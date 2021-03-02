@@ -1,0 +1,41 @@
+{
+  "private": true,
+  "name": "leemons-monorepo",
+  "description": "The powerful flexible friendly Learning Experience Platform you’re waiting for",
+  "license": "SEE LICENSE IN LICENSE",
+  "dependencies": {},
+  "devDependencies": {
+    "lerna": "^3.22.1",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
+    "snyk": "^1.464.0",
+    "wait-on": "^5.2.1"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/leemonade/leemons.git"
+  },
+  "bugs": {
+    "url": "https://github.com/leemonade/leemons/issues"
+  },
+  "author": {
+    "email": "hi@leemons.io",
+    "name": "Leemons Edtech Solutions",
+    "url": "https://www.leemons.io"
+  },
+  "maintainers": [
+    {
+      "email": "hi@leemons.io",
+      "name": "Leemons Edutech Solutions",
+      "url": "https://www.leemons.io"
+    }
+  ],
+  "engines": {
+    "node": ">=10.16.0 <=14.x.x",
+    "npm": ">=6.0.0"
+  }
+}
