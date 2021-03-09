@@ -52,8 +52,10 @@
   "scripts": {
     "lint": "npm-run-all -s -p lint:code lint:css",
     "lint:code": "eslint .",
-    "lint:css": "",
-    "lint:fix": "eslint --fix .",
+    "lint:css": "stylelint **/*.*css",
+    "lint:fix": "npm-run-all -s -p lint:code:fix lint:css:fix",
+    "lint:code:fix": "eslint . --fix",
+    "lint:css:fix": "stylelint **/*.*css --fix",
     "format": "npm-run-all -p format:*",
     "format:code": "npm run prettier:code -- --write",
     "format:other": "npm run prettier:other -- --write",
