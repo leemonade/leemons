@@ -1,0 +1,12 @@
+{
+  "name": "first-app",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "leemons start -N next",
+    "leemons": "leemons"
+  },
+  "dependencies": {
+    "leemons": "1.0.0"
+  },
+  "license": "MIT"
+}

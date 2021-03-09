@@ -23,7 +23,8 @@
     "wait-on": "^5.2.1"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "examples/*"
   ],
   "repository": {
     "type": "git",
@@ -64,6 +65,5 @@
       "pre-commit": "npm run lint -s",
       "pre-push": "npm run lint -s"
     }
-  },
-  "type": "module"
+  }
 }

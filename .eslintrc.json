@@ -23,7 +23,12 @@
   ],
   "rules": {
     "no-plusplus": "off",
-    "import/no-commonjs": "error",
-    "prettier/prettier": "error"
+    "comma-dangle": ["error", {
+      "arrays": "always",
+      "objects": "always",
+      "imports": "always",
+      "exports": "always",
+      "functions": "never"
+    }]
   }
 }
