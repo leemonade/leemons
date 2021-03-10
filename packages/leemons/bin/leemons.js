@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const chalk = require('chalk');
-const { Command, } = require('commander');
+const { Command } = require('commander');
 const resolveCwd = require('resolve-cwd');
 
 const packageJSON = require('../package.json');
@@ -20,7 +20,9 @@ function getLocalCommand(commandName) {
     try {
       script(...args);
     } catch (e) {
-      process.stderr.write(chalk`{red An error ocurred while running the command {yellow ${commandName}}}\n{gray ${e.message}}`);
+      process.stderr.write(
+        chalk`{red An error ocurred while running the command {yellow ${commandName}}}\n{gray ${e.message}}`
+      );
       process.exit(1);
     }
   };
@@ -35,7 +37,7 @@ program
   .command('start')
   .alias('develop')
   .alias('dev')
-  .option("-N, --next <dir>", "next directory")
+  .option('-N, --next <dir>', 'next directory')
   .description('Launches leemons application in production mode')
   .action(getLocalCommand('start'));
 
