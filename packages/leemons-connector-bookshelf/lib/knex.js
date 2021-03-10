@@ -29,11 +29,10 @@ function initKnex(leemons, connections) {
     }
 
     // Check if the db client is installed
-    let clientPackage;
     try {
+      // TODO: do something with the clientPackage
       // eslint-disable-next-line import/no-dynamic-require, global-require
-      clientPackage = require(client);
-      console.log(clientPackage);
+      require(client);
     } catch (e) {
       throw new Error(`The desired db client is not installed, try yarn add ${client}`);
     }

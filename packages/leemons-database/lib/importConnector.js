@@ -16,7 +16,6 @@ function importConnector(connector) {
     // eslint-disable-next-line import/no-dynamic-require, global-require
     return require(connectorPackage);
   } catch (e) {
-    console.log(e);
     throw new Error(`The connector ${connectorPackage} can not be initialized`);
   }
 }

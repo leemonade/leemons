@@ -5,7 +5,6 @@ function createConnectorRegistry({ connections, defaultConnection }, leemons) {
   return {
     load: () => {
       // Register each different connector
-      console.log(connections);
       Object.values(connections).forEach((connection) => {
         const { connector } = connection;
         if (!connectors.has(connector)) {
