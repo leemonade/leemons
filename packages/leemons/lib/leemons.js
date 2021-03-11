@@ -3,9 +3,12 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const Static = require('koa-static');
 const nextjs = require('next');
-const { createDatabaseManager } = require('../../leemons-database/lib');
+const path = require('path');
+const { createDatabaseManager } = require('leemons-database');
 
 const { loadConfiguration } = require('./core/config/loadConfig');
+const { loadModels, formatModels } = require('./core/model/loadModel');
+const createCoreStore = require('./core/model/coreStore');
 
 class Leemons {
   constructor(log) {
@@ -19,7 +22,6 @@ class Leemons {
     this.router = new Router();
 
     this.config = loadConfiguration(this);
-
     this.initServer();
 
     this.loaded = false;
@@ -54,6 +56,7 @@ class Leemons {
     const state = {
       isReloading: false,
     };
+
     // Overwrite this.reload for being able to use a private state
     this.reload = () => {
       if (!state.isReloading && process.send) {
@@ -62,6 +65,7 @@ class Leemons {
         state.isReloading = true;
         return true;
       }
+
       return false;
     };
   }
@@ -110,6 +114,12 @@ class Leemons {
     if (this.loaded) {
       return true;
     }
+
+    // TODO: Load a model for each plugin/content
+    this.models = loadModels(path.resolve(this.dir.app, this.dir.model));
+    this.models.core_store = createCoreStore();
+
+    formatModels(this);
 
     // Create a database manager
     this.db = createDatabaseManager(this);

@@ -1,7 +1,29 @@
 const Bookshelf = require('bookshelf');
 const { initKnex } = require('./knex');
+const mountModels = require('./model/mountModel');
+
+/*
+  BOOKSHELF - KNEX
+
+  1) You need to initialize a knek object
+  2) You need to initialize Bookshelf with knek object
+  3) In order to use ORM models, the DB must be created
+    3.1) Create a table with ORM.knex.schema.createTable (SEE https://knexjs.org/#Schema-createTable for more info)
+    3.2) On the callback, create the attributes (SEE https://knexjs.org/#Schema-Building for more info)
+  4) Create a model (SEE https://bookshelfjs.org/api.html#section-Model for more info)
+  5) You can start building queries (STRAPI: strapi-connector-bookshelf/lib/queries.js)
+
+*/
 
 module.exports = (leemons) => {
+  function setupConnection(ctx) {
+    // TODO: Stop using global models
+    const models = Object.values(leemons.models).filter(
+      (model) => model.connection === ctx.connection.name
+    );
+    mountModels(models, ctx);
+  }
+
   function init() {
     // Get connections made with bookshelf
     const bookshelfConnections = Object.entries(leemons.config.get('database.connections'))
@@ -16,44 +38,17 @@ module.exports = (leemons) => {
 
       // Initialize the ORM
       const ORM = new Bookshelf(leemons.connections[connection.name]);
-      console.log(ORM);
+
+      const ctx = {
+        ORM,
+        connection,
+      };
+
+      return setupConnection(ctx);
     });
   }
+
   return {
     init,
   };
 };
-
-// const knexConnection = knex({
-//   client: "mysql",
-//   connection: {
-//     host: "127.0.0.1",
-//     user: "test",
-//     password: "root",
-//     database: "bookshelf",
-//     charset: "utf8",
-//   },
-// });
-
-// const ORM = new Bookshelf(knexConnection);
-
-// const User = ORM.model("User", {
-//   tableName: "Users",
-// });
-//  /*
-// //   BOOKSHELF - KNEX
-
-// //   1) You need to initialize a knek object
-// //   2) You need to initialize Bookshelf with knek object
-// //   3) In order to use ORM models, the DB must be created
-// //     3.1) Create a table with ORM.knex.schema.createTable (SEE https://knexjs.org/#Schema-createTable for more info)
-// //     3.2) On the callback, create the attributes (SEE https://knexjs.org/#Schema-Building for more info)
-// //   4) Create a model (SEE https://bookshelfjs.org/api.html#section-Model for more info)
-// //   5) You can start building queries (STRAPI: strapi-connector-bookshelf/lib/queries.js)
-
-// */
-// new User({name: "Miguel",}).save();
-// new User().fetchAll().then(model => {
-//   console.log(model.toJSON());
-// })
-// //! ONLY USE knex
