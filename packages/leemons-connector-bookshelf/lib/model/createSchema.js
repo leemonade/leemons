@@ -1,10 +1,15 @@
 const _ = require('lodash');
 
+function getRelationCollectionName(properties, ctx) {
+  return _.get(ctx.leemons.models, properties.references.collection).schema.collectionName;
+}
+
+function getRelationPrimaryKey(properties, ctx) {
+  return _.get(ctx.leemons.models, properties.references.collection).schema.primaryKey;
+}
+
 function createTable(model, ctx) {
   const { schema } = ctx.ORM.knex;
-
-  const getRelationPrimaryKey = (properties) =>
-    ctx.leemons.models[properties.references.collection].primaryKey;
 
   // TODO: Maybe move to an uuid/uid
   const createId = (table) => table.increments(model.primaryKey.name);
@@ -13,7 +18,7 @@ function createTable(model, ctx) {
     Object.entries(model.attributes).map(([name, properties]) => {
       // Create a column for the relation
       if (_.has(properties, 'references') && properties.references.relation !== 'many to many') {
-        _.set(properties, 'type', getRelationPrimaryKey(properties).type);
+        _.set(properties, 'type', getRelationPrimaryKey(properties, ctx).type);
         const col = table.integer(name).unsigned();
 
         if (properties.references.relation === 'one to one') {
@@ -88,22 +93,23 @@ function tableExists(table, ctx) {
 }
 
 async function createSchema(model, ctx) {
-  if (!(await tableExists(model.collectionName, ctx))) {
-    await createTable(model, ctx);
-    return model;
+  const { schema } = model;
+  if (!(await tableExists(schema.collectionName, ctx))) {
+    await createTable(schema, ctx);
+    return schema;
   }
   return null;
 }
 
-async function createRelations(model, ctx) {
+async function createRelations(schema, ctx) {
   // TODO: many to many relations
   return Promise.all(
-    Object.entries(model.attributes)
+    Object.entries(schema.attributes)
       .filter(([, properties]) => _.has(properties, 'references'))
       .map(([name, properties]) => {
         if (properties.references.relation === 'many to many') {
           // TODO: check if exists because of user creation or foreign relation
-          const collectionName = `${model.collectionName}_${properties.references.collection}`;
+          const collectionName = `${schema.collectionName}_${properties.references.collection}`;
           const unionModel = {
             collectionName,
             info: {
@@ -112,9 +118,9 @@ async function createRelations(model, ctx) {
             },
             options: {},
             attributes: {
-              [`${model.collectionName}_id`]: {
+              [`${schema.collectionName}_id`]: {
                 references: {
-                  collection: model.collectionName,
+                  collection: schema.collectionName,
                   relation: 'one to one',
                 },
               },
@@ -133,11 +139,11 @@ async function createRelations(model, ctx) {
 
           return createTable(unionModel, ctx).then(() => createRelations(unionModel, ctx));
         }
-        return ctx.ORM.knex.schema.table(model.collectionName, (table) => {
+        return ctx.ORM.knex.schema.table(schema.collectionName, (table) => {
           table
             .foreign(name)
-            .references(ctx.leemons.models[properties.references.collection].primaryKey.name)
-            .inTable(properties.references.collection);
+            .references(getRelationPrimaryKey(properties, ctx).name)
+            .inTable(getRelationCollectionName(properties, ctx));
         });
       })
   );

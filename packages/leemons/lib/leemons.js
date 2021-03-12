@@ -3,8 +3,8 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const Static = require('koa-static');
 const nextjs = require('next');
-const { createDatabaseManager } = require('leemons-database');
 
+const { createDatabaseManager } = require('leemons-database');
 const { loadConfiguration } = require('./core/config/loadConfig');
 const { loadModels } = require('./core/model/loadModel');
 
@@ -143,6 +143,7 @@ class Leemons {
       return;
     }
     await this.load();
+
     this.server.listen(process.env.PORT, () => {
       this.log(`Listening on http://localhost:${process.env.PORT}`);
 

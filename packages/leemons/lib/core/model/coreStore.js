@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
-function CoreStoreProvider(model) {
-  const modelProvier = _.cloneDeep(model);
+function coreStoreProvider(model) {
+  const modelProvier = _.cloneDeep(model.core_store);
 
   Object.assign(modelProvier, {
     get: () => {
@@ -15,7 +15,7 @@ function CoreStoreProvider(model) {
     },
   });
 
-  return modelProvier;
+  return { core_store: modelProvier };
 }
 
 function createCoreStore() {
@@ -37,7 +37,7 @@ function createCoreStore() {
     },
   };
 
-  return CoreStoreProvider(model);
+  return model;
 }
 
-module.exports = createCoreStore;
+module.exports = { createCoreStore, coreStoreProvider };
