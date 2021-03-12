@@ -1,20 +1,11 @@
-const createSchema = require('./createSchema');
+const { createSchema, createRelations } = require('./createSchema');
 
 function mountModels(models, ctx) {
-  return models.map(
-    (model) => createSchema(model, ctx)
-    // console.log(model);
-    // ctx.ORM.knex.schema.hasTable(model.collectionName).then((exists) => {
-    //   if (!exists) {
-    //     console.log('Create Table', model.collectionName);
-    //     ctx.ORM.knex.schema
-    //       .createTable(model.collectionName, (table) => {
-    //         table.increments();
-    //       })
-    //       .then((d) => console.log(`Table ${model.collectionName} created`));
-    //   }
-    // });
-    // ctx.ORM.model(model.)
+  // Use promises and not awaits for performance reasons
+  return Promise.all(models.map((model) => createSchema(model, ctx))).then((modelsCollection) =>
+    Promise.all(
+      modelsCollection.filter((model) => model).map((model) => createRelations(model, ctx))
+    )
   );
 }
 

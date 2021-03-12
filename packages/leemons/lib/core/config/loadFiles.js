@@ -29,7 +29,7 @@ function loadFile(file) {
   if (extension === '.json') {
     return loadJSONFile(file);
   }
-  return {};
+  return null;
 }
 
 function loadFiles(dir) {
@@ -46,7 +46,11 @@ function loadFiles(dir) {
           `${file.name} configuration already exists on ${dir}. (do not use same name in .js files and .json files)`
         );
       }
-      return { ...config, [key]: loadFile(path.resolve(dir, file.name)) };
+      const fileConfig = loadFile(path.resolve(dir, file.name));
+      if (fileConfig) {
+        return { ...config, [key]: fileConfig };
+      }
+      return config;
     }, {});
 }
 

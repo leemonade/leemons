@@ -3,12 +3,10 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const Static = require('koa-static');
 const nextjs = require('next');
-const path = require('path');
 const { createDatabaseManager } = require('leemons-database');
 
 const { loadConfiguration } = require('./core/config/loadConfig');
-const { loadModels, formatModels } = require('./core/model/loadModel');
-const createCoreStore = require('./core/model/coreStore');
+const { loadModels } = require('./core/model/loadModel');
 
 class Leemons {
   constructor(log) {
@@ -116,10 +114,7 @@ class Leemons {
     }
 
     // TODO: Load a model for each plugin/content
-    this.models = loadModels(path.resolve(this.dir.app, this.dir.model));
-    this.models.core_store = createCoreStore();
-
-    formatModels(this);
+    this.models = loadModels(this);
 
     // Create a database manager
     this.db = createDatabaseManager(this);

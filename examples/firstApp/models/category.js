@@ -1,8 +1,7 @@
 module.exports = {
-  collectionName: 'restaurants',
+  collectionName: 'category',
   info: {
-    name: 'restaurantes',
-    description: 'Los restaurantes',
+    description: 'La categoría de un restaurante',
   },
   options: {},
   attributes: {

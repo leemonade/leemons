@@ -1,98 +1,36 @@
-/*
-  Knex schema builder
-
-  TYPES
-    increments(name, [options]): Creates an auto_increment column
-    options:
-    {
-      primaryKey: (Sets if the column is the primary key)
-      Boolean (default: true)
-    }
-    + uuid(name): Adds a uuid column
-
-
-    + integer(name): Creates an integer column
-
-    + bigInteger(name): Creates a bigInteger column (Only for MySQL and Postgre, otherwise, creates integer)
-      returns: string (because of JS precision)
-
-    + float(name, [precision], [scale]): Creates a float column
-      precision: (Specifies the number of digits)
-        Number || null (null means any precision, default = 8)
-      scale: (Specifies the number of decimal precision)
-        Number || null (null means any scale, default = 2)
-
-    + decimal(name, [precision], [scale]): Creates a decimal column (Only for Oracle, SQLite, Postgres)
-      precision: (Specifies the number of digits)
-        Number || null (null means any precision, default = 8)
-      scale: (Specifies the number of decimal precision)
-        Number || null (null means any scale, default = 2)
-
-    + binary(name, [length]): Adds a binary column
-      length: (Only for MySQL)
-        Number
-
-    + boolean(name): Adds a boolean column
-
-
-    - text(name, [textType]): Creates a text column
-      textType: (only for MySQL, otherwise ignored)
-        "mediumText" | "longText"
-
-    + string(name, [length]): Creates a string column
-      length: (specifies the length)
-        Number (default: 255)
-
-    + enu(name, values): Adds an enum column
-      values: (specifies the enum values)
-        Array
-
-
-    - json(name): Adds a json column (should be stringified)
-
-    + jsonb(name): Adds a jsonb column
-
-
-    date(name): Adds a date column
-
-    datetime(name, [options], [precision]): Adds a datetime column
-      options:
-        {
-          useTz: Boolean (does not work for MySQL and MSSQL, default: true)
-        }
-      precision:
-        Number
-
-    time(name, [precision]): Adds a time column
-      precision: (only for MySQL)
-        Number
-
-    timestamp(name, [options], [precision]): Adds a timestamp column
-      options:
-        {
-          useTz: Boolean (does not work for MySQL and MSSQL, default: true)
-        }
-      precision:
-        Number
-
-    specificType(name, type): Adds the desired specific type
-
-  PROPERTIES
-    unique(name)
-
-    foreign https://knexjs.org/#Schema-foreign
-*/
+const _ = require('lodash');
 
 function createTable(model, ctx) {
   const { schema } = ctx.ORM.knex;
 
+  const getRelationPrimaryKey = (properties) =>
+    ctx.leemons.models[properties.references.collection].primaryKey;
+
   // TODO: Maybe move to an uuid/uid
-  const createId = (table) => table.increments();
+  const createId = (table) => table.increments(model.primaryKey.name);
 
   const createColumns = (table) =>
     Object.entries(model.attributes).map(([name, properties]) => {
-      if (properties.specificType) return table.specificType(name, properties.specificType);
+      // Create a column for the relation
+      if (_.has(properties, 'references') && properties.references.relation !== 'many to many') {
+        _.set(properties, 'type', getRelationPrimaryKey(properties).type);
+        const col = table.integer(name).unsigned();
 
+        if (properties.references.relation === 'one to one') {
+          col.unique();
+        }
+        return col;
+      }
+
+      if (_.has(properties, 'specificType')) {
+        return table.specificType(name, properties.specificType);
+      }
+
+      if (!_.has(properties, 'type')) {
+        return null;
+      }
+
+      // TODO: Let the user add unique, unsigned, notNull...
       switch (properties.type) {
         case 'string':
         case 'text':
@@ -145,12 +83,67 @@ function createTable(model, ctx) {
   });
 }
 
-async function createSchema(model, ctx) {
-  const tableExists = (table) => ctx.ORM.knex.schema.hasTable(table);
-
-  if (!(await tableExists(model.collectionName))) {
-    await createTable(model, ctx);
-  }
+function tableExists(table, ctx) {
+  return ctx.ORM.knex.schema.hasTable(table);
 }
 
-module.exports = createSchema;
+async function createSchema(model, ctx) {
+  if (!(await tableExists(model.collectionName, ctx))) {
+    await createTable(model, ctx);
+    return model;
+  }
+  return null;
+}
+
+async function createRelations(model, ctx) {
+  // TODO: many to many relations
+  return Promise.all(
+    Object.entries(model.attributes)
+      .filter(([, properties]) => _.has(properties, 'references'))
+      .map(([name, properties]) => {
+        if (properties.references.relation === 'many to many') {
+          // TODO: check if exists because of user creation or foreign relation
+          const collectionName = `${model.collectionName}_${properties.references.collection}`;
+          const unionModel = {
+            collectionName,
+            info: {
+              name: collectionName,
+              description: 'union table',
+            },
+            options: {},
+            attributes: {
+              [`${model.collectionName}_id`]: {
+                references: {
+                  collection: model.collectionName,
+                  relation: 'one to one',
+                },
+              },
+              [`${properties.references.collection}_id`]: {
+                references: {
+                  collection: properties.references.collection,
+                  relation: 'one to many',
+                },
+              },
+            },
+            primaryKey: {
+              name: 'id',
+              type: 'int',
+            },
+          };
+
+          return createTable(unionModel, ctx).then(() => createRelations(unionModel, ctx));
+        }
+        return ctx.ORM.knex.schema.table(model.collectionName, (table) => {
+          table
+            .foreign(name)
+            .references(ctx.leemons.models[properties.references.collection].primaryKey.name)
+            .inTable(properties.references.collection);
+        });
+      })
+  );
+}
+
+module.exports = {
+  createRelations,
+  createSchema,
+};

@@ -21,7 +21,7 @@ module.exports = (leemons) => {
     const models = Object.values(leemons.models).filter(
       (model) => model.connection === ctx.connection.name
     );
-    mountModels(models, ctx);
+    return mountModels(models, ctx).then();
   }
 
   function init() {
@@ -33,19 +33,22 @@ module.exports = (leemons) => {
     // Initialize knex, all the connections in leemons.connections
     initKnex(leemons, bookshelfConnections);
 
-    bookshelfConnections.map((connection) => {
-      // TODO: Let the user have a pre-initialization function
+    return Promise.all(
+      bookshelfConnections.map((connection) => {
+        // TODO: Let the user have a pre-initialization function
 
-      // Initialize the ORM
-      const ORM = new Bookshelf(leemons.connections[connection.name]);
+        // Initialize the ORM
+        const ORM = new Bookshelf(leemons.connections[connection.name]);
 
-      const ctx = {
-        ORM,
-        connection,
-      };
+        const ctx = {
+          ORM,
+          connection,
+          leemons,
+        };
 
-      return setupConnection(ctx);
-    });
+        return setupConnection(ctx);
+      })
+    );
   }
 
   return {

@@ -1,49 +1,16 @@
 module.exports = {
-  collectionName: 'allInOne',
+  collectionName: 'menu',
   info: {
-    name: 'allInOne',
-    description: 'Esta tabla lo tiene todo!',
+    name: 'menu',
+    description: 'Los menus',
   },
   options: {},
   attributes: {
-    string: {
+    name: {
       type: 'string',
     },
-    string2: {
-      type: 'string',
-      length: 2,
-    },
-    enum: {
-      type: 'enum',
-      enum: ['a', 'b', 'c'],
-    },
-    json: {
-      type: 'json',
-    },
-    int: {
+    price: {
       type: 'int',
-    },
-    bigInt: {
-      type: 'bigint',
-    },
-    float: {
-      type: 'float',
-    },
-    decimal: {
-      type: 'decimal',
-    },
-    binary: {
-      type: 'binary',
-    },
-    binary2: {
-      type: 'binary',
-      length: 2,
-    },
-    boolean: {
-      type: 'boolean',
-    },
-    uuid: {
-      type: 'uuid',
     },
   },
 };
