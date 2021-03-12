@@ -11,19 +11,19 @@ module.exports = {
     },
     direction: {
       references: {
-        collection: 'direction',
+        collection: 'global.direction',
         relation: 'one to one',
       },
     },
     menu: {
       references: {
-        collection: 'menu',
+        collection: 'global.menu',
         relation: 'many to many',
       },
     },
     category: {
       references: {
-        collection: 'category',
+        collection: 'global.category',
         relation: 'one to many',
       },
     },

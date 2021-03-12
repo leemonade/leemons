@@ -6,7 +6,7 @@ function mountModels(models, ctx) {
   // Use promises and not awaits for performance reasons
   return Promise.all(models.map((model) => createSchema(model, ctx))).then((modelsCollection) => {
     models.forEach((model) => {
-      _.set(ctx.leemons, `${model.target}.${model.modelName}`, {
+      _.set(ctx.leemons, `${model.target ? `${model.target}.` : ''}${model.modelName}`, {
         ..._.cloneDeep(model),
         model: ctx.ORM.model(model.modelName, {
           tableName: model.schema.collectionName,

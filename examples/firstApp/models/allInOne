@@ -1,8 +1,8 @@
 module.exports = {
   collectionName: 'allInOne',
   info: {
-    name: 'allInOne',
     description: 'Esta tabla lo tiene todo!',
+    name: 'allInOne',
   },
   options: {},
   primaryKey: {
@@ -13,12 +13,12 @@ module.exports = {
       type: 'string',
     },
     string2: {
-      type: 'string',
       length: 2,
+      type: 'string',
     },
     enum: {
-      type: 'enum',
       enum: ['a', 'b', 'c'],
+      type: 'enum',
     },
     json: {
       type: 'json',
@@ -39,14 +39,20 @@ module.exports = {
       type: 'binary',
     },
     binary2: {
-      type: 'binary',
       length: 2,
+      type: 'binary',
     },
     boolean: {
       type: 'boolean',
     },
     uuid: {
       type: 'uuid',
+    },
+    oneToOne: {
+      references: {
+        collection: 'global.restaurants',
+        relation: 'one to one',
+      },
     },
   },
 };

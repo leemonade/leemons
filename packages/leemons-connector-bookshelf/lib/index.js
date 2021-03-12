@@ -1,12 +1,19 @@
 const Bookshelf = require('bookshelf');
+const _ = require('lodash');
 
 const { initKnex } = require('./knex');
 const mountModels = require('./model/mountModel');
 
 module.exports = (leemons) => {
   function setupConnection(ctx) {
-    // TODO: Stop using global models
-    const models = Object.values(leemons.models).filter(
+    // eslint-disable-next-line prettier/prettier
+    const allModels = _.merge(
+      {},
+      { core_store: leemons.core_store },
+      leemons.global.models
+    );
+
+    const models = Object.values(allModels).filter(
       (model) => model.connection === ctx.connection.name
     );
     return mountModels(models, ctx);

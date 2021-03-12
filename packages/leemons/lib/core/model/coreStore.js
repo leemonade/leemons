@@ -13,6 +13,7 @@ function coreStoreProvider(model) {
     set: () => {
       // TODO: set a new value in the core_store
     },
+    target: '',
   });
 
   return { core_store: modelProvier };

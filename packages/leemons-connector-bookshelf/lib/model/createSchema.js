@@ -1,11 +1,17 @@
 const _ = require('lodash');
 
 function getRelationCollectionName(properties, ctx) {
-  return _.get(ctx.leemons.models, properties.references.collection).schema.collectionName;
+  const ref = properties.references.collection.split('.');
+  ref.splice(ref.length - 1, 0, 'models');
+  const path = ref.join('.');
+  return _.get(ctx.leemons, path).schema.collectionName;
 }
 
 function getRelationPrimaryKey(properties, ctx) {
-  return _.get(ctx.leemons.models, properties.references.collection).schema.primaryKey;
+  const ref = properties.references.collection.split('.');
+  ref.splice(ref.length - 1, 0, 'models');
+  const path = ref.join('.');
+  return _.get(ctx.leemons, path).schema.primaryKey;
 }
 
 function createTable(model, ctx) {
@@ -96,20 +102,22 @@ async function createSchema(model, ctx) {
   const { schema } = model;
   if (!(await tableExists(schema.collectionName, ctx))) {
     await createTable(schema, ctx);
-    return schema;
+    return model;
   }
   return null;
 }
 
-async function createRelations(schema, ctx) {
+async function createRelations(model, ctx) {
+  const schema = model.schema || model;
   // TODO: many to many relations
   return Promise.all(
     Object.entries(schema.attributes)
       .filter(([, properties]) => _.has(properties, 'references'))
       .map(([name, properties]) => {
+        const relationTable = getRelationCollectionName(properties, ctx);
         if (properties.references.relation === 'many to many') {
           // TODO: check if exists because of user creation or foreign relation
-          const collectionName = `${schema.collectionName}_${properties.references.collection}`;
+          const collectionName = `${schema.collectionName}_${relationTable}`;
           const unionModel = {
             collectionName,
             info: {
@@ -120,11 +128,11 @@ async function createRelations(schema, ctx) {
             attributes: {
               [`${schema.collectionName}_id`]: {
                 references: {
-                  collection: schema.collectionName,
+                  collection: `${model.target}.${schema.collectionName}`,
                   relation: 'one to one',
                 },
               },
-              [`${properties.references.collection}_id`]: {
+              [`${relationTable}_id`]: {
                 references: {
                   collection: properties.references.collection,
                   relation: 'one to many',
@@ -136,14 +144,13 @@ async function createRelations(schema, ctx) {
               type: 'int',
             },
           };
-
           return createTable(unionModel, ctx).then(() => createRelations(unionModel, ctx));
         }
         return ctx.ORM.knex.schema.table(schema.collectionName, (table) => {
           table
             .foreign(name)
             .references(getRelationPrimaryKey(properties, ctx).name)
-            .inTable(getRelationCollectionName(properties, ctx));
+            .inTable(relationTable);
         });
       })
   );

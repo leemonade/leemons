@@ -28,7 +28,7 @@ function formatModel(name, modelConfig, leemons) {
   const schema = _.pick(modelConfig, ['collectionName', 'options', 'attributes', 'primaryKey']);
   const model = _.pick(modelConfig, ['connection', 'modelName', 'type']);
   _.set(model, 'schema', schema);
-  _.set(model, 'target', 'models');
+  _.set(model, 'target', 'global');
 
   return { [model.modelName]: model };
 }
@@ -47,10 +47,12 @@ function loadModels(leemons) {
   const coreStore = createCoreStore();
   const global = loadFiles(path.resolve(leemons.dir.app, leemons.dir.model));
 
-  return {
-    ...coreStoreProvider(formatModel('core_store', coreStore, leemons)),
-    ...formatModels(global, leemons),
-  };
+  _.set(
+    leemons,
+    'core_store',
+    coreStoreProvider(formatModel('core_store', coreStore, leemons)).core_store
+  );
+  _.set(leemons, 'global.models', formatModels(global, leemons));
 }
 
 module.exports = {
