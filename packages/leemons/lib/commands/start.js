@@ -1,6 +1,6 @@
 const chalk = require('chalk');
 const cluster = require('cluster');
-const execa = require('execa');
+// const execa = require('execa');
 const fs = require('fs');
 const http = require('http');
 const ora = require('ora');
@@ -138,10 +138,10 @@ module.exports = async (args) => {
 
     try {
       const spinner = ora('Building front').start();
-      // TODO: fix this line
-      const { stdout } = await execa('npm', ['run', 'build', '--prefix', nextDir]);
+      // TODO: uncomment this line
+      // const { stdout } = await execa('npm', ['run', 'build', '--prefix', nextDir]);
       spinner.succeed();
-      log(stdout);
+      // log(stdout);
 
       const leemonsInstance = leemons(log);
 

@@ -27,5 +27,8 @@ module.exports = {
         relation: 'one to many',
       },
     },
+    test: {
+      type: 'string',
+    },
   },
 };

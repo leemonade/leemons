@@ -113,13 +113,17 @@ class Leemons {
       return true;
     }
 
-    // TODO: Load a model for each plugin/content
     this.models = loadModels(this);
 
     // Create a database manager
     this.db = createDatabaseManager(this);
     // Initialize all database connections
     await this.db.init();
+
+    this.db.connectors.default
+      .queries(this.global.models.restaurants)
+      .find({})
+      .then((res) => console.log(res));
 
     // Initialize next
     this.front = nextjs({

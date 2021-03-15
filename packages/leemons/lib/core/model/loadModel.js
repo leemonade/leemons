@@ -21,14 +21,14 @@ function formatModel(name, modelConfig, leemons) {
       type: 'int',
     },
     type: 'collection',
+    target: 'global',
   };
   // Set default info for each model
   _.defaultsDeep(modelConfig, defaultModel);
 
   const schema = _.pick(modelConfig, ['collectionName', 'options', 'attributes', 'primaryKey']);
-  const model = _.pick(modelConfig, ['connection', 'modelName', 'type']);
+  const model = _.pick(modelConfig, ['connection', 'modelName', 'type', 'target']);
   _.set(model, 'schema', schema);
-  _.set(model, 'target', 'global');
 
   return { [model.modelName]: model };
 }
@@ -50,7 +50,7 @@ function loadModels(leemons) {
   _.set(
     leemons,
     'core_store',
-    coreStoreProvider(formatModel('core_store', coreStore, leemons)).core_store
+    coreStoreProvider(formatModel('core_store', coreStore, leemons), leemons).core_store
   );
   _.set(leemons, 'global.models', formatModels(global, leemons));
 }

@@ -1,38 +1,39 @@
 const _ = require('lodash');
+const { getModelLocation } = require('leemons-utils');
 
 function getRelationCollectionName(properties, ctx) {
-  const ref = properties.references.collection.split('.');
-  ref.splice(ref.length - 1, 0, 'models');
-  const path = ref.join('.');
-  return _.get(ctx.leemons, path).schema.collectionName;
+  const model = getModelLocation(properties.references.collection, ctx.leemons);
+  return model.schema.collectionName;
 }
 
 function getRelationPrimaryKey(properties, ctx) {
-  const ref = properties.references.collection.split('.');
-  ref.splice(ref.length - 1, 0, 'models');
-  const path = ref.join('.');
-  return _.get(ctx.leemons, path).schema.primaryKey;
+  const model = getModelLocation(properties.references.collection, ctx.leemons);
+  return model.schema.primaryKey;
 }
 
-function createTable(model, ctx) {
+// TODO: Update columns with foreign keys (maybe as easy as delete the key?)
+async function createTable(model, ctx, useUpdate = false, storedData) {
   const { schema } = ctx.ORM.knex;
 
   // TODO: Maybe move to an uuid/uid
   const createId = (table) => table.increments(model.primaryKey.name);
 
-  const createColumns = (table) =>
-    Object.entries(model.attributes).map(([name, properties]) => {
-      // Create a column for the relation
+  const createColumns = (table, columns = Object.entries(model.attributes), alter = false) =>
+    columns.forEach(async ([name, properties]) => {
+      // Create a column for the relation (only if not `many to many`)
       if (_.has(properties, 'references') && properties.references.relation !== 'many to many') {
         _.set(properties, 'type', getRelationPrimaryKey(properties, ctx).type);
         const col = table.integer(name).unsigned();
 
+        // If the relation is `one to one`, set the column to unique
         if (properties.references.relation === 'one to one') {
           col.unique();
         }
+        // If the relation is `one to many`, leave the column not unique
         return col;
       }
 
+      // A SQL type defined by the user
       if (_.has(properties, 'specificType')) {
         return table.specificType(name, properties.specificType);
       }
@@ -41,53 +42,97 @@ function createTable(model, ctx) {
         return null;
       }
 
+      let col;
       // TODO: Let the user add unique, unsigned, notNull...
       switch (properties.type) {
         case 'string':
         case 'text':
         case 'richtext':
-          return table.string(name, properties.length); // default length is 255 (Do not use text because the space in disk ~65537B)
-
+          col = table.string(name, properties.length); // default length is 255 (Do not use text because the space in disk ~65537B)
+          break;
         case 'enum':
         case 'enu':
         case 'enumeration':
           if (Array.isArray(properties.enumValues)) {
-            return table.enu(name, properties.enum);
+            col = table.enu(name, properties.enum);
+            break;
           }
           return null;
 
         case 'json':
         case 'jsonb':
-          return table.jsonb(name);
+          col = table.jsonb(name);
+          break;
 
         case 'int':
         case 'integer':
-          return table.integer(name);
+          col = table.integer(name);
+          break;
 
         case 'bigint':
         case 'biginteger':
-          return table.bigInteger(name);
+          col = table.bigInteger(name);
+          break;
 
         case 'float':
-          return table.float(name, properties.precision, properties.scale);
+          col = table.float(name, properties.precision, properties.scale);
+          break;
 
         case 'decimal':
-          return table.decimal(name, properties.precision, properties.scale);
+          col = table.decimal(name, properties.precision, properties.scale);
+          break;
 
         case 'binary':
-          return table.binary(name, properties.length);
+          col = table.binary(name, properties.length);
+          break;
 
         case 'boolean':
-          return table.boolean(name);
+          col = table.boolean(name);
+          break;
 
         case 'uuid':
-          return table.uuid(name);
+          col = table.uuid(name);
+          break;
 
         default:
           return null;
       }
+
+      // Change the current column type for the new one
+      if (alter) {
+        col.alter();
+      }
+
+      return col;
     });
 
+  // If the table has changed
+  if (useUpdate) {
+    const storedModel = JSON.parse(storedData.value);
+
+    // Get the columns that changed
+    const updatedColumns = Object.entries(model.attributes).filter(([name, properties]) => {
+      const storedColumn = _.get(storedModel.schema, `attributes.${name}`);
+      return storedColumn && !_.isEqual(properties, storedColumn);
+    });
+
+    // Get the created columns
+    const newColumns = Object.entries(model.attributes).filter(([name]) => {
+      const storedColumn = _.get(storedModel.schema, `attributes.${name}`);
+      return storedColumn === null;
+    });
+
+    // Generate the new table
+    if (updatedColumns.length > 0) {
+      return schema.alterTable(model.collectionName, (table) => {
+        createColumns(table, updatedColumns, true);
+        createColumns(table, newColumns);
+      });
+    }
+    return null;
+  }
+
+  // Generate a new table if is not already created
   return schema.createTable(model.collectionName, (table) => {
     createId(table);
     createColumns(table);
@@ -100,8 +145,27 @@ function tableExists(table, ctx) {
 
 async function createSchema(model, ctx) {
   const { schema } = model;
-  if (!(await tableExists(schema.collectionName, ctx))) {
-    await createTable(schema, ctx);
+  let hasBeenUpdated = false;
+  let storedModel;
+
+  // check if the model has been updated
+  if (model.modelName !== 'core_store') {
+    storedModel = await ctx.leemons.core_store.get(`model::${model.modelName}`, false);
+    hasBeenUpdated = storedModel && !_.isEqual(JSON.parse(storedModel.value), model);
+
+    // Update the stored model for the next start
+    if (hasBeenUpdated || !storedModel) {
+      await ctx.leemons.core_store.set(
+        `model::${model.modelName}`,
+        JSON.stringify(model),
+        'Object'
+      );
+    }
+  }
+
+  // Update the table if has changed or create a new one if it does not exists
+  if (hasBeenUpdated || !(await tableExists(schema.collectionName, ctx))) {
+    await createTable(schema, ctx, hasBeenUpdated, storedModel);
     return model;
   }
   return null;
@@ -109,30 +173,31 @@ async function createSchema(model, ctx) {
 
 async function createRelations(model, ctx) {
   const schema = model.schema || model;
-  // TODO: many to many relations
   return Promise.all(
+    // Get the attributes that are foreign keys
     Object.entries(schema.attributes)
       .filter(([, properties]) => _.has(properties, 'references'))
-      .map(([name, properties]) => {
+      .map(async ([name, properties]) => {
+        // Get the name of the related table
         const relationTable = getRelationCollectionName(properties, ctx);
+
+        // If we have a many to many relation, create a new table
         if (properties.references.relation === 'many to many') {
-          // TODO: check if exists because of user creation or foreign relation
-          const collectionName = `${schema.collectionName}_${relationTable}`;
           const unionModel = {
-            collectionName,
+            collectionName: model.ORM.relations[name].unionTable,
             info: {
-              name: collectionName,
+              name: model.ORM.relations[name].unionTable,
               description: 'union table',
             },
             options: {},
             attributes: {
-              [`${schema.collectionName}_id`]: {
+              [model.ORM.relations[name].foreignKey]: {
                 references: {
                   collection: `${model.target}.${schema.collectionName}`,
-                  relation: 'one to one',
+                  relation: 'one to many',
                 },
               },
-              [`${relationTable}_id`]: {
+              [model.ORM.relations[name].otherKey]: {
                 references: {
                   collection: properties.references.collection,
                   relation: 'one to many',
@@ -144,19 +209,27 @@ async function createRelations(model, ctx) {
               type: 'int',
             },
           };
-          return createTable(unionModel, ctx).then(() => createRelations(unionModel, ctx));
+
+          // If the table do not exist, create its
+          if (!(await tableExists(unionModel.collectionName, ctx))) {
+            return createTable(unionModel, ctx).then(() => createRelations(unionModel, ctx));
+          }
+          return null;
         }
-        return ctx.ORM.knex.schema.table(schema.collectionName, (table) => {
-          table
-            .foreign(name)
-            .references(getRelationPrimaryKey(properties, ctx).name)
-            .inTable(relationTable);
-        });
+
+        // Add the new foreign keys
+        return ctx.ORM.knex.schema
+          .table(schema.collectionName, (table) => {
+            table
+              .foreign(name)
+              .references(getRelationPrimaryKey(properties, ctx).name)
+              .inTable(relationTable);
+          })
+          .catch(() => {
+            // Prevents error when foreign key is already created
+          });
       })
   );
 }
 
-module.exports = {
-  createRelations,
-  createSchema,
-};
+module.exports = { createSchema, createRelations };

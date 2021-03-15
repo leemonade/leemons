@@ -3,19 +3,24 @@ const _ = require('lodash');
 
 const { initKnex } = require('./knex');
 const mountModels = require('./model/mountModel');
+const queries = require('./queries');
 
 module.exports = (leemons) => {
-  function setupConnection(ctx) {
+  async function setupConnection(ctx) {
     // eslint-disable-next-line prettier/prettier
     const allModels = _.merge(
       {},
-      { core_store: leemons.core_store },
       leemons.global.models
     );
 
     const models = Object.values(allModels).filter(
       (model) => model.connection === ctx.connection.name
     );
+
+    // First mount core_store for checking structure changes
+    if (leemons.core_store.connection === ctx.connection.name) {
+      await mountModels([leemons.core_store], ctx);
+    }
     return mountModels(models, ctx);
   }
 
@@ -48,5 +53,6 @@ module.exports = (leemons) => {
 
   return {
     init,
+    queries,
   };
 };

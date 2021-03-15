@@ -1,19 +1,32 @@
 const _ = require('lodash');
 
-function coreStoreProvider(model) {
+function coreStoreProvider(model, leemons) {
   const modelProvier = _.cloneDeep(model.core_store);
 
   Object.assign(modelProvier, {
-    get: () => {
-      // TODO: get a specific value from core_store
-    },
-    has: () => {
-      // TODO: get if a specific key exists in core_store
-    },
-    set: () => {
-      // TODO: set a new value in the core_store
-    },
-    target: '',
+    get: (key, require = true) =>
+      leemons.core_store.model
+        .where({ key })
+        .fetch({
+          require,
+        })
+        .then((result) => (result ? result.toJSON() : null)),
+
+    has: (key) =>
+      leemons.core_store.model
+        .where({ key })
+        .count()
+        .then((count) => count > 0),
+
+    set: (key, value, type, env) =>
+      leemons.core_store.get(key, false).then((r) => {
+        const params = { key, value, type, env };
+        if (r) {
+          params.id = r.id;
+        }
+
+        return leemons.core_store.model.forge(params).save();
+      }),
   });
 
   return { core_store: modelProvier };
@@ -27,7 +40,7 @@ function createCoreStore() {
         type: 'string',
       },
       value: {
-        type: 'string',
+        specificType: 'text',
       },
       type: {
         type: 'string',
@@ -36,6 +49,7 @@ function createCoreStore() {
         type: 'string',
       },
     },
+    target: 'core_store',
   };
 
   return model;
