@@ -10,6 +10,7 @@ const { loadModels } = require('./core/model/loadModel');
 
 class Leemons {
   constructor(log) {
+    // TODO: Do a good log system
     this.log = log;
     log('New leemons');
 
@@ -20,6 +21,7 @@ class Leemons {
     this.router = new Router();
 
     this.config = loadConfiguration(this);
+
     this.initServer();
 
     this.loaded = false;
@@ -107,6 +109,12 @@ class Leemons {
     this.app.use(this.router.routes()).use(this.router.allowedMethods());
   }
 
+  query(connection = this.config.get('database.defaultConnection')) {
+    const connector = this.db.connectors.getFromConnection(connection);
+    // Call to the connector's query for the given connection
+    return connector.query(connection, this);
+  }
+
   // Load all apps
   async load() {
     if (this.loaded) {
@@ -114,7 +122,6 @@ class Leemons {
     }
 
     this.models = loadModels(this);
-
     // Create a database manager
     this.db = createDatabaseManager(this);
     // Initialize all database connections

@@ -78,6 +78,7 @@ function generateModel(models, ctx) {
       tableName: model.schema.collectionName,
       idAttribute: model.schema.primaryKey.name,
       hidden: [],
+      hasTimestamps: _.get(model.schema, 'options.useTimestamps', false),
     };
 
     // Generate the hidden attributes

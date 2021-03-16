@@ -19,6 +19,8 @@ function createConnectorRegistry({ connections, defaultConnection }, leemons) {
 
     get: (key) => connectors.get(key),
 
+    getFromConnection: (key) => connectors.get(connections[key].connector),
+
     set: (key, value) => connectors.set(key, value),
 
     get default() {

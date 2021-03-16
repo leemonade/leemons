@@ -4,10 +4,15 @@ module.exports = {
     name: 'restaurantes',
     description: 'Los restaurantes',
   },
-  options: {},
+  options: {
+    useTimestamps: true,
+  },
   attributes: {
     name: {
       type: 'string',
+      options: {
+        notNull: false,
+      },
     },
     direction: {
       references: {
@@ -27,8 +32,11 @@ module.exports = {
         relation: 'one to many',
       },
     },
-    test: {
-      type: 'string',
+    users: {
+      references: {
+        collection: 'global.users',
+        relation: 'many to many',
+      },
     },
   },
 };

@@ -22,7 +22,9 @@ async function createTable(model, ctx, useUpdate = false, storedData) {
     columns.forEach(async ([name, properties]) => {
       // Create a column for the relation (only if not `many to many`)
       if (_.has(properties, 'references') && properties.references.relation !== 'many to many') {
+        // The type of the col is the related primary key type
         _.set(properties, 'type', getRelationPrimaryKey(properties, ctx).type);
+        // TODO: Use the defined type
         const col = table.integer(name).unsigned();
 
         // If the relation is `one to one`, set the column to unique
@@ -43,7 +45,8 @@ async function createTable(model, ctx, useUpdate = false, storedData) {
       }
 
       let col;
-      // TODO: Let the user add unique, unsigned, notNull...
+
+      // Set the property type
       switch (properties.type) {
         case 'string':
         case 'text':
@@ -98,13 +101,54 @@ async function createTable(model, ctx, useUpdate = false, storedData) {
           return null;
       }
 
-      // Change the current column type for the new one
+      // Set the property options (notNull, unique...)
+      if (properties.options) {
+        _.forEach(properties.options, (property, optionName) => {
+          if (property === true) {
+            switch (optionName) {
+              case 'unique':
+                col.unique();
+                break;
+              case 'defaultTo':
+                col.defaultTo(property);
+                break;
+              case 'unsigned':
+                col.unsigned();
+                break;
+              case 'notNullable':
+              case 'notNull':
+                col.notNullable();
+                break;
+              default:
+            }
+          }
+
+          if (property === false) {
+            switch (optionName) {
+              case 'notNullable':
+              case 'notNull':
+                col.nullable();
+                break;
+              default:
+            }
+          }
+        });
+      }
       if (alter) {
+        // Change the current column type for the new one
         col.alter();
       }
 
       return col;
     });
+
+  const parseOptions = (table, options = model.options) => {
+    const { useTimestamps } = options;
+
+    if (useTimestamps) {
+      table.timestamps(true, true);
+    }
+  };
 
   // If the table has changed
   if (useUpdate) {
@@ -118,15 +162,21 @@ async function createTable(model, ctx, useUpdate = false, storedData) {
 
     // Get the created columns
     const newColumns = Object.entries(model.attributes).filter(([name]) => {
-      const storedColumn = _.get(storedModel.schema, `attributes.${name}`);
-      return storedColumn === null;
+      const storedColumn = _.get(storedModel.schema, `attributes.${name}`, undefined);
+      return storedColumn === undefined;
+    });
+
+    const newOptions = Object.entries(model.options).filter(([name, value]) => {
+      const storedOption = _.get(storedModel.schema, `options.${name}`);
+      return storedOption === false && value === true;
     });
 
     // Generate the new table
-    if (updatedColumns.length > 0) {
+    if (updatedColumns.length > 0 || newColumns.length > 0 || newOptions.length > 0) {
       return schema.alterTable(model.collectionName, (table) => {
         createColumns(table, updatedColumns, true);
         createColumns(table, newColumns);
+        parseOptions(table, _.fromPairs(newOptions));
       });
     }
     return null;
@@ -136,6 +186,7 @@ async function createTable(model, ctx, useUpdate = false, storedData) {
   return schema.createTable(model.collectionName, (table) => {
     createId(table);
     createColumns(table);
+    parseOptions(table);
   });
 }
 
@@ -154,6 +205,7 @@ async function createSchema(model, ctx) {
     hasBeenUpdated = storedModel && !_.isEqual(JSON.parse(storedModel.value), model);
 
     // Update the stored model for the next start
+    // TODO: Do in a transaction
     if (hasBeenUpdated || !storedModel) {
       await ctx.leemons.core_store.set(
         `model::${model.modelName}`,
@@ -164,13 +216,16 @@ async function createSchema(model, ctx) {
   }
 
   // Update the table if has changed or create a new one if it does not exists
-  if (hasBeenUpdated || !(await tableExists(schema.collectionName, ctx))) {
-    await createTable(schema, ctx, hasBeenUpdated, storedModel);
+  const isTableCreated = await tableExists(schema.collectionName, ctx);
+  if (hasBeenUpdated || !isTableCreated) {
+    // Only update if the table is already created
+    await createTable(schema, ctx, hasBeenUpdated && isTableCreated, storedModel);
     return model;
   }
   return null;
 }
 
+// TODO: ON UPDATE CASCADE ON DELETE
 async function createRelations(model, ctx) {
   const schema = model.schema || model;
   return Promise.all(
@@ -183,6 +238,7 @@ async function createRelations(model, ctx) {
 
         // If we have a many to many relation, create a new table
         if (properties.references.relation === 'many to many') {
+          // TODO: Generate a model for bookshelf
           const unionModel = {
             collectionName: model.ORM.relations[name].unionTable,
             info: {

@@ -1,20 +1,53 @@
 module.exports = {
   collectionName: 'users',
   info: {
-    name: 'users',
-    description: 'Los usuarios',
+    name: 'Users',
+    description: 'All the users in the school',
   },
-  options: {},
+  options: {
+    useTimestamps: true,
+  },
   attributes: {
     name: {
       type: 'string',
+      options: {
+        notNull: true,
+      },
+    },
+    nick: {
+      type: 'string',
+      length: 32,
+      options: {
+        unique: true,
+      },
     },
     email: {
       type: 'string',
+      options: {
+        notNull: true,
+      },
     },
-    password: {
-      type: 'string',
-      hidden: true,
+    age: {
+      type: 'int',
+    },
+    role: {
+      references: {
+        collection: 'global.roles',
+        relation: 'one to many',
+      },
+    },
+
+    class: {
+      references: {
+        collection: 'global.class',
+        relation: 'many to many',
+      },
+    },
+    subjects: {
+      references: {
+        collection: 'global.subjects',
+        relation: 'many to many',
+      },
     },
   },
 };

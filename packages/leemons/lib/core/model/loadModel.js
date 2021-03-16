@@ -14,7 +14,9 @@ function formatModel(name, modelConfig, leemons) {
       name,
       description: '',
     },
-    options: {},
+    options: {
+      useTimestamps: false,
+    },
     attributes: {},
     primaryKey: {
       name: 'id',

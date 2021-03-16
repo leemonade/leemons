@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 const { initKnex } = require('./knex');
 const mountModels = require('./model/mountModel');
-const queries = require('./queries');
+const generateQueries = require('./queries');
 
 module.exports = (leemons) => {
   async function setupConnection(ctx) {
@@ -39,6 +39,7 @@ module.exports = (leemons) => {
 
         // Initialize the ORM
         const ORM = new Bookshelf(leemons.connections[connection.name]);
+        _.set(leemons.connections[connection.name], 'ORM', ORM);
 
         const ctx = {
           ORM,
@@ -53,6 +54,6 @@ module.exports = (leemons) => {
 
   return {
     init,
-    queries,
+    query: generateQueries,
   };
 };
