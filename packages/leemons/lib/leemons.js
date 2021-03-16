@@ -120,11 +120,6 @@ class Leemons {
     // Initialize all database connections
     await this.db.init();
 
-    this.db.connectors.default
-      .queries(this.global.models.restaurants)
-      .find({})
-      .then((res) => console.log(res));
-
     // Initialize next
     this.front = nextjs({
       dir: process.env.nextDir,

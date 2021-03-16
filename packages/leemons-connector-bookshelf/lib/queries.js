@@ -1,31 +1,39 @@
 function queries(model) {
   const bookshelfModel = model.model;
-  function create(newItem) {
+
+  function create(newItem, parseOptions = {}) {
     return bookshelfModel
       .forge()
       .save(newItem, { method: 'insert' })
-      .then((res) => res.toJSON());
+      .then((res) => (res ? res.toJSON(parseOptions) : res));
   }
 
-  function update(updatedItem) {
+  function update(updatedItem, parseOptions = {}) {
     return bookshelfModel
       .forge()
       .save(updatedItem, { method: 'update' })
-      .then((res) => res.toJSON());
+      .then((res) => (res ? res.toJSON(parseOptions) : res));
   }
 
-  function deleteOne(id) {
+  function deleteOne(id, parseOptions = {}) {
     return bookshelfModel
       .forge({ [model.schema.primaryKey.name]: id })
       .destroy()
-      .then((res) => res.toJSON());
+      .then((res) => (res ? res.toJSON(parseOptions) : res));
   }
 
-  function find(query = {}) {
+  function findOne(query = {}, options = {}, parseOptions = {}) {
     return bookshelfModel
       .query(query)
-      .fetchAll()
-      .then((data) => data.toJSON());
+      .fetch(options)
+      .then((res) => (res ? res.toJSON(parseOptions) : res));
+  }
+
+  function find(query = {}, options = {}, parseOptions = {}) {
+    return bookshelfModel
+      .query(query)
+      .fetchAll(options)
+      .then((res) => (res ? res.toJSON(parseOptions) : res));
   }
 
   function count(query = {}) {
@@ -36,6 +44,7 @@ function queries(model) {
     update,
     deleteOne,
     find,
+    findOne,
     count,
   };
 }

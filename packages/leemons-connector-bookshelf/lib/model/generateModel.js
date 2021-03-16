@@ -77,7 +77,15 @@ function generateModel(models, ctx) {
     const Model = {
       tableName: model.schema.collectionName,
       idAttribute: model.schema.primaryKey.name,
+      hidden: [],
     };
+
+    // Generate the hidden attributes
+    _.forEach(model.schema.attributes, (attribute, name) => {
+      if (_.get(attribute, 'hidden', false)) {
+        Model.hidden.push(name);
+      }
+    });
 
     // In case a relation exists, add it to the model
     if (model.ORM) {
