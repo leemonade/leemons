@@ -5,11 +5,11 @@ function getModelLocation(path, models) {
   return _.find(models, (model) => model.modelName === path.split('.').splice(-1)[0]);
 }
 
-function generateRelations(models) {
+function generateRelations(models, allModels = models) {
   models.forEach((model) => {
     Object.entries(model.schema.attributes).forEach(([name, attribute]) => {
       if (_.has(attribute, 'references')) {
-        const referencedModel = getModelLocation(attribute.references.collection, models);
+        const referencedModel = getModelLocation(attribute.references.collection, allModels);
         switch (attribute.references.relation) {
           case 'one to one':
             // This model attribute belongsTo(the referenced model)
@@ -72,7 +72,7 @@ function generateRelations(models) {
 }
 
 function generateModel(models, ctx) {
-  generateRelations(models);
+  generateRelations(models, ctx.models);
   models.forEach((model) => {
     const Model = {
       tableName: model.schema.collectionName,

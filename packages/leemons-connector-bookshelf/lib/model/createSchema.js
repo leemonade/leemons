@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { getModelLocation } = require('leemons-utils');
 const { formatModel } = require('leemons/lib/core/model/loadModel');
-const { union } = require('lodash');
+const generateModel = require('./generateModel');
 
 function getRelationCollectionName(properties, ctx) {
   const model = getModelLocation(properties.references.collection, ctx.leemons);
@@ -269,17 +269,17 @@ async function createRelations(model, ctx) {
             },
           };
           // Standardize model
-          console.log(model);
           unionModel = formatModel(model.ORM.relations[name].unionTable, unionModel)[
             model.ORM.relations[name].unionTable
           ];
-          console.log(unionModel);
-          const unionSchema = unionModel.schema;
-          // If the table do not exist, create its
-          if (!(await tableExists(unionSchema.collectionName, ctx))) {
-            return createTable(unionSchema, ctx).then(() => createRelations(unionModel, ctx));
-          }
-          return null;
+
+          return createSchema(unionModel, ctx).then(() => {
+            // Create bookshelf models
+            generateModel([unionModel], ctx);
+
+            // Generate relations
+            return createRelations(unionModel, ctx);
+          });
         }
 
         // Add the new foreign keys

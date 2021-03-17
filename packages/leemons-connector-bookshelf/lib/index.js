@@ -17,6 +17,9 @@ module.exports = (leemons) => {
       (model) => model.connection === ctx.connection.name
     );
 
+    // give all the models to the ctx
+    _.set(ctx, 'models', models);
+
     // First mount core_store for checking structure changes
     if (leemons.core_store.connection === ctx.connection.name) {
       await mountModels([leemons.core_store], ctx);

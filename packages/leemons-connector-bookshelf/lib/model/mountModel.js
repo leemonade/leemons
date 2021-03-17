@@ -3,14 +3,12 @@ const generateModel = require('./generateModel');
 
 function mountModels(models, ctx) {
   // Create the schema
-  return Promise.all(models.map((model) => createSchema(model, ctx))).then((modelsCollection) => {
+  return Promise.all(models.map((model) => createSchema(model, ctx))).then(() => {
     // Create bookshelf models
     generateModel(models, ctx);
 
     // Generate relations
-    return Promise.all(
-      modelsCollection.filter((model) => model).map((model) => createRelations(model, ctx))
-    );
+    return Promise.all(models.map((model) => createRelations(model, ctx)));
   });
 }
 
