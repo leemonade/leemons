@@ -125,10 +125,6 @@ class Leemons {
     // Initialize all database connections
     await this.db.init();
 
-    const query = this.query('users');
-
-    query.count().then((r) => console.log(r));
-
     // Initialize next
     this.front = nextjs({
       dir: process.env.nextDir,

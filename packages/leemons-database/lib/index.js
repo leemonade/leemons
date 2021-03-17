@@ -1,4 +1,5 @@
 const createConnectorRegistry = require('./connectorRegistry');
+const queryBuilder = require('./queryBuilder');
 
 class DatabaseManager {
   constructor(leemons) {
@@ -43,7 +44,10 @@ class DatabaseManager {
 
     const model = this.models.get(modelName);
     const connector = this.connectors.getFromConnection(model.connection);
-    return connector.query(model);
+
+    const query = queryBuilder(model, connector);
+    this.queries.set(modelName, query);
+    return query;
 
     // Call to the connector's query for the given connection
     // return connector.query(connection, this.leemons);

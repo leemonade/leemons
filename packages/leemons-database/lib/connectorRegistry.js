@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const importConnector = require('./importConnector');
 
 function createConnectorRegistry({ connections, defaultConnection }, connectorInstance) {

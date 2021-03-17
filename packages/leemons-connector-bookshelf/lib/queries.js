@@ -1,4 +1,4 @@
-function generateQueries(model, connector) {
+function generateQueries(model /* connector */) {
   const bookshelfModel = model.model;
 
   // TODO: Give the use the ability to use custom queries
