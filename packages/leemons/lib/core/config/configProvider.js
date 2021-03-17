@@ -15,7 +15,7 @@ const _ = require('lodash');
  * has: `(path, defaultValue) => {}` Returns a boolean meaning if the path's property exist
  *
  * set: `(path, defaultValue) => {}` Sets the new value to the path's property and returns the config object
- * @param {objer} configObj
+ * @param {object} configObj
  * @returns {configProvider} Returns the config object with some helper functions
  */
 function configProvider(configObj = {}) {

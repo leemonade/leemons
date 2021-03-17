@@ -57,7 +57,7 @@ function initKnex(leemons, connections) {
       const dbConnection = knex(config);
       _.set(leemons, `connections.${connection.name}`, dbConnection);
     } catch (e) {
-      throw new Error('Erorr in knex initialization');
+      throw new Error('Error in knex initialization');
     }
   });
 }

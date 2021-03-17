@@ -33,7 +33,7 @@ function timeDif(start, end = new Date()) {
   return `${(minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')}${milliseconds}ms`;
 }
 
-// $ strapi develop
+// $ leemons develop
 module.exports = async (args) => {
   const nextDir = path.resolve(process.cwd(), args.next || 'next/');
   if (!fs.existsSync(nextDir)) {

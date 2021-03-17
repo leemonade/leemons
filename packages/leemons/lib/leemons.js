@@ -98,7 +98,7 @@ class Leemons {
     // Next.js public path
     this.app.use(Static('./next/public'));
 
-    // Make nextjs handle with all non /api requests
+    // Make next.js handle with all non /api requests
     this.router.get(/(?!^\/api)^\/.*/, async (ctx) => {
       await this.frontHandler(ctx.req, ctx.res);
       // Stop Koa handling the request

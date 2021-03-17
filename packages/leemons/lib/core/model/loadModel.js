@@ -5,7 +5,7 @@ const { loadFiles } = require('../config/loadFiles');
 const { createCoreStore, coreStoreProvider } = require('./coreStore');
 
 function formatModel(name, modelConfig, leemons) {
-  // TODO: standarize names
+  // TODO: standardize names
   const defaultModel = {
     modelName: name,
     connection: leemons.config.get('database.defaultConnection'),
@@ -37,8 +37,8 @@ function formatModel(name, modelConfig, leemons) {
 
 function formatModels(models, leemons) {
   return Object.entries(models).reduce(
-    (formatedModels, [name, model]) => ({
-      ...formatedModels,
+    (formattedModels, [name, model]) => ({
+      ...formattedModels,
       ...formatModel(name, model, leemons),
     }),
     {}

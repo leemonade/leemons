@@ -1,7 +1,7 @@
 module.exports = {
   collectionName: 'allInOne',
   info: {
-    description: 'Esta tabla lo tiene todo!',
+    description: 'This table has everything',
     name: 'allInOne',
   },
   options: {},

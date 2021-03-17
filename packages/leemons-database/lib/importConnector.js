@@ -4,7 +4,7 @@ function importConnector(connector) {
     throw new Error('Connector name was not specified');
   }
   try {
-    // Check if the connector is instaled
+    // Check if the connector is installed
     require.resolve(connectorPackage);
   } catch (e) {
     throw new Error(

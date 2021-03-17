@@ -1,9 +1,9 @@
 const _ = require('lodash');
 
 function coreStoreProvider(model, leemons) {
-  const modelProvier = _.cloneDeep(model.core_store);
+  const modelProvider = _.cloneDeep(model.core_store);
 
-  Object.assign(modelProvier, {
+  Object.assign(modelProvider, {
     get: (key, require = true) =>
       leemons.core_store.model
         .where({ key })
@@ -29,7 +29,7 @@ function coreStoreProvider(model, leemons) {
       }),
   });
 
-  return { core_store: modelProvier };
+  return { core_store: modelProvider };
 }
 
 function createCoreStore() {
