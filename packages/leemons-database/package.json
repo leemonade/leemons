@@ -2,5 +2,8 @@
   "name": "leemons-database",
   "version": "1.0.0",
   "main": "lib/index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
 }

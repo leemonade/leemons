@@ -3,13 +3,17 @@ const createConnectorRegistry = require('./connectorRegistry');
 class DatabaseManager {
   constructor(leemons) {
     this.leemons = leemons;
+    this.defaultConnection = leemons.config.get('database.defaultConnection');
     this.connectors = createConnectorRegistry(
       {
         connections: leemons.config.get('database.connections'),
-        defaultConnection: leemons.config.get('database.defaultConnection'),
+        defaultConnection: this.defaultConnection,
       },
-      leemons
+      this
     );
+
+    this.models = new Map();
+    this.queries = new Map();
 
     this.initialized = false;
   }
@@ -21,6 +25,28 @@ class DatabaseManager {
     await this.connectors.init();
 
     this.initialized = true;
+  }
+
+  query(modelName) {
+    // Get the used connector (if no connection provided, get the default one)
+    // const connector = this.connectors.getFromConnection(connection);
+
+    // Check if the model exists
+    if (!modelName || !this.models.has(modelName)) {
+      throw new Error('The provided model can not be found');
+    }
+
+    // Check if the query builder is cached
+    if (this.queries.has(modelName)) {
+      return this.queries.get(modelName);
+    }
+
+    const model = this.models.get(modelName);
+    const connector = this.connectors.getFromConnection(model.connection);
+    return connector.query(model);
+
+    // Call to the connector's query for the given connection
+    // return connector.query(connection, this.leemons);
   }
 }
 

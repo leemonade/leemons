@@ -4,12 +4,12 @@ const { formatModel } = require('leemons/lib/core/model/loadModel');
 const generateModel = require('./generateModel');
 
 function getRelationCollectionName(properties, ctx) {
-  const model = getModelLocation(properties.references.collection, ctx.leemons);
+  const model = getModelLocation(properties.references.collection, ctx.connector.leemons);
   return model.schema.collectionName;
 }
 
 function getRelationPrimaryKey(properties, ctx) {
-  const model = getModelLocation(properties.references.collection, ctx.leemons);
+  const model = getModelLocation(properties.references.collection, ctx.connector.leemons);
   return model.schema.primaryKey;
 }
 
@@ -221,13 +221,13 @@ async function createSchema(model, ctx) {
 
   // check if the model has been updated
   if (model.modelName !== 'core_store') {
-    storedModel = await ctx.leemons.core_store.get(`model::${model.modelName}`, false);
+    storedModel = await ctx.connector.leemons.core_store.get(`model::${model.modelName}`, false);
     hasBeenUpdated = storedModel && !_.isEqual(JSON.parse(storedModel.value), model);
 
     // Update the stored model for the next start
     // TODO: Do in a transaction
     if (hasBeenUpdated || !storedModel) {
-      await ctx.leemons.core_store.set(
+      await ctx.connector.leemons.core_store.set(
         `model::${model.modelName}`,
         JSON.stringify(model),
         'Object'
@@ -292,7 +292,6 @@ async function createRelations(model, ctx) {
           return createSchema(unionModel, ctx).then(() => {
             // Create bookshelf models
             generateModel([unionModel], ctx);
-
             // Generate relations
             return createRelations(unionModel, ctx);
           });

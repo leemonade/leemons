@@ -115,15 +115,24 @@ function generateModel(models, ctx) {
       });
     }
     if (model.modelName === 'core_store') {
-      _.set(ctx.leemons, `core_store`, {
+      _.set(ctx.connector.leemons, `core_store`, {
         ..._.cloneDeep(model),
         model: ctx.ORM.model(model.modelName, Model),
       });
     } else {
-      _.set(ctx.leemons, `${model.target ? `${model.target}.models.` : ''}${model.modelName}`, {
+      const fullModel = {
         ..._.cloneDeep(model),
         model: ctx.ORM.model(model.modelName, Model),
-      });
+      };
+      // Set the model to leemons
+      _.set(
+        ctx.connector.leemons,
+        `${model.target ? `${model.target}.models.` : ''}${model.modelName}`,
+        fullModel
+      );
+
+      // Set the model for the connector
+      ctx.connector.models.set(model.modelName, fullModel);
     }
   });
 }

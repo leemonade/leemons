@@ -109,10 +109,8 @@ class Leemons {
     this.app.use(this.router.routes()).use(this.router.allowedMethods());
   }
 
-  query(connection = this.config.get('database.defaultConnection')) {
-    const connector = this.db.connectors.getFromConnection(connection);
-    // Call to the connector's query for the given connection
-    return connector.query(connection, this);
+  query(model) {
+    return this.db.query(model);
   }
 
   // Load all apps
@@ -127,10 +125,9 @@ class Leemons {
     // Initialize all database connections
     await this.db.init();
 
-    const query = this.query();
-    query('users')
-      .create({ name: 'Miguel', email: 'miguel@leemons.io' })
-      .then((r) => console.log(r));
+    const query = this.query('users');
+
+    query.count().then((r) => console.log(r));
 
     // Initialize next
     this.front = nextjs({

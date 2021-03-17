@@ -6,13 +6,18 @@ const { initKnex } = require('./knex');
 const mountModels = require('./model/mountModel');
 const generateQueries = require('./queries');
 
-module.exports = (leemons) => {
-  async function setupConnection(ctx) {
+class Connector {
+  constructor(leemons) {
+    this.leemons = leemons;
+    this.models = new Map();
+  }
+
+  async setupConnection(ctx) {
     // eslint-disable-next-line prettier/prettier
-    const allModels = _.merge(
-      {},
-      leemons.global.models
-    );
+      const allModels = _.merge(
+        {},
+        this.leemons.global.models
+      );
 
     const models = Object.values(allModels).filter(
       (model) => model.connection === ctx.connection.name
@@ -22,28 +27,32 @@ module.exports = (leemons) => {
     _.set(ctx, 'models', models);
 
     // First mount core_store for checking structure changes
-    if (leemons.core_store.connection === ctx.connection.name) {
-      await mountModels([leemons.core_store], ctx);
+    if (this.leemons.core_store.connection === ctx.connection.name) {
+      await mountModels([this.leemons.core_store], ctx);
     }
     return mountModels(models, ctx);
   }
 
-  function init() {
+  query(model) {
+    return generateQueries(model, this);
+  }
+
+  init() {
     // Get connections made with bookshelf
-    const bookshelfConnections = Object.entries(leemons.config.get('database.connections'))
+    const bookshelfConnections = Object.entries(this.leemons.config.get('database.connections'))
       .map(([name, value]) => ({ ...value, name }))
       .filter(({ connector }) => connector === 'bookshelf');
 
     // Initialize knex, all the connections in leemons.connections
-    initKnex(leemons, bookshelfConnections);
+    initKnex(this.leemons, bookshelfConnections);
 
     return Promise.all(
       bookshelfConnections.map((connection) => {
         // TODO: Let the user have a pre-initialization function
 
         // Initialize the ORM
-        const ORM = new Bookshelf(leemons.connections[connection.name]);
-        _.set(leemons.connections[connection.name], 'ORM', ORM);
+        const ORM = new Bookshelf(this.leemons.connections[connection.name]);
+        _.set(this.leemons.connections[connection.name], 'ORM', ORM);
 
         // Use uuid plugin
         ORM.plugin(bookshelfUUID);
@@ -51,16 +60,13 @@ module.exports = (leemons) => {
         const ctx = {
           ORM,
           connection,
-          leemons,
+          connector: this,
         };
 
-        return setupConnection(ctx);
+        return this.setupConnection(ctx);
       })
     );
   }
+}
 
-  return {
-    init,
-    query: generateQueries,
-  };
-};
+module.exports = (leemons) => new Connector(leemons);

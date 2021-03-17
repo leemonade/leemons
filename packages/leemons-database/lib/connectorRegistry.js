@@ -1,6 +1,7 @@
+const _ = require('lodash');
 const importConnector = require('./importConnector');
 
-function createConnectorRegistry({ connections, defaultConnection }, leemons) {
+function createConnectorRegistry({ connections, defaultConnection }, connectorInstance) {
   const connectors = new Map();
   return {
     load: () => {
@@ -8,12 +9,21 @@ function createConnectorRegistry({ connections, defaultConnection }, leemons) {
       Object.values(connections).forEach((connection) => {
         const { connector } = connection;
         if (!connectors.has(connector)) {
-          connectors.set(connector, importConnector(connector)(leemons));
+          connectors.set(connector, importConnector(connector)(connectorInstance.leemons));
         }
       });
     },
 
-    init: () => Promise.all([...connectors.values()].map((connector) => connector.init())),
+    init: () =>
+      Promise.all(
+        [...connectors.values()].map((connector) =>
+          connector.init().then(() => {
+            [...connector.models.entries()].forEach(([key, value]) => {
+              connectorInstance.models.set(key, value);
+            });
+          })
+        )
+      ),
 
     getAll: () => [...connectors.values()],
 
