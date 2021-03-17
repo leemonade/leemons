@@ -1,5 +1,7 @@
 const _ = require('lodash');
 const { getModelLocation } = require('leemons-utils');
+const { formatModel } = require('leemons/lib/core/model/loadModel');
+const { union } = require('lodash');
 
 function getRelationCollectionName(properties, ctx) {
   const model = getModelLocation(properties.references.collection, ctx.leemons);
@@ -227,7 +229,7 @@ async function createSchema(model, ctx) {
 
 // TODO: ON UPDATE CASCADE ON DELETE
 async function createRelations(model, ctx) {
-  const schema = model.schema || model;
+  const { schema } = model;
   return Promise.all(
     // Get the attributes that are foreign keys
     Object.entries(schema.attributes)
@@ -239,7 +241,8 @@ async function createRelations(model, ctx) {
         // If we have a many to many relation, create a new table
         if (properties.references.relation === 'many to many') {
           // TODO: Generate a model for bookshelf
-          const unionModel = {
+          let unionModel = {
+            connection: model.connection, // Preserve original model connection
             collectionName: model.ORM.relations[name].unionTable,
             info: {
               name: model.ORM.relations[name].unionTable,
@@ -265,10 +268,16 @@ async function createRelations(model, ctx) {
               type: 'int',
             },
           };
-
+          // Standardize model
+          console.log(model);
+          unionModel = formatModel(model.ORM.relations[name].unionTable, unionModel)[
+            model.ORM.relations[name].unionTable
+          ];
+          console.log(unionModel);
+          const unionSchema = unionModel.schema;
           // If the table do not exist, create its
-          if (!(await tableExists(unionModel.collectionName, ctx))) {
-            return createTable(unionModel, ctx).then(() => createRelations(unionModel, ctx));
+          if (!(await tableExists(unionSchema.collectionName, ctx))) {
+            return createTable(unionSchema, ctx).then(() => createRelations(unionModel, ctx));
           }
           return null;
         }

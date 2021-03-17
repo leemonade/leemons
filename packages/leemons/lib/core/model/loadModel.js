@@ -8,7 +8,7 @@ function formatModel(name, modelConfig, leemons) {
   // TODO: standardize names
   const defaultModel = {
     modelName: name,
-    connection: leemons.config.get('database.defaultConnection'),
+    connection: leemons ? leemons.config.get('database.defaultConnection') : null,
     collectionName: name,
     info: {
       name,
@@ -31,7 +31,9 @@ function formatModel(name, modelConfig, leemons) {
   const schema = _.pick(modelConfig, ['collectionName', 'options', 'attributes', 'primaryKey']);
   const model = _.pick(modelConfig, ['connection', 'modelName', 'type', 'target']);
   _.set(model, 'schema', schema);
-
+  if (model.connection === null) {
+    throw new Error(`Connection in model ${model.modelName} can not be null`);
+  }
   return { [model.modelName]: model };
 }
 
@@ -60,4 +62,5 @@ function loadModels(leemons) {
 module.exports = {
   loadModels,
   formatModels,
+  formatModel,
 };
