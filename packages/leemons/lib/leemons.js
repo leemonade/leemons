@@ -127,6 +127,11 @@ class Leemons {
     // Initialize all database connections
     await this.db.init();
 
+    const query = this.query();
+    query('users')
+      .create({ name: 'Miguel', email: 'miguel@leemons.io' })
+      .then((r) => console.log(r));
+
     // Initialize next
     this.front = nextjs({
       dir: process.env.nextDir,

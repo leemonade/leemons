@@ -1,5 +1,6 @@
 const Bookshelf = require('bookshelf');
 const _ = require('lodash');
+const bookshelfUUID = require('bookshelf-uuid');
 
 const { initKnex } = require('./knex');
 const mountModels = require('./model/mountModel');
@@ -43,6 +44,9 @@ module.exports = (leemons) => {
         // Initialize the ORM
         const ORM = new Bookshelf(leemons.connections[connection.name]);
         _.set(leemons.connections[connection.name], 'ORM', ORM);
+
+        // Use uuid plugin
+        ORM.plugin(bookshelfUUID);
 
         const ctx = {
           ORM,

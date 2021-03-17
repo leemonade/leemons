@@ -17,17 +17,35 @@ function getRelationPrimaryKey(properties, ctx) {
 async function createTable(model, ctx, useUpdate = false, storedData) {
   const { schema } = ctx.ORM.knex;
 
-  // TODO: Maybe move to an uuid/uid
-  const createId = (table) => table.increments(model.primaryKey.name);
+  const createId = (table) => {
+    if (_.has(model.primaryKey, 'specificType')) {
+      return table.specificType(model.primaryKey.name, model.primaryKey.specificType).primary();
+    }
+    if (model.primaryKey.type === 'uuid') {
+      return table.uuid(model.primaryKey.name).primary();
+    }
+    _.set(model.primaryKey, 'type', 'int');
+    return table.increments(model.primaryKey.name);
+  };
 
   const createColumns = (table, columns = Object.entries(model.attributes), alter = false) =>
     columns.forEach(async ([name, properties]) => {
       // Create a column for the relation (only if not `many to many`)
       if (_.has(properties, 'references') && properties.references.relation !== 'many to many') {
+        const relatedPrimaryKey = getRelationPrimaryKey(properties, ctx);
+        let col;
+
         // The type of the col is the related primary key type
-        _.set(properties, 'type', getRelationPrimaryKey(properties, ctx).type);
-        // TODO: Use the defined type
-        const col = table.integer(name).unsigned();
+        _.set(properties, 'type', relatedPrimaryKey.type);
+
+        // Set the type of the col
+        if (_.has(relatedPrimaryKey, 'specificType')) {
+          col = table.specificType(name, relatedPrimaryKey.specificType);
+        } else if (relatedPrimaryKey.type === 'uuid') {
+          col = table.uuid(name);
+        } else {
+          col = table.integer(name).unsigned();
+        }
 
         // If the relation is `one to one`, set the column to unique
         if (properties.references.relation === 'one to one') {
@@ -227,7 +245,6 @@ async function createSchema(model, ctx) {
   return null;
 }
 
-// TODO: ON UPDATE CASCADE ON DELETE
 async function createRelations(model, ctx) {
   const { schema } = model;
   return Promise.all(
@@ -240,7 +257,6 @@ async function createRelations(model, ctx) {
 
         // If we have a many to many relation, create a new table
         if (properties.references.relation === 'many to many') {
-          // TODO: Generate a model for bookshelf
           let unionModel = {
             connection: model.connection, // Preserve original model connection
             collectionName: model.ORM.relations[name].unionTable,
@@ -282,13 +298,22 @@ async function createRelations(model, ctx) {
           });
         }
 
+        // Set default actions on Update and Delete
+        if (!properties.references.onUpdate) {
+          _.set(properties, 'references.onUpdate', 'cascade');
+        }
+        if (!properties.references.onDelete) {
+          _.set(properties, 'references.onDelete', 'no action');
+        }
         // Add the new foreign keys
         return ctx.ORM.knex.schema
           .table(schema.collectionName, (table) => {
             table
               .foreign(name)
               .references(getRelationPrimaryKey(properties, ctx).name)
-              .inTable(relationTable);
+              .inTable(relationTable)
+              .onUpdate(properties.references.onUpdate)
+              .onDelete(properties.references.onDelete);
           })
           .catch(() => {
             // Prevents error when foreign key is already created

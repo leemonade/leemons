@@ -79,6 +79,7 @@ function generateModel(models, ctx) {
       idAttribute: model.schema.primaryKey.name,
       hidden: [],
       hasTimestamps: _.get(model.schema, 'options.useTimestamps', false),
+      uuid: model.schema.primaryKey.type === 'uuid',
     };
 
     // Generate the hidden attributes

@@ -7,6 +7,9 @@ module.exports = {
   options: {
     useTimestamps: true,
   },
+  primaryKey: {
+    type: 'uuid',
+  },
   attributes: {
     name: {
       type: 'string',
@@ -34,6 +37,8 @@ module.exports = {
       references: {
         collection: 'global.roles',
         relation: 'one to many',
+        onUpdate: 'cascade',
+        onDelete: 'cascade',
       },
     },
 
