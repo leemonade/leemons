@@ -1,0 +1,169 @@
+const _ = require('lodash');
+
+// List of all the possible filters
+const VALID_REST_OPERATORS = [
+  'eq',
+  'ne',
+  'in',
+  'nin',
+  'contains',
+  'ncontains',
+  'containss',
+  'ncontainss',
+  'lt',
+  'lte',
+  'gt',
+  'gte',
+  'null',
+];
+
+const BOOLEAN_OPERATORS = ['or'];
+const QUERY_OPERATORS = ['_where', '_or'];
+
+function parseSortFilter(sort) {
+  if (typeof sort !== 'string') {
+    throw new Error(`parseSortFilter expected a string, instead got ${typeof sort}`);
+  }
+
+  const sortInstructions = [];
+
+  sort.split(',').forEach((instruction) => {
+    const [field, order = 'asc'] = instruction.trim().split(':');
+
+    if (field.length === 0) {
+      throw new Error('Field cannot be empty');
+    }
+
+    if (!['asc', 'desc'].includes(order.toLocaleLowerCase())) {
+      throw new Error('order can only be one of asc|desc|ASC|DESC');
+    }
+
+    sortInstructions.push({ field, order: order.toLocaleLowerCase() });
+  });
+
+  return {
+    sort: sortInstructions,
+  };
+}
+
+function parseOffsetFilter(offset) {
+  const offsetValue = _.toNumber(offset);
+  if (!_.isInteger(offsetValue) || offsetValue < 0) {
+    throw new Error(`parseOffsetFilter expected a positive integer, instead got ${offsetValue}`);
+  }
+
+  return {
+    offset: offsetValue,
+  };
+}
+
+function parseLimitFilter(limit) {
+  const limitValue = _.toNumber(limit);
+  if (!_.isInteger(limitValue) || limitValue < 0) {
+    throw new Error(`parseLimitFilter expected a positive integer, instead got ${limitValue}`);
+  }
+
+  return {
+    limit: limitValue,
+  };
+}
+
+function parseWhereClause(name, value) {
+  const separatorIndex = name.lastIndexOf('_');
+
+  // Check for boolean operators (starts with $OPERATOR)
+  if (separatorIndex === -1) {
+    if (name[0] === '$') {
+      const operator = name.substring(1);
+      // TODO: check this
+      if (BOOLEAN_OPERATORS.includes(operator)) {
+        // eslint-disable-next-line no-use-before-define
+        return { field: null, operator, value: [].concat(value).map(parseWhereParams) };
+      }
+    }
+    // eq operator
+    return { field: name, value };
+  }
+
+  // separate fieldName and operator
+  const field = name.substring(0, separatorIndex);
+  // skip the $ symbol
+  const operator = name.substring(separatorIndex + 2);
+
+  // If the operator is not found, use the original name
+  if (!VALID_REST_OPERATORS.includes(operator)) {
+    return { field: name, value };
+  }
+
+  // return the field, operator and value
+  return { field, operator, value };
+}
+
+function parseWhereParams(params) {
+  const finalWhere = [];
+
+  Object.entries(params).forEach(([name, clauseValue]) => {
+    const { field, operator = 'eq', value } = parseWhereClause(name, clauseValue);
+
+    finalWhere.push({
+      field,
+      operator,
+      value,
+    });
+  });
+
+  return finalWhere;
+}
+
+function parseFilters(filters = {}, defaults = {}) {
+  if (typeof filters !== 'object' || filters === null) {
+    throw new Error(
+      `parseFilters expected an object, got ${filters === null ? 'null' : typeof filters}`
+    );
+  }
+
+  const finalFilters = _.defaultsDeep({}, defaults);
+
+  // If there are no filters, return the finalFilter
+  if (Object.keys(filters).length === 0) {
+    return finalFilters;
+  }
+
+  if (_.has(filters, '$sort')) {
+    Object.assign(finalFilters, parseSortFilter(filters.$sort));
+  }
+
+  if (_.has(filters, '$start') && !_.has(filters, '$offset')) {
+    _.set(filters, '$offset', filters.$start);
+    // eslint-disable-next-line no-param-reassign
+    delete filters.$start;
+  }
+  if (_.has(filters, '$offset')) {
+    Object.assign(finalFilters, parseOffsetFilter(filters.$offset));
+  }
+
+  if (_.has(filters, '$limit')) {
+    Object.assign(finalFilters, parseLimitFilter(filters.$limit));
+  }
+
+  const params = _.omit(filters, ['$sort', '$offset', '$limit', '$where']);
+  const where = [];
+
+  if (_.keys(params).length > 0) {
+    where.push(...parseWhereParams(params));
+  }
+
+  if (_.has(filters, '$where')) {
+    where.push(...parseWhereParams(filters.$where));
+  }
+
+  Object.assign(finalFilters, { where });
+
+  return finalFilters;
+}
+
+module.exports = {
+  parseFilters,
+  VALID_REST_OPERATORS,
+  QUERY_OPERATORS,
+};

@@ -4,12 +4,15 @@ const bookshelfUUID = require('bookshelf-uuid');
 
 const { initKnex } = require('./knex');
 const mountModels = require('./model/mountModel');
-const generateQueries = require('./queries');
+const generateQueries = require('./queries/queries');
+const buildQuery = require('./queries/buildQuery');
 
 class Connector {
   constructor(leemons) {
     this.leemons = leemons;
     this.models = new Map();
+
+    this.buildQuery = buildQuery;
   }
 
   async setupConnection(ctx) {

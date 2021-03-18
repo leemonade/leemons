@@ -159,5 +159,8 @@ class Leemons {
 
 module.exports = (...args) => {
   const leemons = new Leemons(...args);
+  // expose leemons globally
+  global.leemons = leemons;
+
   return leemons;
 };

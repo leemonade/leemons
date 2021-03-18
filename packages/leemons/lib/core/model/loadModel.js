@@ -31,6 +31,18 @@ function formatModel(name, modelConfig, leemons) {
   const schema = _.pick(modelConfig, ['collectionName', 'options', 'attributes', 'primaryKey']);
   const model = _.pick(modelConfig, ['connection', 'modelName', 'type', 'target']);
   _.set(model, 'schema', schema);
+
+  const attributesArray = Object.entries(model.schema.attributes);
+  // Get the collection attributes (not relations)
+  _.set(model.schema, 'allAttributes', [
+    ...attributesArray
+      .filter(
+        ([, value]) => !_.has(value, 'references') || value.references.relation !== 'many to many'
+      )
+      .map(([attributeName]) => attributeName),
+    model.schema.primaryKey.name,
+    ...['created_at', 'updated_at'].filter(() => model.schema.options.useTimestamps),
+  ]);
   if (model.connection === null) {
     throw new Error(`Connection in model ${model.modelName} can not be null`);
   }
