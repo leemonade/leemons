@@ -1,29 +1,25 @@
 const _ = require('lodash');
+const { getModelLocation } = require('leemons-utils');
 
-// Gets the desired model from all the models
-function getModelLocation(path, models) {
-  return _.find(models, (model) => model.modelName === path.split('.').splice(-1)[0]);
-}
-
-function generateRelations(models, allModels = models) {
+function generateRelations(models) {
   models.forEach((model) => {
     Object.entries(model.schema.attributes).forEach(([name, attribute]) => {
       if (_.has(attribute, 'references')) {
-        const referencedModel = getModelLocation(attribute.references.collection, allModels);
+        const referencedModel = getModelLocation(attribute.references.collection);
         switch (attribute.references.relation) {
           case 'one to one':
             // This model attribute belongsTo(the referenced model)
             _.set(model, `relations.${name}`, {
               type: 'belongsTo',
-              model: referencedModel.modelName,
+              model: referencedModel.originalModelName,
               foreignKey: name,
               foreignKeyTarget: referencedModel.schema.primaryKey.name,
             });
 
             // The referenced model hasOne(this model)
-            _.set(referencedModel, `relations.${model.modelName}`, {
+            _.set(referencedModel, `relations.${model.originalModelName}`, {
               type: 'hasOne',
-              model: model.modelName,
+              model: model.originalModelName,
               foreignKey: name,
               foreignKeyTarget: referencedModel.schema.primaryKey.name,
             });
@@ -33,19 +29,19 @@ function generateRelations(models, allModels = models) {
             // This model attribute belongsToMany(the referenced model)
             _.set(model, `relations.${name}`, {
               type: 'belongsToMany',
-              model: referencedModel.modelName,
-              unionTable: `${model.modelName}_${referencedModel.modelName}`,
-              foreignKey: `${model.modelName}_id`,
-              otherKey: `${referencedModel.modelName}_id`,
+              model: referencedModel.originalModelName,
+              unionTable: `${model.originalModelName}_${referencedModel.originalModelName}`,
+              foreignKey: `${model.originalModelName}_id`,
+              otherKey: `${referencedModel.originalModelName}_id`,
             });
 
             // The referenced model belongToMany(this model)
-            _.set(referencedModel, `relations.${model.modelName}`, {
+            _.set(referencedModel, `relations.${model.originalModelName}`, {
               type: 'belongsToMany',
-              model: model.modelName,
-              unionTable: `${model.modelName}_${referencedModel.modelName}`,
-              foreignKey: `${referencedModel.modelName}_id`,
-              otherKey: `${model.modelName}_id`,
+              model: model.originalModelName,
+              unionTable: `${model.originalModelName}_${referencedModel.originalModelName}`,
+              foreignKey: `${referencedModel.originalModelName}_id`,
+              otherKey: `${model.originalModelName}_id`,
             });
             break;
 
@@ -54,14 +50,14 @@ function generateRelations(models, allModels = models) {
             // This model attribute belongsTo(the referenced model)
             _.set(model, `relations.${name}`, {
               type: 'belongsTo',
-              model: referencedModel.modelName,
+              model: referencedModel.originalModelName,
               foreignKey: name,
               foreignKeyTarget: referencedModel.schema.primaryKey.name,
             });
             // The referenced model hasMany(this model)
-            _.set(referencedModel, `relations.${model.modelName}`, {
+            _.set(referencedModel, `relations.${model.originalModelName}`, {
               type: 'hasMany',
-              model: model.modelName,
+              model: model.originalModelName,
               foreignKey: name,
               foreignKeyTarget: referencedModel.schema.primaryKey.name,
             });
@@ -72,7 +68,7 @@ function generateRelations(models, allModels = models) {
 }
 
 function generateModel(models, ctx) {
-  generateRelations(models, ctx.models);
+  generateRelations(models);
   models.forEach((model) => {
     const Model = {
       tableName: model.schema.collectionName,
@@ -128,7 +124,7 @@ function generateModel(models, ctx) {
       // Set the model to leemons
       _.set(
         ctx.connector.leemons,
-        `${model.target ? `${model.target}.models.` : ''}${model.modelName}`,
+        `${model.target ? `${model.target}.models.` : ''}${model.originalModelName}`,
         fullModel
       );
 

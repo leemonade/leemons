@@ -4,7 +4,7 @@ const path = require('path');
 const { loadFiles } = require('../config/loadFiles');
 const { createCoreStore, coreStoreProvider } = require('./coreStore');
 
-function formatModel(name, modelConfig, leemons) {
+function formatModel(name, modelConfig, leemons = global.leemons) {
   // TODO: standardize names
   const defaultModel = {
     modelName: name,
@@ -30,6 +30,17 @@ function formatModel(name, modelConfig, leemons) {
 
   const schema = _.pick(modelConfig, ['collectionName', 'options', 'attributes', 'primaryKey']);
   const model = _.pick(modelConfig, ['connection', 'modelName', 'type', 'target']);
+
+  // // Ignore in core_store
+  if (model.target !== 'core_store') {
+    const target = model.target.replace(/\./g, '_');
+    // standardize modelName
+    model.originalModelName = model.modelName;
+    model.modelName = `${target}::${model.modelName}`;
+    // standardize collectionName
+    schema.collectionName = `${target}::${schema.collectionName}`;
+  }
+
   _.set(model, 'schema', schema);
 
   const attributesArray = Object.entries(model.schema.attributes);

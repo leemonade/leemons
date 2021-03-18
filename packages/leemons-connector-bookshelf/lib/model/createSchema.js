@@ -275,11 +275,12 @@ async function createRelations(model, ctx) {
               name: model.relations[name].unionTable,
               description: 'union table',
             },
+            target: model.target,
             options: {},
             attributes: {
               [model.relations[name].foreignKey]: {
                 references: {
-                  collection: `${model.target}.${schema.collectionName}`,
+                  collection: `${model.target}.${model.originalModelName}`,
                   relation: 'one to many',
                 },
               },
@@ -297,7 +298,7 @@ async function createRelations(model, ctx) {
           };
           // Standardize model
           unionModel = formatModel(model.relations[name].unionTable, unionModel)[
-            model.relations[name].unionTable
+            `${model.target.replace(/\./g, '_')}::${model.relations[name].unionTable}`
           ];
 
           return createSchema(unionModel, ctx).then(() => {
