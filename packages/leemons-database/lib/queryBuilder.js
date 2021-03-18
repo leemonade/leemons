@@ -1,6 +1,9 @@
 const _ = require('lodash');
 
 function replaceIdByPrimaryKey(params, model) {
+  if (Array.isArray(params)) {
+    return params.map((paramsElement) => replaceIdByPrimaryKey(paramsElement, model));
+  }
   const newParams = { ...params };
 
   // Replace the id by the primary key
@@ -22,8 +25,11 @@ function queryBuilder(model, connector) {
   // TODO: standardize
   return {
     create: createQuery({ query: 'create', model, connectorQuery }),
+    createMany: createQuery({ query: 'createMany', model, connectorQuery }),
     update: createQuery({ query: 'update', model, connectorQuery }),
+    updateMany: createQuery({ query: 'updateMany', model, connectorQuery }),
     delete: createQuery({ query: 'delete', model, connectorQuery }),
+    deleteMany: createQuery({ query: 'deleteMany', model, connectorQuery }),
     find: createQuery({ query: 'find', model, connectorQuery }),
     findOne: createQuery({ query: 'findOne', model, connectorQuery }),
     count: createQuery({ query: 'count', model, connectorQuery }),

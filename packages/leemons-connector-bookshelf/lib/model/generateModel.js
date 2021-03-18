@@ -13,7 +13,7 @@ function generateRelations(models, allModels = models) {
         switch (attribute.references.relation) {
           case 'one to one':
             // This model attribute belongsTo(the referenced model)
-            _.set(model, `ORM.relations.${name}`, {
+            _.set(model, `relations.${name}`, {
               type: 'belongsTo',
               model: referencedModel.modelName,
               foreignKey: name,
@@ -21,7 +21,7 @@ function generateRelations(models, allModels = models) {
             });
 
             // The referenced model hasOne(this model)
-            _.set(referencedModel, `ORM.relations.${model.modelName}`, {
+            _.set(referencedModel, `relations.${model.modelName}`, {
               type: 'hasOne',
               model: model.modelName,
               foreignKey: name,
@@ -31,7 +31,7 @@ function generateRelations(models, allModels = models) {
 
           case 'many to many':
             // This model attribute belongsToMany(the referenced model)
-            _.set(model, `ORM.relations.${name}`, {
+            _.set(model, `relations.${name}`, {
               type: 'belongsToMany',
               model: referencedModel.modelName,
               unionTable: `${model.modelName}_${referencedModel.modelName}`,
@@ -40,7 +40,7 @@ function generateRelations(models, allModels = models) {
             });
 
             // The referenced model belongToMany(this model)
-            _.set(referencedModel, `ORM.relations.${model.modelName}`, {
+            _.set(referencedModel, `relations.${model.modelName}`, {
               type: 'belongsToMany',
               model: model.modelName,
               unionTable: `${model.modelName}_${referencedModel.modelName}`,
@@ -52,14 +52,14 @@ function generateRelations(models, allModels = models) {
           // one to many
           default:
             // This model attribute belongsTo(the referenced model)
-            _.set(model, `ORM.relations.${name}`, {
+            _.set(model, `relations.${name}`, {
               type: 'belongsTo',
               model: referencedModel.modelName,
               foreignKey: name,
               foreignKeyTarget: referencedModel.schema.primaryKey.name,
             });
             // The referenced model hasMany(this model)
-            _.set(referencedModel, `ORM.relations.${model.modelName}`, {
+            _.set(referencedModel, `relations.${model.modelName}`, {
               type: 'hasMany',
               model: model.modelName,
               foreignKey: name,
@@ -91,7 +91,7 @@ function generateModel(models, ctx) {
 
     // In case a relation exists, add it to the model
     if (model.ORM) {
-      _.forEach(model.ORM.relations, (relation, name) => {
+      _.forEach(model.relations, (relation, name) => {
         if (relation.type === 'belongsToMany') {
           // eslint-disable-next-line func-names
           Model[name] = function () {
@@ -122,6 +122,7 @@ function generateModel(models, ctx) {
     } else {
       const fullModel = {
         ..._.cloneDeep(model),
+        ORM: ctx.ORM,
         model: ctx.ORM.model(model.modelName, Model),
       };
       // Set the model to leemons

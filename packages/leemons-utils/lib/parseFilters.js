@@ -68,7 +68,7 @@ function parseLimitFilter(limit) {
   };
 }
 
-function parseWhereClause(name, value) {
+function parseWhereClause(name, value, model) {
   const separatorIndex = name.lastIndexOf('_');
 
   // Check for boolean operators (starts with $OPERATOR)
@@ -81,12 +81,21 @@ function parseWhereClause(name, value) {
         return { field: null, operator, value: [].concat(value).map(parseWhereParams) };
       }
     }
+    let field = name;
     // eq operator
-    return { field: name, value };
+    if (field === 'id') {
+      field = model.schema.primaryKey.name;
+    }
+    return { field, value };
   }
 
   // separate fieldName and operator
-  const field = name.substring(0, separatorIndex);
+  let field = name.substring(0, separatorIndex);
+  // If field is the id, replace it by primary key
+  if (field === 'id') {
+    field = model.schema.primaryKey.name;
+  }
+
   // skip the $ symbol
   const operator = name.substring(separatorIndex + 2);
 
@@ -99,11 +108,11 @@ function parseWhereClause(name, value) {
   return { field, operator, value };
 }
 
-function parseWhereParams(params) {
+function parseWhereParams(params, model) {
   const finalWhere = [];
 
   Object.entries(params).forEach(([name, clauseValue]) => {
-    const { field, operator = 'eq', value } = parseWhereClause(name, clauseValue);
+    const { field, operator = 'eq', value } = parseWhereClause(name, clauseValue, model);
 
     finalWhere.push({
       field,
@@ -115,7 +124,7 @@ function parseWhereParams(params) {
   return finalWhere;
 }
 
-function parseFilters(filters = {}, defaults = {}) {
+function parseFilters({ filters = {}, defaults = {}, model } = {}) {
   if (typeof filters !== 'object' || filters === null) {
     throw new Error(
       `parseFilters expected an object, got ${filters === null ? 'null' : typeof filters}`
@@ -150,11 +159,11 @@ function parseFilters(filters = {}, defaults = {}) {
   const where = [];
 
   if (_.keys(params).length > 0) {
-    where.push(...parseWhereParams(params));
+    where.push(...parseWhereParams(params, model));
   }
 
   if (_.has(filters, '$where')) {
-    where.push(...parseWhereParams(filters.$where));
+    where.push(...parseWhereParams(filters.$where, model));
   }
 
   Object.assign(finalFilters, { where });

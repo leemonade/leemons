@@ -259,20 +259,20 @@ async function createRelations(model, ctx) {
         if (properties.references.relation === 'many to many') {
           let unionModel = {
             connection: model.connection, // Preserve original model connection
-            collectionName: model.ORM.relations[name].unionTable,
+            collectionName: model.relations[name].unionTable,
             info: {
-              name: model.ORM.relations[name].unionTable,
+              name: model.relations[name].unionTable,
               description: 'union table',
             },
             options: {},
             attributes: {
-              [model.ORM.relations[name].foreignKey]: {
+              [model.relations[name].foreignKey]: {
                 references: {
                   collection: `${model.target}.${schema.collectionName}`,
                   relation: 'one to many',
                 },
               },
-              [model.ORM.relations[name].otherKey]: {
+              [model.relations[name].otherKey]: {
                 references: {
                   collection: properties.references.collection,
                   relation: 'one to many',
@@ -285,8 +285,8 @@ async function createRelations(model, ctx) {
             },
           };
           // Standardize model
-          unionModel = formatModel(model.ORM.relations[name].unionTable, unionModel)[
-            model.ORM.relations[name].unionTable
+          unionModel = formatModel(model.relations[name].unionTable, unionModel)[
+            model.relations[name].unionTable
           ];
 
           return createSchema(unionModel, ctx).then(() => {
