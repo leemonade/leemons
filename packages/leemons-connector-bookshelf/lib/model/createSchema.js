@@ -14,8 +14,13 @@ function getRelationPrimaryKey(properties, ctx) {
 }
 
 // TODO: Update columns with foreign keys (maybe as easy as delete the key?)
-async function createTable(model, ctx, useUpdate = false, storedData) {
-  const { schema } = ctx.ORM.knex;
+async function createTable(model, ctx, useUpdate = false, storedData, transacting) {
+  let { schema } = ctx.ORM.knex;
+
+  // If is running on a transaction, replace schema by schema with transaction
+  if (transacting) {
+    schema = schema.transacting(transacting);
+  }
 
   const createId = (table) => {
     if (_.has(model.primaryKey, 'specificType')) {
@@ -219,30 +224,36 @@ async function createSchema(model, ctx) {
   let hasBeenUpdated = false;
   let storedModel;
 
-  // check if the model has been updated
-  if (model.modelName !== 'core_store') {
-    storedModel = await ctx.connector.leemons.core_store.get(`model::${model.modelName}`, false);
-    hasBeenUpdated = storedModel && !_.isEqual(JSON.parse(storedModel.value), model);
-
-    // Update the stored model for the next start
-    // TODO: Do in a transaction
-    if (hasBeenUpdated || !storedModel) {
-      await ctx.connector.leemons.core_store.set(
+  return ctx.ORM.transaction(async (transacting) => {
+    // check if the model has been updated
+    if (model.modelName !== 'core_store') {
+      storedModel = await ctx.connector.leemons.core_store.get(
         `model::${model.modelName}`,
-        JSON.stringify(model),
-        'Object'
+        false,
+        transacting
       );
-    }
-  }
+      hasBeenUpdated = storedModel && !_.isEqual(JSON.parse(storedModel.value), model);
 
-  // Update the table if has changed or create a new one if it does not exists
-  const isTableCreated = await tableExists(schema.collectionName, ctx);
-  if (hasBeenUpdated || !isTableCreated) {
-    // Only update if the table is already created
-    await createTable(schema, ctx, hasBeenUpdated && isTableCreated, storedModel);
-    return model;
-  }
-  return null;
+      // Update the stored model for the next start
+      if (hasBeenUpdated || !storedModel) {
+        await ctx.connector.leemons.core_store.set({
+          key: `model::${model.modelName}`,
+          value: JSON.stringify(model),
+          type: 'Object',
+          transacting,
+        });
+      }
+    }
+
+    // Update the table if has changed or create a new one if it does not exists
+    const isTableCreated = await tableExists(schema.collectionName, ctx);
+    if (hasBeenUpdated || !isTableCreated) {
+      // Only update if the table is already created
+      await createTable(schema, ctx, hasBeenUpdated && isTableCreated, storedModel);
+      return model;
+    }
+    return null;
+  });
 }
 
 async function createRelations(model, ctx) {

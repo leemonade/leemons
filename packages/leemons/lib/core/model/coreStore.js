@@ -4,11 +4,12 @@ function coreStoreProvider(model, leemons) {
   const modelProvider = _.cloneDeep(model.core_store);
 
   Object.assign(modelProvider, {
-    get: (key, require = true) =>
+    get: (key, require = true, transacting) =>
       leemons.core_store.model
         .where({ key })
         .fetch({
           require,
+          transacting,
         })
         .then((result) => (result ? result.toJSON() : null)),
 
@@ -18,14 +19,14 @@ function coreStoreProvider(model, leemons) {
         .count()
         .then((count) => count > 0),
 
-    set: (key, value, type, env) =>
-      leemons.core_store.get(key, false).then((r) => {
+    set: ({ key, value, type, env, transacting }) =>
+      leemons.core_store.get(key, false, transacting).then((r) => {
         const params = { key, value, type, env };
         if (r) {
           params.id = r.id;
         }
 
-        return leemons.core_store.model.forge(params).save();
+        return leemons.core_store.model.forge(params).save(null, { transacting });
       }),
   });
 
