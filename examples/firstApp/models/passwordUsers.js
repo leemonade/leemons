@@ -11,7 +11,7 @@ module.exports = {
   attributes: {
     user_id: {
       references: {
-        collection: 'global.users',
+        collection: 'global::users',
         relation: 'one to one',
         options: {
           notNull: true,

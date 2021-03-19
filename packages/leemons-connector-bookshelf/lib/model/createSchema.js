@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { getModelLocation } = require('leemons-utils');
+const { getModelLocation, generateModelName } = require('leemons-utils');
 const { formatModel } = require('leemons/lib/core/model/loadModel');
 const generateModel = require('./generateModel');
 
@@ -280,7 +280,7 @@ async function createRelations(model, ctx) {
             attributes: {
               [model.relations[name].foreignKey]: {
                 references: {
-                  collection: `${model.target}.${model.originalModelName}`,
+                  collection: generateModelName(model.target, model.originalModelName),
                   relation: 'one to many',
                 },
               },
@@ -298,7 +298,7 @@ async function createRelations(model, ctx) {
           };
           // Standardize model
           unionModel = formatModel(model.relations[name].unionTable, unionModel)[
-            `${model.target.replace(/\./g, '_')}::${model.relations[name].unionTable}`
+            generateModelName(model.target, model.relations[name].unionTable)
           ];
 
           return createSchema(unionModel, ctx).then(() => {

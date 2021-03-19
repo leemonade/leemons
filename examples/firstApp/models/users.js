@@ -35,7 +35,7 @@ module.exports = {
     },
     role: {
       references: {
-        collection: 'global.roles',
+        collection: 'global::roles',
         relation: 'one to many',
         onUpdate: 'cascade',
         onDelete: 'cascade',
@@ -44,13 +44,13 @@ module.exports = {
 
     class: {
       references: {
-        collection: 'global.class',
+        collection: 'global::class',
         relation: 'many to many',
       },
     },
     subjects: {
       references: {
-        collection: 'global.subjects',
+        collection: 'global::subjects',
         relation: 'many to many',
       },
     },

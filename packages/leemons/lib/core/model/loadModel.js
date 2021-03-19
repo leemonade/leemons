@@ -1,3 +1,4 @@
+const { generateModelName } = require('leemons-utils');
 const _ = require('lodash');
 const path = require('path');
 
@@ -31,14 +32,13 @@ function formatModel(name, modelConfig, leemons = global.leemons) {
   const schema = _.pick(modelConfig, ['collectionName', 'options', 'attributes', 'primaryKey']);
   const model = _.pick(modelConfig, ['connection', 'modelName', 'type', 'target']);
 
-  // // Ignore in core_store
+  // Ignore in core_store
   if (model.target !== 'core_store') {
-    const target = model.target.replace(/\./g, '_');
     // standardize modelName
     model.originalModelName = model.modelName;
-    model.modelName = `${target}::${model.modelName}`;
+    model.modelName = generateModelName(model.target, model.modelName);
     // standardize collectionName
-    schema.collectionName = `${target}::${schema.collectionName}`;
+    schema.collectionName = generateModelName(model.target, schema.collectionName);
   }
 
   _.set(model, 'schema', schema);
