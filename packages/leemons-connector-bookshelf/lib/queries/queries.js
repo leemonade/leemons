@@ -113,8 +113,8 @@ function generateQueries(model /* connector */) {
     const newQuery = buildQuery(model, filters);
 
     // TODO: Move to joins
-    const toJSONConfig = {};
-    if (columns !== '*' && columns !== null) {
+    const toJSONConfig = { omitPivot: true };
+    if (columns && columns !== '*') {
       toJSONConfig.hidden = [];
     }
 
@@ -125,7 +125,7 @@ function generateQueries(model /* connector */) {
         withRelated: related,
         transacting,
       })
-      .then((res) => (res ? res.toJSON(toJSONConfig) : res));
+      .then((res) => (res ? res.serialize(toJSONConfig) : res));
   }
 
   async function findOne(query, columns, related, ...rest) {

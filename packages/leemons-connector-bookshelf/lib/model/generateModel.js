@@ -1,17 +1,17 @@
 const _ = require('lodash');
-const { getModelLocation } = require('leemons-utils');
+const { getModelLocation, generateModelName } = require('leemons-utils');
 
 function generateRelations(models) {
   models.forEach((model) => {
     Object.entries(model.schema.attributes).forEach(([name, attribute]) => {
       if (_.has(attribute, 'references')) {
-        const referencedModel = getModelLocation(attribute.references.collection);
+        const referencedModel = getModelLocation(attribute.references.collection, models);
         switch (attribute.references.relation) {
           case 'one to one':
             // This model attribute belongsTo(the referenced model)
             _.set(model, `relations.${name}`, {
               type: 'belongsTo',
-              model: referencedModel.originalModelName,
+              model: referencedModel.modelName,
               foreignKey: name,
               foreignKeyTarget: referencedModel.schema.primaryKey.name,
             });
@@ -19,7 +19,7 @@ function generateRelations(models) {
             // The referenced model hasOne(this model)
             _.set(referencedModel, `relations.${model.originalModelName}`, {
               type: 'hasOne',
-              model: model.originalModelName,
+              model: model.modelName,
               foreignKey: name,
               foreignKeyTarget: referencedModel.schema.primaryKey.name,
             });
@@ -29,8 +29,12 @@ function generateRelations(models) {
             // This model attribute belongsToMany(the referenced model)
             _.set(model, `relations.${name}`, {
               type: 'belongsToMany',
-              model: referencedModel.originalModelName,
-              unionTable: `${model.originalModelName}_${referencedModel.originalModelName}`,
+              model: referencedModel.modelName,
+              target: model.target,
+              // If the user specified a custom name, use that name, if not, concat both originalModelNames
+              unionTable:
+                attribute.references.unionTable ||
+                `${model.originalModelName}_${referencedModel.originalModelName}`,
               foreignKey: `${model.originalModelName}_id`,
               otherKey: `${referencedModel.originalModelName}_id`,
             });
@@ -38,8 +42,10 @@ function generateRelations(models) {
             // The referenced model belongToMany(this model)
             _.set(referencedModel, `relations.${model.originalModelName}`, {
               type: 'belongsToMany',
-              model: model.originalModelName,
-              unionTable: `${model.originalModelName}_${referencedModel.originalModelName}`,
+              model: model.modelName,
+              unionTable:
+                attribute.references.unionTable ||
+                `${model.originalModelName}_${referencedModel.originalModelName}`,
               foreignKey: `${referencedModel.originalModelName}_id`,
               otherKey: `${model.originalModelName}_id`,
             });
@@ -50,14 +56,15 @@ function generateRelations(models) {
             // This model attribute belongsTo(the referenced model)
             _.set(model, `relations.${name}`, {
               type: 'belongsTo',
-              model: referencedModel.originalModelName,
+              model: referencedModel.modelName,
               foreignKey: name,
               foreignKeyTarget: referencedModel.schema.primaryKey.name,
             });
             // The referenced model hasMany(this model)
+
             _.set(referencedModel, `relations.${model.originalModelName}`, {
               type: 'hasMany',
-              model: model.originalModelName,
+              model: model.modelName,
               foreignKey: name,
               foreignKeyTarget: referencedModel.schema.primaryKey.name,
             });
@@ -86,14 +93,14 @@ function generateModel(models, ctx) {
     });
 
     // In case a relation exists, add it to the model
-    if (model.ORM) {
+    if (model.relations) {
       _.forEach(model.relations, (relation, name) => {
         if (relation.type === 'belongsToMany') {
           // eslint-disable-next-line func-names
           Model[name] = function () {
             return this[relation.type](
               relation.model,
-              relation.unionTable,
+              generateModelName(relation.target, relation.unionTable),
               relation.foreignKey,
               relation.otherKey
             );
@@ -110,6 +117,7 @@ function generateModel(models, ctx) {
         }
       });
     }
+
     if (model.modelName === 'core_store') {
       _.set(ctx.connector.leemons, `core_store`, {
         ..._.cloneDeep(model),

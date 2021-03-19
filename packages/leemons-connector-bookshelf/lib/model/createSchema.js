@@ -3,13 +3,13 @@ const { getModelLocation, generateModelName } = require('leemons-utils');
 const { formatModel } = require('leemons/lib/core/model/loadModel');
 const generateModel = require('./generateModel');
 
-function getRelationCollectionName(properties, ctx) {
-  const model = getModelLocation(properties.references.collection, ctx.connector.leemons);
+function getRelationCollectionName(properties) {
+  const model = getModelLocation(properties.references.collection);
   return model.schema.collectionName;
 }
 
-function getRelationPrimaryKey(properties, ctx) {
-  const model = getModelLocation(properties.references.collection, ctx.connector.leemons);
+function getRelationPrimaryKey(properties) {
+  const model = getModelLocation(properties.references.collection);
   return model.schema.primaryKey;
 }
 
@@ -37,7 +37,7 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
     columns.forEach(async ([name, properties]) => {
       // Create a column for the relation (only if not `many to many`)
       if (_.has(properties, 'references') && properties.references.relation !== 'many to many') {
-        const relatedPrimaryKey = getRelationPrimaryKey(properties, ctx);
+        const relatedPrimaryKey = getRelationPrimaryKey(properties);
         let col;
 
         // The type of the col is the related primary key type
@@ -264,7 +264,7 @@ async function createRelations(model, ctx) {
       .filter(([, properties]) => _.has(properties, 'references'))
       .map(async ([name, properties]) => {
         // Get the name of the related table
-        const relationTable = getRelationCollectionName(properties, ctx);
+        const relationTable = getRelationCollectionName(properties);
 
         // If we have a many to many relation, create a new table
         if (properties.references.relation === 'many to many') {
@@ -321,7 +321,7 @@ async function createRelations(model, ctx) {
           .table(schema.collectionName, (table) => {
             table
               .foreign(name)
-              .references(getRelationPrimaryKey(properties, ctx).name)
+              .references(getRelationPrimaryKey(properties).name)
               .inTable(relationTable)
               .onUpdate(properties.references.onUpdate)
               .onDelete(properties.references.onDelete);

@@ -34,7 +34,7 @@ class DatabaseManager {
 
     // Check if the model exists
     if (!modelName || !this.models.has(modelName)) {
-      throw new Error('The provided model can not be found');
+      throw new Error(`The provided model can not be found: ${modelName}`);
     }
 
     // Check if the query builder is cached
