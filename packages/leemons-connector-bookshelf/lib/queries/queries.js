@@ -1,7 +1,8 @@
 const _ = require('lodash');
+const pmap = require('p-map');
+
 const { buildQuery } = require('leemons-utils');
 const { parseFilters } = require('leemons-utils');
-const pmap = require('p-map');
 
 function generateQueries(model /* connector */) {
   const bookshelfModel = model.model;
@@ -98,6 +99,7 @@ function generateQueries(model /* connector */) {
     return entry.destroy({ transacting }).then(() => entry.toJSON());
   }
 
+  // Deletes many items matching the query
   async function deleteMany(query, { transacting } = {}) {
     const filters = parseFilters({ filters: query, model });
     const newQuery = buildQuery(model, filters);
@@ -108,7 +110,8 @@ function generateQueries(model /* connector */) {
       .then((entries) => entries.toJSON());
   }
 
-  function find(query, columns = '*', related, { transacting } = {}) {
+  // Finds all items based on a query
+  function find(query, { columns = '*', related, transacting } = {}) {
     const filters = parseFilters({ filters: query, model });
     const newQuery = buildQuery(model, filters);
 
@@ -128,16 +131,20 @@ function generateQueries(model /* connector */) {
       .then((res) => (res ? res.serialize(toJSONConfig) : res));
   }
 
-  async function findOne(query, columns, related, ...rest) {
-    const entry = await find({ ...query, $limit: 1 }, columns, related, ...rest);
+  // Finds one item based on a query
+  async function findOne(query, ...rest) {
+    const entry = await find({ ...query, $limit: 1 }, rest);
     return entry[0] || null;
   }
 
+  // Finds how many items exists based on a query
   function count(query) {
     const filters = parseFilters({ filters: query, model });
     const newQuery = buildQuery(model, filters);
+
     return bookshelfModel.query(newQuery).count();
   }
+
   return {
     create,
     createMany,
