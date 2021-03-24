@@ -6,20 +6,31 @@ const http = require('http');
 const ora = require('ora');
 const path = require('path');
 const request = require('request');
+const detect = require('detect-port');
 
 const leemons = require('../index');
 
+function getAvailablePort(port = process.env.PORT || 8080) {
+  return detect(port).then((_port) => _port);
+}
+
+function createWorker(env = {}) {
+  const newWorker = cluster.fork(env);
+  newWorker.process.env = env;
+}
+
 // Create a Proxy which uses the currently active server
-function createProxy(workers, log) {
+async function createProxy(workers, log) {
   const server = http.createServer((req, res) => {
     const { url } = req;
     const serverUrl = Object.values(workers).find((worker) => worker.active).url;
-
     req.pipe(request({ url: `${serverUrl}${url}` })).pipe(res);
   });
 
-  server.listen(8080, () => {
-    log('Listening on http://localhost:8080');
+  const port = await getAvailablePort();
+  process.env.PORT = port;
+  server.listen(port, () => {
+    log(`Listening on http://localhost:${port}`);
   });
 }
 
@@ -65,14 +76,14 @@ module.exports = async (args) => {
 
     log(chalk`Started server on {underline PID: ${process.pid}}`);
 
-    createProxy(workers, log);
+    await createProxy(workers, log);
 
     // Register every new worker
-    cluster.on('fork', (worker) => {
+    cluster.on('fork', async (worker) => {
       const { pid } = worker.process;
       workers[pid] = {
         pid,
-        url: `http://localhost:${pid}`,
+        url: `http://localhost:${worker.process.env.PORT}`,
         active: true,
       };
     });
@@ -84,7 +95,7 @@ module.exports = async (args) => {
     });
 
     // Handle message logic
-    cluster.on('message', (worker, message) => {
+    cluster.on('message', async (worker, message) => {
       const order = Array.isArray(message) ? message[0] : message;
 
       log(chalk`{blue Worker ${worker.process.pid}} sends {underline ${order}}`);
@@ -96,7 +107,7 @@ module.exports = async (args) => {
         case 'reload':
           nodeToBeKilled = worker;
           time = new Date();
-          cluster.fork();
+          createWorker({ PORT: await getAvailablePort() });
           break;
         // When a worker is ready to be killed
         // Kill it and create a new one
@@ -125,14 +136,13 @@ module.exports = async (args) => {
     });
 
     // Create the first worker
-    cluster.fork();
+    createWorker({ PORT: await getAvailablePort() });
   }
   // Worker Cluster
   if (cluster.isWorker) {
     const createdAt = new Date();
 
     // Set the port for the worker's server
-    process.env.PORT = cluster.worker.process.pid;
 
     log('new Worker started');
 
