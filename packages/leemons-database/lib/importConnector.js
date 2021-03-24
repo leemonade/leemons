@@ -8,7 +8,7 @@ function importConnector(connector) {
     require.resolve(connectorPackage);
   } catch (e) {
     throw new Error(
-      `The connector ${connectorPackage} is not installed. try $ yarn add ${connectorPackage}`
+      `The connector ${connectorPackage} is not installed. try: $ yarn add ${connectorPackage}`
     );
   }
 

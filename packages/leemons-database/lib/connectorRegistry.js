@@ -1,6 +1,6 @@
 const importConnector = require('./importConnector');
 
-function createConnectorRegistry({ connections, defaultConnection }, connectorInstance) {
+function createConnectorRegistry({ connections, defaultConnection }, databaseManager) {
   const connectors = new Map();
   return {
     load: () => {
@@ -8,7 +8,7 @@ function createConnectorRegistry({ connections, defaultConnection }, connectorIn
       Object.values(connections).forEach((connection) => {
         const { connector } = connection;
         if (!connectors.has(connector)) {
-          connectors.set(connector, importConnector(connector)(connectorInstance.leemons));
+          connectors.set(connector, importConnector(connector)(databaseManager.leemons));
         }
       });
     },
@@ -18,7 +18,7 @@ function createConnectorRegistry({ connections, defaultConnection }, connectorIn
         [...connectors.values()].map((connector) =>
           connector.init().then(() => {
             [...connector.models.entries()].forEach(([key, value]) => {
-              connectorInstance.models.set(key, value);
+              databaseManager.models.set(key, value);
             });
           })
         )

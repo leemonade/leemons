@@ -18,7 +18,7 @@ const VALID_REST_OPERATORS = [
 ];
 
 const BOOLEAN_OPERATORS = ['or'];
-const QUERY_OPERATORS = ['_where', '_or'];
+const QUERY_OPERATORS = ['_$where', '_$or'];
 
 function parseSortFilter(sort) {
   if (typeof sort !== 'string') {
@@ -111,15 +111,22 @@ function parseWhereClause(name, value, model) {
 function parseWhereParams(params, model) {
   const finalWhere = [];
 
-  Object.entries(params).forEach(([name, clauseValue]) => {
-    const { field, operator = 'eq', value } = parseWhereClause(name, clauseValue, model);
+  let where = params;
+  if (!Array.isArray(where)) {
+    where = [params];
+  }
 
-    finalWhere.push({
-      field,
-      operator,
-      value,
-    });
-  });
+  where.forEach((whereEl) =>
+    Object.entries(whereEl).forEach(([name, clauseValue]) => {
+      const { field, operator = 'eq', value } = parseWhereClause(name, clauseValue, model);
+
+      finalWhere.push({
+        field,
+        operator,
+        value,
+      });
+    })
+  );
 
   return finalWhere;
 }
@@ -147,6 +154,7 @@ function parseFilters({ filters = {}, defaults = {}, model } = {}) {
     // eslint-disable-next-line no-param-reassign
     delete filters.$start;
   }
+
   if (_.has(filters, '$offset')) {
     Object.assign(finalFilters, parseOffsetFilter(filters.$offset));
   }

@@ -1,15 +1,16 @@
 const _ = require('lodash');
-const { getModelLocation, generateModelName } = require('leemons-utils');
+
+const { getModel, generateModelName } = require('leemons-utils');
 const { formatModel } = require('leemons/lib/core/model/loadModel');
 const generateModel = require('./generateModel');
 
 function getRelationCollectionName(properties) {
-  const model = getModelLocation(properties.references.collection);
+  const model = getModel(properties.references.collection);
   return model.schema.collectionName;
 }
 
 function getRelationPrimaryKey(properties) {
-  const model = getModelLocation(properties.references.collection);
+  const model = getModel(properties.references.collection);
   return model.schema.primaryKey;
 }
 

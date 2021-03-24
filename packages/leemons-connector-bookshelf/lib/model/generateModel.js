@@ -1,11 +1,11 @@
 const _ = require('lodash');
-const { getModelLocation, generateModelName } = require('leemons-utils');
+const { getModel, generateModelName } = require('leemons-utils');
 
 function generateRelations(models) {
   models.forEach((model) => {
     Object.entries(model.schema.attributes).forEach(([name, attribute]) => {
       if (_.has(attribute, 'references')) {
-        const referencedModel = getModelLocation(attribute.references.collection, models);
+        const referencedModel = getModel(attribute.references.collection, models);
         switch (attribute.references.relation) {
           case 'one to one':
             // This model attribute belongsTo(the referenced model)

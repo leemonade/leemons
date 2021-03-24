@@ -9,7 +9,7 @@ const fieldLowerFn = (qb) => {
 };
 
 function buildWhereClause({ qb, field, operator, value }) {
-  // if where have an array and is not or|in|nin use it as a were with multiple orWhere
+  // If where is an array, use it as and wheres
   if (Array.isArray(value) && !['or', 'in', 'nin'].includes(operator)) {
     return qb.where((subQb) => {
       value.forEach((val) => {

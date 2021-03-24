@@ -48,9 +48,6 @@ class DatabaseManager {
     const query = queryBuilder(model, connector);
     this.queries.set(modelName, query);
     return query;
-
-    // Call to the connector's query for the given connection
-    // return connector.query(connection, this.leemons);
   }
 }
 

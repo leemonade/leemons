@@ -4,16 +4,16 @@ function generateModelName(target, originalModelName) {
   return `${target.replace(/\./g, '_')}::${originalModelName}`;
 }
 
-function getModelLocation(path, models = null) {
+function getModel(path, models = null) {
   let modelObject = null;
   if (models) {
     modelObject = models.find((model) => model.modelName === path);
   }
   if (!modelObject) {
     const absolutePath = path.split('::')[0].replace(/_/g, '.');
-    modelObject = _.get(global.leemons, `${absolutePath}.models.${path}`);
+    modelObject = _.get(global.leemons, `${absolutePath}.models.${path}`, null);
   }
   return modelObject;
 }
 
-module.exports = { getModelLocation, generateModelName };
+module.exports = { getModel, generateModelName };

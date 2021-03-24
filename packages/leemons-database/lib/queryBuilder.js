@@ -22,7 +22,6 @@ function createQuery({ query, model, connectorQuery }) {
 }
 function queryBuilder(model, connector) {
   const connectorQuery = connector.query(model, connector);
-  // TODO: standardize
   return {
     create: createQuery({ query: 'create', model, connectorQuery }),
     createMany: createQuery({ query: 'createMany', model, connectorQuery }),
@@ -33,6 +32,8 @@ function queryBuilder(model, connector) {
     find: createQuery({ query: 'find', model, connectorQuery }),
     findOne: createQuery({ query: 'findOne', model, connectorQuery }),
     count: createQuery({ query: 'count', model, connectorQuery }),
+
+    model,
   };
 }
 
