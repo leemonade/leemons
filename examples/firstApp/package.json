@@ -8,7 +8,6 @@
   "dependencies": {
     "leemons": "1.0.0",
     "leemons-connector-bookshelf": "1.0.0",
-    "leemons-plugin-installed-test": "1.0.0",
     "mysql": "^2.18.1",
     "pg": "^8.5.1"
   },
