@@ -7,7 +7,7 @@ const { loadFiles } = require('./loadFiles');
 
 const leemonsDefaultDirs = {
   config: env('CONFIG_DIR', 'config'),
-  model: 'models',
+  models: 'models',
   plugins: 'plugins',
 };
 

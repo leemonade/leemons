@@ -8,7 +8,7 @@ function loadJSFile(file) {
     // eslint-disable-next-line import/no-dynamic-require, global-require
     const fileContent = require(file);
     if (typeof fileContent === 'function') {
-      return fileContent(env);
+      return fileContent(env, global.leemons);
     }
     return fileContent;
   } catch (e) {
@@ -17,22 +17,26 @@ function loadJSFile(file) {
 }
 
 function loadJSONFile(file) {
-  return JSON.parse(fs.readFileSync(file));
+  try {
+    return JSON.parse(fs.readFileSync(file));
+  } catch (e) {
+    throw new Error(`File can not be read: ${file}. ${e.message}`);
+  }
 }
 
-function loadFile(file) {
+function loadFile(file, accept = ['.js', '.json']) {
   const extension = path.extname(file);
 
-  if (extension === '.js') {
+  if (extension === '.js' && accept.includes('.js')) {
     return loadJSFile(file);
   }
-  if (extension === '.json') {
+  if (extension === '.json' && accept.includes('.json')) {
     return loadJSONFile(file);
   }
   return null;
 }
 
-function loadFiles(dir) {
+function loadFiles(dir, accept = ['.js', '.json']) {
   if (!fs.existsSync(dir)) {
     return {};
   }
@@ -46,7 +50,7 @@ function loadFiles(dir) {
           `${file.name} configuration already exists on ${dir}. (do not use same name in .js files and .json files)`
         );
       }
-      const fileConfig = loadFile(path.resolve(dir, file.name));
+      const fileConfig = loadFile(path.resolve(dir, file.name), accept);
       if (fileConfig) {
         return { ...config, [key]: fileConfig };
       }
@@ -54,4 +58,4 @@ function loadFiles(dir) {
     }, {});
 }
 
-module.exports = { loadFiles };
+module.exports = { loadFiles, loadFile };

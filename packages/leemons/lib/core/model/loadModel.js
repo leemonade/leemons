@@ -72,7 +72,6 @@ function formatModels(models, target = 'global', leemons = global.leemons) {
 
 function loadModels(leemons) {
   const coreStore = createCoreStore();
-  const global = loadFiles(path.resolve(leemons.dir.app, leemons.dir.model));
 
   _.set(
     leemons,
@@ -80,7 +79,6 @@ function loadModels(leemons) {
     coreStoreProvider(formatModel('core_store', coreStore, 'core_store', leemons), leemons)
       .core_store
   );
-  _.set(leemons, 'global.models', formatModels(global, 'global', leemons));
 }
 
 module.exports = {

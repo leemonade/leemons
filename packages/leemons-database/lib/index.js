@@ -26,8 +26,7 @@ class DatabaseManager {
     this.leemons.models = _.merge(
       ...Object.values(this.leemons.plugins)
         .filter((plugin) => plugin.models)
-        .map((plugin) => plugin.models),
-      this.leemons.global.models
+        .map((plugin) => plugin.models)
     );
   }
 
