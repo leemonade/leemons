@@ -5,7 +5,7 @@ const path = require('path');
 const { loadFiles } = require('../config/loadFiles');
 const { createCoreStore, coreStoreProvider } = require('./coreStore');
 
-function formatModel(name, modelConfig, leemons = global.leemons) {
+function formatModel(name, modelConfig, target = 'global', leemons = global.leemons) {
   // TODO: standardize names
   const defaultModel = {
     modelName: name,
@@ -24,7 +24,7 @@ function formatModel(name, modelConfig, leemons = global.leemons) {
       type: 'int',
     },
     type: 'collection',
-    target: 'global',
+    target,
   };
   // Set default info for each model
   _.defaultsDeep(modelConfig, defaultModel);
@@ -60,11 +60,11 @@ function formatModel(name, modelConfig, leemons = global.leemons) {
   return { [model.modelName]: model };
 }
 
-function formatModels(models, leemons) {
+function formatModels(models, target = 'global', leemons = global.leemons) {
   return Object.entries(models).reduce(
     (formattedModels, [name, model]) => ({
       ...formattedModels,
-      ...formatModel(name, model, leemons),
+      ...formatModel(name, model, target, leemons),
     }),
     {}
   );
@@ -77,9 +77,10 @@ function loadModels(leemons) {
   _.set(
     leemons,
     'core_store',
-    coreStoreProvider(formatModel('core_store', coreStore, leemons), leemons).core_store
+    coreStoreProvider(formatModel('core_store', coreStore, 'core_store', leemons), leemons)
+      .core_store
   );
-  _.set(leemons, 'global.models', formatModels(global, leemons));
+  _.set(leemons, 'global.models', formatModels(global, 'global', leemons));
 }
 
 module.exports = {

@@ -5,28 +5,29 @@ const { env } = require('leemons-utils');
 const { configProvider } = require('./configProvider');
 const { loadFiles } = require('./loadFiles');
 
-let defaultDirs = {
+const leemonsDefaultDirs = {
   config: env('CONFIG_DIR', 'config'),
   model: 'models',
+  plugins: 'plugins',
 };
 
-function loadConfiguration(leemons) {
-  // get the default directory
-  const dir = process.cwd();
-
+function loadConfiguration(object, dir = process.cwd(), defaultDirs = leemonsDefaultDirs) {
   // get config directory
   const configDir = path.resolve(dir, defaultDirs.config);
   const config = {
     ...loadFiles(configDir),
   };
 
-  if (config.config.dir) {
+  let dirs;
+  if (config.config && config.config.dir) {
     // Config directory can not be changed on config file
-    defaultDirs = { ...defaultDirs, ...config.config.dir, config: defaultDirs.config };
+    dirs = { ...defaultDirs, ...config.config.dir, config: defaultDirs.config };
+  } else {
+    dirs = defaultDirs;
   }
-  // Set the leemons app path
-  defaultDirs.app = dir;
-  _.set(leemons, 'dir', defaultDirs);
+  // Set the object paths (normally leemons or plugin)
+  dirs.app = dir;
+  _.set(object, 'dir', dirs);
 
   return configProvider(config);
 }

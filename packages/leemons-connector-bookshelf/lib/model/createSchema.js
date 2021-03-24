@@ -220,41 +220,39 @@ function tableExists(table, ctx) {
   return ctx.ORM.knex.schema.hasTable(table);
 }
 
-async function createSchema(model, ctx) {
+async function createSchema(model, ctx, transacting) {
   const { schema } = model;
   let hasBeenUpdated = false;
   let storedModel;
 
-  return ctx.ORM.transaction(async (transacting) => {
-    // check if the model has been updated
-    if (model.modelName !== 'core_store') {
-      storedModel = await ctx.connector.leemons.core_store.get(
-        `model::${model.modelName}`,
-        false,
-        transacting
-      );
-      hasBeenUpdated = storedModel && !_.isEqual(JSON.parse(storedModel.value), model);
+  // check if the model has been updated
+  if (model.modelName !== 'core_store') {
+    storedModel = await ctx.connector.leemons.core_store.get(
+      `model::${model.modelName}`,
+      false,
+      transacting
+    );
+    hasBeenUpdated = storedModel && !_.isEqual(JSON.parse(storedModel.value), model);
 
-      // Update the stored model for the next start
-      if (hasBeenUpdated || !storedModel) {
-        await ctx.connector.leemons.core_store.set({
-          key: `model::${model.modelName}`,
-          value: JSON.stringify(model),
-          type: 'Object',
-          transacting,
-        });
-      }
+    // Update the stored model for the next start
+    if (hasBeenUpdated || !storedModel) {
+      await ctx.connector.leemons.core_store.set({
+        key: `model::${model.modelName}`,
+        value: JSON.stringify(model),
+        type: 'Object',
+        transacting,
+      });
     }
+  }
 
-    // Update the table if has changed or create a new one if it does not exists
-    const isTableCreated = await tableExists(schema.collectionName, ctx);
-    if (hasBeenUpdated || !isTableCreated) {
-      // Only update if the table is already created
-      await createTable(schema, ctx, hasBeenUpdated && isTableCreated, storedModel);
-      return model;
-    }
-    return null;
-  });
+  // Update the table if has changed or create a new one if it does not exists
+  const isTableCreated = await tableExists(schema.collectionName, ctx);
+  if (hasBeenUpdated || !isTableCreated) {
+    // Only update if the table is already created
+    await createTable(schema, ctx, hasBeenUpdated && isTableCreated, storedModel);
+    return model;
+  }
+  return null;
 }
 
 async function createRelations(model, ctx) {

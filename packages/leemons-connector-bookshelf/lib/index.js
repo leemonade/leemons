@@ -17,10 +17,11 @@ class Connector {
 
   async setupConnection(ctx) {
     // eslint-disable-next-line prettier/prettier
-      const allModels = _.merge(
-        {},
-        this.leemons.global.models
-      );
+      const allModels = this.leemons.models;
+    // _.merge(
+    //   {},
+    //   this.leemons.global.models
+    // );
 
     const models = Object.values(allModels).filter(
       (model) => model.connection === ctx.connection.name

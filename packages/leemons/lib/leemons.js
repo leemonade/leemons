@@ -7,6 +7,7 @@ const nextjs = require('next');
 const { createDatabaseManager } = require('leemons-database');
 const { loadConfiguration } = require('./core/config/loadConfig');
 const { loadModels } = require('./core/model/loadModel');
+const loadPlugins = require('./core/plugins/loadPlugins');
 
 class Leemons {
   constructor(log) {
@@ -118,7 +119,7 @@ class Leemons {
     if (this.loaded) {
       return true;
     }
-
+    loadPlugins(this);
     this.models = loadModels(this);
     // Create a database manager
     this.db = createDatabaseManager(this);

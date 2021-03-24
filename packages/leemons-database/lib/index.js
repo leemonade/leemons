@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const createConnectorRegistry = require('./connectorRegistry');
 const queryBuilder = require('./queryBuilder');
 
@@ -19,11 +21,29 @@ class DatabaseManager {
     this.initialized = false;
   }
 
+  // This is done for making connector development easier
+  exposeModels() {
+    this.leemons.models = _.merge(
+      ...Object.values(this.leemons.plugins)
+        .filter((plugin) => plugin.models)
+        .map((plugin) => plugin.models),
+      this.leemons.global.models
+    );
+  }
+
+  // This is done for ram efficiency
+  undoModelExposure() {
+    delete this.leemons.models;
+  }
+
   async init() {
     if (this.initialized) throw new Error('The database was already initialized');
 
     this.connectors.load();
+    // expose models under leemons.models for the connectors.
+    this.exposeModels();
     await this.connectors.init();
+    this.undoModelExposure();
 
     this.initialized = true;
   }
