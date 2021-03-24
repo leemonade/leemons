@@ -23,12 +23,9 @@
   ],
   "rules": {
     "no-plusplus": "off",
-    "comma-dangle": ["error", {
-      "arrays": "always",
-      "objects": "always",
-      "imports": "always",
-      "exports": "always",
-      "functions": "never"
+    "import/no-dynamic-requires": "off",
+    "prettier/prettier": ["error", {}, {
+      "usePrettierrc": true
     }]
   }
 }

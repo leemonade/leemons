@@ -1,10 +1,10 @@
 const chalk = require('chalk');
 const cluster = require('cluster');
-const execa = require('execa');
-const fs = require("fs");
+// const execa = require('execa');
+const fs = require('fs');
 const http = require('http');
-const ora = require("ora");
-const path = require("path");
+const ora = require('ora');
+const path = require('path');
 const request = require('request');
 
 const leemons = require('../index');
@@ -12,10 +12,10 @@ const leemons = require('../index');
 // Create a Proxy which uses the currently active server
 function createProxy(workers, log) {
   const server = http.createServer((req, res) => {
-    const { url, } = req;
+    const { url } = req;
     const serverUrl = Object.values(workers).find((worker) => worker.active).url;
 
-    req.pipe(request({ url: `${serverUrl}${url}`, })).pipe(res);
+    req.pipe(request({ url: `${serverUrl}${url}` })).pipe(res);
   });
 
   server.listen(8080, () => {
@@ -33,9 +33,9 @@ function timeDif(start, end = new Date()) {
   return `${(minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')}${milliseconds}ms`;
 }
 
-// $ strapi develop
+// $ leemons develop
 module.exports = async (args) => {
-  const nextDir = path.resolve(process.cwd(), args.next || "next/");
+  const nextDir = path.resolve(process.cwd(), args.next || 'next/');
   if (!fs.existsSync(nextDir)) {
     process.stderr.write(chalk`{red The provided nextjs route is not valid}\n`);
     process.exit(1);
@@ -69,7 +69,7 @@ module.exports = async (args) => {
 
     // Register every new worker
     cluster.on('fork', (worker) => {
-      const { pid, } = worker.process;
+      const { pid } = worker.process;
       workers[pid] = {
         pid,
         url: `http://localhost:${pid}`,
@@ -79,7 +79,7 @@ module.exports = async (args) => {
 
     // Remove every disconnected worker
     cluster.on('disconnect', (worker) => {
-      const { pid, } = worker.process;
+      const { pid } = worker.process;
       delete workers[pid];
     });
 
@@ -115,8 +115,9 @@ module.exports = async (args) => {
           worker.send('running');
           break;
         case 'exit':
-          if (message[1])
+          if (message[1]) {
             process.stderr.write(chalk`{red An error ocurred\n{gray ${message[1]}}}\n`);
+          }
           process.exit(1);
         // eslint-disable-next-line no-fallthrough
         default:
@@ -136,12 +137,13 @@ module.exports = async (args) => {
     log('new Worker started');
 
     try {
-      const spinner = ora("Building front").start();
-      const { stdout, } = await execa('npm', ['run', 'build', '--prefix', nextDir,]);
+      const spinner = ora('Building front').start();
+      // TODO: uncomment this line
+      // const { stdout } = await execa('npm', ['run', 'build', '--prefix', nextDir]);
       spinner.succeed();
-      log(stdout);
+      // log(stdout);
 
-      const leemonsInstance = leemons();
+      const leemonsInstance = leemons(log);
 
       // Handle message logic
       cluster.worker.on('message', (message) => {
@@ -166,7 +168,7 @@ module.exports = async (args) => {
 
       return leemonsInstance.start();
     } catch (error) {
-      process.send(['exit', error.message,]);
+      process.send(['exit', error.message]);
     }
   }
   return false;

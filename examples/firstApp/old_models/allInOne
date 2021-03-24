@@ -1,0 +1,58 @@
+module.exports = {
+  collectionName: 'allInOne',
+  info: {
+    description: 'This table has everything',
+    name: 'allInOne',
+  },
+  options: {},
+  primaryKey: {
+    name: '_id',
+  },
+  attributes: {
+    string: {
+      type: 'string',
+    },
+    string2: {
+      length: 2,
+      type: 'string',
+    },
+    enum: {
+      enum: ['a', 'b', 'c'],
+      type: 'enum',
+    },
+    json: {
+      type: 'json',
+    },
+    int: {
+      type: 'int',
+    },
+    bigInt: {
+      type: 'bigint',
+    },
+    float: {
+      type: 'float',
+    },
+    decimal: {
+      type: 'decimal',
+    },
+    binary: {
+      type: 'binary',
+    },
+    binary2: {
+      length: 2,
+      type: 'binary',
+    },
+    boolean: {
+      type: 'boolean',
+    },
+    uuid: {
+      type: 'uuid',
+    },
+    oneToOne: {
+      references: {
+        collection: 'global.restaurants',
+        relation: 'one to one',
+      },
+    },
+  },
+};
