@@ -1,4 +1,6 @@
+const { getStackTrace } = require('leemons-utils');
 const _ = require('lodash');
+const path = require('path');
 
 const createConnectorRegistry = require('./connectorRegistry');
 const queryBuilder = require('./queryBuilder');
@@ -15,34 +17,47 @@ class DatabaseManager {
       this
     );
 
-    this.models = new Map();
+    // Register the models (only show it to leemons-database)
+    const leemonsDatabasePath = path.dirname(require.resolve('leemons-database/package.json'));
+    const models = new Map();
+    Object.defineProperty(this, 'models', {
+      get: () => {
+        const caller = getStackTrace(2).fileName;
+        if (caller.includes(leemonsDatabasePath)) {
+          return models;
+        }
+        return null;
+      },
+    });
+
+    // Register the queries (only show it to leemons-database)
+    const queries = new Map();
     this.queries = new Map();
+    Object.defineProperty(this, 'queries', {
+      get: () => {
+        const caller = getStackTrace(2).fileName;
+        if (caller.includes(leemonsDatabasePath)) {
+          return queries;
+        }
+        return null;
+      },
+    });
 
     this.initialized = false;
-  }
-
-  // This is done for making connector development easier
-  exposeModels() {
-    this.leemons.models = _.merge(
-      ...Object.values(this.leemons.plugins)
-        .filter((plugin) => plugin.models)
-        .map((plugin) => plugin.models)
-    );
-  }
-
-  // This is done for ram efficiency
-  undoModelExposure() {
-    delete this.leemons.models;
   }
 
   async init() {
     if (this.initialized) throw new Error('The database was already initialized');
 
     this.connectors.load();
-    // expose models under leemons.models for the connectors.
-    this.exposeModels();
-    await this.connectors.init();
-    this.undoModelExposure();
+
+    await this.connectors.init(
+      _.merge(
+        ...Object.values(this.leemons.plugins)
+          .filter((plugin) => plugin.models)
+          .map((plugin) => plugin.models)
+      )
+    );
 
     this.initialized = true;
   }
@@ -51,8 +66,26 @@ class DatabaseManager {
     // Get the used connector (if no connection provided, get the default one)
     // const connector = this.connectors.getFromConnection(connection);
 
-    // Check if the model exists
+    if (modelName.split('_')[0] === 'plugins') {
+      const caller = getStackTrace(3).fileName;
+      const plugin = _.get(this.leemons, modelName.split('::')[0].replace(/_/g, '.'));
+
+      const leemonsPath = path.dirname(require.resolve('leemons/package.json'));
+      const leemonsDatabasePath = path.dirname(require.resolve('leemons-database/package.json'));
+
+      if (
+        plugin &&
+        _.get(plugin.config, 'config.private', false) &&
+        ![plugin.dir.app, leemonsPath, leemonsDatabasePath].find((allowedPath) =>
+          caller.includes(allowedPath)
+        )
+      ) {
+        // The provided model is private and not visible for you
+        throw new Error(`The provided model can not be found: ${modelName}`);
+      }
+    }
     if (!modelName || !this.models.has(modelName)) {
+      // Check if the model exists
       throw new Error(`The provided model can not be found: ${modelName}`);
     }
 

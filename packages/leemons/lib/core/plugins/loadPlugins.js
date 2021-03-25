@@ -81,13 +81,14 @@ function loadPlugins(leemons) {
       return null;
     },
   });
-  const leemonsPath = path.dirname(require.resolve('leemons/package.json'));
-  const leemonsDatabasePath = path.dirname(require.resolve('leemons-database/package.json'));
+  const leemonsPath = `${path.dirname(require.resolve('leemons/package.json'))}/`;
+  const leemonsDatabasePath = `${path.dirname(require.resolve('leemons-database/package.json'))}/`;
+  // TODO: Is not working
   Object.defineProperty(leemons, 'plugins', {
     get: () => {
       const caller = getStackTrace(2).fileName;
 
-      const visiblePlugins = loadedPlugins;
+      const visiblePlugins = [...loadedPlugins];
       // Return the plugins
       const plugin = privatePlugins.find(([, object]) => {
         const allowedPaths = [object.dir.app, leemonsPath, leemonsDatabasePath];

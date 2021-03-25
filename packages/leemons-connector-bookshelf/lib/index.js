@@ -1,5 +1,4 @@
 const Bookshelf = require('bookshelf');
-const _ = require('lodash');
 const bookshelfUUID = require('bookshelf-uuid');
 
 const { initKnex } = require('./knex');
@@ -15,9 +14,7 @@ class Connector {
     this.buildQuery = buildQuery;
   }
 
-  async setupConnection(ctx) {
-    const allModels = this.leemons.models;
-
+  async setupConnection(ctx, allModels) {
     const models = Object.values(allModels).filter(
       (model) => model.connection === ctx.connection.name
     );
@@ -33,7 +30,7 @@ class Connector {
     return generateQueries(model, this);
   }
 
-  init() {
+  init(models) {
     // Get connections made with bookshelf
     const bookshelfConnections = Object.entries(this.leemons.config.get('database.connections'))
       .map(([name, value]) => ({ ...value, name }))
@@ -48,7 +45,6 @@ class Connector {
 
         // Initialize the ORM
         const ORM = new Bookshelf(this.leemons.connections[connection.name]);
-        _.set(this.leemons.connections[connection.name], 'ORM', ORM);
 
         // Use uuid plugin
         ORM.plugin(bookshelfUUID);
@@ -59,7 +55,7 @@ class Connector {
           connector: this,
         };
 
-        return this.setupConnection(ctx);
+        return this.setupConnection(ctx, models);
       })
     );
   }

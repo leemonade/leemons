@@ -126,7 +126,7 @@ class Leemons {
       return true;
     }
     loadPlugins(this);
-    this.models = loadModels(this);
+    loadModels(this);
     // Create a database manager
     this.db = createDatabaseManager(this);
     // Initialize all database connections

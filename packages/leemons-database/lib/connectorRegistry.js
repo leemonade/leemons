@@ -13,10 +13,10 @@ function createConnectorRegistry({ connections, defaultConnection }, databaseMan
       });
     },
 
-    init: () =>
+    init: (models) =>
       Promise.all(
         [...connectors.values()].map((connector) =>
-          connector.init().then(() => {
+          connector.init(models).then(() => {
             [...connector.models.entries()].forEach(([key, value]) => {
               databaseManager.models.set(key, value);
             });
