@@ -2,6 +2,7 @@ const path = require('path');
 const _ = require('lodash');
 const fs = require('fs-extra');
 
+const { getStackTrace } = require('leemons-utils');
 const { loadConfiguration } = require('../config/loadConfig');
 const { loadFiles, loadFile } = require('../config/loadFiles');
 const { formatModels } = require('../model/loadModel');
@@ -61,7 +62,43 @@ function loadPlugins(leemons) {
     return [pluginObj.name, { ...pluginObj, routes, controllers, services }];
   });
 
-  _.set(leemons, 'plugins', _.fromPairs(loadedPlugins));
+  const privatePlugins = loadedPlugins.filter(
+    ([, plugin]) => plugin.config.get('config.private', false) === true
+  );
+  loadedPlugins = loadedPlugins.filter(
+    ([, plugin]) => plugin.config.get('config.private', false) === false
+  );
+
+  // loadedPlugins = _.fromPairs(loadedPlugins);
+
+  Object.defineProperty(leemons, 'plugin', {
+    get: () => {
+      const caller = getStackTrace(2).fileName;
+      const plugin = loadedPlugins.find(([, object]) => caller.includes(object.dir.app));
+      if (plugin) {
+        return plugin[1];
+      }
+      return null;
+    },
+  });
+  const leemonsPath = path.dirname(require.resolve('leemons/package.json'));
+  const leemonsDatabasePath = path.dirname(require.resolve('leemons-database/package.json'));
+  Object.defineProperty(leemons, 'plugins', {
+    get: () => {
+      const caller = getStackTrace(2).fileName;
+
+      const visiblePlugins = loadedPlugins;
+      // Return the plugins
+      const plugin = privatePlugins.find(([, object]) => {
+        const allowedPaths = [object.dir.app, leemonsPath, leemonsDatabasePath];
+        return allowedPaths.find((allowedPath) => caller.includes(allowedPath));
+      });
+      if (plugin) {
+        visiblePlugins.push(plugin);
+      }
+      return _.fromPairs(visiblePlugins);
+    },
+  });
 }
 
 module.exports = loadPlugins;

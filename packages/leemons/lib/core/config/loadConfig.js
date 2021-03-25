@@ -26,7 +26,7 @@ function loadConfiguration(object, dir = process.cwd(), defaultDirs = leemonsDef
     dirs = defaultDirs;
   }
   // Set the object paths (normally leemons or plugin)
-  dirs.app = dir;
+  dirs.app = dir[dir.length - 1] === '/' ? dir : `${dir}/`;
   _.set(object, 'dir', dirs);
 
   return configProvider(config);
