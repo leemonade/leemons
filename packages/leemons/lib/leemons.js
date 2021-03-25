@@ -3,6 +3,7 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const Static = require('koa-static');
 const nextjs = require('next');
+const _ = require('lodash');
 
 const { createDatabaseManager } = require('leemons-database');
 const { loadConfiguration } = require('./core/config/loadConfig');
@@ -81,16 +82,21 @@ class Leemons {
 
   // Initialize the api endpoints
   setRoutes() {
-    this.router.get('/api/reload', (ctx) => {
-      if (this.reload()) {
-        ctx.body = { msg: 'Reloading' };
-      } else {
-        ctx.body = { msg: 'The server was already reloading' };
+    // Plugins
+    Object.entries(this.plugins).forEach(([, plugin]) => {
+      if (plugin.routes) {
+        plugin.routes.forEach((route) => {
+          if (
+            route.handler &&
+            route.path &&
+            route.method &&
+            _.get(plugin.controllers, route.handler)
+          ) {
+            const handler = _.get(plugin.controllers, route.handler);
+            this.router[route.method.toLocaleLowerCase()](`/api${route.path}`, handler);
+          }
+        });
       }
-    });
-
-    this.router.get('/api', (ctx) => {
-      ctx.body = 'Hello World';
     });
   }
 

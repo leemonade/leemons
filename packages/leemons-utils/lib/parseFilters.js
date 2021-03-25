@@ -75,7 +75,6 @@ function parseWhereClause(name, value, model) {
   if (separatorIndex === -1) {
     if (name[0] === '$') {
       const operator = name.substring(1);
-      // TODO: check this
       if (BOOLEAN_OPERATORS.includes(operator)) {
         // eslint-disable-next-line no-use-before-define
         return { field: null, operator, value: [].concat(value).map(parseWhereParams) };

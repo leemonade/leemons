@@ -1,3 +1,1 @@
-module.exports = () => {
-  console.log('Email sent');
-};
+module.exports = () => 'email sent';

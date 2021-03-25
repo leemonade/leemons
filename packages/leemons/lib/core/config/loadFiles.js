@@ -36,7 +36,7 @@ function loadFile(file, accept = ['.js', '.json']) {
   return null;
 }
 
-function loadFiles(dir, accept = ['.js', '.json']) {
+function loadFiles(dir, { accept = ['.js', '.json'], exclude = [] } = {}) {
   if (!fs.existsSync(dir)) {
     return {};
   }
@@ -44,6 +44,9 @@ function loadFiles(dir, accept = ['.js', '.json']) {
     .readdirSync(dir, { withFileTypes: true })
     .filter((file) => file.isFile())
     .reduce((config, file) => {
+      if (exclude.includes(file.name)) {
+        return config;
+      }
       const key = path.basename(file.name, path.extname(file.name));
       if (config[key]) {
         throw new Error(

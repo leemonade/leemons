@@ -7,6 +7,7 @@ const { loadFiles, loadFile } = require('../config/loadFiles');
 const { formatModels } = require('../model/loadModel');
 const { getLocalPlugins, getExternalPlugins } = require('./getPlugins');
 const checkPluginDuplicates = require('./checkPluginDuplicates');
+const loadServices = require('./loadServices');
 
 function loadPlugins(leemons) {
   const plugins = [...getLocalPlugins(leemons), ...getExternalPlugins(leemons)];
@@ -38,24 +39,24 @@ function loadPlugins(leemons) {
     pluginObj.models = formatModels(pluginModels, `plugins.${pluginObj.name}`);
 
     // Load routes
-    const routesFile = path.resolve(pluginObj.dir.app, pluginObj.dir.controllers, 'routes');
+    let routesFile = path.resolve(pluginObj.dir.app, pluginObj.dir.controllers, 'routes');
     let routes = {};
     if (fs.existsSync(`${routesFile}.json`)) {
-      routes = loadFile(`${routesFile}.json`);
+      routesFile += '.json';
+      routes = loadFile(routesFile);
     } else if (fs.existsSync(`${routesFile}.js`)) {
-      routes = loadFile(`${routesFile}.js`);
+      routesFile += '.js';
+      routes = loadFile(routesFile);
     }
 
     // Load controllers
-    // TODO: Bind controllers and routes
-    const controllers = loadFiles(path.resolve(pluginObj.dir.app, pluginObj.dir.controllers), [
-      '.js',
-    ]);
+    const controllers = loadFiles(path.resolve(pluginObj.dir.app, pluginObj.dir.controllers), {
+      accept: ['.js'],
+      exclude: [path.basename(routesFile)],
+    });
 
-    // TODO: Implement services
     // Load services
-    const services = loadFiles(path.resolve(pluginObj.dir.app, pluginObj.dir.services), ['.js']);
-
+    const services = loadServices(path.resolve(pluginObj.dir.app, pluginObj.dir.services));
     // Return as the result of Object.entries
     return [pluginObj.name, { ...pluginObj, routes, controllers, services }];
   });

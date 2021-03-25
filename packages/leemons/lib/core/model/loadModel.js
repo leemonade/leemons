@@ -1,12 +1,9 @@
 const { generateModelName } = require('leemons-utils');
 const _ = require('lodash');
-const path = require('path');
 
-const { loadFiles } = require('../config/loadFiles');
 const { createCoreStore, coreStoreProvider } = require('./coreStore');
 
 function formatModel(name, modelConfig, target = 'global', leemons = global.leemons) {
-  // TODO: standardize names
   const defaultModel = {
     modelName: name,
     connection: leemons ? leemons.config.get('database.defaultConnection') : null,
