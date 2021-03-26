@@ -118,27 +118,26 @@ function generateModel(models, ctx) {
       });
     }
 
-    if (model.modelName === 'core_store') {
-      _.set(ctx.connector.leemons, `core_store`, {
-        ..._.cloneDeep(model),
-        model: ctx.ORM.model(model.modelName, Model),
-      });
-    } else {
-      const fullModel = {
-        ..._.cloneDeep(model),
-        ORM: ctx.ORM,
-        model: ctx.ORM.model(model.modelName, Model),
-      };
-      // Set the model to leemons
-      _.set(
-        ctx.connector.leemons,
-        `${model.target ? `${model.target}.models.` : ''}${model.originalModelName}`,
-        fullModel
-      );
+    const fullModel = {
+      ..._.cloneDeep(model),
+      ORM: ctx.ORM,
+      model: ctx.ORM.model(model.modelName, Model),
+    };
 
-      // Set the model for the connector
-      ctx.connector.models.set(model.modelName, fullModel);
-    }
+    // [ ] Check if the models are not needed in leemons
+
+    // Set the model to leemons
+    // if (model.modelName === 'core_store') {
+    //   _.set(ctx.connector.leemons, `core_store`, fullModel);
+    // } else {
+    //   _.set(
+    //     ctx.connector.leemons,
+    //     `${model.target ? `${model.target}.models.` : ''}${model.originalModelName}`,
+    //     fullModel
+    //   );
+    // }
+    // Set the model for the connector
+    ctx.connector.models.set(model.modelName, fullModel);
   });
 }
 

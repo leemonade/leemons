@@ -145,6 +145,24 @@ function generateQueries(model /* connector */) {
     return bookshelfModel.query(newQuery).count();
   }
 
+  async function set(query, item, { transacting } = {}) {
+    const entry = await findOne(query, { transacting });
+
+    if (entry) {
+      if (!_.has(item, 'updated_at')) {
+        _.set(item, 'updated_at', new Date());
+      }
+      const attributes = selectAttributes(item);
+
+      return Object.keys(attributes).length > 0
+        ? entry
+            .save(attributes, { method: 'update', patch: true, transacting })
+            .then((res) => res.toJSON())
+        : entry.toJSON();
+    }
+    return create({ ...query, ...item }, { transacting });
+  }
+
   return {
     create,
     createMany,
@@ -155,6 +173,7 @@ function generateQueries(model /* connector */) {
     find,
     findOne,
     count,
+    set,
   };
 }
 

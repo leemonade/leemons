@@ -27,6 +27,7 @@ function queryBuilder(model, connector) {
     createMany: createQuery({ query: 'createMany', model, connectorQuery }),
     update: createQuery({ query: 'update', model, connectorQuery }),
     updateMany: createQuery({ query: 'updateMany', model, connectorQuery }),
+    set: createQuery({ query: 'set', model, connectorQuery }),
     delete: createQuery({ query: 'delete', model, connectorQuery }),
     deleteMany: createQuery({ query: 'deleteMany', model, connectorQuery }),
     find: createQuery({ query: 'find', model, connectorQuery }),

@@ -13,8 +13,11 @@ function createConnectorRegistry({ connections, defaultConnection }, databaseMan
       });
     },
 
-    init: (models) =>
-      Promise.all(
+    init: async (coreStore, models) => {
+      const coreStoreConnector = connectors.get(connections[coreStore.connection].connector);
+      await coreStoreConnector.init([coreStore]);
+      databaseManager.models.set('core_store', coreStoreConnector.models.get('core_store'));
+      return Promise.all(
         [...connectors.values()].map((connector) =>
           connector.init(models).then(() => {
             [...connector.models.entries()].forEach(([key, value]) => {
@@ -22,7 +25,8 @@ function createConnectorRegistry({ connections, defaultConnection }, databaseMan
             });
           })
         )
-      ),
+      );
+    },
 
     getAll: () => [...connectors.values()],
 
@@ -33,7 +37,7 @@ function createConnectorRegistry({ connections, defaultConnection }, databaseMan
     set: (key, value) => connectors.set(key, value),
 
     get default() {
-      return this.get(connections[defaultConnection].connector);
+      return connectors.get(connections[defaultConnection].connector);
     },
   };
 }

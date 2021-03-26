@@ -9,7 +9,12 @@ class DatabaseManager {
   constructor(leemons) {
     this.leemons = leemons;
     this.defaultConnection = leemons.config.get('database.defaultConnection');
-    this.connectors = createConnectorRegistry(
+
+    // Register the models (only show it to leemons-database)
+    const leemonsDatabasePath = path.dirname(require.resolve('leemons-database/package.json'));
+    const leemonsPath = path.dirname(require.resolve('leemons/package.json'));
+
+    const connectors = createConnectorRegistry(
       {
         connections: leemons.config.get('database.connections'),
         defaultConnection: this.defaultConnection,
@@ -17,13 +22,25 @@ class DatabaseManager {
       this
     );
 
-    // Register the models (only show it to leemons-database)
-    const leemonsDatabasePath = path.dirname(require.resolve('leemons-database/package.json'));
+    Object.defineProperty(this, 'connectors', {
+      get: () => {
+        const caller = getStackTrace(2).fileName;
+        if (
+          [leemonsPath, leemonsDatabasePath].find((allowedPath) => caller.includes(allowedPath))
+        ) {
+          return connectors;
+        }
+        return null;
+      },
+    });
+
     const models = new Map();
     Object.defineProperty(this, 'models', {
       get: () => {
         const caller = getStackTrace(2).fileName;
-        if (caller.includes(leemonsDatabasePath)) {
+        if (
+          [leemonsPath, leemonsDatabasePath].find((allowedPath) => caller.includes(allowedPath))
+        ) {
           return models;
         }
         return null;
@@ -50,8 +67,8 @@ class DatabaseManager {
     if (this.initialized) throw new Error('The database was already initialized');
 
     this.connectors.load();
-
     await this.connectors.init(
+      this.leemons.core_store,
       _.merge(
         ...Object.values(this.leemons.plugins)
           .filter((plugin) => plugin.models)
@@ -63,6 +80,10 @@ class DatabaseManager {
   }
 
   query(modelName) {
+    // TODO: Private models (can be accessed through the ORM (the ORM is exposed per plugin))
+    // TODO: Limit database deletion
+    // TODO: Add plugin roles
+
     // Get the used connector (if no connection provided, get the default one)
     // const connector = this.connectors.getFromConnection(connection);
 

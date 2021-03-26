@@ -7,7 +7,7 @@ const CLIENTS = {
   mysql: 'mysql',
 };
 
-function initKnex(leemons, connections) {
+function initKnex(connector, connections) {
   connections.forEach((connection) => {
     // Check which client is using
     let client;
@@ -55,7 +55,7 @@ function initKnex(leemons, connections) {
 
     try {
       const dbConnection = knex(config);
-      _.set(leemons, `connections.${connection.name}`, dbConnection);
+      _.set(connector, `connections.${connection.name}`, dbConnection);
     } catch (e) {
       throw new Error('Error in knex initialization');
     }
