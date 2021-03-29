@@ -26,7 +26,7 @@ class DatabaseManager {
       get: () => {
         const caller = getStackTrace(2).fileName;
         if (
-          [leemonsPath, leemonsDatabasePath].find((allowedPath) => caller.includes(allowedPath))
+          [leemonsPath, leemonsDatabasePath].find((allowedPath) => caller.startsWith(allowedPath))
         ) {
           return connectors;
         }
@@ -39,7 +39,7 @@ class DatabaseManager {
       get: () => {
         const caller = getStackTrace(2).fileName;
         if (
-          [leemonsPath, leemonsDatabasePath].find((allowedPath) => caller.includes(allowedPath))
+          [leemonsPath, leemonsDatabasePath].find((allowedPath) => caller.startsWith(allowedPath))
         ) {
           return models;
         }
@@ -53,7 +53,7 @@ class DatabaseManager {
     Object.defineProperty(this, 'queries', {
       get: () => {
         const caller = getStackTrace(2).fileName;
-        if (caller.includes(leemonsDatabasePath)) {
+        if (caller.startsWith(leemonsDatabasePath)) {
           return queries;
         }
         return null;
@@ -98,7 +98,7 @@ class DatabaseManager {
         plugin &&
         _.get(plugin.config, 'config.private', false) &&
         ![plugin.dir.app, leemonsPath, leemonsDatabasePath].find((allowedPath) =>
-          caller.includes(allowedPath)
+          caller.startsWith(allowedPath)
         )
       ) {
         // The provided model is private and not visible for you

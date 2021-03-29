@@ -74,7 +74,7 @@ function loadPlugins(leemons) {
   Object.defineProperty(leemons, 'plugin', {
     get: () => {
       const caller = getStackTrace(2).fileName;
-      const plugin = loadedPlugins.find(([, object]) => caller.includes(object.dir.app));
+      const plugin = loadedPlugins.find(([, object]) => caller.startsWith(object.dir.app));
       if (plugin) {
         return plugin[1];
       }
@@ -92,7 +92,7 @@ function loadPlugins(leemons) {
       // Return the plugins
       const plugin = privatePlugins.find(([, object]) => {
         const allowedPaths = [object.dir.app, leemonsPath, leemonsDatabasePath];
-        return allowedPaths.find((allowedPath) => caller.includes(allowedPath));
+        return allowedPaths.find((allowedPath) => caller.startsWith(allowedPath));
       });
       if (plugin) {
         visiblePlugins.push(plugin);

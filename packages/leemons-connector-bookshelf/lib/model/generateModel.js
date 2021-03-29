@@ -124,18 +124,6 @@ function generateModel(models, ctx) {
       model: ctx.ORM.model(model.modelName, Model),
     };
 
-    // [ ] Check if the models are not needed in leemons
-
-    // Set the model to leemons
-    // if (model.modelName === 'core_store') {
-    //   _.set(ctx.connector.leemons, `core_store`, fullModel);
-    // } else {
-    //   _.set(
-    //     ctx.connector.leemons,
-    //     `${model.target ? `${model.target}.models.` : ''}${model.originalModelName}`,
-    //     fullModel
-    //   );
-    // }
     // Set the model for the connector
     ctx.connector.models.set(model.modelName, fullModel);
   });
