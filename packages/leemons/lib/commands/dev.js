@@ -84,14 +84,23 @@ module.exports = async (args) => {
     await createProxy(workers, log);
 
     const leemonsPath = path.dirname(require.resolve('leemons/package.json'));
+    const leemonsDatabasePath = path.dirname(require.resolve('leemons-database/package.json'));
+    const leemonsUtilsPath = path.dirname(require.resolve('leemons-utils/package.json'));
 
     chokidar
-      .watch(`${leemonsPath}/**/*.(js|json)`, {
-        cwd: process.cwd(),
-        persistent: true,
-        followSymlinks: true,
-        ignoreInitial: true,
-      })
+      .watch(
+        [
+          `${leemonsPath}/**/*.(js|json)`,
+          `${leemonsDatabasePath}/**/*.(js|json)`,
+          `${leemonsUtilsPath}/**/*.(js|json)`,
+        ],
+        {
+          cwd: process.cwd(),
+          persistent: true,
+          followSymlinks: true,
+          ignoreInitial: true,
+        }
+      )
       .on('all', async () => {
         Object.values(cluster.workers).forEach((worker) => {
           delete workers[worker.pid];
