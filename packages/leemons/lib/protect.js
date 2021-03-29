@@ -6,6 +6,7 @@ const { getStackTrace } = require('leemons-utils');
 
 const baseDir = process.env.PWD;
 const nextPath = path.dirname(require.resolve('next/package.json'));
+const leemonsDir = path.dirname(require.resolve('leemons/package.json'));
 const jestWorker = path.dirname(require.resolve('jest-worker/package.json'));
 
 function protectMethod(module, method, check, errormsg = `The method ${method} is private`) {
@@ -67,7 +68,11 @@ function multiPathError(method, path1, path2) {
 
 function cpCheck() {
   const caller = getStackTrace(3);
-  return caller.fileName.startsWith(jestWorker);
+  const callerAlt = getStackTrace(4);
+  if (caller.fileName.startsWith(jestWorker) || callerAlt.fileName.startsWith(leemonsDir)) {
+    return { result: true };
+  }
+  return { result: false };
 }
 
 function cpError(method) {
@@ -138,12 +143,12 @@ function protect() {
   protectMethod(fs, 'watchFile', checkPath, error);
 
   // child_process
-  protectMethod(cp, 'spawn', () => false, cpError);
-  protectMethod(cp, 'spawnSync', () => false, cpError);
-  protectMethod(cp, 'exec', () => false, cpError);
-  protectMethod(cp, 'execSync', () => false, cpError);
-  protectMethod(cp, 'execFile', () => false, cpError);
-  protectMethod(cp, 'execFileSync', () => false, cpError);
+  protectMethod(cp, 'spawn', cpCheck, cpError);
+  protectMethod(cp, 'spawnSync', cpCheck, cpError);
+  protectMethod(cp, 'exec', cpCheck, cpError);
+  protectMethod(cp, 'execSync', cpCheck, cpError);
+  protectMethod(cp, 'execFile', cpCheck, cpError);
+  protectMethod(cp, 'execFileSync', cpCheck, cpError);
   protectMethod(cp, 'fork', cpCheck, cpError);
 }
 

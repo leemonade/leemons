@@ -20,7 +20,6 @@ module.exports = () => {
   //   },
   //   options: {},
   // };
-
   const mysql = {
     connector: 'bookshelf',
     settings: {

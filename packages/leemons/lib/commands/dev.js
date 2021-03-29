@@ -1,4 +1,5 @@
 const chalk = require('chalk');
+const chokidar = require('chokidar');
 const cluster = require('cluster');
 const fs = require('fs');
 const http = require('http');
@@ -21,8 +22,10 @@ function createWorker(env = {}) {
 async function createProxy(workers, log) {
   const server = http.createServer((req, res) => {
     const { url } = req;
-    const serverUrl = Object.values(workers).find((worker) => worker.active).url;
-    req.pipe(request({ url: `${serverUrl}${url}` })).pipe(res);
+    const activeWorker = Object.values(workers).find((worker) => worker.active);
+    if (activeWorker && activeWorker.url)
+      req.pipe(request({ url: `${activeWorker.url}${url}` })).pipe(res);
+    else res.end('The server is restarting');
   });
 
   const port = await getAvailablePort();
@@ -72,7 +75,7 @@ module.exports = async (args) => {
     let nodeToBeKilled;
     let time;
 
-    process.env.NODE_ENV = 'production';
+    process.env.NODE_ENV = 'development';
 
     log(
       chalk`Started server in {green ${process.env.NODE_ENV} mode } on {underline PID: ${process.pid}}`
@@ -80,13 +83,30 @@ module.exports = async (args) => {
 
     await createProxy(workers, log);
 
+    const leemonsPath = path.dirname(require.resolve('leemons/package.json'));
+
+    chokidar
+      .watch(`${leemonsPath}/**/*.(js|json)`, {
+        cwd: process.cwd(),
+        persistent: true,
+        followSymlinks: true,
+        ignoreInitial: true,
+      })
+      .on('all', async () => {
+        Object.values(cluster.workers).forEach((worker) => {
+          delete workers[worker.pid];
+          worker.send('kill');
+        });
+        createWorker({ PORT: await getAvailablePort() });
+      });
+
     // Register every new worker
     cluster.on('fork', async (worker) => {
       const { pid } = worker.process;
       workers[pid] = {
         pid,
         url: `http://localhost:${worker.process.env.PORT}`,
-        active: true,
+        active: false,
       };
     });
 
@@ -94,6 +114,7 @@ module.exports = async (args) => {
     cluster.on('disconnect', (worker) => {
       const { pid } = worker.process;
       delete workers[pid];
+      log(chalk`Worker ${pid} killed`);
     });
 
     // Handle message logic
@@ -125,6 +146,7 @@ module.exports = async (args) => {
             nodeToBeKilled.send('kill');
             nodeToBeKilled = undefined;
           }
+          workers[worker.process.pid].active = true;
           worker.send('running');
           break;
         case 'exit':
@@ -167,6 +189,10 @@ module.exports = async (args) => {
           // When running log the time to up
           case 'running':
             log(chalk`Time to up: {underline ${timeDif(createdAt)}}`);
+            break;
+          case 'reload':
+            log(chalk`Reloading due a file change`);
+            process.send('reload');
             break;
           default:
         }

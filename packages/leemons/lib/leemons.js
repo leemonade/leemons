@@ -5,6 +5,7 @@ const Static = require('koa-static');
 const nextjs = require('next');
 const execa = require('execa');
 const _ = require('lodash');
+const ora = require('ora');
 
 const { createDatabaseManager } = require('leemons-database');
 const { loadConfiguration } = require('./core/config/loadConfig');
@@ -138,12 +139,15 @@ class Leemons {
     this.db = createDatabaseManager(this);
     // Initialize all database connections
     await this.db.init();
+
     // Initialize next
     this.front = nextjs({
       dir: this.dir.next,
     });
 
+    const spinner = ora('Building frontend').start();
     await execa('npm', ['run', 'build', '--prefix', this.dir.next]);
+    spinner.succeed('Frontend builded');
     this.frontHandler = this.front.getRequestHandler();
 
     // TODO: this should be on a custom loader
