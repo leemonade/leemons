@@ -3,6 +3,7 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const Static = require('koa-static');
 const nextjs = require('next');
+const execa = require('execa');
 const _ = require('lodash');
 
 const { createDatabaseManager } = require('leemons-database');
@@ -96,7 +97,10 @@ class Leemons {
             _.get(plugin.controllers, route.handler)
           ) {
             const handler = _.get(plugin.controllers, route.handler);
-            this.router[route.method.toLocaleLowerCase()](`/api${route.path}`, handler);
+            this.router[route.method.toLocaleLowerCase()](
+              `/api/${plugin.name}${route.path}`,
+              handler
+            );
           }
         });
       }
@@ -134,11 +138,12 @@ class Leemons {
     this.db = createDatabaseManager(this);
     // Initialize all database connections
     await this.db.init();
-
     // Initialize next
     this.front = nextjs({
-      dir: process.env.nextDir,
+      dir: this.dir.next,
     });
+
+    await execa('npm', ['run', 'build', '--prefix', this.dir.next]);
     this.frontHandler = this.front.getRequestHandler();
 
     // TODO: this should be on a custom loader
@@ -157,7 +162,6 @@ class Leemons {
       return;
     }
     await this.load();
-
     this.server.listen(process.env.PORT, () => {
       this.log(`Listening on http://localhost:${process.env.PORT}`);
 

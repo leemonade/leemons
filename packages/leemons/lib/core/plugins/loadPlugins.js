@@ -10,16 +10,22 @@ const { getLocalPlugins, getExternalPlugins } = require('./getPlugins');
 const checkPluginDuplicates = require('./checkPluginDuplicates');
 const loadServices = require('./loadServices');
 
+function loadFront(pluginName, nextDir) {
+  fs.copySync(path.join(nextDir, 'pages'), path.join(global.leemons.dir.next, 'pages', pluginName));
+}
+
 function loadPlugins(leemons) {
   const plugins = [...getLocalPlugins(leemons), ...getExternalPlugins(leemons)];
   checkPluginDuplicates(plugins);
 
+  // Load all the plugins configuration
   let loadedPlugins = plugins.map((plugin) => {
     const config = loadConfiguration(plugin, plugin.path, {
       config: 'config',
       models: 'models',
       controllers: 'controllers',
       services: 'services',
+      next: 'next',
     });
 
     return {
@@ -30,10 +36,13 @@ function loadPlugins(leemons) {
     };
   });
 
+  // Save the plugins in leemons (for the protect() to work)
   _.set(leemons, 'plugins', loadedPlugins);
 
+  // Throw an error when two plugins have the same id
   checkPluginDuplicates(loadedPlugins);
 
+  // Process every plugin
   loadedPlugins = loadedPlugins.map((plugin) => {
     const pluginObj = plugin;
 
@@ -60,10 +69,13 @@ function loadPlugins(leemons) {
 
     // Load services
     const services = loadServices(path.resolve(pluginObj.dir.app, pluginObj.dir.services));
+
+    loadFront(pluginObj.name, path.resolve(pluginObj.dir.app, pluginObj.dir.next));
     // Return as the result of Object.entries
     return [pluginObj.name, { ...pluginObj, routes, controllers, services }];
   });
 
+  // Split the plugins in private and public
   const privatePlugins = loadedPlugins.filter(
     ([, plugin]) => plugin.config.get('config.private', false) === true
   );
@@ -71,8 +83,7 @@ function loadPlugins(leemons) {
     ([, plugin]) => plugin.config.get('config.private', false) === false
   );
 
-  // loadedPlugins = _.fromPairs(loadedPlugins);
-
+  // Expose the plugin object under leemons.plugin
   Object.defineProperty(leemons, 'plugin', {
     get: () => {
       const caller = getStackTrace(2).fileName;
@@ -85,7 +96,7 @@ function loadPlugins(leemons) {
   });
   const leemonsPath = `${path.dirname(require.resolve('leemons/package.json'))}/`;
   const leemonsDatabasePath = `${path.dirname(require.resolve('leemons-database/package.json'))}/`;
-  // TODO: Is not working
+
   Object.defineProperty(leemons, 'plugins', {
     get: () => {
       const caller = getStackTrace(2).fileName;

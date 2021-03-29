@@ -9,6 +9,7 @@ const leemonsDefaultDirs = {
   config: env('CONFIG_DIR', 'config'),
   models: 'models',
   plugins: 'plugins',
+  next: env('nextDir', 'next'),
 };
 
 function loadConfiguration(object, dir = process.cwd(), defaultDirs = leemonsDefaultDirs) {
