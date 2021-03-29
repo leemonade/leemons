@@ -30,6 +30,8 @@ function loadPlugins(leemons) {
     };
   });
 
+  _.set(leemons, 'plugins', loadedPlugins);
+
   checkPluginDuplicates(loadedPlugins);
 
   loadedPlugins = loadedPlugins.map((plugin) => {

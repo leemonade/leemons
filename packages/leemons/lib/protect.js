@@ -1,23 +1,29 @@
 const fs = require('fs');
+const cp = require('child_process');
 const path = require('path');
+
 const { getStackTrace } = require('leemons-utils');
 
 const baseDir = process.env.PWD;
 const nextPath = path.dirname(require.resolve('next/package.json'));
+const jestWorker = path.dirname(require.resolve('jest-worker/package.json'));
 
 function protectMethod(module, method, check, errormsg = `The method ${method} is private`) {
   const originalMethod = module[method];
 
   // eslint-disable-next-line no-param-reassign
   module[method] = (...args) => {
-    const { path1, path2 } = check(...args);
-    if (path1) {
-      if (path2) {
-        args.splice(0, 2);
-        return originalMethod(path1, path2, ...args);
+    const { path1, path2, result = true } = check(...args);
+    if (result) {
+      if (path1) {
+        if (path2) {
+          args.splice(0, 2);
+          return originalMethod(path1, path2, ...args);
+        }
+        args.shift();
+        return originalMethod(path1, ...args);
       }
-      args.shift();
-      return originalMethod(path1, ...args);
+      return originalMethod(...args);
     }
 
     if (typeof errormsg === 'function') {
@@ -29,6 +35,17 @@ function protectMethod(module, method, check, errormsg = `The method ${method} i
 function checkPath(userPath) {
   const caller = getStackTrace(3);
   const path1 = path.resolve(path.dirname(caller.fileName), userPath);
+
+  // If the caller is a plugin, only let access the plugin folders
+  if (global.leemons && global.leemons.plugins) {
+    const plugin = Object.values(global.leemons.plugins).find((targetPlugin) =>
+      caller.fileName.startsWith(targetPlugin.dir.app)
+    );
+    if (plugin) {
+      return path1.startsWith(plugin.dir.app) ? { path1 } : { result: false };
+    }
+  }
+
   if (
     path1.startsWith(baseDir) ||
     caller.fileName.startsWith(path.join('internal', 'modules', 'cjs')) ||
@@ -38,13 +55,23 @@ function checkPath(userPath) {
   ) {
     return { path1 };
   }
-  return false;
+  return { result: false };
 }
 function error(method, path1) {
   return `The method ${method} is private for the path '${path1}'`;
 }
+
 function multiPathError(method, path1, path2) {
   return `The method ${method} is private for the path '${path1}' or '${path2}'`;
+}
+
+function cpCheck() {
+  const caller = getStackTrace(3);
+  return caller.fileName.startsWith(jestWorker);
+}
+
+function cpError(method) {
+  return `The method ${method} can't be used`;
 }
 
 function checkMultiPath(path1, path2) {
@@ -53,9 +80,10 @@ function checkMultiPath(path1, path2) {
   if (check1 && check2) {
     return { ...check1, ...check2 };
   }
-  return false;
+  return { result: false };
 }
 function protect() {
+  // FS
   protectMethod(fs, 'writeFile', checkPath, error);
   protectMethod(fs, 'writeFileSync', checkPath, error);
   protectMethod(fs, 'readFile', checkPath, error);
@@ -108,6 +136,15 @@ function protect() {
   protectMethod(fs, 'utimesSync', checkPath, error);
   protectMethod(fs, 'watch', checkPath, error);
   protectMethod(fs, 'watchFile', checkPath, error);
+
+  // child_process
+  protectMethod(cp, 'spawn', () => false, cpError);
+  protectMethod(cp, 'spawnSync', () => false, cpError);
+  protectMethod(cp, 'exec', () => false, cpError);
+  protectMethod(cp, 'execSync', () => false, cpError);
+  protectMethod(cp, 'execFile', () => false, cpError);
+  protectMethod(cp, 'execFileSync', () => false, cpError);
+  protectMethod(cp, 'fork', cpCheck, cpError);
 }
 
 module.exports = protect;
