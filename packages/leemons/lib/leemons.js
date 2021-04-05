@@ -6,6 +6,7 @@ const nextjs = require('next');
 const execa = require('execa');
 const _ = require('lodash');
 const ora = require('ora');
+const bodyParser = require('koa-bodyparser');
 
 const { createDatabaseManager } = require('leemons-database');
 const { loadConfiguration } = require('./core/config/loadConfig');
@@ -15,6 +16,9 @@ const protect = require('./protect');
 
 class Leemons {
   constructor(log) {
+    // expose leemons globally
+    global.leemons = this;
+
     // TODO: Do a good log system
     this.log = log;
     log('New leemons');
@@ -83,6 +87,8 @@ class Leemons {
       this.log(`New connection to ${ctx.method} ${ctx.path}`);
       await next();
     });
+
+    this.app.use(bodyParser());
   }
 
   // Initialize the api endpoints
@@ -145,9 +151,11 @@ class Leemons {
       dir: this.dir.next,
     });
 
-    const spinner = ora('Building frontend').start();
-    await execa('npm', ['run', 'build', '--prefix', this.dir.next]);
-    spinner.succeed('Frontend builded');
+    if (this.needsBuild) {
+      const spinner = ora('Building frontend').start();
+      await execa('npm', ['run', 'build', '--prefix', this.dir.next]);
+      spinner.succeed('Frontend builded');
+    }
     this.frontHandler = this.front.getRequestHandler();
 
     // TODO: this should be on a custom loader
@@ -177,8 +185,5 @@ class Leemons {
 
 module.exports = (...args) => {
   const leemons = new Leemons(...args);
-  // expose leemons globally
-  global.leemons = leemons;
-
   return leemons;
 };

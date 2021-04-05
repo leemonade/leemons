@@ -38,8 +38,8 @@ function checkPath(userPath) {
   const path1 = path.resolve(path.dirname(caller.fileName), userPath);
 
   // If the caller is a plugin, only let access the plugin folders
-  if (global.leemons && global.leemons.plugins) {
-    const plugin = Object.values(global.leemons.plugins).find((targetPlugin) =>
+  if (leemons && leemons.plugins) {
+    const plugin = Object.values(leemons.plugins).find((targetPlugin) =>
       caller.fileName.startsWith(targetPlugin.dir.app)
     );
     if (plugin) {

@@ -8,7 +8,7 @@ function loadJSFile(file) {
     // eslint-disable-next-line import/no-dynamic-require, global-require
     const fileContent = require(file);
     if (typeof fileContent === 'function') {
-      return fileContent(env, global.leemons);
+      return fileContent(env, leemons);
     }
     return fileContent;
   } catch (e) {

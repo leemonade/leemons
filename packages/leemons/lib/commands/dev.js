@@ -10,7 +10,7 @@ const detect = require('detect-port');
 const leemons = require('../index');
 
 function getAvailablePort(port = process.env.PORT || 8080) {
-  return detect(port).then((_port) => _port);
+  return detect(port);
 }
 
 function createWorker(env = {}) {
@@ -83,6 +83,7 @@ module.exports = async (args) => {
 
     await createProxy(workers, log);
 
+    const appPath = process.cwd();
     const leemonsPath = path.dirname(require.resolve('leemons/package.json'));
     const leemonsDatabasePath = path.dirname(require.resolve('leemons-database/package.json'));
     const leemonsUtilsPath = path.dirname(require.resolve('leemons-utils/package.json'));
@@ -90,6 +91,7 @@ module.exports = async (args) => {
     chokidar
       .watch(
         [
+          `${appPath}/**/*.(js|json)`,
           `${leemonsPath}/**/*.(js|json)`,
           `${leemonsDatabasePath}/**/*.(js|json)`,
           `${leemonsUtilsPath}/**/*.(js|json)`,
@@ -97,6 +99,7 @@ module.exports = async (args) => {
         {
           cwd: process.cwd(),
           persistent: true,
+          ignored: [`${nextDir}`],
           followSymlinks: true,
           ignoreInitial: true,
         }

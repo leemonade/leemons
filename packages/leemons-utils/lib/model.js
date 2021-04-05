@@ -11,7 +11,7 @@ function getModel(path, models = null) {
   }
   if (!modelObject) {
     const absolutePath = path.split('::')[0].replace(/_/g, '.');
-    modelObject = _.get(global.leemons, `${absolutePath}.models.${path}`, null);
+    modelObject = _.get(leemons, `${absolutePath}.models.${path}`, null);
   }
   return modelObject;
 }

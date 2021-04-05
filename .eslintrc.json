@@ -4,6 +4,9 @@
     "es2021": true,
     "node": true
   },
+  "globals": {
+    "leemons": true
+  },
   "extends": [
     "plugin:react/recommended",
     "airbnb-base",

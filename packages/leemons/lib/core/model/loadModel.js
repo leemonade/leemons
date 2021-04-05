@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 const { createCoreStore, coreStoreProvider } = require('./coreStore');
 
-function formatModel(name, modelConfig, target = 'global', leemons = global.leemons) {
+function formatModel(name, modelConfig, target = 'global') {
   const defaultModel = {
     modelName: name,
     connection: leemons ? leemons.config.get('database.defaultConnection') : null,
@@ -57,11 +57,11 @@ function formatModel(name, modelConfig, target = 'global', leemons = global.leem
   return { [model.modelName]: model };
 }
 
-function formatModels(models, target = 'global', leemons = global.leemons) {
+function formatModels(models, target = 'global') {
   return Object.entries(models).reduce(
     (formattedModels, [name, model]) => ({
       ...formattedModels,
-      ...formatModel(name, model, target, leemons),
+      ...formatModel(name, model, target),
     }),
     {}
   );

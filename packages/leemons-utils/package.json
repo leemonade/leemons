@@ -4,6 +4,9 @@
   "main": "lib/index.js",
   "license": "MIT",
   "dependencies": {
-    "lodash": "^4.17.21"
+    "fs-extra": "^9.1.0",
+    "lodash": "^4.17.21",
+    "md5-file": "^5.0.0",
+    "object-hash": "^2.1.1"
   }
 }

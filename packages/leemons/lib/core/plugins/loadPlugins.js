@@ -9,10 +9,7 @@ const { formatModels } = require('../model/loadModel');
 const { getLocalPlugins, getExternalPlugins } = require('./getPlugins');
 const checkPluginDuplicates = require('./checkPluginDuplicates');
 const loadServices = require('./loadServices');
-
-function loadFront(pluginName, nextDir) {
-  fs.copySync(path.join(nextDir, 'pages'), path.join(global.leemons.dir.next, 'pages', pluginName));
-}
+const loadFront = require('./front/loadFront');
 
 function loadPlugins(leemons) {
   const plugins = [...getLocalPlugins(leemons), ...getExternalPlugins(leemons)];
@@ -70,10 +67,13 @@ function loadPlugins(leemons) {
     // Load services
     const services = loadServices(path.resolve(pluginObj.dir.app, pluginObj.dir.services));
 
-    loadFront(pluginObj.name, path.resolve(pluginObj.dir.app, pluginObj.dir.next));
     // Return as the result of Object.entries
     return [pluginObj.name, { ...pluginObj, routes, controllers, services }];
   });
+
+  // Load the frontend of all the plugins
+  _.set(leemons, 'needsBuild', false);
+  loadFront();
 
   // Split the plugins in private and public
   const privatePlugins = loadedPlugins.filter(
