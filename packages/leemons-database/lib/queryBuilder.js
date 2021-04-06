@@ -33,8 +33,7 @@ function queryBuilder(model, connector) {
     find: createQuery({ query: 'find', model, connectorQuery }),
     findOne: createQuery({ query: 'findOne', model, connectorQuery }),
     count: createQuery({ query: 'count', model, connectorQuery }),
-
-    model,
+    transaction: connectorQuery.transaction,
   };
 }
 

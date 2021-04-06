@@ -11,6 +11,8 @@ const checkPluginDuplicates = require('./checkPluginDuplicates');
 const loadServices = require('./loadServices');
 const loadFront = require('./front/loadFront');
 
+// TODO: Load database prior to any plugin file
+
 function loadPlugins(leemons) {
   const plugins = [...getLocalPlugins(leemons), ...getExternalPlugins(leemons)];
   checkPluginDuplicates(plugins);

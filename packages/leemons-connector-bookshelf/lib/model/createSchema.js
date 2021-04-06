@@ -36,10 +36,10 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
 
   const createColumns = (table, columns = Object.entries(model.attributes), alter = false) =>
     columns.forEach(async ([name, properties]) => {
+      let col;
       // Create a column for the relation (only if not `many to many`)
       if (_.has(properties, 'references') && properties.references.relation !== 'many to many') {
         const relatedPrimaryKey = getRelationPrimaryKey(properties);
-        let col;
 
         // The type of the col is the related primary key type
         _.set(properties, 'type', relatedPrimaryKey.type);
@@ -58,73 +58,75 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
           col.unique();
         }
         // If the relation is `one to many`, leave the column not unique
-        return col;
+        // return col;
       }
 
       // A SQL type defined by the user
-      if (_.has(properties, 'specificType')) {
-        return table.specificType(name, properties.specificType);
+      else if (_.has(properties, 'specificType')) {
+        col = table.specificType(name, properties.specificType);
       }
 
-      if (!_.has(properties, 'type')) {
+      // Has not type specified at all and is not a relation
+      else if (!_.has(properties, 'type')) {
         return null;
       }
 
-      let col;
-
-      // Set the property type
-      switch (properties.type) {
-        case 'string':
-        case 'text':
-        case 'richtext':
-          col = table.string(name, properties.length); // default length is 255 (Do not use text because the space in disk ~65537B)
-          break;
-        case 'enum':
-        case 'enu':
-        case 'enumeration':
-          if (Array.isArray(properties.enumValues)) {
-            col = table.enu(name, properties.enum);
+      // Has a bookshelf type
+      else {
+        // Set the property type
+        switch (properties.type) {
+          case 'string':
+          case 'text':
+          case 'richtext':
+            col = table.string(name, properties.length); // default length is 255 (Do not use text because the space in disk ~65537B)
             break;
-          }
-          return null;
+          case 'enum':
+          case 'enu':
+          case 'enumeration':
+            if (Array.isArray(properties.enumValues)) {
+              col = table.enu(name, properties.enum);
+              break;
+            }
+            return null;
 
-        case 'json':
-        case 'jsonb':
-          col = table.jsonb(name);
-          break;
+          case 'json':
+          case 'jsonb':
+            col = table.jsonb(name);
+            break;
 
-        case 'int':
-        case 'integer':
-          col = table.integer(name);
-          break;
+          case 'int':
+          case 'integer':
+            col = table.integer(name);
+            break;
 
-        case 'bigint':
-        case 'biginteger':
-          col = table.bigInteger(name);
-          break;
+          case 'bigint':
+          case 'biginteger':
+            col = table.bigInteger(name);
+            break;
 
-        case 'float':
-          col = table.float(name, properties.precision, properties.scale);
-          break;
+          case 'float':
+            col = table.float(name, properties.precision, properties.scale);
+            break;
 
-        case 'decimal':
-          col = table.decimal(name, properties.precision, properties.scale);
-          break;
+          case 'decimal':
+            col = table.decimal(name, properties.precision, properties.scale);
+            break;
 
-        case 'binary':
-          col = table.binary(name, properties.length);
-          break;
+          case 'binary':
+            col = table.binary(name, properties.length);
+            break;
 
-        case 'boolean':
-          col = table.boolean(name);
-          break;
+          case 'boolean':
+            col = table.boolean(name);
+            break;
 
-        case 'uuid':
-          col = table.uuid(name);
-          break;
+          case 'uuid':
+            col = table.uuid(name);
+            break;
 
-        default:
-          return null;
+          default:
+            return null;
+        }
       }
 
       // Set the property options (notNull, unique...)

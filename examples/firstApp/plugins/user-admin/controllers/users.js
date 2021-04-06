@@ -1,10 +1,13 @@
 async function register(ctx) {
   const { name, email, password } = ctx.request.body;
   if (name && email && password) {
-    const user = await leemons.query('plugins_user-admin::users').create({ name, email, password });
-    if (user) {
+    try {
+      const user = await leemons
+        .query('plugins_user-admin::users')
+        .create({ name, email, password });
+
       ctx.body = { msg: 'The user has been created', user };
-    } else {
+    } catch (e) {
       ctx.body = { msg: `The user can't be created` };
     }
   } else {

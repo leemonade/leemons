@@ -43,7 +43,7 @@ function generateQueries(model /* connector */) {
     const filters = parseFilters({ filters: query, model });
     const newQuery = buildQuery(model, filters);
 
-    const entry = await bookshelfModel.query(newQuery).fetch({ transacting });
+    const entry = await bookshelfModel.query(newQuery).fetch({ transacting, require: false });
 
     if (!entry) {
       const err = new Error('entry.notFound');
@@ -88,7 +88,7 @@ function generateQueries(model /* connector */) {
     const filters = parseFilters({ filters: { ...query, $limit: 1 }, model });
     const newQuery = buildQuery(model, filters);
 
-    const entry = await bookshelfModel.query(newQuery).fetch({ transacting });
+    const entry = await bookshelfModel.query(newQuery).fetch({ transacting, require: false });
 
     if (!entry) {
       const err = new Error('entry.notFound');
@@ -146,14 +146,18 @@ function generateQueries(model /* connector */) {
   }
 
   async function set(query, item, { transacting } = {}) {
-    const entry = await findOne(query, { transacting });
+    const filters = parseFilters({ filters: query, model });
+    const newQuery = buildQuery(model, filters);
+    const entry = await bookshelfModel.query(newQuery).fetch({
+      require: false,
+      transacting,
+    });
 
     if (entry) {
       if (!_.has(item, 'updated_at')) {
         _.set(item, 'updated_at', new Date());
       }
       const attributes = selectAttributes(item);
-
       return Object.keys(attributes).length > 0
         ? entry
             .save(attributes, { method: 'update', patch: true, transacting })
@@ -161,6 +165,10 @@ function generateQueries(model /* connector */) {
         : entry.toJSON();
     }
     return create({ ...query, ...item }, { transacting });
+  }
+
+  async function transaction(f) {
+    return model.ORM.transaction(f);
   }
 
   return {
@@ -174,6 +182,7 @@ function generateQueries(model /* connector */) {
     findOne,
     count,
     set,
+    transaction,
   };
 }
 

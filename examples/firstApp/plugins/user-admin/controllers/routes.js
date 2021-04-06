@@ -19,4 +19,30 @@ module.exports = [
     method: 'POST',
     handler: 'users.login',
   },
+
+  {
+    path: '/user/:id/posts',
+    method: 'GET',
+    handler: 'posts.userPosts',
+  },
+  {
+    path: '/post',
+    method: 'POST',
+    handler: 'posts.create',
+  },
+  {
+    path: '/post/:id',
+    method: 'GET',
+    handler: 'posts.read',
+  },
+  {
+    path: '/post/:id',
+    method: 'PATCH',
+    handler: 'posts.update',
+  },
+  {
+    path: '/post/:id',
+    method: 'DELETE',
+    handler: 'posts.delete',
+  },
 ];
