@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 
+const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
 const readdirRecursiveSync = require('leemons-utils/lib/readdirRecursiveSync');
@@ -85,7 +86,7 @@ function loadFront() {
   const nextPath = leemons.dir.next;
 
   // Detect plugins folder
-  const { plugins } = leemons;
+  const plugins = _.values(leemons.plugins);
 
   const pagesPath = path.resolve(nextPath, 'pages');
   const srcPath = path.resolve(nextPath, 'src');

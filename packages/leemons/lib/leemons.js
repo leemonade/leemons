@@ -11,7 +11,7 @@ const bodyParser = require('koa-bodyparser');
 const { createDatabaseManager } = require('leemons-database');
 const { loadConfiguration } = require('./core/config/loadConfig');
 const { loadModels } = require('./core/model/loadModel');
-const loadPlugins = require('./core/plugins/loadPlugins');
+const { loadPlugins, initializePlugins } = require('./core/plugins/loadPlugins');
 const protect = require('./protect');
 
 class Leemons {
@@ -140,11 +140,14 @@ class Leemons {
       return true;
     }
     loadPlugins(this);
+
     loadModels(this);
     // Create a database manager
     this.db = createDatabaseManager(this);
     // Initialize all database connections
     await this.db.init();
+
+    initializePlugins(this);
 
     // Initialize next
     this.front = nextjs({

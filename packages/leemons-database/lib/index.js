@@ -80,17 +80,13 @@ class DatabaseManager {
   }
 
   query(modelName) {
-    // TODO: Private models (can be accessed through the ORM (the ORM is exposed per plugin))
-    // TODO: Limit database deletion
     // TODO: Add plugin roles
 
     // Get the used connector (if no connection provided, get the default one)
     // const connector = this.connectors.getFromConnection(connection);
-
     if (modelName.split('_')[0] === 'plugins') {
       const caller = getStackTrace(3).fileName;
       const plugin = _.get(this.leemons, modelName.split('::')[0].replace(/_/g, '.'));
-
       const leemonsPath = path.dirname(require.resolve('leemons/package.json'));
       const leemonsDatabasePath = path.dirname(require.resolve('leemons-database/package.json'));
 

@@ -1,10 +1,10 @@
+const usersTable = leemons.query('plugins_user-admin::users');
+
 async function register(ctx) {
   const { name, email, password } = ctx.request.body;
   if (name && email && password) {
     try {
-      const user = await leemons
-        .query('plugins_user-admin::users')
-        .create({ name, email, password });
+      const user = await usersTable.create({ name, email, password });
 
       ctx.body = { msg: 'The user has been created', user };
     } catch (e) {
@@ -17,9 +17,7 @@ async function register(ctx) {
 
 async function publicInfo(ctx) {
   const { id } = ctx.request.params;
-  const user = await leemons
-    .query('plugins_user-admin::users')
-    .findOne({ id }, { columns: ['id', 'name'] });
+  const user = await usersTable.findOne({ id }, { columns: ['id', 'name'] });
 
   if (user) {
     ctx.body = { msg: 'The user has been found', user };
@@ -29,9 +27,7 @@ async function publicInfo(ctx) {
 }
 
 async function allUsers(ctx) {
-  const users = await leemons
-    .query('plugins_user-admin::users')
-    .find({}, { columns: ['name', 'id'] });
+  const users = await usersTable.find({}, { columns: ['name', 'id'] });
   if (users.length) {
     ctx.body = { msg: 'All the user info has been sent', users };
   } else {
@@ -43,7 +39,7 @@ async function login(ctx) {
   const { email, password } = ctx.request.body;
 
   if (email && password) {
-    const user = await leemons.query('plugins_user-admin::users').findOne({ email, password });
+    const user = await usersTable.findOne({ email, password });
     if (user) {
       ctx.body = { msg: 'You have logged', user };
     } else {

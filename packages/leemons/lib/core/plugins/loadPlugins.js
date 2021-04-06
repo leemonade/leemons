@@ -11,8 +11,6 @@ const checkPluginDuplicates = require('./checkPluginDuplicates');
 const loadServices = require('./loadServices');
 const loadFront = require('./front/loadFront');
 
-// TODO: Load database prior to any plugin file
-
 function loadPlugins(leemons) {
   const plugins = [...getLocalPlugins(leemons), ...getExternalPlugins(leemons)];
   checkPluginDuplicates(plugins);
@@ -35,13 +33,10 @@ function loadPlugins(leemons) {
     };
   });
 
-  // Save the plugins in leemons (for the protect() to work)
-  _.set(leemons, 'plugins', loadedPlugins);
-
   // Throw an error when two plugins have the same id
   checkPluginDuplicates(loadedPlugins);
 
-  // Process every plugin
+  // Process every plugin models
   loadedPlugins = loadedPlugins.map((plugin) => {
     const pluginObj = plugin;
 
@@ -49,6 +44,17 @@ function loadPlugins(leemons) {
     const pluginModels = loadFiles(path.resolve(pluginObj.dir.app, pluginObj.dir.models));
     pluginObj.models = formatModels(pluginModels, `plugins.${pluginObj.name}`);
 
+    return [pluginObj.name, pluginObj];
+  });
+
+  // Save the plugins in leemons (for the protect() to work inside controllers and services)
+  _.set(leemons, 'plugins', _.fromPairs(loadedPlugins));
+}
+function initializePlugins(leemons) {
+  let loadedPlugins = _.values(leemons.plugins);
+  // Process every plugin
+  loadedPlugins = loadedPlugins.map((plugin) => {
+    const pluginObj = plugin;
     // Load routes
     let routesFile = path.resolve(pluginObj.dir.app, pluginObj.dir.controllers, 'routes');
     let routes = {};
@@ -117,4 +123,4 @@ function loadPlugins(leemons) {
   });
 }
 
-module.exports = loadPlugins;
+module.exports = { loadPlugins, initializePlugins };
