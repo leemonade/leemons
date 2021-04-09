@@ -35,7 +35,7 @@ function readdirRecursiveSync(
       let fileObj = { name, path: fileDir, type };
       // If the file is a directory, read that directory
       if (type === 'directory') {
-        fileObj = readdirRecursiveSync(fileDir, { checksums, json, relative });
+        fileObj = readdirRecursiveSync(fileDir, { checksums, json, relative, ignore });
 
         // If it's a file and checksums is specified, get checksum of file
       } else if (type === 'file' && checksums) {
@@ -51,7 +51,7 @@ function readdirRecursiveSync(
     });
 
   // The object describing the current directory
-  let dirObj = {
+  const dirObj = {
     name: path.basename(dir),
     type: 'directory',
     path: relative ? path.relative(relative, dir) : dir,
@@ -61,7 +61,7 @@ function readdirRecursiveSync(
   // If the json flag is on, use jsons instead of arrays (Use this if you know the files you are looking for)
   if (json) {
     if (dirObj.content.length) {
-      dirObj = _.fromPairs(dirObj.map((file) => [file.name, file]));
+      dirObj.content = _.fromPairs(dirObj.content.map((file) => [file.name, file]));
     } else {
       dirObj.content = null;
     }
