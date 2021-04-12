@@ -83,7 +83,7 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
           case 'enum':
           case 'enu':
           case 'enumeration':
-            if (Array.isArray(properties.enumValues)) {
+            if (Array.isArray(properties.enum)) {
               col = table.enu(name, properties.enum);
               break;
             }
