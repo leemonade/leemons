@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
+const vm = require('../config/vm');
 const { loadFile } = require('../config/loadFiles');
 
 function loadServices(dir) {
@@ -22,8 +23,9 @@ function loadServices(dir) {
         fileContent = loadFile(path.resolve(dir, file.name));
       } else if (fileExt === '.js') {
         try {
+          fileContent = vm(dir).runFile(path.resolve(dir, file.name));
           // eslint-disable-next-line import/no-dynamic-require, global-require
-          fileContent = require(path.resolve(dir, file.name));
+          // fileContent = require(path.resolve(dir, file.name));
         } catch (e) {
           throw new Error(`File can not be read: ${file}. ${e.message}`);
         }

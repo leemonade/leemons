@@ -84,9 +84,10 @@ function initializePlugins(leemons) {
   loadFront();
 
   // Split the plugins in private and public
-  const privatePlugins = loadedPlugins.filter(
-    ([, plugin]) => plugin.config.get('config.private', false) === true
-  );
+  const privatePlugins = loadedPlugins
+    .filter(([, plugin]) => plugin.config.get('config.private', false) === true)
+    .map(([name, plugin]) => [name, { private: true, ...plugin }]);
+
   loadedPlugins = loadedPlugins.filter(
     ([, plugin]) => plugin.config.get('config.private', false) === false
   );
@@ -94,8 +95,10 @@ function initializePlugins(leemons) {
   // Expose the plugin object under leemons.plugin
   Object.defineProperty(leemons, 'plugin', {
     get: () => {
-      const caller = getStackTrace(2).fileName;
-      const plugin = loadedPlugins.find(([, object]) => caller.startsWith(object.dir.app));
+      const caller = getStackTrace(4).fileName;
+      const plugin = [...loadedPlugins, ...privatePlugins].find(([, object]) =>
+        caller.startsWith(object.dir.app)
+      );
       if (plugin) {
         return plugin[1];
       }
@@ -107,8 +110,12 @@ function initializePlugins(leemons) {
 
   Object.defineProperty(leemons, 'plugins', {
     get: () => {
-      const caller = getStackTrace(2).fileName;
+      let caller = getStackTrace(2).fileName;
 
+      // When containerized in VM
+      if (caller === null) {
+        caller = getStackTrace(4).fileName;
+      }
       const visiblePlugins = [...loadedPlugins];
       // Return the plugins
       const plugin = privatePlugins.find(([, object]) => {

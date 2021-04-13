@@ -85,7 +85,7 @@ class DatabaseManager {
     // Get the used connector (if no connection provided, get the default one)
     // const connector = this.connectors.getFromConnection(connection);
     if (modelName.split('_')[0] === 'plugins') {
-      const caller = getStackTrace(3).fileName;
+      const caller = getStackTrace(4).fileName;
       const plugin = _.get(this.leemons, modelName.split('::')[0].replace(/_/g, '.'));
       const leemonsPath = path.dirname(require.resolve('leemons/package.json'));
       const leemonsDatabasePath = path.dirname(require.resolve('leemons-database/package.json'));

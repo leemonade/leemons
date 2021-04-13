@@ -1,1 +1,1 @@
-{"compilerOptions":{"baseUrl":".","paths":{}}}
+{"compilerOptions":{"baseUrl":".","paths":{"@user-admin/*":["src/user-admin/*"]}}}

@@ -1,12 +1,11 @@
 const fs = require('fs-extra');
 const path = require('path');
-
 const { env } = require('leemons-utils');
+const vm = require('./vm');
 
 function loadJSFile(file) {
   try {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const fileContent = require(file);
+    const fileContent = vm(path.dirname(file)).runFile(file);
     if (typeof fileContent === 'function') {
       return fileContent({ env, leemons });
     }

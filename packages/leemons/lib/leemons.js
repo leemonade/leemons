@@ -12,7 +12,6 @@ const { createDatabaseManager } = require('leemons-database');
 const { loadConfiguration } = require('./core/config/loadConfig');
 const { loadModels } = require('./core/model/loadModel');
 const { loadPlugins, initializePlugins } = require('./core/plugins/loadPlugins');
-const protect = require('./protect');
 
 class Leemons {
   constructor(log) {
@@ -28,8 +27,6 @@ class Leemons {
 
     this.app = new Koa();
     this.router = new Router();
-    // TODO: Run all the untrusted code in a VM2
-    protect();
 
     this.config = loadConfiguration(this);
 
