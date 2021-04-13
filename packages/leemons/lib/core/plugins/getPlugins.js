@@ -1,6 +1,8 @@
 const fs = require('fs-extra');
 const path = require('path');
+const { loadFile } = require('../config/loadFiles');
 
+// Get an array of plugins stored under '/${pluginsFolder}'
 function getLocalPlugins(leemons) {
   const dir = path.resolve(leemons.dir.app, leemons.dir.plugins);
   const plugins = [];
@@ -15,16 +17,21 @@ function getLocalPlugins(leemons) {
   return plugins;
 }
 
+// Get an array of plugins stored in node_modules
 function getExternalPlugins(leemons) {
   const plugins = [];
+  // TODO: Check this change
   // eslint-disable-next-line import/no-dynamic-require, global-require
-  const packageJSON = require(path.resolve(leemons.dir.app, 'package.json'));
+  // const packageJSON = require(path.resolve(leemons.dir.app, 'package.json'));
+  const packageJSON = loadFile(path.resolve(leemons.dir.app, 'package.json'));
 
+  // Get the plugins from the app dependencies in package.json
   if (packageJSON.dependencies) {
     plugins.push(
       ...Object.keys(packageJSON.dependencies)
         .map((name) => {
           try {
+            // Get those dependencies called 'leemons-plugin-*'
             if (name.startsWith('leemons-plugin-')) {
               const pluginPath = path.dirname(require.resolve(`${name}/package.json`));
               return {

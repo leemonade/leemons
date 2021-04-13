@@ -3,6 +3,7 @@ const _ = require('lodash');
 function coreStoreProvider(model, leemons) {
   const modelProvider = _.cloneDeep(model.core_store);
 
+  // Return the core_store model with helper functions
   Object.assign(modelProvider, {
     get: (key, transacting) => leemons.query('core_store').findOne({ key }, { transacting }),
 
@@ -16,6 +17,7 @@ function coreStoreProvider(model, leemons) {
 }
 
 function createCoreStore() {
+  // Generate a model with a table called 'core_store' and the attrbutes: key, value, type, and env
   const model = {
     collectionName: 'core_store',
     attributes: {

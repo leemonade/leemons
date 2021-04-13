@@ -2,61 +2,85 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 
+// Generate an array with the protected method [name, function]
+function protectMethod(module, method, check, errormsg = `The method ${method} is private`) {
+  const originalMethod = module[method];
+
+  return [
+    method,
+    (...args) => {
+      // Runs the check we gave
+      const { path1, path2, result = true } = check(...args);
+      // If we have a result not false
+      if (result) {
+        // And the path1 exists
+        if (path1) {
+          // If there is a second path, use it
+          if (path2) {
+            args.splice(0, 2);
+            return originalMethod(path1, path2, ...args);
+          }
+          // Else use only the first one
+          args.shift();
+          return originalMethod(path1, ...args);
+        }
+        return originalMethod(...args);
+      }
+
+      // If an error occurred, throw with the given error
+      if (typeof errormsg === 'function') {
+        throw new Error(errormsg(method, ...args));
+      }
+      throw new Error(errormsg);
+    },
+  ];
+}
+
+// Generate a FS allowing the operations inside the given path
 module.exports = (allowedRelPath) => {
+  // Generate an absolute path for the allowed directory
   const allowedPath = path.isAbsolute(allowedRelPath)
     ? allowedRelPath
     : path.resolve(allowedRelPath);
 
-  function protectMethod(module, method, check, errormsg = `The method ${method} is private`) {
-    const originalMethod = module[method];
-
-    return [
-      method,
-      (...args) => {
-        const { path1, path2, result = true } = check(...args);
-        if (result) {
-          if (path1) {
-            if (path2) {
-              args.splice(0, 2);
-              return originalMethod(path1, path2, ...args);
-            }
-            args.shift();
-            return originalMethod(path1, ...args);
-          }
-          return originalMethod(...args);
-        }
-
-        if (typeof errormsg === 'function') {
-          throw new Error(errormsg(method, ...args));
-        }
-        throw new Error(errormsg);
-      },
-    ];
-  }
+  // The one path checking function
   function checkPath(userPath) {
+    // Get the absolute path used
     const path1 = path.resolve(allowedPath, userPath);
 
+    // If the path is inside the allowed directory, return true
     if (path1.startsWith(allowedPath)) {
       return { path1 };
     }
+    // else return false
     return { result: false };
   }
-  function error(method, path1) {
-    return `The method ${method} is private for the path '${path1}'`;
-  }
 
-  function multiPathError(method, path1, path2) {
-    return `The method ${method} is private for the path '${path1}' or '${path2}'`;
-  }
-
+  // The 2 path checking function
   function checkMultiPath(path1, path2) {
-    const check1 = checkPath(path1);
-    const check2 = checkPath(path2);
+    // run one path checking function with path 1
+    const { result: check1 = true } = checkPath(path1);
+    // The same with path 2
+    const { result: check2 = true } = checkPath(path2);
+
+    // If both are valid return true
     if (check1 && check2) {
       return { ...check1, ...check2 };
     }
     return { result: false };
   }
+
+  // Generate a custom error for 1-path
+  function error(method, path1) {
+    return `The method ${method} is private for the path '${path1}'`;
+  }
+
+  // Generate a custom error for 2-path
+  function multiPathError(method, path1, path2) {
+    return `The method ${method} is private for the path '${path1}' or '${path2}'`;
+  }
+
+  // Protect the given methods
   function protect() {
     // FS
     return _.fromPairs([
@@ -115,5 +139,6 @@ module.exports = (allowedRelPath) => {
     ]);
   }
 
+  // return the protection generator for the given directory
   return protect;
 };

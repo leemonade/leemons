@@ -7,6 +7,7 @@ function loadServices(dir) {
   if (!fs.existsSync(dir)) {
     return {};
   }
+  // Same code as loadFile
   return fs
     .readdirSync(dir, { withFileTypes: true })
     .filter((file) => file.isFile())
@@ -21,11 +22,10 @@ function loadServices(dir) {
       const fileExt = path.extname(file.name);
       if (fileExt === '.json') {
         fileContent = loadFile(path.resolve(dir, file.name));
+        // Except when loading .js, it loads the file, but don't process anything else
       } else if (fileExt === '.js') {
         try {
           fileContent = vm(dir).runFile(path.resolve(dir, file.name));
-          // eslint-disable-next-line import/no-dynamic-require, global-require
-          // fileContent = require(path.resolve(dir, file.name));
         } catch (e) {
           throw new Error(`File can not be read: ${file}. ${e.message}`);
         }

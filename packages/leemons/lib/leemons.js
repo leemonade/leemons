@@ -25,6 +25,7 @@ class Leemons {
     // Initialize the reload method (generate a "state" for it)
     this.reload();
 
+    // TODO: Stop exposing the server and router
     this.app = new Koa();
     this.router = new Router();
 

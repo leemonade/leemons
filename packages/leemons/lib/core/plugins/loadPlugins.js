@@ -11,6 +11,7 @@ const checkPluginDuplicates = require('./checkPluginDuplicates');
 const loadServices = require('./loadServices');
 const loadFront = require('./front/loadFront');
 
+// Load plugins part 1 (load config and models)
 function loadPlugins(leemons) {
   const plugins = [...getLocalPlugins(leemons), ...getExternalPlugins(leemons)];
   checkPluginDuplicates(plugins);
@@ -33,7 +34,7 @@ function loadPlugins(leemons) {
     };
   });
 
-  // Throw an error when two plugins have the same id
+  // Throw an error when two plugins have the same id (name)
   checkPluginDuplicates(loadedPlugins);
 
   // Process every plugin models
@@ -47,9 +48,11 @@ function loadPlugins(leemons) {
     return [pluginObj.name, pluginObj];
   });
 
-  // Save the plugins in leemons (for the protect() to work inside controllers and services)
+  // Save the plugins in leemons (for the connector to detect them)
   _.set(leemons, 'plugins', _.fromPairs(loadedPlugins));
 }
+
+// Load plugins part 2 (controllers, services and front)
 function initializePlugins(leemons) {
   let loadedPlugins = _.values(leemons.plugins);
   // Process every plugin
@@ -96,6 +99,7 @@ function initializePlugins(leemons) {
   Object.defineProperty(leemons, 'plugin', {
     get: () => {
       const caller = getStackTrace(4).fileName;
+      // Get the plugin which is calling this property.
       const plugin = [...loadedPlugins, ...privatePlugins].find(([, object]) =>
         caller.startsWith(object.dir.app)
       );
@@ -108,6 +112,7 @@ function initializePlugins(leemons) {
   const leemonsPath = `${path.dirname(require.resolve('leemons/package.json'))}/`;
   const leemonsDatabasePath = `${path.dirname(require.resolve('leemons-database/package.json'))}/`;
 
+  // Expose all the plugins object under leemons.plugins (private plugins only shown to the allowed ones)
   Object.defineProperty(leemons, 'plugins', {
     get: () => {
       let caller = getStackTrace(2).fileName;
