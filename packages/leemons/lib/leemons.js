@@ -9,6 +9,7 @@ const ora = require('ora');
 const bodyParser = require('koa-bodyparser');
 
 const { createDatabaseManager } = require('leemons-database');
+
 const { loadConfiguration } = require('./core/config/loadConfig');
 const { loadModels } = require('./core/model/loadModel');
 const { loadPlugins, initializePlugins } = require('./core/plugins/loadPlugins');
@@ -161,12 +162,16 @@ class Leemons {
 
     // TODO: this should be on a custom loader
     // When next is prepared
-    return this.front.prepare().then(() => {
-      this.setMiddlewares();
-      this.setRoutes();
-      this.setFrontRoutes();
-      this.loaded = true;
-    });
+    return this.front
+      .prepare()
+      .then(() => {
+        this.setMiddlewares();
+        this.setRoutes();
+        this.setFrontRoutes();
+      })
+      .then(async () => {
+        this.loaded = true;
+      });
   }
 
   // Start the app
