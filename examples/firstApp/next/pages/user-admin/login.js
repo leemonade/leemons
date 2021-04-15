@@ -25,15 +25,26 @@ export default function Login() {
       .then(console.log);
   };
 
+  console.log(leemons);
+  leemons.addComponent({
+    name: 'pepe',
+    component: (
+      <div>
+        <label>Name</label>
+        <input value="Pepe" />
+      </div>
+    ),
+  });
+
   return (
     <div>
+      {leemons.components.pepe}
       <p>Login</p>
       <form onSubmit={sendForm}>
         <label htmlFor="email">Email</label>
         <input type="email" id="email" onChange={(e) => handleChange('email', e)} />
         <label htmlFor="password">Password</label>
         <input type="password" id="password" onChange={(e) => handleChange('password', e)} />
-
         <button>Send</button>
       </form>
     </div>

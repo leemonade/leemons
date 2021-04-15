@@ -71,11 +71,31 @@ function copyFolder(src, dest, name, checksums) {
  * @param {object} checksums The checksums object we want to save
  */
 function saveChecksums(dir, checksums) {
+  // Get installed plugins
+  const plugins = _.values(leemons.plugins).map((plugin) => plugin.name);
+
+  // Get current copied dirs
+  const folder = fs
+    .readdirSync(dir, { withFileTypes: true })
+    .filter((file) => file.isDirectory())
+    .map((directory) => ({ name: directory.name, path: path.resolve(dir, directory.name) }));
+
+  // Remove missing plugins from frontend
+  folder
+    .filter((plugin) => !plugins.includes(plugin.name))
+    .forEach((plugin) => {
+      delete checksums[plugin.name];
+      leemons.needsBuild = true;
+      fs.rmdirSync(plugin.path, { recursive: true });
+    });
+
+  // Generate new integrity
   checksums.integrity = readdirRecursiveSync(dir, {
     checksums: true,
     ignore: ['checksums.json'],
   }).checksum;
 
+  // Save the current integrity
   fs.writeJSONSync(path.resolve(dir, 'checksums.json'), checksums);
 }
 
