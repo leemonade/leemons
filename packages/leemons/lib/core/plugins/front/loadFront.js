@@ -4,6 +4,7 @@ const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
 const readdirRecursiveSync = require('leemons-utils/lib/readdirRecursiveSync');
+const { copyFolder } = require('./copyFolder');
 
 /**
  * Checks if the directory have been changed since last execution
@@ -44,25 +45,6 @@ function checkDirChanges(dir) {
   leemons.needsBuild = true;
   checksums = {};
   return { changed: true, checksums };
-}
-
-/**
- *
- * @param {string} src The plugin folder we want to copy
- * @param {string} dest The final folder where we want the directory to be copied
- * @param {string} name The name of the plugin
- * @param {object} checksums The checksums object
- */
-function copyFolder(src, dest, name, checksums) {
-  const dirObj = readdirRecursiveSync(src, { checksums: true });
-  if (checksums[name] !== dirObj.checksum) {
-    leemons.log(`The plugin ${name} have changed`);
-    leemons.needsBuild = true;
-
-    // Move pages to nextjs
-    fs.copySync(src, path.resolve(dest, name));
-    checksums[name] = dirObj.checksum;
-  }
 }
 
 /**
@@ -141,7 +123,7 @@ function loadFront() {
       if (folders.includes('src')) {
         const pluginSrc = path.resolve(dir, 'src');
         aliases[`@${name}/*`] = [`src/${name}/*`];
-        copyFolder(pluginSrc, srcPath, name, srcChecksums);
+        copyFolder(pluginSrc, srcPath, name, srcChecksums, [path.resolve(dir, `package.json`)]);
       }
     }
   });

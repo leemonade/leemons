@@ -3,16 +3,15 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const Static = require('koa-static');
 const nextjs = require('next');
-const execa = require('execa');
 const _ = require('lodash');
-const ora = require('ora');
+
 const bodyParser = require('koa-bodyparser');
 
 const { createDatabaseManager } = require('leemons-database');
-
 const { loadConfiguration } = require('./core/config/loadConfig');
 const { loadModels } = require('./core/model/loadModel');
 const { loadPlugins, initializePlugins } = require('./core/plugins/loadPlugins');
+const buildFront = require('./core/front/build');
 
 class Leemons {
   constructor(log) {
@@ -153,11 +152,7 @@ class Leemons {
       dir: this.dir.next,
     });
 
-    if (this.needsBuild) {
-      const spinner = ora('Building frontend').start();
-      await execa('npm', ['run', 'build', '--prefix', this.dir.next]);
-      spinner.succeed('Frontend builded');
-    }
+    await buildFront();
     this.frontHandler = this.front.getRequestHandler();
 
     // TODO: this should be on a custom loader
