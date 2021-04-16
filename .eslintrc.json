@@ -27,6 +27,7 @@
   "rules": {
     "no-plusplus": "off",
     "import/no-dynamic-requires": "off",
+    "react/react-in-jsx-scope": "off",
     "prettier/prettier": ["error", {}, {
       "usePrettierrc": true
     }]

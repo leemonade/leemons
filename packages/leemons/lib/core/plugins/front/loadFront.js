@@ -33,7 +33,7 @@ function checkDirChanges(dir) {
   // Get nextjs path checksums
   const currentChecksums = readdirRecursiveSync(dir, {
     checksums: true,
-    ignore: ['checksums.json'],
+    ignore: ['checksums.json', /(yarn\.lock|package-lock\.json)$/, 'node_modules'],
   });
 
   if (checksums.integrity === currentChecksums.checksum) {
@@ -74,7 +74,7 @@ function saveChecksums(dir, checksums) {
   // Generate new integrity
   checksums.integrity = readdirRecursiveSync(dir, {
     checksums: true,
-    ignore: ['checksums.json'],
+    ignore: ['checksums.json', /(yarn\.lock|package-lock\.json)$/, 'node_modules'],
   }).checksum;
 
   // Save the current integrity

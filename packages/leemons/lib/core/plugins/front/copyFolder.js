@@ -27,10 +27,16 @@ function generateFolderChecksum(src, extraFiles) {
      * Generate the checksums for files to copy
      */
     .map(({ path: file }) =>
-      readdirRecursiveSync(file, { checksums: true, relative: path.dirname(file) })
+      readdirRecursiveSync(file, {
+        checksums: true,
+        relative: path.dirname(file),
+      })
     );
   // Get the checksums for the src
-  const dirObj = readdirRecursiveSync(src, { checksums: true });
+  const dirObj = readdirRecursiveSync(src, {
+    checksums: true,
+    ignore: [/(yarn\.lock|package-lock\.json)$/, 'node_modules'],
+  });
 
   // Merge src checksums with extra files' ones
   filesObj.forEach((file) => {
@@ -61,7 +67,7 @@ function copyFolder(src, dest, name, checksums, addFiles = []) {
   const dirObj = generateFolderChecksum(src, extraFiles);
 
   if (checksums[name] !== dirObj.checksum) {
-    leemons.log(`The plugin ${name} have changed`);
+    leemons.log(`The plugin ${name} in ${src} have changed`);
     leemons.needsBuild = true;
 
     // Move pages to nextjs

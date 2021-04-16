@@ -25,12 +25,20 @@ function readdirRecursiveSync(
   if (!fs.existsSync(dir)) {
     throw new Error(`The directory ${dir} does not exist`);
   }
-  const type = getFileType(fs.lstatSync(dir));
-  if (type === 'directory') {
+  const srcType = getFileType(fs.lstatSync(dir));
+  if (srcType === 'directory') {
     // Read every file in the current directory
     const content = fs
       .readdirSync(dir, { withFileTypes: true })
-      .filter((file) => !ignore.includes(file.name))
+      .filter(
+        (file) =>
+          ignore.find((expression) => {
+            if (_.isRegExp(expression)) {
+              return expression.test(file.name);
+            }
+            return file.name === expression;
+          }) >= 0
+      )
       .map((file) => {
         const { name } = file;
         const type = getFileType(file);
@@ -80,13 +88,15 @@ function readdirRecursiveSync(
 
     return dirObj;
   }
-  if (type === 'file') {
+  if (srcType === 'file') {
     return {
       name: path.basename(dir),
       path: relative ? path.relative(relative, dir) : dir,
       checksum: md5File(dir),
     };
   }
+
+  return null;
 }
 
 module.exports = readdirRecursiveSync;
