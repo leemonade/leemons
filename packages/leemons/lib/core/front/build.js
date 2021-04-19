@@ -2,6 +2,7 @@ const ora = require('ora');
 const execa = require('execa');
 const fs = require('fs-extra');
 const path = require('path');
+const hooks = require('leemons-hooks');
 
 /*
  * Global Next.js Dependencies Installation
@@ -42,10 +43,14 @@ async function build() {
   }
 
   if (leemons.frontNeedsUpdateDeps) {
+    await hooks.fireEvent('leemons::installDeps', { status: 'start' });
     await frontDeps();
+    await hooks.fireEvent('leemons::installDeps', { status: 'end' });
   }
   if (leemons.frontNeedsBuild) {
+    await hooks.fireEvent('leemons::build', { status: 'start' });
     await buildNext();
+    await hooks.fireEvent('leemons::build', { status: 'end' });
   }
 }
 
