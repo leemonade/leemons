@@ -32,12 +32,12 @@ function readdirRecursiveSync(
       .readdirSync(dir, { withFileTypes: true })
       .filter(
         (file) =>
-          ignore.find((expression) => {
+          ignore.findIndex((expression) => {
             if (_.isRegExp(expression)) {
               return expression.test(file.name);
             }
             return file.name === expression;
-          }) >= 0
+          }) === -1
       )
       .map((file) => {
         const { name } = file;

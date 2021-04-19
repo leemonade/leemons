@@ -4,7 +4,8 @@ const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
 const readdirRecursiveSync = require('leemons-utils/lib/readdirRecursiveSync');
-const { copyFolder } = require('./copyFolder');
+const execa = require('execa');
+const { copyFolder, copyFile } = require('./copyFolder');
 
 /**
  * Checks if the directory have been changed since last execution
@@ -19,7 +20,7 @@ const { copyFolder } = require('./copyFolder');
 function checkDirChanges(dir) {
   // If directory does not exists, create it
   if (!fs.pathExistsSync(dir)) {
-    fs.mkdirSync(dir);
+    fs.mkdirSync(dir, { recursive: true });
   }
 
   // Get current path checksums
@@ -68,7 +69,7 @@ function saveChecksums(dir, checksums) {
     .forEach((plugin) => {
       delete checksums[plugin.name];
       leemons.needsBuild = true;
-      fs.rmdirSync(plugin.path, { recursive: true });
+      fs.removeSync(plugin.path);
     });
 
   // Generate new integrity
@@ -87,28 +88,40 @@ function saveChecksums(dir, checksums) {
 function loadFront() {
   const nextPath = leemons.dir.next;
 
-  // Detect plugins folder
+  // Get plugins folder
   const plugins = _.values(leemons.plugins);
 
+  // Generate dest directories
   const pagesPath = path.resolve(nextPath, 'pages');
-  const srcPath = path.resolve(nextPath, 'src');
+  const srcPath = path.resolve(nextPath, 'plugins');
+  const depsPath = path.resolve(nextPath, 'dependencies');
 
   // Get current pages checksums
   const pagesChecksums = checkDirChanges(pagesPath).checksums;
   // Get current src checksums
   const srcChecksums = checkDirChanges(srcPath).checksums;
+  // Get current dependencies checksums
+  const depsChecksums = checkDirChanges(depsPath).checksums;
 
+  // Plugins' aliases system
   const aliases = {};
+  const usedDeps = [];
 
-  // Move plugins folder
+  // Get installed deps
+  const nextDeps = fs.readJSONSync(path.resolve(nextPath, 'package.json')).dependencies;
+
+  // Move plugins folders
   plugins.forEach(({ name, dir: { app: pluginDir, next: pluginNext } }) => {
+    // Each plugin root directory
     const dir = path.resolve(pluginDir, pluginNext);
 
     if (fs.existsSync(dir)) {
+      // Generate directory structure
       const folders = fs
         .readdirSync(dir, { withFileTypes: true })
         .filter((plugin) => plugin.isDirectory())
         .map((plugin) => plugin.name);
+
       // Move pages
       if (folders.includes('pages')) {
         const pluginPages = path.resolve(dir, 'pages');
@@ -116,29 +129,77 @@ function loadFront() {
       }
 
       // Move src
-      if (!fs.pathExistsSync(path.resolve(nextPath, 'src'))) {
-        fs.mkdirSync(path.resolve(nextPath, 'src'));
+      if (folders.includes('src')) {
+        // Create the plugin src folder
+        if (!fs.pathExistsSync(srcPath)) {
+          fs.mkdirSync(srcPath, { recursive: true });
+        }
+
+        // Generate an alias
+        aliases[`@${name}/*`] = [`${path.relative(nextPath, srcPath)}/${name}/*`];
+
+        // Copy folder
+        const pluginSrc = path.resolve(dir, 'src');
+        copyFolder(pluginSrc, srcPath, name, srcChecksums);
       }
 
-      if (folders.includes('src')) {
-        const pluginSrc = path.resolve(dir, 'src');
-        aliases[`@${name}/*`] = [`src/${name}/*`];
-        copyFolder(pluginSrc, srcPath, name, srcChecksums, [path.resolve(dir, `package.json`)]);
+      // Move dependencies
+      if (fs.existsSync(path.resolve(dir, 'package.json'))) {
+        // Create the next.js dependencies directory
+        if (!fs.pathExistsSync(depsPath)) {
+          fs.mkdirSync(depsPath, { recursive: true });
+        }
+
+        // Copy the package.json
+        copyFile(path.resolve(dir, 'package.json'), depsPath, name, depsChecksums);
+
+        // Register useds deps
+        usedDeps.push(`@leemons/${name}`);
+        // If the dependencies are not registered register them
+        if (!_.get(nextDeps, `@leemons/${name}`, null)) {
+          execa.commandSync(
+            `yarn --cwd ${nextPath} add @leemons/${name}@file:${path.resolve(depsPath, name)}`
+          );
+          leemons.needsBuild = true;
+        }
       }
     }
   });
 
   // Set all the aliases
-  fs.writeJSONSync(path.resolve(nextPath, 'jsconfig.json'), {
-    compilerOptions: {
-      baseUrl: '.',
-      paths: aliases,
-    },
-  });
+  let jsconfig;
+  try {
+    jsconfig = fs.readJSONSync(path.resolve(nextPath, 'jsconfig.json'));
+  } catch (e) {
+    jsconfig = {};
+  }
+
+  // Merge current jsconfig and plugins jsconfig
+  fs.writeJSONSync(
+    path.resolve(nextPath, 'jsconfig.json'),
+    _.merge(jsconfig, {
+      compilerOptions: {
+        baseUrl: '.',
+        paths: aliases,
+      },
+    })
+  );
 
   // Generate the directory integrity file
   saveChecksums(pagesPath, pagesChecksums);
   saveChecksums(srcPath, srcChecksums);
+  saveChecksums(depsPath, depsChecksums);
+
+  // Prune dependencies
+
+  const unusedDeps = _.difference(
+    _.keys(nextDeps).filter((name) => name.startsWith('@leemons/')),
+    usedDeps
+  );
+
+  if (unusedDeps.length) {
+    execa.commandSync(`yarn --cwd ${nextPath} remove ${unusedDeps.join(' ')}`);
+  }
 }
 
 module.exports = loadFront;

@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "leemons-hooks": "file:/Users/Miguel/Desktop/leemons/packages/leemons-hooks",
     "next": "10.1.3",
     "prop-types": "^15.7.2",
     "react": "17.0.2",

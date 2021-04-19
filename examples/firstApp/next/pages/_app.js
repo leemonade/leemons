@@ -1,25 +1,22 @@
 import '../styles/globals.css';
 import PropTypes from 'prop-types';
+import hooks from "leemons-hooks";
+import {useEffect, useRef} from "react";
 
 function MyApp({ Component, pageProps }) {
-  const components = {};
-  global.leemons = {
-    components,
-    addComponent: (component) => {
-      if (!components[component.name]) {
-        components[component.name] = component.component;
-        return components[component.name];
-      }
-      return null;
-    },
-    deleteComponent: (component) => {
-      if (components[component]) {
-        delete components[component];
-        return true;
-      }
-      return false;
-    },
-  };
+  const initialized = useRef(false);
+  // Only add it once
+  if (initialized.current === false) {
+    hooks.addFilter('user-admin::welcome_visited', (msg = [], ...args) => {
+      console.log("Filter receives:", msg);
+      return [[...msg, "Hello World"], ...args]
+    });
+
+
+    global.leemons = {};
+
+    initialized.current = true;
+  }
   return <Component {...pageProps} />;
 }
 

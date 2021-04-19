@@ -8,7 +8,12 @@ async function fireEvent(eventName, ...args) {
     async (params, func) => func(...(await params)),
     args
   );
-  await Promise.all(getActions(eventName).map(async (f) => f(...filteredArgs)));
+  await Promise.all(
+    getActions(eventName).map(async (f, i) => {
+      console.log(`function ${i} called`);
+      return f(...filteredArgs);
+    })
+  );
 
   console.log(
     chalk`The event {green ${eventName}} was fired with: {magenta %d Filters} and {cyan %d Actions}`,

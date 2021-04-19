@@ -30,6 +30,7 @@ function generateFolderChecksum(src, extraFiles) {
       readdirRecursiveSync(file, {
         checksums: true,
         relative: path.dirname(file),
+        ignore: [/(yarn\.lock|package-lock\.json)$/, 'node_modules'],
       })
     );
   // Get the checksums for the src
@@ -57,10 +58,38 @@ function generateFolderChecksum(src, extraFiles) {
 
 /**
  *
+ * @param {string} src The plugin file we want to copy
+ * @param {string} dest The final folder where we want the file to be copied
+ * @param {string} name The name of the plugin
+ * @param {object} checksums The checksums object
+ * @returns Will return true if the file was copied, and false if it wasn't necessary
+ */
+function copyFile(src, dest, name, checksums) {
+  const fileChecksums = readdirRecursiveSync(src, { checksums: true });
+  const fileName = path.basename(src);
+  const finalDest = path.resolve(dest, name);
+
+  if (checksums[name] !== fileChecksums.checksum) {
+    leemons.log(`The plugin ${name} in ${src} have changed`);
+    leemons.needsBuild = true;
+
+    // Move file to next.js
+    if (!fs.existsSync(finalDest)) {
+      fs.mkdirSync(finalDest);
+    }
+    fs.copyFileSync(src, path.resolve(finalDest, fileName));
+
+    checksums[name] = fileChecksums.checksum;
+  }
+}
+
+/**
+ *
  * @param {string} src The plugin folder we want to copy
  * @param {string} dest The final folder where we want the directory to be copied
  * @param {string} name The name of the plugin
  * @param {object} checksums The checksums object
+ * @returns Will return true if the folder was copied, and false if it wasn't necessary
  */
 function copyFolder(src, dest, name, checksums, addFiles = []) {
   const extraFiles = filesToCopy(addFiles);
@@ -70,14 +99,16 @@ function copyFolder(src, dest, name, checksums, addFiles = []) {
     leemons.log(`The plugin ${name} in ${src} have changed`);
     leemons.needsBuild = true;
 
-    // Move pages to nextjs
+    // Move folder to next.js
     fs.copySync(src, path.resolve(dest, name));
     extraFiles.forEach(({ path: file }) => {
       fs.copySync(file, path.resolve(dest, name, path.basename(file)));
     });
 
     checksums[name] = dirObj.checksum;
+    return true;
   }
+  return false;
 }
 
-module.exports = { copyFolder };
+module.exports = { copyFolder, copyFile };

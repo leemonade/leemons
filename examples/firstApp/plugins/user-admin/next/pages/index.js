@@ -1,7 +1,9 @@
 import Welcome from '@user-admin/componentes/Welcome';
 
-export default () => (
+export default () => {
+  return(
   <div>
-    <Welcome />
+    <Welcome url={"/user-admin/2"}/>
   </div>
-);
+)
+};
