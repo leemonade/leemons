@@ -83,7 +83,8 @@ function initializePlugins(leemons) {
   });
 
   // Load the frontend of all the plugins
-  _.set(leemons, 'needsBuild', false);
+  _.set(leemons, 'frontNeedsBuild', false);
+  _.set(leemons, 'frontNeedsUpdateDeps', false);
   loadFront();
 
   // Split the plugins in private and public

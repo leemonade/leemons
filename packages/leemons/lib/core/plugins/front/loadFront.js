@@ -43,9 +43,7 @@ function checkDirChanges(dir) {
   }
 
   leemons.log(dir, 'Changed');
-  leemons.needsBuild = true;
-  checksums = {};
-  return { changed: true, checksums };
+  return { changed: true, checksums: {} };
 }
 
 /**
@@ -68,7 +66,7 @@ function saveChecksums(dir, checksums) {
     .filter((plugin) => !plugins.includes(plugin.name))
     .forEach((plugin) => {
       delete checksums[plugin.name];
-      leemons.needsBuild = true;
+      leemons.frontNeedsBuild = true;
       fs.removeSync(plugin.path);
     });
 
@@ -125,7 +123,9 @@ function loadFront() {
       // Move pages
       if (folders.includes('pages')) {
         const pluginPages = path.resolve(dir, 'pages');
-        copyFolder(pluginPages, pagesPath, name, pagesChecksums);
+        if (copyFolder(pluginPages, pagesPath, name, pagesChecksums)) {
+          leemons.frontNeedsBuild = true;
+        }
       }
 
       // Move src
@@ -140,7 +140,9 @@ function loadFront() {
 
         // Copy folder
         const pluginSrc = path.resolve(dir, 'src');
-        copyFolder(pluginSrc, srcPath, name, srcChecksums);
+        if (copyFolder(pluginSrc, srcPath, name, srcChecksums)) {
+          leemons.frontNeedsBuild = true;
+        }
       }
 
       // Move dependencies
@@ -151,7 +153,9 @@ function loadFront() {
         }
 
         // Copy the package.json
-        copyFile(path.resolve(dir, 'package.json'), depsPath, name, depsChecksums);
+        if (copyFile(path.resolve(dir, 'package.json'), depsPath, name, depsChecksums)) {
+          leemons.frontNeedsUpdateDeps = true;
+        }
 
         // Register useds deps
         usedDeps.push(`@leemons/${name}`);
@@ -160,7 +164,7 @@ function loadFront() {
           execa.commandSync(
             `yarn --cwd ${nextPath} add @leemons/${name}@file:${path.resolve(depsPath, name)}`
           );
-          leemons.needsBuild = true;
+          leemons.frontNeedsUpdateDeps = true;
         }
       }
     }

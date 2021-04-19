@@ -71,7 +71,6 @@ function copyFile(src, dest, name, checksums) {
 
   if (checksums[name] !== fileChecksums.checksum) {
     leemons.log(`The plugin ${name} in ${src} have changed`);
-    leemons.needsBuild = true;
 
     // Move file to next.js
     if (!fs.existsSync(finalDest)) {
@@ -80,7 +79,9 @@ function copyFile(src, dest, name, checksums) {
     fs.copyFileSync(src, path.resolve(finalDest, fileName));
 
     checksums[name] = fileChecksums.checksum;
+    return true;
   }
+  return false;
 }
 
 /**
@@ -97,7 +98,6 @@ function copyFolder(src, dest, name, checksums, addFiles = []) {
 
   if (checksums[name] !== dirObj.checksum) {
     leemons.log(`The plugin ${name} in ${src} have changed`);
-    leemons.needsBuild = true;
 
     // Move folder to next.js
     fs.copySync(src, path.resolve(dest, name));

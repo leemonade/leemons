@@ -1,5 +1,7 @@
 const ora = require('ora');
 const execa = require('execa');
+const fs = require('fs-extra');
+const path = require('path');
 
 /*
  * Global Next.js Dependencies Installation
@@ -34,9 +36,15 @@ function buildNext() {
 }
 
 async function build() {
-  if (leemons.needsBuild) {
+  // If node_modules is not created, install deps
+  if (!fs.existsSync(path.resolve(leemons.dir.next, 'node_modules'))) {
+    leemons.frontNeedsUpdateDeps = true;
+  }
+
+  if (leemons.frontNeedsUpdateDeps) {
     await frontDeps();
-    // await pluginsDeps();
+  }
+  if (leemons.frontNeedsBuild) {
     await buildNext();
   }
 }
