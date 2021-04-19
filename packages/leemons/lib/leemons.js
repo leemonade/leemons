@@ -4,10 +4,13 @@ const Router = require('koa-router');
 const Static = require('koa-static');
 const nextjs = require('next');
 const _ = require('lodash');
+const chalk = require('chalk');
 
 const bodyParser = require('koa-bodyparser');
 
 const { createDatabaseManager } = require('leemons-database');
+const hooks = require('leemons-hooks');
+const ora = require('ora');
 const { loadConfiguration } = require('./core/config/loadConfig');
 const { loadModels } = require('./core/model/loadModel');
 const { loadPlugins, initializePlugins } = require('./core/plugins/loadPlugins');
@@ -17,6 +20,34 @@ class Leemons {
   constructor(log) {
     // expose leemons globally
     global.leemons = this;
+
+    const timers = {};
+    hooks.addAction('*', (eventName, options) => {
+      const now = new Date();
+      switch (_.get(options, 'status', null)) {
+        case 'start':
+          _.set(timers, eventName, now);
+          break;
+        case 'end': {
+          const started = _.get(timers, eventName, now);
+          const time = new Date(now - started);
+
+          const minutes = time.getMinutes();
+          const seconds = time.getSeconds();
+          const milliseconds = time.getMilliseconds();
+          const timeString = `${
+            (minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')
+          }${milliseconds}ms`;
+
+          delete timers[eventName];
+          console.log(
+            chalk`The event {green ${eventName}} was running during {magenta ${timeString}}`
+          );
+          break;
+        }
+        default:
+      }
+    });
 
     // TODO: Do a good log system
     this.log = log;
@@ -134,38 +165,52 @@ class Leemons {
 
   // Load all apps
   async load() {
+    await hooks.fireEvent('leemons::load', { status: 'start' });
     if (this.loaded) {
       return true;
     }
+
     loadPlugins(this);
 
     loadModels(this);
     // Create a database manager
     this.db = createDatabaseManager(this);
-    // Initialize all database connections
-    await this.db.init();
 
+    // Initialize all database connections
+    await hooks.fireEvent('leemons::initDB', { status: 'start' });
+    await this.db.init();
+    await hooks.fireEvent('leemons::initDB', { status: 'end' });
+
+    await hooks.fireEvent('leemons::initializePlugins', { status: 'start' });
     initializePlugins(this);
+    await hooks.fireEvent('leemons::initializePlugins', { status: 'end' });
 
     // Initialize next
     this.front = nextjs({
       dir: this.dir.next,
     });
 
+    await hooks.fireEvent('leemons::buildFront', { status: 'start' });
     await buildFront();
+    await hooks.fireEvent('leemons::buildFront', { status: 'end' });
     this.frontHandler = this.front.getRequestHandler();
 
     // TODO: this should be on a custom loader
     // When next is prepared
+    await hooks.fireEvent('leemons::prepareFrontend', { status: 'start' });
+    const prepareFront = ora('Starting frontend server').start();
     return this.front
       .prepare()
-      .then(() => {
+      .then(async () => {
+        prepareFront.succeed('Frontend server started');
+        await hooks.fireEvent('leemons::prepareFrontend', { status: 'end' });
         this.setMiddlewares();
         this.setRoutes();
         this.setFrontRoutes();
       })
       .then(async () => {
         this.loaded = true;
+        await hooks.fireEvent('leemons::load', { status: 'end' });
       });
   }
 
