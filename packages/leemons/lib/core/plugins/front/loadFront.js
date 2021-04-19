@@ -104,6 +104,7 @@ function loadFront() {
   // Plugins' aliases system
   const aliases = {};
   const usedDeps = [];
+  const nonInstalledDeps = [];
 
   // Get installed deps
   const nextDeps = fs.readJSONSync(path.resolve(nextPath, 'package.json')).dependencies;
@@ -161,10 +162,7 @@ function loadFront() {
         usedDeps.push(`@leemons/${name}`);
         // If the dependencies are not registered register them
         if (!_.get(nextDeps, `@leemons/${name}`, null)) {
-          execa.commandSync(
-            `yarn --cwd ${nextPath} add @leemons/${name}@file:${path.resolve(depsPath, name)}`
-          );
-          leemons.frontNeedsUpdateDeps = true;
+          nonInstalledDeps.push({ name: `@leemons/${name}`, path: path.resolve(depsPath, name) });
         }
       }
     }
@@ -194,8 +192,22 @@ function loadFront() {
   saveChecksums(srcPath, srcChecksums);
   saveChecksums(depsPath, depsChecksums);
 
-  // Prune dependencies
+  // Add plugins dependencies
+  if (nonInstalledDeps.length) {
+    const dependencyObject = _.fromPairs(
+      nonInstalledDeps.map((dep) => [dep.name, `file:${dep.path}`])
+    );
+    fs.writeJSONSync(
+      path.resolve(nextPath, 'package.json'),
+      _.merge(fs.readJSONSync(path.resolve(nextPath, 'package.json')), {
+        dependencies: dependencyObject,
+      }),
+      { spaces: 2 }
+    );
+    leemons.frontNeedsUpdateDeps = true;
+  }
 
+  // Prune dependencies
   const unusedDeps = _.difference(
     _.keys(nextDeps).filter((name) => name.startsWith('@leemons/')),
     usedDeps
