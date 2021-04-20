@@ -85,7 +85,7 @@ function initializePlugins(leemons) {
   // Load the frontend of all the plugins
   _.set(leemons, 'frontNeedsBuild', false);
   _.set(leemons, 'frontNeedsUpdateDeps', false);
-  loadFront();
+  loadFront(loadedPlugins);
 
   // Split the plugins in private and public
   const privatePlugins = loadedPlugins

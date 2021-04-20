@@ -83,11 +83,11 @@ function saveChecksums(dir, checksums) {
 /**
  * Moves all the modified folders to the front directory
  */
-function loadFront() {
+function loadFront(plugins) {
   const nextPath = leemons.dir.next;
 
   // Get plugins folder
-  const plugins = _.values(leemons.plugins);
+  // const plugins = _.values(leemons.plugins);
 
   // Generate dest directories
   const pagesPath = path.resolve(nextPath, 'pages');
@@ -108,13 +108,19 @@ function loadFront() {
 
   // Get installed deps
   const nextDeps = fs.readJSONSync(path.resolve(nextPath, 'package.json')).dependencies;
-
   // Move plugins folders
-  plugins.forEach(({ name, dir: { app: pluginDir, next: pluginNext } }) => {
+  plugins.forEach(([, pluginObj]) => {
+    const {
+      name,
+      dir: { app: pluginDir, next: pluginNext },
+    } = pluginObj;
     // Each plugin root directory
     const dir = path.resolve(pluginDir, pluginNext);
 
     if (fs.existsSync(dir)) {
+      // Track which plugins have frontend
+      _.set(pluginObj, 'hasFront', true);
+
       // Generate directory structure
       const folders = fs
         .readdirSync(dir, { withFileTypes: true })
