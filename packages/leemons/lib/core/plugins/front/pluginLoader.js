@@ -1,0 +1,35 @@
+/* eslint-disable no-param-reassign */
+
+const path = require('path');
+const fs = require('fs-extra');
+const _ = require('lodash');
+
+function generatePluginLoader({ plugins, srcPath, srcChecksums, aliases, nextPath }) {
+  const file = `module.exports = {
+  plugins: [
+    ${plugins.map(([name]) => `'${name}'`).join(',\n\t\t')}
+  ],
+  frontPlugins: [${plugins
+    .filter(([, plugin]) => _.get(plugin, 'hasFront', false))
+    .map(
+      ([name, plugin]) => `{
+    name: '${name}',
+    version: ${_.get(plugin, 'version', null)},
+    load: require('@${name}/index.js')
+  }`
+    )
+    .join(',\n\t')}]
+};`;
+  const pluginFilePath = path.resolve(srcPath, 'plugins.js');
+  // TODO: Make a md5
+  const fileHash = file;
+  if (fileHash !== srcChecksums['plugins.js']) {
+    leemons.frontNeedsBuild = true;
+    srcChecksums['plugins.js'] = fileHash;
+    fs.writeFileSync(pluginFilePath, file);
+  }
+
+  aliases[`@plugins`] = [`${path.relative(nextPath, srcPath)}/plugins.js`];
+}
+
+module.exports = { generatePluginLoader };

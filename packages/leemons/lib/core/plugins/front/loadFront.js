@@ -6,6 +6,7 @@ const path = require('path');
 const readdirRecursiveSync = require('leemons-utils/lib/readdirRecursiveSync');
 const execa = require('execa');
 const { copyFolder, copyFile } = require('./copyFolder');
+const { generatePluginLoader } = require('./pluginLoader');
 
 /**
  * Checks if the directory have been changed since last execution
@@ -173,6 +174,9 @@ function loadFront(plugins) {
       }
     }
   });
+
+  // Generate a plugin loader
+  generatePluginLoader({ plugins, srcPath, srcChecksums, aliases, nextPath });
 
   // Set all the aliases
   let jsconfig;
