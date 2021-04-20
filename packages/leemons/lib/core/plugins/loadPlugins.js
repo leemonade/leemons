@@ -124,12 +124,12 @@ function initializePlugins(leemons) {
       }
       const visiblePlugins = [...loadedPlugins];
       // Return the plugins
-      const plugin = privatePlugins.find(([, object]) => {
+      const visiblePrivatePlugins = privatePlugins.filter(([, object]) => {
         const allowedPaths = [object.dir.app, leemonsPath, leemonsDatabasePath];
         return allowedPaths.find((allowedPath) => caller.startsWith(allowedPath));
       });
-      if (plugin) {
-        visiblePlugins.push(plugin);
+      if (visiblePrivatePlugins.length) {
+        visiblePlugins.push(...visiblePrivatePlugins);
       }
       return _.fromPairs(visiblePlugins);
     },

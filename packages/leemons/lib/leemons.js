@@ -124,7 +124,7 @@ class Leemons {
   setRoutes() {
     // Plugins
     Object.entries(this.plugins).forEach(([, plugin]) => {
-      if (plugin.routes) {
+      if (_.isArray(plugin.routes)) {
         plugin.routes.forEach((route) => {
           if (
             route.handler &&
