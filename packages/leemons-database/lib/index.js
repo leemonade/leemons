@@ -70,7 +70,7 @@ class DatabaseManager {
     await this.connectors.init(
       this.leemons.core_store,
       _.merge(
-        ...Object.values(this.leemons.plugins)
+        ...Object.values(_.cloneDeep(this.leemons.plugins))
           .filter((plugin) => plugin.models)
           .map((plugin) => plugin.models)
       )
