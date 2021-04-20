@@ -5,11 +5,13 @@ const { getFilters } = require('../filters');
 async function fireEvent(eventName, ...args) {
   // Execute all the filters in order, wait for promises to resolve if exists
   const filteredArgs = await [...getFilters(eventName), ...getFilters('*')].reduce(
-    async (params, func) => func(eventName, ...(await params)),
+    async (params, func) => func({ eventName, args: await params }),
     args
   );
   await Promise.all(
-    [...getActions(eventName), ...getActions('*')].map(async (f) => f(eventName, ...filteredArgs))
+    [...getActions(eventName), ...getActions('*')].map(async (f) =>
+      f({ eventName, args: filteredArgs })
+    )
   );
 
   // console.log(

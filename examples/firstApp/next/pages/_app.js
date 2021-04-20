@@ -7,7 +7,7 @@ function MyApp({ Component, pageProps }) {
   const initialized = useRef(false);
   // Only add it once
   if (initialized.current === false) {
-    hooks.addFilter('user-admin::welcome_visited', (msg = [], ...args) => {
+    hooks.addFilter('user-admin::welcome_visited', ({args: [msg = [], ...args]}) => {
       console.log("Filter receives:", msg);
       return [[...msg, "Hello World"], ...args]
     });
