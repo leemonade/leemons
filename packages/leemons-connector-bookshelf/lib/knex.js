@@ -53,12 +53,13 @@ function initKnex(connector, connections) {
       },
     };
 
-    try {
-      const dbConnection = knex(config);
-      _.set(connector, `connections.${connection.name}`, dbConnection);
-    } catch (e) {
-      throw new Error('Error in knex initialization');
+    const dbConnection = knex(config);
+    if (!dbConnection.pool) {
+      throw new Error(
+        `Can't connect to the database in ${connection.name} connection. Check the database is running.`
+      );
     }
+    _.set(connector, `connections.${connection.name}`, dbConnection);
   });
 }
 
