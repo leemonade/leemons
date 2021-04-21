@@ -22,7 +22,7 @@ class Leemons {
     global.leemons = this;
 
     const timers = {};
-    hooks.addAction('*', (eventName, options) => {
+    hooks.addAction('*', ({ eventName, args: [options] }) => {
       const now = new Date();
       switch (_.get(options, 'status', null)) {
         case 'start':

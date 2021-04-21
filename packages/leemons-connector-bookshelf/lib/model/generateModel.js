@@ -6,6 +6,11 @@ function generateRelations(models) {
     Object.entries(model.schema.attributes).forEach(([name, attribute]) => {
       if (_.has(attribute, 'references')) {
         const referencedModel = getModel(attribute.references.collection, models);
+        if (!referencedModel) {
+          throw new Error(
+            `The references model ${attribute.references.collection} does not exists in model ${model.modelName}`
+          );
+        }
         switch (attribute.references.relation) {
           case 'one to one':
             // This model attribute belongsTo(the referenced model)
