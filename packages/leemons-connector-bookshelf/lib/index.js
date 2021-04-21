@@ -27,14 +27,14 @@ class Connector {
     return generateQueries(model, this);
   }
 
-  init(models) {
+  async init(models) {
     // Get connections made with bookshelf
     const bookshelfConnections = Object.entries(this.leemons.config.get('database.connections'))
       .map(([name, value]) => ({ ...value, name }))
       .filter(({ connector }) => connector === 'bookshelf');
 
     // Initialize knex, all the connections in this.connections
-    initKnex(this, bookshelfConnections);
+    await initKnex(this, bookshelfConnections);
 
     return Promise.all(
       bookshelfConnections.map((connection) => {
