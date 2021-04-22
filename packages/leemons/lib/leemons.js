@@ -159,8 +159,8 @@ class Leemons {
     this.app.use(this.router.routes()).use(this.router.allowedMethods());
   }
 
-  query(model) {
-    return this.db.query(model);
+  query(model, plugin) {
+    return this.db.query(model, plugin);
   }
 
   // Load all apps

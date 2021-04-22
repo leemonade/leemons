@@ -79,30 +79,23 @@ class DatabaseManager {
     this.initialized = true;
   }
 
-  query(modelName) {
+  query(modelName, pluginName = null) {
     // TODO: Add plugin roles
 
     // Get the used connector (if no connection provided, get the default one)
     // const connector = this.connectors.getFromConnection(connection);
-    if (modelName.split('_')[0] === 'plugins') {
-      const caller = getStackTrace(4).fileName;
-      const plugin = _.get(this.leemons, modelName.split('::')[0].replace(/_/g, '.'));
-      const leemonsPath = path.dirname(require.resolve('leemons/package.json'));
-      const leemonsDatabasePath = path.dirname(require.resolve('leemons-database/package.json'));
 
-      if (
-        plugin &&
-        _.get(plugin.config, 'config.private', false) &&
-        ![plugin.dir.app, leemonsPath, leemonsDatabasePath].find((allowedPath) =>
-          caller.startsWith(allowedPath)
-        )
-      ) {
+    if (pluginName) {
+      const plugin = _.get(this.leemons, modelName.split('::')[0].replace(/_/g, '.'));
+      // TODO: Plugins permissions
+      if (plugin.config.get('config.private', false) === true && plugin.name !== pluginName) {
         // The provided model is private and not visible for you
         throw new Error(`The provided model can not be found: ${modelName}`);
       }
     }
+
     if (!modelName || !this.models.has(modelName)) {
-      // Check if the model exists
+      // The provided model does not exist
       throw new Error(`The provided model can not be found: ${modelName}`);
     }
 

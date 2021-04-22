@@ -75,6 +75,8 @@ function initializePlugins(leemons) {
       Object.defineProperty(filtered.leemons, 'plugins', {
         get: () => _.pick(leemons.plugins, allowedPlugins),
       });
+      const { query } = filtered.leemons;
+      _.set(filtered, 'leemons.query', (modelName) => query(modelName, plugin.name));
       return filtered;
     };
     // Load routes
@@ -111,53 +113,6 @@ function initializePlugins(leemons) {
   loadFront(loadedPlugins);
 
   _.set(leemons, 'plugins', _.fromPairs(loadedPlugins));
-  // Split the plugins in private and public
-  // const privatePlugins = loadedPlugins
-  //   .filter(([, plugin]) => plugin.config.get('config.private', false) === true)
-  //   .map(([name, plugin]) => [name, { private: true, ...plugin }]);
-
-  // loadedPlugins = loadedPlugins.filter(
-  //   ([, plugin]) => plugin.config.get('config.private', false) === false
-  // );
-
-  // Expose the plugin object under leemons.plugin
-  // Object.defineProperty(leemons, 'plugin', {
-  //   get: () => {
-  //     const caller = getStackTrace(4).fileName;
-  //     // Get the plugin which is calling this property.
-  //     const plugin = [...loadedPlugins, ...privatePlugins].find(([, object]) =>
-  //       caller.startsWith(object.dir.app)
-  //     );
-  //     if (plugin) {
-  //       return plugin[1];
-  //     }
-  //     return null;
-  //   },
-  // });
-  // const leemonsPath = `${path.dirname(require.resolve('leemons/package.json'))}/`;
-  // const leemonsDatabasePath = `${path.dirname(require.resolve('leemons-database/package.json'))}/`;
-
-  // Expose all the plugins object under leemons.plugins (private plugins only shown to the allowed ones)
-  // Object.defineProperty(leemons, 'plugins', {
-  //   get: () => {
-  //     let caller = getStackTrace(2).fileName;
-
-  //     // When containerized in VM
-  //     if (caller === null) {
-  //       caller = getStackTrace(4).fileName;
-  //     }
-  //     const visiblePlugins = [...loadedPlugins];
-  //     // Return the plugins
-  //     const visiblePrivatePlugins = privatePlugins.filter(([, object]) => {
-  //       const allowedPaths = [object.dir.app, leemonsPath, leemonsDatabasePath];
-  //       return allowedPaths.find((allowedPath) => caller.startsWith(allowedPath));
-  //     });
-  //     if (visiblePrivatePlugins.length) {
-  //       visiblePlugins.push(...visiblePrivatePlugins);
-  //     }
-  //     return _.fromPairs(visiblePlugins);
-  //   },
-  // });
 }
 
 module.exports = { loadPlugins, initializePlugins };
