@@ -85,12 +85,17 @@ class DatabaseManager {
     // Get the used connector (if no connection provided, get the default one)
     // const connector = this.connectors.getFromConnection(connection);
 
+    let showDelete = true;
     if (pluginName) {
-      const plugin = _.get(this.leemons, modelName.split('::')[0].replace(/_/g, '.'));
+      const plugin = _.get(this.leemons, modelName.split('::')[0].replace(/_/g, '.'), {});
       // TODO: Plugins permissions
       if (plugin.config.get('config.private', false) === true && plugin.name !== pluginName) {
         // The provided model is private and not visible for you
         throw new Error(`The provided model can not be found: ${modelName}`);
+      }
+
+      if (plugin.name !== pluginName) {
+        showDelete = false;
       }
     }
 
@@ -101,7 +106,9 @@ class DatabaseManager {
 
     // Check if the query builder is cached
     if (this.queries.has(modelName)) {
-      return this.queries.get(modelName);
+      return showDelete
+        ? this.queries.get(modelName)
+        : _.omit(this.queries.get(modelName), ['delete', 'deleteMany']);
     }
 
     const model = this.models.get(modelName);
@@ -109,7 +116,7 @@ class DatabaseManager {
 
     const query = queryBuilder(model, connector);
     this.queries.set(modelName, query);
-    return query;
+    return showDelete ? query : _.omit(query, ['delete', 'deleteMany']);
   }
 }
 

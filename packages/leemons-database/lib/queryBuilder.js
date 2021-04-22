@@ -32,37 +32,10 @@ function queryBuilder(model, connector) {
     find: createQuery({ query: 'find', model, connectorQuery }),
     findOne: createQuery({ query: 'findOne', model, connectorQuery }),
     count: createQuery({ query: 'count', model, connectorQuery }),
+    delete: createQuery({ query: 'delete', model, connectorQuery }),
+    deleteMany: createQuery({ query: 'deleteMany', model, connectorQuery }),
     transaction: connectorQuery.transaction,
   };
-
-  Object.defineProperty(queryObj, 'delete', {
-    get: () => {
-      const owner = _.get(leemons, model.target, null);
-      if (owner) {
-        const dir = owner.dir.app;
-        const caller = getStackTrace(2);
-
-        if (caller.fileName.startsWith(dir)) {
-          return createQuery({ query: 'delete', model, connectorQuery });
-        }
-      }
-      return () => Promise.reject(new Error(`You don't have access to delete on this model`));
-    },
-  });
-  Object.defineProperty(queryObj, 'deleteMany', {
-    get: () => {
-      const owner = _.get(leemons, model.target, null);
-      if (owner) {
-        const dir = owner.dir.app;
-        const caller = getStackTrace(2);
-
-        if (caller.fileName.startsWith(dir)) {
-          return createQuery({ query: 'deleteMany', model, connectorQuery });
-        }
-      }
-      return () => Promise.reject(new Error(`You don't have access to deleteMany on this model`));
-    },
-  });
   return queryObj;
 }
 
