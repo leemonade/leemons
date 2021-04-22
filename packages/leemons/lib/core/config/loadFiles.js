@@ -3,9 +3,9 @@ const path = require('path');
 const { env } = require('leemons-utils');
 const vm = require('./vm');
 
-function loadJSFile(file) {
+function loadJSFile(file, filter = null) {
   try {
-    const fileContent = vm(path.dirname(file)).runFile(file);
+    const fileContent = vm(path.dirname(file), filter).runFile(file);
     if (typeof fileContent === 'function') {
       return fileContent({ env, leemons });
     }
@@ -23,11 +23,11 @@ function loadJSONFile(file) {
   }
 }
 
-function loadFile(file, accept = ['.js', '.json']) {
+function loadFile(file, accept = ['.js', '.json'], filter = null) {
   const extension = path.extname(file);
 
   if (extension === '.js' && accept.includes('.js')) {
-    return loadJSFile(file);
+    return loadJSFile(file, filter);
   }
   if (extension === '.json' && accept.includes('.json')) {
     return loadJSONFile(file);
@@ -35,7 +35,7 @@ function loadFile(file, accept = ['.js', '.json']) {
   return null;
 }
 
-function loadFiles(dir, { accept = ['.js', '.json'], exclude = [] } = {}) {
+function loadFiles(dir, { accept = ['.js', '.json'], exclude = [], filter = null } = {}) {
   if (!fs.existsSync(dir)) {
     return {};
   }
@@ -57,7 +57,7 @@ function loadFiles(dir, { accept = ['.js', '.json'], exclude = [] } = {}) {
       }
 
       // Load the current file
-      const fileConfig = loadFile(path.resolve(dir, file.name), accept);
+      const fileConfig = loadFile(path.resolve(dir, file.name), accept, filter);
 
       if (fileConfig) {
         return { ...config, [key]: fileConfig };

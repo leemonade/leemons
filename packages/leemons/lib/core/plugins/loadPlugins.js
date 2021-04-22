@@ -2,7 +2,7 @@ const path = require('path');
 const _ = require('lodash');
 const fs = require('fs-extra');
 
-const { getStackTrace } = require('leemons-utils');
+// const { getStackTrace } = require('leemons-utils');
 const { loadConfiguration } = require('../config/loadConfig');
 const { loadFiles, loadFile } = require('../config/loadFiles');
 const { formatModels } = require('../model/loadModel');
@@ -58,6 +58,25 @@ function initializePlugins(leemons) {
   // Process every plugin
   loadedPlugins = loadedPlugins.map((plugin) => {
     const pluginObj = plugin;
+
+    // VM filter
+    const allowedPlugins = loadedPlugins
+      .filter((loadedPlugin) => loadedPlugin.config.get('config.private', false) === false)
+      .map((publicPlugin) => publicPlugin.name);
+    if (!allowedPlugins.includes(plugin.name)) {
+      allowedPlugins.push(plugin.name);
+    }
+    const vmFilter = (filtered) => {
+      Object.defineProperty(filtered.leemons, 'plugin', {
+        // The binding is needed for triggering the outside VM leemons
+        // eslint-disable-next-line no-extra-bind
+        get: () => leemons.plugins[plugin.name],
+      });
+      Object.defineProperty(filtered.leemons, 'plugins', {
+        get: () => _.pick(leemons.plugins, allowedPlugins),
+      });
+      return filtered;
+    };
     // Load routes
     let routesFile = path.resolve(pluginObj.dir.app, pluginObj.dir.controllers, 'routes');
     let routes = {};
@@ -73,10 +92,14 @@ function initializePlugins(leemons) {
     const controllers = loadFiles(path.resolve(pluginObj.dir.app, pluginObj.dir.controllers), {
       accept: ['.js'],
       exclude: [path.basename(routesFile)],
+      filter: vmFilter,
     });
 
     // Load services
-    const services = loadServices(path.resolve(pluginObj.dir.app, pluginObj.dir.services));
+    const services = loadServices(
+      path.resolve(pluginObj.dir.app, pluginObj.dir.services),
+      vmFilter
+    );
 
     // Return as the result of Object.entries
     return [pluginObj.name, { ...pluginObj, routes, controllers, services }];
@@ -87,53 +110,54 @@ function initializePlugins(leemons) {
   _.set(leemons, 'frontNeedsUpdateDeps', false);
   loadFront(loadedPlugins);
 
+  _.set(leemons, 'plugins', _.fromPairs(loadedPlugins));
   // Split the plugins in private and public
-  const privatePlugins = loadedPlugins
-    .filter(([, plugin]) => plugin.config.get('config.private', false) === true)
-    .map(([name, plugin]) => [name, { private: true, ...plugin }]);
+  // const privatePlugins = loadedPlugins
+  //   .filter(([, plugin]) => plugin.config.get('config.private', false) === true)
+  //   .map(([name, plugin]) => [name, { private: true, ...plugin }]);
 
-  loadedPlugins = loadedPlugins.filter(
-    ([, plugin]) => plugin.config.get('config.private', false) === false
-  );
+  // loadedPlugins = loadedPlugins.filter(
+  //   ([, plugin]) => plugin.config.get('config.private', false) === false
+  // );
 
   // Expose the plugin object under leemons.plugin
-  Object.defineProperty(leemons, 'plugin', {
-    get: () => {
-      const caller = getStackTrace(4).fileName;
-      // Get the plugin which is calling this property.
-      const plugin = [...loadedPlugins, ...privatePlugins].find(([, object]) =>
-        caller.startsWith(object.dir.app)
-      );
-      if (plugin) {
-        return plugin[1];
-      }
-      return null;
-    },
-  });
-  const leemonsPath = `${path.dirname(require.resolve('leemons/package.json'))}/`;
-  const leemonsDatabasePath = `${path.dirname(require.resolve('leemons-database/package.json'))}/`;
+  // Object.defineProperty(leemons, 'plugin', {
+  //   get: () => {
+  //     const caller = getStackTrace(4).fileName;
+  //     // Get the plugin which is calling this property.
+  //     const plugin = [...loadedPlugins, ...privatePlugins].find(([, object]) =>
+  //       caller.startsWith(object.dir.app)
+  //     );
+  //     if (plugin) {
+  //       return plugin[1];
+  //     }
+  //     return null;
+  //   },
+  // });
+  // const leemonsPath = `${path.dirname(require.resolve('leemons/package.json'))}/`;
+  // const leemonsDatabasePath = `${path.dirname(require.resolve('leemons-database/package.json'))}/`;
 
   // Expose all the plugins object under leemons.plugins (private plugins only shown to the allowed ones)
-  Object.defineProperty(leemons, 'plugins', {
-    get: () => {
-      let caller = getStackTrace(2).fileName;
+  // Object.defineProperty(leemons, 'plugins', {
+  //   get: () => {
+  //     let caller = getStackTrace(2).fileName;
 
-      // When containerized in VM
-      if (caller === null) {
-        caller = getStackTrace(4).fileName;
-      }
-      const visiblePlugins = [...loadedPlugins];
-      // Return the plugins
-      const visiblePrivatePlugins = privatePlugins.filter(([, object]) => {
-        const allowedPaths = [object.dir.app, leemonsPath, leemonsDatabasePath];
-        return allowedPaths.find((allowedPath) => caller.startsWith(allowedPath));
-      });
-      if (visiblePrivatePlugins.length) {
-        visiblePlugins.push(...visiblePrivatePlugins);
-      }
-      return _.fromPairs(visiblePlugins);
-    },
-  });
+  //     // When containerized in VM
+  //     if (caller === null) {
+  //       caller = getStackTrace(4).fileName;
+  //     }
+  //     const visiblePlugins = [...loadedPlugins];
+  //     // Return the plugins
+  //     const visiblePrivatePlugins = privatePlugins.filter(([, object]) => {
+  //       const allowedPaths = [object.dir.app, leemonsPath, leemonsDatabasePath];
+  //       return allowedPaths.find((allowedPath) => caller.startsWith(allowedPath));
+  //     });
+  //     if (visiblePrivatePlugins.length) {
+  //       visiblePlugins.push(...visiblePrivatePlugins);
+  //     }
+  //     return _.fromPairs(visiblePlugins);
+  //   },
+  // });
 }
 
 module.exports = { loadPlugins, initializePlugins };

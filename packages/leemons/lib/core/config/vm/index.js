@@ -1,10 +1,32 @@
 const { NodeVM } = require('vm2');
 const path = require('path');
+const _ = require('lodash');
 const utils = require('leemons-utils');
 
 const protect = require('./protect');
 
-module.exports = (allowedPath) => {
+function filterLeemons(filter) {
+  let filtered = {
+    leemons: _.fromPairs(
+      _.entries(_.pick(leemons, ['log', 'config', 'query' /* , 'plugins', 'plugin' */])).map(
+        ([name, property]) => {
+          if (_.isFunction(property)) {
+            return [name, property.bind(leemons)];
+          }
+          return [name, property];
+        }
+      )
+    ),
+    utils,
+  };
+
+  if (filter) {
+    filtered = filter(filtered);
+  }
+  return filtered;
+}
+
+module.exports = (allowedPath, filter = null) => {
   // Set the allowed routes for imports
   const root = [
     allowedPath,
@@ -13,7 +35,7 @@ module.exports = (allowedPath) => {
 
   // Set-up a NodeVM with the limititations
   const vm = new NodeVM({
-    sandbox: { leemons, utils },
+    sandbox: filterLeemons(filter),
     require: {
       external: true,
       // Run every imported file inside the VM
