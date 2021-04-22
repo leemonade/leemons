@@ -1,6 +1,4 @@
-const { getStackTrace } = require('leemons-utils');
 const _ = require('lodash');
-const path = require('path');
 
 const createConnectorRegistry = require('./connectorRegistry');
 const queryBuilder = require('./queryBuilder');
@@ -10,11 +8,7 @@ class DatabaseManager {
     this.leemons = leemons;
     this.defaultConnection = leemons.config.get('database.defaultConnection');
 
-    // Register the models (only show it to leemons-database)
-    const leemonsDatabasePath = path.dirname(require.resolve('leemons-database/package.json'));
-    const leemonsPath = path.dirname(require.resolve('leemons/package.json'));
-
-    const connectors = createConnectorRegistry(
+    this.connectors = createConnectorRegistry(
       {
         connections: leemons.config.get('database.connections'),
         defaultConnection: this.defaultConnection,
@@ -22,43 +16,10 @@ class DatabaseManager {
       this
     );
 
-    Object.defineProperty(this, 'connectors', {
-      get: () => {
-        const caller = getStackTrace(2).fileName;
-        if (
-          [leemonsPath, leemonsDatabasePath].find((allowedPath) => caller.startsWith(allowedPath))
-        ) {
-          return connectors;
-        }
-        return null;
-      },
-    });
-
-    const models = new Map();
-    Object.defineProperty(this, 'models', {
-      get: () => {
-        const caller = getStackTrace(2).fileName;
-        if (
-          [leemonsPath, leemonsDatabasePath].find((allowedPath) => caller.startsWith(allowedPath))
-        ) {
-          return models;
-        }
-        return null;
-      },
-    });
+    this.models = new Map();
 
     // Register the queries (only show it to leemons-database)
-    const queries = new Map();
     this.queries = new Map();
-    Object.defineProperty(this, 'queries', {
-      get: () => {
-        const caller = getStackTrace(2).fileName;
-        if (caller.startsWith(leemonsDatabasePath)) {
-          return queries;
-        }
-        return null;
-      },
-    });
 
     this.initialized = false;
   }
@@ -81,9 +42,6 @@ class DatabaseManager {
 
   query(modelName, pluginName = null) {
     // TODO: Add plugin roles
-
-    // Get the used connector (if no connection provided, get the default one)
-    // const connector = this.connectors.getFromConnection(connection);
 
     let showDelete = true;
     if (pluginName) {
