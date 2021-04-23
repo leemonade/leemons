@@ -169,7 +169,10 @@ function loadFront(plugins) {
         usedDeps.push(`@leemons/${name}`);
         // If the dependencies are not registered register them
         if (!_.get(nextDeps, `@leemons/${name}`, null)) {
-          nonInstalledDeps.push({ name: `@leemons/${name}`, path: path.resolve(depsPath, name) });
+          nonInstalledDeps.push({
+            name: `@leemons/${name}`,
+            path: path.relative(nextPath, path.resolve(depsPath, name)),
+          });
         }
       }
     }
