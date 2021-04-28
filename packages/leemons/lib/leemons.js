@@ -23,7 +23,7 @@ class Leemons {
     // expose logging system to leemons
     this.log = log;
 
-    log.debug('New leemons');
+    log.verbose('New leemons');
 
     const timers = {};
     hooks.addAction('*', ({ eventName, args: [options] }) => {
@@ -227,7 +227,7 @@ class Leemons {
     }
     await this.load();
     this.server.listen(process.env.PORT, () => {
-      this.log.http(`Listening on http://localhost:${process.env.PORT}`);
+      this.log.debug(`Listening on http://localhost:${process.env.PORT}`);
 
       process.send('running');
       this.started = true;

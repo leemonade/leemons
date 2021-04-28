@@ -31,7 +31,7 @@ async function createProxy(workers, log) {
   const port = await getAvailablePort();
   process.env.PORT = port;
   server.listen(port, () => {
-    log.info(`Listening on http://localhost:${port}`);
+    log.debug(`Listening on http://localhost:${port}`);
   });
 }
 

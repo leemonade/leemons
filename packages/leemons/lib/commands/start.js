@@ -58,7 +58,8 @@ module.exports = async (args) => {
   const log = await createLogger({ id: process.env.loggerId });
   // Save the logger id
   process.env.loggerId = log.id;
-  log.level = 'silly';
+  // By default see error, warn and info
+  log.level = args.level || 'info';
   // const log = (...msgs) => {
   //   const time = new Date().toUTCString();
   //   const msg = msgs.join(' ');
@@ -81,7 +82,7 @@ module.exports = async (args) => {
 
     process.env.NODE_ENV = 'production';
 
-    log.debug(
+    log.verbose(
       chalk`Started server in {green ${process.env.NODE_ENV} mode } on {underline PID: ${process.pid}}`
     );
 
@@ -132,12 +133,14 @@ module.exports = async (args) => {
             nodeToBeKilled.send('kill');
             nodeToBeKilled = undefined;
           }
+          log.info(`Server started on http://localhost:${process.env.PORT}`);
           worker.send('running');
           break;
         case 'exit':
           if (Array.isArray(message) && message[1]) {
             process.stderr.write(chalk`{red An error ocurred\n{gray ${message[1]}}}\n`);
           }
+          Object.values(cluster.workers).forEach((_worker) => _worker.send('kill'));
           process.exit(0);
         // eslint-disable-next-line no-fallthrough
         default:

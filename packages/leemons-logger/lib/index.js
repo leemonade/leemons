@@ -41,7 +41,7 @@ module.exports = async ({ id = uuid() } = {}) => {
   // Throw error
   log.throw = (e) => {
     // Log error
-    logger.error(e.stack);
+    logger.error(logger.isDebugEnabled() ? e.stack : e.message);
 
     // Stop listening to other logs
     [...Object.keys(winston.config.npm.levels), 'throw'].forEach((level) => {
