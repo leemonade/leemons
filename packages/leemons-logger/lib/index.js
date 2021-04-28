@@ -1,8 +1,18 @@
 const winston = require('winston');
+// const _ = require('lodash');
 const transports = require('./transports');
 
-const logger = winston.createLogger({
-  transports,
-});
+module.exports = () => {
+  const logger = winston.createLogger({
+    transports: transports(),
+  });
 
-module.exports = logger;
+  return logger;
+  // return _.pick(logger, [
+  //   'profile',
+  //   'startTimer',
+  //   'level',
+  //   'on',
+  //   ...Object.keys(winston.config.npm.levels),
+  // ]);
+};
