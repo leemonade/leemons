@@ -1,4 +1,3 @@
-const { getStackTrace } = require('leemons-utils');
 const _ = require('lodash');
 
 function replaceIdByPrimaryKey(params, model) {
