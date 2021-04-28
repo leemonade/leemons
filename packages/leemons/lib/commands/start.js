@@ -181,7 +181,6 @@ module.exports = async (args) => {
 
       return leemonsInstance.start();
     } catch (error) {
-      console.log(error);
       process.send(['exit', error.message]);
     }
   }

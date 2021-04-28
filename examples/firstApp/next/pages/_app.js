@@ -8,6 +8,9 @@ function MyApp({ Component, pageProps }) {
   const initialized = useRef(false);
   // Only add it once
   if (initialized.current === false) {
+    // Define logger to console (temporal)
+    global.leemons = {log: console};
+
     console.log('Frontend plugins:', frontPlugins.map(plugin => plugin.name));
     console.log('All the installed plugins:', plugins)
     frontPlugins.forEach(plugin => {
@@ -19,7 +22,6 @@ function MyApp({ Component, pageProps }) {
     });
 
 
-    global.leemons = {};
 
     initialized.current = true;
   }
