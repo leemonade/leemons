@@ -20,6 +20,10 @@ class Leemons {
   constructor(log) {
     // expose leemons globally
     global.leemons = this;
+    // expose logging system to leemons
+    this.log = log;
+
+    log.debug('New leemons');
 
     const timers = {};
     hooks.addAction('*', ({ eventName, args: [options] }) => {
@@ -40,7 +44,7 @@ class Leemons {
           }${milliseconds}ms`;
 
           delete timers[eventName];
-          console.log(
+          this.log.debug(
             chalk`The event {green ${eventName}} was running during {magenta ${timeString}}`
           );
           break;
@@ -48,10 +52,6 @@ class Leemons {
         default:
       }
     });
-
-    // TODO: Do a good log system
-    this.log = log;
-    log('New leemons');
 
     // Initialize the reload method (generate a "state" for it)
     this.reload();
@@ -112,17 +112,23 @@ class Leemons {
 
   // Initialize all the middlewares
   setMiddlewares() {
+    this.app.use(bodyParser());
     this.app.use(async (ctx, next) => {
-      this.log(`New connection to ${ctx.method} ${ctx.path}`);
+      this.log.http(
+        chalk`New connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${ctx.ip}}`
+      );
       await next();
     });
-
-    this.app.use(bodyParser());
   }
 
   // Initialize the api endpoints
   setRoutes() {
     // Plugins
+    this.router.get('/api/reload', (ctx) => {
+      ctx.body = { reloading: true };
+      this.reload();
+    });
+
     Object.entries(this.plugins).forEach(([, plugin]) => {
       if (_.isArray(plugin.routes)) {
         plugin.routes.forEach((route) => {
@@ -221,7 +227,7 @@ class Leemons {
     }
     await this.load();
     this.server.listen(process.env.PORT, () => {
-      this.log(`Listening on http://localhost:${process.env.PORT}`);
+      this.log.http(`Listening on http://localhost:${process.env.PORT}`);
 
       process.send('running');
       this.started = true;

@@ -39,11 +39,11 @@ function checkDirChanges(dir) {
   });
 
   if (checksums.integrity === currentChecksums.checksum) {
-    leemons.log(dir, 'Not Changed');
+    leemons.log.debug(`${dir} Not Changed`);
     return { changed: false, checksums };
   }
 
-  leemons.log(dir, 'Changed');
+  leemons.log.debug(`${dir} Changed`);
   return { changed: true, checksums: {} };
 }
 

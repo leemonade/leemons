@@ -6,6 +6,7 @@ const path = require('path');
 const request = require('request');
 const detect = require('detect-port');
 
+const createLogger = require('leemons-logger');
 const leemons = require('../index');
 
 function getAvailablePort(port = process.env.PORT || 8080) {
@@ -13,8 +14,9 @@ function getAvailablePort(port = process.env.PORT || 8080) {
 }
 
 function createWorker(env = {}) {
-  const newWorker = cluster.fork(env);
-  newWorker.process.env = env;
+  const customenv = { ...env, loggerId: process.env.loggerId };
+  const newWorker = cluster.fork(customenv);
+  newWorker.process.env = customenv;
 }
 
 // Create a Proxy which uses the currently active server
@@ -28,7 +30,7 @@ async function createProxy(workers, log) {
   const port = await getAvailablePort();
   process.env.PORT = port;
   server.listen(port, () => {
-    log(`Listening on http://localhost:${port}`);
+    log.debug(`Listening on http://localhost:${port}`);
   });
 }
 
@@ -51,19 +53,24 @@ module.exports = async (args) => {
   }
   process.env.nextDir = nextDir;
 
-  // Logging function
-  const log = (...msgs) => {
-    const time = new Date().toUTCString();
-    const msg = msgs.join(' ');
-    if (cluster.isMaster)
-      process.stdout.write(
-        chalk`{gray ${time}} {bold {gray [}{green Master}{gray ]}} {gray - ${msg}}\n`
-      );
-    else
-      process.stdout.write(
-        chalk`{gray ${time}} {bold {gray [}{blue Worker ${cluster.worker.process.pid}}{gray ]}} {gray - ${msg}}\n`
-      );
-  };
+  // Logging function (The loggerId is used for keep the same logger
+  //                   between the master and the worker process)
+  const log = await createLogger({ id: process.env.loggerId });
+  // Save the logger id
+  process.env.loggerId = log.id;
+  log.level = 'silly';
+  // const log = (...msgs) => {
+  //   const time = new Date().toUTCString();
+  //   const msg = msgs.join(' ');
+  //   if (cluster.isMaster)
+  //     process.stdout.write(
+  //       chalk`{gray ${time}} {bold {gray [}{green Master}{gray ]}} {gray - ${msg}}\n`
+  //     );
+  //   else
+  //     process.stdout.write(
+  //       chalk`{gray ${time}} {bold {gray [}{blue Worker ${cluster.worker.process.pid}}{gray ]}} {gray - ${msg}}\n`
+  //     );
+  // };
   global.log = log;
 
   // Master Cluster
@@ -74,7 +81,7 @@ module.exports = async (args) => {
 
     process.env.NODE_ENV = 'production';
 
-    log(
+    log.debug(
       chalk`Started server in {green ${process.env.NODE_ENV} mode } on {underline PID: ${process.pid}}`
     );
 
@@ -100,7 +107,7 @@ module.exports = async (args) => {
     cluster.on('message', async (worker, message) => {
       const order = Array.isArray(message) ? message[0] : message;
 
-      log(chalk`{blue Worker ${worker.process.pid}} sends {underline ${order}}`);
+      log.debug(chalk`{blue Worker ${worker.process.pid}} sends {underline ${order}}`);
 
       switch (order) {
         // When a reload order is sent
@@ -114,7 +121,7 @@ module.exports = async (args) => {
         // When a worker is ready to be killed
         // Kill it and create a new one
         case 'kill':
-          log(chalk`Time to kill: {underline ${timeDif(time)}}`);
+          log.debug(chalk`Time to kill: {underline ${timeDif(time)}}`);
           worker.kill();
           break;
         // when a worker is running, kill the
@@ -128,10 +135,10 @@ module.exports = async (args) => {
           worker.send('running');
           break;
         case 'exit':
-          if (message[1]) {
+          if (Array.isArray(message) && message[1]) {
             process.stderr.write(chalk`{red An error ocurred\n{gray ${message[1]}}}\n`);
           }
-          process.exit(1);
+          process.exit(0);
         // eslint-disable-next-line no-fallthrough
         default:
       }
@@ -146,27 +153,27 @@ module.exports = async (args) => {
 
     // Set the port for the worker's server
 
-    log('new Worker started');
+    log.debug('new Worker started');
 
     try {
       const leemonsInstance = leemons(log);
 
       // Handle message logic
       cluster.worker.on('message', (message) => {
-        log(chalk`{green Master} sends {underline ${message}}`);
+        log.debug(chalk`{green Master} sends {underline ${message}}`);
 
         switch (message) {
           // When kill, do a clean-exit
           case 'kill':
             leemonsInstance.server.destroy(() => {
-              log('Server stopped listening');
+              log.debug('Server stopped listening');
               process.send('kill');
-              log(chalk.red.bold('is now death'));
+              log.debug(chalk.red.bold('is now death'));
             });
             break;
           // When running log the time to up
           case 'running':
-            log(chalk`Time to up: {underline ${timeDif(createdAt)}}`);
+            log.debug(chalk`Time to up: {underline ${timeDif(createdAt)}}`);
             break;
           default:
         }
@@ -174,6 +181,7 @@ module.exports = async (args) => {
 
       return leemonsInstance.start();
     } catch (error) {
+      console.log(error);
       process.send(['exit', error.message]);
     }
   }

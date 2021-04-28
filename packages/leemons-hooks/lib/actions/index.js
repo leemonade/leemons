@@ -26,7 +26,9 @@ function registerAction(eventName, func) {
 
   setAction(eventName, func);
 
-  console.log(chalk`A new {magenta action} for the event {green ${eventName}} has been registered`);
+  leemons.log.debug(
+    chalk`A new {magenta action} for the event {green ${eventName}} has been registered`
+  );
 }
 
 function unregisterAction(eventName, func) {
@@ -43,7 +45,7 @@ function unregisterAction(eventName, func) {
     .filter(({ el }) => el === func)
     .map(({ pos, el }) => {
       eventActions.splice(pos, 1);
-      console.log(
+      leemons.log.debug(
         chalk`An {magenta action} for the event {green ${eventName}} has been unregistered`
       );
       return el;

@@ -38,6 +38,28 @@ module.exports = async ({ id = uuid() } = {}) => {
     },
   });
 
+  // Throw error
+  log.throw = (e) => {
+    // Log error
+    logger.error(e.stack);
+
+    // Stop listening to other logs
+    [...Object.keys(winston.config.npm.levels), 'throw'].forEach((level) => {
+      log[level] = () => {};
+    });
+    // Stop winston stream
+    logger.end();
+
+    // When stream finished, send exit signal
+    logger.on('finish', () => {
+      process.send('exit');
+    });
+  };
+
+  process.once('uncaughtException', log.throw);
+
+  process.once('unhandledRejection', log.throw);
+
   // Return as object
   return log;
 };

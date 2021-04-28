@@ -22,6 +22,7 @@
     "koa-static": "^5.0.0",
     "leemons-database": "1",
     "leemons-hooks": "1.0.0",
+    "leemons-logger": "1.0.0",
     "leemons-utils": "1.0.0",
     "lodash": "^4.17.21",
     "next": "^10.0.8",
