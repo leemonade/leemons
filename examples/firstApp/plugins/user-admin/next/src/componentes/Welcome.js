@@ -15,6 +15,7 @@ export default function Welcome({url}) {
     {
       msgs.map(msg => {console.log("Iteration sees", msg); return <p>{msg}</p>})
     }
+    <button onClick={() => {throw new Error('ERRORE')}}>Throw</button>
     <Link href={url}>Go to page</Link>
   </div>;
 }

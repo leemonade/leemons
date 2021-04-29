@@ -52,7 +52,8 @@ module.exports = async ({ id = uuid() } = {}) => {
 
     // When stream finished, send exit signal
     logger.on('finish', () => {
-      process.send('exit');
+      if (process.send) process.send('exit');
+      else process.exit();
     });
   };
 

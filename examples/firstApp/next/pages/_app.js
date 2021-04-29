@@ -7,6 +7,12 @@ import {plugins, frontPlugins} from "@plugins";
 function MyApp({ Component, pageProps }) {
   const initialized = useRef(false);
   // Only add it once
+  useEffect(() => {
+    window.addEventListener('error', (e) => {
+      e.preventDefault();
+      console.error(e.error);
+    });
+  }, []);
   if (initialized.current === false) {
     // Define logger to console (temporal)
     global.leemons = {log: console};
