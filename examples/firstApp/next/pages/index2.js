@@ -1,10 +1,9 @@
 import Head from 'next/head';
 import React from 'react';
-import withPersistentState from 'src/HOC/withPersistentState';
 import styles from '../styles/Home.module.css';
 import Link from 'next/link';
 
-function Home({persistentState: [state, setState]}) {
+function Home() {
   return (
     <div className={styles.container}>
       <Head>
@@ -13,10 +12,8 @@ function Home({persistentState: [state, setState]}) {
       </Head>
 
       <main className={styles.main}>
-        <h1>Persistent State</h1>
-        <p>Value: {state.value}</p>
-        <button onClick={() => setState({ value: state.value + 1 })}>Increment</button>
-        <Link href="/index2">Go to page without persisten State</Link>
+        <h1>No Persistent State</h1>
+        <Link href="/index">Go to page with persisten State</Link>
       </main>
 
       <footer className={styles.footer}>
@@ -32,4 +29,4 @@ function Home({persistentState: [state, setState]}) {
   );
 }
 
-export default withPersistentState(Home, 'leemons', {value: 0}, {value: 'deleted'});
+export default Home;
