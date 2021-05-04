@@ -54,12 +54,13 @@ async function initKnex(connector, connections) {
         },
       };
 
-      const dbConnection = knex(config);
+      let dbConnection;
       try {
+        dbConnection = knex(config);
         await dbConnection.schema.hasTable('core_store');
-      } catch {
+      } catch (e) {
         throw new Error(
-          `Can't connect to the database in ${connection.name} connection. Check if the database is running.`
+          `Can't connect to the database in ${connection.name} connection. Check if the database is running. (${e.code} - ${e.sqlMessage})`
         );
       }
 

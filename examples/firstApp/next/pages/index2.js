@@ -13,7 +13,7 @@ function Home() {
 
       <main className={styles.main}>
         <h1>No Persistent State</h1>
-        <Link href="/index">Go to page with persisten State</Link>
+        <Link href="/">Go to page with persistent State</Link>
       </main>
 
       <footer className={styles.footer}>

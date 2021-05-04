@@ -1,4 +1,5 @@
 import React from 'react';
+import {fireEvent, addAction} from 'leemons-hooks';
 
 function getDisplayName(WrappedComponent) {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';
@@ -11,18 +12,17 @@ class State extends React.Component {
    */
   static State = {};
 
-  constructor(props, namespace, defaultValue) {
+  constructor(props, namespace, defaultValue, deletedValue) {
     super(props);
 
     /*
      * The namespace is the key where the state for this
      * caller is stored, allowing the user to share the
      * states between different components
-     *
-     * WARNING: When updating the State of a namespace, only
-     * the updater' component will be updated.
      */
     this.namespace = namespace;
+
+    this.deletedValue = deletedValue;
 
     /*
      * Check if the stored state is deleted for this caller
@@ -37,6 +37,28 @@ class State extends React.Component {
       State.State[this.namespace] = defaultValue;
     }
     this.state = State.State[this.namespace];
+
+    /*
+     * Create an action hook for the state update on the given namespace
+     * then check if the updated state differs from the React State, if this
+     * happens, update the state, allowing component syncronization.
+     */
+    addAction(`withPersistentState::stateUpdated-${this.namespace}`, () => {
+      if (this.state != State.State[this.namespace]) {
+        this.setState(State.State[this.namespace]);
+      }
+    });
+
+    /*
+     * Create an action hook for the state deletion on the given namespace
+     * returning the deletedValue of this component (not the one who deleted it)
+     */
+    addAction(`withPersistentState::stateDeleted-${this.namespace}`, () => {
+      if (!this.deleted) {
+        this.setState(this.deletedValue);
+        this.deleted = true;
+      }
+    });
   }
 
   /*
@@ -47,6 +69,7 @@ class State extends React.Component {
     if (!this.deleted) {
       this.setState(newValue, () => {
         State.State[this.namespace] = this.state;
+        fireEvent(`withPersistentState::stateUpdated-${this.namespace}`);
         callback();
       });
     }
@@ -57,9 +80,10 @@ class State extends React.Component {
    * React' state (the last one can't be removed)
    */
   freeState() {
-    this.setState({});
     this.deleted = true;
     delete State.State[this.namespace];
+    this.setState(this.deletedValue);
+    fireEvent(`withPersistentState::stateDeleted-${this.namespace}`);
   }
 }
 
@@ -75,7 +99,7 @@ export function withPersistentState(
 ) {
   class withPersistentState extends State {
     constructor(props) {
-      super(props, namespace, defaultValue);
+      super(props, namespace, defaultValue, deletedValue);
     }
     render() {
       return (

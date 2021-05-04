@@ -16,6 +16,16 @@
   padding: 5rem 0;
 }
 
+.flex {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.counter {
+  margin: 10px;
+}
+
 .footer {
   display: flex;
   width: 100%;
