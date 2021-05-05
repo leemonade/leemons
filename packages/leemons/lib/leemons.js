@@ -11,6 +11,7 @@ const bodyParser = require('koa-bodyparser');
 const { createDatabaseManager } = require('leemons-database');
 const hooks = require('leemons-hooks');
 const ora = require('ora');
+const { generateEnv } = require('leemons-utils/lib/env');
 const { loadConfiguration } = require('./core/config/loadConfig');
 const { loadModels } = require('./core/model/loadModel');
 const { loadPlugins, initializePlugins } = require('./core/plugins/loadPlugins');
@@ -59,8 +60,6 @@ class Leemons {
     // TODO: Stop exposing the server and router
     this.app = new Koa();
     this.router = new Router();
-
-    this.config = loadConfiguration(this);
 
     this.initServer();
 
@@ -165,14 +164,19 @@ class Leemons {
 
   // Load all apps
   async load() {
+    // TODO: Review the .env loading for the configuration files (maybe let the user define the .env location?)
+    this.config = loadConfiguration(this, { env: await generateEnv('.env') });
+
     await hooks.fireEvent('leemons::load', { status: 'start' });
     if (this.loaded) {
       return true;
     }
-
+    await hooks.fireEvent('leemons::loadPlugins', { status: 'start' });
     await loadPlugins(this);
-
+    await hooks.fireEvent('leemons::loadPlugins', { status: 'end' });
+    await hooks.fireEvent('leemons::loadModels', { status: 'start' });
     loadModels(this);
+    await hooks.fireEvent('leemons::loadModels', { status: 'end' });
     // Create a database manager
     this.db = createDatabaseManager(this);
 

@@ -20,23 +20,30 @@ async function loadPlugins(leemons) {
   checkPluginDuplicates(plugins);
 
   // Load all the plugins configuration
-  let loadedPlugins = plugins.map((plugin) => {
-    const config = loadConfiguration(plugin, plugin.path, {
-      config: 'config',
-      models: 'models',
-      controllers: 'controllers',
-      services: 'services',
-      next: 'next',
-      env: '.env',
-    });
+  let loadedPlugins = await Promise.all(
+    plugins.map(async (plugin) => {
+      const config = loadConfiguration(plugin, {
+        dir: plugin.path,
+        defaultDirs: {
+          config: 'config',
+          models: 'models',
+          controllers: 'controllers',
+          services: 'services',
+          next: 'next',
+          env: '.env',
+        },
+        // TODO: Review the .env loading for the configuration files (maybe let the user define the .env location?)
+        env: await generateEnv(path.resolve(plugin.path, '.env')),
+      });
 
-    return {
-      source: plugin.source,
-      name: config.get('config.name', plugin.name),
-      dir: plugin.dir,
-      config,
-    };
-  });
+      return {
+        source: plugin.source,
+        name: config.get('config.name', plugin.name),
+        dir: plugin.dir,
+        config,
+      };
+    })
+  );
 
   pluginsEnv = await Promise.all(
     loadedPlugins
@@ -57,7 +64,6 @@ async function loadPlugins(leemons) {
     const pluginObj = plugin;
 
     // Generate database models
-    // TODO: Adding custom env
     const pluginModels = loadFiles(path.resolve(pluginObj.dir.app, pluginObj.dir.models), {
       env: pluginsEnv[pluginObj.name],
     });
@@ -111,7 +117,6 @@ function initializePlugins(leemons) {
     }
 
     // Load controllers
-    // TODO: Adding custom env
     const controllers = loadFiles(path.resolve(pluginObj.dir.app, pluginObj.dir.controllers), {
       accept: ['.js'],
       exclude: [path.basename(routesFile)],
@@ -120,7 +125,6 @@ function initializePlugins(leemons) {
     });
 
     // Load services
-    // TODO: Adding custom env
     const services = loadServices(
       path.resolve(pluginObj.dir.app, pluginObj.dir.services),
       vmFilter,

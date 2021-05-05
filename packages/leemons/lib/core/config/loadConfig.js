@@ -1,22 +1,25 @@
 const _ = require('lodash');
 const path = require('path');
 
-const { env } = require('leemons-utils');
+const { env: envf } = require('leemons-utils');
 const { configProvider } = require('./configProvider');
 const { loadFiles } = require('./loadFiles');
 
 const leemonsDefaultDirs = {
-  config: env('CONFIG_DIR', 'config'),
+  config: envf('CONFIG_DIR', 'config'),
   models: 'models',
   plugins: 'plugins',
-  next: env('nextDir', 'next'),
+  next: envf('nextDir', 'next'),
 };
 
-function loadConfiguration(object, dir = process.cwd(), defaultDirs = leemonsDefaultDirs) {
+function loadConfiguration(
+  object,
+  { dir = process.cwd(), defaultDirs = leemonsDefaultDirs, env = {} } = {}
+) {
   // get config directory
   const configDir = path.resolve(dir, defaultDirs.config);
   const config = {
-    ...loadFiles(configDir),
+    ...loadFiles(configDir, { env }),
   };
 
   let dirs;
