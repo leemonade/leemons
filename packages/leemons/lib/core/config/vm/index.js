@@ -26,7 +26,7 @@ function filterLeemons(filter) {
   return filtered;
 }
 
-module.exports = (allowedPath, filter = null) => {
+module.exports = (allowedPath, filter = null, env = {}) => {
   // Set the allowed routes for imports
   const root = [
     allowedPath,
@@ -36,6 +36,7 @@ module.exports = (allowedPath, filter = null) => {
   // Set-up a NodeVM with the limititations
   const vm = new NodeVM({
     sandbox: filterLeemons(filter),
+    env,
     require: {
       external: true,
       // Run every imported file inside the VM

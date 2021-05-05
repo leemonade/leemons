@@ -1,4 +1,5 @@
 const postsTable = leemons.query('plugins_user-admin::posts');
+console.log(process.env);
 
 async function create(ctx) {
   const { title, body, author } = ctx.request.body;

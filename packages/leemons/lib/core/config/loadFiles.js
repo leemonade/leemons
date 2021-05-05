@@ -1,13 +1,13 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { env } = require('leemons-utils');
+const { env: envf } = require('leemons-utils');
 const vm = require('./vm');
 
-function loadJSFile(file, filter = null) {
+function loadJSFile(file, filter = null, env = {}) {
   try {
-    const fileContent = vm(path.dirname(file), filter).runFile(file);
+    const fileContent = vm(path.dirname(file), filter, env).runFile(file);
     if (typeof fileContent === 'function') {
-      return fileContent({ env, leemons });
+      return fileContent({ env: envf, leemons });
     }
     return fileContent;
   } catch (e) {
@@ -23,11 +23,11 @@ function loadJSONFile(file) {
   }
 }
 
-function loadFile(file, accept = ['.js', '.json'], filter = null) {
+function loadFile(file, accept = ['.js', '.json'], filter = null, env = {}) {
   const extension = path.extname(file);
 
   if (extension === '.js' && accept.includes('.js')) {
-    return loadJSFile(file, filter);
+    return loadJSFile(file, filter, env);
   }
   if (extension === '.json' && accept.includes('.json')) {
     return loadJSONFile(file);
@@ -35,7 +35,7 @@ function loadFile(file, accept = ['.js', '.json'], filter = null) {
   return null;
 }
 
-function loadFiles(dir, { accept = ['.js', '.json'], exclude = [], filter = null } = {}) {
+function loadFiles(dir, { accept = ['.js', '.json'], exclude = [], filter = null, env = {} } = {}) {
   if (!fs.existsSync(dir)) {
     return {};
   }
@@ -57,7 +57,7 @@ function loadFiles(dir, { accept = ['.js', '.json'], exclude = [], filter = null
       }
 
       // Load the current file
-      const fileConfig = loadFile(path.resolve(dir, file.name), accept, filter);
+      const fileConfig = loadFile(path.resolve(dir, file.name), accept, filter, env);
 
       if (fileConfig) {
         return { ...config, [key]: fileConfig };

@@ -3,6 +3,7 @@ const _ = require('lodash');
 const fs = require('fs-extra');
 
 // const { getStackTrace } = require('leemons-utils');
+const { generateEnv } = require('leemons-utils/lib/env');
 const { loadConfiguration } = require('../config/loadConfig');
 const { loadFiles, loadFile } = require('../config/loadFiles');
 const { formatModels } = require('../model/loadModel');
@@ -24,6 +25,7 @@ function loadPlugins(leemons) {
       controllers: 'controllers',
       services: 'services',
       next: 'next',
+      env: '.env',
     });
 
     return {
@@ -34,6 +36,16 @@ function loadPlugins(leemons) {
     };
   });
 
+  Promise.all(
+    loadedPlugins
+      .map((plugin) =>
+        path.isAbsolute(plugin.dir.env)
+          ? plugin.dir.env
+          : path.resolve(plugin.dir.app, plugin.dir.env)
+      )
+      .map(generateEnv)
+  ).then((a) => console.log(a));
+
   // Throw an error when two plugins have the same id (name)
   checkPluginDuplicates(loadedPlugins);
 
@@ -42,7 +54,10 @@ function loadPlugins(leemons) {
     const pluginObj = plugin;
 
     // Generate database models
-    const pluginModels = loadFiles(path.resolve(pluginObj.dir.app, pluginObj.dir.models));
+    // TODO: Adding custom env
+    const pluginModels = loadFiles(path.resolve(pluginObj.dir.app, pluginObj.dir.models), {
+      env: { name: plugin.name },
+    });
     pluginObj.models = formatModels(pluginModels, `plugins.${pluginObj.name}`);
 
     return [pluginObj.name, pluginObj];
@@ -66,6 +81,7 @@ function initializePlugins(leemons) {
     if (!allowedPlugins.includes(plugin.name)) {
       allowedPlugins.push(plugin.name);
     }
+
     const vmFilter = (filtered) => {
       Object.defineProperty(filtered.leemons, 'plugin', {
         // The binding is needed for triggering the outside VM leemons
@@ -79,6 +95,7 @@ function initializePlugins(leemons) {
       _.set(filtered, 'leemons.query', (modelName) => query(modelName, plugin.name));
       return filtered;
     };
+
     // Load routes
     let routesFile = path.resolve(pluginObj.dir.app, pluginObj.dir.controllers, 'routes');
     let routes = {};
@@ -91,16 +108,20 @@ function initializePlugins(leemons) {
     }
 
     // Load controllers
+    // TODO: Adding custom env
     const controllers = loadFiles(path.resolve(pluginObj.dir.app, pluginObj.dir.controllers), {
       accept: ['.js'],
       exclude: [path.basename(routesFile)],
       filter: vmFilter,
+      env: { name: pluginObj.name },
     });
 
     // Load services
+    // TODO: Adding custom env
     const services = loadServices(
       path.resolve(pluginObj.dir.app, pluginObj.dir.services),
-      vmFilter
+      vmFilter,
+      { name: pluginObj.name }
     );
 
     // Return as the result of Object.entries

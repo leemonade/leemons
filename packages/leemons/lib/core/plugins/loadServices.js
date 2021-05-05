@@ -3,7 +3,7 @@ const path = require('path');
 const vm = require('../config/vm');
 const { loadFile } = require('../config/loadFiles');
 
-function loadServices(dir, vmFilter) {
+function loadServices(dir, vmFilter, env) {
   if (!fs.existsSync(dir)) {
     return {};
   }
@@ -25,7 +25,7 @@ function loadServices(dir, vmFilter) {
         // Except when loading .js, it loads the file, but don't process anything else
       } else if (fileExt === '.js') {
         try {
-          fileContent = vm(dir, vmFilter).runFile(path.resolve(dir, file.name));
+          fileContent = vm(dir, vmFilter, env).runFile(path.resolve(dir, file.name));
         } catch (e) {
           throw new Error(`File can not be read: ${file}. ${e.message}`);
         }
