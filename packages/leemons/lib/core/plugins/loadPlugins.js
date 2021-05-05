@@ -12,8 +12,10 @@ const checkPluginDuplicates = require('./checkPluginDuplicates');
 const loadServices = require('./loadServices');
 const loadFront = require('./front/loadFront');
 
+let pluginsEnv;
+
 // Load plugins part 1 (load config and models)
-function loadPlugins(leemons) {
+async function loadPlugins(leemons) {
   const plugins = [...getLocalPlugins(leemons), ...getExternalPlugins(leemons)];
   checkPluginDuplicates(plugins);
 
@@ -36,15 +38,16 @@ function loadPlugins(leemons) {
     };
   });
 
-  Promise.all(
+  pluginsEnv = await Promise.all(
     loadedPlugins
-      .map((plugin) =>
+      .map((plugin) => [
+        plugin.name,
         path.isAbsolute(plugin.dir.env)
           ? plugin.dir.env
-          : path.resolve(plugin.dir.app, plugin.dir.env)
-      )
-      .map(generateEnv)
-  ).then((a) => console.log(a));
+          : path.resolve(plugin.dir.app, plugin.dir.env),
+      ])
+      .map(async ([name, file]) => [name, await generateEnv(file)])
+  ).then(_.fromPairs);
 
   // Throw an error when two plugins have the same id (name)
   checkPluginDuplicates(loadedPlugins);
@@ -56,7 +59,7 @@ function loadPlugins(leemons) {
     // Generate database models
     // TODO: Adding custom env
     const pluginModels = loadFiles(path.resolve(pluginObj.dir.app, pluginObj.dir.models), {
-      env: { name: plugin.name },
+      env: pluginsEnv[pluginObj.name],
     });
     pluginObj.models = formatModels(pluginModels, `plugins.${pluginObj.name}`);
 
@@ -113,7 +116,7 @@ function initializePlugins(leemons) {
       accept: ['.js'],
       exclude: [path.basename(routesFile)],
       filter: vmFilter,
-      env: { name: pluginObj.name },
+      env: pluginsEnv[pluginObj.name],
     });
 
     // Load services
@@ -121,7 +124,7 @@ function initializePlugins(leemons) {
     const services = loadServices(
       path.resolve(pluginObj.dir.app, pluginObj.dir.services),
       vmFilter,
-      { name: pluginObj.name }
+      pluginsEnv[pluginObj.name]
     );
 
     // Return as the result of Object.entries

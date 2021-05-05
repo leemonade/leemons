@@ -170,7 +170,7 @@ class Leemons {
       return true;
     }
 
-    loadPlugins(this);
+    await loadPlugins(this);
 
     loadModels(this);
     // Create a database manager
