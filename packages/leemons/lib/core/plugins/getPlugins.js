@@ -18,11 +18,11 @@ function getLocalPlugins(leemons) {
 }
 
 // Get an array of plugins stored in node_modules
-function getExternalPlugins(leemons) {
+async function getExternalPlugins(leemons) {
   const plugins = [];
   // eslint-disable-next-line import/no-dynamic-require, global-require
   // const packageJSON = require(path.resolve(leemons.dir.app, 'package.json'));
-  const packageJSON = loadFile(path.resolve(leemons.dir.app, 'package.json'));
+  const packageJSON = await loadFile(path.resolve(leemons.dir.app, 'package.json'));
 
   // Get the plugins from the app dependencies in package.json
   if (packageJSON.dependencies) {

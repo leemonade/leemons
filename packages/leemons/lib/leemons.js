@@ -184,7 +184,7 @@ class Leemons {
     await hooks.fireEvent('leemons::initDB', { status: 'end' });
 
     await hooks.fireEvent('leemons::initializePlugins', { status: 'start' });
-    initializePlugins(this);
+    await initializePlugins(this);
     await hooks.fireEvent('leemons::initializePlugins', { status: 'end' });
 
     // Initialize next

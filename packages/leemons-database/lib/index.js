@@ -28,6 +28,7 @@ class DatabaseManager {
     if (this.initialized) throw new Error('The database was already initialized');
 
     this.connectors.load();
+
     await this.connectors.init(
       this.leemons.core_store,
       _.merge(

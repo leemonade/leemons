@@ -3,10 +3,19 @@ const path = require('path');
 const { env: envf } = require('leemons-utils');
 const vm = require('./vm');
 
-function loadJSFile(file, filter = null, env = {}) {
+/**
+ * Loads a JS file securely (inside a VM).
+ * If the file exports a function, it executes it with leemons and env function,
+ * if it is a JSON, it just return it.
+ *
+ * The can be executed with a custom env and also a filter (see ./vm/index.js)
+ */
+async function loadJSFile(file, filter = null, env = {}) {
   try {
+    // Load the file in a VM (for security reasons)
     const fileContent = vm(path.dirname(file), filter, env).runFile(file);
     if (typeof fileContent === 'function') {
+      // TODO: Check env function not showing file process env
       return fileContent({ env: envf, leemons });
     }
     return fileContent;
@@ -15,20 +24,35 @@ function loadJSFile(file, filter = null, env = {}) {
   }
 }
 
-function loadJSONFile(file) {
+/**
+ * Loads a JSON file with the FS, then parse the JSON and returns it
+ */
+async function loadJSONFile(file) {
   try {
-    return JSON.parse(fs.readFileSync(file));
+    return JSON.parse(await fs.readFile(file));
   } catch (e) {
     throw new Error(`File can not be read: ${file}. ${e.message}`);
   }
 }
 
-function loadFile(file, accept = ['.js', '.json'], filter = null, env = {}) {
+/**
+ * Loads the given file (.js or .json). The file can be rejected if doesn't match
+ * one of the accepted extensions (done for avoiding extension comparision when
+ * loading a user-input file).
+ *
+ * The given file can be loaded with a custom env, loaded inside process.env
+ * and also a custom filter for giving global variables to the
+ * file (see ./vm/index.js for more info).
+ */
+async function loadFile(file, accept = ['.js', '.json'], filter = null, env = {}) {
   const extension = path.extname(file);
-  if (fs.existsSync(file)) {
+
+  if (await fs.exists(file)) {
+    // If it is a JS file and it is allowed, then load it
     if (extension === '.js' && accept.includes('.js')) {
       return loadJSFile(file, filter, env);
     }
+    // If it is a JSON file and it is allowed, then load it
     if (extension === '.json' && accept.includes('.json')) {
       return loadJSONFile(file);
     }
@@ -36,35 +60,61 @@ function loadFile(file, accept = ['.js', '.json'], filter = null, env = {}) {
   return null;
 }
 
-function loadFiles(dir, { accept = ['.js', '.json'], exclude = [], filter = null, env = {} } = {}) {
-  if (!fs.existsSync(dir)) {
+/**
+ * Loads all files (.js or .json) in the given directory.
+ * The file can be rejected if doesn't match one of the
+ * accepted extensions (done for avoiding extension comparision when
+ * loading a user-input file).
+ *
+ * An exclude option is also provided for excluding certain filenames
+ *
+ * The given file can be loaded with a custom env, loaded inside process.env
+ * and also a custom filter for giving global variables to the
+ * file (see ./vm/index.js for more info).
+ */
+async function loadFiles(
+  dir,
+  { accept = ['.js', '.json'], exclude = [], filter = null, env = {} } = {}
+) {
+  // If the directory doesn't exists, return an empty object
+  if (!(await fs.exists(dir))) {
     return {};
   }
+
   // Get all the files
-  return fs
-    .readdirSync(dir, { withFileTypes: true })
-    .filter((file) => file.isFile())
-    .reduce((config, file) => {
-      // Remove excluded files
-      if (exclude.includes(file.name)) {
+  return (
+    // Asynchronously read all the files in the directory
+    (await fs.readdir(dir, { withFileTypes: true }))
+      // Keep only those items which are files
+      .filter((file) => file.isFile())
+      // TODO: Find a better name for PConfig
+      .reduce(async (Pconfig, file) => {
+        // Wait until config is resolved;
+        const config = await Pconfig;
+
+        // Remove excluded files
+        if (exclude.includes(file.name)) {
+          return config;
+        }
+
+        // Generate a key for the object based on the filename
+        const key = path.basename(file.name, path.extname(file.name));
+        if (config[key]) {
+          throw new Error(
+            `${file.name} configuration already exists on ${dir}. (do not use same name in .js files and .json files)`
+          );
+        }
+
+        // Load the current file
+        const fileConfig = await loadFile(path.resolve(dir, file.name), accept, filter, env);
+
+        // Append to the current config
+        if (fileConfig) {
+          return { ...config, [key]: fileConfig };
+        }
         return config;
-      }
-      // Generate a key for the object based on the file name
-      const key = path.basename(file.name, path.extname(file.name));
-      if (config[key]) {
-        throw new Error(
-          `${file.name} configuration already exists on ${dir}. (do not use same name in .js files and .json files)`
-        );
-      }
-
-      // Load the current file
-      const fileConfig = loadFile(path.resolve(dir, file.name), accept, filter, env);
-
-      if (fileConfig) {
-        return { ...config, [key]: fileConfig };
-      }
-      return config;
-    }, {});
+      }, {})
+  );
 }
 
 module.exports = { loadFiles, loadFile };

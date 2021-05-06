@@ -23,7 +23,8 @@ async function loadConfiguration(
 
   // Read main config file
   const configFile =
-    loadFile(path.join(configDir, 'config.json')) || loadFile(path.join(configDir, 'config.js'));
+    (await loadFile(path.join(configDir, 'config.json'))) ||
+    (await loadFile(path.join(configDir, 'config.js')));
 
   let dirs;
   if (configFile && configFile.dir) {
@@ -43,7 +44,7 @@ async function loadConfiguration(
 
   const env = await generateEnv(dirs.env);
   const config = {
-    ...loadFiles(configDir, { env, exclude: ['config.json', 'config.js'] }),
+    ...(await loadFiles(configDir, { env, exclude: ['config.json', 'config.js'] })),
   };
   if (configFile) {
     config.config = configFile;
