@@ -133,7 +133,7 @@ async function loadFront(plugins) {
         // Move pages
         if (folders.includes('pages')) {
           const pluginPages = path.resolve(dir, 'pages');
-          if (copyFolder(pluginPages, pagesPath, name, pagesChecksums)) {
+          if (await copyFolder(pluginPages, pagesPath, name, pagesChecksums)) {
             leemons.frontNeedsBuild = true;
           }
         }
@@ -150,7 +150,7 @@ async function loadFront(plugins) {
 
           // Copy folder
           const pluginSrc = path.resolve(dir, 'src');
-          if (copyFolder(pluginSrc, srcPath, name, srcChecksums)) {
+          if (await copyFolder(pluginSrc, srcPath, name, srcChecksums)) {
             leemons.frontNeedsBuild = true;
           }
         }
@@ -163,7 +163,7 @@ async function loadFront(plugins) {
           }
 
           // Copy the package.json
-          if (copyFile(path.resolve(dir, 'package.json'), depsPath, name, depsChecksums)) {
+          if (await copyFile(path.resolve(dir, 'package.json'), depsPath, name, depsChecksums)) {
             leemons.frontNeedsUpdateDeps = true;
           }
 

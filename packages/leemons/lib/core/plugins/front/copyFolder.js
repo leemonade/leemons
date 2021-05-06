@@ -7,17 +7,23 @@ const fs = require('fs-extra');
 const path = require('path');
 const readdirRecursiveSync = require('leemons-utils/lib/readdirRecursiveSync');
 
-function filesToCopy(files) {
-  return files
-    .map((file) => {
-      let fileObj = file;
-      if (_.isString(file)) {
-        fileObj = { path: file };
-      }
+async function filesToCopy(files) {
+  return (
+    await Promise.all(
+      files.map(async (file) => {
+        let fileObj = file;
+        if (_.isString(file)) {
+          fileObj = { path: file };
+        }
+        fileObj = _.defaults(fileObj, { required: false });
 
-      return _.defaults(fileObj, { required: false });
-    })
-    .filter((file) => (!file.required && fs.existsSync(file.path)) || file.required);
+        if ((!fileObj.required && (await fs.exists(fileObj.path))) || fileObj.required) {
+          return fileObj;
+        }
+        return null;
+      })
+    )
+  ).filter((file) => file);
 }
 
 function generateFolderChecksum(src, extraFiles) {
@@ -64,7 +70,7 @@ function generateFolderChecksum(src, extraFiles) {
  * @param {object} checksums The checksums object
  * @returns Will return true if the file was copied, and false if it wasn't necessary
  */
-function copyFile(src, dest, name, checksums) {
+async function copyFile(src, dest, name, checksums) {
   const fileChecksums = readdirRecursiveSync(src, { checksums: true });
   const fileName = path.basename(src);
   const finalDest = path.resolve(dest, name);
@@ -73,10 +79,10 @@ function copyFile(src, dest, name, checksums) {
     leemons.log(`The plugin ${name} in ${src} have changed`);
 
     // Move file to next.js
-    if (!fs.existsSync(finalDest)) {
-      fs.mkdirSync(finalDest);
+    if (!(await fs.exists(finalDest))) {
+      await fs.mkdir(finalDest);
     }
-    fs.copyFileSync(src, path.resolve(finalDest, fileName));
+    await fs.copyFile(src, path.resolve(finalDest, fileName));
 
     checksums[name] = fileChecksums.checksum;
     return true;
@@ -92,18 +98,20 @@ function copyFile(src, dest, name, checksums) {
  * @param {object} checksums The checksums object
  * @returns Will return true if the folder was copied, and false if it wasn't necessary
  */
-function copyFolder(src, dest, name, checksums, addFiles = []) {
-  const extraFiles = filesToCopy(addFiles);
+async function copyFolder(src, dest, name, checksums, addFiles = []) {
+  const extraFiles = await filesToCopy(addFiles);
   const dirObj = generateFolderChecksum(src, extraFiles);
 
   if (checksums[name] !== dirObj.checksum) {
     leemons.log(`The plugin ${name} in ${src} have changed`);
 
     // Move folder to next.js
-    fs.copySync(src, path.resolve(dest, name));
-    extraFiles.forEach(({ path: file }) => {
-      fs.copySync(file, path.resolve(dest, name, path.basename(file)));
-    });
+    await fs.copy(src, path.resolve(dest, name));
+    await Promise.all(
+      extraFiles.map(({ path: file }) =>
+        fs.copy(file, path.resolve(dest, name, path.basename(file)))
+      )
+    );
 
     checksums[name] = dirObj.checksum;
     return true;
