@@ -18,18 +18,18 @@ const { generatePluginLoader } = require('./pluginLoader');
  * @param {string} dir The directory to look for changes
  * @returns
  */
-function checkDirChanges(dir) {
+async function checkDirChanges(dir) {
   // If directory does not exists, create it
-  if (!fs.pathExistsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+  if (!(await fs.pathExists(dir))) {
+    await fs.mkdir(dir, { recursive: true });
   }
 
   // Get current path checksums
   const checksumsPath = path.resolve(dir, 'checksums.json');
 
   let checksums = {};
-  if (fs.existsSync(checksumsPath)) {
-    checksums = fs.readJsonSync(checksumsPath);
+  if (await fs.exists(checksumsPath)) {
+    checksums = await fs.readJson(checksumsPath);
   }
 
   // Get nextjs path checksums
@@ -52,24 +52,25 @@ function checkDirChanges(dir) {
  * @param {string} dir The directory where we want to save the checksums object
  * @param {object} checksums The checksums object we want to save
  */
-function saveChecksums(dir, checksums) {
+async function saveChecksums(dir, checksums) {
   // Get installed plugins
   const plugins = _.values(leemons.plugins).map((plugin) => plugin.name);
 
   // Get current copied dirs
-  const folder = fs
-    .readdirSync(dir, { withFileTypes: true })
+  const folder = (await fs.readdir(dir, { withFileTypes: true }))
     .filter((file) => file.isDirectory())
     .map((directory) => ({ name: directory.name, path: path.resolve(dir, directory.name) }));
 
   // Remove missing plugins from frontend
-  folder
-    .filter((plugin) => !plugins.includes(plugin.name))
-    .forEach((plugin) => {
-      delete checksums[plugin.name];
-      leemons.frontNeedsBuild = true;
-      fs.removeSync(plugin.path);
-    });
+  await Promise.all(
+    folder
+      .filter((plugin) => !plugins.includes(plugin.name))
+      .map(async (plugin) => {
+        delete checksums[plugin.name];
+        leemons.frontNeedsBuild = true;
+        await fs.remove(plugin.path);
+      })
+  );
 
   // Generate new integrity
   checksums.integrity = readdirRecursiveSync(dir, {
@@ -78,7 +79,7 @@ function saveChecksums(dir, checksums) {
   }).checksum;
 
   // Save the current integrity
-  fs.writeJSONSync(path.resolve(dir, 'checksums.json'), checksums);
+  await fs.writeJSON(path.resolve(dir, 'checksums.json'), checksums);
 }
 
 /**
@@ -96,11 +97,12 @@ async function loadFront(plugins) {
   const depsPath = path.resolve(nextPath, 'dependencies');
 
   // Get current pages checksums
-  const pagesChecksums = checkDirChanges(pagesPath).checksums;
+  const pagesChecksums = (await checkDirChanges(pagesPath)).checksums;
+
   // Get current src checksums
-  const srcChecksums = checkDirChanges(srcPath).checksums;
+  const srcChecksums = (await checkDirChanges(srcPath)).checksums;
   // Get current dependencies checksums
-  const depsChecksums = checkDirChanges(depsPath).checksums;
+  const depsChecksums = (await checkDirChanges(depsPath)).checksums;
 
   // Plugins' aliases system
   const aliases = {};
@@ -108,7 +110,7 @@ async function loadFront(plugins) {
   const nonInstalledDeps = [];
 
   // Get installed deps
-  const nextDeps = await fs.readJSON(path.resolve(nextPath, 'package.json')).dependencies;
+  const nextDeps = (await fs.readJSON(path.resolve(nextPath, 'package.json'))).dependencies;
   // Move plugins folders
   await Promise.all(
     plugins.map(async ([, pluginObj]) => {
@@ -157,7 +159,7 @@ async function loadFront(plugins) {
         if (await fs.exists(path.resolve(dir, 'package.json'))) {
           // Create the next.js dependencies directory
           if (!(await fs.pathExists(depsPath))) {
-            fs.mkdirSync(depsPath, { recursive: true });
+            await fs.mkdir(depsPath, { recursive: true });
           }
 
           // Copy the package.json
@@ -202,9 +204,9 @@ async function loadFront(plugins) {
   );
 
   // Generate the directory integrity file
-  saveChecksums(pagesPath, pagesChecksums);
-  saveChecksums(srcPath, srcChecksums);
-  saveChecksums(depsPath, depsChecksums);
+  await saveChecksums(pagesPath, pagesChecksums);
+  await saveChecksums(srcPath, srcChecksums);
+  await saveChecksums(depsPath, depsChecksums);
 
   // Add plugins dependencies
   if (nonInstalledDeps.length) {
