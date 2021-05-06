@@ -18,50 +18,51 @@ function getFileType(file) {
   return '';
 }
 
-function readdirRecursiveSync(
+async function readdirRecursive(
   dir,
   { checksums = false, json = false, relative = dir, ignore = [] } = {}
 ) {
-  if (!fs.existsSync(dir)) {
+  if (!(await fs.exists(dir))) {
     throw new Error(`The directory ${dir} does not exist`);
   }
-  const srcType = getFileType(fs.lstatSync(dir));
+  const srcType = getFileType(await fs.lstat(dir));
   if (srcType === 'directory') {
     // Read every file in the current directory
-    const content = fs
-      .readdirSync(dir, { withFileTypes: true })
-      .filter(
-        (file) =>
-          ignore.findIndex((expression) => {
-            if (_.isRegExp(expression)) {
-              return expression.test(file.name);
-            }
-            return file.name === expression;
-          }) === -1
-      )
-      .map((file) => {
-        const { name } = file;
-        const type = getFileType(file);
-        const fileDir = path.resolve(dir, file.name);
+    const content = await Promise.all(
+      (await fs.readdir(dir, { withFileTypes: true }))
+        .filter(
+          (file) =>
+            ignore.findIndex((expression) => {
+              if (_.isRegExp(expression)) {
+                return expression.test(file.name);
+              }
+              return file.name === expression;
+            }) === -1
+        )
+        .map(async (file) => {
+          const { name } = file;
+          const type = getFileType(file);
+          const fileDir = path.resolve(dir, file.name);
 
-        // File structure
-        let fileObj = { name, path: fileDir, type };
-        // If the file is a directory, read that directory
-        if (type === 'directory') {
-          fileObj = readdirRecursiveSync(fileDir, { checksums, json, relative, ignore });
+          // File structure
+          let fileObj = { name, path: fileDir, type };
+          // If the file is a directory, read that directory
+          if (type === 'directory') {
+            fileObj = await readdirRecursive(fileDir, { checksums, json, relative, ignore });
 
-          // If it's a file and checksums is specified, get checksum of file
-        } else if (type === 'file' && checksums) {
-          fileObj.checksum = md5File(fileDir);
-        }
+            // If it's a file and checksums is specified, get checksum of file
+          } else if (type === 'file' && checksums) {
+            fileObj.checksum = md5File(fileDir);
+          }
 
-        // If a relative path is specified, use that path (Used for checksums not based on directory)
-        if (relative) {
-          fileObj.path = path.relative(relative, fileDir);
-        }
+          // If a relative path is specified, use that path (Used for checksums not based on directory)
+          if (relative) {
+            fileObj.path = path.relative(relative, fileDir);
+          }
 
-        return fileObj;
-      });
+          return fileObj;
+        })
+    );
 
     // The object describing the current directory
     const dirObj = {
@@ -99,4 +100,4 @@ function readdirRecursiveSync(
   return null;
 }
 
-module.exports = readdirRecursiveSync;
+module.exports = readdirRecursive;

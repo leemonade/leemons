@@ -5,7 +5,7 @@ const { MD5: md5Object } = require('object-hash');
 const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
-const readdirRecursiveSync = require('leemons-utils/lib/readdirRecursiveSync');
+const readdirRecursive = require('leemons-utils/lib/readdirRecursive');
 
 async function filesToCopy(files) {
   return (
@@ -26,21 +26,23 @@ async function filesToCopy(files) {
   ).filter((file) => file);
 }
 
-function generateFolderChecksum(src, extraFiles) {
+async function generateFolderChecksum(src, extraFiles) {
   // Get all the checksums for extra files
-  const filesObj = extraFiles
-    /*
-     * Generate the checksums for files to copy
-     */
-    .map(({ path: file }) =>
-      readdirRecursiveSync(file, {
-        checksums: true,
-        relative: path.dirname(file),
-        ignore: [/(yarn\.lock|package-lock\.json)$/, 'node_modules'],
-      })
-    );
+  const filesObj = await Promise.all(
+    extraFiles
+      /*
+       * Generate the checksums for files to copy
+       */
+      .map(({ path: file }) =>
+        readdirRecursive(file, {
+          checksums: true,
+          relative: path.dirname(file),
+          ignore: [/(yarn\.lock|package-lock\.json)$/, 'node_modules'],
+        })
+      )
+  );
   // Get the checksums for the src
-  const dirObj = readdirRecursiveSync(src, {
+  const dirObj = await readdirRecursive(src, {
     checksums: true,
     ignore: [/(yarn\.lock|package-lock\.json)$/, 'node_modules'],
   });
@@ -71,7 +73,7 @@ function generateFolderChecksum(src, extraFiles) {
  * @returns Will return true if the file was copied, and false if it wasn't necessary
  */
 async function copyFile(src, dest, name, checksums) {
-  const fileChecksums = readdirRecursiveSync(src, { checksums: true });
+  const fileChecksums = await readdirRecursive(src, { checksums: true });
   const fileName = path.basename(src);
   const finalDest = path.resolve(dest, name);
 
@@ -100,7 +102,7 @@ async function copyFile(src, dest, name, checksums) {
  */
 async function copyFolder(src, dest, name, checksums, addFiles = []) {
   const extraFiles = await filesToCopy(addFiles);
-  const dirObj = generateFolderChecksum(src, extraFiles);
+  const dirObj = await generateFolderChecksum(src, extraFiles);
 
   if (checksums[name] !== dirObj.checksum) {
     leemons.log(`The plugin ${name} in ${src} have changed`);

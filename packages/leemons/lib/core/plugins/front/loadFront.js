@@ -3,7 +3,7 @@
 const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
-const readdirRecursiveSync = require('leemons-utils/lib/readdirRecursiveSync');
+const readdirRecursive = require('leemons-utils/lib/readdirRecursive');
 const execa = require('execa');
 const { copyFolder, copyFile } = require('./copyFolder');
 const { generatePluginLoader } = require('./pluginLoader');
@@ -33,7 +33,7 @@ async function checkDirChanges(dir) {
   }
 
   // Get nextjs path checksums
-  const currentChecksums = readdirRecursiveSync(dir, {
+  const currentChecksums = await readdirRecursive(dir, {
     checksums: true,
     ignore: ['checksums.json', /(yarn\.lock|package-lock\.json)$/, 'node_modules'],
   });
@@ -73,10 +73,12 @@ async function saveChecksums(dir, checksums) {
   );
 
   // Generate new integrity
-  checksums.integrity = readdirRecursiveSync(dir, {
-    checksums: true,
-    ignore: ['checksums.json', /(yarn\.lock|package-lock\.json)$/, 'node_modules'],
-  }).checksum;
+  checksums.integrity = (
+    await readdirRecursive(dir, {
+      checksums: true,
+      ignore: ['checksums.json', /(yarn\.lock|package-lock\.json)$/, 'node_modules'],
+    })
+  ).checksum;
 
   // Save the current integrity
   await fs.writeJSON(path.resolve(dir, 'checksums.json'), checksums);
