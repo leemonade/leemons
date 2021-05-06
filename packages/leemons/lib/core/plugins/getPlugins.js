@@ -3,10 +3,10 @@ const path = require('path');
 const { loadFile } = require('../config/loadFiles');
 
 // Get an array of plugins stored under '/${pluginsFolder}'
-function getLocalPlugins(leemons) {
+async function getLocalPlugins(leemons) {
   const dir = path.resolve(leemons.dir.app, leemons.dir.plugins);
   const plugins = [];
-  if (fs.existsSync(dir)) {
+  if (await fs.exists(dir)) {
     plugins.push(
       ...fs
         .readdirSync(dir, { withFileTypes: true })

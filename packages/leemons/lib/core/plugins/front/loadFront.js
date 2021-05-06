@@ -84,7 +84,7 @@ function saveChecksums(dir, checksums) {
 /**
  * Moves all the modified folders to the front directory
  */
-function loadFront(plugins) {
+async function loadFront(plugins) {
   const nextPath = leemons.dir.next;
 
   // Get plugins folder
@@ -179,7 +179,7 @@ function loadFront(plugins) {
   });
 
   // Generate a plugin loader
-  generatePluginLoader({ plugins, srcPath, srcChecksums, aliases, nextPath });
+  await generatePluginLoader({ plugins, srcPath, srcChecksums, aliases, nextPath });
 
   // Set all the aliases
   let jsconfig;

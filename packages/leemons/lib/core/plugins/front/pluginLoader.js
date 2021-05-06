@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const _ = require('lodash');
 
-function generatePluginLoader({ plugins, srcPath, srcChecksums, aliases, nextPath }) {
+async function generatePluginLoader({ plugins, srcPath, srcChecksums, aliases, nextPath }) {
   const file = `module.exports = {
   plugins: [
     ${plugins.map(([name]) => `'${name}'`).join(',\n\t\t')}
@@ -26,7 +26,7 @@ function generatePluginLoader({ plugins, srcPath, srcChecksums, aliases, nextPat
   if (fileHash !== srcChecksums['plugins.js']) {
     leemons.frontNeedsBuild = true;
     srcChecksums['plugins.js'] = fileHash;
-    fs.writeFileSync(pluginFilePath, file);
+    await fs.writeFile(pluginFilePath, file);
   }
 
   aliases[`@plugins`] = [`${path.relative(nextPath, srcPath)}/plugins.js`];

@@ -4,7 +4,7 @@ const vm = require('../config/vm');
 const { loadFile } = require('../config/loadFiles');
 
 async function loadServices(dir, vmFilter, env) {
-  if (!fs.existsSync(dir)) {
+  if (!(await fs.exists(dir))) {
     return {};
   }
   // Same code as loadFile

@@ -9,7 +9,7 @@ const hooks = require('leemons-hooks');
  */
 async function frontDeps() {
   // Check if the dependencies are installed
-  if (!fs.existsSync(path.resolve(leemons.dir.next, 'node_modules'))) {
+  if (!(await fs.exists(path.resolve(leemons.dir.next, 'node_modules')))) {
     leemons.frontNeedsUpdateDeps = true;
   }
 
@@ -22,9 +22,9 @@ async function frontDeps() {
       .then(() => {
         installSpinner.succeed('Frontend dependencies installed');
       })
-      .catch((e) => {
+      .catch(async (e) => {
         installSpinner.fail("Frontend dependencies can't be installed");
-        fs.removeSync(path.resolve(leemons.dir.next, 'node_modules'));
+        await fs.remove(path.resolve(leemons.dir.next, 'node_modules'));
         throw e;
       })
       .finally(async () => {
@@ -39,7 +39,7 @@ async function frontDeps() {
  */
 async function buildNext() {
   // Check if the build exists
-  if (!fs.existsSync(path.resolve(leemons.dir.next, '.next'))) {
+  if (!(await fs.exists(path.resolve(leemons.dir.next, '.next')))) {
     leemons.frontNeedsBuild = true;
     // The error can be related to dependencies
     leemons.frontNeedsUpdateDeps = true;
@@ -54,9 +54,9 @@ async function buildNext() {
       .then(() => {
         spinner.succeed('Frontend builded');
       })
-      .catch((e) => {
+      .catch(async (e) => {
         spinner.fail(`Frontend can't be builded`);
-        fs.removeSync(path.resolve(leemons.dir.next, '.next'));
+        await fs.remove(path.resolve(leemons.dir.next, '.next'));
         throw e;
       })
       .finally(async () => {

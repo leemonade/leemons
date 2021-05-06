@@ -1,6 +1,5 @@
 const path = require('path');
 const _ = require('lodash');
-const fs = require('fs-extra');
 
 // const { getStackTrace } = require('leemons-utils');
 const { generateEnv } = require('leemons-utils/lib/env');
@@ -16,7 +15,7 @@ let pluginsEnv;
 
 // Load plugins part 1 (load config and models)
 async function loadPlugins(leemons) {
-  const plugins = [...getLocalPlugins(leemons), ...(await getExternalPlugins(leemons))];
+  const plugins = [...(await getLocalPlugins(leemons)), ...(await getExternalPlugins(leemons))];
   checkPluginDuplicates(plugins);
 
   // Load all the plugins configuration
@@ -107,15 +106,14 @@ async function initializePlugins(leemons) {
       };
 
       // Load routes
-      let routesFile = path.resolve(pluginObj.dir.app, pluginObj.dir.controllers, 'routes');
-      let routes = {};
-      if (fs.existsSync(`${routesFile}.json`)) {
-        routesFile += '.json';
-        routes = await loadFile(routesFile);
-      } else if (fs.existsSync(`${routesFile}.js`)) {
-        routesFile += '.js';
-        routes = await loadFile(routesFile);
-      }
+      const routesFile = path.resolve(pluginObj.dir.app, pluginObj.dir.controllers, 'routes');
+
+      // resolve routes in the following order (until find one)
+      // 1.- controllers/routes.js
+      // 2.- controllers/routes.json
+      // set to []
+      const routes =
+        (await loadFile(`${routesFile}.js`)) || (await loadFile(`${routesFile}.json`)) || [];
 
       // Load controllers
       const controllers = await loadFiles(
@@ -143,7 +141,7 @@ async function initializePlugins(leemons) {
   // Load the frontend of all the plugins
   _.set(leemons, 'frontNeedsBuild', false);
   _.set(leemons, 'frontNeedsUpdateDeps', false);
-  loadFront(loadedPlugins);
+  await loadFront(loadedPlugins);
 
   _.set(leemons, 'plugins', _.fromPairs(loadedPlugins));
 }
