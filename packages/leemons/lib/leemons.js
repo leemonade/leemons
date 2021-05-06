@@ -11,7 +11,6 @@ const bodyParser = require('koa-bodyparser');
 const { createDatabaseManager } = require('leemons-database');
 const hooks = require('leemons-hooks');
 const ora = require('ora');
-const { generateEnv } = require('leemons-utils/lib/env');
 const { loadConfiguration } = require('./core/config/loadConfig');
 const { loadModels } = require('./core/model/loadModel');
 const { loadPlugins, initializePlugins } = require('./core/plugins/loadPlugins');
@@ -164,8 +163,7 @@ class Leemons {
 
   // Load all apps
   async load() {
-    // TODO: Review the .env loading for the configuration files (maybe let the user define the .env location?)
-    this.config = loadConfiguration(this, { env: await generateEnv('.env') });
+    this.config = await loadConfiguration(this);
 
     await hooks.fireEvent('leemons::load', { status: 'start' });
     if (this.loaded) {

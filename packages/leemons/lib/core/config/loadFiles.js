@@ -25,12 +25,13 @@ function loadJSONFile(file) {
 
 function loadFile(file, accept = ['.js', '.json'], filter = null, env = {}) {
   const extension = path.extname(file);
-
-  if (extension === '.js' && accept.includes('.js')) {
-    return loadJSFile(file, filter, env);
-  }
-  if (extension === '.json' && accept.includes('.json')) {
-    return loadJSONFile(file);
+  if (fs.existsSync(file)) {
+    if (extension === '.js' && accept.includes('.js')) {
+      return loadJSFile(file, filter, env);
+    }
+    if (extension === '.json' && accept.includes('.json')) {
+      return loadJSONFile(file);
+    }
   }
   return null;
 }

@@ -22,7 +22,7 @@ async function loadPlugins(leemons) {
   // Load all the plugins configuration
   let loadedPlugins = await Promise.all(
     plugins.map(async (plugin) => {
-      const config = loadConfiguration(plugin, {
+      const config = await loadConfiguration(plugin, {
         dir: plugin.path,
         defaultDirs: {
           config: 'config',
@@ -32,8 +32,6 @@ async function loadPlugins(leemons) {
           next: 'next',
           env: '.env',
         },
-        // TODO: Review the .env loading for the configuration files (maybe let the user define the .env location?)
-        env: await generateEnv(path.resolve(plugin.path, '.env')),
       });
 
       return {
