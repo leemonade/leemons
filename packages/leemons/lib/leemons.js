@@ -166,25 +166,8 @@ class Leemons {
     return this.db.query(model, plugin);
   }
 
-  // Load all apps
-  async load() {
-    await hooks.fireEvent('leemons::loadConfig', { status: 'start' });
-    this.config = (await loadConfiguration(this)).configProvider;
-    await hooks.fireEvent('leemons::loadConfig', { status: 'end' });
-
-    await hooks.fireEvent('leemons::load', { status: 'start' });
-    if (this.loaded) {
-      return true;
-    }
-
-    /*
-     * Load all the installed plugins configuration, check for duplicated
-     * plugins and save plugin' env
-     */
-    await hooks.fireEvent('leemons::loadPlugins', { status: 'start' });
-    const loadedPlugins = await loadPluginsConfig(this);
-    await hooks.fireEvent('leemons::loadPlugins', { status: 'end' });
-
+  async loadBack(loadedPlugins) {
+    await hooks.fireEvent('leemons::loadBack', { status: 'start' });
     /*
      * Load the plugins' DataBase Model Descriptions
      */
@@ -213,9 +196,16 @@ class Leemons {
     await initializePlugins(this);
     await hooks.fireEvent('leemons::initializePlugins', { status: 'end' });
 
+    this.setMiddlewares();
+    this.setRoutes();
+    await hooks.fireEvent('leemons::loadBack', { status: 'end' });
+  }
+
+  async loadFront() {
     await hooks.fireEvent('leemons::loadFront', { status: 'start' });
+    await hooks.fireEvent('leemons::loadFrontPlugins', { status: 'start' });
     await loadFront(this);
-    await hooks.fireEvent('leemons::loadFront', { status: 'end' });
+    await hooks.fireEvent('leemons::loadFrontPlugins', { status: 'end' });
 
     // Initialize next
     this.front = nextjs({
@@ -229,19 +219,52 @@ class Leemons {
     // When next is prepared
     await hooks.fireEvent('leemons::prepareFrontend', { status: 'start' });
     const prepareFront = ora('Starting frontend server').start();
-    return this.front
-      .prepare()
-      .then(async () => {
-        prepareFront.succeed('Frontend server started');
-        await hooks.fireEvent('leemons::prepareFrontend', { status: 'end' });
-        this.setMiddlewares();
-        this.setRoutes();
-        this.setFrontRoutes();
-      })
-      .then(async () => {
-        this.loaded = true;
-        await hooks.fireEvent('leemons::load', { status: 'end' });
-      });
+    return this.front.prepare().then(async () => {
+      prepareFront.succeed('Frontend server started');
+      await hooks.fireEvent('leemons::prepareFrontend', { status: 'end' });
+
+      this.setFrontRoutes();
+
+      await hooks.fireEvent('leemons::loadFront', { status: 'end' });
+    });
+  }
+
+  // Load all apps
+  async load() {
+    await hooks.fireEvent('leemons::load', { status: 'start' });
+    if (this.loaded) {
+      return true;
+    }
+
+    await hooks.fireEvent('leemons::loadConfig', { status: 'start' });
+    this.config = (await loadConfiguration(this)).configProvider;
+    await hooks.fireEvent('leemons::loadConfig', { status: 'end' });
+
+    /*
+     * Load all the installed plugins configuration, check for duplicated
+     * plugins and save plugin' env
+     */
+    await hooks.fireEvent('leemons::loadPlugins', { status: 'start' });
+    const loadedPlugins = await loadPluginsConfig(this);
+    await hooks.fireEvent('leemons::loadPlugins', { status: 'end' });
+
+    await Promise.all([
+      /*
+       * Load all the backend plugins, database and
+       * setup the middlewares
+       */
+      await this.loadBack(loadedPlugins),
+      /*
+       * Load all the frontend plugins, build the app if needed
+       * and set the middlewares.
+       */
+      await this.loadFront(),
+    ]);
+
+    this.loaded = true;
+    await hooks.fireEvent('leemons::load', { status: 'end' });
+
+    return true;
   }
 
   // Start the app
@@ -250,6 +273,7 @@ class Leemons {
       return;
     }
     await this.load();
+
     this.server.listen(process.env.PORT, () => {
       this.log(`Listening on http://localhost:${process.env.PORT}`);
 
