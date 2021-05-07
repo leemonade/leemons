@@ -13,7 +13,11 @@ const hooks = require('leemons-hooks');
 const ora = require('ora');
 const { loadConfiguration } = require('./core/config/loadConfig');
 const { loadModels } = require('./core/model/loadModel');
-const { loadPlugins, initializePlugins } = require('./core/plugins/loadPlugins');
+const {
+  initializePlugins,
+  loadPluginsModels,
+  loadPluginsConfig,
+} = require('./core/plugins/loadPlugins');
 const buildFront = require('./core/front/build');
 
 class Leemons {
@@ -163,19 +167,40 @@ class Leemons {
 
   // Load all apps
   async load() {
+    await hooks.fireEvent('leemons::loadConfig', { status: 'start' });
     this.config = (await loadConfiguration(this)).configProvider;
+    await hooks.fireEvent('leemons::loadConfig', { status: 'end' });
 
     await hooks.fireEvent('leemons::load', { status: 'start' });
     if (this.loaded) {
       return true;
     }
+
+    /*
+     * Load all the installed plugins configuration, check for duplicated
+     * plugins and save plugin' env
+     */
     await hooks.fireEvent('leemons::loadPlugins', { status: 'start' });
-    await loadPlugins(this);
+    const loadedPlugins = await loadPluginsConfig(this);
     await hooks.fireEvent('leemons::loadPlugins', { status: 'end' });
+
+    /*
+     * Load the plugins' DataBase Model Descriptions
+     */
+    await hooks.fireEvent('leemons::loadPluginsModels', { status: 'start' });
+    await loadPluginsModels(loadedPlugins, this);
+    await hooks.fireEvent('leemons::loadPluginsModels', { status: 'end' });
+
+    /*
+     * Load other DataBase Model Descriptions
+     */
     await hooks.fireEvent('leemons::loadModels', { status: 'start' });
     loadModels(this);
     await hooks.fireEvent('leemons::loadModels', { status: 'end' });
-    // Create a database manager
+
+    /*
+     * Create a DatabaseManager for managing the database connections and models
+     */
     this.db = createDatabaseManager(this);
 
     // Initialize all database connections

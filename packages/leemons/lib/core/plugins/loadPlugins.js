@@ -12,12 +12,11 @@ const loadFront = require('./front/loadFront');
 let pluginsEnv = [];
 
 // Load plugins part 1 (load config and models)
-async function loadPlugins(leemons) {
+async function loadPluginsConfig(leemons) {
   const plugins = [...(await getLocalPlugins(leemons)), ...(await getExternalPlugins(leemons))];
-  checkPluginDuplicates(plugins);
 
   // Load all the plugins configuration
-  let loadedPlugins = await Promise.all(
+  const loadedPlugins = await Promise.all(
     plugins.map(async (plugin) => {
       const { env, configProvider: config } = await loadConfiguration(plugin, {
         dir: plugin.path,
@@ -31,6 +30,7 @@ async function loadPlugins(leemons) {
         },
       });
 
+      // Save the plugin env
       pluginsEnv.push([config.get('config.name', plugin.name), env]);
 
       return {
@@ -42,10 +42,17 @@ async function loadPlugins(leemons) {
     })
   );
 
+  // Convert the plugins env to a json ([[name, value]] => {name: value})
   pluginsEnv = _.fromPairs(pluginsEnv);
 
   // Throw an error when two plugins have the same id (name)
   checkPluginDuplicates(loadedPlugins);
+
+  return loadedPlugins;
+}
+
+async function loadPluginsModels(pluginObjs, leemons) {
+  let loadedPlugins = pluginObjs;
 
   // Process every plugin models
   loadedPlugins = await Promise.all(
@@ -137,4 +144,4 @@ async function initializePlugins(leemons) {
   _.set(leemons, 'plugins', _.fromPairs(loadedPlugins));
 }
 
-module.exports = { loadPlugins, initializePlugins };
+module.exports = { loadPluginsConfig, loadPluginsModels, initializePlugins };
