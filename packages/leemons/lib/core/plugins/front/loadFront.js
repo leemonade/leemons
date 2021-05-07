@@ -87,8 +87,13 @@ async function saveChecksums(dir, checksums) {
 /**
  * Moves all the modified folders to the front directory
  */
-async function loadFront(plugins) {
+async function loadFront(leemons) {
+  const plugins = _.entries(leemons.plugins);
+
   const nextPath = leemons.dir.next;
+
+  _.set(leemons, 'frontNeedsBuild', false);
+  _.set(leemons, 'frontNeedsUpdateDeps', false);
 
   // Get plugins folder
   // const plugins = _.values(leemons.plugins);
@@ -114,6 +119,7 @@ async function loadFront(plugins) {
   // Get installed deps
   const nextDeps = (await fs.readJSON(path.resolve(nextPath, 'package.json'))).dependencies;
   // Move plugins folders
+
   await Promise.all(
     plugins.map(async ([, pluginObj]) => {
       const {

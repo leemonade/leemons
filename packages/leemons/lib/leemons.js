@@ -19,6 +19,7 @@ const {
   loadPluginsConfig,
 } = require('./core/plugins/loadPlugins');
 const buildFront = require('./core/front/build');
+const loadFront = require('./core/plugins/front/loadFront');
 
 class Leemons {
   constructor(log) {
@@ -212,14 +213,16 @@ class Leemons {
     await initializePlugins(this);
     await hooks.fireEvent('leemons::initializePlugins', { status: 'end' });
 
+    await hooks.fireEvent('leemons::loadFront', { status: 'start' });
+    await loadFront(this);
+    await hooks.fireEvent('leemons::loadFront', { status: 'end' });
+
     // Initialize next
     this.front = nextjs({
       dir: this.dir.next,
     });
 
-    await hooks.fireEvent('leemons::buildFront', { status: 'start' });
     await buildFront();
-    await hooks.fireEvent('leemons::buildFront', { status: 'end' });
     this.frontHandler = this.front.getRequestHandler();
 
     // TODO: this should be on a custom loader

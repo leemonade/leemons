@@ -7,7 +7,6 @@ const { formatModels } = require('../model/loadModel');
 const { getLocalPlugins, getExternalPlugins } = require('./getPlugins');
 const checkPluginDuplicates = require('./checkPluginDuplicates');
 const loadServices = require('./loadServices');
-const loadFront = require('./front/loadFront');
 
 let pluginsEnv = [];
 
@@ -76,12 +75,14 @@ async function loadPluginsModels(pluginObjs, leemons) {
 // Load plugins part 2 (controllers, services and front)
 async function initializePlugins(leemons) {
   let loadedPlugins = _.values(leemons.plugins);
+
   // Process every plugin
   loadedPlugins = await Promise.all(
     loadedPlugins.map(async (plugin) => {
       const pluginObj = plugin;
 
       // VM filter
+      // TODO: Refactor (Maybe some code can be run only once?) [Check after implementing plugin Deps]
       const allowedPlugins = loadedPlugins
         .filter((loadedPlugin) => loadedPlugin.config.get('config.private', false) === false)
         .map((publicPlugin) => publicPlugin.name);
@@ -91,6 +92,7 @@ async function initializePlugins(leemons) {
 
       const vmFilter = (filtered) => {
         Object.defineProperty(filtered.leemons, 'plugin', {
+          // TODO: Check binding missing
           // The binding is needed for triggering the outside VM leemons
           // eslint-disable-next-line no-extra-bind
           get: () => leemons.plugins[plugin.name],
@@ -135,12 +137,6 @@ async function initializePlugins(leemons) {
       return [pluginObj.name, { ...pluginObj, routes, controllers, services }];
     })
   );
-
-  // Load the frontend of all the plugins
-  _.set(leemons, 'frontNeedsBuild', false);
-  _.set(leemons, 'frontNeedsUpdateDeps', false);
-  await loadFront(loadedPlugins);
-
   _.set(leemons, 'plugins', _.fromPairs(loadedPlugins));
 }
 
