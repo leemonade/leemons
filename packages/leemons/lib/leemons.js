@@ -163,7 +163,7 @@ class Leemons {
 
   // Load all apps
   async load() {
-    this.config = await loadConfiguration(this);
+    this.config = (await loadConfiguration(this)).configProvider;
 
     await hooks.fireEvent('leemons::load', { status: 'start' });
     if (this.loaded) {

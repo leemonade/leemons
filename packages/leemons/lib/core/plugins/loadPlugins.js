@@ -1,8 +1,6 @@
 const path = require('path');
 const _ = require('lodash');
 
-// const { getStackTrace } = require('leemons-utils');
-const { generateEnv } = require('leemons-utils/lib/env');
 const { loadConfiguration } = require('../config/loadConfig');
 const { loadFiles, loadFile } = require('../config/loadFiles');
 const { formatModels } = require('../model/loadModel');
@@ -11,7 +9,7 @@ const checkPluginDuplicates = require('./checkPluginDuplicates');
 const loadServices = require('./loadServices');
 const loadFront = require('./front/loadFront');
 
-let pluginsEnv;
+let pluginsEnv = [];
 
 // Load plugins part 1 (load config and models)
 async function loadPlugins(leemons) {
@@ -21,7 +19,7 @@ async function loadPlugins(leemons) {
   // Load all the plugins configuration
   let loadedPlugins = await Promise.all(
     plugins.map(async (plugin) => {
-      const config = await loadConfiguration(plugin, {
+      const { env, configProvider: config } = await loadConfiguration(plugin, {
         dir: plugin.path,
         defaultDirs: {
           config: 'config',
@@ -33,6 +31,8 @@ async function loadPlugins(leemons) {
         },
       });
 
+      pluginsEnv.push([config.get('config.name', plugin.name), env]);
+
       return {
         source: plugin.source,
         name: config.get('config.name', plugin.name),
@@ -42,16 +42,7 @@ async function loadPlugins(leemons) {
     })
   );
 
-  pluginsEnv = await Promise.all(
-    loadedPlugins
-      .map((plugin) => [
-        plugin.name,
-        path.isAbsolute(plugin.dir.env)
-          ? plugin.dir.env
-          : path.resolve(plugin.dir.app, plugin.dir.env),
-      ])
-      .map(async ([name, file]) => [name, await generateEnv(file)])
-  ).then(_.fromPairs);
+  pluginsEnv = _.fromPairs(pluginsEnv);
 
   // Throw an error when two plugins have the same id (name)
   checkPluginDuplicates(loadedPlugins);

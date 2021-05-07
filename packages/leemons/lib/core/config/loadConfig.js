@@ -50,7 +50,7 @@ async function loadConfiguration(
     config.config = configFile;
   }
 
-  return configProvider(config);
+  return { configProvider: configProvider(config), env };
 }
 
 module.exports = {
