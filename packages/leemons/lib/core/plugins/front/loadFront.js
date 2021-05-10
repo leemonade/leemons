@@ -52,9 +52,9 @@ async function checkDirChanges(dir) {
  * @param {string} dir The directory where we want to save the checksums object
  * @param {object} checksums The checksums object we want to save
  */
-async function saveChecksums(dir, checksums) {
+async function saveChecksums(dir, checksums, pluginsEntries) {
   // Get installed plugins
-  const plugins = _.values(leemons.plugins).map((plugin) => plugin.name);
+  const plugins = pluginsEntries.map(([name]) => name);
 
   // Get current copied dirs
   const folder = (await fs.readdir(dir, { withFileTypes: true }))
@@ -87,9 +87,8 @@ async function saveChecksums(dir, checksums) {
 /**
  * Moves all the modified folders to the front directory
  */
-async function loadFront(leemons) {
-  const plugins = _.entries(leemons.plugins);
-
+async function loadFront(leemons, installedPlugins) {
+  const plugins = installedPlugins.map((plugin) => [plugin.name, plugin]);
   const nextPath = leemons.dir.next;
 
   _.set(leemons, 'frontNeedsBuild', false);
@@ -212,9 +211,9 @@ async function loadFront(leemons) {
   );
 
   // Generate the directory integrity file
-  await saveChecksums(pagesPath, pagesChecksums);
-  await saveChecksums(srcPath, srcChecksums);
-  await saveChecksums(depsPath, depsChecksums);
+  await saveChecksums(pagesPath, pagesChecksums, plugins);
+  await saveChecksums(srcPath, srcChecksums, plugins);
+  await saveChecksums(depsPath, depsChecksums, plugins);
 
   // Add plugins dependencies
   if (nonInstalledDeps.length) {

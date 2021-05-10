@@ -201,10 +201,10 @@ class Leemons {
     await hooks.fireEvent('leemons::loadBack', { status: 'end' });
   }
 
-  async loadFront() {
+  async loadFront(plugins) {
     await hooks.fireEvent('leemons::loadFront', { status: 'start' });
     await hooks.fireEvent('leemons::loadFrontPlugins', { status: 'start' });
-    await loadFront(this);
+    await loadFront(this, plugins);
     await hooks.fireEvent('leemons::loadFrontPlugins', { status: 'end' });
 
     // Initialize next
@@ -229,6 +229,22 @@ class Leemons {
     });
   }
 
+  async loadAppConfig() {
+    await hooks.fireEvent('leemons::loadConfig', { status: 'start' });
+    this.config = (await loadConfiguration(this)).configProvider;
+    await hooks.fireEvent('leemons::loadConfig', { status: 'end' });
+
+    return this.config;
+  }
+
+  async loadPluginsConfig() {
+    await hooks.fireEvent('leemons::loadPlugins', { status: 'start' });
+    const loadedPlugins = await loadPluginsConfig(this);
+    await hooks.fireEvent('leemons::loadPlugins', { status: 'end' });
+
+    return loadedPlugins;
+  }
+
   // Load all apps
   async load() {
     await hooks.fireEvent('leemons::load', { status: 'start' });
@@ -236,17 +252,12 @@ class Leemons {
       return true;
     }
 
-    await hooks.fireEvent('leemons::loadConfig', { status: 'start' });
-    this.config = (await loadConfiguration(this)).configProvider;
-    await hooks.fireEvent('leemons::loadConfig', { status: 'end' });
-
+    await this.loadAppConfig();
     /*
      * Load all the installed plugins configuration, check for duplicated
      * plugins and save plugin' env
      */
-    await hooks.fireEvent('leemons::loadPlugins', { status: 'start' });
-    const loadedPlugins = await loadPluginsConfig(this);
-    await hooks.fireEvent('leemons::loadPlugins', { status: 'end' });
+    const loadedPlugins = await this.loadPluginsConfig();
 
     await Promise.all([
       /*
@@ -258,7 +269,7 @@ class Leemons {
        * Load all the frontend plugins, build the app if needed
        * and set the middlewares.
        */
-      await this.loadFront(),
+      await this.loadFront(loadedPlugins),
     ]);
 
     this.loaded = true;
@@ -276,8 +287,9 @@ class Leemons {
 
     this.server.listen(process.env.PORT, () => {
       this.log(`Listening on http://localhost:${process.env.PORT}`);
-
-      process.send('running');
+      if (process.send) {
+        process.send('running');
+      }
       this.started = true;
     });
   }
@@ -287,3 +299,4 @@ module.exports = (...args) => {
   const leemons = new Leemons(...args);
   return leemons;
 };
+module.exports.Leemons = Leemons;
