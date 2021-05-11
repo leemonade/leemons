@@ -90,6 +90,14 @@ module.exports = async ({ next }) => {
   process.env.next = nextDir;
 
   if (cluster.isMaster) {
+    cluster.on('message', (worker, message) => {
+      switch (message) {
+        case 'kill':
+          worker.kill();
+          break;
+        default:
+      }
+    });
     const configDir = process.env.CONFIG_DIR || 'config';
 
     /* TODO: Implement file watcher
@@ -112,13 +120,28 @@ module.exports = async ({ next }) => {
       ignoreInitial: true,
     });
 
-    watcher.on('all', (event, changedPath) => {
-      console.log(changedPath, event);
+    watcher.on('all', (event, filename) => {
+      console.log(`App fired ${event} event on ${filename}`);
+      Object.values(cluster.workers).forEach((worker) => {
+        worker.send('kill');
+      });
+      cluster.fork();
     });
 
     cluster.fork();
   } else {
     const leemons = new Leemons(console.log);
+
+    cluster.worker.on('message', (message) => {
+      switch (message) {
+        case 'kill':
+          leemons.server.destroy(() => {
+            process.send('kill');
+          });
+          break;
+        default:
+      }
+    });
 
     process.env.NODE_ENV = 'development';
     process.env.PORT = 8080;
