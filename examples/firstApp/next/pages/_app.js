@@ -1,13 +1,11 @@
 import '../styles/globals.css';
 import PropTypes from 'prop-types';
 import hooks from "leemons-hooks";
-import {useEffect, useRef} from "react";
 import {plugins, frontPlugins} from "@plugins";
 
 function MyApp({ Component, pageProps }) {
-  const initialized = useRef(false);
-  // Only add it once
-  if (initialized.current === false) {
+  // Only add it once (when leemons is not setted)
+  if (!global.leemons) {
     console.log('Frontend plugins:', frontPlugins.map(plugin => plugin.name));
     console.log('All the installed plugins:', plugins)
     frontPlugins.forEach(plugin => {
@@ -18,10 +16,7 @@ function MyApp({ Component, pageProps }) {
       return [[...msg, "Hello World"], ...args]
     });
 
-
     global.leemons = {};
-
-    initialized.current = true;
   }
   return <Component {...pageProps} />;
 }

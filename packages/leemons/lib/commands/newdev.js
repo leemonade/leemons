@@ -2,6 +2,86 @@ const chokidar = require('chokidar');
 const path = require('path');
 const cluster = require('cluster');
 const { Leemons } = require('../index');
+const loadFront = require('../core/plugins/front/loadFront');
+
+async function setupFront(leemons, plugins, nextDir) {
+  // #region fileWatcher
+  const frontDirs = [
+    path.join(
+      path.isAbsolute(leemons.dir.next)
+        ? leemons.dir.next
+        : path.join(leemons.dir.app, leemons.dir.next),
+      '**'
+    ),
+    ...plugins.map((plugin) =>
+      path.join(
+        path.isAbsolute(plugin.dir.next)
+          ? plugin.dir.next
+          : path.join(plugin.dir.app, plugin.dir.next),
+        '**'
+      )
+    ),
+  ];
+
+  const frontWatcher = chokidar.watch(frontDirs, {
+    ignoreInitial: true,
+    ignored: [
+      /(^|[/\\])\../, // ignore dotfiles
+      /.*node_modules.*/,
+      `${nextDir}/(dependencies|plugins|pages|jsconfig.json)/**`,
+      /.*checksums.json.*/,
+    ],
+  });
+
+  const frontHandler = async (event, filename) => {
+    console.log(`Frontend fired ${event} event. (${filename})`);
+    await loadFront(leemons, plugins);
+  };
+
+  // #endregion
+
+  await leemons.loadFront(plugins);
+
+  frontWatcher.on('all', frontHandler);
+}
+
+async function setupBack(leemons, plugins) {
+  // #region fileWatcher
+  const backDirs = plugins.map((plugin) =>
+    path.join(
+      plugin.dir.app,
+      `\
+(${plugin.dir.models}|\
+${plugin.dir.controllers}|\
+${plugin.dir.services})`,
+      '**'
+    )
+  );
+
+  const backWatcher = chokidar.watch(backDirs, {
+    ignoreInitial: true,
+    ignored: [
+      /(^|[/\\])\../, // ignore dotfiles
+      /.*node_modules.*/,
+      // `${nextDir}/(dependencies|plugins|pages|jsconfig.json)/**`,
+      /.*checksums.json.*/,
+    ],
+  });
+
+  const backHandler = async (event, filename) => {
+    console.log(`Backend fired ${event} event. (${filename})`);
+
+    // eslint-disable-next-line no-param-reassign
+    leemons.backRouter.stack = [];
+    leemons.loadBack(plugins);
+  };
+
+  // #endregion
+
+  await leemons.loadBack(plugins);
+
+  backWatcher.on('all', backHandler);
+}
 
 module.exports = async ({ next }) => {
   const cwd = process.cwd();
@@ -32,10 +112,6 @@ module.exports = async ({ next }) => {
       ignoreInitial: true,
     });
 
-    // watcher.on('ready', () => {
-    //   console.log(watcher.getWatched());
-    // });
-
     watcher.on('all', (event, changedPath) => {
       console.log(changedPath, event);
     });
@@ -43,49 +119,18 @@ module.exports = async ({ next }) => {
     cluster.fork();
   } else {
     const leemons = new Leemons(console.log);
+
+    process.env.NODE_ENV = 'development';
     process.env.PORT = 8080;
     await leemons.loadAppConfig();
     const pluginsConfig = await leemons.loadPluginsConfig();
 
-    const frontDirs = [
-      path.join(
-        path.isAbsolute(leemons.dir.next)
-          ? leemons.dir.next
-          : path.join(leemons.dir.app, leemons.dir.next),
-        '**'
-      ),
-      ...pluginsConfig.map((plugin) =>
-        path.join(
-          path.isAbsolute(plugin.dir.next)
-            ? plugin.dir.next
-            : path.join(plugin.dir.app, plugin.dir.next),
-          '**'
-        )
-      ),
-    ];
+    await Promise.all([
+      setupFront(leemons, pluginsConfig, nextDir),
+      setupBack(leemons, pluginsConfig),
+    ]);
 
-    const frontWatcher = chokidar.watch(frontDirs, {
-      ignoreInitial: true,
-      ignored: [
-        /(^|[/\\])\../,
-        /.*node_modules.*/,
-        `${nextDir}/(dependencies|plugins|pages|jsconfig.json)`,
-        /.*checksums.json.*/,
-      ], // ignore dotfiles
-    });
-
-    frontWatcher.on('all', (event, filename) => {
-      console.log(`Frontend was ${event} (${filename})`);
-    });
-    await leemons.loadFront(pluginsConfig);
-    // /*
-    //  * The dirs var contains all the directories read by leemons
-    //  * Although exists some other files used (node_modules, leemons itself, etc)
-    //  *
-    //  * This info can be useful for knowing which server needs a restart.
-    //  */
-    // await leemons.loadBack(pluginsConfig);
     leemons.loaded = true;
-    // await leemons.start();
+    await leemons.start();
   }
 };

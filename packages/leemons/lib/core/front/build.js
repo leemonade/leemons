@@ -46,7 +46,7 @@ async function buildNext() {
   }
 
   // Build if necessary
-  if (leemons.frontNeedsBuild) {
+  if (leemons.frontNeedsBuild && process.env.NODE_ENV !== 'development') {
     await hooks.fireEvent('leemons::build', { status: 'start' });
     const spinner = ora('Building frontend').start();
     return execa

@@ -63,7 +63,8 @@ class Leemons {
 
     // TODO: Stop exposing the server and router
     this.app = new Koa();
-    this.router = new Router();
+    this.frontRouter = new Router();
+    this.backRouter = new Router();
 
     this.initServer();
 
@@ -81,6 +82,11 @@ class Leemons {
 
   // Initialize the server config with http server
   initServer() {
+    // Add front router to KOA
+    this.app.use(this.frontRouter.routes()).use(this.frontRouter.allowedMethods());
+    // Add backRouter to app
+    this.app.use(this.backRouter.routes());
+
     // Use http-server for being able to reuse it (for example with webSockets)
     this.server = http.createServer(this.handleRequest.bind(this));
 
@@ -115,12 +121,12 @@ class Leemons {
 
   // Initialize all the middlewares
   setMiddlewares() {
-    this.app.use(async (ctx, next) => {
+    this.backRouter.use(async (ctx, next) => {
       this.log(`New connection to ${ctx.method} ${ctx.path}`);
       await next();
     });
 
-    this.app.use(bodyParser());
+    this.backRouter.use(bodyParser());
   }
 
   // Initialize the api endpoints
@@ -136,7 +142,7 @@ class Leemons {
             _.get(plugin.controllers, route.handler)
           ) {
             const handler = _.get(plugin.controllers, route.handler);
-            this.router[route.method.toLocaleLowerCase()](
+            this.backRouter[route.method.toLocaleLowerCase()](
               `/api/${plugin.name}${route.path}`,
               handler
             );
@@ -152,14 +158,11 @@ class Leemons {
     this.app.use(Static('./next/public'));
 
     // Make next.js handle with all non /api requests
-    this.router.get(/(?!^\/api)^\/.*/, async (ctx) => {
+    this.frontRouter.get(/(?!^\/api)^\/.*/, async (ctx) => {
       await this.frontHandler(ctx.req, ctx.res);
       // Stop Koa handling the request
       ctx.respond = false;
     });
-
-    // Expose all routes to koa
-    this.app.use(this.router.routes()).use(this.router.allowedMethods());
   }
 
   query(model, plugin) {
@@ -210,6 +213,7 @@ class Leemons {
     // Initialize next
     this.front = nextjs({
       dir: this.dir.next,
+      dev: process.env.NODE_ENV === 'development',
     });
 
     await buildFront();
