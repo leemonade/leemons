@@ -1,8 +1,6 @@
 module.exports = {
   plugins: [
-    'newPlugin',
-		'plugin2',
-		'user-admin'
+    'user-admin'
   ],
   frontPlugins: [{
     name: 'user-admin',

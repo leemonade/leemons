@@ -38,30 +38,33 @@ async function frontDeps() {
  * Next.js Build
  */
 async function buildNext() {
-  // Check if the build exists
-  if (!(await fs.exists(path.resolve(leemons.dir.next, '.next')))) {
-    leemons.frontNeedsBuild = true;
-    // The error can be related to dependencies
-    leemons.frontNeedsUpdateDeps = true;
-  }
+  // Do not build if is a dev environment
+  if (process.env.NODE_ENV !== 'development') {
+    // Check if a production build exists
+    if (!(await fs.exists(path.resolve(leemons.dir.next, '.next', 'BUILD_ID')))) {
+      leemons.frontNeedsBuild = true;
+      // The error can be related to dependencies
+      leemons.frontNeedsUpdateDeps = true;
+    }
 
-  // Build if necessary
-  if (leemons.frontNeedsBuild && process.env.NODE_ENV !== 'development') {
-    await hooks.fireEvent('leemons::build', { status: 'start' });
-    const spinner = ora('Building frontend').start();
-    return execa
-      .command(`yarn --cwd ${leemons.dir.next} build`)
-      .then(() => {
-        spinner.succeed('Frontend builded');
-      })
-      .catch(async (e) => {
-        spinner.fail(`Frontend can't be builded`);
-        await fs.remove(path.resolve(leemons.dir.next, '.next'));
-        throw e;
-      })
-      .finally(async () => {
-        await hooks.fireEvent('leemons::build', { status: 'end' });
-      });
+    // Build if necessary
+    if (leemons.frontNeedsBuild && process.env.NODE_ENV !== 'development') {
+      await hooks.fireEvent('leemons::build', { status: 'start' });
+      const spinner = ora('Building frontend').start();
+      return execa
+        .command(`yarn --cwd ${leemons.dir.next} build`)
+        .then(() => {
+          spinner.succeed('Frontend builded');
+        })
+        .catch(async (e) => {
+          spinner.fail(`Frontend can't be builded`);
+          await fs.remove(path.resolve(leemons.dir.next, '.next'));
+          throw e;
+        })
+        .finally(async () => {
+          await hooks.fireEvent('leemons::build', { status: 'end' });
+        });
+    }
   }
   return null;
 }
