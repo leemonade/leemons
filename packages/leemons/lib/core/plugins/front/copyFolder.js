@@ -78,7 +78,7 @@ async function copyFile(src, dest, name, checksums) {
   const finalDest = path.resolve(dest, name);
 
   if (checksums[name] !== fileChecksums.checksum) {
-    leemons.log(`The plugin ${name} in ${src} have changed`);
+    leemons.log.debug(`The plugin ${name} in ${src} have changed`);
 
     // Move file to next.js
     if (!(await fs.exists(finalDest))) {
@@ -105,7 +105,7 @@ async function copyFolder(src, dest, name, checksums, addFiles = []) {
   const dirObj = await generateFolderChecksum(src, extraFiles);
 
   if (checksums[name] !== dirObj.checksum) {
-    leemons.log(`The plugin ${name} in ${src} have changed`);
+    leemons.log.debug(`The plugin ${name} in ${src} have changed`);
 
     // Move folder to next.js
     await fs.copy(src, path.resolve(dest, name));

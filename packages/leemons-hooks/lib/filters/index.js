@@ -26,7 +26,9 @@ function registerFilter(eventName, func) {
 
   setFilter(eventName, func);
 
-  console.log(chalk`A new {magenta filter} for the event {green ${eventName}} has been registered`);
+  leemons.log.debug(
+    chalk`A new {magenta filter} for the event {green ${eventName}} has been registered`
+  );
 }
 
 function unregisterFilter(eventName, func) {
@@ -43,7 +45,7 @@ function unregisterFilter(eventName, func) {
     .filter(({ el }) => el === func)
     .map(({ pos, el }) => {
       eventFilters.splice(pos, 1);
-      console.log(
+      leemons.log.debug(
         chalk`A {magenta filter} for the event {green ${eventName}} has been unregistered`
       );
       return el;

@@ -14,12 +14,6 @@ async function fireEvent(eventName, ...args) {
     )
   );
 
-  // console.log(
-  //   chalk`The event {green ${eventName}} was fired with: {magenta %d Filters} and {cyan %d Actions}`,
-  //   [...getFilters(eventName), ...getFilters('*')].length,
-  //   [...getActions(eventName), ...getActions('*')].length
-  // );
-
   return filteredArgs;
 }
 

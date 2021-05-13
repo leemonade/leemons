@@ -31,7 +31,7 @@ async function createProxy(workers, log) {
   const port = await getAvailablePort();
   process.env.PORT = port;
   server.listen(port, () => {
-    log(`Listening on http://localhost:${port}`);
+    log.debug(`Listening on http://localhost:${port}`);
   });
 }
 
@@ -77,7 +77,7 @@ module.exports = async (args) => {
 
     process.env.NODE_ENV = 'development';
 
-    log(
+    log.debug(
       chalk`Started server in {green ${process.env.NODE_ENV} mode } on {underline PID: ${process.pid}}`
     );
 
@@ -126,14 +126,14 @@ module.exports = async (args) => {
     cluster.on('disconnect', (worker) => {
       const { pid } = worker.process;
       delete workers[pid];
-      log(chalk`Worker ${pid} killed`);
+      log.info(chalk`Worker ${pid} killed`);
     });
 
     // Handle message logic
     cluster.on('message', async (worker, message) => {
       const order = Array.isArray(message) ? message[0] : message;
 
-      log(chalk`{blue Worker ${worker.process.pid}} sends {underline ${order}}`);
+      log.debug(chalk`{blue Worker ${worker.process.pid}} sends {underline ${order}}`);
 
       switch (order) {
         // When a reload order is sent
@@ -147,7 +147,7 @@ module.exports = async (args) => {
         // When a worker is ready to be killed
         // Kill it and create a new one
         case 'kill':
-          log(chalk`Time to kill: {underline ${timeDif(time)}}`);
+          log.info(chalk`Time to kill: {underline ${timeDif(time)}}`);
           worker.kill();
           break;
         // when a worker is running, kill the
@@ -180,30 +180,30 @@ module.exports = async (args) => {
 
     // Set the port for the worker's server
 
-    log('new Worker started');
+    log.debug('new Worker started');
 
     try {
       const leemonsInstance = leemons(log);
 
       // Handle message logic
       cluster.worker.on('message', (message) => {
-        log(chalk`{green Master} sends {underline ${message}}`);
+        log.debug(chalk`{green Master} sends {underline ${message}}`);
 
         switch (message) {
           // When kill, do a clean-exit
           case 'kill':
             leemonsInstance.server.destroy(() => {
-              log('Server stopped listening');
+              log.info('Server stopped listening');
               process.send('kill');
-              log(chalk.red.bold('is now death'));
+              log.info(chalk.red.bold('is now death'));
             });
             break;
           // When running log the time to up
           case 'running':
-            log(chalk`Time to up: {underline ${timeDif(createdAt)}}`);
+            log.debug(chalk`Time to up: {underline ${timeDif(createdAt)}}`);
             break;
           case 'reload':
-            log(chalk`Reloading due a file change`);
+            log.info(chalk`Reloading due a file change`);
             process.send('reload');
             break;
           default:

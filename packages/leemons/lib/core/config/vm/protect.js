@@ -136,6 +136,8 @@ module.exports = (allowedRelPath) => {
       protectMethod(fs, 'utimesSync', checkPath, error),
       protectMethod(fs, 'watch', checkPath, error),
       protectMethod(fs, 'watchFile', checkPath, error),
+      protectMethod(fs, 'createReadStream', checkPath, error),
+      protectMethod(fs, 'createWriteStream', checkPath, error),
     ]);
   }
 
