@@ -3,6 +3,7 @@ const path = require('path');
 const cluster = require('cluster');
 const { getAvailablePort } = require('leemons-utils/lib/port');
 const chalk = require('chalk');
+const createLogger = require('leemons-logger');
 const { Leemons } = require('../index');
 const loadFront = require('../core/plugins/front/loadFront');
 
@@ -174,7 +175,7 @@ ${plugin.dir.services})`,
   );
 }
 
-module.exports = async ({ next }) => {
+module.exports = async ({ next, level: logLevel = 'debug' }) => {
   const cwd = process.cwd();
 
   const nextDir = next && path.isAbsolute(next) ? next : path.join(cwd, next || 'next/');
@@ -194,6 +195,9 @@ module.exports = async ({ next }) => {
       path.join(__dirname, '../../../leemons/**'),
     ];
     const PORT = await getAvailablePort();
+
+    const logger = await createLogger();
+    logger.level = logLevel;
 
     cluster.on('message', (worker, message) => {
       switch (message) {
@@ -219,16 +223,19 @@ module.exports = async ({ next }) => {
         Object.values(cluster.workers).forEach((worker) => {
           worker.send('kill');
         });
-        createWorker({ PORT });
+        createWorker({ PORT, loggerId: logger.id, loggerLevel: logger.level });
       }
     );
 
-    createWorker({ PORT });
+    createWorker({ PORT, loggerId: logger.id, loggerLevel: logger.level });
   } else if (cluster.isWorker) {
     process.title = 'Leemons Dev Instance';
     process.env.NODE_ENV = 'development';
 
-    const leemons = new Leemons(console.log);
+    const log = await createLogger({ id: process.env.loggerId });
+    log.level = process.env.loggerLevel;
+
+    const leemons = new Leemons(log);
 
     cluster.worker.on('message', (message) => {
       switch (message) {

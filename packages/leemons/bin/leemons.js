@@ -44,6 +44,7 @@ program
 program
   .command('newdev')
   .option('-N, --next <dir>', 'next directory')
+  .option('-L, --level <level>', 'log level')
   .description('Launches leemons application in production mode')
   .action(getLocalCommand('newdev'));
 
