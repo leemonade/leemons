@@ -29,7 +29,11 @@ async function checkDirChanges(dir) {
 
   let checksums = {};
   if (await fs.exists(checksumsPath)) {
-    checksums = await fs.readJson(checksumsPath);
+    try {
+      checksums = await fs.readJson(checksumsPath);
+    } catch (e) {
+      leemons.log.error(`The integrity file ${checksumsPath} can not be read.`);
+    }
   }
 
   // Get nextjs path checksums
