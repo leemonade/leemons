@@ -3,7 +3,7 @@ const path = require('path');
 const cluster = require('cluster');
 const { getAvailablePort } = require('leemons-utils/lib/port');
 const chalk = require('chalk');
-const createLogger = require('leemons-logger');
+const createLogger = require('leemons-logger/lib/logger/multiThread');
 const { Leemons } = require('../index');
 const loadFront = require('../core/plugins/front/loadFront');
 
@@ -13,7 +13,7 @@ function createWorker(env = {}) {
   return newWorker;
 }
 
-function handleStdin(PORT) {
+function handleStdin(PORT, logger) {
   process.stdin.setEncoding('utf8');
 
   process.stdin.on('data', (data) => {
@@ -21,7 +21,7 @@ function handleStdin(PORT) {
       case 'restart':
       case 'reload':
       case 'rs':
-        console.log(chalk`{green Reloading\n}`);
+        logger.info(chalk`{green Reloading Leemons App\n}`);
         Object.values(cluster.workers).forEach((worker) => {
           worker.send('kill');
         });
@@ -31,12 +31,13 @@ function handleStdin(PORT) {
     }
 
     if (data.charCodeAt(0) === 12) {
+      // eslint-disable-next-line no-console
       console.clear();
     }
   });
 }
 
-function createReloader(name, dirs, config, handler) {
+function createReloader({ name, dirs, config, handler, logger } = {}) {
   let isReloading = false;
   let requestedReloads = 0;
   let lastTimer = null;
@@ -56,10 +57,10 @@ function createReloader(name, dirs, config, handler) {
 
       if (!isReloading) {
         isReloading = true;
-        console.log(chalk`Reloading ${name} due to {magenta ${handledRequests}} changes`);
+        logger.info(chalk`Reloading ${name} due to {magenta ${handledRequests}} changes`);
         handler().then(() => {
           requestedReloads -= handledRequests;
-          console.log(
+          logger.info(
             chalk`Reloaded ${name} due to {magenta ${handledRequests} changes}. {red ${requestedReloads} changes remaining}`
           );
           if (lastTimer === timer) {
@@ -107,10 +108,10 @@ async function setupFront(leemons, plugins, nextDir) {
   await leemons.loadFront(plugins);
 
   // Create a file watcher
-  createReloader(
-    'Frontend',
-    frontDirs,
-    {
+  createReloader({
+    name: 'Frontend',
+    dirs: frontDirs,
+    config: {
       ignoreInitial: true,
       ignored: [
         /(^|[/\\])\../, // ignore dotfiles
@@ -127,8 +128,9 @@ async function setupFront(leemons, plugins, nextDir) {
       ],
     },
     // When a change occurs, reload front
-    () => loadFront(leemons, plugins)
-  );
+    handler: () => loadFront(leemons, plugins),
+    logger: leemons.log,
+  });
 }
 
 async function setupBack(leemons, plugins) {
@@ -153,10 +155,10 @@ ${plugin.dir.services})`,
   await leemons.loadBack(plugins);
 
   // Create a backend watcher
-  createReloader(
-    'Backend',
-    backDirs,
-    {
+  createReloader({
+    name: 'Backend',
+    dirs: backDirs,
+    config: {
       ignoreInitial: true,
       ignored: [
         /(^|[/\\])\../, // ignore dotfiles
@@ -167,12 +169,13 @@ ${plugin.dir.services})`,
      * When a change occurs, remove backend router endpoints
      * and load back again
      */
-    () => {
+    handler: () => {
       // eslint-disable-next-line no-param-reassign
       leemons.backRouter.stack = [];
       return leemons.loadBack(plugins);
-    }
-  );
+    },
+    logger: leemons.log,
+  });
 }
 
 module.exports = async ({ next, level: logLevel = 'debug' }) => {
@@ -198,6 +201,7 @@ module.exports = async ({ next, level: logLevel = 'debug' }) => {
 
     const logger = await createLogger();
     logger.level = logLevel;
+    global.log = logger;
 
     cluster.on('message', (worker, message) => {
       switch (message) {
@@ -208,24 +212,25 @@ module.exports = async ({ next, level: logLevel = 'debug' }) => {
       }
     });
 
-    handleStdin(PORT);
+    handleStdin(PORT, logger);
 
-    createReloader(
-      'Leemons',
-      paths,
-      {
+    createReloader({
+      name: 'Leemons',
+      dirs: paths,
+      config: {
         cwd,
         ignored: /(^|[/\\])\../, // ignore dotfiles
         ignoreInitial: true,
       },
       // When a change is detected, kill all the workers and fork a new one
-      async () => {
+      handler: async () => {
         Object.values(cluster.workers).forEach((worker) => {
           worker.send('kill');
         });
         createWorker({ PORT, loggerId: logger.id, loggerLevel: logger.level });
-      }
-    );
+      },
+      logger,
+    });
 
     createWorker({ PORT, loggerId: logger.id, loggerLevel: logger.level });
   } else if (cluster.isWorker) {

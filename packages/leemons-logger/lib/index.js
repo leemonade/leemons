@@ -1,11 +1,15 @@
 const winston = require('winston');
 const _ = require('lodash');
 const { v4: uuid } = require('uuid');
-const transports = require('./transports');
+const defaultTransports = require('./transports');
 
-module.exports = async ({ id = uuid() } = {}) => {
+module.exports = async ({ id = uuid(), transports = null } = {}) => {
+  let _transports = transports;
+  if (!transports) {
+    _transports = defaultTransports;
+  }
   const logger = winston.createLogger({
-    transports: await transports({ id }),
+    transports: await _transports({ id }),
   });
 
   logger.id = id;

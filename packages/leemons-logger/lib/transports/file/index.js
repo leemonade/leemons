@@ -1,9 +1,27 @@
-const { transports } = require('winston');
-const format = require('../../format');
+const {
+  transports,
+  format: { combine, metadata, json, uncolorize },
+} = require('winston');
+const defaultFormat = require('../../format');
 const resolveFile = require('./resolveFile');
 
-module.exports = ({ id, folder = 'logs', filename = 'latest.log' }) =>
+module.exports = ({ id, folder = 'logs', filename = 'latest.log', format = null } = {}) => {
+  let _format = format;
+  if (!format) {
+    _format = defaultFormat;
+  }
   // Get the desired file safely and create a transport for it
-  resolveFile({ id, folder, filename }).then(
-    (file) => new transports.File({ filename: file.filename, format: format() })
+  return resolveFile({ id, folder, filename }).then(
+    (file) =>
+      new transports.File({
+        filename: file.filename,
+        timestamp: true,
+        format: combine(
+          _format(),
+          uncolorize(),
+          metadata({ fillExcept: ['level', 'message', 'labels', 'timestamp'] }),
+          json()
+        ),
+      })
   );
+};
