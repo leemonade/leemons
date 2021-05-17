@@ -40,20 +40,12 @@ program
   .description('Launches leemons application in production mode')
   .action(getLocalCommand('start'));
 
-// $leemons newdev
+// $leemons dev
 program
-  .command('newdev')
+  .command('dev')
   .option('-N, --next <dir>', 'next directory')
   .option('-L, --level <level>', 'log level')
   .description('Launches leemons application in production mode')
-  .action(getLocalCommand('newdev'));
-
-// $leemons develop
-program
-  .command('dev')
-  .alias('develop')
-  .option('-N, --next <dir>', 'next directory')
-  .description('Launches leemons application in development mode')
   .action(getLocalCommand('dev'));
 
 program.parseAsync(process.argv);

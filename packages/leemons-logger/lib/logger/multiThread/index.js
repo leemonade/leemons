@@ -5,6 +5,10 @@ const file = require('./transports/File');
 const addPID = require('./format/addPID');
 const EmitToMaster = require('./transports/EmitToMaster');
 
+/**
+ *
+ * @returns {createLogger}
+ */
 module.exports = async () => {
   if (cluster.isMaster) {
     // Master logger, which will log to Console and File

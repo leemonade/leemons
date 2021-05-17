@@ -1,219 +1,229 @@
-const chalk = require('chalk');
-const chokidar = require('chokidar');
 const cluster = require('cluster');
-const fs = require('fs');
-const http = require('http');
 const path = require('path');
-const request = require('request');
-const detect = require('detect-port');
 
-const leemons = require('../index');
+const createLogger = require('leemons-logger/lib/logger/multiThread');
+const { getAvailablePort } = require('leemons-utils/lib/port');
 
-function getAvailablePort(port = process.env.PORT || 8080) {
-  return detect(port);
-}
+const { handleStdin } = require('./lib/io');
+const { createWorker } = require('./lib/worker');
+const { createReloader } = require('./lib/watch');
 
-function createWorker(env = {}) {
-  const newWorker = cluster.fork(env);
-  newWorker.process.env = env;
-}
+const { Leemons } = require('../index');
+const loadFront = require('../core/plugins/front/loadFront');
 
-// Create a Proxy which uses the currently active server
-async function createProxy(workers, log) {
-  const server = http.createServer((req, res) => {
-    const { url } = req;
-    const activeWorker = Object.values(workers).find((worker) => worker.active);
-    if (activeWorker && activeWorker.url)
-      req.pipe(request({ url: `${activeWorker.url}${url}` })).pipe(res);
-    else res.end('The server is restarting');
-  });
-
-  const port = await getAvailablePort();
-  process.env.PORT = port;
-  server.listen(port, () => {
-    log.debug(`Listening on http://localhost:${port}`);
-  });
-}
-
-// Return a string with the time diff between 2 dates
-function timeDif(start, end = new Date()) {
-  const time = new Date(end - start);
-
-  const minutes = time.getMinutes();
-  const seconds = time.getSeconds();
-  const milliseconds = time.getMilliseconds();
-  return `${(minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')}${milliseconds}ms`;
-}
-
-// $ leemons develop
-module.exports = async (args) => {
-  const nextDir = path.resolve(process.cwd(), args.next || 'next/');
-  if (!fs.existsSync(nextDir)) {
-    process.stderr.write(chalk`{red The provided nextjs route is not valid}\n`);
-    process.exit(1);
-  }
-  process.env.nextDir = nextDir;
-
-  // Logging function
-  const log = (...msgs) => {
-    const time = new Date().toUTCString();
-    const msg = msgs.join(' ');
-    if (cluster.isMaster)
-      process.stdout.write(
-        chalk`{gray ${time}} {bold {gray [}{green Master}{gray ]}} {gray - ${msg}}\n`
-      );
-    else
-      process.stdout.write(
-        chalk`{gray ${time}} {bold {gray [}{blue Worker ${cluster.worker.process.pid}}{gray ]}} {gray - ${msg}}\n`
-      );
-  };
-  global.log = log;
-
-  // Master Cluster
-  if (cluster.isMaster) {
-    const workers = {};
-    let nodeToBeKilled;
-    let time;
-
-    process.env.NODE_ENV = 'development';
-
-    log.debug(
-      chalk`Started server in {green ${process.env.NODE_ENV} mode } on {underline PID: ${process.pid}}`
-    );
-
-    await createProxy(workers, log);
-
-    const appPath = process.cwd();
-    const leemonsPath = path.dirname(require.resolve('leemons/package.json'));
-    const leemonsDatabasePath = path.dirname(require.resolve('leemons-database/package.json'));
-    const leemonsUtilsPath = path.dirname(require.resolve('leemons-utils/package.json'));
-
-    chokidar
-      .watch(
-        [
-          `${appPath}/**/*.(js|json)`,
-          `${leemonsPath}/**/*.(js|json)`,
-          `${leemonsDatabasePath}/**/*.(js|json)`,
-          `${leemonsUtilsPath}/**/*.(js|json)`,
-        ],
-        {
-          cwd: process.cwd(),
-          persistent: true,
-          ignored: [`${nextDir}`],
-          followSymlinks: true,
-          ignoreInitial: true,
-        }
+/**
+ * Creates a watcher for frontend files and then sets up all the needed files
+ */
+async function setupFront(leemons, plugins, nextDir) {
+  // Frontend directories to watch for changes
+  const frontDirs = [
+    // App next/** directories
+    path.join(
+      path.isAbsolute(leemons.dir.next)
+        ? leemons.dir.next
+        : path.join(leemons.dir.app, leemons.dir.next),
+      '**'
+    ),
+    // Plugin next/** directories
+    ...plugins.map((plugin) =>
+      path.join(
+        path.isAbsolute(plugin.dir.next)
+          ? plugin.dir.next
+          : path.join(plugin.dir.app, plugin.dir.next),
+        '**'
       )
-      .on('all', async () => {
-        Object.values(cluster.workers).forEach((worker) => {
-          delete workers[worker.pid];
-          worker.send('kill');
-        });
-        createWorker({ PORT: await getAvailablePort() });
-      });
+    ),
+  ];
 
-    // Register every new worker
-    cluster.on('fork', async (worker) => {
-      const { pid } = worker.process;
-      workers[pid] = {
-        pid,
-        url: `http://localhost:${worker.process.env.PORT}`,
-        active: false,
-      };
-    });
+  // Make first front load
+  await leemons.loadFront(plugins);
 
-    // Remove every disconnected worker
-    cluster.on('disconnect', (worker) => {
-      const { pid } = worker.process;
-      delete workers[pid];
-      log.info(chalk`Worker ${pid} killed`);
-    });
+  // Create a file watcher
+  createReloader({
+    name: 'Frontend',
+    dirs: frontDirs,
+    config: {
+      ignoreInitial: true,
+      ignored: [
+        /(^|[/\\])\../, // ignore dotfiles
+        /.*node_modules.*/,
+        /*
+         * Ignore:
+         *  next/dependencies
+         *  next/plugins
+         *  next/pages
+         *  next/jsconfig.json
+         */
+        `${nextDir}/(dependencies|plugins|pages|jsconfig.json)/**`,
+        /.*checksums.json.*/,
+      ],
+    },
+    // When a change occurs, reload front
+    handler: () => loadFront(leemons, plugins),
+    logger: leemons.log,
+  });
+}
 
-    // Handle message logic
-    cluster.on('message', async (worker, message) => {
-      const order = Array.isArray(message) ? message[0] : message;
+/**
+ * Creates a watcher for backend files and then sets up all the needed services
+ */
+async function setupBack(leemons, plugins) {
+  /*
+   * Backend directories to watch for changes
+   *  plugin.dir.models
+   *  plugin.dir.controllers
+   *  plugin.dir.services
+   */
+  const backDirs = plugins.map((plugin) =>
+    path.join(
+      plugin.dir.app,
+      `\
+(${plugin.dir.models}|\
+${plugin.dir.controllers}|\
+${plugin.dir.services})`,
+      '**'
+    )
+  );
 
-      log.debug(chalk`{blue Worker ${worker.process.pid}} sends {underline ${order}}`);
+  // Load backend for first time
+  await leemons.loadBack(plugins);
 
-      switch (order) {
-        // When a reload order is sent
-        // Order worker to clean-exit
-        // worker.send("kill");
-        case 'reload':
-          nodeToBeKilled = worker;
-          time = new Date();
-          createWorker({ PORT: await getAvailablePort() });
-          break;
-        // When a worker is ready to be killed
-        // Kill it and create a new one
+  // Create a backend watcher
+  createReloader({
+    name: 'Backend',
+    dirs: backDirs,
+    config: {
+      ignoreInitial: true,
+      ignored: [
+        /(^|[/\\])\../, // ignore dotfiles
+        /.*node_modules.*/,
+      ],
+    },
+    /*
+     * When a change occurs, remove backend router endpoints
+     * and load back again
+     */
+    handler: () => {
+      // eslint-disable-next-line no-param-reassign
+      leemons.backRouter.stack = [];
+      return leemons.loadBack(plugins);
+    },
+    logger: leemons.log,
+  });
+}
+
+module.exports = async ({ next, level: logLevel = 'debug' }) => {
+  const cwd = process.cwd();
+
+  const nextDir = next && path.isAbsolute(next) ? next : path.join(cwd, next || 'next/');
+  process.env.next = nextDir;
+
+  if (cluster.isMaster) {
+    // Set the master process title (visible in $ ps)
+    process.title = 'Leemons Dev';
+
+    // Resolve the config_dir
+    const configDir = process.env.CONFIG_DIR || 'config';
+
+    // Global directories to watch for changes
+    const paths = [
+      // Application config directory
+      configDir,
+      // Application package.json
+      path.join(cwd, 'package.json'),
+      // ignore leemons plugins and connectors
+      path.join(__dirname, '../../../leemons-!(plugin|connector)**'),
+      path.join(__dirname, '../../../leemons/**'),
+    ];
+
+    // Gets the first free port (starting at process.env.PORT)
+    const PORT = await getAvailablePort();
+
+    // Create a multi-thread logger
+    const logger = await createLogger();
+    logger.level = logLevel;
+
+    /*
+     * Thread communication listener
+     *
+     * Kill:
+     *  When a child process emits a kill event, the master process will kill it.
+     */
+    cluster.on('message', (worker, message) => {
+      switch (message) {
         case 'kill':
-          log.info(chalk`Time to kill: {underline ${timeDif(time)}}`);
           worker.kill();
           break;
-        // when a worker is running, kill the
-        // node which have sended the reload order
-        case 'running':
-          if (nodeToBeKilled) {
-            workers[nodeToBeKilled.process.pid].active = false;
-            nodeToBeKilled.send('kill');
-            nodeToBeKilled = undefined;
-          }
-          workers[worker.process.pid].active = true;
-          worker.send('running');
-          break;
-        case 'exit':
-          if (message[1]) {
-            process.stderr.write(chalk`{red An error ocurred\n{gray ${message[1]}}}\n`);
-          }
-          process.exit(1);
-        // eslint-disable-next-line no-fallthrough
         default:
       }
     });
 
-    // Create the first worker
-    createWorker({ PORT: await getAvailablePort() });
+    // Handles CLI interaction commands (such as screen cleaning [ctrl + l])
+    handleStdin(PORT, logger);
+
+    createReloader({
+      name: 'Leemons',
+      dirs: paths,
+      config: {
+        cwd,
+        ignored: /(^|[/\\])\../, // ignore dotfiles
+        ignoreInitial: true,
+      },
+      // When a change is detected, kill all the workers and fork a new one
+      handler: async () => {
+        Object.values(cluster.workers).forEach((worker) => {
+          worker.send('kill');
+        });
+        createWorker({ PORT, loggerId: logger.id, loggerLevel: logger.level });
+      },
+      logger,
+    });
+
+    // Creates the first worker (which will host the leemons app)
+    createWorker({ PORT, loggerId: logger.id, loggerLevel: logger.level });
+  } else if (cluster.isWorker) {
+    // Set the thread process title (visible in $ ps)
+    process.title = 'Leemons Dev Instance';
+    // Sets the environment to development
+    process.env.NODE_ENV = 'development';
+
+    // Creates the worker multi-thread logger (emits logs to master)
+    const log = await createLogger();
+    log.level = process.env.loggerLevel;
+
+    // Starts the application (Config)
+    const leemons = new Leemons(log);
+
+    /*
+     * Thread communication listener
+     *
+     * Kill:
+     *  When the master emits a kill event, clean the Leemons instance and exit.
+     */
+    cluster.worker.on('message', (message) => {
+      switch (message) {
+        case 'kill':
+          leemons.server.destroy(() => {
+            process.send('kill');
+          });
+          break;
+        default:
+      }
+    });
+
+    // Loads the App and plugins config
+    await leemons.loadAppConfig();
+    const pluginsConfig = await leemons.loadPluginsConfig();
+
+    // Start the Front and Back services
+    await Promise.all([
+      setupFront(leemons, pluginsConfig, nextDir),
+      setupBack(leemons, pluginsConfig),
+    ]);
+
+    leemons.loaded = true;
+
+    // Start listening once all is loaded
+    await leemons.start();
   }
-  // Worker Cluster
-  if (cluster.isWorker) {
-    const createdAt = new Date();
-
-    // Set the port for the worker's server
-
-    log.debug('new Worker started');
-
-    try {
-      const leemonsInstance = leemons(log);
-
-      // Handle message logic
-      cluster.worker.on('message', (message) => {
-        log.debug(chalk`{green Master} sends {underline ${message}}`);
-
-        switch (message) {
-          // When kill, do a clean-exit
-          case 'kill':
-            leemonsInstance.server.destroy(() => {
-              log.info('Server stopped listening');
-              process.send('kill');
-              log.info(chalk.red.bold('is now death'));
-            });
-            break;
-          // When running log the time to up
-          case 'running':
-            log.debug(chalk`Time to up: {underline ${timeDif(createdAt)}}`);
-            break;
-          case 'reload':
-            log.info(chalk`Reloading due a file change`);
-            process.send('reload');
-            break;
-          default:
-        }
-      });
-
-      return leemonsInstance.start();
-    } catch (error) {
-      process.send(['exit', error.message]);
-    }
-  }
-  return false;
 };

@@ -3,6 +3,9 @@ const _ = require('lodash');
 const { v4: uuid } = require('uuid');
 const defaultTransports = require('./transports');
 
+/**
+ * @returns {Promise<winston.Logger>}
+ */
 module.exports = async ({ id = uuid(), transports = null } = {}) => {
   let _transports = transports;
   if (!transports) {
