@@ -1,5 +1,5 @@
 const http = require('http');
-const { getAvailablePort } = require('../port');
+const { getAvailablePort } = require('../lib/port');
 
 describe('port Functions', () => {
   describe('call getAvailablePort', () => {

@@ -2,13 +2,12 @@ const { createGzip } = require('zlib');
 const fs = require('fs-extra');
 const path = require('path');
 
-module.exports = ({ id, folder = 'logs', filename: basename = 'latest.log' }) =>
-  new Promise((resolve, reject) => {
+module.exports = ({ id, folder = 'logs', filename: basename = 'latest.log' } = {}) => {
+  const handler = async (resolve, reject) => {
     // Compose the path
     const filename = path.resolve(folder, basename);
-
     // If a log exists check if has the same logger id or gzip it
-    if (fs.existsSync(filename)) {
+    if (await fs.exists(filename)) {
       const file = fs
         // Read file inside a stream (infinite file size)
         .createReadStream(filename)
@@ -19,24 +18,24 @@ module.exports = ({ id, folder = 'logs', filename: basename = 'latest.log' }) =>
         })
 
         // When finished GZIPing continue the execution
-        .on('end', () => {
-          fs.removeSync(filename);
-          fs.writeFileSync(filename, `${id}\n`);
-          resolve({ id, filename, isnew: true });
+        .on('end', async () => {
+          await fs.remove(filename);
+          await fs.writeFile(filename, `${id}\n`);
+          resolve({ id, filename, isNew: true });
         })
 
         // When ready to read, get the id from file
-        .once('readable', () => {
+        .once('readable', async () => {
           // If the ids match, stop file manipulation and continue
           const content = file.read(37);
 
           if (content && content.toString().trim() === id) {
-            resolve({ id, filename, isnew: false });
+            resolve({ id, filename, isNew: false });
           } else {
             // Get the filename for the gzipped log
             const newName = path.resolve(
               folder,
-              `${fs.lstatSync(filename).birthtime.toISOString()}.log.gz`
+              `${(await fs.lstat(filename)).birthtime.toISOString()}.log.gz`
             );
 
             // Gzipper function
@@ -57,12 +56,15 @@ module.exports = ({ id, folder = 'logs', filename: basename = 'latest.log' }) =>
       // If the file does not exists
 
       // Create the log directory if needed
-      if (!fs.pathExistsSync(folder)) {
-        fs.mkdirpSync(folder);
+      if (!(await fs.pathExists(folder))) {
+        await fs.mkdirp(folder);
       }
       // Save the id to the log file
-      fs.writeFileSync(filename, `${id}\n`);
+      await fs.writeFile(filename, `${id}\n`);
 
-      resolve({ id, filename, isnew: true });
+      resolve({ id, filename, isNew: true });
     }
-  });
+  };
+
+  return new Promise(handler);
+};

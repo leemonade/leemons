@@ -1,5 +1,5 @@
 const path = require('path');
-const { env, generateEnv } = require('../env');
+const { env, generateEnv } = require('../lib/env');
 
 describe('Environment Functions', () => {
   beforeAll(() => {

@@ -1,4 +1,4 @@
-const { generateModelName, getModel } = require('../model');
+const { generateModelName, getModel } = require('../lib/model');
 
 describe('Model Functions', () => {
   describe('call getModel', () => {

@@ -1,5 +1,5 @@
 const path = require('path');
-const getStackTrace = require('../getStackTrace');
+const getStackTrace = require('../lib/getStackTrace');
 
 function checkStackTraceArray(stack) {
   expect(Array.isArray(stack)).toBeTruthy();
@@ -37,7 +37,7 @@ describe('StackTrace', () => {
 
       // GetStackTrace function
       checkStackTraceProperties(stack[0], {
-        fileName: path.join(__dirname, '../getStackTrace.js'),
+        fileName: path.join(__dirname, '../lib/getStackTrace.js'),
         functionName: 'getStackTrace',
       });
 
@@ -59,7 +59,7 @@ describe('StackTrace', () => {
 
       // GetStackTrace function
       checkStackTraceProperties(stack, {
-        fileName: path.join(__dirname, '../getStackTrace.js'),
+        fileName: path.join(__dirname, '../lib/getStackTrace.js'),
         functionName: 'getStackTrace',
       });
     });

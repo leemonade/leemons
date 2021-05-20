@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs-extra');
-const readdirRecursive = require('../readdirRecursive');
+const readdirRecursive = require('../lib/readdirRecursive');
 
 const directoryStructure = {
   content: [

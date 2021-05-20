@@ -1,4 +1,4 @@
-const { parseFilters } = require('../parseFilters');
+const { parseFilters } = require('../lib/parseFilters');
 
 const model = {
   schema: {
