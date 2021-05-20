@@ -26,9 +26,10 @@ function parseSortFilter(sort) {
   }
 
   const sortInstructions = [];
+  const keys = [];
 
   sort.split(',').forEach((instruction) => {
-    const [field, order = 'asc'] = instruction.trim().split(':');
+    const [field, order = 'asc'] = instruction.split(':').map((value) => value.trim());
 
     if (field.length === 0) {
       throw new Error('Field cannot be empty');
@@ -39,7 +40,12 @@ function parseSortFilter(sort) {
     }
 
     sortInstructions.push({ field, order: order.toLocaleLowerCase() });
+    keys.push(field);
   });
+
+  if ([...new Set(keys)].length < keys.length) {
+    throw new Error('A provided ordering key is duplicated');
+  }
 
   return {
     sort: sortInstructions,
@@ -48,6 +54,7 @@ function parseSortFilter(sort) {
 
 function parseOffsetFilter(offset) {
   const offsetValue = _.toNumber(offset);
+
   if (!_.isInteger(offsetValue) || offsetValue < 0) {
     throw new Error(`parseOffsetFilter expected a positive integer, instead got ${offsetValue}`);
   }
@@ -119,6 +126,11 @@ function parseWhereParams(params, model) {
     Object.entries(whereEl).forEach(([name, clauseValue]) => {
       const { field, operator = 'eq', value } = parseWhereClause(name, clauseValue, model);
 
+      // Null is valid field name
+      if (!field && field !== null) {
+        throw new Error(`The specified filter "${name}" can't have an empty field`);
+      }
+
       finalWhere.push({
         field,
         operator,
@@ -135,6 +147,10 @@ function parseFilters({ filters = {}, defaults = {}, model } = {}) {
     throw new Error(
       `parseFilters expected an object, got ${filters === null ? 'null' : typeof filters}`
     );
+  }
+
+  if (!_.has(model, 'schema.primaryKey.name')) {
+    throw new Error('A valid model must be provided');
   }
 
   const finalFilters = _.defaultsDeep({}, defaults);

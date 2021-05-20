@@ -9,7 +9,9 @@
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-react": "^7.23.1",
     "husky": "4",
+    "jest": "^26.6.3",
     "lerna": "^4.0.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.2.1",
@@ -19,7 +21,8 @@
     "stylelint": "^13.12.0",
     "stylelint-config-idiomatic-order": "^8.1.0",
     "stylelint-config-standard": "^21.0.0",
-    "wait-on": "^5.2.1"
+    "wait-on": "^5.2.1",
+    "@types/jest": "^26.0.23"
   },
   "workspaces": [
     "packages/*",
@@ -59,15 +62,13 @@
     "format:code": "npm run prettier:code -- --write",
     "format:other": "npm run prettier:other -- --write",
     "prettier:code": "prettier \"**/*.js\"",
-    "prettier:other": "prettier \"**/*.{md,css,scss,yaml,yml}\""
+    "prettier:other": "prettier \"**/*.{md,css,scss,yaml,yml}\"",
+    "test": "jest"
   },
   "husky": {
     "hooks": {
       "pre-commit": "npm run lint -s",
       "pre-push": "npm run lint -s"
     }
-  },
-  "dependencies": {
-    "eslint-plugin-react": "^7.23.1"
   }
 }

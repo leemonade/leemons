@@ -18,7 +18,10 @@ function getStackTrace(index) {
   // Restore default prepareStackTrace
   Error.prepareStackTrace = prepareStackTrace;
 
-  if (index) {
+  if (typeof index === 'number') {
+    if (!stack[index]) {
+      return null;
+    }
     return {
       fileName: stack[index].getFileName(),
       lineNumber: stack[index].getLineNumber(),
