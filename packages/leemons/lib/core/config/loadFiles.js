@@ -1,6 +1,5 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { env: envf } = require('leemons-utils');
 const vm = require('./vm');
 
 /**
@@ -15,8 +14,7 @@ async function loadJSFile(file, filter = null, env = {}) {
     // Load the file in a VM (for security reasons)
     const fileContent = vm(path.dirname(file), filter, env).runFile(file);
     if (typeof fileContent === 'function') {
-      // TODO: Check env function not showing file process env
-      return fileContent({ env: envf, leemons });
+      return fileContent({ leemons });
     }
     return fileContent;
   } catch (e) {
@@ -87,10 +85,9 @@ async function loadFiles(
     (await fs.readdir(dir, { withFileTypes: true }))
       // Keep only those items which are files
       .filter((file) => file.isFile())
-      // TODO: Find a better name for PConfig
-      .reduce(async (Pconfig, file) => {
+      .reduce(async (configPromise, file) => {
         // Wait until config is resolved;
-        const config = await Pconfig;
+        const config = await configPromise;
 
         // Remove excluded files
         if (exclude.includes(file.name)) {

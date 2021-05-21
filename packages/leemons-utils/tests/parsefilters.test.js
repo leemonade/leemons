@@ -950,8 +950,6 @@ describe('parseFilters Functions', () => {
             ).toThrow();
           });
         });
-
-        // TODO: Test where inside where and or inside or
       });
 
       describe('or filter', () => {

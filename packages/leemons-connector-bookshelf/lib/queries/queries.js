@@ -9,7 +9,6 @@ function generateQueries(model /* connector */) {
   const selectAttributes = (attributes) =>
     _.pickBy(attributes, (value, key) => model.schema.allAttributes.includes(key));
 
-  // TODO: Give the use the ability to use custom queries
   // Creates one new item
   function create(newItem, { transacting } = {}) {
     const attributes = selectAttributes(newItem);

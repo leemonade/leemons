@@ -61,7 +61,6 @@ class Leemons {
     // Initialize the reload method (generate a "state" for it)
     this.reload();
 
-    // TODO: Stop exposing the server and router
     this.app = new Koa();
     this.frontRouter = new Router();
     this.backRouter = new Router();
@@ -226,7 +225,6 @@ class Leemons {
     await buildFront();
     this.frontHandler = this.front.getRequestHandler();
 
-    // TODO: this should be on a custom loader
     // When next is prepared
     await hooks.fireEvent('leemons::prepareFrontend', { status: 'start' });
     const prepareFront = ora('Starting frontend server').start();

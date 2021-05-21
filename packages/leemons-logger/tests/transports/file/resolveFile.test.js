@@ -1,3 +1,5 @@
+// TODO: Test errors: on file read, on gzip error, on gzip save error
+
 const path = require('path');
 const fs = require('fs-extra');
 const resolveFile = require('../../../lib/transports/file/resolveFile');
@@ -5,9 +7,7 @@ const resolveFile = require('../../../lib/transports/file/resolveFile');
 describe('Test resolveFile', () => {
   const dir = path.join(__dirname, 'testOutput');
 
-  beforeEach(async () => fs.remove(dir));
-
-  test.each([
+  describe.each([
     ['existing folder (1 depth)', { shouldDirExist: true }],
     [
       'custom folder, existing folder (5 depth)',
@@ -70,7 +70,7 @@ describe('Test resolveFile', () => {
     ],
   ])(
     '%s',
-    async (
+    (
       name,
       {
         folder = dir,
@@ -83,48 +83,55 @@ describe('Test resolveFile', () => {
     ) => {
       const filename = path.join(folder, _filename);
 
-      // #region File Setup
-
-      // Create directory (also create parents)
-      if (shouldDirExist || shouldAlreadyExist) {
-        if (!(await fs.exists(folder))) {
-          await fs.mkdir(folder, { recursive: true });
+      beforeAll(async () => {
+        await fs.remove(dir);
+        // Create directory (also create parents)
+        if (shouldDirExist || shouldAlreadyExist) {
+          if (!(await fs.exists(folder))) {
+            await fs.mkdir(folder, { recursive: true });
+          }
         }
-      }
-      // Create file
-      if (shouldAlreadyExist) {
-        await fs.writeFile(filename, `${existingId}\n`);
-      }
-
-      // #endregion
+        // Create file
+        if (shouldAlreadyExist) {
+          await fs.writeFile(filename, `${existingId}\n`);
+        }
+      });
 
       // Testing function call
-      const result = await resolveFile({ folder, filename: _filename, id });
-      expect(result).toEqual({
-        filename,
-        id,
-        // Always is new except when the file already existed but with a different id
-        isNew: !(shouldAlreadyExist && id === existingId),
+      test('Expected return', async () => {
+        const result = await resolveFile({ folder, filename: _filename, id });
+        expect(result).toEqual({
+          filename,
+          id,
+          // Always is new except when the file already existed but with a different id
+          isNew: !(shouldAlreadyExist && id === existingId),
+        });
       });
 
       // Check new log file existence
-      const exists = await fs.exists(filename);
-      expect(exists).toBeTruthy();
+      test('The logfile is created', async () => {
+        const exists = await fs.exists(filename);
+        expect(exists).toBeTruthy();
+      });
 
-      const files = await fs.readdir(folder);
+      let files;
 
-      const count = files.length;
-      // The count should be 2 when the file already existed but the id is different, otherwise, must be 1
-      expect(count).toBe(shouldAlreadyExist && id !== existingId ? 2 : 1);
+      test('The expected number of files is created', async () => {
+        files = await fs.readdir(folder);
+
+        const count = files.length;
+        // The count should be 2 when the file already existed but the id is different, otherwise, must be 1
+        expect(count).toBe(shouldAlreadyExist && id !== existingId ? 2 : 1);
+      });
 
       if (shouldAlreadyExist && id !== existingId) {
         // The file is gzipped
-        expect(files.filter((file) => file.substring(file.length - 3) === '.gz')).toHaveLength(1);
+        test('The previouse log is gzipped', () => {
+          expect(files.filter((file) => file.substring(file.length - 3) === '.gz')).toHaveLength(1);
+        });
       }
     }
   );
 
   afterAll(() => fs.remove(dir));
 });
-
-// TODO: Test errors: on file read, on gzip error, on gzip save error

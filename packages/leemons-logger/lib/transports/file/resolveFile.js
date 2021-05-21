@@ -2,7 +2,7 @@ const { createGzip } = require('zlib');
 const fs = require('fs-extra');
 const path = require('path');
 
-module.exports = ({ id, folder = 'logs', filename: basename = 'latest.log' } = {}) => {
+module.exports = ({ id, folder, filename: basename }) => {
   const handler = async (resolve, reject) => {
     // Compose the path
     const filename = path.resolve(folder, basename);

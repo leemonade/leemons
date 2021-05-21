@@ -5,7 +5,7 @@ const {
 const defaultFormat = require('../../format');
 const resolveFile = require('./resolveFile');
 
-module.exports = ({ id, folder = 'logs', filename = 'latest.log', format = null } = {}) => {
+module.exports = ({ id, folder, filename, format = null }) => {
   let _format = format;
   if (!format) {
     _format = defaultFormat;
