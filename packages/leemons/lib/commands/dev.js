@@ -10,6 +10,7 @@ const { createReloader } = require('./lib/watch');
 
 const { Leemons } = require('../index');
 const loadFront = require('../core/plugins/front/loadFront');
+const build = require('../core/front/build');
 
 /**
  * Creates a watcher for frontend files and then sets up all the needed files
@@ -59,7 +60,10 @@ async function setupFront(leemons, plugins, nextDir) {
       ],
     },
     // When a change occurs, reload front
-    handler: () => loadFront(leemons, plugins),
+    handler: async () => {
+      await loadFront(leemons, plugins);
+      await build();
+    },
     logger: leemons.log,
   });
 }
