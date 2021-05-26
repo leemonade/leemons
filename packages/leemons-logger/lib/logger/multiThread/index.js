@@ -15,7 +15,7 @@ module.exports = async () => {
     const logger = await createLogger({
       transports: async ({ id }) => [
         console(),
-        await file({ id, folder: 'latest', filename: 'latest.log' }),
+        await file({ id, folder: 'logs', filename: 'latest.log' }),
       ],
     });
 
