@@ -82,7 +82,7 @@ class Leemons {
   // Initialize the server config with http server
   initServer() {
     // Add front router to KOA
-    this.app.use(this.frontRouter.routes()).use(this.frontRouter.allowedMethods());
+    this.app.use(this.frontRouter.routes());
     // Add backRouter to app
     this.app.use(this.backRouter.routes());
 

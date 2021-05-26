@@ -23,14 +23,17 @@ async function loadServices(dir, vmFilter, env) {
       }
       let fileContent;
       const fileExt = path.extname(file.name);
+      const filePath = path.resolve(dir, file.name);
       if (fileExt === '.json') {
-        fileContent = await loadFile(path.resolve(dir, file.name));
+        fileContent = await loadFile(filePath);
         // Except when loading .js, it loads the file, but don't process anything else
       } else if (fileExt === '.js') {
         try {
-          fileContent = vm(dir, vmFilter, env).runFile(path.resolve(dir, file.name));
+          fileContent = vm(dir, vmFilter, env).runFile(filePath);
         } catch (e) {
-          throw new Error(`File can not be read: ${file}. ${e.message}`);
+          throw new Error(
+            `File can not be read: ${filePath}. It has the following error on it: ${e.message}`
+          );
         }
       }
       if (fileContent) {

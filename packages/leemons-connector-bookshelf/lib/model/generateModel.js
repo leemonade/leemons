@@ -5,10 +5,10 @@ function generateRelations(models) {
   models.forEach((model) => {
     Object.entries(model.schema.attributes).forEach(([name, attribute]) => {
       if (_.has(attribute, 'references')) {
-        const referencedModel = getModel(attribute.references.collection, models);
+        const referencedModel = getModel(attribute.references.collection, models, true);
         if (!referencedModel) {
           throw new Error(
-            `The references model ${attribute.references.collection} does not exists in model ${model.modelName}`
+            `The referenced model ${attribute.references.collection} does not exists in model ${model.modelName}`
           );
         }
         switch (attribute.references.relation) {
@@ -92,7 +92,7 @@ function generateModel(models, ctx) {
 
     // Generate the hidden attributes
     _.forEach(model.schema.attributes, (attribute, name) => {
-      if (_.get(attribute, 'hidden', false)) {
+      if (_.get(attribute, 'options.hidden', false)) {
         Model.hidden.push(name);
       }
     });

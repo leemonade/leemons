@@ -10,6 +10,7 @@ class DatabaseManager {
 
     this.connectors = createConnectorRegistry(
       {
+        // FIXME: If no database config provided, it will crash
         connections: leemons.config.get('database.connections'),
         defaultConnection: this.defaultConnection,
       },
@@ -42,6 +43,7 @@ class DatabaseManager {
   }
 
   query(modelName, pluginName = null) {
+    // FIXME: An error will throw if the plugin or model can't be found
     // TODO: Add plugin roles
 
     let showDelete = true;

@@ -20,7 +20,14 @@ function generateModelName(target, originalModelName) {
   return `${target.replace(/\./g, '_')}::${originalModelName}`;
 }
 
-function getModel(path, models = null) {
+/**
+ *
+ * @param {string} path The path for the model
+ * @param {object[]} models The models to search into (if null, it will search in leemons models)
+ * @param {boolean} useLeemonsModels Use leemons models if not found in provided models
+ * @returns {object|null} The requested model if found, if not, returns null
+ */
+function getModel(path, models = null, useLeemonsModels = false) {
   if (typeof path !== 'string') {
     return null;
   }
@@ -30,7 +37,9 @@ function getModel(path, models = null) {
       throw new Error('The provided models must be an array');
     }
     const modelObject = models.find((model) => model.modelName === path);
-    return modelObject === undefined ? null : modelObject;
+    if (modelObject || !useLeemonsModels) {
+      return modelObject === undefined ? null : modelObject;
+    }
   }
 
   const absolutePath = path.split('::')[0].replace(/_/g, '.');

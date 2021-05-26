@@ -13,7 +13,10 @@ module.exports = async () => {
   if (cluster.isMaster) {
     // Master logger, which will log to Console and File
     const logger = await createLogger({
-      transports: async ({ id }) => [console(), await file({ id })],
+      transports: async ({ id }) => [
+        console(),
+        await file({ id, folder: 'latest', filename: 'latest.log' }),
+      ],
     });
 
     // When a worker sends a log, log it.
