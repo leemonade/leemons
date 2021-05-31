@@ -105,14 +105,16 @@ async function loadFront(leemons, installedPlugins) {
   const pagesPath = path.resolve(nextPath, 'pages');
   const srcPath = path.resolve(nextPath, 'plugins');
   const depsPath = path.resolve(nextPath, 'dependencies');
+  const publicPath = path.resolve(nextPath, 'public');
 
   // Get current pages checksums
   const pagesChecksums = (await checkDirChanges(pagesPath)).checksums;
-
   // Get current src checksums
   const srcChecksums = (await checkDirChanges(srcPath)).checksums;
   // Get current dependencies checksums
   const depsChecksums = (await checkDirChanges(depsPath)).checksums;
+  // Get public files
+  const publicChecksums = (await checkDirChanges(publicPath)).checksums;
 
   // Plugins' aliases system
   const aliases = {};
@@ -141,15 +143,16 @@ async function loadFront(leemons, installedPlugins) {
           .filter((plugin) => plugin.isDirectory())
           .map((plugin) => plugin.name);
 
-        // Move pages
+        // #region Copy Pages
         if (folders.includes('pages')) {
           const pluginPages = path.resolve(dir, 'pages');
           if (await copyFolder(pluginPages, pagesPath, name, pagesChecksums)) {
             leemons.frontNeedsBuild = true;
           }
         }
+        // #endregion
 
-        // Move src
+        // #region Copy src
         if (folders.includes('src')) {
           // Create the plugin src folder
           if (!(await fs.pathExists(srcPath))) {
@@ -166,7 +169,9 @@ async function loadFront(leemons, installedPlugins) {
           }
         }
 
-        // Move dependencies
+        // #endregion
+
+        // #region Copy dependencies
         if (await fs.exists(path.resolve(dir, 'package.json'))) {
           // Create the next.js dependencies directory
           if (!(await fs.pathExists(depsPath))) {
@@ -188,6 +193,21 @@ async function loadFront(leemons, installedPlugins) {
             });
           }
         }
+        // #endregion
+
+        // #region Copy public files
+        if (folders.includes('public')) {
+          if (!(await fs.pathExists(publicPath))) {
+            await fs.mkdir(publicPath, { recursive: true });
+          }
+
+          // Copy folder
+          const pluginPublic = path.resolve(dir, 'public');
+          if (await copyFolder(pluginPublic, publicPath, name, publicChecksums)) {
+            leemons.frontNeedsBuild = true;
+          }
+        }
+        // #endregion
       }
     })
   );
@@ -218,6 +238,7 @@ async function loadFront(leemons, installedPlugins) {
   await saveChecksums(pagesPath, pagesChecksums, plugins);
   await saveChecksums(srcPath, srcChecksums, plugins);
   await saveChecksums(depsPath, depsChecksums, plugins);
+  await saveChecksums(publicPath, publicChecksums, plugins);
 
   // Add plugins dependencies
   if (nonInstalledDeps.length) {
