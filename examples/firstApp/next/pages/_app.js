@@ -2,12 +2,21 @@ import '../styles/globals.css';
 import PropTypes from 'prop-types';
 import hooks from "leemons-hooks";
 import {useEffect} from "react";
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+
 import {plugins, frontPlugins} from "@plugins";
 
+const theme = createMuiTheme({});
 function MyApp({ Component, pageProps }) {
 
   // Only add it once
   useEffect(() => {
+    // Remove the server-side injected CSS.
+    const jssStyles = document.querySelector('#jss-server-side');
+    if (jssStyles && jssStyles.parentElement) {
+      jssStyles.parentElement.removeChild(jssStyles);
+    }
+
     window.addEventListener('error', (e) => {
       e.preventDefault();
       console.error(e.error);
@@ -29,7 +38,11 @@ function MyApp({ Component, pageProps }) {
       return [[...msg, "Hello World"], ...args]
     });
   }
-  return <Component {...pageProps} />;
+  return (
+    <ThemeProvider theme={theme}>
+      <Component {...pageProps} />;
+    </ThemeProvider>
+  );
 }
 
 MyApp.propTypes = {

@@ -10,8 +10,7 @@
     "leemons-connector-bookshelf": "1.0.0",
     "leemons-hooks": "1.0.0",
     "leemons-utils": "1.0.0",
-    "mysql": "^2.18.1",
-    "pg": "^8.5.1"
+    "mysql": "^2.18.1"
   },
   "license": "MIT"
 }
