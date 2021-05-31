@@ -123,12 +123,14 @@ async function initializePlugins(leemons) {
           exclude: [path.basename(routesFile)],
           filter: vmFilter,
           env: pluginsEnv[pluginObj.name],
+          allowedPath: pluginObj.dir.app,
         }
       );
 
       // Load services
       const services = await loadServices(
-        path.resolve(pluginObj.dir.app, pluginObj.dir.services),
+        // path.resolve(pluginObj.dir.app, pluginObj.dir.services),
+        pluginObj,
         vmFilter,
         pluginsEnv[pluginObj.name]
       );

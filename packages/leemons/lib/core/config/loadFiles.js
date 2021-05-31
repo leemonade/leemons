@@ -9,10 +9,14 @@ const vm = require('./vm');
  *
  * The can be executed with a custom env and also a filter (see ./vm/index.js)
  */
-async function loadJSFile(file, filter = null, env = {}) {
+async function loadJSFile(file, filter = null, allowedPath = null, env = {}) {
+  let allowedDir = allowedPath;
   try {
+    if (allowedPath === null) {
+      allowedDir = path.dirname(file);
+    }
     // Load the file in a VM (for security reasons)
-    const fileContent = vm(path.dirname(file), filter, env).runFile(file);
+    const fileContent = vm(allowedDir, filter, env).runFile(file);
     if (typeof fileContent === 'function') {
       return fileContent({ leemons });
     }
@@ -42,13 +46,19 @@ async function loadJSONFile(file) {
  * and also a custom filter for giving global variables to the
  * file (see ./vm/index.js for more info).
  */
-async function loadFile(file, accept = ['.js', '.json'], filter = null, env = {}) {
+async function loadFile(
+  file,
+  accept = ['.js', '.json'],
+  filter = null,
+  allowedPath = null,
+  env = {}
+) {
   const extension = path.extname(file);
 
   if (await fs.exists(file)) {
     // If it is a JS file and it is allowed, then load it
     if (extension === '.js' && accept.includes('.js')) {
-      return loadJSFile(file, filter, env);
+      return loadJSFile(file, filter, allowedPath, env);
     }
     // If it is a JSON file and it is allowed, then load it
     if (extension === '.json' && accept.includes('.json')) {
@@ -72,7 +82,7 @@ async function loadFile(file, accept = ['.js', '.json'], filter = null, env = {}
  */
 async function loadFiles(
   dir,
-  { accept = ['.js', '.json'], exclude = [], filter = null, env = {} } = {}
+  { accept = ['.js', '.json'], exclude = [], filter = null, env = {}, allowedPath = null } = {}
 ) {
   // If the directory doesn't exists, return an empty object
   if (!(await fs.exists(dir))) {
@@ -103,7 +113,13 @@ async function loadFiles(
         }
 
         // Load the current file
-        const fileConfig = await loadFile(path.resolve(dir, file.name), accept, filter, env);
+        const fileConfig = await loadFile(
+          path.resolve(dir, file.name),
+          accept,
+          filter,
+          allowedPath,
+          env
+        );
 
         // Append to the current config
         if (fileConfig) {

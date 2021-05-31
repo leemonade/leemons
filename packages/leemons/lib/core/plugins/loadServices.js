@@ -3,7 +3,8 @@ const path = require('path');
 const vm = require('../config/vm');
 const { loadFile } = require('../config/loadFiles');
 
-async function loadServices(dir, vmFilter, env) {
+async function loadServices(plugin, vmFilter, env) {
+  const dir = path.join(plugin.dir.app, plugin.dir.services);
   if (!(await fs.exists(dir))) {
     return {};
   }
@@ -29,7 +30,7 @@ async function loadServices(dir, vmFilter, env) {
         // Except when loading .js, it loads the file, but don't process anything else
       } else if (fileExt === '.js') {
         try {
-          fileContent = vm(dir, vmFilter, env).runFile(filePath);
+          fileContent = vm(plugin.dir.app, vmFilter, env).runFile(filePath);
         } catch (e) {
           throw new Error(
             `File can not be read: ${filePath}. It has the following error on it: ${e.message}`
