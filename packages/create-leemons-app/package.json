@@ -1,0 +1,13 @@
+{
+  "name": "create-leemons-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "bin": "bin/index.js",
+  "dependencies": {
+    "chalk": "^4.1.1",
+    "commander": "^7.2.0",
+    "enquirer": "^2.3.6",
+    "lodash": "^4.17.21"
+  }
+}
