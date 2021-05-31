@@ -6,12 +6,12 @@ const queryBuilder = require('./queryBuilder');
 class DatabaseManager {
   constructor(leemons) {
     this.leemons = leemons;
-    this.defaultConnection = leemons.config.get('database.defaultConnection');
+    this.defaultConnection = leemons.config.get('database.defaultConnection', null);
 
     this.connectors = createConnectorRegistry(
       {
         // FIXME: If no database config provided, it will crash
-        connections: leemons.config.get('database.connections'),
+        connections: leemons.config.get('database.connections', null),
         defaultConnection: this.defaultConnection,
       },
       this

@@ -1,6 +1,13 @@
 const importConnector = require('./importConnector');
 
 function createConnectorRegistry({ connections, defaultConnection }, databaseManager) {
+  if (connections === null) {
+    throw new Error('No connection is provided');
+  }
+  if (!Object.keys(connections).includes(defaultConnection)) {
+    throw new Error(`The defaultConnection ${defaultConnection} does not exists in connections`);
+  }
+
   const connectors = new Map();
   return {
     load: () => {
