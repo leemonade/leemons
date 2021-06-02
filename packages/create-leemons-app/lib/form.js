@@ -25,12 +25,12 @@ module.exports = async (appName) => {
       message: 'Which database type do you use?',
       choices: ['SQL', 'NoSQL'],
       required: true,
-      // validate: (value) => {
-      //   if (value === 'NoSQL') {
-      //     return 'Sorry, NoSQL is not yet supported';
-      //   }
-      //   return true;
-      // },
+      validate: (value) => {
+        if (value === 'NoSQL') {
+          return 'Sorry, NoSQL is not yet supported';
+        }
+        return true;
+      },
     },
     {
       type: 'select',

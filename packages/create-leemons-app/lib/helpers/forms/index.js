@@ -2,6 +2,10 @@ const { prompt } = require('enquirer');
 const _ = require('lodash');
 
 module.exports = (questions) =>
+  /**
+   * for each question, check if meets the condition and execute the form, then
+   * resolve the previous responses and iterate to the next item
+   */
   questions.reduce(async (_result, _question) => {
     let question = _question;
     const result = await _result;
@@ -9,6 +13,7 @@ module.exports = (questions) =>
       return _result;
     }
 
+    // Get custom properties that changes with the previous inputs
     if (question.custom) {
       question = {
         ...question,

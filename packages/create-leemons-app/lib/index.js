@@ -1,5 +1,4 @@
 const path = require('path');
-const fs = require('fs-extra');
 const chalk = require('chalk');
 const _ = require('lodash');
 
@@ -15,14 +14,19 @@ const getDatabaseConfig = require('./helpers/utils/getDatabaseConfig');
 const exitWithError = require('./helpers/utils/exitWithError');
 const saveConfigDirs = require('./helpers/utils/saveConfigDirs');
 const getDatabaseDeps = require('./helpers/packageManager/getDatabaseDeps');
+const createDir = require('./helpers/utils/createDir');
+const createPackageJSON = require('./createPackageJSON');
+const createFrontDir = require('./createFrontDir');
 
 module.exports = async (_appName, useNPM) => {
   try {
     const template = 'default';
     const cwd = process.cwd();
 
+    // Get app settings
     let userConfig = { _appName, ...(await form(_appName)) };
 
+    // Fill required but user-optional info
     userConfig = _.defaultsDeep(userConfig, {
       routes: {
         values: {
@@ -39,81 +43,56 @@ module.exports = async (_appName, useNPM) => {
       appName,
       routes: { values: routes },
     } = userConfig;
+
+    // Validate app name
     if (!validateName(appName)) {
       exitWithError(chalk`{red The name {bold ${appName}} is not valid}`);
     }
 
+    // Throw error when app folder is not empty
     if (!(await isFolderEmpty(routes.app))) {
       exitWithError(chalk`{red The directory {bold ${routes.app}} is not empty}`);
     }
 
+    // Throw if we don't have permissions
     if (!(await hasAccess(cwd, ['r', 'w', 'x']))) {
       exitWithError(
         chalk`{red The directory {bold ${cwd}} does not have read, write and execute permissions}`
       );
     }
 
+    // Decide to use npm or yarn
     const useYarn = useNPM || (await shouldUseYarn());
 
-    try {
-      await fs.mkdir(routes.app, { recursive: true });
-    } catch (e) {
-      exitWithError(chalk`{red An error occurred while creating the {bold {dir}} directory}`);
-    }
+    // Create the app dir
+    await createDir(routes.app, appName);
 
-    try {
-      const packageJSON = {
-        name: appName,
-        version: '1.0.0',
-        private: true,
-        scripts: {
-          start: 'leemons start',
-          dev: 'leemons dev',
-          leemons: 'leemons',
-        },
-        leemons: {},
-      };
+    // run simultaneous
+    await Promise.all([
+      createPackageJSON(appName, routes).then(async () => {
+        // Install the app's dependencies
+        const dependencies = [`leemons@${version}`, ...getDatabaseDeps(userConfig)];
+        if (!(await installDeps(routes.app, dependencies, useYarn))) {
+          exitWithError('An error occurred while installing the dependencies');
+        }
+      }),
 
-      if (routes.config !== 'config') {
-        packageJSON.leemons.configDir = routes.config;
-      }
+      // Create front directory
+      createFrontDir(template, routes),
 
-      await fs.writeFile(
-        path.join(routes.app, 'package.json'),
-        `${JSON.stringify(packageJSON, '', 2)}\n`
-      );
-    } catch (e) {
-      exitWithError(chalk`{red An error occurred while creating {bold package.json}}`);
-    }
+      // Create plugins dir
+      createDir(path.join(routes.app, routes.plugins), 'plugins'),
 
-    const dependencies = [`leemons@${version}`, ...getDatabaseDeps(userConfig)];
-    if (!(await installDeps(routes.app, dependencies, useYarn))) {
-      exitWithError('An error occurred while installing the dependencies');
-    }
-
-    const localFrontDir = path.join(__dirname, 'templates', template, 'front');
-    const frontDir = path.join(routes.app, routes.next);
-    try {
-      await fs.copy(localFrontDir, frontDir);
-    } catch (e) {
-      exitWithError('An error occurred while generating the frontend directories');
-    }
-
-    const pluginsDir = path.join(routes.app, routes.plugins);
-    try {
-      await fs.mkdir(pluginsDir);
-    } catch (e) {
-      exitWithError('An error occurred while creating the plugins folder');
-    }
-
-    const configDir = path.join(routes.app, routes.config);
-    try {
-      await fs.mkdir(configDir);
-    } catch (e) {
-      exitWithError('An error occurred while creating the config folder');
-    }
-    await saveConfigDirs(routes.app, userConfig);
-    await getDatabaseConfig(routes.app, userConfig);
+      // Create config dir
+      createDir(path.join(routes.app, routes.config), 'config').then(async () =>
+        Promise.all([
+          // Save config.js
+          saveConfigDirs(routes.app, userConfig),
+          // Save database.js
+          getDatabaseConfig(routes.app, userConfig),
+        ])
+      ),
+    ]);
   } catch (e) {
     exitWithError('An unknown error occurred while creating the app');
   }

@@ -1,15 +1,7 @@
 const path = require('path');
-const fs = require('fs-extra');
-const chalk = require('chalk');
-const exitWithError = require('./exitWithError');
+const createFile = require('./createFile');
 
-function createFile(dir, content, filename) {
-  try {
-    return fs.writeFile(dir, content);
-  } catch (e) {
-    return exitWithError(chalk`{red The ${filename} file can not be created}`);
-  }
-}
+// TODO: Add more comments
 
 module.exports = (dir, config) => {
   const configDir = path.join(dir, config.routes.values.config, 'config.js');
