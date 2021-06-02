@@ -1,12 +1,17 @@
-const { command } = require('execa');
+const { command: execCommand } = require('execa');
 
 module.exports = async (dir, dependencies, useYarn) => {
+  let command;
   if (useYarn) {
-    await command(`yarn --cwd ${dir} add ${dependencies.join(' ')}`, {
-      stdio: 'inherit',
-    });
+    command = `yarn --cwd ${dir} add ${dependencies.join(' ')}`;
   } else {
-    console.error('Npm not yet supported');
-    process.exit(1);
+    command = `npm install -p ${dir} ${dependencies.join(' ')}`;
+  }
+
+  try {
+    await execCommand(command, { stdio: 'inherit' });
+    return true;
+  } catch (e) {
+    return false;
   }
 };

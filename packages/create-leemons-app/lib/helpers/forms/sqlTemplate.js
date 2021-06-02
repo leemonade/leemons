@@ -6,12 +6,12 @@ module.exports = ({ sqlEngine }) => {
     connector: '${connector:bookshelf}',
     settings: {
       client: `\${client:${sqlEngine.toLowerCase()}}`,
-      host: '${host}',
+      host: '${host:127.0.0.1}',
       port: '${port:3306}',
-      user: '${username}',
-      password: '${password}',
-      database: '${database}',
-      filename: '${filename}',
+      user: '${username:leemons}',
+      password: '${password:leemons}',
+      database: '${database:leemons}',
+      filename: '${filename:leemonsDB}',
     },
   };
 

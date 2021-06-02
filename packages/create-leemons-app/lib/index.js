@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs-extra');
-const { command } = require('execa');
 const chalk = require('chalk');
 const _ = require('lodash');
 
@@ -11,114 +10,111 @@ const hasAccess = require('./helpers/utils/fsPermissions');
 const isFolderEmpty = require('./helpers/validators/isFolderEmpty');
 const validateName = require('./helpers/validators/packageName');
 const shouldUseYarn = require('./helpers/packageManager/shouldUseYarn');
+const installDeps = require('./helpers/packageManager/installDeps');
+const getDatabaseConfig = require('./helpers/utils/getDatabaseConfig');
+const exitWithError = require('./helpers/utils/exitWithError');
+const saveConfigDirs = require('./helpers/utils/saveConfigDirs');
+const getDatabaseDeps = require('./helpers/packageManager/getDatabaseDeps');
 
-module.exports = async (appName) => {
+module.exports = async (_appName, useNPM) => {
   try {
+    const template = 'default';
     const cwd = process.cwd();
 
-    const userConfig = { appName }; // ...(await form(appName)) };
+    let userConfig = { _appName, ...(await form(_appName)) };
 
-    console.log(userConfig);
-    {
-      const { appName } = userConfig;
-      if (!validateName(appName)) {
-        console.error(chalk`{red The name {bold ${appName}} is not valid}`);
-        process.exit(1);
-      }
+    userConfig = _.defaultsDeep(userConfig, {
+      routes: {
+        values: {
+          app: path.join(cwd, userConfig.appName),
+          config: 'config',
+          plugins: 'plugins',
+          next: 'next',
+          env: '.env',
+        },
+      },
+    });
 
-      const dir = path.join(cwd, appName);
-      if (!(await isFolderEmpty(dir))) {
-        console.error(chalk`{red The directory {bold ${dir}} is not empty}`);
-        process.exit(1);
-      }
-
-      if (!(await hasAccess(cwd, ['r', 'w', 'x']))) {
-        console.error(
-          chalk`{red The directory {bold ${cwd}} does not have read, write and execute permissions}`
-        );
-        process.exit(1);
-      }
-
-      const useYarn = await shouldUseYarn();
-
-      try {
-        await fs.mkdir(dir, { recursive: true });
-      } catch (e) {
-        console.error(chalk`{red An error occurred while creating the {bold {dir}} directory}`);
-        process.exit(1);
-      }
-
-      try {
-        const packageJSON = {
-          name: appName,
-          version: '1.0.0',
-          private: true,
-          scripts: {
-            start: 'leemons start',
-            dev: 'leemons dev',
-            leemons: 'leemons',
-          },
-        };
-        await fs.writeFile(
-          path.join(dir, 'package.json'),
-          `${JSON.stringify(packageJSON, '', 2)}\n`
-        );
-      } catch (e) {
-        console.error(chalk`{red An error occurred while creating {bold package.json}}`);
-        process.exit(1);
-      }
-
-      try {
-        const dependencies = [`leemons@${version}`];
-        await command(`yarn --cwd ${dir} add ${dependencies.join(' ')}`, {
-          stdio: 'inherit',
-        });
-      } catch (e) {
-        process.exit(1);
-      }
-      /**
-       * El nombre es válido?
-       * Existe ya la carpeta
-       * Tenemos permisos
-       * Usamos yarn o npm
-       * crear carpeta
-       *  crear package.json
-       *    instalar deps
-       *  Crear carpeta de front
-       *  Crear carpeta de plugins
-       *  Crear .env
-       */
-      // if (await hasAccess(cwd, ['r', 'w', 'x'])) {
-      //   console.log('Everything ok');
-      //   await fs.mkdir(dir);
-      //   const packageJSON = {
-      //     name: appName,
-      //     version: '1.0.0',
-      //     private: true,
-      //     scripts: {
-      //       start: 'leemons start',
-      //       dev: 'leemons dev',
-      //       leemons: 'leemons',
-      //     },
-      //   };
-      //   await fs.writeFile(
-      //     path.join(dir, 'package.json'),
-      //     `${JSON.stringify(packageJSON, '', 2)}\n`
-      //   );
-
-      //   const dependencies = [`leemons@${version}`];
-
-      //   await command(`yarn --cwd ${dir} add ${dependencies.join(' ')}`, {
-      //     stdio: 'inherit',
-      //   });
-
-      //   fs.mkdir(path.join(dir, 'config'));
-      // } else {
-      //   console.log('No access!!');
-      // }
+    const {
+      appName,
+      routes: { values: routes },
+    } = userConfig;
+    if (!validateName(appName)) {
+      exitWithError(chalk`{red The name {bold ${appName}} is not valid}`);
     }
-    // console.log(data);
+
+    if (!(await isFolderEmpty(routes.app))) {
+      exitWithError(chalk`{red The directory {bold ${routes.app}} is not empty}`);
+    }
+
+    if (!(await hasAccess(cwd, ['r', 'w', 'x']))) {
+      exitWithError(
+        chalk`{red The directory {bold ${cwd}} does not have read, write and execute permissions}`
+      );
+    }
+
+    const useYarn = useNPM || (await shouldUseYarn());
+
+    try {
+      await fs.mkdir(routes.app, { recursive: true });
+    } catch (e) {
+      exitWithError(chalk`{red An error occurred while creating the {bold {dir}} directory}`);
+    }
+
+    try {
+      const packageJSON = {
+        name: appName,
+        version: '1.0.0',
+        private: true,
+        scripts: {
+          start: 'leemons start',
+          dev: 'leemons dev',
+          leemons: 'leemons',
+        },
+        leemons: {},
+      };
+
+      if (routes.config !== 'config') {
+        packageJSON.leemons.configDir = routes.config;
+      }
+
+      await fs.writeFile(
+        path.join(routes.app, 'package.json'),
+        `${JSON.stringify(packageJSON, '', 2)}\n`
+      );
+    } catch (e) {
+      exitWithError(chalk`{red An error occurred while creating {bold package.json}}`);
+    }
+
+    const dependencies = [`leemons@${version}`, ...getDatabaseDeps(userConfig)];
+    if (!(await installDeps(routes.app, dependencies, useYarn))) {
+      exitWithError('An error occurred while installing the dependencies');
+    }
+
+    const localFrontDir = path.join(__dirname, 'templates', template, 'front');
+    const frontDir = path.join(routes.app, routes.next);
+    try {
+      await fs.copy(localFrontDir, frontDir);
+    } catch (e) {
+      exitWithError('An error occurred while generating the frontend directories');
+    }
+
+    const pluginsDir = path.join(routes.app, routes.plugins);
+    try {
+      await fs.mkdir(pluginsDir);
+    } catch (e) {
+      exitWithError('An error occurred while creating the plugins folder');
+    }
+
+    const configDir = path.join(routes.app, routes.config);
+    try {
+      await fs.mkdir(configDir);
+    } catch (e) {
+      exitWithError('An error occurred while creating the config folder');
+    }
+    await saveConfigDirs(routes.app, userConfig);
+    await getDatabaseConfig(routes.app, userConfig);
   } catch (e) {
-    console.log(e);
+    exitWithError('An unknown error occurred while creating the app');
   }
 };
