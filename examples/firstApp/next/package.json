@@ -8,8 +8,10 @@
     "start": "next start"
   },
   "dependencies": {
+    "@leemons/user-admin": "file:dependencies/user-admin",
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",
-    "prop-types": "^15.7.2"
+    "prop-types": "^15.7.2",
+    "@leemons/users-groups-roles": "file:dependencies/users-groups-roles"
   }
 }

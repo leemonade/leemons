@@ -1,0 +1,1 @@
+{"compilerOptions":{"baseUrl":".","paths":{"@users-and-groups/*":["plugins/users-and-groups/*"],"@user-admin/*":["plugins/user-admin/*"],"@plugins":["plugins/plugins.js"],"@users-groups-roles/*":["plugins/users-groups-roles/*"]}}}
