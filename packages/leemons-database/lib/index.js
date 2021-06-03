@@ -48,9 +48,12 @@ class DatabaseManager {
 
     let showDelete = true;
     if (pluginName) {
-      const plugin = _.get(this.leemons, modelName.split('::')[0].replace(/_/g, '.'), {});
+      const plugin = _.get(this.leemons, modelName.split('::')[0].replace(/_/g, '.'), null);
       // TODO: Plugins permissions
-      if (plugin.config.get('config.private', false) === true && plugin.name !== pluginName) {
+      if (
+        !plugin ||
+        (plugin.config.get('config.private', false) === true && plugin.name !== pluginName)
+      ) {
         // The provided model is private and not visible for you
         throw new Error(`The provided model can not be found: ${modelName}`);
       }
