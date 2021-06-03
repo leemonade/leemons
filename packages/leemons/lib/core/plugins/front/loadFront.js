@@ -5,8 +5,9 @@ const fs = require('fs-extra');
 const path = require('path');
 const readdirRecursive = require('leemons-utils/lib/readdirRecursive');
 const execa = require('execa');
-const { copyFolder, copyFile } = require('./copyFolder');
+const { copyFolder } = require('./copyFolder');
 const { generatePluginLoader } = require('./pluginLoader');
+const copyPackageJSON = require('./copyPackageJSON');
 
 /**
  * Checks if the directory have been changed since last execution
@@ -179,7 +180,9 @@ async function loadFront(leemons, installedPlugins) {
           }
 
           // Copy the package.json
-          if (await copyFile(path.resolve(dir, 'package.json'), depsPath, name, depsChecksums)) {
+          if (
+            await copyPackageJSON(path.resolve(dir, 'package.json'), depsPath, name, depsChecksums)
+          ) {
             leemons.frontNeedsUpdateDeps = true;
           }
 
