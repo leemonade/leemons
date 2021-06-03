@@ -1,0 +1,52 @@
+{
+  "name": "leemons-ui",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "scripts": {
+    "dev": "webpack serve --mode=development --hot",
+    "build": "rm -rf dist && NODE_ENV=production babel src/lib --out-dir dist --copy-files"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "author": {
+    "email": "hi@leemons.io",
+    "name": "Leemons Edtech Solutions",
+    "url": "https://www.leemons.io"
+  },
+  "maintainers": [
+    {
+      "email": "hi@leemons.io",
+      "name": "Leemons Edutech Solutions",
+      "url": "https://www.leemons.io"
+    }
+  ],
+  "dependencies": {
+    "@heroicons/react": "^1.0.1",
+    "lodash": "^4.17.21",
+    "prop-types": "^15.7.2",
+    "tailwindcss": "^2.1.4"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.14.3",
+    "@babel/core": "^7.14.3",
+    "@babel/preset-env": "^7.14.4",
+    "@babel/preset-react": "^7.13.13",
+    "@babel/polyfill": "^7.12.1",
+    "autoprefixer": "^10.2.6",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.2.6",
+    "html-webpack-plugin": "^5.3.1",
+    "postcss": "^8.3.0",
+    "postcss-loader": "^5.3.0",
+    "postcss-preset-env": "^6.7.0",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.0",
+    "webpack-dev-server": "^3.11.2"
+  }
+}
