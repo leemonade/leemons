@@ -16,19 +16,22 @@ const readdirRecursive = require('leemons-utils/lib/readdirRecursive');
  * @returns Will return true if the file was copied, and false if it wasn't necessary
  */
 module.exports = async (src, dest, name, checksums) => {
-  // TODO: Detect dependency change
+  // Get frontend plugin' package.json
   const fileContent = await fs.readJSON(src);
-  const fileChecksums = md5Object(fileContent);
 
+  // Remove conflicting deps (react only allows 1 copy of react)
   const depsToRemove = ['react', 'react-dom', 'next'];
   depsToRemove.forEach((dep) => {
     delete fileContent.dependencies[dep];
   });
 
+  // Get the checksums of the new package.json
+  const fileChecksums = md5Object(fileContent);
+
   const fileName = path.basename(src);
   const finalDest = path.resolve(dest, name);
 
-  if (checksums[name] !== fileChecksums.checksum) {
+  if (checksums[name] !== fileChecksums) {
     leemons.log.debug(`The plugin ${name} in ${src} have changed`);
 
     // Move file to next.js
@@ -38,7 +41,7 @@ module.exports = async (src, dest, name, checksums) => {
 
     await fs.writeJSON(path.resolve(finalDest, fileName), fileContent);
 
-    checksums[name] = fileChecksums.checksum;
+    checksums[name] = fileChecksums;
     return true;
   }
   return false;
