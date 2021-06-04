@@ -2588,11 +2588,6 @@ atob@^2.1.2:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-atomic-sleep@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/atomic-sleep/-/atomic-sleep-1.0.0.tgz#eb85b77a601fc932cfe432c5acd364a9e2c9075b"
-  integrity sha512-kNOjDqAh7px0XWNI+4QbzoiR/nTkHAWNud2uvnJquD1/x5a7EQZMJT0AczqK0Qn67oY/TTQ1LbUKajZpp3I9tQ==
-
 autoprefixer@^9.8.6:
   version "9.8.6"
   resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-9.8.6.tgz#3b73594ca1bf9266320c5acf1588d74dea74210f"
@@ -4906,12 +4901,7 @@ fast-levenshtein@^2.0.6, fast-levenshtein@~2.0.6:
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
 
-fast-redact@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/fast-redact/-/fast-redact-3.0.0.tgz#ac2f9e36c9f4976f5db9fb18c6ffbaf308cf316d"
-  integrity sha512-a/S/Hp6aoIjx7EmugtzLqXmcNsyFszqbt6qQ99BdG61QjBZF6shNis0BYR6TsZOQ1twYc0FN2Xdhwwbv6+KD0w==
-
-fast-safe-stringify@^2.0.4, fast-safe-stringify@^2.0.7:
+fast-safe-stringify@^2.0.4:
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/fast-safe-stringify/-/fast-safe-stringify-2.0.7.tgz#124aa885899261f68aedb42a7c080de9da608743"
   integrity sha512-Utm6CdzT+6xsDk2m8S6uL8VHxNwI6Jub+e9NYTcAms28T84pTa25GJQV9j0CY0N1rM8hK4x6grpF2BQf+2qwVA==
@@ -5035,11 +5025,6 @@ flat-cache@^3.0.4:
   dependencies:
     flatted "^3.1.0"
     rimraf "^3.0.2"
-
-flatstr@^1.0.12:
-  version "1.0.12"
-  resolved "https://registry.yarnpkg.com/flatstr/-/flatstr-1.0.12.tgz#c2ba6a08173edbb6c9640e3055b95e287ceb5931"
-  integrity sha512-4zPxDyhCyiN2wIAtSLI6gc82/EjqZc1onI4Mz/l0pWrAlsSfYH/2ZIcU+e3oA2wDwbzIWNKwa23F8rh6+DRWkw==
 
 flatted@^3.1.0:
   version "3.1.1"
@@ -9172,23 +9157,6 @@ pinkie@^2.0.0:
   resolved "https://registry.yarnpkg.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
   integrity sha1-clVrgM+g1IqXToDnckjoDtT3+HA=
 
-pino-std-serializers@^3.1.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/pino-std-serializers/-/pino-std-serializers-3.2.0.tgz#b56487c402d882eb96cd67c257868016b61ad671"
-  integrity sha512-EqX4pwDPrt3MuOAAUBMU0Tk5kR/YcCM5fNPEzgCO2zJ5HfX0vbiH9HbJglnyeQsN96Kznae6MWD47pZB5avTrg==
-
-pino@^6.11.2:
-  version "6.11.2"
-  resolved "https://registry.yarnpkg.com/pino/-/pino-6.11.2.tgz#2f3d119c526651aab4ec3d280844785d52d0b690"
-  integrity sha512-bmzxwbrIPxQUlAuMkF4PWVErUGERU4z37HazlhflKFg08crsNE3fACGN6gPwg5xtKOK47Ux5cZm8YCuLV4wWJg==
-  dependencies:
-    fast-redact "^3.0.0"
-    fast-safe-stringify "^2.0.7"
-    flatstr "^1.0.12"
-    pino-std-serializers "^3.1.0"
-    quick-format-unescaped "4.0.1"
-    sonic-boom "^1.0.2"
-
 pirates@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/pirates/-/pirates-4.0.1.tgz#643a92caf894566f91b2b986d2c66950a8e2fb87"
@@ -9622,11 +9590,6 @@ queue-microtask@^1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.2.tgz#abf64491e6ecf0f38a6502403d4cda04f372dfd3"
   integrity sha512-dB15eXv3p2jDlbOiNLyMabYg1/sXvppd8DP2J3EOCQ0AkuSXCW2tP7mnVouVLJKgUMY6yP0kcQDVpLCN13h4Xg==
-
-quick-format-unescaped@4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/quick-format-unescaped/-/quick-format-unescaped-4.0.1.tgz#437a5ea1a0b61deb7605f8ab6a8fd3858dbeb701"
-  integrity sha512-RyYpQ6Q5/drsJyOhrWHYMWTedvjTIat+FTwv0K4yoUxzvekw2aRHMQJLlnvt8UantkZg2++bEzD9EdxXqkWf4A==
 
 quick-lru@^4.0.1:
   version "4.0.1"
@@ -10822,14 +10785,6 @@ socks@~2.3.2:
   dependencies:
     ip "1.1.5"
     smart-buffer "^4.1.0"
-
-sonic-boom@^1.0.2:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/sonic-boom/-/sonic-boom-1.4.0.tgz#d6d35196c32609b46193145afc1174a8c692d21e"
-  integrity sha512-1xUAszhQBOrjk7uisbStQZYkZxD3vkYlCUw5qzOblWQ1ILN5v0dVPAs+QPgszzoPmbdWx6jyT9XiLJ95JdlLiQ==
-  dependencies:
-    atomic-sleep "^1.0.0"
-    flatstr "^1.0.12"
 
 sort-keys@^2.0.0:
   version "2.0.0"
