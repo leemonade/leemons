@@ -42,6 +42,13 @@ async function loadConfiguration(
     dirs.env = path.join(dirs.app, dirs.env);
   }
 
+  const allDirs = Object.values(dirs).map((_dir) => path.resolve(dirs.app, _dir));
+  if (allDirs.length > [...new Set(allDirs)].length) {
+    throw new Error(
+      `The specified directories in ${path.resolve(dirs.app, dirs.config)} must be different`
+    );
+  }
+
   const env = await generateEnv(dirs.env);
   const config = {
     ...(await loadFiles(configDir, { env, exclude: ['config.json', 'config.js'] })),
