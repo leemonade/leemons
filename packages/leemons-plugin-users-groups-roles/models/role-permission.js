@@ -11,12 +11,10 @@ module.exports = {
       },
     },
     permission: {
-      references: {
-        collection: 'plugins_users-groups-roles::permissions',
-      },
+      type: 'string',
     },
   },
   primaryKey: {
-    type: 'uuid',
+    type: 'string',
   },
 };

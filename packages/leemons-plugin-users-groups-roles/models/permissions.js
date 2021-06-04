@@ -11,13 +11,13 @@ module.exports = {
         notNull: true,
       },
     },
-    permission_name: {
+    permissionName: {
       type: 'string',
       options: {
         notNull: true,
       },
     },
-    plugin_name: {
+    pluginName: {
       type: 'string',
       options: {
         notNull: true,

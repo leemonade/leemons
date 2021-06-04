@@ -4,6 +4,7 @@
   "main": "lib/index.js",
   "license": "MIT",
   "dependencies": {
-    "ajv": "^8.5.0"
+    "ajv": "^8.5.0",
+    "lodash": "^4.17.21"
   }
 }

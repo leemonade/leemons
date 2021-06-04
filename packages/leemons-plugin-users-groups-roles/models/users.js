@@ -28,6 +28,9 @@ module.exports = {
         notNull: true,
       },
     },
+    permissions: {
+      type: 'string',
+    },
   },
   primaryKey: {
     type: 'uuid',
