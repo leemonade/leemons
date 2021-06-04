@@ -243,6 +243,12 @@ class Leemons {
     this.config = (await loadConfiguration(this)).configProvider;
     await hooks.fireEvent('leemons::loadConfig', { status: 'end' });
 
+    if (this.config.get('config.insecure', false)) {
+      this.log.warn(
+        'The app is running in insecure mode, this means all the plugins can require any file in your computer'
+      );
+    }
+
     return this.config;
   }
 
