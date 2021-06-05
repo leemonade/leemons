@@ -59,8 +59,11 @@ module.exports = async ({ id = uuid(), transports = null } = {}) => {
 
     // When stream finished, send exit signal
     logger.on('finish', () => {
-      if (process.send) process.send('exit');
-      else process.exit();
+      if (process.send) {
+        process.send({ message: 'kill', error: true });
+      } else {
+        process.exit();
+      }
     });
   };
 

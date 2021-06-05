@@ -1,5 +1,6 @@
 const cluster = require('cluster');
 const path = require('path');
+const chalk = require('chalk');
 
 const createLogger = require('leemons-logger/lib/logger/multiThread');
 const { getAvailablePort } = require('leemons-utils/lib/port');
@@ -153,10 +154,21 @@ module.exports = async ({ next, level: logLevel = 'debug' }) => {
      * Kill:
      *  When a child process emits a kill event, the master process will kill it.
      */
-    cluster.on('message', (worker, message) => {
-      switch (message) {
+    cluster.on('message', (worker, _message) => {
+      let message = _message;
+      if (typeof _message === 'string') {
+        message = { message: _message };
+      }
+      switch (message.message) {
         case 'kill':
+          worker.send({ ...message, message: 'kill' });
+          break;
+        case 'killed':
           worker.kill();
+          if (message.error) {
+            // eslint-disable-next-line no-console
+            console.error(chalk`{green An error occurred, type "rs\\n" for restart the process}\n`);
+          }
           break;
         default:
       }
@@ -204,11 +216,16 @@ module.exports = async ({ next, level: logLevel = 'debug' }) => {
      * Kill:
      *  When the master emits a kill event, clean the Leemons instance and exit.
      */
-    cluster.worker.on('message', (message) => {
-      switch (message) {
+    cluster.worker.on('message', (_message) => {
+      let message = _message;
+      if (typeof _message === 'string') {
+        message = { message: _message };
+      }
+
+      switch (message.message) {
         case 'kill':
           leemons.server.destroy(() => {
-            process.send('kill');
+            process.send({ ...message, message: 'killed' });
           });
           break;
         default:
