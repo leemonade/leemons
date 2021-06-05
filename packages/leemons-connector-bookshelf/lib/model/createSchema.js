@@ -38,31 +38,39 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
     columns.forEach(async ([name, properties]) => {
       let col;
       // Create a column for the relation (only if not `many to many`)
-      if (_.has(properties, 'references') && properties.references.relation !== 'many to many') {
-        const relatedPrimaryKey = getRelationPrimaryKey(properties);
-
-        // The type of the col is the related primary key type
-        _.set(properties, 'type', relatedPrimaryKey.type);
+      if (_.has(properties, 'references') && properties.references.relation === 'many to many') {
+        return undefined;
+      }
+      // Relations which are not many to many
+      if (_.has(properties, 'references')) {
+        const field = _.get(properties, 'references.field', null);
+        // If the field is not specified, use primary key
+        let relatedField;
+        if (!field) {
+          relatedField = getRelationPrimaryKey(properties);
+        } else {
+          relatedField = _.get(
+            getModel(properties.references.collection),
+            `schema.attributes.${field}`,
+            null
+          );
+        }
 
         // Set the type of the col
-        if (_.has(relatedPrimaryKey, 'specificType')) {
-          col = table.specificType(name, relatedPrimaryKey.specificType);
-        } else if (relatedPrimaryKey.type === 'uuid') {
-          col = table.uuid(name);
-        } else {
-          col = table.integer(name).unsigned();
+        if (_.has(relatedField, 'specificType')) {
+          _.set(properties, 'specificType', relatedField.specificType);
+        } else if (_.has(relatedField, 'type')) {
+          _.set(properties, 'type', relatedField.type);
         }
 
         // If the relation is `one to one`, set the column to unique
         if (properties.references.relation === 'one to one') {
-          col.unique();
+          _.set(properties, 'options.unique', true);
         }
-        // If the relation is `one to many`, leave the column not unique
-        // return col;
       }
 
       // A SQL type defined by the user
-      else if (_.has(properties, 'specificType')) {
+      if (_.has(properties, 'specificType')) {
         col = table.specificType(name, properties.specificType);
       }
 

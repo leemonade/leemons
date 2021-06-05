@@ -11,6 +11,23 @@ function generateRelations(models) {
             `The referenced model ${attribute.references.collection} does not exists in model ${model.modelName}`
           );
         }
+
+        const field = _.get(attribute, 'references.field', null);
+
+        // Get the referenced field
+        let referencedField;
+        if (field) {
+          // throw when the referenced field does not exists in the referenced model
+          if (!_.has(referencedModel, `schema.attributes.${field}`)) {
+            throw new Error(
+              `The referenced field ${field} in model ${model.modelName}, does not exists in the model ${referencedModel.modelName}`
+            );
+          }
+          referencedField = referencedModel.schema.attributes[field].name;
+        } else {
+          referencedField = referencedModel.schema.primaryKey.name;
+        }
+
         switch (attribute.references.relation) {
           case 'one to one':
             // This model attribute belongsTo(the referenced model)
@@ -18,7 +35,7 @@ function generateRelations(models) {
               type: 'belongsTo',
               model: referencedModel.modelName,
               foreignKey: name,
-              foreignKeyTarget: referencedModel.schema.primaryKey.name,
+              foreignKeyTarget: referencedField,
             });
 
             // The referenced model hasOne(this model)
@@ -26,7 +43,7 @@ function generateRelations(models) {
               type: 'hasOne',
               model: model.modelName,
               foreignKey: name,
-              foreignKeyTarget: referencedModel.schema.primaryKey.name,
+              foreignKeyTarget: referencedField,
             });
             break;
 
@@ -63,7 +80,7 @@ function generateRelations(models) {
               type: 'belongsTo',
               model: referencedModel.modelName,
               foreignKey: name,
-              foreignKeyTarget: referencedModel.schema.primaryKey.name,
+              foreignKeyTarget: referencedField,
             });
             // The referenced model hasMany(this model)
 
@@ -71,7 +88,7 @@ function generateRelations(models) {
               type: 'hasMany',
               model: model.modelName,
               foreignKey: name,
-              foreignKeyTarget: referencedModel.schema.primaryKey.name,
+              foreignKeyTarget: referencedField,
             });
         }
       }
