@@ -1,3 +1,6 @@
+const _ = require('lodash');
+const moment = require('moment');
+const constants = require('../../config/constants');
 // const bcrypt = require('bcrypt');
 
 const table = {
@@ -76,12 +79,10 @@ class Users {
    * */
   static async login(email, password) {
     const user = await table.users.findOne({ email }, { columns: ['password'] });
-    console.log(user);
     if (!user) throw new Error('Credentials do not match');
     const areEquals = await this.comparePassword(password, user.password);
     if (!areEquals) throw new Error('Credentials do not match');
-    delete user.password;
-    return user;
+    return table.users.findOne({ email });
   }
 
   /**
@@ -95,16 +96,24 @@ class Users {
    * */
   static async recover(email) {
     const user = await table.users.findOne({ email }, { columns: ['id'] });
-    console.log(user);
     if (!user) throw new Error('Email not found');
-    const recovery = await table.userRecoverPassword.findOne({ user: user.id });
+    let recovery = await table.userRecoverPassword.findOne({ user: user.id });
     if (recovery) {
+      const now = moment(_.now());
+      const updatedAt = moment(recovery.updated_at);
+      if (now.diff(updatedAt, 'minutes') >= constants.timeForRecoverPassword) {
+        recovery = await table.userRecoverPassword.update(
+          { id: recovery.id },
+          { code: _.random(100000, 999999).toString() }
+        );
+      }
     } else {
-      await table.userRecoverPassword.create({
+      recovery = await table.userRecoverPassword.create({
         user: user.id,
-        code: 'sd',
+        code: _.random(100000, 999999).toString(),
       });
     }
+    // TODO Mandamos email de recuperacion
     return undefined;
   }
 }

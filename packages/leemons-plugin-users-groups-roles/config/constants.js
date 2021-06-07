@@ -1,4 +1,6 @@
 module.exports = {
+  // Time in minutes
+  timeForRecoverPassword: 30,
   // TODO Añadir listado de roles basicos
   defaultRoles: [
     { name: 'Administrador', permissions: ['add-users', 'show-users', 'delete-users'] },

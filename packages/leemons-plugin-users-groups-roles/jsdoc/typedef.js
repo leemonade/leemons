@@ -2,8 +2,8 @@
  * @typedef Role
  * @property {string} id Role id
  * @property {string} name Role name
- * @property {Date} createdAt Date of role creation
- * @property {Date} updatedAt Date of role update
+ * @property {Date} created_at Date of role creation
+ * @property {Date} updated_at Date of role update
  */
 
 /**
@@ -12,8 +12,8 @@
  * @property {string} name Permission name (For frontend)
  * @property {string} permissionName Permission name (For backend - Check if has this permission name)
  * @property {string} pluginName Plugin name (To group permissions by plugin)
- * @property {Date} createdAt Date of permission creation
- * @property {Date} updatedAt Date of permission update
+ * @property {Date} created_at Date of permission creation
+ * @property {Date} updated_at Date of permission update
  */
 
 /**
@@ -24,6 +24,6 @@
  * @property {string} email User email
  * @property {string} password User password
  * @property {string} permissions User permissions
- * @property {Date} createdAt Date of permission creation
- * @property {Date} updatedAt Date of permission update
+ * @property {Date} created_at Date of permission creation
+ * @property {Date} updated_at Date of permission update
  */
