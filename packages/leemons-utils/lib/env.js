@@ -17,10 +17,14 @@ module.exports = {
 
       fs.exists(_filename).then((exists) => {
         if (exists) {
-          fs.readFile(_filename).then((file) => {
-            const config = dotenv.parse(file);
-            resolve(config);
-          });
+          fs.readFile(_filename)
+            .then((file) => {
+              const config = dotenv.parse(file);
+              resolve(config);
+            })
+            .catch(() => {
+              throw new Error(`The .env file ${_filename} can not be read`);
+            });
         } else {
           resolve({});
         }
