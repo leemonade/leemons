@@ -1,9 +1,8 @@
 const usersService = require('../services/private/users');
-const LeemonsValidator = require('../helpers/leemons-validator');
 
 async function reset(ctx) {
   try {
-    const validator = new LeemonsValidator({
+    const validator = new global.utils.LeemonsValidator({
       type: 'object',
       properties: {
         email: { type: 'string', format: 'email' },
@@ -32,7 +31,7 @@ async function reset(ctx) {
 
 async function recover(ctx) {
   try {
-    const validator = new LeemonsValidator({
+    const validator = new global.utils.LeemonsValidator({
       type: 'object',
       properties: {
         email: { type: 'string', format: 'email' },
@@ -55,7 +54,7 @@ async function recover(ctx) {
 
 async function login(ctx) {
   try {
-    const validator = new LeemonsValidator({
+    const validator = new global.utils.LeemonsValidator({
       type: 'object',
       properties: {
         email: { type: 'string', format: 'email' },
@@ -74,8 +73,7 @@ async function login(ctx) {
       throw new Error(validator.error);
     }
   } catch (err) {
-    ctx.status = 400;
-    ctx.body = { status: 400, msg: err.message };
+    global.utils.returnError(ctx, err);
   }
 }
 

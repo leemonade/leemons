@@ -79,9 +79,9 @@ class Users {
    * */
   static async login(email, password) {
     const user = await table.users.findOne({ email }, { columns: ['password'] });
-    if (!user) throw new Error('Credentials do not match');
+    if (!user) throw new global.utils.HttpError(401, 'Credentials do not match');
     const areEquals = await this.comparePassword(password, user.password);
-    if (!areEquals) throw new Error('Credentials do not match');
+    if (!areEquals) throw new global.utils.HttpError(401, 'Credentials do not match');
     return table.users.findOne({ email });
   }
 
@@ -96,7 +96,7 @@ class Users {
    * */
   static async recover(email) {
     const user = await table.users.findOne({ email }, { columns: ['id'] });
-    if (!user) throw new Error('Email not found');
+    if (!user) throw new global.utils.HttpError(401, 'Email not found');
     let recovery = await table.userRecoverPassword.findOne({ user: user.id });
     if (recovery) {
       const now = moment(_.now());
@@ -130,15 +130,15 @@ class Users {
    * */
   static async reset(email, code, password) {
     const user = await table.users.findOne({ email }, { columns: ['id'] });
-    if (!user) throw new Error('Email not found');
+    if (!user) throw new global.utils.HttpError(401, 'Email not found');
 
     const recovery = await table.userRecoverPassword.findOne({ user: user.id, code });
-    if (!recovery) throw new Error('Credentials do not match');
+    if (!recovery) throw new global.utils.HttpError(401, 'Credentials do not match');
 
     const now = moment(_.now());
     const updatedAt = moment(recovery.updated_at);
     if (now.diff(updatedAt, 'minutes') > constants.timeForRecoverPassword)
-      throw new Error('Credentials do not match');
+      throw new global.utils.HttpError(401, 'Credentials do not match');
 
     return table.users.transaction(async (transacting) => {
       const values = await Promise.all([
