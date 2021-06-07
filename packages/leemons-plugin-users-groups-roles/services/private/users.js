@@ -1,8 +1,8 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcrypt');
 
 const table = {
-  users: leemons.query("plugins_users-groups-roles::users"),
-  superAdminUsers: leemons.query("plugins_users-groups-roles::super-admin-users")
+  users: leemons.query('plugins_users-groups-roles::users'),
+  superAdminUsers: leemons.query('plugins_users-groups-roles::super-admin-users'),
 };
 
 class Users {
@@ -49,7 +49,7 @@ class Users {
             name,
             surnames,
             email,
-            password: await this.encryptPassword(password)
+            password: await this.encryptPassword(password),
           },
           { transacting }
         );
@@ -58,7 +58,7 @@ class Users {
       });
     }
     throw new Error(
-      "The first super administrator user can only be created if there are no users in the database."
+      'The first super administrator user can only be created if there are no users in the database.'
     );
   }
 
@@ -72,10 +72,8 @@ class Users {
    * */
   static async login(email, password) {
     const user = await table.users.findOne({ email });
-    if (!user) throw new Error("Credentials do not match");
-
+    if (!user) throw new Error('Credentials do not match');
   }
+}
 
-  module;
-.
-  exports = Users;
+module.exports = Users;
