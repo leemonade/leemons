@@ -1,32 +1,49 @@
 const usersService = require('../services/private/users');
+const LeemonsValidator = require('../helpers/leemons-validator');
+
+async function recover(ctx) {
+  try {
+    const validator = new LeemonsValidator({
+      type: 'object',
+      properties: {
+        email: { type: 'string', format: 'email' },
+      },
+      required: ['email'],
+      additionalProperties: false,
+    });
+    if (validator.validate(ctx.request.body)) {
+      await usersService.recover(ctx.request.body.email);
+      ctx.status = 200;
+      ctx.body = { status: 200, msg: 'Email sent' };
+    } else {
+      throw new Error(validator.error);
+    }
+  } catch (err) {
+    ctx.status = 400;
+    ctx.body = { status: 400, msg: err.message };
+  }
+}
 
 async function login(ctx) {
   try {
-    /*
-    const leeValidator = leemonUtils.LeemonsValidator();
-    schema = {
+    const validator = new LeemonsValidator({
       type: 'object',
       properties: {
-        email: { type: 'email' },
+        email: { type: 'string', format: 'email' },
         password: {
           type: 'string',
         },
       },
       required: ['email', 'password'],
       additionalProperties: false,
-    };
-    if (ajv.validate(schema, ctx.request.body)) {
-      const role = await rolesService.createRole(
-        ctx.request.body.name,
-        ctx.request.body.permissions
-      );
-      ctx.status = 201;
-      ctx.body = { status: 201, msg: 'Role created / updated', role };
+    });
+    if (validator.validate(ctx.request.body)) {
+      const user = await usersService.login(ctx.request.body.email, ctx.request.body.password);
+      ctx.status = 200;
+      ctx.body = { status: 200, user };
     } else {
-      // Todo añadir funcion a nivel proyecto para la generacion del mensaje de error del ajv
-      throw new Error('Error formulario');
+      throw new Error(validator.error);
     }
-         */
   } catch (err) {
     ctx.status = 400;
     ctx.body = { status: 400, msg: err.message };
@@ -56,18 +73,16 @@ async function create(ctx) {
 }
 
 async function createSuperAdmin(ctx) {
-  /*
   ctx.body = await usersService.registerFirstSuperAdminUser(
     'Pepe',
     'pruebas',
     'testing@test.io',
     'testing'
   );
-
-   */
 }
 
 module.exports = {
+  recover,
   login,
   create,
   createSuperAdmin,

@@ -1,7 +1,8 @@
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
 
 const table = {
   users: leemons.query('plugins_users-groups-roles::users'),
+  userRecoverPassword: leemons.query('plugins_users-groups-roles::user-recover-password'),
   superAdminUsers: leemons.query('plugins_users-groups-roles::super-admin-users'),
 };
 
@@ -14,8 +15,9 @@ class Users {
    * @return {Promise<string>} Generated hash password
    * */
   static async encryptPassword(password) {
-    const salt = await bcrypt.genSalt(10);
-    return bcrypt.hash(password, salt);
+    // const salt = await bcrypt.genSalt(10);
+    // return bcrypt.hash(password, salt);
+    return password;
   }
 
   /**
@@ -27,7 +29,8 @@ class Users {
    * @return {Promise<boolean>} If they are equal, returns true
    * */
   static async comparePassword(password, hashPassword) {
-    return bcrypt.compare(password, hashPassword);
+    // return bcrypt.compare(password, hashPassword);
+    return password === hashPassword;
   }
 
   /**
@@ -54,6 +57,7 @@ class Users {
           { transacting }
         );
         await table.superAdminUsers.create({ user: user.id }, { transacting });
+        delete user.password;
         return user;
       });
     }
@@ -71,8 +75,37 @@ class Users {
    * @return {Promise<User>} Created / Updated role
    * */
   static async login(email, password) {
-    const user = await table.users.findOne({ email });
+    const user = await table.users.findOne({ email }, { columns: ['password'] });
+    console.log(user);
     if (!user) throw new Error('Credentials do not match');
+    const areEquals = await this.comparePassword(password, user.password);
+    if (!areEquals) throw new Error('Credentials do not match');
+    delete user.password;
+    return user;
+  }
+
+  /**
+   * If there is a user with that email we check if there is already a recovery in progress, if
+   * there is we resend the email with the previously generated code, if there is no recovery in
+   * progress we update an existing expired one or create a new one.
+   * @public
+   * @static
+   * @param {string} email - User email
+   * @return {Promise<undefined>} Created / Updated role
+   * */
+  static async recover(email) {
+    const user = await table.users.findOne({ email }, { columns: ['id'] });
+    console.log(user);
+    if (!user) throw new Error('Email not found');
+    const recovery = await table.userRecoverPassword.findOne({ user: user.id });
+    if (recovery) {
+    } else {
+      await table.userRecoverPassword.create({
+        user: user.id,
+        code: 'sd',
+      });
+    }
+    return undefined;
   }
 }
 

@@ -11,6 +11,11 @@ module.exports = [
     handler: 'users.login',
   },
   {
+    path: '/user/recover',
+    method: 'POST',
+    handler: 'users.recover',
+  },
+  {
     path: '/user',
     method: 'POST',
     handler: 'users.create',

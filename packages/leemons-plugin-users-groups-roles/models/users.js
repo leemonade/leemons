@@ -23,8 +23,8 @@ module.exports = {
     },
     password: {
       type: 'string',
-      hidden: true,
       options: {
+        hidden: true,
         notNull: true,
       },
     },
