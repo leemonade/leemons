@@ -60,6 +60,7 @@ module.exports = (allowedPath, filter = null, env = {}) => {
         'fs',
         'util',
         'os',
+        'events',
       ],
       // Ensure a protected use of FS (only access inside the given directory)
       mock: {
