@@ -20,7 +20,7 @@ class Permissions {
   }
 
   /**
-   * Create the permit only if the premissionName does not already exist, if it does, the existing one is returned.
+   * Create the permit only if the permissionName does not already exist, if it does, the existing one is returned.
    * @public
    * @static
    * @param {string} name - Role id

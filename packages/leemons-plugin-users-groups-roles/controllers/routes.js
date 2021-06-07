@@ -6,9 +6,19 @@ module.exports = [
   },
   // Users
   {
+    path: '/user/login',
+    method: 'POST',
+    handler: 'users.login',
+  },
+  {
     path: '/user',
     method: 'POST',
     handler: 'users.create',
+  },
+  {
+    path: '/super-admin',
+    method: 'POST',
+    handler: 'users.createSuperAdmin',
   },
   // Roles
   {

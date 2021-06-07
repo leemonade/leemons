@@ -1371,6 +1371,21 @@
     npmlog "^4.1.2"
     write-file-atomic "^3.0.3"
 
+"@mapbox/node-pre-gyp@^1.0.0":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@mapbox/node-pre-gyp/-/node-pre-gyp-1.0.5.tgz#2a0b32fcb416fb3f2250fd24cb2a81421a4f5950"
+  integrity sha512-4srsKPXWlIxp5Vbqz5uLfBN+du2fJChBoYn/f2h991WLdk7jUvcSk/McVLSv/X+xQIPI8eGD5GjrnygdyHnhPA==
+  dependencies:
+    detect-libc "^1.0.3"
+    https-proxy-agent "^5.0.0"
+    make-dir "^3.1.0"
+    node-fetch "^2.6.1"
+    nopt "^5.0.0"
+    npmlog "^4.1.2"
+    rimraf "^3.0.2"
+    semver "^7.3.4"
+    tar "^6.1.0"
+
 "@next/env@10.0.8":
   version "10.0.8"
   resolved "https://registry.yarnpkg.com/@next/env/-/env-10.0.8.tgz#3306c9de20ef187438affbafce0ef966c9e43c3b"
@@ -2269,6 +2284,13 @@ aggregate-error@^3.0.0:
     clean-stack "^2.0.0"
     indent-string "^4.0.0"
 
+ajv-formats@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/ajv-formats/-/ajv-formats-2.1.0.tgz#96eaf83e38d32108b66d82a9cb0cfa24886cdfeb"
+  integrity sha512-USH2jBb+C/hIpwD2iRjp0pe0k+MvzG0mlSn/FIdCgQhUb9ALPRjt2KIQdfZDS9r0ZIeUAg7gOu9KL0PFqGqr5Q==
+  dependencies:
+    ajv "^8.0.0"
+
 ajv@^6.10.0, ajv@^6.12.3, ajv@^6.12.4:
   version "6.12.6"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.6.tgz#baf5a62e802b07d977034586f8c3baf5adf26df4"
@@ -2289,10 +2311,10 @@ ajv@^7.0.2:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
-ajv@^8.5.0:
-  version "8.5.0"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.5.0.tgz#695528274bcb5afc865446aa275484049a18ae4b"
-  integrity sha512-Y2l399Tt1AguU3BPRP9Fn4eN+Or+StUGWCUpbnFyXSo8NZ9S4uj+AG2pjs5apK+ZMOwYOz1+a+VKvKH7CudXgQ==
+ajv@^8.0.0, ajv@^8.6.0:
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.6.0.tgz#60cc45d9c46a477d80d92c48076d972c342e5720"
+  integrity sha512-cnUG4NSBiM4YFBxgZIj/In3/6KX+rQ2l2YPRVcvAMQGWEPKuXoPIhxzwqh31jA3IPbI4qEOp/5ILI4ynioXsGQ==
   dependencies:
     fast-deep-equal "^3.1.1"
     json-schema-traverse "^1.0.0"
@@ -2718,6 +2740,14 @@ bcrypt-pbkdf@^1.0.0, bcrypt-pbkdf@^1.0.2:
   integrity sha1-pDAdOJtqQ/m2f/PKEaP2Y342Dp4=
   dependencies:
     tweetnacl "^0.14.3"
+
+bcrypt@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/bcrypt/-/bcrypt-5.0.1.tgz#f1a2c20f208e2ccdceea4433df0c8b2c54ecdf71"
+  integrity sha512-9BTgmrhZM2t1bNuDtrtIMVSmmxZBrJ71n8Wg+YgdjHuIWYF7SjjmCPZFB+/5i/o/PIeRpwVJR3P+NrpIItUjqw==
+  dependencies:
+    "@mapbox/node-pre-gyp" "^1.0.0"
+    node-addon-api "^3.1.0"
 
 before-after-hook@^2.1.0:
   version "2.2.0"
@@ -4061,6 +4091,11 @@ detect-indent@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/detect-indent/-/detect-indent-6.0.0.tgz#0abd0f549f69fc6659a254fe96786186b6f528fd"
   integrity sha512-oSyFlqaTHCItVRGK5RmrmjB+CmaMOW7IaNA/kdxqhoa6d17j/5ce9O9eWXmV/KEdRwqpQA+Vqe8a8Bsybu4YnA==
+
+detect-libc@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/detect-libc/-/detect-libc-1.0.3.tgz#fa137c4bd698edf55cd5cd02ac559f91a4c4ba9b"
+  integrity sha1-+hN8S9aY7fVc1c0CrFWfkaTEups=
 
 detect-newline@^3.0.0:
   version "3.1.0"
@@ -7650,7 +7685,7 @@ make-dir@^2.1.0:
     pify "^4.0.1"
     semver "^5.6.0"
 
-make-dir@^3.0.0, make-dir@^3.0.2:
+make-dir@^3.0.0, make-dir@^3.0.2, make-dir@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/make-dir/-/make-dir-3.1.0.tgz#415e967046b3a7f1d185277d84aa58203726a13f"
   integrity sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw==
@@ -8202,6 +8237,11 @@ nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
+
+node-addon-api@^3.1.0:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-3.2.1.tgz#81325e0a2117789c0128dab65e7e38f07ceba161"
+  integrity sha512-mmcei9JghVNDYydghQmeDX8KoAm0FAiYyIcUt/N4nhyAipB17pllZQDOJD2fotxABnt4Mdz+dKTO7eftLg4d0A==
 
 node-fetch@2.6.1, node-fetch@^2.6.1:
   version "2.6.1"

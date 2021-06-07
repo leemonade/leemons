@@ -4,7 +4,7 @@ const constants = require('../../config/constants');
 const table = {
   rolePermission: leemons.query('plugins_users-groups-roles::role-permission'),
   permissions: leemons.query('plugins_users-groups-roles::permissions'),
-  role: leemons.query('plugins_users-groups-roles::roles'),
+  roles: leemons.query('plugins_users-groups-roles::roles'),
 };
 
 class Roles {
@@ -25,7 +25,7 @@ class Roles {
    * @static
    * @param {string} name - Role name
    * @param {string[]} permissions - Array of permissions
-   * @return {Promise<Role>} Crated / Updated role
+   * @return {Promise<Role>} Created / Updated role
    * */
   static async createRole(name, permissions) {
     return this.registerRole(null, name, permissions);
@@ -37,7 +37,7 @@ class Roles {
    * @static
    * @param {string} id - Role id
    * @param {string[]} permissions - Array of permissions
-   * @return {Promise<Role>} Crated / Updated role
+   * @return {Promise<Role>} Created / Updated role
    * */
   static async updateRole(id, permissions) {
     return this.registerRole(id, null, permissions);
@@ -52,11 +52,11 @@ class Roles {
    * @param {string=} id - Role id
    * @param {string=} name - Role name
    * @param {string[]} permissions - Array of permissions
-   * @return {Promise<Role>} Crated / Updated role
+   * @return {Promise<Role>} Created / Updated role
    * */
   static async registerRole(id, name, permissions) {
     const values = await Promise.all([
-      id ? table.role.findOne({ id }) : table.role.findOne({ name }),
+      id ? table.roles.findOne({ id }) : table.roles.findOne({ name }),
       table.permissions.count({ permissionName_$in: permissions }),
     ]);
 
@@ -69,13 +69,13 @@ class Roles {
         // If the role already exists, we update its fields and delete its permissions and then create the new ones.
         leemons.log.info(`Updating role '${name}'`);
         await Promise.all([
-          table.role.update({ id: role.id }, { name }, { transacting }),
+          table.roles.update({ id: role.id }, { name }, { transacting }),
           table.rolePermission.deleteMany({ role: role.id }, { transacting }),
         ]);
       } else {
         // If the role does not exist, we create it
         leemons.log.info(`Creating role '${name}'`);
-        role = await table.role.create({ name }, { transacting });
+        role = await table.roles.create({ name }, { transacting });
       }
 
       await table.rolePermission.createMany(

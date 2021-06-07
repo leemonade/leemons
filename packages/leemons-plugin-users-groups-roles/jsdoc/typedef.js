@@ -15,3 +15,15 @@
  * @property {Date} createdAt Date of permission creation
  * @property {Date} updatedAt Date of permission update
  */
+
+/**
+ * @typedef User
+ * @property {string} id User id
+ * @property {string} name User name
+ * @property {string} surnames User surnames
+ * @property {string} email User email
+ * @property {string} password User password
+ * @property {string} permissions User permissions
+ * @property {Date} createdAt Date of permission creation
+ * @property {Date} updatedAt Date of permission update
+ */
