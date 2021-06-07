@@ -1,6 +1,35 @@
 const usersService = require('../services/private/users');
 const LeemonsValidator = require('../helpers/leemons-validator');
 
+async function reset(ctx) {
+  try {
+    const validator = new LeemonsValidator({
+      type: 'object',
+      properties: {
+        email: { type: 'string', format: 'email' },
+        code: { type: 'string' },
+        password: { type: 'string' },
+      },
+      required: ['email', 'code', 'password'],
+      additionalProperties: false,
+    });
+    if (validator.validate(ctx.request.body)) {
+      const user = await usersService.reset(
+        ctx.request.body.email,
+        ctx.request.body.code,
+        ctx.request.body.password
+      );
+      ctx.status = 200;
+      ctx.body = { status: 200, user };
+    } else {
+      throw new Error(validator.error);
+    }
+  } catch (err) {
+    ctx.status = 400;
+    ctx.body = { status: 400, msg: err.message };
+  }
+}
+
 async function recover(ctx) {
   try {
     const validator = new LeemonsValidator({
@@ -82,6 +111,7 @@ async function createSuperAdmin(ctx) {
 }
 
 module.exports = {
+  reset,
   recover,
   login,
   create,

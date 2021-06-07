@@ -92,7 +92,7 @@ class Users {
    * @public
    * @static
    * @param {string} email - User email
-   * @return {Promise<undefined>} Created / Updated role
+   * @return {Promise<undefined>}
    * */
   static async recover(email) {
     const user = await table.users.findOne({ email }, { columns: ['id'] });
@@ -115,6 +115,39 @@ class Users {
     }
     // TODO Mandamos email de recuperacion
     return undefined;
+  }
+
+  /**
+   * If there is a user with that email we check if there is already a recovery in progress, if
+   * there is we resend the email with the previously generated code, if there is no recovery in
+   * progress we update an existing expired one or create a new one.
+   * @public
+   * @static
+   * @param {string} email - User email
+   * @param {string} code - Recovery code
+   * @param {string} password - New user password
+   * @return {Promise<undefined>} Updated user
+   * */
+  static async reset(email, code, password) {
+    const user = await table.users.findOne({ email }, { columns: ['id'] });
+    if (!user) throw new Error('Email not found');
+
+    const recovery = await table.userRecoverPassword.findOne({ user: user.id, code });
+    if (!recovery) throw new Error('Credentials do not match');
+
+    const now = moment(_.now());
+    const updatedAt = moment(recovery.updated_at);
+    if (now.diff(updatedAt, 'minutes') > constants.timeForRecoverPassword)
+      throw new Error('Credentials do not match');
+
+    return table.users.transaction(async (transacting) => {
+      const values = await Promise.all([
+        table.users.update({ id: user.id }, { password }, { transacting }),
+        table.userRecoverPassword.delete({ id: recovery.id }, { transacting }),
+      ]);
+
+      return values[0];
+    });
   }
 }
 
