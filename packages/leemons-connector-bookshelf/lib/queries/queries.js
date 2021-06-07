@@ -132,7 +132,7 @@ function generateQueries(model /* connector */) {
 
   // Finds one item based on a query
   async function findOne(query, ...rest) {
-    const entry = await find({ ...query, $limit: 1 }, rest);
+    const entry = await find({ ...query, $limit: 1 }, ...rest);
     return entry[0] || null;
   }
 
