@@ -67,7 +67,7 @@ function generateQueries(model /* connector */) {
     const filters = parseFilters({ filters: query, model });
     const newQuery = buildQuery(model, filters);
 
-    const entry = await bookshelfModel.query(newQuery);
+    const entry = () => bookshelfModel.query(newQuery);
 
     if (!_.has(updatedItem, 'updated_at')) {
       _.set(updatedItem, 'updated_at', new Date());
@@ -75,9 +75,15 @@ function generateQueries(model /* connector */) {
 
     const attributes = selectAttributes(updatedItem);
 
-    return entry
-      .save(attributes, { method: 'update', patch: true, transacting })
-      .then((res) => res.toJSON());
+    const updatedCount = await entry().count();
+
+    await entry().save(attributes, {
+      method: 'update',
+      patch: true,
+      transacting,
+    });
+
+    return { count: updatedCount };
   }
 
   // TODO: soft delete
