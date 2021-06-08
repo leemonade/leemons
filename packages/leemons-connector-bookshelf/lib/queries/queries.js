@@ -77,11 +77,13 @@ function generateQueries(model /* connector */) {
 
     const updatedCount = await entry().count();
 
-    await entry().save(attributes, {
-      method: 'update',
-      patch: true,
-      transacting,
-    });
+    if (updatedCount > 0) {
+      await entry().save(attributes, {
+        method: 'update',
+        patch: true,
+        transacting,
+      });
+    }
 
     return { count: updatedCount };
   }
@@ -111,7 +113,11 @@ function generateQueries(model /* connector */) {
     const entries = () => bookshelfModel.query(newQuery);
 
     const deletedCount = await entries().count();
-    await entries().destroy({ transacting });
+
+    if (deletedCount > 0) {
+      await entries().destroy({ transacting });
+    }
+
     return { count: deletedCount };
   }
 
