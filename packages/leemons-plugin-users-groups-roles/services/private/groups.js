@@ -54,7 +54,6 @@ class Groups {
       ]);
       return values[0];
     });
-    return undefined;
   }
 
   /**

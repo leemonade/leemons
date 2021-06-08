@@ -5,6 +5,9 @@ const table = {
   rolePermission: leemons.query('plugins_users-groups-roles::role-permission'),
   permissions: leemons.query('plugins_users-groups-roles::permissions'),
   roles: leemons.query('plugins_users-groups-roles::roles'),
+  userRole: leemons.query('plugins_users-groups-roles::user-role'),
+  groupRole: leemons.query('plugins_users-groups-roles::group-role'),
+  groupUser: leemons.query('plugins_users-groups-roles::group-user'),
 };
 
 class Roles {
@@ -71,6 +74,7 @@ class Roles {
         await Promise.all([
           table.roles.update({ id: role.id }, { name }, { transacting }),
           table.rolePermission.deleteMany({ role: role.id }, { transacting }),
+          Roles.searchUsersWithRoleAndMarkAsReloadPermissions(role.id, transacting),
         ]);
       } else {
         // If the role does not exist, we create it
@@ -88,6 +92,36 @@ class Roles {
 
       return role;
     });
+  }
+
+  /**
+   * Searches for the users that have that role, the groups that have that role and the users
+   * that are in that groups.
+   * @private
+   * @static
+   * @param {string} roleId - Role id
+   * @param {any} transacting - Database transaction
+   * @return {Promise<any>}
+   * */
+  static async searchUsersWithRoleAndMarkAsReloadPermissions(roleId, transacting) {
+    const [userRoles, groupRoles] = await Promise.all([
+      table.userRole.find({ role: roleId }, { columns: ['user'] }, { transacting }),
+      table.groupRole.find({ role: roleId }, { columns: ['group'] }, { transacting }),
+    ]);
+
+    const groupUser = await table.groupUser.find(
+      { group_$in: _.map(groupRoles, 'group') },
+      { columns: ['user'] },
+      { transacting }
+    );
+
+    const userIds = _.uniq(_.map(userRoles, 'user').concat(_.map(groupUser, 'user')));
+
+    return table.users.updateMany(
+      { id_$in: userIds },
+      { reloadPermissions: true },
+      { transacting }
+    );
   }
 }
 
