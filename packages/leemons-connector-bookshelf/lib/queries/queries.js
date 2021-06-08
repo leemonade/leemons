@@ -63,22 +63,21 @@ function generateQueries(model /* connector */) {
   }
 
   // Updated many items in one transaction
-  function updateMany(updateArray, { transacting } = {}) {
-    if (!Array.isArray(updateArray)) {
-      throw new Error(
-        `updateMany expected an array, instead got ${
-          typeof updateArray === 'object' ? JSON.stringify(updateArray) : updateArray
-        }`
-      );
-    }
-    if (transacting) {
-      return pmap(updateArray, ({ query, item }) => update(query, item, { transacting }));
+  async function updateMany(query, updatedItem, { transacting } = {}) {
+    const filters = parseFilters({ filters: query, model });
+    const newQuery = buildQuery(model, filters);
+
+    const entry = await bookshelfModel.query(newQuery);
+
+    if (!_.has(updatedItem, 'updated_at')) {
+      _.set(updatedItem, 'updated_at', new Date());
     }
 
-    // If we are not on a transaction, make a new transaction
-    return model.ORM.transaction((t) =>
-      pmap(updateArray, ({ query, item }) => update(query, item, { transacting: t }))
-    );
+    const attributes = selectAttributes(updatedItem);
+
+    return entry
+      .save(attributes, { method: 'update', patch: true, transacting })
+      .then((res) => res.toJSON());
   }
 
   // TODO: soft delete
