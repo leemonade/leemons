@@ -49,6 +49,7 @@ async function setupFront(leemons, plugins, nextDir) {
       ignored: [
         /(^|[/\\])\../, // ignore dotfiles
         /.*node_modules.*/,
+        'yarn.lock',
         /*
          * Ignore:
          *  next/dependencies
@@ -117,11 +118,8 @@ ${plugin.dir.services})`,
   });
 }
 
-module.exports = async ({ next, level: logLevel = 'debug' }) => {
+module.exports = async ({ level: logLevel = 'debug' }) => {
   const cwd = process.cwd();
-
-  const nextDir = next && path.isAbsolute(next) ? next : path.join(cwd, next || 'next/');
-  process.env.next = nextDir;
 
   if (cluster.isMaster) {
     // Set the master process title (visible in $ ps)
@@ -235,6 +233,9 @@ module.exports = async ({ next, level: logLevel = 'debug' }) => {
     // Loads the App and plugins config
     await leemons.loadAppConfig();
     const pluginsConfig = await leemons.loadPluginsConfig();
+
+    let nextDir = leemons.config.get('config.dir.next', 'next');
+    nextDir = path.isAbsolute(nextDir) ? nextDir : path.join(cwd, nextDir);
 
     // Start the Front and Back services
     await Promise.all([
