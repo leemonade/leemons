@@ -108,10 +108,11 @@ function generateQueries(model /* connector */) {
     const filters = parseFilters({ filters: query, model });
     const newQuery = buildQuery(model, filters);
 
-    return bookshelfModel
-      .query(newQuery)
-      .destroy({ transacting })
-      .then((entries) => entries.toJSON());
+    const entries = () => bookshelfModel.query(newQuery);
+
+    const deletedCount = await entries().count();
+    await entries().destroy({ transacting });
+    return { count: deletedCount };
   }
 
   // Finds all items based on a query
