@@ -8,6 +8,10 @@ const table = {
   superAdminUsers: leemons.query('plugins_users-groups-roles::super-admin-users'),
   config: leemons.query('plugins_users-groups-roles::config'),
   userPermission: leemons.query('plugins_users-groups-roles::user-permission'),
+  userRole: leemons.query('plugins_users-groups-roles::user-role'),
+  groupUser: leemons.query('plugins_users-groups-roles::group-user'),
+  groupRole: leemons.query('plugins_users-groups-roles::group-role'),
+  rolePermission: leemons.query('plugins_users-groups-roles::role-permission'),
 };
 
 let jwtPrivateKey = null;
@@ -264,6 +268,9 @@ class Users {
    * */
   static async havePermission(user, allowedPermissions) {
     // TODO Añadir que se compruebe si hay que actualizar los permisos del usuario en cuestion y si hace falta sacar todos los roles del usuario incluidos de los grupos a los que pertenece y de estos roles sacar los permisos que hay que añadir al usuario
+
+    if (user.reloadPermissions) await Users.updateUserPermissions(user.id);
+
     let hasPermission = await table.userPermission.count({
       user: user.id,
       permission_$in: allowedPermissions,
@@ -272,6 +279,47 @@ class Users {
     hasPermission = await Users.userIsSuperAdmin(user.id);
     if (hasPermission) return true;
     return false;
+  }
+
+  /**
+   * Updates the permissions of the user if it is marked as reload permissions according to their
+   * roles and the roles of the groups to which they belong.
+   * @public
+   * @static
+   * @param {string} userId - User id
+   * @return {Promise<any>}
+   * */
+  static async updateUserPermissions(userId) {
+    // First we search for all user roles
+    return table.user.transaction(async (transacting) => {
+      const [userRoles, groupUsers] = await Promise.all([
+        table.userRole.find({ user: userId }, { columns: ['role'], transacting }),
+        table.groupUser.find({ user: userId }, { columns: ['group'], transacting }),
+        table.userPermission.deleteMany({ user: userId }, { transacting }),
+      ]);
+      const groupRoles = await table.groupRole.find(
+        { group_$in: _.map(groupUsers, 'group') },
+        { columns: ['role'], transacting }
+      );
+
+      const roleIds = _.uniq(_.map(userRoles, 'role').concat(_.map(groupRoles, 'role')));
+
+      const rolePermissions = await table.rolePermission.find(
+        { role_$in: roleIds },
+        {
+          columns: ['permission'],
+          transacting,
+        }
+      );
+
+      return table.userPermission.createMany(
+        _.map(rolePermissions, (rolePermission) => ({
+          user: userId,
+          permission: rolePermission.permission,
+        })),
+        { transacting }
+      );
+    });
   }
 
   /**

@@ -105,14 +105,13 @@ class Roles {
    * */
   static async searchUsersWithRoleAndMarkAsReloadPermissions(roleId, transacting) {
     const [userRoles, groupRoles] = await Promise.all([
-      table.userRole.find({ role: roleId }, { columns: ['user'] }, { transacting }),
-      table.groupRole.find({ role: roleId }, { columns: ['group'] }, { transacting }),
+      table.userRole.find({ role: roleId }, { columns: ['user'], transacting }),
+      table.groupRole.find({ role: roleId }, { columns: ['group'], transacting }),
     ]);
 
     const groupUser = await table.groupUser.find(
       { group_$in: _.map(groupRoles, 'group') },
-      { columns: ['user'] },
-      { transacting }
+      { columns: ['user'], transacting }
     );
 
     const userIds = _.uniq(_.map(userRoles, 'user').concat(_.map(groupUser, 'user')));

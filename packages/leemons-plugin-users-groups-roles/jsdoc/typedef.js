@@ -23,6 +23,7 @@
  * @property {string} surnames User surnames
  * @property {string} email User email
  * @property {string} password User password
+ * @property {boolean} reloadPermissions Define if need reload permissions
  * @property {Date} created_at Date of permission creation
  * @property {Date} updated_at Date of permission update
  */
