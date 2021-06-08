@@ -1,6 +1,4 @@
-import Alert from './components/Alert';
-import Button from './components/Button';
-import Input from './components/Input';
-import Pagination from './components/Pagination';
+import Alert from './components/Alert/Alert';
+import Button from './components/Button/Button';
 
-export { Alert, Button, Input, Pagination };
+export { Alert, Button };

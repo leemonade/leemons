@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "leemons start -N next",
+    "dev": "leemons dev -N next",
     "leemons": "leemons"
   },
   "dependencies": {
