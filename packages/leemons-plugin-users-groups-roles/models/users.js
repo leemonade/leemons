@@ -28,6 +28,12 @@ module.exports = {
         notNull: true,
       },
     },
+    reloadPermissions: {
+      type: 'boolean',
+      options: {
+        defaultTo: false,
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

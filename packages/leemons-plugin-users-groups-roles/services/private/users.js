@@ -17,6 +17,20 @@ class Users {
     await Users.generateJWTPrivateKey();
   }
 
+  /**
+   * Check if user exists
+   * @public
+   * @static
+   * @param {any} query
+   * @param {boolean} throwErrorIfNotExists
+   * @return {Promise<boolean>}
+   * */
+  static async checkIfExist(query, throwErrorIfNotExists) {
+    const count = await table.users.count(query);
+    if (throwErrorIfNotExists && !count) throw new Error('User not found');
+    return true;
+  }
+
   static async getJWTPrivateKey() {
     if (!jwtPrivateKey) jwtPrivateKey = await table.config.findOne({ key: 'jwt-private-key' });
     return jwtPrivateKey.value;
