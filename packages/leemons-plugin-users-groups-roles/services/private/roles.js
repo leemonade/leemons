@@ -15,7 +15,7 @@ class Roles {
    * */
   static async init() {
     await Promise.all(
-      _.map(constants.defaultRoles, (role) => this.createRole(role.name, role.permission))
+      _.map(constants.defaultRoles, (role) => Roles.createRole(role.name, role.permissions))
     );
   }
 
@@ -28,7 +28,7 @@ class Roles {
    * @return {Promise<Role>} Created / Updated role
    * */
   static async createRole(name, permissions) {
-    return this.registerRole(null, name, permissions);
+    return Roles.registerRole(null, name, permissions);
   }
 
   /**
@@ -40,7 +40,7 @@ class Roles {
    * @return {Promise<Role>} Created / Updated role
    * */
   static async updateRole(id, permissions) {
-    return this.registerRole(id, null, permissions);
+    return Roles.registerRole(id, null, permissions);
   }
 
   /**

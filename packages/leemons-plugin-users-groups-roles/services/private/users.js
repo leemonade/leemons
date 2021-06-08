@@ -1,15 +1,79 @@
 const _ = require('lodash');
 const moment = require('moment');
 const constants = require('../../config/constants');
-// const bcrypt = require('bcrypt');
 
 const table = {
   users: leemons.query('plugins_users-groups-roles::users'),
   userRecoverPassword: leemons.query('plugins_users-groups-roles::user-recover-password'),
   superAdminUsers: leemons.query('plugins_users-groups-roles::super-admin-users'),
+  config: leemons.query('plugins_users-groups-roles::config'),
+  userPermission: leemons.query('plugins_users-groups-roles::user-permission'),
 };
 
+let jwtPrivateKey = null;
+
 class Users {
+  static async init() {
+    await Users.generateJWTPrivateKey();
+  }
+
+  static async getJWTPrivateKey() {
+    if (!jwtPrivateKey) jwtPrivateKey = await table.config.findOne({ key: 'jwt-private-key' });
+    return jwtPrivateKey.value;
+  }
+
+  static async generateJWTPrivateKey() {
+    const config = await table.config.findOne({ key: 'jwt-private-key' });
+    if (!config)
+      return table.config.create({
+        key: 'jwt-private-key',
+        value: Users.randomString(),
+      });
+    return config;
+    /*
+    if (config) return table.config.update({ id: config.id }, { value: Users.randomString() });
+    return table.config.create({ key: 'jwt-private-key', value: Users.randomString() });
+     */
+  }
+
+  /**
+   * Generate long random string
+   * @public
+   * @static
+   * @return {string}
+   * */
+  static randomString() {
+    return (
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15)
+    );
+  }
+
+  /**
+   * Generate the jwt token of passed data
+   * @public
+   * @static
+   * @param {object} payload
+   * @return {string} JWT Token
+   * */
+  static async generateJWTToken(payload) {
+    return global.utils.jwt.sign(payload, await Users.getJWTPrivateKey(), {
+      expiresIn: 60 * 60 * 24,
+    }); // 1 day
+  }
+
+  /**
+   * Decrypts the jwt token and return his data
+   * @public
+   * @static
+   * @param {string} token
+   * @return {any} Payload
+   * */
+  static async verifyJWTToken(token) {
+    return global.utils.jwt.verify(token, await Users.getJWTPrivateKey());
+  }
+
   /**
    * Encrypts the passed password by generating a hash.
    * @private
@@ -18,9 +82,8 @@ class Users {
    * @return {Promise<string>} Generated hash password
    * */
   static async encryptPassword(password) {
-    // const salt = await bcrypt.genSalt(10);
-    // return bcrypt.hash(password, salt);
-    return password;
+    const salt = await global.utils.bcrypt.genSalt(10);
+    return global.utils.bcrypt.hash(password, salt);
   }
 
   /**
@@ -32,8 +95,7 @@ class Users {
    * @return {Promise<boolean>} If they are equal, returns true
    * */
   static async comparePassword(password, hashPassword) {
-    // return bcrypt.compare(password, hashPassword);
-    return password === hashPassword;
+    return global.utils.bcrypt.compare(password, hashPassword);
   }
 
   /**
@@ -55,7 +117,7 @@ class Users {
             name,
             surnames,
             email,
-            password: await this.encryptPassword(password),
+            password: await Users.encryptPassword(password),
           },
           { transacting }
         );
@@ -78,11 +140,15 @@ class Users {
    * @return {Promise<User>} Created / Updated role
    * */
   static async login(email, password) {
-    const user = await table.users.findOne({ email }, { columns: ['password'] });
-    if (!user) throw new global.utils.HttpError(401, 'Credentials do not match');
-    const areEquals = await this.comparePassword(password, user.password);
+    const userP = await table.users.findOne({ email }, { columns: ['id', 'password'] });
+    if (!userP) throw new global.utils.HttpError(401, 'Credentials do not match');
+    const areEquals = await Users.comparePassword(password, userP.password);
     if (!areEquals) throw new global.utils.HttpError(401, 'Credentials do not match');
-    return table.users.findOne({ email });
+    const [user, token] = await Promise.all([
+      table.users.findOne({ email }),
+      Users.generateJWTToken({ id: userP.id }),
+    ]);
+    return { user, token };
   }
 
   /**
@@ -148,6 +214,79 @@ class Users {
 
       return values[0];
     });
+  }
+
+  /**
+   * Return super admin user ids
+   * @public
+   * @static
+   * @return {Promise<string[]>} Super admin ids
+   * */
+  static async getSuperAdminUserIds() {
+    // Todo cachear ids de super administrador
+    const superAdminUsers = await table.superAdminUsers.find();
+    return _.map(superAdminUsers, 'user');
+  }
+
+  /**
+   * Return if user is super admin
+   * @public
+   * @static
+   * @param {string} userId - User id to check
+   * @return {Promise<boolean>} If is super admin return true if not false
+   * */
+  static async userIsSuperAdmin(userId) {
+    const superAdminUsersIds = await Users.getSuperAdminUserIds();
+    return _.includes(superAdminUsersIds, userId);
+  }
+
+  /**
+   * Checks if the user has 1 or more of the specified permissions.
+   * @public
+   * @static
+   * @param {User} user - User to check
+   * @param {string[]} allowedPermissions - Array of permissions
+   * @return {Promise<boolean>} If have permission return true if not false
+   * */
+  static async havePermission(user, allowedPermissions) {
+    // TODO Añadir que se compruebe si hay que actualizar los permisos del usuario en cuestion y si hace falta sacar todos los roles del usuario incluidos de los grupos a los que pertenece y de estos roles sacar los permisos que hay que añadir al usuario
+    let hasPermission = await table.userPermission.count({
+      user: user.id,
+      permission_$in: allowedPermissions,
+    });
+    if (hasPermission) return true;
+    hasPermission = await Users.userIsSuperAdmin(user.id);
+    if (hasPermission) return true;
+    return false;
+  }
+
+  /**
+   * Return the user for the id provided
+   * @public
+   * @static
+   * @param {string} userId - User id
+   * @return {Promise<User>}
+   * */
+  static async detail(userId) {
+    const user = await table.users.findOne({ id: userId });
+    if (!user) throw new Error('No user found for the id provided');
+    return user;
+  }
+
+  /**
+   * Return the user for the id provided
+   * We have two detail functions because possibly in the future detail will return a lot of
+   * information not necessary for the backend validation logic.
+   * @public
+   * @static
+   * @param {string} jwtToken
+   * @return {Promise<User>}
+   * */
+  static async detailForJWT(jwtToken) {
+    const payload = await Users.verifyJWTToken(jwtToken);
+    const user = await table.users.findOne({ id: payload.id });
+    if (!user) throw new Error('No user found for the id provided');
+    return user;
   }
 }
 

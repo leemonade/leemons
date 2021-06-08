@@ -22,6 +22,13 @@ module.exports = [
   },
   {
     path: '/user',
+    method: 'GET',
+    handler: 'users.detail',
+    authenticated: true,
+    permissions: ['show-users'],
+  },
+  {
+    path: '/user',
     method: 'POST',
     handler: 'users.create',
   },

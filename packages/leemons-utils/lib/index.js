@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const { env } = require('./env');
 const { getModel, generateModelName } = require('./model');
 const buildQuery = require('./queryBuilder');
@@ -18,4 +20,6 @@ module.exports = {
   LeemonsValidator,
   HttpError,
   returnError,
+  bcrypt,
+  jwt,
 };

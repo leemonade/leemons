@@ -1,5 +1,6 @@
-class Users {
-  static test() {}
-}
+const users = require('./private/users');
 
-module.exports = Users;
+module.exports = {
+  detailForJWT: users.detailForJWT,
+  havePermission: users.havePermission,
+};

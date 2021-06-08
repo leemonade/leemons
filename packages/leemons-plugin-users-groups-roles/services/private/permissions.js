@@ -14,7 +14,11 @@ class Permissions {
   static async init() {
     await Promise.all(
       _.map(constants.defaultPermissions, (permission) =>
-        this.registerPermission(permission.name, permission.permissionName, permission.pluginName)
+        Permissions.registerPermission(
+          permission.name,
+          permission.permissionName,
+          permission.pluginName
+        )
       )
     );
   }

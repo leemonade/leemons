@@ -66,12 +66,22 @@ async function login(ctx) {
       additionalProperties: false,
     });
     if (validator.validate(ctx.request.body)) {
-      const user = await usersService.login(ctx.request.body.email, ctx.request.body.password);
+      const data = await usersService.login(ctx.request.body.email, ctx.request.body.password);
       ctx.status = 200;
-      ctx.body = { status: 200, user };
+      ctx.body = { status: 200, user: data.user, jwtToken: data.token };
     } else {
       throw new Error(validator.error);
     }
+  } catch (err) {
+    global.utils.returnError(ctx, err);
+  }
+}
+
+async function detail(ctx) {
+  try {
+    const user = await usersService.detail(ctx.user.id);
+    ctx.status = 200;
+    ctx.body = { status: 200, user };
   } catch (err) {
     global.utils.returnError(ctx, err);
   }
@@ -109,6 +119,7 @@ async function createSuperAdmin(ctx) {
 }
 
 module.exports = {
+  detail,
   reset,
   recover,
   login,

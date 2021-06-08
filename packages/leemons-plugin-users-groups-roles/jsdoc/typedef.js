@@ -23,7 +23,14 @@
  * @property {string} surnames User surnames
  * @property {string} email User email
  * @property {string} password User password
- * @property {string} permissions User permissions
+ * @property {Date} created_at Date of permission creation
+ * @property {Date} updated_at Date of permission update
+ */
+
+/**
+ * @typedef Group
+ * @property {string} id User id
+ * @property {string} name User name
  * @property {Date} created_at Date of permission creation
  * @property {Date} updated_at Date of permission update
  */

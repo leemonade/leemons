@@ -130,6 +130,42 @@ class Leemons {
     this.backRouter.use(bodyParser());
   }
 
+  authenticatedMiddleware() {
+    return async (ctx, next) => {
+      try {
+        const user = await this.plugins['users-groups-roles'].services.users.detailForJWT(
+          ctx.headers.authorization
+        );
+        if (user) {
+          ctx.user = user;
+          return next();
+        }
+        ctx.status = 401;
+        ctx.body = { status: 401, msg: 'Authorization required' };
+        return undefined;
+      } catch (err) {
+        ctx.status = 401;
+        ctx.body = { status: 401, msg: 'Authorization required' };
+        return undefined;
+      }
+    };
+  }
+
+  permissionsMiddleware(allowedPermissions) {
+    return async (ctx, next) => {
+      const hasPermission = await this.plugins['users-groups-roles'].services.users.havePermission(
+        ctx.user,
+        allowedPermissions
+      );
+      if (hasPermission) {
+        return next();
+      }
+      ctx.status = 401;
+      ctx.body = { status: 401, msg: 'You do not have permissions' };
+      return undefined;
+    };
+  }
+
   // Initialize the api endpoints
   setRoutes() {
     // Plugins
@@ -148,9 +184,14 @@ class Leemons {
             _.get(plugin.controllers, route.handler)
           ) {
             const handler = _.get(plugin.controllers, route.handler);
+            const functions = [];
+            if (route.authenticated) functions.push(this.authenticatedMiddleware());
+            if (_.isArray(route.permissions) && route.permissions.length)
+              functions.push(this.permissionsMiddleware(route.permissions));
+            functions.push(handler);
             this.backRouter[route.method.toLocaleLowerCase()](
               `/api/${plugin.name}${route.path}`,
-              handler
+              ...functions
             );
           }
         });
