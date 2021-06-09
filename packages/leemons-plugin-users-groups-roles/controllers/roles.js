@@ -1,10 +1,8 @@
-const Ajv = require('ajv');
 const rolesService = require('../services/private/roles');
 
 async function create(ctx) {
   try {
-    const ajv = new Ajv({ allErrors: true });
-    const schema = {
+    const validator = new global.utils.LeemonsValidator({
       type: 'object',
       properties: {
         name: { type: 'string' },
@@ -15,17 +13,16 @@ async function create(ctx) {
       },
       required: ['name'],
       additionalProperties: false,
-    };
-    if (ajv.validate(schema, ctx.request.body)) {
+    });
+    if (validator.validate(ctx.request.body)) {
       const role = await rolesService.createRole(
         ctx.request.body.name,
         ctx.request.body.permissions
       );
       ctx.status = 201;
-      ctx.body = { status: 201, msg: 'Role created / updated', role };
+      ctx.body = { status: 201, role };
     } else {
-      // Todo añadir funcion a nivel proyecto para la generacion del mensaje de error del ajv
-      throw new Error('Error formulario');
+      throw new Error(validator.error);
     }
   } catch (err) {
     ctx.status = 400;
@@ -35,8 +32,7 @@ async function create(ctx) {
 
 async function list(ctx) {
   try {
-    const ajv = new Ajv({ allErrors: true });
-    const schema = {
+    const validator = new global.utils.LeemonsValidator({
       type: 'object',
       properties: {
         name: { type: 'string' },
@@ -47,17 +43,16 @@ async function list(ctx) {
       },
       required: ['name'],
       additionalProperties: false,
-    };
-    if (ajv.validate(schema, ctx.request.body)) {
+    });
+    if (validator.validate(ctx.request.body)) {
       const role = await rolesService.createRole(
         ctx.request.body.name,
         ctx.request.body.permissions
       );
       ctx.status = 201;
-      ctx.body = { status: 201, msg: 'Role created / updated', role };
+      ctx.body = { status: 201, role };
     } else {
-      // Todo añadir funcion a nivel proyecto para la generacion del mensaje de error del ajv
-      throw new Error('Error formulario');
+      throw new Error(validator.error);
     }
   } catch (err) {
     ctx.status = 400;

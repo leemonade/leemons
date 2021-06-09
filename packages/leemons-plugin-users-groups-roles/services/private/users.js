@@ -267,8 +267,6 @@ class Users {
    * @return {Promise<boolean>} If have permission return true if not false
    * */
   static async havePermission(user, allowedPermissions) {
-    // TODO Añadir que se compruebe si hay que actualizar los permisos del usuario en cuestion y si hace falta sacar todos los roles del usuario incluidos de los grupos a los que pertenece y de estos roles sacar los permisos que hay que añadir al usuario
-
     if (user.reloadPermissions) await Users.updateUserPermissions(user.id);
 
     let hasPermission = await table.userPermission.count({
@@ -296,6 +294,7 @@ class Users {
         table.userRole.find({ user: userId }, { columns: ['role'], transacting }),
         table.groupUser.find({ user: userId }, { columns: ['group'], transacting }),
         table.userPermission.deleteMany({ user: userId }, { transacting }),
+        table.users.update({ id: userId }, { reloadPermissions: false }, { transacting }),
       ]);
       const groupRoles = await table.groupRole.find(
         { group_$in: _.map(groupUsers, 'group') },
