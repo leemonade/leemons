@@ -60,12 +60,9 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
           );
         }
 
-        // Set the type of the col
-        if (_.has(relatedField, 'specificType')) {
-          _.set(properties, 'specificType', relatedField.specificType);
-        } else if (_.has(relatedField, 'type')) {
-          _.set(properties, 'type', relatedField.type);
-        }
+
+        // Set the same config for column
+        _.assign(properties, relatedField);
 
         // If the relation is `one to one`, set the column to unique
         if (properties.references.relation === 'one to one') {
@@ -336,7 +333,7 @@ async function createRelations(model, ctx) {
           .table(schema.collectionName, (table) => {
             table
               .foreign(name)
-              .references(getRelationPrimaryKey(properties).name)
+              .references(model.relations[name].foreignKeyTarget)
               .inTable(relationTable)
               .onUpdate(properties.references.onUpdate)
               .onDelete(properties.references.onDelete);
