@@ -25,14 +25,14 @@
   "scripts": {
     "dev": "next dev",
     "build": "rm -rf dist && NODE_ENV=production babel lib --out-dir dist --copy-files && npm run build:tailwind",
-    "build:tailwind": "tailwind build styles/globals.css -o dist/leemons.css"
+    "build:tailwind": "tailwind build lib/theme/leemons.css -o dist/theme/leemons.build.css"
   },
   "dependencies": {
     "@heroicons/react": "^1.0.1",
     "lodash": "^4.17.21",
     "next": "10.2.3",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "prop-types": "^15.7.2"
   },
   "devDependencies": {

@@ -8,7 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
-    "prop-types": "^15.7.2"
+    "prop-types": "^15.7.2",
+    "@leemons/users": "file:dependencies/users",
+    "@leemons/layouts": "file:dependencies/layouts"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.6",
