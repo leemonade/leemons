@@ -84,9 +84,11 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
         // Set the property type
         switch (properties.type) {
           case 'string':
+            col = table.string(name, properties.length); // default length is 255
+            break;
           case 'text':
           case 'richtext':
-            col = table.string(name, properties.length); // default length is 255 (Do not use text because the space in disk ~65537B)
+            col = table.text(name, properties.type); // default to text (65535 chars), can also be: mediumText (16777215 chars) or longtext (4294967295 chars).
             break;
           case 'enum':
           case 'enu':
