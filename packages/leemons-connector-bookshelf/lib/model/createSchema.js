@@ -48,6 +48,10 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
         let relatedField;
         if (!field) {
           relatedField = getRelationPrimaryKey(properties);
+          // If is a primary key, add the unsigned value to true
+          if (relatedField.type === 'int') {
+            _.set(properties, 'options.unsigned', true);
+          }
         } else {
           relatedField = _.get(
             getModel(properties.references.collection),
