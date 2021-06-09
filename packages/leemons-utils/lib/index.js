@@ -1,3 +1,4 @@
+const nodemailer = require('nodemailer');
 const { env } = require('./env');
 const { getModel, generateModelName } = require('./model');
 const buildQuery = require('./queryBuilder');
@@ -13,4 +14,5 @@ module.exports = {
   parseFilters,
   getStackTrace,
   getAvailablePort,
+  nodemailer,
 };

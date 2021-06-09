@@ -1,6 +1,7 @@
 module.exports = {
   plugins: [
-    'user-admin'
+    'user-admin',
+		'emails'
   ],
   frontPlugins: [{
     name: 'user-admin',
