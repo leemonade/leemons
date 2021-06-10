@@ -25,7 +25,6 @@ module.exports = [
     method: 'GET',
     handler: 'users.detail',
     authenticated: true,
-    permissions: ['show-users'],
   },
   {
     path: '/user',
