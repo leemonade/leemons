@@ -73,7 +73,7 @@ async function setupFront(leemons, plugins, nextDir) {
 /**
  * Creates a watcher for backend files and then sets up all the needed services
  */
-async function setupBack(leemons, plugins) {
+async function setupBack(leemons, plugins, providers) {
   /*
    * Backend directories to watch for changes
    *  plugin.dir.models
@@ -91,13 +91,23 @@ ${plugin.dir.services})`,
     )
   );
 
+  const backDirsProviders = providers.map((provider) =>
+    path.join(
+      provider.dir.app,
+      `\
+(${provider.dir.models}|\
+${provider.dir.services})`,
+      '**'
+    )
+  );
+
   // Load backend for first time
-  await leemons.loadBack(plugins);
+  await leemons.loadBack(plugins, providers);
 
   // Create a backend watcher
   createReloader({
     name: 'Backend',
-    dirs: backDirs,
+    dirs: backDirs.concat(backDirsProviders),
     config: {
       ignoreInitial: true,
       ignored: [
@@ -112,7 +122,7 @@ ${plugin.dir.services})`,
     handler: () => {
       // eslint-disable-next-line no-param-reassign
       leemons.backRouter.stack = [];
-      return leemons.loadBack(plugins);
+      return leemons.loadBack(plugins, providers);
     },
     logger: leemons.log,
   });
@@ -233,6 +243,7 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
     // Loads the App and plugins config
     await leemons.loadAppConfig();
     const pluginsConfig = await leemons.loadPluginsConfig();
+    const providersConfig = await leemons.loadProvidersConfig();
 
     let nextDir = leemons.config.get('config.dir.next', 'next');
     nextDir = path.isAbsolute(nextDir) ? nextDir : path.join(cwd, nextDir);
@@ -240,7 +251,7 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
     // Start the Front and Back services
     await Promise.all([
       setupFront(leemons, pluginsConfig, nextDir),
-      setupBack(leemons, pluginsConfig),
+      setupBack(leemons, pluginsConfig, providersConfig),
     ]);
 
     leemons.loaded = true;
