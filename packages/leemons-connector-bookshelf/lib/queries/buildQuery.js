@@ -18,6 +18,10 @@ function buildWhereClause({ qb, field, operator, value }) {
     });
   }
 
+  /**
+   * If you want to add a new operator, must be modified on leemons-utils/parse-filters
+   * for the parser to detect them
+   */
   switch (operator) {
     case 'or':
       // Add a where
@@ -88,6 +92,24 @@ function buildWhereClause({ qb, field, operator, value }) {
     case 'ncontainss':
       // where field is not like %value%
       return qb.whereNot(field, 'like', `%${value}%`);
+
+    case 'startsWith':
+      // where field is like value%
+      return qb.whereRaw(`${fieldLowerFn(qb)} LIKE LOWER(?)`, [field, `${value}%`]);
+
+    // not starts with
+    case 'nstartsWith':
+      // where field is not like value%
+      return qb.whereRaw(`${fieldLowerFn(qb)} NOT LIKE LOWER(?)`, [field, `${value}%`]);
+
+    case 'endsWith':
+      // where field is like %value
+      return qb.whereRaw(`${fieldLowerFn(qb)} LIKE LOWER(?)`, [field, `%${value}`]);
+
+    // not starts with
+    case 'nendsWith':
+      // where field is like %value
+      return qb.whereRaw(`${fieldLowerFn(qb)} NOT LIKE LOWER(?)`, [field, `%${value}`]);
 
     case 'null':
       // if value is true: where is null
