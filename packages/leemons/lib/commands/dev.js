@@ -216,7 +216,7 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
     log.level = process.env.loggerLevel;
 
     // Starts the application (Config)
-    const leemons = new Leemons(log, process.env.PORT);
+    const leemons = new Leemons(log);
 
     /*
      * Thread communication listener

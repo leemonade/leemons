@@ -159,7 +159,7 @@ module.exports = async (args) => {
     log.debug('new Worker started');
 
     try {
-      const leemonsInstance = leemons(log, process.env.PORT);
+      const leemonsInstance = leemons(log);
 
       // Handle message logic
       cluster.worker.on('message', (message) => {

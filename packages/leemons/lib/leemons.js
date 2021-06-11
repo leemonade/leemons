@@ -25,12 +25,11 @@ const { initializeProviders } = require('./core/plugins/loadProviders');
 const { loadProvidersConfig } = require('./core/plugins/loadProviders');
 
 class Leemons {
-  constructor(log, port) {
+  constructor(log) {
     // expose leemons globally
     global.leemons = this;
     // expose logging system to leemons
     this.log = log;
-    this.port = port;
 
     log.verbose('New leemons');
 
@@ -76,7 +75,7 @@ class Leemons {
   }
 
   api(url, config) {
-    return fetch(`http://localhost:${this.port}/api/${url}`, config).then(async (r) => {
+    return fetch(`http://localhost:${process.env.PORT}/api/${url}`, config).then(async (r) => {
       if (r.status >= 400) {
         throw await r.json();
       }
@@ -354,7 +353,7 @@ class Leemons {
        * Load all the backend plugins, database and
        * setup the middlewares
        */
-      await this.loadBack(loadedPlugins),
+      await this.loadBack(loadedPlugins, providersConfig),
       /*
        * Load all the frontend plugins, build the app if needed
        * and set the middlewares.
