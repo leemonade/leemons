@@ -15,7 +15,7 @@ class HttpError extends Error {
  * */
 function returnError(ctx, errorEvent) {
   ctx.status = 400;
-  ctx.body = { status: 400, msg: errorEvent.message };
+  ctx.body = { status: 400, message: errorEvent.message };
   if (errorEvent instanceof HttpError) {
     ctx.status = errorEvent.statusCode;
     ctx.body.status = errorEvent.statusCode;

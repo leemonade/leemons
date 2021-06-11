@@ -25,8 +25,7 @@ async function create(ctx) {
       throw new Error(validator.error);
     }
   } catch (err) {
-    ctx.status = 400;
-    ctx.body = { status: 400, msg: err.message };
+    global.utils.returnError(ctx, err);
   }
 }
 
@@ -55,8 +54,7 @@ async function list(ctx) {
       throw new Error(validator.error);
     }
   } catch (err) {
-    ctx.status = 400;
-    ctx.body = { status: 400, msg: err.message };
+    global.utils.returnError(ctx, err);
   }
 }
 

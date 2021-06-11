@@ -24,8 +24,7 @@ async function reset(ctx) {
       throw new Error(validator.error);
     }
   } catch (err) {
-    ctx.status = 400;
-    ctx.body = { status: 400, msg: err.message };
+    global.utils.returnError(ctx, err);
   }
 }
 
@@ -42,13 +41,12 @@ async function recover(ctx) {
     if (validator.validate(ctx.request.body)) {
       await usersService.recover(ctx.request.body.email);
       ctx.status = 200;
-      ctx.body = { status: 200, msg: 'Email sent' };
+      ctx.body = { status: 200, message: 'Email sent' };
     } else {
       throw new Error(validator.error);
     }
   } catch (err) {
-    ctx.status = 400;
-    ctx.body = { status: 400, msg: err.message };
+    global.utils.returnError(ctx, err);
   }
 }
 
