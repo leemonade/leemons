@@ -60,9 +60,8 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
           );
         }
 
-
-        // Set the same config for column
-        _.assign(properties, relatedField);
+        // Set the same config for column (omit unnecesary options)
+        _.assign(properties, _.omit(relatedField, ['options.unique']));
 
         // If the relation is `one to one`, set the column to unique
         if (properties.references.relation === 'one to one') {
