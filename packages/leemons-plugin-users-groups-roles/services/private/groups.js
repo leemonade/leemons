@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const userService = require('./users');
-const constants = require('../../config/constants');
 
 const table = {
   users: leemons.query('plugins_users-groups-roles::users'),

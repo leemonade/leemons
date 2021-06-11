@@ -73,6 +73,23 @@ async function loadPluginsModels(pluginObjs, leemons) {
   _.set(leemons, 'plugins', _.fromPairs(loadedPlugins));
 }
 
+function transformServices(pluginsObj, fromPlugin) {
+  _.forEach(_.keys(pluginsObj), (pluginKey) => {
+    _.forEach(_.keys(pluginsObj[pluginKey].services), (serviceKey) => {
+      _.forEach(_.keys(pluginsObj[pluginKey].services[serviceKey]), (serviceFunctionKey) => {
+        if (_.isFunction(pluginsObj[pluginKey].services[serviceKey][serviceFunctionKey])) {
+          const func = pluginsObj[pluginKey].services[serviceKey][serviceFunctionKey];
+          // eslint-disable-next-line no-param-reassign
+          pluginsObj[pluginKey].services[serviceKey][serviceFunctionKey] = (...params) =>
+            func.call({ executeFrom: fromPlugin.name }, ...params);
+        }
+      });
+    });
+    return pluginsObj[pluginKey];
+  });
+  return pluginsObj;
+}
+
 // Load plugins part 2 (controllers, services and front)
 async function initializePlugins(leemons) {
   let loadedPlugins = _.values(leemons.plugins);
@@ -110,7 +127,7 @@ async function initializePlugins(leemons) {
           get: () => leemons.plugins[plugin.name],
         });
         Object.defineProperty(filtered.leemons, 'plugins', {
-          get: () => _.pick(leemons.plugins, allowedPlugins),
+          get: () => transformServices(_.pick(leemons.plugins, allowedPlugins), pluginObj),
         });
         const { query } = filtered.leemons;
         _.set(filtered, 'leemons.query', (modelName) => query(modelName, plugin.name));
