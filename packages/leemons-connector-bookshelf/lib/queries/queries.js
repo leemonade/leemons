@@ -77,11 +77,13 @@ function generateQueries(model /* connector */) {
 
     const updatedCount = await entry().count();
 
-    await entry().save(attributes, {
-      method: 'update',
-      patch: true,
-      transacting,
-    });
+    if (updatedCount > 0) {
+      await entry().save(attributes, {
+        method: 'update',
+        patch: true,
+        transacting,
+      });
+    }
 
     return { count: updatedCount };
   }
@@ -108,10 +110,15 @@ function generateQueries(model /* connector */) {
     const filters = parseFilters({ filters: query, model });
     const newQuery = buildQuery(model, filters);
 
-    return bookshelfModel
-      .query(newQuery)
-      .destroy({ transacting })
-      .then((entries) => entries.toJSON());
+    const entries = () => bookshelfModel.query(newQuery);
+
+    const deletedCount = await entries().count();
+
+    if (deletedCount > 0) {
+      await entries().destroy({ transacting });
+    }
+
+    return { count: deletedCount };
   }
 
   // Finds all items based on a query

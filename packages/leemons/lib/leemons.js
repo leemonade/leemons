@@ -20,6 +20,9 @@ const {
 } = require('./core/plugins/loadPlugins');
 const buildFront = require('./core/front/build');
 const loadFront = require('./core/plugins/front/loadFront');
+const { loadProvidersModels } = require('./core/plugins/loadProviders');
+const { initializeProviders } = require('./core/plugins/loadProviders');
+const { loadProvidersConfig } = require('./core/plugins/loadProviders');
 
 class Leemons {
   constructor(log) {
@@ -216,8 +219,16 @@ class Leemons {
     return this.db.query(model, plugin);
   }
 
-  async loadBack(loadedPlugins) {
+  async loadBack(loadedPlugins, loadedProviders) {
     await hooks.fireEvent('leemons::loadBack', { status: 'start' });
+
+    /*
+     * Load the providers' DataBase Model Descriptions
+     */
+    await hooks.fireEvent('leemons::loadProvidersModels', { status: 'start' });
+    await loadProvidersModels(loadedProviders, this);
+    await hooks.fireEvent('leemons::loadProvidersModels', { status: 'end' });
+
     /*
      * Load the plugins' DataBase Model Descriptions
      */
@@ -241,6 +252,10 @@ class Leemons {
     await hooks.fireEvent('leemons::initDB', { status: 'start' });
     await this.db.init();
     await hooks.fireEvent('leemons::initDB', { status: 'end' });
+
+    await hooks.fireEvent('leemons::initializeProviders', { status: 'start' });
+    await initializeProviders(this);
+    await hooks.fireEvent('leemons::initializeProviders', { status: 'end' });
 
     await hooks.fireEvent('leemons::initializePlugins', { status: 'start' });
     await initializePlugins(this);
@@ -301,6 +316,14 @@ class Leemons {
     return loadedPlugins;
   }
 
+  async loadProvidersConfig() {
+    await hooks.fireEvent('leemons::loadProviders', { status: 'start' });
+    const loadedProviders = await loadProvidersConfig(this);
+    await hooks.fireEvent('leemons::loadProviders', { status: 'end' });
+
+    return loadedProviders;
+  }
+
   // Load all apps
   async load() {
     await hooks.fireEvent('leemons::load', { status: 'start' });
@@ -314,6 +337,7 @@ class Leemons {
      * plugins and save plugin' env
      */
     const loadedPlugins = await this.loadPluginsConfig();
+    const providersConfig = await this.loadProvidersConfig();
 
     await Promise.all([
       /*

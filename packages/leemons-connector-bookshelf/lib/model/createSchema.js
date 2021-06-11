@@ -48,6 +48,10 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
         let relatedField;
         if (!field) {
           relatedField = getRelationPrimaryKey(properties);
+          // If is a primary key, add the unsigned value to true
+          if (relatedField.type === 'int') {
+            _.set(properties, 'options.unsigned', true);
+          }
         } else {
           relatedField = _.get(
             getModel(properties.references.collection),
@@ -56,12 +60,9 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
           );
         }
 
-        // Set the type of the col
-        if (_.has(relatedField, 'specificType')) {
-          _.set(properties, 'specificType', relatedField.specificType);
-        } else if (_.has(relatedField, 'type')) {
-          _.set(properties, 'type', relatedField.type);
-        }
+
+        // Set the same config for column
+        _.assign(properties, relatedField);
 
         // If the relation is `one to one`, set the column to unique
         if (properties.references.relation === 'one to one') {
@@ -84,9 +85,11 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
         // Set the property type
         switch (properties.type) {
           case 'string':
+            col = table.string(name, properties.length); // default length is 255
+            break;
           case 'text':
           case 'richtext':
-            col = table.string(name, properties.length); // default length is 255 (Do not use text because the space in disk ~65537B)
+            col = table.text(name, properties.textType); // default to text (65535 chars), can also be: mediumText (16777215 chars) or longtext (4294967295 chars).
             break;
           case 'enum':
           case 'enu':
@@ -330,7 +333,7 @@ async function createRelations(model, ctx) {
           .table(schema.collectionName, (table) => {
             table
               .foreign(name)
-              .references(getRelationPrimaryKey(properties).name)
+              .references(model.relations[name].foreignKeyTarget)
               .inTable(relationTable)
               .onUpdate(properties.references.onUpdate)
               .onDelete(properties.references.onDelete);

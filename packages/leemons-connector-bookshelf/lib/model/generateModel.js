@@ -23,7 +23,7 @@ function generateRelations(models) {
               `The referenced field ${field} in model ${model.modelName}, does not exists in the model ${referencedModel.modelName}`
             );
           }
-          referencedField = referencedModel.schema.attributes[field].name;
+          referencedField = field;
         } else {
           referencedField = referencedModel.schema.primaryKey.name;
         }

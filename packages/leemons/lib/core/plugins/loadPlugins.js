@@ -24,6 +24,7 @@ async function loadPluginsConfig(leemons) {
           models: 'models',
           controllers: 'controllers',
           services: 'services',
+          providers: 'providers',
           next: 'next',
           env: '.env',
         },
@@ -75,11 +76,22 @@ async function loadPluginsModels(pluginObjs, leemons) {
 // Load plugins part 2 (controllers, services and front)
 async function initializePlugins(leemons) {
   let loadedPlugins = _.values(leemons.plugins);
+  const loadedProviders = _.values(leemons.providers);
 
   // Process every plugin
   loadedPlugins = await Promise.all(
     loadedPlugins.map(async (plugin) => {
       const pluginObj = plugin;
+
+      pluginObj.providers = {};
+      _.forEach(loadedProviders, (loadedProvider) => {
+        if (
+          _.isArray(loadedProvider.config.config.pluginsCanUseMe) &&
+          _.includes(loadedProvider.config.config.pluginsCanUseMe, pluginObj.name)
+        ) {
+          pluginObj.providers[loadedProvider.name] = loadedProvider;
+        }
+      });
 
       // VM filter
       // TODO: Refactor (Maybe some code can be run only once?) [Check after implementing plugin Deps]

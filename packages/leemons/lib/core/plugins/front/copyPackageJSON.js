@@ -18,10 +18,12 @@ module.exports = async (src, dest, name, checksums) => {
   const fileContent = await fs.readJSON(src);
 
   // Remove conflicting deps (react only allows 1 copy of react)
-  const depsToRemove = ['react', 'react-dom', 'next'];
-  depsToRemove.forEach((dep) => {
-    delete fileContent.dependencies[dep];
-  });
+  if (fileContent.dependencies) {
+    const depsToRemove = ['react', 'react-dom', 'next'];
+    depsToRemove.forEach((dep) => {
+      delete fileContent.dependencies[dep];
+    });
+  }
 
   // Get the checksums of the new package.json
   const fileChecksums = md5Object(fileContent);
