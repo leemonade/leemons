@@ -25,11 +25,12 @@ const { initializeProviders } = require('./core/plugins/loadProviders');
 const { loadProvidersConfig } = require('./core/plugins/loadProviders');
 
 class Leemons {
-  constructor(log) {
+  constructor(log, port) {
     // expose leemons globally
     global.leemons = this;
     // expose logging system to leemons
     this.log = log;
+    this.port = port;
 
     log.verbose('New leemons');
 
@@ -72,6 +73,15 @@ class Leemons {
 
     this.loaded = false;
     this.started = false;
+  }
+
+  api(url, config) {
+    return fetch(`http://localhost:${this.port}/api/${url}`, config).then(async (r) => {
+      if (r.status >= 400) {
+        throw await r.json();
+      }
+      return r.json();
+    });
   }
 
   // Set KOA as requestHandler

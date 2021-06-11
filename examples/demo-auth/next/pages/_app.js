@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import hooks from 'leemons-hooks';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { frontPlugins, plugins } from '@plugins';
-import { SessionProvider } from '@users-groups-roles/session';
+import { SessionProvider } from '@users-groups-roles/context/session';
+
+const Context = React.createContext(null);
 
 function MyApp({ Component, pageProps }) {
   // Only add it once
@@ -47,8 +49,6 @@ function MyApp({ Component, pageProps }) {
       return [[...msg, 'Hello World'], ...args];
     });
   }
-
-  console.log(Component);
 
   return (
     <>

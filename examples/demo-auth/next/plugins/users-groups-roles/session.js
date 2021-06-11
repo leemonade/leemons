@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import SessionContext from '@users-groups-roles/context/session';
 import Cookies from 'js-cookie';
 import useSWR from 'swr';
 import Router from 'next/router';
@@ -29,9 +29,15 @@ function getAppCookies(req) {
 export async function getSession({ req }) {
   const { token } = getAppCookies(req);
   if (token) {
+    const response = await leemons.api('users-groups-roles/user', {
+      headers: { Authorization: token },
+    });
+    /*
     const response = await fetch(`http://${req.headers.host}/api/users-groups-roles/user`, {
       headers: { Authorization: token },
     }).then((r) => r.json());
+
+     */
     if (response.status === 200) {
       return response.user;
     }
@@ -40,9 +46,6 @@ export async function getSession({ req }) {
   }
   return null;
 }
-
-export const SessionContext = React.createContext(null);
-export const SessionProvider = SessionContext.Provider;
 
 const fetcher = (token) => (url) =>
   leemons.api(url, {
@@ -84,8 +87,3 @@ export function logoutSession(redirectTo) {
 export function loginSession(token, redirectTo) {
   Router.push(`users-groups-roles/auth/login?token=${token}&redirectTo=${redirectTo}`);
 }
-
-SessionProvider.propTypes = {
-  children: PropTypes.func.isRequired,
-  session: PropTypes.object,
-};

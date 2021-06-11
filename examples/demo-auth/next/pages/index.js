@@ -1,4 +1,4 @@
-import { loginSession, logoutSession, useSession } from '@users-groups-roles/session';
+import { getSession, loginSession, logoutSession, useSession } from '@users-groups-roles/session';
 import { useForm } from 'react-hook-form';
 
 export default function Home() {
@@ -52,3 +52,10 @@ export default function Home() {
     </>
   );
 }
+export const getServerSideProps = async (context) => {
+  return {
+    props: {
+      session: await getSession(context),
+    },
+  };
+};
