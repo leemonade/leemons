@@ -32,12 +32,6 @@ export async function getSession({ req }) {
     const response = await leemons.api('users-groups-roles/user', {
       headers: { Authorization: token },
     });
-    /*
-    const response = await fetch(`http://${req.headers.host}/api/users-groups-roles/user`, {
-      headers: { Authorization: token },
-    }).then((r) => r.json());
-
-     */
     if (response.status === 200) {
       return response.user;
     }

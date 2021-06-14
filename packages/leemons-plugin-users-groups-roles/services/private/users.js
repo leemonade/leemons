@@ -5,11 +5,11 @@ const constants = require('../../config/constants');
 const table = {
   users: leemons.query('plugins_users-groups-roles::users'),
   userRecoverPassword: leemons.query('plugins_users-groups-roles::user-recover-password'),
-  superAdminUsers: leemons.query('plugins_users-groups-roles::super-admin-users'),
+  superAdminUserAuth: leemons.query('plugins_users-groups-roles::super-admin-user-auth'),
   config: leemons.query('plugins_users-groups-roles::config'),
-  userPermission: leemons.query('plugins_users-groups-roles::user-permission'),
-  userRole: leemons.query('plugins_users-groups-roles::user-role'),
-  groupUser: leemons.query('plugins_users-groups-roles::group-user'),
+  userAuthPermission: leemons.query('plugins_users-groups-roles::user-auth-permission'),
+  userAuthRole: leemons.query('plugins_users-groups-roles::user-auth-role'),
+  groupUserAuth: leemons.query('plugins_users-groups-roles::group-user-auth'),
   groupRole: leemons.query('plugins_users-groups-roles::group-role'),
   rolePermission: leemons.query('plugins_users-groups-roles::role-permission'),
 };

@@ -1,13 +1,13 @@
 module.exports = {
-  modelName: 'user-role',
-  collectionName: 'user-role',
+  modelName: 'user-auth-role',
+  collectionName: 'user-auth-role',
   options: {
     useTimestamps: true,
   },
   attributes: {
-    user: {
+    userAuth: {
       references: {
-        collection: 'plugins_users-groups-roles::users',
+        collection: 'plugins_users-groups-roles::user-auth',
       },
     },
     role: {

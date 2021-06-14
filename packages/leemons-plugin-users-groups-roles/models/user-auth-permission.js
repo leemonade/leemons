@@ -1,22 +1,22 @@
 module.exports = {
-  modelName: 'role-permission',
-  collectionName: 'role-permission',
+  modelName: 'user-auth-permission',
+  collectionName: 'user-auth-permission',
   options: {
     useTimestamps: true,
   },
   attributes: {
-    role: {
+    userAuth: {
       references: {
-        collection: 'plugins_users-groups-roles::roles',
+        collection: 'plugins_users-groups-roles::user-auth',
       },
     },
-    permissionName: {
+    permission: {
       type: 'string',
       options: {
         notNull: true,
       },
     },
-    actionName: {
+    action: {
       type: 'string',
       options: {
         notNull: true,
@@ -24,6 +24,11 @@ module.exports = {
     },
     target: {
       type: 'string',
+    },
+    role: {
+      references: {
+        collection: 'plugins_users-groups-roles::roles',
+      },
     },
   },
   primaryKey: {

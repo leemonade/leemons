@@ -1,6 +1,6 @@
 module.exports = {
-  modelName: 'group-user',
-  collectionName: 'group-user',
+  modelName: 'group-user-auth',
+  collectionName: 'group-user-auth',
   options: {
     useTimestamps: true,
   },
@@ -10,9 +10,9 @@ module.exports = {
         collection: 'plugins_users-groups-roles::groups',
       },
     },
-    user: {
+    userAuth: {
       references: {
-        collection: 'plugins_users-groups-roles::users',
+        collection: 'plugins_users-groups-roles::user-auth',
       },
     },
   },

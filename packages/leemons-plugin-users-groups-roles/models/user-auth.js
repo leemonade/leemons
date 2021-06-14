@@ -1,6 +1,6 @@
 module.exports = {
-  modelName: 'user-permission',
-  collectionName: 'user-permission',
+  modelName: 'user-auth',
+  collectionName: 'user-auth',
   options: {
     useTimestamps: true,
   },
@@ -10,11 +10,8 @@ module.exports = {
         collection: 'plugins_users-groups-roles::users',
       },
     },
-    permission: {
-      type: 'string',
-    },
   },
   primaryKey: {
-    type: 'string',
+    type: 'uuid',
   },
 };

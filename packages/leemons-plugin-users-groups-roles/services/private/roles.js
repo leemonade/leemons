@@ -1,13 +1,14 @@
 const _ = require('lodash');
 const constants = require('../../config/constants');
+const permissionsService = require('./permissions');
 
 const table = {
   rolePermission: leemons.query('plugins_users-groups-roles::role-permission'),
   permissions: leemons.query('plugins_users-groups-roles::permissions'),
   roles: leemons.query('plugins_users-groups-roles::roles'),
-  userRole: leemons.query('plugins_users-groups-roles::user-role'),
+  userAuthRole: leemons.query('plugins_users-groups-roles::user-auth-role'),
   groupRole: leemons.query('plugins_users-groups-roles::group-role'),
-  groupUser: leemons.query('plugins_users-groups-roles::group-user'),
+  groupUserAuth: leemons.query('plugins_users-groups-roles::group-user-auth'),
 };
 
 class Roles {
@@ -20,6 +21,39 @@ class Roles {
     await Promise.all(
       _.map(constants.defaultRoles, (role) => Roles.createRole(role.name, role.permissions))
     );
+  }
+
+  /**
+   * Create one role
+   * @private
+   * @static
+   * @param {RoleAdd} data
+   * @return {Promise<Role>} Created / Updated role
+   * */
+  static async add(data) {
+    const existRole = await table.roles.count({ name: data.name });
+    if (existRole) throw new Error(`Role with name '${data.name}' already exists`);
+    const dataToCheckPermissions = _.map(data.permissions, (permission) => [
+      permission.permissionName,
+      permission.actionNames,
+    ]);
+    if (!(await permissionsService.manyPermissionsHasManyActions(dataToCheckPermissions)))
+      throw new Error(`One or more permissions or his actions not exist`);
+
+    return table.roles.transaction(async (transacting) => {
+      leemons.log.info(`Creating role '${data.name}'`);
+      const role = await table.roles.create({ name: data.name }, { transacting });
+
+      await table.rolePermission.createMany(
+        _.map(permissions, (permission) => ({
+          role: role.id,
+          permission,
+        })),
+        { transacting }
+      );
+
+      return role;
+    });
   }
 
   /**

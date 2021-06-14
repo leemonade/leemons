@@ -6,6 +6,7 @@ const buildQuery = require('./queryBuilder');
 const { parseFilters } = require('./parseFilters');
 const getStackTrace = require('./getStackTrace');
 const LeemonsValidator = require('./leemons-validator');
+const { settledResponseToManyResponse } = require('./settled-response-to-many-response');
 const { HttpError, returnError } = require('./http-error');
 const { getAvailablePort } = require('./port');
 
@@ -22,4 +23,5 @@ module.exports = {
   returnError,
   bcrypt,
   jwt,
+  settledResponseToManyResponse,
 };
