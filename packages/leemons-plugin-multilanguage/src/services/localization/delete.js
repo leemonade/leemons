@@ -1,45 +1,90 @@
-const validateLocale = require('../../../validations/locale');
-const throwInvalid = require('../../../validations/throwInvalid');
-
-const localesTable = leemons.query('plugins_multilanguage::locales');
+const localizationsTable = leemons.query('plugins_multilanguage::localizations');
 
 /**
- * Deletes the locale that matches the code
- * @param {string} code The locale iso code xx-YY or xx
+ * Deletes the localization that matches the tuple key, locale
+ * @param {string} key the entry key
+ * @param {string} locale the locale code
  * @returns {Promise<Boolean>} if the locale was deleted or not
  */
-async function deleteOne(code) {
-  const _code = code.toLowerCase();
-
-  throwInvalid(validateLocale(_code));
+async function deleteOne(key, locale) {
+  const _key = key.toLowerCase();
+  const _locale = locale.toLowerCase();
 
   try {
-    return (await localesTable.deleteMany({ code: _code })).count === 1;
+    return (await localizationsTable.deleteMany({ key: _key, locale: _locale })).count === 1;
   } catch (e) {
     leemons.log.debug(e.message);
-    throw new Error('An error occurred while deleting the locale');
+    throw new Error('An error occurred while deleting the localization');
   }
 }
 
 /**
- * Deletes the locales that matches the codes
- * @param {string[]} codes The locale iso code xx-YY or xx
- * @returns {Promise<Number>} The number of locales deleted
+ * Deletes the localization that matches the key prefix
+ *
+ * If not locale provided, remove all the keys matching the prefix in any locale
+ *
+ * @param {string} key The key prefix
+ * @param {string} [locale] the locale code
+ * @returns {Promise<Boolean>} if the locale was deleted or not
  */
-async function deleteMany(codes) {
-  // Todo: Add validation (fails when codes is not an array)
-  const _codes = codes.map((code) => code.toLowerCase());
-  throwInvalid(_codes.map((code) => validateLocale(code)));
+async function deleteKeyStartsWith(key, locale = null) {
+  const query = {
+    key_$startsWith: key.toLowerCase(),
+  };
+
+  if (locale) {
+    query.locale = locale.toLowerCase();
+  }
 
   try {
-    return (await localesTable.deleteMany({ code_$in: _codes })).count;
+    return (await localizationsTable.deleteMany(query)).count;
   } catch (e) {
     leemons.log.debug(e.message);
-    throw new Error('An error occurred while deleting the locales');
+    throw new Error('An error occurred while deleting the localizations');
+  }
+}
+
+/**
+ * Deletes the localization that matches the tuple key, locale
+ * @param {string[][]} localizations An array of [key, locale]
+ * @returns {Promise<Number>} The number of localizations deleted
+ */
+async function deleteMany(localizations) {
+  // Todo: Add validation (fails when codes is not an array)
+  const _localizations = localizations.map(([key, locale]) => ({
+    key: key.toLowerCase(),
+    locale: locale.toLowerCase(),
+  }));
+
+  try {
+    return (await localizationsTable.deleteMany({ $or: _localizations })).count;
+  } catch (e) {
+    leemons.log.debug(e.message);
+    throw new Error('An error occurred while deleting the localizations');
+  }
+}
+
+async function deleteAll({ key = null, locale = null }) {
+  const query = {};
+
+  if (key) {
+    query.key = key;
+  }
+  if (locale) {
+    query.locale = locale;
+  }
+
+  try {
+    return (await localizationsTable.deleteMany(query)).count;
+  } catch (e) {
+    leemons.log.debug(e.message);
+    throw new Error('An error occurred while deleting the localizations');
   }
 }
 
 module.exports = {
   delete: deleteOne,
   deleteMany,
+  deleteAll,
+  deleteKeyStartsWith,
 };

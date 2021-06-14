@@ -1,13 +1,9 @@
 const localizations = require('../src/services/localization');
 
 localizations
-  .addManyByKey('message.greet', {
-    en: 'Hello',
-    es: 'Hola',
-    fr: 'Bonjour',
-  })
+  .deleteKeyStartsWith('message')
   .then((r) => {
-    console.log('OK:', r);
+    console.log('OK:', JSON.stringify(r, '', 2));
   })
   .catch((e) => {
     console.log('KO:', e);
