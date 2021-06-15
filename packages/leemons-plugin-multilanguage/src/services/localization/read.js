@@ -1,46 +1,105 @@
-const _ = require('lodash');
 const validateLocale = require('../../../validations/locale');
 const throwInvalid = require('../../../validations/throwInvalid');
 
-const localesTable = leemons.query('plugins_multilanguage::locales');
+const localizationsTable = leemons.query('plugins_multilanguage::localizations');
 
 /**
  * Gets the given locale
  * @param {string} code The locale iso code xx-YY or xx
  * @returns {Promise<Locale> | null} The locale
  */
-async function get(code) {
-  const _code = code.toLowerCase();
-
-  throwInvalid(validateLocale(_code));
+async function get(key, locale) {
+  const _key = key.toLowerCase();
+  const _locale = locale.toLowerCase();
 
   try {
-    return await localesTable.findOne({ code: _code });
+    return await localizationsTable.findOne({ key: _key, locale: _locale });
   } catch (e) {
     leemons.log.debug(e.message);
-    throw new Error('An error occurred while creating the locale');
+    throw new Error('An error occurred while getting the localization');
   }
 }
 
-/**
- * Gets the given locales
- * @param {string[]} codes The locale iso code xx-YY or xx
- * @returns {Promise<Locale[]>} An array with the locales that exists
- */
-async function getMany(codes) {
-  // Todo: Add validation (fails when codes is not an array)
-  const _codes = codes.map((code) => code.toLowerCase());
-  throwInvalid(_codes.map((code) => validateLocale(code)));
+async function getWithKey(key) {
+  const _key = key.toLowerCase();
 
   try {
-    return await localesTable.find({ code_$in: _codes });
+    return await localizationsTable.find({ key: _key });
   } catch (e) {
     leemons.log.debug(e.message);
-    throw new Error('An error occurred while deleting the locales');
+    throw new Error('An error occurred while getting the localizations');
+  }
+}
+
+async function getWithLocale(locale) {
+  const _locale = locale.toLowerCase();
+
+  try {
+    return await localizationsTable.find({ locale: _locale });
+  } catch (e) {
+    leemons.log.debug(e.message);
+    throw new Error('An error occurred while getting the localizations');
+  }
+}
+
+async function getKeyValueWithLocale(locale) {
+  const _locale = locale.toLowerCase();
+
+  try {
+    const localizations = await localizationsTable.find({ locale: _locale });
+
+    return localizations.reduce((result, { key, value }) => {
+      const _result = result;
+
+      _result[key] = value;
+
+      return _result;
+    }, {});
+  } catch (e) {
+    leemons.log.debug(e.message);
+    throw new Error('An error occurred while getting the localizations');
+  }
+}
+
+async function getKeyStartsWith(key, locale) {
+  const _key = key.toLowerCase();
+  const _locale = locale.toLowerCase();
+
+  try {
+    return await localizationsTable.find({ key_$startsWith: _key, locale: _locale });
+  } catch (e) {
+    leemons.log.debug(e.message);
+    throw new Error('An error occurred while getting the localization');
+  }
+}
+async function getKeyValueStartsWith(key, locale) {
+  const _key = key.toLowerCase();
+  const _locale = locale.toLowerCase();
+
+  try {
+    const localizations = await localizationsTable.find({
+      key_$startsWith: _key,
+      locale: _locale,
+    });
+
+    return localizations.reduce((result, { key: lKey, value }) => {
+      const _result = result;
+
+      _result[lKey] = value;
+
+      return _result;
+    }, {});
+  } catch (e) {
+    leemons.log.debug(e.message);
+    throw new Error('An error occurred while getting the localization');
   }
 }
 
 module.exports = {
   get,
-  getMany,
+  getWithKey,
+  getKeyValueWithLocale,
+  getWithLocale,
+  getKeyStartsWith,
+  getKeyValueStartsWith,
 };

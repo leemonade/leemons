@@ -1,6 +1,14 @@
 const { add, addMany, addManyByKey } = require('./create');
-const { get, getMany } = require('./read');
-const { setName } = require('./update');
+const {
+  get,
+  getWithKey,
+  getKeyValueWithLocale,
+  getWithLocale,
+  getKeyStartsWith,
+  getKeyValueStartsWith,
+} = require('./read');
+const { countKeyStartsWith, countLocalesWithKey } = require('./count');
+const { setValue, setKey, setMany } = require('./update');
 const { delete: deleteOne, deleteMany, deleteAll, deleteKeyStartsWith } = require('./delete');
 const { has, hasMany } = require('./has');
 
@@ -10,9 +18,17 @@ module.exports = {
   addManyByKey,
 
   get,
-  getMany,
+  getWithKey,
+  getKeyValueWithLocale,
+  getWithLocale,
+  getKeyStartsWith,
+  getKeyValueStartsWith,
 
-  setName,
+  countKeyStartsWith,
+  countLocalesWithKey,
+
+  setValue,
+  setKey,
 
   delete: deleteOne,
   deleteMany,
@@ -21,4 +37,5 @@ module.exports = {
 
   has,
   hasMany,
+  setMany,
 };

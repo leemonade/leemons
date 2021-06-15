@@ -1,7 +1,7 @@
 const localizations = require('../src/services/localization');
 
 localizations
-  .deleteKeyStartsWith('message')
+  .getKeyValueStartsWith('m', 'es')
   .then((r) => {
     console.log('OK:', JSON.stringify(r, '', 2));
   })

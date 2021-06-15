@@ -18,12 +18,8 @@ async function setName(code, name) {
   throwInvalid(validateDataType(name, { type: 'string', minLength: 1, maxlength: 255 }));
 
   try {
-    return await localesTable.update({ code: _code }, { name });
+    return await localesTable.set({ code: _code }, { name });
   } catch (e) {
-    if (e.message === 'entry.notFound') {
-      return null;
-    }
-
     leemons.log.debug(e.message);
     throw new Error('An error occurred while updating the locale');
   }
