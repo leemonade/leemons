@@ -10,6 +10,7 @@ const leemonsDefaultDirs = {
   config: envf('CONFIG_DIR', 'config'),
   models: 'models',
   plugins: 'plugins',
+  providers: 'providers',
   next: envf('nextDir', 'next'),
   env: '.env',
 };
@@ -18,6 +19,11 @@ async function loadConfiguration(
   object,
   { dir = process.cwd(), defaultDirs = leemonsDefaultDirs } = {}
 ) {
+  const packageJSON = await loadFile(path.join(dir, 'package.json'));
+  // Get config_dir from package.json
+  if (_.has(packageJSON, 'leemons.configDir')) {
+    _.set(defaultDirs, 'config', packageJSON.leemons.configDir);
+  }
   // get config directory
   const configDir = path.resolve(dir, defaultDirs.config);
 

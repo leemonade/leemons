@@ -48,6 +48,10 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
         let relatedField;
         if (!field) {
           relatedField = getRelationPrimaryKey(properties);
+          // If is a primary key, add the unsigned value to true
+          if (relatedField.type === 'int') {
+            _.set(properties, 'options.unsigned', true);
+          }
         } else {
           relatedField = _.get(
             getModel(properties.references.collection),
@@ -56,12 +60,8 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
           );
         }
 
-        // Set the type of the col
-        if (_.has(relatedField, 'specificType')) {
-          _.set(properties, 'specificType', relatedField.specificType);
-        } else if (_.has(relatedField, 'type')) {
-          _.set(properties, 'type', relatedField.type);
-        }
+        // Set the same config for column (omit unnecesary options)
+        _.assign(properties, _.omit(relatedField, ['options.unique']));
 
         // If the relation is `one to one`, set the column to unique
         if (properties.references.relation === 'one to one') {
@@ -332,7 +332,7 @@ async function createRelations(model, ctx) {
           .table(schema.collectionName, (table) => {
             table
               .foreign(name)
-              .references(getRelationPrimaryKey(properties).name)
+              .references(model.relations[name].foreignKeyTarget)
               .inTable(relationTable)
               .onUpdate(properties.references.onUpdate)
               .onDelete(properties.references.onDelete);

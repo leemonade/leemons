@@ -1,0 +1,18 @@
+{
+  "name": "leemons-front",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@leemons/users-groups-roles": "file:dependencies/users-groups-roles",
+    "js-cookie": "^2.2.1",
+    "postcss": "^8.3.0",
+    "prop-types": "^15.7.2",
+    "react-hook-form": "^7.8.3",
+    "tailwindcss": "^2.1.2"
+  }
+}

@@ -30,14 +30,16 @@ class DatabaseManager {
 
     this.connectors.load();
 
-    await this.connectors.init(
-      this.leemons.core_store,
-      _.merge(
-        ...Object.values(_.cloneDeep(this.leemons.plugins))
-          .filter((plugin) => plugin.models)
-          .map((plugin) => plugin.models)
-      )
+    const models = _.merge(
+      ...Object.values(_.cloneDeep(this.leemons.plugins))
+        .filter((plugin) => plugin.models)
+        .map((plugin) => plugin.models),
+      ...Object.values(_.cloneDeep(this.leemons.providers))
+        .filter((plugin) => plugin.models)
+        .map((plugin) => plugin.models)
     );
+
+    await this.connectors.init(this.leemons.core_store, models);
 
     this.initialized = true;
   }

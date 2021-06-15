@@ -20,6 +20,9 @@ const {
 } = require('./core/plugins/loadPlugins');
 const buildFront = require('./core/front/build');
 const loadFront = require('./core/plugins/front/loadFront');
+const { loadProvidersModels } = require('./core/plugins/loadProviders');
+const { initializeProviders } = require('./core/plugins/loadProviders');
+const { loadProvidersConfig } = require('./core/plugins/loadProviders');
 
 class Leemons {
   constructor(log) {
@@ -69,6 +72,15 @@ class Leemons {
 
     this.loaded = false;
     this.started = false;
+  }
+
+  api(url, config) {
+    return fetch(`http://localhost:${process.env.PORT}/api/${url}`, config).then(async (r) => {
+      if (r.status >= 400) {
+        throw await r.json();
+      }
+      return r.json();
+    });
   }
 
   // Set KOA as requestHandler
@@ -130,6 +142,42 @@ class Leemons {
     this.backRouter.use(bodyParser());
   }
 
+  authenticatedMiddleware() {
+    return async (ctx, next) => {
+      try {
+        const user = await this.plugins['users-groups-roles'].services.users.detailForJWT(
+          ctx.headers.authorization
+        );
+        if (user) {
+          ctx.user = user;
+          return next();
+        }
+        ctx.status = 401;
+        ctx.body = { status: 401, msg: 'Authorization required' };
+        return undefined;
+      } catch (err) {
+        ctx.status = 401;
+        ctx.body = { status: 401, msg: 'Authorization required' };
+        return undefined;
+      }
+    };
+  }
+
+  permissionsMiddleware(allowedPermissions) {
+    return async (ctx, next) => {
+      const hasPermission = await this.plugins['users-groups-roles'].services.users.havePermission(
+        ctx.user,
+        allowedPermissions
+      );
+      if (hasPermission) {
+        return next();
+      }
+      ctx.status = 401;
+      ctx.body = { status: 401, msg: 'You do not have permissions' };
+      return undefined;
+    };
+  }
+
   // Initialize the api endpoints
   setRoutes() {
     // Plugins
@@ -148,9 +196,14 @@ class Leemons {
             _.get(plugin.controllers, route.handler)
           ) {
             const handler = _.get(plugin.controllers, route.handler);
+            const functions = [];
+            if (route.authenticated) functions.push(this.authenticatedMiddleware());
+            if (_.isArray(route.permissions) && route.permissions.length)
+              functions.push(this.permissionsMiddleware(route.permissions));
+            functions.push(handler);
             this.backRouter[route.method.toLocaleLowerCase()](
               `/api/${plugin.name}${route.path}`,
-              handler
+              ...functions
             );
           }
         });
@@ -175,8 +228,16 @@ class Leemons {
     return this.db.query(model, plugin);
   }
 
-  async loadBack(loadedPlugins) {
+  async loadBack(loadedPlugins, loadedProviders) {
     await hooks.fireEvent('leemons::loadBack', { status: 'start' });
+
+    /*
+     * Load the providers' DataBase Model Descriptions
+     */
+    await hooks.fireEvent('leemons::loadProvidersModels', { status: 'start' });
+    await loadProvidersModels(loadedProviders, this);
+    await hooks.fireEvent('leemons::loadProvidersModels', { status: 'end' });
+
     /*
      * Load the plugins' DataBase Model Descriptions
      */
@@ -200,6 +261,10 @@ class Leemons {
     await hooks.fireEvent('leemons::initDB', { status: 'start' });
     await this.db.init();
     await hooks.fireEvent('leemons::initDB', { status: 'end' });
+
+    await hooks.fireEvent('leemons::initializeProviders', { status: 'start' });
+    await initializeProviders(this);
+    await hooks.fireEvent('leemons::initializeProviders', { status: 'end' });
 
     await hooks.fireEvent('leemons::initializePlugins', { status: 'start' });
     await initializePlugins(this);
@@ -260,6 +325,14 @@ class Leemons {
     return loadedPlugins;
   }
 
+  async loadProvidersConfig() {
+    await hooks.fireEvent('leemons::loadProviders', { status: 'start' });
+    const loadedProviders = await loadProvidersConfig(this);
+    await hooks.fireEvent('leemons::loadProviders', { status: 'end' });
+
+    return loadedProviders;
+  }
+
   // Load all apps
   async load() {
     await hooks.fireEvent('leemons::load', { status: 'start' });
@@ -273,13 +346,14 @@ class Leemons {
      * plugins and save plugin' env
      */
     const loadedPlugins = await this.loadPluginsConfig();
+    const providersConfig = await this.loadProvidersConfig();
 
     await Promise.all([
       /*
        * Load all the backend plugins, database and
        * setup the middlewares
        */
-      await this.loadBack(loadedPlugins),
+      await this.loadBack(loadedPlugins, providersConfig),
       /*
        * Load all the frontend plugins, build the app if needed
        * and set the middlewares.
