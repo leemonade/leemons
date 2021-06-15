@@ -43,15 +43,36 @@ class Roles {
     return table.roles.transaction(async (transacting) => {
       leemons.log.info(`Creating role '${data.name}'`);
       const role = await table.roles.create({ name: data.name }, { transacting });
+      await Roles.addPermissionMany(role.id, data.permissions, transacting);
+      return role;
+    });
+  }
 
-      await table.rolePermission.createMany(
-        _.map(permissions, (permission) => ({
-          role: role.id,
-          permission,
-        })),
-        { transacting }
-      );
+  /**
+   * Create one role
+   * @private
+   * @static
+   * @param {RoleUpdate} data
+   * @return {Promise<Role>} Created / Updated role
+   * */
+  static async update(data) {
+    let existRole = await table.roles.count({ id: data.id });
+    if (!existRole) throw new Error(`The role with the specified id does not exist`);
 
+    existRole = await table.roles.count({ id_$ne: data.id, name: data.name });
+    if (existRole) throw new Error(`Role with name '${data.name}' already exists`);
+
+    const dataToCheckPermissions = _.map(data.permissions, (permission) => [
+      permission.permissionName,
+      permission.actionNames,
+    ]);
+    if (!(await permissionsService.manyPermissionsHasManyActions(dataToCheckPermissions)))
+      throw new Error(`One or more permissions or his actions not exist`);
+
+    return table.roles.transaction(async (transacting) => {
+      leemons.log.info(`Creating role '${data.name}'`);
+      const role = await table.roles.create({ name: data.name }, { transacting });
+      await Roles.addPermissionMany(role.id, data.permissions, transacting);
       return role;
     });
   }
@@ -155,6 +176,61 @@ class Roles {
       { reloadPermissions: true },
       { transacting }
     );
+  }
+
+  /**
+   * Update the provided role
+   * @public
+   * @static
+   * @param {string} roleId - Role id
+   * @param {RolePermissionsAdd} permissions - Array of permissions
+   * @param {any} transaction - DB Transaction
+   * @return {Promise<any>} Created permissions-roles
+   * */
+  static async addPermissionMany(roleId, permissions, transaction) {
+    if (transaction) return Roles._addPermissionMany(roleId, permissions, transaction);
+    return table.roles.transaction(async (transacting) => {
+      return Roles._addPermissionMany(roleId, permissions, transacting);
+    });
+  }
+
+  static async _addPermissionMany(roleId, permissions, transacting) {
+    const roleExist = await table.roles.count({ id: roleId });
+    if (!roleExist) throw new Error('The role with the specified id does not exist');
+    const items = [];
+    _.forEach(permissions, (permission) => {
+      _.forEach(permission.actionNames, (actionName) => {
+        items.push({
+          permissionName: permission.permissionName,
+          actionName,
+          target: permission.target,
+          role: roleId,
+        });
+      });
+    });
+    return table.rolePermission.createMany(items, { transacting });
+  }
+
+  /**
+   * Remove all permissions of role
+   * @public
+   * @static
+   * @param {string} roleId - Role id
+   * @param {any} transaction - DB Transaction
+   * @return {Promise<Role>} Created / Updated role
+   * */
+  static async deletePermissionAll(roleId, transaction) {
+    if (transaction) return Roles._deletePermissionAll(roleId, transaction);
+    return table.roles.transaction(async (transacting) => {
+      return Roles._deletePermissionAll(roleId, transacting);
+    });
+  }
+
+  static async _deletePermissionAll(roleId, transaction) {
+    if (transaction) return Roles._addPermissionMany(roleId, transaction);
+    return table.roles.transaction(async (transacting) => {
+      return Roles._addPermissionMany(roleId, transacting);
+    });
   }
 }
 

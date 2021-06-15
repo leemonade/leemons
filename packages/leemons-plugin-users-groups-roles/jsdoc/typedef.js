@@ -20,12 +20,23 @@
 
 /**
  * @typedef RoleAdd
- * @param {string} name Role name
- * @param {object[]} permissions Permissions for role
- * @param {string} permissions.permissionName Permission name (For backend)
- * @param {string[]} permissions.actionNames Action names (For backend)
- * @param {string[]=} permissions.target Target id
- * @param {LocalizationAdd} localizationName
+ * @type {Object}
+ * @property {string} name Role name
+ * @property {RolePermissionsAdd} permissions Permissions for role
+ * @property {LocalizationAdd} localizationName
+ */
+
+/**
+ * @typedef {RoleAdd} RoleUpdate
+ * @property {string} id Role id
+ */
+
+/**
+ * @typedef RolePermissionsAdd
+ * @type {Object[]}
+ * @property {string} permissionName Permission name (For backend)
+ * @property {string[]} actionNames Action names (For backend)
+ * @property {string} target Target id
  */
 
 /**
