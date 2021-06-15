@@ -1,0 +1,1 @@
+{"users-groups-roles":"8fc86e15426ad15a2ae7f703a11adfe2","plugins.js":"module.exports = {\n  plugins: [\n    'users-groups-roles'\n  ],\n  frontPlugins: [{\n    name: 'users-groups-roles',\n    version: null,\n    load: require('@users-groups-roles/index.js')\n  }]\n};","integrity":"75e959763f3b6a1c26ccdb66d7ace70a"}
