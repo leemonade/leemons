@@ -11,6 +11,11 @@
 
 "@leemons/users-groups-roles@file:dependencies/users-groups-roles":
   version "1.0.0"
+  dependencies:
+    "@users-groups-roles" "file:../../../../../../Library/Caches/Yarn/v6/npm-@leemons-users-groups-roles-1.0.0-54201d67-ab43-4bca-afd9-a2e4406a1917-1623752597814/node_modules/@leemons/users-groups-roles"
+    js-cookie "^2.2.1"
+    react-hook-form "^7.8.5"
+    swr "^0.5.6"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -32,6 +37,14 @@
   dependencies:
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
+
+"@users-groups-roles@file:dependencies/users-groups-roles":
+  version "1.0.0"
+  dependencies:
+    "@users-groups-roles" "file:../../../../../../Library/Caches/Yarn/v6/npm-@users-groups-roles-1.0.0-ddfdc139-be79-4b0a-b0e9-3587c845ba51-1623752597818/node_modules/@users-groups-roles"
+    js-cookie "^2.2.1"
+    react-hook-form "^7.8.5"
+    swr "^0.5.6"
 
 acorn-node@^1.6.1:
   version "1.8.2"
@@ -215,6 +228,11 @@ defined@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/defined/-/defined-1.0.0.tgz#c98d9bcef75674188e110969151199e39b1fa693"
   integrity sha1-yY2bzvdWdBiOEQlpFRGZ45sfppM=
+
+dequal@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/dequal/-/dequal-2.0.2.tgz#85ca22025e3a87e65ef75a7a437b35284a7e319d"
+  integrity sha512-q9K8BlJVxK7hQYqa6XISGmBZbtQQWVXSrRrWreHC94rMt1QL/Impruc+7p2CYSYuVIUr+YCt6hjrs1kkdJRTug==
 
 detective@^5.2.0:
   version "5.2.0"
@@ -648,6 +666,11 @@ react-hook-form@^7.8.3:
   resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.8.3.tgz#104da2a1ae50aaaea949ddee9ec8684506c4e448"
   integrity sha512-W444tNhyyR3eaQjgtdVOvzId8Fjoexdfko0d46Nme/3Cjo3ETcF9kSVg51ut8mI805Wh2K1GKim+hEgcfIrFLA==
 
+react-hook-form@^7.8.5:
+  version "7.8.5"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.8.5.tgz#2aa3b29bf6517e80122653ae30473e76f200d50c"
+  integrity sha512-zRz3mBmkq4wJNhOnVyDfnEJOjZEEasNIcRABkSpczjPCRtQSsPICqG96ldYCGrOHHrk7qOIjG8TF52cOFMxhPQ==
+
 react-is@^16.8.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
@@ -718,6 +741,13 @@ supports-color@^7.1.0:
   integrity sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==
   dependencies:
     has-flag "^4.0.0"
+
+swr@^0.5.6:
+  version "0.5.6"
+  resolved "https://registry.yarnpkg.com/swr/-/swr-0.5.6.tgz#70bfe9bc9d7ac49a064be4a0f4acf57982e55a31"
+  integrity sha512-Bmx3L4geMZjYT5S2Z6EE6/5Cx6v1Ka0LhqZKq8d6WL2eu9y6gHWz3dUzfIK/ymZVHVfwT/EweFXiYGgfifei3w==
+  dependencies:
+    dequal "2.0.2"
 
 tailwindcss@^2.1.2:
   version "2.1.4"

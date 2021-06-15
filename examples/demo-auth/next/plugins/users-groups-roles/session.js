@@ -51,7 +51,9 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
   if (!context) {
     const token = Cookies.get('token');
     if (token) {
-      const { data, error } = useSWR('users-groups-roles/user', fetcher(token));
+      const { data, error } = useSWR('users-groups-roles/user', fetcher(token), {
+        revalidateOnFocus: false,
+      });
       const user = data && data.user ? data.user : null;
       const finished = Boolean(data);
       const hasUser = Boolean(user);

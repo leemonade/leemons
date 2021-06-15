@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { useSession } from '@users-groups-roles/session';
 
 export default function UserTest() {

@@ -5,7 +5,7 @@ const constants = require('../../config/constants');
 const table = {
   users: leemons.query('plugins_users-groups-roles::users'),
   userRecoverPassword: leemons.query('plugins_users-groups-roles::user-recover-password'),
-  superAdminUserAuth: leemons.query('plugins_users-groups-roles::super-admin-user-auth'),
+  superAdminUser: leemons.query('plugins_users-groups-roles::super-admin-user'),
   config: leemons.query('plugins_users-groups-roles::config'),
   userAuthPermission: leemons.query('plugins_users-groups-roles::user-auth-permission'),
   userAuthRole: leemons.query('plugins_users-groups-roles::user-auth-role'),
@@ -37,6 +37,7 @@ class Users {
 
   static async getJWTPrivateKey() {
     if (!jwtPrivateKey) jwtPrivateKey = await table.config.findOne({ key: 'jwt-private-key' });
+    if (!jwtPrivateKey) jwtPrivateKey = await Users.generateJWTPrivateKey();
     return jwtPrivateKey.value;
   }
 
@@ -48,10 +49,6 @@ class Users {
         value: Users.randomString(),
       });
     return config;
-    /*
-    if (config) return table.config.update({ id: config.id }, { value: Users.randomString() });
-    return table.config.create({ key: 'jwt-private-key', value: Users.randomString() });
-     */
   }
 
   /**
@@ -139,7 +136,7 @@ class Users {
           },
           { transacting }
         );
-        await table.superAdminUsers.create({ user: user.id }, { transacting });
+        await table.superAdminUser.create({ user: user.id }, { transacting });
         delete user.password;
         return user;
       });
@@ -160,12 +157,15 @@ class Users {
   static async login(email, password) {
     const userP = await table.users.findOne({ email }, { columns: ['id', 'password'] });
     if (!userP) throw new global.utils.HttpError(401, 'Credentials do not match');
+
     const areEquals = await Users.comparePassword(password, userP.password);
     if (!areEquals) throw new global.utils.HttpError(401, 'Credentials do not match');
+
     const [user, token] = await Promise.all([
       table.users.findOne({ email }),
       Users.generateJWTToken({ id: userP.id }),
     ]);
+
     return { user, token };
   }
 
@@ -242,7 +242,7 @@ class Users {
    * */
   static async getSuperAdminUserIds() {
     // Todo cachear ids de super administrador
-    const superAdminUsers = await table.superAdminUsers.find();
+    const superAdminUsers = await table.superAdminUser.find();
     return _.map(superAdminUsers, 'user');
   }
 
@@ -262,19 +262,19 @@ class Users {
    * Checks if the user has 1 or more of the specified permissions.
    * @public
    * @static
-   * @param {User} user - User to check
+   * @param {UserAuth} userAuth - User auth to check
    * @param {string[]} allowedPermissions - Array of permissions
    * @return {Promise<boolean>} If have permission return true if not false
    * */
-  static async havePermission(user, allowedPermissions) {
-    if (user.reloadPermissions) await Users.updateUserPermissions(user.id);
+  static async havePermission(userAuth, allowedPermissions) {
+    if (userAuth.reloadPermissions) await Users.updateUserPermissions(userAuth.id);
 
-    let hasPermission = await table.userPermission.count({
-      user: user.id,
+    let hasPermission = await table.userAuthPermission.count({
+      user: userAuth.id,
       permission_$in: allowedPermissions,
     });
     if (hasPermission) return true;
-    hasPermission = await Users.userIsSuperAdmin(user.id);
+    hasPermission = await Users.userIsSuperAdmin(userAuth.user);
     if (hasPermission) return true;
     return false;
   }

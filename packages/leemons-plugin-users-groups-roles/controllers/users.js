@@ -71,6 +71,7 @@ async function login(ctx) {
       throw new Error(validator.error);
     }
   } catch (err) {
+    console.error(err);
     global.utils.returnError(ctx, err);
   }
 }

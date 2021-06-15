@@ -30,10 +30,10 @@ class Roles {
    * @param {RoleAdd} data
    * @return {Promise<Role>} Created / Updated role
    * */
-  static async add(data) {
-    const existRole = await table.roles.count({ name: data.name });
-    if (existRole) throw new Error(`Role with name '${data.name}' already exists`);
-    const dataToCheckPermissions = _.map(data.permissions, (permission) => [
+  static async add({ name, permissions }) {
+    const existRole = await table.roles.count({ name });
+    if (existRole) throw new Error(`Role with name '${name}' already exists`);
+    const dataToCheckPermissions = _.map(permissions, (permission) => [
       permission.permissionName,
       permission.actionNames,
     ]);
@@ -41,28 +41,28 @@ class Roles {
       throw new Error(`One or more permissions or his actions not exist`);
 
     return table.roles.transaction(async (transacting) => {
-      leemons.log.info(`Creating role '${data.name}'`);
-      const role = await table.roles.create({ name: data.name }, { transacting });
-      await Roles.addPermissionMany(role.id, data.permissions, transacting);
+      leemons.log.info(`Creating role '${name}'`);
+      const role = await table.roles.create({ name }, { transacting });
+      await Roles.addPermissionMany(role.id, permissions, transacting);
       return role;
     });
   }
 
   /**
-   * Create one role
+   * Update one role
    * @private
    * @static
    * @param {RoleUpdate} data
    * @return {Promise<Role>} Created / Updated role
    * */
-  static async update(data) {
-    let existRole = await table.roles.count({ id: data.id });
+  static async update({ id, name, permissions }) {
+    let existRole = await table.roles.count({ id });
     if (!existRole) throw new Error(`The role with the specified id does not exist`);
 
-    existRole = await table.roles.count({ id_$ne: data.id, name: data.name });
-    if (existRole) throw new Error(`Role with name '${data.name}' already exists`);
+    existRole = await table.roles.count({ id_$ne: id, name });
+    if (existRole) throw new Error(`Role with name '${name}' already exists`);
 
-    const dataToCheckPermissions = _.map(data.permissions, (permission) => [
+    const dataToCheckPermissions = _.map(permissions, (permission) => [
       permission.permissionName,
       permission.actionNames,
     ]);
@@ -70,82 +70,14 @@ class Roles {
       throw new Error(`One or more permissions or his actions not exist`);
 
     return table.roles.transaction(async (transacting) => {
-      leemons.log.info(`Creating role '${data.name}'`);
-      const role = await table.roles.create({ name: data.name }, { transacting });
-      await Roles.addPermissionMany(role.id, data.permissions, transacting);
-      return role;
-    });
-  }
+      leemons.log.info(`Creating role '${name}'`);
+      const values = await Promise.all([
+        Roles.deletePermissionAll(id, transacting),
+        table.roles.update({ id }, { name }, { transacting }),
+      ]);
 
-  /**
-   * Creates or updates a role based on whether the name is already in use
-   * @public
-   * @static
-   * @param {string} name - Role name
-   * @param {string[]} permissions - Array of permissions
-   * @return {Promise<Role>} Created / Updated role
-   * */
-  static async createRole(name, permissions) {
-    return Roles.registerRole(null, name, permissions);
-  }
-
-  /**
-   * Update the provided role
-   * @public
-   * @static
-   * @param {string} id - Role id
-   * @param {string[]} permissions - Array of permissions
-   * @return {Promise<Role>} Created / Updated role
-   * */
-  static async updateRole(id, permissions) {
-    return Roles.registerRole(id, null, permissions);
-  }
-
-  /**
-   * Create / Update one role
-   * If id is provided we update the role
-   * If name is provided we check if already exist one role with this name, if exist we update if not we create it
-   * @private
-   * @static
-   * @param {string=} id - Role id
-   * @param {string=} name - Role name
-   * @param {string[]} permissions - Array of permissions
-   * @return {Promise<Role>} Created / Updated role
-   * */
-  static async registerRole(id, name, permissions) {
-    const values = await Promise.all([
-      id ? table.roles.findOne({ id }) : table.roles.findOne({ name }),
-      table.permissions.count({ permissionName_$in: permissions }),
-    ]);
-
-    if (values[1] !== permissions.length)
-      throw new Error('One or more of the permits do not exist');
-
-    return table.rolePermission.transaction(async (transacting) => {
-      let role = values[0];
-      if (role) {
-        // If the role already exists, we update its fields and delete its permissions and then create the new ones.
-        leemons.log.info(`Updating role '${name}'`);
-        await Promise.all([
-          table.roles.update({ id: role.id }, { name }, { transacting }),
-          table.rolePermission.deleteMany({ role: role.id }, { transacting }),
-          Roles.searchUsersWithRoleAndMarkAsReloadPermissions(role.id, transacting),
-        ]);
-      } else {
-        // If the role does not exist, we create it
-        leemons.log.info(`Creating role '${name}'`);
-        role = await table.roles.create({ name }, { transacting });
-      }
-
-      await table.rolePermission.createMany(
-        _.map(permissions, (permission) => ({
-          role: role.id,
-          permission,
-        })),
-        { transacting }
-      );
-
-      return role;
+      await Roles.addPermissionMany(id, permissions, transacting);
+      return values[1];
     });
   }
 
@@ -184,14 +116,14 @@ class Roles {
    * @static
    * @param {string} roleId - Role id
    * @param {RolePermissionsAdd} permissions - Array of permissions
-   * @param {any} transaction - DB Transaction
+   * @param {any} transacting - DB Transaction
    * @return {Promise<any>} Created permissions-roles
    * */
-  static async addPermissionMany(roleId, permissions, transaction) {
-    if (transaction) return Roles._addPermissionMany(roleId, permissions, transaction);
-    return table.roles.transaction(async (transacting) => {
-      return Roles._addPermissionMany(roleId, permissions, transacting);
-    });
+  static async addPermissionMany(roleId, permissions, transacting) {
+    if (transacting) return Roles._addPermissionMany(roleId, permissions, transacting);
+    return table.roles.transaction(async (transactin) =>
+      Roles._addPermissionMany(roleId, permissions, transactin)
+    );
   }
 
   static async _addPermissionMany(roleId, permissions, transacting) {
@@ -216,21 +148,18 @@ class Roles {
    * @public
    * @static
    * @param {string} roleId - Role id
-   * @param {any} transaction - DB Transaction
+   * @param {any} transacting - DB Transaction
    * @return {Promise<Role>} Created / Updated role
    * */
-  static async deletePermissionAll(roleId, transaction) {
-    if (transaction) return Roles._deletePermissionAll(roleId, transaction);
-    return table.roles.transaction(async (transacting) => {
-      return Roles._deletePermissionAll(roleId, transacting);
-    });
+  static async deletePermissionAll(roleId, transacting) {
+    if (transacting) return Roles._deletePermissionAll(roleId, transacting);
+    return table.roles.transaction(async (transactin) =>
+      Roles._deletePermissionAll(roleId, transactin)
+    );
   }
 
-  static async _deletePermissionAll(roleId, transaction) {
-    if (transaction) return Roles._addPermissionMany(roleId, transaction);
-    return table.roles.transaction(async (transacting) => {
-      return Roles._addPermissionMany(roleId, transacting);
-    });
+  static async _deletePermissionAll(role, transacting) {
+    return table.rolePermission.deleteMany({ role }, { transacting });
   }
 }
 

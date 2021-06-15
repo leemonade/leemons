@@ -1,13 +1,13 @@
 module.exports = {
-  modelName: 'super-admin-user-auth',
-  collectionName: 'super-admin-user-auth',
+  modelName: 'super-admin-user',
+  collectionName: 'super-admin-user',
   options: {
     useTimestamps: true,
   },
   attributes: {
-    userAuth: {
+    user: {
       references: {
-        collection: 'plugins_users-groups-roles::user-auth',
+        collection: 'plugins_users-groups-roles::users',
       },
     },
   },
