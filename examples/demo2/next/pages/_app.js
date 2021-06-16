@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import hooks from 'leemons-hooks';
 import { frontPlugins, plugins } from '@plugins';
 import { useLayout } from '@layouts/hooks';
+import 'leemons-ui/dist/theme/leemons.css';
 
 function MyApp({ Component, pageProps }) {
   // Only add it once
