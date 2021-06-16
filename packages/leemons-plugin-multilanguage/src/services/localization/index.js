@@ -1,6 +1,7 @@
 const { add, addMany, addManyByKey } = require('./create');
 const {
   get,
+  getManyWithLocale,
   getWithKey,
   getKeyValueWithLocale,
   getWithLocale,
@@ -18,6 +19,7 @@ module.exports = {
   addManyByKey,
 
   get,
+  getManyWithLocale,
   getWithKey,
   getKeyValueWithLocale,
   getWithLocale,

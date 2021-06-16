@@ -79,7 +79,9 @@ async function addMany(locales) {
       // Return the new locales
       const addedLocales = await localesTable.createMany(newLocales, { transacting: t });
       leemons.log.info(
-        `New locales added: ${newLocales.map((locale) => `${locale.code} | ${locale.name}}`)}`
+        `New locales added: ${newLocales
+          .map((locale) => `${locale.code} | ${locale.name}`)
+          .join(', ')}`
       );
       return addedLocales;
     });

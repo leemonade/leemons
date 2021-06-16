@@ -1,5 +1,4 @@
-const validateLocale = require('../../../validations/locale');
-const throwInvalid = require('../../../validations/throwInvalid');
+const _ = require('lodash');
 
 const localizationsTable = leemons.query('plugins_multilanguage::localizations');
 
@@ -17,6 +16,22 @@ async function get(key, locale) {
   } catch (e) {
     leemons.log.debug(e.message);
     throw new Error('An error occurred while getting the localization');
+  }
+}
+
+async function getManyWithLocale(keys, locale) {
+  const _keys = keys.map((key) => key.toLowerCase());
+  const _locale = locale.toLowerCase();
+
+  try {
+    const foundLocalizations = await localizationsTable.find({ key_$in: _keys, locale: _locale });
+
+    return _.fromPairs(
+      foundLocalizations.map((localization) => [localization.key, localization.value])
+    );
+  } catch (e) {
+    leemons.log.debug(e.message);
+    throw new Error('An error ocurred while getting the localizations');
   }
 }
 
@@ -97,6 +112,7 @@ async function getKeyValueStartsWith(key, locale) {
 
 module.exports = {
   get,
+  getManyWithLocale,
   getWithKey,
   getKeyValueWithLocale,
   getWithLocale,
