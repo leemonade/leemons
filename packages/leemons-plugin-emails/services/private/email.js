@@ -1,154 +1,236 @@
 const _ = require('lodash');
-const { htmlToText } = require('nodemailer-html-to-text');
-const inlineBase64 = require('nodemailer-plugin-inline-base64');
 const Sqrl = require('squirrelly');
 
-const constants = require('../../config/constants');
+const testTemplate = require('../../emails/test');
 
 const table = {
-  emails: leemons.query('plugins_emails::emails'),
-  emailsConfig: leemons.query('plugins_emails::emails-config'),
+  emailTemplate: leemons.query('plugins_emails::email-template'),
+  emailTemplateDetail: leemons.query('plugins_emails::email-template-detail'),
 };
 
-let _transporters = null;
-
 class Email {
+  static get types() {
+    return {
+      active: 'active',
+    };
+  }
+
   static async init() {
-    await Email.registerConfig({
-      transport: 'smtp',
-      name: 'Test smtp',
-      host: 'smtp.ethereal.email',
-      port: 587,
-      secure: false,
-      user: 'lavern48@ethereal.email',
-      pass: 'km6a5jmjRy3QGMzb8W',
-    });
-    await Email.register(
-      'Tes email',
-      'test-mail',
+    await Email.addIfNotExist(
+      'test-email',
       'es',
-      'El asunto de prueba {name}',
-      '<p>Hola <b>{name}</b></p>'
+      'Email de prueba',
+      testTemplate.es,
+      Email.types.active
+    );
+    await Email.addIfNotExist(
+      'test-email',
+      'en',
+      'Test email',
+      testTemplate.en,
+      Email.types.active
     );
   }
 
   /**
-   * Create the nodemailer smtp transporter
-   * @private
+   * Return array of installed providers for email
+   * @public
    * @static
-   * @param {EmailConfig} config
-   * @return {Promise<any>}
+   * @return {any[]}
    * */
-  static createSMTPTransport(config) {
-    const transporter = global.utils.nodemailer.createTransport({
-      host: config.host,
-      port: config.port,
-      secure: config.secure,
-      auth: {
-        user: config.user,
-        pass: config.pass,
-      },
-    });
-    transporter.use('compile', htmlToText());
-    transporter.use('compile', inlineBase64());
-    return transporter;
-  }
-
-  static createMailchimpTransport(config) {
-    return true;
-  }
-
-  /**
-   * Create the nodemailer transporters
-   * @private
-   * @static
-   * @return {Promise<any>}
-   * */
-  static async createTransporters() {
-    const emailConfigs = await table.emailsConfig.find();
-    _transporters = _.map(emailConfigs, (emailConfig) => {
-      switch (emailConfig.transport.toLowerCase()) {
-        case 'smtp':
-          return Email.createSMTPTransport(emailConfig);
-        case 'mailchimp':
-          return Email.createMailchimpTransport(emailConfig);
-        default:
-          return Email.createSMTPTransport(emailConfig);
+  static providers() {
+    const providers = [];
+    let newValue;
+    _.forIn(leemons.plugin.providers, (value, key) => {
+      newValue = value;
+      if (newValue.config && newValue.config.data) {
+        newValue.config.data.providerName = key;
+        providers.push(newValue.config.data);
       }
     });
+    return providers;
   }
 
   /**
-   * Return the nodemailer transporters
+   * Add new provider config
+   * @public
+   * @static
+   * @return {Promise<any>} new provider config
+   * */
+  static async addProvider(data) {
+    if (!leemons.plugin.providers[data.providerName])
+      throw new Error(`No provider with the name ${data.providerName}`);
+    return leemons.plugin.providers[data.providerName].services.email.addConfig(data.config);
+  }
+
+  /**
+   * Send test email to check if the transporter is working with the provided config
+   * @private
+   * @static
+   * @return {Promise<any>} nodemailer transporters
+   * */
+  static async sendTest(data) {
+    if (!leemons.plugin.providers[data.providerName])
+      throw new Error(`No provider with the name ${data.providerName}`);
+    const transporter = leemons.plugin.providers[
+      data.providerName
+    ].services.email.getTransporterByConfig(data.config);
+
+    // TODO Email Sacar idioma principal seleccionado
+    const language = 'es';
+    let email = await Email.findEmail('test-email', language);
+    if (!email) email = await Email.findEmail('test-email', 'en');
+
+    // Compile email with data
+    email.subject = Sqrl.render(email.subject, { name: 'Cerberupo' });
+    email.html = Sqrl.render(email.html, { name: 'Cerberupo' });
+
+    // TODO Cambiar emails por el del super admin para recibir el email y el del colegio para from
+    return Email.startToTrySendEmail(
+      'jaime@leemons.io',
+      'jaime@leemons.io',
+      email,
+      [transporter],
+      0
+    );
+  }
+
+  /**
+   * Return the nodemailer transporters for all installed providers
    * @private
    * @static
    * @return {Promise<any>} nodemailer transporters
    * */
   static async getTransporters() {
-    if (!_transporters) await Email.createTransporters();
-    return _transporters;
+    const promises = [];
+    _.forIn(leemons.plugin.providers, (value) => {
+      if (
+        value.services &&
+        value.services.email &&
+        _.isFunction(value.services.email.getTransporters)
+      ) {
+        promises.push(value.services.email.getTransporters());
+      }
+    });
+    const transporters = await Promise.all(promises);
+    return _.flatten(transporters);
   }
 
   /**
-   * Remove one smtp config
+   * Add email if not exist
    * @public
    * @static
-   * @param {string} configId
-   * @return {Promise<EmailConfig>}
-   * */
-  static async removeConfig(configId) {
-    return table.emailsConfig.delete({ id: configId });
-  }
-
-  /**
-   * Register new smtp config
-   * @public
-   * @static
-   * @param {EmailConfig} config
-   * @return {Promise<EmailConfig>}
-   * */
-  static async registerConfig(config) {
-    return table.emailsConfig.create(config);
-  }
-
-  /**
-   * Send email
-   * @public
-   * @static
-   * @param {string} name
    * @param {string} templateName
    * @param {string} subject
    * @param {string} language
    * @param {string} html
-   * @return {Promise<Email>}
+   * @param {string} type
+   * @return {Promise<boolean>}
    * */
-  static async register(name, templateName, language, subject, html) {
-    const exists = await table.emails.count({ templateName, language });
-    if (exists) throw new Error('An email with this template name and language already exists');
-    return table.emails.create({ name, templateName, language, subject, html });
+  static async addIfNotExist(templateName, language, subject, html, type) {
+    try {
+      await Email.add(templateName, language, subject, html, type);
+      return true;
+    } catch (err) {
+      return true;
+    }
   }
 
   /**
-   * Send email
+   * Add email
+   * @public
+   * @static
+   * @param {string} templateName
+   * @param {string} subject
+   * @param {string} language
+   * @param {string} html
+   * @param {string} type
+   * @return {Promise<Email>}
+   * */
+  static async add(templateName, language, subject, html, type) {
+    let template = await table.emailTemplate.findOne({ templateName }, { columns: ['id'] });
+    return table.emailTemplate.transaction(async (transacting) => {
+      if (!template)
+        template = await table.emailTemplate.create(
+          {
+            name: templateName,
+            templateName,
+          },
+          { transacting }
+        );
+      const detail = await table.emailTemplateDetail.count(
+        {
+          template: template.id,
+          language,
+          type,
+        },
+        { transacting }
+      );
+      if (detail)
+        throw new Error(
+          `The ${templateName} email template already have the language ${language} of type ${type}`
+        );
+      leemons.log.info(
+        `Adding email template Name: ${templateName} Language: ${language} Type: ${type}`
+      );
+      return table.emailTemplateDetail.create(
+        {
+          template: template.id,
+          language,
+          subject,
+          html,
+          type,
+        },
+        { transacting }
+      );
+    });
+  }
+
+  /**
+   * Delete one template for one language
    * @public
    * @static
    * @param {string} templateName
    * @param {string} language
+   * @param {string} type
    * @return {Promise<Email>}
    * */
-  static async remove(templateName, language) {
-    return table.emails.remove({ templateName, language });
+  static async delete(templateName, language, type) {
+    const template = await table.emailTemplate.findOne({ templateName }, { columns: ['id'] });
+    if (!template) throw new Error(`There is no template with the name ${templateName}`);
+    const templateDetail = await table.emailTemplateDetail.findOne(
+      {
+        template: template.id,
+        language,
+        type,
+      },
+      { columns: ['id'] }
+    );
+    if (!templateDetail)
+      throw new Error(
+        `The ${templateName} email template does not have the language ${language} of type ${type}`
+      );
+    return table.emailTemplateDetail.delete({ id: templateDetail.id });
   }
 
   /**
-   * Send email
+   * Delete all data of one template
    * @public
    * @static
    * @param {string} templateName
    * @return {Promise<Email>}
    * */
-  static async removeAll(templateName) {
-    return table.emails.remove({ templateName });
+  static async deleteAll(templateName) {
+    const template = await table.emailTemplate.findOne({ templateName }, { columns: ['id'] });
+    if (!template) throw new Error(`There is no template with the name ${templateName}`);
+
+    return table.emailTemplate.transaction(async (transacting) => {
+      const value = await Promise.all([
+        table.emailTemplate.delete({ id: template.id }, { transacting }),
+        table.emailTemplateDetail.deleteMany({ template: template.id }, { transacting }),
+      ]);
+      return value[0];
+    });
   }
 
   /**
@@ -170,31 +252,31 @@ class Email {
     if (!email) throw new Error(`No email found for template '${templateName}' and language `);
     // Take email settings and try to send email with each setting until it is sent.
     const transporters = await Email.getTransporters();
-    return Email.startToTrySendEmail(from, to, email, context, transporters, 0);
+
+    // Compile email with data
+    email.subject = Sqrl.render(email.subject, context);
+    email.html = Sqrl.render(email.html, context);
+
+    return Email.startToTrySendEmail(from, to, email, transporters, 0);
   }
 
-  static async startToTrySendEmail(from, to, email, context, transporters, index) {
+  static async startToTrySendEmail(from, to, email, transporters, index) {
     if (index < transporters.length) {
-      let info = await transporters[index].sendMail({
-        from,
-        to,
-        subject: email.subject,
-        html: email.html,
-      });
-      console.log(info);
+      try {
+        const info = await transporters[index].sendMail({
+          from,
+          to,
+          subject: email.subject,
+          html: email.html,
+        });
+        info.error = false;
+        return info;
+      } catch (err) {
+        return Email.startToTrySendEmail(from, to, email, transporters, index + 1);
+      }
     }
-    return { error: true, done: false };
+    return { error: true, message: 'Could not send email with any provider' };
   }
-
-  /**
-   * Get email
-   * @private
-   * @static
-   * @param {Email} email
-   * @param {any} transporter - Nodemailer transporter
-   * @return {Promise<boolean>}
-   * */
-  static async sendEmail(email, transporter) {}
 
   /**
    * Get email
@@ -205,10 +287,13 @@ class Email {
    * @return {Promise<Email>}
    * */
   static async findEmail(templateName, language) {
-    return table.emails.findOne(
+    const template = await table.emailTemplate.findOne({ templateName }, { columns: ['id'] });
+    if (!template) throw new Error(`There is no template with the name ${templateName}`);
+    return table.emailTemplateDetail.findOne(
       {
-        templateName,
+        template: template.id,
         language,
+        type: Email.types.active,
       },
       { columns: ['subject', 'html'] }
     );

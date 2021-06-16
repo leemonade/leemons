@@ -1,17 +1,16 @@
 module.exports = {
-  modelName: 'emails',
-  collectionName: 'emails',
+  modelName: 'email-template-detail',
+  collectionName: 'email-template-detail',
   options: {
     useTimestamps: true,
   },
   attributes: {
-    name: {
-      type: 'string',
-      options: {
-        notNull: true,
+    template: {
+      references: {
+        collection: 'plugins_emails::email-template',
       },
     },
-    templateName: {
+    type: {
       type: 'string',
       options: {
         notNull: true,

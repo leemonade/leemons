@@ -8,11 +8,14 @@
     "start": "next start"
   },
   "dependencies": {
+    "@leemons/onboarding": "file:dependencies/onboarding",
+    "@leemons/provider-emails-amazon-ses": "file:dependencies/provider-emails-amazon-ses",
     "@leemons/users-groups-roles": "file:dependencies/users-groups-roles",
     "js-cookie": "^2.2.1",
     "postcss": "^8.3.0",
     "prop-types": "^15.7.2",
     "react-hook-form": "^7.8.3",
-    "tailwindcss": "^2.1.2"
+    "tailwindcss": "^2.1.2",
+    "@leemons/emails": "file:dependencies/emails"
   }
 }

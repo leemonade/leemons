@@ -92,8 +92,15 @@ async function saveChecksums(dir, checksums, pluginsEntries) {
 /**
  * Moves all the modified folders to the front directory
  */
-async function loadFront(leemons, installedPlugins) {
-  const plugins = installedPlugins.map((plugin) => [plugin.name, plugin]);
+async function loadFront(leemons, installedPlugins, installedProviders) {
+  const providers = _.map(_.cloneDeep(installedProviders), (provider) => {
+    provider.name = `provider-${provider.name}`;
+    return provider;
+  });
+
+  const plugins = installedPlugins
+    .map((plugin) => [plugin.name, plugin])
+    .concat(providers.map((provider) => [provider.name, provider]));
   const nextPath = leemons.dir.next;
 
   _.set(leemons, 'frontNeedsBuild', false);

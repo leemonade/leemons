@@ -9,10 +9,27 @@
   dependencies:
     purgecss "^3.1.3"
 
+"@leemons/emails@file:dependencies/emails":
+  version "1.0.0"
+  dependencies:
+    lodash "^4.17.21"
+    react-hook-form "^7.8.5"
+
+"@leemons/onboarding@file:dependencies/onboarding":
+  version "1.0.0"
+  dependencies:
+    lodash "^4.17.21"
+    react-hook-form "^7.8.5"
+
+"@leemons/provider-emails-amazon-ses@file:dependencies/provider-emails-amazon-ses":
+  version "1.0.0"
+  dependencies:
+    prop-types "^15.7.2"
+    react-hook-form "^7.8.5"
+
 "@leemons/users-groups-roles@file:dependencies/users-groups-roles":
   version "1.0.0"
   dependencies:
-    "@users-groups-roles" "file:../../../../../../Library/Caches/Yarn/v6/npm-@leemons-users-groups-roles-1.0.0-54201d67-ab43-4bca-afd9-a2e4406a1917-1623752597814/node_modules/@leemons/users-groups-roles"
     js-cookie "^2.2.1"
     react-hook-form "^7.8.5"
     swr "^0.5.6"
@@ -37,14 +54,6 @@
   dependencies:
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
-
-"@users-groups-roles@file:dependencies/users-groups-roles":
-  version "1.0.0"
-  dependencies:
-    "@users-groups-roles" "file:../../../../../../Library/Caches/Yarn/v6/npm-@users-groups-roles-1.0.0-ddfdc139-be79-4b0a-b0e9-3587c845ba51-1623752597818/node_modules/@users-groups-roles"
-    js-cookie "^2.2.1"
-    react-hook-form "^7.8.5"
-    swr "^0.5.6"
 
 acorn-node@^1.6.1:
   version "1.8.2"
@@ -667,9 +676,9 @@ react-hook-form@^7.8.3:
   integrity sha512-W444tNhyyR3eaQjgtdVOvzId8Fjoexdfko0d46Nme/3Cjo3ETcF9kSVg51ut8mI805Wh2K1GKim+hEgcfIrFLA==
 
 react-hook-form@^7.8.5:
-  version "7.8.5"
-  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.8.5.tgz#2aa3b29bf6517e80122653ae30473e76f200d50c"
-  integrity sha512-zRz3mBmkq4wJNhOnVyDfnEJOjZEEasNIcRABkSpczjPCRtQSsPICqG96ldYCGrOHHrk7qOIjG8TF52cOFMxhPQ==
+  version "7.8.6"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.8.6.tgz#93335fbada5eae3ddee8f6dffe5bac868295ec4d"
+  integrity sha512-kKdaySvv21tyH8WM5jYpKRxTFdknmHi7ssdBrU7cW0qRwXcr9lxVyO14MjUFlfEGe9S5VzBmTz7NKNSarV3AFw==
 
 react-is@^16.8.1:
   version "16.13.1"

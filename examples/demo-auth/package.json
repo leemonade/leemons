@@ -11,7 +11,10 @@
   "dependencies": {
     "leemons": "1.0.0",
     "leemons-connector-bookshelf": "1.0.0",
+    "leemons-plugin-emails": "1.0.0",
+    "leemons-plugin-onboarding": "1.0.0",
     "leemons-plugin-users-groups-roles": "1.0.0",
+    "leemons-provider-emails-amazon-ses": "1.0.0",
     "mysql": "^2.18.1"
   }
 }

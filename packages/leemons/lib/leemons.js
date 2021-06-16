@@ -5,6 +5,7 @@ const Static = require('koa-static');
 const nextjs = require('next');
 const _ = require('lodash');
 const chalk = require('chalk');
+const leemonsUtils = require('leemons-utils');
 
 const bodyParser = require('koa-bodyparser');
 
@@ -20,9 +21,11 @@ const {
 } = require('./core/plugins/loadPlugins');
 const buildFront = require('./core/front/build');
 const loadFront = require('./core/plugins/front/loadFront');
-const { loadProvidersModels } = require('./core/plugins/loadProviders');
-const { initializeProviders } = require('./core/plugins/loadProviders');
-const { loadProvidersConfig } = require('./core/plugins/loadProviders');
+const {
+  loadProvidersModels,
+  loadProvidersConfig,
+  initializeProviders,
+} = require('./core/plugins/loadProviders');
 
 class Leemons {
   constructor(log) {
@@ -137,6 +140,14 @@ class Leemons {
         chalk`New connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${ctx.ip}}`
       );
       await next();
+    });
+
+    this.backRouter.use(async (ctx, next) => {
+      try {
+        await next();
+      } catch (err) {
+        leemonsUtils.returnError(ctx, err);
+      }
     });
 
     this.backRouter.use(bodyParser());
@@ -275,10 +286,10 @@ class Leemons {
     await hooks.fireEvent('leemons::loadBack', { status: 'end' });
   }
 
-  async loadFront(plugins) {
+  async loadFront(plugins, providers) {
     await hooks.fireEvent('leemons::loadFront', { status: 'start' });
     await hooks.fireEvent('leemons::loadFrontPlugins', { status: 'start' });
-    await loadFront(this, plugins);
+    await loadFront(this, plugins, providers);
     await hooks.fireEvent('leemons::loadFrontPlugins', { status: 'end' });
 
     // Initialize next
@@ -358,7 +369,7 @@ class Leemons {
        * Load all the frontend plugins, build the app if needed
        * and set the middlewares.
        */
-      await this.loadFront(loadedPlugins),
+      await this.loadFront(loadedPlugins, providersConfig),
     ]);
 
     this.loaded = true;

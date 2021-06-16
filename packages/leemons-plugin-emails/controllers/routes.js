@@ -2,11 +2,21 @@ module.exports = [
   {
     path: '/init',
     method: 'POST',
-    handler: 'init.init',
+    handler: 'email.init',
   },
   {
-    path: '/test-send',
+    path: '/providers',
+    method: 'GET',
+    handler: 'email.providers',
+  },
+  {
+    path: '/send-test',
     method: 'POST',
-    handler: 'init.testSend',
+    handler: 'email.sendTest',
+  },
+  {
+    path: '/add-provider',
+    method: 'POST',
+    handler: 'email.addProvider',
   },
 ];

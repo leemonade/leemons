@@ -1,47 +1,29 @@
 module.exports = {
-  modelName: 'emails-config',
-  collectionName: 'emails-config',
+  modelName: 'config',
+  collectionName: 'config',
   options: {
     useTimestamps: true,
   },
   attributes: {
-    transport: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
-    },
     name: {
       type: 'string',
       options: {
         notNull: true,
       },
     },
-    host: {
+    region: {
       type: 'string',
       options: {
         notNull: true,
       },
     },
-    port: {
-      type: 'integer',
-      options: {
-        notNull: true,
-      },
-    },
-    secure: {
-      type: 'boolean',
-      options: {
-        notNull: true,
-      },
-    },
-    user: {
+    accessKey: {
       type: 'string',
       options: {
         notNull: true,
       },
     },
-    pass: {
+    secretAccessKey: {
       type: 'string',
       options: {
         notNull: true,

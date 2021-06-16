@@ -27,18 +27,18 @@ function getAppCookies(req) {
  * @return {any} user or null
  */
 export async function getSession({ req }) {
-  const { token } = getAppCookies(req);
-  if (token) {
-    const response = await leemons.api('users-groups-roles/user', {
-      headers: { Authorization: token },
-    });
-    if (response.status === 200) {
+  try {
+    const { token } = getAppCookies(req);
+    if (token) {
+      const response = await leemons.api('users-groups-roles/user', {
+        headers: { Authorization: token },
+      });
       return response.user;
     }
-
+    return null;
+  } catch (err) {
     return null;
   }
-  return null;
 }
 
 const fetcher = (token) => (url) =>
@@ -54,8 +54,9 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
       const { data, error } = useSWR('users-groups-roles/user', fetcher(token), {
         revalidateOnFocus: false,
       });
+
       const user = data && data.user ? data.user : null;
-      const finished = Boolean(data);
+      const finished = Boolean(data || error);
       const hasUser = Boolean(user);
 
       useEffect(() => {

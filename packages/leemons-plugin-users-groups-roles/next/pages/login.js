@@ -2,7 +2,7 @@ import { getSession, loginSession, logoutSession, useSession } from '@users-grou
 import { useForm } from 'react-hook-form';
 
 export default function Home() {
-  const session = useSession();
+  const session = useSession('', '');
 
   const {
     register,
@@ -30,9 +30,6 @@ export default function Home() {
 
   return (
     <>
-      {session && session.name}
-      <br />
-      {session && session.email}
       <button onClick={logout}>Logout</button>
       <form onSubmit={handleSubmit(onSubmit)}>
         <label>Email</label>

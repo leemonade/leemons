@@ -16,7 +16,7 @@ const build = require('../core/front/build');
 /**
  * Creates a watcher for frontend files and then sets up all the needed files
  */
-async function setupFront(leemons, plugins, nextDir) {
+async function setupFront(leemons, plugins, providers, nextDir) {
   // Frontend directories to watch for changes
   const frontDirs = [
     // App next/** directories
@@ -35,10 +35,18 @@ async function setupFront(leemons, plugins, nextDir) {
         '**'
       )
     ),
+    ...providers.map((plugin) =>
+      path.join(
+        path.isAbsolute(plugin.dir.next)
+          ? plugin.dir.next
+          : path.join(plugin.dir.app, plugin.dir.next),
+        '**'
+      )
+    ),
   ];
 
   // Make first front load
-  await leemons.loadFront(plugins);
+  await leemons.loadFront(plugins, providers);
 
   // Create a file watcher
   createReloader({
@@ -63,7 +71,7 @@ async function setupFront(leemons, plugins, nextDir) {
     },
     // When a change occurs, reload front
     handler: async () => {
-      await loadFront(leemons, plugins);
+      await loadFront(leemons, plugins, providers);
       await build();
     },
     logger: leemons.log,
@@ -250,7 +258,7 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
 
     // Start the Front and Back services
     await Promise.all([
-      setupFront(leemons, pluginsConfig, nextDir),
+      setupFront(leemons, pluginsConfig, providersConfig, nextDir),
       setupBack(leemons, pluginsConfig, providersConfig),
     ]);
 

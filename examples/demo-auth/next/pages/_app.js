@@ -1,10 +1,10 @@
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import hooks from 'leemons-hooks';
 import React, { useEffect } from 'react';
 import { frontPlugins, plugins } from '@plugins';
 import { SessionProvider } from '@users-groups-roles/context/session';
-
-const Context = React.createContext(null);
+import 'tailwindcss/tailwind.css';
 
 function MyApp({ Component, pageProps }) {
   // Only add it once
@@ -27,7 +27,17 @@ function MyApp({ Component, pageProps }) {
     global.leemons = {
       log: console,
       api: (url, config) => {
+        if (config && !config.headers) config.headers = {};
+        if (config && !config.headers['content-type'])
+          config.headers['content-type'] = 'application/json';
+        if (config && _.isObject(config.body)) {
+          config.body = JSON.stringify(config.body);
+        }
+
         return fetch(`${window.location.origin}/api/${url}`, config).then(async (r) => {
+          if (r.status >= 500) {
+            throw { status: r.status, message: r.statusText };
+          }
           if (r.status >= 400) {
             throw await r.json();
           }
