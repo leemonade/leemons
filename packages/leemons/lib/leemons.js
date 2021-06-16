@@ -74,6 +74,15 @@ class Leemons {
     this.started = false;
   }
 
+  api(url, config) {
+    return fetch(`http://localhost:${process.env.PORT}/api/${url}`, config).then(async (r) => {
+      if (r.status >= 400) {
+        throw await r.json();
+      }
+      return r.json();
+    });
+  }
+
   // Set KOA as requestHandler
   handleRequest(req, res) {
     if (!this.requestHandler) {
@@ -133,6 +142,42 @@ class Leemons {
     this.backRouter.use(bodyParser());
   }
 
+  authenticatedMiddleware() {
+    return async (ctx, next) => {
+      try {
+        const user = await this.plugins['users-groups-roles'].services.users.detailForJWT(
+          ctx.headers.authorization
+        );
+        if (user) {
+          ctx.user = user;
+          return next();
+        }
+        ctx.status = 401;
+        ctx.body = { status: 401, msg: 'Authorization required' };
+        return undefined;
+      } catch (err) {
+        ctx.status = 401;
+        ctx.body = { status: 401, msg: 'Authorization required' };
+        return undefined;
+      }
+    };
+  }
+
+  permissionsMiddleware(allowedPermissions) {
+    return async (ctx, next) => {
+      const hasPermission = await this.plugins['users-groups-roles'].services.users.havePermission(
+        ctx.user,
+        allowedPermissions
+      );
+      if (hasPermission) {
+        return next();
+      }
+      ctx.status = 401;
+      ctx.body = { status: 401, msg: 'You do not have permissions' };
+      return undefined;
+    };
+  }
+
   // Initialize the api endpoints
   setRoutes() {
     // Plugins
@@ -151,9 +196,14 @@ class Leemons {
             _.get(plugin.controllers, route.handler)
           ) {
             const handler = _.get(plugin.controllers, route.handler);
+            const functions = [];
+            if (route.authenticated) functions.push(this.authenticatedMiddleware());
+            if (_.isArray(route.permissions) && route.permissions.length)
+              functions.push(this.permissionsMiddleware(route.permissions));
+            functions.push(handler);
             this.backRouter[route.method.toLocaleLowerCase()](
               `/api/${plugin.name}${route.path}`,
-              handler
+              ...functions
             );
           }
         });
@@ -303,7 +353,7 @@ class Leemons {
        * Load all the backend plugins, database and
        * setup the middlewares
        */
-      await this.loadBack(loadedPlugins),
+      await this.loadBack(loadedPlugins, providersConfig),
       /*
        * Load all the frontend plugins, build the app if needed
        * and set the middlewares.
