@@ -41,7 +41,8 @@ module.exports = (allowedPath, filter = null, env = {}) => {
       external: true,
       // Run every imported file inside the VM
       context: 'sandbox',
-      root,
+      // If the insecure flag is true, disable the require restriction
+      root: leemons.config && leemons.config.get('config.insecure', false) ? undefined : root,
       // Allow the following node-builtin modules
       builtin: [
         'path',
@@ -58,6 +59,8 @@ module.exports = (allowedPath, filter = null, env = {}) => {
         'constants',
         'fs',
         'util',
+        'os',
+        'events',
       ],
       // Ensure a protected use of FS (only access inside the given directory)
       mock: {

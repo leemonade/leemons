@@ -43,7 +43,6 @@ program
 // $leemons dev
 program
   .command('dev')
-  .option('-N, --next <dir>', 'next directory')
   .option('-L, --level <level>', 'log level')
   .description('Launches leemons application in production mode')
   .action(getLocalCommand('dev'));

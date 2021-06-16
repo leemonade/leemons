@@ -63,22 +63,29 @@ function generateQueries(model /* connector */) {
   }
 
   // Updated many items in one transaction
-  function updateMany(updateArray, { transacting } = {}) {
-    if (!Array.isArray(updateArray)) {
-      throw new Error(
-        `updateMany expected an array, instead got ${
-          typeof updateArray === 'object' ? JSON.stringify(updateArray) : updateArray
-        }`
-      );
-    }
-    if (transacting) {
-      return pmap(updateArray, ({ query, item }) => update(query, item, { transacting }));
+  async function updateMany(query, updatedItem, { transacting } = {}) {
+    const filters = parseFilters({ filters: query, model });
+    const newQuery = buildQuery(model, filters);
+
+    const entry = () => bookshelfModel.query(newQuery);
+
+    if (!_.has(updatedItem, 'updated_at')) {
+      _.set(updatedItem, 'updated_at', new Date());
     }
 
-    // If we are not on a transaction, make a new transaction
-    return model.ORM.transaction((t) =>
-      pmap(updateArray, ({ query, item }) => update(query, item, { transacting: t }))
-    );
+    const attributes = selectAttributes(updatedItem);
+
+    const updatedCount = await entry().count();
+
+    if (updatedCount > 0) {
+      await entry().save(attributes, {
+        method: 'update',
+        patch: true,
+        transacting,
+      });
+    }
+
+    return { count: updatedCount };
   }
 
   // TODO: soft delete
@@ -103,10 +110,15 @@ function generateQueries(model /* connector */) {
     const filters = parseFilters({ filters: query, model });
     const newQuery = buildQuery(model, filters);
 
-    return bookshelfModel
-      .query(newQuery)
-      .destroy({ transacting })
-      .then((entries) => entries.toJSON());
+    const entries = () => bookshelfModel.query(newQuery);
+
+    const deletedCount = await entries().count();
+
+    if (deletedCount > 0) {
+      await entries().destroy({ transacting });
+    }
+
+    return { count: deletedCount };
   }
 
   // Finds all items based on a query
@@ -132,7 +144,7 @@ function generateQueries(model /* connector */) {
 
   // Finds one item based on a query
   async function findOne(query, ...rest) {
-    const entry = await find({ ...query, $limit: 1 }, rest);
+    const entry = await find({ ...query, $limit: 1 }, ...rest);
     return entry[0] || null;
   }
 

@@ -1,5 +1,6 @@
 const cluster = require('cluster');
 const path = require('path');
+const chalk = require('chalk');
 
 const createLogger = require('leemons-logger/lib/logger/multiThread');
 const { getAvailablePort } = require('leemons-utils/lib/port');
@@ -48,6 +49,7 @@ async function setupFront(leemons, plugins, nextDir) {
       ignored: [
         /(^|[/\\])\../, // ignore dotfiles
         /.*node_modules.*/,
+        'yarn.lock',
         /*
          * Ignore:
          *  next/dependencies
@@ -71,7 +73,7 @@ async function setupFront(leemons, plugins, nextDir) {
 /**
  * Creates a watcher for backend files and then sets up all the needed services
  */
-async function setupBack(leemons, plugins) {
+async function setupBack(leemons, plugins, providers) {
   /*
    * Backend directories to watch for changes
    *  plugin.dir.models
@@ -89,13 +91,23 @@ ${plugin.dir.services})`,
     )
   );
 
+  const backDirsProviders = providers.map((provider) =>
+    path.join(
+      provider.dir.app,
+      `\
+(${provider.dir.models}|\
+${provider.dir.services})`,
+      '**'
+    )
+  );
+
   // Load backend for first time
-  await leemons.loadBack(plugins);
+  await leemons.loadBack(plugins, providers);
 
   // Create a backend watcher
   createReloader({
     name: 'Backend',
-    dirs: backDirs,
+    dirs: backDirs.concat(backDirsProviders),
     config: {
       ignoreInitial: true,
       ignored: [
@@ -110,17 +122,14 @@ ${plugin.dir.services})`,
     handler: () => {
       // eslint-disable-next-line no-param-reassign
       leemons.backRouter.stack = [];
-      return leemons.loadBack(plugins);
+      return leemons.loadBack(plugins, providers);
     },
     logger: leemons.log,
   });
 }
 
-module.exports = async ({ next, level: logLevel = 'debug' }) => {
+module.exports = async ({ level: logLevel = 'debug' }) => {
   const cwd = process.cwd();
-
-  const nextDir = next && path.isAbsolute(next) ? next : path.join(cwd, next || 'next/');
-  process.env.next = nextDir;
 
   if (cluster.isMaster) {
     // Set the master process title (visible in $ ps)
@@ -153,10 +162,21 @@ module.exports = async ({ next, level: logLevel = 'debug' }) => {
      * Kill:
      *  When a child process emits a kill event, the master process will kill it.
      */
-    cluster.on('message', (worker, message) => {
-      switch (message) {
+    cluster.on('message', (worker, _message) => {
+      let message = _message;
+      if (typeof _message === 'string') {
+        message = { message: _message };
+      }
+      switch (message.message) {
         case 'kill':
+          worker.send({ ...message, message: 'kill' });
+          break;
+        case 'killed':
           worker.kill();
+          if (message.error) {
+            // eslint-disable-next-line no-console
+            console.error(chalk`{green An error occurred, type "rs\\n" for restart the process}\n`);
+          }
           break;
         default:
       }
@@ -204,11 +224,16 @@ module.exports = async ({ next, level: logLevel = 'debug' }) => {
      * Kill:
      *  When the master emits a kill event, clean the Leemons instance and exit.
      */
-    cluster.worker.on('message', (message) => {
-      switch (message) {
+    cluster.worker.on('message', (_message) => {
+      let message = _message;
+      if (typeof _message === 'string') {
+        message = { message: _message };
+      }
+
+      switch (message.message) {
         case 'kill':
           leemons.server.destroy(() => {
-            process.send('kill');
+            process.send({ ...message, message: 'killed' });
           });
           break;
         default:
@@ -218,11 +243,15 @@ module.exports = async ({ next, level: logLevel = 'debug' }) => {
     // Loads the App and plugins config
     await leemons.loadAppConfig();
     const pluginsConfig = await leemons.loadPluginsConfig();
+    const providersConfig = await leemons.loadProvidersConfig();
+
+    let nextDir = leemons.config.get('config.dir.next', 'next');
+    nextDir = path.isAbsolute(nextDir) ? nextDir : path.join(cwd, nextDir);
 
     // Start the Front and Back services
     await Promise.all([
       setupFront(leemons, pluginsConfig, nextDir),
-      setupBack(leemons, pluginsConfig),
+      setupBack(leemons, pluginsConfig, providersConfig),
     ]);
 
     leemons.loaded = true;

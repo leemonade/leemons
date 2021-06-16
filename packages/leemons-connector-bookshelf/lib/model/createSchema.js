@@ -38,31 +38,39 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
     columns.forEach(async ([name, properties]) => {
       let col;
       // Create a column for the relation (only if not `many to many`)
-      if (_.has(properties, 'references') && properties.references.relation !== 'many to many') {
-        const relatedPrimaryKey = getRelationPrimaryKey(properties);
-
-        // The type of the col is the related primary key type
-        _.set(properties, 'type', relatedPrimaryKey.type);
-
-        // Set the type of the col
-        if (_.has(relatedPrimaryKey, 'specificType')) {
-          col = table.specificType(name, relatedPrimaryKey.specificType);
-        } else if (relatedPrimaryKey.type === 'uuid') {
-          col = table.uuid(name);
+      if (_.has(properties, 'references') && properties.references.relation === 'many to many') {
+        return undefined;
+      }
+      // Relations which are not many to many
+      if (_.has(properties, 'references')) {
+        const field = _.get(properties, 'references.field', null);
+        // If the field is not specified, use primary key
+        let relatedField;
+        if (!field) {
+          relatedField = getRelationPrimaryKey(properties);
+          // If is a primary key, add the unsigned value to true
+          if (relatedField.type === 'int') {
+            _.set(properties, 'options.unsigned', true);
+          }
         } else {
-          col = table.integer(name).unsigned();
+          relatedField = _.get(
+            getModel(properties.references.collection),
+            `schema.attributes.${field}`,
+            null
+          );
         }
+
+        // Set the same config for column (omit unnecesary options)
+        _.assign(properties, _.omit(relatedField, ['options.unique']));
 
         // If the relation is `one to one`, set the column to unique
         if (properties.references.relation === 'one to one') {
-          col.unique();
+          _.set(properties, 'options.unique', true);
         }
-        // If the relation is `one to many`, leave the column not unique
-        // return col;
       }
 
       // A SQL type defined by the user
-      else if (_.has(properties, 'specificType')) {
+      if (_.has(properties, 'specificType')) {
         col = table.specificType(name, properties.specificType);
       }
 
@@ -76,9 +84,11 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
         // Set the property type
         switch (properties.type) {
           case 'string':
+            col = table.string(name, properties.length); // default length is 255
+            break;
           case 'text':
           case 'richtext':
-            col = table.string(name, properties.length); // default length is 255 (Do not use text because the space in disk ~65537B)
+            col = table.text(name, properties.textType); // default to text (65535 chars), can also be: mediumText (16777215 chars) or longtext (4294967295 chars).
             break;
           case 'enum':
           case 'enu':
@@ -322,7 +332,7 @@ async function createRelations(model, ctx) {
           .table(schema.collectionName, (table) => {
             table
               .foreign(name)
-              .references(getRelationPrimaryKey(properties).name)
+              .references(model.relations[name].foreignKeyTarget)
               .inTable(relationTable)
               .onUpdate(properties.references.onUpdate)
               .onDelete(properties.references.onDelete);

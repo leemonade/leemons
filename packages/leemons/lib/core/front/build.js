@@ -25,7 +25,7 @@ async function frontDeps() {
       .catch(async (e) => {
         installSpinner.fail("Frontend dependencies can't be installed");
         await fs.remove(path.resolve(leemons.dir.next, 'node_modules'));
-        throw e;
+        leemons.log.throw(e);
       })
       .finally(async () => {
         await hooks.fireEvent('leemons::installDeps', { status: 'end' });
@@ -59,7 +59,7 @@ async function buildNext() {
         .catch(async (e) => {
           spinner.fail(`Frontend can't be builded`);
           await fs.remove(path.resolve(leemons.dir.next, '.next'));
-          throw e;
+          leemons.log.throw(e);
         })
         .finally(async () => {
           await hooks.fireEvent('leemons::build', { status: 'end' });

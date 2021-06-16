@@ -30,14 +30,16 @@ class DatabaseManager {
 
     this.connectors.load();
 
-    await this.connectors.init(
-      this.leemons.core_store,
-      _.merge(
-        ...Object.values(_.cloneDeep(this.leemons.plugins))
-          .filter((plugin) => plugin.models)
-          .map((plugin) => plugin.models)
-      )
+    const models = _.merge(
+      ...Object.values(_.cloneDeep(this.leemons.plugins))
+        .filter((plugin) => plugin.models)
+        .map((plugin) => plugin.models),
+      ...Object.values(_.cloneDeep(this.leemons.providers))
+        .filter((plugin) => plugin.models)
+        .map((plugin) => plugin.models)
     );
+
+    await this.connectors.init(this.leemons.core_store, models);
 
     this.initialized = true;
   }
@@ -48,9 +50,12 @@ class DatabaseManager {
 
     let showDelete = true;
     if (pluginName) {
-      const plugin = _.get(this.leemons, modelName.split('::')[0].replace(/_/g, '.'), {});
+      const plugin = _.get(this.leemons, modelName.split('::')[0].replace(/_/g, '.'), null);
       // TODO: Plugins permissions
-      if (plugin.config.get('config.private', false) === true && plugin.name !== pluginName) {
+      if (
+        !plugin ||
+        (plugin.config.get('config.private', false) === true && plugin.name !== pluginName)
+      ) {
         // The provided model is private and not visible for you
         throw new Error(`The provided model can not be found: ${modelName}`);
       }

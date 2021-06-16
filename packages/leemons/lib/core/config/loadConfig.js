@@ -10,6 +10,7 @@ const leemonsDefaultDirs = {
   config: envf('CONFIG_DIR', 'config'),
   models: 'models',
   plugins: 'plugins',
+  providers: 'providers',
   next: envf('nextDir', 'next'),
   env: '.env',
 };
@@ -45,6 +46,13 @@ async function loadConfiguration(
 
   if (!path.isAbsolute(dirs.env)) {
     dirs.env = path.join(dirs.app, dirs.env);
+  }
+
+  const allDirs = Object.values(dirs).map((_dir) => path.resolve(dirs.app, _dir));
+  if (allDirs.length > [...new Set(allDirs)].length) {
+    throw new Error(
+      `The specified directories in ${path.resolve(dirs.app, dirs.config)} must be different`
+    );
   }
 
   const env = await generateEnv(dirs.env);

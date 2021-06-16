@@ -1,5 +1,3 @@
 {
-  "dir": {
-    "model": "models"
-  }
+  "insecure": true
 }
