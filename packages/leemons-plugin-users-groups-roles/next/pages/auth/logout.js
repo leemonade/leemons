@@ -6,6 +6,6 @@ export default function Logout() {
   const urlParams = new URLSearchParams(window.location.search);
   let redirect = urlParams.get('redirectTo');
   if (!redirect) redirect = '/';
-  Router.push(decodeURIComponent(redirect));
+  Router.push(`/${decodeURIComponent(redirect)}`);
   return '<></>';
 }

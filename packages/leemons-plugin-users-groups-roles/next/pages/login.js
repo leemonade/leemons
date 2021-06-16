@@ -1,8 +1,9 @@
-import { getSession, loginSession, logoutSession, useSession } from '@users-groups-roles/session';
+import { getSession, loginSession, useSession } from '@users-groups-roles/session';
+import constants from '@users-groups-roles/constants';
 import { useForm } from 'react-hook-form';
 
 export default function Home() {
-  const session = useSession('', '');
+  useSession({ redirectTo: constants.base, redirectIfFound: true });
 
   const {
     register,
@@ -11,26 +12,18 @@ export default function Home() {
   } = useForm();
   const onSubmit = async (data) => {
     try {
-      const response = await leemons.api(`users-groups-roles/user/login`, {
+      const response = await leemons.api(constants.backend.login, {
         method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        body: data,
       });
-      loginSession(response.jwtToken, '/');
+      loginSession(response.jwtToken, constants.base);
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
     }
-  };
-
-  const logout = () => {
-    logoutSession('/');
   };
 
   return (
     <>
-      <button onClick={logout}>Logout</button>
       <form onSubmit={handleSubmit(onSubmit)}>
         <label>Email</label>
         <input defaultValue="testing@test.io" {...register('email', { required: true })} />

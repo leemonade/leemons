@@ -51,28 +51,23 @@ async function recover(ctx) {
 }
 
 async function login(ctx) {
-  try {
-    const validator = new global.utils.LeemonsValidator({
-      type: 'object',
-      properties: {
-        email: { type: 'string', format: 'email' },
-        password: {
-          type: 'string',
-        },
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      email: { type: 'string', format: 'email' },
+      password: {
+        type: 'string',
       },
-      required: ['email', 'password'],
-      additionalProperties: false,
-    });
-    if (validator.validate(ctx.request.body)) {
-      const data = await usersService.login(ctx.request.body.email, ctx.request.body.password);
-      ctx.status = 200;
-      ctx.body = { status: 200, user: data.user, jwtToken: data.token };
-    } else {
-      throw new Error(validator.error);
-    }
-  } catch (err) {
-    console.error(err);
-    global.utils.returnError(ctx, err);
+    },
+    required: ['email', 'password'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.body)) {
+    const data = await usersService.login(ctx.request.body.email, ctx.request.body.password);
+    ctx.status = 200;
+    ctx.body = { status: 200, user: data.user, jwtToken: data.token };
+  } else {
+    throw new Error(validator.error);
   }
 }
 

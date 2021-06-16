@@ -6,6 +6,6 @@ export default function Login() {
   Cookies.set('token', urlParams.get('token'));
   let redirect = urlParams.get('redirectTo');
   if (!redirect) redirect = '/';
-  Router.push(decodeURIComponent(redirect));
+  Router.push(`/${decodeURIComponent(redirect)}`);
   return '<></>';
 }
