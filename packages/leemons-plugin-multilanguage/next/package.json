@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "react-hook-form": "^7.8.8",
     "swr": "^0.5.6"
   }
 }

@@ -36,11 +36,21 @@ async function getMany(codes) {
     return await localesTable.find({ code_$in: _codes });
   } catch (e) {
     leemons.log.debug(e.message);
-    throw new Error('An error occurred while deleting the locales');
+    throw new Error('An error occurred while getting the locales');
+  }
+}
+
+async function getAll() {
+  try {
+    return await localesTable.find({ code_$ne: '' });
+  } catch (e) {
+    leemons.log.debug(e.message);
+    throw new Error('An error occurred while getting all the locales');
   }
 }
 
 module.exports = {
   get,
   getMany,
+  getAll,
 };

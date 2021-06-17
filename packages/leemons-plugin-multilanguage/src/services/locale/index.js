@@ -1,5 +1,5 @@
 const { add, addMany } = require('./create');
-const { get, getMany } = require('./read');
+const { get, getMany, getAll } = require('./read');
 const { setName } = require('./update');
 const { delete: deleteOne, deleteMany } = require('./delete');
 const { has, hasMany } = require('./has');
@@ -10,6 +10,7 @@ module.exports = {
 
   get,
   getMany,
+  getAll,
 
   setName,
 

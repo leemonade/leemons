@@ -86,6 +86,15 @@ module.exports = async () => {
   space();
 
   try {
+    console.log(`locales.getAll()`);
+    const locale = await locales.getAll();
+    console.log(locale);
+  } catch (e) {
+    console.error(e);
+  }
+  space();
+
+  try {
     console.log(`locales.delete('es')`);
     const locale = await locales.delete('es');
     console.log(locale);
