@@ -11,6 +11,7 @@ async function add(ctx) {
 
     ctx.body = { message: 'Locale already exists' };
   } catch (e) {
+    console.log(e);
     ctx.body = { error: true };
   }
 }

@@ -7,7 +7,13 @@ const throwInvalid = require('../../../validations/throwInvalid');
 const { has: hasLocale, hasMany: hasLocales } = require('../locale/has');
 const { has: hasLocalization, hasMany: hasLocalizations } = require('./has');
 
+const { LeemonsValidator } = global.utils;
+
 const localizationsTable = leemons.query('plugins_multilanguage::localizations');
+
+LeemonsValidator.ajv.addFormat('localizationKey', {
+  validate: (x) => /^([a-z][a-z0-9_-]+\.){0,}[a-z][a-z0-9_-]+$/.test(x),
+});
 
 /**
  * Adds one locale
