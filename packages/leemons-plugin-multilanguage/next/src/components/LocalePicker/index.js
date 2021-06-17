@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import Item from './item';
 
-export default function LocalePicker({ locales }) {
-  const [selected, setSelected] = useState(null);
+export default function LocalePicker({
+  locales,
+  selected: _selected = null,
+  setLocale = () => {},
+}) {
+  const [selected, setSelected] = useState(_selected);
   const [expanded, setExpanded] = useState(false);
 
   const toggleExpanded = () => {
@@ -11,6 +15,7 @@ export default function LocalePicker({ locales }) {
 
   const selectItem = (id) => () => {
     setSelected(id);
+    setLocale(id);
     toggleExpanded();
   };
   return (
@@ -49,16 +54,6 @@ export default function LocalePicker({ locales }) {
           </span>
         </button>
 
-        {/* <!--
-      Select popover, show/hide based on select state.
-
-      Entering: ""
-        From: ""
-        To: ""
-      Leaving: "transition ease-in duration-100"
-        From: "opacity-100"
-        To: "opacity-0"
-    --> */}
         <ul
           className={`${
             expanded ? null : 'hidden'
@@ -78,11 +73,6 @@ export default function LocalePicker({ locales }) {
                   selected={selected === locale}
                 />
               ))}
-          {/* <!--
-        Select option, manage highlight styles based on mouseenter/mouseleave and keyboard navigation.
-
-        Highlighted: "text-white bg-indigo-600", Not Highlighted: "text-gray-900"
-      --> */}
         </ul>
       </div>
     </div>

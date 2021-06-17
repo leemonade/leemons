@@ -1,25 +1,24 @@
 import { useState } from 'react';
-import useSRW from 'swr';
 import LocalePicker from '@multilanguage/components/LocalePicker';
 import LocaleCreator from '@multilanguage/components/LocaleCreator';
+import { useGetLocales } from '@multilanguage/helpers/getLocales';
 import Link from 'next/link';
+import WithPersistentState from 'src/HOC/withPersistentState';
 
-export default function Locales() {
+function Locales({ persistentState: [state, setState] }) {
   const [locales, setLocales] = useState([]);
-  useSRW('locales', getLocales);
-
-  async function getLocales() {
-    const fetchedLocales = (await fetch('/api/multilanguage/locales').then((r) => r.json()))
-      .locales;
-
-    if (fetchedLocales) {
-      setLocales(fetchedLocales);
-    }
-  }
+  useGetLocales(setLocales);
+  // eslint-disable-next-line no-use-before-define
 
   function addLocale(locale) {
     if (!locales.find((_locale) => _locale.code === locale.code)) {
       setLocales((_locales) => [..._locales, locale]);
+    }
+  }
+
+  function setLocale(locale) {
+    if (locale) {
+      setState({ locale });
     }
   }
 
@@ -43,9 +42,11 @@ export default function Locales() {
         {/* Pick your locales */}
         <div>
           <h1 className="text-center text-xl mb-2">Pick your locales</h1>
-          <LocalePicker locales={locales} />
+          <LocalePicker locales={locales} setLocale={setLocale} selected={state.locale} />
         </div>
       </div>
     </div>
   );
 }
+
+export default WithPersistentState(Locales, 'multilanguage', { locale: null }, {});

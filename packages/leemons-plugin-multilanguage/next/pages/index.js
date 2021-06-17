@@ -1,22 +1,33 @@
 import useTranslate from '@multilanguage/useTranslate';
 import Link from 'next/link';
+import WithPersistentState from 'src/HOC/withPersistentState';
 
-export default function Home() {
+function Home({ persistentState: [state] }) {
+  const { locale } = state;
+
   const [translations, errors, loading] = useTranslate({
     keys: ['config.name', 'config.settings'],
-    locale: 'es',
+    locale: locale?.code,
   });
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-  if (errors) {
-    console.error('errors', errors);
-    return <p>Error ${errors.message}</p>;
+
+  function printBody() {
+    if (loading) {
+      return <p>Loading...</p>;
+    }
+    if (errors) {
+      return <p>An error ocurred while loading the translations: {errors.message}</p>;
+    }
+    return (
+      <>
+        <p>Locale {locale ? `${locale.name} (${locale.code})` : 'undefined'}</p>
+        <p>config.name = {translations['config.name'] || 'undefined'}</p>
+        <p>config.settings = {translations['config.settings'] || 'undefined'}</p>
+      </>
+    );
   }
 
-  console.log('translations', translations);
   return (
-    <div className="min-h-screen min-w-full bg-gray-800 pl-3 overflow-auto text-white">
+    <div className="min-h-screen min-w-full bg-gray-800 px-3 overflow-auto text-white">
       <div className="-ml-1 mt-2 mb-5 flex space-x-1">
         <Link href="/multilanguage/locales">
           <a className="bg-indigo-600 p-2 px-3 rounded-md block text-white">Locales page</a>
@@ -25,9 +36,9 @@ export default function Home() {
           <a className="bg-indigo-600 p-2 px-3 rounded-md block text-white">Localizations page</a>
         </Link>
       </div>
-      <p>Locale {'undefined'}</p>
-      <p>config.name = {translations['config.name'] || 'undefined'}</p>
-      <p>config.settings = {translations['config.settings'] || 'undefined'}</p>
+      {printBody()}
     </div>
   );
 }
+
+export default WithPersistentState(Home, 'multilanguage', { locale: null }, {});
