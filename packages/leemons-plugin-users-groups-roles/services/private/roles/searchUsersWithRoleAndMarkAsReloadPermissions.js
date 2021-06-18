@@ -11,6 +11,7 @@ const { table } = require('../tables');
  * @return {Promise<any>}
  * */
 async function searchUsersWithRoleAndMarkAsReloadPermissions(roleId, transacting) {
+  // TODO SIN USAR
   // TODO ARREGLAR PARA QUE USE USER AUTH Y NO USERS
   const [userRoles, groupRoles] = await Promise.all([
     table.userRole.find({ role: roleId }, { columns: ['user'], transacting }),

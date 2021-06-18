@@ -3,7 +3,7 @@ const { init } = require('./init');
 const { list } = require('./list');
 const { detailForJWT } = require('./detailForJWT');
 const { detail } = require('./detail');
-const { updateUserPermissions } = require('./updateUserPermissions');
+const { updateUserAuthPermissions } = require('./updateUserAuthPermissions');
 const { havePermission } = require('./havePermission');
 const { isSuperAdmin } = require('./isSuperAdmin');
 const { reset } = require('./reset');
@@ -45,6 +45,6 @@ module.exports = {
   getSuperAdminUserIds,
   isSuperAdmin,
   havePermission,
-  updateUserPermissions,
+  updateUserAuthPermissions,
   detailForJWT,
 };

@@ -19,6 +19,9 @@ const table = {
   rolePermission: leemons.query('plugins_users-groups-roles::role-permission'),
 
   actions: leemons.query('plugins_users-groups-roles::actions'),
+
+  profiles: leemons.query('plugins_users-groups-roles::profiles'),
+  profileRole: leemons.query('plugins_users-groups-roles::profile-role'),
 };
 
 module.exports = { table };

@@ -16,7 +16,7 @@ module.exports = {
         notNull: true,
       },
     },
-    action: {
+    actionName: {
       type: 'string',
       options: {
         notNull: true,

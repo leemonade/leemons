@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { updateUserPermissions } = require('./updateUserPermissions');
+const { updateUserAuthPermissions } = require('./updateUserAuthPermissions');
 const { isSuperAdmin } = require('./isSuperAdmin');
 const { table } = require('../tables');
 
@@ -15,7 +15,7 @@ const { table } = require('../tables');
  * @return {Promise<boolean>} If have permission return true if not false
  * */
 async function havePermission(userAuth, allowedPermissions, ctx) {
-  if (userAuth.reloadPermissions) await updateUserPermissions(userAuth.id);
+  if (userAuth.reloadPermissions) await updateUserAuthPermissions(userAuth.id);
 
   const promises = [];
   let query;
