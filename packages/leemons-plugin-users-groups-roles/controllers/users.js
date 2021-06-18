@@ -104,7 +104,7 @@ async function list(ctx) {
 }
 
 async function createSuperAdmin(ctx) {
-  ctx.body = await usersService.registerFirstSuperAdminUser(
+  ctx.body = await usersService.addFirstSuperAdminUser(
     'Jaime',
     'Gómez Cimarro',
     'jaime@leemons.io',

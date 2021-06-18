@@ -12,6 +12,7 @@ const { settledResponseToManyResponse } = require('./settled-response-to-many-re
 const { HttpError, returnError } = require('./http-error');
 const { getAvailablePort } = require('./port');
 const paginate = require('./paginate');
+const randomString = require('./randomString');
 
 module.exports = {
   env,
@@ -30,4 +31,5 @@ module.exports = {
   settledResponseToManyResponse,
   aws,
   paginate,
+  randomString,
 };
