@@ -57,8 +57,6 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
         revalidateOnFocus: false,
       });
 
-      console.log(data);
-
       const user = data && data.user ? data.user : null;
       const finished = Boolean(data || error);
       const hasUser = Boolean(user);

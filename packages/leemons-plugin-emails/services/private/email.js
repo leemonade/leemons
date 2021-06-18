@@ -8,6 +8,8 @@ const table = {
   emailTemplateDetail: leemons.query('plugins_emails::email-template-detail'),
 };
 
+let sendMailTransporter = null;
+
 class Email {
   static get types() {
     return {
@@ -112,8 +114,14 @@ class Email {
         promises.push(value.services.email.getTransporters());
       }
     });
-    const transporters = await Promise.all(promises);
-    return _.flatten(transporters);
+    const transportersArray = await Promise.all(promises);
+    const transporters = _.flatten(transportersArray);
+    if (!sendMailTransporter)
+      sendMailTransporter = global.utils.nodemailer.createTransport({
+        sendmail: true,
+      });
+    transporters.push(sendMailTransporter);
+    return transporters;
   }
 
   /**
@@ -252,12 +260,31 @@ class Email {
     if (!email) throw new Error(`No email found for template '${templateName}' and language `);
     // Take email settings and try to send email with each setting until it is sent.
     const transporters = await Email.getTransporters();
+    if (!transporters.length) throw new Error('No email providers configured yet');
 
     // Compile email with data
     email.subject = Sqrl.render(email.subject, context);
     email.html = Sqrl.render(email.html, context);
 
     return Email.startToTrySendEmail(from, to, email, transporters, 0);
+  }
+
+  /**
+   * Send email as educational center
+   * @public
+   * @static
+   * @param {string} to
+   * @param {string} templateName
+   * @param {string} language
+   * @param {any} context
+   * @return {Promise<boolean>}
+   * */
+  static async sendAsEducationalCenter(to, templateName, language, context) {
+    // TODO Sacar email del centro para mandar como from
+    // TODO Sacar email del centro para mandar como from
+    const centerEmail = 'jaime@leemons.io';
+    const centerLanguage = 'es-ES';
+    return Email.send(centerEmail, to, templateName, language, centerLanguage, context);
   }
 
   static async startToTrySendEmail(from, to, email, transporters, index) {

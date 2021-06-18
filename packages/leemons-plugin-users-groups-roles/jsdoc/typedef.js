@@ -49,9 +49,10 @@
 
 /**
  * @typedef PermissionAdd
- * @param {string} permissionName Permission name (For backend)
- * @param {string[]} actions Actions for this permission
- * @param {LocalizationAdd} localizationName
+ * @type {Object}
+ * @property {string} permissionName Permission name (For backend)
+ * @property {string[]} actions Actions for this permission
+ * @property {LocalizationAdd} localizationName
  */
 
 /**
@@ -64,8 +65,8 @@
 
 /**
  * @typedef ActionAdd
- * @param {string} actionName Action name (For backend)
- * @param {LocalizationAdd} localizationName
+ * @property {string} actionName Action name (For backend)
+ * @property {LocalizationAdd} localizationName
  */
 
 /**

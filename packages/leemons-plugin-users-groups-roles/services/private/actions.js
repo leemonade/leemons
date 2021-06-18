@@ -13,6 +13,7 @@ class Actions {
    * */
   static async init() {
     await Actions.addMany(constants.defaultActions);
+    console.log('Holaa');
   }
 
   /**
@@ -23,7 +24,7 @@ class Actions {
    * @return {Promise<Action>} Created action
    * */
   static async add(data) {
-    const action = await table.permissions.count({ actionName: data.actionName });
+    const action = await table.actions.count({ actionName: data.actionName });
     if (action) throw new Error(`Action '${data.actionName}' already exists`);
 
     leemons.log.info(`Adding action '${data.actionName}'`);
@@ -47,6 +48,18 @@ class Actions {
   static async addMany(data) {
     const response = await Promise.allSettled(_.map(data, (d) => Actions.add(d)));
     return global.utils.settledResponseToManyResponse(response);
+  }
+
+  /**
+   * Check if exist action
+   * @public
+   * @static
+   * @param {string} actionName - Action name
+   * @return {Promise<boolean>} Created actions
+   * */
+  static async exist(actionName) {
+    const result = await table.actions.count({ actionName });
+    return !!result;
   }
 }
 

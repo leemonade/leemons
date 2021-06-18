@@ -17,6 +17,7 @@ export default function Home() {
         method: 'POST',
         body: data,
       });
+      alert('Te ha logado bien');
       loginSession(response.jwtToken, constants.base);
     } catch (err) {
       console.error(err);
@@ -28,7 +29,7 @@ export default function Home() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label>Email</label>
-          <input defaultValue="testing@test.io" {...register('email', { required: true })} />
+          <input defaultValue="jaime@leemons.io" {...register('email', { required: true })} />
           {errors.email && <span>email is required</span>}
         </div>
 

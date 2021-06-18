@@ -11,7 +11,7 @@ function settledResponseToManyResponse(response) {
     }
   });
   value.count = value.items.length;
-  if (errors.length) value.warnings.errors = errors;
+  if (errors.length) value.warnings = { errors };
   return value;
 }
 

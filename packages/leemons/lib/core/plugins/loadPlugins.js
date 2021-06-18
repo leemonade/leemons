@@ -73,19 +73,23 @@ async function loadPluginsModels(pluginObjs, leemons) {
   _.set(leemons, 'plugins', _.fromPairs(loadedPlugins));
 }
 
+function transformService(pluginObj, fromPlugin) {
+  _.forEach(_.keys(pluginObj.services), (serviceKey) => {
+    _.forEach(_.keys(pluginObj.services[serviceKey]), (serviceFunctionKey) => {
+      if (_.isFunction(pluginObj.services[serviceKey][serviceFunctionKey])) {
+        const func = pluginObj.services[serviceKey][serviceFunctionKey];
+        // eslint-disable-next-line no-param-reassign
+        pluginObj.services[serviceKey][serviceFunctionKey] = (...params) =>
+          func.call({ executeFrom: fromPlugin.name }, ...params);
+      }
+    });
+  });
+  return pluginObj;
+}
+
 function transformServices(pluginsObj, fromPlugin) {
   _.forEach(_.keys(pluginsObj), (pluginKey) => {
-    _.forEach(_.keys(pluginsObj[pluginKey].services), (serviceKey) => {
-      _.forEach(_.keys(pluginsObj[pluginKey].services[serviceKey]), (serviceFunctionKey) => {
-        if (_.isFunction(pluginsObj[pluginKey].services[serviceKey][serviceFunctionKey])) {
-          const func = pluginsObj[pluginKey].services[serviceKey][serviceFunctionKey];
-          // eslint-disable-next-line no-param-reassign
-          pluginsObj[pluginKey].services[serviceKey][serviceFunctionKey] = (...params) =>
-            func.call({ executeFrom: fromPlugin.name }, ...params);
-        }
-      });
-    });
-    return pluginsObj[pluginKey];
+    transformService(pluginsObj[pluginKey], fromPlugin);
   });
   return pluginsObj;
 }
@@ -124,7 +128,7 @@ async function initializePlugins(leemons) {
           // TODO: Check binding missing
           // The binding is needed for triggering the outside VM leemons
           // eslint-disable-next-line no-extra-bind
-          get: () => leemons.plugins[plugin.name],
+          get: () => transformService(leemons.plugins[plugin.name], pluginObj),
         });
         Object.defineProperty(filtered.leemons, 'plugins', {
           get: () => transformServices(_.pick(leemons.plugins, allowedPlugins), pluginObj),

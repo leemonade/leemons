@@ -13,10 +13,7 @@ class Permissions {
    * @static
    * */
   static async init() {
-    await Permissions.addMany.call(
-      { executeFrom: 'users-groups-roles' },
-      constants.defaultPermissions
-    );
+    await leemons.plugin.services.permissions.addMany(constants.defaultPermissions);
   }
 
   /**
@@ -46,15 +43,10 @@ class Permissions {
           },
           { transacting }
         ),
-        table.permissionAction.createMany(
-          _.map(data.actions, (actionName) => ({
-            actionName,
-            permissionName: data.permissionName,
-          })),
-          { transacting }
-        ),
         // TODO Añadir que se añadan las traducciones
       ]);
+
+      await Permissions.addActionMany(data.permissionName, data.actions);
 
       return values[0];
     });
@@ -64,11 +56,58 @@ class Permissions {
    * Create multiple permissions
    * @public
    * @static
+   * @param {string} permissionName - Permission to add action
+   * @param {string} actionName - Action to add
+   * @return {Promise<any>}
+   * */
+  static async addAction(permissionName, actionName) {
+    const values = await Promise.all([
+      leemons.plugin.services.actions.exist(actionName),
+      leemons.plugin.services.permissions.exist(permissionName),
+      leemons.plugin.services.permissions.existPermissionAction(permissionName, actionName),
+    ]);
+    if (!values[0]) throw new Error(`There is no ${actionName} action`);
+    if (!values[1]) throw new Error(`There is no ${permissionName} permission`);
+    if (!values[2])
+      throw new Error(
+        `Already exist the permission ${permissionName} with the action ${actionName}`
+      );
+
+    return table.permissionAction.create({ permissionName, actionName });
+  }
+
+  /**
+   * Create multiple permissions
+   * @public
+   * @static
+   * @param {string} permissionName - Permission to add action
+   * @param {string} actionNames - Actions to add
+   * @return {Promise<any>}
+   * */
+  static async addActionMany(permissionName, actionNames) {
+    const response = await Promise.allSettled(
+      _.map(actionNames, (d) => Permissions.addAction(permissionName, d))
+    );
+    return global.utils.settledResponseToManyResponse(response);
+  }
+
+  static async existPermissionAction(permissionName, actionName) {
+    const response = await table.permissionAction.count({ permissionName, actionName });
+    return !!response;
+  }
+
+  /**
+   * Create multiple permissions
+   * @public
+   * @static
    * @param {PermissionAdd[]} data - Array of permissions to add
    * @return {Promise<ManyResponse>} Created permissions
    * */
+
   static async addMany(data) {
-    const response = await Promise.allSettled(_.map(data, (d) => Permissions.add(d)));
+    const response = await Promise.allSettled(
+      _.map(data, (d) => leemons.plugin.services.permissions.add(d))
+    );
     return global.utils.settledResponseToManyResponse(response);
   }
 
@@ -174,7 +213,8 @@ class Permissions {
    * @return {Promise<boolean>}
    * */
   static async exist(permissionName) {
-    return table.permission.count({ permissionName });
+    const response = await table.permission.count({ permissionName });
+    return !!response;
   }
 
   /**

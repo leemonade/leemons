@@ -11,6 +11,7 @@ const LeemonsValidator = require('./leemons-validator');
 const { settledResponseToManyResponse } = require('./settled-response-to-many-response');
 const { HttpError, returnError } = require('./http-error');
 const { getAvailablePort } = require('./port');
+const paginate = require('./paginate');
 
 module.exports = {
   env,
@@ -28,4 +29,5 @@ module.exports = {
   jwt,
   settledResponseToManyResponse,
   aws,
+  paginate,
 };

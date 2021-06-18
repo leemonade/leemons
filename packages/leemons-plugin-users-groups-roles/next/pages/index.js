@@ -1,8 +1,9 @@
 import constants from '@users-groups-roles/constants';
 import { logoutSession, useSession } from '@users-groups-roles/session';
+import Router from 'next/router';
 
 export default function UserTest() {
-  useSession({ redirectTo: constants.frontend.login });
+  const session = useSession({ redirectTo: constants.frontend.login });
 
   const logout = () => {
     logoutSession(constants.base);
@@ -10,7 +11,24 @@ export default function UserTest() {
 
   return (
     <div>
-      <button onClick={logout}>Logout</button>
+      {session && (
+        <div>
+          <div>Nombre: {session.name}</div>
+          <div>Email: {session.email}</div>
+        </div>
+      )}
+
+      <div>Cutre menu</div>
+      <div className="flex">
+        <div onClick={() => Router.push(`/${constants.frontend.private.list}`)}>Usuarios</div>
+      </div>
+
+      <button
+        className="absolute right-2 top-2 px-2 border border-gray-500 rounded"
+        onClick={logout}
+      >
+        Logout
+      </button>
     </div>
   );
 }

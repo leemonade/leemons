@@ -1,6 +1,8 @@
 const _ = require('lodash');
 const moment = require('moment');
 const constants = require('../../config/constants');
+const recoverEmail = require('../../emails/recoverPassword');
+const resetPassword = require('../../emails/resetPassword');
 
 const table = {
   users: leemons.query('plugins_users-groups-roles::users'),
@@ -19,6 +21,36 @@ let jwtPrivateKey = null;
 class Users {
   static async init() {
     await Users.generateJWTPrivateKey();
+    if (leemons.plugins.emails) {
+      await leemons.plugins.emails.services.email.addIfNotExist(
+        'user-recover-password',
+        'es-ES',
+        'Recuperar contraseña',
+        recoverEmail.es,
+        leemons.plugins.emails.services.email.types.active
+      );
+      await leemons.plugins.emails.services.email.addIfNotExist(
+        'user-recover-password',
+        'en',
+        'Recover password',
+        recoverEmail.en,
+        leemons.plugins.emails.services.email.types.active
+      );
+      await leemons.plugins.emails.services.email.addIfNotExist(
+        'user-reset-password',
+        'es-ES',
+        'Su contraseña fue restablecida',
+        resetPassword.es,
+        leemons.plugins.emails.services.email.types.active
+      );
+      await leemons.plugins.emails.services.email.addIfNotExist(
+        'user-reset-password',
+        'en',
+        'Your password was reset',
+        resetPassword.en,
+        leemons.plugins.emails.services.email.types.active
+      );
+    }
   }
 
   /**
@@ -121,9 +153,10 @@ class Users {
    * @param {string} surnames - User surnames
    * @param {string} email - User email
    * @param {string} password - User password in raw
+   * @param {string} language - User language
    * @return {Promise<User>} Created / Updated role
    * */
-  static async registerFirstSuperAdminUser(name, surnames, email, password) {
+  static async registerFirstSuperAdminUser(name, surnames, email, password, language) {
     const hasUsers = await table.users.count();
     if (!hasUsers) {
       return table.users.transaction(async (transacting) => {
@@ -133,6 +166,7 @@ class Users {
             surnames,
             email,
             password: await Users.encryptPassword(password),
+            language,
           },
           { transacting }
         );
@@ -176,10 +210,11 @@ class Users {
    * @public
    * @static
    * @param {string} email - User email
+   * @param {any} ctx - Next context
    * @return {Promise<undefined>}
    * */
-  static async recover(email) {
-    const user = await table.users.findOne({ email }, { columns: ['id'] });
+  static async recover(email, ctx) {
+    const user = await table.users.findOne({ email }, { columns: ['id', 'language', 'name'] });
     if (!user) throw new global.utils.HttpError(401, 'Email not found');
     let recovery = await table.userRecoverPassword.findOne({ user: user.id });
     if (recovery) {
@@ -197,8 +232,65 @@ class Users {
         code: _.random(100000, 999999).toString(),
       });
     }
-    // TODO Mandamos email de recuperacion
+    if (leemons.plugins.emails) {
+      await leemons.plugins.emails.services.email.sendAsEducationalCenter(
+        email,
+        'user-recover-password',
+        user.language,
+        {
+          name: user.name,
+          resetUrl: `${ctx.request.header.origin}/${
+            constants.url.frontend.reset
+          }?token=${encodeURIComponent(
+            await Users.generateJWTToken({
+              id: user.id,
+              code: recovery.code,
+            })
+          )}`,
+          recoverUrl: `${ctx.request.header.origin}/${constants.url.frontend.recover}`,
+        }
+      );
+    }
     return undefined;
+  }
+
+  /**
+   * Return if canReset password with the provided token
+   * @public
+   * @static
+   * @param {string} token - User token
+   * @return {Promise<boolean>}
+   * */
+  static async canReset(token) {
+    try {
+      await Users.getResetConfig(token);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  /**
+   * Return reset config
+   * @public
+   * @static
+   * @param {string} token - User token
+   * @return {Promise<Object<{user: User, recoveryId: string}>>} Updated user
+   * */
+  static async getResetConfig(token) {
+    const payload = await Users.verifyJWTToken(token);
+    const user = await table.users.findOne({ id: payload.id });
+    if (!user) throw new global.utils.HttpError(401, 'Email not found');
+
+    const recovery = await table.userRecoverPassword.findOne({ user: user.id, code: payload.code });
+    if (!recovery) throw new global.utils.HttpError(401, 'Credentials do not match');
+
+    const now = moment(_.now());
+    const updatedAt = moment(recovery.updated_at);
+    if (now.diff(updatedAt, 'minutes') > constants.timeForRecoverPassword)
+      throw new global.utils.HttpError(401, 'Credentials do not match');
+
+    return { user, recoveryId: recovery.id };
   }
 
   /**
@@ -207,28 +299,34 @@ class Users {
    * progress we update an existing expired one or create a new one.
    * @public
    * @static
-   * @param {string} email - User email
-   * @param {string} code - Recovery code
+   * @param {string} token - User token
    * @param {string} password - New user password
    * @return {Promise<undefined>} Updated user
    * */
-  static async reset(email, code, password) {
-    const user = await table.users.findOne({ email }, { columns: ['id'] });
-    if (!user) throw new global.utils.HttpError(401, 'Email not found');
-
-    const recovery = await table.userRecoverPassword.findOne({ user: user.id, code });
-    if (!recovery) throw new global.utils.HttpError(401, 'Credentials do not match');
-
-    const now = moment(_.now());
-    const updatedAt = moment(recovery.updated_at);
-    if (now.diff(updatedAt, 'minutes') > constants.timeForRecoverPassword)
-      throw new global.utils.HttpError(401, 'Credentials do not match');
+  static async reset(token, password, ctx) {
+    const config = await this.getResetConfig(token);
 
     return table.users.transaction(async (transacting) => {
       const values = await Promise.all([
-        table.users.update({ id: user.id }, { password }, { transacting }),
-        table.userRecoverPassword.delete({ id: recovery.id }, { transacting }),
+        table.users.update(
+          { id: config.user.id },
+          { password: await Users.encryptPassword(password) },
+          { transacting }
+        ),
+        table.userRecoverPassword.delete({ id: config.recoveryId }, { transacting }),
       ]);
+
+      if (leemons.plugins.emails) {
+        await leemons.plugins.emails.services.email.sendAsEducationalCenter(
+          config.user.email,
+          'user-reset-password',
+          config.user.language,
+          {
+            name: config.user.name,
+            loginUrl: `${ctx.request.header.origin}/${constants.url.frontend.login}`,
+          }
+        );
+      }
 
       return values[0];
     });
@@ -263,16 +361,39 @@ class Users {
    * @public
    * @static
    * @param {UserAuth} userAuth - User auth to check
-   * @param {string[]} allowedPermissions - Array of permissions
+   * @param {Object} allowedPermissions - Allowed permission by key
+   * @property {string[]} allowedPermissions.actions - Array of allowed actions
+   * @property {string} allowedPermissions.target - Target
+   * @param {any} ctx - Koa context
    * @return {Promise<boolean>} If have permission return true if not false
    * */
-  static async havePermission(userAuth, allowedPermissions) {
+  static async havePermission(userAuth, allowedPermissions, ctx) {
     if (userAuth.reloadPermissions) await Users.updateUserPermissions(userAuth.id);
 
-    let hasPermission = await table.userAuthPermission.count({
-      user: userAuth.id,
-      permission_$in: allowedPermissions,
+    const promises = [];
+    let query;
+    _.forIn(allowedPermissions, (value, permissionName) => {
+      query = { userAuth: userAuth.id, permission: permissionName, action_$in: value.actions };
+      if (value.target) {
+        query.target = value.target;
+        if (ctx) query.target = _.get(ctx, value.target, value.target);
+      }
+      promises.push(table.userAuthPermission.count(query));
     });
+
+    const values = await Promise.all(promises);
+
+    let hasPermission = false;
+    let i = 0;
+    const maxIterations = values.length;
+
+    while (i < maxIterations && !hasPermission) {
+      if (values[i]) {
+        hasPermission = true;
+      }
+      i++;
+    }
+
     if (hasPermission) return true;
     hasPermission = await Users.userIsSuperAdmin(userAuth.user);
     if (hasPermission) return true;
@@ -348,6 +469,10 @@ class Users {
     const user = await table.users.findOne({ id: payload.id });
     if (!user) throw new Error('No user found for the id provided');
     return user;
+  }
+
+  static async list(page, size) {
+    return global.utils.paginate(table.users, page, size);
   }
 }
 

@@ -21,10 +21,26 @@ module.exports = [
     handler: 'users.reset',
   },
   {
+    path: '/user/can/reset',
+    method: 'POST',
+    handler: 'users.canReset',
+  },
+  {
     path: '/user',
     method: 'GET',
     handler: 'users.detail',
     authenticated: true,
+  },
+  {
+    path: '/user/list',
+    method: 'POST',
+    handler: 'users.list',
+    authenticated: true,
+    allowedPermissions: {
+      users: {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
   },
   {
     path: '/user',

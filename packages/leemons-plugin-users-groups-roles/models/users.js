@@ -34,6 +34,12 @@ module.exports = {
         defaultTo: false,
       },
     },
+    language: {
+      type: 'string',
+      options: {
+        notNull: true,
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

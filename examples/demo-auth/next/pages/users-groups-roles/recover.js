@@ -1,8 +1,9 @@
 import { getSession, loginSession, useSession } from '@users-groups-roles/session';
 import constants from '@users-groups-roles/constants';
 import { useForm } from 'react-hook-form';
+import Router from 'next/router';
 
-export default function Home() {
+export default function Recover() {
   useSession({ redirectTo: constants.base, redirectIfFound: true });
 
   const {
@@ -25,20 +26,19 @@ export default function Home() {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <label>Email</label>
-        <input defaultValue="testing@test.io" {...register('email', { required: true })} />
-        {errors.email && <span>email is required</span>}
-
-        <label>Password</label>
-        <input
-          type="password"
-          defaultValue="testing"
-          {...register('password', { required: true })}
-        />
-        {errors.password && <span>password is required</span>}
+        <div>
+          <label>Email</label>
+          <input defaultValue="jaime@leemons.io" {...register('email', { required: true })} />
+          {errors.email && <span>email is required</span>}
+        </div>
 
         <input type="submit" />
       </form>
+
+      <div onClick={() => Router.push(`/${constants.frontend.login}`)}>Volver al login</div>
+      <div onClick={() => Router.push(`/${constants.frontend.register}`)}>
+        Aun no estoy registrado
+      </div>
     </>
   );
 }
