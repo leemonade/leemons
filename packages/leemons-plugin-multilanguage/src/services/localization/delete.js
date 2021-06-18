@@ -1,17 +1,24 @@
+const { validateLocaleCode } = require('../../validations/locale');
+const {
+  validateLocalizationTuple,
+  validateLocalizationKey,
+  validateLocalizationTupleArray,
+} = require('../../validations/localization');
+
 const localizationsTable = leemons.query('plugins_multilanguage::localizations');
 
 /**
- * Deletes the localization that matches the tuple key, locale
- * @param {string} key the entry key
- * @param {string} locale the locale code
- * @returns {Promise<Boolean>} if the locale was deleted or not
+ * Deletes the localization that matches the tuple [key, locale]
+ * @param {LocalizationKey} key the entry key
+ * @param {LocaleCode} locale the locale code
+ * @returns {Promise<boolean>} if the locale was deleted or not
  */
 async function deleteOne(key, locale) {
-  const _key = key.toLowerCase();
-  const _locale = locale.toLowerCase();
+  const tuple = validateLocalizationTuple({ key, locale });
 
   try {
-    return (await localizationsTable.deleteMany({ key: _key, locale: _locale })).count === 1;
+    // Delete the given tuple
+    return (await localizationsTable.deleteMany(tuple)).count === 1;
   } catch (e) {
     leemons.log.debug(e.message);
     throw new Error('An error occurred while deleting the localization');
@@ -19,21 +26,23 @@ async function deleteOne(key, locale) {
 }
 
 /**
- * Deletes the localization that matches the key prefix
+ * Deletes the localizations that matches the key prefix
  *
  * If not locale provided, remove all the keys matching the prefix in any locale
  *
- * @param {string} key The key prefix
- * @param {string} [locale] the locale code
- * @returns {Promise<Boolean>} if the locale was deleted or not
+ * @param {LocalizationKey} key The key prefix
+ * @param {LocaleCode} [locale] the locale code
+ * @returns {Promise<number>} how many localizations where deleted
  */
 async function deleteKeyStartsWith(key, locale = null) {
   const query = {
-    key_$startsWith: key.toLowerCase(),
+    // Validate key and get it lowercased
+    key_$startsWith: validateLocalizationKey(key),
   };
 
   if (locale) {
-    query.locale = locale.toLowerCase();
+    // Validate locales and get it lowercased
+    query.locale = validateLocaleCode(locale);
   }
 
   try {
@@ -45,16 +54,13 @@ async function deleteKeyStartsWith(key, locale = null) {
 }
 
 /**
- * Deletes the localization that matches the tuple key, locale
- * @param {string[][]} localizations An array of [key, locale]
+ * Deletes the localizations that matches the tuple [key, locale]
+ * @param {Array<LocalizationKey, LocaleCode>[]} localizations An array of [key, locale]
  * @returns {Promise<Number>} The number of localizations deleted
  */
 async function deleteMany(localizations) {
-  // Todo: Add validation (fails when codes is not an array)
-  const _localizations = localizations.map(([key, locale]) => ({
-    key: key.toLowerCase(),
-    locale: locale.toLowerCase(),
-  }));
+  // Validates the input and returns an array of LocalizationTuples ([{key, locale}])
+  const _localizations = validateLocalizationTupleArray(localizations);
 
   try {
     return (await localizationsTable.deleteMany({ $or: _localizations })).count;
@@ -64,14 +70,25 @@ async function deleteMany(localizations) {
   }
 }
 
+/**
+ * Deletes all the entries mathching a key or locale
+ * @param {object} params
+ * @param {LocalizationKey} [params.key] The key to delete
+ * @param {LocaleCode} [params.locale] The locale to delete
+ * @returns {number} the number of items deleted
+ */
 async function deleteAll({ key = null, locale = null }) {
   const query = {};
 
   if (key) {
-    query.key = key;
+    query.key = validateLocalizationKey(key);
   }
   if (locale) {
-    query.locale = locale;
+    query.locale = validateLocaleCode(locale);
+  }
+
+  if (!query.key && !query.locale) {
+    throw new Error('At least one parameter should be provided');
   }
 
   try {

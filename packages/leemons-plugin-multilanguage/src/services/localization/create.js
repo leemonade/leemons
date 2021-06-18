@@ -1,39 +1,31 @@
 const _ = require('lodash');
-const validateLocale = require('../../../validations/locale');
-const validateKey = require('../../../validations/key');
-const validateDataType = require('../../../validations/datatypes');
-const throwInvalid = require('../../../validations/throwInvalid');
+const {
+  validateLocalization,
+  validateLocalizationsBulk,
+  validateLocalizationsArray,
+} = require('../../validations/localization');
 
 const { has: hasLocale, hasMany: hasLocales } = require('../locale/has');
 const { has: hasLocalization, hasMany: hasLocalizations } = require('./has');
 
-const { LeemonsValidator } = global.utils;
-
 const localizationsTable = leemons.query('plugins_multilanguage::localizations');
-
-LeemonsValidator.ajv.addFormat('localizationKey', {
-  validate: (x) => /^([a-z][a-z0-9_-]+\.){0,}[a-z][a-z0-9_-]+$/.test(x),
-});
 
 /**
  * Adds one locale
- * @param {string} key The localization key
- * @param {string} locale The locale for the localization
- * @param {string} value The value for the entry
- * @returns {Promise<Localization> | Promise<null>} null if the locale already exists and the locale object if created
+ * @param {LocalizationKey} key The localization key
+ * @param {LocaleCode} locale The locale for the localization
+ * @param {LocalizationValue} value The value for the entry
+ * @returns {Promise<Localization | null>} null if the locale already exists and the locale object if created
  * @param
  */
-
 async function add(key, locale, value) {
-  const _locale = locale.toLowerCase();
-  const _key = key.toLowerCase();
-
-  throwInvalid(validateLocale(_locale));
-  throwInvalid(validateKey(key));
-  throwInvalid(validateDataType(value, { type: 'string', minLength: 1, maxlength: 65535 }));
+  // Validates the localization and returns it with the key and locale lowercased
+  const { key: _key, locale: _locale } = validateLocalization({ key, locale, value });
 
   try {
+    // Check if the localization exists
     if (!(await hasLocalization(_key, _locale))) {
+      // Check if the locale exists
       if (await hasLocale(_locale)) {
         // Create the new localization
         return await localizationsTable.create({ key: _key, locale: _locale, value });
@@ -53,8 +45,15 @@ async function add(key, locale, value) {
   }
 }
 
-// TODO: Add JSDOC and data validation
+/**
+ * Adds many localizations to the database
+ * @param {{[locale:string]: {[key:string]: LocalizationValue}} data
+ * @returns {Promise<{items: Localization[],count: number, warnings: {nonExistingLocales: LocaleCode[] | undefined, existingKeys: LocalizationKey[] | undefined} | null}}
+ */
 async function addMany(data) {
+  // Validate params
+  validateLocalizationsBulk(data);
+
   const locales = Object.keys(data);
 
   // Get the existing locales
@@ -63,11 +62,14 @@ async function addMany(data) {
     .map(([locale]) => locale);
 
   // Get the localizations for the existing locales (flat array)
-  const localizations = _.flatten(
+  let localizations = _.flatten(
     Object.entries(_.pick(data, existingLocales)).map(([locale, values]) =>
       Object.entries(values).map(([key, value]) => ({ key, locale, value }))
     )
   );
+
+  // Validate localizations formats (get them with key and locale lowercased)
+  localizations = validateLocalizationsArray(localizations);
 
   // Get the DB existing localizations
   const existingLocalizations = await hasLocalizations(

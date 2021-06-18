@@ -1,36 +1,32 @@
-const _ = require('lodash');
-const validateLocale = require('../../../validations/locale');
-const throwInvalid = require('../../../validations/throwInvalid');
+const { validateLocaleCode, validateLocaleCodeArray } = require('../../validations/locale');
 
 const localesTable = leemons.query('plugins_multilanguage::locales');
 
 /**
- * Gets the given locale
- * @param {string} code The locale iso code xx-YY or xx
- * @returns {Promise<Locale> | null} The locale
+ * Gets the given locale info from the database
+ * @param {LocaleCode} code The locale iso code xx-YY or xx
+ * @returns {Promise<Locale | null>} The locale
  */
 async function get(code) {
-  const _code = code.toLowerCase();
-
-  throwInvalid(validateLocale(_code));
+  // Validates the code and returns it lowercased
+  const _code = validateLocaleCode(code);
 
   try {
     return await localesTable.findOne({ code: _code });
   } catch (e) {
     leemons.log.debug(e.message);
-    throw new Error('An error occurred while creating the locale');
+    throw new Error('An error occurred while getting the locale');
   }
 }
 
 /**
- * Gets the given locales
- * @param {string[]} codes The locale iso code xx-YY or xx
+ * Gets the given locales form the database
+ * @param {LocaleCode[]} codes The locale iso code xx-YY or xx
  * @returns {Promise<Locale[]>} An array with the locales that exists
  */
 async function getMany(codes) {
-  // Todo: Add validation (fails when codes is not an array)
-  const _codes = codes.map((code) => code.toLowerCase());
-  throwInvalid(_codes.map((code) => validateLocale(code)));
+  // Validates the codes and returns them lowercased
+  const _codes = validateLocaleCodeArray(codes);
 
   try {
     return await localesTable.find({ code_$in: _codes });
@@ -40,9 +36,13 @@ async function getMany(codes) {
   }
 }
 
+/**
+ * Gets all the existing locales in the database
+ * @returns {Promise<Locale[]>} An array with all the locales in the database
+ */
 async function getAll() {
   try {
-    return await localesTable.find({ code_$ne: '' });
+    return await localesTable.find({ code_$null: false });
   } catch (e) {
     leemons.log.debug(e.message);
     throw new Error('An error occurred while getting all the locales');

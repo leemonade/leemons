@@ -1,27 +1,41 @@
 const _ = require('lodash');
+const { validateLocaleCode } = require('../../validations/locale');
+const {
+  validateLocalizationTuple,
+  validateLocalizationKeyArray,
+  validateLocalizationKey,
+} = require('../../validations/localization');
 
 const localizationsTable = leemons.query('plugins_multilanguage::localizations');
 
 /**
  * Gets the given locale
- * @param {string} code The locale iso code xx-YY or xx
- * @returns {Promise<Locale> | null} The locale
+ * @param {LocaleCode} code The locale iso code xx-YY or xx
+ * @returns {Promise<Localization | null>} The requested localization or null
  */
 async function get(key, locale) {
-  const _key = key.toLowerCase();
-  const _locale = locale.toLowerCase();
+  // Validates the tuple and lowercase it
+  const tuple = validateLocalizationTuple({ key, locale });
 
   try {
-    return await localizationsTable.findOne({ key: _key, locale: _locale });
+    return await localizationsTable.findOne(tuple);
   } catch (e) {
     leemons.log.debug(e.message);
     throw new Error('An error occurred while getting the localization');
   }
 }
 
+/**
+ * Gets many localization that matches the keys and the locale
+ * @param {LocalizationKey[]} keys
+ * @param {LocaleCode} locale
+ * @returns {Localization[]}
+ */
 async function getManyWithLocale(keys, locale) {
-  const _keys = keys.map((key) => key.toLowerCase());
-  const _locale = locale.toLowerCase();
+  // Validate keys array and lowercase them
+  const _keys = validateLocalizationKeyArray(keys);
+  // Validate locale and lowercase it
+  const _locale = validateLocaleCode(locale);
 
   try {
     const foundLocalizations = await localizationsTable.find({ key_$in: _keys, locale: _locale });
@@ -35,8 +49,14 @@ async function getManyWithLocale(keys, locale) {
   }
 }
 
+/**
+ * Get all the localization mathing a key (different locales)
+ * @param {LocalizationKey} key
+ * @returns {Localization[]}
+ */
 async function getWithKey(key) {
-  const _key = key.toLowerCase();
+  // Validate the key and lowercase it
+  const _key = validateLocalizationKey(key);
 
   try {
     return await localizationsTable.find({ key: _key });
@@ -46,8 +66,14 @@ async function getWithKey(key) {
   }
 }
 
+/**
+ * Gets all the localizations mathching a locale (different keys)
+ * @param {LocaleCode} locale
+ * @returns {Localization[]}
+ */
 async function getWithLocale(locale) {
-  const _locale = locale.toLowerCase();
+  // Validate the locale and lowercase it
+  const _locale = validateLocaleCode(locale);
 
   try {
     return await localizationsTable.find({ locale: _locale });
@@ -57,8 +83,14 @@ async function getWithLocale(locale) {
   }
 }
 
+/**
+ * Gets an object with keys and values of all the keys in a locale
+ * @param {LocaleCode} locale
+ * @returns {{[key: string]: LocalizationValue}}
+ */
 async function getKeyValueWithLocale(locale) {
-  const _locale = locale.toLowerCase();
+  // Validate the locale and lowercase it
+  const _locale = validateLocaleCode(locale);
 
   try {
     const localizations = await localizationsTable.find({ locale: _locale });
@@ -76,25 +108,38 @@ async function getKeyValueWithLocale(locale) {
   }
 }
 
+/**
+ * Gets all the keys for a locale starting with a prefix
+ * @param {LocalizationKey} key
+ * @param {LocaleCode} locale
+ * @returns {Localization[]}
+ */
 async function getKeyStartsWith(key, locale) {
-  const _key = key.toLowerCase();
-  const _locale = locale.toLowerCase();
+  // Validate the tuple and lowercase it
+  const tuple = validateLocalizationTuple({ key, locale });
 
   try {
-    return await localizationsTable.find({ key_$startsWith: _key, locale: _locale });
+    return await localizationsTable.find({ key_$startsWith: tuple.key, locale: tuple.locale });
   } catch (e) {
     leemons.log.debug(e.message);
     throw new Error('An error occurred while getting the localization');
   }
 }
+
+/**
+ * Gets an object of key value for all the keys starting with a prefix for a given locale
+ * @param {LocalizationKey} key
+ * @param {LocaleCode} locale
+ * @returns {{[key: string]: LocalizationValue}}
+ */
 async function getKeyValueStartsWith(key, locale) {
-  const _key = key.toLowerCase();
-  const _locale = locale.toLowerCase();
+  // Validate the tuple and lowercase it
+  const tuple = validateLocalizationTuple({ key, locale });
 
   try {
     const localizations = await localizationsTable.find({
-      key_$startsWith: _key,
-      locale: _locale,
+      key_$startsWith: tuple.key,
+      locale: tuple.locale,
     });
 
     return localizations.reduce((result, { key: lKey, value }) => {

@@ -1,21 +1,20 @@
 const _ = require('lodash');
-const validateLocale = require('../../../validations/locale');
-const throwInvalid = require('../../../validations/throwInvalid');
+const { validateLocaleCode, validateLocaleCodeArray } = require('../../validations/locale');
 
 const localesTable = leemons.query('plugins_multilanguage::locales');
 
 /**
  * Checks if the given locale exists
- * @param {string} code The locale iso code xx-YY or xx
- * @returns {Promise<Boolean>} if the locale exists
+ * @param {LocaleCode} code The locale iso code xx-YY or xx
+ * @returns {Promise<boolean>} if the locale exists
  */
 async function has(code) {
-  const _code = code.toLowerCase();
-
-  throwInvalid(validateLocale(_code));
+  // Validates the code and returns it in lowercase
+  const _code = validateLocaleCode(code);
 
   try {
-    return (await localesTable.count({ code: _code })) === 1;
+    // Get if there is at least 1 locale with the given code
+    return (await localesTable.count({ code: _code })) > 0;
   } catch (e) {
     leemons.log.debug(e.message);
     throw new Error('An error occurred while creating the locale');
@@ -24,18 +23,19 @@ async function has(code) {
 
 /**
  * Checks if the given locales exists
- * @param {string[]} codes The locale iso code xx-YY or xx
- * @returns {Promise<object>} An array with the locales that exists
+ * @param {LocaleCode[]} codes The locale iso code xx-YY or xx
+ * @returns {Promise<Object<string, boolean>>} An array with the locales that exists
  */
 async function hasMany(codes) {
-  // Todo: Add validation (fails when codes is not an array)
-  const _codes = codes.map((code) => code.toLowerCase());
-  throwInvalid(_codes.map((code) => validateLocale(code)));
+  // Validates the code and returns them lowercased
+  const _codes = validateLocaleCodeArray(codes);
 
   try {
+    // Find the locales that exists in the database
     let existingLocales = await localesTable.find({ code_$in: _codes }, { columns: ['code'] });
     existingLocales = existingLocales.map((locale) => locale.code);
 
+    // Generate an object of {locale: boolean}
     return _.fromPairs(_codes.map((code) => [code, existingLocales.includes(code)]));
   } catch (e) {
     leemons.log.debug(e.message);

@@ -1,25 +1,22 @@
 const _ = require('lodash');
-const validateKey = require('../../../validations/key');
-const validateLocale = require('../../../validations/locale');
-const throwInvalid = require('../../../validations/throwInvalid');
+const {
+  validateLocalizationTuple,
+  validateLocalizationTupleArray,
+} = require('../../validations/localization');
 
 const localizationsTable = leemons.query('plugins_multilanguage::localizations');
 
 /**
  * Checks if the given localization tuple exists
- * @param {string} key The localization key
- * @param {string} locale The desired locale
- * @returns {Promise<Boolean>} if the locale exists
+ * @param {LocalizationKey} key The localization key
+ * @param {LocaleCode} locale The desired locale
+ * @returns {Promise<boolean>} if the localization exists
  */
 async function has(key, locale) {
-  const _key = key.toLowerCase();
-  const _locale = locale.toLowerCase();
-
-  throwInvalid(validateKey(_key));
-  throwInvalid(validateLocale(_locale));
+  const tuple = validateLocalizationTuple({ key, locale });
 
   try {
-    return (await localizationsTable.count({ key: _key, locale: _locale })) === 1;
+    return (await localizationsTable.count(tuple)) === 1;
   } catch (e) {
     leemons.log.debug(e.message);
     throw new Error('An error occurred while checking if the localization exists');
@@ -27,14 +24,13 @@ async function has(key, locale) {
 }
 
 /**
- * Checks if the given locales exists
- * @param {string[][]} locales The locale iso code xx-YY or xx
- * @returns {Promise<object>} An array with the locales that exists
+ * Checks if the given localizations exists
+ * @param {Array<LocalizationKey, LocaleCode>[]} localizations An array of localization objects
+ * @returns {Promise<{[locale:string]: {[key:string]:boolean}}>} An array with the localizations that exists
  */
-async function hasMany(locales) {
-  // Todo: Add validation (fails when codes is not an array)
-  const _localizations = locales.map(([key, locale]) => ({ key, locale: locale.toLowerCase() }));
-  throwInvalid(_localizations.map(({ key, locale }) => [validateKey(key), validateLocale(locale)]));
+async function hasMany(localizations) {
+  // Validates the localizations and lowercase each tuple
+  const _localizations = validateLocalizationTupleArray(localizations);
 
   try {
     const existingLocalizations = await localizationsTable.find(

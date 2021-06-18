@@ -1,58 +1,28 @@
-const localesTable = leemons.query('plugins_multilanguage::locales');
-const { LeemonsValidator } = global.utils;
-
+const { validateLocale, validateLocalesArray } = require('../../validations/locale');
 const { has: hasLocale, hasMany: hasLocales } = require('./has');
 
-LeemonsValidator.ajv.addFormat('localeCode', {
-  validate: (x) => /^(([a-z]{2})|([a-z]{2}-[a-z]{2}))$/.test(x),
-});
+const localesTable = leemons.query('plugins_multilanguage::locales');
 
 /**
  * Adds one locale to the database if it does not exist
  *
- * @param {string} code The locale iso code xx-YY or xx
- * @param {string} name The display name of the given locale
+ * @param {LocaleCode} code The locale iso code xx-YY or xx
+ * @param {LocaleName} name The display name of the given locale
  *
- * @returns {Promise<Locale> | Promise<null>} null if the locale already exists and the locale object if created
+ * @returns {Promise<Locale | null>} null if the locale already exists and the locale object if created
  */
 async function add(code, name) {
-  // Always save locale in lowercase
-  const _code = typeof code === 'string' ? code.toLowerCase() : null;
-  /**
-   * Code must be of type localeCode
-   * Name must be a string of 1 <= length <= 255
-   */
-  const validator = new LeemonsValidator({
-    type: 'object',
-    properties: {
-      code: {
-        type: 'string',
-        format: 'localeCode',
-        minLength: 2,
-        maxLength: 5,
-      },
-      name: {
-        type: 'string',
-        minLength: 1,
-        maxLength: 255,
-      },
-    },
-    required: ['code', 'name'],
-  });
-
-  // Throw validation error
-  if (!validator.validate({ code: _code, name })) {
-    throw validator.error;
-  }
+  // Validate the locale and get the code in lowercase
+  const locale = validateLocale({ code, name });
 
   try {
-    // If the locale does not exists, create it
-    if (!(await hasLocale(_code))) {
-      const locale = await localesTable.create({ code: _code, name });
+    // If the locale does not exist, create it
+    if (!(await hasLocale(locale.code))) {
+      const dbLocale = await localesTable.create(locale);
 
-      leemons.log.info(`New locale added: ${code} | ${name}`);
+      leemons.log.info(`New locale added: ${dbLocale.code} | ${dbLocale.name}`);
 
-      return locale;
+      return dbLocale;
     }
     // If already exists, return null
     return null;
@@ -65,9 +35,9 @@ async function add(code, name) {
 /**
  * Adds many locales to the database. Only adds those not existing
  *
- * @param {string[][]} locales An array of locales ([code, name])
+ * @param {Array<Array<LocaleCode, LocaleName>>} locales An array of locales ([code, name])
  *
- * @returns {Promise<Locale[]> | Promise<[]>} [] if all the locales already exists and an array of locale objects created
+ * @returns {Promise<Locale[]>} if all the locales already exists and an array of locale objects created
  *
  * @example
  * addMany([
@@ -76,72 +46,8 @@ async function add(code, name) {
  * ]);
  */
 async function addMany(locales) {
-  /**
-   * The locales must be an array of arrays:
-   *   Element 0 must be a string 2 <= length <= 5
-   *   Element 1 must be a string of 1 <= length <= 255
-   */
-  const paramsValidator = new LeemonsValidator({
-    type: 'array',
-    items: {
-      type: 'array',
-      minItems: 2,
-      maxItems: 2,
-      items: [
-        {
-          type: 'string',
-          minLength: 2,
-          maxLength: 5,
-        },
-        {
-          type: 'string',
-          minLength: 1,
-          maxLength: 255,
-        },
-      ],
-    },
-  });
-
-  // Throw validation error
-  if (!paramsValidator.validate(locales)) {
-    throw paramsValidator.error;
-  }
-  // Get the locales with the code lower cased
-  const _locales = locales.map(([code, name]) => ({
-    code: code.toLowerCase(),
-    name,
-  }));
-
-  /**
-   * The locales must be an array of the interfaces:
-   *   Code must be of type localeCode
-   *   Name must be a string of 1 <= length <= 255
-   */
-  const formatValidator = new LeemonsValidator({
-    type: 'array',
-    items: {
-      type: 'object',
-      properties: {
-        code: {
-          type: 'string',
-          format: 'localeCode',
-          minLength: 2,
-          maxLength: 5,
-        },
-        name: {
-          type: 'string',
-          minLength: 1,
-          maxLength: 255,
-        },
-      },
-      required: ['code', 'name'],
-    },
-  });
-
-  // Throw validation error
-  if (!formatValidator.validate(_locales)) {
-    throw formatValidator.error;
-  }
+  // Validate the locales and get an array of Locale objects
+  const _locales = validateLocalesArray(locales);
 
   const codes = _locales.map((locale) => locale.code);
 

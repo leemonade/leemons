@@ -1,3 +1,3 @@
-const localizations = require('../src/services/localization');
+// const localizations = require('../src/services/localization');
 
-module.exports = localizations;
+// module.exports = localizations;
