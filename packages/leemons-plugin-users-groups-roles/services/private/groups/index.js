@@ -1,5 +1,5 @@
 const { removeUser } = require('./removeUser');
-const { addUser } = require('./addUser');
+const { addUserAuth } = require('./addUserAuth');
 const { remove } = require('./remove');
 const { exist } = require('./exist');
 const { create } = require('./create');
@@ -8,6 +8,6 @@ module.exports = {
   exist,
   create,
   remove,
-  addUser,
+  addUserAuth,
   removeUser,
 };

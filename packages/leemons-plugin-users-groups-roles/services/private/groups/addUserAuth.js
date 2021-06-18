@@ -1,30 +1,30 @@
 const { existUserAuth } = require('../users');
-const { table } = require('../tables');
 const { exist: userExist } = require('../users/exist');
 const { exist: groupExist } = require('./exist');
+const { table } = require('../tables');
 
 /**
- * Remove one user from group
+ * Add one user auth to group if not already in group
+ * If you are in, continue without errors
  * @public
  * @static
  * @param {string} groupId - Group id
  * @param {string} userAuthId - User auth id
  * @return {Promise<undefined>}
  * */
-async function removeUser(groupId, userAuthId) {
+async function addUserAuth(groupId, userAuthId) {
   await Promise.all([groupExist({ id: groupId }, true), existUserAuth({ id: userAuthId }, true)]);
-
-  const groupUserAuth = await table.groupUserAuth.count({ group: groupId, userAuth: userAuthId });
-  if (groupUserAuth) {
+  const groupUser = await table.groupUserAuth.count({ group: groupId, userAuth: userAuthId });
+  if (!groupUser) {
     return table.groupUserAuth.transaction(async () => {
       const values = await Promise.all([
-        table.groupUserAuth.delete({ group: groupId, userAuth: userAuthId }),
+        table.groupUserAuth.create({ group: groupId, userAuth: userAuthId }),
         table.userAuth.update({ id: userAuthId }, { reloadPermissions: true }),
       ]);
       return values[0];
     });
   }
-  return undefined;
+  return groupUser;
 }
 
-module.exports = { removeUser };
+module.exports = { addUserAuth };

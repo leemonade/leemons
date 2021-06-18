@@ -10,14 +10,13 @@ const { exist } = require('./exist');
  * @return {Promise<undefined>}
  * */
 async function remove(groupId) {
-  // TODO ARREGLAR PARA QUE USE USER AUTH Y NO USERS
   await exist({ id: groupId }, true);
-  const groupUsers = await table.groupUser.find({ group: groupId }, { columns: ['user'] });
-  const userIdsInGroup = _.map(groupUsers, 'user');
-  return table.groupUser.transaction(async () => {
+  const groupUserAuths = await table.groupUserAuth.find({ group: groupId }, { columns: ['user'] });
+  const userAuthIdsInGroup = _.map(groupUserAuths, 'userAuth');
+  return table.groupUserAuth.transaction(async () => {
     const values = await Promise.all([
       table.group.delete({ id: groupId }),
-      table.users.updateMany({ id_$in: userIdsInGroup }, { reloadPermissions: true }),
+      table.userAuth.updateMany({ id_$in: userAuthIdsInGroup }, { reloadPermissions: true }),
     ]);
     return values[0];
   });

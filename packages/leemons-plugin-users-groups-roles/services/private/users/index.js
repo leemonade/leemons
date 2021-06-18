@@ -1,3 +1,4 @@
+const { existUserAuth } = require('./existUserAuth');
 const { init } = require('./init');
 const { list } = require('./list');
 const { detailForJWT } = require('./detailForJWT');
@@ -30,6 +31,8 @@ module.exports = {
   list,
 
   exist,
+  existUserAuth,
+
   addFirstSuperAdminUser,
   generateJWTPrivateKey,
   getJWTPrivateKey,
