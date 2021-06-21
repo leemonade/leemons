@@ -77,15 +77,6 @@ class Leemons {
     this.started = false;
   }
 
-  api(url, config) {
-    return fetch(`http://localhost:${process.env.PORT}/api/${url}`, config).then(async (r) => {
-      if (r.status >= 400) {
-        throw await r.json();
-      }
-      return r.json();
-    });
-  }
-
   // Set KOA as requestHandler
   handleRequest(req, res) {
     if (!this.requestHandler) {
