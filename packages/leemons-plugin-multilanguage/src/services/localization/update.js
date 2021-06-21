@@ -1,14 +1,29 @@
 const _ = require('lodash');
+const {
+  validateLocalization,
+  validateLocalizationKey,
+  validateLocalizationLocaleValue,
+  validateLocalizationsBulk,
+} = require('../../validations/localization');
 const { hasMany: hasLocales, has: hasLocale } = require('../locale/has');
 
 const localizationsTable = leemons.query('plugins_multilanguage::localizations');
 
+/**
+ * Sets the value of a locale, if this does not exists, it creates it
+ * @param {LocalizationKey} key The localization key
+ * @param {LocaleCode} locale The locale for the localization
+ * @param {LocalizationValue} value The value for the entry
+ * @returns {Promise<Localization | null>} null if the locale already exists and the locale object if created
+ */
 async function setValue(key, locale, value) {
+  // Validates the localization and returns it with the key and locale lowercased
+  const { key: _key, locale: _locale } = validateLocalization({ key, locale, value });
   try {
-    if (!(await hasLocale(locale))) {
+    if (!(await hasLocale(_locale))) {
       throw new Error('Invalid locale');
     }
-    return await localizationsTable.set({ key, locale }, { value });
+    return await localizationsTable.set({ key: _key, locale: _locale }, { value });
   } catch (e) {
     if (e.message === 'Invalid locale') {
       throw e;
@@ -19,8 +34,19 @@ async function setValue(key, locale, value) {
   }
 }
 
+/**
+ * Sets the values for a key in different locales
+ * @param {LocalizationKey} key
+ * @param {{[key:string]: LocalizationValue}} data
+ * @returns {Promise<{items: Localization[],count: number, warnings: {nonExistingLocales: LocaleCode[] | undefined, existingLocalizations: LocaleCode[] | undefined} | null}}
+ */
 async function setKey(key, data) {
-  const locales = Object.keys(data);
+  // Validates the key and returns it lowercased
+  const _key = validateLocalizationKey(key);
+  // Validates the tuples [locale, value] and lowercases the locale
+  const _data = validateLocalizationLocaleValue(data);
+
+  const locales = Object.keys(_data);
 
   // Get the existing locales
   const existingLocales = Object.entries(await hasLocales(locales))
@@ -29,7 +55,11 @@ async function setKey(key, data) {
 
   // Get the localizations for the existing locales (flat array)
   const localizations = _.flatten(
-    Object.entries(_.pick(data, existingLocales)).map(([locale, value]) => ({ key, locale, value }))
+    Object.entries(_.pick(_data, existingLocales)).map(([locale, value]) => ({
+      key: _key,
+      locale,
+      value,
+    }))
   );
 
   try {
@@ -68,7 +98,15 @@ async function setKey(key, data) {
   }
 }
 
+/**
+ * Sets many localizations to the database
+ * @param {{[locale:string]: {[key:string]: LocalizationValue}}} data
+ * @returns {Promise<{items: Localization[],count: number, warnings: {nonExistingLocales: LocaleCode[] | undefined, existingKeys: LocalizationKey[] | undefined} | null}>}
+ */
 async function setMany(data) {
+  // Validate params
+  validateLocalizationsBulk(data);
+
   const locales = Object.keys(data);
 
   // Get the existing locales
@@ -89,7 +127,7 @@ async function setMany(data) {
       Promise.all(
         localizations.map((localization) => {
           const { value, ...query } = localization;
-          return localizationsTable.set(query, { value });
+          return localizationsTable.set(query, { value }, { transacting });
         })
       )
     );

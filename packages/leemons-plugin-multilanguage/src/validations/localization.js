@@ -1,9 +1,10 @@
+const _ = require('lodash');
 const { codeSchema } = require('./locale');
 
 const { LeemonsValidator } = global.utils;
 
 LeemonsValidator.ajv.addFormat('localizationKey', {
-  validate: (x) => /^([a-z][a-z0-9_-]+\.){0,}[a-z][a-z0-9_-]+$/.test(x),
+  validate: (x) => /^([a-z][a-z0-9_-]+\.){0,}[a-z][a-z0-9_-]{0,}$/.test(x),
 });
 
 /**
@@ -82,26 +83,28 @@ const localizationsBulkSchema = {
 const localizationArrayNoFormatSchema = {
   type: 'array',
   items: {
-    anyOf: {
-      type: 'object',
-      properties: {
-        key: {
-          type: 'string',
-          minLength: 1,
-          maxLength: 255,
-        },
-        locale: {
-          type: 'string',
-          minLength: 2,
-          maxLength: 5,
-        },
-        value: {
-          type: 'string',
-          minLength: 1,
-          maxLength: 65535,
+    anyOf: [
+      {
+        type: 'object',
+        properties: {
+          key: {
+            type: 'string',
+            minLength: 1,
+            maxLength: 255,
+          },
+          locale: {
+            type: 'string',
+            minLength: 2,
+            maxLength: 5,
+          },
+          value: {
+            type: 'string',
+            minLength: 1,
+            maxLength: 65535,
+          },
         },
       },
-    },
+    ],
   },
 };
 
@@ -113,6 +116,9 @@ const localizationArraySchema = {
   items: localizationSchema,
 };
 
+/**
+ * An object with the tuple [locale, key]
+ */
 const localizationTupleSchema = {
   type: 'object',
   properties: {
@@ -122,9 +128,34 @@ const localizationTupleSchema = {
   required: ['locale', 'key'],
 };
 
+/**
+ * An array of tuples [locale, key]
+ */
 const localizationTupleArraySchema = {
   type: 'array',
   items: localizationTupleSchema,
+};
+
+/**
+ * An array with an array of locales in the first item
+ * and an array of values in the second item
+ */
+const localeValueSchema = {
+  type: 'array',
+  items: [
+    {
+      type: 'array',
+      items: codeSchema,
+      minItems: 1,
+    },
+    {
+      type: 'array',
+      items: valueSchema,
+      minItems: 1,
+    },
+  ],
+  minItems: 2,
+  maxItems: 2,
 };
 
 /**
@@ -239,7 +270,7 @@ function validateLocalizationKeyArray(keys) {
   const validator = new LeemonsValidator(keyArraySchema);
 
   // Throw validation error
-  if (!validator.validate(_key)) {
+  if (!validator.validate(_keys)) {
     throw validator.error;
   }
 
@@ -286,6 +317,24 @@ function validateLocalizationsBulk(localizations) {
   }
 }
 
+/**
+ * Validates an object of { key: value }
+ * @param {{[key:string]: LocalizationValue}} data
+ * @returns {{[key:string]: LocalizationValue}} The original data with the locales lowercased
+ */
+function validateLocalizationLocaleValue(data) {
+  const locales = Object.keys(data).map((locale) => locale.toLowerCase());
+  const values = Object.values(data);
+
+  const validator = new LeemonsValidator(localeValueSchema);
+
+  if (!validator.validate([locales, values])) {
+    throw validator.error;
+  }
+
+  return _.fromPairs(locales.map((locale, i) => [locale, values[i]]));
+}
+
 module.exports = {
   validateLocalizationKey,
   validateLocalizationKeyArray,
@@ -294,4 +343,5 @@ module.exports = {
   validateLocalization,
   validateLocalizationsArray,
   validateLocalizationsBulk,
+  validateLocalizationLocaleValue,
 };

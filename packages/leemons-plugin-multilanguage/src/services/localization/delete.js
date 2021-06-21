@@ -35,6 +35,7 @@ async function deleteOne(key, locale) {
  * @returns {Promise<number>} how many localizations where deleted
  */
 async function deleteKeyStartsWith(key, locale = null) {
+  console.log(key);
   const query = {
     // Validate key and get it lowercased
     key_$startsWith: validateLocalizationKey(key),

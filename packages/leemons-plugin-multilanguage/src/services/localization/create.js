@@ -3,6 +3,8 @@ const {
   validateLocalization,
   validateLocalizationsBulk,
   validateLocalizationsArray,
+  validateLocalizationLocaleValue,
+  validateLocalizationKey,
 } = require('../../validations/localization');
 
 const { has: hasLocale, hasMany: hasLocales } = require('../locale/has');
@@ -16,7 +18,6 @@ const localizationsTable = leemons.query('plugins_multilanguage::localizations')
  * @param {LocaleCode} locale The locale for the localization
  * @param {LocalizationValue} value The value for the entry
  * @returns {Promise<Localization | null>} null if the locale already exists and the locale object if created
- * @param
  */
 async function add(key, locale, value) {
   // Validates the localization and returns it with the key and locale lowercased
@@ -47,8 +48,8 @@ async function add(key, locale, value) {
 
 /**
  * Adds many localizations to the database
- * @param {{[locale:string]: {[key:string]: LocalizationValue}} data
- * @returns {Promise<{items: Localization[],count: number, warnings: {nonExistingLocales: LocaleCode[] | undefined, existingKeys: LocalizationKey[] | undefined} | null}}
+ * @param {{[locale:string]: {[key:string]: LocalizationValue}}} data
+ * @returns {Promise<{items: Localization[],count: number, warnings: {nonExistingLocales: LocaleCode[] | undefined, existingKeys: LocalizationKey[] | undefined} | null}>}
  */
 async function addMany(data) {
   // Validate params
@@ -134,9 +135,19 @@ async function addMany(data) {
   }
 }
 
-// TODO: Add JSDOC and data validation
+/**
+ * Adds many localizations to the database for the same key
+ * @param {LocalizationKey} key
+ * @param {{[key:string]: LocalizationValue}} data
+ * @returns {Promise<{items: Localization[],count: number, warnings: {nonExistingLocales: LocaleCode[] | undefined, existingLocalizations: LocaleCode[] | undefined} | null}}
+ */
 async function addManyByKey(key, data) {
-  const locales = Object.keys(data);
+  // Validates the key and returns it lowercased
+  const _key = validateLocalizationKey(key);
+  // Validates the tuples [locale, value] and lowercases the locale
+  const _data = validateLocalizationLocaleValue(data);
+
+  const locales = Object.keys(_data);
 
   // Get the existing locales
   const existingLocales = Object.entries(await hasLocales(locales))
@@ -145,15 +156,19 @@ async function addManyByKey(key, data) {
 
   // Get the localizations for the existing locales (flat array)
   const localizations = _.flatten(
-    Object.entries(_.pick(data, existingLocales)).map(([locale, value]) => ({ key, locale, value }))
+    Object.entries(_.pick(_data, existingLocales)).map(([locale, value]) => ({
+      key: _key,
+      locale,
+      value,
+    }))
   );
 
   const existingLocalizations = await hasLocalizations(
-    localizations.map(({ key: _key, locale }) => [_key, locale])
+    localizations.map(({ key: __key, locale }) => [__key, locale])
   );
 
   const newLocalizations = localizations.filter(
-    ({ key: _key, locale }) => !existingLocalizations[locale][_key]
+    ({ key: __key, locale }) => !existingLocalizations[locale][__key]
   );
 
   try {

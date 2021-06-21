@@ -174,7 +174,7 @@ module.exports = async () => {
 
   try {
     console.log(`localizations.getWithLocale('es-ES')`);
-    const locale = await localizations.getWi('es-ES');
+    const locale = await localizations.getWithLocale('es-ES');
     console.log(locale);
   } catch (e) {
     console.error(e);
