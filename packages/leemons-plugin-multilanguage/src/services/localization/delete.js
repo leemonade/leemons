@@ -36,7 +36,6 @@ module.exports = (Base) =>
      * @returns {Promise<number>} how many localizations where deleted
      */
     async deleteKeyStartsWith(key, locale = null) {
-      console.log(key);
       const query = {
         // Validate key and get it lowercased
         key_$startsWith: validateLocalizationKey(key),

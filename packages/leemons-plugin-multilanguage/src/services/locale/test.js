@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 const localizationsTable = leemons.query('plugins_multilanguage::localizations');
 const localesTable = leemons.query('plugins_multilanguage::locales');
 
