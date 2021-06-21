@@ -14,7 +14,7 @@ export default function Reset() {
 
   async function canReset() {
     try {
-      const response = await leemons.api(constants.backend.canReset, {
+      const response = await leemons.api(constants.backend.users.canReset, {
         method: 'POST',
         body: {
           token: getToken(),
@@ -46,7 +46,7 @@ export default function Reset() {
   } = useForm();
   const onSubmit = async (data) => {
     try {
-      const response = await leemons.api(constants.backend.reset, {
+      const response = await leemons.api(constants.backend.users.reset, {
         method: 'POST',
         body: {
           token: getToken(),

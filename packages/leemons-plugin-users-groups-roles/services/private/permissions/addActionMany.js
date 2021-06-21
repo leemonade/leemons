@@ -6,13 +6,15 @@ const { addAction } = require('./addAction');
  * @public
  * @static
  * @param {string} permissionName - Permission to add action
- * @param {string} actionNames - Actions to add
+ * @param {string[]} actionNames - Actions to add
+ * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function addActionMany(permissionName, actionNames) {
+async function addActionMany(permissionName, actionNames, transacting) {
   const response = await Promise.allSettled(
-    _.map(actionNames, (d) => addAction(permissionName, d))
+    _.map(actionNames, (d) => addAction.call(this, permissionName, d, transacting))
   );
+  console.log(response);
   return global.utils.settledResponseToManyResponse(response);
 }
 

@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const { verifyJWTToken } = require('./verifyJWTToken');
 const { table } = require('../tables');
 
@@ -12,9 +13,24 @@ const { table } = require('../tables');
  * */
 async function detailForJWT(jwtToken) {
   const payload = await verifyJWTToken(jwtToken);
-  const user = await table.users.findOne({ id: payload.id });
-  if (!user) throw new Error('No user found for the id provided');
-  return user;
+  let result;
+
+  if (payload.userAuth) {
+    const userAuth = await table.userAuth.findOne({ id: payload.userAuth });
+    if (!userAuth) throw new Error('No user auth found for the id provided');
+    const user = await table.users.findOne({ id: userAuth.user });
+    if (!user) throw new Error('No user found for the id provided');
+    result = _.assign(user, userAuth);
+    result.id = userAuth.id;
+    result.user = user.id;
+  } else {
+    const user = await table.users.findOne({ id: payload.id });
+    if (!user) throw new Error('No user found for the id provided');
+    user.user = user.id;
+    result = user;
+  }
+
+  return result;
 }
 
 module.exports = { detailForJWT };

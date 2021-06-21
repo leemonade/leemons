@@ -12,6 +12,9 @@ module.exports = {
         unique: true,
       },
     },
+    order: {
+      type: 'integer',
+    },
   },
   primaryKey: {
     type: 'uuid',

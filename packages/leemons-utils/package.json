@@ -15,6 +15,7 @@
     "lodash": "^4.17.21",
     "md5-file": "^5.0.0",
     "nodemailer": "^6.6.1",
-    "object-hash": "^2.1.1"
+    "object-hash": "^2.1.1",
+    "slugify": "^1.5.3"
   }
 }

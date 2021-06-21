@@ -7,7 +7,7 @@ export default function ListUsers() {
   useSession({ redirectTo: constants.frontend.login });
 
   async function listUsers() {
-    const response = await leemons.api(constants.backend.list, {
+    const response = await leemons.api(constants.backend.users.list, {
       method: 'POST',
       body: {
         page: 0,

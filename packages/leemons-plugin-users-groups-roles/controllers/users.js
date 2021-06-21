@@ -77,7 +77,7 @@ async function login(ctx) {
 }
 
 async function detail(ctx) {
-  const user = await usersService.detail(ctx.user.id);
+  const user = await usersService.detail(ctx.state.user.user);
   ctx.status = 200;
   ctx.body = { status: 200, user };
 }

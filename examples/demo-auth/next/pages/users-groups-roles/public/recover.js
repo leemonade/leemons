@@ -13,7 +13,7 @@ export default function Recover() {
   } = useForm();
   const onSubmit = async (data) => {
     try {
-      const response = await leemons.api(constants.backend.recover, {
+      const response = await leemons.api(constants.backend.users.recover, {
         method: 'POST',
         body: data,
       });

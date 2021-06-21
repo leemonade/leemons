@@ -20,7 +20,7 @@ async function havePermission(userAuth, allowedPermissions, ctx) {
   const promises = [];
   let query;
   _.forIn(allowedPermissions, (value, permissionName) => {
-    query = { userAuth: userAuth.id, permission: permissionName, action_$in: value.actions };
+    query = { userAuth: userAuth.id, permissionName, actionName_$in: value.actions };
     if (value.target) {
       query.target = value.target;
       if (ctx) query.target = _.get(ctx, value.target, value.target);

@@ -14,7 +14,7 @@ async function add(data) {
   leemons.log.info(`Adding action '${data.actionName}'`);
   return table.actions.transaction(async (transacting) => {
     const values = await Promise.all([
-      table.actions.create({ actionName: data.actionName }, { transacting }),
+      table.actions.create({ actionName: data.actionName, order: data.order }, { transacting }),
       // TODO Añadir que se añadan las traducciones
     ]);
 

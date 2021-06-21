@@ -1,3 +1,4 @@
+const { addActionMany } = require('./addActionMany');
 const { table } = require('../tables');
 
 /**
@@ -18,7 +19,7 @@ async function add(data) {
     );
 
   leemons.log.info(`Adding permission '${data.permissionName}' for plugin '${this.executeFrom}'`);
-  return table.permissions.transaction(async (transacting) => {
+  const results = await table.permissions.transaction(async (transacting) => {
     const values = await Promise.all([
       table.permissions.create(
         {
@@ -30,10 +31,12 @@ async function add(data) {
       // TODO Añadir que se añadan las traducciones
     ]);
 
-    await Permissions.addActionMany(data.permissionName, data.actions);
+    await addActionMany(data.permissionName, data.actions, transacting);
 
     return values[0];
   });
+
+  return results;
 }
 
 module.exports = { add };

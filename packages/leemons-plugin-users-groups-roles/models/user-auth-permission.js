@@ -10,7 +10,7 @@ module.exports = {
         collection: 'plugins_users-groups-roles::user-auth',
       },
     },
-    permission: {
+    permissionName: {
       type: 'string',
       options: {
         notNull: true,

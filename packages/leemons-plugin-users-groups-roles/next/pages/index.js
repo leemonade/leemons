@@ -20,7 +20,10 @@ export default function UserTest() {
 
       <div>Cutre menu</div>
       <div className="flex">
-        <div onClick={() => Router.push(`/${constants.frontend.private.list}`)}>Usuarios</div>
+        <div onClick={() => Router.push(`/${constants.frontend.private.users.list}`)}>Usuarios</div>
+        <div onClick={() => Router.push(`/${constants.frontend.private.profiles.list}`)}>
+          Perfiles
+        </div>
       </div>
 
       <button

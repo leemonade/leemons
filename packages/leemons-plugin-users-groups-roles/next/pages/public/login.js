@@ -13,7 +13,7 @@ export default function Home() {
   } = useForm();
   const onSubmit = async (data) => {
     try {
-      const response = await leemons.api(constants.backend.login, {
+      const response = await leemons.api(constants.backend.users.login, {
         method: 'POST',
         body: data,
       });

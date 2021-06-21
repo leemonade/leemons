@@ -10,6 +10,7 @@ const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
  * */
 async function isSuperAdmin(userId) {
   const superAdminUsersIds = await getSuperAdminUserIds();
+  console.log(userId, superAdminUsersIds);
   return _.includes(superAdminUsersIds, userId);
 }
 

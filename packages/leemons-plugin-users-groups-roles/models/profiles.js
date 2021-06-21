@@ -12,6 +12,13 @@ module.exports = {
         unique: true,
       },
     },
+    uri: {
+      type: 'string',
+      options: {
+        notNull: true,
+        unique: true,
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

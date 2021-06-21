@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { add } = require('./add');
 
 /**
  * Create multiple permissions
@@ -8,9 +9,7 @@ const _ = require('lodash');
  * @return {Promise<ManyResponse>} Created permissions
  * */
 async function addMany(data) {
-  const response = await Promise.allSettled(
-    _.map(data, (d) => leemons.plugin.services.permissions.add(d))
-  );
+  const response = await Promise.allSettled(_.map(data, (d) => add.call(this, d)));
   return global.utils.settledResponseToManyResponse(response);
 }
 

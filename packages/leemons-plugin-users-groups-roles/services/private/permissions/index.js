@@ -1,3 +1,4 @@
+const { list } = require('./list');
 const { existMany } = require('./existMany');
 const { exist } = require('./exist');
 const { updateMany } = require('./updateMany');
@@ -16,6 +17,7 @@ const { init } = require('./init');
 
 module.exports = {
   init,
+  list,
   exist,
   existMany,
   add,

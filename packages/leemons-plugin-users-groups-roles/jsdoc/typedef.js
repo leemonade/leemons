@@ -66,6 +66,7 @@
 /**
  * @typedef ActionAdd
  * @property {string} actionName Action name (For backend)
+ * @property {number} order Order to show in frontend
  * @property {LocalizationAdd} localizationName
  */
 

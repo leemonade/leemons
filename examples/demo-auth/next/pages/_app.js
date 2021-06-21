@@ -28,6 +28,7 @@ function MyApp({ Component, pageProps }) {
     global.leemons = {
       log: console,
       api: (url, config) => {
+        if (!config) config = {};
         if (config && !config.headers) config.headers = {};
         if (config && !config.headers['content-type'] && !config.headers['Content-Type'])
           config.headers['content-type'] = 'application/json';
