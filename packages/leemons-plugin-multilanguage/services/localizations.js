@@ -1,3 +1,5 @@
-const localizations = require('../src/services/localization');
+const LocalizationProvider = require('../src/services/localization');
 
-module.exports = localizations;
+const localizationsTable = leemons.query('plugins_multilanguage::localizations');
+
+module.exports = new LocalizationProvider(localizationsTable);

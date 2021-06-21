@@ -1,43 +1,20 @@
-const { add, addMany, addManyByKey } = require('./create');
-const {
-  get,
-  getManyWithLocale,
-  getWithKey,
-  getKeyValueWithLocale,
-  getWithLocale,
-  getKeyStartsWith,
-  getKeyValueStartsWith,
-} = require('./read');
-const { countKeyStartsWith, countLocalesWithKey } = require('./count');
-const { setValue, setKey, setMany } = require('./update');
-const { delete: deleteOne, deleteMany, deleteAll, deleteKeyStartsWith } = require('./delete');
-const { has, hasMany } = require('./has');
+const LocalizationHas = require('./has');
+const LocalizationSet = require('./update');
+const LocalizationGet = require('./read');
+const LocalizationAdd = require('./create');
+const LocalizationDelete = require('./delete');
 
-module.exports = {
-  add,
-  addMany,
-  addManyByKey,
+const createMixin = require('../../helpers/createMixin');
+const MultilanguageBase = require('../../helpers/MultilanguageBase');
 
-  get,
-  getManyWithLocale,
-  getWithKey,
-  getKeyValueWithLocale,
-  getWithLocale,
-  getKeyStartsWith,
-  getKeyValueStartsWith,
+// Uses mixins to create a unique class extending all the others
+const LocalizationProvider = createMixin([
+  MultilanguageBase,
+  LocalizationHas,
+  LocalizationAdd,
+  LocalizationGet,
+  LocalizationSet,
+  LocalizationDelete,
+]);
 
-  countKeyStartsWith,
-  countLocalesWithKey,
-
-  setValue,
-  setKey,
-
-  delete: deleteOne,
-  deleteMany,
-  deleteAll,
-  deleteKeyStartsWith,
-
-  has,
-  hasMany,
-  setMany,
-};
+module.exports = LocalizationProvider;
