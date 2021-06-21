@@ -5,7 +5,6 @@ const {
   validateLocalizationLocaleValue,
   validateLocalizationsBulk,
 } = require('../../validations/localization');
-const { hasMany: hasLocales, has: hasLocale } = require('../locale/has');
 
 // A mixing for extending all the needed classes
 module.exports = (Base) =>
@@ -21,7 +20,7 @@ module.exports = (Base) =>
       // Validates the localization and returns it with the key and locale lowercased
       const { key: _key, locale: _locale } = validateLocalization({ key, locale, value });
       try {
-        if (!(await hasLocale(_locale))) {
+        if (!(await this.hasLocale(_locale))) {
           throw new Error('Invalid locale');
         }
         return await this.model.set({ key: _key, locale: _locale }, { value });
@@ -50,7 +49,7 @@ module.exports = (Base) =>
       const locales = Object.keys(_data);
 
       // Get the existing locales
-      const existingLocales = Object.entries(await hasLocales(locales))
+      const existingLocales = Object.entries(await this.hasLocales(locales))
         .filter(([, exists]) => exists)
         .map(([locale]) => locale);
 
@@ -111,7 +110,7 @@ module.exports = (Base) =>
       const locales = Object.keys(data);
 
       // Get the existing locales
-      const existingLocales = Object.entries(await hasLocales(locales))
+      const existingLocales = Object.entries(await this.hasLocales(locales))
         .filter(([, exists]) => exists)
         .map(([locale]) => locale);
 

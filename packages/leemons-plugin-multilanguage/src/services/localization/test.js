@@ -1,11 +1,13 @@
 const localizationsTable = leemons.query('plugins_multilanguage::localizations');
 const localesTable = leemons.query('plugins_multilanguage::locales');
 
-const locales = require('../locale');
-const Localizations = require('.');
+const LocalesProvider = require('../locale');
+const LocalizationsProvider = require('.');
 
 module.exports = async () => {
-  const localizations = new Localizations(localizationsTable);
+  const locales = new LocalesProvider(localesTable);
+  const localizations = new LocalizationsProvider(localizationsTable);
+
   leemons.log.debug('Initializing Localizations test');
   leemons.log.debug('This must be moved to jest', { labels: ['warning'] });
 

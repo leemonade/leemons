@@ -7,12 +7,21 @@ const {
   validateLocalizationKey,
 } = require('../../validations/localization');
 
-const { has: hasLocale, hasMany: hasLocales } = require('../locale/has');
-const { has: hasLocalization, hasMany: hasLocalizations } = require('./has');
+const LocaleProvider = require('../locale');
 
 // A mixing for extending all the needed classes
 module.exports = (Base) =>
   class LocalizationAdd extends Base {
+    constructor(...args) {
+      super(...args);
+
+      // Add the hasLocale and has hasManyLocales to all the Localizations
+      const locales = new LocaleProvider(leemons.query('plugins_multilanguage::locales'));
+
+      this.hasLocale = locales.has.bind(locales);
+      this.hasLocales = locales.hasMany.bind(locales);
+    }
+
     /**
      * Adds one locale
      * @param {LocalizationKey} key The localization key
@@ -26,9 +35,9 @@ module.exports = (Base) =>
 
       try {
         // Check if the localization exists
-        if (!(await hasLocalization(_key, _locale))) {
+        if (!(await this.has(_key, _locale))) {
           // Check if the locale exists
-          if (await hasLocale(_locale)) {
+          if (await this.hasLocale(_locale)) {
             // Create the new localization
             return await this.model.create({ key: _key, locale: _locale, value });
           }
@@ -59,7 +68,7 @@ module.exports = (Base) =>
       const locales = Object.keys(data);
 
       // Get the existing locales
-      const existingLocales = Object.entries(await hasLocales(locales))
+      const existingLocales = Object.entries(await this.hasLocales(locales))
         .filter(([, exists]) => exists)
         .map(([locale]) => locale);
 
@@ -74,7 +83,7 @@ module.exports = (Base) =>
       localizations = validateLocalizationsArray(localizations);
 
       // Get the DB existing localizations
-      const existingLocalizations = await hasLocalizations(
+      const existingLocalizations = await this.hasMany(
         localizations.map(({ key, locale }) => [key, locale])
       );
 
@@ -154,7 +163,7 @@ module.exports = (Base) =>
       const locales = Object.keys(_data);
 
       // Get the existing locales
-      const existingLocales = Object.entries(await hasLocales(locales))
+      const existingLocales = Object.entries(await this.hasLocales(locales))
         .filter(([, exists]) => exists)
         .map(([locale]) => locale);
 
@@ -167,7 +176,7 @@ module.exports = (Base) =>
         }))
       );
 
-      const existingLocalizations = await hasLocalizations(
+      const existingLocalizations = await this.hasMany(
         localizations.map(({ key: __key, locale }) => [__key, locale])
       );
 

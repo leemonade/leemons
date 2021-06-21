@@ -1,22 +1,19 @@
-const { add, addMany } = require('./create');
-const { get, getMany, getAll } = require('./read');
-const { setName } = require('./update');
-const { delete: deleteOne, deleteMany } = require('./delete');
-const { has, hasMany } = require('./has');
+const LocaleAdd = require('./create');
+const LocaleGet = require('./read');
+const LocaleSet = require('./update');
+const LocaleDelete = require('./delete');
+const LocaleHas = require('./has');
+const createMixin = require('../../helpers/createMixin');
+const MultilanguageBase = require('../../helpers/MultilanguageBase');
 
-module.exports = {
-  add,
-  addMany,
+const LocaleProvider = createMixin([
+  MultilanguageBase,
+  // LocaleHas must be the first one, because some other classes use its methods
+  LocaleHas,
+  LocaleAdd,
+  LocaleGet,
+  LocaleSet,
+  LocaleDelete,
+]);
 
-  get,
-  getMany,
-  getAll,
-
-  setName,
-
-  delete: deleteOne,
-  deleteMany,
-
-  has,
-  hasMany,
-};
+module.exports = LocaleProvider;
