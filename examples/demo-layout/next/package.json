@@ -8,8 +8,11 @@
     "start": "next start"
   },
   "dependencies": {
-    "prop-types": "^15.7.2",
+    "@leemons/users": "file:dependencies/users",
     "postcss": "^8.3.0",
-    "tailwindcss": "^2.1.2"
+    "prop-types": "^15.7.2",
+    "tailwindcss": "^2.1.2",
+    "@leemons/classroom": "file:dependencies/classroom",
+    "@leemons/layout": "file:dependencies/layout"
   }
 }
