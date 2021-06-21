@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
 import hooks from 'leemons-hooks';
 import React, { useEffect } from 'react';
@@ -27,11 +28,16 @@ function MyApp({ Component, pageProps }) {
     global.leemons = {
       log: console,
       api: (url, config) => {
+        if (!config) config = {};
         if (config && !config.headers) config.headers = {};
-        if (config && !config.headers['content-type'])
+        if (config && !config.headers['content-type'] && !config.headers['Content-Type'])
           config.headers['content-type'] = 'application/json';
         if (config && _.isObject(config.body)) {
           config.body = JSON.stringify(config.body);
+        }
+        const token = Cookies.get('token');
+        if (config && token && !config.headers['Authorization']) {
+          config.headers['Authorization'] = token;
         }
 
         return fetch(`${window.location.origin}/api/${url}`, config).then(async (r) => {

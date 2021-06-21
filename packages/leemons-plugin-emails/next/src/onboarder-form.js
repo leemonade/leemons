@@ -22,13 +22,14 @@ export default function OnboarderForm() {
   }
 
   async function onTest(config) {
-    await leemons.api('emails/send-test', {
+    const data = await leemons.api('emails/send-test', {
       method: 'POST',
       body: {
         providerName: router.query.providerName,
         config,
       },
     });
+    console.log(data);
   }
 
   return (

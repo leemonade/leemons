@@ -77,15 +77,6 @@ class Leemons {
     this.started = false;
   }
 
-  api(url, config) {
-    return fetch(`http://localhost:${process.env.PORT}/api/${url}`, config).then(async (r) => {
-      if (r.status >= 400) {
-        throw await r.json();
-      }
-      return r.json();
-    });
-  }
-
   // Set KOA as requestHandler
   handleRequest(req, res) {
     if (!this.requestHandler) {
@@ -146,6 +137,7 @@ class Leemons {
       try {
         await next();
       } catch (err) {
+        console.error(err);
         leemonsUtils.returnError(ctx, err);
       }
     });
@@ -160,7 +152,7 @@ class Leemons {
           ctx.headers.authorization
         );
         if (user) {
-          ctx.user = user;
+          ctx.state.user = user;
           return next();
         }
         ctx.status = 401;
@@ -177,7 +169,7 @@ class Leemons {
   permissionsMiddleware(allowedPermissions) {
     return async (ctx, next) => {
       const hasPermission = await this.plugins['users-groups-roles'].services.users.havePermission(
-        ctx.user,
+        ctx.state.user,
         allowedPermissions
       );
       if (hasPermission) {
@@ -209,8 +201,8 @@ class Leemons {
             const handler = _.get(plugin.controllers, route.handler);
             const functions = [];
             if (route.authenticated) functions.push(this.authenticatedMiddleware());
-            if (_.isArray(route.permissions) && route.permissions.length)
-              functions.push(this.permissionsMiddleware(route.permissions));
+            if (route.allowedPermissions)
+              functions.push(this.permissionsMiddleware(route.allowedPermissions));
             functions.push(handler);
             this.backRouter[route.method.toLocaleLowerCase()](
               `/api/${plugin.name}${route.path}`,
@@ -219,6 +211,11 @@ class Leemons {
           }
         });
       }
+    });
+
+    this.backRouter.all(/\/.*/, (ctx) => {
+      ctx.status = 404;
+      ctx.body = { status: 404, message: 'Url not found' };
     });
   }
 

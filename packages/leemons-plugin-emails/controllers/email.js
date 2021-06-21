@@ -24,9 +24,9 @@ async function providers(ctx) {
 async function sendTest(ctx) {
   const validator = new global.utils.LeemonsValidator(validateProviderConfigObj);
   if (validator.validate(ctx.request.body)) {
-    await emailService.sendTest(ctx.request.body);
+    const data = await emailService.sendTest(ctx.request.body);
     ctx.status = 200;
-    ctx.body = { status: 200 };
+    ctx.body = { status: 200, data };
   } else {
     throw new Error(validator.error);
   }

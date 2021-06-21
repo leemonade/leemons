@@ -5,12 +5,6 @@ module.exports = {
     useTimestamps: true,
   },
   attributes: {
-    name: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
-    },
     permissionName: {
       type: 'string',
       options: {

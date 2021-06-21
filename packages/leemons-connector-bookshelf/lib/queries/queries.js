@@ -149,11 +149,8 @@ function generateQueries(model /* connector */) {
   }
 
   // Finds how many items exists based on a query
-  function count(query) {
-    const filters = parseFilters({ filters: query, model });
-    const newQuery = buildQuery(model, filters);
-
-    return bookshelfModel.query(newQuery).count();
+  function count(query, {transacting}) {
+    return find(query, {columns: ['id'], transacting}).length;
   }
 
   async function set(query, item, { transacting } = {}) {

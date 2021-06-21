@@ -1,3 +1,3 @@
 module.exports = {
-  private: true,
+  private: false,
 };

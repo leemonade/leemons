@@ -1,127 +1,125 @@
 const usersService = require('../services/private/users');
 
+async function canReset(ctx) {
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      token: { type: 'string' },
+    },
+    required: ['token'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.body)) {
+    const can = await usersService.canReset(ctx.request.body.token);
+    ctx.status = 200;
+    ctx.body = { status: 200, can };
+  } else {
+    throw new Error(validator.error);
+  }
+}
+
 async function reset(ctx) {
-  try {
-    const validator = new global.utils.LeemonsValidator({
-      type: 'object',
-      properties: {
-        email: { type: 'string', format: 'email' },
-        code: { type: 'string' },
-        password: { type: 'string' },
-      },
-      required: ['email', 'code', 'password'],
-      additionalProperties: false,
-    });
-    if (validator.validate(ctx.request.body)) {
-      const user = await usersService.reset(
-        ctx.request.body.email,
-        ctx.request.body.code,
-        ctx.request.body.password
-      );
-      ctx.status = 200;
-      ctx.body = { status: 200, user };
-    } else {
-      throw new Error(validator.error);
-    }
-  } catch (err) {
-    global.utils.returnError(ctx, err);
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      token: { type: 'string' },
+      password: { type: 'string' },
+    },
+    required: ['token', 'password'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.body)) {
+    const user = await usersService.reset(ctx.request.body.token, ctx.request.body.password);
+    ctx.status = 200;
+    ctx.body = { status: 200, user };
+  } else {
+    throw new Error(validator.error);
   }
 }
 
 async function recover(ctx) {
-  try {
-    const validator = new global.utils.LeemonsValidator({
-      type: 'object',
-      properties: {
-        email: { type: 'string', format: 'email' },
-      },
-      required: ['email'],
-      additionalProperties: false,
-    });
-    if (validator.validate(ctx.request.body)) {
-      await usersService.recover(ctx.request.body.email);
-      ctx.status = 200;
-      ctx.body = { status: 200, message: 'Email sent' };
-    } else {
-      throw new Error(validator.error);
-    }
-  } catch (err) {
-    global.utils.returnError(ctx, err);
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      email: { type: 'string', format: 'email' },
+    },
+    required: ['email'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.body)) {
+    await usersService.recover(ctx.request.body.email, ctx);
+    ctx.status = 200;
+    ctx.body = { status: 200, message: 'Email sent' };
+  } else {
+    throw new Error(validator.error);
   }
 }
 
 async function login(ctx) {
-  try {
-    const validator = new global.utils.LeemonsValidator({
-      type: 'object',
-      properties: {
-        email: { type: 'string', format: 'email' },
-        password: {
-          type: 'string',
-        },
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      email: { type: 'string', format: 'email' },
+      password: {
+        type: 'string',
       },
-      required: ['email', 'password'],
-      additionalProperties: false,
-    });
-    if (validator.validate(ctx.request.body)) {
-      const data = await usersService.login(ctx.request.body.email, ctx.request.body.password);
-      ctx.status = 200;
-      ctx.body = { status: 200, user: data.user, jwtToken: data.token };
-    } else {
-      throw new Error(validator.error);
-    }
-  } catch (err) {
-    console.error(err);
-    global.utils.returnError(ctx, err);
+    },
+    required: ['email', 'password'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.body)) {
+    const data = await usersService.login(ctx.request.body.email, ctx.request.body.password);
+    ctx.status = 200;
+    ctx.body = { status: 200, user: data.user, jwtToken: data.token };
+  } else {
+    throw new Error(validator.error);
   }
 }
 
 async function detail(ctx) {
-  try {
-    const user = await usersService.detail(ctx.user.id);
-    ctx.status = 200;
-    ctx.body = { status: 200, user };
-  } catch (err) {
-    global.utils.returnError(ctx, err);
-  }
+  const user = await usersService.detail(ctx.state.user.user);
+  ctx.status = 200;
+  ctx.body = { status: 200, user };
 }
 
-async function create(ctx) {
-  /*
-  const ajv = new Ajv({ allErrors: true });
-  const schema = {
+async function create() {}
+
+async function list(ctx) {
+  const validator = new global.utils.LeemonsValidator({
     type: 'object',
     properties: {
-      name: { type: 'string' },
-      test: { type: 'string' },
+      page: { type: 'number' },
+      size: { type: 'number' },
     },
-    required: ['name', 'test'],
+    required: ['page', 'size'],
     additionalProperties: false,
-  };
-  if (ajv.validate(schema, ctx.request.body)) {
+  });
+  if (validator.validate(ctx.request.body)) {
+    const data = await usersService.list(ctx.request.body.page, ctx.request.body.size);
+    ctx.status = 200;
+    ctx.body = { status: 200, data };
   } else {
-    console.log('error', ajv.errors);
+    throw new Error(validator.error);
   }
-  ctx.body = { test: 'Holaaa' };
-  return ctx.body;
-
-   */
 }
 
 async function createSuperAdmin(ctx) {
-  ctx.body = await usersService.registerFirstSuperAdminUser(
-    'Pepe',
-    'pruebas',
-    'testing@test.io',
-    'testing'
+  ctx.body = await usersService.addFirstSuperAdminUser(
+    'Jaime',
+    'Gómez Cimarro',
+    'jaime@leemons.io',
+    'testing',
+    'es-ES'
   );
 }
 
 module.exports = {
   detail,
   reset,
+  canReset,
   recover,
   login,
   create,
+  list,
   createSuperAdmin,
 };

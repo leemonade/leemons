@@ -1,10 +1,14 @@
+// TODO COMPROBAR PERMISOS DE LOS ENDPOINTS
+
 module.exports = [
   {
     path: '/init',
     method: 'POST',
     handler: 'init.init',
   },
-  // Users
+  /**
+   * Users
+   * */
   {
     path: '/user/login',
     method: 'POST',
@@ -21,10 +25,26 @@ module.exports = [
     handler: 'users.reset',
   },
   {
+    path: '/user/can/reset',
+    method: 'POST',
+    handler: 'users.canReset',
+  },
+  {
     path: '/user',
     method: 'GET',
     handler: 'users.detail',
     authenticated: true,
+  },
+  {
+    path: '/user/list',
+    method: 'POST',
+    handler: 'users.list',
+    authenticated: true,
+    allowedPermissions: {
+      users: {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
   },
   {
     path: '/user',
@@ -36,7 +56,52 @@ module.exports = [
     method: 'POST',
     handler: 'users.createSuperAdmin',
   },
-  // Roles
+  /**
+   * Profiles
+   * */
+  {
+    path: '/profile/list',
+    method: 'POST',
+    handler: 'profiles.list',
+    authenticated: true,
+    allowedPermissions: {
+      profiles: {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/profile/add',
+    method: 'POST',
+    handler: 'profiles.add',
+    authenticated: true,
+    allowedPermissions: {
+      profiles: {
+        actions: ['create', 'admin'],
+      },
+    },
+  },
+  /**
+   * Permissions
+   * */
+  {
+    path: '/permission/list',
+    method: 'GET',
+    handler: 'permissions.list',
+    authenticated: true,
+  },
+  /**
+   * Actions
+   * */
+  {
+    path: '/action/list',
+    method: 'GET',
+    handler: 'actions.list',
+    authenticated: true,
+  },
+  /**
+   * Roles
+   * */
   {
     path: '/role',
     method: 'GET',
