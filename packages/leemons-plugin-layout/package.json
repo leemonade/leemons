@@ -4,5 +4,7 @@
   "main": "lib/index.js",
   "license": "MIT",
   "dependencies": {
+    "leemons-hooks": "1.0.0",
+    "leemons-plugin-users-groups-roles": "1.0.0"
   }
 }

@@ -12,6 +12,7 @@
     "leemons": "1.0.0",
     "leemons-connector-bookshelf": "1.0.0",
     "leemons-plugin-layout": "1.0.0",
+    "leemons-plugin-users-groups-roles": "1.0.0",
     "mysql": "^2.18.1"
   }
 }

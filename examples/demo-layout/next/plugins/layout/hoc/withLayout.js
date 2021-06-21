@@ -1,13 +1,22 @@
 import React from 'react';
+// import { useSession } from '@users-groups-roles/session';
+import PrivateLayout from '../components/PrivateLayout';
+import withPersistentState from './withPersistentState';
+
+const LAYOUTS = {
+  private: withPersistentState(PrivateLayout, 'PrivateLayout'),
+};
 
 export default function withLayout(WrappedPage, layout) {
-  console.log('layout:', layout);
+  const Layout = LAYOUTS[layout || 'private'] || React.Fragment;
+
   const WithLayout = ({ ...pageProps }) => {
     console.log('pageProps:', pageProps);
+
     return (
-      <>
+      <Layout>
         <WrappedPage {...pageProps} />
-      </>
+      </Layout>
     );
   };
 
