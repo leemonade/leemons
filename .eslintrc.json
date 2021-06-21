@@ -29,6 +29,7 @@
   "rules": {
     "no-plusplus": "off",
     "import/no-dynamic-requires": "off",
+    "import/no-extraneous-dependencies": "off",
     "react/react-in-jsx-scope": "off",
     "no-underscore-dangle": "off",
     "prettier/prettier": ["error", {}, {
