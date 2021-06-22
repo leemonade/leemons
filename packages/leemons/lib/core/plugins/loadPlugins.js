@@ -7,6 +7,7 @@ const { formatModels } = require('../model/loadModel');
 const { getLocalPlugins, getExternalPlugins } = require('./getPlugins');
 const checkPluginDuplicates = require('./checkPluginDuplicates');
 const loadServices = require('./loadServices');
+const loadInit = require('./loadInit');
 
 let pluginsEnv = [];
 
@@ -168,8 +169,11 @@ async function initializePlugins(leemons) {
         pluginsEnv[pluginObj.name]
       );
 
+      // Load init
+      const init = await loadInit(pluginObj, vmFilter, pluginsEnv[pluginObj.name]);
+
       // Return as the result of Object.entries
-      return [pluginObj.name, { ...pluginObj, routes, controllers, services }];
+      return [pluginObj.name, { ...pluginObj, routes, controllers, services, init }];
     })
   );
   _.set(leemons, 'plugins', _.fromPairs(loadedPlugins));

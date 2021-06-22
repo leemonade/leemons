@@ -5,6 +5,7 @@ const { loadConfiguration } = require('../config/loadConfig');
 const { getLocalProviders, getExternalProviders } = require('./getProviders');
 const checkPluginDuplicates = require('./checkPluginDuplicates');
 const loadServices = require('./loadServices');
+const loadInit = require('./loadInit');
 const { formatModels } = require('../model/loadModel');
 const { loadFiles } = require('../config/loadFiles');
 
@@ -120,8 +121,11 @@ async function initializeProviders(leemons) {
         providersEnv[pluginObj.name]
       );
 
+      // Load init
+      const init = await loadInit(pluginObj, vmFilter, providersEnv[pluginObj.name]);
+
       // Return as the result of Object.entries
-      return [pluginObj.name, { ...pluginObj, services }];
+      return [pluginObj.name, { ...pluginObj, services, init }];
     })
   );
   _.set(leemons, 'providers', _.fromPairs(loadedProviders));

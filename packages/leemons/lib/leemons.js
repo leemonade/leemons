@@ -181,6 +181,26 @@ class Leemons {
     };
   }
 
+  initPlugins() {
+    const promises = [];
+    _.forIn(this.plugins, (plugin) => {
+      if (plugin && plugin.init && _.isFunction(plugin.init)) {
+        promises.push(plugin.init());
+      }
+    });
+    return Promise.allSettled(promises);
+  }
+
+  initProviders() {
+    const promises = [];
+    _.forIn(this.providers, (plugin) => {
+      if (plugin && plugin.init && _.isFunction(plugin.init)) {
+        promises.push(plugin.init());
+      }
+    });
+    return Promise.allSettled(promises);
+  }
+
   // Initialize the api endpoints
   setRoutes() {
     // Plugins
@@ -278,8 +298,22 @@ class Leemons {
     await initializePlugins(this);
     await hooks.fireEvent('leemons::initializePlugins', { status: 'end' });
 
+    await hooks.fireEvent('leemons::setMiddlewares', { status: 'start' });
     this.setMiddlewares();
+    await hooks.fireEvent('leemons::setMiddlewares', { status: 'end' });
+
+    await hooks.fireEvent('leemons::setRoutes', { status: 'start' });
     this.setRoutes();
+    await hooks.fireEvent('leemons::setRoutes', { status: 'end' });
+
+    await hooks.fireEvent('leemons::initProviders', { status: 'start' });
+    await this.initProviders();
+    await hooks.fireEvent('leemons::initProviders', { status: 'end' });
+
+    await hooks.fireEvent('leemons::initPlugins', { status: 'start' });
+    await this.initPlugins();
+    await hooks.fireEvent('leemons::initPlugins', { status: 'end' });
+
     await hooks.fireEvent('leemons::loadBack', { status: 'end' });
   }
 
