@@ -127,8 +127,9 @@ class Leemons {
   // Initialize all the middlewares
   setMiddlewares() {
     this.backRouter.use(async (ctx, next) => {
+      ctx._startAt = new Date();
       this.log.http(
-        chalk`New connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${ctx.ip}}`
+        chalk`Start connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${ctx.ip}}`
       );
       await next();
     });
@@ -136,6 +137,13 @@ class Leemons {
     this.backRouter.use(async (ctx, next) => {
       try {
         await next();
+        const start = ctx._startAt.getTime();
+        const end = new Date().getTime();
+        this.log.http(
+          chalk`  End connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${
+            ctx.ip
+          }} {gray ${end - start} ms}`
+        );
       } catch (err) {
         console.error(err);
         leemonsUtils.returnError(ctx, err);

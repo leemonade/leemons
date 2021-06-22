@@ -10,6 +10,7 @@ const constants = {
     private: {
       users: {
         list: 'users-groups-roles/private/users/list',
+        detail: 'users-groups-roles/private/users/detail',
       },
       profiles: {
         list: 'users-groups-roles/private/profiles/list',
