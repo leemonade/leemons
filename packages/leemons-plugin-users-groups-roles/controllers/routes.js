@@ -81,6 +81,28 @@ module.exports = [
       },
     },
   },
+  {
+    path: '/profile/detail/:uri',
+    method: 'GET',
+    handler: 'profiles.detail',
+    authenticated: true,
+    allowedPermissions: {
+      profiles: {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/profile/update',
+    method: 'POST',
+    handler: 'profiles.update',
+    authenticated: true,
+    allowedPermissions: {
+      profiles: {
+        actions: ['update', 'admin'],
+      },
+    },
+  },
   /**
    * Permissions
    * */

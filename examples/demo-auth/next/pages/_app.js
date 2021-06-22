@@ -28,6 +28,13 @@ function MyApp({ Component, pageProps }) {
     global.leemons = {
       log: console,
       api: (url, config) => {
+        if (_.isObject(url)) {
+          let goodUrl = url.url;
+          _.forIn(url.query, (value, key) => {
+            goodUrl = _.replace(goodUrl, `:${key}`, value);
+          });
+          url = goodUrl;
+        }
         if (!config) config = {};
         if (config && !config.headers) config.headers = {};
         if (config && !config.headers['content-type'] && !config.headers['Content-Type'])

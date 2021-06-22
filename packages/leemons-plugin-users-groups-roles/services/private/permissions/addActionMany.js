@@ -14,7 +14,6 @@ async function addActionMany(permissionName, actionNames, transacting) {
   const response = await Promise.allSettled(
     _.map(actionNames, (d) => addAction.call(this, permissionName, d, transacting))
   );
-  console.log(response);
   return global.utils.settledResponseToManyResponse(response);
 }
 

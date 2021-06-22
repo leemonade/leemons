@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { table } = require('../tables');
 
 async function _addPermissionMany(roleId, permissions, transacting) {
-  const roleExist = await table.roles.count({ id: roleId });
+  const roleExist = await table.roles.count({ id: roleId }, { transacting });
   if (!roleExist) throw new Error('The role with the specified id does not exist');
   const items = [];
   _.forEach(permissions, (permission) => {

@@ -1,43 +1,91 @@
+import * as _ from 'lodash';
 import constants from '@users-groups-roles/constants';
 import { useSession } from '@users-groups-roles/session';
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 export default function ListProfiles() {
   useSession({ redirectTo: constants.frontend.login });
+
+  const router = useRouter();
+
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   const [actions, setActions] = useState([]);
   const [permissions, setPermissions] = useState([]);
+  const [profile, setProfile] = useState(null);
+
+  function goList() {
+    return router.push(`/${constants.frontend.private.profiles.list}`);
+  }
 
   async function getPermissions() {
     const response = await leemons.api(constants.backend.permissions.list);
-    console.log(response);
     setPermissions(response.permissions);
   }
 
   async function getActions() {
     const response = await leemons.api(constants.backend.actions.list);
-    console.log(response);
     setActions(response.actions);
   }
 
   async function saveProfile(data) {
-    const response = await leemons.api(constants.backend.profiles.add, {
-      method: 'POST',
-      body: data,
-    });
-    console.log(response);
+    let response;
+    if (profile && profile.id) {
+      response = await leemons.api(constants.backend.profiles.update, {
+        method: 'POST',
+        body: {
+          ...data,
+          id: profile.id,
+        },
+      });
+    } else {
+      response = await leemons.api(constants.backend.profiles.add, {
+        method: 'POST',
+        body: data,
+      });
+    }
+    router.push(`/${constants.frontend.private.profiles.detail}/${response.profile.uri}`);
   }
+
+  async function getProfile(uri) {
+    try {
+      const response = await leemons.api({
+        url: constants.backend.profiles.detail,
+        query: {
+          uri,
+        },
+      });
+
+      setValue('name', response.profile.name);
+      setValue('description', response.profile.description);
+      _.forIn(response.profile.permissions, (value, key) => {
+        setValue(`permissions.${key}`, value);
+      });
+
+      setProfile(response.profile);
+    } catch (err) {
+      console.error(err);
+      await goList();
+    }
+  }
+
+  useEffect(() => {
+    if (_.isArray(router.query.id)) {
+      getProfile(router.query.id[0]);
+    }
+  }, [router.query]);
 
   useEffect(() => {
     getPermissions();
     getActions();
   }, []);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
 
   const onSubmit = (data) => {
     saveProfile(data);

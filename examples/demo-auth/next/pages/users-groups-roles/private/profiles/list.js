@@ -45,7 +45,13 @@ export default function ListProfiles() {
           {pagination
             ? pagination.items.map((item) => (
                 <tr key={item.id}>
-                  <td>{item.name}</td>
+                  <td
+                    onClick={() =>
+                      Router.push(`/${constants.frontend.private.profiles.detail}/${item.uri}`)
+                    }
+                  >
+                    {item.name}
+                  </td>
                   <td>{item.created_at}</td>
                 </tr>
               ))

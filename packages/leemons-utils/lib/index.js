@@ -14,6 +14,7 @@ const { HttpError, returnError } = require('./http-error');
 const { getAvailablePort } = require('./port');
 const paginate = require('./paginate');
 const randomString = require('./randomString');
+const { withTransaction } = require('./withTransaction');
 
 module.exports = {
   env,
@@ -34,4 +35,5 @@ module.exports = {
   paginate,
   randomString,
   slugify,
+  withTransaction,
 };

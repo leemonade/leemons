@@ -12,6 +12,9 @@ module.exports = {
         unique: true,
       },
     },
+    description: {
+      type: 'string',
+    },
     uri: {
       type: 'string',
       options: {

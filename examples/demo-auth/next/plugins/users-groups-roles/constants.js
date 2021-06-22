@@ -28,6 +28,8 @@ const constants = {
     profiles: {
       list: 'users-groups-roles/profile/list',
       add: 'users-groups-roles/profile/add',
+      detail: 'users-groups-roles/profile/detail/:uri',
+      update: 'users-groups-roles/profile/update',
     },
     permissions: {
       list: 'users-groups-roles/permission/list',

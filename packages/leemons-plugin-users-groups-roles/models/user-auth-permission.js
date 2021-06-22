@@ -32,6 +32,6 @@ module.exports = {
     },
   },
   primaryKey: {
-    type: 'string',
+    type: 'uuid',
   },
 };

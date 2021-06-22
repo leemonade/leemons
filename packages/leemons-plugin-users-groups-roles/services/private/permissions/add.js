@@ -19,7 +19,7 @@ async function add(data) {
     );
 
   leemons.log.info(`Adding permission '${data.permissionName}' for plugin '${this.executeFrom}'`);
-  const results = await table.permissions.transaction(async (transacting) => {
+  return table.permissions.transaction(async (transacting) => {
     const values = await Promise.all([
       table.permissions.create(
         {
@@ -35,8 +35,6 @@ async function add(data) {
 
     return values[0];
   });
-
-  return results;
 }
 
 module.exports = { add };
