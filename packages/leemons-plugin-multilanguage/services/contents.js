@@ -1,5 +1,18 @@
 const LocalizationProvider = require('../src/services/localization');
 
-const localizationsTable = leemons.query('plugins_multilanguage::contents');
+const model = leemons.query('plugins_multilanguage::contents');
 
-module.exports = new LocalizationProvider(localizationsTable);
+module.exports = {
+  // Needs to be a function due to this
+  getProvider() {
+    const provider = new LocalizationProvider({
+      model,
+      caller: this.executeFrom,
+    });
+
+    // Prevent the modification of the provider, so the caller can't be modified
+    Object.seal(provider);
+
+    return provider;
+  },
+};

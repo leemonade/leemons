@@ -16,7 +16,9 @@ module.exports = (Base) =>
       super(...args);
 
       // Add the hasLocale and has hasManyLocales to all the Localizations
-      const locales = new LocaleProvider(leemons.query('plugins_multilanguage::locales'));
+      const locales = new LocaleProvider({
+        model: leemons.query('plugins_multilanguage::locales'),
+      });
 
       this.hasLocale = locales.has.bind(locales);
       this.hasLocales = locales.hasMany.bind(locales);

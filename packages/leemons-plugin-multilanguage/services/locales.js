@@ -1,3 +1,18 @@
-const locales = require('../src/services/locale');
+const LocalesProvider = require('../src/services/locale');
 
-module.exports = locales;
+const model = leemons.query('plugins_multilanguage::locales');
+
+module.exports = {
+  // Needs to be a function due to this
+  getProvider() {
+    const provider = new LocalesProvider({
+      model,
+      caller: this.executeFrom,
+    });
+
+    // Prevent the modification of the provider, so the caller can't be modified
+    Object.seal(provider);
+
+    return provider;
+  },
+};
