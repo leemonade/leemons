@@ -8,6 +8,7 @@ module.exports = {
     const provider = new LocalizationProvider({
       model,
       caller: this.executeFrom,
+      private: true,
     });
 
     // Prevent the modification of the provider, so the caller can't be modified

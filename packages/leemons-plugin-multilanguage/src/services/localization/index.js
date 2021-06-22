@@ -11,10 +11,25 @@ const MultilanguageBase = require('../../helpers/MultilanguageBase');
 
 const validators = require('../../validations/localization');
 
-class Base {
-  constructor({ model, caller }) {
+class Base extends MultilanguageBase {
+  constructor(props) {
+    const { model } = props;
+
+    super(props);
+
     this.model = model;
-    this.caller = caller;
+
+    // Expose validators
+    this.validateLocalization = validators.validateLocalization;
+    this.validateLocalizationsArray = validators.validateLocalizationsArray;
+
+    this.validateLocalizationKey = validators.validateLocalizationKey;
+    this.validateLocalizationLocaleValue = validators.validateLocalizationLocaleValue;
+
+    this.validateLocalizationTuple = validators.validateLocalizationTuple;
+    this.validateLocalizationTupleArray = validators.validateLocalizationTupleArray;
+
+    this.validateLocalizationsBulk = validators.validateLocalizationsBulk;
   }
 }
 

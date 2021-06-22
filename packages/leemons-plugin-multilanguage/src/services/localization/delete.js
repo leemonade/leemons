@@ -1,9 +1,4 @@
 const { validateLocaleCode } = require('../../validations/locale');
-const {
-  validateLocalizationTuple,
-  validateLocalizationKey,
-  validateLocalizationTupleArray,
-} = require('../../validations/localization');
 
 // A mixing for extending all the needed classes
 module.exports = (Base) =>
@@ -15,7 +10,7 @@ module.exports = (Base) =>
      * @returns {Promise<boolean>} if the locale was deleted or not
      */
     async delete(key, locale) {
-      const tuple = validateLocalizationTuple({ key, locale });
+      const tuple = this.validateLocalizationTuple({ key, locale });
 
       try {
         // Delete the given tuple
@@ -38,7 +33,7 @@ module.exports = (Base) =>
     async deleteKeyStartsWith(key, locale = null) {
       const query = {
         // Validate key and get it lowercased
-        key_$startsWith: validateLocalizationKey(key),
+        key_$startsWith: this.validateLocalizationKey(key),
       };
 
       if (locale) {
@@ -61,7 +56,7 @@ module.exports = (Base) =>
      */
     async deleteMany(localizations) {
       // Validates the input and returns an array of LocalizationTuples ([{key, locale}])
-      const _localizations = validateLocalizationTupleArray(localizations);
+      const _localizations = this.validateLocalizationTupleArray(localizations);
 
       try {
         return (await this.model.deleteMany({ $or: _localizations })).count;
@@ -82,7 +77,7 @@ module.exports = (Base) =>
       const query = {};
 
       if (key) {
-        query.key = validateLocalizationKey(key);
+        query.key = this.validateLocalizationKey(key);
       }
       if (locale) {
         query.locale = validateLocaleCode(locale);

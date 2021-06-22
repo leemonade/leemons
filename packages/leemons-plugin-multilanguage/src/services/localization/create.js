@@ -1,11 +1,4 @@
 const _ = require('lodash');
-const {
-  validateLocalization,
-  validateLocalizationsBulk,
-  validateLocalizationsArray,
-  validateLocalizationLocaleValue,
-  validateLocalizationKey,
-} = require('../../validations/localization');
 
 const LocaleProvider = require('../locale');
 
@@ -33,7 +26,7 @@ module.exports = (Base) =>
      */
     async add(key, locale, value) {
       // Validates the localization and returns it with the key and locale lowercased
-      const { key: _key, locale: _locale } = validateLocalization({ key, locale, value });
+      const { key: _key, locale: _locale } = this.validateLocalization({ key, locale, value });
 
       try {
         // Check if the localization exists
@@ -65,7 +58,7 @@ module.exports = (Base) =>
      */
     async addMany(data) {
       // Validate params
-      validateLocalizationsBulk(data);
+      this.validateLocalizationsBulk(data);
 
       const locales = Object.keys(data);
 
@@ -82,7 +75,7 @@ module.exports = (Base) =>
       );
 
       // Validate localizations formats (get them with key and locale lowercased)
-      localizations = validateLocalizationsArray(localizations);
+      localizations = this.validateLocalizationsArray(localizations);
 
       // Get the DB existing localizations
       const existingLocalizations = await this.hasMany(
@@ -158,9 +151,9 @@ module.exports = (Base) =>
      */
     async addManyByKey(key, data) {
       // Validates the key and returns it lowercased
-      const _key = validateLocalizationKey(key);
+      const _key = this.validateLocalizationKey(key);
       // Validates the tuples [locale, value] and lowercases the locale
-      const _data = validateLocalizationLocaleValue(data);
+      const _data = this.validateLocalizationLocaleValue(data);
 
       const locales = Object.keys(_data);
 

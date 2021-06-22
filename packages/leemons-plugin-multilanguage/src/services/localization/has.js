@@ -1,8 +1,4 @@
 const _ = require('lodash');
-const {
-  validateLocalizationTuple,
-  validateLocalizationTupleArray,
-} = require('../../validations/localization');
 
 // A mixing for extending all the needed classes
 module.exports = (Base) =>
@@ -14,7 +10,7 @@ module.exports = (Base) =>
      * @returns {Promise<boolean>} if the localization exists
      */
     async has(key, locale) {
-      const tuple = validateLocalizationTuple({ key, locale });
+      const tuple = this.validateLocalizationTuple({ key, locale });
 
       try {
         return (await this.model.count(tuple)) === 1;
@@ -31,7 +27,7 @@ module.exports = (Base) =>
      */
     async hasMany(localizations) {
       // Validates the localizations and lowercase each tuple
-      const _localizations = validateLocalizationTupleArray(localizations);
+      const _localizations = this.validateLocalizationTupleArray(localizations);
 
       try {
         const existingLocalizations = await this.model.find(

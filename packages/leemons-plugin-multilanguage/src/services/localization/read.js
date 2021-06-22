@@ -1,10 +1,5 @@
 const _ = require('lodash');
 const { validateLocaleCode } = require('../../validations/locale');
-const {
-  validateLocalizationTuple,
-  validateLocalizationKeyArray,
-  validateLocalizationKey,
-} = require('../../validations/localization');
 
 // A mixing for extending all the needed classes
 module.exports = (Base) =>
@@ -16,7 +11,7 @@ module.exports = (Base) =>
      */
     async get(key, locale) {
       // Validates the tuple and lowercase it
-      const tuple = validateLocalizationTuple({ key, locale });
+      const tuple = this.validateLocalizationTuple({ key, locale });
 
       try {
         return await this.model.findOne(tuple);
@@ -34,7 +29,7 @@ module.exports = (Base) =>
      */
     async getManyWithLocale(keys, locale) {
       // Validate keys array and lowercase them
-      const _keys = validateLocalizationKeyArray(keys);
+      const _keys = this.validateLocalizationKeyArray(keys);
       // Validate locale and lowercase it
       const _locale = validateLocaleCode(locale);
 
@@ -57,7 +52,7 @@ module.exports = (Base) =>
      */
     async getWithKey(key) {
       // Validate the key and lowercase it
-      const _key = validateLocalizationKey(key);
+      const _key = this.validateLocalizationKey(key);
 
       try {
         return await this.model.find({ key: _key });
@@ -117,7 +112,7 @@ module.exports = (Base) =>
      */
     async getKeyStartsWith(key, locale) {
       // Validate the tuple and lowercase it
-      const tuple = validateLocalizationTuple({ key, locale });
+      const tuple = this.validateLocalizationTuple({ key, locale });
 
       try {
         return await this.model.find({ key_$startsWith: tuple.key, locale: tuple.locale });
@@ -135,7 +130,7 @@ module.exports = (Base) =>
      */
     async getKeyValueStartsWith(key, locale) {
       // Validate the tuple and lowercase it
-      const tuple = validateLocalizationTuple({ key, locale });
+      const tuple = this.validateLocalizationTuple({ key, locale });
 
       try {
         const localizations = await this.model.find({

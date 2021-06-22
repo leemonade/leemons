@@ -7,14 +7,18 @@ const LocalesProvider = require('../locale');
 const LocalizationsProvider = require('.');
 
 module.exports = async () => {
-  const locales = new LocalesProvider(localesTable);
-  const localizations = new LocalizationsProvider(localizationsTable);
+  const locales = new LocalesProvider({ model: localesTable });
+  const localizations = new LocalizationsProvider({ model: localizationsTable });
 
   leemons.log.debug('Initializing Localizations test');
   leemons.log.debug('This must be moved to jest', { labels: ['warning'] });
 
-  await localizationsTable.deleteMany({ id_$ne: 0 });
-  await localesTable.deleteMany({ id_$ne: 0 });
+  try {
+    await localizationsTable.deleteMany({ id_$null: false });
+    await localesTable.deleteMany({ id_$null: false });
+  } catch (e) {
+    console.log(e);
+  }
 
   await locales.addMany([
     ['es', 'Español'],

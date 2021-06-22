@@ -1,11 +1,12 @@
-const {
-  validateLocalizationTuple,
-  validateLocalizationKey,
-} = require('../../validations/localization');
-
 // A mixing for extending all the needed classes
 module.exports = (Base) =>
   class LocalizationCount extends Base {
+    constructor(props) {
+      super(props);
+
+      this.model = props.model;
+    }
+
     /**
      * Counts how many keys starts with the given key for the given locale
      * @param {LocalizationKey} key The localization key prefix
@@ -14,7 +15,7 @@ module.exports = (Base) =>
      */
     async countKeyStartsWith(key, locale) {
       // Validates the tuple and returns it in lowercase
-      const tuple = validateLocalizationTuple({ key, locale });
+      const tuple = this.validateLocalizationTuple({ key, locale });
 
       try {
         // Get the count of localizations in the given locale starting with the given tuple
@@ -32,7 +33,7 @@ module.exports = (Base) =>
      */
     async countLocalesWithKey(key) {
       // Validates the key and returns it lowercased
-      const _key = validateLocalizationKey(key);
+      const _key = this.validateLocalizationKey(key);
 
       try {
         return await this.model.count({ key: _key });

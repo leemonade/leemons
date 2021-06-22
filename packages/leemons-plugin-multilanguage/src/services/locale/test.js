@@ -6,13 +6,13 @@ const localesTable = leemons.query('plugins_multilanguage::locales');
 const Locales = require('.');
 
 module.exports = async () => {
-  const locales = new Locales(localesTable);
+  const locales = new Locales({ model: localesTable });
 
   leemons.log.debug('Initializing Locales test');
   leemons.log.debug('This must be moved to jest', { labels: ['warning'] });
 
-  await localizationsTable.deleteMany({ id_$ne: 0 });
-  await localesTable.deleteMany({ id_$ne: 0 });
+  await localizationsTable.deleteMany({ id_$null: false });
+  await localesTable.deleteMany({ id_$null: false });
 
   function space() {
     console.log();

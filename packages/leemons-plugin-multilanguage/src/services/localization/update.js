@@ -1,10 +1,4 @@
 const _ = require('lodash');
-const {
-  validateLocalization,
-  validateLocalizationKey,
-  validateLocalizationLocaleValue,
-  validateLocalizationsBulk,
-} = require('../../validations/localization');
 
 // A mixing for extending all the needed classes
 module.exports = (Base) =>
@@ -18,7 +12,7 @@ module.exports = (Base) =>
      */
     async setValue(key, locale, value) {
       // Validates the localization and returns it with the key and locale lowercased
-      const { key: _key, locale: _locale } = validateLocalization({ key, locale, value });
+      const { key: _key, locale: _locale } = this.validateLocalization({ key, locale, value });
       try {
         if (!(await this.hasLocale(_locale))) {
           throw new Error('Invalid locale');
@@ -42,9 +36,9 @@ module.exports = (Base) =>
      */
     async setKey(key, data) {
       // Validates the key and returns it lowercased
-      const _key = validateLocalizationKey(key);
+      const _key = this.validateLocalizationKey(key);
       // Validates the tuples [locale, value] and lowercases the locale
-      const _data = validateLocalizationLocaleValue(data);
+      const _data = this.validateLocalizationLocaleValue(data);
 
       const locales = Object.keys(_data);
 
@@ -105,7 +99,7 @@ module.exports = (Base) =>
      */
     async setMany(data) {
       // Validate params
-      validateLocalizationsBulk(data);
+      this.validateLocalizationsBulk(data);
 
       const locales = Object.keys(data);
 

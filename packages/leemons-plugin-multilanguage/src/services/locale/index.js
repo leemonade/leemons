@@ -6,8 +6,18 @@ const LocaleHas = require('./has');
 const createMixin = require('../../helpers/createMixin');
 const MultilanguageBase = require('../../helpers/MultilanguageBase');
 
+class Base extends MultilanguageBase {
+  constructor(props) {
+    const { model } = props;
+
+    super(props);
+
+    this.model = model;
+  }
+}
+
 const LocaleProvider = createMixin([
-  MultilanguageBase,
+  Base,
   // LocaleHas must be the first one, because some other classes use its methods
   LocaleHas,
   LocaleAdd,
