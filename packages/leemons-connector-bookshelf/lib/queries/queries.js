@@ -149,8 +149,8 @@ function generateQueries(model /* connector */) {
   }
 
   // Finds how many items exists based on a query
-  function count(query, { transacting } = {}) {
-    return find(query, { columns: ['id'], transacting }).length;
+  async function count(query, { transacting } = {}) {
+    return (await find(query, { columns: ['id'], transacting })).length;
   }
 
   async function set(query, item, { transacting } = {}) {
