@@ -11,7 +11,7 @@ module.exports = (Base) =>
      */
     async get(key, locale) {
       // Validates the tuple and lowercase it
-      const tuple = this.validateLocalizationTuple({ key, locale });
+      const tuple = this.validator.validateLocalizationTuple({ key, locale }, this.private);
 
       try {
         return await this.model.findOne(tuple);
@@ -29,7 +29,7 @@ module.exports = (Base) =>
      */
     async getManyWithLocale(keys, locale) {
       // Validate keys array and lowercase them
-      const _keys = this.validateLocalizationKeyArray(keys);
+      const _keys = this.validator.validateLocalizationKeyArray(keys, this.private);
       // Validate locale and lowercase it
       const _locale = validateLocaleCode(locale);
 
@@ -52,7 +52,7 @@ module.exports = (Base) =>
      */
     async getWithKey(key) {
       // Validate the key and lowercase it
-      const _key = this.validateLocalizationKey(key);
+      const _key = this.validator.validateLocalizationKey(key, this.private);
 
       try {
         return await this.model.find({ key: _key });
@@ -71,8 +71,16 @@ module.exports = (Base) =>
       // Validate the locale and lowercase it
       const _locale = validateLocaleCode(locale);
 
+      const query = {
+        locale: _locale,
+      };
+
+      if (this.private) {
+        query.key_$startsWith = this.caller;
+      }
+
       try {
-        return await this.model.find({ locale: _locale });
+        return await this.model.find(query);
       } catch (e) {
         leemons.log.debug(e.message);
         throw new Error('An error occurred while getting the localizations');
@@ -88,8 +96,16 @@ module.exports = (Base) =>
       // Validate the locale and lowercase it
       const _locale = validateLocaleCode(locale);
 
+      const query = {
+        locale: _locale,
+      };
+
+      if (this.private) {
+        query.key_$startsWith = this.caller;
+      }
+
       try {
-        const localizations = await this.model.find({ locale: _locale });
+        const localizations = await this.model.find(query);
 
         return localizations.reduce((result, { key, value }) => {
           const _result = result;
@@ -112,7 +128,7 @@ module.exports = (Base) =>
      */
     async getKeyStartsWith(key, locale) {
       // Validate the tuple and lowercase it
-      const tuple = this.validateLocalizationTuple({ key, locale });
+      const tuple = this.validator.validateLocalizationTuple({ key, locale }, this.private);
 
       try {
         return await this.model.find({ key_$startsWith: tuple.key, locale: tuple.locale });
@@ -130,7 +146,7 @@ module.exports = (Base) =>
      */
     async getKeyValueStartsWith(key, locale) {
       // Validate the tuple and lowercase it
-      const tuple = this.validateLocalizationTuple({ key, locale });
+      const tuple = this.validator.validateLocalizationTuple({ key, locale }, this.private);
 
       try {
         const localizations = await this.model.find({

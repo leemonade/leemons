@@ -10,7 +10,7 @@ module.exports = (Base) =>
      * @returns {Promise<boolean>} if the locale was deleted or not
      */
     async delete(key, locale) {
-      const tuple = this.validateLocalizationTuple({ key, locale });
+      const tuple = this.validator.validateLocalizationTuple({ key, locale }, true);
 
       try {
         // Delete the given tuple
@@ -33,7 +33,7 @@ module.exports = (Base) =>
     async deleteKeyStartsWith(key, locale = null) {
       const query = {
         // Validate key and get it lowercased
-        key_$startsWith: this.validateLocalizationKey(key),
+        key_$startsWith: this.validator.validateLocalizationKey(key, true),
       };
 
       if (locale) {
@@ -56,7 +56,7 @@ module.exports = (Base) =>
      */
     async deleteMany(localizations) {
       // Validates the input and returns an array of LocalizationTuples ([{key, locale}])
-      const _localizations = this.validateLocalizationTupleArray(localizations);
+      const _localizations = this.validator.validateLocalizationTupleArray(localizations, true);
 
       try {
         return (await this.model.deleteMany({ $or: _localizations })).count;
@@ -77,7 +77,7 @@ module.exports = (Base) =>
       const query = {};
 
       if (key) {
-        query.key = this.validateLocalizationKey(key);
+        query.key = this.validator.validateLocalizationKey(key, true);
       }
       if (locale) {
         query.locale = validateLocaleCode(locale);

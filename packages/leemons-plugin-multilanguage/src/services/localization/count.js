@@ -15,7 +15,7 @@ module.exports = (Base) =>
      */
     async countKeyStartsWith(key, locale) {
       // Validates the tuple and returns it in lowercase
-      const tuple = this.validateLocalizationTuple({ key, locale });
+      const tuple = this.validator.validateLocalizationTuple({ key, locale }, this.private);
 
       try {
         // Get the count of localizations in the given locale starting with the given tuple
@@ -33,7 +33,7 @@ module.exports = (Base) =>
      */
     async countLocalesWithKey(key) {
       // Validates the key and returns it lowercased
-      const _key = this.validateLocalizationKey(key);
+      const _key = this.validator.validateLocalizationKey(key, this.private);
 
       try {
         return await this.model.count({ key: _key });

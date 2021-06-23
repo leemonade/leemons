@@ -7,341 +7,345 @@ LeemonsValidator.ajv.addFormat('localizationKey', {
   validate: (x) => /^([a-z][a-z0-9_-]+\.){0,}[a-z][a-z0-9_-]{0,}$/.test(x),
 });
 
-/**
- * String with format localizationKey (xx.yy.bb1_-)
- */
-const keySchema = {
-  type: 'string',
-  format: 'localizationKey',
-  minLength: 1,
-  maxLength: 255,
-};
+module.exports = class Validator {
+  constructor(_prefix) {
+    const prefix = _prefix.replace(/\./g, '\\.');
+    /**
+     * String with format localizationKey (xx.yy.bb1_-)
+     * If the prefix is required, the key must be the prefix of start with the '${prefix}.'
+     */
+    this.keySchema = (usePrefix) => {
+      const pattern = `([a-z][a-z0-9_-]+\\.){0,}[a-z][a-z0-9_-]{0,}`;
+      return {
+        type: 'string',
+        pattern: `^(${usePrefix && prefix ? `(${prefix})|(${prefix}\\.${pattern})` : pattern})$`,
+        minLength: 1,
+        maxLength: 255,
+      };
+    };
 
-/**
- * String with 1 <= length <= 65535
- */
-const valueSchema = {
-  type: 'string',
-  minLength: 1,
-  maxLength: 65535,
-};
+    /**
+     * String with 1 <= length <= 65535
+     */
+    this.valueSchema = {
+      type: 'string',
+      minLength: 1,
+      maxLength: 65535,
+    };
 
-/**
- * An object with the properties:
- * @property key: String with format localizationKey (xx.yy.bb1_-)
- * @property locale: String with format localeCode (xx or xx-yy)
- * @property value: String with 1 <= length <= 65535
- */
-const localizationSchema = {
-  type: 'object',
-  properties: {
-    locale: codeSchema,
-    key: keySchema,
-    value: valueSchema,
-  },
-  required: ['locale', 'key', 'value'],
-};
-
-/**
- * Array of keys
- */
-const keyArraySchema = {
-  type: 'array',
-  items: keySchema,
-};
-
-/**
- * An object like the following one:
- * @example
- * {
- *   "locale": {
- *     "key": "value"
- *   }
- * }
- */
-const localizationsBulkSchema = {
-  type: 'object',
-  properties: {
-    oneOf: {
+    /**
+     * An object with the properties:
+     * @property key: String with format localizationKey (xx.yy.bb1_-)
+     * @property locale: String with format localeCode (xx or xx-yy)
+     * @property value: String with 1 <= length <= 65535
+     */
+    this.localizationSchema = (usePrefix) => ({
       type: 'object',
       properties: {
-        oneOf: valueSchema,
+        locale: codeSchema,
+        key: this.keySchema(usePrefix),
+        value: this.valueSchema,
       },
-    },
-  },
-};
+      required: ['locale', 'key', 'value'],
+    });
 
-/**
- * An object like the following one (no format is checked):
- * @example
- * {
- *   "locale": {
- *     "key": "value"
- *   }
- * }
- */
-const localizationArrayNoFormatSchema = {
-  type: 'array',
-  items: {
-    anyOf: [
-      {
-        type: 'object',
-        properties: {
-          key: {
-            type: 'string',
-            minLength: 1,
-            maxLength: 255,
-          },
-          locale: {
-            type: 'string',
-            minLength: 2,
-            maxLength: 5,
-          },
-          value: {
-            type: 'string',
-            minLength: 1,
-            maxLength: 65535,
+    /**
+     * Array of keys
+     */
+    this.keyArraySchema = (usePrefix) => ({
+      type: 'array',
+      items: this.keySchema(usePrefix),
+    });
+
+    /**
+     * An object like the following one:
+     * @example
+     * {
+     *   "locale": {
+     *     "key": "value"
+     *   }
+     * }
+     */
+    this.localizationsBulkSchema = {
+      type: 'object',
+      properties: {
+        oneOf: {
+          type: 'object',
+          properties: {
+            oneOf: this.valueSchema,
           },
         },
       },
-    ],
-  },
-};
+    };
 
-/**
- * An array of localizations
- */
-const localizationArraySchema = {
-  type: 'array',
-  items: localizationSchema,
-};
-
-/**
- * An object with the tuple [locale, key]
- */
-const localizationTupleSchema = {
-  type: 'object',
-  properties: {
-    locale: codeSchema,
-    key: keySchema,
-  },
-  required: ['locale', 'key'],
-};
-
-/**
- * An array of tuples [locale, key]
- */
-const localizationTupleArraySchema = {
-  type: 'array',
-  items: localizationTupleSchema,
-};
-
-/**
- * An array with an array of locales in the first item
- * and an array of values in the second item
- */
-const localeValueSchema = {
-  type: 'array',
-  items: [
-    {
+    /**
+     * An object like the following one (no format is checked):
+     * @example
+     * {
+     *   "locale": {
+     *     "key": "value"
+     *   }
+     * }
+     */
+    this.localizationArrayNoFormatSchema = {
       type: 'array',
-      items: codeSchema,
-      minItems: 1,
-    },
-    {
+      items: {
+        anyOf: [
+          {
+            type: 'object',
+            properties: {
+              key: {
+                type: 'string',
+                minLength: 1,
+                maxLength: 255,
+              },
+              locale: {
+                type: 'string',
+                minLength: 2,
+                maxLength: 5,
+              },
+              value: {
+                type: 'string',
+                minLength: 1,
+                maxLength: 65535,
+              },
+            },
+          },
+        ],
+      },
+    };
+
+    /**
+     * An array of localizations
+     */
+    this.localizationArraySchema = (usePrefix) => ({
       type: 'array',
-      items: valueSchema,
-      minItems: 1,
-    },
-  ],
-  minItems: 2,
-  maxItems: 2,
-};
+      items: this.localizationSchema(usePrefix),
+    });
 
-/**
- * @typedef {string} LocalizationKey a string with the format (xx.yy.bb1_-)
- *
- * @typedef {string} LocalizationValue a string with 1 <= length <= 65535
- *
- * @typedef Localization
- * @property {LocaleCode} locale
- * @property {LocalizationKey} key
- * @property {LocalizationValue} value
- * @property {number | undefined} [id] The locale internal id
- */
+    /**
+     * An object with the tuple [locale, key]
+     */
+    this.localizationTupleSchema = (usePrefix) => ({
+      type: 'object',
+      properties: {
+        locale: codeSchema,
+        key: this.keySchema(usePrefix),
+      },
+      required: ['locale', 'key'],
+    });
 
-/**
- * Validates a localization
- * @param {{key: LocalizationKey, locale: LocaleCode}}
- * @returns {{key: LocalizationKey, locale: LocaleCode}} The Localization with key and locale lowercased
- */
-function validateLocalizationTuple({ key, locale }) {
-  // Always save locale in lowercase
-  const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
-  const _key = typeof key === 'string' ? key.toLowerCase() : null;
+    /**
+     * An array of tuples [locale, key]
+     */
+    this.localizationTupleArraySchema = (usePrefix) => ({
+      type: 'array',
+      items: this.localizationTupleSchema(usePrefix),
+    });
 
-  const validator = new LeemonsValidator(localizationTupleSchema);
-
-  // Throw validation error
-  if (!validator.validate({ key: _key, locale: _locale })) {
-    throw validator.error;
+    /**
+     * An array with an array of locales in the first item
+     * and an array of values in the second item
+     */
+    this.localeValueSchema = {
+      type: 'array',
+      items: [
+        {
+          type: 'array',
+          items: codeSchema,
+          minItems: 1,
+        },
+        {
+          type: 'array',
+          items: this.valueSchema,
+          minItems: 1,
+        },
+      ],
+      minItems: 2,
+      maxItems: 2,
+    };
   }
 
-  return { key: _key, locale: _locale };
-}
+  /**
+   * @typedef {string} LocalizationKey a string with the format (xx.yy.bb1_-)
+   *
+   * @typedef {string} LocalizationValue a string with 1 <= length <= 65535
+   *
+   * @typedef Localization
+   * @property {LocaleCode} locale
+   * @property {LocalizationKey} key
+   * @property {LocalizationValue} value
+   * @property {number | undefined} [id] The locale internal id
+   */
 
-/**
- * Validates a localization array
- * @param {{key: LocalizationKey, locale: LocaleCode}[]}
- * @returns {{key: LocalizationKey, locale: LocaleCode}[]} The Localization array with key and locale lowercased
- */
-function validateLocalizationTupleArray(tuples) {
-  // Get an array of tuples in lowercase or null
-  const _tuples =
-    Array.isArray(tuples) && tuples.every(Array.isArray)
-      ? tuples.map(([key, locale]) => {
-          const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
-          const _key = typeof key === 'string' ? key.toLowerCase() : null;
+  /**
+   * Validates a localization
+   * @param {{key: LocalizationKey, locale: LocaleCode}}
+   * @param {boolean} usePrefix
+   * @returns {{key: LocalizationKey, locale: LocaleCode}} The Localization with key and locale lowercased
+   */
+  validateLocalizationTuple({ key, locale }, usePrefix = false) {
+    // Always save locale in lowercase
+    const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
+    const _key = typeof key === 'string' ? key.toLowerCase() : null;
 
-          return { key: _key, locale: _locale };
-        })
-      : null;
+    const validator = new LeemonsValidator(this.localizationTupleSchema(usePrefix));
 
-  const validator = new LeemonsValidator(localizationTupleArraySchema);
+    // Throw validation error
+    if (!validator.validate({ key: _key, locale: _locale })) {
+      throw validator.error;
+    }
 
-  // Throw validation error
-  if (!validator.validate(_tuples)) {
-    throw validator.error;
+    return { key: _key, locale: _locale };
   }
 
-  return _tuples;
-}
+  /**
+   * Validates a localization array
+   * @param {{key: LocalizationKey, locale: LocaleCode}[]}
+   * @param {boolean} usePrefix
+   * @returns {{key: LocalizationKey, locale: LocaleCode}[]} The Localization array with key and locale lowercased
+   */
+  validateLocalizationTupleArray(tuples, usePrefix = false) {
+    // Get an array of tuples in lowercase or null
+    const _tuples =
+      Array.isArray(tuples) && tuples.every(Array.isArray)
+        ? tuples.map(([key, locale]) => {
+            const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
+            const _key = typeof key === 'string' ? key.toLowerCase() : null;
 
-/**
- * Validates a localization
- * @param {Localization} localization
- * @returns {Localization} The Localization with key and locale lowercased
- */
-function validateLocalization({ key, locale, value }) {
-  // Always save locale in lowercase
-  const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
-  const _key = typeof key === 'string' ? key.toLowerCase() : null;
+            return { key: _key, locale: _locale };
+          })
+        : null;
 
-  const validator = new LeemonsValidator(localizationSchema);
+    const validator = new LeemonsValidator(this.localizationTupleArraySchema(usePrefix));
 
-  // Throw validation error
-  if (!validator.validate({ key: _key, locale: _locale, value })) {
-    throw validator.error;
+    // Throw validation error
+    if (!validator.validate(_tuples)) {
+      throw validator.error;
+    }
+
+    return _tuples;
   }
 
-  return { key: _key, locale: _locale, value };
-}
+  /**
+   * Validates a localization
+   * @param {Localization} localization
+   * @param {boolean} usePrefix
+   * @returns {Localization} The Localization with key and locale lowercased
+   */
+  validateLocalization({ key, locale, value }, usePrefix = false) {
+    // Always save locale in lowercase
+    const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
+    const _key = typeof key === 'string' ? key.toLowerCase() : null;
 
-/**
- * Validates a localization key
- * @param {LocalizationKey} key
- * @returns {LocalizationKey}
- */
-function validateLocalizationKey(key) {
-  const _key = typeof key === 'string' ? key.toLowerCase() : null;
+    const validator = new LeemonsValidator(this.localizationSchema(usePrefix));
 
-  const validator = new LeemonsValidator(keySchema);
+    // Throw validation error
+    if (!validator.validate({ key: _key, locale: _locale, value })) {
+      throw validator.error;
+    }
 
-  // Throw validation error
-  if (!validator.validate(_key)) {
-    throw validator.error;
+    return { key: _key, locale: _locale, value };
   }
 
-  return _key;
-}
+  /**
+   * Validates a localization key
+   * @param {LocalizationKey} key
+   * @param {boolean} usePrefix
+   * @returns {LocalizationKey}
+   */
+  validateLocalizationKey(key, usePrefix = false) {
+    const _key = typeof key === 'string' ? key.toLowerCase() : null;
 
-/**
- * Validates a localization keys
- * @param {LocalizationKey[]} keys
- * @returns {LocalizationKey+}
- */
-function validateLocalizationKeyArray(keys) {
-  // Get the keys lowercased
-  const _keys =
-    Array.isArray(keys) && keys.every((key) => typeof key === 'string')
-      ? keys.map((key) => key.toLowerCase())
-      : null;
+    const validator = new LeemonsValidator(this.keySchema(usePrefix));
 
-  const validator = new LeemonsValidator(keyArraySchema);
+    // Throw validation error
+    if (!validator.validate(_key)) {
+      throw validator.error;
+    }
 
-  // Throw validation error
-  if (!validator.validate(_keys)) {
-    throw validator.error;
+    return _key;
   }
 
-  return _keys;
-}
+  /**
+   * Validates a localization keys
+   * @param {LocalizationKey[]} keys
+   * @param {boolean} usePrefix
+   * @returns {LocalizationKey+}
+   */
+  validateLocalizationKeyArray(keys, usePrefix = false) {
+    // Get the keys lowercased
+    const _keys =
+      Array.isArray(keys) && keys.every((key) => typeof key === 'string')
+        ? keys.map((key) => key.toLowerCase())
+        : null;
 
-/**
- * Validates a localization array
- * @param {Localization[]} localizations
- * @returns {Localization[]} The Localization with key and locale lowercased
- */
-function validateLocalizationsArray(localizations) {
-  const paramValidator = new LeemonsValidator(localizationArrayNoFormatSchema);
+    const validator = new LeemonsValidator(this.keyArraySchema(usePrefix));
 
-  if (!paramValidator.validate(localizations)) {
-    throw paramValidator.error;
+    // Throw validation error
+    if (!validator.validate(_keys)) {
+      throw validator.error;
+    }
+
+    return _keys;
   }
 
-  const _localizations = localizations.map(({ key, locale, value }) => ({
-    key: key.toLowerCase(),
-    locale: locale.toLowerCase(),
-    value,
-  }));
+  /**
+   * Validates a localization array
+   * @param {Localization[]} localizations
+   * @param {boolean} usePrefix
+   * @returns {Localization[]} The Localization with key and locale lowercased
+   */
+  validateLocalizationsArray(localizations, usePrefix = false) {
+    const paramValidator = new LeemonsValidator(this.localizationArrayNoFormatSchema);
 
-  const formattedValidator = new LeemonsValidator(localizationArraySchema);
+    if (!paramValidator.validate(localizations)) {
+      throw paramValidator.error;
+    }
 
-  // Throw validation error
-  if (!formattedValidator.validate(_localizations)) {
-    throw formattedValidator.error;
+    const _localizations = localizations.map(({ key, locale, value }) => ({
+      key: key.toLowerCase(),
+      locale: locale.toLowerCase(),
+      value,
+    }));
+
+    const formattedValidator = new LeemonsValidator(this.localizationArraySchema(usePrefix));
+
+    // Throw validation error
+    if (!formattedValidator.validate(_localizations)) {
+      throw formattedValidator.error;
+    }
+
+    return _localizations;
   }
 
-  return _localizations;
-}
+  /**
+   * validates a bulk loading schema of localizations
+   * @param {{[locale:string]: {[key:string]: LocalizationValue}} localizations
+   */
+  validateLocalizationsBulk(localizations) {
+    const validator = new LeemonsValidator(this.localizationsBulkSchema);
 
-/**
- * validates a bulk loading schema of localizations
- * @param {{[locale:string]: {[key:string]: LocalizationValue}} localizations
- */
-function validateLocalizationsBulk(localizations) {
-  const validator = new LeemonsValidator(localizationsBulkSchema);
-
-  if (!validator.validate(localizations)) {
-    throw validator.error;
-  }
-}
-
-/**
- * Validates an object of { key: value }
- * @param {{[key:string]: LocalizationValue}} data
- * @returns {{[key:string]: LocalizationValue}} The original data with the locales lowercased
- */
-function validateLocalizationLocaleValue(data) {
-  const locales = Object.keys(data).map((locale) => locale.toLowerCase());
-  const values = Object.values(data);
-
-  const validator = new LeemonsValidator(localeValueSchema);
-
-  if (!validator.validate([locales, values])) {
-    throw validator.error;
+    if (!validator.validate(localizations)) {
+      throw validator.error;
+    }
   }
 
-  return _.fromPairs(locales.map((locale, i) => [locale, values[i]]));
-}
+  /**
+   * Validates an object of { key: value }
+   * @param {{[key:string]: LocalizationValue}} data
+   * @returns {{[key:string]: LocalizationValue}} The original data with the locales lowercased
+   */
+  validateLocalizationLocaleValue(data) {
+    const locales = Object.keys(data).map((locale) => locale.toLowerCase());
+    const values = Object.values(data);
 
-module.exports = {
-  validateLocalizationKey,
-  validateLocalizationKeyArray,
-  validateLocalizationTuple,
-  validateLocalizationTupleArray,
-  validateLocalization,
-  validateLocalizationsArray,
-  validateLocalizationsBulk,
-  validateLocalizationLocaleValue,
+    const validator = new LeemonsValidator(this.localeValueSchema);
+
+    if (!validator.validate([locales, values])) {
+      throw validator.error;
+    }
+
+    return _.fromPairs(locales.map((locale, i) => [locale, values[i]]));
+  }
 };

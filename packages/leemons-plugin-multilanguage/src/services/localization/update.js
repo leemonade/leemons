@@ -12,7 +12,10 @@ module.exports = (Base) =>
      */
     async setValue(key, locale, value) {
       // Validates the localization and returns it with the key and locale lowercased
-      const { key: _key, locale: _locale } = this.validateLocalization({ key, locale, value });
+      const { key: _key, locale: _locale } = this.validator.validateLocalization(
+        { key, locale, value },
+        true
+      );
       try {
         if (!(await this.hasLocale(_locale))) {
           throw new Error('Invalid locale');
@@ -36,9 +39,9 @@ module.exports = (Base) =>
      */
     async setKey(key, data) {
       // Validates the key and returns it lowercased
-      const _key = this.validateLocalizationKey(key);
+      const _key = this.validator.validateLocalizationKey(key, true);
       // Validates the tuples [locale, value] and lowercases the locale
-      const _data = this.validateLocalizationLocaleValue(data);
+      const _data = this.validator.validateLocalizationLocaleValue(data);
 
       const locales = Object.keys(_data);
 
@@ -99,7 +102,7 @@ module.exports = (Base) =>
      */
     async setMany(data) {
       // Validate params
-      this.validateLocalizationsBulk(data);
+      this.validator.validateLocalizationsBulk(data);
 
       const locales = Object.keys(data);
 
@@ -108,12 +111,26 @@ module.exports = (Base) =>
         .filter(([, exists]) => exists)
         .map(([locale]) => locale);
 
+      // Get an array of the non existing locales
+      const nonExistingLocales = [];
+
       // Get the localizations for the existing locales (flat array)
-      const localizations = _.flatten(
-        Object.entries(_.pick(data, existingLocales)).map(([locale, values]) =>
+      let localizations = _.flatten(
+        Object.entries(
+          _.pickBy(data, (value, key) => {
+            const _key = key.toLowerCase();
+            const exists = existingLocales.includes(_key);
+            if (!exists) {
+              nonExistingLocales.push(_key);
+            }
+          })
+        ).map(([locale, values]) =>
           Object.entries(values).map(([key, value]) => ({ key, locale, value }))
         )
       );
+
+      // Validate the keys
+      localizations = this.validator.validateLocalizationsArray(localizations, true);
 
       try {
         // Create the new localizations
@@ -127,9 +144,6 @@ module.exports = (Base) =>
         );
 
         // #region Define Warning object
-
-        // Get an array of the non existing locales
-        const nonExistingLocales = locales.filter((locale) => !existingLocales.includes(locale));
 
         let warnings = null;
 

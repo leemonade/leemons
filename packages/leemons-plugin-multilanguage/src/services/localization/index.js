@@ -9,7 +9,7 @@ const LocalizationDelete = require('./delete');
 
 const MultilanguageBase = require('../../helpers/MultilanguageBase');
 
-const validators = require('../../validations/localization');
+const Validator = require('../../validations/localization');
 
 class Base extends MultilanguageBase {
   constructor(props) {
@@ -19,17 +19,7 @@ class Base extends MultilanguageBase {
 
     this.model = model;
 
-    // Expose validators
-    this.validateLocalization = validators.validateLocalization;
-    this.validateLocalizationsArray = validators.validateLocalizationsArray;
-
-    this.validateLocalizationKey = validators.validateLocalizationKey;
-    this.validateLocalizationLocaleValue = validators.validateLocalizationLocaleValue;
-
-    this.validateLocalizationTuple = validators.validateLocalizationTuple;
-    this.validateLocalizationTupleArray = validators.validateLocalizationTupleArray;
-
-    this.validateLocalizationsBulk = validators.validateLocalizationsBulk;
+    this.validator = new Validator(this.caller);
   }
 }
 

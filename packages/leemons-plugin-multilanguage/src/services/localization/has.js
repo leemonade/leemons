@@ -10,7 +10,7 @@ module.exports = (Base) =>
      * @returns {Promise<boolean>} if the localization exists
      */
     async has(key, locale) {
-      const tuple = this.validateLocalizationTuple({ key, locale });
+      const tuple = this.validator.validateLocalizationTuple({ key, locale }, this.private);
 
       try {
         return (await this.model.count(tuple)) === 1;
@@ -27,7 +27,10 @@ module.exports = (Base) =>
      */
     async hasMany(localizations) {
       // Validates the localizations and lowercase each tuple
-      const _localizations = this.validateLocalizationTupleArray(localizations);
+      const _localizations = this.validator.validateLocalizationTupleArray(
+        localizations,
+        this.private
+      );
 
       try {
         const existingLocalizations = await this.model.find(
