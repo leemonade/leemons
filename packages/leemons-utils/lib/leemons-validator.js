@@ -16,4 +16,6 @@ class LeemonsValidator {
   }
 }
 
+LeemonsValidator.ajv = ajv;
+
 module.exports = LeemonsValidator;

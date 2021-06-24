@@ -35,11 +35,12 @@ async function setupFront(leemons, plugins, providers, nextDir) {
         '**'
       )
     ),
-    ...providers.map((plugin) =>
+    // Provider next/** directories
+    ...providers.map((provider) =>
       path.join(
-        path.isAbsolute(plugin.dir.next)
-          ? plugin.dir.next
-          : path.join(plugin.dir.app, plugin.dir.next),
+        path.isAbsolute(provider.dir.next)
+          ? provider.dir.next
+          : path.join(provider.dir.app, provider.dir.next),
         '**'
       )
     ),
@@ -88,23 +89,28 @@ async function setupBack(leemons, plugins, providers) {
    *  plugin.dir.controllers
    *  plugin.dir.services
    */
-  const backDirs = plugins.map((plugin) =>
+  const pluginsDirs = plugins.map((plugin) => path.join(plugin.dir.app, '**'));
+
+  // Ignore plugins frontend and config folders (they are handled by other services)
+  const ignoredPluginsDirs = plugins.map((plugin) =>
     path.join(
       plugin.dir.app,
       `\
-(${plugin.dir.models}|\
-${plugin.dir.controllers}|\
-${plugin.dir.services})`,
+(${plugin.dir.config}|\
+${plugin.dir.next})`,
       '**'
     )
   );
 
-  const backDirsProviders = providers.map((provider) =>
+  const providersDirs = providers.map((provider) => path.join(provider.dir.app, '**'));
+
+  // Ignore providers frontend and config folders (they are handled by other services)
+  const ignoredProvidersDirs = plugins.map((plugin) =>
     path.join(
-      provider.dir.app,
+      plugin.dir.app,
       `\
-(${provider.dir.models}|\
-${provider.dir.services})`,
+(${plugin.dir.config}|\
+${plugin.dir.next})`,
       '**'
     )
   );
@@ -115,12 +121,14 @@ ${provider.dir.services})`,
   // Create a backend watcher
   createReloader({
     name: 'Backend',
-    dirs: backDirs.concat(backDirsProviders),
+    dirs: [...pluginsDirs, ...providersDirs],
     config: {
       ignoreInitial: true,
       ignored: [
         /(^|[/\\])\../, // ignore dotfiles
         /.*node_modules.*/,
+        ...ignoredPluginsDirs,
+        ...ignoredProvidersDirs,
       ],
     },
     /*
@@ -153,7 +161,7 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
       // Application package.json
       path.join(cwd, 'package.json'),
       // ignore leemons plugins and connectors
-      path.join(__dirname, '../../../leemons-!(plugin|connector)**'),
+      path.join(__dirname, '../../../leemons-!(plugin|connector|provider)**'),
       path.join(__dirname, '../../../leemons/**'),
     ];
 
