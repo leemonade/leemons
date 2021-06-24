@@ -4,6 +4,7 @@ import PrivateLayout from '../components/PrivateLayout';
 import withPersistentState from './withPersistentState';
 
 const LAYOUTS = {
+  // private: withPersistentState(PrivateLayout, 'PrivateLayout'),
   private: withPersistentState(PrivateLayout, 'PrivateLayout'),
 };
 

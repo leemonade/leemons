@@ -3,6 +3,7 @@ import SessionContext from '@users-groups-roles/context/session';
 import Cookies from 'js-cookie';
 import useSWR from 'swr';
 import Router from 'next/router';
+import constants from './constants';
 
 /**
  * @private
@@ -48,6 +49,7 @@ const fetcher = (token) => (url) =>
 
 export function useSession({ redirectTo, redirectIfFound } = {}) {
   const context = useContext(SessionContext);
+  let effect = false;
   if (!context) {
     const token = Cookies.get('token');
     if (token) {
@@ -67,20 +69,38 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
           // If redirectIfFound is also set, redirect if the user was found
           (redirectIfFound && hasUser)
         ) {
-          Router.push(redirectTo);
+          Router.push(`/${redirectTo}`);
         }
       }, [redirectTo, redirectIfFound, finished, hasUser]);
 
       return error ? null : user;
+    } else {
+      effect = true;
     }
+  } else {
+    effect = true;
+  }
+  if (effect) {
+    const hasUser = Boolean(context);
+    useEffect(() => {
+      if (!redirectTo) return;
+      if (
+        // If redirectTo is set, redirect if the user was not found.
+        (redirectTo && !redirectIfFound && !hasUser) ||
+        // If redirectIfFound is also set, redirect if the user was found
+        (redirectIfFound && hasUser)
+      ) {
+        Router.push(`/${redirectTo}`);
+      }
+    }, [redirectTo, redirectIfFound, hasUser]);
   }
   return context;
 }
 
 export function logoutSession(redirectTo) {
-  Router.push(`users-groups-roles/auth/logout?redirectTo=${redirectTo}`);
+  Router.push(`/${constants.frontend.authLogout}?redirectTo=${redirectTo}`);
 }
 
 export function loginSession(token, redirectTo) {
-  Router.push(`users-groups-roles/auth/login?token=${token}&redirectTo=${redirectTo}`);
+  Router.push(`/${constants.frontend.authLogin}?token=${token}&redirectTo=${redirectTo}`);
 }
