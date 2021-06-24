@@ -16,6 +16,7 @@
     "prop-types": "^15.7.2",
     "react-hook-form": "^7.8.3",
     "tailwindcss": "^2.1.2",
-    "@leemons/emails": "file:dependencies/emails"
+    "@leemons/emails": "file:dependencies/emails",
+    "@leemons/multilanguage": "file:dependencies/multilanguage"
   }
 }

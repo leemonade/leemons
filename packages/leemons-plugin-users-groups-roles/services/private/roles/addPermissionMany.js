@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 
-async function _addPermissionMany(roleId, permissions, transacting) {
+async function _addPermissionMany(roleId, permissions, { transacting }) {
   const roleExist = await table.roles.count({ id: roleId }, { transacting });
   if (!roleExist) throw new Error('The role with the specified id does not exist');
   const items = [];
@@ -28,10 +28,10 @@ async function _addPermissionMany(roleId, permissions, transacting) {
  * @param {any} transacting - DB Transaction
  * @return {Promise<any>} Created permissions-roles
  * */
-async function addPermissionMany(roleId, permissions, transacting) {
-  if (transacting) return _addPermissionMany(roleId, permissions, transacting);
-  return table.roles.transaction(async (transactin) =>
-    _addPermissionMany(roleId, permissions, transactin)
+async function addPermissionMany(roleId, permissions, { transacting }) {
+  if (transacting) return _addPermissionMany(roleId, permissions, { transacting });
+  return table.roles.transaction(async (_transacting) =>
+    _addPermissionMany(roleId, permissions, { transacting: _transacting })
   );
 }
 

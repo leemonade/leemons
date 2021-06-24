@@ -11,7 +11,7 @@ const { table } = require('../tables');
  * @param {any=} _transacting -  DB Transaction
  * @return {Promise<Role>} Created / Updated role
  * */
-async function add({ name, permissions }, _transacting) {
+async function add({ name, permissions }, { transacting: _transacting }) {
   return global.utils.withTransaction(
     async (transacting) => {
       const existRole = await table.roles.count({ name }, { transacting });
@@ -20,12 +20,12 @@ async function add({ name, permissions }, _transacting) {
         permission.permissionName,
         permission.actionNames,
       ]);
-      if (!(await manyPermissionsHasManyActions(dataToCheckPermissions, transacting)))
+      if (!(await manyPermissionsHasManyActions(dataToCheckPermissions, { transacting })))
         throw new Error(`One or more permissions or his actions not exist`);
 
       leemons.log.info(`Creating role '${name}'`);
       const role = await table.roles.create({ name }, { transacting });
-      await addPermissionMany(role.id, permissions, transacting);
+      await addPermissionMany(role.id, permissions, { transacting });
       return role;
     },
     table.roles,

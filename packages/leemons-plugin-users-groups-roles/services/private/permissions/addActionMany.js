@@ -10,9 +10,9 @@ const { addAction } = require('./addAction');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function addActionMany(permissionName, actionNames, transacting) {
+async function addActionMany(permissionName, actionNames, { transacting }) {
   const response = await Promise.allSettled(
-    _.map(actionNames, (d) => addAction.call(this, permissionName, d, transacting))
+    _.map(actionNames, (d) => addAction.call(this, permissionName, d, { transacting }))
   );
   return global.utils.settledResponseToManyResponse(response);
 }

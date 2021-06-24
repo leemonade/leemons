@@ -15,6 +15,12 @@
     lodash "^4.17.21"
     react-hook-form "^7.8.5"
 
+"@leemons/multilanguage@file:dependencies/multilanguage":
+  version "1.0.0"
+  dependencies:
+    react-hook-form "^7.8.8"
+    swr "^0.5.6"
+
 "@leemons/onboarding@file:dependencies/onboarding":
   version "1.0.0"
   dependencies:
@@ -679,6 +685,11 @@ react-hook-form@^7.8.5:
   version "7.8.6"
   resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.8.6.tgz#93335fbada5eae3ddee8f6dffe5bac868295ec4d"
   integrity sha512-kKdaySvv21tyH8WM5jYpKRxTFdknmHi7ssdBrU7cW0qRwXcr9lxVyO14MjUFlfEGe9S5VzBmTz7NKNSarV3AFw==
+
+react-hook-form@^7.8.8:
+  version "7.9.0"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.9.0.tgz#0b5ed2f262a1e3cc64cfcf855f09a6e236d46ac3"
+  integrity sha512-1SazsTvsC5A4jLxc8fIf0bB92kEp4MGjP69k8s+2nI1spHPha5UkLwaebOXhO9vY95aGqcyBU67pRiv+6T5KZQ==
 
 react-is@^16.8.1:
   version "16.13.1"

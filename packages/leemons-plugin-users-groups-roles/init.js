@@ -2,6 +2,7 @@ const permissionService = require('./services/private/permissions');
 // const roleService = require('./services/private/roles');
 const userService = require('./services/private/users');
 const actionsService = require('./services/private/actions');
+const { translations } = require('./services/private/translations');
 
 async function init() {
   await actionsService.init();

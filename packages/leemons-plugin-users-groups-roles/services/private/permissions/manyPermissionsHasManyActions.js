@@ -9,8 +9,10 @@ const { hasActionMany } = require('./hasActionMany');
  * @param {any=} transacting - DB transaction
  * @return {Promise<boolean>}
  * */
-async function manyPermissionsHasManyActions(data, transacting) {
-  const response = await Promise.all(_.map(data, (d) => hasActionMany(d[0], d[1], transacting)));
+async function manyPermissionsHasManyActions(data, { transacting }) {
+  const response = await Promise.all(
+    _.map(data, (d) => hasActionMany(d[0], d[1], { transacting }))
+  );
   const result = _.uniq(response);
   return result.length > 1 ? false : result[0];
 }
