@@ -9,7 +9,7 @@ LeemonsValidator.ajv.addFormat('localizationKey', {
 
 module.exports = class Validator {
   constructor(_prefix) {
-    const prefix = _prefix.replace(/\./g, '\\.');
+    const prefix = (_prefix || '').replace(/\./g, '\\.');
     /**
      * String with format localizationKey (xx.yy.bb1_-)
      * If the prefix is required, the key must be the prefix of start with the '${prefix}.'
@@ -18,7 +18,7 @@ module.exports = class Validator {
       const pattern = `([a-z][a-z0-9_-]+\\.){0,}[a-z][a-z0-9_-]{0,}`;
       return {
         type: 'string',
-        pattern: `^(${usePrefix && prefix ? `(${prefix})|(${prefix}\\.${pattern})` : pattern})$`,
+        pattern: `^(${usePrefix && prefix ? `((${prefix})|(${prefix}\\.${pattern}))` : pattern})$`,
         minLength: 1,
         maxLength: 255,
       };

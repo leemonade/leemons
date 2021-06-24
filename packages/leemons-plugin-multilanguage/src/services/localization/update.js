@@ -123,12 +123,12 @@ module.exports = (Base) =>
             if (!exists) {
               nonExistingLocales.push(_key);
             }
+            return exists;
           })
         ).map(([locale, values]) =>
           Object.entries(values).map(([key, value]) => ({ key, locale, value }))
         )
       );
-
       // Validate the keys
       localizations = this.validator.validateLocalizationsArray(localizations, true);
 

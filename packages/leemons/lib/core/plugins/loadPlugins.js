@@ -81,7 +81,7 @@ function transformServices(pluginsObj, fromPlugin) {
           const func = pluginsObj[pluginKey].services[serviceKey][serviceFunctionKey];
           // eslint-disable-next-line no-param-reassign
           pluginsObj[pluginKey].services[serviceKey][serviceFunctionKey] = (...params) =>
-            func.call({ executeFrom: fromPlugin.name }, ...params);
+            func.call({ calledFrom: `plugins.${fromPlugin.name}` }, ...params);
         }
       });
     });

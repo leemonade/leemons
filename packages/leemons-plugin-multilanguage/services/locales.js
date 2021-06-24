@@ -7,7 +7,7 @@ module.exports = {
   getProvider() {
     const provider = new LocalesProvider({
       model,
-      caller: this.executeFrom,
+      caller: this.calledFrom,
     });
 
     // Prevent the modification of the provider, so the caller can't be modified

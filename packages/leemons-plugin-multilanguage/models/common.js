@@ -1,5 +1,5 @@
 module.exports = {
-  modelName: 'localizations',
+  modelName: 'common',
   attributes: {
     key: {
       type: 'string',

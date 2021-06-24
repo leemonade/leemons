@@ -80,6 +80,7 @@ module.exports = (Base) =>
         query.key = this.validator.validateLocalizationKey(key, true);
       }
       if (locale) {
+        query.key_$startsWith = this.caller;
         query.locale = validateLocaleCode(locale);
       }
 
