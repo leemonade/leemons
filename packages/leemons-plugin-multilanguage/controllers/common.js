@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 // TODO: Add locale fallback
 async function get(ctx) {
   const { keys = null, keysStartsWith = null, locale } = ctx.request.body;
@@ -61,7 +62,7 @@ async function get(ctx) {
     return;
   }
 
-  const localizationsService = leemons.plugin.services.common;
+  const localizationsService = leemons.plugin.services.common.getProvider();
 
   try {
     const localizations = [];
@@ -93,7 +94,8 @@ async function get(ctx) {
 
     ctx.body = { items: resolvedLocalizations };
   } catch (e) {
-    ctx.body = { error: 'An unknown error ocurred' };
+    console.error(e);
+    ctx.body = { error: e.message };
   }
 }
 

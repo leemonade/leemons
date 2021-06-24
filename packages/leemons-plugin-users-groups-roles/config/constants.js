@@ -1,6 +1,4 @@
 module.exports = {
-  actionsName: 'plugins.users-groups-roles',
-  permissionsName: 'plugins.users-groups-roles',
   // Time in minutes
   timeForRecoverPassword: 15,
   // TODO Añadir listado de roles basicos

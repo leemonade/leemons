@@ -11,7 +11,6 @@ async function list() {
     table.permissions.find(),
     table.permissionAction.find(),
   ]);
-  // TODO Sacar traducciones de los nombres de los permisos
 
   let permission;
   _.forEach(permissions, (_permission) => {
