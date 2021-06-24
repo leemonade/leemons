@@ -44,11 +44,11 @@ function getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) {
     });
 }
 
-export default (keys, locale) => {
+export default ({ keys = null, keysStartsWith = null, locale } = {}) => {
   // Let swr handle data fetching and caching
   const { data, error } = useSWR(
-    '/api/multilanguage/localizations',
-    getLocalizations(keys, locale)
+    '/api/multilanguage/common',
+    getLocalizations({ keys, keysStartsWith, locale })
   );
 
   // Add a loading property

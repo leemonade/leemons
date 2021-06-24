@@ -9,8 +9,22 @@ async function generatePluginLoader({ plugins, srcPath, srcChecksums, aliases, n
   plugins: [
     ${plugins.map(([name]) => `'${name}'`).join(',\n\t\t')}
   ],
-  frontPlugins: [${plugins
-    .filter(([, plugin]) => _.get(plugin, 'hasFront', false))
+  frontPlugins: [${(
+    await Promise.all(
+      plugins
+        .filter(([, plugin]) => _.get(plugin, 'hasFront', false))
+        .map(([name, plugin]) =>
+          fs
+            .access(
+              path.join(plugin.dir.app, plugin.dir.next, 'src', 'index.js'),
+              fs.constants.R_OK
+            )
+            .then(() => [name, { ...plugin, hasInitFunc: true }])
+            .catch(() => [name, { ...plugin, hasInitFunc: false }])
+        )
+    )
+  )
+    .filter(([, { hasInitFunc }]) => hasInitFunc)
     .map(
       ([name, plugin]) => `{
     name: '${name}',

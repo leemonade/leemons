@@ -61,7 +61,7 @@ async function get(ctx) {
     return;
   }
 
-  const localizationsService = leemons.plugin.services.localizations;
+  const localizationsService = leemons.plugin.services.common;
 
   try {
     const localizations = [];
