@@ -1,5 +1,7 @@
 const _ = require('lodash');
 
+const { withTransaction } = global.utils;
+
 // A mixing for extending all the needed classes
 module.exports = (Base) =>
   class LocalizationHas extends Base {
@@ -9,11 +11,11 @@ module.exports = (Base) =>
      * @param {LocaleCode} locale The desired locale
      * @returns {Promise<boolean>} if the localization exists
      */
-    async has(key, locale) {
+    async has(key, locale, { transacting } = {}) {
       const tuple = this.validator.validateLocalizationTuple({ key, locale }, this.private);
 
       try {
-        return (await this.model.count(tuple)) === 1;
+        return (await this.model.count(tuple, { transacting })) === 1;
       } catch (e) {
         leemons.log.debug(e.message);
         throw new Error('An error occurred while checking if the localization exists');
@@ -25,7 +27,7 @@ module.exports = (Base) =>
      * @param {Array<LocalizationKey, LocaleCode>[]} localizations An array of localization objects
      * @returns {Promise<{[locale:string]: {[key:string]:boolean}}>} An array with the localizations that exists
      */
-    async hasMany(localizations) {
+    async hasMany(localizations, { transacting } = {}) {
       // Validates the localizations and lowercase each tuple
       const _localizations = this.validator.validateLocalizationTupleArray(
         localizations,
@@ -33,32 +35,39 @@ module.exports = (Base) =>
       );
 
       try {
-        const existingLocalizations = await this.model.find(
-          { $or: _localizations },
-          { columns: ['key', 'locale'] }
+        return await withTransaction(
+          async (t) => {
+            const existingLocalizations = await this.model.find(
+              { $or: _localizations },
+              { columns: ['key', 'locale'] },
+              { transacting: t }
+            );
+
+            const result = {};
+
+            _localizations.forEach((localization) => {
+              // Find if the given tuple exists in the database
+              const exists =
+                existingLocalizations.findIndex(
+                  (existingLocalization) =>
+                    existingLocalization.key === localization.key &&
+                    existingLocalization.locale === localization.locale
+                ) !== -1;
+
+              if (!_.has(result, localization.locale)) {
+                _.set(result, `${localization.locale}`, {});
+              }
+
+              // Set the key in a json like:
+              // { [locale]: { [key]: boolean } }
+              result[localization.locale][localization.key] = exists;
+            });
+
+            return result;
+          },
+          this.model,
+          transacting
         );
-
-        const result = {};
-
-        _localizations.forEach((localization) => {
-          // Find if the given tuple exists in the database
-          const exists =
-            existingLocalizations.findIndex(
-              (existingLocalization) =>
-                existingLocalization.key === localization.key &&
-                existingLocalization.locale === localization.locale
-            ) !== -1;
-
-          if (!_.has(result, localization.locale)) {
-            _.set(result, `${localization.locale}`, {});
-          }
-
-          // Set the key in a json like:
-          // { [locale]: { [key]: boolean } }
-          result[localization.locale][localization.key] = exists;
-        });
-
-        return result;
       } catch (e) {
         leemons.log.debug(e.message);
         throw new Error('An error occurred while deleting the locales');
