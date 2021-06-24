@@ -1,17 +1,9 @@
-<<<<<<< HEAD:examples/demo-auth/next/pages/_app.js
 import _ from 'lodash';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import hooks from 'leemons-hooks';
-import React, { useEffect } from 'react';
-import { frontPlugins, plugins } from '@plugins';
-import { SessionProvider } from '@users-groups-roles/context/session';
-import 'tailwindcss/tailwind.css';
-=======
-import React, { useEffect } from 'react';
 import { plugins, frontPlugins } from '@plugins';
-import PropTypes from 'prop-types';
 import 'leemons-ui/dist/theme/leemons.css';
->>>>>>> plugin/localization:examples/localization-demo/next/pages/_app.js
+import 'tailwindcss/tailwind.css';
 
 function MyApp({ Component, pageProps }) {
   // Only add it once
@@ -31,7 +23,6 @@ function MyApp({ Component, pageProps }) {
   // Only add it once (when leemons is not setted)
   if (!global.leemons) {
     // Define logger to console (temporal)
-<<<<<<< HEAD:examples/demo-auth/next/pages/_app.js
     global.leemons = {
       log: console,
       api: (url, config) => {
@@ -53,9 +44,6 @@ function MyApp({ Component, pageProps }) {
         });
       },
     };
-=======
-    global.leemons = { log: console };
->>>>>>> plugin/localization:examples/localization-demo/next/pages/_app.js
 
     console.log(
       'Frontend plugins:',
