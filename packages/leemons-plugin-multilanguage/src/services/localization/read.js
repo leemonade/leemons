@@ -7,7 +7,8 @@ const { withTransaction } = global.utils;
 module.exports = (Base) =>
   class LocalizationGet extends Base {
     /**
-     * Gets the given locale
+     * Gets the given localization
+     * @param {LocalizationKey} key The localization key
      * @param {LocaleCode} code The locale iso code xx-YY or xx
      * @returns {Promise<Localization | null>} The requested localization or null
      */
@@ -21,6 +22,21 @@ module.exports = (Base) =>
         leemons.log.debug(e.message);
         throw new Error('An error occurred while getting the localization');
       }
+    }
+
+    /**
+     * Gets the given localization value
+     * @param {LocalizationKey} key The localization key
+     * @param {LocaleCode} code The locale iso code xx-YY or xx
+     * @returns {Promise<LocalizationValue | null>} The requested localization value or null
+     */
+    async getValue(key, locale, { transacting } = {}) {
+      const localization = await this.get(key, locale, { transacting });
+
+      if (localization) {
+        return localization.value;
+      }
+      return null;
     }
 
     /**
@@ -57,7 +73,7 @@ module.exports = (Base) =>
     }
 
     /**
-     * Get all the localization mathing a key (different locales)
+     * Get all the localizations matching a key (different locales)
      * @param {LocalizationKey} key
      * @returns {Localization[]}
      */
@@ -71,6 +87,30 @@ module.exports = (Base) =>
         leemons.log.debug(e.message);
         throw new Error('An error occurred while getting the localizations');
       }
+    }
+
+    /**
+     * Get all the localizations matching a key (different locales)
+     * @param {LocalizationKey} key
+     * @returns {{[locale: string]: LocalizationValue} | null}
+     */
+    getLocaleValueWithKey(key, { transacting } = {}) {
+      return withTransaction(
+        async (t) => {
+          const localizations = await this.getWithKey(key, { transacting: t });
+
+          // Return null if no localization is found
+          return localizations.reduce((result, { locale, value }) => {
+            const _result = result || {};
+
+            _result[locale] = value;
+
+            return _result;
+          }, null);
+        },
+        this.model,
+        transacting
+      );
     }
 
     /**
