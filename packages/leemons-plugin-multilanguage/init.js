@@ -4,7 +4,7 @@ const Locales = require('./src/services/locale');
 
 async function init() {
   const locales = new Locales({ model: localesTable });
-  const locale = await locales.addMany([
+  await locales.addMany([
     ['es-ES', 'Español de España'],
     ['en', 'English'],
     ['en-UK', 'English UK'],
