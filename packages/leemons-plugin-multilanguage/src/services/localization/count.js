@@ -13,13 +13,16 @@ module.exports = (Base) =>
      * @param {LocaleCode} locale The desired locale
      * @returns {Promise<number>} how many keys exists
      */
-    async countKeyStartsWith(key, locale) {
+    async countKeyStartsWith(key, locale, { transacting } = {}) {
       // Validates the tuple and returns it in lowercase
       const tuple = this.validator.validateLocalizationTuple({ key, locale }, this.private);
 
       try {
         // Get the count of localizations in the given locale starting with the given tuple
-        return await this.model.count({ key_$startsWith: tuple.key, locale: tuple.locale });
+        return await this.model.count(
+          { key_$startsWith: tuple.key, locale: tuple.locale },
+          { transacting }
+        );
       } catch (e) {
         leemons.log.debug(e.message);
         throw new Error('An error occurred while counting the localizations');
@@ -31,12 +34,12 @@ module.exports = (Base) =>
      * @param {LocalizationKey} key
      * @returns {number} how many locales has the localization
      */
-    async countLocalesWithKey(key) {
+    async countLocalesWithKey(key, { transacting } = {}) {
       // Validates the key and returns it lowercased
       const _key = this.validator.validateLocalizationKey(key, this.private);
 
       try {
-        return await this.model.count({ key: _key });
+        return await this.model.count({ key: _key }, { transacting });
       } catch (e) {
         leemons.log.debug(e.message);
         throw new Error('An error occurred while counting the localizations');

@@ -9,12 +9,12 @@ module.exports = (Base) =>
      * @param {LocaleCode} locale the locale code
      * @returns {Promise<boolean>} if the locale was deleted or not
      */
-    async delete(key, locale) {
+    async delete(key, locale, { transacting } = {}) {
       const tuple = this.validator.validateLocalizationTuple({ key, locale }, true);
 
       try {
         // Delete the given tuple
-        return (await this.model.deleteMany(tuple)).count === 1;
+        return (await this.model.deleteMany(tuple, { transacting })).count === 1;
       } catch (e) {
         leemons.log.debug(e.message);
         throw new Error('An error occurred while deleting the localization');
@@ -30,7 +30,7 @@ module.exports = (Base) =>
      * @param {LocaleCode} [locale] the locale code
      * @returns {Promise<number>} how many localizations where deleted
      */
-    async deleteKeyStartsWith(key, locale = null) {
+    async deleteKeyStartsWith(key, { locale = null, transacting } = {}) {
       const query = {
         // Validate key and get it lowercased
         key_$startsWith: this.validator.validateLocalizationKey(key, true),
@@ -42,7 +42,7 @@ module.exports = (Base) =>
       }
 
       try {
-        return (await this.model.deleteMany(query)).count;
+        return (await this.model.deleteMany(query, { transacting })).count;
       } catch (e) {
         leemons.log.debug(e.message);
         throw new Error('An error occurred while deleting the localizations');
@@ -54,12 +54,12 @@ module.exports = (Base) =>
      * @param {Array<LocalizationKey, LocaleCode>[]} localizations An array of [key, locale]
      * @returns {Promise<Number>} The number of localizations deleted
      */
-    async deleteMany(localizations) {
+    async deleteMany(localizations, { transacting } = {}) {
       // Validates the input and returns an array of LocalizationTuples ([{key, locale}])
       const _localizations = this.validator.validateLocalizationTupleArray(localizations, true);
 
       try {
-        return (await this.model.deleteMany({ $or: _localizations })).count;
+        return (await this.model.deleteMany({ $or: _localizations }, { transacting })).count;
       } catch (e) {
         leemons.log.debug(e.message);
         throw new Error('An error occurred while deleting the localizations');
@@ -73,7 +73,7 @@ module.exports = (Base) =>
      * @param {LocaleCode} [params.locale] The locale to delete
      * @returns {number} the number of items deleted
      */
-    async deleteAll({ key = null, locale = null }) {
+    async deleteAll({ key = null, locale = null }, { transacting } = {}) {
       const query = {};
 
       if (key) {
@@ -89,7 +89,7 @@ module.exports = (Base) =>
       }
 
       try {
-        return (await this.model.deleteMany(query)).count;
+        return (await this.model.deleteMany(query, { transacting })).count;
       } catch (e) {
         leemons.log.debug(e.message);
         throw new Error('An error occurred while deleting the localizations');

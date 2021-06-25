@@ -1,6 +1,8 @@
 const _ = require('lodash');
 const { validateLocaleCode, validateLocaleCodeArray } = require('../../validations/locale');
 
+const { withTransaction } = global.utils;
+
 module.exports = (Base) =>
   class LocaleHas extends Base {
     /**
@@ -8,13 +10,13 @@ module.exports = (Base) =>
      * @param {LocaleCode} code The locale iso code xx-YY or xx
      * @returns {Promise<boolean>} if the locale exists
      */
-    async has(code) {
+    async has(code, { transacting } = {}) {
       // Validates the code and returns it in lowercase
       const _code = validateLocaleCode(code);
 
       try {
+        return (await this.model.count({ code: _code }, { transacting })) > 0;
         // Get if there is at least 1 locale with the given code
-        return (await this.model.count({ code: _code })) > 0;
       } catch (e) {
         leemons.log.debug(e.message);
         throw new Error('An error occurred while creating the locale');
@@ -26,17 +28,27 @@ module.exports = (Base) =>
      * @param {LocaleCode[]} codes The locale iso code xx-YY or xx
      * @returns {Promise<Object<string, boolean>>} An array with the locales that exists
      */
-    async hasMany(codes) {
+    async hasMany(codes, { transacting } = {}) {
       // Validates the code and returns them lowercased
       const _codes = validateLocaleCodeArray(codes);
 
       try {
         // Find the locales that exists in the database
-        let existingLocales = await this.model.find({ code_$in: _codes }, { columns: ['code'] });
-        existingLocales = existingLocales.map((locale) => locale.code);
+        return await withTransaction(
+          async (t) => {
+            let existingLocales = await this.model.find(
+              { code_$in: _codes },
+              { columns: ['code'] },
+              { transacting: t }
+            );
+            existingLocales = existingLocales.map((locale) => locale.code);
 
-        // Generate an object of {locale: boolean}
-        return _.fromPairs(_codes.map((code) => [code, existingLocales.includes(code)]));
+            // Generate an object of {locale: boolean}
+            return _.fromPairs(_codes.map((code) => [code, existingLocales.includes(code)]));
+          },
+          this.model,
+          transacting
+        );
       } catch (e) {
         leemons.log.debug(e.message);
         throw new Error('An error occurred while deleting the locales');
