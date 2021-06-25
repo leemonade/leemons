@@ -5,20 +5,14 @@ module.exports = {
     useTimestamps: true,
   },
   attributes: {
-    plugin: {
+    pluginName: {
       type: 'string',
       options: {
         notNull: true,
         unique: true,
       },
     },
-    name: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
-    },
-    language: {
+    locationName: {
       type: 'string',
       options: {
         notNull: true,

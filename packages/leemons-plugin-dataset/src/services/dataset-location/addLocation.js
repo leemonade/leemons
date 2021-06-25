@@ -15,13 +15,24 @@ const { table } = require('../tables');
  * @public
  * @static
  * @param {DatasetAddLocation} data - New dataset location
+ * @param {any=} transacting - DB Transaction
  * @return {Promise<Action>} The new dataset location
  * */
-async function addLocation({ name, description, locationName, pluginName }) {
+async function addLocation(
+  { name, description, locationName, pluginName },
+  { transacting: _transacting }
+) {
   if (pluginName !== this.calledFrom) throw new Error(`The plugin name must be ${this.calledFrom}`);
-  if (await existLocation(locationName, pluginName))
+  if (await existLocation(locationName, pluginName, { transacting: _transacting }))
     throw new Error(`The '${locationName}' location already exist`);
-  // TODO Añadir traducciones
+  return global.utils.withTransaction(
+    async () => {
+      const response = await Promise.all([table.dataset.create({ locationName, pluginName })]);
+      return response[0];
+    },
+    table.dataset,
+    _transacting
+  );
 }
 
 module.exports = { addLocation };

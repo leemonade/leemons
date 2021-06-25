@@ -10,8 +10,8 @@
 
 /**
  * @typedef DatasetAddLocation
- * @param {[locale: string]: string} name Location name (For frontend)
- * @property {string} description Location description (For frontend)
+ * @property {[locale: string]: string} name Location name (For frontend)
+ * @property {[locale: string]: string} description Location description (For frontend)
  * @property {string} locationName Location name (For backend)
  * @property {string} pluginName Plugin name (For backend)
  */

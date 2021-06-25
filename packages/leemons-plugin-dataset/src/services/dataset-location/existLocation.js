@@ -11,10 +11,14 @@ const { table } = require('../tables');
  * @static
  * @param {string} locationName - Location name
  * @param {string} pluginName - Plugin name
+ * @param {any=} transacting - DB transaction
  * @example
  * existLocation('users-dataset', 'plugins.users');
  * @return {Promise<boolean>}
  * */
-async function existLocation(locationName, pluginName) {}
+async function existLocation(locationName, pluginName, { transacting }) {
+  const result = await table.dataset.count({ locationName, pluginName }, { transacting });
+  return !!result;
+}
 
 module.exports = { existLocation };
