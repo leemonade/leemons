@@ -101,7 +101,7 @@ module.exports = (Base) =>
     /**
      * Gets an object with keys and values of all the keys in a locale
      * @param {LocaleCode} locale
-     * @returns {{[key: string]: LocalizationValue}}
+     * @returns {{[key: string]: LocalizationValue} | null}
      */
     async getKeyValueWithLocale(locale, { transacting } = {}) {
       // Validate the locale and lowercase it
@@ -120,13 +120,14 @@ module.exports = (Base) =>
           async (t) => {
             const localizations = await this.model.find(query, { transacting: t });
 
+            // Return null if no localization is found
             return localizations.reduce((result, { key, value }) => {
-              const _result = result;
+              const _result = result || {};
 
               _result[key] = value;
 
               return _result;
-            }, {});
+            }, null);
           },
           this.model,
           transacting
@@ -162,7 +163,7 @@ module.exports = (Base) =>
      * Gets an object of key value for all the keys starting with a prefix for a given locale
      * @param {LocalizationKey} key
      * @param {LocaleCode} locale
-     * @returns {{[key: string]: LocalizationValue}}
+     * @returns {{[key: string]: LocalizationValue} | null}
      */
     async getKeyValueStartsWith(key, locale, { transacting } = {}) {
       // Validate the tuple and lowercase it
@@ -179,13 +180,14 @@ module.exports = (Base) =>
               { transacting: t }
             );
 
+            // Return null if no localization is found
             return localizations.reduce((result, { key: lKey, value }) => {
-              const _result = result;
+              const _result = result || {};
 
               _result[lKey] = value;
 
               return _result;
-            }, {});
+            }, null);
           },
           this.model,
           transacting
