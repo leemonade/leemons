@@ -16,10 +16,10 @@ async function addUserAuth(groupId, userAuthId) {
   await Promise.all([groupExist({ id: groupId }, true), existUserAuth({ id: userAuthId }, true)]);
   const groupUser = await table.groupUserAuth.count({ group: groupId, userAuth: userAuthId });
   if (!groupUser) {
-    return table.groupUserAuth.transaction(async () => {
+    return table.groupUserAuth.transaction(async (transacting) => {
       const values = await Promise.all([
-        table.groupUserAuth.create({ group: groupId, userAuth: userAuthId }),
-        table.userAuth.update({ id: userAuthId }, { reloadPermissions: true }),
+        table.groupUserAuth.create({ group: groupId, userAuth: userAuthId }, { transacting }),
+        table.userAuth.update({ id: userAuthId }, { reloadPermissions: true }, { transacting }),
       ]);
       return values[0];
     });

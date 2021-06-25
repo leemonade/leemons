@@ -16,10 +16,10 @@ async function removeUser(groupId, userAuthId) {
 
   const groupUserAuth = await table.groupUserAuth.count({ group: groupId, userAuth: userAuthId });
   if (groupUserAuth) {
-    return table.groupUserAuth.transaction(async () => {
+    return table.groupUserAuth.transaction(async (transacting) => {
       const values = await Promise.all([
-        table.groupUserAuth.delete({ group: groupId, userAuth: userAuthId }),
-        table.userAuth.update({ id: userAuthId }, { reloadPermissions: true }),
+        table.groupUserAuth.delete({ group: groupId, userAuth: userAuthId }, { transacting }),
+        table.userAuth.update({ id: userAuthId }, { reloadPermissions: true }, { transacting }),
       ]);
       return values[0];
     });

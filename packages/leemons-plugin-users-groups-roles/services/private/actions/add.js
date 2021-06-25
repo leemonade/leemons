@@ -1,3 +1,5 @@
+const { getTranslationKey } = require('../../../next/src/actions/getTranslationKey');
+const { translations } = require('../translations');
 const { table } = require('../tables');
 
 /**
@@ -13,10 +15,25 @@ async function add(data) {
 
   leemons.log.info(`Adding action '${data.actionName}'`);
   return table.actions.transaction(async (transacting) => {
-    const values = await Promise.all([
-      table.actions.create({ actionName: data.actionName, order: data.order }, { transacting }),
-      // TODO Añadir que se añadan las traducciones
-    ]);
+    const promises = [
+      table.actions.create(
+        {
+          actionName: data.actionName,
+          order: data.order,
+        },
+        { transacting }
+      ),
+    ];
+    if (translations()) {
+      promises.push(
+        translations().common.addManyByKey(
+          getTranslationKey(data.actionName, 'name'),
+          data.localizationName,
+          { transacting }
+        )
+      );
+    }
+    const values = await Promise.all(promises);
 
     return values[0];
   });

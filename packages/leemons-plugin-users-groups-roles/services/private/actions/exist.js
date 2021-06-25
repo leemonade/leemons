@@ -8,7 +8,7 @@ const { table } = require('../tables');
  * @param {any} transacting - DB Transaction
  * @return {Promise<boolean>} Created actions
  * */
-async function exist(actionName, transacting) {
+async function exist(actionName, { transacting }) {
   const result = await table.actions.count({ actionName }, { transacting });
   return !!result;
 }

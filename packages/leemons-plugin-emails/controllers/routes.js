@@ -1,10 +1,5 @@
 module.exports = [
   {
-    path: '/init',
-    method: 'POST',
-    handler: 'email.init',
-  },
-  {
     path: '/providers',
     method: 'GET',
     handler: 'email.providers',

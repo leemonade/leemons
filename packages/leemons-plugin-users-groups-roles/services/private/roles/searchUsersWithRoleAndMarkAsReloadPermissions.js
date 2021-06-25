@@ -10,7 +10,7 @@ const { table } = require('../tables');
  * @param {any} transacting - Database transaction
  * @return {Promise<any>}
  * */
-async function searchUsersWithRoleAndMarkAsReloadPermissions(roleId, transacting) {
+async function searchUsersWithRoleAndMarkAsReloadPermissions(roleId, { transacting }) {
   // TODO SIN USAR
   // TODO ARREGLAR PARA QUE USE USER AUTH Y NO USERS
   const [userRoles, groupRoles] = await Promise.all([

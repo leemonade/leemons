@@ -1,11 +1,6 @@
 // TODO COMPROBAR PERMISOS DE LOS ENDPOINTS
 
 module.exports = [
-  {
-    path: '/init',
-    method: 'POST',
-    handler: 'init.init',
-  },
   /**
    * Users
    * */

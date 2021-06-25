@@ -12,11 +12,6 @@ const validateProviderConfigObj = {
   additionalProperties: false,
 };
 
-async function init(ctx) {
-  await emailService.init();
-  ctx.body = { status: 200 };
-}
-
 async function providers(ctx) {
   ctx.body = { providers: emailService.providers() };
 }
@@ -47,5 +42,4 @@ module.exports = {
   addProvider,
   providers,
   sendTest,
-  init,
 };

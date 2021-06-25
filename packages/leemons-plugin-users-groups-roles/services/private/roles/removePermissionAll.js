@@ -12,9 +12,11 @@ async function _removePermissionAll(role, transacting) {
  * @param {any} transacting - DB Transaction
  * @return {Promise<Role>} Created / Updated role
  * */
-async function removePermissionAll(roleId, transacting) {
+async function removePermissionAll(roleId, { transacting }) {
   if (transacting) return _removePermissionAll(roleId, transacting);
-  return table.roles.transaction(async (transactin) => _removePermissionAll(roleId, transactin));
+  return table.roles.transaction(async (_transacting) =>
+    _removePermissionAll(roleId, { transacting: _transacting })
+  );
 }
 
 module.exports = { removePermissionAll };
