@@ -10,6 +10,64 @@ const { generatePluginLoader } = require('./pluginLoader');
 const copyPackageJSON = require('./copyPackageJSON');
 
 /**
+ * Removes the folders of those plugins no longer installed
+ * @param {string} dir
+ * @param {[pluginName:string][]} _plugins
+ * @returns {Promise<void>}
+ */
+async function removeMissingPlugins(dir, _plugins) {
+  const plugins = _plugins.map(([name]) => name);
+  await Promise.all(
+    (await fs.readdir(dir, { withFileTypes: true }))
+      .filter((file) => file.isDirectory())
+      .map((file) => file.name)
+      // Get missing plugins
+      .filter((plugin) => !plugins.includes(plugin))
+      // Delete the missing plugins folders
+      .map((plugin) => fs.rm(path.join(dir, plugin), { recursive: true }))
+  );
+}
+
+function getFilesArrayFromreaddirRecursive(data) {
+  if (data.type === 'file') {
+    return [{ path: data.path || data.name, checksum: data.checksum }];
+  }
+  if (data.type === 'directory') {
+    return _.flattenDeep(data.content.map((element) => getFilesArrayFromreaddirRecursive(element)));
+  }
+}
+
+/**
+ * Gets the
+ * @param {import('fs').PathLike} src
+ * @param {import('fs').PathLike} dest
+ * @returns {{extra: import('fs').PathLike[], modified: import('fs').PathLike[]}} The files which dest has and src not, and also the files that are missing in dest or modified
+ */
+async function getDiff(src, dest) {
+  const srcStructure = await readdirRecursive(src, { checksums: true });
+  const destStructure = await readdirRecursive(dest, { checksums: true });
+
+  const srcFiles = getFilesArrayFromreaddirRecursive(srcStructure);
+  const destFiles = getFilesArrayFromreaddirRecursive(destStructure);
+
+  const filesToDelete = destFiles
+    .filter((destFile) => srcFiles.findIndex((srcFile) => srcFile.path === destFile.path) === -1)
+    .map((file) => file.path);
+
+  const modifiedFiles = srcFiles
+    .filter((srcFile) => {
+      const destFile = destFiles.find((_destFile) => _destFile.path === srcFile.path);
+      return !(destFile && destFile.checksum === srcFile.checksum);
+    })
+    .map((file) => file.path);
+
+  return {
+    extra: filesToDelete,
+    modified: modifiedFiles,
+  };
+}
+
+/**
  * Checks if the directory have been changed since last execution
  *
  * If the directory doesn't exists, it creates it
@@ -103,17 +161,22 @@ async function loadFront(leemons, installedPlugins, installedProviders) {
     .concat(providers.map((provider) => [provider.name, provider]));
   const nextPath = leemons.dir.next;
 
+  // Flags for compilation
   _.set(leemons, 'frontNeedsBuild', false);
   _.set(leemons, 'frontNeedsUpdateDeps', false);
-
-  // Get plugins folder
-  // const plugins = _.values(leemons.plugins);
 
   // Generate dest directories
   const pagesPath = path.resolve(nextPath, 'pages');
   const srcPath = path.resolve(nextPath, 'plugins');
   const depsPath = path.resolve(nextPath, 'dependencies');
   const publicPath = path.resolve(nextPath, 'public');
+
+  await Promise.all([
+    removeMissingPlugins(pagesPath, plugins),
+    removeMissingPlugins(srcPath, plugins),
+    removeMissingPlugins(depsPath, plugins),
+    removeMissingPlugins(publicPath, plugins),
+  ]);
 
   // Get current pages checksums
   const pagesChecksums = (await checkDirChanges(pagesPath)).checksums;
@@ -154,6 +217,7 @@ async function loadFront(leemons, installedPlugins, installedProviders) {
         // #region Copy Pages
         if (folders.includes('pages')) {
           const pluginPages = path.resolve(dir, 'pages');
+          await getDiff(pluginPages, path.join(pagesPath, pluginObj.name));
           if (await copyFolder(pluginPages, pagesPath, name, pagesChecksums)) {
             leemons.frontNeedsBuild = true;
           }
