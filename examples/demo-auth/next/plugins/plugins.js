@@ -1,6 +1,8 @@
 module.exports = {
   plugins: [
-    'emails',
+    'dataset',
+		'dataset-test',
+		'emails',
 		'multilanguage',
 		'onboarding',
 		'users-groups-roles',

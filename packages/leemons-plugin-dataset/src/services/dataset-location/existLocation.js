@@ -16,9 +16,9 @@ const { table } = require('../tables');
  * existLocation('users-dataset', 'plugins.users');
  * @return {Promise<boolean>}
  * */
-async function existLocation(locationName, pluginName, { transacting }) {
+async function existLocation(locationName, pluginName, { transacting } = {}) {
   const result = await table.dataset.count({ locationName, pluginName }, { transacting });
   return !!result;
 }
 
-module.exports = { existLocation };
+module.exports = existLocation;

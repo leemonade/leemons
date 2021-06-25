@@ -74,7 +74,8 @@ async function loadPluginsModels(pluginObjs, leemons) {
   _.set(leemons, 'plugins', _.fromPairs(loadedPlugins));
 }
 
-function transformService(pluginObj, fromPlugin) {
+function transformService(_pluginObj, fromPlugin) {
+  const pluginObj = _.cloneDeep(_pluginObj);
   _.forEach(_.keys(pluginObj.services), (serviceKey) => {
     _.forEach(_.keys(pluginObj.services[serviceKey]), (serviceFunctionKey) => {
       if (_.isFunction(pluginObj.services[serviceKey][serviceFunctionKey])) {
@@ -89,10 +90,11 @@ function transformService(pluginObj, fromPlugin) {
 }
 
 function transformServices(pluginsObj, fromPlugin) {
+  const result = {};
   _.forEach(_.keys(pluginsObj), (pluginKey) => {
-    transformService(pluginsObj[pluginKey], fromPlugin);
+    result[pluginsObj[pluginKey].name] = transformService(pluginsObj[pluginKey], fromPlugin);
   });
-  return pluginsObj;
+  return result;
 }
 
 // Load plugins part 2 (controllers, services and front)
@@ -111,7 +113,7 @@ async function initializePlugins(leemons) {
           _.isArray(loadedProvider.config.config.pluginsCanUseMe) &&
           _.includes(loadedProvider.config.config.pluginsCanUseMe, pluginObj.name)
         ) {
-          pluginObj.providers[loadedProvider.name] = loadedProvider;
+          pluginObj.providers[loadedProvider.name] = _.cloneDeep(loadedProvider);
         }
       });
 

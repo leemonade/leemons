@@ -15,3 +15,8 @@
  * @property {string} locationName Location name (For backend)
  * @property {string} pluginName Plugin name (For backend)
  */
+
+/**
+ * @typedef {DatasetAddLocation} DatasetUpdateLocation
+
+ */
