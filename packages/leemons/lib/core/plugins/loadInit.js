@@ -1,7 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
 const vm = require('../config/vm');
-const { loadFile } = require('../config/loadFiles');
 
 async function loadInit(plugin, vmFilter, env) {
   const dir = path.join(plugin.dir.app);
