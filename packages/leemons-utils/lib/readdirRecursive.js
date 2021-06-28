@@ -103,4 +103,73 @@ async function readdirRecursive(
   return null;
 }
 
-module.exports = readdirRecursive;
+/**
+ * Get all the files recursively inside a directory
+ * @param {*} data The readdirRecursive output
+ * @returns {{path: import('fs').PathLike, checksum: string}[]}
+ */
+function getFilesArrayFromreaddirRecursive(data) {
+  if (data && data.type === 'file') {
+    return [{ path: data.path || data.name, checksum: data.checksum }];
+  }
+  if (data && data.type === 'directory') {
+    return _.flattenDeep(data.content.map((element) => getFilesArrayFromreaddirRecursive(element)));
+  }
+
+  return [];
+}
+
+/**
+ * Get the empty directories inside a directory
+ * An empty directory is a folder which:
+ *  does not have any file or directory inside itself
+ *  has one or more directory inside itself which are empty
+ * @param {*} data The readdirRecursive output
+ * @returns {import('fs').PathLike[]}
+ */
+function getEmptyDirsFromreaddirRecursive(data) {
+  // If the root file is of type file, return an empty array (nothing empty)
+  if (data.type === 'file') {
+    return [];
+  }
+
+  // Get all the directories inside the root (1 level)
+  const directories = data.content.filter((file) => file.type === 'directory');
+
+  // Get the directories that are empty (no children)
+  const emptyDirectories = directories
+    .filter((directory) => directory.content.length === 0)
+    .map((file) => file.path);
+
+  // Get the directories with children
+  const nonEmptyDirectories = directories.filter((directory) => directory.content.length !== 0);
+
+  // The current directory empty children' directories
+  const emptyChildren = [
+    // The empty directories (no children)
+    ...emptyDirectories,
+    // Continue looking inside
+    ..._.flatten(
+      nonEmptyDirectories.map((directory) => getEmptyDirsFromreaddirRecursive(directory))
+    ),
+  ];
+
+  // If a directory has children but all of them are empty, then the directory is empty
+  if (
+    data.content
+      .map((file) => file.path)
+      .sort()
+      .join(', ') === emptyChildren.sort().join(', ')
+  ) {
+    // Return the directory as empty
+    return [data.path || '.'];
+  }
+
+  return emptyChildren;
+}
+
+module.exports = {
+  readdirRecursive,
+  getFilesArrayFromreaddirRecursive,
+  getEmptyDirsFromreaddirRecursive,
+};

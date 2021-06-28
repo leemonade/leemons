@@ -3,7 +3,11 @@
 const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
-const readdirRecursive = require('leemons-utils/lib/readdirRecursive');
+const {
+  readdirRecursive,
+  getFilesArrayFromreaddirRecursive,
+  getEmptyDirsFromreaddirRecursive,
+} = require('leemons-utils/lib/readdirRecursive');
 const execa = require('execa');
 const { copyFolder } = require('./copyFolder');
 const { generatePluginLoader } = require('./pluginLoader');
@@ -17,35 +21,49 @@ const copyPackageJSON = require('./copyPackageJSON');
  */
 async function removeMissingPlugins(dir, _plugins) {
   const plugins = _plugins.map(([name]) => name);
-  await Promise.all(
-    (await fs.readdir(dir, { withFileTypes: true }))
-      .filter((file) => file.isDirectory())
-      .map((file) => file.name)
-      // Get missing plugins
-      .filter((plugin) => !plugins.includes(plugin))
-      // Delete the missing plugins folders
-      .map((plugin) => fs.rm(path.join(dir, plugin), { recursive: true }))
+  if (await fs.exists(dir)) {
+    await Promise.all(
+      (await fs.readdir(dir, { withFileTypes: true }))
+        .filter((file) => file.isDirectory())
+        .map((file) => file.name)
+        // Get missing plugins
+        .filter((plugin) => !plugins.includes(plugin))
+        // Delete the missing plugins folders
+        .map((plugin) => fs.rm(path.join(dir, plugin), { recursive: true }))
+    );
+  }
+}
+
+async function removeExtraFiles(dir, extra) {
+  if (extra.length) {
+    await Promise.all(extra.map((file) => fs.rm(path.join(dir, file), { recursive: true })));
+    leemons.frontNeedsBuild = true;
+  }
+}
+
+async function removeEmptyDirs(dir) {
+  // Get the empty directories
+  const emptyDirs = getEmptyDirsFromreaddirRecursive(
+    await readdirRecursive(dir, { ignore: ['node_modules', '.next', 'src'] })
   );
-}
 
-function getFilesArrayFromreaddirRecursive(data) {
-  if (data.type === 'file') {
-    return [{ path: data.path || data.name, checksum: data.checksum }];
-  }
-  if (data.type === 'directory') {
-    return _.flattenDeep(data.content.map((element) => getFilesArrayFromreaddirRecursive(element)));
+  // If there are empty directories, delete them
+  if (emptyDirs.length) {
+    await Promise.all(emptyDirs.map((file) => fs.rm(path.join(dir, file), { recursive: true })));
+    leemons.frontNeedsBuild = true;
   }
 }
 
+// TODO: Only copy changed files
 /**
- * Gets the
- * @param {import('fs').PathLike} src
- * @param {import('fs').PathLike} dest
+ * Gets the deleted and modified files between a src and a dest
+ * @param {import('fs').PathLike} src The src directory
+ * @param {import('fs').PathLike} dest The dest directory
  * @returns {{extra: import('fs').PathLike[], modified: import('fs').PathLike[]}} The files which dest has and src not, and also the files that are missing in dest or modified
  */
 async function getDiff(src, dest) {
   const srcStructure = await readdirRecursive(src, { checksums: true });
-  const destStructure = await readdirRecursive(dest, { checksums: true });
+  const destStructure = await readdirRecursive(dest, { checksums: true, throwOnMissing: false });
 
   const srcFiles = getFilesArrayFromreaddirRecursive(srcStructure);
   const destFiles = getFilesArrayFromreaddirRecursive(destStructure);
@@ -118,7 +136,9 @@ async function checkDirChanges(dir) {
 async function saveChecksums(dir, checksums, pluginsEntries) {
   // Get installed plugins
   const plugins = pluginsEntries.map(([name]) => name);
-
+  if (!(await fs.exists(dir))) {
+    return;
+  }
   // Get current copied dirs
   const folder = (await fs.readdir(dir, { withFileTypes: true }))
     .filter((file) => file.isDirectory())
@@ -217,7 +237,11 @@ async function loadFront(leemons, installedPlugins, installedProviders) {
         // #region Copy Pages
         if (folders.includes('pages')) {
           const pluginPages = path.resolve(dir, 'pages');
-          await getDiff(pluginPages, path.join(pagesPath, pluginObj.name));
+          const { extra } = await getDiff(pluginPages, path.join(pagesPath, pluginObj.name));
+          // If some extra files are missing, delete them (from app)
+          await removeExtraFiles(path.join(pagesPath, pluginObj.name), extra);
+
+          // Copy the new folder
           if (await copyFolder(pluginPages, pagesPath, name, pagesChecksums)) {
             leemons.frontNeedsBuild = true;
           }
@@ -234,8 +258,13 @@ async function loadFront(leemons, installedPlugins, installedProviders) {
           // Generate an alias
           aliases[`@${name}/*`] = [`${path.relative(nextPath, srcPath)}/${name}/*`];
 
-          // Copy folder
           const pluginSrc = path.resolve(dir, 'src');
+
+          const { extra } = await getDiff(pluginSrc, path.join(srcPath, pluginObj.name));
+          // If some extra files are missing, delete them (from app)
+          await removeExtraFiles(path.join(pagesPath, pluginObj.name), extra);
+
+          // Copy folder
           if (await copyFolder(pluginSrc, srcPath, name, srcChecksums)) {
             leemons.frontNeedsBuild = true;
           }
@@ -266,6 +295,8 @@ async function loadFront(leemons, installedPlugins, installedProviders) {
               path: path.relative(nextPath, path.resolve(depsPath, name)),
             });
           }
+        } else if (await fs.exists(path.resolve(depsPath, name))) {
+          await fs.rm(path.resolve(depsPath, name), { recursive: true });
         }
         // #endregion
 
@@ -277,6 +308,11 @@ async function loadFront(leemons, installedPlugins, installedProviders) {
 
           // Copy folder
           const pluginPublic = path.resolve(dir, 'public');
+
+          const { extra } = await getDiff(pluginPublic, path.join(publicPath, pluginObj.name));
+          // If some extra files are missing, delete them (from app)
+          await removeExtraFiles(path.join(publicPath, pluginObj.name), extra);
+
           if (await copyFolder(pluginPublic, publicPath, name, publicChecksums)) {
             leemons.frontNeedsBuild = true;
           }
@@ -286,6 +322,7 @@ async function loadFront(leemons, installedPlugins, installedProviders) {
     })
   );
 
+  await removeEmptyDirs(nextPath);
   // Generate a plugin loader
   await generatePluginLoader({ plugins, srcPath, srcChecksums, aliases, nextPath });
 

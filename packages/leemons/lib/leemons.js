@@ -145,7 +145,7 @@ class Leemons {
           }} {gray ${end - start} ms}`
         );
       } catch (err) {
-        console.error(err);
+        leemons.log.error(err.message);
         leemonsUtils.returnError(ctx, err);
       }
     });
