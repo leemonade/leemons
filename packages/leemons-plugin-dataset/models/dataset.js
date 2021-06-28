@@ -9,7 +9,6 @@ module.exports = {
       type: 'string',
       options: {
         notNull: true,
-        unique: true,
       },
     },
     locationName: {

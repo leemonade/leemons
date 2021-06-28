@@ -1,6 +1,7 @@
 const existLocation = require('../dataset-location/existLocation');
 const existSchema = require('../dataset-schema/existSchema');
 const existSchemaLocale = require('./existSchemaLocale');
+const { validateAddSchemaLocale } = require('../../validations/dataset-schema-locale');
 const { table } = require('../tables');
 const { getTranslationKey } = require('../translations');
 const { translations } = require('../translations');
@@ -22,6 +23,7 @@ async function addSchemaLocale(
   { locationName, pluginName, schemaData, uiData, locale },
   { transacting } = {}
 ) {
+  validateAddSchemaLocale({ locationName, pluginName, schemaData, uiData, locale });
   if (pluginName !== this.calledFrom) throw new Error(`The plugin name must be ${this.calledFrom}`);
   if (!(await existLocation(locationName, pluginName, { transacting })))
     throw new Error(`The '${locationName}' location not exist`);

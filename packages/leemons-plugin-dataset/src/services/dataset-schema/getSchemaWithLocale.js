@@ -4,6 +4,7 @@ const existLocation = require('../dataset-location/existLocation');
 const existSchemaLocale = require('../dataset-schema-locale/existSchemaLocale');
 const getSchema = require('./getSchema');
 const getSchemaLocale = require('../dataset-schema-locale/getSchemaLocale');
+const { validateLocationAndPluginAndLocale } = require('../../validations/dataset-location');
 const { table } = require('../tables');
 
 /** *
@@ -22,6 +23,7 @@ const { table } = require('../tables');
  *  @return {Promise<Action>} The new dataset location
  *  */
 async function getSchemaWithLocale(locationName, pluginName, locale, { transacting } = {}) {
+  validateLocationAndPluginAndLocale(locationName, pluginName, locale, true);
   if (!(await existLocation(locationName, pluginName, { transacting })))
     throw new Error(`The '${locationName}' location not exist`);
   if (!(await existSchema(locationName, pluginName, { transacting })))

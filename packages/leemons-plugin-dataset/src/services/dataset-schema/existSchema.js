@@ -1,3 +1,4 @@
+const { validateLocationAndPlugin } = require('../../validations/dataset-location');
 const { table } = require('../tables');
 
 /**
@@ -17,6 +18,7 @@ const { table } = require('../tables');
  * @return {Promise<boolean>}
  * */
 async function existSchema(locationName, pluginName, { transacting } = {}) {
+  validateLocationAndPlugin(locationName, pluginName);
   const dataset = await table.dataset.findOne({ locationName, pluginName }, { transacting });
   return dataset.jsonSchema && dataset.jsonUI;
 }

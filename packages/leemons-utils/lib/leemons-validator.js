@@ -12,7 +12,13 @@ class LeemonsValidator {
   }
 
   get error() {
-    return _.map(_.uniqBy(this.validate.errors, 'message'), 'message').join('\n');
+    return new Error(this.errorMessage);
+  }
+
+  get errorMessage() {
+    return _.map(_.uniqBy(this.validate.errors, 'message'), (error) => {
+      return `"${error.instancePath}": ${error.message}`;
+    }).join('\n');
   }
 }
 

@@ -1,5 +1,6 @@
 const { translations, getTranslationKey } = require('../translations');
 const existLocation = require('./existLocation');
+const { validateAddLocation } = require('../../validations/dataset-location');
 const { table } = require('../tables');
 
 /** *
@@ -23,6 +24,7 @@ async function addLocation(
   { name, description, locationName, pluginName },
   { transacting: _transacting } = {}
 ) {
+  validateAddLocation({ name, description, locationName, pluginName });
   if (pluginName !== this.calledFrom) throw new Error(`The plugin name must be ${this.calledFrom}`);
   if (await existLocation(locationName, pluginName, { transacting: _transacting }))
     throw new Error(`The '${locationName}' location already exist`);

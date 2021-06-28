@@ -201,6 +201,7 @@ async function getSchemaWithLocale() {
   console.log('---- End getSchemaWithLocale ----');
 }
 
+/*
 setTimeout(() => {
   (async () => {
     const json = leemons.plugins.dataset.services.dataset.transformJsonSchema(jsonSchema);
@@ -217,4 +218,6 @@ setTimeout(() => {
   })();
 }, 1000);
 
+
+ */
 module.exports = {};

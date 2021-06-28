@@ -14,7 +14,7 @@ async function canReset(ctx) {
     ctx.status = 200;
     ctx.body = { status: 200, can };
   } else {
-    throw new Error(validator.error);
+    throw validator.error;
   }
 }
 
@@ -33,7 +33,7 @@ async function reset(ctx) {
     ctx.status = 200;
     ctx.body = { status: 200, user };
   } else {
-    throw new Error(validator.error);
+    throw validator.error;
   }
 }
 
@@ -51,7 +51,7 @@ async function recover(ctx) {
     ctx.status = 200;
     ctx.body = { status: 200, message: 'Email sent' };
   } else {
-    throw new Error(validator.error);
+    throw validator.error;
   }
 }
 
@@ -72,7 +72,7 @@ async function login(ctx) {
     ctx.status = 200;
     ctx.body = { status: 200, user: data.user, jwtToken: data.token };
   } else {
-    throw new Error(validator.error);
+    throw validator.error;
   }
 }
 
@@ -99,7 +99,7 @@ async function list(ctx) {
     ctx.status = 200;
     ctx.body = { status: 200, data };
   } else {
-    throw new Error(validator.error);
+    throw validator.error;
   }
 }
 

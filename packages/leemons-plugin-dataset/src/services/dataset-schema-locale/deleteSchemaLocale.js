@@ -3,6 +3,7 @@ const { getTranslationKey, translations } = require('../translations');
 const existLocation = require('../dataset-location/existLocation');
 const existSchema = require('../dataset-schema/existSchema');
 const existSchemaLocale = require('./existSchemaLocale');
+const { validateLocationAndPluginAndLocale } = require('../../validations/dataset-location');
 const { table } = require('../tables');
 
 /** *
@@ -19,6 +20,7 @@ const { table } = require('../tables');
  *  @return {Promise<boolean>} Return true if delete is ok
  *  */
 async function deleteSchemaLocale({ locationName, pluginName, locale }, { transacting } = {}) {
+  validateLocationAndPluginAndLocale(locationName, pluginName, locale, true);
   if (pluginName !== this.calledFrom) throw new Error(`The plugin name must be ${this.calledFrom}`);
   if (!(await existLocation(locationName, pluginName, { transacting })))
     throw new Error(`The '${locationName}' location not exist`);

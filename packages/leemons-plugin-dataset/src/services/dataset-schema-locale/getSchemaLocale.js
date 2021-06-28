@@ -2,6 +2,7 @@ const { translations, getTranslationKey } = require('../translations');
 const existLocation = require('../dataset-location/existLocation');
 const existSchemaLocale = require('./existSchemaLocale');
 const existSchema = require('../dataset-schema/existSchema');
+const { validateLocationAndPluginAndLocale } = require('../../validations/dataset-location');
 
 /** *
  *  ES:
@@ -19,6 +20,7 @@ const existSchema = require('../dataset-schema/existSchema');
  *  @return {Promise<{schemaData, uiData}>} The json data
  *  */
 async function getSchemaLocale(locationName, pluginName, locale, { transacting } = {}) {
+  validateLocationAndPluginAndLocale(locationName, pluginName, locale, true);
   if (pluginName !== this.calledFrom) throw new Error(`The plugin name must be ${this.calledFrom}`);
   if (!(await existLocation(locationName, pluginName, { transacting })))
     throw new Error(`The '${locationName}' location not exist`);

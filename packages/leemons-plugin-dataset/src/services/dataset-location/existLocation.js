@@ -1,3 +1,4 @@
+const { validateLocationAndPlugin } = require('../../validations/dataset-location');
 const { table } = require('../tables');
 
 /**
@@ -17,6 +18,7 @@ const { table } = require('../tables');
  * @return {Promise<boolean>}
  * */
 async function existLocation(locationName, pluginName, { transacting } = {}) {
+  validateLocationAndPlugin(locationName, pluginName);
   const result = await table.dataset.count({ locationName, pluginName }, { transacting });
   return !!result;
 }
