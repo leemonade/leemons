@@ -5,7 +5,7 @@ const { MD5: md5Object } = require('object-hash');
 const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
-const readdirRecursive = require('leemons-utils/lib/readdirRecursive');
+const { readdirRecursive } = require('leemons-utils/lib/readdirRecursive');
 
 async function filesToCopy(files) {
   return (
