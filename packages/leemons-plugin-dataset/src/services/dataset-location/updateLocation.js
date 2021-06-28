@@ -1,5 +1,5 @@
 const { translations, getTranslationKey } = require('../translations');
-const { existLocation } = require('./existLocation');
+const existLocation = require('./existLocation');
 const { table } = require('../tables');
 
 /** *
@@ -30,20 +30,24 @@ async function updateLocation(
     async (transacting) => {
       const promises = [table.dataset.update({ locationName, pluginName }, {}, { transacting })];
       if (translations()) {
-        promises.push(
-          translations().contents.setKey(
-            getTranslationKey(locationName, pluginName, 'name'),
-            name,
-            { transacting }
-          )
-        );
-        promises.push(
-          translations().contents.setKey(
-            getTranslationKey(locationName, pluginName, 'description'),
-            description,
-            { transacting }
-          )
-        );
+        if (name) {
+          promises.push(
+            translations().contents.setKey(
+              getTranslationKey(locationName, pluginName, 'name'),
+              name,
+              { transacting }
+            )
+          );
+        }
+        if (description) {
+          promises.push(
+            translations().contents.setKey(
+              getTranslationKey(locationName, pluginName, 'description'),
+              description,
+              { transacting }
+            )
+          );
+        }
       }
       const response = await Promise.all(promises);
       if (response[1] && !response[1].warnings) response[0].name = name;

@@ -18,6 +18,14 @@ module.exports = {
         notNull: true,
       },
     },
+    jsonSchema: {
+      type: 'text',
+      textType: 'mediumText',
+    },
+    jsonUI: {
+      type: 'text',
+      textType: 'mediumText',
+    },
   },
   primaryKey: {
     type: 'uuid',

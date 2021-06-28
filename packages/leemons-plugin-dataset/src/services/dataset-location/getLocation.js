@@ -61,6 +61,9 @@ async function getLocation(locationName, pluginName, { locale, transacting } = {
   if (name) dataset.name = name;
   if (description) dataset.description = description;
 
+  delete dataset.jsonSchema;
+  delete dataset.jsonUI;
+
   return dataset;
 }
 

@@ -16,6 +16,7 @@
     "md5-file": "^5.0.0",
     "nodemailer": "^6.6.1",
     "object-hash": "^2.1.1",
-    "slugify": "^1.5.3"
+    "slugify": "^1.5.3",
+    "squirrelly": "^8.0.8"
   }
 }

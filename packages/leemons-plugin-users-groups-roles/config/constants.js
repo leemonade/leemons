@@ -27,6 +27,20 @@ module.exports = {
     { order: 51, actionName: 'assign', localizationName: { 'es-ES': 'Asignar', en: 'Assign' } },
     { order: 61, actionName: 'admin', localizationName: { 'es-ES': 'Administrador', en: 'Admin' } },
   ],
+  defaultDatasetLocations: [
+    {
+      name: {
+        'es-ES': 'Dataset comun',
+        en: 'Common Dataset',
+      },
+      description: {
+        'es-ES': 'Añade datos adicionales a los comunes a todos usuarios',
+        en: 'Adds additional data to those common to all users',
+      },
+      locationName: 'user-common-dataset',
+      pluginName: 'plugins.users-groups-roles',
+    },
+  ],
   url: {
     base: 'users-groups-roles',
     frontend: {

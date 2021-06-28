@@ -1,4 +1,4 @@
 module.exports = {
   private: false,
-  initOrder: 9997,
+  initOrder: 9999,
 };

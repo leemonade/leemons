@@ -22,27 +22,36 @@ async function deleteLocation(locationName, pluginName, { transacting: _transact
     throw new Error(`The '${locationName}' location not exist`);
   return global.utils.withTransaction(
     async (transacting) => {
-      const promises = [table.dataset.create({ locationName, pluginName }, { transacting })];
+      const promises = [table.dataset.delete({ locationName, pluginName }, { transacting })];
       if (translations()) {
         promises.push(
-          translations().contents.addManyByKey(
-            getTranslationKey(locationName, pluginName, 'name'),
-            name,
+          translations().contents.deleteAll(
+            { key: getTranslationKey(locationName, pluginName, 'name') },
             { transacting }
           )
         );
         promises.push(
-          translations().contents.addManyByKey(
-            getTranslationKey(locationName, pluginName, 'description'),
-            description,
+          translations().contents.deleteAll(
+            { key: getTranslationKey(locationName, pluginName, 'description') },
+            { transacting }
+          )
+        );
+        promises.push(
+          translations().contents.deleteAll(
+            { key: getTranslationKey(locationName, pluginName, 'jsonSchema') },
+            { transacting }
+          )
+        );
+        promises.push(
+          translations().contents.deleteAll(
+            { key: getTranslationKey(locationName, pluginName, 'jsonUI') },
             { transacting }
           )
         );
       }
-      const response = await Promise.all(promises);
-      if (response[1] && !response[1].warnings) response[0].name = name;
-      if (response[2] && !response[2].warnings) response[0].description = description;
-      return response[0];
+      // TODO Añadir que se borre un el apartado del menu del plugin si es el ultimo dataset existente para ese plugin
+      await Promise.all(promises);
+      return true;
     },
     table.dataset,
     _transacting
