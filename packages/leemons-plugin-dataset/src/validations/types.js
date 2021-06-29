@@ -1,7 +1,13 @@
+const { translations } = require('../services/translations');
 const { LeemonsValidator } = global.utils;
 
 LeemonsValidator.ajv.addFormat('localeCode', {
-  validate: (x) => /^(([a-z]{2})|([a-z]{2}-[a-z]{2}))$/.test(x),
+  validate: (x) => {
+    if (translations() && translations().functions.isValidLocaleCode) {
+      return translations().functions.isValidLocaleCode(x);
+    }
+    return /^(([a-z]{2})|([a-z]{2}-[a-z]{2}))$/.test(x);
+  },
 });
 
 /**

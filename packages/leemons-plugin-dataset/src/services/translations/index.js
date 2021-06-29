@@ -5,6 +5,9 @@ module.exports = {
         common: leemons.plugins.multilanguage.services.common.getProvider(),
         contents: leemons.plugins.multilanguage.services.contents.getProvider(),
         locales: leemons.plugins.multilanguage.services.locales.getProvider(),
+        functions: {
+          isValidLocaleCode: leemons.plugins.multilanguage.services.locales.isValidLocaleCode,
+        },
       };
     }
     return null;
