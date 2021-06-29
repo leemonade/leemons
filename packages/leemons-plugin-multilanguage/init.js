@@ -6,7 +6,7 @@ async function init() {
   const locales = new Locales({ model: localesTable });
   await locales.addMany([
     ['es-ES', 'Español de España'],
-    ['en', 'English'],
+    ['ru-Cyrl-BY', 'Ruso cirílico'],
     ['en-UK', 'English UK'],
   ]);
 }
