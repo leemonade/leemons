@@ -1,5 +1,3 @@
-const constants = require('../../../config/constants');
-
 /**
  * Return the key for translation
  * @public
@@ -9,8 +7,9 @@ const constants = require('../../../config/constants');
  * @return {string}
  * */
 function getTranslationKey(actionName, key) {
-  if (key) return `${constants.actionsName}.${actionName}.${key}`;
-  return `${constants.actionsName}.${actionName}`;
+  const pluginName = 'plugins.users-groups-roles';
+  if (key) return `${pluginName}.${actionName}.${key}`;
+  return `${pluginName}.${actionName}`;
 }
 
 module.exports = { getTranslationKey };

@@ -1,3 +1,5 @@
+const { getTranslationKey } = require('../../../next/src/permissions/getTranslationKey');
+const { translations } = require('../translations');
 const { table } = require('../tables');
 
 /**
@@ -10,24 +12,35 @@ const { table } = require('../tables');
 async function remove(permissionName) {
   const permission = await table.permissions.count({
     permissionName,
-    pluginName: this.executeFrom,
+    pluginName: this.calledFrom,
   });
   if (!permission)
-    throw new Error(`Permission '${permissionName}' for plugin '${this.executeFrom}' not exists`);
+    throw new Error(`Permission '${permissionName}' for plugin '${this.calledFrom}' not exists`);
 
-  leemons.log.info(`Deleting permission '${permissionName}' for plugin '${this.executeFrom}'`);
+  leemons.log.info(`Deleting permission '${permissionName}' for plugin '${this.calledFrom}'`);
   return table.permissions.transaction(async (transacting) => {
-    const response = await Promise.all([
+    const promises = [
       table.permissions.delete(
         {
           permissionName,
-          pluginName: this.executeFrom,
+          pluginName: this.calledFrom,
         },
         { transacting }
       ),
       table.permissionAction.deleteMany({ permissionName }, { transacting }),
-    ]);
-    // TODO Añadir que se borren las traducciones
+    ];
+
+    if (translations()) {
+      promises.push(
+        translations().common.deleteAll(
+          { key: getTranslationKey(permissionName, 'name') },
+          { transacting }
+        )
+      );
+    }
+
+    const response = await Promise.all(promises);
+
     return response[0];
   });
 }

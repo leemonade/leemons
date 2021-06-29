@@ -1,6 +1,4 @@
 module.exports = {
-  actionsName: 'plugins.users-groups-roles',
-  permissionsName: 'plugins.users-groups-roles',
   // Time in minutes
   timeForRecoverPassword: 15,
   // TODO Añadir listado de roles basicos
@@ -10,12 +8,12 @@ module.exports = {
   // TODO Añadir listado de permisos basicos
   defaultPermissions: [
     {
-      permissionName: 'users',
+      permissionName: 'plugins.users-groups-roles.users',
       actions: ['view', 'update', 'create', 'delete', 'admin'],
       localizationName: { 'es-ES': 'Usuarios', en: 'Users' },
     },
     {
-      permissionName: 'profiles',
+      permissionName: 'plugins.users-groups-roles.profiles',
       actions: ['view', 'update', 'create', 'delete', 'admin'],
       localizationName: { 'es-ES': 'Perfiles', en: 'profiles' },
     },

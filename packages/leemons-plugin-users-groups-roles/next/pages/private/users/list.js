@@ -25,7 +25,7 @@ export default function ListUsers() {
 
   return (
     <>
-      <button onClick={router.push(`/${constants.frontend.private.users.detail}`)}>
+      <button onClick={() => router.push(`/${constants.frontend.private.users.detail}`)}>
         Añadir usuario
       </button>
 

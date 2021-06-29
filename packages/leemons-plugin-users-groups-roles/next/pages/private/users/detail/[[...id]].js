@@ -9,6 +9,7 @@ export default function ListProfiles() {
   useSession({ redirectTo: constants.frontend.login });
 
   const router = useRouter();
+  console.log(router);
 
   const {
     register,
@@ -21,7 +22,7 @@ export default function ListProfiles() {
     if (_.isArray(router.query.id)) {
       // router.query.id[0]
     }
-  }, [router.query]);
+  }, [router]);
 
   useEffect(() => {}, []);
 

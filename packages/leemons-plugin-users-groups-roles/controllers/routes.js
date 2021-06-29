@@ -36,7 +36,7 @@ module.exports = [
     handler: 'users.list',
     authenticated: true,
     allowedPermissions: {
-      users: {
+      'plugins.users-groups-roles.users': {
         actions: ['view', 'update', 'create', 'delete', 'admin'],
       },
     },
@@ -60,7 +60,7 @@ module.exports = [
     handler: 'profiles.list',
     authenticated: true,
     allowedPermissions: {
-      profiles: {
+      'plugins.users-groups-roles.profiles': {
         actions: ['view', 'update', 'create', 'delete', 'admin'],
       },
     },
@@ -71,7 +71,7 @@ module.exports = [
     handler: 'profiles.add',
     authenticated: true,
     allowedPermissions: {
-      profiles: {
+      'plugins.users-groups-roles.profiles': {
         actions: ['create', 'admin'],
       },
     },
@@ -82,7 +82,7 @@ module.exports = [
     handler: 'profiles.detail',
     authenticated: true,
     allowedPermissions: {
-      profiles: {
+      'plugins.users-groups-roles.profiles': {
         actions: ['view', 'update', 'create', 'delete', 'admin'],
       },
     },
@@ -93,7 +93,7 @@ module.exports = [
     handler: 'profiles.update',
     authenticated: true,
     allowedPermissions: {
-      profiles: {
+      'plugins.users-groups-roles.profiles': {
         actions: ['update', 'admin'],
       },
     },

@@ -1,4 +1,4 @@
-const { getTranslationKey } = require('./getTranslationKey');
+const { getTranslationKey } = require('../../../next/src/actions/getTranslationKey');
 const { translations } = require('../translations');
 const { table } = require('../tables');
 
@@ -26,7 +26,7 @@ async function add(data) {
     ];
     if (translations()) {
       promises.push(
-        translations().contents.addManyByKey(
+        translations().common.addManyByKey(
           getTranslationKey(data.actionName, 'name'),
           data.localizationName,
           { transacting }
@@ -34,8 +34,6 @@ async function add(data) {
       );
     }
     const values = await Promise.all(promises);
-
-    console.log(values[1]);
 
     return values[0];
   });

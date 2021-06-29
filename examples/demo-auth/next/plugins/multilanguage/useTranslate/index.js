@@ -1,6 +1,7 @@
 import useSWR from 'swr';
+import * as _ from 'lodash';
 
-function getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) {
+function _getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) {
   // Get deduplicated keys
   let _keys = null;
   if (Array.isArray(keys)) {
@@ -22,8 +23,8 @@ function getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) {
   }
 
   // Get the desired localizations from the api
-  return (url) =>
-    fetch(url, {
+  return () =>
+    fetch('/api/multilanguage/common', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -44,12 +45,24 @@ function getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) {
     });
 }
 
+export function getLocalizations(...data) {
+  return _getLocalizations(...data)();
+}
+
+export function getLocalizationsByArrayOfItems(items, reducer, locale) {
+  const keysToTranslate = [];
+  _.forEach(items, (item) => {
+    keysToTranslate.push(reducer(item));
+  });
+  return getLocalizations({
+    keys: keysToTranslate,
+    locale,
+  });
+}
+
 export default ({ keys = null, keysStartsWith = null, locale } = {}) => {
   // Let swr handle data fetching and caching
-  const { data, error } = useSWR(
-    '/api/multilanguage/common',
-    getLocalizations({ keys, keysStartsWith, locale })
-  );
+  const { data, error } = useSWR('Translate', _getLocalizations({ keys, keysStartsWith, locale }));
 
   // Add a loading property
   let loading = false;
