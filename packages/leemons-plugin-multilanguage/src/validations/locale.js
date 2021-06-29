@@ -184,6 +184,7 @@ function validateLocalesArray(locales) {
 }
 
 module.exports = {
+  isValidLocaleCode,
   validateLocaleCode,
   validateLocaleCodeArray,
   validateLocale,
