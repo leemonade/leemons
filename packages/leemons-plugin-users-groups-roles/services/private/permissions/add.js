@@ -15,6 +15,10 @@ async function add(data) {
     permissionName: data.permissionName,
     pluginName: this.calledFrom,
   });
+
+  if (!data.permissionName.startsWith(this.calledFrom))
+    throw new Error(`The name of the permit must start with plugins.${this.calledFrom}`);
+
   if (permission)
     throw new Error(
       `Permission '${data.permissionName}' for plugin '${this.calledFrom}' already exists`

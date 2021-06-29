@@ -8,12 +8,12 @@ module.exports = {
   // TODO Añadir listado de permisos basicos
   defaultPermissions: [
     {
-      permissionName: 'users',
+      permissionName: 'plugins.users-groups-roles.users',
       actions: ['view', 'update', 'create', 'delete', 'admin'],
       localizationName: { 'es-ES': 'Usuarios', en: 'Users' },
     },
     {
-      permissionName: 'profiles',
+      permissionName: 'plugins.users-groups-roles.profiles',
       actions: ['view', 'update', 'create', 'delete', 'admin'],
       localizationName: { 'es-ES': 'Perfiles', en: 'profiles' },
     },
