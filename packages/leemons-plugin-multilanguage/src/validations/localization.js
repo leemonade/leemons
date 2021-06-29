@@ -102,7 +102,7 @@ module.exports = class Validator {
               locale: {
                 type: 'string',
                 minLength: 2,
-                maxLength: 5,
+                maxLength: 12,
               },
               value: {
                 type: 'string',

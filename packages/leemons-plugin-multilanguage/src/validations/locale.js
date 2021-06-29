@@ -1,11 +1,16 @@
 const { LeemonsValidator } = global.utils;
 
-function isValidLocaleCode(localeCode) {
-  return /^(([a-z]{2})|([a-z]{2}-[a-z]{2}))$/.test(localeCode);
-}
+// According to MDN: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang#language_tag_syntax
+// REQUIRED 2-3 letters defines the basic language
+const languageSubtag = '([a-z]{2,3})';
+// OPTIONAL 4 letters defines the writing system
+const scriptSubtag = '(-[a-z]{4}){0,1}';
+// OPTIONAL 2 letters or 3 numbers define the dialect
+const regionSubtag = '(-([a-z]{2}|[0-9]{3})){0,1}';
 
+const LocaleRegex = new RegExp(`^${languageSubtag}${scriptSubtag}${regionSubtag}$`);
 LeemonsValidator.ajv.addFormat('localeCode', {
-  validate: (x) => isValidLocaleCode(x),
+  validate: (x) => LocaleRegex.test(x),
 });
 
 /**
@@ -15,7 +20,7 @@ const codeSchema = {
   type: 'string',
   format: 'localeCode',
   minLength: 2,
-  maxLength: 5,
+  maxLength: 12,
 };
 /**
  * An array of strings with the localeCode format (xx or xx-yy)
@@ -61,7 +66,7 @@ const arrayLocalesArraySchema = {
       {
         type: 'string',
         minLength: 2,
-        maxLength: 5,
+        maxLength: 12,
       },
       nameSchema,
     ],
@@ -108,6 +113,20 @@ function validateLocaleCode(code) {
   }
 
   return _code;
+}
+
+/**
+ * Validates a locale code and returns wheter is valid or not
+ * @param {LocaleCode} code
+ * @returns {boolean} If the locale is valid
+ */
+function isValidLocaleCode(code) {
+  try {
+    validateLocaleCode(code);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 /**

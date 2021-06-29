@@ -9,7 +9,7 @@ const Locales = require('./src/services/locale');
 async function init() {
   try {
     const goodLocales = _.map(
-      locale.all.filter((local) => local['iso639-1'] && isValidLocaleCode(local.tag)),
+      locale.all.filter((local) => isValidLocaleCode(local.tag)),
       (local) => {
         let name = local.local || local.name;
         if (local.location) {
