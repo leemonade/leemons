@@ -15,7 +15,7 @@ const { table } = require('../tables');
  *  @param {string} locationName - Location name
  *  @param {string} pluginName - Plugin name
  *  @param {any=} transacting - DB Transaction
- *  @return {Promise<Action>} The new dataset location
+ *  @return {Promise<boolean>} The new dataset location
  *  */
 async function deleteLocation(locationName, pluginName, { transacting: _transacting } = {}) {
   validateLocationAndPlugin(locationName, pluginName);

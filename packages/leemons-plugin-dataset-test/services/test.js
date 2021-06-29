@@ -1,6 +1,12 @@
 const constants = require('../config/constants');
 
 const locationName = 'user-dataset';
+
+const schemaValues = {
+  firstName: 'Chuck',
+  lastName: 'Norris',
+};
+
 const jsonSchema = {
   title: 'A registration form',
   description: 'A simple form example.',
@@ -201,7 +207,21 @@ async function getSchemaWithLocale() {
   console.log('---- End getSchemaWithLocale ----');
 }
 
-/*
+async function addValues() {
+  try {
+    console.log('---- Start addValues ----');
+    const data = await leemons.plugins.dataset.services.dataset.addValues(
+      locationName,
+      constants.pluginName,
+      schemaValues
+    );
+    console.log(data);
+  } catch (e) {
+    console.error(e);
+  }
+  console.log('---- End addValues ----');
+}
+
 setTimeout(() => {
   (async () => {
     const json = leemons.plugins.dataset.services.dataset.transformJsonSchema(jsonSchema);
@@ -214,10 +234,11 @@ setTimeout(() => {
     await getSchemaLocale();
     await getSchema();
     await getSchemaWithLocale();
+
+    await addValues();
+
     await deleteLocation();
   })();
 }, 1000);
 
-
- */
 module.exports = {};

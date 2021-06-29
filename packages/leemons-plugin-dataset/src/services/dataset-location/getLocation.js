@@ -16,7 +16,7 @@ const { table } = require('../tables');
  *  @param {string} pluginName - Plugin name
  *  @param {any=} transacting - DB Transaction
  *  @param {string=} locale - Locale to return name and description
- *  @return {Promise<Action>} The new dataset location
+ *  @return {Promise<DatasetLocation>} The new dataset location
  *  */
 async function getLocation(locationName, pluginName, { locale, transacting } = {}) {
   validateLocationAndPluginAndLocale(locationName, pluginName, locale, false);

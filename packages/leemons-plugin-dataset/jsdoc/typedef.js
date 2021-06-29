@@ -1,4 +1,14 @@
 /**
+ * @typedef DatasetSchema
+ * @property {string} locationName Location name (For backend)
+ * @property {string} pluginName Plugin name (For backend)
+ * @property {any} jsonSchema JSON schema
+ * @property {any} jsonUI JSON ui
+ * @property {Date} created_at Date of dataset location creation
+ * @property {Date} updated_at Date of dataset location update
+ */
+
+/**
  * @typedef DatasetLocation
  * @property {string} name Location name (For frontend)
  * @property {string} description Location description (For frontend)
@@ -47,14 +57,4 @@
  * @property {string} locationName Location name (For backend)
  * @property {string} pluginName Plugin name (For backend)
  * @property {string} locale Json locale
- */
-
-/**
- * @typedef DatasetSchema
- * @property {string} locationName Location name (For backend)
- * @property {string} pluginName Plugin name (For backend)
- * @property {any} jsonSchema JSON schema
- * @property {any} jsonUI JSON ui
- * @property {Date} created_at Date of dataset location creation
- * @property {Date} updated_at Date of dataset location update
  */

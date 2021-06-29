@@ -6,8 +6,15 @@ const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
 
 class LeemonsValidator {
-  constructor(schema) {
-    this.validate = ajv.compile(schema);
+  constructor(schema, options) {
+    if (options) {
+      const aj = new Ajv({ ...options, allErrors: true });
+      addFormats(aj);
+      this.validate = aj.compile(schema);
+    } else {
+      this.validate = ajv.compile(schema);
+    }
+
     this.schema = schema;
   }
 
@@ -19,6 +26,10 @@ class LeemonsValidator {
     return _.map(_.uniqBy(this.validate.errors, 'message'), (error) => {
       return `"${error.instancePath}": ${error.message}`;
     }).join('\n');
+  }
+
+  get ajvError() {
+    return this.validate.errors;
   }
 }
 

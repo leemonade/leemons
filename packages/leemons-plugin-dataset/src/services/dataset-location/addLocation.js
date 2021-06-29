@@ -18,7 +18,7 @@ const { table } = require('../tables');
  *  @static
  *  @param {DatasetAddLocation} data - New dataset location
  *  @param {any=} transacting - DB Transaction
- *  @return {Promise<Action>} The new dataset location
+ *  @return {Promise<DatasetLocation>} The new dataset location
  *  */
 async function addLocation(
   { name, description, locationName, pluginName },
