@@ -1,7 +1,11 @@
 const { LeemonsValidator } = global.utils;
 
+function isValidLocaleCode(localeCode) {
+  return /^(([a-z]{2})|([a-z]{2}-[a-z]{2}))$/.test(localeCode);
+}
+
 LeemonsValidator.ajv.addFormat('localeCode', {
-  validate: (x) => /^(([a-z]{2})|([a-z]{2}-[a-z]{2}))$/.test(x),
+  validate: (x) => isValidLocaleCode(x),
 });
 
 /**
@@ -175,6 +179,7 @@ function validateLocalesArray(locales) {
 }
 
 module.exports = {
+  isValidLocaleCode,
   validateLocaleCode,
   validateLocaleCodeArray,
   validateLocale,

@@ -7,12 +7,12 @@ module.exports = (Base) =>
      * @param {LocaleCode} code The locale iso code xx-YY or xx
      * @returns {Promise<Locale | null>} The locale
      */
-    async get(code) {
+    async get(code, { transacting } = {}) {
       // Validates the code and returns it lowercased
       const _code = validateLocaleCode(code);
 
       try {
-        return await this.model.findOne({ code: _code });
+        return await this.model.findOne({ code: _code }, { transacting });
       } catch (e) {
         leemons.log.debug(e.message);
         throw new Error('An error occurred while getting the locale');
@@ -24,12 +24,12 @@ module.exports = (Base) =>
      * @param {LocaleCode[]} codes The locale iso code xx-YY or xx
      * @returns {Promise<Locale[]>} An array with the locales that exists
      */
-    async getMany(codes) {
+    async getMany(codes, { transacting } = {}) {
       // Validates the codes and returns them lowercased
       const _codes = validateLocaleCodeArray(codes);
 
       try {
-        return await this.model.find({ code_$in: _codes });
+        return await this.model.find({ code_$in: _codes }, { transacting });
       } catch (e) {
         leemons.log.debug(e.message);
         throw new Error('An error occurred while getting the locales');
@@ -40,9 +40,9 @@ module.exports = (Base) =>
      * Gets all the existing locales in the database
      * @returns {Promise<Locale[]>} An array with all the locales in the database
      */
-    async getAll() {
+    async getAll({ transacting } = {}) {
       try {
-        return await this.model.find({ code_$null: false });
+        return await this.model.find({ code_$null: false }, { transacting });
       } catch (e) {
         leemons.log.debug(e.message);
         throw new Error('An error occurred while getting all the locales');
