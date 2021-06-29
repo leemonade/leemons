@@ -116,6 +116,20 @@ function validateLocaleCode(code) {
 }
 
 /**
+ * Validates a locale code and returns wheter is valid or not
+ * @param {LocaleCode} code
+ * @returns {boolean} If the locale is valid
+ */
+function isValidLocaleCode(code) {
+  try {
+    validateLocaleCode(code);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
  * Validates an array of locale codes and returns them in lowercase
  * @param {LocaleCode[]} codes
  * @returns {LocaleCode[]} The codes lowercased
