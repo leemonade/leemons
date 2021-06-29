@@ -8,7 +8,7 @@ const { table } = require('../tables');
  * @param {any} transacting - DB Permission
  * @return {Promise<boolean>}
  * */
-async function exist(permissionName, transacting) {
+async function exist(permissionName, { transacting }) {
   const response = await table.permissions.count({ permissionName }, { transacting });
   return !!response;
 }

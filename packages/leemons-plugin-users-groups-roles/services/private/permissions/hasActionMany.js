@@ -9,7 +9,7 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function hasActionMany(permissionName, actionNames, transacting) {
+async function hasActionMany(permissionName, actionNames, { transacting }) {
   const count = await table.permissionAction.count(
     {
       permissionName,

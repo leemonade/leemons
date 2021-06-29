@@ -1,5 +1,7 @@
 const _ = require('lodash');
 
+const { withTransaction } = global.utils;
+
 // A mixing for extending all the needed classes
 module.exports = (Base) =>
   class LocalizationSet extends Base {
@@ -10,17 +12,23 @@ module.exports = (Base) =>
      * @param {LocalizationValue} value The value for the entry
      * @returns {Promise<Localization | null>} null if the locale already exists and the locale object if created
      */
-    async setValue(key, locale, value) {
+    async setValue(key, locale, value, { transacting } = {}) {
       // Validates the localization and returns it with the key and locale lowercased
       const { key: _key, locale: _locale } = this.validator.validateLocalization(
         { key, locale, value },
         true
       );
       try {
-        if (!(await this.hasLocale(_locale))) {
-          throw new Error('Invalid locale');
-        }
-        return await this.model.set({ key: _key, locale: _locale }, { value });
+        return await withTransaction(
+          async (t) => {
+            if (!(await this.hasLocale(_locale, { transacting: t }))) {
+              throw new Error('Invalid locale');
+            }
+            return this.model.set({ key: _key, locale: _locale }, { value }, { transacting: t });
+          },
+          this.model,
+          transacting
+        );
       } catch (e) {
         if (e.message === 'Invalid locale') {
           throw e;
@@ -37,7 +45,7 @@ module.exports = (Base) =>
      * @param {{[key:string]: LocalizationValue}} data
      * @returns {Promise<{items: Localization[],count: number, warnings: {nonExistingLocales: LocaleCode[] | undefined, existingLocalizations: LocaleCode[] | undefined} | null}}
      */
-    async setKey(key, data) {
+    async setKey(key, data, { transacting } = {}) {
       // Validates the key and returns it lowercased
       const _key = this.validator.validateLocalizationKey(key, true);
       // Validates the tuples [locale, value] and lowercases the locale
@@ -46,53 +54,59 @@ module.exports = (Base) =>
       const locales = Object.keys(_data);
 
       // Get the existing locales
-      const existingLocales = Object.entries(await this.hasLocales(locales))
-        .filter(([, exists]) => exists)
-        .map(([locale]) => locale);
+      return withTransaction(
+        async (t) => {
+          const existingLocales = Object.entries(await this.hasLocales(locales, { transacting: t }))
+            .filter(([, exists]) => exists)
+            .map(([locale]) => locale);
 
-      // Get the localizations for the existing locales (flat array)
-      const localizations = _.flatten(
-        Object.entries(_.pick(_data, existingLocales)).map(([locale, value]) => ({
-          key: _key,
-          locale,
-          value,
-        }))
+          // Get the localizations for the existing locales (flat array)
+          const localizations = _.flatten(
+            Object.entries(_.pick(_data, existingLocales)).map(([locale, value]) => ({
+              key: _key,
+              locale,
+              value,
+            }))
+          );
+
+          try {
+            const updatedLocalizations = await Promise.all(
+              localizations.map((localization) => {
+                const { value, ...query } = localization;
+
+                return this.model.set(query, { value }, { transacting: t });
+              })
+            );
+
+            // #region Define Warning object
+
+            // Get an array of the non existing locales
+            const nonExistingLocales = locales.filter(
+              (locale) => !existingLocales.includes(locale)
+            );
+
+            let warnings = null;
+
+            // Set non existing language warning
+            if (nonExistingLocales.length) {
+              warnings = { nonExistingLocales };
+            }
+
+            // #endregion
+
+            return {
+              items: updatedLocalizations,
+              count: updatedLocalizations.length,
+              warnings,
+            };
+          } catch (e) {
+            leemons.log.debug(e.message);
+            throw new Error('An error occurred while creating the localizations');
+          }
+        },
+        this.model,
+        transacting
       );
-
-      try {
-        const updatedLocalizations = await this.model.transaction((transacting) =>
-          Promise.all(
-            localizations.map((localization) => {
-              const { value, ...query } = localization;
-
-              return this.model.set(query, { value }, { transacting });
-            })
-          )
-        );
-
-        // #region Define Warning object
-
-        // Get an array of the non existing locales
-        const nonExistingLocales = locales.filter((locale) => !existingLocales.includes(locale));
-
-        let warnings = null;
-
-        // Set non existing language warning
-        if (nonExistingLocales.length) {
-          warnings = { nonExistingLocales };
-        }
-
-        // #endregion
-
-        return {
-          items: updatedLocalizations,
-          count: updatedLocalizations.length,
-          warnings,
-        };
-      } catch (e) {
-        leemons.log.debug(e.message);
-        throw new Error('An error occurred while creating the localizations');
-      }
     }
 
     /**
@@ -100,68 +114,72 @@ module.exports = (Base) =>
      * @param {{[locale:string]: {[key:string]: LocalizationValue}}} data
      * @returns {Promise<{items: Localization[],count: number, warnings: {nonExistingLocales: LocaleCode[] | undefined, existingKeys: LocalizationKey[] | undefined} | null}>}
      */
-    async setMany(data) {
+    async setMany(data, { transacting } = {}) {
       // Validate params
       this.validator.validateLocalizationsBulk(data);
 
       const locales = Object.keys(data);
 
       // Get the existing locales
-      const existingLocales = Object.entries(await this.hasLocales(locales))
-        .filter(([, exists]) => exists)
-        .map(([locale]) => locale);
+      return withTransaction(
+        async (t) => {
+          const existingLocales = Object.entries(await this.hasLocales(locales, { transacting: t }))
+            .filter(([, exists]) => exists)
+            .map(([locale]) => locale);
 
-      // Get an array of the non existing locales
-      const nonExistingLocales = [];
+          // Get an array of the non existing locales
+          const nonExistingLocales = [];
 
-      // Get the localizations for the existing locales (flat array)
-      let localizations = _.flatten(
-        Object.entries(
-          _.pickBy(data, (value, key) => {
-            const _key = key.toLowerCase();
-            const exists = existingLocales.includes(_key);
-            if (!exists) {
-              nonExistingLocales.push(_key);
+          // Get the localizations for the existing locales (flat array)
+          let localizations = _.flatten(
+            Object.entries(
+              _.pickBy(data, (value, key) => {
+                const _key = key.toLowerCase();
+                const exists = existingLocales.includes(_key);
+                if (!exists) {
+                  nonExistingLocales.push(_key);
+                }
+                return exists;
+              })
+            ).map(([locale, values]) =>
+              Object.entries(values).map(([key, value]) => ({ key, locale, value }))
+            )
+          );
+          // Validate the keys
+          localizations = this.validator.validateLocalizationsArray(localizations, true);
+
+          try {
+            // Create the new localizations
+            const modifiedLocalizations = await Promise.all(
+              localizations.map((localization) => {
+                const { value, ...query } = localization;
+                return this.model.set(query, { value }, { transacting: t });
+              })
+            );
+
+            // #region Define Warning object
+
+            let warnings = null;
+
+            // Set non existing language warning
+            if (nonExistingLocales.length) {
+              warnings = { nonExistingLocales };
             }
-            return exists;
-          })
-        ).map(([locale, values]) =>
-          Object.entries(values).map(([key, value]) => ({ key, locale, value }))
-        )
+
+            // #endregion
+
+            return {
+              items: modifiedLocalizations,
+              count: modifiedLocalizations.length,
+              warnings,
+            };
+          } catch (e) {
+            leemons.log.debug(e.message);
+            throw new Error('An error occurred while creating the localizations');
+          }
+        },
+        this.model,
+        transacting
       );
-      // Validate the keys
-      localizations = this.validator.validateLocalizationsArray(localizations, true);
-
-      try {
-        // Create the new localizations
-        const modifiedLocalizations = await this.model.transaction((transacting) =>
-          Promise.all(
-            localizations.map((localization) => {
-              const { value, ...query } = localization;
-              return this.model.set(query, { value }, { transacting });
-            })
-          )
-        );
-
-        // #region Define Warning object
-
-        let warnings = null;
-
-        // Set non existing language warning
-        if (nonExistingLocales.length) {
-          warnings = { nonExistingLocales };
-        }
-
-        // #endregion
-
-        return {
-          items: modifiedLocalizations,
-          count: modifiedLocalizations.length,
-          warnings,
-        };
-      } catch (e) {
-        leemons.log.debug(e.message);
-        throw new Error('An error occurred while creating the localizations');
-      }
     }
   };

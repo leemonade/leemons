@@ -127,8 +127,9 @@ class Leemons {
   // Initialize all the middlewares
   setMiddlewares() {
     this.backRouter.use(async (ctx, next) => {
+      ctx._startAt = new Date();
       this.log.http(
-        chalk`New connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${ctx.ip}}`
+        chalk`Start connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${ctx.ip}}`
       );
       await next();
     });
@@ -136,8 +137,15 @@ class Leemons {
     this.backRouter.use(async (ctx, next) => {
       try {
         await next();
+        const start = ctx._startAt.getTime();
+        const end = new Date().getTime();
+        this.log.http(
+          chalk`  End connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${
+            ctx.ip
+          }} {gray ${end - start} ms}`
+        );
       } catch (err) {
-        console.error(err);
+        leemons.log.error(err.message);
         leemonsUtils.returnError(ctx, err);
       }
     });
@@ -181,24 +189,42 @@ class Leemons {
     };
   }
 
-  initPlugins() {
-    const promises = [];
-    _.forIn(this.plugins, (plugin) => {
+  async initPlugins() {
+    const plugins = _.orderBy(this.plugins, (plugin) => plugin.config?.config?.initOrder || 0, [
+      'desc',
+    ]);
+
+    const results = [];
+
+    let plugin;
+    for (let i = 0, l = plugins.length; i < l; i++) {
+      plugin = plugins[i];
       if (plugin && plugin.init && _.isFunction(plugin.init)) {
-        promises.push(plugin.init());
+        // eslint-disable-next-line no-await-in-loop
+        results.push(await plugin.init());
       }
-    });
-    return Promise.allSettled(promises);
+    }
+    return results;
   }
 
-  initProviders() {
-    const promises = [];
-    _.forIn(this.providers, (plugin) => {
-      if (plugin && plugin.init && _.isFunction(plugin.init)) {
-        promises.push(plugin.init());
+  async initProviders() {
+    const providers = _.orderBy(
+      this.providers,
+      (provider) => provider.config?.config?.initOrder || 0,
+      ['desc']
+    );
+
+    const results = [];
+
+    let provider;
+    for (let i = 0, l = providers.length; i < l; i++) {
+      provider = providers[i];
+      if (provider && provider.init && _.isFunction(provider.init)) {
+        // eslint-disable-next-line no-await-in-loop
+        results.push(await provider.init());
       }
-    });
-    return Promise.allSettled(promises);
+    }
+    return results;
   }
 
   // Initialize the api endpoints

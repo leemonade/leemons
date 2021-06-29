@@ -36,6 +36,7 @@ export default function ListProfiles() {
   }
 
   async function saveProfile(data) {
+    console.log(data);
     let response;
     if (profile && profile.id) {
       response = await leemons.api(constants.backend.profiles.update, {
@@ -87,7 +88,9 @@ export default function ListProfiles() {
     getActions();
   }, []);
 
-  const onSubmit = (data) => {
+  const onSubmit = (_data) => {
+    const data = _data;
+    data.permissions = _.pickBy(data.permissions, _.identity);
     saveProfile(data);
   };
 

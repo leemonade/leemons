@@ -1,8 +1,8 @@
 module.exports = [
   {
-    path: '/localizations',
+    path: '/common',
     method: 'POST',
-    handler: 'localizations.get',
+    handler: 'common.get',
   },
   {
     path: '/locale',

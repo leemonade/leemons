@@ -31,7 +31,7 @@ async function add(data) {
       // TODO Añadir que se añadan las traducciones
     ]);
 
-    await addActionMany(data.permissionName, data.actions, transacting);
+    await addActionMany(data.permissionName, data.actions, { transacting });
 
     return values[0];
   });

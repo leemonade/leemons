@@ -6,18 +6,16 @@ const { table } = require('../tables');
  * @static
  * @param {string} permissionName - Permission to add action
  * @param {string} actionName - Action to add
- * @param {any} transacting - DB Transaction
+ * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function addAction(permissionName, actionName, transacting) {
+async function addAction(permissionName, actionName, { transacting }) {
   const values = await Promise.all([
-    leemons.plugin.services.actions.exist(actionName, transacting),
-    leemons.plugin.services.permissions.exist(permissionName, transacting),
-    leemons.plugin.services.permissions.existPermissionAction(
-      permissionName,
-      actionName,
-      transacting
-    ),
+    leemons.plugin.services.actions.exist(actionName, { transacting }),
+    leemons.plugin.services.permissions.exist(permissionName, { transacting }),
+    leemons.plugin.services.permissions.existPermissionAction(permissionName, actionName, {
+      transacting,
+    }),
   ]);
   if (!values[0]) throw new Error(`There is no '${actionName}' action`);
   if (!values[1]) throw new Error(`There is no '${permissionName}' permission`);

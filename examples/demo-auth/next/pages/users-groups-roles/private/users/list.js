@@ -1,10 +1,12 @@
 import constants from '@users-groups-roles/constants';
 import { useEffect, useState } from 'react';
 import { useSession } from '@users-groups-roles/session';
+import { useRouter } from 'next/router';
 
 export default function ListUsers() {
   const [pagination, setPagination] = useState(null);
   useSession({ redirectTo: constants.frontend.login });
+  const router = useRouter();
 
   async function listUsers() {
     const response = await leemons.api(constants.backend.users.list, {
@@ -23,6 +25,10 @@ export default function ListUsers() {
 
   return (
     <>
+      <button onClick={router.push(`/${constants.frontend.private.users.detail}`)}>
+        Añadir usuario
+      </button>
+
       <div>Usuarios:</div>
       <table>
         <thead>

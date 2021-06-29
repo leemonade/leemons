@@ -3,7 +3,7 @@ module.exports = {
   attributes: {
     code: {
       type: 'string',
-      length: 5,
+      length: 12,
       options: {
         unique: true,
       },

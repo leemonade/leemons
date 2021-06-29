@@ -10,6 +10,11 @@ module.exports = {
         collection: 'plugins_users-groups-roles::users',
       },
     },
+    profile: {
+      references: {
+        collection: 'plugins_users-groups-roles::profiles',
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

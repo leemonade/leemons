@@ -32,7 +32,7 @@ async function update(data) {
         name: `role-for-profile-${profile.id}`,
         permissions: permissionsForRole,
       },
-      transacting
+      { transacting }
     );
 
     return profile;

@@ -1,6 +1,7 @@
 module.exports = {
   plugins: [
     'emails',
+		'multilanguage',
 		'onboarding',
 		'users-groups-roles',
 		'provider-emails-amazon-ses'
@@ -9,6 +10,11 @@ module.exports = {
     name: 'emails',
     version: null,
     load: require('@emails/index.js')
+  },
+	{
+    name: 'multilanguage',
+    version: null,
+    load: require('@multilanguage/index.js')
   },
 	{
     name: 'onboarding',
