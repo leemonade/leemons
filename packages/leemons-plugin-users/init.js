@@ -1,8 +1,8 @@
-const permissionService = require('./services/private/permissions');
+const permissionService = require('./src/services/permissions');
 // const roleService = require('./services/private/roles');
-const userService = require('./services/private/users');
-const actionsService = require('./services/private/actions');
-const { translations } = require('./services/private/translations');
+const userService = require('./src/services/users');
+const actionsService = require('./src/services/actions');
+const { translations } = require('./src/services/translations');
 
 async function init() {
   await actionsService.init();

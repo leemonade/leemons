@@ -1,4 +1,4 @@
-const rolesService = require('../services/private/roles');
+const rolesService = require('../src/services/roles');
 
 async function create(ctx) {
   const validator = new global.utils.LeemonsValidator({

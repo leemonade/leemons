@@ -1,4 +1,4 @@
-const users = require('./private/users');
+const users = require('../src/services/users');
 
 module.exports = {
   detailForJWT: users.detailForJWT,

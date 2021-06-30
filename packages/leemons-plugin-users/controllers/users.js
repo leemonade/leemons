@@ -1,4 +1,4 @@
-const usersService = require('../services/private/users');
+const usersService = require('../src/services/users');
 
 async function canReset(ctx) {
   const validator = new global.utils.LeemonsValidator({

@@ -1,4 +1,4 @@
-const actionsService = require('../services/private/actions');
+const actionsService = require('../src/services/actions');
 
 async function list(ctx) {
   const actions = await actionsService.list();
