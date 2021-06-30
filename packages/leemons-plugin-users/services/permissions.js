@@ -1,4 +1,4 @@
-const permissions = require('./private/permissions');
+const permissions = require('../src/services/permissions');
 
 module.exports = {
   add: permissions.add,

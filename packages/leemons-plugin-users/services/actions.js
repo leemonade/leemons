@@ -1,4 +1,4 @@
-const actions = require('./private/actions');
+const actions = require('../src/services/actions');
 
 module.exports = {
   add: actions.add,

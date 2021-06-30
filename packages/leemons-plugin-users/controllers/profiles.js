@@ -1,4 +1,4 @@
-const profileService = require('../services/private/profiles');
+const profileService = require('../src/services/profiles');
 
 async function list(ctx) {
   const validator = new global.utils.LeemonsValidator({

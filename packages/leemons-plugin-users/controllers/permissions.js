@@ -1,4 +1,4 @@
-const permissionsService = require('../services/private/permissions');
+const permissionsService = require('../src/services/permissions');
 
 async function list(ctx) {
   const permissions = await permissionsService.list();
