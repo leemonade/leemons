@@ -156,7 +156,7 @@ class Leemons {
   authenticatedMiddleware() {
     return async (ctx, next) => {
       try {
-        const user = await this.plugins['users-groups-roles'].services.users.detailForJWT(
+        const user = await this.plugins['users'].services.users.detailForJWT(
           ctx.headers.authorization
         );
         if (user) {
@@ -176,7 +176,7 @@ class Leemons {
 
   permissionsMiddleware(allowedPermissions) {
     return async (ctx, next) => {
-      const hasPermission = await this.plugins['users-groups-roles'].services.users.havePermission(
+      const hasPermission = await this.plugins['users'].services.users.havePermission(
         ctx.state.user,
         allowedPermissions
       );

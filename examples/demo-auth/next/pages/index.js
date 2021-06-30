@@ -1,4 +1,4 @@
-import { getSession, logoutSession, useSession } from '@users-groups-roles/session';
+import { getSession, logoutSession, useSession } from '@users/session';
 import { useForm } from 'react-hook-form';
 
 export default function Home() {
@@ -11,7 +11,7 @@ export default function Home() {
   } = useForm();
   const onSubmit = async (data) => {
     try {
-      const response = await leemons.api(`users-groups-roles/user/login`, {
+      const response = await leemons.api(`users/user/login`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
