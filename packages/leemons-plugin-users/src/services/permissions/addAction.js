@@ -13,7 +13,7 @@ async function addAction(permissionName, actionName, { transacting }) {
   const values = await Promise.all([
     leemons.plugin.services.actions.exist(actionName, { transacting }),
     leemons.plugin.services.permissions.exist(permissionName, { transacting }),
-    leemons.plugin.services.permissions.existPermissionAction(permissionName, actionName, {
+    leemons.plugin.services.permissions.hasAction(permissionName, actionName, {
       transacting,
     }),
   ]);

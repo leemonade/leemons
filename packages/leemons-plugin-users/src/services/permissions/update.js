@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { addActionMany } = require('./addActionMany');
 const { getTranslationKey } = require('../../../next/src/permissions/getTranslationKey');
 const { translations } = require('../translations');
 const { table } = require('../tables');
@@ -26,13 +27,8 @@ async function update(data) {
       { permissionName: data.permissionName },
       { transacting }
     );
-    await table.permissionAction.createMany(
-      _.map(data.actions, (actionName) => ({
-        actionName,
-        permissionName: data.permissionName,
-      })),
-      { transacting }
-    );
+
+    await addActionMany(data.permissionName, data.actions, { transacting });
 
     if (translations()) {
       translations().common.setKey(

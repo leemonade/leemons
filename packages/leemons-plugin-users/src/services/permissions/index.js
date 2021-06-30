@@ -8,7 +8,6 @@ const { remove } = require('./remove');
 const { manyPermissionsHasManyActions } = require('./manyPermissionsHasManyActions');
 const { hasActionMany } = require('./hasActionMany');
 const { hasAction } = require('./hasAction');
-const { existPermissionAction } = require('./existPermissionAction');
 const { addMany } = require('./addMany');
 const { addActionMany } = require('./addActionMany');
 const { addAction } = require('./addAction');
@@ -28,7 +27,6 @@ module.exports = {
   removeMany,
   update,
   updateMany,
-  existPermissionAction,
   hasAction,
   hasActionMany,
   manyPermissionsHasManyActions,

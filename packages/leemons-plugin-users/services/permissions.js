@@ -12,7 +12,6 @@ module.exports = {
   hasAction: permissions.hasAction,
   hasActionMany: permissions.hasActionMany,
   manyPermissionsHasManyActions: permissions.manyPermissionsHasManyActions,
-  existPermissionAction: permissions.existPermissionAction,
   addActionMany: permissions.addActionMany,
   addAction: permissions.addAction,
 };
