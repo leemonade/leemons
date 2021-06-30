@@ -33,7 +33,7 @@
     prop-types "^15.7.2"
     react-hook-form "^7.8.5"
 
-"@leemons/users-groups-roles@file:dependencies/users-groups-roles":
+"@leemons/users@file:dependencies/users":
   version "1.0.0"
   dependencies:
     js-cookie "^2.2.1"

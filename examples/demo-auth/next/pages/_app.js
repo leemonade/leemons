@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import hooks from 'leemons-hooks';
 import React, { useEffect } from 'react';
 import { frontPlugins, plugins } from '@plugins';
-import { SessionProvider } from '@users-groups-roles/context/session';
+import { SessionProvider } from '@users/context/session';
 import 'tailwindcss/tailwind.css';
 
 function MyApp({ Component, pageProps }) {

@@ -1,7 +1,7 @@
 const constants = {
-  loginUrl: 'users-groups-roles/login',
-  recoverUrl: 'users-groups-roles/recover',
-  registerUrl: 'users-groups-roles/register',
+  loginUrl: 'users/login',
+  recoverUrl: 'users/recover',
+  registerUrl: 'users/register',
 };
 
 export default constants;
