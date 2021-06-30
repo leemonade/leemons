@@ -1,8 +1,11 @@
-const { translations, getTranslationKey } = require('../translations');
-const existLocation = require('../dataset-location/existLocation');
-const existSchemaLocale = require('./existSchemaLocale');
-const existSchema = require('../dataset-schema/existSchema');
+const {
+  validateNotExistSchemaLocale,
+  validateNotExistSchema,
+  validateNotExistLocation,
+  validatePluginName,
+} = require('../../validations/exists');
 const { validateLocationAndPluginAndLocale } = require('../../validations/dataset-location');
+const { translations, getTranslationKey } = require('../translations');
 
 /** *
  *  ES:
@@ -21,15 +24,10 @@ const { validateLocationAndPluginAndLocale } = require('../../validations/datase
  *  */
 async function getSchemaLocale(locationName, pluginName, locale, { transacting } = {}) {
   validateLocationAndPluginAndLocale(locationName, pluginName, locale, true);
-  if (pluginName !== this.calledFrom) throw new Error(`The plugin name must be ${this.calledFrom}`);
-  if (!(await existLocation(locationName, pluginName, { transacting })))
-    throw new Error(`The '${locationName}' location not exist`);
-  if (!(await existSchema(locationName, pluginName, { transacting })))
-    throw new Error(`The schema for '${locationName}' location not exist`);
-  if (!(await existSchemaLocale(locationName, pluginName, 'jsonSchema', locale, { transacting })))
-    throw new Error(`"${locale}" language data for "${locationName}" localization not exists.`);
-  if (!(await existSchemaLocale(locationName, pluginName, 'jsonUI', locale, { transacting })))
-    throw new Error(`"${locale}" language data for "${locationName}" localization not exists.`);
+  validatePluginName(pluginName, this.calledFrom);
+  await validateNotExistLocation(locationName, pluginName, { transacting });
+  await validateNotExistSchema(locationName, pluginName, { transacting });
+  await validateNotExistSchemaLocale(locationName, pluginName, locale, { transacting });
 
   const [schemaData, uiData] = await Promise.all([
     translations().contents.getValue(

@@ -1,5 +1,8 @@
-const getLocation = require('../dataset-location/getLocation');
-const existLocation = require('../dataset-location/existLocation');
+const {
+  validatePluginName,
+  validateNotExistLocation,
+  validateExistSchema,
+} = require('../../validations/exists');
 const { validateAddSchema } = require('../../validations/dataset-schema');
 const { table } = require('../tables');
 
@@ -20,13 +23,9 @@ const { table } = require('../tables');
  *  */
 async function addSchema({ locationName, pluginName, jsonSchema, jsonUI }, { transacting } = {}) {
   validateAddSchema({ locationName, pluginName, jsonSchema, jsonUI });
-  if (pluginName !== this.calledFrom) throw new Error(`The plugin name must be ${this.calledFrom}`);
-  if (!(await existLocation(locationName, pluginName, { transacting })))
-    throw new Error(`The '${locationName}' location not exist`);
-
-  const location = await getLocation(locationName, pluginName, { transacting });
-  if (location.jsonSchema || location.jsonUI)
-    throw new Error(`A schema already exists for '${locationName}' dataset location`);
+  validatePluginName(pluginName, this.calledFrom);
+  await validateNotExistLocation(locationName, pluginName, { transacting });
+  await validateExistSchema(locationName, pluginName, { transacting });
 
   const dataset = await table.dataset.update(
     { locationName, pluginName },

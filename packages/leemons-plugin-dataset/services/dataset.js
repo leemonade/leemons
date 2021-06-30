@@ -25,7 +25,7 @@ const {
   existSchemaLocale,
 } = require('../src/services/dataset-schema-locale');
 
-const { addValues } = require('../src/services/dataset-values');
+const { addValues, getValues } = require('../src/services/dataset-values');
 
 module.exports = {
   getLocation,
@@ -50,4 +50,5 @@ module.exports = {
   existSchemaLocale,
 
   addValues,
+  getValues,
 };

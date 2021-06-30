@@ -1,18 +1,19 @@
 const _ = require('lodash');
 const getSchema = require('../dataset-schema/getSchema');
 const existValues = require('./existValues');
-const { validateExistValues } = require('../../validations/exists');
+const deleteValues = require('./deleteValues');
+const { validateNotExistValues } = require('../../validations/exists');
 const { validatePluginName } = require('../../validations/exists');
 const { table } = require('../tables');
 
 /** *
  *  ES:
- *  Si ya existen valores para los datos especificados devolvemos un error, si no
+ *  Si no existen valores para los datos especificados devolvemos un error, si existen
  *  se comprueba con ajv que los datos pasados cumplen con lo descrito en el schema y se almacenan
  *  los campos
  *
  *  EN:
- *  If values already exist for the specified data we return an error, otherwise we return an error.
+ *  If there are no values for the specified data we return an error, if there are values for the specified data we return an error, if there are values for the specified data we return an error.
  *  the data passed is checked with ajv to ensure that it complies with the schema and stored.
  *  the fields
  *
@@ -25,11 +26,18 @@ const { table } = require('../tables');
  *  @param {string=} target Any string to differentiate what you want, for example a user id.
  *  @return {Promise<any>} Passed formData
  *  */
-async function addValues(locationName, pluginName, formData, { target, transacting } = {}) {
+async function updateValues(
+  locationName,
+  pluginName,
+  formData,
+  { target, transacting: _transacting } = {}
+) {
   validatePluginName(pluginName, this.calledFrom);
-  await validateExistValues(locationName, pluginName, target, { transacting });
+  await validateNotExistValues(locationName, pluginName, target, { transacting: _transacting });
 
-  const { jsonSchema } = await getSchema.call(this, locationName, pluginName);
+  const { jsonSchema } = await getSchema.call(this, locationName, pluginName, {
+    transacting: _transacting,
+  });
 
   const validator = new global.utils.LeemonsValidator(
     {
@@ -47,9 +55,11 @@ async function addValues(locationName, pluginName, formData, { target, transacti
     toSave.push(data);
   });
 
-  await table.datasetValues.createMany(toSave, { transacting });
-
-  return formData;
+  return global.utils.withTransaction(async (transacting) => {
+    await deleteValues.call(this, locationName, pluginName, { target, transacting });
+    await table.datasetValues.createMany(toSave, { transacting });
+    return formData;
+  }, table.datasetValues);
 }
 
-module.exports = addValues;
+module.exports = updateValues;

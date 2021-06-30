@@ -1,5 +1,5 @@
 const { translations, getTranslationKey } = require('../translations');
-const existLocation = require('./existLocation');
+const { validateNotExistLocation } = require('../../validations/exists');
 const { validateLocationAndPluginAndLocale } = require('../../validations/dataset-location');
 const { table } = require('../tables');
 
@@ -20,8 +20,8 @@ const { table } = require('../tables');
  *  */
 async function getLocation(locationName, pluginName, { locale, transacting } = {}) {
   validateLocationAndPluginAndLocale(locationName, pluginName, locale, false);
-  if (!(await existLocation(locationName, pluginName, { transacting })))
-    throw new Error(`The '${locationName}' location not exist`);
+  await validateNotExistLocation(locationName, pluginName, { transacting });
+
   const promises = [table.dataset.findOne({ locationName, pluginName }, { transacting })];
 
   if (translations()) {

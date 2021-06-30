@@ -36,7 +36,7 @@ function validateAddSchemaLocale(data) {
   }
 }
 
-function validateExistSchemaLocale(data) {
+function validateExistSchemaLocaleData(data) {
   const validator = new LeemonsValidator(existSchemaLocaleSchema);
 
   if (!validator.validate(data)) {
@@ -46,5 +46,5 @@ function validateExistSchemaLocale(data) {
 
 module.exports = {
   validateAddSchemaLocale,
-  validateExistSchemaLocale,
+  validateExistSchemaLocaleData,
 };

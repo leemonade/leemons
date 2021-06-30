@@ -1,5 +1,5 @@
+const { validatePluginName, validateNotExistLocation } = require('../../validations/exists');
 const { translations, getTranslationKey } = require('../translations');
-const existLocation = require('./existLocation');
 const { validateLocationAndPlugin } = require('../../validations/dataset-location');
 const { table } = require('../tables');
 
@@ -19,9 +19,9 @@ const { table } = require('../tables');
  *  */
 async function deleteLocation(locationName, pluginName, { transacting: _transacting } = {}) {
   validateLocationAndPlugin(locationName, pluginName);
-  if (pluginName !== this.calledFrom) throw new Error(`The plugin name must be ${this.calledFrom}`);
-  if (!(await existLocation(locationName, pluginName, { transacting: _transacting })))
-    throw new Error(`The '${locationName}' location not exist`);
+  validatePluginName(pluginName, this.calledFrom);
+  await validateNotExistLocation(locationName, pluginName, { transacting: _transacting });
+
   return global.utils.withTransaction(
     async (transacting) => {
       const promises = [table.dataset.delete({ locationName, pluginName }, { transacting })];

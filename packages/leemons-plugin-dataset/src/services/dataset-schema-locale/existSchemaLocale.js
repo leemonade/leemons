@@ -1,6 +1,5 @@
-const { validateExistSchemaLocale } = require('../../validations/dataset-schema-locale');
+const { validateExistSchemaLocaleData } = require('../../validations/dataset-schema-locale');
 const { translations, getTranslationKey } = require('../translations');
-const { table } = require('../tables');
 
 /**
  * ES:
@@ -21,7 +20,7 @@ const { table } = require('../tables');
  * @return {Promise<boolean>}
  * */
 async function existSchemaLocale(locationName, pluginName, key, locale, { transacting } = {}) {
-  validateExistSchemaLocale({ locationName, pluginName, key, locale });
+  validateExistSchemaLocaleData({ locationName, pluginName, key, locale });
   if (!translations()) throw new Error('The translation plugin is required');
   return translations().contents.has(getTranslationKey(locationName, pluginName, key), locale, {
     transacting,

@@ -1,6 +1,4 @@
-const { translations, getTranslationKey } = require('../translations');
-const existSchema = require('./existSchema');
-const existLocation = require('../dataset-location/existLocation');
+const { validateNotExistSchema, validateNotExistLocation } = require('../../validations/exists');
 const { validateLocationAndPlugin } = require('../../validations/dataset-location');
 const { table } = require('../tables');
 
@@ -20,10 +18,8 @@ const { table } = require('../tables');
  *  */
 async function getSchema(locationName, pluginName, { transacting } = {}) {
   validateLocationAndPlugin(locationName, pluginName);
-  if (!(await existLocation(locationName, pluginName, { transacting })))
-    throw new Error(`The '${locationName}' location not exist`);
-  if (!(await existSchema(locationName, pluginName, { transacting })))
-    throw new Error(`The schema for '${locationName}' location not exist`);
+  await validateNotExistLocation(locationName, pluginName, { transacting });
+  await validateNotExistSchema(locationName, pluginName, { transacting });
 
   const dataset = await table.dataset.findOne({ locationName, pluginName }, { transacting });
 

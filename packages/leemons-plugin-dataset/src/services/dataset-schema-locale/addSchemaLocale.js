@@ -1,10 +1,12 @@
-const existLocation = require('../dataset-location/existLocation');
-const existSchema = require('../dataset-schema/existSchema');
-const existSchemaLocale = require('./existSchemaLocale');
+const {
+  validateExistSchemaLocale,
+  validateNotExistSchema,
+  validateNotExistLocation,
+  validatePluginName,
+} = require('../../validations/exists');
 const { validateAddSchemaLocale } = require('../../validations/dataset-schema-locale');
+const { getTranslationKey, translations } = require('../translations');
 const { table } = require('../tables');
-const { getTranslationKey } = require('../translations');
-const { translations } = require('../translations');
 
 /** *
  *  ES:
@@ -24,15 +26,10 @@ async function addSchemaLocale(
   { transacting } = {}
 ) {
   validateAddSchemaLocale({ locationName, pluginName, schemaData, uiData, locale });
-  if (pluginName !== this.calledFrom) throw new Error(`The plugin name must be ${this.calledFrom}`);
-  if (!(await existLocation(locationName, pluginName, { transacting })))
-    throw new Error(`The '${locationName}' location not exist`);
-  if (!(await existSchema(locationName, pluginName, { transacting })))
-    throw new Error(`The schema for '${locationName}' location not exist`);
-  if (await existSchemaLocale(locationName, pluginName, 'jsonSchema', locale, { transacting }))
-    throw new Error(`"${locale}" language data for "${locationName}" localization already exists.`);
-  if (await existSchemaLocale(locationName, pluginName, 'jsonUI', locale, { transacting }))
-    throw new Error(`"${locale}" language data for "${locationName}" localization already exists.`);
+  validatePluginName(pluginName, this.calledFrom);
+  await validateNotExistLocation(locationName, pluginName, { transacting });
+  await validateNotExistSchema(locationName, pluginName, { transacting });
+  await validateExistSchemaLocale(locationName, pluginName, locale, { transacting });
 
   return global.utils.withTransaction(
     async (_transacting) => {

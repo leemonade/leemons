@@ -1,8 +1,9 @@
-const getLocation = require('../dataset-location/getLocation');
+const {
+  validatePluginName,
+  validateNotExistLocation,
+  validateNotExistSchema,
+} = require('../../validations/exists');
 const { getTranslationKey, translations } = require('../translations');
-
-const existLocation = require('../dataset-location/existLocation');
-const existSchema = require('./existSchema');
 const { validateLocationAndPlugin } = require('../../validations/dataset-location');
 const { table } = require('../tables');
 
@@ -22,11 +23,9 @@ const { table } = require('../tables');
  *  */
 async function deleteSchema(locationName, pluginName, { transacting: _transacting } = {}) {
   validateLocationAndPlugin(locationName, pluginName);
-  if (pluginName !== this.calledFrom) throw new Error(`The plugin name must be ${this.calledFrom}`);
-  if (!(await existLocation(locationName, pluginName, { transacting: _transacting })))
-    throw new Error(`The '${locationName}' location not exist`);
-  if (!(await existSchema(locationName, pluginName, { transacting: _transacting })))
-    throw new Error(`No schema for '${locationName}' dataset location`);
+  validatePluginName(pluginName, this.calledFrom);
+  await validateNotExistLocation(locationName, pluginName, { transacting: _transacting });
+  await validateNotExistSchema(locationName, pluginName, { transacting: _transacting });
 
   return global.utils.withTransaction(
     async (transacting) => {
