@@ -9,7 +9,7 @@
     "leemons": "1.0.0",
     "leemons-connector-bookshelf": "1.0.0",
     "leemons-hooks": "1.0.0",
-    "leemons-plugin-users-groups-roles": "1.0.0",
+    "leemons-plugin-users": "1.0.0",
     "leemons-utils": "1.0.0",
     "mysql": "^2.18.1"
   },

@@ -1,4 +1,4 @@
-const email = require('./private/email');
+const email = require('../src/services/email');
 
 module.exports = {
   send: email.send,
