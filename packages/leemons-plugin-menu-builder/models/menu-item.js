@@ -24,9 +24,16 @@ module.exports = {
         notNull: true,
       },
     },
-    label: {
+    name: {
       type: 'string',
       options: {
+        notNull: true,
+      },
+    },
+    slug: {
+      type: 'string',
+      options: {
+        unique: true,
         notNull: true,
       },
     },

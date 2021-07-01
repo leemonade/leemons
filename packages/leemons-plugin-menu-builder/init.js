@@ -1,5 +1,5 @@
 async function init() {
-  console.log('Iniciando el Menu Builder');
+  console.log('Plugin Menu Builder init OK');
 }
 
 module.exports = init;
