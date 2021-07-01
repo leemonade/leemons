@@ -1,4 +1,4 @@
-const emailService = require('./services/private/email');
+const emailService = require('./src/services/email');
 
 async function init() {
   await emailService.init();

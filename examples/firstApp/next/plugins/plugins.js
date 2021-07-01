@@ -1,7 +1,7 @@
 module.exports = {
   plugins: [
     'user-admin',
-		'users-groups-roles'
+		'users'
   ],
   frontPlugins: [{
     name: 'user-admin',
@@ -9,8 +9,8 @@ module.exports = {
     load: require('@user-admin/index.js')
   },
 	{
-    name: 'users-groups-roles',
+    name: 'users',
     version: null,
-    load: require('@users-groups-roles/index.js')
+    load: require('@users/index.js')
   }]
 };
