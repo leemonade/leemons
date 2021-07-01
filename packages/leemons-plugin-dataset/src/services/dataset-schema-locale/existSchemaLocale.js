@@ -19,12 +19,20 @@ const { translations, getTranslationKey } = require('../translations');
  * existLocation('users-dataset', 'plugins.users');
  * @return {Promise<boolean>}
  * */
-async function existSchemaLocale(locationName, pluginName, key, locale, { transacting } = {}) {
+async function _existSchemaLocale(locationName, pluginName, key, locale, { transacting } = {}) {
   validateExistSchemaLocaleData({ locationName, pluginName, key, locale });
   if (!translations()) throw new Error('The translation plugin is required');
   return translations().contents.has(getTranslationKey(locationName, pluginName, key), locale, {
     transacting,
   });
+}
+
+async function existSchemaLocale(locationName, pluginName, locale, { transacting } = {}) {
+  const responses = await Promise.all([
+    _existSchemaLocale(locationName, pluginName, 'jsonSchema', locale, { transacting }),
+    _existSchemaLocale(locationName, pluginName, 'jsonUI', locale, { transacting }),
+  ]);
+  return responses[0] && responses[1];
 }
 
 module.exports = existSchemaLocale;

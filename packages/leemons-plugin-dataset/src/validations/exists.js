@@ -24,16 +24,12 @@ async function validateNotExistSchema(locationName, pluginName, { transacting })
 }
 
 async function validateExistSchemaLocale(locationName, pluginName, locale, { transacting }) {
-  if (await existSchemaLocale(locationName, pluginName, 'jsonSchema', locale, { transacting }))
-    throw new Error(`"${locale}" language data for "${locationName}" localization already exists.`);
-  if (await existSchemaLocale(locationName, pluginName, 'jsonUI', locale, { transacting }))
+  if (await existSchemaLocale(locationName, pluginName, locale, { transacting }))
     throw new Error(`"${locale}" language data for "${locationName}" localization already exists.`);
 }
 
 async function validateNotExistSchemaLocale(locationName, pluginName, locale, { transacting }) {
-  if (!(await existSchemaLocale(locationName, pluginName, 'jsonSchema', locale, { transacting })))
-    throw new Error(`"${locale}" language data for "${locationName}" localization not exists.`);
-  if (!(await existSchemaLocale(locationName, pluginName, 'jsonUI', locale, { transacting })))
+  if (!(await existSchemaLocale(locationName, pluginName, locale, { transacting })))
     throw new Error(`"${locale}" language data for "${locationName}" localization not exists.`);
 }
 

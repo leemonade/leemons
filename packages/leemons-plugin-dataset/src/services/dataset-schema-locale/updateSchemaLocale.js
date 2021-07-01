@@ -47,10 +47,7 @@ async function updateSchemaLocale(
           { transacting: _transacting }
         ),
       ]);
-      return {
-        schemaData,
-        uiData,
-      };
+      return { locationName, pluginName, schemaData, uiData, locale };
     },
     table.dataset,
     transacting

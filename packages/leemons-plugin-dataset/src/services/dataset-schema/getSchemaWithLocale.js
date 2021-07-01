@@ -39,13 +39,13 @@ async function getSchemaWithLocale(locationName, pluginName, locale, { transacti
     JSON.stringify(schema.jsonSchema),
     schema.schemaData
   );
-  schema.compileJsonUi = global.utils.squirrelly.render(
+  schema.compileJsonUI = global.utils.squirrelly.render(
     JSON.stringify(schema.jsonUI),
     schema.uiData
   );
 
   schema.compileJsonSchema = JSON.parse(schema.compileJsonSchema);
-  schema.compileJsonUi = JSON.parse(schema.compileJsonUi);
+  schema.compileJsonUI = JSON.parse(schema.compileJsonUi);
 
   return schema;
 }

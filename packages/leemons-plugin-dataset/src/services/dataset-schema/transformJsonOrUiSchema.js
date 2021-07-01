@@ -79,7 +79,7 @@ function transformJsonOrUiSchema(jsonSchema, saveKeys, replaces) {
 
   return {
     values,
-    schema,
+    json: schema,
   };
 }
 

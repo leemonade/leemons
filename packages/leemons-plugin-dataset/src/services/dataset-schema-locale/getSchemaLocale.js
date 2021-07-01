@@ -46,7 +46,13 @@ async function getSchemaLocale(locationName, pluginName, locale, { transacting }
     ),
   ]);
 
-  return { schemaData: JSON.parse(schemaData), uiData: JSON.parse(uiData) };
+  return {
+    schemaData: JSON.parse(schemaData),
+    uiData: JSON.parse(uiData),
+    locationName,
+    pluginName,
+    locale,
+  };
 }
 
 module.exports = getSchemaLocale;

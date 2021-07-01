@@ -239,13 +239,13 @@ async function getValues() {
 }
 
 async function init() {
-  const json = leemons.plugins.dataset.services.dataset.transformJsonSchema(jsonSchema);
+  const schema = leemons.plugins.dataset.services.dataset.transformJsonSchema(jsonSchema);
   const ui = leemons.plugins.dataset.services.dataset.transformUiSchema(jsonUI);
 
   await addLocation();
   await getLocation();
-  await addSchema(json.schema, ui.schema);
-  await addSchemaLocale(json.values, ui.values);
+  await addSchema(schema.json, ui.json);
+  await addSchemaLocale(schema.values, ui.values);
   await getSchemaLocale();
   await getSchema();
   await getSchemaWithLocale();

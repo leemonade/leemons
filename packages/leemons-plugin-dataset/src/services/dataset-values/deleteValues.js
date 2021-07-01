@@ -1,4 +1,3 @@
-const existValues = require('./existValues');
 const { validateNotExistValues } = require('../../validations/exists');
 const { validatePluginName } = require('../../validations/exists');
 const { table } = require('../tables');

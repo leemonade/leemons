@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const getSchema = require('../dataset-schema/getSchema');
-const existValues = require('./existValues');
 const { validateExistValues } = require('../../validations/exists');
 const { validatePluginName } = require('../../validations/exists');
 const { table } = require('../tables');

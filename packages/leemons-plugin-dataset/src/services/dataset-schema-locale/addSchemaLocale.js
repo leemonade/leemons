@@ -48,8 +48,11 @@ async function addSchemaLocale(
         ),
       ]);
       return {
+        locationName,
+        pluginName,
         schemaData,
         uiData,
+        locale,
       };
     },
     table.dataset,
