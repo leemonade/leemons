@@ -1,9 +1,24 @@
+const _ = require('lodash');
+const constants = require('../../../config/constants');
 const { generateJWTPrivateKey } = require('./generateJWTPrivateKey');
 const recoverEmail = require('../../../emails/recoverPassword');
 const resetPassword = require('../../../emails/resetPassword');
 
+async function initDatasetLocation(config) {
+  try {
+    await leemons.plugins.dataset.services.dataset.addLocation(config);
+  } catch (err) {}
+}
+
 async function init() {
   await generateJWTPrivateKey();
+
+  // Adding dataset locations
+  if (leemons.plugins.dataset) {
+    await Promise.all(
+      _.map(constants.defaultDatasetLocations, (config) => initDatasetLocation(config))
+    );
+  }
 
   if (leemons.plugins.emails) {
     await leemons.plugins.emails.services.email.addIfNotExist(

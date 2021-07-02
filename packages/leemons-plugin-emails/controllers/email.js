@@ -23,7 +23,7 @@ async function sendTest(ctx) {
     ctx.status = 200;
     ctx.body = { status: 200, data };
   } else {
-    throw new Error(validator.error);
+    throw validator.error;
   }
 }
 
@@ -34,7 +34,7 @@ async function addProvider(ctx) {
     ctx.status = 200;
     ctx.body = { status: 200 };
   } else {
-    throw new Error(validator.error);
+    throw validator.error;
   }
 }
 

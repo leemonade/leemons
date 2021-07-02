@@ -15,7 +15,7 @@ async function list(ctx) {
     ctx.status = 200;
     ctx.body = { status: 200, data };
   } else {
-    throw new Error(validator.error);
+    throw validator.error;
   }
 }
 
@@ -45,7 +45,7 @@ async function add(ctx) {
     ctx.status = 200;
     ctx.body = { status: 200, profile };
   } else {
-    throw new Error(validator.error);
+    throw validator.error;
   }
 }
 
@@ -63,7 +63,7 @@ async function detail(ctx) {
     ctx.status = 200;
     ctx.body = { status: 200, profile };
   } else {
-    throw new Error(validator.error);
+    throw validator.error;
   }
 }
 
@@ -94,7 +94,7 @@ async function update(ctx) {
     ctx.status = 200;
     ctx.body = { status: 200, profile };
   } else {
-    throw new Error(validator.error);
+    throw validator.error;
   }
 }
 
