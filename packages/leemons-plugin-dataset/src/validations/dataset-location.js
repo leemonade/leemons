@@ -3,16 +3,16 @@ const _ = require('lodash');
 const { LeemonsValidator } = global.utils;
 const { localeSchema, localeObjectSchema, stringSchema } = require('./types');
 
-const addLocationSchema = {
+const addLocationSchema = () => ({
   type: 'object',
   properties: {
-    name: localeObjectSchema,
-    description: localeObjectSchema,
+    name: localeObjectSchema(),
+    description: localeObjectSchema(),
     locationName: stringSchema,
     pluginName: stringSchema,
   },
   required: ['name', 'description', 'locationName', 'pluginName'],
-};
+});
 
 const locationPluginSchema = {
   type: 'object',
@@ -34,7 +34,7 @@ const locationPluginLocaleSchema = {
 };
 
 function validateAddLocation(data) {
-  const validator = new LeemonsValidator(addLocationSchema);
+  const validator = new LeemonsValidator(addLocationSchema());
 
   if (!validator.validate(data)) {
     throw validator.error;

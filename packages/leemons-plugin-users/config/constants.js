@@ -41,6 +41,34 @@ module.exports = {
       pluginName: 'plugins.users-groups-roles',
     },
   ],
+  defaultMainMenuItems: [
+    {
+      item: {
+        key: 'users',
+        iconName: 'users',
+        label: {
+          en: 'Users',
+          es: 'Usuarios',
+        },
+      },
+    },
+    {
+      item: {
+        key: 'user-list',
+        parentKey: 'users',
+        label: {
+          en: 'User list',
+          es: 'Listado de usuarios',
+        },
+      },
+      permissions: [
+        {
+          permissionName: 'plugins.users.users',
+          actionNames: ['view'],
+        },
+      ],
+    },
+  ],
   url: {
     base: 'users',
     frontend: {

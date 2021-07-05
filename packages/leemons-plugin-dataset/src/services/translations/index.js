@@ -7,6 +7,8 @@ module.exports = {
         locales: leemons.plugins.multilanguage.services.locales.getProvider(),
         functions: {
           isValidLocaleCode: leemons.plugins.multilanguage.services.locales.isValidLocaleCode,
+          localeRegex: leemons.plugins.multilanguage.services.locales.localeRegex,
+          localeRegexString: leemons.plugins.multilanguage.services.locales.localeRegexString,
         },
       };
     }

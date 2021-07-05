@@ -5,8 +5,7 @@
 
 /**
  * @typedef Menu
- * @property {string} name
- * @property {string} slug
+ * @property {string} key
  * @property {string | undefined} [id] The Menu internal id
  */
 
@@ -35,14 +34,16 @@
 
 /**
  * @typedef MenuItemAdd
+ * @property {string} menuKey
+ * @property {string | undefined} key Identifier key
+ * @property {string | undefined} parentKey The Parent's key
  * @property {string} pluginName
- * @property {string} name
+ * @property {number | undefined} order
+ * @property {boolean | undefined} fixed
  * @property {string | undefined} iconName
  * @property {string | undefined} iconSvg
  * @property {string | undefined} url
  * @property {string | undefined} window
- * @property {string | undefined} parentId The Parent's MenuItem ID
- * @property {string | undefined} parentSlug The Parent's MenuItem Slug
  * @property {LocalizationAdd} label
  * @property {LocalizationAdd | undefined} description
  */

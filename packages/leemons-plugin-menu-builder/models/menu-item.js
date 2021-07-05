@@ -5,18 +5,21 @@ module.exports = {
     useTimestamps: true,
   },
   attributes: {
-    menu: {
-      references: {
-        collection: 'plugins_menu-builder::menu',
+    menuKey: {
+      type: 'string',
+      options: {
+        notNull: true,
       },
     },
-    parent: {
-      references: {
-        collection: 'plugins_menu-builder::menu-item',
-      },
+    key: {
+      type: 'string',
       options: {
-        notNull: false,
+        unique: true,
+        notNull: true,
       },
+    },
+    parentKey: {
+      type: 'string',
     },
     pluginName: {
       type: 'string',
@@ -24,24 +27,8 @@ module.exports = {
         notNull: true,
       },
     },
-    name: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
-    },
-    slug: {
-      type: 'string',
-      options: {
-        unique: true,
-        notNull: true,
-      },
-    },
     order: {
       type: 'integer',
-      options: {
-        notNull: false,
-      },
     },
     fixed: {
       type: 'boolean',
@@ -51,16 +38,10 @@ module.exports = {
     },
     iconName: {
       type: 'string',
-      options: {
-        notNull: false,
-      },
     },
     iconSvg: {
       type: 'richtext',
       textType: 'text',
-      options: {
-        notNull: false,
-      },
     },
     url: {
       type: 'string',

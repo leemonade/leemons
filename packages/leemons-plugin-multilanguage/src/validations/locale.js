@@ -8,9 +8,10 @@ const scriptSubtag = '(-[a-z]{4}){0,1}';
 // OPTIONAL 2 letters or 3 numbers define the dialect
 const regionSubtag = '(-([a-z]{2}|[0-9]{3})){0,1}';
 
-const LocaleRegex = new RegExp(`^${languageSubtag}${scriptSubtag}${regionSubtag}$`);
+const localeRegexString = `^${languageSubtag}${scriptSubtag}${regionSubtag}$`;
+const localeRegex = new RegExp(localeRegexString);
 LeemonsValidator.ajv.addFormat('localeCode', {
-  validate: (x) => LocaleRegex.test(x),
+  validate: (x) => localeRegex.test(x),
 });
 
 /**
@@ -204,4 +205,6 @@ module.exports = {
   validateLocale,
   validateLocalesArray,
   codeSchema,
+  localeRegex,
+  localeRegexString,
 };

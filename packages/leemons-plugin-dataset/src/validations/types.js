@@ -17,17 +17,17 @@ const localeSchema = {
   type: 'string',
   format: 'localeCode',
   minLength: 2,
-  maxLength: 5,
+  maxLength: 12,
 };
 
-const localeObjectSchema = {
+const localeObjectSchema = () => ({
   type: 'object',
   patternProperties: {
-    '^(([a-z]{2})|([a-z]{2}-[a-z]{2}))$': {
+    [translations().functions.localeRegexString]: {
       type: 'string',
     },
   },
-};
+});
 
 const textSchema = {
   type: 'string',

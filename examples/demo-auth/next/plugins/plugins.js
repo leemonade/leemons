@@ -3,6 +3,7 @@ module.exports = {
     'dataset',
 		'dataset-test',
 		'emails',
+		'menu-builder',
 		'multilanguage',
 		'onboarding',
 		'users',

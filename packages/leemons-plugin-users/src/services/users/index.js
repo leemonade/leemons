@@ -20,6 +20,7 @@ const { generateJWTToken } = require('./generateJWTToken');
 const { getJWTPrivateKey } = require('./getJWTPrivateKey');
 const { generateJWTPrivateKey } = require('./generateJWTPrivateKey');
 const { exist } = require('./exist');
+const getUserPermissions = require('./getUserPermissions');
 
 module.exports = {
   init,
@@ -47,4 +48,5 @@ module.exports = {
   havePermission,
   updateUserAuthPermissions,
   detailForJWT,
+  getUserPermissions,
 };

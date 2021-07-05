@@ -5,16 +5,10 @@ module.exports = {
     useTimestamps: true,
   },
   attributes: {
-    slug: {
+    key: {
       type: 'string',
       options: {
         unique: true,
-        notNull: true,
-      },
-    },
-    name: {
-      type: 'string',
-      options: {
         notNull: true,
       },
     },

@@ -1,65 +1,75 @@
 const _ = require('lodash');
-const { addMenuItemPermissionMany } = require('../../helpers/addPermissionMany');
 const { table } = require('../../tables');
 const { translations } = require('../../translations');
-const constants = require('../../../config/constants');
+const prefixPN = require('../../helpers/prefixPN');
+const addItemPermissions = require('../../helpers/addItemPermissions');
+const { validateNotExistMenuItem } = require('../../validations/exists');
+const { validateKeyPrefix } = require('../../validations/exists');
+const { validateExistMenuItem } = require('../../validations/exists');
+const { validateAddMenuItem } = require('../../validations/menu-item');
+const { validateNotExistMenu } = require('../../validations/exists');
 
-const { withTransaction, slugify } = global.utils;
+const { withTransaction } = global.utils;
 
 /**
  * Create a Menu Item
  * @private
  * @static
- * @param {string} menuSlug - The SLUG which identify the Menu to include the item
  * @param {MenuItemAdd} data - The Menu Item to create
- * @property {MenuPermissionsAdd} permissions Permissions for Menu Item
+ * @param {MenuPermissionsAdd=} permissions Permissions for Menu Item
+ * @param {any=} transacting DB transaction
  * @return {Promise<MenuItem>} Created / Updated menuItem
  * */
 async function add(
-  menuSlug,
-  { pluginName, name, parentId, parentSlug, url, window, iconName, iconSvg, label, description },
+  { menuKey, key, parentKey, order, fixed, url, window, iconName, iconSvg, label, description },
   permissions,
   { transacting: _transacting } = {}
 ) {
+  validateKeyPrefix(key, this.calledFrom);
+  validateAddMenuItem({
+    menuKey,
+    key,
+    parentKey,
+    pluginName: this.calledFrom,
+    order,
+    fixed,
+    url,
+    window,
+    iconName,
+    iconSvg,
+    label,
+    description,
+  });
   const locales = translations();
 
   return withTransaction(
     async (transacting) => {
       // Check for required params
-      if (_.isNil(name)) throw new Error(`Must indicate a NAME to identify the Menu Item`);
-      if (!_.isObjectLike(label))
-        throw new Error(`Must indicate at least one localized label to display in the Menu Item`);
-
-      // Check if the MENU exists
-      const existMenu = await table.menu.findOne({ slug: menuSlug }, { transacting });
-      if (!existMenu) throw new Error(`Menu with name '${menuSlug}' doesn't exists`);
+      await validateNotExistMenu(menuKey, { transacting });
 
       // Check if the MENU ITEM exists
-      const slug = `${pluginName}-${slugify(name, { lower: true })}`;
-      const existMenuItem = await table.menuItem.count({ slug }, { transacting });
-      if (existMenuItem) throw new Error(`Menu item with name '${name}' already exists`);
+      await validateExistMenuItem(menuKey, key, { transacting });
 
       // Check if the MENU ITEM PARENT exists
-      if (_.isString(parentSlug)) {
-        const parentSlugClean = parentSlug.replace(`${pluginName}-`, ''); // Let's clean the SLUG, in case it comes with the plugin name
-        const existMenuItemParent = await table.menuItem.count(
-          { slug: `${pluginName}-${parentSlugClean}` },
-          { transacting }
-        );
-        if (!existMenuItemParent)
-          throw new Error(`Menu item PARENT with name '${parentSlug}' doesn't exists`);
-      }
-      if (!_.isNil(parentId)) {
-        const existMenuItemParent = await table.menuItem.count({ id: parentId }, { transacting });
-        if (!existMenuItemParent)
-          throw new Error(`Menu item PARENT with ID '${parentId}' doesn't exists`);
+      if (parentKey) {
+        await validateNotExistMenuItem(menuKey, parentKey, { transacting });
       }
 
       // Create the MENU ITEM
-      leemons.log.info(`Creating MenuItem :: '${name}'`);
       const promises = [
         table.menuItem.create(
-          { name, slug, pluginName, url, window, iconName, iconSvg },
+          {
+            menuKey,
+            key,
+            parentKey,
+            pluginName: this.calledFrom,
+            order,
+            fixed,
+            url,
+            window,
+            iconName,
+            iconSvg,
+          },
           { transacting }
         ),
       ];
@@ -67,28 +77,31 @@ async function add(
       // Create LABEL & DESCRIPTIONS in locales
       if (locales) {
         promises.push(
-          locales.contents.addManyByKey(`${constants.translationPrefix}.${slug}.label`, label, {
+          locales.contents.addManyByKey(prefixPN(`${menuKey}.${key}.label`), label, {
             transacting,
           })
         );
 
         if (description) {
           promises.push(
-            locales.contents.addManyByKey(
-              `${constants.translationPrefix}.${slug}.description`,
-              description,
-              {
-                transacting,
-              }
-            )
+            locales.contents.addManyByKey(prefixPN(`${menuKey}.${key}.description`), description, {
+              transacting,
+            })
           );
         }
       }
 
-      const values = await Promise.all(promises);
+      // Add the necessary permissions to view the item
+      if (_.isArray(permissions) && permissions.length) {
+        promises.push(
+          addItemPermissions(key, `${menuKey}.menu-item`, permissions, { transacting })
+        );
+      }
 
-      const menuItem = values[0];
-      await addMenuItemPermissionMany(menuItem.id, permissions, { transacting });
+      const [menuItem] = await Promise.all(promises);
+
+      leemons.log.info(`Added menu item "${key}" to menu "${menuKey}"`);
+
       return menuItem;
     },
     table.menuItem,
@@ -96,4 +109,4 @@ async function add(
   );
 }
 
-module.exports = { add };
+module.exports = add;

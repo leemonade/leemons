@@ -1,5 +1,5 @@
 module.exports = {
-  translationPrefix: 'plugins.menu-builder',
+  mainMenuKey: 'plugins.menu-builder.main',
   url: {
     base: 'menu-builder',
     frontend: {},
