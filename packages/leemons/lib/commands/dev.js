@@ -5,6 +5,7 @@ const chalk = require('chalk');
 const createLogger = require('leemons-logger/lib/logger/multiThread');
 const { getAvailablePort } = require('leemons-utils/lib/port');
 
+const { createDatabaseManager } = require('leemons-database');
 const { handleStdin } = require('./lib/io');
 const { createWorker } = require('./lib/worker');
 const { createReloader } = require('./lib/watch');
@@ -258,6 +259,13 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
 
     // Loads the App and plugins config
     await leemons.loadAppConfig();
+
+    /*
+     * Create a DatabaseManager for managing the database connections and models
+     */
+    leemons.db = createDatabaseManager(leemons);
+    await leemons.db.init();
+
     const pluginsConfig = await leemons.loadPluginsConfig();
     const providersConfig = await leemons.loadProvidersConfig();
 

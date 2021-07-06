@@ -306,14 +306,14 @@ class Leemons {
     loadModels(this);
     await hooks.fireEvent('leemons::loadModels', { status: 'end' });
 
-    /*
-     * Create a DatabaseManager for managing the database connections and models
-     */
-    this.db = createDatabaseManager(this);
+    // /*
+    //  * Create a DatabaseManager for managing the database connections and models
+    //  */
+    // this.db = createDatabaseManager(this);
 
     // Initialize all database connections
     await hooks.fireEvent('leemons::initDB', { status: 'start' });
-    await this.db.init();
+    // await this.db.init();
     const models = _.merge(
       ...Object.values(_.cloneDeep(this.plugins))
         .filter((plugin) => plugin.models)
