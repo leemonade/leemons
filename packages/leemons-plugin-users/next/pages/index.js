@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import constants from '@users/constants';
 import { logoutSession, useSession } from '@users/session';
 import Router from 'next/router';
@@ -8,6 +9,24 @@ export default function UserTest() {
   const logout = () => {
     logoutSession(constants.base);
   };
+
+  async function getMenu() {
+    try {
+      const { menu } = await leemons.api({
+        url: 'menu-builder/menu/:key',
+        query: {
+          key: 'plugins.menu-builder.main',
+        },
+      });
+      console.log(menu);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  useEffect(() => {
+    getMenu();
+  }, []);
 
   return (
     <div>
@@ -26,6 +45,12 @@ export default function UserTest() {
         </div>
       </div>
 
+      <button
+        className="absolute right-20 top-2 px-2 border border-gray-500 rounded"
+        onClick={() => Router.push(`/${constants.frontend.private.selectProfile}`)}
+      >
+        Cambiar perfil
+      </button>
       <button
         className="absolute right-2 top-2 px-2 border border-gray-500 rounded"
         onClick={logout}

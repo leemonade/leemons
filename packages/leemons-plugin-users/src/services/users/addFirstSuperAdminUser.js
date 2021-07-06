@@ -23,6 +23,7 @@ async function addFirstSuperAdminUser(name, surnames, email, password, language)
           email,
           password: await encryptPassword(password),
           language,
+          active: true,
         },
         { transacting }
       );

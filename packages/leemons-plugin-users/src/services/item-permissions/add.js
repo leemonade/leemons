@@ -16,20 +16,24 @@ const { exist } = require('../permissions/exist');
  * @public
  * @static
  * @param {ItemPermission} data - Item permission
+ * @param {boolean=} isCustomPermission - If it is a custom permit, it is not checked if it exists in the list of permits.
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function add({ permissionName, actionNames, target, type, item }, { transacting } = {}) {
+async function add(
+  { permissionName, actionNames, target, type, item },
+  { isCustomPermission, transacting } = {}
+) {
   validateItemPermission({ permissionName, actionNames, target, type, item });
   validateTypePrefix(type, this.calledFrom);
 
-  console.log(permissionName);
+  if (!isCustomPermission) {
+    if (!(await exist(permissionName, { transacting })))
+      throw new Error('The specified permit does not exist');
 
-  if (!(await exist(permissionName, { transacting })))
-    throw new Error('The specified permit does not exist');
-
-  if (!(await hasActionMany(permissionName, actionNames, { transacting })))
-    throw new Error('Some of the actions do not exist for the specified permit');
+    if (!(await hasActionMany(permissionName, actionNames, { transacting })))
+      throw new Error('Some of the actions do not exist for the specified permit');
+  }
 
   await validateExistItemPermissions(
     {
@@ -41,6 +45,7 @@ async function add({ permissionName, actionNames, target, type, item }, { transa
     },
     { transacting }
   );
+
   const toSave = _.map(actionNames, (actionName) => {
     return {
       permissionName,

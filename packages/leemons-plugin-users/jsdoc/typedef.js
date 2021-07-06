@@ -116,3 +116,12 @@
  * @property {string[]} actionNames Array of actions for the permission name
  * @property {string | undefined} target Target of permissions
  */
+
+/**
+ * @typedef AddUser
+ * @property {string} name User name
+ * @property {string | undefined} surnames User surnames
+ * @property {string} email User email
+ * @property {string} password User password
+ * @property {string} language User locale language
+ */

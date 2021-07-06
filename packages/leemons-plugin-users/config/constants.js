@@ -5,6 +5,11 @@ module.exports = {
   defaultRoles: [
     { name: 'Administrador', permissions: ['add-users', 'show-users', 'delete-users'] },
   ],
+  // All users always have this permission
+  basicPermission: {
+    permissionName: 'plugins.users.any',
+    actionName: 'view',
+  },
   // TODO Añadir listado de permisos basicos
   defaultPermissions: [
     {

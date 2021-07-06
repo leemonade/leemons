@@ -5,7 +5,7 @@ const table = {
   userAuth: leemons.query('plugins_users::user-auth'),
   userRecoverPassword: leemons.query('plugins_users::user-recover-password'),
   userAuthPermission: leemons.query('plugins_users::user-auth-permission'),
-  userAuthRole: leemons.query('plugins_users::user-auth-role'),
+  userAuthRole: leemons.query('plugins_users::user-auth-role'), // TODO No se usa? Tambien sobra el modelo?
   superAdminUser: leemons.query('plugins_users::super-admin-user'),
 
   groupUserAuth: leemons.query('plugins_users::group-user-auth'),

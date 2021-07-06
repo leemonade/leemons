@@ -8,6 +8,7 @@ const constants = {
     authLogin: 'users/public/auth/login',
     authLogout: 'users/public/auth/logout',
     private: {
+      selectProfile: 'users/private/select-profile',
       users: {
         list: 'users/private/users/list',
         detail: 'users/private/users/detail',
@@ -20,6 +21,8 @@ const constants = {
   },
   backend: {
     users: {
+      profileToken: 'users/user/profile/:id/token',
+      profiles: 'users/user/profile',
       login: 'users/user/login',
       recover: 'users/user/recover',
       reset: 'users/user/reset',

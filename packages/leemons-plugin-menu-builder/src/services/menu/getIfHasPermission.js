@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const transformManyMenuItemsToFrontEndMenu = require('../menu-item/transformManyMenuItemsToFrontEndMenu');
+const prefixPN = require('../../helpers/prefixPN');
 const { validateNotExistMenu } = require('../../validations/exists');
 const { table } = require('../../tables');
 
@@ -17,7 +18,7 @@ const { table } = require('../../tables');
  * @param {any=} transacting DB transaction
  * @return {Promise<any>}
  * */
-async function getIfHavePermission(menuKey, userAuth, { transacting } = {}) {
+async function getIfHasPermission(menuKey, userAuth, { transacting } = {}) {
   await validateNotExistMenu(menuKey, { transacting });
 
   let userPermissions = [];
@@ -37,7 +38,7 @@ async function getIfHavePermission(menuKey, userAuth, { transacting } = {}) {
     _.forEach(userPermissions, (userPermission) => {
       queryPermissions.push({
         permissionName: userPermission.permissionName,
-        actionNames: userPermission.actionName,
+        actionName_$in: userPermission.actionNames,
         target: userPermission.target,
       });
     });
@@ -72,7 +73,7 @@ async function getIfHavePermission(menuKey, userAuth, { transacting } = {}) {
   // ES: Cogemos solo los elementos del menu a los que tenemos acceso
   // EN: We take only the menu items to which we have access.
   const query = {
-    type: `${menuKey}.menu-item`,
+    type: prefixPN(`${menuKey}.menu-item`),
   };
   if (!isSuperAdmin) query.$or = queryPermissions;
   const menuItemPermissions = await leemons.plugins.users.services.itemPermissions.find(query, {
@@ -88,10 +89,12 @@ async function getIfHavePermission(menuKey, userAuth, { transacting } = {}) {
     { transacting }
   );
 
+  console.log(menuItems);
+
   // TODO Añadir locale del user para sacar el menu en su idioma
   const locale = 'en';
 
   return transformManyMenuItemsToFrontEndMenu(menuItems, locale, { transacting });
 }
 
-module.exports = getIfHavePermission;
+module.exports = getIfHasPermission;

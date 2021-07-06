@@ -11,7 +11,7 @@ const { comparePassword } = require('./comparePassword');
 const { table } = require('../tables');
 
 async function login(email, password) {
-  const userP = await table.users.findOne({ email }, { columns: ['id', 'password'] });
+  const userP = await table.users.findOne({ email, active: true }, { columns: ['id', 'password'] });
   if (!userP) throw new global.utils.HttpError(401, 'Credentials do not match');
 
   const areEquals = await comparePassword(password, userP.password);

@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 const { updateUserAuthPermissions } = require('./updateUserAuthPermissions');
+const constants = require('../../../config/constants');
 
 /**
  * Return all user auth permissions
@@ -27,6 +28,14 @@ async function getUserPermissions(userAuth, { transacting } = {}) {
       actionNames: _.map(values, 'actionName'),
       target: values[0].target,
     });
+  });
+
+  // Add default permission for all users
+  responses.push({
+    role: null,
+    permissionName: constants.basicPermission.permissionName,
+    actionNames: [constants.basicPermission.actionName],
+    target: null,
   });
 
   return responses;

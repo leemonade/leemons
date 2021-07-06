@@ -3,9 +3,11 @@ const { existUserAuth } = require('./existUserAuth');
 const { table } = require('../tables');
 
 /**
+ * EN:
  * Updates the permissions of the user if it is marked as reload permissions according to their
  * roles and the roles of the groups to which they belong.
  *
+ * ES:
  * Borra todos los permisos que ya tuviera el usuario que vinieran desde un rol y vuelve a generar
  * todos los permisos desde los roles en los que esta el usuario
  *
@@ -57,7 +59,7 @@ async function updateUserAuthPermissions(userAuthId, { transacting: _transacting
         { transacting }
       );
     },
-    table.user,
+    table.userAuth,
     _transacting
   );
 }

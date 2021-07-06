@@ -17,8 +17,7 @@ export default function Home() {
         method: 'POST',
         body: data,
       });
-      alert('Te ha logado bien');
-      loginSession(response.jwtToken, constants.base);
+      loginSession(response.jwtToken, constants.frontend.private.selectProfile);
     } catch (err) {
       console.error(err);
     }

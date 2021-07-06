@@ -2,6 +2,7 @@ const _ = require('lodash');
 const { updateUserAuthPermissions } = require('./updateUserAuthPermissions');
 const { isSuperAdmin } = require('./isSuperAdmin');
 const { table } = require('../tables');
+const constants = require('../../../config/constants');
 
 /**
  * Checks if the user has 1 or more of the specified permissions.
@@ -14,37 +15,42 @@ const { table } = require('../tables');
  * @param {any} ctx - Koa context
  * @return {Promise<boolean>} If have permission return true if not false
  * */
-async function havePermission(userAuth, allowedPermissions, ctx) {
+async function hasPermission(userAuth, allowedPermissions, ctx) {
   if (userAuth.reloadPermissions) await updateUserAuthPermissions(userAuth.id);
 
   const promises = [];
   let query;
   _.forIn(allowedPermissions, (value, permissionName) => {
-    query = { userAuth: userAuth.id, permissionName, actionName_$in: value.actions };
-    if (value.target) {
-      query.target = value.target;
-      if (ctx) query.target = _.get(ctx, value.target, value.target);
+    // We check the default permission of all users
+    if (constants.basicPermission.permissionName === permissionName) {
+      promises.push(value.actions.indexOf(constants.basicPermission.actionName) >= 0 ? 1 : 0);
+    } else {
+      query = { userAuth: userAuth.id, permissionName, actionName_$in: value.actions };
+      if (value.target) {
+        query.target = value.target;
+        if (ctx) query.target = _.get(ctx, value.target, value.target);
+      }
+      promises.push(table.userAuthPermission.count(query));
     }
-    promises.push(table.userAuthPermission.count(query));
   });
 
   const values = await Promise.all(promises);
 
-  let hasPermission = false;
+  let _hasPermission = false;
   let i = 0;
   const maxIterations = values.length;
 
-  while (i < maxIterations && !hasPermission) {
+  while (i < maxIterations && !_hasPermission) {
     if (values[i]) {
-      hasPermission = true;
+      _hasPermission = true;
     }
     i++;
   }
 
-  if (hasPermission) return true;
-  hasPermission = await isSuperAdmin(userAuth.user);
-  if (hasPermission) return true;
+  if (_hasPermission) return true;
+  _hasPermission = await isSuperAdmin(userAuth.user);
+  if (_hasPermission) return true;
   return false;
 }
 
-module.exports = { havePermission };
+module.exports = { hasPermission };

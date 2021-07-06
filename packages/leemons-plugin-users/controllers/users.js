@@ -82,6 +82,18 @@ async function detail(ctx) {
   ctx.body = { status: 200, user };
 }
 
+async function profiles(ctx) {
+  const _profiles = await usersService.profiles(ctx.state.user.user);
+  ctx.status = 200;
+  ctx.body = { status: 200, profiles: _profiles };
+}
+
+async function profileToken(ctx) {
+  const jwtToken = await usersService.profileToken(ctx.state.user.user, ctx.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200, jwtToken };
+}
+
 async function create() {}
 
 async function list(ctx) {
@@ -122,4 +134,6 @@ module.exports = {
   create,
   list,
   createSuperAdmin,
+  profiles,
+  profileToken,
 };

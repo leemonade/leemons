@@ -96,6 +96,21 @@ async function add(
         promises.push(
           addItemPermissions(key, `${menuKey}.menu-item`, permissions, { transacting })
         );
+      } else if (leemons.plugins.users) {
+        promises.push(
+          addItemPermissions(
+            key,
+            `${menuKey}.menu-item`,
+            [
+              {
+                permissionName:
+                  leemons.plugins.users.config.constants.basicPermission.permissionName,
+                actionNames: [leemons.plugins.users.config.constants.basicPermission.actionName],
+              },
+            ],
+            { isCustomPermission: true, transacting }
+          )
+        );
       }
 
       const [menuItem] = await Promise.all(promises);

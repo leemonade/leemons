@@ -31,6 +31,18 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/user/profile',
+    method: 'GET',
+    handler: 'users.profiles',
+    authenticated: true,
+  },
+  {
+    path: '/user/profile/:id/token',
+    method: 'GET',
+    handler: 'users.profileToken',
+    authenticated: true,
+  },
+  {
     path: '/user/list',
     method: 'POST',
     handler: 'users.list',

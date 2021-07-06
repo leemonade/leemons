@@ -6,4 +6,5 @@ module.exports = {
   find: itemPermissions.find,
   remove: itemPermissions.remove,
   exist: itemPermissions.exist,
+  count: itemPermissions.count,
 };

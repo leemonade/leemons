@@ -5,6 +5,7 @@ module.exports = {
 		'emails',
 		'menu-builder',
 		'multilanguage',
+		'mvp-template',
 		'onboarding',
 		'users',
 		'provider-emails-amazon-ses'
