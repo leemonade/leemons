@@ -314,6 +314,18 @@ class Leemons {
     // Initialize all database connections
     await hooks.fireEvent('leemons::initDB', { status: 'start' });
     await this.db.init();
+    const models = _.merge(
+      ...Object.values(_.cloneDeep(this.plugins))
+        .filter((plugin) => plugin.models)
+        .map((plugin) => plugin.models),
+      ...Object.values(_.cloneDeep(this.providers))
+        .filter((provider) => provider.models)
+        .map((provider) => provider.models)
+    );
+    await this.db.loadModels({
+      'plugins_multilanguage::locales': models['plugins_multilanguage::locales'],
+    });
+    await this.db.loadModels(_.omit(models, 'plugins_multilanguage::locales'));
     await hooks.fireEvent('leemons::initDB', { status: 'end' });
 
     await hooks.fireEvent('leemons::initializeProviders', { status: 'start' });
