@@ -322,10 +322,7 @@ class Leemons {
         .filter((provider) => provider.models)
         .map((provider) => provider.models)
     );
-    await this.db.loadModels({
-      'plugins_multilanguage::locales': models['plugins_multilanguage::locales'],
-    });
-    await this.db.loadModels(_.omit(models, 'plugins_multilanguage::locales'));
+    await this.db.loadModels(models);
     await hooks.fireEvent('leemons::initDB', { status: 'end' });
 
     await hooks.fireEvent('leemons::initializeProviders', { status: 'start' });
