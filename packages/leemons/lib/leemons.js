@@ -302,9 +302,9 @@ class Leemons {
     /*
      * Load other DataBase Model Descriptions
      */
-    await hooks.fireEvent('leemons::loadModels', { status: 'start' });
-    loadModels(this);
-    await hooks.fireEvent('leemons::loadModels', { status: 'end' });
+    // await hooks.fireEvent('leemons::loadModels', { status: 'start' });
+    // loadModels(this);
+    // await hooks.fireEvent('leemons::loadModels', { status: 'end' });
 
     // /*
     //  * Create a DatabaseManager for managing the database connections and models
@@ -322,7 +322,7 @@ class Leemons {
         .filter((provider) => provider.models)
         .map((provider) => provider.models)
     );
-    await this.db.loadModels(_.omit(leemons.models, 'core_store'));
+    // await this.db.loadModels(_.omit(leemons.models, 'core_store'));
     await this.db.loadModels(models);
 
     await hooks.fireEvent('leemons::initDB', { status: 'end' });

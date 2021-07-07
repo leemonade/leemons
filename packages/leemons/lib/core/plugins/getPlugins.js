@@ -2,6 +2,14 @@ const fs = require('fs-extra');
 const path = require('path');
 const { loadFile } = require('../config/loadFiles');
 
+async function getPluginsInfoFromDB(leemons) {
+  const plugins = await leemons.models.plugins.getAll();
+
+  // console.log(plugins);
+
+  return plugins;
+}
+
 // Get an array of plugins stored under '/${pluginsFolder}'
 async function getLocalPlugins(leemons) {
   const dir = path.resolve(leemons.dir.app, leemons.dir.plugins);
@@ -50,4 +58,4 @@ async function getExternalPlugins(leemons) {
   return plugins;
 }
 
-module.exports = { getLocalPlugins, getExternalPlugins };
+module.exports = { getPluginsInfoFromDB, getLocalPlugins, getExternalPlugins };

@@ -65,7 +65,7 @@ function formatModels(models, target = 'global') {
   );
 }
 
-function loadModels(leemons) {
+function loadCoreModels(leemons) {
   const coreStore = createCoreStore();
   const plugins = createPlugins();
 
@@ -85,7 +85,7 @@ function loadModels(leemons) {
 }
 
 module.exports = {
-  loadModels,
+  loadCoreModels,
   formatModels,
   formatModel,
 };

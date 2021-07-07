@@ -1,6 +1,7 @@
 const cluster = require('cluster');
 const path = require('path');
 const chalk = require('chalk');
+const _ = require('lodash');
 
 const createLogger = require('leemons-logger/lib/logger/multiThread');
 const { getAvailablePort } = require('leemons-utils/lib/port');
@@ -13,6 +14,13 @@ const { createReloader } = require('./lib/watch');
 const { Leemons } = require('../index');
 const loadFront = require('../core/plugins/front/loadFront');
 const build = require('../core/front/build');
+const { loadCoreModels } = require('../core/model/loadModel');
+const {
+  getPluginsInfoFromDB,
+  getLocalPlugins,
+  getExternalPlugins,
+} = require('../core/plugins/getPlugins');
+const { loadConfiguration } = require('../core/config/loadConfig');
 
 /**
  * Creates a watcher for frontend files and then sets up all the needed files
@@ -264,19 +272,121 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
      * Create a DatabaseManager for managing the database connections and models
      */
     leemons.db = createDatabaseManager(leemons);
+    /*
+     * Initialize database connections
+     */
     await leemons.db.init();
 
-    const pluginsConfig = await leemons.loadPluginsConfig();
-    const providersConfig = await leemons.loadProvidersConfig();
+    /**
+     * Load core models
+     */
+    loadCoreModels(leemons);
+    await leemons.db.loadModels(_.omit(leemons.models, 'core_store'));
 
-    let nextDir = leemons.config.get('config.dir.next', 'next');
-    nextDir = path.isAbsolute(nextDir) ? nextDir : path.join(cwd, nextDir);
+    const pluginsInfo = await getPluginsInfoFromDB(leemons);
+    const localPlugins = await getLocalPlugins(leemons);
+    const externalPlugins = await getExternalPlugins(leemons);
 
-    // Start the Front and Back services
-    await Promise.all([
-      setupFront(leemons, pluginsConfig, providersConfig, nextDir),
-      setupBack(leemons, pluginsConfig, providersConfig),
-    ]);
+    let plugins = await Promise.all(
+      [...localPlugins, ...externalPlugins].map(async (plugin) => {
+        const { env, configProvider: config } = await loadConfiguration(plugin, {
+          dir: plugin.path,
+          defaultDirs: {
+            config: 'config',
+            models: 'models',
+            controllers: 'controllers',
+            services: 'services',
+            providers: 'providers',
+            next: 'next',
+            env: '.env',
+          },
+        });
+
+        // Save the plugin env
+        // pluginsEnv.push([config.get('config.name', plugin.name), env]);
+
+        return {
+          source: plugin.source,
+          name: config.get('config.name', plugin.name),
+          dir: plugin.dir,
+          config,
+        };
+      })
+    );
+
+    const getStatus = (pluginInfo, defaultStatus) => {
+      if (pluginsInfo.isDisabled) {
+        return {
+          code: 'disabled',
+          reason: 'disabled by admin',
+        };
+      }
+      if (pluginsInfo.isBroken) {
+        return {
+          code: 'broken',
+          reason: 'the plugin initialization failed',
+        };
+      }
+
+      return defaultStatus;
+    };
+
+    pluginsInfo.forEach(({ name, path: pluginPath, version, id, source, ...pluginInfo }) => {
+      const equivalentPlugin = plugins.find(
+        (plugin) => plugin.name === name && plugin.dir.app === pluginPath
+      );
+
+      if (!equivalentPlugin) {
+        plugins.push({
+          name,
+          // TODO: Save source
+          source,
+          version,
+          id,
+          dir: { app: pluginPath },
+          status: {
+            ...getStatus(pluginInfo, {
+              code: 'missing',
+              reason: 'The plugin is registered but its files are missing',
+            }),
+            ...pluginInfo,
+          },
+        });
+      } else {
+        equivalentPlugin.id = id;
+        equivalentPlugin.status = {
+          // TODO: Support not enabled statuses
+          ...getStatus(pluginInfo, { code: 'enabled', reason: '' }),
+          ...pluginInfo,
+        };
+      }
+    });
+
+    console.log(plugins);
+    // Register new plugins to DB
+    plugins = await Promise.all(
+      plugins.map(async (plugin) => {
+        if (plugin.id === undefined) {
+          await leemons.models.plugins.add({
+            ...plugin,
+            path: plugin.dir.app,
+            version: plugin.version || '0.0.1',
+          });
+        }
+      })
+    );
+
+    // const pluginsConfig = await leemons.loadPluginsConfig();
+    // const providersConfig = await leemons.loadProvidersConfig();
+
+    // let nextDir = leemons.config.get('config.dir.next', 'next');
+    // nextDir = path.isAbsolute(nextDir) ? nextDir : path.join(cwd, nextDir);
+
+    // // Start the Front and Back services
+    // await Promise.all([
+    //   setupFront(leemons, pluginsConfig, providersConfig, nextDir),
+    //   setupBack(leemons, pluginsConfig, providersConfig),
+    // ]);
 
     leemons.loaded = true;
 
