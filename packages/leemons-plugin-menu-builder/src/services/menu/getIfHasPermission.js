@@ -89,8 +89,6 @@ async function getIfHasPermission(menuKey, userAuth, { transacting } = {}) {
     { transacting }
   );
 
-  console.log(menuItems);
-
   // TODO Añadir locale del user para sacar el menu en su idioma
   const locale = 'en';
 

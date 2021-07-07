@@ -7,9 +7,10 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { getTranslationKey as getTranslationKeyActions } from '@users/actions/getTranslationKey';
 import { getTranslationKey as getTranslationKeyPermissions } from '@users/permissions/getTranslationKey';
+import { goDetailProfilePage, goListProfilesPage, goLoginPage } from '@users/navigate';
 
 export default function ListProfiles() {
-  useSession({ redirectTo: constants.frontend.login });
+  useSession({ redirectTo: goLoginPage });
 
   const router = useRouter();
 
@@ -27,7 +28,7 @@ export default function ListProfiles() {
   const [permissionT, setPermissionT] = useState({});
 
   function goList() {
-    return router.push(`/${constants.frontend.private.profiles.list}`);
+    return goListProfilesPage();
   }
 
   async function getPermissions() {
@@ -74,7 +75,7 @@ export default function ListProfiles() {
         body: data,
       });
     }
-    router.push(`/${constants.frontend.private.profiles.detail}/${response.profile.uri}`);
+    goDetailProfilePage(response.profile.uri);
   }
 
   async function getProfile(uri) {

@@ -12,7 +12,7 @@ const { translations } = require('../../translations');
  * @return {MenuItem[]} Frontend Menu
  * */
 async function transformManyMenuItemsToFrontEndMenu(menuItems, locale, { transacting } = {}) {
-  const translationItems = await translations().contents.getManyWithLocale(
+  const translationItemsByKey = await translations().contents.getManyWithLocale(
     menuItems.reduce((acc, menuItem) => {
       acc.push(prefixPN(`${menuItem.menuKey}.${menuItem.key}.label`));
       acc.push(prefixPN(`${menuItem.menuKey}.${menuItem.key}.description`));
@@ -21,9 +21,6 @@ async function transformManyMenuItemsToFrontEndMenu(menuItems, locale, { transac
     locale,
     { transacting }
   );
-
-  // We set each text in its item
-  const translationItemsByKey = _.keyBy(translationItems, 'key');
 
   const notFoundLabelsKeys = [];
   const notFoundDescriptionsKeys = [];

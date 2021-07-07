@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import constants from '@users/constants';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import { useSession } from '@users/session';
 import { useForm } from 'react-hook-form';
@@ -7,9 +6,17 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { getTranslationKey as getTranslationKeyActions } from '@users/actions/getTranslationKey';
 import { getTranslationKey as getTranslationKeyPermissions } from '@users/permissions/getTranslationKey';
+import {
+  addProfileRequest,
+  getProfileRequest,
+  listActionsRequest,
+  listPermissionsRequest,
+  updateProfileRequest,
+} from '@users/request';
+import { goDetailProfilePage, goListProfilesPage, goLoginPage } from '@users/navigate';
 
 export default function ListProfiles() {
-  useSession({ redirectTo: constants.frontend.login });
+  useSession({ redirectTo: goLoginPage });
 
   const router = useRouter();
 
@@ -27,11 +34,11 @@ export default function ListProfiles() {
   const [permissionT, setPermissionT] = useState({});
 
   function goList() {
-    return router.push(`/${constants.frontend.private.profiles.list}`);
+    return goListProfilesPage();
   }
 
   async function getPermissions() {
-    const response = await leemons.api(constants.backend.permissions.list);
+    const response = await listPermissionsRequest();
     setPermissionT(
       await getLocalizationsByArrayOfItems(
         response.permissions,
@@ -44,7 +51,7 @@ export default function ListProfiles() {
   }
 
   async function getActions() {
-    const response = await leemons.api(constants.backend.actions.list);
+    const response = await listActionsRequest();
 
     setActionT(
       await getLocalizationsByArrayOfItems(
@@ -61,30 +68,19 @@ export default function ListProfiles() {
     console.log(data);
     let response;
     if (profile && profile.id) {
-      response = await leemons.api(constants.backend.profiles.update, {
-        method: 'POST',
-        body: {
-          ...data,
-          id: profile.id,
-        },
+      response = await updateProfileRequest({
+        ...data,
+        id: profile.id,
       });
     } else {
-      response = await leemons.api(constants.backend.profiles.add, {
-        method: 'POST',
-        body: data,
-      });
+      response = await addProfileRequest(data);
     }
-    router.push(`/${constants.frontend.private.profiles.detail}/${response.profile.uri}`);
+    goDetailProfilePage(response.profile.uri);
   }
 
   async function getProfile(uri) {
     try {
-      const response = await leemons.api({
-        url: constants.backend.profiles.detail,
-        query: {
-          uri,
-        },
-      });
+      const response = await getProfileRequest(uri);
 
       setValue('name', response.profile.name);
       setValue('description', response.profile.description);

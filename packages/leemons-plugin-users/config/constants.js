@@ -50,7 +50,7 @@ module.exports = {
     {
       item: {
         key: 'users',
-        iconName: 'users',
+        iconSvg: '/users/svgs/user.svg',
         label: {
           en: 'Users',
           es: 'Usuarios',
@@ -61,6 +61,7 @@ module.exports = {
       item: {
         key: 'user-list',
         parentKey: 'users',
+        url: '/users/private/users/list',
         label: {
           en: 'User list',
           es: 'Listado de usuarios',

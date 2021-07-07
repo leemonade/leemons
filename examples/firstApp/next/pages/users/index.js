@@ -1,9 +1,9 @@
 import constants from '@users/constants';
 import { logoutSession, useSession } from '@users/session';
-import Router from 'next/router';
+import { goListProfilesPage, goListUsersPage, goLoginPage } from '@users/navigate';
 
 export default function UserTest() {
-  const session = useSession({ redirectTo: constants.frontend.login });
+  const session = useSession({ redirectTo: goLoginPage });
 
   const logout = () => {
     logoutSession(constants.base);
@@ -20,10 +20,8 @@ export default function UserTest() {
 
       <div>Cutre menu</div>
       <div className="flex">
-        <div onClick={() => Router.push(`/${constants.frontend.private.users.list}`)}>Usuarios</div>
-        <div onClick={() => Router.push(`/${constants.frontend.private.profiles.list}`)}>
-          Perfiles
-        </div>
+        <div onClick={goListUsersPage}>Usuarios</div>
+        <div onClick={goListProfilesPage}>Perfiles</div>
       </div>
 
       <button

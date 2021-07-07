@@ -1,14 +1,7 @@
-const { table } = require('../tables');
+const { hasAction } = require('./hasAction');
 
 async function existPermissionAction(permissionName, actionName, { transacting }) {
-  const response = await table.permissionAction.count(
-    {
-      permissionName,
-      actionName,
-    },
-    { transacting }
-  );
-  return !!response;
+  return hasAction(permissionName, actionName, { transacting });
 }
 
 module.exports = { existPermissionAction };

@@ -21,7 +21,22 @@ const { withTransaction } = global.utils;
  * @return {Promise<MenuItem>} Created / Updated menuItem
  * */
 async function add(
-  { menuKey, key, parentKey, order, fixed, url, window, iconName, iconSvg, label, description },
+  {
+    menuKey,
+    key,
+    parentKey,
+    order,
+    fixed,
+    url,
+    window,
+    iconName,
+    activeIconName,
+    iconSvg,
+    activeIconSvg,
+    iconAlt,
+    label,
+    description,
+  },
   permissions,
   { transacting: _transacting } = {}
 ) {
@@ -36,7 +51,10 @@ async function add(
     url,
     window,
     iconName,
+    activeIconName,
     iconSvg,
+    activeIconSvg,
+    iconAlt,
     label,
     description,
   });
@@ -68,7 +86,10 @@ async function add(
             url,
             window,
             iconName,
+            activeIconName,
             iconSvg,
+            activeIconSvg,
+            iconAlt,
           },
           { transacting }
         ),

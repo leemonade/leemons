@@ -262,7 +262,7 @@ async function loadFront(leemons, installedPlugins, installedProviders) {
 
           const { extra } = await getDiff(pluginSrc, path.join(srcPath, pluginObj.name));
           // If some extra files are missing, delete them (from app)
-          await removeExtraFiles(path.join(pagesPath, pluginObj.name), extra);
+          await removeExtraFiles(path.join(srcPath, pluginObj.name), extra);
 
           // Copy folder
           if (await copyFolder(pluginSrc, srcPath, name, srcChecksums)) {

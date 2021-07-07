@@ -3,6 +3,7 @@ import constants from '@users/constants';
 import { useForm } from 'react-hook-form';
 import Router from 'next/router';
 import { useEffect } from 'react';
+import { goLoginPage } from '@users/navigate';
 
 export default function Reset() {
   useSession({ redirectTo: constants.base, redirectIfFound: true });
@@ -54,7 +55,7 @@ export default function Reset() {
         },
       });
       console.log(response);
-      Router.push(`/${constants.frontend.login}`);
+      goLoginPage();
     } catch (err) {
       console.error(err);
     }

@@ -39,9 +39,19 @@ module.exports = {
     iconName: {
       type: 'string',
     },
+    activeIconName: {
+      type: 'string',
+    },
     iconSvg: {
       type: 'richtext',
       textType: 'text',
+    },
+    activeIconSvg: {
+      type: 'richtext',
+      textType: 'text',
+    },
+    iconAlt: {
+      type: 'string',
     },
     url: {
       type: 'string',
