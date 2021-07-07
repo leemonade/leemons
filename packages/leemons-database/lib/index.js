@@ -35,7 +35,7 @@ class DatabaseManager {
   }
 
   async loadModels(models) {
-    await this.connectors.loadModels(this.leemons.core_store, models);
+    await this.connectors.loadModels(this.leemons.models.core_store, models);
   }
 
   query(modelName, pluginName = null) {

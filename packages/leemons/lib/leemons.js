@@ -322,7 +322,9 @@ class Leemons {
         .filter((provider) => provider.models)
         .map((provider) => provider.models)
     );
+    await this.db.loadModels(_.omit(leemons.models, 'core_store'));
     await this.db.loadModels(models);
+
     await hooks.fireEvent('leemons::initDB', { status: 'end' });
 
     await hooks.fireEvent('leemons::initializeProviders', { status: 'start' });

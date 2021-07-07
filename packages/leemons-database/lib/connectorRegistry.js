@@ -42,10 +42,13 @@ function createConnectorRegistry({ connections, defaultConnection }, databaseMan
      */
     loadModels: async (coreStore, models) => {
       // Load core_store model
-      if (!databaseManager.models.has('core_store')) {
+      if (!databaseManager.models.has('models::core_store')) {
         const coreStoreConnector = connectors.get(connections[coreStore.connection].connector);
         await coreStoreConnector.loadModels([coreStore]);
-        databaseManager.models.set('core_store', coreStoreConnector.models.get('core_store'));
+        databaseManager.models.set(
+          'models::core_store',
+          coreStoreConnector.models.get('models::core_store')
+        );
       }
       // Load the other models
       return Promise.all(
