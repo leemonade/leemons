@@ -51,6 +51,7 @@ module.exports = {
       item: {
         key: 'users',
         iconSvg: '/users/svgs/user.svg',
+        activeIconSvg: '/users/svgs/userActive.svg',
         label: {
           en: 'Users',
           es: 'Usuarios',

@@ -42,10 +42,7 @@ export async function getSession({ req }) {
   }
 }
 
-const fetcher = (token) => (url) =>
-  leemons.api(url, {
-    headers: { Authorization: token },
-  });
+const fetcher = () => () => leemons.api('users/user');
 
 export function useSession({ redirectTo, redirectIfFound } = {}) {
   const context = useContext(SessionContext);
@@ -53,7 +50,7 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
   if (!context) {
     const token = Cookies.get('token');
     if (token) {
-      const { data, error } = useSWR('users/user', fetcher(token), {
+      const { data, error } = useSWR(`users/user/${token}`, fetcher(), {
         revalidateOnFocus: false,
       });
 
@@ -69,6 +66,7 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
           // If redirectIfFound is also set, redirect if the user was found
           (redirectIfFound && hasUser)
         ) {
+          console.log('Redirecionamos al usuario', finished, hasUser, data, error);
           if (_.isFunction(redirectTo)) {
             redirectTo();
           } else if (_.isString(redirectTo)) {

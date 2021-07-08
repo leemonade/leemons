@@ -7,10 +7,11 @@ import hooks from 'leemons-hooks';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de crear usuarios
 export default function SelectProfile() {
+  console.log('Justo en el select profile');
   useSession({ redirectTo: goLoginPage });
 
   const [loading, setLoading] = useState(true);
-  const [profiles, setProfiles] = useState();
+  const [profiles, setProfiles] = useState([]);
 
   async function getProfileToken(profile) {
     const { jwtToken } = await getUserProfileTokenRequest(profile.id);

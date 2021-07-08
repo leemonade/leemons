@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { listUsersRequest } from '@users/request';
 import { goBasePage, goDetailUserPage } from '@users/navigate';
 import MainMenuLayout from '@menu-builder/components/mainMenuLayout';
+import MainMenuDropItem from '@menu-builder/components/mainMenu/mainMenuDropItem';
 
 export default function ListUsers() {
   const [pagination, setPagination] = useState(null);
@@ -23,6 +24,12 @@ export default function ListUsers() {
   return (
     <>
       <MainMenuLayout>
+        <div className="mb-4">
+          <MainMenuDropItem item={{ prueba: 'Flipas' }} className="bg-blue-300 rounded-3xl">
+            {({ isDragging }) => <>{isDragging.toString()}Arrastra esto al menu</>}
+          </MainMenuDropItem>
+        </div>
+
         <button onClick={goBasePage}>Volver</button>
         <button onClick={goDetailUserPage}>Añadir usuario</button>
 

@@ -11,7 +11,11 @@ export default function MainMenuItem({ item, menuWidth, active, onClick }) {
         key={item.id}
       >
         <div className={'w-5 h-full mx-auto relative'}>
-          <Image layout="fill" src={item.iconSvg} alt={item.iconAlt} />
+          <Image
+            layout="fill"
+            src={active && item.activeIconSvg ? item.activeIconSvg : item.iconSvg}
+            alt={item.iconAlt}
+          />
         </div>
       </div>
     </>

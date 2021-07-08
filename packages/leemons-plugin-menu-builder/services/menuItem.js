@@ -1,7 +1,20 @@
 const { add, exist, remove, removeAll } = require('../src/services/menu-item');
 
 function _add(
-  { menuKey, key, parentKey, url, window, iconName, iconSvg, label, description },
+  {
+    menuKey,
+    key,
+    parentKey,
+    url,
+    window,
+    iconName,
+    activeIconName,
+    iconSvg,
+    activeIconSvg,
+    iconAlt,
+    label,
+    description,
+  },
   permissions,
   { transacting } = {}
 ) {
@@ -14,7 +27,10 @@ function _add(
       url,
       window,
       iconName,
+      activeIconName,
       iconSvg,
+      activeIconSvg,
+      iconAlt,
       label,
       description,
     },

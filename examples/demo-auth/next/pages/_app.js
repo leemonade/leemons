@@ -6,6 +6,7 @@ import React, { useEffect } from 'react';
 import { frontPlugins, plugins } from '@plugins';
 import { SessionProvider } from '@users/context/session';
 import 'tailwindcss/tailwind.css';
+import 'simplebar/dist/simplebar.min.css';
 
 function MyApp({ Component, pageProps }) {
   // Only add it once

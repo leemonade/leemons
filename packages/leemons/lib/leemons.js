@@ -168,6 +168,7 @@ class Leemons {
         ctx.body = { status: 401, msg: 'Authorization required' };
         return undefined;
       } catch (err) {
+        console.error(err);
         ctx.status = 401;
         ctx.body = { status: 401, msg: 'Authorization required' };
         return undefined;
