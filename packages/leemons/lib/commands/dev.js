@@ -7,6 +7,7 @@ const createLogger = require('leemons-logger/lib/logger/multiThread');
 const { getAvailablePort } = require('leemons-utils/lib/port');
 
 const { createDatabaseManager } = require('leemons-database');
+const EventEmitter = require('events');
 const { handleStdin } = require('./lib/io');
 const { createWorker } = require('./lib/worker');
 const { createReloader } = require('./lib/watch');
@@ -21,6 +22,7 @@ const {
   getExternalPlugins,
 } = require('../core/plugins/getPlugins');
 const { loadConfiguration } = require('../core/config/loadConfig');
+const { getStatus, PLUGIN_STATUS } = require('./pluginsStatus');
 
 /**
  * Creates a watcher for frontend files and then sets up all the needed files
@@ -265,6 +267,32 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
       }
     });
 
+    const eventEmitter = new EventEmitter();
+
+    const emit = (event, ...args) => {
+      eventEmitter.emit('all', event, ...args);
+      eventEmitter.emit(event, ...args);
+    };
+
+    // ! Event handling
+
+    let startTime = 0;
+    eventEmitter.once('pluginsWillLoad', () => {
+      startTime = new Date();
+    });
+    eventEmitter.once('pluginsDidLoad', () => {
+      const time = new Date(new Date() - startTime);
+      const minutes = time.getMinutes();
+      const seconds = time.getSeconds();
+      const milliseconds = time.getMilliseconds();
+      const timeString = `${
+        (minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')
+      }${milliseconds}ms`;
+
+      leemons.log.debug(`Plugins loaded in ${timeString}`);
+    });
+
+    // ! App init
     // Loads the App and plugins config
     await leemons.loadAppConfig();
 
@@ -283,10 +311,14 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
     loadCoreModels(leemons);
     await leemons.db.loadModels(_.omit(leemons.models, 'core_store'));
 
+    // ! Plugin loading
+    emit('pluginsWillLoad');
+    // Get plugins info from DB and installed plugins (local and external)
     const pluginsInfo = await getPluginsInfoFromDB(leemons);
     const localPlugins = await getLocalPlugins(leemons);
     const externalPlugins = await getExternalPlugins(leemons);
 
+    // Load configuration for each plugin
     let plugins = await Promise.all(
       [...localPlugins, ...externalPlugins].map(async (plugin) => {
         const { env, configProvider: config } = await loadConfiguration(plugin, {
@@ -314,67 +346,129 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
       })
     );
 
-    const getStatus = (pluginInfo, defaultStatus) => {
-      if (pluginsInfo.isDisabled) {
-        return {
-          code: 'disabled',
-          reason: 'disabled by admin',
-        };
-      }
-      if (pluginsInfo.isBroken) {
-        return {
-          code: 'broken',
-          reason: 'the plugin initialization failed',
-        };
-      }
-
-      return defaultStatus;
-    };
-
+    // Merge DB info with plugins config, if the plugin is missing, create it
+    // as missing
     pluginsInfo.forEach(({ name, path: pluginPath, version, id, source, ...pluginInfo }) => {
       const equivalentPlugin = plugins.find(
         (plugin) => plugin.name === name && plugin.dir.app === pluginPath
       );
 
+      // Missing plugin
       if (!equivalentPlugin) {
         plugins.push({
           name,
-          // TODO: Save source
           source,
           version,
           id,
           dir: { app: pluginPath },
           status: {
-            ...getStatus(pluginInfo, {
-              code: 'missing',
-              reason: 'The plugin is registered but its files are missing',
-            }),
+            ...getStatus(pluginInfo, PLUGIN_STATUS.missing),
             ...pluginInfo,
           },
         });
+        // Existing plugin
       } else {
         equivalentPlugin.id = id;
         equivalentPlugin.status = {
-          // TODO: Support not enabled statuses
-          ...getStatus(pluginInfo, { code: 'enabled', reason: '' }),
+          ...getStatus(pluginInfo, PLUGIN_STATUS.enabled),
           ...pluginInfo,
         };
       }
     });
 
-    console.log(plugins);
-    // Register new plugins to DB
+    // TODO: If a plugin is marked as uninstalled will fail
+    // Register new plugins to DB and merge data from DB with config
     plugins = await Promise.all(
-      plugins.map(async (plugin) => {
+      plugins.map(async (plugin, i) => {
+        /*
+         * Disable duplicated plugins, the duplicated plugins are those which
+         * share a name and is not registered in the DB, this last conditions
+         * is for ensuring the less posible plugin disabling
+         */
+        if (
+          plugins.findIndex((_plugin, j) => j !== i && plugin.name === _plugin.name) > -1 &&
+          plugin.id === undefined
+        ) {
+          return { ...plugin, status: PLUGIN_STATUS.duplicated };
+        }
+
+        // TODO: Can crash
+        // If the plugin does not have an id, is not registered in the DB yet
         if (plugin.id === undefined) {
-          await leemons.models.plugins.add({
+          const {
+            name,
+            path: pluginPath,
+            version,
+            id,
+            source,
+            ...pluginInfo
+          } = await leemons.models.plugins.add({
             ...plugin,
             path: plugin.dir.app,
+            // Use version 0.0.1 as default
             version: plugin.version || '0.0.1',
           });
+
+          return {
+            ...plugin,
+            id,
+            status: {
+              ...getStatus(pluginInfo, PLUGIN_STATUS.enabled),
+              ...pluginInfo,
+            },
+          };
         }
+
+        // Return already registered plugin
+        return plugin;
       })
     );
+
+    // TODO: Compute dependencies and dependants
+
+    /**
+     * We should have each plugin:
+     *  dependencies: The plugins it directly depends on
+     *  fullDependencies: All the plugins it depends on (directly or indirectly)
+     *  dependants: All the plugins that depends on it (if it fails, the dependants must be disabled)
+     */
+
+    // TODO: LoadPluginsModels
+
+    /**
+     * Load the models described by each plugin, only if it is enabled
+     */
+
+    // TODO: Load backend
+    // TODO:  Install plugins
+    /**
+     *        run the installation script for the uninstalled plugins
+     */
+    // TODO:  Initialize plugins (pre)?
+    /**
+     *        Run a preinitialization where each plugin can set up stuff needed by services and controllers
+     */
+    // TODO:  Load services
+    /**
+     *        Load the services; some functions the plugin exposes
+     */
+    // TODO:  Load controllers
+    /**
+     *        Load the controllers; functions exposed to the server (endpoints)
+     */
+    // TODO:  Initialize plugins (post)?
+    /**
+     *        Run a posInitialization where each plugin can set up stuff needed by other plugins and/or itself. Also, that stuff that relies on itself' services/controllers
+     */
+
+    // TODO: Load frontend (start nextjs with child_process instead of next)
+    /**
+     *        Load the frontend of all the plugins, and reload in secure mode if an error occurs
+     */
+
+    emit('pluginsDidLoad');
+
+    // ! Original functions
 
     // const pluginsConfig = await leemons.loadPluginsConfig();
     // const providersConfig = await leemons.loadProvidersConfig();

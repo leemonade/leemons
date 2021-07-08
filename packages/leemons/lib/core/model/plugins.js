@@ -5,10 +5,8 @@ function createPluginsProvider(model, leemons) {
 
   // Return the core_store model with helper functions
   Object.assign(modelProvider, {
-    add: ({ name, path, version, source }, transacting) => {
-      leemons.query('models::plugins').create({ name, path, version, source }, { transacting });
-    },
-
+    add: ({ name, path, version, source }, transacting) =>
+      leemons.query('models::plugins').create({ name, path, version, source }, { transacting }),
     get: (name, transacting) => leemons.query('models::plugins').findOne({ name }, { transacting }),
 
     setVersion: (name, version) => leemons.query('models::plugins').set({ name }, { version }),
@@ -54,6 +52,7 @@ function createPlugins() {
         type: 'string',
         options: {
           notNull: true,
+          unique: true,
         },
       },
       path: {
