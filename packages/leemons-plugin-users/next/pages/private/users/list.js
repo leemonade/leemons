@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useSession } from '@users/session';
 import { listUsersRequest } from '@users/request';
-import { goBasePage, goDetailUserPage, goLoginPage } from '@users/navigate';
-import MainMenu from '@menu-builder/components/mainMenu';
+import { goBasePage, goDetailUserPage } from '@users/navigate';
+import MainMenuLayout from '@menu-builder/components/mainMenuLayout';
 
 export default function ListUsers() {
   const [pagination, setPagination] = useState(null);
-  useSession({ redirectTo: goLoginPage });
+
+  // useSession({ redirectTo: goLoginPage });
 
   async function listUsers() {
     const { data } = await listUsersRequest({
@@ -22,7 +22,7 @@ export default function ListUsers() {
 
   return (
     <>
-      <MainMenu>
+      <MainMenuLayout>
         <button onClick={goBasePage}>Volver</button>
         <button onClick={goDetailUserPage}>Añadir usuario</button>
 
@@ -49,7 +49,7 @@ export default function ListUsers() {
               : null}
           </tbody>
         </table>
-      </MainMenu>
+      </MainMenuLayout>
     </>
   );
 }

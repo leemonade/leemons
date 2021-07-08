@@ -6,7 +6,7 @@ import {
   goLoginPage,
   goSelectProfilePage,
 } from '@users/navigate';
-import MainMenu from '@menu-builder/components/mainMenu';
+import MainMenuLayout from '@menu-builder/components/mainMenuLayout';
 
 export default function UserTest() {
   const session = useSession({ redirectTo: goLoginPage });
@@ -16,7 +16,7 @@ export default function UserTest() {
   };
 
   return (
-    <MainMenu>
+    <MainMenuLayout>
       <div>
         {session && (
           <div>
@@ -44,7 +44,7 @@ export default function UserTest() {
           Logout
         </button>
       </div>
-    </MainMenu>
+    </MainMenuLayout>
   );
 }
 
