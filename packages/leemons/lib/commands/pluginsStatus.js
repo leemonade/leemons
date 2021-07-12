@@ -16,6 +16,10 @@ const PLUGIN_STATUS = {
     code: 'duplicated',
     reason: 'the plugin is duplicated',
   },
+  missingDeps: {
+    code: 'missingDeps',
+    reason: "some of the plugin' dependencies are not satisfied",
+  },
 };
 
 // Get the status of the plugin based on the plugin info from DB

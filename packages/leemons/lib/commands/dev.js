@@ -15,7 +15,7 @@ const { createReloader } = require('./lib/watch');
 const { Leemons } = require('../index');
 const loadFront = require('../core/plugins/front/loadFront');
 const build = require('../core/front/build');
-const { loadCoreModels } = require('../core/model/loadModel');
+const { loadCoreModels, formatModels } = require('../core/model/loadModel');
 const {
   getPluginsInfoFromDB,
   getLocalPlugins,
@@ -23,6 +23,8 @@ const {
 } = require('../core/plugins/getPlugins');
 const { loadConfiguration } = require('../core/config/loadConfig');
 const { getStatus, PLUGIN_STATUS } = require('./pluginsStatus');
+const { computeDependencies, checkMissingDependencies } = require('./dependencies');
+const { loadFiles } = require('../core/config/loadFiles');
 
 /**
  * Creates a watcher for frontend files and then sets up all the needed files
@@ -317,6 +319,7 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
     const pluginsInfo = await getPluginsInfoFromDB(leemons);
     const localPlugins = await getLocalPlugins(leemons);
     const externalPlugins = await getExternalPlugins(leemons);
+    const pluginsEnv = new Map();
 
     // Load configuration for each plugin
     let plugins = await Promise.all(
@@ -335,6 +338,7 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
         });
 
         // Save the plugin env
+        pluginsEnv.set(plugin.path.app, env);
         // pluginsEnv.push([config.get('config.name', plugin.name), env]);
 
         return {
@@ -425,25 +429,58 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
     );
 
     // TODO: Compute dependencies and dependants
-
     /**
-     * We should have each plugin:
+     * Get for each plugin:
      *  dependencies: The plugins it directly depends on
      *  fullDependencies: All the plugins it depends on (directly or indirectly)
      *  dependants: All the plugins that depends on it (if it fails, the dependants must be disabled)
      */
+    plugins = computeDependencies(plugins);
+
+    // Mark each plugin as missingDeps
+    const unsatisfiedPlugins = checkMissingDependencies(plugins);
+    plugins
+      .filter((plugin) => unsatisfiedPlugins.includes(plugin.name))
+      .forEach((plugin) => {
+        // eslint-disable-next-line no-param-reassign
+        plugin.status = { ...plugin.status, ...PLUGIN_STATUS.missingDeps };
+      });
 
     // TODO: LoadPluginsModels
 
+    plugins = await Promise.all(
+      plugins.map(async (plugin) => {
+        if (plugin.status.code === PLUGIN_STATUS.enabled.code) {
+          const models = formatModels(
+            await loadFiles(path.join(plugin.dir.app, plugin.dir.models), {
+              env: pluginsEnv.get(plugin.dir.app),
+            }),
+            `plugins.${plugin.name}`
+          );
+          return { ...plugin, models };
+        }
+        return plugin;
+      })
+    );
+
+    leemons.plugins = _.fromPairs(plugins.map((plugin) => [plugin.name, plugin]));
+    const pluginsModels = _.merge(
+      ...plugins
+        .filter((plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code && plugin.models)
+        .map((plugin) => plugin.models)
+    );
+
+    // Load all the plugins models
+    await leemons.db.loadModels(pluginsModels);
     /**
      * Load the models described by each plugin, only if it is enabled
      */
 
-    // TODO: Load backend
     // TODO:  Install plugins
     /**
      *        run the installation script for the uninstalled plugins
      */
+    // TODO: Load backend
     // TODO:  Initialize plugins (pre)?
     /**
      *        Run a preinitialization where each plugin can set up stuff needed by services and controllers
