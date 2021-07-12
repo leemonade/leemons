@@ -24,7 +24,7 @@ const {
 const { loadConfiguration } = require('../core/config/loadConfig');
 const { getStatus, PLUGIN_STATUS } = require('./pluginsStatus');
 const { computeDependencies, checkMissingDependencies } = require('./dependencies');
-const { loadFiles } = require('../core/config/loadFiles');
+const { loadFiles, loadFile } = require('../core/config/loadFiles');
 
 /**
  * Creates a watcher for frontend files and then sets up all the needed files
@@ -334,6 +334,7 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
             providers: 'providers',
             next: 'next',
             env: '.env',
+            install: 'install.js',
           },
         });
 
@@ -477,6 +478,34 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
      */
 
     // TODO:  Install plugins
+    const nonInstalledPlugins = plugins.filter(
+      (plugin) => !plugin.status.isInstalled && plugin.status.code === PLUGIN_STATUS.enabled.code
+    );
+
+    for (let i = 0; i < nonInstalledPlugins.length; i++) {
+      const plugin = nonInstalledPlugins[i];
+      // Try to install the plugin, if an error occurred, mark the plugin as disabled as well as its dependencies
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        const installResult = await loadFile(path.join(plugin.dir.app, plugin.dir.install));
+        // If the installation script exists
+        if (installResult !== null) {
+          plugin.status.isInstalled = true;
+          // eslint-disable-next-line no-await-in-loop
+          await leemons.models.plugins.installed(plugin.name);
+        }
+      } catch (e) {
+        // The installation failed, disable plugin
+        // eslint-disable-next-line no-param-reassign
+        plugin.status = {
+          ...plugin.status,
+          ...PLUGIN_STATUS.installationFailed,
+        };
+        // Disable dependant plugins
+      }
+    }
+
+    console.log(plugins);
     /**
      *        run the installation script for the uninstalled plugins
      */
