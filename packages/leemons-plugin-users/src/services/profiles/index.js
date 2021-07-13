@@ -3,6 +3,7 @@ const { add } = require('./add');
 const { existName } = require('./existName');
 const { detailByUri } = require('./detailByUri');
 const { update } = require('./update');
+const existMany = require('./existMany');
 
 module.exports = {
   list,
@@ -10,4 +11,5 @@ module.exports = {
   existName,
   detailByUri,
   update,
+  existMany,
 };

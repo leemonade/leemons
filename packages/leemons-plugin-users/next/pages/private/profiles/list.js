@@ -1,23 +1,19 @@
-import constants from '@users/constants';
 import { useEffect, useState } from 'react';
 import { useSession } from '@users/session';
-import Router from 'next/router';
+import { listProfilesRequest } from '@users/request';
+import { goDetailProfilePage, goLoginPage } from '@users/navigate';
 
 export default function ListProfiles() {
   const [pagination, setPagination] = useState(null);
-  useSession({ redirectTo: constants.frontend.login });
+  useSession({ redirectTo: goLoginPage });
 
   async function listProfiles() {
     try {
-      const response = await leemons.api(constants.backend.profiles.list, {
-        method: 'POST',
-        body: {
-          page: 0,
-          size: 10,
-        },
+      const { data } = await listProfilesRequest({
+        page: 0,
+        size: 10,
       });
-      console.log(response);
-      setPagination(response.data);
+      setPagination(data);
     } catch (err) {
       console.log('petazo');
       console.error(err);
@@ -31,9 +27,7 @@ export default function ListProfiles() {
   return (
     <>
       <div>Perfiles:</div>
-      <button onClick={() => Router.push(`/${constants.frontend.private.profiles.detail}`)}>
-        Crear nuevo perfil
-      </button>
+      <button onClick={goDetailProfilePage}>Crear nuevo perfil</button>
       <table>
         <thead>
           <tr>
@@ -45,13 +39,7 @@ export default function ListProfiles() {
           {pagination
             ? pagination.items.map((item) => (
                 <tr key={item.id}>
-                  <td
-                    onClick={() =>
-                      Router.push(`/${constants.frontend.private.profiles.detail}/${item.uri}`)
-                    }
-                  >
-                    {item.name}
-                  </td>
+                  <td onClick={() => goDetailProfilePage(item.uri)}>{item.name}</td>
                   <td>{item.created_at}</td>
                 </tr>
               ))

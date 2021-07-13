@@ -40,15 +40,13 @@ async function recover(email, ctx) {
       user.language,
       {
         name: user.name,
-        resetUrl: `${ctx.request.header.origin}/${
-          constants.url.frontend.reset
-        }?token=${encodeURIComponent(
+        resetUrl: `${ctx.request.header.origin}/users/public/reset?token=${encodeURIComponent(
           await generateJWTToken({
             id: user.id,
             code: recovery.code,
           })
         )}`,
-        recoverUrl: `${ctx.request.header.origin}/${constants.url.frontend.recover}`,
+        recoverUrl: `${ctx.request.header.origin}/users/public/recover`,
       }
     );
   }

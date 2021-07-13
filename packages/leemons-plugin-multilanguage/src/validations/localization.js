@@ -4,7 +4,7 @@ const { codeSchema } = require('./locale');
 const { LeemonsValidator } = global.utils;
 
 LeemonsValidator.ajv.addFormat('localizationKey', {
-  validate: (x) => /^([a-z][a-z0-9_-]+\.){0,}[a-z][a-z0-9_-]{0,}$/.test(x),
+  validate: (x) => /^([a-z][a-z0-9_:-]+\.){0,}[a-z][a-z0-9_:-]{0,}$/.test(x),
 });
 
 module.exports = class Validator {
@@ -15,7 +15,7 @@ module.exports = class Validator {
      * If the prefix is required, the key must be the prefix of start with the '${prefix}.'
      */
     this.keySchema = (usePrefix) => {
-      const pattern = `([a-z][a-z0-9_-]+\\.){0,}[a-z][a-z0-9_-]{0,}`;
+      const pattern = `([a-z][a-z0-9_:-]+\\.){0,}[a-z][a-z0-9_:-]{0,}`;
       return {
         type: 'string',
         pattern: `^(${usePrefix && prefix ? `((${prefix})|(${prefix}\\.${pattern}))` : pattern})$`,
@@ -102,7 +102,7 @@ module.exports = class Validator {
               locale: {
                 type: 'string',
                 minLength: 2,
-                maxLength: 5,
+                maxLength: 12,
               },
               value: {
                 type: 'string',

@@ -1,7 +1,7 @@
 import { getSession, useSession } from '@users/session';
 import constants from '@users/constants';
 import { useForm } from 'react-hook-form';
-import Router from 'next/router';
+import { goLoginPage, goRegisterPage } from '@users/navigate';
 
 export default function Recover() {
   useSession({ redirectTo: constants.base, redirectIfFound: true });
@@ -35,10 +35,8 @@ export default function Recover() {
         <input type="submit" />
       </form>
 
-      <div onClick={() => Router.push(`/${constants.frontend.login}`)}>Volver al login</div>
-      <div onClick={() => Router.push(`/${constants.frontend.register}`)}>
-        Aun no estoy registrado
-      </div>
+      <div onClick={goLoginPage}>Volver al login</div>
+      <div onClick={goRegisterPage}>Aun no estoy registrado</div>
     </>
   );
 }

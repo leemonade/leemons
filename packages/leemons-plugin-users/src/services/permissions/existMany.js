@@ -1,4 +1,5 @@
 const { table } = require('../tables');
+const constants = require('../../../config/constants');
 
 /**
  * Check if permission exists
@@ -8,7 +9,8 @@ const { table } = require('../tables');
  * @return {Promise<boolean>}
  * */
 async function existMany(permissionNames) {
-  const count = await table.permission.count({ permissionName_$in: permissionNames });
+  let count = await table.permission.count({ permissionName_$in: permissionNames });
+  if (permissionNames.indexOf(constants.basicPermission.permissionName) >= 0) count += 1;
   return count === permissionNames.length;
 }
 

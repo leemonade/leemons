@@ -7,9 +7,9 @@ const { table } = require('../tables');
  * @static
  * @return {Promise<string[]>} Super admin ids
  * */
-async function getSuperAdminUserIds() {
+async function getSuperAdminUserIds({ transacting } = {}) {
   // Todo cachear ids de super administrador
-  const superAdminUsers = await table.superAdminUser.find();
+  const superAdminUsers = await table.superAdminUser.find(undefined, { transacting });
   return _.map(superAdminUsers, 'user');
 }
 

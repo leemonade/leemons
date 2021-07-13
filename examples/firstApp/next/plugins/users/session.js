@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import React, { useContext, useEffect } from 'react';
 import SessionContext from '@users/context/session';
 import Cookies from 'js-cookie';
@@ -69,7 +70,11 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
           // If redirectIfFound is also set, redirect if the user was found
           (redirectIfFound && hasUser)
         ) {
-          Router.push(`/${redirectTo}`);
+          if (_.isFunction(redirectTo)) {
+            redirectTo();
+          } else if (_.isString(redirectTo)) {
+            Router.push(redirectTo);
+          }
         }
       }, [redirectTo, redirectIfFound, finished, hasUser]);
 

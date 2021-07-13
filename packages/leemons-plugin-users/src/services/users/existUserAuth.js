@@ -6,10 +6,11 @@ const { table } = require('../tables');
  * @static
  * @param {any} query
  * @param {boolean} throwErrorIfNotExists
+ * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function existUserAuth(query, throwErrorIfNotExists) {
-  const count = await table.userAuth.count(query);
+async function existUserAuth(query, throwErrorIfNotExists, { transacting } = {}) {
+  const count = await table.userAuth.count(query, { transacting });
   if (throwErrorIfNotExists && !count) throw new Error('User auth not found');
   return !!count;
 }

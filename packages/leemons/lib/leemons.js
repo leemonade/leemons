@@ -145,6 +145,7 @@ class Leemons {
           }} {gray ${end - start} ms}`
         );
       } catch (err) {
+        console.error(err);
         leemons.log.error(err.message);
         leemonsUtils.returnError(ctx, err);
       }
@@ -156,7 +157,7 @@ class Leemons {
   authenticatedMiddleware() {
     return async (ctx, next) => {
       try {
-        const user = await this.plugins['users'].services.users.detailForJWT(
+        const user = await this.plugins.users.services.users.detailForJWT(
           ctx.headers.authorization
         );
         if (user) {
@@ -167,6 +168,7 @@ class Leemons {
         ctx.body = { status: 401, msg: 'Authorization required' };
         return undefined;
       } catch (err) {
+        console.error(err);
         ctx.status = 401;
         ctx.body = { status: 401, msg: 'Authorization required' };
         return undefined;
@@ -176,16 +178,20 @@ class Leemons {
 
   permissionsMiddleware(allowedPermissions) {
     return async (ctx, next) => {
-      const hasPermission = await this.plugins['users'].services.users.havePermission(
-        ctx.state.user,
-        allowedPermissions
-      );
-      if (hasPermission) {
-        return next();
+      try {
+        const hasPermission = await this.plugins.users.services.users.hasPermissionCTX(
+          ctx.state.user,
+          allowedPermissions
+        );
+        if (hasPermission) {
+          return next();
+        }
+        ctx.status = 401;
+        ctx.body = { status: 401, msg: 'You do not have permissions' };
+        return undefined;
+      } catch (err) {
+        console.error(err);
       }
-      ctx.status = 401;
-      ctx.body = { status: 401, msg: 'You do not have permissions' };
-      return undefined;
     };
   }
 

@@ -39,6 +39,14 @@
  */
 
 /**
+ * @typedef {RolePermissionsAdd} UserAddCustomPermission
+ */
+
+/**
+ * @typedef {UserAddCustomPermission} UserHasCustomPermission
+ */
+
+/**
  * @typedef Permission
  * @property {string} id Permission id
  * @property {string} permissionName Permission name (For backend - Check if has this permission name)
@@ -53,6 +61,16 @@
  * @property {string} permissionName Permission name (For backend)
  * @property {string[]} actions Actions for this permission
  * @property {LocalizationAdd} localizationName
+ */
+
+/**
+ * @typedef ItemPermission
+ * @type {Object}
+ * @property {string} permissionName Permission name (For backend)
+ * @property {string[]} actionNames Action names (For backend)
+ * @property {string} target Target id
+ * @property {string} type Type
+ * @property {string} item Item that requires the user attempting to access to have the following permissions to be read
  */
 
 /**
@@ -97,4 +115,21 @@
  * @property {string} name User name
  * @property {Date} created_at Date of permission creation
  * @property {Date} updated_at Date of permission update
+ */
+
+/**
+ * @typedef {array} ListOfUserPermissions
+ * @property {string | undefined} role Role id
+ * @property {string} permissionName Permission name
+ * @property {string[]} actionNames Array of actions for the permission name
+ * @property {string | undefined} target Target of permissions
+ */
+
+/**
+ * @typedef AddUser
+ * @property {string} name User name
+ * @property {string | undefined} surnames User surnames
+ * @property {string} email User email
+ * @property {string} password User password
+ * @property {string} language User locale language
  */

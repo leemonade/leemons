@@ -40,6 +40,42 @@ module.exports = (Base) =>
     }
 
     /**
+     * Gets many localization that matches the keys
+     * @param {LocalizationKey[]} keys
+     * @returns {Localization[]}
+     */
+    async getManyWithKeys(keys, { transacting } = {}) {
+      // Validate keys array and lowercase them
+      const _keys = this.validator.validateLocalizationKeyArray(keys, this.private);
+
+      try {
+        return await withTransaction(
+          async (t) => {
+            const foundLocalizations = await this.model.find(
+              { key_$in: _keys },
+              { transacting: t }
+            );
+
+            const localizationsByKey = _.groupBy(foundLocalizations, 'key');
+
+            return Object.keys(localizationsByKey).reduce((acc, key) => {
+              acc[key] = {};
+              _.forEach(localizationsByKey[key], ({ locale, value }) => {
+                acc[key][locale] = value;
+              });
+              return acc;
+            }, {});
+          },
+          this.model,
+          transacting
+        );
+      } catch (e) {
+        leemons.log.debug(e.message);
+        throw new Error('An error ocurred while getting the localizations');
+      }
+    }
+
+    /**
      * Gets many localization that matches the keys and the locale
      * @param {LocalizationKey[]} keys
      * @param {LocaleCode} locale

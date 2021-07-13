@@ -1,0 +1,27 @@
+import login from './login';
+import reset from './reset';
+import recover from './recover';
+import canReset from './canReset';
+import listUsers from './listUsers';
+import listActions from './listActions';
+import addProfile from './addProfile';
+import getProfile from './getProfile';
+import listProfiles from './listProfiles';
+import updateProfile from './updateProfile';
+import listPermissions from './listPermissions';
+import getUserProfiles from './getUserProfiles';
+import getUserProfileToken from './getUserProfileToken';
+
+export const loginRequest = login;
+export const resetRequest = reset;
+export const recoverRequest = recover;
+export const canResetRequest = canReset;
+export const listUsersRequest = listUsers;
+export const listActionsRequest = listActions;
+export const addProfileRequest = addProfile;
+export const getProfileRequest = getProfile;
+export const listProfilesRequest = listProfiles;
+export const updateProfileRequest = updateProfile;
+export const listPermissionsRequest = listPermissions;
+export const getUserProfilesRequest = getUserProfiles;
+export const getUserProfileTokenRequest = getUserProfileToken;

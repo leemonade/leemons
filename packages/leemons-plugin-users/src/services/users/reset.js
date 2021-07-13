@@ -33,7 +33,7 @@ async function reset(token, password, ctx) {
         config.user.language,
         {
           name: config.user.name,
-          loginUrl: `${ctx.request.header.origin}/${constants.url.frontend.login}`,
+          loginUrl: `${ctx.request.header.origin}/users/public/login`,
         }
       );
     }

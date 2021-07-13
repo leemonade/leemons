@@ -14,7 +14,7 @@ async function canReset(ctx) {
     ctx.status = 200;
     ctx.body = { status: 200, can };
   } else {
-    throw new Error(validator.error);
+    throw validator.error;
   }
 }
 
@@ -33,7 +33,7 @@ async function reset(ctx) {
     ctx.status = 200;
     ctx.body = { status: 200, user };
   } else {
-    throw new Error(validator.error);
+    throw validator.error;
   }
 }
 
@@ -51,7 +51,7 @@ async function recover(ctx) {
     ctx.status = 200;
     ctx.body = { status: 200, message: 'Email sent' };
   } else {
-    throw new Error(validator.error);
+    throw validator.error;
   }
 }
 
@@ -72,14 +72,27 @@ async function login(ctx) {
     ctx.status = 200;
     ctx.body = { status: 200, user: data.user, jwtToken: data.token };
   } else {
-    throw new Error(validator.error);
+    throw validator.error;
   }
 }
 
 async function detail(ctx) {
+  console.log('En el detail');
   const user = await usersService.detail(ctx.state.user.user);
   ctx.status = 200;
   ctx.body = { status: 200, user };
+}
+
+async function profiles(ctx) {
+  const _profiles = await usersService.profiles(ctx.state.user.user);
+  ctx.status = 200;
+  ctx.body = { status: 200, profiles: _profiles };
+}
+
+async function profileToken(ctx) {
+  const jwtToken = await usersService.profileToken(ctx.state.user.user, ctx.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200, jwtToken };
 }
 
 async function create() {}
@@ -99,7 +112,7 @@ async function list(ctx) {
     ctx.status = 200;
     ctx.body = { status: 200, data };
   } else {
-    throw new Error(validator.error);
+    throw validator.error;
   }
 }
 
@@ -122,4 +135,6 @@ module.exports = {
   create,
   list,
   createSuperAdmin,
+  profiles,
+  profileToken,
 };

@@ -20,6 +20,7 @@ async function add({ name, permissions }, { transacting: _transacting }) {
         permission.permissionName,
         permission.actionNames,
       ]);
+
       if (!(await manyPermissionsHasManyActions(dataToCheckPermissions, { transacting })))
         throw new Error(`One or more permissions or his actions not exist`);
 

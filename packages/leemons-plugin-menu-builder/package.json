@@ -1,0 +1,11 @@
+{
+  "name": "leemons-plugin-menu-builder",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "leemons-utils": "1.0.0",
+    "lodash": "^4.17.21",
+    "tailwindcss": "^2.2.4"
+  }
+}

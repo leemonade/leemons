@@ -1,7 +1,8 @@
 import { getSession, loginSession, useSession } from '@users/session';
 import constants from '@users/constants';
 import { useForm } from 'react-hook-form';
-import Router from 'next/router';
+import { loginRequest } from '@users/request';
+import { goRecoverPage } from '@users/navigate';
 
 export default function Home() {
   useSession({ redirectTo: constants.base, redirectIfFound: true });
@@ -13,12 +14,8 @@ export default function Home() {
   } = useForm();
   const onSubmit = async (data) => {
     try {
-      const response = await leemons.api(constants.backend.users.login, {
-        method: 'POST',
-        body: data,
-      });
-      alert('Te ha logado bien');
-      loginSession(response.jwtToken, constants.base);
+      const response = await loginRequest(data);
+      loginSession(response.jwtToken, 'users/private/select-profile');
     } catch (err) {
       console.error(err);
     }
@@ -46,7 +43,7 @@ export default function Home() {
         <input type="submit" />
       </form>
 
-      <div onClick={() => Router.push(`/${constants.frontend.recover}`)}>Recuperar contraseña</div>
+      <div onClick={goRecoverPage}>Recuperar contraseña</div>
     </>
   );
 }

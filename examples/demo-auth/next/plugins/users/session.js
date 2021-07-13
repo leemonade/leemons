@@ -1,9 +1,9 @@
+import * as _ from 'lodash';
 import React, { useContext, useEffect } from 'react';
 import SessionContext from '@users/context/session';
 import Cookies from 'js-cookie';
 import useSWR from 'swr';
 import Router from 'next/router';
-import constants from './constants';
 
 /**
  * @private
@@ -42,10 +42,7 @@ export async function getSession({ req }) {
   }
 }
 
-const fetcher = (token) => (url) =>
-  leemons.api(url, {
-    headers: { Authorization: token },
-  });
+const fetcher = () => () => leemons.api('users/user');
 
 export function useSession({ redirectTo, redirectIfFound } = {}) {
   const context = useContext(SessionContext);
@@ -53,7 +50,7 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
   if (!context) {
     const token = Cookies.get('token');
     if (token) {
-      const { data, error } = useSWR('users/user', fetcher(token), {
+      const { data, error } = useSWR(`users/user/${token}`, fetcher(), {
         revalidateOnFocus: false,
       });
 
@@ -69,7 +66,12 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
           // If redirectIfFound is also set, redirect if the user was found
           (redirectIfFound && hasUser)
         ) {
-          Router.push(`/${redirectTo}`);
+          console.log('Redirecionamos al usuario', finished, hasUser, data, error);
+          if (_.isFunction(redirectTo)) {
+            redirectTo();
+          } else if (_.isString(redirectTo)) {
+            Router.push(`/${redirectTo}`);
+          }
         }
       }, [redirectTo, redirectIfFound, finished, hasUser]);
 
@@ -90,7 +92,11 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
         // If redirectIfFound is also set, redirect if the user was found
         (redirectIfFound && hasUser)
       ) {
-        Router.push(`/${redirectTo}`);
+        if (_.isFunction(redirectTo)) {
+          redirectTo();
+        } else if (_.isString(redirectTo)) {
+          Router.push(`/${redirectTo}`);
+        }
       }
     }, [redirectTo, redirectIfFound, hasUser]);
   }
@@ -98,9 +104,9 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
 }
 
 export function logoutSession(redirectTo) {
-  Router.push(`/${constants.frontend.authLogout}?redirectTo=${redirectTo}`);
+  Router.push(`/users/public/auth/logout?redirectTo=${redirectTo}`);
 }
 
 export function loginSession(token, redirectTo) {
-  Router.push(`/${constants.frontend.authLogin}?token=${token}&redirectTo=${redirectTo}`);
+  Router.push(`/users/public/auth/login?token=${token}&redirectTo=${redirectTo}`);
 }

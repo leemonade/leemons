@@ -21,8 +21,6 @@ async function detailForJWT(jwtToken) {
     const user = await table.users.findOne({ id: userAuth.user });
     if (!user) throw new Error('No user found for the id provided');
     result = _.assign(user, userAuth);
-    result.id = userAuth.id;
-    result.user = user.id;
   } else {
     const user = await table.users.findOne({ id: payload.id });
     if (!user) throw new Error('No user found for the id provided');

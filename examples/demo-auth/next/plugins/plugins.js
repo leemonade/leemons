@@ -1,7 +1,11 @@
 module.exports = {
   plugins: [
-    'emails',
+    'dataset',
+		'dataset-test',
+		'emails',
+		'menu-builder',
 		'multilanguage',
+		'mvp-template',
 		'onboarding',
 		'users',
 		'provider-emails-amazon-ses'

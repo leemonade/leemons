@@ -25,19 +25,19 @@ module.exports = {
       type: 'string',
       options: {
         hidden: true,
-        notNull: true,
-      },
-    },
-    reloadPermissions: {
-      type: 'boolean',
-      options: {
-        defaultTo: false,
       },
     },
     language: {
       type: 'string',
       options: {
         notNull: true,
+      },
+    },
+    active: {
+      type: 'boolean',
+      options: {
+        notNull: true,
+        defaultTo: false,
       },
     },
   },

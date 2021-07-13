@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
-import constants from '@users/constants';
 import { useSession } from '@users/session';
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { goLoginPage } from '@users/navigate';
 
 export default function ListProfiles() {
-  useSession({ redirectTo: constants.frontend.login });
+  useSession({ redirectTo: goLoginPage });
 
   const router = useRouter();
   console.log(router);

@@ -1,7 +1,8 @@
 import { getSession, useSession } from '@users/session';
 import constants from '@users/constants';
 import { useForm } from 'react-hook-form';
-import Router from 'next/router';
+import { recoverRequest } from '@users/request';
+import { goLoginPage, goRegisterPage } from '@users/navigate';
 
 export default function Recover() {
   useSession({ redirectTo: constants.base, redirectIfFound: true });
@@ -13,10 +14,7 @@ export default function Recover() {
   } = useForm();
   const onSubmit = async (data) => {
     try {
-      const response = await leemons.api(constants.backend.users.recover, {
-        method: 'POST',
-        body: data,
-      });
+      const response = await recoverRequest(data);
       alert('Te hemos enviado un email');
     } catch (err) {
       console.error(err);
@@ -35,10 +33,8 @@ export default function Recover() {
         <input type="submit" />
       </form>
 
-      <div onClick={() => Router.push(`/${constants.frontend.login}`)}>Volver al login</div>
-      <div onClick={() => Router.push(`/${constants.frontend.register}`)}>
-        Aun no estoy registrado
-      </div>
+      <div onClick={goLoginPage}>Volver al login</div>
+      <div onClick={goRegisterPage}>Aun no estoy registrado</div>
     </>
   );
 }

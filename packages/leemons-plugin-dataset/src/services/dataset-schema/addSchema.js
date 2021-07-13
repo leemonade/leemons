@@ -1,0 +1,45 @@
+const {
+  validatePluginName,
+  validateNotExistLocation,
+  validateExistSchema,
+} = require('../../validations/exists');
+const { validateAddSchema } = require('../../validations/dataset-schema');
+const { table } = require('../tables');
+
+/** *
+ *  ES:
+ *  Añade los schemas del dataset, solo el dueño de la localizacion puede añadir los schemas.
+ *  Si ya existe un schema para esa localizacion devolvera un error
+ *
+ *  EN:
+ *  Adds the schemas of the dataset, only the owner of the location can add schemas.
+ *  If a schema already exists for that location it will return an error.
+ *
+ *  @public
+ *  @static
+ *  @param {DatasetAddSchema} data - New dataset location
+ *  @param {any=} transacting - DB Transaction
+ *  @return {Promise<DatasetSchema>} The new dataset location
+ *  */
+async function addSchema({ locationName, pluginName, jsonSchema, jsonUI }, { transacting } = {}) {
+  validateAddSchema({ locationName, pluginName, jsonSchema, jsonUI });
+  validatePluginName(pluginName, this.calledFrom);
+  await validateNotExistLocation(locationName, pluginName, { transacting });
+  await validateExistSchema(locationName, pluginName, { transacting });
+
+  const dataset = await table.dataset.update(
+    { locationName, pluginName },
+    {
+      jsonSchema: JSON.stringify(jsonSchema),
+      jsonUI: JSON.stringify(jsonUI),
+    },
+    { transacting }
+  );
+
+  dataset.jsonSchema = JSON.parse(dataset.jsonSchema);
+  dataset.jsonUI = JSON.parse(dataset.jsonUI);
+
+  return dataset;
+}
+
+module.exports = addSchema;

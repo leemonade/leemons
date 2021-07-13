@@ -1,7 +1,7 @@
 import { getSession, loginSession, useSession } from '@users/session';
 import constants from '@users/constants';
 import { useForm } from 'react-hook-form';
-import Router from 'next/router';
+import { goRecoverPage } from '@users/navigate';
 
 export default function Home() {
   useSession({ redirectTo: constants.base, redirectIfFound: true });
@@ -46,7 +46,7 @@ export default function Home() {
         <input type="submit" />
       </form>
 
-      <div onClick={() => Router.push(`/${constants.frontend.recover}`)}>Recuperar contraseña</div>
+      <div onClick={goRecoverPage}>Recuperar contraseña</div>
     </>
   );
 }

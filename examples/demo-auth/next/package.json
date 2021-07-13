@@ -9,14 +9,21 @@
   },
   "dependencies": {
     "@leemons/emails": "file:dependencies/emails",
+    "@leemons/menu-builder": "file:dependencies/menu-builder",
     "@leemons/multilanguage": "file:dependencies/multilanguage",
+    "@leemons/mvp-template": "file:dependencies/mvp-template",
     "@leemons/onboarding": "file:dependencies/onboarding",
     "@leemons/provider-emails-amazon-ses": "file:dependencies/provider-emails-amazon-ses",
     "@leemons/users": "file:dependencies/users",
     "js-cookie": "^2.2.1",
-    "postcss": "^8.3.0",
     "prop-types": "^15.7.2",
+    "react-dnd": "^14.0.2",
+    "react-dnd-html5-backend": "^14.0.0",
     "react-hook-form": "^7.8.3",
     "tailwindcss": "^2.1.2"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.2.6",
+    "postcss": "^8.3.0"
   }
 }

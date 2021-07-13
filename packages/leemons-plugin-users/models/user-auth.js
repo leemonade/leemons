@@ -15,6 +15,12 @@ module.exports = {
         collection: 'plugins_users::profiles',
       },
     },
+    reloadPermissions: {
+      type: 'boolean',
+      options: {
+        defaultTo: false,
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

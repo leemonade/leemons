@@ -1,11 +1,11 @@
 import constants from '@users/constants';
 import { useEffect, useState } from 'react';
 import { useSession } from '@users/session';
-import Router from 'next/router';
+import { goDetailProfilePage, goLoginPage } from '@users/navigate';
 
 export default function ListProfiles() {
   const [pagination, setPagination] = useState(null);
-  useSession({ redirectTo: constants.frontend.login });
+  useSession({ redirectTo: goLoginPage });
 
   async function listProfiles() {
     try {
@@ -31,9 +31,7 @@ export default function ListProfiles() {
   return (
     <>
       <div>Perfiles:</div>
-      <button onClick={() => Router.push(`/${constants.frontend.private.profiles.detail}`)}>
-        Crear nuevo perfil
-      </button>
+      <button onClick={goDetailProfilePage}>Crear nuevo perfil</button>
       <table>
         <thead>
           <tr>
@@ -45,13 +43,7 @@ export default function ListProfiles() {
           {pagination
             ? pagination.items.map((item) => (
                 <tr key={item.id}>
-                  <td
-                    onClick={() =>
-                      Router.push(`/${constants.frontend.private.profiles.detail}/${item.uri}`)
-                    }
-                  >
-                    {item.name}
-                  </td>
+                  <td onClick={() => goDetailProfilePage(item.uri)}>{item.name}</td>
                   <td>{item.created_at}</td>
                 </tr>
               ))
