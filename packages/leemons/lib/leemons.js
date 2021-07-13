@@ -179,7 +179,7 @@ class Leemons {
   permissionsMiddleware(allowedPermissions) {
     return async (ctx, next) => {
       try {
-        const hasPermission = await this.plugins.users.services.users.hasPermission(
+        const hasPermission = await this.plugins.users.services.users.hasPermissionCTX(
           ctx.state.user,
           allowedPermissions
         );

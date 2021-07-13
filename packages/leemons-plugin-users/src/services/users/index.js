@@ -4,7 +4,6 @@ const { list } = require('./list');
 const { detailForJWT } = require('./detailForJWT');
 const { detail } = require('./detail');
 const { updateUserAuthPermissions } = require('./updateUserAuthPermissions');
-const { hasPermission } = require('./hasPermission');
 const { isSuperAdmin } = require('./isSuperAdmin');
 const { reset } = require('./reset');
 const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
@@ -24,6 +23,10 @@ const getUserPermissions = require('./getUserPermissions');
 const add = require('./add');
 const profiles = require('./profiles');
 const profileToken = require('./profileToken');
+const addCustomPermission = require('./addCustomPermission');
+const hasPermission = require('./hasPermission');
+const hasPermissionCTX = require('./hasPermissionCTX');
+const removeCustomPermission = require('./removeCustomPermission');
 
 module.exports = {
   init,
@@ -48,7 +51,7 @@ module.exports = {
   getResetConfig,
   getSuperAdminUserIds,
   isSuperAdmin,
-  hasPermission,
+  hasPermissionCTX,
   updateUserAuthPermissions,
   detailForJWT,
   getUserPermissions,
@@ -56,4 +59,7 @@ module.exports = {
   add,
   profiles,
   profileToken,
+  addCustomPermission,
+  hasPermission,
+  removeCustomPermission,
 };

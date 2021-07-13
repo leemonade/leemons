@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import SimpleBar from 'simplebar-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -8,6 +9,7 @@ import getActiveParentAndChild from '../../helpers/getActiveParentAndChild';
 import MainMenuItem from './mainMenuItem';
 import MainMenuSubmenu from './mainMenuSubmenu';
 import { useSession } from '@users/session';
+import hooks from 'leemons-hooks';
 
 const menuWidth = '52px';
 
@@ -17,13 +19,22 @@ export default function MainMenu({ onClose, onOpen }) {
   const [activeMenu, setActiveMenu] = useState({ parent: null, child: null });
   const [menu, setMenu] = useState([]);
 
-  function openMenu() {
-    if (onOpen) onOpen(activeMenu);
-  }
-
   async function loadMenu() {
     const _menu = await getMenu('plugins.menu-builder.main');
     setMenu(_menu);
+    return _menu;
+  }
+
+  async function reloadMenu() {
+    const _menu = await loadMenu();
+    if (activeMenu.parent) {
+      const parent = _.find(_menu, { id: activeMenu.parent.id });
+      if (parent) setActiveMenu({ ...activeMenu, parent });
+    }
+  }
+
+  function openMenu() {
+    if (onOpen) onOpen(activeMenu);
   }
 
   const handleRouteChange = async () => {
@@ -31,19 +42,6 @@ export default function MainMenu({ onClose, onOpen }) {
     setActiveMenu(result);
     if (result.parent) openMenu();
   };
-
-  useEffect(() => {}, [activeMenu]);
-
-  useEffect(() => {
-    (async () => {
-      await loadMenu();
-      await handleRouteChange();
-    })();
-    router.events.on('routeChangeComplete', handleRouteChange);
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteChange);
-    };
-  }, []);
 
   function onMenuItemClick(item) {
     setActiveMenu({ ...activeMenu, parent: item });
@@ -54,6 +52,22 @@ export default function MainMenu({ onClose, onOpen }) {
     setActiveMenu(await getActiveParentAndChild());
     if (onClose) onClose();
   }
+
+  useEffect(() => {
+    router.events.on('routeChangeComplete', handleRouteChange);
+    hooks.addAction('menu-builder:reload-menu', reloadMenu);
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+      hooks.removeAction('menu-builder:reload-menu', reloadMenu);
+    };
+  });
+
+  useEffect(() => {
+    (async () => {
+      await loadMenu();
+      await handleRouteChange();
+    })();
+  }, []);
 
   return (
     <>

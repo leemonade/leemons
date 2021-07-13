@@ -1,23 +1,25 @@
 import { getMenuRequest } from '@menu-builder/request';
 import hooks from 'leemons-hooks';
 
-let menuCache;
+let menuCache = {};
 let hooksActionsInit = false;
 
-function onUserChangeProfile() {
-  menuCache = null;
+function resetMenu() {
+  menuCache = {};
+  hooks.fireEvent('menu-builder:reload-menu');
 }
 
 async function getMenu(key, force) {
   if (!hooksActionsInit) {
-    hooks.addAction('user:change:profile', onUserChangeProfile);
+    hooks.addAction('user:change:profile', resetMenu);
+    hooks.addAction('menu-builder:user:addCustomItem', resetMenu);
     hooksActionsInit = true;
   }
-  if (!menuCache || force) {
+  if (!menuCache[key] || force) {
     const { menu } = await getMenuRequest(key);
-    menuCache = menu;
+    menuCache[key] = menu;
   }
-  return menuCache;
+  return menuCache[key];
 }
 
 export default getMenu;

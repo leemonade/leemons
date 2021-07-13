@@ -1,5 +1,6 @@
-import Image from 'next/image';
 import * as PropTypes from 'prop-types';
+
+import LeemonsImage from '../leemonsImage';
 
 export default function MainMenuItem({ item, menuWidth, active, onClick }) {
   return (
@@ -11,8 +12,8 @@ export default function MainMenuItem({ item, menuWidth, active, onClick }) {
         key={item.id}
       >
         <div className={'w-5 h-full mx-auto relative'}>
-          <Image
-            layout="fill"
+          <LeemonsImage
+            forceImage={false}
             src={active && item.activeIconSvg ? item.activeIconSvg : item.iconSvg}
             alt={item.iconAlt}
           />

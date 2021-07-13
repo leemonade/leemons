@@ -73,7 +73,7 @@ async function getIfHasPermission(menuKey, userAuth, { transacting } = {}) {
   // ES: Cogemos solo los elementos del menu a los que tenemos acceso
   // EN: We take only the menu items to which we have access.
   const query = {
-    type: prefixPN(`${menuKey}.menu-item`),
+    type_$startssWith: prefixPN(`${menuKey}.menu-item`),
   };
   if (!isSuperAdmin) query.$or = queryPermissions;
   const menuItemPermissions = await leemons.plugins.users.services.itemPermissions.find(query, {
@@ -89,10 +89,15 @@ async function getIfHasPermission(menuKey, userAuth, { transacting } = {}) {
     { transacting }
   );
 
+  const customItemIds = _.map(
+    _.filter(menuItemPermissions, ({ type }) => type.endsWith('.custom')),
+    'item'
+  );
+
   // TODO Añadir locale del user para sacar el menu en su idioma
   const locale = 'en';
 
-  return transformManyMenuItemsToFrontEndMenu(menuItems, locale, { transacting });
+  return transformManyMenuItemsToFrontEndMenu(menuItems, locale, customItemIds, { transacting });
 }
 
 module.exports = getIfHasPermission;

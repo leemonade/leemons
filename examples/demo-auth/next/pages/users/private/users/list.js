@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { listUsersRequest } from '@users/request';
-import { goBasePage, goDetailUserPage } from '@users/navigate';
+import { goBasePage, goDetailUserPage, goLoginPage } from '@users/navigate';
 import MainMenuLayout from '@menu-builder/components/mainMenuLayout';
 import MainMenuDropItem from '@menu-builder/components/mainMenu/mainMenuDropItem';
+import { useSession } from '@users/session';
 
 export default function ListUsers() {
   const [pagination, setPagination] = useState(null);
 
-  // useSession({ redirectTo: goLoginPage });
+  useSession({ redirectTo: goLoginPage });
 
   async function listUsers() {
     const { data } = await listUsersRequest({
@@ -25,8 +26,8 @@ export default function ListUsers() {
     <>
       <MainMenuLayout>
         <div className="mb-4">
-          <MainMenuDropItem item={{ prueba: 'Flipas' }} className="bg-blue-300 rounded-3xl">
-            {({ isDragging }) => <>{isDragging.toString()}Arrastra esto al menu</>}
+          <MainMenuDropItem item={{ key: 'user-list-18' }} className="bg-blue-300 rounded-3xl">
+            {({ isDragging }) => <>El list 18</>}
           </MainMenuDropItem>
         </div>
 

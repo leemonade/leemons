@@ -39,6 +39,14 @@
  */
 
 /**
+ * @typedef {RolePermissionsAdd} UserAddCustomPermission
+ */
+
+/**
+ * @typedef {UserAddCustomPermission} UserHasCustomPermission
+ */
+
+/**
  * @typedef Permission
  * @property {string} id Permission id
  * @property {string} permissionName Permission name (For backend - Check if has this permission name)

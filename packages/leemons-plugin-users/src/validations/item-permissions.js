@@ -11,6 +11,7 @@ const itemPermissionSchema = {
     item: stringSchema,
   },
   required: ['permissionName', 'actionNames', 'type', 'item'],
+  additionalProperties: false,
 };
 
 const findItemPermissionSchema = {
@@ -22,6 +23,7 @@ const findItemPermissionSchema = {
     type: stringSchema,
   },
   required: ['permissionName', 'actionNames', 'type'],
+  additionalProperties: false,
 };
 
 function validateItemPermission(data) {

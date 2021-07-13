@@ -17,6 +17,8 @@
     "@leemons/users": "file:dependencies/users",
     "js-cookie": "^2.2.1",
     "prop-types": "^15.7.2",
+    "react-dnd": "^14.0.2",
+    "react-dnd-html5-backend": "^14.0.0",
     "react-hook-form": "^7.8.3",
     "tailwindcss": "^2.1.2"
   },

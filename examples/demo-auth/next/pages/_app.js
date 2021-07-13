@@ -7,6 +7,8 @@ import { frontPlugins, plugins } from '@plugins';
 import { SessionProvider } from '@users/context/session';
 import 'tailwindcss/tailwind.css';
 import 'simplebar/dist/simplebar.min.css';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DndProvider } from 'react-dnd';
 
 function MyApp({ Component, pageProps }) {
   // Only add it once
@@ -76,9 +78,11 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <>
-      <SessionProvider value={pageProps.session}>
-        <Component {...pageProps} />
-      </SessionProvider>
+      <DndProvider backend={HTML5Backend}>
+        <SessionProvider value={pageProps.session}>
+          <Component {...pageProps} />
+        </SessionProvider>
+      </DndProvider>
     </>
   );
 }

@@ -1,38 +1,24 @@
-import { DndProvider, useDrag } from 'react-dnd';
-import PropTypes from 'prop-types';
 import * as _ from 'lodash';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import React from 'react';
+import PropTypes from 'prop-types';
+import Router from 'next/router';
+import getInnerText from '../../helpers/getInnerText';
+import DndItem from '../dnd/dndItem';
 
-function MainMenuDropItem_({ children, className, item }) {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'menu-item',
-    item,
-    end: (data, monitor) => {
-      // const dropResult = monitor.getDropResult();
-    },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-      handlerId: monitor.getHandlerId(),
-    }),
-  }));
+export default function MainMenuDropItem({ children, className, item }) {
+  const goodChildren = _.isFunction(children) ? children({ isDragging: false }) : children;
+
+  const _item = {
+    ...item,
+    menuKey: item.menuKey || 'plugins.menu-builder.main',
+    url: item.url || Router?.router?.route,
+    label: item.label || getInnerText(goodChildren),
+  };
+
   return (
-    <div ref={drag} className={className}>
-      {_.isFunction(children) ? children({ isDragging }) : children}
-    </div>
-  );
-}
-
-MainMenuDropItem_.propTypes = {
-  children: PropTypes.any,
-  className: PropTypes.string,
-  item: PropTypes.any,
-};
-
-export default function MainMenuDropItem({ children, ...rest }) {
-  return (
-    <DndProvider backend={HTML5Backend}>
-      <MainMenuDropItem_ {...rest}>{children}</MainMenuDropItem_>
-    </DndProvider>
+    <DndItem className={className} type={'menu-item'} item={_item} emptyLayout={true}>
+      {children}
+    </DndItem>
   );
 }
 
