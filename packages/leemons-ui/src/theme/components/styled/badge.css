@@ -1,0 +1,64 @@
+@layer components {
+  .badge {
+    @apply bg-neutral border border-neutral text-neutral-content rounded-badge;
+  }
+  .btn .badge {
+    @apply bg-base-100 text-base-content border-transparent;
+    &-outline {
+      @apply bg-transparent text-base-200 border-base-200;
+    }
+  }
+
+  .btn-outline {
+    .badge {
+      @apply text-neutral-content border-neutral-focus;
+    }
+    &.btn-primary .badge {
+      @apply bg-primary text-primary-content border-primary;
+    }
+    &.btn-secondary .badge {
+      @apply bg-secondary text-secondary-content border-secondary;
+    }
+    &.btn-accent .badge {
+      @apply bg-accent text-accent-content border-accent;
+    }
+
+    .badge.outline {
+      @apply bg-transparent border-neutral-focus;
+    }
+    &.btn-primary .badge-outline {
+      @apply bg-transparent text-primary border-primary;
+    }
+    &.btn-secondary .badge-outline {
+      @apply bg-transparent text-secondary border-secondary;
+    }
+    &.btn-accent .badge-outline {
+      @apply bg-transparent text-accent border-accent;
+    }
+
+    &:hover .badge {
+      @apply bg-base-200 text-base-content border-base-200;
+      &.outline {
+        @apply text-neutral-content border-base-200;
+      }
+    }
+    &.btn-primary:hover .badge {
+      @apply bg-primary-content text-primary border-primary-content;
+      &.outline {
+        @apply bg-primary-focus text-primary-content border-primary-content;
+      }
+    }
+    &.btn-secondary:hover .badge {
+      @apply bg-secondary-content text-secondary border-secondary-content;
+      &.outline {
+        @apply bg-secondary-focus text-secondary-content border-secondary-content;
+      }
+    }
+    &.btn-accent:hover .badge {
+      @apply bg-accent-content text-accent border-accent-content;
+      &.outline {
+        @apply bg-accent-focus text-accent-content border-accent-content;
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import '../lib/theme/leemons.css';
+import '../src/theme/leemons.css';
+// import 'tailwindcss/tailwind.css';
 
 function App({ Component, pageProps }) {
   return <Component {...pageProps} />;

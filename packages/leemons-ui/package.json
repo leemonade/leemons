@@ -1,11 +1,11 @@
 {
   "name": "leemons-ui",
   "version": "1.0.0",
+  "homepage": "https://ui.leemons.io",
   "license": "MIT",
   "private": true,
   "main": "dist/index.js",
   "module": "dist/index.js",
-  "style": "dist/theme/leemons.css",
   "files": [
     "dist",
     "README.md"
@@ -24,26 +24,56 @@
   ],
   "scripts": {
     "dev": "next dev",
-    "build": "rm -rf dist && NODE_ENV=production babel lib --out-dir dist --copy-files && npm run build:tailwind",
-    "build:tailwind": "tailwind build lib/theme/leemons.css -o dist/theme/leemons.build.css"
+    "index": "cp -R ./src/theme/index.js ./dist/theme/index.js",
+    "colors": "cp -R ./src/theme/colors ./dist/theme/colors",
+    "prebase": "postcss --config src/theme/base src/theme/base/*.css --base src --dir dist",
+    "base": "cat dist/theme/base/*.css > dist/theme/base.css",
+    "postbase": "prejss-cli dist/theme/base.css --format commonjs",
+    "preutilities:global": "postcss --config src/theme/utilities/global src/theme/utilities/global/*.css --base src --dir dist",
+    "utilities:global": "cat dist/theme/utilities/global/*.css > dist/theme/utilities.css",
+    "postutilities:global": "prejss-cli dist/theme/utilities.css --format commonjs",
+    "preutilities:unstyled": "postcss --config src/theme/utilities/unstyled src/theme/utilities/unstyled/*.css --base src --dir dist",
+    "utilities:unstyled": "cat dist/theme/utilities/unstyled/*.css > dist/theme/utilities-unstyled.css",
+    "postutilities:unstyled": "prejss-cli dist/theme/utilities-unstyled.css --format commonjs",
+    "preutilities:styled": "postcss --config src/theme/utilities/styled src/theme/utilities/styled/*.css --base src --dir dist",
+    "utilities:styled": "cat dist/theme/utilities/styled/*.css > dist/theme/utilities-styled.css",
+    "postutilities:styled": "prejss-cli dist/theme/utilities-styled.css --format commonjs",
+    "components": "postcss --config src/theme/components src/theme/components/**/*.css --base src --dir dist",
+    "merge:unstyled": "cat dist/theme/components/unstyled/*.css > dist/theme/unstyled.css",
+    "merge:styled": "cat dist/theme/components/unstyled/*.css dist/theme/components/styled/*.css > dist/theme/styled.css",
+    "rtl": "rtlcss dist/theme/unstyled.css -s && rtlcss dist/theme/styled.css -s",
+    "prejss": "prejss-cli dist/theme/{unstyled,styled}{,.rtl}.css --format commonjs",
+    "themes": "postcss src/theme/themes/index.css -o dist/theme/themes.css --config src/theme/themes",
+    "full": "postcss src/theme/full/index.css -o dist/theme/full.css --config src/theme/full",
+    "build": "rm -rf dist && NODE_ENV=production babel src --out-dir dist --copy-files && npm run build:theme",
+    "build:theme": "npm run index && npm run colors && npm run base && npm run utilities:global && npm run utilities:unstyled && npm run utilities:styled && npm run components && npm run merge:unstyled && npm run merge:styled && npm run rtl && npm run prejss && npm run themes && npm run full"
   },
   "dependencies": {
     "@heroicons/react": "^1.0.1",
+    "@tailwindcss/typography": "^0.4.1",
+    "immutable": "^4.0.0-rc.14",
     "lodash": "^4.17.21",
     "next": "10.2.3",
+    "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "prop-types": "^15.7.2"
+    "react-highlight": "^0.14.0",
+    "tailwindcss": "^2.1.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.3",
     "@babel/core": "^7.14.3",
+    "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.14.4",
     "@babel/preset-react": "^7.13.13",
-    "@babel/polyfill": "^7.12.1",
     "autoprefixer": "^10.2.6",
+    "cssnano": "^5.0.6",
     "postcss": "^8.3.0",
-    "tailwindcss": "^2.1.4"
+    "postcss-cli": "^8.3.1",
+    "postcss-import": "^14.0.2",
+    "postcss-nested": "^5.0.5",
+    "prejss-cli": "^0.3.3",
+    "rtlcss": "^3.3.0"
   },
   "browserslist": {
     "production": [
