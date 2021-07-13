@@ -24,31 +24,24 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
   );
 
   const move = useCallback(
-    (id, atIndex) => {
+    async (id, atIndex, isLast) => {
       const { dragItem, index } = find(id);
-      setCustomChildrens(
-        update(customChildrens, {
-          $splice: [
-            [index, 1],
-            [atIndex, 0, dragItem],
-          ],
-        })
-      );
+      const newCustomChildrens = update(customChildrens, {
+        $splice: [
+          [index, 1],
+          [atIndex, 0, dragItem],
+        ],
+      });
+      setCustomChildrens(newCustomChildrens);
+      if (isLast) {
+        await reOrderCustomUserItemsRequest(
+          'plugins.menu-builder.main',
+          item.key,
+          _.map(newCustomChildrens, 'id')
+        );
+      }
     },
     [customChildrens, setCustomChildrens]
-  );
-
-  const endMove = useCallback(
-    async (dragItem, atIndex) => {
-      move(dragItem, atIndex);
-      const response = await reOrderCustomUserItemsRequest(
-        'plugins.menu-builder.main',
-        item.key,
-        _.map(customChildrens, 'id')
-      );
-      console.log(response);
-    },
-    [move]
   );
 
   const onDrop = async (droppedItem) => {
@@ -101,7 +94,6 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
                           id={child.id}
                           find={find}
                           move={move}
-                          endMove={endMove}
                           type={'menu-item-sort'}
                         >
                           {({ isDragging }) => (

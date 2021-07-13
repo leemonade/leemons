@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useDrag, useDrop } from 'react-dnd';
 import * as _ from 'lodash';
 
-export default function DndSortItem({ children, className, id, find, move, endMove, type }) {
+export default function DndSortItem({ children, className, id, find, move, type }) {
   const originalIndex = find(id).index;
   const [{ isDragging }, drag] = useDrag(
     () => ({
@@ -15,8 +15,7 @@ export default function DndSortItem({ children, className, id, find, move, endMo
       end: (item, monitor) => {
         const didDrop = monitor.didDrop();
         const lastIndex = find(item.id).index;
-        if (!didDrop) move(item.id, item.originalIndex);
-        endMove(item.id, !didDrop ? item.originalIndex : lastIndex);
+        move(item.id, !didDrop ? item.originalIndex : lastIndex, true);
       },
     }),
     [id, originalIndex, move]
@@ -47,6 +46,5 @@ DndSortItem.propTypes = {
   id: PropTypes.string.isRequired,
   find: PropTypes.func.isRequired,
   move: PropTypes.func.isRequired,
-  endMove: PropTypes.func.isRequired,
   type: PropTypes.string.isRequired,
 };
