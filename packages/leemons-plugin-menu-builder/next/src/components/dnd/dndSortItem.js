@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDrag, useDrop } from 'react-dnd';
 import * as _ from 'lodash';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 
-export default function DndSortItem({ children, className, id, find, move, type }) {
+export default function DndSortItem({ children, className, id, find, move, type, emptyLayout }) {
   const originalIndex = find(id).index;
-  const [{ isDragging }, drag] = useDrag(
+  const [{ isDragging }, drag, preview] = useDrag(
     () => ({
       type,
       item: { id, originalIndex },
@@ -31,6 +32,12 @@ export default function DndSortItem({ children, className, id, find, move, type 
     [find, move]
   );
 
+  useEffect(() => {
+    if (emptyLayout) {
+      preview(getEmptyImage(), { captureDraggingState: true });
+    }
+  }, []);
+
   const goodChildren = _.isFunction(children) ? children({ isDragging }) : children;
 
   return (
@@ -47,4 +54,5 @@ DndSortItem.propTypes = {
   find: PropTypes.func.isRequired,
   move: PropTypes.func.isRequired,
   type: PropTypes.string.isRequired,
+  emptyLayout: PropTypes.bool,
 };

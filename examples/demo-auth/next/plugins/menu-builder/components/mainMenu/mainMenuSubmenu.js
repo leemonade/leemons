@@ -95,6 +95,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
                           find={find}
                           move={move}
                           type={'menu-item-sort'}
+                          emptyLayout={true}
                         >
                           {({ isDragging }) => (
                             <MainMenuSubmenuItem
