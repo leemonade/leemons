@@ -51,6 +51,7 @@
   "dependencies": {
     "@heroicons/react": "^1.0.1",
     "@tailwindcss/typography": "^0.4.1",
+    "glob": "^7.1.7",
     "immutable": "^4.0.0-rc.14",
     "lodash": "^4.17.21",
     "next": "10.2.3",

@@ -216,46 +216,46 @@
 
   @keyframes button-pop {
     0% {
-      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--b2));
+      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--b3));
     }
     30% {
-      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--b2));
+      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--b3));
     }
     70% {
-      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--b2));
+      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--b3));
     }
     100% {
-      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--b2));
+      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--b3));
     }
   }
 
   @keyframes button-pop-primary {
     0% {
-      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--p) / 0.7);
+      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--p) / 0.3);
     }
     30% {
-      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--p) / 0.7);
+      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--p) / 0.3);
     }
     70% {
-      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--p) / 0.7);
+      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--p) / 0.3);
     }
     100% {
-      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--p) / 0.7);
+      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--p) / 0.3);
     }
   }
 
   @keyframes button-pop-secondary {
     0% {
-      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--s) / 0.7);
+      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--s) / 0.3);
     }
     30% {
-      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--s) / 0.7);
+      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--s) / 0.3);
     }
     70% {
-      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--s) / 0.7);
+      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--s) / 0.3);
     }
     100% {
-      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--s) / 0.7);
+      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--s) / 0.3);
     }
   }
 }

@@ -8,9 +8,7 @@ export default function Home() {
         <title>Leemons UI</title>
       </Head>
 
-      <main className="flex-grow p-4" data-theme="light">
-        <button className={'btn btn-primary'}>Hola Mundo</button>
-      </main>
+      <main>Hola Home</main>
     </div>
   );
 }

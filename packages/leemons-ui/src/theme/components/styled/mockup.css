@@ -1,7 +1,7 @@
 @layer components {
   .mockup {
     &-code {
-      @apply rounded-box py-5 bg-neutral text-neutral-content;
+      @apply rounded-box py-5 bg-secondary text-secondary-content;
       &:before {
         content: '';
         @apply block w-3 h-3 rounded-full opacity-30 mb-4;

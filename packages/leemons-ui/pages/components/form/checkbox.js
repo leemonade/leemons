@@ -25,7 +25,7 @@ function CheckboxPage() {
       <div className="text-xl font-bold">Examples</div>
 
       <Wrapper title="checkbox" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-6 card bordered">
+        <div className="p-6 card bordered shadow-lg">
           <FormControl>
             <Label text="Remember me" className="cursor-pointer">
               <Checkbox className="" />
@@ -34,7 +34,7 @@ function CheckboxPage() {
         </div>
       </Wrapper>
       <Wrapper title="checkbox primary" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-6 card bordered">
+        <div className="p-6 card bordered shadow-lg">
           <FormControl>
             <Label text="Remember me" className="cursor-pointer">
               <Checkbox className="checkbox-primary" />
@@ -43,7 +43,7 @@ function CheckboxPage() {
         </div>
       </Wrapper>
       <Wrapper title="checkbox secondary" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-6 card bordered">
+        <div className="p-6 card bordered shadow-lg">
           <FormControl>
             <Label text="Remember me" className="cursor-pointer">
               <Checkbox className="checkbox-secondary" />
@@ -52,7 +52,7 @@ function CheckboxPage() {
         </div>
       </Wrapper>
       <Wrapper title="checkbox accent" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-6 card bordered">
+        <div className="p-6 card bordered shadow-lg">
           <FormControl>
             <Label text="Remember me" className="cursor-pointer">
               <Checkbox className="checkbox-accent" />
@@ -61,7 +61,7 @@ function CheckboxPage() {
         </div>
       </Wrapper>
       <Wrapper title="checkbox disabled" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-6 card bordered">
+        <div className="p-6 card bordered shadow-lg">
           <FormControl>
             <Label text="Disabled + unchecked">
               <Checkbox className="checkbox-accent" disabled />
