@@ -1,0 +1,8 @@
+@layer components {
+  .avatar-group {
+    @apply flex overflow-hidden;
+    .avatar {
+      @apply rounded-full border-4 border-base-100 overflow-hidden;
+    }
+  }
+}

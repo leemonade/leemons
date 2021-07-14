@@ -1,0 +1,5 @@
+@layer components {
+  .alert {
+    @apply rounded-box bg-base-200 p-4;
+  }
+}

@@ -1,0 +1,5 @@
+@layer components {
+  .navbar {
+    padding: var(--navbar-padding, 0.5rem);
+  }
+}
