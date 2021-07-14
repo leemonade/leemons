@@ -27,8 +27,6 @@ async function addCustomForUser(
 ) {
   const locales = translations();
 
-  console.log({ label, description, ...data }, userAuth);
-
   // eslint-disable-next-line no-param-reassign
   data.key = prefixPN(`user:${userAuth.id}.${data.key}`);
 
@@ -51,16 +49,17 @@ async function addCustomForUser(
 
       // Create LABEL & DESCRIPTIONS in locales
       if (locales) {
-        console.log(prefixPN(`${data.menuKey}.${data.key}.label`));
-        promises.push(
-          locales.contents.addManyByKey(
-            prefixPN(`${data.menuKey}.${data.key}.label`),
-            { [locale]: label },
-            {
-              transacting,
-            }
-          )
-        );
+        if (label) {
+          promises.push(
+            locales.contents.addManyByKey(
+              prefixPN(`${data.menuKey}.${data.key}.label`),
+              { [locale]: label },
+              {
+                transacting,
+              }
+            )
+          );
+        }
 
         if (description) {
           promises.push(
@@ -103,7 +102,7 @@ async function addCustomForUser(
 
       const [menuItem] = await Promise.all(promises);
 
-      leemons.log.info(`Added menu item "${data.key}" to menu "${data.menuKey}"`);
+      leemons.log.info(`Added custom menu item "${data.key}" to menu "${data.menuKey}"`);
 
       return menuItem;
     },
