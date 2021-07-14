@@ -25,8 +25,8 @@ function validateTypePrefix(type, calledFrom) {
   if (!type.startsWith(calledFrom)) throw new Error(`The type name must begin with ${calledFrom}`);
 }
 
-function validatePermissionName(type, calledFrom) {
-  if (!type.startsWith(calledFrom))
+function validatePermissionName(permissionName, calledFrom) {
+  if (!permissionName.startsWith(calledFrom))
     throw new Error(`The permission name must begin with ${calledFrom}`);
 }
 

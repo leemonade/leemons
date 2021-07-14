@@ -4,6 +4,7 @@ const { existName } = require('./existName');
 const { detailByUri } = require('./detailByUri');
 const { update } = require('./update');
 const existMany = require('./existMany');
+const addCustomPermissions = require('./addCustomPermissions');
 
 module.exports = {
   list,
@@ -12,4 +13,5 @@ module.exports = {
   detailByUri,
   update,
   existMany,
+  addCustomPermissions,
 };

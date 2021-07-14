@@ -1,16 +1,21 @@
 @layer components {
   .avatar {
     @apply relative inline-flex;
-    & > div {
-      @apply overflow-hidden block;
-    }
-    img {
-      @apply object-cover w-full h-full;
-    }
-    &.placeholder {
-      & > div {
-        @apply flex items-center justify-center;
-      }
-    }
+
+& > div {
+    @apply overflow-hidden block;
+  }
+
+  img {
+    @apply object-cover w-full h-full;
+  }
+
+&.placeholder {
+
+& > div {
+    @apply flex items-center justify-center;
   }
 }
+}
+}
+

@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const getProfileRoles = require('./getProfileRoles');
 const { update: updateRole } = require('../roles');
 const { existName } = require('./existName');
 const { table } = require('../tables');
@@ -25,7 +26,7 @@ async function update(data) {
     ]);
 
     // *** Only get one profile role for now
-    const profileRole = await table.profileRole.findOne({ profile: profile.id });
+    const profileRole = (await getProfileRoles(profile.id))[0];
     await updateRole(
       {
         id: profileRole.role,

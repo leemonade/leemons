@@ -7,4 +7,5 @@ module.exports = {
   update: profiles.update,
   list: profiles.list,
   detailByUri: profiles.detailByUri,
+  addCustomPermissions: profiles.addCustomPermissions,
 };
