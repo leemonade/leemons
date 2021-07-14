@@ -1,9 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import '../lib/theme/leemons.css';
+import '../src/theme/leemons.css';
+// import 'tailwindcss/tailwind.css';
+import Sidebar from '../partials/Sidebar';
 
 function App({ Component, pageProps }) {
-  return <Component {...pageProps} />;
+  return (
+    <Sidebar>
+      <Component {...pageProps} />
+    </Sidebar>
+  );
 }
 
 App.propTypes = {

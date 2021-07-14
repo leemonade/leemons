@@ -1,8 +1,5 @@
 import React from 'react';
 import Head from 'next/head';
-import Header from '../partials/Header';
-import Footer from '../partials/Footer';
-import HeroHome from '../partials/HeroHome';
 
 export default function Home() {
   return (
@@ -11,13 +8,7 @@ export default function Home() {
         <title>Leemons UI</title>
       </Head>
 
-      <Header />
-
-      <main className="flex-grow">
-        <HeroHome />
-      </main>
-
-      <Footer />
+      <main>Hola Home</main>
     </div>
   );
 }

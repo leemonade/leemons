@@ -9,6 +9,7 @@ class MyDocument extends Document {
         <Head>
           <meta name="description" content="Leemons UI - Design System" />
           <link rel="icon" href="/favicon.ico" />
+          <link rel="stylesheet" href="/styles/vs2015.css" />
         </Head>
         <body>
           <Main />
