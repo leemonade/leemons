@@ -3,9 +3,9 @@ const { table } = require('../../tables');
 const { translations } = require('../../translations');
 const prefixPN = require('../../helpers/prefixPN');
 const addItemPermissions = require('../../helpers/addItemPermissions');
+const removeItemPermissions = require('../../helpers/removeItemPermissions');
 const { validateNotExistMenuItem } = require('../../validations/exists');
 const { validateKeyPrefix } = require('../../validations/exists');
-const { validateExistMenuItem } = require('../../validations/exists');
 const { validateAddMenuItem } = require('../../validations/menu-item');
 const { validateNotExistMenu } = require('../../validations/exists');
 
@@ -34,11 +34,11 @@ async function update(
   const _disabled = data.disabled;
 
   // eslint-disable-next-line no-param-reassign
-  data.order = null;
+  data.order = undefined;
   // eslint-disable-next-line no-param-reassign
-  data.fixed = null;
+  data.fixed = undefined;
   // eslint-disable-next-line no-param-reassign
-  data.disabled = null;
+  data.disabled = undefined;
 
   validateKeyPrefix(key, this.calledFrom);
   validateAddMenuItem({
@@ -75,11 +75,21 @@ async function update(
       // Create the MENU ITEM
       const promises = [table.menuItem.update({ menuKey, key }, data, { transacting })];
 
+      // ES: Si la clave o el menu quieren ser actualizados tenemos que borrar de la tabla de traducciones y de permisos los registros, ya que dejan de existir
+      if ((data.key && data.key !== key) || (data.menuKey && data.menuKey !== menuKey)) {
+        if (locales) {
+          promises.push(locales.contents.deleteKeyStartsWith(prefixPN(`${menuKey}.${key}.`)), {
+            transacting,
+          });
+        }
+        promises.push(removeItemPermissions(key, `${menuKey}.menu-item`, { transacting }));
+      }
+
       // Create LABEL & DESCRIPTIONS in locales
       if (locales) {
         if (label) {
           promises.push(
-            locales.contents.addManyByKey(prefixPN(`${menuKey}.${key}.label`), label, {
+            locales.contents.setKey(prefixPN(`${data.menuKey}.${data.key}.label`), label, {
               transacting,
             })
           );
@@ -87,23 +97,28 @@ async function update(
 
         if (description) {
           promises.push(
-            locales.contents.addManyByKey(prefixPN(`${menuKey}.${key}.description`), description, {
-              transacting,
-            })
+            locales.contents.setKey(
+              prefixPN(`${data.menuKey}.${data.key}.description`),
+              description,
+              {
+                transacting,
+              }
+            )
           );
         }
       }
 
       // Add the necessary permissions to view the item
       if (_.isArray(permissions) && permissions.length) {
+        promises.push(removeItemPermissions(key, `${menuKey}.menu-item`, { transacting }));
         promises.push(
-          addItemPermissions(key, `${menuKey}.menu-item`, permissions, { transacting })
+          addItemPermissions(data.key, `${data.menuKey}.menu-item`, permissions, { transacting })
         );
       } else if (leemons.plugins.users) {
         promises.push(
           addItemPermissions(
-            key,
-            `${menuKey}.menu-item`,
+            data.key,
+            `${data.menuKey}.menu-item`,
             [
               {
                 permissionName:
@@ -118,7 +133,9 @@ async function update(
 
       const [menuItem] = await Promise.all(promises);
 
-      leemons.log.info(`Added menu item "${key}" to menu "${menuKey}"`);
+      leemons.log.info(
+        `Updated menu item "${key}" of menu "${menuKey}" to "${data.key}" of menu "${aya.menuKey}"`
+      );
 
       return menuItem;
     },
@@ -127,4 +144,4 @@ async function update(
   );
 }
 
-module.exports = add;
+module.exports = update;

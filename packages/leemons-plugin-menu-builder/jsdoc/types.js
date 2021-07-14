@@ -44,6 +44,7 @@
  * @property {string | undefined} iconSvg
  * @property {string | undefined} url
  * @property {string | undefined} window
+ * @property {boolean | undefined} disabled
  * @property {LocalizationAdd} label
  * @property {LocalizationAdd | undefined} description
  */

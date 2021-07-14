@@ -4,6 +4,7 @@ const remove = require('./remove');
 const removeAll = require('./removeAll');
 const exist = require('./exist');
 const reOrderCustomUserItems = require('./reOrderCustomUserItems');
+const update = require('./update');
 
 module.exports = {
   add,
@@ -12,4 +13,5 @@ module.exports = {
   removeAll,
   exist,
   reOrderCustomUserItems,
+  update,
 };

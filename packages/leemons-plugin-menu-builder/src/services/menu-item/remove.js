@@ -37,13 +37,7 @@ async function remove(menuKey, key, { transacting: _transacting } = {}) {
       // Delete item translations
       if (locales) {
         promises.push(
-          locales.contents.deleteAll({ key: prefixPN(`${menuKey}.${key}.label`) }, { transacting })
-        );
-        promises.push(
-          locales.contents.deleteAll(
-            { key: prefixPN(`${menuKey}.${key}.description`) },
-            { transacting }
-          )
+          locales.contents.deleteKeyStartsWith(prefixPN(`${menuKey}.${key}.`), { transacting })
         );
       }
 

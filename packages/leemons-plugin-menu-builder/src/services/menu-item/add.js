@@ -46,11 +46,11 @@ async function add(
   const _disabled = disabled;
 
   // eslint-disable-next-line no-param-reassign
-  order = null;
+  order = undefined;
   // eslint-disable-next-line no-param-reassign
-  fixed = null;
+  fixed = undefined;
   // eslint-disable-next-line no-param-reassign
-  disabled = null;
+  disabled = undefined;
 
   validateKeyPrefix(key, this.calledFrom);
   validateAddMenuItem({
