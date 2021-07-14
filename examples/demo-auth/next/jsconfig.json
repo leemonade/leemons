@@ -1,1 +1,1 @@
-{"compilerOptions":{"baseUrl":".","paths":{"@plugins":["plugins/plugins.js"],"@users-groups-roles/*":["plugins/users-groups-roles/*"]}}}
+{"compilerOptions":{"baseUrl":".","paths":{"@provider-emails-amazon-ses/*":["plugins/provider-emails-amazon-ses/*"],"@emails/*":["plugins/emails/*"],"@multilanguage/*":["plugins/multilanguage/*"],"@onboarding/*":["plugins/onboarding/*"],"@users/*":["plugins/users/*"],"@plugins":["plugins/plugins.js"]}}}

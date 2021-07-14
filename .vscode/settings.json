@@ -1,5 +1,6 @@
 {
+    "folders": [],
+    "settings": {},
     "editor.formatOnSave": true,
-    "javascript.format.enable": false,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "files.autoSave": "onFocusChange",
 }

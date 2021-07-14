@@ -7,6 +7,7 @@ const { formatModels } = require('../model/loadModel');
 const { getLocalPlugins, getExternalPlugins } = require('./getPlugins');
 const checkPluginDuplicates = require('./checkPluginDuplicates');
 const loadServices = require('./loadServices');
+const loadInit = require('./loadInit');
 
 let pluginsEnv = [];
 
@@ -73,21 +74,27 @@ async function loadPluginsModels(pluginObjs, leemons) {
   _.set(leemons, 'plugins', _.fromPairs(loadedPlugins));
 }
 
-function transformServices(pluginsObj, fromPlugin) {
-  _.forEach(_.keys(pluginsObj), (pluginKey) => {
-    _.forEach(_.keys(pluginsObj[pluginKey].services), (serviceKey) => {
-      _.forEach(_.keys(pluginsObj[pluginKey].services[serviceKey]), (serviceFunctionKey) => {
-        if (_.isFunction(pluginsObj[pluginKey].services[serviceKey][serviceFunctionKey])) {
-          const func = pluginsObj[pluginKey].services[serviceKey][serviceFunctionKey];
-          // eslint-disable-next-line no-param-reassign
-          pluginsObj[pluginKey].services[serviceKey][serviceFunctionKey] = (...params) =>
-            func.call({ executeFrom: fromPlugin.name }, ...params);
-        }
-      });
+function transformService(_pluginObj, fromPlugin) {
+  const pluginObj = _.cloneDeep(_pluginObj);
+  _.forEach(_.keys(pluginObj.services), (serviceKey) => {
+    _.forEach(_.keys(pluginObj.services[serviceKey]), (serviceFunctionKey) => {
+      if (_.isFunction(pluginObj.services[serviceKey][serviceFunctionKey])) {
+        const func = pluginObj.services[serviceKey][serviceFunctionKey];
+        // eslint-disable-next-line no-param-reassign
+        pluginObj.services[serviceKey][serviceFunctionKey] = (...params) =>
+          func.call({ calledFrom: `plugins.${fromPlugin.name}` }, ...params);
+      }
     });
-    return pluginsObj[pluginKey];
   });
-  return pluginsObj;
+  return pluginObj;
+}
+
+function transformServices(pluginsObj, fromPlugin) {
+  const result = {};
+  _.forEach(_.keys(pluginsObj), (pluginKey) => {
+    result[pluginsObj[pluginKey].name] = transformService(pluginsObj[pluginKey], fromPlugin);
+  });
+  return result;
 }
 
 // Load plugins part 2 (controllers, services and front)
@@ -106,7 +113,7 @@ async function initializePlugins(leemons) {
           _.isArray(loadedProvider.config.config.pluginsCanUseMe) &&
           _.includes(loadedProvider.config.config.pluginsCanUseMe, pluginObj.name)
         ) {
-          pluginObj.providers[loadedProvider.name] = loadedProvider;
+          pluginObj.providers[loadedProvider.name] = _.cloneDeep(loadedProvider);
         }
       });
 
@@ -124,7 +131,7 @@ async function initializePlugins(leemons) {
           // TODO: Check binding missing
           // The binding is needed for triggering the outside VM leemons
           // eslint-disable-next-line no-extra-bind
-          get: () => leemons.plugins[plugin.name],
+          get: () => transformService(leemons.plugins[plugin.name], pluginObj),
         });
         Object.defineProperty(filtered.leemons, 'plugins', {
           get: () => transformServices(_.pick(leemons.plugins, allowedPlugins), pluginObj),
@@ -164,8 +171,11 @@ async function initializePlugins(leemons) {
         pluginsEnv[pluginObj.name]
       );
 
+      // Load init
+      const init = await loadInit(pluginObj, vmFilter, pluginsEnv[pluginObj.name]);
+
       // Return as the result of Object.entries
-      return [pluginObj.name, { ...pluginObj, routes, controllers, services }];
+      return [pluginObj.name, { ...pluginObj, routes, controllers, services, init }];
     })
   );
   _.set(leemons, 'plugins', _.fromPairs(loadedPlugins));

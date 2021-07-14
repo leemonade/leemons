@@ -12,10 +12,6 @@
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",
     "prop-types": "^15.7.2",
-<<<<<<< HEAD
-    "@leemons/user-admin": "file:dependencies/user-admin"
-=======
-    "@leemons/users-groups-roles": "file:dependencies/users-groups-roles"
->>>>>>> dev
+    "@leemons/users": "file:dependencies/users"
   }
 }

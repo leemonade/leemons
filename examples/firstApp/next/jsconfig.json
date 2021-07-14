@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-{"compilerOptions":{"baseUrl":".","paths":{"@user-admin/*":["plugins/user-admin/*"],"@plugins":["plugins/plugins.js"]}}}
-=======
-{"compilerOptions":{"baseUrl":".","paths":{"@user-admin/*":["plugins/user-admin/*"],"@plugins":["plugins/plugins.js"],"@users-groups-roles/*":["plugins/users-groups-roles/*"]}}}
->>>>>>> dev
+{"compilerOptions":{"baseUrl":".","paths":{"@user-admin/*":["plugins/user-admin/*"],"@plugins":["plugins/plugins.js"],"@users/*":["plugins/users/*"]}}}

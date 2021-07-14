@@ -6,6 +6,7 @@
   "dependencies": {
     "ajv": "^8.6.0",
     "ajv-formats": "^2.1.0",
+    "aws-sdk": "^2.928.0",
     "bcrypt": "^5.0.1",
     "detect-port": "^1.3.0",
     "dotenv": "^8.5.1",
@@ -13,6 +14,9 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "md5-file": "^5.0.0",
-    "object-hash": "^2.1.1"
+    "nodemailer": "^6.6.1",
+    "object-hash": "^2.1.1",
+    "slugify": "^1.5.3",
+    "squirrelly": "^8.0.8"
   }
 }

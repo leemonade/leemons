@@ -16,7 +16,7 @@ const build = require('../core/front/build');
 /**
  * Creates a watcher for frontend files and then sets up all the needed files
  */
-async function setupFront(leemons, plugins, nextDir) {
+async function setupFront(leemons, plugins, providers, nextDir) {
   // Frontend directories to watch for changes
   const frontDirs = [
     // App next/** directories
@@ -35,10 +35,19 @@ async function setupFront(leemons, plugins, nextDir) {
         '**'
       )
     ),
+    // Provider next/** directories
+    ...providers.map((provider) =>
+      path.join(
+        path.isAbsolute(provider.dir.next)
+          ? provider.dir.next
+          : path.join(provider.dir.app, provider.dir.next),
+        '**'
+      )
+    ),
   ];
 
   // Make first front load
-  await leemons.loadFront(plugins);
+  await leemons.loadFront(plugins, providers);
 
   // Create a file watcher
   createReloader({
@@ -63,7 +72,7 @@ async function setupFront(leemons, plugins, nextDir) {
     },
     // When a change occurs, reload front
     handler: async () => {
-      await loadFront(leemons, plugins);
+      await loadFront(leemons, plugins, providers);
       await build();
     },
     logger: leemons.log,
@@ -80,23 +89,28 @@ async function setupBack(leemons, plugins, providers) {
    *  plugin.dir.controllers
    *  plugin.dir.services
    */
-  const backDirs = plugins.map((plugin) =>
+  const pluginsDirs = plugins.map((plugin) => path.join(plugin.dir.app, '**'));
+
+  // Ignore plugins frontend and config folders (they are handled by other services)
+  const ignoredPluginsDirs = plugins.map((plugin) =>
     path.join(
       plugin.dir.app,
       `\
-(${plugin.dir.models}|\
-${plugin.dir.controllers}|\
-${plugin.dir.services})`,
+(${plugin.dir.config}|\
+${plugin.dir.next})`,
       '**'
     )
   );
 
-  const backDirsProviders = providers.map((provider) =>
+  const providersDirs = providers.map((provider) => path.join(provider.dir.app, '**'));
+
+  // Ignore providers frontend and config folders (they are handled by other services)
+  const ignoredProvidersDirs = plugins.map((plugin) =>
     path.join(
-      provider.dir.app,
+      plugin.dir.app,
       `\
-(${provider.dir.models}|\
-${provider.dir.services})`,
+(${plugin.dir.config}|\
+${plugin.dir.next})`,
       '**'
     )
   );
@@ -107,12 +121,14 @@ ${provider.dir.services})`,
   // Create a backend watcher
   createReloader({
     name: 'Backend',
-    dirs: backDirs.concat(backDirsProviders),
+    dirs: [...pluginsDirs, ...providersDirs],
     config: {
       ignoreInitial: true,
       ignored: [
         /(^|[/\\])\../, // ignore dotfiles
         /.*node_modules.*/,
+        ...ignoredPluginsDirs,
+        ...ignoredProvidersDirs,
       ],
     },
     /*
@@ -145,7 +161,7 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
       // Application package.json
       path.join(cwd, 'package.json'),
       // ignore leemons plugins and connectors
-      path.join(__dirname, '../../../leemons-!(plugin|connector)**'),
+      path.join(__dirname, '../../../leemons-!(plugin|connector|provider)**'),
       path.join(__dirname, '../../../leemons/**'),
     ];
 
@@ -250,7 +266,7 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
 
     // Start the Front and Back services
     await Promise.all([
-      setupFront(leemons, pluginsConfig, nextDir),
+      setupFront(leemons, pluginsConfig, providersConfig, nextDir),
       setupBack(leemons, pluginsConfig, providersConfig),
     ]);
 

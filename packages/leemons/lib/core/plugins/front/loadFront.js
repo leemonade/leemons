@@ -3,11 +3,87 @@
 const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
-const readdirRecursive = require('leemons-utils/lib/readdirRecursive');
+const {
+  readdirRecursive,
+  getFilesArrayFromreaddirRecursive,
+  getEmptyDirsFromreaddirRecursive,
+} = require('leemons-utils/lib/readdirRecursive');
 const execa = require('execa');
 const { copyFolder } = require('./copyFolder');
 const { generatePluginLoader } = require('./pluginLoader');
 const copyPackageJSON = require('./copyPackageJSON');
+
+/**
+ * Removes the folders of those plugins no longer installed
+ * @param {string} dir
+ * @param {[pluginName:string][]} _plugins
+ * @returns {Promise<void>}
+ */
+async function removeMissingPlugins(dir, _plugins) {
+  const plugins = _plugins.map(([name]) => name);
+  if (await fs.exists(dir)) {
+    await Promise.all(
+      (await fs.readdir(dir, { withFileTypes: true }))
+        .filter((file) => file.isDirectory())
+        .map((file) => file.name)
+        // Get missing plugins
+        .filter((plugin) => !plugins.includes(plugin))
+        // Delete the missing plugins folders
+        .map((plugin) => fs.rm(path.join(dir, plugin), { recursive: true }))
+    );
+  }
+}
+
+async function removeExtraFiles(dir, extra) {
+  if (extra.length) {
+    await Promise.all(extra.map((file) => fs.rm(path.join(dir, file), { recursive: true })));
+    leemons.frontNeedsBuild = true;
+  }
+}
+
+async function removeEmptyDirs(dir) {
+  // Get the empty directories
+  const emptyDirs = getEmptyDirsFromreaddirRecursive(
+    await readdirRecursive(dir, { ignore: ['node_modules', '.next', 'src'] })
+  );
+
+  // If there are empty directories, delete them
+  if (emptyDirs.length) {
+    await Promise.all(emptyDirs.map((file) => fs.rm(path.join(dir, file), { recursive: true })));
+    leemons.frontNeedsBuild = true;
+  }
+}
+
+// TODO: Only copy changed files
+/**
+ * Gets the deleted and modified files between a src and a dest
+ * @param {import('fs').PathLike} src The src directory
+ * @param {import('fs').PathLike} dest The dest directory
+ * @returns {{extra: import('fs').PathLike[], modified: import('fs').PathLike[]}} The files which dest has and src not, and also the files that are missing in dest or modified
+ */
+async function getDiff(src, dest) {
+  const srcStructure = await readdirRecursive(src, { checksums: true });
+  const destStructure = await readdirRecursive(dest, { checksums: true, throwOnMissing: false });
+
+  const srcFiles = getFilesArrayFromreaddirRecursive(srcStructure);
+  const destFiles = getFilesArrayFromreaddirRecursive(destStructure);
+
+  const filesToDelete = destFiles
+    .filter((destFile) => srcFiles.findIndex((srcFile) => srcFile.path === destFile.path) === -1)
+    .map((file) => file.path);
+
+  const modifiedFiles = srcFiles
+    .filter((srcFile) => {
+      const destFile = destFiles.find((_destFile) => _destFile.path === srcFile.path);
+      return !(destFile && destFile.checksum === srcFile.checksum);
+    })
+    .map((file) => file.path);
+
+  return {
+    extra: filesToDelete,
+    modified: modifiedFiles,
+  };
+}
 
 /**
  * Checks if the directory have been changed since last execution
@@ -60,7 +136,9 @@ async function checkDirChanges(dir) {
 async function saveChecksums(dir, checksums, pluginsEntries) {
   // Get installed plugins
   const plugins = pluginsEntries.map(([name]) => name);
-
+  if (!(await fs.exists(dir))) {
+    return;
+  }
   // Get current copied dirs
   const folder = (await fs.readdir(dir, { withFileTypes: true }))
     .filter((file) => file.isDirectory())
@@ -92,21 +170,33 @@ async function saveChecksums(dir, checksums, pluginsEntries) {
 /**
  * Moves all the modified folders to the front directory
  */
-async function loadFront(leemons, installedPlugins) {
-  const plugins = installedPlugins.map((plugin) => [plugin.name, plugin]);
+async function loadFront(leemons, installedPlugins, installedProviders) {
+  const providers = _.map(_.cloneDeep(installedProviders), (provider) => {
+    provider.name = `provider-${provider.name}`;
+    return provider;
+  });
+
+  const plugins = installedPlugins
+    .map((plugin) => [plugin.name, plugin])
+    .concat(providers.map((provider) => [provider.name, provider]));
   const nextPath = leemons.dir.next;
 
+  // Flags for compilation
   _.set(leemons, 'frontNeedsBuild', false);
   _.set(leemons, 'frontNeedsUpdateDeps', false);
-
-  // Get plugins folder
-  // const plugins = _.values(leemons.plugins);
 
   // Generate dest directories
   const pagesPath = path.resolve(nextPath, 'pages');
   const srcPath = path.resolve(nextPath, 'plugins');
   const depsPath = path.resolve(nextPath, 'dependencies');
   const publicPath = path.resolve(nextPath, 'public');
+
+  await Promise.all([
+    removeMissingPlugins(pagesPath, plugins),
+    removeMissingPlugins(srcPath, plugins),
+    removeMissingPlugins(depsPath, plugins),
+    removeMissingPlugins(publicPath, plugins),
+  ]);
 
   // Get current pages checksums
   const pagesChecksums = (await checkDirChanges(pagesPath)).checksums;
@@ -147,6 +237,11 @@ async function loadFront(leemons, installedPlugins) {
         // #region Copy Pages
         if (folders.includes('pages')) {
           const pluginPages = path.resolve(dir, 'pages');
+          const { extra } = await getDiff(pluginPages, path.join(pagesPath, pluginObj.name));
+          // If some extra files are missing, delete them (from app)
+          await removeExtraFiles(path.join(pagesPath, pluginObj.name), extra);
+
+          // Copy the new folder
           if (await copyFolder(pluginPages, pagesPath, name, pagesChecksums)) {
             leemons.frontNeedsBuild = true;
           }
@@ -163,8 +258,13 @@ async function loadFront(leemons, installedPlugins) {
           // Generate an alias
           aliases[`@${name}/*`] = [`${path.relative(nextPath, srcPath)}/${name}/*`];
 
-          // Copy folder
           const pluginSrc = path.resolve(dir, 'src');
+
+          const { extra } = await getDiff(pluginSrc, path.join(srcPath, pluginObj.name));
+          // If some extra files are missing, delete them (from app)
+          await removeExtraFiles(path.join(pagesPath, pluginObj.name), extra);
+
+          // Copy folder
           if (await copyFolder(pluginSrc, srcPath, name, srcChecksums)) {
             leemons.frontNeedsBuild = true;
           }
@@ -195,6 +295,8 @@ async function loadFront(leemons, installedPlugins) {
               path: path.relative(nextPath, path.resolve(depsPath, name)),
             });
           }
+        } else if (await fs.exists(path.resolve(depsPath, name))) {
+          await fs.rm(path.resolve(depsPath, name), { recursive: true });
         }
         // #endregion
 
@@ -206,6 +308,11 @@ async function loadFront(leemons, installedPlugins) {
 
           // Copy folder
           const pluginPublic = path.resolve(dir, 'public');
+
+          const { extra } = await getDiff(pluginPublic, path.join(publicPath, pluginObj.name));
+          // If some extra files are missing, delete them (from app)
+          await removeExtraFiles(path.join(publicPath, pluginObj.name), extra);
+
           if (await copyFolder(pluginPublic, publicPath, name, publicChecksums)) {
             leemons.frontNeedsBuild = true;
           }
@@ -215,6 +322,7 @@ async function loadFront(leemons, installedPlugins) {
     })
   );
 
+  await removeEmptyDirs(nextPath);
   // Generate a plugin loader
   await generatePluginLoader({ plugins, srcPath, srcChecksums, aliases, nextPath });
 
