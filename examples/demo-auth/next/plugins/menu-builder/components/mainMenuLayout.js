@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import MainMenu from './mainMenu';
-import { useState } from 'react';
+
 import DndLayer from './dnd/dndLayer';
 
 export default function MainMenuLayout({ children }) {

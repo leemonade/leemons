@@ -25,6 +25,7 @@ const { withTransaction } = global.utils;
 async function removeCustomForUser(userAuth, menuKey, key, { transacting: _transacting } = {}) {
   const locales = translations();
 
+  // TODO Hablar si esto es sufientemente seguro o si comprobamos mediante permisos el comprobar si puede borrar el registro (Es mas costoso)
   if (!key.startsWith(prefixPN(`user:${userAuth.id}.`))) {
     throw new Error('You can only delete your own custom items');
   }

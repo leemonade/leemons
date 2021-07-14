@@ -67,51 +67,49 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
         <div className="w-full h-screen bg-gray-300 flex flex-col justify-between">
           {/* Header submenu */}
           <div className={'flex flex-row justify-between items-center mb-8 pt-3'}>
-            <div className={'w-full pl-6 font-lexend text-base'}>{item.label}</div>
+            <div className={'w-full pl-6 font-lexend text-base text-white '}>{item.label}</div>
             {/* Close submenu */}
             <div className={'px-2'}>
               <MainMenuCloseSubmenuBtn onClick={onClose} />
             </div>
           </div>
           {/* Items submenu */}
-          <SimpleBar className="flex-grow h-px">
-            <DndDropZone type={'menu-item'} onDrop={onDrop} className="h-full">
-              {() => (
-                <>
-                  {item.childrens.map((child) => (
-                    <MainMenuSubmenuItem
-                      key={child.id}
-                      item={child}
-                      active={activeItem?.id === child.id}
-                    />
-                  ))}
+          <DndDropZone type={'menu-item'} onDrop={onDrop} className="flex-grow h-px">
+            {() => (
+              <SimpleBar className="h-full">
+                {item.childrens.map((child) => (
+                  <MainMenuSubmenuItem
+                    key={child.id}
+                    item={child}
+                    active={activeItem?.id === child.id}
+                  />
+                ))}
 
-                  <div ref={drop}>
-                    <>
-                      {customChildrens.map((child) => (
-                        <DndSortItem
-                          key={child.id}
-                          id={child.id}
-                          find={find}
-                          move={move}
-                          type={'menu-item-sort'}
-                          emptyLayout={true}
-                        >
-                          {({ isDragging }) => (
-                            <MainMenuSubmenuItem
-                              item={child}
-                              isDragging={isDragging}
-                              active={activeItem?.id === child.id}
-                            />
-                          )}
-                        </DndSortItem>
-                      ))}
-                    </>
-                  </div>
-                </>
-              )}
-            </DndDropZone>
-          </SimpleBar>
+                <div ref={drop}>
+                  <>
+                    {customChildrens.map((child) => (
+                      <DndSortItem
+                        key={child.id}
+                        id={child.id}
+                        find={find}
+                        move={move}
+                        type={'menu-item-sort'}
+                        emptyLayout={true}
+                      >
+                        {({ isDragging }) => (
+                          <MainMenuSubmenuItem
+                            item={child}
+                            isDragging={isDragging}
+                            active={activeItem?.id === child.id}
+                          />
+                        )}
+                      </DndSortItem>
+                    ))}
+                  </>
+                </div>
+              </SimpleBar>
+            )}
+          </DndDropZone>
         </div>
       )}
     </>

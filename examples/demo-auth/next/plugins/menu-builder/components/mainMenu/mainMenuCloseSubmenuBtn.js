@@ -1,5 +1,5 @@
-import Image from 'next/image';
 import * as PropTypes from 'prop-types';
+import LeemonsImage from '../leemonsImage';
 
 const closeSubmenuSize = '32px';
 
@@ -13,7 +13,10 @@ export default function MainMenuCloseSubmenuBtn({ onClick }) {
       >
         <div className={'w-4 h-full mx-auto relative'}>
           {/* TODO: Add alt multilanguage */}
-          <Image layout="fill" src="/menu-builder/svgs/keyboard-previous.svg" />
+          <LeemonsImage
+            className="stroke-current text-white"
+            src="/menu-builder/svgs/keyboard-previous.svg"
+          />
         </div>
       </div>
     </>
