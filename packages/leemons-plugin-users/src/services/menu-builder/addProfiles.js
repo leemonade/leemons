@@ -1,4 +1,4 @@
-import add from './add';
+const add = require('./add');
 
 async function addProfiles() {
   return add(

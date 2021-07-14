@@ -6,8 +6,7 @@ async function add(item, permissions) {
   const { menuItem } = menuBuilder.services;
   const { mainMenuKey } = menuBuilder.config.constants;
   if (!(await menuItem.exist(mainMenuKey, prefixPN(item.key)))) {
-    // eslint-disable-next-line no-await-in-loop
-    await menuItem.add(
+    return menuItem.add(
       {
         ...item,
         menuKey: mainMenuKey,
@@ -17,6 +16,7 @@ async function add(item, permissions) {
       permissions
     );
   }
+  return null;
 }
 
 module.exports = add;

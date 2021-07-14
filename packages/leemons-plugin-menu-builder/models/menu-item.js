@@ -65,6 +65,9 @@ module.exports = {
         defaultTo: 'SELF', // SELF, BLANK, MODAL
       },
     },
+    disabled: {
+      type: 'boolean',
+    },
   },
   primaryKey: {
     type: 'uuid',

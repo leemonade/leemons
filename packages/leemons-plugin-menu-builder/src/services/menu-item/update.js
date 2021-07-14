@@ -15,61 +15,36 @@ const { withTransaction } = global.utils;
  * Create a Menu Item
  * @private
  * @static
+ * @param {string} menuKey - Menu key
+ * @param {string} key - Menu item key
  * @param {MenuItemAdd} data - The Menu Item to create
  * @param {MenuPermissionsAdd=} permissions Permissions for Menu Item
  * @param {any=} transacting DB transaction
  * @return {Promise<MenuItem>} Created / Updated menuItem
  * */
-async function add(
-  {
-    menuKey,
-    key,
-    parentKey,
-    order,
-    fixed,
-    url,
-    window,
-    iconName,
-    activeIconName,
-    iconSvg,
-    activeIconSvg,
-    iconAlt,
-    label,
-    description,
-    disabled,
-  },
+async function update(
+  menuKey,
+  key,
+  { label, description, ...data },
   permissions,
   { transacting: _transacting } = {}
 ) {
-  const _order = order;
-  const _fixed = fixed;
-  const _disabled = disabled;
+  const _order = data.order;
+  const _fixed = data.fixed;
+  const _disabled = data.disabled;
 
   // eslint-disable-next-line no-param-reassign
-  order = null;
+  data.order = null;
   // eslint-disable-next-line no-param-reassign
-  fixed = null;
+  data.fixed = null;
   // eslint-disable-next-line no-param-reassign
-  disabled = null;
+  data.disabled = null;
 
   validateKeyPrefix(key, this.calledFrom);
   validateAddMenuItem({
+    ...data,
     menuKey,
     key,
-    parentKey,
-    pluginName: this.calledFrom,
-    order,
-    fixed,
-    url,
-    window,
-    iconName,
-    activeIconName,
-    iconSvg,
-    activeIconSvg,
-    iconAlt,
-    label,
-    description,
-    disabled,
   });
   const locales = translations();
 
@@ -79,51 +54,36 @@ async function add(
       await validateNotExistMenu(menuKey, { transacting });
 
       // Check if the MENU ITEM exists
-      await validateExistMenuItem(menuKey, key, { transacting });
+      await validateNotExistMenuItem(menuKey, key, { transacting });
 
       // Check if the MENU ITEM PARENT exists
-      if (parentKey) {
-        await validateNotExistMenuItem(menuKey, parentKey, { transacting });
-        if (parentKey.startsWith(this.calledFrom)) {
+      if (data.parentKey) {
+        await validateNotExistMenuItem(menuKey, data.parentKey, { transacting });
+        if (data.parentKey.startsWith(this.calledFrom)) {
           // eslint-disable-next-line no-param-reassign
-          order = _order;
+          data.order = _order;
           // eslint-disable-next-line no-param-reassign
-          fixed = _fixed;
+          data.fixed = _fixed;
           // eslint-disable-next-line no-param-reassign
-          disabled = _disabled;
+          data.disabled = _disabled;
         }
       }
 
+      // eslint-disable-next-line no-param-reassign
+      data.pluginName = this.calledFrom;
+
       // Create the MENU ITEM
-      const promises = [
-        table.menuItem.create(
-          {
-            menuKey,
-            key,
-            parentKey,
-            pluginName: this.calledFrom,
-            order,
-            fixed,
-            url,
-            window,
-            iconName,
-            activeIconName,
-            iconSvg,
-            activeIconSvg,
-            iconAlt,
-            disabled,
-          },
-          { transacting }
-        ),
-      ];
+      const promises = [table.menuItem.update({ menuKey, key }, data, { transacting })];
 
       // Create LABEL & DESCRIPTIONS in locales
       if (locales) {
-        promises.push(
-          locales.contents.addManyByKey(prefixPN(`${menuKey}.${key}.label`), label, {
-            transacting,
-          })
-        );
+        if (label) {
+          promises.push(
+            locales.contents.addManyByKey(prefixPN(`${menuKey}.${key}.label`), label, {
+              transacting,
+            })
+          );
+        }
 
         if (description) {
           promises.push(
