@@ -2,7 +2,10 @@ const http = require('http');
 const Koa = require('koa');
 const Router = require('koa-router');
 const Static = require('koa-static');
-const nextjs = require('next');
+const request = require('request');
+// const nextjs = require('next');
+const execa = require('execa');
+const stream = require('stream');
 const _ = require('lodash');
 const chalk = require('chalk');
 const leemonsUtils = require('leemons-utils');
@@ -278,7 +281,8 @@ class Leemons {
 
     // Make next.js handle with all non /api requests
     this.frontRouter.get(/(?!^\/api)^\/.*/, async (ctx) => {
-      await this.frontHandler(ctx.req, ctx.res);
+      ctx.req.pipe(request(`http://localhost:3000${ctx.req.url}`)).pipe(ctx.res);
+      // await this.frontHandler(ctx.req, ctx.res);
       // Stop Koa handling the request
       ctx.respond = false;
     });
@@ -356,25 +360,68 @@ class Leemons {
     await hooks.fireEvent('leemons::loadFrontPlugins', { status: 'end' });
 
     // Initialize next
-    this.front = nextjs({
-      dir: this.dir.next,
-      dev: process.env.NODE_ENV === 'development',
-    });
+    // this.front = nextjs({
+    //   dir: this.dir.next,
+    //   dev: process.env.NODE_ENV === 'development',
+    // });
 
     await buildFront();
-    this.frontHandler = this.front.getRequestHandler();
+    // this.frontHandler = this.front.getRequestHandler();
+
+    // stream transformer for listening ready event from frontend
+    // Emit a ready event when next is listening
+    const nextTransform = (readyCallback) =>
+      new stream.Transform({
+        transform: (chunk, encoding, callback) => {
+          callback(null, chunk);
+
+          const data = chunk.toString();
+          if (
+            data
+              // ignore colors
+              .replace(
+                // eslint-disable-next-line no-control-regex
+                /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
+                ''
+              )
+              // in dev. and prod. next logs a line like: ready - listening on:
+              .startsWith('ready')
+          ) {
+            readyCallback();
+          }
+        },
+      });
+
+    const frontLogger = (level) =>
+      new stream.Writable({
+        write: (chunk) => {
+          this.log[level](chunk.toString(), { labels: ['front'] });
+        },
+      });
 
     // When next is prepared
     await hooks.fireEvent('leemons::prepareFrontend', { status: 'start' });
     const prepareFront = ora('Starting frontend server').start();
-    return this.front.prepare().then(async () => {
-      prepareFront.succeed('Frontend server started');
-      await hooks.fireEvent('leemons::prepareFrontend', { status: 'end' });
-
-      this.setFrontRoutes();
-
-      await hooks.fireEvent('leemons::loadFront', { status: 'end' });
-    });
+    // Start production next app
+    const start = execa.command(
+      `yarn --cwd ${leemons.dir.next} ${process.env.NODE_ENV === 'production' ? 'start' : 'dev'}`,
+      {
+        ...process.env,
+        FORCE_COLOR: true,
+      }
+    );
+    // Log the stdout and stderr
+    start.stdout
+      .pipe(
+        nextTransform(async () => {
+          prepareFront.succeed('Frontend server started');
+          await hooks.fireEvent('leemons::prepareFrontend', { status: 'end' });
+          await hooks.fireEvent('leemons::loadFront', { status: 'end' });
+          this.setFrontRoutes();
+        })
+      )
+      .pipe(frontLogger('info'));
+    start.stderr.pipe(frontLogger('error'));
   }
 
   async loadAppConfig() {
