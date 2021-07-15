@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .radio {
     & ~ .radio-mark {
       @apply flex select-none cursor-pointer items-center justify-center transition duration-200 ease-in-out;
@@ -14,4 +16,6 @@
       @apply outline-none;
     }
   }
+  /* clean-start */
 }
+/* clean-end */

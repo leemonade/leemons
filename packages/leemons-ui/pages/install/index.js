@@ -2,7 +2,8 @@ import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { ChevronRightIcon } from '@heroicons/react/outline';
-import Wrapper from '../src/components/Wrapper';
+import Wrapper from '../../src/components/Wrapper';
+import TabHandler from '../../src/components/TabHandler';
 
 export default function InstallPage() {
   return (
@@ -13,6 +14,8 @@ export default function InstallPage() {
 
       <main data-theme="light">
         <h2 className="my-6 text-5xl font-bold">
+          <TabHandler />
+
           <span className="text-primary">Install as Tailwind CSS plugin</span>
         </h2>
 
@@ -47,12 +50,46 @@ export default function InstallPage() {
               <pre>
                 <code>
                   {`module.exports = {
-
-      plugins: [`}
+      plugins: [
+        `}
                   <span className="badge badge-primary">{`require('leemons-ui/dist/theme'),`}</span>
-                  {`],
-
+                  {`
+      ],
     }`}
+                </code>
+              </pre>
+            </div>
+          </div>
+
+          <p className="my-4">3. Finally add required fonts:</p>
+          <p className="prose text-base-content opacity-60">
+            As <strong>@import</strong> in your CSS file
+          </p>
+          <div className="w-full max-w-xl my-2">
+            <div className="text-sm shadow-lg mockup-code">
+              <pre>
+                <code>
+                  <span className="text-neutral-content text-opacity-60">{`@import url("`}</span>
+                  {`https://fonts.googleapis.com/css2?family=Inter&family=Lexend:wght@300;400;500;600&display=swap`}
+                  <span className="text-neutral-content text-opacity-60">{`");`}</span>
+                </code>
+              </pre>
+            </div>
+          </div>
+          <p className="prose text-base-content opacity-60">
+            Or included in your <strong>{`<head>`}</strong> tag
+          </p>
+          <div className="w-full max-w-xl my-2">
+            <div className="text-sm shadow-lg mockup-code">
+              <pre>
+                <code>
+                  <span className="text-neutral-content text-opacity-60">
+                    {`<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="`}
+                  </span>
+                  {`https://fonts.googleapis.com/css2?family=Inter&family=Lexend:wght@300;400;500;600&display=swap`}
+                  <span className="text-neutral-content text-opacity-50">{`" rel="stylesheet">`}</span>
                 </code>
               </pre>
             </div>

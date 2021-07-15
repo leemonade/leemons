@@ -1,14 +1,16 @@
 const plugin = require('tailwindcss/plugin');
 const colors = require('../../../dist/theme/colors');
+const fontFamily = require('../../../dist/theme/fonts');
 const base = require('../../../dist/theme/base');
 const utilities = require('../../../dist/theme/utilities');
 const utilitiesStyled = require('../../../dist/theme/utilities-styled');
 const utilitiesUnstyled = require('../../../dist/theme/utilities-unstyled');
-const styled = require('../../../dist/theme/styled');
+const components = require('../../../dist/theme/styled');
 
 module.exports = {
   theme: {
     colors,
+    fontFamily,
   },
   corePlugins: [
     'animation',
@@ -30,7 +32,7 @@ module.exports = {
   plugins: [
     plugin(({ addBase, addUtilities, addComponents }) => {
       addBase(base);
-      addComponents(styled);
+      addComponents(components);
       addUtilities(utilities, { variants: ['responsive'] });
       addUtilities(utilitiesUnstyled, { variants: ['responsive'] });
       addUtilities(utilitiesStyled, { variants: ['responsive'] });

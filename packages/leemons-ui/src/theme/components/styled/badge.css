@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .badge {
     @apply bg-neutral border border-neutral text-neutral-content rounded-badge;
   }
@@ -61,4 +63,6 @@
       }
     }
   }
+  /* clean-start */
 }
+/* clean-end */

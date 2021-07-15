@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .avatar {
     @apply relative inline-flex;
     & > div {
@@ -13,4 +15,6 @@
       }
     }
   }
+  /* clean-start */
 }
+/* clean-end */

@@ -1,5 +1,9 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .artboard {
     @apply w-full;
   }
+  /* clean-start */
 }
+/* clean-end */

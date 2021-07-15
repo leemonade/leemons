@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .breadcrumbs {
     @apply py-2;
     & > ul {
@@ -21,4 +23,6 @@
       }
     }
   }
+  /* clean-start */
 }
+/* clean-end */

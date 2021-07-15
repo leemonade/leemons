@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .tooltip {
     @apply inline-block relative text-center;
     --tooltip-tail: 3px;
@@ -104,4 +106,6 @@
       --tooltip-text-color: hsl(var(--er));
     }
   }
+  /* clean-start */
 }
+/* clean-end */

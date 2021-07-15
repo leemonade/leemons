@@ -4,7 +4,7 @@ module.exports = {
   corePlugins: {
     preflight: false,
   },
-  daisyui: {
+  leemons: {
     base: false,
   },
   plugins: [leemonsUI],

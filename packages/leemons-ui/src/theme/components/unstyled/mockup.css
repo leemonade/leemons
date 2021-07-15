@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .mockup {
     &-code {
       @apply relative overflow-hidden overflow-x-auto;
@@ -19,4 +21,6 @@
       }
     }
   }
+  /* clean-start */
 }
+/* clean-end */

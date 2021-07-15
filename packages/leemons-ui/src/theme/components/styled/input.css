@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .input {
     @apply bg-base-100 rounded-btn border border-opacity-0 border-base-content;
     &-bordered {
@@ -61,4 +63,6 @@
       @apply cursor-not-allowed bg-base-200 border-base-200 text-opacity-20 placeholder-base-content placeholder-opacity-20;
     }
   }
+  /* clean-start */
 }
+/* clean-end */

@@ -1,4 +1,6 @@
+/* clean-start */
 @layer utilities {
+  /* clean-end */
   .alert {
     &-sm {
       @apply p-2;
@@ -16,4 +18,6 @@
       @apply bg-opacity-10 bg-error text-error;
     }
   }
+  /* clean-start */
 }
+/* clean-end */

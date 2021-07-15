@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .table {
     @apply text-left;
     th,
@@ -58,4 +60,6 @@
       }
     }
   }
+  /* clean-start */
 }
+/* clean-end */

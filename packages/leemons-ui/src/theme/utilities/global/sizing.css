@@ -1,5 +1,7 @@
+/* clean-start */
 @layer utilities {
   @variants responsive {
+    /* clean-end */
     .min-h-6 {
       min-height: 1.5rem;
     }
@@ -12,5 +14,7 @@
     .min-h-16 {
       min-height: 4rem;
     }
+    /* clean-start */
   }
 }
+/* clean-end */

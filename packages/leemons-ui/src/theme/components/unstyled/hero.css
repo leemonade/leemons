@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .hero {
     @apply grid w-full bg-cover bg-center place-items-center;
     & > * {
@@ -11,4 +13,6 @@
       @apply items-center flex z-0 justify-center;
     }
   }
+  /* clean-start */
 }
+/* clean-end */

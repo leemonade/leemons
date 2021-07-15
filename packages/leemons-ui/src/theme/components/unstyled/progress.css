@@ -1,5 +1,9 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .progress {
     @apply appearance-none relative overflow-hidden w-full;
   }
+  /* clean-start */
 }
+/* clean-end */

@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .card {
     @apply rounded-box;
     &:focus-visible {
@@ -36,4 +38,6 @@
       @apply text-neutral-content z-20;
     }
   }
+  /* clean-start */
 }
+/* clean-end */

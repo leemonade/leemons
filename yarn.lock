@@ -5472,7 +5472,7 @@ domutils@^1.5.1:
     dom-serializer "0"
     domelementtype "1"
 
-domutils@^2.5.2:
+domutils@^2.5.2, domutils@^2.6.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/domutils/-/domutils-2.7.0.tgz#8ebaf0c41ebafcf55b0b72ec31c56323712c5442"
   integrity sha512-8eaHa17IwJUPAiB+SoTYBo5mCdeMgdcAoXJ59m6DT1vw+5iLS3gNoqYaRowaBKtGVrOF1Jz4yDTgYKLK2kvfJg==
@@ -12285,6 +12285,15 @@ repeating@^2.0.0:
   integrity sha1-UhTFOpJtNVJwdSf7q0FdvAjQbdo=
   dependencies:
     is-finite "^1.0.0"
+
+replace-in-file@^6.2.0:
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/replace-in-file/-/replace-in-file-6.2.0.tgz#9c0e381b0e02f27f83d5ba500bb4046f63d18566"
+  integrity sha512-Im2AF9G/qgkYneOc9QwWwUS/efyyonTUBvzXS2VXuxPawE5yQIjT/e6x4CTijO0Quq48lfAujuo+S89RR2TP2Q==
+  dependencies:
+    chalk "^4.1.0"
+    glob "^7.1.6"
+    yargs "^16.2.0"
 
 request-promise-core@1.1.4:
   version "1.1.4"

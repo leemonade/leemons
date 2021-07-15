@@ -1,5 +1,6 @@
 const tailwindPlugin = require('tailwindcss/plugin');
 const colors = require('./colors/index');
+const fontFamily = require('./fonts/index');
 const utilities = require('./utilities');
 const base = require('./base');
 const unstyled = require('./unstyled');
@@ -176,7 +177,7 @@ you need to add this to your \x1b[34mtailwind.config.js\x1b[0m file:
 };
 
 if (isTailwindInstalled) {
-  module.exports = tailwindPlugin(mainFunction, { theme: { extend: { colors } } });
+  module.exports = tailwindPlugin(mainFunction, { theme: { fontFamily, extend: { colors } } });
 } else {
   module.exports = mainFunction;
 }

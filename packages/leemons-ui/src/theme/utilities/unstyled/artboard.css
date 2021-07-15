@@ -1,4 +1,6 @@
+/* clean-start */
 @layer utilities {
+  /* clean-end */
   .artboard {
     &-demo {
       @apply flex flex-col items-center justify-center flex-none;
@@ -55,4 +57,6 @@
       }
     }
   }
+  /* clean-start */
 }
+/* clean-end */
