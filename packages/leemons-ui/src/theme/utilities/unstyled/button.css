@@ -12,7 +12,7 @@
       @apply px-4 leading-loose h-12 text-sm min-h-12;
     }
     &-lg {
-      @apply px-6 leading-loose h-16 text-lg min-h-16;
+      @apply px-6 leading-loose h-14 text-lg min-h-14;
     }
     &-wide {
       @apply w-64;
@@ -28,10 +28,10 @@
         @apply h-8 w-8 p-0;
       }
       &.btn-md {
-        @apply h-12 w-12 p-0;
+        @apply h-10 w-10 p-0;
       }
       &.btn-lg {
-        @apply h-16 w-16 p-0;
+        @apply h-14 w-14 p-0;
       }
     }
     &-circle {
@@ -45,7 +45,7 @@
         @apply rounded-full h-12 w-12 p-0;
       }
       &.btn-lg {
-        @apply rounded-full h-16 w-16 p-0;
+        @apply rounded-full h-14 w-14 p-0;
       }
     }
   }
