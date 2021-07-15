@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .textarea {
     @apply transition duration-200 ease-in-out flex-shrink;
     & {
@@ -8,4 +10,6 @@
       @apply outline-none;
     }
   }
+  /* clean-start */
 }
+/* clean-end */

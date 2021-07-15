@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .card {
     @apply flex flex-col relative overflow-hidden;
     &:focus {
@@ -35,4 +37,6 @@
       @apply relative;
     }
   }
+  /* clean-start */
 }
+/* clean-end */

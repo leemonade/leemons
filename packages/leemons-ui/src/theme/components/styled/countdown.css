@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .countdown {
     & > * {
       &:before {
@@ -7,4 +9,6 @@
       }
     }
   }
+  /* clean-start */
 }
+/* clean-end */

@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .hero {
     &-overlay {
       @apply bg-neutral bg-opacity-50;
@@ -7,4 +9,6 @@
       @apply p-4 gap-4 max-w-7xl;
     }
   }
+  /* clean-start */
 }
+/* clean-end */

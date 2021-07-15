@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .divider {
     @apply flex items-center;
     &:before,
@@ -14,4 +16,6 @@
       }
     }
   }
+  /* clean-start */
 }
+/* clean-end */

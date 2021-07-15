@@ -1,4 +1,6 @@
+/* clean-start */
 @layer utilities {
+  /* clean-end */
   .glass {
     &,
     &:hover,
@@ -21,4 +23,6 @@
       text-shadow: 0 1px rgb(0 0 0 / var(--glass-text-shadow-opacity, 5%));
     }
   }
+  /* clean-start */
 }
+/* clean-end */

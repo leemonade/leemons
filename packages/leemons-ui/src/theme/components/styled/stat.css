@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .stats {
     @apply rounded-box;
   }
@@ -25,4 +27,6 @@
       @apply border-l-0 border-t;
     }
   }
+  /* clean-start */
 }
+/* clean-end */

@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .link {
     &-primary {
       @apply text-primary hover:text-primary-focus;
@@ -19,4 +21,6 @@
       box-shadow: 0 0 0 2px currentColor;
     }
   }
+  /* clean-start */
 }
+/* clean-end */

@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .modal {
     @apply transition duration-200 ease-in-out bg-neutral-focus bg-opacity-40;
   }
@@ -13,4 +15,6 @@
   .modal-action {
     @apply mt-6 justify-end space-x-2;
   }
+  /* clean-start */
 }
+/* clean-end */

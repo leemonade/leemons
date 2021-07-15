@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .label {
     @apply px-1 py-2;
     &-text {
@@ -11,4 +13,6 @@
       @apply hover:text-base-content;
     }
   }
+  /* clean-start */
 }
+/* clean-end */

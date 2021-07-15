@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .steps {
     counter-reset: step;
     grid-auto-columns: 1fr;
@@ -8,4 +10,6 @@
       @apply grid grid-cols-1 grid-rows-2 place-items-center text-center;
     }
   }
+  /* clean-start */
 }
+/* clean-end */

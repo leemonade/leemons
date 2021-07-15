@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .drawer {
     @apply grid overflow-hidden;
     &.drawer-end .drawer-toggle {
@@ -55,4 +57,6 @@
       }
     }
   }
+  /* clean-start */
 }
+/* clean-end */

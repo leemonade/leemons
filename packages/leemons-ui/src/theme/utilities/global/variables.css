@@ -1,5 +1,7 @@
+/* clean-start */
 @layer utilities {
   @variants responsive {
+    /* clean-end */
     .no-animation {
       --btn-focus-scale: 1;
       --animation-btn: 0;
@@ -23,5 +25,7 @@
     .tab-rounded-lg {
       --tab-radius: 0.5rem;
     }
+    /* clean-start */
   }
 }
+/* clean-end */

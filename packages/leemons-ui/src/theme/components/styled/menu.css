@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .menu {
     &.horizontal {
       li {
@@ -66,4 +68,6 @@
       }
     }
   }
+  /* clean-start */
 }
+/* clean-end */

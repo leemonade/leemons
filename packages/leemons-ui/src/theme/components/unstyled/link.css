@@ -1,8 +1,12 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .link {
     @apply underline cursor-pointer;
     &-hover {
       @apply no-underline hover:underline;
     }
   }
+  /* clean-start */
 }
+/* clean-end */

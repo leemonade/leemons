@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .dropdown .dropdown-content {
     @apply transition duration-200 ease-in-out transform scale-95 origin-top;
   }
@@ -17,4 +19,6 @@
   .dropdown:focus-within .dropdown-content {
     @apply scale-100;
   }
+  /* clean-start */
 }
+/* clean-end */

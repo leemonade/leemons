@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .menu {
     @apply flex flex-col overflow-hidden;
     &.horizontal {
@@ -27,4 +29,6 @@
       }
     }
   }
+  /* clean-start */
 }
+/* clean-end */

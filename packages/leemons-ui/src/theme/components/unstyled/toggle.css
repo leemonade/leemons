@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .toggle {
     & ~ .toggle-mark {
       @apply flex select-none cursor-pointer items-center justify-start transition duration-200 ease-in-out;
@@ -11,4 +13,6 @@
       @apply outline-none;
     }
   }
+  /* clean-start */
 }
+/* clean-end */

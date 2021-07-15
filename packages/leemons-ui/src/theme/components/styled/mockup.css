@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .mockup {
     &-code {
       @apply rounded-box py-5 bg-secondary text-secondary-content;
@@ -76,4 +78,6 @@
       }
     }
   }
+  /* clean-start */
 }
+/* clean-end */

@@ -1,4 +1,6 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .navbar {
     @apply flex items-center;
     & > * {
@@ -16,4 +18,6 @@
     width: 50%;
     justify-content: flex-end;
   }
+  /* clean-start */
 }
+/* clean-end */

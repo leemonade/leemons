@@ -1,8 +1,12 @@
+/* clean-start */
 @layer components {
+  /* clean-end */
   .alert {
     @apply flex flex-col justify-between items-center md:flex-row space-y-2 md:space-y-0;
     & > * {
       @apply flex;
     }
   }
+  /* clean-start */
 }
+/* clean-end */
