@@ -23,7 +23,7 @@
     }
   ],
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --port 3001",
     "index": "cp ./src/theme/index.js ./dist/theme/index.js",
     "colors": "cp -R ./src/theme/colors ./dist/theme",
     "prebase": "postcss --config temp/theme/base temp/theme/base/*.css --base temp --dir dist",

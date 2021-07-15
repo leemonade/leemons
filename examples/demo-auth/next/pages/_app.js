@@ -6,7 +6,6 @@ import React, { useEffect } from 'react';
 import { frontPlugins, plugins } from '@plugins';
 import { SessionProvider } from '@users/context/session';
 import 'tailwindcss/tailwind.css';
-// import 'leemons-ui/src/theme/leemons.css';
 import 'simplebar/dist/simplebar.min.css';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
