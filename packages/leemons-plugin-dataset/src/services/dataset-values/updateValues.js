@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const getSchema = require('../dataset-schema/getSchema');
 const deleteValues = require('./deleteValues');
+const getKeysCanAction = require('./getKeysCanAction');
 const { validateNotExistValues } = require('../../validations/exists');
 const { validatePluginName } = require('../../validations/exists');
 const { table } = require('../tables');
@@ -20,7 +21,8 @@ const { table } = require('../tables');
  *  @static
  *  @param {string} locationName Location name (For backend)
  *  @param {string} pluginName Plugin name (For backend)
- *  @param {any} formData Form data to save
+ *  @param {any} _formData Form data to save
+ *  @param {UserAuth} userAuth - User auth
  *  @param {any=} transacting - DB Transaction
  *  @param {string=} target Any string to differentiate what you want, for example a user id.
  *  @return {Promise<any>} Passed formData
@@ -28,7 +30,8 @@ const { table } = require('../tables');
 async function updateValues(
   locationName,
   pluginName,
-  formData,
+  _formData,
+  userAuth,
   { target, transacting: _transacting } = {}
 ) {
   validatePluginName(pluginName, this.calledFrom);
@@ -36,6 +39,14 @@ async function updateValues(
 
   const { jsonSchema } = await getSchema.call(this, locationName, pluginName, {
     transacting: _transacting,
+  });
+
+  // ES: Cogemos solos los campos a los que el usuario tiene permiso de edicion
+  // EN: We take only the fields to which the user has permission to edit.
+  const goodKeys = await getKeysCanAction(locationName, pluginName, userAuth, 'edit');
+  const formData = {};
+  _.forEach(goodKeys, (k) => {
+    formData[k] = _formData[k];
   });
 
   const validator = new global.utils.LeemonsValidator(

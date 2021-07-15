@@ -8,12 +8,14 @@ const constants = require('../../../config/constants');
  * @public
  * @static
  * @param {UserAuth} userAuth - User auth
+ * @param {object} _query
  * @param {any=} transacting - DB Transaction
  * @return {Promise<ListOfUserPermissions>} User permissions
  * */
-async function getUserPermissions(userAuth, { transacting } = {}) {
+async function getUserPermissions(userAuth, { query: _query, transacting } = {}) {
   if (userAuth.reloadPermissions) await updateUserAuthPermissions(userAuth.id, { transacting });
-  const results = await table.userAuthPermission.find({ userAuth: userAuth.id });
+  const query = { ..._query, userAuth: userAuth.id };
+  const results = await table.userAuthPermission.find(query, { transacting });
 
   const group = _.groupBy(
     results,
@@ -31,12 +33,14 @@ async function getUserPermissions(userAuth, { transacting } = {}) {
   });
 
   // Add default permission for all users
-  responses.push({
-    role: null,
-    permissionName: constants.basicPermission.permissionName,
-    actionNames: [constants.basicPermission.actionName],
-    target: null,
-  });
+  if (!_query) {
+    responses.push({
+      role: null,
+      permissionName: constants.basicPermission.permissionName,
+      actionNames: [constants.basicPermission.actionName],
+      target: null,
+    });
+  }
 
   return responses;
 }

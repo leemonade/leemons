@@ -8,4 +8,5 @@ module.exports = {
   list: profiles.list,
   detailByUri: profiles.detailByUri,
   addCustomPermissions: profiles.addCustomPermissions,
+  removeCustomPermissionsByName: profiles.removeCustomPermissionsByName,
 };

@@ -1,5 +1,11 @@
 const _ = require('lodash');
 const getSchema = require('../dataset-schema/getSchema');
+const prefixPN = require('../../helpers/prefixPN');
+const transformPermissionKeysToObjects = require('../dataset-schema/transformPermissionKeysToObjects');
+const getKeysCanAction = require('./getKeysCanAction');
+const {
+  getJsonSchemaProfilePermissionsKeys,
+} = require('../dataset-schema/transformJsonOrUiSchema');
 const { validateExistValues } = require('../../validations/exists');
 const { validatePluginName } = require('../../validations/exists');
 const { table } = require('../tables');
@@ -19,17 +25,34 @@ const { table } = require('../tables');
  *  @static
  *  @param {string} locationName Location name (For backend)
  *  @param {string} pluginName Plugin name (For backend)
- *  @param {any} formData Form data to save
+ *  @param {any} _formData Form data to save
  *  @param {any=} transacting - DB Transaction
  *  @param {string=} target Any string to differentiate what you want, for example a user id.
+ *  @param {UserAuth} userAuth - User auth
  *  @return {Promise<any>} Passed formData
  *  */
-async function addValues(locationName, pluginName, formData, { target, transacting } = {}) {
+async function addValues(
+  locationName,
+  pluginName,
+  _formData,
+  userAuth,
+  { target, transacting } = {}
+) {
   validatePluginName(pluginName, this.calledFrom);
   await validateExistValues(locationName, pluginName, target, { transacting });
 
   const { jsonSchema } = await getSchema.call(this, locationName, pluginName);
 
+  // ES: Cogemos solos los campos a los que el usuario tiene permiso de edicion
+  // EN: We take only the fields to which the user has permission to edit.
+  const goodKeys = await getKeysCanAction(locationName, pluginName, userAuth, 'edit');
+  const formData = {};
+  _.forEach(goodKeys, (k) => {
+    formData[k] = _formData[k];
+  });
+
+  // ES: Comprobamos que los datos cumplen con la validacion
+  // EN: We check that the data complies with validation
   const validator = new global.utils.LeemonsValidator(
     {
       ...jsonSchema,

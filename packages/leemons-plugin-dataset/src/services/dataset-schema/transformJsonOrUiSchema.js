@@ -13,6 +13,8 @@ function arrKeys(object) {
           _.forEach(arrKeys(val), (_k) => {
             keys.push(`${key}[${k}].${_k}`);
           });
+        } else {
+          keys.push(`${key}.${k}`);
         }
       });
     } else {
@@ -84,6 +86,18 @@ function transformJsonOrUiSchema(jsonSchema, saveKeys, replaces) {
 }
 
 module.exports = {
+  arrKeys,
+  getJsonSchemaProfilePermissionsKeys(jsonSchema) {
+    const keys = [];
+    _.forEach(arrKeys(jsonSchema), (key) => {
+      if (key.indexOf('.profilePermissions.') >= 0) {
+        const k = _.split(key, '.');
+        k.pop();
+        keys.push(_.join(k, '.'));
+      }
+    });
+    return _.uniq(keys);
+  },
   transformJsonSchema(jsonSchema) {
     return transformJsonOrUiSchema(jsonSchema, ['title', 'description', 'default']);
   },

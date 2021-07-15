@@ -1,3 +1,6 @@
+const _ = require('lodash');
+const transformPermissionKeysToObjects = require('./transformPermissionKeysToObjects');
+const { getJsonSchemaProfilePermissionsKeys } = require('./transformJsonOrUiSchema');
 const {
   validatePluginName,
   validateNotExistLocation,
@@ -21,25 +24,52 @@ const { table } = require('../tables');
  *  @param {any=} transacting - DB Transaction
  *  @return {Promise<DatasetSchema>} The new dataset location
  *  */
-async function addSchema({ locationName, pluginName, jsonSchema, jsonUI }, { transacting } = {}) {
+async function addSchema(
+  { locationName, pluginName, jsonSchema, jsonUI },
+  { transacting: _transacting } = {}
+) {
   validateAddSchema({ locationName, pluginName, jsonSchema, jsonUI });
   validatePluginName(pluginName, this.calledFrom);
-  await validateNotExistLocation(locationName, pluginName, { transacting });
-  await validateExistSchema(locationName, pluginName, { transacting });
+  await validateNotExistLocation(locationName, pluginName, { transacting: _transacting });
+  await validateExistSchema(locationName, pluginName, { transacting: _transacting });
 
-  const dataset = await table.dataset.update(
-    { locationName, pluginName },
-    {
-      jsonSchema: JSON.stringify(jsonSchema),
-      jsonUI: JSON.stringify(jsonUI),
+  return global.utils.withTransaction(
+    async (transacting) => {
+      const permissionObject = transformPermissionKeysToObjects(
+        jsonSchema,
+        getJsonSchemaProfilePermissionsKeys(jsonSchema),
+        `${locationName}.${pluginName}`
+      );
+
+      const promises = [
+        table.dataset.update(
+          { locationName, pluginName },
+          {
+            jsonSchema: JSON.stringify(jsonSchema),
+            jsonUI: JSON.stringify(jsonUI),
+          },
+          { transacting }
+        ),
+      ];
+
+      _.forIn(permissionObject, (permissions, profileId) => {
+        promises.push(
+          leemons.plugins.users.services.profiles.addCustomPermissions(profileId, permissions, {
+            transacting,
+          })
+        );
+      });
+
+      const [dataset] = await Promise.all(promises);
+
+      dataset.jsonSchema = JSON.parse(dataset.jsonSchema);
+      dataset.jsonUI = JSON.parse(dataset.jsonUI);
+
+      return dataset;
     },
-    { transacting }
+    table.dataset,
+    _transacting
   );
-
-  dataset.jsonSchema = JSON.parse(dataset.jsonSchema);
-  dataset.jsonUI = JSON.parse(dataset.jsonUI);
-
-  return dataset;
 }
 
 module.exports = addSchema;

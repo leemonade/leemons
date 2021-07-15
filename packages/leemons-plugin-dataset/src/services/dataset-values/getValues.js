@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const existValues = require('./existValues');
+const getKeysCanAction = require('./getKeysCanAction');
 const { table } = require('../tables');
 
 /** *
@@ -13,12 +14,13 @@ const { table } = require('../tables');
  *  @static
  *  @param {string} locationName Location name (For backend)
  *  @param {string} pluginName Plugin name (For backend)
+ *  @param {UserAuth} userAuth - User auth
  *  @param {string[]=} keys Keys to get
  *  @param {any=} transacting - DB Transaction
  *  @param {string=} target Any string to differentiate what you want, for example a user id.
  *  @return {Promise<any>} Passed formData
  *  */
-async function getValues(locationName, pluginName, { target, keys, transacting } = {}) {
+async function getValues(locationName, pluginName, userAuth, { target, keys, transacting } = {}) {
   if (!(await existValues(locationName, pluginName, { target, transacting }))) return null;
 
   let _keys = keys;
@@ -30,10 +32,19 @@ async function getValues(locationName, pluginName, { target, keys, transacting }
 
   const response = await table.datasetValues.find(query, { transacting });
 
-  return response.reduce((acc, value) => {
+  const data = response.reduce((acc, value) => {
     acc[value.key] = JSON.parse(value.value);
     return acc;
   }, {});
+
+  const goodKeys = await getKeysCanAction(locationName, pluginName, userAuth, ['view', 'edit']);
+
+  const result = {};
+  _.forEach(goodKeys, (k) => {
+    result[k] = data[k];
+  });
+
+  return result;
 }
 
 module.exports = getValues;

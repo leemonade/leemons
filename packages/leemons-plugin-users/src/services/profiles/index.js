@@ -5,6 +5,7 @@ const { detailByUri } = require('./detailByUri');
 const { update } = require('./update');
 const existMany = require('./existMany');
 const addCustomPermissions = require('./addCustomPermissions');
+const removeCustomPermissionsByName = require('./removeCustomPermissionsByName');
 
 module.exports = {
   list,
@@ -14,4 +15,5 @@ module.exports = {
   update,
   existMany,
   addCustomPermissions,
+  removeCustomPermissionsByName,
 };

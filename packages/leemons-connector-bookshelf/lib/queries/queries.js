@@ -78,11 +78,17 @@ function generateQueries(model /* connector */) {
     const updatedCount = await entry().count();
 
     if (updatedCount > 0) {
-      await entry().save(attributes, {
-        method: 'update',
-        patch: true,
-        transacting,
-      });
+      try {
+        await entry().save(attributes, {
+          method: 'update',
+          patch: true,
+          transacting,
+        });
+      } catch (err) {
+        if (err.message !== 'EmptyResponse') {
+          throw err;
+        }
+      }
     }
 
     return { count: updatedCount };

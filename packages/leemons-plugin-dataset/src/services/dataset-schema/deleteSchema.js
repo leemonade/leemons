@@ -1,3 +1,6 @@
+const _ = require('lodash');
+const transformPermissionKeysToObjects = require('./transformPermissionKeysToObjects');
+const { getJsonSchemaProfilePermissionsKeys } = require('./transformJsonOrUiSchema');
 const {
   validatePluginName,
   validateNotExistLocation,
@@ -29,6 +32,16 @@ async function deleteSchema(locationName, pluginName, { transacting: _transactin
 
   return global.utils.withTransaction(
     async (transacting) => {
+      // ES: Pillamos los permisos por perfil para el jsonSchema
+      // EN: We set the permissions per profile for jsonSchema
+      const { jsonSchema } = await table.dataset.findOne({ locationName, pluginName });
+
+      const permissionObject = transformPermissionKeysToObjects(
+        jsonSchema,
+        getJsonSchemaProfilePermissionsKeys(jsonSchema),
+        `${locationName}.${pluginName}`
+      );
+
       const promises = [
         table.dataset.update(
           { locationName, pluginName },
@@ -39,6 +52,21 @@ async function deleteSchema(locationName, pluginName, { transacting: _transactin
           { transacting }
         ),
       ];
+
+      // ES: Borramos todos los permisos que se añadieron al perfil para este dataset
+      // EN: Delete all permissions that were added to the profile for this dataset
+      _.forIn(permissionObject, (permissions, profileId) => {
+        promises.push(
+          leemons.plugins.users.services.profiles.removeCustomPermissionsByName(
+            profileId,
+            _.map(permissions, 'permissionName'),
+            { transacting }
+          )
+        );
+      });
+
+      // ES: Borramos traducciones
+      // EN: We delete translations
       if (translations()) {
         promises.push(
           translations().contents.deleteAll(

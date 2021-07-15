@@ -1,3 +1,6 @@
+const _ = require('lodash');
+const transformPermissionKeysToObjects = require('./transformPermissionKeysToObjects');
+const { getJsonSchemaProfilePermissionsKeys } = require('./transformJsonOrUiSchema');
 const {
   validatePluginName,
   validateNotExistLocation,
@@ -21,26 +24,84 @@ const { table } = require('../tables');
  *  */
 async function updateSchema(
   { locationName, pluginName, jsonSchema, jsonUI },
-  { transacting } = {}
+  { transacting: _transacting } = {}
 ) {
   validateAddSchema({ locationName, pluginName, jsonSchema, jsonUI });
   validatePluginName(pluginName, this.calledFrom);
-  await validateNotExistLocation(locationName, pluginName, { transacting });
-  await validateNotExistSchema(locationName, pluginName, { transacting });
+  await validateNotExistLocation(locationName, pluginName, { transacting: _transacting });
+  await validateNotExistSchema(locationName, pluginName, { transacting: _transacting });
 
-  const dataset = table.dataset.update(
-    { locationName, pluginName },
-    {
-      jsonSchema: JSON.stringify(jsonSchema),
-      jsonUI: JSON.stringify(jsonUI),
+  return global.utils.withTransaction(
+    async (transacting) => {
+      // ES: Pillamos los permisos por perfil viejos para el jsonSchema
+      // EN: We set the old permissions per profile for jsonSchema
+      const { jsonSchema: oldJsonSchema } = await table.dataset.findOne({
+        locationName,
+        pluginName,
+      });
+
+      // ES: Transformamos los jsonSchema
+      // EN: We transform the jsonSchema
+      const oldPermissionObject = transformPermissionKeysToObjects(
+        oldJsonSchema,
+        getJsonSchemaProfilePermissionsKeys(oldJsonSchema),
+        `${locationName}.${pluginName}`
+      );
+      const newPermissionObject = transformPermissionKeysToObjects(
+        jsonSchema,
+        getJsonSchemaProfilePermissionsKeys(jsonSchema),
+        `${locationName}.${pluginName}`
+      );
+
+      const removePermissionsPromises = [];
+
+      // ES: Borramos todos los permisos antiguos que se añadieron el perfil para mas adelante añadir los nuevos
+      // EN: We delete all the old permissions that were added to the profile to add the new ones later.
+      _.forIn(oldPermissionObject, (permissions, profileId) => {
+        removePermissionsPromises.push(
+          leemons.plugins.users.services.profiles.removeCustomPermissionsByName(
+            profileId,
+            _.map(permissions, 'permissionName'),
+            { transacting }
+          )
+        );
+      });
+
+      await Promise.all(removePermissionsPromises);
+
+      const promises = [
+        // ES: Actualizamos el dataset
+        // EN: We update the dataset
+        table.dataset.update(
+          { locationName, pluginName },
+          {
+            jsonSchema: JSON.stringify(jsonSchema),
+            jsonUI: JSON.stringify(jsonUI),
+          },
+          { transacting }
+        ),
+      ];
+
+      // ES: Añadimos de nuevo los permisos despues que borraramos los antiguos
+      // EN: We add the permissions again after deleting the old ones.
+      _.forIn(newPermissionObject, (permissions, profileId) => {
+        promises.push(
+          leemons.plugins.users.services.profiles.addCustomPermissions(profileId, permissions, {
+            transacting,
+          })
+        );
+      });
+
+      const [dataset] = await Promise.all(promises);
+
+      dataset.jsonSchema = JSON.parse(dataset.jsonSchema);
+      dataset.jsonUI = JSON.parse(dataset.jsonUI);
+
+      return dataset;
     },
-    { transacting }
+    table.dataset,
+    _transacting
   );
-
-  dataset.jsonSchema = JSON.parse(dataset.jsonSchema);
-  dataset.jsonUI = JSON.parse(dataset.jsonUI);
-
-  return dataset;
 }
 
 module.exports = updateSchema;
