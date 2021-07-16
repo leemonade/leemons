@@ -26,8 +26,8 @@ export default function ListUsers() {
     <>
       <MainMenuLayout>
         <div className="mb-4">
-          <MainMenuDropItem item={{ key: 'user-list-4' }} className="bg-blue-300 rounded-3xl">
-            {({ isDragging }) => <>El list 4</>}
+          <MainMenuDropItem item={{ key: 'user-list-6' }} className="bg-blue-300 rounded-3xl">
+            {({ isDragging }) => <>El list 6</>}
           </MainMenuDropItem>
         </div>
 

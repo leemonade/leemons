@@ -73,8 +73,8 @@ export default function MainMenu({ onClose, onOpen }) {
     <>
       <div className="flex w-full">
         {/* Menu */}
-        <div style={{ width: menuWidth }} className="h-screen flex-none bg-gray-100">
-          <div className="h-screen w-full flex flex-col justify-between bg-gray-100">
+        <div style={{ width: menuWidth }} className="h-screen flex-none bg-secondary">
+          <div className="h-screen w-full flex flex-col justify-between">
             <img className="w-8 mb-9 mx-auto" src="/menu-builder/logo.svg" alt="" />
 
             {/* Menu items */}

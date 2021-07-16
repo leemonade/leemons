@@ -9,12 +9,12 @@ export default function MainMenuCloseSubmenuBtn({ onClick }) {
       <div
         onClick={onClick}
         style={{ width: closeSubmenuSize, height: closeSubmenuSize }}
-        className={'bg-gray-400 rounded-full cursor-pointer'}
+        className={'bg-secondary-500 rounded-full cursor-pointer'}
       >
         <div className={'w-4 h-full mx-auto relative'}>
           {/* TODO: Add alt multilanguage */}
           <LeemonsImage
-            className="stroke-current text-white"
+            className="stroke-current text-secondary-20"
             src="/menu-builder/svgs/keyboard-previous.svg"
           />
         </div>

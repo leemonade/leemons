@@ -25,31 +25,63 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
 
   const move = useCallback(
     async (id, atIndex, isLast) => {
-      const { dragItem, index } = find(id);
-      const newCustomChildrens = update(customChildrens, {
-        $splice: [
-          [index, 1],
-          [atIndex, 0, dragItem],
-        ],
-      });
-      setCustomChildrens(newCustomChildrens);
-      if (isLast) {
-        await reOrderCustomUserItemsRequest(
-          'plugins.menu-builder.main',
-          item.key,
-          _.map(newCustomChildrens, 'id')
-        );
+      if (_.isString(id)) {
+        const { dragItem, index } = find(id);
+        const newCustomChildrens = update(customChildrens, {
+          $splice: [
+            [index, 1],
+            [atIndex, 0, dragItem],
+          ],
+        });
+        setCustomChildrens(newCustomChildrens);
+        if (isLast) {
+          await reOrderCustomUserItemsRequest(
+            'plugins.menu-builder.main',
+            item.key,
+            _.map(newCustomChildrens, 'id')
+          );
+        }
+      } else {
+        const { dragItem, index } = find('new-item');
+        if (dragItem) {
+          setCustomChildrens(
+            update(customChildrens, {
+              $splice: [
+                [index, 1],
+                [atIndex, 0, dragItem],
+              ],
+            })
+          );
+        } else {
+          setCustomChildrens(
+            update(customChildrens, {
+              $push: [{ ...id, id: 'new-item' }],
+            })
+          );
+        }
       }
     },
     [customChildrens, setCustomChildrens]
   );
 
   const onDrop = async (droppedItem) => {
+    console.log('onDrop');
     const { menuItem } = await addMenuItemRequest({ ...droppedItem, parentKey: item.key });
     await hooks.fireEvent('menu-builder:user:addCustomItem', menuItem);
   };
 
+  const onCancel = (dragItem) => {
+    console.log(dragItem, customChildrens);
+  };
+
   const [, drop] = useDrop(() => ({ accept: 'menu-item-sort' }));
+
+  useEffect(() => {
+    hooks.addAction('dnd:cancel', onCancel);
+    return () => {
+      hooks.removeAction('dnd:cancel', onCancel);
+    };
+  });
 
   useEffect(() => {
     registerDndLayer('menu-item-sort', ({ item: _item }) => (
@@ -64,9 +96,12 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
   return (
     <>
       {item && (
-        <div className="w-full h-screen bg-gray-300 flex flex-col justify-between">
+        <div className="w-full h-screen bg-secondary-400 flex flex-col justify-between">
           {/* Header submenu */}
-          <div className={'flex flex-row justify-between items-center mb-8 pt-3'}>
+          <div
+            style={{ marginBottom: '34px' }}
+            className={'flex flex-row justify-between items-center pt-3'}
+          >
             <div className={'w-full pl-6 font-lexend text-base text-white '}>{item.label}</div>
             {/* Close submenu */}
             <div className={'px-2'}>
@@ -94,6 +129,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
                         find={find}
                         move={move}
                         type={'menu-item-sort'}
+                        accept={['menu-item-sort', 'menu-item']}
                         emptyLayout={true}
                       >
                         {({ isDragging }) => (

@@ -3,17 +3,27 @@ import { useDrag } from 'react-dnd';
 import PropTypes from 'prop-types';
 import * as _ from 'lodash';
 import { getEmptyImage } from 'react-dnd-html5-backend';
+import hooks from 'leemons-hooks';
 
 export default function DndItem({ children, className, item, type, emptyLayout }) {
   let goodChildren = _.isFunction(children) ? children({ isDragging: false }) : children;
 
   const [{ isDragging }, drag, preview] = useDrag(() => ({
     type,
-    item,
+    item: {
+      ...item,
+      _tempId: Math.random().toString(16).slice(2),
+    },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
       handlerId: monitor.getHandlerId(),
     }),
+    end: (dragItem, monitor) => {
+      const didDrop = monitor.didDrop();
+      if (!didDrop) {
+        hooks.fireEvent('dnd:cancel', dragItem);
+      }
+    },
   }));
 
   useEffect(() => {

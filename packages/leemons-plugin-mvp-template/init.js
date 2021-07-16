@@ -8,7 +8,9 @@ async function init() {
     console.log('profiles', profiles);
     const users = await initUsers(profiles);
     console.log('users', users);
-  } catch (e) {}
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 module.exports = init;

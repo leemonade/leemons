@@ -3,7 +3,7 @@ const { add: addRole } = require('../roles');
 const { existName } = require('./existName');
 const { table } = require('../tables');
 
-async function add(data, { transacting: _transacting }) {
+async function add(data, { transacting: _transacting } = {}) {
   const exist = await existName(data.name);
   if (exist) throw new Error(`Already exists one profile with the name '${data.name}'`);
   const permissionsForRole = [];
