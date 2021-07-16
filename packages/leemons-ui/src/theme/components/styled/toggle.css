@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .toggle {
     @apply appearance-none opacity-0 w-0 h-0 absolute;
     & ~ .toggle-mark {
@@ -122,6 +122,6 @@
       margin-left: 2px;
     }
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

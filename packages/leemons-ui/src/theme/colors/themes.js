@@ -23,7 +23,7 @@ module.exports = {
   },
   '[data-theme=light]': {
     primary: '#4F96FF',
-    'primary-focus': '#427ED6',
+    'primary-focus': '#1a75ff',
     'primary-content': '#ffffff',
     secondary: '#202a3c',
     'secondary-focus': '#333F56',

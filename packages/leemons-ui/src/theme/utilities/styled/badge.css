@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer utilities {
-  /* clean-end */
+  /* <: */
   .badge {
     &-primary {
       @apply bg-primary border-primary text-primary-content;
@@ -42,6 +42,6 @@
       @apply bg-opacity-10 bg-error border-transparent text-error;
     }
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

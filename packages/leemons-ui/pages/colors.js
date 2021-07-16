@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import PropTypes from 'prop-types';
 import {
   ChevronRightIcon,
   EyeIcon,
@@ -27,42 +28,43 @@ import {
   MenuItem,
   Alert,
 } from '../src/components/ui';
-import hexToHSL from '../src/theme/colors/hex2hsl';
+import HexToHSL from '../src/theme/colors/hex2hsl';
+import Themes from '../src/theme/colors/themes';
 
 const COLOR_VALUES = {
-  p: { hsl: '259 94% 51%', hex: '#570df8', name: 'primary' },
-  pf: { hsl: '259 94% 41%', hex: '#4506cb', name: 'primary-focus' },
-  pc: { hsl: '0 0% 100%', hex: '#ffffff', name: 'primary-content' },
+  p: { name: 'primary' },
+  pf: { name: 'primary-focus' },
+  pc: { name: 'primary-content' },
 
-  s: { hsl: '314 100% 47%', hex: '#f000b8', name: 'secondary' },
-  sf: { hsl: '314 100% 37%', hex: '#bd0091', name: 'secondary-focus' },
-  sc: { hsl: '0 0% 100%', hex: '#ffffff', name: 'secondary-content' },
+  s: { name: 'secondary' },
+  sf: { name: 'secondary-focus' },
+  sc: { name: 'secondary-content' },
 
-  a: { hsl: '174 60% 51%', hex: '#37cdbe', name: 'accent' },
-  af: { hsl: '174 60% 41%', hex: '#2aa79b', name: 'accent-focus' },
-  ac: { hsl: '0 0% 100%', hex: '#ffffff', name: 'accent-content' },
+  a: { name: 'accent' },
+  af: { name: 'accent-focus' },
+  ac: { name: 'accent-content' },
 
-  n: { hsl: '219 14% 28%', hex: '#3d4451', name: 'neutral' },
-  nf: { hsl: '222 13% 19%', hex: '#2a2e37', name: 'neutral-focus' },
-  nc: { hsl: '0 0% 100%', hex: '#ffffff', name: 'neutral-content' },
+  n: { name: 'neutral' },
+  nf: { name: 'neutral-focus' },
+  nc: { name: 'neutral-content' },
 
-  b1: { hsl: '0 0% 100%', hex: '#ffffff', name: 'base-100' },
-  b2: { hsl: '210 20% 98%', hex: '#f9fafb', name: 'base-200' },
-  b3: { hsl: '216 12% 84%', hex: '#d1d5db', name: 'base-300' },
-  bc: { hsl: '215 28% 17%', hex: '#1f2937', name: 'base-content' },
+  b1: { name: 'base-100' },
+  b2: { name: 'base-200' },
+  b3: { name: 'base-300' },
+  bc: { name: 'base-content' },
 
-  in: { hsl: '207 90% 54%', hex: '#2094f3', name: 'info' },
-  inf: { hsl: '207 90% 54%', hex: '#2094f3', name: 'info-focus' },
-  inc: { hsl: '207 90% 54%', hex: '#2094f3', name: 'info-content' },
-  su: { hsl: '174 100% 29%', hex: '#009485', name: 'success' },
-  suf: { hsl: '174 100% 29%', hex: '#009485', name: 'success-focus' },
-  suc: { hsl: '174 100% 29%', hex: '#009485', name: 'success-content' },
-  wa: { hsl: '36 100% 50%', hex: '#ff9900', name: 'warning' },
-  waf: { hsl: '36 100% 50%', hex: '#ff9900', name: 'warning-focus' },
-  wac: { hsl: '36 100% 50%', hex: '#ff9900', name: 'warning-content' },
-  er: { hsl: '14 100% 57%', hex: '#ff5724', name: 'error' },
-  erf: { hsl: '14 100% 57%', hex: '#ff5724', name: 'error-focus' },
-  erc: { hsl: '14 100% 57%', hex: '#ff5724', name: 'error-content' },
+  in: { name: 'info' },
+  inf: { name: 'info-focus' },
+  inc: { name: 'info-content' },
+  su: { name: 'success' },
+  suf: { name: 'success-focus' },
+  suc: { name: 'success-content' },
+  wa: { name: 'warning' },
+  waf: { name: 'warning-focus' },
+  wac: { name: 'warning-content' },
+  er: { name: 'error' },
+  erf: { name: 'error-focus' },
+  erc: { name: 'error-content' },
 };
 const COLORS = {
   primary: [
@@ -91,16 +93,22 @@ const COLORS = {
     { title: 'base-300', name: 'b3', class: 'bg-base-300' },
     { title: 'base-content', name: 'bc', class: 'bg-base-content' },
   ],
-  state: [
+  info: [
     { title: 'info', name: 'in', class: 'bg-info' },
     { title: 'info-focus', name: 'inf', class: 'bg-info-focus' },
     { title: 'info-content', name: 'inc', class: 'bg-info-content' },
+  ],
+  success: [
     { title: 'success', name: 'su', class: 'bg-success' },
     { title: 'success-focus', name: 'suf', class: 'bg-success-focus' },
     { title: 'success-content', name: 'suc', class: 'bg-success-content' },
+  ],
+  warning: [
     { title: 'warning', name: 'wa', class: 'bg-warning' },
     { title: 'warning-focus', name: 'waf', class: 'bg-warning-focus' },
     { title: 'warning-content', name: 'wac', class: 'bg-warning-content' },
+  ],
+  error: [
     { title: 'error', name: 'er', class: 'bg-error' },
     { title: 'error-focus', name: 'erf', class: 'bg-error-focus' },
     { title: 'error-content', name: 'erc', class: 'bg-error-content' },
@@ -183,19 +191,59 @@ const CLASS_DATA = {
   ],
 };
 
+function hexToHsl(hex) {
+  const hsl = HexToHSL(hex) || '0 0 100%';
+  const [h, s, l] = hsl.replace(/%/g, '').split(' ');
+  return `${Math.floor(h)} ${Math.floor(s)}% ${Math.floor(l)}%`;
+}
+
+function loadColorTheme() {
+  const lightTheme = Themes['[data-theme=light]'];
+
+  Object.keys(COLOR_VALUES).forEach((color) => {
+    const colorName = COLOR_VALUES[color].name;
+    const hex = lightTheme[colorName];
+    const hsl = hexToHsl(hex);
+
+    COLOR_VALUES[color].hex = hex;
+    COLOR_VALUES[color].hsl = hsl;
+  });
+  return COLOR_VALUES;
+}
+
+const ColorBlock = ({ colorGroup }) => (
+  <div className="block mb-4" key={colorGroup}>
+    <div className="mb-4 text-xs uppercase opacity-50">{colorGroup}</div>
+    <div className="grid rounded">
+      <div className="flex flex-col col-start-1 row-start-1">
+        {COLORS[colorGroup].map((color, j) => (
+          <div key={`c-${j}`} className="relative col-start-1 row-start-1">
+            <label
+              htmlFor={color.name}
+              className={`flex justify-start items-end w-full h-20 transform transition-all cursor-pointer shadow hover:shadow-lg hover:-translate-y-1 ${
+                color.class
+              } ${j === 0 ? ' rounded-t ' : ''} ${
+                j === colorGroup.length - 1 ? ' rounded-b ' : ''
+              }`}
+            >
+              <div className="px-1 m-1 text-xs text-white bg-black rounded bg-opacity-20">
+                .bg-{color.title}
+              </div>
+            </label>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+ColorBlock.propTypes = {
+  colorGroup: PropTypes.any.isRequired,
+};
+
 export default function UsePage() {
   const [activeTab, setActiveTab] = useState('colors');
-  const [applyCustomThemeToSite, setApplyCustomThemeToSite] = useState(true);
-  const [colorValues, setColorValues] = useState(COLOR_VALUES);
-  const [showCustomThemeTogglerSwitch, setShowCustomThemeTogglerSwitch] = useState(true);
-
-  const hexToHsl = (colorName, e) => {
-    const hex = e.target.value;
-    const [h, s, l] = hexToHSL(hex).replaceAll('%', '').split(' ');
-    const newValues = { ...colorValues };
-    newValues[colorName].hsl = `${Math.floor(h)} ${Math.floor(s)}% ${Math.floor(l)}%`;
-    setColorValues(newValues);
-  };
+  const [colorValues] = useState(loadColorTheme());
 
   return (
     <div className="flex flex-col min-h-screen overflow-hidden">
@@ -216,10 +264,6 @@ export default function UsePage() {
               <Link href="/default-themes">
                 <a className="link">How to use themes?</a>
               </Link>
-              <br />
-              <Link href="/add-themes">
-                <a className="link">How to add new theme?</a>
-              </Link>
             </p>
           </Wrapper>
         </div>
@@ -229,7 +273,7 @@ export default function UsePage() {
             onClick={() => setActiveTab('colors')}
             className={`tab tab-lifted tab-lg ${activeTab === 'colors' ? 'tab-active' : ''}`}
           >
-            Customize
+            Colors
           </button>
           <button
             onClick={() => setActiveTab('preview')}
@@ -247,64 +291,25 @@ export default function UsePage() {
         </div>
 
         <div id="colors" className={activeTab !== 'colors' ? 'hidden' : ''}>
-          <div className="text-xl font-bold text-base-content">Edit colors</div>
-          <div className="mb-6">Choose your own colors</div>
-          {showCustomThemeTogglerSwitch && (
-            <div className="w-56 card">
-              <div className="form-control">
-                <label className="cursor-pointer label">
-                  <span className="label-text">Show customized colors</span>
-                  <div>
-                    <input
-                      type="checkbox"
-                      className="toggle toggle-primary"
-                      checked={applyCustomThemeToSite}
-                      onChange={() => setApplyCustomThemeToSite(!applyCustomThemeToSite)}
-                    />
-                    <span className="toggle-mark"></span>
-                  </div>
-                </label>
-              </div>
-            </div>
-          )}
+          <div className="text-xl font-bold text-base-content">Brand Colors</div>
 
           <Wrapper className="grid grid-cols-1 md:grid-cols-6 gap-6" nocode>
-            {Object.keys(COLORS).map((colorGroup) => (
-              <div className="block mb-4" key={colorGroup}>
-                <div className="mb-4 text-xs uppercase opacity-50">{colorGroup}</div>
-                <div className="grid rounded">
-                  <div className="flex flex-col col-start-1 row-start-1">
-                    {COLORS[colorGroup].map((color, j) => (
-                      <div key={`c-${j}`} className="relative col-start-1 row-start-1">
-                        <label
-                          htmlFor={color.name}
-                          className={`flex justify-start items-end w-full h-20 transform transition-all cursor-pointer shadow hover:shadow-lg hover:-translate-y-1 ${
-                            color.class
-                          } ${j === 0 ? ' rounded-t ' : ''} ${
-                            j === colorGroup.length - 1 ? ' rounded-b ' : ''
-                          }`}
-                        >
-                          <div className="px-1 m-1 text-xs text-white bg-black rounded bg-opacity-20">
-                            .bg-{color.title}
-                          </div>
-                        </label>
-                        <input
-                          type="color"
-                          id={color.name}
-                          className="absolute top-0 invisible opacity-0"
-                          value={colorValues[color.name].hex}
-                          onChange={(e) => {
-                            hexToHsl(color.name, e);
-                            setApplyCustomThemeToSite(true);
-                            setShowCustomThemeTogglerSwitch(true);
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
+            {Object.keys(COLORS).map(
+              (colorGroup) =>
+                !['info', 'success', 'warning', 'error'].includes(colorGroup) && (
+                  <ColorBlock key={colorGroup} colorGroup={colorGroup} />
+                )
+            )}
+          </Wrapper>
+
+          <div className="text-xl font-bold text-base-content">State Colors</div>
+          <Wrapper className="grid grid-cols-1 md:grid-cols-6 gap-6" nocode>
+            {Object.keys(COLORS).map(
+              (colorGroup) =>
+                ['info', 'success', 'warning', 'error'].includes(colorGroup) && (
+                  <ColorBlock key={colorGroup} colorGroup={colorGroup} />
+                )
+            )}
           </Wrapper>
         </div>
 
@@ -543,8 +548,7 @@ export default function UsePage() {
 
         <div className="mt-20">
           <div>
-            You can use color names in utility classes just like Tailwind&apos;s color
-            names.border-opacity-20
+            You can use color names in utility classes just like Tailwind&apos;s color names.
           </div>
           <div>These are default utility classes that use color names:</div>
 

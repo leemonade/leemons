@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .radio {
     @apply appearance-none opacity-0 w-0 h-0 absolute;
     & ~ .radio-mark {
@@ -149,6 +149,6 @@
       transform: rotate(45deg) translate(-1px, -1px) scale(1);
     }
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

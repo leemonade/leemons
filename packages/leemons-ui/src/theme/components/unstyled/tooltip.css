@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .tooltip {
     @apply inline-block relative;
     --tooltip-offset: calc(100% + 1px + var(--tooltip-tail, 0px));
@@ -44,6 +44,6 @@
       bottom: auto;
     }
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer utilities {
-  /* clean-end */
+  /* <: */
   .tab {
     &-md {
       @apply leading-loose h-8 text-sm;
@@ -19,6 +19,6 @@
       --tab-padding: 0.5rem;
     }
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

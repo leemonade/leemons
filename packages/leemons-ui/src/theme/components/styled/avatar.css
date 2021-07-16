@@ -1,12 +1,12 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .avatar-group {
     @apply flex overflow-hidden;
     .avatar {
       @apply rounded-full border-4 border-base-100 overflow-hidden;
     }
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

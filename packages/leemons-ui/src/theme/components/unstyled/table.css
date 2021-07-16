@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .table {
     @apply relative;
     th:first-child {
@@ -9,6 +9,6 @@
       position: -webkit-sticky;
     }
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

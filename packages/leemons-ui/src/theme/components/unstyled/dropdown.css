@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .dropdown {
     @apply relative inline-block;
   }
@@ -34,6 +34,6 @@
   .dropdown:not(.dropdown-hover):focus-within .dropdown-content {
     @apply visible opacity-100;
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

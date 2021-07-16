@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer utilities {
-  /* clean-end */
+  /* <: */
   .input {
     &-md {
       @apply px-4 h-12 text-sm leading-loose;
@@ -15,6 +15,6 @@
       @apply px-2 h-6 text-xs leading-relaxed;
     }
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

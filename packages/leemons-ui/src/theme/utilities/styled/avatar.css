@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer utilities {
-  /* clean-end */
+  /* <: */
   .avatar {
     &.online {
       &:before {
@@ -21,6 +21,6 @@
       }
     }
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

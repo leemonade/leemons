@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .collapse {
     @apply relative grid overflow-hidden;
   }
@@ -21,6 +21,6 @@
   .collapse:not(.collapse-close) input[type='checkbox']:checked ~ .collapse-content {
     max-height: 9000px;
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

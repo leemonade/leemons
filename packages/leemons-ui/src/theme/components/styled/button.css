@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .btn {
     border-width: var(--border-btn, 1px);
 
@@ -312,6 +312,6 @@
       box-shadow: 0 0 0 0 hsl(var(--a-f));
     }
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */
