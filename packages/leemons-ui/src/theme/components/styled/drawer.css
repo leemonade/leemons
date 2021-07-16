@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .drawer.drawer-end .drawer-toggle:checked ~ .drawer-content {
     @apply -translate-x-2;
   }
@@ -73,6 +73,6 @@
       }
     }
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

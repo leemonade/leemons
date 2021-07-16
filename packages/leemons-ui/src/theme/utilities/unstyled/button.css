@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer utilities {
-  /* clean-end */
+  /* <: */
   .btn {
     &-xs {
       @apply px-2 text-xs leading-relaxed h-6 min-h-6;
@@ -49,6 +49,6 @@
       }
     }
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

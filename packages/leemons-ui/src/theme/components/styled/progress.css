@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .progress {
     @apply rounded-box h-2;
     &::-moz-progress-bar {
@@ -55,6 +55,6 @@
       @apply bg-error;
     }
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

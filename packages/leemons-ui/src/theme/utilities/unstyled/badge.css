@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer utilities {
-  /* clean-end */
+  /* <: */
   .badge {
     &-sm {
       @apply text-xs leading-4 px-2;
@@ -12,6 +12,6 @@
       @apply text-base leading-6 px-3;
     }
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .steps {
     .step {
       grid-template-rows: 40px 1fr;
@@ -64,6 +64,6 @@
       @apply bg-error text-base-100;
     }
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

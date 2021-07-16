@@ -1,11 +1,11 @@
-/* clean-start */
+/* :> */
 @layer utilities {
   @variants responsive {
-    /* clean-end */
+    /* <: */
     .text-2xs {
       font-size: 0.7rem;
     }
-    /* clean-start */
+    /* :> */
   }
 }
-/* clean-end */
+/* <: */

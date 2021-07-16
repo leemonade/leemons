@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .breadcrumbs {
     @apply overflow-x-auto max-w-full;
     & > ul {
@@ -14,6 +14,6 @@
       }
     }
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .collapse {
     @apply outline-none;
   }
@@ -68,6 +68,6 @@
   .collapse-plus:not(.collapse-close) input[type='checkbox']:checked ~ .collapse-title:after {
     content: '−';
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

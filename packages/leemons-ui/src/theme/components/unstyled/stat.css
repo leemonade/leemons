@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .stats {
     @apply inline-grid grid-flow-col overflow-hidden overflow-x-auto;
   }
@@ -26,6 +26,6 @@
   .stats.grid-flow-row {
     @apply auto-rows-fr;
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

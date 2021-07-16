@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .modal {
     @apply inset-0 invisible opacity-0 pointer-events-none fixed flex items-end justify-center sm:items-center;
     z-index: 999;
@@ -15,6 +15,6 @@
   .modal-toggle {
     @apply appearance-none opacity-0 w-0 h-0 absolute;
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

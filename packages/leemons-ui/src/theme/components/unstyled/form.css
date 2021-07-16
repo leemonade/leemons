@@ -1,12 +1,12 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .form-control {
     @apply flex flex-col;
   }
   .label {
     @apply flex items-center justify-between select-none;
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

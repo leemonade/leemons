@@ -1,9 +1,9 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .navbar {
     padding: var(--navbar-padding, 0.5rem);
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */

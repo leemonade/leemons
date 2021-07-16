@@ -51,7 +51,7 @@
     "clean:temp": "rm -rf temp",
     "prebuild:theme": "npm run clean:temp && mkdir temp && cp -R ./src/theme ./temp && npm run cleancss",
     "build:theme": "npm run index && npm run colors && npm run base && npm run utilities:global && npm run utilities:unstyled && npm run utilities:styled && npm run components && npm run merge:unstyled && npm run merge:styled && npm run rtl && npm run prejss && npm run themes",
-    "cleancss": "replace-in-file \"/\\/\\* clean-start \\*\\/[\\S\\s]*?\\/\\* clean-end \\*\\//gm\" \"\" temp/theme/**/**/*.css --isRegex"
+    "cleancss": "replace-in-file \"/\\/\\* :> \\*\\/[\\S\\s]*?\\/\\* <: \\*\\//gm\" \"\" temp/theme/**/**/*.css --isRegex"
   },
   "dependencies": {
     "@heroicons/react": "^1.0.1",

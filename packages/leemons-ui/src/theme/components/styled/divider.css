@@ -1,6 +1,6 @@
-/* clean-start */
+/* :> */
 @layer components {
-  /* clean-end */
+  /* <: */
   .divider {
     @apply my-4 h-4;
     &:before,
@@ -33,6 +33,6 @@
       }
     }
   }
-  /* clean-start */
+  /* :> */
 }
-/* clean-end */
+/* <: */
