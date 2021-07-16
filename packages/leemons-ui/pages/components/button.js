@@ -41,234 +41,245 @@ function ButtonPage() {
       <div className="divider my-6"></div>
       <div className="text-xl font-bold">Examples</div>
 
-      <Wrapper
-        className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row"
-        title="button with brand colors"
-      >
-        <Button className="">neutral</Button>
-        <Button className="btn-primary">primary</Button>
-        <Button className="btn-secondary">secondary</Button>
-        <Button className="btn-accent">accent</Button>
-        <Button className="btn-ghost">ghost</Button>
-        <Button className="btn-link">link</Button>
+      <Wrapper title="button with brand colors">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <Button>neutral</Button>
+          <Button color="primary">primary</Button>
+          <Button color="secondary">secondary</Button>
+          <Button color="accent">accent</Button>
+          <Button color="ghost">ghost</Button>
+          <Button color="primary" className="btn-link">
+            link
+          </Button>
+        </div>
       </Wrapper>
 
-      <Wrapper
-        className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row"
-        title="active state button"
-      >
-        <Button className="btn-active" role="button" aria-pressed="true">
-          neutral
-        </Button>
-        <Button className="btn-primary btn-active" role="button" aria-pressed="true">
-          primary
-        </Button>
-        <Button className="btn-secondary btn-active" role="button" aria-pressed="true">
-          secondary
-        </Button>
-        <Button className="btn-accent btn-active" role="button" aria-pressed="true">
-          accent
-        </Button>
-        <Button className="btn-link btn-active" role="button" aria-pressed="true">
-          link
-        </Button>
+      <Wrapper title="active state button">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <Button className="btn-active" role="button" aria-pressed="true">
+            neutral
+          </Button>
+          <Button color="primary" className="btn-active" role="button" aria-pressed="true">
+            primary
+          </Button>
+          <Button color="secondary" className="btn-active" role="button" aria-pressed="true">
+            secondary
+          </Button>
+          <Button color="accent" className="btn-active" role="button" aria-pressed="true">
+            accent
+          </Button>
+          <Button className="btn-link btn-active" role="button" aria-pressed="true">
+            link
+          </Button>
+        </div>
       </Wrapper>
 
-      <Wrapper
-        className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row"
-        title="outline button"
-      >
-        <Button className="btn-outline">neutral</Button>
-        <Button className="btn-outline btn-primary">primary</Button>
-        <Button className="btn-outline btn-secondary">secondary</Button>
-        <Button className="btn-outline btn-accent">accent</Button>
+      <Wrapper title="outline button">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <Button outlined>neutral</Button>
+          <Button outlined color="primary">
+            primary
+          </Button>
+          <Button outlined color="secondary">
+            secondary
+          </Button>
+          <Button outlined color="accent">
+            accent
+          </Button>
+        </div>
       </Wrapper>
 
-      <Wrapper
-        className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row"
-        title="disabled button"
-      >
-        <Button disabled>neutral</Button>
-        <Button disabled className="btn-primary">
-          primary
-        </Button>
-        <Button disabled className="btn-ghost">
-          ghost
-        </Button>
-        <Button disabled className="btn-link">
-          link
-        </Button>
-        <Button className="btn-disabled" tabIndex="-1" role="button" aria-disabled="true">
-          visually disabled
-        </Button>
+      <Wrapper title="disabled button">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <Button disabled>neutral</Button>
+          <Button disabled color="primary">
+            primary
+          </Button>
+          <Button disabled color="secondary">
+            secondary
+          </Button>
+          <Button disabled className="btn-link">
+            link
+          </Button>
+          <Button className="btn-disabled" tabIndex="-1" role="button" aria-disabled="true">
+            visually disabled
+          </Button>
+        </div>
       </Wrapper>
 
-      <Wrapper
-        className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row"
-        title="button with state colors"
-      >
-        <Button className="btn-info">info</Button>
-        <Button className="btn-success">success</Button>
-        <Button className="btn-warning">warning</Button>
-        <Button className="btn-error">error</Button>
+      <Wrapper title="rounded button">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <Button rounded>neutral</Button>
+          <Button color="primary" rounded>
+            primary
+          </Button>
+          <Button color="secondary" rounded>
+            secondary
+          </Button>
+          <Button color="accent" rounded>
+            accent
+          </Button>
+          <Button color="primary" rounded outlined>
+            Outlined
+          </Button>
+        </div>
       </Wrapper>
 
-      <Wrapper className="flex flex-wrap items-start space-x-2 flex-row" title="responsive buttons">
-        <Button className="btn-xs md:btn-sm lg:btn-md xl:btn-lg">resize your browser</Button>
-        <Button className="btn-square btn-xs md:btn-sm lg:btn-md xl:btn-lg">
-          <XIcon className="inline-block w-4 h-4 stroke-current md:w-6 md:h-6" />
-        </Button>
-        <Button className="btn-circle btn-xs md:btn-sm lg:btn-md xl:btn-lg">
-          <XIcon className="inline-block w-4 h-4 stroke-current md:w-6 md:h-6" />
-        </Button>
+      <Wrapper title="button with state colors">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <Button color="info">info</Button>
+          <Button color="success">success</Button>
+          <Button color="warning">warning</Button>
+          <Button color="error">error</Button>
+        </div>
       </Wrapper>
 
-      <Wrapper
-        className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row"
-        title="button with diffrent HTML tags"
-      >
-        <a className="btn" href="#" role="button">
-          Link
-        </a>
-        <button className="btn" type="submit">
-          Button
-        </button>
-        <input className="btn" type="button" value="Input" />
-        <input className="btn" type="submit" value="Submit" />
-        <input className="btn" type="reset" value="Reset" />
+      <Wrapper title="button with diffrent HTML tags">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <a className="btn" href="#" role="button">
+            Link
+          </a>
+          <button className="btn" type="submit">
+            Button
+          </button>
+          <input className="btn" type="button" value="Input" />
+          <input className="btn" type="submit" value="Submit" />
+          <input className="btn" type="reset" value="Reset" />
+        </div>
       </Wrapper>
 
-      <Wrapper
-        className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row"
-        title="button size"
-      >
-        <Button className="btn-lg">Large</Button>
-        <Button className="">Normal</Button>
-        <Button className="btn-sm">Small</Button>
-        <Button className="btn-xs">Tiny</Button>
+      <Wrapper title="button size">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <Button className="btn-lg">Large</Button>
+          <Button className="">Normal</Button>
+          <Button className="btn-sm">Small</Button>
+          <Button className="btn-xs">Tiny</Button>
+        </div>
       </Wrapper>
 
-      <Wrapper className="flex flex-wrap items-start space-y-2 flex-col" title="button wide">
-        <Button className="btn-wide btn-lg">large</Button>
-        <Button className="btn-wide">normal</Button>
-        <Button className="btn-wide btn-sm">small</Button>
-        <Button className="btn-wide btn-xs">tiny</Button>
+      <Wrapper title="button wide">
+        <div className="flex flex-wrap items-start space-y-2 flex-col">
+          <Button wide className=" btn-lg">
+            large
+          </Button>
+          <Button wide>normal</Button>
+          <Button wide className="bbtn-sm">
+            small
+          </Button>
+          <Button wide className="bbtn-xs">
+            tiny
+          </Button>
+        </div>
       </Wrapper>
 
-      <Wrapper
-        className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row"
-        title="icon button start"
-      >
-        <Button className="btn-lg">
-          <XIcon className="inline-block w-6 h-6 mr-2 stroke-current" />
-          Large
-        </Button>
-        <Button className="">
-          <XIcon className="inline-block w-6 h-6 mr-2 stroke-current" />
-          Normal
-        </Button>
-        <Button className="btn-sm">
-          <XIcon className="inline-block w-4 h-4 mr-2 stroke-current" />
-          Small
-        </Button>
-        <Button className="btn-xs">
-          <XIcon className="inline-block w-4 h-4 mr-1 stroke-current" />
-          Tiny
-        </Button>
+      <Wrapper title="icon button start (rounded)">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <Button rounded className="btn-lg">
+            <XIcon className="inline-block w-6 h-6 mr-2 -ml-2 stroke-current" />
+            Large
+          </Button>
+          <Button rounded>
+            <XIcon className="inline-block w-6 h-6 mr-2 -ml-2 stroke-current" />
+            Normal
+          </Button>
+          <Button rounded className="btn-sm">
+            <XIcon className="inline-block w-4 h-4 mr-2 -ml-1 stroke-current" />
+            Small
+          </Button>
+          <Button rounded className="btn-xs">
+            <XIcon className="inline-block w-4 h-4 mr-1 -ml-1 stroke-current" />
+            Tiny
+          </Button>
+        </div>
       </Wrapper>
 
-      <Wrapper
-        className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row"
-        title="icon button end"
-      >
-        <Button className="btn-lg">
-          Large
-          <ChevronRightIcon className="inline-block w-6 h-6 ml-2 stroke-current" />
-        </Button>
-        <Button className="">
-          Normal
-          <ChevronRightIcon className="inline-block w-6 h-6 ml-2 stroke-current" />
-        </Button>
-        <Button className="btn-sm">
-          Small
-          <ChevronRightIcon className="inline-block w-4 h-4 ml-2 stroke-current" />
-        </Button>
-        <Button className="btn-xs">
-          Tiny
-          <ChevronRightIcon className="inline-block w-4 h-4 ml-1 stroke-current" />
-        </Button>
+      <Wrapper title="icon button end (rounded)">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <Button rounded className="btn-lg">
+            Large
+            <ChevronRightIcon className="inline-block w-6 h-6 ml-2 -mr-2 stroke-current" />
+          </Button>
+          <Button rounded>
+            Normal
+            <ChevronRightIcon className="inline-block w-6 h-6 ml-2 -mr-2 stroke-current" />
+          </Button>
+          <Button rounded className="btn-sm">
+            Small
+            <ChevronRightIcon className="inline-block w-4 h-4 ml-2 -mr-1 stroke-current" />
+          </Button>
+          <Button rounded className="btn-xs">
+            Tiny
+            <ChevronRightIcon className="inline-block w-4 h-4 ml-1 -mr-1 stroke-current" />
+          </Button>
+        </div>
       </Wrapper>
 
-      <Wrapper
-        className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row"
-        title="button shapes"
-      >
-        <Button className="btn-circle btn-lg">
-          <XIcon className="inline-block w-6 h-6 stroke-current" />
-        </Button>
-        <Button className="btn-circle">
-          <XIcon className="inline-block w-6 h-6 stroke-current" />
-        </Button>
-        <Button className="btn-circle btn-sm">
-          <XIcon className="inline-block w-4 h-4 stroke-current" />
-        </Button>
-        <Button className="btn-circle btn-xs">
-          <XIcon className="inline-block w-4 h-4 stroke-current" />
-        </Button>
+      <Wrapper title="button shapes">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <Button className="btn-circle btn-lg">
+            <XIcon className="inline-block w-6 h-6 stroke-current" />
+          </Button>
+          <Button className="btn-circle">
+            <XIcon className="inline-block w-6 h-6 stroke-current" />
+          </Button>
+          <Button className="btn-circle btn-sm">
+            <XIcon className="inline-block w-4 h-4 stroke-current" />
+          </Button>
+          <Button className="btn-circle btn-xs">
+            <XIcon className="inline-block w-4 h-4 stroke-current" />
+          </Button>
+        </div>
       </Wrapper>
 
-      <Wrapper
-        className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row"
-        title="button shapes"
-      >
-        <Button className="btn-square btn-lg">
-          <XIcon className="inline-block w-6 h-6 stroke-current" />
-        </Button>
-        <Button className="btn-square">
-          <XIcon className="inline-block w-6 h-6 stroke-current" />
-        </Button>
-        <Button className="btn-square btn-sm">
-          <XIcon className="inline-block w-4 h-4 stroke-current" />
-        </Button>
-        <Button className="btn-square btn-xs">
-          <XIcon className="inline-block w-4 h-4 stroke-current" />
-        </Button>
+      <Wrapper title="button shapes">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <Button square className="btn-lg">
+            <XIcon className="inline-block w-6 h-6 stroke-current" />
+          </Button>
+          <Button square>
+            <XIcon className="inline-block w-6 h-6 stroke-current" />
+          </Button>
+          <Button square className="btn-sm">
+            <XIcon className="inline-block w-4 h-4 stroke-current" />
+          </Button>
+          <Button square className="btn-xs">
+            <XIcon className="inline-block w-4 h-4 stroke-current" />
+          </Button>
+        </div>
       </Wrapper>
 
-      <Wrapper
-        className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row"
-        title="button shapes"
-      >
-        <Button className="btn-outline btn-circle btn-lg">
-          <XIcon className="inline-block w-6 h-6 stroke-current" />
-        </Button>
-        <Button className="btn-outline btn-circle">
-          <XIcon className="inline-block w-6 h-6 stroke-current" />
-        </Button>
-        <Button className="btn-outline btn-circle btn-sm">
-          <XIcon className="inline-block w-4 h-4 stroke-current" />
-        </Button>
-        <Button className="btn-outline btn-circle btn-xs">
-          <XIcon className="inline-block w-4 h-4 stroke-current" />
-        </Button>
+      <Wrapper title="button shapes">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <Button outlined circle className="btn-lg">
+            <XIcon className="inline-block w-6 h-6 stroke-current" />
+          </Button>
+          <Button outlined circle>
+            <XIcon className="inline-block w-6 h-6 stroke-current" />
+          </Button>
+          <Button outlined circle className="btn-sm">
+            <XIcon className="inline-block w-4 h-4 stroke-current" />
+          </Button>
+          <Button outlined circle className="btn-xs">
+            <XIcon className="inline-block w-4 h-4 stroke-current" />
+          </Button>
+        </div>
       </Wrapper>
 
-      <Wrapper
-        className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row"
-        title="button shapes"
-      >
-        <Button className="btn-outline btn-square btn-lg">
-          <XIcon className="inline-block w-6 h-6 stroke-current" />
-        </Button>
-        <Button className="btn-outline btn-square">
-          <XIcon className="inline-block w-6 h-6 stroke-current" />
-        </Button>
-        <Button className="btn-outline btn-square btn-sm">
-          <XIcon className="inline-block w-4 h-4 stroke-current" />
-        </Button>
-        <Button className="btn-outline btn-square btn-xs">
-          <XIcon className="inline-block w-4 h-4 stroke-current" />
-        </Button>
+      <Wrapper title="button shapes">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <Button outlined square className="btn-lg">
+            <XIcon className="inline-block w-6 h-6 stroke-current" />
+          </Button>
+          <Button outlined square>
+            <XIcon className="inline-block w-6 h-6 stroke-current" />
+          </Button>
+          <Button outlined square className="btn-sm">
+            <XIcon className="inline-block w-4 h-4 stroke-current" />
+          </Button>
+          <Button outlined square className="btn-xs">
+            <XIcon className="inline-block w-4 h-4 stroke-current" />
+          </Button>
+        </div>
       </Wrapper>
 
       <Wrapper
@@ -278,44 +289,48 @@ function ButtonPage() {
         <Button className="btn-block">block</Button>
       </Wrapper>
 
-      <Wrapper
-        className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row"
-        title="button loading"
-      >
-        <Button className="btn-lg loading">loading</Button>
-        <Button className="btn-primary loading">loading</Button>
-        <Button className="btn-sm btn-secondary loading">loading</Button>
-        <Button className="btn-xs btn-accent loading">loading</Button>
+      <Wrapper title="button loading">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <Button className="btn-lg loading">loading</Button>
+          <Button className="btn-primary loading">loading</Button>
+          <Button className="btn-sm btn-secondary loading">loading</Button>
+          <Button className="btn-xs btn-accent loading">loading</Button>
+        </div>
       </Wrapper>
 
-      <Wrapper
-        className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row"
-        title="button loading"
-      >
-        <Button className="btn-sm btn-outline btn-primary loading">loading</Button>
-        <Button className="btn-sm btn-outline btn-secondary loading">loading</Button>
-        <Button className="btn-sm btn-outline btn-accent loading">loading</Button>
-        <Button className="btn-sm btn-ghost loading">loading</Button>
+      <Wrapper title="button loading">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <Button outlined loading className="btn-sm">
+            loading
+          </Button>
+          <Button color="primary" outlined loading className="btn-sm">
+            loading
+          </Button>
+          <Button color="secondary" outlined loading className="btn-sm">
+            loading
+          </Button>
+          <Button color="accent" outlined loading className="btn-sm">
+            loading
+          </Button>
+        </div>
       </Wrapper>
 
-      <Wrapper
-        className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row"
-        title="button loading"
-      >
-        <Button className="btn-lg btn-square loading"></Button>
-        <Button className="btn-square loading"></Button>
-        <Button className="btn-sm btn-square loading"></Button>
-        <Button className="btn-xs btn-square loading"></Button>
+      <Wrapper title="button loading">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <Button square loading className="btn-lg"></Button>
+          <Button square loading></Button>
+          <Button square loading className="btn-sm"></Button>
+          <Button square loading className="btn-xs"></Button>
+        </div>
       </Wrapper>
 
-      <Wrapper
-        className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row"
-        title="button loading"
-      >
-        <Button className="btn-lg btn-circle loading"></Button>
-        <Button className="btn-circle loading"></Button>
-        <Button className="btn-sm btn-circle loading"></Button>
-        <Button className="btn-xs btn-circle loading"></Button>
+      <Wrapper title="button loading">
+        <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+          <Button circle loading className="btn-lg"></Button>
+          <Button circle loading></Button>
+          <Button circle loading className="btn-sm"></Button>
+          <Button circle loading className="btn-xs"></Button>
+        </div>
       </Wrapper>
 
       <Wrapper

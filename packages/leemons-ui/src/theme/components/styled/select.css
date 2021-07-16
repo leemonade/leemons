@@ -12,7 +12,7 @@
     background-size: 4px 4px, 4px 4px;
     background-repeat: no-repeat;
     &:focus {
-      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsla(var(--bc) / 0.2);
+      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsla(var(--b-c) / 0.2);
     }
     &-ghost {
       @apply bg-opacity-5;

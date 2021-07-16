@@ -74,7 +74,7 @@ function serializeItem(item, options, delimit = true) {
 
 function jsxToString(component, options) {
   const baseOpts = {
-    displayName: component.type.displayName || component.type.name || component.type,
+    displayName: component.type?.displayName || component.type?.name || component.type || 'Unknown',
     ignoreProps: [],
     ignoreTags: [],
     keyValueOverride: {},
@@ -139,7 +139,7 @@ function jsxToString(component, options) {
     }
   }
 
-  if (component.props.children) {
+  if (component.props?.children) {
     opts.spacing += 2;
     const indentation = new Array(opts.spacing + 1).join(' ');
     if (Array.isArray(component.props.children)) {

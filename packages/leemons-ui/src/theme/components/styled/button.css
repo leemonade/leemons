@@ -3,17 +3,14 @@
   /* clean-end */
   .btn {
     border-width: var(--border-btn, 1px);
-    /* animation: button-pop var(--animation-btn, 0.25s) ease-out; */
-    animation: button-pop var(--animation-btn, 0.25s) ease-out;
 
     &:active:hover,
     &:active:focus {
-      animation: none;
+      /* -- */
     }
     &:active:hover,
     &:active:focus {
-      /* transform: scale(var(--btn-focus-scale, 0.98)); */
-      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--p));
+      /* -- */
     }
 
     /* default btn */
@@ -23,31 +20,35 @@
       &-active {
         @apply bg-neutral-focus border-neutral-focus;
       }
+      &:active,
       &:focus-visible {
-        box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--nf));
+        @apply bg-neutral border-neutral;
+        box-shadow: 0 0 0 2px hsl(var(--n-f));
       }
     }
     /* brand colors */
     &-primary {
       @apply bg-primary border-primary text-primary-content;
-      animation: button-pop-primary var(--animation-btn, 0.25s) ease-out;
       &:hover,
       &.btn-active {
         @apply bg-primary-focus border-primary-focus;
       }
+      &:active,
       &:focus-visible {
-        box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--p));
+        @apply bg-primary border-primary;
+        box-shadow: 0 0 0 2px hsl(var(--p-f));
       }
     }
     &-secondary {
       @apply bg-secondary border-secondary text-secondary-content;
-      animation: button-pop-secondary var(--animation-btn, 0.25s) ease-out;
       &:hover,
       &.btn-active {
         @apply bg-secondary-focus border-secondary-focus;
       }
+      &:active,
       &:focus-visible {
-        box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--s));
+        @apply bg-secondary border-secondary;
+        box-shadow: 0 0 0 2px hsl(var(--p-f));
       }
     }
     &-accent {
@@ -56,50 +57,60 @@
       &.btn-active {
         @apply bg-accent-focus border-accent-focus;
       }
+      &:active,
       &:focus-visible {
-        box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--a));
+        @apply bg-accent border-accent;
+        box-shadow: 0 0 0 2px hsl(var(--a-f));
       }
     }
 
     /* btn with state colors */
     &-info {
-      @apply bg-info border-info text-base-200;
+      @apply bg-info border-info text-info-content;
       &:hover,
       &.btn-active {
-        @apply bg-info border-info;
+        @apply bg-info-focus border-info-focus;
       }
+      &:active,
       &:focus-visible {
-        box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--in));
+        @apply bg-info border-info;
+        box-shadow: 0 0 0 2px hsl(var(--in-f));
       }
     }
     &-success {
-      @apply bg-success border-success text-base-200;
+      @apply bg-success border-success text-success-content;
       &:hover,
       &.btn-active {
-        @apply bg-success border-success;
+        @apply bg-success-focus border-success-focus;
       }
+      &:active,
       &:focus-visible {
-        box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--su));
+        @apply bg-success border-success;
+        box-shadow: 0 0 0 2px hsl(var(--su-f));
       }
     }
     &-warning {
-      @apply bg-warning border-warning text-base-200;
+      @apply bg-warning border-warning text-warning-content;
       &:hover,
       &.btn-active {
-        @apply bg-warning border-warning;
+        @apply bg-warning-focus border-warning-focus;
       }
+      &:active,
       &:focus-visible {
-        box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--wa));
+        @apply bg-warning border-warning;
+        box-shadow: 0 0 0 2px hsl(var(--wa-f));
       }
     }
     &-error {
-      @apply bg-error border-error text-base-200;
+      @apply bg-error border-error text-error-content;
       &:hover,
       &.btn-active {
-        @apply bg-error border-error;
+        @apply bg-error-focus border-error-focus;
       }
+      &:active,
       &:focus-visible {
-        box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--er));
+        @apply bg-error border-error;
+        box-shadow: 0 0 0 2px hsl(var(--er-f));
       }
     }
 
@@ -133,6 +144,7 @@
         @apply underline bg-transparent border-transparent;
       }
       &:focus-visible {
+        @apply bg-transparent border-transparent;
         box-shadow: 0 0 0 2px currentColor;
       }
     }
@@ -148,17 +160,32 @@
         &:hover {
           @apply bg-primary-focus text-primary-content border-primary-focus;
         }
+        &:active,
+        &:focus-visible {
+          @apply bg-primary border-primary text-primary-content;
+          box-shadow: 0 0 0 2px hsl(var(--p-f));
+        }
       }
       &.btn-secondary {
         @apply text-secondary;
         &:hover {
           @apply bg-secondary-focus text-secondary-content border-secondary-focus;
         }
+        &:active,
+        &:focus-visible {
+          @apply bg-secondary border-secondary text-secondary-content;
+          box-shadow: 0 0 0 2px hsl(var(--p-f));
+        }
       }
       &.btn-accent {
         @apply text-accent;
         &:hover {
           @apply bg-accent-focus text-accent-content border-accent-focus;
+        }
+        &:active,
+        &:focus-visible {
+          @apply bg-accent border-accent text-accent-content;
+          box-shadow: 0 0 0 2px hsl(var(--a-f));
         }
       }
     }
@@ -167,6 +194,16 @@
     &-disabled,
     &[disabled] {
       @apply bg-neutral border-opacity-0 bg-opacity-20 text-base-content text-opacity-20;
+
+      &.btn-primary {
+        @apply text-base-200;
+        background-color: hsl(var(--p) / 0.7);
+      }
+
+      &.btn-secondary {
+        @apply text-base-300;
+        background-color: hsl(var(--s) / 0.7);
+      }
     }
 
     /* loading */
@@ -218,46 +255,61 @@
 
   @keyframes button-pop {
     0% {
-      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--b3));
+      box-shadow: 0 0 0 0 hsl(var(--b3));
     }
     30% {
-      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--b3));
+      box-shadow: 0 0 0 2px hsl(var(--b3));
     }
     70% {
-      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--b3));
+      box-shadow: 0 0 0 2px hsl(var(--b3));
     }
     100% {
-      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--b3));
+      box-shadow: 0 0 0 0 hsl(var(--b3));
     }
   }
 
   @keyframes button-pop-primary {
     0% {
-      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--p) / 0.3);
+      box-shadow: 0 0 0 0 hsl(var(--p-f));
     }
     30% {
-      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--p) / 0.3);
+      box-shadow: 0 0 0 2px hsl(var(--p-f));
     }
     70% {
-      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--p) / 0.3);
+      box-shadow: 0 0 0 2px hsl(var(--p-f));
     }
     100% {
-      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--p) / 0.3);
+      box-shadow: 0 0 0 0 hsl(var(--p-f));
     }
   }
 
   @keyframes button-pop-secondary {
     0% {
-      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--s) / 0.3);
+      box-shadow: 0 0 0 0 hsl(var(--p-f));
     }
     30% {
-      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--s) / 0.3);
+      box-shadow: 0 0 0 2px hsl(var(--p-f));
     }
     70% {
-      box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--s) / 0.3);
+      box-shadow: 0 0 0 2px hsl(var(--p-f));
     }
     100% {
-      box-shadow: 0 0 0 0 hsl(var(--b1)), 0 0 0 0 hsl(var(--s) / 0.3);
+      box-shadow: 0 0 0 0 hsl(var(--p-f));
+    }
+  }
+
+  @keyframes button-pop-accent {
+    0% {
+      box-shadow: 0 0 0 0 hsl(var(--a-f));
+    }
+    30% {
+      box-shadow: 0 0 0 2px hsl(var(--a-f));
+    }
+    70% {
+      box-shadow: 0 0 0 2px hsl(var(--a-f));
+    }
+    100% {
+      box-shadow: 0 0 0 0 hsl(var(--a-f));
     }
   }
   /* clean-start */

@@ -11,18 +11,18 @@ import { Alert, Button } from '../../src/components/ui';
 import ClassTable from '../../src/components/ClassTable';
 import Wrapper from '../../src/components/Wrapper';
 
-function AlertPage() {
-  const data = {
-    showType: true,
-    components: [{ class: 'alert', desc: 'Container element' }],
-    utilities: [
-      { class: 'alert-info', desc: 'Alert with `info` color' },
-      { class: 'alert-success', desc: 'Alert with `success` color' },
-      { class: 'alert-warning', desc: 'Alert with `warning` color' },
-      { class: 'alert-error', desc: 'Alert with `error` color' },
-    ],
-  };
+const data = {
+  showType: true,
+  components: [{ class: 'alert', desc: 'Container element' }],
+  utilities: [
+    { class: 'alert-info', desc: 'Alert with `info` color' },
+    { class: 'alert-success', desc: 'Alert with `success` color' },
+    { class: 'alert-warning', desc: 'Alert with `warning` color' },
+    { class: 'alert-error', desc: 'Alert with `error` color' },
+  ],
+};
 
+function AlertPage() {
   return (
     <div className="flex-grow p-4" data-theme="light">
       <ClassTable data={data} />

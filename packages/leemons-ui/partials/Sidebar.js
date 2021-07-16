@@ -101,7 +101,7 @@ function Sidebar({ children }) {
                   </Link>
                 </MenuItem>
                 <MenuItem>
-                  <Link href="/core/colors">
+                  <Link href="/colors">
                     <a onClick={() => setShowMainMenu(false)} className="capitalize">
                       <ColorSwatchIcon className="inline-block w-6 h-6 mr-2 stroke-current" />
                       Colors
@@ -109,7 +109,7 @@ function Sidebar({ children }) {
                   </Link>
                 </MenuItem>
                 <MenuItem>
-                  <Link href="/core/layout">
+                  <Link href="/layout">
                     <a onClick={() => setShowMainMenu(false)} className="capitalize">
                       <AtSymbolIcon className="inline-block w-6 h-6 mr-2 stroke-current" />
                       Layout &amp; Typography
