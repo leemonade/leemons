@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function Progress({ className }) {
-  return <progress className={`progress ${className || ''}`}></progress>;
+function Progress({ className, ...props }) {
+  return <progress className={`progress ${className || ''}`} {...props}></progress>;
 }
 
 Progress.propTypes = {

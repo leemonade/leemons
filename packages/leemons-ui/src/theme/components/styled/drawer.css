@@ -28,7 +28,7 @@
     }
     &:focus-visible {
       & ~ .drawer-content .drawer-button {
-        box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--nf));
+        box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--n-f));
         &.btn-primary {
           box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--p));
         }

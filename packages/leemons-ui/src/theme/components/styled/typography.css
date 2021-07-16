@@ -21,14 +21,14 @@
     }
   }
   code {
-    background: hsla(var(--bc) / 0.2);
-    color: hsl(var(--bc));
+    background: hsla(var(--b-c) / 0.2);
+    color: hsl(var(--b-c));
     padding: 2px 6px;
     border-radius: var(--rounded-badge);
   }
   pre {
     background: hsl(var(--n));
-    color: hsl(var(--nc));
+    color: hsl(var(--n-c));
     border-radius: var(--rounded-box);
     code {
       border-radius: none;
@@ -45,15 +45,15 @@
     color: inherit;
   }
   blockquote {
-    border-left-color: hsl(var(--bc) / 40%);
+    border-left-color: hsl(var(--b-c) / 40%);
   }
   ul > li:before {
-    background-color: hsl(var(--bc) / 40%);
+    background-color: hsl(var(--b-c) / 40%);
   }
   thead {
-    border-bottom-color: hsl(var(--bc) / 40%);
+    border-bottom-color: hsl(var(--b-c) / 40%);
   }
   tbody tr {
-    border-bottom-color: hsl(var(--bc) / 40%);
+    border-bottom-color: hsl(var(--b-c) / 40%);
   }
 }

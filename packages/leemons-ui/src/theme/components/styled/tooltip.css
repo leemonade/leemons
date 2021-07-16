@@ -5,7 +5,7 @@
     @apply inline-block relative text-center;
     --tooltip-tail: 3px;
     --tooltip-color: hsl(var(--n));
-    --tooltip-text-color: hsl(var(--nc));
+    --tooltip-text-color: hsl(var(--n-c));
     --tooltip-tail-offset: calc(100% + 1px - var(--tooltip-tail));
   }
   .tooltip:before,
@@ -79,15 +79,15 @@
   .tooltip {
     &-primary {
       --tooltip-color: hsl(var(--p));
-      --tooltip-text-color: hsl(var(--pc));
+      --tooltip-text-color: hsl(var(--p-c));
     }
     &-secondary {
       --tooltip-color: hsl(var(--s));
-      --tooltip-text-color: hsl(var(--sc));
+      --tooltip-text-color: hsl(var(--s-c));
     }
     &-accent {
       --tooltip-color: hsl(var(--a));
-      --tooltip-text-color: hsl(var(--ac));
+      --tooltip-text-color: hsl(var(--a-c));
     }
     &-info {
       --tooltip-color: hsla(var(--in) / 0.1);

@@ -14,7 +14,7 @@
     &:checked:focus-visible,
     &:checked:hover:focus-visible {
       & ~ .toggle-mark {
-        box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--bc));
+        box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--b-c));
       }
     }
     &:checked {
