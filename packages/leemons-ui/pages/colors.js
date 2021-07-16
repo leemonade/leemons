@@ -211,13 +211,13 @@ export default function UsePage() {
         <div className="text-base-content">
           <Wrapper nocode>
             <div className="text-xl font-bold text-base-content">Read the documents</div>
-            <p>Read everything about DaisyUI colors and theming:</p>
+            <p>Read everything about LeemonsUI colors and theming:</p>
             <p className="mt-4">
-              <Link href="/docs/default-themes">
+              <Link href="/default-themes">
                 <a className="link">How to use themes?</a>
               </Link>
               <br />
-              <Link href="/docs/add-themes">
+              <Link href="/add-themes">
                 <a className="link">How to add new theme?</a>
               </Link>
             </p>
