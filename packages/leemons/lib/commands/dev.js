@@ -16,6 +16,7 @@ const { Leemons } = require('../index');
 const loadFront = require('../core/plugins/front/loadFront');
 const build = require('../core/front/build');
 const { loadExternalFiles } = require('./loadExternalFiles');
+const { loadCoreModels } = require('../core/model/loadModel');
 
 /**
  * Creates a watcher for frontend files and then sets up all the needed files

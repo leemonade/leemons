@@ -56,6 +56,7 @@ async function loadExternalFiles(leemons) {
           next: 'next',
           env: '.env',
           install: 'install.js',
+          init: 'init.js',
         },
       });
 
@@ -196,14 +197,65 @@ async function loadExternalFiles(leemons) {
    * Load the models described by each plugin, only if it is enabled
    */
 
-  // TODO:  Install plugins
-  const nonInstalledPlugins = plugins.filter(
-    (plugin) => !plugin.status.isInstalled && plugin.status.code === PLUGIN_STATUS.enabled.code
-  );
+  const pluginsFunctions = plugins.map((plugin) => {
+    // TODO: Move to loader functions and add events
+    // TODO: Use plugin' env on the scripts
+    const installation = () => loadFile(path.join(plugin.dir.app, plugin.dir.install));
+    const init = () => loadFile(path.join(plugin.dir.app, plugin.dir.init));
+    const services = () =>
+      loadFiles(path.join(plugin.dir.app, plugin.dir.services), {
+        execFunction: false,
+      });
+    const controllers = () => loadFiles(path.join(plugin.dir.app, plugin.dir.controllers));
 
-  await installPlugins(nonInstalledPlugins);
+    return {
+      plugin,
+      scripts: {
+        installation,
+        init,
+        services,
+        controllers,
+      },
+    };
+  });
 
-  console.log(plugins);
+  const pluginsLength = pluginsFunctions.length;
+  for (let i = 0; i < pluginsLength; i++) {
+    const { plugin } = pluginsFunctions[i];
+    const { scripts } = pluginsFunctions[i];
+
+    // TODO: Only load those plugin which are enabled (check per scripts)
+
+    // Install uninstalled plugins
+    if (!plugin.status.isInstalled && plugin.status.code === PLUGIN_STATUS.enabled.code) {
+      try {
+        await scripts.installation();
+        // Set as installed even though the script does not exists
+        plugin.status.isInstalled = true;
+        await leemons.models.plugins.installed(plugin.name);
+      } catch (e) {
+        // The installation failed, disable plugin
+        plugin.status = {
+          ...plugin.status,
+          ...PLUGIN_STATUS.installationFailed,
+        };
+        // TODO: Disable dependant plugins
+      }
+    }
+
+    await scripts.init();
+
+    // TODO: Expose leemons
+    // await scripts.services();
+    // await scripts.controllers();
+  }
+  // // TODO:  Install plugins
+  // const nonInstalledPlugins = plugins.filter(
+  //   (plugin) => !plugin.status.isInstalled && plugin.status.code === PLUGIN_STATUS.enabled.code
+  // );
+
+  // await installPlugins(nonInstalledPlugins);
+
   /**
    *        run the installation script for the uninstalled plugins
    */
