@@ -1,6 +1,7 @@
 const menuService = require('../src/services/menu');
 const menuItemService = require('../src/services/menu-item');
 const prefixPN = require('../src/helpers/prefixPN');
+const { table } = require('../src/tables');
 const { validateReOrder } = require('../src/validations/menu-item');
 const { validateAddMenuItemFromUser } = require('../src/validations/menu-item');
 
@@ -34,8 +35,22 @@ async function reOrder(ctx) {
   ctx.body = { status: 201, items };
 }
 
+async function getIfKnowHowToUse(ctx) {
+  const knowHowToUse = await table.knowHowToUse.count({ user: ctx.state.user.user });
+  ctx.status = 200;
+  ctx.body = { status: 200, knowHowToUse: !!knowHowToUse };
+}
+
+async function setKnowHowToUse(ctx) {
+  await table.knowHowToUse.create({ user: ctx.state.user.user });
+  ctx.status = 201;
+  ctx.body = { status: 201, knowHowToUse: true };
+}
+
 module.exports = {
   getMenu,
   addMenuItem,
   reOrder,
+  getIfKnowHowToUse,
+  setKnowHowToUse,
 };

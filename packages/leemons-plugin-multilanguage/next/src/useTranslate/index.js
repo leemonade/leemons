@@ -6,42 +6,33 @@ function _getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) 
   let _keys = null;
   if (Array.isArray(keys)) {
     _keys = [...new Set(keys)];
+  } else if (keys) {
+    _keys = [...new Set([keys])];
   }
 
   // Get deduplicated keysStartsWith
   let _keysStartsWith = null;
   if (Array.isArray(keysStartsWith)) {
     _keysStartsWith = [...new Set(keysStartsWith)];
+  } else if (keysStartsWith) {
+    _keysStartsWith = [...new Set([keysStartsWith])];
   }
 
-  // Throw if an error occurred
-  // TODO: Get locale in backend form user session
+  let url = 'multilanguage/common';
+
   if (!locale) {
-    return async () => {
-      throw new Error('A locale must be provided');
-    };
+    url = 'multilanguage/common/logged';
   }
 
   // Get the desired localizations from the api
   return () =>
-    fetch('/api/multilanguage/common', {
+    leemons.api(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+      body: {
         keys: _keys,
         keysStartsWith: _keysStartsWith,
         locale,
-      }),
-    }).then(async (response) => {
-      const data = await response.json();
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      return data.items;
+      },
     });
 }
 

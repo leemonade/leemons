@@ -1,4 +1,16 @@
 module.exports = [
+  {
+    path: '/know-how-to-use',
+    method: 'GET',
+    handler: 'menu.getIfKnowHowToUse',
+    authenticated: true,
+  },
+  {
+    path: '/know-how-to-use',
+    method: 'POST',
+    handler: 'menu.setKnowHowToUse',
+    authenticated: true,
+  },
   /**
    * Menu
    * */

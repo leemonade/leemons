@@ -112,7 +112,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
   return (
     <>
       {item && (
-        <div className="w-full h-screen bg-secondary-focus flex flex-col justify-between">
+        <div className="w-full overflow-hidden h-screen bg-secondary-focus flex flex-col justify-between">
           {/* Header submenu */}
           <div className={'flex flex-row justify-between items-center mb-6 pt-3'}>
             <div className={'w-full pl-6 font-lexend text-base text-secondary-content'}>

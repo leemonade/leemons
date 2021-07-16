@@ -1,27 +1,7 @@
 const _ = require('lodash');
 
 function arrKeys(object) {
-  const keys = [];
-  _.forIn(object, (value, key) => {
-    if (_.isPlainObject(value)) {
-      _.forEach(arrKeys(value), (k) => {
-        keys.push(`${key}.${k}`);
-      });
-    } else if (_.isArray(value)) {
-      _.forEach(value, (val, k) => {
-        if (_.isPlainObject(val)) {
-          _.forEach(arrKeys(val), (_k) => {
-            keys.push(`${key}[${k}].${_k}`);
-          });
-        } else {
-          keys.push(`${key}.${k}`);
-        }
-      });
-    } else {
-      keys.push(key);
-    }
-  });
-  return keys;
+  return global.utils.getObjectArrayKeys(object);
 }
 
 /** *

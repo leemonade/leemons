@@ -15,6 +15,7 @@ const { HttpError, returnError } = require('./http-error');
 const { getAvailablePort } = require('./port');
 const paginate = require('./paginate');
 const randomString = require('./randomString');
+const getObjectArrayKeys = require('./getObjectArrayKeys');
 const { withTransaction } = require('./withTransaction');
 
 module.exports = {
@@ -38,4 +39,5 @@ module.exports = {
   slugify,
   withTransaction,
   squirrelly,
+  getObjectArrayKeys,
 };

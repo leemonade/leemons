@@ -99,6 +99,12 @@ async function get(ctx) {
   }
 }
 
+async function getLogged(ctx) {
+  ctx.request.body.locale = ctx.state.user.language;
+  await get(ctx);
+}
+
 module.exports = {
   get,
+  getLogged,
 };
