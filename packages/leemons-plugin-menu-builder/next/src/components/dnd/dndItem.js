@@ -19,10 +19,7 @@ export default function DndItem({ children, className, item, type, emptyLayout }
       handlerId: monitor.getHandlerId(),
     }),
     end: (dragItem, monitor) => {
-      const didDrop = monitor.didDrop();
-      if (!didDrop) {
-        hooks.fireEvent('dnd:cancel', dragItem);
-      }
+      hooks.fireEvent('dnd:end', { dragItem, monitor });
     },
   }));
 

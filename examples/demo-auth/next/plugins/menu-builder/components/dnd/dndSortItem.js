@@ -13,11 +13,13 @@ export default function DndSortItem({
   type,
   accept,
   emptyLayout,
+  disableDrag,
 }) {
   const originalIndex = find(id).index;
   const [{ isDragging }, drag, preview] = useDrag(
     () => ({
       type,
+      canDrag: !disableDrag,
       item: { id, originalIndex },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),

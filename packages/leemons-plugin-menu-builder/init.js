@@ -1,3 +1,5 @@
+const es = require();
+
 async function init() {
   const exists = await leemons.plugin.services.menu.exist(
     leemons.plugin.config.constants.mainMenuKey

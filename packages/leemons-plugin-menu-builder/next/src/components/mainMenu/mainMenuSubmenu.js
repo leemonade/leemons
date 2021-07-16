@@ -11,6 +11,7 @@ import DndDropZone from '../dnd/dndDropZone';
 import { addMenuItemRequest, reOrderCustomUserItemsRequest } from '../../request';
 import hooks from 'leemons-hooks';
 import { registerDndLayer } from '../dnd/dndLayer';
+import MainMenuInfo from './mainMenuInfo';
 
 export default function MainMenuSubmenu({ item, onClose, activeItem }) {
   const [customChildrens, setCustomChildrens] = useState(item ? item.customChildrens : []);
@@ -25,67 +26,82 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
 
   const move = useCallback(
     async (id, atIndex, isLast) => {
-      if (_.isString(id)) {
-        const { dragItem, index } = find(id);
-        const newCustomChildrens = update(customChildrens, {
-          $splice: [
-            [index, 1],
-            [atIndex, 0, dragItem],
-          ],
-        });
-        setCustomChildrens(newCustomChildrens);
-        if (isLast) {
-          await reOrderCustomUserItemsRequest(
-            'plugins.menu-builder.main',
-            item.key,
-            _.map(newCustomChildrens, 'id')
-          );
+      const { dragItem, index } = find(_.isString(id) ? id : id._tempId);
+      if (dragItem) {
+        if (index !== atIndex || isLast) {
+          const newCustomChildrens = update(customChildrens, {
+            $splice: [
+              [index, 1],
+              [atIndex, 0, dragItem],
+            ],
+          });
+          setCustomChildrens(newCustomChildrens);
+          if (_.isString(id)) {
+            if (isLast) {
+              await reOrderCustomUserItemsRequest(
+                'plugins.menu-builder.main',
+                item.key,
+                _.map(newCustomChildrens, 'id')
+              );
+            }
+          }
         }
       } else {
-        const { dragItem, index } = find('new-item');
-        if (dragItem) {
-          setCustomChildrens(
-            update(customChildrens, {
-              $splice: [
-                [index, 1],
-                [atIndex, 0, dragItem],
-              ],
-            })
-          );
-        } else {
-          setCustomChildrens(
-            update(customChildrens, {
-              $push: [{ ...id, id: 'new-item' }],
-            })
-          );
-        }
+        setCustomChildrens(
+          update(customChildrens, {
+            $push: [{ ...id, id: id._tempId }],
+          })
+        );
       }
     },
     [customChildrens, setCustomChildrens]
   );
 
-  const onDrop = async (droppedItem) => {
-    console.log('onDrop');
-    const { menuItem } = await addMenuItemRequest({ ...droppedItem, parentKey: item.key });
-    await hooks.fireEvent('menu-builder:user:addCustomItem', menuItem);
-  };
+  const onDrop = useCallback(
+    async (droppedItem) => {
+      const { _tempId, ...saveItem } = droppedItem;
+      const order = _.map(customChildrens, 'id');
+      const index = _.findIndex(order, (id) => id === _tempId);
+      const { menuItem } = await addMenuItemRequest({ ...saveItem, parentKey: item.key });
+      if (index >= 0) {
+        order[index] = menuItem.id;
+        await reOrderCustomUserItemsRequest('plugins.menu-builder.main', item.key, order);
+      }
+      await hooks.fireEvent('menu-builder:user:addCustomItem', menuItem);
+    },
+    [customChildrens, setCustomChildrens]
+  );
 
-  const onCancel = (dragItem) => {
-    console.log(dragItem, customChildrens);
+  const onEnd = (event) => {
+    const [{ dragItem, monitor }] = event.args;
+    const didDrop = monitor.didDrop();
+    if (!didDrop) {
+      const index = _.findIndex(customChildrens, (ch) => ch.id === dragItem._tempId);
+      if (index >= 0) {
+        setCustomChildrens(
+          update(customChildrens, {
+            $splice: [[index, 1]],
+          })
+        );
+      }
+    }
   };
 
   const [, drop] = useDrop(() => ({ accept: 'menu-item-sort' }));
 
   useEffect(() => {
-    hooks.addAction('dnd:cancel', onCancel);
+    hooks.addAction('dnd:end', onEnd);
     return () => {
-      hooks.removeAction('dnd:cancel', onCancel);
+      hooks.removeAction('dnd:end', onEnd);
     };
   });
 
   useEffect(() => {
     registerDndLayer('menu-item-sort', ({ item: _item }) => (
       <MainMenuSubmenuItem item={find(_item.id).dragItem} isLayer={true} />
+    ));
+    registerDndLayer('menu-item', ({ item: _item }) => (
+      <MainMenuSubmenuItem item={_item} isLayer={true} />
     ));
   }, [find]);
 
@@ -96,13 +112,12 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
   return (
     <>
       {item && (
-        <div className="w-full h-screen bg-secondary-400 flex flex-col justify-between">
+        <div className="w-full h-screen bg-secondary-focus flex flex-col justify-between">
           {/* Header submenu */}
-          <div
-            style={{ marginBottom: '34px' }}
-            className={'flex flex-row justify-between items-center pt-3'}
-          >
-            <div className={'w-full pl-6 font-lexend text-base text-white '}>{item.label}</div>
+          <div className={'flex flex-row justify-between items-center mb-6 pt-3'}>
+            <div className={'w-full pl-6 font-lexend text-base text-secondary-content'}>
+              {item.label}
+            </div>
             {/* Close submenu */}
             <div className={'px-2'}>
               <MainMenuCloseSubmenuBtn onClick={onClose} />
@@ -120,6 +135,8 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
                   />
                 ))}
 
+                {customChildrens.length && <div className="h-px bg-neutral-focus my-3"></div>}
+
                 <div ref={drop}>
                   <>
                     {customChildrens.map((child) => (
@@ -135,7 +152,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
                         {({ isDragging }) => (
                           <MainMenuSubmenuItem
                             item={child}
-                            isDragging={isDragging}
+                            isDragging={!!child._tempId || isDragging}
                             active={activeItem?.id === child.id}
                           />
                         )}
@@ -146,6 +163,10 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
               </SimpleBar>
             )}
           </DndDropZone>
+          {/* Menu constructor */}
+          <div>
+            <MainMenuInfo />
+          </div>
         </div>
       )}
     </>

@@ -16,7 +16,7 @@ export default function MainMenuDropItem({ children, className, item }) {
   };
 
   return (
-    <DndItem className={className} type={'menu-item'} item={_item} emptyLayout={false}>
+    <DndItem className={className} type={'menu-item'} item={_item} emptyLayout={true}>
       {children}
     </DndItem>
   );

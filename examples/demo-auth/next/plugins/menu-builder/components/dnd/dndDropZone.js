@@ -4,14 +4,17 @@ import PropTypes from 'prop-types';
 import * as _ from 'lodash';
 
 export default function DndDropZone({ children, className, type, onDrop }) {
-  const [{ canDrop, isOver }, drop] = useDrop(() => ({
-    accept: type,
-    drop: onDrop,
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
+  const [{ canDrop, isOver }, drop] = useDrop(
+    () => ({
+      accept: type,
+      drop: onDrop,
+      collect: (monitor) => ({
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop(),
+      }),
     }),
-  }));
+    [onDrop]
+  );
 
   return (
     <div ref={drop} className={className}>

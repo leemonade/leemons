@@ -75,7 +75,7 @@ export default function MainMenu({ onClose, onOpen }) {
         {/* Menu */}
         <div style={{ width: menuWidth }} className="h-screen flex-none bg-secondary">
           <div className="h-screen w-full flex flex-col justify-between">
-            <img className="w-8 mb-9 mx-auto" src="/menu-builder/logo.svg" alt="" />
+            <img className="w-6 mb-9 mx-auto" src="/menu-builder/logo.svg" alt="" />
 
             {/* Menu items */}
             <SimpleBar className="flex-grow h-px">
@@ -99,7 +99,7 @@ export default function MainMenu({ onClose, onOpen }) {
                   ) : (
                     <div
                       style={{ width: '40px', height: '40px' }}
-                      className="rounded-full bg-blue-500 mx-auto my-4 text-white font-lexend text-center flex flex-col align-items-center justify-center"
+                      className="rounded-full bg-primary-focus mx-auto my-4 text-secondary-content font-lexend text-center flex flex-col align-items-center justify-center"
                     >
                       {session.name[0].toUpperCase()}
                     </div>
