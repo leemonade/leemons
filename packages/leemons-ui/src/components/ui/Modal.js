@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import ReactDOM from 'react-dom';
+import { XIcon } from '@heroicons/react/solid';
 import classNames from 'classnames';
 import shortid from 'shortid';
 import PropTypes from 'prop-types';
+import Button from './Button';
 
 function Modal({ show, onHide, options, children }) {
   const handleOverlayClicked = (e) => {
@@ -27,7 +29,7 @@ function Modal({ show, onHide, options, children }) {
     }
     if (options && options.message) {
       return (
-        <div className="modal-content">
+        <div className="modal-body">
           <p>{options.message}</p>
         </div>
       );
@@ -35,13 +37,37 @@ function Modal({ show, onHide, options, children }) {
     return false;
   };
 
-  const renderFooter = () => {
+  const renderButtons = () => {
     const { buttons } = options;
     return (
       <div className="modal-action">
         {buttons.map((button) => (
           <React.Fragment key={shortid.generate()}>{button}</React.Fragment>
         ))}
+      </div>
+    );
+  };
+
+  const renderFooter = () => {
+    const { cancelLabel, actionLabel, onAction } = options;
+    return (
+      <div className="modal-action">
+        {cancelLabel && (
+          <Button color="ghost" className="text-black" onClick={() => onHide()}>
+            {cancelLabel}
+          </Button>
+        )}
+        {actionLabel && (
+          <Button
+            color="primary"
+            onClick={() => {
+              if (onAction) onAction();
+              onHide();
+            }}
+          >
+            {actionLabel}
+          </Button>
+        )}
       </div>
     );
   };
@@ -57,6 +83,11 @@ function Modal({ show, onHide, options, children }) {
     'modal-animated modal-animation-fade-in': options && options.animated,
   });
 
+  const modalBodyClass = classNames({
+    'modal-body': true,
+    'modal-no-action': options?.buttons?.length === 0 || true,
+  });
+
   return show
     ? ReactDOM.createPortal(
         <React.Fragment>
@@ -70,25 +101,25 @@ function Modal({ show, onHide, options, children }) {
             onClick={handleOverlayClicked}
           >
             <div className={modalClass}>
-              <div className="modal-box">
+              <div className="modal-content">
                 {options !== undefined && options.closeButton === false ? null : (
                   <div className="modal-header">
-                    {options !== undefined && options.title !== undefined && (
-                      <div className="modal-title">{options.title}</div>
-                    )}
-                    <button
-                      type="button"
-                      className="modal-close-button"
+                    <div className="modal-title">{options?.title || ''}</div>
+                    <Button
+                      color="ghost"
+                      circle
+                      className="btn-xs"
                       data-dismiss="modal"
                       aria-label="Close"
                       onClick={onHide}
                     >
-                      <span aria-hidden="true">&times;</span>
-                    </button>
+                      <XIcon className="h-4 w-4 stroke-current" />
+                    </Button>
                   </div>
                 )}
-                <div className="modal-body">{renderBody()}</div>
-                {options && options.buttons && options.buttons.length > 0 && renderFooter()}
+                <div className={modalBodyClass}>{renderBody()}</div>
+                {options?.buttons?.length > 0 && renderButtons()}
+                {(options?.cancelLabel || options?.actionLabel) && renderFooter()}
               </div>
             </div>
           </div>
@@ -104,10 +135,14 @@ Modal.propTypes = {
   show: PropTypes.bool,
   onHide: PropTypes.any,
   options: PropTypes.objectOf({
+    animated: PropTypes.bool,
     overlayClose: PropTypes.any,
     onOverlayClicked: PropTypes.func,
     title: PropTypes.any,
     message: PropTypes.any,
+    cancelLabel: PropTypes.any,
+    actionLabel: PropTypes.any,
+    onAction: PropTypes.func,
   }),
 };
 

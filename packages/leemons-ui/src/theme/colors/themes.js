@@ -38,6 +38,8 @@ module.exports = {
     'base-200': '#e7ecf4',
     'base-300': '#dadde2',
     'base-content': '#202a3c',
+    black: '#202a3c',
+    white: '#ffffff',
     info: '#80b3ff',
     'info-focus': '#4d94ff',
     'info-content': '#ffffff',

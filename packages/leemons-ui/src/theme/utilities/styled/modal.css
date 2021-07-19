@@ -1,0 +1,14 @@
+/* :> */
+@layer utilities {
+  /* <: */
+  .modal {
+    &-lg {
+      @apply sm:max-w-lg;
+    }
+    &-xs {
+      @apply sm:max-w-xs;
+    }
+  }
+  /* :> */
+}
+/* <: */

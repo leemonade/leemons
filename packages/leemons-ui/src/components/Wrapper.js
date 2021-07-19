@@ -37,8 +37,8 @@ function Wrapper({ children, className, title, nocode, html }) {
       <div>
         {!nocode && showcode && (
           <div className="pt-2">
-            <div className="p-4 text-xs">
-              <Highlight className="html p-4 rounded-box">{sourcecode}</Highlight>
+            <div className="p-4">
+              <Highlight className="html p-4 text-xs rounded-box">{sourcecode}</Highlight>
             </div>
           </div>
         )}
