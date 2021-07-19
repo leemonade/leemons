@@ -97,7 +97,9 @@ export default function MyComponent(props) {
             <div className="shadow-lg mockup-code">
               <Highlight className="javascript p-4 bg-secondary text-xs">
                 {`{
-    animated: Boolean, // Default: true. Enabled the modal fadeIn animation
+    animated: Boolean, // Default: true. Enables the modal fadeIn animation
+    overlayClose: Boolean, // Default: true. Enableds close Modal on OverlayClick
+    onOverlayClicked: Function, // Fired when Modal overlay is clicked,
     title: String | React.Component, // Modal's title
     message: String | React.Component, // Modal's Message or Body content
     cancelLabel: String | React.Component, // Cancel button label
