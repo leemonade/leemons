@@ -12,5 +12,11 @@ module.exports = {
       edit: 'Edit',
       finish_edit: 'Finish',
     },
+    remove_item_modal: {
+      title: 'Do you want to delete the item?',
+      message: 'This action cannot be undone',
+      cancel: 'No',
+      action: 'Delete',
+    },
   },
 };

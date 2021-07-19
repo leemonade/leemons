@@ -12,5 +12,11 @@ module.exports = {
       edit: 'Editar',
       finish_edit: 'Finalizar',
     },
+    remove_item_modal: {
+      title: '¿Quieres eliminar el item?',
+      message: 'Esta acción no puede deshacerse',
+      cancel: 'No',
+      action: 'Eliminar',
+    },
   },
 };

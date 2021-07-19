@@ -5,7 +5,7 @@ import LeemonsImage from '../leemonsImage';
 export default function MainMenuItem({ item, menuWidth, active, onClick }) {
   return (
     <>
-      <div
+      <button
         onClick={onClick}
         style={{ height: menuWidth }}
         className={`w-full text-center cursor-pointer ${
@@ -24,7 +24,7 @@ export default function MainMenuItem({ item, menuWidth, active, onClick }) {
             alt={item.iconAlt}
           />
         </div>
-      </div>
+      </button>
     </>
   );
 }

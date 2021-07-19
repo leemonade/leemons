@@ -1,16 +1,11 @@
+import { Button } from 'leemons-ui';
 import * as PropTypes from 'prop-types';
 import LeemonsImage from '../leemonsImage';
-
-const closeSubmenuSize = '32px';
 
 export default function MainMenuCloseSubmenuBtn({ onClick }) {
   return (
     <>
-      <div
-        onClick={onClick}
-        style={{ width: closeSubmenuSize, height: closeSubmenuSize }}
-        className={'bg-secondary rounded-full cursor-pointer'}
-      >
+      <Button color="secondary" circle onClick={onClick} className="btn-sm">
         <div className={'w-4 h-full mx-auto relative'}>
           {/* TODO: Add alt multilanguage */}
           <LeemonsImage
@@ -18,7 +13,7 @@ export default function MainMenuCloseSubmenuBtn({ onClick }) {
             src="/menu-builder/svgs/keyboard-previous.svg"
           />
         </div>
-      </div>
+      </Button>
     </>
   );
 }

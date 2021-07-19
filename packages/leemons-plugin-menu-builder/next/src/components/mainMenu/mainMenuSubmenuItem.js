@@ -1,8 +1,8 @@
+import { Input } from 'leemons-ui';
 import Link from 'next/link';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import Router from 'next/router';
-import { Input } from 'leemons-ui';
 import LeemonsImage from '../leemonsImage';
 
 export default function MainMenuSubmenuItem({
@@ -69,6 +69,16 @@ export default function MainMenuSubmenuItem({
     }
   };
 
+  if (!isLayer && !editMode && !editItemMode && !isDragging) {
+    return (
+      <Link href={item.url}>
+        <a className={`relative w-full block font-lexend text-sm cursor-pointer ${styles}`}>
+          <span className="line-clamp-2">{item.label}</span>
+        </a>
+      </Link>
+    );
+  }
+
   return (
     <div
       className={`relative w-full font-lexend text-sm cursor-pointer ${styles}`}
@@ -103,9 +113,7 @@ export default function MainMenuSubmenuItem({
           </div>
         </div>
       ) : (
-        <Link href={item.url}>
-          <a className={`line-clamp-2`}>{item.label}</a>
-        </Link>
+        <span className={`line-clamp-2`}>{item.label}</span>
       )}
 
       {editMode && (

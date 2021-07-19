@@ -52,8 +52,10 @@ export function getLocalizationsByArrayOfItems(items, reducer, locale) {
 }
 
 export default ({ keys = null, keysStartsWith = null, locale } = {}) => {
+  const jsonKey = JSON.stringify({ keys, keysStartsWith, locale });
+
   // Let swr handle data fetching and caching
-  const { data, error } = useSWR('Translate', _getLocalizations({ keys, keysStartsWith, locale }));
+  const { data, error } = useSWR(jsonKey, _getLocalizations({ keys, keysStartsWith, locale }));
 
   // Add a loading property
   let loading = false;

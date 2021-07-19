@@ -1,27 +1,43 @@
 import * as _ from 'lodash';
+import { Modal, useModal } from 'leemons-ui';
+import hooks from 'leemons-hooks';
+import SimpleBar from 'simplebar-react';
+import update from 'immutability-helper';
 import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDrop } from 'react-dnd';
+import useTranslate from '@multilanguage/useTranslate';
 import MainMenuCloseSubmenuBtn from './mainMenuCloseSubmenuBtn';
 import MainMenuSubmenuItem from './mainMenuSubmenuItem';
-import SimpleBar from 'simplebar-react';
-import update from 'immutability-helper';
+
 import DndSortItem from '../dnd/dndSortItem';
 import DndDropZone from '../dnd/dndDropZone';
 import {
   addMenuItemRequest,
-  removeMenuItemRequest,
   reOrderCustomUserItemsRequest,
   updateMenuItemRequest,
 } from '../../request';
-import hooks from 'leemons-hooks';
+
 import { registerDndLayer } from '../dnd/dndLayer';
 import MainMenuInfo from './mainMenuInfo';
+import prefixPN from '../../helpers/prefixPN';
+import tLoader from '../../helpers/tLoader';
 
 export default function MainMenuSubmenu({ item, onClose, activeItem }) {
   const [editingItem, setEditingItem] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [customChildrens, setCustomChildrens] = useState(item ? item.customChildrens : []);
+  const [translations] = useTranslate({ keysStartsWith: prefixPN('menu.remove_item_modal') });
+  const t = tLoader(prefixPN('menu.remove_item_modal'), translations);
+
+  const [modal, toggleModal] = useModal({
+    animated: true,
+    title: t('title'),
+    message: t('message'),
+    cancelLabel: t('cancel'),
+    actionLabel: t('action'),
+    onAction: () => alert('Modal action is triggered'),
+  });
 
   const find = useCallback(
     (id) => {
@@ -100,6 +116,8 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
   };
 
   const remove = async (toRemoveItem) => {
+    toggleModal();
+    /*
     await removeMenuItemRequest(toRemoveItem.menuKey, toRemoveItem.key);
     const { index } = find(toRemoveItem.id);
     setCustomChildrens(
@@ -107,6 +125,8 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
         $splice: [[index, 1]],
       })
     );
+
+     */
   };
 
   const updateItem = async (toUpdateItem, dataToUpdate) => {
@@ -145,68 +165,78 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
   return (
     <>
       {item && (
-        <div className="w-full overflow-hidden h-screen bg-secondary-focus flex flex-col justify-between">
-          {/* Header submenu */}
-          <div className={'flex flex-row justify-between items-center mb-6 pt-3'}>
-            <div className={'w-full pl-6 font-lexend text-base text-secondary-content'}>
-              {item.label}
+        <>
+          <Modal {...modal} />
+          <div className="w-full overflow-hidden h-screen bg-secondary-focus flex flex-col justify-between">
+            {/* Header submenu */}
+            <div className={'flex flex-row justify-between items-center mb-6 pt-3'}>
+              <div className={'w-full pl-6 font-lexend text-base text-secondary-content'}>
+                {item.label}
+              </div>
+              {/* Close submenu */}
+              <div className={'px-2'}>
+                <MainMenuCloseSubmenuBtn onClick={onClose} />
+              </div>
             </div>
-            {/* Close submenu */}
-            <div className={'px-2'}>
-              <MainMenuCloseSubmenuBtn onClick={onClose} />
+            {/* Items submenu */}
+            <DndDropZone type={'menu-item'} onDrop={onDrop} className="flex-grow h-px">
+              {() => (
+                <SimpleBar className="h-full">
+                  <nav>
+                    <ul>
+                      {item.childrens.map((child) => (
+                        <li key={child.id}>
+                          <MainMenuSubmenuItem item={child} active={activeItem?.id === child.id} />
+                        </li>
+                      ))}
+
+                      {customChildrens.length ? (
+                        <div className="h-px bg-neutral-focus my-3"></div>
+                      ) : (
+                        ''
+                      )}
+
+                      <div ref={drop}>
+                        <>
+                          {customChildrens.map((child) => (
+                            <li key={child.id}>
+                              <DndSortItem
+                                id={child.id}
+                                find={find}
+                                move={move}
+                                type={'menu-item-sort'}
+                                accept={['menu-item-sort', 'menu-item']}
+                                emptyLayout={true}
+                                disableDrag={!editMode || !!editingItem}
+                              >
+                                {({ isDragging }) => (
+                                  <MainMenuSubmenuItem
+                                    item={child}
+                                    remove={remove}
+                                    editMode={editMode && !editingItem}
+                                    changeToEditItem={(e) => setEditingItem(e)}
+                                    editItemMode={editingItem === child}
+                                    isDragging={!!child._tempId || isDragging}
+                                    active={activeItem?.id === child.id}
+                                    updateItem={updateItem}
+                                  />
+                                )}
+                              </DndSortItem>
+                            </li>
+                          ))}
+                        </>
+                      </div>
+                    </ul>
+                  </nav>
+                </SimpleBar>
+              )}
+            </DndDropZone>
+            {/* Menu constructor */}
+            <div>
+              <MainMenuInfo editMode={editMode} toggleEditMode={toggleEditMode} />
             </div>
           </div>
-          {/* Items submenu */}
-          <DndDropZone type={'menu-item'} onDrop={onDrop} className="flex-grow h-px">
-            {() => (
-              <SimpleBar className="h-full">
-                {item.childrens.map((child) => (
-                  <MainMenuSubmenuItem
-                    key={child.id}
-                    item={child}
-                    active={activeItem?.id === child.id}
-                  />
-                ))}
-
-                {customChildrens.length ? <div className="h-px bg-neutral-focus my-3"></div> : ''}
-
-                <div ref={drop}>
-                  <>
-                    {customChildrens.map((child) => (
-                      <DndSortItem
-                        key={child.id}
-                        id={child.id}
-                        find={find}
-                        move={move}
-                        type={'menu-item-sort'}
-                        accept={['menu-item-sort', 'menu-item']}
-                        emptyLayout={true}
-                        disableDrag={!editMode || !!editingItem}
-                      >
-                        {({ isDragging }) => (
-                          <MainMenuSubmenuItem
-                            item={child}
-                            remove={remove}
-                            editMode={editMode && !editingItem}
-                            changeToEditItem={(e) => setEditingItem(e)}
-                            editItemMode={editingItem === child}
-                            isDragging={!!child._tempId || isDragging}
-                            active={activeItem?.id === child.id}
-                            updateItem={updateItem}
-                          />
-                        )}
-                      </DndSortItem>
-                    ))}
-                  </>
-                </div>
-              </SimpleBar>
-            )}
-          </DndDropZone>
-          {/* Menu constructor */}
-          <div>
-            <MainMenuInfo editMode={editMode} toggleEditMode={toggleEditMode} />
-          </div>
-        </div>
+        </>
       )}
     </>
   );
