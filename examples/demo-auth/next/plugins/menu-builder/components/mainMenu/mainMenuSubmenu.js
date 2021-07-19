@@ -14,6 +14,7 @@ import DndSortItem from '../dnd/dndSortItem';
 import DndDropZone from '../dnd/dndDropZone';
 import {
   addMenuItemRequest,
+  removeMenuItemRequest,
   reOrderCustomUserItemsRequest,
   updateMenuItemRequest,
 } from '../../request';
@@ -26,18 +27,10 @@ import tLoader from '../../helpers/tLoader';
 export default function MainMenuSubmenu({ item, onClose, activeItem }) {
   const [editingItem, setEditingItem] = useState(null);
   const [editMode, setEditMode] = useState(false);
+  const [removeItem, setRemoveItem] = useState(null);
   const [customChildrens, setCustomChildrens] = useState(item ? item.customChildrens : []);
   const [translations] = useTranslate({ keysStartsWith: prefixPN('menu.remove_item_modal') });
   const t = tLoader(prefixPN('menu.remove_item_modal'), translations);
-
-  const [modal, toggleModal] = useModal({
-    animated: true,
-    title: t('title'),
-    message: t('message'),
-    cancelLabel: t('cancel'),
-    actionLabel: t('action'),
-    onAction: () => alert('Modal action is triggered'),
-  });
 
   const find = useCallback(
     (id) => {
@@ -46,6 +39,24 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
     },
     [customChildrens]
   );
+
+  const [modal, toggleModal] = useModal({
+    animated: true,
+    title: t('title'),
+    message: t('message'),
+    cancelLabel: t('cancel'),
+    actionLabel: t('action'),
+    onAction: async () => {
+      await removeMenuItemRequest(removeItem.menuKey, removeItem.key);
+      const { index } = find(removeItem.id);
+      setRemoveItem(null);
+      setCustomChildrens(
+        update(customChildrens, {
+          $splice: [[index, 1]],
+        })
+      );
+    },
+  });
 
   const move = useCallback(
     async (id, atIndex, isLast) => {
@@ -116,17 +127,8 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
   };
 
   const remove = async (toRemoveItem) => {
-    toggleModal();
-    /*
-    await removeMenuItemRequest(toRemoveItem.menuKey, toRemoveItem.key);
-    const { index } = find(toRemoveItem.id);
-    setCustomChildrens(
-      update(customChildrens, {
-        $splice: [[index, 1]],
-      })
-    );
-
-     */
+    setRemoveItem(toRemoveItem);
+    toggleModal(toRemoveItem);
   };
 
   const updateItem = async (toUpdateItem, dataToUpdate) => {
