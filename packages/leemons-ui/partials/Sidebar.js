@@ -34,7 +34,7 @@ function Sidebar({ setShowMainMenu }) {
   return (
     <div className="drawer-side bg-secondary">
       <label htmlFor="main-menu" className="drawer-overlay"></label>
-      <aside className="flex flex-col border-r border-base-200 bg-secondary text-secondary-content">
+      <aside className="flex flex-col border-r border-base-200 bg-secondary text-secondary-content w-80">
         <div className="hidden lg:block sticky inset-x-0 top-0 z-50 w-full border-b border-secondary-400 transition duration-200 ease-in-out bg-secondary py-1">
           <div className="mx-auto space-x-1 navbar max-w-none">
             <div className="flex items-center flex-none">
