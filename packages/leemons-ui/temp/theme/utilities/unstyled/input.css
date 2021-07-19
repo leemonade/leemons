@@ -1,0 +1,18 @@
+
+  .input {
+    @apply px-3 h-10 text-sm leading-loose;
+
+    &-md {
+      @apply px-4 h-12 text-sm leading-loose;
+    }
+    &-lg {
+      @apply px-4 h-14 text-base leading-loose;
+    }
+    &-sm {
+      @apply px-2 h-8 text-sm leading-8;
+    }
+    &-xs {
+      @apply px-1 h-6 text-xs leading-relaxed;
+    }
+  }
+  

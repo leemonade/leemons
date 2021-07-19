@@ -1,0 +1,14 @@
+
+  .label {
+    @apply pt-2 pb-1;
+    &-text {
+      @apply text-black font-medium text-sm;
+    }
+    &-text-alt {
+      @apply text-xs text-black;
+    }
+    a {
+      @apply hover:text-base-content;
+    }
+  }
+  
