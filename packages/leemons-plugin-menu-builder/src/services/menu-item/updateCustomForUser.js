@@ -1,7 +1,7 @@
+const _ = require('lodash');
 const { table } = require('../../tables');
 const { translations } = require('../../translations');
 const prefixPN = require('../../helpers/prefixPN');
-const removeItemPermissions = require('../../helpers/removeItemPermissions');
 const { validateNotExistMenu, validateNotExistMenuItem } = require('../../validations/exists');
 
 const { withTransaction } = global.utils;
@@ -13,6 +13,7 @@ const { withTransaction } = global.utils;
  * @param {any} userAuth User auth
  * @param {string} menuKey - The Menu key
  * @param {string} key - The item key
+ * @param {object} json - The item data to update
  * @param {any=} transacting DB transaction
  * @return {Promise<MenuItem>} Created / Updated menuItem
  * */
@@ -24,8 +25,6 @@ async function updateCustomForUser(
   { transacting: _transacting } = {}
 ) {
   const locales = translations();
-
-  // TODO TERMINAR DE PROGRAMAR
 
   if (!key.startsWith(prefixPN(`user:${userAuth.id}.`))) {
     throw new Error('You can only update your own custom items');
@@ -40,7 +39,11 @@ async function updateCustomForUser(
       await validateNotExistMenuItem(menuKey, key, { transacting });
 
       // Update the MENU ITEM
-      const promises = [table.menuItem.update({ menuKey, key }, data, { transacting })];
+      const promises = [];
+
+      if (!_.isEmpty(data)) {
+        promises.push(table.menuItem.update({ menuKey, key }, data, { transacting }));
+      }
 
       // Update LABEL & DESCRIPTIONS in locales
       if (locales) {
@@ -71,23 +74,9 @@ async function updateCustomForUser(
         }
       }
 
-      // Remove permissions for item
-      promises.push(removeItemPermissions(key, `${menuKey}.menu-item.custom`, { transacting }));
-
-      // Remove de custom permission
-      promises.push(
-        leemons.plugins.users.services.users.removeCustomPermission(
-          userAuth.id,
-          {
-            permissionName: key,
-          },
-          { transacting }
-        )
-      );
-
       await Promise.all(promises);
 
-      leemons.log.info(`Remove custom menu item "${key}" from menu "${menuKey}"`);
+      leemons.log.info(`Updated custom menu item "${key}" from menu "${menuKey}"`);
 
       return true;
     },

@@ -1,10 +1,13 @@
 const menuService = require('../src/services/menu');
 const menuItemService = require('../src/services/menu-item');
 const prefixPN = require('../src/helpers/prefixPN');
-const { validateRemoveMenuItemFromUser } = require('../src/validations/menu-item');
 const { table } = require('../src/tables');
-const { validateReOrder } = require('../src/validations/menu-item');
-const { validateAddMenuItemFromUser } = require('../src/validations/menu-item');
+const {
+  validateReOrder,
+  validateAddMenuItemFromUser,
+  validateUpdateMenuItemFromUser,
+  validateRemoveMenuItemFromUser,
+} = require('../src/validations/menu-item');
 
 async function getMenu(ctx) {
   const menu = await menuService.getIfHasPermission(ctx.params.key, ctx.state.user);
@@ -34,6 +37,21 @@ async function removeMenuItem(ctx) {
 
   ctx.status = 200;
   ctx.body = { status: 200, removed };
+}
+
+async function updateMenuItem(ctx) {
+  console.log('updateMenuItem');
+  validateUpdateMenuItemFromUser({ ...ctx.params, ...ctx.request.body });
+
+  const updated = await menuItemService.updateCustomForUser(
+    ctx.state.user,
+    ctx.params.menuKey,
+    ctx.params.key,
+    ctx.request.body
+  );
+
+  ctx.status = 200;
+  ctx.body = { status: 200, updated };
 }
 
 async function reOrder(ctx) {
@@ -68,4 +86,5 @@ module.exports = {
   reOrder,
   getIfKnowHowToUse,
   setKnowHowToUse,
+  updateMenuItem,
 };

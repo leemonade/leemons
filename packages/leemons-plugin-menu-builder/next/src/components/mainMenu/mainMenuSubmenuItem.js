@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import Router from 'next/router';
 import LeemonsImage from '../leemonsImage';
+import { Input } from 'leemons-ui';
 
 export default function MainMenuSubmenuItem({
   item,
@@ -11,37 +12,43 @@ export default function MainMenuSubmenuItem({
   editMode,
   editItemMode,
   changeToEditItem,
+  updateItem,
   remove,
 }) {
   const [newLabel, setNewLabel] = useState(item.label);
 
-  const styles = {
-    color: 'text-secondary-content hover:text-secondary-content',
-    border: '',
-    backgroundColor: 'hover:bg-primary',
-    paddingLeft: 'pl-7',
+  const recalculeStyles = () => {
+    const _styles = {
+      color: 'text-secondary-content hover:text-secondary-content',
+      border: '',
+      backgroundColor: 'hover:bg-primary',
+      paddings: 'pl-7 py-3 pr-8',
+    };
+
+    if (active) {
+      _styles.backgroundColor = `bg-secondary-300 ${_styles.backgroundColor}`;
+    }
+
+    if (isDragging) {
+      _styles.border = 'border border-secondary-content border-dashed';
+    }
+
+    if (isLayer) {
+      _styles.color = 'text-secondary';
+      _styles.border = 'border border-primary border-dashed';
+      _styles.backgroundColor = 'bg-secondary-content';
+    }
+
+    if (editItemMode) {
+      _styles.paddings = 'px-1 py-1';
+      _styles.border = `border ${newLabel ? 'border-primary' : 'border-error-focus'} border-solid`;
+      _styles.backgroundColor = 'bg-base-200';
+    }
+
+    return `${_styles.color} ${_styles.border} ${_styles.backgroundColor} ${_styles.paddings}`;
   };
 
-  if (active) {
-    styles.backgroundColor = `bg-secondary-300 ${styles.backgroundColor}`;
-  }
-
-  if (isDragging) {
-    styles.border = 'border-2 border-secondary-content border-dashed';
-  }
-
-  if (isLayer) {
-    styles.color = 'text-secondary';
-    styles.border = 'border-2 border-primary border-dashed';
-    styles.backgroundColor = 'bg-secondary-content';
-  }
-
-  if (editItemMode) {
-    styles.paddingLeft = 'pl-4';
-    styles.border = 'border-2 border-primary border-solid';
-  }
-
-  const finalStyle = `${styles.color} ${styles.border} ${styles.backgroundColor} ${styles.paddingLeft}`;
+  const styles = recalculeStyles();
 
   const onClick = () => {
     if (!editMode && !editItemMode) {
@@ -55,9 +62,15 @@ export default function MainMenuSubmenuItem({
     setNewLabel(event.target.value);
   };
 
+  const onUpdateItem = () => {
+    if (newLabel) {
+      updateItem(item, { label: newLabel });
+    }
+  };
+
   return (
     <div
-      className={`relative w-full py-3 pr-8 font-lexend text-sm cursor-pointer truncate ${finalStyle}`}
+      className={`relative w-full font-lexend text-sm cursor-pointer truncate ${styles}`}
       style={isLayer ? { width: '190px' } : {}}
       onClick={onClick}
     >
@@ -70,23 +83,42 @@ export default function MainMenuSubmenuItem({
         </div>
       )}
       {editItemMode ? (
-        <input
-          className="h-full w-full bg-transparent focus-visible:border-transparent"
-          type="text"
-          value={newLabel}
-          onChange={onNewLabelChange}
-        />
+        <div className="relative">
+          <Input
+            className="w-full pr-9"
+            type="text"
+            value={newLabel}
+            onChange={onNewLabelChange}
+            onKeyPress={(e) => e.key === 'Enter' && onUpdateItem()}
+          />
+          <div
+            onClick={onUpdateItem}
+            className={`absolute right-2 top-2/4 transform -translate-y-1/2 ${
+              newLabel ? 'text-primary' : 'text-neutral'
+            }`}
+            style={{ width: '18px', height: '18px' }}
+          >
+            <LeemonsImage className="fill-current" src={'/menu-builder/svgs/check.svg'} />
+          </div>
+        </div>
       ) : (
         <span className={`${isDragging ? '' : ''}`}>{item.label}</span>
       )}
 
       {editMode && (
         <div
-          onClick={() => remove(item)}
+          onClick={(event) => {
+            event.stopPropagation();
+            event.preventDefault();
+            remove(item);
+          }}
           className="absolute right-3 top-2/4 transform -translate-y-1/2"
           style={{ width: '12px', height: '12px' }}
         >
-          <LeemonsImage className="stroke-current" src={'/menu-builder/svgs/remove.svg'} />
+          <LeemonsImage
+            className="stroke-current fill-current"
+            src={'/menu-builder/svgs/remove.svg'}
+          />
         </div>
       )}
     </div>
@@ -102,4 +134,5 @@ MainMenuSubmenuItem.propTypes = {
   editItemMode: PropTypes.bool,
   remove: PropTypes.func,
   changeToEditItem: PropTypes.func,
+  updateItem: PropTypes.func,
 };

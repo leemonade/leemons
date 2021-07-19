@@ -12,6 +12,7 @@ import {
   addMenuItemRequest,
   removeMenuItemRequest,
   reOrderCustomUserItemsRequest,
+  updateMenuItemRequest,
 } from '../../request';
 import hooks from 'leemons-hooks';
 import { registerDndLayer } from '../dnd/dndLayer';
@@ -108,6 +109,17 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
     );
   };
 
+  const updateItem = async (toUpdateItem, dataToUpdate) => {
+    await updateMenuItemRequest(toUpdateItem.menuKey, toUpdateItem.key, dataToUpdate);
+    const { index } = find(toUpdateItem.id);
+    setCustomChildrens(
+      update(customChildrens, {
+        [index]: { $merge: dataToUpdate },
+      })
+    );
+    setEditingItem(null);
+  };
+
   const [, drop] = useDrop(() => ({ accept: 'menu-item-sort' }));
 
   useEffect(() => {
@@ -156,7 +168,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
                   />
                 ))}
 
-                {customChildrens.length && <div className="h-px bg-neutral-focus my-3"></div>}
+                {customChildrens.length ? <div className="h-px bg-neutral-focus my-3"></div> : ''}
 
                 <div ref={drop}>
                   <>
@@ -169,7 +181,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
                         type={'menu-item-sort'}
                         accept={['menu-item-sort', 'menu-item']}
                         emptyLayout={true}
-                        disableDrag={!editMode}
+                        disableDrag={!editMode || !!editingItem}
                       >
                         {({ isDragging }) => (
                           <MainMenuSubmenuItem
@@ -180,6 +192,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
                             editItemMode={editingItem === child}
                             isDragging={!!child._tempId || isDragging}
                             active={activeItem?.id === child.id}
+                            updateItem={updateItem}
                           />
                         )}
                       </DndSortItem>

@@ -59,6 +59,17 @@ const removeMenuItemFromUserSchema = () => ({
   additionalProperties: false,
 });
 
+const updateMenuItemFromUserSchema = () => ({
+  type: 'object',
+  properties: {
+    menuKey: stringSchema,
+    key: stringSchema,
+    label: stringSchema,
+  },
+  required: ['menuKey', 'key', 'label'],
+  additionalProperties: false,
+});
+
 const reOrderSchema = () => ({
   type: 'object',
   properties: {
@@ -97,6 +108,14 @@ function validateRemoveMenuItemFromUser(data) {
   }
 }
 
+function validateUpdateMenuItemFromUser(data) {
+  const validator = new LeemonsValidator(updateMenuItemFromUserSchema());
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 function validateReOrder(data) {
   const validator = new LeemonsValidator(reOrderSchema());
 
@@ -109,5 +128,6 @@ module.exports = {
   validateAddMenuItem,
   validateAddMenuItemFromUser,
   validateRemoveMenuItemFromUser,
+  validateUpdateMenuItemFromUser,
   validateReOrder,
 };

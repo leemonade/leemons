@@ -32,6 +32,7 @@ export default function MainMenuInfo({ editMode, toggleEditMode }) {
   const markAsKnowHowToUse = async () => {
     await setKnowHowToUseRequest();
     setShowKnowHowToUse(true);
+    setKnowHowToUse(true);
   };
 
   useEffect(() => {
@@ -59,20 +60,15 @@ export default function MainMenuInfo({ editMode, toggleEditMode }) {
             }}
           />
           {!knowHowToUse && (
-            <Button
-              color="primary"
-              rounded={true}
-              className="btn-sm mt-8"
-              onClick={markAsKnowHowToUse}
-            >
+            <Button color="primary" rounded className="btn-sm mt-8" onClick={markAsKnowHowToUse}>
               {t('got_it_btn')}
             </Button>
           )}
         </div>
         <div
-          className={`flex flex-row text-sm text-center items-center text-neutral ${
-            editMode ? 'py-4' : 'py-8'
-          } bg-secondary-focus relative z-10`}
+          className={`flex flex-row text-sm text-center items-center text-neutral transition ${
+            knowHowToUse ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          } ${editMode ? 'py-4' : 'py-8'} bg-secondary-focus relative z-10`}
         >
           {!editMode ? (
             <div className="flex-1 hover:text-primary cursor-pointer" onClick={toggleEditMode}>
@@ -95,6 +91,7 @@ export default function MainMenuInfo({ editMode, toggleEditMode }) {
               </Button>
             </div>
           )}
+
           <div
             className={`flex-1 hover:text-primary cursor-pointer ${editMode ? 'text-center' : ''}`}
             onClick={() => setShowKnowHowToUse(!showKnowHowToUse)}
