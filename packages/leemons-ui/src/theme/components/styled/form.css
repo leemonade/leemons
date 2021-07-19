@@ -2,12 +2,12 @@
 @layer components {
   /* <: */
   .label {
-    @apply px-1 py-2;
+    @apply pt-2 pb-1;
     &-text {
-      @apply text-sm text-base-content;
+      @apply text-black font-medium text-sm;
     }
     &-text-alt {
-      @apply text-xs text-base-content;
+      @apply text-xs text-black;
     }
     a {
       @apply hover:text-base-content;

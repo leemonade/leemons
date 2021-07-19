@@ -2,7 +2,7 @@
 @layer components {
   /* <: */
   .alert {
-    @apply rounded-box bg-base-200 p-4;
+    @apply rounded-btn bg-base-200 p-4;
   }
   /* :> */
 }

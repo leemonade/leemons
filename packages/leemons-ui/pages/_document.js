@@ -5,7 +5,7 @@ import Document, { Html, Head, Main, NextScript } from 'next/document';
 class MyDocument extends Document {
   render() {
     return (
-      <Html lang="en">
+      <Html lang="en" data-theme="light">
         <Head>
           <meta name="description" content="Leemons UI - Design System" />
           <link rel="icon" href="/favicon.ico" />

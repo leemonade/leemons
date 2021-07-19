@@ -1,14 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import '../src/theme/leemons.css';
-// import 'tailwindcss/tailwind.css';
-import Sidebar from '../partials/Sidebar';
+import Layout from '../partials/Layout';
 
 function App({ Component, pageProps }) {
   return (
-    <Sidebar>
+    <Layout>
       <Component {...pageProps} />
-    </Sidebar>
+    </Layout>
   );
 }
 

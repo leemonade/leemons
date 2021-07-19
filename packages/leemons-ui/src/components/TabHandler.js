@@ -1,12 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 function TabHandler({ tabs }) {
   const router = useRouter();
-
-  useEffect(() => console.log(router.pathname), [router]);
 
   return (
     <div className="overflow-x-auto mb-10">

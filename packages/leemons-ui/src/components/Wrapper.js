@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Highlight from 'react-highlight';
 import jsxToString from '../utils/jsx-to-string';
 
-function Wrapper({ children, className, title, nocode }) {
+function Wrapper({ children, className, title, nocode, html }) {
   const [showcode, setShowcode] = useState(false);
   const [sourcecode, setSourcecode] = useState('');
   const component = useRef(null);
@@ -29,7 +29,7 @@ function Wrapper({ children, className, title, nocode }) {
             className={`tab tab-lifted ${showcode && 'tab-active'}`}
             onClick={() => setShowcode(true)}
           >
-            React code
+            {html ? 'HTML' : 'React code'}
           </div>
           <div className="flex-1 cursor-default tab tab-lifted"></div>
         </div>
@@ -60,6 +60,7 @@ Wrapper.propTypes = {
   className: PropTypes.string,
   title: PropTypes.string,
   nocode: PropTypes.bool,
+  html: PropTypes.bool,
 };
 
 export default Wrapper;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, Select, Label } from '../../../src/components/ui';
+import { FormControl, Select, Label, Divider } from '../../../src/components/ui';
 import ClassTable from '../../../src/components/ClassTable';
 import Wrapper from '../../../src/components/Wrapper';
 
@@ -29,107 +29,16 @@ function SelectPage() {
   };
 
   return (
-    <div className="flex-grow p-4" data-theme="light">
-      <ClassTable data={data} />
-      <div className="divider my-6"></div>
-      <div className="text-xl font-bold">Examples</div>
+    <main>
+      <h2 className="mt-2 mb-6 text-5xl font-bold">
+        <span>Form </span>
+        <span className="text-primary">Select</span>
+      </h2>
+      <div className="flex-grow p-4">
+        <div className="text-xl font-bold">Examples</div>
 
-      <Wrapper className="flex flex-col space-y-2" title="select">
-        <Select className="select-bordered w-full max-w-xs">
-          <option disabled selected>
-            Choose your superpower
-          </option>
-          <option>telekinesis</option>
-          <option>time travel</option>
-          <option>invisibility</option>
-        </Select>
-      </Wrapper>
-
-      <Wrapper className="flex flex-col space-y-2" title="select primary">
-        <Select className="select-bordered select-primary w-full max-w-xs">
-          <option disabled selected>
-            Choose your superpower
-          </option>
-          <option>telekinesis</option>
-          <option>time travel</option>
-          <option>invisibility</option>
-        </Select>
-      </Wrapper>
-
-      <Wrapper className="flex flex-col space-y-2" title="select secondary">
-        <Select className="select-bordered select-secondary w-full max-w-xs">
-          <option disabled selected>
-            Choose your superpower
-          </option>
-          <option>telekinesis</option>
-          <option>time travel</option>
-          <option>invisibility</option>
-        </Select>
-      </Wrapper>
-
-      <Wrapper className="flex flex-col space-y-2" title="select accent">
-        <Select className="select-bordered select-accent w-full max-w-xs">
-          <option disabled selected>
-            Choose your superpower
-          </option>
-          <option>telekinesis</option>
-          <option>time travel</option>
-          <option>invisibility</option>
-        </Select>
-      </Wrapper>
-
-      <Wrapper className="flex flex-col space-y-2" title="select info">
-        <Select className="select-bordered select-info w-full max-w-xs">
-          <option disabled selected>
-            Choose your superpower
-          </option>
-          <option>telekinesis</option>
-          <option>time travel</option>
-          <option>invisibility</option>
-        </Select>
-      </Wrapper>
-
-      <Wrapper className="flex flex-col space-y-2" title="select success">
-        <Select className="select-bordered select-success w-full max-w-xs">
-          <option disabled selected>
-            Choose your superpower
-          </option>
-          <option>telekinesis</option>
-          <option>time travel</option>
-          <option>invisibility</option>
-        </Select>
-      </Wrapper>
-
-      <Wrapper className="flex flex-col space-y-2" title="select warning">
-        <Select className="select-bordered select-warning w-full max-w-xs">
-          <option disabled selected>
-            Choose your superpower
-          </option>
-          <option>telekinesis</option>
-          <option>time travel</option>
-          <option>invisibility</option>
-        </Select>
-      </Wrapper>
-
-      <Wrapper className="flex flex-col space-y-2" title="select error">
-        <Select className="select-bordered select-error w-full max-w-xs">
-          <option disabled selected>
-            Choose your superpower
-          </option>
-          <option>telekinesis</option>
-          <option>time travel</option>
-          <option>invisibility</option>
-        </Select>
-      </Wrapper>
-
-      <Wrapper className="flex flex-col space-y-2" title="select with labels">
-        <FormControl className="w-full max-w-xs">
-          <Label text="Choose your superpower">
-            <a href="#" className="label-text-alt">
-              Pick wisely
-            </a>
-          </Label>
-          <Select className="select-bordered w-full">
+        <Wrapper className="flex flex-col space-y-2" title="select">
+          <Select outlined className="w-full max-w-xs">
             <option disabled selected>
               Choose your superpower
             </option>
@@ -137,63 +46,157 @@ function SelectPage() {
             <option>time travel</option>
             <option>invisibility</option>
           </Select>
-          <label className="label">
-            <a href="#" className="label-text-alt">
-              Cant pick?
-            </a>
-            <a href="#" className="label-text-alt">
-              Need hint?
-            </a>
-          </label>
-        </FormControl>
-      </Wrapper>
+        </Wrapper>
 
-      <Wrapper className="flex flex-col space-y-2" title="select sizes">
-        <Select className="select-bordered select-lg w-full max-w-xs">
-          <option disabled selected>
-            Large
-          </option>
-          <option>telekinesis</option>
-          <option>time travel</option>
-          <option>invisibility</option>
-        </Select>
-        <Select className="select-bordered w-full max-w-xs">
-          <option disabled selected>
-            Normal
-          </option>
-          <option>telekinesis</option>
-          <option>time travel</option>
-          <option>invisibility</option>
-        </Select>
-        <Select className="select-bordered select-sm w-full max-w-xs">
-          <option disabled selected>
-            Small
-          </option>
-          <option>telekinesis</option>
-          <option>time travel</option>
-          <option>invisibility</option>
-        </Select>
-        <Select className="select-bordered select-xs w-full max-w-xs">
-          <option disabled selected>
-            Tiny
-          </option>
-          <option>telekinesis</option>
-          <option>time travel</option>
-          <option>invisibility</option>
-        </Select>
-      </Wrapper>
+        <Wrapper className="flex flex-col space-y-2" title="select primary">
+          <Select outlined color="primary" className="w-full max-w-xs">
+            <option disabled selected>
+              Choose your superpower
+            </option>
+            <option>telekinesis</option>
+            <option>time travel</option>
+            <option>invisibility</option>
+          </Select>
+        </Wrapper>
 
-      <Wrapper className="flex flex-col space-y-2" title="select diabled">
-        <Select className="select-bordered w-full max-w-xs" disabled>
-          <option disabled selected>
-            Choose your superpower
-          </option>
-          <option>telekinesis</option>
-          <option>time travel</option>
-          <option>invisibility</option>
-        </Select>
-      </Wrapper>
-    </div>
+        <Wrapper className="flex flex-col space-y-2" title="select secondary">
+          <Select outlined color="secondary" className="w-full max-w-xs">
+            <option disabled selected>
+              Choose your superpower
+            </option>
+            <option>telekinesis</option>
+            <option>time travel</option>
+            <option>invisibility</option>
+          </Select>
+        </Wrapper>
+
+        <Wrapper className="flex flex-col space-y-2" title="select accent">
+          <Select outlined color="accent" className="w-full max-w-xs">
+            <option disabled selected>
+              Choose your superpower
+            </option>
+            <option>telekinesis</option>
+            <option>time travel</option>
+            <option>invisibility</option>
+          </Select>
+        </Wrapper>
+
+        <Wrapper className="flex flex-col space-y-2" title="select info">
+          <Select outlined color="info" className="w-full max-w-xs">
+            <option disabled selected>
+              Choose your superpower
+            </option>
+            <option>telekinesis</option>
+            <option>time travel</option>
+            <option>invisibility</option>
+          </Select>
+        </Wrapper>
+
+        <Wrapper className="flex flex-col space-y-2" title="select success">
+          <Select outlined color="success" className="w-full max-w-xs">
+            <option disabled selected>
+              Choose your superpower
+            </option>
+            <option>telekinesis</option>
+            <option>time travel</option>
+            <option>invisibility</option>
+          </Select>
+        </Wrapper>
+
+        <Wrapper className="flex flex-col space-y-2" title="select warning">
+          <Select outlined color="warning" className="w-full max-w-xs">
+            <option disabled selected>
+              Choose your superpower
+            </option>
+            <option>telekinesis</option>
+            <option>time travel</option>
+            <option>invisibility</option>
+          </Select>
+        </Wrapper>
+
+        <Wrapper className="flex flex-col space-y-2" title="select error">
+          <Select outlined color="error" className="w-full max-w-xs">
+            <option disabled selected>
+              Choose your superpower
+            </option>
+            <option>telekinesis</option>
+            <option>time travel</option>
+            <option>invisibility</option>
+          </Select>
+        </Wrapper>
+
+        <Wrapper className="flex flex-col space-y-2" title="select with labels">
+          <FormControl label="Choose your superpower" className="w-full max-w-xs">
+            <Select outlined className="w-full">
+              <option disabled selected>
+                Choose your superpower
+              </option>
+              <option>telekinesis</option>
+              <option>time travel</option>
+              <option>invisibility</option>
+            </Select>
+            <Label>
+              <a href="#" className="label-text-alt">
+                Cant pick?
+              </a>
+              <a href="#" className="label-text-alt">
+                Need hint?
+              </a>
+            </Label>
+          </FormControl>
+        </Wrapper>
+
+        <Wrapper title="select sizes">
+          <div className="flex flex-col space-y-2">
+            <Select outlined className="select-lg w-full max-w-xs">
+              <option disabled selected>
+                Large
+              </option>
+              <option>telekinesis</option>
+              <option>time travel</option>
+              <option>invisibility</option>
+            </Select>
+            <Select outlined className="w-full max-w-xs">
+              <option disabled selected>
+                Normal
+              </option>
+              <option>telekinesis</option>
+              <option>time travel</option>
+              <option>invisibility</option>
+            </Select>
+            <Select outlined className="select-sm w-full max-w-xs">
+              <option disabled selected>
+                Small
+              </option>
+              <option>telekinesis</option>
+              <option>time travel</option>
+              <option>invisibility</option>
+            </Select>
+            <Select outlined className="select-xs w-full max-w-xs">
+              <option disabled selected>
+                Tiny
+              </option>
+              <option>telekinesis</option>
+              <option>time travel</option>
+              <option>invisibility</option>
+            </Select>
+          </div>
+        </Wrapper>
+
+        <Wrapper className="flex flex-col space-y-2" title="select diabled">
+          <Select outlined className="w-full max-w-xs" disabled>
+            <option disabled selected>
+              Choose your superpower
+            </option>
+            <option>telekinesis</option>
+            <option>time travel</option>
+            <option>invisibility</option>
+          </Select>
+        </Wrapper>
+        <Divider className="my-6" />
+        <ClassTable data={data} />
+      </div>
+    </main>
   );
 }
 

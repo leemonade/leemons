@@ -8,14 +8,14 @@ export default function StyleGuide() {
         <title>Leemons UI</title>
       </Head>
 
-      <main className="prose flex-grow p-4" data-theme="light">
+      <main className="prose flex-grow p-4">
         <div>
           <div className="items-end justify-start h-96 hero bg-primary rounded-box">
             <div className="hero-content">
               <div className="py-6 hero-text">
                 <div className="py-2 font-bold text-9xl text-primary-content">Aa</div>
                 <div className="py-2 text-5xl font-bold text-primary-content">Style Guide Demo</div>
-                <p className="text-primary-content">Omnis quo eveniet veniam quis odit.</p>
+                <div className="py-2 text-primary-content">Omnis quo eveniet veniam quis odit.</div>
               </div>
             </div>
           </div>

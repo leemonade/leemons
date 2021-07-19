@@ -138,7 +138,16 @@
       }
     }
     &-link {
-      @apply bg-transparent border-transparent text-primary;
+      @apply bg-transparent border-transparent text-neutral;
+      &.btn-primary {
+        @apply text-primary;
+      }
+      &.btn-secondary {
+        @apply text-secondary;
+      }
+      &.btn-accent {
+        @apply text-accent;
+      }
       &:hover,
       &.btn-active {
         @apply underline bg-transparent border-transparent;
@@ -228,9 +237,17 @@
     & > .btn-active {
       @apply bg-primary border-primary text-primary-content;
       &:focus-visible {
-        box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--p));
+        box-shadow: 0 0 0 2px hsl(var(--p));
       }
     }
+    & > .btn {
+      z-index: 10;
+      &:active,
+      &:focus-visible {
+        z-index: 1000;
+      }
+    }
+
     & > .btn:not(:first-child) {
       @apply rounded-l-none -ml-px;
     }

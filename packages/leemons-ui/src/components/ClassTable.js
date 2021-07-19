@@ -14,12 +14,12 @@ function ClassTable({ data }) {
               <th></th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="font-inter">
             {Array.isArray(data?.components) &&
               data.components.map((item, index) => (
                 <tr key={`c-${index}`}>
                   <th className="font-normal">
-                    <span className="lowercase font-mono">{item.class}</span>
+                    <span className="lowercase font-medium">{item.class}</span>
                   </th>
                   {data?.showType && (
                     <td>
@@ -33,14 +33,16 @@ function ClassTable({ data }) {
                       ></span>
                     </td>
                   )}
-                  <td>{item.desc}</td>
+                  <td>
+                    <span className="font-light">{item.desc}</span>
+                  </td>
                 </tr>
               ))}
             {Array.isArray(data?.utilities) &&
               data.utilities.map((item, index) => (
                 <tr key={`u-${index}`}>
                   <th className="font-normal">
-                    <span className="lowercase font-mono">{item.class}</span>
+                    <span className="lowercase font-medium">{item.class}</span>
                   </th>
                   {data?.showType && (
                     <td>
@@ -54,7 +56,9 @@ function ClassTable({ data }) {
                       ></span>
                     </td>
                   )}
-                  <td>{item.desc}</td>
+                  <td>
+                    <span className="font-light">{item.desc}</span>
+                  </td>
                 </tr>
               ))}
           </tbody>

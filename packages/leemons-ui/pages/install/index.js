@@ -2,8 +2,8 @@ import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { ChevronRightIcon } from '@heroicons/react/outline';
-import Wrapper from '../../src/components/Wrapper';
 import TabHandler from '../../src/components/TabHandler';
+import Wrapper from '../../src/components/Wrapper';
 
 export default function InstallPage() {
   return (
@@ -12,8 +12,8 @@ export default function InstallPage() {
         <title>Leemons UI</title>
       </Head>
 
-      <main data-theme="light">
-        <h2 className="my-6 text-5xl font-bold">
+      <main>
+        <h2 className="mt-6 text-5xl font-bold">
           <TabHandler />
 
           <span className="text-primary">Install as Tailwind CSS plugin</span>
@@ -65,7 +65,7 @@ export default function InstallPage() {
           <p className="prose text-base-content opacity-60">
             As <strong>@import</strong> in your CSS file
           </p>
-          <div className="w-full max-w-xl my-2">
+          <div className="w-full my-2">
             <div className="text-sm shadow-lg mockup-code">
               <pre>
                 <code>
@@ -79,7 +79,7 @@ export default function InstallPage() {
           <p className="prose text-base-content opacity-60">
             Or included in your <strong>{`<head>`}</strong> tag
           </p>
-          <div className="w-full max-w-xl my-2">
+          <div className="w-full my-2">
             <div className="text-sm shadow-lg mockup-code">
               <pre>
                 <code>
@@ -94,16 +94,16 @@ export default function InstallPage() {
               </pre>
             </div>
           </div>
-        </Wrapper>
 
-        <div className="flex justify-end max-w-4xl pt-10 mt-20 border-t-2 border-base-200">
-          <Link href="/use">
-            <a className="text-xs btn-lg btn lg:text-lg">
-              Next: How to use
-              <ChevronRightIcon className="inline-block w-6 h-6 ml-2 stroke-current" />
-            </a>
-          </Link>
-        </div>
+          <div className="flex justify-end max-w-4xl pt-10 mt-20 border-t-2 border-base-200">
+            <Link href="/use">
+              <a className="text-xs btn-lg btn lg:text-lg">
+                Next: How to use
+                <ChevronRightIcon className="inline-block w-6 h-6 ml-2 stroke-current" />
+              </a>
+            </Link>
+          </div>
+        </Wrapper>
       </main>
     </div>
   );

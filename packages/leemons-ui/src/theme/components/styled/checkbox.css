@@ -4,7 +4,7 @@
   .checkbox {
     @apply appearance-none opacity-0 w-0 h-0 absolute;
     & ~ .checkbox-mark {
-      @apply w-6 h-6 rounded-btn border border-base-content border-opacity-20;
+      @apply w-6 h-6 rounded-btn border border-neutral-content border-opacity-50;
       &:before {
         width: 7px;
         height: 14px;
@@ -17,7 +17,7 @@
     &:hover {
       & ~ .checkbox-mark {
         &:before {
-          @apply border-base-content border-opacity-20;
+          @apply border-neutral-content border-opacity-50;
         }
       }
     }
@@ -25,14 +25,14 @@
     &:checked:focus-visible,
     &:checked:hover:focus-visible {
       & ~ .checkbox-mark {
-        box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--b-c));
+        box-shadow: 0 0 0 2px hsl(var(--b-f));
       }
     }
     &:checked {
       &,
       &:hover {
         & ~ .checkbox-mark {
-          @apply bg-base-content border-base-content text-base-100;
+          @apply bg-neutral-content border-neutral-content text-base-100;
           &:before {
             animation: checkmark var(--animation-input, 0.4s) ease-in-out;
             transform: rotate(45deg) translate(-1px, -1px) scale(1);
@@ -52,7 +52,7 @@
       &:checked:focus-visible,
       &:checked:hover:focus-visible {
         & ~ .checkbox-mark {
-          box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--p));
+          box-shadow: 0 0 0 2px hsl(var(--p-f));
         }
       }
       &:checked {
@@ -78,7 +78,7 @@
       &:checked:focus-visible,
       &:checked:hover:focus-visible {
         & ~ .checkbox-mark {
-          box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--s));
+          box-shadow: 0 0 0 2px hsl(var(--p-f));
         }
       }
       &:checked {
@@ -104,7 +104,7 @@
       &:checked:focus-visible,
       &:checked:hover:focus-visible {
         & ~ .checkbox-mark {
-          box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--a));
+          box-shadow: 0 0 0 2px hsl(var(--a-f));
         }
       }
       &:checked {

@@ -2,7 +2,7 @@
 @layer components {
   /* <: */
   .card {
-    @apply rounded-box;
+    @apply rounded-btn;
     &:focus-visible {
       box-shadow: 0 0 0 2px currentColor;
     }
@@ -31,7 +31,7 @@
     }
     &.image-full {
       &:before {
-        @apply bg-neutral z-10 opacity-75 rounded-box;
+        @apply bg-neutral z-10 opacity-75 rounded-btn;
       }
     }
     &.image-full > &-body {

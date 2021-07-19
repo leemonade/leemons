@@ -11,8 +11,8 @@ export default function UsePage() {
         <title>Leemons UI</title>
       </Head>
 
-      <main data-theme="light">
-        <h2 className="my-6 text-5xl font-bold">
+      <main>
+        <h2 className="mt-6 text-5xl font-bold">
           <span className="text-primary">Add component classes </span>
           <span>to your HTML: </span>
         </h2>

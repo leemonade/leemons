@@ -51,7 +51,7 @@ module.exports = {
     'error-focus': '#d94a4a',
     'error-content': '#ffffff',
     '--rounded-box': '1rem',
-    '--rounded-btn': '0.5rem',
+    '--rounded-btn': '0.15rem',
     '--rounded-badge': '1.9rem',
     '--animation-btn': '0.25s',
     '--animation-input': '.4s',

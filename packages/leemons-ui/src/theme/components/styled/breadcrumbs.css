@@ -5,7 +5,13 @@
     @apply py-2;
     & > ul {
       & > li {
+        &:last-child {
+          & > a {
+            @apply text-opacity-100;
+          }
+        }
         & > a {
+          @apply text-base-content text-opacity-50;
           &:focus {
             @apply outline-none;
           }

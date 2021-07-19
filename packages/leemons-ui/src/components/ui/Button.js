@@ -11,16 +11,18 @@ function Button({
   loading,
   square,
   circle,
+  link,
   ...props
 }) {
-  const colorClass = color ? `btn-${color}` : '';
   const classes = className || '';
   const roundClass = rounded ? 'rounded-full' : '';
+  const colorClass = color ? `btn-${color}` : '';
   const outlinedClass = outlined ? 'btn-outline' : '';
   const wideClass = wide ? 'btn-wide' : '';
   const loadingClass = loading ? 'loading' : '';
   const squareClass = square ? 'btn-square' : '';
   const circleClass = circle ? 'btn-circle' : '';
+  const linkClass = link ? 'btn-link' : '';
   return (
     <button
       className={[
@@ -32,6 +34,7 @@ function Button({
         loadingClass,
         squareClass,
         circleClass,
+        linkClass,
         classes,
       ].join(' ')}
       {...props}
@@ -43,13 +46,14 @@ function Button({
 
 Button.propTypes = {
   children: PropTypes.any,
-  className: PropTypes.string,
-  rounded: PropTypes.bool,
-  outlined: PropTypes.bool,
   wide: PropTypes.bool,
   loading: PropTypes.bool,
   square: PropTypes.bool,
   circle: PropTypes.bool,
+  link: PropTypes.bool,
+  className: PropTypes.string,
+  rounded: PropTypes.bool,
+  outlined: PropTypes.bool,
   color: PropTypes.oneOf([
     'primary',
     'secondary',
