@@ -1,9 +1,13 @@
 module.exports = {
   plugins: [
-    'emails',
+    'dataset',
+		'dataset-test',
+		'emails',
+		'menu-builder',
 		'multilanguage',
+		'mvp-template',
 		'onboarding',
-		'users-groups-roles',
+		'users',
 		'provider-emails-amazon-ses'
   ],
   frontPlugins: [{
@@ -22,9 +26,9 @@ module.exports = {
     load: require('@onboarding/index.js')
   },
 	{
-    name: 'users-groups-roles',
+    name: 'users',
     version: null,
-    load: require('@users-groups-roles/index.js')
+    load: require('@users/index.js')
   },
 	{
     name: 'provider-emails-amazon-ses',

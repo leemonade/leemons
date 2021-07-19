@@ -2,7 +2,7 @@ const _ = require('lodash');
 const constants = require('../../config/constants');
 
 const table = {
-  actions: leemons.query('plugins_users-groups-roles::actions'),
+  actions: leemons.query('plugins_users::actions'),
 };
 
 class Actions {

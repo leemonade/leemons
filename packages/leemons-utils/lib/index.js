@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const aws = require('aws-sdk');
 const slugify = require('slugify');
+const squirrelly = require('squirrelly');
 const { env } = require('./env');
 const { getModel, generateModelName } = require('./model');
 const buildQuery = require('./queryBuilder');
@@ -36,4 +37,5 @@ module.exports = {
   randomString,
   slugify,
   withTransaction,
+  squirrelly,
 };

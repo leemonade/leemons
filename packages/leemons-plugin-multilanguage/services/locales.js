@@ -1,9 +1,11 @@
 const LocalesProvider = require('../src/services/locale');
-const { isValidLocaleCode } = require('../src/validations/locale');
+const { isValidLocaleCode, localeRegex, localeRegexString } = require('../src/validations/locale');
 
 const model = leemons.query('plugins_multilanguage::locales');
 
 module.exports = {
+  localeRegex,
+  localeRegexString,
   isValidLocaleCode,
   // Needs to be a function due to this
   getProvider() {
