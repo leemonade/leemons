@@ -20,6 +20,9 @@ module.exports = {
   'base-300': '--b3',
   'base-content': '--b-c',
 
+  black: '--black',
+  white: '--white',
+
   info: '--in',
   'info-focus': '--in-f',
   'info-content': '--in-c',

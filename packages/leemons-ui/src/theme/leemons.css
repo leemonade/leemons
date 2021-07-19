@@ -96,6 +96,7 @@
 @import './utilities/styled/artboard.css';
 @import './utilities/styled/avatar.css';
 @import './utilities/styled/badge.css';
+@import './utilities/styled/modal.css';
 
 /* ------------------------------------------ */
 /* THEME */
@@ -117,6 +118,8 @@
     --b2: 216 36% 93%;
     --b3: 213 13% 87%;
     --b-c: 219 13% 41%;
+    --black: 219 30% 18%;
+    --white: 0 0% 100%;
     --in: 216 100% 75%;
     --in-f: 216 100% 65%;
     --in-c: 0 0% 100%;
