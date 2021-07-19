@@ -1,8 +1,9 @@
+import Link from 'next/link';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import Router from 'next/router';
-import LeemonsImage from '../leemonsImage';
 import { Input } from 'leemons-ui';
+import LeemonsImage from '../leemonsImage';
 
 export default function MainMenuSubmenuItem({
   item,
@@ -70,7 +71,7 @@ export default function MainMenuSubmenuItem({
 
   return (
     <div
-      className={`relative w-full font-lexend text-sm cursor-pointer truncate ${styles}`}
+      className={`relative w-full font-lexend text-sm cursor-pointer ${styles}`}
       style={isLayer ? { width: '190px' } : {}}
       onClick={onClick}
     >
@@ -102,7 +103,9 @@ export default function MainMenuSubmenuItem({
           </div>
         </div>
       ) : (
-        <span className={`${isDragging ? '' : ''}`}>{item.label}</span>
+        <Link href={item.url}>
+          <a className={`line-clamp-2`}>{item.label}</a>
+        </Link>
       )}
 
       {editMode && (
