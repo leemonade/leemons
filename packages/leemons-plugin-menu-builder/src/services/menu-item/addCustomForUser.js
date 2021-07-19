@@ -44,16 +44,14 @@ async function addCustomForUser(
       // Create the MENU ITEM
       const promises = [table.menuItem.create(data, { transacting })];
 
-      // TODO Change to user locale
-      const locale = 'en';
-
       // Create LABEL & DESCRIPTIONS in locales
       if (locales) {
         if (label) {
           promises.push(
-            locales.contents.addManyByKey(
+            locales.contents.add(
               prefixPN(`${data.menuKey}.${data.key}.label`),
-              { [locale]: label },
+              userAuth.language,
+              label,
               {
                 transacting,
               }
@@ -63,9 +61,10 @@ async function addCustomForUser(
 
         if (description) {
           promises.push(
-            locales.contents.addManyByKey(
+            locales.contents.add(
               prefixPN(`${data.menuKey}.${data.key}.description`),
-              { [locale]: description },
+              userAuth.language,
+              description,
               {
                 transacting,
               }

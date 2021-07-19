@@ -42,19 +42,19 @@
       &.menu-item-white {
         > a,
         > span {
-          @apply text-white;
+          @apply text-base-100;
         }
       }
     }
     &-white {
       > a,
       > span {
-        @apply text-white text-opacity-40;
+        @apply text-base-100 text-opacity-40;
       }
       > a {
         &:focus,
         &:hover {
-          @apply text-white;
+          @apply text-base-100;
         }
       }
     }
