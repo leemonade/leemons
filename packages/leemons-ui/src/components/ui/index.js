@@ -21,6 +21,8 @@ import Select from './Select';
 import Textarea from './Textarea';
 import Toggle from './Toggle';
 
+import Modal, { useModal } from './Modal';
+
 export {
   Alert,
   Avatar,
@@ -38,10 +40,12 @@ export {
   Label,
   Menu,
   MenuItem,
+  Modal,
   Navbar,
   Progress,
   Radio,
   Select,
   Textarea,
   Toggle,
+  useModal,
 };
