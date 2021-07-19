@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, Toggle, Label } from '../../../src/components/ui';
+import { FormControl, Toggle, Divider } from '../../../src/components/ui';
 import ClassTable from '../../../src/components/ClassTable';
 import Wrapper from '../../../src/components/Wrapper';
 
@@ -19,62 +19,76 @@ function TogglePage() {
   };
 
   return (
-    <div className="flex-grow p-4" data-theme="light">
-      <ClassTable data={data} />
-      <div className="divider my-6"></div>
-      <div className="text-xl font-bold">Examples</div>
+    <main>
+      <h2 className="mt-2 mb-6 text-5xl font-bold">
+        <span>Form </span>
+        <span className="text-primary">Toggle</span>
+      </h2>
+      <div className="flex-grow p-4">
+        <div className="text-xl font-bold">Examples</div>
 
-      <Wrapper title="toggle" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-6 card bordered">
-          <FormControl>
-            <Label text="Remember me" className="cursor-pointer">
-              <Toggle className="" />
-            </Label>
-          </FormControl>
-        </div>
-      </Wrapper>
-      <Wrapper title="toggle primary" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-6 card bordered">
-          <FormControl>
-            <Label text="Remember me" className="cursor-pointer">
-              <Toggle className="toggle-primary" />
-            </Label>
-          </FormControl>
-        </div>
-      </Wrapper>
-      <Wrapper title="toggle secondary" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-6 card bordered">
-          <FormControl>
-            <Label text="Remember me" className="cursor-pointer">
-              <Toggle className="toggle-secondary" />
-            </Label>
-          </FormControl>
-        </div>
-      </Wrapper>
-      <Wrapper title="toggle accent" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-6 card bordered">
-          <FormControl>
-            <Label text="Remember me" className="cursor-pointer">
-              <Toggle className="toggle-accent" />
-            </Label>
-          </FormControl>
-        </div>
-      </Wrapper>
-      <Wrapper title="Disabled" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-6 card bordered">
-          <FormControl>
-            <Label text="Unchecked + Disabled">
-              <Toggle className="toggle-accent" disabled />
-            </Label>
-          </FormControl>
-          <FormControl>
-            <Label text="Checked + Disabled">
-              <Toggle className="toggle-accent" checked disabled />
-            </Label>
-          </FormControl>
-        </div>
-      </Wrapper>
-    </div>
+        <Wrapper title="toggle + label position" className="flex flex-col space-y-2 max-w-xs">
+          <div className="p-6 card bordered shadow-lg">
+            <div className="flex">
+              <FormControl label="Remember me" labelPosition="right">
+                <Toggle />
+              </FormControl>
+            </div>
+          </div>
+        </Wrapper>
+
+        <Wrapper
+          title="toggle primary + label position + custom label"
+          className="flex flex-col space-y-2 max-w-md"
+        >
+          <div className="p-6 card bordered shadow-lg">
+            <div className="flex">
+              <FormControl
+                label={
+                  <>
+                    I have read and accept the{' '}
+                    <a href="#" className="text-primary">
+                      terms and conditions
+                    </a>
+                  </>
+                }
+                labelPosition="right"
+              >
+                <Toggle color="primary" />
+              </FormControl>
+            </div>
+          </div>
+        </Wrapper>
+        <Wrapper title="toggle secondary" className="flex flex-col space-y-2 max-w-xs">
+          <div className="p-6 card bordered shadow-lg">
+            <FormControl label="Remember me">
+              <Toggle color="secondary" />
+            </FormControl>
+          </div>
+        </Wrapper>
+        <Wrapper title="toggle accent" className="flex flex-col space-y-2 max-w-xs">
+          <div className="p-6 card bordered shadow-lg">
+            <FormControl label="Remember me">
+              <Toggle color="accent" />
+            </FormControl>
+          </div>
+        </Wrapper>
+        <Wrapper title="toggle disabled" className="flex flex-col space-y-2 max-w-xs">
+          <div className="p-6 card bordered shadow-lg">
+            <FormControl label="Disabled + unchecked">
+              <Toggle color="accent" disabled />
+            </FormControl>
+            <FormControl label="Disabled + checked">
+              <Toggle color="accent" checked disabled />
+            </FormControl>
+          </div>
+        </Wrapper>
+
+        <Divider className="my-6" />
+
+        <ClassTable data={data} />
+      </div>
+    </main>
   );
 }
 

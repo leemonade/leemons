@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar } from '../../src/components/ui';
+import { Avatar, AvatarGroup, Divider } from '../../src/components/ui';
 import ClassTable from '../../src/components/ClassTable';
 import Wrapper from '../../src/components/Wrapper';
 
@@ -18,153 +18,161 @@ function AvatarPage() {
   };
 
   return (
-    <div className="flex-grow p-4" data-theme="light">
-      <ClassTable data={data} />
-      <div className="divider my-6"></div>
-      <div className="text-xl font-bold">Examples</div>
+    <main>
+      <h2 className="mt-2 mb-6 text-5xl font-bold">
+        <span className="text-primary">Avatar</span>
+      </h2>
+      <div className="flex-grow p-4">
+        <div className="text-xl font-bold">Examples</div>
 
-      <Wrapper title="avatar" className="flex items-center space-x-8 flex-wrap">
-        <Avatar className="mb-8 rounded-btn w-24 h-24">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@94w.png" />
-        </Avatar>
-        <Avatar className="mb-8 rounded-btn w-14 h-14">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@56w.png" />
-        </Avatar>
-        <Avatar className="mb-8 rounded-btn w-10 h-10">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
-        </Avatar>
-      </Wrapper>
-
-      <Wrapper title="avatar-group" className="flex items-center space-x-8 flex-wrap">
-        <div className="avatar-group -space-x-6">
-          <Avatar className="w-16 h-16">
-            <img src="http://daisyui.com/tailwind-css-component-profile-1@56w.png" />
-          </Avatar>
-          <Avatar className="w-16 h-16">
-            <img src="http://daisyui.com/tailwind-css-component-profile-2@56w.png" />
-          </Avatar>
-          <Avatar className="w-16 h-16">
-            <img src="http://daisyui.com/tailwind-css-component-profile-3@56w.png" />
-          </Avatar>
-          <Avatar className="w-16 h-16">
-            <img src="http://daisyui.com/tailwind-css-component-profile-5@56w.png" />
-          </Avatar>
-        </div>
-      </Wrapper>
-
-      <Wrapper title="avatar-group" className="flex items-center space-x-8 flex-wrap">
-        <div className="avatar-group -space-x-5">
-          <Avatar className="w-10 h-10">
-            <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
-          </Avatar>
-          <Avatar className="w-10 h-10">
-            <img src="http://daisyui.com/tailwind-css-component-profile-2@40w.png" />
-          </Avatar>
-          <Avatar className="w-10 h-10">
-            <img src="http://daisyui.com/tailwind-css-component-profile-3@40w.png" />
-          </Avatar>
-          <Avatar className="w-10 h-10">
-            <img src="http://daisyui.com/tailwind-css-component-profile-5@40w.png" />
-          </Avatar>
-          <div className="avatar placeholder">
-            <div className="bg-neutral-focus text-neutral-content rounded-full w-10 h-10">
-              <span>+99</span>
-            </div>
+        <Wrapper title="avatar">
+          <div className="flex items-center space-x-8 flex-wrap mb-8">
+            <Avatar rounded className="w-24 h-24">
+              <img src="http://daisyui.com/tailwind-css-component-profile-1@94w.png" />
+            </Avatar>
+            <Avatar rounded className="w-14 h-14">
+              <img src="http://daisyui.com/tailwind-css-component-profile-1@56w.png" />
+            </Avatar>
+            <Avatar rounded className="w-10 h-10">
+              <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
+            </Avatar>
           </div>
-        </div>
-      </Wrapper>
+        </Wrapper>
 
-      <Wrapper title="avatar circle" className="flex items-center space-x-8 flex-wrap">
-        <Avatar className="mb-8 rounded-full w-24 h-24">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@94w.png" />
-        </Avatar>
-        <Avatar className="mb-8 rounded-full w-14 h-14">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@56w.png" />
-        </Avatar>
-        <Avatar className="mb-8 rounded-full w-10 h-10">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
-        </Avatar>
-      </Wrapper>
+        <Wrapper title="avatar-group">
+          <div className="flex items-center space-x-8 flex-wrap">
+            <AvatarGroup>
+              <Avatar size={16}>
+                <img src="http://daisyui.com/tailwind-css-component-profile-1@56w.png" />
+              </Avatar>
+              <Avatar size={16}>
+                <img src="http://daisyui.com/tailwind-css-component-profile-2@56w.png" />
+              </Avatar>
+              <Avatar size={16}>
+                <img src="http://daisyui.com/tailwind-css-component-profile-3@56w.png" />
+              </Avatar>
+              <Avatar size={16}>
+                <img src="http://daisyui.com/tailwind-css-component-profile-5@56w.png" />
+              </Avatar>
+            </AvatarGroup>
+          </div>
+        </Wrapper>
 
-      <Wrapper title="avatar with border" className="flex items-center space-x-8 flex-wrap">
-        <Avatar className="mb-8 rounded-box w-24 h-24 ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@94w.png" />
-        </Avatar>
-        <Avatar className="mb-8 rounded-box w-14 h-14 ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@56w.png" />
-        </Avatar>
-        <Avatar className="mb-8 rounded-box w-10 h-10 ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
-        </Avatar>
-      </Wrapper>
+        <Wrapper title="avatar-group">
+          <div className="flex items-center space-x-8 flex-wrap">
+            <AvatarGroup gap={5} placeholder="+99" placeholderSize={10}>
+              <Avatar size={10}>
+                <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
+              </Avatar>
+              <Avatar size={10}>
+                <img src="http://daisyui.com/tailwind-css-component-profile-2@40w.png" />
+              </Avatar>
+              <Avatar size={10}>
+                <img src="http://daisyui.com/tailwind-css-component-profile-3@40w.png" />
+              </Avatar>
+              <Avatar size={10}>
+                <img src="http://daisyui.com/tailwind-css-component-profile-5@40w.png" />
+              </Avatar>
+            </AvatarGroup>
+          </div>
+        </Wrapper>
 
-      <Wrapper title="avatar circle" className="flex items-center space-x-8 flex-wrap">
-        <Avatar className="mb-8 rounded-full w-24 h-24 ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@94w.png" />
-        </Avatar>
-        <Avatar className="mb-8 rounded-full w-14 h-14 ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@56w.png" />
-        </Avatar>
-        <Avatar className="mb-8 rounded-full w-10 h-10 ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
-        </Avatar>
-      </Wrapper>
+        <Wrapper title="avatar circle">
+          <div className="flex items-center space-x-8 flex-wrap mb-8">
+            <Avatar circle size={24}>
+              <img src="http://daisyui.com/tailwind-css-component-profile-1@94w.png" />
+            </Avatar>
+            <Avatar circle size={14}>
+              <img src="http://daisyui.com/tailwind-css-component-profile-1@56w.png" />
+            </Avatar>
+            <Avatar circle size={10}>
+              <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
+            </Avatar>
+          </div>
+        </Wrapper>
 
-      <Wrapper
-        title="avatar with presense indicator"
-        className="flex items-center space-x-8 flex-wrap"
-      >
-        <Avatar type="online" className="rounded-btn w-24 h-24">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@94w.png" />
-        </Avatar>
-        <Avatar type="offline" className="rounded-btn w-14 h-14">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@56w.png" />
-        </Avatar>
-        <Avatar type="online" className="rounded-btn w-10 h-10">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
-        </Avatar>
-      </Wrapper>
-      <Wrapper
-        title="avatar with presense indicator"
-        className="flex items-center space-x-8 flex-wrap"
-      >
-        <Avatar type="online" className="rounded-full w-24 h-24">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@94w.png" />
-        </Avatar>
-        <Avatar type="offline" className="rounded-full w-14 h-14">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@56w.png" />
-        </Avatar>
-        <Avatar className="online rounded-full w-10 h-10">
-          <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
-        </Avatar>
-      </Wrapper>
-      <Wrapper title="avatar placeholder" className="flex items-center space-x-8 flex-wrap">
-        <Avatar
-          type="placeholder"
-          className="bg-neutral-focus text-neutral-content rounded-full w-32 h-32"
-        >
-          <span className="text-3xl">K</span>
-        </Avatar>
-        <Avatar
-          type="online placeholder"
-          className="bg-neutral-focus text-neutral-content rounded-full w-24 h-24"
-        >
-          <span className="text-xl">JO</span>
-        </Avatar>
-        <Avatar
-          type="placeholder"
-          className="bg-neutral-focus text-neutral-content rounded-full w-16 h-16"
-        >
-          <span>MX</span>
-        </Avatar>
-        <Avatar
-          type="placeholder"
-          className="bg-neutral-focus text-neutral-content rounded-full w-10 h-10"
-        >
-          <span>AA</span>
-        </Avatar>
-      </Wrapper>
-    </div>
+        <Wrapper title="avatar with border">
+          <div className="flex items-center space-x-8 flex-wrap">
+            <Avatar circle size={24} className="ring ring-neutral">
+              <img src="http://daisyui.com/tailwind-css-component-profile-1@94w.png" />
+            </Avatar>
+            <Avatar circle size={14} className="ring ring-primary">
+              <img src="http://daisyui.com/tailwind-css-component-profile-1@56w.png" />
+            </Avatar>
+            <Avatar circle size={10} className="ring ring-secondary">
+              <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
+            </Avatar>
+          </div>
+        </Wrapper>
+
+        <Wrapper title="avatar with presense indicator">
+          <div className="flex items-center space-x-8 flex-wrap">
+            <Avatar type="online" rounded size={24}>
+              <img src="http://daisyui.com/tailwind-css-component-profile-1@94w.png" />
+            </Avatar>
+            <Avatar type="offline" rounded size={14}>
+              <img src="http://daisyui.com/tailwind-css-component-profile-1@56w.png" />
+            </Avatar>
+            <Avatar type="online" rounded size={10}>
+              <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
+            </Avatar>
+          </div>
+        </Wrapper>
+
+        <Wrapper title="avatar with presense indicator">
+          <div className="flex items-center space-x-8 flex-wrap">
+            <Avatar type="online" circle size={24}>
+              <img src="http://daisyui.com/tailwind-css-component-profile-1@94w.png" />
+            </Avatar>
+            <Avatar type="offline" circle size={14}>
+              <img src="http://daisyui.com/tailwind-css-component-profile-1@56w.png" />
+            </Avatar>
+            <Avatar type="online" circle size={10}>
+              <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
+            </Avatar>
+          </div>
+        </Wrapper>
+
+        <Wrapper title="avatar placeholder">
+          <div className="flex items-center space-x-8 flex-wrap">
+            <Avatar
+              type="placeholder"
+              circle
+              size={32}
+              className="bg-neutral-focus text-neutral-content"
+            >
+              <span className="text-3xl">K</span>
+            </Avatar>
+            <Avatar
+              type="online placeholder"
+              circle
+              size={24}
+              className="bg-neutral-focus text-neutral-content"
+            >
+              <span className="text-xl">JO</span>
+            </Avatar>
+            <Avatar
+              type="placeholder"
+              circle
+              size={16}
+              className="bg-neutral-focus text-neutral-content"
+            >
+              <span>MX</span>
+            </Avatar>
+            <Avatar
+              type="placeholder"
+              circle
+              size={10}
+              className="bg-neutral-focus text-neutral-content"
+            >
+              <span>AA</span>
+            </Avatar>
+          </div>
+        </Wrapper>
+        <Divider className="my-6" />
+        <ClassTable data={data} />
+      </div>
+    </main>
   );
 }
 

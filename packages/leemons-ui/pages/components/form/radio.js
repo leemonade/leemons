@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, Radio } from '../../../src/components/ui';
+import { FormControl, Radio, Divider } from '../../../src/components/ui';
 import ClassTable from '../../../src/components/ClassTable';
 import Wrapper from '../../../src/components/Wrapper';
 
@@ -19,50 +19,62 @@ function RadioPage() {
   };
 
   return (
-    <div className="flex-grow p-4" data-theme="light">
-      <ClassTable data={data} />
-      <div className="divider my-6"></div>
-      <div className="text-xl font-bold">Examples</div>
+    <main>
+      <h2 className="mt-2 mb-6 text-5xl font-bold">
+        <span>Form </span>
+        <span className="text-primary">Radio</span>
+      </h2>
+      <div className="flex-grow p-4">
+        <div className="text-xl font-bold">Examples</div>
 
-      <Wrapper title="input" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-6 card bordered">
-          <FormControl>
-            <label className="cursor-pointer label">
-              <span className="label-text">Neutral</span>
-              <Radio name="opt" className="" />
-            </label>
-          </FormControl>
+        <Wrapper title="input" className="flex flex-col space-y-2 max-w-xs">
+          <div className="p-6 card bordered">
+            <FormControl label="Neutral">
+              <Radio name="opt" />
+            </FormControl>
 
-          <FormControl>
-            <label className="cursor-pointer label">
-              <span className="label-text">Primary</span>
-              <Radio name="opt" className="radio-primary" />
-            </label>
-          </FormControl>
+            <FormControl label="Primary">
+              <Radio name="opt" color="primary" />
+            </FormControl>
 
-          <FormControl>
-            <label className="cursor-pointer label">
-              <span className="label-text">Secondary</span>
-              <Radio name="opt" className="radio-secondary" />
-            </label>
-          </FormControl>
+            <FormControl label="Secondary">
+              <Radio name="opt" color="secondary" />
+            </FormControl>
 
-          <FormControl>
-            <label className="cursor-pointer label">
-              <span className="label-text">Accent</span>
-              <Radio name="opt" className="radio-accent" />
-            </label>
-          </FormControl>
+            <FormControl label="Accent">
+              <Radio name="opt" color="accent" />
+            </FormControl>
 
-          <FormControl>
-            <label className="label">
-              <span className="label-text">Disabled</span>
-              <Radio name="opt" className="radio-accent" value="" disabled />
-            </label>
-          </FormControl>
-        </div>
-      </Wrapper>
-    </div>
+            <FormControl label="Disabled">
+              <Radio name="opt" color="accent" value="" disabled />
+            </FormControl>
+          </div>
+        </Wrapper>
+
+        <Wrapper title="input + label position" className="flex flex-col space-y-2 max-w-xs">
+          <div className="p-6 card bordered">
+            <div className="flex">
+              <FormControl label="Neutral" labelPosition="right">
+                <Radio name="opt" />
+              </FormControl>
+            </div>
+            <div className="flex">
+              <FormControl label="Primary" labelPosition="right">
+                <Radio name="opt" color="primary" />
+              </FormControl>
+            </div>
+            <div className="flex">
+              <FormControl label="Secondary" labelPosition="right">
+                <Radio name="opt" color="secondary" />
+              </FormControl>
+            </div>
+          </div>
+        </Wrapper>
+
+        <Divider className="my-6" />
+        <ClassTable data={data} />
+      </div>
+    </main>
   );
 }
 

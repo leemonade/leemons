@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 function Alert({ children, className, color }) {
   const colorClass = color ? `alert-${color}` : '';
   const classes = className || '';
-  return <div className={`alert ${classes} ${colorClass}`}>{children}</div>;
+  return <div className={`alert ${colorClass} ${classes}`}>{children}</div>;
 }
 
 Alert.propTypes = {

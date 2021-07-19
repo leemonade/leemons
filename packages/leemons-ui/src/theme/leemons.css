@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter&family=Lexend:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lexend:wght@300;400;500;600&display=swap');
 
 /* ------------------------------------------ */
 /* BASE */
@@ -116,7 +116,7 @@
     --b1: 0 0% 100%;
     --b2: 216 36% 93%;
     --b3: 213 13% 87%;
-    --b-c: 219 30% 18%;
+    --b-c: 219 13% 41%;
     --in: 216 100% 75%;
     --in-f: 216 100% 65%;
     --in-c: 0 0% 100%;
@@ -129,5 +129,21 @@
     --er: 0 65% 67%;
     --er-f: 0 65% 57%;
     --er-c: 0 0% 100%;
+
+    --rounded-box: 1rem;
+    --rounded-btn: 0.15rem;
+    --rounded-badge: 1.9rem;
+    --animation-btn: 0.25s;
+    --animation-input: 0.4s;
+    --padding-card: 2rem;
+    --btn-text-case: inherit;
+    --btn-focus-scale: 0.95;
+    --navbar-padding: 0.5rem;
+    --border-btn: 1px;
+    --tab-border: 1px;
+    --tab-radius: 0.5rem;
+    --tab-spacer: 0.5rem;
+    --focus-ring: 2px;
+    --focus-ring-offset: 2px;
   }
 }

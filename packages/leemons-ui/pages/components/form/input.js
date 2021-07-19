@@ -1,5 +1,6 @@
 import React from 'react';
-import { FormControl, Input, Label } from '../../../src/components/ui';
+import { ExclamationIcon } from '@heroicons/react/solid';
+import { FormControl, Input, Label, Button, Divider } from '../../../src/components/ui';
 import ClassTable from '../../../src/components/ClassTable';
 import Wrapper from '../../../src/components/Wrapper';
 
@@ -29,195 +30,141 @@ function InputPage() {
   };
 
   return (
-    <div className="flex-grow p-4" data-theme="light">
-      <ClassTable data={data} />
-      <div className="divider my-6"></div>
-      <div className="text-xl font-bold">Examples</div>
+    <main>
+      <h2 className="mt-2 mb-6 text-5xl font-bold">
+        <span>Form </span>
+        <span className="text-primary">Input</span>
+      </h2>
+      <div className="flex-grow p-4">
+        <div className="text-xl font-bold">Examples</div>
 
-      <Wrapper title="input with border" className="flex flex-col space-y-2 max-w-xs">
-        <FormControl>
-          <Label text="Username" />
-          <Input className="input input-bordered" type="text" placeholder="username" />
-        </FormControl>
-      </Wrapper>
-      <Wrapper title="input without border" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-10 card bg-base-200">
-          <FormControl>
-            <label className="label">
-              <span className="label-text">Username</span>
-            </label>
-            <Input className="input" type="text" placeholder="username" />
+        <Wrapper title="input with border" className="flex flex-col space-y-2 max-w-xs">
+          <FormControl label="Username">
+            <Input outlined placeholder="username" />
           </FormControl>
-        </div>
-      </Wrapper>
-      <Wrapper title="input ghost (no background)" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-10 card bg-base-200">
-          <FormControl>
-            <label className="label">
-              <span className="label-text">Username</span>
-            </label>
-            <Input className="input input-ghost" type="text" placeholder="username" />
+        </Wrapper>
+        <Wrapper title="input without border" className="flex flex-col space-y-2 max-w-xs">
+          <div className="p-10 card bg-base-200">
+            <FormControl label="Username">
+              <Input placeholder="username" />
+            </FormControl>
+          </div>
+        </Wrapper>
+        <Wrapper title="input ghost (no background)" className="flex flex-col space-y-2 max-w-xs">
+          <div className="p-10 card bg-base-200">
+            <FormControl label="Username">
+              <Input color="ghost" placeholder="username" />
+            </FormControl>
+          </div>
+        </Wrapper>
+
+        <Wrapper title="input disabled" className="flex flex-col space-y-2 max-w-xs">
+          <FormControl label="Disabled input">
+            <Input outlined placeholder="username" disabled />
           </FormControl>
-        </div>
-      </Wrapper>
+        </Wrapper>
 
-      <Wrapper title="input disabled" className="flex flex-col space-y-2 max-w-xs">
-        <FormControl>
-          <label className="label">
-            <span className="label-text">Disabled input</span>
-          </label>
-          <Input className="input input-bordered" type="text" placeholder="username" disabled />
-        </FormControl>
-      </Wrapper>
+        <Wrapper title="input helper texts" className="flex flex-col space-y-2 max-w-xs">
+          <FormControl>
+            <Label text="Username">
+              <a href="#" className="label-text-alt">
+                Need help?
+              </a>
+            </Label>
+            <Input outlined placeholder="username" />
+            <Label>
+              <a href="#" className="label-text-alt">
+                Forgot username?
+              </a>
+              <a href="#" className="label-text-alt">
+                Are you sure?
+              </a>
+            </Label>
+          </FormControl>
+        </Wrapper>
+        <Wrapper title="input with brand colors" className="flex flex-col space-y-2 max-w-xs">
+          <FormControl label="Primary">
+            <Input outlined color="primary" placeholder="username" />
+          </FormControl>
+          <FormControl label="Secondary">
+            <Input outlined color="secondary" placeholder="username" />
+          </FormControl>
+          <FormControl label="Accent">
+            <Input outlined color="accent" placeholder="username" />
+          </FormControl>
+        </Wrapper>
+        <Wrapper title="input with state colors">
+          <div className="flex flex-col space-y-2 max-w-xs">
+            <FormControl label="Username">
+              <Input outlined color="info" placeholder="username" />
+              <Label text="Please enter data" helper />
+            </FormControl>
 
-      <Wrapper title="input helper texts" className="flex flex-col space-y-2 max-w-xs">
-        <FormControl>
-          <label className="label">
-            <span className="label-text">Username</span>
-            <a href="#" className="label-text-alt">
-              Need help?
-            </a>
-          </label>
-          <Input className="input input-bordered" type="text" placeholder="username" />
-          <label className="label">
-            <a href="#" className="label-text-alt">
-              Forgot username?
-            </a>
-            <a href="#" className="label-text-alt">
-              Are you sure?
-            </a>
-          </label>
-        </FormControl>
-      </Wrapper>
-      <Wrapper title="input with brand colors" className="flex flex-col space-y-2 max-w-xs">
-        <FormControl>
-          <label className="label">
-            <span className="label-text">Primary</span>
-          </label>
-          <Input
-            className="input input-primary input-bordered"
-            type="text"
-            placeholder="username"
-          />
-        </FormControl>
-        <FormControl>
-          <label className="label">
-            <span className="label-text">Secondary</span>
-          </label>
-          <Input
-            className="input input-secondary input-bordered"
-            type="text"
-            placeholder="username"
-          />
-        </FormControl>
-        <FormControl>
-          <label className="label">
-            <span className="label-text">Accent</span>
-          </label>
-          <Input className="input input-accent input-bordered" type="text" placeholder="username" />
-        </FormControl>
-      </Wrapper>
-      <Wrapper title="input with state colors" className="flex flex-col space-y-2 max-w-xs">
-        <FormControl>
-          <label className="label">
-            <span className="label-text">Username</span>
-          </label>
-          <Input className="input input-info input-bordered" type="text" placeholder="username" />
-          <label className="label">
-            <span className="label-text-alt">Please enter data</span>
-          </label>
-        </FormControl>
-        <FormControl>
-          <label className="label">
-            <span className="label-text">Username</span>
-          </label>
-          <Input
-            className="input input-success input-bordered"
-            type="text"
-            placeholder="username"
-          />
-          <label className="label">
-            <span className="label-text-alt">Data is valid</span>
-          </label>
-        </FormControl>
-        <FormControl>
-          <label className="label">
-            <span className="label-text">Username</span>
-          </label>
-          <Input
-            className="input input-warning input-bordered"
-            type="text"
-            placeholder="username"
-          />
-          <label className="label">
-            <span className="label-text-alt">Data must be more than 3 characters</span>
-          </label>
-        </FormControl>
-        <FormControl>
-          <label className="label">
-            <span className="label-text">Username</span>
-          </label>
-          <Input className="input input-error input-bordered" type="text" placeholder="username" />
-          <label className="label">
-            <span className="label-text-alt">Data is incorrect</span>
-          </label>
-        </FormControl>
-      </Wrapper>
-      <Wrapper title="input sizes" className="flex flex-col space-y-2 max-w-xs">
-        <FormControl>
-          <label className="label">
-            <span className="label-text">Large</span>
-          </label>
-          <Input className="input input-lg input-bordered" type="text" placeholder="username" />
-        </FormControl>
-        <FormControl>
-          <label className="label">
-            <span className="label-text">Normal</span>
-          </label>
-          <Input className="input input-bordered" type="text" placeholder="username" />
-        </FormControl>
-        <FormControl>
-          <label className="label">
-            <span className="label-text">Small</span>
-          </label>
-          <Input className="input input-sm input-bordered" type="text" placeholder="username" />
-        </FormControl>
-        <FormControl>
-          <label className="label">
-            <span className="label-text">Tiny</span>
-          </label>
-          <Input className="input input-xs input-bordered" type="text" placeholder="username" />
-        </FormControl>
-      </Wrapper>
-      <Wrapper title="with button" className="flex flex-col space-y-2 max-w-xs">
-        <FormControl>
-          <label className="label">
-            <span className="label-text">connected</span>
-          </label>
-          <div className="relative">
-            <Input
-              className="w-full pr-16 input input-primary input-bordered"
-              type="text"
-              placeholder="Search"
-            />
-            <button className="absolute right-0 top-0 rounded-l-none btn btn-primary">go</button>
+            <FormControl label="Username">
+              <Input outlined color="success" placeholder="username" />
+              <Label text="Data is valid" helper />
+            </FormControl>
+
+            <FormControl label="Username">
+              <Input outlined color="warning" placeholder="username" />
+              <Label text="Data must be more than 3 characters" helper />
+            </FormControl>
+
+            <FormControl label="Username">
+              <Input outlined color="error" placeholder="username" />
+              <Label
+                text={
+                  <>
+                    <ExclamationIcon className="inline-block mr-1 h-4 text-error fill-current" />
+                    Data is incorrect
+                  </>
+                }
+                helper
+              />
+            </FormControl>
           </div>
-        </FormControl>
-        <FormControl>
-          <label className="label">
-            <span className="label-text">with space</span>
-          </label>
-          <div className="flex space-x-2">
-            <Input
-              className="w-full input input-primary input-bordered"
-              type="text"
-              placeholder="Search"
-            />
-            <button className="btn btn-primary">go</button>
+        </Wrapper>
+        <Wrapper title="input sizes">
+          <div className="flex flex-col space-y-2 max-w-xs">
+            <FormControl label="Large">
+              <Input outlined className="input-lg" placeholder="username" />
+            </FormControl>
+            <FormControl label="Normal">
+              <Input outlined placeholder="username" />
+            </FormControl>
+            <FormControl label="Small">
+              <Input outlined className="input-sm" placeholder="username" />
+            </FormControl>
+            <FormControl label="Tiny">
+              <Input outlined className="input-xs" placeholder="username" />
+            </FormControl>
           </div>
-        </FormControl>
-      </Wrapper>
-    </div>
+        </Wrapper>
+        <Wrapper title="with button" className="flex flex-col space-y-2 max-w-xs">
+          <FormControl label="connected">
+            <div className="relative">
+              <Input outlined color="primary" className="w-full pr-16" placeholder="Search" />
+              <Button
+                color="primary"
+                className="absolute right-0 top-0 rounded-l-none no-animation"
+              >
+                go
+              </Button>
+            </div>
+          </FormControl>
+          <FormControl label="with space">
+            <div className="flex space-x-2">
+              <Input outlined color="primary" className="w-full" placeholder="Search" />
+              <Button color="primary">go</Button>
+            </div>
+          </FormControl>
+        </Wrapper>
+
+        <Divider className="my-6" />
+
+        <ClassTable data={data} />
+      </div>
+    </main>
   );
 }
 

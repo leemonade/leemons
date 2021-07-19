@@ -1,14 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function Badge({ children, className, color, outlined }) {
-  const colorClass = color ? `badge-${color}` : '';
+function Breadcrumbs({ children, className, color }) {
+  const colorClass = color ? `text-${color}` : '';
   const classes = className || '';
-  const outlinedClass = outlined ? 'badge-outline' : '';
-  return <div className={`badge ${colorClass} ${outlinedClass} ${classes}`}>{children}</div>;
+  return (
+    <div className={`text-sm breadcrumbs ${colorClass} ${classes}`}>
+      <ul>{children}</ul>
+    </div>
+  );
 }
 
-Badge.propTypes = {
+Breadcrumbs.propTypes = {
   children: PropTypes.any,
   className: PropTypes.string,
   color: PropTypes.oneOf([
@@ -24,4 +27,4 @@ Badge.propTypes = {
   outlined: PropTypes.bool,
 };
 
-export default Badge;
+export default Breadcrumbs;

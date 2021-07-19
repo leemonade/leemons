@@ -20,15 +20,19 @@
       color: inherit;
     }
   }
-  code {
-    background: hsla(var(--b-c) / 0.2);
+  p {
     color: hsl(var(--b-c));
+    font-family: 'Inter', sans-serif;
+  }
+  code {
+    background: hsla(var(--s-c) / 0.2);
+    color: hsl(var(--s-c));
     padding: 2px 6px;
     border-radius: var(--rounded-badge);
   }
   pre {
-    background: hsl(var(--n));
-    color: hsl(var(--n-c));
+    background: hsl(var(--s));
+    color: hsl(var(--s-c));
     border-radius: var(--rounded-box);
     code {
       border-radius: none;
@@ -51,9 +55,13 @@
     background-color: hsl(var(--b-c) / 40%);
   }
   thead {
-    border-bottom-color: hsl(var(--b-c) / 40%);
+    border-bottom-color: hsl(var(--b-c) / 30%);
   }
   tbody tr {
-    border-bottom-color: hsl(var(--b-c) / 40%);
+    border-bottom-color: hsl(var(--b-c) / 8%);
+  }
+  figure figcaption {
+    font-size: 0.8rem;
+    color: hsl(var(--b-c));
   }
 }

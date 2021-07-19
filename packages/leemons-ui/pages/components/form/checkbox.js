@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, Checkbox, Label } from '../../../src/components/ui';
+import { FormControl, Checkbox, Divider } from '../../../src/components/ui';
 import ClassTable from '../../../src/components/ClassTable';
 import Wrapper from '../../../src/components/Wrapper';
 
@@ -19,62 +19,74 @@ function CheckboxPage() {
   };
 
   return (
-    <div className="flex-grow p-4" data-theme="light">
-      <ClassTable data={data} />
-      <div className="divider my-6"></div>
-      <div className="text-xl font-bold">Examples</div>
+    <main>
+      <h2 className="mt-2 mb-6 text-5xl font-bold">
+        <span>Form </span>
+        <span className="text-primary">Checkbox</span>
+      </h2>
+      <div className="flex-grow p-4">
+        <div className="text-xl font-bold">Examples</div>
 
-      <Wrapper title="checkbox" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-6 card bordered shadow-lg">
-          <FormControl>
-            <Label text="Remember me" className="cursor-pointer">
-              <Checkbox className="" />
-            </Label>
-          </FormControl>
-        </div>
-      </Wrapper>
-      <Wrapper title="checkbox primary" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-6 card bordered shadow-lg">
-          <FormControl>
-            <Label text="Remember me" className="cursor-pointer">
-              <Checkbox className="checkbox-primary" />
-            </Label>
-          </FormControl>
-        </div>
-      </Wrapper>
-      <Wrapper title="checkbox secondary" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-6 card bordered shadow-lg">
-          <FormControl>
-            <Label text="Remember me" className="cursor-pointer">
-              <Checkbox className="checkbox-secondary" />
-            </Label>
-          </FormControl>
-        </div>
-      </Wrapper>
-      <Wrapper title="checkbox accent" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-6 card bordered shadow-lg">
-          <FormControl>
-            <Label text="Remember me" className="cursor-pointer">
-              <Checkbox className="checkbox-accent" />
-            </Label>
-          </FormControl>
-        </div>
-      </Wrapper>
-      <Wrapper title="checkbox disabled" className="flex flex-col space-y-2 max-w-xs">
-        <div className="p-6 card bordered shadow-lg">
-          <FormControl>
-            <Label text="Disabled + unchecked">
-              <Checkbox className="checkbox-accent" disabled />
-            </Label>
-          </FormControl>
-          <FormControl>
-            <Label text="Disabled + checked">
-              <Checkbox className="checkbox-accent" checked disabled />
-            </Label>
-          </FormControl>
-        </div>
-      </Wrapper>
-    </div>
+        <Wrapper title="checkbox + label position" className="flex flex-col space-y-2 max-w-xs">
+          <div className="p-6 card bordered shadow-lg">
+            <div className="flex">
+              <FormControl label="Remember me" labelPosition="right">
+                <Checkbox />
+              </FormControl>
+            </div>
+          </div>
+        </Wrapper>
+
+        <Wrapper
+          title="checkbox primary + label position + custom label"
+          className="flex flex-col space-y-2 max-w-md"
+        >
+          <div className="p-6 card bordered shadow-lg">
+            <div className="flex">
+              <FormControl
+                label={
+                  <>
+                    I have read and accept the{' '}
+                    <a href="#" className="text-primary">
+                      terms and conditions
+                    </a>
+                  </>
+                }
+                labelPosition="right"
+              >
+                <Checkbox color="primary" />
+              </FormControl>
+            </div>
+          </div>
+        </Wrapper>
+        <Wrapper title="checkbox secondary" className="flex flex-col space-y-2 max-w-xs">
+          <div className="p-6 card bordered shadow-lg">
+            <FormControl label="Remember me">
+              <Checkbox color="secondary" />
+            </FormControl>
+          </div>
+        </Wrapper>
+        <Wrapper title="checkbox accent" className="flex flex-col space-y-2 max-w-xs">
+          <div className="p-6 card bordered shadow-lg">
+            <FormControl label="Remember me">
+              <Checkbox color="accent" />
+            </FormControl>
+          </div>
+        </Wrapper>
+        <Wrapper title="checkbox disabled" className="flex flex-col space-y-2 max-w-xs">
+          <div className="p-6 card bordered shadow-lg">
+            <FormControl label="Disabled + unchecked">
+              <Checkbox color="accent" disabled />
+            </FormControl>
+            <FormControl label="Disabled + checked">
+              <Checkbox color="accent" checked disabled />
+            </FormControl>
+          </div>
+        </Wrapper>
+        <Divider className="my-6" />
+        <ClassTable data={data} />
+      </div>
+    </main>
   );
 }
 

@@ -211,7 +211,7 @@ function loadColorTheme() {
   return COLOR_VALUES;
 }
 
-const ColorBlock = ({ colorGroup }) => (
+const ColorBlock = ({ colorGroup, colorValues }) => (
   <div className="block mb-4" key={colorGroup}>
     <div className="mb-4 text-xs uppercase opacity-50">{colorGroup}</div>
     <div className="grid rounded">
@@ -220,14 +220,23 @@ const ColorBlock = ({ colorGroup }) => (
           <div key={`c-${j}`} className="relative col-start-1 row-start-1">
             <label
               htmlFor={color.name}
-              className={`flex justify-start items-end w-full h-20 transform transition-all cursor-pointer shadow hover:shadow-lg hover:-translate-y-1 ${
+              className={`flex justify-start items-end w-full h-20 transform transition-all cursor-pointer shadow ${
                 color.class
               } ${j === 0 ? ' rounded-t ' : ''} ${
-                j === colorGroup.length - 1 ? ' rounded-b ' : ''
+                j === COLORS[colorGroup].length - 1 ? ' rounded-b ' : ''
               }`}
             >
               <div className="px-1 m-1 text-xs text-white bg-black rounded bg-opacity-20">
                 .bg-{color.title}
+              </div>
+              <div
+                className={`absolute top-0 p-1 text-xs ${
+                  parseInt(colorValues[color.name].hex.substring(1, 2), 10) < 8
+                    ? 'text-white mix-blend-soft-light'
+                    : 'text-gray-600 mix-blend-hard-light'
+                }`}
+              >
+                {colorValues[color.name].hex.toUpperCase()}
               </div>
             </label>
           </div>
@@ -239,9 +248,10 @@ const ColorBlock = ({ colorGroup }) => (
 
 ColorBlock.propTypes = {
   colorGroup: PropTypes.any.isRequired,
+  colorValues: PropTypes.any.isRequired,
 };
 
-export default function UsePage() {
+export default function ColorsPage() {
   const [activeTab, setActiveTab] = useState('colors');
   const [colorValues] = useState(loadColorTheme());
 
@@ -251,22 +261,20 @@ export default function UsePage() {
         <title>Leemons UI</title>
       </Head>
 
-      <main data-theme="light">
-        <h2 className="my-6 text-5xl font-bold">
+      <main>
+        <h2 className="mt-6 text-5xl font-bold">
           <span className="text-primary">Colors</span>
         </h2>
 
-        <div className="text-base-content">
-          <Wrapper nocode>
-            <div className="text-xl font-bold text-base-content">Read the documents</div>
-            <p>Read everything about LeemonsUI colors and theming:</p>
-            <p className="mt-4">
-              <Link href="/default-themes">
-                <a className="link">How to use themes?</a>
-              </Link>
-            </p>
-          </Wrapper>
-        </div>
+        <Wrapper nocode>
+          <div className="text-xl font-bold text-base-content">Read the documents</div>
+          <p>Read everything about LeemonsUI colors and theming:</p>
+          <p className="mt-4">
+            <Link href="/default-themes">
+              <a className="link">How to use themes?</a>
+            </Link>
+          </p>
+        </Wrapper>
 
         <div className="tabs mb-6 mt-10">
           <button
@@ -281,12 +289,7 @@ export default function UsePage() {
           >
             Preview
           </button>
-          <button
-            onClick={() => setActiveTab('output')}
-            className={`tab tab-lifted tab-lg ${activeTab === 'output' ? 'tab-active' : ''}`}
-          >
-            Result
-          </button>
+
           <span className="tab tab-lifted tab-lg flex-grow cursor-default hidden sm:block"></span>
         </div>
 
@@ -297,7 +300,7 @@ export default function UsePage() {
             {Object.keys(COLORS).map(
               (colorGroup) =>
                 !['info', 'success', 'warning', 'error'].includes(colorGroup) && (
-                  <ColorBlock key={colorGroup} colorGroup={colorGroup} />
+                  <ColorBlock key={colorGroup} colorGroup={colorGroup} colorValues={colorValues} />
                 )
             )}
           </Wrapper>
@@ -307,7 +310,7 @@ export default function UsePage() {
             {Object.keys(COLORS).map(
               (colorGroup) =>
                 ['info', 'success', 'warning', 'error'].includes(colorGroup) && (
-                  <ColorBlock key={colorGroup} colorGroup={colorGroup} />
+                  <ColorBlock key={colorGroup} colorGroup={colorGroup} colorValues={colorValues} />
                 )
             )}
           </Wrapper>
@@ -318,7 +321,7 @@ export default function UsePage() {
           <div className="mb-6">See how components will look like using you color palette</div>
           <div>
             <div className="grid grid-cols-1 gap-6 lg:p-10 xl:grid-cols-3 lg:bg-base-200 rounded-box">
-              <Navbar className="col-span-1 shadow-lg xl:col-span-3 bg-primary-focus text-primary-content rounded-box">
+              <Navbar className="col-span-1 shadow-md xl:col-span-3 bg-primary-focus text-primary-content rounded-btn">
                 <div className="flex-none">
                   <Button square className="btn-ghost">
                     <MenuIcon className="inline-block w-6 h-6 stroke-current" />
@@ -347,7 +350,7 @@ export default function UsePage() {
                 </div>
               </Navbar>
 
-              <Card className="shadow-lg compact side bg-base-100">
+              <Card className="shadow-md compact side bg-base-100">
                 <div className="flex-row items-center space-x-4 card-body">
                   <div>
                     <Avatar className="rounded-full w-14 h-14 shadow">
@@ -361,7 +364,7 @@ export default function UsePage() {
                 </div>
               </Card>
 
-              <Card className="shadow-lg compact side bg-base-100">
+              <Card className="shadow-md compact side bg-base-100">
                 <div className="flex-row items-center space-x-4 card-body">
                   <div className="flex-1">
                     <h2 className="card-title">Meredith Mayer</h2>
@@ -373,7 +376,7 @@ export default function UsePage() {
                 </div>
               </Card>
 
-              <Card className="row-span-3 shadow-lg compact bg-base-100">
+              <Card className="row-span-3 shadow-md compact bg-base-100">
                 <figure>
                   <img src="https://picsum.photos/id/1005/600/400" />
                 </figure>
@@ -385,24 +388,24 @@ export default function UsePage() {
                 </div>
               </Card>
 
-              <Card className="shadow-lg compact side bg-base-100">
+              <Card className="shadow-md compact side bg-base-100">
                 <div className="flex-row items-center space-x-4 card-body">
                   <div className="flex-1">
                     <h2 className="card-title text-primary">4,600</h2>
                     <p className="text-base-content text-opacity-40">Page views</p>
                   </div>
                   <div className="flex space-x-2 flex-0">
-                    <Button className="btn-sm btn-square">
+                    <Button square link className="btn-sm">
                       <EyeIcon className="inline-block w-6 h-6 stroke-current" />
                     </Button>
-                    <Button className="btn-sm btn-square">
+                    <Button square link color="primary" className="btn-sm">
                       <DotsVerticalIcon className="inline-block w-6 h-6 stroke-current" />
                     </Button>
                   </div>
                 </div>
               </Card>
 
-              <Card className="shadow-lg compact side bg-base-100">
+              <Card className="shadow-md compact side bg-base-100">
                 <div className="flex-row items-center space-x-4 card-body">
                   <label className="flex-0">
                     <Toggle className="toggle-primary" />
@@ -414,7 +417,7 @@ export default function UsePage() {
                 </div>
               </Card>
 
-              <Card className="col-span-1 row-span-3 shadow-lg xl:col-span-2 bg-base-100">
+              <Card className="col-span-1 row-span-3 shadow-md xl:col-span-2 bg-base-100">
                 <div className="card-body">
                   <h2 className="my-4 text-4xl font-bold card-title">Top 10 UI Components</h2>
                   <div className="mb-4 space-x-2 card-actions">
@@ -433,7 +436,7 @@ export default function UsePage() {
                 </div>
               </Card>
 
-              <Card className="shadow-lg compact side bg-base-100">
+              <Card className="shadow-md compact side bg-base-100">
                 <div className="flex-row items-center space-x-4 card-body">
                   <div className="flex-1">
                     <h2 className="flex card-title">
@@ -462,7 +465,7 @@ export default function UsePage() {
                 </div>
               </Card>
 
-              <Card className="shadow-lg compact side bg-base-100">
+              <Card className="shadow-md compact side bg-base-100">
                 <div className="flex-row items-center space-x-4 card-body">
                   <label className="cursor-pointer label">
                     <Checkbox className="checkbox-accent" />
@@ -471,7 +474,7 @@ export default function UsePage() {
                 </div>
               </Card>
 
-              <Menu className="row-span-3 p-4 shadow-lg bg-base-100 rounded-box">
+              <Menu className="row-span-3 p-4 shadow-md bg-base-100 rounded-btn">
                 <MenuItem className="menu-title">
                   <span>Menu Title</span>
                 </MenuItem>
@@ -522,31 +525,7 @@ export default function UsePage() {
           </div>
         </div>
 
-        <div id="output" className={activeTab !== 'output' ? 'hidden' : ''}>
-          <div className="text-xl font-bold text-base-content">Theme config</div>
-          <div className="mb-6">This is your custom color theme. Add it to tailwind.config.js</div>
-          <div className="w-full max-w-2xl my-2">
-            <div className="shadow-lg mockup-code text-sm">
-              <pre>
-                <code>
-                  {`leemons: {
-            themes: [
-              {
-                'mytheme': {
-                  ${Object.keys(colorValues).map(
-                    (color) => `'${colorValues[color].name}': '${colorValues[color].hex}'`
-                  )},
-                },
-              },
-            ],
-          },`}
-                </code>
-              </pre>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-20">
+        <div className="mt-10">
           <div>
             You can use color names in utility classes just like Tailwind&apos;s color names.
           </div>
