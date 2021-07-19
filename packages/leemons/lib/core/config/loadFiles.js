@@ -19,7 +19,7 @@ async function loadJSFile(
       allowedDir = path.dirname(file);
     }
     // Load the file in a VM (for security reasons)
-    const fileContent = vm(allowedDir, filter, env).runFile(file);
+    const fileContent = await vm(allowedDir, filter, env).runFile(file);
     if (typeof fileContent === 'function' && execFunction) {
       return fileContent({ leemons });
     }

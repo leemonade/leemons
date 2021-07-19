@@ -4,6 +4,7 @@ const Router = require('koa-router');
 const Static = require('koa-static');
 const request = require('request');
 // const nextjs = require('next');
+const events = require('events');
 const execa = require('execa');
 const stream = require('stream');
 const _ = require('lodash');
@@ -78,6 +79,18 @@ class Leemons {
 
     this.loaded = false;
     this.started = false;
+
+    this.events = new events.EventEmitter();
+    const { emit } = this.events;
+    this.events.emit = (event, target, ...args) => {
+      emit.call(this.events, 'all', { event, target }, ...args);
+      emit.call(this.events, event, { event, target }, ...args);
+      emit.call(this.events, `${target}:${event}`, { event, target }, ...args);
+    };
+
+    this.events.on('all', ({ event, target }) => {
+      console.log('Event', event, 'emitted over', target);
+    });
   }
 
   // Set KOA as requestHandler

@@ -28,6 +28,10 @@ const PLUGIN_STATUS = {
     code: 'broken',
     reason: 'the plugin installation failed',
   },
+  servicesFailed: {
+    code: 'broken',
+    reason: 'the plugin services failes',
+  },
   initializationFailed: {
     code: 'broken',
     reason: 'the plugin initialization failed',

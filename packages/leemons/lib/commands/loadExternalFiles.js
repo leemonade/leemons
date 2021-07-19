@@ -41,6 +41,7 @@ function transformServices(services, calledFrom) {
  * Disables the given plugin and also it's dependants
  */
 function disablePlugin(plugins, plugin, reason = PLUGIN_STATUS.initializationFailed) {
+  leemons.events.emit('pluginWillDisable', `plugins.${plugin.name}`, reason);
   _.set(plugin, 'status', { ...plugin.status, ...reason });
 
   const { dependants } = plugin.dependencies;
@@ -48,6 +49,26 @@ function disablePlugin(plugins, plugin, reason = PLUGIN_STATUS.initializationFai
   plugins
     .filter((_plugin) => dependants.includes(_plugin.name))
     .forEach((_plugin) => disablePlugin(plugins, _plugin, PLUGIN_STATUS.disabledDeps));
+
+  leemons.events.emit('pluginDidDisable', `plugins.${plugin.name}`, reason);
+}
+
+async function loadServices(plugins, plugin, env, filter) {
+  leemons.events.emit('pluginWillLoadServices', `plugins.${plugin.name}`);
+  try {
+    const services = await loadFiles(path.join(plugin.dir.app, plugin.dir.services), {
+      execFunction: false,
+      env,
+      filter,
+      allowedPath: plugin.dir.app,
+    });
+
+    leemons.events.emit('pluginDidLoadServices', `plugins.${plugin.name}`);
+    return services;
+  } catch (e) {
+    disablePlugin(plugins, plugin, PLUGIN_STATUS.servicesFailed);
+    return null;
+  }
 }
 
 async function loadExternalFiles(leemons) {
@@ -268,13 +289,7 @@ async function loadExternalFiles(leemons) {
           filter: vmFilter,
         });
 
-      const services = () =>
-        loadFiles(path.join(plugin.dir.app, plugin.dir.services), {
-          execFunction: false,
-          env,
-          filter: vmFilter,
-          allowedPath: plugin.dir.app,
-        });
+      const services = () => loadServices(plugins, plugin, env, vmFilter);
 
       const routesDir = path.join(plugin.dir.app, plugin.dir.controllers, 'routes');
       // Try to load routes.js, if not exists, load routes.json, if none exists, set the routes to empty array
