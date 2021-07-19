@@ -26,6 +26,7 @@
     "dev": "next dev --port 3001",
     "index": "cp ./src/theme/index.js ./dist/theme/index.js",
     "colors": "cp -R ./src/theme/colors ./dist/theme",
+    "fonts": "cp -R ./src/theme/fonts ./dist/theme",
     "prebase": "postcss --config temp/theme/base temp/theme/base/*.css --base temp --dir dist",
     "base": "cat dist/theme/base/*.css > dist/theme/base.css",
     "postbase": "prejss-cli dist/theme/base.css --format commonjs",
@@ -50,7 +51,7 @@
     "postbuild": "npm run clean:temp && rm -rf dist/theme/base && rm -rf dist/theme/components && rm -rf dist/theme/utilities && rm -rf dist/theme/full && rm -rf dist/theme/*.css &&  npm run full && rm -rf dist/theme/themes",
     "clean:temp": "rm -rf temp",
     "prebuild:theme": "npm run clean:temp && mkdir temp && cp -R ./src/theme ./temp && npm run cleancss",
-    "build:theme": "npm run index && npm run colors && npm run base && npm run utilities:global && npm run utilities:unstyled && npm run utilities:styled && npm run components && npm run merge:unstyled && npm run merge:styled && npm run rtl && npm run prejss && npm run themes",
+    "build:theme": "npm run index && npm run colors && npm run fonts && npm run base && npm run utilities:global && npm run utilities:unstyled && npm run utilities:styled && npm run components && npm run merge:unstyled && npm run merge:styled && npm run rtl && npm run prejss && npm run themes",
     "cleancss": "replace-in-file \"/\\/\\* :> \\*\\/[\\S\\s]*?\\/\\* <: \\*\\//gm\" \"\" temp/theme/**/**/*.css --isRegex"
   },
   "dependencies": {
