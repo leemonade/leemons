@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import Router from 'next/router';
 import LeemonsImage from '../leemonsImage';
@@ -8,12 +9,17 @@ export default function MainMenuSubmenuItem({
   isDragging,
   isLayer,
   editMode,
+  editItemMode,
+  changeToEditItem,
   remove,
 }) {
+  const [newLabel, setNewLabel] = useState(item.label);
+
   const styles = {
     color: 'text-secondary-content hover:text-secondary-content',
     border: '',
     backgroundColor: 'hover:bg-primary',
+    paddingLeft: 'pl-7',
   };
 
   if (active) {
@@ -30,13 +36,30 @@ export default function MainMenuSubmenuItem({
     styles.backgroundColor = 'bg-secondary-content';
   }
 
-  const finalStyle = `${styles.color} ${styles.border} ${styles.backgroundColor}`;
+  if (editItemMode) {
+    styles.paddingLeft = 'pl-4';
+    styles.border = 'border-2 border-primary border-solid';
+  }
+
+  const finalStyle = `${styles.color} ${styles.border} ${styles.backgroundColor} ${styles.paddingLeft}`;
+
+  const onClick = () => {
+    if (!editMode && !editItemMode) {
+      Router.push(item.url);
+    } else {
+      changeToEditItem(item);
+    }
+  };
+
+  const onNewLabelChange = (event) => {
+    setNewLabel(event.target.value);
+  };
 
   return (
     <div
-      className={`relative w-full py-3 pl-7 pr-8 font-lexend text-sm cursor-pointer truncate ${finalStyle}`}
+      className={`relative w-full py-3 pr-8 font-lexend text-sm cursor-pointer truncate ${finalStyle}`}
       style={isLayer ? { width: '190px' } : {}}
-      onClick={() => Router.push(item.url)}
+      onClick={onClick}
     >
       {editMode && (
         <div
@@ -46,7 +69,17 @@ export default function MainMenuSubmenuItem({
           <LeemonsImage className="stroke-current" src={'/menu-builder/svgs/re-order.svg'} />
         </div>
       )}
-      <span className={`${isDragging ? '' : ''}`}>{item.label}</span>
+      {editItemMode ? (
+        <input
+          className="h-full w-full bg-transparent focus-visible:border-transparent"
+          type="text"
+          value={newLabel}
+          onChange={onNewLabelChange}
+        />
+      ) : (
+        <span className={`${isDragging ? '' : ''}`}>{item.label}</span>
+      )}
+
       {editMode && (
         <div
           onClick={() => remove(item)}
@@ -66,5 +99,7 @@ MainMenuSubmenuItem.propTypes = {
   isDragging: PropTypes.bool,
   isLayer: PropTypes.bool,
   editMode: PropTypes.bool,
+  editItemMode: PropTypes.bool,
   remove: PropTypes.func,
+  changeToEditItem: PropTypes.func,
 };

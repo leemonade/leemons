@@ -18,6 +18,7 @@ import { registerDndLayer } from '../dnd/dndLayer';
 import MainMenuInfo from './mainMenuInfo';
 
 export default function MainMenuSubmenu({ item, onClose, activeItem }) {
+  const [editingItem, setEditingItem] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [customChildrens, setCustomChildrens] = useState(item ? item.customChildrens : []);
 
@@ -94,11 +95,11 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
 
   const toggleEditMode = () => {
     setEditMode(!editMode);
+    setEditingItem(null);
   };
 
   const remove = async (toRemoveItem) => {
-    const response = await removeMenuItemRequest(toRemoveItem.menuKey, toRemoveItem.key);
-    console.log(response);
+    await removeMenuItemRequest(toRemoveItem.menuKey, toRemoveItem.key);
     const { index } = find(toRemoveItem.id);
     setCustomChildrens(
       update(customChildrens, {
@@ -174,7 +175,9 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
                           <MainMenuSubmenuItem
                             item={child}
                             remove={remove}
-                            editMode={editMode}
+                            editMode={editMode && !editingItem}
+                            changeToEditItem={(e) => setEditingItem(e)}
+                            editItemMode={editingItem === child}
                             isDragging={!!child._tempId || isDragging}
                             active={activeItem?.id === child.id}
                           />
