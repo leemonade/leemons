@@ -6,16 +6,16 @@ import shortid from 'shortid';
 import PropTypes from 'prop-types';
 import Button from './Button';
 
-function Modal({ show, onHide, options, children }) {
+function Modal({ isModalVisible, hide, options, children }) {
   const handleOverlayClicked = (e) => {
     if (e.target.className !== 'modal-wrapper') {
       return;
     }
-    if (options === undefined && onHide) {
-      onHide();
+    if (options === undefined && hide) {
+      hide();
     } else {
-      if (options.overlayClose !== false && onHide) {
-        onHide();
+      if (options.overlayClose !== false && hide) {
+        hide();
       }
       if (options.onOverlayClicked) {
         options.onOverlayClicked();
@@ -49,11 +49,18 @@ function Modal({ show, onHide, options, children }) {
   };
 
   const renderFooter = () => {
-    const { cancelLabel, actionLabel, onAction } = options;
+    const { cancelLabel, actionLabel, onAction, onCancel } = options;
     return (
       <div className="modal-action">
         {cancelLabel && (
-          <Button color="ghost" className="text-black" onClick={() => onHide()}>
+          <Button
+            color="ghost"
+            className="text-black"
+            onClick={() => () => {
+              if (onCancel) onCancel();
+              hide();
+            }}
+          >
             {cancelLabel}
           </Button>
         )}
@@ -62,7 +69,7 @@ function Modal({ show, onHide, options, children }) {
             color="primary"
             onClick={() => {
               if (onAction) onAction();
-              onHide();
+              hide();
             }}
           >
             {actionLabel}
@@ -88,9 +95,9 @@ function Modal({ show, onHide, options, children }) {
     'modal-no-action': options?.buttons?.length === 0 || true,
   });
 
-  return show
+  return isModalVisible
     ? ReactDOM.createPortal(
-        <React.Fragment>
+        <>
           <div className="modal-overlay" />
           <div
             className={modalWrapperClass}
@@ -111,7 +118,10 @@ function Modal({ show, onHide, options, children }) {
                       className="btn-xs"
                       data-dismiss="modal"
                       aria-label="Close"
-                      onClick={onHide}
+                      onClick={() => {
+                        if (options?.onCancel) options.onCancel();
+                        hide();
+                      }}
                     >
                       <XIcon className="h-4 w-4 stroke-current" />
                     </Button>
@@ -123,7 +133,7 @@ function Modal({ show, onHide, options, children }) {
               </div>
             </div>
           </div>
-        </React.Fragment>,
+        </>,
         document.body
       )
     : null;
@@ -132,17 +142,18 @@ function Modal({ show, onHide, options, children }) {
 Modal.propTypes = {
   children: PropTypes.any,
   className: PropTypes.string,
-  show: PropTypes.bool,
-  onHide: PropTypes.any,
-  options: PropTypes.objectOf({
+  isModalVisible: PropTypes.bool,
+  hide: PropTypes.any,
+  options: PropTypes.shape({
     animated: PropTypes.bool,
-    overlayClose: PropTypes.any,
+    overlayClose: PropTypes.bool,
     onOverlayClicked: PropTypes.func,
     title: PropTypes.any,
     message: PropTypes.any,
     cancelLabel: PropTypes.any,
     actionLabel: PropTypes.any,
     onAction: PropTypes.func,
+    onCancel: PropTypes.func,
   }),
 };
 
@@ -182,8 +193,8 @@ export const useModal = (options) => {
       document.body.classList.add('modal-open');
     }
     if (!isShown && hasToggledBefore) {
-      if (options && options.onHide) {
-        options.onHide();
+      if (options && options.hide) {
+        options.hide();
       }
       document.body.classList.remove('modal-open');
     }
@@ -193,8 +204,8 @@ export const useModal = (options) => {
   return [
     {
       isShown,
-      show: isModalVisible,
-      onHide: toggle,
+      isModalVisible,
+      hide: toggle,
       options,
     },
     toggle,

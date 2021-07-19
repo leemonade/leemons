@@ -4,7 +4,7 @@ import { Button, Modal, useModal, Divider } from '../../src/components/ui';
 import ClassTable from '../../src/components/ClassTable';
 import Wrapper from '../../src/components/Wrapper';
 
-function BadgePage() {
+function ModalPage() {
   const data = {
     showType: true,
     components: [
@@ -92,6 +92,26 @@ export default function MyComponent(props) {
         </Wrapper>
 
         <Wrapper nocode>
+          <p className="mb-4">useModal options:</p>
+          <div className="w-full max-w-4xl my-2">
+            <div className="shadow-lg mockup-code">
+              <Highlight className="javascript p-4 bg-secondary text-xs">
+                {`{
+    animated: Boolean, // Default: true. Enabled the modal fadeIn animation
+    title: String | React.Component, // Modal's title
+    message: String | React.Component, // Modal's Message or Body content
+    cancelLabel: String | React.Component, // Cancel button label
+    actionLabel: String | React.Component, // Action button label
+    onAction: Function, // Fired when Modal action is triggered
+    onCancel: Function, // Fired when Modal cancel is triggered,
+    buttons: Array, // Array of customs buttons to be placed in Modal actions
+}`}
+              </Highlight>
+            </div>
+          </div>
+        </Wrapper>
+
+        <Wrapper nocode>
           <p className="mb-4">Custom content and buttons:</p>
           <div className="w-full max-w-4xl my-2">
             <div className="shadow-lg mockup-code">
@@ -133,4 +153,4 @@ export default function MyComponent(props) {
   );
 }
 
-export default BadgePage;
+export default ModalPage;
