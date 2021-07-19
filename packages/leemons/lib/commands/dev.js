@@ -307,9 +307,10 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
 
     // ! Plugin loading
     emit('pluginsWillLoad');
-    loadExternalFiles(leemons);
-
+    await loadExternalFiles(leemons);
     emit('pluginsDidLoad');
+    await leemons.setMiddlewares();
+    await leemons.setRoutes();
 
     // ! Original functions
 

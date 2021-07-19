@@ -20,9 +20,17 @@ const PLUGIN_STATUS = {
     code: 'missingDeps',
     reason: "some of the plugin' dependencies are not satisfied",
   },
+  disabledDeps: {
+    code: 'disabledDeps',
+    reason: "some of the plugin' dependencies were disabled",
+  },
   installationFailed: {
     code: 'broken',
     reason: 'the plugin installation failed',
+  },
+  initializationFailed: {
+    code: 'broken',
+    reason: 'the plugin initialization failed',
   },
 };
 

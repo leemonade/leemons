@@ -10,29 +10,44 @@ const {
   getLocalPlugins,
   getExternalPlugins,
 } = require('../core/plugins/getPlugins');
-const { computeDependencies, checkMissingDependencies } = require('./dependencies');
+const { computeDependencies, checkMissingDependencies, sortByDeps } = require('./dependencies');
 const { getStatus, PLUGIN_STATUS } = require('./pluginsStatus');
 
-async function installPlugins(plugins) {
-  for (let i = 0; i < plugins.length; i++) {
-    const plugin = plugins[i];
-    // Try to install the plugin, if an error occurred, mark the plugin as disabled as well as its dependencies
-    try {
-      const installResult = await loadFile(path.join(plugin.dir.app, plugin.dir.install));
-      // If the installation script exists
-      if (installResult !== null) {
-        plugin.status.isInstalled = true;
-        await leemons.models.plugins.installed(plugin.name);
-      }
-    } catch (e) {
-      // The installation failed, disable plugin
-      plugin.status = {
-        ...plugin.status,
-        ...PLUGIN_STATUS.installationFailed,
-      };
-      // Disable dependant plugins
+/**
+ * Get all the services which are a function and wrap them, so this.calledFrom is added to the call
+ */
+function transformServices(services, calledFrom) {
+  const _services = _.cloneDeep(services);
+  const wrap = (func) => (...params) => func.call({ calledFrom }, ...params);
+
+  _.forEach(_.keys(services), (serviceKey) => {
+    // If the service is a function, call it with custom context
+    if (_.isFunction(services[serviceKey])) {
+      _services[serviceKey] = wrap(services[serviceKey]);
+      // If the service is an object
+    } else if (_.isObject(services[serviceKey])) {
+      _.forEach(_.keys(services[serviceKey]), (propertyKey) => {
+        // Check if the property is a function and call it with custom context
+        if (_.isFunction(services[serviceKey][propertyKey])) {
+          _services[serviceKey][propertyKey] = wrap(services[serviceKey][propertyKey]);
+        }
+      });
     }
-  }
+  });
+  return _services;
+}
+
+/**
+ * Disables the given plugin and also it's dependants
+ */
+function disablePlugin(plugins, plugin, reason = PLUGIN_STATUS.initializationFailed) {
+  _.set(plugin, 'status', { ...plugin.status, ...reason });
+
+  const { dependants } = plugin.dependencies;
+
+  plugins
+    .filter((_plugin) => dependants.includes(_plugin.name))
+    .forEach((_plugin) => disablePlugin(plugins, _plugin, PLUGIN_STATUS.disabledDeps));
 }
 
 async function loadExternalFiles(leemons) {
@@ -57,11 +72,12 @@ async function loadExternalFiles(leemons) {
           env: '.env',
           install: 'install.js',
           init: 'init.js',
+          load: 'load.js',
         },
       });
 
       // Save the plugin env
-      pluginsEnv.set(plugin.path.app, env);
+      pluginsEnv.set(plugin.dir.app, env);
 
       return {
         source: plugin.source,
@@ -95,6 +111,7 @@ async function loadExternalFiles(leemons) {
       // Existing plugin
     } else {
       equivalentPlugin.id = id;
+      equivalentPlugin.version = equivalentPlugin.version || version || '0.0.1';
       equivalentPlugin.status = {
         ...getStatus(pluginInfo, PLUGIN_STATUS.enabled),
         ...pluginInfo,
@@ -158,6 +175,7 @@ async function loadExternalFiles(leemons) {
    *  dependants: All the plugins that depends on it (if it fails, the dependants must be disabled)
    */
   plugins = computeDependencies(plugins);
+  plugins = sortByDeps(plugins);
 
   // Mark each plugin as missingDeps
   const unsatisfiedPlugins = checkMissingDependencies(plugins);
@@ -197,27 +215,94 @@ async function loadExternalFiles(leemons) {
    * Load the models described by each plugin, only if it is enabled
    */
 
-  const pluginsFunctions = plugins.map((plugin) => {
-    // TODO: Move to loader functions and add events
-    // TODO: Use plugin' env on the scripts
-    const installation = () => loadFile(path.join(plugin.dir.app, plugin.dir.install));
-    const init = () => loadFile(path.join(plugin.dir.app, plugin.dir.init));
-    const services = () =>
-      loadFiles(path.join(plugin.dir.app, plugin.dir.services), {
-        execFunction: false,
-      });
-    const controllers = () => loadFiles(path.join(plugin.dir.app, plugin.dir.controllers));
+  const pluginsFunctions = plugins
+    .filter((plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code)
+    .map((plugin) => {
+      const env = pluginsEnv.get(plugin.dir.app);
 
-    return {
-      plugin,
-      scripts: {
-        installation,
-        init,
-        services,
-        controllers,
-      },
-    };
-  });
+      const vmFilter = (filter) => {
+        _.set(filter, 'leemons.plugin', plugin);
+        // TODO: Expose the other plugins
+
+        _.set(filter, 'leemons.getPlugin', (pluginName) => {
+          let desiredPlugin = plugins.find(
+            (_plugin) =>
+              _plugin.name === pluginName && _plugin.status.code === PLUGIN_STATUS.enabled.code
+          );
+
+          if (desiredPlugin) {
+            desiredPlugin = _.pick(desiredPlugin, ['name', 'version', 'services']);
+            desiredPlugin.services = transformServices(
+              desiredPlugin.services,
+              `plugins.${plugin.name}`
+            );
+            return desiredPlugin;
+          }
+          return null;
+        });
+
+        const { query } = filter.leemons;
+        _.set(filter, 'leemons.query', (modelName) => query(modelName, plugin.name));
+
+        return filter;
+      };
+
+      // TODO: Move to loader functions and add events
+      const load = () =>
+        loadFile(path.join(plugin.dir.app, plugin.dir.load), {
+          env,
+          filter: vmFilter,
+          allowedPath: plugin.dir.app,
+        });
+
+      const installation = () =>
+        loadFile(path.join(plugin.dir.app, plugin.dir.install), {
+          env,
+          allowedPath: plugin.dir.app,
+        });
+
+      const init = () =>
+        loadFile(path.join(plugin.dir.app, plugin.dir.init), {
+          env,
+          allowedPath: plugin.dir.app,
+          filter: vmFilter,
+        });
+
+      const services = () =>
+        loadFiles(path.join(plugin.dir.app, plugin.dir.services), {
+          execFunction: false,
+          env,
+          filter: vmFilter,
+          allowedPath: plugin.dir.app,
+        });
+
+      const routesDir = path.join(plugin.dir.app, plugin.dir.controllers, 'routes');
+      // Try to load routes.js, if not exists, load routes.json, if none exists, set the routes to empty array
+      const routes = async () =>
+        (await loadFile(`${routesDir}.js`, { env })) ||
+        (await loadFile(`${routesDir}.json`, { env })) ||
+        [];
+
+      const controllers = () =>
+        loadFiles(path.join(plugin.dir.app, plugin.dir.controllers), {
+          env,
+          // Do not load the routes again
+          exclude: [`${routesDir}.js`, `${routesDir}.json`],
+          filter: vmFilter,
+        });
+
+      return {
+        plugin,
+        scripts: {
+          load,
+          installation,
+          init,
+          services,
+          routes,
+          controllers,
+        },
+      };
+    });
 
   const pluginsLength = pluginsFunctions.length;
   for (let i = 0; i < pluginsLength; i++) {
@@ -235,19 +320,17 @@ async function loadExternalFiles(leemons) {
         await leemons.models.plugins.installed(plugin.name);
       } catch (e) {
         // The installation failed, disable plugin
-        plugin.status = {
-          ...plugin.status,
-          ...PLUGIN_STATUS.installationFailed,
-        };
-        // TODO: Disable dependant plugins
+        disablePlugin(plugins, plugin, PLUGIN_STATUS.installationFailed);
       }
     }
 
     await scripts.init();
 
     // TODO: Expose leemons
-    // await scripts.services();
-    // await scripts.controllers();
+    plugin.services = await scripts.services();
+    await scripts.init();
+    plugin.controllers = await scripts.controllers();
+    plugin.routes = await scripts.routes();
   }
   // // TODO:  Install plugins
   // const nonInstalledPlugins = plugins.filter(
