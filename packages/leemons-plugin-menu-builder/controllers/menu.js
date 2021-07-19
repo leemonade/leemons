@@ -1,6 +1,7 @@
 const menuService = require('../src/services/menu');
 const menuItemService = require('../src/services/menu-item');
 const prefixPN = require('../src/helpers/prefixPN');
+const { validateRemoveMenuItemFromUser } = require('../src/validations/menu-item');
 const { table } = require('../src/tables');
 const { validateReOrder } = require('../src/validations/menu-item');
 const { validateAddMenuItemFromUser } = require('../src/validations/menu-item');
@@ -20,6 +21,19 @@ async function addMenuItem(ctx) {
 
   ctx.status = 201;
   ctx.body = { status: 201, menuItem };
+}
+
+async function removeMenuItem(ctx) {
+  validateRemoveMenuItemFromUser(ctx.params);
+
+  const removed = await menuItemService.removeCustomForUser(
+    ctx.state.user,
+    ctx.params.menuKey,
+    ctx.params.key
+  );
+
+  ctx.status = 200;
+  ctx.body = { status: 200, removed };
 }
 
 async function reOrder(ctx) {
@@ -50,6 +64,7 @@ async function setKnowHowToUse(ctx) {
 module.exports = {
   getMenu,
   addMenuItem,
+  removeMenuItem,
   reOrder,
   getIfKnowHowToUse,
   setKnowHowToUse,

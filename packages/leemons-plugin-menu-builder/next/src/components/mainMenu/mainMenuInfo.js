@@ -3,8 +3,10 @@ import { Button } from 'leemons-ui';
 import useTranslate from '@multilanguage/useTranslate';
 import prefixPN from '../../helpers/prefixPN';
 import { getIfKnowHowToUseRequest, setKnowHowToUseRequest } from '../../request';
+import * as PropTypes from 'prop-types';
+import LeemonsImage from '../leemonsImage';
 
-export default function MainMenuInfo() {
+export default function MainMenuInfo({ editMode, toggleEditMode }) {
   const [knowHowToUse, setKnowHowToUse] = useState(false);
   const [showKnowHowToUse, setShowKnowHowToUse] = useState(false);
   const [translations] = useTranslate({ keysStartsWith: prefixPN('menu.menu_constructor') });
@@ -31,8 +33,6 @@ export default function MainMenuInfo() {
     await setKnowHowToUseRequest();
     setShowKnowHowToUse(true);
   };
-
-  // TODO: Traducir los textos
 
   useEffect(() => {
     checkIfKnowHowToUse();
@@ -69,13 +69,44 @@ export default function MainMenuInfo() {
             </Button>
           )}
         </div>
-        <div className="flex flex-row text-sm text-center text-neutral py-8 bg-secondary-focus relative z-10">
-          <div className="flex-1 hover:text-primary">Edit</div>
+        <div
+          className={`flex flex-row text-sm text-center items-center text-neutral ${
+            editMode ? 'py-4' : 'py-8'
+          } bg-secondary-focus relative z-10`}
+        >
+          {!editMode ? (
+            <div className="flex-1 hover:text-primary cursor-pointer" onClick={toggleEditMode}>
+              <div
+                className={`relative inline-block align-middle mr-2`}
+                style={{ width: '12px', height: '12px' }}
+              >
+                <LeemonsImage className="fill-current" src={'/menu-builder/svgs/edit.svg'} />
+              </div>
+              {t('edit')}
+            </div>
+          ) : (
+            <div className="pl-4">
+              <Button
+                color="primary"
+                className="whitespace-nowrap overflow-ellipsis cursor-pointer"
+                onClick={toggleEditMode}
+              >
+                {t('finish_edit')}
+              </Button>
+            </div>
+          )}
           <div
-            className="flex-1 hover:text-primary"
+            className={`flex-1 hover:text-primary cursor-pointer ${editMode ? 'text-center' : ''}`}
             onClick={() => setShowKnowHowToUse(!showKnowHowToUse)}
           >
-            Help
+            <div
+              className={`relative inline-block align-middle ${editMode ? '' : 'mr-2'}`}
+              style={{ width: '12px', height: '12px' }}
+            >
+              <LeemonsImage className="fill-current" src={'/menu-builder/svgs/info.svg'} />
+            </div>
+
+            {!editMode ? t('help') : ''}
           </div>
         </div>
       </div>
@@ -83,4 +114,7 @@ export default function MainMenuInfo() {
   );
 }
 
-MainMenuInfo.propTypes = {};
+MainMenuInfo.propTypes = {
+  editMode: PropTypes.bool,
+  toggleEditMode: PropTypes.func.isRequired,
+};

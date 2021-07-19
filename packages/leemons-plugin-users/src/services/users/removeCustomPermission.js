@@ -23,7 +23,7 @@ async function removeCustomPermission(userAuthId, data, { transacting } = {}) {
 
   const query = {
     permissionName: data.permissionName,
-    target: data.target,
+    target: data.target || null,
     userAuth: userAuthId,
     role_$null: true,
   };

@@ -261,6 +261,7 @@ module.exports = class Validator {
 
     // Throw validation error
     if (!validator.validate(_key)) {
+      console.log(validator.ajvError);
       throw validator.error;
     }
 

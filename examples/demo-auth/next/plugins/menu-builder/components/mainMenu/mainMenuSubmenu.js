@@ -8,12 +8,17 @@ import SimpleBar from 'simplebar-react';
 import update from 'immutability-helper';
 import DndSortItem from '../dnd/dndSortItem';
 import DndDropZone from '../dnd/dndDropZone';
-import { addMenuItemRequest, reOrderCustomUserItemsRequest } from '../../request';
+import {
+  addMenuItemRequest,
+  removeMenuItemRequest,
+  reOrderCustomUserItemsRequest,
+} from '../../request';
 import hooks from 'leemons-hooks';
 import { registerDndLayer } from '../dnd/dndLayer';
 import MainMenuInfo from './mainMenuInfo';
 
 export default function MainMenuSubmenu({ item, onClose, activeItem }) {
+  const [editMode, setEditMode] = useState(false);
   const [customChildrens, setCustomChildrens] = useState(item ? item.customChildrens : []);
 
   const find = useCallback(
@@ -87,6 +92,21 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
     }
   };
 
+  const toggleEditMode = () => {
+    setEditMode(!editMode);
+  };
+
+  const remove = async (toRemoveItem) => {
+    const response = await removeMenuItemRequest(toRemoveItem.menuKey, toRemoveItem.key);
+    console.log(response);
+    const { index } = find(toRemoveItem.id);
+    setCustomChildrens(
+      update(customChildrens, {
+        $splice: [[index, 1]],
+      })
+    );
+  };
+
   const [, drop] = useDrop(() => ({ accept: 'menu-item-sort' }));
 
   useEffect(() => {
@@ -148,10 +168,13 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
                         type={'menu-item-sort'}
                         accept={['menu-item-sort', 'menu-item']}
                         emptyLayout={true}
+                        disableDrag={!editMode}
                       >
                         {({ isDragging }) => (
                           <MainMenuSubmenuItem
                             item={child}
+                            remove={remove}
+                            editMode={editMode}
                             isDragging={!!child._tempId || isDragging}
                             active={activeItem?.id === child.id}
                           />
@@ -165,7 +188,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
           </DndDropZone>
           {/* Menu constructor */}
           <div>
-            <MainMenuInfo />
+            <MainMenuInfo editMode={editMode} toggleEditMode={toggleEditMode} />
           </div>
         </div>
       )}

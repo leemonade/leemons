@@ -30,7 +30,7 @@ export default function DndSortItem({
         move(item.id, !didDrop ? item.originalIndex : lastIndex, true);
       },
     }),
-    [id, originalIndex, move]
+    [id, originalIndex, move, disableDrag]
   );
   const [, drop] = useDrop(
     () => ({
@@ -67,4 +67,5 @@ DndSortItem.propTypes = {
   type: PropTypes.string.isRequired,
   accept: PropTypes.array,
   emptyLayout: PropTypes.bool,
+  disableDrag: PropTypes.bool,
 };

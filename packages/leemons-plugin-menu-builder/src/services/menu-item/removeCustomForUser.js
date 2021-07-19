@@ -1,14 +1,8 @@
-const _ = require('lodash');
 const { table } = require('../../tables');
 const { translations } = require('../../translations');
 const prefixPN = require('../../helpers/prefixPN');
-const addItemPermissions = require('../../helpers/addItemPermissions');
 const removeItemPermissions = require('../../helpers/removeItemPermissions');
-const {
-  validateExistMenuItem,
-  validateNotExistMenu,
-  validateNotExistMenuItem,
-} = require('../../validations/exists');
+const { validateNotExistMenu, validateNotExistMenuItem } = require('../../validations/exists');
 
 const { withTransaction } = global.utils;
 
@@ -25,7 +19,6 @@ const { withTransaction } = global.utils;
 async function removeCustomForUser(userAuth, menuKey, key, { transacting: _transacting } = {}) {
   const locales = translations();
 
-  // TODO Hablar si esto es sufientemente seguro o si comprobamos mediante permisos el comprobar si puede borrar el registro (Es mas costoso)
   if (!key.startsWith(prefixPN(`user:${userAuth.id}.`))) {
     throw new Error('You can only delete your own custom items');
   }
@@ -44,7 +37,7 @@ async function removeCustomForUser(userAuth, menuKey, key, { transacting: _trans
       // Remove LABEL & DESCRIPTIONS in locales
       if (locales) {
         promises.push(
-          locales.contents.deleteKeyStartsWith(prefixPN(`${menuKey}.${key}.`), { transacting })
+          locales.contents.deleteKeyStartsWith(prefixPN(`${menuKey}.${key}`), { transacting })
         );
       }
 

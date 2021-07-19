@@ -27,6 +27,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/menu/:menuKey/:key',
+    method: 'DELETE',
+    handler: 'menu.removeMenuItem',
+    authenticated: true,
+  },
+  {
     path: '/menu/:key/re-order',
     method: 'POST',
     handler: 'menu.reOrder',

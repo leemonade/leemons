@@ -8,6 +8,9 @@ module.exports = {
       <p class="mb-2">Simply click on the section title and drag to this space</p>
       <p class="mb-2">Press “Edit menu” to reorder or delete options</p>`,
       got_it_btn: 'Ok, I got it',
+      help: 'Help',
+      edit: 'Edit',
+      finish_edit: 'Finish',
     },
   },
 };
