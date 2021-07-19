@@ -4,10 +4,12 @@
   .label {
     @apply pt-2 pb-1;
     &-text {
-      @apply text-black font-medium text-sm;
+      @apply font-medium text-sm;
+      color: #000000;
     }
     &-text-alt {
-      @apply text-xs text-black;
+      @apply text-xs;
+      color: #000000;
     }
     a {
       @apply hover:text-base-content;
