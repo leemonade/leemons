@@ -56,7 +56,7 @@ function Modal({ isModalVisible, hide, options, children }) {
           <Button
             color="ghost"
             className="text-black"
-            onClick={() => () => {
+            onClick={() => {
               if (onCancel) onCancel();
               hide();
             }}
