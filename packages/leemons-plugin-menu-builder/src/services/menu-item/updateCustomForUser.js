@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
 const { translations } = require('../../translations');
-const prefixPN = require('../../helpers/prefixPN');
 const { validateNotExistMenu, validateNotExistMenuItem } = require('../../validations/exists');
 
 const { withTransaction } = global.utils;
@@ -26,7 +25,7 @@ async function updateCustomForUser(
 ) {
   const locales = translations();
 
-  if (!key.startsWith(prefixPN(`user:${userAuth.id}.`))) {
+  if (!key.startsWith(leemons.plugin.prefixPN(`user:${userAuth.id}.`))) {
     throw new Error('You can only update your own custom items');
   }
 
@@ -50,7 +49,7 @@ async function updateCustomForUser(
         if (label) {
           promises.push(
             locales.contents.setValue(
-              prefixPN(`${menuKey}.${key}.label`),
+              leemons.plugin.prefixPN(`${menuKey}.${key}.label`),
               userAuth.language,
               label,
               {
@@ -63,7 +62,7 @@ async function updateCustomForUser(
         if (description) {
           promises.push(
             locales.contents.setValue(
-              prefixPN(`${menuKey}.${key}.description`),
+              leemons.plugin.prefixPN(`${menuKey}.${key}.description`),
               userAuth.language,
               description,
               {

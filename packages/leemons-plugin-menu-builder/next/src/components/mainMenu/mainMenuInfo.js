@@ -2,22 +2,22 @@ import { useEffect, useState } from 'react';
 import * as PropTypes from 'prop-types';
 import { Button } from 'leemons-ui';
 import useTranslate from '@multilanguage/useTranslate';
+import tLoader from '@multilanguage/helpers/tLoader';
 import prefixPN from '../../helpers/prefixPN';
 import { getIfKnowHowToUseRequest, setKnowHowToUseRequest } from '../../request';
 
 import LeemonsImage from '../leemonsImage';
-import tLoader from '../../helpers/tLoader';
 
 export default function MainMenuInfo({ editMode, toggleEditMode }) {
-  const [knowHowToUse, setKnowHowToUse] = useState(false);
-  const [showKnowHowToUse, setShowKnowHowToUse] = useState(false);
+  const [knowHowToUse, setKnowHowToUse] = useState(true);
+  const [showKnowHowToUse, setShowKnowHowToUse] = useState(true);
   const [translations] = useTranslate({ keysStartsWith: prefixPN('menu.menu_constructor') });
   const t = tLoader(prefixPN('menu.menu_constructor'), translations);
 
   const checkIfKnowHowToUse = async () => {
     const { knowHowToUse: know } = await getIfKnowHowToUseRequest();
     setKnowHowToUse(know);
-    if (know) setShowKnowHowToUse(know);
+    setShowKnowHowToUse(know);
   };
 
   const markAsKnowHowToUse = async () => {

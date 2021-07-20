@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const prefixPN = require('../../helpers/prefixPN');
 const { translations } = require('../../translations');
 
 function setLabelAndDescriptionToItems(menuItems, translationItemsByKey) {
@@ -8,8 +7,10 @@ function setLabelAndDescriptionToItems(menuItems, translationItemsByKey) {
 
   _.forEach(menuItems, (_menuItem) => {
     const menuItem = _menuItem;
-    const labelKey = prefixPN(`${menuItem.menuKey}.${menuItem.key}.label`);
-    const descriptionKey = prefixPN(`${menuItem.menuKey}.${menuItem.key}.description`);
+    const labelKey = leemons.plugin.prefixPN(`${menuItem.menuKey}.${menuItem.key}.label`);
+    const descriptionKey = leemons.plugin.prefixPN(
+      `${menuItem.menuKey}.${menuItem.key}.description`
+    );
     if (Object.prototype.hasOwnProperty.call(translationItemsByKey, labelKey)) {
       menuItem.label = translationItemsByKey[labelKey];
     } else {
@@ -42,8 +43,8 @@ async function transformManyMenuItemsToFrontEndMenu(
 ) {
   let translationItemsByKey = await translations().contents.getManyWithLocale(
     menuItems.reduce((acc, menuItem) => {
-      acc.push(prefixPN(`${menuItem.menuKey}.${menuItem.key}.label`));
-      acc.push(prefixPN(`${menuItem.menuKey}.${menuItem.key}.description`));
+      acc.push(leemons.plugin.prefixPN(`${menuItem.menuKey}.${menuItem.key}.label`));
+      acc.push(leemons.plugin.prefixPN(`${menuItem.menuKey}.${menuItem.key}.description`));
       return acc;
     }, []),
     locale,

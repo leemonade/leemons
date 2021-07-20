@@ -1,4 +1,4 @@
-import { getSession, loginSession, useSession } from '@users/session';
+import { loginSession, useSession } from '@users/session';
 import constants from '@users/constants';
 import { useForm } from 'react-hook-form';
 import { loginRequest } from '@users/request';
@@ -23,6 +23,13 @@ export default function Home() {
 
   return (
     <>
+      <div className="flex h-screen">
+        <div className="w-5/12">a</div>
+        <div className="w-7/12 flex flex-col justify-center p-24">
+          <h1>Login to your account</h1>
+        </div>
+      </div>
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label>Email</label>
@@ -47,10 +54,3 @@ export default function Home() {
     </>
   );
 }
-export const getServerSideProps = async (context) => {
-  return {
-    props: {
-      session: await getSession(context),
-    },
-  };
-};

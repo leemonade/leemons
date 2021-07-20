@@ -19,7 +19,7 @@ export default function MainMenuLayout({ children }) {
     <>
       <div className={'flex'}>
         <DndLayer />
-        <div style={{ width: `${menuWidth}px` }} className={'overflow-x-hidden transition-all'}>
+        <div style={{ width: `${menuWidth}px` }} className={'overflow-x-visible transition-all'}>
           <MainMenu onClose={onCloseMenu} onOpen={onOpenMenu} />
         </div>
         <div>{children}</div>

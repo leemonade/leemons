@@ -1,6 +1,5 @@
 const menuService = require('../src/services/menu');
 const menuItemService = require('../src/services/menu-item');
-const prefixPN = require('../src/helpers/prefixPN');
 const { table } = require('../src/tables');
 const {
   validateReOrder,
@@ -17,7 +16,7 @@ async function getMenu(ctx) {
 
 async function addMenuItem(ctx) {
   ctx.request.body.menuKey = ctx.params.key;
-  ctx.request.body.pluginName = prefixPN('');
+  ctx.request.body.pluginName = leemons.plugin.prefixPN('');
   validateAddMenuItemFromUser(ctx.request.body);
 
   const menuItem = await menuItemService.addCustomForUser(ctx.state.user, ctx.request.body);

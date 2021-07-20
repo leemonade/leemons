@@ -1,5 +1,3 @@
-const prefixPN = require('./prefixPN');
-
 /**
  * ES:
  * Borra de la tabla permiso de items los registros
@@ -17,7 +15,7 @@ const prefixPN = require('./prefixPN');
 async function removeItemPermissions(key, type, { transacting } = {}) {
   await leemons.plugins.users.services.itemPermissions.remove(
     {
-      type: prefixPN(type),
+      type: leemons.plugin.prefixPN(type),
       item: key,
     },
     { transacting }

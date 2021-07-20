@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const transformManyMenuItemsToFrontEndMenu = require('../menu-item/transformManyMenuItemsToFrontEndMenu');
-const prefixPN = require('../../helpers/prefixPN');
 const { validateNotExistMenu } = require('../../validations/exists');
 const { table } = require('../../tables');
 
@@ -73,7 +72,7 @@ async function getIfHasPermission(menuKey, userAuth, { transacting } = {}) {
   // ES: Cogemos solo los elementos del menu a los que tenemos acceso
   // EN: We take only the menu items to which we have access.
   const query = {
-    type_$startssWith: prefixPN(`${menuKey}.menu-item`),
+    type_$startssWith: leemons.plugin.prefixPN(`${menuKey}.menu-item`),
   };
   if (!isSuperAdmin) query.$or = queryPermissions;
   const menuItemPermissions = await leemons.plugins.users.services.itemPermissions.find(query, {

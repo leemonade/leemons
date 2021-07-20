@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const prefixPN = require('../../helpers/prefixPN');
 const removeItemPermissions = require('../../helpers/removeItemPermissions');
 const removeAll = require('../menu-item/removeAll');
 const { validateNotExistMenu } = require('../../validations/exists');

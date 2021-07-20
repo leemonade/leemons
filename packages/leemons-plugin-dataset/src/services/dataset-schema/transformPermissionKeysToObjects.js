@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const prefixPN = require('../../helpers/prefixPN');
 
 function transformPermissionKeysToObjects(jsonSchema, keys, prefix) {
   const result = {};
@@ -11,7 +10,7 @@ function transformPermissionKeysToObjects(jsonSchema, keys, prefix) {
       result[profileId] = [];
     }
     result[profileId].push({
-      permissionName: prefixPN(`${prefix}.${saveKey}`),
+      permissionName: leemons.plugin.prefixPN(`${prefix}.${saveKey}`),
       actionNames: _.get(jsonSchema, key),
     });
   });

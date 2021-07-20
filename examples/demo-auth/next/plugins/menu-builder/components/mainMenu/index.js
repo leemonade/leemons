@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import SimpleBar from 'simplebar-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
@@ -10,6 +9,7 @@ import MainMenuItem from './mainMenuItem';
 import MainMenuSubmenu from './mainMenuSubmenu';
 import { useSession } from '@users/session';
 import hooks from 'leemons-hooks';
+import SimpleBar from 'simplebar-react';
 
 const menuWidth = '52px';
 
@@ -78,7 +78,224 @@ export default function MainMenu({ onClose, onOpen }) {
             <img className="w-6 mb-9 mx-auto" src="/menu-builder/logo.svg" alt="" />
 
             {/* Menu items */}
+
             <SimpleBar className="flex-grow h-px">
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
+              {menu.map((item) => (
+                <MainMenuItem
+                  onClick={() => onMenuItemClick(item)}
+                  key={item.id}
+                  active={activeMenu.parent?.id === item.id}
+                  item={item}
+                  menuWidth={menuWidth}
+                />
+              ))}
               {menu.map((item) => (
                 <MainMenuItem
                   onClick={() => onMenuItemClick(item)}

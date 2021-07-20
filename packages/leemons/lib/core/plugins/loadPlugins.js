@@ -76,6 +76,7 @@ async function loadPluginsModels(pluginObjs, leemons) {
 
 function transformService(_pluginObj, fromPlugin) {
   const pluginObj = _.cloneDeep(_pluginObj);
+  pluginObj.prefixPN = (str) => `plugins.${fromPlugin.name}.${str}`;
   _.forEach(_.keys(pluginObj.services), (serviceKey) => {
     _.forEach(_.keys(pluginObj.services[serviceKey]), (serviceFunctionKey) => {
       if (_.isFunction(pluginObj.services[serviceKey][serviceFunctionKey])) {

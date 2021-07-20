@@ -1,11 +1,6 @@
 const _ = require('lodash');
 const getSchema = require('../dataset-schema/getSchema');
-const prefixPN = require('../../helpers/prefixPN');
-const transformPermissionKeysToObjects = require('../dataset-schema/transformPermissionKeysToObjects');
 const getKeysCanAction = require('./getKeysCanAction');
-const {
-  getJsonSchemaProfilePermissionsKeys,
-} = require('../dataset-schema/transformJsonOrUiSchema');
 const { validateExistValues } = require('../../validations/exists');
 const { validatePluginName } = require('../../validations/exists');
 const { table } = require('../tables');

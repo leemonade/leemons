@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
 const { translations } = require('../../translations');
-const prefixPN = require('../../helpers/prefixPN');
 const addItemPermissions = require('../../helpers/addItemPermissions');
 const removeItemPermissions = require('../../helpers/removeItemPermissions');
 const { validateNotExistMenuItem } = require('../../validations/exists');
@@ -78,9 +77,12 @@ async function update(
       // ES: Si la clave o el menu quieren ser actualizados tenemos que borrar de la tabla de traducciones y de permisos los registros, ya que dejan de existir
       if ((data.key && data.key !== key) || (data.menuKey && data.menuKey !== menuKey)) {
         if (locales) {
-          promises.push(locales.contents.deleteKeyStartsWith(prefixPN(`${menuKey}.${key}.`)), {
-            transacting,
-          });
+          promises.push(
+            locales.contents.deleteKeyStartsWith(leemons.plugin.prefixPN(`${menuKey}.${key}.`)),
+            {
+              transacting,
+            }
+          );
         }
         promises.push(removeItemPermissions(key, `${menuKey}.menu-item`, { transacting }));
       }
@@ -89,16 +91,20 @@ async function update(
       if (locales) {
         if (label) {
           promises.push(
-            locales.contents.setKey(prefixPN(`${data.menuKey}.${data.key}.label`), label, {
-              transacting,
-            })
+            locales.contents.setKey(
+              leemons.plugin.prefixPN(`${data.menuKey}.${data.key}.label`),
+              label,
+              {
+                transacting,
+              }
+            )
           );
         }
 
         if (description) {
           promises.push(
             locales.contents.setKey(
-              prefixPN(`${data.menuKey}.${data.key}.description`),
+              leemons.plugin.prefixPN(`${data.menuKey}.${data.key}.description`),
               description,
               {
                 transacting,

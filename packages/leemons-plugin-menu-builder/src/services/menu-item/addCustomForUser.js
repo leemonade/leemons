@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
 const { translations } = require('../../translations');
-const prefixPN = require('../../helpers/prefixPN');
 const addItemPermissions = require('../../helpers/addItemPermissions');
 const {
   validateExistMenuItem,
@@ -28,7 +27,7 @@ async function addCustomForUser(
   const locales = translations();
 
   // eslint-disable-next-line no-param-reassign
-  data.key = prefixPN(`user:${userAuth.id}.${data.key}`);
+  data.key = leemons.plugin.prefixPN(`user:${userAuth.id}.${data.key}`);
 
   return withTransaction(
     async (transacting) => {
@@ -49,7 +48,7 @@ async function addCustomForUser(
         if (label) {
           promises.push(
             locales.contents.add(
-              prefixPN(`${data.menuKey}.${data.key}.label`),
+              leemons.plugin.prefixPN(`${data.menuKey}.${data.key}.label`),
               userAuth.language,
               label,
               {
@@ -62,7 +61,7 @@ async function addCustomForUser(
         if (description) {
           promises.push(
             locales.contents.add(
-              prefixPN(`${data.menuKey}.${data.key}.description`),
+              leemons.plugin.prefixPN(`${data.menuKey}.${data.key}.description`),
               userAuth.language,
               description,
               {

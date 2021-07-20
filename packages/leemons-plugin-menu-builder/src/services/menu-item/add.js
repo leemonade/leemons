@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
 const { translations } = require('../../translations');
-const prefixPN = require('../../helpers/prefixPN');
 const addItemPermissions = require('../../helpers/addItemPermissions');
 const { validateNotExistMenuItem } = require('../../validations/exists');
 const { validateKeyPrefix } = require('../../validations/exists');
@@ -120,16 +119,20 @@ async function add(
       // Create LABEL & DESCRIPTIONS in locales
       if (locales) {
         promises.push(
-          locales.contents.addManyByKey(prefixPN(`${menuKey}.${key}.label`), label, {
+          locales.contents.addManyByKey(leemons.plugin.prefixPN(`${menuKey}.${key}.label`), label, {
             transacting,
           })
         );
 
         if (description) {
           promises.push(
-            locales.contents.addManyByKey(prefixPN(`${menuKey}.${key}.description`), description, {
-              transacting,
-            })
+            locales.contents.addManyByKey(
+              leemons.plugin.prefixPN(`${menuKey}.${key}.description`),
+              description,
+              {
+                transacting,
+              }
+            )
           );
         }
       }

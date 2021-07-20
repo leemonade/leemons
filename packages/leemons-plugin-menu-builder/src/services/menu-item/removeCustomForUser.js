@@ -1,6 +1,5 @@
 const { table } = require('../../tables');
 const { translations } = require('../../translations');
-const prefixPN = require('../../helpers/prefixPN');
 const removeItemPermissions = require('../../helpers/removeItemPermissions');
 const { validateNotExistMenu, validateNotExistMenuItem } = require('../../validations/exists');
 
@@ -19,7 +18,7 @@ const { withTransaction } = global.utils;
 async function removeCustomForUser(userAuth, menuKey, key, { transacting: _transacting } = {}) {
   const locales = translations();
 
-  if (!key.startsWith(prefixPN(`user:${userAuth.id}.`))) {
+  if (!key.startsWith(leemons.plugin.prefixPN(`user:${userAuth.id}.`))) {
     throw new Error('You can only delete your own custom items');
   }
 
@@ -37,7 +36,9 @@ async function removeCustomForUser(userAuth, menuKey, key, { transacting: _trans
       // Remove LABEL & DESCRIPTIONS in locales
       if (locales) {
         promises.push(
-          locales.contents.deleteKeyStartsWith(prefixPN(`${menuKey}.${key}`), { transacting })
+          locales.contents.deleteKeyStartsWith(leemons.plugin.prefixPN(`${menuKey}.${key}`), {
+            transacting,
+          })
         );
       }
 

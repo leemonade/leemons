@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const prefixPN = require('./prefixPN');
 
 /**
  * ES:
@@ -25,7 +24,7 @@ async function addItemPermissions(
 ) {
   const itemPermissions = _.map(permissions, (permission) => ({
     ...permission,
-    type: prefixPN(type),
+    type: leemons.plugin.prefixPN(type),
     item: key,
   }));
   await leemons.plugins.users.services.itemPermissions.addMany(itemPermissions, {

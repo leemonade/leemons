@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const prefixPN = require('../../helpers/prefixPN');
 const { table } = require('../../tables');
 
 /**
@@ -27,7 +26,7 @@ async function reOrderCustomUserItems(
       menuKey,
       parentKey,
       id_$in: ids,
-      key_$startssWith: prefixPN(`user:${userAuth.id}.`),
+      key_$startssWith: leemons.plugin.prefixPN(`user:${userAuth.id}.`),
     },
     { transacting: _transacting }
   );

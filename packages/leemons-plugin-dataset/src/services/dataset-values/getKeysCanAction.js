@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const prefixPN = require('../../helpers/prefixPN');
 
 /** *
  *  ES:
@@ -28,7 +27,7 @@ async function getKeysCanAction(
   const actions = _.isArray(_actions) ? _actions : [_actions];
   const userPermissions = await leemons.plugins.users.services.users.getUserPermissions(userAuth, {
     query: {
-      permissionName_$startssWith: prefixPN(`${locationName}.${pluginName}`),
+      permissionName_$startssWith: leemons.plugin.prefixPN(`${locationName}.${pluginName}`),
     },
     transacting,
   });

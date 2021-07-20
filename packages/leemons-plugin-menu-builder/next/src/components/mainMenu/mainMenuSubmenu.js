@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDrop } from 'react-dnd';
 import useTranslate from '@multilanguage/useTranslate';
+import tLoader from '@multilanguage/helpers/tLoader';
 import MainMenuCloseSubmenuBtn from './mainMenuCloseSubmenuBtn';
 import MainMenuSubmenuItem from './mainMenuSubmenuItem';
 
@@ -22,7 +23,6 @@ import {
 import { registerDndLayer } from '../dnd/dndLayer';
 import MainMenuInfo from './mainMenuInfo';
 import prefixPN from '../../helpers/prefixPN';
-import tLoader from '../../helpers/tLoader';
 
 export default function MainMenuSubmenu({ item, onClose, activeItem }) {
   const [editingItem, setEditingItem] = useState(null);
