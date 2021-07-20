@@ -10,6 +10,7 @@ import Collapse from './Collapse';
 import Divider from './Divider';
 import FormControl from './FormControl';
 import Hero from './Hero';
+import HeroBg from './HeroBg';
 import Input from './Input';
 import Label from './Label';
 import Menu from './Menu';
@@ -37,6 +38,7 @@ export {
   Divider,
   FormControl,
   Hero,
+  HeroBg,
   Input,
   Label,
   Menu,

@@ -7,10 +7,15 @@ export default (req, res) => {
   const pagesDir = path.join(__dirname, '../../../../pages');
   let result = glob.sync(`${pagesDir}/**/*.js`);
   result = _.map(result, (item) => item.replace(`${pagesDir}/`, '').replace('.js', ''));
-  result = _.filter(result, (item) => item.startsWith('components') || item.startsWith('demos'));
+  result = _.filter(
+    result,
+    (item) => item.startsWith('components') || item.startsWith('demos') || item.startsWith('blocks')
+  );
 
   result = _.map(result, (url) => {
-    let label = _.capitalize(url.replace('components/', '').replace('demos/', ''));
+    let label = _.capitalize(
+      url.replace('components/', '').replace('demos/', '').replace('blocks/', '')
+    );
 
     if (label.indexOf('/') > 0) {
       label = _.map(label.split('/'), (item) => _.capitalize(item)).join('/');
@@ -28,6 +33,7 @@ export default (req, res) => {
 
   const components = _.filter(result, (item) => item.url.startsWith('/components'));
   const demos = _.filter(result, (item) => item.url.startsWith('/demos'));
+  const blocks = _.filter(result, (item) => item.url.startsWith('/blocks'));
 
-  res.status(200).json({ components, demos });
+  res.status(200).json({ components, demos, blocks });
 };
