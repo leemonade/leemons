@@ -5,12 +5,12 @@ import LeemonsImage from '../leemonsImage';
 export default function MainMenuItem({ item, menuWidth, active, onClick }) {
   return (
     <>
-      <Tooltip color="primary" position="right" content="Im large" open={true}>
+      <Tooltip color="primary" position="right" size="lg" content={item.label}>
         <Button
           onClick={onClick}
           style={{ height: menuWidth }}
           color="secondary"
-          className={`w-full text-center cursor-pointer hover:bg-primary-focus ${
+          className={`w-full text-center cursor-pointer hover:bg-primary-focus sharp border-0 ${
             active ? 'bg-secondary-focus' : ''
           } `}
         >

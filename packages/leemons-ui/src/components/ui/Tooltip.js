@@ -38,22 +38,21 @@ function Tooltip({
     onBlur: () => setShow(false),
   });
 
-  const tooltip = ReactDOM.createPortal(
-    <>
-      {visible && (
-        <div
-          ref={setTooltipRef}
-          {...getTooltipProps({
-            className: `tooltip-container ${colorClass} ${sizeClass} ${className || ''}`,
-          })}
-        >
-          <div {...getArrowProps({ className: 'tooltip-arrow' })} />
-          {content}
-        </div>
-      )}
-    </>,
-    document.body
-  );
+  const tooltip =
+    typeof document !== 'undefined' && visible
+      ? ReactDOM.createPortal(
+          <div
+            ref={setTooltipRef}
+            {...getTooltipProps({
+              className: `tooltip-container ${colorClass} ${sizeClass} ${className || ''}`,
+            })}
+          >
+            <div {...getArrowProps({ className: 'tooltip-arrow' })} />
+            {content}
+          </div>,
+          document.body
+        )
+      : null;
 
   return (
     <>
