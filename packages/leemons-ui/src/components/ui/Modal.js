@@ -55,7 +55,7 @@ function Modal({ isModalVisible, hide, options, children }) {
         {cancelLabel && (
           <Button
             color="ghost"
-            className="text-black"
+            className="text-black btn-sm"
             onClick={() => {
               if (onCancel) onCancel();
               hide();
@@ -67,6 +67,7 @@ function Modal({ isModalVisible, hide, options, children }) {
         {actionLabel && (
           <Button
             color="primary"
+            className="btn-sm"
             onClick={() => {
               if (onAction) onAction();
               hide();

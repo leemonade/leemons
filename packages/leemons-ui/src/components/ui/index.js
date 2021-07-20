@@ -20,6 +20,7 @@ import Radio from './Radio';
 import Select from './Select';
 import Textarea from './Textarea';
 import Toggle from './Toggle';
+import Tooltip from './Tooltip';
 
 import Modal, { useModal } from './Modal';
 
@@ -47,5 +48,6 @@ export {
   Select,
   Textarea,
   Toggle,
+  Tooltip,
   useModal,
 };
