@@ -162,7 +162,6 @@ async function loadExternalFiles(leemons) {
     })
   );
 
-  // TODO: Compute dependencies and dependants
   /**
    * Get for each plugin:
    *  dependencies: The plugins it directly depends on
@@ -242,11 +241,10 @@ async function loadExternalFiles(leemons) {
       };
 
       const load = () => customLoad(plugins, plugin, env, vmFilter);
-
       const install = () => loadInstall(plugins, plugin, env, vmFilter);
       const init = () => loadInit(plugins, plugin, env, vmFilter);
       const services = () => loadServices(plugins, plugin, env, vmFilter);
-      const routes = () => loadRoutes(plugin, plugin, env, vmFilter);
+      const routes = () => loadRoutes(plugins, plugin, env, vmFilter);
       const controllers = () => loadControllers(plugins, plugin, env, vmFilter);
 
       return {
@@ -267,31 +265,71 @@ async function loadExternalFiles(leemons) {
     const { plugin } = pluginsFunctions[i];
     const { scripts } = pluginsFunctions[i];
 
+    /**
+     * Keep track on everything a plugin should load, so in case a custom loader
+     * exists, everything is loaded correctly
+     */
+    const loadStatus = {
+      installed: false,
+      services: false,
+      init: false,
+      controllers: false,
+      routes: false,
+    };
+
+    leemons.events.once(`plugins.${plugin.name}:pluginDidInstall`, () => {
+      loadStatus.installed = true;
+    });
+    leemons.events.once(`plugins.${plugin.name}:pluginDidLoadedServices`, () => {
+      loadStatus.services = true;
+    });
+    leemons.events.once(`plugins.${plugin.name}:pluginDidInit`, () => {
+      loadStatus.init = true;
+    });
+    leemons.events.once(`plugins.${plugin.name}:pluginDidLoadedControllers`, () => {
+      loadStatus.controllers = true;
+    });
+    leemons.events.once(`plugins.${plugin.name}:pluginDidLoadedRoutes`, () => {
+      loadStatus.routes = true;
+    });
+
     const load = await scripts.load();
     if (load.exists) {
-      console.log('Custom load exists on ', plugin.name);
+      await load.func({ scripts: _.omit(scripts, ['load']) });
     }
 
     /**
      * Run the installation script for the uninstalled plugins
      */
-    if (!plugin.status.isInstalled && plugin.status.code === PLUGIN_STATUS.enabled.code) {
+    if (
+      !loadStatus.installed &&
+      !plugin.status.isInstalled &&
+      plugin.status.code === PLUGIN_STATUS.enabled.code
+    ) {
       await scripts.install();
     }
 
     /**
      * Load the services; some functions the plugin exposes
      */
-    await scripts.services();
+    if (!loadStatus.services) {
+      await scripts.services();
+    }
     /**
      * Run the initialization script once the services are loaded
      */
-    await scripts.init();
+    if (!loadStatus.init) {
+      await scripts.init();
+    }
     /**
      * Load the controllers; functions exposed to the server (endpoints)
      */
-    await scripts.controllers();
-    await scripts.routes();
+    if (!loadStatus.controllers) {
+      await scripts.controllers();
+    }
+    if (!loadStatus.routes) {
+      await scripts.routes();
+    }
   }
 
   // TODO: Load frontend (start nextjs with child_process instead of next)

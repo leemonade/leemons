@@ -8,14 +8,14 @@ const protect = require('./protect');
 function filterLeemons(filter) {
   let filtered = {
     leemons: _.fromPairs(
-      _.entries(_.pick(leemons, ['log', 'config', 'query' /* , 'plugins', 'plugin' */])).map(
-        ([name, property]) => {
-          if (_.isFunction(property)) {
-            return [name, property.bind(leemons)];
-          }
-          return [name, property];
+      _.entries(
+        _.pick(leemons, ['log', 'query', 'events' /* 'config', 'plugins', 'plugin' */])
+      ).map(([name, property]) => {
+        if (_.isFunction(property)) {
+          return [name, property.bind(leemons)];
         }
-      )
+        return [name, property];
+      })
     ),
     utils,
   };

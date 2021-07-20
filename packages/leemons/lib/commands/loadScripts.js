@@ -153,10 +153,7 @@ async function customLoad(plugins, plugin, env, filter) {
   if (_.isFunction(func)) {
     return {
       exists: true,
-      // TODO: Emit events and call with params
-      func: () => {
-        func();
-      },
+      func,
     };
   }
 
