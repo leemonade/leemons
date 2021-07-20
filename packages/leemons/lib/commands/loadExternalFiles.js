@@ -45,11 +45,17 @@ function transformServices(services, calledFrom) {
   return _services;
 }
 
+/**
+ * Loads all the external files of a type (plugins, providers, etc)
+ */
 async function loadExternalFiles(leemons) {
+  // TODO: Change from plugins to the target
   // Get plugins info from DB and installed plugins (local and external)
   const pluginsInfo = await getPluginsInfoFromDB(leemons);
   const localPlugins = await getLocalPlugins(leemons);
   const externalPlugins = await getExternalPlugins(leemons);
+
+  // Save the environments in a Map
   const pluginsEnv = new Map();
 
   // Load configuration for each plugin
@@ -91,6 +97,7 @@ async function loadExternalFiles(leemons) {
     );
 
     // Missing plugin
+    // TODO: Log whenever a plugin is missing for telemetry and analytics
     if (!equivalentPlugin) {
       plugins.push({
         name,
@@ -106,6 +113,9 @@ async function loadExternalFiles(leemons) {
       // Existing plugin
     } else {
       equivalentPlugin.id = id;
+      // Resolve the plugin version from plugin' files (if defined), then from DB
+      // and finally the default version
+      // TODO: Add version missmatch behaviour (the DB has different version than plugin' files)
       equivalentPlugin.version = equivalentPlugin.version || version || '0.0.1';
       equivalentPlugin.status = {
         ...getStatus(pluginInfo, PLUGIN_STATUS.enabled),
@@ -114,14 +124,14 @@ async function loadExternalFiles(leemons) {
     }
   });
 
-  // TODO: If a plugin is marked as uninstalled will fail
+  // TODO: If a plugin is marked as uninstalled will fail (I don't think it happend any more, as models.plugins.getAll not does not fetch the uninstalled ones)
   // Register new plugins to DB and merge data from DB with config
   plugins = await Promise.all(
     plugins.map(async (plugin, i) => {
       /*
        * Disable duplicated plugins, the duplicated plugins are those which
        * share a name and is not registered in the DB, this last conditions
-       * is for ensuring the less posible plugin disabling
+       * is for ensuring the less posible plugins are disabled
        */
       if (
         plugins.findIndex((_plugin, j) => j !== i && plugin.name === _plugin.name) > -1 &&
@@ -130,8 +140,9 @@ async function loadExternalFiles(leemons) {
         return { ...plugin, status: PLUGIN_STATUS.duplicated };
       }
 
-      // TODO: Can crash
+      // TODO: Can crash (When the plugin can't be added to the DB)
       // If the plugin does not have an id, is not registered in the DB yet
+      // so we need to register it
       if (plugin.id === undefined) {
         const {
           name,
@@ -162,6 +173,7 @@ async function loadExternalFiles(leemons) {
     })
   );
 
+  // TODO: Add fullDependants, so the Plugin Loading can be optimized async-loading those plugins not depending on any other
   /**
    * Get for each plugin:
    *  dependencies: The plugins it directly depends on
@@ -169,9 +181,11 @@ async function loadExternalFiles(leemons) {
    *  dependants: All the plugins that depends on it (if it fails, the dependants must be disabled)
    */
   plugins = computeDependencies(plugins);
+  // Sort by dependencies so the plugins finds all the dependant services loaded
   plugins = sortByDeps(plugins);
 
-  // Mark each plugin as missingDeps
+  // Check which plugins doesn't have its deps satisfied and mark them as
+  // missingDeps
   const unsatisfiedPlugins = checkMissingDependencies(plugins);
   plugins
     .filter((plugin) => unsatisfiedPlugins.includes(plugin.name))
@@ -179,7 +193,7 @@ async function loadExternalFiles(leemons) {
       _.set(plugin, 'status', { ...plugin.status, ...PLUGIN_STATUS.missingDeps });
     });
 
-  // TODO: LoadPluginsModels
+  // TODO: Move plugin model loading to Plugin Loading so a custom load can decide when to load the models
 
   plugins = await Promise.all(
     plugins.map(async (plugin) => {
@@ -196,6 +210,7 @@ async function loadExternalFiles(leemons) {
     })
   );
 
+  // Save the plugin on leemons so the model loader finds them
   _.set(leemons, 'plugins', _.fromPairs(plugins.map((plugin) => [plugin.name, plugin])));
   const pluginsModels = _.merge(
     ...plugins
@@ -205,15 +220,16 @@ async function loadExternalFiles(leemons) {
 
   // Load all the plugins models
   await leemons.db.loadModels(pluginsModels);
-  /**
-   * Load the models described by each plugin, only if it is enabled
-   */
 
+  // TODO: Add model loading function, remove it from the previous lines
+  // Get each loading function for the plugin
   const pluginsFunctions = plugins
     .filter((plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code)
     .map((plugin) => {
       const env = pluginsEnv.get(plugin.dir.app);
 
+      // Expose some objects to the plugin (leemons.plugin, leemons.getplugin,
+      // leemons.query)
       const vmFilter = (filter) => {
         _.set(filter, 'leemons.plugin', plugin);
 
@@ -260,6 +276,7 @@ async function loadExternalFiles(leemons) {
       };
     });
 
+  // Load each plugin
   const pluginsLength = pluginsFunctions.length;
   for (let i = 0; i < pluginsLength; i++) {
     const { plugin } = pluginsFunctions[i];
