@@ -30,11 +30,19 @@ const PLUGIN_STATUS = {
   },
   servicesFailed: {
     code: 'broken',
-    reason: 'the plugin services failes',
+    reason: 'the plugin services failed',
+  },
+  controllersFailed: {
+    code: 'broken',
+    reason: 'the plugin controllers failed',
   },
   initializationFailed: {
     code: 'broken',
     reason: 'the plugin initialization failed',
+  },
+  routesFailed: {
+    code: 'broken',
+    reason: 'the plugin routes loading failed',
   },
 };
 

@@ -89,7 +89,7 @@ class Leemons {
     };
 
     this.events.on('all', ({ event, target }) => {
-      console.log('Event', event, 'emitted over', target);
+      console.log(chalk`{green ${target}} emitted {magenta ${event}}`);
     });
   }
 

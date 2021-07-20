@@ -3,7 +3,7 @@ const path = require('path');
 const _ = require('lodash');
 
 const { loadConfiguration } = require('../core/config/loadConfig');
-const { loadFiles, loadFile } = require('../core/config/loadFiles');
+const { loadFiles } = require('../core/config/loadFiles');
 const { formatModels } = require('../core/model/loadModel');
 const {
   getPluginsInfoFromDB,
@@ -12,6 +12,14 @@ const {
 } = require('../core/plugins/getPlugins');
 const { computeDependencies, checkMissingDependencies, sortByDeps } = require('./dependencies');
 const { getStatus, PLUGIN_STATUS } = require('./pluginsStatus');
+const {
+  loadServices,
+  loadInstall,
+  loadInit,
+  loadRoutes,
+  loadControllers,
+  customLoad,
+} = require('./loadScripts');
 
 /**
  * Get all the services which are a function and wrap them, so this.calledFrom is added to the call
@@ -35,40 +43,6 @@ function transformServices(services, calledFrom) {
     }
   });
   return _services;
-}
-
-/**
- * Disables the given plugin and also it's dependants
- */
-function disablePlugin(plugins, plugin, reason = PLUGIN_STATUS.initializationFailed) {
-  leemons.events.emit('pluginWillDisable', `plugins.${plugin.name}`, reason);
-  _.set(plugin, 'status', { ...plugin.status, ...reason });
-
-  const { dependants } = plugin.dependencies;
-
-  plugins
-    .filter((_plugin) => dependants.includes(_plugin.name))
-    .forEach((_plugin) => disablePlugin(plugins, _plugin, PLUGIN_STATUS.disabledDeps));
-
-  leemons.events.emit('pluginDidDisable', `plugins.${plugin.name}`, reason);
-}
-
-async function loadServices(plugins, plugin, env, filter) {
-  leemons.events.emit('pluginWillLoadServices', `plugins.${plugin.name}`);
-  try {
-    const services = await loadFiles(path.join(plugin.dir.app, plugin.dir.services), {
-      execFunction: false,
-      env,
-      filter,
-      allowedPath: plugin.dir.app,
-    });
-
-    leemons.events.emit('pluginDidLoadServices', `plugins.${plugin.name}`);
-    return services;
-  } catch (e) {
-    disablePlugin(plugins, plugin, PLUGIN_STATUS.servicesFailed);
-    return null;
-  }
 }
 
 async function loadExternalFiles(leemons) {
@@ -243,7 +217,6 @@ async function loadExternalFiles(leemons) {
 
       const vmFilter = (filter) => {
         _.set(filter, 'leemons.plugin', plugin);
-        // TODO: Expose the other plugins
 
         _.set(filter, 'leemons.getPlugin', (pluginName) => {
           let desiredPlugin = plugins.find(
@@ -268,49 +241,19 @@ async function loadExternalFiles(leemons) {
         return filter;
       };
 
-      // TODO: Move to loader functions and add events
-      const load = () =>
-        loadFile(path.join(plugin.dir.app, plugin.dir.load), {
-          env,
-          filter: vmFilter,
-          allowedPath: plugin.dir.app,
-        });
+      const load = () => customLoad(plugins, plugin, env, vmFilter);
 
-      const installation = () =>
-        loadFile(path.join(plugin.dir.app, plugin.dir.install), {
-          env,
-          allowedPath: plugin.dir.app,
-        });
-
-      const init = () =>
-        loadFile(path.join(plugin.dir.app, plugin.dir.init), {
-          env,
-          allowedPath: plugin.dir.app,
-          filter: vmFilter,
-        });
-
+      const install = () => loadInstall(plugins, plugin, env, vmFilter);
+      const init = () => loadInit(plugins, plugin, env, vmFilter);
       const services = () => loadServices(plugins, plugin, env, vmFilter);
-
-      const routesDir = path.join(plugin.dir.app, plugin.dir.controllers, 'routes');
-      // Try to load routes.js, if not exists, load routes.json, if none exists, set the routes to empty array
-      const routes = async () =>
-        (await loadFile(`${routesDir}.js`, { env })) ||
-        (await loadFile(`${routesDir}.json`, { env })) ||
-        [];
-
-      const controllers = () =>
-        loadFiles(path.join(plugin.dir.app, plugin.dir.controllers), {
-          env,
-          // Do not load the routes again
-          exclude: [`${routesDir}.js`, `${routesDir}.json`],
-          filter: vmFilter,
-        });
+      const routes = () => loadRoutes(plugin, plugin, env, vmFilter);
+      const controllers = () => loadControllers(plugins, plugin, env, vmFilter);
 
       return {
         plugin,
         scripts: {
           load,
-          installation,
+          install,
           init,
           services,
           routes,
@@ -324,56 +267,32 @@ async function loadExternalFiles(leemons) {
     const { plugin } = pluginsFunctions[i];
     const { scripts } = pluginsFunctions[i];
 
-    // TODO: Only load those plugin which are enabled (check per scripts)
-
-    // Install uninstalled plugins
-    if (!plugin.status.isInstalled && plugin.status.code === PLUGIN_STATUS.enabled.code) {
-      try {
-        await scripts.installation();
-        // Set as installed even though the script does not exists
-        plugin.status.isInstalled = true;
-        await leemons.models.plugins.installed(plugin.name);
-      } catch (e) {
-        // The installation failed, disable plugin
-        disablePlugin(plugins, plugin, PLUGIN_STATUS.installationFailed);
-      }
+    const load = await scripts.load();
+    if (load.exists) {
+      console.log('Custom load exists on ', plugin.name);
     }
 
-    await scripts.init();
+    /**
+     * Run the installation script for the uninstalled plugins
+     */
+    if (!plugin.status.isInstalled && plugin.status.code === PLUGIN_STATUS.enabled.code) {
+      await scripts.install();
+    }
 
-    // TODO: Expose leemons
-    plugin.services = await scripts.services();
+    /**
+     * Load the services; some functions the plugin exposes
+     */
+    await scripts.services();
+    /**
+     * Run the initialization script once the services are loaded
+     */
     await scripts.init();
-    plugin.controllers = await scripts.controllers();
-    plugin.routes = await scripts.routes();
+    /**
+     * Load the controllers; functions exposed to the server (endpoints)
+     */
+    await scripts.controllers();
+    await scripts.routes();
   }
-  // // TODO:  Install plugins
-  // const nonInstalledPlugins = plugins.filter(
-  //   (plugin) => !plugin.status.isInstalled && plugin.status.code === PLUGIN_STATUS.enabled.code
-  // );
-
-  // await installPlugins(nonInstalledPlugins);
-
-  /**
-   *        run the installation script for the uninstalled plugins
-   */
-  // TODO: Load backend
-  // TODO:  Initialize plugins (pre)?
-  /**
-   *        Run a preinitialization where each plugin can set up stuff needed by services and controllers
-   */
-  // TODO:  Load services
-  /**
-   *        Load the services; some functions the plugin exposes
-   */
-  // TODO:  Load controllers
-  /**
-   *        Load the controllers; functions exposed to the server (endpoints)
-   */
-  // TODO:  Initialize plugins (post)?
-  /**
-   *        Run a posInitialization where each plugin can set up stuff needed by other plugins and/or itself. Also, that stuff that relies on itself' services/controllers
-   */
 
   // TODO: Load frontend (start nextjs with child_process instead of next)
   /**
