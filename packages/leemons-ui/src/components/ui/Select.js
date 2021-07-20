@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function Select({ children, className, outlined, color, ...props }) {
+const Select = React.forwardRef(({ children, className, outlined, color, ...props }, ref) => {
   const colorClass = color ? `select-${color}` : '';
   const outlinedClass = outlined ? 'select-bordered' : '';
   const classes = className?.split(' ') || [];
@@ -10,6 +10,7 @@ function Select({ children, className, outlined, color, ...props }) {
   return (
     <div className={`select-wrapper ${wrapperClasses.join(' ')}`}>
       <select
+        ref={ref}
         className={['select', colorClass, outlinedClass, selectClasses.join(' ')].join(' ')}
         {...props}
       >
@@ -17,7 +18,9 @@ function Select({ children, className, outlined, color, ...props }) {
       </select>
     </div>
   );
-}
+});
+
+Select.displayName = 'Select';
 
 Select.propTypes = {
   children: PropTypes.any,

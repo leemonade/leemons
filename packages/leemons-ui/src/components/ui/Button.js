@@ -1,51 +1,61 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function Button({
-  children,
-  className,
-  color,
-  rounded,
-  outlined,
-  wide,
-  loading,
-  square,
-  circle,
-  link,
-  ...props
-}) {
-  const classes = className || '';
-  const roundClass = rounded ? 'rounded-full' : '';
-  const colorClass = color ? `btn-${color}` : '';
-  const outlinedClass = outlined ? 'btn-outline' : '';
-  const wideClass = wide ? 'btn-wide' : '';
-  const loadingClass = loading ? 'loading' : '';
-  const squareClass = square ? 'btn-square' : '';
-  const circleClass = circle ? 'btn-circle' : '';
-  const linkClass = link ? 'btn-link' : '';
-  return (
-    <button
-      className={[
-        'btn',
-        outlinedClass,
-        colorClass,
-        wideClass,
-        roundClass,
-        loadingClass,
-        squareClass,
-        circleClass,
-        linkClass,
-        classes,
-      ].join(' ')}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-}
+const Button = React.forwardRef(
+  (
+    {
+      children,
+      className,
+      color,
+      rounded,
+      outlined,
+      wide,
+      loading,
+      square,
+      circle,
+      link,
+      ...props
+    },
+    ref
+  ) => {
+    const classes = className || '';
+    const roundClass = rounded ? 'rounded-full' : '';
+    const colorClass = color ? `btn-${color}` : '';
+    const outlinedClass = outlined ? 'btn-outline' : '';
+    const wideClass = wide ? 'btn-wide' : '';
+    const loadingClass = loading ? 'loading' : '';
+    const squareClass = square ? 'btn-square' : '';
+    const circleClass = circle ? 'btn-circle' : '';
+    const linkClass = link ? 'btn-link' : '';
+
+    return (
+      <button
+        ref={ref}
+        className={[
+          'btn',
+          outlinedClass,
+          colorClass,
+          wideClass,
+          roundClass,
+          loadingClass,
+          squareClass,
+          circleClass,
+          linkClass,
+          classes,
+        ].join(' ')}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
+);
+
+Button.displayName = 'Button';
 
 Button.propTypes = {
   children: PropTypes.any,
+  reference: PropTypes.any,
   wide: PropTypes.bool,
   loading: PropTypes.bool,
   square: PropTypes.bool,

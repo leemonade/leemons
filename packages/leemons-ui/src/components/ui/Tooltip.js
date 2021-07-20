@@ -1,22 +1,86 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { usePopperTooltip } from 'react-popper-tooltip';
 
-function Tooltip({ children, className, color, content, position }) {
-  const positionClass = position ? `tooltip-${position}` : '';
+function Tooltip({
+  children,
+  className,
+  color,
+  content,
+  placement,
+  followCursor,
+  open,
+  options,
+  size,
+}) {
+  const [show, setShow] = useState(open);
   const colorClass = color ? `tooltip-${color}` : '';
-  const classes = className || '';
+  const sizeClass = size ? `tooltip-${size}` : '';
+  const {
+    getArrowProps,
+    getTooltipProps,
+    setTooltipRef,
+    setTriggerRef,
+    visible,
+  } = usePopperTooltip({
+    placement,
+    visible: show,
+    followCursor,
+    ...options,
+  });
+
+  const childrenWrapped = React.cloneElement(children, {
+    ref: setTriggerRef,
+    onMouseEnter: () => setShow(true),
+    onMouseLeave: () => setShow(false),
+    onFocus: () => setShow(true),
+    onBlur: () => setShow(false),
+  });
+
   return (
-    <div data-tip={content} className={`tooltip ${colorClass} ${positionClass} ${classes}`}>
-      {children}
-    </div>
+    <>
+      {childrenWrapped}
+      {visible && (
+        <div
+          ref={setTooltipRef}
+          {...getTooltipProps({
+            className: `tooltip-container ${colorClass} ${sizeClass} ${className || ''}`,
+          })}
+        >
+          <div {...getArrowProps({ className: 'tooltip-arrow' })} />
+          {content}
+        </div>
+      )}
+    </>
   );
 }
+Tooltip.defaultProps = { placement: 'auto', followCursor: false, open: false, options: {} };
 
 Tooltip.propTypes = {
   children: PropTypes.any,
   className: PropTypes.string,
   content: PropTypes.any,
-  position: PropTypes.oneOf(['left', 'right', 'bottom']),
+  followCursor: PropTypes.bool,
+  open: PropTypes.bool,
+  size: PropTypes.string,
+  placement: PropTypes.oneOf([
+    'auto',
+    'auto-start',
+    'auto-end',
+    'top',
+    'top-start',
+    'top-end',
+    'bottom',
+    'bottom-start',
+    'bottom-end',
+    'right',
+    'right-start',
+    'right-end',
+    'left',
+    'left-start',
+    'left-end',
+  ]),
+  options: PropTypes.object,
   color: PropTypes.oneOf([
     'primary',
     'secondary',
