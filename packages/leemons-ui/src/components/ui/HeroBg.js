@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 
-function HeroBg({ className, color, type }) {
+function HeroBg({ className, color, type, animate, decay, speed }) {
   const colorClass = color ? `herobg-${color}` : '';
   const classes = className || '';
   const [currentType, setCurrentType] = useState(null);
@@ -207,7 +207,7 @@ function HeroBg({ className, color, type }) {
     return nodes;
   };
 
-  const doAnimation = () => {
+  const doAnimation = (firstTime) => {
     const nodes = getSVGNodes(currentType || TYPES[type]);
     let yValues = [];
     nodes.forEach(
@@ -231,8 +231,8 @@ function HeroBg({ className, color, type }) {
       const _y = y / (yCount / 2);
       for (let x = 0; x < xCount; x++) {
         animStyles.push({
-          opacity: (_y ** 2 / 1) * Math.random(),
-          transition: 'opacity 1s',
+          opacity: (_y ** 2 / decay) * Math.random(),
+          transition: `opacity ${speed}ms`,
         });
       }
     }
@@ -258,7 +258,7 @@ function HeroBg({ className, color, type }) {
         currentNodes[i] = React.cloneElement(currentNode, {
           style:
             currentNode.type === 'path'
-              ? { ...animStyles[i], opacity: Math.random() / 3 }
+              ? { opacity: Math.random() / 3, transition: 'opacity 3s' }
               : animStyles[i],
         });
       } else {
@@ -266,14 +266,16 @@ function HeroBg({ className, color, type }) {
       }
     }
 
-    if (animationRef.current > 0) {
+    if (firstTime || (!firstTime && animationRef.current > 0)) {
       setCurrentType(React.cloneElement(TYPES[type], { children: currentNodes }));
     }
   };
 
   const initAnimation = () => {
-    doAnimation();
-    animationRef.current = setInterval(() => doAnimation(), 2000);
+    doAnimation(true);
+    if (animate) {
+      animationRef.current = setInterval(() => doAnimation(), speed * 2);
+    }
   };
 
   useEffect(() => {
@@ -284,7 +286,7 @@ function HeroBg({ className, color, type }) {
   return currentType;
 }
 
-HeroBg.defaultProps = { type: 'lg' };
+HeroBg.defaultProps = { type: 'lg', animate: true, decay: 1, speed: 500 };
 
 HeroBg.propTypes = {
   children: PropTypes.any,
@@ -300,6 +302,9 @@ HeroBg.propTypes = {
     'error',
   ]),
   type: PropTypes.oneOf(['lg', 'x-md', 'x-sm']),
+  decay: PropTypes.number,
+  animate: PropTypes.bool,
+  speed: PropTypes.number,
 };
 
 export default HeroBg;

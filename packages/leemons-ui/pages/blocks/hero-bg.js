@@ -46,10 +46,14 @@ export default function HeroBgPage() {
           </div>
         </Wrapper>
 
-        <Wrapper title="medium horizontal (x-md)">
+        <Wrapper title="medium horizontal (x-md) + Speed">
           <div className="flex flex-row h-96 border border-base-200">
             <section className="relative">
-              <HeroBg type="x-md" className="h-full w-auto bg-primary text-primary-200" />
+              <HeroBg
+                type="x-md"
+                speed={100}
+                className="h-full w-auto bg-primary text-primary-200"
+              />
               <div className="absolute top-0 lef-0 w-full h-full">
                 <div className="flex flex-col h-full p-4 text-black">
                   <div className="text-lg font-medium">leemons</div>
@@ -72,10 +76,40 @@ export default function HeroBgPage() {
           </div>
         </Wrapper>
 
-        <Wrapper title="Small horizontal (x-sm)">
+        <Wrapper title="Small horizontal (x-sm) + Decay">
           <div className="flex flex-row h-96 border border-base-200">
             <section className="relative">
-              <HeroBg type="x-sm" className="h-full w-auto bg-pink-400 text-pink-200" />
+              <HeroBg type="x-sm" decay={2} className="h-full w-auto bg-pink-400 text-white" />
+              <div className="absolute top-0 lef-0 w-full h-full">
+                <div className="flex flex-col h-full p-4 text-black">
+                  <div className="text-lg font-medium">leemons</div>
+                  <div className="flex flex-col flex-grow place-content-center">
+                    <p className="font-inter font-medium leading-none">
+                      <em>
+                        “I don’t know the meaning of half those long words, and, what’s more, I
+                        don’t believe you do either!”
+                      </em>
+                    </p>
+                    <div className="text-xs leading-none mt-4">
+                      <span className="block">Alice in Wonderland</span>
+                      <span>Lewis Carrol</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section className="p-4">Right content</section>
+          </div>
+        </Wrapper>
+
+        <Wrapper title="no animation">
+          <div className="flex flex-row h-96 border border-base-200">
+            <section className="relative">
+              <HeroBg
+                type="x-sm"
+                animate={false}
+                className="h-full w-auto bg-yellow-400 text-yellow-100"
+              />
               <div className="absolute top-0 lef-0 w-full h-full">
                 <div className="flex flex-col h-full p-4 text-black">
                   <div className="text-lg font-medium">leemons</div>
