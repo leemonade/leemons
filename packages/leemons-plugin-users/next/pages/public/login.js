@@ -47,6 +47,7 @@ export default function Home() {
                 <Input
                   outlined={true}
                   placeholder={t('email')}
+                  defaultValue="jaime@leemons.io"
                   {...register('email', { required: true })}
                 />
               </FormControl>
@@ -56,6 +57,7 @@ export default function Home() {
                 <Input
                   outlined={true}
                   placeholder={t('password')}
+                  defaultValue="testing"
                   {...register('password', { required: true })}
                 />
               </FormControl>

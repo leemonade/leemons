@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { usePopperTooltip } from 'react-popper-tooltip';
+import ReactDOM from 'react-dom';
 
 function Tooltip({
   children,
@@ -37,9 +38,8 @@ function Tooltip({
     onBlur: () => setShow(false),
   });
 
-  return (
+  const tooltip = ReactDOM.createPortal(
     <>
-      {childrenWrapped}
       {visible && (
         <div
           ref={setTooltipRef}
@@ -51,9 +51,18 @@ function Tooltip({
           {content}
         </div>
       )}
+    </>,
+    document.body
+  );
+
+  return (
+    <>
+      {childrenWrapped}
+      {tooltip}
     </>
   );
 }
+
 Tooltip.defaultProps = { placement: 'auto', followCursor: false, open: false, options: {} };
 
 Tooltip.propTypes = {

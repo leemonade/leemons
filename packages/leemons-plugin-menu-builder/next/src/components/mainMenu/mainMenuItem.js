@@ -1,25 +1,17 @@
 import * as PropTypes from 'prop-types';
+import { Button, Tooltip } from 'leemons-ui';
 import LeemonsImage from '../leemonsImage';
-import { Tooltip } from 'leemons-ui';
 
 export default function MainMenuItem({ item, menuWidth, active, onClick }) {
   return (
     <>
-      <Tooltip
-        onClick={onClick}
-        style={{ height: menuWidth }}
-        className={`tooltip-open tooltip-lg sharp w-full text-center cursor-pointer ${
-          active ? 'bg-secondary-focus' : 'bg-secondary'
-        } `}
-        color="primary"
-        position="right"
-        content="Im large"
-      >
-        <button
+      <Tooltip color="primary" position="right" content="Im large" open={true}>
+        <Button
           onClick={onClick}
           style={{ height: menuWidth }}
-          className={`w-full text-center cursor-pointer ${
-            active ? 'bg-secondary-focus' : 'bg-secondary'
+          color="secondary"
+          className={`w-full text-center cursor-pointer hover:bg-primary-focus ${
+            active ? 'bg-secondary-focus' : ''
           } `}
         >
           <div className={'w-5 h-full mx-auto relative'}>
@@ -33,7 +25,7 @@ export default function MainMenuItem({ item, menuWidth, active, onClick }) {
               alt={item.iconAlt}
             />
           </div>
-        </button>
+        </Button>
       </Tooltip>
     </>
   );
