@@ -1,16 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function Textarea({ className, color, outlined, ...props }) {
+const Textarea = React.forwardRef(({ className, color, outlined, ...props }, ref) => {
   const colorClass = color ? `textarea-${color}` : '';
   const outlinedClass = outlined ? 'textarea-bordered' : '';
   return (
     <textarea
+      ref={ref}
       className={`textarea ${colorClass} ${outlinedClass} ${className || ''}`}
       {...props}
     ></textarea>
   );
-}
+});
+
+Textarea.displayName = 'Textarea';
 
 Textarea.propTypes = {
   className: PropTypes.string,

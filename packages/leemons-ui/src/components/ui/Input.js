@@ -1,17 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function Input({ type, className, outlined, color, ...props }) {
+const Input = React.forwardRef(({ type, className, outlined, color, ...props }, ref) => {
   const colorClass = color ? `input-${color}` : '';
   const outlinedClass = outlined ? 'input-bordered' : '';
   return (
     <input
+      ref={ref}
       type={type}
       className={['input', colorClass, outlinedClass, className].join(' ')}
       {...props}
     />
   );
-}
+});
+
+Input.displayName = 'Input';
 
 Input.defaultProps = {
   type: 'text',
