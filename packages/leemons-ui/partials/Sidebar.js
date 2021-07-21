@@ -97,6 +97,25 @@ function Sidebar({ setShowMainMenu }) {
               ))}
 
             <MenuItem className="mt-4 menu-title">
+              <span>Blocks</span>
+            </MenuItem>
+
+            {Array.isArray(menuItems.demos) &&
+              menuItems.blocks.map((item, index) => (
+                <MenuItem
+                  key={`d-${index}`}
+                  color="white"
+                  className={
+                    router.pathname === item.url ? 'menu-item-active btn-primary btn-active' : ''
+                  }
+                >
+                  <Link href={item.url}>
+                    <a className="capitalize justify-between">{item.label}</a>
+                  </Link>
+                </MenuItem>
+              ))}
+
+            <MenuItem className="mt-4 menu-title">
               <span>Demos</span>
             </MenuItem>
 
