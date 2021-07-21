@@ -3,7 +3,7 @@ import { Modal, useModal } from 'leemons-ui';
 import hooks from 'leemons-hooks';
 import SimpleBar from 'simplebar-react';
 import update from 'immutability-helper';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDrop } from 'react-dnd';
 import useTranslate from '@multilanguage/useTranslate';
@@ -24,20 +24,45 @@ import { registerDndLayer } from '../dnd/dndLayer';
 import MainMenuInfo from './mainMenuInfo';
 import prefixPN from '../../helpers/prefixPN';
 
-export default function MainMenuSubmenu({ item, onClose, activeItem }) {
-  const [editingItem, setEditingItem] = useState(null);
-  const [editMode, setEditMode] = useState(false);
-  const [removeItem, setRemoveItem] = useState(null);
-  const [customChildrens, setCustomChildrens] = useState(item ? item.customChildrens : []);
+export default function MainMenuSubmenu({ item, onClose, activeItem, state, setState }) {
+  const setEditingItem = (submenuEditingItem) => {
+    setState({ submenuEditingItem });
+  };
+  const setEditMode = (submenuEditMode) => {
+    setState({ submenuEditMode });
+  };
+  const setRemoveItem = (submenuRemoveItem) => {
+    setState({ submenuRemoveItem });
+  };
+  const setCustomChildrens = (customChildrens) => {
+    const newParent = {
+      ...state.menuActive.parent,
+      customChildrens,
+    };
+    const menuIndex = _.findIndex(state.menu, { id: state.menuActive.parent.id });
+    const menu = update(state.menu, {
+      [menuIndex]: {
+        $set: newParent,
+      },
+    });
+    setState({
+      menu,
+      menuActive: {
+        ...state.menuActive,
+        parent: newParent,
+      },
+    });
+  };
+
   const [translations] = useTranslate({ keysStartsWith: prefixPN('menu.remove_item_modal') });
   const t = tLoader(prefixPN('menu.remove_item_modal'), translations);
 
   const find = useCallback(
     (id) => {
-      const dragItem = _.find(customChildrens, { id });
-      return { dragItem, index: customChildrens.indexOf(dragItem) };
+      const dragItem = _.find(item.customChildrens, { id });
+      return { dragItem, index: item.customChildrens.indexOf(dragItem) };
     },
-    [customChildrens]
+    [item?.customChildrens]
   );
 
   const [modal, toggleModal] = useModal({
@@ -47,11 +72,11 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
     cancelLabel: t('cancel'),
     actionLabel: t('action'),
     onAction: async () => {
-      await removeMenuItemRequest(removeItem.menuKey, removeItem.key);
-      const { index } = find(removeItem.id);
+      await removeMenuItemRequest(state.submenuRemoveItem.menuKey, state.submenuRemoveItem.key);
+      const { index } = find(state.submenuRemoveItem.id);
       setRemoveItem(null);
       setCustomChildrens(
-        update(customChildrens, {
+        update(item.customChildrens, {
           $splice: [[index, 1]],
         })
       );
@@ -63,7 +88,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
       const { dragItem, index } = find(_.isString(id) ? id : id._tempId);
       if (dragItem) {
         if (index !== atIndex || isLast) {
-          const newCustomChildrens = update(customChildrens, {
+          const newCustomChildrens = update(item.customChildrens, {
             $splice: [
               [index, 1],
               [atIndex, 0, dragItem],
@@ -82,19 +107,19 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
         }
       } else {
         setCustomChildrens(
-          update(customChildrens, {
+          update(item.customChildrens, {
             $push: [{ ...id, id: id._tempId }],
           })
         );
       }
     },
-    [customChildrens, setCustomChildrens]
+    [item?.customChildrens]
   );
 
   const onDrop = useCallback(
     async (droppedItem) => {
       const { _tempId, ...saveItem } = droppedItem;
-      const order = _.map(customChildrens, 'id');
+      const order = _.map(item.customChildrens, 'id');
       const index = _.findIndex(order, (id) => id === _tempId);
       const { menuItem } = await addMenuItemRequest({ ...saveItem, parentKey: item.key });
       if (index >= 0) {
@@ -103,17 +128,17 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
       }
       await hooks.fireEvent('menu-builder:user:addCustomItem', menuItem);
     },
-    [customChildrens, setCustomChildrens]
+    [item?.customChildrens]
   );
 
   const onEnd = (event) => {
     const [{ dragItem, monitor }] = event.args;
     const didDrop = monitor.didDrop();
     if (!didDrop) {
-      const index = _.findIndex(customChildrens, (ch) => ch.id === dragItem._tempId);
+      const index = _.findIndex(item.customChildrens, (ch) => ch.id === dragItem._tempId);
       if (index >= 0) {
         setCustomChildrens(
-          update(customChildrens, {
+          update(item.customChildrens, {
             $splice: [[index, 1]],
           })
         );
@@ -122,7 +147,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
   };
 
   const toggleEditMode = () => {
-    setEditMode(!editMode);
+    setEditMode(!state.submenuEditMode);
     setEditingItem(null);
   };
 
@@ -135,7 +160,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
     await updateMenuItemRequest(toUpdateItem.menuKey, toUpdateItem.key, dataToUpdate);
     const { index } = find(toUpdateItem.id);
     setCustomChildrens(
-      update(customChildrens, {
+      update(item.customChildrens, {
         [index]: { $merge: dataToUpdate },
       })
     );
@@ -159,10 +184,6 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
       <MainMenuSubmenuItem item={_item} isLayer={true} />
     ));
   }, [find]);
-
-  useEffect(() => {
-    if (item) setCustomChildrens(item.customChildrens);
-  }, [item]);
 
   return (
     <>
@@ -188,11 +209,16 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
                     <ul>
                       {item.childrens.map((child) => (
                         <li key={child.id}>
-                          <MainMenuSubmenuItem item={child} active={activeItem?.id === child.id} />
+                          <MainMenuSubmenuItem
+                            state={state}
+                            setState={setState}
+                            item={child}
+                            active={activeItem?.id === child.id}
+                          />
                         </li>
                       ))}
 
-                      {customChildrens.length ? (
+                      {item.customChildrens.length ? (
                         <div className="h-px bg-neutral-focus my-3"></div>
                       ) : (
                         ''
@@ -200,7 +226,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
 
                       <div ref={drop}>
                         <>
-                          {customChildrens.map((child) => (
+                          {item.customChildrens.map((child) => (
                             <li key={child.id}>
                               <DndSortItem
                                 id={child.id}
@@ -209,18 +235,20 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
                                 type={'menu-item-sort'}
                                 accept={['menu-item-sort', 'menu-item']}
                                 emptyLayout={true}
-                                disableDrag={!editMode || !!editingItem}
+                                disableDrag={!state.submenuEditMode || !!state.submenuEditingItem}
                               >
                                 {({ isDragging }) => (
                                   <MainMenuSubmenuItem
                                     item={child}
                                     remove={remove}
-                                    editMode={editMode && !editingItem}
+                                    editMode={state.submenuEditMode && !state.submenuEditingItem}
                                     changeToEditItem={(e) => setEditingItem(e)}
-                                    editItemMode={editingItem === child}
+                                    editItemMode={state.submenuEditingItem === child}
                                     isDragging={!!child._tempId || isDragging}
                                     active={activeItem?.id === child.id}
                                     updateItem={updateItem}
+                                    state={state}
+                                    setState={setState}
                                   />
                                 )}
                               </DndSortItem>
@@ -235,7 +263,12 @@ export default function MainMenuSubmenu({ item, onClose, activeItem }) {
             </DndDropZone>
             {/* Menu constructor */}
             <div>
-              <MainMenuInfo editMode={editMode} toggleEditMode={toggleEditMode} />
+              <MainMenuInfo
+                state={state}
+                setState={setState}
+                editMode={state.submenuEditMode}
+                toggleEditMode={toggleEditMode}
+              />
             </div>
           </div>
         </>
@@ -248,4 +281,6 @@ MainMenuSubmenu.propTypes = {
   item: PropTypes.object,
   onClose: PropTypes.func,
   activeItem: PropTypes.object,
+  state: PropTypes.object.isRequired,
+  setState: PropTypes.func.isRequired,
 };

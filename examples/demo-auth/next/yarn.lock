@@ -16,11 +16,20 @@
   dependencies:
     purgecss "^3.1.3"
 
+"@leemons/assets@file:dependencies/assets":
+  version "1.0.0"
+
 "@leemons/emails@file:dependencies/emails":
   version "1.0.0"
   dependencies:
     lodash "^4.17.21"
     react-hook-form "^7.8.5"
+
+"@leemons/layout@file:dependencies/layout":
+  version "1.0.0"
+  dependencies:
+    lodash "^4.17.21"
+    prop-types "^15.7.2"
 
 "@leemons/menu-builder@file:dependencies/menu-builder":
   version "1.0.0"

@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 import Image from 'next/image';
-import SvgInline from './svgInline';
+import InlineSvg from './inlineSvg';
 
-export default function LeemonsImage({ src, alt, forceImage, className }) {
+export default function ImageLoader({ src, alt, forceImage, className }) {
   const isSvg = forceImage ? false : src.toLowerCase().endsWith('.svg');
 
   return (
     <>
       {isSvg ? (
-        <SvgInline src={src} className={className} />
+        <InlineSvg src={src} className={className} />
       ) : (
         <Image layout="fill" src={src} alt={alt} className={className} />
       )}
@@ -16,7 +16,7 @@ export default function LeemonsImage({ src, alt, forceImage, className }) {
   );
 }
 
-LeemonsImage.propTypes = {
+ImageLoader.propTypes = {
   src: PropTypes.string.isRequired,
   alt: PropTypes.string,
   forceImage: PropTypes.bool,

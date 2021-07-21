@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 
-export default function SvgInline({ src, className }) {
+export default function InlineSvg({ src, className }) {
   const [svg, setSvg] = useState(null);
   const [goodSvg, setGoodSvg] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -23,8 +23,8 @@ export default function SvgInline({ src, className }) {
         const hasStroke = className.indexOf('stroke-current') >= 0;
         const hasFill = className.indexOf('fill-current') >= 0;
         let str = svg;
-        if (hasStroke) str = str.replaceAll(/stroke=".+?"/gi);
-        if (hasFill) str = str.replaceAll(/fill=".+?"/gi);
+        if (hasStroke) str = str.replaceAll(/stroke=".+?"/gi, 'stroke="currentColor"');
+        if (hasFill) str = str.replaceAll(/fill=".+?"/gi, 'fill="currentColor"');
         setGoodSvg(str);
       } else {
         setGoodSvg(svg);
@@ -52,7 +52,7 @@ export default function SvgInline({ src, className }) {
   );
 }
 
-SvgInline.propTypes = {
+InlineSvg.propTypes = {
   src: PropTypes.string.isRequired,
   className: PropTypes.string,
 };
