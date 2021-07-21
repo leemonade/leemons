@@ -5,7 +5,7 @@ import { loginRequest } from '@users/request';
 import { goRecoverPage } from '@users/navigate';
 import useTranslate from '@multilanguage/useTranslate';
 import tLoader from '@multilanguage/helpers/tLoader';
-import { Button, FormControl, Input } from 'leemons-ui';
+import { Button, FormControl, HeroBg, ImageLoader, Input } from 'leemons-ui';
 import prefixPN from '@users/helpers/prefixPN';
 import Link from 'next/link';
 
@@ -35,9 +35,33 @@ export default function Home() {
   return (
     <>
       <div className="flex h-screen">
-        <div className="w-5/12"></div>
-        <div className="w-7/12 flex flex-col justify-center p-24">
-          <div className="max-w-xs">
+        <div className="relative flex">
+          <HeroBg
+            style={{ backgroundColor: '#F4E6E6' }}
+            type="x-md"
+            speed={500}
+            className="h-full w-auto text-primary-200"
+          />
+
+          <div
+            style={{ width: '294.58px', height: '414px' }}
+            className="absolute right-20 bottom-20"
+          >
+            <ImageLoader src="/assets/login/child.png" />
+          </div>
+
+          <div className="absolute left-6 right-6 top-1/3 transform -translate-y-1/4 max-w-sm">
+            <div className="text-3xl text-secondary italic">{t('hero_text')}</div>
+            <div
+              className="text-secondary text-xl mt-7"
+              dangerouslySetInnerHTML={{
+                __html: t('hero_author'),
+              }}
+            />
+          </div>
+        </div>
+        <div className="w-7/12 relative">
+          <div className="max-w-xs w-full absolute left-1/4 top-2/4 transform -translate-y-2/4">
             <h1 className="text-2xl mb-12">{t('title')}</h1>
 
             {/* Login Form */}
