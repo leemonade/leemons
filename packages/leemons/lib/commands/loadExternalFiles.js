@@ -277,77 +277,117 @@ async function loadExternalFiles(leemons) {
     });
 
   // Load each plugin
-  const pluginsLength = pluginsFunctions.length;
-  for (let i = 0; i < pluginsLength; i++) {
-    const { plugin } = pluginsFunctions[i];
-    const { scripts } = pluginsFunctions[i];
+  // const pluginsLength = pluginsFunctions.length;
 
-    /**
-     * Keep track on everything a plugin should load, so in case a custom loader
-     * exists, everything is loaded correctly
-     */
-    const loadStatus = {
-      installed: false,
-      services: false,
-      init: false,
-      controllers: false,
-      routes: false,
-    };
+  // for (let i = 0; i < pluginsLength; i++) {
+  async function loadPlugin(i) {
+    const { plugin, scripts } = pluginsFunctions[i] || {};
 
-    leemons.events.once(`plugins.${plugin.name}:pluginDidInstall`, () => {
-      loadStatus.installed = true;
-    });
-    leemons.events.once(`plugins.${plugin.name}:pluginDidLoadedServices`, () => {
-      loadStatus.services = true;
-    });
-    leemons.events.once(`plugins.${plugin.name}:pluginDidInit`, () => {
-      loadStatus.init = true;
-    });
-    leemons.events.once(`plugins.${plugin.name}:pluginDidLoadedControllers`, () => {
-      loadStatus.controllers = true;
-    });
-    leemons.events.once(`plugins.${plugin.name}:pluginDidLoadedRoutes`, () => {
-      loadStatus.routes = true;
-    });
+    if (plugin && !plugin.status.didLoad) {
+      plugin.status.didLoad = true;
+      /**
+       * Keep track on everything a plugin should load, so in case a custom loader
+       * exists, everything is loaded correctly
+       */
+      const loadStatus = {
+        installed: false,
+        services: false,
+        init: false,
+        controllers: false,
+        routes: false,
+      };
+      plugin.status.loadStatus = loadStatus;
 
-    const load = await scripts.load();
-    if (load.exists) {
-      await load.func({ scripts: _.omit(scripts, ['load']) });
-    }
+      leemons.events.once(`plugins.${plugin.name}:pluginDidInstall`, () => {
+        loadStatus.installed = true;
+      });
+      leemons.events.once(`plugins.${plugin.name}:pluginDidLoadedServices`, () => {
+        loadStatus.services = true;
+      });
+      leemons.events.once(`plugins.${plugin.name}:pluginDidInit`, () => {
+        loadStatus.init = true;
+      });
+      leemons.events.once(`plugins.${plugin.name}:pluginDidLoadedControllers`, () => {
+        loadStatus.controllers = true;
+      });
+      leemons.events.once(`plugins.${plugin.name}:pluginDidLoadedRoutes`, () => {
+        loadStatus.routes = true;
+      });
 
-    /**
-     * Run the installation script for the uninstalled plugins
-     */
-    if (
-      !loadStatus.installed &&
-      !plugin.status.isInstalled &&
-      plugin.status.code === PLUGIN_STATUS.enabled.code
-    ) {
-      await scripts.install();
-    }
+      const load = await scripts.load();
+      if (load.exists) {
+        await load.func({ scripts: _.omit(scripts, ['load']), next: () => loadPlugin(i + 1) });
+      }
 
-    /**
-     * Load the services; some functions the plugin exposes
-     */
-    if (!loadStatus.services) {
-      await scripts.services();
-    }
-    /**
-     * Run the initialization script once the services are loaded
-     */
-    if (!loadStatus.init) {
-      await scripts.init();
-    }
-    /**
-     * Load the controllers; functions exposed to the server (endpoints)
-     */
-    if (!loadStatus.controllers) {
-      await scripts.controllers();
-    }
-    if (!loadStatus.routes) {
-      await scripts.routes();
+      /**
+       * Run the installation script for the uninstalled plugins
+       */
+      if (
+        !loadStatus.installed &&
+        !plugin.status.isInstalled &&
+        plugin.status.code === PLUGIN_STATUS.enabled.code
+      ) {
+        await scripts.install();
+      }
+
+      /**
+       * Load the services; some functions the plugin exposes
+       */
+      if (!loadStatus.services) {
+        await scripts.services();
+      }
+      /**
+       * Run the initialization script once the services are loaded
+       */
+      if (!loadStatus.init) {
+        await scripts.init();
+      }
+      /**
+       * Load the controllers; functions exposed to the server (endpoints)
+       */
+      if (!loadStatus.controllers) {
+        await scripts.controllers();
+      }
+      if (!loadStatus.routes) {
+        await scripts.routes();
+      }
+      leemons.events.emit('pluginDidLoaded', `plugins.${plugin.name}`);
+      await loadPlugin(i + 1);
     }
   }
+
+  /**
+   * As soon as a plugin calls `next()` without awaiting it, the following
+   * plugins are not waited by leemons in order to continue loading the app,
+   * resulting in crashes, bugs and errors, so we need to wait unitl all the
+   * plugins are loaded (have emitted pluginDidLoaded)
+   */
+  async function waitPluginsLoad() {
+    return new Promise((resolve) => {
+      // Create a Map with all the plugins that needs loading
+      const remainingPlugins = new Map();
+      pluginsFunctions.forEach(({ plugin }) =>
+        remainingPlugins.set(`plugins.${plugin.name}`, plugin)
+      );
+
+      const eventHandler = ({ target }) => {
+        remainingPlugins.delete(target);
+        // When no remaininingPlugins to be loaded, then the plugins are loaded
+        if (remainingPlugins.size === 0) {
+          leemons.events.off('pluginDidLoaded', eventHandler);
+          leemons.events.off('pluginDidDisabled', eventHandler);
+          resolve();
+        }
+      };
+
+      // When a plugin is fully loaded, remove it from the Map
+      leemons.events.on('pluginDidLoaded', eventHandler);
+      // When a plugin is disabled, remove it from the Map
+      leemons.events.on('pluginDidDisabled', eventHandler);
+    });
+  }
+  await Promise.all([waitPluginsLoad(), loadPlugin(0)]);
+  leemons.events.emit('pluginsDidLoaded', 'leemons');
 
   // TODO: Load frontend (start nextjs with child_process instead of next)
   /**

@@ -14,7 +14,7 @@ function disablePlugin(plugins, plugin, reason = PLUGIN_STATUS.initializationFai
     .filter((_plugin) => dependants.includes(_plugin.name))
     .forEach((_plugin) => disablePlugin(plugins, _plugin, PLUGIN_STATUS.disabledDeps));
 
-  leemons.events.emit('pluginDidDisable', `plugins.${plugin.name}`, reason);
+  leemons.events.emit('pluginDidDisabled', `plugins.${plugin.name}`, reason);
 }
 
 module.exports = disablePlugin;
