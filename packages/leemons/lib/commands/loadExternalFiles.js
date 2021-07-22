@@ -393,6 +393,11 @@ async function loadExternalFiles(leemons) {
   /**
    *        Load the frontend of all the plugins, and reload in secure mode if an error occurs
    */
+
+  await leemons.loadFront(
+    pluginsFunctions.map(({ plugin }) => plugin),
+    []
+  );
 }
 
 module.exports = {

@@ -429,7 +429,7 @@ class Leemons {
     const prepareFront = ora('Starting frontend server').start();
     // Start production next app
     const start = execa.command(
-      `yarn --cwd ${leemons.dir.next} ${process.env.NODE_ENV === 'production' ? 'start' : 'dev'}`,
+      `yarn --cwd ${leemons.dir.next} ${process.env.NODE_ENV !== 'development' ? 'start' : 'dev'}`,
       {
         ...process.env,
         FORCE_COLOR: true,
