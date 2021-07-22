@@ -57,6 +57,7 @@
   "dependencies": {
     "@heroicons/react": "^1.0.1",
     "@popperjs/core": "^2.9.2",
+    "@react-hook/window-size": "^3.0.7",
     "@tailwindcss/typography": "^0.4.1",
     "classnames": "^2.3.1",
     "glob": "^7.1.7",
