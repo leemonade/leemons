@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { getMenu } from '@menu-builder/helpers';
 import PropTypes from 'prop-types';
@@ -13,43 +13,45 @@ import SimpleBar from 'simplebar-react';
 
 const menuWidth = '52px';
 
-export default function MainMenu({ onClose, onOpen }) {
+export default function MainMenu({ onClose, onOpen, state, setState }) {
   const session = useSession();
   const router = useRouter();
-  const [activeMenu, setActiveMenu] = useState({ parent: null, child: null });
-  const [menu, setMenu] = useState([]);
 
-  async function loadMenu() {
-    const _menu = await getMenu('plugins.menu-builder.main');
-    setMenu(_menu);
-    return _menu;
-  }
+  const loadMenu = useCallback(async () => {
+    const menu = await getMenu('plugins.menu-builder.main');
+    setState({ menu });
+    return menu;
+  }, [state]);
 
   async function reloadMenu() {
     const _menu = await loadMenu();
-    if (activeMenu.parent) {
-      const parent = _.find(_menu, { id: activeMenu.parent.id });
-      if (parent) setActiveMenu({ ...activeMenu, parent });
+    if (state.menuActive.parent) {
+      const parent = _.find(_menu, { id: state.menuActive.parent.id });
+      if (parent) setState({ menuActive: { ...state.menuActive, parent } });
     }
   }
 
-  function openMenu() {
-    if (onOpen) onOpen(activeMenu);
-  }
+  const openMenu = useCallback(() => {
+    if (onOpen) onOpen();
+  }, [state]);
 
-  const handleRouteChange = async () => {
-    const result = await getActiveParentAndChild();
-    setActiveMenu(result);
-    if (result.parent) openMenu();
-  };
+  const handleRouteChange = useCallback(async () => {
+    const menuActive = await getActiveParentAndChild();
+    setState({ menuActive });
+    if (menuActive.parent) openMenu();
+    return menuActive;
+  }, [state]);
 
-  function onMenuItemClick(item) {
-    setActiveMenu({ ...activeMenu, parent: item });
-    openMenu();
-  }
+  const onMenuItemClick = useCallback(
+    (parent) => {
+      setState({ menuActive: { ...state.menuActive, parent } });
+      openMenu();
+    },
+    [state]
+  );
 
   async function onCloseSubMenu() {
-    setActiveMenu(await getActiveParentAndChild());
+    setState({ menuActive: await getActiveParentAndChild() });
     if (onClose) onClose();
   }
 
@@ -75,19 +77,21 @@ export default function MainMenu({ onClose, onOpen }) {
         {/* Menu */}
         <div style={{ width: menuWidth }} className="h-screen flex-none bg-secondary">
           <div className="h-screen w-full flex flex-col justify-between">
-            <img className="w-6 mb-9 mx-auto" src="/menu-builder/logo.svg" alt="" />
+            <img className="w-6 mb-9 mx-auto" src="/assets/logo.svg" alt="" />
 
             {/* Menu items */}
             <SimpleBar className="flex-grow h-px">
-              {menu.map((item) => (
-                <MainMenuItem
-                  onClick={() => onMenuItemClick(item)}
-                  key={item.id}
-                  active={activeMenu.parent?.id === item.id}
-                  item={item}
-                  menuWidth={menuWidth}
-                />
-              ))}
+              {state.menu && state.menuActive
+                ? state.menu.map((item) => (
+                    <MainMenuItem
+                      onClick={() => onMenuItemClick(item)}
+                      key={item.id}
+                      active={state.menuActive.parent?.id === item.id}
+                      item={item}
+                      menuWidth={menuWidth}
+                    />
+                  ))
+                : null}
             </SimpleBar>
 
             {/* User image */}
@@ -111,11 +115,15 @@ export default function MainMenu({ onClose, onOpen }) {
         </div>
 
         {/* Submenu */}
-        <MainMenuSubmenu
-          item={activeMenu.parent}
-          activeItem={activeMenu.child}
-          onClose={onCloseSubMenu}
-        />
+        {state.menuActive ? (
+          <MainMenuSubmenu
+            item={state.menuActive.parent}
+            activeItem={state.menuActive.child}
+            onClose={onCloseSubMenu}
+            state={state}
+            setState={setState}
+          />
+        ) : null}
       </div>
     </>
   );
@@ -124,4 +132,6 @@ export default function MainMenu({ onClose, onOpen }) {
 MainMenu.propTypes = {
   onOpen: PropTypes.func,
   onClose: PropTypes.func,
+  state: PropTypes.object.isRequired,
+  setState: PropTypes.func.isRequired,
 };

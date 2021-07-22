@@ -1,8 +1,10 @@
 module.exports = {
   plugins: [
-    'dataset',
+    'assets',
+		'dataset',
 		'dataset-test',
 		'emails',
+		'layout',
 		'menu-builder',
 		'multilanguage',
 		'mvp-template',
@@ -14,6 +16,11 @@ module.exports = {
     name: 'emails',
     version: null,
     load: require('@emails/index.js')
+  },
+	{
+    name: 'layout',
+    version: null,
+    load: require('@layout/index.js')
   },
 	{
     name: 'multilanguage',

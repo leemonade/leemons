@@ -1,6 +1,5 @@
 import * as PropTypes from 'prop-types';
-import { Button, Tooltip } from 'leemons-ui';
-import LeemonsImage from '../leemonsImage';
+import { Button, ImageLoader, Tooltip } from 'leemons-ui';
 
 export default function MainMenuItem({ item, menuWidth, active, onClick }) {
   return (
@@ -15,7 +14,7 @@ export default function MainMenuItem({ item, menuWidth, active, onClick }) {
           } `}
         >
           <div className={'w-5 h-full mx-auto relative'}>
-            <LeemonsImage
+            <ImageLoader
               className={`${
                 active
                   ? 'stroke-current text-secondary-content'

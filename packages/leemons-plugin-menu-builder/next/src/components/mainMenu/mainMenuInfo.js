@@ -1,16 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import * as PropTypes from 'prop-types';
-import { Button } from 'leemons-ui';
+import { Button, ImageLoader } from 'leemons-ui';
 import useTranslate from '@multilanguage/useTranslate';
 import tLoader from '@multilanguage/helpers/tLoader';
 import prefixPN from '../../helpers/prefixPN';
 import { getIfKnowHowToUseRequest, setKnowHowToUseRequest } from '../../request';
 
-import LeemonsImage from '../leemonsImage';
+export default function MainMenuInfo({ editMode, toggleEditMode, state, setState }) {
+  const setKnowHowToUse = (knowHowToUse) => {
+    setState({ knowHowToUse });
+  };
+  const setShowKnowHowToUse = (showKnowHowToUse) => {
+    setState({ showKnowHowToUse });
+  };
 
-export default function MainMenuInfo({ editMode, toggleEditMode }) {
-  const [knowHowToUse, setKnowHowToUse] = useState(true);
-  const [showKnowHowToUse, setShowKnowHowToUse] = useState(true);
   const [translations] = useTranslate({ keysStartsWith: prefixPN('menu.menu_constructor') });
   const t = tLoader(prefixPN('menu.menu_constructor'), translations);
 
@@ -35,9 +38,9 @@ export default function MainMenuInfo({ editMode, toggleEditMode }) {
       <div className="relative">
         <div
           className={`absolute ${
-            knowHowToUse ? 'bottom-full' : 'bottom-0'
+            state.knowHowToUse ? 'bottom-full' : 'bottom-0'
           } transform w-full bg-secondary-600 transition p-4 ${
-            showKnowHowToUse ? 'translate-y-full' : ''
+            state.showKnowHowToUse ? 'translate-y-full' : ''
           }`}
         >
           <div className="mb-8">
@@ -50,7 +53,7 @@ export default function MainMenuInfo({ editMode, toggleEditMode }) {
               __html: t('description'),
             }}
           />
-          {!knowHowToUse && (
+          {!state.knowHowToUse && (
             <Button color="primary" rounded className="btn-sm mt-8" onClick={markAsKnowHowToUse}>
               {t('got_it_btn')}
             </Button>
@@ -58,7 +61,7 @@ export default function MainMenuInfo({ editMode, toggleEditMode }) {
         </div>
         <div
           className={`flex flex-row text-sm text-center items-center text-neutral transition ${
-            knowHowToUse ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            state.knowHowToUse ? 'opacity-100' : 'opacity-0 pointer-events-none'
           } ${editMode ? 'py-4' : 'py-8'} bg-secondary-focus relative z-10`}
         >
           {!editMode ? (
@@ -67,7 +70,7 @@ export default function MainMenuInfo({ editMode, toggleEditMode }) {
                 className={`relative inline-block align-middle mr-2`}
                 style={{ width: '12px', height: '12px' }}
               >
-                <LeemonsImage className="fill-current" src={'/menu-builder/svgs/edit.svg'} />
+                <ImageLoader className="fill-current" src={'/assets/svgs/edit.svg'} />
               </div>
               {t('edit')}
             </div>
@@ -85,13 +88,13 @@ export default function MainMenuInfo({ editMode, toggleEditMode }) {
 
           <div
             className={`flex-1 hover:text-primary cursor-pointer ${editMode ? 'text-center' : ''}`}
-            onClick={() => setShowKnowHowToUse(!showKnowHowToUse)}
+            onClick={() => setShowKnowHowToUse(!state.showKnowHowToUse)}
           >
             <div
               className={`relative inline-block align-middle ${editMode ? '' : 'mr-2'}`}
               style={{ width: '12px', height: '12px' }}
             >
-              <LeemonsImage className="fill-current" src={'/menu-builder/svgs/info.svg'} />
+              <ImageLoader className="fill-current" src={'/assets/svgs/info.svg'} />
             </div>
 
             {!editMode ? t('help') : ''}
@@ -105,4 +108,6 @@ export default function MainMenuInfo({ editMode, toggleEditMode }) {
 MainMenuInfo.propTypes = {
   editMode: PropTypes.bool,
   toggleEditMode: PropTypes.func.isRequired,
+  state: PropTypes.object.isRequired,
+  setState: PropTypes.func.isRequired,
 };

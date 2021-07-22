@@ -17,7 +17,11 @@
 "@leemons/user-admin@file:dependencies/user-admin":
   version "1.0.0"
 
+<<<<<<< HEAD
 "@leemons/users@file:dependencies/users":
+=======
+"@leemons/users-groups-roles@file:dependencies/users-groups-roles":
+>>>>>>> plugin/layout
   version "1.0.0"
   dependencies:
     js-cookie "^2.2.1"

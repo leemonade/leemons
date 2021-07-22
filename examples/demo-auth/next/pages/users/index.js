@@ -6,9 +6,9 @@ import {
   goLoginPage,
   goSelectProfilePage,
 } from '@users/navigate';
-import MainMenuLayout from '@menu-builder/components/mainMenuLayout';
+import { withLayout } from '@layout/hoc';
 
-export default function UserTest() {
+function UserTest() {
   const session = useSession({ redirectTo: goLoginPage });
 
   const logout = () => {
@@ -16,37 +16,37 @@ export default function UserTest() {
   };
 
   return (
-    <MainMenuLayout>
-      <div>
-        {session && (
-          <div>
-            <div>Nombre: {session.name}</div>
-            <div>Email: {session.email}</div>
-          </div>
-        )}
-
-        <div>Cutre menu</div>
-        <div className="flex">
-          <div onClick={goListUsersPage}>Usuarios</div>
-          <div onClick={goListProfilesPage}>Perfiles</div>
+    <div>
+      {session && (
+        <div>
+          <div>Nombre: {session.name}</div>
+          <div>Email: {session.email}</div>
         </div>
+      )}
 
-        <button
-          className="absolute right-20 top-2 px-2 border border-gray-500 rounded"
-          onClick={goSelectProfilePage}
-        >
-          Cambiar perfil
-        </button>
-        <button
-          className="absolute right-2 top-2 px-2 border border-gray-500 rounded"
-          onClick={logout}
-        >
-          Logout
-        </button>
+      <div>Cutre menu</div>
+      <div className="flex">
+        <div onClick={goListUsersPage}>Usuarios</div>
+        <div onClick={goListProfilesPage}>Perfiles</div>
       </div>
-    </MainMenuLayout>
+
+      <button
+        className="absolute right-20 top-2 px-2 border border-gray-500 rounded"
+        onClick={goSelectProfilePage}
+      >
+        Cambiar perfil
+      </button>
+      <button
+        className="absolute right-2 top-2 px-2 border border-gray-500 rounded"
+        onClick={logout}
+      >
+        Logout
+      </button>
+    </div>
   );
 }
+
+export default withLayout(UserTest);
 
 /*
 export async function getServerSideProps(context) {

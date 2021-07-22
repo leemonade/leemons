@@ -1,9 +1,8 @@
-import { Input } from 'leemons-ui';
+import { ImageLoader, Input } from 'leemons-ui';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Router from 'next/router';
-import LeemonsImage from '../leemonsImage';
 
 export default function MainMenuSubmenuItem({
   item,
@@ -15,8 +14,19 @@ export default function MainMenuSubmenuItem({
   changeToEditItem,
   updateItem,
   remove,
+  state,
+  setState,
 }) {
-  const [newLabel, setNewLabel] = useState(item.label);
+  const key = `label-${item.id}`;
+  const setNewLabel = (label) => {
+    if (setState) setState({ [key]: label });
+  };
+
+  useEffect(() => {
+    if (state && !state[key]) {
+      setNewLabel(item.label);
+    }
+  }, []);
 
   const recalculeStyles = () => {
     const _styles = {
@@ -28,6 +38,11 @@ export default function MainMenuSubmenuItem({
 
     if (active) {
       _styles.backgroundColor = `bg-secondary-300 ${_styles.backgroundColor}`;
+    }
+
+    if (editMode) {
+      _styles.color = 'text-neutral-content';
+      _styles.backgroundColor = 'bg-base-200 hover:bg-base-100';
     }
 
     if (isDragging) {
@@ -42,7 +57,9 @@ export default function MainMenuSubmenuItem({
 
     if (editItemMode) {
       _styles.paddings = 'px-1 py-1';
-      _styles.border = `border ${newLabel ? 'border-primary' : 'border-error-focus'} border-solid`;
+      _styles.border = `border ${
+        state[key] ? 'border-primary' : 'border-error-focus'
+      } border-solid`;
       _styles.backgroundColor = 'bg-base-200';
     }
 
@@ -64,8 +81,8 @@ export default function MainMenuSubmenuItem({
   };
 
   const onUpdateItem = () => {
-    if (newLabel) {
-      updateItem(item, { label: newLabel });
+    if (state[key]) {
+      updateItem(item, { label: state[key] });
     }
   };
 
@@ -85,12 +102,14 @@ export default function MainMenuSubmenuItem({
       style={isLayer ? { width: '190px' } : {}}
       onClick={onClick}
     >
-      {editMode && (
+      {(editMode || isLayer) && (
         <div
-          className="absolute left-2 top-2/4 transform -translate-y-1/2"
+          className={`absolute left-2 top-2/4 transform -translate-y-1/2 hover:text-primary cursor-move ${
+            isLayer ? 'text-primary' : ''
+          }`}
           style={{ width: '10px', height: '5px' }}
         >
-          <LeemonsImage className="stroke-current" src={'/menu-builder/svgs/re-order.svg'} />
+          <ImageLoader className="stroke-current" src={'/assets/svgs/re-order.svg'} />
         </div>
       )}
       {editItemMode ? (
@@ -98,22 +117,22 @@ export default function MainMenuSubmenuItem({
           <Input
             className="w-full pr-9"
             type="text"
-            value={newLabel}
+            value={state[key]}
             onChange={onNewLabelChange}
             onKeyPress={(e) => e.key === 'Enter' && onUpdateItem()}
           />
           <div
             onClick={onUpdateItem}
             className={`absolute right-2 top-2/4 transform -translate-y-1/2 ${
-              newLabel ? 'text-primary' : 'text-neutral'
+              state[key] ? 'text-primary' : 'text-neutral'
             }`}
             style={{ width: '18px', height: '18px' }}
           >
-            <LeemonsImage className="fill-current" src={'/menu-builder/svgs/check.svg'} />
+            <ImageLoader className="fill-current" src={'/assets/svgs/check.svg'} />
           </div>
         </div>
       ) : (
-        <span className={`line-clamp-2`}>{item.label}</span>
+        <span className={`line-clamp-2 hover:text-base-content`}>{item.label}</span>
       )}
 
       {editMode && (
@@ -123,13 +142,10 @@ export default function MainMenuSubmenuItem({
             event.preventDefault();
             remove(item);
           }}
-          className="absolute right-3 top-2/4 transform -translate-y-1/2"
+          className="absolute right-3 top-2/4 transform -translate-y-1/2 hover:text-base-content"
           style={{ width: '12px', height: '12px' }}
         >
-          <LeemonsImage
-            className="stroke-current fill-current"
-            src={'/menu-builder/svgs/remove.svg'}
-          />
+          <ImageLoader className="stroke-current fill-current" src={'/assets/svgs/remove.svg'} />
         </div>
       )}
     </div>
@@ -146,4 +162,6 @@ MainMenuSubmenuItem.propTypes = {
   remove: PropTypes.func,
   changeToEditItem: PropTypes.func,
   updateItem: PropTypes.func,
+  state: PropTypes.object,
+  setState: PropTypes.func,
 };

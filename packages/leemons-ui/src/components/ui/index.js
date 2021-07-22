@@ -22,6 +22,8 @@ import Select from './Select';
 import Textarea from './Textarea';
 import Toggle from './Toggle';
 import Tooltip from './Tooltip';
+import ImageLoader from './ImageLoader';
+import InlineSvg from './InlineSvg';
 
 import Modal, { useModal } from './Modal';
 
@@ -52,4 +54,6 @@ export {
   Toggle,
   Tooltip,
   useModal,
+  ImageLoader,
+  InlineSvg,
 };
