@@ -7,7 +7,6 @@ const createLogger = require('leemons-logger/lib/logger/multiThread');
 const { getAvailablePort } = require('leemons-utils/lib/port');
 
 const { createDatabaseManager } = require('leemons-database');
-const EventEmitter = require('events');
 const { handleStdin } = require('./lib/io');
 const { createWorker } = require('./lib/worker');
 const { createReloader } = require('./lib/watch');
@@ -261,31 +260,6 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
       }
     });
 
-    const eventEmitter = new EventEmitter();
-
-    const emit = (event, ...args) => {
-      eventEmitter.emit('all', event, ...args);
-      eventEmitter.emit(event, ...args);
-    };
-
-    // ! Event handling
-
-    let startTime = 0;
-    eventEmitter.once('pluginsWillLoad', () => {
-      startTime = new Date();
-    });
-    eventEmitter.once('pluginsDidLoad', () => {
-      const time = new Date(new Date() - startTime);
-      const minutes = time.getMinutes();
-      const seconds = time.getSeconds();
-      const milliseconds = time.getMilliseconds();
-      const timeString = `${
-        (minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')
-      }${milliseconds}ms`;
-
-      leemons.log.debug(`Plugins loaded in ${timeString}`);
-    });
-
     // ! App init
     // Loads the App and plugins config
     await leemons.loadAppConfig();
@@ -306,9 +280,15 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
     await leemons.db.loadModels(_.omit(leemons.models, 'core_store'));
 
     // ! Plugin loading
-    emit('pluginsWillLoad');
-    await loadExternalFiles(leemons);
-    emit('pluginsDidLoad');
+    leemons.events.emit('pluginsWillLoad', 'leemons');
+    const plugins = await loadExternalFiles(leemons, 'plugins', 'plugin');
+    leemons.events.emit('pluginsDidLoad', 'leemons');
+    leemons.events.emit('providersWillLoad', 'leemons');
+    const providers = await loadExternalFiles(leemons, 'providers', 'provider');
+    leemons.events.emit('providersDidLoad', 'leemons');
+
+    console.log('PLUGINS', plugins);
+    console.log(providers);
     await leemons.setMiddlewares();
     await leemons.setRoutes();
 

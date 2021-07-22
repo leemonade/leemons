@@ -67,7 +67,8 @@ function formatModels(models, target = 'global') {
 
 function loadCoreModels(leemons) {
   const coreStore = createCoreStore();
-  const plugins = createPlugins();
+  const plugins = createPlugins('plugins');
+  const providers = createPlugins('providers');
 
   const coreStoreProvider = createCoreStoreProvider(
     formatModel(coreStore.collectionName, coreStore, coreStore.target, leemons),
@@ -75,12 +76,19 @@ function loadCoreModels(leemons) {
   );
   const pluginsProvider = createPluginsProvider(
     formatModel(plugins.collectionName, plugins, plugins.target, leemons),
+    'plugins',
+    leemons
+  );
+  const providersProvider = createPluginsProvider(
+    formatModel(providers.collectionName, providers, providers.target, leemons),
+    'providers',
     leemons
   );
 
   _.set(leemons, 'models', {
     core_store: coreStoreProvider,
     plugins: pluginsProvider,
+    providers: providersProvider,
   });
 }
 

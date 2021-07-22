@@ -2,8 +2,8 @@ const fs = require('fs-extra');
 const path = require('path');
 const { loadFile } = require('../config/loadFiles');
 
-async function getPluginsInfoFromDB(leemons) {
-  const plugins = await leemons.models.plugins.getAll();
+async function getPluginsInfoFromDB(leemons, target) {
+  const plugins = await leemons.models[target].getAll();
 
   // console.log(plugins);
 
@@ -11,8 +11,8 @@ async function getPluginsInfoFromDB(leemons) {
 }
 
 // Get an array of plugins stored under '/${pluginsFolder}'
-async function getLocalPlugins(leemons) {
-  const dir = path.resolve(leemons.dir.app, leemons.dir.plugins);
+async function getLocalPlugins(leemons, target) {
+  const dir = path.resolve(leemons.dir.app, leemons.dir[target]);
   const plugins = [];
   if (await fs.exists(dir)) {
     plugins.push(
@@ -26,7 +26,7 @@ async function getLocalPlugins(leemons) {
 }
 
 // Get an array of plugins stored in node_modules
-async function getExternalPlugins(leemons) {
+async function getExternalPlugins(leemons, target) {
   const plugins = [];
   // eslint-disable-next-line import/no-dynamic-require, global-require
   // const packageJSON = require(path.resolve(leemons.dir.app, 'package.json'));
@@ -39,10 +39,10 @@ async function getExternalPlugins(leemons) {
         .map((name) => {
           try {
             // Get those dependencies called 'leemons-plugin-*'
-            if (name.startsWith('leemons-plugin-')) {
+            if (name.startsWith(`leemons-${target}-`)) {
               const pluginPath = path.dirname(require.resolve(`${name}/package.json`));
               return {
-                name: name.replace('leemons-plugin-', ''),
+                name: name.replace(`leemons-${target}-`, ''),
                 path: pluginPath,
                 source: 'external',
               };

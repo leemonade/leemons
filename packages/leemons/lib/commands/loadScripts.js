@@ -93,17 +93,18 @@ async function loadServices(plugins, plugin, env, filter) {
 }
 
 async function loadRoutes(plugins, plugin, env, filter) {
-  const func = () => {
+  const func = async () => {
     if (plugin.status.code === PLUGIN_STATUS.enabled.code) {
       leemons.events.emit('pluginWillLoadRoutes', `plugins.${plugin.name}`);
       try {
         const routesDir = path.join(plugin.dir.app, plugin.dir.controllers, 'routes');
 
         // Try to load routes.js, if not exists, load routes.json, if none exists, set the routes to empty array
-        const routes = async () =>
+        const routes =
           (await loadFile(`${routesDir}.js`, { env, filter, allowedPath: plugin.dir.app })) ||
           (await loadFile(`${routesDir}.json`, { env, filter, allowedPath: plugin.dir.app })) ||
           [];
+
         leemons.events.emit('pluginDidLoadedRoutes', `plugins.${plugin.name}`);
         return routes;
       } catch (e) {

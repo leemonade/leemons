@@ -48,12 +48,12 @@ function transformServices(services, calledFrom) {
 /**
  * Loads all the external files of a type (plugins, providers, etc)
  */
-async function loadExternalFiles(leemons) {
+async function loadExternalFiles(leemons, target, singularTarget) {
   // TODO: Change from plugins to the target
   // Get plugins info from DB and installed plugins (local and external)
-  const pluginsInfo = await getPluginsInfoFromDB(leemons);
-  const localPlugins = await getLocalPlugins(leemons);
-  const externalPlugins = await getExternalPlugins(leemons);
+  const pluginsInfo = await getPluginsInfoFromDB(leemons, target);
+  const localPlugins = await getLocalPlugins(leemons, target);
+  const externalPlugins = await getExternalPlugins(leemons, singularTarget);
 
   // Save the environments in a Map
   const pluginsEnv = new Map();
@@ -202,7 +202,7 @@ async function loadExternalFiles(leemons) {
           await loadFiles(path.join(plugin.dir.app, plugin.dir.models), {
             env: pluginsEnv.get(plugin.dir.app),
           }),
-          `plugins.${plugin.name}`
+          `${target}.${plugin.name}`
         );
         return { ...plugin, models };
       }
@@ -211,7 +211,7 @@ async function loadExternalFiles(leemons) {
   );
 
   // Save the plugin on leemons so the model loader finds them
-  _.set(leemons, 'plugins', _.fromPairs(plugins.map((plugin) => [plugin.name, plugin])));
+  _.set(leemons, target, _.fromPairs(plugins.map((plugin) => [plugin.name, plugin])));
   const pluginsModels = _.merge(
     ...plugins
       .filter((plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code && plugin.models)
@@ -231,24 +231,28 @@ async function loadExternalFiles(leemons) {
       // Expose some objects to the plugin (leemons.plugin, leemons.getplugin,
       // leemons.query)
       const vmFilter = (filter) => {
-        _.set(filter, 'leemons.plugin', plugin);
+        _.set(filter, `leemons.${singularTarget}`, plugin);
 
-        _.set(filter, 'leemons.getPlugin', (pluginName) => {
-          let desiredPlugin = plugins.find(
-            (_plugin) =>
-              _plugin.name === pluginName && _plugin.status.code === PLUGIN_STATUS.enabled.code
-          );
-
-          if (desiredPlugin) {
-            desiredPlugin = _.pick(desiredPlugin, ['name', 'version', 'services']);
-            desiredPlugin.services = transformServices(
-              desiredPlugin.services,
-              `plugins.${plugin.name}`
+        _.set(
+          filter,
+          `leemons.get${singularTarget.charAt(0).toUpperCase()}${singularTarget.substr(1)}`,
+          (pluginName) => {
+            let desiredPlugin = plugins.find(
+              (_plugin) =>
+                _plugin.name === pluginName && _plugin.status.code === PLUGIN_STATUS.enabled.code
             );
-            return desiredPlugin;
+
+            if (desiredPlugin) {
+              desiredPlugin = _.pick(desiredPlugin, ['name', 'version', 'services']);
+              desiredPlugin.services = transformServices(
+                desiredPlugin.services,
+                `${target}.${plugin.name}`
+              );
+              return desiredPlugin;
+            }
+            return null;
           }
-          return null;
-        });
+        );
 
         const { query } = filter.leemons;
         _.set(filter, 'leemons.query', (modelName) => query(modelName, plugin.name));
@@ -298,19 +302,19 @@ async function loadExternalFiles(leemons) {
       };
       plugin.status.loadStatus = loadStatus;
 
-      leemons.events.once(`plugins.${plugin.name}:pluginDidInstall`, () => {
+      leemons.events.once(`${target}.${plugin.name}:${singularTarget}DidInstall`, () => {
         loadStatus.installed = true;
       });
-      leemons.events.once(`plugins.${plugin.name}:pluginDidLoadedServices`, () => {
+      leemons.events.once(`${target}.${plugin.name}:${singularTarget}DidLoadedServices`, () => {
         loadStatus.services = true;
       });
-      leemons.events.once(`plugins.${plugin.name}:pluginDidInit`, () => {
+      leemons.events.once(`${target}.${plugin.name}:${singularTarget}DidInit`, () => {
         loadStatus.init = true;
       });
-      leemons.events.once(`plugins.${plugin.name}:pluginDidLoadedControllers`, () => {
+      leemons.events.once(`${target}.${plugin.name}:${singularTarget}DidLoadedControllers`, () => {
         loadStatus.controllers = true;
       });
-      leemons.events.once(`plugins.${plugin.name}:pluginDidLoadedRoutes`, () => {
+      leemons.events.once(`${target}.${plugin.name}:${singularTarget}DidLoadedRoutes`, () => {
         loadStatus.routes = true;
       });
 
@@ -351,7 +355,7 @@ async function loadExternalFiles(leemons) {
       if (!loadStatus.routes) {
         await scripts.routes();
       }
-      leemons.events.emit('pluginDidLoaded', `plugins.${plugin.name}`);
+      leemons.events.emit(`${singularTarget}DidLoaded`, `${target}.${plugin.name}`);
       await loadPlugin(i + 1);
     }
   }
@@ -367,37 +371,40 @@ async function loadExternalFiles(leemons) {
       // Create a Map with all the plugins that needs loading
       const remainingPlugins = new Map();
       pluginsFunctions.forEach(({ plugin }) =>
-        remainingPlugins.set(`plugins.${plugin.name}`, plugin)
+        remainingPlugins.set(`${target}.${plugin.name}`, plugin)
       );
+      if (remainingPlugins.size === 0) {
+        resolve();
+      }
 
-      const eventHandler = ({ target }) => {
-        remainingPlugins.delete(target);
+      const eventHandler = ({ target: eventTarget }) => {
+        remainingPlugins.delete(eventTarget);
         // When no remaininingPlugins to be loaded, then the plugins are loaded
         if (remainingPlugins.size === 0) {
-          leemons.events.off('pluginDidLoaded', eventHandler);
-          leemons.events.off('pluginDidDisabled', eventHandler);
+          leemons.events.off(`${singularTarget}DidLoaded`, eventHandler);
+          leemons.events.off(`${singularTarget}DidDisabled`, eventHandler);
           resolve();
         }
       };
 
       // When a plugin is fully loaded, remove it from the Map
-      leemons.events.on('pluginDidLoaded', eventHandler);
+      leemons.events.on(`${singularTarget}DidLoaded`, eventHandler);
       // When a plugin is disabled, remove it from the Map
-      leemons.events.on('pluginDidDisabled', eventHandler);
+      leemons.events.on(`${singularTarget}DidDisabled`, eventHandler);
     });
   }
   await Promise.all([waitPluginsLoad(), loadPlugin(0)]);
-  leemons.events.emit('pluginsDidLoaded', 'leemons');
+  leemons.events.emit(`${target}DidLoaded`, 'leemons');
 
   // TODO: Load frontend (start nextjs with child_process instead of next)
   /**
    *        Load the frontend of all the plugins, and reload in secure mode if an error occurs
    */
 
-  await leemons.loadFront(
-    pluginsFunctions.map(({ plugin }) => plugin),
-    []
-  );
+  // Save the enabled plugins on leemons
+  _.set(leemons, target, _.fromPairs(pluginsFunctions.map(({ plugin }) => [plugin.name, plugin])));
+
+  return pluginsFunctions.map(({ plugin }) => plugin);
 }
 
 module.exports = {
