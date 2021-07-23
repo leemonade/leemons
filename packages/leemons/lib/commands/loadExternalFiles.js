@@ -277,11 +277,31 @@ async function loadExternalFiles(leemons, target, singularTarget) {
   // Load each plugin
   // const pluginsLength = pluginsFunctions.length;
 
+  const startTime = new Date();
+  leemons.events.once(`${target}DidLoaded`, () => {
+    const now = new Date();
+    const time = new Date(now - startTime);
+    const minutes = time.getMinutes();
+    const seconds = time.getSeconds();
+    const milliseconds = time.getMilliseconds();
+    const timeString = `${
+      (minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')
+    }${milliseconds}ms`;
+
+    leemons.log.debug(`${target} loaded in ${timeString}`);
+  });
+
   // for (let i = 0; i < pluginsLength; i++) {
   async function loadPlugin(i) {
     const { plugin, scripts } = pluginsFunctions[i] || {};
 
     if (plugin && !plugin.status.didLoad) {
+      // If no plugin depends on it load it asynchronously
+      console.log(plugin.dependencies);
+      if (!plugin.dependencies.dependants.length) {
+        console.log('Loading asynchronously', plugin.name);
+        loadPlugin(i + 1);
+      }
       plugin.status.didLoad = true;
       /**
        * Keep track on everything a plugin should load, so in case a custom loader
@@ -389,11 +409,6 @@ async function loadExternalFiles(leemons, target, singularTarget) {
   }
   await Promise.all([waitPluginsLoad(), loadPlugin(0)]);
   leemons.events.emit(`${target}DidLoaded`, 'leemons');
-
-  // TODO: Load frontend (start nextjs with child_process instead of next)
-  /**
-   *        Load the frontend of all the plugins, and reload in secure mode if an error occurs
-   */
 
   // Save the enabled plugins on leemons
   _.set(leemons, target, _.fromPairs(pluginsFunctions.map(({ plugin }) => [plugin.name, plugin])));
