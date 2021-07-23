@@ -12,14 +12,7 @@ const {
 } = require('../core/plugins/getPlugins');
 const { computeDependencies, checkMissingDependencies, sortByDeps } = require('./dependencies');
 const { getStatus, PLUGIN_STATUS } = require('./pluginsStatus');
-const {
-  loadServices,
-  loadInstall,
-  loadInit,
-  loadRoutes,
-  loadControllers,
-  customLoad,
-} = require('./loadScripts');
+const ScriptLoader = require('./loadScripts');
 
 /**
  * Get all the services which are a function and wrap them, so this.calledFrom is added to the call
@@ -49,6 +42,7 @@ function transformServices(services, calledFrom) {
  * Loads all the external files of a type (plugins, providers, etc)
  */
 async function loadExternalFiles(leemons, target, singularTarget) {
+  const scriptLoader = new ScriptLoader(target, singularTarget);
   // Get plugins info from DB and installed plugins (local and external)
   const pluginsInfo = await getPluginsInfoFromDB(leemons, target);
   const localPlugins = await getLocalPlugins(leemons, target);
@@ -254,12 +248,12 @@ async function loadExternalFiles(leemons, target, singularTarget) {
         return filter;
       };
 
-      const load = () => customLoad(plugins, plugin, env, vmFilter);
-      const install = () => loadInstall(plugins, plugin, env, vmFilter);
-      const init = () => loadInit(plugins, plugin, env, vmFilter);
-      const services = () => loadServices(plugins, plugin, env, vmFilter);
-      const routes = () => loadRoutes(plugins, plugin, env, vmFilter);
-      const controllers = () => loadControllers(plugins, plugin, env, vmFilter);
+      const load = () => scriptLoader.customLoad(plugin, env, vmFilter);
+      const install = () => scriptLoader.loadInstall(plugins, plugin, env, vmFilter);
+      const init = () => scriptLoader.loadInit(plugins, plugin, env, vmFilter);
+      const services = () => scriptLoader.loadServices(plugins, plugin, env, vmFilter);
+      const routes = () => scriptLoader.loadRoutes(plugins, plugin, env, vmFilter);
+      const controllers = () => scriptLoader.loadControllers(plugins, plugin, env, vmFilter);
 
       return {
         plugin,
@@ -297,9 +291,7 @@ async function loadExternalFiles(leemons, target, singularTarget) {
 
     if (plugin && !plugin.status.didLoad) {
       // If no plugin depends on it load it asynchronously
-      console.log(plugin.dependencies);
       if (!plugin.dependencies.dependants.length) {
-        console.log('Loading asynchronously', plugin.name);
         loadPlugin(i + 1);
       }
       plugin.status.didLoad = true;

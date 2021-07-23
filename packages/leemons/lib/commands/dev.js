@@ -287,8 +287,8 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
     const providers = await loadExternalFiles(leemons, 'providers', 'provider');
     leemons.events.emit('providersDidLoad', 'leemons');
 
-    console.log('PLUGINS', plugins);
-    console.log(providers);
+    // console.log('PLUGINS', plugins);
+    // console.log(providers);
     await leemons.setMiddlewares();
     await leemons.setRoutes();
 
