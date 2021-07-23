@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import Image from 'next/image';
-import InlineSvg from './inlineSvg';
+import InlineSvg from './InlineSvg';
 
 export default function ImageLoader({ src, alt, forceImage, className }) {
   const isSvg = forceImage ? false : src.toLowerCase().endsWith('.svg');
