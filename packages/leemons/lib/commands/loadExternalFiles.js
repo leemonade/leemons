@@ -49,7 +49,6 @@ function transformServices(services, calledFrom) {
  * Loads all the external files of a type (plugins, providers, etc)
  */
 async function loadExternalFiles(leemons, target, singularTarget) {
-  // TODO: Change from plugins to the target
   // Get plugins info from DB and installed plugins (local and external)
   const pluginsInfo = await getPluginsInfoFromDB(leemons, target);
   const localPlugins = await getLocalPlugins(leemons, target);
@@ -68,7 +67,6 @@ async function loadExternalFiles(leemons, target, singularTarget) {
           models: 'models',
           controllers: 'controllers',
           services: 'services',
-          providers: 'providers',
           next: 'next',
           env: '.env',
           install: 'install.js',
@@ -82,6 +80,7 @@ async function loadExternalFiles(leemons, target, singularTarget) {
 
       return {
         source: plugin.source,
+        // TODO: Plugin name only can be defined through package.json
         name: config.get('config.name', plugin.name),
         dir: plugin.dir,
         config,
@@ -124,14 +123,14 @@ async function loadExternalFiles(leemons, target, singularTarget) {
     }
   });
 
-  // TODO: If a plugin is marked as uninstalled will fail (I don't think it happend any more, as models.plugins.getAll not does not fetch the uninstalled ones)
   // Register new plugins to DB and merge data from DB with config
   plugins = await Promise.all(
     plugins.map(async (plugin, i) => {
       /*
-       * Disable duplicated plugins, the duplicated plugins are those which
-       * share a name and is not registered in the DB, this last conditions
-       * is for ensuring the less posible plugins are disabled
+       * Disable duplicated plugins; the duplicated plugin are those which
+       * share a name with another plugin and are is not registered in the DB,
+       * this last condition is for ensuring that the less posible plugins
+       * are disabled
        */
       if (
         plugins.findIndex((_plugin, j) => j !== i && plugin.name === _plugin.name) > -1 &&
@@ -141,17 +140,12 @@ async function loadExternalFiles(leemons, target, singularTarget) {
       }
 
       // TODO: Can crash (When the plugin can't be added to the DB)
-      // If the plugin does not have an id, is not registered in the DB yet
+      // If the plugin does not have an id, it is not registered in the DB yet
       // so we need to register it
       if (plugin.id === undefined) {
-        const {
-          name,
-          path: pluginPath,
-          version,
-          id,
-          source,
-          ...pluginInfo
-        } = await leemons.models.plugins.add({
+        const { name, path: pluginPath, version, id, source, ...pluginInfo } = await leemons.models[
+          target
+        ].add({
           ...plugin,
           path: plugin.dir.app,
           // Use version 0.0.1 as default
