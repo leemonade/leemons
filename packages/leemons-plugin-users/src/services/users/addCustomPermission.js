@@ -18,6 +18,19 @@ const { table } = require('../tables');
 async function addCustomPermission(userAuthId, data, { transacting } = {}) {
   validatePermissionName(data.permissionName, this.calledFrom);
   validateUserAddCustomPermission(data);
+
+  if (_.isArray(userAuthId)) {
+    return global.utils.settledResponseToManyResponse(
+      await Promise.allSettled(
+        _.map(userAuthId, (id) => _addCustomPermission(id, data, { transacting }))
+      )
+    );
+  } else {
+    return _addCustomPermission(userAuthId, data, { transacting });
+  }
+}
+
+async function _addCustomPermission(userAuthId, data, { transacting } = {}) {
   await existUserAuth({ id: userAuthId }, { transacting });
   await validateExistPermission(data.permissionName, { transacting });
   if (await hasPermission(userAuthId, data, { transacting })) {

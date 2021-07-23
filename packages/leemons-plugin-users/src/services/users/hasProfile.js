@@ -10,6 +10,7 @@ const { table } = require('../tables');
  * @return {Promise<boolean>} If have permission return true if not false
  * */
 async function hasProfile(user, profile, { transacting } = {}) {
+  // TODO VER (CAMBIO)
   const results = await table.userAuth.count({ user, profile }, { transacting });
   return !!results;
 }

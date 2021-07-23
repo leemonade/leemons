@@ -13,8 +13,18 @@ const constants = require('../../../config/constants');
  * @return {Promise<ListOfUserPermissions>} User permissions
  * */
 async function getUserPermissions(userAuth, { query: _query, transacting } = {}) {
-  if (userAuth.reloadPermissions) await updateUserAuthPermissions(userAuth.id, { transacting });
-  const query = { ..._query, userAuth: userAuth.id };
+  const users = _.isArray(userAuth) ? userAuth : [userAuth];
+
+  const reloadPermissionPromises = [];
+  _.forEach(users, (user) => {
+    if (user.reloadPermissions)
+      reloadPermissionPromises.push(updateUserAuthPermissions(user.id, { transacting }));
+  });
+
+  await Promise.all(reloadPermissionPromises);
+
+  const query = { ..._query, userAuth_$in: _.map(users, 'id') };
+
   const results = await table.userAuthPermission.find(query, { transacting });
 
   const group = _.groupBy(

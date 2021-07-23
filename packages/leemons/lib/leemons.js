@@ -160,12 +160,24 @@ class Leemons {
   authenticatedMiddleware() {
     return async (ctx, next) => {
       try {
-        const user = await this.plugins.users.services.users.detailForJWT(
-          ctx.headers.authorization
-        );
-        if (user) {
-          ctx.state.user = user;
-          return next();
+        let authorization = ctx.headers.authorization;
+        try {
+          authorization = JSON.parse(authorization);
+        } catch (e) {}
+        if (_.isString(authorization)) {
+          const user = await this.plugins.users.services.users.detailForJWT(authorization);
+          if (user) {
+            ctx.state.user = user;
+            return next();
+          }
+        } else {
+          const users = await Promise.all(
+            _.map(authorization, (auth) => this.plugins.users.services.users.detailForJWT(auth))
+          );
+          if (users.length) {
+            ctx.state.users = users;
+            return next();
+          }
         }
         ctx.status = 401;
         ctx.body = { status: 401, msg: 'Authorization required' };

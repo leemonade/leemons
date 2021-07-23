@@ -9,7 +9,7 @@ const {
 } = require('../src/validations/menu-item');
 
 async function getMenu(ctx) {
-  const menu = await menuService.getIfHasPermission(ctx.params.key, ctx.state.user);
+  const menu = await menuService.getIfHasPermission(ctx.params.key, ctx.state.users);
   ctx.status = 201;
   ctx.body = { status: 201, menu };
 }
@@ -19,7 +19,7 @@ async function addMenuItem(ctx) {
   ctx.request.body.pluginName = leemons.plugin.prefixPN('');
   validateAddMenuItemFromUser(ctx.request.body);
 
-  const menuItem = await menuItemService.addCustomForUser(ctx.state.user, ctx.request.body);
+  const menuItem = await menuItemService.addCustomForUser(ctx.state.users, ctx.request.body);
 
   ctx.status = 201;
   ctx.body = { status: 201, menuItem };
@@ -29,7 +29,7 @@ async function removeMenuItem(ctx) {
   validateRemoveMenuItemFromUser(ctx.params);
 
   const removed = await menuItemService.removeCustomForUser(
-    ctx.state.user,
+    ctx.state.users,
     ctx.params.menuKey,
     ctx.params.key
   );
@@ -39,11 +39,10 @@ async function removeMenuItem(ctx) {
 }
 
 async function updateMenuItem(ctx) {
-  console.log('updateMenuItem');
   validateUpdateMenuItemFromUser({ ...ctx.params, ...ctx.request.body });
 
   const updated = await menuItemService.updateCustomForUser(
-    ctx.state.user,
+    ctx.state.users,
     ctx.params.menuKey,
     ctx.params.key,
     ctx.request.body
@@ -59,7 +58,7 @@ async function reOrder(ctx) {
     ctx.params.key,
     ctx.request.body.parentKey,
     ctx.request.body.orderedIds,
-    ctx.state.user
+    ctx.state.users
   );
 
   ctx.status = 201;

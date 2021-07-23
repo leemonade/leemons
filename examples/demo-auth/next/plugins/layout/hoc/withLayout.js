@@ -12,8 +12,6 @@ export default function withLayout(WrappedPage, layout) {
   const Layout = LAYOUTS[layout || 'private'] || React.Fragment;
 
   const WithLayout = ({ ...pageProps }) => {
-    console.log('pageProps:', pageProps);
-
     return (
       <Layout>
         <WrappedPage {...pageProps} />

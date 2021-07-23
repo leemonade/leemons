@@ -7,7 +7,7 @@ export default function ListProfiles() {
   const [pagination, setPagination] = useState(null);
   useSession({ redirectTo: goLoginPage });
 
-  async function listProfiles() {
+  async function listRoles() {
     try {
       const { data } = await listProfilesRequest({
         page: 0,
@@ -21,7 +21,7 @@ export default function ListProfiles() {
   }
 
   useEffect(() => {
-    listProfiles();
+    listRoles();
   }, []);
 
   return (

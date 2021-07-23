@@ -14,7 +14,7 @@ const { table } = require('../tables');
 async function detailForJWT(jwtToken) {
   const payload = await verifyJWTToken(jwtToken);
   let result;
-
+  // TODO VER (CAMBIO) Hay que ver que vamos a guardar en el token jwt cuando el usuario seleccione el perfil
   if (payload.userAuth) {
     const userAuth = await table.userAuth.findOne({ id: payload.userAuth });
     if (!userAuth) throw new Error('No user auth found for the id provided');

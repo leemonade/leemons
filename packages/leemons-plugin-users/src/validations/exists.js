@@ -30,6 +30,11 @@ function validatePermissionName(permissionName, calledFrom) {
     throw new Error(`The permission name must begin with ${calledFrom}`);
 }
 
+function validateRoleType(permissionName, calledFrom) {
+  if (!permissionName.startsWith(calledFrom))
+    throw new Error(`The role type must begin with ${calledFrom}`);
+}
+
 module.exports = {
   validateExistItemPermissions,
   validateNotExistItemPermissions,
@@ -37,4 +42,5 @@ module.exports = {
   validateTypePrefix,
   validateExistPermission,
   validateNotExistPermission,
+  validateRoleType,
 };

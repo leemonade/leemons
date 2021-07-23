@@ -18,6 +18,19 @@ const { table } = require('../tables');
 async function removeCustomPermission(userAuthId, data, { transacting } = {}) {
   validatePermissionName(data.permissionName, this.calledFrom);
   validateUserRemoveCustomPermission(data);
+
+  if (_.isArray(userAuthId)) {
+    return global.utils.settledResponseToManyResponse(
+      await Promise.allSettled(
+        _.map(userAuthId, (id) => _removeCustomPermission(id, data, { transacting }))
+      )
+    );
+  } else {
+    return _removeCustomPermission(userAuthId, data, { transacting });
+  }
+}
+
+async function _removeCustomPermission(userAuthId, data, { transacting } = {}) {
   await existUserAuth({ id: userAuthId }, { transacting });
   await validateExistPermission(data.permissionName, { transacting });
 

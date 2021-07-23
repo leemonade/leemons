@@ -33,20 +33,19 @@ async function updateUserAuthPermissions(userAuthId, { transacting: _transacting
         ),
       ]);
 
-      const [groupRoles, profileRoles] = await Promise.all([
-        table.groupRole.find(
-          { group_$in: _.map(groupUserAuth, 'group') },
-          { columns: ['role'], transacting }
-        ),
-        table.profileRole.find({ profile: userAuth.profile }, { columns: ['role'], transacting }),
+      const groupRoles = await table.groupRole.find(
+        { group_$in: _.map(groupUserAuth, 'group') },
+        { columns: ['role'], transacting }
+      );
+
+      const roleIds = _.uniq([userAuth.role].concat(_.map(groupRoles, 'role')));
+
+      const [rolePermissions, roleCenter] = await Promise.all([
+        table.rolePermission.find({ role_$in: roleIds }, { transacting }),
+        table.roleCenter.find({ role_$in: roleIds }, { transacting }),
       ]);
 
-      const roleIds = _.uniq(_.map(profileRoles, 'role').concat(_.map(groupRoles, 'role')));
-
-      const rolePermissions = await table.rolePermission.find(
-        { role_$in: roleIds },
-        { transacting }
-      );
+      const roleCenterByRole = _.keyBy(roleCenter, 'role');
 
       return table.userAuthPermission.createMany(
         _.map(rolePermissions, (rolePermission) => ({
@@ -55,6 +54,9 @@ async function updateUserAuthPermissions(userAuthId, { transacting: _transacting
           permissionName: rolePermission.permissionName,
           actionName: rolePermission.actionName,
           target: rolePermission.target,
+          center: roleCenterByRole[rolePermission.role]
+            ? roleCenterByRole[rolePermission.role].center
+            : null,
         })),
         { transacting }
       );

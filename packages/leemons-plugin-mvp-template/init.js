@@ -1,13 +1,18 @@
-const initProfiles = require('./src/profiles');
+const initRoles = require('./src/roles');
 const initUsers = require('./src/users');
+const initCenters = require('./src/centers');
+const initProfiles = require('./src/profiles');
 
 async function init() {
   try {
-    console.log('Before profiles');
-    const profiles = await initProfiles();
-    console.log('profiles', profiles);
-    const users = await initUsers(profiles);
+    const centers = await initCenters();
+    console.log('centers', centers);
+    const roles = await initRoles(centers);
+    console.log('roles', roles);
+    const users = await initUsers(roles);
     console.log('users', users);
+    const profiles = await initProfiles(roles);
+    console.log('profiles', profiles);
   } catch (e) {
     console.error(e);
   }

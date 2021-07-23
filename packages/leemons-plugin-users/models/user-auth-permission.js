@@ -30,6 +30,11 @@ module.exports = {
         collection: 'plugins_users::roles',
       },
     },
+    center: {
+      references: {
+        collection: 'plugins_users::centers',
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

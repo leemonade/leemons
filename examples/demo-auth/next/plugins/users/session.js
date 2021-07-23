@@ -44,6 +44,100 @@ export async function getSession({ req }) {
 
 const fetcher = () => () => leemons.api('users/user');
 
+function getUserToken(data) {
+  if (data) {
+    if (_.isString(data)) {
+      return data;
+    } else {
+      return data.userToken;
+    }
+  }
+  return null;
+}
+
+export function getCookieToken(onlyCookie) {
+  let token = Cookies.get('token');
+  try {
+    token = JSON.parse(token);
+  } catch (e) {}
+  return onlyCookie ? token : getUserToken(token);
+}
+
+export function getCentersWithToken() {
+  const token = getCookieToken(true);
+  return _.isString(token) ? null : token.centers;
+}
+
+function getContextToken() {
+  return getUserToken(useContext(SessionContext));
+}
+
+export function useSession({ redirectTo, redirectIfFound } = {}) {
+  let result = null;
+  let finished = null;
+  let hasUser = null;
+  let effect = false;
+
+  const context = getContextToken();
+  if (context) {
+    effect = true;
+    hasUser = Boolean(context);
+    result = context;
+  }
+
+  const token = getCookieToken();
+
+  const { data, error } = useSWR(`users/user/${token}`, fetcher(), {
+    revalidateOnFocus: false,
+  });
+
+  const user = data && data.user ? data.user : null;
+  finished = Boolean(data || error);
+  hasUser = Boolean(user);
+
+  if (user) result = user;
+
+  if (!token) {
+    effect = true;
+    hasUser = Boolean(context);
+  }
+
+  useEffect(() => {
+    if (!effect) {
+      if (!redirectTo || !finished) return;
+      if (
+        // If redirectTo is set, redirect if the user was not found.
+        (redirectTo && !redirectIfFound && !hasUser) ||
+        // If redirectIfFound is also set, redirect if the user was found
+        (redirectIfFound && hasUser)
+      ) {
+        if (_.isFunction(redirectTo)) {
+          redirectTo();
+        } else if (_.isString(redirectTo)) {
+          Router.push(`/${redirectTo}`);
+        }
+      }
+    } else {
+      if (!redirectTo) return;
+      if (
+        // If redirectTo is set, redirect if the user was not found.
+        (redirectTo && !redirectIfFound && !hasUser) ||
+        // If redirectIfFound is also set, redirect if the user was found
+        (redirectIfFound && hasUser)
+      ) {
+        if (_.isFunction(redirectTo)) {
+          redirectTo();
+        } else if (_.isString(redirectTo)) {
+          Router.push(`/${redirectTo}`);
+        }
+      }
+    }
+  }, [redirectTo, redirectIfFound, finished, hasUser]);
+
+  return result;
+}
+
+/*
 export function useSession({ redirectTo, redirectIfFound } = {}) {
   const context = useContext(SessionContext);
   let effect = false;
@@ -66,7 +160,6 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
           // If redirectIfFound is also set, redirect if the user was found
           (redirectIfFound && hasUser)
         ) {
-          console.log('Redirecionamos al usuario', finished, hasUser, data, error);
           if (_.isFunction(redirectTo)) {
             redirectTo();
           } else if (_.isString(redirectTo)) {
@@ -102,11 +195,8 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
   }
   return context;
 }
+ */
 
 export function logoutSession(redirectTo) {
   Router.push(`/users/public/auth/logout?redirectTo=${redirectTo}`);
-}
-
-export function loginSession(token, redirectTo) {
-  Router.push(`/users/public/auth/login?token=${token}&redirectTo=${redirectTo}`);
 }

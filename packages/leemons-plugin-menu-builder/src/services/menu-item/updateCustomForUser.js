@@ -9,7 +9,7 @@ const { withTransaction } = global.utils;
  * Update custom Menu Item
  * @private
  * @static
- * @param {any} userAuth User auth
+ * @param {any} _userAuth User auth
  * @param {string} menuKey - The Menu key
  * @param {string} key - The item key
  * @param {object} json - The item data to update
@@ -17,7 +17,7 @@ const { withTransaction } = global.utils;
  * @return {Promise<MenuItem>} Created / Updated menuItem
  * */
 async function updateCustomForUser(
-  userAuth,
+  _userAuth,
   menuKey,
   key,
   { label, description, ...data },
@@ -25,7 +25,9 @@ async function updateCustomForUser(
 ) {
   const locales = translations();
 
-  if (!key.startsWith(leemons.plugin.prefixPN(`user:${userAuth.id}.`))) {
+  const userAuths = _.isArray(_userAuth) ? _userAuth : [_userAuth];
+
+  if (!key.startsWith(leemons.plugin.prefixPN(`user.${userAuths[0].user}.`))) {
     throw new Error('You can only update your own custom items');
   }
 
@@ -50,7 +52,7 @@ async function updateCustomForUser(
           promises.push(
             locales.contents.setValue(
               leemons.plugin.prefixPN(`${menuKey}.${key}.label`),
-              userAuth.language,
+              userAuths[0].locale,
               label,
               {
                 transacting,
@@ -63,7 +65,7 @@ async function updateCustomForUser(
           promises.push(
             locales.contents.setValue(
               leemons.plugin.prefixPN(`${menuKey}.${key}.description`),
-              userAuth.language,
+              userAuths[0].locale,
               description,
               {
                 transacting,

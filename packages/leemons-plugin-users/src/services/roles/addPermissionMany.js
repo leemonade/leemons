@@ -11,7 +11,7 @@ const { table } = require('../tables');
  * @param {any} transacting - DB Transaction
  * @return {Promise<any>} Created permissions-roles
  * */
-async function addPermissionMany(roleId, permissions, { isCustom, transacting }) {
+async function addPermissionMany(roleId, permissions, { isCustom, transacting } = {}) {
   const roleExist = await table.roles.count({ id: roleId }, { transacting });
   if (!roleExist) throw new Error('The role with the specified id does not exist');
   const items = [];

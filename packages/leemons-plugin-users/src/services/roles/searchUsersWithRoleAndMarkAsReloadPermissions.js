@@ -10,22 +10,24 @@ const { table } = require('../tables');
  * @param {any} transacting - Database transaction
  * @return {Promise<any>}
  * */
-async function searchUsersWithRoleAndMarkAsReloadPermissions(roleId, { transacting }) {
-  // TODO SIN USAR
-  // TODO ARREGLAR PARA QUE USE USER AUTH Y NO USERS
-  const [userRoles, groupRoles] = await Promise.all([
-    table.userRole.find({ role: roleId }, { columns: ['user'], transacting }),
+async function searchUsersWithRoleAndMarkAsReloadPermissions(roleId, { transacting } = {}) {
+  const [userAuths, groupRoles] = await Promise.all([
+    table.userAuth.find({ role: roleId }, { columns: ['id'], transacting }),
     table.groupRole.find({ role: roleId }, { columns: ['group'], transacting }),
   ]);
 
-  const groupUser = await table.groupUser.find(
+  const groupUser = await table.groupUserAuth.find(
     { group_$in: _.map(groupRoles, 'group') },
-    { columns: ['user'], transacting }
+    { columns: ['userAuth'], transacting }
   );
 
-  const userIds = _.uniq(_.map(userRoles, 'user').concat(_.map(groupUser, 'user')));
+  const userIds = _.uniq(_.map(userAuths, 'id').concat(_.map(groupUser, 'userAuth')));
 
-  return table.users.updateMany({ id_$in: userIds }, { reloadPermissions: true }, { transacting });
+  return table.userAuth.updateMany(
+    { id_$in: userIds },
+    { reloadPermissions: true },
+    { transacting }
+  );
 }
 
-module.exports = { searchUsersWithRoleAndMarkAsReloadPermissions };
+module.exports = searchUsersWithRoleAndMarkAsReloadPermissions;

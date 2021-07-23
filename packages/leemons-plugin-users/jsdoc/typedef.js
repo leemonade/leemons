@@ -14,6 +14,9 @@
  * @typedef Role
  * @property {string} id Role id
  * @property {string} name Role name
+ * @property {string} description Role description
+ * @property {string} center Role center id
+ * @property {string} type Role type
  * @property {Date} created_at Date of role creation
  * @property {Date} updated_at Date of role update
  */
@@ -22,6 +25,9 @@
  * @typedef RoleAdd
  * @type {Object}
  * @property {string} name Role name
+ * @property {string} description Role description
+ * @property {string} center Role center id
+ * @property {string} type Role type
  * @property {RolePermissionsAdd} permissions Permissions for role
  */
 
@@ -89,6 +95,24 @@
  */
 
 /**
+ * @typedef Center
+ * @property {string} id Action id
+ * @property {string} name Center name
+ * @property {number} description Center description
+ * @property {string} locale Center locale
+ * @property {Date} created_at Date of center creation
+ * @property {Date} updated_at Date of center update
+ */
+
+/**
+ * @typedef CenterAdd
+ * @property {string} name Center name
+ * @property {number} description Center description
+ * @property {number} locale Center locale
+ *
+ */
+
+/**
  * @typedef User
  * @property {string} id User id
  * @property {string} name User name
@@ -132,4 +156,11 @@
  * @property {string} email User email
  * @property {string} password User password
  * @property {string} language User locale language
+ */
+
+/**
+ * @typedef ProfileAdd
+ * @property {string} name Profile name
+ * @property {string} description Profile description
+ * @property {string} roles Profile roles ids
  */

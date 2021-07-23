@@ -100,7 +100,7 @@ async function get(ctx) {
 }
 
 async function getLogged(ctx) {
-  ctx.request.body.locale = ctx.state.user.language;
+  ctx.request.body.locale = ctx.state.user.locale;
   await get(ctx);
 }
 

@@ -5,7 +5,6 @@ const table = {
   userAuth: leemons.query('plugins_users::user-auth'),
   userRecoverPassword: leemons.query('plugins_users::user-recover-password'),
   userAuthPermission: leemons.query('plugins_users::user-auth-permission'),
-  userAuthRole: leemons.query('plugins_users::user-auth-role'), // TODO No se usa? Tambien sobra el modelo?
   superAdminUser: leemons.query('plugins_users::super-admin-user'),
 
   groupUserAuth: leemons.query('plugins_users::group-user-auth'),
@@ -17,12 +16,15 @@ const table = {
   permissionAction: leemons.query('plugins_users::permission-action'),
 
   roles: leemons.query('plugins_users::roles'),
+  roleCenter: leemons.query('plugins_users::role-center'),
   rolePermission: leemons.query('plugins_users::role-permission'),
 
   actions: leemons.query('plugins_users::actions'),
 
   profiles: leemons.query('plugins_users::profiles'),
   profileRole: leemons.query('plugins_users::profile-role'),
+
+  centers: leemons.query('plugins_users::centers'),
 };
 
 module.exports = { table };

@@ -30,7 +30,7 @@ async function reset(token, password, ctx) {
       await leemons.plugins.emails.services.email.sendAsEducationalCenter(
         config.user.email,
         'user-reset-password',
-        config.user.language,
+        config.user.locale,
         {
           name: config.user.name,
           loginUrl: `${ctx.request.header.origin}/users/public/login`,

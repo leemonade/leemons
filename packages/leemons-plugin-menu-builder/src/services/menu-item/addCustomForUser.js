@@ -10,24 +10,30 @@ const {
 
 const { withTransaction } = global.utils;
 
+// plugins.menu-builder.plugins.menu-builder.main.plugins.menu-builder.user:a3578518-b547-4059-8afb-3d715a623b6d.user-list-22.8jrwn3fd8me1ulvna75wgjws2xj0c9a6n.label
+
 /**
  * Create a Menu Item
  * @private
  * @static
- * @param {any} userAuth User auth
+ * @param {any} _userAuth User auth
  * @param {MenuItemAdd} data - The Menu Item to create
  * @param {any=} transacting DB transaction
  * @return {Promise<MenuItem>} Created / Updated menuItem
  * */
 async function addCustomForUser(
-  userAuth,
+  _userAuth,
   { label, description, ...data },
   { transacting: _transacting } = {}
 ) {
   const locales = translations();
 
+  const userAuths = _.isArray(_userAuth) ? _userAuth : [_userAuth];
+
   // eslint-disable-next-line no-param-reassign
-  data.key = leemons.plugin.prefixPN(`user:${userAuth.id}.${data.key}`);
+  data.key = leemons.plugin.prefixPN(
+    `user.${userAuths[0].user}.${data.key}.${global.utils.randomString()}`
+  );
 
   return withTransaction(
     async (transacting) => {
@@ -49,7 +55,7 @@ async function addCustomForUser(
           promises.push(
             locales.contents.add(
               leemons.plugin.prefixPN(`${data.menuKey}.${data.key}.label`),
-              userAuth.language,
+              userAuths[0].locale,
               label,
               {
                 transacting,
@@ -62,7 +68,7 @@ async function addCustomForUser(
           promises.push(
             locales.contents.add(
               leemons.plugin.prefixPN(`${data.menuKey}.${data.key}.description`),
-              userAuth.language,
+              userAuths[0].locale,
               description,
               {
                 transacting,
@@ -89,7 +95,7 @@ async function addCustomForUser(
 
       promises.push(
         leemons.plugins.users.services.users.addCustomPermission(
-          userAuth.id,
+          _.map(userAuths, 'id'),
           {
             permissionName: data.key,
             actionNames: ['admin'],

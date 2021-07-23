@@ -1,10 +1,6 @@
 module.exports = {
   // Time in minutes
   timeForRecoverPassword: 15,
-  // TODO Añadir listado de roles basicos
-  defaultRoles: [
-    { name: 'Administrador', permissions: ['add-users', 'show-users', 'delete-users'] },
-  ],
   // All users always have this permission
   basicPermission: {
     permissionName: 'plugins.users.any',

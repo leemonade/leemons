@@ -10,9 +10,9 @@ module.exports = {
         collection: 'plugins_users::users',
       },
     },
-    profile: {
+    role: {
       references: {
-        collection: 'plugins_users::profiles',
+        collection: 'plugins_users::roles',
       },
     },
     reloadPermissions: {

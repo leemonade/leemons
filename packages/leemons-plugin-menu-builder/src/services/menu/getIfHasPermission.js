@@ -20,8 +20,10 @@ const { table } = require('../../tables');
 async function getIfHasPermission(menuKey, userAuth, { transacting } = {}) {
   await validateNotExistMenu(menuKey, { transacting });
 
+  const user = _.isArray(userAuth) ? userAuth[0].user : userAuth.user;
+
   let userPermissions = [];
-  const isSuperAdmin = await leemons.plugins.users.services.users.isSuperAdmin(userAuth.user, {
+  const isSuperAdmin = await leemons.plugins.users.services.users.isSuperAdmin(user, {
     transacting,
   });
   if (!isSuperAdmin)

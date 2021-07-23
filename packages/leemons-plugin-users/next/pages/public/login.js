@@ -1,5 +1,4 @@
-import { loginSession, useSession } from '@users/session';
-import constants from '@users/constants';
+import { useSession } from '@users/session';
 import { useForm } from 'react-hook-form';
 import { loginRequest } from '@users/request';
 import { goRecoverPage } from '@users/navigate';
@@ -8,9 +7,10 @@ import tLoader from '@multilanguage/helpers/tLoader';
 import { Button, FormControl, HeroBg, ImageLoader, Input } from 'leemons-ui';
 import prefixPN from '@users/helpers/prefixPN';
 import Link from 'next/link';
+import Cookies from 'js-cookie';
 
-export default function Home() {
-  useSession({ redirectTo: constants.base, redirectIfFound: true });
+export default function Login() {
+  useSession({ redirectTo: 'users/private/select-profile', redirectIfFound: true });
   // TODO Ver de donde deberia de salir el locale cuando no se esta logado
   const [translations] = useTranslate({ keysStartsWith: prefixPN('login'), locale: 'en' });
   const t = tLoader(prefixPN('login'), translations);
@@ -22,15 +22,12 @@ export default function Home() {
   } = useForm();
   const onSubmit = async (data) => {
     try {
-      console.log(data);
       const response = await loginRequest(data);
-      loginSession(response.jwtToken, 'users/private/select-profile');
+      Cookies.set('token', response.jwtToken);
     } catch (err) {
       console.error(err);
     }
   };
-
-  console.log(errors);
 
   return (
     <>
