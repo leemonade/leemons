@@ -131,7 +131,7 @@
       @apply bg-transparent text-current border border-transparent;
       &:hover,
       &.btn-active {
-        @apply bg-base-content bg-opacity-20 border-opacity-0;
+        @apply bg-base-content bg-opacity-10 border-opacity-0;
       }
       &:focus-visible {
         box-shadow: 0 0 0 2px currentColor;
