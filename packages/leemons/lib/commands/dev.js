@@ -280,12 +280,8 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
     await leemons.db.loadModels(_.omit(leemons.models, 'core_store'));
 
     // ! Plugin loading
-    leemons.events.emit('pluginsWillLoad', 'leemons');
-    const plugins = await loadExternalFiles(leemons, 'plugins', 'plugin');
-    leemons.events.emit('pluginsDidLoad', 'leemons');
-    leemons.events.emit('providersWillLoad', 'leemons');
-    const providers = await loadExternalFiles(leemons, 'providers', 'provider');
-    leemons.events.emit('providersDidLoad', 'leemons');
+    await loadExternalFiles(leemons, 'plugins', 'plugin');
+    await loadExternalFiles(leemons, 'providers', 'provider');
 
     // console.log('PLUGINS', plugins);
     // console.log(providers);

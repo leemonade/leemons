@@ -42,6 +42,8 @@ function transformServices(services, calledFrom) {
  * Loads all the external files of a type (plugins, providers, etc)
  */
 async function loadExternalFiles(leemons, target, singularTarget) {
+  leemons.events.emit(`${target}WillLoad`, 'leemons');
+
   const scriptLoader = new ScriptLoader(target, singularTarget);
   // Get plugins info from DB and installed plugins (local and external)
   const pluginsInfo = await getPluginsInfoFromDB(leemons, target);
@@ -161,7 +163,6 @@ async function loadExternalFiles(leemons, target, singularTarget) {
     })
   );
 
-  // TODO: Add fullDependants, so the Plugin Loading can be optimized async-loading those plugins not depending on any other
   /**
    * Get for each plugin:
    *  dependencies: The plugins it directly depends on
@@ -181,35 +182,6 @@ async function loadExternalFiles(leemons, target, singularTarget) {
       _.set(plugin, 'status', { ...plugin.status, ...PLUGIN_STATUS.missingDeps });
     });
 
-  // TODO: Move plugin model loading to Plugin Loading so a custom load can decide when to load the models
-
-  plugins = await Promise.all(
-    plugins.map(async (plugin) => {
-      if (plugin.status.code === PLUGIN_STATUS.enabled.code) {
-        const models = formatModels(
-          await loadFiles(path.join(plugin.dir.app, plugin.dir.models), {
-            env: pluginsEnv.get(plugin.dir.app),
-          }),
-          `${target}.${plugin.name}`
-        );
-        return { ...plugin, models };
-      }
-      return plugin;
-    })
-  );
-
-  // Save the plugin on leemons so the model loader finds them
-  _.set(leemons, target, _.fromPairs(plugins.map((plugin) => [plugin.name, plugin])));
-  const pluginsModels = _.merge(
-    ...plugins
-      .filter((plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code && plugin.models)
-      .map((plugin) => plugin.models)
-  );
-
-  // Load all the plugins models
-  await leemons.db.loadModels(pluginsModels);
-
-  // TODO: Add model loading function, remove it from the previous lines
   // Get each loading function for the plugin
   const pluginsFunctions = plugins
     .filter((plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code)
@@ -219,8 +191,17 @@ async function loadExternalFiles(leemons, target, singularTarget) {
       // Expose some objects to the plugin (leemons.plugin, leemons.getplugin,
       // leemons.query)
       const vmFilter = (filter) => {
+        // Only let the plugin to emit events on itself
+        const events = _.cloneDeep(leemons.events);
+        _.set(filter, 'leemons.events', events);
+        _.set(filter, 'leemons.events.emit', (event, ...args) => {
+          leemons.events.emit.call(this.events, event, `${target}.${plugin.name}`, ...args);
+        });
+
+        // Expose leemons.plugin, leemons.provider... to each external file
         _.set(filter, `leemons.${singularTarget}`, plugin);
 
+        // Expose leemons.getPlugin, leemons.getProvider... to each external file
         _.set(
           filter,
           `leemons.get${singularTarget.charAt(0).toUpperCase()}${singularTarget.substr(1)}`,
@@ -249,6 +230,7 @@ async function loadExternalFiles(leemons, target, singularTarget) {
       };
 
       const load = () => scriptLoader.customLoad(plugin, env, vmFilter);
+      const models = () => scriptLoader.loadModels(plugins, plugin, env, vmFilter);
       const install = () => scriptLoader.loadInstall(plugins, plugin, env, vmFilter);
       const init = () => scriptLoader.loadInit(plugins, plugin, env, vmFilter);
       const services = () => scriptLoader.loadServices(plugins, plugin, env, vmFilter);
@@ -259,6 +241,7 @@ async function loadExternalFiles(leemons, target, singularTarget) {
         plugin,
         scripts: {
           load,
+          models,
           install,
           init,
           services,
@@ -300,6 +283,7 @@ async function loadExternalFiles(leemons, target, singularTarget) {
        * exists, everything is loaded correctly
        */
       const loadStatus = {
+        models: false,
         installed: false,
         services: false,
         init: false,
@@ -308,6 +292,9 @@ async function loadExternalFiles(leemons, target, singularTarget) {
       };
       plugin.status.loadStatus = loadStatus;
 
+      leemons.events.once(`${target}.${plugin.name}:${singularTarget}DidLoadModels`, () => {
+        loadStatus.models = true;
+      });
       leemons.events.once(`${target}.${plugin.name}:${singularTarget}DidInstall`, () => {
         loadStatus.installed = true;
       });
@@ -327,6 +314,10 @@ async function loadExternalFiles(leemons, target, singularTarget) {
       const load = await scripts.load();
       if (load.exists) {
         await load.func({ scripts: _.omit(scripts, ['load']), next: () => loadPlugin(i + 1) });
+      }
+
+      if (!loadStatus.models) {
+        await scripts.models();
       }
 
       /**

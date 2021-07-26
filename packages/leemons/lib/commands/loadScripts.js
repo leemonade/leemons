@@ -3,6 +3,7 @@ const path = require('path');
 const { PLUGIN_STATUS } = require('./pluginsStatus');
 const { loadFiles, loadFile } = require('../core/config/loadFiles');
 const disablePlugin = require('./disablePlugin');
+const { formatModels } = require('../core/model/loadModel');
 
 class ScriptLoader {
   constructor(target, singularTarget) {
@@ -24,10 +25,12 @@ class ScriptLoader {
     exclude = [],
   }) {
     if (plugin.status.code === PLUGIN_STATUS.enabled.code) {
-      leemons.events.emit(
-        `${this.singularTarget}${willLoadEvent}`,
-        `${this.target}.${plugin.name}`
-      );
+      if (willLoadEvent) {
+        leemons.events.emit(
+          `${this.singularTarget}${willLoadEvent}`,
+          `${this.target}.${plugin.name}`
+        );
+      }
       try {
         const func = singleFile ? loadFile : loadFiles;
 
@@ -38,10 +41,12 @@ class ScriptLoader {
           allowedPath: plugin.dir.app,
           exclude,
         });
-        leemons.events.emit(
-          `${this.singularTarget}${didLoadEvent}`,
-          `${this.target}.${plugin.name}`
-        );
+        if (didLoadEvent) {
+          leemons.events.emit(
+            `${this.singularTarget}${didLoadEvent}`,
+            `${this.target}.${plugin.name}`
+          );
+        }
         return { error: null, result };
       } catch (e) {
         disablePlugin(plugins, plugin, failStatus);
@@ -178,6 +183,32 @@ class ScriptLoader {
     }
 
     return { exists: false };
+  }
+
+  async loadModels(plugins, plugin, env, filter) {
+    const { error, result } = await this.loadScript({
+      plugins,
+      plugin,
+      dir: plugin.dir.models,
+      willLoadEvent: 'WillLoadModels',
+      didLoadEvent: null,
+      failStatus: PLUGIN_STATUS.servicesFailed,
+      env,
+      filter,
+      execFunction: false,
+    });
+
+    if (error || result === null) {
+      _.set(plugin, 'models', result);
+      return result;
+    }
+
+    const models = formatModels(result, `${this.target}.${plugin.name}`);
+    _.set(plugin, 'models', models);
+    _.set(leemons, `${this.target}.${plugin.name}`, plugin);
+    await leemons.db.loadModels(models);
+    leemons.events.emit(`${this.singularTarget}DidLoadModels`, `${this.target}.${plugin.name}`);
+    return models;
   }
 }
 
