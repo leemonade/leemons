@@ -201,6 +201,7 @@ async function loadExternalFiles(leemons, target, singularTarget) {
         // Expose leemons.plugin, leemons.provider... to each external file
         _.set(filter, `leemons.${singularTarget}`, plugin);
 
+        // TODO: Convert the plugins array to a Map for more efficiency
         // Expose leemons.getPlugin, leemons.getProvider... to each external file
         _.set(
           filter,

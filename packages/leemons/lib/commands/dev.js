@@ -280,13 +280,18 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
     await leemons.db.loadModels(_.omit(leemons.models, 'core_store'));
 
     // ! Plugin loading
-    await loadExternalFiles(leemons, 'plugins', 'plugin');
-    await loadExternalFiles(leemons, 'providers', 'provider');
+    const plugins = await loadExternalFiles(leemons, 'plugins', 'plugin');
+    const providers = await loadExternalFiles(leemons, 'providers', 'provider');
 
     // console.log('PLUGINS', plugins);
     // console.log(providers);
     await leemons.setMiddlewares();
     await leemons.setRoutes();
+
+    await leemons.loadFront(
+      plugins.filter((plugin) => plugin.status.code === 'enabled'),
+      providers.filter((provider) => provider.status.code === 'enabled')
+    );
 
     // ! Original functions
 
