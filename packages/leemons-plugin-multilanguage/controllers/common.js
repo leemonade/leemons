@@ -100,7 +100,12 @@ async function get(ctx) {
 }
 
 async function getLogged(ctx) {
-  ctx.request.body.locale = ctx.state.userSession.locale;
+  if (ctx.state.userSession) {
+    ctx.request.body.locale = ctx.state.userSession.locale;
+  } else {
+    ctx.request.body.locale = await leemons.plugins.users.services.platform.getLocale();
+  }
+  console.log(ctx.request.body.locale);
   await get(ctx);
 }
 

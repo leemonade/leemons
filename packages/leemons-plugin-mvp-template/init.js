@@ -5,6 +5,7 @@ const initProfiles = require('./src/profiles');
 
 async function init() {
   try {
+    await leemons.plugins.users.services.platform.setLocale('en');
     const centers = await initCenters();
     console.log('centers', centers);
     const roles = await initRoles(centers);

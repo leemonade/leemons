@@ -1,4 +1,9 @@
 module.exports = {
+  hero_bg: {
+    text:
+      '"¡No sé el significado de la mitad de esas largas palabras y, además, no creo que tú tampoco lo sepas!"',
+    author: 'Alice in Wonderland <br/> Lewis Carrol',
+  },
   login: {
     title: 'Acceda a su cuenta',
     email: 'Email',
@@ -6,8 +11,14 @@ module.exports = {
     remember_password: 'No recuerdo mi contraseña',
     log_in: 'Entrar',
     not_registered: 'No estoy registrado',
-    hero_text:
-      '"¡No sé el significado de la mitad de esas largas palabras y, además, no creo que tú tampoco lo sepas!"',
-    hero_author: 'Alice in Wonderland <br/> Lewis Carrol',
+  },
+  selectProfile: {
+    title: 'Hola {name}',
+    number_of_profiles:
+      'Tienes {profiles} perfiles en leemons, por favor selecciona con el que quieres acceder',
+    use_always_profile: 'Utilizar siempre este perfil para acceder rápidamente',
+    change_easy:
+      'Puede cambiar fácilmente su perfil haciendo clic en su avatar en la barra lateral de la aplicación',
+    log_in: 'Entrar',
   },
 };

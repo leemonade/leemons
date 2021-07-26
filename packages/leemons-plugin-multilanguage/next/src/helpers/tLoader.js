@@ -1,12 +1,20 @@
+import _ from 'lodash';
+
 function tLoader(prefix, translations) {
-  return (key) => {
-    const tKey = `${prefix}.${key}`;
+  return (key, replaces) => {
+    const tKey = `${prefix}.${key}`.toLowerCase();
     if (
       translations &&
       translations.items &&
       Object.prototype.hasOwnProperty.call(translations.items, tKey)
     ) {
-      return translations.items[tKey];
+      let item = translations.items[tKey];
+      if (_.isObject(replaces)) {
+        _.forIn(replaces, (value, key) => {
+          item = _.replace(item, `{${key}}`, value);
+        });
+      }
+      return item;
     }
     return null;
   };

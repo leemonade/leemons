@@ -157,7 +157,7 @@ class Leemons {
     this.backRouter.use(bodyParser());
   }
 
-  authenticatedMiddleware() {
+  authenticatedMiddleware(authenticated) {
     return async (ctx, next) => {
       try {
         let authorization = ctx.headers.authorization;
@@ -183,11 +183,18 @@ class Leemons {
             return next();
           }
         }
+        if (_.isObject(authenticated) && authenticated.nextWithoutSession) {
+          ctx.state.userSession = null;
+          return next();
+        }
         ctx.status = 401;
         ctx.body = { status: 401, msg: 'Authorization required' };
         return undefined;
       } catch (err) {
-        console.error(err);
+        if (_.isObject(authenticated) && authenticated.nextWithoutSession) {
+          ctx.state.userSession = null;
+          return next();
+        }
         ctx.status = 401;
         ctx.body = { status: 401, msg: 'Authorization required' };
         return undefined;
@@ -273,7 +280,8 @@ class Leemons {
           ) {
             const handler = _.get(plugin.controllers, route.handler);
             const functions = [];
-            if (route.authenticated) functions.push(this.authenticatedMiddleware());
+            if (route.authenticated)
+              functions.push(this.authenticatedMiddleware(route.authenticated));
             if (route.allowedPermissions)
               functions.push(this.permissionsMiddleware(route.allowedPermissions));
             functions.push(handler);
