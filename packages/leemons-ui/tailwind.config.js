@@ -2,6 +2,7 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 const typography = require('@tailwindcss/typography');
 // const leemonsUI = require('./dist/theme');
 const colors = require('./src/theme/colors');
+const width = require('./src/theme/extends/width');
 
 module.exports = {
   dark: false,
@@ -19,6 +20,7 @@ module.exports = {
     },
     extend: {
       colors,
+      width,
     },
   },
   variants: {

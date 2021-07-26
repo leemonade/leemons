@@ -6,11 +6,13 @@ const utilities = require('../../../dist/theme/utilities');
 const utilitiesStyled = require('../../../dist/theme/utilities-styled');
 const utilitiesUnstyled = require('../../../dist/theme/utilities-unstyled');
 const components = require('../../../dist/theme/styled');
+const width = require('../../../dist/theme/extends/width');
 
 module.exports = {
   theme: {
     colors,
     fontFamily,
+    width,
   },
   corePlugins: [
     'animation',

@@ -12,6 +12,7 @@ const utilitiesStyled = require('./utilities-styled');
 const themes = require('./colors/themes');
 const colorNames = require('./colors/colorNames');
 const hex2hsl = require('./colors/hex2hsl');
+const width = require('./extends/width');
 
 // check if tailwindcss package exists
 const isTailwindInstalled = typeof tailwindPlugin !== 'undefined';
@@ -177,7 +178,9 @@ you need to add this to your \x1b[34mtailwind.config.js\x1b[0m file:
 };
 
 if (isTailwindInstalled) {
-  module.exports = tailwindPlugin(mainFunction, { theme: { fontFamily, extend: { colors } } });
+  module.exports = tailwindPlugin(mainFunction, {
+    theme: { fontFamily, extend: { colors, width } },
+  });
 } else {
   module.exports = mainFunction;
 }

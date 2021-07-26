@@ -70,7 +70,7 @@ export default function InstallPage() {
               <pre>
                 <code>
                   <span className="text-neutral-content text-opacity-60">{`@import url("`}</span>
-                  {`https://fonts.googleapis.com/css2?family=Inter&family=Lexend:wght@300;400;500;600&display=swap`}
+                  {`https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lexend:wght@300;400;500;600&display=swap`}
                   <span className="text-neutral-content text-opacity-60">{`");`}</span>
                 </code>
               </pre>
@@ -88,7 +88,7 @@ export default function InstallPage() {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="`}
                   </span>
-                  {`https://fonts.googleapis.com/css2?family=Inter&family=Lexend:wght@300;400;500;600&display=swap`}
+                  {`https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lexend:wght@300;400;500;600&display=swap`}
                   <span className="text-neutral-content text-opacity-50">{`" rel="stylesheet">`}</span>
                 </code>
               </pre>
