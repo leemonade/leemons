@@ -272,7 +272,7 @@ async function loadExternalFiles(leemons, target, singularTarget) {
   // const pluginsLength = pluginsFunctions.length;
 
   const startTime = new Date();
-  leemons.events.once(`${target}DidLoaded`, () => {
+  leemons.events.once(`${target}DidLoad`, () => {
     const now = new Date();
     const time = new Date(now - startTime);
     const minutes = time.getMinutes();
@@ -311,16 +311,16 @@ async function loadExternalFiles(leemons, target, singularTarget) {
       leemons.events.once(`${target}.${plugin.name}:${singularTarget}DidInstall`, () => {
         loadStatus.installed = true;
       });
-      leemons.events.once(`${target}.${plugin.name}:${singularTarget}DidLoadedServices`, () => {
+      leemons.events.once(`${target}.${plugin.name}:${singularTarget}DidLoadServices`, () => {
         loadStatus.services = true;
       });
       leemons.events.once(`${target}.${plugin.name}:${singularTarget}DidInit`, () => {
         loadStatus.init = true;
       });
-      leemons.events.once(`${target}.${plugin.name}:${singularTarget}DidLoadedControllers`, () => {
+      leemons.events.once(`${target}.${plugin.name}:${singularTarget}DidLoadControllers`, () => {
         loadStatus.controllers = true;
       });
-      leemons.events.once(`${target}.${plugin.name}:${singularTarget}DidLoadedRoutes`, () => {
+      leemons.events.once(`${target}.${plugin.name}:${singularTarget}DidLoadRoutes`, () => {
         loadStatus.routes = true;
       });
 
@@ -361,7 +361,7 @@ async function loadExternalFiles(leemons, target, singularTarget) {
       if (!loadStatus.routes) {
         await scripts.routes();
       }
-      leemons.events.emit(`${singularTarget}DidLoaded`, `${target}.${plugin.name}`);
+      leemons.events.emit(`${singularTarget}DidLoad`, `${target}.${plugin.name}`);
       await loadPlugin(i + 1);
     }
   }
@@ -370,7 +370,7 @@ async function loadExternalFiles(leemons, target, singularTarget) {
    * As soon as a plugin calls `next()` without awaiting it, the following
    * plugins are not waited by leemons in order to continue loading the app,
    * resulting in crashes, bugs and errors, so we need to wait unitl all the
-   * plugins are loaded (have emitted pluginDidLoaded)
+   * plugins are loaded (have emitted pluginDidLoad)
    */
   async function waitPluginsLoad() {
     return new Promise((resolve) => {
@@ -387,20 +387,20 @@ async function loadExternalFiles(leemons, target, singularTarget) {
         remainingPlugins.delete(eventTarget);
         // When no remaininingPlugins to be loaded, then the plugins are loaded
         if (remainingPlugins.size === 0) {
-          leemons.events.off(`${singularTarget}DidLoaded`, eventHandler);
-          leemons.events.off(`${singularTarget}DidDisabled`, eventHandler);
+          leemons.events.off(`${singularTarget}DidLoad`, eventHandler);
+          leemons.events.off(`${singularTarget}DidDisable`, eventHandler);
           resolve();
         }
       };
 
       // When a plugin is fully loaded, remove it from the Map
-      leemons.events.on(`${singularTarget}DidLoaded`, eventHandler);
+      leemons.events.on(`${singularTarget}DidLoad`, eventHandler);
       // When a plugin is disabled, remove it from the Map
-      leemons.events.on(`${singularTarget}DidDisabled`, eventHandler);
+      leemons.events.on(`${singularTarget}DidDisable`, eventHandler);
     });
   }
   await Promise.all([waitPluginsLoad(), loadPlugin(0)]);
-  leemons.events.emit(`${target}DidLoaded`, 'leemons');
+  leemons.events.emit(`${target}DidLoad`, 'leemons');
 
   // Save the enabled plugins on leemons
   _.set(leemons, target, _.fromPairs(pluginsFunctions.map(({ plugin }) => [plugin.name, plugin])));

@@ -92,7 +92,7 @@ class ScriptLoader {
         plugin,
         dir: plugin.dir.services,
         willLoadEvent: 'WillLoadServices',
-        didLoadEvent: 'DidLoadedServices',
+        didLoadEvent: 'DidLoadServices',
         failStatus: PLUGIN_STATUS.servicesFailed,
         env,
         filter,
@@ -121,7 +121,7 @@ class ScriptLoader {
             [];
 
           leemons.events.emit(
-            `${this.singularTarget}DidLoadedRoutes`,
+            `${this.singularTarget}DidLoadRoutes`,
             `${this.target}.${plugin.name}`
           );
           return routes;
@@ -148,7 +148,7 @@ class ScriptLoader {
         plugin,
         dir: plugin.dir.controllers,
         willLoadEvent: 'WillLoadControllers',
-        didLoadEvent: 'DidLoadedControllers',
+        didLoadEvent: 'DidLoadControllers',
         failStatus: PLUGIN_STATUS.controllersFailed,
         env,
         filter,
