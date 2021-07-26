@@ -13,6 +13,7 @@ import Hero from './Hero';
 import HeroBg from './HeroBg';
 import Input from './Input';
 import Label from './Label';
+import Logo from './Logo';
 import Menu from './Menu';
 import MenuItem from './MenuItem';
 import Navbar from './Navbar';
@@ -43,6 +44,7 @@ export {
   HeroBg,
   Input,
   Label,
+  Logo,
   Menu,
   MenuItem,
   Modal,
