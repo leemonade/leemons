@@ -9,23 +9,27 @@ const { table } = require('../tables');
  * @public
  * @static
  * @param {string} jwtToken
+ * @param {boolean} forceOnlyUser
+ * @param {boolean} forceOnlyUserAuth
  * @return {Promise<User>}
  * */
-async function detailForJWT(jwtToken) {
+async function detailForJWT(jwtToken, forceOnlyUser, forceOnlyUserAuth) {
   const payload = await verifyJWTToken(jwtToken);
   let result;
-  // TODO VER (CAMBIO) Hay que ver que vamos a guardar en el token jwt cuando el usuario seleccione el perfil
   if (payload.userAuth) {
     const userAuth = await table.userAuth.findOne({ id: payload.userAuth });
     if (!userAuth) throw new Error('No user auth found for the id provided');
+    if (forceOnlyUserAuth) return userAuth;
     const user = await table.users.findOne({ id: userAuth.user });
     if (!user) throw new Error('No user found for the id provided');
-    result = _.assign(user, userAuth);
+    if (forceOnlyUser) return user;
+    result = user;
+    result.userAuths = [userAuth];
   } else {
     const user = await table.users.findOne({ id: payload.id });
     if (!user) throw new Error('No user found for the id provided');
-    user.user = user.id;
     result = user;
+    result.userAuths = [];
   }
 
   return result;

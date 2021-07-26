@@ -52,6 +52,9 @@ function MyApp({ Component, pageProps }) {
             config.headers['Authorization'] = token;
           } else {
             config.headers['Authorization'] = token.userToken;
+            if (token.centers.length === 1) {
+              config.headers['Authorization'] = token.centers[0].token;
+            }
             if (_.isObject(urlConfig) && urlConfig.allUsers) {
               config.headers['Authorization'] = JSON.stringify(_.map(token.centers, 'token'));
             }

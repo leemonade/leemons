@@ -8,7 +8,7 @@ const { table } = require('../../tables');
  * @param {string} menuKey Menu key
  * @param {string} parentKey Parent key
  * @param {string[]} ids Menu item ids in order
- * @param {any} _userAuth User auth
+ * @param {UserSession} userSession User session
  * @param {any=} transacting DB transaction
  * @return {Promise<MenuItem>} Created / Updated menuItem
  * */
@@ -16,10 +16,9 @@ async function reOrderCustomUserItems(
   menuKey,
   parentKey,
   ids,
-  _userAuth,
+  userSession,
   { transacting: _transacting } = {}
 ) {
-  const userAuths = _.isArray(_userAuth) ? _userAuth : [_userAuth];
   // Todo: Comprobamos si tiene permiso mediante la clave, mejor en rendimiento peor en consistencia deberia quiza de ir por los permisos del usuario comprobando la tabla de los permisos?
   // Check if use have access to all menu item ids
   const count = await table.menuItem.count(
@@ -27,7 +26,7 @@ async function reOrderCustomUserItems(
       menuKey,
       parentKey,
       id_$in: ids,
-      key_$startssWith: leemons.plugin.prefixPN(`user.${userAuths[0].user}.`),
+      key_$startssWith: leemons.plugin.prefixPN(`user.${userSession.id}.`),
     },
     { transacting: _transacting }
   );

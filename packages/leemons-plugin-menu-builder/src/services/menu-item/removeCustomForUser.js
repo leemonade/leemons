@@ -10,18 +10,16 @@ const { withTransaction } = global.utils;
  * Remove custom Menu Item
  * @private
  * @static
- * @param {any} _userAuth User auth
+ * @param {UserSession} userSession User session
  * @param {string} menuKey - The Menu key
  * @param {string} key - The item key
  * @param {any=} transacting DB transaction
  * @return {Promise<MenuItem>} Created / Updated menuItem
  * */
-async function removeCustomForUser(_userAuth, menuKey, key, { transacting: _transacting } = {}) {
+async function removeCustomForUser(userSession, menuKey, key, { transacting: _transacting } = {}) {
   const locales = translations();
 
-  const userAuths = _.isArray(_userAuth) ? _userAuth : [_userAuth];
-
-  if (!key.startsWith(leemons.plugin.prefixPN(`user.${userAuths[0].user}.`))) {
+  if (!key.startsWith(leemons.plugin.prefixPN(`user.${userSession.id}.`))) {
     throw new Error('You can only delete your own custom items');
   }
 
@@ -51,7 +49,7 @@ async function removeCustomForUser(_userAuth, menuKey, key, { transacting: _tran
       // Remove de custom permission
       promises.push(
         leemons.plugins.users.services.users.removeCustomPermission(
-          userAuths,
+          _.map(userSession.userAuths, 'id'),
           {
             permissionName: key,
           },

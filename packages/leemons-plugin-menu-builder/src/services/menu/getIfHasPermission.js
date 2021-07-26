@@ -13,23 +13,24 @@ const { table } = require('../../tables');
  * @public
  * @static
  * @param {string} menuKey - A name to identify the Menu (just to admin it)
- * @param {UserAuth} userAuth - User auth
+ * @param {UserSession} userSession - User auth
  * @param {any=} transacting DB transaction
  * @return {Promise<any>}
  * */
-async function getIfHasPermission(menuKey, userAuth, { transacting } = {}) {
+async function getIfHasPermission(menuKey, userSession, { transacting } = {}) {
   await validateNotExistMenu(menuKey, { transacting });
 
-  const user = _.isArray(userAuth) ? userAuth[0].user : userAuth.user;
-
   let userPermissions = [];
-  const isSuperAdmin = await leemons.plugins.users.services.users.isSuperAdmin(user, {
+  const isSuperAdmin = await leemons.plugins.users.services.users.isSuperAdmin(userSession.id, {
     transacting,
   });
   if (!isSuperAdmin)
-    userPermissions = await leemons.plugins.users.services.users.getUserPermissions(userAuth, {
-      transacting,
-    });
+    userPermissions = await leemons.plugins.users.services.users.getUserPermissions(
+      userSession.userAuths,
+      {
+        transacting,
+      }
+    );
 
   const queryPermissions = [];
 

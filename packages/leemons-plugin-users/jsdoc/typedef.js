@@ -125,10 +125,24 @@
  */
 
 /**
- * @typedef UserAuth
+ * @typedef UserAuthSession
+ * @property {string} id User auth id
+ * @property {string} user User relation
+ * @property {string} role User auth role
+ * @property {string} reloadPermissions Define if need reload the user auth permissions
+ * @property {Date} created_at Date of permission creation
+ * @property {Date} updated_at Date of permission update
+ */
+
+/**
+ * @typedef UserSession
  * @property {string} id User id
- * @property {string} user User id
- * @property {boolean} reloadPermissions Define if need reload permissions
+ * @property {string} name User name
+ * @property {string} surnames User surnames
+ * @property {string} email User email
+ * @property {string} locale User locale
+ * @property {boolean} active User is active
+ * @property {UserAuthSession[]} userAuths User auths for this session
  * @property {Date} created_at Date of permission creation
  * @property {Date} updated_at Date of permission update
  */

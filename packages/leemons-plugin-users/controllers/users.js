@@ -77,20 +77,19 @@ async function login(ctx) {
 }
 
 async function detail(ctx) {
-  console.log('En el detail');
-  const user = await usersService.detail(ctx.state.user.user);
+  const user = await usersService.detail(ctx.state.userSession.id);
   ctx.status = 200;
   ctx.body = { status: 200, user };
 }
 
 async function profiles(ctx) {
-  const _profiles = await usersService.profiles(ctx.state.user.user);
+  const _profiles = await usersService.profiles(ctx.state.userSession.id);
   ctx.status = 200;
   ctx.body = { status: 200, profiles: _profiles };
 }
 
 async function profileToken(ctx) {
-  const jwtToken = await usersService.profileToken(ctx.state.user.user, ctx.params.id);
+  const jwtToken = await usersService.profileToken(ctx.state.userSession.id, ctx.params.id);
   ctx.status = 200;
   ctx.body = { status: 200, jwtToken };
 }

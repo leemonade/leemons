@@ -167,15 +167,19 @@ class Leemons {
         if (_.isString(authorization)) {
           const user = await this.plugins.users.services.users.detailForJWT(authorization);
           if (user) {
-            ctx.state.user = user;
+            ctx.state.userSession = user;
             return next();
           }
         } else {
-          const users = await Promise.all(
-            _.map(authorization, (auth) => this.plugins.users.services.users.detailForJWT(auth))
+          const user = await this.plugins.users.services.users.detailForJWT(authorization[0], true);
+          const userAuths = await Promise.all(
+            _.map(authorization, (auth) =>
+              this.plugins.users.services.users.detailForJWT(auth, false, true)
+            )
           );
-          if (users.length) {
-            ctx.state.users = users;
+          if (user && userAuths.length) {
+            user.userAuths = userAuths;
+            ctx.state.userSession = user;
             return next();
           }
         }
@@ -194,10 +198,12 @@ class Leemons {
   permissionsMiddleware(allowedPermissions) {
     return async (ctx, next) => {
       try {
+        // TODO: Ahora mismo con que cualquiera de los user auth tenga permiso pasa al controlador, aqui entra la duda de si se le deberian de pasar todos los user auth o solo los que tengan permiso, por qe es posible que relacione algun dato a un user auth que realmente no deberia de tener acceso
         const hasPermission = await this.plugins.users.services.users.hasPermissionCTX(
-          ctx.state.user,
+          ctx.state.userSession,
           allowedPermissions
         );
+        console.log(hasPermission);
         if (hasPermission) {
           return next();
         }

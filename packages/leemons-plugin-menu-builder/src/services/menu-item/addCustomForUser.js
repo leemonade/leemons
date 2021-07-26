@@ -16,23 +16,21 @@ const { withTransaction } = global.utils;
  * Create a Menu Item
  * @private
  * @static
- * @param {any} _userAuth User auth
+ * @param {UserSession} userSession User session
  * @param {MenuItemAdd} data - The Menu Item to create
  * @param {any=} transacting DB transaction
  * @return {Promise<MenuItem>} Created / Updated menuItem
  * */
 async function addCustomForUser(
-  _userAuth,
+  userSession,
   { label, description, ...data },
   { transacting: _transacting } = {}
 ) {
   const locales = translations();
 
-  const userAuths = _.isArray(_userAuth) ? _userAuth : [_userAuth];
-
   // eslint-disable-next-line no-param-reassign
   data.key = leemons.plugin.prefixPN(
-    `user.${userAuths[0].user}.${data.key}.${global.utils.randomString()}`
+    `user.${userSession.id}.${data.key}.${global.utils.randomString()}`
   );
 
   return withTransaction(
@@ -55,7 +53,7 @@ async function addCustomForUser(
           promises.push(
             locales.contents.add(
               leemons.plugin.prefixPN(`${data.menuKey}.${data.key}.label`),
-              userAuths[0].locale,
+              userSession.locale,
               label,
               {
                 transacting,
@@ -68,7 +66,7 @@ async function addCustomForUser(
           promises.push(
             locales.contents.add(
               leemons.plugin.prefixPN(`${data.menuKey}.${data.key}.description`),
-              userAuths[0].locale,
+              userSession.locale,
               description,
               {
                 transacting,
@@ -95,7 +93,7 @@ async function addCustomForUser(
 
       promises.push(
         leemons.plugins.users.services.users.addCustomPermission(
-          _.map(userAuths, 'id'),
+          _.map(userSession.userAuths, 'id'),
           {
             permissionName: data.key,
             actionNames: ['admin'],
