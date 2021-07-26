@@ -353,7 +353,9 @@ async function loadExternalFiles(leemons, target, singularTarget) {
       if (!loadStatus.routes) {
         await scripts.routes();
       }
-      leemons.events.emit(`${singularTarget}DidLoad`, `${target}.${plugin.name}`);
+      if (plugin.status.code === PLUGIN_STATUS.enabled.code) {
+        leemons.events.emit(`${singularTarget}DidLoad`, `${target}.${plugin.name}`);
+      }
       await loadPlugin(i + 1);
     }
   }

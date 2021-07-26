@@ -17,7 +17,7 @@ const { createDatabaseManager } = require('leemons-database');
 const hooks = require('leemons-hooks');
 const ora = require('ora');
 const { loadConfiguration } = require('./core/config/loadConfig');
-const { loadModels } = require('./core/model/loadModel');
+const { loadModels, loadCoreModels } = require('./core/model/loadModel');
 const {
   initializePlugins,
   loadPluginsModels,
@@ -30,6 +30,8 @@ const {
   loadProvidersConfig,
   initializeProviders,
 } = require('./core/plugins/loadProviders');
+const { loadExternalFiles } = require('./commands/loadExternalFiles');
+const { PLUGIN_STATUS } = require('./commands/pluginsStatus');
 
 class Leemons {
   constructor(log) {
@@ -144,11 +146,13 @@ class Leemons {
 
   // Initialize all the middlewares
   setMiddlewares() {
+    this.events.emit('willSetMiddlewares', 'leemons');
     this.backRouter.use(async (ctx, next) => {
       ctx._startAt = new Date();
       this.log.http(
         chalk`Start connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${ctx.ip}}`
       );
+
       await next();
     });
 
@@ -170,11 +174,13 @@ class Leemons {
     });
 
     this.backRouter.use(bodyParser());
+    this.events.emit('didSetMiddlewares', 'leemons');
   }
 
   authenticatedMiddleware() {
     return async (ctx, next) => {
       try {
+        // TODO: Modify plugin accessor
         const user = await this.plugins.users.services.users.detailForJWT(
           ctx.headers.authorization
         );
@@ -196,6 +202,7 @@ class Leemons {
   permissionsMiddleware(allowedPermissions) {
     return async (ctx, next) => {
       try {
+        // TODO: Modify plugin accessor
         const hasPermission = await this.plugins.users.services.users.hasPermission(
           ctx.state.user,
           allowedPermissions
@@ -250,15 +257,26 @@ class Leemons {
     return results;
   }
 
-  // Initialize the api endpoints
-  setRoutes() {
-    // Plugins
+  /**
+   * Initializes the api endpoints
+   * @param {{
+   *  controllers: {[name]: any}[],
+   *  routes: {
+   *    path: string,
+   *    method: string,
+   *    handler: string,
+   *    authenticated?: boolean,
+   *    allowedPermissions?: []}[]}} plugins
+   */
+  setRoutes(plugins) {
+    this.events.emit('willSetRoutes', 'leemons');
+    // TODO: Remove server reload endpoint
     this.backRouter.get('/api/reload', (ctx) => {
       ctx.body = { reloading: true };
       this.reload();
     });
 
-    Object.entries(this.plugins).forEach(([, plugin]) => {
+    plugins.forEach((plugin) => {
       if (_.isArray(plugin.routes)) {
         plugin.routes.forEach((route) => {
           if (
@@ -286,6 +304,8 @@ class Leemons {
       ctx.status = 404;
       ctx.body = { status: 404, message: 'Url not found' };
     });
+
+    this.events.emit('didSetRoutes', 'leemons');
   }
 
   // Initialize the frontend handler
@@ -306,76 +326,36 @@ class Leemons {
     return this.db.query(model, plugin);
   }
 
-  async loadBack(loadedPlugins, loadedProviders) {
-    await hooks.fireEvent('leemons::loadBack', { status: 'start' });
-
+  async loadBack() {
     /*
-     * Load the providers' DataBase Model Descriptions
+     * Create a DatabaseManager for managing the database connections and models
      */
-    await hooks.fireEvent('leemons::loadProvidersModels', { status: 'start' });
-    await loadProvidersModels(loadedProviders, this);
-    await hooks.fireEvent('leemons::loadProvidersModels', { status: 'end' });
-
+    this.db = createDatabaseManager(this);
     /*
-     * Load the plugins' DataBase Model Descriptions
+     * Initialize database connections
      */
-    await hooks.fireEvent('leemons::loadPluginsModels', { status: 'start' });
-    await loadPluginsModels(loadedPlugins, this);
-    await hooks.fireEvent('leemons::loadPluginsModels', { status: 'end' });
+    await this.db.init();
 
-    /*
-     * Load other DataBase Model Descriptions
+    /**
+     * Load core models
      */
-    // await hooks.fireEvent('leemons::loadModels', { status: 'start' });
-    // loadModels(this);
-    // await hooks.fireEvent('leemons::loadModels', { status: 'end' });
+    loadCoreModels(this);
+    await this.db.loadModels(_.omit(this.models, 'core_store'));
 
-    // /*
-    //  * Create a DatabaseManager for managing the database connections and models
-    //  */
-    // this.db = createDatabaseManager(this);
+    this.events.emit('willLoadBack', 'leemons');
 
-    // Initialize all database connections
-    await hooks.fireEvent('leemons::initDB', { status: 'start' });
-    // await this.db.init();
-    const models = _.merge(
-      ...Object.values(_.cloneDeep(this.plugins))
-        .filter((plugin) => plugin.models)
-        .map((plugin) => plugin.models),
-      ...Object.values(_.cloneDeep(this.providers))
-        .filter((provider) => provider.models)
-        .map((provider) => provider.models)
-    );
-    // await this.db.loadModels(_.omit(leemons.models, 'core_store'));
-    await this.db.loadModels(models);
+    const plugins = await loadExternalFiles(this, 'plugins', 'plugin');
+    const providers = await loadExternalFiles(this, 'providers', 'provider');
 
-    await hooks.fireEvent('leemons::initDB', { status: 'end' });
-
-    await hooks.fireEvent('leemons::initializeProviders', { status: 'start' });
-    await initializeProviders(this);
-    await hooks.fireEvent('leemons::initializeProviders', { status: 'end' });
-
-    await hooks.fireEvent('leemons::initializePlugins', { status: 'start' });
-    await initializePlugins(this);
-    await hooks.fireEvent('leemons::initializePlugins', { status: 'end' });
-
-    await hooks.fireEvent('leemons::setMiddlewares', { status: 'start' });
     this.setMiddlewares();
-    await hooks.fireEvent('leemons::setMiddlewares', { status: 'end' });
+    this.setRoutes([
+      ...plugins.filter((plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code),
+      ...providers.filter((provider) => provider.status.code === PLUGIN_STATUS.enabled.code),
+    ]);
 
-    await hooks.fireEvent('leemons::setRoutes', { status: 'start' });
-    this.setRoutes();
-    await hooks.fireEvent('leemons::setRoutes', { status: 'end' });
+    this.events.emit('didLoadBack', 'leemons');
 
-    await hooks.fireEvent('leemons::initProviders', { status: 'start' });
-    await this.initProviders();
-    await hooks.fireEvent('leemons::initProviders', { status: 'end' });
-
-    await hooks.fireEvent('leemons::initPlugins', { status: 'start' });
-    await this.initPlugins();
-    await hooks.fireEvent('leemons::initPlugins', { status: 'end' });
-
-    await hooks.fireEvent('leemons::loadBack', { status: 'end' });
+    return { plugins, providers };
   }
 
   async loadFront(plugins, providers) {

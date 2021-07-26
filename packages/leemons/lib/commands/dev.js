@@ -1,12 +1,10 @@
 const cluster = require('cluster');
 const path = require('path');
 const chalk = require('chalk');
-const _ = require('lodash');
 
 const createLogger = require('leemons-logger/lib/logger/multiThread');
 const { getAvailablePort } = require('leemons-utils/lib/port');
 
-const { createDatabaseManager } = require('leemons-database');
 const { handleStdin } = require('./lib/io');
 const { createWorker } = require('./lib/worker');
 const { createReloader } = require('./lib/watch');
@@ -14,8 +12,6 @@ const { createReloader } = require('./lib/watch');
 const { Leemons } = require('../index');
 const loadFront = require('../core/plugins/front/loadFront');
 const build = require('../core/front/build');
-const { loadExternalFiles } = require('./loadExternalFiles');
-const { loadCoreModels } = require('../core/model/loadModel');
 
 /**
  * Creates a watcher for frontend files and then sets up all the needed files
@@ -86,14 +82,14 @@ async function setupFront(leemons, plugins, providers, nextDir) {
 /**
  * Creates a watcher for backend files and then sets up all the needed services
  */
-async function setupBack(leemons, plugins, providers) {
-  /*
-   * Backend directories to watch for changes
-   *  plugin.dir.models
-   *  plugin.dir.controllers
-   *  plugin.dir.services
-   */
+async function setupBack(leemons) {
+  // Load backend for first time
+  const { plugins, providers } = await leemons.loadBack();
+
+  // Keep plugins and providers separated because they can need different files
+  // to be watched
   const pluginsDirs = plugins.map((plugin) => path.join(plugin.dir.app, '**'));
+  const providersDirs = providers.map((provider) => path.join(provider.dir.app, '**'));
 
   // Ignore plugins frontend and config folders (they are handled by other services)
   const ignoredPluginsDirs = plugins.map((plugin) =>
@@ -106,8 +102,6 @@ ${plugin.dir.next})`,
     )
   );
 
-  const providersDirs = providers.map((provider) => path.join(provider.dir.app, '**'));
-
   // Ignore providers frontend and config folders (they are handled by other services)
   const ignoredProvidersDirs = plugins.map((plugin) =>
     path.join(
@@ -118,9 +112,6 @@ ${plugin.dir.next})`,
       '**'
     )
   );
-
-  // Load backend for first time
-  await leemons.loadBack(plugins, providers);
 
   // Create a backend watcher
   createReloader({
@@ -136,16 +127,19 @@ ${plugin.dir.next})`,
       ],
     },
     /*
-     * When a change occurs, remove backend router endpoints
-     * and load back again
+     * When a change occurs, remove backend router endpoints, destroy DB
+     * connection and load back again
      */
-    handler: () => {
+    handler: async () => {
       // eslint-disable-next-line no-param-reassign
       leemons.backRouter.stack = [];
-      return leemons.loadBack(plugins, providers);
+      await leemons.db.destroy();
+      return leemons.loadBack();
     },
     logger: leemons.log,
   });
+
+  return { plugins, providers };
 }
 
 module.exports = async ({ level: logLevel = 'debug' }) => {
@@ -260,52 +254,14 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
       }
     });
 
-    // ! App init
     // Loads the App and plugins config
     await leemons.loadAppConfig();
 
-    /*
-     * Create a DatabaseManager for managing the database connections and models
-     */
-    leemons.db = createDatabaseManager(leemons);
-    /*
-     * Initialize database connections
-     */
-    await leemons.db.init();
+    const { plugins, providers } = await setupBack(leemons);
 
-    /**
-     * Load core models
-     */
-    loadCoreModels(leemons);
-    await leemons.db.loadModels(_.omit(leemons.models, 'core_store'));
-
-    // ! Plugin loading
-    const plugins = await loadExternalFiles(leemons, 'plugins', 'plugin');
-    const providers = await loadExternalFiles(leemons, 'providers', 'provider');
-
-    // console.log('PLUGINS', plugins);
-    // console.log(providers);
-    await leemons.setMiddlewares();
-    await leemons.setRoutes();
-
-    await leemons.loadFront(
-      plugins.filter((plugin) => plugin.status.code === 'enabled'),
-      providers.filter((provider) => provider.status.code === 'enabled')
-    );
-
-    // ! Original functions
-
-    // const pluginsConfig = await leemons.loadPluginsConfig();
-    // const providersConfig = await leemons.loadProvidersConfig();
-
-    // let nextDir = leemons.config.get('config.dir.next', 'next');
-    // nextDir = path.isAbsolute(nextDir) ? nextDir : path.join(cwd, nextDir);
-
-    // // Start the Front and Back services
-    // await Promise.all([
-    //   setupFront(leemons, pluginsConfig, providersConfig, nextDir),
-    //   setupBack(leemons, pluginsConfig, providersConfig),
-    // ]);
+    let nextDir = leemons.config.get('config.dir.next', 'next');
+    nextDir = path.isAbsolute(nextDir) ? nextDir : path.join(cwd, nextDir);
+    await setupFront(leemons, plugins, providers, nextDir);
 
     leemons.loaded = true;
 

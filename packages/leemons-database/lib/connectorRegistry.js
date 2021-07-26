@@ -34,6 +34,9 @@ function createConnectorRegistry({ connections, defaultConnection }, databaseMan
         })
       ),
 
+    destroy: async () =>
+      Promise.all([...connectors.values()].map((connector) => connector.destroy())),
+
     /**
      * Loads each provided model on its corresponding connection and connector
      * @param {Model} coreStore

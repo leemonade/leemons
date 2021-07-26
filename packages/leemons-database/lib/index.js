@@ -38,6 +38,10 @@ class DatabaseManager {
     await this.connectors.loadModels(this.leemons.models.core_store, models);
   }
 
+  async destroy() {
+    await this.connectors.destroy();
+  }
+
   query(modelName, pluginName = null) {
     // FIXME: An error will throw if the plugin or model can't be found
     // TODO: Add plugin roles

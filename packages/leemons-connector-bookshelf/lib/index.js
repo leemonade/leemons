@@ -58,6 +58,10 @@ class Connector {
     );
   }
 
+  destroy() {
+    return Promise.all(Object.values(this.connections).map((connection) => connection.destroy()));
+  }
+
   /**
    * Loads the given models in the database
    * @param {Model[]} models
