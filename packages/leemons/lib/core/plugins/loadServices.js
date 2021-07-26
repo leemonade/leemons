@@ -32,7 +32,6 @@ async function loadServices(plugin, vmFilter, env) {
         try {
           fileContent = vm(plugin.dir.app, vmFilter, env).runFile(filePath);
         } catch (e) {
-          console.error(e);
           throw new Error(
             `File can not be read: ${filePath}. It has the following error on it: ${e.message}`
           );

@@ -1,9 +1,9 @@
 const _ = require('lodash');
 const path = require('path');
 const { PLUGIN_STATUS } = require('./pluginsStatus');
-const { loadFiles, loadFile } = require('../core/config/loadFiles');
+const { loadFiles, loadFile } = require('../config/loadFiles');
 const disablePlugin = require('./disablePlugin');
-const { formatModels } = require('../core/model/loadModel');
+const { formatModels } = require('../model/loadModel');
 
 class ScriptLoader {
   constructor(target, singularTarget) {

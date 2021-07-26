@@ -17,21 +17,13 @@ const { createDatabaseManager } = require('leemons-database');
 const hooks = require('leemons-hooks');
 const ora = require('ora');
 const { loadConfiguration } = require('./core/config/loadConfig');
-const { loadModels, loadCoreModels } = require('./core/model/loadModel');
-const {
-  initializePlugins,
-  loadPluginsModels,
-  loadPluginsConfig,
-} = require('./core/plugins/loadPlugins');
+const { loadCoreModels } = require('./core/model/loadModel');
+const { loadPluginsConfig } = require('./core/plugins/loadPlugins');
 const buildFront = require('./core/front/build');
 const loadFront = require('./core/plugins/front/loadFront');
-const {
-  loadProvidersModels,
-  loadProvidersConfig,
-  initializeProviders,
-} = require('./core/plugins/loadProviders');
-const { loadExternalFiles } = require('./commands/loadExternalFiles');
-const { PLUGIN_STATUS } = require('./commands/pluginsStatus');
+const { loadProvidersConfig } = require('./core/plugins/loadProviders');
+const { loadExternalFiles } = require('./core/plugins/loadExternalFiles');
+const { PLUGIN_STATUS } = require('./core/plugins/pluginsStatus');
 
 class Leemons {
   constructor(log) {
@@ -93,7 +85,7 @@ class Leemons {
     };
 
     this.events.on('all', ({ event, target }) => {
-      console.log(chalk`{green ${target}} emitted {magenta ${event}}`);
+      this.log.debug(chalk`{green ${target}} emitted {magenta ${event}}`);
     });
   }
 
@@ -167,7 +159,6 @@ class Leemons {
           }} {gray ${end - start} ms}`
         );
       } catch (err) {
-        console.error(err);
         leemons.log.error(err.message);
         leemonsUtils.returnError(ctx, err);
       }
@@ -212,10 +203,10 @@ class Leemons {
         }
         ctx.status = 401;
         ctx.body = { status: 401, msg: 'You do not have permissions' };
-        return undefined;
       } catch (err) {
-        console.error(err);
+        leemons.log.error(err.message);
       }
+      return undefined;
     };
   }
 

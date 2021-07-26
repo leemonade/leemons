@@ -1,15 +1,8 @@
 /* eslint-disable no-await-in-loop */
-const path = require('path');
 const _ = require('lodash');
 
-const { loadConfiguration } = require('../core/config/loadConfig');
-const { loadFiles } = require('../core/config/loadFiles');
-const { formatModels } = require('../core/model/loadModel');
-const {
-  getPluginsInfoFromDB,
-  getLocalPlugins,
-  getExternalPlugins,
-} = require('../core/plugins/getPlugins');
+const { loadConfiguration } = require('../config/loadConfig');
+const { getPluginsInfoFromDB, getLocalPlugins, getExternalPlugins } = require('./getPlugins');
 const { computeDependencies, checkMissingDependencies, sortByDeps } = require('./dependencies');
 const { getStatus, PLUGIN_STATUS } = require('./pluginsStatus');
 const ScriptLoader = require('./loadScripts');
