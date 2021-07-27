@@ -172,13 +172,13 @@ class Leemons {
           }
         } else {
           const user = await this.plugins.users.services.users.detailForJWT(authorization[0], true);
-          const userAuths = await Promise.all(
+          const userAgents = await Promise.all(
             _.map(authorization, (auth) =>
               this.plugins.users.services.users.detailForJWT(auth, false, true)
             )
           );
-          if (user && userAuths.length) {
-            user.userAuths = userAuths;
+          if (user && userAgents.length) {
+            user.userAgents = userAgents;
             ctx.state.userSession = user;
             return next();
           }

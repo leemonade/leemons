@@ -1,6 +1,6 @@
 module.exports = {
-  modelName: 'user-auth',
-  collectionName: 'user-auth',
+  modelName: 'user-agent',
+  collectionName: 'user-agent',
   options: {
     useTimestamps: true,
   },

@@ -11,7 +11,7 @@ const { table } = require('../tables');
  * */
 async function hasProfile(user, profile, { transacting } = {}) {
   // TODO VER (CAMBIO)
-  const results = await table.userAuth.count({ user, profile }, { transacting });
+  const results = await table.userAgent.count({ user, profile }, { transacting });
   return !!results;
 }
 

@@ -4,7 +4,7 @@ const teacherProfileId = 'ee387729-6e77-4677-a93f-d45d396c8c1b';
 const studentProfileId = '571dfe59-d1c7-40ae-9e29-713901036d13';
 const locationName = 'user-dataset';
 
-const userAuth = {
+const userAgent = {
   id: '843887b7-f6a9-45c9-9cdb-d5d30281d918',
   profile: teacherProfileId,
   reloadPermissions: 1,
@@ -286,7 +286,7 @@ async function addValues() {
       locationName,
       constants.pluginName,
       schemaValues,
-      userAuth
+      userAgent
     );
     // console.log(data);
   } catch (e) {
@@ -301,7 +301,7 @@ async function getValues() {
     const data = await leemons.plugins.dataset.services.dataset.getValues(
       locationName,
       constants.pluginName,
-      userAuth,
+      userAgent,
       { keys: ['firstName', 'lastName', 'telephone'] }
     );
     // console.log(data);

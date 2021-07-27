@@ -19,7 +19,9 @@ async function init() {
     await addMain();
     await addUsers();
     await addProfiles();
-  } catch (e) {}
+  } catch (e) {
+    console.error(e);
+  }
 
   if (translations()) {
     await translations().common.setManyByJSON(

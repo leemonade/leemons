@@ -1,13 +1,13 @@
 module.exports = {
-  modelName: 'user-auth-permission',
-  collectionName: 'user-auth-permission',
+  modelName: 'user-agent-permission',
+  collectionName: 'user-agent-permission',
   options: {
     useTimestamps: true,
   },
   attributes: {
-    userAuth: {
+    userAgent: {
       references: {
-        collection: 'plugins_users::user-auth',
+        collection: 'plugins_users::user-agent',
       },
     },
     permissionName: {

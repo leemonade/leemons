@@ -26,7 +26,7 @@ async function getIfHasPermission(menuKey, userSession, { transacting } = {}) {
   });
   if (!isSuperAdmin)
     userPermissions = await leemons.plugins.users.services.users.getUserPermissions(
-      userSession.userAuths,
+      userSession.userAgents,
       {
         transacting,
       }
@@ -90,6 +90,8 @@ async function getIfHasPermission(menuKey, userSession, { transacting } = {}) {
     },
     { transacting }
   );
+
+  console.log(menuItemPermissions);
 
   const customItemIds = _.map(
     _.filter(menuItemPermissions, ({ type }) => type.endsWith('.custom')),

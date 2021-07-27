@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { updateUserAuthPermissions } = require('./updateUserAuthPermissions');
+const { updateUserAgentPermissions } = require('./updateUserAgentPermissions');
 const { isSuperAdmin } = require('./isSuperAdmin');
 const { table } = require('../tables');
 const constants = require('../../../config/constants');
@@ -16,10 +16,10 @@ const constants = require('../../../config/constants');
  * @return {Promise<boolean>} If have permission return true if not false
  * */
 async function hasPermissionCTX(userSession, allowedPermissions, ctx) {
-  if (_.isArray(userSession.userAuths) && userSession.userAuths.length) {
+  if (_.isArray(userSession.userAgents) && userSession.userAgents.length) {
     const perPromises = [];
-    _.forEach(userSession.userAuths, (userAuth) => {
-      if (userAuth.reloadPermissions) perPromises.push(updateUserAuthPermissions(userAuth.id));
+    _.forEach(userSession.userAgents, (userAgent) => {
+      if (userAgent.reloadPermissions) perPromises.push(updateUserAgentPermissions(userAgent.id));
     });
     await Promise.all(perPromises);
   }
@@ -32,7 +32,7 @@ async function hasPermissionCTX(userSession, allowedPermissions, ctx) {
       promises.push(value.actions.indexOf(constants.basicPermission.actionName) >= 0 ? 1 : 0);
     } else {
       query = {
-        userAuth_$in: _.map(userSession.userAuths, 'id'),
+        userAgent_$in: _.map(userSession.userAgents, 'id'),
         permissionName,
         actionName_$in: value.actions,
       };
@@ -40,7 +40,7 @@ async function hasPermissionCTX(userSession, allowedPermissions, ctx) {
         query.target = value.target;
         if (ctx) query.target = _.get(ctx, value.target, value.target);
       }
-      promises.push(table.userAuthPermission.count(query));
+      promises.push(table.userAgentPermission.count(query));
     }
   });
 

@@ -37,7 +37,7 @@ async function addCustomPermissions(profileId, _permissions, { transacting: _tra
 
         // ES: Actualizamos los usuarios para que recarguen los permisos
         // EN: Update users to reload permissions
-        table.userAuth.updateMany(
+        table.userAgent.updateMany(
           { profile: profileId },
           { reloadPermissions: true },
           { transacting }

@@ -1,6 +1,6 @@
 module.exports = {
-  modelName: 'group-user-auth',
-  collectionName: 'group-user-auth',
+  modelName: 'group-user-agent',
+  collectionName: 'group-user-agent',
   options: {
     useTimestamps: true,
   },
@@ -10,9 +10,9 @@ module.exports = {
         collection: 'plugins_users::groups',
       },
     },
-    userAuth: {
+    userAgent: {
       references: {
-        collection: 'plugins_users::user-auth',
+        collection: 'plugins_users::user-agent',
       },
     },
   },

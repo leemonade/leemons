@@ -1,4 +1,4 @@
-const { existUserAuth } = require('../users');
+const { existUserAgent } = require('../users');
 const { exist: userExist } = require('../users/exist');
 const { exist: groupExist } = require('./exist');
 const { table } = require('../tables');
@@ -9,17 +9,17 @@ const { table } = require('../tables');
  * @public
  * @static
  * @param {string} groupId - Group id
- * @param {string} userAuthId - User auth id
+ * @param {string} userAgentId - User auth id
  * @return {Promise<undefined>}
  * */
-async function addUserAuth(groupId, userAuthId) {
-  await Promise.all([groupExist({ id: groupId }, true), existUserAuth({ id: userAuthId }, true)]);
-  const groupUser = await table.groupUserAuth.count({ group: groupId, userAuth: userAuthId });
+async function addUserAgent(groupId, userAgentId) {
+  await Promise.all([groupExist({ id: groupId }, true), existUserAgent({ id: userAgentId }, true)]);
+  const groupUser = await table.groupUserAgent.count({ group: groupId, userAgent: userAgentId });
   if (!groupUser) {
-    return table.groupUserAuth.transaction(async (transacting) => {
+    return table.groupUserAgent.transaction(async (transacting) => {
       const values = await Promise.all([
-        table.groupUserAuth.create({ group: groupId, userAuth: userAuthId }, { transacting }),
-        table.userAuth.update({ id: userAuthId }, { reloadPermissions: true }, { transacting }),
+        table.groupUserAgent.create({ group: groupId, userAgent: userAgentId }, { transacting }),
+        table.userAgent.update({ id: userAgentId }, { reloadPermissions: true }, { transacting }),
       ]);
       return values[0];
     });
@@ -27,4 +27,4 @@ async function addUserAuth(groupId, userAuthId) {
   return groupUser;
 }
 
-module.exports = { addUserAuth };
+module.exports = { addUserAgent };

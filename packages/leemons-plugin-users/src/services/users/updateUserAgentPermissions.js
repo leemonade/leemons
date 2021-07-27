@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { existUserAuth } = require('./existUserAuth');
+const { existUserAgent } = require('./existUserAgent');
 const { table } = require('../tables');
 
 /**
@@ -13,20 +13,20 @@ const { table } = require('../tables');
  *
  * @public
  * @static
- * @param {string} userAuthId - User auth id
+ * @param {string} userAgentId - User auth id
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function updateUserAuthPermissions(userAuthId, { transacting: _transacting } = {}) {
-  await existUserAuth({ id: userAuthId }, true, { transacting: _transacting });
+async function updateUserAgentPermissions(userAgentId, { transacting: _transacting } = {}) {
+  await existUserAgent({ id: userAgentId }, true, { transacting: _transacting });
   return global.utils.withTransaction(
     async (transacting) => {
-      const [groupUserAuth, userAuth] = await Promise.all([
-        table.groupUserAuth.find({ userAuth: userAuthId }, { columns: ['group'], transacting }),
-        table.userAuth.update({ id: userAuthId }, { reloadPermissions: false }, { transacting }),
-        table.userAuthPermission.deleteMany(
+      const [groupUserAgent, userAgent] = await Promise.all([
+        table.groupUserAgent.find({ userAgent: userAgentId }, { columns: ['group'], transacting }),
+        table.userAgent.update({ id: userAgentId }, { reloadPermissions: false }, { transacting }),
+        table.userAgentPermission.deleteMany(
           {
-            userAuth: userAuthId,
+            userAgent: userAgentId,
             role_$null: false,
           },
           { transacting }
@@ -34,11 +34,11 @@ async function updateUserAuthPermissions(userAuthId, { transacting: _transacting
       ]);
 
       const groupRoles = await table.groupRole.find(
-        { group_$in: _.map(groupUserAuth, 'group') },
+        { group_$in: _.map(groupUserAgent, 'group') },
         { columns: ['role'], transacting }
       );
 
-      const roleIds = _.uniq([userAuth.role].concat(_.map(groupRoles, 'role')));
+      const roleIds = _.uniq([userAgent.role].concat(_.map(groupRoles, 'role')));
 
       const [rolePermissions, roleCenter] = await Promise.all([
         table.rolePermission.find({ role_$in: roleIds }, { transacting }),
@@ -47,9 +47,9 @@ async function updateUserAuthPermissions(userAuthId, { transacting: _transacting
 
       const roleCenterByRole = _.keyBy(roleCenter, 'role');
 
-      return table.userAuthPermission.createMany(
+      return table.userAgentPermission.createMany(
         _.map(rolePermissions, (rolePermission) => ({
-          userAuth: userAuthId,
+          userAgent: userAgentId,
           role: rolePermission.role,
           permissionName: rolePermission.permissionName,
           actionName: rolePermission.actionName,
@@ -61,9 +61,9 @@ async function updateUserAuthPermissions(userAuthId, { transacting: _transacting
         { transacting }
       );
     },
-    table.userAuth,
+    table.userAgent,
     _transacting
   );
 }
 
-module.exports = { updateUserAuthPermissions };
+module.exports = { updateUserAgentPermissions };

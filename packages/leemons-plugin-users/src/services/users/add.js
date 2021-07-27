@@ -37,7 +37,7 @@ async function add(
         { transacting }
       );
 
-      await table.userAuth.createMany(
+      await table.userAgent.createMany(
         _.map(roles, (role) => ({
           role,
           user: user.id,

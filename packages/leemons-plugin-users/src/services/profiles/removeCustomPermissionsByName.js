@@ -33,7 +33,7 @@ async function removeCustomPermissionsByName(
           removeCustomPermissions: true,
           transacting,
         }),
-        table.userAuth.updateMany(
+        table.userAgent.updateMany(
           { profile: profileId },
           { reloadPermissions: true },
           { transacting }

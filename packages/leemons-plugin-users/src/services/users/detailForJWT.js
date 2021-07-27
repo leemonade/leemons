@@ -10,26 +10,26 @@ const { table } = require('../tables');
  * @static
  * @param {string} jwtToken
  * @param {boolean} forceOnlyUser
- * @param {boolean} forceOnlyUserAuth
+ * @param {boolean} forceOnlyUserAgent
  * @return {Promise<User>}
  * */
-async function detailForJWT(jwtToken, forceOnlyUser, forceOnlyUserAuth) {
+async function detailForJWT(jwtToken, forceOnlyUser, forceOnlyUserAgent) {
   const payload = await verifyJWTToken(jwtToken);
   let result;
-  if (payload.userAuth) {
-    const userAuth = await table.userAuth.findOne({ id: payload.userAuth });
-    if (!userAuth) throw new Error('No user auth found for the id provided');
-    if (forceOnlyUserAuth) return userAuth;
-    const user = await table.users.findOne({ id: userAuth.user });
+  if (payload.userAgent) {
+    const userAgent = await table.userAgent.findOne({ id: payload.userAgent });
+    if (!userAgent) throw new Error('No user auth found for the id provided');
+    if (forceOnlyUserAgent) return userAgent;
+    const user = await table.users.findOne({ id: userAgent.user });
     if (!user) throw new Error('No user found for the id provided');
     if (forceOnlyUser) return user;
     result = user;
-    result.userAuths = [userAuth];
+    result.userAgents = [userAgent];
   } else {
     const user = await table.users.findOne({ id: payload.id });
     if (!user) throw new Error('No user found for the id provided');
     result = user;
-    result.userAuths = [];
+    result.userAgents = [];
   }
 
   return result;

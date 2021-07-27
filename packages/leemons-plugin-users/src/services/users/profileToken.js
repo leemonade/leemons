@@ -17,12 +17,12 @@ async function profileToken(user, profile, { transacting } = {}) {
   const profil = _.find(profiles, { id: profile });
   if (!profil) throw new Error('Yu dont have access to this profile');
 
-  const userAuths = await table.userAuth.find({ user }, { columns: ['id', 'role'], transacting });
+  const userAgents = await table.userAgent.find({ user }, { columns: ['id', 'role'], transacting });
 
   const profileRoles = await table.profileRole.find(
     {
       profile,
-      role_$in: _.map(userAuths, 'role'),
+      role_$in: _.map(userAgents, 'role'),
     },
     { columns: ['role'], transacting }
   );
@@ -40,14 +40,14 @@ async function profileToken(user, profile, { transacting } = {}) {
     }
   );
 
-  const userAuthsByRole = _.keyBy(userAuths, 'role');
+  const userAgentsByRole = _.keyBy(userAgents, 'role');
   const rolesCentersByCenter = _.keyBy(rolesCenters, 'center');
 
   const promises = [generateJWTToken({ id: user })];
 
   for (let i = 0, l = centers.length; i < l; i++) {
     promises.push(
-      generateJWTToken({ userAuth: userAuthsByRole[rolesCentersByCenter[centers[i].id].role].id })
+      generateJWTToken({ userAgent: userAgentsByRole[rolesCentersByCenter[centers[i].id].role].id })
     );
   }
 

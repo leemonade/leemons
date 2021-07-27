@@ -1,9 +1,9 @@
-const { existUserAuth } = require('./existUserAuth');
+const { existUserAgent } = require('./existUserAgent');
 const { init } = require('./init');
 const { list } = require('./list');
 const { detailForJWT } = require('./detailForJWT');
 const { detail } = require('./detail');
-const { updateUserAuthPermissions } = require('./updateUserAuthPermissions');
+const { updateUserAgentPermissions } = require('./updateUserAgentPermissions');
 const { isSuperAdmin } = require('./isSuperAdmin');
 const { reset } = require('./reset');
 const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
@@ -38,7 +38,7 @@ module.exports = {
   list,
 
   exist,
-  existUserAuth,
+  existUserAgent,
 
   addFirstSuperAdminUser,
   generateJWTPrivateKey,
@@ -52,7 +52,7 @@ module.exports = {
   getSuperAdminUserIds,
   isSuperAdmin,
   hasPermissionCTX,
-  updateUserAuthPermissions,
+  updateUserAgentPermissions,
   detailForJWT,
   getUserPermissions,
 

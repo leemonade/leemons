@@ -10,9 +10,9 @@ const { table } = require('../tables');
  * @return {Promise<boolean>}
  * */
 async function profiles(user, { transacting } = {}) {
-  const userAuths = await table.userAuth.find({ user }, { columns: ['role'], transacting });
+  const userAgents = await table.userAgent.find({ user }, { columns: ['role'], transacting });
   const profileRoles = await table.profileRole.find(
-    { role_$in: _.map(userAuths, 'role') },
+    { role_$in: _.map(userAgents, 'role') },
     { transacting }
   );
   return table.profiles.find({ id_$in: _.map(profileRoles, 'profile') }, { transacting });

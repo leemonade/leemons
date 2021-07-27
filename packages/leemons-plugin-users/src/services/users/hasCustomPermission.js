@@ -6,13 +6,13 @@ const constants = require('../../../config/constants');
  * Check if user the permission
  * @public
  * @static
- * @param {string} userAuthId - User auth id
+ * @param {string} userAgentId - User auth id
  * @param {UserHasCustomPermission} data - Has permission data
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
 async function hasCustomPermission(
-  userAuthId,
+  userAgentId,
   { permissionName, actionNames, target, center },
   { transacting } = {}
 ) {
@@ -21,13 +21,13 @@ async function hasCustomPermission(
   }
   const query = {
     role_$null: true,
-    userAuth: userAuthId,
+    userAgent: userAgentId,
     permissionName,
     actionName_$in: actionNames,
   };
   if (target) query.target = target;
   if (center) query.center = center;
-  const response = await table.userAuthPermission.count(query, { transacting });
+  const response = await table.userAgentPermission.count(query, { transacting });
   return !!response;
 }
 

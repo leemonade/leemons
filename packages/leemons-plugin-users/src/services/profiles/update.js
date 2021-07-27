@@ -22,7 +22,11 @@ async function update(data) {
         },
         { transacting }
       ),
-      table.userAuth.updateMany({ profile: data.id }, { reloadPermissions: true }, { transacting }),
+      table.userAgent.updateMany(
+        { profile: data.id },
+        { reloadPermissions: true },
+        { transacting }
+      ),
     ]);
 
     // *** Only get one profile role for now

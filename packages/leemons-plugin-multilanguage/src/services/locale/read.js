@@ -55,13 +55,13 @@ module.exports = (Base) =>
      * Your specific locales -> User locale -> Center locale -> Platform locale
      * @returns {Promise<string[]>} Locale array
      */
-    async resolveLanguages(locales, userAuth) {
+    async resolveLanguages(locales, userAgent) {
       let finalLocales = [];
       if (locales) {
         finalLocales = finalLocales.concat(locales);
       }
-      if (userAuth) {
-        const userAuths = _.isArray(userAuth) ? userAuth : [userAuth];
+      if (userAgent) {
+        const userAgents = _.isArray(userAgent) ? userAgent : [userAgent];
       }
       const platformLocale = await leemons.plugins.users.platform.getLocale();
       if (platformLocale) {
