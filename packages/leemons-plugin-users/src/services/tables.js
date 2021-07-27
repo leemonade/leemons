@@ -25,6 +25,7 @@ const table = {
   profileRole: leemons.query('plugins_users::profile-role'),
 
   centers: leemons.query('plugins_users::centers'),
+  userRememberProfile: leemons.query('plugins_users::user-remember-profile'),
 };
 
 module.exports = { table };

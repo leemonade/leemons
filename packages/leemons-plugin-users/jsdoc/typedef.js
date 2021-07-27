@@ -46,6 +46,7 @@
 
 /**
  * @typedef {RolePermissionsAdd} UserAddCustomPermission
+ * @property {string} center Center id
  */
 
 /**

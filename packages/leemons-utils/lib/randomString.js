@@ -1,15 +1,13 @@
+const crypto = require('crypto');
+
 /**
  * Generate long random string
  * @public
  * @static
  * @return {string}
  * */
-function randomString() {
-  return (
-    Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15)
-  );
+function randomString(size = 32) {
+  return crypto.randomBytes(size).toString('hex');
 }
 
 module.exports = randomString;

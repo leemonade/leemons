@@ -21,10 +21,10 @@ const { exist } = require('../permissions/exist');
  * @return {Promise<any>}
  * */
 async function add(
-  { permissionName, actionNames, target, type, item },
+  { permissionName, actionNames, target, type, item, center },
   { isCustomPermission, transacting } = {}
 ) {
-  validateItemPermission({ permissionName, actionNames, target, type, item });
+  validateItemPermission({ permissionName, actionNames, target, type, item, center });
   validateTypePrefix(type, this.calledFrom);
 
   if (!isCustomPermission) {
@@ -42,6 +42,7 @@ async function add(
       target,
       type,
       item,
+      center,
     },
     { transacting }
   );
@@ -53,6 +54,7 @@ async function add(
       target,
       type,
       item,
+      center,
     };
   });
 

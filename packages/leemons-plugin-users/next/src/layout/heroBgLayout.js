@@ -1,4 +1,4 @@
-import { HeroBg, ImageLoader } from 'leemons-ui';
+import { HeroBg, ImageLoader, Logo } from 'leemons-ui';
 import useTranslate from '@multilanguage/useTranslate';
 import tLoader from '@multilanguage/helpers/tLoader';
 import prefixPN from '@users/helpers/prefixPN';
@@ -17,6 +17,8 @@ export default function HeroBgLayout({ children }) {
             speed={500}
             className="h-full w-auto text-primary-200"
           />
+
+          <Logo className="absolute left-8 top-8" />
 
           <div
             style={{ width: '294.58px', height: '414px' }}

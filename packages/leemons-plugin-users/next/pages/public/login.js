@@ -1,6 +1,11 @@
-import { useSession } from '@users/session';
+import * as _ from 'lodash';
+import { getCookieToken, useSession } from '@users/session';
 import { useForm } from 'react-hook-form';
-import { loginRequest } from '@users/request';
+import {
+  getRememberProfileRequest,
+  getUserProfileTokenRequest,
+  loginRequest,
+} from '@users/request';
 import { goRecoverPage } from '@users/navigate';
 import useTranslate from '@multilanguage/useTranslate';
 import tLoader from '@multilanguage/helpers/tLoader';
@@ -10,11 +15,16 @@ import prefixPN from '@users/helpers/prefixPN';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
 import HeroBgLayout from '@users/layout/heroBgLayout';
+import hooks from 'leemons-hooks';
+import constants from '@users/constants';
 
 const emailRegex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
 export default function Login() {
-  useSession({ redirectTo: 'users/private/select-profile', redirectIfFound: true });
+  useSession({
+    redirectTo: _.isString(getCookieToken(true)) ? 'users/private/select-profile' : constants.base,
+    redirectIfFound: true,
+  });
   const { t: tCommon } = useCommonTranslate('formValidations');
   const [translations] = useTranslate({ keysStartsWith: prefixPN('login') });
   const t = tLoader(prefixPN('login'), translations);
@@ -27,6 +37,13 @@ export default function Login() {
   const onSubmit = async (data) => {
     try {
       const response = await loginRequest(data);
+
+      try {
+        const { profile } = await getRememberProfileRequest(response.jwtToken);
+        const { jwtToken } = await getUserProfileTokenRequest(profile.id, response.jwtToken);
+        await hooks.fireEvent('user:change:profile', profile);
+        response.jwtToken = jwtToken;
+      } catch (e) {}
       Cookies.set('token', response.jwtToken);
     } catch (err) {
       console.error(err);

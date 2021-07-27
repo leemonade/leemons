@@ -32,11 +32,11 @@ async function removeCustomPermission(userAuthId, data, { transacting } = {}) {
 
 async function _removeCustomPermission(userAuthId, data, { transacting } = {}) {
   await existUserAuth({ id: userAuthId }, { transacting });
-  await validateExistPermission(data.permissionName, { transacting });
 
   const query = {
     permissionName: data.permissionName,
     target: data.target || null,
+    center: data.center || null,
     userAuth: userAuthId,
     role_$null: true,
   };

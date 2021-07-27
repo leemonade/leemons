@@ -14,8 +14,11 @@ const { validateItemPermission } = require('../../validations/item-permissions')
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function exist({ permissionName, actionNames, target, type, item }, { transacting } = {}) {
-  await validateItemPermission({ permissionName, actionNames, target, type, item });
+async function exist(
+  { permissionName, actionNames, target, type, item, center },
+  { transacting } = {}
+) {
+  await validateItemPermission({ permissionName, actionNames, target, type, item, center });
   const query = {
     permissionName,
     actionName_$in: actionNames,
@@ -23,6 +26,7 @@ async function exist({ permissionName, actionNames, target, type, item }, { tran
     item,
   };
   if (target) query.target = target;
+  if (center) query.center = center;
   const response = await table.itemPermissions.count(query, { transacting });
   return !!response;
 }

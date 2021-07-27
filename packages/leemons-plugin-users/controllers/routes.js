@@ -37,6 +37,18 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/user/remember/profile',
+    method: 'GET',
+    handler: 'users.getRememberProfile',
+    authenticated: true,
+  },
+  {
+    path: '/user/remember/profile',
+    method: 'POST',
+    handler: 'users.setRememberProfile',
+    authenticated: true,
+  },
+  {
     path: '/user/profile/:id/token',
     method: 'GET',
     handler: 'users.profileToken',

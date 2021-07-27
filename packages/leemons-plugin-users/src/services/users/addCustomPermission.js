@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const hasPermission = require('./hasPermission');
+const hasCustomPermission = require('./hasCustomPermission');
 const { existUserAuth } = require('./existUserAuth');
 const { validatePermissionName } = require('../../validations/exists');
 const { validateExistPermission } = require('../../validations/exists');
@@ -32,9 +33,8 @@ async function addCustomPermission(userAuthId, data, { transacting } = {}) {
 
 async function _addCustomPermission(userAuthId, data, { transacting } = {}) {
   await existUserAuth({ id: userAuthId }, { transacting });
-  await validateExistPermission(data.permissionName, { transacting });
-  if (await hasPermission(userAuthId, data, { transacting })) {
-    throw new Error(`You have already been assigned this permit`);
+  if (await hasCustomPermission(userAuthId, data, { transacting })) {
+    throw new Error(`You have already been assigned this custom permit`);
   }
 
   await table.userAuthPermission.createMany(
@@ -43,6 +43,7 @@ async function _addCustomPermission(userAuthId, data, { transacting } = {}) {
       actionName,
       target: data.target,
       userAuth: userAuthId,
+      center: data.center,
     })),
     { transacting }
   );

@@ -1,4 +1,6 @@
+const _ = require('lodash');
 const usersService = require('../src/services/users');
+const { table } = require('../src/services/tables');
 
 async function canReset(ctx) {
   const validator = new global.utils.LeemonsValidator({
@@ -90,8 +92,46 @@ async function profiles(ctx) {
 
 async function profileToken(ctx) {
   const jwtToken = await usersService.profileToken(ctx.state.userSession.id, ctx.params.id);
+
   ctx.status = 200;
   ctx.body = { status: 200, jwtToken };
+}
+
+async function setRememberProfile(ctx) {
+  const profiles = await usersService.profiles(ctx.state.userSession.id);
+  const index = _.findIndex(profiles, { id: ctx.request.body.id });
+  if (index >= 0) {
+    await table.userRememberProfile.set(
+      { user: ctx.state.userSession.id },
+      {
+        user: ctx.state.userSession.id,
+        profile: ctx.request.body.id,
+      }
+    );
+
+    ctx.status = 200;
+    ctx.body = { status: 200, profile: profiles[index] };
+  } else {
+    throw new Error('You do not have access to the specified profile');
+  }
+}
+
+async function getRememberProfile(ctx) {
+  const remember = await table.userRememberProfile.findOne({ user: ctx.state.userSession.id });
+  if (remember) {
+    const profiles = await usersService.profiles(ctx.state.userSession.id);
+    const index = _.findIndex(profiles, { id: remember.profile });
+    if (index >= 0) {
+      ctx.status = 200;
+      ctx.body = { status: 200, profile: profiles[index] };
+    } else {
+      ctx.status = 200;
+      ctx.body = { status: 200, profile: null };
+    }
+  } else {
+    ctx.status = 200;
+    ctx.body = { status: 200, profile: null };
+  }
 }
 
 async function create() {}
@@ -136,4 +176,6 @@ module.exports = {
   createSuperAdmin,
   profiles,
   profileToken,
+  setRememberProfile,
+  getRememberProfile,
 };

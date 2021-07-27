@@ -1,14 +1,15 @@
 const { LeemonsValidator } = global.utils;
-const { stringSchema, arrayStringRequiredSchema } = require('./types');
+const { stringSchema, arrayStringRequiredSchema, textSchema } = require('./types');
 
 const itemPermissionSchema = {
   type: 'object',
   properties: {
-    permissionName: stringSchema,
+    permissionName: textSchema,
     actionNames: arrayStringRequiredSchema,
     target: stringSchema,
     type: stringSchema,
     item: stringSchema,
+    center: textSchema,
   },
   required: ['permissionName', 'actionNames', 'type', 'item'],
   additionalProperties: false,
@@ -17,10 +18,11 @@ const itemPermissionSchema = {
 const findItemPermissionSchema = {
   type: 'object',
   properties: {
-    permissionName: stringSchema,
+    permissionName: textSchema,
     actionNames: arrayStringRequiredSchema,
     target: stringSchema,
     type: stringSchema,
+    center: textSchema,
   },
   required: ['permissionName', 'actionNames', 'type'],
   additionalProperties: false,

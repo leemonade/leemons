@@ -105,7 +105,6 @@ async function getLogged(ctx) {
   } else {
     ctx.request.body.locale = await leemons.plugins.users.services.platform.getLocale();
   }
-  console.log(ctx.request.body.locale);
   await get(ctx);
 }
 
