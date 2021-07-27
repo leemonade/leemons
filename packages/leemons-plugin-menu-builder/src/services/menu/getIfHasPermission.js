@@ -49,7 +49,7 @@ async function getIfHasPermission(menuKey, userSession, { transacting } = {}) {
   // ES: Si el menú tiene permisos comprobamos si tenemos acceso si no tiene permisos significa que cualquiera tiene acceso.
   // EN: If the menu has permissions we check if we have access if it does not have permissions it means that anyone has access.
   if (!isSuperAdmin) {
-    const menuHasPermissions = await leemons.plugins.users.services.itemPermissions.count(
+    const menuHasPermissions = await leemons.plugins.users.services.permissions.countItems(
       {
         type: 'menu',
         item: menuKey,
@@ -58,7 +58,7 @@ async function getIfHasPermission(menuKey, userSession, { transacting } = {}) {
     );
 
     if (menuHasPermissions) {
-      const menuItemHasPermissions = await leemons.plugins.users.services.itemPermissions.count(
+      const menuItemHasPermissions = await leemons.plugins.users.services.permissions.countItems(
         {
           $or: queryPermissions,
           type: 'menu',
@@ -78,7 +78,7 @@ async function getIfHasPermission(menuKey, userSession, { transacting } = {}) {
     type_$startssWith: leemons.plugin.prefixPN(`${menuKey}.menu-item`),
   };
   if (!isSuperAdmin) query.$or = queryPermissions;
-  const menuItemPermissions = await leemons.plugins.users.services.itemPermissions.find(query, {
+  const menuItemPermissions = await leemons.plugins.users.services.permissions.findItems(query, {
     transacting,
   });
 

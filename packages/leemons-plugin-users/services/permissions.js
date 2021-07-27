@@ -1,4 +1,5 @@
 const permissions = require('../src/services/permissions');
+const itemPermissions = require('../src/services/item-permissions');
 
 module.exports = {
   add: permissions.add,
@@ -14,4 +15,10 @@ module.exports = {
   manyPermissionsHasManyActions: permissions.manyPermissionsHasManyActions,
   addActionMany: permissions.addActionMany,
   addAction: permissions.addAction,
+  // Item permissions
+  addItem: itemPermissions.add,
+  countItems: itemPermissions.count,
+  findItems: itemPermissions.find,
+  removeItems: itemPermissions.remove,
+  existItems: itemPermissions.exist,
 };

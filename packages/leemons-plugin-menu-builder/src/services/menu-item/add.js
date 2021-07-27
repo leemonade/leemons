@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
 const { translations } = require('../../translations');
-const addItemPermissions = require('../../helpers/addItemPermissions');
 const { validateNotExistMenuItem } = require('../../validations/exists');
 const { validateKeyPrefix } = require('../../validations/exists');
 const { validateExistMenuItem } = require('../../validations/exists');
@@ -140,20 +139,22 @@ async function add(
       // Add the necessary permissions to view the item
       if (_.isArray(permissions) && permissions.length) {
         promises.push(
-          addItemPermissions(key, `${menuKey}.menu-item`, permissions, { transacting })
+          leemons.plugins.users.services.permissions.addItem(
+            key,
+            leemons.plugin.prefixPN(`${menuKey}.menu-item`),
+            permissions,
+            { transacting }
+          )
         );
       } else if (leemons.plugins.users) {
         promises.push(
-          addItemPermissions(
+          leemons.plugins.users.services.permissions.addItem(
             key,
-            `${menuKey}.menu-item`,
-            [
-              {
-                permissionName:
-                  leemons.plugins.users.config.constants.basicPermission.permissionName,
-                actionNames: [leemons.plugins.users.config.constants.basicPermission.actionName],
-              },
-            ],
+            leemons.plugin.prefixPN(`${menuKey}.menu-item`),
+            {
+              permissionName: leemons.plugins.users.config.constants.basicPermission.permissionName,
+              actionNames: [leemons.plugins.users.config.constants.basicPermission.actionName],
+            },
             { isCustomPermission: true, transacting }
           )
         );

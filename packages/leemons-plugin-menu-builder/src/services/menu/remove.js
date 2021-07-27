@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const removeItemPermissions = require('../../helpers/removeItemPermissions');
 const removeAll = require('../menu-item/removeAll');
 const { validateNotExistMenu } = require('../../validations/exists');
 const { validateKeyPrefix } = require('../../validations/exists');
@@ -23,7 +22,13 @@ async function remove(key, { transacting: _transacting } = {}) {
 
       await Promise.all([
         table.menu.delete({ key }, { transacting }),
-        removeItemPermissions.call(this, key, 'menu', { transacting }),
+        leemons.plugins.users.services.permissions.removeItems(
+          {
+            type: leemons.plugin.prefixPN('menu'),
+            item: key,
+          },
+          { transacting }
+        ),
         removeAll.call(this, key, { transacting }),
       ]);
 

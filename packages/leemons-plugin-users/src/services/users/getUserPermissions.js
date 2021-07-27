@@ -35,20 +35,19 @@ async function getUserPermissions(userAuth, { query: _query, transacting } = {})
   const responses = [];
   _.forIn(group, (values) => {
     responses.push({
-      role: values[0].role,
-      permissionName: values[0].permissionName,
+      ...values[0],
       actionNames: _.map(values, 'actionName'),
-      target: values[0].target,
     });
   });
 
   // Add default permission for all users
   if (!_query) {
     responses.push({
-      role: null,
       permissionName: constants.basicPermission.permissionName,
       actionNames: [constants.basicPermission.actionName],
+      role: null,
       target: null,
+      center: null,
     });
   }
 

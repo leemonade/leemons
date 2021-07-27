@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
 const { translations } = require('../../translations');
-const removeItemPermissions = require('../../helpers/removeItemPermissions');
 const { validateNotExistMenu, validateNotExistMenuItem } = require('../../validations/exists');
 
 const { withTransaction } = global.utils;
@@ -44,7 +43,15 @@ async function removeCustomForUser(userSession, menuKey, key, { transacting: _tr
       }
 
       // Remove permissions for item
-      promises.push(removeItemPermissions(key, `${menuKey}.menu-item.custom`, { transacting }));
+      promises.push(
+        leemons.plugins.users.services.permissions.removeItems(
+          {
+            type: leemons.plugin.prefixPN(`${menuKey}.menu-item.custom`),
+            item: key,
+          },
+          { transacting }
+        )
+      );
 
       // Remove de custom permission
       promises.push(

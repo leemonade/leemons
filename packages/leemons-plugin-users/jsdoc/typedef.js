@@ -81,6 +81,15 @@
  */
 
 /**
+ * @typedef AddItemPermission
+ * @type {Object}
+ * @property {string} permissionName Permission name (For backend)
+ * @property {string[]} actionNames Action names (For backend)
+ * @property {string} target Target id
+ * @property {string} center Center
+ */
+
+/**
  * @typedef Action
  * @property {string} id Action id
  * @property {string} actionName Action name (For backend)

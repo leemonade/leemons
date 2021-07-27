@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
 const { translations } = require('../../translations');
-const addItemPermissions = require('../../helpers/addItemPermissions');
 const {
   validateExistMenuItem,
   validateNotExistMenu,
@@ -78,15 +77,13 @@ async function addCustomForUser(
 
       // Add the necessary permissions to view the item
       promises.push(
-        addItemPermissions(
+        leemons.plugins.users.services.permissions.addItem(
           data.key,
-          `${data.menuKey}.menu-item.custom`,
-          [
-            {
-              permissionName: data.key,
-              actionNames: ['view', 'admin'],
-            },
-          ],
+          leemons.plugin.prefixPN(`${data.menuKey}.menu-item.custom`),
+          {
+            permissionName: data.key,
+            actionNames: ['view', 'admin'],
+          },
           { isCustomPermission: true, transacting }
         )
       );

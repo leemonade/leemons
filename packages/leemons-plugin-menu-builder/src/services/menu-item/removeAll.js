@@ -25,7 +25,7 @@ async function removeAll(menuKey, { transacting: _transacting } = {}) {
         // Delete item
         table.menuItem.deleteMany({ menuKey }, { transacting }),
         // Delete permissions of all items
-        leemons.plugins.users.services.itemPermissions.remove(
+        leemons.plugins.users.services.permissions.removeItems(
           {
             type_$startsWith: leemons.plugin.prefixPN(menuKey),
           },

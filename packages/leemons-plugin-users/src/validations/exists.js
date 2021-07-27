@@ -1,4 +1,4 @@
-const existItemPermission = require('../services/item-permissions/exist');
+const { exist: existItemPermission } = require('../services/item-permissions/exist');
 const { exist: existPermission } = require('../services/permissions/exist');
 
 async function validateExistPermission(permissionName, { transacting } = {}) {
