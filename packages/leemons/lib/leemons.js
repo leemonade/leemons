@@ -8,13 +8,12 @@ const execa = require('execa');
 const stream = require('stream');
 const _ = require('lodash');
 const chalk = require('chalk');
-const leemonsUtils = require('leemons-utils');
-
 const bodyParser = require('koa-bodyparser');
-
-const { createDatabaseManager } = require('leemons-database');
-const hooks = require('leemons-hooks');
 const ora = require('ora');
+
+const leemonsUtils = require('leemons-utils');
+const { createDatabaseManager } = require('leemons-database');
+
 const { loadConfiguration } = require('./core/config/loadConfig');
 const { loadCoreModels } = require('./core/model/loadModel');
 const buildFront = require('./core/front/build');
@@ -31,33 +30,7 @@ class Leemons {
 
     log.verbose('New leemons');
 
-    const timers = {};
-    hooks.addAction('*', ({ eventName, args: [options] }) => {
-      const now = new Date();
-      switch (_.get(options, 'status', null)) {
-        case 'start':
-          _.set(timers, eventName, now);
-          break;
-        case 'end': {
-          const started = _.get(timers, eventName, now);
-          const time = new Date(now - started);
-
-          const minutes = time.getMinutes();
-          const seconds = time.getSeconds();
-          const milliseconds = time.getMilliseconds();
-          const timeString = `${
-            (minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')
-          }${milliseconds}ms`;
-
-          delete timers[eventName];
-          this.log.debug(
-            chalk`The event {green ${eventName}} was running during {magenta ${timeString}}`
-          );
-          break;
-        }
-        default:
-      }
-    });
+    const timers = new Map();
 
     // Initialize the reload method (generate a "state" for it)
     this.reload();
@@ -82,7 +55,26 @@ class Leemons {
     };
 
     this.events.on('all', ({ event, target }) => {
-      this.log.debug(chalk`{green ${target}} emitted {magenta ${event}}`);
+      const now = new Date();
+      let eventName = event.toLocaleLowerCase();
+      if (eventName.includes('will')) {
+        timers.set(eventName.replace('will', ''), now);
+        this.log.silly(chalk`{green ${target}} emitted {magenta ${event}}`);
+      } else if (eventName.includes('did')) {
+        eventName = eventName.replace('did', '');
+        const started = timers.get(eventName) || now;
+        const time = new Date(now - started);
+
+        const minutes = time.getMinutes();
+        const seconds = time.getSeconds();
+        const milliseconds = time.getMilliseconds();
+        const timeString = `${
+          (minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')
+        }${milliseconds}ms`;
+
+        timers.delete(eventName);
+        this.log.debug(chalk`{green ${target}} emitted {magenta ${event}} {gray ${timeString}}`);
+      }
     });
   }
 
@@ -310,9 +302,7 @@ class Leemons {
 
   async loadFront(plugins, providers) {
     this.events.emit('appWillLoadFront', 'leemons');
-    await hooks.fireEvent('leemons::loadFrontPlugins', { status: 'start' });
     await loadFront(this, plugins, providers);
-    await hooks.fireEvent('leemons::loadFrontPlugins', { status: 'end' });
 
     await buildFront();
 
@@ -348,7 +338,7 @@ class Leemons {
       });
 
     // When next is prepared
-    await hooks.fireEvent('leemons::prepareFrontend', { status: 'start' });
+    leemons.events.emit('frontWillStartServer', 'leemons');
     const prepareFront = ora('Starting frontend server').start();
     // Start production next app
     const start = execa.command(
@@ -363,8 +353,7 @@ class Leemons {
       .pipe(
         nextTransform(async () => {
           prepareFront.succeed('Frontend server started');
-          await hooks.fireEvent('leemons::prepareFrontend', { status: 'end' });
-          await hooks.fireEvent('leemons::loadFront', { status: 'end' });
+          leemons.events.emit('frontDidStartServer', 'leemons');
           this.setFrontRoutes();
           this.events.emit('appDidLoadFront', 'leemons');
         })
@@ -374,9 +363,9 @@ class Leemons {
   }
 
   async loadAppConfig() {
-    await hooks.fireEvent('leemons::loadConfig', { status: 'start' });
+    leemons.events.emit('appWillLoadConfig', 'leemons');
     this.config = (await loadConfiguration(this)).configProvider;
-    await hooks.fireEvent('leemons::loadConfig', { status: 'end' });
+    leemons.events.emit('appDidLoadConfig', 'leemons');
 
     if (this.config.get('config.insecure', false)) {
       this.log.warn(
