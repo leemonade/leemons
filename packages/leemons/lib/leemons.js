@@ -3,7 +3,6 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const Static = require('koa-static');
 const request = require('request');
-// const nextjs = require('next');
 const events = require('events');
 const execa = require('execa');
 const stream = require('stream');
@@ -300,7 +299,7 @@ class Leemons {
   }
 
   // Initialize the frontend handler
-  async setFrontRoutes() {
+  setFrontRoutes() {
     // Next.js public path
     this.app.use(Static('./next/public'));
 
@@ -333,7 +332,7 @@ class Leemons {
     loadCoreModels(this);
     await this.db.loadModels(_.omit(this.models, 'core_store'));
 
-    this.events.emit('willLoadBack', 'leemons');
+    this.events.emit('appWillLoadBack', 'leemons');
 
     const plugins = await loadExternalFiles(this, 'plugins', 'plugin');
     const providers = await loadExternalFiles(this, 'providers', 'provider');
@@ -344,25 +343,18 @@ class Leemons {
       ...providers.filter((provider) => provider.status.code === PLUGIN_STATUS.enabled.code),
     ]);
 
-    this.events.emit('didLoadBack', 'leemons');
+    this.events.emit('appDidLoadBack', 'leemons');
 
     return { plugins, providers };
   }
 
   async loadFront(plugins, providers) {
-    await hooks.fireEvent('leemons::loadFront', { status: 'start' });
+    this.events.emit('appWillLoadFront', 'leemons');
     await hooks.fireEvent('leemons::loadFrontPlugins', { status: 'start' });
     await loadFront(this, plugins, providers);
     await hooks.fireEvent('leemons::loadFrontPlugins', { status: 'end' });
 
-    // Initialize next
-    // this.front = nextjs({
-    //   dir: this.dir.next,
-    //   dev: process.env.NODE_ENV === 'development',
-    // });
-
     await buildFront();
-    // this.frontHandler = this.front.getRequestHandler();
 
     // stream transformer for listening ready event from frontend
     // Emit a ready event when next is listening
@@ -414,6 +406,7 @@ class Leemons {
           await hooks.fireEvent('leemons::prepareFrontend', { status: 'end' });
           await hooks.fireEvent('leemons::loadFront', { status: 'end' });
           this.setFrontRoutes();
+          this.events.emit('appDidLoadFront', 'leemons');
         })
       )
       .pipe(frontLogger('info'));
@@ -452,34 +445,30 @@ class Leemons {
 
   // Load all apps
   async load() {
-    await hooks.fireEvent('leemons::load', { status: 'start' });
     if (this.loaded) {
       return true;
     }
 
-    await this.loadAppConfig();
-    /*
-     * Load all the installed plugins configuration, check for duplicated
-     * plugins and save plugin' env
-     */
-    const loadedPlugins = await this.loadPluginsConfig();
-    const providersConfig = await this.loadProvidersConfig();
+    this.events.emit('appWillLoad', 'leemons');
 
-    await Promise.all([
-      /*
-       * Load all the backend plugins, database and
-       * setup the middlewares
-       */
-      await this.loadBack(loadedPlugins, providersConfig),
-      /*
-       * Load all the frontend plugins, build the app if needed
-       * and set the middlewares.
-       */
-      await this.loadFront(loadedPlugins, providersConfig),
-    ]);
+    await this.loadAppConfig();
+
+    /*
+     * Load all the backend plugins, database and
+     * setup the middlewares
+     */
+    const { plugins, providers } = await this.loadBack();
+    /*
+     * Load all the frontend plugins, build the app if needed
+     * and set the middlewares.
+     */
+    await this.loadFront(
+      plugins.filter((plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code),
+      providers.filter((provider) => provider.status.code === PLUGIN_STATUS.enabled.code)
+    );
 
     this.loaded = true;
-    await hooks.fireEvent('leemons::load', { status: 'end' });
+    this.events.emit('appDidLoad', 'leemons');
 
     return true;
   }
@@ -489,9 +478,12 @@ class Leemons {
     if (this.started) {
       return;
     }
+    this.events.emit('appWillStart', 'leemons');
+
     await this.load();
 
     this.server.listen(process.env.PORT, () => {
+      this.events.emit('appDidStart', 'leemons');
       this.log.debug(`Listening on http://localhost:${process.env.PORT}`);
       if (process.send) {
         process.send('running');
