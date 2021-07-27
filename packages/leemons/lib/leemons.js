@@ -17,10 +17,8 @@ const hooks = require('leemons-hooks');
 const ora = require('ora');
 const { loadConfiguration } = require('./core/config/loadConfig');
 const { loadCoreModels } = require('./core/model/loadModel');
-const { loadPluginsConfig } = require('./core/plugins/loadPlugins');
 const buildFront = require('./core/front/build');
 const loadFront = require('./core/plugins/front/loadFront');
-const { loadProvidersConfig } = require('./core/plugins/loadProviders');
 const { loadExternalFiles } = require('./core/plugins/loadExternalFiles');
 const { PLUGIN_STATUS } = require('./core/plugins/pluginsStatus');
 
@@ -209,44 +207,6 @@ class Leemons {
     };
   }
 
-  async initPlugins() {
-    const plugins = _.orderBy(this.plugins, (plugin) => plugin.config?.config?.initOrder || 0, [
-      'desc',
-    ]);
-
-    const results = [];
-
-    let plugin;
-    for (let i = 0, l = plugins.length; i < l; i++) {
-      plugin = plugins[i];
-      if (plugin && plugin.init && _.isFunction(plugin.init)) {
-        // eslint-disable-next-line no-await-in-loop
-        results.push(await plugin.init());
-      }
-    }
-    return results;
-  }
-
-  async initProviders() {
-    const providers = _.orderBy(
-      this.providers,
-      (provider) => provider.config?.config?.initOrder || 0,
-      ['desc']
-    );
-
-    const results = [];
-
-    let provider;
-    for (let i = 0, l = providers.length; i < l; i++) {
-      provider = providers[i];
-      if (provider && provider.init && _.isFunction(provider.init)) {
-        // eslint-disable-next-line no-await-in-loop
-        results.push(await provider.init());
-      }
-    }
-    return results;
-  }
-
   /**
    * Initializes the api endpoints
    * @param {{
@@ -425,22 +385,6 @@ class Leemons {
     }
 
     return this.config;
-  }
-
-  async loadPluginsConfig() {
-    await hooks.fireEvent('leemons::loadPlugins', { status: 'start' });
-    const loadedPlugins = await loadPluginsConfig(this);
-    await hooks.fireEvent('leemons::loadPlugins', { status: 'end' });
-
-    return loadedPlugins;
-  }
-
-  async loadProvidersConfig() {
-    await hooks.fireEvent('leemons::loadProviders', { status: 'start' });
-    const loadedProviders = await loadProvidersConfig(this);
-    await hooks.fireEvent('leemons::loadProviders', { status: 'end' });
-
-    return loadedProviders;
   }
 
   // Load all apps
