@@ -1,6 +1,6 @@
 const add = require('./add');
 
-async function addWellcome() {
+async function addWelcome() {
   return add(
     {
       key: 'welcome',
@@ -24,4 +24,4 @@ async function addWellcome() {
   );
 }
 
-module.exports = addWellcome;
+module.exports = addWelcome;

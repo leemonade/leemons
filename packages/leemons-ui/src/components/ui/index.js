@@ -26,6 +26,8 @@ import Tooltip from './Tooltip';
 import ImageLoader from './ImageLoader';
 import InlineSvg from './InlineSvg';
 import PageHeader from './PageHeader';
+import PageContainer from './PageContainer';
+import Drawer from './Drawer';
 
 import Modal, { useModal } from './Modal';
 
@@ -60,4 +62,6 @@ export {
   ImageLoader,
   InlineSvg,
   PageHeader,
+  PageContainer,
+  Drawer,
 };

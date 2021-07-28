@@ -28,7 +28,9 @@ export default function Login() {
     redirectIfFound: true,
   });
   const [formStatus, setFormStatus] = useState('');
+
   const { t: tCommon } = useCommonTranslate('forms');
+
   const [translations] = useTranslate({ keysStartsWith: prefixPN('login') });
   const t = tLoader(prefixPN('login'), translations);
 

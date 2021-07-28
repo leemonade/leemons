@@ -5,7 +5,7 @@ const userService = require('./src/services/users');
 const actionsService = require('./src/services/actions');
 const { table } = require('./src/services/tables');
 const { translations } = require('./src/services/translations');
-const { addMain, addUsers, addProfiles } = require('./src/services/menu-builder');
+const { addMain, addUsers, addProfiles, addWelcome } = require('./src/services/menu-builder');
 
 async function init() {
   try {
@@ -17,7 +17,7 @@ async function init() {
   try {
     // Menu builder
     await addMain();
-    await addUsers();
+    await addWelcome();
     await addProfiles();
   } catch (e) {
     console.error(e);

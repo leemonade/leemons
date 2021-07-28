@@ -1,6 +1,8 @@
 import React from 'react';
-import { Menu, MenuItem, Divider } from '../../src/components/ui';
+import { Divider } from '../../src/components/ui';
 import ClassTable from '../../src/components/ClassTable';
+import Drawer, { useDrawer } from '../../src/components/ui/Drawer';
+import { Button } from '../../src';
 import Wrapper from '../../src/components/Wrapper';
 
 const data = {
@@ -22,6 +24,11 @@ const data = {
 };
 
 function DrawerPage() {
+  const [drawer, toggleDrawer] = useDrawer({
+    animated: true,
+    side: 'right',
+  });
+
   return (
     <main>
       <h2 className="mt-2 mb-6 text-5xl font-bold">
@@ -30,6 +37,13 @@ function DrawerPage() {
       <div className="flex-grow p-4">
         <div className="text-xl font-bold">Examples</div>
 
+        <Wrapper title="sliding drawer menu" classes="flex flex-col space-y-2">
+          <Button color="primary" onClick={toggleDrawer}>
+            Open
+          </Button>
+          <Drawer {...drawer}>Flipas</Drawer>
+        </Wrapper>
+        {/*
         <Wrapper title="sliding drawer menu" classes="flex flex-col space-y-2">
           <div className="drawer rounded border border-base-200 bg-base-200 h-52">
             <input id="my-drawer" type="checkbox" className="drawer-toggle" />
@@ -159,6 +173,7 @@ function DrawerPage() {
             </div>
           </div>
         </Wrapper>
+        */}
 
         <Divider className="my-6" />
 

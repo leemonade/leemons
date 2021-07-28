@@ -1,4 +1,9 @@
 module.exports = {
+  welcome_page: {
+    page_title: 'Bienvenido a la administración de usuarios',
+    page_description:
+      'Aquí le recomendamos los primeros pasos para configurar correctamente su administración de usuarios.',
+  },
   hero_bg: {
     text:
       '"¡No sé el significado de la mitad de esas largas palabras y, además, no creo que tú tampoco lo sepas!"',

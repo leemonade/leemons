@@ -134,8 +134,12 @@ function PageHeader({
   };
 
   return (
-    <div className={`${className} bg-primary-content p-6 border-b border-base-300`}>
-      <div className="max-w-screen-xl w-full">
+    <div
+      className={`${className} bg-primary-content px-6 ${
+        breadcrumbs ? 'py-6' : 'py-12'
+      } border-b border-base-300`}
+    >
+      <div className="max-w-screen-xl w-full mx-auto">
         {getBreadcrumbs()}
         <div className="flex flex-row items-center">
           <div className="flex-grow">

@@ -1,9 +1,13 @@
-import { useEffect, useState } from 'react';
+/*import { useEffect, useState } from 'react';
 import { useSession } from '@users/session';
 import { listProfilesRequest } from '@users/request';
 import { goDetailProfilePage, goLoginPage } from '@users/navigate';
 
+ */
+
 export default function ListProfiles() {
+  return null;
+  /*
   const [pagination, setPagination] = useState(null);
   useSession({ redirectTo: goLoginPage });
 
@@ -48,4 +52,5 @@ export default function ListProfiles() {
       </table>
     </>
   );
+   */
 }
