@@ -25,6 +25,7 @@ import Toggle from './Toggle';
 import Tooltip from './Tooltip';
 import ImageLoader from './ImageLoader';
 import InlineSvg from './InlineSvg';
+import PageHeader from './PageHeader';
 
 import Modal, { useModal } from './Modal';
 
@@ -58,4 +59,5 @@ export {
   useModal,
   ImageLoader,
   InlineSvg,
+  PageHeader,
 };
