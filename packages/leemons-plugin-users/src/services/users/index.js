@@ -19,11 +19,9 @@ const { generateJWTToken } = require('./generateJWTToken');
 const { getJWTPrivateKey } = require('./getJWTPrivateKey');
 const { generateJWTPrivateKey } = require('./generateJWTPrivateKey');
 const { exist } = require('./exist');
-const getUserPermissions = require('./getUserPermissions');
 const add = require('./add');
 const profiles = require('./profiles');
 const profileToken = require('./profileToken');
-const addCustomPermission = require('./addCustomPermission');
 const hasPermission = require('./hasPermission');
 const hasPermissionCTX = require('./hasPermissionCTX');
 const removeCustomPermission = require('./removeCustomPermission');
@@ -54,12 +52,10 @@ module.exports = {
   hasPermissionCTX,
   updateUserAgentPermissions,
   detailForJWT,
-  getUserPermissions,
 
   add,
   profiles,
   profileToken,
-  addCustomPermission,
   hasPermission,
   removeCustomPermission,
 };

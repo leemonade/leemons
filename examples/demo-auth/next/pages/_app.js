@@ -30,7 +30,7 @@ function MyApp({ Component, pageProps }) {
     // Define logger to console (temporal)
     global.leemons = {
       log: console,
-      api: (url, config) => {
+      api: async (url, config) => {
         const urlConfig = url;
         if (_.isObject(url)) {
           let goodUrl = url.url;
@@ -61,15 +61,26 @@ function MyApp({ Component, pageProps }) {
           }
         }
 
-        return fetch(`${window.location.origin}/api/${url}`, config).then(async (r) => {
-          if (r.status >= 500) {
-            throw { status: r.status, message: r.statusText };
+        try {
+          // No se devuelve directamente la respuesta por que si no el error no lo coge este try catch
+          return await fetch(`${window.location.origin}/api/${url}`, config).then(async (r) => {
+            if (r.status >= 500) {
+              throw { status: r.status, message: r.statusText };
+            }
+            if (r.status >= 400) {
+              throw await r.json();
+            }
+            return r.json();
+          });
+        } catch (err) {
+          if (_.isString(err)) {
+            throw { status: 500, message: err };
+          } else if (!err.status) {
+            throw { status: 500, message: err.message };
+          } else {
+            throw err;
           }
-          if (r.status >= 400) {
-            throw await r.json();
-          }
-          return r.json();
-        });
+        }
       },
     };
 

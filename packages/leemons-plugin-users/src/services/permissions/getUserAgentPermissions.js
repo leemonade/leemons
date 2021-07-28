@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { table } = require('../tables');
-const { updateUserAgentPermissions } = require('./updateUserAgentPermissions');
 const constants = require('../../../config/constants');
+const { updateUserAgentPermissions } = require('../users/updateUserAgentPermissions');
 
 /**
  * Return all user auth permissions
@@ -12,24 +12,24 @@ const constants = require('../../../config/constants');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<ListOfUserPermissions>} User permissions
  * */
-async function getUserPermissions(userAgent, { query: _query, transacting } = {}) {
-  const users = _.isArray(userAgent) ? userAgent : [userAgent];
+async function getUserAgentPermissions(userAgent, { query: _query, transacting } = {}) {
+  const _userAgents = _.isArray(userAgent) ? userAgent : [userAgent];
 
   const reloadPermissionPromises = [];
-  _.forEach(users, (user) => {
-    if (user.reloadPermissions)
-      reloadPermissionPromises.push(updateUserAgentPermissions(user.id, { transacting }));
+  _.forEach(_userAgents, (_userAgent) => {
+    if (_userAgent.reloadPermissions)
+      reloadPermissionPromises.push(updateUserAgentPermissions(_userAgent.id, { transacting }));
   });
 
   await Promise.all(reloadPermissionPromises);
 
-  const query = { ..._query, userAgent_$in: _.map(users, 'id') };
+  const query = { ..._query, userAgent_$in: _.map(_userAgents, 'id') };
 
   const results = await table.userAgentPermission.find(query, { transacting });
 
   const group = _.groupBy(
     results,
-    (value) => `${value.permissionName}.${value.target}.${value.role}`
+    ({ actionName, id, userAgent, created_at, updated_at, ...rest }) => JSON.stringify(rest)
   );
 
   const responses = [];
@@ -54,4 +54,4 @@ async function getUserPermissions(userAgent, { query: _query, transacting } = {}
   return responses;
 }
 
-module.exports = getUserPermissions;
+module.exports = { getUserAgentPermissions };

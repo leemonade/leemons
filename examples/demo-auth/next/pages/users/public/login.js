@@ -1,8 +1,10 @@
 import * as _ from 'lodash';
 import { getCookieToken, useSession } from '@users/session';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   getRememberProfileRequest,
+  getUserProfilesRequest,
   getUserProfileTokenRequest,
   loginRequest,
 } from '@users/request';
@@ -10,7 +12,7 @@ import { goRecoverPage } from '@users/navigate';
 import useTranslate from '@multilanguage/useTranslate';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import { Button, FormControl, ImageLoader, Input } from 'leemons-ui';
+import { Alert, Button, FormControl, ImageLoader, Input } from 'leemons-ui';
 import prefixPN from '@users/helpers/prefixPN';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
@@ -25,7 +27,8 @@ export default function Login() {
     redirectTo: _.isString(getCookieToken(true)) ? 'users/private/select-profile' : constants.base,
     redirectIfFound: true,
   });
-  const { t: tCommon } = useCommonTranslate('formValidations');
+  const [formStatus, setFormStatus] = useState('');
+  const { t: tCommon } = useCommonTranslate('forms');
   const [translations] = useTranslate({ keysStartsWith: prefixPN('login') });
   const t = tLoader(prefixPN('login'), translations);
 
@@ -36,23 +39,52 @@ export default function Login() {
   } = useForm();
   const onSubmit = async (data) => {
     try {
+      setFormStatus('loading');
       const response = await loginRequest(data);
 
       try {
+        // Comprobamos si tiene recordado un perfil
         const { profile } = await getRememberProfileRequest(response.jwtToken);
-        const { jwtToken } = await getUserProfileTokenRequest(profile.id, response.jwtToken);
-        await hooks.fireEvent('user:change:profile', profile);
-        response.jwtToken = jwtToken;
+        if (profile) {
+          // Si lo tiene sacamos el token para dicho perfil
+          const { jwtToken } = await getUserProfileTokenRequest(profile.id, response.jwtToken);
+          await hooks.fireEvent('user:change:profile', profile);
+          response.jwtToken = jwtToken;
+        } else {
+          // Si no lo tiene sacamos todos los perfiles a los que tiene acceso para hacer login
+          const { profiles } = await getUserProfilesRequest(response.jwtToken);
+          // Si solo tiene un perfil hacemos login automaticamente con ese
+          if (profiles.length === 1) {
+            const { jwtToken } = await getUserProfileTokenRequest(
+              profiles[0].id,
+              response.jwtToken
+            );
+            await hooks.fireEvent('user:change:profile', profiles[0]);
+            response.jwtToken = jwtToken;
+          }
+        }
       } catch (e) {}
+      // Finalmente metemos el token
       Cookies.set('token', response.jwtToken);
     } catch (err) {
-      console.error(err);
+      if (_.isObject(err) && err.status === 401) setFormStatus('error-match');
+      if (_.isObject(err) && err.status === 500) setFormStatus('unknown-error');
     }
   };
 
   return (
     <HeroBgLayout>
       <h1 className="text-2xl mb-12">{t('title')}</h1>
+
+      {formStatus === 'error-match' || formStatus === 'unknown-error' ? (
+        <Alert color="error mb-8 -mt-4">
+          <div className="flex-1">
+            <label>
+              {formStatus === 'error-match' ? t('form_error') : tCommon('unknown_error')}
+            </label>
+          </div>
+        </Alert>
+      ) : null}
 
       {/* Login Form */}
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -91,7 +123,12 @@ export default function Login() {
         </div>
 
         {/* Send form */}
-        <Button className="my-8 btn-block" color="primary" rounded={true}>
+        <Button
+          className="my-8 btn-block"
+          loading={formStatus === 'loading'}
+          color="primary"
+          rounded={true}
+        >
           <div className="flex-1 text-left">{t('log_in')}</div>
           <div className="relative" style={{ width: '8px', height: '14px' }}>
             <ImageLoader src="/assets/svgs/chevron-right.svg" />

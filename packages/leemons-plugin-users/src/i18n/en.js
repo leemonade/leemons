@@ -11,6 +11,7 @@ module.exports = {
     remember_password: 'I cant remember my password',
     log_in: 'Log in',
     not_registered: 'I am not registered',
+    form_error: 'Email or password does not match',
   },
   selectProfile: {
     title: 'Hi {name}',

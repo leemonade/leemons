@@ -89,7 +89,7 @@ async function addCustomForUser(
       );
 
       promises.push(
-        leemons.plugins.users.services.users.addCustomPermission(
+        leemons.plugins.users.services.permissions.addCustomPermissionToUserAgent(
           _.map(userSession.userAgents, 'id'),
           {
             permissionName: data.key,

@@ -15,6 +15,10 @@ module.exports = {
   manyPermissionsHasManyActions: permissions.manyPermissionsHasManyActions,
   addActionMany: permissions.addActionMany,
   addAction: permissions.addAction,
+  // User agent
+  addCustomPermissionToUserAgent: permissions.addCustomPermissionToUserAgent,
+  getUserAgentPermissions: permissions.getUserAgentPermissions,
+  userAgentHasCustomPermission: permissions.userAgentHasCustomPermission,
   // Item permissions
   addItem: itemPermissions.add,
   countItems: itemPermissions.count,

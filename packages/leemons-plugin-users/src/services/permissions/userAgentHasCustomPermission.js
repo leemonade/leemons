@@ -11,7 +11,7 @@ const constants = require('../../../config/constants');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function hasCustomPermission(
+async function userAgentHasCustomPermission(
   userAgentId,
   { permissionName, actionNames, target, center },
   { transacting } = {}
@@ -31,4 +31,4 @@ async function hasCustomPermission(
   return !!response;
 }
 
-module.exports = hasCustomPermission;
+module.exports = { userAgentHasCustomPermission };
