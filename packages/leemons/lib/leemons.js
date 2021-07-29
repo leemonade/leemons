@@ -312,10 +312,10 @@ class Leemons {
 
     // stream transformer for listening ready event from frontend
     // Emit a ready event when next is listening
-    const nextTransform = (readyCallback) =>
+    const nextTransform = (prefix, callback) =>
       new stream.Transform({
-        transform: (chunk, encoding, callback) => {
-          callback(null, chunk);
+        transform: (chunk, encoding, next) => {
+          next(null, chunk);
 
           const data = chunk.toString();
           if (
@@ -327,17 +327,18 @@ class Leemons {
                 ''
               )
               // in dev. and prod. next logs a line like: ready - listening on:
-              .startsWith('ready')
+              .startsWith(prefix)
           ) {
-            readyCallback();
+            callback();
           }
         },
       });
 
     const frontLogger = (level) =>
       new stream.Writable({
-        write: (chunk) => {
+        write: (chunk, encoding, next) => {
           this.log[level](chunk.toString(), { labels: ['front'] });
+          next();
         },
       });
 
@@ -355,7 +356,7 @@ class Leemons {
     // Log the stdout and stderr
     start.stdout
       .pipe(
-        nextTransform(async () => {
+        nextTransform('ready', async () => {
           prepareFront.succeed('Frontend server started');
           leemons.events.emit('frontDidStartServer', 'leemons');
           this.setFrontRoutes();
@@ -363,7 +364,14 @@ class Leemons {
         })
       )
       .pipe(frontLogger('info'));
-    start.stderr.pipe(frontLogger('error'));
+    start.stderr
+      .pipe(
+        nextTransform('error Command failed', () => {
+          prepareFront.fail('Frontend server failed to start');
+          leemons.events.emit('frontDidCrash', 'leemons');
+        })
+      )
+      .pipe(frontLogger('error'));
   }
 
   async loadAppConfig() {
