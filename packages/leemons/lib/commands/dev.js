@@ -12,6 +12,7 @@ const { createReloader } = require('./lib/watch');
 const { Leemons } = require('../index');
 const loadFront = require('../core/plugins/front/loadFront');
 const build = require('../core/front/build');
+const { PLUGIN_STATUS } = require('../core/plugins/pluginsStatus');
 
 /**
  * Creates a watcher for frontend files and then sets up all the needed files
@@ -259,9 +260,20 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
 
     const { plugins, providers } = await setupBack(leemons);
 
+    leemons.enabledPlugins = plugins.filter(
+      (plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code
+    );
+    leemons.enabledProviders = providers.filter(
+      (provider) => provider.status.code === PLUGIN_STATUS.enabled.code
+    );
+    /*
+     * Load all the frontend plugins, build the app if needed
+     * and set the middlewares.
+     */
+
     let nextDir = leemons.config.get('config.dir.next', 'next');
     nextDir = path.isAbsolute(nextDir) ? nextDir : path.join(cwd, nextDir);
-    await setupFront(leemons, plugins, providers, nextDir);
+    await setupFront(leemons, leemons.enabledPlugins, leemons.enabledProviders, nextDir);
 
     leemons.loaded = true;
 

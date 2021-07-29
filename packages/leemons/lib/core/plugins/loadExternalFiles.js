@@ -34,7 +34,7 @@ function transformServices(services, calledFrom) {
 /**
  * Loads all the external files of a type (plugins, providers, etc)
  */
-async function loadExternalFiles(leemons, target, singularTarget) {
+async function loadExternalFiles(leemons, target, singularTarget, VMProperties) {
   leemons.events.emit(`${target}WillLoad`, 'leemons');
 
   const scriptLoader = new ScriptLoader(target, singularTarget);
@@ -196,26 +196,42 @@ async function loadExternalFiles(leemons, target, singularTarget) {
 
         // TODO: Convert the plugins array to a Map for more efficiency
         // Expose leemons.getPlugin, leemons.getProvider... to each external file
-        _.set(
-          filter,
-          `leemons.get${singularTarget.charAt(0).toUpperCase()}${singularTarget.substr(1)}`,
-          (pluginName) => {
-            let desiredPlugin = plugins.find(
-              (_plugin) =>
-                _plugin.name === pluginName && _plugin.status.code === PLUGIN_STATUS.enabled.code
+        const getPluggable = (pluggables) => (pluggableName) => {
+          if (_.isString(pluggables)) {
+            // eslint-disable-next-line no-param-reassign
+            pluggables = leemons[pluggables];
+          }
+
+          if (_.isArray(pluggables)) {
+            let desiredPluggable = pluggables.find(
+              (pluggable) =>
+                pluggable.name === pluggableName &&
+                pluggable.status.code === PLUGIN_STATUS.enabled.code
             );
 
-            if (desiredPlugin) {
-              desiredPlugin = _.pick(desiredPlugin, ['name', 'version', 'services']);
-              desiredPlugin.services = transformServices(
-                desiredPlugin.services,
+            if (desiredPluggable) {
+              desiredPluggable = _.pick(desiredPluggable, ['name', 'version', 'services']);
+              desiredPluggable.services = transformServices(
+                desiredPluggable.services,
                 `${target}.${plugin.name}`
               );
-              return desiredPlugin;
+              return desiredPluggable;
             }
-            return null;
           }
-        );
+          return null;
+        };
+
+        // Get which pluggable getters should be exposed
+        const pluggables = Object.entries(VMProperties);
+        pluggables.push([
+          `get${singularTarget.charAt(0).toUpperCase()}${singularTarget.substr(1)}`,
+          plugins,
+        ]);
+
+        // Expose each pluggable getter
+        pluggables.forEach(([name, value]) => {
+          _.set(filter, `leemons.${name}`, getPluggable(value));
+        });
 
         const { query } = filter.leemons;
         _.set(filter, 'leemons.query', (modelName) => query(modelName, plugin.name));

@@ -286,8 +286,12 @@ class Leemons {
 
     this.events.emit('appWillLoadBack', 'leemons');
 
-    const plugins = await loadExternalFiles(this, 'plugins', 'plugin');
-    const providers = await loadExternalFiles(this, 'providers', 'provider');
+    const plugins = await loadExternalFiles(this, 'plugins', 'plugin', {
+      getProvider: 'enabledProviders',
+    });
+    const providers = await loadExternalFiles(this, 'providers', 'provider', {
+      getPlugin: 'enabledPlugins',
+    });
 
     this.setMiddlewares();
     this.setRoutes([
@@ -391,14 +395,18 @@ class Leemons {
      * setup the middlewares
      */
     const { plugins, providers } = await this.loadBack();
+
+    this.enabledPlugins = plugins.filter(
+      (plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code
+    );
+    this.enabledProviders = providers.filter(
+      (provider) => provider.status.code === PLUGIN_STATUS.enabled.code
+    );
     /*
      * Load all the frontend plugins, build the app if needed
      * and set the middlewares.
      */
-    await this.loadFront(
-      plugins.filter((plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code),
-      providers.filter((provider) => provider.status.code === PLUGIN_STATUS.enabled.code)
-    );
+    await this.loadFront(this.enabledPlugins, this.enabledProviders);
 
     this.loaded = true;
     this.events.emit('appDidLoad', 'leemons');
