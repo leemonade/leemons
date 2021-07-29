@@ -5,7 +5,6 @@ const Static = require('koa-static');
 const request = require('request');
 const events = require('events');
 const execa = require('execa');
-const stream = require('stream');
 const _ = require('lodash');
 const chalk = require('chalk');
 const bodyParser = require('koa-bodyparser');
@@ -20,6 +19,7 @@ const buildFront = require('./core/front/build');
 const loadFront = require('./core/plugins/front/loadFront');
 const { loadExternalFiles } = require('./core/plugins/loadExternalFiles');
 const { PLUGIN_STATUS } = require('./core/plugins/pluginsStatus');
+const { nextTransform, frontLogger } = require('./core/front/streams');
 
 class Leemons {
   constructor(log) {
@@ -308,39 +308,10 @@ class Leemons {
     this.events.emit('appWillLoadFront', 'leemons');
     await loadFront(this, plugins, providers);
 
-    await buildFront();
-
-    // stream transformer for listening ready event from frontend
-    // Emit a ready event when next is listening
-    const nextTransform = (prefix, callback) =>
-      new stream.Transform({
-        transform: (chunk, encoding, next) => {
-          next(null, chunk);
-
-          const data = chunk.toString();
-          if (
-            data
-              // ignore colors
-              .replace(
-                // eslint-disable-next-line no-control-regex
-                /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
-                ''
-              )
-              // in dev. and prod. next logs a line like: ready - listening on:
-              .startsWith(prefix)
-          ) {
-            callback();
-          }
-        },
-      });
-
-    const frontLogger = (level) =>
-      new stream.Writable({
-        write: (chunk, encoding, next) => {
-          this.log[level](chunk.toString(), { labels: ['front'] });
-          next();
-        },
-      });
+    // If no successful build, do not continue loading front
+    if (!(await buildFront())) {
+      return;
+    }
 
     // When next is prepared
     leemons.events.emit('frontWillStartServer', 'leemons');
