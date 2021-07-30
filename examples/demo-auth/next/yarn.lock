@@ -19,6 +19,9 @@
 "@leemons/assets@file:dependencies/assets":
   version "1.0.0"
 
+"@leemons/dataset@file:dependencies/dataset":
+  version "1.0.0"
+
 "@leemons/emails@file:dependencies/emails":
   version "1.0.0"
   dependencies:

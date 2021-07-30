@@ -18,7 +18,6 @@ import Cookies from 'js-cookie';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de crear usuarios
 export default function SelectProfile() {
-  console.log('SelectProfile');
   const session = useSession({ redirectTo: goLoginPage });
 
   const [translations] = useTranslate({ keysStartsWith: prefixPN('selectProfile') });

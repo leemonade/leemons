@@ -22,6 +22,11 @@ module.exports = {
         unique: true,
       },
     },
+    role: {
+      references: {
+        collection: 'plugins_users::roles',
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

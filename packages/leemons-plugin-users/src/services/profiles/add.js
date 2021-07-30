@@ -9,7 +9,7 @@ const { table } = require('../tables');
  * @static
  * @param {ProfileAdd} data - Profile data
  * @param {RolePermissionsAdd} _permissions - Array of permissions
- * @param {any} transacting - DB Transaction
+ * @param {any} _transacting - DB Transaction
  * @return {Promise<any>} Created permissions-roles
  * */
 async function add({ name, description, roles }, { transacting: _transacting } = {}) {
@@ -18,11 +18,21 @@ async function add({ name, description, roles }, { transacting: _transacting } =
       const exist = await existName(name, undefined, { transacting });
       if (exist) throw new Error(`Already exists one profile with the name '${name}'`);
 
+      const role = await table.roles.create(
+        {
+          name: `profile:${name}:role`,
+          type: leemons.plugin.prefixPN('profile-role'),
+          uri: global.utils.slugify(name, { lower: true }),
+        },
+        { transacting }
+      );
+
       const profile = await table.profiles.create(
         {
           name,
           description,
           uri: global.utils.slugify(name, { lower: true }),
+          role: role.id,
         },
         { transacting }
       );

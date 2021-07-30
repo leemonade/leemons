@@ -21,6 +21,7 @@ async function updateUserAgentPermissions(userAgentId, { transacting: _transacti
   await existUserAgent({ id: userAgentId }, true, { transacting: _transacting });
   return global.utils.withTransaction(
     async (transacting) => {
+      // ES: Borramos los permisos que salieran desde roles y sacamos todos los roles actuales del usuario, ya sea por que vienen desde grupos/perfiles/o el mismo rol que tiene
       const [groupUserAgent, userAgent] = await Promise.all([
         table.groupUserAgent.find({ userAgent: userAgentId }, { columns: ['group'], transacting }),
         table.userAgent.update({ id: userAgentId }, { reloadPermissions: false }, { transacting }),
@@ -33,12 +34,26 @@ async function updateUserAgentPermissions(userAgentId, { transacting: _transacti
         ),
       ]);
 
-      const groupRoles = await table.groupRole.find(
-        { group_$in: _.map(groupUserAgent, 'group') },
-        { columns: ['role'], transacting }
+      // ES: Sacamos los roles de los grupos y los perfiles a los que pertenezca el usuario
+      const [groupRoles, profileRoles] = await Promise.all([
+        table.groupRole.find(
+          { group_$in: _.map(groupUserAgent, 'group') },
+          { columns: ['role'], transacting }
+        ),
+        table.profileRole.find({ role: userAgent.role }, { columns: ['profile'], transacting }),
+      ]);
+
+      const profiles = await table.profiles.find(
+        { id_$in: _.map(profileRoles, 'profile') },
+        {
+          columns: ['role'],
+          transacting,
+        }
       );
 
-      const roleIds = _.uniq([userAgent.role].concat(_.map(groupRoles, 'role')));
+      const roleIds = _.uniq(
+        [userAgent.role].concat(_.map(groupRoles, 'role')).concat(_.map(profiles, 'role'))
+      );
 
       const [rolePermissions, roleCenter] = await Promise.all([
         table.rolePermission.find({ role_$in: roleIds }, { transacting }),

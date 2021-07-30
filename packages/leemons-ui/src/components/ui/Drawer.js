@@ -48,9 +48,7 @@ function Drawer({ isShown, isVisible, hide, options, children }) {
         <>
           <div className={overlayClass} onClick={handleOverlayClicked} />
           <div aria-modal aria-hidden tabIndex={-1} role="dialog" className={contentClass}>
-            <div>
-              <div className="">{children}</div>
-            </div>
+            {children}
           </div>
         </>,
         document.body
@@ -68,7 +66,7 @@ Drawer.propTypes = {
     animated: PropTypes.bool,
     overlayClose: PropTypes.bool,
     onOverlayClicked: PropTypes.func,
-    side: PropTypes.string,
+    side: PropTypes.oneOf(['right', 'left']),
   }),
 };
 

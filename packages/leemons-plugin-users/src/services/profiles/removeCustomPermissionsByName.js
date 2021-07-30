@@ -1,9 +1,11 @@
 const _ = require('lodash');
-const getProfileRoles = require('./getProfileRoles');
+const getProfileRole = require('./getProfileRole');
 const removePermissionsByName = require('../roles/removePermissionsByName');
 const { table } = require('../tables');
-const { addPermissionMany } = require('../roles');
 const { validatePermissionName } = require('../../validations/exists');
+const {
+  markAllUsersWithProfileToReloadPermissions,
+} = require('./markAllUsersWithProfileToReloadPermissions');
 
 /**
  * Update the provided role
@@ -26,18 +28,14 @@ async function removeCustomPermissionsByName(
   });
   return global.utils.withTransaction(
     async (transacting) => {
-      const { role } = (await getProfileRoles(profileId, { transacting }))[0];
+      const role = await getProfileRole(profileId, { transacting });
 
       await Promise.all([
         removePermissionsByName(role, permissions, {
           removeCustomPermissions: true,
           transacting,
         }),
-        table.userAgent.updateMany(
-          { profile: profileId },
-          { reloadPermissions: true },
-          { transacting }
-        ),
+        markAllUsersWithProfileToReloadPermissions(profileId, { transacting }),
       ]);
 
       return true;

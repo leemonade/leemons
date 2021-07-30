@@ -55,6 +55,7 @@ async function deleteSchema(locationName, pluginName, { transacting: _transactin
 
       // ES: Borramos todos los permisos que se añadieron al perfil para este dataset
       // EN: Delete all permissions that were added to the profile for this dataset
+      // TODO Cambiar de perfiles a roles
       _.forIn(permissionObject, (permissions, profileId) => {
         promises.push(
           leemons.plugins.users.services.profiles.removeCustomPermissionsByName(

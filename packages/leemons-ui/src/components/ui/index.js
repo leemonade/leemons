@@ -27,7 +27,7 @@ import ImageLoader from './ImageLoader';
 import InlineSvg from './InlineSvg';
 import PageHeader from './PageHeader';
 import PageContainer from './PageContainer';
-import Drawer from './Drawer';
+import Drawer, { useDrawer } from './Drawer';
 
 import Modal, { useModal } from './Modal';
 
@@ -64,4 +64,5 @@ export {
   PageHeader,
   PageContainer,
   Drawer,
+  useDrawer,
 };
