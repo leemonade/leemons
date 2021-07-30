@@ -1,19 +1,21 @@
 const _ = require('lodash');
 
-function coreStoreProvider(model, leemons) {
-  const modelProvider = _.cloneDeep(model.core_store);
+function createCoreStoreProvider(model, leemons) {
+  const modelProvider = _.cloneDeep(model['models::core_store']);
 
   // Return the core_store model with helper functions
   Object.assign(modelProvider, {
-    get: (key, transacting) => leemons.query('core_store').findOne({ key }, { transacting }),
+    get: (key, transacting) =>
+      leemons.query('models::core_store').findOne({ key }, { transacting }),
 
-    has: (key, transacting) => leemons.query('core_store').count({ key }, { transacting }) > 0,
+    has: (key, transacting) =>
+      leemons.query('models::core_store').count({ key }, { transacting }) > 0,
 
     set: ({ key, value, type, env, transacting }) =>
-      leemons.query('core_store').set({ key }, { value, type, env }, { transacting }),
+      leemons.query('models::core_store').set({ key }, { value, type, env }, { transacting }),
   });
 
-  return { core_store: modelProvider };
+  return modelProvider;
 }
 
 function createCoreStore() {
@@ -34,7 +36,7 @@ function createCoreStore() {
         type: 'string',
       },
     },
-    target: 'core_store',
+    target: 'models',
   };
 
   return model;
@@ -42,5 +44,5 @@ function createCoreStore() {
 
 module.exports = {
   createCoreStore,
-  coreStoreProvider,
+  createCoreStoreProvider,
 };

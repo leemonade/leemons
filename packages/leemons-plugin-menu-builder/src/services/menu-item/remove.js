@@ -29,7 +29,7 @@ async function remove(menuKey, key, { transacting: _transacting } = {}) {
         // Delete item
         table.menuItem.delete({ key }, { transacting }),
         // Delete item permissions
-        leemons.plugins.users.services.permissions.removeItems(
+        leemons.getPlugin('users').services.permissions.removeItems(
           {
             type: leemons.plugin.prefixPN(`${menuKey}.menu-item`),
             item: key,

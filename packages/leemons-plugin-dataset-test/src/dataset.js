@@ -121,7 +121,7 @@ const jsonUI = {
 async function addLocation() {
   try {
     // console.log('---- Start addLocation ----');
-    const data = await leemons.plugins.dataset.services.dataset.addLocation({
+    const data = await leemons.getPlugin('dataset').services.dataset.addLocation({
       name: {
         'es-ES': 'Usuarios',
         en: 'Users',
@@ -143,11 +143,9 @@ async function addLocation() {
 async function getLocation() {
   try {
     // console.log('---- Start getLocation ----');
-    const data = await leemons.plugins.dataset.services.dataset.getLocation(
-      locationName,
-      constants.pluginName,
-      { locale: 'en' }
-    );
+    const data = await leemons
+      .getPlugin('dataset')
+      .services.dataset.getLocation(locationName, constants.pluginName, { locale: 'en' });
     // console.log(data);
   } catch (e) {
     // console.error(e);
@@ -158,7 +156,7 @@ async function getLocation() {
 async function updateLocation() {
   try {
     // console.log('---- Start updateLocation ----');
-    const data = await leemons.plugins.dataset.services.dataset.updateLocation({
+    const data = await leemons.getPlugin('dataset').services.dataset.updateLocation({
       name: {
         en: 'Usersssss',
       },
@@ -175,10 +173,9 @@ async function updateLocation() {
 async function deleteLocation() {
   try {
     // console.log('---- Start deleteLocation ----');
-    const data = await leemons.plugins.dataset.services.dataset.deleteLocation(
-      locationName,
-      constants.pluginName
-    );
+    const data = await leemons
+      .getPlugin('dataset')
+      .services.dataset.deleteLocation(locationName, constants.pluginName);
     // console.log(data);
   } catch (e) {
     // console.error(e);
@@ -189,7 +186,7 @@ async function deleteLocation() {
 async function addSchema(schema, ui) {
   try {
     // console.log('---- Start addSchema ----');
-    const data = await leemons.plugins.dataset.services.dataset.addSchema({
+    const data = await leemons.getPlugin('dataset').services.dataset.addSchema({
       jsonSchema: schema,
       jsonUI: ui,
       locationName,
@@ -205,7 +202,7 @@ async function addSchema(schema, ui) {
 async function updateSchema(schema, ui) {
   try {
     // console.log('---- Start addSchema ----');
-    const data = await leemons.plugins.dataset.services.dataset.updateSchema({
+    const data = await leemons.getPlugin('dataset').services.dataset.updateSchema({
       jsonSchema: schema,
       jsonUI: ui,
       locationName,
@@ -221,10 +218,9 @@ async function updateSchema(schema, ui) {
 async function getSchema() {
   try {
     // console.log('---- Start getSchema ----');
-    const data = await leemons.plugins.dataset.services.dataset.getSchema(
-      locationName,
-      constants.pluginName
-    );
+    const data = await leemons
+      .getPlugin('dataset')
+      .services.dataset.getSchema(locationName, constants.pluginName);
     // console.log(data);
   } catch (e) {
     // console.error(e);
@@ -235,7 +231,7 @@ async function getSchema() {
 async function addSchemaLocale(schema, ui) {
   try {
     // console.log('---- Start addSchemaLocale ----');
-    const data = await leemons.plugins.dataset.services.dataset.addSchemaLocale({
+    const data = await leemons.getPlugin('dataset').services.dataset.addSchemaLocale({
       schemaData: schema,
       uiData: ui,
       locationName,
@@ -252,11 +248,9 @@ async function addSchemaLocale(schema, ui) {
 async function getSchemaLocale() {
   try {
     // console.log('---- Start getSchemaLocale ----');
-    const data = await leemons.plugins.dataset.services.dataset.getSchemaLocale(
-      locationName,
-      constants.pluginName,
-      'en'
-    );
+    const data = await leemons
+      .getPlugin('dataset')
+      .services.dataset.getSchemaLocale(locationName, constants.pluginName, 'en');
     // console.log(data);
   } catch (e) {
     // console.error(e);
@@ -267,11 +261,9 @@ async function getSchemaLocale() {
 async function getSchemaWithLocale() {
   try {
     // console.log('---- Start getSchemaWithLocale ----');
-    const data = await leemons.plugins.dataset.services.dataset.getSchemaWithLocale(
-      locationName,
-      constants.pluginName,
-      'en'
-    );
+    const data = await leemons
+      .getPlugin('dataset')
+      .services.dataset.getSchemaWithLocale(locationName, constants.pluginName, 'en');
     // console.log(data);
   } catch (e) {
     // console.error(e);
@@ -282,12 +274,9 @@ async function getSchemaWithLocale() {
 async function addValues() {
   try {
     // console.log('---- Start addValues ----');
-    const data = await leemons.plugins.dataset.services.dataset.addValues(
-      locationName,
-      constants.pluginName,
-      schemaValues,
-      userAgent
-    );
+    const data = await leemons
+      .getPlugin('dataset')
+      .services.dataset.addValues(locationName, constants.pluginName, schemaValues, userAgent);
     // console.log(data);
   } catch (e) {
     // console.error(e);
@@ -298,12 +287,11 @@ async function addValues() {
 async function getValues() {
   try {
     // console.log('---- Start getValues ----');
-    const data = await leemons.plugins.dataset.services.dataset.getValues(
-      locationName,
-      constants.pluginName,
-      userAgent,
-      { keys: ['firstName', 'lastName', 'telephone'] }
-    );
+    const data = await leemons
+      .getPlugin('dataset')
+      .services.dataset.getValues(locationName, constants.pluginName, userAgent, {
+        keys: ['firstName', 'lastName', 'telephone'],
+      });
     // console.log(data);
   } catch (e) {
     console.error(e);
@@ -314,10 +302,9 @@ async function getValues() {
 async function deleteValues() {
   try {
     // console.log('---- Start deleteValues ----');
-    const data = await leemons.plugins.dataset.services.dataset.deleteValues(
-      locationName,
-      constants.pluginName
-    );
+    const data = await leemons
+      .getPlugin('dataset')
+      .services.dataset.deleteValues(locationName, constants.pluginName);
     // console.log(data);
   } catch (e) {
     // console.error(e);
@@ -326,11 +313,13 @@ async function deleteValues() {
 }
 
 async function init() {
-  const schema = leemons.plugins.dataset.services.dataset.transformJsonSchema(jsonSchema);
-  const ui = leemons.plugins.dataset.services.dataset.transformUiSchema(jsonUI);
+  const schema = leemons.getPlugin('dataset').services.dataset.transformJsonSchema(jsonSchema);
+  const ui = leemons.getPlugin('dataset').services.dataset.transformUiSchema(jsonUI);
 
-  const uPschema = leemons.plugins.dataset.services.dataset.transformJsonSchema(updatedJsonSchema);
-  const uPui = leemons.plugins.dataset.services.dataset.transformUiSchema(jsonUI);
+  const uPschema = leemons
+    .getPlugin('dataset')
+    .services.dataset.transformJsonSchema(updatedJsonSchema);
+  const uPui = leemons.getPlugin('dataset').services.dataset.transformUiSchema(jsonUI);
 
   await addLocation();
   await getLocation();

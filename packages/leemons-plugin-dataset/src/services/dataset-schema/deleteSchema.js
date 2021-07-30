@@ -58,11 +58,13 @@ async function deleteSchema(locationName, pluginName, { transacting: _transactin
       // TODO Cambiar de perfiles a roles
       _.forIn(permissionObject, (permissions, profileId) => {
         promises.push(
-          leemons.plugins.users.services.profiles.removeCustomPermissionsByName(
-            profileId,
-            _.map(permissions, 'permissionName'),
-            { transacting }
-          )
+          leemons
+            .getPlugin('users')
+            .services.profiles.removeCustomPermissionsByName(
+              profileId,
+              _.map(permissions, 'permissionName'),
+              { transacting }
+            )
         );
       });
 

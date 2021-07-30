@@ -25,15 +25,14 @@ async function getKeysCanAction(
   { transacting } = {}
 ) {
   const actions = _.isArray(_actions) ? _actions : [_actions];
-  const userPermissions = await leemons.plugins.users.services.permissions.getUserAgentPermissions(
-    userAgent,
-    {
+  const userPermissions = await leemons
+    .getPlugin('users')
+    .services.permissions.getUserAgentPermissions(userAgent, {
       query: {
         permissionName_$startssWith: leemons.plugin.prefixPN(`${locationName}.${pluginName}`),
       },
       transacting,
-    }
-  );
+    });
 
   const goodKeys = [];
 

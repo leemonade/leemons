@@ -83,7 +83,7 @@ async function update(
           );
         }
         promises.push(
-          leemons.plugins.users.services.permissions.removeItems(
+          leemons.getPlugin('users').services.permissions.removeItems(
             {
               type: leemons.plugin.prefixPN(`${menuKey}.menu-item`),
               item: key,
@@ -123,7 +123,7 @@ async function update(
       // Add the necessary permissions to view the item
       if (_.isArray(permissions) && permissions.length) {
         promises.push(
-          leemons.plugins.users.services.permissions.removeItems(
+          leemons.getPlugin('users').services.permissions.removeItems(
             {
               type: leemons.plugin.prefixPN(`${menuKey}.menu-item`),
               item: key,
@@ -132,21 +132,24 @@ async function update(
           )
         );
         promises.push(
-          leemons.plugins.users.services.permissions.addItem(
-            data.key,
-            leemons.plugin.prefixPN(`${data.menuKey}.menu-item`),
-            permissions,
-            { transacting }
-          )
+          leemons
+            .getPlugin('users')
+            .services.permissions.addItem(
+              data.key,
+              leemons.plugin.prefixPN(`${data.menuKey}.menu-item`),
+              permissions,
+              { transacting }
+            )
         );
-      } else if (leemons.plugins.users) {
+      } else if (leemons.getPlugin('users')) {
         promises.push(
-          leemons.plugins.users.services.permissions.addItem(
+          leemons.getPlugin('users').services.permissions.addItem(
             data.key,
             leemons.plugin.prefixPN(`${data.menuKey}.menu-item`),
             {
-              permissionName: leemons.plugins.users.config.constants.basicPermission.permissionName,
-              actionNames: [leemons.plugins.users.config.constants.basicPermission.actionName],
+              permissionName: leemons.getPlugin('users').config.constants.basicPermission
+                .permissionName,
+              actionNames: [leemons.getPlugin('users').config.constants.basicPermission.actionName],
             },
             { isCustomPermission: true, transacting }
           )

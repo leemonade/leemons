@@ -77,7 +77,7 @@ async function addCustomForUser(
 
       // Add the necessary permissions to view the item
       promises.push(
-        leemons.plugins.users.services.permissions.addItem(
+        leemons.getPlugin('users').services.permissions.addItem(
           data.key,
           leemons.plugin.prefixPN(`${data.menuKey}.menu-item.custom`),
           {
@@ -89,7 +89,7 @@ async function addCustomForUser(
       );
 
       promises.push(
-        leemons.plugins.users.services.permissions.addCustomPermissionToUserAgent(
+        leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
           _.map(userSession.userAgents, 'id'),
           {
             permissionName: data.key,

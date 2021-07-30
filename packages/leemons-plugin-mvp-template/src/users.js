@@ -1,5 +1,5 @@
 async function initUsers(roles) {
-  const user1 = await leemons.plugins.users.services.users.add(
+  const user1 = await leemons.getPlugin('users').services.users.add(
     {
       name: 'Jaime',
       email: 'jaime@leemons.io',

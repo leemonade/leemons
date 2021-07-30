@@ -24,12 +24,11 @@ async function add(key, permissions, { transacting: _transacting } = {}) {
 
       // Add the necessary permissions to view the item
       if (_.isArray(permissions) && permissions.length) {
-        await leemons.plugins.users.services.permissions.addItem(
-          key,
-          leemons.plugin.prefixPN('menu'),
-          permissions,
-          { transacting }
-        );
+        await leemons
+          .getPlugin('users')
+          .services.permissions.addItem(key, leemons.plugin.prefixPN('menu'), permissions, {
+            transacting,
+          });
       }
 
       leemons.log.info(`Added menu "${key}"`);

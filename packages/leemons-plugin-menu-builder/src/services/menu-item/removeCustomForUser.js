@@ -44,7 +44,7 @@ async function removeCustomForUser(userSession, menuKey, key, { transacting: _tr
 
       // Remove permissions for item
       promises.push(
-        leemons.plugins.users.services.permissions.removeItems(
+        leemons.getPlugin('users').services.permissions.removeItems(
           {
             type: leemons.plugin.prefixPN(`${menuKey}.menu-item.custom`),
             item: key,
@@ -55,7 +55,7 @@ async function removeCustomForUser(userSession, menuKey, key, { transacting: _tr
 
       // Remove de custom permission
       promises.push(
-        leemons.plugins.users.services.users.removeCustomPermission(
+        leemons.getPlugin('users').services.users.removeCustomPermission(
           _.map(userSession.userAgents, 'id'),
           {
             permissionName: key,

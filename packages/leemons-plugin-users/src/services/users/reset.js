@@ -26,16 +26,18 @@ async function reset(token, password, ctx) {
       table.userRecoverPassword.delete({ id: config.recoveryId }, { transacting }),
     ]);
 
-    if (leemons.plugins.emails) {
-      await leemons.plugins.emails.services.email.sendAsEducationalCenter(
-        config.user.email,
-        'user-reset-password',
-        config.user.locale,
-        {
-          name: config.user.name,
-          loginUrl: `${ctx.request.header.origin}/users/public/login`,
-        }
-      );
+    if (leemons.getPlugin('emails')) {
+      await leemons
+        .getPlugin('emails')
+        .services.email.sendAsEducationalCenter(
+          config.user.email,
+          'user-reset-password',
+          config.user.locale,
+          {
+            name: config.user.name,
+            loginUrl: `${ctx.request.header.origin}/users/public/login`,
+          }
+        );
     }
 
     return values[0];

@@ -22,7 +22,7 @@ async function remove(key, { transacting: _transacting } = {}) {
 
       await Promise.all([
         table.menu.delete({ key }, { transacting }),
-        leemons.plugins.users.services.permissions.removeItems(
+        leemons.getPlugin('users').services.permissions.removeItems(
           {
             type: leemons.plugin.prefixPN('menu'),
             item: key,

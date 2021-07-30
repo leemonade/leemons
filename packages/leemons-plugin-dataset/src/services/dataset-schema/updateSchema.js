@@ -60,11 +60,13 @@ async function updateSchema(
       // TODO Cambiar de perfiles a roles
       _.forIn(oldPermissionObject, (permissions, profileId) => {
         removePermissionsPromises.push(
-          leemons.plugins.users.services.profiles.removeCustomPermissionsByName(
-            profileId,
-            _.map(permissions, 'permissionName'),
-            { transacting }
-          )
+          leemons
+            .getPlugin('users')
+            .services.profiles.removeCustomPermissionsByName(
+              profileId,
+              _.map(permissions, 'permissionName'),
+              { transacting }
+            )
         );
       });
 
@@ -88,9 +90,11 @@ async function updateSchema(
       // TODO Cambiar de perfiles a roles
       _.forIn(newPermissionObject, (permissions, profileId) => {
         promises.push(
-          leemons.plugins.users.services.profiles.addCustomPermissions(profileId, permissions, {
-            transacting,
-          })
+          leemons
+            .getPlugin('users')
+            .services.profiles.addCustomPermissions(profileId, permissions, {
+              transacting,
+            })
         );
       });
 

@@ -33,12 +33,10 @@ async function recover(email, ctx) {
       code: _.random(100000, 999999).toString(),
     });
   }
-  if (leemons.plugins.emails) {
-    await leemons.plugins.emails.services.email.sendAsEducationalCenter(
-      email,
-      'user-recover-password',
-      user.locale,
-      {
+  if (leemons.getPlugin('emails')) {
+    await leemons
+      .getPlugin('emails')
+      .services.email.sendAsEducationalCenter(email, 'user-recover-password', user.locale, {
         name: user.name,
         resetUrl: `${ctx.request.header.origin}/users/public/reset?token=${encodeURIComponent(
           await generateJWTToken({
@@ -47,8 +45,7 @@ async function recover(email, ctx) {
           })
         )}`,
         recoverUrl: `${ctx.request.header.origin}/users/public/recover`,
-      }
-    );
+      });
   }
   return undefined;
 }
