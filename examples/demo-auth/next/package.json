@@ -11,7 +11,6 @@
     "@leemons/assets": "file:dependencies/assets",
     "@leemons/emails": "file:dependencies/emails",
     "@leemons/layout": "file:dependencies/layout",
-    "@leemons/multilanguage": "file:dependencies/multilanguage",
     "@leemons/onboarding": "file:dependencies/onboarding",
     "@leemons/provider-emails-amazon-ses": "file:dependencies/provider-emails-amazon-ses",
     "@tailwindcss/line-clamp": "^0.2.1",
@@ -20,7 +19,12 @@
     "react-dnd": "^14.0.2",
     "react-dnd-html5-backend": "^14.0.0",
     "react-hook-form": "^7.8.3",
-    "tailwindcss": "^2.1.2"
+    "tailwindcss": "^2.1.2",
+    "@leemons/mvp-template": "file:dependencies/mvp-template",
+    "@leemons/dataset": "file:dependencies/dataset",
+    "@leemons/multilanguage": "file:dependencies/multilanguage",
+    "@leemons/menu-builder": "file:dependencies/menu-builder",
+    "@leemons/users": "file:dependencies/users"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.6",

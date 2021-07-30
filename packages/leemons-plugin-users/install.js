@@ -3,12 +3,11 @@ const permissionService = require('./src/services/permissions');
 const userService = require('./src/services/users');
 const { addMain, addWelcome, addProfiles } = require('./src/services/menu-builder');
 const _ = require('lodash');
-const constants = require('../../../config/constants');
-const recoverEmail = require('../../../emails/recoverPassword');
-const resetPassword = require('../../../emails/resetPassword');
+const constants = require('./config/constants');
+const recoverEmail = require('./emails/recoverPassword');
+const resetPassword = require('./emails/resetPassword');
 
 async function install() {
-  console.log('Estamos en el install de users');
   await actionsService.init();
   leemons.events.emit('init-actions');
   await permissionService.init();
@@ -17,6 +16,7 @@ async function install() {
 
   // Dataset locations
   leemons.events.once('plugins.dataset:pluginDidLoadServices', async () => {
+    console.log('Vamos a instala user dataset');
     await Promise.all(
       _.map(constants.defaultDatasetLocations, (config) =>
         leemons.getPlugin('dataset').services.dataset.addLocation(config)

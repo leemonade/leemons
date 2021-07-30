@@ -72,6 +72,8 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
         // TODO: Plugin name only can be defined through package.json
         name: config.get('config.name', plugin.name),
         dir: plugin.dir,
+        // TODO Sacar version del package.json
+        version: '0.0.1',
         config,
       };
     })
@@ -185,10 +187,16 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
       // leemons.query)
       const vmFilter = (filter) => {
         // Only let the plugin to emit events on itself
-        const events = _.cloneDeep(leemons.events);
-        _.set(filter, 'leemons.events', events);
-        _.set(filter, 'leemons.events.emit', (event, ...args) => {
-          leemons.events.emit.call(this.events, event, `${target}.${plugin.name}`, ...args);
+        _.set(filter, 'leemons.events', {
+          emit: (event, ...args) => {
+            leemons.events.emit(event, `${target}.${plugin.name}`, ...args);
+          },
+          once: (...args) => {
+            leemons.events.once(...args);
+          },
+          on: (...args) => {
+            leemons.events.on(...args);
+          },
         });
 
         // Expose leemons.plugin, leemons.provider... to each external file

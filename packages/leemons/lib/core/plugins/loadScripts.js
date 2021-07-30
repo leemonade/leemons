@@ -11,19 +11,22 @@ class ScriptLoader {
     this.singularTarget = singularTarget;
   }
 
-  async loadScript({
-    plugins,
-    plugin,
-    dir,
-    willLoadEvent,
-    didLoadEvent,
-    failStatus,
-    env,
-    filter,
-    execFunction = true,
-    singleFile = false,
-    exclude = [],
-  }) {
+  async loadScript(
+    {
+      plugins,
+      plugin,
+      dir,
+      willLoadEvent,
+      didLoadEvent,
+      failStatus,
+      env,
+      filter,
+      execFunction = true,
+      singleFile = false,
+      exclude = [],
+    },
+    beforeDidLoadEventCallback
+  ) {
     if (plugin.status.code === PLUGIN_STATUS.enabled.code) {
       if (willLoadEvent) {
         leemons.events.emit(
@@ -41,6 +44,7 @@ class ScriptLoader {
           allowedPath: plugin.dir.app,
           exclude,
         });
+        if (_.isFunction(beforeDidLoadEventCallback)) beforeDidLoadEventCallback(result);
         if (didLoadEvent) {
           leemons.events.emit(
             `${this.singularTarget}${didLoadEvent}`,
@@ -91,22 +95,24 @@ class ScriptLoader {
   }
 
   async loadServices(plugins, plugin, env, filter) {
-    const services = (
-      await this.loadScript({
-        plugins,
-        plugin,
-        dir: plugin.dir.services,
-        willLoadEvent: 'WillLoadServices',
-        didLoadEvent: 'DidLoadServices',
-        failStatus: PLUGIN_STATUS.servicesFailed,
-        env,
-        filter,
-        execFunction: false,
-      })
+    return (
+      await this.loadScript(
+        {
+          plugins,
+          plugin,
+          dir: plugin.dir.services,
+          willLoadEvent: 'WillLoadServices',
+          didLoadEvent: 'DidLoadServices',
+          failStatus: PLUGIN_STATUS.servicesFailed,
+          env,
+          filter,
+          execFunction: false,
+        },
+        (services) => {
+          _.set(plugin, 'services', services);
+        }
+      )
     ).result;
-    _.set(plugin, 'services', services);
-
-    return services;
   }
 
   async loadRoutes(plugins, plugin, env, filter) {

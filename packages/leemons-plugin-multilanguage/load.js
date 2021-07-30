@@ -1,4 +1,4 @@
-module.exports = async ({ scripts }) => {
+module.exports = async ({ scripts, next }) => {
   console.log('Cargamos Multilanguage');
   // ES: Añade los modelos a la base de datos
   await scripts.models();
