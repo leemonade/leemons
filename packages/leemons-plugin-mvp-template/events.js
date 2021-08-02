@@ -5,7 +5,7 @@ const initProfiles = require('./src/profiles');
 const _ = require('lodash');
 
 async function events() {
-  console.log('Init multiple');
+  console.log('Init template --------');
   leemons.events.once('plugins.users:pluginDidLoadServices', async () => {
     try {
       console.log('Añadimos mvp');

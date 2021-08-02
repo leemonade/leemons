@@ -78,7 +78,7 @@ async function buildNext() {
       });
     }
   }
-  return null;
+  return true;
 }
 
 async function buildF() {

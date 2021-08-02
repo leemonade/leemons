@@ -28,7 +28,7 @@ function nextTransform(prefix, callback) {
 function frontLogger(level, label = 'Front') {
   return new stream.Writable({
     write: (chunk, encoding, next) => {
-      this.log[level](chunk.toString(), { labels: [label] });
+      leemons.log[level](chunk.toString(), { labels: [label] });
       next();
     },
   });

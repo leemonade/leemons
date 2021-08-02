@@ -331,44 +331,50 @@ class Leemons {
   }
 
   async loadFront(plugins, providers) {
-    this.events.emit('appWillLoadFront', 'leemons');
-    await loadFront(this, plugins, providers);
+    try {
+      this.events.emit('appWillLoadFront', 'leemons');
+      await loadFront(this, plugins, providers);
 
-    // If no successful build, do not continue loading front
-    if (!(await buildFront())) {
-      return;
-    }
-
-    // When next is prepared
-    leemons.events.emit('frontWillStartServer', 'leemons');
-    const prepareFront = ora('Starting frontend server').start();
-    // Start production next app
-    const start = execa.command(
-      `yarn --cwd ${leemons.dir.next} ${process.env.NODE_ENV !== 'development' ? 'start' : 'dev'}`,
-      {
-        ...process.env,
-        FORCE_COLOR: true,
+      // If no successful build, do not continue loading front
+      if (!(await buildFront())) {
+        return;
       }
-    );
-    // Log the stdout and stderr
-    start.stdout
-      .pipe(
-        nextTransform('ready', async () => {
-          prepareFront.succeed('Frontend server started');
-          leemons.events.emit('frontDidStartServer', 'leemons');
-          this.setFrontRoutes();
-          this.events.emit('appDidLoadFront', 'leemons');
-        })
-      )
-      .pipe(frontLogger('info'));
-    start.stderr
-      .pipe(
-        nextTransform('error Command failed', () => {
-          prepareFront.fail('Frontend server failed to start');
-          leemons.events.emit('frontDidCrash', 'leemons');
-        })
-      )
-      .pipe(frontLogger('error'));
+
+      // When next is prepared
+      leemons.events.emit('frontWillStartServer', 'leemons');
+      const prepareFront = ora('Starting frontend server').start();
+      // Start production next app
+      const start = execa.command(
+        `yarn --cwd ${leemons.dir.next} ${
+          process.env.NODE_ENV !== 'development' ? 'start' : 'dev'
+        }`,
+        {
+          ...process.env,
+          FORCE_COLOR: true,
+        }
+      );
+      // Log the stdout and stderr
+      start.stdout
+        .pipe(
+          nextTransform('ready', async () => {
+            prepareFront.succeed('Frontend server started');
+            leemons.events.emit('frontDidStartServer', 'leemons');
+            this.setFrontRoutes();
+            this.events.emit('appDidLoadFront', 'leemons');
+          })
+        )
+        .pipe(frontLogger('info'));
+      start.stderr
+        .pipe(
+          nextTransform('error Command failed', () => {
+            prepareFront.fail('Frontend server failed to start');
+            leemons.events.emit('frontDidCrash', 'leemons');
+          })
+        )
+        .pipe(frontLogger('error'));
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async loadAppConfig() {
