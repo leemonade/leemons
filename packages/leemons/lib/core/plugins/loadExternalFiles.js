@@ -6,30 +6,7 @@ const { getPluginsInfoFromDB, getLocalPlugins, getExternalPlugins } = require('.
 const { computeDependencies, checkMissingDependencies, sortByDeps } = require('./dependencies');
 const { getStatus, PLUGIN_STATUS } = require('./pluginsStatus');
 const ScriptLoader = require('./loadScripts');
-
-/**
- * Get all the services which are a function and wrap them, so this.calledFrom is added to the call
- */
-function transformServices(services, calledFrom) {
-  const _services = _.cloneDeep(services);
-  const wrap = (func) => (...params) => func.call({ calledFrom }, ...params);
-
-  _.forEach(_.keys(services), (serviceKey) => {
-    // If the service is a function, call it with custom context
-    if (_.isFunction(services[serviceKey])) {
-      _services[serviceKey] = wrap(services[serviceKey]);
-      // If the service is an object
-    } else if (_.isObject(services[serviceKey])) {
-      _.forEach(_.keys(services[serviceKey]), (propertyKey) => {
-        // Check if the property is a function and call it with custom context
-        if (_.isFunction(services[serviceKey][propertyKey])) {
-          _services[serviceKey][propertyKey] = wrap(services[serviceKey][propertyKey]);
-        }
-      });
-    }
-  });
-  return _services;
-}
+const transformServices = require('./transformServices');
 
 /**
  * Loads all the external files of a type (plugins, providers, etc)
@@ -432,5 +409,4 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
 
 module.exports = {
   loadExternalFiles,
-  transformServices,
 };

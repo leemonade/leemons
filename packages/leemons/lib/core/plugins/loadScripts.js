@@ -4,28 +4,7 @@ const { PLUGIN_STATUS } = require('./pluginsStatus');
 const { loadFiles, loadFile } = require('../config/loadFiles');
 const disablePlugin = require('./disablePlugin');
 const { formatModels } = require('../model/loadModel');
-
-// TODO Ver por que si lo importo desde loadExternalFiles no funciona
-function transformServices(services, calledFrom) {
-  const _services = _.cloneDeep(services);
-  const wrap = (func) => (...params) => func.call({ calledFrom }, ...params);
-
-  _.forEach(_.keys(services), (serviceKey) => {
-    // If the service is a function, call it with custom context
-    if (_.isFunction(services[serviceKey])) {
-      _services[serviceKey] = wrap(services[serviceKey]);
-      // If the service is an object
-    } else if (_.isObject(services[serviceKey])) {
-      _.forEach(_.keys(services[serviceKey]), (propertyKey) => {
-        // Check if the property is a function and call it with custom context
-        if (_.isFunction(services[serviceKey][propertyKey])) {
-          _services[serviceKey][propertyKey] = wrap(services[serviceKey][propertyKey]);
-        }
-      });
-    }
-  });
-  return _services;
-}
+const transformServices = require('./transformServices');
 
 class ScriptLoader {
   constructor(target, singularTarget) {
@@ -132,7 +111,11 @@ class ScriptLoader {
           execFunction: false,
         },
         (services) => {
-          _.set(plugin, 'services', transformServices(services, `plugins.${plugin.name}`));
+          _.set(
+            plugin,
+            'services',
+            transformServices(services, `${this.target}.${plugin.name}`, true)
+          );
         }
       )
     ).result;
