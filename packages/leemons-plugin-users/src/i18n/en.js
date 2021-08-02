@@ -1,4 +1,14 @@
 module.exports = {
+  user_data_page: {
+    page_title: 'User data',
+    page_description:
+      'In this section you can configure the dataset fields for your users. The identification data are mandatory for the operation of the platform and mandatory for all users of any profile. The common fields are those shared by all users, they can be mandatory or optional (they are useful to save time when defining fields common to all users of the platform such as a name or surname). <br/> Last but not least, profiles have their own data sets that you can consult in the profiles section.',
+    tabs: {
+      login_data: 'Login data',
+      basic_data: 'Basic data',
+      user_dataset: 'User dataset',
+    },
+  },
   welcome_page: {
     page_title: 'Welcome to Users Admin',
     page_description:

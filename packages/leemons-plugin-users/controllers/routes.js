@@ -144,9 +144,9 @@ module.exports = [
    * Roles
    * */
   {
-    path: '/role',
+    path: '/roles-for-center/:center',
     method: 'GET',
-    handler: 'roles.list',
+    handler: 'roles.rolesForCenter',
   },
   {
     path: '/role',
@@ -157,5 +157,19 @@ module.exports = [
     path: '/role/:id',
     method: 'PUT',
     handler: 'roles.create',
+  },
+  /**
+   * Centers
+   * */
+  {
+    path: '/centers',
+    method: 'GET',
+    handler: 'centers.list',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.centers': {
+        actions: ['view', 'admin'],
+      },
+    },
   },
 ];

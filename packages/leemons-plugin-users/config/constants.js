@@ -9,6 +9,16 @@ module.exports = {
   // TODO Añadir listado de permisos basicos
   defaultPermissions: [
     {
+      permissionName: 'plugins.users.centers',
+      actions: ['view', 'update', 'create', 'delete', 'admin'],
+      localizationName: { 'es-ES': 'Centros', en: 'Centers' },
+    },
+    {
+      permissionName: 'plugins.users.user-data',
+      actions: ['view', 'update', 'delete', 'admin'],
+      localizationName: { 'es-ES': 'Datos del usuario', en: 'User data' },
+    },
+    {
       permissionName: 'plugins.users.users',
       actions: ['view', 'update', 'create', 'delete', 'admin'],
       localizationName: { 'es-ES': 'Usuarios', en: 'Users' },

@@ -6,6 +6,7 @@ const addProfiles = require('./addProfiles');
 const addUsers = require('./addUsers');
 const removeWelcome = require('./removeWelcome');
 const addMain = require('./addMain');
+const addUserData = require('./addUserData');
 
 module.exports = {
   addWelcome,
@@ -16,4 +17,5 @@ module.exports = {
   addUsers,
   removeWelcome,
   addMain,
+  addUserData,
 };

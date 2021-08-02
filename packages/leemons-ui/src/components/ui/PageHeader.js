@@ -65,7 +65,12 @@ function PageHeader({
 
   const getDescription = () => {
     if (description) {
-      return <div className="text-base text-secondary mt-2">{description}</div>;
+      return (
+        <div
+          className="text-base text-secondary mt-2"
+          dangerouslySetInnerHTML={{ __html: description }}
+        ></div>
+      );
     }
     return null;
   };

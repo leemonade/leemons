@@ -224,23 +224,27 @@ class ScriptLoader {
   }
 
   async loadEvents(plugins, plugin, env, filter) {
-    const event = await this.loadScript({
-      plugins,
-      plugin,
-      dir: plugin.dir.events,
-      willLoadEvent: 'WillSetEvents',
-      didLoadEvent: null, //'DidSetEvents',
-      failStatus: PLUGIN_STATUS.eventsFailed,
-      env,
-      filter,
-      execFunction: false,
-      singleFile: true,
-    });
+    const event = (
+      await this.loadScript({
+        plugins,
+        plugin,
+        dir: plugin.dir.events,
+        willLoadEvent: 'WillSetEvents',
+        didLoadEvent: null, //'DidSetEvents',
+        failStatus: PLUGIN_STATUS.eventsFailed,
+        env,
+        filter,
+        execFunction: false,
+        singleFile: true,
+      })
+    ).result;
 
-    const eventExec = await event(plugin.status.isInstalled);
-
+    let result = null;
+    if (event) {
+      result = await event(plugin.status.isInstalled);
+    }
     leemons.events.emit('pluginDidSetEvents', `${this.target}.${plugin.name}`);
-    return eventExec;
+    return result;
   }
 }
 
