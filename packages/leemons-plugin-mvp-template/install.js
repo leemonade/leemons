@@ -5,8 +5,10 @@ const initProfiles = require('./src/profiles');
 const _ = require('lodash');
 
 async function install() {
+  console.log('Init multiple');
   leemons.events.once('plugins.users:pluginDidLoadServices', async () => {
     try {
+      console.log('Añadimos mvp');
       await leemons.getPlugin('users').services.platform.setLocale('en');
       const centers = await initCenters();
       console.log('centers', centers);

@@ -2,13 +2,12 @@ const getMenuBuilder = require('./getMenuBuilder');
 
 async function add(item, permissions) {
   const menuBuilder = getMenuBuilder();
-  const { menuItem } = menuBuilder.services;
-  const { mainMenuKey } = menuBuilder.config.constants;
-  if (!(await menuItem.exist(mainMenuKey, leemons.plugin.prefixPN(item.key)))) {
+  const { menuItem, config } = menuBuilder.services;
+  if (!(await menuItem.exist(config.constants.mainMenuKey, leemons.plugin.prefixPN(item.key)))) {
     return menuItem.add(
       {
         ...item,
-        menuKey: mainMenuKey,
+        menuKey: config.constants.mainMenuKey,
         key: leemons.plugin.prefixPN(item.key),
         parentKey: item.parentKey ? leemons.plugin.prefixPN(item.parentKey) : undefined,
       },
