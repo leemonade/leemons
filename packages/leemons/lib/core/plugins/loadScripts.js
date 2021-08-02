@@ -210,6 +210,20 @@ class ScriptLoader {
     leemons.events.emit(`${this.singularTarget}DidLoadModels`, `${this.target}.${plugin.name}`);
     return models;
   }
+
+  async loadEvents(plugins, plugin, env, filter) {
+    return this.loadScript({
+      plugins,
+      plugin,
+      dir: plugin.dir.events,
+      willLoadEvent: 'WillSetEvents',
+      didLoadEvent: 'DidSetEvents',
+      failStatus: PLUGIN_STATUS.eventsFailed,
+      env,
+      filter,
+      singleFile: true,
+    });
+  }
 }
 
 module.exports = ScriptLoader;

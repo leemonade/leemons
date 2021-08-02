@@ -59,6 +59,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
           next: 'next',
           env: '.env',
           install: 'install.js',
+          events: 'events.js',
           init: 'init.js',
           load: 'load.js',
         },
@@ -251,6 +252,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
       const services = () => scriptLoader.loadServices(plugins, plugin, env, vmFilter);
       const routes = () => scriptLoader.loadRoutes(plugins, plugin, env, vmFilter);
       const controllers = () => scriptLoader.loadControllers(plugins, plugin, env, vmFilter);
+      const events = () => scriptLoader.loadEvents(plugins, plugin, env, vmFilter);
 
       return {
         plugin,
@@ -262,6 +264,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
           services,
           routes,
           controllers,
+          events,
         },
       };
     });
@@ -282,6 +285,8 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
 
     leemons.log.debug(`${target} loaded in ${timeString}`);
   });
+
+  await Promise.all(pluginsFunctions.map((plugin) => plugin.scripts.events()));
 
   // for (let i = 0; i < pluginsLength; i++) {
   async function loadPlugin(i) {

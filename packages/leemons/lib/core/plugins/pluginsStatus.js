@@ -44,6 +44,10 @@ const PLUGIN_STATUS = {
     code: 'broken',
     reason: 'the plugin routes loading failed',
   },
+  eventsFailed: {
+    code: 'broken',
+    reason: 'the plugin events loading failed',
+  },
 };
 
 // Get the status of the plugin based on the plugin info from DB
