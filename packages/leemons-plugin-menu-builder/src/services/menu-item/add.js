@@ -154,9 +154,11 @@ async function add(
             key,
             leemons.plugin.prefixPN(`${menuKey}.menu-item`),
             {
-              permissionName: leemons.getPlugin('users').config.constants.basicPermission
+              permissionName: leemons.getPlugin('users').services.config.constants.basicPermission
                 .permissionName,
-              actionNames: [leemons.getPlugin('users').config.constants.basicPermission.actionName],
+              actionNames: [
+                leemons.getPlugin('users').services.config.constants.basicPermission.actionName,
+              ],
             },
             { isCustomPermission: true, transacting }
           )

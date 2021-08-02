@@ -44,7 +44,7 @@ class Leemons {
     this.loaded = false;
     this.started = false;
 
-    this.events = new events.EventEmitter();
+    this.events = new events();
     const { emit } = this.events;
     this.events.emit = (event, target = null, ...args) => {
       emit.call(this.events, 'all', { event, target }, ...args);

@@ -7,7 +7,6 @@ const { isValidLocaleCode } = require('./src/validations/locale');
 const Locales = require('./src/services/locale');
 
 async function install() {
-  console.log('Instalamos Multilanguage');
   try {
     const goodLocales = _.map(
       locale.all.filter((local) => isValidLocaleCode(local.tag)),

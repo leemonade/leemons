@@ -11,7 +11,10 @@ function disablePlugin(plugins, plugin, reason = PLUGIN_STATUS.initializationFai
   const { dependants } = plugin.dependencies;
 
   plugins
-    .filter((_plugin) => dependants.includes(_plugin.name))
+    .filter(
+      (_plugin) =>
+        dependants.includes(_plugin.name) && _plugin.status.code === PLUGIN_STATUS.enabled.code
+    )
     .forEach((_plugin) => disablePlugin(plugins, _plugin, PLUGIN_STATUS.disabledDeps));
 
   leemons.events.emit('pluginDidDisable', `plugins.${plugin.name}`, reason);

@@ -3,31 +3,26 @@ const permissionService = require('./src/services/permissions');
 const userService = require('./src/services/users');
 const { addMain, addWelcome, addProfiles } = require('./src/services/menu-builder');
 const _ = require('lodash');
-const constants = require('../../../config/constants');
-const recoverEmail = require('../../../emails/recoverPassword');
-const resetPassword = require('../../../emails/resetPassword');
+const constants = require('./config/constants');
+const recoverEmail = require('./emails/recoverPassword');
+const resetPassword = require('./emails/resetPassword');
 
 async function install() {
-  console.log('Estamos en el install de users');
-  await actionsService.init();
-  leemons.events.emit('init-actions');
-  await permissionService.init();
-  leemons.events.emit('init-permissions');
-  await userService.init();
-
+  console.log('Install users');
   // Dataset locations
   leemons.events.once('plugins.dataset:pluginDidLoadServices', async () => {
+    console.log('DATASET INIT');
     await Promise.all(
       _.map(constants.defaultDatasetLocations, (config) =>
         leemons.getPlugin('dataset').services.dataset.addLocation(config)
       )
     );
     leemons.events.emit('init-dataset-locations');
-    console.log('DATASET init');
   });
 
   // Emails
   leemons.events.once('plugins.emails:pluginDidLoadServices', async () => {
+    console.log('EMAILS INIT');
     await leemons
       .getPlugin('emails')
       .services.email.addIfNotExist(
@@ -67,16 +62,21 @@ async function install() {
       );
     leemons.events.emit('init-email-reset-password');
     leemons.events.emit('init-emails');
-    console.log('Emails init');
   });
 
   leemons.events.once('plugins.menu-builder:init-main-menu', async () => {
+    console.log('MENU INIT');
     await addMain();
     leemons.events.emit('init-menu');
     await Promise.all([addWelcome(), addProfiles()]);
     leemons.events.emit('init-submenu');
-    console.log('Menu init');
   });
+
+  await actionsService.init();
+  leemons.events.emit('init-actions');
+  await permissionService.init();
+  leemons.events.emit('init-permissions');
+  await userService.init();
 }
 
 module.exports = install;

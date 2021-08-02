@@ -33,7 +33,6 @@ async function add(data) {
       );
     }
     const values = await Promise.all(promises);
-    console.log('despues de promise all');
     leemons.log.info(`Added action '${data.actionName}'`);
     return values[0];
   });

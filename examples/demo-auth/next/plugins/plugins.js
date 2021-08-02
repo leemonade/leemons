@@ -1,36 +1,45 @@
 module.exports = {
   plugins: [
     'onboarding',
-		'multilanguage',
 		'layout',
 		'emails',
 		'dataset-test',
 		'assets',
+		'dataset',
+		'multilanguage',
+		'users',
+		'mvp-template',
+		'menu-builder',
 		'provider-emails-amazon-ses'
   ],
   frontPlugins: [{
     name: 'onboarding',
-    version: 'null',
+    version: '0.0.1',
     load: require('@onboarding/index.js')
   },
 	{
-    name: 'multilanguage',
-    version: 'null',
-    load: require('@multilanguage/index.js')
-  },
-	{
     name: 'layout',
-    version: 'null',
+    version: '0.0.1',
     load: require('@layout/index.js')
   },
 	{
     name: 'emails',
-    version: 'null',
+    version: '0.0.1',
     load: require('@emails/index.js')
   },
 	{
+    name: 'multilanguage',
+    version: '0.0.1',
+    load: require('@multilanguage/index.js')
+  },
+	{
+    name: 'users',
+    version: '0.0.1',
+    load: require('@users/index.js')
+  },
+	{
     name: 'provider-emails-amazon-ses',
-    version: 'null',
+    version: '0.0.1',
     load: require('@provider-emails-amazon-ses/index.js')
   }]
 };

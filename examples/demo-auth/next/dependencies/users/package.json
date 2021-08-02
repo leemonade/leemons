@@ -1,0 +1,1 @@
+{"name":"next","version":"1.0.0","main":"index.js","license":"MIT","dependencies":{"js-cookie":"^2.2.1","prop-types":"^15.7.2","react-hook-form":"^7.8.5","swr":"^0.5.6"},"devDependencies":{"@users":"file:src"}}
