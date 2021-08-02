@@ -48,7 +48,7 @@
     "full": "postcss src/theme/full/index.css -o dist/theme/leemons.css --config src/theme/full",
     "prebuild": "rm -rf dist",
     "build": "NODE_ENV=production babel src --out-dir dist --copy-files && npm run build:theme",
-    "postbuild": "npm run clean:temp && rm -rf dist/theme/base && rm -rf dist/theme/components && rm -rf dist/theme/utilities && rm -rf dist/theme/full && rm -rf dist/theme/*.css &&  npm run full && rm -rf dist/theme/themes",
+    "postbuild": "npm run clean:temp && rm -rf dist/theme/base && rm -rf dist/theme/components && rm -rf dist/theme/utilities && rm -rf dist/theme/full &&  npm run full && mv dist/theme/leemons.css dist/theme/leemons.tmp && rm -rf dist/theme/*.css && rm -rf dist/theme/themes && mv dist/theme/leemons.tmp dist/theme/leemons.css",
     "clean:temp": "rm -rf temp",
     "prebuild:theme": "npm run clean:temp && mkdir temp && cp -R ./src/theme ./temp && npm run cleancss",
     "build:theme": "npm run index && npm run colors && npm run fonts && npm run base && npm run utilities:global && npm run utilities:unstyled && npm run utilities:styled && npm run components && npm run merge:unstyled && npm run merge:styled && npm run rtl && npm run prejss && npm run themes",

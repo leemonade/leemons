@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 
-function HeroBg({ className, color, type, animate, decay, speed }) {
+function HeroBg({ className, color, type, animate, decay, speed, solid }) {
   const colorClass = color ? `herobg-${color}` : '';
   const classes = className || '';
   const [currentType, setCurrentType] = useState(null);
@@ -194,7 +194,72 @@ function HeroBg({ className, color, type, animate, decay, speed }) {
     </svg>
   );
 
-  const TYPES = { lg, 'x-md': xMD, 'x-sm': xSM };
+  const ySM = (
+    <svg
+      className={[colorClass, classes].join(' ')}
+      width="1600"
+      height="310"
+      viewBox="0 0 1600 310"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* Y = 0 */}
+      <rect x="267" width="268" height="155" fill="currentColor" />
+      <rect x="534" width="268" height="155" fill="currentColor" />
+      <rect x="801" width="268" height="155" fill="currentColor" />
+      <rect x="1068" width="268" height="155" fill="currentColor" />
+      <rect x="1335" width="265" height="155" fill="currentColor" />
+
+      {/* Y = 155 */}
+      <rect x="267" y="155" width="268" height="155" fill="currentColor" />
+      <rect x="534" y="155" width="268" height="155" fill="currentColor" />
+      <rect x="1068" y="155" width="268" height="155" fill="currentColor" />
+      <rect x="1335" y="155" width="265" height="155" fill="currentColor" />
+
+      <path d="M800 155 H1068 C1068 241 997 310 911 310 H800 V155Z" fill="currentColor" />
+      <path d="M267 0 H0 C0 86 70 155 155 155H268V0Z" fill="currentColor" />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M200 233 C191 188 155 155 115 155 C73 155 38 188 28 233 C38 277 73 310 115 310 C155 310 190 277 200 233Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+
+  const yXS = (
+    <svg
+      className={[colorClass, classes].join(' ')}
+      width="1600"
+      height="155"
+      viewBox="0 0 1600 155"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect x="266.667" width="266.667" height="155" fill="currentColor" />
+      <rect x="533.334" width="266.667" height="155" fill="currentColor" />
+      <rect x="1066.67" width="266.667" height="155" fill="currentColor" />
+      <path
+        transform="translate(0 -155)"
+        d="M266.666 0 H0 V43.3334 C0 190.609 119.39 310 266.666 310V0Z"
+        fill="currentColor"
+      />
+      <path
+        transform="translate(0 -155)"
+        d="M1066.67 155H799.999C799.999 240.604 869.395 310 954.999 310H1066.67V155Z"
+        fill="currentColor"
+      />
+      <path
+        transform="translate(0 -155)"
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M1556.35 232.502C1546.06 187.933 1509.78 155 1466.59 155C1423.41 155 1387.13 187.933 1376.84 232.502C1387.13 277.067 1423.41 310 1466.59 310C1509.78 310 1546.06 277.067 1556.35 232.502Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+
+  const TYPES = { lg, 'x-md': xMD, 'x-sm': xSM, 'y-sm': ySM, 'y-xs': yXS };
 
   const getSVGNodes = (node) => {
     let nodes = [];
@@ -231,7 +296,7 @@ function HeroBg({ className, color, type, animate, decay, speed }) {
       const _y = y / (yCount / 2);
       for (let x = 0; x < xCount; x++) {
         animStyles.push({
-          opacity: (_y ** 2 / decay) * Math.random(),
+          opacity: solid ? 1 : (_y ** 2 / decay) * Math.random(),
           transition: `opacity ${speed}ms`,
         });
       }
@@ -258,7 +323,7 @@ function HeroBg({ className, color, type, animate, decay, speed }) {
         currentNodes[i] = React.cloneElement(currentNode, {
           style:
             currentNode.type === 'path'
-              ? { opacity: Math.random() / 3, transition: 'opacity 3s' }
+              ? { opacity: solid ? 1 : Math.random() / 3, transition: 'opacity 3s' }
               : animStyles[i],
         });
       } else {
@@ -301,10 +366,11 @@ HeroBg.propTypes = {
     'success',
     'error',
   ]),
-  type: PropTypes.oneOf(['lg', 'x-md', 'x-sm']),
+  type: PropTypes.oneOf(['lg', 'x-md', 'x-sm', 'y-sm', 'y-xs']),
   decay: PropTypes.number,
   animate: PropTypes.bool,
   speed: PropTypes.number,
+  solid: PropTypes.bool,
 };
 
 export default HeroBg;

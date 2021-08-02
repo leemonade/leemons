@@ -28,89 +28,89 @@
     }
     /* brand colors */
     &-primary {
-      @apply bg-primary border-primary text-primary-content;
+      @apply bg-primary border-primary text-primary-content !important;
       &:hover,
       &.btn-active {
-        @apply bg-primary-focus border-primary-focus;
+        @apply bg-primary-focus border-primary-focus !important;
       }
       &:active,
       &:focus-visible {
-        @apply bg-primary border-primary;
-        box-shadow: 0 0 0 2px hsl(var(--p-f));
+        @apply bg-primary border-primary !important;
+        box-shadow: 0 0 0 2px hsl(var(--p-f)) !important;
       }
     }
     &-secondary {
-      @apply bg-secondary border-secondary text-secondary-content;
+      @apply bg-secondary border-secondary text-secondary-content !important;
       &:hover,
       &.btn-active {
-        @apply bg-secondary-focus border-secondary-focus;
+        @apply bg-secondary-focus border-secondary-focus !important;
       }
       &:active,
       &:focus-visible {
-        @apply bg-secondary border-secondary;
-        box-shadow: 0 0 0 2px hsl(var(--p-f));
+        @apply bg-secondary border-secondary !important;
+        box-shadow: 0 0 0 2px hsl(var(--p-f)) !important;
       }
     }
     &-accent {
-      @apply bg-accent border-accent text-accent-content;
+      @apply bg-accent border-accent text-accent-content !important;
       &:hover,
       &.btn-active {
-        @apply bg-accent-focus border-accent-focus;
+        @apply bg-accent-focus border-accent-focus !important;
       }
       &:active,
       &:focus-visible {
-        @apply bg-accent border-accent;
-        box-shadow: 0 0 0 2px hsl(var(--a-f));
+        @apply bg-accent border-accent !important;
+        box-shadow: 0 0 0 2px hsl(var(--a-f)) !important;
       }
     }
 
     /* btn with state colors */
     &-info {
-      @apply bg-info border-info text-info-content;
+      @apply bg-info border-info text-info-content !important;
       &:hover,
       &.btn-active {
-        @apply bg-info-focus border-info-focus;
+        @apply bg-info-focus border-info-focus !important;
       }
       &:active,
       &:focus-visible {
-        @apply bg-info border-info;
-        box-shadow: 0 0 0 2px hsl(var(--in-f));
+        @apply bg-info border-info !important;
+        box-shadow: 0 0 0 2px hsl(var(--in-f)) !important;
       }
     }
     &-success {
-      @apply bg-success border-success text-success-content;
+      @apply bg-success border-success text-success-content !important;
       &:hover,
       &.btn-active {
-        @apply bg-success-focus border-success-focus;
+        @apply bg-success-focus border-success-focus !important;
       }
       &:active,
       &:focus-visible {
-        @apply bg-success border-success;
-        box-shadow: 0 0 0 2px hsl(var(--su-f));
+        @apply bg-success border-success !important;
+        box-shadow: 0 0 0 2px hsl(var(--su-f)) !important;
       }
     }
     &-warning {
-      @apply bg-warning border-warning text-warning-content;
+      @apply bg-warning border-warning text-warning-content !important;
       &:hover,
       &.btn-active {
-        @apply bg-warning-focus border-warning-focus;
+        @apply bg-warning-focus border-warning-focus !important;
       }
       &:active,
       &:focus-visible {
-        @apply bg-warning border-warning;
-        box-shadow: 0 0 0 2px hsl(var(--wa-f));
+        @apply bg-warning border-warning !important;
+        box-shadow: 0 0 0 2px hsl(var(--wa-f)) !important;
       }
     }
     &-error {
-      @apply bg-error border-error text-error-content;
+      @apply bg-error border-error text-error-content !important;
       &:hover,
       &.btn-active {
-        @apply bg-error-focus border-error-focus;
+        @apply bg-error-focus border-error-focus !important;
       }
       &:active,
       &:focus-visible {
-        @apply bg-error border-error;
-        box-shadow: 0 0 0 2px hsl(var(--er-f));
+        @apply bg-error border-error !important;
+        box-shadow: 0 0 0 2px hsl(var(--er-f)) !important;
       }
     }
 
@@ -131,9 +131,10 @@
       @apply bg-transparent text-current border border-transparent;
       &:hover,
       &.btn-active {
-        @apply bg-base-content bg-opacity-10 border-opacity-0;
+        @apply bg-base-content bg-opacity-20 border-opacity-0;
       }
       &:focus-visible {
+        @apply bg-base-content bg-opacity-0;
         box-shadow: 0 0 0 2px currentColor;
       }
     }
