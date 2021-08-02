@@ -200,7 +200,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
           },
         });
 
-        // Expose leemons.plugin, leemons.provider... to each external file
+        // Expose leemons.plugin, leemons.provider... to each external file+
         _.set(filter, `leemons.${singularTarget}`, plugin);
         _.set(
           filter,
@@ -432,4 +432,5 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
 
 module.exports = {
   loadExternalFiles,
+  transformServices,
 };

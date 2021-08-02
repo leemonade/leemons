@@ -39,7 +39,7 @@ module.exports = {
         en: 'Adds additional data to those common to all users',
       },
       locationName: 'user-common-dataset',
-      pluginName: 'plugins.users-groups-roles',
+      pluginName: 'plugins.users',
     },
   ],
   url: {

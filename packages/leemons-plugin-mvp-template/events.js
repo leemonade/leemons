@@ -4,7 +4,7 @@ const initCenters = require('./src/centers');
 const initProfiles = require('./src/profiles');
 const _ = require('lodash');
 
-async function install() {
+async function events() {
   console.log('Init multiple');
   leemons.events.once('plugins.users:pluginDidLoadServices', async () => {
     try {
@@ -24,4 +24,4 @@ async function install() {
   });
 }
 
-module.exports = install;
+module.exports = events;
