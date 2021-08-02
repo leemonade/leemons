@@ -1,14 +1,15 @@
 module.exports = {
   translations: () => {
-    if (leemons.plugins.multilanguage) {
+    const multilanguage = leemons.getPlugin('multilanguage');
+    if (multilanguage && multilanguage.services) {
       return {
-        common: leemons.plugins.multilanguage.services.common.getProvider(),
-        contents: leemons.plugins.multilanguage.services.contents.getProvider(),
-        locales: leemons.plugins.multilanguage.services.locales.getProvider(),
+        common: multilanguage.services.common.getProvider(),
+        contents: multilanguage.services.contents.getProvider(),
+        locales: multilanguage.services.locales.getProvider(),
         functions: {
-          isValidLocaleCode: leemons.plugins.multilanguage.services.locales.isValidLocaleCode,
-          localeRegex: leemons.plugins.multilanguage.services.locales.localeRegex,
-          localeRegexString: leemons.plugins.multilanguage.services.locales.localeRegexString,
+          isValidLocaleCode: multilanguage.services.locales.isValidLocaleCode,
+          localeRegex: multilanguage.services.locales.localeRegex,
+          localeRegexString: multilanguage.services.locales.localeRegexString,
         },
       };
     }

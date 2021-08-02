@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+/*import * as _ from 'lodash';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import { useSession } from '@users/session';
 import { useForm } from 'react-hook-form';
@@ -14,8 +14,11 @@ import {
   updateProfileRequest,
 } from '@users/request';
 import { goDetailProfilePage, goListProfilesPage, goLoginPage } from '@users/navigate';
+*/
 
 export default function ListProfiles() {
+  return null;
+  /*
   useSession({ redirectTo: goLoginPage });
 
   const router = useRouter();
@@ -169,4 +172,5 @@ export default function ListProfiles() {
       </form>
     </>
   );
+  */
 }

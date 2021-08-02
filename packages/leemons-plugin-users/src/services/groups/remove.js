@@ -11,12 +11,15 @@ const { exist } = require('./exist');
  * */
 async function remove(groupId) {
   await exist({ id: groupId }, true);
-  const groupUserAuths = await table.groupUserAuth.find({ group: groupId }, { columns: ['user'] });
-  const userAuthIdsInGroup = _.map(groupUserAuths, 'userAuth');
-  return table.groupUserAuth.transaction(async () => {
+  const groupUserAgents = await table.groupUserAgent.find(
+    { group: groupId },
+    { columns: ['user'] }
+  );
+  const userAgentIdsInGroup = _.map(groupUserAgents, 'userAgent');
+  return table.groupUserAgent.transaction(async () => {
     const values = await Promise.all([
       table.group.delete({ id: groupId }),
-      table.userAuth.updateMany({ id_$in: userAuthIdsInGroup }, { reloadPermissions: true }),
+      table.userAgent.updateMany({ id_$in: userAgentIdsInGroup }, { reloadPermissions: true }),
     ]);
     return values[0];
   });

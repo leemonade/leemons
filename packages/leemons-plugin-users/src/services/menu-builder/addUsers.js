@@ -1,23 +1,5 @@
 const add = require('./add');
 
-async function addUsers() {
-  return add(
-    {
-      key: 'user-list',
-      parentKey: 'users',
-      url: '/users/private/users/list',
-      label: {
-        en: 'Users list',
-        es: 'Listado de usuarios',
-      },
-    },
-    [
-      {
-        permissionName: 'plugins.users.users',
-        actionNames: ['view'],
-      },
-    ]
-  );
-}
+async function addUsers() {}
 
 module.exports = addUsers;

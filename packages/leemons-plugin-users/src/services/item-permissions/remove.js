@@ -37,4 +37,4 @@ async function remove(query, { transacting } = {}) {
   return table.itemPermissions.deleteMany(query, { transacting });
 }
 
-module.exports = remove;
+module.exports = { remove };

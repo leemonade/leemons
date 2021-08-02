@@ -6,11 +6,11 @@ const { table } = require('../tables');
  * @static
  * @return {Promise<any>}
  * */
-async function find(...params) {
-  const results = await table.itemPermissions.find(...params);
+async function find(params, { transacting } = {}) {
+  const results = await table.itemPermissions.find(params, { transacting });
   const group = _.groupBy(
     results,
-    (value) => `${value.permissionName}.${value.target}.${value.type}.${value.item}`
+    (value) => `${value.permissionName}.${value.target}.${value.type}.${value.item}.${value.center}`
   );
   const responses = [];
   _.forIn(group, (values) => {
@@ -20,10 +20,11 @@ async function find(...params) {
       target: values[0].target,
       type: values[0].type,
       item: values[0].item,
+      center: values[0].center,
     });
   });
 
   return responses;
 }
 
-module.exports = find;
+module.exports = { find };

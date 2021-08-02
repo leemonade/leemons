@@ -1,6 +1,5 @@
 import React from 'react';
-import { ExclamationIcon } from '@heroicons/react/solid';
-import { FormControl, Input, Label, Button, Divider } from '../../../src/components/ui';
+import { Button, Divider, FormControl, Input, Label } from '../../../src/components/ui';
 import ClassTable from '../../../src/components/ClassTable';
 import Wrapper from '../../../src/components/Wrapper';
 
@@ -110,17 +109,11 @@ function InputPage() {
               <Label text="Data must be more than 3 characters" helper />
             </FormControl>
 
-            <FormControl label="Username">
+            <FormControl
+              formError={{ message: 'Data is incorrect', type: 'required' }}
+              label="Username"
+            >
               <Input outlined color="error" placeholder="username" />
-              <Label
-                text={
-                  <>
-                    <ExclamationIcon className="inline-block mr-1 h-4 text-error fill-current" />
-                    Data is incorrect
-                  </>
-                }
-                helper
-              />
             </FormControl>
           </div>
         </Wrapper>

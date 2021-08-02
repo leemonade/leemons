@@ -28,7 +28,7 @@ async function generatePluginLoader({ plugins, srcPath, srcChecksums, aliases, n
     .map(
       ([name, plugin]) => `{
     name: '${name}',
-    version: ${_.get(plugin, 'version', null)},
+    version: '${_.get(plugin, 'version', null)}',
     load: require('@${name}/index.js')
   }`
     )

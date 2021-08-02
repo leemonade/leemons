@@ -1,0 +1,22 @@
+module.exports = {
+  datasetItemDrawer: {
+    preview: 'Preview',
+    new_field: 'New field',
+    edit_field: 'Edit field',
+    field_type: 'Field type',
+    required: 'Required',
+    masked: 'Masked',
+    field_length: 'Field length',
+    min: 'Min',
+    max: 'Max',
+    only_numbers: 'Only numbers',
+    config_and_languages: 'Configuration & languages',
+    label_title: 'Label',
+    label_description: 'Visible name on the file.',
+    help_text_title: 'Help text',
+    help_text_description: 'Use this text to orient the user to the expected content.',
+    human_error_title: 'Human error text',
+    human_error_description: 'Required validation and format will added automatically.',
+    profiles_permission: 'Profiles permission',
+  },
+};

@@ -22,7 +22,7 @@ const { table } = require('../tables');
  *  @param {string} locationName Location name (For backend)
  *  @param {string} pluginName Plugin name (For backend)
  *  @param {any} _formData Form data to save
- *  @param {UserAuth} userAuth - User auth
+ *  @param {UserAgent} userAgent - User auth
  *  @param {any=} transacting - DB Transaction
  *  @param {string=} target Any string to differentiate what you want, for example a user id.
  *  @return {Promise<any>} Passed formData
@@ -31,7 +31,7 @@ async function updateValues(
   locationName,
   pluginName,
   _formData,
-  userAuth,
+  userAgent,
   { target, transacting: _transacting } = {}
 ) {
   validatePluginName(pluginName, this.calledFrom);
@@ -43,7 +43,7 @@ async function updateValues(
 
   // ES: Cogemos solos los campos a los que el usuario tiene permiso de edicion
   // EN: We take only the fields to which the user has permission to edit.
-  const goodKeys = await getKeysCanAction(locationName, pluginName, userAuth, 'edit');
+  const goodKeys = await getKeysCanAction(locationName, pluginName, userAgent, 'edit');
   const formData = {};
   _.forEach(goodKeys, (k) => {
     formData[k] = _formData[k];

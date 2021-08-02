@@ -25,6 +25,9 @@ import Toggle from './Toggle';
 import Tooltip from './Tooltip';
 import ImageLoader from './ImageLoader';
 import InlineSvg from './InlineSvg';
+import PageHeader from './PageHeader';
+import PageContainer from './PageContainer';
+import Drawer, { useDrawer } from './Drawer';
 
 import Modal, { useModal } from './Modal';
 
@@ -58,4 +61,8 @@ export {
   useModal,
   ImageLoader,
   InlineSvg,
+  PageHeader,
+  PageContainer,
+  Drawer,
+  useDrawer,
 };

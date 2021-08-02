@@ -9,7 +9,7 @@ const permissions = [
 async function add() {
   try {
     console.log('---- Start add ----');
-    const data = await leemons.plugins['menu-builder'].services.menu.add(key, permissions);
+    const data = await leemons.getPlugin('menu-builder').services.menu.add(key, permissions);
     console.log(data);
   } catch (e) {
     console.error(e);

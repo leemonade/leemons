@@ -1,9 +1,9 @@
-const { existUserAuth } = require('./existUserAuth');
+const { existUserAgent } = require('./existUserAgent');
 const { init } = require('./init');
 const { list } = require('./list');
 const { detailForJWT } = require('./detailForJWT');
 const { detail } = require('./detail');
-const { updateUserAuthPermissions } = require('./updateUserAuthPermissions');
+const { updateUserAgentPermissions } = require('./updateUserAgentPermissions');
 const { isSuperAdmin } = require('./isSuperAdmin');
 const { reset } = require('./reset');
 const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
@@ -19,11 +19,9 @@ const { generateJWTToken } = require('./generateJWTToken');
 const { getJWTPrivateKey } = require('./getJWTPrivateKey');
 const { generateJWTPrivateKey } = require('./generateJWTPrivateKey');
 const { exist } = require('./exist');
-const getUserPermissions = require('./getUserPermissions');
 const add = require('./add');
 const profiles = require('./profiles');
 const profileToken = require('./profileToken');
-const addCustomPermission = require('./addCustomPermission');
 const hasPermission = require('./hasPermission');
 const hasPermissionCTX = require('./hasPermissionCTX');
 const removeCustomPermission = require('./removeCustomPermission');
@@ -38,7 +36,7 @@ module.exports = {
   list,
 
   exist,
-  existUserAuth,
+  existUserAgent,
 
   addFirstSuperAdminUser,
   generateJWTPrivateKey,
@@ -52,14 +50,12 @@ module.exports = {
   getSuperAdminUserIds,
   isSuperAdmin,
   hasPermissionCTX,
-  updateUserAuthPermissions,
+  updateUserAgentPermissions,
   detailForJWT,
-  getUserPermissions,
 
   add,
   profiles,
   profileToken,
-  addCustomPermission,
   hasPermission,
   removeCustomPermission,
 };

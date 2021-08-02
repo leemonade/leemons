@@ -1,8 +1,11 @@
 const _ = require('lodash');
-const getProfileRoles = require('./getProfileRoles');
+const getProfileRole = require('./getProfileRole');
 const { update: updateRole } = require('../roles');
 const { existName } = require('./existName');
 const { table } = require('../tables');
+const {
+  markAllUsersWithProfileToReloadPermissions,
+} = require('./markAllUsersWithProfileToReloadPermissions');
 
 async function update(data) {
   const exist = await existName(data.name, data.id);
@@ -22,14 +25,13 @@ async function update(data) {
         },
         { transacting }
       ),
-      table.userAuth.updateMany({ profile: data.id }, { reloadPermissions: true }, { transacting }),
+      markAllUsersWithProfileToReloadPermissions(data.id, { transacting }),
     ]);
 
-    // *** Only get one profile role for now
-    const profileRole = (await getProfileRoles(profile.id))[0];
+    const profileRole = await getProfileRole(profile.id);
     await updateRole(
       {
-        id: profileRole.role,
+        id: profileRole,
         name: `role-for-profile-${profile.id}`,
         permissions: permissionsForRole,
       },

@@ -52,11 +52,14 @@ async function addSchema(
         ),
       ];
 
+      // TODO Cambiar de perfiles a roles
       _.forIn(permissionObject, (permissions, profileId) => {
         promises.push(
-          leemons.plugins.users.services.profiles.addCustomPermissions(profileId, permissions, {
-            transacting,
-          })
+          leemons
+            .getPlugin('users')
+            .services.profiles.addCustomPermissions(profileId, permissions, {
+              transacting,
+            })
         );
       });
 

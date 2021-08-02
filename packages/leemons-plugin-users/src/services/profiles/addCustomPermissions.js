@@ -1,9 +1,12 @@
 const _ = require('lodash');
-const getProfileRoles = require('./getProfileRoles');
+const getProfileRole = require('./getProfileRole');
 const removePermissionsByName = require('../roles/removePermissionsByName');
 const { table } = require('../tables');
 const { addPermissionMany } = require('../roles');
 const { validatePermissionName } = require('../../validations/exists');
+const {
+  markAllUsersWithProfileToReloadPermissions,
+} = require('./markAllUsersWithProfileToReloadPermissions');
 
 /**
  * Update the provided role
@@ -22,7 +25,7 @@ async function addCustomPermissions(profileId, _permissions, { transacting: _tra
   });
   return global.utils.withTransaction(
     async (transacting) => {
-      const { role } = (await getProfileRoles(profileId, { transacting }))[0];
+      const role = await getProfileRole(profileId, { transacting });
       // ES: Borramos los permisos por si alguno ya existian de antes que se borre ya que se añadira mas adelante
       // EN: We delete the permissions, in case any of them already existed before they will be added later.
       await removePermissionsByName(role, _.map(permissions, 'permissionName'), {
@@ -37,11 +40,7 @@ async function addCustomPermissions(profileId, _permissions, { transacting: _tra
 
         // ES: Actualizamos los usuarios para que recarguen los permisos
         // EN: Update users to reload permissions
-        table.userAuth.updateMany(
-          { profile: profileId },
-          { reloadPermissions: true },
-          { transacting }
-        ),
+        markAllUsersWithProfileToReloadPermissions(profileId, { transacting }),
       ]);
 
       return true;

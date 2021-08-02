@@ -15,7 +15,7 @@ const { generateJWTToken } = require('./generateJWTToken');
  * @return {Promise<undefined>}
  * */
 async function recover(email, ctx) {
-  const user = await table.users.findOne({ email }, { columns: ['id', 'language', 'name'] });
+  const user = await table.users.findOne({ email }, { columns: ['id', 'locale', 'name'] });
   if (!user) throw new global.utils.HttpError(401, 'Email not found');
   let recovery = await table.userRecoverPassword.findOne({ user: user.id });
   if (recovery) {
@@ -33,12 +33,10 @@ async function recover(email, ctx) {
       code: _.random(100000, 999999).toString(),
     });
   }
-  if (leemons.plugins.emails) {
-    await leemons.plugins.emails.services.email.sendAsEducationalCenter(
-      email,
-      'user-recover-password',
-      user.language,
-      {
+  if (leemons.getPlugin('emails')) {
+    await leemons
+      .getPlugin('emails')
+      .services.email.sendAsEducationalCenter(email, 'user-recover-password', user.locale, {
         name: user.name,
         resetUrl: `${ctx.request.header.origin}/users/public/reset?token=${encodeURIComponent(
           await generateJWTToken({
@@ -47,8 +45,7 @@ async function recover(email, ctx) {
           })
         )}`,
         recoverUrl: `${ctx.request.header.origin}/users/public/recover`,
-      }
-    );
+      });
   }
   return undefined;
 }

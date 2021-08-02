@@ -3,11 +3,6 @@ const en = require('./src/i18n/en');
 const { translations } = require('./src/translations');
 
 async function init() {
-  const exists = await leemons.plugin.services.menu.exist(
-    leemons.plugin.config.constants.mainMenuKey
-  );
-  if (!exists) await leemons.plugin.services.menu.add(leemons.plugin.config.constants.mainMenuKey);
-
   if (translations()) {
     await translations().common.setManyByJSON(
       {

@@ -7,6 +7,7 @@ const userAddCustomPermissionSchema = {
     permissionName: stringSchema,
     actionNames: arrayStringRequiredSchema,
     target: stringSchema,
+    center: stringSchema,
   },
   required: ['permissionName', 'actionNames'],
   additionalProperties: false,

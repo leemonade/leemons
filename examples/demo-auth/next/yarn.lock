@@ -19,6 +19,9 @@
 "@leemons/assets@file:dependencies/assets":
   version "1.0.0"
 
+"@leemons/dataset@file:dependencies/dataset":
+  version "1.0.0"
+
 "@leemons/emails@file:dependencies/emails":
   version "1.0.0"
   dependencies:
@@ -829,9 +832,9 @@ react-hook-form@^7.8.5:
   integrity sha512-kKdaySvv21tyH8WM5jYpKRxTFdknmHi7ssdBrU7cW0qRwXcr9lxVyO14MjUFlfEGe9S5VzBmTz7NKNSarV3AFw==
 
 react-hook-form@^7.8.8:
-  version "7.9.0"
-  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.9.0.tgz#0b5ed2f262a1e3cc64cfcf855f09a6e236d46ac3"
-  integrity sha512-1SazsTvsC5A4jLxc8fIf0bB92kEp4MGjP69k8s+2nI1spHPha5UkLwaebOXhO9vY95aGqcyBU67pRiv+6T5KZQ==
+  version "7.12.1"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.12.1.tgz#dc6adbbd78a3c8817129672a6367d45479e9ca3e"
+  integrity sha512-JBu5TZK3IXzDKw9SuNFwyQFdIx5uGZSmN9QTDsNsDSYdccU/O+43jBUh0zKG4jDc4hiNYYgDw34lLt7qLSeusA==
 
 react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"

@@ -11,7 +11,7 @@ const _ = require('lodash');
  *  @static
  *  @param {string} locationName
  *  @param {string} pluginName
- *  @param {UserAuth} userAuth - User auth
+ *  @param {UserAgent} userAgent - User auth
  *  @param {string | string[]} _actions
  *  @param {any=} transacting - DB Transaction
  *
@@ -20,17 +20,19 @@ const _ = require('lodash');
 async function getKeysCanAction(
   locationName,
   pluginName,
-  userAuth,
+  userAgent,
   _actions,
   { transacting } = {}
 ) {
   const actions = _.isArray(_actions) ? _actions : [_actions];
-  const userPermissions = await leemons.plugins.users.services.users.getUserPermissions(userAuth, {
-    query: {
-      permissionName_$startssWith: leemons.plugin.prefixPN(`${locationName}.${pluginName}`),
-    },
-    transacting,
-  });
+  const userPermissions = await leemons
+    .getPlugin('users')
+    .services.permissions.getUserAgentPermissions(userAgent, {
+      query: {
+        permissionName_$startssWith: leemons.plugin.prefixPN(`${locationName}.${pluginName}`),
+      },
+      transacting,
+    });
 
   const goodKeys = [];
 

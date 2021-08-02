@@ -1,13 +1,17 @@
-import { useEffect, useState } from 'react';
+/*import { useEffect, useState } from 'react';
 import { useSession } from '@users/session';
 import { listProfilesRequest } from '@users/request';
 import { goDetailProfilePage, goLoginPage } from '@users/navigate';
 
+ */
+
 export default function ListProfiles() {
+  return null;
+  /*
   const [pagination, setPagination] = useState(null);
   useSession({ redirectTo: goLoginPage });
 
-  async function listProfiles() {
+  async function listRoles() {
     try {
       const { data } = await listProfilesRequest({
         page: 0,
@@ -21,7 +25,7 @@ export default function ListProfiles() {
   }
 
   useEffect(() => {
-    listProfiles();
+    listRoles();
   }, []);
 
   return (
@@ -48,4 +52,5 @@ export default function ListProfiles() {
       </table>
     </>
   );
+   */
 }

@@ -1,10 +1,6 @@
 module.exports = {
   // Time in minutes
   timeForRecoverPassword: 15,
-  // TODO Añadir listado de roles basicos
-  defaultRoles: [
-    { name: 'Administrador', permissions: ['add-users', 'show-users', 'delete-users'] },
-  ],
   // All users always have this permission
   basicPermission: {
     permissionName: 'plugins.users.any',
@@ -12,6 +8,16 @@ module.exports = {
   },
   // TODO Añadir listado de permisos basicos
   defaultPermissions: [
+    {
+      permissionName: 'plugins.users.centers',
+      actions: ['view', 'update', 'create', 'delete', 'admin'],
+      localizationName: { 'es-ES': 'Centros', en: 'Centers' },
+    },
+    {
+      permissionName: 'plugins.users.user-data',
+      actions: ['view', 'update', 'delete', 'admin'],
+      localizationName: { 'es-ES': 'Datos del usuario', en: 'User data' },
+    },
     {
       permissionName: 'plugins.users.users',
       actions: ['view', 'update', 'create', 'delete', 'admin'],
@@ -43,7 +49,7 @@ module.exports = {
         en: 'Adds additional data to those common to all users',
       },
       locationName: 'user-common-dataset',
-      pluginName: 'plugins.users-groups-roles',
+      pluginName: 'plugins.users',
     },
   ],
   url: {

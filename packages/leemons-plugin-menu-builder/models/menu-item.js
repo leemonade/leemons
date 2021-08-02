@@ -43,12 +43,10 @@ module.exports = {
       type: 'string',
     },
     iconSvg: {
-      type: 'richtext',
-      textType: 'text',
+      type: 'string',
     },
     activeIconSvg: {
-      type: 'richtext',
-      textType: 'text',
+      type: 'string',
     },
     iconAlt: {
       type: 'string',

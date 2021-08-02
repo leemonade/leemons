@@ -1,8 +1,6 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
 const { translations } = require('../../translations');
-const addItemPermissions = require('../../helpers/addItemPermissions');
-const removeItemPermissions = require('../../helpers/removeItemPermissions');
 const { validateNotExistMenuItem } = require('../../validations/exists');
 const { validateKeyPrefix } = require('../../validations/exists');
 const { validateAddMenuItem } = require('../../validations/menu-item');
@@ -84,7 +82,15 @@ async function update(
             }
           );
         }
-        promises.push(removeItemPermissions(key, `${menuKey}.menu-item`, { transacting }));
+        promises.push(
+          leemons.getPlugin('users').services.permissions.removeItems(
+            {
+              type: leemons.plugin.prefixPN(`${menuKey}.menu-item`),
+              item: key,
+            },
+            { transacting }
+          )
+        );
       }
 
       // Create LABEL & DESCRIPTIONS in locales
@@ -116,22 +122,35 @@ async function update(
 
       // Add the necessary permissions to view the item
       if (_.isArray(permissions) && permissions.length) {
-        promises.push(removeItemPermissions(key, `${menuKey}.menu-item`, { transacting }));
         promises.push(
-          addItemPermissions(data.key, `${data.menuKey}.menu-item`, permissions, { transacting })
+          leemons.getPlugin('users').services.permissions.removeItems(
+            {
+              type: leemons.plugin.prefixPN(`${menuKey}.menu-item`),
+              item: key,
+            },
+            { transacting }
+          )
         );
-      } else if (leemons.plugins.users) {
         promises.push(
-          addItemPermissions(
+          leemons
+            .getPlugin('users')
+            .services.permissions.addItem(
+              data.key,
+              leemons.plugin.prefixPN(`${data.menuKey}.menu-item`),
+              permissions,
+              { transacting }
+            )
+        );
+      } else if (leemons.getPlugin('users')) {
+        promises.push(
+          leemons.getPlugin('users').services.permissions.addItem(
             data.key,
-            `${data.menuKey}.menu-item`,
-            [
-              {
-                permissionName:
-                  leemons.plugins.users.config.constants.basicPermission.permissionName,
-                actionNames: [leemons.plugins.users.config.constants.basicPermission.actionName],
-              },
-            ],
+            leemons.plugin.prefixPN(`${data.menuKey}.menu-item`),
+            {
+              permissionName: leemons.getPlugin('users').config.constants.basicPermission
+                .permissionName,
+              actionNames: [leemons.getPlugin('users').config.constants.basicPermission.actionName],
+            },
             { isCustomPermission: true, transacting }
           )
         );

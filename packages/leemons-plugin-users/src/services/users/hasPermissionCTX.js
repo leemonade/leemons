@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { updateUserAuthPermissions } = require('./updateUserAuthPermissions');
+const { updateUserAgentPermissions } = require('./updateUserAgentPermissions');
 const { isSuperAdmin } = require('./isSuperAdmin');
 const { table } = require('../tables');
 const constants = require('../../../config/constants');
@@ -8,15 +8,21 @@ const constants = require('../../../config/constants');
  * Checks if the user has 1 or more of the specified permissions.
  * @public
  * @static
- * @param {UserAuth} userAuth - User auth to check
+ * @param {UserSession} userSession - User session to check
  * @param {Object} allowedPermissions - Allowed permission by key
  * @property {string[]} allowedPermissions.actions - Array of allowed actions
  * @property {string} allowedPermissions.target - Target
  * @param {any} ctx - Koa context
  * @return {Promise<boolean>} If have permission return true if not false
  * */
-async function hasPermissionCTX(userAuth, allowedPermissions, ctx) {
-  if (userAuth.reloadPermissions) await updateUserAuthPermissions(userAuth.id);
+async function hasPermissionCTX(userSession, allowedPermissions, ctx) {
+  if (_.isArray(userSession.userAgents) && userSession.userAgents.length) {
+    const perPromises = [];
+    _.forEach(userSession.userAgents, (userAgent) => {
+      if (userAgent.reloadPermissions) perPromises.push(updateUserAgentPermissions(userAgent.id));
+    });
+    await Promise.all(perPromises);
+  }
 
   const promises = [];
   let query;
@@ -25,12 +31,16 @@ async function hasPermissionCTX(userAuth, allowedPermissions, ctx) {
     if (constants.basicPermission.permissionName === permissionName) {
       promises.push(value.actions.indexOf(constants.basicPermission.actionName) >= 0 ? 1 : 0);
     } else {
-      query = { userAuth: userAuth.id, permissionName, actionName_$in: value.actions };
+      query = {
+        userAgent_$in: _.map(userSession.userAgents, 'id'),
+        permissionName,
+        actionName_$in: value.actions,
+      };
       if (value.target) {
         query.target = value.target;
         if (ctx) query.target = _.get(ctx, value.target, value.target);
       }
-      promises.push(table.userAuthPermission.count(query));
+      promises.push(table.userAgentPermission.count(query));
     }
   });
 
@@ -48,7 +58,7 @@ async function hasPermissionCTX(userAuth, allowedPermissions, ctx) {
   }
 
   if (_hasPermission) return true;
-  _hasPermission = await isSuperAdmin(userAuth.user);
+  _hasPermission = await isSuperAdmin(userSession.id);
   if (_hasPermission) return true;
   return false;
 }

@@ -8,7 +8,9 @@ module.exports = [
     path: '/common/logged',
     method: 'POST',
     handler: 'common.getLogged',
-    authenticated: true,
+    authenticated: {
+      nextWithoutSession: true,
+    },
   },
   {
     path: '/locale',

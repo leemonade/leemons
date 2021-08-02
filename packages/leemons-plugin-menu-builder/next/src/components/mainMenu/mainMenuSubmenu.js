@@ -122,6 +122,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem, state, setS
       const order = _.map(item.customChildrens, 'id');
       const index = _.findIndex(order, (id) => id === _tempId);
       const { menuItem } = await addMenuItemRequest({ ...saveItem, parentKey: item.key });
+      console.log(menuItem);
       if (index >= 0) {
         order[index] = menuItem.id;
         await reOrderCustomUserItemsRequest('plugins.menu-builder.main', item.key, order);

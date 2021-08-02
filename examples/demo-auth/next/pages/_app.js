@@ -1,10 +1,10 @@
 import _ from 'lodash';
-import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
 import hooks from 'leemons-hooks';
 import React, { useEffect } from 'react';
 import { frontPlugins, plugins } from '@plugins';
 import { SessionProvider } from '@users/context/session';
+import { getCookieToken } from '@users/session';
 import 'tailwindcss/tailwind.css';
 import 'simplebar/dist/simplebar.min.css';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -30,7 +30,8 @@ function MyApp({ Component, pageProps }) {
     // Define logger to console (temporal)
     global.leemons = {
       log: console,
-      api: (url, config) => {
+      api: async (url, config) => {
+        const urlConfig = url;
         if (_.isObject(url)) {
           let goodUrl = url.url;
           _.forIn(url.query, (value, key) => {
@@ -45,20 +46,41 @@ function MyApp({ Component, pageProps }) {
         if (config && _.isObject(config.body)) {
           config.body = JSON.stringify(config.body);
         }
-        const token = Cookies.get('token');
+        const token = getCookieToken(true);
         if (config && token && !config.headers['Authorization']) {
-          config.headers['Authorization'] = token;
+          if (_.isString(token)) {
+            config.headers['Authorization'] = token;
+          } else {
+            config.headers['Authorization'] = token.userToken;
+            if (token.centers.length === 1) {
+              config.headers['Authorization'] = token.centers[0].token;
+            }
+            if (_.isObject(urlConfig) && urlConfig.allUsers) {
+              config.headers['Authorization'] = JSON.stringify(_.map(token.centers, 'token'));
+            }
+          }
         }
 
-        return fetch(`${window.location.origin}/api/${url}`, config).then(async (r) => {
-          if (r.status >= 500) {
-            throw { status: r.status, message: r.statusText };
+        try {
+          // No se devuelve directamente la respuesta por que si no el error no lo coge este try catch
+          return await fetch(`${window.location.origin}/api/${url}`, config).then(async (r) => {
+            if (r.status >= 500) {
+              throw { status: r.status, message: r.statusText };
+            }
+            if (r.status >= 400) {
+              throw await r.json();
+            }
+            return r.json();
+          });
+        } catch (err) {
+          if (_.isString(err)) {
+            throw { status: 500, message: err };
+          } else if (!err.status) {
+            throw { status: 500, message: err.message };
+          } else {
+            throw err;
           }
-          if (r.status >= 400) {
-            throw await r.json();
-          }
-          return r.json();
-        });
+        }
       },
     };
 

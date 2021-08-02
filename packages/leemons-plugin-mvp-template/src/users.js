@@ -1,13 +1,13 @@
-async function initUsers(profiles) {
-  const user1 = await leemons.plugins.users.services.users.add(
+async function initUsers(roles) {
+  const user1 = await leemons.getPlugin('users').services.users.add(
     {
       name: 'Jaime',
       email: 'jaime@leemons.io',
       password: 'testing',
-      language: 'es',
+      locale: 'es',
       active: true,
     },
-    [profiles.student.id, profiles.teacher.id]
+    [roles.leemon.id, roles.orange.id]
   );
   return { users: [user1] };
 }

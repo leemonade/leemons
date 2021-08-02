@@ -3,38 +3,53 @@ const { add: addRole } = require('../roles');
 const { existName } = require('./existName');
 const { table } = require('../tables');
 
-async function add(data, { transacting: _transacting } = {}) {
-  const exist = await existName(data.name);
-  if (exist) throw new Error(`Already exists one profile with the name '${data.name}'`);
-  const permissionsForRole = [];
-  _.forIn(data.permissions, (actionNames, permissionName) => {
-    permissionsForRole.push({ permissionName, actionNames });
-  });
+/**
+ * Update the provided role
+ * @public
+ * @static
+ * @param {ProfileAdd} data - Profile data
+ * @param {RolePermissionsAdd} _permissions - Array of permissions
+ * @param {any} _transacting - DB Transaction
+ * @return {Promise<any>} Created permissions-roles
+ * */
+async function add({ name, description, roles }, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
-      const profile = await table.profiles.create(
+      const exist = await existName(name, undefined, { transacting });
+      if (exist) throw new Error(`Already exists one profile with the name '${name}'`);
+
+      const role = await table.roles.create(
         {
-          name: data.name,
-          description: data.description,
-          uri: global.utils.slugify(data.name, { lower: true }),
-        },
-        { transacting }
-      );
-      const role = await addRole(
-        {
-          name: `role-for-profile-${profile.id}`,
-          permissions: permissionsForRole,
+          name: `profile:${name}:role`,
+          type: leemons.plugin.prefixPN('profile-role'),
+          uri: global.utils.slugify(name, { lower: true }),
         },
         { transacting }
       );
 
-      await table.profileRole.create(
+      const profile = await table.profiles.create(
         {
-          profile: profile.id,
+          name,
+          description,
+          uri: global.utils.slugify(name, { lower: true }),
           role: role.id,
         },
         { transacting }
       );
+
+      if (roles) {
+        await Promise.all(
+          _.map(roles, (role) => {
+            return table.profileRole.create(
+              {
+                profile: profile.id,
+                role: role,
+              },
+              { transacting }
+            );
+          })
+        );
+      }
       return profile;
     },
     table.profiles,

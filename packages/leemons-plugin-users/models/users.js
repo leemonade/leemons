@@ -27,7 +27,7 @@ module.exports = {
         hidden: true,
       },
     },
-    language: {
+    locale: {
       type: 'string',
       options: {
         notNull: true,

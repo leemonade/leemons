@@ -1,6 +1,6 @@
+const _ = require('lodash');
 const { table } = require('../../tables');
 const { translations } = require('../../translations');
-const removeItemPermissions = require('../../helpers/removeItemPermissions');
 const { validateNotExistMenu, validateNotExistMenuItem } = require('../../validations/exists');
 
 const { withTransaction } = global.utils;
@@ -9,16 +9,16 @@ const { withTransaction } = global.utils;
  * Remove custom Menu Item
  * @private
  * @static
- * @param {any} userAuth User auth
+ * @param {UserSession} userSession User session
  * @param {string} menuKey - The Menu key
  * @param {string} key - The item key
  * @param {any=} transacting DB transaction
  * @return {Promise<MenuItem>} Created / Updated menuItem
  * */
-async function removeCustomForUser(userAuth, menuKey, key, { transacting: _transacting } = {}) {
+async function removeCustomForUser(userSession, menuKey, key, { transacting: _transacting } = {}) {
   const locales = translations();
 
-  if (!key.startsWith(leemons.plugin.prefixPN(`user:${userAuth.id}.`))) {
+  if (!key.startsWith(leemons.plugin.prefixPN(`user.${userSession.id}.`))) {
     throw new Error('You can only delete your own custom items');
   }
 
@@ -43,12 +43,20 @@ async function removeCustomForUser(userAuth, menuKey, key, { transacting: _trans
       }
 
       // Remove permissions for item
-      promises.push(removeItemPermissions(key, `${menuKey}.menu-item.custom`, { transacting }));
+      promises.push(
+        leemons.getPlugin('users').services.permissions.removeItems(
+          {
+            type: leemons.plugin.prefixPN(`${menuKey}.menu-item.custom`),
+            item: key,
+          },
+          { transacting }
+        )
+      );
 
       // Remove de custom permission
       promises.push(
-        leemons.plugins.users.services.users.removeCustomPermission(
-          userAuth.id,
+        leemons.getPlugin('users').services.users.removeCustomPermission(
+          _.map(userSession.userAgents, 'id'),
           {
             permissionName: key,
           },

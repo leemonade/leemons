@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
-function HeroBg({ className, color, type, animate, decay, speed, solid }) {
+function HeroBg({ className, color, type, animate, decay, speed, solid, style }) {
   const colorClass = color ? `herobg-${color}` : '';
   const classes = className || '';
   const [currentType, setCurrentType] = useState(null);
@@ -9,6 +9,7 @@ function HeroBg({ className, color, type, animate, decay, speed, solid }) {
 
   const lg = (
     <svg
+      style={style}
       className={[colorClass, classes].join(' ')}
       width="1601"
       height="882"
@@ -90,6 +91,7 @@ function HeroBg({ className, color, type, animate, decay, speed, solid }) {
 
   const xMD = (
     <svg
+      style={style}
       className={[colorClass, classes].join(' ')}
       width="687"
       height="1024"
@@ -145,6 +147,7 @@ function HeroBg({ className, color, type, animate, decay, speed, solid }) {
 
   const xSM = (
     <svg
+      style={style}
       className={[colorClass, classes].join(' ')}
       width="458"
       height="1024"

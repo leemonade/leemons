@@ -1,5 +1,6 @@
 function getMenuBuilder() {
-  if (leemons.plugins['menu-builder']) return leemons.plugins['menu-builder'];
+  const menu = leemons.getPlugin('menu-builder');
+  if (menu) return menu;
   throw new Error(`Plugin 'menu-builder' need to be installed`);
 }
 

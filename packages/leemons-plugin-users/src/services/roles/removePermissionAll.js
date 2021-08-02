@@ -9,7 +9,7 @@ const { table } = require('../tables');
  * @param {any} transacting - DB Transaction
  * @return {Promise<Role>} Created / Updated role
  * */
-async function removePermissionAll(roleId, { removeCustomPermissions, transacting }) {
+async function removePermissionAll(roleId, { removeCustomPermissions, transacting } = {}) {
   const query = { role: roleId };
   if (!removeCustomPermissions) {
     query.isCustom_$ne = true;

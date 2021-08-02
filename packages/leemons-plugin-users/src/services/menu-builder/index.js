@@ -1,19 +1,21 @@
-const addWellcome = require('./addWellcome');
+const addWelcome = require('./addWelcome');
 const addDashboard = require('./addDashboard');
 const addGroups = require('./addGroups');
 const addProfileDataset = require('./addProfileDataset');
 const addProfiles = require('./addProfiles');
 const addUsers = require('./addUsers');
-const removeWellcome = require('./removeWellcome');
+const removeWelcome = require('./removeWelcome');
 const addMain = require('./addMain');
+const addUserData = require('./addUserData');
 
 module.exports = {
-  addWellcome,
+  addWelcome,
   addDashboard,
   addGroups,
   addProfileDataset,
   addProfiles,
   addUsers,
-  removeWellcome,
+  removeWelcome,
   addMain,
+  addUserData,
 };

@@ -49,7 +49,7 @@ function ListUsers() {
                 <tr key={item.id}>
                   <td>{item.name}</td>
                   <td>{item.email}</td>
-                  <td>{item.language}</td>
+                  <td>{item.locale}</td>
                   <td>{item.created_at}</td>
                 </tr>
               ))

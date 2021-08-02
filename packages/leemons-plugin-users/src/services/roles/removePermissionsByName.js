@@ -13,7 +13,7 @@ const { table } = require('../tables');
 async function removePermissionsByName(
   roleId,
   permissionNames,
-  { removeCustomPermissions, transacting }
+  { removeCustomPermissions, transacting } = {}
 ) {
   const query = { role: roleId, permissionName_$in: permissionNames };
   if (!removeCustomPermissions) {
