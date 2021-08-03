@@ -2,7 +2,7 @@ async function addMenuItem(body) {
   return leemons.api(
     {
       url: 'menu-builder/menu/:key/add-item',
-      allUsers: true,
+      allAgents: true,
       query: {
         key: body.menuKey,
       },

@@ -6,12 +6,22 @@ async function list(ctx) {
     properties: {
       page: { type: 'number' },
       size: { type: 'number' },
+      withRoles: {
+        anyOf: [
+          { type: 'boolean' },
+          {
+            type: 'object',
+            properties: { columns: { type: 'array', items: { type: 'string' } } },
+          },
+        ],
+      },
     },
     required: ['page', 'size'],
     additionalProperties: false,
   });
   if (validator.validate(ctx.request.body)) {
-    const data = await profileService.list(ctx.request.body.page, ctx.request.body.size);
+    const { page, size, ...options } = ctx.request.body;
+    const data = await profileService.list(page, size, { ...options });
     ctx.status = 200;
     ctx.body = { status: 200, data };
   } else {

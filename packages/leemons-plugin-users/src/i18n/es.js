@@ -8,6 +8,18 @@ module.exports = {
       basic_data: 'Basicos',
       user_dataset: 'Dataset',
     },
+    login: {
+      description:
+        'Campos obligatorios para crear cuentas de usuario (no se pueden editar o eliminar)',
+    },
+    basic: {
+      description: 'Configuración de campos generales para sus usuarios',
+    },
+    dataset: {
+      description: 'Configuración de campos generales para sus usuarios',
+      filter_by_center: 'Filtrar por centro',
+      add_field: 'Añadir campo',
+    },
   },
   welcome_page: {
     page_title: 'Bienvenido a la administración de usuarios',

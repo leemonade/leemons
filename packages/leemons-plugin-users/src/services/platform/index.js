@@ -1,7 +1,11 @@
-const setLocale = require('./setLocale');
-const getLocale = require('./getLocale');
+const setDefaultLocale = require('./setDefaultLocale');
+const getDefaultLocale = require('./getDefaultLocale');
+const addLocale = require('./addLocale');
+const getLocales = require('./getLocales');
 
 module.exports = {
-  setLocale,
-  getLocale,
+  setDefaultLocale,
+  getDefaultLocale,
+  addLocale,
+  getLocales,
 };
