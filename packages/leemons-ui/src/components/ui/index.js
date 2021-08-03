@@ -20,6 +20,7 @@ import Navbar from './Navbar';
 import Progress from './Progress';
 import Radio from './Radio';
 import Select from './Select';
+import { Tab, Tabs, TabList, TabPanel, useTabs } from './Tabs';
 import Textarea from './Textarea';
 import Toggle from './Toggle';
 import Tooltip from './Tooltip';
@@ -55,6 +56,11 @@ export {
   Progress,
   Radio,
   Select,
+  Tab,
+  Tabs,
+  TabList,
+  TabPanel,
+  useTabs,
   Textarea,
   Toggle,
   Tooltip,
