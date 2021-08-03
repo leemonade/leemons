@@ -14,16 +14,23 @@ const Checkbox = React.forwardRef(
     ref
   ) => {
     const colorClass = color ? `checkbox-${color}` : '';
-    const [checked, setChecked] = useState(defaultChecked);
+    const [checked, setChecked] = useState({ checked: defaultChecked, fromClick: false });
 
     useEffect(() => {
-      setChecked(defaultChecked);
+      setChecked({ checked: defaultChecked, fromClick: false });
     }, [defaultChecked]);
 
     const spanClick = () => {
-      onChange(!checked);
-      setChecked(!checked);
+      setChecked({ checked: !checked.checked, fromClick: true });
       onClick();
+    };
+
+    const customOnChange = (event) => {
+      if (checked.fromClick) {
+        event.target.checked = checked.checked;
+      }
+      onChange(event);
+      setChecked({ checked: event.target.checked, fromClick: false });
     };
 
     return (
@@ -31,7 +38,8 @@ const Checkbox = React.forwardRef(
         <input
           ref={ref}
           type="checkbox"
-          defaultChecked={checked}
+          checked={checked.checked}
+          onChange={customOnChange}
           className={`checkbox ${colorClass} ${className || ''}`}
           {...props}
         />

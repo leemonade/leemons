@@ -8,8 +8,8 @@ const { translations } = require('../translations');
  * @return {Promise<any>}
  * */
 async function getLocales({ transacting } = {}) {
-  const translations = translations();
-  return translations.locales.getAll({ transacting });
+  const transl = translations();
+  return transl.locales.getAll({ transacting });
 }
 
 module.exports = getLocales;

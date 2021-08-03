@@ -4,6 +4,7 @@ module.exports = {
 		'layout',
 		'emails',
 		'dataset-test',
+		'common',
 		'assets',
 		'dataset',
 		'multilanguage',

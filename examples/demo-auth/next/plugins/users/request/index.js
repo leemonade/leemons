@@ -15,6 +15,8 @@ import getRememberProfile from './getRememberProfile';
 import setRememberProfile from './setRememberProfile';
 import getCenters from './getCenters';
 import listProfiles from './listProfiles';
+import getDefaultPlatformLocale from './getDefaultPlatformLocale';
+import getPlatformLocales from './getPlatformLocales';
 
 export const loginRequest = login;
 export const resetRequest = reset;
@@ -33,3 +35,5 @@ export const getUserProfilesRequest = getUserProfiles;
 export const getUserProfileTokenRequest = getUserProfileToken;
 export const getCentersRequest = getCenters;
 export const listProfilesRequest = listProfiles;
+export const getDefaultPlatformLocaleRequest = getDefaultPlatformLocale;
+export const getPlatformLocalesRequest = getPlatformLocales;

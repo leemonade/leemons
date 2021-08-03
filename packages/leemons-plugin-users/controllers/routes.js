@@ -172,4 +172,18 @@ module.exports = [
       },
     },
   },
+
+  /**
+   * Platform
+   * */
+  {
+    path: '/platform/default-locale',
+    method: 'GET',
+    handler: 'platform.getDefaultLocale',
+  },
+  {
+    path: '/platform/locales',
+    method: 'GET',
+    handler: 'platform.getLocales',
+  },
 ];

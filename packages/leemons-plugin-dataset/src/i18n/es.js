@@ -22,5 +22,7 @@ module.exports = {
     profile: 'Perfil',
     view: 'Ver',
     edit: 'Editar',
+    save: 'Guardar',
+    text_field: 'Campo de texto',
   },
 };

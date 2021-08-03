@@ -15,8 +15,8 @@ async function events(isInstalled) {
     };
     const config = async () => {
       try {
-        await leemons.getPlugin('users').services.platform.addLocale('en', 'English');
         await leemons.getPlugin('users').services.platform.addLocale('es', 'Español');
+        await leemons.getPlugin('users').services.platform.addLocale('en', 'English');
         await leemons.getPlugin('users').services.platform.addLocale('es-ES', 'Español (España)');
         await leemons.getPlugin('users').services.platform.setDefaultLocale('en');
         const centers = await initCenters();

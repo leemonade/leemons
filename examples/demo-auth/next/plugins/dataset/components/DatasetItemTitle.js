@@ -8,7 +8,7 @@ export const DatasetItemTitle = ({ t, tCommon, item, register, errors }) => {
         className="mr-10 input-lg text-2xl"
         outlined={true}
         placeholder={t('new_field')}
-        {...register('name', {
+        {...register('frontConfig.name', {
           required: tCommon('required'),
         })}
       />

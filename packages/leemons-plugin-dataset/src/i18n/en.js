@@ -21,5 +21,7 @@ module.exports = {
     profile: 'Profile',
     view: 'View',
     edit: 'Edit',
+    save: 'Save',
+    text_field: 'Text field',
   },
 };
