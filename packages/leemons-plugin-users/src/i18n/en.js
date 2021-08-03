@@ -8,6 +8,18 @@ module.exports = {
       basic_data: 'Basic data',
       user_dataset: 'User dataset',
     },
+    login: {
+      description:
+        'Mandatory fields in order to create user accounts (you cannot edit o delete it)',
+    },
+    basic: {
+      description: 'Configuration of general fields for your users',
+    },
+    dataset: {
+      description: 'Configuration of general fields for your users',
+      filter_by_center: 'Filter by center',
+      add_field: 'Add field',
+    },
   },
   welcome_page: {
     page_title: 'Welcome to Users Admin',

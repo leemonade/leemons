@@ -9,8 +9,8 @@ const { table } = require('../tables');
  * @param {any} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function setLocale(locale, { transacting } = {}) {
-  if (!(await translations().locales.has(locale)))
+async function setDefaultLocale(locale, { transacting } = {}) {
+  if (!(await translations().locales.has(locale, { transacting })))
     throw new Error(`The locale '${locale}' not exists`);
   return await table.config.set(
     { key: 'platform-locale' },
@@ -22,4 +22,4 @@ async function setLocale(locale, { transacting } = {}) {
   );
 }
 
-module.exports = setLocale;
+module.exports = setDefaultLocale;

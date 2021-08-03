@@ -7,6 +7,8 @@ const { isValidLocaleCode } = require('./src/validations/locale');
 const Locales = require('./src/services/locale');
 
 async function install() {
+  /*
+
   try {
     const goodLocales = _.map(
       locale.all.filter((local) => isValidLocaleCode(local.tag)),
@@ -26,6 +28,8 @@ async function install() {
   } catch (err) {
     console.error(err);
   }
+
+   */
 }
 
 module.exports = install;

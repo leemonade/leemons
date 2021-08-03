@@ -163,12 +163,12 @@ module.exports = [
    * */
   {
     path: '/centers',
-    method: 'GET',
+    method: 'POST',
     handler: 'centers.list',
     authenticated: true,
     allowedPermissions: {
       'plugins.users.centers': {
-        actions: ['view', 'admin'],
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
       },
     },
   },

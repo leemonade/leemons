@@ -1,7 +1,7 @@
-async function getCenters(body) {
+async function listProfiles(body) {
   return leemons.api(
     {
-      url: 'users/centers',
+      url: 'users/profile/list',
       allAgents: true,
     },
     {
@@ -11,4 +11,4 @@ async function getCenters(body) {
   );
 }
 
-export default getCenters;
+export default listProfiles;

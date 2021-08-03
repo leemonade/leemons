@@ -1,7 +1,7 @@
 async function test(key) {
   return leemons.api({
     url: 'menu-builder/menu/:key',
-    allUsers: true,
+    allAgents: true,
     query: {
       key,
     },

@@ -1,16 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function Checkbox({ className, color, ...props }) {
+const Checkbox = React.forwardRef(({ className, color, ...props }, ref) => {
   const colorClass = color ? `checkbox-${color}` : '';
 
   return (
     <div>
-      <input type="checkbox" className={`checkbox ${colorClass} ${className || ''}`} {...props} />
+      <input
+        ref={ref}
+        type="checkbox"
+        className={`checkbox ${colorClass} ${className || ''}`}
+        {...props}
+      />
       <span className="checkbox-mark"></span>
     </div>
   );
-}
+});
 
 Checkbox.propTypes = {
   className: PropTypes.string,
