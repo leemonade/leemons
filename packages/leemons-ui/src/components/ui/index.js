@@ -28,6 +28,7 @@ import InlineSvg from './InlineSvg';
 import PageHeader from './PageHeader';
 import PageContainer from './PageContainer';
 import Drawer, { useDrawer } from './Drawer';
+import Table from './Table';
 
 import Modal, { useModal } from './Modal';
 
@@ -65,4 +66,5 @@ export {
   PageContainer,
   Drawer,
   useDrawer,
+  Table,
 };

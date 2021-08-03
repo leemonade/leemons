@@ -19,5 +19,8 @@ module.exports = {
     human_error_title: 'Texto de error humano',
     human_error_description: 'La validación y el formato requeridos se añadirán automáticamente.',
     profiles_permission: 'Permiso de perfiles',
+    profile: 'Perfil',
+    view: 'Ver',
+    edit: 'Editar',
   },
 };

@@ -61,6 +61,7 @@
     "@tailwindcss/typography": "^0.4.1",
     "classnames": "^2.3.1",
     "glob": "^7.1.7",
+    "immutability-helper": "^3.1.1",
     "immutable": "^4.0.0-rc.14",
     "lodash": "^4.17.21",
     "next": "10.2.3",
@@ -69,6 +70,7 @@
     "react-dom": "^17.0.1",
     "react-highlight": "^0.14.0",
     "react-popper-tooltip": "^4.3.0",
+    "react-table": "^7.7.0",
     "shortid": "^2.2.16",
     "tailwindcss": "^2.1.4"
   },
