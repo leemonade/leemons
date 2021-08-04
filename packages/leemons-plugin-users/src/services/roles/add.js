@@ -4,6 +4,7 @@ const { validateRoleType } = require('../../validations/exists');
 const { manyPermissionsHasManyActions } = require('../permissions/manyPermissionsHasManyActions');
 const { addPermissionMany } = require('./addPermissionMany');
 const { table } = require('../tables');
+const { hasRole } = require('../profiles/hasRole');
 
 /**
  * Create one role
@@ -14,7 +15,7 @@ const { table } = require('../tables');
  * @return {Promise<Role>} Created / Updated role
  * */
 async function add(
-  { name, type, description, center, permissions },
+  { name, type, description, center, profile, permissions },
   { transacting: _transacting } = {}
 ) {
   validateRoleType(type, this.calledFrom);
@@ -26,6 +27,7 @@ async function add(
         }`;
         throw new Error(error);
       }
+
       const dataToCheckPermissions = _.map(permissions, (permission) => [
         permission.permissionName,
         permission.actionNames,
@@ -46,6 +48,7 @@ async function add(
         { transacting }
       );
       if (center) await table.roleCenter.create({ role: role.id, center }, { transacting });
+      if (profile) await table.profileRole.create({ role: role.id, profile }, { transacting });
 
       await addPermissionMany(role.id, permissions, { transacting });
       return role;

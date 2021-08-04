@@ -31,6 +31,19 @@ module.exports = {
       '"¡No sé el significado de la mitad de esas largas palabras y, además, no creo que tú tampoco lo sepas!"',
     author: 'Alice in Wonderland <br/> Lewis Carrol',
   },
+  list_profiles: {
+    page_title: 'Perfiles',
+    page_description:
+      'Utilice los perfiles de usuario para gestionar los permisos de las aplicaciones. Cada vez que instale un nuevo leemon le pediremos que defina los permisos para cada perfil existente.',
+    name: 'Nombre',
+    overview: 'Resumen',
+    actions: 'Acciones',
+    view: 'Ver',
+  },
+  detail_profile: {
+    profile_name: 'Nombre del perfil',
+    description: 'Descripción del perfil',
+  },
   login: {
     title: 'Acceda a su cuenta',
     email: 'Email',

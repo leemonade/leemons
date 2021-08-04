@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { createRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 const Checkbox = React.forwardRef(
@@ -13,15 +13,23 @@ const Checkbox = React.forwardRef(
     },
     ref
   ) => {
+    const inputRef = createRef();
     const colorClass = color ? `checkbox-${color}` : '';
     const [checked, setChecked] = useState({ checked: defaultChecked, fromClick: false });
 
     useEffect(() => {
+      console.log('A cambiado el checked');
       setChecked({ checked: defaultChecked, fromClick: false });
     }, [defaultChecked]);
 
-    const spanClick = () => {
+    const spanClick = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       setChecked({ checked: !checked.checked, fromClick: true });
+      const ev = new Event('change', { bubbles: true });
+      inputRef.current.dispatchEvent(ev);
+      ev.target.checked = !checked.checked;
+      onChange(ev);
       onClick();
     };
 
@@ -36,7 +44,10 @@ const Checkbox = React.forwardRef(
     return (
       <div>
         <input
-          ref={ref}
+          ref={(e) => {
+            inputRef.current = e;
+            if (ref) ref.current = e;
+          }}
           type="checkbox"
           checked={checked.checked}
           onChange={customOnChange}

@@ -1,56 +1,111 @@
-/*import { useEffect, useState } from 'react';
+import * as _ from 'lodash';
+import { useEffect, useMemo, useState } from 'react';
 import { useSession } from '@users/session';
 import { listProfilesRequest } from '@users/request';
 import { goDetailProfilePage, goLoginPage } from '@users/navigate';
+import { withLayout } from '@layout/hoc';
+import { PageContainer, PageHeader, Table } from 'leemons-ui';
+import useTranslate from '@multilanguage/useTranslate';
+import tLoader from '@multilanguage/helpers/tLoader';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import prefixPN from '@users/helpers/prefixPN';
+import Link from 'next/link';
 
- */
-
-export default function ListProfiles() {
-  return null;
-  /*
-  const [pagination, setPagination] = useState(null);
+function ListProfiles() {
   useSession({ redirectTo: goLoginPage });
+  const [translations] = useTranslate({ keysStartsWith: prefixPN('list_profiles') });
+  const t = tLoader(prefixPN('list_profiles'), translations);
+  const { t: tCommon } = useCommonTranslate('page_header');
+  const [loadingError, setLoadingError, LoadingErrorAlert] = useRequestErrorMessage();
+  const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState(null);
 
-  async function listRoles() {
-    try {
-      const { data } = await listProfilesRequest({
-        page: 0,
-        size: 10,
-      });
-      setPagination(data);
-    } catch (err) {
-      console.log('petazo');
-      console.error(err);
-    }
+  const tableHeaders = useMemo(
+    () => [
+      {
+        Header: t('name'),
+        accessor: 'name',
+        className: 'text-left',
+      },
+      {
+        Header: t('overview'),
+        accessor: 'description',
+        className: 'text-left',
+      },
+      {
+        Header: t('actions'),
+        accessor: 'actions',
+        className: 'text-right',
+      },
+    ],
+    [t]
+  );
+
+  const tableItems = useMemo(() => {
+    return pagination
+      ? _.map(pagination.items, (item) => {
+          item.name = <div className="font-semibold">{item.name}</div>;
+          item.actions = (
+            <div className="text-right">
+              <Link href={`/users/private/profiles/detail/${item.uri}`}>
+                <a className="text-sm text-primary">{t('view')}</a>
+              </Link>
+            </div>
+          );
+          return item;
+        })
+      : [];
+  }, [t, pagination]);
+
+  async function listProfiles() {
+    const { data } = await listProfilesRequest({
+      page: 0,
+      size: 10,
+    });
+
+    setPagination(data);
   }
 
+  const load = async () => {
+    try {
+      await listProfiles();
+      setLoading(false);
+    } catch (err) {
+      setLoadingError(err);
+    }
+  };
+
   useEffect(() => {
-    listRoles();
+    load();
   }, []);
 
   return (
     <>
-      <div>Perfiles:</div>
-      <button onClick={goDetailProfilePage}>Crear nuevo perfil</button>
-      <table>
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Creado el</th>
-          </tr>
-        </thead>
-        <tbody>
-          {pagination
-            ? pagination.items.map((item) => (
-                <tr key={item.id}>
-                  <td onClick={() => goDetailProfilePage(item.uri)}>{item.name}</td>
-                  <td>{item.created_at}</td>
-                </tr>
-              ))
-            : null}
-        </tbody>
-      </table>
+      <PageHeader
+        title={t('page_title')}
+        newButton={tCommon('new')}
+        onNewButton={goDetailProfilePage}
+      />
+      <div className="bg-primary-content">
+        <PageContainer>
+          <div className="text-base text-secondary pb-6 max-w-screen-sm">
+            {t('page_description')}
+          </div>
+        </PageContainer>
+      </div>
+      <PageContainer>
+        <LoadingErrorAlert />
+        <div className="bg-primary-content p-2">
+          {!loading && !loadingError ? (
+            <div>
+              <Table columns={tableHeaders} data={tableItems} />
+            </div>
+          ) : null}
+        </div>
+      </PageContainer>
     </>
   );
-   */
 }
+
+export default withLayout(ListProfiles);

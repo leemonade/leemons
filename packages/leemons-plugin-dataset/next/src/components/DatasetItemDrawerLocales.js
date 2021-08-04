@@ -1,24 +1,15 @@
 import * as _ from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { getDefaultPlatformLocaleRequest, getPlatformLocalesRequest } from '@users/request';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { FormControl, Input, Tab, TabList, TabPanel, Tabs } from 'leemons-ui';
 import { ExclamationIcon } from '@heroicons/react/outline';
 import update from 'immutability-helper';
+import DatasetItemDrawerContext from './DatasetItemDrawerContext';
 
-const LocaleTab = ({
-  t,
-  tCommon,
-  item,
-  required,
-  locale,
-  onChange,
-  register,
-  errors,
-  setValue,
-  getValues,
-  load,
-}) => {
+const LocaleTab = ({ required, locale, load }) => {
+  const { t, tCommon, form } = useContext(DatasetItemDrawerContext);
+
   useEffect(() => {
     load();
   }, []);
@@ -32,13 +23,36 @@ const LocaleTab = ({
           <div className="text-sm text-neutral-content">{t('label_description')}</div>
         </div>
         <div className="w-8/12 pl-4">
-          <FormControl className="w-full" formError={_.get(errors, `locales.${locale}.title`)}>
+          <FormControl
+            className="w-full"
+            formError={_.get(form.errors, `locales.${locale}.schema.title`)}
+          >
             <Input
               className="w-full"
               outlined={true}
-              {...register(`locales.${locale}.title`, {
+              {...form.register(`locales.${locale}.schema.title`, {
                 required: required ? tCommon('required') : false,
               })}
+            />
+          </FormControl>
+        </div>
+      </div>
+
+      {/* Description text */}
+      <div className="flex flex-row py-6">
+        <div className="w-4/12">
+          <div className="text-sm text-secondary">{t('description_text_title')}</div>
+          <div className="text-sm text-neutral-content">{t('description_text_description')}</div>
+        </div>
+        <div className="w-8/12 pl-4">
+          <FormControl
+            className="w-full"
+            formError={_.get(form.errors, `locales.${locale}.schema.description`)}
+          >
+            <Input
+              className="w-full"
+              outlined={true}
+              {...form.register(`locales.${locale}.schema.description`)}
             />
           </FormControl>
         </div>
@@ -53,12 +67,12 @@ const LocaleTab = ({
         <div className="w-8/12 pl-4">
           <FormControl
             className="w-full"
-            formError={_.get(errors, `locales.${locale}.description`)}
+            formError={_.get(form.errors, `locales.${locale}.ui.ui:help`)}
           >
             <Input
               className="w-full"
               outlined={true}
-              {...register(`locales.${locale}.description`)}
+              {...form.register(`locales.${locale}.ui.ui:help`)}
             />
           </FormControl>
         </div>
@@ -79,23 +93,16 @@ const LocaleTab = ({
   );
 };
 
-export const DatasetItemDrawerLocales = ({
-  t,
-  tCommon,
-  item,
-  register,
-  errors,
-  setValue,
-  getValues,
-  onChange = () => {},
-}) => {
+export const DatasetItemDrawerLocales = () => {
   const [loading, setLoading] = useState(true);
   const [profileError, setError, ErrorAlert] = useRequestErrorMessage();
   const [defaultLocale, setDefaultLocale] = useState();
   const [locales, setLocales] = useState([]);
   const [loadedLocales, setLoadedLocales] = useState([]);
+  const { form, setState } = useContext(DatasetItemDrawerContext);
 
   const loadLocale = async (locale) => {
+    setState({ currentLocale: locale });
     if (loadedLocales.indexOf(locale) < 0) {
       // TODO: Cargamos del backend si es que tenemos item
       setLoadedLocales(update(loadedLocales, { $push: [locale] }));
@@ -143,8 +150,14 @@ export const DatasetItemDrawerLocales = ({
             <TabList>
               {locales.map(({ name, code }) => (
                 <Tab key={code} id={`id-${code}`} panelId={`panel-${code}`}>
-                  {_.get(errors, `locales.${defaultLocale}`) && code === defaultLocale ? (
-                    <ExclamationIcon className="w-4 h-4 mr-2 text-error-focus" />
+                  {code === defaultLocale ? (
+                    <ExclamationIcon
+                      className={`w-4 h-4 mr-2 ${
+                        _.get(form.errors, `locales.${defaultLocale}`)
+                          ? 'text-error-focus'
+                          : 'text-warning-focus'
+                      }`}
+                    />
                   ) : null}
                   {name}
                 </Tab>
@@ -156,13 +169,6 @@ export const DatasetItemDrawerLocales = ({
                 <LocaleTab
                   locale={code}
                   required={code === defaultLocale}
-                  t={t}
-                  item={item}
-                  register={register}
-                  errors={errors}
-                  tCommon={tCommon}
-                  setValue={setValue}
-                  getValues={getValues}
                   load={() => loadLocale(code)}
                 />
               </TabPanel>

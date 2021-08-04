@@ -1,5 +1,5 @@
-/*import * as _ from 'lodash';
-import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
+import * as _ from 'lodash';
+import useTranslate, { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import { useSession } from '@users/session';
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
@@ -13,13 +13,20 @@ import {
   listPermissionsRequest,
   updateProfileRequest,
 } from '@users/request';
+import { withLayout } from '@layout/hoc';
 import { goDetailProfilePage, goListProfilesPage, goLoginPage } from '@users/navigate';
-*/
+import { PageContainer, PageHeader, Textarea } from 'leemons-ui';
+import tLoader from '@multilanguage/helpers/tLoader';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import prefixPN from '@users/helpers/prefixPN';
 
-export default function ListProfiles() {
-  return null;
-  /*
+function ProfileDetail() {
   useSession({ redirectTo: goLoginPage });
+
+  const [translations] = useTranslate({ keysStartsWith: prefixPN('detail_profile') });
+  const t = tLoader(prefixPN('detail_profile'), translations);
+  const { t: tCommonHeader } = useCommonTranslate('page_header');
+  const { t: tCommonForm } = useCommonTranslate('forms');
 
   const router = useRouter();
 
@@ -42,28 +49,22 @@ export default function ListProfiles() {
 
   async function getPermissions() {
     const response = await listPermissionsRequest();
-    setPermissionT(
-      await getLocalizationsByArrayOfItems(
-        response.permissions,
-        (permission) => getTranslationKeyPermissions(permission.permissionName, 'name'),
-        'en' // TODO Añadir idioma
-      )
+    const translate = await getLocalizationsByArrayOfItems(response.permissions, (permission) =>
+      getTranslationKeyPermissions(permission.permissionName, 'name')
     );
 
+    setPermissionT(translate);
     setPermissions(response.permissions);
   }
 
   async function getActions() {
     const response = await listActionsRequest();
-
-    setActionT(
-      await getLocalizationsByArrayOfItems(
-        response.actions,
-        (action) => getTranslationKeyActions(action.actionName, 'name'),
-        'en' // TODO Añadir idioma
-      )
+    const translate = await getLocalizationsByArrayOfItems(response.actions, (action) =>
+      getTranslationKeyActions(action.actionName, 'name')
     );
+    console.log(translate);
 
+    setActionT(translate);
     setActions(response.actions);
   }
 
@@ -117,19 +118,26 @@ export default function ListProfiles() {
 
   return (
     <>
-      <div className="mb-3">Detalle perfil</div>
-
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-3">
-          <label>Nombre</label>
-          <input {...register('name', { required: true })} />
-          {errors.name && <span>name is required</span>}
-        </div>
+        <PageHeader
+          title={''}
+          registerFormTitle={register('name', { required: tCommonForm('required') })}
+          registerFormTitleErrors={errors.title}
+          titlePlaceholder={t('profile_name')}
+          saveButton={tCommonHeader('save')}
+          cancelButton={tCommonHeader('cancel')}
+          onNewButton={goDetailProfilePage}
+        />
 
-        <div className="mb-3">
-          <label>Description</label>
-          <input type="description" {...register('description', { required: true })} />
-          {errors.description && <span>description is required</span>}
+        <div className="bg-primary-content">
+          <PageContainer>
+            <div className="flex flex-row max-w-screen-md">
+              <div className="w-4/12 font-medium">{t('description')}</div>
+              <div className="w-8/12">
+                <Textarea className="w-full" outlined={true} {...register('description')} />
+              </div>
+            </div>
+          </PageContainer>
         </div>
 
         <div className="mb-3">
@@ -172,5 +180,6 @@ export default function ListProfiles() {
       </form>
     </>
   );
-  */
 }
+
+export default withLayout(ProfileDetail);

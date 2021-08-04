@@ -6,8 +6,8 @@ import update from 'immutability-helper';
 import Checkbox from './Checkbox';
 
 function Cell({ cell, onChangeCell }) {
-  function onCheckedChange(checked) {
-    onChangeCell(cell, { ...cell, value: { ...cell.value, checked } });
+  function onCheckedChange(event) {
+    onChangeCell(cell, { ...cell, value: { ...cell.value, checked: event.target.checked } });
   }
 
   // Custom

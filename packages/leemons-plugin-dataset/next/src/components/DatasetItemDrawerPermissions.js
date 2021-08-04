@@ -1,14 +1,16 @@
 import * as _ from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { listProfilesRequest } from '@users/request';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import update from 'immutability-helper';
 import { Table } from 'leemons-ui';
+import DatasetItemDrawerContext from './DatasetItemDrawerContext';
 
-export const DatasetItemDrawerPermissions = ({ t, item, onChange = () => {} }) => {
+export const DatasetItemDrawerPermissions = ({ onChange = () => {} }) => {
   const [loading, setLoading] = useState(true);
   const [profiles, setProfiles] = useState([]);
   const [profileError, setError, ProfileErrorAlert] = useRequestErrorMessage();
+  const { t, item } = useContext(DatasetItemDrawerContext);
   const tableHeaders = useMemo(
     () => [
       {
@@ -75,6 +77,19 @@ export const DatasetItemDrawerPermissions = ({ t, item, onChange = () => {} }) =
   };
 
   function onChangeData(event) {
+    if (event.changedField === 'view') {
+      if (event.newData[event.itemIndex].edit.checked) {
+        setTimeout(() => {
+          setProfiles(
+            update(event.newData, {
+              [event.itemIndex]: {
+                view: { checked: { $set: true } },
+              },
+            })
+          );
+        }, 10);
+      }
+    }
     if (event.changedField === 'edit') {
       if (event.newItem.checked) {
         setProfiles(

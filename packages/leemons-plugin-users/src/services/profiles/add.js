@@ -2,6 +2,7 @@ const _ = require('lodash');
 const { add: addRole } = require('../roles');
 const { existName } = require('./existName');
 const { table } = require('../tables');
+const createNecessaryRolesForProfilesAccordingToCenters = require('./createNecessaryRolesForProfilesAccordingToCenters');
 
 /**
  * Update the provided role
@@ -12,7 +13,7 @@ const { table } = require('../tables');
  * @param {any} _transacting - DB Transaction
  * @return {Promise<any>} Created permissions-roles
  * */
-async function add({ name, description, roles }, { transacting: _transacting } = {}) {
+async function add({ name, description }, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       const exist = await existName(name, undefined, { transacting });
@@ -37,19 +38,8 @@ async function add({ name, description, roles }, { transacting: _transacting } =
         { transacting }
       );
 
-      if (roles) {
-        await Promise.all(
-          _.map(roles, (role) => {
-            return table.profileRole.create(
-              {
-                profile: profile.id,
-                role: role,
-              },
-              { transacting }
-            );
-          })
-        );
-      }
+      await createNecessaryRolesForProfilesAccordingToCenters(profile.id, { transacting });
+
       return profile;
     },
     table.profiles,

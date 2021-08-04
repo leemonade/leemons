@@ -17,6 +17,9 @@ import getCenters from './getCenters';
 import listProfiles from './listProfiles';
 import getDefaultPlatformLocale from './getDefaultPlatformLocale';
 import getPlatformLocales from './getPlatformLocales';
+import addProfile from './addProfile';
+import getProfile from './getProfile';
+import updateProfile from './updateProfile';
 
 export const loginRequest = login;
 export const resetRequest = reset;
@@ -37,3 +40,6 @@ export const getCentersRequest = getCenters;
 export const listProfilesRequest = listProfiles;
 export const getDefaultPlatformLocaleRequest = getDefaultPlatformLocale;
 export const getPlatformLocalesRequest = getPlatformLocales;
+export const addProfileRequest = addProfile;
+export const getProfileRequest = getProfile;
+export const updateProfileRequest = updateProfile;
