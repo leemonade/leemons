@@ -9,4 +9,5 @@ module.exports = {
   detailByUri: profiles.detailByUri,
   addCustomPermissions: profiles.addCustomPermissions,
   removeCustomPermissionsByName: profiles.removeCustomPermissionsByName,
+  getRoleForRelationshipProfileCenter: profiles.getRoleForRelationshipProfileCenter,
 };

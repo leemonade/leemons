@@ -1,6 +1,7 @@
 const existName = require('./existName');
 const { translations } = require('../translations');
 const { table } = require('../tables');
+const createNecessaryRolesForProfilesAccordingToCenters = require('../profiles/createNecessaryRolesForProfilesAccordingToCenters');
 
 /**
  * Create one center
@@ -23,7 +24,7 @@ async function add({ name, description, locale }, { transacting: _transacting } 
       }
 
       leemons.log.info(`Creating center '${name}'`);
-      return await table.centers.create(
+      const center = await table.centers.create(
         {
           name,
           description,
@@ -32,6 +33,12 @@ async function add({ name, description, locale }, { transacting: _transacting } 
         },
         { transacting }
       );
+
+      await createNecessaryRolesForProfilesAccordingToCenters(undefined, center.id, {
+        transacting,
+      });
+
+      return center;
     },
     table.roles,
     _transacting

@@ -1,7 +1,8 @@
 async function getProfile(uri) {
   return leemons.api({
     url: 'users/profile/detail/:uri',
-    params: { uri },
+    query: { uri },
+    allAgents: true,
   });
 }
 

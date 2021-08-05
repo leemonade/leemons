@@ -18,7 +18,6 @@ const Checkbox = React.forwardRef(
     const [checked, setChecked] = useState({ checked: defaultChecked, fromClick: false });
 
     useEffect(() => {
-      console.log('A cambiado el checked');
       setChecked({ checked: defaultChecked, fromClick: false });
     }, [defaultChecked]);
 

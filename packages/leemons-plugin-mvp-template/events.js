@@ -13,33 +13,42 @@ async function events(isInstalled) {
       users: false,
       multilanguage: false,
     };
-    const config = async () => {
+    const configLocales = async () => {
       try {
         await leemons.getPlugin('users').services.platform.addLocale('es', 'Español');
         await leemons.getPlugin('users').services.platform.addLocale('en', 'English');
         await leemons.getPlugin('users').services.platform.addLocale('es-ES', 'Español (España)');
         await leemons.getPlugin('users').services.platform.setDefaultLocale('en');
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    const config = async () => {
+      try {
         const centers = await initCenters();
         console.log('centers', centers);
         const profiles = await initProfiles();
         console.log('profiles', profiles);
-        // const roles = await initRoles(centers);
-        // console.log('roles', roles);
-        // const users = await initUsers(roles);
-        // console.log('users', users);
+        const users = await initUsers(centers, profiles);
+        console.log('users', users);
       } catch (e) {
         console.error(e);
       }
     };
 
     leemons.events.once('plugins.users:pluginDidLoadServices', async () => {
-      if (services.multilanguage) config();
+      if (services.multilanguage) configLocales();
       services.users = true;
     });
 
     leemons.events.once('plugins.multilanguage:pluginDidLoadServices', async () => {
-      if (services.users) config();
+      if (services.users) configLocales();
       services.multilanguage = true;
+    });
+
+    leemons.events.once('plugins.users:init-permissions', async () => {
+      config();
     });
   }
 }

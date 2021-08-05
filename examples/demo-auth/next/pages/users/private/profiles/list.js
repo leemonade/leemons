@@ -85,7 +85,7 @@ function ListProfiles() {
       <PageHeader
         title={t('page_title')}
         newButton={tCommon('new')}
-        onNewButton={goDetailProfilePage}
+        onNewButton={() => goDetailProfilePage()}
       />
       <div className="bg-primary-content">
         <PageContainer>

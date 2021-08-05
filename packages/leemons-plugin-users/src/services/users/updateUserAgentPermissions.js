@@ -2,22 +2,8 @@ const _ = require('lodash');
 const { existUserAgent } = require('./existUserAgent');
 const { table } = require('../tables');
 
-/**
- * EN:
- * Updates the permissions of the user if it is marked as reload permissions according to their
- * roles and the roles of the groups to which they belong.
- *
- * ES:
- * Borra todos los permisos que ya tuviera el usuario que vinieran desde un rol y vuelve a generar
- * todos los permisos desde los roles en los que esta el usuario
- *
- * @public
- * @static
- * @param {string} userAgentId - User auth id
- * @param {any=} transacting - DB Transaction
- * @return {Promise<any>}
- * */
-async function updateUserAgentPermissions(userAgentId, { transacting: _transacting } = {}) {
+async function _updateUserAgentPermissions(userAgentId, { transacting: _transacting } = {}) {
+  console.log(userAgentId);
   await existUserAgent({ id: userAgentId }, true, { transacting: _transacting });
   return global.utils.withTransaction(
     async (transacting) => {
@@ -61,7 +47,7 @@ async function updateUserAgentPermissions(userAgentId, { transacting: _transacti
       ]);
 
       const roleCenterByRole = _.keyBy(roleCenter, 'role');
-
+      console.log(userAgentId);
       return table.userAgentPermission.createMany(
         _.map(rolePermissions, (rolePermission) => ({
           userAgent: userAgentId,
@@ -79,6 +65,33 @@ async function updateUserAgentPermissions(userAgentId, { transacting: _transacti
     table.userAgent,
     _transacting
   );
+}
+
+/**
+ * EN:
+ * Updates the permissions of the user if it is marked as reload permissions according to their
+ * roles and the roles of the groups to which they belong.
+ *
+ * ES:
+ * Borra todos los permisos que ya tuviera el usuario que vinieran desde un rol y vuelve a generar
+ * todos los permisos desde los roles en los que esta el usuario
+ *
+ * @public
+ * @static
+ * @param {string | string[]} userAgentId - User auth id
+ * @param {any=} transacting - DB Transaction
+ * @return {Promise<any>}
+ * */
+async function updateUserAgentPermissions(userAgentId, { transacting } = {}) {
+  if (_.isArray(userAgentId)) {
+    const results = [];
+    for (let i = 0, l = userAgentId.length; i < l; i++) {
+      results.push(await _updateUserAgentPermissions(userAgentId[i], { transacting }));
+    }
+    return results;
+  } else {
+    return _updateUserAgentPermissions(userAgentId, { transacting });
+  }
 }
 
 module.exports = { updateUserAgentPermissions };

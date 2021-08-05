@@ -12,7 +12,7 @@ async function getRoleForRelationshipProfileCenter(profile, center, { transactin
   );
   if (!centerRole)
     throw new Error(
-      'Error de consistencia, siempre debe existir un Rol para un centro dado un perfil'
+      'Consistency error, a Role must always be associsted to a center given a Profile'
     );
   return table.roles.findOne({ id: centerRole.role }, { transacting });
 }

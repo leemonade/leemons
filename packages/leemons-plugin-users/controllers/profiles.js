@@ -85,12 +85,18 @@ async function update(ctx) {
       name: { type: 'string' },
       description: { type: 'string' },
       permissions: {
-        type: 'object',
-        patternProperties: {
-          '.*': {
-            type: 'array',
-            items: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            permissionName: {
               type: 'string',
+            },
+            actionNames: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
             },
           },
         },

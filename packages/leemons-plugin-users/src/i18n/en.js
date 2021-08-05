@@ -43,6 +43,9 @@ module.exports = {
   detail_profile: {
     profile_name: 'Profile name',
     description: 'Profile description',
+    leemon: 'Leemon',
+    permissions: 'Permissions',
+    dataset: 'Dataset',
   },
   login: {
     title: 'Login to your account',

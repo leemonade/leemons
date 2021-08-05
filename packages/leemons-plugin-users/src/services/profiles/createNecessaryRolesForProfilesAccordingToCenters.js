@@ -13,23 +13,29 @@ const {
  * @public
  * @static
  * @param {string | string[]} profileIds - Profile ids
+ * @param {string | string[]} centerIds - Center ids
  * @param {any} _transacting - DB Transaction
  * @return {Promise<any>} Created permissions-roles
  * */
 async function createNecessaryRolesForProfilesAccordingToCenters(
   profileIds,
+  centerIds,
   { transacting: _transacting }
 ) {
   return global.utils.withTransaction(
     async (transacting) => {
       // ES: Si no vienen ids de perfiles sacamos todos los perfiles si vienen solo sacamos esos
-      const query = {};
+      const queryProfile = {};
       if (profileIds) {
-        query.id_$in = _.isArray(profileIds) ? profileIds : [profileIds];
+        queryProfile.id_$in = _.isArray(profileIds) ? profileIds : [profileIds];
+      }
+      const queryCenters = {};
+      if (centerIds) {
+        queryCenters.id_$in = _.isArray(centerIds) ? centerIds : [centerIds];
       }
       const [profiles, centers] = await Promise.all([
-        table.profiles.find(query, { columns: ['id'], transacting }),
-        table.centers.find({}, { columns: ['id'], transacting }),
+        table.profiles.find(queryProfile, { columns: ['id'], transacting }),
+        table.centers.find(queryCenters, { columns: ['id'], transacting }),
       ]);
 
       const [centerRoles, profileRoles] = await Promise.all([

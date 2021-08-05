@@ -1,7 +1,7 @@
 const { table } = require('../tables');
 
-async function getProfileRole(profileId, { transacting }) {
-  const profileRole = await table.profile.findOne(
+async function getProfileRole(profileId, { transacting } = {}) {
+  const profileRole = await table.profiles.findOne(
     { id: profileId },
     {
       columns: ['role'],

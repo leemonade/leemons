@@ -16,7 +16,7 @@ function tLoader(prefix, translations) {
       }
       return item;
     }
-    return null;
+    return key;
   };
 }
 

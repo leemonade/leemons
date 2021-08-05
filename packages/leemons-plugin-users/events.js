@@ -3,12 +3,26 @@ const constants = require('./config/constants');
 const recoverEmail = require('./emails/recoverPassword');
 const resetPassword = require('./emails/resetPassword');
 const { addMain, addWelcome, addProfiles, addUserData } = require('./src/services/menu-builder');
+const init = require('./init');
 
 async function events(isInstalled) {
+  leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
+    init();
+  });
   if (!isInstalled) {
     const loadServices = {
       dataset: false,
       multilanguage: false,
+      users: false,
+    };
+
+    const initUsers = async () => {
+      const actionsService = require('./src/services/actions');
+      const permissionService = require('./src/services/permissions');
+      await actionsService.init();
+      leemons.events.emit('init-actions');
+      await permissionService.init();
+      leemons.events.emit('init-permissions');
     };
 
     const initDataset = async () => {
@@ -25,9 +39,15 @@ async function events(isInstalled) {
       if (loadServices.multilanguage) initDataset();
       loadServices.dataset = true;
     });
-    leemons.events.once('plugins.multilanguage:pluginDidLoadServices', async () => {
+    leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
       if (loadServices.dataset) initDataset();
+      if (loadServices.users) initUsers();
       loadServices.multilanguage = true;
+    });
+
+    leemons.events.once('plugins.users:pluginDidLoad', async () => {
+      if (loadServices.multilanguage) initUsers();
+      loadServices.users = true;
     });
 
     // Emails
