@@ -6,7 +6,6 @@ module.exports = {
     tabs: {
       login_data: 'Login',
       basic_data: 'Basicos',
-      user_dataset: 'Dataset',
     },
     login: {
       description:
@@ -14,11 +13,25 @@ module.exports = {
     },
     basic: {
       description: 'Configuración de campos generales para sus usuarios',
+      table: {
+        name: 'Nombre',
+        description: 'Descripción',
+        type: 'Tipo',
+        actions: 'Acciones',
+      },
+      edit: 'Editar',
+      delete: 'Borrar',
     },
     dataset: {
       description: 'Configuración de campos generales para sus usuarios',
       filter_by_center: 'Filtrar por centro',
       add_field: 'Añadir campo',
+    },
+    remove_modal: {
+      title: '¿Quieres eliminar el item?',
+      message: 'Esta acción no puede deshacerse',
+      cancel: 'No',
+      action: 'Eliminar',
     },
   },
   welcome_page: {

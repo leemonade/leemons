@@ -5,6 +5,7 @@ const deleteSchema = require('./deleteSchema');
 const existSchema = require('./existSchema');
 const getSchemaWithLocale = require('./getSchemaWithLocale');
 const { transformJsonSchema, transformUiSchema } = require('./transformJsonOrUiSchema');
+const saveField = require('./saveField');
 
 module.exports = {
   getSchema,
@@ -15,4 +16,5 @@ module.exports = {
   getSchemaWithLocale,
   transformJsonSchema,
   transformUiSchema,
+  saveField,
 };

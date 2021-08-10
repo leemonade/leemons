@@ -144,11 +144,6 @@ module.exports = [
    * Roles
    * */
   {
-    path: '/roles-for-center/:center',
-    method: 'GET',
-    handler: 'roles.rolesForCenter',
-  },
-  {
     path: '/role',
     method: 'POST',
     handler: 'roles.create',

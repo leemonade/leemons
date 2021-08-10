@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSession } from '@users/session';
 import { getUserProfilesRequest } from '@users/request';
 import useTranslate from '@multilanguage/useTranslate';
@@ -6,47 +6,161 @@ import tLoader from '@multilanguage/helpers/tLoader';
 import { goLoginPage } from '@users/navigate';
 import prefixPN from '@users/helpers/prefixPN';
 import { withLayout } from '@layout/hoc';
-import { Button, PageContainer, PageHeader, Tab, TabList, TabPanel, Tabs } from 'leemons-ui';
+import {
+  Button,
+  Modal,
+  PageContainer,
+  PageHeader,
+  Tab,
+  Table,
+  TabList,
+  TabPanel,
+  Tabs,
+  useModal,
+} from 'leemons-ui';
 import { PlusIcon } from '@heroicons/react/outline';
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
 import { useRouter } from 'next/router';
+import { useAsync } from '@common/useAsync';
+import { getDatasetSchemaRequest } from '@dataset/request';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 
-function TabDescription({ t, type }) {
-  return <div className="text-base text-secondary pb-6">{t(`${type}.description`)}</div>;
+function TabDescription({ t, type, className }) {
+  return <div className={`text-base text-secondary ${className}`}>{t(`${type}.description`)}</div>;
 }
 
 function LoginTab({ t }) {
   return (
-    <div className="pt-6">
-      <TabDescription t={t} type="login" />
+    <div className="bg-primary-content">
+      <PageContainer>
+        <TabDescription className="mb-6" t={t} type="login" />
+      </PageContainer>
     </div>
   );
 }
 
 function BasicTab({ t }) {
-  return (
-    <div className="pt-6">
-      <TabDescription t={t} type="basic" />
-    </div>
-  );
-}
-
-function DatasetTab({ t }) {
+  const [loading, setLoading] = useState(true);
+  const [tableItems, setTableItems] = useState([]);
+  const [item, setItem] = useState(null);
+  const [itemToRemove, setItemToRemove] = useState(null);
   const [toggle, DatasetItemDrawer] = useDatasetItemDrawer();
+  const { t: tCommonTypes } = useCommonTranslate('form_field_types');
+  const [error, setError, ErrorAlert] = useRequestErrorMessage();
+  const [modal, toggleModal] = useModal({
+    animated: true,
+    title: t('remove_modal.title'),
+    message: t('remove_modal.message'),
+    cancelLabel: t('remove_modal.cancel'),
+    actionLabel: t('remove_modal.action'),
+    onAction: async () => {},
+  });
+
+  function newItem() {
+    setItem(null);
+    toggle();
+  }
+
+  function openItem(item) {
+    setItem(item);
+    toggle();
+  }
+
+  function removeItem(item) {
+    setItemToRemove(item);
+    toggleModal();
+  }
+
+  const tableHeaders = useMemo(
+    () => [
+      {
+        Header: t('basic.table.name'),
+        accessor: (field) => (
+          <div className="text-left">
+            {field.schema.frontConfig.name} {field.schema.frontConfig.required ? '*' : ''}
+          </div>
+        ),
+        className: 'text-left',
+      },
+      {
+        Header: t('basic.table.description'),
+        accessor: 'description',
+        className: 'text-left',
+      },
+      {
+        Header: t('basic.table.type'),
+        accessor: (field) => (
+          <div className="text-center">{tCommonTypes(field.schema.frontConfig.type)}</div>
+        ),
+        className: 'text-center',
+      },
+      {
+        Header: t('basic.table.actions'),
+        accessor: (field) => (
+          <div className="text-center">
+            <Button color="ghost" className="text-primary" onClick={() => openItem(field)}>
+              {t('basic.edit')}
+            </Button>
+            <Button color="ghost" className="text-primary" onClick={() => removeItem(field)}>
+              {t('basic.delete')}
+            </Button>
+          </div>
+        ),
+        className: 'text-center',
+      },
+    ],
+    [t, tCommonTypes]
+  );
+
+  const load = useMemo(() => () => getDatasetSchemaRequest('user-data', 'plugins.users'), []);
+
+  const onSuccess = useMemo(
+    () => ({ dataset }) => {
+      setTableItems(getDatasetAsArrayOfProperties(dataset));
+      setLoading(false);
+    },
+    []
+  );
+
+  const onError = useMemo(
+    () => (e) => {
+      // ES: 4001 codigo de que aun no existe schema, como es posible ignoramos el error
+      if (e.code !== 4001) {
+        setError(e);
+      }
+    },
+    []
+  );
+
+  useAsync(load, onSuccess, onError);
 
   return (
-    <div className="pt-6">
-      <TabDescription t={t} type="dataset" />
-      <div className="flex flex-row justify-between">
-        <div className="flex flex-row">b</div>
-        <div>
-          <Button color="secondary" onClick={toggle}>
-            <PlusIcon className="w-6 h-6 mr-1" />
-            {t('dataset.add_field')}
-          </Button>
-        </div>
+    <div>
+      <Modal {...modal} />
+      <div className="bg-primary-content">
+        <PageContainer className="pt-0">
+          <div className="pt-6 mb-6 flex flex-row justify-between items-center">
+            <TabDescription className="mb-0" t={t} type="basic" />
+            <Button color="secondary" onClick={newItem}>
+              <PlusIcon className="w-6 h-6 mr-1" />
+              {t('dataset.add_field')}
+            </Button>
+            <DatasetItemDrawer locationName="user-data" pluginName="plugins.users" item={item} />
+          </div>
+        </PageContainer>
       </div>
-      <DatasetItemDrawer />
+      <PageContainer>
+        <div className="bg-primary-content p-2">
+          <ErrorAlert />
+          {!loading && !error ? (
+            <div>
+              <Table columns={tableHeaders} data={tableItems} />
+            </div>
+          ) : null}
+        </div>
+      </PageContainer>
     </div>
   );
 }
@@ -80,33 +194,30 @@ function UserData() {
             className="text-base text-secondary pb-6"
             dangerouslySetInnerHTML={{ __html: t('page_description') }}
           />
-          <div className="mt-2 text-xs">
-            <Tabs router={router} saveHistory>
-              <TabList>
-                <Tab id="login-data" panelId="panel-login-data">
-                  {t('tabs.login_data')}
-                </Tab>
-                <Tab id="basic-data" panelId="panel-basic-data">
-                  {t('tabs.basic_data')}
-                </Tab>
-                <Tab id="dataset-data" panelId="panel-dataset-data">
-                  {t('tabs.user_dataset')}
-                </Tab>
-              </TabList>
-
-              <TabPanel id="panel-login-data" tabId="login-data">
-                <LoginTab t={t} />
-              </TabPanel>
-              <TabPanel id="panel-basic-data" tabId="basic-data">
-                <BasicTab t={t} />
-              </TabPanel>
-              <TabPanel id="panel-dataset-data" tabId="dataset-data">
-                <DatasetTab t={t} />
-              </TabPanel>
-            </Tabs>
-          </div>
         </PageContainer>
       </div>
+
+      <Tabs router={router} saveHistory>
+        <div className="bg-primary-content">
+          <PageContainer>
+            <TabList>
+              <Tab id="login-data" panelId="panel-login-data">
+                {t('tabs.login_data')}
+              </Tab>
+              <Tab id="basic-data" panelId="panel-basic-data">
+                {t('tabs.basic_data')}
+              </Tab>
+            </TabList>
+          </PageContainer>
+        </div>
+
+        <TabPanel id="panel-login-data" tabId="login-data">
+          <LoginTab t={t} />
+        </TabPanel>
+        <TabPanel id="panel-basic-data" tabId="basic-data">
+          <BasicTab t={t} />
+        </TabPanel>
+      </Tabs>
     </>
   );
 }

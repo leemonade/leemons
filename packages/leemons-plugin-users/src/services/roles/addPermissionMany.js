@@ -1,5 +1,7 @@
 const _ = require('lodash');
 const { table } = require('../tables');
+const { validatePermissionName } = require('../../validations/exists');
+const searchUsersWithRoleAndMarkAsReloadPermissions = require('./searchUsersWithRoleAndMarkAsReloadPermissions');
 
 /**
  * Update the provided role
@@ -26,6 +28,8 @@ async function addPermissionMany(roleId, permissions, { isCustom, transacting } 
       });
     });
   });
+
+  await searchUsersWithRoleAndMarkAsReloadPermissions(roleId, { transacting });
 
   return table.rolePermission.createMany(items, { transacting });
 }

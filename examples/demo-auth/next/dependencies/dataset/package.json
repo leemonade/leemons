@@ -1,1 +1,1 @@
-{"name":"next","version":"1.0.0","main":"index.js","license":"MIT","dependencies":{"json-rules-engine-simplified":"^0.1.17","react-jsonschema-form":"^1.8.1","react-jsonschema-form-conditionals":"^0.3.15"},"devDependencies":{}}
+{"name":"next","version":"1.0.0","main":"index.js","license":"MIT","dependencies":{"@babel/runtime-corejs2":"^7.14.8","@rjsf/core":"^3.0.0","json-rules-engine-simplified":"^0.1.17","rjsf-conditionals":"^1.1.4"},"devDependencies":{}}

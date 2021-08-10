@@ -17,11 +17,14 @@ const constants = require('../../../config/constants');
  * */
 async function hasPermissionCTX(userSession, allowedPermissions, ctx) {
   if (_.isArray(userSession.userAgents) && userSession.userAgents.length) {
-    const perPromises = [];
+    const reloadUserAgents = [];
     _.forEach(userSession.userAgents, (userAgent) => {
-      if (userAgent.reloadPermissions) perPromises.push(updateUserAgentPermissions(userAgent.id));
+      if (userAgent.reloadPermissions) reloadUserAgents.push(userAgent.id);
     });
-    await Promise.all(perPromises);
+
+    if (reloadUserAgents.length) {
+      await updateUserAgentPermissions(reloadUserAgents);
+    }
   }
 
   const promises = [];

@@ -2,6 +2,7 @@ const { validatePluginName, validateNotExistLocation } = require('../../validati
 const { translations, getTranslationKey } = require('../translations');
 const { validateLocationAndPlugin } = require('../../validations/dataset-location');
 const { table } = require('../tables');
+const deleteSchema = require('../dataset-schema/deleteSchema');
 
 /** *
  *  ES:
@@ -24,6 +25,7 @@ async function deleteLocation(locationName, pluginName, { transacting: _transact
 
   return global.utils.withTransaction(
     async (transacting) => {
+      await deleteSchema.call(this, locationName, pluginName, { transacting });
       const promises = [table.dataset.delete({ locationName, pluginName }, { transacting })];
       if (translations()) {
         promises.push(

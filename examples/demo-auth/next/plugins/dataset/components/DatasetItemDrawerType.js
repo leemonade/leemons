@@ -3,10 +3,13 @@ import * as _ from 'lodash';
 import { Checkbox, FormControl, Input, Select } from 'leemons-ui';
 import DatasetItemDrawerContext from './DatasetItemDrawerContext';
 import datasetDataTypes from '../helpers/datasetDataTypes';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 
 export const DatasetItemDrawerType = () => {
   const { t, tCommon, item, form } = useContext(DatasetItemDrawerContext);
-  const type = _.get(form.watch(), 'frontConfig.type');
+  const { t: tCommonTypes } = useCommonTranslate('form_field_types');
+  const type = form.watch('frontConfig.type');
+
   const dataTypes = _.values(datasetDataTypes);
   return (
     <>
@@ -24,8 +27,10 @@ export const DatasetItemDrawerType = () => {
                   required: tCommon('required'),
                 })}
               >
-                {dataTypes.map(({ type: _type }) => (
-                  <option value={_type}>{t(_type)}</option>
+                {dataTypes.map(({ type: _type }, index) => (
+                  <option key={index} value={_type}>
+                    {tCommonTypes(_type)}
+                  </option>
                 ))}
               </Select>
             </FormControl>
@@ -40,7 +45,12 @@ export const DatasetItemDrawerType = () => {
               labelPosition="right"
               formError={_.get(form.errors, 'frontConfig.required')}
             >
-              <Checkbox color="primary" {...form.register('frontConfig.required')} />
+              <Checkbox
+                color="primary"
+                {...form.register('frontConfig.required')}
+                checked={form.watch('frontConfig.required')}
+                onChange={(event) => form.setValue('frontConfig.required', event.target.checked)}
+              />
             </FormControl>
           </div>
           {/* Masked */}
@@ -51,7 +61,12 @@ export const DatasetItemDrawerType = () => {
                 labelPosition="right"
                 formError={_.get(form.errors, 'frontConfig.masked')}
               >
-                <Checkbox color="primary" {...form.register('frontConfig.masked')} />
+                <Checkbox
+                  color="primary"
+                  {...form.register('frontConfig.masked')}
+                  checked={form.watch('frontConfig.masked')}
+                  onChange={(event) => form.setValue('frontConfig.masked', event.target.checked)}
+                />
               </FormControl>
             </div>
           ) : null}
@@ -104,7 +119,14 @@ export const DatasetItemDrawerType = () => {
                   labelPosition="right"
                   formError={_.get(form.errors, 'frontConfig.onlyNumbers')}
                 >
-                  <Checkbox color="primary" {...form.register('frontConfig.onlyNumbers')} />
+                  <Checkbox
+                    color="primary"
+                    {...form.register('frontConfig.onlyNumbers')}
+                    checked={form.watch('frontConfig.onlyNumbers')}
+                    onChange={(event) =>
+                      form.setValue('frontConfig.onlyNumbers', event.target.checked)
+                    }
+                  />
                 </FormControl>
               </div>
             </div>

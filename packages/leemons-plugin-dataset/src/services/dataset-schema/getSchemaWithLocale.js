@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const getSchema = require('./getSchema');
 const getSchemaLocale = require('../dataset-schema-locale/getSchemaLocale');
 const {
@@ -20,21 +21,39 @@ const { validateLocationAndPluginAndLocale } = require('../../validations/datase
  *  @param {string} pluginName - Plugin name
  *  @param {string} locale
  *  @param {any=} transacting - DB Transaction
+ *  @param {boolean=} defaultWithEmptyValues - Define if the values of default locales is empty = ""
  *  @return {Promise<Action>} The new dataset location
  *  */
-async function getSchemaWithLocale(locationName, pluginName, locale, { transacting } = {}) {
+async function getSchemaWithLocale(
+  locationName,
+  pluginName,
+  locale,
+  { defaultWithEmptyValues, transacting } = {}
+) {
   validateLocationAndPluginAndLocale(locationName, pluginName, locale, true);
   await validateNotExistLocation(locationName, pluginName, { transacting });
   await validateNotExistSchema(locationName, pluginName, { transacting });
   await validateNotExistSchemaLocale(locationName, pluginName, locale, { transacting });
 
-  const [schema, schemaLocale] = await Promise.all([
+  const defaultLocale = await leemons.getPlugin('users').services.platform.getDefaultLocale();
+
+  const [schema, schemaLocale, defaultSchemaLocale] = await Promise.all([
     getSchema.call(this, locationName, pluginName),
     getSchemaLocale.call(this, locationName, pluginName, locale),
+    getSchemaLocale.call(this, locationName, pluginName, defaultLocale),
   ]);
 
-  schema.schemaData = schemaLocale.schemaData;
-  schema.uiData = schemaLocale.uiData;
+  if (defaultWithEmptyValues) {
+    _.forEach(global.utils.getObjectArrayKeys(defaultSchemaLocale.schemaData), (key) => {
+      _.set(defaultSchemaLocale.schemaData, key, '');
+    });
+    _.forEach(global.utils.getObjectArrayKeys(defaultSchemaLocale.uiData), (key) => {
+      _.set(defaultSchemaLocale.uiData, key, '');
+    });
+  }
+
+  schema.schemaData = _.merge(defaultSchemaLocale.schemaData, schemaLocale.schemaData);
+  schema.uiData = _.merge(defaultSchemaLocale.uiData, schemaLocale.uiData);
   schema.compileJsonSchema = global.utils.squirrelly.render(
     JSON.stringify(schema.jsonSchema),
     schema.schemaData
@@ -45,7 +64,7 @@ async function getSchemaWithLocale(locationName, pluginName, locale, { transacti
   );
 
   schema.compileJsonSchema = JSON.parse(schema.compileJsonSchema);
-  schema.compileJsonUI = JSON.parse(schema.compileJsonUi);
+  schema.compileJsonUI = JSON.parse(schema.compileJsonUI);
 
   return schema;
 }

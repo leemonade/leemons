@@ -75,7 +75,7 @@ function generateQueries(model /* connector */) {
 
     const attributes = selectAttributes(updatedItem);
 
-    const updatedCount = await entry().count();
+    const updatedCount = await entry().count({ transacting });
 
     if (updatedCount > 0) {
       try {
@@ -118,7 +118,7 @@ function generateQueries(model /* connector */) {
 
     const entries = () => bookshelfModel.query(newQuery);
 
-    const deletedCount = await entries().count();
+    const deletedCount = await entries().count({ transacting });
 
     if (deletedCount > 0) {
       await entries().destroy({ transacting });

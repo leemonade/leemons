@@ -1,6 +1,12 @@
 const _ = require('lodash');
-const transformPermissionKeysToObjects = require('./transformPermissionKeysToObjects');
-const { getJsonSchemaProfilePermissionsKeys } = require('./transformJsonOrUiSchema');
+const {
+  transformPermissionKeysToObjects,
+  transformPermissionKeysToObjectsByType,
+} = require('./transformPermissionKeysToObjects');
+const {
+  getJsonSchemaProfilePermissionsKeys,
+  getJsonSchemaProfilePermissionsKeysByType,
+} = require('./transformJsonOrUiSchema');
 const {
   validatePluginName,
   validateNotExistLocation,
@@ -42,14 +48,20 @@ async function updateSchema(
 
       // ES: Transformamos los jsonSchema
       // EN: We transform the jsonSchema
-      const oldPermissionObject = transformPermissionKeysToObjects(
-        oldJsonSchema,
-        getJsonSchemaProfilePermissionsKeys(oldJsonSchema),
+      const {
+        profiles: oldProfilePermissions,
+        roles: oldRolesPermissions,
+      } = transformPermissionKeysToObjectsByType(
+        JSON.parse(oldJsonSchema),
+        getJsonSchemaProfilePermissionsKeysByType(JSON.parse(oldJsonSchema)),
         `${locationName}.${pluginName}`
       );
-      const newPermissionObject = transformPermissionKeysToObjects(
+      const {
+        profiles: newProfilePermissions,
+        roles: newRolesPermissions,
+      } = transformPermissionKeysToObjectsByType(
         jsonSchema,
-        getJsonSchemaProfilePermissionsKeys(jsonSchema),
+        getJsonSchemaProfilePermissionsKeysByType(jsonSchema),
         `${locationName}.${pluginName}`
       );
 
@@ -57,8 +69,7 @@ async function updateSchema(
 
       // ES: Borramos todos los permisos antiguos que se añadieron el perfil para mas adelante añadir los nuevos
       // EN: We delete all the old permissions that were added to the profile to add the new ones later.
-      // TODO Cambiar de perfiles a roles
-      _.forIn(oldPermissionObject, (permissions, profileId) => {
+      _.forIn(oldProfilePermissions, (permissions, profileId) => {
         removePermissionsPromises.push(
           leemons
             .getPlugin('users')
@@ -67,6 +78,16 @@ async function updateSchema(
               _.map(permissions, 'permissionName'),
               { transacting }
             )
+        );
+      });
+      _.forIn(oldRolesPermissions, (permissions, roleId) => {
+        removePermissionsPromises.push(
+          leemons
+            .getPlugin('users')
+            .services.roles.removePermissionsByName(roleId, _.map(permissions, 'permissionName'), {
+              removeCustomPermissions: true,
+              transacting,
+            })
         );
       });
 
@@ -87,14 +108,22 @@ async function updateSchema(
 
       // ES: Añadimos de nuevo los permisos despues que borraramos los antiguos
       // EN: We add the permissions again after deleting the old ones.
-      // TODO Cambiar de perfiles a roles
-      _.forIn(newPermissionObject, (permissions, profileId) => {
+      _.forIn(newProfilePermissions, (permissions, profileId) => {
         promises.push(
           leemons
             .getPlugin('users')
             .services.profiles.addCustomPermissions(profileId, permissions, {
               transacting,
             })
+        );
+      });
+
+      _.forIn(newRolesPermissions, (permissions, roleId) => {
+        promises.push(
+          leemons.getPlugin('users').services.roles.addPermissionMany(roleId, permissions, {
+            isCustom: true,
+            transacting,
+          })
         );
       });
 

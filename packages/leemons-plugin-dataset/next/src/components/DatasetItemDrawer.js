@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { Button, Drawer, ImageLoader, useDrawer } from 'leemons-ui';
 import useTranslate from '@multilanguage/useTranslate';
@@ -12,58 +13,37 @@ import { DatasetItemDrawerPreview } from './DatasetItemDrawerPreview';
 import { DatasetItemDrawerPermissions } from './DatasetItemDrawerPermissions';
 import { DatasetItemDrawerLocales } from './DatasetItemDrawerLocales';
 import { DatasetItemDrawerType } from './DatasetItemDrawerType';
-import DatasetItemDrawerContext from './DatasetItemDrawerContext';
-import datasetDataTypes from '../helpers/datasetDataTypes';
+import {
+  DatasetItemDrawerCentersContext,
+  DatasetItemDrawerContext,
+  DatasetItemDrawerProfilesContext,
+} from './DatasetItemDrawerContext';
+import { DatasetItemDrawerCenters } from './DatasetItemDrawerCenters';
+import SimpleBar from 'simplebar-react';
+import transformItemToSchemaAndUi from './help/transformItemToSchemaAndUi';
+import { saveDatasetFieldRequest } from '../request';
+import datasetFields from '../helpers/datasetFields';
 
-const transformItemToSaveSchema = (item, locale) => {
-  let schema = { frontConfig: item.frontConfig };
-  let ui = {};
-
-  if (item) {
-    const { frontConfig, locales } = item;
-    if (frontConfig) {
-      // Text Field
-      if (frontConfig.type === datasetDataTypes.textField.type) {
-        schema.type = 'string';
-        if (frontConfig.masked) {
-          ui['ui:widget'] = 'password';
-        }
-        if (frontConfig.onlyNumbers) {
-          schema.type = 'integer';
-        }
-      }
-      // Rich Text
-      if (frontConfig.type === datasetDataTypes.richText.type) {
-        schema.type = 'string';
-        ui['ui:widget'] = 'textarea';
-      }
-      // Text Field / Rich Text
-      if (
-        frontConfig.type === datasetDataTypes.textField.type ||
-        frontConfig.type === datasetDataTypes.richText.type
-      ) {
-        if (item.minLength) schema.minLength = parseInt(item.minLength);
-        if (item.maxLength) schema.maxLength = parseInt(item.maxLength);
-      }
-    }
-
-    if (locale && locales && locales[locale]) {
-      schema = { ...schema, ...locales[locale].schema };
-      ui = { ...ui, ...locales[locale].ui };
-    }
-  }
-
-  console.log(schema);
-
-  return { schema, ui };
-};
-
-const DatasetItemDrawer = ({ drawer, close, item: _item }) => {
+const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName }) => {
   const [translations] = useTranslate({ keysStartsWith: prefixPN('datasetItemDrawer') });
   const t = tLoader(prefixPN('datasetItemDrawer'), translations);
   const { t: tCommon } = useCommonTranslate('forms');
+  const [saveLoading, setSaveLoading] = useState(false);
   const [contextState, setContextState] = useState({});
-  const [item, setItem] = useState(_item || { frontConfig: { permissions: [] } });
+  const [profileContextState, setProfileContextState] = useState({});
+  const [centersContextState, setCentersContextState] = useState({});
+  const [item, setItem] = useState(
+    _item
+      ? {
+          frontConfig: {
+            permissions: _item.schema.frontConfig.permissions,
+            centers: _item.schema.frontConfig.centers,
+            isAllCenterMode: _item.schema.frontConfig.isAllCenterMode,
+          },
+          id: _item.id,
+        }
+      : { frontConfig: { permissions: [] } }
+  );
 
   const {
     register,
@@ -78,14 +58,113 @@ const DatasetItemDrawer = ({ drawer, close, item: _item }) => {
 
   useEffect(() => {
     if (_item) {
-      setValue('frontConfig.name', _item.frontConfig.name);
+      setValue('frontConfig.name', _item.schema.frontConfig.name);
+      _.forIn(_item.schema.frontConfig, (value, key) => {
+        setValue(`frontConfig.${key}`, value);
+      });
     }
   }, []);
 
   const onSubmit = async (data) => {
     try {
-      console.log(data);
-    } catch (err) {}
+      // ES: Datos principales para crear/actualizar el schema
+      const schemaWithAllConfig = transformItemToSchemaAndUi(data, Object.keys(data.locales)[0]);
+      schemaWithAllConfig.schema.frontConfig = {
+        ...schemaWithAllConfig.schema.frontConfig,
+        ...item.frontConfig,
+      };
+      // ES: Datos secundarios traducciones
+      const schemaLocales = {};
+      _.forIn(data.locales, (value, key) => {
+        schemaLocales[key] = transformItemToSchemaAndUi(data, key);
+        const schemaGoodKeys = {};
+        _.forIn(schemaLocales[key].schema, (value, key) => {
+          if (datasetFields.schema.indexOf(key) >= 0) {
+            schemaGoodKeys[key] = value;
+          }
+        });
+        schemaLocales[key].schema = schemaGoodKeys;
+        const uiGoodKeys = {};
+        _.forIn(schemaLocales[key].ui, (value, key) => {
+          if (datasetFields.ui.indexOf(key) >= 0) {
+            uiGoodKeys[key] = value;
+          }
+        });
+        schemaLocales[key].ui = uiGoodKeys;
+      });
+      // ES: Calculamos los permisos finales
+      const permissions = {
+        // ES: Si esta marcado como que los permisos afecten a todos los centros decimos que las ids
+        // son de tipo perfil, si solo afecta a unos centros en concreto es rol por que se almacenaran
+        // las ids de los roles que sean la interseccion de centro - perfil
+        permissionsType: schemaWithAllConfig.schema.frontConfig.isAllCenterMode
+          ? 'profile'
+          : 'role',
+        permissions: {},
+      };
+      if (schemaWithAllConfig.schema.frontConfig.permissions) {
+        if (permissions.permissionsType === 'profile') {
+          _.forEach(schemaWithAllConfig.schema.frontConfig.permissions, ({ id, view, edit }) => {
+            permissions.permissions[id] = [];
+            if (view) permissions.permissions[id].push('view');
+            if (edit) permissions.permissions[id].push('edit');
+          });
+        } else {
+          const oneOfCentersHasRole = (role) => {
+            const selectedCenters = _.filter(
+              centersContextState.centers,
+              ({ id }) => schemaWithAllConfig.schema.frontConfig.centers.indexOf(id) >= 0
+            );
+            let hasRole = false;
+            _.forEach(selectedCenters, ({ roles }) => {
+              _.forEach(roles, ({ id }) => {
+                if (id === role) {
+                  hasRole = true;
+                  return false;
+                }
+              });
+              if (hasRole) return false;
+            });
+            return hasRole;
+          };
+          _.forEach(
+            schemaWithAllConfig.schema.frontConfig.permissions,
+            ({ id, view, edit, roles }) => {
+              _.forEach(roles, (role) => {
+                if (oneOfCentersHasRole(role.id)) {
+                  permissions.permissions[role.id] = [];
+                  if (view) permissions.permissions[role.id].push('view');
+                  if (edit) permissions.permissions[role.id].push('edit');
+                }
+              });
+            }
+          );
+        }
+      }
+
+      schemaWithAllConfig.schema = { ...schemaWithAllConfig.schema, ...permissions };
+
+      if (_item && _item.id) {
+        schemaWithAllConfig.schema.id = _item.id;
+      }
+
+      if (locationName && pluginName) {
+        try {
+          setSaveLoading(true);
+          await saveDatasetFieldRequest(
+            locationName,
+            pluginName,
+            schemaWithAllConfig,
+            schemaLocales
+          );
+          setSaveLoading(false);
+        } catch (e) {
+          setSaveLoading(false);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const onPermissionsChange = (event) => {
@@ -100,36 +179,62 @@ const DatasetItemDrawer = ({ drawer, close, item: _item }) => {
     );
   };
 
+  const onCentersChange = (event) => {
+    console.log(event);
+    setItem(
+      update(item, {
+        frontConfig: {
+          $merge: event,
+        },
+      })
+    );
+  };
+
   return (
-    <Drawer {...drawer}>
-      <DatasetItemDrawerContext.Provider
+    <DatasetItemDrawerProfilesContext.Provider
+      value={{
+        ...profileContextState,
+        setState: (data) => setProfileContextState({ ...profileContextState, ...data }),
+      }}
+    >
+      <DatasetItemDrawerCentersContext.Provider
         value={{
-          ...contextState,
-          tCommon,
-          t,
-          item,
-          form: {
-            register,
-            handleSubmit,
-            setValue,
-            getValues,
-            watch,
-            errors,
-          },
-          setState: (data) => setContextState({ ...contextState, ...data }),
+          ...centersContextState,
+          setState: (data) => setCentersContextState({ ...centersContextState, ...data }),
         }}
       >
-        <div className="max-w-screen-xl w-screen h-full flex flex-row">
-          <div className="w-4/12 bg-base-200 h-full">
-            <DatasetItemDrawerPreview
-              t={t}
-              item={transformItemToSaveSchema(currentFormValues, contextState.currentLocale)}
-            />
-          </div>
-          <div className="w-8/12 h-full px-10 py-4 relative">
-            <form onSubmit={handleSubmit(onSubmit)}>
+        <DatasetItemDrawerContext.Provider
+          value={{
+            ...contextState,
+            tCommon,
+            t,
+            item,
+            locationName,
+            pluginName,
+            form: {
+              register,
+              handleSubmit,
+              setValue,
+              getValues,
+              watch,
+              errors,
+            },
+            setState: (data) => setContextState({ ...contextState, ...data }),
+          }}
+        >
+          <div className="max-w-screen-xl w-screen h-full flex flex-row">
+            <div className="w-4/12 bg-base-200 h-full">
+              <DatasetItemDrawerPreview
+                t={t}
+                item={transformItemToSchemaAndUi(currentFormValues, contextState.currentLocale)}
+              />
+            </div>
+            <form
+              className="w-8/12 h-full relative flex flex-col"
+              onSubmit={handleSubmit(onSubmit)}
+            >
               {/* Titulo y cerrar */}
-              <div className="flex flex-row justify-between items-center mb-16">
+              <div className="flex flex-row justify-between items-center mb-8 pt-4 px-10">
                 <DatasetItemTitle />
                 <div
                   style={{ width: '18px', height: '18px' }}
@@ -140,27 +245,36 @@ const DatasetItemDrawer = ({ drawer, close, item: _item }) => {
                 </div>
               </div>
 
-              {/* *** Campos *** */}
-              <DatasetItemDrawerType />
+              <SimpleBar className="flex-grow h-px">
+                <div className="px-10 py-1">
+                  {/* *** Centros *** */}
+                  <div className="mb-6">
+                    <DatasetItemDrawerCenters onChange={onCentersChange} />
+                  </div>
 
-              {/* *** Idiomas *** */}
-              <DatasetItemSeparator text={t('config_and_languages')} />
-              <DatasetItemDrawerLocales />
+                  {/* *** Campos *** */}
+                  <DatasetItemDrawerType />
 
-              {/* *** Permisos *** */}
-              <DatasetItemSeparator text={t('profiles_permission')} />
-              <DatasetItemDrawerPermissions onChange={onPermissionsChange} />
+                  {/* *** Idiomas *** */}
+                  <DatasetItemSeparator text={t('config_and_languages')} />
+                  <DatasetItemDrawerLocales />
 
-              <div className="absolute w-full bg-primary-content left-0 bottom-0 px-6 py-4 text-right">
-                <Button color="primary" wide={true}>
+                  {/* *** Permisos *** */}
+                  <DatasetItemSeparator text={t('profiles_permission')} />
+                  <DatasetItemDrawerPermissions onChange={onPermissionsChange} />
+                </div>
+              </SimpleBar>
+
+              <div className="w-full bg-primary-content px-10 py-4 text-right">
+                <Button color="primary" loading={saveLoading} wide={true}>
                   {t('save')}
                 </Button>
               </div>
             </form>
           </div>
-        </div>
-      </DatasetItemDrawerContext.Provider>
-    </Drawer>
+        </DatasetItemDrawerContext.Provider>
+      </DatasetItemDrawerCentersContext.Provider>
+    </DatasetItemDrawerProfilesContext.Provider>
   );
 };
 
@@ -173,7 +287,11 @@ export const useDatasetItemDrawer = () => {
   return [
     toggleDrawer,
     function (data) {
-      return <DatasetItemDrawer drawer={drawer} close={toggleDrawer} {...data} />;
+      return (
+        <Drawer {...drawer}>
+          <DatasetItemDrawer close={toggleDrawer} {...data} />
+        </Drawer>
+      );
     },
   ];
 };

@@ -65,18 +65,37 @@ function transformJsonOrUiSchema(jsonSchema, saveKeys, replaces) {
   };
 }
 
+function getJsonSchemaProfilePermissionsKeys(jsonSchema) {
+  const keys = [];
+  _.forEach(arrKeys(jsonSchema), (key) => {
+    if (key.indexOf('.permissions.') >= 0) {
+      const k = _.split(key, '.');
+      k.pop();
+      keys.push(_.join(k, '.'));
+    }
+  });
+  return _.uniq(keys);
+}
+
 module.exports = {
   arrKeys,
-  getJsonSchemaProfilePermissionsKeys(jsonSchema) {
-    const keys = [];
-    _.forEach(arrKeys(jsonSchema), (key) => {
-      if (key.indexOf('.profilePermissions.') >= 0) {
-        const k = _.split(key, '.');
-        k.pop();
-        keys.push(_.join(k, '.'));
+  getJsonSchemaProfilePermissionsKeys,
+  getJsonSchemaProfilePermissionsKeysByType(jsonSchema) {
+    const profiles = _.clone(jsonSchema);
+    const roles = _.clone(jsonSchema);
+    profiles.properties = {};
+    roles.properties = {};
+    _.forIn(jsonSchema.properties, (value, key) => {
+      if (value.permissionsType === 'profile') {
+        profiles.properties[key] = _.cloneDeep(value);
+      } else if (value.permissionsType === 'role') {
+        roles.properties[key] = _.cloneDeep(value);
       }
     });
-    return _.uniq(keys);
+    return {
+      profiles: getJsonSchemaProfilePermissionsKeys(profiles),
+      roles: getJsonSchemaProfilePermissionsKeys(roles),
+    };
   },
   transformJsonSchema(jsonSchema) {
     return transformJsonOrUiSchema(jsonSchema, ['title', 'description', 'default']);

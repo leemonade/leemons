@@ -28,7 +28,7 @@ async function addCustomPermissions(profileId, _permissions, { transacting: _tra
       const role = await getProfileRole(profileId, { transacting });
       // ES: Borramos los permisos por si alguno ya existian de antes que se borre ya que se añadira mas adelante
       // EN: We delete the permissions, in case any of them already existed before they will be added later.
-      await removePermissionsByName(role, _.map(permissions, 'permissionName'), {
+      await removePermissionsByName.call(this, role, _.map(permissions, 'permissionName'), {
         removeCustomPermissions: true,
         transacting,
       });
@@ -36,7 +36,10 @@ async function addCustomPermissions(profileId, _permissions, { transacting: _tra
       await Promise.all([
         // ES: Añadimos los permisos
         // EN: Add permissions
-        addPermissionMany(role, permissions, { isCustom: true, transacting }),
+        addPermissionMany.call(this, role, permissions, {
+          isCustom: true,
+          transacting,
+        }),
 
         // ES: Actualizamos los usuarios para que recarguen los permisos
         // EN: Update users to reload permissions

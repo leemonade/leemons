@@ -27,7 +27,10 @@ module.exports = {
     },
     isCustom: {
       type: 'boolean',
-      default: false,
+      options: {
+        defaultTo: false,
+        notNull: true,
+      },
     },
   },
   primaryKey: {

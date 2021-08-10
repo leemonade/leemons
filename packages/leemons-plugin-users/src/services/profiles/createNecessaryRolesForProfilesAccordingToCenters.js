@@ -1,12 +1,5 @@
 const _ = require('lodash');
-const getProfileRole = require('./getProfileRole');
-const removePermissionsByName = require('../roles/removePermissionsByName');
 const { table } = require('../tables');
-const { addPermissionMany, add } = require('../roles');
-const { validatePermissionName } = require('../../validations/exists');
-const {
-  markAllUsersWithProfileToReloadPermissions,
-} = require('./markAllUsersWithProfileToReloadPermissions');
 
 /**
  * Create all roles for profiles por all centers in platform

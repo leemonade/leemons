@@ -68,14 +68,12 @@ async function update(
         removePermissionAll(id, { transacting }),
       ]);
 
-      console.log(n);
-
       // ES: Si nos pasan que center es explicitamente null significa que quieren quitarle el centro al rol y si viene centro es que quieres actualizarlo
       if (_.isNull(center) || center)
         await table.roleCenter.delete({ id: roleCenter.id }, { transacting });
       if (center) await table.roleCenter.create({ role: role.id, center }, { transacting });
 
-      await addPermissionMany(id, permissions, { transacting });
+      await addPermissionMany.call(this, id, permissions, { transacting });
       return role;
     },
     table.roles,

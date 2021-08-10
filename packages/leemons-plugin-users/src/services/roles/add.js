@@ -50,7 +50,7 @@ async function add(
       if (center) await table.roleCenter.create({ role: role.id, center }, { transacting });
       if (profile) await table.profileRole.create({ role: role.id, profile }, { transacting });
 
-      await addPermissionMany(role.id, permissions, { transacting });
+      await addPermissionMany.call(this, role.id, permissions, { transacting });
       return role;
     },
     table.roles,

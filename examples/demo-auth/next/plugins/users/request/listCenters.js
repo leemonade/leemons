@@ -1,4 +1,4 @@
-async function getCenters(body) {
+async function listCenters(body) {
   return leemons.api(
     {
       url: 'users/centers',
@@ -11,4 +11,4 @@ async function getCenters(body) {
   );
 }
 
-export default getCenters;
+export default listCenters;

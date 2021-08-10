@@ -31,7 +31,7 @@ async function removeCustomPermissionsByName(
       const role = await getProfileRole(profileId, { transacting });
 
       await Promise.all([
-        removePermissionsByName(role, permissions, {
+        removePermissionsByName.call(this, role, permissions, {
           removeCustomPermissions: true,
           transacting,
         }),

@@ -1,11 +1,14 @@
 import * as _ from 'lodash';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { getDefaultPlatformLocaleRequest, getPlatformLocalesRequest } from '@users/request';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { FormControl, Input, Tab, TabList, TabPanel, Tabs } from 'leemons-ui';
 import { ExclamationIcon } from '@heroicons/react/outline';
 import update from 'immutability-helper';
 import DatasetItemDrawerContext from './DatasetItemDrawerContext';
+import { useAsync } from '@common/useAsync';
+import { getDatasetSchemaFieldLocaleRequest } from '../request';
+import datasetFields from '../helpers/datasetFields';
 
 const LocaleTab = ({ required, locale, load }) => {
   const { t, tCommon, form } = useContext(DatasetItemDrawerContext);
@@ -99,47 +102,70 @@ export const DatasetItemDrawerLocales = () => {
   const [defaultLocale, setDefaultLocale] = useState();
   const [locales, setLocales] = useState([]);
   const [loadedLocales, setLoadedLocales] = useState([]);
-  const { form, setState } = useContext(DatasetItemDrawerContext);
+  const { form, setState, locationName, pluginName, item } = useContext(DatasetItemDrawerContext);
 
   const loadLocale = async (locale) => {
     setState({ currentLocale: locale });
     if (loadedLocales.indexOf(locale) < 0) {
-      // TODO: Cargamos del backend si es que tenemos item
+      if (locationName && pluginName && item && item.id) {
+        try {
+          const { schema, ui } = await getDatasetSchemaFieldLocaleRequest(
+            locationName,
+            pluginName,
+            locale,
+            item.id
+          );
+
+          _.forIn(schema, (value, key) => {
+            if (datasetFields.schema.indexOf(key) >= 0) {
+              form.setValue(`locales.${locale}.schema.${key}`, value);
+            }
+          });
+          _.forIn(ui, (value, key) => {
+            if (datasetFields.ui.indexOf(key) >= 0) {
+              form.setValue(`locales.${locale}.ui.${key}`, value);
+            }
+          });
+        } catch (e) {
+          if (e.code !== 4002) setError(e);
+        }
+      }
       setLoadedLocales(update(loadedLocales, { $push: [locale] }));
     }
   };
 
-  const getDefaultLocale = async () => {
-    const { locale } = await getDefaultPlatformLocaleRequest();
-    setDefaultLocale(locale);
-    return locale;
-  };
+  const load = useMemo(
+    () => async () => {
+      const { locale } = await getDefaultPlatformLocaleRequest();
+      const { locales: _locales } = await getPlatformLocalesRequest();
+      return { locale, locales: _locales };
+    },
+    []
+  );
 
-  const getLocales = async (_defaultLocale) => {
-    const { locales: _locales } = await getPlatformLocalesRequest();
-    const localeIndex = _.findIndex(_locales, { locale: _defaultLocale });
-    if (localeIndex >= 0) {
-      const locale = _locales[localeIndex];
-      _locales.splice(localeIndex, 1);
-      _locales.unshift(locale);
-    }
-    setLocales(_locales);
-  };
-
-  const init = async () => {
-    try {
-      setLoading(true);
-      const _defaultLocale = await getDefaultLocale();
-      await getLocales(_defaultLocale);
+  const onSuccess = useMemo(
+    () => ({ locale, locales: _locales }) => {
+      const localeIndex = _.findIndex(_locales, { locale: locale });
+      if (localeIndex >= 0) {
+        const locale = _locales[localeIndex];
+        _locales.splice(localeIndex, 1);
+        _locales.unshift(locale);
+      }
+      setDefaultLocale(locale);
+      setLocales(_locales);
       setLoading(false);
-    } catch (e) {
-      setError(e);
-    }
-  };
+    },
+    []
+  );
 
-  useEffect(() => {
-    init();
-  }, []);
+  const onError = useMemo(
+    () => (e) => {
+      setError(e);
+    },
+    []
+  );
+
+  useAsync(load, onSuccess, onError);
 
   return (
     <>
@@ -150,7 +176,8 @@ export const DatasetItemDrawerLocales = () => {
             <TabList>
               {locales.map(({ name, code }) => (
                 <Tab key={code} id={`id-${code}`} panelId={`panel-${code}`}>
-                  {code === defaultLocale ? (
+                  {code === defaultLocale &&
+                  !form.watch(`locales.${defaultLocale}.schema.title`) ? (
                     <ExclamationIcon
                       className={`w-4 h-4 mr-2 ${
                         _.get(form.errors, `locales.${defaultLocale}`)

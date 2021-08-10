@@ -19,6 +19,11 @@ function PageHeader({
   cancelButton,
   duplicateButton,
   editButton,
+  newButtonLoading,
+  saveButtonLoading,
+  cancelButtonLoading,
+  duplicateButtonLoading,
+  editButtonLoading,
   onNewButton,
   onSaveButton,
   onCancelButton,
@@ -94,6 +99,7 @@ function PageHeader({
           key="cancel-btn"
           color="ghost"
           className="text-primary"
+          loading={cancelButtonLoading}
           onClick={(e) => onPressButton(onCancelButton, e)}
         >
           {_.isString(cancelButton) ? cancelButton : 'Cancel'}
@@ -106,6 +112,7 @@ function PageHeader({
           key="duplicate-btn"
           color="primary"
           outlined={true}
+          loading={duplicateButtonLoading}
           onClick={(e) => onPressButton(onDuplicateButton, e)}
         >
           {_.isString(duplicateButton) ? duplicateButton : 'Duplicate'}
@@ -114,21 +121,36 @@ function PageHeader({
     }
     if (editButton) {
       buttons.push(
-        <Button key="edit-btn" color="primary" onClick={(e) => onPressButton(onEditButton, e)}>
+        <Button
+          key="edit-btn"
+          color="primary"
+          loading={editButtonLoading}
+          onClick={(e) => onPressButton(onEditButton, e)}
+        >
           {_.isString(editButton) ? editButton : 'Edit'}
         </Button>
       );
     }
     if (saveButton) {
       buttons.push(
-        <Button key="save-btn" color="primary" onClick={(e) => onPressButton(onSaveButton, e)}>
+        <Button
+          key="save-btn"
+          color="primary"
+          loading={saveButtonLoading}
+          onClick={(e) => onPressButton(onSaveButton, e)}
+        >
           {_.isString(saveButton) ? saveButton : 'Save'}
         </Button>
       );
     }
     if (newButton) {
       buttons.push(
-        <Button key="new-btn" color="secondary" onClick={(e) => onPressButton(onNewButton, e)}>
+        <Button
+          key="new-btn"
+          color="secondary"
+          loading={newButtonLoading}
+          onClick={(e) => onPressButton(onNewButton, e)}
+        >
           <PlusIcon className="w-6 h-6 mr-1" />
           {_.isString(newButton) ? newButton : 'New'}
         </Button>
@@ -171,6 +193,11 @@ PageHeader.propTypes = {
   cancelButton: PropTypes.oneOf([PropTypes.bool, PropTypes.string]),
   duplicateButton: PropTypes.oneOf([PropTypes.bool, PropTypes.string]),
   editButton: PropTypes.oneOf([PropTypes.bool, PropTypes.string]),
+  newButtonLoading: PropTypes.bool,
+  saveButtonLoading: PropTypes.bool,
+  cancelButtonLoading: PropTypes.bool,
+  duplicateButtonLoading: PropTypes.bool,
+  editButtonLoading: PropTypes.bool,
   onNewButton: PropTypes.func,
   onSaveButton: PropTypes.func,
   onCancelButton: PropTypes.func,

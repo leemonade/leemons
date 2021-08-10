@@ -12,7 +12,7 @@ export const DatasetItemDrawerPreview = ({ t, item }) => {
     required: [],
   };
 
-  if (item.required) {
+  if (item.schema?.frontConfig?.required) {
     schema.required.push(pName);
   }
 

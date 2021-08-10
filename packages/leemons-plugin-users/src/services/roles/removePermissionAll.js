@@ -1,4 +1,5 @@
 const { table } = require('../tables');
+const searchUsersWithRoleAndMarkAsReloadPermissions = require('./searchUsersWithRoleAndMarkAsReloadPermissions');
 
 /**
  * Remove all permissions of role
@@ -14,6 +15,7 @@ async function removePermissionAll(roleId, { removeCustomPermissions, transactin
   if (!removeCustomPermissions) {
     query.isCustom_$ne = true;
   }
+  await searchUsersWithRoleAndMarkAsReloadPermissions(roleId, { transacting });
   return table.rolePermission.deleteMany(query, { transacting });
 }
 

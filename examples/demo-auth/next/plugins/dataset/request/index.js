@@ -1,3 +1,7 @@
-import test from './test';
+import getDatasetSchema from './getDatasetSchema';
+import saveDatasetField from './saveDatasetField';
+import getDatasetSchemaFieldLocale from './getDatasetSchemaFieldLocale';
 
-export const testRequest = test;
+export const getDatasetSchemaRequest = getDatasetSchema;
+export const saveDatasetFieldRequest = saveDatasetField;
+export const getDatasetSchemaFieldLocaleRequest = getDatasetSchemaFieldLocale;

@@ -50,6 +50,7 @@ function ProfileDetail() {
   const [permissions, setPermissions] = useState(null);
   const [profile, setProfile] = useState(null);
   const [actionT, setActionT] = useState(null);
+  const [saveLoading, setSaveLoading] = useState(false);
   const [permissionT, setPermissionT] = useState(null);
   const [tableData, setTableData] = useState([]);
 
@@ -134,7 +135,7 @@ function ProfileDetail() {
   }
 
   async function saveProfile(data) {
-    console.log(data);
+    setSaveLoading(true);
     let response;
     if (profile && profile.id) {
       response = await updateProfileRequest({
@@ -144,6 +145,7 @@ function ProfileDetail() {
     } else {
       response = await addProfileRequest(data);
     }
+    setSaveLoading(false);
     goDetailProfilePage(response.profile.uri);
   }
 
@@ -153,11 +155,6 @@ function ProfileDetail() {
 
       setValue('name', response.profile.name);
       setValue('description', response.profile.description);
-      /*
-      _.forIn(response.profile.permissions, (value, key) => {
-        setValue(`permissions.${key}`, value);
-      });
-       */
 
       setProfile(response.profile);
     } catch (err) {
@@ -189,6 +186,7 @@ function ProfileDetail() {
           registerFormTitleErrors={errors.title}
           titlePlaceholder={t('profile_name')}
           saveButton={tCommonHeader('save')}
+          saveButtonLoading={saveLoading}
           cancelButton={tCommonHeader('cancel')}
           onNewButton={goDetailProfilePage}
           onCancelButton={goListProfilesPage}
@@ -206,9 +204,9 @@ function ProfileDetail() {
         </div>
       </form>
 
-      <div className="bg-primary-content">
-        <PageContainer>
-          <Tabs>
+      <Tabs>
+        <div className="bg-primary-content">
+          <PageContainer>
             <TabList>
               <Tab id={`id-permissions`} panelId={`panel-permissions`}>
                 {t('permissions')}
@@ -217,19 +215,23 @@ function ProfileDetail() {
                 {t('dataset')}
               </Tab>
             </TabList>
+          </PageContainer>
+        </div>
 
-            <TabPanel id={`panel-permissions`} tabId={`id-permissions`}>
-              <div className="bg-primary-content py-8">
-                <Table columns={tableHeaders} data={tableData} setData={setTableData} />
-              </div>
-            </TabPanel>
+        <TabPanel id={`panel-permissions`} tabId={`id-permissions`}>
+          <PageContainer>
+            <div className="bg-primary-content p-4">
+              <Table columns={tableHeaders} data={tableData} setData={setTableData} />
+            </div>
+          </PageContainer>
+        </TabPanel>
 
-            <TabPanel id={`panel-dataset`} tabId={`id-dataset`}>
-              <div className="bg-primary-content py-8">Dataset</div>
-            </TabPanel>
-          </Tabs>
-        </PageContainer>
-      </div>
+        <TabPanel id={`panel-dataset`} tabId={`id-dataset`}>
+          <PageContainer>
+            <div className="bg-primary-content p-4">Dataset</div>
+          </PageContainer>
+        </TabPanel>
+      </Tabs>
     </>
   );
 }

@@ -41,14 +41,14 @@ module.exports = {
   defaultDatasetLocations: [
     {
       name: {
-        es: 'Dataset comun',
-        en: 'Common Dataset',
+        es: 'Datos del usuarios',
+        en: 'User data',
       },
       description: {
-        es: 'Añade datos adicionales a los comunes a todos usuarios',
-        en: 'Adds additional data to those common to all users',
+        es: 'Añade datos adicionales comunes a todos los usuarios',
+        en: 'Adds additional data common to all users',
       },
-      locationName: 'user-common-dataset',
+      locationName: 'user-data',
       pluginName: 'plugins.users',
     },
   ],
