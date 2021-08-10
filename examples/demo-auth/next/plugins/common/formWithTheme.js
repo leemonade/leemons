@@ -41,10 +41,11 @@ const BaseInput = ({
   type,
   ...rest
 }) => {
+  console.log('BaseInput', rest, type);
   return (
     <Input
       id={id}
-      type={type}
+      type={type !== 'email' ? type : 'text'}
       autoFocus={autofocus}
       disabled={disabled}
       className={`mr-10 w-full ${className}`}
@@ -105,12 +106,16 @@ function NumberField({ ...props }) {
 
 function transformErrors(errors, t) {
   return errors.map((error) => {
+    console.log('error', error);
+    if (error.name === 'format') {
+      error.message = t(`format.${error.params.format}`);
+    }
     if (error.name === 'type') {
     }
     if (error.name === 'minLength' || error.name === 'maxLength' || error.name === 'required') {
       error.message = t(error.name, error.params);
-      error.stack = `${error.property} ${error.message}`;
     }
+    error.stack = `${error.property} ${error.message}`;
     return error;
   });
 }

@@ -181,7 +181,6 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
   };
 
   const onCentersChange = (event) => {
-    console.log(event);
     setItem(
       update(item, {
         frontConfig: {

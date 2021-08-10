@@ -37,6 +37,12 @@ const transformItemToSchemaAndUi = (item, locale) => {
           schema.frontConfig.maxLength = parseInt(frontConfig.maxLength);
         }
       }
+
+      // Email
+      if (frontConfig.type === datasetDataTypes.email.type) {
+        schema.type = 'string';
+        schema.format = 'email';
+      }
     }
 
     if (locale && locales && locales[locale]) {

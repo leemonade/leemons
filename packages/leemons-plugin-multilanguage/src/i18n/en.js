@@ -5,6 +5,9 @@ module.exports = {
     email: 'Not a valid email',
     minLength: 'The field cannot be less than {limit} characters',
     maxLength: 'The field cannot be longer than {limit} characters',
+    format: {
+      email: 'Not a valid email',
+    },
   },
   request_errors: {
     permission_error:
