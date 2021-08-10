@@ -24,7 +24,7 @@ import transformItemToSchemaAndUi from './help/transformItemToSchemaAndUi';
 import { saveDatasetFieldRequest } from '../request';
 import datasetFields from '../helpers/datasetFields';
 
-const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName }) => {
+const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSave = () => {} }) => {
   const [translations] = useTranslate({ keysStartsWith: prefixPN('datasetItemDrawer') });
   const t = tLoader(prefixPN('datasetItemDrawer'), translations);
   const { t: tCommon } = useCommonTranslate('forms');
@@ -151,13 +151,14 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName }) => 
       if (locationName && pluginName) {
         try {
           setSaveLoading(true);
-          await saveDatasetFieldRequest(
+          const dataset = await saveDatasetFieldRequest(
             locationName,
             pluginName,
             schemaWithAllConfig,
             schemaLocales
           );
           setSaveLoading(false);
+          onSave(dataset);
         } catch (e) {
           setSaveLoading(false);
         }

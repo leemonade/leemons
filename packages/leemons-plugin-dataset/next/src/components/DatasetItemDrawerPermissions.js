@@ -31,7 +31,7 @@ export const DatasetItemDrawerPermissions = ({ onChange = () => {} }) => {
         accessor: 'edit',
       },
     ],
-    []
+    [t]
   );
 
   useEffect(() => {

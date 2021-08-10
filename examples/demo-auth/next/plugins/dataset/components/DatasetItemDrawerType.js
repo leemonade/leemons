@@ -65,6 +65,7 @@ export const DatasetItemDrawerType = () => {
                   color="primary"
                   {...form.register('frontConfig.masked')}
                   checked={form.watch('frontConfig.masked')}
+                  disabled={form.watch('frontConfig.onlyNumbers')}
                   onChange={(event) => form.setValue('frontConfig.masked', event.target.checked)}
                 />
               </FormControl>
@@ -123,6 +124,7 @@ export const DatasetItemDrawerType = () => {
                     color="primary"
                     {...form.register('frontConfig.onlyNumbers')}
                     checked={form.watch('frontConfig.onlyNumbers')}
+                    disabled={form.watch('frontConfig.masked')}
                     onChange={(event) =>
                       form.setValue('frontConfig.onlyNumbers', event.target.checked)
                     }
