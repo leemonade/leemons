@@ -32,4 +32,15 @@ module.exports = [
       },
     },
   },
+  {
+    path: '/remove-field',
+    method: 'POST',
+    handler: 'dataset.removeField',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.dataset.dataset': {
+        actions: ['delete', 'admin'],
+      },
+    },
+  },
 ];

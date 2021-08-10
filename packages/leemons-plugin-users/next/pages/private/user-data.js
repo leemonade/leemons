@@ -22,7 +22,7 @@ import { PlusIcon } from '@heroicons/react/outline';
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
 import { useRouter } from 'next/router';
 import { useAsync } from '@common/useAsync';
-import { getDatasetSchemaRequest } from '@dataset/request';
+import { getDatasetSchemaRequest, removeDatasetFieldRequest } from '@dataset/request';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -55,7 +55,9 @@ function BasicTab({ t }) {
     message: t('remove_modal.message'),
     cancelLabel: t('remove_modal.cancel'),
     actionLabel: t('remove_modal.action'),
-    onAction: async () => {},
+    onAction: async () => {
+      await removeDatasetFieldRequest('user-data', 'plugins.users', itemToRemove.id);
+    },
   });
 
   function newItem() {

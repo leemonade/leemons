@@ -104,8 +104,34 @@ async function saveField(ctx) {
   }
 }
 
+async function removeField(ctx) {
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      locationName: { type: 'string' },
+      pluginName: { type: 'string' },
+      item: { type: 'string' },
+    },
+    required: ['locationName', 'pluginName', 'item'],
+    additionalProperties: false,
+  });
+
+  if (validator.validate(ctx.request.body)) {
+    const dataset = await schemaService.removeField(
+      ctx.request.body.locationName,
+      ctx.request.body.pluginName,
+      ctx.request.body.item
+    );
+    ctx.status = 200;
+    ctx.body = { status: 200, dataset };
+  } else {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   getSchema,
   saveField,
+  removeField,
   getSchemaFieldLocale,
 };

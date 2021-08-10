@@ -3,9 +3,9 @@ const { existUserAgent } = require('./existUserAgent');
 const { table } = require('../tables');
 
 async function _updateUserAgentPermissions(userAgentId, { transacting: _transacting } = {}) {
-  await existUserAgent({ id: userAgentId }, true, { transacting: _transacting });
   return await global.utils.withTransaction(
     async (transacting) => {
+      await existUserAgent({ id: userAgentId }, true, { transacting });
       // ES: Borramos los permisos que salieran desde roles y sacamos todos los roles actuales del usuario, ya sea por que vienen desde grupos/perfiles/o el mismo rol que tiene
       const [groupUserAgent, userAgent] = await Promise.all([
         table.groupUserAgent.find({ userAgent: userAgentId }, { columns: ['group'], transacting }),
