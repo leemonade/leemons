@@ -9,7 +9,7 @@ const COLORS = {
 function Logo({ className, color, isotype }) {
   const colorClass = color === COLORS.POSITIVE ? 'text-black' : 'text-white';
   const classes = className || '';
-  const width = isotype ? '26' : '200';
+  const width = isotype ? '25' : '200';
 
   return (
     <svg

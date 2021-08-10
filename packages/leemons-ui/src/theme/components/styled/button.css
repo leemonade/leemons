@@ -25,6 +25,19 @@
         @apply bg-neutral border-neutral;
         box-shadow: 0 0 0 2px hsl(var(--n-f));
       }
+
+      &.btn-text {
+        @apply border-0 text-neutral;
+        background-color: hsl(var(--n) / 0%);
+        &:hover,
+        &.btn-active {
+          background-color: hsl(var(--n) / 10%);
+        }
+        &:active,
+        &:focus-visible {
+          background-color: hsl(var(--n) / 10%);
+        }
+      }
     }
     /* brand colors */
     &-primary {
@@ -38,6 +51,20 @@
         @apply bg-primary border-primary !important;
         box-shadow: 0 0 0 2px hsl(var(--p-f)) !important;
       }
+
+      &.btn-text {
+        @apply border-0 text-primary !important;
+        background-color: hsl(var(--p) / 0%) !important;
+        &:hover,
+        &.btn-active {
+          background-color: hsl(var(--p) / 10%) !important;
+        }
+        &:active,
+        &:focus-visible {
+          background-color: hsl(var(--p) / 10%) !important;
+          box-shadow: 0 0 0 2px hsl(var(--p)) !important;
+        }
+      }
     }
     &-secondary {
       @apply bg-secondary border-secondary text-secondary-content !important;
@@ -50,6 +77,20 @@
         @apply bg-secondary border-secondary !important;
         box-shadow: 0 0 0 2px hsl(var(--p-f)) !important;
       }
+
+      &.btn-text {
+        @apply border-0 text-secondary !important;
+        background-color: hsl(var(--s) / 0%) !important;
+        &:hover,
+        &.btn-active {
+          background-color: hsl(var(--s) / 10%) !important;
+        }
+        &:active,
+        &:focus-visible {
+          background-color: hsl(var(--s) / 10%) !important;
+          box-shadow: 0 0 0 2px hsl(var(--p)) !important;
+        }
+      }
     }
     &-accent {
       @apply bg-accent border-accent text-accent-content !important;
@@ -61,6 +102,20 @@
       &:focus-visible {
         @apply bg-accent border-accent !important;
         box-shadow: 0 0 0 2px hsl(var(--a-f)) !important;
+      }
+
+      &.btn-text {
+        @apply border-0 text-accent !important;
+        background-color: hsl(var(--a) / 0%) !important;
+        &:hover,
+        &.btn-active {
+          background-color: hsl(var(--a) / 10%) !important;
+        }
+        &:active,
+        &:focus-visible {
+          background-color: hsl(var(--a) / 10%) !important;
+          box-shadow: 0 0 0 2px hsl(var(--a-f)) !important;
+        }
       }
     }
 

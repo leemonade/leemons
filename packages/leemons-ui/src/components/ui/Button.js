@@ -14,6 +14,8 @@ const Button = React.forwardRef(
       square,
       circle,
       link,
+      disableOnLoading,
+      text,
       ...props
     },
     ref
@@ -27,6 +29,8 @@ const Button = React.forwardRef(
     const squareClass = square ? 'btn-square' : '';
     const circleClass = circle ? 'btn-circle' : '';
     const linkClass = link ? 'btn-link' : '';
+    const textClass = text ? 'btn-text' : '';
+    const disableClass = loading && disableOnLoading ? 'pointer-events-none' : '';
 
     return (
       <button
@@ -42,6 +46,8 @@ const Button = React.forwardRef(
           circleClass,
           linkClass,
           classes,
+          disableClass,
+          textClass,
         ].join(' ')}
         {...props}
       >
@@ -52,6 +58,7 @@ const Button = React.forwardRef(
 );
 
 Button.displayName = 'Button';
+Button.defaultProps = { disableOnLoading: true };
 
 Button.propTypes = {
   children: PropTypes.any,
@@ -64,6 +71,8 @@ Button.propTypes = {
   className: PropTypes.string,
   rounded: PropTypes.bool,
   outlined: PropTypes.bool,
+  disableOnLoading: PropTypes.bool,
+  text: PropTypes.bool,
   color: PropTypes.oneOf([
     'primary',
     'secondary',
