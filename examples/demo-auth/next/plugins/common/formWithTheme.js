@@ -42,10 +42,11 @@ const BaseInput = ({
   ...rest
 }) => {
   console.log('BaseInput', rest, type);
+  const ignoreTypes = ['email', 'url'];
   return (
     <Input
       id={id}
-      type={type !== 'email' ? type : 'text'}
+      type={ignoreTypes.indexOf(type) < 0 ? type : 'text'}
       autoFocus={autofocus}
       disabled={disabled}
       className={`mr-10 w-full ${className}`}

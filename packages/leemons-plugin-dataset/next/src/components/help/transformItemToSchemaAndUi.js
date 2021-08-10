@@ -43,6 +43,12 @@ const transformItemToSchemaAndUi = (item, locale) => {
         schema.type = 'string';
         schema.format = 'email';
       }
+
+      // URL
+      if (frontConfig.type === datasetDataTypes.link.type) {
+        schema.type = 'string';
+        schema.format = 'uri';
+      }
     }
 
     if (locale && locales && locales[locale]) {

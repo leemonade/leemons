@@ -7,6 +7,7 @@ module.exports = {
     maxLength: 'The field cannot be longer than {limit} characters',
     format: {
       email: 'Not a valid email',
+      uri: 'Not a valid url',
     },
   },
   request_errors: {
