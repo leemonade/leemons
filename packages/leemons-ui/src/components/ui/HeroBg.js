@@ -199,6 +199,7 @@ function HeroBg({ className, color, type, animate, decay, speed, solid, style })
 
   const ySM = (
     <svg
+      style={style}
       className={[colorClass, classes].join(' ')}
       width="1600"
       height="310"
@@ -232,6 +233,7 @@ function HeroBg({ className, color, type, animate, decay, speed, solid, style })
 
   const yXS = (
     <svg
+      style={style}
       className={[colorClass, classes].join(' ')}
       width="1600"
       height="155"
@@ -262,7 +264,49 @@ function HeroBg({ className, color, type, animate, decay, speed, solid, style })
     </svg>
   );
 
-  const TYPES = { lg, 'x-md': xMD, 'x-sm': xSM, 'y-sm': ySM, 'y-xs': yXS };
+  const xLG = (
+    <svg
+      style={style}
+      className={[colorClass, classes].join(' ')}
+      width="1372"
+      height="441"
+      viewBox="0 0 1372 441"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* Y = 0 */}
+      <rect width="229" height="147" fill="currentColor" />
+      <rect x="228" width="229" height="147" fill="currentColor" />
+      <rect x="457" width="229" height="147" fill="currentColor" />
+      <rect x="686" width="229" height="147" fill="currentColor" />
+      <rect x="915" width="229" height="147" fill="currentColor" />
+      <rect x="1144" width="229" height="147" fill="currentColor" />
+
+      {/* Y = 147 */}
+      <rect y="147" width="229" height="147" fill="currentColor" />
+      <rect x="228" y="147" width="229" height="147" fill="currentColor" />
+      <rect x="457" y="147" width="229" height="147" fill="currentColor" />
+      <rect x="686" y="147" width="229" height="147" fill="currentColor" />
+      <rect x="915" y="147" width="229" height="147" fill="currentColor" />
+      <rect x="1144" y="147" width="229" height="148" fill="white" />
+
+      {/* Y = 294 */}
+      <rect y="294" width="229" height="147" fill="currentColor" />
+      <rect x="228" y="294" width="229" height="147" fill="currentColor" />
+      <rect x="457" y="294" width="229" height="147" fill="currentColor" />
+      <rect x="686" y="294" width="229" height="147" fill="currentColor" />
+      <rect x="915" y="294" width="229" height="147" fill="white" />
+      <rect x="1143" y="294" width="230" height="147" fill="white" />
+
+      <path
+        d="M955 378 L955 378 C963 414 993 441 1028 441 C1064 441 1094 414 1102 378 L1102 378 H955Z"
+        fill="#F7F8FA"
+      />
+      <path d="M1371 0H1144 C1144 81 1209 148 1290 148H1371V0Z" fill="white" />
+    </svg>
+  );
+
+  const TYPES = { lg, 'x-md': xMD, 'x-sm': xSM, 'y-sm': ySM, 'y-xs': yXS, 'x-lg': xLG };
 
   const getSVGNodes = (node) => {
     let nodes = [];
@@ -369,7 +413,7 @@ HeroBg.propTypes = {
     'success',
     'error',
   ]),
-  type: PropTypes.oneOf(['lg', 'x-md', 'x-sm', 'y-sm', 'y-xs']),
+  type: PropTypes.oneOf(['lg', 'x-md', 'x-sm', 'y-sm', 'y-xs', 'x-lg']),
   decay: PropTypes.number,
   animate: PropTypes.bool,
   speed: PropTypes.number,

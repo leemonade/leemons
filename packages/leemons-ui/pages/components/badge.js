@@ -85,8 +85,11 @@ function BadgePage() {
           <Badge outlined color="primary">
             primary
           </Badge>
-          <Badge outlined color="secondary">
-            secondary
+          <Badge outlined color="secondary" className="p-2">
+            <span className="px-2">secondary</span>
+            <Button color="ghost" circle className="btn-xs">
+              <XIcon className="inline-block w-4 h-4 stroke-current" />
+            </Button>
           </Badge>
           <Badge outlined color="accent">
             accent

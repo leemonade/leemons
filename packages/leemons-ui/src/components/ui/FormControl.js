@@ -48,6 +48,7 @@ function FormControl({ children, label, labelPosition, className, formError }) {
         {childrens}
         {formError ? (
           <Label
+            className="pt-1"
             text={
               <>
                 <ExclamationIcon className="inline-block mr-1 h-4 text-error fill-current" />

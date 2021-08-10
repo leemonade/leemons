@@ -34,8 +34,16 @@ function TextareaPage() {
         <div className="text-xl font-bold">Examples</div>
 
         <Wrapper title="Textarea with border" className="flex flex-col space-y-2 max-w-xs">
-          <FormControl label="Your bio">
-            <Textarea className="h-24 textarea-bordered" placeholder="Bio" />
+          <FormControl
+            label="Your bio"
+            formError={{ message: 'Campo requerido', type: 'required' }}
+          >
+            <Textarea
+              className="h-24 textarea-bordered"
+              placeholder="Bio"
+              maxLength={140}
+              showCount
+            />
           </FormControl>
         </Wrapper>
         <Wrapper title="Textarea without border" className="flex flex-col space-y-2 max-w-xs">

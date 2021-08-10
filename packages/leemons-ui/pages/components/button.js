@@ -57,6 +57,23 @@ function ButtonPage() {
           </div>
         </Wrapper>
 
+        <Wrapper title="text buttons">
+          <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+            <Button color="primary" text>
+              primary
+            </Button>
+            <Button color="secondary" text>
+              secondary
+            </Button>
+            <Button color="accent" text>
+              accent
+            </Button>
+            <Button color="ghost" text>
+              ghost
+            </Button>
+          </div>
+        </Wrapper>
+
         <Wrapper title="active state button">
           <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
             <Button className="btn-active" role="button" aria-pressed="true">

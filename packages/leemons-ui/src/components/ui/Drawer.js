@@ -27,6 +27,7 @@ function Drawer({ isShown, isVisible, hide, options, children }) {
     transition: options && options.animated,
     'opacity-100': isVisible,
     'opacity-0': !isVisible,
+    'ease-out': true,
   });
 
   const contentClass = classNames({
@@ -40,6 +41,7 @@ function Drawer({ isShown, isVisible, hide, options, children }) {
     'translate-x-full': (!isVisible && options.side === 'right') || !options.side,
     '-translate-x-full': !isVisible && options.side === 'left',
     'bg-primary-content': true,
+    'ease-out': true,
     'z-50': true,
   });
 
