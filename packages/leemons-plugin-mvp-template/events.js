@@ -3,13 +3,22 @@ const initUsers = require('./src/users');
 const initCenters = require('./src/centers');
 const initProfiles = require('./src/profiles');
 const _ = require('lodash');
+const { ca } = require('wait-on/exampleConfig');
 
 async function events(isInstalled) {
+  console.log('MVP events');
+
   if (!isInstalled) {
-    leemons.events.once('plugins.users:pluginDidLoad', async () => {
+    const services = {
+      users: false,
+      multilanguage: false,
+    };
+    const config = async () => {
       try {
-        console.log('Añadimos mvp');
-        await leemons.getPlugin('users').services.platform.setLocale('en');
+        await leemons.getPlugin('users').services.platform.addLocale('en', 'English');
+        await leemons.getPlugin('users').services.platform.addLocale('es', 'Español');
+        await leemons.getPlugin('users').services.platform.addLocale('es-ES', 'Español (España)');
+        await leemons.getPlugin('users').services.platform.setDefaultLocale('en');
         const centers = await initCenters();
         console.log('centers', centers);
         const roles = await initRoles(centers);
@@ -21,6 +30,16 @@ async function events(isInstalled) {
       } catch (e) {
         console.error(e);
       }
+    };
+
+    leemons.events.once('plugins.users:pluginDidLoadServices', async () => {
+      if (services.multilanguage) config();
+      services.users = true;
+    });
+
+    leemons.events.once('plugins.multilanguage:pluginDidLoadServices', async () => {
+      if (services.users) config();
+      services.multilanguage = true;
     });
   }
 }

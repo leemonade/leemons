@@ -63,7 +63,7 @@ module.exports = (Base) =>
       if (userAgent) {
         const userAgents = _.isArray(userAgent) ? userAgent : [userAgent];
       }
-      const platformLocale = await leemons.getPlugin('users').platform.getLocale();
+      const platformLocale = await leemons.getPlugin('users').platform.getDefaultLocale();
       if (platformLocale) {
         finalLocales.push(platformLocale);
       }

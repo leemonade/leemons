@@ -7,9 +7,9 @@ const { table } = require('../tables');
  * @param {any} transacting - DB Transaction
  * @return {Promise<string | null>} locale
  * */
-async function getLocale({ transacting } = {}) {
+async function getDefaultLocale({ transacting } = {}) {
   const config = await table.config.findOne({ key: 'platform-locale' }, { transacting });
   return config ? config.value : null;
 }
 
-module.exports = getLocale;
+module.exports = getDefaultLocale;

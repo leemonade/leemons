@@ -14,6 +14,7 @@ import getUserProfileToken from './getUserProfileToken';
 import getRememberProfile from './getRememberProfile';
 import setRememberProfile from './setRememberProfile';
 import getCenters from './getCenters';
+import listProfiles from './listProfiles';
 
 export const loginRequest = login;
 export const resetRequest = reset;
@@ -31,3 +32,4 @@ export const listPermissionsRequest = listPermissions;
 export const getUserProfilesRequest = getUserProfiles;
 export const getUserProfileTokenRequest = getUserProfileToken;
 export const getCentersRequest = getCenters;
+export const listProfilesRequest = listProfiles;

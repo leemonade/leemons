@@ -6,18 +6,48 @@ import tLoader from '@multilanguage/helpers/tLoader';
 import { goLoginPage } from '@users/navigate';
 import prefixPN from '@users/helpers/prefixPN';
 import { withLayout } from '@layout/hoc';
-import { PageContainer, PageHeader } from 'leemons-ui';
+import { Button, PageContainer, PageHeader } from 'leemons-ui';
+import { PlusIcon } from '@heroicons/react/outline';
+import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
 
-function LoginTab() {
-  return <div>Login</div>;
+function TabDescription({ t, type }) {
+  return <div className="text-base text-secondary pb-6">{t(`${type}.description`)}</div>;
 }
 
-function BasicTab() {
-  return <div>Basic</div>;
+function LoginTab({ t }) {
+  return (
+    <div className="pt-6">
+      <TabDescription t={t} type="login" />
+    </div>
+  );
 }
 
-function DatasetTab() {
-  return <div>dATASET</div>;
+function BasicTab({ t }) {
+  return (
+    <div className="pt-6">
+      <TabDescription t={t} type="basic" />
+    </div>
+  );
+}
+
+function DatasetTab({ t }) {
+  const [toggle, DatasetItemDrawer] = useDatasetItemDrawer();
+
+  return (
+    <div className="pt-6">
+      <TabDescription t={t} type="dataset" />
+      <div className="flex flex-row justify-between">
+        <div className="flex flex-row">b</div>
+        <div>
+          <Button color="secondary" onClick={toggle}>
+            <PlusIcon className="w-6 h-6 mr-1" />
+            {t('dataset.add_field')}
+          </Button>
+        </div>
+      </div>
+      <DatasetItemDrawer />
+    </div>
+  );
 }
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de crear usuarios
@@ -71,10 +101,9 @@ function UserData() {
             </div>
             <div className="flex-1 cursor-default tab tab-lifted"></div>
           </div>
-          {tab}
-          {tab === 0 && <div>{LoginTab()}</div>}
-          {tab === 1 && <div>{BasicTab()}</div>}
-          {tab === 2 && <div>{DatasetTab()}</div>}
+          {tab === 0 && <LoginTab t={t} />}
+          {tab === 1 && <BasicTab t={t} />}
+          {tab === 2 && <DatasetTab t={t} />}
         </PageContainer>
       </div>
     </>

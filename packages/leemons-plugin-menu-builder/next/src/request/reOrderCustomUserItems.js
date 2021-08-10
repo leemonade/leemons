@@ -2,7 +2,7 @@ async function reOrderCustomUserItems(key, parentKey, orderedIds) {
   return leemons.api(
     {
       url: 'menu-builder/menu/:key/re-order',
-      allUsers: true,
+      allAgents: true,
       query: {
         key,
       },

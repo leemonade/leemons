@@ -18,5 +18,8 @@ module.exports = {
     human_error_title: 'Human error text',
     human_error_description: 'Required validation and format will added automatically.',
     profiles_permission: 'Profiles permission',
+    profile: 'Profile',
+    view: 'View',
+    edit: 'Edit',
   },
 };
