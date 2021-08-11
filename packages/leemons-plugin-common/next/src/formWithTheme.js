@@ -160,7 +160,8 @@ export default function formWithTheme(schema, ui, conditions) {
   });
   const FormWithConditionals = applyRules(schema, ui, conditions, Engine)(Form);
   const customFormats = {
-    numbers: /[0-9]*$/,
+    numbers: /^\d+$/,
+    phone: /^[\+]?[(]?[0-9]{2,3}[)]?[-\s\.]?[0-9\s]{3}[-\s\.]?[0-9\s]{4,8}$/,
   };
 
   return ({ ...props }) => {

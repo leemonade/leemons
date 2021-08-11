@@ -8,6 +8,8 @@ module.exports = {
     format: {
       email: 'Not a valid email',
       uri: 'Not a valid url',
+      numbers: 'Only numbers are allowed',
+      phone: 'Invalid phone (+xx xxxxxxxxx)',
     },
   },
   request_errors: {

@@ -38,6 +38,17 @@ const transformItemToSchemaAndUi = (item, locale) => {
         }
       }
 
+      // Number
+      if (frontConfig.type === datasetDataTypes.number.type) {
+        schema.type = 'number';
+      }
+
+      // Phone
+      if (frontConfig.type === datasetDataTypes.phone.type) {
+        schema.type = 'string';
+        schema.format = 'phone';
+      }
+
       // Email
       if (frontConfig.type === datasetDataTypes.email.type) {
         schema.type = 'string';
