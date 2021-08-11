@@ -10,7 +10,6 @@ module.exports = {
 		'users',
 		'mvp-template',
 		'menu-builder',
-		'dataset-test',
 		'provider-emails-amazon-ses'
   ],
   frontPlugins: [{

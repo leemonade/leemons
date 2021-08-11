@@ -159,6 +159,7 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
           );
           setSaveLoading(false);
           onSave(dataset);
+          close();
         } catch (e) {
           setSaveLoading(false);
         }
@@ -266,7 +267,7 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
               </SimpleBar>
 
               <div className="w-full bg-primary-content px-10 py-4 text-right">
-                <Button color="primary" loading={saveLoading} wide={true}>
+                <Button color="primary" loading={saveLoading}>
                   {t('save')}
                 </Button>
               </div>

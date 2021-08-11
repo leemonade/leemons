@@ -14,7 +14,7 @@ const transformItemToSchemaAndUi = (item, locale) => {
           ui['ui:widget'] = 'password';
         }
         if (frontConfig.onlyNumbers) {
-          schema.type = 'number';
+          schema.format = 'numbers';
         }
       }
       // Rich Text
@@ -48,6 +48,17 @@ const transformItemToSchemaAndUi = (item, locale) => {
       if (frontConfig.type === datasetDataTypes.link.type) {
         schema.type = 'string';
         schema.format = 'uri';
+      }
+
+      // Archive
+      if (frontConfig.type === datasetDataTypes.archive.type) {
+        schema.type = 'string';
+        schema.format = 'data-url';
+      }
+
+      // Boolean checkbox
+      if (frontConfig.type === datasetDataTypes.checkbox.type) {
+        schema.type = 'boolean';
       }
     }
 
