@@ -119,6 +119,32 @@
       }
     }
 
+    &-white {
+      @apply bg-white border-white text-black !important;
+      &:hover,
+      &.btn-active {
+        @apply border-black !important;
+      }
+      &:active,
+      &:focus-visible {
+        box-shadow: 0 0 0 2px hsl(var(--s-f)) !important;
+      }
+
+      &.btn-text {
+        @apply border-0 text-white !important;
+        background-color: rgba(255, 255, 255, 0) !important;
+        &:hover,
+        &.btn-active {
+          background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        &:active,
+        &:focus-visible {
+          background-color: rgba(255, 255, 255, 0.1) !important;
+          box-shadow: 0 0 0 2px rgba(255, 255, 255, 1) !important;
+        }
+      }
+    }
+
     /* btn with state colors */
     &-info {
       @apply bg-info border-info text-info-content !important;
