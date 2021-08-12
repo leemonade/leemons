@@ -63,8 +63,12 @@ async function getSchemaWithLocale(
     schema.uiData
   );
 
-  schema.compileJsonSchema = JSON.parse(schema.compileJsonSchema);
-  schema.compileJsonUI = JSON.parse(schema.compileJsonUI);
+  schema.compileJsonSchema = JSON.parse(
+    schema.compileJsonSchema.replaceAll('"-*-*-[', '[').replaceAll(']-*-*-"', ']')
+  );
+  schema.compileJsonUI = JSON.parse(
+    schema.compileJsonUI.replaceAll('"-*-*-[', '[').replaceAll(']-*-*-"', ']')
+  );
 
   return schema;
 }

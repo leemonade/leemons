@@ -1,5 +1,5 @@
 import { withTheme } from '@rjsf/core';
-import { Checkbox, FormControl, Input, Textarea } from 'leemons-ui';
+import { Checkbox, FormControl, Input, Label, Textarea } from 'leemons-ui';
 // import applyRules from 'react-jsonschema-form-conditionals';
 import Engine from 'json-rules-engine-simplified';
 import applyRules from 'rjsf-conditionals';
@@ -93,6 +93,51 @@ function NumberField({ ...props }) {
   return <BaseInput {...props} type="number" />;
 }
 
+function CheckboxesWidget({ options, onChange, schema, rawErrors, ...props }) {
+  const onCheckboxChange = (event, value) => {
+    if (event.target.checked) {
+      if (props.value.indexOf(value) < 0) {
+        onChange([...props.value, value]);
+      }
+    } else {
+      const index = props.value.indexOf(value);
+      if (index >= 0) {
+        props.value.splice(index, 1);
+        onChange(props.value);
+      }
+    }
+  };
+
+  return (
+    <div>
+      {schema.title ? (
+        <div>
+          <Label text={schema.title} />
+        </div>
+      ) : null}
+      {schema.description ? (
+        <div className="text-sm pb-2 text-secondary">{schema.description}</div>
+      ) : null}
+      <div>
+        {options.enumOptions
+          ? options.enumOptions.map(({ value, label }) => (
+              <div key={value + label} className="flex">
+                <FormControl label={label} labelPosition="right">
+                  <Checkbox
+                    color="primary"
+                    checked={value === props.value}
+                    onChange={(event) => onCheckboxChange(event, value)}
+                  />
+                </FormControl>
+              </div>
+            ))
+          : null}
+      </div>
+      <FormControl formError={rawErrors ? { message: rawErrors[0] } : null} />
+    </div>
+  );
+}
+
 function transformErrors(errors, t) {
   return errors.map((error) => {
     console.log('error', error);
@@ -101,7 +146,8 @@ function transformErrors(errors, t) {
     }
     if (error.name === 'type') {
     }
-    if (error.name === 'minLength' || error.name === 'maxLength' || error.name === 'required') {
+    const types = ['maxItems', 'minItems', 'minLength', 'maxLength', 'required'];
+    if (types.indexOf(error.name) >= 0) {
       error.message = t(error.name, error.params);
     }
     error.stack = `${error.property} ${error.message}`;
@@ -156,6 +202,7 @@ export default function formWithTheme(schema, ui, conditions) {
     widgets: {
       BaseInput,
       TextareaWidget,
+      CheckboxesWidget,
     },
   });
   const FormWithConditionals = applyRules(schema, ui, conditions, Engine)(Form);

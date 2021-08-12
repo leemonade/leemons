@@ -22,7 +22,6 @@ import { DatasetItemDrawerCenters } from './DatasetItemDrawerCenters';
 import SimpleBar from 'simplebar-react';
 import transformItemToSchemaAndUi from './help/transformItemToSchemaAndUi';
 import { saveDatasetFieldRequest } from '../request';
-import datasetFields from '../helpers/datasetFields';
 
 const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSave = () => {} }) => {
   const [translations] = useTranslate({ keysStartsWith: prefixPN('datasetItemDrawer') });
@@ -77,19 +76,24 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
       const schemaLocales = {};
       _.forIn(data.locales, (value, key) => {
         schemaLocales[key] = transformItemToSchemaAndUi(data, key);
+
+        // Schema
         const schemaGoodKeys = {};
-        _.forIn(schemaLocales[key].schema, (value, key) => {
-          if (datasetFields.schema.indexOf(key) >= 0) {
-            schemaGoodKeys[key] = value;
-          }
-        });
+        if (schemaLocales[key].schema.title) schemaGoodKeys.title = schemaLocales[key].schema.title;
+        if (schemaLocales[key].schema.description)
+          schemaGoodKeys.description = schemaLocales[key].schema.description;
+        if (schemaLocales[key].schema.items?.enumNames)
+          schemaGoodKeys.items = { enumNames: schemaLocales[key].schema.items.enumNames };
+        if (schemaLocales[key].schema.frontConfig?.checkboxLabels)
+          schemaGoodKeys.frontConfig = {
+            checkboxLabels: schemaLocales[key].schema.frontConfig.checkboxLabels,
+          };
         schemaLocales[key].schema = schemaGoodKeys;
+
+        // Ui
         const uiGoodKeys = {};
-        _.forIn(schemaLocales[key].ui, (value, key) => {
-          if (datasetFields.ui.indexOf(key) >= 0) {
-            uiGoodKeys[key] = value;
-          }
-        });
+        if (schemaLocales[key].ui['ui:help'])
+          schemaGoodKeys['ui:help'] = schemaLocales[key].ui['ui:help'];
         schemaLocales[key].ui = uiGoodKeys;
       });
       // ES: Calculamos los permisos finales

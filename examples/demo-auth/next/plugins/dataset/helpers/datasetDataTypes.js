@@ -20,9 +20,11 @@ const datasetDataTypes = {
   link: {
     type: 'link',
   },
+  /*
   archive: {
     type: 'archive',
   },
+   */
   multioption: {
     type: 'multioption',
   },

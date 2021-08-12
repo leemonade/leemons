@@ -29,5 +29,9 @@ module.exports = {
     save: 'Save',
     view: 'View',
     edit: 'Edit',
+    options_title: 'Options',
+    options_description: 'Adds different options to be selected from among them.',
+    add_option: 'Add option',
+    number_of_options: 'Number of options',
   },
 };

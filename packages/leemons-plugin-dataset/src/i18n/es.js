@@ -30,5 +30,9 @@ module.exports = {
     save: 'Guardar',
     view: 'Ver',
     edit: 'Editar',
+    options_title: 'Opciones',
+    options_description: 'Añade distintas opciones para que se pueda seleccionar entre ellas.',
+    add_option: 'Añadir opción',
+    number_of_options: 'Numero de opciones',
   },
 };

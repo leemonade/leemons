@@ -9,6 +9,7 @@ const existSchemaLocale = require('../dataset-schema-locale/existSchemaLocale');
 const updateSchemaLocale = require('../dataset-schema-locale/updateSchemaLocale');
 const updateSchema = require('./updateSchema');
 const getSchemaWithLocale = require('./getSchemaWithLocale');
+const recalculeEnumNames = require('./recalculeEnumNames');
 
 async function saveLocale(
   locale,
@@ -170,6 +171,10 @@ async function saveField(
         promises.push(saveLocale(locale, value, locationName, pluginName, id, { transacting }));
       });
       await Promise.all(promises);
+
+      // TODO Procesar todas las traducciones de los schemas para recarlcular los enumNames en funcion de su campo checkboxs
+      // Vamos coger el schema tocho, que tiene que tener los checkboxs guays y recorrernos todas las traducciones calculando el enumNames
+      await recalculeEnumNames(locationName, pluginName, { transacting });
 
       return dataset;
     },
