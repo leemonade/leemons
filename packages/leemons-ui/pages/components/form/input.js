@@ -39,7 +39,7 @@ function InputPage() {
 
         <Wrapper title="input with border" className="flex flex-col space-y-2 max-w-xs">
           <FormControl label="Username">
-            <Input outlined placeholder="username" />
+            <Input outlined placeholder="username" type="date" />
           </FormControl>
         </Wrapper>
         <Wrapper title="input without border" className="flex flex-col space-y-2 max-w-xs">

@@ -48,8 +48,23 @@ const TextareaWidget = (props) => {
 };
 
 const BaseInput = (props) => {
-  const { className, onChange, value, id, required, disabled, autofocus, type, ...rest } = props;
+  const {
+    className,
+    onChange,
+    value,
+    id,
+    required,
+    disabled,
+    autofocus,
+    type,
+    schema,
+    ...rest
+  } = props;
   const ignoreTypes = ['email', 'url'];
+  let min = null;
+  let max = null;
+  if (schema.minDate) min = new Date(schema.minDate).toISOString().slice(0, 10);
+  if (schema.maxDate) max = new Date(schema.maxDate).toISOString().slice(0, 10);
   return (
     <MyCustomFormControl {...props}>
       <Input
@@ -60,6 +75,8 @@ const BaseInput = (props) => {
         className={`mr-10 w-full ${className}`}
         outlined={true}
         value={value}
+        min={min}
+        max={max}
         onChange={(event) =>
           onChange(type === 'number' ? parseFloat(event.target.value) : event.target.value)
         }
@@ -191,7 +208,6 @@ function BooleanField(props) {
 
 function SelectWidget(props) {
   const { disabled, onBlur, onFocus, autofocus, readonly, onChange, options, ...rest } = props;
-  console.log(rest);
   return (
     <MyCustomFormControl descriptionOutside={true} {...props}>
       <Select

@@ -34,5 +34,8 @@ module.exports = {
     options_description: 'Añade distintas opciones para que se pueda seleccionar entre ellas.',
     add_option: 'Añadir opción',
     number_of_options: 'Numero de opciones',
+    limited_to: 'Limitado a',
+    from: 'Desde',
+    to: 'a',
   },
 };

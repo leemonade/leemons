@@ -172,6 +172,45 @@ export const DatasetItemDrawerType = () => {
           </div>
         </div>
       ) : null}
+
+      {/* Date from/to */}
+      {type === datasetDataTypes.date.type ? (
+        <div className="flex flex-row mt-6">
+          <div className="flex flex-col">
+            <div className="text-sm text-secondary font-medium mb-6">{t('limited_to')}</div>
+            <div className="w-6/12 flex flex-row">
+              <div className="flex-1 pr-2 flex flex-row items-center">
+                <span className="mr-2 text-sm">{t('from')}</span>
+                <FormControl
+                  className="w-full"
+                  formError={_.get(form.errors, 'frontConfig.minDate')}
+                >
+                  <Input
+                    className="w-full"
+                    type="date"
+                    outlined={true}
+                    {...form.register('frontConfig.minDate')}
+                  />
+                </FormControl>
+              </div>
+              <div className="flex-1 pl-2 flex flex-row items-center">
+                <span className="mr-2 text-sm">{t('to')}</span>
+                <FormControl
+                  className="w-full"
+                  formError={_.get(form.errors, 'frontConfig.maxDate')}
+                >
+                  <Input
+                    className="w-full"
+                    type="date"
+                    outlined={true}
+                    {...form.register('frontConfig.maxDate')}
+                  />
+                </FormControl>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 };

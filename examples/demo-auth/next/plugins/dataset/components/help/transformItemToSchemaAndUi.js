@@ -75,6 +75,20 @@ const transformItemToSchemaAndUi = (item, locale) => {
         schema.type = 'boolean';
       }
 
+      // Date
+      if (frontConfig.type === datasetDataTypes.date.type) {
+        schema.type = 'string';
+        schema.format = 'date';
+        if (frontConfig.minDate) {
+          schema.minDate = new Date(frontConfig.minDate);
+          schema.frontConfig.minDate = new Date(frontConfig.minDate);
+        }
+        if (frontConfig.maxDate) {
+          schema.maxDate = new Date(frontConfig.maxDate);
+          schema.frontConfig.maxDate = new Date(frontConfig.maxDate);
+        }
+      }
+
       // Multioption
       if (frontConfig.type === datasetDataTypes.multioption.type) {
         if (frontConfig.minItems) {

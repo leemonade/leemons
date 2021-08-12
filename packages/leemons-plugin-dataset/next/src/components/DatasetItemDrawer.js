@@ -58,8 +58,12 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
   useEffect(() => {
     if (_item) {
       setValue('frontConfig.name', _item.schema.frontConfig.name);
+      const dateKeys = ['minDate', 'maxDate'];
       _.forIn(_item.schema.frontConfig, (value, key) => {
-        setValue(`frontConfig.${key}`, value);
+        setValue(
+          `frontConfig.${key}`,
+          dateKeys.indexOf(key) >= 0 ? new Date(value).toISOString().slice(0, 10) : value
+        );
       });
     }
   }, []);

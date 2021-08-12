@@ -20,8 +20,6 @@ export const DatasetItemDrawerPreview = ({ t, item }) => {
     [pName]: item.ui,
   };
 
-  console.log(schema);
-
   const Form = formWithTheme(schema, ui, []);
 
   let data = null;
