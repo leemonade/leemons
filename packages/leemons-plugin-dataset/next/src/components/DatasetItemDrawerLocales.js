@@ -118,7 +118,7 @@ const LocaleTab = ({ required, locale, load, defaultLocale }) => {
       */}
 
       {/* Checkbox options */}
-      {type === datasetDataTypes.multioption.type ? (
+      {type === datasetDataTypes.multioption.type || type === datasetDataTypes.select.type ? (
         <div className="flex flex-row py-6">
           <div className="w-4/12">
             <div className="text-sm text-secondary">{t('options_title')}</div>

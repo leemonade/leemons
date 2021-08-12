@@ -86,6 +86,13 @@ const transformItemToSchemaAndUi = (item, locale) => {
           schema.frontConfig.maxItems = parseInt(frontConfig.maxItems);
         }
         ui['ui:widget'] = 'checkboxes';
+      }
+
+      // Multioption / Select
+      if (
+        frontConfig.type === datasetDataTypes.select.type ||
+        frontConfig.type === datasetDataTypes.multioption.type
+      ) {
         if (locale && locales && locales[locale] && locales[locale].schema.frontConfig) {
           const schemaKeys = _.map(schema.frontConfig.checkboxValues, 'key');
           _.forEachRight(locales[locale].schema.frontConfig.checkboxLabels, ({ key }, index) => {
@@ -125,6 +132,23 @@ const transformItemToSchemaAndUi = (item, locale) => {
             schema.items.enumNames.push(
               checkLocalesByKey[key] ? checkLocalesByKey[key].label : ' '
             );
+          });
+        }
+      }
+
+      // Select
+      if (frontConfig.type === datasetDataTypes.select.type) {
+        schema.type = 'string';
+        schema.enum = [];
+        schema.enumNames = [];
+        if (locale && locales && locales[locale] && locales[locale].schema.frontConfig) {
+          const checkLocalesByKey = _.keyBy(
+            locales[locale].schema.frontConfig.checkboxLabels,
+            'key'
+          );
+          _.forEach(schema.frontConfig.checkboxValues, ({ key, value }) => {
+            schema.enum.push(value);
+            schema.enumNames.push(checkLocalesByKey[key] ? checkLocalesByKey[key].label : ' ');
           });
         }
       }

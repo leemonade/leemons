@@ -1,6 +1,5 @@
 import { withTheme } from '@rjsf/core';
-import { Checkbox, FormControl, Input, Label, Textarea } from 'leemons-ui';
-// import applyRules from 'react-jsonschema-form-conditionals';
+import { Checkbox, FormControl, Input, Label, Select, Textarea } from 'leemons-ui';
 import Engine from 'json-rules-engine-simplified';
 import applyRules from 'rjsf-conditionals';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -190,6 +189,33 @@ function BooleanField(props) {
   );
 }
 
+function SelectWidget(props) {
+  const { disabled, onBlur, onFocus, autofocus, readonly, onChange, options, ...rest } = props;
+  console.log(rest);
+  return (
+    <MyCustomFormControl descriptionOutside={true} {...props}>
+      <Select
+        disabled={disabled}
+        onBlur={onBlur}
+        onFocus={onFocus}
+        autoFocus={autofocus}
+        readOnly={readonly}
+        onChange={(e) => onChange(e.target.value)}
+        outlined={true}
+        className="w-full"
+      >
+        {options.enumOptions
+          ? options.enumOptions.map(({ value, label }) => (
+              <option key={value + label} value={value} selected={props.value === value}>
+                {label}
+              </option>
+            ))
+          : null}
+      </Select>
+    </MyCustomFormControl>
+  );
+}
+
 export default function formWithTheme(schema, ui, conditions) {
   const { t } = useCommonTranslate('forms');
   const Form = withTheme({
@@ -203,6 +229,7 @@ export default function formWithTheme(schema, ui, conditions) {
       BaseInput,
       TextareaWidget,
       CheckboxesWidget,
+      SelectWidget,
     },
   });
   const FormWithConditionals = applyRules(schema, ui, conditions, Engine)(Form);
