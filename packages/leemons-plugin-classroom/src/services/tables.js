@@ -1,6 +1,5 @@
 const table = {
-  dataset: leemons.query('plugins_dataset::dataset'),
-  datasetValues: leemons.query('plugins_dataset::dataset-values'),
+  treeLevel: leemons.query('plugins_classroom::tree-level'),
 };
 
 module.exports = { table };

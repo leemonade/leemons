@@ -39,8 +39,10 @@ async function add(item, type, data, { isCustomPermission, transacting } = {}) {
         _.map(_data, ({ permissionName, actionNames }) => [permissionName, actionNames]),
         { transacting }
       ))
-    )
+    ) {
+      console.log(_data);
       throw new Error('Some of the actions do not exist for the specified permit');
+    }
   }
 
   await Promise.all(
