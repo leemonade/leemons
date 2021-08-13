@@ -22,20 +22,20 @@ function PrivateLayout({ persistentState: [state, _setState], children }) {
   }, [state]);
 
   const onOpenMenu = useCallback(() => {
-    setState({ menuWidth: 242 });
+    setState({ menuWidth: 280 });
   }, [state]);
 
   return (
     <>
-      <div className={'flex'}>
+      <div className={'flex h-screen'}>
         <DndLayer />
         <div
           style={{ width: `${state.menuWidth}px` }}
-          className={'overflow-x-visible transition-all'}
+          className={'overflow-x-visible transition-all h-full'}
         >
           <MainMenu state={state} setState={setState} onClose={onCloseMenu} onOpen={onOpenMenu} />
         </div>
-        <div className="w-full bg-secondary-content">{children}</div>
+        <div className="w-full bg-white h-screen overflow-y-auto">{children}</div>
       </div>
     </>
   );

@@ -28,6 +28,7 @@ import {
 import tLoader from '@multilanguage/helpers/tLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@users/helpers/prefixPN';
+import hooks from 'leemons-hooks';
 
 function ProfileDetail() {
   useSession({ redirectTo: goLoginPage });
@@ -142,6 +143,7 @@ function ProfileDetail() {
         ...data,
         id: profile.id,
       });
+      await hooks.fireEvent('user:update:permissions', profile);
     } else {
       response = await addProfileRequest(data);
     }
