@@ -99,7 +99,7 @@ const transformItemToSchemaAndUi = (item, locale) => {
           schema.maxItems = parseInt(frontConfig.maxItems);
           schema.frontConfig.maxItems = parseInt(frontConfig.maxItems);
         }
-        ui['ui:widget'] = 'checkboxes';
+        if (frontConfig.uiType === 'checkboxs') ui['ui:widget'] = 'checkboxes';
       }
 
       // Multioption / Select

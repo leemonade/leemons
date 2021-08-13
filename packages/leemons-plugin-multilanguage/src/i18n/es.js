@@ -38,5 +38,10 @@ module.exports = {
     multioption: 'Multiples opciones',
     checkbox: 'Checkbox',
     select: 'Select',
+    multioption_types: {
+      dropdown: 'Dropdown (+chips)',
+      checkboxs: 'Checkboxes',
+      radio: 'Radiobuttons',
+    },
   },
 };

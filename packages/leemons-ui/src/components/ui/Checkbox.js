@@ -18,7 +18,9 @@ const Checkbox = React.forwardRef(
     const [checked, setChecked] = useState({ checked: defaultChecked, fromClick: false });
 
     useEffect(() => {
-      setChecked({ checked: defaultChecked, fromClick: false });
+      if (checked.checked !== defaultChecked) {
+        setChecked({ checked: defaultChecked, fromClick: false });
+      }
     }, [defaultChecked]);
 
     const spanClick = (event) => {

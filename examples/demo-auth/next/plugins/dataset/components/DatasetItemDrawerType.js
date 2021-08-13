@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import * as _ from 'lodash';
-import { Checkbox, FormControl, Input, Select } from 'leemons-ui';
+import { Button, Checkbox, FormControl, ImageLoader, Input, Select } from 'leemons-ui';
 import DatasetItemDrawerContext from './DatasetItemDrawerContext';
 import datasetDataTypes from '../helpers/datasetDataTypes';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -9,8 +9,33 @@ export const DatasetItemDrawerType = () => {
   const { t, tCommon, item, form } = useContext(DatasetItemDrawerContext);
   const { t: tCommonTypes } = useCommonTranslate('form_field_types');
   const type = form.watch('frontConfig.type');
+  const checkboxValues = form.watch('frontConfig.checkboxValues');
 
   const dataTypes = _.values(datasetDataTypes);
+
+  const addNewOption = () => {
+    let checkboxs = form.getValues(`frontConfig.checkboxValues`);
+    if (!_.isArray(checkboxs)) checkboxs = [];
+    const newKey = new Date().getTime();
+    checkboxs.push({ key: newKey, value: '' });
+    form.setValue(`frontConfig.checkboxValues`, checkboxs);
+  };
+
+  const removeOption = (key) => {
+    const checkboxs = form.getValues(`frontConfig.checkboxValues`);
+    const index = _.findIndex(checkboxs, { key });
+    if (index >= 0) {
+      checkboxs.splice(index, 1);
+      form.setValue(`frontConfig.checkboxValues`, checkboxs);
+    }
+  };
+
+  const inputCheckboxChange = (event, index) => {
+    const value = form.getValues(`frontConfig.checkboxValues`);
+    value[index].value = event.target.value;
+    form.setValue(`frontConfig.checkboxValues`, value);
+  };
+
   return (
     <>
       {/* Tipo de campo / Required / Masked */}
@@ -82,7 +107,7 @@ export const DatasetItemDrawerType = () => {
             <div className="text-sm text-secondary font-medium mr-6">{t('field_length')}</div>
             <div className="w-6/12 flex flex-row">
               <div className="flex-1 pr-2 flex flex-row items-center">
-                <span className="mr-2">{t('min')}</span>
+                <span className="mr-2 text-sm">{t('min')}</span>
                 <FormControl
                   className="w-full"
                   formError={_.get(form.errors, 'frontConfig.minLength')}
@@ -96,7 +121,7 @@ export const DatasetItemDrawerType = () => {
                 </FormControl>
               </div>
               <div className="flex-1 pl-2 flex flex-row items-center">
-                <span className="mr-2">{t('max')}</span>
+                <span className="mr-2 text-sm">{t('max')}</span>
                 <FormControl
                   className="w-full"
                   formError={_.get(form.errors, 'frontConfig.maxLength')}
@@ -136,39 +161,115 @@ export const DatasetItemDrawerType = () => {
 
       {/* Field length */}
       {type === datasetDataTypes.multioption.type ? (
-        <div className="flex flex-row mt-6">
-          <div className="flex flex-row justify-between items-center w-7/12">
-            <div className="text-sm text-secondary font-medium mr-6">{t('number_of_options')}</div>
-            <div className="w-6/12 flex flex-row">
-              <div className="flex-1 pr-2 flex flex-row items-center">
-                <span className="mr-2">{t('min')}</span>
-                <FormControl
-                  className="w-full"
-                  formError={_.get(form.errors, 'frontConfig.minItems')}
-                >
-                  <Input
-                    className="w-full"
-                    type="number"
-                    outlined={true}
-                    {...form.register('frontConfig.minItems')}
-                  />
-                </FormControl>
+        <>
+          {/* Multioption ui type */}
+          <div className="flex flex-row mt-6">
+            <div className="flex flex-row justify-between items-center w-7/12">
+              <div className="w-6/12">
+                <div className="text-sm text-secondary font-medium mr-6">{t('show_as')}</div>
+                <div className="text-sm text-neutral-content">{t('show_as_description')}</div>
               </div>
-              <div className="flex-1 pl-2 flex flex-row items-center">
-                <span className="mr-2">{t('max')}</span>
-                <FormControl
-                  className="w-full"
-                  formError={_.get(form.errors, 'frontConfig.maxItems')}
-                >
-                  <Input
-                    className="w-full"
-                    type="number"
+              <div className="w-6/12">
+                <FormControl formError={_.get(form.errors, 'frontConfig.type')}>
+                  <Select
                     outlined={true}
-                    {...form.register('frontConfig.maxItems')}
-                  />
+                    className="w-full max-w-xs"
+                    {...form.register('frontConfig.uiType', {
+                      required: tCommon('required'),
+                    })}
+                  >
+                    <option value="dropdown">{tCommonTypes('multioption_types.dropdown')}</option>
+                    <option value="checkboxs">{tCommonTypes('multioption_types.checkboxs')}</option>
+                    <option value="radio">{tCommonTypes('multioption_types.radio')}</option>
+                  </Select>
                 </FormControl>
               </div>
             </div>
+          </div>
+
+          {/* Multioption min/max */}
+          {form.watch('frontConfig.uiType') !== 'radio' ? (
+            <div className="flex flex-row mt-6">
+              <div className="flex flex-row justify-between items-center w-7/12">
+                <div className="text-sm text-secondary font-medium mr-6">
+                  {t('number_of_options')}
+                </div>
+                <div className="w-6/12 flex flex-row">
+                  <div className="flex-1 pr-2 flex flex-row items-center">
+                    <span className="mr-2 text-sm">{t('min')}</span>
+                    <FormControl
+                      className="w-full"
+                      formError={_.get(form.errors, 'frontConfig.minItems')}
+                    >
+                      <Input
+                        className="w-full"
+                        type="number"
+                        outlined={true}
+                        {...form.register('frontConfig.minItems')}
+                      />
+                    </FormControl>
+                  </div>
+                  <div className="flex-1 pl-2 flex flex-row items-center">
+                    <span className="mr-2 text-sm">{t('max')}</span>
+                    <FormControl
+                      className="w-full"
+                      formError={_.get(form.errors, 'frontConfig.maxItems')}
+                    >
+                      <Input
+                        className="w-full"
+                        type="number"
+                        outlined={true}
+                        {...form.register('frontConfig.maxItems')}
+                      />
+                    </FormControl>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </>
+      ) : null}
+
+      {/* Multioption values */}
+      {type === datasetDataTypes.multioption.type || type === datasetDataTypes.select.type ? (
+        <div className="pt-6 w-7/12">
+          <div className="mb-4">
+            <div className="text-sm text-secondary font-medium">{t('options_title')}</div>
+            <div className="text-sm text-neutral-content">{t('options_description')}</div>
+          </div>
+          <div>
+            {checkboxValues
+              ? checkboxValues.map((value, index) => {
+                  return (
+                    <div key={value.key} className="pb-4">
+                      <FormControl
+                        className="w-full relative"
+                        formError={_.get(form.errors, `frontConfig.checkboxValues[${index}].value`)}
+                      >
+                        <Input
+                          className="w-full"
+                          outlined={true}
+                          value={_.get(checkboxValues, `[${index}].value`)}
+                          onChange={(e) => inputCheckboxChange(e, index)}
+                        />
+                        <div
+                          onClick={() => removeOption(value.key)}
+                          className="absolute right-3 text-neutral-content hover:text-error cursor-pointer"
+                          style={{ width: '12px', height: '12px', top: '14px' }}
+                        >
+                          <ImageLoader
+                            className="stroke-current fill-current"
+                            src={'/assets/svgs/remove.svg'}
+                          />
+                        </div>
+                      </FormControl>
+                    </div>
+                  );
+                })
+              : null}
+            <Button type="button" color="secondary" onClick={addNewOption}>
+              {t('add_option')}
+            </Button>
           </div>
         </div>
       ) : null}

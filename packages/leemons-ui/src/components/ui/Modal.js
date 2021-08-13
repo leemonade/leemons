@@ -6,7 +6,7 @@ import shortid from 'shortid';
 import PropTypes from 'prop-types';
 import Button from './Button';
 
-function Modal({ isModalVisible, hide, options, children }) {
+function Modal({ isModalVisible, hide, options, children, className }) {
   const handleOverlayClicked = (e) => {
     if (e.target.className !== 'modal-wrapper') {
       return;
@@ -108,7 +108,7 @@ function Modal({ isModalVisible, hide, options, children }) {
             role="dialog"
             onClick={handleOverlayClicked}
           >
-            <div className={modalClass}>
+            <div className={`${modalClass} ${className}`}>
               <div className="modal-content">
                 {options !== undefined && options.closeButton === false ? null : (
                   <div className="modal-header">

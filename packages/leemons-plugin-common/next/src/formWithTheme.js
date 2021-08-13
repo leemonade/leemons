@@ -109,7 +109,7 @@ function NumberField({ ...props }) {
   return <BaseInput {...props} type="number" />;
 }
 
-function CheckboxesWidget({ options, onChange, schema, rawErrors, ...props }) {
+function CheckboxesWidget({ options, onChange, schema, rawErrors, required, ...props }) {
   const onCheckboxChange = (event, value) => {
     if (event.target.checked) {
       if (props.value.indexOf(value) < 0) {
@@ -128,7 +128,7 @@ function CheckboxesWidget({ options, onChange, schema, rawErrors, ...props }) {
     <div>
       {schema.title ? (
         <div>
-          <Label text={schema.title} />
+          <Label text={`${schema.title ? schema.title : ''}${required ? '*' : ''}`} />
         </div>
       ) : null}
       {schema.description ? (
@@ -136,12 +136,12 @@ function CheckboxesWidget({ options, onChange, schema, rawErrors, ...props }) {
       ) : null}
       <div>
         {options.enumOptions
-          ? options.enumOptions.map(({ value, label }) => (
-              <div key={value + label} className="flex">
+          ? options.enumOptions.map(({ value, label }, index) => (
+              <div key={value + label + index} className="flex">
                 <FormControl label={label} labelPosition="right">
                   <Checkbox
                     color="primary"
-                    checked={value === props.value}
+                    checked={props.value.indexOf(value) >= 0}
                     onChange={(event) => onCheckboxChange(event, value)}
                   />
                 </FormControl>
@@ -207,22 +207,41 @@ function BooleanField(props) {
 }
 
 function SelectWidget(props) {
-  const { disabled, onBlur, onFocus, autofocus, readonly, onChange, options, ...rest } = props;
+  const {
+    disabled,
+    onBlur,
+    onFocus,
+    autofocus,
+    readonly,
+    onChange,
+    options,
+    multiple,
+    schema,
+    ...rest
+  } = props;
+
   return (
-    <MyCustomFormControl descriptionOutside={true} {...props}>
+    <MyCustomFormControl {...props}>
       <Select
         disabled={disabled}
         onBlur={onBlur}
         onFocus={onFocus}
         autoFocus={autofocus}
         readOnly={readonly}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => (multiple ? onChange(e) : onChange(e.target.value))}
         outlined={true}
+        multiple={multiple}
         className="w-full"
+        value={props.value}
       >
+        {schema.selectPlaceholder ? (
+          <option value="-" selected disabled>
+            {schema.selectPlaceholder}
+          </option>
+        ) : null}
         {options.enumOptions
-          ? options.enumOptions.map(({ value, label }) => (
-              <option key={value + label} value={value} selected={props.value === value}>
+          ? options.enumOptions.map(({ value, label }, index) => (
+              <option key={value + label + index} value={value}>
                 {label}
               </option>
             ))
