@@ -53,7 +53,12 @@ const Checkbox = React.forwardRef(
           className={`checkbox ${colorClass} ${className || ''}`}
           {...props}
         />
-        <span className="checkbox-mark" onClick={spanClick}></span>
+        <span
+          className="checkbox-mark"
+          onClick={(e) => {
+            if (!props.disabled) spanClick(e);
+          }}
+        />
       </div>
     );
   }

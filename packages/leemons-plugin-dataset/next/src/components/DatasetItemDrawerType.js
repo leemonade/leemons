@@ -133,6 +133,45 @@ export const DatasetItemDrawerType = () => {
           ) : null}
         </div>
       ) : null}
+
+      {/* Field length */}
+      {type === datasetDataTypes.multioption.type ? (
+        <div className="flex flex-row mt-6">
+          <div className="flex flex-row justify-between items-center w-7/12">
+            <div className="text-sm text-secondary font-medium mr-6">{t('number_of_options')}</div>
+            <div className="w-6/12 flex flex-row">
+              <div className="flex-1 pr-2 flex flex-row items-center">
+                <span className="mr-2">{t('min')}</span>
+                <FormControl
+                  className="w-full"
+                  formError={_.get(form.errors, 'frontConfig.minItems')}
+                >
+                  <Input
+                    className="w-full"
+                    type="number"
+                    outlined={true}
+                    {...form.register('frontConfig.minItems')}
+                  />
+                </FormControl>
+              </div>
+              <div className="flex-1 pl-2 flex flex-row items-center">
+                <span className="mr-2">{t('max')}</span>
+                <FormControl
+                  className="w-full"
+                  formError={_.get(form.errors, 'frontConfig.maxItems')}
+                >
+                  <Input
+                    className="w-full"
+                    type="number"
+                    outlined={true}
+                    {...form.register('frontConfig.maxItems')}
+                  />
+                </FormControl>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 };

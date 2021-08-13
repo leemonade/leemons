@@ -22,9 +22,8 @@ import { DatasetItemDrawerCenters } from './DatasetItemDrawerCenters';
 import SimpleBar from 'simplebar-react';
 import transformItemToSchemaAndUi from './help/transformItemToSchemaAndUi';
 import { saveDatasetFieldRequest } from '../request';
-import datasetFields from '../helpers/datasetFields';
 
-const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName }) => {
+const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSave = () => {} }) => {
   const [translations] = useTranslate({ keysStartsWith: prefixPN('datasetItemDrawer') });
   const t = tLoader(prefixPN('datasetItemDrawer'), translations);
   const { t: tCommon } = useCommonTranslate('forms');
@@ -77,19 +76,24 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName }) => 
       const schemaLocales = {};
       _.forIn(data.locales, (value, key) => {
         schemaLocales[key] = transformItemToSchemaAndUi(data, key);
+
+        // Schema
         const schemaGoodKeys = {};
-        _.forIn(schemaLocales[key].schema, (value, key) => {
-          if (datasetFields.schema.indexOf(key) >= 0) {
-            schemaGoodKeys[key] = value;
-          }
-        });
+        if (schemaLocales[key].schema.title) schemaGoodKeys.title = schemaLocales[key].schema.title;
+        if (schemaLocales[key].schema.description)
+          schemaGoodKeys.description = schemaLocales[key].schema.description;
+        if (schemaLocales[key].schema.items?.enumNames)
+          schemaGoodKeys.items = { enumNames: schemaLocales[key].schema.items.enumNames };
+        if (schemaLocales[key].schema.frontConfig?.checkboxLabels)
+          schemaGoodKeys.frontConfig = {
+            checkboxLabels: schemaLocales[key].schema.frontConfig.checkboxLabels,
+          };
         schemaLocales[key].schema = schemaGoodKeys;
+
+        // Ui
         const uiGoodKeys = {};
-        _.forIn(schemaLocales[key].ui, (value, key) => {
-          if (datasetFields.ui.indexOf(key) >= 0) {
-            uiGoodKeys[key] = value;
-          }
-        });
+        if (schemaLocales[key].ui['ui:help'])
+          schemaGoodKeys['ui:help'] = schemaLocales[key].ui['ui:help'];
         schemaLocales[key].ui = uiGoodKeys;
       });
       // ES: Calculamos los permisos finales
@@ -151,13 +155,15 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName }) => 
       if (locationName && pluginName) {
         try {
           setSaveLoading(true);
-          await saveDatasetFieldRequest(
+          const dataset = await saveDatasetFieldRequest(
             locationName,
             pluginName,
             schemaWithAllConfig,
             schemaLocales
           );
           setSaveLoading(false);
+          onSave(dataset);
+          close();
         } catch (e) {
           setSaveLoading(false);
         }
@@ -180,7 +186,6 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName }) => 
   };
 
   const onCentersChange = (event) => {
-    console.log(event);
     setItem(
       update(item, {
         frontConfig: {
@@ -266,7 +271,7 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName }) => 
               </SimpleBar>
 
               <div className="w-full bg-primary-content px-10 py-4 text-right">
-                <Button color="primary" loading={saveLoading} wide={true}>
+                <Button color="primary" loading={saveLoading}>
                   {t('save')}
                 </Button>
               </div>

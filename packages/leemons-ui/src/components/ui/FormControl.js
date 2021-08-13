@@ -10,35 +10,70 @@ import Select from './Select';
 import Textarea from './Textarea';
 import { ExclamationIcon } from '@heroicons/react/solid';
 
-function FormControl({ children, label, labelPosition, className, formError }) {
-  const childrens = React.Children.toArray(children);
-
+function oneChildrenIsCheckbox(childrens) {
   let isCheckbox = false;
-
   _.forEach(childrens, (child) => {
     isCheckbox = child.type === Checkbox || child.type === Radio || child.type === Toggle;
     if (isCheckbox) return false;
+    if (child?.props?.children)
+      isCheckbox = oneChildrenIsCheckbox(React.Children.toArray(child?.props?.children));
+    if (isCheckbox) return false;
   });
+  return isCheckbox;
+}
+
+function equalsOneOfTypes(item, types) {
+  let isEquals = false;
+  _.forEach(types, (type) => {
+    if (type === item.type) {
+      isEquals = true;
+      return false;
+    }
+  });
+  return isEquals;
+}
+
+function getItemOfOneType(childrens, types) {
+  let item = null;
+  _.forEach(childrens, (child) => {
+    if (equalsOneOfTypes(child, types)) {
+      item = child;
+      return false;
+    } else if (child?.props?.children) {
+      item = getItemOfOneType(React.Children.toArray(child?.props?.children), types);
+      if (item) return false;
+    }
+  });
+  return item;
+}
+
+function replaceItem(childrens, item, to) {
+  _.forEach(childrens, (child, index) => {
+    if (child === item) {
+      childrens[index] = to;
+      return false;
+    } else if (child?.props?.children) {
+      replaceItem(React.Children.toArray(child?.props?.children), item, to);
+    }
+  });
+}
+
+function FormControl({ children, label, labelPosition, className, formError }) {
+  const childrens = React.Children.toArray(children);
+
+  let isCheckbox = oneChildrenIsCheckbox(childrens);
 
   const Component = isCheckbox ? Label : React.Fragment;
   const componentProps = isCheckbox
     ? { text: label, className: 'cursor-pointer', labelPosition }
     : {};
 
-  const formItemIndex = childrens.findIndex(
-    (child) =>
-      child.type === Checkbox ||
-      child.type === Radio ||
-      child.type === Toggle ||
-      child.type === Input ||
-      child.type === Select ||
-      child.type === Textarea
-  );
+  const item = getItemOfOneType(childrens, [Checkbox, Radio, Toggle, Input, Select, Textarea]);
 
-  if (formItemIndex >= 0) {
+  if (item) {
     const childrenProps = {};
     if (formError) childrenProps.color = 'error';
-    childrens[formItemIndex] = React.cloneElement(childrens[formItemIndex], childrenProps);
+    replaceItem(childrens, item, React.cloneElement(item, childrenProps));
   }
 
   return (

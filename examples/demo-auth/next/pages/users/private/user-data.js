@@ -57,6 +57,7 @@ function BasicTab({ t }) {
     actionLabel: t('remove_modal.action'),
     onAction: async () => {
       await removeDatasetFieldRequest('user-data', 'plugins.users', itemToRemove.id);
+      reload();
     },
   });
 
@@ -73,6 +74,19 @@ function BasicTab({ t }) {
   function removeItem(item) {
     setItemToRemove(item);
     toggleModal();
+  }
+
+  async function reload() {
+    try {
+      setLoading(true);
+      await onSuccess(await load());
+    } catch (e) {
+      onError(e);
+    }
+  }
+
+  function onSave() {
+    reload();
   }
 
   const tableHeaders = useMemo(
@@ -102,10 +116,10 @@ function BasicTab({ t }) {
         Header: t('basic.table.actions'),
         accessor: (field) => (
           <div className="text-center">
-            <Button color="ghost" className="text-primary" onClick={() => openItem(field)}>
+            <Button color="primary" text onClick={() => openItem(field)}>
               {t('basic.edit')}
             </Button>
-            <Button color="ghost" className="text-primary" onClick={() => removeItem(field)}>
+            <Button color="primary" text onClick={() => removeItem(field)}>
               {t('basic.delete')}
             </Button>
           </div>
@@ -149,7 +163,12 @@ function BasicTab({ t }) {
               <PlusIcon className="w-6 h-6 mr-1" />
               {t('dataset.add_field')}
             </Button>
-            <DatasetItemDrawer locationName="user-data" pluginName="plugins.users" item={item} />
+            <DatasetItemDrawer
+              locationName="user-data"
+              pluginName="plugins.users"
+              item={item}
+              onSave={onSave}
+            />
           </div>
         </PageContainer>
       </div>

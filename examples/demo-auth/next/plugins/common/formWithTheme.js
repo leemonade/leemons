@@ -1,59 +1,71 @@
 import { withTheme } from '@rjsf/core';
-import { FormControl, Input, Label, Textarea } from 'leemons-ui';
-import { ExclamationIcon } from '@heroicons/react/solid';
+import { Checkbox, FormControl, Input, Label, Textarea } from 'leemons-ui';
 // import applyRules from 'react-jsonschema-form-conditionals';
 import Engine from 'json-rules-engine-simplified';
 import applyRules from 'rjsf-conditionals';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 
-const TextareaWidget = ({
-  className,
-  onChange,
-  value,
-  id,
-  required,
-  disabled,
-  autofocus,
-  type,
-}) => {
+const MyCustomFormControl = ({ children, required, rawErrors, schema, descriptionOutside }) => {
   return (
-    <Textarea
-      id={id}
-      type={type}
-      autoFocus={autofocus}
-      disabled={disabled}
-      className={`mr-10 w-full ${className}`}
-      outlined={true}
-      value={value}
-      onChange={(event) => onChange(event.target.value)}
-    />
+    <>
+      <div>
+        {schema.description && descriptionOutside ? (
+          <div className="text-sm pb-2 text-secondary">{schema.description}</div>
+        ) : null}
+        <div className="flex">
+          <FormControl
+            formError={rawErrors ? { message: rawErrors[0] } : null}
+            label={`${schema.title ? schema.title : ''}${required ? '*' : ''}`}
+            className={`${schema.type !== 'boolean' ? 'w-full' : ''}`}
+            labelPosition="right"
+          >
+            {schema.description && !descriptionOutside ? (
+              <div className="text-sm pb-2 text-secondary">{schema.description}</div>
+            ) : null}
+            {children}
+          </FormControl>
+        </div>
+      </div>
+    </>
   );
 };
 
-const BaseInput = ({
-  className,
-  onChange,
-  value,
-  id,
-  required,
-  disabled,
-  autofocus,
-  type,
-  ...rest
-}) => {
+const TextareaWidget = (props) => {
+  const { className, onChange, value, id, disabled, autofocus, type } = props;
   return (
-    <Input
-      id={id}
-      type={type}
-      autoFocus={autofocus}
-      disabled={disabled}
-      className={`mr-10 w-full ${className}`}
-      outlined={true}
-      value={value}
-      onChange={(event) =>
-        onChange(type === 'number' ? parseFloat(event.target.value) : event.target.value)
-      }
-    />
+    <MyCustomFormControl {...props}>
+      <Textarea
+        id={id}
+        type={type}
+        autoFocus={autofocus}
+        disabled={disabled}
+        className={`mr-10 w-full ${className}`}
+        outlined={true}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </MyCustomFormControl>
+  );
+};
+
+const BaseInput = (props) => {
+  const { className, onChange, value, id, required, disabled, autofocus, type, ...rest } = props;
+  const ignoreTypes = ['email', 'url'];
+  return (
+    <MyCustomFormControl {...props}>
+      <Input
+        id={id}
+        type={ignoreTypes.indexOf(type) < 0 ? type : 'text'}
+        autoFocus={autofocus}
+        disabled={disabled}
+        className={`mr-10 w-full ${className}`}
+        outlined={true}
+        value={value}
+        onChange={(event) =>
+          onChange(type === 'number' ? parseFloat(event.target.value) : event.target.value)
+        }
+      />
+    </MyCustomFormControl>
   );
 };
 
@@ -66,33 +78,11 @@ function FieldTemplate({
   description,
   errors: _errors,
   children,
+  ...rest
 }) {
-  const errors = _errors.props.errors;
   return (
     <div className={`py-2 ${classNames}`}>
-      {label ? (
-        <FormControl label={`${label}${required ? '*' : ''}`}>
-          {description ? <div className="text-sm pb-2 text-secondary">{description}</div> : null}
-          {children}
-        </FormControl>
-      ) : (
-        children
-      )}
-
-      {errors
-        ? errors.map((error, index) => (
-            <Label
-              key={index}
-              text={
-                <>
-                  <ExclamationIcon className="inline-block mr-1 h-4 text-error fill-current" />
-                  {error}
-                </>
-              }
-              helper
-            />
-          ))
-        : null}
+      {children}
 
       {help ? <div className="text-xs pt-2 text-neutral-content">{help}</div> : null}
     </div>
@@ -103,14 +93,64 @@ function NumberField({ ...props }) {
   return <BaseInput {...props} type="number" />;
 }
 
+function CheckboxesWidget({ options, onChange, schema, rawErrors, ...props }) {
+  const onCheckboxChange = (event, value) => {
+    if (event.target.checked) {
+      if (props.value.indexOf(value) < 0) {
+        onChange([...props.value, value]);
+      }
+    } else {
+      const index = props.value.indexOf(value);
+      if (index >= 0) {
+        props.value.splice(index, 1);
+        onChange(props.value);
+      }
+    }
+  };
+
+  return (
+    <div>
+      {schema.title ? (
+        <div>
+          <Label text={schema.title} />
+        </div>
+      ) : null}
+      {schema.description ? (
+        <div className="text-sm pb-2 text-secondary">{schema.description}</div>
+      ) : null}
+      <div>
+        {options.enumOptions
+          ? options.enumOptions.map(({ value, label }) => (
+              <div key={value + label} className="flex">
+                <FormControl label={label} labelPosition="right">
+                  <Checkbox
+                    color="primary"
+                    checked={value === props.value}
+                    onChange={(event) => onCheckboxChange(event, value)}
+                  />
+                </FormControl>
+              </div>
+            ))
+          : null}
+      </div>
+      <FormControl formError={rawErrors ? { message: rawErrors[0] } : null} />
+    </div>
+  );
+}
+
 function transformErrors(errors, t) {
   return errors.map((error) => {
+    console.log('error', error);
+    if (error.name === 'format') {
+      error.message = t(`format.${error.params.format}`);
+    }
     if (error.name === 'type') {
     }
-    if (error.name === 'minLength' || error.name === 'maxLength' || error.name === 'required') {
+    const types = ['maxItems', 'minItems', 'minLength', 'maxLength', 'required'];
+    if (types.indexOf(error.name) >= 0) {
       error.message = t(error.name, error.params);
-      error.stack = `${error.property} ${error.message}`;
     }
+    error.stack = `${error.property} ${error.message}`;
     return error;
   });
 }
@@ -133,6 +173,23 @@ function ErrorList({ errors }) {
    */
 }
 
+function BooleanField(props) {
+  const { required, readonly, disabled, autofocus, onChange, formData, ...rest } = props;
+  return (
+    <MyCustomFormControl descriptionOutside={true} {...props}>
+      <Checkbox
+        color="primary"
+        autoFocus={autofocus}
+        readOnly={readonly}
+        required={required}
+        checked={formData}
+        disabled={disabled}
+        onChange={(event) => onChange(event.target.checked)}
+      />
+    </MyCustomFormControl>
+  );
+}
+
 export default function formWithTheme(schema, ui, conditions) {
   const { t } = useCommonTranslate('forms');
   const Form = withTheme({
@@ -140,15 +197,27 @@ export default function formWithTheme(schema, ui, conditions) {
     ErrorList,
     fields: {
       NumberField,
+      BooleanField,
     },
     widgets: {
       BaseInput,
       TextareaWidget,
+      CheckboxesWidget,
     },
   });
   const FormWithConditionals = applyRules(schema, ui, conditions, Engine)(Form);
+  const customFormats = {
+    numbers: /^\d+$/,
+    phone: /^[\+]?[(]?[0-9]{2,3}[)]?[-\s\.]?[0-9\s]{3}[-\s\.]?[0-9\s]{4,8}$/,
+  };
 
   return ({ ...props }) => {
-    return <FormWithConditionals {...props} transformErrors={(e) => transformErrors(e, t)} />;
+    return (
+      <FormWithConditionals
+        {...props}
+        transformErrors={(e) => transformErrors(e, t)}
+        customFormats={customFormats}
+      />
+    );
   };
 }

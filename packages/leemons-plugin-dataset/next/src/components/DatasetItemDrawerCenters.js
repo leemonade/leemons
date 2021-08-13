@@ -137,7 +137,7 @@ export const DatasetItemDrawerCenters = ({ onChange = () => {} }) => {
         </div>
         {!isAllCenterMode && currentSelectValue && currentSelectValue !== '...' ? (
           <div className="ml-3">
-            <Button type="button" className="text-primary" color="ghost" onClick={selectItem}>
+            <Button type="button" text color="primary" onClick={selectItem}>
               {t('add_center')}
             </Button>
           </div>

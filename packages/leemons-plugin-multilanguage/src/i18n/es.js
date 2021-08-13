@@ -5,6 +5,14 @@ module.exports = {
     email: 'No es un email valido',
     minLength: 'El campo no puede ser menor de {limit} caracteres',
     maxLength: 'El campo no puede ser mayor de {limit} caracteres',
+    minItems: 'Tiene que tener mínimo {limit} elementos',
+    maxItems: 'Tiene que tener máximo {limit} elementos',
+    format: {
+      email: 'No es un email valido',
+      uri: 'No es una url valida',
+      numbers: 'Solo se permiten números',
+      phone: 'Teléfono invalido (+xx xxxxxxxxx)',
+    },
   },
   request_errors: {
     permission_error:

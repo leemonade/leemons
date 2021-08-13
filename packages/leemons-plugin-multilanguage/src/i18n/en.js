@@ -5,6 +5,14 @@ module.exports = {
     email: 'Not a valid email',
     minLength: 'The field cannot be less than {limit} characters',
     maxLength: 'The field cannot be longer than {limit} characters',
+    minItems: 'It must have a minimum of {limit} elements',
+    maxItems: 'It must have a maximum of {limit} elements',
+    format: {
+      email: 'Not a valid email',
+      uri: 'Not a valid url',
+      numbers: 'Only numbers are allowed',
+      phone: 'Invalid phone (+xx xxxxxxxxx)',
+    },
   },
   request_errors: {
     permission_error:

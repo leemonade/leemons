@@ -1,7 +1,8 @@
+import * as _ from 'lodash';
 import datasetDataTypes from '../../helpers/datasetDataTypes';
 
 const transformItemToSchemaAndUi = (item, locale) => {
-  let schema = { frontConfig: item.frontConfig };
+  let schema = { frontConfig: _.cloneDeep(item.frontConfig) };
   let ui = {};
 
   if (item) {
@@ -14,7 +15,7 @@ const transformItemToSchemaAndUi = (item, locale) => {
           ui['ui:widget'] = 'password';
         }
         if (frontConfig.onlyNumbers) {
-          schema.type = 'number';
+          schema.format = 'numbers';
         }
       }
       // Rich Text
@@ -37,11 +38,96 @@ const transformItemToSchemaAndUi = (item, locale) => {
           schema.frontConfig.maxLength = parseInt(frontConfig.maxLength);
         }
       }
+
+      // Number
+      if (frontConfig.type === datasetDataTypes.number.type) {
+        schema.type = 'number';
+      }
+
+      // Phone
+      if (frontConfig.type === datasetDataTypes.phone.type) {
+        schema.type = 'string';
+        schema.format = 'phone';
+      }
+
+      // Email
+      if (frontConfig.type === datasetDataTypes.email.type) {
+        schema.type = 'string';
+        schema.format = 'email';
+      }
+
+      // URL
+      if (frontConfig.type === datasetDataTypes.link.type) {
+        schema.type = 'string';
+        schema.format = 'uri';
+      }
+
+      // Archive
+      /*
+      if (frontConfig.type === datasetDataTypes.archive.type) {
+        schema.type = 'string';
+        schema.format = 'data-url';
+      }
+      */
+
+      // Boolean checkbox
+      if (frontConfig.type === datasetDataTypes.checkbox.type) {
+        schema.type = 'boolean';
+      }
+
+      // Multioption
+      if (frontConfig.type === datasetDataTypes.multioption.type) {
+        if (frontConfig.minItems) {
+          schema.minItems = parseInt(frontConfig.minItems);
+          schema.frontConfig.minItems = parseInt(frontConfig.minItems);
+        }
+        if (frontConfig.maxItems) {
+          schema.maxItems = parseInt(frontConfig.maxItems);
+          schema.frontConfig.maxItems = parseInt(frontConfig.maxItems);
+        }
+        ui['ui:widget'] = 'checkboxes';
+        if (locale && locales && locales[locale] && locales[locale].schema.frontConfig) {
+          const schemaKeys = _.map(schema.frontConfig.checkboxValues, 'key');
+          _.forEachRight(locales[locale].schema.frontConfig.checkboxLabels, ({ key }, index) => {
+            if (schemaKeys.indexOf(key) < 0) {
+              locales[locale].schema.frontConfig.checkboxLabels.splice(index, 1);
+            }
+          });
+        }
+      }
     }
 
     if (locale && locales && locales[locale]) {
-      schema = { ...schema, ...locales[locale].schema };
+      schema = _.merge(_.cloneDeep(schema), _.cloneDeep(locales[locale].schema));
       ui = { ...ui, ...locales[locale].ui };
+    }
+
+    if (frontConfig) {
+      // Multioption
+      if (frontConfig.type === datasetDataTypes.multioption.type) {
+        schema.type = 'array';
+        schema.uniqueItems = true;
+        schema.items = {
+          type: 'string',
+          enum: [],
+          enumNames: [],
+        };
+        if (!schema.minItems && schema.frontConfig.required) {
+          schema.minItems = 1;
+        }
+        if (locale && locales && locales[locale] && locales[locale].schema.frontConfig) {
+          const checkLocalesByKey = _.keyBy(
+            locales[locale].schema.frontConfig.checkboxLabels,
+            'key'
+          );
+          _.forEach(schema.frontConfig.checkboxValues, ({ key, value }) => {
+            schema.items.enum.push(value);
+            schema.items.enumNames.push(
+              checkLocalesByKey[key] ? checkLocalesByKey[key].label : ' '
+            );
+          });
+        }
+      }
     }
   }
 

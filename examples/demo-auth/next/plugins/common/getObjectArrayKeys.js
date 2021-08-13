@@ -1,6 +1,6 @@
-const _ = require('lodash');
+import * as _ from 'lodash';
 
-function getObjectArrayKeys(object) {
+export default function getObjectArrayKeys(object) {
   const keys = [];
   _.forIn(object, (value, key) => {
     if (_.isPlainObject(value)) {
@@ -23,5 +23,3 @@ function getObjectArrayKeys(object) {
   });
   return keys;
 }
-
-module.exports = getObjectArrayKeys;
