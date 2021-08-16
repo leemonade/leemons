@@ -58,15 +58,14 @@ function replaceItem(childrens, item, to) {
   });
 }
 
-function FormControl({ children, label, labelPosition, className, formError }) {
+function FormControl({ children, label, labelPosition, className, formError, multiple }) {
   const childrens = React.Children.toArray(children);
 
   let isCheckbox = oneChildrenIsCheckbox(childrens);
 
-  const Component = isCheckbox ? Label : React.Fragment;
-  const componentProps = isCheckbox
-    ? { text: label, className: 'cursor-pointer', labelPosition }
-    : {};
+  const Component = isCheckbox && !multiple ? Label : React.Fragment;
+  const componentProps =
+    isCheckbox && !multiple ? { text: label, className: 'cursor-pointer', labelPosition } : {};
 
   const item = getItemOfOneType(childrens, [Checkbox, Radio, Toggle, Input, Select, Textarea]);
 
@@ -81,19 +80,15 @@ function FormControl({ children, label, labelPosition, className, formError }) {
       <Component {...componentProps}>
         {typeof label !== 'undefined' && !isCheckbox && <Label text={label} />}
         {childrens}
-        {formError ? (
-          <Label
-            className="pt-1"
-            text={
-              <>
-                <ExclamationIcon className="inline-block mr-1 h-4 text-error fill-current" />
-                {formError.message}
-              </>
-            }
-            helper
-          />
-        ) : null}
       </Component>
+      {formError && (
+        <div className="label">
+          <span className="label-text-alt font-inter text-black">
+            <ExclamationIcon className="inline-block mr-1 h-4 text-error fill-current" />
+            {formError.message}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
@@ -108,6 +103,7 @@ FormControl.propTypes = {
   label: PropTypes.any,
   labelPosition: PropTypes.oneOf(['left', 'right']),
   formError: PropTypes.any,
+  multiple: PropTypes.bool,
 };
 
 export default FormControl;

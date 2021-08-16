@@ -94,6 +94,31 @@
         }
       }
     }
+
+    &-error {
+      & ~ .toggle-mark {
+        @apply border-error;
+      }
+      &:focus-visible,
+      &:checked:focus-visible,
+      &:checked:hover:focus-visible {
+        & ~ .toggle-mark {
+          box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--er));
+        }
+      }
+      &:checked {
+        &,
+        &:hover {
+          & ~ .toggle-mark {
+            @apply bg-error border-error bg-opacity-20 border-opacity-10;
+            &:before {
+              @apply bg-error;
+            }
+          }
+        }
+      }
+    }
+
     &:disabled,
     &:disabled:hover {
       & ~ .toggle-mark {

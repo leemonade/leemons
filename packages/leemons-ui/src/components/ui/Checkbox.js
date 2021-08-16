@@ -66,7 +66,7 @@ const Checkbox = React.forwardRef(
 
 Checkbox.propTypes = {
   className: PropTypes.string,
-  color: PropTypes.oneOf(['neutral', 'primary', 'secondary', 'accent']),
+  color: PropTypes.oneOf(['neutral', 'primary', 'secondary', 'accent', 'error']),
 };
 
 export default Checkbox;

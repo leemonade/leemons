@@ -13,7 +13,7 @@ function Toggle({ className, color, ...props }) {
 
 Toggle.propTypes = {
   className: PropTypes.string,
-  color: PropTypes.oneOf(['neutral', 'primary', 'secondary', 'accent']),
+  color: PropTypes.oneOf(['neutral', 'primary', 'secondary', 'accent', 'error']),
 };
 
 export default Toggle;
