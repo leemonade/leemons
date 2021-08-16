@@ -119,6 +119,32 @@
         }
       }
     }
+    &-error {
+      & ~ .radio-mark {
+        @apply border-error hover:border-error;
+      }
+      &:hover ~ .radio-mark:before {
+        @apply border-error;
+      }
+      &:focus-visible,
+      &:checked:focus-visible,
+      &:checked:hover:focus-visible {
+        & ~ .radio-mark {
+          box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--er));
+        }
+      }
+      &:checked {
+        &,
+        &:hover {
+          & ~ .radio-mark {
+            @apply bg-error border-error text-white;
+            &:before {
+              @apply border-white;
+            }
+          }
+        }
+      }
+    }
     &[disabled],
     &[disabled]:hover {
       & ~ .radio-mark {

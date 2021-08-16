@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, Select, Label, Divider } from '../../../src/components/ui';
+import { Divider, FormControl, Label, Select } from '../../../src/components/ui';
 import ClassTable from '../../../src/components/ClassTable';
 import Wrapper from '../../../src/components/Wrapper';
 
@@ -38,11 +38,11 @@ function SelectPage() {
         <div className="text-xl font-bold">Examples</div>
 
         <Wrapper className="flex flex-col space-y-2" title="select">
-          <Select outlined className="w-full max-w-xs">
+          <Select outlined multiple={true} className="w-full max-w-xs">
             <option disabled selected>
               Choose your superpower
             </option>
-            <option>telekinesis</option>
+            <option value="TELECO">telekinesis</option>
             <option>time travel</option>
             <option>invisibility</option>
           </Select>

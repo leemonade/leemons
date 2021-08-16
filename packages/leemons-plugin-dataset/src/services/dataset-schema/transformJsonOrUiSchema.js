@@ -113,7 +113,17 @@ module.exports = {
     };
   },
   transformJsonSchema(jsonSchema, ignoreKeys = []) {
-    const keys = ['title', 'description', 'default', 'enumNames', 'checkboxLabels'];
+    const keys = [
+      'title',
+      'description',
+      'default',
+      'enumNames',
+      'checkboxLabels',
+      'selectPlaceholder',
+      'optionLabel',
+      'yesOptionLabel',
+      'noOptionLabel',
+    ];
     _.forEach(ignoreKeys, (k) => {
       const index = keys.indexOf(k);
       if (index >= 0) {

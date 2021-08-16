@@ -2,43 +2,84 @@ import * as _ from 'lodash';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { getDefaultPlatformLocaleRequest, getPlatformLocalesRequest } from '@users/request';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { Button, FormControl, ImageLoader, Input, Tab, TabList, TabPanel, Tabs } from 'leemons-ui';
+import SimpleBar from 'simplebar-react';
+import {
+  Button,
+  FormControl,
+  Input,
+  Modal,
+  Tab,
+  TabList,
+  TabPanel,
+  Tabs,
+  useModal,
+} from 'leemons-ui';
 import { ExclamationIcon } from '@heroicons/react/outline';
 import update from 'immutability-helper';
-import DatasetItemDrawerContext from './DatasetItemDrawerContext';
+import DatasetItemDrawerContext, {
+  DatasetItemDrawerLocaleErrorContext,
+} from './DatasetItemDrawerContext';
 import { useAsync } from '@common/useAsync';
 import { getDatasetSchemaFieldLocaleRequest } from '../request';
 import datasetDataTypes from '../helpers/datasetDataTypes';
 
-const LocaleTab = ({ required, locale, load, defaultLocale }) => {
+const LocaleTab = ({ required, locale, localeName, load }) => {
   const { t, tCommon, form } = useContext(DatasetItemDrawerContext);
+  const { checkboxLabelsError, setState: setStateLocaleError } = useContext(
+    DatasetItemDrawerLocaleErrorContext
+  );
+  const [allCheckboxsHaveLabels, setAllCheckboxsHaveLabels] = useState(false);
   const type = form.watch('frontConfig.type');
+  const checkboxValues = form.watch('frontConfig.checkboxValues');
+  const checkboxLabels = form.watch(`locales.${locale}.schema.frontConfig.checkboxLabels`);
+  const uiType = form.watch('frontConfig.uiType');
+
+  const [modal, toggleModal] = useModal({
+    animated: true,
+    title: t('options_modal.title'),
+    cancelLabel: t('options_modal.cancel'),
+    actionLabel: t('options_modal.accept'),
+  });
+
+  useEffect(() => {
+    if (_.isArray(checkboxValues)) {
+      const checkLabels = [];
+      _.forEach(checkboxValues, ({ key }, i) => {
+        let index = _.findIndex(checkboxLabels, ({ key: _key }) => key === _key);
+        if (index < 0) {
+          checkLabels.push({ key, label: '' });
+        } else {
+          checkLabels.push(checkboxLabels[index]);
+        }
+      });
+      if (!_.isEqual(checkLabels, checkboxLabels)) {
+        form.setValue(`locales.${locale}.schema.frontConfig.checkboxLabels`, checkLabels);
+      }
+
+      if (checkLabels) {
+        let allHaveValues = true;
+        _.forEach(checkLabels, ({ label }) => {
+          if (!label) {
+            allHaveValues = false;
+            return false;
+          }
+        });
+        setAllCheckboxsHaveLabels(allHaveValues);
+        if (required && checkboxLabelsError !== !allHaveValues) {
+          setStateLocaleError({ checkboxLabelsError: !allHaveValues });
+        }
+      }
+    }
+  }, [form.getValues()]);
 
   useEffect(() => {
     load();
   }, []);
 
-  const addNewOption = () => {
-    let checkboxs = form.getValues(`frontConfig.checkboxValues`);
-    if (!_.isArray(checkboxs)) checkboxs = [];
-    const newKey = new Date().getTime();
-    checkboxs.push({ key: newKey, value: `val${newKey}` });
-    form.setValue(`frontConfig.checkboxValues`, checkboxs);
-  };
-
-  const removeOption = (key) => {
-    const checkboxs = form.getValues(`frontConfig.checkboxValues`);
-    const index = _.findIndex(checkboxs, { key });
-    if (index >= 0) {
-      checkboxs.splice(index, 1);
-      form.setValue(`frontConfig.checkboxValues`, checkboxs);
-    }
-  };
-
   const inputCheckboxChange = (event, index) => {
-    const value = form.getValues(`locales.${locale}.schema.frontConfig.checkboxLabels[${index}]`);
-    value.label = event.target.value;
-    form.setValue(`locales.${locale}.schema.frontConfig.checkboxLabels[${index}]`, value);
+    const value = form.getValues(`locales.${locale}.schema.frontConfig.checkboxLabels`);
+    value[index].label = event.target.value;
+    form.setValue(`locales.${locale}.schema.frontConfig.checkboxLabels`, value);
   };
 
   return (
@@ -117,72 +158,165 @@ const LocaleTab = ({ required, locale, load, defaultLocale }) => {
       </div>
       */}
 
-      {/* Checkbox options */}
-      {type === datasetDataTypes.multioption.type ? (
+      {/* First option text */}
+      {(type === datasetDataTypes.multioption.type && uiType === 'dropdown') ||
+      type === datasetDataTypes.select.type ? (
         <div className="flex flex-row py-6">
           <div className="w-4/12">
-            <div className="text-sm text-secondary">{t('options_title')}</div>
-            <div className="text-sm text-neutral-content">{t('options_description')}</div>
+            <div className="text-sm text-secondary">{t('first_option_not_eligible')}</div>
           </div>
           <div className="w-8/12 pl-4">
-            {form.watch(`frontConfig.checkboxValues`)
-              ? form.watch(`frontConfig.checkboxValues`).map(({ key }) => {
-                  let index = _.findIndex(
-                    form.getValues(`locales.${locale}.schema.frontConfig.checkboxLabels`),
-                    ({ key: _key }) => key === _key
-                  );
-
-                  if (index < 0) {
-                    let values = form.getValues(
-                      `locales.${locale}.schema.frontConfig.checkboxLabels`
-                    );
-                    if (!_.isArray(values)) values = [];
-                    values.push({ key, label: '' });
-                    form.setValue(`locales.${locale}.schema.frontConfig.checkboxLabels`, values);
-                    index = values.length - 1;
-                  }
-
-                  return (
-                    <div key={key} className="pb-4">
-                      <FormControl
-                        className="w-full relative"
-                        formError={_.get(
-                          form.errors,
-                          `locales.${locale}.schema.frontConfig.checkboxLabels[${index}].label`
-                        )}
-                      >
-                        <Input
-                          className="w-full"
-                          outlined={true}
-                          value={form.watch(
-                            `locales.${locale}.schema.frontConfig.checkboxLabels[${index}].label`
-                          )}
-                          onChange={(e) => inputCheckboxChange(e, index)}
-                        />
-                        {locale === defaultLocale ? (
-                          <div
-                            onClick={() => removeOption(key)}
-                            className="absolute right-3 text-neutral-content hover:text-error cursor-pointer"
-                            style={{ width: '12px', height: '12px', top: '14px' }}
-                          >
-                            <ImageLoader
-                              className="stroke-current fill-current"
-                              src={'/assets/svgs/remove.svg'}
-                            />
-                          </div>
-                        ) : null}
-                      </FormControl>
-                    </div>
-                  );
-                })
-              : null}
-            {locale === defaultLocale ? (
-              <Button type="button" color="secondary" onClick={addNewOption}>
-                {t('add_option')}
-              </Button>
-            ) : null}
+            <FormControl
+              className="w-full"
+              formError={_.get(form.errors, `locales.${locale}.schema.selectPlaceholder`)}
+            >
+              <Input
+                className="w-full"
+                outlined={true}
+                {...form.register(`locales.${locale}.schema.selectPlaceholder`)}
+              />
+            </FormControl>
           </div>
         </div>
+      ) : null}
+
+      {/* First option text */}
+      {type === datasetDataTypes.boolean.type ? (
+        <>
+          {uiType === 'checkbox' || uiType === 'switcher' ? (
+            <div className="flex flex-row py-6">
+              <div className="w-4/12">
+                <div className="text-sm text-secondary">{t('option_label')}</div>
+                <div className="text-sm text-neutral-content">{t('option_label_description')}</div>
+              </div>
+              <div className="w-8/12 pl-4">
+                <FormControl
+                  className="w-full"
+                  formError={_.get(form.errors, `locales.${locale}.schema.optionLabel`)}
+                >
+                  <Input
+                    className="w-full"
+                    outlined={true}
+                    {...form.register(`locales.${locale}.schema.optionLabel`)}
+                  />
+                </FormControl>
+              </div>
+            </div>
+          ) : null}
+
+          {uiType === 'radio' ? (
+            <>
+              <div className="flex flex-row py-6">
+                <div className="w-4/12">
+                  <div className="text-sm text-secondary">{t('yes_label')}</div>
+                </div>
+                <div className="w-8/12 pl-4">
+                  <FormControl
+                    className="w-full"
+                    formError={_.get(form.errors, `locales.${locale}.schema.yesOptionLabel`)}
+                  >
+                    <Input
+                      className="w-full"
+                      outlined={true}
+                      {...form.register(`locales.${locale}.schema.yesOptionLabel`)}
+                    />
+                  </FormControl>
+                </div>
+              </div>
+              <div className="flex flex-row py-6">
+                <div className="w-4/12">
+                  <div className="text-sm text-secondary">{t('no_label')}</div>
+                </div>
+                <div className="w-8/12 pl-4">
+                  <FormControl
+                    className="w-full"
+                    formError={_.get(form.errors, `locales.${locale}.schema.noOptionLabel`)}
+                  >
+                    <Input
+                      className="w-full"
+                      outlined={true}
+                      {...form.register(`locales.${locale}.schema.noOptionLabel`)}
+                    />
+                  </FormControl>
+                </div>
+              </div>
+            </>
+          ) : null}
+        </>
+      ) : null}
+
+      {/* Checkbox options */}
+      {type === datasetDataTypes.multioption.type || type === datasetDataTypes.select.type ? (
+        <>
+          <div className="flex flex-row py-6">
+            <div className="w-4/12">
+              <div className="text-sm text-secondary">{t('options_title')}</div>
+              <div className="text-sm text-neutral-content">{t('options_description2')}</div>
+            </div>
+            <div className="w-8/12 pl-4">
+              <Button type="button" color="primary" text onClick={toggleModal}>
+                {t('options_modal.title')}
+                {required && !allCheckboxsHaveLabels ? (
+                  <span
+                    className={`${
+                      form.isSubmitted ? 'bg-error' : 'bg-warning'
+                    } w-2 h-2 rounded-full  mt-2 ml-2 self-start`}
+                  />
+                ) : null}
+              </Button>
+            </div>
+          </div>
+
+          <Modal {...modal} className="max-w-xl">
+            <div className="text-sm text-secondary">
+              {t('options_modal.description', { locale: localeName })}
+            </div>
+
+            <div className="flex flex-row pt-6 mb-4">
+              <div className="w-4/12 text-sm font-bold">{t('options_modal.value')}</div>
+              <div className="w-8/12 text-sm font-bold">
+                {t('options_modal.translate_to', { locale: localeName })}
+              </div>
+            </div>
+
+            <SimpleBar style={{ maxHeight: 'calc(100vh - 300px)' }} className="-mr-4 pr-4 py-1">
+              {checkboxValues
+                ? checkboxValues.map(({ key, value }) => {
+                    let index = _.findIndex(checkboxLabels, ({ key: _key }) => key === _key);
+
+                    if (index < 0) return null;
+
+                    const labelValue = form.getValues(
+                      `locales.${locale}.schema.frontConfig.checkboxLabels[${index}].label`
+                    );
+
+                    return (
+                      <div className="flex flex-row items-center pb-4" key={key}>
+                        <div className="w-4/12 text-sm">{value}</div>
+                        <div className="w-8/12">
+                          <FormControl
+                            className="w-full relative"
+                            formError={
+                              required && form.isSubmitted && !labelValue
+                                ? { message: tCommon('required') }
+                                : undefined
+                            }
+                          >
+                            <Input
+                              className="w-full"
+                              outlined={true}
+                              value={labelValue}
+                              onChange={(e) => inputCheckboxChange(e, index)}
+                            />
+                          </FormControl>
+                        </div>
+                      </div>
+                    );
+                  })
+                : null}
+            </SimpleBar>
+          </Modal>
+        </>
       ) : null}
     </div>
   );
@@ -195,6 +329,17 @@ export const DatasetItemDrawerLocales = () => {
   const [locales, setLocales] = useState([]);
   const [loadedLocales, setLoadedLocales] = useState([]);
   const { form, setState, locationName, pluginName, item } = useContext(DatasetItemDrawerContext);
+  const { checkboxLabelsError } = useContext(DatasetItemDrawerLocaleErrorContext);
+
+  const showDefaultLocaleWarning = useMemo(() => {
+    const title = form.getValues(`locales.${defaultLocale}.schema.title`);
+    const type = form.getValues('frontConfig.type');
+    if (type === datasetDataTypes.select.type || type === datasetDataTypes.multioption.type) {
+      return !title || checkboxLabelsError;
+    }
+
+    return !title;
+  }, [checkboxLabelsError, form.getValues()]);
 
   const loadLocale = async (locale) => {
     setState({ currentLocale: locale });
@@ -208,16 +353,27 @@ export const DatasetItemDrawerLocales = () => {
             item.id
           );
 
-          console.log(schema);
-
           form.setValue(`locales.${locale}.schema.title`, _.get(schema, 'title', ''));
           form.setValue(`locales.${locale}.schema.description`, _.get(schema, 'description', ''));
+          form.setValue(
+            `locales.${locale}.schema.selectPlaceholder`,
+            _.get(schema, 'selectPlaceholder', '')
+          );
+          form.setValue(`locales.${locale}.schema.optionLabel`, _.get(schema, 'optionLabel', ''));
+          form.setValue(
+            `locales.${locale}.schema.yesOptionLabel`,
+            _.get(schema, 'yesOptionLabel', '')
+          );
+          form.setValue(
+            `locales.${locale}.schema.noOptionLabel`,
+            _.get(schema, 'noOptionLabel', '')
+          );
           form.setValue(
             `locales.${locale}.schema.frontConfig.checkboxLabels`,
             _.get(schema, 'frontConfig.checkboxLabels', [])
           );
 
-          form.setValue(`locales.${locale}.ui['ui:help']}`, _.get(ui, 'ui:help', ''));
+          form.setValue(`locales.${locale}.ui['ui:help']`, _.get(ui, 'ui:help', ''));
         } catch (e) {
           if (e.code !== 4002) setError(e);
         }
@@ -268,13 +424,10 @@ export const DatasetItemDrawerLocales = () => {
             <TabList>
               {locales.map(({ name, code }) => (
                 <Tab key={code} id={`id-${code}`} panelId={`panel-${code}`}>
-                  {code === defaultLocale &&
-                  !form.watch(`locales.${defaultLocale}.schema.title`) ? (
+                  {code === defaultLocale && showDefaultLocaleWarning ? (
                     <ExclamationIcon
                       className={`w-4 h-4 mr-2 ${
-                        _.get(form.errors, `locales.${defaultLocale}`)
-                          ? 'text-error-focus'
-                          : 'text-warning-focus'
+                        form.isSubmitted ? 'text-error-focus' : 'text-warning-focus'
                       }`}
                     />
                   ) : null}
@@ -283,10 +436,11 @@ export const DatasetItemDrawerLocales = () => {
               ))}
             </TabList>
 
-            {locales.map(({ code }) => (
+            {locales.map(({ code, name }) => (
               <TabPanel key={code} id={`panel-${code}`} tabId={`id-${code}`}>
                 <LocaleTab
                   locale={code}
+                  localeName={name}
                   defaultLocale={defaultLocale}
                   required={code === defaultLocale}
                   load={() => loadLocale(code)}

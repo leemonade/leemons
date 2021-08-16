@@ -18,7 +18,9 @@ const Checkbox = React.forwardRef(
     const [checked, setChecked] = useState({ checked: defaultChecked, fromClick: false });
 
     useEffect(() => {
-      setChecked({ checked: defaultChecked, fromClick: false });
+      if (checked.checked !== defaultChecked) {
+        setChecked({ checked: defaultChecked, fromClick: false });
+      }
     }, [defaultChecked]);
 
     const spanClick = (event) => {
@@ -66,7 +68,7 @@ const Checkbox = React.forwardRef(
 
 Checkbox.propTypes = {
   className: PropTypes.string,
-  color: PropTypes.oneOf(['neutral', 'primary', 'secondary', 'accent']),
+  color: PropTypes.oneOf(['neutral', 'primary', 'secondary', 'accent', 'error']),
 };
 
 export default Checkbox;

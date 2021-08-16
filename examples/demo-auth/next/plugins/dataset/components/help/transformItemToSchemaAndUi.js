@@ -70,22 +70,56 @@ const transformItemToSchemaAndUi = (item, locale) => {
       }
       */
 
-      // Boolean checkbox
-      if (frontConfig.type === datasetDataTypes.checkbox.type) {
+      // Boolean
+      if (frontConfig.type === datasetDataTypes.boolean.type) {
         schema.type = 'boolean';
+        if (frontConfig.initialStatus === 'yes') schema.default = true;
+        if (frontConfig.initialStatus === 'no') schema.default = false;
+        if (frontConfig.uiType === 'radio') {
+          ui['ui:widget'] = 'radio';
+          schema.enumNames = [frontConfig.yesOptionLabel, frontConfig.noOptionLabel];
+        }
+        if (frontConfig.uiType === 'switcher') {
+          ui['ui:widget'] = 'toggle';
+        }
+      }
+
+      // Date
+      if (frontConfig.type === datasetDataTypes.date.type) {
+        schema.type = 'string';
+        schema.format = 'date';
+        if (frontConfig.minDate) {
+          schema.minDate = new Date(frontConfig.minDate);
+          schema.frontConfig.minDate = new Date(frontConfig.minDate);
+        }
+        if (frontConfig.maxDate) {
+          schema.maxDate = new Date(frontConfig.maxDate);
+          schema.frontConfig.maxDate = new Date(frontConfig.maxDate);
+        }
       }
 
       // Multioption
       if (frontConfig.type === datasetDataTypes.multioption.type) {
-        if (frontConfig.minItems) {
-          schema.minItems = parseInt(frontConfig.minItems);
-          schema.frontConfig.minItems = parseInt(frontConfig.minItems);
+        if (frontConfig.uiType !== 'radio') {
+          if (frontConfig.minItems) {
+            schema.minItems = parseInt(frontConfig.minItems);
+            schema.frontConfig.minItems = parseInt(frontConfig.minItems);
+          }
+          if (frontConfig.maxItems) {
+            schema.maxItems = parseInt(frontConfig.maxItems);
+            schema.frontConfig.maxItems = parseInt(frontConfig.maxItems);
+          }
+          if (frontConfig.uiType === 'checkboxs') ui['ui:widget'] = 'checkboxes';
+        } else {
+          ui['ui:widget'] = 'radio';
         }
-        if (frontConfig.maxItems) {
-          schema.maxItems = parseInt(frontConfig.maxItems);
-          schema.frontConfig.maxItems = parseInt(frontConfig.maxItems);
-        }
-        ui['ui:widget'] = 'checkboxes';
+      }
+
+      // Multioption / Select
+      if (
+        frontConfig.type === datasetDataTypes.select.type ||
+        frontConfig.type === datasetDataTypes.multioption.type
+      ) {
         if (locale && locales && locales[locale] && locales[locale].schema.frontConfig) {
           const schemaKeys = _.map(schema.frontConfig.checkboxValues, 'key');
           _.forEachRight(locales[locale].schema.frontConfig.checkboxLabels, ({ key }, index) => {
@@ -103,6 +137,21 @@ const transformItemToSchemaAndUi = (item, locale) => {
     }
 
     if (frontConfig) {
+      // Boolean
+      if (
+        frontConfig.type === datasetDataTypes.boolean.type &&
+        locale &&
+        locales &&
+        locales[locale] &&
+        locales[locale].schema.frontConfig
+      ) {
+        if (frontConfig.uiType === 'radio') {
+          schema.enumNames = [
+            locales[locale].schema.yesOptionLabel,
+            locales[locale].schema.noOptionLabel,
+          ];
+        }
+      }
       // Multioption
       if (frontConfig.type === datasetDataTypes.multioption.type) {
         schema.type = 'array';
@@ -125,6 +174,29 @@ const transformItemToSchemaAndUi = (item, locale) => {
             schema.items.enumNames.push(
               checkLocalesByKey[key] ? checkLocalesByKey[key].label : ' '
             );
+          });
+        }
+        if (frontConfig.uiType === 'radio') {
+          schema.type = 'string';
+          schema.enum = schema.items.enum;
+          schema.enumNames = schema.items.enumNames;
+          delete schema.items;
+        }
+      }
+
+      // Select
+      if (frontConfig.type === datasetDataTypes.select.type) {
+        schema.type = 'string';
+        schema.enum = [];
+        schema.enumNames = [];
+        if (locale && locales && locales[locale] && locales[locale].schema.frontConfig) {
+          const checkLocalesByKey = _.keyBy(
+            locales[locale].schema.frontConfig.checkboxLabels,
+            'key'
+          );
+          _.forEach(schema.frontConfig.checkboxValues, ({ key, value }) => {
+            schema.enum.push(value);
+            schema.enumNames.push(checkLocalesByKey[key] ? checkLocalesByKey[key].label : ' ');
           });
         }
       }

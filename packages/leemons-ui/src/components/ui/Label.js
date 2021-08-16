@@ -6,8 +6,9 @@ function Label({ children, className, text, helper, labelPosition }) {
     ? 'label-text-alt font-inter text-black'
     : 'label-text font-medium text-black';
   const positionClass = labelPosition === 'left' ? 'mr-3' : 'ml-3';
+  const labelClass = labelPosition === 'right' ? 'justify-start' : '';
   return (
-    <label className={`label ${className || ''}`}>
+    <label className={`label ${className || ''} ${labelClass}`}>
       {labelPosition === 'right' && children}
       {typeof text !== 'undefined' && (
         <span className={[textClass, positionClass].join(' ')}>{text}</span>
