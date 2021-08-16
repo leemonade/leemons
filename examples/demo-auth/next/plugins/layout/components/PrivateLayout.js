@@ -22,7 +22,7 @@ function PrivateLayout({ persistentState: [state, _setState], children }) {
   }, [state]);
 
   const onOpenMenu = useCallback(() => {
-    setState({ menuWidth: 300 });
+    setState({ menuWidth: 280 });
   }, [state]);
 
   return (
