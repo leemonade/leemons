@@ -119,6 +119,34 @@
         }
       }
     }
+
+    &-error {
+      & ~ .checkbox-mark {
+        @apply border-error hover:border-error;
+      }
+      &:hover ~ .checkbox-mark:before {
+        @apply border-error;
+      }
+      &:focus-visible,
+      &:checked:focus-visible,
+      &:checked:hover:focus-visible {
+        & ~ .checkbox-mark {
+          box-shadow: 0 0 0 2px hsl(var(--err));
+        }
+      }
+      &:checked {
+        &,
+        &:hover {
+          & ~ .checkbox-mark {
+            @apply bg-error border-error text-white;
+            &:before {
+              @apply border-white;
+            }
+          }
+        }
+      }
+    }
+
     &:disabled,
     &:disabled:hover {
       & ~ .checkbox-mark {

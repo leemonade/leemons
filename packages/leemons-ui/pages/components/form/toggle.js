@@ -83,6 +83,19 @@ function TogglePage() {
             </FormControl>
           </div>
         </Wrapper>
+        <Wrapper title="toggle + errors" className="flex flex-col space-y-2 max-w-xs">
+          <div className="p-6 card bordered shadow-lg">
+            <div className="flex">
+              <FormControl
+                label="Accept terms"
+                labelPosition="right"
+                formError={{ message: 'Must accept terms', type: 'required' }}
+              >
+                <Toggle color="error" />
+              </FormControl>
+            </div>
+          </div>
+        </Wrapper>
 
         <Divider className="my-6" />
 

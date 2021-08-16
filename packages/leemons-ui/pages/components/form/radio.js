@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, Radio, Divider } from '../../../src/components/ui';
+import { FormControl, Radio, Divider, Label } from '../../../src/components/ui';
 import ClassTable from '../../../src/components/ClassTable';
 import Wrapper from '../../../src/components/Wrapper';
 
@@ -68,6 +68,24 @@ function RadioPage() {
                 <Radio name="opt" color="secondary" />
               </FormControl>
             </div>
+          </div>
+        </Wrapper>
+
+        <Wrapper title="input + error" className="flex flex-col space-y-2 max-w-xs">
+          <div className="p-6 card bordered">
+            <FormControl multiple formError={{ message: 'Must select one', type: 'required' }}>
+              <div className="flex flex-col">
+                <Label text="Option 1" labelPosition="right">
+                  <Radio name="opt" color="error" />
+                </Label>
+                <Label text="Option 2" labelPosition="right">
+                  <Radio name="opt" color="error" />
+                </Label>
+                <Label text="Option 3" labelPosition="right">
+                  <Radio name="opt" color="error" />
+                </Label>
+              </div>
+            </FormControl>
           </div>
         </Wrapper>
 

@@ -83,6 +83,26 @@ function CheckboxPage() {
             </FormControl>
           </div>
         </Wrapper>
+        <Wrapper title="checkbox with error" className="flex flex-col space-y-2 max-w-xs">
+          <div className="p-6 card bordered shadow-lg">
+            <div className="flex">
+              <FormControl
+                label={
+                  <>
+                    I have read and accept the{' '}
+                    <a href="#" className="text-primary">
+                      terms and conditions
+                    </a>
+                  </>
+                }
+                labelPosition="right"
+                formError={{ message: 'Must accept the terms', type: 'required' }}
+              >
+                <Checkbox color="error" />
+              </FormControl>
+            </div>
+          </div>
+        </Wrapper>
         <Divider className="my-6" />
         <ClassTable data={data} />
       </div>
