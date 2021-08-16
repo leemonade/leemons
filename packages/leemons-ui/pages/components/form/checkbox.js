@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, Checkbox, Divider } from '../../../src/components/ui';
+import { Checkbox, Divider, FormControl } from '../../../src/components/ui';
 import ClassTable from '../../../src/components/ClassTable';
 import Wrapper from '../../../src/components/Wrapper';
 

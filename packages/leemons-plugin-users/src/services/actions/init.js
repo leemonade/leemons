@@ -7,7 +7,7 @@ const { addMany } = require('./addMany');
  * @static
  * */
 async function init() {
-  await addMany(constants.defaultActions);
+  return await addMany(constants.defaultActions);
 }
 
 module.exports = { init };

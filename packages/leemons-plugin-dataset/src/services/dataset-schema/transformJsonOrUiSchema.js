@@ -23,7 +23,22 @@ function arrKeys(object) {
 function transformJsonOrUiSchema(jsonSchema, saveKeys, replaces) {
   const schema = _.cloneDeep(jsonSchema);
 
-  const keys = _.filter(arrKeys(schema), (key) => saveKeys.indexOf(_.last(_.split(key, '.'))) >= 0);
+  let keys = [];
+  _.forEach(arrKeys(schema), (key) => {
+    const props = _.split(key, '.');
+    let path = '';
+    _.forEach(props, (prop) => {
+      const p = prop.replace(/\[(.*)\]/g, '');
+      if (saveKeys.indexOf(p) >= 0) {
+        keys.push(`${path}${p}`);
+        return false;
+      } else {
+        path += `${prop}.`;
+      }
+    });
+  });
+
+  keys = _.uniq(keys);
   const keysProp = _.map(keys, (value) => {
     const k = _.split(value, '.');
     return {
@@ -53,9 +68,9 @@ function transformJsonOrUiSchema(jsonSchema, saveKeys, replaces) {
     }
     if (value.key) {
       obj = _.get(schema, value.key);
-      obj[value.property] = `{{it.${value.key}.${property}}}`;
+      obj[value.property] = `{{@printWithOutErrors(it, '${value.key}.${property}')/}}`;
     } else {
-      schema[value.property] = `{{it.${property}}}`;
+      schema[value.property] = `{{@printWithOutErrors(it, '${property}')/}}`;
     }
   });
 
@@ -65,21 +80,47 @@ function transformJsonOrUiSchema(jsonSchema, saveKeys, replaces) {
   };
 }
 
+function getJsonSchemaProfilePermissionsKeys(jsonSchema) {
+  const keys = [];
+  _.forEach(arrKeys(jsonSchema), (key) => {
+    if (key.indexOf('.permissions.') >= 0) {
+      const k = _.split(key, '.');
+      k.pop();
+      keys.push(_.join(k, '.'));
+    }
+  });
+  return _.uniq(keys);
+}
+
 module.exports = {
   arrKeys,
-  getJsonSchemaProfilePermissionsKeys(jsonSchema) {
-    const keys = [];
-    _.forEach(arrKeys(jsonSchema), (key) => {
-      if (key.indexOf('.profilePermissions.') >= 0) {
-        const k = _.split(key, '.');
-        k.pop();
-        keys.push(_.join(k, '.'));
+  getJsonSchemaProfilePermissionsKeys,
+  getJsonSchemaProfilePermissionsKeysByType(jsonSchema) {
+    const profiles = _.clone(jsonSchema);
+    const roles = _.clone(jsonSchema);
+    profiles.properties = {};
+    roles.properties = {};
+    _.forIn(jsonSchema.properties, (value, key) => {
+      if (value.permissionsType === 'profile') {
+        profiles.properties[key] = _.cloneDeep(value);
+      } else if (value.permissionsType === 'role') {
+        roles.properties[key] = _.cloneDeep(value);
       }
     });
-    return _.uniq(keys);
+    return {
+      profiles: getJsonSchemaProfilePermissionsKeys(profiles),
+      roles: getJsonSchemaProfilePermissionsKeys(roles),
+    };
   },
-  transformJsonSchema(jsonSchema) {
-    return transformJsonOrUiSchema(jsonSchema, ['title', 'description', 'default']);
+  transformJsonSchema(jsonSchema, ignoreKeys = []) {
+    const keys = ['title', 'description', 'default', 'enumNames', 'checkboxLabels'];
+    _.forEach(ignoreKeys, (k) => {
+      const index = keys.indexOf(k);
+      if (index >= 0) {
+        keys.splice(index, 1);
+      }
+    });
+    return transformJsonOrUiSchema(jsonSchema, keys);
   },
   transformUiSchema(uiSchema) {
     return transformJsonOrUiSchema(

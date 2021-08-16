@@ -7,7 +7,7 @@ const crypto = require('crypto');
  * @return {string}
  * */
 function randomString(size = 32) {
-  return crypto.randomBytes(size).toString('hex');
+  return 'rs' + crypto.randomBytes(size - 2).toString('hex');
 }
 
 module.exports = randomString;

@@ -1,4 +1,7 @@
 const { table } = require('../tables');
+const _ = require('lodash');
+const { validatePermissionName } = require('../../validations/exists');
+const searchUsersWithRoleAndMarkAsReloadPermissions = require('./searchUsersWithRoleAndMarkAsReloadPermissions');
 
 /**
  * Remove all permissions of role
@@ -15,10 +18,14 @@ async function removePermissionsByName(
   permissionNames,
   { removeCustomPermissions, transacting } = {}
 ) {
+  _.forEach(permissionNames, (permissionName) => {
+    validatePermissionName(permissionName, this.calledFrom);
+  });
   const query = { role: roleId, permissionName_$in: permissionNames };
   if (!removeCustomPermissions) {
     query.isCustom_$ne = true;
   }
+  await searchUsersWithRoleAndMarkAsReloadPermissions(roleId, { transacting });
   return table.rolePermission.deleteMany(query, { transacting });
 }
 

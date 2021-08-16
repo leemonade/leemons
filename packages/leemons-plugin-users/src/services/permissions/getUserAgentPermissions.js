@@ -15,13 +15,12 @@ const { updateUserAgentPermissions } = require('../users/updateUserAgentPermissi
 async function getUserAgentPermissions(userAgent, { query: _query, transacting } = {}) {
   const _userAgents = _.isArray(userAgent) ? userAgent : [userAgent];
 
-  const reloadPermissionPromises = [];
+  const reloadUserAgents = [];
   _.forEach(_userAgents, (_userAgent) => {
-    if (_userAgent.reloadPermissions)
-      reloadPermissionPromises.push(updateUserAgentPermissions(_userAgent.id, { transacting }));
+    if (_userAgent.reloadPermissions) reloadUserAgents.push(_userAgent.id);
   });
 
-  await Promise.all(reloadPermissionPromises);
+  await updateUserAgentPermissions(reloadUserAgents, { transacting });
 
   const query = { ..._query, userAgent_$in: _.map(_userAgents, 'id') };
 

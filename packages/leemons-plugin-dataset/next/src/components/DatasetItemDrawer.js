@@ -1,114 +1,285 @@
-import React from 'react';
-import { Button, Checkbox, Drawer, FormControl, ImageLoader, Select, useDrawer } from 'leemons-ui';
+import * as _ from 'lodash';
+import React, { useEffect, useState } from 'react';
+import { Button, Drawer, ImageLoader, useDrawer } from 'leemons-ui';
 import useTranslate from '@multilanguage/useTranslate';
 import tLoader from '@multilanguage/helpers/tLoader';
 import { useForm } from 'react-hook-form';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import update from 'immutability-helper';
 import prefixPN from '../helpers/prefixPN';
 import { DatasetItemSeparator } from './DatasetItemSeparator';
 import { DatasetItemTitle } from './DatasetItemTitle';
 import { DatasetItemDrawerPreview } from './DatasetItemDrawerPreview';
 import { DatasetItemDrawerPermissions } from './DatasetItemDrawerPermissions';
+import { DatasetItemDrawerLocales } from './DatasetItemDrawerLocales';
+import { DatasetItemDrawerType } from './DatasetItemDrawerType';
+import {
+  DatasetItemDrawerCentersContext,
+  DatasetItemDrawerContext,
+  DatasetItemDrawerProfilesContext,
+} from './DatasetItemDrawerContext';
+import { DatasetItemDrawerCenters } from './DatasetItemDrawerCenters';
+import SimpleBar from 'simplebar-react';
+import transformItemToSchemaAndUi from './help/transformItemToSchemaAndUi';
+import { saveDatasetFieldRequest } from '../request';
 
-const DatasetItemDrawer = ({ drawer, close, item }) => {
+const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSave = () => {} }) => {
   const [translations] = useTranslate({ keysStartsWith: prefixPN('datasetItemDrawer') });
   const t = tLoader(prefixPN('datasetItemDrawer'), translations);
   const { t: tCommon } = useCommonTranslate('forms');
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [contextState, setContextState] = useState({});
+  const [profileContextState, setProfileContextState] = useState({});
+  const [centersContextState, setCentersContextState] = useState({});
+  const [item, setItem] = useState(
+    _item
+      ? {
+          frontConfig: {
+            permissions: _item.schema.frontConfig.permissions,
+            centers: _item.schema.frontConfig.centers,
+            isAllCenterMode: _item.schema.frontConfig.isAllCenterMode,
+          },
+          id: _item.id,
+        }
+      : { frontConfig: { permissions: [] } }
+  );
 
   const {
     register,
     handleSubmit,
+    setValue,
+    getValues,
+    watch,
     formState: { errors },
   } = useForm();
 
+  const currentFormValues = watch();
+
+  useEffect(() => {
+    if (_item) {
+      setValue('frontConfig.name', _item.schema.frontConfig.name);
+      _.forIn(_item.schema.frontConfig, (value, key) => {
+        setValue(`frontConfig.${key}`, value);
+      });
+    }
+  }, []);
+
   const onSubmit = async (data) => {
     try {
-      console.log(data);
-    } catch (err) {}
+      // ES: Datos principales para crear/actualizar el schema
+      const schemaWithAllConfig = transformItemToSchemaAndUi(data, Object.keys(data.locales)[0]);
+      schemaWithAllConfig.schema.frontConfig = {
+        ...schemaWithAllConfig.schema.frontConfig,
+        ...item.frontConfig,
+      };
+      // ES: Datos secundarios traducciones
+      const schemaLocales = {};
+      _.forIn(data.locales, (value, key) => {
+        schemaLocales[key] = transformItemToSchemaAndUi(data, key);
+
+        // Schema
+        const schemaGoodKeys = {};
+        if (schemaLocales[key].schema.title) schemaGoodKeys.title = schemaLocales[key].schema.title;
+        if (schemaLocales[key].schema.description)
+          schemaGoodKeys.description = schemaLocales[key].schema.description;
+        if (schemaLocales[key].schema.items?.enumNames)
+          schemaGoodKeys.items = { enumNames: schemaLocales[key].schema.items.enumNames };
+        if (schemaLocales[key].schema.frontConfig?.checkboxLabels)
+          schemaGoodKeys.frontConfig = {
+            checkboxLabels: schemaLocales[key].schema.frontConfig.checkboxLabels,
+          };
+        schemaLocales[key].schema = schemaGoodKeys;
+
+        // Ui
+        const uiGoodKeys = {};
+        if (schemaLocales[key].ui['ui:help'])
+          schemaGoodKeys['ui:help'] = schemaLocales[key].ui['ui:help'];
+        schemaLocales[key].ui = uiGoodKeys;
+      });
+      // ES: Calculamos los permisos finales
+      const permissions = {
+        // ES: Si esta marcado como que los permisos afecten a todos los centros decimos que las ids
+        // son de tipo perfil, si solo afecta a unos centros en concreto es rol por que se almacenaran
+        // las ids de los roles que sean la interseccion de centro - perfil
+        permissionsType: schemaWithAllConfig.schema.frontConfig.isAllCenterMode
+          ? 'profile'
+          : 'role',
+        permissions: {},
+      };
+      if (schemaWithAllConfig.schema.frontConfig.permissions) {
+        if (permissions.permissionsType === 'profile') {
+          _.forEach(schemaWithAllConfig.schema.frontConfig.permissions, ({ id, view, edit }) => {
+            permissions.permissions[id] = [];
+            if (view) permissions.permissions[id].push('view');
+            if (edit) permissions.permissions[id].push('edit');
+          });
+        } else {
+          const oneOfCentersHasRole = (role) => {
+            const selectedCenters = _.filter(
+              centersContextState.centers,
+              ({ id }) => schemaWithAllConfig.schema.frontConfig.centers.indexOf(id) >= 0
+            );
+            let hasRole = false;
+            _.forEach(selectedCenters, ({ roles }) => {
+              _.forEach(roles, ({ id }) => {
+                if (id === role) {
+                  hasRole = true;
+                  return false;
+                }
+              });
+              if (hasRole) return false;
+            });
+            return hasRole;
+          };
+          _.forEach(
+            schemaWithAllConfig.schema.frontConfig.permissions,
+            ({ id, view, edit, roles }) => {
+              _.forEach(roles, (role) => {
+                if (oneOfCentersHasRole(role.id)) {
+                  permissions.permissions[role.id] = [];
+                  if (view) permissions.permissions[role.id].push('view');
+                  if (edit) permissions.permissions[role.id].push('edit');
+                }
+              });
+            }
+          );
+        }
+      }
+
+      schemaWithAllConfig.schema = { ...schemaWithAllConfig.schema, ...permissions };
+
+      if (_item && _item.id) {
+        schemaWithAllConfig.schema.id = _item.id;
+      }
+
+      if (locationName && pluginName) {
+        try {
+          setSaveLoading(true);
+          const dataset = await saveDatasetFieldRequest(
+            locationName,
+            pluginName,
+            schemaWithAllConfig,
+            schemaLocales
+          );
+          setSaveLoading(false);
+          onSave(dataset);
+          close();
+        } catch (e) {
+          setSaveLoading(false);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const onPermissionsChange = (event) => {
+    setItem(
+      update(item, {
+        frontConfig: {
+          permissions: {
+            $set: event,
+          },
+        },
+      })
+    );
+  };
+
+  const onCentersChange = (event) => {
+    setItem(
+      update(item, {
+        frontConfig: {
+          $merge: event,
+        },
+      })
+    );
   };
 
   return (
-    <Drawer {...drawer}>
-      <div className="max-w-screen-xl w-screen h-full flex flex-row">
-        <div className="w-4/12 bg-base-200 h-full">
-          <DatasetItemDrawerPreview t={t} />
-        </div>
-        <div className="w-8/12 h-full px-10 py-4">
-          <form onSubmit={handleSubmit(onSubmit)}>
-            {/* Titulo y cerrar */}
-            <div className="flex flex-row justify-between items-center mb-16">
-              <DatasetItemTitle
+    <DatasetItemDrawerProfilesContext.Provider
+      value={{
+        ...profileContextState,
+        setState: (data) => setProfileContextState({ ...profileContextState, ...data }),
+      }}
+    >
+      <DatasetItemDrawerCentersContext.Provider
+        value={{
+          ...centersContextState,
+          setState: (data) => setCentersContextState({ ...centersContextState, ...data }),
+        }}
+      >
+        <DatasetItemDrawerContext.Provider
+          value={{
+            ...contextState,
+            tCommon,
+            t,
+            item,
+            locationName,
+            pluginName,
+            form: {
+              register,
+              handleSubmit,
+              setValue,
+              getValues,
+              watch,
+              errors,
+            },
+            setState: (data) => setContextState({ ...contextState, ...data }),
+          }}
+        >
+          <div className="max-w-screen-xl w-screen h-full flex flex-row">
+            <div className="w-4/12 bg-base-200 h-full">
+              <DatasetItemDrawerPreview
                 t={t}
-                tCommon={tCommon}
-                item={item}
-                register={register}
-                errors={errors}
+                item={transformItemToSchemaAndUi(currentFormValues, contextState.currentLocale)}
               />
-              <div
-                style={{ width: '18px', height: '18px' }}
-                className="relative cursor-pointer"
-                onClick={close}
-              >
-                <ImageLoader src="/assets/svgs/close.svg" />
-              </div>
             </div>
-
-            {/* Tipo de campo / Required / Masked */}
-            <div className="flex flex-row">
-              {/* Tipo de campo */}
-              <div className="flex flex-row justify-between items-center w-7/12">
-                <div className="text-sm text-secondary mr-6">{t('field_type')}</div>
-                <div>
-                  <FormControl formError={errors.type}>
-                    <Select
-                      outlined={true}
-                      className="w-full max-w-xs"
-                      {...register('type', {
-                        required: tCommon('required'),
-                      })}
-                    >
-                      <option>telekinesis</option>
-                      <option>time travel</option>
-                      <option>invisibility</option>
-                    </Select>
-                  </FormControl>
+            <form
+              className="w-8/12 h-full relative flex flex-col"
+              onSubmit={handleSubmit(onSubmit)}
+            >
+              {/* Titulo y cerrar */}
+              <div className="flex flex-row justify-between items-center mb-8 pt-4 px-10">
+                <DatasetItemTitle />
+                <div
+                  style={{ width: '18px', height: '18px' }}
+                  className="relative cursor-pointer"
+                  onClick={close}
+                >
+                  <ImageLoader src="/assets/svgs/close.svg" />
                 </div>
               </div>
 
-              <div className="flex flex-row">
-                {/* Required */}
-                <div className="ml-6">
-                  <FormControl
-                    label={t('required')}
-                    labelPosition="right"
-                    formError={errors.required}
-                  >
-                    <Checkbox color="primary" {...register('required')} />
-                  </FormControl>
+              <SimpleBar className="flex-grow h-px">
+                <div className="px-10 py-1">
+                  {/* *** Centros *** */}
+                  <div className="mb-6">
+                    <DatasetItemDrawerCenters onChange={onCentersChange} />
+                  </div>
+
+                  {/* *** Campos *** */}
+                  <DatasetItemDrawerType />
+
+                  {/* *** Idiomas *** */}
+                  <DatasetItemSeparator text={t('config_and_languages')} />
+                  <DatasetItemDrawerLocales />
+
+                  {/* *** Permisos *** */}
+                  <DatasetItemSeparator text={t('profiles_permission')} />
+                  <DatasetItemDrawerPermissions onChange={onPermissionsChange} />
                 </div>
-                {/* Masked */}
-                <div className="ml-6">
-                  <FormControl label={t('masked')} labelPosition="right" formError={errors.masked}>
-                    <Checkbox color="primary" {...register('masked')} />
-                  </FormControl>
-                </div>
+              </SimpleBar>
+
+              <div className="w-full bg-primary-content px-10 py-4 text-right">
+                <Button color="primary" loading={saveLoading}>
+                  {t('save')}
+                </Button>
               </div>
-            </div>
-
-            {/* *** Idiomas *** */}
-            <DatasetItemSeparator text={t('config_and_languages')} />
-
-            {/* *** Permisos *** */}
-            <DatasetItemSeparator text={t('profiles_permission')} />
-            <DatasetItemDrawerPermissions t={t} />
-
-            <Button className="my-8 btn-block" color="primary" rounded={true}>
-              Enviar
-            </Button>
-          </form>
-        </div>
-      </div>
-    </Drawer>
+            </form>
+          </div>
+        </DatasetItemDrawerContext.Provider>
+      </DatasetItemDrawerCentersContext.Provider>
+    </DatasetItemDrawerProfilesContext.Provider>
   );
 };
 
@@ -121,7 +292,11 @@ export const useDatasetItemDrawer = () => {
   return [
     toggleDrawer,
     function (data) {
-      return <DatasetItemDrawer drawer={drawer} close={toggleDrawer} {...data} />;
+      return (
+        <Drawer {...drawer}>
+          <DatasetItemDrawer close={toggleDrawer} {...data} />
+        </Drawer>
+      );
     },
   ];
 };

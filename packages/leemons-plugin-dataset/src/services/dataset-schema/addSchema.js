@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const transformPermissionKeysToObjects = require('./transformPermissionKeysToObjects');
-const { getJsonSchemaProfilePermissionsKeys } = require('./transformJsonOrUiSchema');
+const { transformPermissionKeysToObjectsByType } = require('./transformPermissionKeysToObjects');
+const { getJsonSchemaProfilePermissionsKeysByType } = require('./transformJsonOrUiSchema');
 const {
   validatePluginName,
   validateNotExistLocation,
@@ -35,9 +35,12 @@ async function addSchema(
 
   return global.utils.withTransaction(
     async (transacting) => {
-      const permissionObject = transformPermissionKeysToObjects(
+      const {
+        profiles: profilePermissions,
+        roles: rolesPermissions,
+      } = transformPermissionKeysToObjectsByType(
         jsonSchema,
-        getJsonSchemaProfilePermissionsKeys(jsonSchema),
+        getJsonSchemaProfilePermissionsKeysByType(jsonSchema),
         `${locationName}.${pluginName}`
       );
 
@@ -52,14 +55,22 @@ async function addSchema(
         ),
       ];
 
-      // TODO Cambiar de perfiles a roles
-      _.forIn(permissionObject, (permissions, profileId) => {
+      _.forIn(profilePermissions, (permissions, profileId) => {
         promises.push(
           leemons
             .getPlugin('users')
             .services.profiles.addCustomPermissions(profileId, permissions, {
               transacting,
             })
+        );
+      });
+
+      _.forIn(rolesPermissions, (permissions, roleId) => {
+        promises.push(
+          leemons.getPlugin('users').services.roles.addPermissionMany(roleId, permissions, {
+            isCustom: true,
+            transacting,
+          })
         );
       });
 

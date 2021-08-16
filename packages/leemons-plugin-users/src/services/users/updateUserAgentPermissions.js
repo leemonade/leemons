@@ -2,25 +2,10 @@ const _ = require('lodash');
 const { existUserAgent } = require('./existUserAgent');
 const { table } = require('../tables');
 
-/**
- * EN:
- * Updates the permissions of the user if it is marked as reload permissions according to their
- * roles and the roles of the groups to which they belong.
- *
- * ES:
- * Borra todos los permisos que ya tuviera el usuario que vinieran desde un rol y vuelve a generar
- * todos los permisos desde los roles en los que esta el usuario
- *
- * @public
- * @static
- * @param {string} userAgentId - User auth id
- * @param {any=} transacting - DB Transaction
- * @return {Promise<any>}
- * */
-async function updateUserAgentPermissions(userAgentId, { transacting: _transacting } = {}) {
-  await existUserAgent({ id: userAgentId }, true, { transacting: _transacting });
-  return global.utils.withTransaction(
+async function _updateUserAgentPermissions(userAgentId, { transacting: _transacting } = {}) {
+  return await global.utils.withTransaction(
     async (transacting) => {
+      await existUserAgent({ id: userAgentId }, true, { transacting });
       // ES: Borramos los permisos que salieran desde roles y sacamos todos los roles actuales del usuario, ya sea por que vienen desde grupos/perfiles/o el mismo rol que tiene
       const [groupUserAgent, userAgent] = await Promise.all([
         table.groupUserAgent.find({ userAgent: userAgentId }, { columns: ['group'], transacting }),
@@ -61,8 +46,7 @@ async function updateUserAgentPermissions(userAgentId, { transacting: _transacti
       ]);
 
       const roleCenterByRole = _.keyBy(roleCenter, 'role');
-
-      return table.userAgentPermission.createMany(
+      return await table.userAgentPermission.createMany(
         _.map(rolePermissions, (rolePermission) => ({
           userAgent: userAgentId,
           role: rolePermission.role,
@@ -79,6 +63,33 @@ async function updateUserAgentPermissions(userAgentId, { transacting: _transacti
     table.userAgent,
     _transacting
   );
+}
+
+/**
+ * EN:
+ * Updates the permissions of the user if it is marked as reload permissions according to their
+ * roles and the roles of the groups to which they belong.
+ *
+ * ES:
+ * Borra todos los permisos que ya tuviera el usuario que vinieran desde un rol y vuelve a generar
+ * todos los permisos desde los roles en los que esta el usuario
+ *
+ * @public
+ * @static
+ * @param {string | string[]} userAgentId - User auth id
+ * @param {any=} transacting - DB Transaction
+ * @return {Promise<any>}
+ * */
+async function updateUserAgentPermissions(userAgentId, { transacting } = {}) {
+  if (_.isArray(userAgentId)) {
+    const results = [];
+    for (let i = 0, l = userAgentId.length; i < l; i++) {
+      results.push(await _updateUserAgentPermissions(userAgentId[i], { transacting }));
+    }
+    return results;
+  } else {
+    return _updateUserAgentPermissions(userAgentId, { transacting });
+  }
 }
 
 module.exports = { updateUserAgentPermissions };

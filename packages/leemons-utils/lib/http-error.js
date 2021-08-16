@@ -1,3 +1,11 @@
+class HttpErrorWithCustomCode extends Error {
+  constructor(statusCode, code, ...rest) {
+    super(rest);
+    this.statusCode = statusCode;
+    this.code = code;
+  }
+}
+
 class HttpError extends Error {
   constructor(statusCode, ...rest) {
     super(rest);
@@ -16,13 +24,17 @@ class HttpError extends Error {
 function returnError(ctx, errorEvent) {
   ctx.status = 400;
   ctx.body = { status: 400, message: errorEvent.message };
-  if (errorEvent instanceof HttpError) {
+  if (errorEvent instanceof HttpError || errorEvent instanceof HttpErrorWithCustomCode) {
     ctx.status = errorEvent.statusCode;
     ctx.body.status = errorEvent.statusCode;
+    if (errorEvent.code) {
+      ctx.body.code = errorEvent.code;
+    }
   }
 }
 
 module.exports = {
   HttpError,
+  HttpErrorWithCustomCode,
   returnError,
 };

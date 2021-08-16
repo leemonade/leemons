@@ -1,4 +1,4 @@
-import React, { createContext, useState, useMemo, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
 import cln from 'classnames';
 
@@ -107,6 +107,7 @@ const Tab = ({
         onClick={handleClick}
         role="tab"
         id={id}
+        type="button"
         aria-selected={isActive ? 'true' : 'false'}
         aria-disabled={disabled ? 'true' : 'false'}
         aria-controls={panelId}

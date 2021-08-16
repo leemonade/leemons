@@ -1,6 +1,17 @@
 const roles = require('../src/services/roles');
+const _ = require('lodash');
+const { validatePermissionName } = require('../src/validations/exists');
+
+function addPermissionMany(roleId, permissions, { isCustom, transacting } = {}) {
+  _.forEach(permissions, (permission) => {
+    validatePermissionName(permission.permissionName, this.calledFrom);
+  });
+  return roles.addPermissionMany(roleId, permissions, { isCustom, transacting });
+}
 
 module.exports = {
-  // TODO Esto no se deberia de tener acceso, lo pongo para que el template pueda crear centros
   add: roles.add,
+  update: roles.update,
+  addPermissionMany,
+  removePermissionsByName: roles.removePermissionsByName,
 };

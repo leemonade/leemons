@@ -8,6 +8,9 @@ module.exports = {
     name: {
       type: 'string',
     },
+    type: {
+      type: 'string',
+    },
   },
   primaryKey: {
     type: 'uuid',

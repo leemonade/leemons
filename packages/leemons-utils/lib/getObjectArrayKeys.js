@@ -14,7 +14,7 @@ function getObjectArrayKeys(object) {
             keys.push(`${key}[${k}].${_k}`);
           });
         } else {
-          keys.push(`${key}.${k}`);
+          keys.push(`${key}[${k}]`);
         }
       });
     } else {

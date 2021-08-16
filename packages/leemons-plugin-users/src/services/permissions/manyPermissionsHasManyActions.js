@@ -10,6 +10,7 @@ const { hasActionMany } = require('./hasActionMany');
  * @return {Promise<boolean>}
  * */
 async function manyPermissionsHasManyActions(data, { transacting }) {
+  if (data.length === 0) return true;
   const response = await Promise.all(
     _.map(data, (d) => hasActionMany(d[0], d[1], { transacting }))
   );

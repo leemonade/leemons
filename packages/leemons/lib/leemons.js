@@ -148,6 +148,7 @@ class Leemons {
           }} {gray ${end - start} ms}`
         );
       } catch (err) {
+        console.error(err);
         leemons.log.error(err.message);
         leemonsUtils.returnError(ctx, err);
       }
@@ -254,23 +255,27 @@ class Leemons {
     plugins.forEach((plugin) => {
       if (_.isArray(plugin.routes)) {
         plugin.routes.forEach((route) => {
-          if (
-            route.handler &&
-            route.path &&
-            route.method &&
-            _.get(plugin.controllers, route.handler)
-          ) {
-            const handler = _.get(plugin.controllers, route.handler);
-            const functions = [];
-            if (route.authenticated)
-              functions.push(this.authenticatedMiddleware(route.authenticated));
-            if (route.allowedPermissions)
-              functions.push(this.permissionsMiddleware(route.allowedPermissions));
-            functions.push(handler);
-            this.backRouter[route.method.toLocaleLowerCase()](
-              `/api/${plugin.name}${route.path}`,
-              ...functions
-            );
+          if (route.handler && route.path && route.method) {
+            if (_.get(plugin.controllers, route.handler)) {
+              const handler = _.get(plugin.controllers, route.handler);
+              const functions = [];
+              if (route.authenticated)
+                functions.push(this.authenticatedMiddleware(route.authenticated));
+              if (route.allowedPermissions)
+                functions.push(this.permissionsMiddleware(route.allowedPermissions));
+              functions.push(handler);
+
+              this.backRouter[route.method.toLocaleLowerCase()](
+                `/api/${plugin.name}${route.path}`,
+                ...functions
+              );
+            } else {
+              this.log.error(
+                `Not found handler function for the API url: ${route.method.toLocaleLowerCase()} - /api/${
+                  plugin.name
+                }${route.path}`
+              );
+            }
           }
         });
       }

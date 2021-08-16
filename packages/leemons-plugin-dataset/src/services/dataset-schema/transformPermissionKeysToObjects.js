@@ -18,4 +18,11 @@ function transformPermissionKeysToObjects(jsonSchema, keys, prefix) {
   return result;
 }
 
-module.exports = transformPermissionKeysToObjects;
+function transformPermissionKeysToObjectsByType(jsonSchema, keysByType, prefix) {
+  return {
+    profiles: transformPermissionKeysToObjects(jsonSchema, keysByType.profiles, prefix),
+    roles: transformPermissionKeysToObjects(jsonSchema, keysByType.roles, prefix),
+  };
+}
+
+module.exports = { transformPermissionKeysToObjects, transformPermissionKeysToObjectsByType };

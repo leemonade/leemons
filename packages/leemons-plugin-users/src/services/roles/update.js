@@ -62,17 +62,18 @@ async function update(
         throw new Error(`One or more permissions or his actions not exist`);
 
       leemons.log.info(`Updating role '${name}'`);
-      const [role, roleCenter] = await Promise.all([
+      const [role, roleCenter, n] = await Promise.all([
         table.roles.update({ id }, { name, type, description }, { transacting }),
         table.roleCenter.findOne({ role: id }, { transacting }),
         removePermissionAll(id, { transacting }),
       ]);
 
       // ES: Si nos pasan que center es explicitamente null significa que quieren quitarle el centro al rol y si viene centro es que quieres actualizarlo
-      if (_.isNull(center) || center) await table.roleCenter.delete({ id: roleCenter.id });
+      if (_.isNull(center) || center)
+        await table.roleCenter.delete({ id: roleCenter.id }, { transacting });
       if (center) await table.roleCenter.create({ role: role.id, center }, { transacting });
 
-      await addPermissionMany(id, permissions, { transacting });
+      await addPermissionMany.call(this, id, permissions, { transacting });
       return role;
     },
     table.roles,

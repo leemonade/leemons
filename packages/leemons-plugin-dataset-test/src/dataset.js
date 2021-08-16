@@ -316,6 +316,9 @@ async function init() {
   const schema = leemons.getPlugin('dataset').services.dataset.transformJsonSchema(jsonSchema);
   const ui = leemons.getPlugin('dataset').services.dataset.transformUiSchema(jsonUI);
 
+  console.log(schema, ui);
+
+  /*
   const uPschema = leemons
     .getPlugin('dataset')
     .services.dataset.transformJsonSchema(updatedJsonSchema);
@@ -335,6 +338,8 @@ async function init() {
   await getValues();
 
   await deleteLocation();
+
+   */
 }
 
 module.exports = init;

@@ -25,6 +25,7 @@ async function loadJSFile(
     }
     return fileContent;
   } catch (e) {
+    console.error(e);
     throw new Error(`File can not be read: ${file}. ${e.message}`);
   }
 }

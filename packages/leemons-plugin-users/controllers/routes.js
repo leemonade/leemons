@@ -144,11 +144,6 @@ module.exports = [
    * Roles
    * */
   {
-    path: '/roles-for-center/:center',
-    method: 'GET',
-    handler: 'roles.rolesForCenter',
-  },
-  {
     path: '/role',
     method: 'POST',
     handler: 'roles.create',
@@ -171,5 +166,19 @@ module.exports = [
         actions: ['view', 'update', 'create', 'delete', 'admin'],
       },
     },
+  },
+
+  /**
+   * Platform
+   * */
+  {
+    path: '/platform/default-locale',
+    method: 'GET',
+    handler: 'platform.getDefaultLocale',
+  },
+  {
+    path: '/platform/locales',
+    method: 'GET',
+    handler: 'platform.getLocales',
   },
 ];

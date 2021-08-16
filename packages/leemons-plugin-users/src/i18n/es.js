@@ -6,7 +6,6 @@ module.exports = {
     tabs: {
       login_data: 'Login',
       basic_data: 'Basicos',
-      user_dataset: 'Dataset',
     },
     login: {
       description:
@@ -14,11 +13,25 @@ module.exports = {
     },
     basic: {
       description: 'Configuración de campos generales para sus usuarios',
+      table: {
+        name: 'Nombre',
+        description: 'Descripción',
+        type: 'Tipo',
+        actions: 'Acciones',
+      },
+      edit: 'Editar',
+      delete: 'Borrar',
     },
     dataset: {
       description: 'Configuración de campos generales para sus usuarios',
       filter_by_center: 'Filtrar por centro',
       add_field: 'Añadir campo',
+    },
+    remove_modal: {
+      title: '¿Quieres eliminar el item?',
+      message: 'Esta acción no puede deshacerse',
+      cancel: 'No',
+      action: 'Eliminar',
     },
   },
   welcome_page: {
@@ -30,6 +43,22 @@ module.exports = {
     text:
       '"¡No sé el significado de la mitad de esas largas palabras y, además, no creo que tú tampoco lo sepas!"',
     author: 'Alice in Wonderland <br/> Lewis Carrol',
+  },
+  list_profiles: {
+    page_title: 'Perfiles',
+    page_description:
+      'Utilice los perfiles de usuario para gestionar los permisos de las aplicaciones. Cada vez que instale un nuevo leemon le pediremos que defina los permisos para cada perfil existente.',
+    name: 'Nombre',
+    overview: 'Resumen',
+    actions: 'Acciones',
+    view: 'Ver',
+  },
+  detail_profile: {
+    profile_name: 'Nombre del perfil',
+    description: 'Descripción del perfil',
+    leemon: 'Leemon',
+    permissions: 'Permisos',
+    dataset: 'Dataset',
   },
   login: {
     title: 'Acceda a su cuenta',

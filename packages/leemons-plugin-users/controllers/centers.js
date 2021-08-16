@@ -21,9 +21,9 @@ async function list(ctx) {
   });
   if (validator.validate(ctx.request.body)) {
     const { page, size, ...options } = ctx.request.body;
-    const centers = await centerService.list(page, size, { ...options });
+    const data = await centerService.list(page, size, { ...options });
     ctx.status = 200;
-    ctx.body = { status: 200, centers };
+    ctx.body = { status: 200, data };
   } else {
     throw validator.error;
   }

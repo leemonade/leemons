@@ -6,7 +6,6 @@ module.exports = {
     tabs: {
       login_data: 'Login data',
       basic_data: 'Basic data',
-      user_dataset: 'User dataset',
     },
     login: {
       description:
@@ -14,11 +13,25 @@ module.exports = {
     },
     basic: {
       description: 'Configuration of general fields for your users',
+      table: {
+        name: 'Name',
+        description: 'Description',
+        type: 'Type',
+        actions: 'Actions',
+      },
+      edit: 'Edit',
+      delete: 'Delete',
     },
     dataset: {
       description: 'Configuration of general fields for your users',
       filter_by_center: 'Filter by center',
       add_field: 'Add field',
+    },
+    remove_modal: {
+      title: 'Do you want to delete the item?',
+      message: 'This action cannot be undone',
+      cancel: 'No',
+      action: 'Delete',
     },
   },
   welcome_page: {
@@ -30,6 +43,22 @@ module.exports = {
     text:
       '“I don’t know the meaning of half those long words, and, what’s more, I don’t believe you do either!”',
     author: 'Alice in Wonderland <br/> Lewis Carrol',
+  },
+  list_profiles: {
+    page_title: 'Profiles',
+    page_description:
+      'Use the user profiles to manage permissions for applications. Each time you install a new leemon we will ask you to define permissions for each existing profile.',
+    name: 'Name',
+    overview: 'Overview',
+    actions: 'Actions',
+    view: 'View',
+  },
+  detail_profile: {
+    profile_name: 'Profile name',
+    description: 'Profile description',
+    leemon: 'Leemon',
+    permissions: 'Permissions',
+    dataset: 'Dataset',
   },
   login: {
     title: 'Login to your account',

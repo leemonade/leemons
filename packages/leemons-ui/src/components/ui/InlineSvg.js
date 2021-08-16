@@ -8,13 +8,23 @@ export default function InlineSvg({ src, className }) {
   const [isErrored, setIsErrored] = useState(false);
 
   useEffect(() => {
-    fetch(src)
-      .then((res) => res.text())
-      .then((svgText) => {
-        setSvg(svgText);
-      })
-      .catch(setIsErrored)
-      .then(() => setIsLoaded(true));
+    let mounted = true;
+    if (src) {
+      fetch(src)
+        .then((res) => res.text())
+        .then((svgText) => {
+          if (mounted) setSvg(svgText);
+        })
+        .catch((err) => {
+          if (mounted) setIsErrored(err);
+        })
+        .then(() => {
+          if (mounted) setIsLoaded(true);
+        });
+    }
+    return () => {
+      mounted = false;
+    };
   }, [src]);
 
   useEffect(() => {
