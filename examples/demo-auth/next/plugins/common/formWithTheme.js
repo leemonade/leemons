@@ -1,5 +1,5 @@
 import { withTheme } from '@rjsf/core';
-import { Checkbox, FormControl, Input, Label, Radio, Select, Textarea } from 'leemons-ui';
+import { Checkbox, FormControl, Input, Label, Radio, Select, Textarea, Toggle } from 'leemons-ui';
 import Engine from 'json-rules-engine-simplified';
 import applyRules from 'rjsf-conditionals';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -96,7 +96,6 @@ function FieldTemplate({
   children,
   ...rest
 }) {
-  console.log(children);
   return (
     <div className={`py-2 ${classNames}`}>
       {children}
@@ -110,39 +109,35 @@ function NumberField({ ...props }) {
   return <BaseInput {...props} type="number" />;
 }
 
-function CheckboxesWidget({ options, onChange, schema, rawErrors, required, ...props }) {
+function CheckboxesWidget(props) {
+  const { options, onChange, schema, rawErrors, required, ...rest } = props;
+
   const onCheckboxChange = (event, value) => {
     if (event.target.checked) {
-      if (props.value.indexOf(value) < 0) {
-        onChange([...props.value, value]);
+      if (rest.value.indexOf(value) < 0) {
+        onChange([...rest.value, value]);
       }
     } else {
-      const index = props.value.indexOf(value);
+      const index = rest.value.indexOf(value);
       if (index >= 0) {
-        props.value.splice(index, 1);
-        onChange(props.value);
+        rest.value.splice(index, 1);
+        onChange(rest.value);
       }
     }
   };
 
   return (
     <div>
-      {schema.title ? (
-        <div>
-          <Label text={`${schema.title ? schema.title : ''}${required ? '*' : ''}`} />
-        </div>
-      ) : null}
-      {schema.description ? (
-        <div className="text-sm pb-2 text-secondary">{schema.description}</div>
-      ) : null}
+      <PartTitle {...props} />
+      <PartDescription {...props} />
       <div>
         {options.enumOptions
           ? options.enumOptions.map(({ value, label }, index) => (
               <div key={value + label + index} className="flex">
                 <FormControl label={label} labelPosition="right">
                   <Checkbox
-                    color="primary"
-                    checked={props.value.indexOf(value) >= 0}
+                    color={rawErrors ? 'error' : 'primary'}
+                    checked={rest.value.indexOf(value) >= 0}
                     onChange={(event) => onCheckboxChange(event, value)}
                   />
                 </FormControl>
@@ -150,7 +145,7 @@ function CheckboxesWidget({ options, onChange, schema, rawErrors, required, ...p
             ))
           : null}
       </div>
-      <FormControl formError={rawErrors ? { message: rawErrors[0] } : null} />
+      <PartError rawErrors={rawErrors} />
     </div>
   );
 }
@@ -188,23 +183,6 @@ function ErrorList({ errors }) {
   );
 
    */
-}
-
-function BooleanField(props) {
-  const { required, readonly, disabled, autofocus, onChange, formData, ...rest } = props;
-  return (
-    <MyCustomFormControl descriptionOutside={true} {...props}>
-      <Checkbox
-        color="primary"
-        autoFocus={autofocus}
-        readOnly={readonly}
-        required={required}
-        checked={formData}
-        disabled={disabled}
-        onChange={(event) => onChange(event.target.checked)}
-      />
-    </MyCustomFormControl>
-  );
 }
 
 function SelectWidget(props) {
@@ -265,18 +243,20 @@ function RadioWidget(props) {
     schema,
     required,
     value,
+    rawErrors,
     ...rest
   } = props;
-  console.log(props);
+
   return (
     <>
-      <Label className="pt-1" text={`${schema.title ? schema.title : ''}${required ? '*' : ''}`} />
+      <PartTitle {...props} />
+      <PartDescription {...props} />
       {options.enumOptions
         ? options.enumOptions.map(({ value: _value, label }, index) => (
             <div className="flex">
               <FormControl label={label} labelPosition="right">
                 <Radio
-                  color="primary"
+                  color={rawErrors ? 'error' : 'primary'}
                   name={id}
                   disabled={disabled}
                   onBlur={onBlur}
@@ -284,15 +264,102 @@ function RadioWidget(props) {
                   autoFocus={autofocus}
                   readOnly={readonly}
                   checked={_value === value}
-                  onChange={(e) => onChange(e.target.value)}
+                  onChange={() => onChange(_value)}
                   value={_value}
                 />
               </FormControl>
             </div>
           ))
         : null}
+      <PartError rawErrors={rawErrors} />
     </>
   );
+}
+
+function CheckboxWidget(props) {
+  const {
+    required,
+    readonly,
+    disabled,
+    autofocus,
+    onChange,
+    value,
+    rawErrors,
+    schema,
+    ...rest
+  } = props;
+
+  return (
+    <div>
+      <PartTitle {...props} />
+      <PartDescription {...props} />
+      <div className="flex">
+        <FormControl label={schema.optionLabel} labelPosition="right">
+          <Checkbox
+            color={rawErrors ? 'error' : 'primary'}
+            autoFocus={autofocus}
+            readOnly={readonly}
+            checked={value}
+            disabled={disabled}
+            onChange={(event) => onChange(event.target.checked)}
+          />
+        </FormControl>
+      </div>
+      <PartError rawErrors={rawErrors} />
+    </div>
+  );
+}
+
+function ToggleWidget(props) {
+  const {
+    required,
+    readonly,
+    disabled,
+    autofocus,
+    onChange,
+    value,
+    rawErrors,
+    schema,
+    ...rest
+  } = props;
+
+  return (
+    <div>
+      <PartTitle {...props} />
+      <PartDescription {...props} />
+      <div className="flex">
+        <FormControl label={schema.optionLabel} labelPosition="right">
+          <Toggle
+            color={rawErrors ? 'error' : 'primary'}
+            autoFocus={autofocus}
+            readOnly={readonly}
+            checked={value}
+            disabled={disabled}
+            onChange={(event) => onChange(event.target.checked)}
+          />
+        </FormControl>
+      </div>
+      <PartError rawErrors={rawErrors} />
+    </div>
+  );
+}
+
+function PartTitle({ schema, required }) {
+  return schema.title ? (
+    <div>
+      <Label text={`${schema.title ? schema.title : ''}${required ? '*' : ''}`} />
+    </div>
+  ) : null;
+}
+
+function PartDescription({ schema }) {
+  return schema.description ? (
+    <div className="text-sm pb-2 text-secondary">{schema.description}</div>
+  ) : null;
+}
+
+function PartError({ rawErrors }) {
+  return <FormControl formError={rawErrors ? { message: rawErrors[0] } : null} />;
 }
 
 export default function formWithTheme(schema, ui, conditions) {
@@ -302,7 +369,7 @@ export default function formWithTheme(schema, ui, conditions) {
     ErrorList,
     fields: {
       NumberField,
-      BooleanField,
+      //BooleanField,
     },
     widgets: {
       BaseInput,
@@ -310,6 +377,8 @@ export default function formWithTheme(schema, ui, conditions) {
       CheckboxesWidget,
       SelectWidget,
       RadioWidget,
+      CheckboxWidget,
+      toggle: ToggleWidget,
     },
   });
   const FormWithConditionals = applyRules(schema, ui, conditions, Engine)(Form);

@@ -53,6 +53,7 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
     setValue,
     getValues,
     watch,
+    unregister,
     trigger,
     formState: { errors, isSubmitted },
   } = useForm();
@@ -104,6 +105,12 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
             schemaGoodKeys.description = schemaLocales[key].schema.description;
           if (schemaLocales[key].schema.selectPlaceholder)
             schemaGoodKeys.selectPlaceholder = schemaLocales[key].schema.selectPlaceholder;
+          if (schemaLocales[key].schema.optionLabel)
+            schemaGoodKeys.optionLabel = schemaLocales[key].schema.optionLabel;
+          if (schemaLocales[key].schema.yesOptionLabel)
+            schemaGoodKeys.yesOptionLabel = schemaLocales[key].schema.yesOptionLabel;
+          if (schemaLocales[key].schema.noOptionLabel)
+            schemaGoodKeys.noOptionLabel = schemaLocales[key].schema.noOptionLabel;
           if (schemaLocales[key].schema.items?.enumNames)
             schemaGoodKeys.items = { enumNames: schemaLocales[key].schema.items.enumNames };
           if (schemaLocales[key].schema.frontConfig?.checkboxLabels)
@@ -254,6 +261,7 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
                 watch,
                 errors,
                 isSubmitted,
+                unregister,
               },
               setState: (data) => setContextState({ ...contextState, ...data }),
             }}

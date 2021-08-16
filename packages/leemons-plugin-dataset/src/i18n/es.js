@@ -41,6 +41,11 @@ module.exports = {
     show_as: 'Mostrar como',
     show_as_description: 'Cambia como se muestra visualmente.',
     first_option_not_eligible: 'Primera opción (no elegible)',
+    option_label: 'Etiqueta de opción',
+    option_label_description: 'Texto al lado del checkbox.',
+    initial_status: 'Estado inicial',
+    yes_label: '"Si" Label',
+    no_label: '"No" Label',
     options_modal: {
       title: 'Traducción de opciones',
       description: 'Añade aquí las traducciones de las opciones a {locale}',

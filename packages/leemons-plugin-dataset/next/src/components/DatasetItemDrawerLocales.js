@@ -180,6 +180,71 @@ const LocaleTab = ({ required, locale, localeName, load }) => {
         </div>
       ) : null}
 
+      {/* First option text */}
+      {type === datasetDataTypes.boolean.type ? (
+        <>
+          {uiType === 'checkbox' || uiType === 'switcher' ? (
+            <div className="flex flex-row py-6">
+              <div className="w-4/12">
+                <div className="text-sm text-secondary">{t('option_label')}</div>
+                <div className="text-sm text-neutral-content">{t('option_label_description')}</div>
+              </div>
+              <div className="w-8/12 pl-4">
+                <FormControl
+                  className="w-full"
+                  formError={_.get(form.errors, `locales.${locale}.schema.optionLabel`)}
+                >
+                  <Input
+                    className="w-full"
+                    outlined={true}
+                    {...form.register(`locales.${locale}.schema.optionLabel`)}
+                  />
+                </FormControl>
+              </div>
+            </div>
+          ) : null}
+
+          {uiType === 'radio' ? (
+            <>
+              <div className="flex flex-row py-6">
+                <div className="w-4/12">
+                  <div className="text-sm text-secondary">{t('yes_label')}</div>
+                </div>
+                <div className="w-8/12 pl-4">
+                  <FormControl
+                    className="w-full"
+                    formError={_.get(form.errors, `locales.${locale}.schema.yesOptionLabel`)}
+                  >
+                    <Input
+                      className="w-full"
+                      outlined={true}
+                      {...form.register(`locales.${locale}.schema.yesOptionLabel`)}
+                    />
+                  </FormControl>
+                </div>
+              </div>
+              <div className="flex flex-row py-6">
+                <div className="w-4/12">
+                  <div className="text-sm text-secondary">{t('no_label')}</div>
+                </div>
+                <div className="w-8/12 pl-4">
+                  <FormControl
+                    className="w-full"
+                    formError={_.get(form.errors, `locales.${locale}.schema.noOptionLabel`)}
+                  >
+                    <Input
+                      className="w-full"
+                      outlined={true}
+                      {...form.register(`locales.${locale}.schema.noOptionLabel`)}
+                    />
+                  </FormControl>
+                </div>
+              </div>
+            </>
+          ) : null}
+        </>
+      ) : null}
+
       {/* Checkbox options */}
       {type === datasetDataTypes.multioption.type || type === datasetDataTypes.select.type ? (
         <>
@@ -288,20 +353,27 @@ export const DatasetItemDrawerLocales = () => {
             item.id
           );
 
-          console.log(schema);
-
           form.setValue(`locales.${locale}.schema.title`, _.get(schema, 'title', ''));
           form.setValue(`locales.${locale}.schema.description`, _.get(schema, 'description', ''));
           form.setValue(
             `locales.${locale}.schema.selectPlaceholder`,
             _.get(schema, 'selectPlaceholder', '')
           );
+          form.setValue(`locales.${locale}.schema.optionLabel`, _.get(schema, 'optionLabel', ''));
+          form.setValue(
+            `locales.${locale}.schema.yesOptionLabel`,
+            _.get(schema, 'yesOptionLabel', '')
+          );
+          form.setValue(
+            `locales.${locale}.schema.noOptionLabel`,
+            _.get(schema, 'noOptionLabel', '')
+          );
           form.setValue(
             `locales.${locale}.schema.frontConfig.checkboxLabels`,
             _.get(schema, 'frontConfig.checkboxLabels', [])
           );
 
-          form.setValue(`locales.${locale}.ui['ui:help']}`, _.get(ui, 'ui:help', ''));
+          form.setValue(`locales.${locale}.ui['ui:help']`, _.get(ui, 'ui:help', ''));
         } catch (e) {
           if (e.code !== 4002) setError(e);
         }

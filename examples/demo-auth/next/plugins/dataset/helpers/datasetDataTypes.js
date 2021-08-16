@@ -28,8 +28,8 @@ const datasetDataTypes = {
   multioption: {
     type: 'multioption',
   },
-  checkbox: {
-    type: 'checkbox',
+  boolean: {
+    type: 'boolean',
   },
   select: {
     type: 'select',

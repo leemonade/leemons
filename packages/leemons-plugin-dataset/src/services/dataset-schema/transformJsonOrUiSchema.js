@@ -120,6 +120,9 @@ module.exports = {
       'enumNames',
       'checkboxLabels',
       'selectPlaceholder',
+      'optionLabel',
+      'yesOptionLabel',
+      'noOptionLabel',
     ];
     _.forEach(ignoreKeys, (k) => {
       const index = keys.indexOf(k);

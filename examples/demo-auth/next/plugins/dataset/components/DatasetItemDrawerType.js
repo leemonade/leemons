@@ -36,6 +36,18 @@ export const DatasetItemDrawerType = () => {
     form.setValue(`frontConfig.checkboxValues`, value);
   };
 
+  const { onChange: onChangeTypeProperty, ...restRegisterTypeProperties } = form.register(
+    'frontConfig.type',
+    {
+      required: tCommon('required'),
+    }
+  );
+
+  const onChangeType = (event) => {
+    form.unregister('frontConfig.uiType');
+    onChangeTypeProperty(event);
+  };
+
   return (
     <>
       {/* Tipo de campo / Required / Masked */}
@@ -48,9 +60,8 @@ export const DatasetItemDrawerType = () => {
               <Select
                 outlined={true}
                 className="w-full max-w-xs"
-                {...form.register('frontConfig.type', {
-                  required: tCommon('required'),
-                })}
+                {...restRegisterTypeProperties}
+                onChange={onChangeType}
               >
                 {dataTypes.map(({ type: _type }, index) => (
                   <option key={index} value={_type}>
@@ -157,6 +168,60 @@ export const DatasetItemDrawerType = () => {
             </div>
           ) : null}
         </div>
+      ) : null}
+
+      {/* Boolean */}
+      {type === datasetDataTypes.boolean.type ? (
+        <>
+          {/* Boolean ui type */}
+          <div className="flex flex-row mt-6">
+            <div className="flex flex-row justify-between items-center w-7/12">
+              <div className="w-6/12">
+                <div className="text-sm text-secondary font-medium mr-6">{t('show_as')}</div>
+                <div className="text-sm text-neutral-content">{t('show_as_description')}</div>
+              </div>
+              <div className="w-6/12">
+                <FormControl formError={_.get(form.errors, 'frontConfig.type')}>
+                  <Select
+                    outlined={true}
+                    className="w-full max-w-xs"
+                    {...form.register('frontConfig.uiType', {
+                      required: tCommon('required'),
+                    })}
+                  >
+                    <option value="checkbox">{tCommonTypes('boolean_types.checkbox')}</option>
+                    <option value="radio">{tCommonTypes('boolean_types.radio')}</option>
+                    <option value="switcher">{tCommonTypes('boolean_types.switcher')}</option>
+                  </Select>
+                </FormControl>
+              </div>
+            </div>
+          </div>
+
+          {/* Boolean initial status */}
+          <div className="flex flex-row mt-6">
+            <div className="flex flex-row justify-between items-center w-7/12">
+              <div className="w-6/12">
+                <div className="text-sm text-secondary font-medium mr-6">{t('initial_status')}</div>
+              </div>
+              <div className="w-6/12">
+                <FormControl formError={_.get(form.errors, 'frontConfig.initialStatus')}>
+                  <Select
+                    outlined={true}
+                    className="w-full max-w-xs"
+                    {...form.register('frontConfig.initialStatus')}
+                  >
+                    {form.watch('frontConfig.uiType') === 'radio' ? (
+                      <option value="-">{tCommonTypes('boolean_initial_status.nothing')}</option>
+                    ) : null}
+                    <option value="no">{tCommonTypes('boolean_initial_status.no')}</option>
+                    <option value="yes">{tCommonTypes('boolean_initial_status.yes')}</option>
+                  </Select>
+                </FormControl>
+              </div>
+            </div>
+          </div>
+        </>
       ) : null}
 
       {/* Field length */}

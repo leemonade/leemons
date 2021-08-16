@@ -38,10 +38,21 @@ module.exports = {
     multioption: 'Multioption',
     checkbox: 'Checkbox',
     select: 'Select',
+    boolean: 'Boolean',
     multioption_types: {
       dropdown: 'Dropdown (+chips)',
       checkboxs: 'Checkboxes',
-      radio: 'Radiobuttons',
+      radio: 'Radio buttons',
+    },
+    boolean_types: {
+      checkbox: 'Checkbox',
+      radio: 'Radio buttons',
+      switcher: 'Switcher',
+    },
+    boolean_initial_status: {
+      yes: 'Yes',
+      no: 'No',
+      nothing: 'No selection',
     },
   },
 };

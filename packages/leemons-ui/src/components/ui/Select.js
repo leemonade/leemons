@@ -89,7 +89,6 @@ const Select = React.forwardRef(
       }
     }, []);
 
-    /*
     useEffect(() => {
       let _options = getAllOptions(children);
       if (!_.isEqual(_options, _.values(originalOptionsByValue))) {
@@ -110,8 +109,6 @@ const Select = React.forwardRef(
         setOptions(filterOptions(_options));
       }
     }, [children]);
-
-     */
 
     useEffect(() => {
       if (multiple) setItems(value || []);

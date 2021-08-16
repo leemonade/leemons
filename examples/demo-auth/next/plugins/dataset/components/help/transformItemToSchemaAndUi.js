@@ -70,9 +70,18 @@ const transformItemToSchemaAndUi = (item, locale) => {
       }
       */
 
-      // Boolean checkbox
-      if (frontConfig.type === datasetDataTypes.checkbox.type) {
+      // Boolean
+      if (frontConfig.type === datasetDataTypes.boolean.type) {
         schema.type = 'boolean';
+        if (frontConfig.initialStatus === 'yes') schema.default = true;
+        if (frontConfig.initialStatus === 'no') schema.default = false;
+        if (frontConfig.uiType === 'radio') {
+          ui['ui:widget'] = 'radio';
+          schema.enumNames = [frontConfig.yesOptionLabel, frontConfig.noOptionLabel];
+        }
+        if (frontConfig.uiType === 'switcher') {
+          ui['ui:widget'] = 'toggle';
+        }
       }
 
       // Date
@@ -128,6 +137,21 @@ const transformItemToSchemaAndUi = (item, locale) => {
     }
 
     if (frontConfig) {
+      // Boolean
+      if (
+        frontConfig.type === datasetDataTypes.boolean.type &&
+        locale &&
+        locales &&
+        locales[locale] &&
+        locales[locale].schema.frontConfig
+      ) {
+        if (frontConfig.uiType === 'radio') {
+          schema.enumNames = [
+            locales[locale].schema.yesOptionLabel,
+            locales[locale].schema.noOptionLabel,
+          ];
+        }
+      }
       // Multioption
       if (frontConfig.type === datasetDataTypes.multioption.type) {
         schema.type = 'array';
