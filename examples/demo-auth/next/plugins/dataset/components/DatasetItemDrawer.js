@@ -24,6 +24,7 @@ import SimpleBar from 'simplebar-react';
 import transformItemToSchemaAndUi from './help/transformItemToSchemaAndUi';
 import { saveDatasetFieldRequest } from '../request';
 import datasetDataTypes from '../helpers/datasetDataTypes';
+import { addSuccessAlert } from '@layout/alert';
 
 const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSave = () => {} }) => {
   const [translations] = useTranslate({ keysStartsWith: prefixPN('datasetItemDrawer') });
@@ -96,8 +97,6 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
         const schemaLocales = {};
         _.forIn(data.locales, (value, key) => {
           schemaLocales[key] = transformItemToSchemaAndUi(data, key);
-
-          console.log(schemaLocales[key].ui);
 
           // Schema
           const schemaGoodKeys = {};
@@ -187,7 +186,6 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
 
         if (locationName && pluginName) {
           try {
-            console.log(schemaLocales);
             setSaveLoading(true);
             const dataset = await saveDatasetFieldRequest(
               locationName,
@@ -197,6 +195,7 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
             );
             setSaveLoading(false);
             onSave(dataset);
+            addSuccessAlert(_item && _item.id ? t('update_done') : t('save_done'));
             close();
           } catch (e) {
             setSaveLoading(false);

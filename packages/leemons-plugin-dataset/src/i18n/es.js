@@ -46,6 +46,8 @@ module.exports = {
     initial_status: 'Estado inicial',
     yes_label: '"Si" Label',
     no_label: '"No" Label',
+    save_done: 'Campo creado',
+    update_done: 'Campo actualizado',
     options_modal: {
       title: 'Traducción de opciones',
       description: 'Añade aquí las traducciones de las opciones a {locale}',
