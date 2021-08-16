@@ -54,6 +54,7 @@ async function getSchemaWithLocale(
 
   schema.schemaData = _.merge(defaultSchemaLocale.schemaData, schemaLocale.schemaData);
   schema.uiData = _.merge(defaultSchemaLocale.uiData, schemaLocale.uiData);
+
   schema.compileJsonSchema = global.utils.squirrelly.render(
     JSON.stringify(schema.jsonSchema),
     schema.schemaData

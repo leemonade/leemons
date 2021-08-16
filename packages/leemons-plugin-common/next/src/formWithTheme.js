@@ -253,7 +253,7 @@ function RadioWidget(props) {
       <PartDescription {...props} />
       {options.enumOptions
         ? options.enumOptions.map(({ value: _value, label }, index) => (
-            <div className="flex">
+            <div key={_value + label + index} className="flex">
               <FormControl label={label} labelPosition="right">
                 <Radio
                   color={rawErrors ? 'error' : 'primary'}
@@ -381,7 +381,8 @@ export default function formWithTheme(schema, ui, conditions) {
       toggle: ToggleWidget,
     },
   });
-  const FormWithConditionals = applyRules(schema, ui, conditions, Engine)(Form);
+  const FormWithConditionals =
+    schema && ui ? applyRules(schema, ui, conditions, Engine)(Form) : () => null;
   const customFormats = {
     numbers: /^\d+$/,
     phone: /^[\+]?[(]?[0-9]{2,3}[)]?[-\s\.]?[0-9\s]{3}[-\s\.]?[0-9\s]{4,8}$/,

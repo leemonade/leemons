@@ -8,6 +8,7 @@ import prefixPN from '@users/helpers/prefixPN';
 import { withLayout } from '@layout/hoc';
 import {
   Button,
+  Card,
   Modal,
   PageContainer,
   PageHeader,
@@ -22,10 +23,15 @@ import { PlusIcon } from '@heroicons/react/outline';
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
 import { useRouter } from 'next/router';
 import { useAsync } from '@common/useAsync';
-import { getDatasetSchemaRequest, removeDatasetFieldRequest } from '@dataset/request';
+import {
+  getDatasetSchemaLocaleRequest,
+  getDatasetSchemaRequest,
+  removeDatasetFieldRequest,
+} from '@dataset/request';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import formWithTheme from '@common/formWithTheme';
 
 function TabDescription({ t, type, className }) {
   return <div className={`text-base text-secondary ${className}`}>{t(`${type}.description`)}</div>;
@@ -42,6 +48,8 @@ function LoginTab({ t }) {
 }
 
 function BasicTab({ t }) {
+  const [dataTest, setDataTest] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const [tableItems, setTableItems] = useState([]);
   const [item, setItem] = useState(null);
@@ -80,6 +88,7 @@ function BasicTab({ t }) {
     try {
       setLoading(true);
       await onSuccess(await load());
+      await onSuccess2(await load2());
     } catch (e) {
       onError(e);
     }
@@ -152,6 +161,33 @@ function BasicTab({ t }) {
 
   useAsync(load, onSuccess, onError);
 
+  const load2 = useMemo(
+    () => () => getDatasetSchemaLocaleRequest('user-data', 'plugins.users'),
+    []
+  );
+
+  const onSuccess2 = useMemo(
+    () => ({ dataset }) => {
+      setDataTest(dataset);
+      setLoading(false);
+    },
+    []
+  );
+
+  const onError2 = useMemo(
+    () => (e) => {
+      // ES: 4001 codigo de que aun no existe schema, como es posible ignoramos el error
+      if (e.code !== 4001) {
+        setError(e);
+      }
+    },
+    []
+  );
+
+  useAsync(load2, onSuccess2, onError2);
+
+  const Form = formWithTheme(dataTest?.compileJsonSchema, dataTest?.compileJsonUI, []);
+
   return (
     <div>
       <Modal {...modal} />
@@ -181,6 +217,12 @@ function BasicTab({ t }) {
             </div>
           ) : null}
         </div>
+      </PageContainer>
+
+      <PageContainer>
+        <Card className="bordered p-6">
+          <Form />
+        </Card>
       </PageContainer>
     </div>
   );

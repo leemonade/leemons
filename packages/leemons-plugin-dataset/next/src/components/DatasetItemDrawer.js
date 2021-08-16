@@ -97,6 +97,8 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
         _.forIn(data.locales, (value, key) => {
           schemaLocales[key] = transformItemToSchemaAndUi(data, key);
 
+          console.log(schemaLocales[key].ui);
+
           // Schema
           const schemaGoodKeys = {};
           if (schemaLocales[key].schema.title)
@@ -113,6 +115,8 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
             schemaGoodKeys.noOptionLabel = schemaLocales[key].schema.noOptionLabel;
           if (schemaLocales[key].schema.items?.enumNames)
             schemaGoodKeys.items = { enumNames: schemaLocales[key].schema.items.enumNames };
+          if (schemaLocales[key].schema.enumNames)
+            schemaGoodKeys.enumNames = schemaLocales[key].schema.enumNames;
           if (schemaLocales[key].schema.frontConfig?.checkboxLabels)
             schemaGoodKeys.frontConfig = {
               checkboxLabels: schemaLocales[key].schema.frontConfig.checkboxLabels,
@@ -122,7 +126,7 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
           // Ui
           const uiGoodKeys = {};
           if (schemaLocales[key].ui['ui:help'])
-            schemaGoodKeys['ui:help'] = schemaLocales[key].ui['ui:help'];
+            uiGoodKeys['ui:help'] = schemaLocales[key].ui['ui:help'];
           schemaLocales[key].ui = uiGoodKeys;
         });
         // ES: Calculamos los permisos finales
@@ -183,6 +187,7 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
 
         if (locationName && pluginName) {
           try {
+            console.log(schemaLocales);
             setSaveLoading(true);
             const dataset = await saveDatasetFieldRequest(
               locationName,

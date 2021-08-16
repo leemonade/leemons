@@ -373,7 +373,7 @@ export const DatasetItemDrawerLocales = () => {
             _.get(schema, 'frontConfig.checkboxLabels', [])
           );
 
-          form.setValue(`locales.${locale}.ui['ui:help']`, _.get(ui, 'ui:help', ''));
+          form.setValue(`locales.${locale}.ui.ui:help`, _.get(ui, 'ui:help', ''));
         } catch (e) {
           if (e.code !== 4002) setError(e);
         }
