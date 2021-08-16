@@ -1,5 +1,5 @@
 import { withTheme } from '@rjsf/core';
-import { Checkbox, FormControl, Input, Label, Select, Textarea } from 'leemons-ui';
+import { Checkbox, FormControl, Input, Label, Radio, Select, Textarea } from 'leemons-ui';
 import Engine from 'json-rules-engine-simplified';
 import applyRules from 'rjsf-conditionals';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -96,6 +96,7 @@ function FieldTemplate({
   children,
   ...rest
 }) {
+  console.log(children);
   return (
     <div className={`py-2 ${classNames}`}>
       {children}
@@ -251,6 +252,49 @@ function SelectWidget(props) {
   );
 }
 
+function RadioWidget(props) {
+  const {
+    id,
+    disabled,
+    onBlur,
+    onFocus,
+    autofocus,
+    readonly,
+    onChange,
+    options,
+    schema,
+    required,
+    value,
+    ...rest
+  } = props;
+  console.log(props);
+  return (
+    <>
+      <Label className="pt-1" text={`${schema.title ? schema.title : ''}${required ? '*' : ''}`} />
+      {options.enumOptions
+        ? options.enumOptions.map(({ value: _value, label }, index) => (
+            <div className="flex">
+              <FormControl label={label} labelPosition="right">
+                <Radio
+                  color="primary"
+                  name={id}
+                  disabled={disabled}
+                  onBlur={onBlur}
+                  onFocus={onFocus}
+                  autoFocus={autofocus}
+                  readOnly={readonly}
+                  checked={_value === value}
+                  onChange={(e) => onChange(e.target.value)}
+                  value={_value}
+                />
+              </FormControl>
+            </div>
+          ))
+        : null}
+    </>
+  );
+}
+
 export default function formWithTheme(schema, ui, conditions) {
   const { t } = useCommonTranslate('forms');
   const Form = withTheme({
@@ -265,6 +309,7 @@ export default function formWithTheme(schema, ui, conditions) {
       TextareaWidget,
       CheckboxesWidget,
       SelectWidget,
+      RadioWidget,
     },
   });
   const FormWithConditionals = applyRules(schema, ui, conditions, Engine)(Form);

@@ -91,15 +91,19 @@ const transformItemToSchemaAndUi = (item, locale) => {
 
       // Multioption
       if (frontConfig.type === datasetDataTypes.multioption.type) {
-        if (frontConfig.minItems) {
-          schema.minItems = parseInt(frontConfig.minItems);
-          schema.frontConfig.minItems = parseInt(frontConfig.minItems);
+        if (frontConfig.uiType !== 'radio') {
+          if (frontConfig.minItems) {
+            schema.minItems = parseInt(frontConfig.minItems);
+            schema.frontConfig.minItems = parseInt(frontConfig.minItems);
+          }
+          if (frontConfig.maxItems) {
+            schema.maxItems = parseInt(frontConfig.maxItems);
+            schema.frontConfig.maxItems = parseInt(frontConfig.maxItems);
+          }
+          if (frontConfig.uiType === 'checkboxs') ui['ui:widget'] = 'checkboxes';
+        } else {
+          ui['ui:widget'] = 'radio';
         }
-        if (frontConfig.maxItems) {
-          schema.maxItems = parseInt(frontConfig.maxItems);
-          schema.frontConfig.maxItems = parseInt(frontConfig.maxItems);
-        }
-        if (frontConfig.uiType === 'checkboxs') ui['ui:widget'] = 'checkboxes';
       }
 
       // Multioption / Select
@@ -147,6 +151,12 @@ const transformItemToSchemaAndUi = (item, locale) => {
               checkLocalesByKey[key] ? checkLocalesByKey[key].label : ' '
             );
           });
+        }
+        if (frontConfig.uiType === 'radio') {
+          schema.type = 'string';
+          schema.enum = schema.items.enum;
+          schema.enumNames = schema.items.enumNames;
+          delete schema.items;
         }
       }
 
