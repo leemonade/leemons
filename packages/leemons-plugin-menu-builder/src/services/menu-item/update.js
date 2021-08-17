@@ -9,12 +9,12 @@ const { validateNotExistMenu } = require('../../validations/exists');
 const { withTransaction } = global.utils;
 
 /**
- * Create a Menu Item
+ * Update a Menu Item
  * @private
  * @static
  * @param {string} menuKey - Menu key
  * @param {string} key - Menu item key
- * @param {MenuItemAdd} data - The Menu Item to create
+ * @param {MenuItemAdd} data - The Menu Item to update
  * @param {MenuPermissionsAdd=} permissions Permissions for Menu Item
  * @param {any=} transacting DB transaction
  * @return {Promise<MenuItem>} Created / Updated menuItem
