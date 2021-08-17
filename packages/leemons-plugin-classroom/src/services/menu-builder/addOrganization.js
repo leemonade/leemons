@@ -11,6 +11,7 @@ async function addOrganization() {
         en: 'Organization',
         es: 'Organización',
       },
+      disabled: true,
     },
     [
       {

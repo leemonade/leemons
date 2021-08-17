@@ -13,5 +13,17 @@ module.exports = {
       <p>Puedes empezar descargando nuestro archivo de estructura básica y editándolo en tu aplicación de hoja de cálculo favorita o crear el árbol de niveles manualmente desde Leemons.</p>`,
     hide_info_label:
       'Ok, entendido. Cuando la configuración esté completa, no mostrar más esta información.',
+    bulk_load: {
+      title: 'Carga masiva',
+      description:
+        'Descarga el archivo básico y súbelo una vez completado (si necesitas más ayuda, puedes ver esta guía básica sobre el funcionamiento de nuestro sistema de estructuras).',
+      btn: 'Cargar',
+    },
+    manual_load: {
+      title: 'Creación manual',
+      description:
+        'Define tu propia estructura utilizando nuestro editor visual (aquí tiene algunos ejemplos de estructuras básicas que puede utilizar como plantilla).',
+      btn: 'Crear árbol',
+    },
   },
 };

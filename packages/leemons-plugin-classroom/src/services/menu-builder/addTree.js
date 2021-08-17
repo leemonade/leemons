@@ -11,6 +11,7 @@ async function addTree() {
         en: 'Tree',
         es: 'Árbol',
       },
+      disabled: true,
     },
     [
       {

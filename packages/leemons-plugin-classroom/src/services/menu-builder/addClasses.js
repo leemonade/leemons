@@ -11,6 +11,7 @@ async function addClasses() {
         en: 'Classes admin',
         es: 'Clases admin',
       },
+      disabled: true,
     },
     [
       {

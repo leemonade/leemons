@@ -6,6 +6,14 @@ async function getSettings() {
 }
 
 async function updateSettings(body) {
+  if (body) {
+    body.configured = ['true', '1', 'on'].includes(String(body.configured));
+    body.hideWelcome = ['true', '1', 'on'].includes(String(body.hideWelcome));
+    delete body.created_at;
+    delete body.updated_at;
+    delete body.id;
+  }
+
   return leemons.api(
     {
       url: 'classroom/settings',

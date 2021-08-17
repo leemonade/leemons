@@ -4,7 +4,7 @@ import useTranslate from '@multilanguage/useTranslate';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
-import { PageContainer, PageHeader, Card, FormControl, Checkbox } from 'leemons-ui';
+import { PageContainer, PageHeader, Card, FormControl, Checkbox, Button } from 'leemons-ui';
 import prefixPN from '@classroom/helpers/prefixPN';
 import SettingsService from '@classroom/services/settings';
 
@@ -14,6 +14,9 @@ function Welcome() {
 
   const [translations] = useTranslate({ keysStartsWith: prefixPN('welcome_page') });
   const t = tLoader(prefixPN('welcome_page'), translations);
+
+  // ----------------------------------------------------------------------
+  // CLASSROOM SETTINGS
   const [settings, setSettings] = useState(null);
 
   useEffect(() => {
@@ -21,7 +24,9 @@ function Welcome() {
 
     (async () => {
       const response = await SettingsService.getSettings();
-      console.log(response);
+      if (mounted) {
+        setSettings(response.settings);
+      }
     })();
 
     return () => {
@@ -29,7 +34,17 @@ function Welcome() {
     };
   }, []);
 
-  const handleHideHelp = () => {};
+  const updateSettings = async (data) => {
+    await SettingsService.updateSettings(data);
+  };
+
+  // ----------------------------------------------------------------------
+  // UI CONTROLS
+  const handleHideHelp = () => {
+    const newSettings = { ...settings, hideWelcome: !settings?.hideWelcome };
+    setSettings(newSettings);
+    updateSettings(newSettings);
+  };
 
   return (
     <>
@@ -38,14 +53,49 @@ function Welcome() {
         <div className="page-description" dangerouslySetInnerHTML={{ __html: t('page_info') }} />
 
         <FormControl label={t('hide_info_label')} labelPosition="right" className="font-inter">
-          <Checkbox color="primary" onChange={handleHideHelp} />
+          <Checkbox color="primary" onChange={handleHideHelp} checked={settings?.hideWelcome} />
         </FormControl>
-
-        <div className="grid grid-cols-2 gap-4 mt-8">
-          <Card className="border border-base-200 p-8">Hola</Card>
-          <Card className="border border-base-200 p-8">Mundo</Card>
-        </div>
       </PageContainer>
+
+      <div className="bg-gray-100">
+        <PageContainer>
+          <div className="grid grid-cols-2 gap-6 mt-8">
+            {/* BULK LOAD */}
+            <Card className="p-8 bg-white flex flex-col">
+              <div className="h-20 bg-gray-50 rounded"></div>
+              <div className="flex flex-col items-center px-12">
+                <div className="text-2xl font-semibold py-8">{t('bulk_load.title')}</div>
+                <div
+                  className="font-inter text-secondary-300 font-light leading-tight text-center"
+                  dangerouslySetInnerHTML={{ __html: t('bulk_load.description') }}
+                ></div>
+                <div className="mt-8">
+                  <Button color="primary" rounded>
+                    {t('bulk_load.btn')}
+                  </Button>
+                </div>
+              </div>
+            </Card>
+
+            {/* MANUAL CREATION */}
+            <Card className="p-8 bg-white flex flex-col">
+              <div className="h-20 bg-gray-50 rounded"></div>
+              <div className="flex flex-col items-center px-12">
+                <div className="text-2xl font-semibold py-8">{t('manual_load.title')}</div>
+                <div
+                  className="font-inter text-secondary-300 font-light leading-tight text-center"
+                  dangerouslySetInnerHTML={{ __html: t('manual_load.description') }}
+                ></div>
+                <div className="mt-8">
+                  <Button color="primary" rounded>
+                    {t('manual_load.btn')}
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </PageContainer>
+      </div>
     </>
   );
 }
