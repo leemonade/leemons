@@ -37,7 +37,7 @@ const globalColors = {
   primary: {
     DEFAULT: colorObject.primary,
     50: '#FFFFFF',
-    100: '#F2F7FF',
+    100: '#F1F7FF',
     200: '#C9DFFF',
     300: '#A1C7FF',
     400: '#78AEFF',

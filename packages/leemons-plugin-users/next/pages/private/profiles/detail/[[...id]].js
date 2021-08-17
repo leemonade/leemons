@@ -42,6 +42,7 @@ import { CheckCircleIcon, PlusIcon } from '@heroicons/react/outline';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import PlatformLocales from '@multilanguage/components/PlatformLocales';
 import getProfileTranslations from '@users/request/getProfileTranslations';
+import hooks from 'leemons-hooks';
 
 function DatasetTabs({ profile, t, isEditMode }) {
   const [loading, setLoading] = useState(true);
@@ -369,6 +370,7 @@ function ProfileDetail() {
   useEffect(() => {
     if (_.isArray(router.query.id)) {
       getProfile(router.query.id[0]);
+      hooks.fireEvent('user:update:permissions', profile);
     } else {
       setLoading(false);
     }

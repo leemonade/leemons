@@ -27,6 +27,11 @@
 "@leemons/assets@file:dependencies/assets":
   version "1.0.0"
 
+"@leemons/classroom@file:dependencies/classroom":
+  version "1.0.0"
+  dependencies:
+    react-hook-form "^7.8.8"
+
 "@leemons/common@file:dependencies/common":
   version "1.0.0"
 

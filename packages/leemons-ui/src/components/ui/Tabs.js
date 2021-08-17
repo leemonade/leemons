@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import _ from 'lodash';
 import cln from 'classnames';
 
@@ -7,7 +7,7 @@ const Elements = createContext();
 
 const Tabs = ({ children, activeIndex, setActiveIndex, saveHistory, router }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const elements = useMemo(() => ({ tabs: 0, panels: 0 }), []);
+  const elements = useMemo(() => ({ tabs: 0, panels: 0, tabIds: [] }), []);
   const state = {
     activeIndex: activeIndex || currentIndex,
     setActiveIndex: setActiveIndex || setCurrentIndex,
@@ -40,12 +40,15 @@ const useTabState = () => {
     return currentIndex;
   }, []);
 
+  const registerTab = useCallback((id) => elements.tabIds.push(id), []);
+
   const onClick = useMemo(() => () => setActiveIndex(tabIndex), []);
 
   const state = useMemo(
     () => ({
       isActive: activeIndex === tabIndex,
       onClick,
+      registerTab,
     }),
     [activeIndex, onClick, tabIndex]
   );
@@ -77,13 +80,31 @@ const Tab = ({
   selectedClassName,
   disabledClassName,
 }) => {
-  const { isActive, onClick } = useTabState();
+  const { isActive, onClick, registerTab } = useTabState();
   const { saveHistory, router } = useContext(TabsState);
+  const { tabIds } = useContext(Elements);
+
+  useEffect(() => registerTab(id), []);
 
   const handleClick = (e) => {
     onClick();
     if (!_.isNil(router)) {
-      router.push('?' + id + '=true', undefined, { shallow: saveHistory });
+      let currentPath = router.pathname;
+      const query = {};
+
+      for (const key in router.query) {
+        if (currentPath.indexOf(`[${key}]`) > 0) {
+          currentPath = currentPath.replace(`[${key}]`, router.query[key]);
+        } else if (!tabIds.includes(key)) {
+          query[key] = router.query[key];
+        }
+      }
+
+      query[id] = true;
+
+      router.push({ pathname: currentPath, query }, undefined, {
+        shallow: saveHistory,
+      });
     }
   };
 
