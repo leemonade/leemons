@@ -1,9 +1,11 @@
 const { defaultPermissions } = require('../config/constants');
 
-const defaultPermission = {
-  [defaultPermissions[0].permissionName]: {
-    actions: defaultPermissions[0].actions,
-  },
+const defaultPermission = (actions) => {
+  return {
+    [defaultPermissions[0].permissionName]: {
+      actions: actions || defaultPermissions[0].actions,
+    },
+  };
 };
 
 module.exports = [
@@ -12,6 +14,20 @@ module.exports = [
     method: 'GET',
     handler: 'tree.detail',
     authenticated: true,
-    allowedPermissions: { ...defaultPermission },
+    allowedPermissions: { ...defaultPermission() },
+  },
+  {
+    path: '/settings',
+    method: 'GET',
+    handler: 'settings.findOne',
+    authenticated: true,
+    allowedPermissions: { ...defaultPermission() },
+  },
+  {
+    path: '/settings',
+    method: 'POST',
+    handler: 'settings.update',
+    authenticated: true,
+    allowedPermissions: { ...defaultPermission(['admin']) },
   },
 ];

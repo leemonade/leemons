@@ -31,7 +31,7 @@ function CheckboxPage() {
           <div className="p-6 card bordered shadow-lg">
             <div className="flex">
               <FormControl label="Remember me" labelPosition="right">
-                <Checkbox />
+                <Checkbox color="primary" />
               </FormControl>
             </div>
           </div>

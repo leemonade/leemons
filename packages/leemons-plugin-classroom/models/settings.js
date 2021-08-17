@@ -8,6 +8,9 @@ module.exports = {
     hideWelcome: {
       type: 'boolean',
     },
+    configured: {
+      type: 'boolean',
+    },
   },
   primaryKey: {
     type: 'uuid',
