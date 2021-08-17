@@ -32,6 +32,7 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import formWithTheme from '@common/formWithTheme';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 
 function TabDescription({ t, type, className }) {
   return <div className={`text-base text-secondary ${className}`}>{t(`${type}.description`)}</div>;
@@ -56,7 +57,7 @@ function BasicTab({ t }) {
   const [itemToRemove, setItemToRemove] = useState(null);
   const [toggle, DatasetItemDrawer] = useDatasetItemDrawer();
   const { t: tCommonTypes } = useCommonTranslate('form_field_types');
-  const [error, setError, ErrorAlert] = useRequestErrorMessage();
+  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
   const [modal, toggleModal] = useModal({
     animated: true,
     title: t('remove_modal.title'),
@@ -64,8 +65,13 @@ function BasicTab({ t }) {
     cancelLabel: t('remove_modal.cancel'),
     actionLabel: t('remove_modal.action'),
     onAction: async () => {
-      await removeDatasetFieldRequest('user-data', 'plugins.users', itemToRemove.id);
-      reload();
+      try {
+        await removeDatasetFieldRequest('user-data', 'plugins.users', itemToRemove.id);
+        addSuccessAlert(t('dataset.deleted_done'));
+        reload();
+      } catch (e) {
+        addErrorAlert(getErrorMessage(e));
+      }
     },
   });
 
@@ -180,6 +186,7 @@ function BasicTab({ t }) {
       if (e.code !== 4001) {
         setError(e);
       }
+      setLoading(false);
     },
     []
   );
@@ -193,37 +200,47 @@ function BasicTab({ t }) {
       <Modal {...modal} />
       <div className="bg-primary-content">
         <PageContainer className="pt-0">
-          <div className="pt-6 mb-6 flex flex-row justify-between items-center">
-            <TabDescription className="mb-0" t={t} type="basic" />
-            <Button color="secondary" onClick={newItem}>
-              <PlusIcon className="w-6 h-6 mr-1" />
-              {t('dataset.add_field')}
-            </Button>
-            <DatasetItemDrawer
-              locationName="user-data"
-              pluginName="plugins.users"
-              item={item}
-              onSave={onSave}
-            />
-          </div>
-        </PageContainer>
-      </div>
-      <PageContainer>
-        <div className="bg-primary-content p-2">
           <ErrorAlert />
           {!loading && !error ? (
-            <div>
-              <Table columns={tableHeaders} data={tableItems} />
+            <div className="pt-6 mb-6 flex flex-row justify-between items-center">
+              <TabDescription className="mb-0" t={t} type="basic" />
+              <Button color="secondary" onClick={newItem}>
+                <PlusIcon className="w-6 h-6 mr-1" />
+                {t('dataset.add_field')}
+              </Button>
+              <DatasetItemDrawer
+                locationName="user-data"
+                pluginName="plugins.users"
+                item={item}
+                onSave={onSave}
+              />
             </div>
           ) : null}
-        </div>
-      </PageContainer>
+        </PageContainer>
+      </div>
+      {!loading && !error ? (
+        <>
+          <PageContainer>
+            <div className="bg-primary-content p-4">
+              {tableItems && tableItems.length ? (
+                <Table columns={tableHeaders} data={tableItems} />
+              ) : (
+                <div className="text-center">{t('dataset.no_data_in_table')}</div>
+              )}
+            </div>
+          </PageContainer>
 
-      <PageContainer>
-        <Card className="bordered p-6">
-          <Form />
-        </Card>
-      </PageContainer>
+          {tableItems && tableItems.length ? (
+            <PageContainer>
+              <div className="bg-primary-content p-4">
+                <Card className="bordered p-6">
+                  <Form />
+                </Card>
+              </div>
+            </PageContainer>
+          ) : null}
+        </>
+      ) : null}
     </div>
   );
 }

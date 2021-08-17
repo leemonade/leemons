@@ -97,9 +97,11 @@ function PageHeader({
       buttons.push(
         <Button
           key="cancel-btn"
-          color="ghost"
+          color="primary"
           className="text-primary"
           loading={cancelButtonLoading}
+          type="button"
+          text
           onClick={(e) => onPressButton(onCancelButton, e)}
         >
           {_.isString(cancelButton) ? cancelButton : 'Cancel'}
@@ -112,6 +114,7 @@ function PageHeader({
           key="duplicate-btn"
           color="primary"
           outlined={true}
+          type="button"
           loading={duplicateButtonLoading}
           onClick={(e) => onPressButton(onDuplicateButton, e)}
         >
@@ -124,6 +127,7 @@ function PageHeader({
         <Button
           key="edit-btn"
           color="primary"
+          type="button"
           loading={editButtonLoading}
           onClick={(e) => onPressButton(onEditButton, e)}
         >
@@ -148,6 +152,7 @@ function PageHeader({
         <Button
           key="new-btn"
           color="secondary"
+          type="button"
           loading={newButtonLoading}
           onClick={(e) => onPressButton(onNewButton, e)}
         >

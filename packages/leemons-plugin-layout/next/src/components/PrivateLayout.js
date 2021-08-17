@@ -36,7 +36,7 @@ function PrivateLayout({ persistentState: [state, _setState], children }) {
         >
           <MainMenu state={state} setState={setState} onClose={onCloseMenu} onOpen={onOpenMenu} />
         </div>
-        <div className="w-full bg-white h-screen overflow-y-auto">
+        <div className="w-full bg-secondary-content h-screen overflow-y-auto">
           <Alert />
           {children}
         </div>

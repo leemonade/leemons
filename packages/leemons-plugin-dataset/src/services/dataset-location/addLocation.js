@@ -25,7 +25,6 @@ async function addLocation(
   { transacting: _transacting } = {}
 ) {
   validateAddLocation({ name, description, locationName, pluginName });
-  console.log({ name, description, locationName, pluginName }, this.calledFrom);
   validatePluginName(pluginName, this.calledFrom);
   await validateExistLocation(locationName, pluginName, { transacting: _transacting });
 

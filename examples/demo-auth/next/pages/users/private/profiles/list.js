@@ -96,7 +96,7 @@ function ListProfiles() {
       </div>
       <PageContainer>
         <LoadingErrorAlert />
-        <div className="bg-primary-content p-2">
+        <div className="bg-primary-content p-4">
           {!loading && !loadingError ? (
             <div>
               <Table columns={tableHeaders} data={tableItems} />

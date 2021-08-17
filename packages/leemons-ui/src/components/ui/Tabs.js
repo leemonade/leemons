@@ -104,7 +104,7 @@ const Tab = ({
           [selectedClassName || 'tab-selected']: isActive,
           [disabledClassName || 'tab-disabled']: disabled,
         })}
-        onClick={handleClick}
+        onClick={(e) => (disabled ? null : handleClick(e))}
         role="tab"
         id={id}
         type="button"

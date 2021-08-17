@@ -101,10 +101,9 @@ async function getIfHasPermission(menuKey, userSession, { transacting } = {}) {
     'item'
   );
 
-  // TODO Añadir locale del user para sacar el menu en su idioma
-  const locale = 'en';
-
-  return transformManyMenuItemsToFrontEndMenu(menuItems, locale, customItemIds, { transacting });
+  return transformManyMenuItemsToFrontEndMenu(menuItems, userSession.locale, customItemIds, {
+    transacting,
+  });
 }
 
 module.exports = getIfHasPermission;
