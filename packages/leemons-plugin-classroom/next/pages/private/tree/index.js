@@ -22,6 +22,31 @@ function Tree() {
       <PageContainer>
         <div className="page-description" dangerouslySetInnerHTML={{ __html: t('page_info') }} />
       </PageContainer>
+
+      <div className="bg-gray-100">
+        <PageContainer>
+          <div className="flex">
+            {/* TREE ADMIN */}
+            <div className="flex flex-1">
+              <div className="card bg-white"></div>
+            </div>
+            {/* TEMPLATE PANEL */}
+            <div className="w-60">
+              <Card className="bg-white p-8">
+                <div className="font-semibold py-2">{t('from_template_info.title')}</div>
+                <div className="font-inter text-secondary-300 font-light py-2">
+                  {t('from_template_info.description')}
+                </div>
+                <div className="mt-4">
+                  <Button color="primary" rounded>
+                    {t('from_template_info.btn')}
+                  </Button>
+                </div>
+              </Card>
+            </div>
+          </div>
+        </PageContainer>
+      </div>
     </>
   );
 }

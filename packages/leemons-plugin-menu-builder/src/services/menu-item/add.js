@@ -152,7 +152,7 @@ async function add(
         promises.push(
           leemons
             .getPlugin('users')
-            .services.permissions.services.permissions.addItemBasicIfNeed(
+            .services.permissions.addItemBasicIfNeed(
               key,
               leemons.plugin.prefixPN(`${menuKey}.menu-item`)
             )

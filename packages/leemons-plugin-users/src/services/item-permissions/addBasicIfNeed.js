@@ -24,7 +24,10 @@ async function addBasicIfNeed(item, type, { transacting } = {}) {
   const hasPermissions = await exist({ item }, { transacting });
 
   if (!hasPermissions) {
-    return add(
+    return add.call(
+      this,
+      item,
+      type,
       {
         permissionName: basicPermission.permissionName,
         actionNames: [basicPermission.actionName],
