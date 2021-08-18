@@ -48,9 +48,25 @@ class Leemons {
     const arrayEvents = {};
     this.events = new events();
     const { emit, once } = this.events;
+    const emitArrayEventsIfNeed = (_event, { event, target }, ...args) => {
+      _.forIn(arrayEvents, (values, key) => {
+        if (values.indexOf(_event) >= 0) {
+          let foundAll = true;
+          _.forEach(values, (value) => {
+            if (value !== _event && emitCache.indexOf(value) < 0) {
+              foundAll = false;
+              return false;
+            }
+          });
+          if (foundAll) {
+            emit.call(this.events, key, { event, target }, ...args);
+          }
+        }
+      });
+    };
     this.events.once = (event, ...args) => {
-      console.log(event, args);
       if (_.isArray(event)) {
+        arrayEvents[new Date().getTime()] = event;
       } else {
         once.call(this.events, event, ...args);
       }
@@ -58,9 +74,11 @@ class Leemons {
     this.events.emit = (event, target = null, ...args) => {
       emit.call(this.events, 'all', { event, target }, ...args);
       emit.call(this.events, event, { event, target }, ...args);
+      emitArrayEventsIfNeed(event, { event, target }, ...args);
       if (emitCache.indexOf(event) < 0) emitCache.push(event);
       if (target) {
         emit.call(this.events, `${target}:${event}`, { event, target }, ...args);
+        emitArrayEventsIfNeed(`${target}:${event}`, { event, target }, ...args);
         if (emitCache.indexOf(`${target}:${event}`) < 0) emitCache.push(`${target}:${event}`);
       }
     };
