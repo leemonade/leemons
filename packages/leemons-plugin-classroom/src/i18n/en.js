@@ -3,6 +3,10 @@ module.exports = {
     save: 'Save',
     view: 'View',
     edit: 'Edit',
+    organization: 'Organization',
+    centre: 'Centre',
+    add_level: 'Add level',
+    select_template: 'Select template',
   },
   welcome_page: {
     page_title: 'Welcome to Classroom',
@@ -11,7 +15,7 @@ module.exports = {
       <p>For example, if you have a school with educational programmes (primary and secondary) that has courses (first, second, third...) and in each of them you divide the students into groups that share class (group A, group B, ...), it will be necessary for the system to know this logic. You will only have to create the tree once (but you can add new leveles later).</p>
       <p>Then, in the <strong>Organisation</strong> section you can define the dataset (concrete information) for each level and the permissions you want to assign. Finally, in the <strong>Classes admin</strong> section you will be able to assign students, tutors and define the data foreseen in the previous step. These sections will only be available once you have created your tree.</p>
       <p>You can start by downloading our basic structure file and editing it in your favourite spreadsheet application or create the level tree manually from Leemons.</p>`,
-    hide_info_label: `Ok, I've got it. When the configuration is complete, don´t show this info anymore`,
+    hide_info_label: `Ok, I've got it. When the configuration is complete, don't show this info anymore`,
     bulk_load: {
       title: 'Bulk Upload',
       description:
@@ -36,7 +40,7 @@ module.exports = {
       btn: 'Preview template',
       hide_info: {
         description: 'I prefer to do it manually.',
-        btn: 'Don´t show anymore',
+        btn: `Don't show anymore`,
       },
     },
     level: {
@@ -52,7 +56,9 @@ module.exports = {
           description: 'Configuration of general fields for the level',
           add_field: 'Add field',
         },
-        profiles: { label: 'Assignable User profiles', description: '' },
+        profiles: {
+          label: 'Assignable User profiles',
+        },
       },
     },
   },

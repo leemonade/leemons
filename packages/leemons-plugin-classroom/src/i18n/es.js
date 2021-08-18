@@ -57,7 +57,9 @@ module.exports = {
           description: 'Configuración de los campos generales para este nivel',
           add_field: 'Añadir campo',
         },
-        profiles: { label: 'Perfiles de usuario asignables', description: '' },
+        profiles: {
+          label: 'Perfiles de usuario asignables',
+        },
       },
     },
   },
