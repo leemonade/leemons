@@ -29,6 +29,6 @@ module.exports = {
   tree_page: {
     page_title: 'Árbol',
     page_info:
-      'Utiliza el botón <span class="w-4 h-4 border-2 border-primary rounded-full flex items-center justify-center">+</span> para crear cada nivel y, a continuación, utiliza el panel derecho para configurar el conjunto de datos del nivel.',
+      'Utiliza el botón <span class="w-5 h-5 border-2 border-primary rounded-full leading-none inline-block text-primary font-semibold text-center">+</span> para crear cada nivel y, a continuación, utiliza el panel derecho para configurar el conjunto de datos del nivel.',
   },
 };

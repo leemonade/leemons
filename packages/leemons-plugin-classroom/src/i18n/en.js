@@ -28,6 +28,6 @@ module.exports = {
   tree_page: {
     page_title: 'Tree',
     page_info:
-      'Use the button <span class="w-4 h-4 border-2 border-primary rounded-full flex items-center justify-center">+</span> to create each level, then use the right panel to configure the data set for the level.',
+      'Use the button <span class="w-5 h-5 border-2 border-primary rounded-full leading-none inline-block text-primary font-semibold text-center">+</span> to create each level, then use the right panel to configure the data set for the level.',
   },
 };
