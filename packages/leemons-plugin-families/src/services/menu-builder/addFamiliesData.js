@@ -4,7 +4,7 @@ async function addFamiliesData() {
   return add(
     {
       key: 'families-data',
-      parentKey: 'users',
+      parentKey: 'plugins.users.users',
       url: '/families/private/config',
       label: {
         en: 'Families setup',
@@ -14,7 +14,7 @@ async function addFamiliesData() {
     [
       {
         permissionName: 'plugins.families.config',
-        actionNames: ['view'],
+        actionNames: ['view', 'admin'],
       },
     ]
   );

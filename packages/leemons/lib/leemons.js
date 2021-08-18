@@ -66,7 +66,9 @@ class Leemons {
     };
     this.events.once = (event, ...args) => {
       if (_.isArray(event)) {
-        arrayEvents[new Date().getTime()] = event;
+        const time = new Date().getTime().toString();
+        arrayEvents[time] = event;
+        once.call(this.events, time, ...args);
       } else {
         once.call(this.events, event, ...args);
       }

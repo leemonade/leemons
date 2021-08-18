@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSession } from '@users/session';
 import { getUserProfilesRequest } from '@users/request';
-import useTranslate from '@multilanguage/useTranslate';
-import tLoader from '@multilanguage/helpers/tLoader';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+
 import { goLoginPage } from '@users/navigate';
 import prefixPN from '@users/helpers/prefixPN';
 import { withLayout } from '@layout/hoc';
@@ -250,8 +250,7 @@ function UserData() {
   useSession({ redirectTo: goLoginPage });
 
   const router = useRouter();
-  const [translations] = useTranslate({ keysStartsWith: prefixPN('user_data_page') });
-  const t = tLoader(prefixPN('user_data_page'), translations);
+  const [t] = useTranslateLoader(prefixPN('user_data_page'));
 
   async function getProfiles() {
     try {

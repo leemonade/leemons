@@ -24,10 +24,10 @@
     "@leemons/mvp-template": "file:dependencies/mvp-template",
     "@leemons/classroom": "file:dependencies/classroom",
     "@leemons/multilanguage": "file:dependencies/multilanguage",
-    "@leemons/classroom": "file:dependencies/classroom",
     "@leemons/dataset": "file:dependencies/dataset",
     "@leemons/menu-builder": "file:dependencies/menu-builder",
-    "@leemons/users": "file:dependencies/users"
+    "@leemons/users": "file:dependencies/users",
+    "@leemons/families": "file:dependencies/families"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.6",

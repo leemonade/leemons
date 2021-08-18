@@ -9,7 +9,6 @@ async function add(item, permissions) {
         ...item,
         menuKey: config.constants.mainMenuKey,
         key: leemons.plugin.prefixPN(item.key),
-        parentKey: item.parentKey ? leemons.plugin.prefixPN(item.parentKey) : undefined,
       },
       permissions
     );

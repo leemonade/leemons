@@ -10,6 +10,7 @@ module.exports = {
 		'users',
 		'mvp-template',
 		'menu-builder',
+		'families',
 		'dataset-test',
 		'classroom',
 		'provider-emails-amazon-ses'
@@ -38,6 +39,11 @@ module.exports = {
     name: 'users',
     version: '0.0.1',
     load: require('@users/index.js')
+  },
+	{
+    name: 'families',
+    version: '0.0.1',
+    load: require('@families/index.js')
   },
 	{
     name: 'provider-emails-amazon-ses',

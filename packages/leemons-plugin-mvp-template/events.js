@@ -27,11 +27,8 @@ async function events(isInstalled) {
     const config = async () => {
       try {
         const centers = await initCenters();
-        console.log('centers', centers);
         const profiles = await initProfiles();
-        console.log('profiles', profiles);
         const users = await initUsers(centers, profiles);
-        console.log('users', users);
       } catch (e) {
         console.error(e);
       }
