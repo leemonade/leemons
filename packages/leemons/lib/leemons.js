@@ -44,13 +44,24 @@ class Leemons {
     this.loaded = false;
     this.started = false;
 
+    const emitCache = [];
+    const arrayEvents = {};
     this.events = new events();
-    const { emit } = this.events;
+    const { emit, once } = this.events;
+    this.events.once = (event, ...args) => {
+      console.log(event, args);
+      if (_.isArray(event)) {
+      } else {
+        once.call(this.events, event, ...args);
+      }
+    };
     this.events.emit = (event, target = null, ...args) => {
       emit.call(this.events, 'all', { event, target }, ...args);
       emit.call(this.events, event, { event, target }, ...args);
+      if (emitCache.indexOf(event) < 0) emitCache.push(event);
       if (target) {
         emit.call(this.events, `${target}:${event}`, { event, target }, ...args);
+        if (emitCache.indexOf(`${target}:${event}`) < 0) emitCache.push(`${target}:${event}`);
       }
     };
 
