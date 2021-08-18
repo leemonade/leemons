@@ -4,6 +4,7 @@ const removeWelcome = require('./removeWelcome');
 const addTree = require('./addTree');
 const addOrganization = require('./addOrganization');
 const addClasses = require('./addClasses');
+const enableItem = require('./enableItem');
 
 module.exports = {
   addMain,
@@ -12,4 +13,5 @@ module.exports = {
   addTree,
   addOrganization,
   addClasses,
+  enableItem,
 };

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useTranslate from '@multilanguage/useTranslate';
 import { useSession } from '@users/session';
@@ -7,6 +8,7 @@ import { withLayout } from '@layout/hoc';
 import { PageContainer, PageHeader, Card, FormControl, Checkbox, Button } from 'leemons-ui';
 import prefixPN from '@classroom/helpers/prefixPN';
 import SettingsService from '@classroom/services/settings';
+import hooks from 'leemons-hooks';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de gestionar Clases
 function Welcome() {
@@ -44,6 +46,13 @@ function Welcome() {
     const newSettings = { ...settings, hideWelcome: !settings?.hideWelcome };
     setSettings(newSettings);
     updateSettings(newSettings);
+  };
+
+  const handleManualLoad = async (e) => {
+    // Let's enable Tree menu item
+    const itemKey = 'tree';
+    await SettingsService.enableMenuItem(itemKey);
+    await hooks.fireEvent('menu-builder:user:updateItem', itemKey);
   };
 
   return (
@@ -87,9 +96,11 @@ function Welcome() {
                   dangerouslySetInnerHTML={{ __html: t('manual_load.description') }}
                 ></div>
                 <div className="mt-8">
-                  <Button color="primary" rounded>
-                    {t('manual_load.btn')}
-                  </Button>
+                  <Link href="/classroom/private/tree">
+                    <a className="btn btn-primary rounded-full" onClick={handleManualLoad}>
+                      {t('manual_load.btn')}
+                    </a>
+                  </Link>
                 </div>
               </div>
             </Card>

@@ -25,6 +25,13 @@ const addMenuItemSchema = () => ({
   additionalProperties: false,
 });
 
+const updateMenuItemSchema = () => ({
+  type: 'object',
+  properties: addMenuItemSchema().properties,
+  required: ['menuKey', 'key', 'pluginName'],
+  additionalProperties: false,
+});
+
 const addMenuItemFromUserSchema = () => ({
   type: 'object',
   properties: {
@@ -92,6 +99,14 @@ function validateAddMenuItem(data) {
   }
 }
 
+function validateUpdateMenuItem(data) {
+  const validator = new LeemonsValidator(updateMenuItemSchema());
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 function validateAddMenuItemFromUser(data) {
   const validator = new LeemonsValidator(addMenuItemFromUserSchema());
 
@@ -130,4 +145,5 @@ module.exports = {
   validateRemoveMenuItemFromUser,
   validateUpdateMenuItemFromUser,
   validateReOrder,
+  validateUpdateMenuItem,
 };

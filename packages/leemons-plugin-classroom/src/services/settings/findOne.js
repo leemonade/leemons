@@ -8,7 +8,6 @@ const { table } = require('../tables');
  * */
 async function findOne({ transacting } = {}) {
   const results = await table.settings.find({ $limit: 1 }, { transacting });
-  console.log('findOne:', results);
   return Array.isArray(results) ? results[0] : null;
 }
 

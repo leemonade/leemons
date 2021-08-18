@@ -10,24 +10,31 @@ const defaultPermission = (actions) => {
 
 module.exports = [
   {
-    path: '/tree/detail',
-    method: 'GET',
-    handler: 'tree.detail',
-    authenticated: true,
-    allowedPermissions: { ...defaultPermission() },
-  },
-  {
     path: '/settings',
     method: 'GET',
     handler: 'settings.findOne',
     authenticated: true,
-    allowedPermissions: { ...defaultPermission() },
+    allowedPermissions: { ...defaultPermission(['view']) },
   },
   {
     path: '/settings',
     method: 'POST',
     handler: 'settings.update',
     authenticated: true,
-    allowedPermissions: { ...defaultPermission(['admin']) },
+    allowedPermissions: { ...defaultPermission(['edit', 'admin']) },
+  },
+  {
+    path: '/settings/enable-menu-item',
+    method: 'POST',
+    handler: 'settings.enableMenuItem',
+    authenticated: true,
+    allowedPermissions: { ...defaultPermission(['edit', 'admin']) },
+  },
+  {
+    path: '/tree/detail',
+    method: 'GET',
+    handler: 'tree.detail',
+    authenticated: true,
+    allowedPermissions: { ...defaultPermission(['view']) },
   },
 ];

@@ -26,4 +26,17 @@ async function updateSettings(body) {
   );
 }
 
-export default { getSettings, updateSettings };
+async function enableMenuItem(key) {
+  return leemons.api(
+    {
+      url: 'classroom/settings/enable-menu-item',
+      allAgents: true,
+    },
+    {
+      method: 'POST',
+      body: { key },
+    }
+  );
+}
+
+export default { getSettings, updateSettings, enableMenuItem };

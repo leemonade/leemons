@@ -1,25 +1,8 @@
 const add = require('./add');
+const { menuItems } = require('../../../config/constants');
 
 async function addOrganization() {
-  return add(
-    {
-      key: 'organization',
-      order: 3,
-      parentKey: 'classroom',
-      url: '/classroom/private/organization',
-      label: {
-        en: 'Organization',
-        es: 'Organización',
-      },
-      disabled: true,
-    },
-    [
-      {
-        permissionName: 'plugins.classroom.classroom',
-        actionNames: ['view'],
-      },
-    ]
-  );
+  return add(menuItems.organization.item, menuItems.organization.permissions);
 }
 
 module.exports = addOrganization;
