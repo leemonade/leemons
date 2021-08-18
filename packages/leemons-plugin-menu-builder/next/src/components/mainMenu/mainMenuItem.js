@@ -6,12 +6,12 @@ export default function MainMenuItem({ item, menuWidth, active, onClick }) {
     <>
       <Tooltip color="primary" position="right" size="lg" content={item.label}>
         <Button
-          onClick={onClick}
+          onClick={(e) => (item.disabled ? e.preventDefault() : onClick(e))}
           style={{ height: menuWidth }}
           color="secondary"
-          className={`w-full text-center cursor-pointer hover:bg-primary-focus sharp border-0 ${
+          className={`w-full text-center hover:bg-primary-focus sharp border-0 ${
             active ? 'bg-secondary-focus' : ''
-          } `}
+          } ${item.disabled ? 'cursor-not-allowed opacity-30' : 'cursor-pointer'}`}
         >
           <div className={'w-5 h-full mx-auto relative'}>
             <ImageLoader

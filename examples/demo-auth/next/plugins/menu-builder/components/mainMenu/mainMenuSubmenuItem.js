@@ -89,7 +89,12 @@ export default function MainMenuSubmenuItem({
   if (!isLayer && !editMode && !editItemMode && !isDragging) {
     return (
       <Link href={item.url}>
-        <a className={`relative w-full block font-lexend text-sm cursor-pointer ${styles}`}>
+        <a
+          className={`relative w-full block font-lexend text-sm ${styles} ${
+            item.disabled ? 'cursor-not-allowed opacity-30' : 'cursor-pointer'
+          }`}
+          onClick={(e) => item.disabled && e.preventDefault()}
+        >
           <span className="line-clamp-2">{item.label}</span>
         </a>
       </Link>

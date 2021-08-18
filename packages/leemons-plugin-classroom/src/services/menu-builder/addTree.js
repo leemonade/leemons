@@ -1,24 +1,8 @@
 const add = require('./add');
+const { menuItems } = require('../../../config/constants');
 
 async function addTree() {
-  return add(
-    {
-      key: 'tree',
-      order: 2,
-      parentKey: 'classroom',
-      url: '/classroom/private/tree',
-      label: {
-        en: 'Tree',
-        es: 'Árbol',
-      },
-    },
-    [
-      {
-        permissionName: 'plugins.classroom.classroom',
-        actionNames: ['view'],
-      },
-    ]
-  );
+  return add(menuItems.tree.item, menuItems.tree.permissions);
 }
 
 module.exports = addTree;

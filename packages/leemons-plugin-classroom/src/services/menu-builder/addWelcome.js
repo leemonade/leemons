@@ -1,24 +1,8 @@
 const add = require('./add');
+const { menuItems } = require('../../../config/constants');
 
 async function addWelcome() {
-  return add(
-    {
-      key: 'welcome',
-      order: 1,
-      parentKey: 'classroom',
-      url: '/classroom/private/welcome',
-      label: {
-        en: 'Welcome',
-        es: 'Bienvenida',
-      },
-    },
-    [
-      {
-        permissionName: 'plugins.classroom.classroom',
-        actionNames: ['view'],
-      },
-    ]
-  );
+  return add(menuItems.welcome.item, menuItems.welcome.permissions);
 }
 
 module.exports = addWelcome;
