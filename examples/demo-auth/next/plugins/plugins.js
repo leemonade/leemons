@@ -5,6 +5,13 @@ module.exports = {
 		'emails',
 		'common',
 		'assets',
+		'dataset',
+		'multilanguage',
+		'users',
+		'mvp-template',
+		'menu-builder',
+		'dataset-test',
+		'classroom',
 		'provider-emails-amazon-ses'
   ],
   frontPlugins: [{
@@ -21,6 +28,16 @@ module.exports = {
     name: 'emails',
     version: '0.0.1',
     load: require('@emails/index.js')
+  },
+	{
+    name: 'multilanguage',
+    version: '0.0.1',
+    load: require('@multilanguage/index.js')
+  },
+	{
+    name: 'users',
+    version: '0.0.1',
+    load: require('@users/index.js')
   },
 	{
     name: 'provider-emails-amazon-ses',
