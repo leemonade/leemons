@@ -11,7 +11,6 @@ module.exports = {
 		'mvp-template',
 		'menu-builder',
 		'dataset-test',
-		'classroom',
 		'provider-emails-amazon-ses'
   ],
   frontPlugins: [{

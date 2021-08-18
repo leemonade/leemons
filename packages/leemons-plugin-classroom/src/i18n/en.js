@@ -29,5 +29,31 @@ module.exports = {
     page_title: 'Tree',
     page_info:
       'Use the button <span class="w-5 h-5 border-2 border-primary rounded-full leading-none inline-block text-primary font-semibold text-center">+</span> to create each level, then use the right panel to configure the data set for the level.',
+    from_template_info: {
+      title: 'Do you want to pre-load a template to save time?',
+      description:
+        'Choose the type of template and click on load tree, later you can modify the dataset of each level according to the needs of your organisation.',
+      btn: 'Preview template',
+      hide_info: {
+        description: 'I prefer to do it manually.',
+        btn: 'Don´t show anymore',
+      },
+    },
+    level: {
+      new: {
+        placeholder: 'Level name',
+        tree_label: 'New level',
+        btn: 'Save Level and continue',
+        is_class_label: 'Class level (Minimum level to student assignment)',
+      },
+      tabs: {
+        dataset: {
+          label: 'Level Dataset',
+          description: 'Configuration of general fields for the level',
+          add_field: 'Add field',
+        },
+        profiles: { label: 'Assignable User profiles', description: '' },
+      },
+    },
   },
 };
