@@ -9,6 +9,7 @@ const _ = require('lodash');
 const chalk = require('chalk');
 const bodyParser = require('koa-bodyparser');
 const ora = require('ora');
+const uuid = require('uuid');
 
 const leemonsUtils = require('leemons-utils');
 const { createDatabaseManager } = require('leemons-database');
@@ -66,9 +67,9 @@ class Leemons {
     };
     this.events.once = (event, ...args) => {
       if (_.isArray(event)) {
-        const time = new Date().getTime().toString();
-        arrayEvents[time] = event;
-        once.call(this.events, time, ...args);
+        const id = uuid.v4();
+        arrayEvents[id] = event;
+        once.call(this.events, id, ...args);
       } else {
         once.call(this.events, event, ...args);
       }

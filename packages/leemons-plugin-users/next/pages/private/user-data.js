@@ -35,7 +35,7 @@ import formWithTheme from '@common/formWithTheme';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 
 function TabDescription({ t, type, className }) {
-  return <div className={`text-base text-secondary ${className}`}>{t(`${type}.description`)}</div>;
+  return <div className={`page-description ${className}`}>{t(`${type}.description`)}</div>;
 }
 
 function LoginTab({ t }) {
@@ -270,7 +270,7 @@ function UserData() {
       <div className="bg-primary-content">
         <PageContainer>
           <div
-            className="text-base text-secondary pb-6"
+            className="page-description"
             dangerouslySetInnerHTML={{ __html: t('page_description') }}
           />
         </PageContainer>

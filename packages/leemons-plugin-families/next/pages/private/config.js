@@ -10,17 +10,14 @@ function Config() {
   useSession({ redirectTo: goLoginPage });
   const router = useRouter();
 
-  const [t] = useTranslateLoader(prefixPN('user_data_page'));
+  const [t] = useTranslateLoader(prefixPN('config_page'));
 
   return (
     <>
-      <PageHeader title={t('page_title')} />
+      <PageHeader title={t('title')} />
       <div className="bg-primary-content">
         <PageContainer>
-          <div
-            className="text-base text-secondary pb-6"
-            dangerouslySetInnerHTML={{ __html: t('page_description') }}
-          />
+          <div className="page-description max-w-screen-sm">{t('description1')}</div>
         </PageContainer>
       </div>
 
@@ -28,21 +25,27 @@ function Config() {
         <div className="bg-primary-content">
           <PageContainer>
             <TabList>
-              <Tab id="login-data" panelId="panel-login-data">
-                {t('tabs.login_data')}
-              </Tab>
               <Tab id="basic-data" panelId="panel-basic-data">
-                {t('tabs.basic_data')}
+                {t('tabs.basic')}
+              </Tab>
+              <Tab id="dataset-data" panelId="panel-dataset-data">
+                {t('tabs.dataset')}
+              </Tab>
+              <Tab id="permissions-data" panelId="panel-permissions-data">
+                {t('tabs.permissions')}
               </Tab>
             </TabList>
           </PageContainer>
         </div>
 
-        <TabPanel id="panel-login-data" tabId="login-data">
+        <TabPanel id="panel-basic-data" tabId="basic-data">
           a
         </TabPanel>
-        <TabPanel id="panel-basic-data" tabId="basic-data">
+        <TabPanel id="panel-dataset-data" tabId="dataset-data">
           b
+        </TabPanel>
+        <TabPanel id="panel-permissions-data" tabId="permissions-data">
+          c
         </TabPanel>
       </Tabs>
     </>

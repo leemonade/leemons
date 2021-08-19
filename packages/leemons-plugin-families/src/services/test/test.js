@@ -10,7 +10,7 @@ const { table } = require('../tables');
  * @return {Promise<any>}
  * */
 async function test(anyId, { transacting } = {}) {
-  return await table.test.find({ transacting });
+  return await table.families.find({ transacting });
 }
 
 module.exports = { test };

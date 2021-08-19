@@ -89,9 +89,7 @@ function ListProfiles() {
       />
       <div className="bg-primary-content">
         <PageContainer>
-          <div className="text-base text-secondary pb-6 max-w-screen-sm">
-            {t('page_description')}
-          </div>
+          <div className="page-description pb-6 max-w-screen-sm">{t('page_description')}</div>
         </PageContainer>
       </div>
       <PageContainer>

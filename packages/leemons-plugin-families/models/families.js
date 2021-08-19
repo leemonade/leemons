@@ -1,6 +1,6 @@
 module.exports = {
-  modelName: 'test',
-  collectionName: 'test',
+  modelName: 'families',
+  collectionName: 'families',
   options: {
     useTimestamps: true,
   },
@@ -9,6 +9,11 @@ module.exports = {
       type: 'string',
       options: {
         notNull: true,
+      },
+    },
+    group: {
+      references: {
+        collection: 'plugins_users::groups',
       },
     },
   },

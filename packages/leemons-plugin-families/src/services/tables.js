@@ -1,5 +1,5 @@
 const table = {
-  test: leemons.query('plugins_families::test'),
+  families: leemons.query('plugins_families::families'),
 };
 
 module.exports = { table };
