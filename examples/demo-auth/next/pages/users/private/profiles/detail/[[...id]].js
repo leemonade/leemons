@@ -97,8 +97,8 @@ function DatasetTabs({ profile, t, isEditMode }) {
     reload();
   }
 
-  const tableHeaders = useMemo(
-    () => [
+  const tableHeaders = useMemo(() => {
+    const result = [
       {
         Header: t('dataset_tab.table.name'),
         accessor: (field) => (
@@ -120,7 +120,9 @@ function DatasetTabs({ profile, t, isEditMode }) {
         ),
         className: 'text-center',
       },
-      {
+    ];
+    if (isEditMode) {
+      result.push({
         Header: t('dataset_tab.table.actions'),
         accessor: (field) => (
           <div className="text-center">
@@ -133,10 +135,10 @@ function DatasetTabs({ profile, t, isEditMode }) {
           </div>
         ),
         className: 'text-center',
-      },
-    ],
-    [t, tCommonTypes]
-  );
+      });
+    }
+    return result;
+  }, [t, tCommonTypes, isEditMode]);
 
   const load = useMemo(
     () => () => getDatasetSchemaRequest(`profile.${profile.id}`, 'plugins.users'),
@@ -220,18 +222,20 @@ function PermissionsTabs({ t, profile, onPermissionsChange = () => {}, isEditMod
   }, []);
 
   useEffect(() => {
-    onPermissionsChange(
-      _.map(tableData, ({ name, permissionName, ...rest }) => {
-        const actionNames = [];
-        _.forIn(rest, ({ checked }, key) => {
-          if (checked) actionNames.push(key);
-        });
-        return {
-          permissionName,
-          actionNames,
-        };
-      })
-    );
+    if (isEditMode) {
+      onPermissionsChange(
+        _.map(tableData, ({ name, permissionName, ...rest }) => {
+          const actionNames = [];
+          _.forIn(rest, ({ checked }, key) => {
+            if (checked) actionNames.push(key);
+          });
+          return {
+            permissionName,
+            actionNames,
+          };
+        })
+      );
+    }
   }, [tableData]);
 
   useEffect(() => {
@@ -318,7 +322,11 @@ function PermissionsTabs({ t, profile, onPermissionsChange = () => {}, isEditMod
   return (
     <PageContainer>
       <div className="bg-primary-content p-4">
-        <Table columns={tableHeaders} data={tableData} setData={setTableData} />
+        <Table
+          columns={tableHeaders}
+          data={tableData}
+          setData={(e) => (isEditMode ? setTableData(e) : null)}
+        />
       </div>
     </PageContainer>
   );
@@ -343,7 +351,7 @@ function ProfileDetail() {
     formState: { errors, isSubmitted },
   } = useForm();
 
-  const [isEditMode, _setIsEditMode] = useState(true);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [profile, setProfile] = useState(null);
   const [permissions, setPermissions] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -357,10 +365,6 @@ function ProfileDetail() {
     actionLabel: t('options_modal.accept'),
   });
 
-  const setIsEditMode = () => {
-    _setIsEditMode(true);
-  };
-
   useEffect(() => {
     if (!_.isArray(router.query.id)) {
       setIsEditMode(true);
@@ -371,6 +375,7 @@ function ProfileDetail() {
     if (_.isArray(router.query.id)) {
       getProfile(router.query.id[0]);
       hooks.fireEvent('user:update:permissions', profile);
+      setIsEditMode(false);
     } else {
       setLoading(false);
     }
@@ -407,6 +412,12 @@ function ProfileDetail() {
       setValue('name', response.profile.name);
       setValue('description', response.profile.description);
 
+      const perms = [];
+      _.forIn(response.profile.permissions, (actionNames, permissionName) => {
+        perms.push({ actionNames, permissionName });
+      });
+
+      setPermissions(perms);
       setProfile(response.profile);
     } catch (err) {
       setError(err);
@@ -424,8 +435,7 @@ function ProfileDetail() {
 
   const onCancelButton = () => {
     if (profile?.id) {
-      goListProfilesPage();
-      // setIsEditMode(false);
+      setIsEditMode(false);
     } else {
       goListProfilesPage();
     }
@@ -456,6 +466,7 @@ function ProfileDetail() {
                   tCommonForm={tCommonForm}
                   t={t}
                   profile={profile}
+                  isEditMode={isEditMode}
                 />
               </PlatformLocales>
             </div>
@@ -507,11 +518,7 @@ function ProfileDetail() {
             </div>
           </form>
 
-          <Tabs
-            setActiveIndex={(e) => console.log('setActiveIndex', e)}
-            router={router}
-            saveHistory
-          >
+          <Tabs router={router} saveHistory>
             <div className="bg-primary-content">
               <PageContainer>
                 <TabList>
@@ -556,6 +563,7 @@ function LocaleTab({
   t,
   profile,
   getValues,
+  isEditMode,
 }) {
   let nameKey = `translations.name.${localeConfig.currentLocale.code}`;
   let descriptionKey = `translations.description.${localeConfig.currentLocale.code}`;
@@ -597,14 +605,22 @@ function LocaleTab({
         className="w-full"
         formError={_.get(errors, nameKey)}
       >
-        <Input className="w-full" outlined={true} {...nameRegister} />
+        {isEditMode ? (
+          <Input className="w-full" outlined={true} {...nameRegister} />
+        ) : (
+          watch(nameKey)
+        )}
       </FormControl>
       <FormControl
         label={t('options_modal.profile_description')}
         className="w-full"
         formError={_.get(errors, descriptionKey)}
       >
-        <Textarea className="w-full" outlined={true} {...descriptionRegister} />
+        {isEditMode ? (
+          <Textarea className="w-full" outlined={true} {...descriptionRegister} />
+        ) : (
+          watch(descriptionKey)
+        )}
       </FormControl>
     </div>
   );

@@ -25,7 +25,7 @@ export default function MainMenu({ onClose, onOpen, state, setState }) {
 
   async function reloadMenu() {
     const _menu = await loadMenu();
-    if (state.menuActive.parent) {
+    if (state.menuActive && state.menuActive.parent) {
       const parent = _.find(_menu, { id: state.menuActive.parent.id });
       if (parent) setState({ menuActive: { ...state.menuActive, parent } });
     }
