@@ -11,5 +11,25 @@ module.exports = {
       dataset: 'Custom dataset',
       permissions: 'Permissions',
     },
+    dataset_tab: {
+      filter_by_center: 'Filter by center',
+      add_field: 'Add field',
+      no_data_in_table: 'No data available yet',
+      deleted_done: 'Dataset item deleted',
+      table: {
+        name: 'Name',
+        description: 'Description',
+        type: 'Type',
+        actions: 'Actions',
+        edit: 'Edit',
+        delete: 'Delete',
+      },
+    },
+    remove_modal: {
+      title: 'Do you want to delete the item?',
+      message: 'This action cannot be undone',
+      cancel: 'No',
+      action: 'Delete',
+    },
   },
 };

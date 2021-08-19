@@ -11,5 +11,25 @@ module.exports = {
       dataset: 'Conjunto de datos personalizado',
       permissions: 'Permisos',
     },
+    dataset_tab: {
+      filter_by_center: 'Filtrar por centro',
+      add_field: 'Añadir campo',
+      no_data_in_table: 'Aun no hay datos',
+      deleted_done: 'Item del dataset borrado',
+      table: {
+        name: 'Nombre',
+        description: 'Descripción',
+        type: 'Tipo',
+        actions: 'Acciones',
+        edit: 'Editar',
+        delete: 'Borrar',
+      },
+    },
+    remove_modal: {
+      title: '¿Quieres eliminar el item?',
+      message: 'Esta acción no puede deshacerse',
+      cancel: 'No',
+      action: 'Eliminar',
+    },
   },
 };
