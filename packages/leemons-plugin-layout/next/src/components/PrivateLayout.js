@@ -19,11 +19,11 @@ function PrivateLayout({ persistentState: [state, _setState], children }) {
   }, []);
 
   const onCloseMenu = useCallback(() => {
-    setState({ menuWidth: 52 });
+    if (state.menuWidth !== 52) setState({ menuWidth: 52 });
   }, [state]);
 
   const onOpenMenu = useCallback(() => {
-    setState({ menuWidth: 280 });
+    if (state.menuWidth !== 280) setState({ menuWidth: 280 });
   }, [state]);
 
   return (
