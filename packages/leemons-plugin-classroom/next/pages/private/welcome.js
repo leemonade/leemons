@@ -7,7 +7,7 @@ import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
 import { PageContainer, PageHeader, Card, FormControl, Checkbox, Button } from 'leemons-ui';
 import prefixPN from '@classroom/helpers/prefixPN';
-import SettingsService from '@classroom/services/settings';
+import { SettingsService } from '@classroom/services';
 import hooks from 'leemons-hooks';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de gestionar Clases
