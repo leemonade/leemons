@@ -30,6 +30,7 @@ import PageHeader from './PageHeader';
 import PageContainer from './PageContainer';
 import Drawer, { useDrawer } from './Drawer';
 import Table from './Table';
+import Tree, { useTree } from './Tree';
 
 import Modal, { useModal } from './Modal';
 
@@ -73,4 +74,6 @@ export {
   Drawer,
   useDrawer,
   Table,
+  Tree,
+  useTree,
 };
