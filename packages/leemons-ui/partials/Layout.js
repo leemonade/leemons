@@ -21,7 +21,8 @@ function Layout({ children }) {
 
   return (
     <div>
-      <div className="drawer drawer-mobile">
+      <div className="flex h-screen overflow-hidden">
+        {/*
         <input
           id="main-menu"
           type="checkbox"
@@ -29,13 +30,14 @@ function Layout({ children }) {
           checked={showMainMenu}
           onChange={() => setShowMainMenu(!showMainMenu)}
         />
+        */}
+        <Sidebar setShowMainMenu={setShowMainMenu} showMainMenu={showMainMenu} />
         <main
           ref={mainRef}
-          className="flex-grow block overflow-x-hidden bg-base-100 text-base-content drawer-content"
+          className="flex-1 block overflow-x-hidden h-screen overflow-y-auto bg-base-100 text-base-content drawer-content"
         >
           <div className="p-4 lg:p-10">{children}</div>
         </main>
-        <Sidebar setShowMainMenu={setShowMainMenu} showMainMenu={showMainMenu} />
       </div>
     </div>
   );
