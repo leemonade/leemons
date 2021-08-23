@@ -20,6 +20,7 @@ const TREE_DATA = [
     parent: 'ID1',
     text: 'Add Center',
     type: 'button',
+    draggable: false,
     data: {
       action: 'add',
     },
@@ -39,6 +40,7 @@ const TREE_DATA = [
     parent: 'ID2',
     text: 'Add Class',
     type: 'button',
+    draggable: false,
     data: {
       action: 'add',
     },
@@ -81,6 +83,7 @@ const TREE_DATA_1 = [
     parent: 'ID2',
     text: 'Add Class',
     type: 'button',
+    draggable: false,
     data: {
       action: 'add',
     },
@@ -95,6 +98,7 @@ const TREE_DATA_1 = [
     parent: 'ID5',
     text: 'Add Class',
     type: 'button',
+    draggable: false,
     data: {
       action: 'add',
     },
@@ -104,6 +108,7 @@ const TREE_DATA_1 = [
     parent: 'ID1',
     text: 'Add Center',
     type: 'button',
+    draggable: false,
     data: {
       action: 'add',
     },
@@ -124,7 +129,7 @@ const TREE_DATA_2 = [
   {
     id: 'ID-TEMP',
     parent: 'ID2',
-    selected: true,
+    draggable: false,
     text: 'New Level',
   },
 ];
@@ -192,7 +197,7 @@ function TreePage() {
         <div className="grid grid-cols-2">
           <Wrapper
             className="flex flex-wrap items-start flex-col"
-            title="Tree + Initial Selected node"
+            title="Tree + Initial Selected node + Disable draggable"
           >
             <Tree {...tree2} rootId={0} initialSelected={['ID-TEMP']} />
           </Wrapper>

@@ -81,7 +81,7 @@ const TreeView = ({
     return false;
   };
   const handleCanDrag = (node, ...rest) => {
-    return !node.selected;
+    return node.draggable !== false;
   };
   const handleOnToggle = (node, isOpen, onToggle) => {
     if (!isOpen) {

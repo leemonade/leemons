@@ -1604,10 +1604,10 @@
   resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.3.1.tgz#b50a781709c81e10701004214340f25475a171a0"
   integrity sha512-zMM9Ds+SawiUkakS7y94Ymqx+S0ORzpG3frZirN3l+UlXUmSUR7hF4wxCVqW+ei94JzV5kt0uXBcoOEAuiydrw==
 
-"@leemonade/react-dnd-treeview@^1.5.43":
-  version "1.5.43"
-  resolved "https://registry.yarnpkg.com/@leemonade/react-dnd-treeview/-/react-dnd-treeview-1.5.43.tgz#77398762b86e385c45d70a316d82247ef6ca83bb"
-  integrity sha512-okNK0Y7DqGXAyuWaUeE36m8rfFc3WL8tmAbOtYzJT+4kkQ79NRW/d1l7h4XRTWW/+IbSpgxivxpxvRHS0liROA==
+"@leemonade/react-dnd-treeview@^1.5.44":
+  version "1.5.44"
+  resolved "https://registry.yarnpkg.com/@leemonade/react-dnd-treeview/-/react-dnd-treeview-1.5.44.tgz#7ab974e7bbf61c18b22b956e023b258e4b76183d"
+  integrity sha512-osxB6Dc3gYyE88eEp//1ey6G4YGgEDpM9Vw3A3HQSXYNzCvzBHqvEbcZEtkfojGnyd2TAoHH2ZgPfmIxm3zJmw==
   dependencies:
     immer "^9.0.5"
     react-dnd "^14.0.3"
