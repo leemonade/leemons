@@ -1604,6 +1604,17 @@
   resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.3.1.tgz#b50a781709c81e10701004214340f25475a171a0"
   integrity sha512-zMM9Ds+SawiUkakS7y94Ymqx+S0ORzpG3frZirN3l+UlXUmSUR7hF4wxCVqW+ei94JzV5kt0uXBcoOEAuiydrw==
 
+"@leemonade/react-dnd-treeview@^1.5.43":
+  version "1.5.43"
+  resolved "https://registry.yarnpkg.com/@leemonade/react-dnd-treeview/-/react-dnd-treeview-1.5.43.tgz#77398762b86e385c45d70a316d82247ef6ca83bb"
+  integrity sha512-okNK0Y7DqGXAyuWaUeE36m8rfFc3WL8tmAbOtYzJT+4kkQ79NRW/d1l7h4XRTWW/+IbSpgxivxpxvRHS0liROA==
+  dependencies:
+    immer "^9.0.5"
+    react-dnd "^14.0.3"
+    react-dnd-html5-backend "^14.0.1"
+    react-dnd-multi-backend "^6.0.2"
+    react-dnd-touch-backend "^14.1.0"
+
 "@lerna/add@4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@lerna/add/-/add-4.0.0.tgz#c36f57d132502a57b9e7058d1548b7a565ef183f"
@@ -2289,17 +2300,6 @@
     rimraf "^3.0.2"
     semver "^7.3.4"
     tar "^6.1.0"
-
-"@minoru/react-dnd-treeview@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@minoru/react-dnd-treeview/-/react-dnd-treeview-1.5.0.tgz#8ff4f09503ff6f37f963c6f1de31eaafe8a8f258"
-  integrity sha512-3cbAp9V+kpCew2kl67kHTUCb7y8HfxXsuRBoEJYbYZBj20OvUXuM9myWZosyfOByiZjhpvMj4mviGNIMXI6E5g==
-  dependencies:
-    immer "^9.0.5"
-    react-dnd "^14.0.3"
-    react-dnd-html5-backend "^14.0.1"
-    react-dnd-multi-backend "^6.0.2"
-    react-dnd-touch-backend "^14.1.0"
 
 "@next/env@10.0.8":
   version "10.0.8"

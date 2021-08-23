@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import cln from 'classnames';
 import { TrashIcon } from '@heroicons/react/solid';
 import { PlusCircleIcon } from '@heroicons/react/outline';
 import Button from '../Button';
-import { useDragOver } from '@minoru/react-dnd-treeview';
+import { useDragOver } from '@leemonade/react-dnd-treeview';
 
 export const NodeRenderer = ({
   node,
@@ -15,66 +15,71 @@ export const NodeRenderer = ({
   isSelected,
   allowDropOutside,
   allowMultipleOpen,
+  allowDragParents,
+  onAdd,
+  onDelete,
+  hasChild,
+  lowerSiblingsCount,
+  hasOpenSiblings,
+  siblingIndex,
   ...otherProps
 }) => {
-  const [lowerSiblingsCount, setLowerSiblingsCount] = useState(null);
-  const [siblingIndex, setSiblingIndex] = useState(null);
-  const { droppable, data } = node;
-  const isButton = data?.type === 'button';
-  const indent = (isButton ? Math.max(0, depth - 1) : depth) * 24 + (!droppable ? 10 : 0);
-
+  const [showButton, setShowButton] = useState(false);
+  const { droppable, data, type } = node;
+  const isButton = type === 'button';
+  const indent = (isButton ? Math.max(0, depth - 1) : depth) * 24 + (!hasChild ? 10 : 0);
   const dragOverProps =
     allowDropOutside && allowMultipleOpen ? useDragOver(node.id, isOpen, onToggle) : {};
 
-  // useEffect(() => droppable && console.log(isSelected, node), [isSelected, node]);
+  useEffect(() => {
+    if (!hasOpenSiblings && isButton) {
+      setShowButton(true);
+    }
+    if (hasOpenSiblings && isButton) {
+      setShowButton(false);
+    }
+  }, [hasOpenSiblings, showButton, isButton]);
 
-  const calculateLowerSiblingsCount = () => {
-    const siblings = treeData.filter(
-      (sibling) =>
-        sibling.parent === node.parent && !sibling.data?.selected && sibling.data?.type !== 'button'
-    );
-
-    if (siblings && siblings.length) {
-      let foundAt = 0;
-      for (let i = 0, l = siblings.length; i < l; i++) {
-        if (siblings[i].id === node.id) {
-          foundAt = i;
-          break;
-        }
-      }
-      setSiblingIndex(foundAt);
-      setLowerSiblingsCount(siblings.length - foundAt - 1);
+  // ----------------------------------------------------------------------
+  // HANDLERS
+  const handleToggle = (e) => {
+    e.stopPropagation();
+    if (hasChild) {
+      onToggle(node.id);
     }
   };
 
-  useEffect(() => {
-    if (!droppable && node && treeData && treeData.length) {
-      calculateLowerSiblingsCount();
+  const handleOnAdd = () => {
+    if (onAdd && node.data?.action === 'add') {
+      onAdd(node.parent);
     }
-  }, [node, treeData, droppable]);
+  };
 
-  const handleToggle = (e) => {
-    e.stopPropagation();
-    if (droppable) {
-      onToggle(node.id);
+  const handleOnDelete = () => {
+    if (onDelete) {
+      onDelete(node.id);
     }
   };
 
   return (
     <div
       className={cln('tree-node relative flex items-center h-8 rounded group', {
-        'bg-white hover:bg-gray-10 cursor-pointer': droppable && !isSelected,
+        'bg-white hover:bg-gray-10 cursor-pointer': hasChild && !isSelected,
         'border border-transparent hover:border-secondary pl-2':
-          !droppable && !isSelected && !isButton,
+          !hasChild && !isSelected && !isButton,
         'bg-primary-100 border border-dashed border-primary pl-2': isSelected,
+        'transition-all ease-out transform': isButton,
         'pr-2': !isButton,
+        hidden: isButton && hasOpenSiblings,
+        'opacity-0 -translate-x-2': isButton && !showButton,
+        'opacity-100': isButton && showButton,
       })}
       style={{ marginLeft: indent }}
       onClick={handleToggle}
       {...dragOverProps}
     >
       {/* TOGGLE ARROW */}
-      {droppable && !isSelected && (
+      {hasChild && !isSelected && (
         <div
           className={`flex items-center justify-center group cursor-pointer transition-transform transform ease-linear h-6 w-8 ${
             isOpen ? 'rotate-0' : '-rotate-90'
@@ -96,22 +101,26 @@ export const NodeRenderer = ({
         </div>
       )}
 
-      {!droppable && !isButton && (
-        <>
-          {/* NODE LINES */}
-          <div
-            className={cln(
-              'tree-node_lines',
-              'absolute bottom-0 left-0 border-b border-l border-gray-30 w-3',
-              {
-                'h-4': siblingIndex === 0,
-                'h-8': siblingIndex > 0,
-                'rounded-bl': lowerSiblingsCount === 0,
-              }
-            )}
-            style={{ transform: 'translateX(-160%) translateY(-0.9rem)' }}
-          />
-          {/* DRAG HANDLER */}
+      {/* NODE LINES */}
+      {!hasChild && !isButton && !isSelected && (
+        <div
+          className={cln(
+            'tree-node_lines',
+            'absolute bottom-0 left-0 border-b border-l border-gray-30 w-3',
+            {
+              'h-4': siblingIndex === 0,
+              'h-8': siblingIndex > 0,
+              'rounded-bl': lowerSiblingsCount === 0,
+            }
+          )}
+          style={{ transform: 'translateX(-160%) translateY(-0.9rem)' }}
+        />
+      )}
+
+      {/* DRAG HANDLER */}
+      {!isButton &&
+        !isSelected &&
+        ((allowDragParents && !isOpen && !hasOpenSiblings) || !hasChild) && (
           <div className="py-2 mr-2 group text-gray-30 group-hover:text-secondary-300 cursor-move">
             <svg
               width="14"
@@ -124,13 +133,12 @@ export const NodeRenderer = ({
               <path d="M0.333332 1.6665H13.3333" stroke="currentColor" strokeWidth="1.5" />
             </svg>
           </div>
-        </>
-      )}
+        )}
 
       {/* TITLE */}
       {isButton ? (
-        <div className="flex-1">
-          <Button color="primary" text className="btn-sm w-full">
+        <div className="flex-1 pr-1">
+          <Button color="primary" text className="btn-sm w-full mb-1" onClick={handleOnAdd}>
             <PlusCircleIcon className="text-primary w-4 h-4 mr-2" />
             <div className="flex-1 text-left">{`${node.text}`}</div>
           </Button>
@@ -138,7 +146,7 @@ export const NodeRenderer = ({
       ) : (
         <div
           className={cln('flex-1 text-sm', {
-            'text-gray-300 group-hover:text-secondary': droppable && !isSelected,
+            'text-gray-300 group-hover:text-secondary': hasChild && !isSelected,
             'text-primary': isSelected,
           })}
         >
@@ -147,10 +155,16 @@ export const NodeRenderer = ({
       )}
 
       {/* DELETE BUTTON */}
-      {!droppable && !isButton && (
-        <div className="text-gray-30 group-hover:text-secondary-300 pl-6">
+      {!hasChild && !isButton && !isSelected && (
+        <Button
+          color="secondary"
+          circle
+          text
+          className="opacity-20 group-hover:opacity-100 btn-xs ml-4"
+          onClick={handleOnDelete}
+        >
           <TrashIcon className="w-4 h-4" />
-        </div>
+        </Button>
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { NodeModel } from '@minoru/react-dnd-treeview';
+import { NodeModel } from '@leemonade/react-dnd-treeview';
 
 export const NodePlaceholderRenderer = ({ node, depth }) => {
   const left = depth * 24;

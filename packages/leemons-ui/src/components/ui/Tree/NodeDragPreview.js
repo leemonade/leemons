@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { DragLayerMonitorProps } from '@minoru/react-dnd-treeview';
+import { DragLayerMonitorProps } from '@leemonade/react-dnd-treeview';
 
 export const NodeDragPreview = ({ monitorProps, ...otherProps }) => {
   const item = monitorProps.item;
