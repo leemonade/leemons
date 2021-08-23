@@ -5,73 +5,31 @@ import useTranslate from '@multilanguage/useTranslate';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
-import { PageContainer, PageHeader, Card, FormControl, Checkbox, Button, Select } from 'leemons-ui';
+import {
+  PageContainer,
+  PageHeader,
+  Card,
+  FormControl,
+  Checkbox,
+  Button,
+  Select,
+  Tree,
+  useTree,
+} from 'leemons-ui';
 import prefixPN from '@classroom/helpers/prefixPN';
 import hooks from 'leemons-hooks';
 import { CenterService } from '@users/services';
-import { TreeView } from '@classroom/components/treeview';
 
 const TREE_DATA = [
   {
     id: '1',
-    title: 'Organization A',
-    expanded: true,
-    children: [
-      {
-        id: '2',
-        title: 'Center A',
-        children: [
-          { id: '3', title: 'Level 1' },
-          {
-            id: '4',
-            title: 'Level 2',
-            children: [
-              { id: '41', title: 'Level 21' },
-              { id: '42', title: 'Level 22' },
-            ],
-          },
-          { id: '5', title: 'Level 3' },
-          { title: 'Add level', type: 'add' },
-        ],
-      },
-      {
-        id: '6',
-        title: 'Center B',
-        children: [
-          { id: '7', title: 'Level 1' },
-          { title: 'New level', type: 'new' },
-        ],
-      },
-    ],
-  },
-  {
-    id: '10',
-    title: 'Organization B',
-    children: [
-      {
-        id: '12',
-        title: 'Center AB',
-        children: [
-          { id: '13', title: 'Level 1B' },
-          { id: '14', title: 'Level 2B' },
-          { id: '15', title: 'Level 3B' },
-          { title: 'Add level', type: 'add' },
-        ],
-      },
-      {
-        id: '16',
-        title: 'Center BB',
-        children: [
-          { id: '17', title: 'Level 1' },
-          { title: 'New level', type: 'new' },
-        ],
-      },
-    ],
+    text: 'Organization',
+    parent: 0,
   },
 ];
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de gestionar Clases
-function Tree() {
+function TreePage() {
   useSession({ redirectTo: goLoginPage });
 
   const [translations] = useTranslate({ keysStartsWith: prefixPN('') });
@@ -79,24 +37,44 @@ function Tree() {
   const tc = tLoader(prefixPN('common'), translations);
 
   // --------------------------------------------------------
-  // CENTERS
-  const [centers, setCenters] = useState([]);
+  // TREE
+  const [initTree, setInitTree] = useState(false);
+  const [initialOpen, setInitialOpen] = useState([]);
+  const treeProps = useTree();
+
+  // --------------------------------------------------------
+  // INITIAL DATA
   useEffect(() => {
     let mounted = true;
     (async () => {
       const { data } = await CenterService.listCenters({ page: 0, size: 99999 });
       if (mounted && data) {
-        setCenters(data.items);
+        const treeData = [];
+        if (Array.isArray(data.items) && data.items.length) {
+          treeData.push({ id: '1', text: tc('organization'), parent: 0 });
+          treeData.push({ id: '2', text: tc('centre'), parent: '1' });
+        } else {
+          treeData.push({ id: '1', text: `${tc('organization')} / ${tc('centre')}`, parent: 0 });
+        }
+        const lastParentID = treeData[treeData.length - 1].id;
+        treeData.push({
+          id: `${lastParentID}-ADD`,
+          text: tc('add_level'),
+          parent: lastParentID,
+          type: 'button',
+          data: {
+            action: 'add',
+          },
+        });
+        setInitialOpen([`${lastParentID}-ADD`]);
+        treeProps.setTreeData(treeData);
+        setInitTree(true);
       }
     })();
     return () => {
       mounted = false;
     };
   }, []);
-
-  // --------------------------------------------------------
-  // TREE
-  const [treeData, setTreeData] = useState(TREE_DATA);
 
   return (
     <>
@@ -106,19 +84,21 @@ function Tree() {
           <div className="page-description" dangerouslySetInnerHTML={{ __html: t('page_info') }} />
         </PageContainer>
 
-        <div className="bg-gray-100 text-sm flex flex-1">
+        <div className="bg-gray-20 text-sm flex flex-1">
           <PageContainer>
             <div className="flex space-x-5">
               {/* TREE ADMIN */}
               <div className="flex flex-1">
                 <Card className="bg-white w-full h-full p-8">
                   <div className="h-full">
-                    <TreeView
-                      treeData={treeData}
-                      setTreeData={setTreeData}
-                      onAddNode={(rowInfo) => console.log(rowInfo)}
-                      onDeleteNode={(rowInfo) => console.log(rowInfo)}
-                    />
+                    {initTree && (
+                      <Tree
+                        {...treeProps}
+                        initialOpen={initialOpen}
+                        onAdd={(parentId) => console.log(parentId)}
+                        onDelete={(nodeId) => console.log(nodeId)}
+                      />
+                    )}
                   </div>
                 </Card>
               </div>
@@ -164,4 +144,4 @@ function Tree() {
   );
 }
 
-export default withLayout(Tree);
+export default withLayout(TreePage);

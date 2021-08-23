@@ -66,12 +66,12 @@ function Welcome() {
         </FormControl>
       </PageContainer>
 
-      <div className="bg-gray-100">
+      <div className="bg-gray-20">
         <PageContainer>
           <div className="grid grid-cols-2 gap-6 mt-8">
             {/* BULK LOAD */}
             <Card className="p-8 bg-white flex flex-col">
-              <div className="h-20 bg-gray-50 rounded"></div>
+              <div className="h-20 bg-gray-30 rounded"></div>
               <div className="flex flex-col items-center px-12">
                 <div className="text-2xl font-semibold py-8">{t('bulk_load.title')}</div>
                 <div
@@ -88,7 +88,7 @@ function Welcome() {
 
             {/* MANUAL CREATION */}
             <Card className="p-8 bg-white flex flex-col">
-              <div className="h-20 bg-gray-50 rounded"></div>
+              <div className="h-20 bg-gray-30 rounded"></div>
               <div className="flex flex-col items-center px-12">
                 <div className="text-2xl font-semibold py-8">{t('manual_load.title')}</div>
                 <div
