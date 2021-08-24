@@ -118,9 +118,9 @@ function TreePage() {
           <div className="page-description" dangerouslySetInnerHTML={{ __html: t('page_info') }} />
         </PageContainer>
 
-        <div className="text-sm flex flex-1">
+        <div className="flex flex-1">
           <PageContainer>
-            <div className="flex space-x-5">
+            <div className="text-sm flex space-x-5">
               {/* TREE ADMIN */}
               <div className="flex flex-1">
                 <Card className="bg-white w-full h-full p-8">
