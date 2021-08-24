@@ -16,4 +16,4 @@ async function add(item, permissions) {
   return null;
 }
 
-module.exports = add;
+module.exports = { add };
