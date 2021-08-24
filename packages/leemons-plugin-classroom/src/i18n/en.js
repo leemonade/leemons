@@ -4,7 +4,7 @@ module.exports = {
     view: 'View',
     edit: 'Edit',
     organization: 'Organization',
-    centre: 'Centre',
+    center: 'Center',
     add_level: 'Add level',
     select_template: 'Select template',
   },
