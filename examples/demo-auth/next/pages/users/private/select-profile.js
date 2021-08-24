@@ -21,21 +21,26 @@ export default function SelectProfile() {
 
   const [t] = useTranslateLoader(prefixPN('selectProfile'));
 
+  const [loadingProfileToken, setLoadingProfileToken] = useState(false);
   const [rememberProfile, setRememberProfile] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [profiles, setProfiles] = useState([]);
 
   const getProfileToken = async (_profile) => {
-    const profil = selectedProfile || _profile;
-    if (profil) {
-      const { jwtToken } = await getUserProfileTokenRequest(profil.id);
-      if (rememberProfile) {
-        await setRememberProfileRequest(profil.id);
+    try {
+      const profil = selectedProfile || _profile;
+      if (profil) {
+        setLoadingProfileToken(true);
+        const { jwtToken } = await getUserProfileTokenRequest(profil.id);
+        if (rememberProfile) {
+          await setRememberProfileRequest(profil.id);
+        }
+        await hooks.fireEvent('user:change:profile', profil);
+        Cookies.set('token', jwtToken);
+        Router.push(`/${constants.base}`);
       }
-      await hooks.fireEvent('user:change:profile', profil);
-      Cookies.set('token', jwtToken);
-      Router.push(`/${constants.base}`);
-    }
+    } catch (e) {}
+    setLoadingProfileToken(false);
   };
 
   async function getProfiles() {
@@ -63,10 +68,12 @@ export default function SelectProfile() {
       </div>
 
       {/* Profiles list */}
-      <div className="mb-12">
+      <div className="mb-12 grid grid-flow-col grid-cols-3 gap-2">
         {profiles.map((profile) => (
           <div
-            className="p-5 cursor-pointer"
+            className={`p-5 cursor-pointer text-sm text-center ${
+              selectedProfile?.id === profile.id ? 'border rounded' : ''
+            }`}
             key={profile.id}
             onClick={() => setSelectedProfile(profile)}
           >
@@ -90,7 +97,13 @@ export default function SelectProfile() {
       <div className="text-base mb-12">{t('change_easy')}</div>
 
       {/* Send form */}
-      <Button className="btn-block" color="primary" rounded={true} onClick={getProfileToken}>
+      <Button
+        className="btn-block"
+        color="primary"
+        loading={loadingProfileToken}
+        rounded={true}
+        onClick={() => getProfileToken()}
+      >
         <div className="flex-1 text-left">{t('log_in')}</div>
         <div className="relative" style={{ width: '8px', height: '14px' }}>
           <ImageLoader src="/assets/svgs/chevron-right.svg" />

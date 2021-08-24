@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const constants = require('./config/constants');
-const { addFamiliesData } = require('./src/services/menu-builder/addFamiliesData');
+const { add } = require('./src/services/menu-builder/add');
 
 async function events(isInstalled) {
   if (!isInstalled) {
@@ -8,7 +8,9 @@ async function events(isInstalled) {
     leemons.events.once(
       ['plugins.users:init-menu', 'plugins.families:init-permissions'],
       async () => {
-        await addFamiliesData();
+        for (let i = 0, l = constants.menuItems.length; i < l; i++) {
+          await add(constants.menuItems[i].config, constants.menuItems[i].permissions);
+        }
         leemons.events.emit('init-menu');
       }
     );

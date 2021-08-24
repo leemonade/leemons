@@ -11,7 +11,12 @@ async function initProfiles() {
       { permissionName: 'plugins.users.users', actionNames: ['view'] },
     ],
   });
-  return { student };
+  const guardian = await leemons.getPlugin('users').services.profiles.add({
+    name: 'Guardian',
+    description: 'Tutor legal de los alumnos vease un padre/madre',
+    permissions: [],
+  });
+  return { student, guardian };
 }
 
 module.exports = initProfiles;

@@ -441,10 +441,6 @@ function ProfileDetail() {
     }
   };
 
-  const onNewButton = () => {
-    goDetailProfilePage();
-  };
-
   const showDefaultLocaleWarning = useMemo(() => {
     return !getValues('name');
   }, [getValues()]);
@@ -483,7 +479,6 @@ function ProfileDetail() {
               saveButton={isEditMode ? tCommonHeader('save') : null}
               saveButtonLoading={saveLoading}
               cancelButton={isEditMode ? tCommonHeader('cancel') : null}
-              onNewButton={onNewButton}
               onCancelButton={onCancelButton}
               editButton={isEditMode ? null : tCommonHeader('edit')}
               onEditButton={onEditButton}
@@ -500,7 +495,7 @@ function ProfileDetail() {
                       </div>
                     </>
                   ) : (
-                    <div>{watch('description')}</div>
+                    <div className="page-description">{watch('description')}</div>
                   )}
                 </div>
 

@@ -11,10 +11,14 @@ module.exports = {
         notNull: true,
       },
     },
-    group: {
-      references: {
-        collection: 'plugins_users::groups',
-      },
+    maritalStatus: {
+      type: 'string',
+    },
+    nStudents: {
+      type: 'string',
+    },
+    nMembers: {
+      type: 'string',
     },
   },
   primaryKey: {

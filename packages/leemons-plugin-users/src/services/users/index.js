@@ -25,6 +25,7 @@ const profileToken = require('./profileToken');
 const hasPermission = require('./hasPermission');
 const hasPermissionCTX = require('./hasPermissionCTX');
 const removeCustomPermission = require('./removeCustomPermission');
+const { searchUserAgents } = require('./searchUserAgents');
 
 module.exports = {
   init,
@@ -52,6 +53,8 @@ module.exports = {
   hasPermissionCTX,
   updateUserAgentPermissions,
   detailForJWT,
+
+  searchUserAgents,
 
   add,
   profiles,
