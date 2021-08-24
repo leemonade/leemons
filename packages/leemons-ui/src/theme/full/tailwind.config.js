@@ -7,12 +7,14 @@ const utilitiesStyled = require('../../../dist/theme/utilities-styled');
 const utilitiesUnstyled = require('../../../dist/theme/utilities-unstyled');
 const components = require('../../../dist/theme/styled');
 const width = require('../../../dist/theme/extends/width');
+const boxShadow = require('../../../dist/theme/extends/boxShadow');
 
 module.exports = {
   theme: {
     colors,
     fontFamily,
     width,
+    boxShadow,
   },
   corePlugins: [
     'animation',

@@ -2,7 +2,7 @@
 @layer components {
   /* <: */
   .tooltip-container {
-    @apply flex flex-col rounded-btn text-sm px-3 max-w-xs py-1.5;
+    @apply flex flex-col rounded-btn text-sm px-3 max-w-xs py-1.5 shadow-lg;
     --tooltip-color: hsl(var(--black));
     --tooltip-text-color: hsl(var(--white));
     background-color: var(--tooltip-color);
