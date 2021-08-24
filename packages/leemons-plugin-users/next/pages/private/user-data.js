@@ -193,7 +193,7 @@ function BasicTab({ t }) {
 
   useAsync(load2, onSuccess2, onError2);
 
-  const Form = formWithTheme(dataTest?.compileJsonSchema, dataTest?.compileJsonUI, []);
+  const [form] = formWithTheme(dataTest?.compileJsonSchema, dataTest?.compileJsonUI);
 
   return (
     <div>
@@ -233,9 +233,7 @@ function BasicTab({ t }) {
           {tableItems && tableItems.length ? (
             <PageContainer>
               <div className="bg-primary-content p-4">
-                <Card className="bordered p-6">
-                  <Form />
-                </Card>
+                <Card className="bordered p-6">{form}</Card>
               </div>
             </PageContainer>
           ) : null}

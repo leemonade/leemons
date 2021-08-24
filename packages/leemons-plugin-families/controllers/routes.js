@@ -1,14 +1,29 @@
 module.exports = [
   /**
-   * Test
+   * User agents
    * */
   {
-    path: '/test',
+    path: '/search-users',
     method: 'POST',
-    handler: 'test.test',
+    handler: 'families.searchUsers',
+    authenticated: true,
     allowedPermissions: {
-      'plugins.test.test': {
-        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      'plugins.families.families': {
+        actions: ['update', 'create', 'admin'],
+      },
+    },
+  },
+  /**
+   * Dataset
+   * */
+  {
+    path: '/dataset-form',
+    method: 'GET',
+    handler: 'families.getDatasetForm',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.families.families': {
+        actions: ['view', 'update', 'create', 'admin'],
       },
     },
   },

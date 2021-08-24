@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+import React, { useEffect, useRef, useState } from 'react';
 import { withTheme } from '@rjsf/core';
 import { Checkbox, FormControl, Input, Label, Radio, Select, Textarea, Toggle } from 'leemons-ui';
 import Engine from 'json-rules-engine-simplified';
@@ -78,7 +80,15 @@ const BaseInput = (props) => {
         min={min}
         max={max}
         onChange={(event) =>
-          onChange(type === 'number' ? parseFloat(event.target.value) : event.target.value)
+          onChange(
+            type === 'number'
+              ? event.target.value
+                ? parseFloat(event.target.value)
+                : undefined
+              : event.target.value
+              ? event.target.value
+              : undefined
+          )
         }
       />
     </MyCustomFormControl>
@@ -362,39 +372,101 @@ function PartError({ rawErrors }) {
   return <FormControl formError={rawErrors ? { message: rawErrors[0] } : null} />;
 }
 
-export default function formWithTheme(schema, ui, conditions) {
+function columnsObjectFieldTemplate({ properties, uiSchema, ...rest }) {
+  return (
+    <div className={`flex ${uiSchema['ui:className'] || 'w-full'}`}>
+      {properties.map((prop) => {
+        return (
+          <div
+            key={prop.content.key}
+            className={prop.content.props.uiSchema['ui:className'] || 'w-full'}
+          >
+            {prop.content}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+export default function formWithTheme(schema, ui, conditions, props) {
   const { t } = useCommonTranslate('forms');
-  const Form = withTheme({
-    FieldTemplate,
-    ErrorList,
-    fields: {
-      NumberField,
-      //BooleanField,
-    },
-    widgets: {
-      BaseInput,
-      TextareaWidget,
-      CheckboxesWidget,
-      SelectWidget,
-      RadioWidget,
-      CheckboxWidget,
-      toggle: ToggleWidget,
-    },
-  });
-  const FormWithConditionals =
-    schema && ui ? applyRules(schema, ui, conditions, Engine)(Form) : () => null;
+  const [Form, setForm] = useState(null);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    console.log('useEffect');
+    if (schema && ui) {
+      const Form = withTheme({
+        FieldTemplate,
+        ErrorList,
+        fields: {
+          NumberField,
+          //BooleanField,
+        },
+        widgets: {
+          BaseInput,
+          TextareaWidget,
+          CheckboxesWidget,
+          SelectWidget,
+          RadioWidget,
+          CheckboxWidget,
+          toggle: ToggleWidget,
+        },
+      });
+      const FormWithConditionals =
+        schema && ui
+          ? applyRules(
+              _.cloneDeep(schema),
+              _.cloneDeep(ui),
+              _.cloneDeep(conditions || []),
+              Engine
+            )(Form)
+          : () => null;
+      setForm(FormWithConditionals);
+    }
+  }, [schema, ui, conditions]);
+
   const customFormats = {
     numbers: /^\d+$/,
     phone: /^[\+]?[(]?[0-9]{2,3}[)]?[-\s\.]?[0-9\s]{3}[-\s\.]?[0-9\s]{4,8}$/,
   };
 
-  return ({ ...props }) => {
-    return (
-      <FormWithConditionals
-        {...props}
-        transformErrors={(e) => transformErrors(e, t)}
-        customFormats={customFormats}
-      />
-    );
-  };
+  const form = Form ? (
+    <Form
+      {...props}
+      ref={(e) => {
+        ref.current = e;
+        if (props?.ref) props.ref = e;
+      }}
+      transformErrors={(e) => transformErrors(e, t)}
+      customFormats={customFormats}
+      ObjectFieldTemplate={columnsObjectFieldTemplate}
+    >
+      <></>
+    </Form>
+  ) : null;
+
+  return [
+    form,
+    {
+      submit: () => {
+        console.log(ref.current.formElement);
+        ref.current.formElement.dispatchEvent(
+          new Event('submit', {
+            cancelable: true,
+            bubbles: true,
+          })
+        );
+      },
+      getRef: () => ref.current,
+      getErrors: () => ref.current.state.errors || [],
+      getValues: () => ref.current.props.formData,
+      setValue: (key, value) =>
+        ref.current.onChange({
+          ...ref.current.props.formData,
+          [key]: value,
+        }),
+    },
+  ];
 }
