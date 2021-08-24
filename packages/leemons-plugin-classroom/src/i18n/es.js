@@ -4,7 +4,7 @@ module.exports = {
     view: 'Ver',
     edit: 'Editar',
     organization: 'Organización',
-    centre: 'Centro',
+    center: 'Centro',
     add_level: 'Añadir nivel',
     select_template: 'Seleccionar plantilla',
   },

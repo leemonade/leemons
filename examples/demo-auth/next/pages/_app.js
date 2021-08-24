@@ -5,10 +5,10 @@ import React, { useEffect } from 'react';
 import { frontPlugins, plugins } from '@plugins';
 import { SessionProvider } from '@users/context/session';
 import { getCookieToken } from '@users/session';
-import 'tailwindcss/tailwind.css';
 import 'simplebar/dist/simplebar.min.css';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
+import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }) {
   // Only add it once
