@@ -63,10 +63,12 @@ export default function SelectProfile() {
       </div>
 
       {/* Profiles list */}
-      <div className="mb-12">
+      <div className="mb-12 grid grid-flow-col grid-cols-3 gap-2">
         {profiles.map((profile) => (
           <div
-            className="p-5 cursor-pointer"
+            className={`p-5 cursor-pointer text-sm text-center ${
+              selectedProfile?.id === profile.id ? 'border rounded' : ''
+            }`}
             key={profile.id}
             onClick={() => setSelectedProfile(profile)}
           >

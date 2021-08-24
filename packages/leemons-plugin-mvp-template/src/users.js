@@ -32,7 +32,7 @@ async function initUsers(centers, profiles) {
       locale: 'es',
       active: true,
     },
-    _.map(roles, 'id')
+    _.map(roles, 'id').concat(_.map(roles2, 'id'))
   );
   const user2 = await leemons.getPlugin('users').services.users.add(
     {

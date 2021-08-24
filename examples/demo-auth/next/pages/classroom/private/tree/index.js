@@ -20,14 +20,6 @@ import prefixPN from '@classroom/helpers/prefixPN';
 import hooks from 'leemons-hooks';
 import { CenterService } from '@users/services';
 
-const TREE_DATA = [
-  {
-    id: '1',
-    text: 'Organization',
-    parent: 0,
-  },
-];
-
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de gestionar Clases
 function TreePage() {
   useSession({ redirectTo: goLoginPage });
@@ -35,6 +27,36 @@ function TreePage() {
   const [translations] = useTranslate({ keysStartsWith: prefixPN('') });
   const t = tLoader(prefixPN('tree_page'), translations);
   const tc = tLoader(prefixPN('common'), translations);
+
+  const TREE_DATA = [
+    {
+      id: 'stage',
+      text: 'Etapa',
+      parent: 0,
+    },
+    {
+      id: 'stage-ADD',
+      text: tc('add_level'),
+      type: 'button',
+      parent: 'stage',
+    },
+    {
+      id: 'level',
+      text: 'Curso',
+      parent: 'stage',
+    },
+    {
+      id: 'level-ADD',
+      text: tc('add_level'),
+      type: 'button',
+      parent: 'level',
+    },
+    {
+      id: 'group',
+      text: 'Grupo',
+      parent: 'level',
+    },
+  ];
 
   // --------------------------------------------------------
   // TREE
@@ -44,37 +66,49 @@ function TreePage() {
 
   // --------------------------------------------------------
   // INITIAL DATA
-  useEffect(() => {
+
+  useEffect(async () => {
     let mounted = true;
-    (async () => {
-      const { data } = await CenterService.listCenters({ page: 0, size: 99999 });
-      if (mounted && data) {
-        const treeData = [];
-        if (Array.isArray(data.items) && data.items.length) {
-          treeData.push({ id: '1', text: tc('organization'), parent: 0 });
-          treeData.push({ id: '2', text: tc('centre'), parent: '1' });
-        } else {
-          treeData.push({ id: '1', text: `${tc('organization')} / ${tc('centre')}`, parent: 0 });
-        }
-        const lastParentID = treeData[treeData.length - 1].id;
-        treeData.push({
-          id: `${lastParentID}-ADD`,
-          text: tc('add_level'),
-          parent: lastParentID,
-          type: 'button',
-          data: {
-            action: 'add',
-          },
+    // We only need to know if there are multiple centers
+    const { data } = await CenterService.listCenters({ page: 0, size: 2 });
+    if (mounted && data && translations?.items) {
+      const tempTreeData = [];
+      if (Array.isArray(data.items) && data.items.length > 1) {
+        // MultiCenter:  display organization and center in separate levels
+        tempTreeData.push({ id: 'organization', text: tc('organization'), parent: 0 });
+        tempTreeData.push({ id: 'center', text: tc('center'), parent: 'organization' });
+      } else {
+        // MonoCenter:  display organization and center in the same level
+        tempTreeData.push({
+          id: 'organization/center',
+          text: `${tc('organization')} / ${tc('center')}`,
+          parent: 0,
         });
-        setInitialOpen([`${lastParentID}-ADD`]);
-        treeProps.setTreeData(treeData);
-        setInitTree(true);
       }
-    })();
+
+      const lastParentID = tempTreeData[tempTreeData.length - 1].id;
+      tempTreeData.push({
+        id: `${lastParentID}-ADD`,
+        text: tc('add_level'),
+        parent: lastParentID,
+        type: 'button',
+        data: {
+          action: 'add',
+        },
+      });
+
+      const [firstElement, ...treeData] = TREE_DATA;
+      tempTreeData.push({ ...firstElement, parent: lastParentID });
+      tempTreeData.push(...treeData);
+      setInitialOpen([`${lastParentID}-ADD`]);
+      treeProps.setTreeData(tempTreeData);
+      setInitTree(true);
+    }
+
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [translations]);
 
   return (
     <>
