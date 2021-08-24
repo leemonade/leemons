@@ -37,4 +37,11 @@ module.exports = [
     authenticated: true,
     allowedPermissions: { ...defaultPermission(['view']) },
   },
+
+  {
+    path: '/levelSchemas',
+    method: 'POST',
+    handler: 'levelSchemas.add',
+    authenticated: false,
+  },
 ];

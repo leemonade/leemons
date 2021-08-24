@@ -18,7 +18,7 @@ async function add(ctx) {
 
 async function list(ctx) {
   try {
-    const locales = await leemons.plugin.services.locales.getAll();
+    const locales = await leemons.plugin.services.locales.getProvider().getAll();
     ctx.body = { locales };
   } catch (e) {
     ctx.body = { error: true };

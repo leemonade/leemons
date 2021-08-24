@@ -24,7 +24,30 @@ import { CenterService } from '@users/services';
 function TreePage() {
   useSession({ redirectTo: goLoginPage });
 
-  const [translations] = useTranslate({ keysStartsWith: prefixPN('') });
+  // --------------------------------------------------------
+  // LANG PICKER
+  const [languages, setLanguages] = useState([]);
+  const [selectedLanguage, setSelectedLanguage] = useState(null);
+
+  useEffect(async () => {
+    const request = await leemons.api(
+      {
+        url: 'multilanguage/locales',
+        allAgents: true,
+      },
+      {
+        method: 'GET',
+      }
+    );
+    if (request.locales && Array.isArray(request.locales)) {
+      setLanguages(request.locales);
+    }
+  }, []);
+
+  const [translations] = useTranslate({
+    keysStartsWith: prefixPN(''),
+    locale: selectedLanguage === 'default' ? undefined : selectedLanguage,
+  });
   const t = tLoader(prefixPN('tree_page'), translations);
   const tc = tLoader(prefixPN('common'), translations);
 
@@ -121,6 +144,20 @@ function TreePage() {
         <div className="flex flex-1">
           <PageContainer>
             <div className="text-sm flex space-x-5">
+              <Select
+                className="w-full max-w-xs"
+                outlined={true}
+                onChange={(event) => setSelectedLanguage(event.target.value)}
+              >
+                <option key="null" value={'default'}>
+                  default
+                </option>
+                {languages.map((locale) => (
+                  <option key={locale.id} value={locale.code}>
+                    {locale.name} ({locale.code})
+                  </option>
+                ))}
+              </Select>
               {/* TREE ADMIN */}
               <div className="flex flex-1">
                 <Card className="bg-white w-full h-full p-8">
