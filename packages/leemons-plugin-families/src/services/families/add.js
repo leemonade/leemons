@@ -1,6 +1,18 @@
 const _ = require('lodash');
 const { getSessionFamilyPermissions } = require('../users/getSessionFamilyPermissions');
 const { table } = require('../tables');
+const { getProfiles } = require('../profiles-config/getProfiles');
+
+function getFamilyMenuBuilderData(familyId, familyName) {
+  return {
+    pluginName: 'plugins.families',
+    menuKey: leemons.getPlugin('menu-builder').services.config.constants.mainMenuKey,
+    key: leemons.plugin.prefixPN(`family-${familyId}`),
+    parentKey: 'plugins.users.users',
+    url: `/families/private/detail/${familyId}`,
+    label: familyName,
+  };
+}
 
 /**
  * ES: Crea una nueva familia solo si tiene los permisos para hacerlo, es posible que solo cree
@@ -53,6 +65,8 @@ async function add(
 
       const promises = [];
 
+      const profiles = await getProfiles();
+
       // Add guardians if have permission
       if (permissions.guardiansInfo.update) {
         _.forEach(guardians, (guardian) => {
@@ -64,6 +78,16 @@ async function add(
               },
               { transacting }
             )
+          );
+          promises.push(
+            leemons
+              .getPlugin('menu-builder')
+              .services.menuItem.addCustomForUserWithProfile(
+                guardian.user,
+                profiles.guardian,
+                getFamilyMenuBuilderData(family.id, name),
+                { transacting }
+              )
           );
         });
       }
@@ -79,6 +103,16 @@ async function add(
               },
               { transacting }
             )
+          );
+          promises.push(
+            leemons
+              .getPlugin('menu-builder')
+              .services.menuItem.addCustomForUserWithProfile(
+                student.user,
+                profiles.student,
+                getFamilyMenuBuilderData(family.id, name),
+                { transacting }
+              )
           );
         });
       }

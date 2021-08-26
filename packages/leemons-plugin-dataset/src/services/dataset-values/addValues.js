@@ -36,9 +36,8 @@ async function addValues(
   validatePluginName(pluginName, this.calledFrom);
   await validateExistValues(locationName, pluginName, target, { transacting });
 
-  console.log('hola1');
   const { jsonSchema } = await getSchema.call(this, locationName, pluginName);
-  console.log('hola2');
+
   // ES: Cogemos solos los campos a los que el usuario tiene permiso de edicion
   // EN: We take only the fields to which the user has permission to edit.
   const goodKeys = await getKeysCanAction(locationName, pluginName, userAgent, 'edit');
@@ -46,10 +45,7 @@ async function addValues(
   _.forEach(goodKeys, (k) => {
     formData[k] = _formData[k];
   });
-  console.log('hola3', {
-    ...jsonSchema,
-    additionalProperties: false,
-  });
+
   // EN: Remove id ajv not support name if for a field
   _.forIn(jsonSchema.properties, (p) => {
     delete p.id;
@@ -64,16 +60,16 @@ async function addValues(
     { strict: false }
   );
   if (!validator.validate(formData)) throw validator.error;
-  console.log('hola4');
+
   const toSave = [];
   _.forIn(formData, (value, key) => {
     const data = { locationName, pluginName, key, value: JSON.stringify(value) };
     if (target) data.target = target;
     toSave.push(data);
   });
-  console.log('hola5');
+
   await table.datasetValues.createMany(toSave, { transacting });
-  console.log('hola6');
+
   return formData;
 }
 

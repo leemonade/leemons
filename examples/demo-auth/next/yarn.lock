@@ -1064,9 +1064,9 @@ reusify@^1.0.4:
   integrity sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==
 
 rjsf-conditionals@^1.1.4:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/rjsf-conditionals/-/rjsf-conditionals-1.1.5.tgz#699d969df62f9f6b8d8ac0d2690842e02b47abcd"
-  integrity sha512-JC36oJkz4O9lXu3EQOVK+yn4vPcq0hpdhdxE0VmDRTbwcGhvljsk3HgS6S29P28g701r+P/nckG+oxHQOLt+CQ==
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/rjsf-conditionals/-/rjsf-conditionals-1.2.0.tgz#e12f8769eb8874262eeabff1d52b95ee030fc813"
+  integrity sha512-rIiK0EHvm0Fc7oBcSjaA1VKiSde8knVRws5zMu42rp83nNVIk2V/xVRHZEawFqXM3uuReCHbONRCUGhiotJBuw==
   dependencies:
     deepcopy "^2.0.0"
     selectn "^1.1.2"
