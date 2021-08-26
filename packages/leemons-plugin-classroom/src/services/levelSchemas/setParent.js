@@ -23,13 +23,18 @@ module.exports = async function setParent(id, parent, { transacting } = {}) {
     if (parent === id) {
       throw new Error("The parent can't be itself");
     }
-    const levelSchema = await levelSchemas.findOne({ id }, { transacting });
+    let levelSchema = await levelSchemas.findOne({ id }, { transacting });
     if (!levelSchema) {
       throw new Error("The given id can't be found");
     }
 
     if (levelSchema.parent === parent) {
       return levelSchema;
+    }
+
+    const parentLS = await levelSchemas.count({ id: parent, isClass: true }, { transacting });
+    if (parentLS) {
+      throw new Error("The parent can't be of type class");
     }
 
     try {
