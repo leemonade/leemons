@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function Label({ children, className, text, helper, labelPosition }) {
+function Label({ children, className, text, helper, labelPosition, isInput }) {
   const textClass = helper
     ? 'label-text-alt font-inter text-black'
-    : 'label-text font-medium text-black';
+    : `label-text ${isInput ? 'font-medium' : ''} text-black`;
   const positionClass = labelPosition === 'left' ? 'mr-3' : 'ml-3';
   const labelClass = labelPosition === 'right' ? 'justify-start' : '';
   return (
@@ -20,6 +20,7 @@ function Label({ children, className, text, helper, labelPosition }) {
 
 Label.defaultProps = {
   labelPosition: 'left',
+  isInput: true,
 };
 
 Label.propTypes = {
@@ -28,6 +29,7 @@ Label.propTypes = {
   className: PropTypes.string,
   helper: PropTypes.bool,
   labelPosition: PropTypes.oneOf(['left', 'right']),
+  isInput: PropTypes.bool,
 };
 
 export default Label;

@@ -30,7 +30,7 @@ function RadioPage() {
         <Wrapper title="input" className="flex flex-col space-y-2 max-w-xs">
           <div className="p-6 card bordered">
             <FormControl label="Neutral">
-              <Radio name="opt" />
+              <Radio name="opt" color="neutral" />
             </FormControl>
 
             <FormControl label="Primary">

@@ -18,11 +18,16 @@ function Radio({ className, name, value, readOnly, onChange = () => {}, color, .
   );
 }
 
+Radio.defaultProps = {
+  color: 'primary',
+};
+
 Radio.propTypes = {
   className: PropTypes.string,
   name: PropTypes.string,
   value: PropTypes.any,
   color: PropTypes.oneOf([
+    'neutral',
     'primary',
     'secondary',
     'accent',

@@ -4,7 +4,7 @@
   .label {
     @apply pt-2 pb-1;
     &-text {
-      @apply font-medium text-sm;
+      @apply text-sm;
       color: #000000;
     }
     &-text-alt {

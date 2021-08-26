@@ -65,7 +65,9 @@ function FormControl({ children, label, labelPosition, className, formError, mul
 
   const Component = isCheckbox && !multiple ? Label : React.Fragment;
   const componentProps =
-    isCheckbox && !multiple ? { text: label, className: 'cursor-pointer', labelPosition } : {};
+    isCheckbox && !multiple
+      ? { text: label, className: 'cursor-pointer', labelPosition, isInput: !isCheckbox }
+      : {};
 
   const item = getItemOfOneType(childrens, [Checkbox, Radio, Toggle, Input, Select, Textarea]);
 

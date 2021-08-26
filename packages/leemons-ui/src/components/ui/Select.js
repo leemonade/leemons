@@ -132,7 +132,7 @@ const Select = React.forwardRef(
     return (
       <>
         {readOnly ? null : (
-          <div className={`select-wrapper ${wrapperClasses.join(' ')}`}>
+          <div className={`self-start select-wrapper ${wrapperClasses.join(' ')}`}>
             <select
               ref={(e) => {
                 inputRef.current = e;
