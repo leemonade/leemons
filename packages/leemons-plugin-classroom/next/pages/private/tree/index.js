@@ -114,13 +114,13 @@ function TreePage() {
     <>
       <div className="flex flex-col h-full">
         <PageHeader title={t('page_title')} />
-        <PageContainer>
+        <PageContainer className="bg-white">
           <div className="page-description" dangerouslySetInnerHTML={{ __html: t('page_info') }} />
         </PageContainer>
 
-        <div className="bg-gray-20 text-sm flex flex-1">
+        <div className="flex flex-1">
           <PageContainer>
-            <div className="flex space-x-5">
+            <div className="text-sm flex space-x-5">
               {/* TREE ADMIN */}
               <div className="flex flex-1">
                 <Card className="bg-white w-full h-full p-8">
