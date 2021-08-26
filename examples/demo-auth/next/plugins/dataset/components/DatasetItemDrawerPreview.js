@@ -25,8 +25,9 @@ export const DatasetItemDrawerPreview = ({ t, item }) => {
   }, [item]);
 
   let data = null;
+  const props = useMemo(() => ({ formData: data }), [data]);
 
-  const [form] = formWithTheme(schema, ui, undefined, { formData: data });
+  const [form] = formWithTheme(schema, ui, undefined, props);
 
   return (
     <>

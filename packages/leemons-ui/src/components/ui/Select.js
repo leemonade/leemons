@@ -24,7 +24,17 @@ function getAllOptions(children) {
 
 const Select = React.forwardRef(
   (
-    { children, className, outlined, color, onChange = () => {}, multiple, value, ...props },
+    {
+      children,
+      className,
+      outlined,
+      readOnly,
+      color,
+      onChange = () => {},
+      multiple,
+      value,
+      ...props
+    },
     ref
   ) => {
     const filterOptions = (options, _items) => {
@@ -121,38 +131,46 @@ const Select = React.forwardRef(
 
     return (
       <>
-        <div className={`select-wrapper ${wrapperClasses.join(' ')}`}>
-          <select
-            ref={(e) => {
-              inputRef.current = e;
-              if (ref) ref(e);
-            }}
-            value={multiple ? defaultOption.value : value}
-            className={['select', colorClass, outlinedClass, selectClasses.join(' ')].join(' ')}
-            onChange={multiple ? onChangeMultiple : onChange}
-            {...props}
-          >
-            {options.map((option, index) => (
-              <option
-                key={index}
-                value={option.value}
-                disabled={option.disabled}
-                selected={option.selected}
-              >
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        {readOnly ? null : (
+          <div className={`select-wrapper ${wrapperClasses.join(' ')}`}>
+            <select
+              ref={(e) => {
+                inputRef.current = e;
+                if (ref) ref(e);
+              }}
+              value={multiple ? defaultOption.value : value}
+              className={['select', colorClass, outlinedClass, selectClasses.join(' ')].join(' ')}
+              onChange={multiple ? onChangeMultiple : onChange}
+              {...props}
+            >
+              {options.map((option, index) => (
+                <option
+                  key={index}
+                  value={option.value}
+                  disabled={option.disabled}
+                  selected={option.selected}
+                >
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {!multiple && readOnly ? <>{value}</> : null}
+
         {multiple && items.length ? (
           <div className="pt-4">
             {items.map((item) => (
               <div className="inline-block p-1" key={item}>
                 <Badge outlined={true}>
-                  <XIcon
-                    className="inline-block w-4 h-4 mr-2 stroke-current cursor-pointer"
-                    onClick={() => removeItem(item)}
-                  />
+                  {readOnly ? null : (
+                    <XIcon
+                      className="inline-block w-4 h-4 mr-2 stroke-current cursor-pointer"
+                      onClick={() => removeItem(item)}
+                    />
+                  )}
+
                   {originalOptionsByValue[item]?.label || item}
                 </Badge>
               </div>

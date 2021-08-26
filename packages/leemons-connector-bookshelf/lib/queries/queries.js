@@ -11,7 +11,7 @@ function generateQueries(model /* connector */) {
     _.pickBy(attributes, (value, key) => model.schema.allAttributes.includes(key));
 
   // Creates one new item
-  function create(newItem, { transacting } = {}) {
+  async function create(newItem, { transacting } = {}) {
     const attributes = selectAttributes(newItem);
     return bookshelfModel
       .forge(attributes)
@@ -198,14 +198,11 @@ function generateQueries(model /* connector */) {
     try {
       return await func(...args);
     } catch (e) {
-      if (n < 10000) {
-        if (e.code === 'ER_LOCK_DEADLOCK') {
-          await timeoutPromise(time);
-          return await reTry(func, args, n + 1);
-        }
-      } else {
-        throw e;
+      if (n < 10000 && e.code === 'ER_LOCK_DEADLOCK') {
+        await timeoutPromise(time);
+        return await reTry(func, args, n + 1);
       }
+      throw e;
     }
   }
 

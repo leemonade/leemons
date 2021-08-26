@@ -32,19 +32,23 @@ const MyCustomFormControl = ({ children, required, rawErrors, schema, descriptio
 };
 
 const TextareaWidget = (props) => {
-  const { className, onChange, value, id, disabled, autofocus, type } = props;
+  const { className, onChange, value, id, disabled, autofocus, type, readonly } = props;
   return (
     <MyCustomFormControl {...props}>
-      <Textarea
-        id={id}
-        type={type}
-        autoFocus={autofocus}
-        disabled={disabled}
-        className={`mr-10 w-full ${className}`}
-        outlined={true}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-      />
+      {readonly ? (
+        <>{value}</>
+      ) : (
+        <Textarea
+          id={id}
+          type={type}
+          autoFocus={autofocus}
+          disabled={disabled}
+          className={`mr-10 w-full ${className}`}
+          outlined={true}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+        />
+      )}
     </MyCustomFormControl>
   );
 };
@@ -60,6 +64,7 @@ const BaseInput = (props) => {
     autofocus,
     type,
     schema,
+    readonly,
     ...rest
   } = props;
   const ignoreTypes = ['email', 'url'];
@@ -69,28 +74,32 @@ const BaseInput = (props) => {
   if (schema.maxDate) max = new Date(schema.maxDate).toISOString().slice(0, 10);
   return (
     <MyCustomFormControl {...props}>
-      <Input
-        id={id}
-        type={ignoreTypes.indexOf(type) < 0 ? type : 'text'}
-        autoFocus={autofocus}
-        disabled={disabled}
-        className={`mr-10 w-full ${className}`}
-        outlined={true}
-        value={value}
-        min={min}
-        max={max}
-        onChange={(event) =>
-          onChange(
-            type === 'number'
-              ? event.target.value
-                ? parseFloat(event.target.value)
+      {readonly ? (
+        <>{value}</>
+      ) : (
+        <Input
+          id={id}
+          type={ignoreTypes.indexOf(type) < 0 ? type : 'text'}
+          autoFocus={autofocus}
+          disabled={disabled}
+          className={`mr-10 w-full ${className}`}
+          outlined={true}
+          value={value}
+          min={min}
+          max={max}
+          onChange={(event) =>
+            onChange(
+              type === 'number'
+                ? event.target.value
+                  ? parseFloat(event.target.value)
+                  : undefined
+                : event.target.value
+                ? event.target.value
                 : undefined
-              : event.target.value
-              ? event.target.value
-              : undefined
-          )
-        }
-      />
+            )
+          }
+        />
+      )}
     </MyCustomFormControl>
   );
 };
@@ -120,7 +129,7 @@ function NumberField({ ...props }) {
 }
 
 function CheckboxesWidget(props) {
-  const { options, onChange, schema, rawErrors, required, ...rest } = props;
+  const { options, onChange, schema, rawErrors, required, readonly, ...rest } = props;
 
   const onCheckboxChange = (event, value) => {
     if (event.target.checked) {
@@ -148,6 +157,7 @@ function CheckboxesWidget(props) {
                   <Checkbox
                     color={rawErrors ? 'error' : 'primary'}
                     checked={rest.value.indexOf(value) >= 0}
+                    readOnly={readonly}
                     onChange={(event) => onCheckboxChange(event, value)}
                   />
                 </FormControl>
@@ -391,13 +401,38 @@ function columnsObjectFieldTemplate({ properties, uiSchema, ...rest }) {
 
 export default function formWithTheme(schema, ui, conditions, props) {
   const { t } = useCommonTranslate('forms');
-  const [Form, setForm] = useState(null);
+  const [r, setR] = useState(null);
+  const FormWithConditionals = useRef(null);
+  const Form = useRef(null);
   const ref = useRef(null);
+  const liveValidate = useRef(false);
+
+  const render = () => setR(new Date().getTime());
+
+  const getForm = () => {
+    if (FormWithConditionals.current) {
+      return (
+        <FormWithConditionals.current
+          {...props}
+          ref={(e) => {
+            ref.current = e;
+            if (props?.ref) props.ref = e;
+          }}
+          liveValidate={liveValidate.current}
+          transformErrors={(e) => transformErrors(e, t)}
+          customFormats={customFormats}
+          ObjectFieldTemplate={columnsObjectFieldTemplate}
+        >
+          <></>
+        </FormWithConditionals.current>
+      );
+    }
+    return null;
+  };
 
   useEffect(() => {
-    console.log('useEffect');
     if (schema && ui) {
-      const Form = withTheme({
+      const _form = withTheme({
         FieldTemplate,
         ErrorList,
         fields: {
@@ -414,50 +449,49 @@ export default function formWithTheme(schema, ui, conditions, props) {
           toggle: ToggleWidget,
         },
       });
-      const FormWithConditionals =
+      FormWithConditionals.current =
         schema && ui
           ? applyRules(
               _.cloneDeep(schema),
               _.cloneDeep(ui),
               _.cloneDeep(conditions || []),
               Engine
-            )(Form)
+            )(_form)
           : () => null;
-      setForm(FormWithConditionals);
+      Form.current = getForm();
+      render();
     }
   }, [schema, ui, conditions]);
+
+  useEffect(() => {
+    Form.current = getForm();
+  }, [props]);
 
   const customFormats = {
     numbers: /^\d+$/,
     phone: /^[\+]?[(]?[0-9]{2,3}[)]?[-\s\.]?[0-9\s]{3}[-\s\.]?[0-9\s]{4,8}$/,
   };
 
-  const form = Form ? (
-    <Form
-      {...props}
-      ref={(e) => {
-        ref.current = e;
-        if (props?.ref) props.ref = e;
-      }}
-      transformErrors={(e) => transformErrors(e, t)}
-      customFormats={customFormats}
-      ObjectFieldTemplate={columnsObjectFieldTemplate}
-    >
-      <></>
-    </Form>
-  ) : null;
+  const form = Form.current ? Form.current : null;
 
   return [
     form,
     {
+      isLoaded: () => {
+        return !!ref.current;
+      },
       submit: () => {
-        console.log(ref.current.formElement);
         ref.current.formElement.dispatchEvent(
           new Event('submit', {
             cancelable: true,
             bubbles: true,
           })
         );
+        if (!liveValidate.current) {
+          liveValidate.current = true;
+          Form.current = getForm();
+          render();
+        }
       },
       getRef: () => ref.current,
       getErrors: () => ref.current.state.errors || [],

@@ -1,14 +1,37 @@
 module.exports = {
   permissions: [
     {
-      permissionName: 'plugins.families.config',
-      actions: ['view', 'update', 'admin'],
-      localizationName: { es: 'Configuración de las familias', en: 'Families setup' },
-    },
-    {
       permissionName: 'plugins.families.families',
       actions: ['view', 'create', 'update', 'delete', 'admin'],
       localizationName: { es: 'Familias', en: 'Families' },
+    },
+    {
+      permissionName: 'plugins.families.config',
+      actions: ['view', 'update', 'admin'],
+      localizationName: { es: 'Familias - Configuración', en: 'Families - Setup' },
+    },
+    {
+      permissionName: 'plugins.families.families-basic-info',
+      actions: ['view', 'update'],
+      localizationName: { es: 'Familias - Información basica', en: 'Families - Basic info' },
+    },
+    {
+      permissionName: 'plugins.families.families-custom-info',
+      actions: ['view', 'update'],
+      localizationName: { es: 'Familias - Información custom', en: 'Families - Custom info' },
+    },
+    {
+      permissionName: 'plugins.families.families-guardians-info',
+      actions: ['view', 'update'],
+      localizationName: { es: 'Familias - Información tutores', en: 'Families - Guardians info' },
+    },
+    {
+      permissionName: 'plugins.families.families-students-info',
+      actions: ['view', 'update'],
+      localizationName: {
+        es: 'Familias - Información estudiantes',
+        en: 'Families - Students info',
+      },
     },
   ],
   datasetLocations: [

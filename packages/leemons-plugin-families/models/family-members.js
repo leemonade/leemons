@@ -5,9 +5,9 @@ module.exports = {
     useTimestamps: true,
   },
   attributes: {
-    userAgent: {
+    user: {
       references: {
-        collection: 'plugins_users::user-agent',
+        collection: 'plugins_users::users',
       },
     },
     family: {

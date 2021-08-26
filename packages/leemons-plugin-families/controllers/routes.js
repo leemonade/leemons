@@ -27,4 +27,35 @@ module.exports = [
       },
     },
   },
+  /**
+   * Families
+   * */
+  {
+    path: '/add',
+    method: 'POST',
+    handler: 'families.add',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.families.families': {
+        actions: ['create', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/detail/:id',
+    method: 'GET',
+    handler: 'families.detail',
+    authenticated: true,
+  },
+  {
+    path: '/list',
+    method: 'POST',
+    handler: 'families.list',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.families.families': {
+        actions: ['view', 'admin'],
+      },
+    },
+  },
 ];

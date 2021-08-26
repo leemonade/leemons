@@ -48,7 +48,10 @@ async function updateValues(
   _.forEach(goodKeys, (k) => {
     formData[k] = _formData[k];
   });
-
+  // EN: Remove id ajv not support name if for a field
+  _.forIn(jsonSchema.properties, (p) => {
+    delete p.id;
+  });
   const validator = new global.utils.LeemonsValidator(
     {
       ...jsonSchema,

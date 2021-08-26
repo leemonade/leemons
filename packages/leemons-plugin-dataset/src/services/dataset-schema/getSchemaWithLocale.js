@@ -89,6 +89,12 @@ async function getSchemaWithLocale(
       userSession.userAgents,
       'view'
     );
+    const editKeys = await getKeysCanAction(
+      locationName,
+      pluginName,
+      userSession.userAgents,
+      'edit'
+    );
     _.forInRight(schema.compileJsonSchema.properties, (value, key) => {
       if (goodKeys.indexOf(key) < 0) {
         delete schema.compileJsonSchema.properties[key];
@@ -96,11 +102,14 @@ async function getSchemaWithLocale(
         if (requiredIndex >= 0) {
           schema.compileJsonSchema.required.splice(requiredIndex, 1);
         }
-      }
-    });
-    _.forInRight(schema.compileJsonUI.properties, (value, key) => {
-      if (goodKeys.indexOf(key) < 0) {
-        delete schema.compileJsonUI.properties[key];
+        if (schema.compileJsonUI[key]) {
+          delete schema.compileJsonUI[key];
+        }
+      } else if (editKeys.indexOf(key) < 0) {
+        if (!schema.compileJsonUI[key]) {
+          schema.compileJsonUI[key] = {};
+        }
+        schema.compileJsonUI[key]['ui:readonly'] = true;
       }
     });
   }

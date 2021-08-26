@@ -3,10 +3,11 @@ import { useSession } from '@users/session';
 import { useForm } from 'react-hook-form';
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
-import { getProfileRequest } from '@users/request';
+import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
 import { withLayout } from '@layout/hoc';
 import { goLoginPage } from '@users/navigate';
 import {
+  Alert,
   Button,
   FormControl,
   Input,
@@ -15,6 +16,7 @@ import {
   PageContainer,
   PageHeader,
   Radio,
+  Select,
   Table,
   useModal,
 } from 'leemons-ui';
@@ -22,13 +24,20 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@families/helpers/prefixPN';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert } from '@layout/alert';
 import { PlusIcon, TrashIcon } from '@heroicons/react/outline';
-import { getDatasetFormRequest, searchUsersRequest } from '@families/request';
+import {
+  addFamilyRequest,
+  detailFamilyRequest,
+  getDatasetFormRequest,
+  searchUsersRequest,
+  updateFamilyRequest,
+} from '@families/request';
+import { constants } from '@families/constants';
 import moment from 'moment';
 import { UserImage } from '@common/userImage';
 import { useAsync } from '@common/useAsync';
 import formWithTheme from '@common/formWithTheme';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 
 function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} }) {
   const { t: tCommonForm } = useCommonTranslate('forms');
@@ -39,6 +48,10 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} })
   const [inputValue, setInputValue] = useState('');
   const [inputValueRequired, setInputValueRequired] = useState(false);
   const [selectedUser, setSelectedUser] = useState();
+  const [selectedRelation, setSelectedRelation] = useState('...');
+  const [otherRelationValue, setOtherRelationValue] = useState('');
+  const [relationError, setRelationError] = useState();
+  const [dirty, setDirty] = useState(false);
 
   const tableHeaders = useMemo(
     () => [
@@ -93,8 +106,21 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} })
   );
 
   const add = async () => {
+    setDirty(true);
+    let value = {};
+    if (type === 'guardian') {
+      if (!selectedRelation || selectedRelation === '...') {
+        setRelationError('need-relation');
+        return;
+      }
+      if (selectedRelation === 'other' && !otherRelationValue) {
+        setRelationError('need-other-relation');
+        return;
+      }
+      value.memberType = selectedRelation === 'other' ? otherRelationValue : selectedRelation;
+    }
     if (selectedUser) {
-      onAdd(selectedUser);
+      onAdd({ ...selectedUser, ...value });
     }
   };
 
@@ -129,7 +155,7 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} })
   };
 
   if (error) return <ErrorAlert />;
-  if (!users) {
+  if (!users || !users.length) {
     return (
       <>
         <div className="text-sm text-secondary mb-6">{t('search_user_to_add')}</div>
@@ -164,6 +190,11 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} })
             onChange={(e) => setInputValue(e.target.value)}
           />
         </FormControl>
+        {users ? (
+          <Alert className="mt-4" color="error">
+            <label>{t('no_users_to_add')}</label>
+          </Alert>
+        ) : null}
         <div className="text-right mt-6">
           <Button color="primary" loading={loading} onClick={search}>
             {t('search')}
@@ -174,7 +205,67 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} })
   } else {
     return (
       <div>
-        <Table columns={tableHeaders} data={users} />
+        <FormControl
+          multiple={true}
+          formError={!selectedUser && dirty ? { message: tCommonForm('required') } : null}
+        >
+          <Table columns={tableHeaders} data={users} />
+        </FormControl>
+
+        {type === 'guardian' ? (
+          <div className="flex flex-row mt-4 gap-4">
+            <FormControl
+              label={t('guardian_relation')}
+              formError={
+                relationError === 'need-relation' ? { message: tCommonForm('required') } : null
+              }
+            >
+              <Select
+                value={selectedRelation}
+                onChange={(e) => {
+                  setRelationError(null);
+                  setSelectedRelation(e.target.value);
+                }}
+                outlined={true}
+                className="w-full max-w-xs"
+              >
+                <option value="..." disabled={true}>
+                  {t('relations.select_one')}
+                </option>
+                <option value={t('relations.father', undefined, true)}>
+                  {t('relations.father')}
+                </option>
+                <option value={t('relations.mother', undefined, true)}>
+                  {t('relations.mother')}
+                </option>
+                <option value={t('relations.legal_guardian', undefined, true)}>
+                  {t('relations.legal_guardian')}
+                </option>
+                <option value="other">{t('relations.other')}</option>
+              </Select>
+            </FormControl>
+            {selectedRelation === 'other' ? (
+              <FormControl
+                label={t('specify_relation')}
+                formError={
+                  relationError === 'need-other-relation'
+                    ? { message: tCommonForm('required') }
+                    : null
+                }
+              >
+                <Input
+                  outlined={true}
+                  value={otherRelationValue}
+                  onChange={(e) => {
+                    setRelationError(null);
+                    setOtherRelationValue(e.target.value);
+                  }}
+                />
+              </FormControl>
+            ) : null}
+          </div>
+        ) : null}
+
         <div className="text-right mt-6">
           <Button color="primary" loading={loading} onClick={add}>
             {t('add')}
@@ -206,17 +297,56 @@ function Detail() {
   const [addType, setAddType] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [datasetConfig, setDatasetConfig] = useState(false);
+  const [datasetData, setDatasetData] = useState(false);
   const [family, setFamily] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
+  const [_permissions, setPermissions] = useState([]);
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
+
+  const permissions = useMemo(() => {
+    const response = {
+      basicInfo: { view: false, update: false },
+      customInfo: { view: false, update: false },
+      guardiansInfo: { view: false, update: false },
+      studentsInfo: { view: false, update: false },
+    };
+    const permissionsByName = _.keyBy(_permissions, 'permissionName');
+    _.forIn(response, (value, key) => {
+      const info = permissionsByName[constants.permissions[key]];
+      if (info) {
+        if (info.actionNames.indexOf('view') >= 0) value.view = true;
+        if (info.actionNames.indexOf('update') >= 0) value.update = true;
+      }
+    });
+    return response;
+  }, [_permissions]);
 
   const [modal, toggleModal] = useModal({
     animated: true,
     title: t(`assign_${addType}_to_family`),
   });
 
-  const [form, formActions] = formWithTheme(datasetConfig?.jsonSchema, datasetConfig?.jsonUI);
+  const goodDatasetConfig = useMemo(() => {
+    const response = _.cloneDeep(datasetConfig);
+    if (!isEditMode) {
+      if (response && response.jsonSchema) {
+        _.forIn(response.jsonSchema.properties, (value, key) => {
+          if (!response.jsonUI[key]) response.jsonUI[key] = {};
+          response.jsonUI[key]['ui:readonly'] = true;
+        });
+      }
+    }
+    return response;
+  }, [datasetConfig, isEditMode]);
+  const datasetProps = useMemo(() => ({ formData: datasetData }), [datasetData]);
+
+  const [form, formActions] = formWithTheme(
+    goodDatasetConfig?.jsonSchema,
+    goodDatasetConfig?.jsonUI,
+    undefined,
+    datasetProps
+  );
 
   const guardians = watch('guardian') || [];
   const students = watch('student') || [];
@@ -225,32 +355,53 @@ function Detail() {
   const load = useMemo(
     () => async () => {
       setLoading(true);
-      let family = null;
-      if (_.isArray(router.query.id)) {
-        family = await getProfileRequest(router.query.id[0]);
-        family = family.family;
+      if (router.isReady) {
+        let family = null;
+        if (_.isArray(router.query.id)) {
+          family = await detailFamilyRequest(router.query.id[0]);
+          family = family.family;
+        }
+        let familyDatasetForm = null;
+        try {
+          const { jsonSchema, jsonUI } = await getDatasetFormRequest();
+          _.forIn(jsonUI, (value) => {
+            value['ui:className'] = 'w-4/12';
+          });
+          jsonUI['ui:className'] = 'gap-6';
+          familyDatasetForm = { jsonSchema, jsonUI };
+        } catch (e) {}
+        const { permissions } = await getPermissionsWithActionsIfIHaveRequest([
+          constants.permissions.basicInfo,
+          constants.permissions.customInfo,
+          constants.permissions.guardiansInfo,
+          constants.permissions.studentsInfo,
+        ]);
+        return { family, familyDatasetForm, permissions };
       }
-      const { jsonSchema, jsonUI } = await getDatasetFormRequest();
-      _.forIn(jsonUI, (value) => {
-        value['ui:className'] = 'w-4/12';
-      });
-      jsonUI['ui:className'] = 'gap-6';
-      return { family, familyDatasetForm: { jsonSchema, jsonUI } };
     },
-    []
+    [router]
   );
 
   const onSuccess = useMemo(
-    () => ({ family, familyDatasetForm }) => {
-      if (family) {
-        setValue('name', family.name);
-        setFamily(family);
-        setIsEditMode(false);
-      } else {
-        setIsEditMode(true);
+    () => (data) => {
+      if (data) {
+        const { family, familyDatasetForm, permissions } = data;
+        if (family) {
+          setValue('name', family.name);
+          setValue('maritalStatus', family.maritalStatus);
+          setValue('guardian', family.guardians);
+          setValue('student', family.students);
+          setDatasetData(family.datasetValues);
+          setFamily(family);
+          setIsEditMode(false);
+        } else {
+          setValue('maritalStatus', '...');
+          setIsEditMode(true);
+        }
+        if (familyDatasetForm) setDatasetConfig(familyDatasetForm);
+        setPermissions(permissions);
+        setLoading(false);
       }
-      setDatasetConfig(familyDatasetForm);
-      setLoading(false);
     },
     []
   );
@@ -272,24 +423,36 @@ function Detail() {
     try {
       setSaveLoading(true);
 
-      console.log(data);
-      /*;
+      const dataToSend = { ...data };
+      if (_.isArray(dataToSend.guardian)) {
+        dataToSend.guardians = _.map(dataToSend.guardian, (g) => ({
+          user: g.id,
+          memberType: g.memberType,
+        }));
+        delete dataToSend.guardian;
+      }
+      if (_.isArray(dataToSend.student)) {
+        dataToSend.students = _.map(dataToSend.student, (g) => ({
+          user: g.id,
+          memberType: 'student',
+        }));
+        delete dataToSend.student;
+      }
+
       let response;
       if (family && family.id) {
-        response = await updateProfileRequest({
-          ...data,
+        response = await updateFamilyRequest({
+          ...dataToSend,
           id: family.id,
         });
         addSuccessAlert(t('update_done'));
       } else {
-        response = await addProfileRequest(data);
+        response = await addFamilyRequest(dataToSend);
         addSuccessAlert(t('save_done'));
       }
 
       setSaveLoading(false);
-      goDetailProfilePage(response.family.uri);
-
-       */
+      router.push(`/families/private/detail/${response.family.id}`);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
       setSaveLoading(false);
@@ -297,10 +460,15 @@ function Detail() {
   }
 
   const onSubmit = async (data) => {
-    formActions.submit();
-    console.log(formActions.getErrors());
-    if (!formActions.getErrors().length) {
-      await save({ ...data, datasetValues: formActions.getValues() });
+    const toSend = { ...data };
+    let errors = [];
+    if (formActions.isLoaded()) {
+      formActions.submit();
+      errors = formActions.getErrors();
+      toSend.datasetValues = formActions.getValues();
+    }
+    if (!errors.length) {
+      await save(toSend);
     }
   };
 
@@ -355,14 +523,18 @@ function Detail() {
           <form onSubmit={handleSubmit(onSubmit)}>
             <PageHeader
               registerFormTitle={
-                isEditMode ? register('name', { required: tCommonForm('required') }) : null
+                isEditMode
+                  ? permissions.basicInfo.update
+                    ? register('name', { required: tCommonForm('required') })
+                    : null
+                  : null
               }
               registerFormTitleErrors={errors.name}
               titlePlaceholder={t('title_placeholder')}
               title={watch('name')}
               saveButton={isEditMode ? tCommonHeader('save') : null}
               saveButtonLoading={saveLoading}
-              onSaveButton={() => formActions.submit()}
+              onSaveButton={() => (formActions.isLoaded() ? formActions.submit() : null)}
               cancelButton={isEditMode ? tCommonHeader('cancel') : null}
               onCancelButton={onCancelButton}
               editButton={isEditMode ? null : tCommonHeader('edit')}
@@ -373,73 +545,124 @@ function Detail() {
               <PageContainer>
                 <div className="flex flex-row gap-6">
                   {/* Guardians section */}
-                  <div className="w-full">
-                    <div className="flex flex-row justify-between items-center">
-                      <div>{t('guardians')}</div>
-                      {guardians.length < 2 ? (
-                        <Button type="button" color="secondary" onClick={onAddGuardian}>
-                          <PlusIcon className="w-6 h-6 mr-1" />
-                          {t('add_guardian')}
-                        </Button>
+                  {permissions.guardiansInfo.view ? (
+                    <div className="w-full">
+                      <div className="flex flex-row justify-between items-center">
+                        <div>{t('guardians')}</div>
+                        {isEditMode && guardians.length < 2 && permissions.guardiansInfo.update ? (
+                          <Button type="button" color="secondary" onClick={onAddGuardian}>
+                            <PlusIcon className="w-6 h-6 mr-1" />
+                            {t('add_guardian')}
+                          </Button>
+                        ) : null}
+                      </div>
+                      {/* Guardians list */}
+                      <div className="flex flex-row">
+                        {guardians.map((guardian) => (
+                          <div key={guardian.id} className="flex flex-row items-center p-4">
+                            <div>
+                              <UserImage user={guardian} />
+                            </div>
+                            <div className="ml-2">
+                              {guardian.name} {guardian.surname || ''}
+                              <div>
+                                {t(
+                                  guardian.memberType.replace('plugins.families.detail_page.', '')
+                                )}
+                              </div>
+                            </div>
+                            {isEditMode && permissions.guardiansInfo.update ? (
+                              <TrashIcon
+                                className="w-5 ml-2 cursor-pointer"
+                                onClick={() => removeMember('guardian', guardian.id)}
+                              />
+                            ) : null}
+                          </div>
+                        ))}
+                      </div>
+                      {/* Guardians marital status */}
+                      {guardians.length >= 2 && permissions.guardiansInfo.view ? (
+                        <div className="flex">
+                          <FormControl
+                            label={t('guardian_relation')}
+                            formError={errors.maritalStatus}
+                          >
+                            <Select
+                              {...register('maritalStatus')}
+                              outlined={true}
+                              disabled={!permissions.guardiansInfo.update}
+                            >
+                              <option value="..." disabled={true}>
+                                {t('maritalStatus.select_marital_status')}
+                              </option>
+                              <option value={t('maritalStatus.married', undefined, true)}>
+                                {t('maritalStatus.married')}
+                              </option>
+                              <option value={t('maritalStatus.divorced', undefined, true)}>
+                                {t('maritalStatus.divorced')}
+                              </option>
+                              <option value={t('maritalStatus.domestic_partners', undefined, true)}>
+                                {t('maritalStatus.domestic_partners')}
+                              </option>
+                              <option value={t('maritalStatus.cohabitants', undefined, true)}>
+                                {t('maritalStatus.cohabitants')}
+                              </option>
+                              <option value={t('maritalStatus.separated', undefined, true)}>
+                                {t('maritalStatus.separated')}
+                              </option>
+                            </Select>
+                          </FormControl>
+                        </div>
                       ) : null}
                     </div>
-                    {/* Guardians list */}
-                    <div className="flex flex-row">
-                      {guardians.map((guardian) => (
-                        <div key={guardian.id} className="flex flex-row items-center p-4">
-                          <div>
-                            <UserImage user={guardian} />
-                          </div>
-                          <div className="ml-2">
-                            {guardian.name} {guardian.surname || ''}
-                          </div>
-                          <TrashIcon
-                            className="w-5 ml-2 cursor-pointer"
-                            onClick={() => removeMember('guardian', guardian.id)}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                  ) : null}
 
                   {/* Students section */}
-                  <div className="w-full">
-                    <div className="flex flex-row justify-between items-center">
-                      <div>{t('students')}</div>
-                      <Button type="button" color="secondary" onClick={onAddStudent}>
-                        <PlusIcon className="w-6 h-6 mr-1" />
-                        {t('add_student')}
-                      </Button>
-                    </div>
-                    {/* Students list */}
-                    <div className="flex flex-row">
-                      {students.map((student) => (
-                        <div key={student.id} className="flex flex-row items-center p-4">
-                          <div>
-                            <UserImage user={student} />
+                  {permissions.studentsInfo.view ? (
+                    <div className="w-full">
+                      <div className="flex flex-row justify-between items-center">
+                        <div>{t('students')}</div>
+                        {isEditMode && permissions.studentsInfo.update ? (
+                          <Button type="button" color="secondary" onClick={onAddStudent}>
+                            <PlusIcon className="w-6 h-6 mr-1" />
+                            {t('add_student')}
+                          </Button>
+                        ) : null}
+                      </div>
+                      {/* Students list */}
+                      <div className="flex flex-row">
+                        {students.map((student) => (
+                          <div key={student.id} className="flex flex-row items-center p-4">
+                            <div>
+                              <UserImage user={student} />
+                            </div>
+                            <div className="ml-2">
+                              {student.name} {student.surname || ''}
+                            </div>
+                            {isEditMode && permissions.studentsInfo.update ? (
+                              <TrashIcon
+                                className="w-5 ml-2 cursor-pointer"
+                                onClick={() => removeMember('student', student.id)}
+                              />
+                            ) : null}
                           </div>
-                          <div className="ml-2">
-                            {student.name} {student.surname || ''}
-                          </div>
-                          <TrashIcon
-                            className="w-5 ml-2 cursor-pointer"
-                            onClick={() => removeMember('student', student.id)}
-                          />
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  ) : null}
                 </div>
               </PageContainer>
             </div>
           </form>
 
-          <div className="bg-primary-content">
-            <PageContainer>
-              {/* Dataset form */}
-              {form}
-            </PageContainer>
-          </div>
+          {permissions.customInfo.view ? (
+            <div className="bg-primary-content">
+              <PageContainer>
+                {/* Dataset form */}
+                {form}
+              </PageContainer>
+            </div>
+          ) : null}
         </>
       ) : (
         <ErrorAlert />

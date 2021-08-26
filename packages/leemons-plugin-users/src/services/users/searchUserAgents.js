@@ -28,6 +28,7 @@ async function searchUserAgents({ profile, user, ignoreUserIds }, { transacting 
   // Example: We want to get the users that have an email containing gmail.com and where their
   // dataset field age is 22, all those matching user ids should go in this array
   let userIds = [];
+  let addUserIdsToQuery = false;
 
   // ES: Si nos viene perfil sacamos todos los roles del perfil y se los pasamos como query para
   // solo sacar los agentes que esten en dicho perfil
@@ -55,11 +56,12 @@ async function searchUserAgents({ profile, user, ignoreUserIds }, { transacting 
     if (user.email) query.$or.push({ email_$contains: user.email });
     const users = await table.users.find(query, { columns: ['id'], transacting });
     userIds = userIds.concat(_.map(users, 'id'));
+    addUserIdsToQuery = true;
   }
 
   // ES: Si alfinal hay ids de usuarios las añadimos a los filtros finales
   // EN: If there are user ids, we add them to the final filters.
-  if (userIds.length) {
+  if (userIds.length || addUserIdsToQuery) {
     finalQuery.user_$in = userIds;
   }
 

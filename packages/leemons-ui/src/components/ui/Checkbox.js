@@ -6,6 +6,7 @@ const Checkbox = React.forwardRef(
     {
       className,
       color,
+      readOnly,
       onClick = () => {},
       checked: defaultChecked = false,
       onChange = () => {},
@@ -26,20 +27,24 @@ const Checkbox = React.forwardRef(
     const spanClick = (event) => {
       event.preventDefault();
       event.stopPropagation();
-      setChecked({ checked: !checked.checked, fromClick: true });
-      const ev = new Event('change', { bubbles: true });
-      inputRef.current.dispatchEvent(ev);
-      ev.target.checked = !checked.checked;
-      onChange(ev);
-      onClick();
+      if (!readOnly) {
+        setChecked({ checked: !checked.checked, fromClick: true });
+        const ev = new Event('change', { bubbles: true });
+        inputRef.current.dispatchEvent(ev);
+        ev.target.checked = !checked.checked;
+        onChange(ev);
+        onClick();
+      }
     };
 
     const customOnChange = (event) => {
-      if (checked.fromClick) {
-        event.target.checked = checked.checked;
+      if (!readOnly) {
+        if (checked.fromClick) {
+          event.target.checked = checked.checked;
+        }
+        onChange(event);
+        setChecked({ checked: event.target.checked, fromClick: false });
       }
-      onChange(event);
-      setChecked({ checked: event.target.checked, fromClick: false });
     };
 
     return (

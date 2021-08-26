@@ -14,11 +14,23 @@ module.exports = {
     maritalStatus: {
       type: 'string',
     },
+    nGuardians: {
+      type: 'integer',
+      options: {
+        defaultTo: 0,
+      },
+    },
     nStudents: {
-      type: 'string',
+      type: 'integer',
+      options: {
+        defaultTo: 0,
+      },
     },
     nMembers: {
-      type: 'string',
+      type: 'integer',
+      options: {
+        defaultTo: 0,
+      },
     },
   },
   primaryKey: {

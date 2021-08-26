@@ -34,8 +34,14 @@ function List() {
         className: 'text-left',
       },
       {
-        Header: t('table.number'),
-        accessor: 'id',
+        Header: t('table.guardians'),
+        accessor: ({ nGuardians }) => <div className="text-center">{nGuardians}</div>,
+        className: 'text-center',
+      },
+      {
+        Header: t('table.students'),
+        accessor: ({ nStudents }) => <div className="text-center">{nStudents}</div>,
+        className: 'text-center',
       },
       {
         Header: t('table.actions'),
@@ -52,7 +58,7 @@ function List() {
           item.name = <div className="font-semibold">{item.name}</div>;
           item.actions = (
             <div className="text-right">
-              <Link href={`/users/private/profiles/detail/${item.uri}`}>
+              <Link href={`/families/private/detail/${item.id}`}>
                 <a className="text-sm text-primary">{t('view')}</a>
               </Link>
             </div>
