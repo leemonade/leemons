@@ -182,6 +182,24 @@ function generateQueries(model /* connector */) {
     return create({ ...query, ...item }, { transacting });
   }
 
+  function setMany(newItems, { transacting } = {}) {
+    if (!Array.isArray(newItems)) {
+      throw new Error(
+        `setMany expected an array, instead got ${
+          typeof newItems === 'object' ? JSON.stringify(newItems) : newItems
+        }`
+      );
+    }
+    if (transacting) {
+      return pmap(newItems, (newItem) => set(newItem, { transacting }));
+    }
+
+    // If we are not on a transaction, make a new transaction
+    return model.ORM.transaction((t) =>
+      pmap(newItems, (newItem) => set(newItem, { transacting: t }))
+    );
+  }
+
   async function transaction(f) {
     return model.ORM.transaction(f);
   }
@@ -198,14 +216,11 @@ function generateQueries(model /* connector */) {
     try {
       return await func(...args);
     } catch (e) {
-      if (n < 10000) {
-        if (e.code === 'ER_LOCK_DEADLOCK') {
-          await timeoutPromise(time);
-          return await reTry(func, args, n + 1);
-        }
-      } else {
-        throw e;
+      if (n < 10000 && e.code === 'ER_LOCK_DEADLOCK') {
+        await timeoutPromise(time);
+        return await reTry(func, args, n + 1);
       }
+      throw e;
     }
   }
 
@@ -239,6 +254,9 @@ function generateQueries(model /* connector */) {
     },
     set: (...args) => {
       return reTry(set, args);
+    },
+    setMany: (...args) => {
+      return reTry(setMany, args);
     },
     transaction,
   };

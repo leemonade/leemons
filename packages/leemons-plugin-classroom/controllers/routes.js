@@ -38,10 +38,23 @@ module.exports = [
     allowedPermissions: { ...defaultPermission(['view']) },
   },
 
+  // TODO: Add permissions
   {
-    path: '/levelSchemas',
+    path: '/levelSchema',
     method: 'POST',
     handler: 'levelSchemas.add',
+    authenticated: false,
+  },
+  {
+    path: '/levelSchema/:id/names',
+    method: 'PATCH',
+    handler: 'levelSchemas.setNames',
+    authenticated: false,
+  },
+  {
+    path: '/levelSchema/:id/parent',
+    method: 'PATCH',
+    handler: 'levelSchemas.setParent',
     authenticated: false,
   },
 ];

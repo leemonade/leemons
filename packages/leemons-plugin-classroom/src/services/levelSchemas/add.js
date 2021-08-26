@@ -5,64 +5,119 @@ const tables = {
 
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 
-async function add({ name: names, parent = null, isClass = false, assignableProfiles = [] } = {}) {
+async function add(
+  { name: names, parent = null, isClass = false, assignableProfiles = [] } = {},
+  { transacting } = {}
+) {
   const levelSchema = { name: names, parent, isClass, assignableProfiles };
 
-  console.log(levelSchema);
-
-  const validator = new global.utils.LeemonsValidator({
+  // ---------------------------------------------------------------------------
+  // validate data types
+  const levelSSchema = {
     type: 'object',
     properties: {
       name: {
         type: 'object',
       },
       parent: {
-        type: ['string', 'null'],
+        oneOf: [
+          {
+            type: 'null',
+          },
+          {
+            type: 'string',
+            format: 'uuid',
+          },
+        ],
       },
       isClass: {
         type: 'boolean',
       },
       assignableProfiles: {
         type: 'array',
+        items: {
+          type: 'string',
+          format: 'uuid',
+        },
       },
     },
-  });
-  if (validator.validate(levelSchema)) {
-    const ls = await global.utils.withTransaction(async (transacting) => {
-      const savedLevelSchema = await tables.levelSchemas.create(levelSchema, { transacting });
-      console.log(savedLevelSchema);
+  };
+  const validator = new global.utils.LeemonsValidator(levelSSchema);
 
-      const savedAssignableProfiles = await Promise.all(
-        assignableProfiles.map((profile) => {
-          return tables.assignableProfiles.create(
-            {
+  if (validator.validate(levelSchema)) {
+    // -------------------------------------------------------------------------
+    // Register LevelSchema inside a transaction
+    const ls = await global.utils.withTransaction(
+      async (t) => {
+        let savedLevelSchema;
+        let savedAssignableProfiles;
+        let savedNames;
+        let missingLocales;
+
+        // -----------------------------------------------------------------------
+        // Save level schema
+        try {
+          savedLevelSchema = await tables.levelSchemas.create(levelSchema, { transacting: t });
+          console.log('SLS', savedLevelSchema);
+        } catch (e) {
+          if (e.code.includes('ER_NO_REFERENCED_ROW')) {
+            throw new Error("LevelSchema's parent was not found");
+          }
+          throw new Error("LevelSchema can't be created");
+        }
+
+        // -----------------------------------------------------------------------
+        // Save assignable profiles
+        try {
+          savedAssignableProfiles = await tables.assignableProfiles.createMany(
+            assignableProfiles.map((profile) => ({
               levelSchemas_id: savedLevelSchema.id,
               profiles_id: profile,
-            },
-            { transacting }
+            })),
+            { transacting: t }
           );
-        })
-      );
+          console.log('SAP', savedAssignableProfiles);
+        } catch (e) {
+          if (e.code.includes('ER_NO_REFERENCED_ROW')) {
+            throw new Error(`One of the assignable profiles can't be found`);
+          }
+          throw new Error("The assignable profiles can't be saved");
+        }
 
-      const savedNames = await Promise.all(
-        Object.entries(names).map(([locale, value]) => {
-          console.log(locale, value);
-          return multilanguage.add(
+        // -----------------------------------------------------------------------
+        // Save translated names
+        try {
+          const { items, warnings } = await multilanguage.addManyByKey(
             leemons.plugin.prefixPN(`levelSchemas.${savedLevelSchema.id}.name`),
-            locale,
-            value,
-            {
-              transacting,
-            }
+            names,
+            { transacting: t }
           );
-        })
-      );
-      return { ...savedLevelSchema, assignableProfiles: savedAssignableProfiles, name: savedNames };
-    }, tables.levelSchemas);
 
-    console.log(ls);
+          if (warnings?.nonExistingLocales) {
+            missingLocales = warnings.nonExistingLocales;
+          }
+
+          savedNames = items;
+        } catch (e) {
+          throw new Error("the translated names can't be saved");
+        }
+
+        return {
+          ...savedLevelSchema,
+          assignableProfiles: savedAssignableProfiles,
+          name: savedNames,
+          warnings: {
+            missingLocales,
+          },
+        };
+      },
+      tables.levelSchemas,
+      transacting
+    );
+
+    return ls;
   } else {
-    console.log(validator.error);
+    throw validator.error;
   }
 }
 

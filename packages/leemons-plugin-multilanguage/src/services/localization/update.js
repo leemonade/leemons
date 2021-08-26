@@ -183,6 +183,90 @@ module.exports = (Base) =>
       );
     }
 
+    async setManyByKey(key, data, { transacting } = {}) {
+      // Validates the key and returns it lowercased
+      const _key = this.validator.validateLocalizationKey(key, true);
+      // Validates the tuples [locale, value] and lowercases the locale
+      const _data = this.validator.validateLocalizationLocaleValue(data);
+
+      const locales = Object.keys(_data);
+
+      // Get the existing locales
+      return withTransaction(
+        async (t) => {
+          const existingLocales = Object.entries(await this.hasLocales(locales, { transacting: t }))
+            .filter(([, exists]) => exists)
+            .map(([locale]) => locale);
+
+          // Get the localizations for the existing locales (flat array)
+          const localizations = _.flatten(
+            Object.entries(_.pick(_data, existingLocales)).map(([locale, value]) => ({
+              key: _key,
+              locale,
+              value,
+            }))
+          );
+
+          const existingLocalizations = await this.hasMany(
+            localizations.map(({ key: __key, locale }) => [__key, locale]),
+            { transacting: t }
+          );
+
+          const newLocalizations = localizations.filter(
+            ({ key: __key, locale }) => !existingLocalizations[locale][__key]
+          );
+
+          try {
+            const addedLocalizations = await this.model.setMany(newLocalizations, {
+              transacting: t,
+            });
+
+            // #region Define Warning object
+
+            // Get an array of the non existing locales
+            const nonExistingLocales = locales.filter(
+              (locale) => !existingLocales.includes(locale)
+            );
+            // Get an array with the existing localized locales: ['en', 'es']
+            const _existingLocalizations = Object.entries(existingLocalizations)
+              .filter(([, keys]) => Object.values(keys)[0])
+              .map(([locale]) => locale);
+
+            let hasWarnings = false;
+            let warnings = {};
+
+            // Set non existing language warning
+            if (nonExistingLocales.length) {
+              hasWarnings = true;
+              warnings.nonExistingLocales = nonExistingLocales;
+            }
+
+            // Set existing keys warning
+            if (_existingLocalizations.length) {
+              hasWarnings = true;
+              warnings.existingLocalizations = _existingLocalizations;
+            }
+
+            if (!hasWarnings) {
+              warnings = null;
+            }
+            // #endregion
+
+            return {
+              items: addedLocalizations,
+              count: addedLocalizations.length,
+              warnings,
+            };
+          } catch (e) {
+            leemons.log.debug(e.message);
+            throw new Error('An error occurred while creating the localizations');
+          }
+        },
+        this.model,
+        transacting
+      );
+    }
+
     async setManyByJSON(data, prefix, { transacting } = {}) {
       const toAdd = {};
       _.forIn(data, (json, lang) => {

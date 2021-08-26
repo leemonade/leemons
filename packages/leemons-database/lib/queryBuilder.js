@@ -28,6 +28,7 @@ function queryBuilder(model, connector) {
     update: createQuery({ query: 'update', model, connectorQuery }),
     updateMany: createQuery({ query: 'updateMany', model, connectorQuery }),
     set: createQuery({ query: 'set', model, connectorQuery }),
+    setMany: createQuery({ query: 'setMany', model, connectorQuery }),
     find: createQuery({ query: 'find', model, connectorQuery }),
     findOne: createQuery({ query: 'findOne', model, connectorQuery }),
     count: createQuery({ query: 'count', model, connectorQuery }),
