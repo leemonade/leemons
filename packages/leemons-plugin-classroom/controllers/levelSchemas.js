@@ -19,8 +19,19 @@ module.exports = {
   },
   setParent: async (ctx) => {
     try {
-      const parent = await services.setParent(ctx.request.params.id, ctx.request.body.parent);
-      ctx.body = { ok: true, parent };
+      const levelSchema = await services.setParent(ctx.request.params.id, ctx.request.body.parent);
+      ctx.body = { ok: true, levelSchema };
+    } catch (e) {
+      ctx.body = { ok: false, error: e.message };
+    }
+  },
+  setIsClass: async (ctx) => {
+    try {
+      const levelSchema = await services.setIsClass(
+        ctx.request.params.id,
+        ctx.request.body.isClass
+      );
+      ctx.body = { ok: true, levelSchema };
     } catch (e) {
       ctx.body = { ok: false, error: e.message };
     }

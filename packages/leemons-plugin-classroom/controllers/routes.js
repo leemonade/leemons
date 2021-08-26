@@ -57,4 +57,10 @@ module.exports = [
     handler: 'levelSchemas.setParent',
     authenticated: false,
   },
+  {
+    path: '/levelSchema/:id/isClass',
+    method: 'PATCH',
+    handler: 'levelSchemas.setIsClass',
+    authenticated: false,
+  },
 ];
