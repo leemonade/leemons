@@ -83,6 +83,32 @@ async function add(ctx) {
   }
 }
 
+async function update(ctx) {
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      id: { type: 'string' },
+      name: { type: 'string' },
+      guardians: memberValidation,
+      students: memberValidation,
+      maritalStatus: { type: 'string' },
+      datasetValues: {
+        type: 'object',
+        additionalProperties: true,
+      },
+    },
+    required: ['id', 'name'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.body)) {
+    const family = await familiesService.update(ctx.request.body, ctx.state.userSession);
+    ctx.status = 200;
+    ctx.body = { status: 200, family };
+  } else {
+    throw validator.error;
+  }
+}
+
 async function detail(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
@@ -101,12 +127,31 @@ async function detail(ctx) {
   }
 }
 
+async function remove(ctx) {
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      id: { type: 'string' },
+    },
+    required: ['id'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.params)) {
+    const family = await familiesService.remove(ctx.request.params.id);
+    ctx.status = 200;
+    ctx.body = { status: 200, family };
+  } else {
+    throw validator.error;
+  }
+}
+
 async function list(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
     properties: {
       page: { type: 'number' },
       size: { type: 'number' },
+      query: { type: 'object', additionalProperties: true },
     },
     required: ['page', 'size'],
     additionalProperties: false,
@@ -127,4 +172,6 @@ module.exports = {
   add,
   detail,
   list,
+  update,
+  remove,
 };

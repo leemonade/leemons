@@ -35,7 +35,7 @@ module.exports = {
   list_page: {
     title: 'Families list',
     description: 'Families make it easy to manage the organization of parent and student groups.',
-    families: 'Families',
+    families: '{n} Families',
     search: 'Search family',
     families_found: 'We have found {n} families with the name {name}',
     view: 'View',
@@ -66,6 +66,7 @@ module.exports = {
     add: 'Add',
     guardian_relation: 'Relation',
     specify_relation: 'Specify relationship',
+    deleted_done: 'Family removed',
     no_users_to_add:
       'We have not found any user associated with this data, please try repeating the search by using another info.',
     relations: {
@@ -88,6 +89,12 @@ module.exports = {
       domestic_partners: 'Domestic partners',
       cohabitants: 'Cohabitants',
       separated: 'Separated',
+    },
+    remove_modal: {
+      title: 'Delete family',
+      message: 'Are you sure you want to erase this family?',
+      cancel: 'Cancel',
+      action: 'Accept',
     },
   },
 };

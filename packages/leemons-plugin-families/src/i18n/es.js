@@ -36,7 +36,7 @@ module.exports = {
     title: 'Lista de familias',
     description:
       'Las familias facilitan la gestión de la organización de grupos de padres y alumnos.',
-    families: 'Familias',
+    families: '{n} Familias',
     search: 'Buscar familia',
     families_found: 'Hemos encontrado {n} familias con el nombre {name}',
     view: 'Ver',
@@ -67,6 +67,7 @@ module.exports = {
     add: 'Añadir',
     guardian_relation: 'Relación',
     specify_relation: 'Especifique la relación',
+    deleted_done: 'Familia borrada',
     no_users_to_add:
       'No hemos encontrado ningún usuario asociado a estos datos, por favor, intente repetir la búsqueda utilizando otra información.',
     relations: {
@@ -89,6 +90,12 @@ module.exports = {
       domestic_partners: 'Parejas de hecho',
       cohabitants: 'Cohabitantes',
       separated: 'Separado',
+    },
+    remove_modal: {
+      title: 'Eliminar familia',
+      message: '¿Estas seguro de que quieres borrar esta familia?',
+      cancel: 'Cancelar',
+      action: 'Aceptar',
     },
   },
 };

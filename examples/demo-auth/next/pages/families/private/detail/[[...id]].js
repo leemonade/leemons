@@ -29,6 +29,7 @@ import {
   addFamilyRequest,
   detailFamilyRequest,
   getDatasetFormRequest,
+  removeFamilyRequest,
   searchUsersRequest,
   updateFamilyRequest,
 } from '@families/request';
@@ -304,6 +305,15 @@ function Detail() {
   const [_permissions, setPermissions] = useState([]);
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
 
+  const [removeModal, toggleRemoveModal] = useModal({
+    animated: true,
+    title: t('remove_modal.title'),
+    message: t('remove_modal.message'),
+    cancelLabel: t('remove_modal.cancel'),
+    actionLabel: t('remove_modal.action'),
+    onAction: () => deleteFamily(),
+  });
+
   const permissions = useMemo(() => {
     const response = {
       basicInfo: { view: false, update: false },
@@ -364,10 +374,7 @@ function Detail() {
         let familyDatasetForm = null;
         try {
           const { jsonSchema, jsonUI } = await getDatasetFormRequest();
-          _.forIn(jsonUI, (value) => {
-            value['ui:className'] = 'w-4/12';
-          });
-          jsonUI['ui:className'] = 'gap-6';
+          jsonUI['ui:className'] = 'grid grid-cols-3 gap-6';
           familyDatasetForm = { jsonSchema, jsonUI };
         } catch (e) {}
         const { permissions } = await getPermissionsWithActionsIfIHaveRequest([
@@ -459,6 +466,16 @@ function Detail() {
     }
   }
 
+  const deleteFamily = async () => {
+    try {
+      await removeFamilyRequest(family.id);
+      addSuccessAlert(t('deleted_done'));
+      router.push(`/families/private/list`);
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+  };
+
   const onSubmit = async (data) => {
     const toSend = { ...data };
     let errors = [];
@@ -482,6 +499,10 @@ function Detail() {
     } else {
       router.push('/families/private/list');
     }
+  };
+
+  const onDeleteButton = () => {
+    toggleRemoveModal();
   };
 
   const onAddGuardian = () => {
@@ -512,6 +533,7 @@ function Detail() {
     <>
       {!error && !loading ? (
         <>
+          <Modal {...removeModal} />
           <Modal {...modal} className="max-w-xl">
             <SearchUsersModal
               t={t}
@@ -535,12 +557,13 @@ function Detail() {
               saveButton={isEditMode ? tCommonHeader('save') : null}
               saveButtonLoading={saveLoading}
               onSaveButton={() => (formActions.isLoaded() ? formActions.submit() : null)}
-              cancelButton={isEditMode ? tCommonHeader('cancel') : null}
-              onCancelButton={onCancelButton}
+              cancelButton={
+                isEditMode ? tCommonHeader('cancel') : family?.id ? tCommonHeader('delete') : null
+              }
+              onCancelButton={(e) => (isEditMode ? onCancelButton(e) : onDeleteButton(e))}
               editButton={isEditMode ? null : tCommonHeader('edit')}
               onEditButton={onEditButton}
             />
-
             <div className="bg-primary-content">
               <PageContainer>
                 <div className="flex flex-row gap-6">

@@ -42,10 +42,27 @@ module.exports = [
     },
   },
   {
+    path: '/update',
+    method: 'POST',
+    handler: 'families.update',
+    authenticated: true,
+  },
+  {
     path: '/detail/:id',
     method: 'GET',
     handler: 'families.detail',
     authenticated: true,
+  },
+  {
+    path: '/remove/:id',
+    method: 'DELETE',
+    handler: 'families.remove',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.families.families': {
+        actions: ['delete', 'admin'],
+      },
+    },
   },
   {
     path: '/list',

@@ -32,7 +32,7 @@ async function updateValues(
   pluginName,
   _formData,
   userAgent,
-  { target, transacting: _transacting } = {}
+  { target, transacting: _transacting, hardUpdate } = {}
 ) {
   validatePluginName(pluginName, this.calledFrom);
   await validateNotExistValues(locationName, pluginName, target, { transacting: _transacting });
@@ -68,9 +68,20 @@ async function updateValues(
     toSave.push(data);
   });
 
+  console.log(toSave);
+
   return global.utils.withTransaction(async (transacting) => {
-    await deleteValues.call(this, locationName, pluginName, { target, transacting });
-    await table.datasetValues.createMany(toSave, { transacting });
+    if (hardUpdate) {
+      await deleteValues.call(this, locationName, pluginName, { target, transacting });
+      await table.datasetValues.createMany(toSave, { transacting });
+    } else {
+      const promises = [];
+      _.forEach(toSave, ({ value, ...rest }) => {
+        promises.push(table.datasetValues.set(rest, { value, ...rest }, { transacting }));
+      });
+      await Promise.all(promises);
+    }
+
     return formData;
   }, table.datasetValues);
 }
