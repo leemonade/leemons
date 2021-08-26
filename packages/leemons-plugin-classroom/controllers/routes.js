@@ -63,4 +63,10 @@ module.exports = [
     handler: 'levelSchemas.setIsClass',
     authenticated: false,
   },
+  {
+    path: '/levelSchema/:id/assignables',
+    method: 'POST',
+    handler: 'levelSchemas.addAssignables',
+    authenticated: false,
+  },
 ];

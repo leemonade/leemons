@@ -207,14 +207,10 @@ module.exports = (Base) =>
             }))
           );
 
-          const existingLocalizations = await this.hasMany(
-            localizations.map(({ key: __key, locale }) => [__key, locale]),
-            { transacting: t }
-          );
-
-          const newLocalizations = localizations.filter(
-            ({ key: __key, locale }) => !existingLocalizations[locale][__key]
-          );
+          const newLocalizations = localizations.map(({ key, locale, value }) => ({
+            query: { key, locale },
+            item: { value },
+          }));
 
           try {
             const addedLocalizations = await this.model.setMany(newLocalizations, {
@@ -227,10 +223,6 @@ module.exports = (Base) =>
             const nonExistingLocales = locales.filter(
               (locale) => !existingLocales.includes(locale)
             );
-            // Get an array with the existing localized locales: ['en', 'es']
-            const _existingLocalizations = Object.entries(existingLocalizations)
-              .filter(([, keys]) => Object.values(keys)[0])
-              .map(([locale]) => locale);
 
             let hasWarnings = false;
             let warnings = {};
@@ -239,12 +231,6 @@ module.exports = (Base) =>
             if (nonExistingLocales.length) {
               hasWarnings = true;
               warnings.nonExistingLocales = nonExistingLocales;
-            }
-
-            // Set existing keys warning
-            if (_existingLocalizations.length) {
-              hasWarnings = true;
-              warnings.existingLocalizations = _existingLocalizations;
             }
 
             if (!hasWarnings) {

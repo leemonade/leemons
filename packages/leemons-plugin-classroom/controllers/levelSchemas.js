@@ -36,4 +36,15 @@ module.exports = {
       ctx.body = { ok: false, error: e.message };
     }
   },
+  addAssignables: async (ctx) => {
+    try {
+      const assignables = await services.addAssignables(
+        ctx.request.params.id,
+        ctx.request.body.profiles
+      );
+      ctx.body = { ok: true, assignables };
+    } catch (e) {
+      ctx.body = { ok: false, error: e.message };
+    }
+  },
 };

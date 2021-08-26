@@ -191,12 +191,12 @@ function generateQueries(model /* connector */) {
       );
     }
     if (transacting) {
-      return pmap(newItems, (newItem) => set(newItem, { transacting }));
+      return pmap(newItems, (newItem) => set(newItem.query, newItem.item, { transacting }));
     }
 
     // If we are not on a transaction, make a new transaction
     return model.ORM.transaction((t) =>
-      pmap(newItems, (newItem) => set(newItem, { transacting: t }))
+      pmap(newItems, (newItem) => set(newItem.query, newItem.item, { transacting: t }))
     );
   }
 
