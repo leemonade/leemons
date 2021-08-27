@@ -25,6 +25,37 @@ async function getSchema(ctx) {
   }
 }
 
+async function getSchemaLocale(ctx) {
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      locationName: { type: 'string' },
+      pluginName: { type: 'string' },
+      locale: { type: 'string' },
+    },
+    required: ['locationName', 'pluginName'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.body)) {
+    let locale = ctx.request.body.locale;
+    if (!locale) locale = await leemons.getPlugin('users').services.platform.getDefaultLocale();
+    // TODO Esto es "inseguro" ya que se le esta pasando el calledFrom
+    const dataset = await schemaService.getSchemaWithLocale.call(
+      { calledFrom: ctx.request.body.pluginName },
+      ctx.request.body.locationName,
+      ctx.request.body.pluginName,
+      locale
+    );
+    ctx.status = 200;
+    ctx.body = {
+      status: 200,
+      dataset,
+    };
+  } else {
+    throw validator.error;
+  }
+}
+
 async function getSchemaFieldLocale(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
@@ -134,4 +165,5 @@ module.exports = {
   saveField,
   removeField,
   getSchemaFieldLocale,
+  getSchemaLocale,
 };

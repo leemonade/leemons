@@ -22,6 +22,7 @@ module.exports = {
     new: 'Nuevo',
     cancel: 'Cancelar',
     save: 'Guardar',
+    edit: 'Editar',
   },
   form_field_types: {
     view: 'Ver',

@@ -25,7 +25,7 @@ export default function MainMenu({ onClose, onOpen, state, setState }) {
 
   async function reloadMenu() {
     const _menu = await loadMenu();
-    if (state.menuActive.parent) {
+    if (state.menuActive && state.menuActive.parent) {
       const parent = _.find(_menu, { id: state.menuActive.parent.id });
       if (parent) setState({ menuActive: { ...state.menuActive, parent } });
     }
@@ -35,10 +35,21 @@ export default function MainMenu({ onClose, onOpen, state, setState }) {
     if (onOpen) onOpen();
   }, [state]);
 
+  const closeMenu = useCallback(() => {
+    if (onClose) onClose();
+  }, [state]);
+
   const handleRouteChange = useCallback(async () => {
     const menuActive = await getActiveParentAndChild();
+    if (state.menuActive && state.menuActive.parent && !menuActive.parent) {
+      menuActive.parent = state.menuActive.parent;
+    }
     setState({ menuActive });
-    if (menuActive.parent) openMenu();
+    if (menuActive.parent) {
+      openMenu();
+    } else {
+      closeMenu();
+    }
     return menuActive;
   }, [state]);
 
@@ -52,7 +63,7 @@ export default function MainMenu({ onClose, onOpen, state, setState }) {
 
   async function onCloseSubMenu() {
     setState({ menuActive: await getActiveParentAndChild() });
-    if (onClose) onClose();
+    closeMenu();
   }
 
   useEffect(() => {

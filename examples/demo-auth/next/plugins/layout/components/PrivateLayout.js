@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import DndLayer from '@menu-builder/components/dnd/dndLayer';
 import MainMenu from '@menu-builder/components/mainMenu';
+import Alert from './Alert';
 
 function PrivateLayout({ persistentState: [state, _setState], children }) {
   const store = useRef({});
@@ -18,11 +19,11 @@ function PrivateLayout({ persistentState: [state, _setState], children }) {
   }, []);
 
   const onCloseMenu = useCallback(() => {
-    setState({ menuWidth: 52 });
+    if (state.menuWidth !== 52) setState({ menuWidth: 52 });
   }, [state]);
 
   const onOpenMenu = useCallback(() => {
-    setState({ menuWidth: 280 });
+    if (state.menuWidth !== 280) setState({ menuWidth: 280 });
   }, [state]);
 
   return (
@@ -35,7 +36,10 @@ function PrivateLayout({ persistentState: [state, _setState], children }) {
         >
           <MainMenu state={state} setState={setState} onClose={onCloseMenu} onOpen={onOpenMenu} />
         </div>
-        <div className="w-full bg-white h-screen overflow-y-auto">{children}</div>
+        <div className="w-full bg-secondary-content h-screen overflow-y-auto">
+          <Alert />
+          {children}
+        </div>
       </div>
     </>
   );

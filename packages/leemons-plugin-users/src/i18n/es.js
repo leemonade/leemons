@@ -26,6 +26,8 @@ module.exports = {
       description: 'Configuración de campos generales para sus usuarios',
       filter_by_center: 'Filtrar por centro',
       add_field: 'Añadir campo',
+      no_data_in_table: 'Aun no hay datos',
+      deleted_done: 'Item del dataset borrado',
     },
     remove_modal: {
       title: '¿Quieres eliminar el item?',
@@ -59,6 +61,39 @@ module.exports = {
     leemon: 'Leemon',
     permissions: 'Permisos',
     dataset: 'Dataset',
+    save_done: 'Perfil creado',
+    update_done: 'Perfil actualizado',
+    translations: 'Traducciones',
+    options_modal: {
+      title: 'Traducción',
+      description:
+        'Añade aquí las traducciones de la información del perfil a los idiomas de tu sistema',
+      accept: 'Aceptar',
+      cancel: 'Cancelar',
+      profile_name: 'Nombre del perfil',
+      profile_description: 'Descripción del perfil',
+    },
+    dataset_tab: {
+      description: 'Configure los campos adicionales para este perfil',
+      filter_by_center: 'Filtrar por centro',
+      add_field: 'Añadir campo',
+      no_data_in_table: 'Aun no hay datos',
+      deleted_done: 'Item del dataset borrado',
+      table: {
+        name: 'Nombre',
+        description: 'Descripción',
+        type: 'Tipo',
+        actions: 'Acciones',
+        edit: 'Editar',
+        delete: 'Borrar',
+      },
+    },
+    remove_modal: {
+      title: '¿Quieres eliminar el item?',
+      message: 'Esta acción no puede deshacerse',
+      cancel: 'No',
+      action: 'Eliminar',
+    },
   },
   login: {
     title: 'Acceda a su cuenta',

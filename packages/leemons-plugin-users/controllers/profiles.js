@@ -1,5 +1,39 @@
 const profileService = require('../src/services/profiles');
 
+const permissionsValidation = {
+  type: 'array',
+  items: {
+    type: 'object',
+    properties: {
+      permissionName: {
+        type: 'string',
+      },
+      actionNames: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+      },
+    },
+  },
+};
+
+const translationsValidations = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'object',
+      properties: {},
+      additionalProperties: true,
+    },
+    description: {
+      type: 'object',
+      properties: {},
+      additionalProperties: true,
+    },
+  },
+};
+
 async function list(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
@@ -35,17 +69,8 @@ async function add(ctx) {
     properties: {
       name: { type: 'string' },
       description: { type: 'string' },
-      permissions: {
-        type: 'object',
-        patternProperties: {
-          '.*': {
-            type: 'array',
-            items: {
-              type: 'string',
-            },
-          },
-        },
-      },
+      permissions: permissionsValidation,
+      translations: translationsValidations,
     },
     required: ['name', 'description', 'permissions'],
     additionalProperties: false,
@@ -84,23 +109,8 @@ async function update(ctx) {
       id: { type: 'string' },
       name: { type: 'string' },
       description: { type: 'string' },
-      permissions: {
-        type: 'array',
-        items: {
-          type: 'object',
-          properties: {
-            permissionName: {
-              type: 'string',
-            },
-            actionNames: {
-              type: 'array',
-              items: {
-                type: 'string',
-              },
-            },
-          },
-        },
-      },
+      permissions: permissionsValidation,
+      translations: translationsValidations,
     },
     required: ['id', 'name', 'description', 'permissions'],
     additionalProperties: false,

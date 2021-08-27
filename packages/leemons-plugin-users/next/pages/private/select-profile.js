@@ -5,8 +5,7 @@ import {
   getUserProfileTokenRequest,
   setRememberProfileRequest,
 } from '@users/request';
-import useTranslate from '@multilanguage/useTranslate';
-import tLoader from '@multilanguage/helpers/tLoader';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { goLoginPage } from '@users/navigate';
 import prefixPN from '@users/helpers/prefixPN';
 import { Button, Checkbox, FormControl, ImageLoader } from 'leemons-ui';
@@ -20,8 +19,7 @@ import Cookies from 'js-cookie';
 export default function SelectProfile() {
   const session = useSession({ redirectTo: goLoginPage });
 
-  const [translations] = useTranslate({ keysStartsWith: prefixPN('selectProfile') });
-  const t = tLoader(prefixPN('selectProfile'), translations);
+  const [t] = useTranslateLoader(prefixPN('selectProfile'));
 
   const [rememberProfile, setRememberProfile] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);

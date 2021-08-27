@@ -20,7 +20,7 @@ function Cell({ cell, onChangeCell }) {
       return (
         <div
           className={`flex flex-row justify-center py-3 px-4 ${
-            cell.value.checked ? 'bg-primary-200' : ''
+            cell.value.checked ? 'bg-primary-100' : ''
           }`}
         >
           <Checkbox color="primary" checked={cell.value.checked} onChange={onCheckedChange} />

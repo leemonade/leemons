@@ -32,7 +32,7 @@ export default function MainMenuSubmenuItem({
     const _styles = {
       color: 'text-secondary-content hover:text-secondary-content',
       border: '',
-      backgroundColor: 'hover:bg-primary',
+      backgroundColor: item.disabled ? '' : 'hover:bg-primary',
       paddings: 'pl-7 py-3 pr-8',
     };
 

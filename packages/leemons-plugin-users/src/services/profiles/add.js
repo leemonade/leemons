@@ -3,6 +3,8 @@ const { add: addRole } = require('../roles');
 const { existName } = require('./existName');
 const { table } = require('../tables');
 const createNecessaryRolesForProfilesAccordingToCenters = require('./createNecessaryRolesForProfilesAccordingToCenters');
+const { getDefaultLocale } = require('../platform');
+const { updateProfileTranslations } = require('./updateProfileTranslations');
 
 /**
  * Update the provided role
@@ -13,7 +15,10 @@ const createNecessaryRolesForProfilesAccordingToCenters = require('./createNeces
  * @param {any} _transacting - DB Transaction
  * @return {Promise<any>} Created permissions-roles
  * */
-async function add({ name, description, permissions }, { transacting: _transacting } = {}) {
+async function add(
+  { name, description, permissions, translations },
+  { transacting: _transacting } = {}
+) {
   return global.utils.withTransaction(
     async (transacting) => {
       const exist = await existName(name, undefined, { transacting });
@@ -38,6 +43,19 @@ async function add({ name, description, permissions }, { transacting: _transacti
       );
 
       profile = await table.profiles.update({ id: profile.id }, { role: role.id }, { transacting });
+
+      if (translations) await updateProfileTranslations(profile, translations, { transacting });
+
+      // ES: Creamos el dataset para este perfil para poder añadir campos extras
+      // EN: We create the dataset for this profile to be able to add extra fields
+      const platformLocale = await getDefaultLocale();
+      await leemons.getPlugin('dataset').services.dataset.addLocation({
+        name: {
+          [platformLocale]: `profile:${profile.id}`,
+        },
+        locationName: `profile.${profile.id}`,
+        pluginName: 'plugins.users',
+      });
 
       await createNecessaryRolesForProfilesAccordingToCenters(profile.id, undefined, {
         transacting,
