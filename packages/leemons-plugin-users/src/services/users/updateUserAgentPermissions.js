@@ -28,16 +28,29 @@ async function _updateUserAgentPermissions(userAgentId, { transacting: _transact
         table.profileRole.find({ role: userAgent.role }, { columns: ['profile'], transacting }),
       ]);
 
-      const profiles = await table.profiles.find(
-        { id_$in: _.map(profileRoles, 'profile') },
-        {
-          columns: ['role'],
-          transacting,
-        }
-      );
+      const profileIds = _.map(profileRoles, 'profile');
+      const [profiles, userProfiles] = await Promise.all([
+        table.profiles.find(
+          { id_$in: profileIds },
+          {
+            columns: ['role'],
+            transacting,
+          }
+        ),
+        table.userProfile.find(
+          { profile_$in: profileIds, user: userAgent.user },
+          {
+            columns: ['role'],
+            transacting,
+          }
+        ),
+      ]);
 
       const roleIds = _.uniq(
-        [userAgent.role].concat(_.map(groupRoles, 'role')).concat(_.map(profiles, 'role'))
+        [userAgent.role]
+          .concat(_.map(groupRoles, 'role'))
+          .concat(_.map(profiles, 'role'))
+          .concat(_.map(userProfiles, 'role'))
       );
 
       const [rolePermissions, roleCenter] = await Promise.all([
