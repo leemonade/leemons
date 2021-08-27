@@ -48,7 +48,7 @@ function Welcome() {
     updateSettings(newSettings);
   };
 
-  const handleManualLoad = async (e) => {
+  const handleManualLoad = async () => {
     // Let's enable Tree menu item
     const itemKey = 'tree';
     await SettingsService.enableMenuItem(itemKey);

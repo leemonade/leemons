@@ -1,11 +1,9 @@
-const getMenuBuilder = require('./getMenuBuilder');
+const _ = require('lodash');
 const update = require('./update');
 const { menuItems } = require('../../../config/constants');
-const _ = require('lodash');
 
 async function enableItem(key) {
-  let menuItem = _.pickBy(menuItems, { item: { key } });
-  menuItem = Object.values(menuItem)[0];
+  const [menuItem] = _.pickBy(menuItems, { item: { key } });
   const { item } = menuItem;
 
   if (item) {
@@ -14,6 +12,7 @@ async function enableItem(key) {
       disabled: false,
     });
   }
+  return null;
 }
 
 module.exports = enableItem;

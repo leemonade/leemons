@@ -1,5 +1,4 @@
-module.exports = async ({ scripts, next }) => {
-  console.log('Load Classroom');
+module.exports = async ({ scripts }) => {
   // ES: Añade los modelos a la base de datos
   await scripts.models();
   // ES: Añade a leemons.getPlugin()/leemons.plugin todos los services de este plugin a los plugins que tengan acceso

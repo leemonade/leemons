@@ -30,7 +30,6 @@ async function enableMenuItem(ctx) {
     properties: { key: { type: 'string' } },
     required: ['key'],
   });
-  console.log('enableMenuItem:', ctx.request.body);
   if (validator.validate(ctx.request.body)) {
     const item = await menuBuilderService.enableItem(ctx.request.body.key);
     ctx.status = 200;

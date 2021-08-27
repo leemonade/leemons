@@ -26,7 +26,7 @@ module.exports = async function addAssignables(id, profiles, { transacting } = {
   if (validator.validate({ id, profiles })) {
     let savedProfiles;
 
-    let exists = await levelSchemas.count({ id }, { transacting });
+    const exists = await levelSchemas.count({ id }, { transacting });
     if (!exists) {
       throw new Error("The given id can't be found");
     }
@@ -40,17 +40,13 @@ module.exports = async function addAssignables(id, profiles, { transacting } = {
           },
         }))
       );
-
-      console.log(savedProfiles);
     } catch (e) {
-      console.log(e);
       if (e.code.includes('ER_NO_REFERENCED_ROW')) {
         throw new Error("One of the profiles can't be found");
       }
       throw new Error("The assignables can't be saved");
     }
     return savedProfiles;
-  } else {
-    throw validator.error;
   }
+  throw validator.error;
 };

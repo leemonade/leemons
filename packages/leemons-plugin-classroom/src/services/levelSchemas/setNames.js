@@ -50,7 +50,6 @@ module.exports = async function setNames(id, names, { transacting } = {}) {
       throw new Error("the translated names can't be saved");
     }
     return { names: savedNames, warnings: { missingLocales } };
-  } else {
-    throw validator.error;
   }
+  throw validator.error;
 };

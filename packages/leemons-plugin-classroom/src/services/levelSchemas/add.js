@@ -58,7 +58,6 @@ async function add(
         // Save level schema
         try {
           savedLevelSchema = await tables.levelSchemas.create(levelSchema, { transacting: t });
-          console.log('SLS', savedLevelSchema);
         } catch (e) {
           if (e.code.includes('ER_NO_REFERENCED_ROW')) {
             throw new Error("LevelSchema's parent was not found");
@@ -76,7 +75,6 @@ async function add(
             })),
             { transacting: t }
           );
-          console.log('SAP', savedAssignableProfiles);
         } catch (e) {
           if (e.code.includes('ER_NO_REFERENCED_ROW')) {
             throw new Error(`One of the assignable profiles can't be found`);
@@ -116,9 +114,8 @@ async function add(
     );
 
     return ls;
-  } else {
-    throw validator.error;
   }
+  throw validator.error;
 }
 
 module.exports = add;

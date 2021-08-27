@@ -46,7 +46,6 @@ module.exports = async function setParent(id, parent, { transacting } = {}) {
       throw new Error("the new parent can't be saved");
     }
     return levelSchema;
-  } else {
-    throw validator.error;
   }
+  throw validator.error;
 };

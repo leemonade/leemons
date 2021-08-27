@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const { defaultPermissions } = require('./config/constants');
 const {
   addMain,
