@@ -13,10 +13,18 @@ const { removeDatasetValues } = require('./removeDatasetValues');
  * @return {Promise<any>}
  * */
 async function remove(family, { transacting } = {}) {
-  const { guardians, students } = getMembers(family, { transacting });
+  const menuBuilderServices = leemons.getPlugin('menu-builder').services;
+  const { guardians, students } = await getMembers(family, { transacting });
 
   const promises = [];
 
+  promises.push(
+    menuBuilderServices.menuItem.remove(
+      menuBuilderServices.config.constants.mainMenuKey,
+      leemons.plugin.prefixPN(`family-${family}`),
+      { transacting }
+    )
+  );
   promises.push(table.families.delete({ id: family }, { transacting }));
   promises.push(removeDatasetValues(family, { transacting }));
 

@@ -1,21 +1,11 @@
 const _ = require('lodash');
 const { getSessionFamilyPermissions } = require('../users/getSessionFamilyPermissions');
 const { table } = require('../tables');
-const { getProfiles } = require('../profiles-config/getProfiles');
 const { addMember } = require('../family-members/addMember');
 const { setDatasetValues } = require('./setDatasetValues');
 const { recalculeNumberOfMembers } = require('./recalculeNumberOfMembers');
-
-function getFamilyMenuBuilderData(familyId, familyName) {
-  return {
-    pluginName: 'plugins.families',
-    menuKey: leemons.getPlugin('menu-builder').services.config.constants.mainMenuKey,
-    key: leemons.plugin.prefixPN(`family-${familyId}`),
-    parentKey: 'plugins.users.users',
-    url: `/families/private/detail/${familyId}`,
-    label: familyName,
-  };
-}
+const { add: addMenuItem } = require('../menu-builder/add');
+const { getFamilyMenuBuilderData } = require('./getFamilyMenuBuilderData');
 
 /**
  * ES: Crea una nueva familia solo si tiene los permisos para hacerlo, es posible que solo cree
@@ -56,25 +46,21 @@ async function add(
 
       const family = await table.families.create(familyData, { transacting });
 
+      const menuItemConfig = await getFamilyMenuBuilderData(family.id, family.name, {
+        transacting,
+      });
+
       const promises = [];
+
+      // Add the family menu item
+      promises.push(
+        addMenuItem(menuItemConfig.config, menuItemConfig.permissions, true, { transacting })
+      );
 
       // Add guardians if have permission
       if (permissions.guardiansInfo.update) {
         _.forEach(guardians, ({ user, memberType }) => {
           promises.push(addMember({ user, memberType, family: family.id }, { transacting }));
-          /*
-          promises.push(
-            leemons
-              .getPlugin('menu-builder')
-              .services.menuItem.addCustomForUserWithProfile(
-                guardian.user,
-                profiles.guardian,
-                getFamilyMenuBuilderData(family.id, name),
-                { transacting }
-              )
-          );
-
-           */
         });
       }
       // Add students if have permission
@@ -83,20 +69,6 @@ async function add(
           promises.push(
             addMember({ user, memberType: 'student', family: family.id }, { transacting })
           );
-
-          /*
-          promises.push(
-            leemons
-              .getPlugin('menu-builder')
-              .services.menuItem.addCustomForUserWithProfile(
-                student.user,
-                profiles.student,
-                getFamilyMenuBuilderData(family.id, name),
-                { transacting }
-              )
-          );
-
-           */
         });
       }
       // Add datasetvalues if have permission and have data

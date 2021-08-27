@@ -7,6 +7,9 @@ const { recalculeNumberOfMembers } = require('./recalculeNumberOfMembers');
 const { setDatasetValues } = require('./setDatasetValues');
 const { addMember } = require('../family-members/addMember');
 const { removeMember } = require('../family-members/removeMember');
+const { update: updateMenuItem } = require('../menu-builder/update');
+const { getFamilyMenuBuilderData } = require('./getFamilyMenuBuilderData');
+const { add: addMenuItem } = require('../menu-builder/add');
 
 /**
  * ES: Crea una nueva familia solo si tiene los permisos para hacerlo, es posible que solo cree
@@ -90,6 +93,12 @@ async function update(
       }
 
       const family = await table.families.update({ id }, newFamilyData, { transacting });
+
+      const menuItemConfig = await getFamilyMenuBuilderData(family.id, family.name, {
+        transacting,
+      });
+
+      await updateMenuItem(menuItemConfig.config);
 
       // EN: Remove the guardians/students
       const removePromises = [];

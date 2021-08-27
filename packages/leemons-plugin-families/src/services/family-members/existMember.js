@@ -12,7 +12,7 @@ const { table } = require('../tables');
  * */
 async function existMember(family, user, { transacting } = {}) {
   const count = await table.familyMembers.count({ family, user }, { transacting });
-  return !count;
+  return !!count;
 }
 
 module.exports = { existMember };

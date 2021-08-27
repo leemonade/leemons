@@ -39,6 +39,7 @@ import { UserImage } from '@common/userImage';
 import { useAsync } from '@common/useAsync';
 import formWithTheme from '@common/formWithTheme';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import hooks from 'leemons-hooks';
 
 function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} }) {
   const { t: tCommonForm } = useCommonTranslate('forms');
@@ -459,6 +460,7 @@ function Detail() {
       }
 
       setSaveLoading(false);
+      hooks.fireEvent('menu-builder:reset-menu');
       router.push(`/families/private/detail/${response.family.id}`);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));

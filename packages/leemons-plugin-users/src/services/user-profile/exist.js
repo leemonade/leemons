@@ -11,7 +11,7 @@ const { table } = require('../tables');
  * */
 async function exist(user, profile, { transacting } = {}) {
   const count = await table.userProfile.count({ user, profile }, { transacting });
-  return !count;
+  return !!count;
 }
 
 module.exports = { exist };

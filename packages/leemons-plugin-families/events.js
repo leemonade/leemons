@@ -9,7 +9,11 @@ async function events(isInstalled) {
       ['plugins.users:init-menu', 'plugins.families:init-permissions'],
       async () => {
         for (let i = 0, l = constants.menuItems.length; i < l; i++) {
-          await add(constants.menuItems[i].config, constants.menuItems[i].permissions);
+          await add(
+            constants.menuItems[i].config,
+            constants.menuItems[i].permissions,
+            constants.menuItems[i].isCustomPermission
+          );
         }
         leemons.events.emit('init-menu');
       }

@@ -51,6 +51,24 @@ module.exports = {
   menuItems: [
     {
       config: {
+        key: 'user-families',
+        iconSvg: '/assets/svgs/family.svg',
+        activeIconSvg: '/assets/svgs/family.svg',
+        label: {
+          en: 'Families',
+          es: 'Familias',
+        },
+      },
+      permissions: [
+        {
+          permissionName: 'plugins.families.user-families',
+          actionNames: ['view', 'admin'],
+        },
+      ],
+      isCustomPermission: true,
+    },
+    {
+      config: {
         key: 'families-data',
         parentKey: 'plugins.users.users',
         url: '/families/private/config',
