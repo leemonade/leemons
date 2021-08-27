@@ -25,6 +25,7 @@ import prefixPN from '@families/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useAsync } from '@common/useAsync';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { installPluginByNPMRequest } from '@plugin-manager/request';
 
 function DatasetTabs({ t }) {
   const [loading, setLoading] = useState(true);
@@ -192,12 +193,20 @@ function Config() {
 
   const [t] = useTranslateLoader(prefixPN('config_page'));
 
+  const installPhone = async () => {
+    await installPluginByNPMRequest('leemons-plugin-mvp-template', '1.0.0');
+  };
+
   return (
     <>
       <PageHeader title={t('title')} />
       <div className="bg-primary-content">
         <PageContainer>
           <div className="page-description max-w-screen-sm">{t('description1')}</div>
+          <div className="page-description max-w-screen-sm">{t('phone_description')}</div>
+          <Button color="primary" className="mt-4" onClick={installPhone}>
+            {t('phone_button')}
+          </Button>
         </PageContainer>
       </div>
 

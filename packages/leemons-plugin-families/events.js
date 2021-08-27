@@ -37,6 +37,12 @@ async function events(isInstalled) {
         leemons.events.emit('init-dataset-locations');
       }
     );
+  } else {
+    leemons.events.once('plugins.families:pluginDidInit', async () => {
+      leemons.events.emit('init-menu');
+      leemons.events.emit('init-permissions');
+      leemons.events.emit('init-dataset-locations');
+    });
   }
 }
 

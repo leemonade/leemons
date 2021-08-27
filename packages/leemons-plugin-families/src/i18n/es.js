@@ -3,6 +3,9 @@ module.exports = {
     title: 'Conjunto de datos de las familias',
     description1:
       'Este conjunto de datos le permitirá descargar un conjunto de plantillas para cargar sin problemas su base de datos familiar.',
+    phone_description:
+      'Las familias Leemon tienen su propio componente para gestionar los números de emergencia de los alumnos, actívalo para tener esta funcionalidad.',
+    phone_button: 'Activar el complemento de los números de emergencia',
     important: 'Importante:',
     important_remember:
       'recuerde que no podrá cargar sus familias hasta que su base de usuarios esté correctamente cargada en el sistema.',

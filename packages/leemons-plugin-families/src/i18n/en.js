@@ -3,6 +3,9 @@ module.exports = {
     title: 'Families dataset',
     description1:
       'This dataset will allow you to download a template set for a smooth loading of your family database.',
+    phone_description:
+      'The families Leemon has its own component to manage the emergency numbers of the students, activate it to have this functionality.',
+    phone_button: 'Activate Emergency Numbers Addon',
     important: 'Important:',
     important_remember:
       'remember that you will not be able to upload your families until your user base is correctly loaded into the system.',

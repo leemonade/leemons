@@ -93,6 +93,16 @@ async function events(isInstalled) {
       await Promise.all([addWelcome(), addProfiles(), addUserData()]);
       leemons.events.emit('init-submenu');
     });
+  } else {
+    leemons.events.once('plugins.users:pluginDidInit', async () => {
+      leemons.events.emit('init-actions');
+      leemons.events.emit('init-permissions');
+      leemons.events.emit('init-dataset-locations');
+      leemons.events.emit('init-email-reset-password');
+      leemons.events.emit('init-emails');
+      leemons.events.emit('init-menu');
+      leemons.events.emit('init-submenu');
+    });
   }
 }
 
