@@ -3,6 +3,10 @@ const { getSessionFamilyPermissions } = require('../users/getSessionFamilyPermis
 const { table } = require('../tables');
 const { canUpdateFamily } = require('../users/canUpdateFamily');
 const { getMembers } = require('./getMembers');
+const { recalculeNumberOfMembers } = require('./recalculeNumberOfMembers');
+const { setDatasetValues } = require('./setDatasetValues');
+const { addMember } = require('../family-members/addMember');
+const { removeMember } = require('../family-members/removeMember');
 
 /**
  * ES: Crea una nueva familia solo si tiene los permisos para hacerlo, es posible que solo cree
@@ -37,19 +41,11 @@ async function update(
       // EN: First we pull the permissions to check what you have access to and what you do not have access to.
       const permissions = await getSessionFamilyPermissions(userSession, { transacting });
 
-      const [
-        currentFamily,
-        { guardians: currentGuardians, students: currentStudents },
-      ] = await Promise.all([
-        table.families.findOne({ id }, { transacting }),
-        getMembers(id, { transacting }),
-      ]);
+      const { guardians: currentGuardians, students: currentStudents } = await getMembers(id, {
+        transacting,
+      });
 
-      const newFamilyData = {
-        nGuardians: currentFamily.nGuardians,
-        nStudents: currentFamily.nStudents,
-      };
-
+      const newFamilyData = {};
       if (permissions.basicInfo.update && name) {
         newFamilyData.name = name;
       }
@@ -63,13 +59,11 @@ async function update(
         _.forEach(currentGuardians, (currentGuardian) => {
           if (!guardiansById[currentGuardian.id]) {
             removeGuardians.push(currentGuardian);
-            newFamilyData.nGuardians -= 1;
           }
         });
         _.forEach(guardians, (guardian) => {
           if (!currentGuardiansById[guardian.user]) {
             addGuardians.push(guardian);
-            newFamilyData.nGuardians += 1;
           }
         });
         if (maritalStatus) {
@@ -86,85 +80,47 @@ async function update(
         _.forEach(currentStudents, (currentStudent) => {
           if (!studentsById[currentStudent.id]) {
             removeStudents.push(currentStudent);
-            newFamilyData.nStudents -= 1;
           }
         });
         _.forEach(students, (student) => {
           if (!currentStudentsById[student.user]) {
             addStudents.push(student);
-            newFamilyData.nStudents += 1;
           }
         });
       }
 
-      const promises = [table.families.update({ id }, newFamilyData, { transacting })];
+      const family = await table.families.update({ id }, newFamilyData, { transacting });
 
       // EN: Remove the guardians/students
+      const removePromises = [];
       const removeMembers = removeGuardians.concat(removeStudents);
       if (removeMembers.length) {
-        _.forEach(removeMembers, (removeMember) => {
-          promises.push(
-            table.familyMembers.delete(
-              {
-                user: removeMember.id,
-                memberType: removeMember.memberType,
-                family: id,
-              },
-              { transacting }
-            )
-          );
+        _.forEach(removeMembers, (member) => {
+          removePromises.push(removeMember(id, member.id, { transacting }));
         });
       }
+      await Promise.all(removePromises);
 
       // EN: Add the guardians/students
+      const addPromises = [];
       if (addGuardians.length) {
-        _.forEach(addGuardians, (guardian) => {
-          promises.push(
-            table.familyMembers.create(
-              {
-                ...guardian,
-                family: id,
-              },
-              { transacting }
-            )
-          );
+        _.forEach(addGuardians, ({ user, memberType }) => {
+          addPromises.push(addMember({ user, memberType, family: id }, { transacting }));
         });
       }
       if (addStudents.length) {
-        _.forEach(addStudents, (student) => {
-          promises.push(
-            table.familyMembers.create(
-              {
-                ...student,
-                memberType: 'student',
-                family: id,
-              },
-              { transacting }
-            )
-          );
+        _.forEach(addStudents, ({ user }) => {
+          addPromises.push(addMember({ user, memberType: 'student', family: id }, { transacting }));
         });
       }
+      await Promise.all(addPromises);
 
       // EN: Update the dataset data
       if (permissions.customInfo.update && datasetValues) {
-        promises.push(
-          leemons
-            .getPlugin('dataset')
-            .services.dataset.updateValues(
-              'families-data',
-              'plugins.families',
-              datasetValues,
-              userSession.userAgents,
-              {
-                target: id,
-                transacting,
-              }
-            )
-        );
+        await setDatasetValues(id, userSession, datasetValues, { transacting });
       }
 
-      const [family] = await Promise.all(promises);
-
+      await recalculeNumberOfMembers(id, { transacting });
       return family;
     },
     table.families,

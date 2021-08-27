@@ -50,6 +50,8 @@ module.exports = {
     },
   },
   detail_page: {
+    update_done: 'Familia actualizada',
+    save_done: 'Familia creada',
     title_placeholder: 'Nombre de la familia',
     guardians: 'Tutores',
     add_guardian: 'Añadir tutor',

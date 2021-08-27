@@ -1,35 +1,31 @@
 const _ = require('lodash');
 const { table } = require('../tables');
+const { getMembers } = require('./getMembers');
+const { removeMember } = require('../family-members/removeMember');
+const { removeDatasetValues } = require('./removeDatasetValues');
 
 /**
  * Remove the family
  * @public
  * @static
- * @param {string} familyId - Family id
+ * @param {string} family - Family id
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function remove(familyId, { transacting } = {}) {
-  const datasetService = leemons.getPlugin('dataset').services.dataset;
+async function remove(family, { transacting } = {}) {
+  const { guardians, students } = getMembers(family, { transacting });
 
-  const promises = [
-    table.families.delete({ id: familyId }, { transacting }),
-    table.familyMembers.deleteMany({ family: familyId }),
-  ];
+  const promises = [];
 
-  if (
-    await datasetService.existValues('families-data', 'plugins.families', {
-      target: familyId,
-      transacting,
-    })
-  ) {
-    promises.push(
-      datasetService.deleteValues('families-data', 'plugins.families', {
-        target: familyId,
-        transacting,
-      })
-    );
-  }
+  promises.push(table.families.delete({ id: family }, { transacting }));
+  promises.push(removeDatasetValues(family, { transacting }));
+
+  _.forEach(guardians, (guardian) => {
+    promises.push(removeMember(family, guardian.id, { transacting }));
+  });
+  _.forEach(students, (student) => {
+    promises.push(removeMember(family, student.id, { transacting }));
+  });
 
   await Promise.all(promises);
 }

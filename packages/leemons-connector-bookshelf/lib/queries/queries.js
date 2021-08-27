@@ -198,6 +198,7 @@ function generateQueries(model /* connector */) {
     try {
       return await func(...args);
     } catch (e) {
+      console.log(e);
       if (n < 10000 && e.code === 'ER_LOCK_DEADLOCK') {
         await timeoutPromise(time);
         return await reTry(func, args, n + 1);

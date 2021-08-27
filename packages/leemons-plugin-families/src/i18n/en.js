@@ -49,6 +49,8 @@ module.exports = {
     },
   },
   detail_page: {
+    update_done: 'Family updated',
+    save_done: 'Family created',
     title_placeholder: 'Family name',
     guardians: 'Guardians',
     add_guardian: 'Add Guardian',
