@@ -25,7 +25,6 @@ module.exports = async function addAssignables(id, _profiles, { transacting } = 
 
   if (validator.validate({ id, profiles: _profiles })) {
     const profiles = [...new Set(_profiles)];
-    let savedProfiles;
 
     const exists = await levelSchemas.count({ id }, { transacting });
     if (!exists) {
@@ -33,22 +32,31 @@ module.exports = async function addAssignables(id, _profiles, { transacting } = 
     }
 
     try {
-      savedProfiles = await assignableProfiles.setMany(
-        profiles.map((profile) => ({
-          query: {
+      const { count: deletedProfiles } = await assignableProfiles.deleteMany(
+        {
+          $or: profiles.map((profile) => ({
             levelSchemas_id: id,
             profiles_id: profile,
-          },
-        })),
+          })),
+        },
         { transacting }
       );
+
+      if (deletedProfiles < profiles.length) {
+        return {
+          count: deletedProfiles,
+          expected: profiles.length,
+          warning: "Some assignable profiles were not deleted or don't exists",
+        };
+      }
+      return { count: deletedProfiles };
     } catch (e) {
       if (e.code.includes('ER_NO_REFERENCED_ROW')) {
         throw new Error("One of the profiles can't be found");
       }
-      throw new Error("The assignables can't be saved");
+      throw new Error("The assignables can't be removed");
     }
-    return savedProfiles;
+  } else {
+    throw validator.error;
   }
-  throw validator.error;
 };

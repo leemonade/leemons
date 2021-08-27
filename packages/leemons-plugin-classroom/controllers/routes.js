@@ -44,6 +44,24 @@ module.exports = [
     authenticated: false,
   },
   {
+    path: '/levelSchema/:id',
+    method: 'GET',
+    handler: 'levelSchemas.get',
+    authenticated: false,
+  },
+  {
+    path: '/levelSchema',
+    method: 'GET',
+    handler: 'levelSchemas.list',
+    authenticated: false,
+  },
+  {
+    path: '/levelSchema/:id',
+    method: 'DELETE',
+    handler: 'levelSchemas.delete',
+    authenticated: false,
+  },
+  {
     path: '/levelSchema/:id/names',
     method: 'PATCH',
     handler: 'levelSchemas.setNames',
@@ -65,6 +83,12 @@ module.exports = [
     path: '/levelSchema/:id/assignables',
     method: 'POST',
     handler: 'levelSchemas.addAssignables',
+    authenticated: false,
+  },
+  {
+    path: '/levelSchema/:id/assignables',
+    method: 'DELETE',
+    handler: 'levelSchemas.removeAssignables',
     authenticated: false,
   },
 ];

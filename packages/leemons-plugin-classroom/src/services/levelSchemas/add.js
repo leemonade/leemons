@@ -6,7 +6,7 @@ const tables = {
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 
 async function add(
-  { name: names, parent = null, isClass = false, assignableProfiles = [] } = {},
+  { names, parent = null, isClass = false, assignableProfiles = [] } = {},
   { transacting } = {}
 ) {
   const levelSchema = { name: names, parent, isClass, assignableProfiles };

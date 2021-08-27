@@ -218,46 +218,24 @@ function generateQueries(model /* connector */) {
     } catch (e) {
       if (n < 10000 && e.code === 'ER_LOCK_DEADLOCK') {
         await timeoutPromise(time);
-        return await reTry(func, args, n + 1);
+        return reTry(func, args, n + 1);
       }
       throw e;
     }
   }
 
   return {
-    create: (...args) => {
-      return reTry(create, args);
-    },
-    createMany: (...args) => {
-      return reTry(createMany, args);
-    },
-    update: (...args) => {
-      return reTry(update, args);
-    },
-    updateMany: (...args) => {
-      return reTry(updateMany, args);
-    },
-    delete: (...args) => {
-      return reTry(deleteOne, args);
-    },
-    deleteMany: (...args) => {
-      return reTry(deleteMany, args);
-    },
-    find: (...args) => {
-      return reTry(find, args);
-    },
-    findOne: (...args) => {
-      return reTry(findOne, args);
-    },
-    count: (...args) => {
-      return reTry(count, args);
-    },
-    set: (...args) => {
-      return reTry(set, args);
-    },
-    setMany: (...args) => {
-      return reTry(setMany, args);
-    },
+    create: (...args) => reTry(create, args),
+    createMany: (...args) => reTry(createMany, args),
+    update: (...args) => reTry(update, args),
+    updateMany: (...args) => reTry(updateMany, args),
+    delete: (...args) => reTry(deleteOne, args),
+    deleteMany: (...args) => reTry(deleteMany, args),
+    find: (...args) => reTry(find, args),
+    findOne: (...args) => reTry(findOne, args),
+    count: (...args) => reTry(count, args),
+    set: (...args) => reTry(set, args),
+    setMany: (...args) => reTry(setMany, args),
     transaction,
   };
 }
