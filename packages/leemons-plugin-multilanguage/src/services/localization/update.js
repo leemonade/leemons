@@ -207,8 +207,8 @@ module.exports = (Base) =>
             }))
           );
 
-          const newLocalizations = localizations.map(({ key, locale, value }) => ({
-            query: { key, locale },
+          const newLocalizations = localizations.map(({ key: __key, locale, value }) => ({
+            query: { key: __key, locale },
             item: { value },
           }));
 

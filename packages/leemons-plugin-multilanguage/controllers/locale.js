@@ -11,8 +11,7 @@ async function add(ctx) {
 
     ctx.body = { message: 'Locale already exists' };
   } catch (e) {
-    console.log(e);
-    ctx.body = { error: true };
+    ctx.body = { error: e.message };
   }
 }
 
@@ -21,7 +20,7 @@ async function list(ctx) {
     const locales = await leemons.plugin.services.locales.getProvider().getAll();
     ctx.body = { locales };
   } catch (e) {
-    ctx.body = { error: true };
+    ctx.body = { error: e.message };
   }
 }
 

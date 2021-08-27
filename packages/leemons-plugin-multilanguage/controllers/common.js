@@ -94,7 +94,6 @@ async function get(ctx) {
 
     ctx.body = { items: resolvedLocalizations };
   } catch (e) {
-    console.error(e);
     ctx.body = { error: e.message };
   }
 }
