@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import useTranslate, { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import { useSession } from '@users/session';
 import { useForm } from 'react-hook-form';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { getTranslationKey as getTranslationKeyActions } from '@users/actions/getTranslationKey';
 import { getTranslationKey as getTranslationKeyPermissions } from '@users/permissions/getTranslationKey';
@@ -22,6 +22,7 @@ import {
   Modal,
   PageContainer,
   PageHeader,
+  Select,
   Tab,
   Table,
   TabList,
@@ -210,11 +211,30 @@ function DatasetTabs({ profile, t, isEditMode }) {
 }
 
 function PermissionsTabs({ t, profile, onPermissionsChange = () => {}, isEditMode }) {
+  const dataTable = useRef(null);
+  const initialArrayPermissions = useRef([]);
+  const [selectedPermission, setSelectedPermission] = useState('all');
+  const [selectPermissions, setSelectPermissions] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [actions, setActions] = useState(null);
   const [actionT, setActionT] = useState(null);
   const [permissions, setPermissions] = useState(null);
   const [permissionT, setPermissionT] = useState(null);
+
+  const sendPermissionChange = () => {
+    onPermissionsChange(
+      _.map(dataTable.current, ({ name, permissionName, ...rest }) => {
+        const actionNames = [];
+        _.forIn(rest, ({ checked }, key) => {
+          if (checked) actionNames.push(key);
+        });
+        return {
+          permissionName,
+          actionNames,
+        };
+      })
+    );
+  };
 
   useEffect(() => {
     getPermissions();
@@ -222,62 +242,84 @@ function PermissionsTabs({ t, profile, onPermissionsChange = () => {}, isEditMod
   }, []);
 
   useEffect(() => {
-    if (isEditMode) {
-      onPermissionsChange(
-        _.map(tableData, ({ name, permissionName, ...rest }) => {
-          const actionNames = [];
-          _.forIn(rest, ({ checked }, key) => {
-            if (checked) actionNames.push(key);
-          });
-          return {
-            permissionName,
-            actionNames,
-          };
-        })
-      );
+    if (selectedPermission !== 'all') {
+      setPermissions(_.filter(initialArrayPermissions.current, { pluginName: selectedPermission }));
+    } else {
+      setPermissions(initialArrayPermissions.current);
     }
-  }, [tableData]);
+  }, [selectedPermission]);
 
   useEffect(() => {
     if (permissions && actions && permissionT) {
-      setTableData(
-        permissions.map((permission) => {
-          const response = {
-            name: permissionT[getTranslationKeyPermissions(permission.permissionName, 'name')],
-            permissionName: permission.permissionName,
-          };
-          actions.map(({ actionName }) => {
-            if (permission.actions.indexOf(actionName) >= 0) {
-              if (isEditMode) {
-                response[actionName] = {
-                  type: 'checkbox',
-                  checked:
-                    profile && profile.permissions[permission.permissionName]
-                      ? profile.permissions[permission.permissionName].indexOf(actionName) >= 0
-                      : false,
-                };
-              } else {
-                response[actionName] = () => {
-                  const checked =
-                    profile && profile.permissions[permission.permissionName]
-                      ? profile.permissions[permission.permissionName].indexOf(actionName) >= 0
-                      : false;
-                  if (checked)
-                    return (
-                      <div className="text-center text-primary">
-                        <CheckCircleIcon className="w-7 h-7 m-auto" />
-                      </div>
-                    );
-                  return null;
-                };
-              }
+      const data = permissions.map((permission) => {
+        const response = {
+          name: permissionT[getTranslationKeyPermissions(permission.permissionName, 'name')],
+          permissionName: permission.permissionName,
+        };
+        actions.map(({ actionName }) => {
+          if (permission.actions.indexOf(actionName) >= 0) {
+            let cPermission = null;
+            if (dataTable.current) {
+              cPermission = _.find(dataTable.current, {
+                permissionName: permission.permissionName,
+              });
             }
-          });
-          return response;
-        })
-      );
+            if (isEditMode) {
+              response[actionName] = {
+                type: 'checkbox',
+                checked: cPermission
+                  ? cPermission[actionName].checked
+                  : profile && profile.permissions[permission.permissionName]
+                  ? profile.permissions[permission.permissionName].indexOf(actionName) >= 0
+                  : false,
+              };
+            } else {
+              response[actionName] = () => {
+                const checked = cPermission
+                  ? cPermission[actionName].checked
+                  : profile && profile.permissions[permission.permissionName]
+                  ? profile.permissions[permission.permissionName].indexOf(actionName) >= 0
+                  : false;
+                if (checked)
+                  return (
+                    <div className="text-center text-primary">
+                      <CheckCircleIcon className="w-7 h-7 m-auto" />
+                    </div>
+                  );
+                return null;
+              };
+            }
+          }
+        });
+        return response;
+      });
+      setTableData(data);
+      if ((!dataTable.current || !dataTable.current.length) && isEditMode) dataTable.current = data;
     }
   }, [profile, permissions, actions, permissionT, isEditMode]);
+
+  async function _setTableData(e) {
+    _.forEach(e, (d) => {
+      const index = _.findIndex(dataTable.current, { permissionName: d.permissionName });
+      if (index >= 0) {
+        dataTable.current[index] = d;
+      }
+    });
+    sendPermissionChange();
+    setTableData(e);
+  }
+
+  async function _setSelectPermissions() {
+    const perms = _.uniqBy(initialArrayPermissions.current, 'pluginName');
+    setSelectPermissions(
+      _.map(perms, ({ pluginName }) => {
+        return {
+          pluginName,
+          name: pluginName.split('.')[1],
+        };
+      })
+    );
+  }
 
   async function getPermissions() {
     const response = await listPermissionsRequest();
@@ -285,8 +327,10 @@ function PermissionsTabs({ t, profile, onPermissionsChange = () => {}, isEditMod
       getTranslationKeyPermissions(permission.permissionName, 'name')
     );
 
+    initialArrayPermissions.current = _.orderBy(response.permissions, ['permissionName']);
     setPermissionT(translate.items);
-    setPermissions(response.permissions);
+    setPermissions(initialArrayPermissions.current);
+    _setSelectPermissions();
   }
 
   async function getActions() {
@@ -320,15 +364,44 @@ function PermissionsTabs({ t, profile, onPermissionsChange = () => {}, isEditMod
   }, [actionT, actions, t]);
 
   return (
-    <PageContainer>
+    <>
       <div className="bg-primary-content p-4">
-        <Table
-          columns={tableHeaders}
-          data={tableData}
-          setData={(e) => (isEditMode ? setTableData(e) : null)}
-        />
+        <PageContainer>
+          <div className="text-secondary font-semibold text-sm uppercase mb-5">
+            {t('permissions')}
+          </div>
+          <div className="flex flex-row max-w-screen-md">
+            <div className="w-4/12 font-medium">{t('select_permissions')}</div>
+            <div className="w-8/12">
+              <Select
+                value={selectedPermission}
+                onChange={(e) => {
+                  setSelectedPermission(e.target.value);
+                }}
+                outlined={true}
+                className="w-full max-w-xs"
+              >
+                <option value="all">{t('permissions_all')}</option>
+                {selectPermissions.map(({ pluginName, name }) => (
+                  <option key={pluginName} value={pluginName}>
+                    {name}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          </div>
+        </PageContainer>
       </div>
-    </PageContainer>
+      <PageContainer>
+        <div className="bg-primary-content p-4">
+          <Table
+            columns={tableHeaders}
+            data={tableData}
+            setData={(e) => (isEditMode ? _setTableData(e) : null)}
+          />
+        </div>
+      </PageContainer>
+    </>
   );
 }
 
