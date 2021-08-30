@@ -73,8 +73,11 @@ async function setupFront(leemons, plugins, providers, nextDir) {
     },
     // When a change occurs, reload front
     handler: async () => {
-      await loadFront(leemons, plugins, providers);
-      await build();
+      console.log('leemons.canReloadFrontend', leemons.canReloadFrontend);
+      if (leemons.canReloadFrontend) {
+        await loadFront(leemons, plugins, providers);
+        await build();
+      }
     },
     logger: leemons.log,
   });
@@ -132,10 +135,13 @@ ${plugin.dir.next})`,
      * connection and load back again
      */
     handler: async () => {
-      // eslint-disable-next-line no-param-reassign
-      leemons.backRouter.stack = [];
-      await leemons.db.destroy();
-      return leemons.loadBack();
+      console.log('leemons.canReloadBackend', leemons.canReloadBackend);
+      if (leemons.canReloadBackend) {
+        // eslint-disable-next-line no-param-reassign
+        leemons.backRouter.stack = [];
+        await leemons.db.destroy();
+        return leemons.loadBack();
+      }
     },
     logger: leemons.log,
   });
@@ -171,6 +177,15 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
     const logger = await createLogger();
     logger.level = logLevel;
 
+    let canReloadWorkers = true;
+
+    function reloadWorkers() {
+      Object.values(cluster.workers).forEach((worker) => {
+        worker.send('kill');
+      });
+      createWorker({ PORT, loggerId: logger.id, loggerLevel: logger.level });
+    }
+
     /*
      * Thread communication listener
      *
@@ -183,6 +198,15 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
         message = { message: _message };
       }
       switch (message.message) {
+        case 'stop-auto-reload':
+          canReloadWorkers = false;
+          break;
+        case 'start-auto-reload':
+          canReloadWorkers = true;
+          break;
+        case 'reload-workers':
+          reloadWorkers();
+          break;
         case 'kill':
           worker.send({ ...message, message: 'kill' });
           break;
@@ -210,10 +234,10 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
       },
       // When a change is detected, kill all the workers and fork a new one
       handler: async () => {
-        Object.values(cluster.workers).forEach((worker) => {
-          worker.send('kill');
-        });
-        createWorker({ PORT, loggerId: logger.id, loggerLevel: logger.level });
+        console.log('rrecarga worker', canReloadWorkers);
+        if (canReloadWorkers) {
+          reloadWorkers();
+        }
       },
       logger,
     });
@@ -232,6 +256,16 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
 
     // Starts the application (Config)
     const leemons = new Leemons(log);
+
+    leemons.stopAutoReloadWorkers = () => {
+      process.send({ message: 'stop-auto-reload' });
+    };
+    leemons.startAutoReloadWorkers = () => {
+      process.send({ message: 'start-auto-reload' });
+    };
+    leemons.reloadWorkers = () => {
+      process.send({ message: 'reload-workers' });
+    };
 
     /*
      * Thread communication listener

@@ -7,6 +7,7 @@ const { computeDependencies, checkMissingDependencies, sortByDeps } = require('.
 const { getStatus, PLUGIN_STATUS } = require('./pluginsStatus');
 const ScriptLoader = require('./loadScripts');
 const transformServices = require('./transformServices');
+const execa = require('execa');
 
 /**
  * Loads all the external files of a type (plugins, providers, etc)
@@ -164,6 +165,38 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
       // Expose some objects to the plugin (leemons.plugin, leemons.getplugin,
       // leemons.query)
       const vmFilter = (filter) => {
+        _.set(filter, 'leemons.utils', {
+          stopAutoServerReload: () => {
+            if (plugin.name === 'plugin-manager') {
+              leemons.canReloadFrontend = false;
+              leemons.canReloadBackend = false;
+              if (leemons.stopAutoReloadWorkers) leemons.stopAutoReloadWorkers();
+              return true;
+            }
+            throw new Error('Only the plugin plugin-manager have access to stopAutoServerReload');
+          },
+          startAutoServerReload: () => {
+            if (plugin.name === 'plugin-manager') {
+              leemons.canReloadFrontend = true;
+              leemons.canReloadBackend = true;
+              if (leemons.startAutoReloadWorkers) leemons.startAutoReloadWorkers();
+              return true;
+            }
+            throw new Error('Only the plugin plugin-manager have access to startAutoServerReload');
+          },
+          reloadServer: () => {
+            if (plugin.name === 'plugin-manager') {
+              leemons.reloadWorkers();
+              return true;
+            }
+            throw new Error('Only the plugin plugin-manager have access to reloadServer');
+          },
+          getExeca: () => {
+            if (plugin.name === 'plugin-manager') return execa;
+            throw new Error('Only the plugin plugin-manager have access to execa');
+          },
+        });
+
         // Only let the plugin to emit events on itself
         _.set(filter, 'leemons.events', {
           emit: (event, ...args) => {

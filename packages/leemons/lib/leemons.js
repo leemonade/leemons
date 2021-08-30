@@ -29,6 +29,9 @@ class Leemons {
     // expose logging system to leemons
     this.log = log;
 
+    this.canReloadFrontend = true;
+    this.canReloadBackend = true;
+
     log.verbose('New leemons');
 
     const timers = new Map();

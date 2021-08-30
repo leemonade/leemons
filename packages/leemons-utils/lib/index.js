@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const aws = require('aws-sdk');
 const slugify = require('slugify');
 const squirrelly = require('squirrelly');
+const execa = require('execa');
 const { env } = require('./env');
 const { getModel, generateModelName } = require('./model');
 const buildQuery = require('./queryBuilder');

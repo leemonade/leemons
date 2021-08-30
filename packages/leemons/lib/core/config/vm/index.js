@@ -33,6 +33,25 @@ module.exports = (allowedPath, filter = null, env = {}) => {
     path.resolve(leemons.dir ? leemons.dir.app : process.cwd(), 'node_modules'),
   ];
 
+  const builtin = [
+    'path',
+    'url',
+    'assert',
+    'buffer',
+    'crypto',
+    'events',
+    'querystring',
+    'readline',
+    'stream',
+    'string_decoder',
+    'zlib',
+    'constants',
+    'fs',
+    'util',
+    'os',
+    'events',
+  ];
+
   // Set-up a NodeVM with the limititations
   const vm = new NodeVM({
     sandbox: filterLeemons(filter),
@@ -44,24 +63,7 @@ module.exports = (allowedPath, filter = null, env = {}) => {
       // If the insecure flag is true, disable the require restriction
       root: leemons.config && leemons.config.get('config.insecure', false) ? undefined : root,
       // Allow the following node-builtin modules
-      builtin: [
-        'path',
-        'url',
-        'assert',
-        'buffer',
-        'crypto',
-        'events',
-        'querystring',
-        'readline',
-        'stream',
-        'string_decoder',
-        'zlib',
-        'constants',
-        'fs',
-        'util',
-        'os',
-        'events',
-      ],
+      builtin,
       // Ensure a protected use of FS (only access inside the given directory)
       mock: {
         fs: protect(allowedPath)(),
