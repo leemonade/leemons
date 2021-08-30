@@ -1,4 +1,7 @@
-const table = leemons.query('plugins_classroom::levels');
+const tables = {
+  levels: leemons.query('plugins_classroom::levels'),
+  levelSchemas: leemons.query('plugins_classroom::levelSchemas'),
+};
 
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 
@@ -10,7 +13,7 @@ async function add(
 
   // ---------------------------------------------------------------------------
   // validate data types
-  const levelSchema = {
+  const schemaLevel = {
     type: 'object',
     properties: {
       names: {
@@ -36,11 +39,11 @@ async function add(
       },
     },
   };
-  const validator = new global.utils.LeemonsValidator(levelSchema);
+  const validator = new global.utils.LeemonsValidator(schemaLevel);
 
   if (validator.validate(level)) {
     // -------------------------------------------------------------------------
-    // Register LevelSchema inside a transaction
+    // Register Level inside a transaction
     return global.utils.withTransaction(
       async (t) => {
         let savedLevel;
@@ -48,10 +51,37 @@ async function add(
         let savedDescriptions;
         let missingLocales;
 
+        let levelSchema;
+
+        // -------------------------------------------------------------------------
+        // Get the corresponding LevelSchema
+        try {
+          levelSchema = await tables.levelSchemas.findOne({ id: schema }, { transacting: t });
+        } catch (e) {
+          throw new Error("The referenced schema can't be fetched");
+        }
+        if (!levelSchema) {
+          throw new Error('The referenced schema does not exists');
+        }
+
+        // -------------------------------------------------------------------------
+        // Check if the parent exists and is compatible with the given LevelSchema
+        const validSchemaAndParent = await leemons.plugin.services.levels.hasValidSchemaAndParent(
+          levelSchema,
+          parent,
+          {
+            transacting,
+          }
+        );
+
+        if (!validSchemaAndParent.ok) {
+          throw new Error(validSchemaAndParent.message);
+        }
+
         // -----------------------------------------------------------------------
         // Save level schema
         try {
-          savedLevel = await table.create(level, { transacting: t });
+          savedLevel = await tables.levels.create(level, { transacting: t });
         } catch (e) {
           if (e.code.includes('ER_NO_REFERENCED_ROW')) {
             if (!parent) {
@@ -77,7 +107,7 @@ async function add(
 
           savedNames = items;
         } catch (e) {
-          throw new Error("the translated names can't be saved");
+          throw new Error("The translated names can't be saved");
         }
 
         // -----------------------------------------------------------------------
@@ -95,7 +125,7 @@ async function add(
 
           savedDescriptions = items;
         } catch (e) {
-          throw new Error("the translated descriptions can't be saved");
+          throw new Error("The translated descriptions can't be saved");
         }
 
         return {
@@ -109,7 +139,7 @@ async function add(
             : null,
         };
       },
-      table,
+      tables.levels,
       transacting
     );
   }

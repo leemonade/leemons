@@ -5,6 +5,7 @@ const list = require('../src/services/levels/list');
 const setNames = require('../src/services/levels/setNames');
 const setDescriptions = require('../src/services/levels/setDescriptions');
 const setParent = require('../src/services/levels/setParent');
+const hasValidSchemaAndParent = require('../src/services/levels/hasValidSchemaAndParent');
 
 module.exports = {
   add,
@@ -14,4 +15,5 @@ module.exports = {
   setNames,
   setDescriptions,
   setParent,
+  hasValidSchemaAndParent,
 };
