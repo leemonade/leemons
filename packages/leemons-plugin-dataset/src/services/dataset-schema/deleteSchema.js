@@ -1,3 +1,12 @@
+const _ = require('lodash');
+const {
+  transformPermissionKeysToObjects,
+  transformPermissionKeysToObjectsByType,
+} = require('./transformPermissionKeysToObjects');
+const {
+  getJsonSchemaProfilePermissionsKeys,
+  getJsonSchemaProfilePermissionsKeysByType,
+} = require('./transformJsonOrUiSchema');
 const {
   validatePluginName,
   validateNotExistLocation,
@@ -29,6 +38,19 @@ async function deleteSchema(locationName, pluginName, { transacting: _transactin
 
   return global.utils.withTransaction(
     async (transacting) => {
+      // ES: Pillamos los permisos por perfil para el jsonSchema
+      // EN: We set the permissions per profile for jsonSchema
+      const { jsonSchema } = await table.dataset.findOne({ locationName, pluginName });
+
+      const {
+        profiles: profilePermissions,
+        roles: rolesPermissions,
+      } = transformPermissionKeysToObjectsByType(
+        jsonSchema,
+        getJsonSchemaProfilePermissionsKeysByType(jsonSchema),
+        `${locationName}.${pluginName}`
+      );
+
       const promises = [
         table.dataset.update(
           { locationName, pluginName },
@@ -39,6 +61,33 @@ async function deleteSchema(locationName, pluginName, { transacting: _transactin
           { transacting }
         ),
       ];
+
+      // ES: Borramos todos los permisos que se añadieron al perfil para este dataset
+      // EN: Delete all permissions that were added to the profile for this dataset
+      _.forIn(profilePermissions, (permissions, profileId) => {
+        promises.push(
+          leemons
+            .getPlugin('users')
+            .services.profiles.removeCustomPermissionsByName(
+              profileId,
+              _.map(permissions, 'permissionName'),
+              { transacting }
+            )
+        );
+      });
+      _.forIn(rolesPermissions, (permissions, roleId) => {
+        promises.push(
+          leemons
+            .getPlugin('users')
+            .services.roles.removePermissionsByName(roleId, _.map(permissions, 'permissionName'), {
+              removeCustomPermissions: true,
+              transacting,
+            })
+        );
+      });
+
+      // ES: Borramos traducciones
+      // EN: We delete translations
       if (translations()) {
         promises.push(
           translations().contents.deleteAll(

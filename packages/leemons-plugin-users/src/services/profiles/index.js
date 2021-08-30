@@ -4,6 +4,9 @@ const { existName } = require('./existName');
 const { detailByUri } = require('./detailByUri');
 const { update } = require('./update');
 const existMany = require('./existMany');
+const addCustomPermissions = require('./addCustomPermissions');
+const removeCustomPermissionsByName = require('./removeCustomPermissionsByName');
+const { getRoleForRelationshipProfileCenter } = require('./getRoleForRelationshipProfileCenter');
 
 module.exports = {
   list,
@@ -12,4 +15,7 @@ module.exports = {
   detailByUri,
   update,
   existMany,
+  addCustomPermissions,
+  removeCustomPermissionsByName,
+  getRoleForRelationshipProfileCenter,
 };

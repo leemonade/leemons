@@ -9,10 +9,10 @@ const { table } = require('../tables');
  * @param {string} surnames - User surnames
  * @param {string} email - User email
  * @param {string} password - User password in raw
- * @param {string} language - User language
+ * @param {string} locale - User language
  * @return {Promise<User>} Created / Updated role
  * */
-async function addFirstSuperAdminUser(name, surnames, email, password, language) {
+async function addFirstSuperAdminUser(name, surnames, email, password, locale) {
   const hasUsers = await table.users.count();
   if (!hasUsers) {
     return table.users.transaction(async (transacting) => {
@@ -22,7 +22,7 @@ async function addFirstSuperAdminUser(name, surnames, email, password, language)
           surnames,
           email,
           password: await encryptPassword(password),
-          language,
+          locale,
           active: true,
         },
         { transacting }

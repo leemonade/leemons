@@ -20,3 +20,6 @@ module.exports = {
     type: 'uuid',
   },
 };
+// -- Keys --
+// jwt-private-key
+// platform-locale

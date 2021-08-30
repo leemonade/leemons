@@ -9,7 +9,21 @@ module.exports = {
       type: 'string',
       options: {
         notNull: true,
-        unique: true,
+      },
+    },
+    type: {
+      type: 'string',
+      options: {
+        notNull: true,
+      },
+    },
+    description: {
+      type: 'string',
+    },
+    uri: {
+      type: 'string',
+      options: {
+        notNull: true,
       },
     },
   },

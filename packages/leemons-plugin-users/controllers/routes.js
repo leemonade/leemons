@@ -45,6 +45,18 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/user/remember/profile',
+    method: 'GET',
+    handler: 'users.getRememberProfile',
+    authenticated: true,
+  },
+  {
+    path: '/user/remember/profile',
+    method: 'POST',
+    handler: 'users.setRememberProfile',
+    authenticated: true,
+  },
+  {
     path: '/user/profile/:id/token',
     method: 'GET',
     handler: 'users.profileToken',
@@ -127,6 +139,12 @@ module.exports = [
     handler: 'permissions.list',
     authenticated: true,
   },
+  {
+    path: '/permission/get-if-have',
+    method: 'POST',
+    handler: 'permissions.getPermissionsWithActionsIfIHave',
+    authenticated: true,
+  },
   /**
    * Actions
    * */
@@ -141,11 +159,6 @@ module.exports = [
    * */
   {
     path: '/role',
-    method: 'GET',
-    handler: 'roles.list',
-  },
-  {
-    path: '/role',
     method: 'POST',
     handler: 'roles.create',
   },
@@ -153,5 +166,33 @@ module.exports = [
     path: '/role/:id',
     method: 'PUT',
     handler: 'roles.create',
+  },
+  /**
+   * Centers
+   * */
+  {
+    path: '/centers',
+    method: 'POST',
+    handler: 'centers.list',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.centers': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+
+  /**
+   * Platform
+   * */
+  {
+    path: '/platform/default-locale',
+    method: 'GET',
+    handler: 'platform.getDefaultLocale',
+  },
+  {
+    path: '/platform/locales',
+    method: 'GET',
+    handler: 'platform.getLocales',
   },
 ];

@@ -1,0 +1,34 @@
+/* :> */
+@layer components {
+  /* <: */
+  .menu {
+    @apply flex flex-col overflow-hidden;
+    &-horizontal {
+      @apply flex-row inline-flex;
+      .menu-item {
+        @apply flex-row;
+      }
+    }
+  }
+  .menu-item {
+    @apply flex flex-col items-stretch;
+    > a,
+    > span {
+      @apply flex items-center transition ease-in-out duration-200;
+    }
+    > a {
+      @apply cursor-pointer;
+      &:focus {
+        @apply outline-none;
+      }
+    }
+    &.disabled {
+      & > a,
+      & > span {
+        @apply cursor-auto;
+      }
+    }
+  }
+  /* :> */
+}
+/* <: */

@@ -20,7 +20,11 @@ async function validateExistSchema(locationName, pluginName, { transacting }) {
 
 async function validateNotExistSchema(locationName, pluginName, { transacting }) {
   if (!(await existSchema(locationName, pluginName, { transacting })))
-    throw new Error(`No schema for '${locationName}' dataset location`);
+    throw new global.utils.HttpErrorWithCustomCode(
+      400,
+      4001,
+      `No schema for '${locationName}' dataset location`
+    );
 }
 
 async function validateExistSchemaLocale(locationName, pluginName, locale, { transacting }) {
@@ -30,7 +34,11 @@ async function validateExistSchemaLocale(locationName, pluginName, locale, { tra
 
 async function validateNotExistSchemaLocale(locationName, pluginName, locale, { transacting }) {
   if (!(await existSchemaLocale(locationName, pluginName, locale, { transacting })))
-    throw new Error(`"${locale}" language data for "${locationName}" localization not exists.`);
+    throw new global.utils.HttpErrorWithCustomCode(
+      400,
+      4002,
+      `"${locale}" language data for "${locationName}" localization not exists.`
+    );
 }
 
 async function validateExistValues(locationName, pluginName, target, { transacting }) {

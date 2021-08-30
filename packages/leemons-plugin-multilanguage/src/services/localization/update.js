@@ -182,4 +182,16 @@ module.exports = (Base) =>
         transacting
       );
     }
+
+    async setManyByJSON(data, prefix, { transacting } = {}) {
+      const toAdd = {};
+      _.forIn(data, (json, lang) => {
+        toAdd[lang] = {};
+        _.forEach(global.utils.getObjectArrayKeys(json), (key) => {
+          toAdd[lang][`${prefix}${key}`] = _.get(data[lang], key);
+        });
+      });
+
+      return this.setMany.call(this, toAdd, { transacting });
+    }
   };

@@ -1,5 +1,6 @@
 const Bookshelf = require('bookshelf');
 const bookshelfUUID = require('bookshelf-uuid');
+const _ = require('lodash');
 
 const { initKnex } = require('./knex');
 const mountModels = require('./model/mountModel');
@@ -19,6 +20,7 @@ class Connector {
   constructor(leemons) {
     this.leemons = leemons;
     this.models = new Map();
+    this.contexts = new Map();
 
     this.buildQuery = buildQuery;
   }
@@ -27,7 +29,7 @@ class Connector {
     return generateQueries(model, this);
   }
 
-  async init(models) {
+  async init() {
     // Get connections made with bookshelf
     const bookshelfConnections = Object.entries(this.leemons.config.get('database.connections'))
       .map(([name, value]) => ({ ...value, name }))
@@ -38,8 +40,6 @@ class Connector {
 
     return Promise.all(
       bookshelfConnections.map((connection) => {
-        // TODO: Let the user have a pre-initialization function
-
         // Initialize the ORM
         const ORM = new Bookshelf(this.connections[connection.name]);
 
@@ -51,8 +51,47 @@ class Connector {
           connection,
           connector: this,
         };
+        this.contexts.set(connection.name, ctx);
 
-        return setupConnection(ctx, models);
+        return ctx;
+      })
+    );
+  }
+
+  destroy() {
+    return Promise.all(Object.values(this.connections).map((connection) => connection.destroy()));
+  }
+
+  /**
+   * Loads the given models in the database
+   * @param {Model[]} models
+   * @returns {Promise}
+   */
+  async loadModels(models) {
+    const modelsPerConnection = {};
+    // Separate the models per connection
+    Object.values(models).forEach((model) => {
+      if (_.has(modelsPerConnection, model.connection)) {
+        modelsPerConnection[model.connection].push(model);
+      } else {
+        modelsPerConnection[model.connection] = [model];
+      }
+    });
+
+    // Load models per connection
+    return Promise.all(
+      Object.entries(modelsPerConnection).map(([connection, _models]) => {
+        // Throw if the connection does not exists
+        if (!this.contexts.has(connection)) {
+          throw new Error(
+            `No connection called ${connection} was setted up for connector: Bookshelf`
+          );
+        }
+
+        // Get the ctx for the given connection
+        const ctx = this.contexts.get(connection);
+        // Mount the models
+        return mountModels(_models, ctx);
       })
     );
   }

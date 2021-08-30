@@ -1,0 +1,16 @@
+/* :> */
+@layer components {
+  /* <: */
+  .page-description {
+    @apply font-inter text-sm text-secondary-300 font-light;
+    p {
+      @apply py-2;
+    }
+    b,
+    strong {
+      font-weight: 700;
+    }
+  }
+  /* :> */
+}
+/* <: */

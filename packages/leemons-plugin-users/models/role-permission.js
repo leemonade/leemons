@@ -25,6 +25,13 @@ module.exports = {
     target: {
       type: 'string',
     },
+    isCustom: {
+      type: 'boolean',
+      options: {
+        defaultTo: false,
+        notNull: true,
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

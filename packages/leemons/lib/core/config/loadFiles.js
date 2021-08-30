@@ -9,19 +9,23 @@ const vm = require('./vm');
  *
  * The can be executed with a custom env and also a filter (see ./vm/index.js)
  */
-async function loadJSFile(file, filter = null, allowedPath = null, env = {}) {
+async function loadJSFile(
+  file,
+  { filter = null, allowedPath = null, env = {}, execFunction = true } = {}
+) {
   let allowedDir = allowedPath;
   try {
     if (allowedPath === null) {
       allowedDir = path.dirname(file);
     }
     // Load the file in a VM (for security reasons)
-    const fileContent = vm(allowedDir, filter, env).runFile(file);
-    if (typeof fileContent === 'function') {
+    const fileContent = await vm(allowedDir, filter, env).runFile(file);
+    if (typeof fileContent === 'function' && execFunction) {
       return fileContent({ leemons });
     }
     return fileContent;
   } catch (e) {
+    console.error(e);
     throw new Error(`File can not be read: ${file}. ${e.message}`);
   }
 }
@@ -48,17 +52,20 @@ async function loadJSONFile(file) {
  */
 async function loadFile(
   file,
-  accept = ['.js', '.json'],
-  filter = null,
-  allowedPath = null,
-  env = {}
+  {
+    accept = ['.js', '.json'],
+    filter = null,
+    allowedPath = null,
+    env = {},
+    execFunction = true,
+  } = {}
 ) {
   const extension = path.extname(file);
 
   if (await fs.exists(file)) {
     // If it is a JS file and it is allowed, then load it
     if (extension === '.js' && accept.includes('.js')) {
-      return loadJSFile(file, filter, allowedPath, env);
+      return loadJSFile(file, { filter, allowedPath, env, execFunction });
     }
     // If it is a JSON file and it is allowed, then load it
     if (extension === '.json' && accept.includes('.json')) {
@@ -82,7 +89,14 @@ async function loadFile(
  */
 async function loadFiles(
   dir,
-  { accept = ['.js', '.json'], exclude = [], filter = null, env = {}, allowedPath = null } = {}
+  {
+    accept = ['.js', '.json'],
+    exclude = [],
+    filter = null,
+    env = {},
+    allowedPath = null,
+    execFunction = true,
+  } = {}
 ) {
   // If the directory doesn't exists, return an empty object
   if (!(await fs.exists(dir))) {
@@ -113,13 +127,13 @@ async function loadFiles(
         }
 
         // Load the current file
-        const fileConfig = await loadFile(
-          path.resolve(dir, file.name),
+        const fileConfig = await loadFile(path.resolve(dir, file.name), {
           accept,
           filter,
           allowedPath,
-          env
-        );
+          env,
+          execFunction,
+        });
 
         // Append to the current config
         if (fileConfig) {

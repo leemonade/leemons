@@ -1,0 +1,9 @@
+/* :> */
+@layer components {
+  /* <: */
+  .alert {
+    @apply rounded-btn bg-base-200 p-4;
+  }
+  /* :> */
+}
+/* <: */

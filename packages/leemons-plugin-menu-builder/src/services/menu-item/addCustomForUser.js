@@ -1,8 +1,6 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
 const { translations } = require('../../translations');
-const prefixPN = require('../../helpers/prefixPN');
-const addItemPermissions = require('../../helpers/addItemPermissions');
 const {
   validateExistMenuItem,
   validateNotExistMenu,
@@ -11,30 +9,33 @@ const {
 
 const { withTransaction } = global.utils;
 
+// plugins.menu-builder.plugins.menu-builder.main.plugins.menu-builder.user:a3578518-b547-4059-8afb-3d715a623b6d.user-list-22.8jrwn3fd8me1ulvna75wgjws2xj0c9a6n.label
+
 /**
  * Create a Menu Item
  * @private
  * @static
- * @param {any} userAuth User auth
+ * @param {UserSession} userSession User session
  * @param {MenuItemAdd} data - The Menu Item to create
  * @param {any=} transacting DB transaction
  * @return {Promise<MenuItem>} Created / Updated menuItem
  * */
 async function addCustomForUser(
-  userAuth,
+  userSession,
   { label, description, ...data },
   { transacting: _transacting } = {}
 ) {
   const locales = translations();
 
   // eslint-disable-next-line no-param-reassign
-  data.key = prefixPN(`user:${userAuth.id}.${data.key}`);
+  data.key = leemons.plugin.prefixPN(
+    `user.${userSession.id}.${data.key}.${global.utils.randomString()}`
+  );
 
   return withTransaction(
     async (transacting) => {
       // Check for required params
       await validateNotExistMenu(data.menuKey, { transacting });
-
       // Check if the MENU ITEM exists
       await validateExistMenuItem(data.menuKey, data.key, { transacting });
 
@@ -44,16 +45,14 @@ async function addCustomForUser(
       // Create the MENU ITEM
       const promises = [table.menuItem.create(data, { transacting })];
 
-      // TODO Change to user locale
-      const locale = 'en';
-
       // Create LABEL & DESCRIPTIONS in locales
       if (locales) {
         if (label) {
           promises.push(
-            locales.contents.addManyByKey(
-              prefixPN(`${data.menuKey}.${data.key}.label`),
-              { [locale]: label },
+            locales.contents.add(
+              leemons.plugin.prefixPN(`${data.menuKey}.${data.key}.label`),
+              userSession.locale,
+              label,
               {
                 transacting,
               }
@@ -63,9 +62,10 @@ async function addCustomForUser(
 
         if (description) {
           promises.push(
-            locales.contents.addManyByKey(
-              prefixPN(`${data.menuKey}.${data.key}.description`),
-              { [locale]: description },
+            locales.contents.add(
+              leemons.plugin.prefixPN(`${data.menuKey}.${data.key}.description`),
+              userSession.locale,
+              description,
               {
                 transacting,
               }
@@ -76,22 +76,20 @@ async function addCustomForUser(
 
       // Add the necessary permissions to view the item
       promises.push(
-        addItemPermissions(
+        leemons.getPlugin('users').services.permissions.addItem(
           data.key,
-          `${data.menuKey}.menu-item.custom`,
-          [
-            {
-              permissionName: data.key,
-              actionNames: ['view', 'admin'],
-            },
-          ],
+          leemons.plugin.prefixPN(`${data.menuKey}.menu-item.custom`),
+          {
+            permissionName: data.key,
+            actionNames: ['view', 'admin'],
+          },
           { isCustomPermission: true, transacting }
         )
       );
 
       promises.push(
-        leemons.plugins.users.services.users.addCustomPermission(
-          userAuth.id,
+        leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
+          _.map(userSession.userAgents, 'id'),
           {
             permissionName: data.key,
             actionNames: ['admin'],

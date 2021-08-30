@@ -1,3 +1,6 @@
+const _ = require('lodash');
+const { transformPermissionKeysToObjectsByType } = require('./transformPermissionKeysToObjects');
+const { getJsonSchemaProfilePermissionsKeysByType } = require('./transformJsonOrUiSchema');
 const {
   validatePluginName,
   validateNotExistLocation,
@@ -21,25 +24,66 @@ const { table } = require('../tables');
  *  @param {any=} transacting - DB Transaction
  *  @return {Promise<DatasetSchema>} The new dataset location
  *  */
-async function addSchema({ locationName, pluginName, jsonSchema, jsonUI }, { transacting } = {}) {
+async function addSchema(
+  { locationName, pluginName, jsonSchema, jsonUI },
+  { transacting: _transacting } = {}
+) {
   validateAddSchema({ locationName, pluginName, jsonSchema, jsonUI });
   validatePluginName(pluginName, this.calledFrom);
-  await validateNotExistLocation(locationName, pluginName, { transacting });
-  await validateExistSchema(locationName, pluginName, { transacting });
+  await validateNotExistLocation(locationName, pluginName, { transacting: _transacting });
+  await validateExistSchema(locationName, pluginName, { transacting: _transacting });
 
-  const dataset = await table.dataset.update(
-    { locationName, pluginName },
-    {
-      jsonSchema: JSON.stringify(jsonSchema),
-      jsonUI: JSON.stringify(jsonUI),
+  return global.utils.withTransaction(
+    async (transacting) => {
+      const {
+        profiles: profilePermissions,
+        roles: rolesPermissions,
+      } = transformPermissionKeysToObjectsByType(
+        jsonSchema,
+        getJsonSchemaProfilePermissionsKeysByType(jsonSchema),
+        `${locationName}.${pluginName}`
+      );
+
+      const promises = [
+        table.dataset.update(
+          { locationName, pluginName },
+          {
+            jsonSchema: JSON.stringify(jsonSchema),
+            jsonUI: JSON.stringify(jsonUI),
+          },
+          { transacting }
+        ),
+      ];
+
+      _.forIn(profilePermissions, (permissions, profileId) => {
+        promises.push(
+          leemons
+            .getPlugin('users')
+            .services.profiles.addCustomPermissions(profileId, permissions, {
+              transacting,
+            })
+        );
+      });
+
+      _.forIn(rolesPermissions, (permissions, roleId) => {
+        promises.push(
+          leemons.getPlugin('users').services.roles.addPermissionMany(roleId, permissions, {
+            isCustom: true,
+            transacting,
+          })
+        );
+      });
+
+      const [dataset] = await Promise.all(promises);
+
+      dataset.jsonSchema = JSON.parse(dataset.jsonSchema);
+      dataset.jsonUI = JSON.parse(dataset.jsonUI);
+
+      return dataset;
     },
-    { transacting }
+    table.dataset,
+    _transacting
   );
-
-  dataset.jsonSchema = JSON.parse(dataset.jsonSchema);
-  dataset.jsonUI = JSON.parse(dataset.jsonUI);
-
-  return dataset;
 }
 
 module.exports = addSchema;

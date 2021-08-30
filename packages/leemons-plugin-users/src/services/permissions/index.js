@@ -13,6 +13,9 @@ const { addActionMany } = require('./addActionMany');
 const { addAction } = require('./addAction');
 const { add } = require('./add');
 const { init } = require('./init');
+const { addCustomPermissionToUserAgent } = require('./addCustomPermissionToUserAgent');
+const { getUserAgentPermissions } = require('./getUserAgentPermissions');
+const { userAgentHasCustomPermission } = require('./userAgentHasCustomPermission');
 
 module.exports = {
   init,
@@ -30,4 +33,7 @@ module.exports = {
   hasAction,
   hasActionMany,
   manyPermissionsHasManyActions,
+  addCustomPermissionToUserAgent,
+  getUserAgentPermissions,
+  userAgentHasCustomPermission,
 };

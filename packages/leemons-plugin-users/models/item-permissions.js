@@ -6,7 +6,7 @@ module.exports = {
   },
   attributes: {
     permissionName: {
-      type: 'string',
+      type: 'text',
       options: {
         notNull: true,
       },
@@ -31,6 +31,9 @@ module.exports = {
       options: {
         notNull: true,
       },
+    },
+    center: {
+      type: 'text',
     },
   },
   primaryKey: {

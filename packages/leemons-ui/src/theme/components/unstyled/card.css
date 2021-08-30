@@ -1,0 +1,42 @@
+/* :> */
+@layer components {
+  /* <: */
+  .card {
+    @apply flex flex-col relative overflow-hidden;
+    &:focus {
+      @apply outline-none;
+    }
+    &-body {
+      @apply flex flex-col flex-auto;
+    }
+    & figure,
+    & figure > * {
+      @apply w-full;
+    }
+    &-actions {
+      @apply flex items-start flex-wrap -mx-1;
+      & > * {
+        @apply m-1;
+      }
+    }
+    &.image-full {
+      @apply grid;
+      &:before {
+        @apply relative;
+        content: '';
+      }
+      &:before,
+      & > * {
+        @apply row-start-1 col-start-1;
+      }
+      & > figure img {
+        @apply object-cover h-full;
+      }
+    }
+    &.image-full > &-body {
+      @apply relative;
+    }
+  }
+  /* :> */
+}
+/* <: */

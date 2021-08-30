@@ -11,8 +11,11 @@ function resetMenu() {
 
 async function getMenu(key, force) {
   if (!hooksActionsInit) {
+    hooks.addAction('menu-builder:reset-menu', resetMenu);
     hooks.addAction('user:change:profile', resetMenu);
+    hooks.addAction('user:update:permissions', resetMenu);
     hooks.addAction('menu-builder:user:addCustomItem', resetMenu);
+    hooks.addAction('menu-builder:user:updateItem', resetMenu);
     hooksActionsInit = true;
   }
   if (!menuCache[key] || force) {

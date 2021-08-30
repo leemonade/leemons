@@ -1,0 +1,43 @@
+/* :> */
+@layer components {
+  /* <: */
+  .card {
+    @apply rounded-btn;
+    &:focus-visible {
+      box-shadow: 0 0 0 2px currentColor;
+    }
+    &.bordered {
+      @apply border border-base-200;
+    }
+    &.compact {
+      .card-body {
+        @apply p-4 text-sm;
+      }
+      .card-title {
+        @apply mb-1;
+      }
+    }
+    &-body {
+      padding: var(--padding-card, 2rem);
+    }
+    &-title {
+      @apply mb-3 text-xl font-semibold;
+    }
+    &-actions:first-child {
+      @apply mb-2;
+    }
+    &-actions:last-child {
+      @apply mt-6;
+    }
+    &.image-full {
+      &:before {
+        @apply bg-neutral z-10 opacity-75 rounded-btn;
+      }
+    }
+    &.image-full > &-body {
+      @apply text-neutral-content z-20;
+    }
+  }
+  /* :> */
+}
+/* <: */

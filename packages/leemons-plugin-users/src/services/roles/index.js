@@ -1,22 +1,21 @@
-const {
-  searchUsersWithRoleAndMarkAsReloadPermissions,
-} = require('./searchUsersWithRoleAndMarkAsReloadPermissions');
+const searchUsersWithRoleAndMarkAsReloadPermissions = require('./searchUsersWithRoleAndMarkAsReloadPermissions');
 const { removePermissionAll } = require('./removePermissionAll');
 const { addPermissionMany } = require('./addPermissionMany');
 const { update } = require('./update');
 const { add } = require('./add');
-const { init } = require('./init');
 const { detail } = require('./detail');
+const { listForCenter } = require('./listForCenter');
+const removePermissionsByName = require('./removePermissionsByName');
 
 module.exports = {
-  init,
-
   add,
   update,
 
   detail,
+  listForCenter,
 
   addPermissionMany,
   deletePermissionAll: removePermissionAll,
+  removePermissionsByName: removePermissionsByName,
   searchUsersWithRoleAndMarkAsReloadPermissions,
 };

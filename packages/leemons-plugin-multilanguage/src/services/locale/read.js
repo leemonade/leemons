@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const { validateLocaleCode, validateLocaleCodeArray } = require('../../validations/locale');
 
 module.exports = (Base) =>
@@ -46,6 +47,25 @@ module.exports = (Base) =>
       } catch (e) {
         leemons.log.debug(e.message);
         throw new Error('An error occurred while getting all the locales');
+      }
+    }
+
+    /**
+     * Returns an array of locations in order of importance.
+     * Your specific locales -> User locale -> Center locale -> Platform locale
+     * @returns {Promise<string[]>} Locale array
+     */
+    async resolveLanguages(locales, userAgent) {
+      let finalLocales = [];
+      if (locales) {
+        finalLocales = finalLocales.concat(locales);
+      }
+      if (userAgent) {
+        const userAgents = _.isArray(userAgent) ? userAgent : [userAgent];
+      }
+      const platformLocale = await leemons.getPlugin('users').platform.getDefaultLocale();
+      if (platformLocale) {
+        finalLocales.push(platformLocale);
       }
     }
   };

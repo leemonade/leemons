@@ -1,0 +1,137 @@
+/* :> */
+@layer components {
+  /* <: */
+  .radio {
+    @apply appearance-none opacity-0 w-0 h-0 absolute;
+    & ~ .radio-mark {
+      @apply w-5 h-5 rounded-full border border-gray-30 bg-gray-10 bg-opacity-0;
+      &:before {
+        width: 12px;
+        height: 12px;
+        @apply bg-gray-30 opacity-0 rounded-full;
+      }
+    }
+    &:hover {
+      & ~ .radio-mark {
+        @apply border-gray-50;
+        &:before {
+          @apply opacity-50;
+        }
+      }
+    }
+    &:focus-visible,
+    &:checked:focus-visible,
+    &:checked:hover:focus-visible {
+      & ~ .radio-mark {
+      }
+    }
+    &:checked {
+      &,
+      &:hover {
+        & ~ .radio-mark {
+          @apply bg-opacity-100 border-gray-100;
+          &:before {
+            @apply opacity-100;
+          }
+        }
+      }
+    }
+    &-primary {
+      & ~ .radio-mark {
+        @apply bg-primary-100 bg-opacity-0;
+      }
+      &:checked {
+        &,
+        &:hover {
+          & ~ .radio-mark {
+            @apply border-primary;
+            &:before {
+              @apply bg-primary;
+            }
+          }
+        }
+      }
+    }
+    &-secondary {
+      & ~ .radio-mark {
+        @apply bg-secondary-20 bg-opacity-0;
+      }
+      &:checked {
+        &,
+        &:hover {
+          & ~ .radio-mark {
+            @apply border-secondary;
+            &:before {
+              @apply bg-secondary;
+            }
+          }
+        }
+      }
+    }
+    &-accent {
+      & ~ .radio-mark {
+        @apply bg-accent-100 bg-opacity-0;
+      }
+      &:checked {
+        &,
+        &:hover {
+          & ~ .radio-mark {
+            @apply border-accent;
+            &:before {
+              @apply bg-accent;
+            }
+          }
+        }
+      }
+    }
+    &-error {
+      & ~ .radio-mark {
+        @apply border-error bg-error bg-opacity-0;
+        &:before {
+          @apply bg-error;
+        }
+      }
+      &:hover {
+        & ~ .radio-mark {
+          @apply border-error;
+          &:before {
+            @apply opacity-30;
+          }
+        }
+      }
+      &:checked {
+        &,
+        &:hover {
+          & ~ .radio-mark {
+            @apply border-error bg-opacity-10;
+          }
+        }
+      }
+    }
+    &[disabled],
+    &[disabled]:hover {
+      & ~ .radio-mark {
+        @apply cursor-not-allowed;
+      }
+      &:checked {
+        & ~ .radio-mark {
+          @apply cursor-not-allowed;
+        }
+      }
+    }
+  }
+
+  @keyframes checkmark {
+    30% {
+      transform: rotate(45deg) translate(-1px, -1px) scale(1.2);
+    }
+    50% {
+      transform: rotate(45deg) translate(-1px, -1px) scale(0.8);
+    }
+    100% {
+      transform: rotate(45deg) translate(-1px, -1px) scale(1);
+    }
+  }
+  /* :> */
+}
+/* <: */

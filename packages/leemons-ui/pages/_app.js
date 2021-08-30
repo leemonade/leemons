@@ -1,9 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import '../lib/theme/leemons.css';
+import '../src/theme/leemons.css';
+import Layout from '../partials/Layout';
 
 function App({ Component, pageProps }) {
-  return <Component {...pageProps} />;
+  return (
+    <Layout>
+      <Component {...pageProps} />
+    </Layout>
+  );
 }
 
 App.propTypes = {

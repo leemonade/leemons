@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const prefixPN = require('../../helpers/prefixPN');
 const { table } = require('../../tables');
 
 /**
@@ -9,7 +8,7 @@ const { table } = require('../../tables');
  * @param {string} menuKey Menu key
  * @param {string} parentKey Parent key
  * @param {string[]} ids Menu item ids in order
- * @param {any} userAuth User auth
+ * @param {UserSession} userSession User session
  * @param {any=} transacting DB transaction
  * @return {Promise<MenuItem>} Created / Updated menuItem
  * */
@@ -17,7 +16,7 @@ async function reOrderCustomUserItems(
   menuKey,
   parentKey,
   ids,
-  userAuth,
+  userSession,
   { transacting: _transacting } = {}
 ) {
   // Todo: Comprobamos si tiene permiso mediante la clave, mejor en rendimiento peor en consistencia deberia quiza de ir por los permisos del usuario comprobando la tabla de los permisos?
@@ -27,7 +26,7 @@ async function reOrderCustomUserItems(
       menuKey,
       parentKey,
       id_$in: ids,
-      key_$startssWith: prefixPN(`user:${userAuth.id}.`),
+      key_$startssWith: leemons.plugin.prefixPN(`user.${userSession.id}.`),
     },
     { transacting: _transacting }
   );

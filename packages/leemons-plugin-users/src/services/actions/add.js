@@ -13,7 +13,6 @@ async function add(data) {
   const action = await table.actions.count({ actionName: data.actionName });
   if (action) throw new Error(`Action '${data.actionName}' already exists`);
 
-  leemons.log.info(`Adding action '${data.actionName}'`);
   return table.actions.transaction(async (transacting) => {
     const promises = [
       table.actions.create(
@@ -34,7 +33,7 @@ async function add(data) {
       );
     }
     const values = await Promise.all(promises);
-
+    leemons.log.info(`Added action '${data.actionName}'`);
     return values[0];
   });
 }

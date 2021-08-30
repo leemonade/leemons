@@ -25,6 +25,13 @@ const addMenuItemSchema = () => ({
   additionalProperties: false,
 });
 
+const updateMenuItemSchema = () => ({
+  type: 'object',
+  properties: addMenuItemSchema().properties,
+  required: ['menuKey', 'key', 'pluginName'],
+  additionalProperties: false,
+});
+
 const addMenuItemFromUserSchema = () => ({
   type: 'object',
   properties: {
@@ -46,6 +53,27 @@ const addMenuItemFromUserSchema = () => ({
     description: stringSchema,
   },
   required: ['menuKey', 'key', 'parentKey', 'pluginName', 'label', 'url'],
+  additionalProperties: false,
+});
+
+const removeMenuItemFromUserSchema = () => ({
+  type: 'object',
+  properties: {
+    menuKey: stringSchema,
+    key: stringSchema,
+  },
+  required: ['menuKey', 'key'],
+  additionalProperties: false,
+});
+
+const updateMenuItemFromUserSchema = () => ({
+  type: 'object',
+  properties: {
+    menuKey: stringSchema,
+    key: stringSchema,
+    label: stringSchema,
+  },
+  required: ['menuKey', 'key', 'label'],
   additionalProperties: false,
 });
 
@@ -71,8 +99,32 @@ function validateAddMenuItem(data) {
   }
 }
 
+function validateUpdateMenuItem(data) {
+  const validator = new LeemonsValidator(updateMenuItemSchema());
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 function validateAddMenuItemFromUser(data) {
   const validator = new LeemonsValidator(addMenuItemFromUserSchema());
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
+function validateRemoveMenuItemFromUser(data) {
+  const validator = new LeemonsValidator(removeMenuItemFromUserSchema());
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
+function validateUpdateMenuItemFromUser(data) {
+  const validator = new LeemonsValidator(updateMenuItemFromUserSchema());
 
   if (!validator.validate(data)) {
     throw validator.error;
@@ -90,5 +142,8 @@ function validateReOrder(data) {
 module.exports = {
   validateAddMenuItem,
   validateAddMenuItemFromUser,
+  validateRemoveMenuItemFromUser,
+  validateUpdateMenuItemFromUser,
   validateReOrder,
+  validateUpdateMenuItem,
 };

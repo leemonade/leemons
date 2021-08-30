@@ -1,0 +1,14 @@
+/* :> */
+@layer components {
+  /* <: */
+  .hero {
+    &-overlay {
+      @apply bg-neutral bg-opacity-50;
+    }
+    &-content {
+      @apply p-4 gap-4 max-w-7xl;
+    }
+  }
+  /* :> */
+}
+/* <: */

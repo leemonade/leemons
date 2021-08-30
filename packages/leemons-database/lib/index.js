@@ -28,20 +28,18 @@ class DatabaseManager {
   async init() {
     if (this.initialized) throw new Error('The database was already initialized');
 
-    this.connectors.load();
-
-    const models = _.merge(
-      ...Object.values(_.cloneDeep(this.leemons.plugins))
-        .filter((plugin) => plugin.models)
-        .map((plugin) => plugin.models),
-      ...Object.values(_.cloneDeep(this.leemons.providers))
-        .filter((plugin) => plugin.models)
-        .map((plugin) => plugin.models)
-    );
-
-    await this.connectors.init(this.leemons.core_store, models);
+    await this.connectors.load();
+    await this.connectors.init();
 
     this.initialized = true;
+  }
+
+  async loadModels(models) {
+    await this.connectors.loadModels(this.leemons.models.core_store, models);
+  }
+
+  async destroy() {
+    await this.connectors.destroy();
   }
 
   query(modelName, pluginName = null) {

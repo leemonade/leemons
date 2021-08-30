@@ -1,0 +1,20 @@
+/* :> */
+@layer components {
+  /* <: */
+  .label {
+    @apply pt-2 pb-1;
+    &-text {
+      @apply text-sm;
+      color: #000000;
+    }
+    &-text-alt {
+      @apply text-xs;
+      color: #000000;
+    }
+    a {
+      @apply hover:text-base-content;
+    }
+  }
+  /* :> */
+}
+/* <: */

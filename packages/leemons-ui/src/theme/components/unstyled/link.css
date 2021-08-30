@@ -1,0 +1,12 @@
+/* :> */
+@layer components {
+  /* <: */
+  .link {
+    @apply underline cursor-pointer;
+    &-hover {
+      @apply no-underline hover:underline;
+    }
+  }
+  /* :> */
+}
+/* <: */

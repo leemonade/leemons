@@ -2,7 +2,7 @@ const ora = require('ora');
 const execa = require('execa');
 const fs = require('fs-extra');
 const path = require('path');
-const hooks = require('leemons-hooks');
+const { nextTransform, frontLogger } = require('./streams');
 
 /*
  * Global Next.js Dependencies Installation
@@ -15,7 +15,7 @@ async function frontDeps() {
 
   // Install dependencies when needed
   if (leemons.frontNeedsUpdateDeps) {
-    await hooks.fireEvent('leemons::installDeps', { status: 'start' });
+    leemons.events.emit('frontWillInstallDeps', 'leemons');
     const installSpinner = ora('Installing frontend dependencies').start();
     return execa
       .command(`yarn --cwd ${leemons.dir.next} --force`)
@@ -28,7 +28,7 @@ async function frontDeps() {
         leemons.log.throw(e);
       })
       .finally(async () => {
-        await hooks.fireEvent('leemons::installDeps', { status: 'end' });
+        leemons.events.emit('frontDidInstallDeps', 'leemons');
       });
   }
   return null;
@@ -43,35 +43,47 @@ async function buildNext() {
     // Check if a production build exists
     if (!(await fs.exists(path.resolve(leemons.dir.next, '.next', 'BUILD_ID')))) {
       leemons.frontNeedsBuild = true;
-      // The error can be related to dependencies
-      leemons.frontNeedsUpdateDeps = true;
     }
 
     // Build if necessary
     if (leemons.frontNeedsBuild && process.env.NODE_ENV !== 'development') {
-      await hooks.fireEvent('leemons::build', { status: 'start' });
+      leemons.events.emit('frontWillBuild', 'leemons');
       const spinner = ora('Building frontend').start();
-      return execa
-        .command(`yarn --cwd ${leemons.dir.next} build`)
-        .then(() => {
-          spinner.succeed('Frontend builded');
-        })
-        .catch(async (e) => {
-          spinner.fail(`Frontend can't be builded`);
-          await fs.remove(path.resolve(leemons.dir.next, '.next'));
-          leemons.log.throw(e);
-        })
-        .finally(async () => {
-          await hooks.fireEvent('leemons::build', { status: 'end' });
+      return new Promise((resolve) => {
+        const build = execa.command(`yarn --cwd ${leemons.dir.next} build`, {
+          ...process.env,
+          FORCE_COLOR: true,
         });
+        // Log the stdout and stderr
+        build.stdout.pipe(frontLogger('info'));
+
+        build.stderr
+          .pipe(
+            nextTransform('error Command failed', () => {
+              spinner.fail('Frontend build failed');
+              leemons.events.emit('frontDidCrash', 'leemons');
+              resolve(false);
+            })
+          )
+          .pipe(frontLogger('error'));
+
+        // When the build ends, the front was builded successfully
+        build
+          .then(() => {
+            spinner.succeed('Frontend builded successfully');
+            leemons.events.emit('frontDidBuild', 'leemons');
+            resolve(true);
+          })
+          .catch(() => {});
+      });
     }
   }
-  return null;
+  return true;
 }
 
-async function build() {
+async function buildF() {
   await frontDeps();
-  await buildNext();
+  return buildNext();
 }
 
-module.exports = build;
+module.exports = buildF;

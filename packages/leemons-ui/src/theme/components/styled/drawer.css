@@ -1,0 +1,78 @@
+/* :> */
+@layer components {
+  /* <: */
+  .drawer.drawer-end .drawer-toggle:checked ~ .drawer-content {
+    @apply -translate-x-2;
+  }
+  .drawer-toggle {
+    & ~ .drawer-content {
+      @apply transition-all ease-in-out duration-300;
+    }
+    & ~ .drawer-side {
+      & > .drawer-overlay {
+        @apply cursor-pointer transition-all ease-in-out duration-300 bg-neutral-focus;
+      }
+      & > .drawer-overlay + * {
+        @apply transition-all ease-in-out duration-300;
+      }
+    }
+    &:checked {
+      & ~ .drawer-content {
+        @apply translate-x-2;
+      }
+      & ~ .drawer-side {
+        & > .drawer-overlay {
+          @apply opacity-40;
+        }
+      }
+    }
+    &:focus-visible {
+      & ~ .drawer-content .drawer-button {
+        box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--n-f));
+        &.btn-primary {
+          box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--p));
+        }
+        &.btn-secondary {
+          box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--s));
+        }
+        &.btn-accent {
+          box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--a));
+        }
+        &.btn-info {
+          box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--in));
+        }
+        &.btn-success {
+          box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--su));
+        }
+        &.btn-warning {
+          box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--wa));
+        }
+        &.btn-error {
+          box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--er));
+        }
+        &.glass {
+          box-shadow: 0 0 0 2px currentColor;
+        }
+        &.btn-ghost {
+          box-shadow: 0 0 0 2px currentColor;
+        }
+        &.btn-link {
+          box-shadow: 0 0 0 2px currentColor;
+        }
+      }
+    }
+  }
+  @media (min-width: 1024px) {
+    .drawer-mobile {
+      & > .drawer-toggle {
+        &:checked {
+          & ~ .drawer-content {
+            @apply translate-x-0;
+          }
+        }
+      }
+    }
+  }
+  /* :> */
+}
+/* <: */

@@ -1,0 +1,26 @@
+/* :> */
+@layer components {
+  /* <: */
+  .link {
+    &-primary {
+      @apply text-primary hover:text-primary-focus;
+    }
+    &-secondary {
+      @apply text-secondary hover:text-secondary-focus;
+    }
+    &-accent {
+      @apply text-accent hover:text-accent-focus;
+    }
+    &-neutral {
+      @apply text-neutral hover:text-neutral-focus;
+    }
+    &:focus {
+      @apply outline-none;
+    }
+    &:focus-visible {
+      box-shadow: 0 0 0 2px currentColor;
+    }
+  }
+  /* :> */
+}
+/* <: */

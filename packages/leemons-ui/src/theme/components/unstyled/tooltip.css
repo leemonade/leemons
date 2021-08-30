@@ -1,0 +1,94 @@
+/* :> */
+@layer components {
+  /* <: */
+  .tooltip {
+    @apply inline-block relative;
+    --tooltip-offset: calc(100% + 1px + var(--tooltip-tail, 0px));
+  }
+
+  .tooltip:before,
+  .tooltip:after {
+    @apply absolute block;
+  }
+
+  .tooltip:before {
+    content: attr(data-tip);
+    z-index: 2010;
+  }
+
+  .tooltip:after {
+    content: attr(data-tip);
+    z-index: 2009;
+  }
+
+  .tooltip {
+    &:before {
+      transform: translateX(-50%);
+      top: auto;
+      left: 50%;
+      right: auto;
+      bottom: var(--tooltip-offset);
+    }
+    &:after {
+      transform: translateX(-50%);
+      border-color: var(--tooltip-color) transparent transparent transparent;
+      top: auto;
+      left: 50%;
+      right: auto;
+      bottom: var(--tooltip-tail-offset);
+    }
+  }
+  .tooltip-bottom {
+    &:before {
+      transform: translateX(-50%);
+      top: var(--tooltip-offset);
+      left: 50%;
+      right: auto;
+      bottom: auto;
+    }
+    &:after {
+      transform: translateX(-50%);
+      border-color: transparent transparent var(--tooltip-color) transparent;
+      top: var(--tooltip-tail-offset);
+      left: 50%;
+      right: auto;
+      bottom: auto;
+    }
+  }
+  .tooltip-left {
+    &:before {
+      transform: translateY(-50%);
+      top: 50%;
+      left: auto;
+      right: var(--tooltip-offset);
+      bottom: auto;
+    }
+    &:after {
+      transform: translateY(-50%);
+      border-color: transparent transparent transparent var(--tooltip-color);
+      top: 50%;
+      left: auto;
+      right: var(--tooltip-tail-offset);
+      bottom: auto;
+    }
+  }
+  .tooltip-right {
+    &:before {
+      transform: translateY(-50%);
+      top: 50%;
+      left: var(--tooltip-offset);
+      right: auto;
+      bottom: auto;
+    }
+    &:after {
+      transform: translateY(-50%);
+      border-color: transparent var(--tooltip-color) transparent transparent;
+      top: 50%;
+      left: var(--tooltip-tail-offset);
+      right: auto;
+      bottom: auto;
+    }
+  }
+  /* :> */
+}
+/* <: */

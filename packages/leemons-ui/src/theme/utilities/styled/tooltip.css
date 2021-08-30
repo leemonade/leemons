@@ -1,0 +1,14 @@
+/* :> */
+@layer utilities {
+  /* <: */
+  .tooltip {
+    &-lg {
+      @apply px-4 py-3;
+    }
+    &-xs {
+      @apply px-2 py-1;
+    }
+  }
+  /* :> */
+}
+/* <: */

@@ -170,6 +170,23 @@ module.exports = (Base) =>
     }
 
     /**
+     * Adds many localizations to the database
+     * @param {{[locale:string]: {[key:string]: LocalizationValue}}} data
+     * @returns {Promise<{items: Localization[],count: number, warnings: {nonExistingLocales: LocaleCode[] | undefined, existingKeys: LocalizationKey[] | undefined} | null}>}
+     */
+    async addManyByJSON(data, prefix, { transacting } = {}) {
+      const toAdd = {};
+      _.forIn(data, (json, lang) => {
+        toAdd[lang] = {};
+        _.forEach(global.utils.getObjectArrayKeys(json), (key) => {
+          toAdd[lang][`${prefix}${key}`] = _.get(data[lang], key);
+        });
+      });
+
+      return this.addMany.call(this, toAdd, { transacting });
+    }
+
+    /**
      * Adds many localizations to the database for the same key
      * @param {LocalizationKey} key
      * @param {{[key:string]: LocalizationValue}} data

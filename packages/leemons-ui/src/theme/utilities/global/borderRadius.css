@@ -1,0 +1,28 @@
+/* :> */
+@layer utilities {
+  @variants responsive {
+    /* <: */
+    .rounded-box {
+      border-radius: var(--rounded-box, 1rem);
+    }
+    .rounded-t-box {
+      border-top-left-radius: var(--rounded-box, 1rem);
+      border-top-right-radius: var(--rounded-box, 1rem);
+    }
+    .rounded-b-box {
+      border-bottom-left-radius: var(--rounded-box, 1rem);
+      border-bottom-right-radius: var(--rounded-box, 1rem);
+    }
+    .rounded-btn {
+      border-radius: var(--rounded-btn, 0.15rem);
+    }
+    .rounded-badge {
+      border-radius: var(--rounded-badge, 1.9rem);
+    }
+    .sharp {
+      border-radius: 0 !important;
+    }
+    /* :> */
+  }
+}
+/* <: */

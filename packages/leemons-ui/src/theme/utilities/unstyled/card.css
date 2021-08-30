@@ -1,0 +1,21 @@
+/* :> */
+@layer utilities {
+  @variants responsive {
+    /* <: */
+    .card-side {
+      align-items: stretch;
+      flex-direction: row;
+    }
+    .card-side > figure {
+      height: 100%;
+      max-width: none;
+      width: auto;
+    }
+    .card-side > figure > * {
+      width: auto;
+      max-width: none;
+    }
+    /* :> */
+  }
+}
+/* <: */

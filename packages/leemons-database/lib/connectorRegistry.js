@@ -10,6 +10,9 @@ function createConnectorRegistry({ connections, defaultConnection }, databaseMan
 
   const connectors = new Map();
   return {
+    /**
+     * Loads and import each database connector based on the connections
+     */
     load: () => {
       // Register each different connector
       Object.values(connections).forEach((connection) => {
@@ -20,18 +23,47 @@ function createConnectorRegistry({ connections, defaultConnection }, databaseMan
       });
     },
 
-    init: async (coreStore, models) => {
-      const coreStoreConnector = connectors.get(connections[coreStore.connection].connector);
-      await coreStoreConnector.init([coreStore]);
-      databaseManager.models.set('core_store', coreStoreConnector.models.get('core_store'));
+    /**
+     * Initializes each connector
+     */
+    init: async () =>
+      Promise.all(
+        [...connectors.values()].map(async (connector) => {
+          // Initialize connector
+          await connector.init();
+        })
+      ),
+
+    destroy: async () =>
+      Promise.all([...connectors.values()].map((connector) => connector.destroy())),
+
+    /**
+     * Loads each provided model on its corresponding connection and connector
+     * @param {Model} coreStore
+     * @param {Model[]} models
+     * @returns {Promise}
+     */
+    loadModels: async (coreStore, models) => {
+      // Load core_store model
+      if (!databaseManager.models.has('models::core_store')) {
+        const coreStoreConnector = connectors.get(connections[coreStore.connection].connector);
+        await coreStoreConnector.loadModels([coreStore]);
+        databaseManager.models.set(
+          'models::core_store',
+          coreStoreConnector.models.get('models::core_store')
+        );
+      }
+      // Load the other models
       return Promise.all(
-        [...connectors.values()].map((connector) =>
-          connector.init(models).then(() => {
-            [...connector.models.entries()].forEach(([key, value]) => {
-              databaseManager.models.set(key, value);
-            });
-          })
-        )
+        [...connectors.values()].map(async (connector) => {
+          // Load connector models
+          await connector.loadModels(models);
+
+          // Save connector models
+          [...connector.models.entries()].forEach(([key, value]) => {
+            databaseManager.models.set(key, value);
+          });
+        })
       );
     },
 

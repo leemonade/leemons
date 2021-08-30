@@ -3,32 +3,24 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const Static = require('koa-static');
 const request = require('request');
-// const nextjs = require('next');
+const events = require('events');
 const execa = require('execa');
-const stream = require('stream');
 const _ = require('lodash');
 const chalk = require('chalk');
-const leemonsUtils = require('leemons-utils');
-
 const bodyParser = require('koa-bodyparser');
-
-const { createDatabaseManager } = require('leemons-database');
-const hooks = require('leemons-hooks');
 const ora = require('ora');
+const uuid = require('uuid');
+
+const leemonsUtils = require('leemons-utils');
+const { createDatabaseManager } = require('leemons-database');
+
 const { loadConfiguration } = require('./core/config/loadConfig');
-const { loadModels } = require('./core/model/loadModel');
-const {
-  initializePlugins,
-  loadPluginsModels,
-  loadPluginsConfig,
-} = require('./core/plugins/loadPlugins');
+const { loadCoreModels } = require('./core/model/loadModel');
 const buildFront = require('./core/front/build');
 const loadFront = require('./core/plugins/front/loadFront');
-const {
-  loadProvidersModels,
-  loadProvidersConfig,
-  initializeProviders,
-} = require('./core/plugins/loadProviders');
+const { loadExternalFiles } = require('./core/plugins/loadExternalFiles');
+const { PLUGIN_STATUS } = require('./core/plugins/pluginsStatus');
+const { nextTransform, frontLogger } = require('./core/front/streams');
 
 class Leemons {
   constructor(log) {
@@ -39,33 +31,7 @@ class Leemons {
 
     log.verbose('New leemons');
 
-    const timers = {};
-    hooks.addAction('*', ({ eventName, args: [options] }) => {
-      const now = new Date();
-      switch (_.get(options, 'status', null)) {
-        case 'start':
-          _.set(timers, eventName, now);
-          break;
-        case 'end': {
-          const started = _.get(timers, eventName, now);
-          const time = new Date(now - started);
-
-          const minutes = time.getMinutes();
-          const seconds = time.getSeconds();
-          const milliseconds = time.getMilliseconds();
-          const timeString = `${
-            (minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')
-          }${milliseconds}ms`;
-
-          delete timers[eventName];
-          this.log.debug(
-            chalk`The event {green ${eventName}} was running during {magenta ${timeString}}`
-          );
-          break;
-        }
-        default:
-      }
-    });
+    const timers = new Map();
 
     // Initialize the reload method (generate a "state" for it)
     this.reload();
@@ -78,6 +44,70 @@ class Leemons {
 
     this.loaded = false;
     this.started = false;
+
+    const emitCache = [];
+    const arrayEvents = {};
+    this.events = new events();
+    const { emit, once } = this.events;
+    const emitArrayEventsIfNeed = (_event, { event, target }, ...args) => {
+      _.forIn(arrayEvents, (values, key) => {
+        if (values.indexOf(_event) >= 0) {
+          let foundAll = true;
+          _.forEach(values, (value) => {
+            if (value !== _event && emitCache.indexOf(value) < 0) {
+              foundAll = false;
+              return false;
+            }
+          });
+          if (foundAll) {
+            emit.call(this.events, key, { event, target }, ...args);
+          }
+        }
+      });
+    };
+    this.events.once = (event, ...args) => {
+      if (_.isArray(event)) {
+        const id = uuid.v4();
+        arrayEvents[id] = event;
+        once.call(this.events, id, ...args);
+      } else {
+        once.call(this.events, event, ...args);
+      }
+    };
+    this.events.emit = (event, target = null, ...args) => {
+      emit.call(this.events, 'all', { event, target }, ...args);
+      emit.call(this.events, event, { event, target }, ...args);
+      emitArrayEventsIfNeed(event, { event, target }, ...args);
+      if (emitCache.indexOf(event) < 0) emitCache.push(event);
+      if (target) {
+        emit.call(this.events, `${target}:${event}`, { event, target }, ...args);
+        emitArrayEventsIfNeed(`${target}:${event}`, { event, target }, ...args);
+        if (emitCache.indexOf(`${target}:${event}`) < 0) emitCache.push(`${target}:${event}`);
+      }
+    };
+
+    this.events.on('all', ({ event, target }) => {
+      const now = new Date();
+      let eventName = event.toLocaleLowerCase();
+      if (eventName.includes('will')) {
+        timers.set(eventName.replace('will', ''), now);
+        this.log.silly(chalk`{green ${target}} emitted {magenta ${event}}`);
+      } else if (eventName.includes('did')) {
+        eventName = eventName.replace('did', '');
+        const started = timers.get(eventName) || now;
+        const time = new Date(now - started);
+
+        const minutes = time.getMinutes();
+        const seconds = time.getSeconds();
+        const milliseconds = time.getMilliseconds();
+        const timeString = `${
+          (minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')
+        }${milliseconds}ms`;
+
+        timers.delete(eventName);
+        this.log.debug(chalk`{green ${target}} emitted {magenta ${event}} {gray ${timeString}}`);
+      }
+    });
   }
 
   // Set KOA as requestHandler
@@ -129,11 +159,13 @@ class Leemons {
 
   // Initialize all the middlewares
   setMiddlewares() {
+    this.events.emit('willSetMiddlewares', 'leemons');
     this.backRouter.use(async (ctx, next) => {
       ctx._startAt = new Date();
       this.log.http(
         chalk`Start connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${ctx.ip}}`
       );
+
       await next();
     });
 
@@ -155,25 +187,50 @@ class Leemons {
     });
 
     this.backRouter.use(bodyParser());
+    this.events.emit('didSetMiddlewares', 'leemons');
   }
 
-  authenticatedMiddleware() {
+  authenticatedMiddleware(authenticated) {
     return async (ctx, next) => {
       try {
-        const user = await this.plugins.users.services.users.detailForJWT(
-          ctx.headers.authorization
-        );
-        if (user) {
-          ctx.state.user = user;
+        let authorization = ctx.headers.authorization;
+        try {
+          authorization = JSON.parse(authorization);
+        } catch (e) {}
+
+        if (_.isString(authorization)) {
+          const user = await this.plugins.users.services.users.detailForJWT(authorization);
+          if (user) {
+            ctx.state.userSession = user;
+            return next();
+          }
+        } else {
+          const user = await this.plugins.users.services.users.detailForJWT(authorization[0], true);
+          const userAgents = await Promise.all(
+            _.map(authorization, (auth) =>
+              this.plugins.users.services.users.detailForJWT(auth, false, true)
+            )
+          );
+          if (user && userAgents.length) {
+            user.userAgents = userAgents;
+            ctx.state.userSession = user;
+            return next();
+          }
+        }
+        if (_.isObject(authenticated) && authenticated.nextWithoutSession) {
+          ctx.state.userSession = null;
           return next();
         }
         ctx.status = 401;
-        ctx.body = { status: 401, msg: 'Authorization required' };
+        ctx.body = { status: 401, message: 'Authorization required' };
         return undefined;
       } catch (err) {
-        console.error(err);
+        if (_.isObject(authenticated) && authenticated.nextWithoutSession) {
+          ctx.state.userSession = null;
+          return next();
+        }
         ctx.status = 401;
-        ctx.body = { status: 401, msg: 'Authorization required' };
+        ctx.body = { status: 401, message: 'Authorization required' };
         return undefined;
       }
     };
@@ -182,15 +239,25 @@ class Leemons {
   permissionsMiddleware(allowedPermissions) {
     return async (ctx, next) => {
       try {
+        // TODO: Ahora mismo con que cualquiera de los user auth tenga permiso pasa al controlador, aqui entra la duda de si se le deberian de pasar todos los user auth o solo los que tengan permiso, por qe es posible que relacione algun dato a un user auth que realmente no deberia de tener acceso
+        // TODO QUITAR LOS USER AUTH QUE NO TENGAN EL PERMISO
         const hasPermission = await this.plugins.users.services.users.hasPermissionCTX(
-          ctx.state.user,
+          ctx.state.userSession,
           allowedPermissions
         );
         if (hasPermission) {
           return next();
         }
+        const rAllowedPermissions = [];
+        _.forIn(allowedPermissions, ({ actions }, permissionName) => {
+          rAllowedPermissions.push({ permissionName, actions });
+        });
         ctx.status = 401;
-        ctx.body = { status: 401, msg: 'You do not have permissions' };
+        ctx.body = {
+          status: 401,
+          message: 'You do not have permissions',
+          allowedPermissions: rAllowedPermissions,
+        };
         return undefined;
       } catch (err) {
         console.error(err);
@@ -198,71 +265,49 @@ class Leemons {
     };
   }
 
-  async initPlugins() {
-    const plugins = _.orderBy(this.plugins, (plugin) => plugin.config?.config?.initOrder || 0, [
-      'desc',
-    ]);
-
-    const results = [];
-
-    let plugin;
-    for (let i = 0, l = plugins.length; i < l; i++) {
-      plugin = plugins[i];
-      if (plugin && plugin.init && _.isFunction(plugin.init)) {
-        // eslint-disable-next-line no-await-in-loop
-        results.push(await plugin.init());
-      }
-    }
-    return results;
-  }
-
-  async initProviders() {
-    const providers = _.orderBy(
-      this.providers,
-      (provider) => provider.config?.config?.initOrder || 0,
-      ['desc']
-    );
-
-    const results = [];
-
-    let provider;
-    for (let i = 0, l = providers.length; i < l; i++) {
-      provider = providers[i];
-      if (provider && provider.init && _.isFunction(provider.init)) {
-        // eslint-disable-next-line no-await-in-loop
-        results.push(await provider.init());
-      }
-    }
-    return results;
-  }
-
-  // Initialize the api endpoints
-  setRoutes() {
-    // Plugins
+  /**
+   * Initializes the api endpoints
+   * @param {{
+   *  controllers: {[name]: any}[],
+   *  routes: {
+   *    path: string,
+   *    method: string,
+   *    handler: string,
+   *    authenticated?: boolean,
+   *    allowedPermissions?: []}[]}} plugins
+   */
+  setRoutes(plugins) {
+    this.events.emit('willSetRoutes', 'leemons');
+    // TODO: Remove server reload endpoint
     this.backRouter.get('/api/reload', (ctx) => {
       ctx.body = { reloading: true };
       this.reload();
     });
 
-    Object.entries(this.plugins).forEach(([, plugin]) => {
+    plugins.forEach((plugin) => {
       if (_.isArray(plugin.routes)) {
         plugin.routes.forEach((route) => {
-          if (
-            route.handler &&
-            route.path &&
-            route.method &&
-            _.get(plugin.controllers, route.handler)
-          ) {
-            const handler = _.get(plugin.controllers, route.handler);
-            const functions = [];
-            if (route.authenticated) functions.push(this.authenticatedMiddleware());
-            if (route.allowedPermissions)
-              functions.push(this.permissionsMiddleware(route.allowedPermissions));
-            functions.push(handler);
-            this.backRouter[route.method.toLocaleLowerCase()](
-              `/api/${plugin.name}${route.path}`,
-              ...functions
-            );
+          if (route.handler && route.path && route.method) {
+            if (_.get(plugin.controllers, route.handler)) {
+              const handler = _.get(plugin.controllers, route.handler);
+              const functions = [];
+              if (route.authenticated)
+                functions.push(this.authenticatedMiddleware(route.authenticated));
+              if (route.allowedPermissions)
+                functions.push(this.permissionsMiddleware(route.allowedPermissions));
+              functions.push(handler);
+
+              this.backRouter[route.method.toLocaleLowerCase()](
+                `/api/${plugin.name}${route.path}`,
+                ...functions
+              );
+            } else {
+              this.log.error(
+                `Not found handler function for the API url: ${route.method.toLocaleLowerCase()} - /api/${
+                  plugin.name
+                }${route.path}`
+              );
+            }
           }
         });
       }
@@ -272,10 +317,12 @@ class Leemons {
       ctx.status = 404;
       ctx.body = { status: 404, message: 'Url not found' };
     });
+
+    this.events.emit('didSetRoutes', 'leemons');
   }
 
   // Initialize the frontend handler
-  async setFrontRoutes() {
+  setFrontRoutes() {
     // Next.js public path
     this.app.use(Static('./next/public'));
 
@@ -292,142 +339,93 @@ class Leemons {
     return this.db.query(model, plugin);
   }
 
-  async loadBack(loadedPlugins, loadedProviders) {
-    await hooks.fireEvent('leemons::loadBack', { status: 'start' });
-
-    /*
-     * Load the providers' DataBase Model Descriptions
-     */
-    await hooks.fireEvent('leemons::loadProvidersModels', { status: 'start' });
-    await loadProvidersModels(loadedProviders, this);
-    await hooks.fireEvent('leemons::loadProvidersModels', { status: 'end' });
-
-    /*
-     * Load the plugins' DataBase Model Descriptions
-     */
-    await hooks.fireEvent('leemons::loadPluginsModels', { status: 'start' });
-    await loadPluginsModels(loadedPlugins, this);
-    await hooks.fireEvent('leemons::loadPluginsModels', { status: 'end' });
-
-    /*
-     * Load other DataBase Model Descriptions
-     */
-    await hooks.fireEvent('leemons::loadModels', { status: 'start' });
-    loadModels(this);
-    await hooks.fireEvent('leemons::loadModels', { status: 'end' });
-
+  async loadBack() {
     /*
      * Create a DatabaseManager for managing the database connections and models
      */
     this.db = createDatabaseManager(this);
-
-    // Initialize all database connections
-    await hooks.fireEvent('leemons::initDB', { status: 'start' });
+    /*
+     * Initialize database connections
+     */
     await this.db.init();
-    await hooks.fireEvent('leemons::initDB', { status: 'end' });
 
-    await hooks.fireEvent('leemons::initializeProviders', { status: 'start' });
-    await initializeProviders(this);
-    await hooks.fireEvent('leemons::initializeProviders', { status: 'end' });
+    /**
+     * Load core models
+     */
+    loadCoreModels(this);
+    await this.db.loadModels(_.omit(this.models, 'core_store'));
 
-    await hooks.fireEvent('leemons::initializePlugins', { status: 'start' });
-    await initializePlugins(this);
-    await hooks.fireEvent('leemons::initializePlugins', { status: 'end' });
+    this.events.emit('appWillLoadBack', 'leemons');
 
-    await hooks.fireEvent('leemons::setMiddlewares', { status: 'start' });
+    const plugins = await loadExternalFiles(this, 'plugins', 'plugin', {
+      getProvider: 'enabledProviders',
+    });
+    const providers = await loadExternalFiles(this, 'providers', 'provider', {
+      getPlugin: 'enabledPlugins',
+    });
+
     this.setMiddlewares();
-    await hooks.fireEvent('leemons::setMiddlewares', { status: 'end' });
+    this.setRoutes([
+      ...plugins.filter((plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code),
+      ...providers.filter((provider) => provider.status.code === PLUGIN_STATUS.enabled.code),
+    ]);
 
-    await hooks.fireEvent('leemons::setRoutes', { status: 'start' });
-    this.setRoutes();
-    await hooks.fireEvent('leemons::setRoutes', { status: 'end' });
+    this.events.emit('appDidLoadBack', 'leemons');
 
-    await hooks.fireEvent('leemons::initProviders', { status: 'start' });
-    await this.initProviders();
-    await hooks.fireEvent('leemons::initProviders', { status: 'end' });
-
-    await hooks.fireEvent('leemons::initPlugins', { status: 'start' });
-    await this.initPlugins();
-    await hooks.fireEvent('leemons::initPlugins', { status: 'end' });
-
-    await hooks.fireEvent('leemons::loadBack', { status: 'end' });
+    return { plugins, providers };
   }
 
   async loadFront(plugins, providers) {
-    await hooks.fireEvent('leemons::loadFront', { status: 'start' });
-    await hooks.fireEvent('leemons::loadFrontPlugins', { status: 'start' });
-    await loadFront(this, plugins, providers);
-    await hooks.fireEvent('leemons::loadFrontPlugins', { status: 'end' });
+    try {
+      this.events.emit('appWillLoadFront', 'leemons');
+      await loadFront(this, plugins, providers);
 
-    // Initialize next
-    // this.front = nextjs({
-    //   dir: this.dir.next,
-    //   dev: process.env.NODE_ENV === 'development',
-    // });
-
-    await buildFront();
-    // this.frontHandler = this.front.getRequestHandler();
-
-    // stream transformer for listening ready event from frontend
-    // Emit a ready event when next is listening
-    const nextTransform = (readyCallback) =>
-      new stream.Transform({
-        transform: (chunk, encoding, callback) => {
-          callback(null, chunk);
-
-          const data = chunk.toString();
-          if (
-            data
-              // ignore colors
-              .replace(
-                // eslint-disable-next-line no-control-regex
-                /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
-                ''
-              )
-              // in dev. and prod. next logs a line like: ready - listening on:
-              .startsWith('ready')
-          ) {
-            readyCallback();
-          }
-        },
-      });
-
-    const frontLogger = (level) =>
-      new stream.Writable({
-        write: (chunk) => {
-          this.log[level](chunk.toString(), { labels: ['front'] });
-        },
-      });
-
-    // When next is prepared
-    await hooks.fireEvent('leemons::prepareFrontend', { status: 'start' });
-    const prepareFront = ora('Starting frontend server').start();
-    // Start production next app
-    const start = execa.command(
-      `yarn --cwd ${leemons.dir.next} ${process.env.NODE_ENV === 'production' ? 'start' : 'dev'}`,
-      {
-        ...process.env,
-        FORCE_COLOR: true,
+      // If no successful build, do not continue loading front
+      if (!(await buildFront())) {
+        return;
       }
-    );
-    // Log the stdout and stderr
-    start.stdout
-      .pipe(
-        nextTransform(async () => {
-          prepareFront.succeed('Frontend server started');
-          await hooks.fireEvent('leemons::prepareFrontend', { status: 'end' });
-          await hooks.fireEvent('leemons::loadFront', { status: 'end' });
-          this.setFrontRoutes();
-        })
-      )
-      .pipe(frontLogger('info'));
-    start.stderr.pipe(frontLogger('error'));
+
+      // When next is prepared
+      leemons.events.emit('frontWillStartServer', 'leemons');
+      const prepareFront = ora('Starting frontend server').start();
+      // Start production next app
+      const start = execa.command(
+        `yarn --cwd ${leemons.dir.next} ${
+          process.env.NODE_ENV !== 'development' ? 'start' : 'dev'
+        }`,
+        {
+          ...process.env,
+          FORCE_COLOR: true,
+        }
+      );
+      // Log the stdout and stderr
+      start.stdout
+        .pipe(
+          nextTransform('ready', async () => {
+            prepareFront.succeed('Frontend server started');
+            leemons.events.emit('frontDidStartServer', 'leemons');
+            this.setFrontRoutes();
+            this.events.emit('appDidLoadFront', 'leemons');
+          })
+        )
+        .pipe(frontLogger('info'));
+      start.stderr
+        .pipe(
+          nextTransform('error Command failed', () => {
+            prepareFront.fail('Frontend server failed to start');
+            leemons.events.emit('frontDidCrash', 'leemons');
+          })
+        )
+        .pipe(frontLogger('error'));
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async loadAppConfig() {
-    await hooks.fireEvent('leemons::loadConfig', { status: 'start' });
+    leemons.events.emit('appWillLoadConfig', 'leemons');
     this.config = (await loadConfiguration(this)).configProvider;
-    await hooks.fireEvent('leemons::loadConfig', { status: 'end' });
+    leemons.events.emit('appDidLoadConfig', 'leemons');
 
     if (this.config.get('config.insecure', false)) {
       this.log.warn(
@@ -438,52 +436,36 @@ class Leemons {
     return this.config;
   }
 
-  async loadPluginsConfig() {
-    await hooks.fireEvent('leemons::loadPlugins', { status: 'start' });
-    const loadedPlugins = await loadPluginsConfig(this);
-    await hooks.fireEvent('leemons::loadPlugins', { status: 'end' });
-
-    return loadedPlugins;
-  }
-
-  async loadProvidersConfig() {
-    await hooks.fireEvent('leemons::loadProviders', { status: 'start' });
-    const loadedProviders = await loadProvidersConfig(this);
-    await hooks.fireEvent('leemons::loadProviders', { status: 'end' });
-
-    return loadedProviders;
-  }
-
   // Load all apps
   async load() {
-    await hooks.fireEvent('leemons::load', { status: 'start' });
     if (this.loaded) {
       return true;
     }
 
-    await this.loadAppConfig();
-    /*
-     * Load all the installed plugins configuration, check for duplicated
-     * plugins and save plugin' env
-     */
-    const loadedPlugins = await this.loadPluginsConfig();
-    const providersConfig = await this.loadProvidersConfig();
+    this.events.emit('appWillLoad', 'leemons');
 
-    await Promise.all([
-      /*
-       * Load all the backend plugins, database and
-       * setup the middlewares
-       */
-      await this.loadBack(loadedPlugins, providersConfig),
-      /*
-       * Load all the frontend plugins, build the app if needed
-       * and set the middlewares.
-       */
-      await this.loadFront(loadedPlugins, providersConfig),
-    ]);
+    await this.loadAppConfig();
+
+    /*
+     * Load all the backend plugins, database and
+     * setup the middlewares
+     */
+    const { plugins, providers } = await this.loadBack();
+
+    this.enabledPlugins = plugins.filter(
+      (plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code
+    );
+    this.enabledProviders = providers.filter(
+      (provider) => provider.status.code === PLUGIN_STATUS.enabled.code
+    );
+    /*
+     * Load all the frontend plugins, build the app if needed
+     * and set the middlewares.
+     */
+    await this.loadFront(this.enabledPlugins, this.enabledProviders);
 
     this.loaded = true;
-    await hooks.fireEvent('leemons::load', { status: 'end' });
+    this.events.emit('appDidLoad', 'leemons');
 
     return true;
   }
@@ -493,9 +475,12 @@ class Leemons {
     if (this.started) {
       return;
     }
+    this.events.emit('appWillStart', 'leemons');
+
     await this.load();
 
     this.server.listen(process.env.PORT, () => {
+      this.events.emit('appDidStart', 'leemons');
       this.log.debug(`Listening on http://localhost:${process.env.PORT}`);
       if (process.send) {
         process.send('running');

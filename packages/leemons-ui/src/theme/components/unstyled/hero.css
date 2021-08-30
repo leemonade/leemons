@@ -1,0 +1,18 @@
+/* :> */
+@layer components {
+  /* <: */
+  .hero {
+    @apply grid w-full bg-cover bg-center place-items-center;
+    & > * {
+      @apply row-start-1 col-start-1;
+    }
+    &-overlay {
+      @apply row-start-1 col-start-1 w-full h-full;
+    }
+    &-content {
+      @apply items-center flex z-0 justify-center;
+    }
+  }
+  /* :> */
+}
+/* <: */

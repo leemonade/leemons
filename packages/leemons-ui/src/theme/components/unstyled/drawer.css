@@ -1,0 +1,62 @@
+/* :> */
+@layer components {
+  /* <: */
+  .drawer {
+    @apply grid overflow-hidden;
+    &.drawer-end .drawer-toggle {
+      & ~ .drawer-side > .drawer-overlay + * {
+        @apply translate-x-full justify-self-end;
+      }
+      &:checked ~ .drawer-side > .drawer-overlay + * {
+        @apply translate-x-0;
+      }
+    }
+  }
+  .drawer-toggle {
+    @apply appearance-none opacity-0 w-0 h-0 absolute;
+    & ~ .drawer-content {
+      @apply row-start-1 col-start-1 transform overflow-y-auto max-h-screen;
+    }
+    & ~ .drawer-side {
+      @apply row-start-1 col-start-1 grid max-h-screen;
+      & > .drawer-overlay {
+        @apply row-start-1 col-start-1 invisible opacity-0;
+      }
+      & > .drawer-overlay + * {
+        @apply z-10 row-start-1 col-start-1 transform -translate-x-full;
+      }
+    }
+    &:checked {
+      & ~ .drawer-side {
+        @apply overflow-y-auto;
+        & > .drawer-overlay {
+          @apply visible;
+        }
+        & > .drawer-overlay + * {
+          @apply translate-x-0;
+        }
+      }
+    }
+  }
+  @media (min-width: 1024px) {
+    .drawer-mobile {
+      grid-auto-columns: max-content auto;
+      & > .drawer-toggle {
+        & ~ .drawer-content {
+          @apply lg:col-start-2 h-auto;
+        }
+        & ~ .drawer-side {
+          @apply overflow-y-auto;
+          & > .drawer-overlay {
+            @apply lg:visible;
+          }
+          & > .drawer-overlay + * {
+            @apply lg:translate-x-0;
+          }
+        }
+      }
+    }
+  }
+  /* :> */
+}
+/* <: */

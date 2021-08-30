@@ -8,7 +8,8 @@ const objTest = {
 async function add() {
   try {
     console.log('---- Start add ----');
-    const data = await leemons.plugins.users.services.itemPermissions.add(objTest);
+    const { item, type, ...obj } = objTest;
+    const data = await leemons.getPlugin('users').services.permissions.addItem(item, type, obj);
     console.log(data);
   } catch (e) {
     console.error(e);
@@ -19,7 +20,9 @@ async function add() {
 async function find() {
   try {
     console.log('---- Start find ----');
-    const data = await leemons.plugins.users.services.itemPermissions.find({ type: objTest.type });
+    const data = await leemons
+      .getPlugin('users')
+      .services.permissions.findItems({ type: objTest.type });
     console.log(data);
   } catch (e) {
     console.error(e);
@@ -30,7 +33,7 @@ async function find() {
 async function remove() {
   try {
     console.log('---- Start remove ----');
-    const data = await leemons.plugins.users.services.itemPermissions.remove(objTest);
+    const data = await leemons.getPlugin('users').services.permissions.removeItems(objTest);
     console.log(data);
   } catch (e) {
     console.error(e);

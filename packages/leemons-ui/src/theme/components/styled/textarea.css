@@ -1,0 +1,68 @@
+/* :> */
+@layer components {
+  /* <: */
+  .textarea {
+    @apply bg-base-100 rounded-btn border border-opacity-0 border-base-content;
+    &-bordered {
+      @apply border-opacity-20;
+    }
+    &:focus {
+      box-shadow: 0 0 0 3px hsl(var(--b2));
+    }
+    &-ghost {
+      @apply bg-opacity-5;
+      &:focus {
+        @apply bg-opacity-100 text-base-content;
+        box-shadow: none;
+      }
+    }
+    &-primary {
+      @apply border-primary;
+      &:focus {
+        box-shadow: 0 0 0 3px hsl(var(--b2));
+      }
+    }
+    &-secondary {
+      @apply border-secondary;
+      &:focus {
+        box-shadow: 0 0 0 3px hsl(var(--b2));
+      }
+    }
+    &-accent {
+      @apply border-accent;
+      &:focus {
+        box-shadow: 0 0 0 3px hsl(var(--b2));
+      }
+    }
+    &-info {
+      @apply border-info;
+      &:focus {
+        box-shadow: 0 0 0 3px hsl(var(--b2));
+      }
+    }
+    &-success {
+      @apply border-success;
+      &:focus {
+        box-shadow: 0 0 0 3px hsl(var(--b2));
+      }
+    }
+    &-warning {
+      @apply border-warning;
+      &:focus {
+        box-shadow: 0 0 0 3px hsl(var(--b2));
+      }
+    }
+    &-error {
+      @apply border-error;
+      &:focus {
+        box-shadow: 0 0 0 3px hsl(var(--b2));
+      }
+    }
+    &-disabled,
+    &[disabled] {
+      @apply cursor-not-allowed bg-base-200 border-base-200 text-opacity-20 placeholder-base-content placeholder-opacity-20;
+    }
+  }
+  /* :> */
+}
+/* <: */

@@ -1,17 +1,61 @@
 const profileService = require('../src/services/profiles');
 
+const permissionsValidation = {
+  type: 'array',
+  items: {
+    type: 'object',
+    properties: {
+      permissionName: {
+        type: 'string',
+      },
+      actionNames: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+      },
+    },
+  },
+};
+
+const translationsValidations = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'object',
+      properties: {},
+      additionalProperties: true,
+    },
+    description: {
+      type: 'object',
+      properties: {},
+      additionalProperties: true,
+    },
+  },
+};
+
 async function list(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
     properties: {
       page: { type: 'number' },
       size: { type: 'number' },
+      withRoles: {
+        anyOf: [
+          { type: 'boolean' },
+          {
+            type: 'object',
+            properties: { columns: { type: 'array', items: { type: 'string' } } },
+          },
+        ],
+      },
     },
     required: ['page', 'size'],
     additionalProperties: false,
   });
   if (validator.validate(ctx.request.body)) {
-    const data = await profileService.list(ctx.request.body.page, ctx.request.body.size);
+    const { page, size, ...options } = ctx.request.body;
+    const data = await profileService.list(page, size, { ...options });
     ctx.status = 200;
     ctx.body = { status: 200, data };
   } else {
@@ -25,17 +69,8 @@ async function add(ctx) {
     properties: {
       name: { type: 'string' },
       description: { type: 'string' },
-      permissions: {
-        type: 'object',
-        patternProperties: {
-          '.*': {
-            type: 'array',
-            items: {
-              type: 'string',
-            },
-          },
-        },
-      },
+      permissions: permissionsValidation,
+      translations: translationsValidations,
     },
     required: ['name', 'description', 'permissions'],
     additionalProperties: false,
@@ -74,17 +109,8 @@ async function update(ctx) {
       id: { type: 'string' },
       name: { type: 'string' },
       description: { type: 'string' },
-      permissions: {
-        type: 'object',
-        patternProperties: {
-          '.*': {
-            type: 'array',
-            items: {
-              type: 'string',
-            },
-          },
-        },
-      },
+      permissions: permissionsValidation,
+      translations: translationsValidations,
     },
     required: ['id', 'name', 'description', 'permissions'],
     additionalProperties: false,

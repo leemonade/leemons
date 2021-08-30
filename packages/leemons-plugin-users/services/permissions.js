@@ -1,4 +1,6 @@
 const permissions = require('../src/services/permissions');
+const itemPermissions = require('../src/services/item-permissions');
+const userProfile = require('../src/services/user-profile');
 
 module.exports = {
   add: permissions.add,
@@ -14,4 +16,18 @@ module.exports = {
   manyPermissionsHasManyActions: permissions.manyPermissionsHasManyActions,
   addActionMany: permissions.addActionMany,
   addAction: permissions.addAction,
+  // User agent
+  addCustomPermissionToUserAgent: permissions.addCustomPermissionToUserAgent,
+  getUserAgentPermissions: permissions.getUserAgentPermissions,
+  userAgentHasCustomPermission: permissions.userAgentHasCustomPermission,
+  // Item permissions
+  addItem: itemPermissions.add,
+  addItemBasicIfNeed: itemPermissions.addBasicIfNeed,
+  countItems: itemPermissions.count,
+  findItems: itemPermissions.find,
+  removeItems: itemPermissions.remove,
+  existItems: itemPermissions.exist,
+  // User profile
+  addCustomPermissionToUserProfile: userProfile.addCustomPermissionToUserProfile,
+  removeCustomPermissionToUserProfile: userProfile.removeCustomPermissionToUserProfile,
 };

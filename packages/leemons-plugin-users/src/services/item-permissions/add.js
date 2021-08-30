@@ -1,10 +1,10 @@
 const _ = require('lodash');
 const { validateTypePrefix } = require('../../validations/exists');
-const { hasActionMany } = require('../permissions/hasActionMany');
+const { manyPermissionsHasManyActions } = require('../permissions/manyPermissionsHasManyActions');
 const { table } = require('../tables');
 const { validateExistItemPermissions } = require('../../validations/exists');
 const { validateItemPermission } = require('../../validations/item-permissions');
-const { exist } = require('../permissions/exist');
+const { existMany } = require('../permissions/existMany');
 
 /**
  * ES:
@@ -15,48 +15,63 @@ const { exist } = require('../permissions/exist');
  *
  * @public
  * @static
- * @param {ItemPermission} data - Item permission
+ * @param {string} item
+ * @param {string} type
+ * @param {AddItemPermission | AddItemPermission[]} data - Item permission
  * @param {boolean=} isCustomPermission - If it is a custom permit, it is not checked if it exists in the list of permits.
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function add(
-  { permissionName, actionNames, target, type, item },
-  { isCustomPermission, transacting } = {}
-) {
-  validateItemPermission({ permissionName, actionNames, target, type, item });
+async function add(item, type, data, { isCustomPermission, transacting } = {}) {
+  const _data = _.isArray(data) ? data : [data];
+  _.forEach(_data, (d) => {
+    validateItemPermission({ ...d, type, item });
+  });
+
   validateTypePrefix(type, this.calledFrom);
 
   if (!isCustomPermission) {
-    if (!(await exist(permissionName, { transacting })))
+    if (!(await existMany(_.map(_data, 'permissionName'), { transacting }))) {
+      console.error(_data);
       throw new Error('The specified permit does not exist');
-
-    if (!(await hasActionMany(permissionName, actionNames, { transacting })))
+    }
+    if (
+      !(await manyPermissionsHasManyActions(
+        _.map(_data, ({ permissionName, actionNames }) => [permissionName, actionNames]),
+        { transacting }
+      ))
+    ) {
+      console.log(_data);
       throw new Error('Some of the actions do not exist for the specified permit');
+    }
   }
 
-  await validateExistItemPermissions(
-    {
-      permissionName,
-      actionNames,
-      target,
-      type,
-      item,
-    },
-    { transacting }
+  await Promise.all(
+    _.map(_data, ({ actionNames, ...d }) =>
+      validateExistItemPermissions(
+        {
+          ...d,
+          actionName_$in: actionNames,
+          item,
+        },
+        { transacting }
+      )
+    )
   );
 
-  const toSave = _.map(actionNames, (actionName) => {
-    return {
-      permissionName,
-      actionName,
-      target,
-      type,
-      item,
-    };
+  const toSave = [];
+  _.forEach(_data, (d) => {
+    _.forEach(d.actionNames, (actionName) => {
+      toSave.push({
+        ...d,
+        actionName,
+        type,
+        item,
+      });
+    });
   });
 
   return table.itemPermissions.createMany(toSave);
 }
 
-module.exports = add;
+module.exports = { add };

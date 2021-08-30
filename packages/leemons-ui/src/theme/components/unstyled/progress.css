@@ -1,0 +1,9 @@
+/* :> */
+@layer components {
+  /* <: */
+  .progress {
+    @apply appearance-none relative overflow-hidden w-full;
+  }
+  /* :> */
+}
+/* <: */

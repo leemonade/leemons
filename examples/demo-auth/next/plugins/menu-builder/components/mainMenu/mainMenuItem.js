@@ -1,24 +1,31 @@
 import * as PropTypes from 'prop-types';
-
-import LeemonsImage from '../leemonsImage';
+import { Button, ImageLoader, Tooltip } from 'leemons-ui';
 
 export default function MainMenuItem({ item, menuWidth, active, onClick }) {
   return (
     <>
-      <div
-        onClick={onClick}
-        style={{ height: menuWidth }}
-        className={`w-full text-center cursor-pointer ${active ? 'bg-gray-600' : 'bg-gray-200'} `}
-        key={item.id}
-      >
-        <div className={'w-5 h-full mx-auto relative'}>
-          <LeemonsImage
-            forceImage={false}
-            src={active && item.activeIconSvg ? item.activeIconSvg : item.iconSvg}
-            alt={item.iconAlt}
-          />
-        </div>
-      </div>
+      <Tooltip color="primary" position="right" size="lg" content={item.label}>
+        <Button
+          onClick={(e) => (item.disabled ? e.preventDefault() : onClick(e))}
+          style={{ height: menuWidth }}
+          color="secondary"
+          className={`w-full text-center hover:bg-primary-focus sharp border-0 ${
+            active ? 'bg-secondary-focus' : ''
+          } ${item.disabled ? 'cursor-not-allowed opacity-30' : 'cursor-pointer'}`}
+        >
+          <div className={'w-5 h-full mx-auto relative'}>
+            <ImageLoader
+              className={`${
+                active
+                  ? 'stroke-current text-secondary-content'
+                  : 'stroke-current text-secondary-content'
+              }`}
+              src={active && item.activeIconSvg ? item.activeIconSvg : item.iconSvg}
+              alt={item.iconAlt}
+            />
+          </div>
+        </Button>
+      </Tooltip>
     </>
   );
 }

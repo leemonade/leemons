@@ -1,0 +1,9 @@
+/* :> */
+@layer components {
+  /* <: */
+  .artboard {
+    @apply w-full;
+  }
+  /* :> */
+}
+/* <: */

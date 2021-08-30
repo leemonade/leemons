@@ -3,6 +3,7 @@ const pmap = require('p-map');
 
 const { buildQuery } = require('leemons-utils');
 const { parseFilters } = require('leemons-utils');
+const { ca } = require('wait-on/exampleConfig');
 
 function generateQueries(model /* connector */) {
   const bookshelfModel = model.model;
@@ -10,7 +11,7 @@ function generateQueries(model /* connector */) {
     _.pickBy(attributes, (value, key) => model.schema.allAttributes.includes(key));
 
   // Creates one new item
-  function create(newItem, { transacting } = {}) {
+  async function create(newItem, { transacting } = {}) {
     const attributes = selectAttributes(newItem);
     return bookshelfModel
       .forge(attributes)
@@ -75,14 +76,20 @@ function generateQueries(model /* connector */) {
 
     const attributes = selectAttributes(updatedItem);
 
-    const updatedCount = await entry().count();
+    const updatedCount = await entry().count({ transacting });
 
     if (updatedCount > 0) {
-      await entry().save(attributes, {
-        method: 'update',
-        patch: true,
-        transacting,
-      });
+      try {
+        await entry().save(attributes, {
+          method: 'update',
+          patch: true,
+          transacting,
+        });
+      } catch (err) {
+        if (err.message !== 'EmptyResponse') {
+          throw err;
+        }
+      }
     }
 
     return { count: updatedCount };
@@ -112,7 +119,7 @@ function generateQueries(model /* connector */) {
 
     const entries = () => bookshelfModel.query(newQuery);
 
-    const deletedCount = await entries().count();
+    const deletedCount = await entries().count({ transacting });
 
     if (deletedCount > 0) {
       await entries().destroy({ transacting });
@@ -179,17 +186,58 @@ function generateQueries(model /* connector */) {
     return model.ORM.transaction(f);
   }
 
+  async function timeoutPromise(time) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, time);
+    });
+  }
+
+  async function reTry(func, args, time = 10, n = 0) {
+    try {
+      return await func(...args);
+    } catch (e) {
+      console.log(e);
+      if (n < 10000 && e.code === 'ER_LOCK_DEADLOCK') {
+        await timeoutPromise(time);
+        return await reTry(func, args, n + 1);
+      }
+      throw e;
+    }
+  }
+
   return {
-    create,
-    createMany,
-    update,
-    updateMany,
-    delete: deleteOne,
-    deleteMany,
-    find,
-    findOne,
-    count,
-    set,
+    create: (...args) => {
+      return reTry(create, args);
+    },
+    createMany: (...args) => {
+      return reTry(createMany, args);
+    },
+    update: (...args) => {
+      return reTry(update, args);
+    },
+    updateMany: (...args) => {
+      return reTry(updateMany, args);
+    },
+    delete: (...args) => {
+      return reTry(deleteOne, args);
+    },
+    deleteMany: (...args) => {
+      return reTry(deleteMany, args);
+    },
+    find: (...args) => {
+      return reTry(find, args);
+    },
+    findOne: (...args) => {
+      return reTry(findOne, args);
+    },
+    count: (...args) => {
+      return reTry(count, args);
+    },
+    set: (...args) => {
+      return reTry(set, args);
+    },
     transaction,
   };
 }

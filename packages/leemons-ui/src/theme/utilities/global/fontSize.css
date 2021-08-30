@@ -1,0 +1,11 @@
+/* :> */
+@layer utilities {
+  @variants responsive {
+    /* <: */
+    .text-2xs {
+      font-size: 0.7rem;
+    }
+    /* :> */
+  }
+}
+/* <: */

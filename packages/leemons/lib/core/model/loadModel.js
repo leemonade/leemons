@@ -1,7 +1,8 @@
 const { generateModelName } = require('leemons-utils');
 const _ = require('lodash');
 
-const { createCoreStore, coreStoreProvider } = require('./coreStore');
+const { createCoreStore, createCoreStoreProvider } = require('./coreStore');
+const { createPlugins, createPluginsProvider } = require('./plugins');
 
 function formatModel(name, modelConfig, target = 'global') {
   const defaultModel = {
@@ -29,14 +30,11 @@ function formatModel(name, modelConfig, target = 'global') {
   const schema = _.pick(modelConfig, ['collectionName', 'options', 'attributes', 'primaryKey']);
   const model = _.pick(modelConfig, ['connection', 'modelName', 'type', 'target']);
 
-  // Ignore in core_store
-  if (model.target !== 'core_store') {
-    // standardize modelName
-    model.originalModelName = model.modelName;
-    model.modelName = generateModelName(model.target, model.modelName);
-    // standardize collectionName
-    schema.collectionName = generateModelName(model.target, schema.collectionName);
-  }
+  // standardize modelName
+  model.originalModelName = model.modelName;
+  model.modelName = generateModelName(model.target, model.modelName);
+  // standardize collectionName
+  schema.collectionName = generateModelName(model.target, schema.collectionName);
 
   _.set(model, 'schema', schema);
 
@@ -67,19 +65,35 @@ function formatModels(models, target = 'global') {
   );
 }
 
-function loadModels(leemons) {
+function loadCoreModels(leemons) {
   const coreStore = createCoreStore();
+  const plugins = createPlugins('plugins');
+  const providers = createPlugins('providers');
 
-  _.set(
-    leemons,
-    'core_store',
-    coreStoreProvider(formatModel('core_store', coreStore, 'core_store', leemons), leemons)
-      .core_store
+  const coreStoreProvider = createCoreStoreProvider(
+    formatModel(coreStore.collectionName, coreStore, coreStore.target, leemons),
+    leemons
   );
+  const pluginsProvider = createPluginsProvider(
+    formatModel(plugins.collectionName, plugins, plugins.target, leemons),
+    'plugins',
+    leemons
+  );
+  const providersProvider = createPluginsProvider(
+    formatModel(providers.collectionName, providers, providers.target, leemons),
+    'providers',
+    leemons
+  );
+
+  _.set(leemons, 'models', {
+    core_store: coreStoreProvider,
+    plugins: pluginsProvider,
+    providers: providersProvider,
+  });
 }
 
 module.exports = {
-  loadModels,
+  loadCoreModels,
   formatModels,
   formatModel,
 };

@@ -1,5 +1,4 @@
 const { table } = require('../tables');
-const { validateItemPermission } = require('../../validations/item-permissions');
 
 /**
  * ES:
@@ -10,21 +9,13 @@ const { validateItemPermission } = require('../../validations/item-permissions')
  *
  * @public
  * @static
- * @param {ItemPermission} data - Array of permissions
+ * @param {ItemPermission} query -
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function exist({ permissionName, actionNames, target, type, item }, { transacting } = {}) {
-  await validateItemPermission({ permissionName, actionNames, target, type, item });
-  const query = {
-    permissionName,
-    actionName_$in: actionNames,
-    type,
-    item,
-  };
-  if (target) query.target = target;
+async function exist(query, { transacting } = {}) {
   const response = await table.itemPermissions.count(query, { transacting });
   return !!response;
 }
 
-module.exports = exist;
+module.exports = { exist };

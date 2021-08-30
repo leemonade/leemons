@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const addItemPermissions = require('../../helpers/addItemPermissions');
 const { validateKeyPrefix } = require('../../validations/exists');
 const { table } = require('../../tables');
 const { validateExistMenu } = require('../../validations/exists');
@@ -25,7 +24,11 @@ async function add(key, permissions, { transacting: _transacting } = {}) {
 
       // Add the necessary permissions to view the item
       if (_.isArray(permissions) && permissions.length) {
-        await addItemPermissions.call(this, key, 'menu', permissions, { transacting });
+        await leemons
+          .getPlugin('users')
+          .services.permissions.addItem(key, leemons.plugin.prefixPN('menu'), permissions, {
+            transacting,
+          });
       }
 
       leemons.log.info(`Added menu "${key}"`);

@@ -1,0 +1,38 @@
+/* :> */
+@layer components {
+  /* <: */
+  .divider {
+    @apply my-4 h-4;
+    &:before,
+    &:after {
+      @apply bg-base-content;
+      height: 1px;
+      --tw-bg-opacity: var(--tw-border-opacity, 0.1);
+    }
+    &:not(:empty) {
+      &:before {
+        @apply mr-4;
+      }
+      &:after {
+        @apply ml-4;
+      }
+    }
+    &-vertical {
+      @apply my-0 h-auto mx-4 w-4;
+      &:before,
+      &:after {
+        width: 1px;
+      }
+      &:not(:empty) {
+        &:before {
+          @apply mr-0 mb-4;
+        }
+        &:after {
+          @apply ml-0 mt-4;
+        }
+      }
+    }
+  }
+  /* :> */
+}
+/* <: */

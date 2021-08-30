@@ -4,11 +4,22 @@ import { useDrag, useDrop } from 'react-dnd';
 import * as _ from 'lodash';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
-export default function DndSortItem({ children, className, id, find, move, type, emptyLayout }) {
+export default function DndSortItem({
+  children,
+  className,
+  id,
+  find,
+  move,
+  type,
+  accept,
+  emptyLayout,
+  disableDrag,
+}) {
   const originalIndex = find(id).index;
   const [{ isDragging }, drag, preview] = useDrag(
     () => ({
       type,
+      canDrag: !disableDrag,
       item: { id, originalIndex },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
@@ -19,14 +30,14 @@ export default function DndSortItem({ children, className, id, find, move, type,
         move(item.id, !didDrop ? item.originalIndex : lastIndex, true);
       },
     }),
-    [id, originalIndex, move]
+    [id, originalIndex, move, disableDrag]
   );
   const [, drop] = useDrop(
     () => ({
-      accept: type,
+      accept: accept || type,
       canDrop: () => false,
-      hover({ id: draggedId }) {
-        if (draggedId !== id) move(draggedId, find(id).index);
+      hover({ id: draggedId, ...rest }) {
+        if (draggedId !== id) move(draggedId || rest, find(id).index);
       },
     }),
     [find, move]
@@ -54,5 +65,7 @@ DndSortItem.propTypes = {
   find: PropTypes.func.isRequired,
   move: PropTypes.func.isRequired,
   type: PropTypes.string.isRequired,
+  accept: PropTypes.array,
   emptyLayout: PropTypes.bool,
+  disableDrag: PropTypes.bool,
 };

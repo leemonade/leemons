@@ -1,42 +1,56 @@
 import Router from 'next/router';
 
-export function goBasePage() {
-  return Router.push('/users');
+export function goBasePage(returnUrl) {
+  const uri = '/users';
+  return returnUrl === true ? uri : Router.push(uri);
 }
 
-export function goLoginPage() {
-  return Router.push('/users/public/login');
+export function goLoginPage(returnUrl) {
+  const uri = '/users/public/login';
+  return returnUrl === true ? uri : Router.push(uri);
 }
 
-export function goResetPage() {
-  return Router.push('/users/public/reset');
+export function goResetPage(returnUrl) {
+  const uri = '/users/public/reset';
+  return returnUrl === true ? uri : Router.push(uri);
 }
 
-export function goRecoverPage() {
-  return Router.push('/users/public/recover');
+export function goRecoverPage(returnUrl) {
+  const uri = '/users/public/recover';
+  return returnUrl === true ? uri : Router.push(uri);
 }
 
-export function goRegisterPage() {
-  return Router.push('/users/public/register');
+export function goRegisterPage(returnUrl) {
+  const uri = '/users/public/register';
+  return returnUrl === true ? uri : Router.push(uri);
 }
 
-export function goSelectProfilePage() {
-  return Router.push('/users/private/select-profile');
+export function goSelectProfilePage(returnUrl) {
+  const uri = '/users/private/select-profile';
+  return returnUrl === true ? uri : Router.push(uri);
 }
 
-export function goListUsersPage() {
-  return Router.push('/users/private/users/list');
+export function goListUsersPage(returnUrl) {
+  const uri = '/users/private/users/list';
+  return returnUrl === true ? uri : Router.push(uri);
 }
 
-export function goDetailUserPage() {
-  return Router.push('/users/private/users/detail');
+export function goDetailUserPage(returnUrl) {
+  const uri = '/users/private/users/detail';
+  return returnUrl === true ? '/users' : Router.push('');
 }
 
-export function goListProfilesPage() {
-  return Router.push('/users/private/profiles/list');
+export function goListProfilesPage(returnUrl) {
+  const uri = '/users/private/profiles/list';
+  return returnUrl === true ? uri : Router.push(uri);
 }
 
-export function goDetailProfilePage(uri) {
-  if (uri) return Router.push(`/users/private/profiles/detail/${uri}`);
-  return Router.push('/users/private/profiles/detail');
+export function goDetailProfilePage(uri, returnUrl) {
+  if (uri)
+    return returnUrl === true
+      ? `/users/private/profiles/detail/${uri}`
+      : Router.push(`/users/private/profiles/detail/${uri}`);
+  return returnUrl === true
+    ? '/users/private/profiles/detail'
+    : Router.push('/users/private/profiles/detail');
 }

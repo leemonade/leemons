@@ -1,8 +1,6 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
 const { translations } = require('../../translations');
-const prefixPN = require('../../helpers/prefixPN');
-const removeItemPermissions = require('../../helpers/removeItemPermissions');
 const { validateNotExistMenuItem } = require('../../validations/exists');
 const { validateKeyPrefix } = require('../../validations/exists');
 
@@ -31,13 +29,21 @@ async function remove(menuKey, key, { transacting: _transacting } = {}) {
         // Delete item
         table.menuItem.delete({ key }, { transacting }),
         // Delete item permissions
-        removeItemPermissions(key, `${menuKey}.menu-item`, { transacting }),
+        leemons.getPlugin('users').services.permissions.removeItems(
+          {
+            type: leemons.plugin.prefixPN(`${menuKey}.menu-item`),
+            item: key,
+          },
+          { transacting }
+        ),
       ];
 
       // Delete item translations
       if (locales) {
         promises.push(
-          locales.contents.deleteKeyStartsWith(prefixPN(`${menuKey}.${key}.`), { transacting })
+          locales.contents.deleteKeyStartsWith(leemons.plugin.prefixPN(`${menuKey}.${key}.`), {
+            transacting,
+          })
         );
       }
 

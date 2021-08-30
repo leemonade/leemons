@@ -9,4 +9,4 @@ async function count(...params) {
   return table.itemPermissions.count(...params);
 }
 
-module.exports = count;
+module.exports = { count };

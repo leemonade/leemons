@@ -1,0 +1,87 @@
+/* :> */
+@layer components {
+  /* <: */
+  .select-wrapper {
+    @apply relative;
+    &::before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: calc(50% - 0.5rem);
+      right: 1rem;
+      height: 0.5rem;
+      width: 0.5rem;
+      /*
+      border-style: solid;
+      border-width: 1px 1px 0 0;
+      border-color: hsla(var(--b-c));
+      */
+      transform: rotate(135deg);
+      pointer-events: none;
+      box-shadow: 2px -2px 0 0 hsla(var(--b-c));
+    }
+  }
+
+  .select {
+    @apply border font-inter text-base-content w-full transition duration-200 ease-in-out rounded-btn bg-base-100 border-base-300 pr-10;
+    &-bordered {
+    }
+    &:focus {
+      box-shadow: 0 0 0 3px hsla(var(--b2));
+    }
+    &-ghost {
+      @apply bg-opacity-5;
+      &:focus {
+        @apply bg-opacity-100 text-base-content;
+      }
+    }
+    &-primary {
+      @apply border-primary;
+      &:focus {
+        box-shadow: 0 0 0 3px hsla(var(--b2));
+      }
+    }
+    &-secondary {
+      @apply border-secondary;
+      &:focus {
+        box-shadow: 0 0 0 3px hsla(var(--b2));
+      }
+    }
+    &-accent {
+      @apply border-accent;
+      &:focus {
+        box-shadow: 0 0 0 3px hsla(var(--b2));
+      }
+    }
+    &-info {
+      @apply border-info;
+      &:focus {
+        box-shadow: 0 0 0 3px hsla(var(--b2));
+      }
+    }
+    &-success {
+      @apply border-success;
+      &:focus {
+        box-shadow: 0 0 0 3px hsla(var(--b2));
+      }
+    }
+    &-warning {
+      @apply border-warning;
+      &:focus {
+        box-shadow: 0 0 0 3px hsla(var(--b2));
+      }
+    }
+    &-error {
+      @apply border-error;
+      &:focus {
+        box-shadow: 0 0 0 3px hsla(var(--b2));
+      }
+    }
+    &-disabled,
+    &[disabled] {
+      @apply cursor-not-allowed bg-base-200 border-base-200 text-opacity-20 placeholder-base-content placeholder-opacity-20;
+    }
+  }
+  /* :> */
+}
+/* <: */
