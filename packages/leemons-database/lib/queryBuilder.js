@@ -31,6 +31,7 @@ function queryBuilder(model, connector) {
     setMany: createQuery({ query: 'setMany', model, connectorQuery }),
     find: createQuery({ query: 'find', model, connectorQuery }),
     findOne: createQuery({ query: 'findOne', model, connectorQuery }),
+    search: createQuery({ query: 'search', model, connectorQuery }),
     count: createQuery({ query: 'count', model, connectorQuery }),
     delete: createQuery({ query: 'delete', model, connectorQuery }),
     deleteMany: createQuery({ query: 'deleteMany', model, connectorQuery }),

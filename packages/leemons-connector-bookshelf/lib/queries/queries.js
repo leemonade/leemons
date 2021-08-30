@@ -159,6 +159,41 @@ function generateQueries(model /* connector */) {
     return (await find(query, { columns: ['id'], transacting })).length;
   }
 
+  // Finds all items based on a query, a limit and an offset (page)
+  async function search(query, page = 0, size = 10, { transacting } = {}) {
+    if (size < 1) {
+      throw new Error('The size should be at least 1');
+    }
+    if (page < 0) {
+      throw new Error('The page should be at least 0');
+    }
+    const totalCount = await count(query, { transacting });
+    const totalPages = Math.floor(totalCount / size);
+
+    if (page > totalPages) {
+      return {
+        items: [],
+        count: 0,
+        totalCount,
+        page,
+        size,
+        nextPage: page < totalPages ? page + 1 : null,
+        prevPage: page > 0 ? page - 1 : null,
+      };
+    }
+
+    const items = await find({ ...query, $limit: size, $offset: page * size }, { transacting });
+    return {
+      items,
+      count: items.length,
+      totalCount,
+      page,
+      size,
+      nextPage: page < totalPages ? page + 1 : null,
+      prevPage: page > 0 ? page - 1 : null,
+    };
+  }
+
   async function set(query, item, { transacting } = {}) {
     const filters = parseFilters({ filters: query, model });
     const newQuery = buildQuery(model, filters);
@@ -232,6 +267,7 @@ function generateQueries(model /* connector */) {
     deleteMany: (...args) => reTry(deleteMany, args),
     find: (...args) => reTry(find, args),
     findOne: (...args) => reTry(findOne, args),
+    search: (...args) => reTry(search, args),
     count: (...args) => reTry(count, args),
     set: (...args) => reTry(set, args),
     setMany: (...args) => reTry(setMany, args),

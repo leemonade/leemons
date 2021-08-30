@@ -91,4 +91,47 @@ module.exports = [
     handler: 'levelSchemas.removeAssignables',
     authenticated: false,
   },
+
+  {
+    path: '/level',
+    method: 'POST',
+    handler: 'levels.add',
+    authenticated: false,
+  },
+  {
+    path: '/level/:id',
+    method: 'GET',
+    handler: 'levels.get',
+    authenticated: false,
+  },
+  {
+    path: '/level',
+    method: 'GET',
+    handler: 'levels.list',
+    authenticated: false,
+  },
+  {
+    path: '/level/:id',
+    method: 'DELETE',
+    handler: 'levels.delete',
+    authenticated: false,
+  },
+  {
+    path: '/level/:id/names',
+    method: 'PATCH',
+    handler: 'levels.setNames',
+    authenticated: false,
+  },
+  {
+    path: '/level/:id/descriptions',
+    method: 'PATCH',
+    handler: 'levels.setDescriptions',
+    authenticated: false,
+  },
+  {
+    path: '/level/:id/parent',
+    method: 'PATCH',
+    handler: 'levels.setParent',
+    authenticated: false,
+  },
 ];

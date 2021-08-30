@@ -1,22 +1,22 @@
-const tables = {
-  levelSchemas: leemons.query('plugins_classroom::levelSchemas'),
-  assignableProfiles: leemons.query('plugins_classroom::levelSchemas_profiles'),
-};
+const table = leemons.query('plugins_classroom::levels');
 
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 
 async function add(
-  { names = null, parent = null, isClass = false, assignableProfiles = [] } = {},
+  { names = null, descriptions = null, schema = null, parent = null } = {},
   { transacting } = {}
 ) {
-  const levelSchema = { name: names, parent, isClass, assignableProfiles };
+  const level = { names, descriptions, schema, parent };
 
   // ---------------------------------------------------------------------------
   // validate data types
-  const levelSSchema = {
+  const levelSchema = {
     type: 'object',
     properties: {
-      name: {
+      names: {
+        type: 'object',
+      },
+      descriptions: {
         type: 'object',
       },
       parent: {
@@ -30,63 +30,43 @@ async function add(
           },
         ],
       },
-      isClass: {
-        type: 'boolean',
-      },
-      assignableProfiles: {
-        type: 'array',
-        items: {
-          type: 'string',
-          format: 'uuid',
-        },
+      schema: {
+        type: 'string',
+        format: 'uuid',
       },
     },
   };
-  const validator = new global.utils.LeemonsValidator(levelSSchema);
+  const validator = new global.utils.LeemonsValidator(levelSchema);
 
-  if (validator.validate(levelSchema)) {
+  if (validator.validate(level)) {
     // -------------------------------------------------------------------------
     // Register LevelSchema inside a transaction
     return global.utils.withTransaction(
       async (t) => {
-        let savedLevelSchema;
-        let savedAssignableProfiles;
+        let savedLevel;
         let savedNames;
+        let savedDescriptions;
         let missingLocales;
 
         // -----------------------------------------------------------------------
         // Save level schema
         try {
-          savedLevelSchema = await tables.levelSchemas.create(levelSchema, { transacting: t });
+          savedLevel = await table.create(level, { transacting: t });
         } catch (e) {
           if (e.code.includes('ER_NO_REFERENCED_ROW')) {
-            throw new Error("LevelSchema's parent was not found");
+            if (!parent) {
+              throw new Error('The referenced schema does not exists');
+            }
+            throw new Error('The referenced parent or schema does not exists');
           }
           throw new Error("LevelSchema can't be created");
-        }
-
-        // -----------------------------------------------------------------------
-        // Save assignable profiles
-        try {
-          savedAssignableProfiles = await tables.assignableProfiles.createMany(
-            assignableProfiles.map((profile) => ({
-              levelSchemas_id: savedLevelSchema.id,
-              profiles_id: profile,
-            })),
-            { transacting: t }
-          );
-        } catch (e) {
-          if (e.code.includes('ER_NO_REFERENCED_ROW')) {
-            throw new Error(`One of the assignable profiles can't be found`);
-          }
-          throw new Error("The assignable profiles can't be saved");
         }
 
         // -----------------------------------------------------------------------
         // Save translated names
         try {
           const { items, warnings } = await multilanguage.addManyByKey(
-            leemons.plugin.prefixPN(`levelSchemas.${savedLevelSchema.id}.name`),
+            leemons.plugin.prefixPN(`levels.${savedLevel.id}.name`),
             names,
             { transacting: t }
           );
@@ -100,10 +80,28 @@ async function add(
           throw new Error("the translated names can't be saved");
         }
 
+        // -----------------------------------------------------------------------
+        // Save translated descriptions
+        try {
+          const { items, warnings } = await multilanguage.addManyByKey(
+            leemons.plugin.prefixPN(`levels.${savedLevel.id}.description`),
+            descriptions,
+            { transacting: t }
+          );
+
+          if (warnings?.nonExistingLocales) {
+            missingLocales = new Set([...missingLocales, ...warnings.nonExistingLocales]);
+          }
+
+          savedDescriptions = items;
+        } catch (e) {
+          throw new Error("the translated descriptions can't be saved");
+        }
+
         return {
-          ...savedLevelSchema,
-          assignableProfiles: savedAssignableProfiles,
+          ...savedLevel,
           names: savedNames,
+          descriptions: savedDescriptions,
           warnings: missingLocales.length
             ? {
                 missingLocales,
@@ -111,7 +109,7 @@ async function add(
             : null,
         };
       },
-      tables.levelSchemas,
+      table,
       transacting
     );
   }
