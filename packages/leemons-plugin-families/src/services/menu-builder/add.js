@@ -1,6 +1,6 @@
 const getMenuBuilder = require('./getMenuBuilder');
 
-async function add(item, permissions) {
+async function add(item, permissions, isCustomPermission, { transacting } = {}) {
   const menuBuilder = getMenuBuilder();
   const { menuItem, config } = menuBuilder.services;
   if (!(await menuItem.exist(config.constants.mainMenuKey, leemons.plugin.prefixPN(item.key)))) {
@@ -10,10 +10,11 @@ async function add(item, permissions) {
         menuKey: config.constants.mainMenuKey,
         key: leemons.plugin.prefixPN(item.key),
       },
-      permissions
+      permissions,
+      { isCustomPermission, transacting }
     );
   }
   return null;
 }
 
-module.exports = add;
+module.exports = { add };

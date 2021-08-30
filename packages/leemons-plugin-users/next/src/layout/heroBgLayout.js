@@ -38,7 +38,10 @@ export default function HeroBgLayout({ children }) {
           </div>
         </div>
         <div className="w-7/12 relative">
-          <div className="max-w-xs w-full absolute left-1/4 top-2/4 transform -translate-y-2/4">
+          <div
+            style={{ maxWidth: '360px' }}
+            className="w-full absolute left-1/4 top-2/4 transform -translate-y-2/4"
+          >
             {children}
           </div>
         </div>

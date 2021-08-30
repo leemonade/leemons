@@ -23,6 +23,7 @@ module.exports = {
     cancel: 'Cancel',
     save: 'Save',
     edit: 'Edit',
+    delete: 'Delete',
   },
   form_field_types: {
     view: 'View',

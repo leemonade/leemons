@@ -15,7 +15,15 @@ async function initUsers(centers, profiles) {
         centers.orange.id
       ),
   ]);
-  console.log('ROLES', roles);
+  const roles2 = await Promise.all([
+    leemons
+      .getPlugin('users')
+      .services.profiles.getRoleForRelationshipProfileCenter(
+        profiles.guardian.id,
+        centers.leemon.id
+      ),
+  ]);
+
   const user1 = await leemons.getPlugin('users').services.users.add(
     {
       name: 'Jaime',
@@ -24,10 +32,20 @@ async function initUsers(centers, profiles) {
       locale: 'es',
       active: true,
     },
-    _.map(roles, 'id')
+    _.map(roles, 'id').concat(_.map(roles2, 'id'))
   );
-  console.log('USER', user1);
-  return { users: [user1] };
+  const user2 = await leemons.getPlugin('users').services.users.add(
+    {
+      name: 'Jaime Guardian',
+      email: 'jaime2@leemons.io',
+      password: 'testing',
+      locale: 'en',
+      active: true,
+    },
+    _.map(roles2, 'id')
+  );
+
+  return { users: [user1, user2] };
 }
 
 module.exports = initUsers;

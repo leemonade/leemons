@@ -7,6 +7,7 @@ const {
   validateNotExistSchema,
 } = require('../../validations/exists');
 const { validateLocationAndPluginAndLocale } = require('../../validations/dataset-location');
+const getKeysCanAction = require('../dataset-values/getKeysCanAction');
 
 /** *
  *  ES:
@@ -21,6 +22,7 @@ const { validateLocationAndPluginAndLocale } = require('../../validations/datase
  *  @param {string} pluginName - Plugin name
  *  @param {string} locale
  *  @param {any=} transacting - DB Transaction
+ *  @param {any=} userSession - If the user's session comes up, it is checked and returned those fields that at least the user has permissions to view.
  *  @param {boolean=} defaultWithEmptyValues - Define if the values of default locales is empty = ""
  *  @return {Promise<Action>} The new dataset location
  *  */
@@ -28,14 +30,23 @@ async function getSchemaWithLocale(
   locationName,
   pluginName,
   locale,
-  { defaultWithEmptyValues, transacting } = {}
+  { defaultWithEmptyValues, userSession, transacting } = {}
 ) {
   validateLocationAndPluginAndLocale(locationName, pluginName, locale, true);
   await validateNotExistLocation(locationName, pluginName, { transacting });
   await validateNotExistSchema(locationName, pluginName, { transacting });
-  await validateNotExistSchemaLocale(locationName, pluginName, locale, { transacting });
 
   const defaultLocale = await leemons.getPlugin('users').services.platform.getDefaultLocale();
+
+  try {
+    await validateNotExistSchemaLocale(locationName, pluginName, locale, { transacting });
+  } catch (err) {
+    if (userSession) {
+      locale = defaultLocale;
+    } else {
+      throw err;
+    }
+  }
 
   const [schema, schemaLocale, defaultSchemaLocale] = await Promise.all([
     getSchema.call(this, locationName, pluginName),
@@ -70,6 +81,38 @@ async function getSchemaWithLocale(
   schema.compileJsonUI = JSON.parse(
     schema.compileJsonUI.replaceAll('"-*-*-[', '[').replaceAll(']-*-*-"', ']')
   );
+
+  if (userSession) {
+    const goodKeys = await getKeysCanAction(
+      locationName,
+      pluginName,
+      userSession.userAgents,
+      'view'
+    );
+    const editKeys = await getKeysCanAction(
+      locationName,
+      pluginName,
+      userSession.userAgents,
+      'edit'
+    );
+    _.forInRight(schema.compileJsonSchema.properties, (value, key) => {
+      if (goodKeys.indexOf(key) < 0) {
+        delete schema.compileJsonSchema.properties[key];
+        const requiredIndex = schema.compileJsonSchema.required.indexOf(key);
+        if (requiredIndex >= 0) {
+          schema.compileJsonSchema.required.splice(requiredIndex, 1);
+        }
+        if (schema.compileJsonUI[key]) {
+          delete schema.compileJsonUI[key];
+        }
+      } else if (editKeys.indexOf(key) < 0) {
+        if (!schema.compileJsonUI[key]) {
+          schema.compileJsonUI[key] = {};
+        }
+        schema.compileJsonUI[key]['ui:readonly'] = true;
+      }
+    });
+  }
 
   return schema;
 }

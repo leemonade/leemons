@@ -34,7 +34,12 @@ function PrivateLayout({ persistentState: [state, _setState], children }) {
           style={{ width: `${state.menuWidth}px` }}
           className={'overflow-x-visible transition-all h-full'}
         >
-          <MainMenu state={state} setState={setState} onClose={onCloseMenu} onOpen={onOpenMenu} />
+          <MainMenu
+            state={store.current}
+            setState={setState}
+            onClose={onCloseMenu}
+            onOpen={onOpenMenu}
+          />
         </div>
         <div className="w-full bg-secondary-content h-screen overflow-y-auto">
           <Alert />

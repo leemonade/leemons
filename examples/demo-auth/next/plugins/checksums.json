@@ -1,14 +1,15 @@
 {
-  "emails": "1e5321da81373a2905c3382f30d9bb3a",
   "provider-emails-amazon-ses": "f9fa172ae5a4acabe8ddefccd61145a1",
-  "common": "f56ffd61dee5db00b843e829208aac11",
+  "common": "5a14cdd275c937f4a3e3ce2e033fdf73",
+  "emails": "1e5321da81373a2905c3382f30d9bb3a",
   "onboarding": "b78130ba16f2ab58da50faf0896ca5a6",
-  "layout": "0a280fc15ec8f6c8c0beaf3a878f52a7",
-  "multilanguage": "6b06c6e3ee8ea183007dc5842356e251",
-  "dataset": "27f89241b501367f4eb947c5e90b4ee3",
-  "menu-builder": "bba3f340bd6ded9e2410bc613cd7c561",
-  "users": "10dc81c89d95753cace843f8bc1044f3",
-  "plugins.js": "module.exports = {\n  plugins: [\n    'onboarding',\n\t\t'layout',\n\t\t'emails',\n\t\t'common',\n\t\t'assets',\n\t\t'dataset',\n\t\t'multilanguage',\n\t\t'users',\n\t\t'mvp-template',\n\t\t'menu-builder',\n\t\t'dataset-test',\n\t\t'classroom',\n\t\t'provider-emails-amazon-ses'\n  ],\n  frontPlugins: [{\n    name: 'onboarding',\n    version: '0.0.1',\n    load: require('@onboarding/index.js')\n  },\n\t{\n    name: 'layout',\n    version: '0.0.1',\n    load: require('@layout/index.js')\n  },\n\t{\n    name: 'emails',\n    version: '0.0.1',\n    load: require('@emails/index.js')\n  },\n\t{\n    name: 'multilanguage',\n    version: '0.0.1',\n    load: require('@multilanguage/index.js')\n  },\n\t{\n    name: 'users',\n    version: '0.0.1',\n    load: require('@users/index.js')\n  },\n\t{\n    name: 'provider-emails-amazon-ses',\n    version: '0.0.1',\n    load: require('@provider-emails-amazon-ses/index.js')\n  }]\n};",
-  "integrity": "c83f96eb9aa22f6987c3f337d1b5d94f",
-  "classroom": "22541198d48ae19f55fb767f7d5c9e4b"
+  "layout": "cd70dad9a998eac98aef0d74ee713b62",
+  "plugins.js": "module.exports = {\n  plugins: [\n    'onboarding',\n\t\t'layout',\n\t\t'emails',\n\t\t'common',\n\t\t'assets',\n\t\t'dataset',\n\t\t'multilanguage',\n\t\t'users',\n\t\t'mvp-template',\n\t\t'menu-builder',\n\t\t'families',\n\t\t'dataset-test',\n\t\t'classroom',\n\t\t'provider-emails-amazon-ses'\n  ],\n  frontPlugins: [{\n    name: 'onboarding',\n    version: '0.0.1',\n    load: require('@onboarding/index.js')\n  },\n\t{\n    name: 'layout',\n    version: '0.0.1',\n    load: require('@layout/index.js')\n  },\n\t{\n    name: 'emails',\n    version: '0.0.1',\n    load: require('@emails/index.js')\n  },\n\t{\n    name: 'multilanguage',\n    version: '0.0.1',\n    load: require('@multilanguage/index.js')\n  },\n\t{\n    name: 'users',\n    version: '0.0.1',\n    load: require('@users/index.js')\n  },\n\t{\n    name: 'families',\n    version: '0.0.1',\n    load: require('@families/index.js')\n  },\n\t{\n    name: 'provider-emails-amazon-ses',\n    version: '0.0.1',\n    load: require('@provider-emails-amazon-ses/index.js')\n  }]\n};",
+  "integrity": "83cb3b11dc3633dde1d079e04a47788b",
+  "multilanguage": "e61fd097ed6ebba4023992bd056db8b7",
+  "classroom": "a7414b53151d1b7c03f6380f34317225",
+  "families": "8bb29fbf657e094a2fbdc74591279f65",
+  "dataset": "2fb3b019febec98364f37088224f16e8",
+  "menu-builder": "c7cff91d994446f295d5dab508b8136a",
+  "users": "ccc4b60e382af074eb5e5bb65eff68f5"
 }

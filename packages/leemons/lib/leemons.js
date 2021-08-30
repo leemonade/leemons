@@ -222,7 +222,7 @@ class Leemons {
           return next();
         }
         ctx.status = 401;
-        ctx.body = { status: 401, msg: 'Authorization required' };
+        ctx.body = { status: 401, message: 'Authorization required' };
         return undefined;
       } catch (err) {
         if (_.isObject(authenticated) && authenticated.nextWithoutSession) {
@@ -230,7 +230,7 @@ class Leemons {
           return next();
         }
         ctx.status = 401;
-        ctx.body = { status: 401, msg: 'Authorization required' };
+        ctx.body = { status: 401, message: 'Authorization required' };
         return undefined;
       }
     };
@@ -255,7 +255,7 @@ class Leemons {
         ctx.status = 401;
         ctx.body = {
           status: 401,
-          msg: 'You do not have permissions',
+          message: 'You do not have permissions',
           allowedPermissions: rAllowedPermissions,
         };
         return undefined;

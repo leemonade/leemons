@@ -1,5 +1,6 @@
 const permissions = require('../src/services/permissions');
 const itemPermissions = require('../src/services/item-permissions');
+const userProfile = require('../src/services/user-profile');
 
 module.exports = {
   add: permissions.add,
@@ -26,4 +27,7 @@ module.exports = {
   findItems: itemPermissions.find,
   removeItems: itemPermissions.remove,
   existItems: itemPermissions.exist,
+  // User profile
+  addCustomPermissionToUserProfile: userProfile.addCustomPermissionToUserProfile,
+  removeCustomPermissionToUserProfile: userProfile.removeCustomPermissionToUserProfile,
 };

@@ -387,9 +387,9 @@ concat-map@0.0.1:
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
 core-js-pure@^3.6.5:
-  version "3.16.2"
-  resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.16.2.tgz#0ef4b79cabafb251ea86eb7d139b42bd98c533e8"
-  integrity sha512-oxKe64UH049mJqrKkynWp6Vu0Rlm/BTXO/bJZuN2mmR3RtOFNepLlSWDd1eo16PzHpQAoNG97rLU1V/YxesJjw==
+  version "3.16.3"
+  resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.16.3.tgz#41ccb9b6027535f8dd51a0af004c1c7f0a8c9ca7"
+  integrity sha512-6In+2RwN0FT5yK0ZnhDP5rco/NnuuFZhHauQizZiHo5lDnqAvq8Phxcpy3f+prJOqtKodt/cftBl/GTOW0kiqQ==
 
 core-js@^2.6.5:
   version "2.6.12"
@@ -1014,9 +1014,9 @@ react-hook-form@^7.8.5:
   integrity sha512-kKdaySvv21tyH8WM5jYpKRxTFdknmHi7ssdBrU7cW0qRwXcr9lxVyO14MjUFlfEGe9S5VzBmTz7NKNSarV3AFw==
 
 react-hook-form@^7.8.8:
-  version "7.12.2"
-  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.12.2.tgz#2660afbf03c4ef360a9314ebf46ce3d972296c77"
-  integrity sha512-cpxocjrgpMAJCMJQR51BQhMoEx80/EQqePNihMTgoTYTqCRbd2GExi+N4GJIr+cFqrmbwNj9wxk5oLWYQsUefg==
+  version "7.14.0"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.14.0.tgz#b2b336510ddb352cde2fc1f5137e763d5db6c938"
+  integrity sha512-JwnIFedpGwUqxtMLv7lLq8PS6M6snFVeDvAQnG/0lyForn0ucWKMr58j86+9HobUGX6SAFmv7sVIJdLaxxzb8A==
 
 react-is@^16.7.0, react-is@^16.8.1, react-is@^16.9.0:
   version "16.13.1"
@@ -1064,9 +1064,9 @@ reusify@^1.0.4:
   integrity sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==
 
 rjsf-conditionals@^1.1.4:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/rjsf-conditionals/-/rjsf-conditionals-1.1.5.tgz#699d969df62f9f6b8d8ac0d2690842e02b47abcd"
-  integrity sha512-JC36oJkz4O9lXu3EQOVK+yn4vPcq0hpdhdxE0VmDRTbwcGhvljsk3HgS6S29P28g701r+P/nckG+oxHQOLt+CQ==
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/rjsf-conditionals/-/rjsf-conditionals-1.2.0.tgz#e12f8769eb8874262eeabff1d52b95ee030fc813"
+  integrity sha512-rIiK0EHvm0Fc7oBcSjaA1VKiSde8knVRws5zMu42rp83nNVIk2V/xVRHZEawFqXM3uuReCHbONRCUGhiotJBuw==
   dependencies:
     deepcopy "^2.0.0"
     selectn "^1.1.2"

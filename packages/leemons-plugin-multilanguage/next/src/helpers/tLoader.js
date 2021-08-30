@@ -1,8 +1,9 @@
 import _ from 'lodash';
 
 function tLoader(prefix, translations) {
-  return (key, replaces) => {
+  return (key, replaces, returnFullKey) => {
     const tKey = `${prefix}.${key}`.toLowerCase();
+    if (returnFullKey) return tKey;
     if (
       translations &&
       translations.items &&

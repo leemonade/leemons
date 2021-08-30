@@ -9,13 +9,8 @@ async function events(isInstalled) {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
     init();
   });
-  if (!isInstalled) {
-    const loadServices = {
-      dataset: false,
-      multilanguage: false,
-      users: false,
-    };
 
+  if (!isInstalled) {
     const initUsers = async () => {
       const actionsService = require('./src/services/actions');
       const permissionService = require('./src/services/permissions');
@@ -35,20 +30,19 @@ async function events(isInstalled) {
     };
 
     // Dataset locations
-    leemons.events.once('plugins.dataset:pluginDidLoadServices', async () => {
-      if (loadServices.multilanguage) initDataset();
-      loadServices.dataset = true;
-    });
-    leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
-      if (loadServices.dataset) initDataset();
-      if (loadServices.users) initUsers();
-      loadServices.multilanguage = true;
-    });
+    leemons.events.once(
+      ['plugins.multilanguage:pluginDidLoad', 'plugins.dataset:pluginDidLoadServices'],
+      async () => {
+        await initDataset();
+      }
+    );
 
-    leemons.events.once('plugins.users:pluginDidLoad', async () => {
-      if (loadServices.multilanguage) initUsers();
-      loadServices.users = true;
-    });
+    leemons.events.once(
+      ['plugins.users:pluginDidLoad', 'plugins.multilanguage:pluginDidLoad'],
+      async () => {
+        await initUsers();
+      }
+    );
 
     // Emails
     leemons.events.once('plugins.emails:pluginDidLoadServices', async () => {

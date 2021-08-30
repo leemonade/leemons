@@ -1,18 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Input = React.forwardRef(({ type, className, outlined, color, ...props }, ref) => {
-  const colorClass = color ? `input-${color}` : '';
-  const outlinedClass = outlined ? 'input-bordered' : '';
-  return (
-    <input
-      ref={ref}
-      type={type}
-      className={['input', colorClass, outlinedClass, className].join(' ')}
-      {...props}
-    />
-  );
-});
+const Input = React.forwardRef(
+  (
+    { type, className, outlined, color, onKeyEnter = () => {}, onKeyDown = () => {}, ...props },
+    ref
+  ) => {
+    const colorClass = color ? `input-${color}` : '';
+    const outlinedClass = outlined ? 'input-bordered' : '';
+    const myOnKeyDown = (e) => {
+      onKeyDown(e);
+      if (e.key === 'Enter') onKeyEnter(e);
+    };
+    return (
+      <input
+        ref={ref}
+        type={type}
+        className={['input', colorClass, outlinedClass, className].join(' ')}
+        onKeyDown={myOnKeyDown}
+        {...props}
+      />
+    );
+  }
+);
 
 Input.displayName = 'Input';
 

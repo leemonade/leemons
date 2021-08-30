@@ -1,4 +1,8 @@
 /* device specific */
-html{
+html {
   -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-weight: 300;
 }

@@ -46,6 +46,10 @@ async function addValues(
     formData[k] = _formData[k];
   });
 
+  // EN: Remove id ajv not support name if for a field
+  _.forIn(jsonSchema.properties, (p) => {
+    delete p.id;
+  });
   // ES: Comprobamos que los datos cumplen con la validacion
   // EN: We check that the data complies with validation
   const validator = new global.utils.LeemonsValidator(

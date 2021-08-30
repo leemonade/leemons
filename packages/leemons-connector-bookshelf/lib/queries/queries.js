@@ -3,7 +3,6 @@ const pmap = require('p-map');
 
 const { buildQuery } = require('leemons-utils');
 const { parseFilters } = require('leemons-utils');
-const { ca } = require('wait-on/exampleConfig');
 
 function generateQueries(model /* connector */) {
   const bookshelfModel = model.model;
@@ -11,7 +10,7 @@ function generateQueries(model /* connector */) {
     _.pickBy(attributes, (value, key) => model.schema.allAttributes.includes(key));
 
   // Creates one new item
-  function create(newItem, { transacting } = {}) {
+  async function create(newItem, { transacting } = {}) {
     const attributes = selectAttributes(newItem);
     return bookshelfModel
       .forge(attributes)

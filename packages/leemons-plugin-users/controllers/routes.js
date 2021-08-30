@@ -131,6 +131,12 @@ module.exports = [
     handler: 'permissions.list',
     authenticated: true,
   },
+  {
+    path: '/permission/get-if-have',
+    method: 'POST',
+    handler: 'permissions.getPermissionsWithActionsIfIHave',
+    authenticated: true,
+  },
   /**
    * Actions
    * */
