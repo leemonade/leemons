@@ -81,7 +81,7 @@
     lodash "^4.17.21"
     react-hook-form "^7.8.5"
 
-"@leemons/plugin-manager@file:dependencies/plugin-manager":
+"@leemons/package-manager@file:dependencies/package-manager":
   version "1.0.0"
   dependencies:
     prop-types "^15.7.2"

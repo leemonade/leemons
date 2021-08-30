@@ -135,7 +135,6 @@ ${plugin.dir.next})`,
      * connection and load back again
      */
     handler: async () => {
-      console.log('leemons.canReloadBackend', leemons.canReloadBackend);
       if (leemons.canReloadBackend) {
         // eslint-disable-next-line no-param-reassign
         leemons.backRouter.stack = [];
@@ -234,7 +233,6 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
       },
       // When a change is detected, kill all the workers and fork a new one
       handler: async () => {
-        console.log('rrecarga worker', canReloadWorkers);
         if (canReloadWorkers) {
           reloadWorkers();
         }

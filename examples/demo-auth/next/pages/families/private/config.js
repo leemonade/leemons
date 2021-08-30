@@ -25,7 +25,7 @@ import prefixPN from '@families/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useAsync } from '@common/useAsync';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { installPluginByNPMRequest } from '@plugin-manager/request';
+import { PackageManagerService } from '@package-manager/services';
 
 function DatasetTabs({ t }) {
   const [loading, setLoading] = useState(true);
@@ -190,11 +190,36 @@ function DatasetTabs({ t }) {
 function Config() {
   useSession({ redirectTo: goLoginPage });
   const router = useRouter();
-
+  const [emergencyNumberInstalled, setEmergencyNumberInstalled] = useState(false);
+  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
   const [t] = useTranslateLoader(prefixPN('config_page'));
 
+  const load = useMemo(
+    () => () => PackageManagerService.isPluginInstalled('leemons-plugin-family-emergency-number'),
+    []
+  );
+
+  const onSuccess = useMemo(
+    () => (installed) => {
+      setEmergencyNumberInstalled(installed);
+    },
+    []
+  );
+
+  const onError = useMemo(() => (e) => {}, []);
+
+  useAsync(load, onSuccess, onError);
+
   const installPhone = async () => {
-    await installPluginByNPMRequest('leemons-plugin-mvp-template', '1.0.0');
+    try {
+      await PackageManagerService.installPluginByNPM(
+        'leemons-plugin-family-emergency-number',
+        '1.0.0'
+      );
+    } catch (e) {
+      console.log('Hola?');
+      addErrorAlert(getErrorMessage(e));
+    }
   };
 
   return (
@@ -203,10 +228,14 @@ function Config() {
       <div className="bg-primary-content">
         <PageContainer>
           <div className="page-description max-w-screen-sm">{t('description1')}</div>
-          <div className="page-description max-w-screen-sm">{t('phone_description')}</div>
-          <Button color="primary" className="mt-4" onClick={installPhone}>
-            {t('phone_button')}
-          </Button>
+          {!emergencyNumberInstalled ? (
+            <>
+              <div className="page-description max-w-screen-sm">{t('phone_description')}</div>
+              <Button color="primary" className="mt-4" onClick={installPhone}>
+                {t('phone_button')}
+              </Button>
+            </>
+          ) : null}
         </PageContainer>
       </div>
 

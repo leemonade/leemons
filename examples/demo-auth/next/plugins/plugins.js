@@ -8,7 +8,7 @@ module.exports = {
 		'dataset',
 		'multilanguage',
 		'users',
-		'plugin-manager',
+		'package-manager',
 		'mvp-template',
 		'menu-builder',
 		'families',
@@ -42,9 +42,9 @@ module.exports = {
     load: require('@users/index.js')
   },
 	{
-    name: 'plugin-manager',
+    name: 'package-manager',
     version: '0.0.1',
-    load: require('@plugin-manager/index.js')
+    load: require('@package-manager/index.js')
   },
 	{
     name: 'families',

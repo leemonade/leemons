@@ -167,33 +167,33 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
       const vmFilter = (filter) => {
         _.set(filter, 'leemons.utils', {
           stopAutoServerReload: () => {
-            if (plugin.name === 'plugin-manager') {
+            if (plugin.name === 'package-manager') {
               leemons.canReloadFrontend = false;
               leemons.canReloadBackend = false;
               if (leemons.stopAutoReloadWorkers) leemons.stopAutoReloadWorkers();
               return true;
             }
-            throw new Error('Only the plugin plugin-manager have access to stopAutoServerReload');
+            throw new Error('Only the plugin package-manager have access to stopAutoServerReload');
           },
           startAutoServerReload: () => {
-            if (plugin.name === 'plugin-manager') {
+            if (plugin.name === 'package-manager') {
               leemons.canReloadFrontend = true;
               leemons.canReloadBackend = true;
               if (leemons.startAutoReloadWorkers) leemons.startAutoReloadWorkers();
               return true;
             }
-            throw new Error('Only the plugin plugin-manager have access to startAutoServerReload');
+            throw new Error('Only the plugin package-manager have access to startAutoServerReload');
           },
           reloadServer: () => {
-            if (plugin.name === 'plugin-manager') {
+            if (plugin.name === 'package-manager') {
               leemons.reloadWorkers();
               return true;
             }
-            throw new Error('Only the plugin plugin-manager have access to reloadServer');
+            throw new Error('Only the plugin package-manager have access to reloadServer');
           },
           getExeca: () => {
-            if (plugin.name === 'plugin-manager') return execa;
-            throw new Error('Only the plugin plugin-manager have access to execa');
+            if (plugin.name === 'package-manager') return execa;
+            throw new Error('Only the plugin package-manager have access to execa');
           },
         });
 
