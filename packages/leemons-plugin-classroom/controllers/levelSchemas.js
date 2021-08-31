@@ -4,49 +4,61 @@ module.exports = {
   add: async (ctx) => {
     try {
       const levelSchema = await services.add(ctx.request.body);
-      ctx.body = { ok: true, levelSchema };
+      ctx.status = 201;
+      ctx.body = { status: 201, levelSchema };
     } catch (e) {
-      ctx.body = { ok: false, error: e.message };
+      ctx.status = 400;
+      ctx.body = { status: 400, error: e.message };
     }
   },
   get: async (ctx) => {
     try {
-      const levelSchema = await services.get(ctx.params.id, { locale: ctx.request.body.locale });
-      ctx.body = { ok: true, levelSchema };
+      const levelSchema = await services.get(ctx.params.id, { locale: ctx.request.query.locale });
+      ctx.status = 200;
+      ctx.body = { status: 200, levelSchema };
     } catch (e) {
-      ctx.body = { ok: false, error: e.message };
+      ctx.status = 400;
+      ctx.body = { status: 400, error: e.message };
     }
   },
   list: async (ctx) => {
     try {
-      const items = await services.list({ locale: ctx.request.body.locale });
-      ctx.body = { ok: true, items };
+      const items = await services.list({ locale: ctx.request.query.locale });
+      ctx.status = 200;
+      ctx.body = { status: 200, items };
     } catch (e) {
-      ctx.body = { ok: false, error: e.message };
+      ctx.status = 400;
+      ctx.body = { status: 400, error: e.message };
     }
   },
   delete: async (ctx) => {
     try {
       await services.delete(ctx.params.id);
-      ctx.body = { ok: true };
+      ctx.status = 200;
+      ctx.body = { status: 200, deleted: true };
     } catch (e) {
-      ctx.body = { ok: false, error: e.message };
+      ctx.status = 400;
+      ctx.body = { status: 400, error: e.message };
     }
   },
   setNames: async (ctx) => {
     try {
       const names = await services.setNames(ctx.request.params.id, ctx.request.body.names);
-      ctx.body = { ok: true, names };
+      ctx.status = 201;
+      ctx.body = { status: 201, ok: true, names };
     } catch (e) {
-      ctx.body = { ok: false, error: e.message };
+      ctx.status = 400;
+      ctx.body = { status: 400, error: e.message };
     }
   },
   setParent: async (ctx) => {
     try {
       const levelSchema = await services.setParent(ctx.request.params.id, ctx.request.body.parent);
-      ctx.body = { ok: true, levelSchema };
+      ctx.status = 200;
+      ctx.body = { status: 200, levelSchema };
     } catch (e) {
-      ctx.body = { ok: false, error: e.message };
+      ctx.status = 400;
+      ctx.body = { status: 400, error: e.message };
     }
   },
   setIsClass: async (ctx) => {
@@ -55,9 +67,11 @@ module.exports = {
         ctx.request.params.id,
         ctx.request.body.isClass
       );
-      ctx.body = { ok: true, levelSchema };
+      ctx.status = 200;
+      ctx.body = { status: 200, levelSchema };
     } catch (e) {
-      ctx.body = { ok: false, error: e.message };
+      ctx.status = 400;
+      ctx.body = { status: 400, error: e.message };
     }
   },
   addAssignables: async (ctx) => {
@@ -66,9 +80,11 @@ module.exports = {
         ctx.request.params.id,
         ctx.request.body.profiles
       );
-      ctx.body = { ok: true, assignables };
+      ctx.status = 201;
+      ctx.body = { status: 201, assignables };
     } catch (e) {
-      ctx.body = { ok: false, error: e.message };
+      ctx.status = 400;
+      ctx.body = { status: 400, error: e.message };
     }
   },
   removeAssignables: async (ctx) => {
@@ -77,9 +93,11 @@ module.exports = {
         ctx.request.params.id,
         ctx.request.body.profiles
       );
-      ctx.body = { ok: true, assignables };
+      ctx.status = 200;
+      ctx.body = { status: 200, assignables };
     } catch (e) {
-      ctx.body = { ok: false, error: e.message };
+      ctx.status = 400;
+      ctx.body = { status: 400, error: e.message };
     }
   },
 };
