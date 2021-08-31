@@ -3,6 +3,21 @@ const schemaService = require('../src/services/dataset-schema');
 const schemaLocaleService = require('../src/services/dataset-schema-locale');
 const { translations } = require('../src/services/translations');
 
+const schemaConfig = {
+  type: 'object',
+  properties: {
+    schema: {
+      type: 'object',
+      additionalProperties: true,
+    },
+    ui: {
+      type: 'object',
+      additionalProperties: true,
+    },
+  },
+  required: ['schema', 'ui'],
+};
+
 async function getSchema(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
@@ -89,21 +104,6 @@ async function getSchemaFieldLocale(ctx) {
 }
 
 async function saveField(ctx) {
-  const schemaConfig = {
-    type: 'object',
-    properties: {
-      schema: {
-        type: 'object',
-        additionalProperties: true,
-      },
-      ui: {
-        type: 'object',
-        additionalProperties: true,
-      },
-    },
-    required: ['schema', 'ui'],
-  };
-
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
     properties: {
@@ -127,6 +127,46 @@ async function saveField(ctx) {
       ctx.request.body.pluginName,
       ctx.request.body.schemaConfig,
       ctx.request.body.schemaLocales
+    );
+    ctx.status = 200;
+    ctx.body = { status: 200, dataset };
+  } else {
+    throw validator.error;
+  }
+}
+
+async function saveMultipleFields(ctx) {
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      locationName: { type: 'string' },
+      pluginName: { type: 'string' },
+      fields: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            schemaConfig,
+            schemaLocales: {
+              type: 'object',
+              patternProperties: {
+                [translations().functions.localeRegexString]: schemaConfig,
+              },
+            },
+          },
+          required: ['schemaConfig', 'schemaLocales'],
+        },
+      },
+    },
+    required: ['locationName', 'pluginName', 'fields'],
+    additionalProperties: false,
+  });
+
+  if (validator.validate(ctx.request.body)) {
+    const dataset = await schemaService.saveMultipleFields(
+      ctx.request.body.locationName,
+      ctx.request.body.pluginName,
+      ctx.request.body.fields
     );
     ctx.status = 200;
     ctx.body = { status: 200, dataset };
@@ -163,6 +203,7 @@ async function removeField(ctx) {
 module.exports = {
   getSchema,
   saveField,
+  saveMultipleFields,
   removeField,
   getSchemaFieldLocale,
   getSchemaLocale,

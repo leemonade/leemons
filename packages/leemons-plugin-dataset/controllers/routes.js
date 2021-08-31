@@ -44,6 +44,17 @@ module.exports = [
     },
   },
   {
+    path: '/save-multiple-fields',
+    method: 'POST',
+    handler: 'dataset.saveMultipleFields',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.dataset.dataset': {
+        actions: ['update', 'create', 'admin'],
+      },
+    },
+  },
+  {
     path: '/remove-field',
     method: 'POST',
     handler: 'dataset.removeField',
