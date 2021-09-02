@@ -2,8 +2,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import cln from 'classnames';
 import { TrashIcon } from '@heroicons/react/solid';
 import { PlusCircleIcon } from '@heroicons/react/outline';
-import Button from '../Button';
 import { useDragOver } from '@leemonade/react-dnd-treeview';
+import Button from '../Button';
 
 export const NodeRenderer = ({
   node,
@@ -51,7 +51,7 @@ export const NodeRenderer = ({
 
   const handleOnAdd = () => {
     if (onAdd && node.data?.action === 'add') {
-      onAdd(node.parent);
+      onAdd(node);
     }
   };
 
