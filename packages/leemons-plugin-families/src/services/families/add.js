@@ -20,7 +20,7 @@ const { getFamilyMenuBuilderData } = require('./getFamilyMenuBuilderData');
  * @return {Promise<any>}
  * */
 async function add(
-  { name, guardians = [], students = [], datasetValues, maritalStatus },
+  { name, guardians = [], students = [], datasetValues, maritalStatus, emergencyPhoneNumbers = [] },
   userSession,
   { transacting: _transacting } = {}
 ) {
@@ -74,6 +74,20 @@ async function add(
       // Add datasetvalues if have permission and have data
       if (permissions.customInfo.update && datasetValues) {
         promises.push(setDatasetValues(family.id, userSession, datasetValues, { transacting }));
+      }
+
+      // Add phone numbers if plugin installed
+      // The plugin validate if user have access to save phones
+      const familyEmergencyNumbers = leemons.getPlugin('families-emergency-numbers');
+      if (emergencyPhoneNumbers && familyEmergencyNumbers) {
+        promises.push(
+          familyEmergencyNumbers.services.emergencyPhones.saveFamilyPhones(
+            family.id,
+            emergencyPhoneNumbers,
+            userSession,
+            { transacting }
+          )
+        );
       }
 
       await Promise.all(promises);

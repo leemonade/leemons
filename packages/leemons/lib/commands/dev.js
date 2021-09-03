@@ -14,6 +14,8 @@ const loadFront = require('../core/plugins/front/loadFront');
 const build = require('../core/front/build');
 const { PLUGIN_STATUS } = require('../core/plugins/pluginsStatus');
 
+//TODO falta que al reiniciar los servidores manualmente se haga bien añadiendo o quitando a los watchers los nuevos plugins.
+
 /**
  * Creates a watcher for frontend files and then sets up all the needed files
  */
@@ -50,6 +52,11 @@ async function setupFront(leemons, plugins, providers, nextDir) {
   // Make first front load
   await leemons.loadFront(plugins, providers);
 
+  const handler = async () => {
+    await loadFront(leemons, plugins, providers);
+    await build();
+  };
+
   // Create a file watcher
   createReloader({
     name: 'Frontend',
@@ -73,11 +80,13 @@ async function setupFront(leemons, plugins, providers, nextDir) {
     },
     // When a change occurs, reload front
     handler: async () => {
-      await loadFront(leemons, plugins, providers);
-      await build();
+      if (leemons.canReloadFrontend) {
+        await handler();
+      }
     },
     logger: leemons.log,
   });
+  return { handler };
 }
 
 /**
@@ -114,6 +123,13 @@ ${plugin.dir.next})`,
     )
   );
 
+  const handler = async () => {
+    // eslint-disable-next-line no-param-reassign
+    leemons.backRouter.stack = [];
+    await leemons.db.destroy();
+    return leemons.loadBack();
+  };
+
   // Create a backend watcher
   createReloader({
     name: 'Backend',
@@ -132,15 +148,14 @@ ${plugin.dir.next})`,
      * connection and load back again
      */
     handler: async () => {
-      // eslint-disable-next-line no-param-reassign
-      leemons.backRouter.stack = [];
-      await leemons.db.destroy();
-      return leemons.loadBack();
+      if (leemons.canReloadBackend) {
+        await handler();
+      }
     },
     logger: leemons.log,
   });
 
-  return { plugins, providers };
+  return { plugins, providers, handler };
 }
 
 module.exports = async ({ level: logLevel = 'debug' }) => {
@@ -171,6 +186,19 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
     const logger = await createLogger();
     logger.level = logLevel;
 
+    let canReloadWorkers = true;
+
+    function emitToAllWorkers(callback) {
+      Object.values(cluster.workers).forEach((worker) => {
+        callback(worker);
+      });
+    }
+
+    function reloadWorkers() {
+      emitToAllWorkers((worker) => worker.send('kill'));
+      createWorker({ PORT, loggerId: logger.id, loggerLevel: logger.level });
+    }
+
     /*
      * Thread communication listener
      *
@@ -183,6 +211,15 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
         message = { message: _message };
       }
       switch (message.message) {
+        case 'stop-auto-reload':
+          canReloadWorkers = false;
+          break;
+        case 'start-auto-reload':
+          canReloadWorkers = true;
+          break;
+        case 'reload-workers':
+          emitToAllWorkers((worker) => worker.send('reload-back-front'));
+          break;
         case 'kill':
           worker.send({ ...message, message: 'kill' });
           break;
@@ -210,10 +247,9 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
       },
       // When a change is detected, kill all the workers and fork a new one
       handler: async () => {
-        Object.values(cluster.workers).forEach((worker) => {
-          worker.send('kill');
-        });
-        createWorker({ PORT, loggerId: logger.id, loggerLevel: logger.level });
+        if (canReloadWorkers) {
+          reloadWorkers();
+        }
       },
       logger,
     });
@@ -221,6 +257,8 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
     // Creates the first worker (which will host the leemons app)
     createWorker({ PORT, loggerId: logger.id, loggerLevel: logger.level });
   } else if (cluster.isWorker) {
+    let setUpFront;
+    let setUpBack;
     // Set the thread process title (visible in $ ps)
     process.title = 'Leemons Dev Instance';
     // Sets the environment to development
@@ -232,6 +270,16 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
 
     // Starts the application (Config)
     const leemons = new Leemons(log);
+
+    leemons.stopAutoReloadWorkers = () => {
+      process.send({ message: 'stop-auto-reload' });
+    };
+    leemons.startAutoReloadWorkers = () => {
+      process.send({ message: 'start-auto-reload' });
+    };
+    leemons.reloadWorkers = () => {
+      process.send({ message: 'reload-workers' });
+    };
 
     /*
      * Thread communication listener
@@ -251,6 +299,12 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
             process.send({ ...message, message: 'killed' });
           });
           break;
+        case 'reload-back-front':
+          (async () => {
+            await setUpBack();
+            await setUpFront();
+          })();
+          break;
         default:
       }
     });
@@ -258,7 +312,8 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
     // Loads the App and plugins config
     await leemons.loadAppConfig();
 
-    const { plugins, providers } = await setupBack(leemons);
+    const { plugins, providers, handler: backHandler } = await setupBack(leemons);
+    setUpBack = backHandler;
 
     leemons.enabledPlugins = plugins.filter(
       (plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code
@@ -273,7 +328,13 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
 
     let nextDir = leemons.config.get('config.dir.next', 'next');
     nextDir = path.isAbsolute(nextDir) ? nextDir : path.join(cwd, nextDir);
-    await setupFront(leemons, leemons.enabledPlugins, leemons.enabledProviders, nextDir);
+    const { handler: frontHandler } = await setupFront(
+      leemons,
+      leemons.enabledPlugins,
+      leemons.enabledProviders,
+      nextDir
+    );
+    setUpFront = frontHandler;
 
     leemons.loaded = true;
 

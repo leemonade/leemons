@@ -14,5 +14,9 @@ module.exports = async (isInstalled) => {
         await addMenu();
       }
     );
+  } else {
+    leemons.events.once('plugins.menu-builder:pluginDidInit', async () => {
+      leemons.events.emit('init-main-menu');
+    });
   }
 };

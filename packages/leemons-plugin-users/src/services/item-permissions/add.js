@@ -32,7 +32,7 @@ async function add(item, type, data, { isCustomPermission, transacting } = {}) {
 
   if (!isCustomPermission) {
     if (!(await existMany(_.map(_data, 'permissionName'), { transacting }))) {
-      console.error(_data);
+      console.error('The specified permit does not exist', _data);
       throw new Error('The specified permit does not exist');
     }
     if (
