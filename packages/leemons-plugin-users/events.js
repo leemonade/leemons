@@ -88,10 +88,14 @@ async function events(isInstalled) {
     });
 
     leemons.events.once('plugins.menu-builder:init-main-menu', async () => {
-      await addMain();
-      leemons.events.emit('init-menu');
-      await Promise.all([addWelcome(), addProfiles(), addUserData()]);
-      leemons.events.emit('init-submenu');
+      try {
+        await addMain();
+        leemons.events.emit('init-menu');
+        await Promise.all([addWelcome(), addProfiles(), addUserData()]);
+        leemons.events.emit('init-submenu');
+      } catch (e) {
+        console.error('Error users menu', e);
+      }
     });
   } else {
     leemons.events.once('plugins.users:pluginDidInit', async () => {

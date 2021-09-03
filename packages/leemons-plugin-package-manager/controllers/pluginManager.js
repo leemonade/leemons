@@ -13,13 +13,13 @@ async function install(ctx) {
     additionalProperties: false,
   });
   if (validator.validate(ctx.request.body)) {
-    const data = await pluginManagerService.install(
+    const installed = await pluginManagerService.install(
       ctx.request.body.name,
       ctx.request.body.version,
       ctx.status.userSession
     );
     ctx.status = 200;
-    ctx.body = { status: 200, data };
+    ctx.body = { status: 200, installed };
   } else {
     throw validator.error;
   }
@@ -35,9 +35,12 @@ async function remove(ctx) {
     additionalProperties: false,
   });
   if (validator.validate(ctx.request.body)) {
-    const data = await pluginManagerService.remove(ctx.request.body.name, ctx.status.userSession);
+    const removed = await pluginManagerService.remove(
+      ctx.request.body.name,
+      ctx.status.userSession
+    );
     ctx.status = 200;
-    ctx.body = { status: 200, data };
+    ctx.body = { status: 200, removed };
   } else {
     throw validator.error;
   }

@@ -211,7 +211,7 @@ function DatasetTabs({ profile, t, isEditMode }) {
 }
 
 function PermissionsTabs({ t, profile, onPermissionsChange = () => {}, isEditMode }) {
-  const dataTable = useRef(null);
+  const dataTable = useRef([]);
   const initialArrayPermissions = useRef([]);
   const [selectedPermission, setSelectedPermission] = useState('all');
   const [selectPermissions, setSelectPermissions] = useState([]);
@@ -249,52 +249,57 @@ function PermissionsTabs({ t, profile, onPermissionsChange = () => {}, isEditMod
     }
   }, [selectedPermission]);
 
+  const getPermissionsForTable = (editMode) => {
+    return permissions.map((permission) => {
+      const response = {
+        name: permissionT[getTranslationKeyPermissions(permission.permissionName, 'name')],
+        permissionName: permission.permissionName,
+      };
+      actions.map(({ actionName }) => {
+        if (permission.actions.indexOf(actionName) >= 0) {
+          let cPermission = null;
+          if (dataTable.current) {
+            cPermission = _.find(dataTable.current, {
+              permissionName: permission.permissionName,
+            });
+          }
+          if (editMode) {
+            response[actionName] = {
+              type: 'checkbox',
+              checked: cPermission
+                ? cPermission[actionName].checked
+                : profile && profile.permissions[permission.permissionName]
+                ? profile.permissions[permission.permissionName].indexOf(actionName) >= 0
+                : false,
+            };
+          } else {
+            response[actionName] = () => {
+              const checked = cPermission
+                ? cPermission[actionName].checked
+                : profile && profile.permissions[permission.permissionName]
+                ? profile.permissions[permission.permissionName].indexOf(actionName) >= 0
+                : false;
+              if (checked)
+                return (
+                  <div className="text-center text-primary">
+                    <CheckCircleIcon className="w-7 h-7 m-auto" />
+                  </div>
+                );
+              return null;
+            };
+          }
+        }
+      });
+      return response;
+    });
+  };
+
   useEffect(() => {
     if (permissions && actions && permissionT) {
-      const data = permissions.map((permission) => {
-        const response = {
-          name: permissionT[getTranslationKeyPermissions(permission.permissionName, 'name')],
-          permissionName: permission.permissionName,
-        };
-        actions.map(({ actionName }) => {
-          if (permission.actions.indexOf(actionName) >= 0) {
-            let cPermission = null;
-            if (dataTable.current) {
-              cPermission = _.find(dataTable.current, {
-                permissionName: permission.permissionName,
-              });
-            }
-            if (isEditMode) {
-              response[actionName] = {
-                type: 'checkbox',
-                checked: cPermission
-                  ? cPermission[actionName].checked
-                  : profile && profile.permissions[permission.permissionName]
-                  ? profile.permissions[permission.permissionName].indexOf(actionName) >= 0
-                  : false,
-              };
-            } else {
-              response[actionName] = () => {
-                const checked = cPermission
-                  ? cPermission[actionName].checked
-                  : profile && profile.permissions[permission.permissionName]
-                  ? profile.permissions[permission.permissionName].indexOf(actionName) >= 0
-                  : false;
-                if (checked)
-                  return (
-                    <div className="text-center text-primary">
-                      <CheckCircleIcon className="w-7 h-7 m-auto" />
-                    </div>
-                  );
-                return null;
-              };
-            }
-          }
-        });
-        return response;
-      });
-      setTableData(data);
-      if ((!dataTable.current || !dataTable.current.length) && isEditMode) dataTable.current = data;
+      setTableData(getPermissionsForTable(isEditMode));
+      const data = getPermissionsForTable(true);
+      if ((!dataTable.current || !dataTable.current.length) && data.length)
+        dataTable.current = data;
     }
   }, [profile, permissions, actions, permissionT, isEditMode]);
 
@@ -458,6 +463,7 @@ function ProfileDetail() {
     try {
       setSaveLoading(true);
       let response;
+
       if (profile && profile.id) {
         response = await updateProfileRequest({
           ...data,

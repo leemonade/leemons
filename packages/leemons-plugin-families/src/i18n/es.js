@@ -12,6 +12,7 @@ module.exports = {
     tabs: {
       basic: 'Básico',
       dataset: 'Conjunto de datos personalizado',
+      emergency_numbers: 'Numeros de emergencia',
       permissions: 'Permisos',
     },
     dataset_tab: {
@@ -27,6 +28,16 @@ module.exports = {
         edit: 'Editar',
         delete: 'Borrar',
       },
+    },
+    phone_modal: {
+      title: 'Activar el complemento',
+      message1: 'Va a activar el Complemento del Número de Emergencia Familiar.',
+      message2:
+        '<b>Importante:</b> Una vez activado el Addon, sólo se puede volver a desactivar si su conjunto de datos no tiene campos y no se han cargado datos en la base de datos de números de emergencia..',
+      cancel: 'No, volver sin activar',
+      action: 'Sí, active el Addon',
+      installing: 'Instalando complemento',
+      installed: 'Add-on instalado',
     },
     remove_modal: {
       title: '¿Quieres eliminar el item?',

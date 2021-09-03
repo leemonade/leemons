@@ -44,6 +44,10 @@ async function initKnex(connector, connections) {
 
       const config = {
         client,
+        pool: {
+          min: _.get(connection.settings, 'pool.min', 5),
+          max: _.get(connection.settings, 'pool.max', 50),
+        },
         connection: {
           charset: _.get(connection.settings, 'charset'),
           database: _.get(connection.settings, 'database'),

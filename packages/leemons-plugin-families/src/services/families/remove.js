@@ -34,6 +34,12 @@ async function remove(family, { transacting } = {}) {
   _.forEach(students, (student) => {
     promises.push(removeMember(family, student.id, { transacting }));
   });
+  const familyEmergencyNumbers = leemons.getPlugin('families-emergency-numbers');
+  if (familyEmergencyNumbers) {
+    promises.push(
+      familyEmergencyNumbers.services.emergencyPhones.removeFamilyPhones(family, { transacting })
+    );
+  }
 
   await Promise.all(promises);
 }

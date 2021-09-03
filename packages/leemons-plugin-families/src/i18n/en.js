@@ -12,6 +12,7 @@ module.exports = {
     tabs: {
       basic: 'Basic',
       dataset: 'Custom dataset',
+      emergency_numbers: 'Emergency Numbers',
       permissions: 'Permissions',
     },
     dataset_tab: {
@@ -27,6 +28,16 @@ module.exports = {
         edit: 'Edit',
         delete: 'Delete',
       },
+    },
+    phone_modal: {
+      title: 'Activate Addon',
+      message1: 'You are going to activate the Family Emergency Number Addon.',
+      message2:
+        '<b>Important:</b> Once  Addon has been activated, it can only be deactivated again if its dataset has no fields and no data has been loaded into the emergency numbers DB.',
+      cancel: 'No, return without activate',
+      action: 'Yes, activate Addon',
+      installing: 'Installing add-on',
+      installed: 'Add-on installed',
     },
     remove_modal: {
       title: 'Do you want to delete the item?',

@@ -3,6 +3,7 @@ module.exports = {
     unknown_error: 'Error desconocido',
     required: 'El campo es necesario',
     email: 'No es un email valido',
+    numbers: 'Solo se permiten números',
     minLength: 'El campo no puede ser menor de {limit} caracteres',
     maxLength: 'El campo no puede ser mayor de {limit} caracteres',
     minItems: 'Tiene que tener mínimo {limit} elementos',

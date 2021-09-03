@@ -20,12 +20,13 @@ import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
 import { getDatasetSchemaRequest, removeDatasetFieldRequest } from '@dataset/request';
 import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
 import { useRouter } from 'next/router';
-import { PlusIcon } from '@heroicons/react/outline';
+import { CheckIcon, PlusIcon } from '@heroicons/react/outline';
 import prefixPN from '@families/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useAsync } from '@common/useAsync';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { PackageManagerService } from '@package-manager/services';
+import { dynamicImport } from '@common/dynamicImport';
 
 function DatasetTabs({ t }) {
   const [loading, setLoading] = useState(true);
@@ -190,12 +191,21 @@ function DatasetTabs({ t }) {
 function Config() {
   useSession({ redirectTo: goLoginPage });
   const router = useRouter();
+  const [installingEmergencyNumber, setInstallingEmergencyNumber] = useState(false);
   const [emergencyNumberInstalled, setEmergencyNumberInstalled] = useState(false);
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
   const [t] = useTranslateLoader(prefixPN('config_page'));
 
+  const [modal, toggleModal] = useModal({
+    animated: true,
+    title: installingEmergencyNumber ? null : t('phone_modal.title'),
+    closeButton: !installingEmergencyNumber,
+    overlayClose: !installingEmergencyNumber,
+  });
+
   const load = useMemo(
-    () => () => PackageManagerService.isPluginInstalled('leemons-plugin-family-emergency-number'),
+    () => () =>
+      PackageManagerService.isPluginInstalled('leemons-plugin-families-emergency-numbers'),
     []
   );
 
@@ -210,19 +220,63 @@ function Config() {
 
   useAsync(load, onSuccess, onError);
 
-  const installPhone = async () => {
+  const openInstallPhoneModal = async () => {
+    toggleModal();
+  };
+
+  const installPhoneAddon = async () => {
     try {
+      setInstallingEmergencyNumber(true);
       await PackageManagerService.installPluginByNPM(
-        'leemons-plugin-family-emergency-number',
+        'leemons-plugin-families-emergency-numbers',
         '1.0.0'
       );
+      setTimeout(() => {
+        setEmergencyNumberInstalled(true);
+      }, 4000);
+      setTimeout(() => {
+        window.location.reload();
+      }, 10000);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
+      setInstallingEmergencyNumber(false);
     }
   };
 
+  let EmergencyNumbersTabs = null;
+
+  if (emergencyNumberInstalled && !installingEmergencyNumber) {
+    EmergencyNumbersTabs = dynamicImport('families-emergency-numbers/components/config');
+  }
+
   return (
     <>
+      <Modal {...modal}>
+        {installingEmergencyNumber ? (
+          <div className="text-center pt-4">
+            <Button color="primary" className="btn-xl" loading={!emergencyNumberInstalled} text>
+              {emergencyNumberInstalled ? <CheckIcon className="w-7 h-7 mr-2" /> : null}
+              <span className="text-secondary">
+                {emergencyNumberInstalled
+                  ? t('phone_modal.installed')
+                  : t('phone_modal.installing')}
+              </span>
+            </Button>
+          </div>
+        ) : (
+          <>
+            <div className="text-sm text-secondary mb-6">{t('phone_modal.message1')}</div>
+            <div className="mt-6 flex flex-row gap-2 justify-end">
+              <Button color="ghost" onClick={toggleModal}>
+                {t('phone_modal.cancel')}
+              </Button>
+              <Button color="primary" onClick={installPhoneAddon}>
+                {t('phone_modal.action')}
+              </Button>
+            </div>
+          </>
+        )}
+      </Modal>
       <PageHeader title={t('title')} />
       <div className="bg-primary-content">
         <PageContainer>
@@ -230,7 +284,7 @@ function Config() {
           {!emergencyNumberInstalled ? (
             <>
               <div className="page-description max-w-screen-sm">{t('phone_description')}</div>
-              <Button color="primary" className="mt-4" onClick={installPhone}>
+              <Button color="primary" className="mt-4" onClick={openInstallPhoneModal}>
                 {t('phone_button')}
               </Button>
             </>
@@ -248,6 +302,11 @@ function Config() {
               <Tab id="dataset-data" panelId="panel-dataset-data">
                 {t('tabs.dataset')}
               </Tab>
+              {emergencyNumberInstalled ? (
+                <Tab id="phone-data" panelId="panel-phone-data">
+                  {t('tabs.emergency_numbers')}
+                </Tab>
+              ) : null}
               <Tab id="permissions-data" panelId="panel-permissions-data">
                 {t('tabs.permissions')}
               </Tab>
@@ -261,6 +320,11 @@ function Config() {
         <TabPanel id="panel-dataset-data" tabId="dataset-data">
           <DatasetTabs t={t} />
         </TabPanel>
+        {emergencyNumberInstalled ? (
+          <TabPanel id="panel-dataset-data" tabId="dataset-data">
+            <EmergencyNumbersTabs />
+          </TabPanel>
+        ) : null}
         <TabPanel id="panel-permissions-data" tabId="permissions-data">
           c
         </TabPanel>

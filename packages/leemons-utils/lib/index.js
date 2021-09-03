@@ -56,4 +56,11 @@ module.exports = {
   withTransaction,
   squirrelly,
   getObjectArrayKeys,
+  timeoutPromise: (time) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, time);
+    });
+  },
 };

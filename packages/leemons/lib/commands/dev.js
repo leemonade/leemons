@@ -14,6 +14,8 @@ const loadFront = require('../core/plugins/front/loadFront');
 const build = require('../core/front/build');
 const { PLUGIN_STATUS } = require('../core/plugins/pluginsStatus');
 
+//TODO falta que al reiniciar los servidores manualmente se haga bien añadiendo o quitando a los watchers los nuevos plugins.
+
 /**
  * Creates a watcher for frontend files and then sets up all the needed files
  */
@@ -50,6 +52,11 @@ async function setupFront(leemons, plugins, providers, nextDir) {
   // Make first front load
   await leemons.loadFront(plugins, providers);
 
+  const handler = async () => {
+    await loadFront(leemons, plugins, providers);
+    await build();
+  };
+
   // Create a file watcher
   createReloader({
     name: 'Frontend',
@@ -73,14 +80,13 @@ async function setupFront(leemons, plugins, providers, nextDir) {
     },
     // When a change occurs, reload front
     handler: async () => {
-      console.log('leemons.canReloadFrontend', leemons.canReloadFrontend);
       if (leemons.canReloadFrontend) {
-        await loadFront(leemons, plugins, providers);
-        await build();
+        await handler();
       }
     },
     logger: leemons.log,
   });
+  return { handler };
 }
 
 /**
@@ -117,6 +123,13 @@ ${plugin.dir.next})`,
     )
   );
 
+  const handler = async () => {
+    // eslint-disable-next-line no-param-reassign
+    leemons.backRouter.stack = [];
+    await leemons.db.destroy();
+    return leemons.loadBack();
+  };
+
   // Create a backend watcher
   createReloader({
     name: 'Backend',
@@ -136,16 +149,13 @@ ${plugin.dir.next})`,
      */
     handler: async () => {
       if (leemons.canReloadBackend) {
-        // eslint-disable-next-line no-param-reassign
-        leemons.backRouter.stack = [];
-        await leemons.db.destroy();
-        return leemons.loadBack();
+        await handler();
       }
     },
     logger: leemons.log,
   });
 
-  return { plugins, providers };
+  return { plugins, providers, handler };
 }
 
 module.exports = async ({ level: logLevel = 'debug' }) => {
@@ -178,10 +188,14 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
 
     let canReloadWorkers = true;
 
-    function reloadWorkers() {
+    function emitToAllWorkers(callback) {
       Object.values(cluster.workers).forEach((worker) => {
-        worker.send('kill');
+        callback(worker);
       });
+    }
+
+    function reloadWorkers() {
+      emitToAllWorkers((worker) => worker.send('kill'));
       createWorker({ PORT, loggerId: logger.id, loggerLevel: logger.level });
     }
 
@@ -204,7 +218,7 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
           canReloadWorkers = true;
           break;
         case 'reload-workers':
-          reloadWorkers();
+          emitToAllWorkers((worker) => worker.send('reload-back-front'));
           break;
         case 'kill':
           worker.send({ ...message, message: 'kill' });
@@ -243,6 +257,8 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
     // Creates the first worker (which will host the leemons app)
     createWorker({ PORT, loggerId: logger.id, loggerLevel: logger.level });
   } else if (cluster.isWorker) {
+    let setUpFront;
+    let setUpBack;
     // Set the thread process title (visible in $ ps)
     process.title = 'Leemons Dev Instance';
     // Sets the environment to development
@@ -283,6 +299,12 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
             process.send({ ...message, message: 'killed' });
           });
           break;
+        case 'reload-back-front':
+          (async () => {
+            await setUpBack();
+            await setUpFront();
+          })();
+          break;
         default:
       }
     });
@@ -290,7 +312,8 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
     // Loads the App and plugins config
     await leemons.loadAppConfig();
 
-    const { plugins, providers } = await setupBack(leemons);
+    const { plugins, providers, handler: backHandler } = await setupBack(leemons);
+    setUpBack = backHandler;
 
     leemons.enabledPlugins = plugins.filter(
       (plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code
@@ -305,7 +328,13 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
 
     let nextDir = leemons.config.get('config.dir.next', 'next');
     nextDir = path.isAbsolute(nextDir) ? nextDir : path.join(cwd, nextDir);
-    await setupFront(leemons, leemons.enabledPlugins, leemons.enabledProviders, nextDir);
+    const { handler: frontHandler } = await setupFront(
+      leemons,
+      leemons.enabledPlugins,
+      leemons.enabledProviders,
+      nextDir
+    );
+    setUpFront = frontHandler;
 
     leemons.loaded = true;
 

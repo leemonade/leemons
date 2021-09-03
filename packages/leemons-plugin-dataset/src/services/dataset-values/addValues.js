@@ -52,6 +52,7 @@ async function addValues(
   });
   // ES: Comprobamos que los datos cumplen con la validacion
   // EN: We check that the data complies with validation
+  // TODO AÑADIR VALIDADOR CUSTOM PARA NUMEROS DE TELEFONO/ETZ
   const validator = new global.utils.LeemonsValidator(
     {
       ...jsonSchema,
