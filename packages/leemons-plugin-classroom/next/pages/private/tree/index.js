@@ -8,15 +8,9 @@ import { withLayout } from '@layout/hoc';
 import { CenterService } from '@users/services';
 import prefixPN from '@classroom/helpers/prefixPN';
 
-import { listLevelSchemas } from '../../../src/services/levelSchemas';
-
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de gestionar Clases
 function TreePage() {
   useSession({ redirectTo: goLoginPage });
-
-  useEffect(async () => {
-    console.log(await listLevelSchemas());
-  }, []);
 
   // --------------------------------------------------------
   // LANG PICKER

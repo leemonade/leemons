@@ -104,7 +104,7 @@ async function add(
           ...savedLevelSchema,
           assignableProfiles: savedAssignableProfiles,
           names: savedNames,
-          warnings: missingLocales.length
+          warnings: missingLocales?.length
             ? {
                 missingLocales,
               }

@@ -1,4 +1,4 @@
-async function listLevelSchemas(locale = null) {
+export default async function listLevelSchemas(locale = null) {
   const { status, items, error } = await leemons.api(
     `classroom/levelschema${locale ? `?locale=${locale}` : ''}`
   );
@@ -7,5 +7,3 @@ async function listLevelSchemas(locale = null) {
   }
   return { status, error };
 }
-
-export { listLevelSchemas };

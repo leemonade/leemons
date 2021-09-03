@@ -17,5 +17,5 @@ export default (f, ...args) => {
     }
   }, [...args]);
 
-  return [data, error, loading];
+  return [data, setData, error, loading];
 };

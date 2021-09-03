@@ -1,4 +1,4 @@
-import { listLevelSchemas } from '../../services/levelSchemas';
+import listLevelSchemas from '../../services/levelSchemas/listLevelSchemas';
 import useAsync from '../request/useAsync';
 
 function useListLevelSchema(locale) {

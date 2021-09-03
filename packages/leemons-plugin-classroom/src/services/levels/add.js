@@ -132,7 +132,7 @@ async function add(
           ...savedLevel,
           names: savedNames,
           descriptions: savedDescriptions,
-          warnings: missingLocales.length
+          warnings: missingLocales?.length
             ? {
                 missingLocales,
               }

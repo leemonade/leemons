@@ -7,10 +7,12 @@ module.exports = async function hasValidSchemaAndParent(schema, parentId = null,
   if (!parentId && schema.parent) {
     return { ok: false, message: "The level needs to have a parent due to it's schema" };
   }
+  if (!parentId) {
+    return { ok: true };
+  }
 
   let parentObj;
   let parentLevelSchema;
-
   try {
     parentObj = await tables.levels.findOne({ id: parentId }, { transacting });
   } catch (e) {
