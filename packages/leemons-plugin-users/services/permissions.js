@@ -21,6 +21,7 @@ module.exports = {
   userAgentHasCustomPermission: permissions.userAgentHasCustomPermission,
   // Item permissions
   addItem: itemPermissions.add,
+  addItemBasicIfNeed: itemPermissions.addBasicIfNeed,
   countItems: itemPermissions.count,
   findItems: itemPermissions.find,
   removeItems: itemPermissions.remove,

@@ -11,7 +11,7 @@ const addLocationSchema = () => ({
     locationName: stringSchema,
     pluginName: stringSchema,
   },
-  required: ['name', 'description', 'locationName', 'pluginName'],
+  required: ['name', 'locationName', 'pluginName'],
 });
 
 const locationPluginSchema = {

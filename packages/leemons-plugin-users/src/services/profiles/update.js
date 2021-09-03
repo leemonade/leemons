@@ -6,6 +6,7 @@ const { table } = require('../tables');
 const {
   markAllUsersWithProfileToReloadPermissions,
 } = require('./markAllUsersWithProfileToReloadPermissions');
+const { updateProfileTranslations } = require('./updateProfileTranslations');
 
 async function update(data, { transacting: _transacting } = {}) {
   const exist = await existName(data.name, data.id);
@@ -26,6 +27,8 @@ async function update(data, { transacting: _transacting } = {}) {
         markAllUsersWithProfileToReloadPermissions(data.id, { transacting }),
       ]);
 
+      if (data.translations)
+        await updateProfileTranslations(profile, data.translations, { transacting });
       const profileRole = await getProfileRole(profile.id, { transacting });
       // Formato: data.permissions
       // [{ permissionName, actionNames }]

@@ -5,8 +5,7 @@ import {
   getUserProfileTokenRequest,
   setRememberProfileRequest,
 } from '@users/request';
-import useTranslate from '@multilanguage/useTranslate';
-import tLoader from '@multilanguage/helpers/tLoader';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { goLoginPage } from '@users/navigate';
 import prefixPN from '@users/helpers/prefixPN';
 import { Button, Checkbox, FormControl, ImageLoader } from 'leemons-ui';
@@ -20,8 +19,7 @@ import Cookies from 'js-cookie';
 export default function SelectProfile() {
   const session = useSession({ redirectTo: goLoginPage });
 
-  const [translations] = useTranslate({ keysStartsWith: prefixPN('selectProfile') });
-  const t = tLoader(prefixPN('selectProfile'), translations);
+  const [t] = useTranslateLoader(prefixPN('selectProfile'));
 
   const [rememberProfile, setRememberProfile] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
@@ -65,10 +63,12 @@ export default function SelectProfile() {
       </div>
 
       {/* Profiles list */}
-      <div className="mb-12">
+      <div className="mb-12 grid grid-flow-col grid-cols-3 gap-2">
         {profiles.map((profile) => (
           <div
-            className="p-5 cursor-pointer"
+            className={`p-5 cursor-pointer text-sm text-center ${
+              selectedProfile?.id === profile.id ? 'border rounded' : ''
+            }`}
             key={profile.id}
             onClick={() => setSelectedProfile(profile)}
           >

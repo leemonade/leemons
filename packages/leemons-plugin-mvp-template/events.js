@@ -1,18 +1,16 @@
-const initRoles = require('./src/roles');
 const initUsers = require('./src/users');
 const initCenters = require('./src/centers');
 const initProfiles = require('./src/profiles');
 const _ = require('lodash');
-const { ca } = require('wait-on/exampleConfig');
+const { setFamilyProfiles } = require('./src/familyProfiles');
 
 async function events(isInstalled) {
-  console.log('MVP events');
+  const config = {
+    profiles: null,
+    centers: null,
+  };
 
   if (!isInstalled) {
-    const services = {
-      users: false,
-      multilanguage: false,
-    };
     const configLocales = async () => {
       try {
         await leemons.getPlugin('users').services.platform.addLocale('es', 'Español');
@@ -24,31 +22,30 @@ async function events(isInstalled) {
       }
     };
 
-    const config = async () => {
+    leemons.events.once(
+      ['plugins.users:pluginDidLoadServices', 'plugins.multilanguage:pluginDidLoadServices'],
+      async () => {
+        await configLocales();
+      }
+    );
+
+    leemons.events.once(
+      ['plugins.families:pluginDidLoadServices', 'plugins.mvp-template:init-profiles'],
+      async () => {
+        await setFamilyProfiles(config.profiles);
+      }
+    );
+
+    leemons.events.once('plugins.users:init-permissions', async () => {
       try {
-        const centers = await initCenters();
-        console.log('centers', centers);
-        const profiles = await initProfiles();
-        console.log('profiles', profiles);
-        const users = await initUsers(centers, profiles);
-        console.log('users', users);
+        config.centers = await initCenters();
+        leemons.events.emit('init-centers', config.centers);
+        config.profiles = await initProfiles();
+        leemons.events.emit('init-profiles', config.profiles);
+        await initUsers(config.centers, config.profiles);
       } catch (e) {
         console.error(e);
       }
-    };
-
-    leemons.events.once('plugins.users:pluginDidLoadServices', async () => {
-      if (services.multilanguage) configLocales();
-      services.users = true;
-    });
-
-    leemons.events.once('plugins.multilanguage:pluginDidLoadServices', async () => {
-      if (services.users) configLocales();
-      services.multilanguage = true;
-    });
-
-    leemons.events.once('plugins.users:init-permissions', async () => {
-      config();
     });
   }
 }

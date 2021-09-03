@@ -9,6 +9,7 @@ const _ = require('lodash');
 const chalk = require('chalk');
 const bodyParser = require('koa-bodyparser');
 const ora = require('ora');
+const uuid = require('uuid');
 
 const leemonsUtils = require('leemons-utils');
 const { createDatabaseManager } = require('leemons-database');
@@ -44,13 +45,44 @@ class Leemons {
     this.loaded = false;
     this.started = false;
 
+    const emitCache = [];
+    const arrayEvents = {};
     this.events = new events();
-    const { emit } = this.events;
+    const { emit, once } = this.events;
+    const emitArrayEventsIfNeed = (_event, { event, target }, ...args) => {
+      _.forIn(arrayEvents, (values, key) => {
+        if (values.indexOf(_event) >= 0) {
+          let foundAll = true;
+          _.forEach(values, (value) => {
+            if (value !== _event && emitCache.indexOf(value) < 0) {
+              foundAll = false;
+              return false;
+            }
+          });
+          if (foundAll) {
+            emit.call(this.events, key, { event, target }, ...args);
+          }
+        }
+      });
+    };
+    this.events.once = (event, ...args) => {
+      if (_.isArray(event)) {
+        const id = uuid.v4();
+        arrayEvents[id] = event;
+        once.call(this.events, id, ...args);
+      } else {
+        once.call(this.events, event, ...args);
+      }
+    };
     this.events.emit = (event, target = null, ...args) => {
       emit.call(this.events, 'all', { event, target }, ...args);
       emit.call(this.events, event, { event, target }, ...args);
+      emitArrayEventsIfNeed(event, { event, target }, ...args);
+      if (emitCache.indexOf(event) < 0) emitCache.push(event);
       if (target) {
         emit.call(this.events, `${target}:${event}`, { event, target }, ...args);
+        emitArrayEventsIfNeed(`${target}:${event}`, { event, target }, ...args);
+        if (emitCache.indexOf(`${target}:${event}`) < 0) emitCache.push(`${target}:${event}`);
       }
     };
 
@@ -190,7 +222,7 @@ class Leemons {
           return next();
         }
         ctx.status = 401;
-        ctx.body = { status: 401, msg: 'Authorization required' };
+        ctx.body = { status: 401, message: 'Authorization required' };
         return undefined;
       } catch (err) {
         if (_.isObject(authenticated) && authenticated.nextWithoutSession) {
@@ -198,7 +230,7 @@ class Leemons {
           return next();
         }
         ctx.status = 401;
-        ctx.body = { status: 401, msg: 'Authorization required' };
+        ctx.body = { status: 401, message: 'Authorization required' };
         return undefined;
       }
     };
@@ -223,7 +255,7 @@ class Leemons {
         ctx.status = 401;
         ctx.body = {
           status: 401,
-          msg: 'You do not have permissions',
+          message: 'You do not have permissions',
           allowedPermissions: rAllowedPermissions,
         };
         return undefined;

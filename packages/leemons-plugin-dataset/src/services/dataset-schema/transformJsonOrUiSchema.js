@@ -4,6 +4,10 @@ function arrKeys(object) {
   return global.utils.getObjectArrayKeys(object);
 }
 
+function removeArrayPropFromString(string) {
+  return string.replace(/\[(.*)\]/g, '');
+}
+
 /** *
  *  ES:
  *  Transforma un json schema (https://github.com/RXNT/react-jsonschema-form-conditionals) y lo devuelve transformado con las traducciones por un lado y el json
@@ -28,7 +32,7 @@ function transformJsonOrUiSchema(jsonSchema, saveKeys, replaces) {
     const props = _.split(key, '.');
     let path = '';
     _.forEach(props, (prop) => {
-      const p = prop.replace(/\[(.*)\]/g, '');
+      const p = removeArrayPropFromString(prop);
       if (saveKeys.indexOf(p) >= 0) {
         keys.push(`${path}${p}`);
         return false;
@@ -85,7 +89,7 @@ function getJsonSchemaProfilePermissionsKeys(jsonSchema) {
   _.forEach(arrKeys(jsonSchema), (key) => {
     if (key.indexOf('.permissions.') >= 0) {
       const k = _.split(key, '.');
-      k.pop();
+      k[k.length - 1] = removeArrayPropFromString(k[k.length - 1]);
       keys.push(_.join(k, '.'));
     }
   });

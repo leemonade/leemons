@@ -14,6 +14,7 @@ async function getMenu(key, force) {
     hooks.addAction('user:change:profile', resetMenu);
     hooks.addAction('user:update:permissions', resetMenu);
     hooks.addAction('menu-builder:user:addCustomItem', resetMenu);
+    hooks.addAction('menu-builder:user:updateItem', resetMenu);
     hooksActionsInit = true;
   }
   if (!menuCache[key] || force) {

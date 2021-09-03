@@ -5,8 +5,7 @@ import { listProfilesRequest } from '@users/request';
 import { goDetailProfilePage, goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
 import { PageContainer, PageHeader, Table } from 'leemons-ui';
-import useTranslate from '@multilanguage/useTranslate';
-import tLoader from '@multilanguage/helpers/tLoader';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import prefixPN from '@users/helpers/prefixPN';
@@ -14,8 +13,7 @@ import Link from 'next/link';
 
 function ListProfiles() {
   useSession({ redirectTo: goLoginPage });
-  const [translations] = useTranslate({ keysStartsWith: prefixPN('list_profiles') });
-  const t = tLoader(prefixPN('list_profiles'), translations);
+  const [t] = useTranslateLoader(prefixPN('list_profiles'));
   const { t: tCommon } = useCommonTranslate('page_header');
   const [loadingError, setLoadingError, LoadingErrorAlert] = useRequestErrorMessage();
   const [loading, setLoading] = useState(true);
@@ -89,14 +87,12 @@ function ListProfiles() {
       />
       <div className="bg-primary-content">
         <PageContainer>
-          <div className="text-base text-secondary pb-6 max-w-screen-sm">
-            {t('page_description')}
-          </div>
+          <div className="page-description pb-6 max-w-screen-sm">{t('page_description')}</div>
         </PageContainer>
       </div>
       <PageContainer>
         <LoadingErrorAlert />
-        <div className="bg-primary-content p-2">
+        <div className="bg-primary-content p-4">
           {!loading && !loadingError ? (
             <div>
               <Table columns={tableHeaders} data={tableItems} />

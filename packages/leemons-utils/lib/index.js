@@ -12,7 +12,12 @@ const { parseFilters } = require('./parseFilters');
 const getStackTrace = require('./getStackTrace');
 const LeemonsValidator = require('./leemons-validator');
 const { settledResponseToManyResponse } = require('./settled-response-to-many-response');
-const { HttpError, returnError, HttpErrorWithCustomCode } = require('./http-error');
+const {
+  HttpError,
+  returnError,
+  HttpErrorWithCustomCode,
+  HttpErrorPermissions,
+} = require('./http-error');
 const { getAvailablePort } = require('./port');
 const paginate = require('./paginate');
 const randomString = require('./randomString');
@@ -38,6 +43,7 @@ module.exports = {
   LeemonsValidator,
   HttpError,
   HttpErrorWithCustomCode,
+  HttpErrorPermissions,
   returnError,
   bcrypt,
   jwt,

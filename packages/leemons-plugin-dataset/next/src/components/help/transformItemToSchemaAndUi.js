@@ -143,7 +143,7 @@ const transformItemToSchemaAndUi = (item, locale) => {
         locale &&
         locales &&
         locales[locale] &&
-        locales[locale].schema.frontConfig
+        locales[locale].schema
       ) {
         if (frontConfig.uiType === 'radio') {
           schema.enumNames = [

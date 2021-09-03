@@ -3,7 +3,7 @@ const initItemPermission = require('./src/item-permission');
 const initMenuBuilder = require('./src/menu-builder');
 
 async function init() {
-  await initDataset();
+  // await initDataset();
   // await initItemPermission();
   // await initMenuBuilder();
 }

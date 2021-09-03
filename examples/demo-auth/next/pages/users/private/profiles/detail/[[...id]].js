@@ -16,6 +16,10 @@ import {
 import { withLayout } from '@layout/hoc';
 import { goDetailProfilePage, goListProfilesPage, goLoginPage } from '@users/navigate';
 import {
+  Button,
+  FormControl,
+  Input,
+  Modal,
   PageContainer,
   PageHeader,
   Tab,
@@ -24,67 +28,215 @@ import {
   TabPanel,
   Tabs,
   Textarea,
+  useModal,
 } from 'leemons-ui';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@users/helpers/prefixPN';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
+import { getDatasetSchemaRequest, removeDatasetFieldRequest } from '@dataset/request';
+import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
+import { useAsync } from '@common/useAsync';
+import { CheckCircleIcon, PlusIcon } from '@heroicons/react/outline';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import PlatformLocales from '@multilanguage/components/PlatformLocales';
+import getProfileTranslations from '@users/request/getProfileTranslations';
 import hooks from 'leemons-hooks';
 
-function ProfileDetail() {
-  useSession({ redirectTo: goLoginPage });
+function DatasetTabs({ profile, t, isEditMode }) {
+  const [loading, setLoading] = useState(true);
+  const [tableItems, setTableItems] = useState([]);
+  const [item, setItem] = useState(null);
+  const [itemToRemove, setItemToRemove] = useState(null);
+  const [toggle, DatasetItemDrawer] = useDatasetItemDrawer();
+  const { t: tCommonTypes } = useCommonTranslate('form_field_types');
+  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
+  const [modal, toggleModal] = useModal({
+    animated: true,
+    title: t('remove_modal.title'),
+    message: t('remove_modal.message'),
+    cancelLabel: t('remove_modal.cancel'),
+    actionLabel: t('remove_modal.action'),
+    onAction: async () => {
+      try {
+        await removeDatasetFieldRequest(`profile.${profile.id}`, 'plugins.users', itemToRemove.id);
+        addSuccessAlert(t('dataset_tab.deleted_done'));
+        reload();
+      } catch (e) {
+        addErrorAlert(getErrorMessage(e));
+      }
+    },
+  });
 
-  const [translations] = useTranslate({ keysStartsWith: prefixPN('detail_profile') });
-  const t = tLoader(prefixPN('detail_profile'), translations);
-  const { t: tCommonHeader } = useCommonTranslate('page_header');
-  const { t: tCommonForm } = useCommonTranslate('forms');
+  function newItem() {
+    setItem(null);
+    toggle();
+  }
 
-  const router = useRouter();
+  function openItem(item) {
+    setItem(item);
+    toggle();
+  }
 
-  const {
-    register,
-    setValue,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  function removeItem(item) {
+    setItemToRemove(item);
+    toggleModal();
+  }
 
-  const [actions, setActions] = useState(null);
-  const [permissions, setPermissions] = useState(null);
-  const [profile, setProfile] = useState(null);
-  const [actionT, setActionT] = useState(null);
-  const [saveLoading, setSaveLoading] = useState(false);
-  const [permissionT, setPermissionT] = useState(null);
-  const [tableData, setTableData] = useState([]);
+  async function reload() {
+    try {
+      setLoading(true);
+      await onSuccess(await load());
+    } catch (e) {
+      onError(e);
+    }
+  }
+
+  function onSave() {
+    reload();
+  }
 
   const tableHeaders = useMemo(() => {
     const result = [
       {
-        Header: t('leemon'),
-        accessor: 'name',
+        Header: t('dataset_tab.table.name'),
+        accessor: (field) => (
+          <div className="text-left">
+            {field.schema.frontConfig.name} {field.schema.frontConfig.required ? '*' : ''}
+          </div>
+        ),
         className: 'text-left',
       },
+      {
+        Header: t('dataset_tab.table.description'),
+        accessor: 'description',
+        className: 'text-left',
+      },
+      {
+        Header: t('dataset_tab.table.type'),
+        accessor: (field) => (
+          <div className="text-center">{tCommonTypes(field.schema.frontConfig.type)}</div>
+        ),
+        className: 'text-center',
+      },
     ];
-    if (actions && actionT) {
-      _.forIn(actions, (action) => {
-        result.push({
-          Header: actionT[getTranslationKeyActions(action.actionName, 'name')],
-          accessor: action.actionName,
-          className: 'text-center',
-        });
+    if (isEditMode) {
+      result.push({
+        Header: t('dataset_tab.table.actions'),
+        accessor: (field) => (
+          <div className="text-center">
+            <Button color="primary" text onClick={() => openItem(field)}>
+              {t('dataset_tab.table.edit')}
+            </Button>
+            <Button color="primary" text onClick={() => removeItem(field)}>
+              {t('dataset_tab.table.delete')}
+            </Button>
+          </div>
+        ),
+        className: 'text-center',
       });
     }
     return result;
-  }, [actionT, actions, t]);
+  }, [t, tCommonTypes, isEditMode]);
 
-  useEffect(() => {
-    if (_.isArray(router.query.id)) {
-      getProfile(router.query.id[0]);
-    }
-  }, [router]);
+  const load = useMemo(
+    () => () => getDatasetSchemaRequest(`profile.${profile.id}`, 'plugins.users'),
+    []
+  );
+
+  const onSuccess = useMemo(
+    () => ({ dataset }) => {
+      setTableItems(getDatasetAsArrayOfProperties(dataset));
+      setLoading(false);
+    },
+    []
+  );
+
+  const onError = useMemo(
+    () => (e) => {
+      // ES: 4001 codigo de que aun no existe schema, como es posible ignoramos el error
+      if (e.code !== 4001) {
+        setError(e);
+      }
+      setLoading(false);
+    },
+    []
+  );
+
+  useAsync(load, onSuccess, onError);
+
+  return (
+    <>
+      <Modal {...modal} />
+      <div className="bg-primary-content">
+        <PageContainer className="pt-0">
+          <ErrorAlert />
+          {!loading && !error ? (
+            <div className="pt-6 mb-6 flex flex-row justify-between items-center">
+              <div className="text-base text-secondary">{t(`dataset_tab.description`)}</div>
+              {isEditMode ? (
+                <Button color="secondary" onClick={newItem}>
+                  <PlusIcon className="w-6 h-6 mr-1" />
+                  {t('dataset_tab.add_field')}
+                </Button>
+              ) : null}
+
+              <DatasetItemDrawer
+                locationName={`profile.${profile.id}`}
+                pluginName="plugins.users"
+                item={item}
+                onSave={onSave}
+              />
+            </div>
+          ) : null}
+        </PageContainer>
+      </div>
+      {!loading && !error ? (
+        <PageContainer>
+          <div className="bg-primary-content p-4">
+            <div>
+              {tableItems && tableItems.length ? (
+                <Table columns={tableHeaders} data={tableItems} />
+              ) : (
+                <div className="text-center">{t('dataset_tab.no_data_in_table')}</div>
+              )}
+            </div>
+          </div>
+        </PageContainer>
+      ) : null}
+    </>
+  );
+}
+
+function PermissionsTabs({ t, profile, onPermissionsChange = () => {}, isEditMode }) {
+  const [tableData, setTableData] = useState([]);
+  const [actions, setActions] = useState(null);
+  const [actionT, setActionT] = useState(null);
+  const [permissions, setPermissions] = useState(null);
+  const [permissionT, setPermissionT] = useState(null);
 
   useEffect(() => {
     getPermissions();
     getActions();
   }, []);
+
+  useEffect(() => {
+    if (isEditMode) {
+      onPermissionsChange(
+        _.map(tableData, ({ name, permissionName, ...rest }) => {
+          const actionNames = [];
+          _.forIn(rest, ({ checked }, key) => {
+            if (checked) actionNames.push(key);
+          });
+          return {
+            permissionName,
+            actionNames,
+          };
+        })
+      );
+    }
+  }, [tableData]);
 
   useEffect(() => {
     if (permissions && actions && permissionT) {
@@ -96,24 +248,36 @@ function ProfileDetail() {
           };
           actions.map(({ actionName }) => {
             if (permission.actions.indexOf(actionName) >= 0) {
-              response[actionName] = {
-                type: 'checkbox',
-                checked:
-                  profile && profile.permissions[permission.permissionName]
-                    ? profile.permissions[permission.permissionName].indexOf(actionName) >= 0
-                    : false,
-              };
+              if (isEditMode) {
+                response[actionName] = {
+                  type: 'checkbox',
+                  checked:
+                    profile && profile.permissions[permission.permissionName]
+                      ? profile.permissions[permission.permissionName].indexOf(actionName) >= 0
+                      : false,
+                };
+              } else {
+                response[actionName] = () => {
+                  const checked =
+                    profile && profile.permissions[permission.permissionName]
+                      ? profile.permissions[permission.permissionName].indexOf(actionName) >= 0
+                      : false;
+                  if (checked)
+                    return (
+                      <div className="text-center text-primary">
+                        <CheckCircleIcon className="w-7 h-7 m-auto" />
+                      </div>
+                    );
+                  return null;
+                };
+              }
             }
           });
           return response;
         })
       );
     }
-  }, [profile, permissions, actions, permissionT]);
-
-  function goList() {
-    return goListProfilesPage();
-  }
+  }, [profile, permissions, actions, permissionT, isEditMode]);
 
   async function getPermissions() {
     const response = await listPermissionsRequest();
@@ -135,106 +299,325 @@ function ProfileDetail() {
     setActions(response.actions);
   }
 
-  async function saveProfile(data) {
-    setSaveLoading(true);
-    let response;
-    if (profile && profile.id) {
-      response = await updateProfileRequest({
-        ...data,
-        id: profile.id,
+  const tableHeaders = useMemo(() => {
+    const result = [
+      {
+        Header: t('leemon'),
+        accessor: 'name',
+        className: 'text-left',
+      },
+    ];
+    if (actions && actionT) {
+      _.forIn(actions, (action) => {
+        result.push({
+          Header: actionT[getTranslationKeyActions(action.actionName, 'name')],
+          accessor: action.actionName,
+          className: 'text-center',
+        });
       });
-      await hooks.fireEvent('user:update:permissions', profile);
-    } else {
-      response = await addProfileRequest(data);
     }
-    setSaveLoading(false);
-    goDetailProfilePage(response.profile.uri);
+    return result;
+  }, [actionT, actions, t]);
+
+  return (
+    <PageContainer>
+      <div className="bg-primary-content p-4">
+        <Table
+          columns={tableHeaders}
+          data={tableData}
+          setData={(e) => (isEditMode ? setTableData(e) : null)}
+        />
+      </div>
+    </PageContainer>
+  );
+}
+
+function ProfileDetail() {
+  useSession({ redirectTo: goLoginPage });
+
+  const [translations] = useTranslate({ keysStartsWith: prefixPN('detail_profile') });
+  const t = tLoader(prefixPN('detail_profile'), translations);
+  const { t: tCommonHeader } = useCommonTranslate('page_header');
+  const { t: tCommonForm } = useCommonTranslate('forms');
+
+  const router = useRouter();
+
+  const {
+    register,
+    setValue,
+    watch,
+    getValues,
+    handleSubmit,
+    formState: { errors, isSubmitted },
+  } = useForm();
+
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [profile, setProfile] = useState(null);
+  const [permissions, setPermissions] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
+
+  const [modal, toggleModal] = useModal({
+    animated: true,
+    title: t('options_modal.title'),
+    cancelLabel: t('options_modal.cancel'),
+    actionLabel: t('options_modal.accept'),
+  });
+
+  useEffect(() => {
+    if (!_.isArray(router.query.id)) {
+      setIsEditMode(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (_.isArray(router.query.id)) {
+      getProfile(router.query.id[0]);
+      hooks.fireEvent('user:update:permissions', profile);
+      setIsEditMode(false);
+    } else {
+      setLoading(false);
+    }
+  }, [router]);
+
+  async function saveProfile(data) {
+    try {
+      setSaveLoading(true);
+      let response;
+      if (profile && profile.id) {
+        response = await updateProfileRequest({
+          ...data,
+          id: profile.id,
+        });
+        addSuccessAlert(t('update_done'));
+      } else {
+        response = await addProfileRequest(data);
+        addSuccessAlert(t('save_done'));
+      }
+
+      setSaveLoading(false);
+      goDetailProfilePage(response.profile.uri);
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+      setSaveLoading(false);
+    }
   }
 
   async function getProfile(uri) {
     try {
+      setLoading(true);
       const response = await getProfileRequest(uri);
 
       setValue('name', response.profile.name);
       setValue('description', response.profile.description);
 
+      const perms = [];
+      _.forIn(response.profile.permissions, (actionNames, permissionName) => {
+        perms.push({ actionNames, permissionName });
+      });
+
+      setPermissions(perms);
       setProfile(response.profile);
     } catch (err) {
-      console.error(err);
-      await goList();
+      setError(err);
     }
+    setLoading(false);
   }
 
   const onSubmit = (data) => {
-    const permissions = _.map(tableData, ({ name, permissionName, ...rest }) => {
-      const actionNames = [];
-      _.forIn(rest, ({ checked }, key) => {
-        if (checked) actionNames.push(key);
-      });
-      return {
-        permissionName,
-        actionNames,
-      };
-    });
-
     saveProfile({ ...data, permissions });
   };
 
+  const onEditButton = () => {
+    setIsEditMode(true);
+  };
+
+  const onCancelButton = () => {
+    if (profile?.id) {
+      setIsEditMode(false);
+    } else {
+      goListProfilesPage();
+    }
+  };
+
+  const showDefaultLocaleWarning = useMemo(() => {
+    return !getValues('name');
+  }, [getValues()]);
+
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <PageHeader
-          registerFormTitle={register('name', { required: tCommonForm('required') })}
-          registerFormTitleErrors={errors.title}
-          titlePlaceholder={t('profile_name')}
-          saveButton={tCommonHeader('save')}
-          saveButtonLoading={saveLoading}
-          cancelButton={tCommonHeader('cancel')}
-          onNewButton={goDetailProfilePage}
-          onCancelButton={goListProfilesPage}
-        />
-
-        <div className="bg-primary-content">
-          <PageContainer>
-            <div className="flex flex-row max-w-screen-md">
-              <div className="w-4/12 font-medium">{t('description')}</div>
-              <div className="w-8/12">
-                <Textarea className="w-full" outlined={true} {...register('description')} />
-              </div>
+      {!error && !loading ? (
+        <>
+          <Modal {...modal}>
+            <div className="text-sm text-secondary">{t('options_modal.description')}</div>
+            <div className="pt-6 mb-4">
+              <PlatformLocales showWarning={showDefaultLocaleWarning} warningIsError={isSubmitted}>
+                <LocaleTab
+                  errors={errors}
+                  setValue={setValue}
+                  getValues={getValues}
+                  watch={watch}
+                  register={register}
+                  tCommonForm={tCommonForm}
+                  t={t}
+                  profile={profile}
+                  isEditMode={isEditMode}
+                />
+              </PlatformLocales>
             </div>
-          </PageContainer>
-        </div>
-      </form>
+          </Modal>
 
-      <Tabs>
-        <div className="bg-primary-content">
-          <PageContainer>
-            <TabList>
-              <Tab id={`id-permissions`} panelId={`panel-permissions`}>
-                {t('permissions')}
-              </Tab>
-              <Tab id={`id-dataset`} panelId={`panel-dataset`}>
-                {t('dataset')}
-              </Tab>
-            </TabList>
-          </PageContainer>
-        </div>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <PageHeader
+              registerFormTitle={
+                isEditMode ? register('name', { required: tCommonForm('required') }) : null
+              }
+              registerFormTitleErrors={errors.name}
+              titlePlaceholder={t('profile_name')}
+              title={watch('name')}
+              saveButton={isEditMode ? tCommonHeader('save') : null}
+              saveButtonLoading={saveLoading}
+              cancelButton={isEditMode ? tCommonHeader('cancel') : null}
+              onCancelButton={onCancelButton}
+              editButton={isEditMode ? null : tCommonHeader('edit')}
+              onEditButton={onEditButton}
+            />
 
-        <TabPanel id={`panel-permissions`} tabId={`id-permissions`}>
-          <PageContainer>
-            <div className="bg-primary-content p-4">
-              <Table columns={tableHeaders} data={tableData} setData={setTableData} />
+            <div className="bg-primary-content">
+              <PageContainer>
+                <div className="flex flex-row max-w-screen-md">
+                  {isEditMode ? (
+                    <>
+                      <div className="w-4/12 font-medium">{t('description')}</div>
+                      <div className="w-8/12">
+                        <Textarea className="w-full" outlined={true} {...register('description')} />
+                      </div>
+                    </>
+                  ) : (
+                    <div className="page-description">{watch('description')}</div>
+                  )}
+                </div>
+
+                <Button type="button" className="mt-6" color="primary" text onClick={toggleModal}>
+                  {t('translations')}
+                  {showDefaultLocaleWarning ? (
+                    <span
+                      className={`${
+                        isSubmitted ? 'bg-error' : 'bg-warning'
+                      } w-2 h-2 rounded-full  mt-2 ml-2 self-start`}
+                    />
+                  ) : null}
+                </Button>
+              </PageContainer>
             </div>
-          </PageContainer>
-        </TabPanel>
+          </form>
 
-        <TabPanel id={`panel-dataset`} tabId={`id-dataset`}>
-          <PageContainer>
-            <div className="bg-primary-content p-4">Dataset</div>
-          </PageContainer>
-        </TabPanel>
-      </Tabs>
+          <Tabs router={router} saveHistory>
+            <div className="bg-primary-content">
+              <PageContainer>
+                <TabList>
+                  <Tab id={`id-permissions`} panelId={`panel-permissions`}>
+                    {t('permissions')}
+                  </Tab>
+                  <Tab id={`id-dataset`} panelId={`panel-dataset`} disabled={!profile?.id}>
+                    {t('dataset')}
+                  </Tab>
+                </TabList>
+              </PageContainer>
+            </div>
+
+            <TabPanel id={`panel-permissions`} tabId={`id-permissions`}>
+              <PermissionsTabs
+                t={t}
+                profile={profile}
+                onPermissionsChange={setPermissions}
+                isEditMode={isEditMode}
+              />
+            </TabPanel>
+
+            <TabPanel id={`panel-dataset`} tabId={`id-dataset`}>
+              <DatasetTabs t={t} profile={profile} isEditMode={isEditMode} />
+            </TabPanel>
+          </Tabs>
+        </>
+      ) : (
+        <ErrorAlert />
+      )}
     </>
+  );
+}
+
+function LocaleTab({
+  localeConfig,
+  errors,
+  setValue,
+  watch,
+  register,
+  tCommonForm,
+  t,
+  profile,
+  getValues,
+  isEditMode,
+}) {
+  let nameKey = `translations.name.${localeConfig.currentLocale.code}`;
+  let descriptionKey = `translations.description.${localeConfig.currentLocale.code}`;
+  let nameRegister = {};
+  let descriptionRegister = {};
+  const nameOptions = {};
+  if (localeConfig.currentLocaleIsDefaultLocale) {
+    nameOptions.required = tCommonForm('required');
+    nameKey = 'name';
+    descriptionKey = 'description';
+    nameRegister = { onChange: (e) => setValue(nameKey, e.target.value), value: watch('name') };
+    descriptionRegister = {
+      onChange: (e) => setValue(descriptionKey, e.target.value),
+      value: watch('description'),
+    };
+  } else {
+    nameRegister = { ...register(nameKey, nameOptions) };
+    descriptionRegister = { ...register(descriptionKey) };
+  }
+
+  useEffect(() => {
+    (async () => {
+      if (profile && profile.id) {
+        const name = getValues(nameKey);
+        const description = getValues(descriptionKey);
+        if (!name || !description) {
+          const values = await getProfileTranslations(profile.id, localeConfig.currentLocale.code);
+          if (!name) setValue(nameKey, values.name);
+          if (!description) setValue(descriptionKey, values.description);
+        }
+      }
+    })();
+  }, []);
+
+  return (
+    <div className="p-4">
+      <FormControl
+        label={t('options_modal.profile_name')}
+        className="w-full"
+        formError={_.get(errors, nameKey)}
+      >
+        {isEditMode ? (
+          <Input className="w-full" outlined={true} {...nameRegister} />
+        ) : (
+          watch(nameKey)
+        )}
+      </FormControl>
+      <FormControl
+        label={t('options_modal.profile_description')}
+        className="w-full"
+        formError={_.get(errors, descriptionKey)}
+      >
+        {isEditMode ? (
+          <Textarea className="w-full" outlined={true} {...descriptionRegister} />
+        ) : (
+          watch(descriptionKey)
+        )}
+      </FormControl>
+    </div>
   );
 }
 

@@ -11,6 +11,17 @@ module.exports = [
     },
   },
   {
+    path: '/get-schema-locale',
+    method: 'POST',
+    handler: 'dataset.getSchemaLocale',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.dataset.dataset': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+  {
     path: '/get-schema-field-locale',
     method: 'POST',
     handler: 'dataset.getSchemaFieldLocale',

@@ -1,5 +1,5 @@
 import React from 'react';
-import {fireEvent, addAction} from 'leemons-hooks';
+import { addAction, fireEvent } from 'leemons-hooks';
 
 function getDisplayName(WrappedComponent) {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';
@@ -101,6 +101,7 @@ export function withPersistentState(
     constructor(props) {
       super(props, namespace, defaultValue, deletedValue);
     }
+
     render() {
       return (
         <Component
@@ -117,6 +118,7 @@ export function withPersistentState(
       );
     }
   }
+
   // Change displayName for React Dev Tools
   withPersistentState.displayName = `WithPersistentState[${namespace}](${getDisplayName(
     Component

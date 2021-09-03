@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
-import Image from 'next/image';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { getMenu } from '@menu-builder/helpers';
 import PropTypes from 'prop-types';
@@ -10,10 +9,16 @@ import MainMenuSubmenu from './mainMenuSubmenu';
 import { useSession } from '@users/session';
 import hooks from 'leemons-hooks';
 import SimpleBar from 'simplebar-react';
+import { UserImage } from '@common/userImage';
 
 const menuWidth = '52px';
 
-export default function MainMenu({ onClose, onOpen, state, setState }) {
+export default function MainMenu({ onClose, onOpen, state: _state, setState }) {
+  const loadingMenu = useRef();
+  const stateC = useRef();
+  stateC.current = _state;
+  const state = stateC.current;
+
   const session = useSession();
   const router = useRouter();
 
@@ -24,22 +29,41 @@ export default function MainMenu({ onClose, onOpen, state, setState }) {
   }, [state]);
 
   async function reloadMenu() {
+    loadingMenu.current = true;
     const _menu = await loadMenu();
-    if (state.menuActive.parent) {
+    if (state.menuActive && state.menuActive.parent) {
       const parent = _.find(_menu, { id: state.menuActive.parent.id });
       if (parent) setState({ menuActive: { ...state.menuActive, parent } });
     }
+    loadingMenu.current = false;
   }
 
   const openMenu = useCallback(() => {
     if (onOpen) onOpen();
   }, [state]);
 
+  const closeMenu = useCallback(() => {
+    if (onClose) onClose();
+  }, [state]);
+
   const handleRouteChange = useCallback(async () => {
-    const menuActive = await getActiveParentAndChild();
-    setState({ menuActive });
-    if (menuActive.parent) openMenu();
-    return menuActive;
+    if (loadingMenu.current) {
+      setTimeout(() => {
+        handleRouteChange();
+      }, 100);
+    } else {
+      const menuActive = await getActiveParentAndChild();
+      if (stateC.current.menuActive && stateC.current.menuActive.parent && !menuActive.parent) {
+        menuActive.parent = stateC.current.menuActive.parent;
+      }
+      setState({ menuActive });
+      if (menuActive.parent) {
+        openMenu();
+      } else {
+        closeMenu();
+      }
+      return menuActive;
+    }
   }, [state]);
 
   const onMenuItemClick = useCallback(
@@ -52,7 +76,7 @@ export default function MainMenu({ onClose, onOpen, state, setState }) {
 
   async function onCloseSubMenu() {
     setState({ menuActive: await getActiveParentAndChild() });
-    if (onClose) onClose();
+    closeMenu();
   }
 
   useEffect(() => {
@@ -96,20 +120,7 @@ export default function MainMenu({ onClose, onOpen, state, setState }) {
 
             {/* User image */}
             <div>
-              {session && (
-                <>
-                  {session.image ? (
-                    <Image width={40} height={40} src={session.image} className="rounded-full" />
-                  ) : (
-                    <div
-                      style={{ width: '40px', height: '40px' }}
-                      className="rounded-full bg-primary-focus mx-auto my-4 text-secondary-content font-lexend text-center flex flex-col align-items-center justify-center"
-                    >
-                      {session.name[0].toUpperCase()}
-                    </div>
-                  )}
-                </>
-              )}
+              <UserImage className="mx-auto my-4" />
             </div>
           </div>
         </div>

@@ -150,18 +150,12 @@ async function add(
         );
       } else if (leemons.getPlugin('users')) {
         promises.push(
-          leemons.getPlugin('users').services.permissions.addItem(
-            key,
-            leemons.plugin.prefixPN(`${menuKey}.menu-item`),
-            {
-              permissionName: leemons.getPlugin('users').services.config.constants.basicPermission
-                .permissionName,
-              actionNames: [
-                leemons.getPlugin('users').services.config.constants.basicPermission.actionName,
-              ],
-            },
-            { isCustomPermission: true, transacting }
-          )
+          leemons
+            .getPlugin('users')
+            .services.permissions.addItemBasicIfNeed(
+              key,
+              leemons.plugin.prefixPN(`${menuKey}.menu-item`)
+            )
         );
       }
 

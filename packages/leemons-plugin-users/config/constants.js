@@ -31,12 +31,11 @@ module.exports = {
   ],
   defaultActions: [
     { order: 1, actionName: 'view', localizationName: { es: 'Ver', en: 'View' } },
-    { order: 11, actionName: 'change', localizationName: { es: 'Cambiar', en: 'Change' } },
-    { order: 21, actionName: 'update', localizationName: { es: 'Actualizar', en: 'Update' } },
-    { order: 31, actionName: 'create', localizationName: { es: 'Crear', en: 'Create' } },
-    { order: 41, actionName: 'delete', localizationName: { es: 'Borrar', en: 'Delete' } },
-    { order: 51, actionName: 'assign', localizationName: { es: 'Asignar', en: 'Assign' } },
-    { order: 61, actionName: 'admin', localizationName: { es: 'Administrador', en: 'Admin' } },
+    { order: 11, actionName: 'update', localizationName: { es: 'Actualizar', en: 'Update' } },
+    { order: 21, actionName: 'create', localizationName: { es: 'Crear', en: 'Create' } },
+    { order: 31, actionName: 'delete', localizationName: { es: 'Borrar', en: 'Delete' } },
+    { order: 41, actionName: 'assign', localizationName: { es: 'Asignar', en: 'Assign' } },
+    { order: 51, actionName: 'admin', localizationName: { es: 'Administrador', en: 'Admin' } },
   ],
   defaultDatasetLocations: [
     {

@@ -20,6 +20,7 @@ import getPlatformLocales from './getPlatformLocales';
 import addProfile from './addProfile';
 import getProfile from './getProfile';
 import updateProfile from './updateProfile';
+import getPermissionsWithActionsIfIHave from './getPermissionsWithActionsIfIHave';
 
 export const loginRequest = login;
 export const resetRequest = reset;
@@ -43,3 +44,4 @@ export const getPlatformLocalesRequest = getPlatformLocales;
 export const addProfileRequest = addProfile;
 export const getProfileRequest = getProfile;
 export const updateProfileRequest = updateProfile;
+export const getPermissionsWithActionsIfIHaveRequest = getPermissionsWithActionsIfIHave;

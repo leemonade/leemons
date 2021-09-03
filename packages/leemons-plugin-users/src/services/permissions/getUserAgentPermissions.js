@@ -50,6 +50,14 @@ async function getUserAgentPermissions(userAgent, { query: _query, transacting }
     });
   }
 
+  _.map(responses, (response) => {
+    response.actionNames = _.uniq(response.actionNames);
+    delete response.actionName;
+    delete response.userAgent;
+    delete response.created_at;
+    delete response.updated_at;
+  });
+
   return responses;
 }
 
