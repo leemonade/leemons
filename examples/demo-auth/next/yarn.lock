@@ -50,6 +50,11 @@
     lodash "^4.17.21"
     react-hook-form "^7.8.5"
 
+"@leemons/families-emergency-numbers@file:dependencies/families-emergency-numbers":
+  version "1.0.0"
+  dependencies:
+    prop-types "^15.7.2"
+
 "@leemons/families@file:dependencies/families":
   version "1.0.0"
   dependencies:
@@ -80,6 +85,11 @@
   dependencies:
     lodash "^4.17.21"
     react-hook-form "^7.8.5"
+
+"@leemons/package-manager@file:dependencies/package-manager":
+  version "1.0.0"
+  dependencies:
+    prop-types "^15.7.2"
 
 "@leemons/provider-emails-amazon-ses@file:dependencies/provider-emails-amazon-ses":
   version "1.0.0"

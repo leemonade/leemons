@@ -5,6 +5,7 @@ import { Checkbox, FormControl, Input, Label, Radio, Select, Textarea, Toggle } 
 import Engine from 'json-rules-engine-simplified';
 import applyRules from 'rjsf-conditionals';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import regex from '@common/regex';
 
 const MyCustomFormControl = ({ children, required, rawErrors, schema, descriptionOutside }) => {
   return (
@@ -461,15 +462,15 @@ export default function formWithTheme(schema, ui, conditions, props) {
       Form.current = getForm();
       render();
     }
-  }, [schema, ui, conditions]);
+  }, [JSON.stringify(schema), JSON.stringify(ui), JSON.stringify(conditions)]);
 
   useEffect(() => {
     Form.current = getForm();
-  }, [props]);
+  }, [JSON.stringify(props)]);
 
   const customFormats = {
-    numbers: /^\d+$/,
-    phone: /^[\+]?[(]?[0-9]{2,3}[)]?[-\s\.]?[0-9\s]{3}[-\s\.]?[0-9\s]{4,8}$/,
+    numbers: regex.numbers,
+    phone: regex.phone,
   };
 
   const form = Form.current ? Form.current : null;

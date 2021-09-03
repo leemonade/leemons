@@ -200,6 +200,9 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
           } catch (e) {
             setSaveLoading(false);
           }
+        } else {
+          onSave({ schemaConfig: schemaWithAllConfig, schemaLocales });
+          close();
         }
       } catch (err) {
         console.error(err);

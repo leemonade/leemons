@@ -24,7 +24,15 @@ const { add: addMenuItem } = require('../menu-builder/add');
  * @return {Promise<any>}
  * */
 async function update(
-  { id, name, guardians = [], students = [], datasetValues, maritalStatus },
+  {
+    id,
+    name,
+    guardians = [],
+    students = [],
+    datasetValues,
+    maritalStatus,
+    emergencyPhoneNumbers = [],
+  },
   userSession,
   { transacting: _transacting } = {}
 ) {
@@ -127,6 +135,18 @@ async function update(
       // EN: Update the dataset data
       if (permissions.customInfo.update && datasetValues) {
         await setDatasetValues(id, userSession, datasetValues, { transacting });
+      }
+
+      // Add phone numbers if plugin installed
+      // The plugin validate if user have access to save phones
+      const familyEmergencyNumbers = leemons.getPlugin('families-emergency-numbers');
+      if (emergencyPhoneNumbers && familyEmergencyNumbers) {
+        await familyEmergencyNumbers.services.emergencyPhones.saveFamilyPhones(
+          family.id,
+          emergencyPhoneNumbers,
+          userSession,
+          { transacting }
+        );
       }
 
       await recalculeNumberOfMembers(id, { transacting });

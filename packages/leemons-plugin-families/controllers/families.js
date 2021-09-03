@@ -8,15 +8,40 @@ const memberValidation = {
   items: {
     type: 'object',
     properties: {
-      user: {
-        type: 'string',
-      },
-      memberType: {
-        type: 'string',
-      },
+      user: { type: 'string' },
+      memberType: { type: 'string' },
     },
     required: ['user', 'memberType'],
     additionalProperties: false,
+  },
+};
+
+const addUpdateFamilySchema = {
+  name: { type: 'string' },
+  guardians: memberValidation,
+  students: memberValidation,
+  maritalStatus: { type: 'string' },
+  datasetValues: {
+    type: 'object',
+    additionalProperties: true,
+  },
+  emergencyPhoneNumbers: {
+    type: 'array',
+    items: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+        name: { type: 'string' },
+        phone: { type: 'string' },
+        relation: { type: 'string' },
+        dataset: {
+          type: ['object', 'null'],
+          additionalProperties: true,
+        },
+      },
+      required: ['name', 'phone', 'relation'],
+      additionalProperties: false,
+    },
   },
 };
 
@@ -61,16 +86,7 @@ async function getDatasetForm(ctx) {
 async function add(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
-    properties: {
-      name: { type: 'string' },
-      guardians: memberValidation,
-      students: memberValidation,
-      maritalStatus: { type: 'string' },
-      datasetValues: {
-        type: 'object',
-        additionalProperties: true,
-      },
-    },
+    properties: addUpdateFamilySchema,
     required: ['name'],
     additionalProperties: false,
   });
@@ -84,18 +100,12 @@ async function add(ctx) {
 }
 
 async function update(ctx) {
+  console.log(ctx.request.body.emergencyPhoneNumbers);
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
     properties: {
+      ...addUpdateFamilySchema,
       id: { type: 'string' },
-      name: { type: 'string' },
-      guardians: memberValidation,
-      students: memberValidation,
-      maritalStatus: { type: 'string' },
-      datasetValues: {
-        type: 'object',
-        additionalProperties: true,
-      },
     },
     required: ['id', 'name'],
     additionalProperties: false,

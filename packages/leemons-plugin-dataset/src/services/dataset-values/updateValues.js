@@ -52,6 +52,7 @@ async function updateValues(
   _.forIn(jsonSchema.properties, (p) => {
     delete p.id;
   });
+  // TODO AÑADIR VALIDADOR CUSTOM PARA NUMEROS DE TELEFONO/ETZ
   const validator = new global.utils.LeemonsValidator(
     {
       ...jsonSchema,
@@ -68,22 +69,24 @@ async function updateValues(
     toSave.push(data);
   });
 
-  console.log(toSave);
+  return global.utils.withTransaction(
+    async (transacting) => {
+      if (hardUpdate) {
+        await deleteValues.call(this, locationName, pluginName, { target, transacting });
+        await table.datasetValues.createMany(toSave, { transacting });
+      } else {
+        const promises = [];
+        _.forEach(toSave, ({ value, ...rest }) => {
+          promises.push(table.datasetValues.set(rest, { value, ...rest }, { transacting }));
+        });
+        await Promise.all(promises);
+      }
 
-  return global.utils.withTransaction(async (transacting) => {
-    if (hardUpdate) {
-      await deleteValues.call(this, locationName, pluginName, { target, transacting });
-      await table.datasetValues.createMany(toSave, { transacting });
-    } else {
-      const promises = [];
-      _.forEach(toSave, ({ value, ...rest }) => {
-        promises.push(table.datasetValues.set(rest, { value, ...rest }, { transacting }));
-      });
-      await Promise.all(promises);
-    }
-
-    return formData;
-  }, table.datasetValues);
+      return formData;
+    },
+    table.datasetValues,
+    _transacting
+  );
 }
 
 module.exports = updateValues;

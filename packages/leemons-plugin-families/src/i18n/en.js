@@ -3,12 +3,16 @@ module.exports = {
     title: 'Families dataset',
     description1:
       'This dataset will allow you to download a template set for a smooth loading of your family database.',
+    phone_description:
+      'The families Leemon has its own component to manage the emergency numbers of the students, activate it to have this functionality.',
+    phone_button: 'Activate Emergency Numbers Addon',
     important: 'Important:',
     important_remember:
       'remember that you will not be able to upload your families until your user base is correctly loaded into the system.',
     tabs: {
       basic: 'Basic',
       dataset: 'Custom dataset',
+      emergency_numbers: 'Emergency Numbers',
       permissions: 'Permissions',
     },
     dataset_tab: {
@@ -24,6 +28,16 @@ module.exports = {
         edit: 'Edit',
         delete: 'Delete',
       },
+    },
+    phone_modal: {
+      title: 'Activate Addon',
+      message1: 'You are going to activate the Family Emergency Number Addon.',
+      message2:
+        '<b>Important:</b> Once  Addon has been activated, it can only be deactivated again if its dataset has no fields and no data has been loaded into the emergency numbers DB.',
+      cancel: 'No, return without activate',
+      action: 'Yes, activate Addon',
+      installing: 'Installing add-on',
+      installed: 'Add-on installed',
     },
     remove_modal: {
       title: 'Do you want to delete the item?',

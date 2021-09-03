@@ -88,9 +88,23 @@ async function events(isInstalled) {
     });
 
     leemons.events.once('plugins.menu-builder:init-main-menu', async () => {
-      await addMain();
+      try {
+        await addMain();
+        leemons.events.emit('init-menu');
+        await Promise.all([addWelcome(), addProfiles(), addUserData()]);
+        leemons.events.emit('init-submenu');
+      } catch (e) {
+        console.error('Error users menu', e);
+      }
+    });
+  } else {
+    leemons.events.once('plugins.users:pluginDidInit', async () => {
+      leemons.events.emit('init-actions');
+      leemons.events.emit('init-permissions');
+      leemons.events.emit('init-dataset-locations');
+      leemons.events.emit('init-email-reset-password');
+      leemons.events.emit('init-emails');
       leemons.events.emit('init-menu');
-      await Promise.all([addWelcome(), addProfiles(), addUserData()]);
       leemons.events.emit('init-submenu');
     });
   }
