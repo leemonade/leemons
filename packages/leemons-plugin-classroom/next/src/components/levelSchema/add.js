@@ -15,7 +15,8 @@ import { useForm } from 'react-hook-form';
 
 import addLevelSchema from '../../services/levelSchemas/addLevelSchema';
 import addLevel from '../../services/levels/addLevel';
-import DatasetExample from '../dataset/datasetAdmin';
+import DatasetExample from '../dataset/example';
+import DatasetAdmin from '../dataset/datasetAdmin';
 
 export default function Add({
   entities,
@@ -127,7 +128,8 @@ export default function Add({
           </TabList>
           <TabPanel id="dataset">
             <p>Extra Data</p>
-            <DatasetExample />
+            <DatasetAdmin />
+            {/* <DatasetExample /> */}
           </TabPanel>
           <TabPanel id="assignableProfiles">
             <p>Assignable Profiles</p>
