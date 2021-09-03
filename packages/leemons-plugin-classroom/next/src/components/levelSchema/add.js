@@ -127,9 +127,7 @@ export default function Add({
             </Tab>
           </TabList>
           <TabPanel id="dataset">
-            <p>Extra Data</p>
             <DatasetAdmin />
-            {/* <DatasetExample /> */}
           </TabPanel>
           <TabPanel id="assignableProfiles">
             <p>Assignable Profiles</p>

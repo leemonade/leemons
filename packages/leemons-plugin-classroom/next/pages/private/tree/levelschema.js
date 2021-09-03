@@ -12,6 +12,8 @@ import LevelSchemaTree from '@classroom/components/levelSchema/tree';
 import AddLevel from '@classroom/components/levelSchema/add';
 import LocalePicker from '@multilanguage/components/LocalePicker';
 
+// TODO: modify tree when adding item
+
 function Levelschema() {
   const session = useSession({ redirectTo: goLoginPage });
 

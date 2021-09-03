@@ -3,61 +3,18 @@ import { useState, useMemo } from 'react';
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
 import { Button } from 'leemons-ui';
 import Table from 'leemons-ui/dist/components/ui/Table';
-
-function useArrayState(initialState) {
-  const [items, setItems] = useState(initialState);
-
-  const pushItems = (newItems) => {
-    if (Array.isArray(newItems)) {
-      setItems([...items, ...newItems]);
-    } else {
-      setItems([...items, newItems]);
-    }
-  };
-
-  const removeItems = (f) => {
-    setItems(items.filter((...args) => !f(...args)));
-  };
-
-  const findItems = (f) => items.filter(f);
-
-  return [items, { setItems, pushItems, removeItems, findItems }];
-}
-
-function ActionButtons({ removeItems, setEditItem, toggle, field } = {}) {
-  return (
-    <div className="text-center">
-      {/* Boton de actualizar campo */}
-      <Button
-        color="primary"
-        text
-        onClick={() => {
-          console.log('Edit', field);
-          toggle();
-        }}
-      >
-        editar
-      </Button>
-      {/* Boton de borrar campo */}
-      <Button
-        color="primary"
-        text
-        onClick={() => {
-          console.log('Delete', field);
-          removeItems((item) => item === field);
-        }}
-      >
-        eliminar
-      </Button>
-    </div>
-  );
-}
+import useArrayState from '../../hooks/useArrayState';
+import ActionButtons from './actionButtons';
 
 export default function DatasetAdmin() {
+  // The dataset fields with array state helpers
   const [items, { pushItems, removeItems, findItems }] = useArrayState([]);
+  // The dataset field that needs to be edited (null if new one)
   const [editItem, setEditItem] = useState(null);
+  // The dataset drawer and the toggle dataset drawer
   const [toggle, DatasetItemDrawer] = useDatasetItemDrawer();
 
+  // The table columns we are going to ue (they require Memo to prevent reRender)
   const columns = useMemo(() => [
     { Header: 'Nombre', accessor: 'schema.frontConfig.name' },
     { Header: 'Descripción', accessor: 'schema.description' },
@@ -68,20 +25,24 @@ export default function DatasetAdmin() {
     },
   ]);
 
+  /*
+   * Handle dataset events
+   */
+
+  // save item (not saved to server?)
+  // TODO: check what we do receive when it saved to server
   const onSaveDatasetItem = (item) => {
-    pushItems(item.schemaConfig);
     console.log(item);
+    pushItems(item.schemaConfig);
   };
 
-  console.log(items);
   return (
     <>
-      <p>Dataset</p>
       <Button onClick={toggle} color="primary">
-        Toggle
+        Añadir campo
       </Button>
       <DatasetItemDrawer
-        item={null} // El item a editar (null si nuevo)
+        item={editItem} // El item a editar (null si nuevo)
         pluginName="plugins.classroom"
         onSave={onSaveDatasetItem}
       />
