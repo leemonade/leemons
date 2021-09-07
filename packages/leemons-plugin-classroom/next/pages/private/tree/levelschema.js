@@ -114,11 +114,30 @@ function Levelschema() {
         }}
       />
 
+      <>
+        <Select
+          onChange={(e) => {
+            if (e.target.value) {
+              console.log(e.target.value);
+              setAddLevel({ entityId: e.target.value, parent: null, active: true });
+            }
+          }}
+        >
+          <option value={null}>default</option>
+          {levels.map((level) => (
+            <option key={level.id} value={level.id}>
+              {level.name} ({level.id})
+            </option>
+          ))}
+        </Select>
+      </>
+
       {addLevel.active && (
         <AddLevel
           entities={levels}
           schemas={levelSchemas}
           schemaId={addLevel.schema}
+          entityId={addLevel.entityId}
           parentId={addLevel.parent}
           onClose={(newLevel) => {
             setAddLevel({ active: false });

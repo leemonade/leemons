@@ -14,7 +14,9 @@ import {
 import { useForm } from 'react-hook-form';
 
 import addLevelSchema from '../../services/levelSchemas/addLevelSchema';
+import updateLevelSchema from '../../services/levelSchemas/updateLevelSchema';
 import addLevel from '../../services/levels/addLevel';
+import updateLevel from '../../services/levels/updateLevel';
 import DatasetExample from '../dataset/example';
 import DatasetAdmin from '../dataset/datasetAdmin';
 
@@ -27,21 +29,31 @@ export default function Add({
   onClose = () => {},
 }) {
   console.log('Schema', schemaId, 'parent', parentId);
-  const isClass = useRef(false);
-  const { register, handleSubmit } = useForm();
-  const [parent, setParent] = useState(null);
+  const [isClass, setIsClass] = useState(false);
+  const { register, handleSubmit, setValue } = useForm();
+  const [entity, setEntity] = useState(null);
 
   const useSchema = schemas !== null;
 
   useEffect(() => {
-    setParent(entities.find(({ id }) => parentId));
-  }, [entities, parentId]);
-
-  useEffect(() => {
-    console.log(
-      'Entity =',
-      entities.find(({ id }) => entityId)
-    );
+    let entity = entities.find(({ id }) => entityId === id);
+    // If editing an entity, set the entity values
+    if (entity) {
+      if (useSchema) {
+        schemaId = entity.schema;
+        setValue('description', entity.description);
+      } else {
+        setIsClass(entity.isClass);
+      }
+      setValue('levelName', entity.name);
+      setEntity(entity);
+      // If creating a new entity, set the values to default
+    } else {
+      setValue('description', '');
+      setIsClass(false);
+      setValue('levelName', '');
+      setEntity(null);
+    }
   }, [entityId, entities]);
 
   const onSubmit = async (data) => {
@@ -61,28 +73,52 @@ export default function Add({
         names: { en: data.levelName },
         descriptions: { en: data.description },
       };
-      console.log(level);
-      try {
-        level = await addLevel(level);
-        // TODO Provide the new LevelSchema
-        onClose(level);
-      } catch (e) {
-        console.error(e);
+      if (entityId) {
+        level.id = entityId;
+        console.log(level);
+        try {
+          level = await updateLevel(level);
+          // TODO Provide the new LevelSchema
+          onClose(level);
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        console.log(level);
+        try {
+          level = await addLevel(level);
+          // TODO Provide the new LevelSchema
+          onClose(level);
+        } catch (e) {
+          console.error(e);
+        }
       }
     } else {
       let levelSchema = {
         parent: parentId,
         name: data.levelName,
         names: { en: data.levelName },
-        isClass: isClass.current,
+        isClass,
       };
-      try {
-        levelSchema = await addLevelSchema(levelSchema);
-        console.log(levelSchema);
-        // TODO Provide the new LevelSchema
-        onClose(levelSchema);
-      } catch (e) {
-        console.error(e);
+      if (entityId) {
+        levelSchema.id = entityId;
+        try {
+          levelSchema = await updateLevelSchema(levelSchema);
+          console.log(levelSchema);
+          // TODO Provide the new LevelSchema
+          onClose(levelSchema);
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        try {
+          levelSchema = await addLevelSchema(levelSchema);
+          console.log(levelSchema);
+          // TODO Provide the new LevelSchema
+          onClose(levelSchema);
+        } catch (e) {
+          console.error(e);
+        }
       }
     }
   };
@@ -91,17 +127,29 @@ export default function Add({
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Input outlined={true} {...register('levelName')} placeholder="Level name" />
+        <Input
+          outlined={true}
+          {...register('levelName')}
+          // defaultValue={entity ? entity.name : ''}
+          placeholder="Level name"
+        />
         {!useSchema && (
           <FormControl label="Class Level" labelPosition="right">
             <Toggle
+              checked={isClass}
               onChange={(e) => {
-                isClass.current = e.target.checked;
+                setIsClass(!isClass);
               }}
             />
           </FormControl>
         )}
-        {useSchema && <Textarea {...register('description')} placeholder="Level description" />}
+        {useSchema && (
+          <Textarea
+            {...register('description')}
+            defaultValue={entity ? entity.description : ''}
+            placeholder="Level description"
+          />
+        )}
         <Button
           color="neutral"
           onClick={(e) => {
@@ -115,6 +163,7 @@ export default function Add({
       </form>
 
       {useSchema ? (
+        // Levels Tabs
         <Tabs router={router} saveHistory={true}>
           <TabList>
             {/* <Tab id="dataset" panelId="dataset">
@@ -133,6 +182,7 @@ export default function Add({
           </TabPanel>
         </Tabs>
       ) : (
+        // LevelSchemas Tabs
         <Tabs router={router} saveHistory={true}>
           <TabList>
             {/* <Tab id="dataset" panelId="dataset">
