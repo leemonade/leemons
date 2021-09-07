@@ -44,12 +44,12 @@
       @apply bg-primary border-primary text-primary-content;
       &:hover,
       &.btn-active {
-        @apply bg-primary-focus border-primary-focus;
+        @apply bg-primary-focus border-primary-focus !important;
       }
       &:active,
       &:focus-visible {
-        @apply bg-primary border-primary;
-        box-shadow: 0 0 0 2px hsl(var(--p-f));
+        @apply bg-primary border-primary !important;
+        box-shadow: 0 0 0 2px hsl(var(--p-f)) !important;
       }
 
       &.btn-text {
@@ -57,12 +57,12 @@
         background-color: hsl(var(--p) / 0%);
         &:hover,
         &.btn-active {
-          background-color: hsl(var(--p) / 10%);
+          background-color: hsl(var(--p) / 10%) !important;
         }
         &:active,
         &:focus-visible {
-          background-color: hsl(var(--p) / 10%);
-          box-shadow: 0 0 0 2px hsl(var(--p));
+          background-color: hsl(var(--p) / 10%) !important;
+          box-shadow: 0 0 0 2px hsl(var(--p)) !important;
         }
       }
     }
@@ -70,12 +70,12 @@
       @apply bg-secondary border-secondary text-secondary-content;
       &:hover,
       &.btn-active {
-        @apply bg-secondary-focus border-secondary-focus;
+        @apply bg-secondary-focus border-secondary-focus !important;
       }
       &:active,
       &:focus-visible {
-        @apply bg-secondary border-secondary;
-        box-shadow: 0 0 0 2px hsl(var(--p-f));
+        @apply bg-secondary border-secondary !important;
+        box-shadow: 0 0 0 2px hsl(var(--p-f)) !important;
       }
 
       &.btn-text {
@@ -83,12 +83,12 @@
         background-color: hsl(var(--s) / 0%);
         &:hover,
         &.btn-active {
-          background-color: hsl(var(--s) / 10%);
+          background-color: hsl(var(--s) / 10%) !important;
         }
         &:active,
         &:focus-visible {
-          background-color: hsl(var(--s) / 10%);
-          box-shadow: 0 0 0 2px hsl(var(--p));
+          background-color: hsl(var(--s) / 10%) !important;
+          box-shadow: 0 0 0 2px hsl(var(--p)) !important;
         }
       }
     }
@@ -96,12 +96,12 @@
       @apply bg-accent border-accent text-accent-content;
       &:hover,
       &.btn-active {
-        @apply bg-accent-focus border-accent-focus;
+        @apply bg-accent-focus border-accent-focus !important;
       }
       &:active,
       &:focus-visible {
-        @apply bg-accent border-accent;
-        box-shadow: 0 0 0 2px hsl(var(--a-f));
+        @apply bg-accent border-accent !important;
+        box-shadow: 0 0 0 2px hsl(var(--a-f)) !important;
       }
 
       &.btn-text {
@@ -109,12 +109,12 @@
         background-color: hsl(var(--a) / 0%);
         &:hover,
         &.btn-active {
-          background-color: hsl(var(--a) / 10%);
+          background-color: hsl(var(--a) / 10%) !important;
         }
         &:active,
         &:focus-visible {
-          background-color: hsl(var(--a) / 10%);
-          box-shadow: 0 0 0 2px hsl(var(--a-f));
+          background-color: hsl(var(--a) / 10%) !important;
+          box-shadow: 0 0 0 2px hsl(var(--a-f)) !important;
         }
       }
     }
@@ -123,11 +123,11 @@
       @apply bg-white border-white text-black;
       &:hover,
       &.btn-active {
-        @apply border-black;
+        @apply border-black !important;
       }
       &:active,
       &:focus-visible {
-        box-shadow: 0 0 0 2px hsl(var(--s-f));
+        box-shadow: 0 0 0 2px hsl(var(--s-f)) !important;
       }
 
       &.btn-text {
@@ -135,12 +135,12 @@
         background-color: rgba(255, 255, 255, 0);
         &:hover,
         &.btn-active {
-          background-color: rgba(255, 255, 255, 0.1);
+          background-color: rgba(255, 255, 255, 0.1) !important;
         }
         &:active,
         &:focus-visible {
-          background-color: rgba(255, 255, 255, 0.1);
-          box-shadow: 0 0 0 2px rgba(255, 255, 255, 1);
+          background-color: rgba(255, 255, 255, 0.1) !important;
+          box-shadow: 0 0 0 2px rgba(255, 255, 255, 1) !important;
         }
       }
     }
