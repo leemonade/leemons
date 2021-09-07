@@ -36,7 +36,7 @@ function Layout({ children }) {
           ref={mainRef}
           className="flex-1 block overflow-x-hidden h-screen overflow-y-auto bg-base-100 text-base-content drawer-content"
         >
-          <div className="p-4 lg:p-10">{children}</div>
+          <div>{children}</div>
         </main>
       </div>
     </div>
