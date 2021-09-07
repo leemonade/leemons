@@ -17,6 +17,8 @@ module.exports = async function deleteOne(id, { transacting } = {}) {
       throw new Error("Can't delete a Level with children");
     }
 
+    await leemons.plugin.services.levels.removeUsers({ users: 'all', level: id });
+
     await multilanguage.deleteKeyStartsWith(leemons.plugin.prefixPN(`levels.${id}`), {
       transacting,
     });

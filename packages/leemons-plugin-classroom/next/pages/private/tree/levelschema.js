@@ -12,6 +12,8 @@ import LevelSchemaTree from '@classroom/components/levelSchema/tree';
 import AddLevel from '@classroom/components/levelSchema/add';
 import LocalePicker from '@multilanguage/components/LocalePicker';
 
+import { Select } from 'leemons-ui';
+
 // TODO: modify tree when adding item
 
 function Levelschema() {
@@ -54,7 +56,7 @@ function Levelschema() {
           setLocale(newLocale);
         }}
       />
-      <h1>LevelSChemas</h1>
+      <h1>LevelSchemas</h1>
       <LevelSchemaTree
         entities={levelSchemas}
         childrenLimit={1}
@@ -62,13 +64,34 @@ function Levelschema() {
           setAddLevelSchema({ active: true, parent });
         }}
       />
+      <>
+        <Select
+          onChange={(e) => {
+            if (e.target.value) {
+              console.log(e.target.value);
+              setAddLevelSchema({ entityId: e.target.value, parent: null, active: true });
+            }
+          }}
+        >
+          <option value={null}>default</option>
+          {levelSchemas.map((levelSchema) => (
+            <option key={levelSchema.id} value={levelSchema.id}>
+              {levelSchema.name} ({levelSchema.id})
+            </option>
+          ))}
+        </Select>
+      </>
       {addLevelSchema.active && (
         <AddLevel
           levelSchemas={levelSchemas}
           entities={levelSchemas}
           parentId={addLevelSchema.parent}
+          entityId={addLevelSchema.entityId}
           onClose={(newLevelSchema) => {
             setAddLevelSchema({ active: false });
+            if (!newLevelSchema) {
+              return;
+            }
             setLevelSchemas([
               ...levelSchemas,
               {
@@ -99,6 +122,9 @@ function Levelschema() {
           parentId={addLevel.parent}
           onClose={(newLevel) => {
             setAddLevel({ active: false });
+            if (!newLevel) {
+              return;
+            }
             setLevels([
               ...levels,
               {

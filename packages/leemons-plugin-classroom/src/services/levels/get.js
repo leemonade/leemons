@@ -31,7 +31,9 @@ module.exports = async function get(id, { locale = null, transacting } = {}) {
       })
     ).map(({ locale: _locale, value }) => ({ locale: _locale, value }));
 
-    return { ...level, names, descriptions };
+    const users = await leemons.plugin.services.levels.getUsers(id);
+
+    return { ...level, names, descriptions, users };
   }
   throw validator.error;
 };

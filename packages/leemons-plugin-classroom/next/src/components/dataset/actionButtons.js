@@ -8,7 +8,7 @@ export default function ActionButtons({ removeItems, setEditItem, toggle, field 
         color="primary"
         text
         onClick={() => {
-          setEditItem(field);
+          setEditItem(field.schemaConfig);
           toggle();
         }}
       >
@@ -19,7 +19,6 @@ export default function ActionButtons({ removeItems, setEditItem, toggle, field 
         color="primary"
         text
         onClick={() => {
-          console.log('Delete', field);
           removeItems((item) => item === field);
         }}
       >

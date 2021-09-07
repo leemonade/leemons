@@ -1,3 +1,5 @@
+const addDatasetLocation = require('../dataset/addLocation');
+
 const tables = {
   levelSchemas: leemons.query('plugins_classroom::levelSchemas'),
   assignableProfiles: leemons.query('plugins_classroom::levelSchemas_profiles'),
@@ -64,6 +66,11 @@ async function add(
           }
           throw new Error("LevelSchema can't be created");
         }
+
+        // TODO: Add datasets
+        // -----------------------------------------------------------------------
+        // Create dataset location
+        // const datasetLocation = await addDatasetLocation(names.en, savedLevelSchema.id);
 
         // -----------------------------------------------------------------------
         // Save assignable profiles

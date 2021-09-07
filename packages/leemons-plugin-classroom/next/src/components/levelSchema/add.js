@@ -37,6 +37,13 @@ export default function Add({
     setParent(entities.find(({ id }) => parentId));
   }, [entities, parentId]);
 
+  useEffect(() => {
+    console.log(
+      'Entity =',
+      entities.find(({ id }) => entityId)
+    );
+  }, [entityId, entities]);
+
   const onSubmit = async (data) => {
     if (!data.levelName) {
       console.error('The name must be filled');
@@ -95,23 +102,32 @@ export default function Add({
           </FormControl>
         )}
         {useSchema && <Textarea {...register('description')} placeholder="Level description" />}
+        <Button
+          color="neutral"
+          onClick={(e) => {
+            e.preventDefault();
+            onClose(null);
+          }}
+        >
+          Cancel
+        </Button>
         <Button color="primary">Save</Button>
       </form>
 
       {useSchema ? (
         <Tabs router={router} saveHistory={true}>
           <TabList>
-            <Tab id="dataset" panelId="dataset">
+            {/* <Tab id="dataset" panelId="dataset">
               Extra Data
-            </Tab>
+            </Tab> */}
             <Tab id="permissions" panelId="permissions">
               Permissions
             </Tab>
           </TabList>
 
-          <TabPanel id="dataset">
+          {/* <TabPanel id="dataset">
             <p>Extra Data</p>
-          </TabPanel>
+          </TabPanel> */}
           <TabPanel id="permissions">
             <p>Permissions</p>
           </TabPanel>
@@ -119,16 +135,16 @@ export default function Add({
       ) : (
         <Tabs router={router} saveHistory={true}>
           <TabList>
-            <Tab id="dataset" panelId="dataset">
+            {/* <Tab id="dataset" panelId="dataset">
               Dataset
-            </Tab>
+            </Tab> */}
             <Tab id="assignableProfiles" panelId="assignableProfiles">
               Assignable Profiles
             </Tab>
           </TabList>
-          <TabPanel id="dataset">
+          {/* <TabPanel id="dataset">
             <DatasetAdmin />
-          </TabPanel>
+          </TabPanel> */}
           <TabPanel id="assignableProfiles">
             <p>Assignable Profiles</p>
           </TabPanel>

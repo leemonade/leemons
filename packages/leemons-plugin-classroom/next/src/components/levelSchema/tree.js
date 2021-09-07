@@ -90,6 +90,7 @@ function tree({
               text: `Add level to ${entity.name}`,
               parent: entity.id,
               type: 'button',
+              component: () => <p>Hola Mundo</p>,
               draggable: false,
               data: {
                 parent: entity.id,

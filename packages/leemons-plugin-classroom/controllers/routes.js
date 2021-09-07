@@ -134,4 +134,22 @@ module.exports = [
     handler: 'levels.setParent',
     authenticated: false,
   },
+  {
+    path: '/level/:id/users',
+    method: 'GET',
+    handler: 'levels.getUsers',
+    authenticated: false,
+  },
+  {
+    path: '/level/:id/users',
+    method: 'POST',
+    handler: 'levels.addUsers',
+    authenticated: false,
+  },
+  {
+    path: '/level/:id/users',
+    method: 'DELETE',
+    handler: 'levels.removeUsers',
+    authenticated: false,
+  },
 ];

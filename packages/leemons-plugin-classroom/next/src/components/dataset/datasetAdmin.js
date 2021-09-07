@@ -1,8 +1,7 @@
-import { useState, useMemo } from 'react';
-
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
 import { Button } from 'leemons-ui';
 import Table from 'leemons-ui/dist/components/ui/Table';
+import { useMemo, useState } from 'react';
 import useArrayState from '../../hooks/useArrayState';
 import ActionButtons from './actionButtons';
 
@@ -16,9 +15,9 @@ export default function DatasetAdmin() {
 
   // The table columns we are going to ue (they require Memo to prevent reRender)
   const columns = useMemo(() => [
-    { Header: 'Nombre', accessor: 'schema.frontConfig.name' },
-    { Header: 'Descripción', accessor: 'schema.description' },
-    { Header: 'Tipo', accessor: 'schema.type' },
+    { Header: 'Nombre', accessor: 'schemaConfig.schema.frontConfig.name' },
+    { Header: 'Descripción', accessor: 'schemaConfig.schema.description' },
+    { Header: 'Tipo', accessor: 'schemaConfig.schema.type' },
     {
       Header: 'Acciones',
       accessor: (field) => ActionButtons({ removeItems, setEditItem, toggle, field }),
@@ -33,7 +32,11 @@ export default function DatasetAdmin() {
   // TODO: check what we do receive when it saved to server
   const onSaveDatasetItem = (item) => {
     console.log(item);
-    pushItems(item.schemaConfig);
+    pushItems(item);
+  };
+
+  const onGetDataset = () => {
+    console.log(items);
   };
 
   return (
@@ -55,6 +58,7 @@ export default function DatasetAdmin() {
           <div className="text-center">No hay datos todavía</div>
         </>
       )}
+      <Button onClick={onGetDataset}>See data</Button>
     </>
   );
 }
