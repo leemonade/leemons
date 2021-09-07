@@ -312,6 +312,11 @@
         @apply h-3 w-3;
       }
     }
+    /* search */
+    &.btn-search {
+      @apply btn-xs bg-transparent border-0;
+    }
+
   }
   /* group */
   .btn-group {

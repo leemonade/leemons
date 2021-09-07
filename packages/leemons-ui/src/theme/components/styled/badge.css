@@ -3,6 +3,9 @@
   /* <: */
   .badge {
     @apply bg-neutral border border-neutral text-neutral-content rounded-badge;
+    &-outline {
+      @apply border-base-300;
+    }
   }
   .btn .badge {
     @apply bg-base-100 text-base-content border-transparent;

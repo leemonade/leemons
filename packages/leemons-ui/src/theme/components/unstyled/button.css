@@ -39,6 +39,10 @@
         border-right-color: currentColor;
       }
     }
+    /* search */
+    &.btn-search {
+      @apply btn-xs absolute -left-1;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     .btn.loading:before {
