@@ -62,6 +62,12 @@ module.exports = [
     authenticated: false,
   },
   {
+    path: '/levelSchema/:id',
+    method: 'PATCH',
+    handler: 'levelSchemas.update',
+    authenticated: false,
+  },
+  {
     path: '/levelSchema/:id/names',
     method: 'PATCH',
     handler: 'levelSchemas.setNames',
@@ -114,6 +120,12 @@ module.exports = [
     path: '/level/:id',
     method: 'DELETE',
     handler: 'levels.delete',
+    authenticated: false,
+  },
+  {
+    path: '/level/:id',
+    method: 'PATCH',
+    handler: 'levels.update',
     authenticated: false,
   },
   {

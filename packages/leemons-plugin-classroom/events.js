@@ -7,6 +7,7 @@ const {
   addClasses,
 } = require('./src/services/menu-builder');
 const init = require('./init');
+const updateCenters = require('./src/services/centers/updateCenters');
 
 // TODO: el proceso de gestionar los elementos que se añaden al MenuBuilder debería estar abstraido
 // tal y como se está haciendo ahora pero, en lugar de en cada Plugin, hacerlo a nivel del propio MenuBuilder
@@ -21,6 +22,8 @@ async function events(isInstalled) {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
     init();
   });
+
+  updateCenters();
 
   if (!isInstalled) {
     leemons.events.once('plugins.users:init-permissions', async () => {

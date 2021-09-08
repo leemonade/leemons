@@ -1,5 +1,6 @@
 const add = require('../src/services/levelSchemas/add');
 const get = require('../src/services/levelSchemas/get');
+const update = require('../src/services/levelSchemas/update');
 const deleteLS = require('../src/services/levelSchemas/delete');
 const list = require('../src/services/levelSchemas/list');
 const setNames = require('../src/services/levelSchemas/setNames');
@@ -11,6 +12,7 @@ const removeAssignables = require('../src/services/levelSchemas/removeAssignable
 module.exports = {
   add,
   get,
+  update,
   delete: deleteLS,
   list,
   setNames,

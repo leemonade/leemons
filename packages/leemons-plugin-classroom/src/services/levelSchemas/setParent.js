@@ -8,7 +8,7 @@ module.exports = async function setParent(id, parent, { transacting } = {}) {
     type: 'object',
     properties: {
       parent: {
-        type: 'string',
+        type: ['string', 'null'],
         format: 'uuid',
       },
       id: {

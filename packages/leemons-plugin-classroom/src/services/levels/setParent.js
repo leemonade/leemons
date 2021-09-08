@@ -1,4 +1,5 @@
 const levels = leemons.query('plugins_classroom::levels');
+const levelSchemas = leemons.query('plugins_classroom::levelSchemas');
 
 // TODO: Check that the parent is compatible
 module.exports = async function setParent(id, parent, { transacting } = {}) {
@@ -8,7 +9,7 @@ module.exports = async function setParent(id, parent, { transacting } = {}) {
     type: 'object',
     properties: {
       parent: {
-        type: 'string',
+        type: ['string', 'null'],
         format: 'uuid',
       },
       id: {
@@ -31,10 +32,18 @@ module.exports = async function setParent(id, parent, { transacting } = {}) {
     if (level.parent === parent) {
       return level;
     }
-
-    const parentLS = await levels.count({ id: parent, isClass: true }, { transacting });
-    if (parentLS) {
-      throw new Error("The parent can't be of type class");
+    if (parent !== null) {
+      const parentL = await levels.count({ id: parent }, { transacting });
+      if (!parentL) {
+        throw new Error("The given parent can't be found");
+      }
+      const parentLS = await levelSchemas.count(
+        { id: parentL.schema, isClass: true },
+        { transacting }
+      );
+      if (parentLS) {
+        throw new Error("The parent can't be of type class");
+      }
     }
 
     try {

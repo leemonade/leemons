@@ -41,6 +41,16 @@ module.exports = {
       ctx.body = { status: 400, error: e.message };
     }
   },
+  update: async (ctx) => {
+    try {
+      const level = await services.update(ctx.params.id, { ...ctx.request.body });
+      ctx.status = 200;
+      ctx.body = { status: 200, level };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = { status: 400, error: e.message };
+    }
+  },
   setNames: async (ctx) => {
     try {
       const names = await services.setNames(ctx.request.params.id, ctx.request.body.names);

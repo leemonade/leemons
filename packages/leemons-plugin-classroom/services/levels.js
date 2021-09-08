@@ -1,6 +1,7 @@
 const add = require('../src/services/levels/add');
 const get = require('../src/services/levels/get');
 const deleteLS = require('../src/services/levels/delete');
+const update = require('../src/services/levels/update');
 const list = require('../src/services/levels/list');
 const setNames = require('../src/services/levels/setNames');
 const setDescriptions = require('../src/services/levels/setDescriptions');
@@ -14,6 +15,7 @@ module.exports = {
   add,
   get,
   delete: deleteLS,
+  update,
   list,
   setNames,
   setDescriptions,
