@@ -15,6 +15,7 @@ module.exports = async function get(id, { locale = null, transacting } = {}) {
     if (!levelSchema) {
       throw new Error('LevelSchema not found');
     }
+    levelSchema.properties = JSON.parse(levelSchema.properties);
 
     const assignableProfiles = (
       await tables.assignableProfiles.find({ levelSchemas_id: id }, { transacting })
@@ -31,7 +32,11 @@ module.exports = async function get(id, { locale = null, transacting } = {}) {
       })
     ).map(({ locale: _locale, value }) => ({ locale: _locale, value }));
 
-    return { ...levelSchema, assignableProfiles, names };
+    return {
+      ...levelSchema,
+      assignableProfiles,
+      names,
+    };
   }
   throw validator.error;
 };

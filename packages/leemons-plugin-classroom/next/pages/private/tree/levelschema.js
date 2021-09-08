@@ -8,7 +8,7 @@ import { withLayout } from '@layout/hoc';
 
 import { goLoginPage } from '@users/navigate';
 
-import LevelSchemaTree from '@classroom/components/levelSchema/tree';
+import LevelSchemaTree from '@classroom/components/common/tree';
 import AddLevel from '@classroom/components/levelSchema/add';
 import LocalePicker from '@multilanguage/components/LocalePicker';
 
@@ -63,24 +63,14 @@ function Levelschema() {
         onAdd={({ data: { parent } }) => {
           setAddLevelSchema({ active: true, parent });
         }}
+        onSelect={(node, toggle) => {
+          if (node.properties.editable !== false) {
+            setAddLevelSchema({ active: true, entityId: node.id });
+          } else {
+            toggle();
+          }
+        }}
       />
-      <>
-        <Select
-          onChange={(e) => {
-            if (e.target.value) {
-              console.log(e.target.value);
-              setAddLevelSchema({ entityId: e.target.value, parent: null, active: true });
-            }
-          }}
-        >
-          <option value={null}>default</option>
-          {levelSchemas.map((levelSchema) => (
-            <option key={levelSchema.id} value={levelSchema.id}>
-              {levelSchema.name} ({levelSchema.id})
-            </option>
-          ))}
-        </Select>
-      </>
       {addLevelSchema.active && (
         <AddLevel
           levelSchemas={levelSchemas}
@@ -112,25 +102,14 @@ function Levelschema() {
         onAdd={({ data: { parent, schema } }) => {
           setAddLevel({ active: true, parent, schema });
         }}
+        onSelect={(node, toggle) => {
+          if (node.properties.editable !== false) {
+            setAddLevel({ active: true, entityId: node.id });
+          } else {
+            toggle();
+          }
+        }}
       />
-
-      <>
-        <Select
-          onChange={(e) => {
-            if (e.target.value) {
-              console.log(e.target.value);
-              setAddLevel({ entityId: e.target.value, parent: null, active: true });
-            }
-          }}
-        >
-          <option value={null}>default</option>
-          {levels.map((level) => (
-            <option key={level.id} value={level.id}>
-              {level.name} ({level.id})
-            </option>
-          ))}
-        </Select>
-      </>
 
       {addLevel.active && (
         <AddLevel

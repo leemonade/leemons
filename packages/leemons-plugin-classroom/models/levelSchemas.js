@@ -24,6 +24,9 @@ module.exports = {
         relation: 'many to many',
       },
     },
+    properties: {
+      type: 'json',
+    },
   },
   primaryKey: {
     type: 'uuid',

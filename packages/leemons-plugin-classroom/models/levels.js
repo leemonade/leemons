@@ -21,12 +21,9 @@ module.exports = {
         unique: false,
       },
     },
-    // isClass: {
-    //   type: 'boolean',
-    //   options: {
-    //     notNull: true,
-    //   },
-    // },
+    properties: {
+      type: 'json',
+    },
   },
   primaryKey: {
     type: 'uuid',

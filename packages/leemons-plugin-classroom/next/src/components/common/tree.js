@@ -8,6 +8,7 @@ function tree({
   schemas,
 
   onAdd = () => {},
+  onSelect = () => {},
   showButtons = true,
   selectedNode = null,
   initialSelected = null,
@@ -31,27 +32,9 @@ function tree({
       if (useSchemas) {
         buttons.push(
           ...schemas
-            .map((schema) => {
-              if (
-                !schema.parent &&
-                (!childrenLimit ||
-                  entities.filter(({ schema: _schema }) => _schema === schema.id).length <
-                    childrenLimit)
-              ) {
-                return {
-                  id: `${schema.id}-center-ADD`,
-                  text: `Add ${schema.name} (to organization)`,
-                  parent: 'center',
-                  type: 'button',
-                  draggable: false,
-                  data: {
-                    action: 'add',
-                    parent: null,
-                    schema: schema.id,
-                  },
-                };
-              }
-              return entities
+            .filter((schema) => schema.properties.assignable !== false)
+            .map((schema) =>
+              entities
                 .filter((level) => level.schema === schema.parent)
                 .filter(
                   (level) =>
@@ -67,12 +50,13 @@ function tree({
                   type: 'button',
                   draggable: false,
                   data: {
+                    editable: level.properties?.editable,
                     action: 'add',
                     parent: level.id,
                     schema: schema.id,
                   },
-                }));
-            })
+                }))
+            )
             .flat()
         );
       } else {
@@ -92,6 +76,7 @@ function tree({
               type: 'button',
               draggable: false,
               data: {
+                editable: entity.properties.editable,
                 parent: entity.id,
                 action: 'add',
               },
@@ -119,11 +104,11 @@ function tree({
 
     // The actual Levels
     treeProps.setTreeData([
-      { id: 'center', text: useSchemas ? 'Colegio HDP' : 'Organization/center', parent: 0 },
+      // { id: 'center', text: useSchemas ? 'Colegio HDP' : 'Organization/center', parent: 0 },
       ...entities?.map((entity) => ({
         ...entity,
         text: entity.name,
-        parent: entity.parent || 'center',
+        parent: entity.parent || 0,
       })),
       ...(showButtons ? buttons : []),
     ]);
@@ -137,7 +122,7 @@ function tree({
 
   treeProps.initialSelected = [initialSelected];
 
-  return <Tree {...treeProps} onAdd={onAdd} />;
+  return <Tree {...treeProps} onAdd={onAdd} onSelect={onSelect} />;
 }
 
 export default tree;

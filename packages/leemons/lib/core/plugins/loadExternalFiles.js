@@ -1,13 +1,13 @@
 /* eslint-disable no-await-in-loop */
 const _ = require('lodash');
 
+const execa = require('execa');
 const { loadConfiguration } = require('../config/loadConfig');
 const { getPluginsInfoFromDB, getLocalPlugins, getExternalPlugins } = require('./getPlugins');
 const { computeDependencies, checkMissingDependencies, sortByDeps } = require('./dependencies');
 const { getStatus, PLUGIN_STATUS } = require('./pluginsStatus');
 const ScriptLoader = require('./loadScripts');
 const transformServices = require('./transformServices');
-const execa = require('execa');
 
 /**
  * Loads all the external files of a type (plugins, providers, etc)
@@ -351,7 +351,11 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
 
       const load = await scripts.load();
       if (load.exists) {
-        await load.func({ scripts: _.omit(scripts, ['load']), next: () => loadPlugin(i + 1) });
+        await load.func({
+          scripts: _.omit(scripts, ['load']),
+          next: () => loadPlugin(i + 1),
+          isInstalled: plugin.status.isInstalled,
+        });
       }
 
       if (!loadStatus.models) {

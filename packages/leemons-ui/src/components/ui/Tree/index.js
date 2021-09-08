@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useEffect, createContext, useContext, useRef } from 'react';
 import { Tree as ReactTree } from '@leemonade/react-dnd-treeview';
+import _ from 'lodash';
+import { node } from 'prop-types';
 import { NodeRenderer } from './NodeRenderer';
 import { NodePlaceholderRenderer } from './NodePlaceholderRenderer';
 import { NodeDragPreview } from './NodeDragPreview';
-import _ from 'lodash';
-import { node } from 'prop-types';
 
 const TreeContext = createContext();
 
@@ -19,6 +19,7 @@ const Tree = ({
   setTreeData,
   selectedNode,
   setSelectedNode,
+  onSelect,
   onAdd,
   onDelete,
   ...otherProps
@@ -32,6 +33,7 @@ const Tree = ({
     setTreeData: setTreeData || setData,
     onDelete,
     onAdd,
+    onSelect,
   };
 
   return (
@@ -52,9 +54,15 @@ const TreeView = ({
 }) => {
   const [initialized, setInitialized] = useState(false);
   const currentNode = useRef(null);
-  const { treeData, setTreeData, selectedNode, setSelectedNode, onAdd, onDelete } = useContext(
-    TreeContext
-  );
+  const {
+    treeData,
+    setTreeData,
+    selectedNode,
+    setSelectedNode,
+    onAdd,
+    onDelete,
+    onSelect,
+  } = useContext(TreeContext);
   const treeRef = useRef(null);
 
   const closeAllNodes = useCallback(() => {
@@ -81,9 +89,7 @@ const TreeView = ({
     }
     return false;
   };
-  const handleCanDrag = (node, ...rest) => {
-    return node.draggable !== false;
-  };
+  const handleCanDrag = (node, ...rest) => node.draggable !== false;
   const handleOnToggle = (node, isOpen, onToggle) => {
     if (!isOpen) {
       openBranch(node.id, true, !allowMultipleOpen);
@@ -103,9 +109,13 @@ const TreeView = ({
     currentNode.current = node;
   };
 
-  const handleSelect = (node, onSelect, e) => {
-    setSelectedNode(node);
-    onSelect(node.id);
+  const handleSelect = (node, onSelect, e, onToggle) => {
+    if (onSelect) {
+      onSelect(node, onToggle);
+    } else {
+      onToggle();
+    }
+    return false;
   };
 
   return (
@@ -121,7 +131,7 @@ const TreeView = ({
             isOpen,
             hasChild,
             onToggle,
-            onSelect,
+            // onSelect,
             lowerSiblingsCount,
             hasOpenSiblings,
             siblingIndex,
@@ -145,7 +155,7 @@ const TreeView = ({
               siblingIndex={siblingIndex}
               onToggle={(e) => handleOnToggle(node, isOpen, onToggle, e)}
               isSelected={isSelected}
-              onSelect={(e) => handleSelect(node, onSelect, e)}
+              onSelect={(e, onToggle) => handleSelect(node, onSelect, e, onToggle)}
               allowDropOutside={allowDropOutside}
               allowMultipleOpen={allowMultipleOpen}
               allowDragParents={allowDragParents}

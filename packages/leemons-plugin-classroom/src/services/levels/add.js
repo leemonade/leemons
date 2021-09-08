@@ -6,10 +6,10 @@ const tables = {
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 
 async function add(
-  { names = null, descriptions = null, schema = null, parent = null } = {},
+  { names = null, descriptions = null, schema = null, parent = null, properties = {} } = {},
   { transacting } = {}
 ) {
-  const level = { names, descriptions, schema, parent };
+  const level = { names, descriptions, schema, parent, properties };
 
   // ---------------------------------------------------------------------------
   // validate data types
@@ -37,11 +37,15 @@ async function add(
         type: 'string',
         format: 'uuid',
       },
+      properties: {
+        type: 'object',
+      },
     },
   };
   const validator = new global.utils.LeemonsValidator(schemaLevel);
 
   if (validator.validate(level)) {
+    level.properties = JSON.stringify(level.properties);
     // -------------------------------------------------------------------------
     // Register Level inside a transaction
     return global.utils.withTransaction(

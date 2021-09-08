@@ -12,6 +12,7 @@ module.exports = async function get(id, { locale = null, transacting } = {}) {
     if (!level) {
       throw new Error('Level not found');
     }
+    level.properties = JSON.parse(level.properties);
 
     const key = leemons.plugin.prefixPN(`levels.${id}`);
     if (locale) {

@@ -18,6 +18,7 @@ export const NodeRenderer = ({
   allowDragParents,
   onAdd,
   onDelete,
+  onSelect,
   hasChild,
   lowerSiblingsCount,
   hasOpenSiblings,
@@ -42,10 +43,17 @@ export const NodeRenderer = ({
 
   // ----------------------------------------------------------------------
   // HANDLERS
+
   const handleToggle = (e) => {
     e.stopPropagation();
     if (hasChild) {
       onToggle(node.id);
+    }
+  };
+  const handleSelect = (e) => {
+    e.stopPropagation();
+    if (node.data?.action !== 'add') {
+      onSelect(node, () => handleToggle(e));
     }
   };
 
@@ -75,12 +83,13 @@ export const NodeRenderer = ({
         'opacity-100': isButton && showButton,
       })}
       style={{ marginLeft: indent }}
-      onClick={handleToggle}
+      onClick={handleSelect}
       {...dragOverProps}
     >
       {/* TOGGLE ARROW */}
       {hasChild && !isSelected && (
         <div
+          onClick={handleToggle}
           className={`flex items-center justify-center group cursor-pointer transition-transform transform ease-linear h-6 w-8 ${
             isOpen ? 'rotate-0' : '-rotate-90'
           }`}
