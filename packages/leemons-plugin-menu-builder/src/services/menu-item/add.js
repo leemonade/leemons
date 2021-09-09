@@ -37,7 +37,7 @@ async function add(
     disabled,
   },
   permissions,
-  { transacting: _transacting } = {}
+  { isCustomPermission, transacting: _transacting } = {}
 ) {
   const _order = order;
   const _fixed = fixed;
@@ -145,7 +145,7 @@ async function add(
               key,
               leemons.plugin.prefixPN(`${menuKey}.menu-item`),
               permissions,
-              { transacting }
+              { isCustomPermission, transacting }
             )
         );
       } else if (leemons.getPlugin('users')) {

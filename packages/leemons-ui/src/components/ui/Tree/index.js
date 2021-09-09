@@ -1,9 +1,10 @@
 import React, { useState, useCallback, useEffect, createContext, useContext, useRef } from 'react';
 import { Tree as ReactTree } from '@leemonade/react-dnd-treeview';
+import _ from 'lodash';
+import { node } from 'prop-types';
 import { NodeRenderer } from './NodeRenderer';
 import { NodePlaceholderRenderer } from './NodePlaceholderRenderer';
 import { NodeDragPreview } from './NodeDragPreview';
-import _ from 'lodash';
 
 const TreeContext = createContext();
 
@@ -18,6 +19,7 @@ const Tree = ({
   setTreeData,
   selectedNode,
   setSelectedNode,
+  onSelect,
   onAdd,
   onDelete,
   ...otherProps
@@ -31,6 +33,7 @@ const Tree = ({
     setTreeData: setTreeData || setData,
     onDelete,
     onAdd,
+    onSelect,
   };
 
   return (
@@ -51,9 +54,15 @@ const TreeView = ({
 }) => {
   const [initialized, setInitialized] = useState(false);
   const currentNode = useRef(null);
-  const { treeData, setTreeData, selectedNode, setSelectedNode, onAdd, onDelete } = useContext(
-    TreeContext
-  );
+  const {
+    treeData,
+    setTreeData,
+    selectedNode,
+    setSelectedNode,
+    onAdd,
+    onDelete,
+    onSelect,
+  } = useContext(TreeContext);
   const treeRef = useRef(null);
 
   const closeAllNodes = useCallback(() => {
@@ -80,9 +89,7 @@ const TreeView = ({
     }
     return false;
   };
-  const handleCanDrag = (node, ...rest) => {
-    return node.draggable !== false;
-  };
+  const handleCanDrag = (node, ...rest) => node.draggable !== false;
   const handleOnToggle = (node, isOpen, onToggle) => {
     if (!isOpen) {
       openBranch(node.id, true, !allowMultipleOpen);
@@ -102,9 +109,13 @@ const TreeView = ({
     currentNode.current = node;
   };
 
-  const handleSelect = (node, onSelect, e) => {
-    setSelectedNode(node);
-    onSelect(node.id);
+  const handleSelect = (node, onSelect, e, onToggle) => {
+    if (onSelect) {
+      onSelect(node, onToggle);
+    } else {
+      onToggle();
+    }
+    return false;
   };
 
   return (
@@ -120,34 +131,46 @@ const TreeView = ({
             isOpen,
             hasChild,
             onToggle,
-            onSelect,
+            // onSelect,
             lowerSiblingsCount,
             hasOpenSiblings,
             siblingIndex,
             isSelected,
           }
-        ) => (
-          <NodeRenderer
-            node={node}
-            treeData={treeData}
-            setTreeData={setTreeData}
-            depth={depth}
-            isOpen={isOpen}
-            hasChild={hasChild}
-            lowerSiblingsCount={lowerSiblingsCount}
-            hasOpenSiblings={hasOpenSiblings}
-            siblingIndex={siblingIndex}
-            onToggle={(e) => handleOnToggle(node, isOpen, onToggle, e)}
-            isSelected={isSelected}
-            onSelect={(e) => handleSelect(node, onSelect, e)}
-            allowDropOutside={allowDropOutside}
-            allowMultipleOpen={allowMultipleOpen}
-            allowDragParents={allowDragParents}
-            onAdd={onAdd}
-            onDelete={onDelete}
-          />
-        )}
-        dragPreviewRender={(monitorProps) => <NodeDragPreview monitorProps={monitorProps} />}
+        ) => {
+          let Renderer = NodeRenderer;
+          if (node.render) {
+            Renderer = node.render;
+          }
+          return (
+            <Renderer
+              node={node}
+              treeData={treeData}
+              setTreeData={setTreeData}
+              depth={depth}
+              isOpen={isOpen}
+              hasChild={hasChild}
+              lowerSiblingsCount={lowerSiblingsCount}
+              hasOpenSiblings={hasOpenSiblings}
+              siblingIndex={siblingIndex}
+              onToggle={(e) => handleOnToggle(node, isOpen, onToggle, e)}
+              isSelected={isSelected}
+              onSelect={(e, onToggle) => handleSelect(node, onSelect, e, onToggle)}
+              allowDropOutside={allowDropOutside}
+              allowMultipleOpen={allowMultipleOpen}
+              allowDragParents={allowDragParents}
+              onAdd={onAdd}
+              onDelete={onDelete}
+            />
+          );
+        }}
+        dragPreviewRender={(monitorProps) => {
+          let DragPreview = NodeDragPreview;
+          if (monitorProps.item.dragPreview) {
+            DragPreview = monitorProps.item.dragPreview;
+          }
+          return <DragPreview monitorProps={monitorProps} />;
+        }}
         classes={{
           root: 'tree',
           draggingSource: 'tree_draggingSource',
@@ -163,9 +186,13 @@ const TreeView = ({
         initialSelected={initialSelected}
         onChange={(text) => console.log(text)}
         dropTargetOffset={20}
-        placeholderRender={(node, { depth }) => (
-          <NodePlaceholderRenderer node={node} depth={depth} />
-        )}
+        placeholderRender={(node, { depth }) => {
+          let PlaceholderRenderer = NodePlaceholderRenderer;
+          if (node.placeholderRender) {
+            PlaceholderRenderer = node.placeholderRender;
+          }
+          <PlaceholderRenderer node={node} depth={depth} />;
+        }}
       />
     </div>
   );

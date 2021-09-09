@@ -8,8 +8,10 @@ module.exports = {
 		'dataset',
 		'multilanguage',
 		'users',
+		'package-manager',
 		'mvp-template',
 		'menu-builder',
+		'families-emergency-numbers',
 		'families',
 		'dataset-test',
 		'classroom',
@@ -39,6 +41,16 @@ module.exports = {
     name: 'users',
     version: '0.0.1',
     load: require('@users/index.js')
+  },
+	{
+    name: 'package-manager',
+    version: '0.0.1',
+    load: require('@package-manager/index.js')
+  },
+	{
+    name: 'families-emergency-numbers',
+    version: '0.0.1',
+    load: require('@families-emergency-numbers/index.js')
   },
 	{
     name: 'families',

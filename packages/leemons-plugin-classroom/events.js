@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const { defaultPermissions } = require('./config/constants');
 const {
   addMain,
@@ -24,21 +23,23 @@ async function events(isInstalled) {
   });
 
   if (!isInstalled) {
-    const loaded = {
-      menuBuilder: false,
-      users: false,
-    };
-
     leemons.events.once('plugins.users:init-permissions', async () => {
       const usersPlugin = leemons.getPlugin('users');
       await usersPlugin.services.permissions.addMany(defaultPermissions);
-      loaded.users = true;
-      if (loaded.menuBuilder) await initMenuBuilder();
+      leemons.events.emit('init-permissions');
     });
 
-    leemons.events.once('plugins.menu-builder:init-main-menu', async () => {
-      if (loaded.users) await initMenuBuilder();
-      loaded.menuBuilder = true;
+    leemons.events.once(
+      ['plugins.menu-builder:init-main-menu', 'plugins.classroom:init-permissions'],
+      async () => {
+        await initMenuBuilder();
+      }
+    );
+  } else {
+    leemons.events.once('plugins.classroom:pluginDidInit', async () => {
+      leemons.events.emit('init-permissions');
+      leemons.events.emit('init-menu');
+      leemons.events.emit('init-submenu');
     });
   }
 }

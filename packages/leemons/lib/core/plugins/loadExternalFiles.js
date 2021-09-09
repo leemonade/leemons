@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 const _ = require('lodash');
 
+const execa = require('execa');
 const { loadConfiguration } = require('../config/loadConfig');
 const { getPluginsInfoFromDB, getLocalPlugins, getExternalPlugins } = require('./getPlugins');
 const { computeDependencies, checkMissingDependencies, sortByDeps } = require('./dependencies');
@@ -164,6 +165,38 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
       // Expose some objects to the plugin (leemons.plugin, leemons.getplugin,
       // leemons.query)
       const vmFilter = (filter) => {
+        _.set(filter, 'leemons.utils', {
+          stopAutoServerReload: () => {
+            if (plugin.name === 'package-manager') {
+              leemons.canReloadFrontend = false;
+              leemons.canReloadBackend = false;
+              if (leemons.stopAutoReloadWorkers) leemons.stopAutoReloadWorkers();
+              return true;
+            }
+            throw new Error('Only the plugin package-manager have access to stopAutoServerReload');
+          },
+          startAutoServerReload: () => {
+            if (plugin.name === 'package-manager') {
+              leemons.canReloadFrontend = true;
+              leemons.canReloadBackend = true;
+              if (leemons.startAutoReloadWorkers) leemons.startAutoReloadWorkers();
+              return true;
+            }
+            throw new Error('Only the plugin package-manager have access to startAutoServerReload');
+          },
+          reloadServer: () => {
+            if (plugin.name === 'package-manager') {
+              leemons.reloadWorkers();
+              return true;
+            }
+            throw new Error('Only the plugin package-manager have access to reloadServer');
+          },
+          getExeca: () => {
+            if (plugin.name === 'package-manager') return execa;
+            throw new Error('Only the plugin package-manager have access to execa');
+          },
+        });
+
         // Only let the plugin to emit events on itself
         _.set(filter, 'leemons.events', {
           emit: (event, ...args) => {
@@ -318,7 +351,11 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
 
       const load = await scripts.load();
       if (load.exists) {
-        await load.func({ scripts: _.omit(scripts, ['load']), next: () => loadPlugin(i + 1) });
+        await load.func({
+          scripts: _.omit(scripts, ['load']),
+          next: () => loadPlugin(i + 1),
+          isInstalled: plugin.status.isInstalled,
+        });
       }
 
       if (!loadStatus.models) {

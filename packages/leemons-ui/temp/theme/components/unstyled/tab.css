@@ -1,0 +1,7 @@
+.tabs {
+  @apply flex flex-col;
+}
+
+.tab {
+  @apply inline-flex;
+}

@@ -29,6 +29,7 @@ import {
   addFamilyRequest,
   detailFamilyRequest,
   getDatasetFormRequest,
+  removeFamilyRequest,
   searchUsersRequest,
   updateFamilyRequest,
 } from '@families/request';
@@ -38,6 +39,10 @@ import { UserImage } from '@common/userImage';
 import { useAsync } from '@common/useAsync';
 import formWithTheme from '@common/formWithTheme';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import hooks from 'leemons-hooks';
+import { dynamicImport } from '@common/dynamicImport';
+import { PackageManagerService } from '@package-manager/services';
+import RelationSelect from '@families/components/relationSelect';
 
 function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} }) {
   const { t: tCommonForm } = useCommonTranslate('forms');
@@ -220,29 +225,14 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} })
                 relationError === 'need-relation' ? { message: tCommonForm('required') } : null
               }
             >
-              <Select
+              <RelationSelect
                 value={selectedRelation}
                 onChange={(e) => {
                   setRelationError(null);
                   setSelectedRelation(e.target.value);
                 }}
-                outlined={true}
                 className="w-full max-w-xs"
-              >
-                <option value="..." disabled={true}>
-                  {t('relations.select_one')}
-                </option>
-                <option value={t('relations.father', undefined, true)}>
-                  {t('relations.father')}
-                </option>
-                <option value={t('relations.mother', undefined, true)}>
-                  {t('relations.mother')}
-                </option>
-                <option value={t('relations.legal_guardian', undefined, true)}>
-                  {t('relations.legal_guardian')}
-                </option>
-                <option value="other">{t('relations.other')}</option>
-              </Select>
+              />
             </FormControl>
             {selectedRelation === 'other' ? (
               <FormControl
@@ -298,11 +288,21 @@ function Detail() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [datasetConfig, setDatasetConfig] = useState(false);
   const [datasetData, setDatasetData] = useState(false);
+  const [emergencyNumberIsInstalled, setEmergencyNumberIsInstalled] = useState(false);
   const [family, setFamily] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
   const [_permissions, setPermissions] = useState([]);
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
+
+  const [removeModal, toggleRemoveModal] = useModal({
+    animated: true,
+    title: t('remove_modal.title'),
+    message: t('remove_modal.message'),
+    cancelLabel: t('remove_modal.cancel'),
+    actionLabel: t('remove_modal.action'),
+    onAction: () => deleteFamily(),
+  });
 
   const permissions = useMemo(() => {
     const response = {
@@ -364,19 +364,20 @@ function Detail() {
         let familyDatasetForm = null;
         try {
           const { jsonSchema, jsonUI } = await getDatasetFormRequest();
-          _.forIn(jsonUI, (value) => {
-            value['ui:className'] = 'w-4/12';
-          });
-          jsonUI['ui:className'] = 'gap-6';
+          jsonUI['ui:className'] = 'grid grid-cols-3 gap-6';
           familyDatasetForm = { jsonSchema, jsonUI };
         } catch (e) {}
-        const { permissions } = await getPermissionsWithActionsIfIHaveRequest([
-          constants.permissions.basicInfo,
-          constants.permissions.customInfo,
-          constants.permissions.guardiansInfo,
-          constants.permissions.studentsInfo,
+        const [{ permissions }, phoneNumbersInstalled] = await Promise.all([
+          getPermissionsWithActionsIfIHaveRequest([
+            constants.permissions.basicInfo,
+            constants.permissions.customInfo,
+            constants.permissions.guardiansInfo,
+            constants.permissions.studentsInfo,
+          ]),
+          PackageManagerService.isPluginInstalled('leemons-plugin-families-emergency-numbers'),
         ]);
-        return { family, familyDatasetForm, permissions };
+
+        return { family, familyDatasetForm, permissions, phoneNumbersInstalled };
       }
     },
     [router]
@@ -385,12 +386,13 @@ function Detail() {
   const onSuccess = useMemo(
     () => (data) => {
       if (data) {
-        const { family, familyDatasetForm, permissions } = data;
+        const { family, familyDatasetForm, permissions, phoneNumbersInstalled } = data;
         if (family) {
           setValue('name', family.name);
           setValue('maritalStatus', family.maritalStatus);
           setValue('guardian', family.guardians);
           setValue('student', family.students);
+          setValue('emergencyPhoneNumbers', family.emergencyPhoneNumbers);
           setDatasetData(family.datasetValues);
           setFamily(family);
           setIsEditMode(false);
@@ -400,6 +402,7 @@ function Detail() {
         }
         if (familyDatasetForm) setDatasetConfig(familyDatasetForm);
         setPermissions(permissions);
+        setEmergencyNumberIsInstalled(phoneNumbersInstalled);
         setLoading(false);
       }
     },
@@ -418,6 +421,14 @@ function Detail() {
   );
 
   useAsync(load, onSuccess, onError);
+
+  const EmergencyNumbers = useMemo(
+    () =>
+      emergencyNumberIsInstalled
+        ? dynamicImport('families-emergency-numbers/components/phoneNumbers')
+        : null,
+    [emergencyNumberIsInstalled]
+  );
 
   async function save(data) {
     try {
@@ -452,12 +463,23 @@ function Detail() {
       }
 
       setSaveLoading(false);
+      hooks.fireEvent('menu-builder:reset-menu');
       router.push(`/families/private/detail/${response.family.id}`);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
       setSaveLoading(false);
     }
   }
+
+  const deleteFamily = async () => {
+    try {
+      await removeFamilyRequest(family.id);
+      addSuccessAlert(t('deleted_done'));
+      router.push(`/families/private/list`);
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+  };
 
   const onSubmit = async (data) => {
     const toSend = { ...data };
@@ -484,6 +506,10 @@ function Detail() {
     }
   };
 
+  const onDeleteButton = () => {
+    toggleRemoveModal();
+  };
+
   const onAddGuardian = () => {
     setAddType('guardian');
     toggleModal();
@@ -508,10 +534,15 @@ function Detail() {
     setValue(type, [...value]);
   };
 
+  const onChangePhoneNumbers = (e) => {
+    setValue('emergencyPhoneNumbers', e);
+  };
+
   return (
     <>
       {!error && !loading ? (
         <>
+          <Modal {...removeModal} />
           <Modal {...modal} className="max-w-xl">
             <SearchUsersModal
               t={t}
@@ -535,12 +566,13 @@ function Detail() {
               saveButton={isEditMode ? tCommonHeader('save') : null}
               saveButtonLoading={saveLoading}
               onSaveButton={() => (formActions.isLoaded() ? formActions.submit() : null)}
-              cancelButton={isEditMode ? tCommonHeader('cancel') : null}
-              onCancelButton={onCancelButton}
+              cancelButton={
+                isEditMode ? tCommonHeader('cancel') : family?.id ? tCommonHeader('delete') : null
+              }
+              onCancelButton={(e) => (isEditMode ? onCancelButton(e) : onDeleteButton(e))}
               editButton={isEditMode ? null : tCommonHeader('edit')}
               onEditButton={onEditButton}
             />
-
             <div className="bg-primary-content">
               <PageContainer>
                 <div className="flex flex-row gap-6">
@@ -658,11 +690,18 @@ function Detail() {
           {permissions.customInfo.view ? (
             <div className="bg-primary-content">
               <PageContainer>
+                <div>{t('other_information')}</div>
                 {/* Dataset form */}
                 {form}
               </PageContainer>
             </div>
           ) : null}
+
+          <EmergencyNumbers
+            editMode={isEditMode}
+            onChangePhoneNumbers={onChangePhoneNumbers}
+            phoneNumbers={watch('emergencyPhoneNumbers')}
+          />
         </>
       ) : (
         <ErrorAlert />

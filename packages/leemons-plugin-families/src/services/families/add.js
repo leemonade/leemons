@@ -1,6 +1,11 @@
 const _ = require('lodash');
 const { getSessionFamilyPermissions } = require('../users/getSessionFamilyPermissions');
 const { table } = require('../tables');
+const { addMember } = require('../family-members/addMember');
+const { setDatasetValues } = require('./setDatasetValues');
+const { recalculeNumberOfMembers } = require('./recalculeNumberOfMembers');
+const { add: addMenuItem } = require('../menu-builder/add');
+const { getFamilyMenuBuilderData } = require('./getFamilyMenuBuilderData');
 
 /**
  * ES: Crea una nueva familia solo si tiene los permisos para hacerlo, es posible que solo cree
@@ -15,7 +20,7 @@ const { table } = require('../tables');
  * @return {Promise<any>}
  * */
 async function add(
-  { name, guardians = [], students = [], datasetValues, maritalStatus },
+  { name, guardians = [], students = [], datasetValues, maritalStatus, emergencyPhoneNumbers = [] },
   userSession,
   { transacting: _transacting } = {}
 ) {
@@ -32,76 +37,61 @@ async function add(
           },
         ]);
 
-      const familyData = {
-        name,
-        nGuardians: 0,
-        nStudents: 0,
-      };
+      // Creating the family
+      const familyData = { name };
 
-      if (permissions.guardiansInfo.update) {
-        familyData.nGuardians = guardians.length;
-        if (maritalStatus) {
-          familyData.maritalStatus = maritalStatus;
-        }
+      if (permissions.guardiansInfo.update && maritalStatus) {
+        familyData.maritalStatus = maritalStatus;
       }
-      if (permissions.studentsInfo.update) {
-        familyData.nStudents = students.length;
-      }
-      familyData.nMembers = familyData.nGuardians + familyData.nStudents;
 
       const family = await table.families.create(familyData, { transacting });
 
+      const menuItemConfig = await getFamilyMenuBuilderData(family.id, family.name, {
+        transacting,
+      });
+
       const promises = [];
+
+      // Add the family menu item
+      promises.push(
+        addMenuItem(menuItemConfig.config, menuItemConfig.permissions, true, { transacting })
+      );
 
       // Add guardians if have permission
       if (permissions.guardiansInfo.update) {
-        _.forEach(guardians, (guardian) => {
-          promises.push(
-            table.familyMembers.create(
-              {
-                ...guardian,
-                family: family.id,
-              },
-              { transacting }
-            )
-          );
+        _.forEach(guardians, ({ user, memberType }) => {
+          promises.push(addMember({ user, memberType, family: family.id }, { transacting }));
         });
       }
       // Add students if have permission
       if (permissions.studentsInfo.update) {
-        _.forEach(students, (student) => {
+        _.forEach(students, ({ user }) => {
           promises.push(
-            table.familyMembers.create(
-              {
-                ...student,
-                memberType: 'student',
-                family: family.id,
-              },
-              { transacting }
-            )
+            addMember({ user, memberType: 'student', family: family.id }, { transacting })
           );
         });
       }
       // Add datasetvalues if have permission and have data
       if (permissions.customInfo.update && datasetValues) {
+        promises.push(setDatasetValues(family.id, userSession, datasetValues, { transacting }));
+      }
+
+      // Add phone numbers if plugin installed
+      // The plugin validate if user have access to save phones
+      const familyEmergencyNumbers = leemons.getPlugin('families-emergency-numbers');
+      if (emergencyPhoneNumbers && familyEmergencyNumbers) {
         promises.push(
-          leemons
-            .getPlugin('dataset')
-            .services.dataset.addValues(
-              'families-data',
-              'plugins.families',
-              datasetValues,
-              userSession.userAgents,
-              {
-                target: family.id,
-                transacting,
-              }
-            )
+          familyEmergencyNumbers.services.emergencyPhones.saveFamilyPhones(
+            family.id,
+            emergencyPhoneNumbers,
+            userSession,
+            { transacting }
+          )
         );
       }
 
-      // TODO Añadir a todos los miembros el permiso de ver esta familia con la tabla de users:item-permissions
       await Promise.all(promises);
+      await recalculeNumberOfMembers(family.id, { transacting });
       return family;
     },
     table.families,

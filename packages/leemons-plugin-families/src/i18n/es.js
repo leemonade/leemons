@@ -3,12 +3,16 @@ module.exports = {
     title: 'Conjunto de datos de las familias',
     description1:
       'Este conjunto de datos le permitirá descargar un conjunto de plantillas para cargar sin problemas su base de datos familiar.',
+    phone_description:
+      'Las familias Leemon tienen su propio componente para gestionar los números de emergencia de los alumnos, actívalo para tener esta funcionalidad.',
+    phone_button: 'Activar el complemento de los números de emergencia',
     important: 'Importante:',
     important_remember:
       'recuerde que no podrá cargar sus familias hasta que su base de usuarios esté correctamente cargada en el sistema.',
     tabs: {
       basic: 'Básico',
       dataset: 'Conjunto de datos personalizado',
+      emergency_numbers: 'Numeros de emergencia',
       permissions: 'Permisos',
     },
     dataset_tab: {
@@ -25,6 +29,16 @@ module.exports = {
         delete: 'Borrar',
       },
     },
+    phone_modal: {
+      title: 'Activar el complemento',
+      message1: 'Va a activar el Complemento del Número de Emergencia Familiar.',
+      message2:
+        '<b>Importante:</b> Una vez activado el Addon, sólo se puede volver a desactivar si su conjunto de datos no tiene campos y no se han cargado datos en la base de datos de números de emergencia..',
+      cancel: 'No, volver sin activar',
+      action: 'Sí, active el Addon',
+      installing: 'Instalando complemento',
+      installed: 'Add-on instalado',
+    },
     remove_modal: {
       title: '¿Quieres eliminar el item?',
       message: 'Esta acción no puede deshacerse',
@@ -36,7 +50,7 @@ module.exports = {
     title: 'Lista de familias',
     description:
       'Las familias facilitan la gestión de la organización de grupos de padres y alumnos.',
-    families: 'Familias',
+    families: '{n} Familias',
     search: 'Buscar familia',
     families_found: 'Hemos encontrado {n} familias con el nombre {name}',
     view: 'Ver',
@@ -50,6 +64,8 @@ module.exports = {
     },
   },
   detail_page: {
+    update_done: 'Familia actualizada',
+    save_done: 'Familia creada',
     title_placeholder: 'Nombre de la familia',
     guardians: 'Tutores',
     add_guardian: 'Añadir tutor',
@@ -67,6 +83,7 @@ module.exports = {
     add: 'Añadir',
     guardian_relation: 'Relación',
     specify_relation: 'Especifique la relación',
+    deleted_done: 'Familia borrada',
     no_users_to_add:
       'No hemos encontrado ningún usuario asociado a estos datos, por favor, intente repetir la búsqueda utilizando otra información.',
     relations: {
@@ -89,6 +106,12 @@ module.exports = {
       domestic_partners: 'Parejas de hecho',
       cohabitants: 'Cohabitantes',
       separated: 'Separado',
+    },
+    remove_modal: {
+      title: 'Eliminar familia',
+      message: '¿Estas seguro de que quieres borrar esta familia?',
+      cancel: 'Cancelar',
+      action: 'Aceptar',
     },
   },
 };

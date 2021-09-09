@@ -21,7 +21,7 @@ module.exports = {
       permissions: [
         {
           permissionName: 'plugins.classroom.classroom',
-          actionNames: ['view'],
+          actionNames: ['view', 'admin'],
         },
       ],
     },
@@ -40,7 +40,7 @@ module.exports = {
       permissions: [
         {
           permissionName: 'plugins.classroom.classroom',
-          actionNames: ['view'],
+          actionNames: ['view', 'admin'],
         },
       ],
     },
@@ -58,7 +58,7 @@ module.exports = {
       permissions: [
         {
           permissionName: 'plugins.classroom.classroom',
-          actionNames: ['view'],
+          actionNames: ['view', 'admin'],
         },
       ],
     },
@@ -77,7 +77,7 @@ module.exports = {
       permissions: [
         {
           permissionName: 'plugins.classroom.classroom',
-          actionNames: ['view'],
+          actionNames: ['view', 'admin'],
         },
       ],
     },
@@ -96,7 +96,7 @@ module.exports = {
       permissions: [
         {
           permissionName: 'plugins.classroom.classroom',
-          actionNames: ['view'],
+          actionNames: ['view', 'admin'],
         },
       ],
     },

@@ -31,9 +31,10 @@ async function add(item, type, data, { isCustomPermission, transacting } = {}) {
   validateTypePrefix(type, this.calledFrom);
 
   if (!isCustomPermission) {
-    if (!(await existMany(_.map(_data, 'permissionName'), { transacting })))
+    if (!(await existMany(_.map(_data, 'permissionName'), { transacting }))) {
+      console.error('The specified permit does not exist', _data);
       throw new Error('The specified permit does not exist');
-
+    }
     if (
       !(await manyPermissionsHasManyActions(
         _.map(_data, ({ permissionName, actionNames }) => [permissionName, actionNames]),

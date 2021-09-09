@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const aws = require('aws-sdk');
 const slugify = require('slugify');
 const squirrelly = require('squirrelly');
+const execa = require('execa');
 const { env } = require('./env');
 const { getModel, generateModelName } = require('./model');
 const buildQuery = require('./queryBuilder');
@@ -55,4 +56,11 @@ module.exports = {
   withTransaction,
   squirrelly,
   getObjectArrayKeys,
+  timeoutPromise: (time) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, time);
+    });
+  },
 };

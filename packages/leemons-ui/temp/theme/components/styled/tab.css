@@ -1,0 +1,17 @@
+.tab {
+  @apply mr-4 group items-center px-2 py-3 text-sm leading-5 cursor-pointer whitespace-nowrap;
+  @apply border-transparent text-neutral-content hover:text-black hover:border-base-300 focus:border-base-300 focus:text-primary focus:outline-none;
+  border-bottom-width: 3px;
+
+  &.tab-selected {
+    @apply border-primary text-black focus:outline-none focus:text-black focus:border-primary-focus !important;
+  }
+
+  &.tab-disabled {
+    @apply text-base-300 cursor-not-allowed;
+  }
+}
+
+.tablist {
+  @apply flex border-b border-base-300;
+}

@@ -114,6 +114,7 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
             col = table.bigInteger(name);
             break;
 
+          case 'number':
           case 'float':
             col = table.float(name, properties.precision, properties.scale);
             break;

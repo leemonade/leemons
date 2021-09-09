@@ -2,126 +2,10 @@
 # yarn lockfile v1
 
 
-"@babel/runtime@^7.7.2", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
-  version "7.15.3"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.15.3.tgz#2e1c2880ca118e5b2f9988322bd8a7656a32502b"
-  integrity sha512-OvwMLqNXkCXSz1kSm58sEsNuhqOx/fKpnUnKnFB5v8uDda5bLNEHNgKPvhDN6IU0LDcnHQ90LlJ0Q6jnyBSIBA==
-  dependencies:
-    regenerator-runtime "^0.13.4"
-
-"@minoru/react-dnd-treeview@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@minoru/react-dnd-treeview/-/react-dnd-treeview-1.5.0.tgz#8ff4f09503ff6f37f963c6f1de31eaafe8a8f258"
-  integrity sha512-3cbAp9V+kpCew2kl67kHTUCb7y8HfxXsuRBoEJYbYZBj20OvUXuM9myWZosyfOByiZjhpvMj4mviGNIMXI6E5g==
-  dependencies:
-    immer "^9.0.5"
-    react-dnd "^14.0.3"
-    react-dnd-html5-backend "^14.0.1"
-    react-dnd-multi-backend "^6.0.2"
-    react-dnd-touch-backend "^14.1.0"
-
-"@nosferatu500/react-dnd-scrollzone@^1.0.14":
-  version "1.0.14"
-  resolved "https://registry.yarnpkg.com/@nosferatu500/react-dnd-scrollzone/-/react-dnd-scrollzone-1.0.14.tgz#86dd7715bf8b49a1a29ba430a26c7ca13171e805"
-  integrity sha512-Uo62H9u0wsNI/29KKcBtkqFC2a4Z6jZwXaqJ7vKIswHTBEvBzpVImZlXMvcCHqNg216QQNr+Qq9BdPOjroY/eg==
-  dependencies:
-    hoist-non-react-statics "^3.3.2"
-    lodash.throttle "^4.1.1"
-    prop-types "^15.7.2"
-    raf "^3.4.1"
-    react-display-name "^0.2.5"
-
-"@nosferatu500/react-sortable-tree@^3.0.5":
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/@nosferatu500/react-sortable-tree/-/react-sortable-tree-3.0.5.tgz#48756ac94d9f4d031e3ee64590101ddda549a696"
-  integrity sha512-rhOuZOxhkaCU/uKf02zbJFATanqBRC7uB7vUm9DveXI4Y1yTwSRio7gvgto20mNA1M7ZOQX5eP8xKgx5Enf9ig==
-  dependencies:
-    "@nosferatu500/react-dnd-scrollzone" "^1.0.14"
-    lodash.isequal "^4.5.0"
-    prop-types "^15.7.2"
-    react-dnd "^14.0.2"
-    react-dnd-html5-backend "^14.0.0"
-    react-lifecycles-compat "^3.0.4"
-    react-virtualized "^9.22.3"
-
-"@react-dnd/asap@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@react-dnd/asap/-/asap-4.0.0.tgz#b300eeed83e9801f51bd66b0337c9a6f04548651"
-  integrity sha512-0XhqJSc6pPoNnf8DhdsPHtUhRzZALVzYMTzRwV4VI6DJNJ/5xxfL9OQUwb8IH5/2x7lSf7nAZrnzUD+16VyOVQ==
-
-"@react-dnd/invariant@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@react-dnd/invariant/-/invariant-2.0.0.tgz#09d2e81cd39e0e767d7da62df9325860f24e517e"
-  integrity sha512-xL4RCQBCBDJ+GRwKTFhGUW8GXa4yoDfJrPbLblc3U09ciS+9ZJXJ3Qrcs/x2IODOdIE5kQxvMmE2UKyqUictUw==
-
-"@react-dnd/shallowequal@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@react-dnd/shallowequal/-/shallowequal-2.0.0.tgz#a3031eb54129f2c66b2753f8404266ec7bf67f0a"
-  integrity sha512-Pc/AFTdwZwEKJxFJvlxrSmGe/di+aAOBn60sremrpLo6VI/6cmiUYNNwlI5KNYttg7uypzA3ILPMPgxB2GYZEg==
-
-clsx@^1.0.4:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.1.1.tgz#98b3134f9abbdf23b2663491ace13c5c03a73188"
-  integrity sha512-6/bPho624p3S2pMyvP5kKBPXnI3ufHLObBFCfgx+LkeR5lg2XYy2hqZqUf45ypD8COn2bhgGJSUE+l5dhNBieA==
-
-csstype@^3.0.2:
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.0.8.tgz#d2266a792729fb227cd216fb572f43728e1ad340"
-  integrity sha512-jXKhWqXPmlUeoQnF/EhTtTl4C9SnrxSH/jZUih3jmO6lBKr99rP3/+FmrMj4EFpOXzMtXHAZkd3x0E6h6Fgflw==
-
-dnd-core@14.0.0:
-  version "14.0.0"
-  resolved "https://registry.yarnpkg.com/dnd-core/-/dnd-core-14.0.0.tgz#973ab3470d0a9ac5a0fa9021c4feba93ad12347d"
-  integrity sha512-wTDYKyjSqWuYw3ZG0GJ7k+UIfzxTNoZLjDrut37PbcPGNfwhlKYlPUqjAKUjOOv80izshUiqusaKgJPItXSevA==
-  dependencies:
-    "@react-dnd/asap" "^4.0.0"
-    "@react-dnd/invariant" "^2.0.0"
-    redux "^4.0.5"
-
-dnd-multi-backend@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/dnd-multi-backend/-/dnd-multi-backend-6.0.0.tgz#4ed68229a3f6f1fb9e9bc45b4034e8330005280d"
-  integrity sha512-qfUO4V0IACs24xfE9m9OUnwIzoL+SWzSiFbKVIHE0pFddJeZ93BZOdHS1XEYr8X3HNh+CfnfjezXgOMgjvh74g==
-
-dom-helpers@^5.1.3:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/dom-helpers/-/dom-helpers-5.2.1.tgz#d9400536b2bf8225ad98fe052e029451ac40e902"
-  integrity sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==
-  dependencies:
-    "@babel/runtime" "^7.8.7"
-    csstype "^3.0.2"
-
-fast-deep-equal@^3.1.3:
-  version "3.1.3"
-  resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-3.1.3.tgz#3a7d56b559d6cbc3eb512325244e619a65c6c525"
-  integrity sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==
-
-hoist-non-react-statics@^3.3.2:
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz#ece0acaf71d62c2969c2ec59feff42a4b1a85b45"
-  integrity sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==
-  dependencies:
-    react-is "^16.7.0"
-
-immer@^9.0.5:
-  version "9.0.5"
-  resolved "https://registry.yarnpkg.com/immer/-/immer-9.0.5.tgz#a7154f34fe7064f15f00554cc94c66cc0bf453ec"
-  integrity sha512-2WuIehr2y4lmYz9gaQzetPR2ECniCifk4ORaQbU3g5EalLt+0IVTosEPJ5BoYl/75ky2mivzdRzV8wWgQGOSYQ==
-
 "js-tokens@^3.0.0 || ^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
   integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
-
-lodash.isequal@^4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
-  integrity sha1-QVxEePK8wwEgwizhDtMib30+GOA=
-
-lodash.throttle@^4.1.1:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
-  integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
 
 loose-envify@^1.4.0:
   version "1.4.0"
@@ -135,11 +19,6 @@ object-assign@^4.1.1:
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
   integrity sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
 
-performance-now@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
-  integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
-
 prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
@@ -149,95 +28,12 @@ prop-types@^15.7.2:
     object-assign "^4.1.1"
     react-is "^16.8.1"
 
-raf@^3.4.1:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/raf/-/raf-3.4.1.tgz#0742e99a4a6552f445d73e3ee0328af0ff1ede39"
-  integrity sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==
-  dependencies:
-    performance-now "^2.1.0"
+react-hook-form@^7.14.2:
+  version "7.14.2"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.14.2.tgz#e5615ba883588a6dd73bbbbbd7d3bb71b73440e3"
+  integrity sha512-32uvgKkaE/0vOncfnJdwQhfahhocPpcb5c7F4j9Eq7dOnqS2Hg8h70Bmt6KXb6veLSWJultc1+ik9QSfqXFmLA==
 
-react-display-name@^0.2.5:
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/react-display-name/-/react-display-name-0.2.5.tgz#304c7cbfb59ee40389d436e1a822c17fe27936c6"
-  integrity sha512-I+vcaK9t4+kypiSgaiVWAipqHRXYmZIuAiS8vzFvXHHXVigg/sMKwlRgLy6LH2i3rmP+0Vzfl5lFsFRwF1r3pg==
-
-react-dnd-html5-backend@^14.0.0, react-dnd-html5-backend@^14.0.1:
-  version "14.0.1"
-  resolved "https://registry.yarnpkg.com/react-dnd-html5-backend/-/react-dnd-html5-backend-14.0.1.tgz#37d43d6b6ddd91069101969d9eac6d688a9d57ef"
-  integrity sha512-ZDmpvFpd1NR4riw/CMbr8C3mgP6ZhsTf0c48a36kw4ZW8emgiugNlAz/qhhZ4/Pz9TO6DZ63sQohUTTl+AWGiA==
-  dependencies:
-    dnd-core "14.0.0"
-
-react-dnd-multi-backend@^6.0.2:
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/react-dnd-multi-backend/-/react-dnd-multi-backend-6.0.2.tgz#485878014dfbac46fcc898961871be6e5277c3f2"
-  integrity sha512-SwpqRv0HkJYu244FbHf9NbvGzGy14Ir9wIAhm909uvOVaHgsOq6I1THMSWSgpwUI31J3Bo5uS19tuvGpVPjzZw==
-  dependencies:
-    dnd-multi-backend "^6.0.0"
-    prop-types "^15.7.2"
-    react-dnd-preview "^6.0.2"
-
-react-dnd-preview@^6.0.2:
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/react-dnd-preview/-/react-dnd-preview-6.0.2.tgz#dd34931c270853c80438e1275e6c9e77174f8afe"
-  integrity sha512-F2+uK4Be+q+7mZfNh9kaZols7wp1hX6G7UBTVaTpDsBpMhjFvY7/v7odxYSerSFBShh23MJl33a4XOVRFj1zoQ==
-  dependencies:
-    prop-types "^15.7.2"
-
-react-dnd-touch-backend@^14.1.0:
-  version "14.1.0"
-  resolved "https://registry.yarnpkg.com/react-dnd-touch-backend/-/react-dnd-touch-backend-14.1.0.tgz#f1e6240cf4ace1136a6bad15bcc887e8db453943"
-  integrity sha512-pOLXe9Hj2tYEzT8Vr8w/VpGZh5d0qaPxSz6nP2gvK+KBoka/KW2hYWsI6tFj+ewhhNjs07cjMjJIlvRg+4zq2Q==
-  dependencies:
-    "@react-dnd/invariant" "^2.0.0"
-    dnd-core "14.0.0"
-
-react-dnd@^14.0.2, react-dnd@^14.0.3:
-  version "14.0.3"
-  resolved "https://registry.yarnpkg.com/react-dnd/-/react-dnd-14.0.3.tgz#1762c1ec84815439f2d8a6a40efd1f57eee41ba6"
-  integrity sha512-i73Hx5SKfDRdwXe30+CjF/DidiRdt/gwpPN14ajkPR20t/0osnNKFNHg3DLV6RZym+DJ0pO9H5APeMsBWGU3+Q==
-  dependencies:
-    "@react-dnd/invariant" "^2.0.0"
-    "@react-dnd/shallowequal" "^2.0.0"
-    dnd-core "14.0.0"
-    fast-deep-equal "^3.1.3"
-    hoist-non-react-statics "^3.3.2"
-
-react-hook-form@^7.8.8:
-  version "7.12.2"
-  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.12.2.tgz#2660afbf03c4ef360a9314ebf46ce3d972296c77"
-  integrity sha512-cpxocjrgpMAJCMJQR51BQhMoEx80/EQqePNihMTgoTYTqCRbd2GExi+N4GJIr+cFqrmbwNj9wxk5oLWYQsUefg==
-
-react-is@^16.7.0, react-is@^16.8.1:
+react-is@^16.8.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
-
-react-lifecycles-compat@^3.0.4:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
-  integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
-
-react-virtualized@^9.22.3:
-  version "9.22.3"
-  resolved "https://registry.yarnpkg.com/react-virtualized/-/react-virtualized-9.22.3.tgz#f430f16beb0a42db420dbd4d340403c0de334421"
-  integrity sha512-MKovKMxWTcwPSxE1kK1HcheQTWfuCxAuBoSTf2gwyMM21NdX/PXUhnoP8Uc5dRKd+nKm8v41R36OellhdCpkrw==
-  dependencies:
-    "@babel/runtime" "^7.7.2"
-    clsx "^1.0.4"
-    dom-helpers "^5.1.3"
-    loose-envify "^1.4.0"
-    prop-types "^15.7.2"
-    react-lifecycles-compat "^3.0.4"
-
-redux@^4.0.5:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/redux/-/redux-4.1.1.tgz#76f1c439bb42043f985fbd9bf21990e60bd67f47"
-  integrity sha512-hZQZdDEM25UY2P493kPYuKqviVwZ58lEmGQNeQ+gXa+U0gYPUBf7NKYazbe3m+bs/DzM/ahN12DbF+NG8i0CWw==
-  dependencies:
-    "@babel/runtime" "^7.9.2"
-
-regenerator-runtime@^0.13.4:
-  version "0.13.9"
-  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.9.tgz#8925742a98ffd90814988d7566ad30ca3b263b52"
-  integrity sha512-p3VT+cOEgxFsRRA9X4lkI1E+k2/CtnKtU4gcxyaCUreilL/vqI6CdZ3wxVUx3UOUg+gnUOQQcRI7BmSI656MYA==

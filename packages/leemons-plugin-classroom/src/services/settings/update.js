@@ -8,7 +8,7 @@ const findOne = require('./findOne');
  * @return {Promise<any>}
  * */
 async function update(settings, { transacting: _transacting } = {}) {
-  return await global.utils.withTransaction(
+  return global.utils.withTransaction(
     async (transacting) => {
       let currentSettings = await findOne({ transacting });
       if (_.isNil(currentSettings)) {

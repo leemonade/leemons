@@ -23,7 +23,6 @@ function _getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) 
   if (!locale) {
     url = 'multilanguage/common/logged';
   }
-
   // Get the desired localizations from the api
   return () =>
     leemons.api(url, {

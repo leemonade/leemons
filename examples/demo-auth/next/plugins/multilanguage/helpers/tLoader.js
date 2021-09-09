@@ -11,8 +11,8 @@ function tLoader(prefix, translations) {
     ) {
       let item = _.get(translations.items, tKey);
       if (_.isObject(replaces)) {
-        _.forIn(replaces, (value, key) => {
-          item = _.replace(item, `{${key}}`, value);
+        _.forIn(replaces, (value, _key) => {
+          item = _.replace(item, `{${_key}}`, value);
         });
       }
       return item;

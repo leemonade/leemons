@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 const es = require('./src/i18n/es');
 const en = require('./src/i18n/en');
 

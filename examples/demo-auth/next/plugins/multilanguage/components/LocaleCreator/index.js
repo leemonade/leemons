@@ -12,7 +12,6 @@ export default function LocaleCreator({ addLocale }) {
       body: JSON.stringify(data),
     }).then((r) => r.json());
 
-    console.log(response);
     if (response.locale) {
       addLocale(response.locale);
     }

@@ -3,12 +3,16 @@ module.exports = {
     title: 'Families dataset',
     description1:
       'This dataset will allow you to download a template set for a smooth loading of your family database.',
+    phone_description:
+      'The families Leemon has its own component to manage the emergency numbers of the students, activate it to have this functionality.',
+    phone_button: 'Activate Emergency Numbers Addon',
     important: 'Important:',
     important_remember:
       'remember that you will not be able to upload your families until your user base is correctly loaded into the system.',
     tabs: {
       basic: 'Basic',
       dataset: 'Custom dataset',
+      emergency_numbers: 'Emergency Numbers',
       permissions: 'Permissions',
     },
     dataset_tab: {
@@ -25,6 +29,16 @@ module.exports = {
         delete: 'Delete',
       },
     },
+    phone_modal: {
+      title: 'Activate Addon',
+      message1: 'You are going to activate the Family Emergency Number Addon.',
+      message2:
+        '<b>Important:</b> Once  Addon has been activated, it can only be deactivated again if its dataset has no fields and no data has been loaded into the emergency numbers DB.',
+      cancel: 'No, return without activate',
+      action: 'Yes, activate Addon',
+      installing: 'Installing add-on',
+      installed: 'Add-on installed',
+    },
     remove_modal: {
       title: 'Do you want to delete the item?',
       message: 'This action cannot be undone',
@@ -35,7 +49,7 @@ module.exports = {
   list_page: {
     title: 'Families list',
     description: 'Families make it easy to manage the organization of parent and student groups.',
-    families: 'Families',
+    families: '{n} Families',
     search: 'Search family',
     families_found: 'We have found {n} families with the name {name}',
     view: 'View',
@@ -49,6 +63,8 @@ module.exports = {
     },
   },
   detail_page: {
+    update_done: 'Family updated',
+    save_done: 'Family created',
     title_placeholder: 'Family name',
     guardians: 'Guardians',
     add_guardian: 'Add Guardian',
@@ -66,6 +82,7 @@ module.exports = {
     add: 'Add',
     guardian_relation: 'Relation',
     specify_relation: 'Specify relationship',
+    deleted_done: 'Family removed',
     no_users_to_add:
       'We have not found any user associated with this data, please try repeating the search by using another info.',
     relations: {
@@ -88,6 +105,12 @@ module.exports = {
       domestic_partners: 'Domestic partners',
       cohabitants: 'Cohabitants',
       separated: 'Separated',
+    },
+    remove_modal: {
+      title: 'Delete family',
+      message: 'Are you sure you want to erase this family?',
+      cancel: 'Cancel',
+      action: 'Accept',
     },
   },
 };

@@ -12,7 +12,7 @@ async function update(item) {
     pluginName: 'plugins.classroom',
   };
 
-  return await menuItem.update(config.constants.mainMenuKey, leemons.plugin.prefixPN(key), payload);
+  return menuItem.update(config.constants.mainMenuKey, leemons.plugin.prefixPN(key), payload);
 }
 
 module.exports = update;

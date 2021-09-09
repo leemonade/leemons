@@ -48,7 +48,7 @@ function Welcome() {
     updateSettings(newSettings);
   };
 
-  const handleManualLoad = async (e) => {
+  const handleManualLoad = async () => {
     // Let's enable Tree menu item
     const itemKey = 'tree';
     await SettingsService.enableMenuItem(itemKey);
@@ -58,7 +58,7 @@ function Welcome() {
   return (
     <>
       <PageHeader title={t('page_title')} />
-      <PageContainer>
+      <PageContainer className="bg-white">
         <div className="page-description" dangerouslySetInnerHTML={{ __html: t('page_info') }} />
 
         <FormControl label={t('hide_info_label')} labelPosition="right" className="font-inter">
@@ -66,47 +66,45 @@ function Welcome() {
         </FormControl>
       </PageContainer>
 
-      <div className="bg-gray-20">
-        <PageContainer>
-          <div className="grid grid-cols-2 gap-6 mt-8">
-            {/* BULK LOAD */}
-            <Card className="p-8 bg-white flex flex-col">
-              <div className="h-20 bg-gray-30 rounded"></div>
-              <div className="flex flex-col items-center px-12">
-                <div className="text-2xl font-semibold py-8">{t('bulk_load.title')}</div>
-                <div
-                  className="font-inter text-secondary-300 font-light leading-tight text-center"
-                  dangerouslySetInnerHTML={{ __html: t('bulk_load.description') }}
-                ></div>
-                <div className="mt-8">
-                  <Button color="primary" rounded>
-                    {t('bulk_load.btn')}
-                  </Button>
-                </div>
+      <PageContainer>
+        <div className="grid grid-cols-2 gap-6">
+          {/* BULK LOAD */}
+          <Card className="p-8 bg-white flex flex-col">
+            <div className="h-20 bg-gray-10 rounded"></div>
+            <div className="flex flex-col items-center px-12">
+              <div className="text-2xl font-semibold py-8">{t('bulk_load.title')}</div>
+              <div
+                className="font-inter text-secondary-300 font-light leading-tight text-center"
+                dangerouslySetInnerHTML={{ __html: t('bulk_load.description') }}
+              ></div>
+              <div className="mt-8">
+                <Button color="primary" rounded>
+                  {t('bulk_load.btn')}
+                </Button>
               </div>
-            </Card>
+            </div>
+          </Card>
 
-            {/* MANUAL CREATION */}
-            <Card className="p-8 bg-white flex flex-col">
-              <div className="h-20 bg-gray-30 rounded"></div>
-              <div className="flex flex-col items-center px-12">
-                <div className="text-2xl font-semibold py-8">{t('manual_load.title')}</div>
-                <div
-                  className="font-inter text-secondary-300 font-light leading-tight text-center"
-                  dangerouslySetInnerHTML={{ __html: t('manual_load.description') }}
-                ></div>
-                <div className="mt-8">
-                  <Link href="/classroom/private/tree">
-                    <a className="btn btn-primary rounded-full" onClick={handleManualLoad}>
-                      {t('manual_load.btn')}
-                    </a>
-                  </Link>
-                </div>
+          {/* MANUAL CREATION */}
+          <Card className="p-8 bg-white flex flex-col">
+            <div className="h-20 bg-gray-10 rounded"></div>
+            <div className="flex flex-col items-center px-12">
+              <div className="text-2xl font-semibold py-8">{t('manual_load.title')}</div>
+              <div
+                className="font-inter text-secondary-300 font-light leading-tight text-center"
+                dangerouslySetInnerHTML={{ __html: t('manual_load.description') }}
+              ></div>
+              <div className="mt-8">
+                <Link href="/classroom/private/tree">
+                  <a className="btn btn-primary rounded-full" onClick={handleManualLoad}>
+                    {t('manual_load.btn')}
+                  </a>
+                </Link>
               </div>
-            </Card>
-          </div>
-        </PageContainer>
-      </div>
+            </div>
+          </Card>
+        </div>
+      </PageContainer>
     </>
   );
 }

@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lexend:wght@300;400;500;600&display=swap');
+
+/* ------------------------------------------ */
+/* BASE */
+@import 'tailwindcss/base';
+@import './base/colors.css';
+@import './base/general.css';
+
+/* ------------------------------------------ */
+/* COMPONENTS */
+@import 'tailwindcss/components';
+/* Unstyled components (Layout, events, etc) */
+@import './components/unstyled/alert.css';
+@import './components/unstyled/artboard.css';
+@import './components/unstyled/avatar.css';
+@import './components/unstyled/badge.css';
+@import './components/unstyled/breadcrumbs.css';
+@import './components/unstyled/button.css';
+@import './components/unstyled/card.css';
+@import './components/unstyled/checkbox.css';
+@import './components/unstyled/collapse.css';
+@import './components/unstyled/countdown.css';
+@import './components/unstyled/divider.css';
+@import './components/unstyled/drawer.css';
+@import './components/unstyled/dropdown.css';
+@import './components/unstyled/form.css';
+@import './components/unstyled/hero.css';
+@import './components/unstyled/input.css';
+@import './components/unstyled/link.css';
+@import './components/unstyled/menu.css';
+@import './components/unstyled/mockup.css';
+@import './components/unstyled/modal.css';
+@import './components/unstyled/navbar.css';
+@import './components/unstyled/progress.css';
+@import './components/unstyled/radio.css';
+@import './components/unstyled/select.css';
+@import './components/unstyled/stat.css';
+@import './components/unstyled/steps.css';
+@import './components/unstyled/tab.css';
+@import './components/unstyled/table.css';
+@import './components/unstyled/textarea.css';
+@import './components/unstyled/toggle.css';
+@import './components/unstyled/tooltip.css';
+/* Styled components (Bg, colors, effects, etc) */
+@import './components/styled/alert.css';
+@import './components/styled/avatar.css';
+@import './components/styled/badge.css';
+@import './components/styled/breadcrumbs.css';
+@import './components/styled/button.css';
+@import './components/styled/card.css';
+@import './components/styled/checkbox.css';
+@import './components/styled/collapse.css';
+@import './components/styled/countdown.css';
+@import './components/styled/divider.css';
+@import './components/styled/drawer.css';
+@import './components/styled/dropdown.css';
+@import './components/styled/form.css';
+@import './components/styled/hero.css';
+@import './components/styled/input.css';
+@import './components/styled/link.css';
+@import './components/styled/mask.css';
+@import './components/styled/menu.css';
+@import './components/styled/mockup.css';
+@import './components/styled/modal.css';
+@import './components/styled/navbar.css';
+@import './components/styled/progress.css';
+@import './components/styled/radio.css';
+@import './components/styled/select.css';
+@import './components/styled/stat.css';
+@import './components/styled/steps.css';
+@import './components/styled/tab.css';
+@import './components/styled/table.css';
+@import './components/styled/textarea.css';
+@import './components/styled/toggle.css';
+@import './components/styled/tooltip.css';
+@import './components/styled/tree.css';
+@import './components/styled/typography.css';
+
+/* ------------------------------------------ */
+/* UTILITES */
+@import 'tailwindcss/utilities';
+/* Global Utilities */
+@import './utilities/global/borderRadius.css';
+@import './utilities/global/fontSize.css';
+@import './utilities/global/glass.css';
+@import './utilities/global/sizing.css';
+@import './utilities/global/variables.css';
+/* Unstyled Utilities */
+@import './utilities/unstyled/artboard.css';
+@import './utilities/unstyled/badge.css';
+@import './utilities/unstyled/button.css';
+@import './utilities/unstyled/card.css';
+@import './utilities/unstyled/input.css';
+@import './utilities/unstyled/select.css';
+/* Styled Utilities */
+@import './utilities/styled/alert.css';
+@import './utilities/styled/artboard.css';
+@import './utilities/styled/avatar.css';
+@import './utilities/styled/badge.css';
+@import './utilities/styled/modal.css';
+@import './utilities/styled/tooltip.css';
+
+/* ------------------------------------------ */
+/* THEME */
+@layer base {
+  [data-theme='light'] {
+    --p: 216 100% 65%;
+    --p-f: 216 100% 55%;
+    --p-c: 0 0% 100%;
+    --s: 219 30% 18%;
+    --s-f: 219 30% 28%;
+    --s-c: 180 6% 97%;
+    --a: 61 92% 74%;
+    --a-f: 61 92% 64%;
+    --a-c: 219 30% 18%;
+    --n: 218 12% 87%;
+    --n-f: 218 12% 77%;
+    --n-c: 219 10% 59%;
+    --b1: 0 0% 100%;
+    --b2: 216 36% 93%;
+    --b3: 213 13% 87%;
+    --b-c: 219 13% 41%;
+    --black: 219 30% 18%;
+    --white: 0 0% 100%;
+    --in: 216 100% 75%;
+    --in-f: 216 100% 65%;
+    --in-c: 0 0% 100%;
+    --su: 105 36% 76%;
+    --su-f: 105 36% 66%;
+    --su-c: 0 0% 100%;
+    --wa: 54 69% 64%;
+    --wa-f: 54 69% 54%;
+    --wa-c: 0 0% 100%;
+    --er: 0 65% 67%;
+    --er-f: 0 65% 57%;
+    --er-c: 0 0% 100%;
+
+    --rounded-box: 1rem;
+    --rounded-btn: 0.15rem;
+    --rounded-badge: 1.9rem;
+    --animation-btn: 0.25s;
+    --animation-input: 0.4s;
+    --padding-card: 2rem;
+    --btn-text-case: inherit;
+    --btn-focus-scale: 0.95;
+    --navbar-padding: 0.5rem;
+    --border-btn: 1px;
+    --tab-border: 1px;
+    --tab-radius: 0.5rem;
+    --tab-spacer: 0.5rem;
+    --focus-ring: 2px;
+    --focus-ring-offset: 2px;
+  }
+}

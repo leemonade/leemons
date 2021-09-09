@@ -36,7 +36,6 @@ async function addCustomForUser(
     async (transacting) => {
       // Check for required params
       await validateNotExistMenu(data.menuKey, { transacting });
-
       // Check if the MENU ITEM exists
       await validateExistMenuItem(data.menuKey, data.key, { transacting });
 
