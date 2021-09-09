@@ -16,7 +16,7 @@ const data = {
 
 function PageHeaderPage() {
     return (
-        <React.Fragment>
+        <>
             <div className="bg-secondary-content w-full h-screen overflow-auto">
                 <PageHeader
                     separator={false}
@@ -127,7 +127,7 @@ function PageHeaderPage() {
                     </div>
                 </PageContainer>
             </div>
-        </React.Fragment >
+        </ >
     );
 }
 

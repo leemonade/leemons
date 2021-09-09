@@ -16,7 +16,7 @@ const data = {
 
 function PageHeaderPage() {
     return (
-        <React.Fragment>
+        <>
             <div className="bg-secondary-content  edit-mode w-full h-screen overflow-auto grid">
                 <div className="bg-primary-content w-full">
                     <PageHeader
@@ -68,7 +68,7 @@ function PageHeaderPage() {
                     </div>
                 </div>
             </div>
-        </React.Fragment >
+        </>
     );
 }
 
