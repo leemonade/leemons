@@ -123,7 +123,7 @@ function PageHeaderPage() {
                             <Button disabled={true} rounded={true} color='primary'>
                                 Preview template
                             </Button>
-                            <div className="help-wizard_legend">I prefer to do it manually <br />Do not show any more.</div>
+                            <div className="help-wizard_legend">I prefer to do it manually <Button color="primary" link className="btn-sm px-0 -ml-3">Do not show any more.</Button></div>
                         </aside>
                     </div>
                 </div>
