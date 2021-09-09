@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { PageContainer, PageHeader, Card, Button, Select, Tree, useTree } from 'leemons-ui';
+import { PageHeader, Card, Button, Select, Tree, useTree } from 'leemons-ui';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useTranslate from '@multilanguage/useTranslate';
 import { useSession } from '@users/session';
