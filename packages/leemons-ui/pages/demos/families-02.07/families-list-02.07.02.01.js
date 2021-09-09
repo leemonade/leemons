@@ -16,20 +16,21 @@ const data = {
 
 function PageHeaderPage() {
   return (
-    <main>
-      <PageHeader
-        separator={false}
-        title="Families list"
-        description="Families make it easy to manage the organization of parent and student groups"
-        importFamiliesButton={true}
-        newButton={true}
-      />
-      <PageContainer>
-        <div className="bg-primary-content mx-auto">
-          <h2 className="resultcount flex items-center" aria-live='polite'> <Badge outlined>250</Badge> <span className="text-xl font-medium">Families</span></h2>
+    <React.Fragment>
+      <div className="bg-secondary-content w-full h-screen overflow-auto">
+        <PageHeader
+          separator={false}
+          title="Families list"
+          description="Families make it easy to manage the organization of parent and student groups"
+          importFamiliesButton={true}
+          newButton={true}
+        />
+        <div className="bg-primary-content w-full">
+          <div className="max-w-screen-xl w-full mx-auto p-6">
+            <h2 className="resultcount flex items-center" aria-live='polite'> <Badge outlined>250</Badge> <span className="text-xl font-medium">Families</span></h2>
+          </div>
         </div>
-      </PageContainer>
-      <div className='w-full bg-secondary-content h-screen overflow-y-auto'>
+
         <PageContainer>
           <FormControl>
 
@@ -49,7 +50,7 @@ function PageHeaderPage() {
           </FormControl>
         </PageContainer>
       </div>
-    </main >
+    </React.Fragment >
   );
 }
 
