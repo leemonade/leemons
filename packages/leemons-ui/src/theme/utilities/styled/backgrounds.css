@@ -3,6 +3,7 @@
   /* <: */
   .bg-secondary-content {
     &.edit-mode {
+        grid-auto-rows: min-content auto;
         background-image:  url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAYCAYAAAAPtVbGAAAACXBIWXMAAAsSAAALEgHS3X78AAAArUlEQVRIie2WywrCMBBFz4yJFHWj+P9/qBZsF82jcSFdCIITJF31rO/NCWEYIv2YZkBoiLYWLJLmbJIacnOJQGouKeDXeC7Rt6yhAYICwVoIYWIYnuSczJICewc4U3ieedxvAMQwcb5crR5RYGdOiyy3q0L6MZk7KUZCnOi6A6r2mXEIA4WTKew9znvz4QtK4VjdqpasgAJ5DYl5uv6RNGeTVGHaW1/4tSU+fkAvqEAsxr/smy4AAAAASUVORK5CYII=');
     }
   }

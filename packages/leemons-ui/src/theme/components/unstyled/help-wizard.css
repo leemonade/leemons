@@ -1,0 +1,25 @@
+/* :> */
+@layer components {
+  /* <: */
+  .help-wizard {
+    @apply pt-8 pl-12 pb-8 pr-2 max-w-xs;
+    &_ico {
+        @apply mb-4;
+    }
+    &_name {
+        @apply mb-3 mr-9;
+    }
+    &_description {
+        @apply mb-8 mr-10;
+    }
+    select {
+        @apply mb-2;
+    }
+    &_legend {
+        @apply mt-10 mr-10;
+    }
+  }
+   
+  /* :> */
+}
+/* <: */

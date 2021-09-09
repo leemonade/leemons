@@ -1,0 +1,19 @@
+/* :> */
+@layer components {
+  /* <: */
+  .help-wizard {
+    &_description {
+         @apply font-inter text-sm text-gray-200;
+         
+    }
+    &_name {
+      @apply text-xl;
+    }
+    &_legend {
+        @apply text-secondary-800 text-sm font-inter font-normal;
+    }
+  }
+   
+  /* :> */
+}
+/* <: */

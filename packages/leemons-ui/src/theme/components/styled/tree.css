@@ -1,8 +1,10 @@
 /* :> */
 @layer components {
   /* <: */
+
   .tree {
-    @apply h-full overflow-hidden;
+    @apply overflow-hidden w-full;
+    @apply bg-white p-4;
   }
 
   .tree_draggingSource {
@@ -47,6 +49,10 @@
     grid-template-columns: auto auto;
     padding: 4px 8px;
     pointer-events: none;
+  }
+
+  .tree_editWrapper {
+     @apply border border-current text-primary border-dashed p-4 w-full;
   }
 
   /* :> */
