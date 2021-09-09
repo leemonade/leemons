@@ -3,7 +3,7 @@ const services = leemons.plugin.services.levelSchemas;
 module.exports = {
   add: async (ctx) => {
     try {
-      const levelSchema = await services.add(ctx.request.body);
+      const levelSchema = await services.add(ctx.request.body, ctx.state.userSession);
       ctx.status = 201;
       ctx.body = { status: 201, levelSchema };
     } catch (e) {

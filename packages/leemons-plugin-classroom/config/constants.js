@@ -1,12 +1,33 @@
 module.exports = {
   pluginName: 'plugins.classroom',
-  defaultPermissions: [
+  permissions: [
+    {
+      permissionName: 'plugins.classroom.tree',
+      actions: ['view', 'update', 'create', 'delete', 'admin'],
+      localizationName: { es: 'Clases - Árbol', en: 'Classroom - Tree' },
+    },
+    {
+      permissionName: 'plugins.classroom.organization',
+      actions: ['view', 'update', 'create', 'assign', 'delete', 'admin'],
+      localizationName: { es: 'Clases - Organización', en: 'Classroom - Organization' },
+    },
+    {
+      permissionName: 'plugins.classroom.adminview',
+      actions: ['view', 'update', 'admin'],
+      localizationName: { es: 'Clases - Admin', en: 'Classroom - Admin' },
+    },
     {
       permissionName: 'plugins.classroom.classroom',
       actions: ['view', 'update', 'create', 'delete', 'admin'],
       localizationName: { es: 'Clases', en: 'Classroom' },
     },
   ],
+  permissionNames: {
+    tree: 'plugins.classroom.tree',
+    organization: 'plugins.classroom.organization',
+    adminView: 'plugins.classroom.adminview',
+    classroom: 'plugins.classroom.classroom',
+  },
   menuItems: {
     main: {
       item: {

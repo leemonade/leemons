@@ -1,4 +1,4 @@
-const addDatasetLocation = require('../dataset/addLocation');
+const getSessionPermissions = require('../permissions/getSessionPermissions');
 
 const tables = {
   levelSchemas: leemons.query('plugins_classroom::levelSchemas'),
@@ -9,8 +9,34 @@ const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getP
 
 async function add(
   { names = null, parent = null, isClass = false, assignableProfiles = [], properties = {} } = {},
+  userSession,
   { transacting } = {}
 ) {
+  console.log(
+    await getSessionPermissions({
+      userSession,
+      permissions: {
+        classroom: {
+          permission: 'plugins.classroom.classroom',
+          actions: ['view', 'create', 'admin'],
+        },
+        levelSchemaDataset: {
+          permissions: ['plugins.classroom.tree', 'plugins.dataset.dataset'],
+          actions: ['view', 'admin'],
+        },
+        anyEdit: [
+          {
+            permission: 'plugins.classroom.classroom',
+            actions: ['update', 'view'],
+          },
+          {
+            permission: 'plugins.classroom.tree',
+            actions: ['update', 'admin'],
+          },
+        ],
+      },
+    })
+  );
   const levelSchema = { name: names, parent, isClass, assignableProfiles, properties };
 
   // ---------------------------------------------------------------------------

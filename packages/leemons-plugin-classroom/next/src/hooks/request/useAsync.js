@@ -8,11 +8,17 @@ export default (f, ...args) => {
   useEffect(() => {
     setLoading(true);
     try {
-      f().then((res) => {
-        setData(res);
-        setLoading(false);
-      });
+      f()
+        .then((res) => {
+          setData(res);
+          setLoading(false);
+        })
+        .catch((e) => {
+          setLoading(false);
+          setError(e);
+        });
     } catch (e) {
+      setLoading(false);
       setError(e);
     }
   }, [...args]);

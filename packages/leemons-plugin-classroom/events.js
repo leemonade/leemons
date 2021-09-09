@@ -1,4 +1,4 @@
-const { defaultPermissions } = require('./config/constants');
+const { permissions } = require('./config/constants');
 const {
   addMain,
   addWelcome,
@@ -28,7 +28,7 @@ async function events(isInstalled) {
   if (!isInstalled) {
     leemons.events.once('plugins.users:init-permissions', async () => {
       const usersPlugin = leemons.getPlugin('users');
-      await usersPlugin.services.permissions.addMany(defaultPermissions);
+      await usersPlugin.services.permissions.addMany(permissions);
       leemons.events.emit('init-permissions');
     });
 
