@@ -1,3 +1,4 @@
+// TODO: Remove centers when a center is deleted
 async function updateCenters() {
   const tables = {
     centers: leemons.query('plugins_users::centers'),
