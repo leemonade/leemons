@@ -19,7 +19,7 @@ function ModalPage() {
     title: 'Please confirm',
     buttons: [
       // eslint-disable-next-line react/jsx-key
-      <Button color="ghost" className="text-black" onClick={() => toggleDeleteModal()}>
+      <Button color="primary" className="btn-link" onClick={() => toggleDeleteModal()}>
         Cancel
       </Button>,
       // eslint-disable-next-line react/jsx-key

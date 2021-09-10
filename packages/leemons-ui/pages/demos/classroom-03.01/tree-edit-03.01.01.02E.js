@@ -1,41 +1,41 @@
 import React from 'react';
-import { PageHeader, Divider, Button } from '../../../src/components/ui';
-import { ChevronRightIcon } from '@heroicons/react/outline';
-import { ExclamationIcon, PencilIcon } from '@heroicons/react/solid';
+import { PageHeader, Select, Button } from '../../../src/components/ui';
+import { PlusCircleIcon, CheckIcon } from '@heroicons/react/outline';
 
 
-
+const data = {
+    showType: true,
+    components: [{ class: 'alert', desc: 'Container element' }],
+    utilities: [
+        { class: 'alert-info', desc: 'Alert with `info` color' },
+        { class: 'alert-success', desc: 'Alert with `success` color' },
+        { class: 'alert-warning', desc: 'Alert with `warning` color' },
+        { class: 'alert-error', desc: 'Alert with `error` color' },
+    ],
+};
 
 function PageHeaderPage() {
-
     return (
         <>
-            <div className="bg-primary-content view-mode w-full h-screen overflow-auto grid">
-                <div className="bg-base-200 w-full">
+            <div className="bg-secondary-content  edit-mode w-full h-screen overflow-auto grid">
+                <div className="bg-primary-content w-full">
                     <PageHeader
                         separator={false}
                         title="Tree"
-                        className="bg-base-200"
+                        className="pb-0"
                     >
                     </PageHeader>
-                    <div className="page-description text-secondary pb-12 max-w-screen-xl w-full mx-auto px-6">
-                        <div className='flex flex-row w-full'>
-                            <div className="w-3/6">
-                                <p className="mb-10">This is your center tree, press edit in the top right-hand corner to add new levels. <strong>Continue to Organisation to start creating Programs and courses.</strong></p>
-                                <Button color='secondary' rounded={true}>Go to Organisation <ChevronRightIcon className='inline-block w-8 h-8 ml-2 -mr-2 stroke-current' /></Button>
-                            </div>
-                            <Divider vertical={true} className="opacity-20" />
-                            <div className="w-3/6">
-                                <ExclamationIcon className="w-4 h-4 text-gray-200"></ExclamationIcon>
-                                <p className="w-3/6 font-inter text-sm"> Please, note that you will not be able to delete levels or change the class level once the organisation has been created and users assigned in the nexts steps.</p>
-                            </div>
-                        </div>
-                    </div>
+                    <p class="page-description text-secondary pb-12 max-w-screen-xl w-full mx-auto px-6">
+                        Use the button <PlusCircleIcon alt="add button"
+                            className={`w-5 h-5 inline text-primary `}
+                        /> to create a new level, the use the config area to configure the data set for the level
+                    </p>
                 </div>
                 <div className="flex max-w-screen-xl w-full mx-auto px-6">
                     {/* Dummy tree */}
-                    <div className=" w-3/6 my-2 mb-2 relative">
-                        <Button color='primary' className="absolute top-2 right-2 z-10"><PencilIcon className='inline-block w-6 h-6 mr-2 stroke-current' />Editar</Button>
+                    <div className="tree_editWrapper flex-1 my-2 mb-2 relative">
+                        <Button color='primary' className="absolute top-6 right-6 z-10"><CheckIcon className='inline-block w-6 h-6 mr-2 stroke-current' />Finish editing</Button>
+
                         <ul className="tree" role="list">
                             <li className="" role="listitem" draggable="true">
                                 <div className="tree-node relative flex items-center h-8 rounded group bg-white hover:bg-gray-10 cursor-pointer pr-2">
@@ -64,16 +64,12 @@ function PageHeaderPage() {
                             </li>
                         </ul>
                     </div>
-                    <Divider vertical={true} className="opacity-20" />
-
                     {/* End Dummy tree */}
-                    <div className="w-3/6 my-2 mb-2 bg-primary-content py-6 pl-12 pr-6">
+                    <div className="flex-1 m2">
 
                     </div>
                 </div>
-
             </div>
-
         </>
     );
 }

@@ -14,6 +14,14 @@
   .view-mode {
     grid-auto-rows: min-content auto;
   } 
+
+  .out-focus {
+    @apply relative;
+    &::before {
+      @apply absolute top-0 right-0 bottom-0 left-0 bg-white opacity-50;
+      content: "";
+    }
+  }
   /* :> */
 }
 /* <: */
