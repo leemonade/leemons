@@ -1,13 +1,18 @@
-const { permissionNames: permissions } = require('../config/constants');
+const {
+  permissions: { names: permissions },
+} = require('../config/constants');
 
 const getPermissions = (permissionsArr, actions = null) => {
   if (Array.isArray(permissionsArr)) {
-    return permissionsArr.reduce((obj, [permission, _actions]) => ({
-      ...obj,
-      [permission]: {
-        actions: _actions.includes('admin') ? _actions : ['admin', ..._actions],
-      },
-    }));
+    return permissionsArr.reduce(
+      (obj, [permission, _actions]) => ({
+        ...obj,
+        [permission]: {
+          actions: _actions.includes('admin') ? _actions : ['admin', ..._actions],
+        },
+      }),
+      {}
+    );
   }
   return {
     [permissionsArr]: {
@@ -185,20 +190,29 @@ module.exports = [
     method: 'GET',
     handler: 'levels.getUsers',
     authenticated: true,
-    allowedPermissions: getPermissions(permissions.organization, ['view']),
+    allowedPermissions: getPermissions([
+      [permissions.organization, ['view']],
+      ['plugins.users.users', ['view']],
+    ]),
   },
   {
     path: '/level/:id/users',
     method: 'POST',
     handler: 'levels.addUsers',
     authenticated: true,
-    allowedPermissions: getPermissions(permissions.organization, ['assign']),
+    allowedPermissions: getPermissions([
+      [permissions.organization, ['assign']],
+      ['plugins.users.users', ['view']],
+    ]),
   },
   {
     path: '/level/:id/users',
     method: 'DELETE',
     handler: 'levels.removeUsers',
     authenticated: true,
-    allowedPermissions: getPermissions(permissions.organization, ['assign']),
+    allowedPermissions: getPermissions([
+      [permissions.organization, ['assign']],
+      ['plugins.users.users', ['view']],
+    ]),
   },
 ];

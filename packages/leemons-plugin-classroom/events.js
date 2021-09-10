@@ -28,7 +28,7 @@ async function events(isInstalled) {
   if (!isInstalled) {
     leemons.events.once('plugins.users:init-permissions', async () => {
       const usersPlugin = leemons.getPlugin('users');
-      await usersPlugin.services.permissions.addMany(permissions);
+      await usersPlugin.services.permissions.addMany(permissions.permissions);
       leemons.events.emit('init-permissions');
     });
 

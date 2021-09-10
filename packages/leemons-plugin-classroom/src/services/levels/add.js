@@ -1,3 +1,5 @@
+const getSessionPermissions = require('../permissions/getSessionPermissions');
+
 const tables = {
   levels: leemons.query('plugins_classroom::levels'),
   levelSchemas: leemons.query('plugins_classroom::levelSchemas'),
@@ -7,8 +9,20 @@ const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getP
 
 async function add(
   { names = null, descriptions = null, schema = null, parent = null, properties = {} } = {},
-  { transacting } = {}
+  { userSession, transacting } = {}
 ) {
+  const permissions = await getSessionPermissions({
+    userSession,
+    this: this,
+    permissions: {
+      create: leemons.plugin.config.constants.permissions.bundles.organization.create,
+    },
+  });
+
+  // TODO: Add better error message
+  if (!permissions.create) {
+    throw new Error('Permissions not satisfied');
+  }
   const level = { names, descriptions, schema, parent, properties };
 
   // ---------------------------------------------------------------------------

@@ -1,7 +1,21 @@
+const getSessionPermissions = require('../permissions/getSessionPermissions');
+
 const table = leemons.query('plugins_classroom::levels');
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 
-module.exports = async function get(id, { locale = null, transacting } = {}) {
+module.exports = async function get(id, { userSession, locale = null, transacting } = {}) {
+  const permissions = await getSessionPermissions({
+    userSession,
+    this: this,
+    permissions: {
+      view: leemons.plugin.config.constants.permissions.bundles.organization.view,
+    },
+  });
+
+  // TODO: Add better error message
+  if (!permissions.view) {
+    throw new Error('Permissions not satisfied');
+  }
   const validator = new global.utils.LeemonsValidator({
     type: 'string',
     format: 'uuid',

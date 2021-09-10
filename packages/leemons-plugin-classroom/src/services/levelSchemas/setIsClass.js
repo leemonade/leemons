@@ -8,14 +8,11 @@ module.exports = async function setIsClass(id, isClass, { userSession, transacti
     userSession,
     this: this,
     permissions: {
-      canUpdate: {
-        permission: 'plugins.classroom.tree',
-        actions: ['update', 'admin'],
-      },
+      update: leemons.plugin.config.constants.permissions.bundles.tree.update,
     },
   });
   // TODO: Add better error message
-  if (!permissions.canUpdate) {
+  if (!permissions.update) {
     throw new Error('Permissions not satisfied');
   }
   // ---------------------------------------------------------------------------

@@ -12,20 +12,11 @@ module.exports = async function addAssignables(id, _profiles, { userSession, tra
     userSession,
     this: this,
     permissions: {
-      canAddAssignable: [
-        {
-          permission: 'plugins.classroom.tree',
-          actions: ['update', 'admin'],
-        },
-        {
-          permission: 'plugins.users.profiles',
-          actions: ['view', 'admin'],
-        },
-      ],
+      assignables: leemons.plugin.config.constants.permissions.bundles.tree.assignables,
     },
   });
   // TODO: Add better error message
-  if (!permissions.canAddAssignable) {
+  if (!permissions.assignables) {
     throw new Error('Permissions not satisfied');
   }
 

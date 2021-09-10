@@ -1,7 +1,21 @@
+const getSessionPermissions = require('../permissions/getSessionPermissions');
+
 const table = leemons.query('plugins_classroom::levels');
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 
-module.exports = async function deleteOne(id, { transacting } = {}) {
+module.exports = async function deleteOne(id, { userSession, transacting } = {}) {
+  const permissions = await getSessionPermissions({
+    userSession,
+    this: this,
+    permissions: {
+      delete: leemons.plugin.config.constants.permissions.bundles.organization.delete,
+    },
+  });
+
+  // TODO: Add better error message
+  if (!permissions.delete) {
+    throw new Error('Permissions not satisfied');
+  }
   const validator = new global.utils.LeemonsValidator({
     type: 'string',
     format: 'uuid',

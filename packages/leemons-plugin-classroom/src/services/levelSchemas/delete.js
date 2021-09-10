@@ -11,14 +11,11 @@ module.exports = async function get(id, { userSession, transacting } = {}) {
     userSession,
     this: this,
     permissions: {
-      canDelete: {
-        permission: 'plugins.classroom.tree',
-        actions: ['delete', 'admin'],
-      },
+      delete: leemons.plugin.config.constants.permissions.bundles.tree.delete,
     },
   });
   // TODO: Add better error message
-  if (!permissions.canDelete) {
+  if (!permissions.delete) {
     throw new Error('Permissions not satisfied');
   }
   const validator = new global.utils.LeemonsValidator({

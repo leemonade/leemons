@@ -11,18 +11,12 @@ module.exports = async function get(id, { userSession, locale = null, transactin
     userSession,
     this: this,
     permissions: {
-      canView: {
-        permission: 'plugins.classroom.tree',
-        actions: ['view', 'admin'],
-      },
-      canSeeProfiles: {
-        permission: 'plugins.users.profile',
-        actions: ['view', 'admin'],
-      },
+      view: leemons.plugin.config.constants.permissions.bundles.tree.view,
+      viewProfiles: leemons.plugin.config.constants.permissions.bundles.profiles.view,
     },
   });
   // TODO: Add better error message
-  if (!permissions.canView) {
+  if (!permissions.view) {
     throw new Error('Permissions not satisfied');
   }
   const validator = new global.utils.LeemonsValidator({
@@ -38,7 +32,7 @@ module.exports = async function get(id, { userSession, locale = null, transactin
     levelSchema.properties = JSON.parse(levelSchema.properties);
 
     let assignableProfiles;
-    if (permissions.canSeeProfiles) {
+    if (permissions.viewProfiles) {
       assignableProfiles = (
         await tables.assignableProfiles.find({ levelSchemas_id: id }, { transacting })
       ).map(({ profiles_id: profile }) => profile);

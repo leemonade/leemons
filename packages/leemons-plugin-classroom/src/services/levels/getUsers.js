@@ -1,10 +1,24 @@
+const getSessionPermissions = require('../permissions/getSessionPermissions');
+
 const tables = {
   levels: leemons.query('plugins_classroom::levels'),
   levelUsers: leemons.query('plugins_classroom::levels-users'),
 };
 
-module.exports = function getUsers(level, { roles = [], transacting } = {}) {
-  console.log(roles);
+module.exports = async function getUsers(level, { userSession, roles = [], transacting } = {}) {
+  const permissions = await getSessionPermissions({
+    userSession,
+    this: this,
+    permissions: {
+      viewUsers: leemons.plugin.config.constants.permissions.bundles.organization.viewUsers,
+    },
+  });
+
+  // TODO: Add better error message
+  if (!permissions.viewUsers) {
+    throw new Error('Permissions not satisfied');
+  }
+
   const schema = {
     type: 'object',
     properties: {

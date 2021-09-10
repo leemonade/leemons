@@ -15,15 +15,12 @@ async function add(
     userSession,
     this: this,
     permissions: {
-      createLS: {
-        permission: 'plugins.classroom.tree',
-        actions: ['create', 'admin'],
-      },
+      create: leemons.plugin.config.constants.permissions.bundles.tree.create,
     },
   });
 
   // TODO: Add better error message
-  if (!permissions.createLS) {
+  if (!permissions.create) {
     throw new Error('Permissions not satisfied');
   }
 

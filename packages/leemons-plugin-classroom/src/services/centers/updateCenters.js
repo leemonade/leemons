@@ -169,6 +169,9 @@ async function updateCenters() {
 }
 
 module.exports = () => {
+  if (this && this.calledFrom !== 'plugins.classroom') {
+    throw new Error('Permissions not satisfied');
+  }
   let timer;
 
   const callback = () => {
