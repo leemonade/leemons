@@ -220,7 +220,7 @@
       }
     }
     &-link {
-      @apply bg-transparent border-transparent text-neutral;
+      @apply bg-transparent border-transparent text-neutral px-0;
       &.btn-primary {
         @apply text-primary;
       }
