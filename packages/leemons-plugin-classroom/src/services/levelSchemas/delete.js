@@ -1,10 +1,26 @@
+const getSessionPermissions = require('../permissions/getSessionPermissions');
+
 const tables = {
   levelSchemas: leemons.query('plugins_classroom::levelSchemas'),
   assignableProfiles: leemons.query('plugins_classroom::levelSchemas_profiles'),
 };
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 
-module.exports = async function get(id, { transacting } = {}) {
+module.exports = async function get(id, { userSession, transacting } = {}) {
+  const permissions = await getSessionPermissions({
+    userSession,
+    this: this,
+    permissions: {
+      canDelete: {
+        permission: 'plugins.classroom.tree',
+        actions: ['delete', 'admin'],
+      },
+    },
+  });
+  // TODO: Add better error message
+  if (!permissions.canDelete) {
+    throw new Error('Permissions not satisfied');
+  }
   const validator = new global.utils.LeemonsValidator({
     type: 'string',
     format: 'uuid',

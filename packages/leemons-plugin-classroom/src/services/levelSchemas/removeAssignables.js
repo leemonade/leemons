@@ -1,8 +1,30 @@
+const getSessionPermissions = require('../permissions/getSessionPermissions');
+
 const levelSchemas = leemons.query('plugins_classroom::levelSchemas');
 const assignableProfiles = leemons.query('plugins_classroom::levelSchemas_profiles');
 
 // TODO: Check that the parent is compatible
-module.exports = async function addAssignables(id, _profiles, { transacting } = {}) {
+module.exports = async function addAssignables(id, _profiles, { userSession, transacting } = {}) {
+  const permissions = await getSessionPermissions({
+    userSession,
+    this: this,
+    permissions: {
+      canRemoveAssignable: [
+        {
+          permission: 'plugins.classroom.tree',
+          actions: ['update', 'admin'],
+        },
+        {
+          permission: 'plugins.users.profiles',
+          actions: ['view', 'admin'],
+        },
+      ],
+    },
+  });
+  // TODO: Add better error message
+  if (!permissions.canRemoveAssignable) {
+    throw new Error('Permissions not satisfied');
+  }
   // ---------------------------------------------------------------------------
   // validate data types
   const schema = {

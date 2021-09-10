@@ -9,34 +9,24 @@ const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getP
 
 async function add(
   { names = null, parent = null, isClass = false, assignableProfiles = [], properties = {} } = {},
-  userSession,
-  { transacting } = {}
+  { userSession, transacting } = {}
 ) {
-  console.log(
-    await getSessionPermissions({
-      userSession,
-      permissions: {
-        classroom: {
-          permission: 'plugins.classroom.classroom',
-          actions: ['view', 'create', 'admin'],
-        },
-        levelSchemaDataset: {
-          permissions: ['plugins.classroom.tree', 'plugins.dataset.dataset'],
-          actions: ['view', 'admin'],
-        },
-        anyEdit: [
-          {
-            permission: 'plugins.classroom.classroom',
-            actions: ['update', 'view'],
-          },
-          {
-            permission: 'plugins.classroom.tree',
-            actions: ['update', 'admin'],
-          },
-        ],
+  const permissions = await getSessionPermissions({
+    userSession,
+    this: this,
+    permissions: {
+      createLS: {
+        permission: 'plugins.classroom.tree',
+        actions: ['create', 'admin'],
       },
-    })
-  );
+    },
+  });
+
+  // TODO: Add better error message
+  if (!permissions.createLS) {
+    throw new Error('Permissions not satisfied');
+  }
+
   const levelSchema = { name: names, parent, isClass, assignableProfiles, properties };
 
   // ---------------------------------------------------------------------------

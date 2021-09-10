@@ -1,14 +1,23 @@
+const getSessionPermissions = require('../permissions/getSessionPermissions');
+
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 const levelSchemas = leemons.query('plugins_classroom::levelSchemas');
 
-module.exports = async function setNames(id, names, { transacting } = {}) {
-  // 1st validate data types
-  // 2nd validate data integrity
-  // 3rd format data
-  // 4rd register entries
-  // 5th check data registered correctly
-  // 6th send success message / send error message
-
+module.exports = async function setNames(id, names, { userSession, transacting } = {}) {
+  const permissions = await getSessionPermissions({
+    userSession,
+    this: this,
+    permissions: {
+      canUpdate: {
+        permission: 'plugins.classroom.tree',
+        actions: ['update', 'admin'],
+      },
+    },
+  });
+  // TODO: Add better error message
+  if (!permissions.canUpdate) {
+    throw new Error('Permissions not satisfied');
+  }
   // ---------------------------------------------------------------------------
   // validate data types
   const schema = {

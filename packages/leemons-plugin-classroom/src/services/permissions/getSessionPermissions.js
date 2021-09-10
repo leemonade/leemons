@@ -1,11 +1,3 @@
-function getActionsFromObj(permissionObj) {
-  if (Array.isArray(permissionObj)) {
-    return [...new Set(permissionObj.map((permission) => getActionsFromObj(permission)).flat())];
-  }
-
-  return permissionObj.actions;
-}
-
 function getPermissionsFromObj(permissionObj) {
   if (Array.isArray(permissionObj)) {
     return permissionObj.map((permission) => getPermissionsFromObj(permission)).flat();
@@ -23,63 +15,72 @@ function getPermissions(permissions) {
   return permissions.map(([, permission]) => getPermissionsFromObj(permission)).flat();
 }
 
-function checkPermissionsSatisfaction(permissionObj, userPermissions) {
+function checkPermissionsSatisfaction(permissionObj, userPermissions, isSuperAdmin) {
+  if (isSuperAdmin) {
+    return true;
+  }
   if (Array.isArray(permissionObj)) {
-    const allResults = permissionObj.map((permission) =>
-      checkPermissionsSatisfaction(permission, userPermissions)
-    );
-
-    return getActionsFromObj(permissionObj).reduce(
-      (obj, action) => ({ ...obj, [action]: allResults.some((result) => result[action] === true) }),
-      {}
-    );
+    const allResults = permissionObj
+      .map((obj) => checkPermissionsSatisfaction(obj, userPermissions, isSuperAdmin))
+      .every((result) => result);
+    return allResults;
   }
 
   let neededPermissions;
-  let actionsNeeded;
+  let expectedLength;
   if (permissionObj.permission) {
-    actionsNeeded = 1;
+    expectedLength = 1;
     neededPermissions = userPermissions.filter(
       ({ permissionName }) => permissionName === permissionObj.permission
     );
   }
   if (permissionObj.permissions) {
-    actionsNeeded = permissionObj.permissions.length;
+    expectedLength = permissionObj.permissions.length;
     neededPermissions = userPermissions.filter(({ permissionName }) =>
       permissionObj.permissions.includes(permissionName)
     );
   }
-  return permissionObj.actions.reduce(
-    (obj, action) => ({
-      ...obj,
-      [action]:
-        neededPermissions.filter(({ actionNames }) => actionNames?.includes(action)).length ===
-        actionsNeeded,
-    }),
-    {}
-  );
+
+  if (neededPermissions.length !== expectedLength) {
+    return false;
+  }
+
+  return neededPermissions
+    .map(
+      ({ actionNames }) => !!permissionObj.actions.find((action) => actionNames.includes(action))
+    )
+    .every((value) => value);
 }
 
 module.exports = async function getSessionPermissions({
+  this: context,
   userSession,
   permissions: permissionsObjs,
   transacting,
 } = {}) {
   const permissionsEntries = Object.entries(permissionsObjs);
   const permissions = getPermissions(permissionsEntries);
-  const userPermissions = await leemons
-    .getPlugin('users')
-    .services.permissions.getUserAgentPermissions(userSession.userAgents, {
-      transacting,
-      query: {
-        permissionName_$in: permissions,
-      },
-    });
+  let userPermissions = [];
+  if (userSession) {
+    userPermissions = await leemons
+      .getPlugin('users')
+      .services.permissions.getUserAgentPermissions(userSession.userAgents, {
+        transacting,
+        query: {
+          permissionName_$in: permissions,
+        },
+      });
+  }
 
   return permissionsEntries.reduce(
     (obj, [name, permissionObj]) => ({
       ...obj,
-      [name]: checkPermissionsSatisfaction(permissionObj, userPermissions),
+      // TODO: Check if it is super admin
+      [name]: checkPermissionsSatisfaction(
+        permissionObj,
+        userPermissions,
+        !userSession && context.calledFrom === 'plugins.classroom'
+      ),
     }),
     {}
   );

@@ -108,14 +108,20 @@ module.exports = [
     method: 'POST',
     handler: 'levelSchemas.addAssignables',
     authenticated: true,
-    allowedPermissions: getPermissions(permissions.tree, ['update']),
+    allowedPermissions: getPermissions([
+      [permissions.tree, ['update']],
+      ['plugins.users.profiles', ['view']],
+    ]),
   },
   {
     path: '/levelSchema/:id/assignables',
     method: 'DELETE',
     handler: 'levelSchemas.removeAssignables',
     authenticated: true,
-    allowedPermissions: getPermissions(permissions.tree, ['update']),
+    allowedPermissions: getPermissions([
+      [permissions.tree, ['update']],
+      ['plugins.users.profiles', ['view']],
+    ]),
   },
 
   {
