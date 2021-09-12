@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Button from './Button';
 import Input from './Input';
-import { ChevronRightIcon, PlusIcon } from '@heroicons/react/outline';
+import { ChevronRightIcon, PlusIcon, CloudUploadIcon } from '@heroicons/react/outline';
 import FormControl from './FormControl';
 
 function PageHeader({
@@ -17,12 +17,14 @@ function PageHeader({
   newButton,
   saveButton,
   cancelButton,
+  importFamiliesButton,
   duplicateButton,
   editButton,
   newButtonLoading,
   saveButtonLoading,
   cancelButtonLoading,
   duplicateButtonLoading,
+  importFamiliesButtonLoading,
   editButtonLoading,
   onNewButton,
   onSaveButton,
@@ -30,6 +32,7 @@ function PageHeader({
   onDuplicateButton,
   onEditButton,
   onButton,
+  separator
 }) {
   const getBreadcrumbs = () => {
     if (breadcrumbs) {
@@ -147,6 +150,20 @@ function PageHeader({
         </Button>
       );
     }
+    if (importFamiliesButton) {
+      buttons.push(
+        <Button
+          key="import-families-btn"
+          color="primary"
+          type="button"
+          loading={importFamiliesButtonLoading}
+          onClick={(e) => onPressButton(importFamiliesButton, e)}
+        >
+          <CloudUploadIcon className="w-6 h-6 mr-1" />
+          {_.isString(importFamiliesButton) ? importFamiliesButton : 'Import families'}
+        </Button>
+      );
+    }
     if (newButton) {
       buttons.push(
         <Button
@@ -167,9 +184,8 @@ function PageHeader({
 
   return (
     <div
-      className={`${className} bg-primary-content ${
-        breadcrumbs ? 'py-6' : 'py-12'
-      } border-b border-base-300`}
+      className={`${className} bg-primary-content ${breadcrumbs ? 'py-6' : 'py-12'
+        } ${separator ? ' border-b border-base-300' : 'border-0'}`}
     >
       <div className="max-w-screen-xl w-full mx-auto px-6">
         {getBreadcrumbs()}
@@ -184,6 +200,7 @@ function PageHeader({
     </div>
   );
 }
+PageHeader.defaultProps = { separator: true };
 
 PageHeader.propTypes = {
   className: PropTypes.string,

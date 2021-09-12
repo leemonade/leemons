@@ -2,8 +2,7 @@
 @layer utilities {
   /* <: */
   .input {
-    @apply px-3 h-10 text-sm leading-loose;
-
+   
     &-md {
       @apply px-4 h-12 text-sm leading-loose;
     }
