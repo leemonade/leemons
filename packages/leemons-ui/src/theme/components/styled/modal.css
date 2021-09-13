@@ -13,7 +13,7 @@
   }
 
   .modal-title {
-    @apply font-medium text-black;
+    @apply text-black text-2xl;
   }
 
   .modal-body {

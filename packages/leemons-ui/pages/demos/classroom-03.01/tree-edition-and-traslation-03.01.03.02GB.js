@@ -1,5 +1,5 @@
 import React from 'react';
-import { PageHeader, Drawer, useDrawer, FormControl, Tabs, Tab, TabList, TabPanel, Input, Button, Checkbox } from '../../../src/components/ui';
+import { PageHeader, Drawer, useDrawer, FormControl, Tabs, Tab, TabList, TabPanel, Label, Input, Button, Checkbox } from '../../../src/components/ui';
 import { PlusCircleIcon } from '@heroicons/react/outline';
 import { InformationCircleIcon, ExclamationCircleIcon, XIcon, StarIcon } from '@heroicons/react/solid';
 
@@ -133,11 +133,11 @@ function PageHeaderPage() {
 
             </div>
             <Drawer {...drawer}>
-                <div className="p-6 max-w-sm relative">
+                <div className="p-6 relative">
                     <Button className='btn-circle btn-xs ml-8 bg-transparent border-0 absolute top-1 right-1' onClick={toggleDrawer}>
                         <XIcon className='inline-block w-4 h-4 stroke-current' />
                     </Button>
-                    <section>
+                    <section className=" w-full max-w-md">
                         {/*TO DO LIBRERIA ICONOS PROPIA - No existe similar a este en HeroIcons */}
                         <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g clip-path="url(#clip0)">
@@ -179,6 +179,14 @@ function PageHeaderPage() {
 
                             </TabPanel>
                         </Tabs>
+
+                        <FormControl className=" w-min my-4">
+                            <Label text='Label' className=" mr-4">
+                                <span className='label-text-alt whitespace-nowrap text-secondary-200'>(Visible name on the file) </span>
+                            </Label>
+                            <Input outlined={true}
+                                placeholder='Level' />
+                        </FormControl>
                         <div className="flex justify-between my-16">
                             <Button color='primary' className='btn-link'>Cancel </Button>
                             <Button color='primary'>Save</Button>

@@ -1,40 +1,80 @@
 import React from 'react';
-import { PageHeader, Select, FormControl, Tabs, Tab, TabList, TabPanel, Input, Button, Checkbox } from '../../../src/components/ui';
-import { PlusCircleIcon } from '@heroicons/react/outline';
-import { InformationCircleIcon, ExclamationCircleIcon } from '@heroicons/react/solid';
+import { PageHeader, Divider, FormControl, Input, Button, Checkbox, Modal, Tab, Tabs, TabList, TabPanel, useModal } from '../../../src/components/ui';
+import { ChevronRightIcon } from '@heroicons/react/outline';
+import { ExclamationIcon, ExclamationCircleIcon, InformationCircleIcon } from '@heroicons/react/solid';
 
 
-const data = {
-    showType: true,
-    components: [{ class: 'alert', desc: 'Container element' }],
-    utilities: [
-        { class: 'alert-info', desc: 'Alert with `info` color' },
-        { class: 'alert-success', desc: 'Alert with `success` color' },
-        { class: 'alert-warning', desc: 'Alert with `warning` color' },
-        { class: 'alert-error', desc: 'Alert with `error` color' },
-    ],
-};
+
 
 function PageHeaderPage() {
+
+    const [modal, toggleModal] = useModal({
+        animated: true,
+        title: 'Close without saving?',
+        buttons: [
+            <Button color="primary" className="btn-link">
+                Yes, exit and discard changes
+            </Button>,
+            <Button color="primary">
+                No, return to edition
+            </Button>,
+        ],
+    });
     return (
         <>
-            <div className="bg-secondary-content  edit-mode w-full h-screen overflow-auto grid">
-                <div className="bg-primary-content w-full">
+            <div className="bg-secondary-content edit-mode w-full h-screen overflow-auto grid">
+                <div className="bg-base-200 w-full out-focus">
                     <PageHeader
                         separator={false}
                         title="Tree"
-                        className="pb-0"
+                        className="bg-base-200"
                     >
                     </PageHeader>
-                    <p className="page-description text-secondary pb-12 max-w-screen-xl w-full mx-auto px-6">
-                        Use the button <PlusCircleIcon alt="add button"
-                            className={`w-5 h-5 inline text-primary `}
-                        /> to create a new level, the use the config area to configure the data set for the level
-                    </p>
+                    <div className="page-description text-secondary pb-12 max-w-screen-xl w-full mx-auto px-6">
+                        <div className='flex flex-row w-full'>
+                            <div className="flex-1">
+                                <p className="mb-10">This is your center tree, press edit in the top right-hand corner to add new levels. <strong>Continue to Organisation to start creating Programs and courses.</strong></p>
+                                <Button color='secondary' rounded={true}>Go to Organisation <ChevronRightIcon className='inline-block w-8 h-8 ml-2 -mr-2 stroke-current' /></Button>
+                            </div>
+                            <Divider vertical={true} className="opacity-20" />
+                            <div className="w-3/6">
+                                <ExclamationIcon className="w-4 h-4 text-gray-200"></ExclamationIcon>
+                                <p className="w-3/6 font-inter text-sm"> Please, note that you will not be able to delete levels or change the class level once the organisation has been created and users assigned in the nexts steps.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div className="flex max-w-screen-xl w-full mx-auto px-6">
                     {/* Dummy tree */}
                     <div className="tree_editWrapper flex-1 my-2 mb-2">
+                        <div className="bg-white p-2 mb-4 flex justify-between items-center">
+                            {/*TO DO LIBRERIA ICONOS PROPIA - No existe similar a este en HeroIcons */}
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block">
+                                <g clip-path="url(#clip0)">
+                                    <path d="M0.75 0.747986H5.25V5.24799H0.75V0.747986Z" stroke="#8E97A3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M0.75 18.748H5.25V23.248H0.75V18.748Z" stroke="#8E97A3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M17.25 0.747986H21.75V5.24799H17.25V0.747986Z" stroke="#8E97A3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M17.25 18.748H21.75V23.248H17.25V18.748Z" stroke="#8E97A3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M5.25 2.24799H17.25" stroke="#8E97A3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M20.25 5.24799V18.748" stroke="#8E97A3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M17.25 21.748H5.25" stroke="#8E97A3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M2.25 18.748V5.24799" stroke="#8E97A3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M6.75 8.99999C6.74974 8.70434 6.80774 8.41155 6.9207 8.13833C7.03365 7.86512 7.19935 7.61685 7.4083 7.4077C7.61726 7.19856 7.86539 7.03265 8.1385 6.91945C8.41161 6.80625 8.70436 6.74799 9 6.74799H13.5C13.7956 6.74799 14.0884 6.80625 14.3615 6.91945C14.6346 7.03265 14.8827 7.19856 15.0917 7.4077C15.3007 7.61685 15.4663 7.86512 15.5793 8.13833C15.6923 8.41155 15.7503 8.70434 15.75 8.99999" stroke="#8E97A3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M11.25 6.74799V17.248" stroke="#8E97A3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M8.21899 17.248H14.219" stroke="#8E97A3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                </g>
+                                <defs>
+                                    <clipPath id="clip0">
+                                        <rect width="32" height="32" fill="white" />
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                            <div className=" text-gray-300">
+                                <strong>K12 template</strong> <span className=" font-inter text-xs mx-2">Press over the levels to customize the dataset</span>
+                            </div>
+                            <Button color='primary' className="inline-block" onClick={() => toggleModal()} >Finish editing</Button>
+
+                        </div>
                         <ul className="tree" role="list">
                             <li className="" role="listitem" draggable="true">
                                 <div className="tree-node relative flex items-center h-8 rounded group bg-white hover:bg-gray-10 cursor-pointer pr-2">
@@ -63,6 +103,7 @@ function PageHeaderPage() {
                             </li>
                         </ul>
                     </div>
+
                     {/* End Dummy tree */}
                     <div className="flex-1 my-2 mb-2 bg-primary-content py-6 pl-12 pr-6">
                         <FormControl>
@@ -84,10 +125,11 @@ function PageHeaderPage() {
                             <Checkbox color="primary" />
                         </FormControl>
                         <div>
-                            <Button color="primary" link className="pr-1 -ml-5">Translations</Button>
+                            <Button color="primary" link className="pr-1 btn-link" >Translations</Button>
                             <span className="fc_legend"><ExclamationCircleIcon className={`w-3 h-3 inline mr-2 text-error`} />Untranslated content will appear in the default language
                             </span>
                         </div>
+
                         <Tabs>
                             <TabList>
                                 <Tab tabIndex='0'
@@ -120,6 +162,11 @@ function PageHeaderPage() {
                 </div>
 
             </div>
+
+            <Modal {...modal}>
+                <p>If you leave the tree edition now you will lose the modifications made in this level.</p>
+                <p> Do you want to exit without saving?</p>
+            </Modal>
         </>
     );
 }
