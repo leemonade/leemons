@@ -1,13 +1,28 @@
-import useListLevelSchema from '../../../hooks/levelschema/useListLevelSchema';
-import Tree from '../../common/tree';
+import { useEffect } from 'react';
+import useListLevelSchema from '../../../../hooks/levelschema/useListLevelSchema';
+import Tree from '../../../common/tree';
 
-export default function TreeAdmin() {
+function findEntity(id, entities) {
+  return entities.find(({ id: entityId }) => entityId === id);
+}
+
+export default function TreeAdmin({
+  onDetails = () => {},
+  onEdit = () => {},
+  onAdd = () => {},
+  setUpdate = () => {},
+}) {
   const [
     levelSchemas,
     setLevelSchemas,
     levelSchemasError,
     levelSchemasLoading,
+    update,
   ] = useListLevelSchema('en');
+
+  useEffect(() => {
+    setUpdate(update);
+  }, [update]);
   return (
     <div className="tree_editWrapper flex-1 my-2 mb-2">
       {(() => {
@@ -21,13 +36,14 @@ export default function TreeAdmin() {
           <Tree
             entities={levelSchemas}
             onSelect={(node, toggle) => {
+              toggle();
               if (node.properties.editable !== false) {
-                console.log('Edit', node.id);
-                // setAddLevelSchema({ active: true, entityId: node.id });
+                onEdit(findEntity(node.id, levelSchemas));
               } else {
-                toggle();
+                onDetails(findEntity(node.id, levelSchemas));
               }
             }}
+            onAdd={(node) => onAdd(node.data.parent)}
           />
         );
       })()}

@@ -7,8 +7,9 @@ import EditLevel from '@classroom/components/wip-dev/pages/tree/editLevel';
 import { PageHeader, Button } from 'leemons-ui';
 
 function PageHeaderPage() {
-  const [showEdit, toggleShowEdit] = useState(false);
-  const toggleView = () => toggleShowEdit((value) => !value);
+  const [showEdit, toggleShowEdit] = useState({ active: false });
+  const [updateEntities, setUpdateEntities] = useState(null);
+  const toggleView = () => toggleShowEdit(({ active }) => ({ active: !active }));
   return (
     <>
       <div className="bg-secondary-content  edit-mode w-full h-screen overflow-auto grid">
@@ -22,8 +23,31 @@ function PageHeaderPage() {
         </div>
         <div className="flex max-w-screen-xl w-full mx-auto px-6">
           <Button onClick={toggleView}>Toggle</Button>
-          <Tree />
-          {showEdit ? <EditLevel /> : <TemplatePanel />}
+          <Tree
+            setUpdate={(update) => setUpdateEntities({ update })}
+            onDetails={console.log}
+            onEdit={(entity) => {
+              if (entity !== showEdit.entity) {
+                toggleShowEdit({ active: true, entity, parent: entity.parent });
+              }
+            }}
+            onAdd={(parent) => {
+              if (showEdit.parent !== parent) {
+                toggleShowEdit({ active: true, entity: null, parent });
+              }
+            }}
+          />
+          {showEdit.active ? (
+            <EditLevel
+              entity={showEdit.entity}
+              parent={showEdit.parent}
+              onUpdate={() => {
+                updateEntities.update();
+              }}
+            />
+          ) : (
+            <TemplatePanel />
+          )}
         </div>
       </div>
     </>

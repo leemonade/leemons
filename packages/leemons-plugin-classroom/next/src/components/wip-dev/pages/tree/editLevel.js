@@ -1,0 +1,95 @@
+import React, { useRef, useEffect } from 'react';
+import { Button, FormControl, Tabs, Tab, TabList, TabPanel, Input, Checkbox } from 'leemons-ui';
+import { InformationCircleIcon, ExclamationCircleIcon } from '@heroicons/react/solid';
+import { useForm } from 'react-hook-form';
+import addLevelSchema from '../../../../services/levelSchemas/addLevelSchema';
+import updateLevelSchema from '../../../../services/levelSchemas/updateLevelSchema';
+
+export default function EditLevel({ entity, parent, onUpdate = () => {} }) {
+  const { register, handleSubmit, setValue } = useForm();
+
+  useEffect(() => {
+    setValue('name', entity ? entity.name : '');
+    setValue('isClass', entity ? !!entity.isClass : false);
+  }, [entity]);
+
+  const onSubmit = async (data) => {
+    const isNewEntity = !entity;
+
+    const levelSchema = {
+      names: {
+        en: data.name,
+        es: data.name,
+      },
+      isClass: data.isClass,
+      parent,
+    };
+
+    if (isNewEntity) {
+      await addLevelSchema(levelSchema);
+    } else {
+      await updateLevelSchema({ ...levelSchema, id: entity.id });
+    }
+    onUpdate();
+  };
+  return (
+    <>
+      <div className="flex-1 my-2 mb-2 bg-primary-content py-6 pl-12 pr-6">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {/* <FormControl {...register('name')}> */}
+          <div className="flex space-x-2 mb-4">
+            <Input
+              {...register('name')}
+              outlined
+              className="input w-full"
+              placeholder="Level name"
+            />
+            <button className="btn  btn-primary">Save level and continue</button>
+          </div>
+          {/* </FormControl> */}
+          <FormControl
+            className="mb-12 px-4"
+            label={
+              <>
+                Class Level{' '}
+                <span className="fc_legend">
+                  <InformationCircleIcon className={`w-5 h-5 inline mx-2 text-gray-30`} />
+                  Minimum level of student assignment
+                </span>
+              </>
+            }
+            labelPosition="right"
+          >
+            <Checkbox color="primary" {...register('isClass')} />
+          </FormControl>
+        </form>
+        <div>
+          <Button color="primary" link className="pr-1">
+            Translations
+          </Button>
+          <span className="fc_legend">
+            <ExclamationCircleIcon className={`w-3 h-3 inline mr-2 text-error`} />
+            Untranslated content will appear in the default language
+          </span>
+        </div>
+
+        <Tabs>
+          <TabList>
+            <Tab tabIndex="0" id="Tab1" panelId="Panel1">
+              Extra data
+            </Tab>
+            <Tab tabIndex="0" id="Tab2" panelId="Panel2">
+              Permissions
+            </Tab>
+          </TabList>
+          <TabPanel id="Panel1" tabId="Tab1" className="p-4">
+            <h2>Any content 1</h2>
+          </TabPanel>
+          <TabPanel id="Panel2" tabId="Tab2" className="p-4">
+            <h2>Any content 2</h2>
+          </TabPanel>
+        </Tabs>
+      </div>
+    </>
+  );
+}

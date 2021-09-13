@@ -1,11 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default (f, ...args) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
+  const request = useRef(() => {
     setLoading(true);
     try {
       f()
@@ -21,7 +20,11 @@ export default (f, ...args) => {
       setLoading(false);
       setError(e);
     }
+  });
+
+  useEffect(() => {
+    request.current();
   }, [...args]);
 
-  return [data, setData, error, loading];
+  return [data, setData, error, loading, request.current];
 };

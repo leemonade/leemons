@@ -62,7 +62,8 @@ function tree({
       } else {
         buttons.push(
           ...entities
-            ?.filter(
+            ?.filter((entity) => entity.properties.assignable !== false)
+            .filter(
               (entity) =>
                 !entity.isClass &&
                 // Can add many to a level or does not have
