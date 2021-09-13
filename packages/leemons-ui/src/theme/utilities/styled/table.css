@@ -1,0 +1,46 @@
+/* :> */
+@layer utilities {
+  /* <: */
+  .table {
+
+    thead {
+        @apply border-b border-base-200;
+        th {
+            @apply bg-transparent rounded-none normal-case font-inter text-secondary-600;
+        }
+    }  
+    tbody {
+      th,
+      td {
+        @apply bg-transparent;
+      }
+    }
+    tr {
+        @apply border-b border-base-200;
+        td {
+            @apply font-inter text-sm text-secondary-500;
+            &.selected {
+                @apply bg-primary-100 ;
+                background-clip: padding-box; /* bug border disappear */
+            }
+            /* clase para centrar elementos dentro de un div de la tabla */
+            .center {
+                @apply  w-full inline-flex justify-center text-center;
+            }
+            .checkbox {
+                & ~ .checkbox-mark {
+                    @apply w-4 h-4;
+                    &:before {
+                        width: 6px;
+                        height: 12px;
+                    }
+                }
+            }
+        }
+    }
+
+
+  }
+  /* :> */
+}
+/* <: */

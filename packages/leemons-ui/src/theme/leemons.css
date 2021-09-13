@@ -93,6 +93,7 @@
 @import './utilities/unstyled/button.css';
 @import './utilities/unstyled/card.css';
 @import './utilities/unstyled/input.css';
+@import './utilities/unstyled/table.css';
 @import './utilities/unstyled/select.css';
 /* Styled Utilities */
 @import './utilities/styled/alert.css';
@@ -101,6 +102,7 @@
 @import './utilities/styled/backgrounds.css';
 @import './utilities/styled/badge.css';
 @import './utilities/styled/modal.css';
+@import './utilities/styled/table.css';
 @import './utilities/styled/tooltip.css';
 
 /* ------------------------------------------ */
