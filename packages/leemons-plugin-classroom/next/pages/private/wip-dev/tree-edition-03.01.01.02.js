@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { withLayout } from '@layout/hoc';
 import { PlusCircleIcon } from '@heroicons/react/outline';
-import Tree from '@classroom/components/pages/tree/treeAdmin';
-import TemplatePanel from '@classroom/components/pages/tree/templatePanel';
-import EditLevel from '@classroom/components/pages/tree/editLevel';
+import Tree from '@classroom/components/wip-dev/pages/tree/treeAdmin';
+import TemplatePanel from '@classroom/components/wip-dev/pages/tree/templatePanel';
+import EditLevel from '@classroom/components/wip-dev/pages/tree/editLevel';
 import { PageHeader, Button } from 'leemons-ui';
 
 function PageHeaderPage() {

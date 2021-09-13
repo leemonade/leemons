@@ -12,7 +12,7 @@ export default function Index() {
         {pages.map((page) => (
           <li key={page}>
             <a>
-              <Link href={`./salu/${page}`}>{page}</Link>
+              <Link href={`./wip-dev/${page}`}>{page}</Link>
             </a>
           </li>
         ))}
