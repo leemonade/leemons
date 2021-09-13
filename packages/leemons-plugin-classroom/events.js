@@ -1,4 +1,4 @@
-const { defaultPermissions } = require('./config/constants');
+const { permissions } = require('./config/constants');
 const {
   addMain,
   addWelcome,
@@ -7,6 +7,7 @@ const {
   addClasses,
 } = require('./src/services/menu-builder');
 const init = require('./init');
+const updateCenters = require('./src/services/centers/updateCenters');
 
 // TODO: el proceso de gestionar los elementos que se añaden al MenuBuilder debería estar abstraido
 // tal y como se está haciendo ahora pero, en lugar de en cada Plugin, hacerlo a nivel del propio MenuBuilder
@@ -22,10 +23,12 @@ async function events(isInstalled) {
     init();
   });
 
+  updateCenters();
+
   if (!isInstalled) {
     leemons.events.once('plugins.users:init-permissions', async () => {
       const usersPlugin = leemons.getPlugin('users');
-      await usersPlugin.services.permissions.addMany(defaultPermissions);
+      await usersPlugin.services.permissions.addMany(permissions.permissions);
       leemons.events.emit('init-permissions');
     });
 

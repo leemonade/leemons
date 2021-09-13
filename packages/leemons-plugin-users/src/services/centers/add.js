@@ -38,6 +38,7 @@ async function add({ name, description, locale }, { transacting: _transacting } 
         transacting,
       });
 
+      leemons.events.emit('didCreateCenter');
       return center;
     },
     table.roles,

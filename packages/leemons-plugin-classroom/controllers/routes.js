@@ -1,10 +1,25 @@
-const { defaultPermissions } = require('../config/constants');
+const {
+  permissions: { names: permissions },
+} = require('../config/constants');
 
-const defaultPermission = (actions) => ({
-  [defaultPermissions[0].permissionName]: {
-    actions: actions || defaultPermissions[0].actions,
-  },
-});
+const getPermissions = (permissionsArr, actions = null) => {
+  if (Array.isArray(permissionsArr)) {
+    return permissionsArr.reduce(
+      (obj, [permission, _actions]) => ({
+        ...obj,
+        [permission]: {
+          actions: _actions.includes('admin') ? _actions : ['admin', ..._actions],
+        },
+      }),
+      {}
+    );
+  }
+  return {
+    [permissionsArr]: {
+      actions: actions.includes('admin') ? actions : ['admin', ...actions],
+    },
+  };
+};
 
 module.exports = [
   {
@@ -12,28 +27,28 @@ module.exports = [
     method: 'GET',
     handler: 'settings.findOne',
     authenticated: true,
-    allowedPermissions: { ...defaultPermission(['view']) },
+    allowedPermissions: getPermissions(permissions.classroom, ['view']),
   },
   {
     path: '/settings',
     method: 'POST',
     handler: 'settings.update',
     authenticated: true,
-    allowedPermissions: { ...defaultPermission(['edit', 'admin']) },
+    allowedPermissions: getPermissions(permissions.classroom, ['edit']),
   },
   {
     path: '/settings/enable-menu-item',
     method: 'POST',
     handler: 'settings.enableMenuItem',
     authenticated: true,
-    allowedPermissions: { ...defaultPermission(['edit', 'admin']) },
+    allowedPermissions: getPermissions(permissions.classroom, ['edit']),
   },
   {
     path: '/tree/detail',
     method: 'GET',
     handler: 'tree.detail',
     authenticated: true,
-    allowedPermissions: { ...defaultPermission(['view']) },
+    allowedPermissions: getPermissions(permissions.classroom, ['view']),
   },
 
   // TODO: Add permissions
@@ -41,115 +56,163 @@ module.exports = [
     path: '/levelSchema',
     method: 'POST',
     handler: 'levelSchemas.add',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tree, ['create']),
   },
   {
     path: '/levelSchema/:id',
     method: 'GET',
     handler: 'levelSchemas.get',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tree, ['view']),
   },
   {
     path: '/levelSchema',
     method: 'GET',
     handler: 'levelSchemas.list',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tree, ['view']),
   },
   {
     path: '/levelSchema/:id',
     method: 'DELETE',
     handler: 'levelSchemas.delete',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tree, ['delete']),
+  },
+  {
+    path: '/levelSchema/:id',
+    method: 'PATCH',
+    handler: 'levelSchemas.update',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tree, ['update']),
   },
   {
     path: '/levelSchema/:id/names',
     method: 'PATCH',
     handler: 'levelSchemas.setNames',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tree, ['update']),
   },
   {
     path: '/levelSchema/:id/parent',
     method: 'PATCH',
     handler: 'levelSchemas.setParent',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tree, ['update']),
   },
   {
     path: '/levelSchema/:id/isClass',
     method: 'PATCH',
     handler: 'levelSchemas.setIsClass',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tree, ['update']),
   },
   {
     path: '/levelSchema/:id/assignables',
     method: 'POST',
     handler: 'levelSchemas.addAssignables',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions([
+      [permissions.tree, ['update']],
+      ['plugins.users.profiles', ['view']],
+    ]),
   },
   {
     path: '/levelSchema/:id/assignables',
     method: 'DELETE',
     handler: 'levelSchemas.removeAssignables',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions([
+      [permissions.tree, ['update']],
+      ['plugins.users.profiles', ['view']],
+    ]),
   },
 
   {
     path: '/level',
     method: 'POST',
     handler: 'levels.add',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.organization, ['create']),
   },
   {
     path: '/level/:id',
     method: 'GET',
     handler: 'levels.get',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.organization, ['view']),
   },
   {
     path: '/level',
     method: 'GET',
     handler: 'levels.list',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.organization, ['view']),
   },
   {
     path: '/level/:id',
     method: 'DELETE',
     handler: 'levels.delete',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.organization, ['delete']),
+  },
+  {
+    path: '/level/:id',
+    method: 'PATCH',
+    handler: 'levels.update',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.organization, ['update']),
   },
   {
     path: '/level/:id/names',
     method: 'PATCH',
     handler: 'levels.setNames',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.organization, ['update']),
   },
   {
     path: '/level/:id/descriptions',
     method: 'PATCH',
     handler: 'levels.setDescriptions',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.organization, ['update']),
   },
   {
     path: '/level/:id/parent',
     method: 'PATCH',
     handler: 'levels.setParent',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.organization, ['update']),
   },
   {
     path: '/level/:id/users',
     method: 'GET',
     handler: 'levels.getUsers',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions([
+      [permissions.organization, ['view']],
+      ['plugins.users.users', ['view']],
+    ]),
   },
   {
     path: '/level/:id/users',
     method: 'POST',
     handler: 'levels.addUsers',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions([
+      [permissions.organization, ['assign']],
+      ['plugins.users.users', ['view']],
+    ]),
   },
   {
     path: '/level/:id/users',
     method: 'DELETE',
     handler: 'levels.removeUsers',
-    authenticated: false,
+    authenticated: true,
+    allowedPermissions: getPermissions([
+      [permissions.organization, ['assign']],
+      ['plugins.users.users', ['view']],
+    ]),
   },
 ];
