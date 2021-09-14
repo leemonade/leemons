@@ -5,8 +5,11 @@ import Tree from '@classroom/components/wip-dev/pages/tree/treeAdmin';
 import TemplatePanel from '@classroom/components/wip-dev/pages/tree/templatePanel';
 import EditLevel from '@classroom/components/wip-dev/pages/tree/editLevel';
 import { PageHeader, Button } from 'leemons-ui';
+import { useSession } from '@users/session';
+import { goLoginPage } from '@users/navigate';
 
-function PageHeaderPage() {
+function TreePage() {
+  const session = useSession({ redirectTo: goLoginPage });
   const [showEdit, toggleShowEdit] = useState({ active: false });
   const [updateEntities, setUpdateEntities] = useState(null);
   const toggleView = () => toggleShowEdit(({ active }) => ({ active: !active }));
@@ -24,6 +27,7 @@ function PageHeaderPage() {
         <div className="flex max-w-screen-xl w-full mx-auto px-6">
           <Button onClick={toggleView}>Toggle</Button>
           <Tree
+            locale={session.locale}
             setUpdate={(update) => setUpdateEntities({ update })}
             onDetails={console.log}
             onEdit={(entity) => {
@@ -54,4 +58,4 @@ function PageHeaderPage() {
   );
 }
 
-export default withLayout(PageHeaderPage);
+export default withLayout(TreePage);

@@ -42,7 +42,11 @@ const Checkbox = React.forwardRef(
         if (checked.fromClick) {
           inputRef.current.checked = checked.checked;
         }
-        setChecked({ checked: !inputRef.current.checked, fromClick: false });
+        if (event.target === inputRef.current) {
+          setChecked({ checked: inputRef.current.checked, fromClick: false });
+        } else {
+          setChecked((_checked) => ({ checked: !_checked.checked, fromClick: false }));
+        }
         onChange(event);
       }
     };

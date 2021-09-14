@@ -7,6 +7,7 @@ function findEntity(id, entities) {
 }
 
 export default function TreeAdmin({
+  locale = 'en',
   onDetails = () => {},
   onEdit = () => {},
   onAdd = () => {},
@@ -18,16 +19,17 @@ export default function TreeAdmin({
     levelSchemasError,
     levelSchemasLoading,
     update,
-  ] = useListLevelSchema('en');
+  ] = useListLevelSchema(locale);
 
   useEffect(() => {
     setUpdate(update);
   }, []);
+
   return (
     <div className="tree_editWrapper flex-1 my-2 mb-2">
       {(() => {
         if (levelSchemasError) {
-          return <p>{levelSchemasError}</p>;
+          return <p>{levelSchemasError.message}</p>;
         }
         if (!levelSchemas && levelSchemasLoading) {
           return <p>Loading ...</p>;

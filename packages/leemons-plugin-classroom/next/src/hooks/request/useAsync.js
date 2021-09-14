@@ -23,6 +23,23 @@ export default (f, ...args) => {
   });
 
   useEffect(() => {
+    request.current = () => {
+      setLoading(true);
+      try {
+        f()
+          .then((res) => {
+            setData(res);
+            setLoading(false);
+          })
+          .catch((e) => {
+            setLoading(false);
+            setError(e);
+          });
+      } catch (e) {
+        setLoading(false);
+        setError(e);
+      }
+    };
     request.current();
   }, [...args]);
 
