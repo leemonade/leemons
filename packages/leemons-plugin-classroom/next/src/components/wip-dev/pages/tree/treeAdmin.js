@@ -13,6 +13,7 @@ export default function TreeAdmin({
   onAdd = () => {},
   setUpdate = () => {},
 }) {
+  // Get the DB LevelSchemas
   const [
     levelSchemas,
     setLevelSchemas,
@@ -21,6 +22,7 @@ export default function TreeAdmin({
     update,
   ] = useListLevelSchema(locale);
 
+  // Give the update function to the parent
   useEffect(() => {
     setUpdate(update);
   }, []);
