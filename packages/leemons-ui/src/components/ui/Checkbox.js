@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 const Checkbox = React.forwardRef(
@@ -14,7 +14,7 @@ const Checkbox = React.forwardRef(
     },
     ref
   ) => {
-    const inputRef = createRef();
+    const inputRef = ref && typeof ref !== 'function' ? ref : useRef();
     const colorClass = color ? `checkbox-${color}` : '';
     const [checked, setChecked] = useState({ checked: defaultChecked, fromClick: false });
 
@@ -40,10 +40,10 @@ const Checkbox = React.forwardRef(
     const customOnChange = (event) => {
       if (!readOnly) {
         if (checked.fromClick) {
-          event.target.checked = checked.checked;
+          inputRef.current.checked = checked.checked;
         }
+        setChecked({ checked: !inputRef.current.checked, fromClick: false });
         onChange(event);
-        setChecked({ checked: event.target.checked, fromClick: false });
       }
     };
 
@@ -51,8 +51,10 @@ const Checkbox = React.forwardRef(
       <div>
         <input
           ref={(e) => {
+            if (typeof ref === 'function') {
+              ref(e);
+            }
             inputRef.current = e;
-            if (ref) ref.current = e;
           }}
           type="checkbox"
           checked={checked.checked}
@@ -70,10 +72,5 @@ const Checkbox = React.forwardRef(
     );
   }
 );
-
-Checkbox.propTypes = {
-  className: PropTypes.string,
-  color: PropTypes.oneOf(['neutral', 'primary', 'secondary', 'accent', 'error']),
-};
 
 export default Checkbox;

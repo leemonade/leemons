@@ -22,7 +22,7 @@ export default function TreeAdmin({
 
   useEffect(() => {
     setUpdate(update);
-  }, [update]);
+  }, []);
   return (
     <div className="tree_editWrapper flex-1 my-2 mb-2">
       {(() => {
