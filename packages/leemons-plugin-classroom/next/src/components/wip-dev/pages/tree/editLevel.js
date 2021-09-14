@@ -8,19 +8,25 @@ import useTranslationsTabs from '../../../multilanguage/translationsTabs';
 import Translations from './translations';
 
 export default function EditLevel({ entity, parent, onUpdate = () => {} }) {
+  // Translations drawer
   const { toggleTranslations, warnings, ...translationsProps } = useTranslationsTabs({
     warningDefault: true,
   });
+
   const [name, setName] = useState('');
   const { register, handleSubmit, setValue } = useForm();
 
+  // Update form values if the selected entity changes
   useEffect(() => {
     setName(entity ? entity.name : '');
     setValue('isClass', entity ? !!entity.isClass : false);
   }, [entity]);
 
+  // On form Submit, create/update entity
   const onSubmit = async (data) => {
     const isNewEntity = !entity;
+
+    // Only save written values
     const names = Object.entries(data.names)
       .filter(([, value]) => value?.length)
       .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {});
@@ -107,6 +113,7 @@ export default function EditLevel({ entity, parent, onUpdate = () => {} }) {
           </TabPanel>
         </Tabs>
       </div>
+      {/* Translations Drawer */}
       <Translations {...translationsProps} register={register} setName={setName} name={name} />
     </>
   );
