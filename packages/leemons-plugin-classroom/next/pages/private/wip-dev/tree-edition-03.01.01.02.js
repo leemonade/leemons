@@ -26,6 +26,7 @@ function TreePage() {
         </div>
         <div className="flex max-w-screen-xl w-full mx-auto px-6">
           <Button onClick={toggleView}>Toggle</Button>
+          {/* LevelSchemas tree */}
           <Tree
             locale={session.locale}
             setUpdate={(update) => setUpdateEntities({ update })}
@@ -42,6 +43,7 @@ function TreePage() {
             }}
           />
           {showEdit.active ? (
+            // Edit LevelSchema form
             <EditLevel
               entity={showEdit.entity}
               parent={showEdit.parent}
@@ -50,6 +52,7 @@ function TreePage() {
               }}
             />
           ) : (
+            // Show templates panel
             <TemplatePanel />
           )}
         </div>
