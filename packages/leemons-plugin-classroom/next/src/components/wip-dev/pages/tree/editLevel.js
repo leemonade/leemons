@@ -9,7 +9,7 @@ import updateLevelSchema from '../../../../services/levelSchemas/updateLevelSche
 import { useTranslationsDrawer } from '../../../multilanguage/translationsDrawer';
 import Translations from './translations';
 
-export default function EditLevel({ entity, parent, onUpdate = () => {} }) {
+export default function EditLevel({ entity = null, parent, onUpdate = () => {} }) {
   // Translations drawer
   const drawer = useTranslationsDrawer({ warningDefault: true });
   const { toggleDrawer, warnings } = drawer;
@@ -113,7 +113,12 @@ export default function EditLevel({ entity, parent, onUpdate = () => {} }) {
           </TabPanel>
         </Tabs>
       </div>
-      <Translations {...drawer} defaultLocaleValues={values} setDefaultLocaleValues={setValues} />
+      <Translations
+        {...drawer}
+        defaultLocaleValues={values}
+        setDefaultLocaleValues={setValues}
+        entityId={entity?.id || null}
+      />
     </>
   );
 }

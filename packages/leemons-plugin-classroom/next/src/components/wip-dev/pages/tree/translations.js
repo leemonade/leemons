@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Input } from 'leemons-ui';
 import PropTypes from 'prop-types';
 import { TranslationsDrawer } from '../../../multilanguage/translationsDrawer';
+import useGetNames from '../../../../hooks/levelschema/useGetNames';
 
 function TranslationTab({
   locale,
@@ -61,13 +62,24 @@ export default function Translations({
   setDefaultLocaleValues,
   onSave = () => {},
   onCancel = () => {},
+  entityId,
   ...props
 }) {
+  const [names] = useGetNames(entityId);
   const { warnings, setWarnings, toggleDrawer, drawer } = props;
 
   // Save the previous main values, so it can be restored onCancel
   const [originalDefaultValue, setOriginalDefaultValue] = useState({});
   const [values, setValues] = useState({});
+
+  // Update translations to the new entity values
+  useEffect(() => {
+    if (names) {
+      setValues(() =>
+        names.reduce((obj, { locale, value }) => ({ ...obj, [locale]: { name: value } }), {})
+      );
+    }
+  }, [names]);
 
   // Update the previous main value when is changed and the Drawer is closed
   useEffect(() => {
@@ -107,6 +119,7 @@ Translations.propTypes = {
   setDefaultLocaleValues: PropTypes.func,
   onSave: PropTypes.func,
   onCancel: PropTypes.func,
+  entityId: PropTypes.string,
   warnings: PropTypes.object,
   setWarnings: PropTypes.func,
   toggleDrawer: PropTypes.func,

@@ -37,7 +37,7 @@ function TreePage() {
               }
             }}
             onAdd={(parent) => {
-              if (showEdit.parent !== parent) {
+              if (showEdit.parent !== parent || showEdit.entity) {
                 toggleShowEdit({ active: true, entity: null, parent });
               }
             }}
