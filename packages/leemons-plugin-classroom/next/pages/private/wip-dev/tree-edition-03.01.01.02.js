@@ -31,6 +31,7 @@ function TreePage() {
         <div className="flex max-w-screen-xl w-full mx-auto px-6">
           {/* LevelSchemas tree */}
           <Tree
+            editingEntity={showEdit}
             locale={session?.locale}
             setUpdate={(update) => setUpdateEntities({ update })}
             onDetails={console.log}

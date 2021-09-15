@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import useListLevelSchema from '../../../../hooks/levelschema/useListLevelSchema';
 import Tree from '../../../common/tree';
@@ -13,11 +13,35 @@ export default function TreeAdmin({
   onEdit = () => {},
   onAdd = () => {},
   setUpdate = () => {},
+  editingEntity = null,
 }) {
   // Get the DB LevelSchemas
   const [levelSchemas, , levelSchemasError, levelSchemasLoading, update] = useListLevelSchema(
     locale
   );
+  const [entity, setEntity] = useState(null);
+
+  useEffect(() => {
+    if (editingEntity && editingEntity.active) {
+      if (editingEntity.entity) {
+        setEntity({
+          ...editingEntity.entity,
+          properties: { ...editingEntity.entity.properties, editing: true },
+        });
+      } else {
+        setEntity({
+          id: 'creating',
+          parent: editingEntity.parent,
+          isClass: false,
+          name: 'Create Level',
+          properties: {
+            editing: true,
+          },
+        });
+      }
+    }
+    console.log(editingEntity);
+  }, [editingEntity]);
 
   // Give the update function to the parent
   useEffect(() => {
@@ -36,8 +60,13 @@ export default function TreeAdmin({
         return (
           <Tree
             childrenLimit={1}
-            entities={levelSchemas}
-            onSelect={(node) => {
+            entities={
+              entity ? [...levelSchemas.filter(({ id }) => id !== entity.id), entity] : levelSchemas
+            }
+            onSelect={(node, toggle) => {
+              if (node.id === entity?.id) {
+                toggle();
+              }
               if (node.properties.editable !== false) {
                 onEdit(findEntity(node.id, levelSchemas));
               } else {
@@ -58,4 +87,5 @@ TreeAdmin.propTypes = {
   onEdit: PropTypes.func,
   onAdd: PropTypes.func,
   setUpdate: PropTypes.func,
+  editingEntity: PropTypes.element,
 };

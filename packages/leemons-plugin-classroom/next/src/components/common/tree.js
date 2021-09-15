@@ -109,11 +109,19 @@ function Tree({
 
     // The actual Levels
     treeProps.setTreeData([
-      ...entities?.map((entity) => ({
-        ...entity,
-        text: entity.name,
-        parent: entity.parent || 0,
-      })),
+      ...entities?.map((entity) => {
+        if (entity.properties.editing) {
+          console.log('editing', entity.name);
+          treeProps.selectedNode = entity.id;
+          treeProps.setSelectedNode(entity.id);
+        }
+        return {
+          ...entity,
+          text: entity.name,
+          parent: entity.parent || 0,
+          draggable: false,
+        };
+      }),
       ...(showButtons ? buttons : []),
     ]);
 
