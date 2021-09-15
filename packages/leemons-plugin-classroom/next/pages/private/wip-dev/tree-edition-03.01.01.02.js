@@ -50,6 +50,7 @@ function TreePage() {
             // Edit LevelSchema form
             <EditLevel
               entity={showEdit.entity}
+              setEntity={(state) => toggleShowEdit({ active: showEdit.active, ...state })}
               parent={showEdit.parent}
               onUpdate={() => {
                 updateEntities.update();

@@ -11,7 +11,12 @@ import updateLevelSchema from '../../../../services/levelSchemas/updateLevelSche
 import { useTranslationsDrawer } from '../../../multilanguage/translationsDrawer';
 import Translations from './translations';
 
-export default function EditLevel({ entity = null, parent, onUpdate = () => {} }) {
+export default function EditLevel({
+  entity = null,
+  setEntity = () => {},
+  parent,
+  onUpdate = () => {},
+}) {
   const [translations] = useTranslate({ keysStartsWith: 'plugins.classroom.editor' });
   const t = tLoader('plugins.classroom.editor', translations);
   // Translations drawer
@@ -25,7 +30,13 @@ export default function EditLevel({ entity = null, parent, onUpdate = () => {} }
   // Update form values if the selected entity changes
   useEffect(() => {
     setValue('isClass', entity ? !!entity.isClass : false);
-  }, [entity]);
+  }, [entity?.id]);
+
+  useEffect(() => {
+    if (entity) {
+      setEntity({ ...entity, entity: { ...entity, name: values.name } });
+    }
+  }, [values]);
 
   // On form Submit, create/update entity
   const onSubmit = async (data) => {
@@ -57,7 +68,10 @@ export default function EditLevel({ entity = null, parent, onUpdate = () => {} }
     };
 
     if (isNewEntity) {
-      await addLevelSchema(levelSchema);
+      const { id, parent: _parent } = await addLevelSchema(levelSchema);
+      if (id) {
+        setEntity({ ...entity, entity: { ...entity, id, parent: _parent } });
+      }
     } else {
       await updateLevelSchema({ ...levelSchema, id: entity.id });
     }
@@ -139,6 +153,7 @@ export default function EditLevel({ entity = null, parent, onUpdate = () => {} }
 
 EditLevel.propTypes = {
   entity: PropTypes.object,
+  setEntity: PropTypes.func,
   parent: PropTypes.string,
   onUpdate: PropTypes.func,
 };

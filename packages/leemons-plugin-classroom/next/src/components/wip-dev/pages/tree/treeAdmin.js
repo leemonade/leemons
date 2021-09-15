@@ -33,7 +33,7 @@ export default function TreeAdmin({
           id: 'creating',
           parent: editingEntity.parent,
           isClass: false,
-          name: 'Create Level',
+          name: editingEntity.name || 'Create Level',
           properties: {
             editing: true,
           },
