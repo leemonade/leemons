@@ -1,5 +1,3 @@
-// TODO: Add translations from the saved object itself
-// TODO: Update the warnings onCancel and on EntityUpdate
 import React, { useEffect, useState } from 'react';
 import { Input } from 'leemons-ui';
 import PropTypes from 'prop-types';
@@ -39,7 +37,7 @@ function TranslationTab({
           if (isDefault) {
             setDefaultLocaleValues({ ...value, name: e.target.value });
           }
-          setValues((_value) => ({ ..._value, [locale]: { ...value, name: e.target.value } }));
+          setValues({ [locale]: { ...value, name: e.target.value } });
         }}
       />
     </>
@@ -70,14 +68,37 @@ export default function Translations({
 
   // Save the previous main values, so it can be restored onCancel
   const [originalDefaultValue, setOriginalDefaultValue] = useState({});
-  const [values, setValues] = useState({});
+  const [values, _setValues] = useState({});
+  const setValues = ({ reload = false, ...newValue }) => {
+    if (reload) {
+      _setValues(newValue);
+    } else {
+      _setValues((oldValue) => ({ ...oldValue, ...newValue }));
+    }
+    const _warnings = Object.entries(newValue).reduce((obj, [locale, value]) => {
+      if (value?.name && value?.name.length) {
+        if (reload || warnings[locale] !== false) {
+          return { ...obj, [locale]: false };
+        }
+      } else if (reload || warnings[locale] !== true) {
+        return { ...obj, [locale]: true };
+      }
+      return obj;
+    }, {});
+    if (reload) {
+      setWarnings({ reload: true, ..._warnings });
+    } else if (Object.keys(_warnings).length) {
+      setWarnings(_warnings);
+    }
+  };
 
   // Update translations to the new entity values
   useEffect(() => {
     if (names) {
-      setValues(() =>
-        names.reduce((obj, { locale, value }) => ({ ...obj, [locale]: { name: value } }), {})
-      );
+      setValues({
+        reload: true,
+        ...names.reduce((obj, { locale, value }) => ({ ...obj, [locale]: { name: value } }), {}),
+      });
     }
   }, [names]);
 
@@ -94,8 +115,11 @@ export default function Translations({
   };
 
   const handleCancel = () => {
-    // Clear all the values
-    setValues({});
+    // Set the rest of the values to the DB' value
+    setValues({
+      reload: true,
+      ...names.reduce((obj, { locale, value }) => ({ ...obj, [locale]: { name: value } }), {}),
+    });
     // restore the original value
     setDefaultLocaleValues(originalDefaultValue);
     onCancel();

@@ -1,38 +1,9 @@
-import { useMemo, useEffect, cloneElement } from 'react';
-import { getDefaultPlatformLocaleRequest, getPlatformLocalesRequest } from '@users/request';
+import { useMemo, cloneElement } from 'react';
 import { Tabs as UITabs, Tab, TabList, TabPanel } from 'leemons-ui';
 import { StarIcon, ExclamationCircleIcon } from '@heroicons/react/solid';
 import PropTypes from 'prop-types';
-import useAsync from '../../../hooks/request/useAsync';
 
-export default function Tabs({ panel, warnings, setWarnings, warningDefault }) {
-  const [_locales] = useAsync(getPlatformLocalesRequest);
-  const [_defaultLocale] = useAsync(getDefaultPlatformLocaleRequest);
-
-  const locales = _locales?.locales;
-  const defaultLocale = _defaultLocale?.locale;
-
-  useEffect(() => {
-    if (
-      locales?.length &&
-      Object.keys(warnings).sort().join(', ') !==
-        locales
-          .map(({ code }) => code)
-          .sort()
-          .join(', ')
-    ) {
-      setWarnings(
-        locales?.reduce(
-          (obj, { code }) => ({
-            ...obj,
-            [code]: warnings && warnings[code] ? warnings[code] : warningDefault,
-          }),
-          {}
-        )
-      );
-    }
-  }, [warnings, locales]);
-
+export default function Tabs({ panel, warnings, locales, defaultLocale }) {
   const TabsHeaders = useMemo(
     () =>
       locales?.map(({ code, name }) => (
@@ -84,4 +55,6 @@ Tabs.propTypes = {
   warnings: PropTypes.object,
   setWarnings: PropTypes.func,
   warningDefault: PropTypes.bool,
+  locales: PropTypes.arrayOf(PropTypes.object),
+  defaultLocale: PropTypes.string,
 };

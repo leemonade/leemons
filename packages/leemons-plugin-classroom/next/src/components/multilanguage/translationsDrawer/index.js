@@ -1,19 +1,65 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Drawer, useDrawer, Button } from 'leemons-ui';
 import { XIcon } from '@heroicons/react/solid';
 import PropTypes from 'prop-types';
+import { getDefaultPlatformLocaleRequest, getPlatformLocalesRequest } from '@users/request';
 import TranslateIcon from './translateIcon';
 import Tabs from './tabs';
+import useAsync from '../../../hooks/request/useAsync';
 
 export function useTranslationsDrawer(config = {}) {
   const [drawer, toggleDrawer] = useDrawer({ size: 'right', ...config });
-  const [warnings, setWarnings] = useState({});
+  const [warnings, _setWarnings] = useState({});
+  const [_locales] = useAsync(getPlatformLocalesRequest);
+  const [_defaultLocale] = useAsync(getDefaultPlatformLocaleRequest);
+
+  const locales = _locales?.locales;
+  const defaultLocale = _defaultLocale?.locale;
+
+  // If reload arg is provided, replace the whole state by the new one
+  // (missing locales will be set to the default value)
+  const setWarnings = ({ reload, ...value }) =>
+    _setWarnings((oldValue) => {
+      if (reload) {
+        return value;
+      }
+
+      return { ...oldValue, ...value };
+    });
+
+  // Ensure all the tabs have a warning state
+  useEffect(() => {
+    if (
+      locales?.length &&
+      Object.keys(warnings).sort().join(', ') !==
+        locales
+          .map(({ code }) => code)
+          .sort()
+          .join(', ')
+    ) {
+      setWarnings(
+        locales?.reduce(
+          (obj, { code }) => ({
+            ...obj,
+            [code]:
+              warnings && warnings[code] !== undefined
+                ? warnings[code]
+                : config?.warningDefault || false,
+          }),
+          {}
+        )
+      );
+    }
+  }, [warnings, locales]);
+
   return {
     drawer,
     toggleDrawer,
     warnings,
-    setWarnings: (value) => setWarnings((oldValue) => ({ ...oldValue, ...value })),
+    setWarnings,
     warningDefault: config?.warningDefault || false,
+    locales,
+    defaultLocale,
   };
 }
 
@@ -24,6 +70,8 @@ export function TranslationsDrawer({
   setWarnings,
   warningDefault,
   children,
+  locales,
+  defaultLocale,
 
   onSave,
   onCancel,
@@ -45,6 +93,8 @@ export function TranslationsDrawer({
             warnings={warnings}
             setWarnings={setWarnings}
             warningDefault={warningDefault}
+            locales={locales}
+            defaultLocale={defaultLocale}
           />
           <div className="flex justify-between my-16">
             <Button color="primary" className="btn-link" onClick={onCancel}>
@@ -66,6 +116,8 @@ TranslationsDrawer.propTypes = {
   setWarnings: PropTypes.func,
   warningDefault: PropTypes.bool,
   children: PropTypes.element,
+  locales: PropTypes.arrayOf(PropTypes.object),
+  defaultLocale: PropTypes.string,
   onSave: PropTypes.func,
   onCancel: PropTypes.func,
 };
