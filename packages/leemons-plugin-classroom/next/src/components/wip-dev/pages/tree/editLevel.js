@@ -16,7 +16,7 @@ export default function EditLevel({ entity = null, parent, onUpdate = () => {} }
   const t = tLoader('plugins.classroom.editor', translations);
   // Translations drawer
   const drawer = useTranslationsDrawer({ warningDefault: true });
-  const { toggleDrawer, warnings } = drawer;
+  const { toggleDrawer, warnings, defaultLocale } = drawer;
 
   const [values, setValues] = useState({ name: '' });
   const [localizations, setLocalizations] = useState({});
@@ -24,7 +24,6 @@ export default function EditLevel({ entity = null, parent, onUpdate = () => {} }
 
   // Update form values if the selected entity changes
   useEffect(() => {
-    setValues({ name: entity ? entity.name : '' });
     setValue('isClass', entity ? !!entity.isClass : false);
   }, [entity]);
 
@@ -33,14 +32,22 @@ export default function EditLevel({ entity = null, parent, onUpdate = () => {} }
     const isNewEntity = !entity;
 
     // Only save written values
-    const names = Object.entries(data.names)
-      .filter(([, value]) => value?.length)
-      .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {});
+    const localizatedValues = Object.entries(localizations).reduce(
+      (obj, [locale, lValues]) =>
+        Object.entries(lValues).reduce(
+          (obj2, [key, value]) => ({
+            ...obj,
+            [key]: { ...obj2[key], [locale]: value },
+          }),
+          obj
+        ),
+      {}
+    );
 
     const levelSchema = {
       names: {
-        en: name,
-        ...names,
+        ...localizatedValues.name,
+        [defaultLocale]: values.name,
       },
       isClass: data.isClass,
       parent,

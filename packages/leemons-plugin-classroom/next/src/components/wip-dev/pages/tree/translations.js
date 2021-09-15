@@ -65,7 +65,7 @@ export default function Translations({
   ...props
 }) {
   const [names] = useGetNames(entityId);
-  const { warnings, setWarnings, toggleDrawer, drawer } = props;
+  const { warnings, setWarnings, toggleDrawer, drawer, defaultLocale } = props;
 
   // Save the previous main values, so it can be restored onCancel
   const [originalDefaultValue, setOriginalDefaultValue] = useState({});
@@ -96,10 +96,15 @@ export default function Translations({
   // Update translations to the new entity values
   useEffect(() => {
     if (names) {
+      const newValues = names.reduce(
+        (obj, { locale, value }) => ({ ...obj, [locale]: { name: value } }),
+        {}
+      );
       setValues({
         reload: true,
-        ...names.reduce((obj, { locale, value }) => ({ ...obj, [locale]: { name: value } }), {}),
+        ...newValues,
       });
+      setDefaultLocaleValues({ ...defaultLocaleValues, name: newValues[defaultLocale].name });
     }
   }, [names]);
 
@@ -135,6 +140,7 @@ export default function Translations({
     onCancel();
     toggleDrawer();
   };
+
   return (
     <TranslationsDrawer {...props} onSave={handleSave} onCancel={handleCancel}>
       <TranslationTab
@@ -151,6 +157,7 @@ export default function Translations({
 Translations.propTypes = {
   defaultLocaleValues: PropTypes.object,
   setDefaultLocaleValues: PropTypes.func,
+  defaultLocale: PropTypes.string,
   localizations: PropTypes.object,
   onSave: PropTypes.func,
   onCancel: PropTypes.func,

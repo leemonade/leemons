@@ -21,7 +21,7 @@ export default function TreeAdmin({
 
   // Give the update function to the parent
   useEffect(() => {
-    setUpdate(update);
+    setUpdate(() => update);
   }, []);
 
   return (
@@ -35,6 +35,7 @@ export default function TreeAdmin({
         }
         return (
           <Tree
+            childrenLimit={1}
             entities={levelSchemas}
             onSelect={(node, toggle) => {
               toggle();

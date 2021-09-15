@@ -109,7 +109,6 @@ function Tree({
 
     // The actual Levels
     treeProps.setTreeData([
-      // { id: 'center', text: useSchemas ? 'Colegio HDP' : 'Organization/center', parent: 0 },
       ...entities?.map((entity) => ({
         ...entity,
         text: entity.name,
