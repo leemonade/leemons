@@ -41,11 +41,29 @@ module.exports = async function setNames(id, names, { userSession, transacting }
     }
 
     try {
-      const { items, warnings } = await multilanguage.setManyByKey(
-        leemons.plugin.prefixPN(`levelSchemas.${id}.name`),
-        names,
-        { transacting }
+      const nameKey = leemons.plugin.prefixPN(`levelSchemas.${id}.name`);
+      const { namesToSet = {}, namesToDelete = [] } = Object.entries(names).reduce(
+        (obj, [locale, value]) => {
+          if (!value) {
+            const _namesToDelete = obj.namesToDelete || [];
+            return { ...obj, namesToDelete: [..._namesToDelete, locale] };
+          }
+          return { ...obj, namesToSet: { ...obj.namesToSet, [locale]: value } };
+        }
       );
+
+      // Save locales with value
+      const { items, warnings } = await multilanguage.setManyByKey(nameKey, namesToSet, {
+        transacting,
+      });
+
+      // Delete empty locales
+      if (namesToDelete.length) {
+        await multilanguage.deleteMany(
+          namesToDelete.map((locale) => [nameKey, locale]),
+          { transacting }
+        );
+      }
 
       if (warnings?.nonExistingLocales) {
         missingLocales = warnings.nonExistingLocales;

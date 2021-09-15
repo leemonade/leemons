@@ -104,7 +104,10 @@ export default function Translations({
         reload: true,
         ...newValues,
       });
-      setDefaultLocaleValues({ ...defaultLocaleValues, name: newValues[defaultLocale].name });
+      setDefaultLocaleValues({
+        ...defaultLocaleValues,
+        name: newValues[defaultLocale]?.name || '',
+      });
     }
   }, [names]);
 

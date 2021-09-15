@@ -25,7 +25,6 @@ async function updateCenters() {
           },
           properties: {
             editable: false,
-            assignable: false,
             isCenterSchema: true,
           },
         },
@@ -114,7 +113,6 @@ async function updateCenters() {
               parent: organizationLS.id,
               properties: {
                 editable: false,
-                assignable: false,
                 isCenterSchema: true,
               },
             },

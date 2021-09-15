@@ -34,13 +34,16 @@ export default function EditLevel({ entity = null, parent, onUpdate = () => {} }
     // Only save written values
     const localizatedValues = Object.entries(localizations).reduce(
       (obj, [locale, lValues]) =>
-        Object.entries(lValues).reduce(
-          (obj2, [key, value]) => ({
+        Object.entries(lValues).reduce((obj2, [key, value]) => {
+          // When creating entity, ignore empty names
+          if (isNewEntity && !value) {
+            return obj2;
+          }
+          return {
             ...obj,
             [key]: { ...obj2[key], [locale]: value },
-          }),
-          obj
-        ),
+          };
+        }, obj),
       {}
     );
 
