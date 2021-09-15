@@ -3,6 +3,8 @@ import { Button, FormControl, Tabs, Tab, TabList, TabPanel, Input, Checkbox } fr
 import { InformationCircleIcon, ExclamationCircleIcon } from '@heroicons/react/solid';
 import { useForm } from 'react-hook-form';
 import PropTypes from 'prop-types';
+import tLoader from '@multilanguage/helpers/tLoader';
+import useTranslate from '@multilanguage/useTranslate';
 import addLevelSchema from '../../../../services/levelSchemas/addLevelSchema';
 import updateLevelSchema from '../../../../services/levelSchemas/updateLevelSchema';
 
@@ -10,11 +12,14 @@ import { useTranslationsDrawer } from '../../../multilanguage/translationsDrawer
 import Translations from './translations';
 
 export default function EditLevel({ entity = null, parent, onUpdate = () => {} }) {
+  const [translations] = useTranslate({ keysStartsWith: 'plugins.classroom.editor' });
+  const t = tLoader('plugins.classroom.editor', translations);
   // Translations drawer
   const drawer = useTranslationsDrawer({ warningDefault: true });
   const { toggleDrawer, warnings } = drawer;
 
   const [values, setValues] = useState({ name: '' });
+  const [localizations, setLocalizations] = useState({});
   const { register, handleSubmit, setValue } = useForm();
 
   // Update form values if the selected entity changes
@@ -55,28 +60,25 @@ export default function EditLevel({ entity = null, parent, onUpdate = () => {} }
           <FormControl>
             <div className="flex space-x-2 mb-4">
               <Input
-                // {...field}
                 value={values.name}
                 onChange={(e) => {
                   setValues({ ...values, name: e.target.value });
                 }}
                 outlined
                 className="input w-full"
-                placeholder="Level name"
+                placeholder={t('form.name.placeholder')}
               />
-              {/* )}
-            /> */}
-              <Button color="primary">Save level and continue</Button>
+              <Button color="primary">{t('form.save')}</Button>
             </div>
           </FormControl>
           <FormControl
             className="mb-12 px-4"
             label={
               <>
-                Class Level{' '}
+                {t('form.isClass.label')}{' '}
                 <span className="fc_legend">
                   <InformationCircleIcon className={`w-5 h-5 inline mx-2 text-gray-30`} />
-                  Minimum level of student assignment
+                  {t('form.isClass.tooltip')}
                 </span>
               </>
             }
@@ -87,22 +89,22 @@ export default function EditLevel({ entity = null, parent, onUpdate = () => {} }
         </form>
         <div>
           <Button color="primary" link className="pr-1" onClick={toggleDrawer}>
-            Translations
+            {t('translations.label')}
           </Button>
           {Object.values(warnings).some((value) => value) && (
             <span className="fc_legend">
               <ExclamationCircleIcon className={`w-3 h-3 inline mr-2 text-error`} />
-              Untranslated content will appear in the default language
+              {t('translations.tooltip')}
             </span>
           )}
         </div>
         <Tabs>
           <TabList>
             <Tab tabIndex="0" id="Tab1" panelId="Panel1">
-              Extra data
+              {t('tabs.dataset.label')}
             </Tab>
             <Tab tabIndex="0" id="Tab2" panelId="Panel2">
-              Permissions
+              {t('tabs.permissions.label')}
             </Tab>
           </TabList>
           <TabPanel id="Panel1" tabId="Tab1" className="p-4">
@@ -118,6 +120,8 @@ export default function EditLevel({ entity = null, parent, onUpdate = () => {} }
         defaultLocaleValues={values}
         setDefaultLocaleValues={setValues}
         entityId={entity?.id || null}
+        localizations={localizations}
+        onSave={setLocalizations}
       />
     </>
   );

@@ -1,6 +1,8 @@
 import { Tree as UITree, useTree } from 'leemons-ui';
 import { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import tLoader from '@multilanguage/helpers/tLoader';
+import useTranslate from '@multilanguage/useTranslate';
 
 function Tree({
   entities,
@@ -13,6 +15,9 @@ function Tree({
   initialSelected = null,
   childrenLimit = 0,
 }) {
+  const [translations] = useTranslate({ keysStartsWith: 'plugins.classroom.tree.' });
+  const t = tLoader('plugins.classroom.tree', translations);
+
   const treeProps = useTree();
 
   // Regenerate Tree Data when the entities prop change
@@ -44,7 +49,7 @@ function Tree({
                 )
                 .map((level) => ({
                   id: `${schema.id}-${level.id}-ADD`,
-                  text: `Add ${schema.name} (to ${level.name})`,
+                  text: `${t('new.prefix.level')} ${schema.name}`,
                   parent: level.id,
                   type: 'button',
                   draggable: false,
@@ -71,7 +76,7 @@ function Tree({
             )
             .map((entity) => ({
               id: `${entity.id}-ADD`,
-              text: `Add level to ${entity.name}`,
+              text: `${t('new.prefix.levelSchema')}`,
               parent: entity.id,
               type: 'button',
               draggable: false,
@@ -89,7 +94,7 @@ function Tree({
         ) {
           buttons.push({
             id: `center-ADD`,
-            text: `Add level (to organization)`,
+            text: t('new.prefix.levelSchema'),
             parent: 'center',
             type: 'button',
             draggable: false,
@@ -114,7 +119,7 @@ function Tree({
     ]);
 
     // treeProps.;
-  }, [entities, schemas]);
+  }, [entities, schemas, translations]);
 
   useEffect(() => {
     treeProps.setSelectedNode(selectedNode);

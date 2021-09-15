@@ -58,6 +58,7 @@ TranslationTab.propTypes = {
 export default function Translations({
   defaultLocaleValues,
   setDefaultLocaleValues,
+  localizations,
   onSave = () => {},
   onCancel = () => {},
   entityId,
@@ -102,6 +103,13 @@ export default function Translations({
     }
   }, [names]);
 
+  // Update translations to the previous localization
+  useEffect(() => {
+    if (names) {
+      setValues(localizations);
+    }
+  }, [localizations]);
+
   // Update the previous main value when is changed and the Drawer is closed
   useEffect(() => {
     if (!drawer.isShown) {
@@ -115,10 +123,12 @@ export default function Translations({
   };
 
   const handleCancel = () => {
-    // Set the rest of the values to the DB' value
+    // Set the rest of the values to the DB' value and if present, the previous
+    // modified values (last save localizations but not level)
     setValues({
       reload: true,
       ...names.reduce((obj, { locale, value }) => ({ ...obj, [locale]: { name: value } }), {}),
+      ...localizations,
     });
     // restore the original value
     setDefaultLocaleValues(originalDefaultValue);
@@ -141,6 +151,7 @@ export default function Translations({
 Translations.propTypes = {
   defaultLocaleValues: PropTypes.object,
   setDefaultLocaleValues: PropTypes.func,
+  localizations: PropTypes.object,
   onSave: PropTypes.func,
   onCancel: PropTypes.func,
   entityId: PropTypes.string,
