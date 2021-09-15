@@ -4,21 +4,21 @@ import { InformationCircleIcon, ExclamationCircleIcon } from '@heroicons/react/s
 import { useForm } from 'react-hook-form';
 import addLevelSchema from '../../../../services/levelSchemas/addLevelSchema';
 import updateLevelSchema from '../../../../services/levelSchemas/updateLevelSchema';
-// import useTranslationsTabs from '../../../multilanguage/translationsDrawer';
+
+import { useTranslationsDrawer } from '../../../multilanguage/translationsDrawer';
 import Translations from './translations';
 
 export default function EditLevel({ entity, parent, onUpdate = () => {} }) {
   // Translations drawer
-  // const { toggleTranslations, warnings, ...translationsProps } = useTranslationsTabs({
-  //   warningDefault: true,
-  // });
+  const drawer = useTranslationsDrawer({ warningDefault: true });
+  const { toggleDrawer, warnings } = drawer;
 
-  const [name, setName] = useState('');
+  const [values, setValues] = useState({ name: '' });
   const { register, handleSubmit, setValue } = useForm();
 
   // Update form values if the selected entity changes
   useEffect(() => {
-    setName(entity ? entity.name : '');
+    setValues({ name: entity ? entity.name : '' });
     setValue('isClass', entity ? !!entity.isClass : false);
   }, [entity]);
 
@@ -55,10 +55,9 @@ export default function EditLevel({ entity, parent, onUpdate = () => {} }) {
             <div className="flex space-x-2 mb-4">
               <Input
                 // {...field}
-                value={name}
+                value={values.name}
                 onChange={(e) => {
-                  setName(e.target.value);
-                  // onChange(e);
+                  setValues({ ...values, name: e.target.value });
                 }}
                 outlined
                 className="input w-full"
@@ -86,7 +85,7 @@ export default function EditLevel({ entity, parent, onUpdate = () => {} }) {
           </FormControl>
         </form>
         <div>
-          <Button color="primary" link className="pr-1" onClick={toggleTranslations}>
+          <Button color="primary" link className="pr-1" onClick={toggleDrawer}>
             Translations
           </Button>
           {Object.values(warnings).some((value) => value) && (
@@ -113,8 +112,7 @@ export default function EditLevel({ entity, parent, onUpdate = () => {} }) {
           </TabPanel>
         </Tabs>
       </div>
-      {/* Translations Drawer */}
-      {/* <Translations {...translationsProps} register={register} setName={setName} name={name} /> */}
+      <Translations {...drawer} defaultLocaleValues={values} setDefaultLocaleValues={setValues} />
     </>
   );
 }

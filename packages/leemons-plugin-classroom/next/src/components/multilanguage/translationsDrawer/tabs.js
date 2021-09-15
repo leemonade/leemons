@@ -51,7 +51,7 @@ export default function Tabs({ panel, warnings, setWarnings, warningDefault }) {
           )}
         </Tab>
       )),
-    [locales, defaultLocale]
+    [locales, defaultLocale, warnings]
   );
 
   const TabsPanels = useMemo(
@@ -71,11 +71,11 @@ export default function Tabs({ panel, warnings, setWarnings, warningDefault }) {
   return (
     <div>
       <UITabs>
-        <TabList>{TabsHeaders}</TabList>
+        <div className="mb-6 overflow-x-auto">
+          <TabList>{TabsHeaders}</TabList>
+        </div>
         {TabsPanels}
       </UITabs>
-
-      <p>Default Locale: {defaultLocale}</p>
     </div>
   );
 }
