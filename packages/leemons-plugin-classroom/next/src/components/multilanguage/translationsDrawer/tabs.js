@@ -1,10 +1,10 @@
-import { useMemo, cloneElement } from 'react';
+import { useMemo, useEffect, cloneElement } from 'react';
 import { getDefaultPlatformLocaleRequest, getPlatformLocalesRequest } from '@users/request';
 import { Tabs as UITabs, Tab, TabList, TabPanel } from 'leemons-ui';
 import { StarIcon, ExclamationCircleIcon } from '@heroicons/react/solid';
 import useAsync from '../../../hooks/request/useAsync';
 
-export default function Tabs({ panel, warnings = {} }) {
+export default function Tabs({ panel, warnings, setWarnings, warningDefault }) {
   const [_locales, , localesError, localesLoading] = useAsync(getPlatformLocalesRequest);
   const [_defaultLocale, , defaultLocaleError, defaultLocaleLoading] = useAsync(
     getDefaultPlatformLocaleRequest
@@ -12,6 +12,27 @@ export default function Tabs({ panel, warnings = {} }) {
 
   const locales = _locales?.locales;
   const defaultLocale = _defaultLocale?.locale;
+
+  useEffect(() => {
+    if (
+      locales?.length &&
+      Object.keys(warnings).sort().join(', ') !==
+        locales
+          .map(({ code }) => code)
+          .sort()
+          .join(', ')
+    ) {
+      setWarnings(
+        locales?.reduce(
+          (obj, { code }) => ({
+            ...obj,
+            [code]: warnings && warnings[code] ? warnings[code] : warningDefault,
+          }),
+          {}
+        )
+      );
+    }
+  }, [warnings, locales]);
 
   const TabsHeaders = useMemo(
     () =>

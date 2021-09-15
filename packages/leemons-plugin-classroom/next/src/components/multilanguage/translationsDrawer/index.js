@@ -1,5 +1,5 @@
 // import React, { useMemo, useEffect, useState } from 'react';
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { Drawer, useDrawer, Button } from 'leemons-ui';
 // import { getDefaultPlatformLocaleRequest, getPlatformLocalesRequest } from '@users/request';
 // import { Tabs, Tab, TabList, TabPanel, useDrawer, Drawer, Button } from 'leemons-ui';
@@ -8,12 +8,25 @@ import TranslateIcon from './translateIcon';
 import Tabs from './tabs';
 // import useAsync from '../../hooks/request/useAsync';
 
-export function useTranslationsDrawer(config) {
+export function useTranslationsDrawer(config = {}) {
   const [drawer, toggleDrawer] = useDrawer({ size: 'right', ...config });
-  return { drawer, toggleDrawer };
+  const [warnings, setWarnings] = useState({});
+  return {
+    drawer,
+    toggleDrawer,
+    warnings,
+    setWarnings,
+    warningDefault: config?.warningDefault || false,
+  };
 }
 
-export function TranslationsDrawer({ drawer, toggleDrawer: toggleTranslations }) {
+export function TranslationsDrawer({
+  drawer,
+  toggleDrawer: toggleTranslations,
+  warnings,
+  setWarnings,
+  warningDefault,
+}) {
   return (
     <Drawer {...drawer}>
       <div className="p-6 max-w-sm relative">
@@ -26,7 +39,7 @@ export function TranslationsDrawer({ drawer, toggleDrawer: toggleTranslations })
         <section>
           <TranslateIcon />
           <h2 className="text-secondary text-xl">Level translation</h2>
-          <Tabs />
+          <Tabs warnings={warnings} setWarnings={setWarnings} warningDefault={warningDefault} />
           {/* <Tabs>
             <div className="w-full overflow-x-scroll">
               <TabList>{TabHeaders}</TabList>
