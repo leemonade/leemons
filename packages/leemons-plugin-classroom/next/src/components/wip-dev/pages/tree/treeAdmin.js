@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import useListLevelSchema from '../../../../hooks/levelschema/useListLevelSchema';
 import Tree from '../../../common/tree';
 
@@ -14,13 +15,9 @@ export default function TreeAdmin({
   setUpdate = () => {},
 }) {
   // Get the DB LevelSchemas
-  const [
-    levelSchemas,
-    setLevelSchemas,
-    levelSchemasError,
-    levelSchemasLoading,
-    update,
-  ] = useListLevelSchema(locale);
+  const [levelSchemas, , levelSchemasError, levelSchemasLoading, update] = useListLevelSchema(
+    locale
+  );
 
   // Give the update function to the parent
   useEffect(() => {
@@ -54,3 +51,11 @@ export default function TreeAdmin({
     </div>
   );
 }
+
+TreeAdmin.propTypes = {
+  locale: PropTypes.string,
+  onDetails: PropTypes.func,
+  onEdit: PropTypes.func,
+  onAdd: PropTypes.func,
+  setUpdate: PropTypes.func,
+};

@@ -1,5 +1,6 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import PropTypes from 'prop-types';
 import {
   Input,
   Button,
@@ -17,8 +18,6 @@ import addLevelSchema from '../../services/levelSchemas/addLevelSchema';
 import updateLevelSchema from '../../services/levelSchemas/updateLevelSchema';
 import addLevel from '../../services/levels/addLevel';
 import updateLevel from '../../services/levels/updateLevel';
-import DatasetExample from '../dataset/example';
-import DatasetAdmin from '../dataset/datasetAdmin';
 
 export default function Add({
   entities,
@@ -28,7 +27,6 @@ export default function Add({
   parentId,
   onClose = () => {},
 }) {
-  console.log('Schema', schemaId, 'parent', parentId);
   const [isClass, setIsClass] = useState(false);
   const { register, handleSubmit, setValue } = useForm();
   const [entity, setEntity] = useState(null);
@@ -36,7 +34,7 @@ export default function Add({
   const useSchema = schemas !== null;
 
   useEffect(() => {
-    let entity = entities.find(({ id }) => entityId === id);
+    const entity = entities.find(({ id }) => entityId === id);
     // If editing an entity, set the entity values
     if (entity) {
       if (useSchema) {
@@ -137,7 +135,7 @@ export default function Add({
           <FormControl label="Class Level" labelPosition="right">
             <Toggle
               checked={isClass}
-              onChange={(e) => {
+              onChange={() => {
                 setIsClass(!isClass);
               }}
             />
@@ -203,3 +201,12 @@ export default function Add({
     </div>
   );
 }
+
+Add.propTypes = {
+  entities: PropTypes.array,
+  schemas: PropTypes.array,
+  schemaId: PropTypes.string,
+  entityId: PropTypes.string,
+  parentId: PropTypes.string,
+  onClose: PropTypes.func,
+};

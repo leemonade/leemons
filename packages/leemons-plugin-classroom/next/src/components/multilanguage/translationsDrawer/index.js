@@ -1,12 +1,9 @@
-// import React, { useMemo, useEffect, useState } from 'react';
 import { useState } from 'react';
 import { Drawer, useDrawer, Button } from 'leemons-ui';
-// import { getDefaultPlatformLocaleRequest, getPlatformLocalesRequest } from '@users/request';
-// import { Tabs, Tab, TabList, TabPanel, useDrawer, Drawer, Button } from 'leemons-ui';
-import { XIcon, StarIcon, ExclamationCircleIcon } from '@heroicons/react/solid';
+import { XIcon } from '@heroicons/react/solid';
+import PropTypes from 'prop-types';
 import TranslateIcon from './translateIcon';
 import Tabs from './tabs';
-// import useAsync from '../../hooks/request/useAsync';
 
 export function useTranslationsDrawer(config = {}) {
   const [drawer, toggleDrawer] = useDrawer({ size: 'right', ...config });
@@ -62,3 +59,13 @@ export function TranslationsDrawer({
     </Drawer>
   );
 }
+TranslationsDrawer.propTypes = {
+  drawer: PropTypes.object,
+  toggleDrawer: PropTypes.func,
+  warnings: PropTypes.object,
+  setWarnings: PropTypes.func,
+  warningDefault: PropTypes.bool,
+  children: PropTypes.element,
+  onSave: PropTypes.func,
+  onCancel: PropTypes.func,
+};

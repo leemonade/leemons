@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, FormControl, Tabs, Tab, TabList, TabPanel, Input, Checkbox } from 'leemons-ui';
 import { InformationCircleIcon, ExclamationCircleIcon } from '@heroicons/react/solid';
 import { useForm } from 'react-hook-form';
+import PropTypes from 'prop-types';
 import addLevelSchema from '../../../../services/levelSchemas/addLevelSchema';
 import updateLevelSchema from '../../../../services/levelSchemas/updateLevelSchema';
 
@@ -116,3 +117,9 @@ export default function EditLevel({ entity, parent, onUpdate = () => {} }) {
     </>
   );
 }
+
+EditLevel.propTypes = {
+  entity: PropTypes.object,
+  parent: PropTypes.string,
+  onUpdate: PropTypes.func,
+};

@@ -1,9 +1,8 @@
-import { Tree, useTree } from 'leemons-ui';
+import { Tree as UITree, useTree } from 'leemons-ui';
 import { useEffect } from 'react';
+import PropTypes from 'prop-types';
 
-// TODO: Get multicenters
-
-function tree({
+function Tree({
   entities,
   schemas,
 
@@ -123,7 +122,19 @@ function tree({
 
   treeProps.initialSelected = [initialSelected];
 
-  return <Tree {...treeProps} onAdd={onAdd} onSelect={onSelect} />;
+  return <UITree {...treeProps} onAdd={onAdd} onSelect={onSelect} />;
 }
 
-export default tree;
+Tree.propTypes = {
+  entities: PropTypes.array,
+  schemas: PropTypes.array,
+
+  onAdd: PropTypes.func,
+  onSelect: PropTypes.func,
+  showButtons: PropTypes.bool,
+  selectedNode: PropTypes.string,
+  initialSelected: PropTypes.string,
+  childrenLimit: PropTypes.number,
+};
+
+export default Tree;

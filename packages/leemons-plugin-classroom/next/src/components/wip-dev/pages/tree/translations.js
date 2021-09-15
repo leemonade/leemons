@@ -2,6 +2,7 @@
 // TODO: Update the warnings onCancel and on EntityUpdate
 import React, { useEffect, useState } from 'react';
 import { Input } from 'leemons-ui';
+import PropTypes from 'prop-types';
 import { TranslationsDrawer } from '../../../multilanguage/translationsDrawer';
 
 function TranslationTab({
@@ -43,6 +44,17 @@ function TranslationTab({
     </>
   );
 }
+
+TranslationTab.propTypes = {
+  locale: PropTypes.string,
+  isDefault: PropTypes.bool,
+  warnings: PropTypes.object,
+  setWarnings: PropTypes.func,
+  defaultLocaleValues: PropTypes.object,
+  setDefaultLocaleValues: PropTypes.func,
+  values: PropTypes.object,
+  setValues: PropTypes.func,
+};
 
 export default function Translations({
   defaultLocaleValues,
@@ -90,3 +102,13 @@ export default function Translations({
     </TranslationsDrawer>
   );
 }
+Translations.propTypes = {
+  defaultLocaleValues: PropTypes.object,
+  setDefaultLocaleValues: PropTypes.func,
+  onSave: PropTypes.func,
+  onCancel: PropTypes.func,
+  warnings: PropTypes.object,
+  setWarnings: PropTypes.func,
+  toggleDrawer: PropTypes.func,
+  drawer: PropTypes.object,
+};

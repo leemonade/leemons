@@ -2,13 +2,12 @@ import { useMemo, useEffect, cloneElement } from 'react';
 import { getDefaultPlatformLocaleRequest, getPlatformLocalesRequest } from '@users/request';
 import { Tabs as UITabs, Tab, TabList, TabPanel } from 'leemons-ui';
 import { StarIcon, ExclamationCircleIcon } from '@heroicons/react/solid';
+import PropTypes from 'prop-types';
 import useAsync from '../../../hooks/request/useAsync';
 
 export default function Tabs({ panel, warnings, setWarnings, warningDefault }) {
-  const [_locales, , localesError, localesLoading] = useAsync(getPlatformLocalesRequest);
-  const [_defaultLocale, , defaultLocaleError, defaultLocaleLoading] = useAsync(
-    getDefaultPlatformLocaleRequest
-  );
+  const [_locales] = useAsync(getPlatformLocalesRequest);
+  const [_defaultLocale] = useAsync(getDefaultPlatformLocaleRequest);
 
   const locales = _locales?.locales;
   const defaultLocale = _defaultLocale?.locale;
@@ -79,3 +78,10 @@ export default function Tabs({ panel, warnings, setWarnings, warningDefault }) {
     </div>
   );
 }
+
+Tabs.propTypes = {
+  panel: PropTypes.element,
+  warnings: PropTypes.object,
+  setWarnings: PropTypes.func,
+  warningDefault: PropTypes.bool,
+};
