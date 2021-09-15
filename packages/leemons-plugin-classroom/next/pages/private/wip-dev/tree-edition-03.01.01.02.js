@@ -28,7 +28,7 @@ function TreePage() {
           <Button onClick={toggleView}>Toggle</Button>
           {/* LevelSchemas tree */}
           <Tree
-            locale={session.locale}
+            locale={session?.locale}
             setUpdate={(update) => setUpdateEntities({ update })}
             onDetails={console.log}
             onEdit={(entity) => {

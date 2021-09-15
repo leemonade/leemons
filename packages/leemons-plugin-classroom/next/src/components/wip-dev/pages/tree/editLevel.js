@@ -4,14 +4,14 @@ import { InformationCircleIcon, ExclamationCircleIcon } from '@heroicons/react/s
 import { useForm } from 'react-hook-form';
 import addLevelSchema from '../../../../services/levelSchemas/addLevelSchema';
 import updateLevelSchema from '../../../../services/levelSchemas/updateLevelSchema';
-import useTranslationsTabs from '../../../multilanguage/translationsTabs';
+// import useTranslationsTabs from '../../../multilanguage/translationsDrawer';
 import Translations from './translations';
 
 export default function EditLevel({ entity, parent, onUpdate = () => {} }) {
   // Translations drawer
-  const { toggleTranslations, warnings, ...translationsProps } = useTranslationsTabs({
-    warningDefault: true,
-  });
+  // const { toggleTranslations, warnings, ...translationsProps } = useTranslationsTabs({
+  //   warningDefault: true,
+  // });
 
   const [name, setName] = useState('');
   const { register, handleSubmit, setValue } = useForm();
@@ -114,7 +114,7 @@ export default function EditLevel({ entity, parent, onUpdate = () => {} }) {
         </Tabs>
       </div>
       {/* Translations Drawer */}
-      <Translations {...translationsProps} register={register} setName={setName} name={name} />
+      {/* <Translations {...translationsProps} register={register} setName={setName} name={name} /> */}
     </>
   );
 }
