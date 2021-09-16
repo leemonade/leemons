@@ -4,11 +4,13 @@ export default (f, ...args) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const request = useRef(() => {
+  const request = (_args) => {
     setLoading(true);
     try {
-      f()
+      console.log('Updating with args', _args);
+      f(..._args)
         .then((res) => {
+          console.log('response:', res);
           setData(res);
           setLoading(false);
         })
@@ -20,28 +22,15 @@ export default (f, ...args) => {
       setLoading(false);
       setError(e);
     }
-  });
+  };
+
+  const argsRef = useRef(args);
+  argsRef.current = args;
 
   useEffect(() => {
-    request.current = () => {
-      setLoading(true);
-      try {
-        f()
-          .then((res) => {
-            setData(res);
-            setLoading(false);
-          })
-          .catch((e) => {
-            setLoading(false);
-            setError(e);
-          });
-      } catch (e) {
-        setLoading(false);
-        setError(e);
-      }
-    };
-    request.current();
+    console.log('Should update "useEffect"');
+    request(args);
   }, [...args]);
 
-  return [data, setData, error, loading, request.current];
+  return [data, setData, error, loading, () => request(args)];
 };

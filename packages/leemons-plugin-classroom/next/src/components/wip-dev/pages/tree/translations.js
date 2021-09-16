@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Input } from 'leemons-ui';
+import tLoader from '@multilanguage/helpers/tLoader';
+import useTranslate from '@multilanguage/useTranslate';
 import { TranslationsDrawer } from '../../../multilanguage/translationsDrawer';
 import useGetNames from '../../../../hooks/levelschema/useGetNames';
 
@@ -14,6 +16,8 @@ function TranslationTab({
   values,
   warnings,
 }) {
+  const [translations] = useTranslate({ keysStartsWith: 'plugins.classroom.editor.form.name' });
+  const t = tLoader('plugins.classroom.editor.form.name', translations);
   // Use the main value if it is the default locale, if not, use global values
   const value = isDefault ? defaultLocaleValues : values[locale];
 
@@ -30,7 +34,7 @@ function TranslationTab({
       <Input
         outlined
         className="input w-full"
-        placeholder="Level name"
+        placeholder={t('placeholder')}
         value={value?.name || ''}
         onChange={(e) => {
           // Also update the default value (seen outside translations)
