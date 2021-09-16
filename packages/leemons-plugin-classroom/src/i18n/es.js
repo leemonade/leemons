@@ -5,10 +5,6 @@ module.exports = {
     save: 'Guardar',
     view: 'Ver',
     edit: 'Editar',
-    organization: 'Organización',
-    center: 'Centro',
-    add_level: 'Añadir nivel',
-    select_template: 'Seleccionar plantilla',
   },
   welcome_page: {
     page_title: 'Bienvenido a Clases',
@@ -34,34 +30,58 @@ module.exports = {
   },
   tree_page: {
     page_title: 'Árbol',
-    page_info:
-      'Utiliza el botón <span class="w-5 h-5 border-2 border-primary rounded-full leading-none inline-block text-primary font-semibold text-center">+</span> para crear cada nivel y, a continuación, utiliza el panel derecho para configurar el conjunto de datos del nivel.',
-    from_template_info: {
-      title: '¿Quieres precargar una plantilla para ahorrar tiempo?',
-      description:
-        'Selecciona el tipo de plantilla y haz clic en cargar árbol, posteriormente podrás modificar el conjunto de datos de cada nivel según las necesidades de la organización.',
-      btn: 'Previsualizar plantilla',
-      hide_info: {
-        description: 'Prefiero hacerlo manualmente.',
-        btn: 'No mostrar más',
-      },
+    page_info: {
+      pre: 'Usa el botón',
+      post:
+        'para crear un nuevo nivel, y a continuación, usa el área de configuración para definir el nuevo nivel.',
     },
-    level: {
-      new: {
+  },
+  template: {
+    title: '¿Cargar plantilla para ahorrar tiempo?',
+    description:
+      'Elige el tipo de plantilla y haz click en cargar árbol, más tarde podrás modificar los datasets de cada nivel de acuerdo a las necesidades de tu organización',
+    country_select: 'Elegir un país',
+    template_select: 'Elegir una plantilla',
+    btn: 'Previsualizar plantilla',
+    hide_info: {
+      description: 'Prefiero hacerlo manualmente.',
+      btn: `No volver a mostrar`,
+    },
+  },
+  translationsDrawer: {
+    title: 'Traducciones',
+    actions: {
+      save: 'Guardar',
+      cancel: 'Cancelar',
+    },
+  },
+  tree: {
+    new: {
+      prefix: { levelSchema: 'Añadir nivel', level: 'Añadir' },
+    },
+    class_level: 'Nivel de clase',
+  },
+  editor: {
+    form: {
+      name: {
         placeholder: 'Nombre del nivel',
-        tree_label: 'Nuevo nivel',
-        btn: 'Guardar nivel y continuar',
-        is_class_label: 'Nivel de Clase. (Nivel mínimo para asignar estudiantes)',
       },
-      tabs: {
-        dataset: {
-          label: 'Dataset del Nivel',
-          description: 'Configuración de los campos generales para este nivel',
-          add_field: 'Añadir campo',
-        },
-        profiles: {
-          label: 'Perfiles de usuario asignables',
-        },
+      isClass: {
+        label: 'Nivel de clase',
+        tooltip: 'Nivel mínimo de asignación de estudiantes',
+      },
+      save: 'Guardar nivel',
+    },
+    translations: {
+      label: 'Traducciones',
+      tooltip: 'El contenido no traducido aparecerá en el idioma por defecto',
+    },
+    tabs: {
+      dataset: {
+        label: 'Más datos',
+      },
+      permissions: {
+        label: 'Permisos',
       },
     },
   },

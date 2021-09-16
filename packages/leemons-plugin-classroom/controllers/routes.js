@@ -89,6 +89,13 @@ module.exports = [
   },
   {
     path: '/levelSchema/:id/names',
+    method: 'GET',
+    handler: 'levelSchemas.getNames',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tree, ['view']),
+  },
+  {
+    path: '/levelSchema/:id/names',
     method: 'PATCH',
     handler: 'levelSchemas.setNames',
     authenticated: true,

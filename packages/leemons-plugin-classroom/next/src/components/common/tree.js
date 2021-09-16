@@ -1,9 +1,10 @@
-import { Tree, useTree } from 'leemons-ui';
+import { Tree as UITree, useTree } from 'leemons-ui';
 import { useEffect } from 'react';
+import PropTypes from 'prop-types';
+import tLoader from '@multilanguage/helpers/tLoader';
+import useTranslate from '@multilanguage/useTranslate';
 
-// TODO: Get multicenters
-
-function tree({
+function Tree({
   entities,
   schemas,
 
@@ -14,6 +15,9 @@ function tree({
   initialSelected = null,
   childrenLimit = 0,
 }) {
+  const [translations] = useTranslate({ keysStartsWith: 'plugins.classroom.tree.' });
+  const t = tLoader('plugins.classroom.tree', translations);
+
   const treeProps = useTree();
 
   // Regenerate Tree Data when the entities prop change
@@ -45,7 +49,7 @@ function tree({
                 )
                 .map((level) => ({
                   id: `${schema.id}-${level.id}-ADD`,
-                  text: `Add ${schema.name} (to ${level.name})`,
+                  text: `${t('new.prefix.level')} ${schema.name}`,
                   parent: level.id,
                   type: 'button',
                   draggable: false,
@@ -62,7 +66,8 @@ function tree({
       } else {
         buttons.push(
           ...entities
-            ?.filter(
+            ?.filter((entity) => entity.properties.assignable !== false)
+            .filter(
               (entity) =>
                 !entity.isClass &&
                 // Can add many to a level or does not have
@@ -71,7 +76,7 @@ function tree({
             )
             .map((entity) => ({
               id: `${entity.id}-ADD`,
-              text: `Add level to ${entity.name}`,
+              text: `${t('new.prefix.levelSchema')}`,
               parent: entity.id,
               type: 'button',
               draggable: false,
@@ -89,7 +94,7 @@ function tree({
         ) {
           buttons.push({
             id: `center-ADD`,
-            text: `Add level (to organization)`,
+            text: t('new.prefix.levelSchema'),
             parent: 'center',
             type: 'button',
             draggable: false,
@@ -104,17 +109,24 @@ function tree({
 
     // The actual Levels
     treeProps.setTreeData([
-      // { id: 'center', text: useSchemas ? 'Colegio HDP' : 'Organization/center', parent: 0 },
-      ...entities?.map((entity) => ({
-        ...entity,
-        text: entity.name,
-        parent: entity.parent || 0,
-      })),
+      ...entities?.map((entity) => {
+        if (entity.properties.editing) {
+          console.log('editing', entity.name);
+          treeProps.selectedNode = entity.id;
+          treeProps.setSelectedNode(entity.id);
+        }
+        return {
+          ...entity,
+          text: entity.name,
+          parent: entity.parent || 0,
+          draggable: false,
+        };
+      }),
       ...(showButtons ? buttons : []),
     ]);
 
     // treeProps.;
-  }, [entities, schemas]);
+  }, [entities, schemas, translations]);
 
   useEffect(() => {
     treeProps.setSelectedNode(selectedNode);
@@ -122,7 +134,19 @@ function tree({
 
   treeProps.initialSelected = [initialSelected];
 
-  return <Tree {...treeProps} onAdd={onAdd} onSelect={onSelect} />;
+  return <UITree {...treeProps} onAdd={onAdd} onSelect={onSelect} />;
 }
 
-export default tree;
+Tree.propTypes = {
+  entities: PropTypes.array,
+  schemas: PropTypes.array,
+
+  onAdd: PropTypes.func,
+  onSelect: PropTypes.func,
+  showButtons: PropTypes.bool,
+  selectedNode: PropTypes.string,
+  initialSelected: PropTypes.string,
+  childrenLimit: PropTypes.number,
+};
+
+export default Tree;

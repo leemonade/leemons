@@ -26,6 +26,18 @@ module.exports = {
       ctx.body = { status: 400, error: e.message };
     }
   },
+  getNames: async (ctx) => {
+    try {
+      const levelSchema = await services.getNames(ctx.params.id, {
+        userSession: ctx.state.userSession,
+      });
+      ctx.status = 200;
+      ctx.body = { status: 200, levelSchema };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = { status: 400, error: e.message };
+    }
+  },
   list: async (ctx) => {
     try {
       const items = await services.list({

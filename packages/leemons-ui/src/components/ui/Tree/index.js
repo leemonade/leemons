@@ -35,7 +35,6 @@ const Tree = ({
     onAdd,
     onSelect,
   };
-
   return (
     <TreeContext.Provider value={state}>
       <TreeView {...otherProps} />
@@ -63,6 +62,7 @@ const TreeView = ({
     onDelete,
     onSelect,
   } = useContext(TreeContext);
+
   const treeRef = useRef(null);
 
   const closeAllNodes = useCallback(() => {
@@ -79,6 +79,18 @@ const TreeView = ({
     },
     [treeRef]
   );
+
+  useEffect(() => {
+    // Open the branch when a node is selected (through code)
+    if (selectedNode?.id) {
+      openBranch(selectedNode.id, selectedNode.inclusive || false, selectedNode.replace || false);
+    } else if (selectedNode?.fold) {
+      // Fold into the specified branch when deselect (through code)
+      openBranch(selectedNode.fold, selectedNode.inclusive || false, selectedNode.replace || true);
+    } else {
+      openBranch(selectedNode, false, false);
+    }
+  }, [selectedNode]);
 
   // ------------------------------------------------------------------
   // HANDLERS
@@ -154,7 +166,7 @@ const TreeView = ({
               hasOpenSiblings={hasOpenSiblings}
               siblingIndex={siblingIndex}
               onToggle={(e) => handleOnToggle(node, isOpen, onToggle, e)}
-              isSelected={isSelected}
+              isSelected={isSelected || selectedNode === node.id || selectedNode?.id === node.id}
               onSelect={(e, onToggle) => handleSelect(node, onSelect, e, onToggle)}
               allowDropOutside={allowDropOutside}
               allowMultipleOpen={allowMultipleOpen}
@@ -184,7 +196,6 @@ const TreeView = ({
         onDrop={handleDrop}
         initialOpen={initialOpen}
         initialSelected={initialSelected}
-        onChange={(text) => console.log(text)}
         dropTargetOffset={20}
         placeholderRender={(node, { depth }) => {
           let PlaceholderRenderer = NodePlaceholderRenderer;
