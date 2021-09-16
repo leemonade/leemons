@@ -13,7 +13,7 @@ function Avatar({ children, type, rounded, size, circle, className }) {
 }
 
 Avatar.defaultProps = {
-  size: 10,
+  size: 8,
 };
 
 Avatar.propTypes = {

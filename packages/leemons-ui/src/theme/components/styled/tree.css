@@ -52,7 +52,7 @@
   }
 
   .tree_editWrapper {
-     @apply border border-current text-primary border-dashed p-4 w-full;
+    @apply border border-current text-primary border-dashed p-4 w-full;
   }
 
   /* :> */

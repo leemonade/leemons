@@ -20,6 +20,9 @@
         box-shadow: 0 0 0 2px hsl(var(--b1));
       }
     }
+     .stroke {
+      @apply border border-solid ;
+    }
   }
   /* :> */
 }

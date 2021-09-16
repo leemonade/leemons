@@ -62,4 +62,36 @@ module.exports = {
       },
     },
   },
+  class_list: {
+    page_title: 'Administración de clases',
+    page_info:
+      'Aquí puedes encontrar y administrar la estructura de niveles de tu Universidad y asignar estudiantes a clases.',
+    details: {
+      type_program: 'programs',
+      type_courses: 'courses',
+      type_groups: 'groups',
+    },
+    class_table: {
+      th_tutor: 'Tutor',
+      th_students: 'Students',
+      th_actions: 'Actions',
+      btn_edit: 'Edit',
+      btn_expand: 'Expand',
+      btn_view: 'View',
+    },
+
+    view_panel: {
+      summary: {
+        btn_edit: 'Edit',
+        btn_expand: 'Expand',
+        counter: 'Students',
+      },
+      table: {
+        th_name: 'First Name',
+        th_surename: 'Second Name',
+        th_email: 'E-mail Adress',
+        th_birthday: 'birthday',
+      },
+    },
+  },
 };

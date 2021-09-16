@@ -34,6 +34,29 @@
   */
 
   /* Animation Classes */
+  .info-container {
+    @apply  bg-white h-full w-full max-w-2xl absolute right-0 top-0 z-50;
+    box-shadow: -32px 0px 32px rgba(35, 43, 60, 0.05), -100px 0px 60px rgba(51, 63, 86, 0.03);
+    .info-content {
+      @apply grid min-h-screen;
+      grid-auto-rows: min-content auto;
+    }
+    .info-header {
+      @apply flex justify-between items-center p-3;
+      /*apply bg-gray-10;*/
+    }
+    .info-body {
+      @apply bg-gray-10 p-4;
+      > .table { 
+          @apply bg-white w-full;
+          thead th {
+            @apply pt-4;
+          }
+
+      }
+    }
+  }
+ 
 
   .modal-animated {
     animation-duration: 0.3s;
