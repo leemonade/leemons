@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Input } from 'leemons-ui';
 import PropTypes from 'prop-types';
+import { Input } from 'leemons-ui';
 import { TranslationsDrawer } from '../../../multilanguage/translationsDrawer';
 import useGetNames from '../../../../hooks/levelschema/useGetNames';
 
 function TranslationTab({
-  locale,
-  isDefault,
-  warnings,
-  setWarnings,
   defaultLocaleValues,
+  isDefault,
+  locale,
   setDefaultLocaleValues,
-  values,
   setValues,
+  setWarnings,
+  values,
+  warnings,
 }) {
   // Use the main value if it is the default locale, if not, use global values
   const value = isDefault ? defaultLocaleValues : values[locale];
@@ -45,23 +45,25 @@ function TranslationTab({
 }
 
 TranslationTab.propTypes = {
-  locale: PropTypes.string,
-  isDefault: PropTypes.bool,
-  warnings: PropTypes.object,
-  setWarnings: PropTypes.func,
   defaultLocaleValues: PropTypes.object,
+  isDefault: PropTypes.bool,
+  locale: PropTypes.string,
   setDefaultLocaleValues: PropTypes.func,
-  values: PropTypes.object,
   setValues: PropTypes.func,
+  setWarnings: PropTypes.func,
+  values: PropTypes.object,
+  warnings: PropTypes.object,
 };
 
 export default function Translations({
   defaultLocaleValues,
-  setDefaultLocaleValues,
-  localizations,
-  onSave = () => {},
-  onCancel = () => {},
   entityId,
+  locale: userLocale,
+  localizations,
+  onCancel = () => {},
+  onSave = () => {},
+  setDefaultLocaleValues,
+  setTreeEntity,
   ...props
 }) {
   const [names] = useGetNames(entityId);
@@ -77,6 +79,11 @@ export default function Translations({
       _setValues((oldValue) => ({ ...oldValue, ...newValue }));
     }
     const _warnings = Object.entries(newValue).reduce((obj, [locale, value]) => {
+      // Modify the entity in the tree
+      if (locale !== defaultLocale && locale === userLocale) {
+        console.log('Updating entity in the tree [Translations]');
+        setTreeEntity({ name: value.name });
+      }
       if (value?.name && value?.name.length) {
         if (reload || warnings[locale] !== false) {
           return { ...obj, [locale]: false };
@@ -162,15 +169,17 @@ export default function Translations({
   );
 }
 Translations.propTypes = {
-  defaultLocaleValues: PropTypes.object,
-  setDefaultLocaleValues: PropTypes.func,
   defaultLocale: PropTypes.string,
-  localizations: PropTypes.object,
-  onSave: PropTypes.func,
-  onCancel: PropTypes.func,
+  defaultLocaleValues: PropTypes.object,
+  drawer: PropTypes.object,
   entityId: PropTypes.string,
-  warnings: PropTypes.object,
+  locale: PropTypes.string,
+  localizations: PropTypes.object,
+  onCancel: PropTypes.func,
+  onSave: PropTypes.func,
+  setDefaultLocaleValues: PropTypes.func,
+  setTreeEntity: PropTypes.element,
   setWarnings: PropTypes.func,
   toggleDrawer: PropTypes.func,
-  drawer: PropTypes.object,
+  warnings: PropTypes.object,
 };

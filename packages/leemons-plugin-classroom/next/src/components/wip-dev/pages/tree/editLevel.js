@@ -17,6 +17,7 @@ export default function EditLevel({
   setEntity = () => {},
   parent,
   onUpdate = () => {},
+  locale,
 }) {
   const [translations] = useTranslate({ keysStartsWith: 'plugins.classroom.editor' });
   const t = tLoader('plugins.classroom.editor', translations);
@@ -33,19 +34,24 @@ export default function EditLevel({
   // Handle alerts (for showing alers)
   const { addAlert, ...alerts } = useAlerts({ icon: ExclamationCircleIcon });
 
+  const setTreeEntity = (entityValues) => {
+    if (entity) {
+      setEntity({ entity: { ...entity, ...entityValues } });
+    } else if (parent) {
+      setEntity({ newEntity: entityValues, parent });
+    }
+  };
+
   // Update form values if the selected entity changes
   useEffect(() => {
     setValue('isClass', entity ? !!entity.isClass : false);
   }, [entity?.id]);
 
   useEffect(() => {
-    if (entity) {
-      setEntity({ entity: { ...entity, name: values.name } });
-    } else if (parent) {
-      setEntity({ newEntity: { name: values.name }, parent });
+    if (locale === defaultLocale) {
+      setTreeEntity({ name: values.name });
     }
   }, [values]);
-
   // On form Submit, create/update entity
   const onSubmit = async (data) => {
     const isNewEntity = !entity;
@@ -163,9 +169,11 @@ export default function EditLevel({
         {...drawer}
         defaultLocaleValues={values}
         setDefaultLocaleValues={setValues}
+        setTreeEntity={setTreeEntity}
         entityId={entity?.id || null}
         localizations={localizations}
         onSave={setLocalizations}
+        locale={locale}
       />
     </>
   );
@@ -176,4 +184,5 @@ EditLevel.propTypes = {
   setEntity: PropTypes.func,
   parent: PropTypes.string,
   onUpdate: PropTypes.func,
+  locale: PropTypes.string,
 };
