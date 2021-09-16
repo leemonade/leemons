@@ -136,7 +136,10 @@ export default function Translations({
     // modified values (last save localizations but not level)
     setValues({
       reload: true,
-      ...names.reduce((obj, { locale, value }) => ({ ...obj, [locale]: { name: value } }), {}),
+      ...names.names.reduce(
+        (obj, { locale, value }) => ({ ...obj, [locale]: { name: value } }),
+        {}
+      ),
       ...localizations,
     });
     // restore the original value

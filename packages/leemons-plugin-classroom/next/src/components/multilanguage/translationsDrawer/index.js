@@ -3,6 +3,8 @@ import { Drawer, useDrawer, Button } from 'leemons-ui';
 import { XIcon } from '@heroicons/react/solid';
 import PropTypes from 'prop-types';
 import { getDefaultPlatformLocaleRequest, getPlatformLocalesRequest } from '@users/request';
+import tLoader from '@multilanguage/helpers/tLoader';
+import useTranslate from '@multilanguage/useTranslate';
 import TranslateIcon from './translateIcon';
 import Tabs from './tabs';
 import useAsync from '../../../hooks/request/useAsync';
@@ -76,6 +78,9 @@ export function TranslationsDrawer({
   onSave,
   onCancel,
 }) {
+  const [translations] = useTranslate({ keysStartsWith: 'plugins.classroom.translationsDrawer' });
+  const t = tLoader('plugins.classroom.translationsDrawer', translations);
+
   return (
     <Drawer {...drawer}>
       <div className="p-6 max-w-sm relative">
@@ -87,7 +92,7 @@ export function TranslationsDrawer({
         </Button>
         <section>
           <TranslateIcon />
-          <h2 className="text-secondary text-xl">Level translation</h2>
+          <h2 className="text-secondary text-xl">{t('title')}</h2>
           <Tabs
             panel={children}
             warnings={warnings}
@@ -98,10 +103,10 @@ export function TranslationsDrawer({
           />
           <div className="flex justify-between my-16">
             <Button color="primary" className="btn-link" onClick={onCancel}>
-              Cancel
+              {t('actions.cancel')}
             </Button>
             <Button color="primary" onClick={onSave}>
-              Save
+              {t('actions.save')}
             </Button>
           </div>
         </section>

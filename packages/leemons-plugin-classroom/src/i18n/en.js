@@ -45,6 +45,13 @@ module.exports = {
       btn: `Do not show anymore`,
     },
   },
+  translationsDrawer: {
+    title: 'Translation',
+    actions: {
+      save: 'Save',
+      cancel: 'Cancel',
+    },
+  },
   tree: {
     new: {
       prefix: { levelSchema: 'Add level', level: 'Add' },

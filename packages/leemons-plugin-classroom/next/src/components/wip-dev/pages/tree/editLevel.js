@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useTranslate from '@multilanguage/useTranslate';
+import { useAlerts, Alerts } from '@classroom/components/alerts';
 import addLevelSchema from '../../../../services/levelSchemas/addLevelSchema';
 import updateLevelSchema from '../../../../services/levelSchemas/updateLevelSchema';
 
@@ -23,9 +24,14 @@ export default function EditLevel({
   const drawer = useTranslationsDrawer({ warningDefault: true });
   const { toggleDrawer, warnings, defaultLocale } = drawer;
 
+  // Default locale values
   const [values, setValues] = useState({ name: '' });
+  // All the localized values
   const [localizations, setLocalizations] = useState({});
   const { register, handleSubmit, setValue } = useForm();
+
+  // Handle alerts (for showing alers)
+  const { addAlert, ...alerts } = useAlerts({ icon: ExclamationCircleIcon });
 
   // Update form values if the selected entity changes
   useEffect(() => {
@@ -46,6 +52,7 @@ export default function EditLevel({
 
     // don't save if the default locale is not
     if (!values.name.length) {
+      addAlert({ label: 'The level name is required' });
       return;
     }
 
@@ -74,19 +81,25 @@ export default function EditLevel({
       parent,
     };
 
-    if (isNewEntity) {
-      const { id, parent: _parent } = await addLevelSchema(levelSchema);
-      if (id) {
-        setEntity({ ...entity, entity: { ...entity, id, parent: _parent } });
+    try {
+      if (isNewEntity) {
+        const { id, parent: _parent } = await addLevelSchema(levelSchema);
+        if (id) {
+          setEntity({ ...entity, entity: { ...entity, id, parent: _parent } });
+        }
+      } else {
+        await updateLevelSchema({ ...levelSchema, id: entity.id });
       }
-    } else {
-      await updateLevelSchema({ ...levelSchema, id: entity.id });
+      addAlert({ label: 'Saved successfuly', level: 'success', icon: InformationCircleIcon });
+      onUpdate();
+    } catch (e) {
+      addAlert({ label: 'Unable to save the level' });
     }
-    onUpdate();
   };
   return (
     <>
       <div className="flex-1 my-2 mb-2 bg-primary-content py-6 pl-12 pr-6">
+        <Alerts {...alerts} />
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormControl>
             <div className="flex space-x-2 mb-4">
