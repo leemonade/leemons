@@ -95,8 +95,9 @@ export default function Translations({
 
   // Update translations to the new entity values
   useEffect(() => {
-    if (names) {
-      const newValues = names.reduce(
+    // Prevents showing previous translations on slow connections
+    if (names && names.id === entityId && names.names) {
+      const newValues = names.names.reduce(
         (obj, { locale, value }) => ({ ...obj, [locale]: { name: value } }),
         {}
       );

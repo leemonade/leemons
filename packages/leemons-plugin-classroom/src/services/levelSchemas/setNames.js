@@ -49,7 +49,8 @@ module.exports = async function setNames(id, names, { userSession, transacting }
             return { ...obj, namesToDelete: [..._namesToDelete, locale] };
           }
           return { ...obj, namesToSet: { ...obj.namesToSet, [locale]: value } };
-        }
+        },
+        {}
       );
 
       // Save locales with value
