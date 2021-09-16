@@ -4,33 +4,39 @@ export default (f, ...args) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const request = (_args) => {
+  const refArgs = useRef(args);
+  const requestId = useRef(null);
+
+  const request = useRef(() => {
+    const id = new Date().getTime();
+    requestId.current = id;
+
+    const _args = refArgs.current;
     setLoading(true);
-    try {
-      console.log('Updating with args', _args);
-      f(..._args)
-        .then((res) => {
-          console.log('response:', res);
+    f(..._args)
+      .then((res) => {
+        if (requestId.current !== null && id >= requestId.current) {
           setData(res);
           setLoading(false);
-        })
-        .catch((e) => {
+        }
+      })
+      .catch((e) => {
+        if (requestId.current !== null && id >= requestId.current) {
           setLoading(false);
           setError(e);
-        });
-    } catch (e) {
-      setLoading(false);
-      setError(e);
-    }
-  };
-
-  const argsRef = useRef(args);
-  argsRef.current = args;
+        }
+      })
+      .finally(() => {
+        if (requestId.current !== null && id >= requestId.current) {
+          requestId.current = null;
+        }
+      });
+  });
 
   useEffect(() => {
-    console.log('Should update "useEffect"');
-    request(args);
+    refArgs.current = args;
+    request.current();
   }, [...args]);
 
-  return [data, setData, error, loading, () => request(args)];
+  return [data, setData, error, loading, request.current];
 };
