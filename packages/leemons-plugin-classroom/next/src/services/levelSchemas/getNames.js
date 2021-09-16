@@ -1,6 +1,6 @@
 export default async function getNames(id) {
   if (!id) {
-    return [];
+    return { id, names: [] };
   }
   const { status, levelSchema, error } = await leemons.api({
     url: `classroom/levelschema/${id}/names`,

@@ -34,13 +34,20 @@ export default function EditLevel({
 
   useEffect(() => {
     if (entity) {
-      setEntity({ ...entity, entity: { ...entity, name: values.name } });
+      setEntity({ entity: { ...entity, name: values.name } });
+    } else if (parent) {
+      setEntity({ newEntity: { name: values.name }, parent });
     }
   }, [values]);
 
   // On form Submit, create/update entity
   const onSubmit = async (data) => {
     const isNewEntity = !entity;
+
+    // don't save if the default locale is not
+    if (!values.name.length) {
+      return;
+    }
 
     // Only save written values
     const localizatedValues = Object.entries(localizations).reduce(

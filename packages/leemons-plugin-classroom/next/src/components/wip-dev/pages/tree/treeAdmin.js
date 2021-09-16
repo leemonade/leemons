@@ -33,14 +33,13 @@ export default function TreeAdmin({
           id: 'creating',
           parent: editingEntity.parent,
           isClass: false,
-          name: editingEntity.name || 'Create Level',
+          name: editingEntity.newEntity?.name || 'Create Level',
           properties: {
             editing: true,
           },
         });
       }
     }
-    console.log(editingEntity);
   }, [editingEntity]);
 
   // Give the update function to the parent
