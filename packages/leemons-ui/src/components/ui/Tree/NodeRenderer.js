@@ -1,14 +1,13 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import cln from 'classnames';
 import { TrashIcon } from '@heroicons/react/solid';
 import { PlusCircleIcon } from '@heroicons/react/outline';
 import { useDragOver } from '@leemonade/react-dnd-treeview';
 import Button from '../Button';
 
-export const NodeRenderer = ({
+export default function NodeRenderer({
   node,
-  treeData,
-  setTreeData,
   depth,
   isOpen,
   onToggle,
@@ -23,10 +22,9 @@ export const NodeRenderer = ({
   lowerSiblingsCount,
   hasOpenSiblings,
   siblingIndex,
-  ...otherProps
-}) => {
+}) {
   const [showButton, setShowButton] = useState(false);
-  const { droppable, data, type } = node;
+  const { type } = node;
   const isButton = type === 'button';
   const indent = (isButton ? Math.max(0, depth - 1) : depth) * 24 + (!hasChild ? 10 : 0);
   const dragOverProps =
@@ -177,4 +175,22 @@ export const NodeRenderer = ({
       )}
     </div>
   );
+}
+
+NodeRenderer.propTypes = {
+  node: PropTypes.object,
+  isOpen: PropTypes.bool,
+  isSelected: PropTypes.bool,
+  allowDropOutside: PropTypes.bool,
+  allowMultipleOpen: PropTypes.bool,
+  allowDragParents: PropTypes.bool,
+  hasChild: PropTypes.bool,
+  hasOpenSiblings: PropTypes.bool,
+  depth: PropTypes.number,
+  lowerSiblingsCount: PropTypes.number,
+  siblingIndex: PropTypes.number,
+  onToggle: PropTypes.func,
+  onAdd: PropTypes.func,
+  onDelete: PropTypes.func,
+  onSelect: PropTypes.func,
 };
