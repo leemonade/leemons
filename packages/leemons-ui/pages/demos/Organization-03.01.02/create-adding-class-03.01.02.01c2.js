@@ -90,11 +90,11 @@ function PageHeaderPage() {
 
 
                         <div>
-                            <Button color="primary" link className="pr-1 -ml-5">Translations</Button>
+                            <Button color="primary" link className="btn-link">Translations</Button>
                             <span className="fc_legend"><ExclamationCircleIcon className={`w-3 h-3 inline mr-2 text-error`} />Untranslated content will appear in the default language
                             </span>
                         </div>
-                        <Tabs>
+                        <Tabs activeIndex={1}>
                             <TabList>
                                 <Tab tabIndex='0'
                                     id='Tab1'
@@ -116,30 +116,82 @@ function PageHeaderPage() {
                             </TabPanel>
                             <TabPanel id='Panel2'
                                 tabId='Tab2'
-                                className='py-4 prose'>
-                                <h3 className="text-secondary">Permissions</h3>
+                                className='py-4'>
+                                <h3 className=" text-secondary-600 text-xl font-semibold">Permissions</h3>
                                 {/* Dummy tabla */}
-                                <table role="table" class="w-full">
+                                <table role="table" class="table table-admin table-fixed">
                                     <thead>
-                                        <tr role="row" className="border-b border-base-300">
-                                            <th colspan="1" role="columnheader" className="text-xs font-inter weigth-semibold py-3 px-4 text-secondary text-left">Level permissions</th>
-                                            <th colspan="1" role="columnheader" className="text-xs font-inter weigth-semibold py-3 px-4 text-secondary undefined">View</th>
-                                            <th colspan="1" role="columnheader" className="text-xs font-inter weigth-semibold py-3 px-4 text-secondary undefined">Edit</th>
-                                            <th colspan="1" role="columnheader" className="text-xs font-inter weigth-semibold py-3 px-4 text-secondary undefined">Assign</th>
+                                        <tr role="row" className="">
+                                            <th colspan="1" role="columnheader" className="th">Level permissions</th>
+                                            <th colspan="1" role="columnheader" className="th text-center">View</th>
+                                            <th colspan="1" role="columnheader" className="th text-center">Edit</th>
+                                            <th colspan="1" role="columnheader" className="th text-center">Assign</th>
                                         </tr>
                                     </thead>
                                     <tbody role="rowgroup">
-                                        <tr role="row" className="border-b border-base-300">
-                                            <td role="cell" className="m-0 p-0">
-                                                <div className="text-sm text-secondaryfont-inter py-3 px-4">Admin</div>
+                                        <tr role="row" className="">
+                                            <td role="cell" className="td">
+                                                <div className="">Admin</div>
                                             </td>
-                                            <td role="cell" className="m-0 p-0">
-                                                <div className="flex flex-row justify-center py-3 px-4 bg-primary-100"><div>
-                                                    <input type="checkbox" className="checkbox checkbox-primary" /><span class="checkbox-mark"></span>
+                                            <td role="cell" className="selected">
+                                                <div className="center">
+                                                    <input type="checkbox" className="checkbox checkbox-primary" checked /><span class="checkbox-mark"></span>
                                                 </div>
+                                            </td>
+                                            <td role="cell">
+                                                <div className="center">
+                                                    <input type="checkbox" className="checkbox checkbox" /><span class="checkbox-mark"></span>
+                                                </div>
+                                            </td>
+                                            <td role="cell" >
+                                                <div className="center">
+                                                    <input type="checkbox" className="checkbox checkboxy" /><span class="checkbox-mark"></span>
                                                 </div>
                                             </td>
                                         </tr>
+
+                                        <tr role="row" className="">
+                                            <td role="cell" className="td">
+                                                <div className="">Tutors</div>
+                                            </td>
+                                            <td role="cell" className="selected">
+                                                <div className="center">
+                                                    <input type="checkbox" className="checkbox checkbox-primary" checked /><span class="checkbox-mark"></span>
+                                                </div>
+                                            </td>
+                                            <td role="cell">
+                                                <div className="center">
+                                                    <input type="checkbox" className="checkbox" /><span class="checkbox-mark"></span>
+                                                </div>
+                                            </td>
+                                            <td role="cell" className="selected">
+                                                <div className="center">
+                                                    <input type="checkbox" className="checkbox checkbox-primary" checked /><span class="checkbox-mark"></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr role="row" className="">
+                                            <td role="cell" className="td">
+                                                <div className="">Teachers</div>
+                                            </td>
+                                            <td role="cell" className="selected">
+                                                <div className="center">
+                                                    <input type="checkbox" className="checkbox checkbox-primary" checked /><span class="checkbox-mark"></span>
+                                                </div>
+                                            </td>
+                                            <td role="cell" className="selected">
+                                                <div className="center">
+                                                    <input type="checkbox" className="checkbox checkbox-primary" checked /><span class="checkbox-mark"></span>
+                                                </div>
+                                            </td>
+                                            <td role="cell" className="selected">
+                                                <div className="center">
+                                                    <input type="checkbox" className="checkbox checkbox-primary" checked /><span class="checkbox-mark"></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+
                                     </tbody>
                                 </table>
                                 {/* Fin Dummy tabla */}

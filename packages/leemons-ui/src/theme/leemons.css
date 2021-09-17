@@ -52,6 +52,7 @@
 @import './components/styled/checkbox.css';
 @import './components/styled/collapse.css';
 @import './components/styled/countdown.css';
+@import './components/styled/details.css';
 @import './components/styled/divider.css';
 @import './components/styled/drawer.css';
 @import './components/styled/dropdown.css';
@@ -82,6 +83,7 @@
 /* UTILITES */
 @import 'tailwindcss/utilities';
 /* Global Utilities */
+@import './utilities/global/auxiliaries.css';
 @import './utilities/global/borderRadius.css';
 @import './utilities/global/fontSize.css';
 @import './utilities/global/glass.css';
@@ -93,6 +95,7 @@
 @import './utilities/unstyled/button.css';
 @import './utilities/unstyled/card.css';
 @import './utilities/unstyled/input.css';
+@import './utilities/unstyled/table.css';
 @import './utilities/unstyled/select.css';
 /* Styled Utilities */
 @import './utilities/styled/alert.css';
@@ -101,6 +104,7 @@
 @import './utilities/styled/backgrounds.css';
 @import './utilities/styled/badge.css';
 @import './utilities/styled/modal.css';
+@import './utilities/styled/table.css';
 @import './utilities/styled/tooltip.css';
 
 /* ------------------------------------------ */

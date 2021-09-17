@@ -1,3 +1,5 @@
+const { actions } = require('react-table');
+
 module.exports = {
   common: {
     save: 'Guardar',
@@ -80,6 +82,38 @@ module.exports = {
       },
       permissions: {
         label: 'Permisos',
+      },
+    },
+  },
+  class_list: {
+    page_title: 'Administración de clases',
+    page_info:
+      'Aquí puedes encontrar y administrar la estructura de niveles de tu Universidad y asignar estudiantes a clases.',
+    details: {
+      type_program: 'programas',
+      type_courses: 'cursos',
+      type_groups: 'grupos',
+    },
+    class_table: {
+      th_tutor: 'Tutor',
+      th_students: 'Alumnos',
+      th_actions: 'Aciones',
+      btn_edit: 'Editar',
+      btn_expand: 'Expandir',
+      btn_view: 'Ver',
+    },
+
+    view_panel: {
+      summary: {
+        btn_edit: 'Editar',
+        btn_expand: 'Expandir',
+        counter: 'Alumnos',
+      },
+      table: {
+        th_name: 'Nombre de Pila',
+        th_surename: 'Primer Apellido',
+        th_email: 'Dirección E-mail',
+        th_birthday: 'cumpleaños',
       },
     },
   },

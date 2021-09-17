@@ -47,14 +47,14 @@ function Drawer({ isShown, isVisible, hide, options, children }) {
 
   return isShown
     ? ReactDOM.createPortal(
-        <>
-          <div className={overlayClass} onClick={handleOverlayClicked} />
-          <div aria-modal aria-hidden tabIndex={-1} role="dialog" className={contentClass}>
-            {children}
-          </div>
-        </>,
-        document.body
-      )
+      <>
+        <div className={overlayClass} onClick={handleOverlayClicked} />
+        <div aria-modal aria-hidden tabIndex={-1} role="dialog" className={contentClass}>
+          {children}
+        </div>
+      </>,
+      document.body
+    )
     : null;
 }
 
