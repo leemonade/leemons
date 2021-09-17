@@ -5,6 +5,7 @@ import tLoader from '@multilanguage/helpers/tLoader';
 import useTranslate from '@multilanguage/useTranslate';
 import { TranslationsDrawer } from '../../../multilanguage/translationsDrawer';
 import useGetNames from '../../../../hooks/levelschema/useGetNames';
+import FormControl from 'leemons-ui/dist/components/ui/FormControl';
 
 function TranslationTab({
   defaultLocaleValues,
@@ -31,19 +32,21 @@ function TranslationTab({
   }, [value]);
   return (
     <>
-      <Input
-        outlined
-        className="input w-full"
-        placeholder={t('placeholder')}
-        value={value?.name || ''}
-        onChange={(e) => {
-          // Also update the default value (seen outside translations)
-          if (isDefault) {
-            setDefaultLocaleValues({ ...value, name: e.target.value });
-          }
-          setValues({ [locale]: { ...value, name: e.target.value } });
-        }}
-      />
+      <FormControl className="fc w-full my-4 flex flex-row" label={t('placeholder')}>
+        <Input
+          outlined
+          className="inline-block flex-1 w-1/2"
+          placeholder={t('placeholder')}
+          value={value?.name || ''}
+          onChange={(e) => {
+            // Also update the default value (seen outside translations)
+            if (isDefault) {
+              setDefaultLocaleValues({ ...value, name: e.target.value });
+            }
+            setValues({ [locale]: { ...value, name: e.target.value } });
+          }}
+        />
+      </FormControl>
     </>
   );
 }

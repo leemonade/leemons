@@ -258,7 +258,7 @@ function PageHeaderPage() {
               <TabPanel id="Panel1"></TabPanel>
             </Tabs>
 
-            <FormControl className="fc w-full my-4 flex">
+            <FormControl className="fc w-full my-4 flex flex-row">
               <Label text="Label" className=" mr-4 inline-block flex-1"></Label>
               <Input outlined={true} placeholder="Level" className="inline-block flex-1 w-1/2" />
             </FormControl>
