@@ -50,8 +50,6 @@ module.exports = [
     authenticated: true,
     allowedPermissions: getPermissions(permissions.classroom, ['view']),
   },
-
-  // TODO: Add permissions
   {
     path: '/levelSchema',
     method: 'POST',
@@ -221,5 +219,11 @@ module.exports = [
       [permissions.organization, ['assign']],
       ['plugins.users.users', ['view']],
     ]),
+  },
+  {
+    path: '/users/search',
+    method: 'GET',
+    handler: 'users.search',
+    authenticated: true,
   },
 ];
