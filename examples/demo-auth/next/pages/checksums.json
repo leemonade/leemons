@@ -1,13 +1,1 @@
-{
-  "emails": "80277061c7d38beb68d1faca3ac74501",
-  "package-manager": "80277061c7d38beb68d1faca3ac74501",
-  "dataset": "8403b2bb94aaa8e439145b6b2624f196",
-  "layout": "5ac9148d1b9998ad86b0a5114aa4f63b",
-  "mvp-template": "718e5f74207886bfb6ea4dc75dbad125",
-  "menu-builder": "718e5f74207886bfb6ea4dc75dbad125",
-  "onboarding": "7caa90580137cf1d56247707842ef35d",
-  "classroom": "b80ea7c3fd77f5fc088693700afc3b98",
-  "families": "9f33e4ad853ffba48ff20a732fcdff2b",
-  "users": "52755e888216c893bbf94ffa2602af7b",
-  "integrity": "bbc4408e95281e0ff317774ebbbfdd06"
-}
+{"emails":"80277061c7d38beb68d1faca3ac74501","package-manager":"80277061c7d38beb68d1faca3ac74501","dataset":"8403b2bb94aaa8e439145b6b2624f196","layout":"5ac9148d1b9998ad86b0a5114aa4f63b","mvp-template":"718e5f74207886bfb6ea4dc75dbad125","menu-builder":"718e5f74207886bfb6ea4dc75dbad125","onboarding":"7caa90580137cf1d56247707842ef35d","classroom":"88123a8d81502a02abd086046fe23e13","families":"9f33e4ad853ffba48ff20a732fcdff2b","users":"52755e888216c893bbf94ffa2602af7b","integrity":"049ea01cbf13fc1f6d7dff0369490f02"}
