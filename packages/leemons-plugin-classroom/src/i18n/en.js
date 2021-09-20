@@ -114,4 +114,22 @@ module.exports = {
       },
     },
   },
+  edit_level_page: {
+    page_title: 'Classes Admin',
+    tutor: {
+      title: 'Tutor',
+      description: 'Assign a tutor to this group',
+      label: 'Search',
+      placeholder: 'Search a tutor',
+    },
+    students: {
+      title: 'Students',
+      description: 'Assign students to this group from the students database.',
+      option01: 'Select by tag',
+      option02: 'Search',
+      option03: 'Bulk IDs upload',
+      label: 'Assign',
+      placeholder: 'Start typing a tag',
+    },
+  },
 };

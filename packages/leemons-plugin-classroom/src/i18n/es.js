@@ -117,4 +117,22 @@ module.exports = {
       },
     },
   },
+  edit_level_page: {
+    page_title: 'Administración de clases',
+    tutor: {
+      title: 'Tutor',
+      description: 'Asignar tutor a este grupo',
+      label: 'Buscar',
+      placeholder: 'Busca un tutor',
+    },
+    students: {
+      title: 'Estudiantes',
+      description: 'Asignar estudiantes a este grupo desde la base de datos de estudiantes.',
+      option01: 'Seleccionar por tag',
+      option02: 'Buscar',
+      option03: 'Carga masiva de IDs',
+      label: 'Asignar',
+      placeholder: 'Comienza a escribir un tag',
+    },
+  },
 };
