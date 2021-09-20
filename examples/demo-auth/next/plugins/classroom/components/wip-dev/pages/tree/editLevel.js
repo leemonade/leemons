@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useTranslate from '@multilanguage/useTranslate';
 import { useAlerts, Alerts } from '@classroom/components/alerts';
-import addLevelSchema from '../../../../services/levelSchemas/addLevelSchema';
+import DatasetAdmin from '@classroom/components/dataset/datasetAdmin';
 import updateLevelSchema from '../../../../services/levelSchemas/updateLevelSchema';
 
 import { useTranslationsDrawer } from '../../../multilanguage/translationsDrawer';
@@ -158,6 +158,7 @@ export default function EditLevel({
             </Tab>
           </TabList>
           <TabPanel id="Panel1" tabId="Tab1" className="p-4">
+            <DatasetAdmin />
             <h2>Any content 1</h2>
           </TabPanel>
           <TabPanel id="Panel2" tabId="Tab2" className="p-4">
