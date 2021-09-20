@@ -55,17 +55,33 @@ module.exports = (Base) =>
      * Your specific locales -> User locale -> Center locale -> Platform locale
      * @returns {Promise<string[]>} Locale array
      */
-    async resolveLanguages(locales, userAgent) {
+    async resolveLocales(userSession, locales, { transacting } = {}) {
       let finalLocales = [];
+      // Your specific locales
       if (locales) {
         finalLocales = finalLocales.concat(locales);
       }
-      if (userAgent) {
-        const userAgents = _.isArray(userAgent) ? userAgent : [userAgent];
+      if (userSession) {
+        // User locale
+        if (userSession.locale) finalLocales.push(userSession.locale);
+        // Center locale
+        if (userSession.userAgents) {
+          const centers = await leemons
+            .getPlugin('users')
+            .services.users.getUserAgentCenter(userSession.userAgents, { transacting });
+          _.forEach(centers, ({ locale }) => {
+            finalLocales.push(locale);
+          });
+        }
       }
-      const platformLocale = await leemons.getPlugin('users').platform.getDefaultLocale();
+      // Platform locale
+      const platformLocale = await leemons
+        .getPlugin('users')
+        .services.platform.getDefaultLocale({ transacting });
       if (platformLocale) {
         finalLocales.push(platformLocale);
       }
+
+      return _.uniq(finalLocales);
     }
   };

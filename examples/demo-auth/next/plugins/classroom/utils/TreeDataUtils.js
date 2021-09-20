@@ -1,7 +1,7 @@
 function setParents(node) {
   if (node.children) {
     node.children.forEach((child) => {
-      child.parent = node; //so now each node will have a parent except root node.
+      child.parent = node; // so now each node will have a parent except root node.
     });
 
     node.children.forEach(setParents);
@@ -25,9 +25,9 @@ function expandNodes(node, expand) {
 }
 
 function expandBranch(node, targetNode) {
-  expandNodes(node, false); //set all the nodes collapsed
+  expandNodes(node, false); // set all the nodes collapsed
   let level = targetNode;
-  //iterate over all its parent and make it expanded
+  // iterate over all its parent and make it expanded
   while (level) {
     level.expanded = true;
     level = level.parent;
