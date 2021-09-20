@@ -77,52 +77,58 @@ function ClassList() {
                   <FormControl label={t('tutor.label')} className="read-only-label">
                     <Input placeholder={t('tutor.placeholder')} outlined={true}></Input>
                   </FormControl>
-                  {/* autsuggest example */}
-                  <ul role="listbox" className="react-autosuggest__suggestions-list">
-                    <li
-                      role="option"
-                      id="react-autowhatever-1--item-0"
-                      className="react-autosuggest__suggestion"
-                      data-suggestion-index="0"
-                    >
-                      <span className="suggestion-content dancounsell">
-                        <span className="name">
-                          <span className="highlight">C</span>
-                          <span>harlie Brown</span>
-                        </span>
-                      </span>
-                    </li>
-                    <li
-                      role="option"
-                      id="react-autowhatever-1--item-1"
-                      className="react-autosuggest__suggestion"
-                      data-suggestion-index="1"
-                    >
-                      <span className="suggestion-content mtnmissy">
-                        <span className="name">
-                          <span className="highlight">C</span>
-                          <span>harlotte White</span>
-                        </span>
-                      </span>
-                    </li>
-                    <li
-                      role="option"
-                      id="react-autowhatever-1--item-2"
-                      className="react-autosuggest__suggestion"
-                      data-suggestion-index="2"
-                    >
-                      <span className="suggestion-content ladylexy">
-                        <span className="name">
-                          <span class="highlight">C</span>
-                          <span>hloe Jones</span>
-                        </span>
-                      </span>
-                    </li>
-                  </ul>
+                  {/* autsuggest dummy example */}
 
-                  <FormControl label={t('tutor.label')} className="read-only-label">
-                    <Input placeholder={t('tutor.placeholder')} outlined={true}></Input>
-                  </FormControl>
+                  <div
+                    data-reactroot=""
+                    className="react-autosuggest__container react-autosuggest__container--open"
+                  >
+                    <input
+                      type="text"
+                      value="A"
+                      autocomplete="off"
+                      role="combobox"
+                      aria-autocomplete="list"
+                      aria-owns="react-autowhatever-1"
+                      aria-expanded="true"
+                      aria-haspopup="true"
+                      className="input input-bordered w-full"
+                      placeholder="Search"
+                    />
+                    <div id="react-autowhatever-1" className="relative">
+                      <ul role="listbox" className="react-autosuggest__suggestions-list">
+                        <li
+                          role="option"
+                          id="react-autowhatever-1--item-0"
+                          className="react-autosuggest__suggestion"
+                          data-suggestion-index="0"
+                        >
+                          <div className="suggestion-content">
+                            <div className="user-card minimal">
+                              <Avatar circle={true} size={8} className="">
+                                <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
+                              </Avatar>
+                              <span>Antonia Hidalgo</span>
+                            </div>
+                          </div>
+                        </li>
+                        <li
+                          role="option"
+                          id="react-autowhatever-1--item-1"
+                          className="react-autosuggest__suggestion"
+                          data-suggestion-index="1"
+                        >
+                          <div className="user-card minimal">
+                            <Avatar circle={true} size={8} className="">
+                              <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
+                            </Avatar>
+                            <span>Antonia Hidalgo</span>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  {/* End autsuggest dummy example */}
                 </div>
               </fielset>
               <fielset className="edit-section border-t border-base-200 pt-8 flex gap-10">
