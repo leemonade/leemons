@@ -1,14 +1,176 @@
+import { useState } from 'react';
+
 import tLoader from '@multilanguage/helpers/tLoader';
 import useTranslate from '@multilanguage/useTranslate';
 import { Avatar, Button } from 'leemons-ui';
 import Autosuggest from 'react-autosuggest';
 
 export default function EditLevelTutor() {
+  const [value, setValue] = useState('');
+  const [suggestions, setSuggestions] = useState([
+    {
+      name: 'C',
+      year: 1972,
+    },
+    {
+      name: 'C#',
+      year: 2000,
+    },
+    {
+      name: 'C++',
+      year: 1983,
+    },
+    {
+      name: 'Clojure',
+      year: 2007,
+    },
+    {
+      name: 'Elm',
+      year: 2012,
+    },
+    {
+      name: 'Go',
+      year: 2009,
+    },
+    {
+      name: 'Haskell',
+      year: 1990,
+    },
+    {
+      name: 'Java',
+      year: 1995,
+    },
+    {
+      name: 'Javascript',
+      year: 1995,
+    },
+    {
+      name: 'Perl',
+      year: 1987,
+    },
+    {
+      name: 'PHP',
+      year: 1995,
+    },
+    {
+      name: 'Python',
+      year: 1991,
+    },
+    {
+      name: 'Ruby',
+      year: 1995,
+    },
+    {
+      name: 'Scala',
+      year: 2003,
+    },
+  ]);
   const [translate] = useTranslate({
     keysStartsWith: 'edit_level_page.tutor',
   });
   const t = tLoader('edit_level_page.tutor', translate);
   console.log(translate);
+
+  const onChange = (event, { newValue }) => {
+    setValue(newValue);
+  };
+
+  // Imagine you have a list of languages that you'd like to autosuggest.
+  const languages = [
+    {
+      name: 'C',
+      year: 1972,
+    },
+    {
+      name: 'C#',
+      year: 2000,
+    },
+    {
+      name: 'C++',
+      year: 1983,
+    },
+    {
+      name: 'Clojure',
+      year: 2007,
+    },
+    {
+      name: 'Elm',
+      year: 2012,
+    },
+    {
+      name: 'Go',
+      year: 2009,
+    },
+    {
+      name: 'Haskell',
+      year: 1990,
+    },
+    {
+      name: 'Java',
+      year: 1995,
+    },
+    {
+      name: 'Javascript',
+      year: 1995,
+    },
+    {
+      name: 'Perl',
+      year: 1987,
+    },
+    {
+      name: 'PHP',
+      year: 1995,
+    },
+    {
+      name: 'Python',
+      year: 1991,
+    },
+    {
+      name: 'Ruby',
+      year: 1995,
+    },
+    {
+      name: 'Scala',
+      year: 2003,
+    },
+  ];
+
+  // Teach Autosuggest how to calculate suggestions for any given input value.
+  const getSuggestions = (_value) => {
+    const inputValue = _value.trim().toLowerCase();
+    const inputLength = inputValue.length;
+
+    return inputLength === 0
+      ? []
+      : languages.filter((lang) => lang.name.toLowerCase().slice(0, inputLength) === inputValue);
+  };
+
+  // When suggestion is clicked, Autosuggest needs to populate the input
+  // based on the clicked suggestion. Teach Autosuggest how to calculate the
+  // input value for every given suggestion.
+  const getSuggestionValue = (suggestion) => suggestion.name;
+
+  // Use your imagination to render suggestions.
+  const renderSuggestion = (suggestion, { isHighlighted }) => (
+    <div className={isHighlighted ? 'bg-red-50' : 'bg-transparent'}>{suggestion.name}</div>
+  );
+
+  // Autosuggest will call this function every time you need to update suggestions.
+  // You already implemented this logic above, so just use it.
+  const onSuggestionsFetchRequested = ({ value: _value }) => {
+    setSuggestions(getSuggestions(_value));
+  };
+
+  // Autosuggest will call this function every time you need to clear suggestions.
+  const onSuggestionsClearRequested = () => {
+    setSuggestions([]);
+  };
+
+  const inputProps = {
+    placeholder: 'Type a programming language',
+    value,
+    onChange,
+  };
 
   return (
     <>
@@ -20,13 +182,23 @@ export default function EditLevelTutor() {
           </p>
         </div>
         <div className=" w-8/12">
+          <p>Hika</p>
           {/* autsuggest dummy example */}
-
+          <Autosuggest
+            suggestions={suggestions}
+            onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+            onSuggestionsClearRequested={onSuggestionsClearRequested}
+            getSuggestionValue={getSuggestionValue}
+            renderSuggestion={renderSuggestion}
+            inputProps={inputProps}
+            alwaysRenderSuggestions={true}
+          />
+          {/*
           <div data-reactroot="" className="block relative border border-base-300 z-10 open">
             <input
               type="text"
               value="A"
-              autocomplete="off"
+              autoComplete="off"
               role="combobox"
               aria-autocomplete="list"
               aria-owns="react-autowhatever-1"
@@ -67,7 +239,7 @@ export default function EditLevelTutor() {
                 </li>
               </ul>
             </div>
-          </div>
+          </div> */}
           {/* End autsuggest dummy example */}
         </div>
       </fielset>
