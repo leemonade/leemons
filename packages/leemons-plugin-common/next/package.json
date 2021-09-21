@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "react-autosuggest": "^10.1.0"
+  },
   "devDependencies": {}
 }

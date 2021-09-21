@@ -8,7 +8,7 @@ import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
 import { CenterService } from '@users/services';
 import prefixPN from '@classroom/helpers/prefixPN';
-import Infolayer from './info-layer';
+import EditLevelTutor from './edit-level-tutor';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de gestionar Clases
 function ClassList() {
@@ -64,73 +64,7 @@ function ClassList() {
                   Save
                 </Button>
               </div>
-              <fielset className="edit-section border-t border-base-200 pt-8 flex gap-10">
-                <div className=" w-4/12">
-                  <legend className="edit-section-title text-xl text-secondary">
-                    {t('tutor.title')}
-                  </legend>
-                  <p className="edit-section-description font-inter text-sm text-secondary-300">
-                    {t('tutor.description')}
-                  </p>
-                </div>
-                <div className=" w-8/12">
-                  <FormControl label={t('tutor.label')} className="read-only-label">
-                    <Input placeholder={t('tutor.placeholder')} outlined={true}></Input>
-                  </FormControl>
-                  {/* autsuggest dummy example */}
-
-                  <div
-                    data-reactroot=""
-                    className="react-autosuggest__container react-autosuggest__container--open"
-                  >
-                    <input
-                      type="text"
-                      value="A"
-                      autocomplete="off"
-                      role="combobox"
-                      aria-autocomplete="list"
-                      aria-owns="react-autowhatever-1"
-                      aria-expanded="true"
-                      aria-haspopup="true"
-                      className="input input-bordered w-full"
-                      placeholder="Search"
-                    />
-                    <div id="react-autowhatever-1" className="relative">
-                      <ul role="listbox" className="react-autosuggest__suggestions-list">
-                        <li
-                          role="option"
-                          id="react-autowhatever-1--item-0"
-                          className="react-autosuggest__suggestion"
-                          data-suggestion-index="0"
-                        >
-                          <div className="suggestion-content">
-                            <div className="user-card minimal">
-                              <Avatar circle={true} size={8} className="">
-                                <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
-                              </Avatar>
-                              <span>Antonia Hidalgo</span>
-                            </div>
-                          </div>
-                        </li>
-                        <li
-                          role="option"
-                          id="react-autowhatever-1--item-1"
-                          className="react-autosuggest__suggestion"
-                          data-suggestion-index="1"
-                        >
-                          <div className="user-card minimal">
-                            <Avatar circle={true} size={8} className="">
-                              <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
-                            </Avatar>
-                            <span>Antonia Hidalgo</span>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  {/* End autsuggest dummy example */}
-                </div>
-              </fielset>
+              <EditLevelTutor></EditLevelTutor>
               <fielset className="edit-section border-t border-base-200 pt-8 flex gap-10">
                 <div className=" w-4/12">
                   <legend className="edit-section-title text-xl text-secondary">

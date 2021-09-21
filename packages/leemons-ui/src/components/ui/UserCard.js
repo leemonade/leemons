@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function User({ children, className }) {
-  return <div className={`card ${className || ''}`}>{children}</div>;
+function UserCard({ children, className }) {
+  return <div className={`usercard ${className || ''}`}>{children}</div>;
 }
 
-User.propTypes = {
+UserCard.propTypes = {
   children: PropTypes.any,
   className: PropTypes.string,
 };
 
-export default User;
+export default UserCard;
