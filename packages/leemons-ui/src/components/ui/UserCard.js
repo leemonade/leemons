@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 function UserCard({ children, className }) {
-  return <div className={`usercard ${className || ''}`}>{children}</div>;
+  return <div className={`user-card ${className || ''}`}>{children}</div>;
 }
 
 UserCard.propTypes = {

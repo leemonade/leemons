@@ -124,6 +124,8 @@ module.exports = {
       description: 'Asignar tutor a este grupo',
       label: 'Buscar',
       placeholder: 'Busca un tutor',
+      btn_apply: 'Asignar',
+      btn_change: 'Cambiar tutor',
     },
     students: {
       title: 'Estudiantes',

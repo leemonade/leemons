@@ -12,6 +12,7 @@
 /* Unstyled components (Layout, events, etc) */
 @import './components/unstyled/alert.css';
 @import './components/unstyled/artboard.css';
+@import './components/unstyled/autosuggest.css';
 @import './components/unstyled/avatar.css';
 @import './components/unstyled/badge.css';
 @import './components/unstyled/breadcrumbs.css';
@@ -46,6 +47,7 @@
 /* Styled components (Bg, colors, effects, etc) */
 @import './components/styled/alert.css';
 @import './components/styled/avatar.css';
+@import './components/styled/autosuggest.css';
 @import './components/styled/badge.css';
 @import './components/styled/breadcrumbs.css';
 @import './components/styled/button.css';
@@ -160,28 +162,4 @@
     --focus-ring: 2px;
     --focus-ring-offset: 2px;
   }
-}
-
-/* Hide visually but still be available to screenreaders
-  /// @group Main
-  /// @link http://snook.ca/archives/html_and_css/hiding-content-for-accessibility
-  /// @link https://github.com/h5bp/html5-boilerplate/blob/master/dist/css/main.css
-  /// @author Jonathan Snook
-  ///
-  /// @ignore 1. For long content, line feeds are not interpreted as spaces and small width causes content to wrap 1 word per line:
-  /// @ignore https://medium.com/@jessebeach/beware-smushed-off-screen-accessible-text-5952a4c2cbfe
-  */
-.read-only {
-  border: 0;
-  clip: rect(0 0 0 0);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  white-space: nowrap;
-  width: 1px;
-}
-.unseen {
-  visibility: hidden;
 }

@@ -21,10 +21,8 @@
           }
         }
 
-        .user-card-phone,
         .user-card-email {
-          /* 
-          transform: translateY(-50%); */
+          @apply mt-2;
         }
       }
     }
@@ -34,6 +32,9 @@
     .msg {
       @apply ml-16;
     }
+  }
+  .react-autosuggest__suggestion .user-card {
+    @apply py-2 px-4;
   }
   /* :> */
 }

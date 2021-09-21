@@ -68,6 +68,7 @@
     "next": "10.2.3",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
+    "react-autosuggest": "^10.1.0",
     "react-dom": "^17.0.1",
     "react-highlight": "^0.14.0",
     "react-popper-tooltip": "^4.3.0",

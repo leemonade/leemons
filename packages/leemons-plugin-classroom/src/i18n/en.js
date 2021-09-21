@@ -121,6 +121,8 @@ module.exports = {
       description: 'Assign a tutor to this group',
       label: 'Search',
       placeholder: 'Search a tutor',
+      btn_apply: 'Assing',
+      btn_change: 'Change tutor',
     },
     students: {
       title: 'Students',

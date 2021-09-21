@@ -8,7 +8,8 @@ import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
 import { CenterService } from '@users/services';
 import prefixPN from '@classroom/helpers/prefixPN';
-import EditLevelTutor from './edit-level-tutor';
+import EditLevelTutor from '@classroom/components/wip-ui/pages/edit-level/edit-level-tutor';
+import EditLevelStudents from '@classroom/components/wip-ui/pages/edit-level/edit-level-students';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de gestionar Clases
 function ClassList() {
@@ -65,32 +66,7 @@ function ClassList() {
                 </Button>
               </div>
               <EditLevelTutor></EditLevelTutor>
-              <fielset className="edit-section border-t border-base-200 pt-8 flex gap-10">
-                <div className=" w-4/12">
-                  <legend className="edit-section-title text-xl text-secondary">
-                    {t('students.title')}
-                  </legend>
-                  <p className="edit-section-description font-inter text-sm text-secondary-300">
-                    {t('students.description')}
-                  </p>
-                </div>
-                <div className=" w-8/12">
-                  <div className="flex flex-nowrap justify-between mb-3">
-                    <FormControl label={t('students.option01')} labelPosition="right">
-                      <Radio name="opt" />
-                    </FormControl>
-                    <FormControl label={t('students.option02')} labelPosition="right">
-                      <Radio name="opt" />
-                    </FormControl>
-                    <FormControl label={t('students.option03')} labelPosition="right">
-                      <Radio name="opt" />
-                    </FormControl>
-                  </div>
-                  <FormControl label={t('students.label')} className="read-only-label">
-                    <Input placeholder={t('students.placeholder')} outlined={true}></Input>
-                  </FormControl>
-                </div>
-              </fielset>
+              <EditLevelStudents></EditLevelStudents>
             </div>
           </div>
         </div>

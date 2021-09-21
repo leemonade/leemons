@@ -1,23 +1,17 @@
 import React from 'react';
 import { XIcon, ChevronRightIcon } from '@heroicons/react/outline';
-import { Avatar, UserCard, Button, Badge } from '../../src/components/ui';
+import { Avatar, Divider, UserCard, Button, Badge } from '../../src/components/ui';
 import ClassTable from '../../src/components/ClassTable';
 import Wrapper from '../../src/components/Wrapper';
 
 function UserCardPage() {
   const data = {
     showType: true,
-    components: [
-      { class: 'card', desc: 'Container element' },
-      { class: 'card-title', desc: 'Title of card' },
-      { class: 'card-body', desc: 'Container for content' },
-      { class: 'card-actions', desc: 'Container for buttons' },
-    ],
+    components: [{ class: 'usercard', desc: 'Container element' }],
     utilities: [
-      { class: 'bordered', desc: 'Adds border`' },
-      { class: 'compact', desc: 'Less padding' },
-      { class: 'card-side', desc: 'The image in <figure> will be on to the side' },
-      { class: 'image-full', desc: 'The image in <figure> element will be the background' },
+      { class: 'minimal', desc: 'inline avatar and name`' },
+      { class: 'basic horizontal', desc: 'horizontal grid view with name, phone and email' },
+      { class: 'vertical full', desc: 'vertical center view whith ' },
     ],
   };
 
@@ -28,22 +22,20 @@ function UserCardPage() {
       </div>
       <div className="flex-grow p-4">
         <div className="text-xl font-bold">Examples</div>
-        <UserCard>
-          <p> afsdfasdfasd</p>
-        </UserCard>
+
         <Wrapper
           title="Minimal User Card"
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          <div className="user-card minimal">
+          <UserCard className="minimal">
             <Avatar circle={true} size={8} className="">
               <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />
             </Avatar>
             <span>Antonia Hidalgo</span>
-          </div>
+          </UserCard>
         </Wrapper>
         <Wrapper title="Horizontal Basic User Card" className="flex">
-          <div className="user-card">
+          <UserCard>
             <dl className="basic horizontal">
               <dt className="avatar-container read-only">Avatar</dt>
               <dd className="avatar-container">
@@ -60,8 +52,8 @@ function UserCardPage() {
               <dt className="read-only">Correo electrónico</dt>
               <dd className="user-card-email">lafalletye.benoit@example.com</dd>
             </dl>
-          </div>
-          <div className="user-card is-error">
+          </UserCard>
+          <UserCard className="is-error">
             <dl className="basic horizontal">
               <dt className="avatar-container read-only">Avatar</dt>
               <dd className="avatar-container">
@@ -79,10 +71,10 @@ function UserCardPage() {
               <dd className="user-card-email">lafalletye.benoit@example.com</dd>
             </dl>
             <span className="msg">Contact already added</span>
-          </div>
+          </UserCard>
         </Wrapper>
         <Wrapper title="Vertical full User Card">
-          <div className="user-card">
+          <UserCard>
             <dl class="vertical full">
               <dt className="read-only">Avatar</dt>
               <dd className="block justify-center">
@@ -130,8 +122,10 @@ function UserCardPage() {
                 </Button>
               </dd>
             </dl>
-          </div>
+          </UserCard>
         </Wrapper>
+        <Divider className="my-6" />
+        <ClassTable data={data} />
       </div>
     </main>
   );
