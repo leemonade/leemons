@@ -127,11 +127,15 @@ module.exports = {
     students: {
       title: 'Students',
       description: 'Assign students to this group from the students database.',
-      option01: 'Select by tag',
+      option01: 'Select by Tag',
       option02: 'Search',
       option03: 'Bulk IDs upload',
       label: 'Assign',
-      placeholder: 'Start typing a tag',
+      placeholder: 'Start typing a Tag',
+      btn_add: 'Add Tag',
+      btn_search: 'Search by these Tags',
+      error_long:
+        'The number of results is more than 50, please add more tags to narrow down your search',
     },
   },
 };

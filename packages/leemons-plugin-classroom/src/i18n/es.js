@@ -130,11 +130,14 @@ module.exports = {
     students: {
       title: 'Estudiantes',
       description: 'Asignar estudiantes a este grupo desde la base de datos de estudiantes.',
-      option01: 'Seleccionar por tag',
+      option01: 'Seleccionar por Tag',
       option02: 'Buscar',
       option03: 'Carga masiva de IDs',
       label: 'Asignar',
-      placeholder: 'Comienza a escribir un tag',
+      placeholder: 'Comienza a escribir un Tag',
+      btn_add: 'Añadir Tag',
+      btn_search: 'Buscar por estos Tags',
+      error_long: 'Han aparecido más de 50 Tags, agregue más tags para delimitar su búsqueda ',
     },
   },
 };

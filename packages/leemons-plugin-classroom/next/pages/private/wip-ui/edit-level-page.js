@@ -9,7 +9,7 @@ import { withLayout } from '@layout/hoc';
 import { CenterService } from '@users/services';
 import prefixPN from '@classroom/helpers/prefixPN';
 import EditLevelTutor from '@classroom/components/wip-ui/pages/edit-level/edit-level-tutor';
-import EditLevelStudents from '@classroom/components/wip-ui/pages/edit-level/edit-level-students';
+import EditLevelStudent from '@classroom/components/wip-ui/pages/edit-level/edit-level-students';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de gestionar Clases
 function ClassList() {
@@ -66,7 +66,7 @@ function ClassList() {
                 </Button>
               </div>
               <EditLevelTutor></EditLevelTutor>
-              <EditLevelStudents></EditLevelStudents>
+              <EditLevelStudent></EditLevelStudent>
             </div>
           </div>
         </div>
