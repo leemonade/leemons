@@ -13,6 +13,7 @@ module.exports = {
   },
   isSuperAdmin: usersService.isSuperAdmin,
   detailForJWT: usersService.detailForJWT,
+  getUserAgentCenter: usersService.getUserAgentCenter,
   hasPermissionCTX: usersService.hasPermissionCTX,
   // TODO Solo deberian de tener acceso los plugins que tengan permiso a ejecutar dichas funciones o los usuarios con permiso
   add: usersService.add,

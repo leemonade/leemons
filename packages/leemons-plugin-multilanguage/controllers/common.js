@@ -42,7 +42,17 @@ async function get(ctx) {
         ],
       },
       locale: {
-        type: 'string',
+        oneOf: [
+          {
+            type: 'string',
+          },
+          {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+        ],
       },
     },
     required: ['locale'],
@@ -99,11 +109,8 @@ async function get(ctx) {
 }
 
 async function getLogged(ctx) {
-  if (ctx.state.userSession) {
-    ctx.request.body.locale = ctx.state.userSession.locale;
-  } else {
-    ctx.request.body.locale = await leemons.getPlugin('users').services.platform.getDefaultLocale();
-  }
+  const localeService = leemons.plugin.services.locales.getProvider();
+  ctx.request.body.locale = await localeService.resolveLocales(ctx.state.userSession);
   await get(ctx);
 }
 

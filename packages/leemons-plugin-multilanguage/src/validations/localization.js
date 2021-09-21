@@ -182,21 +182,37 @@ module.exports = class Validator {
    * Validates a localization
    * @param {{key: LocalizationKey, locale: LocaleCode}}
    * @param {boolean} usePrefix
-   * @returns {{key: LocalizationKey, locale: LocaleCode}} The Localization with key and locale lowercased
+   * @returns {{key: LocalizationKey, locale: LocaleCode, locales: LocaleCode[]}} The Localization with key and locale lowercased
    */
-  validateLocalizationTuple({ key, locale }, usePrefix = false) {
-    // Always save locale in lowercase
-    const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
-    const _key = typeof key === 'string' ? key.toLowerCase() : null;
+  validateLocalizationTuple({ key, locale, locales }, usePrefix = false) {
+    if (!locales) {
+      // Always save locale in lowercase
+      const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
+      const _key = typeof key === 'string' ? key.toLowerCase() : null;
 
-    const validator = new LeemonsValidator(this.localizationTupleSchema(usePrefix));
+      const validator = new LeemonsValidator(this.localizationTupleSchema(usePrefix));
 
-    // Throw validation error
-    if (!validator.validate({ key: _key, locale: _locale })) {
-      throw validator.error;
+      // Throw validation error
+      if (!validator.validate({ key: _key, locale: _locale })) {
+        throw validator.error;
+      }
+
+      return { key: _key, locale: _locale };
+    } else {
+      const _locales = [];
+      const _key = typeof key === 'string' ? key.toLowerCase() : null;
+      _.forEach(locales, (locale) => {
+        const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
+        const validator = new LeemonsValidator(this.localizationTupleSchema(usePrefix));
+
+        // Throw validation error
+        if (!validator.validate({ key: _key, locale: _locale })) {
+          throw validator.error;
+        }
+        _locales.push(_locale);
+      });
+      return { key: _key, locales: _locales };
     }
-
-    return { key: _key, locale: _locale };
   }
 
   /**
