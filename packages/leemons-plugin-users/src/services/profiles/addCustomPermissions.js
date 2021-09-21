@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const getProfileRole = require('./getProfileRole');
-const removePermissionsByName = require('../roles/removePermissionsByName');
+const removePermissionsByNameAndTarget = require('../roles/removePermissionsByNameAndTarget');
 const { table } = require('../tables');
 const { addPermissionMany } = require('../roles');
 const { validatePermissionName } = require('../../validations/exists');
@@ -28,7 +28,7 @@ async function addCustomPermissions(profileId, _permissions, { transacting: _tra
       const role = await getProfileRole(profileId, { transacting });
       // ES: Borramos los permisos por si alguno ya existian de antes que se borre ya que se añadira mas adelante
       // EN: We delete the permissions, in case any of them already existed before they will be added later.
-      await removePermissionsByName.call(this, role, _.map(permissions, 'permissionName'), {
+      await removePermissionsByNameAndTarget.call(this, role, permissions, {
         removeCustomPermissions: true,
         transacting,
       });
