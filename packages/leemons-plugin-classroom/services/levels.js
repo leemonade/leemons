@@ -7,6 +7,7 @@ const setNames = require('../src/services/levels/setNames');
 const setDescriptions = require('../src/services/levels/setDescriptions');
 const setParent = require('../src/services/levels/setParent');
 const hasValidSchemaAndParent = require('../src/services/levels/hasValidSchemaAndParent');
+const setPermissions = require('../src/services/levels/setPermissions.js');
 const addUsers = require('../src/services/levels/addUsers');
 const removeUsers = require('../src/services/levels/removeUsers');
 const getUsers = require('../src/services/levels/getUsers');
@@ -21,6 +22,7 @@ module.exports = {
   setDescriptions,
   setParent,
   hasValidSchemaAndParent,
+  setPermissions,
   addUsers,
   removeUsers,
   getUsers,
