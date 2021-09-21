@@ -201,6 +201,13 @@ module.exports = [
     ]),
   },
   {
+    path: '/level/:id/permissions',
+    method: 'POST',
+    handler: 'levels.setPermissions',
+    authenticated: true,
+    // TODO: set permissions
+  },
+  {
     path: '/level/:id/users',
     method: 'POST',
     handler: 'levels.addUsers',
@@ -225,5 +232,6 @@ module.exports = [
     method: 'GET',
     handler: 'users.search',
     authenticated: true,
+    // TODO: Add permissions
   },
 ];

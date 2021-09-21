@@ -17,7 +17,7 @@ const {
  * @param {any} transacting - DB Transaction
  * @return {Promise<any>} Created permissions-roles
  * */
-async function addCustomPermissions(profileId, _permissions, { transacting: _transacting }) {
+async function addCustomPermissions(profileId, _permissions, { transacting: _transacting } = {}) {
   let permissions = _permissions;
   if (!_.isArray(permissions)) permissions = [permissions];
   _.forEach(permissions, (permission) => {
