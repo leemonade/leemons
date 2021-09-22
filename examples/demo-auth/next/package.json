@@ -29,7 +29,8 @@
     "react-dnd-html5-backend": "^14.0.0",
     "react-hook-form": "^7.8.3",
     "tailwindcss": "^2.1.2",
-    "@leemons/families-emergency-numbers": "file:dependencies/families-emergency-numbers"
+    "@leemons/families-emergency-numbers": "file:dependencies/families-emergency-numbers",
+    "@leemons/calendar": "file:dependencies/calendar"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.6",

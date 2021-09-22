@@ -3,6 +3,7 @@ const existManyRoles = require('../roles/existMany');
 const { encryptPassword } = require('./encryptPassword');
 const { table } = require('../tables');
 const { exist } = require('./exist');
+const { addCalendarToUserAgentsIfNeedByUser } = require('./addCalendarToUserAgentsIfNeedByUser');
 
 /**
  * Add a user to platform
@@ -46,6 +47,9 @@ async function add(
         { transacting }
       );
 
+      if (leemons.getPlugin('calendar')) {
+        await addCalendarToUserAgentsIfNeedByUser(user.id, { transacting });
+      }
       return user;
     },
     table.users,

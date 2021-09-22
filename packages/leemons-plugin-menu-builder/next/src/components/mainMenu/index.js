@@ -6,9 +6,9 @@ import PropTypes from 'prop-types';
 import getActiveParentAndChild from '../../helpers/getActiveParentAndChild';
 import MainMenuItem from './mainMenuItem';
 import MainMenuSubmenu from './mainMenuSubmenu';
-import { useSession } from '@users/session';
 import hooks from 'leemons-hooks';
 import SimpleBar from 'simplebar-react';
+import Link from 'next/link';
 import { UserImage } from '@common/userImage';
 
 const menuWidth = '52px';
@@ -19,7 +19,6 @@ export default function MainMenu({ onClose, onOpen, state: _state, setState }) {
   stateC.current = _state;
   const state = stateC.current;
 
-  const session = useSession();
   const router = useRouter();
 
   const loadMenu = useCallback(async () => {
@@ -58,7 +57,9 @@ export default function MainMenu({ onClose, onOpen, state: _state, setState }) {
       }
       setState({ menuActive });
       if (menuActive.parent) {
-        openMenu();
+        if (!menuActive.parent.url) {
+          openMenu();
+        }
       } else {
         closeMenu();
       }
@@ -69,7 +70,19 @@ export default function MainMenu({ onClose, onOpen, state: _state, setState }) {
   const onMenuItemClick = useCallback(
     (parent) => {
       setState({ menuActive: { ...state.menuActive, parent } });
-      openMenu();
+
+      let openSubMenu = true;
+      let closeSubMenu = false;
+      if (parent.url) {
+        openSubMenu = false;
+        closeSubMenu = true;
+      }
+      if (closeSubMenu) {
+        closeMenu();
+      }
+      if (openSubMenu) {
+        openMenu();
+      }
     },
     [state]
   );
@@ -95,6 +108,33 @@ export default function MainMenu({ onClose, onOpen, state: _state, setState }) {
     })();
   }, []);
 
+  const getItem = (item) => {
+    if (item.url) {
+      return (
+        <Link key={item.id} href={item.url}>
+          <a>
+            <MainMenuItem
+              onClick={() => onMenuItemClick(item)}
+              active={state.menuActive.parent?.id === item.id}
+              item={item}
+              menuWidth={menuWidth}
+            />
+          </a>
+        </Link>
+      );
+    } else {
+      return (
+        <MainMenuItem
+          onClick={() => onMenuItemClick(item)}
+          key={item.id}
+          active={state.menuActive.parent?.id === item.id}
+          item={item}
+          menuWidth={menuWidth}
+        />
+      );
+    }
+  };
+
   return (
     <>
       <div className="flex w-full">
@@ -105,17 +145,7 @@ export default function MainMenu({ onClose, onOpen, state: _state, setState }) {
 
             {/* Menu items */}
             <SimpleBar className="flex-grow h-px">
-              {state.menu && state.menuActive
-                ? state.menu.map((item) => (
-                    <MainMenuItem
-                      onClick={() => onMenuItemClick(item)}
-                      key={item.id}
-                      active={state.menuActive.parent?.id === item.id}
-                      item={item}
-                      menuWidth={menuWidth}
-                    />
-                  ))
-                : null}
+              {state.menu && state.menuActive ? state.menu.map((item) => getItem(item)) : null}
             </SimpleBar>
 
             {/* User image */}
