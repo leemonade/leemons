@@ -27,7 +27,7 @@ function Calendar() {
       {centers.length > 1 ? (
         <>
           {centers.map((center) => (
-            <Button key={center.id} onClick={getCalendarsForCenter(center)}>
+            <Button key={center.id} onClick={() => getCalendarsForCenter(center)}>
               {center.name}
             </Button>
           ))}

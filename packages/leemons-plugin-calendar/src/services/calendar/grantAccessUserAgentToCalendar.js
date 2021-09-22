@@ -4,7 +4,7 @@ const { validateNotExistCalendarKey, validateKeyPrefix } = require('../../valida
 const { getPermissionConfig } = require('./getPermissionConfig');
 
 /**
- * Return calendar if exists
+ *
  * @public
  * @static
  * @param {string} key - key

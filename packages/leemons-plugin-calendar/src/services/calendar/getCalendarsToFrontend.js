@@ -47,6 +47,16 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     }
   );
 
+  const calendarIds = [];
+  const eventIds = [];
+
+  _.forEach(items, (item) => {
+    if (item.type === permissionConfig.type) {
+      calendarIds.push();
+    } else {
+    }
+  });
+
   console.log(items);
 }
 

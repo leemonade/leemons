@@ -1,3 +1,3 @@
-import prefixPN from './prefixPN';
+import _prefixPN from './prefixPN';
 
-export const prefixPN = prefixPN;
+export const prefixPN = _prefixPN;

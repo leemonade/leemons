@@ -5,7 +5,6 @@ const addEventSchema = {
   type: 'object',
   properties: {
     title: stringSchema,
-    calendar: stringSchema,
     startDate: dateSchema,
     endDate: dateSchema,
     isAllDay: booleanSchema,
@@ -16,7 +15,7 @@ const addEventSchema = {
       additionalProperties: true,
     },
   },
-  required: ['title', 'calendar', 'startDate', 'endDate', 'type'],
+  required: ['title', 'startDate', 'endDate', 'type'],
   additionalProperties: false,
 };
 

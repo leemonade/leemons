@@ -1,9 +1,6 @@
 const _ = require('lodash');
 const { table } = require('../tables');
-const {
-  validateNotExistCalendarKey,
-  validateExistCalendarKey,
-} = require('../../validations/exists');
+
 const { validateAddEvent } = require('../../validations/forms');
 const { detailByKey, getPermissionConfig } = require('../calendar');
 const { addNexts } = require('../notifications');
@@ -13,18 +10,21 @@ const { addNexts } = require('../notifications');
  * @public
  * @static
  * @param {string} key - key
- * @param {any} event - Event data
+ * @param {any} data - Event data
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function add(key, event, { transacting: _transacting } = {}) {
-  validateAddEvent(event);
+async function add(key, data, { transacting: _transacting } = {}) {
+  validateAddEvent(data);
+
+  data.startDate = data.startDate.slice(0, 19).replace('T', ' ');
+  data.endDate = data.endDate.slice(0, 19).replace('T', ' ');
 
   return global.utils.withTransaction(
     async (transacting) => {
       const permissionConfig = getPermissionConfig(key);
       const calendar = await detailByKey(key, { transacting });
-      const event = await table.events.create({ calendar: calendar.id, ...event }, { transacting });
+      const event = await table.events.create({ calendar: calendar.id, ...data }, { transacting });
       await leemons
         .getPlugin('users')
         .services.permissions.addItem(
