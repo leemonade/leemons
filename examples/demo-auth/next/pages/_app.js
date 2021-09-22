@@ -55,8 +55,12 @@ function MyApp({ Component, pageProps }) {
             if (token.centers.length === 1) {
               config.headers['Authorization'] = token.centers[0].token;
             }
-            if (_.isObject(urlConfig) && urlConfig.allAgents) {
-              config.headers['Authorization'] = JSON.stringify(_.map(token.centers, 'token'));
+            if (_.isObject(urlConfig)) {
+              if (urlConfig.allAgents) {
+                config.headers['Authorization'] = JSON.stringify(_.map(token.centers, 'token'));
+              } else if (urlConfig.centerToken) {
+                config.headers['Authorization'] = urlConfig.centerToken;
+              }
             }
           }
         }

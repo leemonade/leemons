@@ -12,36 +12,51 @@ const { removeDatasetValues } = require('./removeDatasetValues');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function remove(family, { transacting } = {}) {
+async function remove(family, { transacting: _transacting } = {}) {
   const menuBuilderServices = leemons.getPlugin('menu-builder').services;
-  const { guardians, students } = await getMembers(family, { transacting });
 
-  const promises = [];
+  return global.utils.withTransaction(
+    async (transacting) => {
+      const { guardians, students } = await getMembers(family, { transacting });
 
-  promises.push(
-    menuBuilderServices.menuItem.remove(
-      menuBuilderServices.config.constants.mainMenuKey,
-      leemons.plugin.prefixPN(`family-${family}`),
-      { transacting }
-    )
+      const promises = [];
+
+      try {
+        await menuBuilderServices.menuItem.remove(
+          menuBuilderServices.config.constants.mainMenuKey,
+          leemons.plugin.prefixPN(`family-${family}`),
+          { transacting }
+        );
+      } catch (e) {}
+
+      try {
+        await removeDatasetValues(family, { transacting });
+      } catch (e) {}
+
+      _.forEach(guardians, (guardian) => {
+        promises.push(removeMember(family, guardian.id, { transacting }));
+      });
+      _.forEach(students, (student) => {
+        promises.push(removeMember(family, student.id, { transacting }));
+      });
+      const familyEmergencyNumbers = leemons.getPlugin('families-emergency-numbers');
+      if (familyEmergencyNumbers) {
+        promises.push(
+          familyEmergencyNumbers.services.emergencyPhones.removeFamilyPhones(family, {
+            transacting,
+          })
+        );
+      }
+
+      await Promise.all(promises);
+
+      await table.families.delete({ id: family }, { transacting });
+
+      return true;
+    },
+    table.families,
+    _transacting
   );
-  promises.push(table.families.delete({ id: family }, { transacting }));
-  promises.push(removeDatasetValues(family, { transacting }));
-
-  _.forEach(guardians, (guardian) => {
-    promises.push(removeMember(family, guardian.id, { transacting }));
-  });
-  _.forEach(students, (student) => {
-    promises.push(removeMember(family, student.id, { transacting }));
-  });
-  const familyEmergencyNumbers = leemons.getPlugin('families-emergency-numbers');
-  if (familyEmergencyNumbers) {
-    promises.push(
-      familyEmergencyNumbers.services.emergencyPhones.removeFamilyPhones(family, { transacting })
-    );
-  }
-
-  await Promise.all(promises);
 }
 
 module.exports = { remove };

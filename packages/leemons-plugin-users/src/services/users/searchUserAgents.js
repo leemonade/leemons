@@ -17,6 +17,8 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
+
+// TODO Añadir como parametro opcionales (Junto transacting) withProfile y withCenter y que se devuelva el perfil/centro para cada use agent
 async function searchUserAgents({ profile, center, user, ignoreUserIds }, { transacting } = {}) {
   const finalQuery = {};
   // ES: Como es posible que se quiera filtrar desde multiples sitios por usuarios añadimos un array
