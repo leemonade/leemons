@@ -1,14 +1,20 @@
+const getSessionPermissions = require('../permissions/getSessionPermissions');
+
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 const levelSchemas = leemons.query('plugins_classroom::levelSchemas');
 
-module.exports = async function setNames(id, names, { transacting } = {}) {
-  // 1st validate data types
-  // 2nd validate data integrity
-  // 3rd format data
-  // 4rd register entries
-  // 5th check data registered correctly
-  // 6th send success message / send error message
-
+module.exports = async function setNames(id, names, { userSession, transacting } = {}) {
+  const permissions = await getSessionPermissions({
+    userSession,
+    this: this,
+    permissions: {
+      update: leemons.plugin.config.constants.permissions.bundles.tree.update,
+    },
+  });
+  // TODO: Add better error message
+  if (!permissions.update) {
+    throw new Error('Permissions not satisfied');
+  }
   // ---------------------------------------------------------------------------
   // validate data types
   const schema = {
@@ -35,11 +41,30 @@ module.exports = async function setNames(id, names, { transacting } = {}) {
     }
 
     try {
-      const { items, warnings } = await multilanguage.setManyByKey(
-        leemons.plugin.prefixPN(`levelSchemas.${id}.name`),
-        names,
-        { transacting }
+      const nameKey = leemons.plugin.prefixPN(`levelSchemas.${id}.name`);
+      const { namesToSet = {}, namesToDelete = [] } = Object.entries(names).reduce(
+        (obj, [locale, value]) => {
+          if (!value) {
+            const _namesToDelete = obj.namesToDelete || [];
+            return { ...obj, namesToDelete: [..._namesToDelete, locale] };
+          }
+          return { ...obj, namesToSet: { ...obj.namesToSet, [locale]: value } };
+        },
+        {}
       );
+
+      // Save locales with value
+      const { items, warnings } = await multilanguage.setManyByKey(nameKey, namesToSet, {
+        transacting,
+      });
+
+      // Delete empty locales
+      if (namesToDelete.length) {
+        await multilanguage.deleteMany(
+          namesToDelete.map((locale) => [nameKey, locale]),
+          { transacting }
+        );
+      }
 
       if (warnings?.nonExistingLocales) {
         missingLocales = warnings.nonExistingLocales;

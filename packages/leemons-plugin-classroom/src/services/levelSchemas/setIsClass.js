@@ -1,7 +1,20 @@
+const getSessionPermissions = require('../permissions/getSessionPermissions');
+
 const levelSchemas = leemons.query('plugins_classroom::levelSchemas');
 
 // TODO: Check compatibility
-module.exports = async function setIsClass(id, isClass, { transacting } = {}) {
+module.exports = async function setIsClass(id, isClass, { userSession, transacting } = {}) {
+  const permissions = await getSessionPermissions({
+    userSession,
+    this: this,
+    permissions: {
+      update: leemons.plugin.config.constants.permissions.bundles.tree.update,
+    },
+  });
+  // TODO: Add better error message
+  if (!permissions.update) {
+    throw new Error('Permissions not satisfied');
+  }
   // ---------------------------------------------------------------------------
   // validate data types
   const schema = {

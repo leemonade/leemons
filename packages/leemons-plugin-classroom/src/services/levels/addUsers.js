@@ -1,9 +1,26 @@
+const getSessionPermissions = require('../permissions/getSessionPermissions');
+
 const tables = {
   levels: leemons.query('plugins_classroom::levels'),
   levelUsers: leemons.query('plugins_classroom::levels-users'),
 };
 
-module.exports = function addUsers({ users, level, role } = {}, { transacting } = {}) {
+module.exports = async function addUsers(
+  { users, level, role } = {},
+  { userSession, transacting } = {}
+) {
+  const permissions = await getSessionPermissions({
+    userSession,
+    this: this,
+    permissions: {
+      assignUsers: leemons.plugin.config.constants.permissions.bundles.organization.assignUsers,
+    },
+  });
+
+  // TODO: Add better error message
+  if (!permissions.assignUsers) {
+    throw new Error('Permissions not satisfied');
+  }
   const schema = {
     type: 'object',
     properties: {
@@ -42,13 +59,13 @@ module.exports = function addUsers({ users, level, role } = {}, { transacting } 
             await tables.levelUsers.find({ user_$in: users }, { columns: ['user'] })
           ).map(({ user }) => user);
         } catch (e) {
-          console.log(e);
           throw new Error("Can't check if the users already exists");
         }
+
+        const newUsers = [...new Set(users.filter((user) => !alreadySavedUsers.includes(user)))];
         try {
-          console.log(alreadySavedUsers);
           savedUsers = await tables.levelUsers.createMany(
-            [...new Set(users.filter((user) => !alreadySavedUsers.includes(user)))].map(
+            newUsers.map(
               (user) => ({
                 level,
                 user,
@@ -62,6 +79,22 @@ module.exports = function addUsers({ users, level, role } = {}, { transacting } 
             throw new Error('Some of the users does not exists');
           }
           throw new Error("The users can't be saved");
+        }
+
+        try {
+          const permission = {
+            permissionName: 'plugins.classroom.level',
+            actionNames: ['admin'],
+            target: level,
+          };
+
+          await leemons
+            .getPlugin('users')
+            .services.permissions.addCustomPermissionToUserAgent(newUsers, permission, {
+              transacting: t,
+            });
+        } catch (e) {
+          throw new Error("Can't save permissions");
         }
 
         return savedUsers;

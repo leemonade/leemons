@@ -15,6 +15,9 @@
       @apply hover:text-base-content;
     }
   }
+  .fc_legend {
+      @apply font-inter text-gray-800 text-xs;
+  }
   /* :> */
 }
 /* <: */

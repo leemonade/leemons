@@ -1,9 +1,26 @@
+const getSessionPermissions = require('../permissions/getSessionPermissions');
+
 const tables = {
   levels: leemons.query('plugins_classroom::levels'),
   levelUsers: leemons.query('plugins_classroom::levels-users'),
 };
 
-module.exports = function removeUsers({ users, level, role = null } = {}, { transacting } = {}) {
+module.exports = async function removeUsers(
+  { userSession, users, level, role = null } = {},
+  { transacting } = {}
+) {
+  const permissions = await getSessionPermissions({
+    userSession,
+    this: this,
+    permissions: {
+      assignUsers: leemons.plugin.config.constants.permissions.bundles.organization.assignUsers,
+    },
+  });
+
+  // TODO: Add better error message
+  if (!permissions.assignUsers) {
+    throw new Error('Permissions not satisfied');
+  }
   const schema = {
     type: 'object',
     properties: {
@@ -55,6 +72,21 @@ module.exports = function removeUsers({ users, level, role = null } = {}, { tran
           deletedCount = await tables.levelUsers.deleteMany(query, { transacting: t });
         } catch (e) {
           throw new Error("The users can't be deleted");
+        }
+
+        try {
+          const permission = {
+            permissionName: 'plugins.classroom.level',
+            target: level,
+          };
+
+          await leemons
+            .getPlugin('users')
+            .services.users.removeCustomPermission(users, permission, {
+              transacting: t,
+            });
+        } catch (e) {
+          throw new Error("Can't save permissions");
         }
 
         return deletedCount.count;

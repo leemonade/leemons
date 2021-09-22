@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useWindowHeight } from '@react-hook/window-size';
 
-function Hero({ children, className, maxHeight, minHeight }) {
+function Hero({ children, className, maxHeight, minHeight, style }) {
   const [height, setHeight] = useState(minHeight);
   const windowHeight = useWindowHeight();
 
@@ -11,7 +11,7 @@ function Hero({ children, className, maxHeight, minHeight }) {
   }, [windowHeight]);
 
   return (
-    <div style={{ minHeight: `${height}px` }} className={`hero ${className || ''}`}>
+    <div style={{ ...style, minHeight: `${height}px` }} className={`hero ${className || ''}`}>
       {children}
     </div>
   );
@@ -20,6 +20,7 @@ function Hero({ children, className, maxHeight, minHeight }) {
 Hero.defaultProps = {
   minHeight: 0,
   maxHeight: 1000000,
+  style: {}
 };
 
 Hero.propTypes = {
@@ -28,6 +29,7 @@ Hero.propTypes = {
   cover: PropTypes.bool,
   maxHeight: PropTypes.number,
   minHeight: PropTypes.number,
+  style: PropTypes.any,
 };
 
 export default Hero;

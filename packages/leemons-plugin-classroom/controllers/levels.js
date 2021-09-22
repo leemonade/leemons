@@ -3,7 +3,7 @@ const services = leemons.plugin.services.levels;
 module.exports = {
   add: async (ctx) => {
     try {
-      const level = await services.add(ctx.request.body);
+      const level = await services.add(ctx.request.body, { userSession: ctx.state.userSession });
       ctx.status = 201;
       ctx.body = { status: 201, level };
     } catch (e) {
@@ -13,7 +13,10 @@ module.exports = {
   },
   get: async (ctx) => {
     try {
-      const levelSchema = await services.get(ctx.params.id, { locale: ctx.request.query.locale });
+      const levelSchema = await services.get(ctx.params.id, {
+        userSession: ctx.state.userSession,
+        locale: ctx.request.query.locale,
+      });
       ctx.status = 200;
       ctx.body = { status: 200, levelSchema };
     } catch (e) {
@@ -23,7 +26,10 @@ module.exports = {
   },
   list: async (ctx) => {
     try {
-      const items = await services.list({ locale: ctx.request.query.locale });
+      const items = await services.list({
+        userSession: ctx.state.userSession,
+        locale: ctx.request.query.locale,
+      });
       ctx.status = 200;
       ctx.body = { status: 200, items };
     } catch (e) {
@@ -33,7 +39,7 @@ module.exports = {
   },
   delete: async (ctx) => {
     try {
-      await services.delete(ctx.params.id);
+      await services.delete(ctx.params.id, { userSession: ctx.state.userSession });
       ctx.status = 200;
       ctx.body = { status: 200, deleted: true };
     } catch (e) {
@@ -41,9 +47,24 @@ module.exports = {
       ctx.body = { status: 400, error: e.message };
     }
   },
+  update: async (ctx) => {
+    try {
+      const level = await services.update(ctx.params.id, {
+        ...ctx.request.body,
+        userSession: ctx.state.userSession,
+      });
+      ctx.status = 200;
+      ctx.body = { status: 200, level };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = { status: 400, error: e.message };
+    }
+  },
   setNames: async (ctx) => {
     try {
-      const names = await services.setNames(ctx.request.params.id, ctx.request.body.names);
+      const names = await services.setNames(ctx.request.params.id, ctx.request.body.names, {
+        userSession: ctx.state.userSession,
+      });
       ctx.status = 201;
       ctx.body = { status: 201, ok: true, names };
     } catch (e) {
@@ -55,7 +76,8 @@ module.exports = {
     try {
       const names = await services.setDescriptions(
         ctx.request.params.id,
-        ctx.request.body.descriptions
+        ctx.request.body.descriptions,
+        { userSession: ctx.state.userSession }
       );
       ctx.status = 201;
       ctx.body = { status: 201, names };
@@ -66,7 +88,9 @@ module.exports = {
   },
   setParent: async (ctx) => {
     try {
-      const levelSchema = await services.setParent(ctx.request.params.id, ctx.request.body.parent);
+      const levelSchema = await services.setParent(ctx.request.params.id, ctx.request.body.parent, {
+        userSession: ctx.state.userSession,
+      });
       ctx.status = 200;
       ctx.body = { status: 200, levelSchema };
     } catch (e) {
@@ -78,11 +102,23 @@ module.exports = {
   getUsers: async (ctx) => {
     try {
       const users = await services.getUsers(ctx.request.params.id, {
+        userSession: ctx.state.userSession,
         roles: ctx.request.body?.roles,
       });
 
       ctx.status = 200;
       ctx.body = { status: 200, users };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = { status: 400, error: e.message };
+    }
+  },
+  setPermissions: async (ctx) => {
+    try {
+      await services.setPermissions(ctx.params.id, ctx.request.body);
+
+      ctx.status = 200;
+      ctx.body = { status: 200 };
     } catch (e) {
       ctx.status = 400;
       ctx.body = { status: 400, error: e.message };
@@ -94,6 +130,7 @@ module.exports = {
         users: ctx.request.body.users,
         level: ctx.request.params.id,
         role: ctx.request.body.role,
+        userSession: ctx.state.userSession,
       });
 
       ctx.status = 201;
@@ -108,6 +145,7 @@ module.exports = {
       const count = await services.removeUsers({
         users: ctx.request.body.users,
         level: ctx.request.params.id,
+        userSession: ctx.state.userSession,
       });
 
       ctx.status = 200;

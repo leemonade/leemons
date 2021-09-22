@@ -3,10 +3,6 @@ module.exports = {
     save: 'Save',
     view: 'View',
     edit: 'Edit',
-    organization: 'Organization',
-    center: 'Center',
-    add_level: 'Add level',
-    select_template: 'Select template',
   },
   welcome_page: {
     page_title: 'Welcome to Classroom',
@@ -31,34 +27,90 @@ module.exports = {
   },
   tree_page: {
     page_title: 'Tree',
-    page_info:
-      'Use the button <span class="w-5 h-5 border-2 border-primary rounded-full leading-none inline-block text-primary font-semibold text-center">+</span> to create each level, then use the right panel to configure the data set for the level.',
-    from_template_info: {
-      title: 'Do you want to pre-load a template to save time?',
-      description:
-        'Choose the type of template and click on load tree, later you can modify the dataset of each level according to the needs of your organisation.',
-      btn: 'Preview template',
-      hide_info: {
-        description: 'I prefer to do it manually.',
-        btn: `Don't show anymore`,
+    page_info: {
+      pre: 'Use the button',
+      post:
+        'to create a new level, then use the config area to configure the data set for the level.',
+    },
+  },
+  template: {
+    title: 'Do you want to pre-load a template to save time?',
+    description:
+      'Choose the type of template and click on load tree, later you can modify the dataset of each level according to the needs of your organisation.',
+    country_select: 'Select a country',
+    template_select: 'Select a template',
+    btn: 'Preview template',
+    hide_info: {
+      description: 'I prefer to do it manually.',
+      btn: `Do not show anymore`,
+    },
+  },
+  translationsDrawer: {
+    title: 'Translation',
+    actions: {
+      save: 'Save',
+      cancel: 'Cancel',
+    },
+  },
+  tree: {
+    new: {
+      prefix: { levelSchema: 'Add level', level: 'Add' },
+    },
+    class_level: 'Class level',
+  },
+  editor: {
+    form: {
+      name: {
+        placeholder: 'Level name',
+      },
+      isClass: {
+        label: 'Class level',
+        tooltip: 'Minimum level of student assignment',
+      },
+      save: 'Save level',
+    },
+    translations: {
+      label: 'Translations',
+      tooltip: 'Untranslated content will appear in the default language',
+    },
+    tabs: {
+      dataset: {
+        label: 'Extra data',
+      },
+      permissions: {
+        label: 'Permissions',
       },
     },
-    level: {
-      new: {
-        placeholder: 'Level name',
-        tree_label: 'New level',
-        btn: 'Save Level and continue',
-        is_class_label: 'Class level (Minimum level to student assignment)',
+  },
+  class_list: {
+    page_title: 'Administración de clases',
+    page_info:
+      'Aquí puedes encontrar y administrar la estructura de niveles de tu Universidad y asignar estudiantes a clases.',
+    details: {
+      type_program: 'programs',
+      type_courses: 'courses',
+      type_groups: 'groups',
+    },
+    class_table: {
+      th_tutor: 'Tutor',
+      th_students: 'Students',
+      th_actions: 'Actions',
+      btn_edit: 'Edit',
+      btn_expand: 'Expand',
+      btn_view: 'View',
+    },
+
+    view_panel: {
+      summary: {
+        btn_edit: 'Edit',
+        btn_expand: 'Expand',
+        counter: 'Students',
       },
-      tabs: {
-        dataset: {
-          label: 'Level Dataset',
-          description: 'Configuration of general fields for the level',
-          add_field: 'Add field',
-        },
-        profiles: {
-          label: 'Assignable User profiles',
-        },
+      table: {
+        th_name: 'First Name',
+        th_surename: 'Second Name',
+        th_email: 'E-mail Adress',
+        th_birthday: 'birthday',
       },
     },
   },

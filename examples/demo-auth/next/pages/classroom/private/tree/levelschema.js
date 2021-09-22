@@ -18,6 +18,7 @@ import { Select } from 'leemons-ui';
 
 function Levelschema() {
   const session = useSession({ redirectTo: goLoginPage });
+  console.log('Session', session);
 
   const [locale, setLocale] = useState('en');
   const [

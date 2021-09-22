@@ -29,6 +29,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem, state, setS
     setState({ submenuEditingItem });
   };
   const setEditMode = (submenuEditMode) => {
+    hooks.fireEvent('menu-builder:edit-mode', submenuEditMode);
     setState({ submenuEditMode });
   };
   const setRemoveItem = (submenuRemoveItem) => {
@@ -56,6 +57,17 @@ export default function MainMenuSubmenu({ item, onClose, activeItem, state, setS
 
   const [translations] = useTranslate({ keysStartsWith: prefixPN('menu.remove_item_modal') });
   const t = tLoader(prefixPN('menu.remove_item_modal'), translations);
+
+  const onEmitEditMode = () => {
+    hooks.fireEvent('menu-builder:edit-mode', state.submenuEditMode);
+  };
+
+  useEffect(() => {
+    hooks.addAction('menu-builder:emit-edit-mode', onEmitEditMode);
+    return () => {
+      hooks.removeAction('menu-builder:emit-edit-mode', onEmitEditMode);
+    };
+  });
 
   const find = useCallback(
     (id) => {
@@ -135,7 +147,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem, state, setS
   const onEnd = (event) => {
     const [{ dragItem, monitor }] = event.args;
     const didDrop = monitor.didDrop();
-    if (!didDrop) {
+    if (!didDrop && item) {
       const index = _.findIndex(item.customChildrens, (ch) => ch.id === dragItem._tempId);
       if (index >= 0) {
         setCustomChildrens(

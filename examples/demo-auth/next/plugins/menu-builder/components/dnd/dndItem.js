@@ -6,8 +6,6 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import hooks from 'leemons-hooks';
 
 export default function DndItem({ children, className, item, type, emptyLayout }) {
-  let goodChildren = _.isFunction(children) ? children({ isDragging: false }) : children;
-
   const [{ isDragging }, drag, preview] = useDrag(() => ({
     type,
     item: {
@@ -29,7 +27,7 @@ export default function DndItem({ children, className, item, type, emptyLayout }
     }
   }, []);
 
-  goodChildren = _.isFunction(children) ? children({ isDragging }) : children;
+  const goodChildren = _.isFunction(children) ? children({ isDragging, canDrag: true }) : children;
 
   return (
     <div ref={drag} className={className}>

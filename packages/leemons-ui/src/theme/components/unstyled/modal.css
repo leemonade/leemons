@@ -17,10 +17,11 @@
     z-index: 100;
   }
   .modal-content {
-    @apply pointer-events-auto w-full;
+    @apply pointer-events-auto w-full p-6;
   }
   .modal-header {
-    @apply flex flex-grow flex-row items-start p-4;
+    @apply flex flex-grow flex-row items-start p-4 relative;
+    .btn[aria-label="Close"] { @apply absolute top-0 right-0;}
   }
 
   .modal-title {
@@ -36,7 +37,7 @@
   }
 
   .modal-action {
-    @apply rounded-b flex justify-end space-x-2 p-1;
+    @apply rounded-b flex justify-between space-x-2 p-1 mt-8;
   }
   /* :> */
 }

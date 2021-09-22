@@ -14,7 +14,7 @@
         content: counter(step);
         counter-increment: step;
         z-index: 1;
-        @apply relative rounded-full w-8 h-8 bg-base-300 text-base-content block col-start-1 row-start-1 place-self-center grid place-items-center;
+        @apply relative rounded-full w-8 h-8 bg-base-300 text-base-content col-start-1 row-start-1 place-self-center grid place-items-center;
       }
       &:first-child:before {
         content: none;
