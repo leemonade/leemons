@@ -6,9 +6,19 @@ const { exist } = require('./exist');
 const { getUserAgentCalendarKey } = require('./getUserAgentCalendarKey');
 
 async function addCalendarToUserAgent(userAgent, { transacting } = {}) {
+  const calendarKey = getUserAgentCalendarKey(userAgent);
+  // ES: Añadimos calendario del agente
+  // EN: Add user agent calendar
   const calendar = await leemons
     .getPlugin('calendar')
-    .services.calendar.add(getUserAgentCalendarKey(userAgent), { transacting });
+    .services.calendar.add(calendarKey, { transacting });
+  // ES: Añadimos acceso de owner al user agent a su propio calendario
+  // EN: Add owner access to the user agent to its own calendar
+  await leemons
+    .getPlugin('calendar')
+    .services.calendar.grantAccessUserAgentToCalendar(calendarKey, userAgent, 'owner', {
+      transacting,
+    });
   return {
     userAgent,
     calendar,
@@ -43,9 +53,7 @@ async function addCalendarToUserAgentsIfNeedByUser(user, { transacting: _transac
 
       if (promises.length) await Promise.all(promises);
 
-      // Dar acceso de owner a cada agente a su calendario
-      console.log('YEEEEEEEH');
-      console.log(exists);
+      return true;
     },
     table.users,
     _transacting

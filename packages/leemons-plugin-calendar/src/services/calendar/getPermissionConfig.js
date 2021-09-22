@@ -3,7 +3,7 @@
  * @public
  * @static
  * @param {string?} key - key
- * @return {{type: string, typeEvent: string, view:AddItemPermission, delete: AddItemPermission, all: AddItemPermission, createEvent:AddItemPermission, updateEvent:AddItemPermission, deleteEvent:AddItemPermission, allEvent:AddItemPermission}}
+ * @return {{type: string, typeEvent: string, permissionName: string, permissionNameEvents: string, all: AddItemPermission,  allEvent:AddItemPermission}}
  * */
 function getPermissionConfig(key) {
   const permissionName = `plugins.calendar.calendar.${key}`;
@@ -11,33 +11,11 @@ function getPermissionConfig(key) {
   return {
     type: 'plugins.calendar.calendar',
     typeEvent: 'plugins.calendar.calendar.events',
-    view: {
-      permissionName,
-      actionNames: ['view', 'admin', 'owner'],
-    },
-    delete: {
-      permissionName,
-      actionNames: ['delete', 'admin', 'owner'],
-    },
+    permissionName,
+    permissionNameEvents,
     all: {
       permissionName,
       actionNames: ['view', 'delete', 'admin', 'owner'],
-    },
-    viewEvent: {
-      permissionName: permissionNameEvents,
-      actionNames: ['view', 'admin', 'owner'],
-    },
-    createEvent: {
-      permissionName: permissionNameEvents,
-      actionNames: ['create', 'admin', 'owner'],
-    },
-    updateEvent: {
-      permissionName: permissionNameEvents,
-      actionNames: ['update', 'admin', 'owner'],
-    },
-    deleteEvent: {
-      permissionName: permissionNameEvents,
-      actionNames: ['delete', 'admin', 'owner'],
     },
     allEvent: {
       permissionName: permissionNameEvents,
