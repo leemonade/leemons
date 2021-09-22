@@ -134,8 +134,22 @@ module.exports = {
       placeholder: 'Start typing a Tag',
       btn_add: 'Add Tag',
       btn_search: 'Search by these Tags',
+      btn_edit: 'Edit Tags',
+      btn_search_againg: 'Search again',
       error_long:
         'The number of results is more than 50, please add more tags to narrow down your search',
+      title_results: 'We have found',
+      error_repeat:
+        '2 students are already included in this class and you can not add them again (in red)',
+      btn_add_selected: 'Add selected to this group',
+      counter_label: 'selected',
+    },
+    table: {
+      th_actions: 'Select all',
+      th_name: 'First Name',
+      th_surename: 'Second Name',
+      th_email: 'E-mail Adress',
+      th_birthday: 'birthday',
     },
   },
 };

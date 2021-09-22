@@ -191,7 +191,7 @@ export default function EditLevelTutor() {
             inputProps={inputProps}
             alwaysRenderSuggestions={false}
           />
-          <Button className="btn-circle btn-xs absolute top-2 right-2">
+          <Button className="btn-circle btn-xs absolute top-2 right-2 text-white">
             <XIcon className="inline-block w-4 h-4 stroke-current" />
           </Button>
         </div>

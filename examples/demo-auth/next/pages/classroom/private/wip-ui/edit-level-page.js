@@ -10,6 +10,7 @@ import { CenterService } from '@users/services';
 import prefixPN from '@classroom/helpers/prefixPN';
 import EditLevelTutor from '@classroom/components/wip-ui/pages/edit-level/edit-level-tutor';
 import EditLevelStudent from '@classroom/components/wip-ui/pages/edit-level/edit-level-students';
+import SearchResults from '@classroom/components/wip-ui/pages/edit-level/search-results';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de gestionar Clases
 function ClassList() {
@@ -47,8 +48,8 @@ function ClassList() {
 
   return (
     <>
-      <div className="bg-primary-content w-full h-screen overflow-auto ">
-        <div className="w-full h-full">
+      <div className="bg-primary-content w-full h-screen overflow-auto">
+        <div className="w-full h-full flex-nowrap">
           <h1 className="text-2xl text-secondary pt-12 pb-6 px-6 border-b border-base-200">
             {t('page_title')}
           </h1>
@@ -57,16 +58,19 @@ function ClassList() {
               {' '}
               TREE COMPONENT
             </div>
-            <div className="w-full max-w-3xl pt-8 pb-6 px-6">
-              <div className="page-header-l2 sticky top-0  mb-8">
-                <h2 className="page-title-l2">Class B</h2>
-                <p className="page-description">Grupo avanzado de primero de primaria</p>
-                <Button color="primary" className="absolute top-3 right-3">
-                  Save
-                </Button>
+            <div className="w-full">
+              <div className="w-full max-w-3xl pt-8 pb-6 px-6">
+                <div className="page-header-l2 relative mb-8">
+                  <h2 className="page-title-l2">Class B</h2>
+                  <p className="page-description">Grupo avanzado de primero de primaria</p>
+                  <Button color="primary" className="absolute top-3 right-3">
+                    Save
+                  </Button>
+                </div>
+                <EditLevelTutor></EditLevelTutor>
+                <EditLevelStudent></EditLevelStudent>
               </div>
-              <EditLevelTutor></EditLevelTutor>
-              <EditLevelStudent></EditLevelStudent>
+              <SearchResults></SearchResults>
             </div>
           </div>
         </div>
