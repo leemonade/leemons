@@ -158,10 +158,10 @@ export default function EditLevel({
             </Tab>
           </TabList>
           <TabPanel id="Panel1" tabId="Tab1" className="p-4">
-            <h2>Any content 1</h2>
+            <h2>Dataset form</h2>
           </TabPanel>
           <TabPanel id="Panel2" tabId="Tab2" className="p-4">
-            <h2>Any content 2</h2>
+            <h2>Permissions form</h2>
           </TabPanel>
         </Tabs>
       </div>

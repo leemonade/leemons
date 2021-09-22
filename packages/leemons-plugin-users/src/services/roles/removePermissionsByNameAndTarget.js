@@ -23,7 +23,7 @@ async function removePermissionsByNameAndTarget(
   });
   const query = {
     role: roleId,
-    $or: permissions.map(({ permissionName, target }) => ({
+    $or: permissions.map(({ permissionName, target = null }) => ({
       permissionName,
       target,
     })),
