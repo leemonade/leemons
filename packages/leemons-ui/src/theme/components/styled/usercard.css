@@ -9,7 +9,7 @@
     .basic {
       @apply text-secondary-500;
       .user-card-name {
-        @apply font-sans text-base font-medium;
+        @apply font-sans text-base font-normal;
       }
       .user-card-phone {
         @apply text-sm font-inter;

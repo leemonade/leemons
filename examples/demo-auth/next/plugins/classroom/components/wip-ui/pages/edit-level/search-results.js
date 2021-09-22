@@ -6,6 +6,7 @@ import { XIcon, BanIcon } from '@heroicons/react/solid';
 import { PlusIcon, SearchIcon, PencilIcon } from '@heroicons/react/outline';
 import Autosuggest from 'react-autosuggest';
 import ListTable from './search-list-table';
+import ListTable2 from './search-list-table-radio';
 
 export default function SearchResults() {
   const [value, setValue] = useState('');
@@ -84,7 +85,7 @@ export default function SearchResults() {
 
   return (
     <>
-      {/* Tabla de resultados */}
+      {/* Tabla de resultados por Tags */}
       <div className="flex flex-col w-full relative bg-gray-10 p-6 mb-12">
         <div>
           <h3 className=" text-base font-medium text-secondary-300 mb-6">
@@ -105,6 +106,35 @@ export default function SearchResults() {
           <span class="font-inter"> 3 {t('counter_label')}</span>
         </div>
         <ListTable></ListTable>
+        {/* Falta darle estilos al paginador */}
+      </div>
+
+      {/* Tabla de resultados por otos datos */}
+      {/* --- sin resultados --- */}
+      <Alert color="error" className=" border border-solid border-red-200 bg-red-50 mb-6 mr-6">
+        <div className="flex-1 items-center">
+          <XIcon className="w-6 h-6 mx-2 stroke-current" />
+          <label className=" font-inter text-xs text-secondary ">{t('error_not_found')}</label>
+        </div>
+      </Alert>
+      {/* --- con resultados --- */}
+      <div className="flex flex-col w-full relative bg-gray-10 p-6 mb-12">
+        <div>
+          <h3 className=" text-base font-medium text-secondary-300 mb-6">
+            {t('title_results')} <strong className=" text-secondary-600">2 {t('title')}</strong>
+            {t('results_by_name')}
+            <strong className=" text-secondary-600">Ana</strong>
+            {t('results_by_birthdate')}
+            <strong className=" text-secondary-600">09/04/2010</strong>
+          </h3>
+        </div>
+        <div>
+          <Button color="primary" className="mr-4 inline-block">
+            <PlusIcon className="inline-block w-4 h-4 mr-2" />
+            {t('btn_add_selected')}
+          </Button>
+        </div>
+        <ListTable2></ListTable2>
         {/* Falta darle estilos al paginador */}
       </div>
     </>
