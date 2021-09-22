@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, createContext, useContext, use
 import { Tree as ReactTree } from '@leemonade/react-dnd-treeview';
 import _ from 'lodash';
 import { node } from 'prop-types';
-import { NodeRenderer } from './NodeRenderer';
+import NodeRenderer from './NodeRenderer';
 import { NodePlaceholderRenderer } from './NodePlaceholderRenderer';
 import { NodeDragPreview } from './NodeDragPreview';
 
