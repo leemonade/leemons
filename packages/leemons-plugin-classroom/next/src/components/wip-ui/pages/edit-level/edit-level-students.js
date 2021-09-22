@@ -98,7 +98,7 @@ export default function EditLevelStudents() {
           <dt className="read-only">Correo electrónico</dt>
           <dd className="user-card-email">{suggestion2.email}</dd>
         </dl>
-      </UserCard>{' '}
+      </UserCard> 
     </span>
   );
 
@@ -114,7 +114,7 @@ export default function EditLevelStudents() {
   };
 
   const inputProps = {
-    placeholder: 'Type a programming language',
+    placeholder: 'Type an email',
     value,
     onChange,
   };
