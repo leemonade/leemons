@@ -4,6 +4,7 @@ import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
 import { getCalendarsToFrontendRequest } from '@calendar/request';
 import { Button } from 'leemons-ui';
+import { FullCalendar } from '@calendar/components/fullcalendar';
 
 function Calendar() {
   useSession({ redirectTo: goLoginPage });
@@ -33,6 +34,7 @@ function Calendar() {
           ))}
         </>
       ) : null}
+      <FullCalendar initialView="dayGridMonth" />
     </div>
   );
 }
