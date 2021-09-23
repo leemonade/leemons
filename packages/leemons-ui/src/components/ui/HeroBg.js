@@ -7,6 +7,8 @@ function HeroBg({ className, color, type, animate, decay, speed, solid, style })
   const [currentType, setCurrentType] = useState(null);
   const animationRef = useRef(0);
 
+  useEffect(() => doAnimation(true), [style, color, className]);
+
   const lg = (
     <svg
       style={style}
