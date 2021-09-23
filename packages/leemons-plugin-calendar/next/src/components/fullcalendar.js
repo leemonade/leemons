@@ -1,18 +1,23 @@
+import * as _ from 'lodash';
 import { useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { addHeaderScript } from '@common/addHeaderScript';
 import { addHeaderStyle } from '@common/addHeaderStyle';
 import { existHeaderScript } from '@common/existHeaderScript';
 
-export function FullCalendar(props) {
+export function FullCalendar({ onCalendarInit = () => {}, events, ...props }) {
   const containerRef = useRef(null);
   const scriptLoaded = useRef(false);
   const calendar = useRef(null);
 
   const initCalendar = () => {
     if (scriptLoaded.current && containerRef.current && !calendar.current) {
-      calendar.current = new window.FullCalendar.Calendar(containerRef.current, props);
-      console.log(calendar.current);
+      calendar.current = new window.FullCalendar.Calendar(containerRef.current, {
+        events,
+        ...props,
+      });
       calendar.current.render();
+      onCalendarInit(calendar.current);
     }
   };
 
@@ -24,6 +29,23 @@ export function FullCalendar(props) {
     containerRef.current = ref;
     initCalendar();
   };
+
+  useEffect(() => {
+    if (calendar.current) {
+      calendar.current.removeAllEvents();
+      _.forEach(events, (event) => {
+        calendar.current.addEvent(event);
+      });
+    }
+  }, [events]);
+
+  useEffect(() => {
+    if (calendar.current) {
+      _.forIn(props, (value, key) => {
+        calendar.current.setOption(key, value);
+      });
+    }
+  }, [props]);
 
   useEffect(() => {
     const scriptUrl =
@@ -43,5 +65,10 @@ export function FullCalendar(props) {
     }
   }, []);
 
-  return <div ref={onContainerRedLoaded}>a</div>;
+  return <div ref={onContainerRedLoaded}></div>;
 }
+
+FullCalendar.propTypes = {
+  events: PropTypes.array,
+  onCalendarInit: PropTypes.func,
+};

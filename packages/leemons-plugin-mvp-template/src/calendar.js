@@ -20,6 +20,7 @@ async function addCalendarAndEventAsClassroom(users) {
     name: 'Biologia',
     bgColor: '#aaff96',
     borderColor: '#aaff96',
+    section: leemons.plugin.prefixPN('Testing'),
   });
   await leemons.getPlugin('calendar').services.calendar.addEvent(calendarKey, event);
   await leemons

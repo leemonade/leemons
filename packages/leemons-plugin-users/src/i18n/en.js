@@ -1,4 +1,7 @@
 module.exports = {
+  calendar: {
+    user_section: 'My calendars',
+  },
   user_data_page: {
     page_title: 'User data',
     page_description:

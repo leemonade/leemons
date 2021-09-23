@@ -13,8 +13,13 @@ function validateKeyPrefix(key, calledFrom) {
   if (!key.startsWith(calledFrom)) throw new Error(`The key must begin with ${calledFrom}`);
 }
 
+function validateSectionPrefix(key, calledFrom) {
+  if (!key.startsWith(calledFrom)) throw new Error(`The section must begin with ${calledFrom}`);
+}
+
 module.exports = {
   validateExistCalendarKey,
   validateNotExistCalendarKey,
   validateKeyPrefix,
+  validateSectionPrefix,
 };

@@ -30,6 +30,12 @@ module.exports = {
     borderColor: {
       type: 'string',
     },
+    section: {
+      type: 'string',
+      options: {
+        notNull: true,
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

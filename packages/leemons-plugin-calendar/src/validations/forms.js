@@ -8,8 +8,9 @@ const addCalendarSchema = {
     icon: stringSchema,
     bgColor: stringSchema,
     borderColor: stringSchema,
+    section: stringSchema,
   },
-  required: ['name', 'bgColor'],
+  required: ['name', 'bgColor', 'section'],
   additionalProperties: false,
 };
 

@@ -12,6 +12,7 @@ async function addCalendarToUserAgent(userAgent, { transacting } = {}) {
       name: userAgent,
       bgColor: '#4F96FF',
       borderColor: '#4F96FF',
+      section: leemons.plugin.prefixPN('calendar.user_section'),
     },
     { transacting }
   );

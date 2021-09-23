@@ -1,18 +1,33 @@
+import * as _ from 'lodash';
 import { useEffect, useState } from 'react';
+import ReactDomServer from 'react-dom/server';
 import { getCentersWithToken, useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
 import { getCalendarsToFrontendRequest } from '@calendar/request';
 import { Button } from 'leemons-ui';
 import { FullCalendar } from '@calendar/components/fullcalendar';
+import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
+import { FullCalendarEventContent } from '@calendar/components/fullcalendar-event-content';
+import { CalendarFilter } from '@calendar/components/calendar-filter';
 
 function Calendar() {
-  useSession({ redirectTo: goLoginPage });
+  const session = useSession({ redirectTo: goLoginPage });
   const [centers, setCenters] = useState([]);
+  const [data, setData] = useState(null);
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [sections, setSections] = useState([]);
 
   const getCalendarsForCenter = async (center) => {
-    const response = await getCalendarsToFrontendRequest(center.token);
-    console.log(response);
+    const { calendars, events, userCalendar } = await getCalendarsToFrontendRequest(center.token);
+    setData({
+      calendars: _.map(calendars, (calendar, index) => {
+        calendars[index].showEvents = true;
+        return calendars[index];
+      }),
+      events,
+      userCalendar,
+    });
   };
 
   useEffect(() => {
@@ -20,11 +35,48 @@ function Calendar() {
   }, []);
 
   useEffect(() => {
+    if (data) {
+      // Eventos
+      const events = [];
+      const calendarsByKey = _.keyBy(data.calendars, 'id');
+      _.forEach(data.events, (event) => {
+        if (calendarsByKey[event.calendar].showEvents) {
+          events.push(event);
+        }
+      });
+      setFilteredEvents(transformDBEventsToFullCalendarEvents(events, data.calendars));
+      // Secciones
+      const calendarsBySection = _.groupBy(data.calendars, 'section');
+      const calendarSections = [];
+      _.forIn(calendarsBySection, (calendars, sectionName) => {
+        calendarSections.push({ calendars, sectionName });
+      });
+      setSections(calendarSections);
+    }
+  }, [data]);
+
+  useEffect(() => {
     if (centers.length) getCalendarsForCenter(centers[0]);
   }, [centers]);
 
+  const showEventsChange = (e, calendar) => {
+    const index = _.findIndex(data.calendars, { id: calendar.id });
+    if (index >= 0) {
+      data.calendars[index].showEvents = e.target.checked;
+      setData({ ...data });
+    }
+  };
+
+  const onEventClick = (info) => {
+    const event = info.event.extendedProps.originalEvent;
+  };
+
+  const onEventContent = (info) => ({
+    html: ReactDomServer.renderToString(<FullCalendarEventContent info={info} config={data} />),
+  });
+
   return (
-    <div>
+    <div className="bg-primary-content">
       {centers.length > 1 ? (
         <>
           {centers.map((center) => (
@@ -34,7 +86,35 @@ function Calendar() {
           ))}
         </>
       ) : null}
-      <FullCalendar initialView="dayGridMonth" />
+
+      <div className="flex flex-column w-full">
+        <div className="w-4/12">
+          {sections.map(({ calendars, sectionName }) => (
+            <div key={sectionName}>
+              <div>{sectionName}</div>
+              <div>
+                {calendars.map((calendar) => (
+                  <CalendarFilter
+                    key={calendar.id}
+                    calendar={calendar}
+                    config={data}
+                    session={session}
+                    showEventsChange={(e) => showEventsChange(e, calendar)}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="w-8/12">
+          <FullCalendar
+            initialView="dayGridMonth"
+            eventClick={onEventClick}
+            events={filteredEvents}
+            eventContent={onEventContent}
+          />
+        </div>
+      </div>
     </div>
   );
 }
