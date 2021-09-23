@@ -6,7 +6,7 @@ import { getCalendarsToFrontendRequest } from '@calendar/request';
 import { Button } from 'leemons-ui';
 
 function Calendar() {
-  const session = useSession({ redirectTo: goLoginPage });
+  useSession({ redirectTo: goLoginPage });
   const [centers, setCenters] = useState([]);
 
   const getCalendarsForCenter = async (center) => {

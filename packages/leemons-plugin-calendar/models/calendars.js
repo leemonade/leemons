@@ -12,6 +12,24 @@ module.exports = {
         notNull: true,
       },
     },
+    name: {
+      type: 'string',
+      options: {
+        notNull: true,
+      },
+    },
+    icon: {
+      type: 'string',
+    },
+    bgColor: {
+      type: 'string',
+      options: {
+        notNull: true,
+      },
+    },
+    borderColor: {
+      type: 'string',
+    },
   },
   primaryKey: {
     type: 'uuid',

@@ -1,6 +1,26 @@
 const { LeemonsValidator } = global.utils;
 const { stringSchema, dateSchema, booleanSchema } = require('./types');
 
+const addCalendarSchema = {
+  type: 'object',
+  properties: {
+    name: stringSchema,
+    icon: stringSchema,
+    bgColor: stringSchema,
+    borderColor: stringSchema,
+  },
+  required: ['name', 'bgColor'],
+  additionalProperties: false,
+};
+
+function validateAddCalendar(data) {
+  const validator = new LeemonsValidator(addCalendarSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 const addEventSchema = {
   type: 'object',
   properties: {
@@ -29,4 +49,5 @@ function validateAddEvent(data) {
 
 module.exports = {
   validateAddEvent,
+  validateAddCalendar,
 };

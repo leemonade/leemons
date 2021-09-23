@@ -16,7 +16,11 @@ const event = {
 
 async function addCalendarAndEventAsClassroom(users) {
   const calendarKey = leemons.plugin.prefixPN('calendar-test');
-  await leemons.getPlugin('calendar').services.calendar.add(calendarKey);
+  await leemons.getPlugin('calendar').services.calendar.add(calendarKey, {
+    name: 'Biologia',
+    bgColor: '#aaff96',
+    borderColor: '#aaff96',
+  });
   await leemons.getPlugin('calendar').services.calendar.addEvent(calendarKey, event);
   await leemons
     .getPlugin('calendar')

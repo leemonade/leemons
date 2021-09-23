@@ -7,6 +7,6 @@
     "prop-types": "^15.7.2"
   },
   "devDependencies": {
-    "@users": "file:src"
+
   }
 }
