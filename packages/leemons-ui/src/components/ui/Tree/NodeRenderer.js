@@ -24,6 +24,7 @@ export default function NodeRenderer({
   ...otherProps
 }) {
   const [showButton, setShowButton] = useState(false);
+  const [hover, setHover] = useState(false);
   const { type } = node;
   const isButton = type === 'button';
   const indent = (isButton ? Math.max(0, depth - 1) : depth) * 24 + (!hasChild ? 10 : 0);
@@ -60,11 +61,11 @@ export default function NodeRenderer({
       onAdd(node);
     }
   };
-
   return (
     <div
       className={cln('tree-node relative flex items-center h-8 rounded group', {
-        'bg-white hover:bg-gray-10 cursor-pointer': hasChild && !isSelected,
+        'bg-whitecursor-pointer': hasChild && !isSelected,
+        'bg-gray-10': hover,
         'border border-transparent hover:border-secondary pl-2':
           !hasChild && !isSelected && !isButton,
         'bg-primary-100 border border-dashed border-primary pl-2': isSelected,
@@ -76,6 +77,10 @@ export default function NodeRenderer({
       })}
       style={{ marginLeft: indent }}
       onClick={handleSelect}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      onFocus={() => setHover(true)}
+      onBlur={() => setHover(false)}
       {...dragOverProps}
     >
       {/* TOGGLE ARROW */}
@@ -156,7 +161,7 @@ export default function NodeRenderer({
       )}
 
       {/* ACTION BUTTONS */}
-      <NodeActions node={node} {...otherProps} />
+      <NodeActions node={node} {...otherProps} hover={hover} />
     </div>
   );
 }

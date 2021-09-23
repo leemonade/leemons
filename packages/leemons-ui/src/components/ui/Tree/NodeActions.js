@@ -6,17 +6,21 @@ import Button from '../Button';
 const defaultActions = {
   edit: {
     icon: PencilIcon,
+    tooltip: 'edit',
     handler: 'onEdit',
+    showOnHover: true,
     render: null,
   },
   delete: {
     icon: TrashIcon,
     handler: 'onDelete',
+    tooltip: 'delete',
+    showOnHover: true,
     render: null,
   },
 };
 
-export default function NodeActions({ node, ...props }) {
+export default function NodeActions({ node, hover, ...props }) {
   if (node.actions) {
     return node.actions.map((_action, i) => {
       if (typeof _action === 'string') {
@@ -36,10 +40,13 @@ export default function NodeActions({ node, ...props }) {
       const Icon = action.icon;
       return (
         <Button
+          title={action.tooltip}
           color="secondary"
           circle
           text
-          className={`opacity-20 group-hover:opacity-100 btn-xs ml-${i === 0 ? 4 : 1}`}
+          className={`${!action.showOnHover || hover ? 'opacity-100' : 'opacity-0'} btn-xs ml-${
+            i === 0 ? 4 : 1
+          }`}
           key={i}
           onClick={(e) => {
             e.stopPropagation();
@@ -61,20 +68,3 @@ export default function NodeActions({ node, ...props }) {
   }
   return <></>;
 }
-
-NodeActions.propTypes = {
-  node: PropTypes.shape({
-    actions: PropTypes.arrayOf(
-      PropTypes.oneOf([
-        PropTypes.string,
-        PropTypes.shape({
-          name: PropTypes.string.isRequired,
-          tooltip: PropTypes.string,
-          icon: PropTypes.element,
-          handler: PropTypes.func,
-          render: PropTypes.element,
-        }),
-      ])
-    ),
-  }),
-};

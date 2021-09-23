@@ -10,13 +10,15 @@ const TREE_DATA_1 = [
     parent: 0,
     text: 'Organization A',
     actions: [
+      {
+        name: 'rename',
+        showOnHover: false,
+        icon: () => <span>R</span>,
+        handler: () => alert('Handler works'),
+      },
       'edit',
       {
         name: 'delete',
-      },
-      {
-        name: 'rename',
-        icon: () => <span>R</span>,
       },
     ],
   },
