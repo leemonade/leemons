@@ -6,7 +6,7 @@ async function events(isInstalled) {
   if (!isInstalled) {
     // Menu
     leemons.events.once(
-      ['plugins.users:init-menu', 'plugins.calendar:init-permissions'],
+      ['plugins.users:init-menu', 'plugins.calendar:init-permissions', 'plugins.menu-builder:pluginDidLoad'],
       async () => {
         for (let i = 0, l = constants.menuItems.length; i < l; i++) {
           await add(
