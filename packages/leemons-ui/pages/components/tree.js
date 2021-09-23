@@ -9,6 +9,16 @@ const TREE_DATA_1 = [
     id: 'ID1',
     parent: 0,
     text: 'Organization A',
+    actions: [
+      'edit',
+      {
+        name: 'delete',
+      },
+      {
+        name: 'rename',
+        icon: () => <span>R</span>,
+      },
+    ],
   },
   {
     id: 'ID2',
@@ -191,7 +201,8 @@ function TreePage() {
               {...tree1}
               rootId={0}
               onAdd={(id) => alert(`Add Node inside parentId: ${id}`)}
-              onDelete={(id) => alert(`Delete nodeId: ${id}`)}
+              onDelete={(node) => alert(`Delete nodeId: ${node.id}`)}
+              onEdit={(node) => alert(`Editing ${node.id}`)}
             />
           </Wrapper>
           <Wrapper className="flex flex-wrap items-start flex-col" title="Tree Data" nocode>
