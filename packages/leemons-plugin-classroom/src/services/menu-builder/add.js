@@ -1,8 +1,7 @@
 const getMenuBuilder = require('./getMenuBuilder');
 
-async function add(item, permissions) {
-  const menuBuilder = getMenuBuilder();
-  const { menuItem, config } = menuBuilder.services;
+async function addMenuItem({ menuItem, config }, { item, permissions }) {
+  // eslint-disable-next-line no-await-in-loop
   if (!(await menuItem.exist(config.constants.mainMenuKey, leemons.plugin.prefixPN(item.key)))) {
     return menuItem.add(
       {
@@ -15,6 +14,25 @@ async function add(item, permissions) {
     );
   }
   return null;
+}
+
+async function add(_items) {
+  let items = _items;
+  if (!Array.isArray(_items)) {
+    items = [_items];
+  }
+
+  const menuBuilder = getMenuBuilder();
+  const { services } = menuBuilder;
+
+  const itemsLength = items.length;
+  const menuItems = [];
+
+  for (let i = 0; i < itemsLength; i++) {
+    // eslint-disable-next-line no-await-in-loop
+    menuItems.push(await addMenuItem(services, items[i]));
+  }
+  return menuItems;
 }
 
 module.exports = add;

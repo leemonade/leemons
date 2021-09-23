@@ -122,8 +122,9 @@ module.exports = {
     names: permissionNames,
     bundles: permissionsBundles,
   },
-  menuItems: {
-    main: {
+  menuItems: [
+    // Main
+    {
       item: {
         key: 'classroom',
         iconSvg: '/classroom/classroom.svg',
@@ -135,12 +136,32 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: 'plugins.classroom.classroom',
+          permissionName: permissionNames.classroom,
           actionNames: ['view', 'admin'],
         },
       ],
     },
-    tree: {
+    // Welcome
+    {
+      item: {
+        key: 'welcome',
+        order: 1,
+        parentKey: 'classroom',
+        url: '/classroom/private/welcome',
+        label: {
+          en: 'Welcome',
+          es: 'Bienvenida',
+        },
+      },
+      permissions: [
+        {
+          permissionName: permissionNames.classroom,
+          actionNames: ['view', 'admin'],
+        },
+      ],
+    },
+    // Tree
+    {
       item: {
         key: 'tree',
         order: 2,
@@ -154,30 +175,13 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: 'plugins.classroom.classroom',
+          permissionName: permissionNames.tree,
           actionNames: ['view', 'admin'],
         },
       ],
     },
-    welcome: {
-      item: {
-        key: 'welcome',
-        order: 1,
-        parentKey: 'classroom',
-        url: '/classroom/private/welcome',
-        label: {
-          en: 'Welcome',
-          es: 'Bienvenida',
-        },
-      },
-      permissions: [
-        {
-          permissionName: 'plugins.classroom.classroom',
-          actionNames: ['view', 'admin'],
-        },
-      ],
-    },
-    organization: {
+    // Organization
+    {
       item: {
         key: 'organization',
         order: 3,
@@ -191,12 +195,13 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: 'plugins.classroom.classroom',
+          permissionName: permissionNames.organization,
           actionNames: ['view', 'admin'],
         },
       ],
     },
-    classes: {
+    // Classes
+    {
       item: {
         key: 'classes',
         order: 4,
@@ -210,10 +215,10 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: 'plugins.classroom.classroom',
+          permissionName: permissionNames.adminView,
           actionNames: ['view', 'admin'],
         },
       ],
     },
-  },
+  ],
 };

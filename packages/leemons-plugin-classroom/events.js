@@ -1,20 +1,22 @@
-const { permissions } = require('./config/constants');
-const {
-  addMain,
-  addWelcome,
-  addTree,
-  addOrganization,
-  addClasses,
-} = require('./src/services/menu-builder');
+const { permissions, menuItems } = require('./config/constants');
+// const {
+//   addMain,
+//   addWelcome,
+//   addTree,
+//   addOrganization,
+//   addClasses,
+// } = require('./src/services/menu-builder');
+const addMenuItems = require('./src/services/menu-builder/add')
 const init = require('./init');
 const updateCenters = require('./src/services/centers/updateCenters');
 
 // TODO: el proceso de gestionar los elementos que se añaden al MenuBuilder debería estar abstraido
 // tal y como se está haciendo ahora pero, en lugar de en cada Plugin, hacerlo a nivel del propio MenuBuilder
 async function initMenuBuilder() {
-  await addMain();
+  // await addMain();
+  await addMenuItems(menuItems);
   leemons.events.emit('init-menu');
-  await Promise.all([addWelcome(), addTree(), addOrganization(), addClasses()]);
+  // await Promise.all([addWelcome(), addTree(), addOrganization(), addClasses()]);
   leemons.events.emit('init-submenu');
 }
 

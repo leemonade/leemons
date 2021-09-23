@@ -1,5 +1,5 @@
 const settingsService = require('../src/services/settings');
-const menuBuilderService = require('../src/services/menu-builder');
+// const menuBuilderService = require('../src/services/menu-builder');
 const settingsSchema = require('../models/settings');
 
 async function findOne(ctx) {
@@ -31,7 +31,7 @@ async function enableMenuItem(ctx) {
     required: ['key'],
   });
   if (validator.validate(ctx.request.body)) {
-    const item = await menuBuilderService.enableItem(ctx.request.body.key);
+    // const item = await menuBuilderService.enableItem(ctx.request.body.key);
     ctx.status = 200;
     ctx.body = { status: 200, item };
   } else {
