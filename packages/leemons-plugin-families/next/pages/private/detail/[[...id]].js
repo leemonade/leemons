@@ -463,8 +463,8 @@ function Detail() {
       }
 
       setSaveLoading(false);
-      hooks.fireEvent('menu-builder:reset-menu');
-      router.push(`/families/private/detail/${response.family.id}`);
+      await hooks.fireEvent('menu-builder:reset-menu');
+      await router.push(`/families/private/detail/${response.family.id}`);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
       setSaveLoading(false);
@@ -475,7 +475,8 @@ function Detail() {
     try {
       await removeFamilyRequest(family.id);
       addSuccessAlert(t('deleted_done'));
-      router.push(`/families/private/list`);
+      await hooks.fireEvent('menu-builder:reset-menu');
+      await router.push(`/families/private/list`);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }

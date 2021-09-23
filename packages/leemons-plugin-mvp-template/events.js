@@ -3,11 +3,13 @@ const initCenters = require('./src/centers');
 const initProfiles = require('./src/profiles');
 const _ = require('lodash');
 const { setFamilyProfiles } = require('./src/familyProfiles');
+const addCalendarAndEventAsClassroom = require('./src/calendar');
 
 async function events(isInstalled) {
   const config = {
     profiles: null,
     centers: null,
+    users: null,
   };
 
   if (!isInstalled) {
@@ -42,7 +44,8 @@ async function events(isInstalled) {
         leemons.events.emit('init-centers', config.centers);
         config.profiles = await initProfiles();
         leemons.events.emit('init-profiles', config.profiles);
-        await initUsers(config.centers, config.profiles);
+        config.users = await initUsers(config.centers, config.profiles);
+        await addCalendarAndEventAsClassroom(config.users);
       } catch (e) {
         console.error(e);
       }

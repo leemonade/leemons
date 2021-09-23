@@ -45,7 +45,7 @@ async function initUsers(centers, profiles) {
     _.map(roles2, 'id')
   );
 
-  return { users: [user1, user2] };
+  return [user1, user2];
 }
 
 module.exports = initUsers;

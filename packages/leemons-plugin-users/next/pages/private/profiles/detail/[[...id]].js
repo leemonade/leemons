@@ -18,6 +18,7 @@ import { goDetailProfilePage, goListProfilesPage, goLoginPage } from '@users/nav
 import {
   Button,
   FormControl,
+  ImageLoader,
   Input,
   Modal,
   PageContainer,
@@ -44,6 +45,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import PlatformLocales from '@multilanguage/components/PlatformLocales';
 import getProfileTranslations from '@users/request/getProfileTranslations';
 import hooks from 'leemons-hooks';
+import MainMenuDropItem from '@menu-builder/components/mainMenu/mainMenuDropItem';
 
 function DatasetTabs({ profile, t, isEditMode }) {
   const [loading, setLoading] = useState(true);
@@ -524,6 +526,28 @@ function ProfileDetail() {
     return !getValues('name');
   }, [getValues()]);
 
+  const Name = () => {
+    return (
+      <MainMenuDropItem item={{ key: `profile.${profile?.id}` }}>
+        {({ isDragging, canDrag }) => (
+          <div className={`relative ${canDrag ? 'pl-5 hover:text-primary cursor-move' : ''}`}>
+            {canDrag ? (
+              <div
+                className={`absolute left-0 top-2/4 transform -translate-y-1/2 ${
+                  isDragging ? 'text-primary' : ''
+                }`}
+                style={{ width: '14px', height: '8px' }}
+              >
+                <ImageLoader className="stroke-current" src={'/assets/svgs/re-order.svg'} />
+              </div>
+            ) : null}
+            <span className="text-secondary">{watch('name')}</span>
+          </div>
+        )}
+      </MainMenuDropItem>
+    );
+  };
+
   return (
     <>
       {!error && !loading ? (
@@ -554,7 +578,7 @@ function ProfileDetail() {
               }
               registerFormTitleErrors={errors.name}
               titlePlaceholder={t('profile_name')}
-              title={watch('name')}
+              title={<Name />}
               saveButton={isEditMode ? tCommonHeader('save') : null}
               saveButtonLoading={saveLoading}
               cancelButton={isEditMode ? tCommonHeader('cancel') : null}
