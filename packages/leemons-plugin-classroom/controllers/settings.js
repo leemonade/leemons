@@ -1,5 +1,6 @@
 const settingsService = require('../src/services/settings');
-// const menuBuilderService = require('../src/services/menu-builder');
+const enableMenuItemService = require('../src/services/menu-builder/enableItem');
+const removeMenuItemService = require('../src/services/menu-builder/remove');
 const settingsSchema = require('../models/settings');
 
 async function findOne(ctx) {
@@ -31,7 +32,22 @@ async function enableMenuItem(ctx) {
     required: ['key'],
   });
   if (validator.validate(ctx.request.body)) {
-    // const item = await menuBuilderService.enableItem(ctx.request.body.key);
+    const item = await enableMenuItemService(ctx.request.body.key);
+    ctx.status = 200;
+    ctx.body = { status: 200, item };
+  } else {
+    throw validator.error;
+  }
+}
+
+async function removeMenuItem(ctx) {
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: { key: { type: 'string' } },
+    required: ['key'],
+  });
+  if (validator.validate(ctx.request.body)) {
+    const item = await removeMenuItemService(ctx.request.body.key);
     ctx.status = 200;
     ctx.body = { status: 200, item };
   } else {
@@ -43,4 +59,5 @@ module.exports = {
   findOne,
   update,
   enableMenuItem,
+  removeMenuItem,
 };

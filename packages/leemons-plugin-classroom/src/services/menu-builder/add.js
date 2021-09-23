@@ -16,7 +16,7 @@ async function addMenuItem({ menuItem, config }, { item, permissions }) {
   return null;
 }
 
-async function add(_items) {
+async function add(_items, shouldWait = false) {
   let items = _items;
   if (!Array.isArray(_items)) {
     items = [_items];
@@ -25,14 +25,17 @@ async function add(_items) {
   const menuBuilder = getMenuBuilder();
   const { services } = menuBuilder;
 
-  const itemsLength = items.length;
-  const menuItems = [];
+  if (shouldWait) {
+    const itemsLength = items.length;
+    const menuItems = [];
 
-  for (let i = 0; i < itemsLength; i++) {
-    // eslint-disable-next-line no-await-in-loop
-    menuItems.push(await addMenuItem(services, items[i]));
+    for (let i = 0; i < itemsLength; i++) {
+      // eslint-disable-next-line no-await-in-loop
+      menuItems.push(await addMenuItem(services, items[i]));
+    }
+    return menuItems;
   }
-  return menuItems;
+  return Promise.all(items.map((item) => addMenuItem(services, item)));
 }
 
 module.exports = add;
