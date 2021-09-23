@@ -3,7 +3,7 @@ const { menuItems } = require('../../../config/constants');
 
 async function enableItem(key) {
   try {
-    const { item } = menuItems.find((menuItem) => menuItem.key === key);
+    const { item } = menuItems.find((menuItem) => menuItem.item.key === key);
 
     if (item) {
       return update({
