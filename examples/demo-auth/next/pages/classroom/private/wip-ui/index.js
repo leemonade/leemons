@@ -8,8 +8,8 @@ import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
 import { CenterService } from '@users/services';
 import prefixPN from '@classroom/helpers/prefixPN';
-import Details from './details';
-import Infolayer from './info-layer';
+import Details from '@classroom/components/wip-ui/pages/admin-level/details';
+import Infolayer from '@classroom/components/wip-ui/pages/admin-level/info-layer';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de gestionar Clases
 function ClassList() {

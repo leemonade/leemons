@@ -1,0 +1,38 @@
+/* :> */
+@layer components {
+  /* <: */
+  .user-card {
+    @apply font-inter;
+    &.minimal {
+      @apply text-sm;
+    }
+    .basic {
+      @apply text-secondary-500;
+      .user-card-name {
+        @apply font-sans text-base font-normal;
+      }
+      .user-card-phone {
+        @apply text-sm font-inter;
+      }
+      .user-card-email {
+        @apply text-xs font-inter text-secondary-300;
+      }
+    }
+
+    .avatar .rounded-full {
+      @apply stroke border border-secondary-50;
+    }
+    .msg {
+      @apply text-sm font-inter;
+    }
+    &.is-error {
+      --tw-bg-opacity: 1;
+      background-color: rgba(254, 242, 242, var(--tw-bg-opacity));
+      .msg {
+        @apply text-error;
+      }
+    }
+  }
+  /* :> */
+}
+/* <: */

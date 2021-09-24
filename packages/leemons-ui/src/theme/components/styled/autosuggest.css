@@ -1,0 +1,46 @@
+/* :> */
+@layer components {
+  /* <: */
+
+  .react-autosuggest__input {
+    @apply font-inter  bg-base-100 border border-opacity-100 border-base-300 text-base-content;
+    &::placeholder {
+      @apply font-inter font-light  text-base-300;
+    }
+    &:focus {
+      box-shadow: 0 0 0 3px hsla(var(--b2));
+
+      &::placeholder {
+        @apply text-base-300;
+      }
+    }
+  }
+
+  .react-autosuggest__suggestions-container {
+    display: none;
+  }
+
+  .react-autosuggest__container--open .react-autosuggest__suggestions-container {
+    @apply font-inter bg-white border border-opacity-100 border-base-300 text-base-content;
+  }
+
+  .react-autosuggest__suggestions-list {
+    list-style-type: none;
+  }
+
+  .react-autosuggest__suggestion {
+    + .react-autosuggest__suggestion {
+      @apply border-t  border-opacity-100 border-base-300;
+    }
+    .is-focused {
+      @apply bg-primary-100;
+    }
+  }
+
+  .suggestion-content {
+    background-repeat: no-repeat;
+  }
+
+  /* :> */
+}
+/* <: */

@@ -60,3 +60,11 @@
     color: hsl(var(--b-c));
   }
 }
+.page-description {
+  @apply text-base text-secondary mt-2;
+}
+.page-title {
+  &-l2 {
+    @apply text-2xl text-secondary font-semibold;
+  }
+}

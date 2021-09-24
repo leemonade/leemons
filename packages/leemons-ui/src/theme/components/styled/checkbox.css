@@ -32,11 +32,11 @@
       &,
       &:hover {
         & ~ .checkbox-mark {
-          @apply bg-neutral-content border-neutral-content text-base-100;
+          @apply bg-primary border-primary text-primary-content;
           &:before {
             animation: checkmark var(--animation-input, 0.4s) ease-in-out;
             transform: rotate(45deg) translate(-1px, -1px) scale(1);
-            @apply border-base-100;
+            @apply border-primary-content;
           }
         }
       }

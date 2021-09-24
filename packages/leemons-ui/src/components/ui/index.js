@@ -31,6 +31,7 @@ import PageContainer from './PageContainer';
 import Drawer, { useDrawer } from './Drawer';
 import Table from './Table';
 import Tree, { useTree } from './Tree';
+import UserCard from './UserCard';
 
 import Modal, { useModal } from './Modal';
 
@@ -76,4 +77,5 @@ export {
   Table,
   Tree,
   useTree,
+  UserCard,
 };

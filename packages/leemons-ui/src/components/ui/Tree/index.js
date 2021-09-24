@@ -156,6 +156,7 @@ const TreeView = ({
           }
           return (
             <Renderer
+              {...otherProps}
               node={node}
               treeData={treeData}
               setTreeData={setTreeData}
