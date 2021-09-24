@@ -65,14 +65,18 @@ TranslationTab.propTypes = {
 };
 
 export default function Translations({
-  defaultLocaleValues,
-  entityId,
   locale: userLocale,
+
+  entityId,
+  setTreeEntity,
+
+  defaultLocaleValues,
+  setDefaultLocaleValues,
+
   localizations,
+
   onCancel = () => {},
   onSave = () => {},
-  setDefaultLocaleValues,
-  setTreeEntity,
   ...props
 }) {
   const [names] = useGetNames(entityId);
@@ -143,10 +147,14 @@ export default function Translations({
       dirtySetDefaultValue(newValues);
 
       // Reset the platform default locale value
-      setDefaultLocaleValues({
-        ...defaultLocaleValues,
-        name: newValues[defaultLocale]?.name || '',
-      });
+      setDefaultLocaleValues(
+        {
+          ...defaultLocaleValues,
+          name: newValues[defaultLocale]?.name || '',
+        },
+        // Set as not dirty value
+        false
+      );
     }
   }, [names]);
 
@@ -159,12 +167,14 @@ export default function Translations({
   }, [defaultLocaleValues]);
 
   const handleSave = () => {
-    // Set the new values as default
-    dirtySetDefaultValue(dirtyValue);
-    setPrevDefaultLocaleValue(dirtyValue[defaultLocale]);
-    // Send to parent the new values
-    onSave(dirtyValue);
-    // Hide the drawer
+    if (isDirty()) {
+      // Set the new values as default
+      dirtySetDefaultValue(dirtyValue);
+      setPrevDefaultLocaleValue(dirtyValue[defaultLocale]);
+      // Send to parent the new values
+      onSave(dirtyValue);
+      // Hide the drawer
+    }
     toggleDrawer();
   };
 

@@ -11,6 +11,7 @@ import updateLevelSchema from '../../../../services/levelSchemas/updateLevelSche
 
 import { useTranslationsDrawer } from '../../../multilanguage/translationsDrawer';
 import Translations from './translations';
+import useDirtyState from '../../../../hooks/useDirtyState';
 
 export default function EditLevel({
   entity = null,
@@ -28,7 +29,13 @@ export default function EditLevel({
 
   // Default locale values
   const [values, setValues] = useState({ name: '' });
+  const {
+    value: dirtyValue,
+    setValue: dirtySetValue,
+    setDefaultValue: dirtySetDefaultValue,
+  } = useDirtyState({ name: '' }, { calculateDirtyOnUpdate: true });
   // All the localized values
+  // TODO: If localizations exists, it denotes they are dirty
   const [localizations, setLocalizations] = useState({});
   const { register, handleSubmit, setValue } = useForm();
 
@@ -57,6 +64,9 @@ export default function EditLevel({
   // Update form values if the selected entity changes
   useEffect(() => {
     setValue('isClass', entity ? !!entity.isClass : false);
+
+    // Clear previous entity localizations
+    setLocalizations({});
   }, [entity?.id]);
 
   // On form Submit, create/update entity
@@ -130,6 +140,7 @@ export default function EditLevel({
                 value={values.name}
                 onChange={(e) => {
                   setValues({ ...values, name: e.target.value });
+                  dirtySetValue({ ...values, name: e.target.value });
                 }}
                 outlined
                 className="input w-full"
@@ -185,7 +196,13 @@ export default function EditLevel({
       <Translations
         {...drawer}
         defaultLocaleValues={values}
-        setDefaultLocaleValues={setValues}
+        setDefaultLocaleValues={(newValue, dirty = true) => {
+          setValues(newValue);
+          dirtySetValue(newValue);
+          if (!dirty) {
+            dirtySetDefaultValue(newValue);
+          }
+        }}
         setTreeEntity={setTreeEntity}
         entityId={entity?.id || null}
         localizations={localizations}
