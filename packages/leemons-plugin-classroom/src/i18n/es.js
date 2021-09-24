@@ -36,6 +36,14 @@ module.exports = {
         'para crear un nuevo nivel, y a continuación, usa el área de configuración para definir el nuevo nivel.',
     },
   },
+  delete_modal: {
+    title: 'Eliminar',
+    message: '¿Estás seguro de eliminar este nivel?',
+    actions: {
+      accept: 'Si',
+      cancel: 'No',
+    },
+  },
   template: {
     title: '¿Cargar plantilla para ahorrar tiempo?',
     description:

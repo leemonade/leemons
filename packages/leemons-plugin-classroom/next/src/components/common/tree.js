@@ -112,14 +112,16 @@ function Tree({
         if (entity.properties.editing) {
           treeProps.setSelectedNode({ id: entity.id, inclusive: true });
         }
-        if (entity.properties.editable !== false) {
-          actions.push('edit');
-        }
-        if (
-          entity.properties.deletable !== false &&
-          !entities.find(({ parent }) => entity.id === parent)
-        ) {
-          actions.push('delete');
+        if (entity.id !== 'creating') {
+          if (entity.properties.editable !== false && !entity.properties.editing) {
+            actions.push('edit');
+          }
+          if (
+            entity.properties.deletable !== false &&
+            !entities.find(({ parent }) => entity.id === parent)
+          ) {
+            actions.push('delete');
+          }
         }
 
         return {

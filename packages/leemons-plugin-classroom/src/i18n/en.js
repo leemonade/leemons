@@ -33,6 +33,14 @@ module.exports = {
         'to create a new level, then use the config area to configure the data set for the level.',
     },
   },
+  delete_modal: {
+    title: 'Delete',
+    message: 'Are you sure you want to delete this level?',
+    actions: {
+      accept: 'Yes',
+      cancel: 'No',
+    },
+  },
   template: {
     title: 'Do you want to pre-load a template to save time?',
     description:

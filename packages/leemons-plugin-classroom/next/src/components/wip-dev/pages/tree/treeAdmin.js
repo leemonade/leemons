@@ -11,8 +11,10 @@ export default function TreeAdmin({
   locale = 'en',
   onEdit = () => {},
   onAdd = () => {},
+  onDelete = () => {},
   setUpdate = () => {},
   editingEntity = null,
+  ...props
 }) {
   // Get the DB LevelSchemas
   const [levelSchemas, , levelSchemasError, levelSchemasLoading, update] = useListLevelSchema(
@@ -38,6 +40,8 @@ export default function TreeAdmin({
           },
         });
       }
+    } else {
+      setEntity(null);
     }
   }, [editingEntity]);
 
@@ -65,7 +69,11 @@ export default function TreeAdmin({
             onEdit={(node) => {
               onEdit(findEntity(node.id, levelSchemas));
             }}
+            onDelete={(node) => {
+              onDelete(findEntity(node.id, levelSchemas));
+            }}
             onAdd={(node) => onAdd(node.data.parent)}
+            {...props}
           />
         );
       })()}
