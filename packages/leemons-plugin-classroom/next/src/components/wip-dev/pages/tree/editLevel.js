@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, FormControl, Tabs, Tab, TabList, TabPanel, Input, Checkbox } from 'leemons-ui';
-import { InformationCircleIcon, ExclamationCircleIcon } from '@heroicons/react/solid';
+import { InformationCircleIcon, ExclamationCircleIcon, XIcon } from '@heroicons/react/solid';
 import { useForm } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import tLoader from '@multilanguage/helpers/tLoader';
@@ -17,6 +17,7 @@ export default function EditLevel({
   setEntity = () => {},
   parent,
   onUpdate = () => {},
+  onClose = () => {},
   locale,
 }) {
   const [translations] = useTranslate({ keysStartsWith: 'plugins.classroom.editor' });
@@ -104,7 +105,13 @@ export default function EditLevel({
   };
   return (
     <>
-      <div className="flex-1 my-2 mb-2 bg-primary-content py-6 pl-12 pr-6">
+      <div className="flex-1 my-2 mb-2 bg-primary-content py-6 pl-12 pr-6 relative">
+        <Button
+          className="btn-circle btn-xs ml-8 bg-transparent border-0 absolute top-1 right-1"
+          onClick={onClose}
+        >
+          <XIcon className="inline-block w-4 h-4 stroke-current" />
+        </Button>
         <Alerts {...alerts} />
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormControl>
@@ -184,5 +191,6 @@ EditLevel.propTypes = {
   setEntity: PropTypes.func,
   parent: PropTypes.string,
   onUpdate: PropTypes.func,
+  onClose: PropTypes.func,
   locale: PropTypes.string,
 };

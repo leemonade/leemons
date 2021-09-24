@@ -84,6 +84,7 @@ function TreePage() {
           {showEdit.active ? (
             // Edit LevelSchema form
             <EditLevel
+              onClose={() => toggleShowEdit({ active: false })}
               locale={session?.locale}
               entity={showEdit.entity}
               setEntity={(state) => toggleShowEdit({ active: showEdit.active, ...state })}
