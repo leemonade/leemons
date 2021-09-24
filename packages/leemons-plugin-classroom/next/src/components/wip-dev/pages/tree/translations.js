@@ -7,6 +7,7 @@ import FormControl from 'leemons-ui/dist/components/ui/FormControl';
 import { TranslationsDrawer } from '../../../multilanguage/translationsDrawer';
 import useGetNames from '../../../../hooks/levelschema/useGetNames';
 import useDirtyState from '../../../../hooks/useDirtyState';
+import ExitWithoutSaving from './exitWithoutSaving';
 
 function TranslationTab({
   defaultLocaleValues,
@@ -88,10 +89,8 @@ export default function Translations({
     setValue: dirtySetValue,
     // Whether if the values were modified or not
     isDirty,
-  } = useDirtyState({}, { calculateDirtyOnUpdate: true });
-  useEffect(() => {
-    console.log('isDirty =', isDirty);
-  }, [isDirty]);
+  } = useDirtyState({});
+  const [showSaveWithouSaving, setShowSaveWithouSaving] = useState(false);
 
   // Handle localization value change
   const setValues = ({ reload = false, ...newValue }) => {
@@ -169,22 +168,36 @@ export default function Translations({
     toggleDrawer();
   };
 
-  const handleCancel = () => {
-    // Set the values to the default ones (not modified)
-    setValues({
-      reload: true,
-      ...dirtyDefaultValue,
-    });
-    // Set the default locale value to the previous one
-    setDefaultLocaleValues(prevDefaultLocaleValue);
-    // Trigger cancel action on parent
-    onCancel();
-    // Hide the drawer
-    toggleDrawer();
+  const handleCancel = (force = false) => {
+    if (force === true || !isDirty()) {
+      // Set the values to the default ones (not modified)
+      setValues({
+        reload: true,
+        ...dirtyDefaultValue,
+      });
+      // Set the default locale value to the previous one
+      setDefaultLocaleValues(prevDefaultLocaleValue);
+      // Trigger cancel action on parent
+      onCancel();
+      // Hide the drawer
+      toggleDrawer();
+    } else {
+      setShowSaveWithouSaving(true);
+    }
   };
 
   return (
     <>
+      <ExitWithoutSaving
+        isShown={showSaveWithouSaving}
+        onDiscard={() => {
+          setShowSaveWithouSaving(false);
+          handleCancel(true);
+        }}
+        onCancel={() => {
+          setShowSaveWithouSaving(false);
+        }}
+      />
       <TranslationsDrawer {...props} onSave={handleSave} onCancel={handleCancel}>
         <TranslationTab
           warnings={warnings}
