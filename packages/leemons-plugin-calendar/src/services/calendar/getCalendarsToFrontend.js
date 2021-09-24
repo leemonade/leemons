@@ -24,6 +24,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   );
 
   const queryPermissions = [];
+  const ownerPermissions = [];
 
   // ES: Preparación de la consulta para comprobar los permisos
   // EN: Preparation of the query to check permissions
@@ -34,24 +35,43 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
         actionName_$in: userPermission.actionNames,
         target: userPermission.target,
       });
+      if (userPermission.actionNames.indexOf('owner') >= 0) {
+        ownerPermissions.push({
+          permissionName: userPermission.permissionName,
+          actionName_$in: ['owner'],
+          target: userPermission.target,
+        });
+      }
     });
   }
 
   // ES: Calendarios/Eventos a los que tiene acceso de lectura
   // EN: Calendars/Events with view access
-  const items = await userPlugin.services.permissions.findItems(
-    {
-      $or: queryPermissions,
-      type_$in: [permissionConfig.type, permissionConfig.typeEvent],
-    },
-    {
-      transacting,
-    }
-  );
+  const [items, ownerItems] = await Promise.all([
+    userPlugin.services.permissions.findItems(
+      {
+        $or: queryPermissions,
+        type_$in: [permissionConfig.type, permissionConfig.typeEvent],
+      },
+      {
+        transacting,
+      }
+    ),
+    userPlugin.services.permissions.findItems(
+      {
+        $or: ownerPermissions,
+        type_$in: [permissionConfig.type],
+      },
+      {
+        transacting,
+      }
+    ),
+  ]);
 
+  // ES: Separamos los calendarios de los eventos
+  // EN: We separate the calendars from the events
   const calendarIds = [];
   const eventIds = [];
-
   _.forEach(items, ({ item, type }) => {
     if (type === permissionConfig.type) {
       calendarIds.push(item);
@@ -81,19 +101,53 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     ),
   ]);
 
+  // ES: Buscamos si el user agent tiene calendario
+  // EN: We check if the user agent has a calendar
   const userCalendar = _.find(calendars, {
     key: userPlugin.services.users.getUserAgentCalendarKey(userSession.userAgents[0].id),
   });
-
   if (userCalendar) {
+    // ES: Si tiene calendario todos los eventos sueltos los asignamos a su calendario
+    // EN: If you have a calendar, all single events are assigned to your calendar.
     _.forEach(events, (event, index) => {
       events[index].calendar = userCalendar.id;
     });
   }
 
+  const ownerCalendarIds = _.map(ownerItems, 'item');
+  const ownerCalendars = _.filter(
+    calendars,
+    (calendar) => ownerCalendarIds.indexOf(calendar.id) >= 0
+  );
+
+  const finalCalendarsIds = [];
+  const finalCalendars = [];
+
+  if (userCalendar) {
+    finalCalendars.push(userCalendar);
+    finalCalendarsIds.push(userCalendar.id);
+  }
+
+  _.forEach(ownerCalendars, (calendar) => {
+    if (finalCalendarsIds.indexOf(calendar.id) < 0) {
+      // eslint-disable-next-line no-param-reassign
+      calendar.section = 'plugins.users.calendar.user_section';
+      finalCalendars.push(calendar);
+      finalCalendarsIds.push(calendar.id);
+    }
+  });
+
+  _.forEach(calendars, (calendar) => {
+    if (finalCalendarsIds.indexOf(calendar.id) < 0) {
+      finalCalendars.push(calendar);
+      finalCalendarsIds.push(calendar.id);
+    }
+  });
+
   return {
     userCalendar,
-    calendars,
+    ownerCalendars,
+    calendars: finalCalendars,
     events: events.concat(eventsFromCalendars),
   };
 }

@@ -8,6 +8,10 @@ function addEvent(key, event, { transacting } = {}) {
 }
 
 module.exports = {
+  eventTypes: {
+    event: leemons.plugin.prefixPN('event'),
+    task: leemons.plugin.prefixPN('task'),
+  },
   add: calendar.add,
   exist: calendar.exist,
   grantAccessUserAgentToCalendar: calendar.grantAccessUserAgentToCalendar,

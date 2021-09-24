@@ -48,11 +48,6 @@
 "@leemons/assets@file:dependencies/assets":
   version "1.0.0"
 
-"@leemons/calendar@file:dependencies/calendar":
-  version "1.0.0"
-  dependencies:
-    prop-types "^15.7.2"
-
 "@leemons/classroom@file:dependencies/classroom":
   version "1.0.0"
   dependencies:

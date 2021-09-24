@@ -10,6 +10,8 @@ import { FullCalendar } from '@calendar/components/fullcalendar';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
 import { FullCalendarEventContent } from '@calendar/components/fullcalendar-event-content';
 import { CalendarFilter } from '@calendar/components/calendar-filter';
+import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
+import tKeys from '@multilanguage/helpers/tKeys';
 
 function Calendar() {
   const session = useSession({ redirectTo: goLoginPage });
@@ -17,9 +19,13 @@ function Calendar() {
   const [data, setData] = useState(null);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [sections, setSections] = useState([]);
+  const [sectionsT, setSectionsT] = useState({});
 
   const getCalendarsForCenter = async (center) => {
-    const { calendars, events, userCalendar } = await getCalendarsToFrontendRequest(center.token);
+    const { calendars, events, userCalendar, ownerCalendars } = await getCalendarsToFrontendRequest(
+      center.token
+    );
+
     setData({
       calendars: _.map(calendars, (calendar, index) => {
         calendars[index].showEvents = true;
@@ -27,12 +33,25 @@ function Calendar() {
       }),
       events,
       userCalendar,
+      ownerCalendars,
     });
   };
+
+  const getTranslationSections = async () => {
+    const sectionKeys = _.map(sections, 'sectionName');
+    const { items } = await getLocalizationsByArrayOfItems(sectionKeys);
+    setSectionsT(items);
+  };
+
+  const getSectionName = (sectionName) => tKeys(sectionName, sectionsT);
 
   useEffect(() => {
     setCenters(getCentersWithToken());
   }, []);
+
+  useEffect(() => {
+    getTranslationSections();
+  }, [sections]);
 
   useEffect(() => {
     if (data) {
@@ -91,7 +110,7 @@ function Calendar() {
         <div className="w-4/12">
           {sections.map(({ calendars, sectionName }) => (
             <div key={sectionName}>
-              <div>{sectionName}</div>
+              <div>{getSectionName(sectionName)}</div>
               <div>
                 {calendars.map((calendar) => (
                   <CalendarFilter

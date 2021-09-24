@@ -39,7 +39,11 @@ async function events(isInstalled) {
     );
 
     leemons.events.once(
-      ['plugins.users:init-permissions', 'plugins.calendar:init-permissions'],
+      [
+        'plugins.users:init-permissions',
+        'plugins.calendar:init-permissions',
+        'plugins.calendar:init-event-types',
+      ],
       async () => {
         try {
           config.centers = await initCenters();

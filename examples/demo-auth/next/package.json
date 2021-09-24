@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "@leemons/assets": "file:dependencies/assets",
-    "@leemons/calendar": "file:dependencies/calendar",
     "@leemons/classroom": "file:dependencies/classroom",
     "@leemons/common": "file:dependencies/common",
     "@leemons/dataset": "file:dependencies/dataset",
