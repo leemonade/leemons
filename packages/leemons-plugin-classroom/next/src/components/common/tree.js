@@ -9,7 +9,8 @@ function Tree({
   schemas,
 
   onAdd = () => {},
-  onSelect = () => {},
+  onEdit = () => {},
+  onDelete = () => {},
   showButtons = true,
   selectedNode = null,
   initialSelected = null,
@@ -29,7 +30,6 @@ function Tree({
     const useSchemas = entities.every(({ schema }) => schema) && schemas;
 
     // Addition buttons
-    // TODO: If a schema exists, use schema name on Add Level
     const buttons = [];
 
     if (showButtons) {
@@ -110,15 +110,25 @@ function Tree({
     // The actual Levels
     treeProps.setTreeData([
       ...entities?.map((entity) => {
+        const actions = [];
         if (entity.properties.editing) {
-          console.log('editing', entity.name);
-          treeProps.selectedNode = entity.id;
-          treeProps.setSelectedNode(entity.id);
+          treeProps.setSelectedNode({ id: entity.id, inclusive: true });
         }
+        if (entity.properties.editable !== false) {
+          actions.push('edit');
+        }
+        if (
+          entity.properties.deletable !== false &&
+          !entities.find(({ parent }) => entity.id === parent)
+        ) {
+          actions.push('delete');
+        }
+
         return {
           ...entity,
           text: entity.name,
           parent: entity.parent || 0,
+          actions,
           draggable: false,
         };
       }),
@@ -134,13 +144,14 @@ function Tree({
 
   treeProps.initialSelected = [initialSelected];
 
-  return <UITree {...treeProps} onAdd={onAdd} onSelect={onSelect} />;
+  return <UITree {...treeProps} onEdit={onEdit} onDelete={onDelete} onAdd={onAdd} />;
 }
 
 Tree.propTypes = {
   entities: PropTypes.array,
   schemas: PropTypes.array,
-
+  onEdit: PropTypes.func,
+  onDelete: PropTypes.func,
   onAdd: PropTypes.func,
   onSelect: PropTypes.func,
   showButtons: PropTypes.bool,

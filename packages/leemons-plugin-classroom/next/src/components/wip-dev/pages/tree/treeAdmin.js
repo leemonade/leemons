@@ -9,7 +9,6 @@ function findEntity(id, entities) {
 
 export default function TreeAdmin({
   locale = 'en',
-  onDetails = () => {},
   onEdit = () => {},
   onAdd = () => {},
   setUpdate = () => {},
@@ -62,15 +61,9 @@ export default function TreeAdmin({
             entities={
               entity ? [...levelSchemas.filter(({ id }) => id !== entity.id), entity] : levelSchemas
             }
-            onSelect={(node, toggle) => {
-              if (node.id === entity?.id) {
-                toggle();
-              }
-              if (node.properties.editable !== false) {
-                onEdit(findEntity(node.id, levelSchemas));
-              } else {
-                onDetails(findEntity(node.id, levelSchemas));
-              }
+            showButtons={!editingEntity.active}
+            onEdit={(node) => {
+              onEdit(findEntity(node.id, levelSchemas));
             }}
             onAdd={(node) => onAdd(node.data.parent)}
           />
