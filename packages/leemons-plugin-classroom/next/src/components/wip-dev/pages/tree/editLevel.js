@@ -14,11 +14,11 @@ import Translations from './translations';
 
 export default function EditLevel({
   entity = null,
-  setEntity = () => {},
   parent,
+  locale,
+  setEntity = () => {},
   onUpdate = () => {},
   onClose = () => {},
-  locale,
 }) {
   const [translations] = useTranslate({ keysStartsWith: 'plugins.classroom.editor' });
   const t = tLoader('plugins.classroom.editor', translations);
@@ -35,35 +35,41 @@ export default function EditLevel({
   // Handle alerts (for showing alers)
   const { addAlert, ...alerts } = useAlerts({ icon: ExclamationCircleIcon });
 
+  // Update tree entity while editing
   const setTreeEntity = (entityValues) => {
     if (entity) {
+      // Already existing entity
       setEntity({ entity: { ...entity, ...entityValues } });
     } else if (parent) {
+      // New entity
       setEntity({ newEntity: entityValues, parent });
     }
   };
+
+  // Update tree entity if the user locale is equal to the platform locale
+  // If not, handled by translations
+  useEffect(() => {
+    if (locale === defaultLocale) {
+      setTreeEntity({ name: values.name });
+    }
+  }, [values]);
 
   // Update form values if the selected entity changes
   useEffect(() => {
     setValue('isClass', entity ? !!entity.isClass : false);
   }, [entity?.id]);
 
-  useEffect(() => {
-    if (locale === defaultLocale) {
-      setTreeEntity({ name: values.name });
-    }
-  }, [values]);
   // On form Submit, create/update entity
   const onSubmit = async (data) => {
     const isNewEntity = !entity;
 
-    // don't save if the default locale is not
+    // Don't save if the default locale is not filled
     if (!values.name.length) {
       addAlert({ label: 'The level name is required' });
       return;
     }
 
-    // Only save written values
+    // Only save filled values
     const localizatedValues = Object.entries(localizations).reduce(
       (obj, [locale, lValues]) =>
         Object.entries(lValues).reduce((obj2, [key, value]) => {
@@ -92,12 +98,16 @@ export default function EditLevel({
       if (isNewEntity) {
         const { id, parent: _parent } = await addLevelSchema(levelSchema);
         if (id) {
+          // Update the currently edited entity to the new entity
           setEntity({ ...entity, entity: { ...entity, id, parent: _parent } });
         }
       } else {
         await updateLevelSchema({ ...levelSchema, id: entity.id });
       }
+
       addAlert({ label: 'Saved successfuly', level: 'success', icon: InformationCircleIcon });
+
+      // Trigger parent update event (ideally, updates the tree entities)
       onUpdate();
     } catch (e) {
       addAlert({ label: 'Unable to save the level' });
