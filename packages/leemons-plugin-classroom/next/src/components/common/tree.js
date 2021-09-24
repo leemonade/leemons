@@ -12,8 +12,6 @@ function Tree({
   onEdit = () => {},
   onDelete = () => {},
   showButtons = true,
-  selectedNode = null,
-  initialSelected = null,
   childrenLimit = 0,
 }) {
   const [translations] = useTranslate({ keysStartsWith: 'plugins.classroom.tree.' });
@@ -134,15 +132,7 @@ function Tree({
       }),
       ...(showButtons ? buttons : []),
     ]);
-
-    // treeProps.;
   }, [entities, schemas, translations]);
-
-  useEffect(() => {
-    treeProps.setSelectedNode(selectedNode);
-  }, [selectedNode]);
-
-  treeProps.initialSelected = [initialSelected];
 
   return <UITree {...treeProps} onEdit={onEdit} onDelete={onDelete} onAdd={onAdd} />;
 }
@@ -155,8 +145,6 @@ Tree.propTypes = {
   onAdd: PropTypes.func,
   onSelect: PropTypes.func,
   showButtons: PropTypes.bool,
-  selectedNode: PropTypes.string,
-  initialSelected: PropTypes.string,
   childrenLimit: PropTypes.number,
 };
 
