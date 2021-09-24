@@ -1,17 +1,23 @@
 import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Modal, useModal } from 'leemons-ui';
+import tLoader from '@multilanguage/helpers/tLoader';
+import useTranslate from '@multilanguage/useTranslate';
 
 export default function ExitWithoutSaving({
   onDiscard = () => {},
   onCancel = () => {},
   isShown = false,
 }) {
+  const [translations] = useTranslate({
+    keysStartsWith: 'plugins.classroom.save_without_saving_modal',
+  });
+  const t = tLoader('plugins.classroom.save_without_saving_modal', translations);
   const [modal, toggleModal] = useModal({
     animated: true,
-    title: 'Close without saving?',
-    cancelLabel: 'Yes, exit and discard changes',
-    actionLabel: 'No, return to edition',
+    title: t('title'),
+    cancelLabel: t('actions.discard'),
+    actionLabel: t('actions.cancel'),
     overlayClose: false,
     onAction: onCancel,
     onCancel: onDiscard,
@@ -25,8 +31,8 @@ export default function ExitWithoutSaving({
 
   return (
     <Modal {...modal}>
-      <p>If you leave the tree edition now you will lose the modifications made in this level.</p>
-      <p className="mt-4">Do you want to exit without saving?</p>
+      <p>{t('message.top')}</p>
+      <p className="mt-4">{t('message.bottom')}</p>
     </Modal>
   );
 }

@@ -41,6 +41,17 @@ module.exports = {
       cancel: 'No',
     },
   },
+  save_without_saving_modal: {
+    title: 'Close without saving?',
+    message: {
+      top: 'If you leave now, you will lose the modifications.',
+      bottom: 'Do you want to exit without saving?',
+    },
+    actions: {
+      discard: 'Yes, exit and discard changes',
+      cancel: 'No, return',
+    },
+  },
   template: {
     title: 'Do you want to pre-load a template to save time?',
     description:

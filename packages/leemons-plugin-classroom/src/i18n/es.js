@@ -44,6 +44,17 @@ module.exports = {
       cancel: 'No',
     },
   },
+  save_without_saving_modal: {
+    title: '¿Salir sin guardar?',
+    message: {
+      top: 'Si sales sin guardar, perderás las modificaciones realizadas.',
+      bottom: '¿Seguro que quieres salir sin guardar?',
+    },
+    actions: {
+      discard: 'Si, salir y descartar cambios',
+      cancel: 'No, volver',
+    },
+  },
   template: {
     title: '¿Cargar plantilla para ahorrar tiempo?',
     description:

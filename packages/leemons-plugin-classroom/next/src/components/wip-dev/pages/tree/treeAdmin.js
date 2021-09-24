@@ -87,5 +87,5 @@ TreeAdmin.propTypes = {
   onEdit: PropTypes.func,
   onAdd: PropTypes.func,
   setUpdate: PropTypes.func,
-  editingEntity: PropTypes.element,
+  editingEntity: PropTypes.object,
 };
