@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 import { Checkbox, FormControl } from 'leemons-ui';
+import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
 
 export function CalendarFilter({ calendar, session, config, showEventsChange = () => {} }) {
-  let label = calendar.name;
-  if (config && config.userCalendar && config.userCalendar.id === calendar.id)
-    label = session.name + (session.surnames || '');
-
   return (
     <div>
-      <FormControl label={label} labelPosition="right">
+      <FormControl
+        label={getCalendarNameWithConfigAndSession(calendar, config, session)}
+        labelPosition="right"
+      >
         <Checkbox checked={calendar.showEvents} onChange={showEventsChange} />
       </FormControl>
     </div>

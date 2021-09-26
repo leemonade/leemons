@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useSession } from '@users/session';
+import { goLoginPage } from '@users/navigate';
 import { Button, Checkbox, Drawer, FormControl, Input, Radio, Select, useDrawer } from 'leemons-ui';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
@@ -9,13 +11,18 @@ import { useForm } from 'react-hook-form';
 import tKeys from '@multilanguage/helpers/tKeys';
 import PropTypes from 'prop-types';
 import { dynamicImport } from '@common/dynamicImport';
+import { getCalendarsToFrontendRequest } from '@calendar/request';
 import { getEventTypesRequest } from '../request';
+import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
 
-function CalendarEventModal({ event }) {
+function CalendarEventModal({ event, centerToken }) {
+  const session = useSession({ redirectTo: goLoginPage });
   const [t] = useTranslateLoader(prefixPN('event_modal'));
   const { t: tCommon } = useCommonTranslate('forms');
+  const [calendarData, setCalendarData] = useState([]);
   const [eventTypes, setEventTypes] = useState([]);
   const [eventTypesT, setEventTypesT] = useState([]);
+  const eventTypeComponent = useRef();
 
   const {
     register,
@@ -28,9 +35,23 @@ function CalendarEventModal({ event }) {
     formState: { errors, isSubmitted },
   } = useForm();
 
+  const getCalendarsForCenter = async () => {
+    const { calendars, events, userCalendar, ownerCalendars } = await getCalendarsToFrontendRequest(
+      centerToken
+    );
+
+    setCalendarData({
+      calendars,
+      events,
+      userCalendar,
+      ownerCalendars,
+    });
+  };
+
   const getEventTypes = async () => {
     const response = await getEventTypesRequest();
     setEventTypes(response.eventTypes);
+    return response.eventTypes;
   };
 
   const getEventTypeTranslations = async () => {
@@ -40,14 +61,44 @@ function CalendarEventModal({ event }) {
 
   const getEventTypeName = (sectionName) => tKeys(sectionName, eventTypesT);
 
-  const onSubmit = async (formData) => {
-    console.log(formData);
+  const onSubmit = async (_formData) => {
+    // eslint-disable-next-line prefer-const
+    let { startDate, endDate, startTime, endTime, ...formData } = _formData;
+    startDate = new Date(startDate);
+    endDate = new Date(endDate);
+    if (formData.isAllDay) {
+      startDate.setUTCHours(0, 0, 0);
+      endDate.setUTCHours(23, 59, 59);
+    } else {
+      startTime = startTime.split(':');
+      endTime = endTime.split(':');
+      startDate.setUTCHours(startTime[0], startTime[1], startTime[2]);
+      endDate.setUTCHours(endTime[0], endTime[1], endTime[2]);
+    }
+    const toSend = {
+      startDate,
+      endDate,
+      ...formData,
+    };
+    console.log(toSend);
   };
 
   const init = async () => {
-    await getEventTypes();
+    const [_eventTypes] = await Promise.all([getEventTypes(), getCalendarsForCenter()]);
     if (event) {
-      const { startDate, endDate, isAllDay, ...eventData } = event;
+      const {
+        startDate,
+        endDate,
+        isAllDay,
+        calendar,
+        data,
+        id,
+        // eslint-disable-next-line camelcase
+        created_at,
+        // eslint-disable-next-line camelcase
+        updated_at,
+        ...eventData
+      } = event;
       _.forIn(eventData, (value, key) => {
         setValue(key, value);
       });
@@ -65,9 +116,10 @@ function CalendarEventModal({ event }) {
       const edIsoArr = _endDate.toISOString().split('T');
       setValue('endDate', edIsoArr[0]);
       setValue('endTime', edIsoArr[1].split('.')[0]);
-    } else if (eventTypes.length) {
-      setValue('type', eventTypes[0].key);
+    } else if (_eventTypes.length) {
+      setValue('type', _eventTypes[0].key);
       setValue('repeat', 'dont_repeat');
+      setValue('isAllDay', false);
     }
   };
 
@@ -80,13 +132,19 @@ function CalendarEventModal({ event }) {
   }, [eventTypes]);
 
   register(`isAllDay`);
+  const isAllDay = watch('isAllDay');
 
-  let EventTypeSection = null;
   const formType = watch('type');
   if (formType) {
     const eventType = _.find(eventTypes, { key: formType });
-    if (eventType) {
-      EventTypeSection = dynamicImport(eventType.url);
+    if (
+      eventType &&
+      (!eventTypeComponent.current || eventTypeComponent.current.type !== eventType.key)
+    ) {
+      eventTypeComponent.current = {
+        Component: dynamicImport(eventType.url),
+        type: eventType.key,
+      };
     }
   }
 
@@ -103,7 +161,7 @@ function CalendarEventModal({ event }) {
           />
         </FormControl>
 
-        {eventTypes.map((eventType, index) => (
+        {eventTypes.map((eventType) => (
           <div key={eventType.key} className="flex">
             <FormControl label={getEventTypeName(eventType.key)} labelPosition="right">
               <Radio
@@ -128,16 +186,18 @@ function CalendarEventModal({ event }) {
           />
         </FormControl>
 
-        <FormControl className="w-full" formError={_.get(errors, `startTime`)}>
-          <Input
-            type="time"
-            className="w-full"
-            outlined={true}
-            {...register(`startTime`, {
-              required: tCommon('required'),
-            })}
-          />
-        </FormControl>
+        {!isAllDay ? (
+          <FormControl className="w-full" formError={_.get(errors, `startTime`)}>
+            <Input
+              type="time"
+              className="w-full"
+              outlined={true}
+              {...register(`startTime`, {
+                required: tCommon('required'),
+              })}
+            />
+          </FormControl>
+        ) : null}
 
         <FormControl className="w-full" formError={_.get(errors, `endDate`)}>
           <Input
@@ -150,27 +210,26 @@ function CalendarEventModal({ event }) {
           />
         </FormControl>
 
-        <FormControl className="w-full" formError={_.get(errors, `endTime`)}>
-          <Input
-            type="time"
-            className="w-full"
-            outlined={true}
-            {...register(`endTime`, {
-              required: tCommon('required'),
-            })}
-          />
-        </FormControl>
+        {!isAllDay ? (
+          <FormControl className="w-full" formError={_.get(errors, `endTime`)}>
+            <Input
+              type="time"
+              className="w-full"
+              outlined={true}
+              {...register(`endTime`, {
+                required: tCommon('required'),
+              })}
+            />
+          </FormControl>
+        ) : null}
 
-        <FormControl label={t('all_day')}>
+        <FormControl labelPosition="right" label={t('all_day')}>
           <Checkbox
             color="secondary"
-            labelPosition="right"
             checked={watch('isAllDay')}
             onChange={(e) => setValue('isAllDay', e.target.checked)}
           />
         </FormControl>
-
-        {EventTypeSection ? <EventTypeSection /> : null}
 
         <Select
           outlined
@@ -185,6 +244,60 @@ function CalendarEventModal({ event }) {
           <option value="every_year">{t('repeat.every_year')}</option>
         </Select>
 
+        {eventTypeComponent.current && eventTypeComponent.current.Component ? (
+          <eventTypeComponent.current.Component
+            event={event}
+            isEditing={true}
+            allFormData={watch()}
+            data={watch('data')}
+            tCommon={tCommon}
+            form={{
+              register: (ref, options) => register(`data.${ref}`, options),
+              setValue: (ref, value, options) => setValue(`data.${ref}`, value, options),
+              getValues: (refs) => {
+                if (_.isArray(refs)) return getValues(_.map(refs, (ref) => `data.${ref}`));
+                return getValues(`data.${refs}`);
+              },
+              watch: (refs, options) => {
+                if (_.isFunction(refs)) {
+                  return watch(refs, options);
+                }
+                if (_.isArray(refs)) {
+                  return watch(
+                    _.map(refs, (ref) => `data.${ref}`),
+                    options
+                  );
+                }
+                return watch(`data.${refs}`, options);
+              },
+              unregister: (refs) => {
+                if (_.isArray(refs)) return unregister(_.map(refs, (ref) => `data.${ref}`));
+                return unregister(`data.${refs}`);
+              },
+              trigger: (refs) => {
+                if (_.isArray(refs)) return trigger(_.map(refs, (ref) => `data.${ref}`));
+                return trigger(`data.${refs}`);
+              },
+              formState: { errors: errors ? errors.data : {}, isSubmitted },
+            }}
+          />
+        ) : null}
+
+        {calendarData && calendarData.ownerCalendars ? (
+          <Select
+            outlined
+            {...register(`calendar`, {
+              required: tCommon('required'),
+            })}
+          >
+            {calendarData.ownerCalendars.map((calendar) => (
+              <option key={calendar.id} value={calendar.id}>
+                {getCalendarNameWithConfigAndSession(calendar, calendarData, session)}
+              </option>
+            ))}
+          </Select>
+        ) : null}
+
         <Button color="primary" className="mt-4">
           {t('save')}
         </Button>
@@ -195,6 +308,7 @@ function CalendarEventModal({ event }) {
 
 CalendarEventModal.propTypes = {
   event: PropTypes.object,
+  centerToken: PropTypes.string.isRequired,
 };
 
 export const useCalendarEventModal = () => {

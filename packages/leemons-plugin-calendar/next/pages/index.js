@@ -17,6 +17,7 @@ import { useCalendarEventModal } from '@calendar/components/calendar-event-modal
 function Calendar() {
   const session = useSession({ redirectTo: goLoginPage });
   const [centers, setCenters] = useState([]);
+  const [center, setCenter] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [data, setData] = useState(null);
   const [filteredEvents, setFilteredEvents] = useState([]);
@@ -24,7 +25,7 @@ function Calendar() {
   const [sectionsT, setSectionsT] = useState({});
   const [toggleEventModal, EventModal] = useCalendarEventModal();
 
-  const getCalendarsForCenter = async (center) => {
+  const getCalendarsForCenter = async () => {
     const { calendars, events, userCalendar, ownerCalendars } = await getCalendarsToFrontendRequest(
       center.token
     );
@@ -53,6 +54,10 @@ function Calendar() {
   }, []);
 
   useEffect(() => {
+    if (center) getCalendarsForCenter();
+  }, [center]);
+
+  useEffect(() => {
     getTranslationSections();
   }, [sections]);
 
@@ -78,7 +83,7 @@ function Calendar() {
   }, [data]);
 
   useEffect(() => {
-    if (centers.length) getCalendarsForCenter(centers[0]);
+    if (centers.length) setCenter(centers[0]);
   }, [centers]);
 
   const showEventsChange = (e, calendar) => {
@@ -94,22 +99,32 @@ function Calendar() {
     toggleEventModal();
   };
 
+  const onNewEvent = () => {
+    setSelectedEvent(null);
+    toggleEventModal();
+  };
+
   const onEventContent = (info) => ({
     html: ReactDomServer.renderToString(<FullCalendarEventContent info={info} config={data} />),
   });
 
   return (
     <div className="bg-primary-content">
-      <EventModal event={selectedEvent} />
+      {center ? <EventModal centerToken={center.token} event={selectedEvent} /> : null}
+
       {centers.length > 1 ? (
         <>
-          {centers.map((center) => (
-            <Button key={center.id} onClick={() => getCalendarsForCenter(center)}>
-              {center.name}
+          {centers.map((_center) => (
+            <Button key={_center.id} onClick={() => setCenter(_center)}>
+              {_center.name}
             </Button>
           ))}
         </>
       ) : null}
+
+      <Button color="primary" onClick={onNewEvent}>
+        Añadir evento
+      </Button>
 
       <div className="flex flex-column w-full">
         <div className="w-4/12">

@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 
-export default function Event({ event }) {
-  return <div>Fliiiiiipas</div>;
+export default function Task({ event }) {
+  return <div>Tasksssss</div>;
 }
 
-Event.propTypes = {
+Task.propTypes = {
   event: PropTypes.object,
 };
