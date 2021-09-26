@@ -13,4 +13,13 @@ module.exports = [
       },
     },
   },
+  /**
+   * Event types
+   * */
+  {
+    path: '/event-types',
+    method: 'GET',
+    handler: 'calendar.getEventTypes',
+    authenticated: true,
+  },
 ];
