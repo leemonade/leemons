@@ -32,11 +32,11 @@ export default function EditLevel({
     value: dirtyValue,
     setValue: dirtySetValue,
     setDefaultValue: dirtySetDefaultValue,
+    defaultValue: dirtyDefaultValue,
     isDirty,
-  } = useDirtyState({ name: '' });
+  } = useDirtyState({ localizations: {}, defaultLocale: { name: '' } });
   // All the localized values
   // TODO: If localizations exists, it denotes they are dirty
-  const [localizations, setLocalizations] = useState({});
   const { register, handleSubmit, setValue } = useForm();
 
   // Handle alerts (for showing alers)
@@ -57,30 +57,32 @@ export default function EditLevel({
   // If not, handled by translations
   useEffect(() => {
     if (locale === defaultLocale) {
-      setTreeEntity({ name: dirtyValue.name });
+      setTreeEntity({ name: dirtyValue.defaultLocale.name });
     }
-  }, [dirtyValue]);
+  }, [dirtyValue.defaultLocale]);
 
   // Update form values if the selected entity changes
   useEffect(() => {
     setValue('isClass', entity ? !!entity.isClass : false);
 
     // Clear previous entity localizations
-    setLocalizations({});
+    dirtySetDefaultValue({ ...dirtyDefaultValue, localizations: {} });
+    dirtySetValue({ ...dirtyValue, localizations: {} });
   }, [entity?.id]);
 
   // On form Submit, create/update entity
   const onSubmit = async (data) => {
+    console.log(dirtyValue);
     const isNewEntity = !entity;
 
     // Don't save if the default locale is not filled
-    if (!dirtyValue.name.length) {
+    if (!dirtyValue.defaultLocale.name.length) {
       addAlert({ label: 'The level name is required' });
       return;
     }
 
     // Only save filled values
-    const localizatedValues = Object.entries(localizations).reduce(
+    const localizatedValues = Object.entries(dirtyValue.localizations).reduce(
       (obj, [vLocale, lValues]) =>
         Object.entries(lValues).reduce((obj2, [key, value]) => {
           // When creating entity, ignore empty names
@@ -98,7 +100,7 @@ export default function EditLevel({
     const levelSchema = {
       names: {
         ...localizatedValues.name,
-        [defaultLocale]: dirtyValue.name,
+        [defaultLocale]: dirtyValue.defaultLocale.name,
       },
       isClass: data.isClass,
       parent,
@@ -144,9 +146,12 @@ export default function EditLevel({
           <FormControl>
             <div className="flex space-x-2 mb-4">
               <Input
-                value={dirtyValue.name}
+                value={dirtyValue.defaultLocale.name}
                 onChange={(e) => {
-                  dirtySetValue({ ...dirtyValue, name: e.target.value });
+                  dirtySetValue({
+                    ...dirtyValue,
+                    defaultLocale: { ...dirtyValue.defaultLocale, name: e.target.value },
+                  });
                 }}
                 outlined
                 className="input w-full"
@@ -201,17 +206,17 @@ export default function EditLevel({
       </div>
       <Translations
         {...drawer}
-        defaultLocaleValues={dirtyValue}
+        defaultLocaleValues={dirtyValue.defaultLocale}
         setDefaultLocaleValues={(newValue, dirty = true) => {
-          dirtySetValue(newValue);
+          dirtySetValue({ ...dirtyValue, defaultLocale: newValue });
           if (!dirty) {
-            dirtySetDefaultValue(newValue);
+            dirtySetDefaultValue({ ...dirtyDefaultValue, defaultLocale: newValue });
           }
         }}
         setTreeEntity={setTreeEntity}
         entityId={entity?.id || null}
-        localizations={localizations}
-        onSave={setLocalizations}
+        localizations={dirtyValue.localizations}
+        onSave={(newValue) => dirtySetValue({ ...dirtyValue, localizations: newValue })}
         locale={locale}
       />
     </>
