@@ -28,12 +28,12 @@ export default function EditLevel({
   const { toggleDrawer, warnings, defaultLocale } = drawer;
 
   // Default locale values
-  const [values, setValues] = useState({ name: '' });
   const {
     value: dirtyValue,
     setValue: dirtySetValue,
     setDefaultValue: dirtySetDefaultValue,
-  } = useDirtyState({ name: '' }, { calculateDirtyOnUpdate: true });
+    isDirty,
+  } = useDirtyState({ name: '' });
   // All the localized values
   // TODO: If localizations exists, it denotes they are dirty
   const [localizations, setLocalizations] = useState({});
@@ -57,9 +57,9 @@ export default function EditLevel({
   // If not, handled by translations
   useEffect(() => {
     if (locale === defaultLocale) {
-      setTreeEntity({ name: values.name });
+      setTreeEntity({ name: dirtyValue.name });
     }
-  }, [values]);
+  }, [dirtyValue]);
 
   // Update form values if the selected entity changes
   useEffect(() => {
@@ -74,14 +74,14 @@ export default function EditLevel({
     const isNewEntity = !entity;
 
     // Don't save if the default locale is not filled
-    if (!values.name.length) {
+    if (!dirtyValue.name.length) {
       addAlert({ label: 'The level name is required' });
       return;
     }
 
     // Only save filled values
     const localizatedValues = Object.entries(localizations).reduce(
-      (obj, [locale, lValues]) =>
+      (obj, [vLocale, lValues]) =>
         Object.entries(lValues).reduce((obj2, [key, value]) => {
           // When creating entity, ignore empty names
           if (isNewEntity && !value) {
@@ -89,7 +89,7 @@ export default function EditLevel({
           }
           return {
             ...obj,
-            [key]: { ...obj2[key], [locale]: value },
+            [key]: { ...obj2[key], [vLocale]: value },
           };
         }, obj),
       {}
@@ -98,7 +98,7 @@ export default function EditLevel({
     const levelSchema = {
       names: {
         ...localizatedValues.name,
-        [defaultLocale]: values.name,
+        [defaultLocale]: dirtyValue.name,
       },
       isClass: data.isClass,
       parent,
@@ -123,12 +123,19 @@ export default function EditLevel({
       addAlert({ label: 'Unable to save the level' });
     }
   };
+
+  const handleClose = () => {
+    if (isDirty()) {
+      alert('Is Dirty');
+    }
+    onClose();
+  };
   return (
     <>
       <div className="flex-1 my-2 mb-2 bg-primary-content py-6 pl-12 pr-6 relative">
         <Button
           className="btn-circle btn-xs ml-8 bg-transparent border-0 absolute top-1 right-1"
-          onClick={onClose}
+          onClick={handleClose}
         >
           <XIcon className="inline-block w-4 h-4 stroke-current" />
         </Button>
@@ -137,10 +144,9 @@ export default function EditLevel({
           <FormControl>
             <div className="flex space-x-2 mb-4">
               <Input
-                value={values.name}
+                value={dirtyValue.name}
                 onChange={(e) => {
-                  setValues({ ...values, name: e.target.value });
-                  dirtySetValue({ ...values, name: e.target.value });
+                  dirtySetValue({ ...dirtyValue, name: e.target.value });
                 }}
                 outlined
                 className="input w-full"
@@ -195,9 +201,8 @@ export default function EditLevel({
       </div>
       <Translations
         {...drawer}
-        defaultLocaleValues={values}
+        defaultLocaleValues={dirtyValue}
         setDefaultLocaleValues={(newValue, dirty = true) => {
-          setValues(newValue);
           dirtySetValue(newValue);
           if (!dirty) {
             dirtySetDefaultValue(newValue);
