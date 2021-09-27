@@ -12,6 +12,7 @@ import updateLevelSchema from '../../../../services/levelSchemas/updateLevelSche
 import { useTranslationsDrawer } from '../../../multilanguage/translationsDrawer';
 import Translations from './translations';
 import useDirtyState from '../../../../hooks/useDirtyState';
+import ExitWithoutSaving from './exitWithoutSaving';
 
 export default function EditLevel({
   entity = null,
@@ -21,6 +22,7 @@ export default function EditLevel({
   onUpdate = () => {},
   onClose = () => {},
 }) {
+  const [showSaveWithouSaving, setShowSaveWithouSaving] = useState(false);
   const [translations] = useTranslate({ keysStartsWith: 'plugins.classroom.editor' });
   const t = tLoader('plugins.classroom.editor', translations);
   // Translations drawer
@@ -72,7 +74,6 @@ export default function EditLevel({
 
   // On form Submit, create/update entity
   const onSubmit = async (data) => {
-    console.log(dirtyValue);
     const isNewEntity = !entity;
 
     // Don't save if the default locale is not filled
@@ -126,14 +127,25 @@ export default function EditLevel({
     }
   };
 
-  const handleClose = () => {
-    if (isDirty()) {
-      alert('Is Dirty');
+  const handleClose = (force = false) => {
+    if (force === true || !isDirty()) {
+      onClose();
+    } else {
+      setShowSaveWithouSaving(true);
     }
-    onClose();
   };
   return (
     <>
+      <ExitWithoutSaving
+        isShown={showSaveWithouSaving}
+        onDiscard={() => {
+          setShowSaveWithouSaving(false);
+          handleClose(true);
+        }}
+        onCancel={() => {
+          setShowSaveWithouSaving(false);
+        }}
+      />
       <div className="flex-1 my-2 mb-2 bg-primary-content py-6 pl-12 pr-6 relative">
         <Button
           className="btn-circle btn-xs ml-8 bg-transparent border-0 absolute top-1 right-1"
