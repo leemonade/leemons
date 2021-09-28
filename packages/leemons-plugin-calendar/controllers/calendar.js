@@ -1,4 +1,5 @@
 const calendarService = require('../src/services/calendar');
+const eventsService = require('../src/services/events');
 const eventTypesService = require('../src/services/event-types');
 
 async function getCalendar(ctx) {
@@ -13,7 +14,21 @@ async function getEventTypes(ctx) {
   ctx.body = { status: 200, eventTypes };
 }
 
+async function addEvent(ctx) {
+  const event = await eventsService.addFromUser(ctx.state.userSession, ctx.request.body.event);
+  ctx.status = 200;
+  ctx.body = { status: 200, event };
+}
+
+async function removeEvent(ctx) {
+  const event = await eventsService.removeFromUser(ctx.state.userSession, ctx.request.body.event);
+  ctx.status = 200;
+  ctx.body = { status: 200, event };
+}
+
 module.exports = {
+  addEvent,
+  removeEvent,
   getCalendar,
   getEventTypes,
 };

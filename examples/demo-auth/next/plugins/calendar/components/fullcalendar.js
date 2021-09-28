@@ -52,7 +52,9 @@ export function FullCalendar({ onCalendarInit = () => {}, events, ...props }) {
       'https://cdn.jsdelivr.net/combine/npm/fullcalendar@5.9.0,npm/fullcalendar@5.9.0/locales-all.min.js';
     const styleUrl = 'https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.css';
     if (!existHeaderScript(scriptUrl)) {
+      addHeaderScript('https://cdn.jsdelivr.net/npm/rrule@2.6.4/dist/es5/rrule.min.js');
       addHeaderScript(scriptUrl);
+      addHeaderScript('https://cdn.jsdelivr.net/npm/@fullcalendar/rrule@5.5.0/main.global.min.js');
       addHeaderStyle(styleUrl);
       const interval = setInterval(() => {
         if (window.FullCalendar) {

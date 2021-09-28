@@ -4,7 +4,10 @@ module.exports = {
   event_modal: {
     title: 'Event title',
     save: 'Save',
+    update: 'Update',
     all_day: 'All day',
+    add_done: 'Successfully added',
+    updated_done: 'Successfully updated',
     repeat: {
       dont_repeat: 'Don´t repeat',
       every_day: 'Every day',

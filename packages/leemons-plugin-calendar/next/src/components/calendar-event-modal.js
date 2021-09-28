@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { Button, Checkbox, Drawer, FormControl, Input, Radio, Select, useDrawer } from 'leemons-ui';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
@@ -12,13 +13,23 @@ import tKeys from '@multilanguage/helpers/tKeys';
 import PropTypes from 'prop-types';
 import { dynamicImport } from '@common/dynamicImport';
 import { getCalendarsToFrontendRequest } from '@calendar/request';
-import { getEventTypesRequest } from '../request';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import hooks from 'leemons-hooks';
+import {
+  addEventRequest,
+  getEventTypesRequest,
+  removeEventRequest,
+  updateEventRequest,
+} from '../request';
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
 
-function CalendarEventModal({ event, centerToken }) {
+function CalendarEventModal({ event, centerToken, close }) {
   const session = useSession({ redirectTo: goLoginPage });
   const [t] = useTranslateLoader(prefixPN('event_modal'));
   const { t: tCommon } = useCommonTranslate('forms');
+  const [, , , getErrorMessage] = useRequestErrorMessage();
+  const [isNew, setIsNew] = useState(true);
+  const [isOwner, setIsOwner] = useState(false);
   const [calendarData, setCalendarData] = useState([]);
   const [eventTypes, setEventTypes] = useState([]);
   const [eventTypesT, setEventTypesT] = useState([]);
@@ -61,6 +72,23 @@ function CalendarEventModal({ event, centerToken }) {
 
   const getEventTypeName = (sectionName) => tKeys(sectionName, eventTypesT);
 
+  const reloadCalendar = () => {
+    hooks.fireEvent('calendar:force:reload');
+  };
+
+  const getUTCString = (date) => {
+    const month = (parseInt(date.getUTCMonth().toString(), 16) + 1).toString();
+    const day = date.getUTCDate();
+    const hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+    const seconds = date.getUTCSeconds();
+    return `${date.getUTCFullYear()}-${month.toString().length === 1 ? `0${month}` : month}-${
+      day.toString().length === 1 ? `0${day}` : day
+    } ${hours.toString().length === 1 ? `0${hours}` : hours}:${
+      minutes.toString().length === 1 ? `0${minutes}` : minutes
+    }:${seconds.toString().length === 1 ? `0${seconds}` : seconds}`;
+  };
+
   const onSubmit = async (_formData) => {
     // eslint-disable-next-line prefer-const
     let { startDate, endDate, startTime, endTime, ...formData } = _formData;
@@ -72,15 +100,49 @@ function CalendarEventModal({ event, centerToken }) {
     } else {
       startTime = startTime.split(':');
       endTime = endTime.split(':');
-      startDate.setUTCHours(startTime[0], startTime[1], startTime[2]);
-      endDate.setUTCHours(endTime[0], endTime[1], endTime[2]);
+      startDate.setUTCHours(
+        startTime[0] ? parseInt(startTime[0], 16) : 0,
+        startTime[1] ? parseInt(startTime[1], 16) : 0,
+        startTime[2] ? parseInt(startTime[2], 16) : 0
+      );
+      endDate.setUTCHours(
+        endTime[0] ? parseInt(endTime[0], 16) : 0,
+        endTime[1] ? parseInt(endTime[1], 16) : 0,
+        endTime[2] ? parseInt(endTime[2], 16) : 0
+      );
     }
+
     const toSend = {
-      startDate,
-      endDate,
+      startDate: getUTCString(startDate),
+      endDate: getUTCString(endDate),
       ...formData,
     };
+
     console.log(toSend);
+
+    try {
+      if (isNew) {
+        await addEventRequest(centerToken, toSend);
+        addSuccessAlert(t('add_done'));
+      } else {
+        await updateEventRequest(centerToken, event.id, toSend);
+        addSuccessAlert(t('updated_done'));
+      }
+      reloadCalendar();
+      close();
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+  };
+
+  const removeEvent = async () => {
+    try {
+      await removeEventRequest(centerToken, event.id);
+      reloadCalendar();
+      close();
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
   };
 
   const init = async () => {
@@ -103,6 +165,7 @@ function CalendarEventModal({ event, centerToken }) {
         setValue(key, value);
       });
       if (!eventData.repeat) setValue('repeat', 'dont_repeat');
+      setValue('calendar', calendar.key);
       setValue('isAllDay', !!isAllDay);
       const _startDate = new Date(startDate);
       const _endDate = new Date(endDate);
@@ -120,12 +183,25 @@ function CalendarEventModal({ event, centerToken }) {
       setValue('type', _eventTypes[0].key);
       setValue('repeat', 'dont_repeat');
       setValue('isAllDay', false);
+      if (calendarData && calendarData.ownerCalendars)
+        setValue('calendar', calendarData.ownerCalendars[0].key);
     }
   };
 
   useEffect(() => {
     init();
   }, []);
+
+  useEffect(() => {
+    setIsNew(!event);
+  }, [event]);
+
+  useEffect(() => {
+    if (event && calendarData) {
+      const calendar = _.find(calendarData.ownerCalendars, { id: event.calendar.id });
+      setIsOwner(!!calendar);
+    }
+  }, [event, calendarData]);
 
   useEffect(() => {
     getEventTypeTranslations();
@@ -291,16 +367,28 @@ function CalendarEventModal({ event, centerToken }) {
             })}
           >
             {calendarData.ownerCalendars.map((calendar) => (
-              <option key={calendar.id} value={calendar.id}>
+              <option key={calendar.id} value={calendar.key}>
                 {getCalendarNameWithConfigAndSession(calendar, calendarData, session)}
               </option>
             ))}
           </Select>
         ) : null}
 
-        <Button color="primary" className="mt-4">
-          {t('save')}
-        </Button>
+        {isNew ? (
+          <Button color="primary" className="mt-4">
+            {t('save')}
+          </Button>
+        ) : null}
+        {!isNew && isOwner ? (
+          <Button color="primary" className="mt-4">
+            {t('update')}
+          </Button>
+        ) : null}
+        {!isNew ? (
+          <Button type="button" color="error" className="mt-4" onClick={removeEvent}>
+            Borrar T
+          </Button>
+        ) : null}
       </form>
     </div>
   );

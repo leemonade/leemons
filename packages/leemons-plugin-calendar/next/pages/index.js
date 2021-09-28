@@ -13,6 +13,7 @@ import { CalendarFilter } from '@calendar/components/calendar-filter';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
+import hooks from 'leemons-hooks';
 
 function Calendar() {
   const session = useSession({ redirectTo: goLoginPage });
@@ -48,6 +49,13 @@ function Calendar() {
   };
 
   const getSectionName = (sectionName) => tKeys(sectionName, sectionsT);
+
+  useEffect(() => {
+    hooks.addAction('calendar:force:reload', getCalendarsForCenter);
+    return () => {
+      hooks.removeAction('calendar:force:reload', getCalendarsForCenter);
+    };
+  });
 
   useEffect(() => {
     setCenters(getCentersWithToken());
@@ -110,7 +118,9 @@ function Calendar() {
 
   return (
     <div className="bg-primary-content">
-      {center ? <EventModal centerToken={center.token} event={selectedEvent} /> : null}
+      {center ? (
+        <EventModal centerToken={center.token} event={selectedEvent} close={toggleEventModal} />
+      ) : null}
 
       {centers.length > 1 ? (
         <>
@@ -151,6 +161,11 @@ function Calendar() {
             eventClick={onEventClick}
             events={filteredEvents}
             eventContent={onEventContent}
+            headerToolbar={{
+              left: 'prev,next today',
+              center: 'title',
+              right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
+            }}
           />
         </div>
       </div>

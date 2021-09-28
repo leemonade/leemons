@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { table } = require('../tables');
-const { getPermissionConfig } = require('./getPermissionConfig');
+const { getPermissionConfig: getPermissionConfigCalendar } = require('./getPermissionConfig');
+const { getPermissionConfig: getPermissionConfigEvent } = require('../events/getPermissionConfig');
 
 /**
  * Add calendar with the provided key if not already exists
@@ -11,7 +12,8 @@ const { getPermissionConfig } = require('./getPermissionConfig');
  * @return {Promise<any>}
  * */
 async function getCalendarsToFrontend(userSession, { transacting } = {}) {
-  const permissionConfig = getPermissionConfig();
+  const permissionConfigCalendar = getPermissionConfigCalendar();
+  const permissionConfigEvent = getPermissionConfigEvent();
   const userPlugin = leemons.getPlugin('users');
 
   // ES: Cogemos todos los permisos del usuario
@@ -51,7 +53,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     userPlugin.services.permissions.findItems(
       {
         $or: queryPermissions,
-        type_$in: [permissionConfig.type, permissionConfig.typeEvent],
+        type_$in: [permissionConfigCalendar.type, permissionConfigEvent.type],
       },
       {
         transacting,
@@ -60,7 +62,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     userPlugin.services.permissions.findItems(
       {
         $or: ownerPermissions,
-        type_$in: [permissionConfig.type],
+        type_$in: [permissionConfigCalendar.type],
       },
       {
         transacting,
@@ -73,7 +75,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   const calendarIds = [];
   const eventIds = [];
   _.forEach(items, ({ item, type }) => {
-    if (type === permissionConfig.type) {
+    if (type === permissionConfigCalendar.type) {
       calendarIds.push(item);
     } else {
       eventIds.push(item);
@@ -148,7 +150,10 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     userCalendar,
     ownerCalendars,
     calendars: finalCalendars,
-    events: events.concat(eventsFromCalendars),
+    events: events.concat(eventsFromCalendars).map((event) => ({
+      ...event,
+      data: _.isString(event.data) ? JSON.parse(event.data) : event.data,
+    })),
   };
 }
 

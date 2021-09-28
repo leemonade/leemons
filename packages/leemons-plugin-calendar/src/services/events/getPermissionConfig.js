@@ -2,17 +2,17 @@
  * Return permissions config for the calendar with key provided
  * @public
  * @static
- * @param {string?} key - key
+ * @param {string?} id - id
  * @return {{type: string, permissionName: string, all: AddItemPermission}}
  * */
-function getPermissionConfig(key) {
-  const permissionName = `plugins.calendar.calendar.${key}`;
+function getPermissionConfig(id) {
+  const permissionName = `plugins.calendar.calendar.event.${id}`;
   return {
-    type: 'plugins.calendar.calendar',
+    type: 'plugins.calendar.calendar.events',
     permissionName,
     all: {
       permissionName,
-      actionNames: ['view', 'delete', 'admin', 'owner'],
+      actionNames: ['view', 'create', 'update', 'delete', 'admin', 'owner'],
     },
   };
 }

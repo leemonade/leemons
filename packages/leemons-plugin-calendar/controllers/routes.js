@@ -22,4 +22,16 @@ module.exports = [
     handler: 'calendar.getEventTypes',
     authenticated: true,
   },
+  {
+    path: '/add/event',
+    method: 'POST',
+    handler: 'calendar.addEvent',
+    authenticated: true,
+  },
+  {
+    path: '/remove/event',
+    method: 'POST',
+    handler: 'calendar.removeEvent',
+    authenticated: true,
+  },
 ];
