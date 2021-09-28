@@ -9,7 +9,7 @@ async function update(item) {
     menuKey: config.constants.mainMenuKey,
     key: leemons.plugin.prefixPN(key),
     parentKey: parentKey ? leemons.plugin.prefixPN(parentKey) : undefined,
-    pluginName: 'plugins.classroom',
+    pluginName: 'plugins.subjects',
   };
 
   return menuItem.update(config.constants.mainMenuKey, leemons.plugin.prefixPN(key), payload);

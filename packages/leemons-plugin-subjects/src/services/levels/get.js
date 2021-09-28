@@ -1,6 +1,6 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
 
-const table = leemons.query('plugins_classroom::levels');
+const table = leemons.query('plugins_subjects::levels');
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 
 module.exports = async function get(id, { userSession, locale = null, transacting } = {}) {

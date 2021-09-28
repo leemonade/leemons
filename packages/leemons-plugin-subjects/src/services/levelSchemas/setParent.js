@@ -1,6 +1,6 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
 
-const levelSchemas = leemons.query('plugins_classroom::levelSchemas');
+const levelSchemas = leemons.query('plugins_subjects::levelSchemas');
 
 // TODO: Check that the parent is compatible
 module.exports = async function setParent(id, parent, { userSession, transacting } = {}) {

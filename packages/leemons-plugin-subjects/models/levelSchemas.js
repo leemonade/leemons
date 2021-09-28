@@ -6,7 +6,7 @@ module.exports = {
   attributes: {
     parent: {
       references: {
-        collection: 'plugins_classroom::levelSchemas',
+        collection: 'plugins_subjects::levelSchemas',
       },
       options: {
         unique: false,

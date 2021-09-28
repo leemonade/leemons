@@ -5,18 +5,15 @@ module.exports = {
     edit: 'Edit',
   },
   welcome_page: {
-    page_title: 'Welcome to Classroom',
-    page_info: `<p>Classroom allows you to replicate the organisational structure of your educational institution.</p>
-      <p>The first step is to create the <strong>Tree</strong>. This tree is used to represent the basic structure of your organisation.</p>
-      <p>For example, if you have a school with educational programmes (primary and secondary) that has courses (first, second, third...) and in each of them you divide the students into groups that share class (group A, group B, ...), it will be necessary for the system to know this logic. You will only have to create the tree once (but you can add new leveles later).</p>
-      <p>Then, in the <strong>Organisation</strong> section you can define the dataset (concrete information) for each level and the permissions you want to assign. Finally, in the <strong>Classes admin</strong> section you will be able to assign students, tutors and define the data foreseen in the previous step. These sections will only be available once you have created your tree.</p>
-      <p>You can start by downloading our basic structure file and editing it in your favourite spreadsheet application or create the level tree manually from Leemons.</p>`,
+    page_title: 'Welcome to Subjects',
+    page_info: `<p>You can create groups of subjects by areas (for example, the mathematics block could contain Pre-Algebra, Algebra I, Geometry, Algebra II, and Trigonometry).</p>
+    <p>The subjects are related to each other by their block of knowledge, they can also be successive (for example, to take Algebra II it is necessary to have passed Algebra I).</p>`,
     hide_info_label: `Ok, I've got it. When the configuration is complete, don't show this info anymore`,
-    bulk_load: {
-      title: 'Bulk Upload',
+    template_load: {
+      title: 'Load template',
       description:
         'Download the basic file and upload it once completed (if you need more help, you can see this basic guide on how our structure system works).',
-      btn: 'Upload',
+      btn: 'Select file',
     },
     manual_load: {
       title: 'Manual creation',
@@ -55,7 +52,7 @@ module.exports = {
   template: {
     title: 'Do you want to pre-load a template to save time?',
     description:
-      'Choose the type of template and click on load tree, later you can modify the dataset of each level according to the needs of your organisation.',
+      'Choose the type of template for the courses you teach according to the country of your school and download it to customize it and load it into the system.',
     country_select: 'Select a country',
     template_select: 'Select a template',
     btn: 'Preview template',

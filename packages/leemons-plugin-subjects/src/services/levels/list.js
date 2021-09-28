@@ -1,4 +1,4 @@
-const table = leemons.query('plugins_classroom::levels');
+const table = leemons.query('plugins_subjects::levels');
 
 module.exports = async function list({ locale, transacting } = {}) {
   return global.utils.withTransaction(

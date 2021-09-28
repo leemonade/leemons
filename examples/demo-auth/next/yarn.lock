@@ -105,6 +105,13 @@
     prop-types "^15.7.2"
     react-hook-form "^7.8.5"
 
+"@leemons/subjects@file:dependencies/subjects":
+  version "1.0.0"
+  dependencies:
+    prop-types "^15.7.2"
+    react-autosuggest "^10.1.0"
+    react-hook-form "^7.14.2"
+
 "@leemons/users@file:dependencies/users":
   version "1.0.0"
   dependencies:

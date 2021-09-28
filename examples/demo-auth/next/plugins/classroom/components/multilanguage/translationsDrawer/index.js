@@ -10,7 +10,7 @@ import Tabs from './tabs';
 import useAsync from '../../../hooks/request/useAsync';
 
 export function useTranslationsDrawer(config = {}) {
-  const [drawer, toggleDrawer] = useDrawer({ size: 'right', ...config });
+  const [drawer, toggleDrawer] = useDrawer({ size: 'right', ...config, overlayClose: false });
   const [warnings, _setWarnings] = useState({});
   const [_locales] = useAsync(getPlatformLocalesRequest);
   const [_defaultLocale] = useAsync(getDefaultPlatformLocaleRequest);
@@ -67,7 +67,6 @@ export function useTranslationsDrawer(config = {}) {
 
 export function TranslationsDrawer({
   drawer,
-  toggleDrawer: toggleTranslations,
   warnings,
   setWarnings,
   warningDefault,
@@ -86,7 +85,7 @@ export function TranslationsDrawer({
       <div className="p-6 max-w-sm relative">
         <Button
           className="btn-circle btn-xs ml-8 bg-transparent border-0 absolute top-1 right-1"
-          onClick={toggleTranslations}
+          onClick={onCancel}
         >
           <XIcon className="inline-block w-4 h-4 stroke-current" />
         </Button>
