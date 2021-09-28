@@ -21,4 +21,9 @@ module.exports = {
     add_place: 'Add place',
     add_description: 'Add a description',
   },
+  task_mode_event_type: {
+    description: 'Description',
+    subtask: 'Subtask',
+    add_subtask: 'Add sub-task',
+  },
 };

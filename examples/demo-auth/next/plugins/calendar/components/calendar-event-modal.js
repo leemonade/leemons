@@ -118,13 +118,14 @@ function CalendarEventModal({ event, centerToken, close }) {
       ...formData,
     };
 
-    console.log(toSend);
-
     try {
       if (isNew) {
         await addEventRequest(centerToken, toSend);
         addSuccessAlert(t('add_done'));
       } else {
+        delete toSend.calendar;
+        delete toSend.type;
+        delete toSend.status;
         await updateEventRequest(centerToken, event.id, toSend);
         addSuccessAlert(t('updated_done'));
       }

@@ -29,6 +29,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/update/event',
+    method: 'POST',
+    handler: 'calendar.updateEvent',
+    authenticated: true,
+  },
+  {
     path: '/remove/event',
     method: 'POST',
     handler: 'calendar.removeEvent',

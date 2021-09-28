@@ -25,13 +25,7 @@ export default function Event({ isEditing, event, form, data, allFormData, tComm
         className="w-full"
         formError={_.get(form.formState.errors, `videoLink`)}
       >
-        <Input
-          className="w-full"
-          outlined={true}
-          {...form.register(`videoLink`, {
-            required: tCommon('required'),
-          })}
-        />
+        <Input className="w-full" outlined={true} {...form.register(`videoLink`)} />
       </FormControl>
 
       <FormControl
@@ -39,13 +33,7 @@ export default function Event({ isEditing, event, form, data, allFormData, tComm
         className="w-full"
         formError={_.get(form.formState.errors, `place`)}
       >
-        <Input
-          className="w-full"
-          outlined={true}
-          {...form.register(`place`, {
-            required: tCommon('required'),
-          })}
-        />
+        <Input className="w-full" outlined={true} {...form.register(`place`)} />
       </FormControl>
 
       <FormControl
@@ -53,13 +41,7 @@ export default function Event({ isEditing, event, form, data, allFormData, tComm
         className="w-full"
         formError={_.get(form.formState.errors, `description`)}
       >
-        <Input
-          className="w-full"
-          outlined={true}
-          {...form.register(`description`, {
-            required: tCommon('required'),
-          })}
-        />
+        <Input className="w-full" outlined={true} {...form.register(`description`)} />
       </FormControl>
     </div>
   );

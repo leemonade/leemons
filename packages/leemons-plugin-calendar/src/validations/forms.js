@@ -48,7 +48,33 @@ function validateAddEvent(data) {
   }
 }
 
+const updateEventSchema = {
+  type: 'object',
+  properties: {
+    title: stringSchema,
+    startDate: dateSchema,
+    endDate: dateSchema,
+    isAllDay: booleanSchema,
+    repeat: stringSchema,
+    data: {
+      type: 'object',
+      additionalProperties: true,
+    },
+  },
+  required: [],
+  additionalProperties: false,
+};
+
+function validateUpdateEvent(data) {
+  const validator = new LeemonsValidator(updateEventSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   validateAddEvent,
+  validateUpdateEvent,
   validateAddCalendar,
 };

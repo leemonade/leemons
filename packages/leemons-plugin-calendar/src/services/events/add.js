@@ -19,12 +19,11 @@ const { getPermissionConfig } = require('./getPermissionConfig');
 async function add(key, data, { transacting: _transacting } = {}) {
   validateAddEvent(data);
 
-  console.log('Antes', data.startDate);
   // eslint-disable-next-line no-param-reassign
   data.startDate = data.startDate.slice(0, 19).replace('T', ' ');
   // eslint-disable-next-line no-param-reassign
   data.endDate = data.endDate.slice(0, 19).replace('T', ' ');
-  console.log('despues', data.startDate);
+
   return global.utils.withTransaction(
     async (transacting) => {
       await validateNotExistEventTypeKey(data.type, { transacting });
