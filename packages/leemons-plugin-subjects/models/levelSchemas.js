@@ -6,26 +6,48 @@ module.exports = {
   attributes: {
     parent: {
       references: {
-        collection: 'plugins_classroom::levelSchemas',
+        collection: 'plugins_subjects::levelSchemas',
       },
       options: {
         unique: false,
       },
     },
-    isClass: {
+    isSubject: {
       type: 'boolean',
       options: {
         notNull: true,
       },
     },
-    assignableProfiles: {
-      references: {
-        collection: 'plugins_users::profiles',
-        relation: 'many to many',
-      },
+    credits: {
+      type: 'string',
+      length: 16,
+    },
+    visualIdentification: {
+      type: 'string',
+      length: 16,
     },
     properties: {
       type: 'json',
+    },
+
+    teaching: {
+      references: {
+        collection: 'plugins_subjects::teachingItems',
+        relation: 'many to many',
+      },
+    },
+
+    hours: {
+      references: {
+        collection: 'plugins_subjects::teachingItems',
+        relation: 'many to many',
+      },
+    },
+    types: {
+      references: {
+        collection: 'plugins_subjects::typesItems',
+        relation: 'many to many',
+      },
     },
   },
   primaryKey: {
