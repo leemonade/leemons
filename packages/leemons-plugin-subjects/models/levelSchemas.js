@@ -12,21 +12,43 @@ module.exports = {
         unique: false,
       },
     },
-    isClass: {
+    isSubject: {
       type: 'boolean',
       options: {
         notNull: true,
       },
     },
-    assignableProfiles: {
-      references: {
-        collection: 'plugins_users::profiles',
-        relation: 'many to many',
-      },
-    },
     properties: {
       type: 'json',
     },
+    // credits: {
+    //   type: 'string',
+    //   length: 16,
+    // },
+    // visualIdentification: {
+    //   type: 'string',
+    //   length: 16,
+    // },
+
+    // teaching: {
+    //   references: {
+    //     collection: 'plugins_subjects::teachingItems',
+    //     relation: 'many to many',
+    //   },
+    // },
+
+    // hours: {
+    //   references: {
+    //     collection: 'plugins_subjects::teachingItems',
+    //     relation: 'many to many',
+    //   },
+    // },
+    // types: {
+    //   references: {
+    //     collection: 'plugins_subjects::typesItems',
+    //     relation: 'many to many',
+    //   },
+    // },
   },
   primaryKey: {
     type: 'uuid',

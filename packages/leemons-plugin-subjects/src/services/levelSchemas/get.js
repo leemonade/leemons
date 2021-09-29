@@ -1,9 +1,7 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
+const getEntity = require('./private/getEntity');
 
-const tables = {
-  levelSchemas: leemons.query('plugins_subjects::levelSchemas'),
-  assignableProfiles: leemons.query('plugins_subjects::levelSchemas_profiles'),
-};
+const levelSchemasTable = leemons.query('plugins_subjects::levelSchemas');
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 
 module.exports = async function get(id, { userSession, locale = null, transacting } = {}) {
@@ -12,7 +10,6 @@ module.exports = async function get(id, { userSession, locale = null, transactin
     this: this,
     permissions: {
       view: leemons.plugin.config.constants.permissions.bundles.tree.view,
-      viewProfiles: leemons.plugin.config.constants.permissions.bundles.profiles.view,
     },
   });
   // TODO: Add better error message
@@ -25,38 +22,37 @@ module.exports = async function get(id, { userSession, locale = null, transactin
   });
 
   if (validator.validate(id)) {
-    const levelSchema = await tables.levelSchemas.findOne({ id }, { transacting });
-    if (!levelSchema) {
-      throw new Error('LevelSchema not found');
-    }
-    levelSchema.properties = JSON.parse(levelSchema.properties);
+    return global.utils.withTransaction(
+      async (t) => {
+        // Get the entity if exists
+        const levelSchema = await getEntity(id, { transacting: t });
+        if (!levelSchema) {
+          throw new Error('LevelSchema not found');
+        }
 
-    let assignableProfiles;
-    if (permissions.viewProfiles) {
-      assignableProfiles = (
-        await tables.assignableProfiles.find({ levelSchemas_id: id }, { transacting })
-      ).map(({ profiles_id: profile }) => profile);
-    } else {
-      // TODO: Add better error message
-      assignableProfiles = { error: 'permissions not satisfied' };
-    }
+        // Parse properties JSON
+        levelSchema.properties = JSON.parse(levelSchema.properties);
 
-    const nameKey = leemons.plugin.prefixPN(`levelSchemas.${id}.name`);
-    if (locale) {
-      const name = await multilanguage.getValue(nameKey, locale);
-      return { ...levelSchema, assignableProfiles, name };
-    }
-    const names = (
-      await multilanguage.getWithKey(nameKey, {
-        transacting,
-      })
-    ).map(({ locale: _locale, value }) => ({ locale: _locale, value }));
+        // Get the names
+        const nameKey = leemons.plugin.prefixPN(`levelSchemas.${id}.name`);
+        if (locale) {
+          const name = await multilanguage.getValue(nameKey, locale);
+          return { ...levelSchema, name };
+        }
+        const names = (
+          await multilanguage.getWithKey(nameKey, {
+            transacting: t,
+          })
+        ).map(({ locale: _locale, value }) => ({ locale: _locale, value }));
 
-    return {
-      ...levelSchema,
-      assignableProfiles,
-      names,
-    };
+        return {
+          ...levelSchema,
+          names,
+        };
+      },
+      levelSchemasTable,
+      transacting
+    );
   }
   throw validator.error;
 };

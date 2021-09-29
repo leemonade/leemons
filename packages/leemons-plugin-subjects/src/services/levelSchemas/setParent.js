@@ -1,4 +1,7 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
+const findEntity = require('./private/findEntity');
+const getEntity = require('./private/getEntity');
+const updateEntity = require('./private/updateEntity');
 
 const levelSchemas = leemons.query('plugins_subjects::levelSchemas');
 
@@ -33,31 +36,37 @@ module.exports = async function setParent(id, parent, { userSession, transacting
   const validator = new global.utils.LeemonsValidator(schema);
 
   if (validator.validate({ id, parent })) {
+    // Check the specified parent is not itself
     if (parent === id) {
       throw new Error("The parent can't be itself");
     }
-    let levelSchema = await levelSchemas.findOne({ id }, { transacting });
+
+    // Check if the entity exists
+    let levelSchema = await getEntity(id, { transacting });
     if (!levelSchema) {
       throw new Error("The given id can't be found");
     }
 
+    // If the parent did not change, do not alter the database
     if (levelSchema.parent === parent) {
       return levelSchema;
     }
 
-    const parentLS = await levelSchemas.count({ id: parent, isClass: true }, { transacting });
-    if (parentLS) {
-      throw new Error("The parent can't be of type class");
+    // Check if the parent is a subject
+    if (await findEntity({ id: parent, isSubject: true }, { count: true, transacting })) {
+      throw new Error("The parent can't be of type subject");
     }
 
+    // Update the parent
     try {
-      levelSchema = await levelSchemas.update({ id }, { parent }, { transacting });
+      levelSchema = await updateEntity({ id }, { parent }, { transacting });
     } catch (e) {
       if (e.code.includes('ER_NO_REFERENCED_ROW')) {
         throw new Error("The given parent can't be found");
       }
       throw new Error("the new parent can't be saved");
     }
+
     return levelSchema;
   }
   throw validator.error;

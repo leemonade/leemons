@@ -107,9 +107,9 @@ module.exports = [
     allowedPermissions: getPermissions(permissions.tree, ['update']),
   },
   {
-    path: '/levelSchema/:id/isClass',
+    path: '/levelSchema/:id/isSubject',
     method: 'PATCH',
-    handler: 'levelSchemas.setIsClass',
+    handler: 'levelSchemas.setisSubject',
     authenticated: true,
     allowedPermissions: getPermissions(permissions.tree, ['update']),
   },

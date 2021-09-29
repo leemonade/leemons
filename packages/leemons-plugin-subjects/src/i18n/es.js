@@ -84,7 +84,7 @@ module.exports = {
       name: {
         placeholder: 'Nombre del nivel',
       },
-      isClass: {
+      isSubject: {
         label: 'Nivel de clase',
         tooltip: 'Nivel mínimo de asignación de estudiantes',
       },
