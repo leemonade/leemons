@@ -100,9 +100,9 @@ module.exports = {
       ctx.body = { status: 400, error: e.message };
     }
   },
-  setisSubject: async (ctx) => {
+  setIsSubject: async (ctx) => {
     try {
-      const levelSchema = await services.setisSubject(
+      const levelSchema = await services.setIsSubject(
         ctx.request.params.id,
         ctx.request.body.isSubject,
         { userSession: ctx.state.userSession }

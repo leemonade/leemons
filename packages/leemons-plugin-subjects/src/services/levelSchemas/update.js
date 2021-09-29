@@ -3,7 +3,7 @@ module.exports = function update(id, { isSubject, names, parent, transacting } =
   return global.utils.withTransaction(
     async (t) => {
       if (isSubject !== undefined) {
-        await services.setisSubject(id, isSubject, { transacting: t });
+        await services.setIsSubject(id, isSubject, { transacting: t });
       }
       if (names !== undefined) {
         await services.setNames(id, names, { transacting: t });
