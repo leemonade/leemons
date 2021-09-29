@@ -1,17 +1,19 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
+const findEntity = require('./private/findEntity');
+const saveDescriptions = require('./private/saveDescriptions');
 
-const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
-const levels = leemons.query('plugins_subjects::levels');
-
-module.exports = async function setNames(id, descriptions, { userSession, transacting } = {}) {
+module.exports = async function setDescriptions(
+  id,
+  descriptions,
+  { userSession, transacting } = {}
+) {
   const permissions = await getSessionPermissions({
     userSession,
     this: this,
     permissions: {
-      update: leemons.plugin.config.constants.permissions.bundles.organization.update,
+      update: leemons.plugin.config.constants.permissions.bundles.tree.update,
     },
   });
-
   // TODO: Add better error message
   if (!permissions.update) {
     throw new Error('Permissions not satisfied');
@@ -33,30 +35,13 @@ module.exports = async function setNames(id, descriptions, { userSession, transa
   const validator = new global.utils.LeemonsValidator(schema);
 
   if (validator.validate({ id, descriptions })) {
-    let savedDescriptions;
-    let missingLocales;
-
-    const exists = await levels.count({ id }, { transacting });
-    if (!exists) {
+    // Check if entity exists
+    if (!(await findEntity({ id }, { count: true, transacting }))) {
       throw new Error("The given id can't be found");
     }
 
-    try {
-      const { items, warnings } = await multilanguage.setManyByKey(
-        leemons.plugin.prefixPN(`levels.${id}.description`),
-        descriptions,
-        { transacting }
-      );
-
-      if (warnings?.nonExistingLocales) {
-        missingLocales = warnings.nonExistingLocales;
-      }
-
-      savedDescriptions = items;
-    } catch (e) {
-      throw new Error("the translated descriptions can't be saved");
-    }
-    return { descriptions: savedDescriptions, warnings: { missingLocales } };
+    // Update names
+    return saveDescriptions(id, descriptions, { deleteEmpty: true, transacting });
   }
   throw validator.error;
 };

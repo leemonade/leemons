@@ -3,8 +3,6 @@ const findEntity = require('./private/findEntity');
 const getEntity = require('./private/getEntity');
 const updateEntity = require('./private/updateEntity');
 
-const levelSchemas = leemons.query('plugins_subjects::levelSchemas');
-
 // TODO: Check that the parent is compatible
 module.exports = async function setParent(id, parent, { userSession, transacting } = {}) {
   const permissions = await getSessionPermissions({

@@ -1,6 +1,6 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
+const getEntity = require('./private/getEntity');
 
-const table = leemons.query('plugins_subjects::levels');
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 
 module.exports = async function get(id, { userSession, locale = null, transacting } = {}) {
@@ -8,7 +8,7 @@ module.exports = async function get(id, { userSession, locale = null, transactin
     userSession,
     this: this,
     permissions: {
-      view: leemons.plugin.config.constants.permissions.bundles.organization.view,
+      view: leemons.plugin.config.constants.permissions.bundles.knowledge.view,
     },
   });
 
@@ -22,12 +22,16 @@ module.exports = async function get(id, { userSession, locale = null, transactin
   });
 
   if (validator.validate(id)) {
-    const level = await table.findOne({ id }, { transacting });
+    // Get entity if exists
+    const level = await getEntity(id, { transacting });
     if (!level) {
       throw new Error('Level not found');
     }
+
+    // Parse properties
     level.properties = JSON.parse(level.properties);
 
+    // Get localizations
     const key = leemons.plugin.prefixPN(`levels.${id}`);
     if (locale) {
       const name = await multilanguage.getValue(`${key}.name`, locale);
@@ -46,9 +50,7 @@ module.exports = async function get(id, { userSession, locale = null, transactin
       })
     ).map(({ locale: _locale, value }) => ({ locale: _locale, value }));
 
-    const users = await leemons.plugin.services.levels.getUsers(id);
-
-    return { ...level, names, descriptions, users };
+    return { ...level, names, descriptions };
   }
   throw validator.error;
 };

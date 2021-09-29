@@ -1,6 +1,6 @@
 module.exports = {
   permissions: {
-    organization: {
+    knowledge: {
       create: {
         permission: 'plugins.subjects.tree',
         actions: ['create', 'admin'],

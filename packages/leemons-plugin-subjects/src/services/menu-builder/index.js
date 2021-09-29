@@ -2,7 +2,7 @@
 // const addWelcome = require('./addWelcome');
 // const removeWelcome = require('./removeWelcome');
 // const addTree = require('./addTree');
-// const addOrganization = require('./addOrganization');
+// const addknowledge = require('./addknowledge');
 // const addClasses = require('./addClasses');
 // const enableItem = require('./enableItem');
 
@@ -11,7 +11,7 @@
 //   addWelcome,
 //   removeWelcome,
 //   addTree,
-//   addOrganization,
+//   addknowledge,
 //   addClasses,
 //   enableItem,
 // };

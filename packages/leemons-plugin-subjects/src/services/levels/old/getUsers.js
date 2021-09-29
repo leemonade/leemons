@@ -1,4 +1,4 @@
-const getSessionPermissions = require('../permissions/getSessionPermissions');
+const getSessionPermissions = require('../../permissions/getSessionPermissions');
 
 const tables = {
   levels: leemons.query('plugins_subjects::levels'),
@@ -10,7 +10,7 @@ module.exports = async function getUsers(level, { userSession, roles = [], trans
     userSession,
     this: this,
     permissions: {
-      viewUsers: leemons.plugin.config.constants.permissions.bundles.organization.viewUsers,
+      viewUsers: leemons.plugin.config.constants.permissions.bundles.knowledge.viewUsers,
     },
   });
 

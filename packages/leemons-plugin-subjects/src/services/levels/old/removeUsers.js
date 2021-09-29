@@ -1,4 +1,4 @@
-const getSessionPermissions = require('../permissions/getSessionPermissions');
+const getSessionPermissions = require('../../permissions/getSessionPermissions');
 
 const tables = {
   levels: leemons.query('plugins_subjects::levels'),
@@ -13,7 +13,7 @@ module.exports = async function removeUsers(
     userSession,
     this: this,
     permissions: {
-      assignUsers: leemons.plugin.config.constants.permissions.bundles.organization.assignUsers,
+      assignUsers: leemons.plugin.config.constants.permissions.bundles.knowledge.assignUsers,
     },
   });
 

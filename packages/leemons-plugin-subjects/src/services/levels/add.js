@@ -1,11 +1,13 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
+const getLevelSchema = require('../levelSchemas/private/getEntity');
+const createEntity = require('./private/createEntity');
+const saveNames = require('./private/saveNames');
+const saveDescriptions = require('./private/saveDescriptions');
 
 const tables = {
   levels: leemons.query('plugins_subjects::levels'),
   levelSchemas: leemons.query('plugins_subjects::levelSchemas'),
 };
-
-const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 
 async function add(
   { names = null, descriptions = null, schema = null, parent = null, properties = {} } = {},
@@ -15,7 +17,7 @@ async function add(
     userSession,
     this: this,
     permissions: {
-      create: leemons.plugin.config.constants.permissions.bundles.organization.create,
+      create: leemons.plugin.config.constants.permissions.bundles.knowledge.create,
     },
   });
 
@@ -64,17 +66,11 @@ async function add(
     // Register Level inside a transaction
     return global.utils.withTransaction(
       async (t) => {
-        let savedLevel;
-        let savedNames;
-        let savedDescriptions;
-        let missingLocales;
-
-        let levelSchema;
-
         // -------------------------------------------------------------------------
         // Get the corresponding LevelSchema
+        let levelSchema = null;
         try {
-          levelSchema = await tables.levelSchemas.findOne({ id: schema }, { transacting: t });
+          levelSchema = await getLevelSchema(schema, { transacting });
         } catch (e) {
           throw new Error("The referenced schema can't be fetched");
         }
@@ -98,58 +94,28 @@ async function add(
 
         // -----------------------------------------------------------------------
         // Save level schema
-        try {
-          savedLevel = await tables.levels.create(level, { transacting: t });
-        } catch (e) {
-          if (e.code.includes('ER_NO_REFERENCED_ROW')) {
-            if (!parent) {
-              throw new Error('The referenced schema does not exists');
-            }
-            throw new Error('The referenced parent or schema does not exists');
-          }
-          throw new Error("LevelSchema can't be created");
-        }
+        const savedLevel = await createEntity(level, { transacting: t });
 
         // -----------------------------------------------------------------------
         // Save translated names
-        try {
-          const { items, warnings } = await multilanguage.addManyByKey(
-            leemons.plugin.prefixPN(`levels.${savedLevel.id}.name`),
-            names,
-            { transacting: t }
-          );
-
-          if (warnings?.nonExistingLocales) {
-            missingLocales = warnings.nonExistingLocales;
-          }
-
-          savedNames = items;
-        } catch (e) {
-          throw new Error("The translated names can't be saved");
-        }
+        const savedNames = await saveNames(savedLevel.id, names, { transacting: t });
 
         // -----------------------------------------------------------------------
         // Save translated descriptions
-        try {
-          const { items, warnings } = await multilanguage.addManyByKey(
-            leemons.plugin.prefixPN(`levels.${savedLevel.id}.description`),
-            descriptions,
-            { transacting: t }
-          );
+        const savedDescriptions = await saveDescriptions(savedLevel.id, names, { transacting: t });
 
-          if (warnings?.nonExistingLocales) {
-            missingLocales = new Set([...missingLocales, ...warnings.nonExistingLocales]);
-          }
-
-          savedDescriptions = items;
-        } catch (e) {
-          throw new Error("The translated descriptions can't be saved");
-        }
+        // TODO: Optimize
+        const missingLocales = [
+          ...new Set([
+            ...(savedNames.warnings?.missingLocales || []),
+            ...(savedDescriptions.warnings?.missingLocales || []),
+          ]),
+        ];
 
         return {
           ...savedLevel,
-          names: savedNames,
-          descriptions: savedDescriptions,
+          ...savedNames,
+          ...savedDescriptions,
           warnings: missingLocales?.length
             ? {
                 missingLocales,
