@@ -1,7 +1,7 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
 
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
-const levelSchemas = leemons.query('plugins_classroom::levelSchemas');
+const levelSchemas = leemons.query('plugins_subjects::levelSchemas');
 
 module.exports = async function setNames(id, names, { userSession, transacting } = {}) {
   const permissions = await getSessionPermissions({

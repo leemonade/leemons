@@ -2,24 +2,24 @@ module.exports = {
   permissions: {
     organization: {
       create: {
-        permission: 'plugins.classroom.tree',
+        permission: 'plugins.subjects.tree',
         actions: ['create', 'admin'],
       },
       view: {
-        permission: 'plugins.classroom.tree',
+        permission: 'plugins.subjects.tree',
         actions: ['view', 'admin'],
       },
       update: {
-        permission: 'plugins.classroom.tree',
+        permission: 'plugins.subjects.tree',
         actions: ['update', 'admin'],
       },
       delete: {
-        permission: 'plugins.classroom.tree',
+        permission: 'plugins.subjects.tree',
         actions: ['delete', 'admin'],
       },
       assignables: [
         {
-          permission: 'plugins.classroom.tree',
+          permission: 'plugins.subjects.tree',
           actions: ['update', 'admin'],
         },
         {

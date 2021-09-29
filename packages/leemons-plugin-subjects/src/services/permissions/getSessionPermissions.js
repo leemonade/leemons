@@ -79,7 +79,7 @@ module.exports = async function getSessionPermissions({
       [name]: checkPermissionsSatisfaction(
         permissionObj,
         userPermissions,
-        !userSession && context.calledFrom === 'plugins.classroom'
+        !userSession && context.calledFrom === 'plugins.subjects'
       ),
     }),
     {}

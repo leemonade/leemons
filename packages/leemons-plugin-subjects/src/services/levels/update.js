@@ -14,7 +14,7 @@ module.exports = function update(id, { names, descriptions, parent, transacting 
 
       return services.get(id, { transacting: t });
     },
-    leemons.query('plugins_classroom::levels'),
+    leemons.query('plugins_subjects::levels'),
     transacting
   );
 };

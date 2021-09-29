@@ -1,8 +1,8 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
 
 const tables = {
-  levels: leemons.query('plugins_classroom::levels'),
-  levelSchemas: leemons.query('plugins_classroom::levelSchemas'),
+  levels: leemons.query('plugins_subjects::levels'),
+  levelSchemas: leemons.query('plugins_subjects::levelSchemas'),
 };
 
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();

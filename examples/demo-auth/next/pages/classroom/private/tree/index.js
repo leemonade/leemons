@@ -4,7 +4,7 @@ import { PlusCircleIcon } from '@heroicons/react/outline';
 import Tree from '@classroom/components/wip-dev/pages/tree/treeAdmin';
 import TemplatePanel from '@classroom/components/wip-dev/pages/tree/templatePanel';
 import EditLevel from '@classroom/components/wip-dev/pages/tree/editLevel';
-import { PageHeader, Button } from 'leemons-ui';
+import { PageHeader, Button, Modal, useModal } from 'leemons-ui';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import tLoader from '@multilanguage/helpers/tLoader';
@@ -13,11 +13,47 @@ import useTranslate from '@multilanguage/useTranslate';
 function TreePage() {
   const session = useSession({ redirectTo: goLoginPage });
   const [showEdit, toggleShowEdit] = useState({ active: false });
+  const [showDelete, setShowDelete] = useState({ active: false });
   const [updateEntities, setUpdateEntities] = useState(null);
-  const [translations] = useTranslate({ keysStartsWith: 'plugins.classroom.tree_page' });
+  const [translations] = useTranslate({
+    keysStartsWith: ['plugins.classroom.tree_page', 'plugins.classroom.delete_modal'],
+  });
   const t = tLoader('plugins.classroom.tree_page', translations);
+  const tdm = tLoader('plugins.classroom.delete_modal', translations);
+  const [modal, toggleModal] = useModal({
+    animated: true,
+    title: tdm('title'),
+    message: tdm('message'),
+    cancelLabel: tdm('actions.cancel'),
+    actionLabel: tdm('actions.accept'),
+    onAction: () => {
+      if (showEdit.active && showEdit.entity.id === showDelete.entity.id) {
+        toggleShowEdit({ active: false });
+      }
+
+      leemons
+        .api(
+          { url: `classroom/levelschema/${showDelete.entity.id}`, allAgents: true },
+          { method: 'DELETE' }
+        )
+        .then(updateEntities.update);
+      // TODO: Show alert
+    },
+  });
+  const toggleDelete = (entity) => {
+    if (!entity) {
+      setShowDelete({ active: false });
+      if (modal.isShown) {
+        toggleModal();
+      }
+    } else {
+      setShowDelete({ active: true, entity });
+      toggleModal();
+    }
+  };
   return (
     <>
+      <Modal {...modal} />
       <div className="bg-secondary-content  edit-mode w-full h-screen overflow-auto grid">
         <div className="bg-primary-content w-full">
           <PageHeader separator={false} title={t('page_title')} className="pb-0"></PageHeader>
@@ -33,7 +69,7 @@ function TreePage() {
             editingEntity={showEdit}
             locale={session?.locale}
             setUpdate={(update) => setUpdateEntities({ update })}
-            onDetails={console.log}
+            onDelete={toggleDelete}
             onEdit={(entity) => {
               if (entity !== showEdit.entity) {
                 toggleShowEdit({ active: true, entity, parent: entity.parent });
@@ -48,6 +84,7 @@ function TreePage() {
           {showEdit.active ? (
             // Edit LevelSchema form
             <EditLevel
+              onClose={() => toggleShowEdit({ active: false })}
               locale={session?.locale}
               entity={showEdit.entity}
               setEntity={(state) => toggleShowEdit({ active: showEdit.active, ...state })}

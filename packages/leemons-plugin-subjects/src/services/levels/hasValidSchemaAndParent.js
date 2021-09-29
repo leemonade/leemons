@@ -1,6 +1,6 @@
 const tables = {
-  levels: leemons.query('plugins_classroom::levels'),
-  levelSchemas: leemons.query('plugins_classroom::levelSchemas'),
+  levels: leemons.query('plugins_subjects::levels'),
+  levelSchemas: leemons.query('plugins_subjects::levelSchemas'),
 };
 
 module.exports = async function hasValidSchemaAndParent(schema, parentId = null, { transacting }) {

@@ -8,6 +8,7 @@ module.exports = {
 		'multilanguage',
 		'dataset',
 		'users',
+		'subjects',
 		'package-manager',
 		'mvp-template',
 		'menu-builder',

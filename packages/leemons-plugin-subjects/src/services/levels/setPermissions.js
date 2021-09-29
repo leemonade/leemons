@@ -1,4 +1,4 @@
-const table = leemons.query('plugins_classroom::levels');
+const table = leemons.query('plugins_subjects::levels');
 
 module.exports = function setPermissions(id, data, { transacting } = {}) {
   const validator = new global.utils.LeemonsValidator({
@@ -39,7 +39,7 @@ module.exports = function setPermissions(id, data, { transacting } = {}) {
             leemons.getPlugin('users').services.profiles.addCustomPermissions(
               profile,
               {
-                permissionName: 'plugins.classroom.levelSchema',
+                permissionName: 'plugins.subjects.levelSchema',
                 target: id,
                 actionNames: actions,
               },

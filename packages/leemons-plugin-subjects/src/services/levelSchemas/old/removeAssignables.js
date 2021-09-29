@@ -1,7 +1,7 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
 
-const levelSchemas = leemons.query('plugins_classroom::levelSchemas');
-const assignableProfiles = leemons.query('plugins_classroom::levelSchemas_profiles');
+const levelSchemas = leemons.query('plugins_subjects::levelSchemas');
+const assignableProfiles = leemons.query('plugins_subjects::levelSchemas_profiles');
 
 // TODO: Check that the parent is compatible
 module.exports = async function addAssignables(id, _profiles, { userSession, transacting } = {}) {

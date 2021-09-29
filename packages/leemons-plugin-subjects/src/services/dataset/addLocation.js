@@ -17,7 +17,7 @@ module.exports = async function addLocaltion(schemaName, schemaId) {
       name,
       description,
       locationName,
-      pluginName: 'plugins.classroom',
+      pluginName: 'plugins.subjects',
     });
   } catch (e) {
     console.log(e);

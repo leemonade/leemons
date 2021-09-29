@@ -1,32 +1,32 @@
-const permissionsPrefix = 'plugins.classroom';
+const permissionsPrefix = 'plugins.subjects';
 
 const permissionNames = {
   tree: `${permissionsPrefix}.tree`,
-  organization: `${permissionsPrefix}.organization`,
+  knowledge: `${permissionsPrefix}.knowledge`,
   adminView: `${permissionsPrefix}.adminview`,
-  classroom: `${permissionsPrefix}.classroom`,
+  subject: `${permissionsPrefix}.subject`,
 };
 
 const permissions = [
   {
     permissionName: permissionNames.tree,
     actions: ['view', 'update', 'create', 'delete', 'admin'],
-    localizationName: { es: 'Clases - Árbol', en: 'Classroom - Tree' },
+    localizationName: { es: 'Asignaturas - Árbol', en: 'Subjects - Tree' },
   },
   {
-    permissionName: permissionNames.organization,
+    permissionName: permissionNames.knowledge,
     actions: ['view', 'update', 'create', 'assign', 'delete', 'admin'],
-    localizationName: { es: 'Clases - Organización', en: 'Classroom - Organization' },
+    localizationName: { es: 'Asignaturas - Área de conocimiento', en: 'Subjects - Knowledge area' },
   },
   {
     permissionName: permissionNames.adminView,
     actions: ['view', 'update', 'admin'],
-    localizationName: { es: 'Clases - Admin', en: 'Classroom - Admin' },
+    localizationName: { es: 'Asignaturas - Admin', en: 'Subjects - Admin' },
   },
   {
-    permissionName: permissionNames.classroom,
+    permissionName: permissionNames.subject,
     actions: ['view', 'update', 'create', 'delete', 'admin'],
-    localizationName: { es: 'Clases', en: 'Classroom' },
+    localizationName: { es: 'Asignaturas', en: 'Subjects' },
   },
 ];
 
@@ -59,30 +59,30 @@ const permissionsBundles = {
       },
     ],
   },
-  organization: {
+  knowledge: {
     create: {
-      permission: permissionNames.organization,
+      permission: permissionNames.knowledge,
       actions: ['create', 'admin'],
     },
     view: {
-      permission: permissionNames.organization,
+      permission: permissionNames.knowledge,
       actions: ['view', 'admin'],
     },
     update: {
-      permission: permissionNames.organization,
+      permission: permissionNames.knowledge,
       actions: ['update', 'admin'],
     },
     delete: {
-      permission: permissionNames.organization,
+      permission: permissionNames.knowledge,
       actions: ['delete', 'admin'],
     },
     assignUsers: [
       {
-        permission: permissionNames.organization,
+        permission: permissionNames.knowledge,
         actions: ['view', 'admin'],
       },
       {
-        permission: permissionNames.organization,
+        permission: permissionNames.knowledge,
         actions: ['assign', 'admin'],
       },
       {
@@ -92,7 +92,7 @@ const permissionsBundles = {
     ],
     viewUsers: [
       {
-        permission: permissionNames.organization,
+        permission: permissionNames.knowledge,
         actions: ['view', 'admin'],
       },
       {
@@ -119,17 +119,17 @@ const menuItems = [
   // Main
   {
     item: {
-      key: 'classroom',
-      iconSvg: '/classroom/classroom.svg',
-      activeIconSvg: '/classroom/classroomActive.svg',
+      key: 'subject',
+      iconSvg: '/subjects/subjects.svg',
+      activeIconSvg: '/subjects/subjectsActive.svg',
       label: {
-        en: 'Classroom',
-        es: 'Clases',
+        en: 'Subjects',
+        es: 'Asignaturas',
       },
     },
     permissions: [
       {
-        permissionName: permissionNames.classroom,
+        permissionName: permissionNames.subject,
         actionNames: ['view', 'admin'],
       },
     ],
@@ -139,8 +139,8 @@ const menuItems = [
     item: {
       key: 'welcome',
       order: 1,
-      parentKey: 'classroom',
-      url: '/classroom/private/welcome',
+      parentKey: 'subject',
+      url: '/subjects/private/welcome',
       label: {
         en: 'Welcome',
         es: 'Bienvenida',
@@ -148,7 +148,7 @@ const menuItems = [
     },
     permissions: [
       {
-        permissionName: permissionNames.classroom,
+        permissionName: permissionNames.subject,
         actionNames: ['view', 'admin'],
       },
     ],
@@ -158,8 +158,8 @@ const menuItems = [
     item: {
       key: 'tree',
       order: 2,
-      parentKey: 'classroom',
-      url: '/classroom/private/tree',
+      parentKey: 'subject',
+      url: '/subjects/private/tree',
       label: {
         en: 'Tree',
         es: 'Árbol',
@@ -173,36 +173,36 @@ const menuItems = [
       },
     ],
   },
-  // Organization
+  // Knowledge
   {
     item: {
-      key: 'organization',
+      key: 'knowledge',
       order: 3,
-      parentKey: 'classroom',
-      url: '/classroom/private/organization',
+      parentKey: 'subject',
+      url: '/subjects/private/knowledge',
       label: {
-        en: 'Organization',
-        es: 'Organización',
+        en: 'Knowledge Area',
+        es: 'Área de Conocimiento',
       },
       disabled: true,
     },
     permissions: [
       {
-        permissionName: permissionNames.organization,
+        permissionName: permissionNames.knowledge,
         actionNames: ['view', 'admin'],
       },
     ],
   },
-  // Classes
+  // Subjects
   {
     item: {
-      key: 'classes',
+      key: 'subjects',
       order: 4,
-      parentKey: 'classroom',
-      url: '/classroom/private/classes',
+      parentKey: 'subject',
+      url: '/subjects/private/subjects',
       label: {
-        en: 'Classes admin',
-        es: 'Clases admin',
+        en: 'Subjects admin',
+        es: 'Asignaturas admin',
       },
       disabled: true,
     },
@@ -216,7 +216,7 @@ const menuItems = [
 ];
 
 module.exports = {
-  pluginName: 'plugins.classroom',
+  pluginName: 'plugins.subjects',
   permissions: {
     permissions,
     names: permissionNames,

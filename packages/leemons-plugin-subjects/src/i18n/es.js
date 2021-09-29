@@ -7,19 +7,16 @@ module.exports = {
     edit: 'Editar',
   },
   welcome_page: {
-    page_title: 'Bienvenido a Clases',
-    page_info: `<p>Aquí podrás replicar la estructura organizativa del centro educativo.</p>
-      <p>El primer paso es crear el <strong>Árbol</strong>. Este árbol se utiliza para representar la estructura básica de la organización.</p>
-      <p>Por ejemplo, si tienes un colegio con programas educativos (primaria y secundaria) que tiene cursos (primero, segundo, tercero...) y en cada uno de ellos se divide a los alumnos en grupos que comparten clase (grupo A, grupo B, ...), será necesario que el sistema conozca esta lógica. Sólo tendrás que crear el árbol una vez (pero podrás añadir nuevos niveles posteriormente).</p>
-      <p>Luego, en la sección <strong>Organización</strong> podrás definir el conjunto de datos (información concreta) para cada nivel y los permisos que deseas asignar. Por último, en la sección de <strong>Clases admin</strong> podrás asignar alumnos, tutores y definir los datos previstos en el paso anterior. Estas secciones sólo estarán disponibles una vez que hayas creado el árbol.</p>
-      <p>Puedes empezar descargando nuestro archivo de estructura básica y editándolo en tu aplicación de hoja de cálculo favorita o crear el árbol de niveles manualmente desde Leemons.</p>`,
+    page_title: 'Bienvenido a Asignaturas',
+    page_info: `<p>Se pueden crear grupos de asignaturas por áreas (por ejemplo, el bloque de matemáticas podría contener Preálgebra, Álgebra I, Geometría, Álgebra II y Trigonometría).</p>
+      <p>Las asignaturas están relacionadas entre sí por su bloque de conocimientos, también pueden ser sucesivas (por ejemplo, para cursar Álgebra II es necesario haber aprobado Álgebra I).</p>`,
     hide_info_label:
       'Ok, entendido. Cuando la configuración esté completa, no mostrar más esta información.',
-    bulk_load: {
-      title: 'Carga masiva',
+    template_load: {
+      title: 'Cargar plantilla',
       description:
         'Descarga el archivo básico y súbelo una vez completado (si necesitas más ayuda, puedes ver esta guía básica sobre el funcionamiento de nuestro sistema de estructuras).',
-      btn: 'Cargar',
+      btn: 'Seleccionar archivo',
     },
     manual_load: {
       title: 'Creación manual',

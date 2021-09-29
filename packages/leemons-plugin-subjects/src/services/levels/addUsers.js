@@ -1,8 +1,8 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
 
 const tables = {
-  levels: leemons.query('plugins_classroom::levels'),
-  levelUsers: leemons.query('plugins_classroom::levels-users'),
+  levels: leemons.query('plugins_subjects::levels'),
+  levelUsers: leemons.query('plugins_subjects::levels-users'),
 };
 
 module.exports = async function addUsers(
@@ -83,7 +83,7 @@ module.exports = async function addUsers(
 
         try {
           const permission = {
-            permissionName: 'plugins.classroom.level',
+            permissionName: 'plugins.subjects.level',
             actionNames: ['admin'],
             target: level,
           };
