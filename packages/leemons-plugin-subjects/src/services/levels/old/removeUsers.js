@@ -1,13 +1,13 @@
-const getSessionPermissions = require('../permissions/getSessionPermissions');
+const getSessionPermissions = require('../../permissions/getSessionPermissions');
 
 const tables = {
   levels: leemons.query('plugins_subjects::levels'),
   levelUsers: leemons.query('plugins_subjects::levels-users'),
 };
 
-module.exports = async function addUsers(
-  { users, level, role } = {},
-  { userSession, transacting } = {}
+module.exports = async function removeUsers(
+  { userSession, users, level, role = null } = {},
+  { transacting } = {}
 ) {
   const permissions = await getSessionPermissions({
     userSession,
@@ -25,12 +25,20 @@ module.exports = async function addUsers(
     type: 'object',
     properties: {
       users: {
-        type: 'array',
-        items: {
-          type: 'string',
-          format: 'uuid',
-        },
-        minItems: 1,
+        oneOf: [
+          {
+            type: 'array',
+            items: {
+              type: 'string',
+              format: 'uuid',
+            },
+            minItems: 1,
+          },
+          {
+            type: 'string',
+            pattern: 'all',
+          },
+        ],
       },
       level: {
         type: 'string',
@@ -39,6 +47,7 @@ module.exports = async function addUsers(
       role: {
         type: 'string',
         minLength: 1,
+        nullable: true,
       },
     },
   };
@@ -51,53 +60,36 @@ module.exports = async function addUsers(
   return global.utils.withTransaction(
     async (t) => {
       if (await tables.levels.count({ id: level }, { transacting: t })) {
-        let alreadySavedUsers;
-        let savedUsers;
-
+        let deletedCount;
         try {
-          alreadySavedUsers = (
-            await tables.levelUsers.find({ user_$in: users }, { columns: ['user'] })
-          ).map(({ user }) => user);
-        } catch (e) {
-          throw new Error("Can't check if the users already exists");
-        }
-
-        const newUsers = [...new Set(users.filter((user) => !alreadySavedUsers.includes(user)))];
-        try {
-          savedUsers = await tables.levelUsers.createMany(
-            newUsers.map(
-              (user) => ({
-                level,
-                user,
-                role,
-              }),
-              { transacting: t }
-            )
-          );
-        } catch (e) {
-          if (e.code.includes('ER_NO_REFERENCED_ROW')) {
-            throw new Error('Some of the users does not exists');
+          const query = { level };
+          if (Array.isArray(users)) {
+            query.user_$in = users;
           }
-          throw new Error("The users can't be saved");
+          if (role) {
+            query.role = role;
+          }
+          deletedCount = await tables.levelUsers.deleteMany(query, { transacting: t });
+        } catch (e) {
+          throw new Error("The users can't be deleted");
         }
 
         try {
           const permission = {
             permissionName: 'plugins.subjects.level',
-            actionNames: ['admin'],
             target: level,
           };
 
           await leemons
             .getPlugin('users')
-            .services.permissions.addCustomPermissionToUserAgent(newUsers, permission, {
+            .services.users.removeCustomPermission(users, permission, {
               transacting: t,
             });
         } catch (e) {
           throw new Error("Can't save permissions");
         }
 
-        return savedUsers;
+        return deletedCount.count;
       }
       throw new Error('No level was found with the given id');
     },

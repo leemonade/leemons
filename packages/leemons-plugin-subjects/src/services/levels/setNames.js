@@ -1,17 +1,15 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
-
-const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
-const levels = leemons.query('plugins_subjects::levels');
+const findEntity = require('./private/findEntity');
+const saveNames = require('./private/saveNames');
 
 module.exports = async function setNames(id, names, { userSession, transacting } = {}) {
   const permissions = await getSessionPermissions({
     userSession,
     this: this,
     permissions: {
-      update: leemons.plugin.config.constants.permissions.bundles.organization.update,
+      update: leemons.plugin.config.constants.permissions.bundles.tree.update,
     },
   });
-
   // TODO: Add better error message
   if (!permissions.update) {
     throw new Error('Permissions not satisfied');
@@ -33,30 +31,13 @@ module.exports = async function setNames(id, names, { userSession, transacting }
   const validator = new global.utils.LeemonsValidator(schema);
 
   if (validator.validate({ id, names })) {
-    let savedNames;
-    let missingLocales;
-
-    const exists = await levels.count({ id }, { transacting });
-    if (!exists) {
+    // Check if entity exists
+    if (!(await findEntity({ id }, { count: true, columns: ['id', 'isSubject'], transacting }))) {
       throw new Error("The given id can't be found");
     }
 
-    try {
-      const { items, warnings } = await multilanguage.setManyByKey(
-        leemons.plugin.prefixPN(`levels.${id}.name`),
-        names,
-        { transacting }
-      );
-
-      if (warnings?.nonExistingLocales) {
-        missingLocales = warnings.nonExistingLocales;
-      }
-
-      savedNames = items;
-    } catch (e) {
-      throw new Error("the translated names can't be saved");
-    }
-    return { names: savedNames, warnings: { missingLocales } };
+    // Update names
+    return saveNames(id, names, { deleteEmpty: true, transacting });
   }
   throw validator.error;
 };

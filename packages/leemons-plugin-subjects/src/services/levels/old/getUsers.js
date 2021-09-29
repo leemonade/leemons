@@ -1,4 +1,4 @@
-const getSessionPermissions = require('../permissions/getSessionPermissions');
+const getSessionPermissions = require('../../permissions/getSessionPermissions');
 
 const tables = {
   levels: leemons.query('plugins_subjects::levels'),
