@@ -1,5 +1,11 @@
 const { LeemonsValidator } = global.utils;
-const { stringSchema, dateSchema, booleanSchema } = require('./types');
+const {
+  stringSchema,
+  dateSchema,
+  booleanSchema,
+  integerSchema,
+  localeObjectSchema,
+} = require('./types');
 
 const addCalendarSchema = {
   type: 'object',
@@ -73,8 +79,30 @@ function validateUpdateEvent(data) {
   }
 }
 
+const addKanbanColumnSchema = () => ({
+  type: 'object',
+  properties: {
+    name: localeObjectSchema(),
+    order: integerSchema,
+    isDone: booleanSchema,
+    isArchived: booleanSchema,
+    bgColor: stringSchema,
+  },
+  required: [],
+  additionalProperties: false,
+});
+
+function validateAddKanbanColumn(data) {
+  const validator = new LeemonsValidator(addKanbanColumnSchema());
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   validateAddEvent,
   validateUpdateEvent,
   validateAddCalendar,
+  validateAddKanbanColumn,
 };

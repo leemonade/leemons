@@ -40,4 +40,22 @@ module.exports = [
     handler: 'calendar.removeEvent',
     authenticated: true,
   },
+  {
+    path: '/kanban/list/columns',
+    method: 'GET',
+    handler: 'calendar.listKanbanColumns',
+    authenticated: true,
+  },
+  {
+    path: '/kanban/list/event/orders',
+    method: 'GET',
+    handler: 'calendar.listKanbanEventOrders',
+    authenticated: true,
+  },
+  {
+    path: '/kanban/save/event/orders',
+    method: 'POST',
+    handler: 'calendar.saveKanbanEventOrders',
+    authenticated: true,
+  },
 ];

@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const constants = require('./config/constants');
-const { add } = require('./src/services/menu-builder/add');
+const { add: addMenuItem } = require('./src/services/menu-builder/add');
 
 async function events(isInstalled) {
   if (!isInstalled) {
@@ -13,13 +13,16 @@ async function events(isInstalled) {
       ],
       async () => {
         for (let i = 0, l = constants.menuItems.length; i < l; i++) {
-          await add(
+          await addMenuItem(
             constants.menuItems[i].config,
             constants.menuItems[i].permissions,
             constants.menuItems[i].isCustomPermission
           );
         }
         leemons.events.emit('init-menu');
+        const { add: addKanbanColumn } = require('./src/services/kanban-columns/add');
+        await Promise.all(_.map(constants.kanbanColumns, (d) => addKanbanColumn(d)));
+        leemons.events.emit('init-kanban-columns');
       }
     );
 

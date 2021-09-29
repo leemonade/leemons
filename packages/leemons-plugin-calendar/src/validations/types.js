@@ -1,3 +1,5 @@
+const { translations } = require('../translations');
+
 const textSchema = {
   type: 'string',
   minLength: 1,
@@ -27,10 +29,25 @@ const booleanSchema = {
   type: 'boolean',
 };
 
+const integerSchema = {
+  type: 'integer',
+};
+
+const localeObjectSchema = () => ({
+  type: 'object',
+  patternProperties: {
+    [translations().functions.localeRegexString]: {
+      type: 'string',
+    },
+  },
+});
+
 module.exports = {
   textSchema,
   stringSchema,
   arrayStringRequiredSchema,
   dateSchema,
   booleanSchema,
+  integerSchema,
+  localeObjectSchema,
 };

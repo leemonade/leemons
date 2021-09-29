@@ -1,12 +1,30 @@
 import PropTypes from 'prop-types';
 import * as _ from 'lodash';
-import { useEffect } from 'react';
-import { Button, Checkbox, FormControl, Input, Textarea } from 'leemons-ui';
+import { useEffect, useState } from 'react';
+import { Button, Checkbox, FormControl, Input, Select, Textarea } from 'leemons-ui';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { listKanbanColumnsRequest } from '@calendar/request';
+import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
+import tKeys from '@multilanguage/helpers/tKeys';
 
 export default function Task({ isEditing, event, form, data, allFormData, tCommon }) {
   const [t] = useTranslateLoader(prefixPN('task_mode_event_type'));
+  const [columns, setColumns] = useState([]);
+  const [columnsT, setColumnsT] = useState([]);
+
+  const getKanbanColumns = async () => {
+    const { columns: _columns } = await listKanbanColumnsRequest();
+    setColumns(_.orderBy(_columns, ['order'], ['asc']));
+  };
+
+  const getTranslationColumns = async () => {
+    const keys = _.map(columns, 'nameKey');
+    const { items } = await getLocalizationsByArrayOfItems(keys);
+    setColumnsT(items);
+  };
+
+  const getColumnName = (name) => tKeys(name, columnsT);
 
   useEffect(() => {
     if (event) {
@@ -16,7 +34,12 @@ export default function Task({ isEditing, event, form, data, allFormData, tCommo
         });
       }
     }
+    getKanbanColumns();
   }, []);
+
+  useEffect(() => {
+    getTranslationColumns();
+  }, [columns]);
 
   const addSubTask = () => {
     let subtask = form.getValues('subtask');
@@ -93,6 +116,20 @@ export default function Task({ isEditing, event, form, data, allFormData, tCommo
           {t('add_subtask')}
         </Button>
       </div>
+      {columns && columns.length ? (
+        <Select
+          outlined
+          {...form.register(`column`, {
+            required: tCommon('required'),
+          })}
+        >
+          {columns.map((column) => (
+            <option key={column.id} value={column.id}>
+              {getColumnName(column.nameKey)}
+            </option>
+          ))}
+        </Select>
+      ) : null}
     </div>
   );
 }

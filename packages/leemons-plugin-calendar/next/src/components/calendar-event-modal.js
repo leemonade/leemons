@@ -23,7 +23,7 @@ import {
 } from '../request';
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
 
-function CalendarEventModal({ event, centerToken, close }) {
+function CalendarEventModal({ event, centerToken, close, forceType }) {
   const session = useSession({ redirectTo: goLoginPage });
   const [t] = useTranslateLoader(prefixPN('event_modal'));
   const { t: tCommon } = useCommonTranslate('forms');
@@ -51,12 +51,15 @@ function CalendarEventModal({ event, centerToken, close }) {
       centerToken
     );
 
-    setCalendarData({
+    const _data = {
       calendars,
       events,
       userCalendar,
       ownerCalendars,
-    });
+    };
+
+    setCalendarData(_data);
+    return _data;
   };
 
   const getEventTypes = async () => {
@@ -147,7 +150,10 @@ function CalendarEventModal({ event, centerToken, close }) {
   };
 
   const init = async () => {
-    const [_eventTypes] = await Promise.all([getEventTypes(), getCalendarsForCenter()]);
+    const [_eventTypes, _calendarData] = await Promise.all([
+      getEventTypes(),
+      getCalendarsForCenter(),
+    ]);
     if (event) {
       const {
         startDate,
@@ -166,7 +172,9 @@ function CalendarEventModal({ event, centerToken, close }) {
         setValue(key, value);
       });
       if (!eventData.repeat) setValue('repeat', 'dont_repeat');
-      setValue('calendar', calendar.key);
+      const calendarId = _.isString(calendar) ? calendar : calendar.id;
+      const _calendar = _.find(_calendarData.ownerCalendars, { id: calendarId });
+      if (_calendar) setValue('calendar', _calendar.key);
       setValue('isAllDay', !!isAllDay);
       const _startDate = new Date(startDate);
       const _endDate = new Date(endDate);
@@ -181,11 +189,11 @@ function CalendarEventModal({ event, centerToken, close }) {
       setValue('endDate', edIsoArr[0]);
       setValue('endTime', edIsoArr[1].split('.')[0]);
     } else if (_eventTypes.length) {
-      setValue('type', _eventTypes[0].key);
+      setValue('type', forceType || _eventTypes[0].key);
       setValue('repeat', 'dont_repeat');
       setValue('isAllDay', false);
-      if (calendarData && calendarData.ownerCalendars)
-        setValue('calendar', calendarData.ownerCalendars[0].key);
+      if (_calendarData && _calendarData.ownerCalendars)
+        setValue('calendar', _calendarData.ownerCalendars[0].key);
     }
   };
 
@@ -199,7 +207,9 @@ function CalendarEventModal({ event, centerToken, close }) {
 
   useEffect(() => {
     if (event && calendarData) {
-      const calendar = _.find(calendarData.ownerCalendars, { id: event.calendar.id });
+      const calendar = _.find(calendarData.ownerCalendars, {
+        id: _.isString(event.calendar) ? event.calendar : event.calendar.id,
+      });
       setIsOwner(!!calendar);
     }
   }, [event, calendarData]);
@@ -237,21 +247,23 @@ function CalendarEventModal({ event, centerToken, close }) {
             })}
           />
         </FormControl>
-
-        {eventTypes.map((eventType) => (
-          <div key={eventType.key} className="flex">
-            <FormControl label={getEventTypeName(eventType.key)} labelPosition="right">
-              <Radio
-                color={_.get(errors, `type`) ? 'error' : 'primary'}
-                name={eventType.key}
-                checked={watch('type') === eventType.key}
-                onChange={() => setValue('type', eventType.key)}
-                value={eventType.key}
-              />
-            </FormControl>
-          </div>
-        ))}
-
+        {!forceType ? (
+          <>
+            {eventTypes.map((eventType) => (
+              <div key={eventType.key} className="flex">
+                <FormControl label={getEventTypeName(eventType.key)} labelPosition="right">
+                  <Radio
+                    color={_.get(errors, `type`) ? 'error' : 'primary'}
+                    name={eventType.key}
+                    checked={watch('type') === eventType.key}
+                    onChange={() => setValue('type', eventType.key)}
+                    value={eventType.key}
+                  />
+                </FormControl>
+              </div>
+            ))}
+          </>
+        ) : null}
         <FormControl className="w-full" formError={_.get(errors, `startDate`)}>
           <Input
             type="date"
@@ -262,7 +274,6 @@ function CalendarEventModal({ event, centerToken, close }) {
             })}
           />
         </FormControl>
-
         {!isAllDay ? (
           <FormControl className="w-full" formError={_.get(errors, `startTime`)}>
             <Input
@@ -275,7 +286,6 @@ function CalendarEventModal({ event, centerToken, close }) {
             />
           </FormControl>
         ) : null}
-
         <FormControl className="w-full" formError={_.get(errors, `endDate`)}>
           <Input
             type="date"
@@ -286,7 +296,6 @@ function CalendarEventModal({ event, centerToken, close }) {
             })}
           />
         </FormControl>
-
         {!isAllDay ? (
           <FormControl className="w-full" formError={_.get(errors, `endTime`)}>
             <Input
@@ -299,7 +308,6 @@ function CalendarEventModal({ event, centerToken, close }) {
             />
           </FormControl>
         ) : null}
-
         <FormControl labelPosition="right" label={t('all_day')}>
           <Checkbox
             color="secondary"
@@ -307,7 +315,6 @@ function CalendarEventModal({ event, centerToken, close }) {
             onChange={(e) => setValue('isAllDay', e.target.checked)}
           />
         </FormControl>
-
         <Select
           outlined
           {...register(`repeat`, {
@@ -320,7 +327,6 @@ function CalendarEventModal({ event, centerToken, close }) {
           <option value="every_month">{t('repeat.every_month')}</option>
           <option value="every_year">{t('repeat.every_year')}</option>
         </Select>
-
         {eventTypeComponent.current && eventTypeComponent.current.Component ? (
           <eventTypeComponent.current.Component
             event={event}
@@ -359,7 +365,6 @@ function CalendarEventModal({ event, centerToken, close }) {
             }}
           />
         ) : null}
-
         {calendarData && calendarData.ownerCalendars ? (
           <Select
             outlined
@@ -374,7 +379,6 @@ function CalendarEventModal({ event, centerToken, close }) {
             ))}
           </Select>
         ) : null}
-
         {isNew ? (
           <Button color="primary" className="mt-4">
             {t('save')}
@@ -398,6 +402,8 @@ function CalendarEventModal({ event, centerToken, close }) {
 CalendarEventModal.propTypes = {
   event: PropTypes.object,
   centerToken: PropTypes.string.isRequired,
+  close: PropTypes.func.isRequired,
+  forceType: PropTypes.string,
 };
 
 export const useCalendarEventModal = () => {
