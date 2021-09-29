@@ -5,9 +5,14 @@ module.exports = {
     edit: 'Edit',
   },
   welcome_page: {
-    page_title: 'Welcome to Subjects',
+    page_title: 'Subjects',
+    page_subtitle: 'In this section you can manage all the subjects taught in your school.',
     page_info: `<p>You can create groups of subjects by areas (for example, the mathematics block could contain Pre-Algebra, Algebra I, Geometry, Algebra II, and Trigonometry).</p>
     <p>The subjects are related to each other by their block of knowledge, they can also be successive (for example, to take Algebra II it is necessary to have passed Algebra I).</p>`,
+    docs_btn: {
+      label: 'View documentation',
+      url: '/',
+    },
     hide_info_label: `Ok, I've got it. When the configuration is complete, don't show this info anymore`,
     template_load: {
       title: 'Load template',

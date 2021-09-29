@@ -17,10 +17,24 @@ export default function TreeAdmin({
   ...props
 }) {
   // Get the DB LevelSchemas
+  // data, setData, error, loading, request.current
   const [levelSchemas, , levelSchemasError, levelSchemasLoading, update] = useListLevelSchema(
     locale
   );
   const [entity, setEntity] = useState(null);
+
+  const defaultEntity = {
+    id: `LEVEL-ADD`,
+    text: `Add Level`,
+    parent: false,
+    type: 'button',
+    draggable: false,
+    data: {
+      editable: false,
+      parent: false,
+      action: 'add',
+    },
+  };
 
   useEffect(() => {
     if (editingEntity && editingEntity.active) {
@@ -51,7 +65,7 @@ export default function TreeAdmin({
   }, []);
 
   return (
-    <div className="tree_editWrapper flex-1 my-2 mb-2">
+    <div className="w-full">
       {(() => {
         if (levelSchemasError) {
           return <p>{levelSchemasError.message}</p>;
@@ -59,20 +73,21 @@ export default function TreeAdmin({
         if (!levelSchemas && levelSchemasLoading) {
           return <p>Loading ...</p>;
         }
+        // showButtons={!editingEntity.active}
         return (
           <Tree
             childrenLimit={1}
             entities={
               entity ? [...levelSchemas.filter(({ id }) => id !== entity.id), entity] : levelSchemas
             }
-            showButtons={!editingEntity.active}
+            showButtons
             onEdit={(node) => {
               onEdit(findEntity(node.id, levelSchemas));
             }}
             onDelete={(node) => {
               onDelete(findEntity(node.id, levelSchemas));
             }}
-            onAdd={(node) => onAdd(node.data.parent)}
+            onAdd={(node) => onAdd(node)}
             {...props}
           />
         );

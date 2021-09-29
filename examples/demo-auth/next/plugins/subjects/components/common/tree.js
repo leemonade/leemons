@@ -13,6 +13,7 @@ function Tree({
   onDelete = () => {},
   showButtons = true,
   childrenLimit = 0,
+  ...props
 }) {
   const [translations] = useTranslate({ keysStartsWith: 'plugins.subjects.tree.' });
   const t = tLoader('plugins.subjects.tree', translations);
@@ -93,7 +94,7 @@ function Tree({
           buttons.push({
             id: `center-ADD`,
             text: t('new.prefix.levelSchema'),
-            parent: 'center',
+            parent: 0,
             type: 'button',
             draggable: false,
             data: {
@@ -136,7 +137,7 @@ function Tree({
     ]);
   }, [entities, schemas, translations]);
 
-  return <UITree {...treeProps} onEdit={onEdit} onDelete={onDelete} onAdd={onAdd} />;
+  return <UITree {...treeProps} onEdit={onEdit} onDelete={onDelete} onAdd={onAdd} {...props} />;
 }
 
 Tree.propTypes = {

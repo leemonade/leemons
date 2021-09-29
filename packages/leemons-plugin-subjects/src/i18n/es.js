@@ -1,5 +1,3 @@
-const { actions } = require('react-table');
-
 module.exports = {
   common: {
     save: 'Guardar',
@@ -7,21 +5,25 @@ module.exports = {
     edit: 'Editar',
   },
   welcome_page: {
-    page_title: 'Bienvenido a Asignaturas',
+    page_title: 'Asignaturas',
+    page_subtitle:
+      'Desde aquí podrás gestionar todas las asignaturas que se imparten en el centro.',
     page_info: `<p>Se pueden crear grupos de asignaturas por áreas (por ejemplo, el bloque de matemáticas podría contener Preálgebra, Álgebra I, Geometría, Álgebra II y Trigonometría).</p>
       <p>Las asignaturas están relacionadas entre sí por su bloque de conocimientos, también pueden ser sucesivas (por ejemplo, para cursar Álgebra II es necesario haber aprobado Álgebra I).</p>`,
+    docs_btn: {
+      label: 'Ver la documentación',
+      url: '/',
+    },
     hide_info_label:
       'Ok, entendido. Cuando la configuración esté completa, no mostrar más esta información.',
     template_load: {
       title: 'Cargar plantilla',
-      description:
-        'Descarga el archivo básico y súbelo una vez completado (si necesitas más ayuda, puedes ver esta guía básica sobre el funcionamiento de nuestro sistema de estructuras).',
+      description: 'Descarga el archivo básico y súbelo una vez completado.',
       btn: 'Seleccionar archivo',
     },
     manual_load: {
       title: 'Creación manual',
-      description:
-        'Define tu propia estructura utilizando nuestro editor visual (aquí tiene algunos ejemplos de estructuras básicas que puede utilizar como plantilla).',
+      description: 'Define tu propia estructura utilizando nuestro editor visual.',
       btn: 'Crear árbol',
     },
   },
