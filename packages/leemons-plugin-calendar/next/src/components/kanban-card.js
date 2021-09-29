@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import { useMemo } from 'react';
 import { Avatar, Card } from 'leemons-ui';
+import moment from 'moment';
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
 
 export default function KanbanCard({
@@ -11,11 +11,13 @@ export default function KanbanCard({
   dragging,
   config,
   session,
+  columns,
   onClick = () => {},
 }) {
-  const calendar = _.find(config.calendars, { id: event.calendar });
-
-  if (!calendar) return null;
+  const { isDone, isArchived } = useMemo(() => _.find(columns, { id: event.data.column }), [
+    event,
+    columns,
+  ]);
 
   const percentaje = useMemo(() => {
     if (event.data && event.data.subtask) {
@@ -25,6 +27,9 @@ export default function KanbanCard({
     }
     return null;
   }, [event]);
+
+  const calendar = _.find(config.calendars, { id: event.calendar });
+  if (!calendar) return null;
 
   const getInitials = () => {
     const words = calendar.name.split(' ');
@@ -61,11 +66,10 @@ export default function KanbanCard({
     avatarType = 'avatar';
     avatarContent = getAvatar();
   }
-
   return (
     <Card
       className="shadow p-4 mt-2 mb-2 bg-white"
-      dragging={dragging}
+      dragging={dragging.toString()}
       onClick={() => onClick(event)}
     >
       <div>{event.title}</div>
@@ -96,5 +100,6 @@ KanbanCard.propTypes = {
   dragging: PropTypes.any,
   config: PropTypes.object,
   session: PropTypes.object,
+  columns: PropTypes.array,
   onClick: PropTypes.func,
 };

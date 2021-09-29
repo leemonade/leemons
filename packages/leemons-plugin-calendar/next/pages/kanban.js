@@ -10,7 +10,7 @@ import {
   saveKanbanEventOrdersRequest,
   updateEventRequest,
 } from '@calendar/request';
-import { Button } from 'leemons-ui';
+import { Button, Checkbox, FormControl } from 'leemons-ui';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
@@ -18,11 +18,13 @@ import hooks from 'leemons-hooks';
 import dynamic from 'next/dynamic';
 import '@asseinfo/react-kanban/dist/styles.css';
 import KanbanCard from '@calendar/components/kanban-card';
+import getCalendarNameWithConfigAndSession from '@calendar/helpers/getCalendarNameWithConfigAndSession';
 
 const Board = dynamic(() => import('@asseinfo/react-kanban'), { ssr: false });
 
 function Kanban() {
   const session = useSession({ redirectTo: goLoginPage });
+
   const [centers, setCenters] = useState([]);
   const [center, setCenter] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -33,6 +35,8 @@ function Kanban() {
   const [columns, setColumns] = useState([]);
   const [columnsT, setColumnsT] = useState([]);
   const [columnsEventsOrder, setColumnsEventsOrder] = useState({});
+  const [onlyShowCalendars, setOnlyShowCalendars] = useState([]);
+  const [showArchived, setShowArchived] = useState(false);
 
   const getKanbanColumnsEventsOrder = async () => {
     const { orders } = await listKanbanEventOrdersRequest(center.token);
@@ -54,10 +58,7 @@ function Kanban() {
     );
 
     setData({
-      calendars: _.map(calendars, (calendar, index) => {
-        calendars[index].showEvents = true;
-        return calendars[index];
-      }),
+      calendars,
       events,
       userCalendar,
       ownerCalendars,
@@ -96,6 +97,10 @@ function Kanban() {
   }, [columns]);
 
   useEffect(() => {
+    setOnlyShowCalendars([]);
+  }, [taskCalendars]);
+
+  useEffect(() => {
     if (data) {
       const eventsTasks = _.filter(data.events, { type: 'plugins.calendar.task' });
       const calendarIds = _.uniq(_.map(eventsTasks, 'calendar'));
@@ -104,10 +109,13 @@ function Kanban() {
         data.calendars,
         (calendar) => calendarIds.indexOf(calendar.id) >= 0
       );
-      // Calendarios de la seccion tareas
-      setTaskCalendars(calendars);
+      if (!_.isEqual(_.map(calendars, 'id'), _.map(taskCalendars, 'id'))) {
+        // Calendarios de la seccion tareas
+        setTaskCalendars(calendars);
+      }
 
       // Eventos
+      /*
       const events = [];
       const calendarsByKey = _.keyBy(calendars, 'id');
       _.forEach(data.events, (event) => {
@@ -115,7 +123,8 @@ function Kanban() {
           events.push(event);
         }
       });
-      setFilteredEvents(events);
+       */
+      setFilteredEvents(data.events);
     }
   }, [data]);
 
@@ -133,57 +142,91 @@ function Kanban() {
     toggleEventModal();
   };
 
+  const onCalendarsChange = (event, calendar) => {
+    const index = onlyShowCalendars.indexOf(calendar.id);
+    if (index >= 0) {
+      onlyShowCalendars.splice(index, 1);
+    } else {
+      onlyShowCalendars.push(calendar.id);
+    }
+    if (taskCalendars.length === onlyShowCalendars.length) {
+      onlyShowCalendars.splice(0, onlyShowCalendars.length);
+    }
+    setOnlyShowCalendars([...onlyShowCalendars]);
+  };
+
   const board = useMemo(() => {
     const cols = [];
     if (columns && columnsT) {
       const eventsByColumn = _.groupBy(filteredEvents, 'data.column');
       _.forEach(columns, (column) => {
-        let cards = [];
-        if (eventsByColumn[column.id] && columnsEventsOrder[column.id]) {
-          const cardsNoOrdered = [];
-          _.forEach(eventsByColumn[column.id], (event) => {
-            const index = columnsEventsOrder[column.id].indexOf(event.id);
-            if (index >= 0) {
-              cards[index] = event;
-            } else {
-              cardsNoOrdered.push(event);
-            }
-          });
-          cards = _.map(cardsNoOrdered, (c) => ({ ...c, notOrdered: true })).concat(cards);
-        } else {
-          cards = eventsByColumn[column.id] || [];
-        }
+        if (!column.isArchived || (column.isArchived && showArchived)) {
+          let cards = [];
+          if (eventsByColumn[column.id] && columnsEventsOrder[column.id]) {
+            const cardsNoOrdered = [];
+            _.forEach(eventsByColumn[column.id], (event) => {
+              const index = columnsEventsOrder[column.id].indexOf(event.id);
+              if (index >= 0) {
+                cards[index] = event;
+              } else {
+                cardsNoOrdered.push(event);
+              }
+            });
+            cards = _.map(cardsNoOrdered, (c) => ({ ...c, notOrdered: true })).concat(cards);
+          } else {
+            cards = eventsByColumn[column.id] || [];
+          }
 
-        cols.push({
-          id: column.id,
-          title: getColumnName(column.nameKey),
-          cards,
-        });
+          cards = _.filter(cards, (c) => !!c);
+
+          if (onlyShowCalendars.length) {
+            cards = _.filter(cards, (c) => onlyShowCalendars.indexOf(c.calendar) >= 0);
+          }
+
+          cols.push({
+            id: column.id,
+            title: getColumnName(column.nameKey),
+            cards,
+          });
+        }
       });
     }
     return { columns: cols };
-  }, [columns, columnsT, filteredEvents, columnsEventsOrder]);
+  }, [columns, columnsT, filteredEvents, columnsEventsOrder, onlyShowCalendars, showArchived]);
 
   const onCardDragEnd = async (event, from, to) => {
-    const index = _.findIndex(data.events, { id: event.id });
+    const calendar = _.find(data.ownerCalendars, {
+      id: _.isString(event.calendar) ? event.calendar : event.calendar.id,
+    });
+    const isOwner = !!calendar;
+    if (isOwner) {
+      const index = _.findIndex(data.events, { id: event.id });
 
-    const { cards } = _.find(board.columns, { id: to.toColumnId });
-    const cardEventIndex = _.findIndex(cards, { id: event.id });
-    if (cardEventIndex >= 0) cards.splice(cardEventIndex, 1);
-    cards.splice(to.toPosition, 0, event);
+      const { cards } = _.find(board.columns, { id: to.toColumnId });
+      const cardEventIndex = _.findIndex(cards, { id: event.id });
+      if (cardEventIndex >= 0) cards.splice(cardEventIndex, 1);
+      cards.splice(to.toPosition, 0, event);
 
-    columnsEventsOrder[to.toColumnId] = _.map(cards, 'id');
+      columnsEventsOrder[to.toColumnId] = _.map(cards, 'id');
 
-    if (index >= 0 && event.data.column !== to.toColumnId) {
-      data.events[index].data.column = to.toColumnId;
-      updateEventRequest(center.token, event.id, { data: data.events[index].data });
+      if (index >= 0 && event.data.column !== to.toColumnId) {
+        data.events[index].data.column = to.toColumnId;
+        updateEventRequest(center.token, event.id, { data: data.events[index].data });
+      }
+
+      saveKanbanEventOrdersRequest(center.token, to.toColumnId, columnsEventsOrder[to.toColumnId]);
+
+      setData({ ...data });
+      setColumnsEventsOrder({ ...columnsEventsOrder });
     }
-
-    saveKanbanEventOrdersRequest(center.token, to.toColumnId, columnsEventsOrder[to.toColumnId]);
-
-    setData({ ...data });
-    setColumnsEventsOrder({ ...columnsEventsOrder });
   };
+
+  const disableCardDrag = useMemo(() => {
+    if (onlyShowCalendars && onlyShowCalendars.length) {
+      return true;
+    }
+    return false;
+  }, [onlyShowCalendars]);
 
   return (
     <div className="bg-primary-content">
@@ -209,8 +252,21 @@ function Kanban() {
       </Button>
       <div>
         {taskCalendars.map((calendar) => (
-          <div key={calendar.id}>{calendar.name}</div>
+          <FormControl
+            key={calendar.id}
+            label={getCalendarNameWithConfigAndSession(calendar, data, session)}
+            labelPosition="right"
+          >
+            <Checkbox
+              checked={onlyShowCalendars.indexOf(calendar.id) >= 0}
+              onChange={(e) => onCalendarsChange(e, calendar)}
+            />
+          </FormControl>
         ))}
+
+        <FormControl label={'Mostrar archivadas'} labelPosition="right">
+          <Checkbox checked={showArchived} onChange={() => setShowArchived(!showArchived)} />
+        </FormControl>
       </div>
 
       {process.browser && board ? (
@@ -222,12 +278,15 @@ function Kanban() {
           allowRemoveCard={false}
           allowAddCard={false}
           onCardDragEnd={onCardDragEnd}
+          disableCardDrag={disableCardDrag}
           renderCard={(event, options) => (
             <KanbanCard
+              key={event.id}
               event={event}
               {...options}
               config={data}
               session={session}
+              columns={columns}
               onClick={onClickCard}
             />
           )}
