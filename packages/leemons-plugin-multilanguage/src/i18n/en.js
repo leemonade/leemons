@@ -3,6 +3,8 @@ module.exports = {
     unknown_error: 'Unknown error',
     required: 'The field is required',
     email: 'Not a valid email',
+    phone: 'Invalid phone',
+    numbers: 'Only numbers are allowed',
     minLength: 'The field cannot be less than {limit} characters',
     maxLength: 'The field cannot be longer than {limit} characters',
     minItems: 'It must have a minimum of {limit} elements',
@@ -11,7 +13,7 @@ module.exports = {
       email: 'Not a valid email',
       uri: 'Not a valid url',
       numbers: 'Only numbers are allowed',
-      phone: 'Invalid phone (+xx xxxxxxxxx)',
+      phone: 'Invalid phone',
     },
   },
   request_errors: {
@@ -23,6 +25,7 @@ module.exports = {
     cancel: 'Cancel',
     save: 'Save',
     edit: 'Edit',
+    delete: 'Delete',
   },
   form_field_types: {
     view: 'View',

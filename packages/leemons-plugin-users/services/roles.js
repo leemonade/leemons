@@ -14,4 +14,5 @@ module.exports = {
   update: roles.update,
   addPermissionMany,
   removePermissionsByName: roles.removePermissionsByName,
+  getRoleProfile: roles.getRoleProfile,
 };

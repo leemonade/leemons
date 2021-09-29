@@ -2,6 +2,14 @@
 
 module.exports = [
   /**
+   * Init config
+   * */
+  {
+    path: '/init/status',
+    method: 'GET',
+    handler: 'init.status',
+  },
+  /**
    * Users
    * */
   {

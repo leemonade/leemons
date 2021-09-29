@@ -27,9 +27,13 @@ async function addCustomForUser(
 ) {
   const locales = translations();
 
+  const profileId = await leemons
+    .getPlugin('users')
+    .services.roles.getRoleProfile(userSession.userAgents[0].role);
+
   // eslint-disable-next-line no-param-reassign
   data.key = leemons.plugin.prefixPN(
-    `user.${userSession.id}.${data.key}.${global.utils.randomString()}`
+    `user.${userSession.id}.${profileId.replaceAll('-', '')}.${data.key}`
   );
 
   return withTransaction(

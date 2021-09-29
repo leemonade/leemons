@@ -1,0 +1,72 @@
+/* :> */
+@layer components {
+  /* <: */
+
+  .details {
+    @apply  border-b border-base-300;
+    @apply  p-2 ;
+    .details {
+      @apply pl-10 pr-0 py-3;
+    }
+    .summary {
+      @apply  pl-4 text-gray-300;
+      @apply cursor-pointer relative list-none;
+      &-counter {
+        @apply  float-right;
+        @apply text-gray-200 font-inter;
+      }
+      &::-webkit-details-marker {
+        display:none;
+      }
+      &::before {
+        content: '';
+        @apply absolute top-1 -left-1;
+        @apply border-solid border-transparent;
+        @apply rotate-0 ;
+        border-width:6px 8px 6px 8px;
+        transform-origin: .2rem 50%;
+        transition: .25s transform ease;
+        border-left-color: currentColor;
+      }
+    }
+
+    &[open] {
+      @apply border-b-0;
+      > .summary {
+        @apply text-secondary;
+        &:before {
+          @apply rotate-90;
+          transform: rotate(90deg);
+        }
+      } 
+    }
+
+    &.details-table[open] {
+      @apply bg-gray-10 rounded-sm;
+      @apply mt-2 mr-1 mb-1 ; 
+      @apply pt-2 pr-3 pb-1 pl-5; 
+      @apply w-full relative -right-4;
+      .summary {
+        @apply relative top-1 z-30;
+        .summary-counter {
+          @apply bg-white rounded-full px-3 py-1;
+          @apply relative -right-2;
+        }
+      }  
+      .table {
+        @apply relative -top-11 -mb-4;
+          thead th {
+            @apply text-secondary-200 px-3 py-6; 
+          }
+          tbody {
+            filter: drop-shadow(0px 10px 36px rgba(35, 43, 60, 0.05)) drop-shadow(0px 2px 0px rgba(51, 63, 86, 0.05));
+          }
+      }
+    }
+
+
+
+  }
+  /* :> */
+}
+/* <: */

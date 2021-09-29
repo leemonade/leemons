@@ -25,7 +25,7 @@ module.exports = {
    * @return {string}
    * */
   getTranslationKey: (locationName, pluginName, key) => {
-    const _pluginName = 'plugins.dataset';
+    const _pluginName = 'plugins.classroom';
     if (key) return `${_pluginName}.${locationName}.${pluginName}.${key}`;
     return `${_pluginName}.${locationName}.${pluginName}`;
   },

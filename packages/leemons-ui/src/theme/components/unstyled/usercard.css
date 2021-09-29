@@ -1,0 +1,41 @@
+/* :> */
+@layer components {
+  /* <: */
+  .user-card {
+    @apply px-3 py-4 w-full;
+    &.minimal {
+      @apply flex overflow-hidden items-center gap-2 p-1;
+    }
+
+    .basic {
+      &.horizontal {
+        @apply grid w-full items-start;
+        grid-template-columns: 4rem auto;
+        grid-template-rows: auto;
+
+        dd,
+        dt {
+          &.avatar-container {
+            grid-column: 1;
+            grid-row: 1 / span 3;
+          }
+        }
+
+        .user-card-email {
+          @apply mt-2;
+        }
+      }
+    }
+    .vertical {
+      @apply text-center;
+    }
+    .msg {
+      @apply ml-16;
+    }
+  }
+  .react-autosuggest__suggestion .user-card {
+    @apply py-2 px-4;
+  }
+  /* :> */
+}
+/* <: */

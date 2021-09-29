@@ -1,25 +1,45 @@
 import * as _ from 'lodash';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Router from 'next/router';
 import getInnerText from '../../helpers/getInnerText';
 import DndItem from '../dnd/dndItem';
+import hooks from 'leemons-hooks';
 
 export default function MainMenuDropItem({ children, className, item }) {
-  const goodChildren = _.isFunction(children) ? children({ isDragging: false }) : children;
+  const [isEditMode, setEditMode] = useState(false);
+  const goodChildren = _.isFunction(children)
+    ? children({ isDragging: false, canDrag: false })
+    : children;
 
   const _item = {
     ...item,
     menuKey: item.menuKey || 'plugins.menu-builder.main',
-    url: item.url || Router?.router?.route,
+    url: item.url || Router?.router?.asPath,
     label: item.label || getInnerText(goodChildren),
   };
 
-  return (
-    <DndItem className={className} type={'menu-item'} item={_item} emptyLayout={true}>
-      {children}
-    </DndItem>
-  );
+  const onEditModeChange = ({ args }) => {
+    setEditMode(args[0]);
+  };
+
+  useEffect(() => {
+    hooks.addAction('menu-builder:edit-mode', onEditModeChange);
+    hooks.fireEvent('menu-builder:emit-edit-mode');
+    return () => {
+      hooks.removeAction('menu-builder:edit-mode', onEditModeChange);
+    };
+  });
+
+  if (isEditMode) {
+    return (
+      <DndItem className={className} type={'menu-item'} item={_item} emptyLayout={true}>
+        {children}
+      </DndItem>
+    );
+  }
+
+  return <>{goodChildren}</>;
 }
 
 MainMenuDropItem.propTypes = {

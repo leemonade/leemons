@@ -9,13 +9,8 @@ async function events(isInstalled) {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
     init();
   });
-  if (!isInstalled) {
-    const loadServices = {
-      dataset: false,
-      multilanguage: false,
-      users: false,
-    };
 
+  if (!isInstalled) {
     const initUsers = async () => {
       const actionsService = require('./src/services/actions');
       const permissionService = require('./src/services/permissions');
@@ -35,20 +30,19 @@ async function events(isInstalled) {
     };
 
     // Dataset locations
-    leemons.events.once('plugins.dataset:pluginDidLoadServices', async () => {
-      if (loadServices.multilanguage) initDataset();
-      loadServices.dataset = true;
-    });
-    leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
-      if (loadServices.dataset) initDataset();
-      if (loadServices.users) initUsers();
-      loadServices.multilanguage = true;
-    });
+    leemons.events.once(
+      ['plugins.multilanguage:pluginDidLoad', 'plugins.dataset:pluginDidLoadServices'],
+      async () => {
+        await initDataset();
+      }
+    );
 
-    leemons.events.once('plugins.users:pluginDidLoad', async () => {
-      if (loadServices.multilanguage) initUsers();
-      loadServices.users = true;
-    });
+    leemons.events.once(
+      ['plugins.users:pluginDidLoad', 'plugins.multilanguage:pluginDidLoad'],
+      async () => {
+        await initUsers();
+      }
+    );
 
     // Emails
     leemons.events.once('plugins.emails:pluginDidLoadServices', async () => {
@@ -94,9 +88,23 @@ async function events(isInstalled) {
     });
 
     leemons.events.once('plugins.menu-builder:init-main-menu', async () => {
-      await addMain();
+      try {
+        await addMain();
+        leemons.events.emit('init-menu');
+        await Promise.all([addWelcome(), addProfiles(), addUserData()]);
+        leemons.events.emit('init-submenu');
+      } catch (e) {
+        console.error('Error users menu', e);
+      }
+    });
+  } else {
+    leemons.events.once('plugins.users:pluginDidInit', async () => {
+      leemons.events.emit('init-actions');
+      leemons.events.emit('init-permissions');
+      leemons.events.emit('init-dataset-locations');
+      leemons.events.emit('init-email-reset-password');
+      leemons.events.emit('init-emails');
       leemons.events.emit('init-menu');
-      await Promise.all([addWelcome(), addProfiles(), addUserData()]);
       leemons.events.emit('init-submenu');
     });
   }

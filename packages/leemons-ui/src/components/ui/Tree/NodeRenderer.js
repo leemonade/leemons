@@ -1,14 +1,13 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import cln from 'classnames';
-import { TrashIcon } from '@heroicons/react/solid';
 import { PlusCircleIcon } from '@heroicons/react/outline';
-import Button from '../Button';
 import { useDragOver } from '@leemonade/react-dnd-treeview';
+import Button from '../Button';
+import NodeActions from './NodeActions';
 
-export const NodeRenderer = ({
+export default function NodeRenderer({
   node,
-  treeData,
-  setTreeData,
   depth,
   isOpen,
   onToggle,
@@ -17,15 +16,16 @@ export const NodeRenderer = ({
   allowMultipleOpen,
   allowDragParents,
   onAdd,
-  onDelete,
+  onSelect,
   hasChild,
   lowerSiblingsCount,
   hasOpenSiblings,
   siblingIndex,
   ...otherProps
-}) => {
+}) {
   const [showButton, setShowButton] = useState(false);
-  const { droppable, data, type } = node;
+  const [hover, setHover] = useState(false);
+  const { type } = node;
   const isButton = type === 'button';
   const indent = (isButton ? Math.max(0, depth - 1) : depth) * 24 + (!hasChild ? 10 : 0);
   const dragOverProps =
@@ -42,29 +42,30 @@ export const NodeRenderer = ({
 
   // ----------------------------------------------------------------------
   // HANDLERS
+
   const handleToggle = (e) => {
     e.stopPropagation();
     if (hasChild) {
       onToggle(node.id);
     }
   };
+  const handleSelect = (e) => {
+    e.stopPropagation();
+    if (node.data?.action !== 'add') {
+      onSelect(node, () => handleToggle(e));
+    }
+  };
 
   const handleOnAdd = () => {
     if (onAdd && node.data?.action === 'add') {
-      onAdd(node.parent);
+      onAdd(node);
     }
   };
-
-  const handleOnDelete = () => {
-    if (onDelete) {
-      onDelete(node.id);
-    }
-  };
-
   return (
     <div
       className={cln('tree-node relative flex items-center h-8 rounded group', {
-        'bg-white hover:bg-gray-10 cursor-pointer': hasChild && !isSelected,
+        'bg-whitecursor-pointer': hasChild && !isSelected,
+        'bg-gray-10': hover,
         'border border-transparent hover:border-secondary pl-2':
           !hasChild && !isSelected && !isButton,
         'bg-primary-100 border border-dashed border-primary pl-2': isSelected,
@@ -75,12 +76,17 @@ export const NodeRenderer = ({
         'opacity-100': isButton && showButton,
       })}
       style={{ marginLeft: indent }}
-      onClick={handleToggle}
+      onClick={handleSelect}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      onFocus={() => setHover(true)}
+      onBlur={() => setHover(false)}
       {...dragOverProps}
     >
       {/* TOGGLE ARROW */}
       {hasChild && !isSelected && (
         <div
+          onClick={handleToggle}
           className={`flex items-center justify-center group cursor-pointer transition-transform transform ease-linear h-6 w-8 ${
             isOpen ? 'rotate-0' : '-rotate-90'
           }`}
@@ -154,18 +160,25 @@ export const NodeRenderer = ({
         </div>
       )}
 
-      {/* DELETE BUTTON */}
-      {!hasChild && !isButton && !isSelected && (
-        <Button
-          color="secondary"
-          circle
-          text
-          className="opacity-20 group-hover:opacity-100 btn-xs ml-4"
-          onClick={handleOnDelete}
-        >
-          <TrashIcon className="w-4 h-4" />
-        </Button>
-      )}
+      {/* ACTION BUTTONS */}
+      <NodeActions node={node} {...otherProps} hover={hover} />
     </div>
   );
+}
+
+NodeRenderer.propTypes = {
+  node: PropTypes.object,
+  isOpen: PropTypes.bool,
+  isSelected: PropTypes.bool,
+  allowDropOutside: PropTypes.bool,
+  allowMultipleOpen: PropTypes.bool,
+  allowDragParents: PropTypes.bool,
+  hasChild: PropTypes.bool,
+  hasOpenSiblings: PropTypes.bool,
+  depth: PropTypes.number,
+  lowerSiblingsCount: PropTypes.number,
+  siblingIndex: PropTypes.number,
+  onToggle: PropTypes.func,
+  onAdd: PropTypes.func,
+  onSelect: PropTypes.func,
 };

@@ -1,0 +1,39 @@
+/* :> */
+@layer components {
+  /* <: */
+  .react-autosuggest__container {
+    position: relative;
+  }
+
+  .react-autosuggest__input {
+    @apply transition duration-200 ease-in-out flex-shrink;
+    @apply px-3 h-10 text-sm leading-loose w-full;
+    &:focus {
+      @apply outline-none;
+    }
+  }
+
+  .react-autosuggest__suggestions-container {
+    display: none;
+  }
+
+  .react-autosuggest__container--open .react-autosuggest__suggestions-container {
+    @apply block absolute top-10 w-full z-50;
+  }
+
+  .react-autosuggest__suggestions-list {
+    margin: 0;
+    padding: 0;
+  }
+
+  .react-autosuggest__suggestion {
+    cursor: pointer;
+  }
+
+  .suggestion-content {
+    display: flex;
+    align-items: center;
+  }
+  /* :> */
+}
+/* <: */

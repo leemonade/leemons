@@ -26,6 +26,7 @@ const hasPermission = require('./hasPermission');
 const hasPermissionCTX = require('./hasPermissionCTX');
 const removeCustomPermission = require('./removeCustomPermission');
 const { searchUserAgents } = require('./searchUserAgents');
+const { getUserAgentCenter } = require('./getUserAgentCenter');
 
 module.exports = {
   init,
@@ -61,4 +62,6 @@ module.exports = {
   profileToken,
   hasPermission,
   removeCustomPermission,
+
+  getUserAgentCenter,
 };

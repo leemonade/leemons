@@ -9,10 +9,10 @@ function tLoader(prefix, translations) {
       translations.items &&
       Object.prototype.hasOwnProperty.call(translations.items, tKey)
     ) {
-      let item = _.get(translations.items, tKey);
+      let item = _.get(translations.items, tKey.toLowerCase());
       if (_.isObject(replaces)) {
-        _.forIn(replaces, (value, key) => {
-          item = _.replace(item, `{${key}}`, value);
+        _.forIn(replaces, (value, _key) => {
+          item = _.replace(item, `{${_key}}`, value);
         });
       }
       return item;
@@ -21,4 +21,4 @@ function tLoader(prefix, translations) {
   };
 }
 
-module.exports = tLoader;
+export default tLoader;

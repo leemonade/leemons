@@ -114,12 +114,25 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
             col = table.bigInteger(name);
             break;
 
+          case 'number':
           case 'float':
             col = table.float(name, properties.precision, properties.scale);
             break;
 
           case 'decimal':
             col = table.decimal(name, properties.precision, properties.scale);
+            break;
+
+          case 'date':
+            col = table.date(name);
+            break;
+
+          case 'time':
+          case 'datetime':
+          case 'timestamp':
+            const options = {};
+            if (!_.isNil(properties.precision)) options.precision = properties.precision;
+            col = table[properties.type](name, options);
             break;
 
           case 'binary':

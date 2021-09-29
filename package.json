@@ -4,6 +4,7 @@
   "description": "The powerful flexible friendly Learning Experience Platform you’re waiting for",
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
+    "@types/jest": "^26.0.23",
     "eslint": "^7.21.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^8.1.0",
@@ -21,8 +22,7 @@
     "stylelint": "^13.12.0",
     "stylelint-config-idiomatic-order": "^8.1.0",
     "stylelint-config-standard": "^21.0.0",
-    "wait-on": "^5.2.1",
-    "@types/jest": "^26.0.23"
+    "wait-on": "^5.2.1"
   },
   "workspaces": [
     "packages/*",
@@ -70,5 +70,6 @@
       "pre-commit": "npm run lint -s",
       "pre-push": "npm run lint -s"
     }
-  }
+  },
+  "dependencies": {}
 }

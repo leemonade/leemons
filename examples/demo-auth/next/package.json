@@ -23,11 +23,14 @@
     "tailwindcss": "^2.1.2",
     "@leemons/mvp-template": "file:dependencies/mvp-template",
     "@leemons/multilanguage": "file:dependencies/multilanguage",
-    "@leemons/classroom": "file:dependencies/classroom",
+    "@leemons/families-emergency-numbers": "file:dependencies/families-emergency-numbers",
+    "@leemons/package-manager": "file:dependencies/package-manager",
     "@leemons/families": "file:dependencies/families",
     "@leemons/dataset": "file:dependencies/dataset",
     "@leemons/menu-builder": "file:dependencies/menu-builder",
-    "@leemons/users": "file:dependencies/users"
+    "@leemons/users": "file:dependencies/users",
+    "@leemons/classroom": "file:dependencies/classroom",
+    "@leemons/calendar": "file:dependencies/calendar"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.6",

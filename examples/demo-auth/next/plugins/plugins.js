@@ -5,14 +5,17 @@ module.exports = {
 		'emails',
 		'common',
 		'assets',
-		'dataset',
 		'multilanguage',
+		'dataset',
 		'users',
+		'package-manager',
 		'mvp-template',
 		'menu-builder',
+		'families-emergency-numbers',
 		'families',
 		'dataset-test',
 		'classroom',
+		'calendar',
 		'provider-emails-amazon-ses'
   ],
   frontPlugins: [{
@@ -41,9 +44,24 @@ module.exports = {
     load: require('@users/index.js')
   },
 	{
+    name: 'package-manager',
+    version: '0.0.1',
+    load: require('@package-manager/index.js')
+  },
+	{
+    name: 'families-emergency-numbers',
+    version: '0.0.1',
+    load: require('@families-emergency-numbers/index.js')
+  },
+	{
     name: 'families',
     version: '0.0.1',
     load: require('@families/index.js')
+  },
+	{
+    name: 'calendar',
+    version: '0.0.1',
+    load: require('@calendar/index.js')
   },
 	{
     name: 'provider-emails-amazon-ses',

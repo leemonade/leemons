@@ -8,6 +8,12 @@
       /* because safari */
       position: -webkit-sticky;
     }
+    tr td {
+      @apply relative;
+    }
+    thead.unseen th {
+      @apply p-0;
+    }
   }
   /* :> */
 }

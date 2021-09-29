@@ -1,0 +1,79 @@
+/* :> */
+@layer utilities {
+  /* <: */
+  .table {
+    thead {
+      @apply border-b border-base-200;
+      th {
+        @apply bg-transparent rounded-none;
+        @apply normal-case text-secondary-600;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+          Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+      }
+    }
+
+    th,
+    td {
+      @apply bg-transparent;
+      .checkbox {
+        & ~ .checkbox-mark {
+          @apply w-4 h-4;
+          &:before {
+            width: 6px;
+            height: 12px;
+          }
+        }
+      }
+      .label {
+        @apply p-0;
+      }
+    }
+
+    tr {
+      @apply border-b border-base-200;
+
+      td {
+        @apply text-sm text-secondary-500;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+          Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+
+        &.selected {
+          @apply bg-primary-100;
+          background-clip: padding-box; /* bug border disappear */
+        }
+        /* clase para centrar elementos dentro de un div de la tabla */
+        .center {
+          @apply w-full inline-flex justify-center items-center text-center;
+        }
+      }
+    }
+
+    &.table-list {
+      tr {
+        @apply border-gray-20;
+        td {
+          @apply pt-1 pb-0 px-3 bg-white align-middle;
+          background-clip: padding-box;
+        }
+        &.is-error {
+          @apply border border-solid;
+          --tw-border-opacity: 1;
+          border-color: rgba(254, 202, 202, var(--tw-border-opacity));
+
+          td {
+            @apply border-t border-solid;
+            --tw-bg-opacity: 1;
+            background-color: rgba(254, 242, 242, var(--tw-bg-opacity));
+            --tw-border-opacity: 1;
+            border-color: rgba(254, 202, 202, var(--tw-border-opacity));
+          }
+        }
+      }
+      .th {
+        @apply px-3;
+      }
+    }
+  }
+  /* :> */
+}
+/* <: */

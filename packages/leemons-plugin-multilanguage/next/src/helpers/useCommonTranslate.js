@@ -8,4 +8,4 @@ function useCommonTranslate(_key) {
   return { t };
 }
 
-module.exports = useCommonTranslate;
+export default useCommonTranslate;

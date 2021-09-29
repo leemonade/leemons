@@ -54,14 +54,17 @@
   ul > li:before {
     background-color: hsl(var(--b-c) / 40%);
   }
-  thead {
-    border-bottom-color: hsl(var(--b-c) / 30%);
-  }
-  tbody tr {
-    border-bottom-color: hsl(var(--b-c) / 8%);
-  }
+
   figure figcaption {
     font-size: 0.8rem;
     color: hsl(var(--b-c));
+  }
+}
+.page-description {
+  @apply text-base text-secondary mt-2;
+}
+.page-title {
+  &-l2 {
+    @apply text-2xl text-secondary font-semibold;
   }
 }

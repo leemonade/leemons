@@ -9,7 +9,11 @@ async function events(isInstalled) {
       ['plugins.users:init-menu', 'plugins.families:init-permissions'],
       async () => {
         for (let i = 0, l = constants.menuItems.length; i < l; i++) {
-          await add(constants.menuItems[i].config, constants.menuItems[i].permissions);
+          await add(
+            constants.menuItems[i].config,
+            constants.menuItems[i].permissions,
+            constants.menuItems[i].isCustomPermission
+          );
         }
         leemons.events.emit('init-menu');
       }
@@ -33,6 +37,12 @@ async function events(isInstalled) {
         leemons.events.emit('init-dataset-locations');
       }
     );
+  } else {
+    leemons.events.once('plugins.families:pluginDidInit', async () => {
+      leemons.events.emit('init-menu');
+      leemons.events.emit('init-permissions');
+      leemons.events.emit('init-dataset-locations');
+    });
   }
 }
 

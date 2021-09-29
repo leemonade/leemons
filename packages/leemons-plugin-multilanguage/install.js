@@ -1,10 +1,10 @@
-const _ = require('lodash');
-const locale = require('locale-codes');
+// const _ = require('lodash');
+// const locale = require('locale-codes');
 
-const localesTable = leemons.query('plugins_multilanguage::locales');
+// const localesTable = leemons.query('plugins_multilanguage::locales');
 
-const { isValidLocaleCode } = require('./src/validations/locale');
-const Locales = require('./src/services/locale');
+// const { isValidLocaleCode } = require('./src/validations/locale');
+// const Locales = require('./src/services/locale');
 
 async function install() {
   /*

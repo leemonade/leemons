@@ -1,0 +1,18 @@
+/* :> */
+@layer utilities {
+  /* <: */
+  .table {
+   @apply w-full;
+   thead {
+        th {
+           @apply px-0 pt-7 pb-4;
+        }
+    }  
+    tr td {
+           @apply px-0;
+        }
+    
+  }
+  /* :> */
+}
+/* <: */

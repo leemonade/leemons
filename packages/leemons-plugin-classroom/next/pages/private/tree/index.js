@@ -1,177 +1,102 @@
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import tLoader from '@multilanguage/helpers/tLoader';
-import useTranslate from '@multilanguage/useTranslate';
+import React, { useState } from 'react';
+import { withLayout } from '@layout/hoc';
+import { PlusCircleIcon } from '@heroicons/react/outline';
+import Tree from '@classroom/components/wip-dev/pages/tree/treeAdmin';
+import TemplatePanel from '@classroom/components/wip-dev/pages/tree/templatePanel';
+import EditLevel from '@classroom/components/wip-dev/pages/tree/editLevel';
+import { PageHeader, Button, Modal, useModal } from 'leemons-ui';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
-import { withLayout } from '@layout/hoc';
-import {
-  PageContainer,
-  PageHeader,
-  Card,
-  FormControl,
-  Checkbox,
-  Button,
-  Select,
-  Tree,
-  useTree,
-} from 'leemons-ui';
-import prefixPN from '@classroom/helpers/prefixPN';
-import hooks from 'leemons-hooks';
-import { CenterService } from '@users/services';
+import tLoader from '@multilanguage/helpers/tLoader';
+import useTranslate from '@multilanguage/useTranslate';
 
-// Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de gestionar Clases
 function TreePage() {
-  useSession({ redirectTo: goLoginPage });
-
-  const [translations] = useTranslate({ keysStartsWith: prefixPN('') });
-  const t = tLoader(prefixPN('tree_page'), translations);
-  const tc = tLoader(prefixPN('common'), translations);
-
-  const TREE_DATA = [
-    {
-      id: 'stage',
-      text: 'Etapa',
-      parent: 0,
-    },
-    {
-      id: 'stage-ADD',
-      text: tc('add_level'),
-      type: 'button',
-      parent: 'stage',
-    },
-    {
-      id: 'level',
-      text: 'Curso',
-      parent: 'stage',
-    },
-    {
-      id: 'level-ADD',
-      text: tc('add_level'),
-      type: 'button',
-      parent: 'level',
-    },
-    {
-      id: 'group',
-      text: 'Grupo',
-      parent: 'level',
-    },
-  ];
-
-  // --------------------------------------------------------
-  // TREE
-  const [initTree, setInitTree] = useState(false);
-  const [initialOpen, setInitialOpen] = useState([]);
-  const treeProps = useTree();
-
-  // --------------------------------------------------------
-  // INITIAL DATA
-
-  useEffect(async () => {
-    let mounted = true;
-    // We only need to know if there are multiple centers
-    const { data } = await CenterService.listCenters({ page: 0, size: 2 });
-    if (mounted && data && translations?.items) {
-      const tempTreeData = [];
-      if (Array.isArray(data.items) && data.items.length > 1) {
-        // MultiCenter:  display organization and center in separate levels
-        tempTreeData.push({ id: 'organization', text: tc('organization'), parent: 0 });
-        tempTreeData.push({ id: 'center', text: tc('center'), parent: 'organization' });
-      } else {
-        // MonoCenter:  display organization and center in the same level
-        tempTreeData.push({
-          id: 'organization/center',
-          text: `${tc('organization')} / ${tc('center')}`,
-          parent: 0,
-        });
+  const session = useSession({ redirectTo: goLoginPage });
+  const [showEdit, toggleShowEdit] = useState({ active: false });
+  const [showDelete, setShowDelete] = useState({ active: false });
+  const [updateEntities, setUpdateEntities] = useState(null);
+  const [translations] = useTranslate({
+    keysStartsWith: ['plugins.classroom.tree_page', 'plugins.classroom.delete_modal'],
+  });
+  const t = tLoader('plugins.classroom.tree_page', translations);
+  const tdm = tLoader('plugins.classroom.delete_modal', translations);
+  const [modal, toggleModal] = useModal({
+    animated: true,
+    title: tdm('title'),
+    message: tdm('message'),
+    cancelLabel: tdm('actions.cancel'),
+    actionLabel: tdm('actions.accept'),
+    onAction: () => {
+      if (showEdit.active && showEdit.entity.id === showDelete.entity.id) {
+        toggleShowEdit({ active: false });
       }
 
-      const lastParentID = tempTreeData[tempTreeData.length - 1].id;
-      tempTreeData.push({
-        id: `${lastParentID}-ADD`,
-        text: tc('add_level'),
-        parent: lastParentID,
-        type: 'button',
-        data: {
-          action: 'add',
-        },
-      });
-
-      const [firstElement, ...treeData] = TREE_DATA;
-      tempTreeData.push({ ...firstElement, parent: lastParentID });
-      tempTreeData.push(...treeData);
-      setInitialOpen([`${lastParentID}-ADD`]);
-      treeProps.setTreeData(tempTreeData);
-      setInitTree(true);
+      leemons
+        .api(
+          { url: `classroom/levelschema/${showDelete.entity.id}`, allAgents: true },
+          { method: 'DELETE' }
+        )
+        .then(updateEntities.update);
+      // TODO: Show alert
+    },
+  });
+  const toggleDelete = (entity) => {
+    if (!entity) {
+      setShowDelete({ active: false });
+      if (modal.isShown) {
+        toggleModal();
+      }
+    } else {
+      setShowDelete({ active: true, entity });
+      toggleModal();
     }
-
-    return () => {
-      mounted = false;
-    };
-  }, [translations]);
-
+  };
   return (
     <>
-      <div className="flex flex-col h-full">
-        <PageHeader title={t('page_title')} />
-        <PageContainer>
-          <div className="page-description" dangerouslySetInnerHTML={{ __html: t('page_info') }} />
-        </PageContainer>
-
-        <div className="bg-gray-20 text-sm flex flex-1">
-          <PageContainer>
-            <div className="flex space-x-5">
-              {/* TREE ADMIN */}
-              <div className="flex flex-1">
-                <Card className="bg-white w-full h-full p-8">
-                  <div className="h-full">
-                    {initTree && (
-                      <Tree
-                        {...treeProps}
-                        initialOpen={initialOpen}
-                        onAdd={(parentId) => console.log(parentId)}
-                        onDelete={(nodeId) => console.log(nodeId)}
-                      />
-                    )}
-                  </div>
-                </Card>
-              </div>
-              {/* TEMPLATE PANEL */}
-              <div className="w-72">
-                <Card className="bg-white p-8">
-                  <div className="text-secondary-400 text-xl py-2 leading-tight">
-                    {t('from_template_info.title')}
-                  </div>
-                  <div className="page-description py-2">{t('from_template_info.description')}</div>
-                  <div className="py-2">
-                    <Select outlined className="w-full">
-                      <option>Spain</option>
-                    </Select>
-                  </div>
-                  <div>
-                    <Select outlined className="w-full" defaultValue="none">
-                      <option disabled value="none">
-                        {tc('select_template')}
-                      </option>
-                    </Select>
-                  </div>
-                  <div className="my-4">
-                    <Button color="primary" rounded className="btn-sm w-full">
-                      {t('from_template_info.btn')}
-                    </Button>
-                  </div>
-                  <div className="page-description">
-                    {t('from_template_info.hide_info.description')}
-                  </div>
-                  <div>
-                    <Button color="primary" link className="btn-sm px-0">
-                      {t('from_template_info.hide_info.btn')}
-                    </Button>
-                  </div>
-                </Card>
-              </div>
-            </div>
-          </PageContainer>
+      <Modal {...modal} />
+      <div className="bg-secondary-content  edit-mode w-full h-screen overflow-auto grid">
+        <div className="bg-primary-content w-full">
+          <PageHeader separator={false} title={t('page_title')} className="pb-0"></PageHeader>
+          <p className="page-description text-secondary pb-12 max-w-screen-xl w-full mx-auto px-6">
+            {t('page_info.pre')}{' '}
+            <PlusCircleIcon alt="add button" className={`w-5 h-5 inline text-primary `} />{' '}
+            {t('page_info.post')}
+          </p>
+        </div>
+        <div className="flex max-w-screen-xl w-full mx-auto px-6">
+          {/* LevelSchemas tree */}
+          <Tree
+            editingEntity={showEdit}
+            locale={session?.locale}
+            setUpdate={(update) => setUpdateEntities({ update })}
+            onDelete={toggleDelete}
+            onEdit={(entity) => {
+              if (entity !== showEdit.entity) {
+                toggleShowEdit({ active: true, entity, parent: entity.parent });
+              }
+            }}
+            onAdd={(parent) => {
+              if (showEdit.parent !== parent || showEdit.entity) {
+                toggleShowEdit({ active: true, entity: null, parent });
+              }
+            }}
+          />
+          {showEdit.active ? (
+            // Edit LevelSchema form
+            <EditLevel
+              onClose={() => toggleShowEdit({ active: false })}
+              locale={session?.locale}
+              entity={showEdit.entity}
+              setEntity={(state) => toggleShowEdit({ active: showEdit.active, ...state })}
+              parent={showEdit.parent}
+              onUpdate={() => {
+                updateEntities.update();
+              }}
+            />
+          ) : (
+            // Show templates panel
+            <TemplatePanel />
+          )}
         </div>
       </div>
     </>
