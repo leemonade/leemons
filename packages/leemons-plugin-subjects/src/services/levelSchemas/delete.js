@@ -2,7 +2,6 @@ const getSessionPermissions = require('../permissions/getSessionPermissions');
 
 const tables = {
   levelSchemas: leemons.query('plugins_subjects::levelSchemas'),
-  assignableProfiles: leemons.query('plugins_subjects::levelSchemas_profiles'),
 };
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 
@@ -33,7 +32,6 @@ module.exports = async function get(id, { userSession, transacting } = {}) {
       throw new Error("Can't delete a LevelSchema with children");
     }
 
-    await tables.assignableProfiles.deleteMany({ levelSchemas_id: id }, { transacting });
     await multilanguage.deleteAll(
       { key: leemons.plugin.prefixPN(`levelSchemas.${id}.name`) },
       { transacting }
