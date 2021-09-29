@@ -1,5 +1,5 @@
-const search = require('../src/services/users/search');
+// const search = require('../src/services/users/search');
 
-module.exports = {
-  search,
-};
+// module.exports = {
+//   search,
+// };

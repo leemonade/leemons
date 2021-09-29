@@ -1,14 +1,21 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
 
 const tables = {
-  levelSchemas: leemons.query('plugins_classroom::levelSchemas'),
-  assignableProfiles: leemons.query('plugins_classroom::levelSchemas_profiles'),
+  levelSchemas: leemons.query('plugins_subjects::levelSchemas'),
 };
 
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 
 async function add(
-  { names = null, parent = null, isClass = false, assignableProfiles = [], properties = {} } = {},
+  {
+    names = null,
+    descriptions = null,
+    parent = null,
+    isSubject = false,
+    // credits = {},
+    // visualIdentification = {},
+    properties = {},
+  } = {},
   { userSession, transacting } = {}
 ) {
   const permissions = await getSessionPermissions({
@@ -24,7 +31,15 @@ async function add(
     throw new Error('Permissions not satisfied');
   }
 
-  const levelSchema = { name: names, parent, isClass, assignableProfiles, properties };
+  const levelSchema = {
+    name: names,
+    descriptions,
+    parent,
+    isSubject,
+    // credits,
+    // visualIdentification,
+    properties,
+  };
 
   // ---------------------------------------------------------------------------
   // validate data types
@@ -45,16 +60,23 @@ async function add(
           },
         ],
       },
-      isClass: {
+      isSubject: {
         type: 'boolean',
       },
-      assignableProfiles: {
-        type: 'array',
-        items: {
-          type: 'string',
-          format: 'uuid',
-        },
-      },
+      // credits: {
+      //   type: 'object',
+      //   properties: {
+      //     minimum: {
+      //       type: 'boolean',
+      //     },
+      //     recommended: {
+      //       type: 'boolean',
+      //     },
+      //     maximum: {
+      //       type: 'boolean',
+      //     },
+      //   },
+      // },
       properties: {
         type: 'object',
       },
@@ -88,23 +110,6 @@ async function add(
         // -----------------------------------------------------------------------
         // Create dataset location
         // const datasetLocation = await addDatasetLocation(names.en, savedLevelSchema.id);
-
-        // -----------------------------------------------------------------------
-        // Save assignable profiles
-        try {
-          savedAssignableProfiles = await tables.assignableProfiles.createMany(
-            assignableProfiles.map((profile) => ({
-              levelSchemas_id: savedLevelSchema.id,
-              profiles_id: profile,
-            })),
-            { transacting: t }
-          );
-        } catch (e) {
-          if (e.code.includes('ER_NO_REFERENCED_ROW')) {
-            throw new Error(`One of the assignable profiles can't be found`);
-          }
-          throw new Error("The assignable profiles can't be saved");
-        }
 
         // -----------------------------------------------------------------------
         // Save translated names
