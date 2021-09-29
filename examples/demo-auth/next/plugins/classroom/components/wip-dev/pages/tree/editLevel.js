@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, FormControl, Tabs, Tab, TabList, TabPanel, Input, Checkbox } from 'leemons-ui';
-import { InformationCircleIcon, ExclamationCircleIcon } from '@heroicons/react/solid';
+import { InformationCircleIcon, ExclamationCircleIcon, XIcon } from '@heroicons/react/solid';
 import { useForm } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import tLoader from '@multilanguage/helpers/tLoader';
@@ -11,14 +11,18 @@ import updateLevelSchema from '../../../../services/levelSchemas/updateLevelSche
 
 import { useTranslationsDrawer } from '../../../multilanguage/translationsDrawer';
 import Translations from './translations';
+import useDirtyState from '../../../../hooks/useDirtyState';
+import ExitWithoutSaving from './exitWithoutSaving';
 
 export default function EditLevel({
   entity = null,
-  setEntity = () => {},
   parent,
-  onUpdate = () => {},
   locale,
+  setEntity = () => {},
+  onUpdate = () => {},
+  onClose = () => {},
 }) {
+  const [showSaveWithouSaving, setShowSaveWithouSaving] = useState(false);
   const [translations] = useTranslate({ keysStartsWith: 'plugins.classroom.editor' });
   const t = tLoader('plugins.classroom.editor', translations);
   // Translations drawer
@@ -26,45 +30,61 @@ export default function EditLevel({
   const { toggleDrawer, warnings, defaultLocale } = drawer;
 
   // Default locale values
-  const [values, setValues] = useState({ name: '' });
+  const {
+    value: dirtyValue,
+    setValue: dirtySetValue,
+    setDefaultValue: dirtySetDefaultValue,
+    defaultValue: dirtyDefaultValue,
+    isDirty,
+  } = useDirtyState({ localizations: {}, defaultLocale: { name: '' } });
   // All the localized values
-  const [localizations, setLocalizations] = useState({});
+  // TODO: If localizations exists, it denotes they are dirty
   const { register, handleSubmit, setValue } = useForm();
 
   // Handle alerts (for showing alers)
   const { addAlert, ...alerts } = useAlerts({ icon: ExclamationCircleIcon });
 
+  // Update tree entity while editing
   const setTreeEntity = (entityValues) => {
     if (entity) {
+      // Already existing entity
       setEntity({ entity: { ...entity, ...entityValues } });
     } else if (parent) {
+      // New entity
       setEntity({ newEntity: entityValues, parent });
     }
   };
 
+  // Update tree entity if the user locale is equal to the platform locale
+  // If not, handled by translations
+  useEffect(() => {
+    if (locale === defaultLocale) {
+      setTreeEntity({ name: dirtyValue.defaultLocale.name });
+    }
+  }, [dirtyValue.defaultLocale]);
+
   // Update form values if the selected entity changes
   useEffect(() => {
     setValue('isClass', entity ? !!entity.isClass : false);
+
+    // Clear previous entity localizations
+    dirtySetDefaultValue({ ...dirtyDefaultValue, localizations: {} });
+    dirtySetValue({ ...dirtyValue, localizations: {} });
   }, [entity?.id]);
 
-  useEffect(() => {
-    if (locale === defaultLocale) {
-      setTreeEntity({ name: values.name });
-    }
-  }, [values]);
   // On form Submit, create/update entity
   const onSubmit = async (data) => {
     const isNewEntity = !entity;
 
-    // don't save if the default locale is not
-    if (!values.name.length) {
+    // Don't save if the default locale is not filled
+    if (!dirtyValue.defaultLocale.name.length) {
       addAlert({ label: 'The level name is required' });
       return;
     }
 
-    // Only save written values
-    const localizatedValues = Object.entries(localizations).reduce(
-      (obj, [locale, lValues]) =>
+    // Only save filled values
+    const localizatedValues = Object.entries(dirtyValue.localizations).reduce(
+      (obj, [vLocale, lValues]) =>
         Object.entries(lValues).reduce((obj2, [key, value]) => {
           // When creating entity, ignore empty names
           if (isNewEntity && !value) {
@@ -72,7 +92,7 @@ export default function EditLevel({
           }
           return {
             ...obj,
-            [key]: { ...obj2[key], [locale]: value },
+            [key]: { ...obj2[key], [vLocale]: value },
           };
         }, obj),
       {}
@@ -81,7 +101,7 @@ export default function EditLevel({
     const levelSchema = {
       names: {
         ...localizatedValues.name,
-        [defaultLocale]: values.name,
+        [defaultLocale]: dirtyValue.defaultLocale.name,
       },
       isClass: data.isClass,
       parent,
@@ -91,28 +111,59 @@ export default function EditLevel({
       if (isNewEntity) {
         const { id, parent: _parent } = await addLevelSchema(levelSchema);
         if (id) {
+          // Update the currently edited entity to the new entity
           setEntity({ ...entity, entity: { ...entity, id, parent: _parent } });
         }
       } else {
         await updateLevelSchema({ ...levelSchema, id: entity.id });
       }
+
       addAlert({ label: 'Saved successfuly', level: 'success', icon: InformationCircleIcon });
+
+      // Trigger parent update event (ideally, updates the tree entities)
       onUpdate();
     } catch (e) {
       addAlert({ label: 'Unable to save the level' });
     }
   };
+
+  const handleClose = (force = false) => {
+    if (force === true || !isDirty()) {
+      onClose();
+    } else {
+      setShowSaveWithouSaving(true);
+    }
+  };
   return (
     <>
-      <div className="flex-1 my-2 mb-2 bg-primary-content py-6 pl-12 pr-6">
+      <ExitWithoutSaving
+        isShown={showSaveWithouSaving}
+        onDiscard={() => {
+          setShowSaveWithouSaving(false);
+          handleClose(true);
+        }}
+        onCancel={() => {
+          setShowSaveWithouSaving(false);
+        }}
+      />
+      <div className="flex-1 my-2 mb-2 bg-primary-content py-6 pl-12 pr-6 relative">
+        <Button
+          className="btn-circle btn-xs ml-8 bg-transparent border-0 absolute top-1 right-1"
+          onClick={handleClose}
+        >
+          <XIcon className="inline-block w-4 h-4 stroke-current" />
+        </Button>
         <Alerts {...alerts} />
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormControl>
             <div className="flex space-x-2 mb-4">
               <Input
-                value={values.name}
+                value={dirtyValue.defaultLocale.name}
                 onChange={(e) => {
-                  setValues({ ...values, name: e.target.value });
+                  dirtySetValue({
+                    ...dirtyValue,
+                    defaultLocale: { ...dirtyValue.defaultLocale, name: e.target.value },
+                  });
                 }}
                 outlined
                 className="input w-full"
@@ -167,12 +218,17 @@ export default function EditLevel({
       </div>
       <Translations
         {...drawer}
-        defaultLocaleValues={values}
-        setDefaultLocaleValues={setValues}
+        defaultLocaleValues={dirtyValue.defaultLocale}
+        setDefaultLocaleValues={(newValue, dirty = true) => {
+          dirtySetValue({ ...dirtyValue, defaultLocale: newValue });
+          if (!dirty) {
+            dirtySetDefaultValue({ ...dirtyDefaultValue, defaultLocale: newValue });
+          }
+        }}
         setTreeEntity={setTreeEntity}
         entityId={entity?.id || null}
-        localizations={localizations}
-        onSave={setLocalizations}
+        localizations={dirtyValue.localizations}
+        onSave={(newValue) => dirtySetValue({ ...dirtyValue, localizations: newValue })}
         locale={locale}
       />
     </>
@@ -184,5 +240,6 @@ EditLevel.propTypes = {
   setEntity: PropTypes.func,
   parent: PropTypes.string,
   onUpdate: PropTypes.func,
+  onClose: PropTypes.func,
   locale: PropTypes.string,
 };
