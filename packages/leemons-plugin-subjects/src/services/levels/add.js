@@ -17,7 +17,7 @@ async function add(
     userSession,
     this: this,
     permissions: {
-      create: leemons.plugin.config.constants.permissions.bundles.organization.create,
+      create: leemons.plugin.config.constants.permissions.bundles.knowledge.create,
     },
   });
 

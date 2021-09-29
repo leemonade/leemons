@@ -13,7 +13,7 @@ module.exports = async function removeUsers(
     userSession,
     this: this,
     permissions: {
-      assignUsers: leemons.plugin.config.constants.permissions.bundles.organization.assignUsers,
+      assignUsers: leemons.plugin.config.constants.permissions.bundles.knowledge.assignUsers,
     },
   });
 

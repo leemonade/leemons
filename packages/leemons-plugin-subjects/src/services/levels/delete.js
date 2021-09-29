@@ -10,7 +10,7 @@ module.exports = async function deleteOne(id, { userSession, transacting } = {})
     userSession,
     this: this,
     permissions: {
-      delete: leemons.plugin.config.constants.permissions.bundles.organization.delete,
+      delete: leemons.plugin.config.constants.permissions.bundles.knowledge.delete,
     },
   });
 
@@ -24,27 +24,31 @@ module.exports = async function deleteOne(id, { userSession, transacting } = {})
   });
 
   if (validator.validate(id)) {
-    return global.utils.withTransaction(async (t) => {
-      // Check if entity exists
-      if (!(await findEntity({ id }, { count: true, transacting: t }))) {
-        throw new Error('Level not found');
-      }
+    return global.utils.withTransaction(
+      async (t) => {
+        // Check if entity exists
+        if (!(await findEntity({ id }, { count: true, transacting: t }))) {
+          throw new Error('Level not found');
+        }
 
-      // Check if level has children
-      if (await findEntity({ parent: id }, { count: true, transacting: t })) {
-        throw new Error("Can't delete a Level with children");
-      }
+        // Check if level has children
+        if (await findEntity({ parent: id }, { count: true, transacting: t })) {
+          throw new Error("Can't delete a Level with children");
+        }
 
-      // Delete localizations
-      await multilanguage.deleteKeyStartsWith(leemons.plugin.prefixPN(`levels.${id}`), {
-        transacting: t,
-      });
+        // Delete localizations
+        await multilanguage.deleteKeyStartsWith(leemons.plugin.prefixPN(`levels.${id}`), {
+          transacting: t,
+        });
 
-      // Delete entity
-      await deleteEntity(id, { transacting: t });
+        // Delete entity
+        await deleteEntity({ id }, { transacting: t });
 
-      return true;
-    });
+        return true;
+      },
+      table,
+      transacting
+    );
   }
   throw validator.error;
 };

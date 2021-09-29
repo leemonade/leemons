@@ -1,4 +1,4 @@
-const findEntity = require('./private/findEntity');
+const getEntity = require('./private/getEntity');
 const getLevelSchema = require('../levelSchemas/private/getEntity');
 
 module.exports = async function hasValidSchemaAndParent(schema, parentId = null, { transacting }) {
@@ -23,7 +23,7 @@ module.exports = async function hasValidSchemaAndParent(schema, parentId = null,
   let parentLevelSchema;
   // Get the parent (if exists)
   try {
-    parentObj = await findEntity({ id: parentId }, { transacting });
+    parentObj = await getEntity(parentId, { transacting });
   } catch (e) {
     return { ok: false, message: "The referenced parent can't be fetched" };
   }
@@ -34,6 +34,7 @@ module.exports = async function hasValidSchemaAndParent(schema, parentId = null,
   try {
     parentLevelSchema = await getLevelSchema(parentObj.schema, { transacting });
   } catch (e) {
+    console.log(parentObj);
     return { ok: false, message: "The referenced parent's schema can't be fetched" };
   }
 

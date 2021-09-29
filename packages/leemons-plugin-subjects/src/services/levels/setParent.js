@@ -51,7 +51,7 @@ module.exports = async function setParent(id, parent, { userSession, transacting
     }
 
     // Get corresponding schema
-    const levelSchema = await getLevelSchema(schema, { transacting });
+    const levelSchema = await getLevelSchema(level.schema, { transacting });
     if (!levelSchema) {
       throw new Error('The referenced schema does not exists');
     }
@@ -79,7 +79,7 @@ module.exports = async function setParent(id, parent, { userSession, transacting
       throw new Error("The new parent can't be saved");
     }
 
-    return levelSchema;
+    return level;
   }
   throw validator.error;
 };
