@@ -70,7 +70,7 @@ function TreePage() {
             {/* TREE */}
             <div className="flex flex-1">
               {/* LevelSchemas tree */}
-              <div className="shadow-xl self-start w-full rounded-lg border border-gray-30 my-6 py-3">
+              <div className="shadow-xl self-start w-full rounded-lg border border-gray-30 my-6">
                 <Tree
                   editingEntity={showEdit}
                   locale={session?.locale}
