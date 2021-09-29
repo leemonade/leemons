@@ -1,8 +1,8 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
+const deleteEntity = require('./private/deleteEntity');
+const findEntity = require('./private/findEntity');
 
-const tables = {
-  levelSchemas: leemons.query('plugins_subjects::levelSchemas'),
-};
+const levelSchemasTable = leemons.query('plugins_subjects::levelSchemas');
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 
 module.exports = async function get(id, { userSession, transacting } = {}) {
@@ -23,22 +23,28 @@ module.exports = async function get(id, { userSession, transacting } = {}) {
   });
 
   if (validator.validate(id)) {
-    const levelSchema = await tables.levelSchemas.findOne({ id }, { transacting });
-    if (!levelSchema) {
-      throw new Error('LevelSchema not found');
-    }
+    return global.utils.withTransaction(
+      async (t) => {
+        // Check if entity exists
+        if (!(await findEntity({ id }, { count: true, transacting: t }))) {
+          throw new Error('LevelSchema not found');
+        }
 
-    if ((await tables.levelSchemas.count({ parent: id }, { transacting })) > 0) {
-      throw new Error("Can't delete a LevelSchema with children");
-    }
+        // Check if it has children
+        if (await findEntity({ parent: id }, { count: true, transacting: t })) {
+          throw new Error("Can't delete a LevelSchema with children");
+        }
 
-    await multilanguage.deleteAll(
-      { key: leemons.plugin.prefixPN(`levelSchemas.${id}.name`) },
-      { transacting }
+        // Delete localizations
+        await multilanguage.deleteAll(
+          { key: leemons.plugin.prefixPN(`levelSchemas.${id}.name`) },
+          { transacting: t }
+        );
+        return deleteEntity({ id }, { transacting: t });
+      },
+      levelSchemasTable,
+      transacting
     );
-    await tables.levelSchemas.delete({ id }, { transacting });
-
-    return true;
   }
   throw validator.error;
 };

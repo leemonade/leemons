@@ -1,7 +1,6 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
-
-const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
-const levelSchemas = leemons.query('plugins_subjects::levelSchemas');
+const findEntity = require('./private/findEntity');
+const saveNames = require('./private/saveNames');
 
 module.exports = async function setNames(id, names, { userSession, transacting } = {}) {
   const permissions = await getSessionPermissions({
@@ -32,49 +31,13 @@ module.exports = async function setNames(id, names, { userSession, transacting }
   const validator = new global.utils.LeemonsValidator(schema);
 
   if (validator.validate({ id, names })) {
-    let savedNames;
-    let missingLocales;
-
-    const exists = await levelSchemas.count({ id }, { transacting });
-    if (!exists) {
+    // Check if entity exists
+    if (!(await findEntity({ id }, { count: true, columns: ['id', 'isSubject'], transacting }))) {
       throw new Error("The given id can't be found");
     }
 
-    try {
-      const nameKey = leemons.plugin.prefixPN(`levelSchemas.${id}.name`);
-      const { namesToSet = {}, namesToDelete = [] } = Object.entries(names).reduce(
-        (obj, [locale, value]) => {
-          if (!value) {
-            const _namesToDelete = obj.namesToDelete || [];
-            return { ...obj, namesToDelete: [..._namesToDelete, locale] };
-          }
-          return { ...obj, namesToSet: { ...obj.namesToSet, [locale]: value } };
-        },
-        {}
-      );
-
-      // Save locales with value
-      const { items, warnings } = await multilanguage.setManyByKey(nameKey, namesToSet, {
-        transacting,
-      });
-
-      // Delete empty locales
-      if (namesToDelete.length) {
-        await multilanguage.deleteMany(
-          namesToDelete.map((locale) => [nameKey, locale]),
-          { transacting }
-        );
-      }
-
-      if (warnings?.nonExistingLocales) {
-        missingLocales = warnings.nonExistingLocales;
-      }
-
-      savedNames = items;
-    } catch (e) {
-      throw new Error("the translated names can't be saved");
-    }
-    return { names: savedNames, warnings: { missingLocales } };
+    // Update names
+    return saveNames(id, names, { deleteEmpty: true, transacting });
   }
   throw validator.error;
 };

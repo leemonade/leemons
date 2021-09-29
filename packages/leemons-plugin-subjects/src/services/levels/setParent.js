@@ -52,7 +52,7 @@ module.exports = async function setParent(id, parent, { userSession, transacting
         throw new Error("The given parent can't be found");
       }
       const parentLS = await levelSchemas.count(
-        { id: parentL.schema, isClass: true },
+        { id: parentL.schema, isSubject: true },
         { transacting }
       );
       if (parentLS) {

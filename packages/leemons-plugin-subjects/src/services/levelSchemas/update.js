@@ -1,9 +1,9 @@
-module.exports = function update(id, { isClass, names, parent, transacting } = {}) {
+module.exports = function update(id, { isSubject, names, parent, transacting } = {}) {
   const services = leemons.plugin.services.levelSchemas;
   return global.utils.withTransaction(
     async (t) => {
-      if (isClass !== undefined) {
-        await services.setIsClass(id, isClass, { transacting: t });
+      if (isSubject !== undefined) {
+        await services.setisSubject(id, isSubject, { transacting: t });
       }
       if (names !== undefined) {
         await services.setNames(id, names, { transacting: t });

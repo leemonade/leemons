@@ -1,9 +1,11 @@
+const findEntity = require('./private/findEntity');
+
 const table = leemons.query('plugins_subjects::levelSchemas');
 
 module.exports = async function list({ userSession, locale, transacting } = {}) {
   return global.utils.withTransaction(
     async (t) => {
-      const levelSchemasIds = (await table.find({}, { transacting: t, columns: ['id'] })).map(
+      const levelSchemasIds = (await findEntity({}, { transacting: t, columns: ['id'] })).map(
         ({ id }) => id
       );
 

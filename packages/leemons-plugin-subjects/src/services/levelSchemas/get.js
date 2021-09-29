@@ -1,8 +1,7 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
+const getEntity = require('./private/getEntity');
 
-const tables = {
-  levelSchemas: leemons.query('plugins_subjects::levelSchemas'),
-};
+const levelSchemasTable = leemons.query('plugins_subjects::levelSchemas');
 const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 
 module.exports = async function get(id, { userSession, locale = null, transacting } = {}) {
@@ -23,27 +22,37 @@ module.exports = async function get(id, { userSession, locale = null, transactin
   });
 
   if (validator.validate(id)) {
-    const levelSchema = await tables.levelSchemas.findOne({ id }, { transacting });
-    if (!levelSchema) {
-      throw new Error('LevelSchema not found');
-    }
-    levelSchema.properties = JSON.parse(levelSchema.properties);
+    return global.utils.withTransaction(
+      async (t) => {
+        // Get the entity if exists
+        const levelSchema = await getEntity(id, { transacting: t });
+        if (!levelSchema) {
+          throw new Error('LevelSchema not found');
+        }
 
-    const nameKey = leemons.plugin.prefixPN(`levelSchemas.${id}.name`);
-    if (locale) {
-      const name = await multilanguage.getValue(nameKey, locale);
-      return { ...levelSchema, name };
-    }
-    const names = (
-      await multilanguage.getWithKey(nameKey, {
-        transacting,
-      })
-    ).map(({ locale: _locale, value }) => ({ locale: _locale, value }));
+        // Parse properties JSON
+        levelSchema.properties = JSON.parse(levelSchema.properties);
 
-    return {
-      ...levelSchema,
-      names,
-    };
+        // Get the names
+        const nameKey = leemons.plugin.prefixPN(`levelSchemas.${id}.name`);
+        if (locale) {
+          const name = await multilanguage.getValue(nameKey, locale);
+          return { ...levelSchema, name };
+        }
+        const names = (
+          await multilanguage.getWithKey(nameKey, {
+            transacting: t,
+          })
+        ).map(({ locale: _locale, value }) => ({ locale: _locale, value }));
+
+        return {
+          ...levelSchema,
+          names,
+        };
+      },
+      levelSchemasTable,
+      transacting
+    );
   }
   throw validator.error;
 };

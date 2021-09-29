@@ -1,10 +1,10 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
+const createEntity = require('./private/createEntity');
+const saveNames = require('./private/saveNames');
 
 const tables = {
   levelSchemas: leemons.query('plugins_subjects::levelSchemas'),
 };
-
-const multilanguage = leemons.getPlugin('multilanguage')?.services.contents.getProvider();
 
 async function add(
   {
@@ -18,6 +18,7 @@ async function add(
   } = {},
   { userSession, transacting } = {}
 ) {
+  // Check permissions
   const permissions = await getSessionPermissions({
     userSession,
     this: this,
@@ -90,54 +91,16 @@ async function add(
     // Register LevelSchema inside a transaction
     return global.utils.withTransaction(
       async (t) => {
-        let savedLevelSchema;
-        let savedAssignableProfiles;
-        let savedNames;
-        let missingLocales;
+        // Create entity
+        const savedLevelSchema = await createEntity(levelSchema, { transacting: t });
 
+        // Save names
+        const savedNames = await saveNames(savedLevelSchema.id, names, { transacting: t });
         // -----------------------------------------------------------------------
-        // Save level schema
-        try {
-          savedLevelSchema = await tables.levelSchemas.create(levelSchema, { transacting: t });
-        } catch (e) {
-          if (e.code.includes('ER_NO_REFERENCED_ROW')) {
-            throw new Error("LevelSchema's parent was not found");
-          }
-          throw new Error("LevelSchema can't be created");
-        }
-
-        // TODO: Add datasets
-        // -----------------------------------------------------------------------
-        // Create dataset location
-        // const datasetLocation = await addDatasetLocation(names.en, savedLevelSchema.id);
-
-        // -----------------------------------------------------------------------
-        // Save translated names
-        try {
-          const { items, warnings } = await multilanguage.addManyByKey(
-            leemons.plugin.prefixPN(`levelSchemas.${savedLevelSchema.id}.name`),
-            names,
-            { transacting: t }
-          );
-
-          if (warnings?.nonExistingLocales) {
-            missingLocales = warnings.nonExistingLocales;
-          }
-
-          savedNames = items;
-        } catch (e) {
-          throw new Error("the translated names can't be saved");
-        }
 
         return {
           ...savedLevelSchema,
-          assignableProfiles: savedAssignableProfiles,
-          names: savedNames,
-          warnings: missingLocales?.length
-            ? {
-                missingLocales,
-              }
-            : null,
+          ...savedNames,
         };
       },
       tables.levelSchemas,
