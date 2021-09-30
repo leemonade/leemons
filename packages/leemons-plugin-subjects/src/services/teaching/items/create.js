@@ -1,3 +1,4 @@
+const saveLocalization = require('./private/saveLocalization');
 const exists = require('./exists');
 
 const table = leemons.query('plugins_subjects::teachingItems');
@@ -8,11 +9,17 @@ module.exports = async (_items, { transacting } = {}) => {
     items = [items];
   }
 
-  const existingItems = await exists(items, { useNames: true, transacting });
+  // Check which items already exists
+  const existingItems = await exists(
+    items.map(({ name }) => name),
+    { useNames: true, transacting }
+  );
 
+  // Separate existing items from non-existing
   items = items.reduce(
     (obj, item) => {
-      const key = existingItems[item] ? 'existing' : 'new';
+      const { name } = item;
+      const key = existingItems[name] ? 'existing' : 'new';
       return {
         ...obj,
         [key]: [...obj[key], item],
@@ -22,17 +29,23 @@ module.exports = async (_items, { transacting } = {}) => {
   );
 
   if (items.new.length) {
+    // Create the registries
     try {
-      await table.createMany(
-        items.new.map((item) => ({ name: item })),
-        {
-          transacting,
-        }
-      );
+      await table.createMany(items.new, {
+        transacting,
+      });
     } catch (e) {
       throw new Error("Can't save the new teaching items");
     }
+
+    // Save the localizations
+    // TODO: Return mixed warnings
+    await Promise.all(
+      items.new.map(({ name, ...localizations }) =>
+        saveLocalization(name, localizations, { transacting })
+      )
+    );
   }
 
-  return items;
+  return { items };
 };

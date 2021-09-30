@@ -9,4 +9,8 @@ module.exports = {
     const result = await leemons.plugin.services.teaching.create(ctx.request.body.items);
     ctx.body = { result };
   },
+  update: async (ctx) => {
+    const result = await leemons.plugin.services.teaching.update(ctx.request.body.items);
+    ctx.body = { result };
+  },
 };

@@ -144,6 +144,11 @@ module.exports = [
     method: 'POST',
     handler: 'teaching.create',
   },
+  {
+    path: '/teaching/items',
+    method: 'PATCH',
+    handler: 'teaching.update',
+  },
 
   {
     path: '/level',
