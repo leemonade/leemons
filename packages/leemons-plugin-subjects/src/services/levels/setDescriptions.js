@@ -1,6 +1,6 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
 const findEntity = require('./private/findEntity');
-const saveDescriptions = require('./private/saveDescriptions');
+const saveLocalization = require('./private/saveLocalization');
 
 module.exports = async function setDescriptions(
   id,
@@ -41,7 +41,7 @@ module.exports = async function setDescriptions(
     }
 
     // Update names
-    return saveDescriptions(id, descriptions, { deleteEmpty: true, transacting });
+    return saveLocalization(id, 'description', descriptions, { deleteEmpty: true, transacting });
   }
   throw validator.error;
 };

@@ -1,6 +1,6 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
 const createEntity = require('./private/createEntity');
-const saveNames = require('./private/saveNames');
+const saveLocalization = require('./private/saveLocalization');
 
 const tables = {
   levelSchemas: leemons.query('plugins_subjects::levelSchemas'),
@@ -95,7 +95,9 @@ async function add(
         const savedLevelSchema = await createEntity(levelSchema, { transacting: t });
 
         // Save names
-        const savedNames = await saveNames(savedLevelSchema.id, names, { transacting: t });
+        const savedNames = await saveLocalization(savedLevelSchema.id, 'name', names, {
+          transacting: t,
+        });
         // -----------------------------------------------------------------------
 
         return {

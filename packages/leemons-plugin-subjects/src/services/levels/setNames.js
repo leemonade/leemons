@@ -1,6 +1,6 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
 const findEntity = require('./private/findEntity');
-const saveNames = require('./private/saveNames');
+const saveLocalization = require('./private/saveLocalization');
 
 module.exports = async function setNames(id, names, { userSession, transacting } = {}) {
   const permissions = await getSessionPermissions({
@@ -37,7 +37,7 @@ module.exports = async function setNames(id, names, { userSession, transacting }
     }
 
     // Update names
-    return saveNames(id, names, { deleteEmpty: true, transacting });
+    return saveLocalization(id, 'name', names, { deleteEmpty: true, transacting });
   }
   throw validator.error;
 };

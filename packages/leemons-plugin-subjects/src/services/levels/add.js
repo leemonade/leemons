@@ -1,8 +1,7 @@
 const getSessionPermissions = require('../permissions/getSessionPermissions');
 const getLevelSchema = require('../levelSchemas/private/getEntity');
 const createEntity = require('./private/createEntity');
-const saveNames = require('./private/saveNames');
-const saveDescriptions = require('./private/saveDescriptions');
+const saveLocalization = require('./private/saveLocalization');
 
 const tables = {
   levels: leemons.query('plugins_subjects::levels'),
@@ -98,11 +97,18 @@ async function add(
 
         // -----------------------------------------------------------------------
         // Save translated names
-        const savedNames = await saveNames(savedLevel.id, names, { transacting: t });
+        const savedNames = await saveLocalization(savedLevel.id, 'name', names, {
+          transacting: t,
+        });
 
         // -----------------------------------------------------------------------
         // Save translated descriptions
-        const savedDescriptions = await saveDescriptions(savedLevel.id, names, { transacting: t });
+        const savedDescriptions = await saveLocalization(
+          savedLevel.id,
+          'description',
+          descriptions,
+          { transacting: t }
+        );
 
         // TODO: Optimize
         const missingLocales = [
