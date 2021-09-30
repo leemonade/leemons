@@ -17,6 +17,7 @@ Badge.propTypes = {
     'accent',
     'ghost',
     'info',
+    'gray',
     'warning',
     'success',
     'error',

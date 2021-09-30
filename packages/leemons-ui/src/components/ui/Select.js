@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
 import React, { createRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { XIcon } from '@heroicons/react/solid';
 import Badge from './Badge';
-import { XIcon } from '@heroicons/react/outline';
+import Button from './Button';
 
 function getAllOptions(children) {
   const childrens = React.Children.toArray(children);
@@ -160,20 +161,21 @@ const Select = React.forwardRef(
         {!multiple && readOnly ? <>{value}</> : null}
 
         {multiple && items.length ? (
-          <div className="pt-4">
+          <div className="pt-4 flex flex-wrap gap-2">
             {items.map((item) => (
-              <div className="inline-block p-1" key={item}>
-                <Badge outlined={true}>
-                  {readOnly ? null : (
-                    <XIcon
-                      className="inline-block w-4 h-4 mr-2 stroke-current cursor-pointer"
-                      onClick={() => removeItem(item)}
-                    />
-                  )}
-
-                  {originalOptionsByValue[item]?.label || item}
-                </Badge>
-              </div>
+              <Badge outlined={true} color="gray" key={item}>
+                <span>{originalOptionsByValue[item]?.label || item}</span>
+                {readOnly ? null : (
+                  <Button
+                    color="ghost"
+                    circle
+                    className="btn-xs ml-1 -mr-1"
+                    onClick={() => removeItem(item)}
+                  >
+                    <XIcon className="inline-block w-4 h-4 fill-current text-gray-50 hover:text-gray-100" />
+                  </Button>
+                )}
+              </Badge>
             ))}
           </div>
         ) : null}

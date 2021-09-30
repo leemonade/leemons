@@ -28,11 +28,13 @@ module.exports = {
     },
   },
   tree_page: {
-    page_title: 'Tree',
+    page_title: 'Subjects',
+    page_subtitle: 'Create Tree & Dataset',
     page_info: {
-      pre: 'Use the button',
+      pre:
+        'The tree allows you to create groupings of subjects to adapt the data model to the educational plans of your school.',
       post:
-        'to create a new level, then use the config area to configure the data set for the level.',
+        'Use the button + to create each level, then use the right panel to configure thedata set for the level.',
     },
   },
   delete_modal: {
@@ -77,15 +79,18 @@ module.exports = {
     new: {
       prefix: { levelSchema: 'Add level', level: 'Add' },
     },
-    class_level: 'Class level',
+    class_level: 'Subject level',
   },
   editor: {
     form: {
       name: {
         placeholder: 'Level name',
       },
+      description: {
+        placeholder: 'About level',
+      },
       isSubject: {
-        label: 'Class level',
+        label: 'Subject level',
         tooltip: 'Minimum level of student assignment',
       },
       save: 'Save level',

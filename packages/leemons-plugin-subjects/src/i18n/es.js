@@ -28,11 +28,13 @@ module.exports = {
     },
   },
   tree_page: {
-    page_title: 'Árbol',
+    page_title: 'Asignaturas',
+    page_subtitle: 'Crear Árbol y Dataset',
     page_info: {
-      pre: 'Usa el botón',
+      pre:
+        'El árbol permite crear agrupaciones de asignaturas para adaptar el modelo de datos a los planes educativos de su centro.',
       post:
-        'para crear un nuevo nivel, y a continuación, usa el área de configuración para definir el nuevo nivel.',
+        'Utiliza el botón + para crear cada nivel, luego utiliza el panel derecho para configurar el conjunto de datos del nivel.',
     },
   },
   delete_modal: {
@@ -77,15 +79,18 @@ module.exports = {
     new: {
       prefix: { levelSchema: 'Añadir nivel', level: 'Añadir' },
     },
-    class_level: 'Nivel de clase',
+    class_level: 'Nivel de asignatura',
   },
   editor: {
     form: {
       name: {
         placeholder: 'Nombre del nivel',
       },
+      description: {
+        placeholder: 'Descripción del nivel',
+      },
       isSubject: {
-        label: 'Nivel de clase',
+        label: 'Nivel de asignatura',
         tooltip: 'Nivel mínimo de asignación de estudiantes',
       },
       save: 'Guardar nivel',
@@ -104,7 +109,7 @@ module.exports = {
     },
   },
   class_list: {
-    page_title: 'Administración de clases',
+    page_title: 'Administración de asignaturas',
     page_info:
       'Aquí puedes encontrar y administrar la estructura de niveles de tu Universidad y asignar estudiantes a clases.',
     details: {

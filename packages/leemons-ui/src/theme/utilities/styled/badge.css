@@ -18,6 +18,11 @@
 
     &-outline {
       @apply bg-transparent text-base-content border-current border-opacity-50;
+
+      &.badge-gray {
+        @apply text-gray-500 border-base-300 border-opacity-100;
+      }
+
       &.badge-primary {
         @apply text-primary;
       }

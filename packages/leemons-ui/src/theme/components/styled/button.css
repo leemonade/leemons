@@ -212,7 +212,7 @@
       @apply bg-transparent text-current border border-transparent;
       &:hover,
       &.btn-active {
-        @apply bg-base-content bg-opacity-20 border-opacity-0;
+        @apply bg-base-content bg-opacity-10 border-opacity-0;
       }
       &:focus-visible {
         @apply bg-base-content bg-opacity-0;
@@ -316,7 +316,6 @@
     &.btn-search {
       @apply btn-xs bg-transparent border-0;
     }
-
   }
   /* group */
   .btn-group {

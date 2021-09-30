@@ -55,7 +55,7 @@ function TreePage() {
     <>
       <Modal {...modal} />
       <div className="flex h-full">
-        <div className="w-2/5 flex justify-end bg-white">
+        <div className="w-4/12 flex justify-end bg-white">
           <div style={{ maxWidth: 500 }} className="flex flex-col p-12">
             {/* TITLE HEAD */}
             <div className="flex">
@@ -64,13 +64,13 @@ function TreePage() {
               </div>
               <div className="flex flex-col ml-2">
                 <div>{t('page_title')}</div>
-                <div className="text-lg font-normal leading-none">Create Tree &amp; Dataset</div>
+                <div className="text-lg font-normal leading-none">{t('page_subtitle')}</div>
               </div>
             </div>
             {/* TREE */}
             <div className="flex flex-1">
               {/* LevelSchemas tree */}
-              <div className="shadow-xl self-start w-full rounded-lg border border-gray-30 my-6">
+              <div className="shadow-xl self-start w-full rounded border border-gray-30 my-6 p-1">
                 <Tree
                   editingEntity={showEdit}
                   locale={session?.locale}
@@ -83,7 +83,6 @@ function TreePage() {
                   }}
                   onAdd={(parent) => {
                     if (showEdit.parent !== parent || showEdit.entity) {
-                      console.log('Abrimos');
                       toggleShowEdit({ active: true, entity: null, parent });
                     }
                   }}
@@ -96,25 +95,32 @@ function TreePage() {
               <div>
                 <InformationCircleIcon className="inline-block stroke-current w-6 h-6" />
               </div>
-              <div className="font-normal">
-                The tree allows you to create groupings of subjects to adapt the data model to the
-                educational plans of your school.
-              </div>
-              <div className="text-gray-300 text-sm">
-                Use the button + to create each level, then use the right panel to configure the
-                data set for the level.
-              </div>
+              <div className="font-normal">{t('page_info.pre')}</div>
+              <div className="text-gray-300 text-sm">{t('page_info.post')}</div>
             </div>
           </div>
         </div>
-        <div className="w-3/5 bg-gray-10">
-          <div style={{ maxWidth: 1000 }} className="p-12">
+        <div
+          className={`w-8/12 ${
+            showEdit.active ? 'bg-white' : 'bg-gray-10'
+          } border-l border-gray-20`}
+        >
+          <div style={{ maxWidth: 1000 }} className="flex flex-1 h-full">
             {showEdit.active ? (
               // Edit LevelSchema form
-              <div>Editando un nivel</div>
+              <EditLevel
+                onClose={() => toggleShowEdit({ active: false })}
+                locale={session?.locale}
+                entity={showEdit.entity}
+                setEntity={(state) => toggleShowEdit({ active: showEdit.active, ...state })}
+                parent={showEdit.parent}
+                onUpdate={() => {
+                  updateEntities.update();
+                }}
+              />
             ) : (
               // Show templates panel
-              <div className="max-w-xs">
+              <div className="p-12 max-w-sm">
                 <TemplatePanel />
               </div>
             )}
