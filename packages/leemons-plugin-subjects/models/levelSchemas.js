@@ -30,12 +30,12 @@ module.exports = {
     //   length: 16,
     // },
 
-    // teaching: {
-    //   references: {
-    //     collection: 'plugins_subjects::teachingItems',
-    //     relation: 'many to many',
-    //   },
-    // },
+    teaching: {
+      references: {
+        collection: 'plugins_subjects::teachingItems',
+        relation: 'many to many',
+      },
+    },
 
     // hours: {
     //   references: {

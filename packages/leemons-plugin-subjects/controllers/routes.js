@@ -135,6 +135,17 @@ module.exports = [
   },
 
   {
+    path: '/teaching/items/exists',
+    method: 'POST',
+    handler: 'teaching.exists',
+  },
+  {
+    path: '/teaching/items',
+    method: 'POST',
+    handler: 'teaching.create',
+  },
+
+  {
     path: '/level',
     method: 'POST',
     handler: 'levels.add',
