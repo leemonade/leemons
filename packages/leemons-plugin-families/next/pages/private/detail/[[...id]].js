@@ -420,7 +420,77 @@ function Detail() {
     []
   );
 
+  useconst;
+  load = useMemo(
+    () => async () => {
+      setLoading(true);
+      if (router.isReady) {
+        let family = null;
+        if (_.isArray(router.query.id)) {
+          family = await detailFamilyRequest(router.query.id[0]);
+          family = family.family;
+        }
+        let familyDatasetForm = null;
+        try {
+          const { jsonSchema, jsonUI } = await getDatasetFormRequest();
+          jsonUI['ui:className'] = 'grid grid-cols-3 gap-6';
+          familyDatasetForm = { jsonSchema, jsonUI };
+        } catch (e) {}
+        const [{ permissions }, phoneNumbersInstalled] = await Promise.all([
+          getPermissionsWithActionsIfIHaveRequest([
+            constants.permissions.basicInfo,
+            constants.permissions.customInfo,
+            constants.permissions.guardiansInfo,
+            constants.permissions.studentsInfo,
+          ]),
+          PackageManagerService.isPluginInstalled('leemons-plugin-families-emergency-numbers'),
+        ]);
+
+        return { family, familyDatasetForm, permissions, phoneNumbersInstalled };
+      }
+    },
+    [router]
+  );
+
+  const onSuccess = useMemo(
+    () => (data) => {
+      if (data) {
+        const { family, familyDatasetForm, permissions, phoneNumbersInstalled } = data;
+        if (family) {
+          setValue('name', family.name);
+          setValue('maritalStatus', family.maritalStatus);
+          setValue('guardian', family.guardians);
+          setValue('student', family.students);
+          setValue('emergencyPhoneNumbers', family.emergencyPhoneNumbers);
+          setDatasetData(family.datasetValues);
+          setFamily(family);
+          setIsEditMode(false);
+        } else {
+          setValue('maritalStatus', '...');
+          setIsEditMode(true);
+        }
+        if (familyDatasetForm) setDatasetConfig(familyDatasetForm);
+        setPermissions(permissions);
+        setEmergencyNumberIsInstalled(phoneNumbersInstalled);
+        setLoading(false);
+      }
+    },
+    []
+  );
+
+  const onError = useMemo(
+    () => (e) => {
+      // ES: 4001 codigo de que aun no existe schema, como es posible ignoramos el error
+      if (e.code !== 4001) {
+        setError(e);
+      }
+      setLoading(false);
+    },
+    []
+  );
+
   useAsync(load, onSuccess, onError);
+  Async(load, onSuccess, onError);
 
   const EmergencyNumbers = useMemo(
     () =>

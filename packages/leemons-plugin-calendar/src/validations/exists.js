@@ -1,7 +1,8 @@
-const { existByKey: existCalendarByKey } = require('../services/calendar/existByKey');
-const { exist: existCalendar } = require('../services/calendar/exist');
 const { exist: existEvent } = require('../services/events/exist');
+const { exist: existCalendar } = require('../services/calendar/exist');
 const { exist: existEventType } = require('../services/event-types/exist');
+const { exist: existCalendarConfig } = require('../services/calendar-configs/exist');
+const { existByKey: existCalendarByKey } = require('../services/calendar/existByKey');
 
 async function validateExistCalendarKey(key, { transacting } = {}) {
   if (await existCalendarByKey(key, { transacting }))
@@ -39,6 +40,16 @@ async function validateNotExistEventTypeKey(key, { transacting } = {}) {
     throw new Error(`Event type '${key}' not exists`);
 }
 
+async function validateExistCalendarConfig(id, { transacting } = {}) {
+  if (await existCalendarConfig(id, { transacting }))
+    throw new Error(`Calendar config '${id}' already exists`);
+}
+
+async function validateNotExistCalendarConfig(id, { transacting } = {}) {
+  if (!(await existCalendarConfig(id, { transacting })))
+    throw new Error(`Calendar config '${id}' not exists`);
+}
+
 function validateKeyPrefix(key, calledFrom) {
   if (!key.startsWith(calledFrom)) throw new Error(`The key must begin with ${calledFrom}`);
 }
@@ -48,14 +59,16 @@ function validateSectionPrefix(key, calledFrom) {
 }
 
 module.exports = {
-  validateExistCalendarKey,
-  validateNotExistCalendarKey,
-  validateExistCalendar,
-  validateNotExistCalendar,
-  validateExistEventTypeKey,
-  validateNotExistEventTypeKey,
+  validateKeyPrefix,
   validateExistEvent,
   validateNotExistEvent,
-  validateKeyPrefix,
+  validateExistCalendar,
   validateSectionPrefix,
+  validateNotExistCalendar,
+  validateExistCalendarKey,
+  validateExistEventTypeKey,
+  validateNotExistCalendarKey,
+  validateExistCalendarConfig,
+  validateNotExistEventTypeKey,
+  validateNotExistCalendarConfig,
 };

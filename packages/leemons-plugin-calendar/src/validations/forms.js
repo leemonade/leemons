@@ -100,9 +100,64 @@ function validateAddKanbanColumn(data) {
   }
 }
 
+const addCalendarConfigSchema = {
+  type: 'object',
+  properties: {
+    title: stringSchema,
+    description: stringSchema,
+    addedFrom: stringSchema,
+    countryName: stringSchema,
+    countryShortCode: stringSchema,
+    regionShortCode: stringSchema,
+    regionName: stringSchema,
+    startMonth: integerSchema,
+    startYear: integerSchema,
+    endMonth: integerSchema,
+    endYear: integerSchema,
+    weekday: integerSchema,
+    notSchoolDays: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+    },
+    schoolDays: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+    },
+  },
+  required: [
+    'title',
+    'addedFrom',
+    'countryName',
+    'countryShortCode',
+    'regionShortCode',
+    'regionName',
+    'startMonth',
+    'startYear',
+    'endMonth',
+    'endYear',
+    'weekday',
+    'notSchoolDays',
+    'schoolDays',
+  ],
+  additionalProperties: false,
+};
+
+function validateAddCalendarConfig(data) {
+  const validator = new LeemonsValidator(addCalendarConfigSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   validateAddEvent,
   validateUpdateEvent,
   validateAddCalendar,
   validateAddKanbanColumn,
+  validateAddCalendarConfig,
 };

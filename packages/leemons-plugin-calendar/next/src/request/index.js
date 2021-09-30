@@ -1,16 +1,24 @@
 import getCalendarsToFrontend from './getCalendarsToFrontend';
+import updateCalendarConfigs from './updateCalendarConfigs';
 import listKanbanEventOrders from './listKanbanEventOrders';
 import saveKanbanEventOrders from './saveKanbanEventOrders';
+import detailCalendarConfigs from './detailCalendarConfigs';
+import listCalendarConfigs from './listCalendarConfigs';
 import listKanbanColumns from './listKanbanColumns';
+import addCalendarConfig from './addCalendarConfig';
 import getEventTypes from './getEventTypes';
 import removeEvent from './removeEvent';
 import updateEvent from './updateEvent';
 import addEvent from './addEvent';
 
 export const getCalendarsToFrontendRequest = getCalendarsToFrontend;
+export const updateCalendarConfigsRequest = updateCalendarConfigs;
 export const listKanbanEventOrdersRequest = listKanbanEventOrders;
 export const saveKanbanEventOrdersRequest = saveKanbanEventOrders;
+export const detailCalendarConfigsRequest = detailCalendarConfigs;
+export const listCalendarConfigsRequest = listCalendarConfigs;
 export const listKanbanColumnsRequest = listKanbanColumns;
+export const addCalendarConfigRequest = addCalendarConfig;
 export const getEventTypesRequest = getEventTypes;
 export const removeEventRequest = removeEvent;
 export const updateEventRequest = updateEvent;

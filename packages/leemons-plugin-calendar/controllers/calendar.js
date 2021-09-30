@@ -3,6 +3,7 @@ const eventsService = require('../src/services/events');
 const kanbanColumnsService = require('../src/services/kanban-columns');
 const kanbanEventOrdersService = require('../src/services/kanban-event-orders');
 const eventTypesService = require('../src/services/event-types');
+const calendarConfigsService = require('../src/services/calendar-configs');
 
 async function getCalendar(ctx) {
   const data = await calendarService.getCalendarsToFrontend(ctx.state.userSession);
@@ -60,6 +61,33 @@ async function saveKanbanEventOrders(ctx) {
   ctx.body = { status: 200, order };
 }
 
+async function addCalendarConfig(ctx) {
+  const config = await calendarConfigsService.add(ctx.request.body.config);
+  ctx.status = 200;
+  ctx.body = { status: 200, config };
+}
+
+async function listCalendarConfig(ctx) {
+  const configs = await calendarConfigsService.list();
+  ctx.status = 200;
+  ctx.body = { status: 200, configs };
+}
+
+async function detailCalendarConfig(ctx) {
+  const configs = await calendarConfigsService.detail(ctx.request.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200, configs };
+}
+
+async function updateCalendarConfig(ctx) {
+  const config = await calendarConfigsService.update(
+    ctx.request.params.id,
+    ctx.request.body.config
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, config };
+}
+
 module.exports = {
   addEvent,
   removeEvent,
@@ -67,6 +95,10 @@ module.exports = {
   getCalendar,
   getEventTypes,
   listKanbanColumns,
+  addCalendarConfig,
+  listCalendarConfig,
+  updateCalendarConfig,
+  detailCalendarConfig,
   listKanbanEventOrders,
   saveKanbanEventOrders,
 };
