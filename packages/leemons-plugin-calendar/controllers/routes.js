@@ -103,6 +103,17 @@ module.exports = [
     },
   },
   {
+    path: '/configs/remove/:id',
+    method: 'DELETE',
+    handler: 'calendar.removeCalendarConfig',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.calendar.calendar-configs': {
+        actions: ['delete', 'admin'],
+      },
+    },
+  },
+  {
     path: '/configs/centers-with-out-assign',
     method: 'GET',
     handler: 'calendar.getCentersWithOutAssign',

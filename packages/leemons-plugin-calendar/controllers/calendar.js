@@ -79,6 +79,12 @@ async function detailCalendarConfig(ctx) {
   ctx.body = { status: 200, config };
 }
 
+async function removeCalendarConfig(ctx) {
+  const config = await calendarConfigsService.remove(ctx.request.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200, config };
+}
+
 async function updateCalendarConfig(ctx) {
   const config = await calendarConfigsService.update(
     ctx.request.params.id,
@@ -105,6 +111,7 @@ module.exports = {
   listCalendarConfig,
   updateCalendarConfig,
   detailCalendarConfig,
+  removeCalendarConfig,
   listKanbanEventOrders,
   saveKanbanEventOrders,
   getCentersWithOutAssign,

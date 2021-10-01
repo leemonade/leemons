@@ -3,12 +3,14 @@ import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
 import { useRouter } from 'next/router';
-import listCalendarConfigs from '@calendar/request/listCalendarConfigs';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@calendar/helpers/prefixPN';
 import Link from 'next/link';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { PageContainer, PageHeader, Table } from 'leemons-ui';
+import { addErrorAlert } from '@layout/alert';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { listCalendarConfigsRequest, removeCalendarConfigRequest } from '@calendar/request';
 
 function ConfigsList() {
   useSession({ redirectTo: goLoginPage });
@@ -16,18 +18,20 @@ function ConfigsList() {
   const [t] = useTranslateLoader(prefixPN('list_page'));
   const { t: tCommon } = useCommonTranslate('page_header');
 
+  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
+
   const [list, setList] = useState([]);
 
   const router = useRouter();
 
   const getConfigList = async () => {
-    const { configs } = await listCalendarConfigs();
+    const { configs } = await listCalendarConfigsRequest();
     return configs;
   };
 
-  const init = async () => {
+  const init = async (canRoute) => {
     const configs = await getConfigList();
-    if (!configs.length) {
+    if (!configs.length && canRoute) {
       return router.push('/calendar/config/detail/new');
     }
     setList(configs);
@@ -39,11 +43,17 @@ function ConfigsList() {
   };
 
   useEffect(() => {
-    init();
+    init(true);
   }, []);
 
   const removeItem = async (item) => {
-    console.log(item);
+    try {
+      // Todo: Añadir modal de asegurar borrado
+      await removeCalendarConfigRequest(item.id);
+      await init();
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
   };
 
   const tableHeaders = useMemo(

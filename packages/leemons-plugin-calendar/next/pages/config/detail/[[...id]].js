@@ -12,6 +12,7 @@ import {
   addCalendarConfigRequest,
   detailCalendarConfigsRequest,
   getCentersWithOutAssignRequest,
+  removeCalendarConfigRequest,
   updateCalendarConfigsRequest,
 } from '@calendar/request';
 import prefixPN from '@calendar/helpers/prefixPN';
@@ -99,7 +100,6 @@ function ConfigAdd() {
       if (id !== 'new') {
         const response = await detailCalendarConfigsRequest(id);
         config = response.config;
-        console.log(config);
       }
       const { centers: _centers } = await getCentersWithOutAssignRequest();
       return { config, _centers };
@@ -195,7 +195,15 @@ function ConfigAdd() {
     setValue('notSchoolDays', notSchoolDays);
   };
 
-  const onDeleteButton = async () => {};
+  const onDeleteButton = async () => {
+    try {
+      // Todo: Añadir modal de asegurar borrado
+      await removeCalendarConfigRequest(data.id);
+      await router.push('/calendar/config/');
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+  };
 
   const onSubmit = async ({ country, region, ...formData }) => {
     try {
