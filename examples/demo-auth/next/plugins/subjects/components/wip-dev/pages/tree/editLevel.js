@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, FormControl, Tabs, Tab, TabList, TabPanel, Input, Checkbox } from 'leemons-ui';
-import { InformationCircleIcon, ExclamationCircleIcon, XIcon } from '@heroicons/react/solid';
+import { Button, FormControl, Select, Input, Checkbox, Textarea, Label, Radio } from 'leemons-ui';
+import { InformationCircleIcon, ExclamationCircleIcon } from '@heroicons/react/solid';
 import { useForm } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import tLoader from '@multilanguage/helpers/tLoader';
@@ -65,7 +65,7 @@ export default function EditLevel({
 
   // Update form values if the selected entity changes
   useEffect(() => {
-    setValue('isClass', entity ? !!entity.isClass : false);
+    setValue('isSubject', entity ? !!entity.isSubject : false);
 
     // Clear previous entity localizations
     dirtySetDefaultValue({ ...dirtyDefaultValue, localizations: {} });
@@ -146,76 +146,238 @@ export default function EditLevel({
           setShowSaveWithouSaving(false);
         }}
       />
-      <div className="flex-1 my-2 mb-2 bg-primary-content py-6 pl-12 pr-6 relative">
-        <Button
-          className="btn-circle btn-xs ml-8 bg-transparent border-0 absolute top-1 right-1"
-          onClick={handleClose}
-        >
-          <XIcon className="inline-block w-4 h-4 stroke-current" />
-        </Button>
-        <Alerts {...alerts} />
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <FormControl>
-            <div className="flex space-x-2 mb-4">
-              <Input
-                value={dirtyValue.defaultLocale.name}
-                onChange={(e) => {
-                  dirtySetValue({
-                    ...dirtyValue,
-                    defaultLocale: { ...dirtyValue.defaultLocale, name: e.target.value },
-                  });
-                }}
-                outlined
-                className="input w-full"
-                placeholder={t('form.name.placeholder')}
-              />
-              <Button color="primary">{t('form.save')}</Button>
+      <div className="flex flex-col flex-1 relative">
+        {/* EDIT DATA */}
+        <div className="flex flex-col flex-1 p-12 overflow-y-scroll">
+          {/* ·······················································
+          ALERTS BADGES */}
+          <Alerts {...alerts} />
+          {/* ·······················································
+          MAIN FORM */}
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex flex-col gap-5">
+              <FormControl>
+                <Input
+                  value={dirtyValue.defaultLocale.name}
+                  onChange={(e) => {
+                    dirtySetValue({
+                      ...dirtyValue,
+                      defaultLocale: { ...dirtyValue.defaultLocale, name: e.target.value },
+                    });
+                  }}
+                  outlined
+                  className="input-lg w-full"
+                  placeholder={t('form.name.placeholder')}
+                />
+              </FormControl>
+
+              <FormControl
+                label={
+                  <>
+                    {t('form.isSubject.label')}{' '}
+                    <span className="fc_legend">
+                      <InformationCircleIcon className={`w-5 h-5 inline mx-2 text-gray-30`} />
+                      {t('form.isSubject.tooltip')}
+                    </span>
+                  </>
+                }
+                labelPosition="right"
+              >
+                <Checkbox color="primary" asToggle {...register('isSubject')} />
+              </FormControl>
+
+              <FormControl>
+                <Textarea
+                  value={dirtyValue.defaultLocale.description}
+                  onChange={(e) => {
+                    dirtySetValue({
+                      ...dirtyValue,
+                      defaultLocale: { ...dirtyValue.defaultLocale, description: e.target.value },
+                    });
+                  }}
+                  outlined
+                  className="w-full"
+                  placeholder={t('form.description.placeholder')}
+                />
+              </FormControl>
             </div>
-          </FormControl>
-          <FormControl
-            className="mb-12 px-4"
-            label={
-              <>
-                {t('form.isClass.label')}{' '}
-                <span className="fc_legend">
-                  <InformationCircleIcon className={`w-5 h-5 inline mx-2 text-gray-30`} />
-                  {t('form.isClass.tooltip')}
-                </span>
-              </>
-            }
-            labelPosition="right"
-          >
-            <Checkbox color="primary" {...register('isClass')} />
-          </FormControl>
-        </form>
-        <div>
-          <Button color="primary" link className="pr-1" onClick={toggleDrawer}>
-            {t('translations.label')}
-          </Button>
-          {Object.values(warnings).some((value) => value) && (
-            <span className="fc_legend">
-              <ExclamationCircleIcon className={`w-3 h-3 inline mr-2 text-error`} />
-              {t('translations.tooltip')}
-            </span>
-          )}
+          </form>
+          {/* ·······················································
+          TRANSLATIONS */}
+          <div className="flex items-center gap-2 my-4">
+            <Button color="primary" outlined rounded onClick={toggleDrawer} className="btn-sm">
+              {t('translations.label')}
+            </Button>
+            {Object.values(warnings).some((value) => value) && (
+              <span className="fc_legend">
+                <ExclamationCircleIcon className={`w-3 h-3 inline mr-2 text-error`} />
+                {t('translations.tooltip')}
+              </span>
+            )}
+          </div>
+          {/* -------------------------------------------------------
+          TEACHING */}
+          <div className="border-t border-gray-20 my-4" />
+          <div className="max-w-lg flex flex-col py-4">
+            <h2 className="text-xl font-normal">Teaching</h2>
+            <div className="page-description text-sm">
+              <p>
+                How is this subject taught? Yearly, half-yearly... indicate the formats in which
+                each subject is taught.
+              </p>
+            </div>
+            <div className="mt-4 max-w-sm">
+              <Select outlined multiple>
+                <option disabled selected>
+                  Add type
+                </option>
+                {'Daily Weekly Fortnightly Monthly Quarterly Quarterly Semiannual Yearly'
+                  .split(' ')
+                  .map((item, i) => (
+                    <option key={`o-${i}`} value={item}>
+                      {item}
+                    </option>
+                  ))}
+              </Select>
+            </div>
+          </div>
+
+          {/* -------------------------------------------------------
+          COURSES */}
+          <div className="border-t border-gray-20 my-4" />
+          <div className="max-w-lg flex flex-col py-4">
+            <h2 className="text-xl font-normal">Courses and hours per course</h2>
+            <div className="page-description text-sm">
+              <p>
+                This information will make it possible to define in which stages and courses the
+                subject is taught and how many hours per week it covers (stages are inherited from
+                the structure defined in Classroom).
+              </p>
+            </div>
+            <div className="mt-4">
+              <FormControl label="Fixed stages" labelPosition="right" className="font-normal">
+                <Radio name="opt" color="primary" checked />
+              </FormControl>
+              <div className="text-sm font-inter pl-8 text-gray-300 mb-4">
+                (use this system if the subject must be taken at a specific stage).
+              </div>
+              <FormControl label="Recommended stages" labelPosition="right" className="font-normal">
+                <Radio name="opt" color="primary" />
+              </FormControl>
+              <div className="text-sm font-inter pl-8 text-gray-300">
+                (use this system if the planning of subjects is only a recommendation and students
+                can take them at a time of their choice).
+              </div>
+            </div>
+            <div className="mt-4">
+              <FormControl label="Add hours" labelPosition="right" className="font-normal">
+                <Checkbox
+                  color="primary"
+                  asToggle
+                  onChange={(e) => dirtySetValue({ ...dirtyValue, addHours: e.target.checked })}
+                />
+              </FormControl>
+              {dirtyValue && dirtyValue.addHours && (
+                <div className="mt-4 max-w-sm">
+                  <Select outlined multiple>
+                    <option disabled selected>
+                      Add temporality
+                    </option>
+                    {'Daily Weekly Fortnightly Monthly Quarterly Quarterly Semiannual Yearly'
+                      .split(' ')
+                      .map((item, i) => (
+                        <option key={`o-${i}`} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                  </Select>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* -------------------------------------------------------
+          CREDITS */}
+          <div className="border-t border-gray-20 my-4" />
+          <div className="max-w-lg flex flex-col py-4">
+            <h2 className="text-xl font-normal">Credits</h2>
+            <div className="page-description text-sm">
+              <p>
+                Activate the Credit system if your students can study the subjects of this level
+                indistinctly in order to obtain an evaluable knowledge.
+              </p>
+            </div>
+            <div className="mt-4">
+              <FormControl label="Credit system" labelPosition="right" className="font-normal">
+                <Checkbox
+                  color="primary"
+                  asToggle
+                  onChange={(e) => dirtySetValue({ ...dirtyValue, useCredits: e.target.checked })}
+                />
+              </FormControl>
+              {dirtyValue && dirtyValue.useCredits && (
+                <div className="mt-6">
+                  <div className="font-inter font-normal text-gray-300">Credit specification</div>
+                  <div className="flex gap-8 mt-4">
+                    {'Minimum Recommended Maximum'.split(' ').map((item, i) => (
+                      <FormControl
+                        key={`c-${i}`}
+                        label={item}
+                        labelPosition="right"
+                        className="font-inter"
+                      >
+                        <Checkbox />
+                      </FormControl>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* -------------------------------------------------------
+          VISUAL IDENTIFICATION */}
+          <div className="border-t border-gray-20 my-4" />
+          <div className="max-w-lg flex flex-col py-4">
+            <h2 className="text-xl font-normal">Visual Identification </h2>
+            <div className="page-description text-sm">
+              <p>
+                You can allow your centre's administration to upload an icon and/or add a colour for
+                each level.
+              </p>
+              <p>
+                Accessibility: if you have students with visual impairment, activate the use of an
+                icon as a minimum.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-1 mt-4">
+              {'Icon Color'.split(' ').map((item, i) => (
+                <FormControl
+                  key={`c-${i}`}
+                  label={item}
+                  labelPosition="right"
+                  className="font-inter"
+                >
+                  <Checkbox />
+                </FormControl>
+              ))}
+            </div>
+          </div>
         </div>
-        <Tabs>
-          <TabList>
-            <Tab tabIndex="0" id="Tab1" panelId="Panel1">
-              {t('tabs.dataset.label')}
-            </Tab>
-            <Tab tabIndex="0" id="Tab2" panelId="Panel2">
-              {t('tabs.permissions.label')}
-            </Tab>
-          </TabList>
-          <TabPanel id="Panel1" tabId="Tab1" className="p-4">
-            <h2>Dataset form</h2>
-          </TabPanel>
-          <TabPanel id="Panel2" tabId="Tab2" className="p-4">
-            <h2>Permissions form</h2>
-          </TabPanel>
-        </Tabs>
+
+        {/* BUTTON BAR */}
+        <div className="flex justify-end gap-2 py-6 px-12">
+          <Button type="button" color="secondary" text onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button type="submit" color="primary">
+            {t('form.save')}
+          </Button>
+        </div>
       </div>
+
+      {/* TRANSLATIONS DRAWER */}
       <Translations
         {...drawer}
         defaultLocaleValues={dirtyValue.defaultLocale}

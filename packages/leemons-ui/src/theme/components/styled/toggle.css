@@ -4,9 +4,9 @@
   .toggle {
     @apply appearance-none opacity-0 w-0 h-0 absolute;
     & ~ .toggle-mark {
-      @apply w-12 h-6 rounded-badge border border-base-content border-opacity-20;
+      @apply w-10 h-6 rounded-badge border border-gray-30 bg-gray-30;
       &:before {
-        @apply w-5 h-5 m-px rounded-badge bg-base-content bg-opacity-20;
+        @apply w-5 h-5 m-px rounded-badge bg-white;
         animation: togglemark-off var(--animation-input, 0.4s) ease-in-out;
       }
     }
@@ -14,21 +14,19 @@
     &:checked:focus-visible,
     &:checked:hover:focus-visible {
       & ~ .toggle-mark {
-        box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--b-c));
       }
     }
     &:checked {
       &,
       &:hover {
         & ~ .toggle-mark {
-          @apply bg-base-100 border-base-content bg-opacity-20;
           &:before {
-            @apply bg-base-content transform translate-x-6;
+            @apply transform translate-x-4;
             animation: togglemark-on var(--animation-input, 0.4s) ease-in-out;
 
             /* RTL quick fix */
             [dir='rtl'] & {
-              @apply -translate-x-6;
+              @apply -translate-x-4;
             }
           }
         }
@@ -39,16 +37,14 @@
       &:checked:focus-visible,
       &:checked:hover:focus-visible {
         & ~ .toggle-mark {
-          box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--p));
         }
       }
       &:checked {
         &,
         &:hover {
           & ~ .toggle-mark {
-            @apply bg-primary border-primary bg-opacity-20 border-opacity-10;
+            @apply border-primary bg-primary;
             &:before {
-              @apply bg-primary;
             }
           }
         }
@@ -59,16 +55,14 @@
       &:checked:focus-visible,
       &:checked:hover:focus-visible {
         & ~ .toggle-mark {
-          box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--s));
         }
       }
       &:checked {
         &,
         &:hover {
           & ~ .toggle-mark {
-            @apply bg-secondary border-secondary bg-opacity-20 border-opacity-10;
+            @apply border-secondary bg-secondary;
             &:before {
-              @apply bg-secondary;
             }
           }
         }
@@ -79,16 +73,14 @@
       &:checked:focus-visible,
       &:checked:hover:focus-visible {
         & ~ .toggle-mark {
-          box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--a));
         }
       }
       &:checked {
         &,
         &:hover {
           & ~ .toggle-mark {
-            @apply bg-accent border-accent bg-opacity-20 border-opacity-10;
+            @apply border-accent bg-accent;
             &:before {
-              @apply bg-accent;
             }
           }
         }
@@ -103,16 +95,14 @@
       &:checked:focus-visible,
       &:checked:hover:focus-visible {
         & ~ .toggle-mark {
-          box-shadow: 0 0 0 2px hsl(var(--b1)), 0 0 0 4px hsl(var(--er));
         }
       }
       &:checked {
         &,
         &:hover {
           & ~ .toggle-mark {
-            @apply bg-error border-error bg-opacity-20 border-opacity-10;
+            @apply border-error bg-error;
             &:before {
-              @apply bg-error;
             }
           }
         }

@@ -65,7 +65,7 @@ export default function NodeRenderer({
     <div
       className={cln('tree-node relative flex items-center h-8 rounded group', {
         'bg-whitecursor-pointer': hasChild && !isSelected,
-        'bg-gray-10': hover,
+        'bg-gray-10': hover && !isButton,
         'border border-transparent hover:border-secondary pl-2':
           !hasChild && !isSelected && !isButton,
         'bg-primary-100 border border-dashed border-primary pl-2': isSelected,

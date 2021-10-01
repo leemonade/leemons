@@ -2,7 +2,7 @@
 @layer components {
   /* <: */
   .badge {
-    @apply bg-neutral border border-neutral text-neutral-content rounded-badge;
+    @apply font-inter bg-neutral border border-neutral text-neutral-content rounded-badge;
     &-outline {
       @apply border-base-300;
     }

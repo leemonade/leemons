@@ -10,12 +10,14 @@ const Checkbox = React.forwardRef(
       onClick = () => {},
       checked: defaultChecked = false,
       onChange = () => {},
+      asToggle,
       ...props
     },
     ref
   ) => {
     const inputRef = ref && typeof ref !== 'function' ? ref : useRef();
-    const colorClass = color ? `checkbox-${color}` : '';
+    const classPrefix = asToggle ? 'toggle' : 'checkbox';
+    const colorClass = color ? `${classPrefix}-${color}` : '';
     const [checked, setChecked] = useState({ checked: defaultChecked, fromClick: false });
 
     useEffect(() => {
@@ -63,11 +65,11 @@ const Checkbox = React.forwardRef(
           type="checkbox"
           checked={checked.checked}
           onChange={customOnChange}
-          className={`checkbox ${colorClass} ${className || ''}`}
+          className={`${classPrefix} ${colorClass} ${className || ''}`}
           {...props}
         />
         <span
-          className="checkbox-mark"
+          className={`${classPrefix}-mark`}
           onClick={(e) => {
             if (!props.disabled) spanClick(e);
           }}
