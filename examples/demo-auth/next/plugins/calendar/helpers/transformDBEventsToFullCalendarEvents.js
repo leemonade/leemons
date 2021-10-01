@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import moment from 'moment';
 
-export default function transformDBEventsToFullCalendarEvents(events, calendars) {
+export default function transformDBEventsToFullCalendarEvents(events, calendars, config) {
   const goodEvents = [];
   const calendarsById = _.keyBy(calendars, 'id');
   const rrule = window.rrule.default;
@@ -59,6 +59,29 @@ export default function transformDBEventsToFullCalendarEvents(events, calendars)
 
     goodEvents.push(ev);
   });
+
+  if (config) {
+    if (_.isArray(config.notSchoolDays) && config.notSchoolDays) {
+      _.forEach(config.notSchoolDays, (weekday) => {
+        const dtstart = new Date(config.startYear, config.startMonth);
+        dtstart.setUTCHours(0, 0, 0, 0);
+        dtstart.setDate(dtstart.getDate() + weekday - dtstart.getDay());
+
+        goodEvents.push({
+          allDay: true,
+          display: 'background',
+          backgroundColor: '#333',
+          duration: {
+            days: 1,
+          },
+          rrule: {
+            freq: rrule.WEEKLY,
+            dtstart,
+          },
+        });
+      });
+    }
+  }
 
   return goodEvents;
 }

@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import ReactDomServer from 'react-dom/server';
 import { getCentersWithToken, useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
@@ -27,9 +27,13 @@ function Calendar() {
   const [toggleEventModal, EventModal] = useCalendarEventModal();
 
   const getCalendarsForCenter = async () => {
-    const { calendars, events, userCalendar, ownerCalendars } = await getCalendarsToFrontendRequest(
-      center.token
-    );
+    const {
+      calendars,
+      events,
+      userCalendar,
+      ownerCalendars,
+      calendarConfig,
+    } = await getCalendarsToFrontendRequest(center.token);
 
     setData({
       calendars: _.map(calendars, (calendar, index) => {
@@ -39,6 +43,7 @@ function Calendar() {
       events,
       userCalendar,
       ownerCalendars,
+      calendarConfig,
     });
   };
 
@@ -79,7 +84,9 @@ function Calendar() {
           events.push(event);
         }
       });
-      setFilteredEvents(transformDBEventsToFullCalendarEvents(events, data.calendars));
+      setFilteredEvents(
+        transformDBEventsToFullCalendarEvents(events, data.calendars, data.calendarConfig)
+      );
       // Secciones
       const calendarsBySection = _.groupBy(data.calendars, 'section');
       const calendarSections = [];
@@ -103,8 +110,10 @@ function Calendar() {
   };
 
   const onEventClick = (info) => {
-    setSelectedEvent(info.event.extendedProps.originalEvent);
-    toggleEventModal();
+    if (info.event.extendedProps.originalEvent) {
+      setSelectedEvent(info.event.extendedProps.originalEvent);
+      toggleEventModal();
+    }
   };
 
   const onNewEvent = () => {
@@ -112,9 +121,26 @@ function Calendar() {
     toggleEventModal();
   };
 
-  const onEventContent = (info) => ({
-    html: ReactDomServer.renderToString(<FullCalendarEventContent info={info} config={data} />),
-  });
+  const onEventContent = (info) => {
+    if (info.event.extendedProps.originalEvent) {
+      return {
+        html: ReactDomServer.renderToString(<FullCalendarEventContent info={info} config={data} />),
+      };
+    }
+    return null;
+  };
+
+  const fullCalendarConfigs = useMemo(() => {
+    const config = {};
+    if (data && data.calendarConfig) {
+      config.firstDay = data.calendarConfig.weekday;
+      config.validRange = {
+        start: new Date(data.calendarConfig.startYear, data.calendarConfig.startMonth, 1),
+        end: new Date(data.calendarConfig.endYear, data.calendarConfig.endMonth, 0),
+      };
+    }
+    return config;
+  }, [data]);
 
   return (
     <div className="bg-primary-content">
@@ -160,6 +186,7 @@ function Calendar() {
             initialView="dayGridMonth"
             eventClick={onEventClick}
             events={filteredEvents}
+            {...fullCalendarConfigs}
             eventContent={onEventContent}
             headerToolbar={{
               left: 'prev,next today',

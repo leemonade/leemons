@@ -2,6 +2,7 @@ const _ = require('lodash');
 const { table } = require('../tables');
 const { getPermissionConfig: getPermissionConfigCalendar } = require('./getPermissionConfig');
 const { getPermissionConfig: getPermissionConfigEvent } = require('../events/getPermissionConfig');
+const { getByCenterId } = require('../calendar-configs');
 
 /**
  * Add calendar with the provided key if not already exists
@@ -18,12 +19,12 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
 
   // ES: Cogemos todos los permisos del usuario
   // EN: We take all the user permissions
-  const userPermissions = await userPlugin.services.permissions.getUserAgentPermissions(
-    userSession.userAgents,
-    {
+  const [userPermissions, center] = await Promise.all([
+    userPlugin.services.permissions.getUserAgentPermissions(userSession.userAgents, {
       transacting,
-    }
-  );
+    }),
+    userPlugin.services.users.getUserAgentCenter(userSession.userAgents[0], { transacting }),
+  ]);
 
   const queryPermissions = [];
   const ownerPermissions = [];
@@ -49,7 +50,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
 
   // ES: Calendarios/Eventos a los que tiene acceso de lectura
   // EN: Calendars/Events with view access
-  const [items, ownerItems] = await Promise.all([
+  const promises = [
     userPlugin.services.permissions.findItems(
       {
         $or: queryPermissions,
@@ -68,7 +69,9 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
         transacting,
       }
     ),
-  ]);
+  ];
+  if (center) promises.push(getByCenterId(center.id, { transacting }));
+  const [items, ownerItems, calendarConfig] = await Promise.all(promises);
 
   // ES: Separamos los calendarios de los eventos
   // EN: We separate the calendars from the events
@@ -149,6 +152,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   return {
     userCalendar,
     ownerCalendars,
+    calendarConfig,
     calendars: finalCalendars,
     events: events.concat(eventsFromCalendars).map((event) => ({
       ...event,

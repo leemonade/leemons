@@ -57,7 +57,7 @@ function ConfigAdd() {
 
   const years = useMemo(() => {
     const currentYear = new Date().getUTCFullYear();
-    const minYear = currentYear - 100;
+    const minYear = currentYear;
     const maxYear = currentYear + 100;
     const list = [];
     for (let i = minYear; i <= maxYear; i++) {

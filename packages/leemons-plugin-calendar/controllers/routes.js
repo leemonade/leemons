@@ -40,6 +40,9 @@ module.exports = [
     handler: 'calendar.removeEvent',
     authenticated: true,
   },
+  /**
+   * Kanban
+   * */
   {
     path: '/kanban/list/columns',
     method: 'GET',
@@ -58,6 +61,9 @@ module.exports = [
     handler: 'calendar.saveKanbanEventOrders',
     authenticated: true,
   },
+  /**
+   * Calendar configs
+   * */
   {
     path: '/configs/add',
     method: 'POST',
