@@ -1,6 +1,6 @@
 const table = leemons.query('plugins_subjects::teachingItems');
 
-module.exports = async (items, { useNames, transacting } = {}) => {
+module.exports = async (items, { useNames = true, transacting } = {}) => {
   try {
     if (Array.isArray(items)) {
       // Get all the entires matching the query

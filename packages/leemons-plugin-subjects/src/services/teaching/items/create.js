@@ -12,7 +12,7 @@ module.exports = async (_items, { transacting } = {}) => {
   // Check which items already exists
   const existingItems = await exists(
     items.map(({ name }) => name),
-    { useNames: true, transacting }
+    { transacting }
   );
 
   // Separate existing items from non-existing

@@ -7,12 +7,12 @@ const updateItem = require('../src/services/teaching/items/update');
 const removeItem = require('../src/services/teaching/items/delete');
 
 // Assignments
-// const create = require('../src/services/teaching/items/create');
-// const exists = require('../src/services/teaching/items/exists');
-// const get = require('../src/services/teaching/items/get');
-// const list = require('../src/services/teaching/items/list');
-// const update = require('../src/services/teaching/items/update');
-// const remove = require('../src/services/teaching/items/delete');
+const add = require('../src/services/teaching/add');
+// const exists = require('../src/services/teaching/exists');
+// const get = require('../src/services/teaching/get');
+// const list = require('../src/services/teaching/list');
+// const update = require('../src/services/teaching/update');
+// const remove = require('../src/services/teaching/delete');
 
 module.exports = {
   // Items
@@ -24,4 +24,5 @@ module.exports = {
   deleteItem: removeItem,
 
   // Assignments
+  add,
 };

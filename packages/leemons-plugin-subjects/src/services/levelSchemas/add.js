@@ -98,11 +98,21 @@ async function add(
         const savedNames = await saveLocalization(savedLevelSchema.id, 'name', names, {
           transacting: t,
         });
+        // Save descriptions
+        const savedDescriptions = await saveLocalization(
+          savedLevelSchema.id,
+          'description',
+          descriptions,
+          {
+            transacting: t,
+          }
+        );
         // -----------------------------------------------------------------------
 
         return {
           ...savedLevelSchema,
           ...savedNames,
+          ...savedDescriptions,
         };
       },
       tables.levelSchemas,

@@ -34,6 +34,7 @@ module.exports = {
       references: {
         collection: 'plugins_subjects::teachingItems',
         relation: 'many to many',
+        field: 'name',
       },
     },
 

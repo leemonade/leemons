@@ -88,6 +88,22 @@ module.exports = {
       ctx.body = { status: 400, error: e.message };
     }
   },
+  setDescriptions: async (ctx) => {
+    try {
+      const names = await services.setDescriptions(
+        ctx.request.params.id,
+        ctx.request.body.descriptions,
+        {
+          userSession: ctx.state.userSession,
+        }
+      );
+      ctx.status = 201;
+      ctx.body = { status: 201, ok: true, names };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = { status: 400, error: e.message };
+    }
+  },
   setParent: async (ctx) => {
     try {
       const levelSchema = await services.setParent(ctx.request.params.id, ctx.request.body.parent, {

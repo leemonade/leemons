@@ -4,7 +4,7 @@ const exists = require('./exists');
 module.exports = async (items, { transacting } = {}) => {
   const existingItems = await exists(
     items.map(({ name }) => name),
-    { useNames: true, transacting }
+    { transacting }
   );
 
   const keys = items.reduce(

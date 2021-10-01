@@ -100,6 +100,13 @@ module.exports = [
     allowedPermissions: getPermissions(permissions.tree, ['update']),
   },
   {
+    path: '/levelSchema/:id/descriptions',
+    method: 'PATCH',
+    handler: 'levelSchemas.setDescriptions',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tree, ['update']),
+  },
+  {
     path: '/levelSchema/:id/parent',
     method: 'PATCH',
     handler: 'levelSchemas.setParent',
@@ -163,6 +170,12 @@ module.exports = [
     path: '/teaching/items',
     method: 'DELETE',
     handler: 'teaching.deleteItem',
+  },
+
+  {
+    path: '/levelSchema/:id/teaching',
+    method: 'POST',
+    handler: 'teaching.add',
   },
 
   {

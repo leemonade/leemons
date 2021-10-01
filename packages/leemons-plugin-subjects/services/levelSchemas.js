@@ -5,6 +5,7 @@ const update = require('../src/services/levelSchemas/update');
 const deleteLS = require('../src/services/levelSchemas/delete');
 const list = require('../src/services/levelSchemas/list');
 const setNames = require('../src/services/levelSchemas/setNames');
+const setDescriptions = require('../src/services/levelSchemas/setDescriptions');
 const setParent = require('../src/services/levelSchemas/setParent');
 const setIsSubject = require('../src/services/levelSchemas/setIsSubject');
 
@@ -16,6 +17,7 @@ module.exports = {
   delete: deleteLS,
   list,
   setNames,
+  setDescriptions,
   setParent,
   setIsSubject,
 };
