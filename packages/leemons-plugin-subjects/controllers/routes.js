@@ -137,17 +137,32 @@ module.exports = [
   {
     path: '/teaching/items/exists',
     method: 'POST',
-    handler: 'teaching.exists',
+    handler: 'teaching.existsItem',
   },
   {
     path: '/teaching/items',
     method: 'POST',
-    handler: 'teaching.create',
+    handler: 'teaching.createItem',
   },
   {
     path: '/teaching/items',
     method: 'PATCH',
-    handler: 'teaching.update',
+    handler: 'teaching.updateItem',
+  },
+  {
+    path: '/teaching/items',
+    method: 'GET',
+    handler: 'teaching.getItem',
+  },
+  {
+    path: '/teaching/items/list',
+    method: 'GET',
+    handler: 'teaching.listItem',
+  },
+  {
+    path: '/teaching/items',
+    method: 'DELETE',
+    handler: 'teaching.deleteItem',
   },
 
   {

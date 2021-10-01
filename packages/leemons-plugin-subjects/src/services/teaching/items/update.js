@@ -1,8 +1,6 @@
 const saveLocalization = require('./private/saveLocalization');
 const exists = require('./exists');
 
-const table = leemons.query('plugins_subjects::teachingItems');
-
 module.exports = async (items, { transacting } = {}) => {
   const existingItems = await exists(
     items.map(({ name }) => name),
