@@ -80,7 +80,7 @@ function CalendarEventModal({ event, centerToken, close, forceType }) {
   };
 
   const getUTCString = (date) => {
-    const month = (parseInt(date.getUTCMonth().toString(), 16) + 1).toString();
+    const month = (parseInt(date.getUTCMonth().toString(), 10) + 1).toString();
     const day = date.getUTCDate();
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
@@ -104,14 +104,14 @@ function CalendarEventModal({ event, centerToken, close, forceType }) {
       startTime = startTime.split(':');
       endTime = endTime.split(':');
       startDate.setUTCHours(
-        startTime[0] ? parseInt(startTime[0], 16) : 0,
-        startTime[1] ? parseInt(startTime[1], 16) : 0,
-        startTime[2] ? parseInt(startTime[2], 16) : 0
+        startTime[0] ? parseInt(startTime[0], 10) : 0,
+        startTime[1] ? parseInt(startTime[1], 10) : 0,
+        startTime[2] ? parseInt(startTime[2], 10) : 0
       );
       endDate.setUTCHours(
-        endTime[0] ? parseInt(endTime[0], 16) : 0,
-        endTime[1] ? parseInt(endTime[1], 16) : 0,
-        endTime[2] ? parseInt(endTime[2], 16) : 0
+        endTime[0] ? parseInt(endTime[0], 10) : 0,
+        endTime[1] ? parseInt(endTime[1], 10) : 0,
+        endTime[2] ? parseInt(endTime[2], 10) : 0
       );
     }
 

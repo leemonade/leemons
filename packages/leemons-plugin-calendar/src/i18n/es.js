@@ -35,6 +35,8 @@ module.exports = {
     add_calendar: 'Añadir calendario',
     from_market: 'Desde el mercado',
     from_scratch: 'Desde cero',
+    centers: 'Centro/s',
+    centers_placeholder: 'Seleccione centro/s...',
     country: 'País',
     country_placeholder: 'Seleccione el país...',
     region: 'Región',
@@ -79,5 +81,7 @@ module.exports = {
     country: 'País',
     region: 'Región',
     actions: 'Acciones',
+    view: 'Ver',
+    remove: 'Borrar',
   },
 };

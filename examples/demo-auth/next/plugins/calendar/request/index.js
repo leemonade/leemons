@@ -1,3 +1,4 @@
+import getCentersWithOutAssign from './getCentersWithOutAssign';
 import getCalendarsToFrontend from './getCalendarsToFrontend';
 import updateCalendarConfigs from './updateCalendarConfigs';
 import listKanbanEventOrders from './listKanbanEventOrders';
@@ -11,6 +12,7 @@ import removeEvent from './removeEvent';
 import updateEvent from './updateEvent';
 import addEvent from './addEvent';
 
+export const getCentersWithOutAssignRequest = getCentersWithOutAssign;
 export const getCalendarsToFrontendRequest = getCalendarsToFrontend;
 export const updateCalendarConfigsRequest = updateCalendarConfigs;
 export const listKanbanEventOrdersRequest = listKanbanEventOrders;

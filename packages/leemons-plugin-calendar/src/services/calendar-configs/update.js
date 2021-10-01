@@ -1,19 +1,23 @@
+const _ = require('lodash');
 const { table } = require('../tables');
 
 const { validateAddCalendarConfig } = require('../../validations/forms');
 const { validateNotExistCalendarConfig } = require('../../validations/exists');
+const { removeByConfigId, addMany } = require('../center-calendar-configs');
+const { detail } = require('./detail');
 
 /**
  * Update calendar config
  * @public
  * @static
  * @param {any} id - Config id
+ * @param {any} centers - Config centers
  * @param {any} data - Config data
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function update(id, data, { transacting } = {}) {
-  validateAddCalendarConfig(data);
+async function update(id, { centers, ...data }, { transacting } = {}) {
+  validateAddCalendarConfig({ centers, ...data });
 
   await validateNotExistCalendarConfig(id, { transacting });
   const response = await table.calendarConfigs.update(
@@ -25,11 +29,16 @@ async function update(id, data, { transacting } = {}) {
     },
     { transacting }
   );
-  return {
-    ...response,
-    schoolDays: JSON.parse(response.schoolDays),
-    notSchoolDays: JSON.parse(response.notSchoolDays),
-  };
+
+  await removeByConfigId(id, { transacting });
+  if (_.isArray(centers)) {
+    await addMany(
+      _.map(centers, (center) => ({ center, config: response.id })),
+      { transacting }
+    );
+  }
+
+  return detail(response.id, { transacting });
 }
 
 module.exports = { update };

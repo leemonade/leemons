@@ -1,0 +1,13 @@
+Los calendarios deberian de poder tener el label/titulo en multiples idiomas, añadir como parametro opcional a la funcion de añadir/actualizar calendario.
+
+https://vldzx7.axshare.com/#id=jau2e2&p=06_01_01_02b_regional_calendars_-_form_scratch&g=1&sc=3&hi=1
+Hay que añadir un select de centros donde solo salgan los centros que aun no esten relacionados a ninguna configuracion de calendario
+
+https://vldzx7.axshare.com/#id=74ko1j&p=06_01_03_calendars&g=1&sc=3&hi=1
+Crear modelo agrupaciones de calendarios.
+
+Modelo: Agrupaciones de calendarios
+Modelo: Calendarios - agrupaciones de calendarios
+
+Hay que hacerse una pantalla que liste las agrupaciones de calendarios que existan.
+El detalle donde se crean/actualizan las agrupaciones

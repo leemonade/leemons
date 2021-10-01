@@ -102,4 +102,15 @@ module.exports = [
       },
     },
   },
+  {
+    path: '/configs/centers-with-out-assign',
+    method: 'GET',
+    handler: 'calendar.getCentersWithOutAssign',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.calendar.calendar-configs': {
+        actions: ['view', 'admin'],
+      },
+    },
+  },
 ];

@@ -3,6 +3,7 @@ const { list } = require('./list');
 const { exist } = require('./exist');
 const { detail } = require('./detail');
 const { update } = require('./update');
+const { getCentersWithOutAssign } = require('./getCentersWithOutAssign');
 
 module.exports = {
   add,
@@ -10,4 +11,5 @@ module.exports = {
   exist,
   detail,
   update,
+  getCentersWithOutAssign,
 };

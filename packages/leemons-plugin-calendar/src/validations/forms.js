@@ -1,9 +1,10 @@
 const { LeemonsValidator } = global.utils;
 const {
-  stringSchema,
   dateSchema,
+  stringSchema,
   booleanSchema,
   integerSchema,
+  arrayStringSchema,
   localeObjectSchema,
 } = require('./types');
 
@@ -127,6 +128,7 @@ const addCalendarConfigSchema = {
         type: 'number',
       },
     },
+    centers: arrayStringSchema,
   },
   required: [
     'title',

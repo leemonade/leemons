@@ -12,6 +12,13 @@ const stringSchema = {
   maxLength: 255,
 };
 
+const arrayStringSchema = {
+  type: 'array',
+  items: {
+    type: 'string',
+  },
+};
+
 const arrayStringRequiredSchema = {
   type: 'array',
   items: {
@@ -43,11 +50,12 @@ const localeObjectSchema = () => ({
 });
 
 module.exports = {
+  dateSchema,
   textSchema,
   stringSchema,
-  arrayStringRequiredSchema,
-  dateSchema,
   booleanSchema,
   integerSchema,
+  arrayStringSchema,
   localeObjectSchema,
+  arrayStringRequiredSchema,
 };

@@ -74,9 +74,9 @@ async function listCalendarConfig(ctx) {
 }
 
 async function detailCalendarConfig(ctx) {
-  const configs = await calendarConfigsService.detail(ctx.request.params.id);
+  const config = await calendarConfigsService.detail(ctx.request.params.id);
   ctx.status = 200;
-  ctx.body = { status: 200, configs };
+  ctx.body = { status: 200, config };
 }
 
 async function updateCalendarConfig(ctx) {
@@ -86,6 +86,12 @@ async function updateCalendarConfig(ctx) {
   );
   ctx.status = 200;
   ctx.body = { status: 200, config };
+}
+
+async function getCentersWithOutAssign(ctx) {
+  const centers = await calendarConfigsService.getCentersWithOutAssign();
+  ctx.status = 200;
+  ctx.body = { status: 200, centers };
 }
 
 module.exports = {
@@ -101,4 +107,5 @@ module.exports = {
   detailCalendarConfig,
   listKanbanEventOrders,
   saveKanbanEventOrders,
+  getCentersWithOutAssign,
 };

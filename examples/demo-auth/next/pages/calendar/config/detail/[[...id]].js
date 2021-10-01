@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
@@ -11,11 +11,13 @@ import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import {
   addCalendarConfigRequest,
   detailCalendarConfigsRequest,
+  getCentersWithOutAssignRequest,
   updateCalendarConfigsRequest,
 } from '@calendar/request';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { Badge, FormControl, PageContainer, PageHeader, Radio, Select } from 'leemons-ui';
+import { addErrorAlert } from '@layout/alert';
 import countryList from 'country-region-data';
 
 function ConfigAdd() {
@@ -71,9 +73,10 @@ function ConfigAdd() {
   const [saveLoading, setSaveLoading] = useState(false);
 
   const [data, setData] = useState(null);
+  const [centers, setCenters] = useState(null);
   const [regionList, setRegionList] = useState(null);
 
-  const [error, setError, ErrorAlert] = useRequestErrorMessage();
+  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
 
   const router = useRouter();
 
@@ -83,63 +86,87 @@ function ConfigAdd() {
     setValue,
     getValues,
     watch,
-    unregister,
-    trigger,
-    formState: { errors, isSubmitted },
+    reset,
+    formState: { errors },
   } = useForm();
 
-  const load = useMemo(
-    () => async () => {
-      setLoading(true);
-      if (router.isReady && router.query && _.isArray(router.query.id)) {
-        const id = router.query.id[0];
-        let config = null;
-        if (id !== 'new') {
-          const response = await detailCalendarConfigsRequest(id);
-          config = response.config;
-        }
-        return { config };
+  const load = useCallback(async () => {
+    setLoading(true);
+    reset();
+    if (router.isReady && router.query && _.isArray(router.query.id)) {
+      const id = router.query.id[0];
+      let config = null;
+      if (id !== 'new') {
+        const response = await detailCalendarConfigsRequest(id);
+        config = response.config;
+        console.log(config);
       }
-      return null;
-    },
-    [router]
-  );
+      const { centers: _centers } = await getCentersWithOutAssignRequest();
+      return { config, _centers };
+    }
+    return null;
+  }, [router]);
 
-  const onSuccess = useMemo(
-    () => (_data) => {
-      if (_data) {
-        const { config } = _data;
-        if (config) {
-        } else {
-          setValue('addedFrom', 'scratch');
-          setValue('country', '_');
-          setValue('region', '_');
-          setValue('startMonth', '_');
-          setValue('startYear', '_');
-          setValue('endMonth', '_');
-          setValue('endYear', '_');
-          setValue('weekday', '_');
-          setValue('notSchoolDays', [6, 0]);
-          setValue('schoolDays', [1, 2, 3, 4, 5]);
-        }
-        setLoading(false);
-      }
-    },
-    []
-  );
-
-  const onError = useMemo(
-    () => (e) => {
-      // ES: 4001 codigo de que aun no existe schema, como es posible ignoramos el error
-      if (e.code !== 4001) {
-        setError(e);
+  const onSuccess = useCallback((_data) => {
+    if (_data) {
+      const { config, _centers } = _data;
+      if (config) {
+        setData(config);
+        const {
+          id,
+          // eslint-disable-next-line camelcase
+          created_at,
+          // eslint-disable-next-line camelcase
+          updated_at,
+          countryShortCode,
+          countryName,
+          regionShortCode,
+          regionName,
+          startMonth,
+          startYear,
+          endMonth,
+          endYear,
+          centers: __centers,
+          ...values
+        } = config;
+        setCenters([..._centers, ...__centers]);
+        _.forIn(values, (value, key) => {
+          setValue(key, value);
+        });
+        setValue('centers', _.map(__centers, 'id'));
+        setValue('startMonth', startMonth.toString());
+        setValue('startYear', startYear.toString());
+        setValue('endMonth', endMonth.toString());
+        setValue('endYear', endYear.toString());
+        setValue('country', countryShortCode);
+        setTimeout(() => setValue('region', regionShortCode), 100);
+      } else {
+        setValue('addedFrom', 'scratch');
+        setValue('country', '_');
+        setValue('region', '_');
+        setValue('startMonth', '_');
+        setValue('startYear', '_');
+        setValue('endMonth', '_');
+        setValue('endYear', '_');
+        setValue('weekday', '_');
+        setValue('notSchoolDays', [6, 0]);
+        setValue('schoolDays', [1, 2, 3, 4, 5]);
+        setValue('centers', []);
+        setCenters(_centers);
       }
       setLoading(false);
-    },
-    []
-  );
+    }
+  }, []);
 
-  useAsync(load, onSuccess, onError);
+  const onError = useCallback((e) => {
+    // ES: 4001 codigo de que aun no existe schema, como es posible ignoramos el error
+    if (e.code !== 4001) {
+      setError(e);
+    }
+    setLoading(false);
+  }, []);
+
+  useAsync(load, onSuccess, onError, [router]);
 
   useEffect(() => {
     const subscription = watch(({ country }, { name }) => {
@@ -171,33 +198,42 @@ function ConfigAdd() {
   const onDeleteButton = async () => {};
 
   const onSubmit = async ({ country, region, ...formData }) => {
-    let config;
+    try {
+      let config;
 
-    const countryItem = _.find(countryList, { countryShortCode: country });
-    const regionItem = _.find(countryItem.regions, { shortCode: region });
+      const countryItem = _.find(countryList, { countryShortCode: country });
+      const regionItem = _.find(countryItem.regions, { shortCode: region });
 
-    const toSend = {
-      ...formData,
-      countryName: countryItem.countryName,
-      countryShortCode: countryItem.countryShortCode,
-      regionName: regionItem.name,
-      regionShortCode: regionItem.shortCode,
-      weekday: parseInt(formData.weekday, 16),
-      startMonth: parseInt(formData.startMonth, 16),
-      startYear: parseInt(formData.startYear, 16),
-      endMonth: parseInt(formData.endMonth, 16),
-      endYear: parseInt(formData.endYear, 16),
-    };
+      const toSend = {
+        ...formData,
+        countryName: countryItem.countryName,
+        countryShortCode: countryItem.countryShortCode,
+        regionName: regionItem.name,
+        regionShortCode: regionItem.shortCode,
+        weekday: parseInt(formData.weekday, 10),
+        startMonth: parseInt(formData.startMonth, 10),
+        startYear: parseInt(formData.startYear, 10),
+        endMonth: parseInt(formData.endMonth, 10),
+        endYear: parseInt(formData.endYear, 10),
+      };
 
-    if (data) {
-      const response = await updateCalendarConfigsRequest(data.id, toSend);
-      config = response.config;
-    } else {
-      const response = await addCalendarConfigRequest(toSend);
-      config = response.config;
+      if (!toSend.description) {
+        delete toSend.description;
+      }
+
+      setSaveLoading(true);
+      if (data) {
+        const response = await updateCalendarConfigsRequest(data.id, toSend);
+        config = response.config;
+      } else {
+        const response = await addCalendarConfigRequest(toSend);
+        config = response.config;
+      }
+      setSaveLoading(false);
+      await router.push(`/calendar/config/detail/${config.id}`);
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
     }
-
-    router.push(`/calendar/config/detail/${config}`);
   };
 
   const formAddedFrom = watch('addedFrom');
@@ -250,6 +286,25 @@ function ConfigAdd() {
                   </>
                 ) : null}
 
+                {/* Centers */}
+                <FormControl label={t('centers')} formError={_.get(errors, 'centers')}>
+                  <Select
+                    outlined
+                    multiple={true}
+                    value={watch('centers')}
+                    onChange={(e) => setValue('centers', e)}
+                    placeholderLabel={t('centers_placeholder')}
+                  >
+                    {centers
+                      ? centers.map((center) => (
+                          <option key={center.id} value={center.id}>
+                            {center.name}
+                          </option>
+                        ))
+                      : null}
+                  </Select>
+                </FormControl>
+
                 {/* Country/Region */}
                 <div className="flex gap-4">
                   <FormControl label={t('country')} formError={_.get(errors, 'country')}>
@@ -262,6 +317,7 @@ function ConfigAdd() {
                           message: tCommonForm('required'),
                         },
                       })}
+                      value={watch('country')}
                     >
                       <option value="_" disabled>
                         {t('country_placeholder')}
@@ -284,6 +340,7 @@ function ConfigAdd() {
                           message: tCommonForm('required'),
                         },
                       })}
+                      value={watch('region')}
                     >
                       <option value="_" disabled>
                         {t('region_placeholder')}
@@ -313,13 +370,14 @@ function ConfigAdd() {
                             required: tCommonForm('required'),
                             validate: (value) => (value === '_' ? tCommonForm('required') : true),
                           })}
+                          value={watch('startMonth')}
                         >
                           <option value="_" disabled>
                             {t('month_placeholder')}
                           </option>
-                          {months.map((country) => (
-                            <option key={country.value} value={country.value}>
-                              {t(country.name)}
+                          {months.map((month) => (
+                            <option key={month.value} value={month.value.toString()}>
+                              {t(month.name)}
                             </option>
                           ))}
                         </Select>
@@ -331,12 +389,13 @@ function ConfigAdd() {
                             required: tCommonForm('required'),
                             validate: (value) => (value === '_' ? tCommonForm('required') : true),
                           })}
+                          value={watch('startYear')}
                         >
                           <option value="_" disabled>
                             {t('year_placeholder')}
                           </option>
                           {years.map((year) => (
-                            <option key={year} value={year}>
+                            <option key={year} value={year.toString()}>
                               {year}
                             </option>
                           ))}
@@ -355,13 +414,14 @@ function ConfigAdd() {
                             required: tCommonForm('required'),
                             validate: (value) => (value === '_' ? tCommonForm('required') : true),
                           })}
+                          value={watch('endMonth')}
                         >
                           <option value="_" disabled>
                             {t('month_placeholder')}
                           </option>
-                          {months.map((country) => (
-                            <option key={country.value} value={country.value}>
-                              {t(country.name)}
+                          {months.map((month) => (
+                            <option key={month.value} value={month.value.toString()}>
+                              {t(month.name)}
                             </option>
                           ))}
                         </Select>
@@ -373,12 +433,13 @@ function ConfigAdd() {
                             required: tCommonForm('required'),
                             validate: (value) => (value === '_' ? tCommonForm('required') : true),
                           })}
+                          value={watch('endYear')}
                         >
                           <option value="_" disabled>
                             {t('year_placeholder')}
                           </option>
                           {years.map((year) => (
-                            <option key={year} value={year}>
+                            <option key={year} value={year.toString()}>
                               {year}
                             </option>
                           ))}
@@ -396,6 +457,7 @@ function ConfigAdd() {
                       required: tCommonForm('required'),
                       validate: (value) => (value === '_' ? tCommonForm('required') : true),
                     })}
+                    value={watch('weekday')}
                   >
                     <option value="_" disabled>
                       {t('first_day_week_placeholder')}

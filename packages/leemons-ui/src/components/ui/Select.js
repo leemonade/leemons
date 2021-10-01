@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
 import React, { createRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import Badge from './Badge';
 import { XIcon } from '@heroicons/react/outline';
+import Badge from './Badge';
 
 function getAllOptions(children) {
   const childrens = React.Children.toArray(children);
-  let options = [];
+  const options = [];
   _.forEach(childrens, (child) => {
     if (child.type === 'option') {
       options.push({
@@ -33,6 +33,8 @@ const Select = React.forwardRef(
       onChange = () => {},
       multiple,
       value,
+      placeholderLabel,
+      placeholderValue,
       ...props
     },
     ref
@@ -71,8 +73,8 @@ const Select = React.forwardRef(
     let __defaultOption = _.find(__options, { selected: true, disabled: true });
     if (!__defaultOption && multiple) {
       __defaultOption = {
-        label: '-',
-        value: '-',
+        label: placeholderLabel || '-',
+        value: placeholderValue || '-',
         selected: true,
         disabled: true,
       };
@@ -100,15 +102,15 @@ const Select = React.forwardRef(
     }, []);
 
     useEffect(() => {
-      let _options = getAllOptions(children);
+      const _options = getAllOptions(children);
       if (!_.isEqual(_options, _.values(originalOptionsByValue))) {
         const defaultOption = _.find(_options, { selected: true, disabled: true });
         if (defaultOption) {
           setDefaultOption(defaultOption);
         } else if (multiple) {
           const def = {
-            label: '-',
-            value: '-',
+            label: placeholderLabel || '-',
+            value: placeholderValue || '-',
             selected: true,
             disabled: true,
           };
@@ -122,12 +124,15 @@ const Select = React.forwardRef(
 
     useEffect(() => {
       if (multiple) setItems(value || []);
-    }, [value]);
+    }, [JSON.stringify(value)]);
 
-    useEffect(() => {
-      setOptions(filterOptions(_.values(originalOptionsByValue)));
-      if (multiple) onChange(items);
-    }, [items]);
+    useEffect(
+      (a) => {
+        setOptions(filterOptions(_.values(originalOptionsByValue)));
+        if (multiple) onChange(items);
+      },
+      [items]
+    );
 
     return (
       <>

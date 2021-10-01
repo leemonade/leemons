@@ -1,17 +1,21 @@
+const _ = require('lodash');
 const { table } = require('../tables');
 
 const { validateAddCalendarConfig } = require('../../validations/forms');
+const { addMany } = require('../center-calendar-configs');
+const { detail } = require('./detail');
 
 /**
  * Add calendar config
  * @public
  * @static
- * @param {any} data - Event data
+ * @param {string[]=} centers - Centers ids
+ * @param {any} data - Calendar data
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function add(data, { transacting } = {}) {
-  validateAddCalendarConfig(data);
+async function add({ centers, ...data }, { transacting } = {}) {
+  validateAddCalendarConfig({ centers, ...data });
 
   const response = await table.calendarConfigs.create(
     {
@@ -21,11 +25,15 @@ async function add(data, { transacting } = {}) {
     },
     { transacting }
   );
-  return {
-    ...response,
-    schoolDays: JSON.parse(response.schoolDays),
-    notSchoolDays: JSON.parse(response.notSchoolDays),
-  };
+
+  if (_.isArray(centers)) {
+    await addMany(
+      _.map(centers, (center) => ({ center, config: response.id })),
+      { transacting }
+    );
+  }
+
+  return detail(response.id, { transacting });
 }
 
 module.exports = { add };
