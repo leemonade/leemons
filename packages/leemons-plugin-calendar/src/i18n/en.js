@@ -1,6 +1,9 @@
 module.exports = {
   event: 'Event',
   task: 'Task',
+  holidays_vacation: 'Holiday / Vacation',
+  regional_holidays: 'Regional holidays',
+  non_school_day: 'Non school day (Other)',
   event_modal: {
     title: 'Event title',
     save: 'Save',
@@ -83,5 +86,11 @@ module.exports = {
     actions: 'Actions',
     view: 'View',
     remove: 'Remove',
+  },
+  detail_calendars_page: {
+    description:
+      'Select the days you want to configure and press over the type of day on the top list to change the type applied. You can press and drag to select a range of days',
+    school_day: 'School day',
+    non_school_day: 'Non school day (Ordinary)',
   },
 };

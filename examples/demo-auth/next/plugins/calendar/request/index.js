@@ -1,3 +1,4 @@
+import listCalendarConfigCalendars from './listCalendarConfigCalendars';
 import getCentersWithOutAssign from './getCentersWithOutAssign';
 import getCalendarsToFrontend from './getCalendarsToFrontend';
 import updateCalendarConfigs from './updateCalendarConfigs';
@@ -13,6 +14,7 @@ import removeEvent from './removeEvent';
 import updateEvent from './updateEvent';
 import addEvent from './addEvent';
 
+export const listCalendarConfigCalendarsRequest = listCalendarConfigCalendars;
 export const getCentersWithOutAssignRequest = getCentersWithOutAssign;
 export const getCalendarsToFrontendRequest = getCalendarsToFrontend;
 export const updateCalendarConfigsRequest = updateCalendarConfigs;

@@ -136,7 +136,7 @@ function Calendar() {
       config.firstDay = data.calendarConfig.weekday;
       config.validRange = {
         start: new Date(data.calendarConfig.startYear, data.calendarConfig.startMonth, 1),
-        end: new Date(data.calendarConfig.endYear, data.calendarConfig.endMonth, 0),
+        end: new Date(data.calendarConfig.endYear, data.calendarConfig.endMonth + 1, 0),
       };
     }
     return config;

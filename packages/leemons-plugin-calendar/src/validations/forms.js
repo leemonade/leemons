@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const { LeemonsValidator } = global.utils;
 const {
   dateSchema,
@@ -156,10 +158,42 @@ function validateAddCalendarConfig(data) {
   }
 }
 
+const addCalendarGroupsSchema = {
+  type: 'object',
+  properties: {
+    title: stringSchema,
+    center: stringSchema,
+    calendars: {
+      type: 'array',
+      items: {
+        ...addCalendarSchema,
+        properties: {
+          ...addCalendarSchema.properties,
+          events: {
+            type: 'array',
+            items: addEventSchema,
+          },
+        },
+      },
+    },
+  },
+  required: ['title'],
+  additionalProperties: false,
+};
+
+function validateAddCalendarGroups(data) {
+  const validator = new LeemonsValidator(addCalendarGroupsSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   validateAddEvent,
   validateUpdateEvent,
   validateAddCalendar,
   validateAddKanbanColumn,
   validateAddCalendarConfig,
+  validateAddCalendarGroups,
 };

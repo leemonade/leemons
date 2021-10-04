@@ -1,8 +1,23 @@
 const _ = require('lodash');
 const constants = require('./config/constants');
 const { add: addMenuItem } = require('./src/services/menu-builder/add');
+const { translations } = require('./src/translations');
+const es = require('./src/i18n/es');
+const en = require('./src/i18n/en');
 
 async function events(isInstalled) {
+  leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
+    if (translations()) {
+      await translations().common.setManyByJSON(
+        {
+          es,
+          en,
+        },
+        leemons.plugin.prefixPN('')
+      );
+    }
+  });
+
   if (!isInstalled) {
     // Menu
     leemons.events.once(

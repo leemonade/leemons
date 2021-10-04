@@ -671,9 +671,9 @@ console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   integrity sha1-PXz0Rk22RG6mRL9LOVB/mFEAjo4=
 
 core-js-pure@^3.6.5:
-  version "3.18.0"
-  resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.18.0.tgz#e5187347bae66448c9e2d67c01c34c4df3261dc5"
-  integrity sha512-ZnK+9vyuMhKulIGqT/7RHGRok8RtkHMEX/BGPHkHx+ouDkq+MUvf9mfIgdqhpmPDu8+V5UtRn/CbCRc9I4lX4w==
+  version "3.18.1"
+  resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.18.1.tgz#097d34d24484be45cea700a448d1e74622646c80"
+  integrity sha512-kmW/k8MaSuqpvA1xm2l3TVlBuvW+XBkcaOroFUpO3D4lsTGQWBTb/tBDCf/PNkkPLrwgrkQRIYNPB0CeqGJWGQ==
 
 core-js@^2.6.5:
   version "2.6.12"
@@ -2238,9 +2238,9 @@ react-dnd@^14.0.2:
     hoist-non-react-statics "^3.3.2"
 
 react-hook-form@^7.14.2, react-hook-form@^7.8.8:
-  version "7.15.4"
-  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.15.4.tgz#5ddb9cb286ed5e261ce47fdbfe019c469980b3f5"
-  integrity sha512-jEtsDBPfpkz1uuJVlTLDOg+jO3cG9pFHT3g5uayVvlNT551IetXE1iwrSaxUR/QPWyJA2FLx4Q/VjO2viZNfLg==
+  version "7.17.0"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.17.0.tgz#a7ea8cf3416a7421228c5035856e5d69f99a80fb"
+  integrity sha512-hA6cbLxycyTRVL585jofNesc1sPtxn2GB1/KCV0P8lnmwzPmqhMxqbuX5TtTdTcBItf3grawfllkg1cv1iDMtQ==
 
 react-hook-form@^7.8.3:
   version "7.8.3"

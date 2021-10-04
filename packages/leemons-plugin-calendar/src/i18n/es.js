@@ -1,6 +1,9 @@
 module.exports = {
   event: 'Evento',
   task: 'Tarea',
+  holidays_vacation: 'Vacaciones / Días festivos',
+  regional_holidays: 'Fiestas regionales',
+  non_school_day: 'Día no lectivo (Otro)',
   event_modal: {
     title: 'Titulo del evento',
     save: 'Guardar',
@@ -83,5 +86,11 @@ module.exports = {
     actions: 'Acciones',
     view: 'Ver',
     remove: 'Borrar',
+  },
+  detail_calendars_page: {
+    description:
+      'Seleccione los días que desea configurar y pulse sobre el tipo de día en la lista superior para cambiar el tipo aplicado. Puede pulsar y arrastrar para seleccionar un rango de días',
+    school_day: 'Día lectivo',
+    non_school_day: 'Día no lectivo (ordinario)',
   },
 };

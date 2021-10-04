@@ -7,6 +7,7 @@ const table = {
   kanbanEventOrders: leemons.query('plugins_calendar::kanban-event-orders'),
   calendarConfigs: leemons.query('plugins_calendar::calendar-configs'),
   centerCalendarConfigs: leemons.query('plugins_calendar::center-calendar-configs'),
+  calendarConfigCalendars: leemons.query('plugins_calendar::calendar-config-calendars'),
 };
 
 module.exports = { table };

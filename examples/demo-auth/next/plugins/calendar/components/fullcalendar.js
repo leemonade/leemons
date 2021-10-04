@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { addHeaderScript } from '@common/addHeaderScript';
 import { addHeaderStyle } from '@common/addHeaderStyle';
@@ -9,6 +9,7 @@ export function FullCalendar({ onCalendarInit = () => {}, events, ...props }) {
   const containerRef = useRef(null);
   const scriptLoaded = useRef(false);
   const calendar = useRef(null);
+  const [isInit, setIsInit] = useState(false);
 
   const initCalendar = () => {
     if (scriptLoaded.current && containerRef.current && !calendar.current) {
@@ -17,6 +18,7 @@ export function FullCalendar({ onCalendarInit = () => {}, events, ...props }) {
         ...props,
       });
       calendar.current.render();
+      setIsInit(true);
       onCalendarInit(calendar.current);
     }
   };
@@ -37,7 +39,7 @@ export function FullCalendar({ onCalendarInit = () => {}, events, ...props }) {
         calendar.current.addEvent(event);
       });
     }
-  }, [events]);
+  }, [events, isInit]);
 
   useEffect(() => {
     if (calendar.current) {
@@ -45,7 +47,7 @@ export function FullCalendar({ onCalendarInit = () => {}, events, ...props }) {
         calendar.current.setOption(key, value);
       });
     }
-  }, [props]);
+  }, [props, isInit]);
 
   useEffect(() => {
     const scriptUrl =
@@ -57,13 +59,22 @@ export function FullCalendar({ onCalendarInit = () => {}, events, ...props }) {
       addHeaderScript('https://cdn.jsdelivr.net/npm/@fullcalendar/rrule@5.5.0/main.global.min.js');
       addHeaderStyle(styleUrl);
       const interval = setInterval(() => {
-        if (window.FullCalendar) {
+        if (window.FullCalendar && window.rrule) {
           clearInterval(interval);
-          onScriptLoaded();
+          setTimeout(() => {
+            onScriptLoaded();
+          }, 300);
         }
       }, 1000 / 30);
     } else {
-      onScriptLoaded();
+      const interval = setInterval(() => {
+        if (window.FullCalendar && window.rrule) {
+          clearInterval(interval);
+          setTimeout(() => {
+            onScriptLoaded();
+          }, 300);
+        }
+      }, 1000 / 30);
     }
   }, []);
 

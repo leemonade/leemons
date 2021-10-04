@@ -100,6 +100,14 @@ async function getCentersWithOutAssign(ctx) {
   ctx.body = { status: 200, centers };
 }
 
+async function getCalendarConfigCalendars(ctx) {
+  const calendars = await calendarConfigsService.getCalendars(ctx.request.params.id, {
+    withEvents: true,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, calendars };
+}
+
 module.exports = {
   addEvent,
   removeEvent,
@@ -115,4 +123,5 @@ module.exports = {
   listKanbanEventOrders,
   saveKanbanEventOrders,
   getCentersWithOutAssign,
+  getCalendarConfigCalendars,
 };

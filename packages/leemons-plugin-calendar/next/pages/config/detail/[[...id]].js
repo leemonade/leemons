@@ -39,18 +39,18 @@ function ConfigAdd() {
 
   const months = useMemo(
     () => [
-      { value: 1, name: 'january' },
-      { value: 2, name: 'february' },
-      { value: 3, name: 'march' },
-      { value: 4, name: 'april' },
-      { value: 5, name: 'may' },
-      { value: 6, name: 'june' },
-      { value: 7, name: 'july' },
-      { value: 8, name: 'august' },
-      { value: 9, name: 'september' },
-      { value: 10, name: 'october' },
-      { value: 11, name: 'november' },
-      { value: 12, name: 'december' },
+      { value: 0, name: 'january' },
+      { value: 1, name: 'february' },
+      { value: 2, name: 'march' },
+      { value: 3, name: 'april' },
+      { value: 4, name: 'may' },
+      { value: 5, name: 'june' },
+      { value: 6, name: 'july' },
+      { value: 7, name: 'august' },
+      { value: 8, name: 'september' },
+      { value: 9, name: 'october' },
+      { value: 10, name: 'november' },
+      { value: 11, name: 'december' },
     ],
     []
   );
@@ -238,9 +238,11 @@ function ConfigAdd() {
         config = response.config;
       }
       setSaveLoading(false);
-      await router.push(`/calendar/config/detail/${config.id}`);
+      await router.push(`/calendar/config/calendars/${config.id}`);
+      // await router.push(`/calendar/config/detail/${config.id}`);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
+      setSaveLoading(false);
     }
   };
 

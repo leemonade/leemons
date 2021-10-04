@@ -130,4 +130,15 @@ module.exports = [
       },
     },
   },
+  {
+    path: '/configs/calendars/:id',
+    method: 'GET',
+    handler: 'calendar.getCalendarConfigCalendars',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.calendar.calendar-configs': {
+        actions: ['view', 'admin'],
+      },
+    },
+  },
 ];
