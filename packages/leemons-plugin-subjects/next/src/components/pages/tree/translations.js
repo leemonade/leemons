@@ -4,9 +4,9 @@ import { Input } from 'leemons-ui';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useTranslate from '@multilanguage/useTranslate';
 import FormControl from 'leemons-ui/dist/components/ui/FormControl';
-import { TranslationsDrawer } from '../../../multilanguage/translationsDrawer';
-import useGetNames from '../../../../hooks/levelschema/useGetNames';
-import useDirtyState from '../../../../hooks/useDirtyState';
+import { TranslationsDrawer } from '../../multilanguage/translationsDrawer';
+import useGetNames from '../../../hooks/levelschema/useGetNames';
+import useDirtyState from '../../../hooks/useDirtyState';
 import ExitWithoutSaving from './exitWithoutSaving';
 
 function TranslationTab({

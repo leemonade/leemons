@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import useListLevelSchema from '../../../../hooks/levelschema/useListLevelSchema';
-import Tree from '../../../common/tree';
+import useListLevelSchema from '../../../hooks/levelschema/useListLevelSchema';
+import Tree from '../../common/tree';
 
 function findEntity(id, entities) {
   return entities.find(({ id: entityId }) => entityId === id);

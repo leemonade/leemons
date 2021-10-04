@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { withLayout } from '@layout/hoc';
 import { InformationCircleIcon } from '@heroicons/react/solid';
-import Tree from '@subjects/components/wip-dev/pages/tree/treeAdmin';
-import TemplatePanel from '@subjects/components/wip-dev/pages/tree/templatePanel';
-import EditLevel from '@subjects/components/wip-dev/pages/tree/editLevel';
+import Tree from '@subjects/components/pages/tree/treeAdmin';
+import TemplatePanel from '@subjects/components/pages/tree/templatePanel';
+import EditLevel from '@subjects/components/pages/tree/editLevel';
 import { PageHeader, Button, Modal, useModal, InlineSvg } from 'leemons-ui';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';

@@ -6,12 +6,12 @@ import PropTypes from 'prop-types';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useTranslate from '@multilanguage/useTranslate';
 import { useAlerts, Alerts } from '@subjects/components/alerts';
-import addLevelSchema from '../../../../services/levelSchemas/addLevelSchema';
-import updateLevelSchema from '../../../../services/levelSchemas/updateLevelSchema';
+import addLevelSchema from '../../../services/levelSchemas/addLevelSchema';
+import updateLevelSchema from '../../../services/levelSchemas/updateLevelSchema';
 
-import { useTranslationsDrawer } from '../../../multilanguage/translationsDrawer';
+import { useTranslationsDrawer } from '../../multilanguage/translationsDrawer';
 import Translations from './translations';
-import useDirtyState from '../../../../hooks/useDirtyState';
+import useDirtyState from '../../../hooks/useDirtyState';
 import ExitWithoutSaving from './exitWithoutSaving';
 
 export default function EditLevel({
@@ -215,73 +215,23 @@ export default function EditLevel({
               </span>
             )}
           </div>
-          {/* -------------------------------------------------------
+          {false && (
+            <>
+              {/* -------------------------------------------------------
           TEACHING */}
-          <div className="border-t border-gray-20 my-4" />
-          <div className="max-w-lg flex flex-col py-4">
-            <h2 className="text-xl font-normal">Teaching</h2>
-            <div className="page-description text-sm">
-              <p>
-                How is this subject taught? Yearly, half-yearly... indicate the formats in which
-                each subject is taught.
-              </p>
-            </div>
-            <div className="mt-4 max-w-sm">
-              <Select outlined multiple>
-                <option disabled selected>
-                  Add type
-                </option>
-                {'Daily Weekly Fortnightly Monthly Quarterly Quarterly Semiannual Yearly'
-                  .split(' ')
-                  .map((item, i) => (
-                    <option key={`o-${i}`} value={item}>
-                      {item}
-                    </option>
-                  ))}
-              </Select>
-            </div>
-          </div>
-
-          {/* -------------------------------------------------------
-          COURSES */}
-          <div className="border-t border-gray-20 my-4" />
-          <div className="max-w-lg flex flex-col py-4">
-            <h2 className="text-xl font-normal">Courses and hours per course</h2>
-            <div className="page-description text-sm">
-              <p>
-                This information will make it possible to define in which stages and courses the
-                subject is taught and how many hours per week it covers (stages are inherited from
-                the structure defined in Classroom).
-              </p>
-            </div>
-            <div className="mt-4">
-              <FormControl label="Fixed stages" labelPosition="right" className="font-normal">
-                <Radio name="opt" color="primary" checked />
-              </FormControl>
-              <div className="text-sm font-inter pl-8 text-gray-300 mb-4">
-                (use this system if the subject must be taken at a specific stage).
-              </div>
-              <FormControl label="Recommended stages" labelPosition="right" className="font-normal">
-                <Radio name="opt" color="primary" />
-              </FormControl>
-              <div className="text-sm font-inter pl-8 text-gray-300">
-                (use this system if the planning of subjects is only a recommendation and students
-                can take them at a time of their choice).
-              </div>
-            </div>
-            <div className="mt-4">
-              <FormControl label="Add hours" labelPosition="right" className="font-normal">
-                <Checkbox
-                  color="primary"
-                  asToggle
-                  onChange={(e) => dirtySetValue({ ...dirtyValue, addHours: e.target.checked })}
-                />
-              </FormControl>
-              {dirtyValue && dirtyValue.addHours && (
+              <div className="border-t border-gray-20 my-4" />
+              <div className="max-w-lg flex flex-col py-4">
+                <h2 className="text-xl font-normal">Teaching</h2>
+                <div className="page-description text-sm">
+                  <p>
+                    How is this subject taught? Yearly, half-yearly... indicate the formats in which
+                    each subject is taught.
+                  </p>
+                </div>
                 <div className="mt-4 max-w-sm">
                   <Select outlined multiple>
                     <option disabled selected>
-                      Add temporality
+                      Add type
                     </option>
                     {'Daily Weekly Fortnightly Monthly Quarterly Quarterly Semiannual Yearly'
                       .split(' ')
@@ -292,79 +242,140 @@ export default function EditLevel({
                       ))}
                   </Select>
                 </div>
-              )}
-            </div>
-          </div>
+              </div>
 
-          {/* -------------------------------------------------------
-          CREDITS */}
-          <div className="border-t border-gray-20 my-4" />
-          <div className="max-w-lg flex flex-col py-4">
-            <h2 className="text-xl font-normal">Credits</h2>
-            <div className="page-description text-sm">
-              <p>
-                Activate the Credit system if your students can study the subjects of this level
-                indistinctly in order to obtain an evaluable knowledge.
-              </p>
-            </div>
-            <div className="mt-4">
-              <FormControl label="Credit system" labelPosition="right" className="font-normal">
-                <Checkbox
-                  color="primary"
-                  asToggle
-                  onChange={(e) => dirtySetValue({ ...dirtyValue, useCredits: e.target.checked })}
-                />
-              </FormControl>
-              {dirtyValue && dirtyValue.useCredits && (
-                <div className="mt-6">
-                  <div className="font-inter font-normal text-gray-300">Credit specification</div>
-                  <div className="flex gap-8 mt-4">
-                    {'Minimum Recommended Maximum'.split(' ').map((item, i) => (
-                      <FormControl
-                        key={`c-${i}`}
-                        label={item}
-                        labelPosition="right"
-                        className="font-inter"
-                      >
-                        <Checkbox />
-                      </FormControl>
-                    ))}
+              {/* -------------------------------------------------------
+          COURSES */}
+              <div className="border-t border-gray-20 my-4" />
+              <div className="max-w-lg flex flex-col py-4">
+                <h2 className="text-xl font-normal">Courses and hours per course</h2>
+                <div className="page-description text-sm">
+                  <p>
+                    This information will make it possible to define in which stages and courses the
+                    subject is taught and how many hours per week it covers (stages are inherited
+                    from the structure defined in Classroom).
+                  </p>
+                </div>
+                <div className="mt-4">
+                  <FormControl label="Fixed stages" labelPosition="right" className="font-normal">
+                    <Radio name="opt" color="primary" checked />
+                  </FormControl>
+                  <div className="text-sm font-inter pl-8 text-gray-300 mb-4">
+                    (use this system if the subject must be taken at a specific stage).
+                  </div>
+                  <FormControl
+                    label="Recommended stages"
+                    labelPosition="right"
+                    className="font-normal"
+                  >
+                    <Radio name="opt" color="primary" />
+                  </FormControl>
+                  <div className="text-sm font-inter pl-8 text-gray-300">
+                    (use this system if the planning of subjects is only a recommendation and
+                    students can take them at a time of their choice).
                   </div>
                 </div>
-              )}
-            </div>
-          </div>
+                <div className="mt-4">
+                  <FormControl label="Add hours" labelPosition="right" className="font-normal">
+                    <Checkbox
+                      color="primary"
+                      asToggle
+                      onChange={(e) => dirtySetValue({ ...dirtyValue, addHours: e.target.checked })}
+                    />
+                  </FormControl>
+                  {dirtyValue && dirtyValue.addHours && (
+                    <div className="mt-4 max-w-sm">
+                      <Select outlined multiple>
+                        <option disabled selected>
+                          Add temporality
+                        </option>
+                        {'Daily Weekly Fortnightly Monthly Quarterly Quarterly Semiannual Yearly'
+                          .split(' ')
+                          .map((item, i) => (
+                            <option key={`o-${i}`} value={item}>
+                              {item}
+                            </option>
+                          ))}
+                      </Select>
+                    </div>
+                  )}
+                </div>
+              </div>
 
-          {/* -------------------------------------------------------
+              {/* -------------------------------------------------------
+          CREDITS */}
+              <div className="border-t border-gray-20 my-4" />
+              <div className="max-w-lg flex flex-col py-4">
+                <h2 className="text-xl font-normal">Credits</h2>
+                <div className="page-description text-sm">
+                  <p>
+                    Activate the Credit system if your students can study the subjects of this level
+                    indistinctly in order to obtain an evaluable knowledge.
+                  </p>
+                </div>
+                <div className="mt-4">
+                  <FormControl label="Credit system" labelPosition="right" className="font-normal">
+                    <Checkbox
+                      color="primary"
+                      asToggle
+                      onChange={(e) =>
+                        dirtySetValue({ ...dirtyValue, useCredits: e.target.checked })
+                      }
+                    />
+                  </FormControl>
+                  {dirtyValue && dirtyValue.useCredits && (
+                    <div className="mt-6">
+                      <div className="font-inter font-normal text-gray-300">
+                        Credit specification
+                      </div>
+                      <div className="flex gap-8 mt-4">
+                        {'Minimum Recommended Maximum'.split(' ').map((item, i) => (
+                          <FormControl
+                            key={`c-${i}`}
+                            label={item}
+                            labelPosition="right"
+                            className="font-inter"
+                          >
+                            <Checkbox />
+                          </FormControl>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* -------------------------------------------------------
           VISUAL IDENTIFICATION */}
-          <div className="border-t border-gray-20 my-4" />
-          <div className="max-w-lg flex flex-col py-4">
-            <h2 className="text-xl font-normal">Visual Identification </h2>
-            <div className="page-description text-sm">
-              <p>
-                You can allow your centre's administration to upload an icon and/or add a colour for
-                each level.
-              </p>
-              <p>
-                Accessibility: if you have students with visual impairment, activate the use of an
-                icon as a minimum.
-              </p>
-            </div>
+              <div className="border-t border-gray-20 my-4" />
+              <div className="max-w-lg flex flex-col py-4">
+                <h2 className="text-xl font-normal">Visual Identification </h2>
+                <div className="page-description text-sm">
+                  <p>
+                    You can allow your centre's administration to upload an icon and/or add a colour
+                    for each level.
+                  </p>
+                  <p>
+                    Accessibility: if you have students with visual impairment, activate the use of
+                    an icon as a minimum.
+                  </p>
+                </div>
 
-            <div className="flex flex-col gap-1 mt-4">
-              {'Icon Color'.split(' ').map((item, i) => (
-                <FormControl
-                  key={`c-${i}`}
-                  label={item}
-                  labelPosition="right"
-                  className="font-inter"
-                >
-                  <Checkbox />
-                </FormControl>
-              ))}
-            </div>
-          </div>
-
+                <div className="flex flex-col gap-1 mt-4">
+                  {'Icon Color'.split(' ').map((item, i) => (
+                    <FormControl
+                      key={`c-${i}`}
+                      label={item}
+                      labelPosition="right"
+                      className="font-inter"
+                    >
+                      <Checkbox />
+                    </FormControl>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
           {/* -------------------------------------------------------
           DATASET */}
           <div className="border-t border-gray-20 my-4" />
