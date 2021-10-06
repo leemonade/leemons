@@ -1,0 +1,38 @@
+version: "3.2"
+services:
+  # server:
+  #   image: node:8 # Docker image name
+  #   user: "node"
+  #   working_dir: /home/node/app
+  #   volumes:
+  #     - ./monorepo/examples/test:/home/node/app
+  #   expose:
+  #     - "8081"
+  #   command: "npm start"
+  #   restart: always
+  leemons:
+    build:
+      dockerfile: ./monorepo.Dockerfile
+    image: leemons
+    tty: true
+    stdin_open: true
+    volumes:
+      - ../examples/demo-auth:/monorepo/app
+      - ../packages:/monorepo/packages
+    links:
+      - db:mysql
+    ports:
+      - 8080:8080
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: leemons
+      MYSQL_USER: leemons
+      MYSQL_ROOT_PASSWORD: leemons
+      MYSQL_PASSWORD: leemons
+    expose:
+      - 3306
+    ports:
+      - 3306:3306
