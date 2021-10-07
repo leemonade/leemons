@@ -21,14 +21,18 @@ async function grantAccessUserAgentToCalendar(key, userAgentId, actionName, { tr
   const actionNames = _.isArray(actionName) ? actionName : [actionName];
   const permissionConfig = getPermissionConfig(key);
 
-  return await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
-    userAgentIds,
-    {
-      permissionName: permissionConfig.permissionName,
-      actionNames,
-    },
-    { transacting }
-  );
+  const { warnings } = await leemons
+    .getPlugin('users')
+    .services.permissions.addCustomPermissionToUserAgent(
+      userAgentIds,
+      {
+        permissionName: permissionConfig.permissionName,
+        actionNames,
+      },
+      { transacting }
+    );
+  if (warnings && warnings.errors && warnings.errors.length) throw warnings.errors[0];
+  return true;
 }
 
 module.exports = { grantAccessUserAgentToCalendar };

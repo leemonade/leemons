@@ -27,6 +27,7 @@ const hasPermissionCTX = require('./hasPermissionCTX');
 const removeCustomPermission = require('./removeCustomPermission');
 const { searchUserAgents } = require('./searchUserAgents');
 const { getUserAgentCenter } = require('./getUserAgentCenter');
+const { getUserAgentCalendarKey } = require('./getUserAgentCalendarKey');
 
 module.exports = {
   init,
@@ -64,4 +65,5 @@ module.exports = {
   removeCustomPermission,
 
   getUserAgentCenter,
+  getUserAgentCalendarKey,
 };

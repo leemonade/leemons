@@ -47,6 +47,7 @@ module.exports = async ({ id = uuid(), transports = null } = {}) => {
 
   // Throw error
   log.throw = (e) => {
+    console.log(e);
     // Log error
     logger.error(`${e.message}${logger.isDebugEnabled() && `\n${e.stack}`}`);
 

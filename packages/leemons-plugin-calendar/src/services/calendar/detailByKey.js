@@ -12,7 +12,7 @@ const { validateNotExistCalendarKey } = require('../../validations/exists');
  * */
 async function detailByKey(key, { transacting } = {}) {
   await validateNotExistCalendarKey(key, { transacting });
-  return await table.calendars.findOne({ key }, { transacting });
+  return table.calendars.findOne({ key }, { transacting });
 }
 
 module.exports = { detailByKey };

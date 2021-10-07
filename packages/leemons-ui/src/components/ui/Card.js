@@ -1,8 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function Card({ children, className }) {
-  return <div className={`card ${className || ''}`}>{children}</div>;
+function Card({ children, className, ...rest }) {
+  return (
+    <div {...rest} className={`card ${className || ''}`}>
+      {children}
+    </div>
+  );
 }
 
 Card.propTypes = {

@@ -6,6 +6,8 @@ import tLoader from '@multilanguage/helpers/tLoader';
 import { useForm } from 'react-hook-form';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import update from 'immutability-helper';
+import SimpleBar from 'simplebar-react';
+import { addSuccessAlert } from '@layout/alert';
 import prefixPN from '../helpers/prefixPN';
 import { DatasetItemSeparator } from './DatasetItemSeparator';
 import { DatasetItemTitle } from './DatasetItemTitle';
@@ -20,11 +22,9 @@ import {
   DatasetItemDrawerProfilesContext,
 } from './DatasetItemDrawerContext';
 import { DatasetItemDrawerCenters } from './DatasetItemDrawerCenters';
-import SimpleBar from 'simplebar-react';
 import transformItemToSchemaAndUi from './help/transformItemToSchemaAndUi';
 import { saveDatasetFieldRequest } from '../request';
 import datasetDataTypes from '../helpers/datasetDataTypes';
-import { addSuccessAlert } from '@layout/alert';
 
 const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSave = () => {} }) => {
   const [translations] = useTranslate({ keysStartsWith: prefixPN('datasetItemDrawer') });

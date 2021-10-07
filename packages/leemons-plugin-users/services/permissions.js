@@ -16,6 +16,7 @@ module.exports = {
   manyPermissionsHasManyActions: permissions.manyPermissionsHasManyActions,
   addActionMany: permissions.addActionMany,
   addAction: permissions.addAction,
+  findUserAgentsWithPermission: permissions.findUserAgentsWithPermission,
   // User agent
   addCustomPermissionToUserAgent: permissions.addCustomPermissionToUserAgent,
   getUserAgentPermissions: permissions.getUserAgentPermissions,
