@@ -19,6 +19,7 @@ function Calendar() {
   const [center, setCenter] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [data, setData] = useState(null);
+  const [dataCalendarsT, setDataCalendarsT] = useState(null);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [sections, setSections] = useState([]);
   const [sectionsT, setSectionsT] = useState({});
@@ -51,7 +52,14 @@ function Calendar() {
     setSectionsT(items);
   };
 
+  const getTranslationDataCalendars = async () => {
+    const keys = _.map(data.calendars, 'name');
+    const { items } = await getLocalizationsByArrayOfItems(keys);
+    setDataCalendarsT(items);
+  };
+
   const getSectionName = (sectionName) => tKeys(sectionName, sectionsT);
+  const getCalendarName = (name) => tKeys(name, dataCalendarsT);
 
   useEffect(() => {
     hooks.addAction('calendar:force:reload', getCalendarsForCenter);
@@ -71,6 +79,10 @@ function Calendar() {
   useEffect(() => {
     getTranslationSections();
   }, [sections]);
+
+  useEffect(() => {
+    if (data) getTranslationDataCalendars();
+  }, [data]);
 
   useEffect(() => {
     if (data) {
@@ -160,7 +172,7 @@ function Calendar() {
                 {calendars.map((calendar) => (
                   <CalendarFilter
                     key={calendar.id}
-                    calendar={calendar}
+                    calendar={{ ...calendar, name: getCalendarName(calendar.name) }}
                     config={data}
                     session={session}
                     showEventsChange={(e) => showEventsChange(e, calendar)}

@@ -3,6 +3,7 @@ const { table } = require('../tables');
 const { getPermissionConfig: getPermissionConfigCalendar } = require('./getPermissionConfig');
 const { getPermissionConfig: getPermissionConfigEvent } = require('../events/getPermissionConfig');
 const { getByCenterId } = require('../calendar-configs');
+const { getCalendars } = require('../calendar-configs/getCalendars');
 
 /**
  * Add calendar with the provided key if not already exists
@@ -50,7 +51,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
 
   // ES: Calendarios/Eventos a los que tiene acceso de lectura
   // EN: Calendars/Events with view access
-  const promises = [
+  let promises = [
     userPlugin.services.permissions.findItems(
       {
         $or: queryPermissions,
@@ -85,7 +86,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     }
   });
 
-  const [calendars, eventsFromCalendars, events] = await Promise.all([
+  promises = [
     table.calendars.find(
       { id_$in: calendarIds },
       {
@@ -104,7 +105,16 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
         transacting,
       }
     ),
-  ]);
+  ];
+
+  if (calendarConfig)
+    promises.push(
+      getCalendars(calendarConfig.id, {
+        withEvents: true,
+        transacting,
+      })
+    );
+  const [calendars, eventsFromCalendars, events, configCalendars] = await Promise.all(promises);
 
   // ES: Buscamos si el user agent tiene calendario
   // EN: We check if the user agent has a calendar
@@ -149,15 +159,28 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     }
   });
 
+  let configCalendarEvents = [];
+  if (_.isArray(configCalendars)) {
+    _.forEach(configCalendars, (calendar) => {
+      configCalendarEvents = configCalendarEvents.concat(calendar.events);
+      delete calendar.events;
+      calendar.section = 'plugins.users.calendar.user_section';
+      finalCalendars.push(calendar);
+    });
+  }
+
   return {
     userCalendar,
     ownerCalendars,
     calendarConfig,
     calendars: finalCalendars,
-    events: events.concat(eventsFromCalendars).map((event) => ({
-      ...event,
-      data: _.isString(event.data) ? JSON.parse(event.data) : event.data,
-    })),
+    events: events
+      .concat(eventsFromCalendars)
+      .concat(configCalendarEvents)
+      .map((event) => ({
+        ...event,
+        data: _.isString(event.data) ? JSON.parse(event.data) : event.data,
+      })),
   };
 }
 
