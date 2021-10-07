@@ -151,7 +151,7 @@ export function FullCalendar({
       previous: t('previous'),
       next: t('next'),
     };
-  }, [messages]);
+  }, [messages, t]);
 
   return (
     <Calendar

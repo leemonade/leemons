@@ -26,23 +26,14 @@ function Calendar() {
   const [toggleEventModal, EventModal] = useCalendarEventModal();
 
   const getCalendarsForCenter = async () => {
-    const {
-      calendars,
-      events,
-      userCalendar,
-      ownerCalendars,
-      calendarConfig,
-    } = await getCalendarsToFrontendRequest(center.token);
+    const response = await getCalendarsToFrontendRequest(center.token);
 
     setData({
-      calendars: _.map(calendars, (calendar, index) => {
-        calendars[index].showEvents = true;
-        return calendars[index];
+      ...response,
+      calendars: _.map(response.calendars, (calendar, index) => {
+        response.calendars[index].showEvents = true;
+        return response.calendars[index];
       }),
-      events,
-      userCalendar,
-      ownerCalendars,
-      calendarConfig,
     });
   };
 

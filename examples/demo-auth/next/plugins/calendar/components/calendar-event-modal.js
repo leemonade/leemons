@@ -32,7 +32,8 @@ function CalendarEventModal({ event, centerToken, close, forceType }) {
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [isNew, setIsNew] = useState(true);
   const [isOwner, setIsOwner] = useState(false);
-  const [calendarData, setCalendarData] = useState([]);
+  const [canRemove, setCanRemove] = useState(false);
+  const [calendarData, setCalendarData] = useState(null);
   const [eventTypes, setEventTypes] = useState([]);
   const [eventTypesT, setEventTypesT] = useState([]);
   const eventTypeComponent = useRef();
@@ -49,19 +50,10 @@ function CalendarEventModal({ event, centerToken, close, forceType }) {
   } = useForm();
 
   const getCalendarsForCenter = async () => {
-    const { calendars, events, userCalendar, ownerCalendars } = await getCalendarsToFrontendRequest(
-      centerToken
-    );
+    const response = await getCalendarsToFrontendRequest(centerToken);
 
-    const _data = {
-      calendars,
-      events,
-      userCalendar,
-      ownerCalendars,
-    };
-
-    setCalendarData(_data);
-    return _data;
+    setCalendarData(response);
+    return response;
   };
 
   const getEventTypes = async () => {
@@ -193,10 +185,14 @@ function CalendarEventModal({ event, centerToken, close, forceType }) {
 
   useEffect(() => {
     if (event && calendarData) {
-      const calendar = _.find(calendarData.ownerCalendars, {
+      let calendar = _.find(calendarData.ownerCalendars, {
         id: _.isString(event.calendar) ? event.calendar : event.calendar.id,
       });
       setIsOwner(!!calendar);
+      calendar = _.find(calendarData.configCalendars, {
+        id: _.isString(event.calendar) ? event.calendar : event.calendar.id,
+      });
+      setCanRemove(!calendar);
     }
   }, [event, calendarData]);
 
@@ -375,7 +371,7 @@ function CalendarEventModal({ event, centerToken, close, forceType }) {
             {t('update')}
           </Button>
         ) : null}
-        {!isNew ? (
+        {!isNew && canRemove ? (
           <Button type="button" color="error" className="mt-4" onClick={removeEvent}>
             Borrar T
           </Button>

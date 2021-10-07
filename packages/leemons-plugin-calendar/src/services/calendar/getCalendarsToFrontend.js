@@ -173,6 +173,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     userCalendar,
     ownerCalendars,
     calendarConfig,
+    configCalendars,
     calendars: finalCalendars,
     events: events
       .concat(eventsFromCalendars)
