@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
@@ -20,9 +20,11 @@ import { FullCalendar } from '@calendar/components/fullcalendar';
 import transformCalendarConfigToEvents from '@calendar/helpers/transformCalendarConfigToEvents';
 import { useCalendarSimpleEventModal } from '@calendar/components/calendar-simple-event-modal';
 import hooks from 'leemons-hooks';
+import DateMonthRangeView from '@calendar/components/fullcalendar-views/DateMonthRange';
+import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
 
 function ConfigAdd() {
-  useSession({ redirectTo: goLoginPage });
+  const session = useSession({ redirectTo: goLoginPage });
 
   const monthsList = useMemo(
     () => [
@@ -45,12 +47,10 @@ function ConfigAdd() {
   const [t] = useTranslateLoader(prefixPN('detail_calendars_page'));
   const { t: tCommonHeader } = useCommonTranslate('page_header');
 
-  const eventClicked = useRef(false);
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
   const [calendars, setCalendars] = useState([]);
   const [config, setConfig] = useState(null);
-  const [calendarInit, setCalendarInit] = useState(false);
   const [eventTypesT, setEventTypesT] = useState([]);
   const [events, setEvents] = useState([]);
   const [event, setEvent] = useState(null);
@@ -117,21 +117,11 @@ function ConfigAdd() {
 
   useAsync(load, onSuccess, onError, [router]);
 
-  const years = useMemo(() => {
-    const acc = [];
-    if (config) {
-      for (let i = config.startYear; i <= config.endYear; i++) {
-        acc.push(i);
-      }
-    }
-    return acc;
-  }, [config]);
-
   const fullCalendarConfigs = useMemo(() => {
     const conf = {
       events: [],
     };
-    if (config && calendarInit) {
+    if (config) {
       conf.firstDay = config.weekday;
       conf.validRange = {
         start: new Date(config.startYear, config.startMonth, 1),
@@ -139,10 +129,9 @@ function ConfigAdd() {
       };
       conf.events = transformCalendarConfigToEvents(config);
     }
-    /*
-    if (events && calendarInit) {
+
+    if (events && calendars && calendars.length) {
       const calendarsByName = _.keyBy(calendars, 'name');
-      console.log(events);
       conf.events = conf.events.concat(
         _.map(transformDBEventsToFullCalendarEvents(events, calendars), (e) => {
           return {
@@ -154,34 +143,30 @@ function ConfigAdd() {
       );
     }
 
-     */
-    console.log(conf);
     return conf;
-  }, [config, calendarInit, events]);
+  }, [config, calendars, events]);
 
-  const onDateClick = async ({ dateStr }) => {
-    if (!eventClicked.current) {
-      const startDate = new Date(dateStr);
-      startDate.setHours(0, 0, 0, 0);
-      const endDate = new Date(dateStr);
-      endDate.setHours(23, 59, 59, 0);
-      setEvent({
-        startDate,
-        endDate,
-        isAllDay: true,
-        type: eventTypes[0].key,
-      });
-      toggleEventModal();
-    }
+  const onDateClick = async (date) => {
+    const startDate = new Date(date);
+    startDate.setHours(0, 0, 0, 0);
+    const endDate = new Date(date);
+    endDate.setHours(23, 59, 59, 0);
+    setEvent({
+      startDate,
+      endDate,
+      isAllDay: true,
+      type: eventTypes[0].key,
+    });
+    toggleEventModal();
   };
 
   const onEventClick = async (info) => {
-    eventClicked.current = true;
-    setEvent(info.event.extendedProps.originalEvent);
-    toggleEventModal();
-    setTimeout(() => {
-      eventClicked.current = false;
-    }, 100);
+    if (info.originalEvent) {
+      setEvent(info.originalEvent);
+      toggleEventModal();
+    } else {
+      await onDateClick(info.start);
+    }
   };
 
   const reloadCalendarEvents = async () => {
@@ -234,6 +219,23 @@ function ConfigAdd() {
                 })}
               </div>
 
+              <div className="mt-4">
+                <FullCalendar
+                  defaultView="dateMonthRange"
+                  views={{
+                    dateMonthRange: DateMonthRangeView,
+                  }}
+                  toolbar={false}
+                  dateMonthRange={config}
+                  {...fullCalendarConfigs}
+                  dateClick={onDateClick}
+                  eventClick={onEventClick}
+                  backgroundEventClick={onEventClick}
+                  language={session?.locale}
+                />
+              </div>
+
+              {/*
               <div className="mt-4 grid grid-cols-3 gap-4">
                 {years.map((year) => {
                   const isStartYear = config.startYear === year;
@@ -268,6 +270,7 @@ function ConfigAdd() {
                   });
                 })}
               </div>
+              */}
             </PageContainer>
           </div>
         </>

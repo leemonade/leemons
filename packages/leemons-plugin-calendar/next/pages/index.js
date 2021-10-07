@@ -171,14 +171,16 @@ function Calendar() {
           ))}
         </div>
         <div className="w-8/12">
-          <FullCalendar
-            defaultView="month"
-            eventClick={onEventClick}
-            events={filteredEvents}
-            {...fullCalendarConfigs}
-            language={session?.locale}
-          />
-          {/*eventContent={onEventContent}*/}
+          <div style={{ paddingBottom: '100%', position: 'relative' }}>
+            <FullCalendar
+              style={{ position: 'absolute', width: '100%', height: '100%' }}
+              defaultView="month"
+              eventClick={onEventClick}
+              events={filteredEvents}
+              {...fullCalendarConfigs}
+              language={session?.locale}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -80,14 +80,19 @@ class MonthView extends React.Component {
   };
 
   render() {
-    let { date, localizer, className } = this.props,
+    let { date, localizer, className, style } = this.props,
       month = localizer.visibleDays(date, localizer),
       weeks = chunk(month, 7);
 
     this._weekCount = weeks.length;
 
     return (
-      <div className={clsx('rbc-month-view', className)} role="table" aria-label="Month View">
+      <div
+        style={style}
+        className={clsx('rbc-month-view', className)}
+        role="table"
+        aria-label="Month View"
+      >
         <div className="rbc-row rbc-month-header" role="row">
           {this.renderHeaders(weeks[0])}
         </div>

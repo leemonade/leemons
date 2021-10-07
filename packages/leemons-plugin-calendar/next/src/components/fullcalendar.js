@@ -21,6 +21,7 @@ export function FullCalendar({
   onRangeChange = () => {},
   onSelectEvent = () => {},
   eventClick = () => {},
+  backgroundEventClick = () => {},
   messages,
   ...props
 }) {
@@ -47,6 +48,7 @@ export function FullCalendar({
   };
 
   const _onRangeChange = (range) => {
+    console.log('range', range);
     if (_.isArray(range) && range.length > 1) {
       range = {
         start: range[0],
@@ -74,10 +76,17 @@ export function FullCalendar({
     eventClick(ev);
   };
 
+  const _backgroundEventClick = ({ args: [ev] }) => {
+    onSelectEvent(ev);
+    eventClick(ev);
+  };
+
   useEffect(() => {
     hooks.addAction('big-calendar:dayClick', _onDayClick);
+    hooks.addAction('big-calendar:backgroundEventClick', _backgroundEventClick);
     return () => {
       hooks.removeAction('big-calendar:dayClick', _onDayClick);
+      hooks.removeAction('big-calendar:backgroundEventClick', _backgroundEventClick);
     };
   });
 

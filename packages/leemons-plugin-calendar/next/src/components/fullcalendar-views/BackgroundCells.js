@@ -37,6 +37,12 @@ class BackgroundCells extends React.Component {
     hooks.fireEvent('big-calendar:dayClick', date);
   }
 
+  backgroundEventClick(event, e) {
+    e.stopPropagation();
+    e.preventDefault();
+    hooks.fireEvent('big-calendar:backgroundEventClick', event);
+  }
+
   render() {
     let {
       range,
@@ -103,6 +109,7 @@ class BackgroundCells extends React.Component {
               >
                 {eventsForDay ? (
                   <div
+                    onClick={(e) => this.backgroundEventClick(eventsForDay[0], e)}
                     style={{
                       position: 'absolute',
                       left: 0,
