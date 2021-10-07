@@ -22,6 +22,9 @@ module.exports = [
     handler: 'calendar.getEventTypes',
     authenticated: true,
   },
+  /**
+   * Events
+   * */
   {
     path: '/add/event',
     method: 'POST',
@@ -71,7 +74,7 @@ module.exports = [
     authenticated: true,
     allowedPermissions: {
       'plugins.calendar.calendar-configs': {
-        actions: ['create', 'admin'],
+        actions: ['create', 'update', 'admin'],
       },
     },
   },
@@ -138,6 +141,42 @@ module.exports = [
     allowedPermissions: {
       'plugins.calendar.calendar-configs': {
         actions: ['view', 'admin'],
+      },
+    },
+  },
+  /**
+   * Config events
+   * */
+  {
+    path: '/configs/event/add',
+    method: 'POST',
+    handler: 'calendar.addConfigEvent',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.calendar.calendar-configs': {
+        actions: ['create', 'update', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/configs/event/update',
+    method: 'POST',
+    handler: 'calendar.updateConfigEvent',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.calendar.calendar-configs': {
+        actions: ['update', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/configs/event/remove',
+    method: 'POST',
+    handler: 'calendar.removeConfigEvent',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.calendar.calendar-configs': {
+        actions: ['delete', 'admin'],
       },
     },
   },

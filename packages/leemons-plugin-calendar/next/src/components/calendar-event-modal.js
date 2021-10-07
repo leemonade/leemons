@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import moment from 'moment';
 import { useEffect, useRef, useState } from 'react';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
@@ -22,6 +23,7 @@ import {
   updateEventRequest,
 } from '../request';
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
+import getUTCString from '../helpers/getUTCString';
 
 function CalendarEventModal({ event, centerToken, close, forceType }) {
   const session = useSession({ redirectTo: goLoginPage });
@@ -79,36 +81,23 @@ function CalendarEventModal({ event, centerToken, close, forceType }) {
     hooks.fireEvent('calendar:force:reload');
   };
 
-  const getUTCString = (date) => {
-    const month = (parseInt(date.getUTCMonth().toString(), 10) + 1).toString();
-    const day = date.getUTCDate();
-    const hours = date.getUTCHours();
-    const minutes = date.getUTCMinutes();
-    const seconds = date.getUTCSeconds();
-    return `${date.getUTCFullYear()}-${month.toString().length === 1 ? `0${month}` : month}-${
-      day.toString().length === 1 ? `0${day}` : day
-    } ${hours.toString().length === 1 ? `0${hours}` : hours}:${
-      minutes.toString().length === 1 ? `0${minutes}` : minutes
-    }:${seconds.toString().length === 1 ? `0${seconds}` : seconds}`;
-  };
-
   const onSubmit = async (_formData) => {
     // eslint-disable-next-line prefer-const
     let { startDate, endDate, startTime, endTime, ...formData } = _formData;
     startDate = new Date(startDate);
     endDate = new Date(endDate);
     if (formData.isAllDay) {
-      startDate.setUTCHours(0, 0, 0);
-      endDate.setUTCHours(23, 59, 59);
+      startDate.setHours(0, 0, 0);
+      endDate.setHours(23, 59, 59);
     } else {
       startTime = startTime.split(':');
       endTime = endTime.split(':');
-      startDate.setUTCHours(
+      startDate.setHours(
         startTime[0] ? parseInt(startTime[0], 10) : 0,
         startTime[1] ? parseInt(startTime[1], 10) : 0,
         startTime[2] ? parseInt(startTime[2], 10) : 0
       );
-      endDate.setUTCHours(
+      endDate.setHours(
         endTime[0] ? parseInt(endTime[0], 10) : 0,
         endTime[1] ? parseInt(endTime[1], 10) : 0,
         endTime[2] ? parseInt(endTime[2], 10) : 0
@@ -181,13 +170,10 @@ function CalendarEventModal({ event, centerToken, close, forceType }) {
       _startDate.setSeconds(0, 0);
       _endDate.setSeconds(0, 0);
 
-      const sdIsoArr = _startDate.toISOString().split('T');
-      setValue('startDate', sdIsoArr[0]);
-      setValue('startTime', sdIsoArr[1].split('.')[0]);
-
-      const edIsoArr = _endDate.toISOString().split('T');
-      setValue('endDate', edIsoArr[0]);
-      setValue('endTime', edIsoArr[1].split('.')[0]);
+      setValue('startDate', moment(_startDate).format('YYYY-MM-DD'));
+      setValue('startTime', moment(_startDate).format('HH:mm:ss'));
+      setValue('endDate', moment(_endDate).format('YYYY-MM-DD'));
+      setValue('endTime', moment(_endDate).format('HH:mm:ss'));
     } else if (_eventTypes.length) {
       setValue('type', forceType || _eventTypes[0].key);
       setValue('repeat', 'dont_repeat');

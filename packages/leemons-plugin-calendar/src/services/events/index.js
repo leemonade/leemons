@@ -1,5 +1,6 @@
 const { add } = require('./add');
 const { exist } = require('./exist');
+const { update } = require('./update');
 const { detail } = require('./detail');
 const { addFromUser } = require('./addFromUser');
 const { removeOrCancel } = require('./removeOrCancel');
@@ -13,6 +14,7 @@ module.exports = {
   add,
   exist,
   detail,
+  update,
   addFromUser,
   removeOrCancel,
   removeFromUser,

@@ -108,14 +108,44 @@ async function getCalendarConfigCalendars(ctx) {
   ctx.body = { status: 200, calendars };
 }
 
+async function addConfigEvent(ctx) {
+  const event = await calendarConfigsService.addEvent(
+    ctx.request.body.config,
+    ctx.request.body.event
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, event };
+}
+
+async function updateConfigEvent(ctx) {
+  const event = await calendarConfigsService.updateEvent(
+    ctx.request.body.config,
+    ctx.request.body.event
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, event };
+}
+
+async function removeConfigEvent(ctx) {
+  const event = await calendarConfigsService.removeEvent(
+    ctx.request.body.config,
+    ctx.request.body.event
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, event };
+}
+
 module.exports = {
   addEvent,
   removeEvent,
   updateEvent,
   getCalendar,
   getEventTypes,
+  addConfigEvent,
   listKanbanColumns,
   addCalendarConfig,
+  updateConfigEvent,
+  removeConfigEvent,
   listCalendarConfig,
   updateCalendarConfig,
   detailCalendarConfig,

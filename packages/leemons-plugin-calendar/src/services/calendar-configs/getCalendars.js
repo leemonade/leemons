@@ -37,7 +37,7 @@ async function getCalendars(id, { withEvents, transacting } = {}) {
   return _.map(calendars, (calendar) => {
     return {
       ...calendar,
-      events: eventsByCalendar[calendar.id] || [],
+      events: eventsByCalendar ? eventsByCalendar[calendar.id] || [] : [],
     };
   });
 }

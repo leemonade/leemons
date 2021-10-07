@@ -14,7 +14,7 @@ const { removeAll } = require('../notifications/removeAll');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function update(id, data, { transacting: _transacting } = {}) {
+async function update(id, data, { calendar, transacting: _transacting } = {}) {
   validateUpdateEvent(data);
 
   // eslint-disable-next-line no-param-reassign
@@ -24,14 +24,12 @@ async function update(id, data, { transacting: _transacting } = {}) {
 
   return global.utils.withTransaction(
     async (transacting) => {
-      const event = await table.events.update(
-        { id },
-        {
-          ...data,
-          data: _.isObject(data.data) ? JSON.stringify(data.data) : data.data,
-        },
-        { transacting }
-      );
+      const toSave = {
+        ...data,
+        data: _.isObject(data.data) ? JSON.stringify(data.data) : data.data,
+      };
+      if (calendar) toSave.calendar = calendar;
+      const event = await table.events.update({ id }, toSave, { transacting });
 
       await removeAll(event.id, { transacting });
       await addNexts(event.id, { transacting });

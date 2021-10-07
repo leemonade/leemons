@@ -26,13 +26,13 @@ function ConfigAdd() {
 
   const weekdays = useMemo(
     () => [
-      { value: 1, name: 'monday' },
-      { value: 2, name: 'tuesday' },
-      { value: 3, name: 'wednesday' },
-      { value: 4, name: 'thursday' },
-      { value: 5, name: 'friday' },
-      { value: 6, name: 'saturday' },
-      { value: 0, name: 'sunday' },
+      { value: 0, name: 'monday' },
+      { value: 1, name: 'tuesday' },
+      { value: 2, name: 'wednesday' },
+      { value: 3, name: 'thursday' },
+      { value: 4, name: 'friday' },
+      { value: 5, name: 'saturday' },
+      { value: 6, name: 'sunday' },
     ],
     []
   );

@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
@@ -19,7 +19,7 @@ import {
 import { FullCalendar } from '@calendar/components/fullcalendar';
 import transformCalendarConfigToEvents from '@calendar/helpers/transformCalendarConfigToEvents';
 import { useCalendarSimpleEventModal } from '@calendar/components/calendar-simple-event-modal';
-import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
+import hooks from 'leemons-hooks';
 
 function ConfigAdd() {
   useSession({ redirectTo: goLoginPage });
@@ -45,6 +45,7 @@ function ConfigAdd() {
   const [t] = useTranslateLoader(prefixPN('detail_calendars_page'));
   const { t: tCommonHeader } = useCommonTranslate('page_header');
 
+  const eventClicked = useRef(false);
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
   const [calendars, setCalendars] = useState([]);
@@ -138,8 +139,10 @@ function ConfigAdd() {
       };
       conf.events = transformCalendarConfigToEvents(config);
     }
-    if (events) {
+    /*
+    if (events && calendarInit) {
       const calendarsByName = _.keyBy(calendars, 'name');
+      console.log(events);
       conf.events = conf.events.concat(
         _.map(transformDBEventsToFullCalendarEvents(events, calendars), (e) => {
           return {
@@ -150,38 +153,63 @@ function ConfigAdd() {
         })
       );
     }
+
+     */
+    console.log(conf);
     return conf;
   }, [config, calendarInit, events]);
 
-  const onDateClick = async ({ dateStr, ...rest }) => {
-    const startDate = new Date(dateStr);
-    startDate.setUTCHours(0, 0, 0, 0);
-    const endDate = new Date(dateStr);
-    endDate.setUTCHours(23, 59, 59, 0);
-    setEvent({
-      startDate,
-      endDate,
-      isAllDay: true,
-      type: eventTypes[0].key,
-    });
+  const onDateClick = async ({ dateStr }) => {
+    if (!eventClicked.current) {
+      const startDate = new Date(dateStr);
+      startDate.setHours(0, 0, 0, 0);
+      const endDate = new Date(dateStr);
+      endDate.setHours(23, 59, 59, 0);
+      setEvent({
+        startDate,
+        endDate,
+        isAllDay: true,
+        type: eventTypes[0].key,
+      });
+      toggleEventModal();
+    }
+  };
+
+  const onEventClick = async (info) => {
+    eventClicked.current = true;
+    setEvent(info.event.extendedProps.originalEvent);
     toggleEventModal();
+    setTimeout(() => {
+      eventClicked.current = false;
+    }, 100);
   };
 
-  const onSaveEvent = async (event) => {
-    const calendar = `plugins.calendar.${config.id}.${event.type.replace('plugins.calendar.', '')}`;
-    setEvents([...events, { ...event, calendar }]);
+  const reloadCalendarEvents = async () => {
+    const id = router.query.id[0];
+    const list = await listCalendarConfigCalendarsRequest(id);
+    let _events = [];
+    _.forEach(list.calendars, (calendar) => {
+      _events = _events.concat(calendar.events);
+    });
+    setEvents(_events);
+    setCalendars(list.calendars);
   };
 
-  const onRemoveEvent = async () => {};
+  useEffect(() => {
+    hooks.addAction('calendar:force:reload', reloadCalendarEvents);
+    return () => {
+      hooks.removeAction('calendar:force:reload', reloadCalendarEvents);
+    };
+  });
 
   return (
     <>
       {!error && !loading ? (
         <>
           <EventModal
+            config={config}
+            calendars={calendars}
             close={toggleEventModal}
-            save={onSaveEvent}
-            remove={onRemoveEvent}
             eventTypes={eventTypes}
             event={event}
           />
@@ -228,6 +256,7 @@ function ConfigAdd() {
                           {...fullCalendarConfigs}
                           aspectRatio={0.9}
                           dateClick={onDateClick}
+                          eventClick={onEventClick}
                           headerToolbar={{
                             left: '',
                             center: 'title',

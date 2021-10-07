@@ -65,6 +65,7 @@ const updateEventSchema = {
     endDate: dateSchema,
     isAllDay: booleanSchema,
     repeat: stringSchema,
+    type: stringSchema,
     data: {
       type: 'object',
       additionalProperties: true,

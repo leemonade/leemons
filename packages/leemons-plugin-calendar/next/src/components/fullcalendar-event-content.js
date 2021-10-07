@@ -35,7 +35,7 @@ export function FullCalendarEventContent({ info, config }) {
     avatarType = 'icon';
     avatarContent = getIcon();
   }
-  if (config.userCalendar && config.userCalendar.id === event.calendar.id) {
+  if (config && config.userCalendar && config.userCalendar.id === event.calendar.id) {
     avatarType = 'avatar';
     avatarContent = getAvatar();
   }

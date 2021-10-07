@@ -1,87 +1,160 @@
 import * as _ from 'lodash';
-import { useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import { addHeaderScript } from '@common/addHeaderScript';
-import { addHeaderStyle } from '@common/addHeaderStyle';
-import { existHeaderScript } from '@common/existHeaderScript';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-export function FullCalendar({ onCalendarInit = () => {}, events, ...props }) {
-  const containerRef = useRef(null);
-  const scriptLoaded = useRef(false);
-  const calendar = useRef(null);
-  const [isInit, setIsInit] = useState(false);
+import React, { useEffect, useMemo, useState } from 'react';
 
-  const initCalendar = () => {
-    if (scriptLoaded.current && containerRef.current && !calendar.current) {
-      calendar.current = new window.FullCalendar.Calendar(containerRef.current, {
-        events,
-        ...props,
+import moment from 'moment';
+import hooks from 'leemons-hooks';
+import { RRule } from 'rrule';
+import { momentLocalizer } from './fullcalendar-views';
+import Calendar from './fullcalendar-views/Calendar';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@calendar/helpers/prefixPN';
+
+export function FullCalendar({
+  events,
+  dateClick = () => {},
+  onSelectDay = () => {},
+  language,
+  firstDay,
+  validRange,
+  onRangeChange = () => {},
+  onSelectEvent = () => {},
+  eventClick = () => {},
+  messages,
+  ...props
+}) {
+  const [t] = useTranslateLoader(prefixPN('calendar'));
+
+  const [dateRange, setDateRange] = useState(null);
+  const [date, setDate] = useState(new Date());
+
+  const localizer = useMemo(() => {
+    if (!_.isNil(language) && !_.isNil(firstDay)) {
+      moment.updateLocale(language, {
+        week: {
+          dow: firstDay, // Monday is the first day of the week.
+        },
       });
-      calendar.current.render();
-      setIsInit(true);
-      onCalendarInit(calendar.current);
+      moment.locale(language);
+    }
+    return momentLocalizer(moment);
+  }, [language, firstDay]);
+
+  const _onDayClick = ({ args: [date] }) => {
+    onSelectDay(date);
+    dateClick(date);
+  };
+
+  const _onRangeChange = (range) => {
+    if (_.isArray(range) && range.length > 1) {
+      range = {
+        start: range[0],
+        end: range[range.length - 1],
+      };
+    } else if (_.isArray(range) && range.length === 1) {
+      const end = new Date(range[0]);
+      end.setHours(23, 59, 59);
+      range = {
+        start: range[0],
+        end,
+      };
+    } else if (_.isArray(range)) {
+      range = null;
+    }
+
+    if (range) {
+      onRangeChange(range);
+      setDateRange(range);
     }
   };
 
-  const onScriptLoaded = () => {
-    scriptLoaded.current = true;
-    initCalendar();
-  };
-  const onContainerRedLoaded = (ref) => {
-    containerRef.current = ref;
-    initCalendar();
+  const _onSelectEvent = (ev) => {
+    onSelectEvent(ev);
+    eventClick(ev);
   };
 
   useEffect(() => {
-    if (calendar.current) {
-      calendar.current.removeAllEvents();
-      _.forEach(events, (event) => {
-        calendar.current.addEvent(event);
-      });
-    }
-  }, [events, isInit]);
+    hooks.addAction('big-calendar:dayClick', _onDayClick);
+    return () => {
+      hooks.removeAction('big-calendar:dayClick', _onDayClick);
+    };
+  });
 
-  useEffect(() => {
-    if (calendar.current) {
-      _.forIn(props, (value, key) => {
-        calendar.current.setOption(key, value);
-      });
-    }
-  }, [props, isInit]);
+  const _events = useMemo(() => {
+    const acc = [];
+    if (dateRange) {
+      _.forEach(events, (ev) => {
+        if (ev.rrule) {
+          const diff = moment(ev.end).diff(ev.start);
 
-  useEffect(() => {
-    const scriptUrl =
-      'https://cdn.jsdelivr.net/combine/npm/fullcalendar@5.9.0,npm/fullcalendar@5.9.0/locales-all.min.js';
-    const styleUrl = 'https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.css';
-    if (!existHeaderScript(scriptUrl)) {
-      addHeaderScript('https://cdn.jsdelivr.net/npm/rrule@2.6.4/dist/es5/rrule.min.js');
-      addHeaderScript(scriptUrl);
-      addHeaderScript('https://cdn.jsdelivr.net/npm/@fullcalendar/rrule@5.5.0/main.global.min.js');
-      addHeaderStyle(styleUrl);
-      const interval = setInterval(() => {
-        if (window.FullCalendar && window.rrule) {
-          clearInterval(interval);
-          setTimeout(() => {
-            onScriptLoaded();
-          }, 300);
+          const rule = new RRule({
+            ...ev.rrule,
+            dtstart: new Date(
+              Date.UTC(
+                dateRange.start.getFullYear(),
+                dateRange.start.getMonth(),
+                dateRange.start.getDate(),
+                dateRange.start.getHours(),
+                dateRange.start.getMinutes(),
+                dateRange.start.getSeconds()
+              )
+            ),
+            until: new Date(
+              Date.UTC(
+                dateRange.end.getFullYear(),
+                dateRange.end.getMonth(),
+                dateRange.end.getDate(),
+                dateRange.end.getHours(),
+                dateRange.end.getMinutes(),
+                dateRange.end.getSeconds()
+              )
+            ),
+          });
+          const dates = rule.all();
+          _.forEach(dates, (date) => {
+            const evStart = new Date(ev.start);
+            date.setHours(evStart.getHours(), evStart.getMinutes(), evStart.getSeconds());
+            acc.push({
+              ...ev,
+              start: date,
+              end: new Date(date.getTime() + diff),
+            });
+          });
+        } else {
+          if (moment(ev.start).isBetween(dateRange.start, dateRange.end)) {
+            acc.push(ev);
+          }
         }
-      }, 1000 / 30);
-    } else {
-      const interval = setInterval(() => {
-        if (window.FullCalendar && window.rrule) {
-          clearInterval(interval);
-          setTimeout(() => {
-            onScriptLoaded();
-          }, 300);
-        }
-      }, 1000 / 30);
+      });
     }
-  }, []);
+    return acc;
+  }, [events, dateRange]);
 
-  return <div ref={onContainerRedLoaded}></div>;
+  const _messages = useMemo(() => {
+    if (messages) return messages;
+    return {
+      month: t('month'),
+      week: t('week'),
+      day: t('day'),
+      agenda: t('agenda'),
+      today: t('today'),
+      previous: t('previous'),
+      next: t('next'),
+    };
+  }, [messages]);
+
+  return (
+    <Calendar
+      localizer={localizer}
+      events={_events}
+      startAccessor="start"
+      endAccessor="end"
+      messages={_messages}
+      onSelectEvent={_onSelectEvent}
+      onRangeChange={_onRangeChange}
+      validRange={validRange}
+      {...props}
+    />
+  );
 }
-
-FullCalendar.propTypes = {
-  events: PropTypes.array,
-  onCalendarInit: PropTypes.func,
-};

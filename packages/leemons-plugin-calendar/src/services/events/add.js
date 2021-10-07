@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { table } = require('../tables');
 
 const { validateAddEvent } = require('../../validations/forms');
-const { detailByKey } = require('../calendar');
+const { detailByKey } = require('../calendar/detailByKey');
 const { addNexts } = require('../notifications');
 const { validateNotExistEventTypeKey } = require('../../validations/exists');
 const { getPermissionConfig } = require('./getPermissionConfig');
@@ -16,7 +16,7 @@ const { getPermissionConfig } = require('./getPermissionConfig');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function add(key, data, { transacting: _transacting } = {}) {
+async function add(key, data, { ignoreType, transacting: _transacting } = {}) {
   validateAddEvent(data);
 
   // eslint-disable-next-line no-param-reassign
@@ -26,7 +26,7 @@ async function add(key, data, { transacting: _transacting } = {}) {
 
   return global.utils.withTransaction(
     async (transacting) => {
-      await validateNotExistEventTypeKey(data.type, { transacting });
+      if (!ignoreType) await validateNotExistEventTypeKey(data.type, { transacting });
 
       const calendar = await detailByKey(key, { transacting });
       const event = await table.events.create(

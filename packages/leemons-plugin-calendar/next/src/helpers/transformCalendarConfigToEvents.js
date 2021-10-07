@@ -1,25 +1,25 @@
 import * as _ from 'lodash';
+import { RRule } from 'rrule';
 
 export default function transformCalendarConfigToEvents(config) {
-  if (_.isArray(config.notSchoolDays) && config.notSchoolDays) {
-    return _.map(config.notSchoolDays, (weekday) => {
-      const dtstart = new Date(config.startYear, config.startMonth);
-      dtstart.setUTCHours(0, 0, 0, 0);
-      dtstart.setDate(dtstart.getDate() + weekday - dtstart.getDay());
-
-      return {
-        allDay: true,
+  if (config && _.isArray(config.notSchoolDays)) {
+    const start = new Date();
+    start.setHours(0, 0, 0);
+    const end = new Date();
+    end.setHours(23, 59, 59);
+    return [
+      {
+        title: '',
         display: 'background',
-        backgroundColor: '#333',
-        duration: {
-          days: 1,
-        },
+        backgroundColor: 'rgba(69,69,69,0.3)',
+        start,
+        end,
         rrule: {
-          freq: window.rrule.default.WEEKLY,
-          dtstart,
+          freq: RRule.WEEKLY,
+          byweekday: config.notSchoolDays,
         },
-      };
-    });
+      },
+    ];
   }
 
   return [];

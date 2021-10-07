@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
-import ReactDomServer from 'react-dom/server';
 import { getCentersWithToken, useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
@@ -8,7 +7,6 @@ import { getCalendarsToFrontendRequest } from '@calendar/request';
 import { Button } from 'leemons-ui';
 import { FullCalendar } from '@calendar/components/fullcalendar';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
-import { FullCalendarEventContent } from '@calendar/components/fullcalendar-event-content';
 import { CalendarFilter } from '@calendar/components/calendar-filter';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
@@ -110,8 +108,8 @@ function Calendar() {
   };
 
   const onEventClick = (info) => {
-    if (info.event.extendedProps.originalEvent) {
-      setSelectedEvent(info.event.extendedProps.originalEvent);
+    if (info.originalEvent) {
+      setSelectedEvent(info.originalEvent);
       toggleEventModal();
     }
   };
@@ -119,15 +117,6 @@ function Calendar() {
   const onNewEvent = () => {
     setSelectedEvent(null);
     toggleEventModal();
-  };
-
-  const onEventContent = (info) => {
-    if (info.event.extendedProps.originalEvent) {
-      return {
-        html: ReactDomServer.renderToString(<FullCalendarEventContent info={info} config={data} />),
-      };
-    }
-    return null;
   };
 
   const fullCalendarConfigs = useMemo(() => {
@@ -143,7 +132,7 @@ function Calendar() {
   }, [data]);
 
   return (
-    <div className="bg-primary-content">
+    <div className="bg-primary-content h-full">
       {center ? (
         <EventModal centerToken={center.token} event={selectedEvent} close={toggleEventModal} />
       ) : null}
@@ -162,7 +151,7 @@ function Calendar() {
         Añadir evento
       </Button>
 
-      <div className="flex flex-column w-full">
+      <div className="flex flex-column w-full h-full">
         <div className="w-4/12">
           {sections.map(({ calendars, sectionName }) => (
             <div key={sectionName}>
@@ -183,17 +172,13 @@ function Calendar() {
         </div>
         <div className="w-8/12">
           <FullCalendar
-            initialView="dayGridMonth"
+            defaultView="month"
             eventClick={onEventClick}
             events={filteredEvents}
             {...fullCalendarConfigs}
-            eventContent={onEventContent}
-            headerToolbar={{
-              left: 'prev,next today',
-              center: 'title',
-              right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
-            }}
+            language={session?.locale}
           />
+          {/*eventContent={onEventContent}*/}
         </div>
       </div>
     </div>

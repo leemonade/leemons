@@ -9,7 +9,7 @@ const { getPermissionConfig } = require('./getPermissionConfig');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function removeOrCancel(id, { transacting: _transacting } = {}) {
+async function removeOrCancel(id, { forceDelete, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       const permissionConfig = getPermissionConfig(id);
@@ -25,7 +25,7 @@ async function removeOrCancel(id, { transacting: _transacting } = {}) {
         }
       );
       // ES: Si hay mas de un invitado (Owner + otros) cancelamos el evento
-      if (userAgentIds.length > 1) {
+      if (userAgentIds.length > 1 && !forceDelete) {
         return table.events.update({ id }, { status: 'cancel' }, { transacting });
       }
       // ES: Si solo hay un invitado (Owner) borramos el evento

@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import moment from 'moment';
 import { useEffect, useState } from 'react';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { Button, Checkbox, Drawer, FormControl, Input, Radio, Select, useDrawer } from 'leemons-ui';
@@ -9,8 +10,16 @@ import prefixPN from '@calendar/helpers/prefixPN';
 import { useForm } from 'react-hook-form';
 import tKeys from '@multilanguage/helpers/tKeys';
 import PropTypes from 'prop-types';
+import getUTCString from '../helpers/getUTCString';
+import {
+  addConfigEventRequest,
+  removeConfigEventRequest,
+  updateConfigEventRequest,
+} from '../request';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import hooks from 'leemons-hooks';
 
-function CalendarSimpleEventModal({ event, eventTypes, save, remove, close }) {
+function CalendarSimpleEventModal({ event, eventTypes, close, config, calendars }) {
   const [t] = useTranslateLoader(prefixPN('event_modal'));
   const { t: tCommon } = useCommonTranslate('forms');
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -48,18 +57,16 @@ function CalendarSimpleEventModal({ event, eventTypes, save, remove, close }) {
       });
       if (!eventData.repeat) setValue('repeat', 'dont_repeat');
       setValue('isAllDay', !!isAllDay);
+
       const _startDate = new Date(startDate);
       const _endDate = new Date(endDate);
       _startDate.setSeconds(0, 0);
       _endDate.setSeconds(0, 0);
 
-      const sdIsoArr = _startDate.toISOString().split('T');
-      setValue('startDate', sdIsoArr[0]);
-      setValue('startTime', sdIsoArr[1].split('.')[0]);
-
-      const edIsoArr = _endDate.toISOString().split('T');
-      setValue('endDate', edIsoArr[0]);
-      setValue('endTime', edIsoArr[1].split('.')[0]);
+      setValue('startDate', moment(_startDate).format('YYYY-MM-DD'));
+      setValue('startTime', moment(_startDate).format('HH:mm:ss'));
+      setValue('endDate', moment(_endDate).format('YYYY-MM-DD'));
+      setValue('endTime', moment(_endDate).format('HH:mm:ss'));
     } else if (eventTypes.length) {
       setValue('type', eventTypes[0].key);
       setValue('repeat', 'dont_repeat');
@@ -78,17 +85,8 @@ function CalendarSimpleEventModal({ event, eventTypes, save, remove, close }) {
 
   const getEventTypeName = (sectionName) => tKeys(sectionName, eventTypesT);
 
-  const getUTCString = (date) => {
-    const month = (parseInt(date.getUTCMonth().toString(), 10) + 1).toString();
-    const day = date.getUTCDate();
-    const hours = date.getUTCHours();
-    const minutes = date.getUTCMinutes();
-    const seconds = date.getUTCSeconds();
-    return `${date.getUTCFullYear()}-${month.toString().length === 1 ? `0${month}` : month}-${
-      day.toString().length === 1 ? `0${day}` : day
-    } ${hours.toString().length === 1 ? `0${hours}` : hours}:${
-      minutes.toString().length === 1 ? `0${minutes}` : minutes
-    }:${seconds.toString().length === 1 ? `0${seconds}` : seconds}`;
+  const reloadCalendar = () => {
+    hooks.fireEvent('calendar:force:reload');
   };
 
   const onSubmit = async (_formData) => {
@@ -97,34 +95,53 @@ function CalendarSimpleEventModal({ event, eventTypes, save, remove, close }) {
     startDate = new Date(startDate);
     endDate = new Date(endDate);
     if (formData.isAllDay) {
-      startDate.setUTCHours(0, 0, 0);
-      endDate.setUTCHours(23, 59, 59);
+      startDate.setHours(0, 0, 0);
+      endDate.setHours(23, 59, 59);
     } else {
       startTime = startTime.split(':');
       endTime = endTime.split(':');
-      startDate.setUTCHours(
+      startDate.setHours(
         startTime[0] ? parseInt(startTime[0], 10) : 0,
         startTime[1] ? parseInt(startTime[1], 10) : 0,
         startTime[2] ? parseInt(startTime[2], 10) : 0
       );
-      endDate.setUTCHours(
+      endDate.setHours(
         endTime[0] ? parseInt(endTime[0], 10) : 0,
         endTime[1] ? parseInt(endTime[1], 10) : 0,
         endTime[2] ? parseInt(endTime[2], 10) : 0
       );
     }
 
-    save({
+    const calendar = _.find(calendars, { name: formData.type });
+
+    const toSend = {
       startDate: getUTCString(startDate),
       endDate: getUTCString(endDate),
       ...formData,
-    });
+      calendar: calendar.id,
+    };
+
+    if (isNew) {
+      await addConfigEventRequest(config.id, toSend);
+      addSuccessAlert(t('add_done'));
+    } else {
+      toSend.id = event.id;
+      await updateConfigEventRequest(config.id, toSend);
+      addSuccessAlert(t('updated_done'));
+    }
+
+    reloadCalendar();
     close();
   };
 
   const removeEvent = async () => {
-    remove(event);
-    close();
+    try {
+      await removeConfigEventRequest(config.id, event.id);
+      reloadCalendar();
+      close();
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
   };
 
   useEffect(() => {
@@ -251,8 +268,8 @@ CalendarSimpleEventModal.propTypes = {
   event: PropTypes.object,
   close: PropTypes.func.isRequired,
   eventTypes: PropTypes.any.isRequired,
-  save: PropTypes.func,
-  remove: PropTypes.func,
+  config: PropTypes.object,
+  calendars: PropTypes.any,
 };
 
 export const useCalendarSimpleEventModal = () => {

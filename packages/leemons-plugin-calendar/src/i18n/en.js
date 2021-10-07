@@ -4,6 +4,15 @@ module.exports = {
   holidays_vacation: 'Holiday / Vacation',
   regional_holidays: 'Regional holidays',
   non_school_day: 'Non school day (Other)',
+  calendar: {
+    month: 'Month',
+    week: 'Week',
+    day: 'Day',
+    agenda: 'Agenda',
+    today: 'Today',
+    previous: 'Previous',
+    next: 'Next',
+  },
   event_modal: {
     title: 'Event title',
     save: 'Save',
