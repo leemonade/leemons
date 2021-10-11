@@ -1,5 +1,6 @@
 const { add } = require('./add');
 const { exist } = require('./exist');
+const { remove } = require('./remove');
 const { update } = require('./update');
 const { detail } = require('./detail');
 const { addFromUser } = require('./addFromUser');
@@ -13,6 +14,7 @@ const { unGrantAccessUserAgentToEvent } = require('./unGrantAccessUserAgentToEve
 module.exports = {
   add,
   exist,
+  remove,
   detail,
   update,
   addFromUser,
