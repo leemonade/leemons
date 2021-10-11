@@ -18,8 +18,10 @@ const { table } = require('../tables');
  * @return {Promise<boolean>}
  * */
 
-// TODO Añadir como parametro opcionales (Junto transacting) withProfile y withCenter y que se devuelva el perfil/centro para cada use agent
-async function searchUserAgents({ profile, center, user, ignoreUserIds }, { transacting } = {}) {
+async function searchUserAgents(
+  { profile, center, user, ignoreUserIds },
+  { withProfile, withCenter, transacting } = {}
+) {
   const finalQuery = {};
   // ES: Como es posible que se quiera filtrar desde multiples sitios por usuarios añadimos un array
   // de ids de usuarios para luego filtrar los agentes
@@ -110,7 +112,7 @@ async function searchUserAgents({ profile, center, user, ignoreUserIds }, { tran
   // ES: Finalmente sacamos los agentes con sus correspondientes usuarios según los filtros
   // EN: Finally, the agents and their corresponding users according to the filters
   const userAgents = await table.userAgent.find(finalQuery, {
-    columns: ['id', 'user'],
+    columns: ['id', 'user', 'role'],
     transacting,
   });
 
@@ -123,10 +125,41 @@ async function searchUserAgents({ profile, center, user, ignoreUserIds }, { tran
     }
   );
 
-  const usersById = _.keyBy(users, 'id');
+  const roles = _.uniq(_.map(userAgents, 'role'));
+
+  let usersById = _.keyBy(users, 'id');
+  let profileRoleByRole = null;
+  let profilesById = null;
+  let roleCentersByRole = null;
+  let centerById = null;
+
+  if (withProfile) {
+    const profileRole = await table.profileRole.find({ role_$in: roles }, { transacting });
+    const profiles = await table.profiles.find(
+      { id_$in: _.map(profileRole, 'profile') },
+      { transacting }
+    );
+    profileRoleByRole = _.keyBy(profileRole, 'role');
+    profilesById = _.keyBy(profiles, 'id');
+  }
+  if (withCenter) {
+    const centerRole = await table.roleCenter.find({ role_$in: roles }, { transacting });
+    const centers = await table.centers.find(
+      { id_$in: _.map(centerRole, 'center') },
+      { transacting }
+    );
+    roleCentersByRole = _.keyBy(centerRole, 'role');
+    centerById = _.keyBy(centers, 'id');
+  }
 
   return _.map(userAgents, (userAgent) => {
     userAgent.user = usersById[userAgent.user];
+    if (profileRoleByRole && profilesById) {
+      userAgent.profile = profilesById[profileRoleByRole[userAgent.role].profile];
+    }
+    if (roleCentersByRole && centerById) {
+      userAgent.center = centerById[roleCentersByRole[userAgent.role].center];
+    }
     return userAgent;
   });
 }

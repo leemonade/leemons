@@ -7,6 +7,7 @@ const { detail } = require('./detail');
 const { listForCenter } = require('./listForCenter');
 const removePermissionsByName = require('./removePermissionsByName');
 const { getRoleProfile } = require('./getRoleProfile');
+const { getRolesProfiles } = require('./getRolesProfiles');
 
 module.exports = {
   add,
@@ -20,4 +21,5 @@ module.exports = {
   removePermissionsByName: removePermissionsByName,
   searchUsersWithRoleAndMarkAsReloadPermissions,
   getRoleProfile,
+  getRolesProfiles,
 };
