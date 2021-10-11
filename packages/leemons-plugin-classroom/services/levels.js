@@ -1,5 +1,6 @@
 const add = require('../src/services/levels/add');
 const get = require('../src/services/levels/get');
+const getAllParents = require('../src/services/levels/getAllParents');
 const deleteLS = require('../src/services/levels/delete');
 const update = require('../src/services/levels/update');
 const list = require('../src/services/levels/list');
@@ -15,6 +16,7 @@ const getUsers = require('../src/services/levels/getUsers');
 module.exports = {
   add,
   get,
+  getAllParents,
   delete: deleteLS,
   update,
   list,

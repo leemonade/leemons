@@ -8,6 +8,7 @@ const table = {
   calendarConfigs: leemons.query('plugins_calendar::calendar-configs'),
   centerCalendarConfigs: leemons.query('plugins_calendar::center-calendar-configs'),
   calendarConfigCalendars: leemons.query('plugins_calendar::calendar-config-calendars'),
+  classroomLevelCalendars: leemons.query('plugins_calendar::classroom-level-calendars'),
 };
 
 module.exports = { table };

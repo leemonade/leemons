@@ -190,6 +190,23 @@ function validateAddCalendarGroups(data) {
   }
 }
 
+const addClassroomLevelSchema = {
+  type: 'object',
+  properties: {
+    level: stringSchema,
+  },
+  required: ['level'],
+  additionalProperties: false,
+};
+
+function validateAddClassroomLevel(data) {
+  const validator = new LeemonsValidator(addClassroomLevelSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   validateAddEvent,
   validateUpdateEvent,
@@ -197,4 +214,5 @@ module.exports = {
   validateAddKanbanColumn,
   validateAddCalendarConfig,
   validateAddCalendarGroups,
+  validateAddClassroomLevel,
 };

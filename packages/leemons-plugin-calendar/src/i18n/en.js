@@ -102,4 +102,16 @@ module.exports = {
     school_day: 'School day',
     non_school_day: 'Non school day (Ordinary)',
   },
+  classroom_detail: {
+    title: 'Calendars',
+    description:
+      "Set the regional calendar, the key dates (e.g. start and end of school year, quarterly closing…) for your schools and courses. Your courses don't have any calendars set up yet, you can start by...",
+    create_school: 'Create School calendar',
+    create_school_description: 'Start by creating a plan for a course of your choice',
+    center: 'Center',
+    leave_childs:
+      'Leave program, group or course unselected to assig the same calendar to the whole child levels',
+    create_plan: 'Create plan',
+    min_select_center: 'Minimum to be selected to the center',
+  },
 };

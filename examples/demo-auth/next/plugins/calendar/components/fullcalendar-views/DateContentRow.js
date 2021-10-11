@@ -118,6 +118,7 @@ class DateContentRow extends React.Component {
       isAllDay,
       resizable,
       showAllEvents,
+      hideBgTitles,
     } = this.props;
 
     if (renderForMeasure) return this.renderDummy();
@@ -171,6 +172,7 @@ class DateContentRow extends React.Component {
           components={components}
           longPressThreshold={longPressThreshold}
           resourceId={resourceId}
+          hideBgTitles={hideBgTitles}
         />
 
         <div

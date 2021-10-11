@@ -4,6 +4,7 @@ const kanbanColumnsService = require('../src/services/kanban-columns');
 const kanbanEventOrdersService = require('../src/services/kanban-event-orders');
 const eventTypesService = require('../src/services/event-types');
 const calendarConfigsService = require('../src/services/calendar-configs');
+const classroomLevelService = require('../src/services/classroom-level');
 
 async function getCalendar(ctx) {
   const data = await calendarService.getCalendarsToFrontend(ctx.state.userSession);
@@ -135,6 +136,22 @@ async function removeConfigEvent(ctx) {
   ctx.body = { status: 200, event };
 }
 
+async function addClassroomLevel(ctx) {
+  const config = await classroomLevelService.add(ctx.request.body.config, {
+    userSession: ctx.state.userSession,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, config };
+}
+
+async function detailClassroomLevel(ctx) {
+  const config = await classroomLevelService.detail(ctx.request.params.id, {
+    withEvents: true,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, config };
+}
+
 module.exports = {
   addEvent,
   removeEvent,
@@ -146,7 +163,9 @@ module.exports = {
   addCalendarConfig,
   updateConfigEvent,
   removeConfigEvent,
+  addClassroomLevel,
   listCalendarConfig,
+  detailClassroomLevel,
   updateCalendarConfig,
   detailCalendarConfig,
   removeCalendarConfig,

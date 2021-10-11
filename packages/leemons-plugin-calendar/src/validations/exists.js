@@ -3,6 +3,9 @@ const { exist: existCalendar } = require('../services/calendar/exist');
 const { exist: existEventType } = require('../services/event-types/exist');
 const { exist: existCalendarConfig } = require('../services/calendar-configs/exist');
 const { existByKey: existCalendarByKey } = require('../services/calendar/existByKey');
+const {
+  existByLevel: existClassroomLevelByLevel,
+} = require('../services/classroom-level/existByLevel');
 
 async function validateExistCalendarKey(key, { transacting } = {}) {
   if (await existCalendarByKey(key, { transacting }))
@@ -50,6 +53,24 @@ async function validateNotExistCalendarConfig(id, { transacting } = {}) {
     throw new Error(`Calendar config '${id}' not exists`);
 }
 
+async function validateExistClassroomLevel(level, { transacting } = {}) {
+  if (await existClassroomLevelByLevel(level, { transacting }))
+    throw new global.utils.HttpErrorWithCustomCode(
+      400,
+      5001,
+      `Classroom level '${level}' already exists`
+    );
+}
+
+async function validateNotExistClassroomLevel(level, { transacting } = {}) {
+  if (!(await existClassroomLevelByLevel(level, { transacting })))
+    throw new global.utils.HttpErrorWithCustomCode(
+      400,
+      5002,
+      `Classroom level '${level}' not exists`
+    );
+}
+
 function validateKeyPrefix(key, calledFrom) {
   if (!key.startsWith(calledFrom)) throw new Error(`The key must begin with ${calledFrom}`);
 }
@@ -69,6 +90,8 @@ module.exports = {
   validateExistEventTypeKey,
   validateNotExistCalendarKey,
   validateExistCalendarConfig,
+  validateExistClassroomLevel,
   validateNotExistEventTypeKey,
+  validateNotExistClassroomLevel,
   validateNotExistCalendarConfig,
 };

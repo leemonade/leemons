@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
@@ -9,7 +9,7 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { PageContainer, PageHeader } from 'leemons-ui';
+import { Button, PageContainer, PageHeader } from 'leemons-ui';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
 import {
@@ -47,6 +47,7 @@ function ConfigAdd() {
   const [t] = useTranslateLoader(prefixPN('detail_calendars_page'));
   const { t: tCommonHeader } = useCommonTranslate('page_header');
 
+  const downloadRef = useRef();
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
   const [calendars, setCalendars] = useState([]);
@@ -54,6 +55,7 @@ function ConfigAdd() {
   const [eventTypesT, setEventTypesT] = useState([]);
   const [events, setEvents] = useState([]);
   const [event, setEvent] = useState(null);
+  const [hideBgTitles, setHideBgTitles] = useState(false);
 
   const [toggleEventModal, EventModal] = useCalendarSimpleEventModal();
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
@@ -180,6 +182,32 @@ function ConfigAdd() {
     setCalendars(list.calendars);
   };
 
+  function addScript(url) {
+    var script = document.createElement('script');
+    script.type = 'application/javascript';
+    script.src = url;
+    document.head.appendChild(script);
+  }
+
+  useEffect(() => {
+    addScript('https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js');
+  }, []);
+
+  const downloadPdf = async () => {
+    setHideBgTitles(true);
+
+    setTimeout(async () => {
+      await window.html2pdf(downloadRef.current, {
+        margin: 0.5,
+        filename: 'calendar.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+      });
+      setHideBgTitles(false);
+    }, 100);
+  };
+
   useEffect(() => {
     hooks.addAction('calendar:force:reload', reloadCalendarEvents);
     return () => {
@@ -219,7 +247,11 @@ function ConfigAdd() {
                 })}
               </div>
 
-              <div className="mt-4">
+              <Button color="primary" onClick={downloadPdf}>
+                Descargar pdf
+              </Button>
+
+              <div className="mt-4 pb-8" ref={downloadRef}>
                 <FullCalendar
                   defaultView="dateMonthRange"
                   views={{
@@ -231,46 +263,10 @@ function ConfigAdd() {
                   dateClick={onDateClick}
                   eventClick={onEventClick}
                   backgroundEventClick={onEventClick}
+                  hideBgTitles={hideBgTitles}
                   language={session?.locale}
                 />
               </div>
-
-              {/*
-              <div className="mt-4 grid grid-cols-3 gap-4">
-                {years.map((year) => {
-                  const isStartYear = config.startYear === year;
-                  const isEndYear = config.endYear === year;
-                  let startMonth = 1;
-                  let endMonth = 12;
-                  if (isStartYear) startMonth = config.startMonth;
-                  if (isEndYear) endMonth = config.endMonth;
-                  const months = [];
-                  for (let i = startMonth; i <= endMonth; i++) {
-                    months.push(i);
-                  }
-                  return months.map((month) => {
-                    return (
-                      <div key={`${year}${month}`}>
-                        <FullCalendar
-                          onCalendarInit={() => setCalendarInit(true)}
-                          initialView="dayGridMonth"
-                          initialDate={new Date(year, month, 1)}
-                          {...fullCalendarConfigs}
-                          aspectRatio={0.9}
-                          dateClick={onDateClick}
-                          eventClick={onEventClick}
-                          headerToolbar={{
-                            left: '',
-                            center: 'title',
-                            right: '',
-                          }}
-                        />
-                      </div>
-                    );
-                  });
-                })}
-              </div>
-              */}
             </PageContainer>
           </div>
         </>

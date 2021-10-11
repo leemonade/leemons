@@ -115,6 +115,7 @@ class MonthView extends React.Component {
       accessors,
       getters,
       showAllEvents,
+      hideBgTitles,
     } = this.props;
 
     const { needLimitMeasure, rowLimit } = this.state;
@@ -155,6 +156,7 @@ class MonthView extends React.Component {
         onKeyPress={this.handleKeyPressEvent}
         onSelectSlot={this.handleSelectSlot}
         longPressThreshold={longPressThreshold}
+        hideBgTitles={hideBgTitles}
         rtl={this.props.rtl}
         resizable={this.props.resizable}
         showAllEvents={showAllEvents}

@@ -34,7 +34,7 @@ class DateMonthRangeView extends React.Component {
     }
 
     return (
-      <div className="mt-4 grid grid-cols-3 gap-4">
+      <div className="mt-4 grid grid-cols-3 gap-2">
         {years.map((year) => {
           const isStartYear = dateMonthRange.startYear === year;
           const isEndYear = dateMonthRange.endYear === year;
@@ -49,12 +49,14 @@ class DateMonthRangeView extends React.Component {
           return months.map((month) => {
             const date = new Date(year, month, 1);
             return (
-              <div style={{ paddingBottom: '100%', position: 'relative' }} key={`${year}${month}`}>
-                <div style={{ position: 'absolute', width: '95%', height: '95%' }}>
-                  <div className="text-center pt-4">
-                    {localizer.format(date, 'monthHeaderFormat')}
+              <div key={`${year}${month}`}>
+                <div className="text-center pt-4 mb-4">
+                  {localizer.format(date, 'monthHeaderFormat')}
+                </div>
+                <div style={{ paddingBottom: '100%', position: 'relative' }}>
+                  <div style={{ position: 'absolute', width: '95%', height: '95%' }}>
+                    <MonthView {...this.props} date={date} onRangeChange={() => {}} />
                   </div>
-                  <MonthView {...this.props} date={date} onRangeChange={() => {}} />
                 </div>
               </div>
             );

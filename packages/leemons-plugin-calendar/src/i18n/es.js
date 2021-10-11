@@ -102,4 +102,16 @@ module.exports = {
     school_day: 'Día lectivo',
     non_school_day: 'Día no lectivo (ordinario)',
   },
+  classroom_detail: {
+    title: 'Calendarios',
+    description:
+      'Establezca las fechas clave (por ejemplo, inicio y fin del año escolar, cierre trimestral...) para sus escuelas y cursos. Sus cursos aún no tienen calendarios configurados, puede empezar por...',
+    create_school: 'Crear el calendario escolar',
+    create_school_description: 'Comience por crear un plan para un curso de su elección',
+    center: 'Centro',
+    leave_childs:
+      'Dejar sin seleccionar el programa, grupo o curso para asignar el mismo calendario a todos los niveles del niño',
+    create_plan: 'Crear un plan',
+    min_select_center: 'Mínimo hay que seleccionar hasta el centro',
+  },
 };
