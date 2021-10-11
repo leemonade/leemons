@@ -51,7 +51,7 @@ async function addLocation(
           );
         }
       }
-      // TODO Añadir que se agrege un nuevo apartado en el menu del plugin para los datasets si aun no lo tiene ya
+
       const response = await Promise.all(promises);
       if (response[1] && !response[1].warnings) response[0].name = name;
       if (response[2] && !response[2].warnings) response[0].description = description;

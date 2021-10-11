@@ -19,7 +19,6 @@ async function reOrderCustomUserItems(
   userSession,
   { transacting: _transacting } = {}
 ) {
-  // Todo: Comprobamos si tiene permiso mediante la clave, mejor en rendimiento peor en consistencia deberia quiza de ir por los permisos del usuario comprobando la tabla de los permisos?
   // Check if use have access to all menu item ids
   const count = await table.menuItem.count(
     {
