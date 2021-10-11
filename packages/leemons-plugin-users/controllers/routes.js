@@ -1,5 +1,3 @@
-// TODO COMPROBAR PERMISOS DE LOS ENDPOINTS
-
 module.exports = [
   /**
    * Init config

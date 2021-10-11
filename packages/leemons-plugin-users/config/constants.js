@@ -6,7 +6,6 @@ module.exports = {
     permissionName: 'plugins.users.any',
     actionName: 'view',
   },
-  // TODO Añadir listado de permisos basicos
   defaultPermissions: [
     {
       permissionName: 'plugins.users.centers',

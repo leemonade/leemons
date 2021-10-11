@@ -19,7 +19,6 @@ async function add(
   roles,
   { transacting: _transacting } = {}
 ) {
-  // TODO Validar entrada con ajv
   if (await exist({ email })) throw new Error(`"${email}" email already exists`);
   if (!(await existManyRoles(roles, { transacting: _transacting })))
     throw new Error('One of the ids specified as profile does not exist.');
