@@ -9,8 +9,10 @@ const {
   listFiles,
   createSymLink,
   copyFile,
+  removeFiles,
 } = require('./lib/fs');
 const { compile } = require('./lib/webpack');
+const { createReloader } = require('./lib/watch');
 
 squirrelly.helpers.define(
   'capitalize',
@@ -34,11 +36,11 @@ async function getPlugins() {
 }
 
 // Get package.json file as string
-async function getPackageJSON(config) {
-  const packageJSON = await fs.readFile(
-    path.resolve(__dirname, 'src', 'packageJSON.json')
+function getPackageJSON(config) {
+  return squirrelly.renderFile(
+    path.resolve(__dirname, 'src', 'packageJSON.json'),
+    config
   );
-  return squirrelly.render(packageJSON.toString(), config);
 }
 
 // Create the package.json file if missing
@@ -85,9 +87,12 @@ async function linkSourceCode(dir, plugins) {
       if (!existingFiles.get(name)) {
         return createSymLink(pluginDir, path.resolve(dir, name));
       }
+      existingFiles.delete(name);
+
       return null;
     })
   );
+  return existingFiles;
 }
 
 // Generate app.js file
@@ -116,7 +121,15 @@ async function generateMonorepo(dir, plugins) {
   );
   await copyAppJS(path.resolve(frontDir, 'App.js'), plugins);
 
-  await linkSourceCode(dir, plugins);
+  const extraFiles = await linkSourceCode(dir, plugins);
+
+  await removeFiles(dir, extraFiles, [
+    'node_modules',
+    'package.json',
+    'yarn.lock',
+    'App.js',
+    'index.js',
+  ]);
   await installDeps(dir);
 }
 
@@ -131,12 +144,26 @@ function generateAliases(plugins) {
 }
 
 async function main() {
-  const plugins = await getPlugins();
+  let plugins = await getPlugins();
 
   await generateMonorepo(frontDir, plugins);
 
-  const stop = await compile({ alias: generateAliases(plugins) }, async () => {
+  let stop = await compile({ alias: generateAliases(plugins) }, async () => {
     console.log('Changed :D');
+  });
+
+  createReloader({
+    name: 'Leemons Front',
+    dirs: pluginsFile,
+    logger: console,
+    handler: async () => {
+      plugins = await getPlugins();
+      await generateMonorepo(frontDir, plugins);
+      await stop();
+      stop = await compile({ alias: generateAliases(plugins) }, async () => {
+        console.log('Changed :D');
+      });
+    },
   });
 }
 

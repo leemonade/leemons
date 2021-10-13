@@ -17,6 +17,9 @@ export default function index() {
         <Route path={`${path}/organization`}>
           <Organization />
         </Route>
+        <Route path="/pepe">
+          <p>PEpe</p>
+        </Route>
       </Switch>
 
       <Link to="/classroom/tree">Tree</Link>

@@ -1,5 +1,4 @@
 [
   "./src/classroom",
-  "./src/subjects",
-  "./src/users"
+  "./src/subjects"
 ]

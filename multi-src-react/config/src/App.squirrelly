@@ -18,6 +18,9 @@ function App() {
           <Route path="/{{plugin.name}}">
             <{{@capitalize(plugin.name) /}} />
           </Route>
+          <Route path="/private/{{plugin.name}}">
+            <{{@capitalize(plugin.name) /}} />
+          </Route>
 {{/each}}
           <Route path="/">
             <p>Not Found</p>
