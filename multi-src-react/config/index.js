@@ -133,11 +133,11 @@ async function generateMonorepo(dir, plugins) {
   await installDeps(dir);
 }
 
-function generateAliases(plugins) {
+function generateAliases(dir, plugins) {
   return plugins.reduce(
     (obj, plugin) => ({
       ...obj,
-      [`@${plugin.name}`]: plugin.path,
+      [`@${plugin.name}`]: path.resolve(dir, path.basename(plugin.path)),
     }),
     {}
   );
@@ -148,9 +148,12 @@ async function main() {
 
   await generateMonorepo(frontDir, plugins);
 
-  let stop = await compile({ alias: generateAliases(plugins) }, async () => {
-    console.log('Changed :D');
-  });
+  let stop = await compile(
+    { alias: generateAliases(frontDir, plugins) },
+    async () => {
+      console.log('Changed :D');
+    }
+  );
 
   createReloader({
     name: 'Leemons Front',
@@ -160,9 +163,12 @@ async function main() {
       plugins = await getPlugins();
       await generateMonorepo(frontDir, plugins);
       await stop();
-      stop = await compile({ alias: generateAliases(plugins) }, async () => {
-        console.log('Changed :D');
-      });
+      stop = await compile(
+        { alias: generateAliases(frontDir, plugins) },
+        async () => {
+          console.log('Changed :D');
+        }
+      );
     },
   });
 }

@@ -21,6 +21,7 @@ module.exports = ({ alias }) => ({
     historyApiFallback: true,
   },
   resolve: {
+    symlinks: false,
     alias: {
       ...alias,
       react: path.resolve(nodeModules, 'react'),
