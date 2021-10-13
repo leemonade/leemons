@@ -1,0 +1,24 @@
+.root {
+  color: var(--color-text);
+  border-color: var(--color-outline);
+}
+
+.success {
+  border-color: var(--color-outline-success);
+  background: var(--color-highlight-success);
+}
+
+.info {
+  border-color: var(--color-outline-info);
+  background: var(--color-highlight-info);
+}
+
+.warning {
+  border-color: var(--color-outline-warning);
+  background: var(--color-highlight-warning);
+}
+
+.danger {
+  border-color: var(--color-outline-danger);
+  background: var(--color-highlight-danger);
+}

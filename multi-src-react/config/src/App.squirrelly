@@ -1,0 +1,27 @@
+import React from "react";
+import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
+import loadable from "@loadable/component";
+
+// Plugins imports
+{{@each(it.plugins) => plugin}}
+import {{@capitalize(plugin.name) /}} from "@{{plugin.name}}";
+{{/each}}
+
+function App() {
+  return (
+    <>
+      <Router>
+        <Switch>
+          {/* Define each plugin route */}
+{{@each(it.plugins) => plugin}}
+          <Route path='/{{plugin.name}}'>
+            <{{@capitalize(plugin.name) /}} />
+          </Route>
+{{/each}}
+        </Switch>
+      </Router>
+    </>
+  );
+}
+
+export default App;
