@@ -1,5 +1,5 @@
-const chokidar = require("chokidar");
-const chalk = require("chalk");
+const chokidar = require('chokidar');
+const chalk = require('chalk');
 
 /**
  * Watches the files in the given dirs (with Chokidar) and calls the handler
@@ -63,7 +63,7 @@ function createReloader({ name, dirs, config, handler, logger } = {}) {
     lastTimer = timer;
   };
 
-  watcher.on("all", watcherHandler);
+  watcher.on('all', watcherHandler);
 
   return watcher;
 }

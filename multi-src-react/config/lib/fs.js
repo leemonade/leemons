@@ -1,5 +1,5 @@
-const fs = require("fs-extra");
-const path = require("path");
+const fs = require('fs-extra');
+const path = require('path');
 
 async function _fileExists(dir, validateFiles = false) {
   try {
@@ -29,7 +29,7 @@ async function createFolder(dir) {
   try {
     await fs.mkdirp(dir);
   } catch (e) {
-    throw new Error("Unable to create folder");
+    throw new Error('Unable to create folder');
   }
 }
 
@@ -45,9 +45,9 @@ async function createFolderIfMissing(dir) {
 }
 
 // Create a file with content
-async function createFile(path, content) {
+async function createFile(dir, content) {
   try {
-    return await fs.writeFile(path, content);
+    return await fs.writeFile(dir, content);
   } catch (e) {
     throw new Error("Can't save file");
   }
@@ -56,7 +56,10 @@ async function createFile(path, content) {
 // Create a symbolic link
 async function createSymLink(src, dest) {
   try {
-    return await fs.createSymlink(src, dest);
+    if (await folderExists(src)) {
+      return await fs.createSymlink(src, dest);
+    }
+    return null;
   } catch (e) {
     throw new Error("Can't create symlink");
   }
@@ -65,21 +68,26 @@ async function createSymLink(src, dest) {
 // Get which file type is a file
 function getFileType(file) {
   if (file.isSymbolicLink()) {
-    return "symbolicLink";
+    return 'symbolicLink';
   }
   if (file.isDirectory()) {
-    return "directory";
+    return 'directory';
   }
   if (file.isFile()) {
-    return "file";
+    return 'file';
   }
+
+  return null;
 }
 
 // List all the files inside a directory
 async function listFiles(dir, useMap = false) {
   try {
     const data = (await fs.readdir(dir, { withFileTypes: true })).map(
-      (file) => ({ name: file.name, type: getFileType(file) })
+      (file) => ({
+        name: file.name,
+        type: getFileType(file),
+      })
     );
     if (useMap) {
       const map = new Map();
@@ -93,33 +101,29 @@ async function listFiles(dir, useMap = false) {
 }
 
 async function removeFiles(dir, files, ignored) {
-  ignored.map((file) => {
-    files.delete(file);
-  });
+  ignored.forEach((file) => files.delete(file));
 
   await Promise.all(
-    [...files.values()].map((file) => {
-      console.log(
-        path.isAbsolute(file.name) ? file.name : path.resolve(dir, file.name)
-      );
+    [...files.values()].map((file) =>
       fs.rm(
         path.isAbsolute(file.name) ? file.name : path.resolve(dir, file.name),
-        { recursive: true }
-      );
-    })
+        {
+          recursive: true,
+        }
+      )
+    )
   );
 }
 
 async function copyFile(src, dest) {
   try {
-    return await fs.copyFile(src, dest);
-  } catch(e) {
+    await fs.copyFile(src, dest);
+  } catch (e) {
     throw new Error(`Can't copy file ${src} into ${dest}`);
   }
 }
 
 module.exports = {
-  copyFile,
   createFile,
   createFolder,
   createFolderIfMissing,
@@ -128,4 +132,5 @@ module.exports = {
   folderExists,
   listFiles,
   removeFiles,
+  copyFile,
 };

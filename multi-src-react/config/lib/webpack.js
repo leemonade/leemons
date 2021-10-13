@@ -1,14 +1,17 @@
-const WebpackDevServer = require("webpack-dev-server");
-const webpack = require("webpack");
-const { resolve } = require("../webpack.config");
+const WebpackDevServer = require('webpack-dev-server');
+const webpack = require('webpack');
 
 // Compile
 async function compile(_config, onChange = () => {}) {
-  const config = await require("../webpack.config");
+  // eslint-disable-next-line global-require
+  const config = await require('../webpack.config');
   const compiler = webpack(config(_config));
 
-  compiler.hooks.watchRun.tapPromise("Leemons", onChange);
+  compiler.hooks.watchRun.tapPromise('Leemons', onChange);
 
+  // Build
+  // compiler.run(() => console.log('Compiled'));
+  // Development
   const devServer = new WebpackDevServer(
     {
       historyApiFallback: true,
@@ -16,14 +19,14 @@ async function compile(_config, onChange = () => {}) {
     compiler
   );
 
-  const stop = () => {
-    return new Promise(async (resolve) => {
+  const stop = () =>
+    // eslint-disable-next-line no-async-promise-executor
+    new Promise(async (resolve) => {
       await devServer.stop();
-      await compiler.close(() => {
+      compiler.close(() => {
         resolve();
       });
     });
-  };
 
   await devServer.start();
 

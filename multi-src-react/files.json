@@ -1,4 +1,5 @@
 [
-  "./src/lib2",
-  "./src/src"
+  "./src/classroom",
+  "./src/subjects",
+  "./src/users"
 ]
