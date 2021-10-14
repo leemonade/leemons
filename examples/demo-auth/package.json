@@ -26,6 +26,7 @@
     "leemons-plugin-mvp-template": "1.0.0",
     "leemons-plugin-onboarding": "1.0.0",
     "leemons-plugin-package-manager": "1.0.0",
+    "leemons-plugin-socket.io": "1.0.0",
     "leemons-plugin-users": "1.0.0",
     "leemons-provider-emails-amazon-ses": "1.0.0",
     "mysql": "^2.18.1",

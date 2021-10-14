@@ -13,6 +13,7 @@ const { Leemons } = require('../index');
 const loadFront = require('../core/plugins/front/loadFront');
 const build = require('../core/front/build');
 const { PLUGIN_STATUS } = require('../core/plugins/pluginsStatus');
+const { LeemonsSocket } = require('../socket.io');
 
 //TODO falta que al reiniciar los servidores manualmente se haga bien añadiendo o quitando a los watchers los nuevos plugins.
 
@@ -198,6 +199,8 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
       emitToAllWorkers((worker) => worker.send('kill'));
       createWorker({ PORT, loggerId: logger.id, loggerLevel: logger.level });
     }
+
+    LeemonsSocket.main.init();
 
     /*
      * Thread communication listener

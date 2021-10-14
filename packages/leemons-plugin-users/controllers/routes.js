@@ -1,4 +1,10 @@
 module.exports = [
+  {
+    path: '/test-socket-io',
+    method: 'GET',
+    handler: 'init.testSocketIo',
+    authenticated: true,
+  },
   /**
    * Init config
    * */

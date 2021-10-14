@@ -8,6 +8,7 @@ const { computeDependencies, checkMissingDependencies, sortByDeps } = require('.
 const { getStatus, PLUGIN_STATUS } = require('./pluginsStatus');
 const ScriptLoader = require('./loadScripts');
 const transformServices = require('./transformServices');
+const { LeemonsSocket } = require('../../socket.io');
 
 /**
  * Loads all the external files of a type (plugins, providers, etc)
@@ -165,6 +166,10 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
       // Expose some objects to the plugin (leemons.plugin, leemons.getplugin,
       // leemons.query)
       const vmFilter = (filter) => {
+        _.set(filter, 'leemons.socket', {
+          emit: LeemonsSocket.worker.emit,
+          onConnection: LeemonsSocket.worker.onConnection,
+        });
         _.set(filter, 'leemons.utils', {
           stopAutoServerReload: () => {
             if (plugin.name === 'package-manager') {
