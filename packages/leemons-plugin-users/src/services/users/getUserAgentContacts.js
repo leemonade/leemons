@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { table } = require('../tables');
+const { getUserAgentsInfo } = require('./getUserAgentsInfo');
 
 /**
  *
@@ -12,6 +13,9 @@ const { table } = require('../tables');
  * @param {string|null} toProfile
  * @param {string|null} plugin
  * @param {string|null} target
+ * @param {boolean} returnAgent
+ * @param {boolean} withProfile
+ * @param {boolean} withCenter
  * @param {any=} transacting - DB Transaction
  * @return {Promise<string[]|Array.<string[]>}
  * */
@@ -24,6 +28,9 @@ async function getUserAgentContacts(
     toProfile = null,
     plugin = null,
     target = null,
+    returnAgent = false,
+    withProfile = false,
+    withCenter = false,
     transacting,
   } = {}
 ) {
@@ -42,13 +49,29 @@ async function getUserAgentContacts(
 
   const response = await table.userAgentContacts.find(query, { transacting });
 
+  let userAgentsById = null;
+  if (returnAgent) {
+    const userAgents = await getUserAgentsInfo(_.map(response, 'toUserAgent'), {
+      withProfile,
+      withCenter,
+      transacting,
+    });
+    userAgentsById = _.keyBy(userAgents, 'id');
+  }
+
   if (isArray) {
     const responseByFromUserAgent = _.groupBy(response, 'fromUserAgent');
     return _.map(fromUserAgents, (fromUserAgent) => {
-      return _.map(responseByFromUserAgent[fromUserAgent], 'toUserAgent');
+      return _.map(responseByFromUserAgent[fromUserAgent], ({ toUserAgent }) => {
+        if (userAgentsById) return userAgentsById[toUserAgent];
+        return toUserAgent;
+      });
     });
   } else {
-    return _.map(response, 'toUserAgent');
+    return _.map(response, ({ toUserAgent }) => {
+      if (userAgentsById) return userAgentsById[toUserAgent];
+      return toUserAgent;
+    });
   }
 }
 
