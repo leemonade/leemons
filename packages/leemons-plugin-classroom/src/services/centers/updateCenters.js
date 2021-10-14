@@ -25,6 +25,7 @@ async function updateCenters() {
           },
           properties: {
             editable: false,
+            deletable: false,
             isCenterSchema: true,
           },
         },
@@ -62,6 +63,7 @@ async function updateCenters() {
             },
             properties: {
               editable: false,
+              deletable: false,
               assignable: false,
               isOrganizationSchema: true,
             },
@@ -83,6 +85,7 @@ async function updateCenters() {
             schema: organizationLS.id,
             properties: {
               editable: false,
+              deletable: false,
               isOrganization: true,
             },
           },
@@ -113,6 +116,7 @@ async function updateCenters() {
               parent: organizationLS.id,
               properties: {
                 editable: false,
+                deletable: false,
                 isCenterSchema: true,
               },
             },
@@ -156,6 +160,7 @@ async function updateCenters() {
               properties: {
                 schoolId: school.id,
                 editable: false,
+                deletable: false,
                 isCenter: true,
               },
             },

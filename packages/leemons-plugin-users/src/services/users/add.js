@@ -3,6 +3,7 @@ const existManyRoles = require('../roles/existMany');
 const { encryptPassword } = require('./encryptPassword');
 const { table } = require('../tables');
 const { exist } = require('./exist');
+const { addCalendarToUserAgentsIfNeedByUser } = require('./addCalendarToUserAgentsIfNeedByUser');
 
 /**
  * Add a user to platform
@@ -18,7 +19,6 @@ async function add(
   roles,
   { transacting: _transacting } = {}
 ) {
-  // TODO Validar entrada con ajv
   if (await exist({ email })) throw new Error(`"${email}" email already exists`);
   if (!(await existManyRoles(roles, { transacting: _transacting })))
     throw new Error('One of the ids specified as profile does not exist.');
@@ -37,7 +37,7 @@ async function add(
         { transacting }
       );
 
-      await table.userAgent.createMany(
+      user.userAgents = await table.userAgent.createMany(
         _.map(roles, (role) => ({
           role,
           user: user.id,
@@ -46,6 +46,9 @@ async function add(
         { transacting }
       );
 
+      if (leemons.getPlugin('calendar')) {
+        await addCalendarToUserAgentsIfNeedByUser(user.id, { transacting });
+      }
       return user;
     },
     table.users,

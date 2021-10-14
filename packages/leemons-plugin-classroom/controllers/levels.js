@@ -113,6 +113,17 @@ module.exports = {
       ctx.body = { status: 400, error: e.message };
     }
   },
+  setPermissions: async (ctx) => {
+    try {
+      await services.setPermissions(ctx.params.id, ctx.request.body);
+
+      ctx.status = 200;
+      ctx.body = { status: 200 };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = { status: 400, error: e.message };
+    }
+  },
   addUsers: async (ctx) => {
     try {
       const users = await services.addUsers({

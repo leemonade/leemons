@@ -1,13 +1,15 @@
+const _ = require('lodash');
 const initUsers = require('./src/users');
 const initCenters = require('./src/centers');
 const initProfiles = require('./src/profiles');
-const _ = require('lodash');
 const { setFamilyProfiles } = require('./src/familyProfiles');
+const addCalendarAndEventAsClassroom = require('./src/calendar');
 
 async function events(isInstalled) {
   const config = {
     profiles: null,
     centers: null,
+    users: null,
   };
 
   if (!isInstalled) {
@@ -36,17 +38,26 @@ async function events(isInstalled) {
       }
     );
 
-    leemons.events.once('plugins.users:init-permissions', async () => {
-      try {
-        config.centers = await initCenters();
-        leemons.events.emit('init-centers', config.centers);
-        config.profiles = await initProfiles();
-        leemons.events.emit('init-profiles', config.profiles);
-        await initUsers(config.centers, config.profiles);
-      } catch (e) {
-        console.error(e);
+    leemons.events.once(
+      [
+        'plugins.users:init-permissions',
+        'plugins.calendar:init-permissions',
+        'plugins.calendar:init-event-types',
+      ],
+      async () => {
+        try {
+          config.centers = await initCenters();
+          leemons.events.emit('init-centers', config.centers);
+          config.profiles = await initProfiles();
+          leemons.events.emit('init-profiles', config.profiles);
+          config.users = await initUsers(config.centers, config.profiles);
+          leemons.events.emit('init-users', config.profiles);
+          await addCalendarAndEventAsClassroom(config.users);
+        } catch (e) {
+          console.error(e);
+        }
       }
-    });
+    );
   }
 }
 

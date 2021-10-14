@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { table } = require('../tables');
+const { getUserAgentsInfo } = require('./getUserAgentsInfo');
 
 /**
  * Returns all agents that meet the specified parameters.
@@ -17,7 +18,11 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function searchUserAgents({ profile, user, ignoreUserIds }, { transacting } = {}) {
+
+async function searchUserAgents(
+  { profile, center, user, ignoreUserIds },
+  { withProfile, withCenter, transacting } = {}
+) {
   const finalQuery = {};
   // ES: Como es posible que se quiera filtrar desde multiples sitios por usuarios añadimos un array
   // de ids de usuarios para luego filtrar los agentes
@@ -30,19 +35,51 @@ async function searchUserAgents({ profile, user, ignoreUserIds }, { transacting 
   let userIds = [];
   let addUserIdsToQuery = false;
 
+  let centerRoles = [];
+  let profileRoles = [];
+
+  // ES: Si nos viene center sacamos todos los roles del centro y se los pasamos como query para
+  // solo sacar los agentes que esten en dicho centro
+  // EN: If we get a center, we extract all the roles of the center and pass them as a query to
+  // extract only the agents that are in that center.
+  if (center) {
+    centerRoles = await table.roleCenter.find(
+      { center },
+      {
+        columns: ['role'],
+        transacting,
+      }
+    );
+    centerRoles = _.map(centerRoles, 'role');
+  }
+
   // ES: Si nos viene perfil sacamos todos los roles del perfil y se los pasamos como query para
   // solo sacar los agentes que esten en dicho perfil
   // EN: If we get a profile, we extract all the roles of the profile and pass them as a query to
   // extract only the agents that are in that profile.
   if (profile) {
-    const profileRoles = await table.profileRole.find(
+    profileRoles = await table.profileRole.find(
       { profile },
       {
         columns: ['role'],
         transacting,
       }
     );
-    finalQuery.role_$in = _.map(profileRoles, 'role');
+    profileRoles = _.map(profileRoles, 'role');
+  }
+
+  // ES: Si solo viene perfil o solo viene centro se pasan sus respectivos roles para solo sacar
+  // los agentes con dichos roles, pero si vienen ambos (perfil y centro) solo tenemos que sacar
+  // aquellos agentes donde el rol exista tanto en el centro como en el perfil
+  // EN: If only profile or only center comes, their respective roles are passed to only get the
+  // agents with those roles, but if both come (profile and center) we only have to get those agents
+  // where the role exists both in the center and in the profile.
+  let queryRoles = [];
+  if (profile || center) {
+    if (profile) queryRoles = profileRoles;
+    if (center) queryRoles = centerRoles;
+    if (profile && center) queryRoles = _.intersection(centerRoles, profileRoles);
+    finalQuery.role_$in = queryRoles;
   }
 
   // ES: Si nos viene el user nos montamos la consulta para sacar todos los usuarios que cumplan con
@@ -76,25 +113,11 @@ async function searchUserAgents({ profile, user, ignoreUserIds }, { transacting 
   // ES: Finalmente sacamos los agentes con sus correspondientes usuarios según los filtros
   // EN: Finally, the agents and their corresponding users according to the filters
   const userAgents = await table.userAgent.find(finalQuery, {
-    columns: ['id', 'user'],
+    columns: ['id'],
     transacting,
   });
 
-  // TODO IMAGEN Si se añade imagen añadir al array de columnas
-  const users = await table.users.find(
-    { id_$in: _.map(userAgents, 'user') },
-    {
-      columns: ['id', 'email', 'name', 'surnames', 'created_at'],
-      transacting,
-    }
-  );
-
-  const usersById = _.keyBy(users, 'id');
-
-  return _.map(userAgents, (userAgent) => {
-    userAgent.user = usersById[userAgent.user];
-    return userAgent;
-  });
+  return getUserAgentsInfo(_.map(userAgents, 'id'), { withProfile, withCenter, transacting });
 }
 
 module.exports = { searchUserAgents };

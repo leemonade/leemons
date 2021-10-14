@@ -74,6 +74,21 @@ module.exports = async function removeUsers(
           throw new Error("The users can't be deleted");
         }
 
+        try {
+          const permission = {
+            permissionName: 'plugins.classroom.level',
+            target: level,
+          };
+
+          await leemons
+            .getPlugin('users')
+            .services.users.removeCustomPermission(users, permission, {
+              transacting: t,
+            });
+        } catch (e) {
+          throw new Error("Can't save permissions");
+        }
+
         return deletedCount.count;
       }
       throw new Error('No level was found with the given id');

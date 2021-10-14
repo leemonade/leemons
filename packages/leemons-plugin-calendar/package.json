@@ -1,0 +1,16 @@
+{
+  "name": "leemons-plugin-calendar",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@asseinfo/react-kanban": "^2.2.0",
+    "clsx": "^1.1.1",
+    "country-region-data": "^1.11.0",
+    "dom-helpers": "^5.2.1",
+    "lodash": "^4.17.21",
+    "memoize-one": "^5.2.1",
+    "react-big-calendar": "^0.36.1",
+    "rrule": "^2.6.8"
+  }
+}

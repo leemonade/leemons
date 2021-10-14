@@ -13,6 +13,7 @@ import Link from 'next/link';
 
 function ListProfiles() {
   useSession({ redirectTo: goLoginPage });
+
   const [t] = useTranslateLoader(prefixPN('list_profiles'));
   const { t: tCommon } = useCommonTranslate('page_header');
   const [loadingError, setLoadingError, LoadingErrorAlert] = useRequestErrorMessage();

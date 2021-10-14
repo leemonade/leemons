@@ -1,6 +1,10 @@
-// TODO COMPROBAR PERMISOS DE LOS ENDPOINTS
-
 module.exports = [
+  {
+    path: '/test-socket-io',
+    method: 'GET',
+    handler: 'init.testSocketIo',
+    authenticated: true,
+  },
   /**
    * Init config
    * */
@@ -82,6 +86,12 @@ module.exports = [
     path: '/super-admin',
     method: 'POST',
     handler: 'users.createSuperAdmin',
+  },
+  {
+    path: '/user/contacts',
+    method: 'POST',
+    handler: 'users.contacts',
+    authenticated: true,
   },
   /**
    * Profiles

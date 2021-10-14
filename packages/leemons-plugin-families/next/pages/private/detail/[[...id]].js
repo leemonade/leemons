@@ -62,21 +62,19 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} })
     () => [
       {
         Header: ' ',
-        accessor: (currentUser) => {
-          return (
-            <div className="text-left">
-              <FormControl>
-                <Radio
-                  name="searchUserModalUser"
-                  color="primary"
-                  checked={currentUser.id === selectedUser?.id}
-                  onChange={() => setSelectedUser(currentUser)}
-                  value={currentUser.id}
-                />
-              </FormControl>
-            </div>
-          );
-        },
+        accessor: (currentUser) => (
+          <div className="text-left">
+            <FormControl>
+              <Radio
+                name="searchUserModalUser"
+                color="primary"
+                checked={currentUser.id === selectedUser?.id}
+                onChange={() => setSelectedUser(currentUser)}
+                value={currentUser.id}
+              />
+            </FormControl>
+          </div>
+        ),
         className: 'text-left',
       },
       {
@@ -101,9 +99,7 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} })
       },
       {
         Header: t('table.created_at'),
-        accessor: ({ created_at }) => {
-          return moment(created_at).format('L');
-        },
+        accessor: ({ created_at }) => moment(created_at).format('L'),
         className: 'text-center',
       },
     ],
@@ -112,7 +108,7 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} })
 
   const add = async () => {
     setDirty(true);
-    let value = {};
+    const value = {};
     if (type === 'guardian') {
       if (!selectedRelation || selectedRelation === '...') {
         setRelationError('need-relation');
@@ -207,63 +203,62 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} })
         </div>
       </>
     );
-  } else {
-    return (
-      <div>
-        <FormControl
-          multiple={true}
-          formError={!selectedUser && dirty ? { message: tCommonForm('required') } : null}
-        >
-          <Table columns={tableHeaders} data={users} />
-        </FormControl>
+  }
+  return (
+    <div>
+      <FormControl
+        multiple={true}
+        formError={!selectedUser && dirty ? { message: tCommonForm('required') } : null}
+      >
+        <Table columns={tableHeaders} data={users} />
+      </FormControl>
 
-        {type === 'guardian' ? (
-          <div className="flex flex-row mt-4 gap-4">
+      {type === 'guardian' ? (
+        <div className="flex flex-row mt-4 gap-4">
+          <FormControl
+            label={t('guardian_relation')}
+            formError={
+              relationError === 'need-relation' ? { message: tCommonForm('required') } : null
+            }
+          >
+            <RelationSelect
+              value={selectedRelation}
+              onChange={(e) => {
+                setRelationError(null);
+                setSelectedRelation(e.target.value);
+              }}
+              className="w-full max-w-xs"
+            />
+          </FormControl>
+          {selectedRelation === 'other' ? (
             <FormControl
-              label={t('guardian_relation')}
+              label={t('specify_relation')}
               formError={
-                relationError === 'need-relation' ? { message: tCommonForm('required') } : null
+                relationError === 'need-other-relation'
+                  ? { message: tCommonForm('required') }
+                  : null
               }
             >
-              <RelationSelect
-                value={selectedRelation}
+              <Input
+                outlined={true}
+                value={otherRelationValue}
                 onChange={(e) => {
                   setRelationError(null);
-                  setSelectedRelation(e.target.value);
+                  setOtherRelationValue(e.target.value);
                 }}
-                className="w-full max-w-xs"
               />
             </FormControl>
-            {selectedRelation === 'other' ? (
-              <FormControl
-                label={t('specify_relation')}
-                formError={
-                  relationError === 'need-other-relation'
-                    ? { message: tCommonForm('required') }
-                    : null
-                }
-              >
-                <Input
-                  outlined={true}
-                  value={otherRelationValue}
-                  onChange={(e) => {
-                    setRelationError(null);
-                    setOtherRelationValue(e.target.value);
-                  }}
-                />
-              </FormControl>
-            ) : null}
-          </div>
-        ) : null}
-
-        <div className="text-right mt-6">
-          <Button color="primary" loading={loading} onClick={add}>
-            {t('add')}
-          </Button>
+          ) : null}
         </div>
+      ) : null}
+
+      <div className="text-right mt-6">
+        <Button color="primary" loading={loading} onClick={add}>
+          {t('add')}
+        </Button>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 function Detail() {
@@ -463,8 +458,8 @@ function Detail() {
       }
 
       setSaveLoading(false);
-      hooks.fireEvent('menu-builder:reset-menu');
-      router.push(`/families/private/detail/${response.family.id}`);
+      await hooks.fireEvent('menu-builder:reset-menu');
+      await router.push(`/families/private/detail/${response.family.id}`);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
       setSaveLoading(false);
@@ -475,7 +470,8 @@ function Detail() {
     try {
       await removeFamilyRequest(family.id);
       addSuccessAlert(t('deleted_done'));
-      router.push(`/families/private/list`);
+      await hooks.fireEvent('menu-builder:reset-menu');
+      await router.push(`/families/private/list`);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }
@@ -528,7 +524,7 @@ function Detail() {
   };
 
   const removeMember = (type, memberId) => {
-    let value = getValues(type);
+    const value = getValues(type);
     const index = _.findIndex(value, { id: memberId });
     value.splice(index, 1);
     setValue(type, [...value]);

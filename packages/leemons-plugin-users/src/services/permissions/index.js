@@ -16,6 +16,7 @@ const { init } = require('./init');
 const { addCustomPermissionToUserAgent } = require('./addCustomPermissionToUserAgent');
 const { getUserAgentPermissions } = require('./getUserAgentPermissions');
 const { userAgentHasCustomPermission } = require('./userAgentHasCustomPermission');
+const { findUserAgentsWithPermission } = require('./findUserAgentsWithPermission');
 
 module.exports = {
   init,
@@ -36,4 +37,5 @@ module.exports = {
   addCustomPermissionToUserAgent,
   getUserAgentPermissions,
   userAgentHasCustomPermission,
+  findUserAgentsWithPermission,
 };

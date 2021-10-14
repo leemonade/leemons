@@ -26,6 +26,11 @@ const hasPermission = require('./hasPermission');
 const hasPermissionCTX = require('./hasPermissionCTX');
 const removeCustomPermission = require('./removeCustomPermission');
 const { searchUserAgents } = require('./searchUserAgents');
+const { getUserAgentCenter } = require('./getUserAgentCenter');
+const { getUserAgentCalendarKey } = require('./getUserAgentCalendarKey');
+const { addUserAgentContacts } = require('./addUserAgentContacts');
+const { removeUserAgentContacts } = require('./removeUserAgentContacts');
+const { getUserAgentContacts } = require('./getUserAgentContacts');
 
 module.exports = {
   init,
@@ -61,4 +66,10 @@ module.exports = {
   profileToken,
   hasPermission,
   removeCustomPermission,
+
+  getUserAgentCenter,
+  getUserAgentCalendarKey,
+  addUserAgentContacts,
+  removeUserAgentContacts,
+  getUserAgentContacts,
 };

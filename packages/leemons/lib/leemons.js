@@ -21,6 +21,7 @@ const loadFront = require('./core/plugins/front/loadFront');
 const { loadExternalFiles } = require('./core/plugins/loadExternalFiles');
 const { PLUGIN_STATUS } = require('./core/plugins/pluginsStatus');
 const { nextTransform, frontLogger } = require('./core/front/streams');
+const { LeemonsSocket } = require('./socket.io');
 
 class Leemons {
   constructor(log) {
@@ -481,6 +482,27 @@ class Leemons {
     this.events.emit('appWillStart', 'leemons');
 
     await this.load();
+
+    LeemonsSocket.worker.init(this.server);
+    LeemonsSocket.worker.onConnection((socket) => {
+      console.log(socket.session);
+    });
+
+    LeemonsSocket.worker.use(async (socket, next) => {
+      const authenticate = this.authenticatedMiddleware(true);
+
+      const ctx = {
+        state: {},
+        headers: { authorization: socket.handshake.auth.token },
+      };
+
+      const response = await authenticate(ctx, () => true);
+
+      if (response) {
+        socket.session = ctx.state.userSession;
+        next();
+      }
+    });
 
     this.server.listen(process.env.PORT, () => {
       this.events.emit('appDidStart', 'leemons');

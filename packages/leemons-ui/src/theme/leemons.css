@@ -12,6 +12,7 @@
 /* Unstyled components (Layout, events, etc) */
 @import './components/unstyled/alert.css';
 @import './components/unstyled/artboard.css';
+@import './components/unstyled/autosuggest.css';
 @import './components/unstyled/avatar.css';
 @import './components/unstyled/badge.css';
 @import './components/unstyled/breadcrumbs.css';
@@ -42,9 +43,11 @@
 @import './components/unstyled/textarea.css';
 @import './components/unstyled/toggle.css';
 @import './components/unstyled/tooltip.css';
+@import './components/unstyled/usercard.css';
 /* Styled components (Bg, colors, effects, etc) */
 @import './components/styled/alert.css';
 @import './components/styled/avatar.css';
+@import './components/styled/autosuggest.css';
 @import './components/styled/badge.css';
 @import './components/styled/breadcrumbs.css';
 @import './components/styled/button.css';
@@ -78,6 +81,7 @@
 @import './components/styled/tooltip.css';
 @import './components/styled/tree.css';
 @import './components/styled/typography.css';
+@import './components/styled/usercard.css';
 
 /* ------------------------------------------ */
 /* UTILITES */

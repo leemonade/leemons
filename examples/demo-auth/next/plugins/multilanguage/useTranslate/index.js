@@ -40,10 +40,14 @@ export function getLocalizations(...data) {
 }
 
 export function getLocalizationsByArrayOfItems(items, reducer, locale) {
-  const keysToTranslate = [];
-  _.forEach(items, (item) => {
-    keysToTranslate.push(reducer(item));
-  });
+  let keysToTranslate = [];
+  if (_.isFunction(reducer)) {
+    _.forEach(items, (item) => {
+      keysToTranslate.push(reducer(item));
+    });
+  } else {
+    keysToTranslate = items;
+  }
   return getLocalizations({
     keys: keysToTranslate,
     locale,

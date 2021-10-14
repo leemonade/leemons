@@ -155,7 +155,19 @@ async function list(ctx) {
   }
 }
 
+async function contacts(ctx) {
+  let toProfile = null;
+  if (ctx.request.body.toProfile) toProfile = ctx.request.body.toProfile;
+  const userAgents = await usersService.getUserAgentContacts(
+    _.map(ctx.state.userSession.userAgents, 'id'),
+    { toProfile, returnAgent: true }
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, userAgents: _.flatten(userAgents) };
+}
+
 async function createSuperAdmin(ctx) {
+  // TODO Borrar en produccion
   ctx.body = await usersService.addFirstSuperAdminUser(
     'Jaime',
     'Gómez Cimarro',
@@ -178,4 +190,5 @@ module.exports = {
   profileToken,
   setRememberProfile,
   getRememberProfile,
+  contacts,
 };

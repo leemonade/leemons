@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import * as _ from 'lodash';
+import React, { useEffect, useRef, useState } from 'react';
 
 const Checkbox = React.forwardRef(
   (
@@ -19,10 +19,10 @@ const Checkbox = React.forwardRef(
     const [checked, setChecked] = useState({ checked: defaultChecked, fromClick: false });
 
     useEffect(() => {
-      if (checked.checked !== defaultChecked) {
+      if (!_.isNil(defaultChecked) && checked.checked !== defaultChecked) {
         setChecked({ checked: defaultChecked, fromClick: false });
       }
-    }, [defaultChecked]);
+    });
 
     const spanClick = (event) => {
       event.preventDefault();

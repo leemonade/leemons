@@ -36,6 +36,25 @@ module.exports = {
         'para crear un nuevo nivel, y a continuación, usa el área de configuración para definir el nuevo nivel.',
     },
   },
+  delete_modal: {
+    title: 'Eliminar',
+    message: '¿Estás seguro de eliminar este nivel?',
+    actions: {
+      accept: 'Si',
+      cancel: 'No',
+    },
+  },
+  save_without_saving_modal: {
+    title: '¿Salir sin guardar?',
+    message: {
+      top: 'Si sales sin guardar, perderás las modificaciones realizadas.',
+      bottom: '¿Seguro que quieres salir sin guardar?',
+    },
+    actions: {
+      discard: 'Si, salir y descartar cambios',
+      cancel: 'No, volver',
+    },
+  },
   template: {
     title: '¿Cargar plantilla para ahorrar tiempo?',
     description:
@@ -113,8 +132,55 @@ module.exports = {
         th_name: 'Nombre de Pila',
         th_surename: 'Primer Apellido',
         th_email: 'Dirección E-mail',
-        th_birthday: 'cumpleaños',
+        th_birthday: 'F.Nacimiento',
       },
+    },
+  },
+  edit_level_page: {
+    page_title: 'Administración de clases',
+    tutor: {
+      title: 'Tutor',
+      description: 'Asignar tutor a este grupo',
+      label: 'Buscar',
+      placeholder: 'Busca un tutor',
+      btn_apply: 'Asignar',
+      btn_change: 'Cambiar tutor',
+    },
+    students: {
+      title: 'Estudiantes',
+      description: 'Asignar estudiantes a este grupo desde la base de datos de estudiantes.',
+      option01: 'Seleccionar por Tag',
+      option02: 'Buscar',
+      option03: 'Carga masiva de IDs',
+      label: 'Asignar',
+      placeholder: 'Comienza a escribir un Tag',
+      btn_add: 'Añadir Tag',
+      btn_search: 'Buscar por estos Tags',
+      btn_search2: 'Buscar',
+      btn_edit: 'Editar Tags',
+      btn_search_again: 'Buscar de nuevo',
+      error_long: 'Han aparecido más de 50 Tags, agregue más tags para delimitar su búsqueda ',
+      title_results: 'Hemos encontrado',
+      error_repeat:
+        '2 estudiantes (en rojo) ya están incluidos en esta clase por lo que no se podrán añadir de nuevo',
+      btn_add_selected: 'Añadir la selección a este grupo',
+      counter_label: 'seleccionados',
+      info_search: 'Busca por email o introduce al menos otros dos datos para realizar la búsqueda',
+      option_name: 'Nombre de Pila',
+      option_surename: 'Primer Apellido',
+      option_email: 'E-mail',
+      option_birthday: 'F. Nacimiento',
+      results_by_name: ' por ',
+      results_by_birthdate: ' nacidos el ',
+      error_not_found:
+        'No hemos encontrado ningún resultado con esos datos, por favor inténtalo de nuevo buscando por email',
+    },
+    table: {
+      th_actions: 'Seleccionar todos',
+      th_name: 'Nombre de Pila',
+      th_surename: 'Primer Apellido',
+      th_email: 'Dirección E-mail',
+      th_birthday: 'F. Nacimiento',
     },
   },
 };

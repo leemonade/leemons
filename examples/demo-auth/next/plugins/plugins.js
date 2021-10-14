@@ -1,12 +1,13 @@
 module.exports = {
   plugins: [
-    'onboarding',
+    'socket.io',
+		'onboarding',
 		'layout',
 		'emails',
 		'common',
 		'assets',
-		'dataset',
 		'multilanguage',
+		'dataset',
 		'users',
 		'package-manager',
 		'mvp-template',
@@ -15,6 +16,7 @@ module.exports = {
 		'families',
 		'dataset-test',
 		'classroom',
+		'calendar',
 		'provider-emails-amazon-ses'
   ],
   frontPlugins: [{
@@ -56,6 +58,11 @@ module.exports = {
     name: 'families',
     version: '0.0.1',
     load: require('@families/index.js')
+  },
+	{
+    name: 'calendar',
+    version: '0.0.1',
+    load: require('@calendar/index.js')
   },
 	{
     name: 'provider-emails-amazon-ses',

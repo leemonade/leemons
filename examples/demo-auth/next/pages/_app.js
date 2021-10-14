@@ -5,12 +5,40 @@ import React, { useEffect } from 'react';
 import { frontPlugins, plugins } from '@plugins';
 import { SessionProvider } from '@users/context/session';
 import { getCookieToken } from '@users/session';
+import { SocketIoService } from '@socket.io/service';
 import 'simplebar/dist/simplebar.min.css';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }) {
+  const token = getCookieToken(true);
+
+  useEffect(() => {
+    if (token) {
+      const config = {
+        auth: {},
+      };
+      if (_.isString(token)) {
+        config.auth.token = token;
+      } else {
+        if (token.centers.length === 1) {
+          config.auth.token = token.centers[0].token;
+        } else {
+          config.auth.token = JSON.stringify(_.map(token.centers, 'token'));
+        }
+      }
+      SocketIoService.connect(window.location.origin, config);
+      SocketIoService.onAny((event, data) => {
+        return hooks.fireEvent('socket.io:onAny', {
+          event,
+          data,
+        });
+      });
+    }
+    return () => SocketIoService.disconnect();
+  }, [token]);
+
   // Only add it once
   useEffect(() => {
     // Remove the server-side injected CSS.
@@ -55,8 +83,12 @@ function MyApp({ Component, pageProps }) {
             if (token.centers.length === 1) {
               config.headers['Authorization'] = token.centers[0].token;
             }
-            if (_.isObject(urlConfig) && urlConfig.allAgents) {
-              config.headers['Authorization'] = JSON.stringify(_.map(token.centers, 'token'));
+            if (_.isObject(urlConfig)) {
+              if (urlConfig.allAgents) {
+                config.headers['Authorization'] = JSON.stringify(_.map(token.centers, 'token'));
+              } else if (urlConfig.centerToken) {
+                config.headers['Authorization'] = urlConfig.centerToken;
+              }
             }
           }
         }
