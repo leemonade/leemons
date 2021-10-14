@@ -19,6 +19,9 @@ module.exports = {
   getUserAgentCenter: usersService.getUserAgentCenter,
   hasPermissionCTX: usersService.hasPermissionCTX,
   getUserAgentCalendarKey: usersService.getUserAgentCalendarKey,
+  addUserAgentContacts: usersService.addUserAgentContacts,
+  removeUserAgentContacts: usersService.removeUserAgentContacts,
+  getUserAgentContacts: usersService.getUserAgentContacts,
   // TODO Solo deberian de tener acceso los plugins que tengan permiso a ejecutar dichas funciones o los usuarios con permiso
   add: usersService.add,
   searchUserAgents: usersService.searchUserAgents,
