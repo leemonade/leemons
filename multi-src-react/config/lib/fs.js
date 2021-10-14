@@ -109,6 +109,7 @@ async function removeFiles(dir, files, ignored) {
         path.isAbsolute(file.name) ? file.name : path.resolve(dir, file.name),
         {
           recursive: true,
+          force: true,
         }
       )
     )

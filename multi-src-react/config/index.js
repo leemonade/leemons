@@ -13,18 +13,23 @@ const {
 } = require('./lib/fs');
 const { compile } = require('./lib/webpack');
 const { createReloader } = require('./lib/watch');
+const { hash } = require('./lib/crypto');
 
+/* Squirrelly Helpers */
 squirrelly.helpers.define(
   'capitalize',
   ({ params: [str] }) => str.charAt(0).toUpperCase() + str.substring(1)
 );
 
+/* Dirs */
 const frontDir = path.resolve(__dirname, '..', 'front');
 const configDir = {
   lib: path.resolve(__dirname, 'lib'),
   src: path.resolve(__dirname, 'src'),
 };
 const pluginsFile = path.resolve(__dirname, '..', 'files.json');
+
+/* Helpers */
 
 // Get all the plugin which need to be installed on front
 async function getPlugins() {
@@ -107,6 +112,51 @@ async function copyAppJS(dir, plugins) {
   await fs.writeFile(dir, App);
 }
 
+// Check public/private routes
+async function checkPluginPaths(plugin) {
+  return {
+    ...plugin,
+    public: await fileExists(path.resolve(plugin.path, 'index.js')),
+    private: await fileExists(path.resolve(plugin.path, 'private.js')),
+  };
+}
+
+// Generate current status description file
+async function generateLockFile(plugins) {
+  const lockFile = {
+    plugins,
+  };
+  lockFile.hash = hash(lockFile);
+
+  return lockFile;
+}
+
+// Get saved lock file
+async function getSavedLockFile(lockDir) {
+  let oldLock = {};
+  try {
+    oldLock = await fs.readJSON(lockDir);
+  } catch (e) {
+    oldLock.hash = null;
+  }
+
+  return oldLock;
+}
+
+// Save Leemons Lock File if modified
+async function saveLockFile(dir, plugins) {
+  const lockDir = path.resolve(dir, 'leemons.lock.json');
+  const lockFile = await generateLockFile(plugins);
+  const oldLock = await getSavedLockFile(lockDir);
+
+  if (lockFile.hash !== oldLock.hash) {
+    await fs.writeJSON(lockDir, lockFile);
+    return true;
+  }
+
+  return false;
+}
+
 // Generate the monorepo related files
 async function generateMonorepo(dir, plugins) {
   await createFolderIfMissing(dir);
@@ -119,7 +169,18 @@ async function generateMonorepo(dir, plugins) {
     path.resolve(configDir.src, 'index.js'),
     path.resolve(frontDir, 'index.js')
   );
-  await copyAppJS(path.resolve(frontDir, 'App.js'), plugins);
+
+  const modified = await saveLockFile(
+    frontDir,
+    await Promise.all(plugins.map(checkPluginPaths))
+  );
+
+  if (modified) {
+    await copyAppJS(
+      path.resolve(frontDir, 'App.js'),
+      await Promise.all(plugins.map(checkPluginPaths))
+    );
+  }
 
   const extraFiles = await linkSourceCode(dir, plugins);
 
@@ -127,12 +188,14 @@ async function generateMonorepo(dir, plugins) {
     'node_modules',
     'package.json',
     'yarn.lock',
+    'leemons.lock.json',
     'App.js',
     'index.js',
   ]);
   await installDeps(dir);
 }
 
+// Generate alias object for webpack
 function generateAliases(dir, plugins) {
   return plugins.reduce(
     (obj, plugin) => ({
@@ -143,6 +206,7 @@ function generateAliases(dir, plugins) {
   );
 }
 
+// Main function of the service
 async function main() {
   let plugins = await getPlugins();
 
@@ -151,7 +215,17 @@ async function main() {
   let stop = await compile(
     { alias: generateAliases(frontDir, plugins) },
     async () => {
-      console.log('Changed :D');
+      const modified = await saveLockFile(
+        frontDir,
+        await Promise.all(plugins.map(checkPluginPaths))
+      );
+
+      if (modified) {
+        await copyAppJS(
+          path.resolve(frontDir, 'App.js'),
+          await Promise.all(plugins.map(checkPluginPaths))
+        );
+      }
     }
   );
 
@@ -166,7 +240,17 @@ async function main() {
       stop = await compile(
         { alias: generateAliases(frontDir, plugins) },
         async () => {
-          console.log('Changed :D');
+          const modified = await saveLockFile(
+            frontDir,
+            await Promise.all(plugins.map(checkPluginPaths))
+          );
+
+          if (modified) {
+            await copyAppJS(
+              path.resolve(frontDir, 'App.js'),
+              await Promise.all(plugins.map(checkPluginPaths))
+            );
+          }
         }
       );
     },

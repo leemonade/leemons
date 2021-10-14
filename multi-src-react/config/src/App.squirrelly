@@ -4,7 +4,12 @@ import loadable from '@loadable/component';
 
 // Plugins imports
 {{@each(it.plugins) => plugin}}
-import {{@capitalize(plugin.name) /}} from '@{{plugin.name}}';
+{{@if(plugin.public)}}
+const {{@capitalize(plugin.name) /}} = loadable(() => import('@{{plugin.name}}'));
+{{/if}}
+{{@if(plugin.private)}}
+const {{@capitalize(plugin.name) /}}Private = loadable(() => import('@{{plugin.name}}/private'));
+{{/if}}
 {{/each}}
 
 function App() {
@@ -15,12 +20,16 @@ function App() {
         <Switch>
           {/* Define each plugin route */}
 {{@each(it.plugins) => plugin}}
+{{@if(plugin.public)}}
           <Route path="/{{plugin.name}}">
-            <{{@capitalize(plugin.name) /}} />
+            <{{@capitalize(plugin.name) /}} fallback={<p>Loading...</p>} />
           </Route>
+{{/if}}
+{{@if(plugin.private)}}
           <Route path="/private/{{plugin.name}}">
-            <{{@capitalize(plugin.name) /}} />
+            <{{@capitalize(plugin.name) /}}Private fallback={<p>Loading...</p>} />
           </Route>
+{{/if}}
 {{/each}}
           <Route path="/">
             <p>Not Found</p>
