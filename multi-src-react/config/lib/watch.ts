@@ -1,5 +1,5 @@
-const chokidar = require('chokidar');
-const chalk = require('chalk');
+import chokidar from 'chokidar';
+import chalk from 'chalk';
 
 /**
  * Watches the files in the given dirs (with Chokidar) and calls the handler
@@ -18,14 +18,37 @@ const chalk = require('chalk');
  *
  * @returns {chokidar.FSWatcher} Returns the created watcher
  */
-function createReloader({ name, dirs, config, handler, logger } = {}) {
+
+interface reloaderConfig {
+  name?: string;
+  dirs?: string | string[];
+  config?: chokidar.WatchOptions;
+  handler?: (
+    event: 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir',
+    filename: string[]
+  ) => Promise<void>;
+  logger?: { info: Function };
+}
+
+export default function createReloader({
+  name,
+  dirs = [],
+  config,
+  handler = async () => {},
+  logger,
+}: reloaderConfig = {}): chokidar.FSWatcher {
   let isReloading = false;
   let requestedReloads = 0;
-  let lastTimer = null;
+  let lastTimer: NodeJS.Timeout | null = null;
 
   const watcher = chokidar.watch(dirs, config);
 
-  const watcherHandler = (event, filename) => {
+  let filenames: string[] = [];
+  const watcherHandler = (
+    event: 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir',
+    filename: string
+  ) => {
+    filenames.push(filename);
     requestedReloads++;
 
     const handledRequests = requestedReloads;
@@ -38,14 +61,20 @@ function createReloader({ name, dirs, config, handler, logger } = {}) {
 
       if (!isReloading) {
         isReloading = true;
-        logger.info(
-          chalk`Reloading ${name} due to {magenta ${handledRequests}} changes`
-        );
-        handler().then(() => {
-          requestedReloads -= handledRequests;
+        if (logger) {
           logger.info(
-            chalk`Reloaded ${name} due to {magenta ${handledRequests} changes}. {red ${requestedReloads} changes remaining}`
+            chalk`Reloading ${name} due to {magenta ${handledRequests}} changes`
           );
+        }
+        const _filenames = [...new Set(filenames)];
+        filenames = [];
+        handler(event, _filenames).then(() => {
+          requestedReloads -= handledRequests;
+          if (logger) {
+            logger.info(
+              chalk`Reloaded ${name} due to {magenta ${handledRequests} changes}. {red ${requestedReloads} changes remaining}`
+            );
+          }
           if (lastTimer === timer) {
             lastTimer = null;
           }
@@ -67,5 +96,3 @@ function createReloader({ name, dirs, config, handler, logger } = {}) {
 
   return watcher;
 }
-
-module.exports = { createReloader };

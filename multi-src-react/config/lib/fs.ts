@@ -1,7 +1,10 @@
-const fs = require('fs-extra');
-const path = require('path');
+import fs from 'fs-extra';
+import path from 'path';
 
-async function _fileExists(dir, validateFiles = false) {
+async function _fileExists(
+  dir: string,
+  validateFiles: boolean = false
+): Promise<boolean> {
   try {
     if (!validateFiles) {
       return (await fs.lstat(dir)).isDirectory();
@@ -15,26 +18,26 @@ async function _fileExists(dir, validateFiles = false) {
 }
 
 // Check if exists and is not a folder
-function fileExists(dir) {
+export function fileExists(dir: string): Promise<boolean> {
   return _fileExists(dir, true);
 }
 
 // Check if exists and is a folder
-function folderExists(dir) {
+export function folderExists(dir: string): Promise<boolean> {
   return _fileExists(dir, false);
 }
 
 // Create folder and parents if needed
-async function createFolder(dir) {
+export async function createFolder(dir: string): Promise<void> {
   try {
     await fs.mkdirp(dir);
   } catch (e) {
-    throw new Error('Unable to create folder');
+    throw new Error("Can't create  folder");
   }
 }
 
 // Create folder only if does not exists
-async function createFolderIfMissing(dir) {
+export async function createFolderIfMissing(dir: string): Promise<void> {
   try {
     if (!(await folderExists(dir))) {
       await createFolder(dir);
@@ -45,7 +48,10 @@ async function createFolderIfMissing(dir) {
 }
 
 // Create a file with content
-async function createFile(dir, content) {
+export async function createFile(
+  dir: string,
+  content: string | Buffer
+): Promise<any> {
   try {
     return await fs.writeFile(dir, content);
   } catch (e) {
@@ -54,10 +60,14 @@ async function createFile(dir, content) {
 }
 
 // Create a symbolic link
-async function createSymLink(src, dest) {
+export async function createSymLink(
+  src: string,
+  dest: string,
+  type: fs.SymlinkType = 'dir'
+) {
   try {
     if (await folderExists(src)) {
-      return await fs.createSymlink(src, dest);
+      return await fs.createSymlink(src, dest, type);
     }
     return null;
   } catch (e) {
@@ -65,23 +75,42 @@ async function createSymLink(src, dest) {
   }
 }
 
+enum fileType {
+  SymbolicLink = 'symbolicLink',
+  Directory = 'directory',
+  File = 'file',
+  Null = 'null',
+}
 // Get which file type is a file
-function getFileType(file) {
+export function getFileType(file: fs.Dirent): fileType {
   if (file.isSymbolicLink()) {
-    return 'symbolicLink';
+    return fileType.SymbolicLink;
   }
   if (file.isDirectory()) {
-    return 'directory';
+    return fileType.Directory;
   }
   if (file.isFile()) {
-    return 'file';
+    return fileType.File;
   }
 
-  return null;
+  return fileType.Null;
 }
 
+export interface fileList {
+  name: string;
+  type: fileType;
+}
 // List all the files inside a directory
-async function listFiles(dir, useMap = false) {
+
+export function listFiles(
+  dir: string,
+  useMap: true
+): Promise<Map<string, fileList>>;
+export function listFiles(dir: string, useMap: false): Promise<fileList[]>;
+export async function listFiles(
+  dir: string,
+  useMap: boolean = false
+): Promise<Map<string, fileList> | fileList[]> {
   try {
     const data = (await fs.readdir(dir, { withFileTypes: true })).map(
       (file) => ({
@@ -100,7 +129,11 @@ async function listFiles(dir, useMap = false) {
   }
 }
 
-async function removeFiles(dir, files, ignored) {
+export async function removeFiles(
+  dir: string,
+  files: Map<string, fileList>,
+  ignored: string[]
+): Promise<void> {
   ignored.forEach((file) => files.delete(file));
 
   await Promise.all(
@@ -116,22 +149,10 @@ async function removeFiles(dir, files, ignored) {
   );
 }
 
-async function copyFile(src, dest) {
+export async function copyFile(src: string, dest: string): Promise<void> {
   try {
     await fs.copyFile(src, dest);
   } catch (e) {
     throw new Error(`Can't copy file ${src} into ${dest}`);
   }
 }
-
-module.exports = {
-  createFile,
-  createFolder,
-  createFolderIfMissing,
-  createSymLink,
-  fileExists,
-  folderExists,
-  listFiles,
-  removeFiles,
-  copyFile,
-};
