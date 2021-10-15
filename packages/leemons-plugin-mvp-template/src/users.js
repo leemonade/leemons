@@ -45,6 +45,11 @@ async function initUsers(centers, profiles) {
     _.map(roles2, 'id')
   );
 
+  await leemons.getPlugin('users').services.users.addUserAgentContacts(
+    _.map(user1.userAgents, 'id'),
+    _.map(user2.userAgents, 'id'),
+  );
+
   return [user1, user2];
 }
 

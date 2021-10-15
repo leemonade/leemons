@@ -485,7 +485,7 @@ class Leemons {
 
     LeemonsSocket.worker.init(this.server);
     LeemonsSocket.worker.onConnection((socket) => {
-      console.log(socket.session);
+      console.log('Connected to socket.io', socket.session.email);
     });
 
     LeemonsSocket.worker.use(async (socket, next) => {

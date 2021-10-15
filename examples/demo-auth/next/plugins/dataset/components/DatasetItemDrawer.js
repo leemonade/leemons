@@ -25,8 +25,15 @@ import { DatasetItemDrawerCenters } from './DatasetItemDrawerCenters';
 import transformItemToSchemaAndUi from './help/transformItemToSchemaAndUi';
 import { saveDatasetFieldRequest } from '../request';
 import datasetDataTypes from '../helpers/datasetDataTypes';
+import setFormLocaleData from './help/setFormLocaleData';
 
-const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSave = () => {} }) => {
+const DatasetItemDrawer = ({
+  close,
+  item: __item,
+  locationName,
+  pluginName,
+  onSave = () => {},
+}) => {
   const [translations] = useTranslate({ keysStartsWith: prefixPN('datasetItemDrawer') });
   const t = tLoader(prefixPN('datasetItemDrawer'), translations);
   const { t: tCommon } = useCommonTranslate('forms');
@@ -35,6 +42,9 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
   const [profileContextState, setProfileContextState] = useState({});
   const [centersContextState, setCentersContextState] = useState({});
   const [localeErrorsContextState, setLocaleErrorsContextState] = useState({});
+
+  let _item = __item && __item.schemaConfig ? __item.schemaConfig : __item;
+
   const [item, setItem] = useState(
     _item
       ? {
@@ -70,6 +80,11 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
           `frontConfig.${key}`,
           dateKeys.indexOf(key) >= 0 ? new Date(value).toISOString().slice(0, 10) : value
         );
+      });
+    }
+    if (__item && __item.schemaLocales) {
+      _.forIn(__item.schemaLocales, ({ schema, ui }, locale) => {
+        setFormLocaleData({ schema, ui, form: { setValue }, locale });
       });
     }
   }, []);
@@ -258,6 +273,7 @@ const DatasetItemDrawer = ({ close, item: _item, locationName, pluginName, onSav
               tCommon,
               t,
               item,
+              __item,
               locationName,
               pluginName,
               form: {

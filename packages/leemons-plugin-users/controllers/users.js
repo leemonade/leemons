@@ -156,11 +156,9 @@ async function list(ctx) {
 }
 
 async function contacts(ctx) {
-  let toProfile = null;
-  if (ctx.request.body.toProfile) toProfile = ctx.request.body.toProfile;
   const userAgents = await usersService.getUserAgentContacts(
     _.map(ctx.state.userSession.userAgents, 'id'),
-    { toProfile, returnAgent: true }
+    { ...ctx.request.body, returnAgent: true }
   );
   ctx.status = 200;
   ctx.body = { status: 200, userAgents: _.flatten(userAgents) };

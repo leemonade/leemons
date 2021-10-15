@@ -10,7 +10,15 @@ const { table } = require('../tables');
  * @return {Promise<boolean>}
  * */
 
-async function getUserAgentsInfo(userAgentIds, { withProfile, withCenter, transacting } = {}) {
+async function getUserAgentsInfo(
+  userAgentIds,
+  {
+    withProfile,
+    withCenter,
+    userColumns = ['id', 'email', 'name', 'surnames', 'created_at'],
+    transacting,
+  } = {}
+) {
   const userAgents = await table.userAgent.find(
     { id_$in: userAgentIds },
     {
@@ -23,7 +31,7 @@ async function getUserAgentsInfo(userAgentIds, { withProfile, withCenter, transa
   const users = await table.users.find(
     { id_$in: _.map(userAgents, 'user') },
     {
-      columns: ['id', 'email', 'name', 'surnames', 'created_at'],
+      columns: userColumns,
       transacting,
     }
   );

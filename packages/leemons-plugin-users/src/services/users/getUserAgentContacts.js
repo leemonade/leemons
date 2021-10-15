@@ -42,18 +42,33 @@ async function getUserAgentContacts(
 
   if (fromCenter) query.fromCenter = fromCenter;
   if (fromProfile) query.fromProfile = fromProfile;
-  if (toCenter) query.toCenter = toCenter;
-  if (toProfile) query.toProfile = toProfile;
+  if (toCenter) {
+    if (_.isArray(toCenter)) {
+      query.toCenter_$in = toCenter;
+    } else {
+      query.toCenter = toCenter;
+    }
+  }
+  if (toProfile) {
+    if (_.isArray(toProfile)) {
+      query.toProfile_$in = toProfile;
+    } else {
+      query.toProfile = toProfile;
+    }
+  }
   if (plugin) query.plugin = plugin;
   if (target) query.target = target;
 
-  const response = await table.userAgentContacts.find(query, { transacting });
+  let response = await table.userAgentContacts.find(query, { transacting });
+
+  response = _.uniqBy(response, 'toUserAgent');
 
   let userAgentsById = null;
   if (returnAgent) {
     const userAgents = await getUserAgentsInfo(_.map(response, 'toUserAgent'), {
       withProfile,
       withCenter,
+      userColumns: ['id', 'name', 'surnames'],
       transacting,
     });
     userAgentsById = _.keyBy(userAgents, 'id');
