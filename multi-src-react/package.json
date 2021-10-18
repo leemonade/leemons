@@ -25,7 +25,7 @@
   },
   "scripts": {
     "build": "webpack --config config/webpack.config.js",
-    "dev": "nodemon -w config config/index.ts"
+    "dev": "nodemon -w config config/index.ts -e ts,json,cjson,js,squirrelly"
   },
   "dependencies": {
     "@loadable/component": "^5.15.0",
