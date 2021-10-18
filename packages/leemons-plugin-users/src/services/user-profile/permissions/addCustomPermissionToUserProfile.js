@@ -1,10 +1,10 @@
-const { table } = require('../tables');
-const { exist } = require('./exist');
-const { add } = require('./add');
-const { getRole } = require('./getRole');
+const { table } = require('../../tables');
+const { exist } = require('../exist');
+const { add } = require('../add');
+const { getRole } = require('../getRole');
 const _ = require('lodash');
-const { validatePermissionName } = require('../../validations/exists');
-const { addPermissionMany, removePermissionsByName } = require('../roles');
+const { validatePermissionName } = require('../../../validations/exists');
+const { addPermissionMany, removePermissionsByName } = require('../../roles');
 const {
   markAllUserAgentsForUserProfileToReloadPermissions,
 } = require('./markAllUserAgentsForUserProfileToReloadPermissions');

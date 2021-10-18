@@ -1,9 +1,7 @@
 const _ = require('lodash');
-const { table } = require('../tables');
-const constants = require('../../../config/constants');
-const {
-  updateUserAgentPermissions,
-} = require('../user-agents/permissions/updateUserAgentPermissions');
+const { table } = require('../../tables');
+const constants = require('../../../../config/constants');
+const { updateUserAgentPermissions } = require('./updateUserAgentPermissions');
 
 /**
  * Return all user auth permissions

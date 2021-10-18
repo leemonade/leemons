@@ -5,7 +5,7 @@ const { existName } = require('./existName');
 const { table } = require('../tables');
 const {
   markAllUsersWithProfileToReloadPermissions,
-} = require('./markAllUsersWithProfileToReloadPermissions');
+} = require('./permissions/markAllUsersWithProfileToReloadPermissions');
 const { updateProfileTranslations } = require('./updateProfileTranslations');
 
 async function update(data, { transacting: _transacting } = {}) {

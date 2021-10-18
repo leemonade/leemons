@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const { table } = require('../tables');
-const { exist } = require('./exist');
-const { getRole } = require('./getRole');
-const { validatePermissionName } = require('../../validations/exists');
-const { removePermissionsByName } = require('../roles');
+const { table } = require('../../tables');
+const { exist } = require('../exist');
+const { getRole } = require('../getRole');
+const { validatePermissionName } = require('../../../validations/exists');
+const { removePermissionsByName } = require('../../roles');
 const {
   markAllUserAgentsForUserProfileToReloadPermissions,
 } = require('./markAllUserAgentsForUserProfileToReloadPermissions');

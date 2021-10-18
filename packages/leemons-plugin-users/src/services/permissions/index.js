@@ -1,41 +1,45 @@
-const { list } = require('./list');
-const { existMany } = require('./existMany');
-const { exist } = require('./exist');
-const { updateMany } = require('./updateMany');
-const { update } = require('./update');
-const { removeMany } = require('./removeMany');
-const { remove } = require('./remove');
-const { manyPermissionsHasManyActions } = require('./manyPermissionsHasManyActions');
-const { hasActionMany } = require('./hasActionMany');
-const { hasAction } = require('./hasAction');
-const { addMany } = require('./addMany');
-const { addActionMany } = require('./addActionMany');
-const { addAction } = require('./addAction');
 const { add } = require('./add');
 const { init } = require('./init');
-const { addCustomPermissionToUserAgent } = require('./addCustomPermissionToUserAgent');
-const { getUserAgentPermissions } = require('./getUserAgentPermissions');
-const { userAgentHasCustomPermission } = require('./userAgentHasCustomPermission');
+const { list } = require('./list');
+const { exist } = require('./exist');
+const { update } = require('./update');
+const { remove } = require('./remove');
+const { addMany } = require('./addMany');
+const { existMany } = require('./existMany');
+const { hasAction } = require('./hasAction');
+const { addAction } = require('./addAction');
+const { updateMany } = require('./updateMany');
+const { removeMany } = require('./removeMany');
+const { addActionMany } = require('./addActionMany');
+const { hasActionMany } = require('./hasActionMany');
 const { findUserAgentsWithPermission } = require('./findUserAgentsWithPermission');
+const { manyPermissionsHasManyActions } = require('./manyPermissionsHasManyActions');
+const { getUserAgentPermissions } = require('../user-agents/permissions/getUserAgentPermissions');
+const {
+  addCustomPermissionToUserAgent,
+} = require('../user-agents/permissions/addCustomPermissionToUserAgent');
+const {
+  userAgentHasCustomPermission,
+} = require('../user-agents/permissions/userAgentHasCustomPermission');
 
 module.exports = {
+  add,
   init,
   list,
   exist,
-  existMany,
-  add,
-  addMany,
-  addAction,
-  addActionMany,
   remove,
-  removeMany,
   update,
-  updateMany,
+  addMany,
+  existMany,
+  addAction,
   hasAction,
+  removeMany,
+  updateMany,
+  addActionMany,
   hasActionMany,
-  manyPermissionsHasManyActions,
-  addCustomPermissionToUserAgent,
   getUserAgentPermissions,
   userAgentHasCustomPermission,
   findUserAgentsWithPermission,
+  manyPermissionsHasManyActions,
+  addCustomPermissionToUserAgent,
 };

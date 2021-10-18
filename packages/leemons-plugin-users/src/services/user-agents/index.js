@@ -16,7 +16,10 @@ const { removeUserAgentContacts } = require('./contacts/removeUserAgentContacts'
 
 // Permissions
 const { userAgentHasPermission } = require('./permissions/userAgentHasPermission');
+const { getUserAgentPermissions } = require('./permissions/getUserAgentPermissions');
 const { updateUserAgentPermissions } = require('./permissions/updateUserAgentPermissions');
+const { userAgentHasCustomPermission } = require('./permissions/userAgentHasCustomPermission');
+const { addCustomPermissionToUserAgent } = require('./permissions/addCustomPermissionToUserAgent');
 const {
   removeCustomUserAgentPermission,
 } = require('./permissions/removeCustomUserAgentPermission');
@@ -37,7 +40,10 @@ module.exports = {
   },
   permissions: {
     userAgentHasPermission,
+    getUserAgentPermissions,
     updateUserAgentPermissions,
+    userAgentHasCustomPermission,
+    addCustomPermissionToUserAgent,
     removeCustomUserAgentPermission,
   },
 };

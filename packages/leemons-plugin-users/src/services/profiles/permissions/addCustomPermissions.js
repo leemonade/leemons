@@ -1,9 +1,11 @@
 const _ = require('lodash');
-const getProfileRole = require('./getProfileRole');
-const removePermissionsByNameAndTarget = require('../roles/removePermissionsByNameAndTarget');
-const { table } = require('../tables');
-const { addPermissionMany } = require('../roles');
-const { validatePermissionName } = require('../../validations/exists');
+const getProfileRole = require('../getProfileRole');
+const {
+  removePermissionsByNameAndTarget,
+} = require('../../roles/permissions/removePermissionsByNameAndTarget');
+const { table } = require('../../tables');
+const { addPermissionMany } = require('../../roles');
+const { validatePermissionName } = require('../../../validations/exists');
 const {
   markAllUsersWithProfileToReloadPermissions,
 } = require('./markAllUsersWithProfileToReloadPermissions');
@@ -53,4 +55,4 @@ async function addCustomPermissions(profileId, _permissions, { transacting: _tra
   );
 }
 
-module.exports = addCustomPermissions;
+module.exports = { addCustomPermissions };

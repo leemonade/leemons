@@ -1,7 +1,9 @@
 const _ = require('lodash');
-const { table } = require('../tables');
-const { validatePermissionName } = require('../../validations/exists');
-const searchUsersWithRoleAndMarkAsReloadPermissions = require('./searchUsersWithRoleAndMarkAsReloadPermissions');
+const { table } = require('../../tables');
+const { validatePermissionName } = require('../../../validations/exists');
+const {
+  searchUsersWithRoleAndMarkAsReloadPermissions,
+} = require('../searchUsersWithRoleAndMarkAsReloadPermissions');
 
 /**
  * Remove all permissions of role
@@ -35,4 +37,4 @@ async function removePermissionsByNameAndTarget(
   return table.rolePermission.deleteMany(query, { transacting });
 }
 
-module.exports = removePermissionsByNameAndTarget;
+module.exports = { removePermissionsByNameAndTarget };

@@ -1,20 +1,20 @@
-const { list } = require('./list');
 const { add } = require('./add');
+const { list } = require('./list');
+const { update } = require('./update');
+const { existMany } = require('./existMany');
 const { existName } = require('./existName');
 const { detailByUri } = require('./detailByUri');
-const { update } = require('./update');
-const existMany = require('./existMany');
-const addCustomPermissions = require('./addCustomPermissions');
-const removeCustomPermissionsByName = require('./removeCustomPermissionsByName');
+const { addCustomPermissions } = require('./permissions/addCustomPermissions');
+const { removeCustomPermissionsByName } = require('./permissions/removeCustomPermissionsByName');
 const { getRoleForRelationshipProfileCenter } = require('./getRoleForRelationshipProfileCenter');
 
 module.exports = {
-  list,
   add,
-  existName,
-  detailByUri,
+  list,
   update,
   existMany,
+  existName,
+  detailByUri,
   addCustomPermissions,
   removeCustomPermissionsByName,
   getRoleForRelationshipProfileCenter,

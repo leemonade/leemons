@@ -1,5 +1,7 @@
-const { table } = require('../tables');
-const searchUsersWithRoleAndMarkAsReloadPermissions = require('./searchUsersWithRoleAndMarkAsReloadPermissions');
+const { table } = require('../../tables');
+const {
+  searchUsersWithRoleAndMarkAsReloadPermissions,
+} = require('../searchUsersWithRoleAndMarkAsReloadPermissions');
 
 /**
  * Remove all permissions of role

@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const getProfileRole = require('./getProfileRole');
-const removePermissionsByName = require('../roles/removePermissionsByName');
-const { table } = require('../tables');
-const { validatePermissionName } = require('../../validations/exists');
+const getProfileRole = require('../getProfileRole');
+const { removePermissionsByName } = require('../../roles/permissions/removePermissionsByName');
+const { table } = require('../../tables');
+const { validatePermissionName } = require('../../../validations/exists');
 const {
   markAllUsersWithProfileToReloadPermissions,
 } = require('./markAllUsersWithProfileToReloadPermissions');
@@ -45,4 +45,4 @@ async function removeCustomPermissionsByName(
   );
 }
 
-module.exports = removeCustomPermissionsByName;
+module.exports = { removeCustomPermissionsByName };

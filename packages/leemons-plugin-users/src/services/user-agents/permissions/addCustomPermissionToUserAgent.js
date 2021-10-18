@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const { existUserAgent } = require('../user-agents/existUserAgent');
-const { validatePermissionName } = require('../../validations/exists');
-const { validateUserAddCustomPermission } = require('../../validations/permissions');
-const { table } = require('../tables');
+const { existUserAgent } = require('../existUserAgent');
+const { validatePermissionName } = require('../../../validations/exists');
+const { validateUserAddCustomPermission } = require('../../../validations/permissions');
+const { table } = require('../../tables');
 const { userAgentHasCustomPermission } = require('./userAgentHasCustomPermission');
 
 async function _addCustomPermissionToUserAgent(userAgentId, data, { transacting } = {}) {
