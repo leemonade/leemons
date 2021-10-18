@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
+import squirrelly from 'squirrelly';
 
 async function _fileExists(
   dir: string,
@@ -132,7 +133,7 @@ export async function listFiles(
 export async function removeFiles(
   dir: string,
   files: Map<string, fileList>,
-  ignored: string[]
+  ignored: string[] = []
 ): Promise<void> {
   ignored.forEach((file) => files.delete(file));
 
@@ -147,6 +148,20 @@ export async function removeFiles(
       )
     )
   );
+}
+
+// Generate app.js file
+export async function copyFileWithSquirrelly(
+  src: string,
+  dest: string,
+  config
+): Promise<void> {
+  const App = await squirrelly.renderFile(
+    path.resolve(src, 'App.squirrelly'),
+    config
+  );
+
+  await fs.writeFile(dest, App);
 }
 
 export async function copyFile(src: string, dest: string): Promise<void> {

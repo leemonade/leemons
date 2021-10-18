@@ -12,6 +12,7 @@ import {
   copyFile,
   removeFiles,
   fileList,
+  copyFileWithSquirrelly,
 } from './lib/fs';
 import compile from './lib/webpack';
 import createReloader from './lib/watch';
@@ -101,7 +102,8 @@ async function linkSourceCode(
   dir: string,
   plugins: Plugin[]
 ): Promise<Map<string, fileList>> {
-  // TODO: Save a file describing each file (maybe has the same name but different dir, so needs to be recopied)
+  await createFolderIfMissing(dir);
+
   // Check which files still exists
   const existingFiles = await listFiles(dir, true);
 
@@ -116,19 +118,9 @@ async function linkSourceCode(
       return null;
     })
   );
+
+  // Return extra files
   return existingFiles;
-}
-
-// Generate app.js file
-async function copyAppJS(dir: string, plugins: Plugin[]): Promise<void> {
-  const App = await squirrelly.renderFile(
-    path.resolve(configDir.src, 'App.squirrelly'),
-    {
-      plugins,
-    }
-  );
-
-  await fs.writeFile(dir, App);
 }
 
 // Check public/private routes
@@ -202,22 +194,20 @@ async function generateMonorepo(dir: string, plugins: Plugin[]): Promise<void> {
   );
 
   if (modified) {
-    await copyAppJS(
+    // Copy App.js
+    await copyFileWithSquirrelly(
+      path.resolve(configDir.src, 'App.js'),
       path.resolve(frontDir, 'App.js'),
-      await Promise.all(plugins.map(checkPluginPaths))
+      { plugins: await Promise.all(plugins.map(checkPluginPaths)) }
     );
   }
 
-  const extraFiles = await linkSourceCode(dir, plugins);
+  const extraFiles = await linkSourceCode(
+    path.resolve(dir, 'plugins'),
+    plugins
+  );
 
-  await removeFiles(dir, extraFiles, [
-    'node_modules',
-    'package.json',
-    'yarn.lock',
-    'leemons.lock.json',
-    'App.js',
-    'index.js',
-  ]);
+  await removeFiles(path.resolve(dir, 'plugins'), extraFiles);
   await installDeps(dir);
 }
 
@@ -226,7 +216,11 @@ function generateAliases(dir: string, plugins: Plugin[]): {} {
   return plugins.reduce(
     (obj, plugin) => ({
       ...obj,
-      [`@${plugin.name}`]: path.resolve(dir, path.basename(plugin.path)),
+      [`@${plugin.name}`]: path.resolve(
+        dir,
+        'plugins',
+        path.basename(plugin.path)
+      ),
     }),
     {}
   );
@@ -249,9 +243,11 @@ async function main(): Promise<void> {
       );
 
       if (modified) {
-        await copyAppJS(
+        // Copy App.js
+        await copyFileWithSquirrelly(
+          path.resolve(configDir.src, 'App.js'),
           path.resolve(frontDir, 'App.js'),
-          await Promise.all(plugins.map(checkPluginPaths))
+          { plugins: await Promise.all(plugins.map(checkPluginPaths)) }
         );
       }
     }
@@ -284,9 +280,11 @@ async function main(): Promise<void> {
 
         // Regenerate AppJS
         if (modified) {
-          await copyAppJS(
+          // Copy App.js
+          await copyFileWithSquirrelly(
+            path.resolve(configDir.src, 'App.js'),
             path.resolve(frontDir, 'App.js'),
-            await Promise.all(plugins.map(checkPluginPaths))
+            { plugins: await Promise.all(plugins.map(checkPluginPaths)) }
           );
         }
         // }, 1500);
@@ -313,9 +311,11 @@ async function main(): Promise<void> {
           );
 
           if (modified) {
-            await copyAppJS(
+            // Copy App.js
+            await copyFileWithSquirrelly(
+              path.resolve(configDir.src, 'App.js'),
               path.resolve(frontDir, 'App.js'),
-              await Promise.all(plugins.map(checkPluginPaths))
+              { plugins: await Promise.all(plugins.map(checkPluginPaths)) }
             );
           }
         }
