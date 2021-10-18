@@ -238,8 +238,10 @@ async function main(): Promise<void> {
 
   await generateMonorepo(frontDir, plugins);
 
+  // Start compilation process
   let stop = await compile(
     { alias: generateAliases(frontDir, plugins) },
+    // Trigger function when code changes are detected
     async () => {
       const modified = await saveLockFile(
         frontDir,
@@ -255,7 +257,7 @@ async function main(): Promise<void> {
     }
   );
 
-  console.log(path.resolve(frontDir, '*', '{index,private}.js'));
+  // When a public/private file is added, recreate App.js
   createReloader({
     name: 'publicPrivatePaths',
     dirs: flatten(
@@ -267,42 +269,33 @@ async function main(): Promise<void> {
     config: {
       ignoreInitial: true,
       followSymlinks: true,
-      awaitWriteFinish: false,
+      // Wait to the system write call
+      // awaitWriteFinish: true,
     },
     handler: async (event, filename) => {
-      // setTimeout(async () => {
+      // Only trigger add events
       if (event === 'add') {
-        console.log(
-          'something changed in index.js or private.js',
-          filename,
-          `(${event}`
-        );
-        console.log();
-
-        console.log(
-          await Promise.all(
-            filename.map(async (file: string) =>
-              (
-                await fs.readFile(path.resolve(frontDir, 'ui', 'index.js'))
-              ).toString()
-            )
-          )
-        );
+        // setTimeout(async () => {
+        // Regenerate LockFile
         const modified = await saveLockFile(
           frontDir,
           await Promise.all(plugins.map(checkPluginPaths))
         );
 
+        // Regenerate AppJS
         if (modified) {
           await copyAppJS(
             path.resolve(frontDir, 'App.js'),
             await Promise.all(plugins.map(checkPluginPaths))
           );
         }
+        // }, 1500);
       }
-      // }, 500);
     },
   });
+
+  // TODO: Remove watcher, move to api call
+  // Watch to the plugins file, and rebuild when updated
   createReloader({
     name: 'Leemons Front',
     dirs: pluginsFile,

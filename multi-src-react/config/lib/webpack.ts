@@ -36,15 +36,6 @@ export default async function compile(
     });
 
   await devServer.start();
-
-  /* @ts-ignore */
-  compiler.hooks.compilation.tap('Leemons', (compilation) => {
-    compilation.hooks.failedModule.tap('Leemons', () => {
-      console.log('error ocurred');
-      console.log();
-      throw new Error('Pepe');
-    });
-  });
   // Stop compiler and dev server
   return stop;
 }
