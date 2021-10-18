@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 import loadable from '@loadable/component';
-import { useContextProvider as useGlobalProvider } from './contexts/global';
 
 // Plugins imports
 {{@each(it.plugins) => plugin}}
@@ -35,10 +34,8 @@ function App() {
   const {{@capitalize(plugin.name) /}}LocalProvider = use{{@capitalize(plugin.name) /}}LocalProvider();
 {{/if}}
 {{/each}}
-  const GlobalProvider = useGlobalProvider();
   return (
     <>
-      <GlobalProvider>
 {{@each(it.plugins) => plugin}}
 {{@if(plugin.globalContext)}}
         <{{@capitalize(plugin.name) /}}GlobalProvider>
@@ -90,7 +87,6 @@ function App() {
         </{{@capitalize(plugin.name) /}}GlobalProvider>
 {{/if}}
 {{/each}}
-      </GlobalProvider>
     </>
   );
 }

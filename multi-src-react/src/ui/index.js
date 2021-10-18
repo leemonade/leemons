@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import GlobalContext from '@leemons/contexts/global';
 import UIGlobalContext from '@ui/globalContext';
 import Button from './components/Button';
@@ -8,7 +8,15 @@ import Image from './components/Image';
 export default function index() {
   const context = useContext(GlobalContext);
   const uiContext = useContext(UIGlobalContext);
-  console.log(uiContext);
+
+  useEffect(() => {
+    context.leemons
+      .api('https://pokeapi.co/api/v2/pokemon/:pokemon', {
+        params: { pokemon: 'ditto' },
+      })
+      .then(console.log);
+  }, []);
+
   return (
     <>
       {context?.leemons.version}
