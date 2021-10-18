@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { table } = require('../tables');
-const { getUserAgentsInfo } = require('./getUserAgentsInfo');
+const { table } = require('../../tables');
+const { getUserAgentsInfo } = require('../getUserAgentsInfo');
 
 /**
  *

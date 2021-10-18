@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { verifyJWTToken } = require('./verifyJWTToken');
-const { table } = require('../tables');
+const { table } = require('../../tables');
 
 /**
  * Return the user for the id provided

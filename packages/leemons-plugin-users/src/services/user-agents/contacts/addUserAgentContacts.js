@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const { table } = require('../tables');
+const { table } = require('../../tables');
 
 /**
- *
+ * ES: Dice que los user agents en _fromUserAgent tienen acceso a ver a todos los user agents en _toUserAgent
  * @public
  * @static
  * @param {string|string[]} _fromUserAgent - User agent id/s

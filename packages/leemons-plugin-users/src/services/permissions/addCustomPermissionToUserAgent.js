@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { existUserAgent } = require('../users/existUserAgent');
+const { existUserAgent } = require('../user-agents/existUserAgent');
 const { validatePermissionName } = require('../../validations/exists');
 const { validateUserAddCustomPermission } = require('../../validations/permissions');
 const { table } = require('../tables');

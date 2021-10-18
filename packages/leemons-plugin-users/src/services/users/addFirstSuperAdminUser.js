@@ -1,4 +1,4 @@
-const { encryptPassword } = require('./encryptPassword');
+const { encryptPassword } = require('./bcrypt/encryptPassword');
 const { table } = require('../tables');
 
 /**

@@ -6,8 +6,8 @@
  * @param {string} password - User password in raw
  * @return {Promise<User>} Created / Updated role
  * */
-const { generateJWTToken } = require('./generateJWTToken');
-const { comparePassword } = require('./comparePassword');
+const { generateJWTToken } = require('./jwt/generateJWTToken');
+const { comparePassword } = require('./bcrypt/comparePassword');
 const { table } = require('../tables');
 
 async function login(email, password) {

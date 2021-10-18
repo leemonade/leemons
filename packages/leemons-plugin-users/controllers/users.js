@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const usersService = require('../src/services/users');
+const userAgentsService = require('../src/services/user-agents');
 const { table } = require('../src/services/tables');
 
 async function canReset(ctx) {
@@ -156,7 +157,7 @@ async function list(ctx) {
 }
 
 async function contacts(ctx) {
-  const userAgents = await usersService.getUserAgentContacts(
+  const userAgents = await userAgentsService.contacts.getUserAgentContacts(
     _.map(ctx.state.userSession.userAgents, 'id'),
     { ...ctx.request.body, returnAgent: true }
   );
@@ -176,17 +177,17 @@ async function createSuperAdmin(ctx) {
 }
 
 module.exports = {
-  detail,
-  reset,
-  canReset,
-  recover,
-  login,
-  create,
   list,
-  createSuperAdmin,
+  reset,
+  login,
+  detail,
+  create,
+  recover,
+  contacts,
+  canReset,
   profiles,
   profileToken,
+  createSuperAdmin,
   setRememberProfile,
   getRememberProfile,
-  contacts,
 };

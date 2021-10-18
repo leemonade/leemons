@@ -1,5 +1,5 @@
 const { generateJWTPrivateKey } = require('./generateJWTPrivateKey');
-const { table } = require('../tables');
+const { table } = require('../../tables');
 
 let jwtPrivateKey = null;
 

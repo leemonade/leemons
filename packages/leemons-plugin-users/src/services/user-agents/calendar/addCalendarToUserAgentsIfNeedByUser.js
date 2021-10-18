@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { table } = require('../tables');
+const { table } = require('../../tables');
 const { getUserAgentCalendarKey } = require('./getUserAgentCalendarKey');
 
 async function addCalendarToUserAgent(userAgent, { transacting } = {}) {

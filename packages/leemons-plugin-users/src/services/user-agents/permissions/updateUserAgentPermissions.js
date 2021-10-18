@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { existUserAgent } = require('./existUserAgent');
-const { table } = require('../tables');
+const { existUserAgent } = require('../existUserAgent');
+const { table } = require('../../tables');
 
 async function _updateUserAgentPermissions(userAgentId, { transacting: _transacting } = {}) {
   return await global.utils.withTransaction(

@@ -2,7 +2,7 @@ const _ = require('lodash');
 const moment = require('moment');
 const { table } = require('../tables');
 const constants = require('../../../config/constants');
-const { generateJWTToken } = require('./generateJWTToken');
+const { generateJWTToken } = require('./jwt/generateJWTToken');
 
 /**
  * If there is a user with that email we check if there is already a recovery in progress, if

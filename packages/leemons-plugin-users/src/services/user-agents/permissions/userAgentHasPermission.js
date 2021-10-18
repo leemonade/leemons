@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { table } = require('../tables');
-const constants = require('../../../config/constants');
+const { table } = require('../../tables');
+const constants = require('../../../../config/constants');
 
 /**
  * Check if user the permission
@@ -11,7 +11,7 @@ const constants = require('../../../config/constants');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function hasPermission(
+async function userAgentHasPermission(
   userAgentId,
   { permissionName, actionNames, target },
   { transacting } = {}
@@ -29,4 +29,4 @@ async function hasPermission(
   return !!response;
 }
 
-module.exports = hasPermission;
+module.exports = { userAgentHasPermission };

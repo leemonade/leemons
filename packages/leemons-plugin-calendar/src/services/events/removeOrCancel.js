@@ -30,9 +30,13 @@ async function removeOrCancel(id, { forceDelete, transacting: _transacting } = {
       }
       // ES: Si solo hay un invitado (Owner) borramos el evento
       if (userAgentIds.length) {
-        await userPlugin.services.users.removeCustomPermission(userAgentIds[0], permissionQuery, {
-          transacting,
-        });
+        await userPlugin.services.users.removeCustomUserAgentPermission(
+          userAgentIds[0],
+          permissionQuery,
+          {
+            transacting,
+          }
+        );
       }
       return table.events.delete({ id }, { transacting });
     },

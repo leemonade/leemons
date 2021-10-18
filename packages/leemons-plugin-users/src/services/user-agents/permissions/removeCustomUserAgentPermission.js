@@ -1,10 +1,8 @@
 const _ = require('lodash');
-const hasPermission = require('./hasPermission');
-const { validateUserRemoveCustomPermission } = require('../../validations/permissions');
-const { existUserAgent } = require('./existUserAgent');
-const { validatePermissionName } = require('../../validations/exists');
-const { validateExistPermission } = require('../../validations/exists');
-const { table } = require('../tables');
+const { validateUserRemoveCustomPermission } = require('../../../validations/permissions');
+const { existUserAgent } = require('../existUserAgent');
+const { validatePermissionName } = require('../../../validations/exists');
+const { table } = require('../../tables');
 
 /**
  * Add a user to platform
@@ -15,7 +13,7 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function removeCustomPermission(userAgentId, data, { transacting } = {}) {
+async function removeCustomUserAgentPermission(userAgentId, data, { transacting } = {}) {
   validatePermissionName(data.permissionName, this.calledFrom);
   validateUserRemoveCustomPermission(data);
 
@@ -48,4 +46,4 @@ async function _removeCustomPermission(userAgentId, data, { transacting } = {}) 
   return true;
 }
 
-module.exports = removeCustomPermission;
+module.exports = { removeCustomUserAgentPermission };

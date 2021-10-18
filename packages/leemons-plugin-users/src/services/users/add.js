@@ -1,9 +1,11 @@
 const _ = require('lodash');
 const existManyRoles = require('../roles/existMany');
-const { encryptPassword } = require('./encryptPassword');
+const { encryptPassword } = require('./bcrypt/encryptPassword');
 const { table } = require('../tables');
 const { exist } = require('./exist');
-const { addCalendarToUserAgentsIfNeedByUser } = require('./addCalendarToUserAgentsIfNeedByUser');
+const {
+  addCalendarToUserAgentsIfNeedByUser,
+} = require('../user-agents/calendar/addCalendarToUserAgentsIfNeedByUser');
 
 /**
  * Add a user to platform
@@ -56,4 +58,4 @@ async function add(
   );
 }
 
-module.exports = add;
+module.exports = { add };
