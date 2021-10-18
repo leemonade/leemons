@@ -12,6 +12,15 @@ const { table } = require('../../tables');
  * @param {UserAddCustomPermission} data - New permission data
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
+ *
+ * @example
+ * leemons
+ * .getPlugin('users')
+ * .services.permissions.removeCustomUserAgentPermission(
+ * 'userAgentId',
+ * {
+ *    permissionName: 'plugins.classroom.level'
+ * });
  * */
 async function removeCustomUserAgentPermission(userAgentId, data, { transacting } = {}) {
   validatePermissionName(data.permissionName, this.calledFrom);
