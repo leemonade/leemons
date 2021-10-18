@@ -39,6 +39,20 @@ async function _addCustomPermissionToUserAgent(userAgentId, data, { transacting 
  * @param {UserAddCustomPermission || UserAddCustomPermission[]} data - New permission data
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
+ *
+ * @example
+ *
+ *
+ * leemons
+ * .getPlugin('users')
+ * .services.permissions.addCustomPermissionToUserAgent(
+ * 'userAgentId',
+ * {
+ *    permissionName: 'plugins.classroom.level',
+ *    actionNames: ['admin'],
+ *    target: level,
+ * });
+ *
  * */
 async function addCustomPermissionToUserAgent(userAgentId, data, { transacting } = {}) {
   const _data = _.isArray(data) ? data : [data];

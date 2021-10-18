@@ -24,6 +24,16 @@ const {
   removeCustomUserAgentPermission,
 } = require('./permissions/removeCustomUserAgentPermission');
 
+// Item permissions
+const { getBaseAllPermissionsQuery } = require('./item-permissions/getBaseAllPermissionsQuery');
+const { userAgentHasPermissionToItem } = require('./item-permissions/userAgentHasPermissionToItem');
+const {
+  getAllItemsForTheUserAgentHasPermissions,
+} = require('./item-permissions/getAllItemsForTheUserAgentHasPermissions');
+const {
+  getAllItemsForTheUserAgentHasPermissionsByType,
+} = require('./item-permissions/getAllItemsForTheUserAgentHasPermissionsByType');
+
 module.exports = {
   existUserAgent,
   searchUserAgents,
@@ -45,5 +55,11 @@ module.exports = {
     userAgentHasCustomPermission,
     addCustomPermissionToUserAgent,
     removeCustomUserAgentPermission,
+  },
+  itemPermissions: {
+    getBaseAllPermissionsQuery,
+    userAgentHasPermissionToItem,
+    getAllItemsForTheUserAgentHasPermissions,
+    getAllItemsForTheUserAgentHasPermissionsByType,
   },
 };

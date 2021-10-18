@@ -1,6 +1,8 @@
+const userAgents = require('../src/services/user-agents');
 const permissions = require('../src/services/permissions');
 const userProfile = require('../src/services/user-profile');
 const itemPermissions = require('../src/services/item-permissions');
+const userAgentsService = require('../src/services/user-agents');
 
 module.exports = {
   add: permissions.add,
@@ -19,9 +21,11 @@ module.exports = {
   manyPermissionsHasManyActions: permissions.manyPermissionsHasManyActions,
 
   // User agent
-  getUserAgentPermissions: permissions.getUserAgentPermissions,
-  userAgentHasCustomPermission: permissions.userAgentHasCustomPermission,
-  addCustomPermissionToUserAgent: permissions.addCustomPermissionToUserAgent,
+  getUserAgentPermissions: userAgents.permissions.getUserAgentPermissions,
+  userAgentHasPermission: userAgentsService.permissions.userAgentHasPermission,
+  userAgentHasCustomPermission: userAgents.permissions.userAgentHasCustomPermission,
+  addCustomPermissionToUserAgent: userAgents.permissions.addCustomPermissionToUserAgent,
+  removeCustomUserAgentPermission: userAgentsService.permissions.removeCustomUserAgentPermission,
 
   // Item permissions
   addItem: itemPermissions.add,
@@ -34,4 +38,11 @@ module.exports = {
   // User profile
   addCustomPermissionToUserProfile: userProfile.addCustomPermissionToUserProfile,
   removeCustomPermissionToUserProfile: userProfile.removeCustomPermissionToUserProfile,
+
+  // User agent - Item permissions
+  userAgentHasPermissionToItem: userAgents.itemPermissions.userAgentHasPermissionToItem,
+  getAllItemsForTheUserAgentHasPermissions:
+    userAgents.itemPermissions.getAllItemsForTheUserAgentHasPermissions,
+  getAllItemsForTheUserAgentHasPermissionsByType:
+    userAgents.itemPermissions.getAllItemsForTheUserAgentHasPermissionsByType,
 };

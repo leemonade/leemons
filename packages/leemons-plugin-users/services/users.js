@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const usersService = require('../src/services/users');
 const userAgentsService = require('../src/services/user-agents');
+const userAgents = require('../src/services/user-agents');
 
 module.exports = {
   detail: async (userId, { transacting } = {}) => {
@@ -35,6 +36,16 @@ module.exports = {
   getUserAgentCalendarKey: userAgentsService.calendars.getUserAgentCalendarKey,
 
   // Permissions
+  getUserAgentPermissions: userAgents.permissions.getUserAgentPermissions,
   userAgentHasPermission: userAgentsService.permissions.userAgentHasPermission,
+  userAgentHasCustomPermission: userAgents.permissions.userAgentHasCustomPermission,
+  addCustomPermissionToUserAgent: userAgents.permissions.addCustomPermissionToUserAgent,
   removeCustomUserAgentPermission: userAgentsService.permissions.removeCustomUserAgentPermission,
+
+  // Item permissions
+  userAgentHasPermissionToItem: userAgents.itemPermissions.userAgentHasPermissionToItem,
+  getAllItemsForTheUserAgentHasPermissions:
+    userAgents.itemPermissions.getAllItemsForTheUserAgentHasPermissions,
+  getAllItemsForTheUserAgentHasPermissionsByType:
+    userAgents.itemPermissions.getAllItemsForTheUserAgentHasPermissionsByType,
 };
