@@ -1,6 +1,5 @@
 import fs from 'fs-extra';
 import path from 'path';
-const squirrelly = require('squirrelly');
 import execa from 'execa';
 import { flatten } from 'lodash';
 import {
@@ -13,17 +12,12 @@ import {
   removeFiles,
   fileList,
   copyFileWithSquirrelly,
+  copyFolder,
 } from './lib/fs';
 import compile from './lib/webpack';
 import createReloader from './lib/watch';
 import { hash } from './lib/crypto';
-
-/* Squirrelly Helpers */
-squirrelly.helpers.define(
-  'capitalize',
-  ({ params: [str] }: { params: string[] }) =>
-    str.charAt(0).toUpperCase() + str.substring(1)
-);
+import { config } from 'webpack';
 
 /* Dirs */
 const frontDir = path.resolve(__dirname, '..', 'front');
@@ -39,7 +33,13 @@ interface Plugin {
   path: string;
   public?: boolean;
   private?: boolean;
+  hooks?: boolean;
+  globalContext?: boolean;
+  localContext?: boolean;
 }
+
+/* Global aliases */
+const globalAliases = { '@leemons': frontDir };
 
 // Get all the plugin which need to be installed on front
 async function getPlugins(): Promise<Plugin[]> {
@@ -50,22 +50,17 @@ async function getPlugins(): Promise<Plugin[]> {
   }));
 }
 
-// Get package.json file as string
-function getPackageJSON(config: Object): string {
-  return squirrelly.renderFile(
-    path.resolve(__dirname, 'src', 'packageJSON.json'),
-    config
-  );
-}
-
 // Create the package.json file if missing
 async function createMissingPackageJSON(
   dir: string,
   config: Object
 ): Promise<boolean> {
   if (!(await fileExists(dir))) {
-    const packageJSON = await getPackageJSON(config);
-    await createFile(dir, packageJSON);
+    await copyFileWithSquirrelly(
+      path.resolve(configDir.src, 'package.json'),
+      dir,
+      config
+    );
     return true;
   }
   return false;
@@ -129,6 +124,13 @@ async function checkPluginPaths(plugin: Plugin): Promise<Plugin> {
     ...plugin,
     public: await fileExists(path.resolve(plugin.path, 'index.js')),
     private: await fileExists(path.resolve(plugin.path, 'private.js')),
+    hooks: await fileExists(path.resolve(plugin.path, 'globalHooks.js')),
+    globalContext: await fileExists(
+      path.resolve(plugin.path, 'globalContext.js')
+    ),
+    localContext: await fileExists(
+      path.resolve(plugin.path, 'localContext.js')
+    ),
   };
 }
 
@@ -187,6 +189,10 @@ async function generateMonorepo(dir: string, plugins: Plugin[]): Promise<void> {
     path.resolve(configDir.src, 'index.js'),
     path.resolve(frontDir, 'index.js')
   );
+  await copyFolder(
+    path.resolve(configDir.src, 'contexts'),
+    path.resolve(frontDir, 'contexts')
+  );
 
   const modified = await saveLockFile(
     frontDir,
@@ -196,7 +202,7 @@ async function generateMonorepo(dir: string, plugins: Plugin[]): Promise<void> {
   if (modified) {
     // Copy App.js
     await copyFileWithSquirrelly(
-      path.resolve(configDir.src, 'App.js'),
+      path.resolve(configDir.src, 'App.squirrelly'),
       path.resolve(frontDir, 'App.js'),
       { plugins: await Promise.all(plugins.map(checkPluginPaths)) }
     );
@@ -222,7 +228,7 @@ function generateAliases(dir: string, plugins: Plugin[]): {} {
         path.basename(plugin.path)
       ),
     }),
-    {}
+    { ...globalAliases }
   );
 }
 
@@ -245,7 +251,7 @@ async function main(): Promise<void> {
       if (modified) {
         // Copy App.js
         await copyFileWithSquirrelly(
-          path.resolve(configDir.src, 'App.js'),
+          path.resolve(configDir.src, 'App.squirrelly'),
           path.resolve(frontDir, 'App.js'),
           { plugins: await Promise.all(plugins.map(checkPluginPaths)) }
         );
@@ -255,11 +261,14 @@ async function main(): Promise<void> {
 
   // When a public/private file is added, recreate App.js
   createReloader({
-    name: 'publicPrivatePaths',
+    name: 'pluginsAppPaths',
     dirs: flatten(
       plugins.map((plugin: Plugin) => [
         path.resolve(plugin.path, 'index.js'),
         path.resolve(plugin.path, 'private.js'),
+        path.resolve(plugin.path, 'globalHooks.js'),
+        path.resolve(plugin.path, 'globalContext.js'),
+        path.resolve(plugin.path, 'localContext.js'),
       ])
     ),
     config: {
@@ -282,7 +291,7 @@ async function main(): Promise<void> {
         if (modified) {
           // Copy App.js
           await copyFileWithSquirrelly(
-            path.resolve(configDir.src, 'App.js'),
+            path.resolve(configDir.src, 'App.squirrelly'),
             path.resolve(frontDir, 'App.js'),
             { plugins: await Promise.all(plugins.map(checkPluginPaths)) }
           );
@@ -313,7 +322,7 @@ async function main(): Promise<void> {
           if (modified) {
             // Copy App.js
             await copyFileWithSquirrelly(
-              path.resolve(configDir.src, 'App.js'),
+              path.resolve(configDir.src, 'App.squirrelly'),
               path.resolve(frontDir, 'App.js'),
               { plugins: await Promise.all(plugins.map(checkPluginPaths)) }
             );

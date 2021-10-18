@@ -1,6 +1,13 @@
 import fs from 'fs-extra';
 import path from 'path';
-import squirrelly from 'squirrelly';
+const squirrelly = require('squirrelly');
+
+/* Squirrelly Helpers */
+squirrelly.helpers.define(
+  'capitalize',
+  ({ params: [str] }: { params: string[] }) =>
+    str.charAt(0).toUpperCase() + str.substring(1)
+);
 
 async function _fileExists(
   dir: string,
@@ -154,12 +161,9 @@ export async function removeFiles(
 export async function copyFileWithSquirrelly(
   src: string,
   dest: string,
-  config
+  config: Object
 ): Promise<void> {
-  const App = await squirrelly.renderFile(
-    path.resolve(src, 'App.squirrelly'),
-    config
-  );
+  const App = await squirrelly.renderFile(path.resolve(src), config);
 
   await fs.writeFile(dest, App);
 }
@@ -169,5 +173,13 @@ export async function copyFile(src: string, dest: string): Promise<void> {
     await fs.copyFile(src, dest);
   } catch (e) {
     throw new Error(`Can't copy file ${src} into ${dest}`);
+  }
+}
+
+export async function copyFolder(src: string, dest: string): Promise<void> {
+  try {
+    await fs.copy(src, dest, { recursive: true });
+  } catch (e) {
+    throw new Error(`Can't copy folder ${src} into ${dest}`);
   }
 }
