@@ -1,0 +1,88 @@
+import React from 'react';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
+import loadable from '@loadable/component';
+
+// Plugins imports
+{{@each(it.plugins) => plugin}}
+{{@if(plugin.public)}}
+const {{@capitalize(plugin.name) /}} = loadable(() => import('@{{plugin.name}}'));
+{{/if}}
+{{@if(plugin.private)}}
+const {{@capitalize(plugin.name) /}}Private = loadable(() => import('@{{plugin.name}}/private'));
+{{/if}}
+{{@if(plugin.hooks)}}
+import use{{@capitalize(plugin.name) /}} from '@{{plugin.name}}/globalHooks';
+{{/if}}
+{{@if(plugin.globalContext)}}
+import { Provider as {{@capitalize(plugin.name) /}}GlobalProvider } from '@{{plugin.name}}/globalContext';
+{{/if}}
+{{@if(plugin.globalContext && (plugin.public || plugin.private))}}
+import { Provider as {{@capitalize(plugin.name) /}}LocalProvider } from '@{{plugin.name}}/localContext';
+{{/if}}
+{{/each}}
+
+function App() {
+  // Plugins hooks
+{{@each(it.plugins) => plugin}}
+{{@if(plugin.hooks)}}
+  use{{@capitalize(plugin.name) /}}();
+{{/if}}
+{{/each}}
+  return (
+    <>
+{{@each(it.plugins) => plugin}}
+{{@if(plugin.globalContext)}}
+        <{{@capitalize(plugin.name) /}}GlobalProvider>
+{{/if}}
+{{/each}}
+          <p>This is Leemons app</p>
+          <Router>
+            <Switch>
+              {/* Define each plugin route */}
+{{@each(it.plugins) => plugin}}
+{{@if(plugin.globalContext && (plugin.public || plugin.private))}}
+              <{{@capitalize(plugin.name) /}}LocalProvider>
+{{/if}}
+{{@if(plugin.public)}}
+                <Route path="/{{plugin.name}}">
+                  <{{@capitalize(plugin.name) /}} fallback={<p>Loading...</p>} />
+                </Route>
+{{/if}}
+{{@if(plugin.private)}}
+                <Route path="/private/{{plugin.name}}">
+                  <{{@capitalize(plugin.name) /}}Private fallback={<p>Loading...</p>} />
+                </Route>
+{{/if}}
+{{@if(plugin.globalContext && (plugin.public || plugin.private))}}
+              </{{@capitalize(plugin.name) /}}LocalProvider>
+{{/if}}
+{{/each}}
+              <Route path="/">
+                <p>Not Found</p>
+              </Route>
+            </Switch>
+            <div style={ { display: "flex", flexDirection: "column" } }>
+{{@each(it.plugins) => plugin}}
+{{@if(plugin.public || plugin.private)}}
+              <div style={ { display: "flex" } }>
+{{@if(plugin.public)}}
+                <Link style={ { marginRight: "8px" } }to="/{{plugin.name}}">{{plugin.name}}</Link>
+{{/if}}
+{{@if(plugin.private)}}
+                <Link to="/private/{{plugin.name}}">private {{plugin.name}}</Link>
+{{/if}}
+              </div>
+{{/if}}
+{{/each}}
+            </div>
+          </Router>
+{{@each(it.plugins) => plugin}}
+{{@if(plugin.globalContext)}}
+        </{{@capitalize(plugin.name) /}}GlobalProvider>
+{{/if}}
+{{/each}}
+    </>
+  );
+}
+
+export default App;

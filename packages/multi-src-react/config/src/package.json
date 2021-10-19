@@ -1,0 +1,7 @@
+{
+  "name": "{{it.name}}",
+  "version": "{{it.version}}",
+  "license": "MIT",
+  "private": true,
+  "workspaces": ["./*"]
+}

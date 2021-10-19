@@ -305,7 +305,8 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
         case 'reload-back-front':
           (async () => {
             await setUpBack();
-            await setUpFront();
+            // TODO: ADD NEW FRONT LOGIC
+            // await setUpFront();
           })();
           break;
         default:
@@ -329,15 +330,17 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
      * and set the middlewares.
      */
 
-    let nextDir = leemons.config.get('config.dir.next', 'next');
-    nextDir = path.isAbsolute(nextDir) ? nextDir : path.join(cwd, nextDir);
-    const { handler: frontHandler } = await setupFront(
-      leemons,
-      leemons.enabledPlugins,
-      leemons.enabledProviders,
-      nextDir
-    );
-    setUpFront = frontHandler;
+    // TODO: ADD NEW FRONT LOGIC
+    leemons.setFrontRoutes();
+    // let nextDir = leemons.config.get('config.dir.next', 'next');
+    // nextDir = path.isAbsolute(nextDir) ? nextDir : path.join(cwd, nextDir);
+    // const { handler: frontHandler } = await setupFront(
+    //   leemons,
+    //   leemons.enabledPlugins,
+    //   leemons.enabledProviders,
+    //   nextDir
+    // );
+    // setUpFront = frontHandler;
 
     leemons.loaded = true;
 

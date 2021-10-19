@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "leemons start",
+    "front": "yarn workspace multi-src-react dev $(pwd)",
     "dev": "leemons dev",
     "leemons": "leemons"
   },
