@@ -6,7 +6,7 @@ const constants = require('../../../../config/constants');
  * Check if user the permission
  * @public
  * @static
- * @param {string} userAgentId - User auth id
+ * @param {string | string[]} userAgentId - User auth id
  * @param {UserHasCustomPermission} data - Has permission data
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
@@ -20,7 +20,7 @@ async function userAgentHasPermission(
     return actionNames.indexOf(constants.basicPermission.actionName) >= 0;
   }
   const query = {
-    userAgent: userAgentId,
+    userAgent_$in: _.isArray(userAgentId) ? userAgentId : [userAgentId],
     permissionName,
     actionName_$in: actionNames,
   };

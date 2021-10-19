@@ -21,7 +21,7 @@ async function userAgentHasCustomPermission(
   }
   const query = {
     role_$null: true,
-    userAgent: userAgentId,
+    userAgent_$in: _.isArray(userAgentId) ? userAgentId : [userAgentId],
     permissionName,
     actionName_$in: actionNames,
   };
