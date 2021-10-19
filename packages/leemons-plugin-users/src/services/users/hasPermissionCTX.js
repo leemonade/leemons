@@ -1,5 +1,7 @@
 const _ = require('lodash');
-const { updateUserAgentPermissions } = require('./updateUserAgentPermissions');
+const {
+  updateUserAgentPermissions,
+} = require('../user-agents/permissions/updateUserAgentPermissions');
 const { isSuperAdmin } = require('./isSuperAdmin');
 const { table } = require('../tables');
 const constants = require('../../../config/constants');
@@ -66,4 +68,4 @@ async function hasPermissionCTX(userSession, allowedPermissions, ctx) {
   return false;
 }
 
-module.exports = hasPermissionCTX;
+module.exports = { hasPermissionCTX };

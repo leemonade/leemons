@@ -25,9 +25,9 @@ module.exports = ({ alias }) => ({
     symlinks: false,
     alias: {
       ...alias,
-      react: path.resolve(nodeModules, 'react'),
-      'react-dom': path.resolve(nodeModules, 'react-dom'),
-      'react-router-dom': path.resolve(nodeModules, 'react-router-dom'),
+      react: path.resolve(require.resolve('react'), '..'),//path.resolve(nodeModules, 'react'),
+      'react-dom': path.resolve(require.resolve('react-dom'), '..'),//path.resolve(nodeModules, 'react-dom'),
+      'react-router-dom': path.resolve(require.resolve('react-router-dom'), '..'),//path.resolve(nodeModules, 'react-router-dom'),
     },
   },
   module: {

@@ -43,6 +43,7 @@ module.exports = {
     checkbox: 'Checkbox',
     select: 'Select',
     boolean: 'Boolean',
+    user: 'User',
     multioption_types: {
       dropdown: 'Dropdown (+chips)',
       checkboxs: 'Checkboxes',

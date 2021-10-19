@@ -200,6 +200,11 @@ const transformItemToSchemaAndUi = (item, locale) => {
           });
         }
       }
+
+      // User
+      if (frontConfig.type === datasetDataTypes.user.type) {
+        schema.type = 'string';
+      }
     }
   }
 

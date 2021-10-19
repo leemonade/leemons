@@ -29,7 +29,7 @@ async function unGrantAccessUserAgentToEvent(id, userAgentId, { actionName, tran
 
   const { warnings } = await leemons
     .getPlugin('users')
-    .services.users.removeCustomPermission(userAgentIds, query, { transacting });
+    .services.users.removeCustomUserAgentPermission(userAgentIds, query, { transacting });
   if (warnings && warnings.errors && warnings.errors.length) throw warnings.errors[0];
   return true;
 }

@@ -87,6 +87,12 @@ module.exports = [
     method: 'POST',
     handler: 'users.createSuperAdmin',
   },
+  {
+    path: '/user/contacts',
+    method: 'POST',
+    handler: 'users.contacts',
+    authenticated: true,
+  },
   /**
    * Profiles
    * */

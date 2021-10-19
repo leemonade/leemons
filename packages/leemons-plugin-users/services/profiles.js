@@ -7,6 +7,9 @@ module.exports = {
   update: profiles.update,
   existName: profiles.existName,
   detailByUri: profiles.detailByUri,
+  // TODO Comprobar acceso
+  addProfileContact: profiles.addProfileContact,
+  getProfileContacts: profiles.getProfileContacts,
   addCustomPermissions: profiles.addCustomPermissions,
   removeCustomPermissionsByName: profiles.removeCustomPermissionsByName,
   getRoleForRelationshipProfileCenter: profiles.getRoleForRelationshipProfileCenter,

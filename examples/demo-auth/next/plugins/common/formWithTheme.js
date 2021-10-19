@@ -1,11 +1,24 @@
 import * as _ from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { withTheme } from '@rjsf/core';
-import { Checkbox, FormControl, Input, Label, Radio, Select, Textarea, Toggle } from 'leemons-ui';
+import {
+  Checkbox,
+  FormControl,
+  Input,
+  Label,
+  Radio,
+  Select,
+  Textarea,
+  Toggle,
+  UserCard,
+} from 'leemons-ui';
 import Engine from 'json-rules-engine-simplified';
 import applyRules from 'rjsf-conditionals';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import regex from '@common/regex';
+import datasetDataTypes from '@dataset/helpers/datasetDataTypes';
+import { getContactsRequest } from '@users/request';
+import Autosuggest from 'react-autosuggest';
 
 const MyCustomFormControl = ({ children, required, rawErrors, schema, descriptionOutside }) => {
   return (
@@ -54,6 +67,122 @@ const TextareaWidget = (props) => {
   );
 };
 
+const UserSelect = (props) => {
+  const {
+    className,
+    onChange,
+    value,
+    id,
+    required,
+    disabled,
+    autofocus,
+    type,
+    schema,
+    readonly,
+    ...rest
+  } = props;
+
+  const [userAgents, setUserAgents] = useState(null);
+  const [suggestions, setSuggestions] = useState(null);
+  const [suggestionInputValue, setSuggestionInputValue] = useState('');
+
+  useEffect(() => {
+    let mounted = true;
+    const params = {
+      withProfile: true,
+      withCenter: true,
+    };
+    let profileName = true;
+    let centerName = true;
+    if (props.schema.frontConfig.profile && props.schema.frontConfig.profile.length) {
+      params.toProfile = props.schema.frontConfig.profile;
+      profileName = props.schema.frontConfig.profile.length !== 1;
+    }
+    if (props.schema.frontConfig.center && props.schema.frontConfig.center.length) {
+      params.toCenter = props.schema.frontConfig.center;
+      centerName = props.schema.frontConfig.center.length !== 1;
+    }
+    getContactsRequest(params).then((response) => {
+      if (mounted) {
+        const agents = _.map(
+          response.userAgents,
+          ({
+            id,
+            user: { name, surnames },
+            profile: { name: pName },
+            center: { name: cName },
+          }) => ({
+            id,
+            name:
+              name +
+              (surnames ? surnames : '') +
+              (profileName ? ` - ${pName}` : '') +
+              (centerName ? ` - ${cName}` : ''),
+          })
+        );
+        setSuggestions(agents);
+        setUserAgents(agents);
+      }
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (value && userAgents) {
+      const agent = _.find(userAgents, { id: value });
+      if (agent && agent.name !== suggestionInputValue) {
+        setSuggestionInputValue(agent.name);
+      }
+    }
+  }, [value, userAgents]);
+
+  const getSuggestions = (_value) => {
+    const inputValue = _value.trim().toLowerCase();
+    const inputLength = inputValue.length;
+
+    return inputLength === 0
+      ? []
+      : userAgents.filter((a) => a.name.toLowerCase().indexOf(inputValue) >= 0);
+  };
+
+  const onSuggestionsFetchRequested = ({ value: _value }) => {
+    setSuggestions(getSuggestions(_value));
+  };
+
+  const onSuggestionsClearRequested = () => {
+    setSuggestions([]);
+  };
+
+  return (
+    <MyCustomFormControl {...props}>
+      {suggestions ? (
+        <Autosuggest
+          suggestions={suggestions}
+          onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+          onSuggestionsClearRequested={onSuggestionsClearRequested}
+          getSuggestionValue={(item) => item.name}
+          onSuggestionSelected={(e, event) => {
+            onChange(event.suggestion.id);
+          }}
+          renderSuggestion={(item) => {
+            return <UserCard className={`minimal`}>{item.name}</UserCard>;
+          }}
+          inputProps={{
+            placeholder: schema.selectPlaceholder,
+            value: suggestionInputValue,
+            disabled: disabled,
+            onChange: (e, { newValue }) => {
+              setSuggestionInputValue(newValue);
+            },
+          }}
+        />
+      ) : null}
+    </MyCustomFormControl>
+  );
+};
+
 const BaseInput = (props) => {
   const {
     className,
@@ -68,7 +197,13 @@ const BaseInput = (props) => {
     readonly,
     ...rest
   } = props;
+
   const ignoreTypes = ['email', 'url'];
+
+  if (props.schema.frontConfig.type === datasetDataTypes.user.type) {
+    return <UserSelect {...props} />;
+  }
+
   let min = null;
   let max = null;
   if (schema.minDate) min = new Date(schema.minDate).toISOString().slice(0, 10);

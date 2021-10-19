@@ -34,6 +34,9 @@ const datasetDataTypes = {
   select: {
     type: 'select',
   },
+  user: {
+    type: 'user',
+  },
 };
 
 export default datasetDataTypes;

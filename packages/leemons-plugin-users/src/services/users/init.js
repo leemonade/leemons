@@ -1,8 +1,5 @@
 const _ = require('lodash');
-const constants = require('../../../config/constants');
-const { generateJWTPrivateKey } = require('./generateJWTPrivateKey');
-const recoverEmail = require('../../../emails/recoverPassword');
-const resetPassword = require('../../../emails/resetPassword');
+const { generateJWTPrivateKey } = require('./jwt/generateJWTPrivateKey');
 
 async function init() {
   await generateJWTPrivateKey();

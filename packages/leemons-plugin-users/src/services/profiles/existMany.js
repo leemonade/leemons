@@ -5,4 +5,4 @@ async function existMany(ids, { transacting } = {}) {
   return response === ids.length;
 }
 
-module.exports = existMany;
+module.exports = { existMany };

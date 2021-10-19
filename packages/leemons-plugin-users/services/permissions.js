@@ -1,34 +1,48 @@
+const userAgents = require('../src/services/user-agents');
 const permissions = require('../src/services/permissions');
-const itemPermissions = require('../src/services/item-permissions');
 const userProfile = require('../src/services/user-profile');
+const itemPermissions = require('../src/services/item-permissions');
+const userAgentsService = require('../src/services/user-agents');
 
 module.exports = {
   add: permissions.add,
-  addMany: permissions.addMany,
-  update: permissions.update,
-  updateMany: permissions.updateMany,
-  delete: permissions.remove,
-  deleteMany: permissions.removeMany,
   exist: permissions.exist,
+  delete: permissions.remove,
+  update: permissions.update,
+  addMany: permissions.addMany,
   existMany: permissions.existMany,
   hasAction: permissions.hasAction,
-  hasActionMany: permissions.hasActionMany,
-  manyPermissionsHasManyActions: permissions.manyPermissionsHasManyActions,
-  addActionMany: permissions.addActionMany,
   addAction: permissions.addAction,
+  updateMany: permissions.updateMany,
+  deleteMany: permissions.removeMany,
+  hasActionMany: permissions.hasActionMany,
+  addActionMany: permissions.addActionMany,
   findUserAgentsWithPermission: permissions.findUserAgentsWithPermission,
+  manyPermissionsHasManyActions: permissions.manyPermissionsHasManyActions,
+
   // User agent
-  addCustomPermissionToUserAgent: permissions.addCustomPermissionToUserAgent,
-  getUserAgentPermissions: permissions.getUserAgentPermissions,
-  userAgentHasCustomPermission: permissions.userAgentHasCustomPermission,
+  getUserAgentPermissions: userAgents.permissions.getUserAgentPermissions,
+  userAgentHasPermission: userAgentsService.permissions.userAgentHasPermission,
+  userAgentHasCustomPermission: userAgents.permissions.userAgentHasCustomPermission,
+  addCustomPermissionToUserAgent: userAgents.permissions.addCustomPermissionToUserAgent,
+  removeCustomUserAgentPermission: userAgentsService.permissions.removeCustomUserAgentPermission,
+
   // Item permissions
   addItem: itemPermissions.add,
-  addItemBasicIfNeed: itemPermissions.addBasicIfNeed,
-  countItems: itemPermissions.count,
   findItems: itemPermissions.find,
-  removeItems: itemPermissions.remove,
   existItems: itemPermissions.exist,
+  countItems: itemPermissions.count,
+  removeItems: itemPermissions.remove,
+  addItemBasicIfNeed: itemPermissions.addBasicIfNeed,
+
   // User profile
   addCustomPermissionToUserProfile: userProfile.addCustomPermissionToUserProfile,
   removeCustomPermissionToUserProfile: userProfile.removeCustomPermissionToUserProfile,
+
+  // User agent - Item permissions
+  userAgentHasPermissionToItem: userAgents.itemPermissions.userAgentHasPermissionToItem,
+  getAllItemsForTheUserAgentHasPermissions:
+    userAgents.itemPermissions.getAllItemsForTheUserAgentHasPermissions,
+  getAllItemsForTheUserAgentHasPermissionsByType:
+    userAgents.itemPermissions.getAllItemsForTheUserAgentHasPermissionsByType,
 };
