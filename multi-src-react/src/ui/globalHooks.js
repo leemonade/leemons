@@ -1,4 +1,4 @@
-import { useEffect, useContext } from 'react';
+import { useEffect, useRef, useContext } from 'react';
 import GlobalContext from '@leemons/contexts/global';
 
 export default function useUi() {
@@ -9,6 +9,7 @@ export default function useUi() {
   }, []);
 
   useEffect(() => {
+    console.log('Loading Api Middlewares again');
     // Replace the rest params with the ones specified in the options
     context.leemons.api.useReq(async (ctx) => {
       if (ctx.options.params) {
@@ -31,8 +32,8 @@ export default function useUi() {
           (ability) => ability.ability.name
         ),
       };
+      console.log(ctx.response);
     });
-
     console.log('registering');
   }, []);
 }

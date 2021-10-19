@@ -1,13 +1,12 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import GlobalContext from '@leemons/contexts/global';
-import UIGlobalContext from '@ui/globalContext';
 import Button from './components/Button';
 import Text from './components/Text';
 import Image from './components/Image';
 
 export default function index() {
   const context = useContext(GlobalContext);
-  const uiContext = useContext(UIGlobalContext);
+  const [changes, setChanges] = useState(0);
 
   useEffect(() => {
     context.leemons
@@ -24,13 +23,23 @@ export default function index() {
       <Button>Hola Mundo</Button>
       <button
         onClick={() => {
+          console.log('Update');
+          setChanges((changes) => changes + 1);
           context?.setValue((value) => ({
             ...value,
-            leemons: { version: '2.0.0' },
+            leemons: {
+              ...value.leemons,
+              version: value.leemons.version
+                .split('.')
+                .map((_value, i) =>
+                  i === 0 ? parseInt(_value, 10) + 1 : _value
+                )
+                .join('.'),
+            },
           }));
         }}
       >
-        Update version
+        Update version to {changes + 2}.0.0
       </button>
       <Image />
       <Text>Hola Mundo</Text>
