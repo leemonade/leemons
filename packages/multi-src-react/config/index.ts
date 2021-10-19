@@ -309,9 +309,9 @@ async function main(): Promise<void> {
     dirs: pluginsFile,
     logger: console,
     handler: async () => {
+      await stop();
       plugins = await getPlugins();
       await generateMonorepo(frontDir, plugins);
-      await stop();
       stop = await compile(
         { alias: generateAliases(frontDir, plugins) },
         async () => {

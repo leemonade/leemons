@@ -1,1 +1,3 @@
-[]
+[
+  {"name": "users_demo", "path": "./users"}
+]
