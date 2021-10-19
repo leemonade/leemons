@@ -8,6 +8,10 @@ const { addCustomPermissions } = require('./permissions/addCustomPermissions');
 const { removeCustomPermissionsByName } = require('./permissions/removeCustomPermissionsByName');
 const { getRoleForRelationshipProfileCenter } = require('./getRoleForRelationshipProfileCenter');
 
+// Contacts
+const { addProfileContact } = require('./contacts/addProfileContact');
+const { getProfileContacts } = require('./contacts/getProfileContacts');
+
 module.exports = {
   add,
   list,
@@ -15,6 +19,8 @@ module.exports = {
   existMany,
   existName,
   detailByUri,
+  addProfileContact,
+  getProfileContacts,
   addCustomPermissions,
   removeCustomPermissionsByName,
   getRoleForRelationshipProfileCenter,

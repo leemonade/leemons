@@ -9,18 +9,21 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function getUserAgentCenter(userAgent, { transacting } = {}) {
+async function getUserAgentProfile(userAgent, { transacting } = {}) {
   const isArray = _.isArray(userAgent);
   const userAgents = isArray ? userAgent : [userAgent];
-  const roleCenters = await table.roleCenter.find(
+  const roleProfiles = await table.profileRole.find(
     { role_$in: _.map(userAgents, 'role') },
     {
-      columns: ['center'],
+      columns: ['profile'],
       transacting,
     }
   );
-  const centers = await table.centers.find({ id: _.map(roleCenters, 'center') }, { transacting });
-  return isArray ? centers : centers[0];
+  const profiles = await table.profiles.find(
+    { id: _.map(roleProfiles, 'profile') },
+    { transacting }
+  );
+  return isArray ? profiles : profiles[0];
 }
 
-module.exports = { getUserAgentCenter };
+module.exports = { getUserAgentProfile };

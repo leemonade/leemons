@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const table = require('../table');
+const { table } = require('../../tables');
 const { getUserAgentPermissions } = require('../permissions/getUserAgentPermissions');
 
 async function getBaseAllPermissionsQuery(_userAgentId, { transacting } = {}) {
@@ -7,7 +7,7 @@ async function getBaseAllPermissionsQuery(_userAgentId, { transacting } = {}) {
   const userAgentIds = _.map(_userAgentIds, (_userAgentId) => {
     return _.isString(_userAgentId) ? _userAgentId : _userAgentId.id;
   });
-  const userAgents = await table.userAgents.find({ id_$in: userAgentIds }, { transacting });
+  const userAgents = await table.userAgent.find({ id_$in: userAgentIds }, { transacting });
 
   const permissions = await getUserAgentPermissions(userAgents, {
     transacting,

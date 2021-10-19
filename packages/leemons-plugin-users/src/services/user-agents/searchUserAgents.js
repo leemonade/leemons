@@ -21,7 +21,7 @@ const { getUserAgentsInfo } = require('./getUserAgentsInfo');
 
 async function searchUserAgents(
   { profile, center, user, ignoreUserIds },
-  { withProfile, withCenter, transacting } = {}
+  { withProfile, withCenter, userColumns, transacting } = {}
 ) {
   const finalQuery = {};
   // ES: Como es posible que se quiera filtrar desde multiples sitios por usuarios añadimos un array
@@ -44,7 +44,7 @@ async function searchUserAgents(
   // extract only the agents that are in that center.
   if (center) {
     centerRoles = await table.roleCenter.find(
-      { center },
+      { center_$in: _.isArray(center) ? center : [center] },
       {
         columns: ['role'],
         transacting,
@@ -59,7 +59,7 @@ async function searchUserAgents(
   // extract only the agents that are in that profile.
   if (profile) {
     profileRoles = await table.profileRole.find(
-      { profile },
+      { profile_$in: _.isArray(profile) ? profile : [profile] },
       {
         columns: ['role'],
         transacting,
@@ -117,7 +117,12 @@ async function searchUserAgents(
     transacting,
   });
 
-  return getUserAgentsInfo(_.map(userAgents, 'id'), { withProfile, withCenter, transacting });
+  return getUserAgentsInfo(_.map(userAgents, 'id'), {
+    withProfile,
+    withCenter,
+    userColumns,
+    transacting,
+  });
 }
 
 module.exports = { searchUserAgents };

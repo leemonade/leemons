@@ -16,6 +16,9 @@ async function initProfiles() {
     description: 'Tutor legal de los alumnos vease un padre/madre',
     permissions: [],
   });
+
+  await leemons.getPlugin('users').services.profiles.addProfileContact(student.id, guardian.id);
+
   return { student, guardian };
 }
 

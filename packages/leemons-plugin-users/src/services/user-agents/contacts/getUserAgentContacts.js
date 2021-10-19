@@ -1,6 +1,9 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
 const { getUserAgentsInfo } = require('../getUserAgentsInfo');
+const { getUserAgentProfile } = require('../getUserAgentProfile');
+const { getProfileContacts } = require('../../profiles/contacts/getProfileContacts');
+const { searchUserAgents } = require('../searchUserAgents');
 
 /**
  *
@@ -34,8 +37,33 @@ async function getUserAgentContacts(
     transacting,
   } = {}
 ) {
+  const userColumns = ['id', 'name', 'surnames'];
   const isArray = _.isArray(_fromUserAgent);
   const fromUserAgents = isArray ? _fromUserAgent : [_fromUserAgent];
+
+  const userAgents = await table.userAgent.find(
+    { id_$in: fromUserAgents },
+    { columns: ['role'], transacting }
+  );
+  const userAgentsProfiles = await getUserAgentProfile(userAgents, { transacting });
+  let profileContacts = await getProfileContacts(_.map(userAgentsProfiles, 'id'), {
+    transacting,
+  });
+  profileContacts = _.uniq(_.flatten(profileContacts));
+
+  const userAgentsForProfiles = await searchUserAgents(
+    {
+      profile: toProfile ? _.intersection(profileContacts, toProfile) : profileContacts,
+      center: toCenter,
+    },
+    {
+      withProfile,
+      withCenter,
+      userColumns,
+      transacting,
+    }
+  );
+
   const query = {
     fromUserAgent_$in: fromUserAgents,
   };
@@ -68,26 +96,31 @@ async function getUserAgentContacts(
     const userAgents = await getUserAgentsInfo(_.map(response, 'toUserAgent'), {
       withProfile,
       withCenter,
-      userColumns: ['id', 'name', 'surnames'],
+      userColumns,
       transacting,
     });
     userAgentsById = _.keyBy(userAgents, 'id');
   }
 
-  if (isArray) {
-    const responseByFromUserAgent = _.groupBy(response, 'fromUserAgent');
-    return _.map(fromUserAgents, (fromUserAgent) => {
-      return _.map(responseByFromUserAgent[fromUserAgent], ({ toUserAgent }) => {
-        if (userAgentsById) return userAgentsById[toUserAgent];
-        return toUserAgent;
-      });
-    });
+  let toReturn = _.map(response, ({ toUserAgent }) => {
+    if (userAgentsById) return userAgentsById[toUserAgent];
+    return toUserAgent;
+  });
+
+  toReturn = toReturn.concat(
+    _.map(userAgentsForProfiles, (userAgentsForProfile) => {
+      if (userAgentsById) return userAgentsForProfile;
+      return userAgentsForProfile.id;
+    })
+  );
+
+  if (userAgentsById) {
+    toReturn = _.uniqBy(toReturn, 'id');
   } else {
-    return _.map(response, ({ toUserAgent }) => {
-      if (userAgentsById) return userAgentsById[toUserAgent];
-      return toUserAgent;
-    });
+    toReturn = _.uniq(toReturn);
   }
+
+  return toReturn;
 }
 
 module.exports = { getUserAgentContacts };

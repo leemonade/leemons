@@ -29,6 +29,8 @@ const table = {
 
   userProfile: leemons.query('plugins_users::user-profile'),
   userAgentContacts: leemons.query('plugins_users::user-agent-contacts'),
+
+  profileContacts: leemons.query('plugins_users::profile-contacts'),
 };
 
 module.exports = { table };
