@@ -1,18 +1,13 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import App from './App';
-import { useContextProvider as useGlobalProvider } from './contexts/global';
-
-function AppWrapper({ children }) {
-  const GlobalProvider = useGlobalProvider();
-  return <GlobalProvider>{children}</GlobalProvider>;
-}
+import { Provider as GlobalProvider } from './contexts/global';
 
 ReactDom.render(
   <React.StrictMode>
-    <AppWrapper>
+    <GlobalProvider>
       <App />
-    </AppWrapper>
+    </GlobalProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

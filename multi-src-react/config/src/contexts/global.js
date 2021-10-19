@@ -3,8 +3,10 @@ import React, { createContext, useState } from 'react';
 const context = createContext();
 
 export default context;
-export const { Provider: GlobalProvider, Consumer: GlobalConsumer } = context;
+export const { Consumer: GlobalConsumer } = context;
+context.displayName = 'Global Context';
 
+// Leemons Api is an api fetcher with middlewares
 class LeemonsApi {
   #reqMiddlewares;
 
@@ -48,18 +50,17 @@ class LeemonsApi {
     );
 }
 
-export const useContextProvider = () => {
+export function Provider({ children }) {
+  const { api } = new LeemonsApi();
   const [value, setValue] = useState({
     leemons: {
-      api: new LeemonsApi().api,
+      api,
       version: '1.0.0',
     },
   });
-  const Provider = ({ children }) => (
-    <GlobalProvider value={{ ...value, setValue }}>{children}</GlobalProvider>
+  return (
+    <context.Provider value={{ ...value, setValue }}>
+      {children}
+    </context.Provider>
   );
-
-  Provider.displayName = 'GlobalProvider';
-
-  return Provider;
-};
+}

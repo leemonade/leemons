@@ -13,15 +13,13 @@ export default async function compile(
   const compiler = webpack(config(_config));
 
   compiler.hooks.watchRun.tapPromise('Leemons', onChange);
-
-  // Build
-  // compiler.run(() => console.log('Compiled'));
   // Development
 
   /* @ts-ignore */
   const devServer = new WebpackDevServer(
     {
       historyApiFallback: true,
+      port: 3000,
     },
     compiler
   );

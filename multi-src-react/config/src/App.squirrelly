@@ -14,10 +14,10 @@ const {{@capitalize(plugin.name) /}}Private = loadable(() => import('@{{plugin.n
 import use{{@capitalize(plugin.name) /}} from '@{{plugin.name}}/globalHooks';
 {{/if}}
 {{@if(plugin.globalContext)}}
-import { useContextProvider as use{{@capitalize(plugin.name) /}}GlobalProvider } from '@{{plugin.name}}/globalContext';
+import { Provider as {{@capitalize(plugin.name) /}}GlobalProvider } from '@{{plugin.name}}/globalContext';
 {{/if}}
 {{@if(plugin.globalContext && (plugin.public || plugin.private))}}
-import { useContextProvider as use{{@capitalize(plugin.name) /}}LocalProvider } from '@{{plugin.name}}/localContext';
+import { Provider as {{@capitalize(plugin.name) /}}LocalProvider } from '@{{plugin.name}}/localContext';
 {{/if}}
 {{/each}}
 
@@ -26,12 +26,6 @@ function App() {
 {{@each(it.plugins) => plugin}}
 {{@if(plugin.hooks)}}
   use{{@capitalize(plugin.name) /}}();
-{{/if}}
-{{@if(plugin.globalContext)}}
-  const {{@capitalize(plugin.name) /}}GlobalProvider = use{{@capitalize(plugin.name) /}}GlobalProvider();
-{{/if}}
-{{@if(plugin.globalContext && (plugin.public || plugin.private))}}
-  const {{@capitalize(plugin.name) /}}LocalProvider = use{{@capitalize(plugin.name) /}}LocalProvider();
 {{/if}}
 {{/each}}
   return (
