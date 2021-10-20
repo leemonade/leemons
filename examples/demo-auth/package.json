@@ -31,7 +31,7 @@
     "leemons-plugin-users": "1.0.0",
     "leemons-provider-emails-amazon-ses": "1.0.0",
     "mysql": "^2.18.1",
-    "simplebar-react": "^2.3.4",
+    "simplebar-react": "^2.3.4"
 
   },
   "devDependencies": {}

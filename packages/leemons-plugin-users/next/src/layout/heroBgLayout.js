@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { HeroBg, ImageLoader, Logo } from 'leemons-ui';
 import useTranslate from '@multilanguage/useTranslate';
 import tLoader from '@multilanguage/helpers/tLoader';
@@ -49,3 +51,7 @@ export default function HeroBgLayout({ children }) {
     </>
   );
 }
+
+HeroBgLayout.propTypes = {
+  children: PropTypes.element,
+};

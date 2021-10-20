@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
-import React, { useContext, useEffect } from 'react';
-import SessionContext from './context/session';
+import { useContext, useEffect } from 'react';
+import SessionContext from '@users/context/session';
 import Cookies from 'js-cookie';
 import useSWR from 'swr';
-import Router from 'next/router';
+import { useHistory } from 'react-router-dom';
 
 /**
  * @private
@@ -48,9 +48,8 @@ function getUserToken(data) {
   if (data) {
     if (_.isString(data)) {
       return data;
-    } else {
-      return data.userToken;
     }
+    return data.userToken;
   }
   return null;
 }
@@ -59,7 +58,9 @@ export function getCookieToken(onlyCookie) {
   let token = Cookies.get('token');
   try {
     token = JSON.parse(token);
-  } catch (e) {}
+  } catch (e) {
+    /* AllGood */
+  }
   return onlyCookie ? token : getUserToken(token);
 }
 
@@ -73,6 +74,7 @@ function getContextToken() {
 }
 
 export function useSession({ redirectTo, redirectIfFound } = {}) {
+  const history = useHistory();
   let result = null;
   let finished = null;
   let hasUser = null;
@@ -114,7 +116,7 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
         if (_.isFunction(redirectTo)) {
           redirectTo();
         } else if (_.isString(redirectTo)) {
-          Router.push(`/${redirectTo}`);
+          history.push(`/${redirectTo}`);
         }
       }
     } else {
@@ -128,7 +130,7 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
         if (_.isFunction(redirectTo)) {
           redirectTo();
         } else if (_.isString(redirectTo)) {
-          Router.push(`/${redirectTo}`);
+          history.push(`/${redirectTo}`);
         }
       }
     }
@@ -137,6 +139,6 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
   return result;
 }
 
-export function logoutSession(redirectTo) {
-  Router.push(`/users/public/auth/logout?redirectTo=${redirectTo}`);
+export function logoutSession(history, redirectTo) {
+  history.push(`/users/public/auth/logout?redirectTo=${redirectTo}`);
 }

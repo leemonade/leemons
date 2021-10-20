@@ -1,7 +1,9 @@
-import { HeroBg, ImageLoader, Logo } from 'leemons-ui';
-import useTranslate from '@multilanguage/src/useTranslate';
-import tLoader from '@multilanguage/src/helpers/tLoader';
-import prefixPN from '../public/helpers/prefixPN';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { HeroBg, ImageLoader, Logo } from '@leemons-ui/components/ui';
+import useTranslate from '@multilanguage/useTranslate';
+import tLoader from '@multilanguage/helpers/tLoader';
+import prefixPN from '@users/helpers/prefixPN';
 
 export default function HeroBgLayout({ children }) {
   const [translations] = useTranslate({ keysStartsWith: prefixPN('hero_bg') });
@@ -49,3 +51,7 @@ export default function HeroBgLayout({ children }) {
     </>
   );
 }
+
+HeroBgLayout.propTypes = {
+  children: PropTypes.element,
+};
