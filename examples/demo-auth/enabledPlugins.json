@@ -1,3 +1,5 @@
 [
-  {"name": "users_demo", "path": "./users"}
+  {"name": "users_demo", "path": "./users"},
+  {"name": "users", "path": "../../packages/leemons-plugin-users/frontend"},
+  {"name": "multilanguage", "path": "../../packages/leemons-plugin-multilanguage/frontend"}
 ]

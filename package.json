@@ -70,5 +70,8 @@
       "pre-commit": "npm run lint -s",
       "pre-push": "npm run lint -s"
     }
+  },
+  "dependencies": {
+    "babel-eslint": "^10.1.0"
   }
 }
