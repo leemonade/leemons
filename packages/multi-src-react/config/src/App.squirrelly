@@ -16,7 +16,7 @@ import use{{@capitalize(plugin.name) /}} from '@{{plugin.name}}/../globalHooks';
 {{@if(plugin.globalContext)}}
 import { Provider as {{@capitalize(plugin.name) /}}GlobalProvider } from '@{{plugin.name}}/../globalContext';
 {{/if}}
-{{@if(plugin.globalContext && (plugin.public || plugin.private))}}
+{{@if(plugin.localContext && (plugin.public || plugin.private))}}
 import { Provider as {{@capitalize(plugin.name) /}}LocalProvider } from '@{{plugin.name}}/../localContext';
 {{/if}}
 {{/each}}
