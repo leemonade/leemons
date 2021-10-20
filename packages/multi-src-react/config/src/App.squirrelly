@@ -35,7 +35,6 @@ function App() {
         <{{@capitalize(plugin.name) /}}GlobalProvider>
 {{/if}}
 {{/each}}
-          <p>This is Leemons app</p>
           <Router>
             <Switch>
               {/* Define each plugin route */}
@@ -61,6 +60,8 @@ function App() {
                 <p>Not Found</p>
               </Route>
             </Switch>
+
+            {/*
             <div style={ { display: "flex", flexDirection: "column" } }>
 {{@each(it.plugins) => plugin}}
 {{@if(plugin.public || plugin.private)}}
@@ -75,6 +76,7 @@ function App() {
 {{/if}}
 {{/each}}
             </div>
+            */}
           </Router>
 {{@each(it.plugins) => plugin}}
 {{@if(plugin.globalContext)}}
