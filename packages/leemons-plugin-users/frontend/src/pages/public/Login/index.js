@@ -36,7 +36,7 @@ const emailRegex =
 
 export default function Login() {
   useSession({
-    redirectTo: _.isString(getCookieToken(true)) ? 'users/private/select-profile' : constants.base,
+    redirectTo: _.isString(getCookieToken(true)) ? 'private/users/select-profile' : constants.base,
     redirectIfFound: true,
   });
   const history = useHistory();
@@ -57,7 +57,6 @@ export default function Login() {
     try {
       setFormStatus('loading');
       const response = await loginRequest(data);
-      console.log(response);
       try {
         // Comprobamos si tiene recordado un perfil
         const { profile } = await getRememberProfileRequest(response.jwtToken);

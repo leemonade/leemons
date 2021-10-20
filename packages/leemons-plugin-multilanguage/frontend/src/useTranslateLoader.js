@@ -7,4 +7,4 @@ function useTranslateLoader(prefix) {
   return [t, translations];
 }
 
-module.exports = useTranslateLoader;
+export default useTranslateLoader;

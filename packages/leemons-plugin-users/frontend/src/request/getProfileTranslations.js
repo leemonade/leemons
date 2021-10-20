@@ -1,5 +1,5 @@
 import { getLocalizations } from '@multilanguage/useTranslate';
-import prefixPN from '../public/helpers/prefixPN';
+import prefixPN from '@users/helpers/prefixPN';
 
 async function getProfileTranslations(profileId, locale) {
   const name = prefixPN(`profile.${profileId}.name`);

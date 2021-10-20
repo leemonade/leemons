@@ -114,7 +114,7 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
         (redirectIfFound && hasUser)
       ) {
         if (_.isFunction(redirectTo)) {
-          redirectTo();
+          redirectTo(history);
         } else if (_.isString(redirectTo)) {
           history.push(`/${redirectTo}`);
         }
@@ -128,7 +128,7 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
         (redirectIfFound && hasUser)
       ) {
         if (_.isFunction(redirectTo)) {
-          redirectTo();
+          redirectTo(history);
         } else if (_.isString(redirectTo)) {
           history.push(`/${redirectTo}`);
         }
