@@ -140,5 +140,7 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
 }
 
 export function logoutSession(history, redirectTo) {
-  history.push(`/users/public/auth/logout?redirectTo=${redirectTo}`);
+  Cookies.remove('token');
+  history.push(redirectTo);
+  // history.push(`/users/public/auth/logout?redirectTo=${redirectTo}`);
 }
