@@ -57,6 +57,7 @@ export default function Login() {
     try {
       setFormStatus('loading');
       const response = await loginRequest(data);
+      console.log(response);
       try {
         // Comprobamos si tiene recordado un perfil
         const { profile } = await getRememberProfileRequest(response.jwtToken);
@@ -82,7 +83,6 @@ export default function Login() {
       // Finalmente metemos el token
       Cookies.set('token', response.jwtToken);
     } catch (err) {
-      console.log('dafuck');
       if (_.isObject(err) && err.status === 401) setFormStatus('error-match');
       if (_.isObject(err) && err.status === 500) setFormStatus('unknown-error');
     }
@@ -90,78 +90,76 @@ export default function Login() {
 
   return (
     <HeroBgLayout>
-      <>
-        <h1 className="text-2xl mb-12">{t('title')}</h1>
+      <h1 className="text-2xl mb-12">{t('title')}</h1>
 
-        {formStatus === 'error-match' || formStatus === 'unknown-error' ? (
-          <Alert color="error mb-8 -mt-4">
-            <div className="flex-1">
-              <label>
-                {formStatus === 'error-match' ? t('form_error') : tCommon('unknown_error')}
-              </label>
-            </div>
-          </Alert>
-        ) : null}
-
-        {/* Login Form */}
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {/* Email input */}
-          <FormControl formError={errors.email} label={t('email')} className="mb-6">
-            <Input
-              outlined={true}
-              placeholder={t('email')}
-              defaultValue="jaime@leemons.io"
-              {...register('email', {
-                required: tCommon('required'),
-                pattern: {
-                  value: emailRegex,
-                  message: tCommon('email'),
-                },
-              })}
-            />
-          </FormControl>
-
-          {/* Password input */}
-          <FormControl formError={errors.password} label={t('password')}>
-            <Input
-              type="password"
-              outlined={true}
-              placeholder={t('password')}
-              defaultValue="testing"
-              {...register('password', { required: tCommon('required') })}
-            />
-          </FormControl>
-
-          {/* Go recover page */}
-          <div>
-            <Link to={goRecoverPage(history, true)} className="text-sm">
-              {t('remember_password')}
-            </Link>
+      {formStatus === 'error-match' || formStatus === 'unknown-error' ? (
+        <Alert color="error mb-8 -mt-4">
+          <div className="flex-1">
+            <label>
+              {formStatus === 'error-match' ? t('form_error') : tCommon('unknown_error')}
+            </label>
           </div>
+        </Alert>
+      ) : null}
 
-          {/* Send form */}
-          <Button
-            className="my-8 btn-block"
-            loading={formStatus === 'loading'}
-            color="primary"
-            rounded={true}
-          >
-            <div className="flex-1 text-left">{t('log_in')}</div>
-            <div className="relative" style={{ width: '8px', height: '14px' }}>
-              <ImageLoader src="/assets/svgs/chevron-right.svg" />
-            </div>
-          </Button>
+      {/* Login Form */}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {/* Email input */}
+        <FormControl formError={errors.email} label={t('email')} className="mb-6">
+          <Input
+            outlined={true}
+            placeholder={t('email')}
+            defaultValue="jaime@leemons.io"
+            {...register('email', {
+              required: tCommon('required'),
+              pattern: {
+                value: emailRegex,
+                message: tCommon('email'),
+              },
+            })}
+          />
+        </FormControl>
 
-          {/* Go register page */}
-          {/*
+        {/* Password input */}
+        <FormControl formError={errors.password} label={t('password')}>
+          <Input
+            type="password"
+            outlined={true}
+            placeholder={t('password')}
+            defaultValue="testing"
+            {...register('password', { required: tCommon('required') })}
+          />
+        </FormControl>
+
+        {/* Go recover page */}
+        <div>
+          <Link to={goRecoverPage(history, true)} className="text-sm">
+            {t('remember_password')}
+          </Link>
+        </div>
+
+        {/* Send form */}
+        <Button
+          className="my-8 btn-block"
+          loading={formStatus === 'loading'}
+          color="primary"
+          rounded={true}
+        >
+          <div className="flex-1 text-left">{t('log_in')}</div>
+          <div className="relative" style={{ width: '8px', height: '14px' }}>
+            <ImageLoader src="/assets/svgs/chevron-right.svg" />
+          </div>
+        </Button>
+
+        {/* Go register page */}
+        {/*
                 <div className="text-center text-sm text-primary">
                   <Link href="">
                     <a>{t('not_registered')}</a>
                   </Link>
                 </div>
               */}
-        </form>
-      </>
+      </form>
     </HeroBgLayout>
   );
 }

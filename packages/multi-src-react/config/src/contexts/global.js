@@ -11,6 +11,7 @@ context.displayName = 'Global Context';
 // Leemons Api is an api fetcher with middlewares
 class LeemonsApi {
   #reqMiddlewares;
+
   #resMiddlewares;
 
   constructor() {
@@ -62,8 +63,31 @@ export function Provider({ children }) {
     }
   }, []);
 
+  const apiUrlParserMiddleware = useCallback((ctx) => {
+    if (ctx.options && _.isObject(ctx.options.params)) {
+      let goodUrl = ctx.url;
+      _.forIn(ctx.options.params, (value, key) => {
+        goodUrl = _.replace(goodUrl, `:${key}`, value);
+      });
+      ctx.url = goodUrl;
+    }
+  }, []);
+
+  const apiResponseParserMiddleware = useCallback((ctx) => {
+    if (ctx.response.status >= 500) {
+      // eslint-disable-next-line no-throw-literal
+      throw { status: ctx.response.status, message: ctx.response.statusText };
+    }
+    if (ctx.response.status >= 400) {
+      throw ctx.response.json();
+    }
+    ctx.response = ctx.response.json();
+  }, []);
+
   useEffect(() => {
     api.useReq(apiContentTypeMiddleware);
+    api.useReq(apiUrlParserMiddleware);
+    api.useRes(apiResponseParserMiddleware);
   }, []);
 
   const [value, setValue] = useState({

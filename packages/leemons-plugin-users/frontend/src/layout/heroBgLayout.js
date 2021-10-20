@@ -53,5 +53,5 @@ export default function HeroBgLayout({ children }) {
 }
 
 HeroBgLayout.propTypes = {
-  children: PropTypes.element,
+  children: PropTypes.node,
 };
