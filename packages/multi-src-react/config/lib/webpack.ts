@@ -9,18 +9,15 @@ export default async function compile(
   onChange: webpackTapFunction = async () => {}
 ): Promise<Function> {
   // eslint-disable-next-line global-require
-  const config = await require('../webpack.config');
-  const compiler = webpack(config(_config));
+  const config = (await require('../webpack.config'))(_config);
+  const compiler = webpack(config);
 
   compiler.hooks.watchRun.tapPromise('Leemons', onChange);
   // Development
 
   /* @ts-ignore */
   const devServer = new WebpackDevServer(
-    {
-      historyApiFallback: true,
-      port: 3000,
-    },
+    config.devServer,
     compiler
   );
 

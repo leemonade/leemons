@@ -1,16 +1,20 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackBar = require('webpackbar');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const appRoot = path.resolve(__dirname, '..');
-const nodeModules = path.resolve(__dirname, '../node_modules');
+
+const isDev = process.env.NODE_ENV !== 'production';
+const useDebug = process.env.DEBUG;
 
 /** @type {import('webpack').Configuration} */
 module.exports = ({ alias }) => ({
-  devtool: 'eval-source-map',
-  mode: 'development',
+  devtool: isDev ? 'eval-source-map' : 'source-map',
+  mode: isDev ? 'development' : 'production',
   entry: path.resolve(appRoot, 'front', 'index.js'),
   output: {
     filename: '[name].bundle.[contenthash].js',
@@ -19,15 +23,17 @@ module.exports = ({ alias }) => ({
   },
   devServer: {
     compress: true,
+    hot: false,
+    port: 3000,
     historyApiFallback: true,
   },
   resolve: {
     symlinks: false,
     alias: {
       ...alias,
-      react: path.resolve(require.resolve('react'), '..'),//path.resolve(nodeModules, 'react'),
-      'react-dom': path.resolve(require.resolve('react-dom'), '..'),//path.resolve(nodeModules, 'react-dom'),
-      'react-router-dom': path.resolve(require.resolve('react-router-dom'), '..'),//path.resolve(nodeModules, 'react-router-dom'),
+      react: path.resolve(require.resolve('react'), '..'),
+      'react-dom': path.resolve(require.resolve('react-dom'), '..'),
+      'react-router-dom': path.resolve(require.resolve('react-router-dom'), '..'),
     },
   },
   module: {
@@ -39,6 +45,9 @@ module.exports = ({ alias }) => ({
             exclude: /node_modules/,
             use: {
               loader: 'babel-loader',
+              options: {
+                plugins: [isDev && require.resolve('react-refresh/babel')].filter(Boolean),
+              },
               options: {
                 presets: ['@babel/preset-react'],
               },
@@ -67,6 +76,8 @@ module.exports = ({ alias }) => ({
       template: path.resolve(appRoot, 'src/public/index.html'),
     }),
     new WebpackBar(),
-    // new BundleAnalyzerPlugin(),
-  ],
+    isDev && new webpack.HotModuleReplacementPlugin(),
+    isDev && new ReactRefreshWebpackPlugin(),
+    useDebug && new BundleAnalyzerPlugin(),
+  ].filter(Boolean),
 });
