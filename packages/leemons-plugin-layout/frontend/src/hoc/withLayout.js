@@ -1,5 +1,5 @@
 import React from 'react';
-// import { useSession } from '@users-groups-roles/session';
+
 import PrivateLayout from '../components/PrivateLayout';
 import withPersistentState from './withPersistentState';
 
@@ -11,14 +11,11 @@ const LAYOUTS = {
 export default function withLayout(WrappedPage, layout) {
   const Layout = LAYOUTS[layout || 'private'] || React.Fragment;
 
-  const WithLayout = ({ ...pageProps }) => {
-    return <WrappedPage {...pageProps} />;
-    return (
-      <Layout>
-        <WrappedPage {...pageProps} />
-      </Layout>
-    );
-  };
+  const WithLayout = ({ ...pageProps }) => (
+    <Layout>
+      <WrappedPage {...pageProps} />
+    </Layout>
+  );
 
   WithLayout.propTypes = {};
 

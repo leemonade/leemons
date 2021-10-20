@@ -2,7 +2,7 @@ import React from 'react';
 import constants from '@users/constants';
 import { logoutSession, useSession } from '@users/session';
 import { goLoginPage, goSelectProfilePage } from '@users/navigate';
-// import { withLayout } from '@layout/hoc';
+import { withLayout } from '@layout/hoc';
 import { useHistory } from 'react-router-dom';
 
 function Home() {
@@ -33,4 +33,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default withLayout(Home);

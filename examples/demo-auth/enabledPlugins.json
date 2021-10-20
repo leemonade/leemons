@@ -1,6 +1,9 @@
 [
   {"name": "users_demo", "path": "./users"},
   {"name": "users", "path": "../../packages/leemons-plugin-users/frontend"},
+  {"name": "layout", "path": "../../packages/leemons-plugin-layout/frontend"},
+  {"name": "common", "path": "../../packages/leemons-plugin-common/frontend"},
+  {"name": "menu-builder", "path": "../../packages/leemons-plugin-menu-builder/frontend"},
   {"name": "multilanguage", "path": "../../packages/leemons-plugin-multilanguage/frontend"},
   {"name": "leemons-ui", "path": "../../packages/leemons-ui"}
 ]

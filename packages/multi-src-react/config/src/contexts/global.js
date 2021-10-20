@@ -93,6 +93,7 @@ export function Provider({ children }) {
   const [value, setValue] = useState({
     leemons: {
       api,
+      log: console,
       version: '1.0.0',
     },
   });

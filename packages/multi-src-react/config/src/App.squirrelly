@@ -14,10 +14,10 @@ const {{@capitalize(plugin.name) /}}Private = loadable(() => import('@{{plugin.n
 import use{{@capitalize(plugin.name) /}} from '@{{plugin.name}}/../globalHooks';
 {{/if}}
 {{@if(plugin.globalContext)}}
-import { Provider as {{@capitalize(plugin.name) /}}GlobalProvider } from '@{{plugin.name}}/../globalContext';
+import { Provider as {{@capitalizeAndClear(plugin.name) /}}GlobalProvider } from '@{{plugin.name}}/../globalContext';
 {{/if}}
 {{@if(plugin.localContext && (plugin.public || plugin.private))}}
-import { Provider as {{@capitalize(plugin.name) /}}LocalProvider } from '@{{plugin.name}}/../localContext';
+import { Provider as {{@capitalizeAndClear(plugin.name) /}}LocalProvider } from '@{{plugin.name}}/../localContext';
 {{/if}}
 {{/each}}
 
@@ -32,7 +32,7 @@ function App() {
     <>
 {{@each(it.plugins) => plugin}}
 {{@if(plugin.globalContext)}}
-        <{{@capitalize(plugin.name) /}}GlobalProvider>
+        <{{@capitalizeAndClear(plugin.name) /}}GlobalProvider>
 {{/if}}
 {{/each}}
           <Router>
@@ -40,7 +40,7 @@ function App() {
               {/* Define each plugin route */}
 {{@each(it.plugins) => plugin}}
 {{@if(plugin.localContext && (plugin.public || plugin.private))}}
-              <{{@capitalize(plugin.name) /}}LocalProvider>
+              <{{@capitalizeAndClear(plugin.name) /}}LocalProvider>
 {{/if}}
 {{@if(plugin.public)}}
                 <Route path="/{{plugin.name}}">
@@ -53,7 +53,7 @@ function App() {
                 </Route>
 {{/if}}
 {{@if(plugin.localContext && (plugin.public || plugin.private))}}
-              </{{@capitalize(plugin.name) /}}LocalProvider>
+              </{{@capitalizeAndClear(plugin.name) /}}LocalProvider>
 {{/if}}
 {{/each}}
               <Route path="/">
@@ -78,9 +78,9 @@ function App() {
             </div>
             */}
           </Router>
-{{@each(it.plugins) => plugin}}
+{{@each(it.plugins.reverse()) => plugin}}
 {{@if(plugin.globalContext)}}
-        </{{@capitalize(plugin.name) /}}GlobalProvider>
+        </{{@capitalizeAndClear(plugin.name) /}}GlobalProvider>
 {{/if}}
 {{/each}}
     </>

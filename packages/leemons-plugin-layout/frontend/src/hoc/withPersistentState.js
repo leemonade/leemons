@@ -44,7 +44,7 @@ class State extends React.Component {
      * happens, update the state, allowing component syncronization.
      */
     addAction(`withPersistentState::stateUpdated-${this.namespace}`, () => {
-      if (this.state != State.State[this.namespace]) {
+      if (this.state !== State.State[this.namespace]) {
         this.setState(State.State[this.namespace]);
       }
     });
