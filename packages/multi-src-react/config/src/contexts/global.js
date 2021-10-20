@@ -58,6 +58,8 @@ export function Provider({ children }) {
       version: '1.0.0',
     },
   });
+
+  global.leemons = value.leemons;
   return (
     <context.Provider value={{ ...value, setValue }}>
       {children}
