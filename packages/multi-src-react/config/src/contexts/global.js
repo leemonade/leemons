@@ -1,4 +1,6 @@
-import React, { createContext, useState } from 'react';
+import _ from 'lodash';
+import React, { createContext, useState, useCallback, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 const context = createContext();
 
@@ -24,7 +26,7 @@ class LeemonsApi {
 
     await this.#callMiddleware(this.#reqMiddlewares, 0, ctx);
 
-    const response = await fetch(ctx.url, ctx.options);
+    const response = await fetch(`${window.location.origin}/api/${ctx.url}`, ctx.options);
 
     const responseCtx = { middlewares: [], response };
     await this.#callMiddleware(this.#resMiddlewares, 0, responseCtx);
@@ -45,13 +47,26 @@ class LeemonsApi {
   };
 
   #use = (type) => (middleware) =>
-    (type === 'req' ? this.#reqMiddlewares : this.#resMiddlewares).push(
-      middleware
-    );
+    (type === 'req' ? this.#reqMiddlewares : this.#resMiddlewares).push(middleware);
 }
 
 export function Provider({ children }) {
   const { api } = new LeemonsApi();
+
+  const apiContentTypeMiddleware = useCallback((ctx) => {
+    if (!ctx.options) ctx.options = {};
+    if (ctx.options && !ctx.options.headers) ctx.options.headers = {};
+    if (ctx.options && !ctx.options.headers['content-type'] && !ctx.options.headers['Content-Type'])
+      ctx.options.headers['content-type'] = 'application/json';
+    if (ctx.options && _.isObject(ctx.options.body)) {
+      ctx.options.body = JSON.stringify(ctx.options.body);
+    }
+  }, []);
+
+  useEffect(() => {
+    api.useReq(apiContentTypeMiddleware);
+  }, []);
+
   const [value, setValue] = useState({
     leemons: {
       api,
@@ -60,9 +75,9 @@ export function Provider({ children }) {
   });
 
   global.leemons = value.leemons;
-  return (
-    <context.Provider value={{ ...value, setValue }}>
-      {children}
-    </context.Provider>
-  );
+  return <context.Provider value={{ ...value, setValue }}>{children}</context.Provider>;
 }
+
+Provider.propTypes = {
+  children: PropTypes.element,
+};

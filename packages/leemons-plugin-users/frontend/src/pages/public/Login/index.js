@@ -52,12 +52,11 @@ export default function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
   const onSubmit = async (data) => {
-    console.log('submmit', data);
     try {
       setFormStatus('loading');
       const response = await loginRequest(data);
-
       try {
         // Comprobamos si tiene recordado un perfil
         const { profile } = await getRememberProfileRequest(response.jwtToken);
@@ -83,6 +82,7 @@ export default function Login() {
       // Finalmente metemos el token
       Cookies.set('token', response.jwtToken);
     } catch (err) {
+      console.log('dafuck');
       if (_.isObject(err) && err.status === 401) setFormStatus('error-match');
       if (_.isObject(err) && err.status === 500) setFormStatus('unknown-error');
     }

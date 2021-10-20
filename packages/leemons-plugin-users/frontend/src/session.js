@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { useContext, useEffect } from 'react';
-import SessionContext from '@users/context/session';
+import { SessionContext } from '@users/context/session';
 import Cookies from 'js-cookie';
 import useSWR from 'swr';
 import { useHistory } from 'react-router-dom';
