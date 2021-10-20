@@ -40,7 +40,7 @@ function App() {
             <Switch>
               {/* Define each plugin route */}
 {{@each(it.plugins) => plugin}}
-{{@if(plugin.globalContext && (plugin.public || plugin.private))}}
+{{@if(plugin.localContext && (plugin.public || plugin.private))}}
               <{{@capitalize(plugin.name) /}}LocalProvider>
 {{/if}}
 {{@if(plugin.public)}}
@@ -53,7 +53,7 @@ function App() {
                   <{{@capitalize(plugin.name) /}}Private fallback={<p>Loading...</p>} />
                 </Route>
 {{/if}}
-{{@if(plugin.globalContext && (plugin.public || plugin.private))}}
+{{@if(plugin.localContext && (plugin.public || plugin.private))}}
               </{{@capitalize(plugin.name) /}}LocalProvider>
 {{/if}}
 {{/each}}
