@@ -11,7 +11,6 @@ context.displayName = 'Global Context';
 // Leemons Api is an api fetcher with middlewares
 class LeemonsApi {
   #reqMiddlewares;
-
   #resMiddlewares;
 
   constructor() {
