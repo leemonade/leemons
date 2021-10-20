@@ -229,7 +229,8 @@ function generateAliases(dir: string, plugins: Plugin[]): {} {
       [`@${plugin.name}`]: path.resolve(
         dir,
         'plugins',
-        plugin.name
+        plugin.name,
+        'src'
       ),
     }),
     { ...globalAliases }

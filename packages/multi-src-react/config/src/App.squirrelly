@@ -5,19 +5,19 @@ import loadable from '@loadable/component';
 // Plugins imports
 {{@each(it.plugins) => plugin}}
 {{@if(plugin.public)}}
-const {{@capitalize(plugin.name) /}}Public = loadable(() => import('@{{plugin.name}}/Public'));
+const {{@capitalize(plugin.name) /}}Public = loadable(() => import('@{{plugin.name}}/../Public'));
 {{/if}}
 {{@if(plugin.private)}}
-const {{@capitalize(plugin.name) /}}Private = loadable(() => import('@{{plugin.name}}/Private'));
+const {{@capitalize(plugin.name) /}}Private = loadable(() => import('@{{plugin.name}}/../Private'));
 {{/if}}
 {{@if(plugin.hooks)}}
-import use{{@capitalize(plugin.name) /}} from '@{{plugin.name}}/globalHooks';
+import use{{@capitalize(plugin.name) /}} from '@{{plugin.name}}/../globalHooks';
 {{/if}}
 {{@if(plugin.globalContext)}}
-import { Provider as {{@capitalize(plugin.name) /}}GlobalProvider } from '@{{plugin.name}}/globalContext';
+import { Provider as {{@capitalize(plugin.name) /}}GlobalProvider } from '@{{plugin.name}}/../globalContext';
 {{/if}}
 {{@if(plugin.globalContext && (plugin.public || plugin.private))}}
-import { Provider as {{@capitalize(plugin.name) /}}LocalProvider } from '@{{plugin.name}}/localContext';
+import { Provider as {{@capitalize(plugin.name) /}}LocalProvider } from '@{{plugin.name}}/../localContext';
 {{/if}}
 {{/each}}
 
