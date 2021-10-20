@@ -123,8 +123,8 @@ async function linkSourceCode(
 async function checkPluginPaths(plugin: Plugin): Promise<Plugin> {
   return {
     ...plugin,
-    public: await fileExists(path.resolve(plugin.path, 'index.js')),
-    private: await fileExists(path.resolve(plugin.path, 'private.js')),
+    public: await fileExists(path.resolve(plugin.path, 'Public.js')),
+    private: await fileExists(path.resolve(plugin.path, 'Private.js')),
     hooks: await fileExists(path.resolve(plugin.path, 'globalHooks.js')),
     globalContext: await fileExists(
       path.resolve(plugin.path, 'globalContext.js')
@@ -186,10 +186,13 @@ async function generateMonorepo(dir: string, plugins: Plugin[]): Promise<void> {
     version: '1.0.0',
   });
 
+  // Generate App index.js
   await copyFile(
     path.resolve(configDir.src, 'index.js'),
     path.resolve(frontDir, 'index.js')
   );
+
+  // Generate App contexts folder
   await copyFolder(
     path.resolve(configDir.src, 'contexts'),
     path.resolve(frontDir, 'contexts')
@@ -265,8 +268,8 @@ async function main(): Promise<void> {
     name: 'pluginsAppPaths',
     dirs: flatten(
       plugins.map((plugin: Plugin) => [
-        path.resolve(plugin.path, 'index.js'),
-        path.resolve(plugin.path, 'private.js'),
+        path.resolve(plugin.path, 'Public.js'),
+        path.resolve(plugin.path, 'Private.js'),
         path.resolve(plugin.path, 'globalHooks.js'),
         path.resolve(plugin.path, 'globalContext.js'),
         path.resolve(plugin.path, 'localContext.js'),

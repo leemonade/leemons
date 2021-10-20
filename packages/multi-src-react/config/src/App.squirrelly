@@ -5,10 +5,10 @@ import loadable from '@loadable/component';
 // Plugins imports
 {{@each(it.plugins) => plugin}}
 {{@if(plugin.public)}}
-const {{@capitalize(plugin.name) /}} = loadable(() => import('@{{plugin.name}}'));
+const {{@capitalize(plugin.name) /}}Public = loadable(() => import('@{{plugin.name}}/Public'));
 {{/if}}
 {{@if(plugin.private)}}
-const {{@capitalize(plugin.name) /}}Private = loadable(() => import('@{{plugin.name}}/private'));
+const {{@capitalize(plugin.name) /}}Private = loadable(() => import('@{{plugin.name}}/Private'));
 {{/if}}
 {{@if(plugin.hooks)}}
 import use{{@capitalize(plugin.name) /}} from '@{{plugin.name}}/globalHooks';
@@ -45,7 +45,7 @@ function App() {
 {{/if}}
 {{@if(plugin.public)}}
                 <Route path="/{{plugin.name}}">
-                  <{{@capitalize(plugin.name) /}} fallback={<p>Loading...</p>} />
+                  <{{@capitalize(plugin.name) /}}Public fallback={<p>Loading...</p>} />
                 </Route>
 {{/if}}
 {{@if(plugin.private)}}
