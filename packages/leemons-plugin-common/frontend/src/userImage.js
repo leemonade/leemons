@@ -1,3 +1,4 @@
+import React from 'react';
 import { useSession } from '@users/session';
 import { ImageLoader } from '@leemons-ui/components/ui';
 

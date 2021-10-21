@@ -1,3 +1,4 @@
+import React from 'react';
 import { Button, ImageLoader } from '@leemons-ui/components/ui';
 import * as PropTypes from 'prop-types';
 

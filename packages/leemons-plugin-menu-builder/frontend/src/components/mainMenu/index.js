@@ -1,10 +1,13 @@
 import * as _ from 'lodash';
-import { useCallback, useEffect, useRef } from 'react';
-import { getMenu } from '@menu-builder/helpers';
+import React, { useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+
+import { getMenu } from '@menu-builder/helpers';
+
 import hooks from 'leemons-hooks';
 import SimpleBar from 'simplebar-react';
-import Link from 'next/link';
+
+import { Link } from 'react-router-dom';
 import { UserImage } from '@common/userImage';
 import MainMenuSubmenu from './mainMenuSubmenu';
 import MainMenuItem from './mainMenuItem';
@@ -115,15 +118,13 @@ export default function MainMenu({ onClose, onOpen, state: _state, setState }) {
   const getItem = (item) => {
     if (item.url) {
       return (
-        <Link key={item.id} href={item.url}>
-          <a>
-            <MainMenuItem
-              onClick={() => onMenuItemClick(item)}
-              active={state.menuActive.parent?.id === item.id}
-              item={item}
-              menuWidth={menuWidth}
-            />
-          </a>
+        <Link key={item.id} to={item.url}>
+          <MainMenuItem
+            onClick={() => onMenuItemClick(item)}
+            active={state.menuActive.parent?.id === item.id}
+            item={item}
+            menuWidth={menuWidth}
+          />
         </Link>
       );
     }
