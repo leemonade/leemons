@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import hooks from 'leemons-hooks';
-import { Alert as AlertUI, Button, ImageLoader } from '@leemons-ui/components/ui';
+import { Alert as AlertUI, Button, ImageLoader } from 'leemons-ui';
 
 function Alert() {
   const alertRef = useRef([]);

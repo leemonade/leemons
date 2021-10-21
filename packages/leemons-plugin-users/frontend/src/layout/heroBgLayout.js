@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { HeroBg, ImageLoader, Logo } from '@leemons-ui/components/ui';
+import { HeroBg, ImageLoader, Logo } from 'leemons-ui';
 import useTranslate from '@multilanguage/useTranslate';
 import tLoader from '@multilanguage/helpers/tLoader';
 import prefixPN from '@users/helpers/prefixPN';
@@ -14,7 +14,7 @@ export default function HeroBgLayout({ children }) {
       <div className="flex h-screen">
         <div className="relative flex">
           <HeroBg
-            style={{ backgroundColor: '#F4E6E6' }}
+            style={{ backgroundColor: '#f4e6e6' }}
             type="x-md"
             speed={500}
             className="h-full w-auto text-primary-200"

@@ -3,5 +3,5 @@
   "version": "{{it.version}}",
   "license": "MIT",
   "private": true,
-  "workspaces": ["./*"]
+  "workspaces": ["./plugins/*"]
 }

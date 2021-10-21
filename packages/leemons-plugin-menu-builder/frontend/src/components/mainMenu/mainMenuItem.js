@@ -1,6 +1,6 @@
 import * as PropTypes from 'prop-types';
 import React from 'react';
-import { Button, ImageLoader, Tooltip } from '@leemons-ui/components/ui';
+import { Button, ImageLoader, Tooltip } from 'leemons-ui';
 
 export default function MainMenuItem({ item, menuWidth, active, onClick }) {
   return (

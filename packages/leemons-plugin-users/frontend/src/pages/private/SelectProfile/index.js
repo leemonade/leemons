@@ -8,7 +8,7 @@ import {
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { goLoginPage } from '@users/navigate';
 import prefixPN from '@users/helpers/prefixPN';
-import { Button, Checkbox, FormControl, ImageLoader } from '@leemons-ui/components/ui';
+import { Button, Checkbox, FormControl, ImageLoader } from 'leemons-ui';
 import HeroBgLayout from '@users/layout/heroBgLayout';
 import constants from '@users/constants';
 import hooks from 'leemons-hooks';

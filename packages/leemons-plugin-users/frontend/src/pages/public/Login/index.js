@@ -25,7 +25,7 @@ import tLoader from '@multilanguage/helpers/tLoader';
 
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 
-import { Alert, Button, FormControl, ImageLoader, Input } from '@leemons-ui/components/ui';
+import { Alert, Button, FormControl, ImageLoader, Input } from 'leemons-ui';
 
 import { Link, useHistory } from 'react-router-dom';
 import Cookies from 'js-cookie';

@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Modal, useModal } from '@leemons-ui/components/ui';
+import { Modal, useModal } from 'leemons-ui';
 import hooks from 'leemons-hooks';
 import SimpleBar from 'simplebar-react';
 import update from 'immutability-helper';

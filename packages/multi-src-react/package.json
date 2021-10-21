@@ -34,6 +34,7 @@
     "@types/lodash": "^4.14.175",
     "chalk": "^4.1.2",
     "chokidar": "^3.5.2",
+    "copy-webpack-plugin": "^9.0.1",
     "css-loader": "^6.4.0",
     "execa": "^5.1.1",
     "file-loader": "^6.2.0",

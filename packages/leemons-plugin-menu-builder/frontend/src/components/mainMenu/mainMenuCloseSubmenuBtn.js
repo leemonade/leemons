@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ImageLoader } from '@leemons-ui/components/ui';
+import { Button, ImageLoader } from 'leemons-ui';
 import * as PropTypes from 'prop-types';
 
 export default function MainMenuCloseSubmenuBtn({ onClick }) {

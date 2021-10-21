@@ -5,6 +5,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackBar = require('webpackbar');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const appRoot = path.resolve(__dirname, '..');
 
@@ -79,5 +80,10 @@ module.exports = ({ alias }) => ({
     isDev && new webpack.HotModuleReplacementPlugin(),
     isDev && new ReactRefreshWebpackPlugin(),
     useDebug && new BundleAnalyzerPlugin(),
+    new CopyPlugin({
+      patterns: [
+        { from: path.resolve(__dirname, '..', 'src', 'public'), to: 'public' },
+      ],
+    }),
   ].filter(Boolean),
 });

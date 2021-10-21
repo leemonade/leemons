@@ -1,6 +1,6 @@
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { useState } from 'react';
-import { Alert } from '@leemons-ui/components/ui';
+import { Alert } from 'leemons-ui';
 
 export function getRequestErrorMessage(error, t) {
   let result = null;

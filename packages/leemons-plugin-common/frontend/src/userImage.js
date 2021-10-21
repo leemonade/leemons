@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSession } from '@users/session';
-import { ImageLoader } from '@leemons-ui/components/ui';
+import { ImageLoader } from 'leemons-ui';
 
 export function UserImage({ user: _user, size = 40, className }) {
   const user = _user || useSession();
