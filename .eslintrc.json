@@ -34,6 +34,7 @@
     "no-underscore-dangle": "off",
     "prettier/prettier": ["error", {}, {
       "usePrettierrc": true
-    }]
+    }],
+    "import/no-names-as-default": "off"
   }
 }
