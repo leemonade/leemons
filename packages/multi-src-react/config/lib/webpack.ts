@@ -1,5 +1,7 @@
 import WebpackDevServer from 'webpack-dev-server';
 import webpack from 'webpack';
+import chalk from 'chalk';
+const { createCompiler, prepareUrls } = require('../react-dev-utils/WebpackDevServerUtils');
 
 type webpackTapFunction = (args_0: webpack.Compiler) => Promise<void>;
 
@@ -10,16 +12,22 @@ export default async function compile(
 ): Promise<Function> {
   // eslint-disable-next-line global-require
   const config = (await require('../webpack.config'))(_config);
-  const compiler = webpack(config);
+  const urls = prepareUrls('http', '0.0.0.0', 8080);
+  const compiler = createCompiler({
+    appName: 'Leemons App',
+    config,
+    urls,
+    useYarn: true,
+    useTypeScript: false,
+    webpack,
+  });
+
+  // const compiler = webpack(config);
 
   compiler.hooks.watchRun.tapPromise('Leemons', onChange);
   // Development
 
-  /* @ts-ignore */
-  const devServer = new WebpackDevServer(
-    config.devServer,
-    compiler
-  );
+  const devServer = new WebpackDevServer(config.devServer, compiler);
 
   const stop = (): Promise<void> =>
     // eslint-disable-next-line no-async-promise-executor

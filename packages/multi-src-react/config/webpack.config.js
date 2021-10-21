@@ -3,7 +3,6 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const WebpackBar = require('webpackbar');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
@@ -22,10 +21,20 @@ module.exports = ({ alias, filesToCopy }) => ({
     path: path.resolve(appRoot, 'build'),
     publicPath: '/',
   },
+  infrastructureLogging: {
+    level: 'none',
+  },
+  stats: false,
   devServer: {
     compress: true,
     hot: false,
     port: 3000,
+    client: {
+      overlay: {
+        errors: false,
+        warnings: false,
+      },
+    },
     historyApiFallback: true,
   },
   resolve: {
@@ -48,8 +57,6 @@ module.exports = ({ alias, filesToCopy }) => ({
               loader: 'babel-loader',
               options: {
                 plugins: [isDev && require.resolve('react-refresh/babel')].filter(Boolean),
-              },
-              options: {
                 presets: ['@babel/preset-react'],
               },
             },
@@ -76,7 +83,6 @@ module.exports = ({ alias, filesToCopy }) => ({
       filename: 'index.html',
       template: path.resolve(appRoot, 'src/public/index.html'),
     }),
-    new WebpackBar(),
     isDev && new webpack.HotModuleReplacementPlugin(),
     isDev && new ReactRefreshWebpackPlugin(),
     useDebug && new BundleAnalyzerPlugin(),
