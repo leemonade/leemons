@@ -144,7 +144,7 @@ export default function MainMenu({ onClose, onOpen, state: _state, setState }) {
         {/* Menu */}
         <div style={{ width: menuWidth }} className="h-screen flex-none bg-secondary">
           <div className="h-screen w-full flex flex-col justify-between">
-            <img className="w-6 mb-9 mx-auto" src="/assets/logo.svg" alt="" />
+            <img className="w-6 mb-9 mx-auto" src="/public/assets/logo.svg" alt="" />
 
             {/* Menu items */}
             <SimpleBar className="flex-grow h-px">

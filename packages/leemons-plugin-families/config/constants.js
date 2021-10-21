@@ -52,8 +52,8 @@ module.exports = {
     {
       config: {
         key: 'user-families',
-        iconSvg: '/assets/svgs/family.svg',
-        activeIconSvg: '/assets/svgs/family.svg',
+        iconSvg: '/public/assets/svgs/family.svg',
+        activeIconSvg: '/public/assets/svgs/family.svg',
         label: {
           en: 'Families',
           es: 'Familias',

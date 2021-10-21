@@ -329,7 +329,7 @@ export const DatasetItemDrawerType = () => {
                         >
                           <ImageLoader
                             className="stroke-current fill-current"
-                            src={'/assets/svgs/remove.svg'}
+                            src={'/public/assets/svgs/remove.svg'}
                           />
                         </div>
                       </FormControl>

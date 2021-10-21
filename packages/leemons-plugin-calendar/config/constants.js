@@ -15,8 +15,8 @@ module.exports = {
     {
       config: {
         key: 'calendar',
-        iconSvg: '/assets/svgs/calendar.svg',
-        activeIconSvg: '/assets/svgs/calendar.svg',
+        iconSvg: '/public/assets/svgs/calendar.svg',
+        activeIconSvg: '/public/assets/svgs/calendar.svg',
         url: '/calendar',
         label: { es: 'Calendario', en: 'Calendar' },
       },

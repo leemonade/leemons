@@ -43,7 +43,7 @@ const DatasetItemDrawer = ({
   const [centersContextState, setCentersContextState] = useState({});
   const [localeErrorsContextState, setLocaleErrorsContextState] = useState({});
 
-  let _item = __item && __item.schemaConfig ? __item.schemaConfig : __item;
+  const _item = __item && __item.schemaConfig ? __item.schemaConfig : __item;
 
   const [item, setItem] = useState(
     _item
@@ -308,7 +308,7 @@ const DatasetItemDrawer = ({
                     className="relative cursor-pointer"
                     onClick={close}
                   >
-                    <ImageLoader src="/assets/svgs/close.svg" />
+                    <ImageLoader src="/public/assets/svgs/close.svg" />
                   </div>
                 </div>
 
