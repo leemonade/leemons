@@ -5,5 +5,5 @@
   {"name": "common", "path": "../../packages/leemons-plugin-common/frontend"},
   {"name": "menu-builder", "path": "../../packages/leemons-plugin-menu-builder/frontend"},
   {"name": "multilanguage", "path": "../../packages/leemons-plugin-multilanguage/frontend"},
-  {"name": "leemons-ui", "path": "../../packages/leemons-ui"}
+  {"name": "assets", "path": "../../packages/leemons-plugin-assets/frontend"}
 ]
