@@ -3,14 +3,16 @@ import path from 'path';
 const squirrelly = require('squirrelly');
 
 /* Squirrelly Helpers */
-squirrelly.helpers.define(
+squirrelly.filters.define(
   'capitalize',
-  ({ params: [str] }: { params: string[] }) => str.charAt(0).toUpperCase() + str.substring(1)
+  (str: string) => str.charAt(0).toUpperCase() + str.substring(1)
 );
 
-squirrelly.helpers.define('capitalizeAndClear', ({ params: [str] }: { params: string[] }) => {
-  const string = str.replace('-', '');
-  return string.charAt(0).toUpperCase() + string.substring(1);
+squirrelly.filters.define('clear', (str: string) => {
+  return str
+    .split(/[-_]/)
+    .map((string) => string.charAt(0).toUpperCase() + string.substring(1))
+    .join('');
 });
 
 async function _fileExists(dir: string, validateFiles: boolean = false): Promise<boolean> {

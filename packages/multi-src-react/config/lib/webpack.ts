@@ -8,7 +8,6 @@ export default async function compile(
   _config: Object,
   onChange: webpackTapFunction = async () => {}
 ): Promise<Function> {
-  console.log(_config);
   // eslint-disable-next-line global-require
   const config = (await require('../webpack.config'))(_config);
   const compiler = webpack(config);
