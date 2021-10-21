@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useSession } from '@users/session';
+import PropTypes from 'prop-types';
 import {
   getUserProfilesRequest,
   getUserProfileTokenRequest,
   setRememberProfileRequest,
 } from '@users/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { goLoginPage } from '@users/navigate';
 import prefixPN from '@users/helpers/prefixPN';
 import { Button, Checkbox, FormControl, ImageLoader } from 'leemons-ui';
 import HeroBgLayout from '@users/layout/heroBgLayout';
@@ -16,8 +15,7 @@ import Cookies from 'js-cookie';
 import { useHistory } from 'react-router-dom';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de crear usuarios
-export default function SelectProfile() {
-  const session = useSession({ redirectTo: goLoginPage });
+export default function SelectProfile({ session }) {
   const history = useHistory();
 
   const [t] = useTranslateLoader(prefixPN('selectProfile'));
@@ -113,3 +111,7 @@ export default function SelectProfile() {
     </HeroBgLayout>
   );
 }
+
+SelectProfile.propTypes = {
+  session: PropTypes.object,
+};
