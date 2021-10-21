@@ -1,17 +1,12 @@
 async function installPluginByNPM(name, version) {
-  return leemons.api(
-    {
-      url: 'package-manager/install',
-      allAgents: true,
+  return leemons.api('package-manager/install', {
+    allAgents: true,
+    method: 'POST',
+    body: {
+      name,
+      version,
     },
-    {
-      method: 'POST',
-      body: {
-        name,
-        version,
-      },
-    }
-  );
+  });
 }
 
 export default installPluginByNPM;
