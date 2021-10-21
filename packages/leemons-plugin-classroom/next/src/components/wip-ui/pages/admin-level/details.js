@@ -1,3 +1,4 @@
+import React from 'react';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useTranslate from '@multilanguage/useTranslate';
 import Listtable from './list-table';

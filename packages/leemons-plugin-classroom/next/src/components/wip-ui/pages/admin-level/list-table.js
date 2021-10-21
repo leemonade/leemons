@@ -1,3 +1,4 @@
+import React from 'react';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useTranslate from '@multilanguage/useTranslate';
 import { Avatar, Button } from 'leemons-ui';
@@ -13,20 +14,20 @@ export default function Listtable() {
   return (
     <>
       {/* Dummy tabla listado */}
-      <table role="table" class="table table-list table-fixed">
+      <table role="table" className="table table-list table-fixed">
         <thead>
           <tr role="row" className="">
             {/*  .unseen oculta sólo visualmente el contenido  */}
-            <th colspan="1" role="columnheader" className="th unseen w-2/6">
+            <th colSpan="1" role="columnheader" className="th unseen w-2/6">
               Education level 3
             </th>
-            <th colspan="1" role="columnheader" className="th ">
+            <th colSpan="1" role="columnheader" className="th ">
               {t('th_tutor')}
             </th>
-            <th colspan="1" role="columnheader" className="th ">
+            <th colSpan="1" role="columnheader" className="th ">
               {t('th_students')}
             </th>
-            <th colspan="1" role="columnheader" className="th unseen">
+            <th colSpan="1" role="columnheader" className="th unseen">
               {t('th_actions')}
             </th>
           </tr>
@@ -60,34 +61,34 @@ export default function Listtable() {
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                     >
-                      <g clip-path="url(#clip01)">
+                      <g clipPath="url(#clip01)">
                         <path
                           d="M9.75 14.248L0.75 23.248"
                           stroke="current"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
                         <path
                           d="M23.25 7.49805V0.748047H16.5"
                           stroke="current"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
                         <path
                           d="M0.75 16.498V23.248H7.5"
                           stroke="current"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
                         <path
                           d="M23.25 0.748047L14.25 9.74805"
                           stroke="current"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
                       </g>
                       <defs>
@@ -134,34 +135,34 @@ export default function Listtable() {
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                     >
-                      <g clip-path="url(#clip02)">
+                      <g clipPath="url(#clip02)">
                         <path
                           d="M9.75 14.248L0.75 23.248"
                           stroke="current"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
                         <path
                           d="M23.25 7.49805V0.748047H16.5"
                           stroke="current"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
                         <path
                           d="M0.75 16.498V23.248H7.5"
                           stroke="current"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
                         <path
                           d="M23.25 0.748047L14.25 9.74805"
                           stroke="current"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
                       </g>
                       <defs>
@@ -205,34 +206,34 @@ export default function Listtable() {
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                     >
-                      <g clip-path="url(#clip03)">
+                      <g clipPath="url(#clip03)">
                         <path
                           d="M9.75 14.248L0.75 23.248"
                           stroke="current"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
                         <path
                           d="M23.25 7.49805V0.748047H16.5"
                           stroke="current"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
                         <path
                           d="M0.75 16.498V23.248H7.5"
                           stroke="current"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
                         <path
                           d="M23.25 0.748047L14.25 9.74805"
                           stroke="current"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
                       </g>
                       <defs>

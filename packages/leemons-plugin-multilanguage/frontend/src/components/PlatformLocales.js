@@ -5,6 +5,7 @@ import { Tab, TabList, TabPanel, Tabs } from 'leemons-ui';
 import { ExclamationIcon } from '@heroicons/react/outline';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { getDefaultPlatformLocaleRequest, getPlatformLocalesRequest } from '@users/request';
+import * as PropTypes from 'prop-types';
 
 export default function PlatformLocales({
   onLocaleChange = () => {},
@@ -19,21 +20,19 @@ export default function PlatformLocales({
   const [defaultLocale, setDefaultLocale] = useState();
   const [error, setError, ErrorAlert] = useRequestErrorMessage();
 
+  const getConfig = (_locales, _defaultLocale, i) => ({
+    currentLocaleIndex: i,
+    currentLocale: _locales[i],
+    currentLocaleIsDefaultLocale: _locales[i].code === _defaultLocale,
+    defaultLocale: _defaultLocale,
+    locales: _locales,
+  });
+
   useEffect(() => {
     if (locales.length && defaultLocale) {
       onLocaleChange(getConfig(locales, defaultLocale, index));
     }
   }, [index, locales, defaultLocale]);
-
-  const getConfig = (_locales, _defaultLocale, i) => {
-    return {
-      currentLocaleIndex: i,
-      currentLocale: _locales[i],
-      currentLocaleIsDefaultLocale: _locales[i].code === _defaultLocale,
-      defaultLocale: _defaultLocale,
-      locales: _locales,
-    };
-  };
 
   const getAllConfigs = (_locales, _defaultLocale) => {
     const result = {};
@@ -53,19 +52,20 @@ export default function PlatformLocales({
   );
 
   const onSuccess = useMemo(
-    () => ({ locale, locales: _locales }) => {
-      const localeIndex = _.findIndex(_locales, { locale: locale });
-      if (localeIndex >= 0) {
-        const locale = _locales[localeIndex];
-        _locales.splice(localeIndex, 1);
-        _locales.unshift(locale);
-      }
+    () =>
+      ({ locale, locales: _locales }) => {
+        const localeIndex = _.findIndex(_locales, { locale });
+        if (localeIndex >= 0) {
+          const _locale = _locales[localeIndex];
+          _locales.splice(localeIndex, 1);
+          _locales.unshift(_locale);
+        }
 
-      setConfigs(getAllConfigs(_locales, locale));
-      setDefaultLocale(locale);
-      setLocales(_locales);
-      setLoading(false);
-    },
+        setConfigs(getAllConfigs(_locales, locale));
+        setDefaultLocale(locale);
+        setLocales(_locales);
+        setLoading(false);
+      },
     []
   );
 
@@ -108,3 +108,10 @@ export default function PlatformLocales({
 
   return <ErrorAlert />;
 }
+
+PlatformLocales.propTypes = {
+  onLocaleChange: PropTypes.func,
+  showWarning: PropTypes.bool,
+  warningIsError: PropTypes.bool,
+  children: PropTypes.node,
+};

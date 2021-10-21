@@ -1,17 +1,11 @@
 async function updateCalendarConfigs(id, config) {
-  return leemons.api(
-    {
-      url: 'calendar/configs/update/:id',
-      allAgents: true,
-      query: { id },
+  return leemons.api(`calendar/configs/update/${id}`, {
+    allAgents: true,
+    method: 'POST',
+    body: {
+      config,
     },
-    {
-      method: 'POST',
-      body: {
-        config,
-      },
-    }
-  );
+  });
 }
 
 export default updateCalendarConfigs;

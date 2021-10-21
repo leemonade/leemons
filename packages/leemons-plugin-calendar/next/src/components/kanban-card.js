@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import PropTypes from 'prop-types';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Avatar, Card } from 'leemons-ui';
 import moment from 'moment';
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
@@ -14,10 +14,10 @@ export default function KanbanCard({
   columns,
   onClick = () => {},
 }) {
-  const { isDone, isArchived } = useMemo(() => _.find(columns, { id: event.data.column }), [
-    event,
-    columns,
-  ]);
+  const { isDone, isArchived } = useMemo(
+    () => _.find(columns, { id: event.data.column }),
+    [event, columns]
+  );
 
   const percentaje = useMemo(() => {
     if (event.data && event.data.subtask) {

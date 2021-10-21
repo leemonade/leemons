@@ -1,6 +1,5 @@
 async function listKanbanEventOrders(centerToken) {
-  return leemons.api({
-    url: 'calendar/kanban/list/event/orders',
+  return leemons.api('calendar/kanban/list/event/orders', {
     centerToken,
   });
 }

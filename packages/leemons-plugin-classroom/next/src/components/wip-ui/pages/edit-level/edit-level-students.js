@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useTranslate from '@multilanguage/useTranslate';
 import {
@@ -98,7 +98,7 @@ export default function EditLevelStudents() {
           <dt className="read-only">Correo electrónico</dt>
           <dd className="user-card-email">{suggestion2.email}</dd>
         </dl>
-      </UserCard> 
+      </UserCard>
     </span>
   );
 
@@ -241,7 +241,7 @@ export default function EditLevelStudents() {
         </div>
       </fielset>
 
-      {/* Busqueda  
+      {/* Busqueda
           Ver: https://vldzx7.axshare.com/#id=wl4mfs&p=03_01_03_02c_class_first_edit_-_select_individuals&sc=3&g=1 */}
       <fielset className="edit-section border-t border-base-200 pt-8 flex gap-10">
         <div className=" w-3/12">

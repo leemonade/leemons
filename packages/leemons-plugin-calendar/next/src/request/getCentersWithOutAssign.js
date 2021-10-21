@@ -1,6 +1,5 @@
 async function getCentersWithOutAssign() {
-  return leemons.api({
-    url: 'calendar/configs/centers-with-out-assign',
+  return leemons.api('calendar/configs/centers-with-out-assign', {
     allAgents: true,
   });
 }

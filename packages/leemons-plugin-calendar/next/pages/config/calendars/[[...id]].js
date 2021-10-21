@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
 import { useAsync } from '@common/useAsync';
-import { useRouter } from 'next/router';
+import { useHistory, useParams } from 'react-router-dom';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@calendar/helpers/prefixPN';
@@ -58,13 +58,11 @@ function ConfigAdd() {
   const [toggleEventModal, EventModal] = useCalendarSimpleEventModal();
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
 
-  const router = useRouter();
+  const history = useHistory();
+  const params = useParams();
 
   const eventTypes = useMemo(
-    () =>
-      _.map(calendars, ({ name, bgColor }) => {
-        return { key: name, color: bgColor };
-      }),
+    () => _.map(calendars, ({ name, bgColor }) => ({ key: name, color: bgColor })),
     [calendars]
   );
 
@@ -81,8 +79,8 @@ function ConfigAdd() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    if (router.isReady && router.query && _.isArray(router.query.id)) {
-      const id = router.query.id[0];
+    if (params && params.id) {
+      const id = params;
       if (id) {
         const [list, detail] = await Promise.all([
           listCalendarConfigCalendarsRequest(id),
@@ -92,7 +90,7 @@ function ConfigAdd() {
       }
     }
     return null;
-  }, [router]);
+  }, [params.id]);
 
   const onSuccess = useCallback((_data) => {
     if (_data) {
@@ -115,7 +113,7 @@ function ConfigAdd() {
     setLoading(false);
   }, []);
 
-  useAsync(load, onSuccess, onError, [router]);
+  useAsync(load, onSuccess, onError, [params.id]);
 
   const fullCalendarConfigs = useMemo(() => {
     const conf = {
@@ -133,13 +131,11 @@ function ConfigAdd() {
     if (events && calendars && calendars.length) {
       const calendarsByName = _.keyBy(calendars, 'name');
       conf.events = conf.events.concat(
-        _.map(transformDBEventsToFullCalendarEvents(events, calendars), (e) => {
-          return {
-            ...e,
-            display: 'background',
-            backgroundColor: calendarsByName[e.originalEvent.type].bgColor,
-          };
-        })
+        _.map(transformDBEventsToFullCalendarEvents(events, calendars), (e) => ({
+          ...e,
+          display: 'background',
+          backgroundColor: calendarsByName[e.originalEvent.type].bgColor,
+        }))
       );
     }
 
@@ -170,7 +166,7 @@ function ConfigAdd() {
   };
 
   const reloadCalendarEvents = async () => {
-    const id = router.query.id[0];
+    const { id } = params;
     const list = await listCalendarConfigCalendarsRequest(id);
     let _events = [];
     _.forEach(list.calendars, (calendar) => {
@@ -210,13 +206,11 @@ function ConfigAdd() {
               <div className="flex group-4">
                 <div style={{ backgroundColor: '#fff' }}>{t('school_day')}</div>
                 <div style={{ backgroundColor: 'rgba(51,51,51,0.3)' }}>{t('non_school_day')}</div>
-                {eventTypes.map(({ key, color }) => {
-                  return (
-                    <div key={key} style={{ backgroundColor: color }}>
-                      {getEventTypeName(key)}
-                    </div>
-                  );
-                })}
+                {eventTypes.map(({ key, color }) => (
+                  <div key={key} style={{ backgroundColor: color }}>
+                    {getEventTypeName(key)}
+                  </div>
+                ))}
               </div>
 
               <div className="mt-4">

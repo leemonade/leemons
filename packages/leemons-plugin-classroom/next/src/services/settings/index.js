@@ -1,6 +1,5 @@
 async function getSettings() {
-  return leemons.api({
-    url: 'classroom/settings',
+  return leemons.api('classroom/settings', {
     allAgents: true,
   });
 }
@@ -14,29 +13,19 @@ async function updateSettings(body) {
     delete body.id;
   }
 
-  return leemons.api(
-    {
-      url: 'classroom/settings',
-      allAgents: true,
-    },
-    {
-      method: 'POST',
-      body,
-    }
-  );
+  return leemons.api('classroom/settings', {
+    allAgents: true,
+    method: 'POST',
+    body,
+  });
 }
 
 async function enableMenuItem(key) {
-  return leemons.api(
-    {
-      url: 'classroom/settings/enable-menu-item',
-      allAgents: true,
-    },
-    {
-      method: 'POST',
-      body: { key },
-    }
-  );
+  return leemons.api('classroom/settings/enable-menu-item', {
+    allAgents: true,
+    method: 'POST',
+    body: { key },
+  });
 }
 
 export default { getSettings, updateSettings, enableMenuItem };

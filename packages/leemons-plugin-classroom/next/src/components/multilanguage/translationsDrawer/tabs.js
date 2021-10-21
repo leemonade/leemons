@@ -1,4 +1,4 @@
-import { useMemo, cloneElement } from 'react';
+import React, { useMemo, cloneElement } from 'react';
 import { Tabs as UITabs, Tab, TabList, TabPanel } from 'leemons-ui';
 import { StarIcon, ExclamationCircleIcon } from '@heroicons/react/solid';
 import PropTypes from 'prop-types';

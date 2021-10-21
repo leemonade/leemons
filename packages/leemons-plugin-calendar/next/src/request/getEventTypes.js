@@ -1,6 +1,5 @@
 async function getEventTypes() {
-  return leemons.api({
-    url: 'calendar/event-types',
+  return leemons.api('calendar/event-types', {
     allAgents: true,
   });
 }

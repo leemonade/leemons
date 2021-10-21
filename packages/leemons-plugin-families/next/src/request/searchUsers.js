@@ -1,17 +1,12 @@
 async function searchUsers(profileType, query) {
-  return leemons.api(
-    {
-      url: 'families/search-users',
-      allAgents: true,
+  return leemons.api('families/search-users', {
+    allAgents: true,
+    method: 'POST',
+    body: {
+      profileType,
+      query,
     },
-    {
-      method: 'POST',
-      body: {
-        profileType,
-        query,
-      },
-    }
-  );
+  });
 }
 
 export default searchUsers;

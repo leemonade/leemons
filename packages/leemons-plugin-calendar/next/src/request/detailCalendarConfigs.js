@@ -1,8 +1,6 @@
 async function detailCalendarConfigs(id) {
-  return leemons.api({
-    url: 'calendar/configs/detail/:id',
+  return leemons.api(`calendar/configs/detail/${id}`, {
     allAgents: true,
-    query: { id },
   });
 }
 

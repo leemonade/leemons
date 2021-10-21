@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useAsync } from '@common/useAsync';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -6,7 +6,6 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 
 import { getDatasetSchemaRequest, removeDatasetFieldRequest } from '@dataset/request';
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
-import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
 
 import prefixPN from '@families/helpers/prefixPN';
 
@@ -158,10 +157,11 @@ export default function DatasetExample() {
 
   // Se llama a esta funcion cuando la de carga termina y recibe lo devuelto por la funcion de carga
   const onSuccess = useMemo(
-    () => ({ dataset }) => {
-      // setTableItems(getDatasetAsArrayOfProperties(dataset));
-      setLoading(false);
-    },
+    () =>
+      ({ dataset }) => {
+        // setTableItems(getDatasetAsArrayOfProperties(dataset));
+        setLoading(false);
+      },
     []
   );
 

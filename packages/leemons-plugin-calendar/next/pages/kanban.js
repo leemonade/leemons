@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { getCentersWithToken, useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
