@@ -5,7 +5,7 @@ async function addProfiles() {
     {
       key: 'profile-list',
       parentKey: 'users',
-      url: '/users/private/profiles/list',
+      url: '/private/users/profiles/list',
       label: {
         en: 'Profiles',
         es: 'Perfiles',

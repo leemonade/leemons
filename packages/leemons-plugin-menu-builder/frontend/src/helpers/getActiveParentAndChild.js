@@ -1,13 +1,11 @@
 import * as _ from 'lodash';
 import { getMenu } from '@menu-builder/helpers';
-import { useLocation } from 'react-router-dom';
 
 async function getActiveParentAndChild(_key) {
   let key = _key;
   if (_.isNil(key)) key = 'plugins.menu-builder.main';
   const menu = await getMenu(key);
-  // TODO MIRAR MIGRACION
-  const url = ''; // location.pathname;
+  const url = window.location.pathname;
   const result = {
     parent: null,
     child: null,

@@ -28,7 +28,9 @@ import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { Alert, Button, FormControl, ImageLoader, Input } from 'leemons-ui';
 
 import { Link, useHistory } from 'react-router-dom';
+
 import Cookies from 'js-cookie';
+
 import hooks from 'leemons-hooks';
 
 const emailRegex =

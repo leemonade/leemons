@@ -7,7 +7,7 @@ import { getMenu } from '@menu-builder/helpers';
 import hooks from 'leemons-hooks';
 import SimpleBar from 'simplebar-react';
 
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { UserImage } from '@common/userImage';
 import MainMenuSubmenu from './mainMenuSubmenu';
 import MainMenuItem from './mainMenuItem';
@@ -21,7 +21,7 @@ export default function MainMenu({ onClose, onOpen, state: _state, setState }) {
   stateC.current = _state;
   const state = stateC.current;
 
-  // const router = useRouter();
+  const history = useHistory();
 
   const loadMenu = useCallback(async () => {
     const menu = await getMenu('plugins.menu-builder.main');
@@ -99,11 +99,17 @@ export default function MainMenu({ onClose, onOpen, state: _state, setState }) {
   }
 
   useEffect(() => {
-    // TODO MIRAR MIGRACION
-    // router.events.on('routeChangeComplete', handleRouteChange);
+    const callback = history.listen(async () => {
+      await handleRouteChange();
+    });
+    return () => {
+      callback();
+    };
+  }, []);
+
+  useEffect(() => {
     hooks.addAction('menu-builder:reload-menu', reloadMenu);
     return () => {
-      // router.events.off('routeChangeComplete', handleRouteChange);
       hooks.removeAction('menu-builder:reload-menu', reloadMenu);
     };
   });
