@@ -1,5 +1,4 @@
 [
-  {"name": "users_demo", "path": "./users"},
   {"name": "users", "path": "../../packages/leemons-plugin-users/frontend"},
   {"name": "layout", "path": "../../packages/leemons-plugin-layout/frontend"},
   {"name": "common", "path": "../../packages/leemons-plugin-common/frontend"},
@@ -7,5 +6,6 @@
   {"name": "multilanguage", "path": "../../packages/leemons-plugin-multilanguage/frontend"},
   {"name": "assets", "path": "../../packages/leemons-plugin-assets/frontend"},
   {"name": "dataset", "path": "../../packages/leemons-plugin-dataset/frontend"},
-  {"name": "socket-io", "path": "../../packages/leemons-plugin-socket-io/frontend"}
+  {"name": "socket-io", "path": "../../packages/leemons-plugin-socket-io/frontend"},
+  {"name": "calendar", "path": "../../packages/leemons-plugin-calendar/frontend"}
 ]
