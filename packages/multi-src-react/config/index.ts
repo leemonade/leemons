@@ -13,6 +13,7 @@ import {
   fileList,
   copyFileWithSquirrelly,
   copyFolder,
+  folderExists,
 } from './lib/fs';
 import compile from './lib/webpack';
 import createReloader from './lib/watch';
@@ -32,8 +33,11 @@ const pluginsFile = path.resolve(process.argv[2], 'enabledPlugins.json');
 interface Plugin {
   name: string;
   path: string;
+  routers?: {
+    public?: boolean;
+    private?: boolean;
+  };
   public?: boolean;
-  private?: boolean;
   hooks?: boolean;
   globalContext?: boolean;
   localContext?: boolean;
@@ -44,24 +48,17 @@ const globalAliases = { '@leemons': frontDir };
 
 // Get all the plugin which need to be installed on front
 async function getPlugins(): Promise<Plugin[]> {
-  const plugins = (await fs.readJSON(pluginsFile)) as {name:string, path: string}[];
-  return plugins.map((plugin: {name:string, path: string}) => ({
+  const plugins = (await fs.readJSON(pluginsFile)) as { name: string; path: string }[];
+  return plugins.map((plugin: { name: string; path: string }) => ({
     name: plugin.name,
     path: path.resolve(pluginsFile, '..', plugin.path),
   }));
 }
 
 // Create the package.json file if missing
-async function createMissingPackageJSON(
-  dir: string,
-  config: Object
-): Promise<boolean> {
+async function createMissingPackageJSON(dir: string, config: Object): Promise<boolean> {
   if (!(await fileExists(dir))) {
-    await copyFileWithSquirrelly(
-      path.resolve(configDir.src, 'package.json'),
-      dir,
-      config
-    );
+    await copyFileWithSquirrelly(path.resolve(configDir.src, 'package.json'), dir, config);
     return true;
   }
   return false;
@@ -76,7 +73,6 @@ function installDeps(dir: string): Promise<void> {
       stderr.on('data', (e) => {
         const message = e.toString();
         if (message.startsWith('warning')) {
-          console.log(message);
         } else {
           reject(new Error(message));
         }
@@ -94,10 +90,7 @@ function installDeps(dir: string): Promise<void> {
 }
 
 // Save the current src files as symlinks in frontdir
-async function linkSourceCode(
-  dir: string,
-  plugins: Plugin[]
-): Promise<Map<string, fileList>> {
+async function linkSourceCode(dir: string, plugins: Plugin[]): Promise<Map<string, fileList>> {
   await createFolderIfMissing(dir);
 
   // Check which files still exists
@@ -120,18 +113,22 @@ async function linkSourceCode(
 }
 
 // Check public/private routes
-async function checkPluginPaths(plugin: Plugin): Promise<Plugin> {
+async function checkPluginPaths(plugin: Plugin[]): Promise<Plugin[]>;
+async function checkPluginPaths(plugin: Plugin): Promise<Plugin>;
+async function checkPluginPaths(plugin: Plugin | Plugin[]): Promise<Plugin | Plugin[]> {
+  if (Array.isArray(plugin)) {
+    return Promise.all(plugin.map(checkPluginPaths));
+  }
   return {
     ...plugin,
-    public: await fileExists(path.resolve(plugin.path, 'Public.js')),
-    private: await fileExists(path.resolve(plugin.path, 'Private.js')),
+    routers: {
+      public: await fileExists(path.resolve(plugin.path, 'Public.js')),
+      private: await fileExists(path.resolve(plugin.path, 'Private.js')),
+    },
+    public: await folderExists(path.resolve(plugin.path, 'public')),
     hooks: await fileExists(path.resolve(plugin.path, 'globalHooks.js')),
-    globalContext: await fileExists(
-      path.resolve(plugin.path, 'globalContext.js')
-    ),
-    localContext: await fileExists(
-      path.resolve(plugin.path, 'localContext.js')
-    ),
+    globalContext: await fileExists(path.resolve(plugin.path, 'globalContext.js')),
+    localContext: await fileExists(path.resolve(plugin.path, 'localContext.js')),
   };
 }
 
@@ -187,35 +184,23 @@ async function generateMonorepo(dir: string, plugins: Plugin[]): Promise<void> {
   });
 
   // Generate App index.js
-  await copyFile(
-    path.resolve(configDir.src, 'index.js'),
-    path.resolve(frontDir, 'index.js')
-  );
+  await copyFile(path.resolve(configDir.src, 'index.js'), path.resolve(frontDir, 'index.js'));
 
   // Generate App contexts folder
-  await copyFolder(
-    path.resolve(configDir.src, 'contexts'),
-    path.resolve(frontDir, 'contexts')
-  );
+  await copyFolder(path.resolve(configDir.src, 'contexts'), path.resolve(frontDir, 'contexts'));
 
-  const modified = await saveLockFile(
-    frontDir,
-    await Promise.all(plugins.map(checkPluginPaths))
-  );
+  const modified = await saveLockFile(frontDir, plugins);
 
   if (modified) {
     // Copy App.js
     await copyFileWithSquirrelly(
       path.resolve(configDir.src, 'App.squirrelly'),
       path.resolve(frontDir, 'App.js'),
-      { plugins: await Promise.all(plugins.map(checkPluginPaths)) }
+      { plugins }
     );
   }
 
-  const extraFiles = await linkSourceCode(
-    path.resolve(dir, 'plugins'),
-    plugins
-  );
+  const extraFiles = await linkSourceCode(path.resolve(dir, 'plugins'), plugins);
 
   await removeFiles(path.resolve(dir, 'plugins'), extraFiles);
   await installDeps(dir);
@@ -226,39 +211,45 @@ function generateAliases(dir: string, plugins: Plugin[]): {} {
   return plugins.reduce(
     (obj, plugin) => ({
       ...obj,
-      [`@${plugin.name}`]: path.resolve(
-        dir,
-        'plugins',
-        plugin.name,
-        'src'
-      ),
+      [`@${plugin.name}`]: path.resolve(dir, 'plugins', plugin.name, 'src'),
     }),
     { ...globalAliases }
   );
 }
 
+// Generate public folders list for webpack config
+function generatePublicFolders(dir: string, plugins: Plugin[]): {} {
+  return plugins
+    .filter(({ public: hasPublic }) => hasPublic)
+    .map(({ name }) => ({
+      from: path.resolve(dir, 'plugins', name, 'public'),
+      to: path.join('public', name),
+      noErrorOnMissing: true,
+    }));
+}
+
 // Main function of the service
 async function main(): Promise<void> {
-  let plugins = await getPlugins();
+  let plugins = await checkPluginPaths(await getPlugins());
 
   await generateMonorepo(frontDir, plugins);
 
   // Start compilation process
   let stop = await compile(
-    { alias: generateAliases(frontDir, plugins) },
+    {
+      alias: generateAliases(frontDir, plugins),
+      filesToCopy: generatePublicFolders(frontDir, plugins),
+    },
     // Trigger function when code changes are detected
     async () => {
-      const modified = await saveLockFile(
-        frontDir,
-        await Promise.all(plugins.map(checkPluginPaths))
-      );
+      const modified = await saveLockFile(frontDir, plugins);
 
       if (modified) {
         // Copy App.js
         await copyFileWithSquirrelly(
           path.resolve(configDir.src, 'App.squirrelly'),
           path.resolve(frontDir, 'App.js'),
-          { plugins: await Promise.all(plugins.map(checkPluginPaths)) }
+          { plugins }
         );
       }
     }
@@ -287,10 +278,7 @@ async function main(): Promise<void> {
       if (event === 'add') {
         // setTimeout(async () => {
         // Regenerate LockFile
-        const modified = await saveLockFile(
-          frontDir,
-          await Promise.all(plugins.map(checkPluginPaths))
-        );
+        const modified = await saveLockFile(frontDir, plugins);
 
         // Regenerate AppJS
         if (modified) {
@@ -298,7 +286,7 @@ async function main(): Promise<void> {
           await copyFileWithSquirrelly(
             path.resolve(configDir.src, 'App.squirrelly'),
             path.resolve(frontDir, 'App.js'),
-            { plugins: await Promise.all(plugins.map(checkPluginPaths)) }
+            { plugins: await checkPluginPaths(plugins) }
           );
         }
         // }, 1500);
@@ -314,22 +302,22 @@ async function main(): Promise<void> {
     logger: console,
     handler: async () => {
       await stop();
-      plugins = await getPlugins();
+      plugins = await checkPluginPaths(await getPlugins());
       await generateMonorepo(frontDir, plugins);
       stop = await compile(
-        { alias: generateAliases(frontDir, plugins) },
+        {
+          alias: generateAliases(frontDir, plugins),
+          filesToCopy: generatePublicFolders(frontDir, plugins),
+        },
         async () => {
-          const modified = await saveLockFile(
-            frontDir,
-            await Promise.all(plugins.map(checkPluginPaths))
-          );
+          const modified = await saveLockFile(frontDir, await checkPluginPaths(plugins));
 
           if (modified) {
             // Copy App.js
             await copyFileWithSquirrelly(
               path.resolve(configDir.src, 'App.squirrelly'),
               path.resolve(frontDir, 'App.js'),
-              { plugins: await Promise.all(plugins.map(checkPluginPaths)) }
+              { plugins: await checkPluginPaths(plugins) }
             );
           }
         }
