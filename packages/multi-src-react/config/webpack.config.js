@@ -13,7 +13,7 @@ const isDev = process.env.NODE_ENV !== 'production';
 const useDebug = process.env.DEBUG;
 
 /** @type {import('webpack').Configuration} */
-module.exports = ({ alias }) => ({
+module.exports = ({ alias, filesToCopy }) => ({
   devtool: isDev ? 'eval-source-map' : 'source-map',
   mode: isDev ? 'development' : 'production',
   entry: path.resolve(appRoot, 'front', 'index.js'),
@@ -82,6 +82,7 @@ module.exports = ({ alias }) => ({
     useDebug && new BundleAnalyzerPlugin(),
     new CopyPlugin({
       patterns: [
+        ...filesToCopy,
         { from: path.resolve(__dirname, '..', 'src', 'public'), to: 'public' },
       ],
     }),

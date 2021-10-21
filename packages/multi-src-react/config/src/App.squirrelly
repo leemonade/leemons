@@ -4,10 +4,10 @@ import loadable from '@loadable/component';
 
 // Plugins imports
 {{@each(it.plugins) => plugin}}
-{{@if(plugin.public)}}
+{{@if(plugin.routers.public)}}
 const {{@capitalize(plugin.name) /}}Public = loadable(() => import('@{{plugin.name}}/../Public'));
 {{/if}}
-{{@if(plugin.private)}}
+{{@if(plugin.routers.private)}}
 const {{@capitalize(plugin.name) /}}Private = loadable(() => import('@{{plugin.name}}/../Private'));
 {{/if}}
 {{@if(plugin.hooks)}}
@@ -16,7 +16,7 @@ import use{{@capitalize(plugin.name) /}} from '@{{plugin.name}}/../globalHooks';
 {{@if(plugin.globalContext)}}
 import { Provider as {{@capitalizeAndClear(plugin.name) /}}GlobalProvider } from '@{{plugin.name}}/../globalContext';
 {{/if}}
-{{@if(plugin.localContext && (plugin.public || plugin.private))}}
+{{@if(plugin.localContext && (plugin.routers.public || plugin.routers.private))}}
 import { Provider as {{@capitalizeAndClear(plugin.name) /}}LocalProvider } from '@{{plugin.name}}/../localContext';
 {{/if}}
 {{/each}}
@@ -39,20 +39,20 @@ function App() {
             <Switch>
               {/* Define each plugin route */}
 {{@each(it.plugins) => plugin}}
-{{@if(plugin.localContext && (plugin.public || plugin.private))}}
+{{@if(plugin.localContext && (plugin.routers.public || plugin.routers.private))}}
               <{{@capitalizeAndClear(plugin.name) /}}LocalProvider>
 {{/if}}
-{{@if(plugin.public)}}
+{{@if(plugin.routers.public)}}
                 <Route path="/{{plugin.name}}">
                   <{{@capitalize(plugin.name) /}}Public fallback={<p>Loading...</p>} />
                 </Route>
 {{/if}}
-{{@if(plugin.private)}}
+{{@if(plugin.routers.private)}}
                 <Route path="/private/{{plugin.name}}">
                   <{{@capitalize(plugin.name) /}}Private fallback={<p>Loading...</p>} />
                 </Route>
 {{/if}}
-{{@if(plugin.localContext && (plugin.public || plugin.private))}}
+{{@if(plugin.localContext && (plugin.routers.public || plugin.routers.private))}}
               </{{@capitalizeAndClear(plugin.name) /}}LocalProvider>
 {{/if}}
 {{/each}}
@@ -64,12 +64,12 @@ function App() {
             {/*
             <div style={ { display: "flex", flexDirection: "column" } }>
 {{@each(it.plugins) => plugin}}
-{{@if(plugin.public || plugin.private)}}
+{{@if(plugin.routers.public || plugin.routers.private)}}
               <div style={ { display: "flex" } }>
-{{@if(plugin.public)}}
+{{@if(plugin.routers.public)}}
                 <Link style={ { marginRight: "8px" } }to="/{{plugin.name}}">{{plugin.name}}</Link>
 {{/if}}
-{{@if(plugin.private)}}
+{{@if(plugin.routers.private)}}
                 <Link to="/private/{{plugin.name}}">private {{plugin.name}}</Link>
 {{/if}}
               </div>
