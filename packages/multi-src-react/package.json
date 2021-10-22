@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@loadable/component": "^5.15.0",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.1",
     "@types/lodash": "^4.14.175",
     "chalk": "^4.1.2",
     "chokidar": "^3.5.2",
@@ -47,6 +48,7 @@
     "react-router-dom": "^5.3.0",
     "squirrelly": "^8.0.8",
     "style-loader": "^3.3.0",
+    "terser-webpack-plugin": "^5.2.4",
     "url-loader": "^4.1.1",
     "webpackbar": "^5.0.0-3"
   }
