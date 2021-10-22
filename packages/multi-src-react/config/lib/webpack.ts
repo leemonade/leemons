@@ -1,7 +1,7 @@
 import WebpackDevServer from 'webpack-dev-server';
 import webpack from 'webpack';
 import chalk from 'chalk';
-const { createCompiler, prepareUrls } = require('../react-dev-utils/WebpackDevServerUtils');
+const { createCompiler, prepareUrls } = require('react-dev-utils/WebpackDevServerUtils');
 
 type webpackTapFunction = (args_0: webpack.Compiler) => Promise<void>;
 
