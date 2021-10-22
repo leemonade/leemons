@@ -5,6 +5,7 @@ import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
 const Calendar = loadable(() => import('./src/pages/private/Calendar'));
+const Kanban = loadable(() => import('./src/pages/private/Kanban'));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -15,6 +16,9 @@ export default function Private() {
       <Switch>
         <Route path={`${path}/home`}>
           <Calendar session={session} />
+        </Route>
+        <Route path={`${path}/kanban`}>
+          <Kanban session={session} />
         </Route>
       </Switch>
     </div>
