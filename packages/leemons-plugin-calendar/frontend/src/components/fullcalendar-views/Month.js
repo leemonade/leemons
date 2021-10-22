@@ -5,20 +5,20 @@ import clsx from 'clsx';
 
 import chunk from 'lodash/chunk';
 
-import { navigate, views } from './utils/constants';
-import { notify } from './utils/helpers';
 import getPosition from 'dom-helpers/position';
 import * as animationFrame from 'dom-helpers/animationFrame';
+import Overlay from 'react-overlays/Overlay';
+import { navigate, views } from './utils/constants';
+import { notify } from './utils/helpers';
 
 import Popup from './Popup';
-import Overlay from 'react-overlays/Overlay';
 import DateContentRow from './DateContentRow';
 import Header from './Header';
 import DateHeader from './DateHeader';
 
 import { inRange, sortEvents } from './utils/eventLevels';
 
-let eventsForWeek = (evts, start, end, accessors, localizer) =>
+const eventsForWeek = (evts, start, end, accessors, localizer) =>
   evts.filter((e) => inRange(e, start, end, accessors, localizer));
 
 class MonthView extends React.Component {
@@ -34,12 +34,14 @@ class MonthView extends React.Component {
     };
   }
 
-  UNSAFE_componentWillReceiveProps({ date }) {
+  /*
+  getSnapshotBeforeUpdate({ date }) {
     const { date: propsDate, localizer } = this.props;
     this.setState({
       needLimitMeasure: localizer.neq(date, propsDate, 'month'),
     });
   }
+  */
 
   componentDidMount() {
     let running;
@@ -75,14 +77,12 @@ class MonthView extends React.Component {
     window.removeEventListener('resize', this._resizeListener, false);
   }
 
-  getContainer = () => {
-    return findDOMNode(this);
-  };
+  getContainer = () => findDOMNode(this);
 
   render() {
-    let { date, localizer, className, style } = this.props,
-      month = localizer.visibleDays(date, localizer),
-      weeks = chunk(month, 7);
+    const { date, localizer, className, style } = this.props;
+    const month = localizer.visibleDays(date, localizer);
+    const weeks = chunk(month, 7);
 
     this._weekCount = weeks.length;
 
@@ -103,7 +103,7 @@ class MonthView extends React.Component {
   }
 
   renderWeek = (week, weekIdx) => {
-    let {
+    const {
       events,
       components,
       selectable,
@@ -163,12 +163,12 @@ class MonthView extends React.Component {
   };
 
   readerDateHeading = ({ date, className, ...props }) => {
-    let { date: currentDate, getDrilldownView, localizer } = this.props;
-    let isOffRange = localizer.neq(date, currentDate, 'month');
-    let isCurrent = localizer.isSameDate(date, currentDate);
-    let drilldownView = getDrilldownView(date);
-    let label = localizer.format(date, 'dateFormat');
-    let DateHeaderComponent = this.props.components.dateHeader || DateHeader;
+    const { date: currentDate, getDrilldownView, localizer } = this.props;
+    const isOffRange = localizer.neq(date, currentDate, 'month');
+    const isCurrent = localizer.isSameDate(date, currentDate);
+    const drilldownView = getDrilldownView(date);
+    const label = localizer.format(date, 'dateFormat');
+    const DateHeaderComponent = this.props.components.dateHeader || DateHeader;
 
     return (
       <div
@@ -188,13 +188,13 @@ class MonthView extends React.Component {
   };
 
   renderHeaders(row) {
-    let { localizer, components } = this.props;
-    let first = row[0];
-    let last = row[row.length - 1];
-    let HeaderComponent = components.header || Header;
+    const { localizer, components } = this.props;
+    const first = row[0];
+    const last = row[row.length - 1];
+    const HeaderComponent = components.header || Header;
 
     return localizer.range(first, last, 'day').map((day, idx) => (
-      <div key={'header_' + idx} className="rbc-header">
+      <div key={`header_${idx}`} className="rbc-header">
         <HeaderComponent
           date={day}
           localizer={localizer}
@@ -205,8 +205,8 @@ class MonthView extends React.Component {
   }
 
   renderOverlay() {
-    let overlay = (this.state && this.state.overlay) || {};
-    let { accessors, localizer, components, getters, selected, popupOffset } = this.props;
+    const overlay = (this.state && this.state.overlay) || {};
+    const { accessors, localizer, components, getters, selected, popupOffset } = this.props;
 
     return (
       <Overlay
@@ -277,11 +277,11 @@ class MonthView extends React.Component {
 
   handleShowMore = (events, date, cell, slot, target) => {
     const { popup, onDrillDown, onShowMore, getDrilldownView, doShowMoreDrillDown } = this.props;
-    //cancel any pending selections so only the event click goes through.
+    // cancel any pending selections so only the event click goes through.
     this.clearSelection();
 
     if (popup) {
-      let position = getPosition(cell, findDOMNode(this));
+      const position = getPosition(cell, findDOMNode(this));
 
       this.setState({
         overlay: { date, events, position, target },
@@ -300,7 +300,7 @@ class MonthView extends React.Component {
   };
 
   selectDates(slotInfo) {
-    let slots = this._pendingSelection.slice();
+    const slots = this._pendingSelection.slice();
 
     this._pendingSelection = [];
 
@@ -374,8 +374,8 @@ MonthView.propTypes = {
 };
 
 MonthView.range = (date, { localizer }) => {
-  let start = localizer.firstVisibleDay(date, localizer);
-  let end = localizer.lastVisibleDay(date, localizer);
+  const start = localizer.firstVisibleDay(date, localizer);
+  const end = localizer.lastVisibleDay(date, localizer);
   return { start, end };
 };
 

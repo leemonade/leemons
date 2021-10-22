@@ -12,10 +12,10 @@ import prefixPN from '@calendar/helpers/prefixPN';
 import { useForm } from 'react-hook-form';
 import tKeys from '@multilanguage/helpers/tKeys';
 import PropTypes from 'prop-types';
-import { dynamicImport } from '@common/dynamicImport';
 import { getCalendarsToFrontendRequest } from '@calendar/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import hooks from 'leemons-hooks';
+import loadable from '@loadable/component';
 import {
   addEventRequest,
   getEventTypesRequest,
@@ -24,6 +24,12 @@ import {
 } from '../request';
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
 import getUTCString from '../helpers/getUTCString';
+
+function dynamicImport(pluginName, component) {
+  return loadable(() =>
+    import(`@leemons/plugins/${pluginName}/src/widgets/calendar/${component}.js`)
+  );
+}
 
 function CalendarEventModal({ event, centerToken, close, forceType }) {
   const session = useSession({ redirectTo: goLoginPage });
@@ -215,7 +221,7 @@ function CalendarEventModal({ event, centerToken, close, forceType }) {
       (!eventTypeComponent.current || eventTypeComponent.current.type !== eventType.key)
     ) {
       eventTypeComponent.current = {
-        Component: dynamicImport(eventType.url),
+        Component: dynamicImport(`${eventType.pluginName}`, eventType.url),
         type: eventType.key,
       };
     }

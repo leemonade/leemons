@@ -3,6 +3,10 @@ import React from 'react';
 import moment from 'moment';
 import { uncontrollable } from 'uncontrollable';
 import clsx from 'clsx';
+import omit from 'lodash/omit';
+import defaults from 'lodash/defaults';
+import transform from 'lodash/transform';
+import mapValues from 'lodash/mapValues';
 import {
   accessor,
   dateFormat,
@@ -20,10 +24,6 @@ import VIEWS from './Views';
 import Toolbar from './Toolbar';
 import NoopWrapper from './NoopWrapper';
 
-import omit from 'lodash/omit';
-import defaults from 'lodash/defaults';
-import transform from 'lodash/transform';
-import mapValues from 'lodash/mapValues';
 import { wrapAccessor } from './utils/accessors';
 
 function viewNames(_views) {
@@ -31,7 +31,7 @@ function viewNames(_views) {
 }
 
 function isValidView(view, { views: _views }) {
-  let names = viewNames(_views);
+  const names = viewNames(_views);
   return names.indexOf(view) !== -1;
 }
 
@@ -901,7 +901,7 @@ class Calendar extends React.Component {
     components = {},
     formats = {},
   }) {
-    let names = viewNames(views);
+    const names = viewNames(views);
     const msgs = message(messages);
     return {
       viewNames: names,
@@ -936,7 +936,7 @@ class Calendar extends React.Component {
   }
 
   getViews = () => {
-    const views = this.props.views;
+    const { views } = this.props;
 
     if (Array.isArray(views)) {
       return transform(views, (obj, name) => (obj[name] = VIEWS[name]), {});
@@ -994,10 +994,10 @@ class Calendar extends React.Component {
 
     current = current || getNow();
 
-    let View = this.getView();
+    const View = this.getView();
     const { accessors, components, getters, localizer, viewNames } = this.state.context;
 
-    let CalToolbar = components.toolbar || Toolbar;
+    const CalToolbar = components.toolbar || Toolbar;
     const label = View.title(current, { localizer, length });
 
     return (
@@ -1054,23 +1054,21 @@ class Calendar extends React.Component {
    * state via url
    */
   handleRangeChange = (date, viewComponent, view) => {
-    let { onRangeChange, localizer } = this.props;
+    const { onRangeChange, localizer } = this.props;
 
     if (onRangeChange) {
       if (viewComponent.range) {
         onRangeChange(viewComponent.range(date, { localizer }), view);
-      } else {
-        if (process.env.NODE_ENV !== 'production') {
-          console.error('onRangeChange prop not supported for this view');
-        }
+      } else if (process.env.NODE_ENV !== 'production') {
+        console.error('onRangeChange prop not supported for this view');
       }
     }
   };
 
   handleNavigate = (action, newDate) => {
     let { view, date, getNow, onNavigate, onCantNavigate, validRange, ...props } = this.props;
-    let ViewComponent = this.getView();
-    let today = getNow();
+    const ViewComponent = this.getView();
+    const today = getNow();
 
     date = moveDate(ViewComponent, {
       ...props,
@@ -1088,9 +1086,7 @@ class Calendar extends React.Component {
     if (canNavigate) {
       onNavigate(date, view, action);
       this.handleRangeChange(date, ViewComponent);
-    } else {
-      if (onCantNavigate) onCantNavigate(date, view, action);
-    }
+    } else if (onCantNavigate) onCantNavigate(date, view, action);
   };
 
   handleViewChange = (view) => {
@@ -1098,7 +1094,7 @@ class Calendar extends React.Component {
       this.props.onView(view);
     }
 
-    let views = this.getViews();
+    const views = this.getViews();
     this.handleRangeChange(this.props.date || this.props.getNow(), views[view], view);
   };
 

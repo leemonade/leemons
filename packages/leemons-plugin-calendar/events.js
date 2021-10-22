@@ -45,12 +45,9 @@ async function events(isInstalled) {
     leemons.events.once('plugins.calendar:pluginDidLoadServices', async () => {
       await leemons.plugin.services.calendar.addEventType(
         leemons.plugin.prefixPN('event'),
-        'calendar/components/event'
+        'event'
       );
-      await leemons.plugin.services.calendar.addEventType(
-        leemons.plugin.prefixPN('task'),
-        'calendar/components/task'
-      );
+      await leemons.plugin.services.calendar.addEventType(leemons.plugin.prefixPN('task'), 'task');
       leemons.events.emit('init-event-types');
     });
 
