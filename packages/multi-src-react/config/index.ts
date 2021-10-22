@@ -239,6 +239,7 @@ async function main(): Promise<void> {
     {
       alias: generateAliases(frontDir, plugins),
       filesToCopy: generatePublicFolders(frontDir, plugins),
+      useLegacy: process.argv[3] === '--legacy'
     },
     // Trigger function when code changes are detected
     async () => {
@@ -308,6 +309,7 @@ async function main(): Promise<void> {
         {
           alias: generateAliases(frontDir, plugins),
           filesToCopy: generatePublicFolders(frontDir, plugins),
+          useLegacy: process.argv[3] === '--legacy'
         },
         async () => {
           const modified = await saveLockFile(frontDir, await checkPluginPaths(plugins));

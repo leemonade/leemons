@@ -14,10 +14,10 @@ const isProduction = !isDev;
 const useDebug = process.env.DEBUG;
 
 /** @type {import('webpack').Configuration} */
-module.exports = ({ alias, filesToCopy }) => ({
+module.exports = ({ alias, filesToCopy, useLegacy = false }) => ({
   mode: isDev ? 'development' : 'production',
   // Stop compilation on first error if production mode
-  bail: !isProduction,
+  bail: isProduction,
   devtool: isDev ? 'cheap-module-source-map' : 'source-map',
   entry: path.resolve(appRoot, 'front', 'index.js'),
   output: {
@@ -38,10 +38,10 @@ module.exports = ({ alias, filesToCopy }) => ({
   },
   // Do not output compilation info
   infrastructureLogging: {
-    level: 'none',
+    level: useLegacy ? 'info' : 'none',
   },
   // Do not output compilation assets info (handled by custom hooks)
-  stats: false,
+  stats: useLegacy ? {} : false,
   optimization: {
     minimize: isProduction,
     minimizer: [
