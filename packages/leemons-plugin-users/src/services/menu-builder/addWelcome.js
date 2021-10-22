@@ -5,7 +5,7 @@ async function addWelcome() {
     {
       key: 'welcome',
       parentKey: 'users',
-      url: '/users/private/welcome',
+      url: '/private/users/welcome',
       label: {
         en: 'Welcome',
         es: 'Bienvenida',

@@ -1,11 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
-import { useRouter } from 'next/router';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@calendar/helpers/prefixPN';
-import Link from 'next/link';
+import { Link, useHistory } from 'react-router-dom';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { PageContainer, PageHeader, Table } from 'leemons-ui';
 import { addErrorAlert } from '@layout/alert';
@@ -22,7 +21,7 @@ function ConfigsList() {
 
   const [list, setList] = useState([]);
 
-  const router = useRouter();
+  const history = useHistory();
 
   const getConfigList = async () => {
     const { configs } = await listCalendarConfigsRequest();
@@ -32,14 +31,14 @@ function ConfigsList() {
   const init = async (canRoute) => {
     const configs = await getConfigList();
     if (!configs.length && canRoute) {
-      return router.push('/calendar/config/detail/new');
+      return history.push('/private/calendar/config/detail/new');
     }
     setList(configs);
     return null;
   };
 
   const goDetailPage = () => {
-    router.push('/calendar/config/detail/new');
+    history.push('/private/calendar/config/detail/new');
   };
 
   useEffect(() => {
@@ -78,8 +77,8 @@ function ConfigsList() {
         accessor(item) {
           return (
             <div className="text-right">
-              <Link href={`/calendar/config/detail/${item.id}`}>
-                <a className="text-sm text-primary">{t('view')}</a>
+              <Link to={`/calendar/config/detail/${item.id}`} className="text-sm text-primary">
+                {t('view')}
               </Link>
               &nbsp;|&nbsp;
               <a onClick={() => removeItem(item)} className="text-sm text-primary cursor-pointer">

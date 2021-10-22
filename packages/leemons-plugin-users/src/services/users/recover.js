@@ -38,13 +38,13 @@ async function recover(email, ctx) {
       .getPlugin('emails')
       .services.email.sendAsEducationalCenter(email, 'user-recover-password', user.locale, {
         name: user.name,
-        resetUrl: `${ctx.request.header.origin}/users/public/reset?token=${encodeURIComponent(
+        resetUrl: `${ctx.request.header.origin}/users/reset?token=${encodeURIComponent(
           await generateJWTToken({
             id: user.id,
             code: recovery.code,
           })
         )}`,
-        recoverUrl: `${ctx.request.header.origin}/users/public/recover`,
+        recoverUrl: `${ctx.request.header.origin}/users/recover`,
       });
   }
   return undefined;

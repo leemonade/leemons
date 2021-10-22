@@ -1,4 +1,6 @@
+import React from 'react';
 import { useForm } from 'react-hook-form';
+import PropTypes from 'prop-types';
 
 export default function LocaleCreator({ addLocale }) {
   const { register, handleSubmit } = useForm();
@@ -61,3 +63,6 @@ export default function LocaleCreator({ addLocale }) {
     </form>
   );
 }
+LocaleCreator.propTypes = {
+  addLocale: PropTypes.func,
+};

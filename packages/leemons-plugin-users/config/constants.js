@@ -53,12 +53,12 @@ module.exports = {
   url: {
     base: 'users',
     frontend: {
-      login: 'users/public/login',
-      reset: 'users/public/reset',
-      recover: 'users/public/recover',
-      register: 'users/public/register',
-      authLogin: 'users/public/auth/login',
-      authLogout: 'users/public/auth/logout',
+      login: 'public/users/login',
+      reset: 'public/users/reset',
+      recover: 'public/users/recover',
+      register: 'public/users/register',
+      authLogin: 'public/users/auth/login',
+      authLogout: 'public/users/auth/logout',
     },
     backend: {
       login: 'users/user/login',

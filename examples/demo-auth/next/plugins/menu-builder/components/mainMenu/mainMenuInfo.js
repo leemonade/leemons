@@ -70,7 +70,7 @@ export default function MainMenuInfo({ editMode, toggleEditMode, state, setState
                 className={`relative inline-block align-middle mr-2`}
                 style={{ width: '12px', height: '12px' }}
               >
-                <ImageLoader className="fill-current" src={'/assets/svgs/edit.svg'} />
+                <ImageLoader className="fill-current" src={'/public/assets/svgs/edit.svg'} />
               </div>
               {t('edit')}
             </div>
@@ -94,7 +94,7 @@ export default function MainMenuInfo({ editMode, toggleEditMode, state, setState
               className={`relative inline-block align-middle ${editMode ? '' : 'mr-2'}`}
               style={{ width: '12px', height: '12px' }}
             >
-              <ImageLoader className="fill-current" src={'/assets/svgs/info.svg'} />
+              <ImageLoader className="fill-current" src={'/public/assets/svgs/info.svg'} />
             </div>
 
             {!editMode ? t('help') : ''}

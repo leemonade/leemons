@@ -1,11 +1,11 @@
 import * as _ from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
 import { useForm } from 'react-hook-form';
 import { useAsync } from '@common/useAsync';
-import { useRouter } from 'next/router';
+import { useHistory, useParams } from 'react-router-dom';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import {
@@ -79,7 +79,8 @@ function ConfigAdd() {
 
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
 
-  const router = useRouter();
+  const history = useHistory();
+  const params = useParams();
 
   const {
     register,
@@ -94,8 +95,8 @@ function ConfigAdd() {
   const load = useCallback(async () => {
     setLoading(true);
     reset();
-    if (router.isReady && router.query && _.isArray(router.query.id)) {
-      const id = router.query.id[0];
+    if (params && params.id) {
+      const { id } = params;
       let config = null;
       if (id !== 'new') {
         const response = await detailCalendarConfigsRequest(id);
@@ -105,7 +106,7 @@ function ConfigAdd() {
       return { config, _centers };
     }
     return null;
-  }, [router]);
+  }, [params.id]);
 
   const onSuccess = useCallback((_data) => {
     if (_data) {
@@ -166,7 +167,7 @@ function ConfigAdd() {
     setLoading(false);
   }, []);
 
-  useAsync(load, onSuccess, onError, [router]);
+  useAsync(load, onSuccess, onError, [params.id]);
 
   useEffect(() => {
     const subscription = watch(({ country }, { name }) => {
@@ -199,7 +200,7 @@ function ConfigAdd() {
     try {
       // Todo: Añadir modal de asegurar borrado
       await removeCalendarConfigRequest(data.id);
-      await router.push('/calendar/config/');
+      await history.push('/private/calendar/config/');
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }
@@ -238,7 +239,7 @@ function ConfigAdd() {
         config = response.config;
       }
       setSaveLoading(false);
-      await router.push(`/calendar/config/calendars/${config.id}`);
+      await history.push(`/private/calendar/config/calendars/${config.id}`);
       // await router.push(`/calendar/config/detail/${config.id}`);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));

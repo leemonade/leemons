@@ -3,3 +3,5 @@ export const constants = {
     phoneNumbersInfo: 'plugins.families-emergency-numbers.families-emergency-numbers',
   },
 };
+
+export default constants;

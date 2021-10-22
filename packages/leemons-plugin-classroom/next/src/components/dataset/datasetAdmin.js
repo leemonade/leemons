@@ -1,7 +1,7 @@
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
 import { Button } from 'leemons-ui';
 import Table from 'leemons-ui/dist/components/ui/Table';
-import { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import useArrayState from '../../hooks/useArrayState';
 import ActionButtons from './actionButtons';
 

@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function TranslateIcon() {
   // TODO LIBRERIA ICONOS PROPIA - No existe similar a este en HeroIcons
   return (

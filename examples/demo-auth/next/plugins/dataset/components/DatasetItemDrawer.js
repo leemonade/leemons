@@ -308,7 +308,7 @@ const DatasetItemDrawer = ({
                     className="relative cursor-pointer"
                     onClick={close}
                   >
-                    <ImageLoader src="/assets/svgs/close.svg" />
+                    <ImageLoader src="/public/assets/svgs/close.svg" />
                   </div>
                 </div>
 

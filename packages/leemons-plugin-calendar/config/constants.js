@@ -15,9 +15,9 @@ module.exports = {
     {
       config: {
         key: 'calendar',
-        iconSvg: '/assets/svgs/calendar.svg',
-        activeIconSvg: '/assets/svgs/calendar.svg',
-        url: '/calendar',
+        iconSvg: '/public/assets/svgs/calendar.svg',
+        activeIconSvg: '/public/assets/svgs/calendar.svg',
+        url: '/private/calendar/home',
         label: { es: 'Calendario', en: 'Calendar' },
       },
       permissions: [
@@ -31,7 +31,7 @@ module.exports = {
       config: {
         key: 'calendar-config',
         parentKey: 'plugins.calendar.calendar',
-        url: '/calendar/config',
+        url: '/private/calendar/config',
         label: { es: 'Configuración calendario', en: 'Calendar setup' },
       },
       permissions: [

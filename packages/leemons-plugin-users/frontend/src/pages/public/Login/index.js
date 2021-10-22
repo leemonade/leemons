@@ -28,7 +28,9 @@ import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { Alert, Button, FormControl, ImageLoader, Input } from 'leemons-ui';
 
 import { Link, useHistory } from 'react-router-dom';
+
 import Cookies from 'js-cookie';
+
 import hooks from 'leemons-hooks';
 
 const emailRegex =
@@ -146,7 +148,7 @@ export default function Login() {
         >
           <div className="flex-1 text-left">{t('log_in')}</div>
           <div className="relative" style={{ width: '8px', height: '14px' }}>
-            <ImageLoader src="/assets/svgs/chevron-right.svg" />
+            <ImageLoader src="/public/assets/svgs/chevron-right.svg" />
           </div>
         </Button>
 

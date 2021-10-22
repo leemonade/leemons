@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { getCentersWithToken, useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
@@ -26,13 +26,8 @@ function Calendar() {
   const [toggleEventModal, EventModal] = useCalendarEventModal();
 
   const getCalendarsForCenter = async () => {
-    const {
-      calendars,
-      events,
-      userCalendar,
-      ownerCalendars,
-      calendarConfig,
-    } = await getCalendarsToFrontendRequest(center.token);
+    const { calendars, events, userCalendar, ownerCalendars, calendarConfig } =
+      await getCalendarsToFrontendRequest(center.token);
 
     setData({
       calendars: _.map(calendars, (calendar, index) => {

@@ -1,13 +1,11 @@
 import React from 'react';
 import constants from '@users/constants';
-import { logoutSession, useSession } from '@users/session';
-import { goLoginPage, goSelectProfilePage } from '@users/navigate';
+import { logoutSession } from '@users/session';
+import { goSelectProfilePage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
 import { useHistory } from 'react-router-dom';
 
 function Home() {
-  useSession({ redirectTo: goLoginPage });
-
   const history = useHistory();
 
   const logout = () => {

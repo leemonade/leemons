@@ -60,7 +60,7 @@ function Alert() {
                   className="relative cursor-pointer"
                   onClick={() => removeAlert(alert.id)}
                 >
-                  <ImageLoader src="/assets/svgs/close.svg" className="stroke-current" />
+                  <ImageLoader src="/public/assets/svgs/close.svg" className="stroke-current" />
                 </div>
               </Button>
             </div>

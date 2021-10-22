@@ -149,10 +149,11 @@ function DatasetTabs({ profile, t, isEditMode }) {
   );
 
   const onSuccess = useMemo(
-    () => ({ dataset }) => {
-      setTableItems(getDatasetAsArrayOfProperties(dataset));
-      setLoading(false);
-    },
+    () =>
+      ({ dataset }) => {
+        setTableItems(getDatasetAsArrayOfProperties(dataset));
+        setLoading(false);
+      },
     []
   );
 
@@ -251,8 +252,8 @@ function PermissionsTabs({ t, profile, onPermissionsChange = () => {}, isEditMod
     }
   }, [selectedPermission]);
 
-  const getPermissionsForTable = (editMode) => {
-    return permissions.map((permission) => {
+  const getPermissionsForTable = (editMode) =>
+    permissions.map((permission) => {
       const response = {
         name: permissionT[getTranslationKeyPermissions(permission.permissionName, 'name')],
         permissionName: permission.permissionName,
@@ -294,7 +295,6 @@ function PermissionsTabs({ t, profile, onPermissionsChange = () => {}, isEditMod
       });
       return response;
     });
-  };
 
   useEffect(() => {
     if (permissions && actions && permissionT) {
@@ -319,12 +319,10 @@ function PermissionsTabs({ t, profile, onPermissionsChange = () => {}, isEditMod
   async function _setSelectPermissions() {
     const perms = _.uniqBy(initialArrayPermissions.current, 'pluginName');
     setSelectPermissions(
-      _.map(perms, ({ pluginName }) => {
-        return {
-          pluginName,
-          name: pluginName.split('.')[1],
-        };
-      })
+      _.map(perms, ({ pluginName }) => ({
+        pluginName,
+        name: pluginName.split('.')[1],
+      }))
     );
   }
 
@@ -522,31 +520,27 @@ function ProfileDetail() {
     }
   };
 
-  const showDefaultLocaleWarning = useMemo(() => {
-    return !getValues('name');
-  }, [getValues()]);
+  const showDefaultLocaleWarning = useMemo(() => !getValues('name'), [getValues()]);
 
-  const Name = () => {
-    return (
-      <MainMenuDropItem item={{ key: `profile.${profile?.id}` }}>
-        {({ isDragging, canDrag }) => (
-          <div className={`relative ${canDrag ? 'pl-5 hover:text-primary cursor-move' : ''}`}>
-            {canDrag ? (
-              <div
-                className={`absolute left-0 top-2/4 transform -translate-y-1/2 ${
-                  isDragging ? 'text-primary' : ''
-                }`}
-                style={{ width: '14px', height: '8px' }}
-              >
-                <ImageLoader className="stroke-current" src={'/assets/svgs/re-order.svg'} />
-              </div>
-            ) : null}
-            <span className="text-secondary">{watch('name')}</span>
-          </div>
-        )}
-      </MainMenuDropItem>
-    );
-  };
+  const Name = () => (
+    <MainMenuDropItem item={{ key: `profile.${profile?.id}` }}>
+      {({ isDragging, canDrag }) => (
+        <div className={`relative ${canDrag ? 'pl-5 hover:text-primary cursor-move' : ''}`}>
+          {canDrag ? (
+            <div
+              className={`absolute left-0 top-2/4 transform -translate-y-1/2 ${
+                isDragging ? 'text-primary' : ''
+              }`}
+              style={{ width: '14px', height: '8px' }}
+            >
+              <ImageLoader className="stroke-current" src={'/public/assets/svgs/re-order.svg'} />
+            </div>
+          ) : null}
+          <span className="text-secondary">{watch('name')}</span>
+        </div>
+      )}
+    </MainMenuDropItem>
+  );
 
   return (
     <>

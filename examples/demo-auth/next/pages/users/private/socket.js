@@ -7,7 +7,7 @@ import { goLoginPage } from '@users/navigate';
 import prefixPN from '@users/helpers/prefixPN';
 import { withLayout } from '@layout/hoc';
 import { PageContainer, PageHeader } from 'leemons-ui';
-import { SocketIoService } from '@socket.io/service';
+import { SocketIoService } from '@socket-io/service';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de crear usuarios
 function Welcome() {

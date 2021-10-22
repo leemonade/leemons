@@ -1,4 +1,7 @@
-export default function Item({ locale, select, selected }) {
+import React from 'react';
+import PropTypes from 'prop-types';
+
+export default function Item({ locale, select = () => {}, selected }) {
   return (
     <li
       className="text-gray-900 cursor-default select-none relative py-2 pl-3 pr-9 hover:bg-indigo-100"
@@ -36,3 +39,9 @@ export default function Item({ locale, select, selected }) {
     </li>
   );
 }
+
+Item.propTypes = {
+  locale: PropTypes.object,
+  select: PropTypes.func,
+  selected: PropTypes.bool,
+};

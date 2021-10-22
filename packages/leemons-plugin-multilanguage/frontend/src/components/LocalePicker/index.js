@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import Item from './item';
 
 export default function LocalePicker({
@@ -78,3 +79,9 @@ export default function LocalePicker({
     </div>
   );
 }
+
+LocalePicker.propTypes = {
+  locales: PropTypes.object,
+  selected: PropTypes.bool,
+  setLocale: PropTypes.func,
+};
