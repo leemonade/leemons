@@ -34,14 +34,16 @@ class MonthView extends React.Component {
     };
   }
 
-  /*
-  getSnapshotBeforeUpdate({ date }) {
+  shouldComponentUpdate({ date }) {
     const { date: propsDate, localizer } = this.props;
-    this.setState({
-      needLimitMeasure: localizer.neq(date, propsDate, 'month'),
-    });
+
+    if (propsDate !== date) {
+      this.setState({
+        needLimitMeasure: localizer.neq(date, propsDate, 'month'),
+      });
+    }
+    return true;
   }
-  */
 
   componentDidMount() {
     let running;
