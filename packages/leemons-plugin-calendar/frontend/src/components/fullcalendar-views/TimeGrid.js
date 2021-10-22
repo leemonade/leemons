@@ -2,13 +2,12 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import * as animationFrame from 'dom-helpers/animationFrame';
 import React, { Component } from 'react';
-import { findDOMNode } from 'react-dom';
 import memoize from 'memoize-one';
 
+import getWidth from 'dom-helpers/width';
 import DayColumn from './DayColumn';
 import TimeGutter from './TimeGutter';
 
-import getWidth from 'dom-helpers/width';
 import TimeGridHeader from './TimeGridHeader';
 import { notify } from './utils/helpers';
 import { inRange, sortEvents } from './utils/eventLevels';
@@ -26,11 +25,8 @@ export default class TimeGrid extends Component {
     this._scrollRatio = null;
   }
 
-  UNSAFE_componentWillMount() {
-    this.calculateScroll();
-  }
-
   componentDidMount() {
+    this.calculateScroll();
     this.checkOverflow();
 
     if (this.props.width == null) {
@@ -69,10 +65,10 @@ export default class TimeGrid extends Component {
     }
 
     this.applyScroll();
-    //this.checkOverflow()
+    // this.checkOverflow()
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  shouldComponentUpdate(nextProps) {
     const { range, scrollToTime, localizer } = this.props;
     // When paginating, reset scroll
     if (
@@ -81,14 +77,15 @@ export default class TimeGrid extends Component {
     ) {
       this.calculateScroll(nextProps);
     }
+    return true;
   }
 
   gutterRef = (ref) => {
-    this.gutter = ref && findDOMNode(ref);
+    this.gutter = ref;
   };
 
   handleSelectAlldayEvent = (...args) => {
-    //cancel any pending selections so only the event click goes through.
+    // cancel any pending selections so only the event click goes through.
     this.clearSelection();
     notify(this.props.onSelectEvent, args);
   };
@@ -110,7 +107,7 @@ export default class TimeGrid extends Component {
   };
 
   renderEvents(range, events, backgroundEvents, now) {
-    let { min, max, components, accessors, localizer, dayLayoutAlgorithm } = this.props;
+    const { min, max, components, accessors, localizer, dayLayoutAlgorithm } = this.props;
 
     const resources = this.memoizedResources(this.props.resources, accessors);
     const groupedEvents = resources.groupEvents(events);
@@ -118,11 +115,11 @@ export default class TimeGrid extends Component {
 
     return resources.map(([id, resource], i) =>
       range.map((date, jj) => {
-        let daysEvents = (groupedEvents.get(id) || []).filter((event) =>
+        const daysEvents = (groupedEvents.get(id) || []).filter((event) =>
           localizer.inRange(date, accessors.start(event), accessors.end(event), 'day')
         );
 
-        let daysBackgroundEvents = (groupedBackgroundEvents.get(id) || []).filter((event) =>
+        const daysBackgroundEvents = (groupedBackgroundEvents.get(id) || []).filter((event) =>
           localizer.inRange(date, accessors.start(event), accessors.end(event), 'day')
         );
 
@@ -135,7 +132,7 @@ export default class TimeGrid extends Component {
             resource={resource && id}
             components={components}
             isNow={localizer.isSameDate(date, now)}
-            key={i + '-' + jj}
+            key={`${i}-${jj}`}
             date={date}
             events={daysEvents}
             backgroundEvents={daysBackgroundEvents}
@@ -169,19 +166,19 @@ export default class TimeGrid extends Component {
 
     width = width || this.state.gutterWidth;
 
-    let start = range[0],
-      end = range[range.length - 1];
+    const start = range[0];
+    const end = range[range.length - 1];
 
     this.slots = range.length;
 
-    let allDayEvents = [],
-      rangeEvents = [],
-      rangeBackgroundEvents = [];
+    const allDayEvents = [];
+    const rangeEvents = [];
+    const rangeBackgroundEvents = [];
 
     events.forEach((event) => {
       if (inRange(event, start, end, accessors, localizer)) {
-        let eStart = accessors.start(event),
-          eEnd = accessors.end(event);
+        const eStart = accessors.start(event);
+        const eEnd = accessors.end(event);
 
         if (
           accessors.allDay(event) ||
@@ -232,7 +229,7 @@ export default class TimeGrid extends Component {
         <div ref={this.contentRef} className="rbc-time-content" onScroll={this.handleScroll}>
           <TimeGutter
             date={start}
-            ref={this.gutterRef}
+            gref={this.gutterRef}
             localizer={localizer}
             min={localizer.merge(start, min)}
             max={localizer.merge(start, max)}
@@ -289,7 +286,7 @@ export default class TimeGrid extends Component {
     if (this._updatingOverflow) return;
 
     const content = this.contentRef.current;
-    let isOverflowing = content.scrollHeight > content.clientHeight;
+    const isOverflowing = content.scrollHeight > content.clientHeight;
 
     if (this.state.isOverflowing !== isOverflowing) {
       this._updatingOverflow = true;

@@ -1,11 +1,7 @@
-import React from 'react'
+import React from 'react';
 
-const DayColumnWrapper = ({ children, className, style }) => {
-  return (
-    <div className={className} style={style}>
-      {children}
-    </div>
-  )
-}
+const DayColumnWrapper = React.forwardRef(({ children, ...rest }, ref) => (
+  <div {...rest}>{children}</div>
+));
 
-export default DayColumnWrapper
+export default DayColumnWrapper;

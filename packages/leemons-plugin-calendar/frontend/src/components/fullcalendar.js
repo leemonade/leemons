@@ -6,10 +6,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import moment from 'moment';
 import hooks from 'leemons-hooks';
 import { RRule } from 'rrule';
-import { momentLocalizer } from './fullcalendar-views';
-import Calendar from './fullcalendar-views/Calendar';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@calendar/helpers/prefixPN';
+import { momentLocalizer } from './fullcalendar-views';
+import Calendar from './fullcalendar-views/Calendar';
 
 export function FullCalendar({
   events,
@@ -48,7 +48,6 @@ export function FullCalendar({
   };
 
   const _onRangeChange = (range) => {
-    console.log('range', range);
     if (_.isArray(range) && range.length > 1) {
       range = {
         start: range[0],
@@ -130,10 +129,8 @@ export function FullCalendar({
               end: new Date(date.getTime() + diff),
             });
           });
-        } else {
-          if (moment(ev.start).isBetween(dateRange.start, dateRange.end)) {
-            acc.push(ev);
-          }
+        } else if (moment(ev.start).isBetween(dateRange.start, dateRange.end)) {
+          acc.push(ev);
         }
       });
     }

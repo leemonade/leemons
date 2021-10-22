@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { findDOMNode } from 'react-dom';
 import clsx from 'clsx';
 
 import chunk from 'lodash/chunk';
@@ -79,7 +78,7 @@ class MonthView extends React.Component {
     window.removeEventListener('resize', this._resizeListener, false);
   }
 
-  getContainer = () => findDOMNode(this);
+  getContainer = () => this.container;
 
   render() {
     const { date, localizer, className, style } = this.props;
@@ -90,6 +89,7 @@ class MonthView extends React.Component {
 
     return (
       <div
+        ref={(r) => (this.container = r)}
         style={style}
         className={clsx('rbc-month-view', className)}
         role="table"
@@ -131,6 +131,8 @@ class MonthView extends React.Component {
     );
 
     weeksEvents.sort((a, b) => sortEvents(a, b, accessors, localizer));
+
+    this.getContainer();
 
     return (
       <DateContentRow
@@ -283,7 +285,7 @@ class MonthView extends React.Component {
     this.clearSelection();
 
     if (popup) {
-      const position = getPosition(cell, findDOMNode(this));
+      const position = getPosition(cell, this.container);
 
       this.setState({
         overlay: { date, events, position, target },
