@@ -265,7 +265,7 @@ function Kanban({ session }) {
         </FormControl>
       </div>
 
-      {process.browser && board ? (
+      {board ? (
         <Board
           allowAddColumn={false}
           disableColumnDrag={true}
