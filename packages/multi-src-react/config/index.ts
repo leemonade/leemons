@@ -253,7 +253,8 @@ async function main(): Promise<void> {
           { plugins }
         );
       }
-    }
+    },
+    plugins
   );
 
   // When a public/private file is added, recreate App.js
@@ -322,7 +323,8 @@ async function main(): Promise<void> {
               { plugins: await checkPluginPaths(plugins) }
             );
           }
-        }
+        },
+        plugins
       );
     },
   });

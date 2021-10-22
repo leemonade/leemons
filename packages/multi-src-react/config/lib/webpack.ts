@@ -7,8 +7,9 @@ type webpackTapFunction = (args_0: webpack.Compiler) => Promise<void>;
 
 // Compile
 export default async function compile(
-  _config: { alias: {}; filesToCopy: {}; useLegacy?: boolean},
-  onChange: webpackTapFunction = async () => {}
+  _config: { alias: {}; filesToCopy: {}; useLegacy?: boolean },
+  onChange: webpackTapFunction = async () => {},
+  plugins: any[]
 ): Promise<Function> {
   // eslint-disable-next-line global-require
   const config = (await require('../webpack.config'))(_config);
@@ -22,6 +23,7 @@ export default async function compile(
         useYarn: true,
         useTypeScript: false,
         webpack,
+        plugins,
       });
 
   compiler.hooks.watchRun.tapPromise('Leemons', onChange);
