@@ -71,7 +71,7 @@ module.exports = {
       config: {
         key: 'families-data',
         parentKey: 'plugins.users.users',
-        url: '/families/private/config',
+        url: '/private/families/config',
         label: {
           en: 'Families setup',
           es: 'Configuración de las familias',
@@ -88,7 +88,7 @@ module.exports = {
       config: {
         key: 'families',
         parentKey: 'plugins.users.users',
-        url: '/families/private/list',
+        url: '/private/families/list',
         label: {
           en: 'Families list',
           es: 'Listado de familias',

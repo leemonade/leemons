@@ -7,5 +7,8 @@
   {"name": "assets", "path": "../../packages/leemons-plugin-assets/frontend"},
   {"name": "dataset", "path": "../../packages/leemons-plugin-dataset/frontend"},
   {"name": "socket-io", "path": "../../packages/leemons-plugin-socket-io/frontend"},
-  {"name": "calendar", "path": "../../packages/leemons-plugin-calendar/frontend"}
+  {"name": "calendar", "path": "../../packages/leemons-plugin-calendar/frontend"},
+  {"name": "families", "path": "../../packages/leemons-plugin-families/frontend"},
+  {"name": "package-manager", "path": "../../packages/leemons-plugin-package-manager/frontend"},
+  {"name": "families-emergency-numbers", "path": "../../packages/leemons-plugin-families-emergency-numbers/frontend"}
 ]

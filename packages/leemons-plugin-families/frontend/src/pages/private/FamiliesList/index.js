@@ -1,26 +1,22 @@
 import * as _ from 'lodash';
-import { useMemo, useRef, useState } from 'react';
-import { useSession } from '@users/session';
+import React, { useMemo, useRef, useState } from 'react';
 import { listFamiliesRequest } from '@families/request';
-import { goLoginPage } from '@users/navigate';
 import { withLayout } from '@layout/hoc';
 import { FormControl, Input, PageContainer, PageHeader, Table } from 'leemons-ui';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import prefixPN from '@families/helpers/prefixPN';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useHistory, Link } from 'react-router-dom';
 import { useAsync } from '@common/useAsync';
 import { SearchIcon } from '@heroicons/react/outline';
 
 function List() {
-  useSession({ redirectTo: goLoginPage });
   const config = useRef({
     page: 0,
     size: 10,
   });
-  const router = useRouter();
+  const history = useHistory();
   const [t] = useTranslateLoader(prefixPN('list_page'));
   const { t: tCommon } = useCommonTranslate('page_header');
   const [loadingError, setLoadingError, LoadingErrorAlert] = useRequestErrorMessage();
@@ -61,8 +57,8 @@ function List() {
             item.name = <div className="font-semibold">{item.name}</div>;
             item.actions = (
               <div className="text-right">
-                <Link href={`/private/families/detail/${item.id}`}>
-                  <a className="text-sm text-primary">{t('view')}</a>
+                <Link to={`/private/families/detail/${item.id}`} className="text-sm text-primary">
+                  {t('view')}
                 </Link>
               </div>
             );
@@ -78,7 +74,7 @@ function List() {
   }
 
   const goDetailPage = () => {
-    router.push('/private/families/detail');
+    history.push('/private/families/detail');
   };
 
   const load = useMemo(
