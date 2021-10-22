@@ -4,7 +4,7 @@ import loadable from '@loadable/component';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const Calendar = loadable(() => import('./src/pages/private/Calendar'));
+// const Calendar = loadable(() => import('./src/pages/private/Calendar'));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -13,9 +13,7 @@ export default function Private() {
   return (
     <div>
       <Switch>
-        <Route path={`${path}/home`}>
-          <Calendar session={session} />
-        </Route>
+        <Route path={`${path}/home`}>Miau</Route>
       </Switch>
     </div>
   );
