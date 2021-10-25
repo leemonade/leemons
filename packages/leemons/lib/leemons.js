@@ -10,6 +10,7 @@ const chalk = require('chalk');
 const bodyParser = require('koa-bodyparser');
 const ora = require('ora');
 const uuid = require('uuid');
+const koaBody = require('koa-body')({ multipart: true });
 
 const leemonsUtils = require('leemons-utils');
 const { createDatabaseManager } = require('leemons-database');
@@ -191,13 +192,15 @@ class Leemons {
     });
 
     this.backRouter.use(bodyParser());
+    this.backRouter.use(koaBody);
+
     this.events.emit('didSetMiddlewares', 'leemons');
   }
 
   authenticatedMiddleware(authenticated) {
     return async (ctx, next) => {
       try {
-        let authorization = ctx.headers.authorization;
+        let { authorization } = ctx.headers;
         try {
           authorization = JSON.parse(authorization);
         } catch (e) {}

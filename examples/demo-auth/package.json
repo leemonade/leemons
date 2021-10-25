@@ -22,6 +22,7 @@
     "leemons-plugin-families": "1.0.0",
     "leemons-plugin-families-emergency-numbers": "1.0.0",
     "leemons-plugin-layout": "1.0.0",
+    "leemons-plugin-media-library": "1.0.0",
     "leemons-plugin-menu-builder": "1.0.0",
     "leemons-plugin-multilanguage": "1.0.0",
     "leemons-plugin-mvp-template": "1.0.0",
@@ -32,7 +33,6 @@
     "leemons-provider-emails-amazon-ses": "1.0.0",
     "mysql": "^2.18.1",
     "simplebar-react": "^2.3.4"
-
   },
   "devDependencies": {}
 }
