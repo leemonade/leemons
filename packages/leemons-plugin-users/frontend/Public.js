@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, useRouteMatch } from 'react-router-dom';
+import { Switch, Route, useRouteMatch, Redirect } from 'react-router-dom';
 import loadable from '@loadable/component';
 
 const Login = loadable(() => import('./src/pages/public/Login'));
@@ -20,6 +20,9 @@ export default function Public() {
         </Route>
         <Route path={`${path}/reset`}>
           <Reset />
+        </Route>
+        <Route path={`${path}`}>
+          <Redirect to={`/private${path}/home`} />
         </Route>
       </Switch>
     </div>

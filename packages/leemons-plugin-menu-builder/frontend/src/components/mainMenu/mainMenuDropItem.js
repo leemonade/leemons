@@ -11,8 +11,6 @@ export default function MainMenuDropItem({ children, className, item }) {
     ? children({ isDragging: false, canDrag: false })
     : children;
 
-  console.log('asdasd', window.location.pathname);
-
   const _item = {
     ...item,
     menuKey: item.menuKey || 'plugins.menu-builder.main',

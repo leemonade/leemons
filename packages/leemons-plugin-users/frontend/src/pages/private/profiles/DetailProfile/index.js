@@ -311,7 +311,6 @@ function PermissionsTabs({ t, profile, onPermissionsChange = () => {}, isEditMod
   }, [profile, permissions, actions, permissionT, isEditMode]);
 
   async function _setTableData(e) {
-    console.log(e);
     _.forEach(e, (d) => {
       const index = _.findIndex(dataTable.current, { permissionName: d.permissionName });
       if (index >= 0) {
@@ -461,7 +460,7 @@ function ProfileDetail() {
   });
 
   useEffect(() => {
-    if (uri) {
+    if (!uri) {
       setIsEditMode(true);
     }
   }, []);
@@ -481,7 +480,7 @@ function ProfileDetail() {
         response = await addProfileRequest(data);
         addSuccessAlert(t('save_done'));
       }
-
+      await hooks.fireEvent('user:update:permissions', profile);
       setSaveLoading(false);
       goDetailProfilePage(history, response.profile.uri);
     } catch (e) {
@@ -514,7 +513,6 @@ function ProfileDetail() {
   useEffect(() => {
     if (uri) {
       getProfile(uri);
-      hooks.fireEvent('user:update:permissions', profile);
       setIsEditMode(false);
     } else {
       setLoading(false);

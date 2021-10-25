@@ -120,8 +120,8 @@ const menuItems = [
   {
     item: {
       key: 'classroom',
-      iconSvg: '/classroom/classroom.svg',
-      activeIconSvg: '/classroom/classroomActive.svg',
+      iconSvg: '/public/assets/svgs/classroom.svg',
+      activeIconSvg: '/public/assets/svgs/classroomActive.svg',
       label: {
         en: 'Classroom',
         es: 'Clases',
@@ -140,7 +140,7 @@ const menuItems = [
       key: 'welcome',
       order: 1,
       parentKey: 'classroom',
-      url: '/classroom/private/welcome',
+      url: '/private/classroom/welcome',
       label: {
         en: 'Welcome',
         es: 'Bienvenida',
@@ -159,7 +159,7 @@ const menuItems = [
       key: 'tree',
       order: 2,
       parentKey: 'classroom',
-      url: '/classroom/private/tree',
+      url: '/private/classroom/tree',
       label: {
         en: 'Tree',
         es: 'Árbol',
@@ -179,7 +179,7 @@ const menuItems = [
       key: 'organization',
       order: 3,
       parentKey: 'classroom',
-      url: '/classroom/private/organization',
+      url: '/private/classroom/organization',
       label: {
         en: 'Organization',
         es: 'Organización',
@@ -199,7 +199,7 @@ const menuItems = [
       key: 'classes',
       order: 4,
       parentKey: 'classroom',
-      url: '/classroom/private/classes',
+      url: '/private/classroom/classes',
       label: {
         en: 'Classes admin',
         es: 'Clases admin',
