@@ -186,6 +186,9 @@ async function generateMonorepo(dir: string, plugins: Plugin[]): Promise<void> {
   // Generate App index.js
   await copyFile(path.resolve(configDir.src, 'index.js'), path.resolve(frontDir, 'index.js'));
 
+  // Generate Tailwind global.css
+  await copyFile(path.resolve(configDir.src, 'global.css'), path.resolve(frontDir, 'global.css'));
+
   // Generate App contexts folder
   await copyFolder(path.resolve(configDir.src, 'contexts'), path.resolve(frontDir, 'contexts'));
 
@@ -239,6 +242,7 @@ async function main(): Promise<void> {
     {
       alias: generateAliases(frontDir, plugins),
       filesToCopy: generatePublicFolders(frontDir, plugins),
+      useLegacy: process.argv[3] === '--legacy'
     },
     // Trigger function when code changes are detected
     async () => {
@@ -252,7 +256,8 @@ async function main(): Promise<void> {
           { plugins }
         );
       }
-    }
+    },
+    plugins
   );
 
   // When a public/private file is added, recreate App.js
@@ -308,6 +313,7 @@ async function main(): Promise<void> {
         {
           alias: generateAliases(frontDir, plugins),
           filesToCopy: generatePublicFolders(frontDir, plugins),
+          useLegacy: process.argv[3] === '--legacy'
         },
         async () => {
           const modified = await saveLockFile(frontDir, await checkPluginPaths(plugins));
@@ -320,7 +326,8 @@ async function main(): Promise<void> {
               { plugins: await checkPluginPaths(plugins) }
             );
           }
-        }
+        },
+        plugins
       );
     },
   });
