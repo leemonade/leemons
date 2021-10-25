@@ -100,7 +100,7 @@ function formatMessage(message, plugins) {
 
   message
     .match(/(\/[^\b\n]+\/multi-src-react)\/front\/plugins\/[^/]+/gm)
-    .map((src) => {
+    ?.map((src) => {
       const plugin = plugins.find(({ name }) => name === path.basename(src));
 
       return { src, realPath: plugin.path };
