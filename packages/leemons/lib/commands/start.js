@@ -1,3 +1,5 @@
+require('leemons-telemetry').start('Leemons App');
+
 const chalk = require('chalk');
 const cluster = require('cluster');
 const fs = require('fs');

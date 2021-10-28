@@ -1,21 +1,23 @@
+const apm = require('leemons-telemetry').start('Leemons App');
+
 const cluster = require('cluster');
 const path = require('path');
 const chalk = require('chalk');
 
 const createLogger = require('leemons-logger/lib/logger/multiThread');
 const { getAvailablePort } = require('leemons-utils/lib/port');
+const { Leemons } = require('../index');
 
 const { handleStdin } = require('./lib/io');
 const { createWorker } = require('./lib/worker');
 const { createReloader } = require('./lib/watch');
 
-const { Leemons } = require('../index');
 const loadFront = require('../core/plugins/front/loadFront');
 const build = require('../core/front/build');
 const { PLUGIN_STATUS } = require('../core/plugins/pluginsStatus');
 const { LeemonsSocket } = require('../socket.io');
 
-//TODO falta que al reiniciar los servidores manualmente se haga bien añadiendo o quitando a los watchers los nuevos plugins.
+// TODO falta que al reiniciar los servidores manualmente se haga bien añadiendo o quitando a los watchers los nuevos plugins.
 
 /**
  * Creates a watcher for frontend files and then sets up all the needed files

@@ -10,6 +10,7 @@ const chalk = require('chalk');
 const bodyParser = require('koa-bodyparser');
 const ora = require('ora');
 const uuid = require('uuid');
+const withTelemetry = require('leemons-telemetry/withTelemetry');
 
 const leemonsUtils = require('leemons-utils');
 const { createDatabaseManager } = require('leemons-database');
@@ -197,7 +198,7 @@ class Leemons {
   authenticatedMiddleware(authenticated) {
     return async (ctx, next) => {
       try {
-        let authorization = ctx.headers.authorization;
+        let { authorization } = ctx.headers;
         try {
           authorization = JSON.parse(authorization);
         } catch (e) {}
@@ -343,40 +344,85 @@ class Leemons {
     return this.db.query(model, plugin);
   }
 
-  async loadBack() {
-    /*
-     * Create a DatabaseManager for managing the database connections and models
-     */
-    this.db = createDatabaseManager(this);
-    /*
-     * Initialize database connections
-     */
-    await this.db.init();
+  async loadBack(parent) {
+    return withTelemetry('loadBack', parent, async (loadBackTelemetry) => {
+      await withTelemetry('initDatabase', loadBackTelemetry, async (t) => {
+        /*
+         * Create a DatabaseManager for managing the database connections and models
+         */
+        let span = t.startSpan('createDatabaseManager');
+        this.db = createDatabaseManager(this);
+        if (span) {
+          span.end();
+        }
+        /*
+         * Initialize database connections
+         */
+        span = t.startSpan('initDatabase');
+        await this.db.init();
+        if (span) {
+          span.end();
+        }
 
-    /**
-     * Load core models
-     */
-    loadCoreModels(this);
-    await this.db.loadModels(_.omit(this.models, 'core_store'));
+        /**
+         * Load core models
+         */
+        span = t.startSpan('loadCoreModels');
+        loadCoreModels(this);
+        await this.db.loadModels(_.omit(this.models, 'core_store'));
+        if (span) {
+          span.end();
+        }
+      });
 
-    this.events.emit('appWillLoadBack', 'leemons');
+      this.events.emit('appWillLoadBack', 'leemons');
 
-    const plugins = await loadExternalFiles(this, 'plugins', 'plugin', {
-      getProvider: 'enabledProviders',
+      return withTelemetry('loadPlugins', loadBackTelemetry, async (t) => {
+        let span = t.startSpan('loadPlugins');
+        const plugins = await loadExternalFiles(this, 'plugins', 'plugin', {
+          getProvider: 'enabledProviders',
+        });
+        if (span) {
+          await span.end();
+        }
+        span = t.startSpan('loadProviders');
+        const providers = await loadExternalFiles(this, 'providers', 'provider', {
+          getPlugin: 'enabledPlugins',
+        });
+        if (span) {
+          span.end();
+        }
+
+        span = t.startSpan('setRouter');
+        this.setMiddlewares();
+        this.setRoutes([
+          ...plugins.filter((plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code),
+          ...providers.filter((provider) => provider.status.code === PLUGIN_STATUS.enabled.code),
+        ]);
+        if (span) {
+          span.end();
+        }
+
+        // Send the installed plugins to trace loading time
+        t.setCustomContext({
+          plugins: plugins.map(({ source, name, version, status }) => ({
+            source,
+            name,
+            version,
+            status,
+          })),
+          providers: providers.map(({ source, name, version, status }) => ({
+            source,
+            name,
+            version,
+            status,
+          })),
+        });
+        this.events.emit('appDidLoadBack', 'leemons');
+
+        return { plugins, providers };
+      });
     });
-    const providers = await loadExternalFiles(this, 'providers', 'provider', {
-      getPlugin: 'enabledPlugins',
-    });
-
-    this.setMiddlewares();
-    this.setRoutes([
-      ...plugins.filter((plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code),
-      ...providers.filter((provider) => provider.status.code === PLUGIN_STATUS.enabled.code),
-    ]);
-
-    this.events.emit('appDidLoadBack', 'leemons');
-
-    return { plugins, providers };
   }
 
   async loadFront(plugins, providers) {
@@ -427,17 +473,19 @@ class Leemons {
   }
 
   async loadAppConfig() {
-    leemons.events.emit('appWillLoadConfig', 'leemons');
-    this.config = (await loadConfiguration(this)).configProvider;
-    leemons.events.emit('appDidLoadConfig', 'leemons');
+    return withTelemetry('loadAppConfig', async () => {
+      leemons.events.emit('appWillLoadConfig', 'leemons');
+      this.config = (await loadConfiguration(this)).configProvider;
+      leemons.events.emit('appDidLoadConfig', 'leemons');
 
-    if (this.config.get('config.insecure', false)) {
-      this.log.warn(
-        'The app is running in insecure mode, this means all the plugins can require any file in your computer'
-      );
-    }
+      if (this.config.get('config.insecure', false)) {
+        this.log.warn(
+          'The app is running in insecure mode, this means all the plugins can require any file in your computer'
+        );
+      }
 
-    return this.config;
+      return this.config;
+    });
   }
 
   // Load all apps
