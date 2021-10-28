@@ -1,14 +1,14 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
 import PrivateLayout from '../components/PrivateLayout';
-import { LayoutContext } from '../context/layout';
+import withPersistentState from './withPersistentState';
 
 const LAYOUTS = {
   // private: withPersistentState(PrivateLayout, 'PrivateLayout'),
-  private: PrivateLayout,
+  private: withPersistentState(PrivateLayout, 'PrivateLayout'),
 };
 
-export default function withLayout(WrappedPage, layout) {
+export default function old_withLayout(WrappedPage, layout) {
   const Layout = LAYOUTS[layout || 'private'] || React.Fragment;
 
   const WithLayout = ({ ...pageProps }) => (

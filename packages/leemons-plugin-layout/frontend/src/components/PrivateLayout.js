@@ -1,12 +1,15 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import DndLayer from '@menu-builder/components/dnd/dndLayer';
 import MainMenu from '@menu-builder/components/mainMenu';
 
 import Alert from './Alert';
+import { LayoutContext } from '../context/layout';
 
-function PrivateLayout({ persistentState: [state, _setState], children }) {
+function PrivateLayout({ children }) {
+  const { state, setState: _setState } = useContext(LayoutContext);
+
   const store = useRef({});
 
   const setState = ({ ...rest }) => {

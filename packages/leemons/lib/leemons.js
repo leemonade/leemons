@@ -11,6 +11,7 @@ const bodyParser = require('koa-bodyparser');
 const ora = require('ora');
 const uuid = require('uuid');
 const withTelemetry = require('leemons-telemetry/withTelemetry');
+const koaBody = require('koa-body')({ multipart: true });
 
 const leemonsUtils = require('leemons-utils');
 const { createDatabaseManager } = require('leemons-database');
@@ -192,6 +193,8 @@ class Leemons {
     });
 
     this.backRouter.use(bodyParser());
+    this.backRouter.use(koaBody);
+
     this.events.emit('didSetMiddlewares', 'leemons');
   }
 
