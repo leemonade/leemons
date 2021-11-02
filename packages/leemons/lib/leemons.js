@@ -192,7 +192,7 @@ class Leemons {
       }
     });
 
-    this.backRouter.use(bodyParser());
+    // this.backRouter.use(bodyParser({ multipart: true }));
     this.backRouter.use(koaBody);
 
     this.events.emit('didSetMiddlewares', 'leemons');
@@ -202,6 +202,9 @@ class Leemons {
     return async (ctx, next) => {
       try {
         let { authorization } = ctx.headers;
+
+        if (!authorization) authorization = ctx.request.query.authorization;
+
         try {
           authorization = JSON.parse(authorization);
         } catch (e) {}

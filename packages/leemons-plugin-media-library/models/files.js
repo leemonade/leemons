@@ -35,6 +35,11 @@ module.exports = {
         notNull: true,
       },
     },
+    fromUser: {
+      references: {
+        collection: 'plugins_users::users',
+      },
+    },
     fromUserAgent: {
       references: {
         collection: 'plugins_users::user-agent',

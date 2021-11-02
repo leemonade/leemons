@@ -69,6 +69,11 @@ export function getCentersWithToken() {
   return _.isString(token) ? null : token.centers;
 }
 
+export function getAuthorizationTokenForAllCenters() {
+  const centers = getCentersWithToken();
+  return centers ? JSON.stringify(_.map(centers, 'token')) : null;
+}
+
 function getContextToken() {
   return getUserToken(useContext(SessionContext));
 }

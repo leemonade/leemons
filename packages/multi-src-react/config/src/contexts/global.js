@@ -58,8 +58,15 @@ export function Provider({ children }) {
     if (ctx.options && !ctx.options.headers) ctx.options.headers = {};
     if (ctx.options && !ctx.options.headers['content-type'] && !ctx.options.headers['Content-Type'])
       ctx.options.headers['content-type'] = 'application/json';
-    if (ctx.options && _.isObject(ctx.options.body)) {
+    if (
+      ctx.options &&
+      _.isObject(ctx.options.body) &&
+      ctx.options.headers['content-type'] === 'application/json'
+    ) {
       ctx.options.body = JSON.stringify(ctx.options.body);
+    }
+    if (ctx.options.headers['content-type'] === 'none') {
+      delete ctx.options.headers['content-type'];
     }
   }, []);
 

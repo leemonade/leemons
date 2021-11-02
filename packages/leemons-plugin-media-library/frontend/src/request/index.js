@@ -1,3 +1,5 @@
-import uploadFiles from '../../../../../../leemons-plugin-media-library/frontend/src/request/uploadFiles';
+import uploadFiles from './uploadFiles';
+import listAllMyFiles from './listAllMyFiles';
 
-export const updateEventRequest = uploadFiles;
+export const uploadFilesRequest = uploadFiles;
+export const listAllMyFilesRequest = listAllMyFiles;

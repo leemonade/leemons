@@ -1,5 +1,3 @@
-import * as _ from 'lodash';
-
 async function uploadFiles(files) {
   const formData = new FormData();
   if (files.constructor.name === 'FileList') {
@@ -16,7 +14,7 @@ async function uploadFiles(files) {
     method: 'POST',
     body: formData,
     headers: {
-      'content-type': null,
+      'content-type': 'none',
     },
   });
 }

@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 const _ = require('lodash');
 
+const fs = require('fs/promises');
 const execa = require('execa');
 const { loadConfiguration } = require('../config/loadConfig');
 const { getPluginsInfoFromDB, getLocalPlugins, getExternalPlugins } = require('./getPlugins');
@@ -114,9 +115,14 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
       // If the plugin does not have an id, it is not registered in the DB yet
       // so we need to register it
       if (plugin.id === undefined) {
-        const { name, path: pluginPath, version, id, source, ...pluginInfo } = await leemons.models[
-          target
-        ].add({
+        const {
+          name,
+          path: pluginPath,
+          version,
+          id,
+          source,
+          ...pluginInfo
+        } = await leemons.models[target].add({
           ...plugin,
           path: plugin.dir.app,
           // Use version 0.0.1 as default
@@ -169,6 +175,12 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
         _.set(filter, 'leemons.socket', {
           emit: LeemonsSocket.worker.emit,
           onConnection: LeemonsSocket.worker.onConnection,
+        });
+        _.set(filter, 'leemons.fs', {
+          copyFile: (...rest) => {
+            if (plugin.name === 'media-library') return fs.copyFile(...rest);
+            throw new Error('Only the plugin media-library have access to copyFile');
+          },
         });
         _.set(filter, 'leemons.utils', {
           stopAutoServerReload: () => {
