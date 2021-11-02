@@ -12,7 +12,7 @@ apm.start = (name, options) => {
 
       ...options,
       serviceName: name,
-      serverUrl: 'http://localhost:8200',
+      serverUrl: 'https://apm.telemetry.leemons.io',
     });
   }
 };
