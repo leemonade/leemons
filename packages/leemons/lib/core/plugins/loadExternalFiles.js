@@ -195,14 +195,14 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
             throw new Error('Only the plugin package-manager have access to startAutoServerReload');
           },
           reloadServer: () => {
-            if (plugin.name === 'package-manager') {
+            if (target === 'plugins' && plugin.name === 'package-manager') {
               leemons.reloadWorkers();
               return true;
             }
             throw new Error('Only the plugin package-manager have access to reloadServer');
           },
           getExeca: () => {
-            if (plugin.name === 'package-manager') return execa;
+            if (target === 'plugins' && plugin.name === 'package-manager') return execa;
             throw new Error('Only the plugin package-manager have access to execa');
           },
         });
