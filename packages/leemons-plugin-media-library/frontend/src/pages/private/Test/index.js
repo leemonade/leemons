@@ -35,6 +35,7 @@ function Test() {
       <div className="flex">
         {items.map((item) => {
           console.log(item);
+
           if (item.type.indexOf('image') >= 0) {
             return <img style={{ width: '20%' }} key={item.id} src={item.localUrl} alt="" />;
           }
