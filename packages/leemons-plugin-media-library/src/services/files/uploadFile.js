@@ -3,6 +3,7 @@ const _ = require('lodash');
 const pathSys = require('path');
 const mime = require('mime-types');
 const { table } = require('../tables');
+const { getActiveProvider } = require('../config/getActiveProvider');
 
 async function uploadFile(file, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
@@ -27,12 +28,29 @@ async function uploadFile(file, { userSession, transacting: _transacting } = {})
       }
       const item = await table.files.create(toCreate, { transacting });
 
-      // TODO Comprobar si tenemos algun provedor configurado he intentar subir el archivo con dicho provedor
+      const providerName = await getActiveProvider({ transacting });
+      if (providerName) {
+        const provider = leemons.getProvider(providerName);
+        if (
+          provider &&
+          provider.services &&
+          provider.services.provider &&
+          provider.services.provider.upload
+        ) {
+          const buffer = await leemons.fs.readFile(path);
+          item.provider = providerName;
+          item.url = await provider.services.provider.upload(item, buffer, { transacting });
+        }
+      }
 
-      // Generamos la nueva url y copiamos desde la carpeta temporal a la nuestra donde se almacenan todos los archivos
-      const newPath = pathSys.resolve(__dirname, '..', '..', '..', 'files', item.id);
-      await leemons.fs.copyFile(path, newPath);
-      return table.files.update({ id: item.id }, { url: newPath }, { transacting });
+      if (item.url === '') {
+        // Generamos la nueva url y copiamos desde la carpeta temporal a la nuestra donde se almacenan todos los archivos
+        item.provider = 'sys';
+        item.url = pathSys.resolve(__dirname, '..', '..', '..', 'files', item.id);
+        await leemons.fs.copyFile(path, item.url);
+      }
+
+      return table.files.update({ id: item.id }, item, { transacting });
     },
     table.files,
     _transacting

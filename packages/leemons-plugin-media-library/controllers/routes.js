@@ -9,6 +9,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/remove/:id',
+    method: 'DELETE',
+    handler: 'files.removeFile',
+    authenticated: true,
+  },
+  {
     path: '/files/my',
     method: 'GET',
     handler: 'files.myFiles',

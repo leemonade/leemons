@@ -6,15 +6,15 @@ async function setProviderConfig(providerName, config, { transacting: _transacti
   return global.utils.withTransaction(
     async (transacting) => {
       const provider = leemons.getProvider(providerName);
-      if (provider && provider.service) {
-        if (!provider.service.provider)
+      if (provider && provider.services) {
+        if (!provider.services.provider)
           throw new Error('Bad implementation for media library, need the service: provider');
-        if (!provider.service.provider.setConfig)
+        if (!provider.services.provider.setConfig)
           throw new Error(
             'Bad implementation for media library, the service provider need the function: setConfig'
           );
         await setActiveProvider(providerName, { transacting });
-        return provider.service.provider.setConfig(config, { transacting });
+        return provider.services.provider.setConfig(config, { transacting });
       }
       throw new Error(`The provider "${providerName}" not found`);
     },

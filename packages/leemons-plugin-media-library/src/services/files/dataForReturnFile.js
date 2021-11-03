@@ -1,17 +1,28 @@
-const _ = require('lodash');
-
 const fs = require('fs');
 const { table } = require('../tables');
+const { getActiveProvider } = require('../config/getActiveProvider');
 
 async function dataForReturnFile(id, { transacting } = {}) {
   const file = await table.files.findOne({ id }, { transacting });
-  console.log(leemons.plugin.providers);
-  // todo segun el provedor que nos devuelva el readStream
+
   if (file.provider === 'sys') {
     return {
       contentType: file.type,
       fileName: `${file.name}.${file.extension}`,
       readStream: fs.createReadStream(file.url),
+    };
+  }
+  const provider = leemons.getProvider(file.provider);
+  if (
+    provider &&
+    provider.services &&
+    provider.services.provider &&
+    provider.services.provider.getReadStream
+  ) {
+    return {
+      contentType: file.type,
+      fileName: `${file.name}.${file.extension}`,
+      readStream: await provider.services.provider.getReadStream(file.url, { transacting }),
     };
   }
 

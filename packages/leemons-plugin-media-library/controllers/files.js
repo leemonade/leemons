@@ -23,7 +23,14 @@ async function file(ctx) {
   ctx.set('Content-disposition', `attachment; filename=${data.fileName}`);
 }
 
+async function removeFile(ctx) {
+  await fileService.removeFiles(ctx.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
 module.exports = {
+  removeFile,
   uploadFile,
   myFiles,
   file,
