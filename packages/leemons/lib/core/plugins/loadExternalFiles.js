@@ -231,27 +231,46 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
         // TODO: Convert the plugins array to a Map for more efficiency
         // Expose leemons.getPlugin, leemons.getProvider... to each external file
         const getPluggable = (pluggables) => (pluggableName) => {
+          // Remove plugins properties from the called pluggable due to security reasons
+          const secureDesiredPlugin = (_plugin) => {
+            const desiredPlugin = _.pick(_plugin, ['name', 'version', 'services']);
+            desiredPlugin.services = transformServices(
+              desiredPlugin.services,
+              `${target}.${plugin.name}`
+            );
+            return desiredPlugin;
+          };
+
+          // If the handler is a function, call it first
+          if (_.isFunction(pluggables)) {
+            // eslint-disable-next-line no-param-reassign
+            pluggables = pluggables(plugin, pluggableName);
+
+            // If the handler desires to handle everything itself, must return a function
+            if (_.isFunction(pluggables)) {
+              return pluggables(secureDesiredPlugin);
+            }
+          }
+
+          // If the handler is a string, get it from leemons global object
           if (_.isString(pluggables)) {
             // eslint-disable-next-line no-param-reassign
             pluggables = leemons[pluggables];
           }
 
+          // If the handler is the object itself, handle by default handler
           if (_.isArray(pluggables)) {
-            let desiredPluggable = pluggables.find(
+            const desiredPluggable = pluggables.find(
               (pluggable) =>
                 pluggable.name === pluggableName &&
                 pluggable.status.code === PLUGIN_STATUS.enabled.code
             );
 
             if (desiredPluggable) {
-              desiredPluggable = _.pick(desiredPluggable, ['name', 'version', 'services']);
-              desiredPluggable.services = transformServices(
-                desiredPluggable.services,
-                `${target}.${plugin.name}`
-              );
-              return desiredPluggable;
+              return secureDesiredPlugin(desiredPluggable);
             }
           }
+
           return null;
         };
 
