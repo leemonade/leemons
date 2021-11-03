@@ -177,7 +177,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
         });
         _.set(filter, 'leemons.utils', {
           stopAutoServerReload: () => {
-            if (plugin.name === 'package-manager') {
+            if (target === 'plugins' && plugin.name === 'package-manager') {
               leemons.canReloadFrontend = false;
               leemons.canReloadBackend = false;
               if (leemons.stopAutoReloadWorkers) leemons.stopAutoReloadWorkers();
@@ -186,7 +186,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
             throw new Error('Only the plugin package-manager have access to stopAutoServerReload');
           },
           startAutoServerReload: () => {
-            if (plugin.name === 'package-manager') {
+            if (target === 'plugins' && plugin.name === 'package-manager') {
               leemons.canReloadFrontend = true;
               leemons.canReloadBackend = true;
               if (leemons.startAutoReloadWorkers) leemons.startAutoReloadWorkers();
