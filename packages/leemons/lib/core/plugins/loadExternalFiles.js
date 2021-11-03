@@ -35,7 +35,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
           models: 'models',
           controllers: 'controllers',
           services: 'services',
-          next: 'next',
+          next: 'frontend',
           env: '.env',
           install: 'install.js',
           events: 'events.js',
@@ -114,9 +114,14 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
       // If the plugin does not have an id, it is not registered in the DB yet
       // so we need to register it
       if (plugin.id === undefined) {
-        const { name, path: pluginPath, version, id, source, ...pluginInfo } = await leemons.models[
-          target
-        ].add({
+        const {
+          name,
+          path: pluginPath,
+          version,
+          id,
+          source,
+          ...pluginInfo
+        } = await leemons.models[target].add({
           ...plugin,
           path: plugin.dir.app,
           // Use version 0.0.1 as default
