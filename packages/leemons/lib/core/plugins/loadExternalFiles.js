@@ -36,7 +36,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
           models: 'models',
           controllers: 'controllers',
           services: 'services',
-          next: 'next',
+          next: 'frontend',
           env: '.env',
           install: 'install.js',
           events: 'events.js',
@@ -184,7 +184,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
         });
         _.set(filter, 'leemons.utils', {
           stopAutoServerReload: () => {
-            if (plugin.name === 'package-manager') {
+            if (target === 'plugins' && plugin.name === 'package-manager') {
               leemons.canReloadFrontend = false;
               leemons.canReloadBackend = false;
               if (leemons.stopAutoReloadWorkers) leemons.stopAutoReloadWorkers();
@@ -193,7 +193,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
             throw new Error('Only the plugin package-manager have access to stopAutoServerReload');
           },
           startAutoServerReload: () => {
-            if (plugin.name === 'package-manager') {
+            if (target === 'plugins' && plugin.name === 'package-manager') {
               leemons.canReloadFrontend = true;
               leemons.canReloadBackend = true;
               if (leemons.startAutoReloadWorkers) leemons.startAutoReloadWorkers();
@@ -202,14 +202,14 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
             throw new Error('Only the plugin package-manager have access to startAutoServerReload');
           },
           reloadServer: () => {
-            if (plugin.name === 'package-manager') {
+            if (target === 'plugins' && plugin.name === 'package-manager') {
               leemons.reloadWorkers();
               return true;
             }
             throw new Error('Only the plugin package-manager have access to reloadServer');
           },
           getExeca: () => {
-            if (plugin.name === 'package-manager') return execa;
+            if (target === 'plugins' && plugin.name === 'package-manager') return execa;
             throw new Error('Only the plugin package-manager have access to execa');
           },
         });
@@ -238,27 +238,46 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
         // TODO: Convert the plugins array to a Map for more efficiency
         // Expose leemons.getPlugin, leemons.getProvider... to each external file
         const getPluggable = (pluggables) => (pluggableName) => {
+          // Remove plugins properties from the called pluggable due to security reasons
+          const secureDesiredPlugin = (_plugin) => {
+            const desiredPlugin = _.pick(_plugin, ['name', 'version', 'services']);
+            desiredPlugin.services = transformServices(
+              desiredPlugin.services,
+              `${target}.${plugin.name}`
+            );
+            return desiredPlugin;
+          };
+
+          // If the handler is a function, call it first
+          if (_.isFunction(pluggables)) {
+            // eslint-disable-next-line no-param-reassign
+            pluggables = pluggables(plugin, pluggableName);
+
+            // If the handler desires to handle everything itself, must return a function
+            if (_.isFunction(pluggables)) {
+              return pluggables(secureDesiredPlugin);
+            }
+          }
+
+          // If the handler is a string, get it from leemons global object
           if (_.isString(pluggables)) {
             // eslint-disable-next-line no-param-reassign
             pluggables = leemons[pluggables];
           }
 
+          // If the handler is the object itself, handle by default handler
           if (_.isArray(pluggables)) {
-            let desiredPluggable = pluggables.find(
+            const desiredPluggable = pluggables.find(
               (pluggable) =>
                 pluggable.name === pluggableName &&
                 pluggable.status.code === PLUGIN_STATUS.enabled.code
             );
 
             if (desiredPluggable) {
-              desiredPluggable = _.pick(desiredPluggable, ['name', 'version', 'services']);
-              desiredPluggable.services = transformServices(
-                desiredPluggable.services,
-                `${target}.${plugin.name}`
-              );
-              return desiredPluggable;
+              return secureDesiredPlugin(desiredPluggable);
             }
           }
+
           return null;
         };
 

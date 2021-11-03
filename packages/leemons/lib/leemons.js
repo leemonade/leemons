@@ -385,16 +385,25 @@ class Leemons {
 
       return withTelemetry('loadPlugins', loadBackTelemetry, async (t) => {
         let span = t.startSpan('loadPlugins');
+        const listProviders = (plugin) =>
+          Object.values(leemons.providers).filter((provider) =>
+            provider?.config?.config?.pluginsCanUseMe.includes(plugin.name)
+          ); // provider.config.config.pluginsCanUseMe.includes(plugin.name)}
+
         const plugins = await loadExternalFiles(this, 'plugins', 'plugin', {
-          getProvider: 'enabledProviders',
+          // Get the given provider from the list of available providers
+          getProvider: listProviders,
+          // Get the list of available providers, return a function to immediate return
+          listProviders: (plugin) => (securePlugin) => listProviders(plugin).map(securePlugin),
         });
         if (span) {
           await span.end();
         }
         span = t.startSpan('loadProviders');
         const providers = await loadExternalFiles(this, 'providers', 'provider', {
-          getPlugin: 'enabledPlugins',
+          getPlugin: () => Object.values(leemons.plugins),
         });
+
         if (span) {
           span.end();
         }
