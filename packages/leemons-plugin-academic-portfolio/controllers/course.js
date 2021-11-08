@@ -1,12 +1,18 @@
-const knowledgeService = require('../src/services/knowledges');
+const courseService = require('../src/services/courses');
 
-async function postKnowledge(ctx) {
-  const knowledge = await knowledgeService.addKnowledge(ctx.request.body);
+async function postCourse(ctx) {
+  const course = await courseService.addCourse(ctx.request.body);
   ctx.status = 200;
-  ctx.body = { status: 200, knowledge };
+  ctx.body = { status: 200, course };
 }
 
-async function listKnowledge(ctx) {
+async function putCourse(ctx) {
+  const course = await courseService.updateCourse(ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, course };
+}
+
+async function listCourse(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
     properties: {
@@ -19,14 +25,9 @@ async function listKnowledge(ctx) {
   });
   if (validator.validate(ctx.request.query)) {
     const { page, size, program, ...options } = ctx.request.query;
-    const data = await knowledgeService.listKnowledges(
-      parseInt(page, 10),
-      parseInt(size, 10),
-      program,
-      {
-        ...options,
-      }
-    );
+    const data = await courseService.listCourses(parseInt(page, 10), parseInt(size, 10), program, {
+      ...options,
+    });
     ctx.status = 200;
     ctx.body = { status: 200, data };
   } else {
@@ -35,6 +36,7 @@ async function listKnowledge(ctx) {
 }
 
 module.exports = {
-  postKnowledge,
-  listKnowledge,
+  postCourse,
+  listCourse,
+  putCourse,
 };

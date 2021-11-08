@@ -38,4 +38,20 @@ module.exports = [
     method: 'GET',
     handler: 'subjectType.listSubjectType',
   },
+  // Courses
+  {
+    path: '/course',
+    method: 'POST',
+    handler: 'course.postCourse',
+  },
+  {
+    path: '/course',
+    method: 'PUT',
+    handler: 'course.putCourse',
+  },
+  {
+    path: '/course',
+    method: 'GET',
+    handler: 'course.listCourse',
+  },
 ];

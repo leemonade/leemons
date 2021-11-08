@@ -14,6 +14,11 @@ module.exports = {
     abbreviation: {
       type: 'string',
     },
+    program: {
+      references: {
+        collection: 'plugins_academic-portfolio::programs',
+      },
+    },
     // course / group / substage
     type: {
       type: 'string',

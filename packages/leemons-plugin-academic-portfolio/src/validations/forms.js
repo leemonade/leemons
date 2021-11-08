@@ -206,9 +206,91 @@ async function validateAddSubjectType(data, { transacting } = {}) {
   if (subjectTypeCount) throw new Error('The subject type already exists');
 }
 
+const addCourseSchema = {
+  type: 'object',
+  properties: {
+    name: stringSchema,
+    abbreviation: stringSchema,
+    program: stringSchema,
+  },
+  required: ['name', 'abbreviation', 'program'],
+  additionalProperties: false,
+};
+async function validateAddCourse(data, { transacting } = {}) {
+  const validator = new LeemonsValidator(addCourseSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+
+  const program = await table.programs.findOne({ id: data.program }, { transacting });
+  if (!program) {
+    throw new Error('The program does not exist');
+  }
+
+  // ES: Comprobamos que no se sobrepase el numero maximo de cursos
+  const courseCount = await table.groups.count(
+    { program: data.program, type: 'course' },
+    { transacting }
+  );
+  if (courseCount >= program.maxNumberOfCourses) {
+    throw new Error('The program has reached the maximum number of courses');
+  }
+
+  // ES: Comprobamos que no exista ya el curso
+  const groupCount = await table.groups.count(
+    {
+      abbreviation: data.abbreviation,
+      program: data.program,
+      type: 'course',
+    },
+    { transacting }
+  );
+
+  if (groupCount) throw new Error('The course already exists');
+}
+
+const updateCourseSchema = {
+  type: 'object',
+  properties: {
+    id: stringSchema,
+    name: stringSchema,
+    abbreviation: stringSchema,
+  },
+  required: ['id', 'name', 'abbreviation'],
+  additionalProperties: false,
+};
+async function validateUpdateCourse(data, { transacting } = {}) {
+  const validator = new LeemonsValidator(updateCourseSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+
+  const course = await table.groups.findOne({ id: data.id }, { transacting });
+  if (!course) {
+    throw new Error('The course does not exist');
+  }
+
+  // ES: Comprobamos que no exista ya el curso
+  const groupCount = await table.groups.count(
+    {
+      id_$ne: data.id,
+      abbreviation: data.abbreviation,
+      program: course.program,
+      type: 'course',
+    },
+    { transacting }
+  );
+
+  if (groupCount) throw new Error('The course already exists');
+}
+
 module.exports = {
+  validateAddCourse,
   validateAddProgram,
   validateAddKnowledge,
+  validateUpdateCourse,
   validateSubstagesFormat,
   validateAddSubjectType,
 };
