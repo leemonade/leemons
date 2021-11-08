@@ -6,7 +6,7 @@ async function updateCourse(data, { transacting: _transacting } = {}) {
     async (transacting) => {
       await validateUpdateCourse(data, { transacting });
       const { id, ..._data } = data;
-      return table.groups.update({ id }, { ..._data }, { transacting });
+      return table.groups.update({ id }, _data, { transacting });
     },
     table.groups,
     _transacting

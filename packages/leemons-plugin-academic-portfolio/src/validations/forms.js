@@ -206,6 +206,44 @@ async function validateAddSubjectType(data, { transacting } = {}) {
   if (subjectTypeCount) throw new Error('The subject type already exists');
 }
 
+const updateSubjectTypeSchema = {
+  type: 'object',
+  properties: {
+    id: stringSchema,
+    name: stringSchema,
+    groupVisibility: booleanSchema,
+    credits_course: integerSchemaNullable,
+    credits_program: integerSchemaNullable,
+  },
+  required: ['id', 'name', 'groupVisibility'],
+  additionalProperties: false,
+};
+async function validateUpdateSubjectType(data, { transacting } = {}) {
+  const validator = new LeemonsValidator(updateSubjectTypeSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+
+  const subjectType = await table.subjectTypes.findOne({ id: data.id }, { transacting });
+
+  if (!subjectType) {
+    throw new Error('The subject type does not exist');
+  }
+
+  // ES: Comprobamos que no exista ya el subject type
+  const subjectTypeCount = await table.subjectTypes.count(
+    {
+      id_$ne: data.id,
+      program: subjectType.program,
+      name: data.name,
+    },
+    { transacting }
+  );
+
+  if (subjectTypeCount) throw new Error('The subject type already exists');
+}
+
 const addCourseSchema = {
   type: 'object',
   properties: {
@@ -293,4 +331,5 @@ module.exports = {
   validateUpdateCourse,
   validateSubstagesFormat,
   validateAddSubjectType,
+  validateUpdateSubjectType,
 };

@@ -35,6 +35,11 @@ module.exports = [
   },
   {
     path: '/subject-type',
+    method: 'PUT',
+    handler: 'subjectType.putSubjectType',
+  },
+  {
+    path: '/subject-type',
     method: 'GET',
     handler: 'subjectType.listSubjectType',
   },

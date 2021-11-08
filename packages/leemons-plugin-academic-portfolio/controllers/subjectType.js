@@ -6,6 +6,12 @@ async function postSubjectType(ctx) {
   ctx.body = { status: 200, subjectType };
 }
 
+async function putSubjectType(ctx) {
+  const subjectType = await subjectTypeService.updateSubjectType(ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, subjectType };
+}
+
 async function listSubjectType(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
@@ -35,6 +41,7 @@ async function listSubjectType(ctx) {
 }
 
 module.exports = {
+  putSubjectType,
   postSubjectType,
   listSubjectType,
 };
