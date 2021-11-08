@@ -97,6 +97,12 @@ module.exports = [
    * Profiles
    * */
   {
+    path: '/add-all-permissions-to-all-profiles',
+    method: 'POST',
+    handler: 'profiles.addAllPermissionsToAllProfiles',
+    authenticated: true,
+  },
+  {
     path: '/profile/list',
     method: 'POST',
     handler: 'profiles.list',

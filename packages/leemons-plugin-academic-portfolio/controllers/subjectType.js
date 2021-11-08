@@ -1,0 +1,34 @@
+const subjectTypeService = require('../src/services/subject-type');
+
+async function postSubjectType(ctx) {
+  const subjectType = await subjectTypeService.addSubjectType(ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, subjectType };
+}
+
+async function listSubjectType(ctx) {
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      page: { type: ['number', 'string'] },
+      size: { type: ['number', 'string'] },
+    },
+    required: ['page', 'size'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.query)) {
+    const { page, size, ...options } = ctx.request.query;
+    const data = await subjectTypeService.listSubjectType(parseInt(page, 10), parseInt(size, 10), {
+      ...options,
+    });
+    ctx.status = 200;
+    ctx.body = { status: 200, data };
+  } else {
+    throw validator.error;
+  }
+}
+
+module.exports = {
+  postSubjectType,
+  listSubjectType,
+};

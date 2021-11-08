@@ -1,6 +1,6 @@
 module.exports = {
-  modelName: 'program',
-  collectionName: 'program',
+  modelName: 'subjects',
+  collectionName: 'subjects',
   options: {
     useTimestamps: true,
   },

@@ -5,6 +5,7 @@ const { existMany } = require('./existMany');
 const { existName } = require('./existName');
 const { detailByUri } = require('./detailByUri');
 const { addCustomPermissions } = require('./permissions/addCustomPermissions');
+const { addAllPermissionsToAllProfiles } = require('./addAllPermissionsToAllProfiles');
 const { removeCustomPermissionsByName } = require('./permissions/removeCustomPermissionsByName');
 const { getRoleForRelationshipProfileCenter } = require('./getRoleForRelationshipProfileCenter');
 
@@ -23,5 +24,6 @@ module.exports = {
   getProfileContacts,
   addCustomPermissions,
   removeCustomPermissionsByName,
+  addAllPermissionsToAllProfiles,
   getRoleForRelationshipProfileCenter,
 };

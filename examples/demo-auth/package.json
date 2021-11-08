@@ -12,6 +12,7 @@
   "dependencies": {
     "leemons": "1.0.0",
     "leemons-connector-bookshelf": "1.0.0",
+    "leemons-plugin-academic-portfolio": "1.0.0",
     "leemons-plugin-assets": "1.0.0",
     "leemons-plugin-calendar": "1.0.0",
     "leemons-plugin-classroom": "1.0.0",
