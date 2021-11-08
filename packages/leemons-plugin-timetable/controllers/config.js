@@ -1,0 +1,66 @@
+module.exports = {
+  has: async (ctx) => {
+    const { type, id } = ctx.request.params;
+    try {
+      const exists = await leemons.plugin.services.config.has(id, type);
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        exists,
+      };
+    } catch (e) {
+      // Should never throw, so if it occurs, it's an Internal Server Error
+      ctx.status = 500;
+      ctx.body = {
+        status: 500,
+        message: 'Internal Server Error',
+      };
+    }
+  },
+  get: async (ctx) => {
+    const { type, id } = ctx.request.params;
+    try {
+      const config = await leemons.plugin.services.config.get(id, type);
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        config,
+      };
+    } catch (e) {
+      // Should never throw, so if it occurs, it's an Internal Server Error
+      ctx.status = 500;
+      ctx.body = {
+        status: 500,
+        message: 'Internal Server Error',
+      };
+    }
+  },
+
+  create: async (ctx) => {
+    const { type, id } = ctx.request.params;
+    const { start, end, days, breaks, slot } = ctx.request.body;
+    try {
+      const config = await leemons.plugin.services.config.create({
+        entity: id,
+        entityType: type,
+        start,
+        end,
+        days,
+        breaks,
+        slot,
+      });
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        config,
+      };
+    } catch (e) {
+      // The most frequent error is that the params are invalid
+      ctx.status = 401;
+      ctx.body = {
+        status: 401,
+        message: e.message,
+      };
+    }
+  },
+};
