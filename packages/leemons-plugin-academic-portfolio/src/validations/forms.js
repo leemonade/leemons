@@ -457,7 +457,7 @@ const updateSubjectSchema = {
     id: stringSchema,
     name: stringSchema,
   },
-  required: ['id', 'name', 'abbreviation'],
+  required: ['id', 'name'],
   additionalProperties: false,
 };
 async function validateUpdateSubject(data, { transacting } = {}) {
@@ -466,14 +466,6 @@ async function validateUpdateSubject(data, { transacting } = {}) {
   if (!validator.validate(data)) {
     throw validator.error;
   }
-
-  // ES: Comprobamos que no exista ya asignatura
-  const subjectCount = await table.subjects.count(
-    { id_$ne: data.id, abbreviation: data.abbreviation },
-    { transacting }
-  );
-
-  if (subjectCount) throw new Error('The subject already exists');
 }
 
 module.exports = {
