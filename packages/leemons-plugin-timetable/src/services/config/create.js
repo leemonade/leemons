@@ -1,10 +1,11 @@
-const dayjs = require('dayjs');
+const timeToDayjs = require('../../helpers/dayjs/timeToDayjs');
+const weekDays = require('../../helpers/dayjs/weekDays');
 const has = require('./has');
 
 const configTable = leemons.query('plugins_timetable::config');
 const breaksTable = leemons.query('plugins_timetable::breaks');
 
-async function create(
+module.exports = async function create(
   { entity, entityType, start, end, days, breaks, slot } = {},
   { transacting: t } = {}
 ) {
@@ -15,6 +16,10 @@ async function create(
 
   if (!Array.isArray(days)) {
     throw new Error('Days must be an array');
+  }
+
+  if (days.some((day) => !weekDays.includes(day))) {
+    throw new Error('Invalid day');
   }
 
   if (!Array.isArray(breaks)) {
@@ -33,18 +38,46 @@ async function create(
     throw new Error('Slot must be an integer');
   }
 
-  if (dayjs(start, 'HH:mm').isAfter(dayjs(end, 'HH:mm'))) {
+  const startTime = timeToDayjs(start);
+  const endTime = timeToDayjs(end);
+
+  if (!startTime) {
+    throw new Error('Start time is invalid, must be HH:mm');
+  }
+
+  if (!endTime) {
+    throw new Error('End time is invalid, must be HH:mm');
+  }
+
+  if (startTime.isAfter(endTime)) {
     throw new Error('Start time must be before end time');
   }
 
   // Validate breaks
   breaks.forEach((breakItem) => {
-    if (dayjs(breakItem.start, 'HH:mm').isAfter(dayjs(breakItem.end, 'HH:mm'))) {
+    const breakStartTime = timeToDayjs(breakItem.start);
+    const breakEndTime = timeToDayjs(breakItem.end);
+
+    if (!breakStartTime) {
+      throw new Error('Start time is invalid, must be HH:mm');
+    }
+
+    if (!breakEndTime) {
+      throw new Error('End time is invalid, must be HH:mm');
+    }
+
+    // If it starts before the group start time or ends after the group end time,
+    // it means that the break is not between the group time, because we ensure
+    // that the break' end time is after the break' start time
+    if (breakStartTime.isBefore(startTime) || breakEndTime.isAfter(endTime)) {
       throw new Error('Breaks must be between start and end time');
+    }
+    if (breakStartTime.isAfter(breakEndTime)) {
+      throw new Error('Breaks end time must be after start time');
     }
   });
 
-  const lowercasedDays = days.map((day) => day.toLowerCase());
+  const lowercasedDays = [...new Set(days.map((day) => day.toLowerCase()))];
 
   // Database queries
   return global.utils.withTransaction(
@@ -83,6 +116,4 @@ async function create(
     configTable,
     t
   );
-}
-
-module.exports = create;
+};
