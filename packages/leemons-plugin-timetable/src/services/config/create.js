@@ -1,9 +1,9 @@
 const timeToDayjs = require('../../helpers/dayjs/timeToDayjs');
 const weekDays = require('../../helpers/dayjs/weekDays');
 const has = require('./has');
+const createBreaks = require('./breakes/create');
 
 const configTable = leemons.query('plugins_timetable::config');
-const breaksTable = leemons.query('plugins_timetable::breaks');
 
 module.exports = async function create(
   { entity, entityType, start, end, days, breaks, slot } = {},
@@ -16,14 +16,6 @@ module.exports = async function create(
 
   if (!Array.isArray(days)) {
     throw new Error('Days must be an array');
-  }
-
-  if (days.some((day) => !weekDays.includes(day))) {
-    throw new Error('Invalid day');
-  }
-
-  if (!Array.isArray(breaks)) {
-    throw new Error('Breaks must be an array');
   }
 
   if (typeof slot !== 'number') {
@@ -53,31 +45,11 @@ module.exports = async function create(
     throw new Error('Start time must be before end time');
   }
 
-  // Validate breaks
-  breaks.forEach((breakItem) => {
-    const breakStartTime = timeToDayjs(breakItem.start);
-    const breakEndTime = timeToDayjs(breakItem.end);
-
-    if (!breakStartTime) {
-      throw new Error('Start time is invalid, must be HH:mm');
-    }
-
-    if (!breakEndTime) {
-      throw new Error('End time is invalid, must be HH:mm');
-    }
-
-    // If it starts before the group start time or ends after the group end time,
-    // it means that the break is not between the group time, because we ensure
-    // that the break' end time is after the break' start time
-    if (breakStartTime.isBefore(startTime) || breakEndTime.isAfter(endTime)) {
-      throw new Error('Breaks must be between start and end time');
-    }
-    if (breakStartTime.isAfter(breakEndTime)) {
-      throw new Error('Breaks end time must be after start time');
-    }
-  });
-
   const lowercasedDays = [...new Set(days.map((day) => day.toLowerCase()))];
+
+  if (lowercasedDays.some((day) => !weekDays.includes(day))) {
+    throw new Error('Invalid day');
+  }
 
   // Database queries
   return global.utils.withTransaction(
@@ -100,16 +72,8 @@ module.exports = async function create(
         { transacting }
       );
 
-      // Create breaks
-      const _breaks = await breaksTable.createMany(
-        breaks.map((_break) => ({
-          timetable: config.id,
-          start: _break.start,
-          end: _break.end,
-          name: _break.name,
-        })),
-        { transacting }
-      );
+      // Register breaks
+      const _breaks = await createBreaks(config, breaks, { transacting });
 
       return { ...config, breaks: _breaks };
     },

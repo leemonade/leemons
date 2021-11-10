@@ -45,7 +45,7 @@ module.exports = {
 
   count: async (ctx) => {
     const { id: classId } = ctx.request.params;
-    const { start, end, startBetween, endBetween } = ctx.request.query;
+    const { start, end, startBetween, endBetween, days } = ctx.request.query;
     try {
       const count = await leemons.plugin.services.timetable.count(classId, {
         start,
@@ -53,6 +53,7 @@ module.exports = {
         // Parse the arrays as JSONs (for the query). To use it, provide the times as strings.
         startBetween: startBetween ? JSON.parse(startBetween) : undefined,
         endBetween: endBetween ? JSON.parse(endBetween) : undefined,
+        days: days ? JSON.parse(days) : undefined,
       });
       ctx.body = {
         count,

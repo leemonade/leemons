@@ -4,7 +4,7 @@ const timetableTable = leemons.query('plugins_timetable::timetable');
 
 module.exports = async function count(
   classId,
-  { start, startBetween, end, endBetween, transacting } = {}
+  { start, startBetween, end, endBetween, days, transacting } = {}
 ) {
   const query = {
     class: classId,
@@ -16,6 +16,10 @@ module.exports = async function count(
     end,
     endBetween,
   });
+
+  if (days) {
+    query.day_$in = days;
+  }
 
   const hasTimetables = await timetableTable.count(
     {
