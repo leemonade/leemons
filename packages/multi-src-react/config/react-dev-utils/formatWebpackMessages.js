@@ -99,7 +99,7 @@ function formatMessage(message, plugins) {
   message = lines.join('\n');
 
   message
-    .match(/(\/[^\b\n]+\/multi-src-react)\/front\/plugins\/[^/]+/gm)
+    .match(/((\/[^\s]+)?\.?\/multi-src-react)?\.?\/front\/plugins\/[^/\s]+/gm)
     ?.map((src) => {
       const plugin = plugins.find(({ name }) => name === path.basename(src));
 
