@@ -14,6 +14,9 @@ module.exports = {
     abbreviation: {
       type: 'string',
     },
+    index: {
+      type: 'integer',
+    },
     program: {
       references: {
         collection: 'plugins_academic-portfolio::programs',

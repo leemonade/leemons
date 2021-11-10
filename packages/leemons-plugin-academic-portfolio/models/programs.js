@@ -74,6 +74,18 @@ module.exports = {
     maxKnowledgeAbbreviationIsOnlyNumbers: {
       type: 'boolean',
     },
+    subjectsFirstDigit: {
+      type: 'string',
+      options: {
+        notNull: true,
+      },
+    },
+    subjectsDigits: {
+      type: 'integer',
+      options: {
+        notNull: true,
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

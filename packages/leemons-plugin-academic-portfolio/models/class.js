@@ -17,6 +17,11 @@ module.exports = {
         defaultTo: false,
       },
     },
+    subjectType: {
+      references: {
+        collection: 'plugins_academic-portfolio::subjects',
+      },
+    },
     subject: {
       references: {
         collection: 'plugins_academic-portfolio::subjects',

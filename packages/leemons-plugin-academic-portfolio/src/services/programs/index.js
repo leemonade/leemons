@@ -1,3 +1,4 @@
+const { programCanHaveCoursesOrHaveCourses } = require('./programCanHaveCoursesOrHaveCourses');
 const { programsByCenters } = require('./programsByCenters');
 const { programsByIds } = require('./programsByIds');
 const { listPrograms } = require('./listPrograms');
@@ -8,4 +9,5 @@ module.exports = {
   listPrograms,
   programsByIds,
   programsByCenters,
+  programCanHaveCoursesOrHaveCourses,
 };

@@ -59,4 +59,36 @@ module.exports = [
     method: 'GET',
     handler: 'course.listCourse',
   },
+  // Groups
+  {
+    path: '/group',
+    method: 'POST',
+    handler: 'group.postGroup',
+  },
+  {
+    path: '/group',
+    method: 'PUT',
+    handler: 'group.putGroup',
+  },
+  {
+    path: '/group',
+    method: 'GET',
+    handler: 'group.listGroup',
+  },
+  // Subjects
+  {
+    path: '/subject',
+    method: 'POST',
+    handler: 'subject.postSubject',
+  },
+  {
+    path: '/subject',
+    method: 'PUT',
+    handler: 'subject.putSubject',
+  },
+  {
+    path: '/subject',
+    method: 'GET',
+    handler: 'subject.listSubject',
+  },
 ];
