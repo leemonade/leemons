@@ -2,23 +2,48 @@ const _ = require('lodash');
 const { table } = require('../tables');
 
 async function programsByIds(ids, { transacting } = {}) {
-  const [programs, programCenter, programSubstage] = await Promise.all([
-    table.programs.find({ id_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
-    table.programCenter.find({ program_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
-    table.programSubstage.find({ program_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
-  ]);
-  const substages = await table.groups.find(
-    { id_$in: _.map(programSubstage, 'substage') },
-    { transacting }
-  );
-  const substagesById = _.keyBy(substages, 'id');
-  const substageByProgram = _.groupBy(programSubstage, 'program');
+  const [programs, programCenter, substages, courses, groups, knowledges, subjects, subjectTypes] =
+    await Promise.all([
+      table.programs.find({ id_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
+      table.programCenter.find({ program_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
+      table.groups.find(
+        { program_$in: _.isArray(ids) ? ids : [ids], type: 'substage' },
+        { transacting }
+      ),
+      table.groups.find(
+        { program_$in: _.isArray(ids) ? ids : [ids], type: 'course' },
+        { transacting }
+      ),
+      table.groups.find(
+        { program_$in: _.isArray(ids) ? ids : [ids], type: 'group' },
+        { transacting }
+      ),
+      table.knowledges.find({ program_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
+      table.subjects.find({ program_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
+      table.subjectTypes.find({ program_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
+    ]);
+
+  const groupsByProgram = _.groupBy(groups, 'program');
+  const coursesByProgram = _.groupBy(courses, 'program');
+  const substageByProgram = _.groupBy(substages, 'program');
+  const knowledgesByProgram = _.groupBy(knowledges, 'program');
+  const subjectsByProgram = _.groupBy(subjects, 'program');
+  const subjectTypesByProgram = _.groupBy(subjectTypes, 'program');
   const centersByProgram = _.groupBy(programCenter, 'program');
+
   return programs.map((program) => ({
     ...program,
     centers: centersByProgram[program.id] ? _.map(centersByProgram[program.id], 'center') : [],
+    groups: groupsByProgram[program.id] ? groupsByProgram[program.id] : [],
+    courses: coursesByProgram[program.id] ? coursesByProgram[program.id] : [],
+    knowledges: knowledgesByProgram[program.id] ? knowledgesByProgram[program.id] : [],
+    subjects: subjectsByProgram[program.id] ? subjectsByProgram[program.id] : [],
+    subjectTypes: subjectTypesByProgram[program.id] ? subjectTypesByProgram[program.id] : [],
     substages: substageByProgram[program.id]
-      ? _.map(substageByProgram[program.id], ({ substage }) => substagesById[substage])
+      ? _.filter(substageByProgram[program.id], ({ number }) => _.isNil(number))
+      : [],
+    customSubstages: substageByProgram[program.id]
+      ? _.filter(substageByProgram[program.id], ({ number }) => !_.isNil(number))
       : [],
   }));
 }

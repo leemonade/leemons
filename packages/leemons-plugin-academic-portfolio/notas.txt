@@ -1,0 +1,2 @@
+
+Borrar programa borra todo lo que haya debajo del programa

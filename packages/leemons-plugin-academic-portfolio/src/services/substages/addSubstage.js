@@ -1,26 +1,23 @@
 const { table } = require('../tables');
 
-async function addSubstage({ name, abbreviation, program }, { transacting: _transacting } = {}) {
+async function addSubstage(
+  { name, abbreviation, number, program },
+  { transacting: _transacting } = {}
+) {
   return global.utils.withTransaction(
-    async (transacting) => {
-      const substage = await table.groups.create(
+    async (transacting) =>
+      table.groups.create(
         {
           name,
           abbreviation,
+          number,
+          program,
           type: 'substage',
         },
         {
           transacting,
         }
-      );
-      await table.programSubstage.create(
-        { program, substage: substage.id },
-        {
-          transacting,
-        }
-      );
-      return substage;
-    },
+      ),
     table.programCenter,
     _transacting
   );

@@ -7,9 +7,6 @@ module.exports = {
   attributes: {
     name: {
       type: 'string',
-      options: {
-        notNull: true,
-      },
     },
     abbreviation: {
       type: 'string',
@@ -28,6 +25,9 @@ module.exports = {
       options: {
         notNull: true,
       },
+    },
+    number: {
+      type: 'integer',
     },
   },
   primaryKey: {

@@ -87,8 +87,34 @@ module.exports = [
     handler: 'subject.putSubject',
   },
   {
+    path: '/subject/credits',
+    method: 'PUT',
+    handler: 'subject.putSubjectCredits',
+  },
+  {
+    path: '/subject/credits',
+    method: 'GET',
+    handler: 'subject.getSubjectCredits',
+  },
+  {
     path: '/subject',
     method: 'GET',
     handler: 'subject.listSubject',
+  },
+  // Class
+  {
+    path: '/class',
+    method: 'POST',
+    handler: 'class.postClass',
+  },
+  {
+    path: '/class',
+    method: 'PUT',
+    handler: 'class.putClass',
+  },
+  {
+    path: '/class',
+    method: 'GET',
+    handler: 'class.listClass',
   },
 ];

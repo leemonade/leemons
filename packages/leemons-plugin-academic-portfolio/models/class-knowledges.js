@@ -1,6 +1,6 @@
 module.exports = {
-  modelName: 'class-course',
-  collectionName: 'class-course',
+  modelName: 'class-knowledges',
+  collectionName: 'class-knowledges',
   options: {
     useTimestamps: true,
   },

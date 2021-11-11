@@ -1,6 +1,6 @@
 module.exports = {
-  modelName: 'group-program',
-  collectionName: 'group-program',
+  modelName: 'program-subjects-credits',
+  collectionName: 'program-subjects-credits',
   options: {
     useTimestamps: true,
   },
@@ -10,10 +10,13 @@ module.exports = {
         collection: 'plugins_academic-portfolio::programs',
       },
     },
-    group: {
+    subject: {
       references: {
-        collection: 'plugins_academic-portfolio::groups',
+        collection: 'plugins_academic-portfolio::subjects',
       },
+    },
+    credits: {
+      type: 'integer',
     },
   },
   primaryKey: {

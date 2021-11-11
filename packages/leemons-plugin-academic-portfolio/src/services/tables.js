@@ -2,17 +2,18 @@ const table = {
   class: leemons.query('plugins_academic-portfolio::class'),
   classCourse: leemons.query('plugins_academic-portfolio::class-course'),
   classGroup: leemons.query('plugins_academic-portfolio::class-group'),
+  classKnowledges: leemons.query('plugins_academic-portfolio::class-knowledges'),
+  classSubstage: leemons.query('plugins_academic-portfolio::class-substage'),
   classStudent: leemons.query('plugins_academic-portfolio::class-student'),
   classTeacher: leemons.query('plugins_academic-portfolio::class-teacher'),
   configs: leemons.query('plugins_academic-portfolio::configs'),
-  groupProgram: leemons.query('plugins_academic-portfolio::group-program'),
   groups: leemons.query('plugins_academic-portfolio::groups'),
   programCenter: leemons.query('plugins_academic-portfolio::program-center'),
-  programSubstage: leemons.query('plugins_academic-portfolio::program-substage'),
   programs: leemons.query('plugins_academic-portfolio::programs'),
   subjectTypes: leemons.query('plugins_academic-portfolio::subject-types'),
   subjects: leemons.query('plugins_academic-portfolio::subjects'),
   knowledges: leemons.query('plugins_academic-portfolio::knowledges'),
+  programSubjectsCredits: leemons.query('plugins_academic-portfolio::program-subjects-credits'),
 };
 
 module.exports = { table };

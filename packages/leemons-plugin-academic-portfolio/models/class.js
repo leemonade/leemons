@@ -5,21 +5,14 @@ module.exports = {
     useTimestamps: true,
   },
   attributes: {
-    name: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
-    },
-    inheritFromGroup: {
-      type: 'boolean',
-      options: {
-        defaultTo: false,
+    program: {
+      references: {
+        collection: 'plugins_academic-portfolio::programs',
       },
     },
     subjectType: {
       references: {
-        collection: 'plugins_academic-portfolio::subjects',
+        collection: 'plugins_academic-portfolio::subject-types',
       },
     },
     subject: {
@@ -31,6 +24,18 @@ module.exports = {
       references: {
         collection: 'plugins_academic-portfolio::class',
       },
+    },
+    classroom: {
+      type: 'string',
+    },
+    seats: {
+      type: 'integer',
+    },
+    icon: {
+      type: 'string',
+    },
+    color: {
+      type: 'string',
     },
   },
   primaryKey: {

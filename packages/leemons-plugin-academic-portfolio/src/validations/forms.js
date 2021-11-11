@@ -66,6 +66,18 @@ const addProgramSubstage1Schema = {
     },
     numberOfSubstages: numberSchema,
     useDefaultSubstagesName: booleanSchema,
+    customSubstages: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          name: stringSchema,
+          abbreviation: stringSchema,
+          number: numberSchema,
+        },
+        required: ['name', 'number'],
+      },
+    },
   },
   required: ['substagesFrequency', 'numberOfSubstages', 'useDefaultSubstagesName'],
   additionalProperties: true,
@@ -84,6 +96,7 @@ const addProgramSubstage2Schema = {
           name: stringSchema,
           abbreviation: stringSchema,
         },
+        required: ['name', 'abbreviation'],
       },
     },
   },
@@ -265,7 +278,7 @@ const addCourseSchema = {
     abbreviation: stringSchema,
     program: stringSchema,
   },
-  required: ['name', 'abbreviation', 'program'],
+  required: ['program'],
   additionalProperties: false,
 };
 async function validateAddCourse(data, { transacting } = {}) {
@@ -288,18 +301,6 @@ async function validateAddCourse(data, { transacting } = {}) {
   if (courseCount >= program.maxNumberOfCourses) {
     throw new Error('The program has reached the maximum number of courses');
   }
-
-  // ES: Comprobamos que no exista ya el curso
-  const groupCount = await table.groups.count(
-    {
-      abbreviation: data.abbreviation,
-      program: data.program,
-      type: 'course',
-    },
-    { transacting }
-  );
-
-  if (groupCount) throw new Error('The course already exists');
 }
 
 const addGroupSchema = {
@@ -370,6 +371,7 @@ async function validateUpdateCourse(data, { transacting } = {}) {
   }
 
   // ES: Comprobamos que no exista ya el curso
+  // EN: Check if the course already exists
   const groupCount = await table.groups.count(
     {
       id_$ne: data.id,
@@ -406,6 +408,7 @@ async function validateUpdateGroup(data, { transacting } = {}) {
   }
 
   // ES: Comprobamos que no exista ya el curso
+  // EN: Check if the group already exists
   const groupCount = await table.groups.count(
     {
       id_$ne: data.id,
@@ -424,6 +427,7 @@ const addSubjectSchema = {
   properties: {
     name: stringSchema,
     program: stringSchema,
+    credits: numberSchema,
   },
   required: ['name', 'program'],
   additionalProperties: false,
@@ -437,15 +441,18 @@ async function validateAddSubject(data, { transacting } = {}) {
   }
 
   // ES: Comprobamos si el programa tiene o puede tener cursos asignados
+  // EN: Check if the program has or can have courses assigned
   const needCourse = await subjectNeedCourseForAdd(data.program, { transacting });
 
   // ES: Si tiene/puede comprobamos si dentro de los datos nos llega a que curso va dirigida la nueva asignatura
+  // EN: If it has/can we check if inside the data we get that the new subject is directed to which course
   if (needCourse) {
     if (!data.course) throw new Error('The course is required');
     const course = await table.groups.findOne({ id: data.course, type: 'course' }, { transacting });
     if (!course) throw new Error('The course does not exist');
   }
   // ES: Si no tiene/puede comprobamos que no nos llega a que curso va dirigida la nueva asignatura
+  // EN: If it not has/can we check if inside the data we get that the new subject is not directed to which course
   else if (data.course) {
     throw new Error('The course is not required');
   }
@@ -456,6 +463,7 @@ const updateSubjectSchema = {
   properties: {
     id: stringSchema,
     name: stringSchema,
+    credits: numberSchema,
   },
   required: ['id', 'name'],
   additionalProperties: false,
@@ -468,7 +476,91 @@ async function validateUpdateSubject(data, { transacting } = {}) {
   }
 }
 
+const putSubjectCreditsSchema = {
+  type: 'object',
+  properties: {
+    subject: stringSchema,
+    program: stringSchema,
+    credits: numberSchema,
+  },
+  required: ['subject', 'program', 'credits'],
+  additionalProperties: false,
+};
+function validatePutSubjectCredits(data) {
+  const validator = new LeemonsValidator(putSubjectCreditsSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
+const getSubjectCreditsSchema = {
+  type: 'object',
+  properties: {
+    subject: stringSchema,
+    program: stringSchema,
+  },
+  required: ['subject', 'program'],
+  additionalProperties: false,
+};
+function validateGetSubjectCredits(data) {
+  const validator = new LeemonsValidator(getSubjectCreditsSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
+const addClassSchema = {
+  type: 'object',
+  properties: {
+    program: stringSchema,
+    course: stringSchema,
+    subject: stringSchema,
+    subjectType: stringSchema,
+    knowledge: stringSchema,
+    color: stringSchema,
+    icon: stringSchema,
+    class: stringSchema,
+    substage: stringSchema,
+    seats: numberSchema,
+    classroom: stringSchema,
+    teachers: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          teacher: stringSchema,
+          type: {
+            type: 'string',
+            enum: ['main-teacher', 'teacher'],
+          },
+        },
+      },
+    },
+    image: stringSchema,
+    description: stringSchema,
+  },
+  required: ['program', 'subject', 'subjectType', 'knowledge'],
+  additionalProperties: false,
+};
+async function validateAddClass(data, { transacting } = {}) {
+  const validator = new LeemonsValidator(addClassSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+
+  if (data.teachers) {
+    const teachersByType = _.groupBy(data.teachers, 'type');
+    if (teachersByType['main-teacher'] && teachersByType['main-teacher'].length > 1) {
+      throw new Error('There can only be one main teacher');
+    }
+  }
+}
+
 module.exports = {
+  validateAddClass,
   validateAddGroup,
   validateAddCourse,
   validateAddSubject,
@@ -480,4 +572,6 @@ module.exports = {
   validateAddSubjectType,
   validateSubstagesFormat,
   validateUpdateSubjectType,
+  validatePutSubjectCredits,
+  validateGetSubjectCredits,
 };
