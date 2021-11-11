@@ -1,9 +1,9 @@
 module.exports = [
   // Timetable config
   {
-    method: 'GET',
-    path: '/config/has/:type/:id',
-    handler: 'config.has',
+    method: 'POST',
+    path: '/config/:type/:id',
+    handler: 'config.create',
   },
   {
     method: 'GET',
@@ -11,9 +11,14 @@ module.exports = [
     handler: 'config.get',
   },
   {
-    method: 'POST',
+    method: 'GET',
+    path: '/config/has/:type/:id',
+    handler: 'config.has',
+  },
+  {
+    method: 'DELETE',
     path: '/config/:type/:id',
-    handler: 'config.create',
+    handler: 'config.delete',
   },
 
   // Timetable
