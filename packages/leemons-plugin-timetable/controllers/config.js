@@ -62,6 +62,36 @@ module.exports = {
       };
     }
   },
+
+  update: async (ctx) => {
+    const { type, id } = ctx.request.params;
+    const { start, end, days, breaks, slot } = ctx.request.body;
+    try {
+      const config = await leemons.plugin.services.config.update({
+        entity: id,
+        entityType: type,
+        start,
+        end,
+        days,
+        breaks,
+        slot,
+      });
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        config,
+      };
+    } catch (e) {
+      // The most frequent error is that the params are invalid
+      ctx.status = 401;
+      ctx.body = {
+        status: 401,
+        message: e.message,
+      };
+    }
+  },
+
   delete: async (ctx) => {
     const { type, id } = ctx.request.params;
     try {

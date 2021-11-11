@@ -16,6 +16,11 @@ module.exports = [
     handler: 'config.has',
   },
   {
+    method: 'PUT',
+    path: '/config/:type/:id',
+    handler: 'config.update',
+  },
+  {
     method: 'DELETE',
     path: '/config/:type/:id',
     handler: 'config.delete',
