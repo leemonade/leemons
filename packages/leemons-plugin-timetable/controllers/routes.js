@@ -38,6 +38,11 @@ module.exports = [
     handler: 'timetable.count',
   },
   {
+    method: 'PUT',
+    path: '/timetable/:id',
+    handler: 'timetable.update',
+  },
+  {
     method: 'DELETE',
     path: '/timetable/:id',
     handler: 'timetable.delete',

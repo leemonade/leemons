@@ -1,5 +1,5 @@
 const timeToDayjs = require('../../helpers/dayjs/timeToDayjs');
-const weekDays = require('../../helpers/dayjs/weekDays');
+const validateDay = require('../../helpers/dayjs/validateDay');
 const count = require('./count');
 
 const timetableTable = leemons.query('plugins_timetable::timetable');
@@ -27,7 +27,7 @@ module.exports = async function create(
   }
 
   // The day must be a valid day
-  if (!weekDays.includes(day)) {
+  if (!validateDay(day)) {
     throw new Error('Invalid day');
   }
 

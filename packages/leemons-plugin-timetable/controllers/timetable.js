@@ -67,6 +67,27 @@ module.exports = {
     }
   },
 
+  update: async (ctx) => {
+    const { id: timetableId } = ctx.request.params;
+    const { day, start, duration } = ctx.request.body;
+    try {
+      const timetable = await leemons.plugin.services.timetable.update(timetableId, {
+        day,
+        start,
+        duration,
+      });
+      ctx.body = {
+        timetable,
+        status: 200,
+      };
+    } catch (error) {
+      ctx.body = {
+        error: error.message,
+        status: 400,
+      };
+    }
+  },
+
   delete: async (ctx) => {
     const { id: timetableId } = ctx.request.params;
     try {
@@ -76,7 +97,6 @@ module.exports = {
         deleted,
       };
     } catch (error) {
-      console.log(error);
       // Should never throw, so if it occurs, it's an Internal Server Error
       ctx.status = 500;
       ctx.body = {
