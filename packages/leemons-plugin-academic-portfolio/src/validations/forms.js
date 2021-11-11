@@ -7,6 +7,7 @@ const {
   integerSchema,
   arrayStringSchema,
   integerSchemaNullable,
+  stringSchemaNullable,
 } = require('./types');
 const { programsByIds } = require('../services/programs/programsByIds');
 const { table } = require('../services/tables');
@@ -544,8 +545,57 @@ const addClassSchema = {
   required: ['program', 'subject', 'subjectType', 'knowledge'],
   additionalProperties: false,
 };
-async function validateAddClass(data, { transacting } = {}) {
+function validateAddClass(data) {
   const validator = new LeemonsValidator(addClassSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+
+  if (data.teachers) {
+    const teachersByType = _.groupBy(data.teachers, 'type');
+    if (teachersByType['main-teacher'] && teachersByType['main-teacher'].length > 1) {
+      throw new Error('There can only be one main teacher');
+    }
+  }
+}
+
+const updateClassSchema = {
+  type: 'object',
+  properties: {
+    id: stringSchema,
+    course: stringSchemaNullable,
+    subject: stringSchemaNullable,
+    subjectType: stringSchemaNullable,
+    knowledge: stringSchemaNullable,
+    color: stringSchemaNullable,
+    icon: stringSchemaNullable,
+    class: stringSchemaNullable,
+    substage: stringSchemaNullable,
+    seats: integerSchemaNullable,
+    classroom: stringSchemaNullable,
+    teachers: {
+      type: 'array',
+      nullable: true,
+      items: {
+        type: 'object',
+        properties: {
+          teacher: stringSchema,
+          type: {
+            type: 'string',
+            enum: ['main-teacher', 'teacher'],
+          },
+        },
+      },
+    },
+    image: stringSchemaNullable,
+    description: stringSchemaNullable,
+  },
+  required: ['id'],
+  additionalProperties: false,
+};
+function validateUpdateClass(data) {
+  const validator = new LeemonsValidator(updateClassSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
@@ -565,6 +615,7 @@ module.exports = {
   validateAddCourse,
   validateAddSubject,
   validateAddProgram,
+  validateUpdateClass,
   validateUpdateGroup,
   validateUpdateCourse,
   validateAddKnowledge,
