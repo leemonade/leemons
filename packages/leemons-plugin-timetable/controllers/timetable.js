@@ -66,4 +66,23 @@ module.exports = {
       };
     }
   },
+
+  delete: async (ctx) => {
+    const { id: timetableId } = ctx.request.params;
+    try {
+      const deleted = await leemons.plugin.services.timetable.delete(timetableId);
+      ctx.body = {
+        status: 200,
+        deleted,
+      };
+    } catch (error) {
+      console.log(error);
+      // Should never throw, so if it occurs, it's an Internal Server Error
+      ctx.status = 500;
+      ctx.body = {
+        status: 500,
+        message: 'Internal Server Error',
+      };
+    }
+  },
 };

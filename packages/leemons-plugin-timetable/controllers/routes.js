@@ -37,4 +37,9 @@ module.exports = [
     path: '/timetable/count/:id',
     handler: 'timetable.count',
   },
+  {
+    method: 'DELETE',
+    path: '/timetable/:id',
+    handler: 'timetable.delete',
+  },
 ];

@@ -14,12 +14,12 @@ module.exports = function timeFiltersQuery({ end, start, endBetween, startBetwee
         $or: [
           startQuery,
           {
-            start_$gte: start,
+            start,
           },
         ],
       };
     } else {
-      startQuery.start_$gte = start;
+      startQuery.start = start;
     }
   }
 
@@ -38,12 +38,12 @@ module.exports = function timeFiltersQuery({ end, start, endBetween, startBetwee
         $or: [
           endQuery,
           {
-            end_$lte: end,
+            end,
           },
         ],
       };
     } else {
-      endQuery.end_$lte = end;
+      endQuery.end = end;
     }
   }
 
