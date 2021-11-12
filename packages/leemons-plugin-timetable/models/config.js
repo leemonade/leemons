@@ -27,13 +27,13 @@ module.exports = {
       },
     },
     // The identifiers of the timetable (should be unique)
-    entity: {
-      type: 'uuid',
+    entities: {
+      type: 'string',
       options: {
         notNull: true,
       },
     },
-    entityType: {
+    entityTypes: {
       type: 'string',
       options: {
         notNull: true,

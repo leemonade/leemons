@@ -1,4 +1,5 @@
 const isEqual = require('lodash.isequal');
+const entitiesFormat = require('../../helpers/config/entitiesFormat');
 const timeToDayjs = require('../../helpers/dayjs/timeToDayjs');
 const weekDays = require('../../helpers/dayjs/weekDays');
 const createBreaks = require('./breakes/create');
@@ -8,7 +9,7 @@ const get = require('./get');
 const configTable = leemons.query('plugins_timetable::config');
 
 module.exports = async function update(
-  { entity, entityType, start, end, days, breaks, slot } = {},
+  { entities: entitiesObj, start, end, days, breaks, slot } = {},
   { transacting: t } = {}
 ) {
   return global.utils.withTransaction(
@@ -16,7 +17,7 @@ module.exports = async function update(
       const data = {};
 
       // Get the current config
-      const config = await get(entity, entityType, { transacting });
+      const config = await get(entitiesObj, { transacting });
 
       // Check if the config exists
       if (!config) {
@@ -119,7 +120,10 @@ module.exports = async function update(
 
       // Update the entity only if there is something to update
       if (!isEqual(data, {})) {
-        const newConfig = await configTable.update({ entity, entityType }, data, { transacting });
+        const { entities, entityTypes } = entitiesFormat(entitiesObj);
+        const newConfig = await configTable.update({ entities, entityTypes }, data, {
+          transacting,
+        });
         return { ...newConfig, breaks: breaks || config.breaks };
       }
       return config;

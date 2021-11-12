@@ -1,11 +1,9 @@
 module.exports = {
   create: async (ctx) => {
-    const { type, id } = ctx.request.params;
-    const { start, end, days, breaks, slot } = ctx.request.body;
+    const { entities, start, end, days, breaks, slot } = ctx.request.body;
     try {
       const config = await leemons.plugin.services.config.create({
-        entity: id,
-        entityType: type,
+        entities,
         start,
         end,
         days,
@@ -27,49 +25,46 @@ module.exports = {
     }
   },
   get: async (ctx) => {
-    const { type, id } = ctx.request.params;
+    const { entities } = ctx.request.query;
     try {
-      const config = await leemons.plugin.services.config.get(id, type);
+      const config = await leemons.plugin.services.config.get(JSON.parse(entities));
       ctx.status = 200;
       ctx.body = {
         status: 200,
         config,
       };
     } catch (e) {
-      // Should never throw, so if it occurs, it's an Internal Server Error
-      ctx.status = 500;
+      ctx.status = 401;
       ctx.body = {
-        status: 500,
-        message: 'Internal Server Error',
+        status: 401,
+        message: e.message,
       };
     }
   },
   has: async (ctx) => {
-    const { type, id } = ctx.request.params;
+    const { entities } = ctx.request.query;
+
     try {
-      const exists = await leemons.plugin.services.config.has(id, type);
+      const exists = await leemons.plugin.services.config.has(JSON.parse(entities));
       ctx.status = 200;
       ctx.body = {
         status: 200,
         exists,
       };
     } catch (e) {
-      // Should never throw, so if it occurs, it's an Internal Server Error
-      ctx.status = 500;
+      ctx.status = 401;
       ctx.body = {
-        status: 500,
-        message: 'Internal Server Error',
+        status: 401,
+        message: e.message,
       };
     }
   },
 
   update: async (ctx) => {
-    const { type, id } = ctx.request.params;
-    const { start, end, days, breaks, slot } = ctx.request.body;
+    const { entities, start, end, days, breaks, slot } = ctx.request.body;
     try {
       const config = await leemons.plugin.services.config.update({
-        entity: id,
-        entityType: type,
+        entities,
         start,
         end,
         days,
@@ -93,20 +88,20 @@ module.exports = {
   },
 
   delete: async (ctx) => {
-    const { type, id } = ctx.request.params;
+    const { entities } = ctx.request.query;
+
     try {
-      const deleted = await leemons.plugin.services.config.delete(id, type);
+      const deleted = await leemons.plugin.services.config.delete(JSON.parse(entities));
       ctx.status = 200;
       ctx.body = {
         status: 200,
         deleted,
       };
     } catch (e) {
-      // Should never throw, so if it occurs, it's an Internal Server Error
-      ctx.status = 500;
+      ctx.status = 401;
       ctx.body = {
-        status: 500,
-        message: 'Internal Server Error',
+        status: 401,
+        message: e.message,
       };
     }
   },

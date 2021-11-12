@@ -3,11 +3,11 @@ const get = require('./get');
 
 const configTable = leemons.query('plugins_timetable::config');
 
-module.exports = async function deleteConfig(entity, entityType, { transacting: t } = {}) {
+module.exports = async function deleteConfig(entitiesObj, { transacting: t } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       // Get the config object
-      const config = await get(entity, entityType, { transacting });
+      const config = await get(entitiesObj, { transacting });
 
       if (!config) {
         return false;

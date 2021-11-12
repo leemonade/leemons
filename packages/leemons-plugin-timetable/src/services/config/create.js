@@ -2,15 +2,16 @@ const timeToDayjs = require('../../helpers/dayjs/timeToDayjs');
 const weekDays = require('../../helpers/dayjs/weekDays');
 const has = require('./has');
 const createBreaks = require('./breakes/create');
+const entitiesFormat = require('../../helpers/config/entitiesFormat');
 
 const configTable = leemons.query('plugins_timetable::config');
 
 module.exports = async function create(
-  { entity, entityType, start, end, days, breaks, slot } = {},
+  { entities: entitiesObj, start, end, days, breaks, slot } = {},
   { transacting: t } = {}
 ) {
   // Validate data types
-  if (!entity || !entityType || !start || !end || !days || !breaks || !slot) {
+  if (!entitiesObj || !start || !end || !days || !breaks || !slot) {
     throw new Error('Missing parameters');
   }
 
@@ -51,19 +52,22 @@ module.exports = async function create(
     throw new Error('Invalid day');
   }
 
+  // Validate entities
+  const { entityTypes, entities } = entitiesFormat(entitiesObj);
+
   // Database queries
   return global.utils.withTransaction(
     async (transacting) => {
       // Check if the timetable config already exists.
-      if (await has(entity, entityType, { transacting })) {
+      if (await has(entitiesObj, { transacting })) {
         throw new Error('Timetable config already exists');
       }
 
       // Create config
       const config = await configTable.create(
         {
-          entity,
-          entityType,
+          entityTypes,
+          entities,
           start,
           end,
           days: lowercasedDays.join(','),
