@@ -8,9 +8,7 @@ const { getProgramKnowledges } = require('../programs/getProgramKnowledges');
 const { getProgramSubjects } = require('../programs/getProgramSubjects');
 const { getProgramSubjectTypes } = require('../programs/getProgramSubjectTypes');
 
-async function getTree({ transacting } = {}) {
-  const nodeTypes = ['center', 'program', 'courses', 'groups', 'knowledges', 'subjectType'];
-
+async function getTree(nodeTypes, { transacting } = {}) {
   const programCenter = await table.programCenter.find({}, { transacting });
   const programIds = _.map(programCenter, 'program');
   const [

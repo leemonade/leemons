@@ -27,7 +27,17 @@ async function listClassSubjects(ctx) {
 }
 
 async function getTree(ctx) {
-  const tree = await commonService.getTree();
+  let { nodeTypes } = ctx.request.query;
+  if (typeof nodeTypes === 'string') {
+    nodeTypes = ctx.request.query.nodeTypes
+      .replace('[', '')
+      .replace(']', '')
+      .replaceAll("'", '')
+      .replaceAll('"', '')
+      .replaceAll(' ', '')
+      .split(',');
+  }
+  const tree = await commonService.getTree(nodeTypes);
   ctx.status = 200;
   ctx.body = { status: 200, tree };
 }
