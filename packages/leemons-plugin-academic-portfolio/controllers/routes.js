@@ -16,6 +16,36 @@ module.exports = [
     method: 'GET',
     handler: 'program.detailProgram',
   },
+  {
+    path: '/program/:id/has/courses',
+    method: 'GET',
+    handler: 'program.programHasCourses',
+  },
+  {
+    path: '/program/:id/has/groups',
+    method: 'GET',
+    handler: 'program.programHasGroups',
+  },
+  {
+    path: '/program/:id/has/substages',
+    method: 'GET',
+    handler: 'program.programHasSubstages',
+  },
+  {
+    path: '/program/:id/courses',
+    method: 'GET',
+    handler: 'program.programCourses',
+  },
+  {
+    path: '/program/:id/groups',
+    method: 'GET',
+    handler: 'program.programGroups',
+  },
+  {
+    path: '/program/:id/substages',
+    method: 'GET',
+    handler: 'program.programSubstages',
+  },
   // Knowledges
   {
     path: '/knowledge',
@@ -116,5 +146,16 @@ module.exports = [
     path: '/class',
     method: 'GET',
     handler: 'class.listClass',
+  },
+  // Common
+  {
+    path: '/class-subjects',
+    method: 'GET',
+    handler: 'common.listClassSubjects',
+  },
+  {
+    path: '/tree',
+    method: 'GET',
+    handler: 'common.getTree',
   },
 ];

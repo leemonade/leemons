@@ -1,26 +1,23 @@
 const _ = require('lodash');
 const { table } = require('../tables');
+const { getProgramSubjectTypes } = require('./getProgramSubjectTypes');
+const { getProgramSubjects } = require('./getProgramSubjects');
+const { getProgramKnowledges } = require('./getProgramKnowledges');
+const { getProgramGroups } = require('./getProgramGroups');
+const { getProgramCourses } = require('./getProgramCourses');
+const { getProgramSubstages } = require('./getProgramSubstages');
 
 async function programsByIds(ids, { transacting } = {}) {
   const [programs, programCenter, substages, courses, groups, knowledges, subjects, subjectTypes] =
     await Promise.all([
       table.programs.find({ id_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
       table.programCenter.find({ program_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
-      table.groups.find(
-        { program_$in: _.isArray(ids) ? ids : [ids], type: 'substage' },
-        { transacting }
-      ),
-      table.groups.find(
-        { program_$in: _.isArray(ids) ? ids : [ids], type: 'course' },
-        { transacting }
-      ),
-      table.groups.find(
-        { program_$in: _.isArray(ids) ? ids : [ids], type: 'group' },
-        { transacting }
-      ),
-      table.knowledges.find({ program_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
-      table.subjects.find({ program_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
-      table.subjectTypes.find({ program_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
+      getProgramSubstages(ids, { transacting }),
+      getProgramCourses(ids, { transacting }),
+      getProgramGroups(ids, { transacting }),
+      getProgramKnowledges(ids, { transacting }),
+      getProgramSubjects(ids, { transacting }),
+      getProgramSubjectTypes(ids, { transacting }),
     ]);
 
   const groupsByProgram = _.groupBy(groups, 'program');
