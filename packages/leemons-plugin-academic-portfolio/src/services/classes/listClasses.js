@@ -1,17 +1,19 @@
+const _ = require('lodash');
 const { table } = require('../tables');
+const { classByIds } = require('./classByIds');
 
 async function listClasses(page, size, program, { transacting } = {}) {
   const response = await global.utils.paginate(
-    table.groups,
+    table.class,
     page,
     size,
-    { program, type: 'course' },
+    { program },
     {
       transacting,
     }
   );
 
-  console.log(response);
+  response.items = await classByIds(_.map(response.items, 'id'), { transacting });
 
   return response;
 }
