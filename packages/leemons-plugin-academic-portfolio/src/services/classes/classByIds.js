@@ -29,7 +29,7 @@ async function classByIds(ids, { transacting } = {}) {
     knowledges: knowledgesByClass[id] ? knowledgesByClass[id][0].knowledge : null,
     substages: substagesByClass[id] ? substagesByClass[id][0].substage : null,
     courses: coursesByClass[id] ? coursesByClass[id][0].course : null,
-    groups: groupsByClass[id] ? groupsByClass[id][0].groups : null,
+    groups: groupsByClass[id] ? groupsByClass[id][0].group : null,
     students: studentsByClass[id] ? _.map(studentsByClass[id], 'student') : [],
     teachers: teachersByClass[id]
       ? _.map(teachersByClass[id], ({ teacher, type }) => ({ teacher, type }))

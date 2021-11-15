@@ -517,6 +517,7 @@ const addClassSchema = {
   properties: {
     program: stringSchema,
     course: stringSchema,
+    group: stringSchema,
     subject: stringSchema,
     subjectType: stringSchema,
     knowledge: stringSchema,
@@ -582,6 +583,7 @@ const updateClassSchema = {
   properties: {
     id: stringSchema,
     course: stringSchemaNullable,
+    group: stringSchemaNullable,
     subject: stringSchemaNullable,
     subjectType: stringSchemaNullable,
     knowledge: stringSchemaNullable,

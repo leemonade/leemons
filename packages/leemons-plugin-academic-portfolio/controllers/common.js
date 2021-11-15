@@ -42,7 +42,28 @@ async function getTree(ctx) {
   ctx.body = { status: 200, tree };
 }
 
+async function geClassesUnderNodeTree(ctx) {
+  let { nodeTypes } = ctx.request.query;
+  if (typeof nodeTypes === 'string') {
+    nodeTypes = ctx.request.query.nodeTypes
+      .replace('[', '')
+      .replace(']', '')
+      .replaceAll("'", '')
+      .replaceAll('"', '')
+      .replaceAll(' ', '')
+      .split(',');
+  }
+  const classes = await commonService.geClassesUnderNodeTree(
+    nodeTypes,
+    ctx.request.query.nodeType,
+    ctx.request.query.nodeId
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, classes };
+}
+
 module.exports = {
+  geClassesUnderNodeTree,
   listClassSubjects,
   getTree,
 };

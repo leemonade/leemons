@@ -22,8 +22,9 @@ async function updateClass(data, { transacting: _transacting } = {}) {
     async (transacting) => {
       await validateUpdateClass(data, { transacting });
       const { id, course, group, knowledge, substage, teachers, ...rest } = data;
-      // ES: Creamos la clase
+      // ES: Actualizamos la clase
       const nClass = await table.class.update({ id }, rest, { transacting });
+
       // ES: Añadimos todas las relaciones de la clase
 
       if (_.isNull(knowledge) || knowledge)

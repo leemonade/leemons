@@ -194,4 +194,10 @@ module.exports = [
     handler: 'common.getTree',
     authenticated: true,
   },
+  {
+    path: '/classes-under-node-tree',
+    method: 'GET',
+    handler: 'common.geClassesUnderNodeTree',
+    authenticated: true,
+  },
 ];
