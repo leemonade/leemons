@@ -2,24 +2,27 @@ const _ = require('lodash');
 const { table } = require('../tables');
 const { getByClass: getKnowledgeByClass } = require('./knowledge/getByClass');
 const { getByClass: getSubstageByClass } = require('./substage/getByClass');
+const { getByClass: getStudentByClass } = require('./student/getByClass');
 const { getByClass: getTeacherByClass } = require('./teacher/getByClass');
 const { getByClass: getCourseByClass } = require('./course/getByClass');
 const { getByClass: getGroupByClass } = require('./group/getByClass');
 
 async function classByIds(ids, { transacting } = {}) {
-  const [classes, knowledges, substages, courses, groups, teachers] = await Promise.all([
+  const [classes, knowledges, substages, courses, groups, teachers, students] = await Promise.all([
     table.class.find({ id_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
     getKnowledgeByClass(ids, { transacting }),
     getSubstageByClass(ids, { transacting }),
     getCourseByClass(ids, { transacting }),
     getGroupByClass(ids, { transacting }),
     getTeacherByClass(ids, { transacting }),
+    getStudentByClass(ids, { transacting }),
   ]);
   const knowledgesByClass = _.groupBy(knowledges, 'class');
   const substagesByClass = _.groupBy(substages, 'class');
   const coursesByClass = _.groupBy(courses, 'class');
   const groupsByClass = _.groupBy(groups, 'class');
   const teachersByClass = _.groupBy(teachers, 'class');
+  const studentsByClass = _.groupBy(students, 'class');
   return _.map(classes, ({ id, ...rest }) => ({
     id,
     ...rest,
@@ -27,6 +30,7 @@ async function classByIds(ids, { transacting } = {}) {
     substages: substagesByClass[id] ? substagesByClass[id][0].substage : null,
     courses: coursesByClass[id] ? coursesByClass[id][0].course : null,
     groups: groupsByClass[id] ? groupsByClass[id][0].groups : null,
+    students: studentsByClass[id] ? _.map(studentsByClass[id], 'student') : [],
     teachers: teachersByClass[id]
       ? _.map(teachersByClass[id], ({ teacher, type }) => ({ teacher, type }))
       : [],

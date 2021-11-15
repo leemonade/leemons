@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const classService = require('../src/services/classes');
 
 async function postClass(ctx) {
@@ -35,8 +36,21 @@ async function listClass(ctx) {
   }
 }
 
+async function postClassStudents(ctx) {
+  if (process.env.NODE_ENV !== 'production') {
+    if (!_.isArray(ctx.request.body.students)) {
+      ctx.request.body.students = [];
+    }
+    ctx.request.body.students.push(ctx.state.userSession.userAgents[0].id);
+  }
+  const _class = await classService.addClassStudents(ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, class: _class };
+}
+
 module.exports = {
   postClass,
   putClass,
   listClass,
+  postClassStudents,
 };

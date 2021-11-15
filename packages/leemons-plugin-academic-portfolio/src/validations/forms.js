@@ -560,6 +560,23 @@ function validateAddClass(data) {
   }
 }
 
+const addClassStudentsSchema = {
+  type: 'object',
+  properties: {
+    class: stringSchema,
+    students: arrayStringSchema,
+  },
+  required: ['class', 'students'],
+  additionalProperties: false,
+};
+function validateAddClassStudents(data) {
+  const validator = new LeemonsValidator(addClassStudentsSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 const updateClassSchema = {
   type: 'object',
   properties: {
@@ -622,6 +639,7 @@ module.exports = {
   validateUpdateSubject,
   validateAddSubjectType,
   validateSubstagesFormat,
+  validateAddClassStudents,
   validateUpdateSubjectType,
   validatePutSubjectCredits,
   validateGetSubjectCredits,
