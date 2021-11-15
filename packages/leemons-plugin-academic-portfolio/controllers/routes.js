@@ -170,7 +170,7 @@ module.exports = [
     authenticated: true,
   },
   {
-    path: '/class',
+    path: '/class/by/student',
     method: 'GET',
     handler: 'class.listClass',
     authenticated: true,
@@ -185,6 +185,20 @@ module.exports = [
     path: '/class/teachers',
     method: 'POST',
     handler: 'class.postClassTeachers',
+    authenticated: true,
+  },
+  // Student
+  {
+    path: '/student/:id/classes',
+    method: 'GET',
+    handler: 'class.listStudentClasses',
+    authenticated: true,
+  },
+  // Teacher
+  {
+    path: '/teacher/:id/classes',
+    method: 'GET',
+    handler: 'class.listTeacherClasses',
     authenticated: true,
   },
   // Common

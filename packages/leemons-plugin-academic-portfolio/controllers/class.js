@@ -55,12 +55,66 @@ async function postClassTeachers(ctx) {
     }
     ctx.request.body.teachers.push({
       teacher: ctx.state.userSession.userAgents[0].id,
-      type: 'main-teacher',
+      type: 'teacher',
     });
   }
   const _class = await classService.addClassTeachers(ctx.request.body);
   ctx.status = 200;
   ctx.body = { status: 200, class: _class };
+}
+
+async function listStudentClasses(ctx) {
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      page: { type: ['number', 'string'] },
+      size: { type: ['number', 'string'] },
+    },
+    required: ['page', 'size'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.query)) {
+    const { page, size, ...options } = ctx.request.query;
+    const data = await classService.listStudentClasses(
+      parseInt(page, 10),
+      parseInt(size, 10),
+      ctx.request.params.id,
+      {
+        ...options,
+      }
+    );
+    ctx.status = 200;
+    ctx.body = { status: 200, data };
+  } else {
+    throw validator.error;
+  }
+}
+
+async function listTeacherClasses(ctx) {
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      page: { type: ['number', 'string'] },
+      size: { type: ['number', 'string'] },
+    },
+    required: ['page', 'size'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.query)) {
+    const { page, size, ...options } = ctx.request.query;
+    const data = await classService.listTeacherClasses(
+      parseInt(page, 10),
+      parseInt(size, 10),
+      ctx.request.params.id,
+      {
+        ...options,
+      }
+    );
+    ctx.status = 200;
+    ctx.body = { status: 200, data };
+  } else {
+    throw validator.error;
+  }
 }
 
 module.exports = {
@@ -69,4 +123,6 @@ module.exports = {
   listClass,
   postClassStudents,
   postClassTeachers,
+  listStudentClasses,
+  listTeacherClasses,
 };

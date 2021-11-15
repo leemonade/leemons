@@ -3,6 +3,8 @@ const { listClasses } = require('./listClasses');
 const { updateClass } = require('./updateClass');
 const { addClassStudents } = require('./addClassStudents');
 const { addClassTeachers } = require('./addClassTeachers');
+const { listStudentClasses } = require('./listStudentClasses');
+const { listTeacherClasses } = require('./listTeacherClasses');
 
 module.exports = {
   addClass,
@@ -10,4 +12,6 @@ module.exports = {
   updateClass,
   addClassTeachers,
   addClassStudents,
+  listStudentClasses,
+  listTeacherClasses,
 };
