@@ -71,11 +71,18 @@ async function programSubstages(ctx) {
   ctx.body = { status: 200, substages };
 }
 
+async function deleteProgram(ctx) {
+  await programService.deleteProgram(ctx.request.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
 module.exports = {
   postProgram,
   listProgram,
   detailProgram,
   programGroups,
+  deleteProgram,
   programCourses,
   programHasGroups,
   programSubstages,

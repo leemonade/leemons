@@ -55,6 +55,12 @@ module.exports = [
     handler: 'program.programSubstages',
     authenticated: true,
   },
+  {
+    path: '/program/:id',
+    method: 'DELETE',
+    handler: 'program.deleteProgram',
+    authenticated: true,
+  },
   // Knowledges
   {
     path: '/knowledge',
