@@ -1,9 +1,11 @@
 const { getTree } = require('./getTree');
 const { listClassesSubjects } = require('./listClassesSubjects');
-const { geClassesUnderNodeTree } = require('./geClassesUnderNodeTree');
+const { getClassesUnderNodeTree } = require('./getClassesUnderNodeTree');
+const { addStudentsClassesUnderNodeTree } = require('./addStudentsToClassesUnderNodeTree');
 
 module.exports = {
   getTree,
   listClassesSubjects,
-  geClassesUnderNodeTree,
+  getClassesUnderNodeTree,
+  addStudentsClassesUnderNodeTree,
 };

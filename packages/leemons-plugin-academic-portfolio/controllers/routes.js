@@ -197,7 +197,13 @@ module.exports = [
   {
     path: '/classes-under-node-tree',
     method: 'GET',
-    handler: 'common.geClassesUnderNodeTree',
+    handler: 'common.getClassesUnderNodeTree',
+    authenticated: true,
+  },
+  {
+    path: '/add-students-to-classes-under-node-tree',
+    method: 'POST',
+    handler: 'common.addStudentsToClassesUnderNodeTree',
     authenticated: true,
   },
 ];

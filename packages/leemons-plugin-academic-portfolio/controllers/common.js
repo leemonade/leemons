@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const commonService = require('../src/services/common');
 
 async function listClassSubjects(ctx) {
@@ -42,7 +43,7 @@ async function getTree(ctx) {
   ctx.body = { status: 200, tree };
 }
 
-async function geClassesUnderNodeTree(ctx) {
+async function getClassesUnderNodeTree(ctx) {
   let { nodeTypes } = ctx.request.query;
   if (typeof nodeTypes === 'string') {
     nodeTypes = ctx.request.query.nodeTypes
@@ -53,7 +54,7 @@ async function geClassesUnderNodeTree(ctx) {
       .replaceAll(' ', '')
       .split(',');
   }
-  const classes = await commonService.geClassesUnderNodeTree(
+  const classes = await commonService.getClassesUnderNodeTree(
     nodeTypes,
     ctx.request.query.nodeType,
     ctx.request.query.nodeId
@@ -62,8 +63,26 @@ async function geClassesUnderNodeTree(ctx) {
   ctx.body = { status: 200, classes };
 }
 
+async function addStudentsToClassesUnderNodeTree(ctx) {
+  if (process.env.NODE_ENV !== 'production') {
+    if (!_.isArray(ctx.request.body.students)) {
+      ctx.request.body.students = [];
+    }
+    ctx.request.body.students.push(ctx.state.userSession.userAgents[0].id);
+  }
+  const classes = await commonService.addStudentsClassesUnderNodeTree(
+    ctx.request.body.nodeTypes,
+    ctx.request.body.nodeType,
+    ctx.request.body.nodeId,
+    ctx.request.body.students
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, classes };
+}
+
 module.exports = {
-  geClassesUnderNodeTree,
+  addStudentsToClassesUnderNodeTree,
+  getClassesUnderNodeTree,
   listClassSubjects,
   getTree,
 };

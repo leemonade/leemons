@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { getTree } = require('./getTree');
 
-async function geClassesUnderNodeTree(nodeTypes, nodeType, nodeId, { transacting } = {}) {
+async function getClassesUnderNodeTree(nodeTypes, nodeType, nodeId, { transacting } = {}) {
   const tree = await getTree(nodeTypes, { transacting });
 
   const getParentNodes = (nodes) => {
@@ -31,4 +31,4 @@ async function geClassesUnderNodeTree(nodeTypes, nodeType, nodeId, { transacting
   return getClassNodes(getParentNodes(tree));
 }
 
-module.exports = { geClassesUnderNodeTree };
+module.exports = { getClassesUnderNodeTree };
