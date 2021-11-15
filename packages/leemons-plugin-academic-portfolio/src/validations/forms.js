@@ -11,13 +11,9 @@ const {
 } = require('./types');
 const { programsByIds } = require('../services/programs/programsByIds');
 const { table } = require('../services/tables');
-const {
-  programCanHaveCoursesOrHaveCourses,
-} = require('../services/programs/programCanHaveCoursesOrHaveCourses');
 const { subjectNeedCourseForAdd } = require('../services/subjects/subjectNeedCourseForAdd');
-const {
-  generateNextSubjectInternalId,
-} = require('../services/subjects/generateNextSubjectInternalId');
+
+const teacherTypes = ['main-teacher', 'teacher'];
 
 const addProgramSchema = {
   type: 'object',
@@ -535,7 +531,7 @@ const addClassSchema = {
           teacher: stringSchema,
           type: {
             type: 'string',
-            enum: ['main-teacher', 'teacher'],
+            enum: teacherTypes,
           },
         },
       },
@@ -578,6 +574,36 @@ function validateAddClassStudents(data) {
   }
 }
 
+const addClassTeachersSchema = {
+  type: 'object',
+  properties: {
+    class: stringSchema,
+    teachers: {
+      type: 'array',
+      nullable: true,
+      items: {
+        type: 'object',
+        properties: {
+          teacher: stringSchema,
+          type: {
+            type: 'string',
+            enum: teacherTypes,
+          },
+        },
+      },
+    },
+  },
+  required: ['class', 'teachers'],
+  additionalProperties: false,
+};
+function validateAddClassTeachers(data) {
+  const validator = new LeemonsValidator(addClassTeachersSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 const updateClassSchema = {
   type: 'object',
   properties: {
@@ -602,7 +628,7 @@ const updateClassSchema = {
           teacher: stringSchema,
           type: {
             type: 'string',
-            enum: ['main-teacher', 'teacher'],
+            enum: teacherTypes,
           },
         },
       },
@@ -642,6 +668,7 @@ module.exports = {
   validateAddSubjectType,
   validateSubstagesFormat,
   validateAddClassStudents,
+  validateAddClassTeachers,
   validateUpdateSubjectType,
   validatePutSubjectCredits,
   validateGetSubjectCredits,

@@ -48,9 +48,25 @@ async function postClassStudents(ctx) {
   ctx.body = { status: 200, class: _class };
 }
 
+async function postClassTeachers(ctx) {
+  if (process.env.NODE_ENV !== 'production') {
+    if (!_.isArray(ctx.request.body.teachers)) {
+      ctx.request.body.teachers = [];
+    }
+    ctx.request.body.teachers.push({
+      teacher: ctx.state.userSession.userAgents[0].id,
+      type: 'main-teacher',
+    });
+  }
+  const _class = await classService.addClassTeachers(ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, class: _class };
+}
+
 module.exports = {
   postClass,
   putClass,
   listClass,
   postClassStudents,
+  postClassTeachers,
 };

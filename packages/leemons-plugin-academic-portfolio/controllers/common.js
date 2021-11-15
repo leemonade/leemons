@@ -80,7 +80,28 @@ async function addStudentsToClassesUnderNodeTree(ctx) {
   ctx.body = { status: 200, classes };
 }
 
+async function addTeachersToClassesUnderNodeTree(ctx) {
+  if (process.env.NODE_ENV !== 'production') {
+    if (!_.isArray(ctx.request.body.students)) {
+      ctx.request.body.teachers = [];
+    }
+    ctx.request.body.teachers.push({
+      teacher: ctx.state.userSession.userAgents[0].id,
+      type: 'teacher',
+    });
+  }
+  const classes = await commonService.addTeachersClassesUnderNodeTree(
+    ctx.request.body.nodeTypes,
+    ctx.request.body.nodeType,
+    ctx.request.body.nodeId,
+    ctx.request.body.teachers
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, classes };
+}
+
 module.exports = {
+  addTeachersToClassesUnderNodeTree,
   addStudentsToClassesUnderNodeTree,
   getClassesUnderNodeTree,
   listClassSubjects,

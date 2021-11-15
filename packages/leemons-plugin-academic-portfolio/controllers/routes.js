@@ -181,6 +181,12 @@ module.exports = [
     handler: 'class.postClassStudents',
     authenticated: true,
   },
+  {
+    path: '/class/teachers',
+    method: 'POST',
+    handler: 'class.postClassTeachers',
+    authenticated: true,
+  },
   // Common
   {
     path: '/class-subjects',
@@ -204,6 +210,12 @@ module.exports = [
     path: '/add-students-to-classes-under-node-tree',
     method: 'POST',
     handler: 'common.addStudentsToClassesUnderNodeTree',
+    authenticated: true,
+  },
+  {
+    path: '/add-teachers-to-classes-under-node-tree',
+    method: 'POST',
+    handler: 'common.addTeachersToClassesUnderNodeTree',
     authenticated: true,
   },
 ];
