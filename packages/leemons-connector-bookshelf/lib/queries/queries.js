@@ -96,7 +96,10 @@ function generateQueries(model /* connector */) {
 
   // TODO: soft delete
   // Deletes one item matching the query
-  async function deleteOne(query, { soft = true, transacting } = {}) {
+  async function deleteOne(
+    query,
+    { soft = model.schema.options.softDelete || false, transacting } = {}
+  ) {
     const filters = parseFilters({ filters: { ...query, $limit: 1 }, model });
     const newQuery = buildQuery(model, filters);
 
@@ -117,7 +120,10 @@ function generateQueries(model /* connector */) {
   }
 
   // Deletes many items matching the query
-  async function deleteMany(query, { soft = true, transacting } = {}) {
+  async function deleteMany(
+    query,
+    { soft = model.schema.options.softDelete || false, transacting } = {}
+  ) {
     const filters = parseFilters({ filters: query, model });
     const newQuery = buildQuery(model, filters);
 
