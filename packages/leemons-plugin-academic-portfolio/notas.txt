@@ -1,2 +1,19 @@
+(Hecho) Cuando se devuelva el arbol si algun nivel tiene algun nodo que no esta en ninguna clase devolverlo debajo del programa
 
-Borrar programa borra todo lo que haya debajo del programa
+Cuando se borre una clase si esta tiene clases referenciadas que estas tambien se borren
+
+
+Añadir creditos a cursos
+Cuando se generen los cursos que se metan los creditos a todos los cursos
+Añadir campo al programa de esconder cursos en el arbol
+
+Crear endpoind donde se le pueda pasar un array de cllases y se le puedan actualizar ciertos campos (grupo, course, subjectType, knowledges)
+Crear endpoind para añadir estudiantes dada una clase/clases
+
+
+Crear endpind de duplicar programa, se duplica todo menos los estudiantes y los profesores de las clases
+Añadir a la funcion que devuelve el arbol que tambien se le pueda pasar asiganturas
+
+Modificar el endpoind del arbol para que devuelva los detalles de todas sus relaciones a nivel de clase
+
+Hablar con miguel lo del clash shedule

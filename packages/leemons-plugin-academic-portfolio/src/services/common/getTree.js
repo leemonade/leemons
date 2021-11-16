@@ -30,8 +30,28 @@ async function getTree(nodeTypes, { transacting } = {}) {
     getProgramKnowledges(programIds, { transacting }),
     getProgramSubjects(programIds, { transacting }),
     getProgramSubjectTypes(programIds, { transacting }),
-    listClasses(0, 9999, undefined, { query: { program_$in: programIds }, transacting }),
+    listClasses(0, 99999, undefined, { query: { program_$in: programIds }, transacting }),
   ]);
+
+  // ES: Cogemos los nodos sin usar en las clases para posteriormente ponerlos al nivel del programa
+  const groupsUnused = _.filter(groups, (group) => !_.find(classes, { group }));
+  const coursesUnused = _.filter(courses, (course) => !_.find(classes, { course }));
+  const substagesUnused = _.filter(substages, (substage) => !_.find(classes, { substage }));
+  const knowledgesUnused = _.filter(knowledges, (knowledge) => !_.find(classes, { knowledge }));
+  const subjectsUnused = _.filter(subjects, (subject) => !_.find(classes, { subject }));
+  const subjectTypeUnused = _.filter(
+    subjectTypes,
+    (subjectType) => !_.find(classes, { subjectType })
+  );
+
+  const unusedNodesByProgram = {
+    courses: _.groupBy(coursesUnused, 'program'),
+    groups: _.groupBy(groupsUnused, 'program'),
+    substage: _.groupBy(substagesUnused, 'program'),
+    knowledges: _.groupBy(knowledgesUnused, 'program'),
+    subjectType: _.groupBy(subjectTypeUnused, 'program'),
+    subject: _.groupBy(subjectsUnused, 'program'),
+  };
 
   const centersByProgram = _.groupBy(programCenter, 'program');
 
@@ -90,7 +110,7 @@ async function getTree(nodeTypes, { transacting } = {}) {
   });
 
   // ES: Ahora vamos a recorrer el árbol y a generar el arbol final con la información de cada nodo
-  const getNodeObjectKeysAsArray = (node) => {
+  const getNodeObjectKeysAsArray = (node, parentNodeType, parentNodeId) => {
     let nodes = [];
     _.forIn(node, (value, key) => {
       if (key === 'classrooms') {
@@ -102,10 +122,32 @@ async function getTree(nodeTypes, { transacting } = {}) {
         nodes.push({
           nodeType,
           value: nodesByIds[nodeType][nodeId],
-          childrens: getNodeObjectKeysAsArray(value),
+          childrens: getNodeObjectKeysAsArray(value, nodeType, nodeId),
         });
       }
     });
+    // ES: Añadimos al programa los nodos que no están asignados a ninguna clase
+    if (
+      parentNodeType &&
+      parentNodeId &&
+      nodeTypes.indexOf('program') >= 0 &&
+      parentNodeType === 'program'
+    ) {
+      _.forEach(nodeTypes, (nodeType) => {
+        if (
+          unusedNodesByProgram[nodeType] &&
+          _.isArray(unusedNodesByProgram[nodeType][parentNodeId])
+        ) {
+          _.forEach(unusedNodesByProgram[nodeType][parentNodeId], (item) => {
+            nodes.push({
+              nodeType,
+              value: item,
+              childrens: [],
+            });
+          });
+        }
+      });
+    }
     return nodes;
   };
 
