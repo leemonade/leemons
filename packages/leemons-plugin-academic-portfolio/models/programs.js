@@ -43,6 +43,12 @@ module.exports = {
         defaultTo: 0,
       },
     },
+    courseCredits: {
+      type: 'integer',
+      options: {
+        defaultTo: 0,
+      },
+    },
     haveSubstagesPerCourse: {
       type: 'boolean',
     },

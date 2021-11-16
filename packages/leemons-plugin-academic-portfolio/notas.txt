@@ -1,10 +1,9 @@
 (Hecho) Cuando se devuelva el arbol si algun nivel tiene algun nodo que no esta en ninguna clase devolverlo debajo del programa
+(Hecho) Añadir creditos a cursos
+(Hecho) Cuando se generen los cursos que se metan los creditos a todos los cursos
 
 Cuando se borre una clase si esta tiene clases referenciadas que estas tambien se borren
 
-
-Añadir creditos a cursos
-Cuando se generen los cursos que se metan los creditos a todos los cursos
 Añadir campo al programa de esconder cursos en el arbol
 
 Crear endpoind donde se le pueda pasar un array de cllases y se le puedan actualizar ciertos campos (grupo, course, subjectType, knowledges)

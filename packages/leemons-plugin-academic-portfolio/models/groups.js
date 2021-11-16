@@ -26,6 +26,8 @@ module.exports = {
         notNull: true,
       },
     },
+    // Si es course son los creditos
+    // Si es substage es el numero de etapas
     number: {
       type: 'integer',
     },
