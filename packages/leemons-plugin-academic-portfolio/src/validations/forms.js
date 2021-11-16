@@ -30,6 +30,7 @@ const addProgramSchema = {
     maxGroupAbbreviationIsOnlyNumbers: booleanSchema,
     maxNumberOfCourses: integerSchema,
     courseCredits: integerSchema,
+    hideCoursesInTree: booleanSchema,
     haveSubstagesPerCourse: booleanSchema,
     haveKnowledge: booleanSchema,
     maxKnowledgeAbbreviation: integerSchemaNullable,

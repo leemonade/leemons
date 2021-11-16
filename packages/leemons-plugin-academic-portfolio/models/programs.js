@@ -49,6 +49,12 @@ module.exports = {
         defaultTo: 0,
       },
     },
+    hideCoursesInTree: {
+      type: 'boolean',
+      options: {
+        defaultTo: false,
+      },
+    },
     haveSubstagesPerCourse: {
       type: 'boolean',
     },
