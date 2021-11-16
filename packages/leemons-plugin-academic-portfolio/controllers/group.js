@@ -35,7 +35,24 @@ async function listGroup(ctx) {
   }
 }
 
+async function deleteGroupFromClassesUnderNodeTree(ctx) {
+  let { nodeTypes } = ctx.request.query;
+  if (typeof nodeTypes === 'string') {
+    nodeTypes = ctx.request.query.nodeTypes
+      .replace('[', '')
+      .replace(']', '')
+      .replaceAll("'", '')
+      .replaceAll('"', '')
+      .replaceAll(' ', '')
+      .split(',');
+  }
+  await groupService.removeGroupFromClassesUnderNodeTree(nodeTypes, ctx.request.query.group);
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
 module.exports = {
+  deleteGroupFromClassesUnderNodeTree,
   postGroup,
   listGroup,
   putGroup,

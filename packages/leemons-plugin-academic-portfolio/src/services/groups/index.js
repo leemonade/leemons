@@ -3,6 +3,7 @@ const { listGroups } = require('./listGroups');
 const { updateGroup } = require('./updateGroup');
 const { addNextGroupIndex } = require('./addNextGroupIndex');
 const { getNextGroupIndex } = require('./getNextGroupIndex');
+const { removeGroupFromClassesUnderNodeTree } = require('./removeGroupFromClassesUnderNodeTree');
 
 module.exports = {
   addGroup,
@@ -10,4 +11,5 @@ module.exports = {
   updateGroup,
   addNextGroupIndex,
   getNextGroupIndex,
+  removeGroupFromClassesUnderNodeTree,
 };

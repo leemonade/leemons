@@ -131,6 +131,12 @@ module.exports = [
     handler: 'group.listGroup',
     authenticated: true,
   },
+  {
+    path: '/group-from-classes-under-node-tree',
+    method: 'DELETE',
+    handler: 'group.deleteGroupFromClassesUnderNodeTree',
+    authenticated: true,
+  },
   // Subjects
   {
     path: '/subject',
