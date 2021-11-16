@@ -22,6 +22,13 @@ async function removeClassesByIds(ids, { soft, transacting: _transacting } = {})
       await removeCourseByClass(classesIds, { soft, transacting });
       await removeGroupByClass(classesIds, { soft, transacting });
 
+      const refClasses = await table.class.find(
+        { class_$in: _.map(classes, 'id') },
+        { transacting }
+      );
+
+      await removeClassesByIds(_.map(refClasses, 'id'), { soft, transacting });
+
       await table.class.deleteMany({ id_$in: _.map(classes, 'id') }, { soft, transacting });
       await leemons.events.emit('after-remove-classes', { classes, soft, transacting });
       return true;
