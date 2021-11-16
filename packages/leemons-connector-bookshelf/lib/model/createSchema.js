@@ -194,6 +194,7 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
 
     if (useTimestamps) {
       table.timestamps(true, true);
+      table.timestamp('deleted_at').nullable();
     }
   };
 

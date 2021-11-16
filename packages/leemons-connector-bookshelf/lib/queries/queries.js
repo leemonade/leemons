@@ -112,7 +112,11 @@ function generateQueries(model /* connector */) {
     }
 
     if (soft) {
-      await entry.save({ deleted: true }, { method: 'update', patch: true, transacting });
+      const fields = { deleted: true };
+      if (model.schema.options.useTimestamps) {
+        fields.deleted_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      }
+      await entry.save(fields, { method: 'update', patch: true, transacting });
       return { deleted: true, soft: true };
     }
     await entry.destroy({ transacting });
@@ -133,7 +137,12 @@ function generateQueries(model /* connector */) {
 
     if (deletedCount > 0) {
       if (soft) {
-        await entries().save({ deleted: true }, { method: 'update', patch: true, transacting });
+        const fields = { deleted: true };
+        if (model.schema.options.useTimestamps) {
+          fields.deleted_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        }
+
+        await entries().save(fields, { method: 'update', patch: true, transacting });
       } else {
         await entries().destroy({ transacting });
       }
