@@ -31,6 +31,7 @@ async function listProgram(ctx) {
 
 async function detailProgram(ctx) {
   const [program] = await programService.programsByIds(ctx.request.params.id);
+  if (!program) throw new Error('Program not found');
   ctx.status = 200;
   ctx.body = { status: 200, program };
 }
@@ -72,7 +73,7 @@ async function programSubstages(ctx) {
 }
 
 async function deleteProgram(ctx) {
-  await programService.deleteProgram(ctx.request.params.id);
+  await programService.removeProgramByIds(ctx.request.params.id, { soft: ctx.request.query.soft });
   ctx.status = 200;
   ctx.body = { status: 200 };
 }

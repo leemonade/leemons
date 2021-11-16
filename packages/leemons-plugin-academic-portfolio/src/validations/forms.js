@@ -539,7 +539,7 @@ const addClassSchema = {
     image: stringSchema,
     description: stringSchema,
   },
-  required: ['program', 'subject', 'subjectType', 'knowledge'],
+  required: ['program', 'subject'],
   additionalProperties: false,
 };
 function validateAddClass(data) {
