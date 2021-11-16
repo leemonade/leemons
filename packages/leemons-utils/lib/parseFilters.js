@@ -150,7 +150,7 @@ function parseWhereParams(params, model) {
   return finalWhere;
 }
 
-function parseFilters({ filters = {}, defaults = {}, model } = {}) {
+function parseFilters({ filters = {}, defaults = { deleted: false }, model } = {}) {
   if (typeof filters !== 'object' || filters === null) {
     throw new Error(
       `parseFilters expected an object, got ${filters === null ? 'null' : typeof filters}`
@@ -161,7 +161,10 @@ function parseFilters({ filters = {}, defaults = {}, model } = {}) {
     throw new Error('A valid model must be provided');
   }
 
-  const finalFilters = _.defaultsDeep({}, defaults);
+  const finalFilters = {};
+
+  // eslint-disable-next-line no-param-reassign
+  filters = _.defaultsDeep(filters, defaults);
 
   // If there are no filters, return the finalFilter
   if (Object.keys(filters).length === 0) {
