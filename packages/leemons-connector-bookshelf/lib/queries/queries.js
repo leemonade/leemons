@@ -96,7 +96,7 @@ function generateQueries(model /* connector */) {
 
   // TODO: soft delete
   // Deletes one item matching the query
-  async function deleteOne(query, { transacting } = {}) {
+  async function deleteOne(query, { soft = true, transacting } = {}) {
     const filters = parseFilters({ filters: { ...query, $limit: 1 }, model });
     const newQuery = buildQuery(model, filters);
 
@@ -108,11 +108,16 @@ function generateQueries(model /* connector */) {
       throw err;
     }
 
-    return entry.destroy({ transacting }).then(() => entry.toJSON());
+    if (soft) {
+      await entry.save({ deleted: true }, { method: 'update', patch: true, transacting });
+      return { deleted: true, soft: true };
+    }
+    await entry.destroy({ transacting });
+    return { deleted: true, soft: false };
   }
 
   // Deletes many items matching the query
-  async function deleteMany(query, { transacting } = {}) {
+  async function deleteMany(query, { soft = true, transacting } = {}) {
     const filters = parseFilters({ filters: query, model });
     const newQuery = buildQuery(model, filters);
 
@@ -121,10 +126,14 @@ function generateQueries(model /* connector */) {
     const deletedCount = await entries().count({ transacting });
 
     if (deletedCount > 0) {
-      await entries().destroy({ transacting });
+      if (soft) {
+        await entries().save({ deleted: true }, { method: 'update', patch: true, transacting });
+      } else {
+        await entries().destroy({ transacting });
+      }
     }
 
-    return { count: deletedCount };
+    return { count: deletedCount, soft };
   }
 
   // Finds all items based on a query
