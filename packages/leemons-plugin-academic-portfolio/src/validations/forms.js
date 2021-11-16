@@ -658,6 +658,26 @@ function validateUpdateClass(data) {
   }
 }
 
+const updateClassManySchema = {
+  type: 'object',
+  properties: {
+    ids: arrayStringSchema,
+    course: stringSchemaNullable,
+    group: stringSchemaNullable,
+    subjectType: stringSchemaNullable,
+    knowledge: stringSchemaNullable,
+  },
+  required: ['ids'],
+  additionalProperties: false,
+};
+function validateUpdateClassMany(data) {
+  const validator = new LeemonsValidator(updateClassManySchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   validateAddClass,
   validateAddGroup,
@@ -670,6 +690,7 @@ module.exports = {
   validateAddKnowledge,
   validateUpdateSubject,
   validateAddSubjectType,
+  validateUpdateClassMany,
   validateSubstagesFormat,
   validateAddClassStudents,
   validateAddClassTeachers,

@@ -13,6 +13,12 @@ async function putClass(ctx) {
   ctx.body = { status: 200, class: _class };
 }
 
+async function putClassMany(ctx) {
+  const classes = await classService.updateClassMany(ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, classes };
+}
+
 async function listClass(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
@@ -121,6 +127,7 @@ module.exports = {
   postClass,
   putClass,
   listClass,
+  putClassMany,
   postClassStudents,
   postClassTeachers,
   listStudentClasses,

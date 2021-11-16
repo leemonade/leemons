@@ -77,7 +77,7 @@ async function updateClass(data, { transacting: _transacting } = {}) {
 
       return (await classByIds(nClass.id, { transacting }))[0];
     },
-    table.groups,
+    table.class,
     _transacting
   );
 }

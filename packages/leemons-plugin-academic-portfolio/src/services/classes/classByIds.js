@@ -29,11 +29,11 @@ async function classByIds(ids, { transacting } = {}) {
     originalGroups,
   ] = await Promise.all([
     table.subjectTypes.find({ id_$in: _.map(classes, 'subjectType') }, { transacting }),
-    table.knowledges.find({ id_$in: _.map(knowledges, 'id') }, { transacting }),
+    table.knowledges.find({ id_$in: _.map(knowledges, 'knowledge') }, { transacting }),
     table.subjects.find({ id_$in: _.map(classes, 'subject') }, { transacting }),
-    table.groups.find({ id_$in: _.map(substages, 'id') }, { transacting }),
-    table.groups.find({ id_$in: _.map(courses, 'id') }, { transacting }),
-    table.groups.find({ id_$in: _.map(groups, 'id') }, { transacting }),
+    table.groups.find({ id_$in: _.map(substages, 'substage') }, { transacting }),
+    table.groups.find({ id_$in: _.map(courses, 'course') }, { transacting }),
+    table.groups.find({ id_$in: _.map(groups, 'group') }, { transacting }),
   ]);
 
   const subjectTypesById = _.keyBy(originalSubjectTypes, 'id');

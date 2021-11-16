@@ -171,6 +171,12 @@ module.exports = [
   // Class
   {
     path: '/class',
+    method: 'GET',
+    handler: 'class.listClass',
+    authenticated: true,
+  },
+  {
+    path: '/class',
     method: 'POST',
     handler: 'class.postClass',
     authenticated: true,
@@ -182,9 +188,9 @@ module.exports = [
     authenticated: true,
   },
   {
-    path: '/class/by/student',
-    method: 'GET',
-    handler: 'class.listClass',
+    path: '/class/many',
+    method: 'PUT',
+    handler: 'class.putClassMany',
     authenticated: true,
   },
   {
