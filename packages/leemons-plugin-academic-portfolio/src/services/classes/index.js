@@ -6,6 +6,8 @@ const { addClassStudents } = require('./addClassStudents');
 const { addClassTeachers } = require('./addClassTeachers');
 const { listStudentClasses } = require('./listStudentClasses');
 const { listTeacherClasses } = require('./listTeacherClasses');
+const { addClassStudentsMany } = require('./addClassStudentsMany');
+const { addClassTeachersMany } = require('./addClassTeachersMany');
 
 module.exports = {
   addClass,
@@ -16,4 +18,6 @@ module.exports = {
   addClassStudents,
   listStudentClasses,
   listTeacherClasses,
+  addClassStudentsMany,
+  addClassTeachersMany,
 };

@@ -578,6 +578,23 @@ function validateAddClassStudents(data) {
   }
 }
 
+const addClassStudentsManySchema = {
+  type: 'object',
+  properties: {
+    class: arrayStringSchema,
+    students: arrayStringSchema,
+  },
+  required: ['class', 'students'],
+  additionalProperties: false,
+};
+function validateAddClassStudentsMany(data) {
+  const validator = new LeemonsValidator(addClassStudentsManySchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 const addClassTeachersSchema = {
   type: 'object',
   properties: {
@@ -602,6 +619,36 @@ const addClassTeachersSchema = {
 };
 function validateAddClassTeachers(data) {
   const validator = new LeemonsValidator(addClassTeachersSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
+const addClassTeachersManySchema = {
+  type: 'object',
+  properties: {
+    class: arrayStringSchema,
+    teachers: {
+      type: 'array',
+      nullable: true,
+      items: {
+        type: 'object',
+        properties: {
+          teacher: stringSchema,
+          type: {
+            type: 'string',
+            enum: teacherTypes,
+          },
+        },
+      },
+    },
+  },
+  required: ['class', 'teachers'],
+  additionalProperties: false,
+};
+function validateAddClassTeachersMany(data) {
+  const validator = new LeemonsValidator(addClassTeachersManySchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
@@ -697,4 +744,6 @@ module.exports = {
   validateUpdateSubjectType,
   validatePutSubjectCredits,
   validateGetSubjectCredits,
+  validateAddClassStudentsMany,
+  validateAddClassTeachersMany,
 };

@@ -49,7 +49,7 @@ async function postClassStudents(ctx) {
     }
     ctx.request.body.students.push(ctx.state.userSession.userAgents[0].id);
   }
-  const _class = await classService.addClassStudents(ctx.request.body);
+  const _class = await classService.addClassStudentsMany(ctx.request.body);
   ctx.status = 200;
   ctx.body = { status: 200, class: _class };
 }
@@ -64,7 +64,7 @@ async function postClassTeachers(ctx) {
       type: 'teacher',
     });
   }
-  const _class = await classService.addClassTeachers(ctx.request.body);
+  const _class = await classService.addClassTeachersMany(ctx.request.body);
   ctx.status = 200;
   ctx.body = { status: 200, class: _class };
 }
