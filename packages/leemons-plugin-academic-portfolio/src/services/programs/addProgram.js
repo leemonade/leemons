@@ -35,7 +35,7 @@ async function addProgram(data, { transacting: _transacting } = {}) {
         }
       }
 
-      const program = await table.programs.create(programData);
+      const program = await table.programs.create(programData, { transacting });
 
       if (_.isArray(substages)) {
         // ES: Generamos los substages

@@ -5,7 +5,7 @@ const { getProgramCourses } = require('./getProgramCourses');
 const { programsByCenters } = require('./programsByCenters');
 const { getProgramGroups } = require('./getProgramGroups');
 const { programsByIds } = require('./programsByIds');
-
+const { updateProgram } = require('./updateProgram');
 const { listPrograms } = require('./listPrograms');
 const { addProgram } = require('./addProgram');
 
@@ -13,6 +13,7 @@ module.exports = {
   addProgram,
   listPrograms,
   programsByIds,
+  updateProgram,
   getProgramGroups,
   programsByCenters,
   getProgramCourses,

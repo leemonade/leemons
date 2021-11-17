@@ -3,6 +3,12 @@ module.exports = [
   // Programs
   {
     path: '/program',
+    method: 'PUT',
+    handler: 'program.putProgram',
+    authenticated: true,
+  },
+  {
+    path: '/program',
     method: 'POST',
     handler: 'program.postProgram',
     authenticated: true,

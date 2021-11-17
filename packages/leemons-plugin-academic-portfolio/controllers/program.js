@@ -6,6 +6,12 @@ async function postProgram(ctx) {
   ctx.body = { status: 200, program };
 }
 
+async function putProgram(ctx) {
+  const program = await programService.updateProgram(ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, program };
+}
+
 async function listProgram(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
@@ -79,6 +85,7 @@ async function deleteProgram(ctx) {
 }
 
 module.exports = {
+  putProgram,
   postProgram,
   listProgram,
   detailProgram,

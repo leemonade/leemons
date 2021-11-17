@@ -128,6 +128,30 @@ function validateAddProgram(data) {
   }
 }
 
+const updateProgramSchema = {
+  type: 'object',
+  properties: {
+    id: stringSchema,
+    name: stringSchema,
+    abbreviation: {
+      type: 'string',
+      minLength: 1,
+      maxLength: 8,
+    },
+    credits: integerSchemaNullable,
+  },
+  required: ['id', 'name', 'abbreviation', 'credits'],
+  additionalProperties: false,
+};
+
+function validateUpdateProgram(data) {
+  const validator = new LeemonsValidator(updateProgramSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 function validateSubstagesFormat(programData, substages) {
   if (substages.length < programData.numberOfSubstages)
     throw new Error('The number of substages is less than the number of substages specified');
@@ -469,7 +493,7 @@ const updateSubjectSchema = {
   required: ['id', 'name'],
   additionalProperties: false,
 };
-async function validateUpdateSubject(data, { transacting } = {}) {
+async function validateUpdateSubject(data) {
   const validator = new LeemonsValidator(updateSubjectSchema);
 
   if (!validator.validate(data)) {
@@ -735,6 +759,7 @@ module.exports = {
   validateUpdateGroup,
   validateUpdateCourse,
   validateAddKnowledge,
+  validateUpdateProgram,
   validateUpdateSubject,
   validateAddSubjectType,
   validateUpdateClassMany,

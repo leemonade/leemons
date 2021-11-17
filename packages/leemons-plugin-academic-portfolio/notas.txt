@@ -8,9 +8,9 @@
 (Hecho) Crear endpoind donde se le pueda pasar un array de clases y se le puedan actualizar ciertos campos (grupo, course, subjectType, knowledges)
 (Hecho) Crear endpoind para añadir estudiantes dada una clase/clases
 (Hecho) Revisar funcion de añadir estudiantes para que compruebe si la clase es una instancia y sacar los alumnos que hay en la clase final y el numero de slots para comprobar si se pueden añadir mas alumnos
+(Hecho) Endpoind/funcion de actualizar programa solo con los campos (nombre, abreviatura y creditos)
 
 Endpoind de crear instancia (clase que apunta a otra clase)
-Endpoind/funcion de actualizar programa solo con los campos (nombre, abreviatura y creditos)
 Crear endpind de duplicar programa, se duplica todo menos los estudiantes y los profesores de las clases
 
 
