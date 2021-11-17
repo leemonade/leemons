@@ -225,6 +225,13 @@ module.exports = [
     handler: 'class.listTeacherClasses',
     authenticated: true,
   },
+  // Class instance
+  {
+    path: '/class/instance',
+    method: 'POST',
+    handler: 'class.postClassInstance',
+    authenticated: true,
+  },
   // Common
   {
     path: '/class-subjects',

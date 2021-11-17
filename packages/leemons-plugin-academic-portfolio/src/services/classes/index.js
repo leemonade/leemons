@@ -4,6 +4,7 @@ const { updateClass } = require('./updateClass');
 const { updateClassMany } = require('./updateClassMany');
 const { addClassStudents } = require('./addClassStudents');
 const { addClassTeachers } = require('./addClassTeachers');
+const { addInstanceClass } = require('./addInstanceClass');
 const { listStudentClasses } = require('./listStudentClasses');
 const { listTeacherClasses } = require('./listTeacherClasses');
 const { addClassStudentsMany } = require('./addClassStudentsMany');
@@ -16,6 +17,7 @@ module.exports = {
   updateClassMany,
   addClassTeachers,
   addClassStudents,
+  addInstanceClass,
   listStudentClasses,
   listTeacherClasses,
   addClassStudentsMany,

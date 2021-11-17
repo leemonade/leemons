@@ -2,6 +2,8 @@ const { table } = require('../tables');
 const { getNextSubjectIndex } = require('./getNextSubjectIndex');
 
 async function generateNextSubjectInternalId(program, { course, transacting } = {}) {
+  throw new Error('No use generateNextSubjectInternalId');
+  /*
   const internalIndex = await getNextSubjectIndex(program, { course, transacting });
   const { subjectsDigits } = await table.programs.findOne(
     { id: program },
@@ -19,6 +21,7 @@ async function generateNextSubjectInternalId(program, { course, transacting } = 
   }
 
   return internalId;
+   */
 }
 
 module.exports = { generateNextSubjectInternalId };

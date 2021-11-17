@@ -15,10 +15,19 @@ module.exports = {
         collection: 'plugins_academic-portfolio::subjects',
       },
     },
+    // Curso solo seteado si el internalId tiene especificado un curso
+    course: {
+      references: {
+        collection: 'plugins_academic-portfolio::groups',
+      },
+    },
     credits: {
       type: 'integer',
     },
     internalId: {
+      type: 'string',
+    },
+    compiledInternalId: {
       type: 'string',
     },
   },

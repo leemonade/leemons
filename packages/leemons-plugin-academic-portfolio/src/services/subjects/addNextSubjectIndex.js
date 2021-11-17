@@ -2,6 +2,8 @@ const { table } = require('../tables');
 const { getNextSubjectIndex } = require('./getNextSubjectIndex');
 
 async function addNextSubjectIndex(program, { course, index, transacting } = {}) {
+  throw new Error('No use addNextSubjectIndex');
+  /*
   let goodIndex = index;
   if (!index) {
     goodIndex = await getNextSubjectIndex(program, { course, transacting });
@@ -12,6 +14,8 @@ async function addNextSubjectIndex(program, { course, index, transacting } = {})
     { transacting }
   );
   return goodIndex;
+
+   */
 }
 
 module.exports = { addNextSubjectIndex };

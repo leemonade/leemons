@@ -12,6 +12,8 @@ const {
 const { programsByIds } = require('../services/programs/programsByIds');
 const { table } = require('../services/tables');
 const { subjectNeedCourseForAdd } = require('../services/subjects/subjectNeedCourseForAdd');
+const { getCourseIndex } = require('../services/courses/getCourseIndex');
+const { getProgramSubjectDigits } = require('../services/programs/getProgramSubjectDigits');
 
 const teacherTypes = ['main-teacher', 'teacher'];
 
@@ -447,14 +449,37 @@ async function validateUpdateGroup(data, { transacting } = {}) {
   if (groupCount) throw new Error('The group already exists');
 }
 
+async function validateProgramNotUsingInternalId(
+  program,
+  compiledInternalId,
+  { subject, transacting } = {}
+) {
+  const query = { program, compiledInternalId };
+  if (subject) query.subject_$ne = subject;
+  const count = await table.programSubjectsCredits.count(query, { transacting });
+  if (count) {
+    throw new Error('The internalId is already in use');
+  }
+}
+
+async function validateInternalIdHaveGoodFormat(program, internalId, { transacting }) {
+  const subjectDigits = await getProgramSubjectDigits(program, { transacting });
+  // ES: Comprobamos si el numero de digitos no es el mismo
+  if (internalId.length !== subjectDigits)
+    throw new Error('internalId does not have the required number of digits');
+  // ES: Comprobamos si son numeros
+  if (!/^[0-9]+$/.test(internalId)) throw new Error('The internalId must be a number');
+}
+
 const addSubjectSchema = {
   type: 'object',
   properties: {
     name: stringSchema,
     program: stringSchema,
     credits: numberSchema,
+    internalId: stringSchema,
   },
-  required: ['name', 'program'],
+  required: ['name', 'program', 'internalId'],
   additionalProperties: false,
 };
 async function validateAddSubject(data, { transacting } = {}) {
@@ -481,6 +506,14 @@ async function validateAddSubject(data, { transacting } = {}) {
   else if (data.course) {
     throw new Error('The course is not required');
   }
+
+  await validateInternalIdHaveGoodFormat(data.program, data.internalId, { transacting });
+
+  await validateProgramNotUsingInternalId(
+    data.program,
+    (data.course ? await getCourseIndex(data.course, { transacting }) : '') + data.internalId,
+    { transacting }
+  );
 }
 
 const updateSubjectSchema = {
@@ -493,11 +526,42 @@ const updateSubjectSchema = {
   required: ['id', 'name'],
   additionalProperties: false,
 };
-async function validateUpdateSubject(data) {
+const updateSubjectInternalIdSchema = {
+  type: 'object',
+  properties: {
+    internalId: stringSchema,
+    course: stringSchema,
+  },
+  required: ['internalId', 'course'],
+  additionalProperties: false,
+};
+async function validateUpdateSubject(data, { transacting } = {}) {
+  const { course, internalId, ..._data } = data;
   const validator = new LeemonsValidator(updateSubjectSchema);
 
-  if (!validator.validate(data)) {
+  if (!validator.validate(_data)) {
     throw validator.error;
+  }
+
+  if (course || internalId) {
+    const validator2 = new LeemonsValidator(updateSubjectInternalIdSchema);
+
+    if (!validator2.validate({ course, internalId })) {
+      throw validator2.error;
+    }
+
+    const subject = await table.subjects.findOne(
+      { id: data.id },
+      { columns: ['program'], transacting }
+    );
+
+    await validateInternalIdHaveGoodFormat(subject.program, data.internalId, { transacting });
+
+    await validateProgramNotUsingInternalId(
+      subject.program,
+      (data.course ? await getCourseIndex(data.course, { transacting }) : '') + data.internalId,
+      { subject: data.id, transacting }
+    );
   }
 }
 
@@ -547,7 +611,6 @@ const addClassSchema = {
     knowledge: stringSchema,
     color: stringSchema,
     icon: stringSchema,
-    class: stringSchema,
     substage: stringSchema,
     seats: numberSchema,
     classroom: stringSchema,
@@ -582,6 +645,76 @@ function validateAddClass(data) {
     if (teachersByType['main-teacher'] && teachersByType['main-teacher'].length > 1) {
       throw new Error('There can only be one main teacher');
     }
+  }
+}
+
+const addInstanceClassSchema = {
+  type: 'object',
+  properties: {
+    program: stringSchema,
+    class: stringSchema,
+    subjectType: stringSchema,
+    course: stringSchema,
+    group: stringSchema,
+    credits: numberSchema,
+  },
+  required: ['program', 'class', 'subjectType'],
+  additionalProperties: false,
+};
+
+const addInstanceClass2Schema = {
+  type: 'object',
+  properties: {
+    internalId: stringSchema,
+    internalIdCourse: stringSchema,
+  },
+  required: ['internalId'],
+  additionalProperties: false,
+};
+async function validateAddInstanceClass(data, { transacting } = {}) {
+  const { internalId, internalIdCourse, ..._data } = data;
+
+  const validator = new LeemonsValidator(addInstanceClassSchema);
+
+  if (!validator.validate(_data)) {
+    throw validator.error;
+  }
+
+  if (internalId || internalIdCourse) {
+    const validator2 = new LeemonsValidator(addInstanceClass2Schema);
+
+    if (!validator2.validate({ internalId, internalIdCourse })) {
+      throw validator.error;
+    }
+
+    // ES: Comprobamos si el programa tiene o puede tener cursos asignados
+    // EN: Check if the program has or can have courses assigned
+    const needCourse = await subjectNeedCourseForAdd(data.program, { transacting });
+
+    // ES: Si tiene/puede comprobamos si dentro de los datos nos llega a que curso va dirigida la nueva asignatura
+    // EN: If it has/can we check if inside the data we get that the new subject is directed to which course
+    if (needCourse) {
+      if (!data.internalIdCourse) throw new Error('The internalIdCourse is required');
+      const course = await table.groups.findOne(
+        { id: data.internalIdCourse, type: 'course' },
+        { transacting }
+      );
+      if (!course) throw new Error('The course does not exist');
+    }
+    // ES: Si no tiene/puede comprobamos que no nos llega a que curso va dirigida la nueva asignatura
+    // EN: If it not has/can we check if inside the data we get that the new subject is not directed to which course
+    else if (data.internalIdCourse) {
+      throw new Error('The course is not required');
+    }
+
+    await validateInternalIdHaveGoodFormat(data.program, data.internalId, { transacting });
+
+    await validateProgramNotUsingInternalId(
+      data.program,
+      (data.internalIdCourse ? await getCourseIndex(data.internalIdCourse, { transacting }) : '') +
+        data.internalId,
+      { transacting }
+    );
   }
 }
 
@@ -690,7 +823,6 @@ const updateClassSchema = {
     knowledge: stringSchemaNullable,
     color: stringSchemaNullable,
     icon: stringSchemaNullable,
-    class: stringSchemaNullable,
     substage: stringSchemaNullable,
     seats: integerSchemaNullable,
     classroom: stringSchemaNullable,
@@ -766,9 +898,11 @@ module.exports = {
   validateSubstagesFormat,
   validateAddClassStudents,
   validateAddClassTeachers,
+  validateAddInstanceClass,
   validateUpdateSubjectType,
   validatePutSubjectCredits,
   validateGetSubjectCredits,
   validateAddClassStudentsMany,
   validateAddClassTeachersMany,
+  validateProgramNotUsingInternalId,
 };

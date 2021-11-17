@@ -46,14 +46,14 @@ async function classByIds(ids, { noSearchChilds, noSearchParents, transacting } 
   let parentClasses = [];
   let childClasses = [];
 
-  if (noSearchParents) {
-    const parentClassesIds = _.compact(_.map(classes, 'class'));
+  if (!noSearchParents) {
+    const parentClassesIds = _.uniq(_.compact(_.map(classes, 'class')));
     parentClasses = parentClassesIds.length
       ? await classByIds(parentClassesIds, { noSearchChilds: true, transacting })
       : [];
   }
 
-  if (noSearchChilds) {
+  if (!noSearchChilds) {
     childClasses = _childClasses.length
       ? await classByIds(_.map(_childClasses, 'id'), { noSearchParents: true, transacting })
       : [];
@@ -83,7 +83,9 @@ async function classByIds(ids, { noSearchChilds, noSearchParents, transacting } 
         _students = _students.concat(childClass.students);
       });
     }
-    const parentStudents = parentClassesById[id] ? getParentStudents(parentClassesById[id]) : [];
+    const parentStudents = parentClassesById[rest.class]
+      ? getParentStudents(parentClassesById[rest.class])
+      : [];
 
     return {
       id,
@@ -91,7 +93,7 @@ async function classByIds(ids, { noSearchChilds, noSearchParents, transacting } 
       subject: subjectsById[subject],
       subjectType: subjectTypesById[subjectType],
       classes: childClassesByClass[id],
-      parentClass: parentClassesById[id],
+      parentClass: parentClassesById[rest.class],
       knowledges: knowledgesByClass[id] ? knowledgesById[knowledgesByClass[id][0].knowledge] : null,
       substages: substagesByClass[id] ? substagesById[substagesByClass[id][0].substage] : null,
       courses: coursesByClass[id] ? coursesById[coursesByClass[id][0].course] : null,
