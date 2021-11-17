@@ -18,6 +18,9 @@ module.exports = {
     credits: {
       type: 'integer',
     },
+    internalId: {
+      type: 'string',
+    },
   },
   primaryKey: {
     type: 'uuid',

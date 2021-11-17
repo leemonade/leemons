@@ -9,6 +9,7 @@
 (Hecho) Crear endpoind para añadir estudiantes dada una clase/clases
 (Hecho) Revisar funcion de añadir estudiantes para que compruebe si la clase es una instancia y sacar los alumnos que hay en la clase final y el numero de slots para comprobar si se pueden añadir mas alumnos
 (Hecho) Endpoind/funcion de actualizar programa solo con los campos (nombre, abreviatura y creditos)
+(Hecho) Cambiar el internalId de la asignatura para que este en la tabla program-subjects-credits por que la asignatura puede estar usandose en distintos programas (por culpa de las clases que gacer referencia a clases)
 
 Endpoind de crear instancia (clase que apunta a otra clase)
 Crear endpind de duplicar programa, se duplica todo menos los estudiantes y los profesores de las clases

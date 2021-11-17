@@ -11,12 +11,6 @@ module.exports = {
         notNull: true,
       },
     },
-    internalId: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
-    },
     program: {
       references: {
         collection: 'plugins_academic-portfolio::programs',
