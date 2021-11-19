@@ -1,4 +1,5 @@
 const { programCanHaveCoursesOrHaveCourses } = require('./programCanHaveCoursesOrHaveCourses');
+const { duplicateProgramByIds } = require('./duplicateProgramByIds');
 const { getProgramSubstages } = require('./getProgramSubstages');
 const { removeProgramByIds } = require('./removeProgramByIds');
 const { getProgramCourses } = require('./getProgramCourses');
@@ -19,5 +20,6 @@ module.exports = {
   getProgramCourses,
   removeProgramByIds,
   getProgramSubstages,
+  duplicateProgramByIds,
   programCanHaveCoursesOrHaveCourses,
 };

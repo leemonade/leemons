@@ -84,6 +84,12 @@ async function deleteProgram(ctx) {
   ctx.body = { status: 200 };
 }
 
+async function duplicateProgram(ctx) {
+  const [program] = await programService.duplicateProgramByIds(ctx.request.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200, program };
+}
+
 module.exports = {
   putProgram,
   postProgram,
@@ -93,6 +99,7 @@ module.exports = {
   deleteProgram,
   programCourses,
   programHasGroups,
+  duplicateProgram,
   programSubstages,
   programHasCourses,
   programHasSubstages,

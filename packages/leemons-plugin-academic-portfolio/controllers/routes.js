@@ -20,6 +20,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/program/:id/duplicate',
+    method: 'POST',
+    handler: 'program.duplicateProgram',
+    authenticated: true,
+  },
+  {
     path: '/program/:id',
     method: 'GET',
     handler: 'program.detailProgram',
