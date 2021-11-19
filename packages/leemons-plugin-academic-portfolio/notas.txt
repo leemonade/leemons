@@ -11,14 +11,13 @@
 (Hecho) Endpoind/funcion de actualizar programa solo con los campos (nombre, abreviatura y creditos)
 (Hecho) Cambiar el internalId de la asignatura para que este en la tabla program-subjects-credits por que la asignatura puede estar usandose en distintos programas (por culpa de las clases que gacer referencia a clases)
 (Hecho) Los internal ids me los pasa el frontend, solo pueden ser digitos, con lo cual no los genera el backend
+(Hecho) Cuando se crea una clase instanciada, siempre me pueden pasar el internalId y los creditos, si ya existian configurados estos para ese programa, se machacan y ya
+(Hecho) Endpoind de crear instancia (clase que apunta a otra clase)
 
 
 
-Cuando se crea una clase instanciada, siempre me pueden pasar el internalId y los creditos, si ya existian configurados estos para ese programa, se machacan y ya
-Endpoind de crear instancia (clase que apunta a otra clase)
 Crear endpind de duplicar programa, se duplica todo menos los estudiantes y los profesores de las clases
-
-
 Cuando se duplica un grupo que se le pueda especificar si los alumnos/profesores permanecen en las clases o no
 
 Hablar con miguel lo del clash shedule
+*
