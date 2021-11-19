@@ -38,10 +38,7 @@ function omitEntries(model, query) {
 
     if (finalOmitEntries.length) {
       return {
-        $where: [
-          query,
-          { $where: { $or: finalOmitEntries.map(([key, value]) => ({ [key]: value })) } },
-        ],
+        $where: [query, { $or: finalOmitEntries.map(([key, value]) => ({ [key]: value })) }],
       };
     }
   }

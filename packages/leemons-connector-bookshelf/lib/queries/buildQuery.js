@@ -13,7 +13,7 @@ function buildWhereClause({ qb, field, operator, value }) {
   if (Array.isArray(value) && !['or', 'in', 'nin'].includes(operator)) {
     return qb.where((subQb) => {
       value.forEach((val) => {
-        subQb.orWhere((q) => buildWhereClause({ qb: q, field, operator, value: val }));
+        subQb.where((q) => buildWhereClause({ qb: q, ...val }));
       });
     });
   }
@@ -136,7 +136,11 @@ function buildWhereClause({ qb, field, operator, value }) {
       // if value is false: where is not null
       return value ? qb.whereNull(field) : qb.whereNotNull(field);
     default:
-      throw new Error(`Unhandled whereClause: ${field} ${operator} ${value}`);
+      throw new Error(
+        `Unhandled whereClause: ${field} ${operator} ${
+          typeof value === 'object' ? JSON.stringify(value, null, 2) : value
+        }`
+      );
   }
 }
 
