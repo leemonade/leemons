@@ -11,7 +11,8 @@ const fieldLowerFn = (qb) => {
 function buildWhereClause({ qb, field, operator, value }) {
   // If where is an array, use it as and wheres
   if (Array.isArray(value) && !['or', 'in', 'nin'].includes(operator)) {
-    return qb.where((subQb) => {
+    const statement = operator === 'not' ? 'whereNot' : 'where';
+    return qb[statement]((subQb) => {
       value.forEach((val) => {
         subQb.where((q) => buildWhereClause({ qb: q, ...val }));
       });

@@ -32,13 +32,18 @@ function omitEntries(model, query) {
   if (model.schema.options?.omit) {
     const stringifiedQuery = JSON.stringify(query);
     const finalOmitEntries = Object.entries(model.schema.options.omit).filter(([entry]) => {
-      const regex = new RegExp(`${entry.replace(/_\$.*/, '')}"(?= ?:)`);
+      // Check if the entry is in the query, and if it is, ignore it
+      const regex = new RegExp(`"${entry.replace(/_\$.*/, '')}(_\\$.*)?"(?= ?:)`);
       return !regex.test(stringifiedQuery);
     });
 
+    // Do not add the omit entries if they are already in the query
     if (finalOmitEntries.length) {
       return {
-        $where: [query, { $or: finalOmitEntries.map(([key, value]) => ({ [key]: value })) }],
+        $where: [
+          query,
+          { $not: { $or: finalOmitEntries.map(([key, value]) => ({ [key]: value })) } },
+        ],
       };
     }
   }
@@ -112,10 +117,10 @@ function parseWhereClause(name, value, model) {
           field: null,
           operator,
           // eslint-disable-next-line no-use-before-define
-          value: [].concat(value).map(parseWhereParams),
+          value: [].concat(value).map((_value) => parseWhereParams(_value, model)),
         };
       }
-      if (operator === 'where') {
+      if (['where', 'not'].includes(operator)) {
         return {
           field: null,
           operator,
@@ -225,10 +230,6 @@ function parseFilters({ filters = {}, defaults = {}, model } = {}) {
   if (_.keys(params).length > 0) {
     where.push(...parseWhereParams(params, model));
   }
-
-  // if (_.has(filters, "$where")) {
-  //   where.push(...parseWhereParams(filters.$where, model));
-  // }
 
   Object.assign(finalFilters, { where });
   return finalFilters;
