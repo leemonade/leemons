@@ -28,6 +28,26 @@ const VALID_REST_OPERATORS = [
 const BOOLEAN_OPERATORS = ['or'];
 const QUERY_OPERATORS = ['_$where', '_$or'];
 
+function omitEntries(model, query) {
+  if (model.schema.options?.omit) {
+    const stringifiedQuery = JSON.stringify(query);
+    const finalOmitEntries = Object.entries(model.schema.options.omit).filter(([entry]) => {
+      const regex = new RegExp(`${entry.replace(/_\$.*/, '')}"(?= ?:)`);
+      return !regex.test(stringifiedQuery);
+    });
+
+    if (finalOmitEntries.length) {
+      return {
+        $where: [
+          query,
+          { $where: { $or: finalOmitEntries.map(([key, value]) => ({ [key]: value })) } },
+        ],
+      };
+    }
+  }
+  return query;
+}
+
 function parseSortFilter(sort) {
   if (typeof sort !== 'string') {
     throw new Error(`parseSortFilter expected a string, instead got ${typeof sort}`);
@@ -91,8 +111,20 @@ function parseWhereClause(name, value, model) {
     if (name[0] === '$') {
       const operator = name.substring(1);
       if (BOOLEAN_OPERATORS.includes(operator)) {
-        // eslint-disable-next-line no-use-before-define
-        return { field: null, operator, value: [].concat(value).map(parseWhereParams) };
+        return {
+          field: null,
+          operator,
+          // eslint-disable-next-line no-use-before-define
+          value: [].concat(value).map(parseWhereParams),
+        };
+      }
+      if (operator === 'where') {
+        return {
+          field: null,
+          operator,
+          // eslint-disable-next-line no-use-before-define
+          value: parseWhereParams(value, model),
+        };
       }
     }
     let field = name;
@@ -150,7 +182,7 @@ function parseWhereParams(params, model) {
   return finalWhere;
 }
 
-function parseFilters({ filters = {}, defaults = { deleted: false }, model } = {}) {
+function parseFilters({ filters = {}, defaults = {}, model } = {}) {
   if (typeof filters !== 'object' || filters === null) {
     throw new Error(
       `parseFilters expected an object, got ${filters === null ? 'null' : typeof filters}`
@@ -189,19 +221,19 @@ function parseFilters({ filters = {}, defaults = { deleted: false }, model } = {
     Object.assign(finalFilters, parseLimitFilter(filters.$limit));
   }
 
-  const params = _.omit(filters, ['$sort', '$offset', '$limit', '$where']);
+  // Apply omit filters excluding DB Engine actions
+  const params = omitEntries(model, _.omit(filters, ['$sort', '$offset', '$limit']));
   const where = [];
 
   if (_.keys(params).length > 0) {
     where.push(...parseWhereParams(params, model));
   }
 
-  if (_.has(filters, '$where')) {
-    where.push(...parseWhereParams(filters.$where, model));
-  }
+  // if (_.has(filters, "$where")) {
+  //   where.push(...parseWhereParams(filters.$where, model));
+  // }
 
   Object.assign(finalFilters, { where });
-
   return finalFilters;
 }
 
