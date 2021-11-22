@@ -149,6 +149,12 @@ module.exports = [
     handler: 'group.deleteGroupFromClassesUnderNodeTree',
     authenticated: true,
   },
+  {
+    path: '/group/:id/duplicate-with-classes-under-node-tree',
+    method: 'POST',
+    handler: 'group.duplicateGroupWithClassesUnderNodeTree',
+    authenticated: true,
+  },
   // Subjects
   {
     path: '/subject',

@@ -51,7 +51,17 @@ async function deleteGroupFromClassesUnderNodeTree(ctx) {
   ctx.body = { status: 200 };
 }
 
+async function duplicateGroupWithClassesUnderNodeTree(ctx) {
+  const duplications = await groupService.duplicateGroupWithClassesUnderNodeTreeByIds(
+    ctx.request.body.nodeTypes,
+    ctx.request.params.id
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, duplications };
+}
+
 module.exports = {
+  duplicateGroupWithClassesUnderNodeTree,
   deleteGroupFromClassesUnderNodeTree,
   postGroup,
   listGroup,
