@@ -135,9 +135,7 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
           case 'time':
           case 'datetime':
           case 'timestamp':
-            const options = {};
-            if (!_.isNil(properties.precision)) options.precision = properties.precision;
-            col = table[properties.type](name, options);
+            col = table[properties.type](name, { precision: properties.precision });
             break;
 
           case 'binary':
@@ -201,6 +199,7 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
 
     if (useTimestamps) {
       table.timestamps(true, true);
+      table.timestamp('deleted_at').nullable();
     }
   };
 

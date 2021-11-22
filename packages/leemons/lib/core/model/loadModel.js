@@ -15,6 +15,9 @@ function formatModel(name, modelConfig, target = 'global') {
     },
     options: {
       useTimestamps: false,
+      omit: {
+        deleted: true,
+      },
     },
     attributes: {},
     primaryKey: {
