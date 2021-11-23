@@ -1,4 +1,4 @@
-// TODO: Añadir autenticación y permisos
+// TODO [Importante]: Añadir autenticación y permisos
 module.exports = [
   // Programs
   {

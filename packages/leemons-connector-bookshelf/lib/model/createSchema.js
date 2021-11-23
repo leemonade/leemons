@@ -14,7 +14,7 @@ function getRelationPrimaryKey(properties) {
     const model = getModel(properties.references.collection);
     return model.schema.primaryKey;
   } catch (err) {
-    console.error(`Error en collection: ${properties.references.collection}`);
+    console.error(`Error on referencing collection: ${properties.references.collection}`);
     throw err;
   }
 }
