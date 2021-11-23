@@ -19,5 +19,9 @@
 Crear endpind de duplicar programa, se duplica todo menos los estudiantes y los profesores de las clases
 Cuando se duplica un grupo que se le pueda especificar si los alumnos/profesores permanecen en las clases o no
 
+
+Añadir a la asigantura un listado de cursos cuando se le añada el listado de cursos comprobar si alguna de las asignaturas que ya tiene vinculadas tiene algun otro curso, entonces devolver un error como que hay una inconcluencia entre las clases los cursos que tenen para asignatura y la asignatura los cursos en los que se ofrece.
+cuando se crea una clase comprobar si la asignatura tiene el curso que se le este especificando a la clase
+
 Hablar con miguel lo del clash shedule
 *
