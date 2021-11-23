@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const initMongooseConnections = require('./mongoose');
 
 class Connector {
@@ -25,7 +26,7 @@ class Connector {
     return Promise.all(
       mongooseConnections.map((connection) => {
         const ctx = {
-          ORM: connection,
+          ODM: this.connections[connection.name],
           connection,
           connector: this,
         };
@@ -48,6 +49,15 @@ class Connector {
    */
   async loadModels(models) {
     const modelsPerConnection = _.groupBy(models, 'connection');
+
+    return Promise.all(
+      Object.entries(modelsPerConnection).map(([connection, _models]) => {
+        const ctx = this.contexts.get(connection);
+
+        console.log(ctx);
+        // return mountModels(_models, ctx);
+      })
+    );
   }
 }
 
