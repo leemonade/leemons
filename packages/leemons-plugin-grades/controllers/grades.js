@@ -19,8 +19,32 @@ async function getGrade(ctx) {
   ctx.body = { status: 200, grade };
 }
 
+async function listGrades(ctx) {
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      page: { type: ['number', 'string'] },
+      size: { type: ['number', 'string'] },
+      center: { type: ['string'] },
+    },
+    required: ['page', 'size'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.query)) {
+    const { page, size, center, ...options } = ctx.request.query;
+    const data = await gradesService.listGrades(parseInt(page, 10), parseInt(size, 10), center, {
+      ...options,
+    });
+    ctx.status = 200;
+    ctx.body = { status: 200, data };
+  } else {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   getGrade,
   putGrade,
   postGrade,
+  listGrades,
 };

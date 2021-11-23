@@ -1,9 +1,9 @@
 module.exports = [
   // Grades
   {
-    path: '/grades/:id',
+    path: '/grades',
     method: 'GET',
-    handler: 'grades.getGrade',
+    handler: 'grades.listGrades',
     authenticated: true,
   },
   {
@@ -16,6 +16,12 @@ module.exports = [
     path: '/grades',
     method: 'PUT',
     handler: 'grades.putGrade',
+    authenticated: true,
+  },
+  {
+    path: '/grades/:id',
+    method: 'GET',
+    handler: 'grades.getGrade',
     authenticated: true,
   },
   // Grade Scales
