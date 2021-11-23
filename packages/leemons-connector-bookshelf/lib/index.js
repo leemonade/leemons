@@ -7,15 +7,6 @@ const mountModels = require('./model/mountModel');
 const generateQueries = require('./queries/queries');
 const buildQuery = require('./queries/buildQuery');
 
-async function setupConnection(ctx, allModels) {
-  const models = Object.values(allModels).filter(
-    (model) => model.connection === ctx.connection.name
-  );
-
-  // First mount core_store for checking structure changes
-  return mountModels(models, ctx);
-}
-
 class Connector {
   constructor(leemons) {
     this.leemons = leemons;
