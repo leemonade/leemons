@@ -134,16 +134,20 @@ function checkMissingDependencies(plugins) {
  */
 function sortByDeps(plugins) {
   return [...plugins].sort((a, b) => {
+    // > 0 b is before a
+    // < 0 a is before b
+    // 0 No change
+
     // If only B has deps, then A loads before B
     if (hasDependencies(b) && !hasDependencies(a)) return -1;
     // If only A has deps, then B loads before A
     if (hasDependencies(a) && !hasDependencies(b)) return 1;
-    // If A depends on B, then B loads before A
-    if (hasDependencies(a) && a.dependencies.fullDepencencies.includes(b.name)) return 1;
     // If B depends on A, then A loads before B
     if (hasDependencies(b) && b.dependencies.fullDepencencies.includes(a.name)) return -1;
+    // If A depends on B, then B loads before A
+    if (hasDependencies(a) && a.dependencies.fullDepencencies.includes(b.name)) return 1;
     // Else don't sort
-    return -1;
+    return 0;
   });
 }
 
