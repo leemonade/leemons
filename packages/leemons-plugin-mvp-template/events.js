@@ -57,6 +57,7 @@ async function events(isInstalled) {
       ],
       async () => {
         try {
+          console.log('HOOOOOLAAAA ---------------');
           config.centers = await initCenters();
           leemons.events.emit('init-centers', config.centers);
           config.profiles = await initProfiles();

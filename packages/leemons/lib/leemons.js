@@ -83,14 +83,15 @@ class Leemons {
       once.call(this.events, event, ...args);
     };
     this.events.emit = async (event, target = null, ...args) => {
+      if (emitCache.indexOf(event) < 0) emitCache.push(event);
+      if (target && emitCache.indexOf(`${target}:${event}`) < 0)
+        emitCache.push(`${target}:${event}`);
       await emit.call(this.events, 'all', { event, target }, ...args);
       await emit.call(this.events, event, { event, target }, ...args);
       await emitArrayEventsIfNeed(event, { event, target }, ...args);
-      if (emitCache.indexOf(event) < 0) emitCache.push(event);
       if (target) {
         await emit.call(this.events, `${target}:${event}`, { event, target }, ...args);
         await emitArrayEventsIfNeed(`${target}:${event}`, { event, target }, ...args);
-        if (emitCache.indexOf(`${target}:${event}`) < 0) emitCache.push(`${target}:${event}`);
       }
     };
 
@@ -114,6 +115,8 @@ class Leemons {
 
         timers.delete(eventName);
         this.log.debug(chalk`{green ${target}} emitted {magenta ${event}} {gray ${timeString}}`);
+      } else {
+        this.log.info(chalk`{red ${target}} emitted {magenta ${event}}`);
       }
     });
   }

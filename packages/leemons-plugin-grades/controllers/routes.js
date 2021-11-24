@@ -50,4 +50,11 @@ module.exports = [
     handler: 'grade-tags.putGradeTag',
     authenticated: true,
   },
+  // Rules
+  {
+    path: '/rules',
+    method: 'POST',
+    handler: 'rules.postRule',
+    authenticated: true,
+  },
 ];

@@ -305,12 +305,64 @@ function validateAddRule(data) {
   }
 }
 
+const addConditionGroupSchema = {
+  type: 'object',
+  properties: {
+    operator: {
+      type: 'string',
+      enum: ['and', 'or'],
+    },
+    rule: stringSchema,
+    conditions: {
+      type: 'array',
+      items: conditionSchema,
+    },
+  },
+  required: ['operator', 'rule', 'conditions'],
+  additionalProperties: false,
+};
+function validateAddConditionGroup(data) {
+  const validator = new LeemonsValidator(addConditionGroupSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
+const addConditionRefToGroupSchema = {
+  type: 'object',
+  properties: {
+    group: groupSchema,
+    rule: stringSchema,
+    parentGroup: stringSchema,
+  },
+  required: ['group', 'rule', 'parentGroup'],
+  additionalProperties: false,
+};
+
+const addConditionSchema = _.cloneDeep(conditionSchema);
+addConditionSchema.properties.rule = stringSchema;
+addConditionSchema.properties.parentGroup = stringSchema;
+addConditionSchema.required = ['source', 'sourceId', 'data', 'operator', 'rule', 'parentGroup'];
+function validateAddCondition({ group, ...rest }) {
+  const schema = group ? addConditionRefToGroupSchema : addConditionSchema;
+  const data = group ? { ...rest, group } : rest;
+
+  const validator = new LeemonsValidator(schema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   validateAddRule,
   validateAddGrade,
   validateUpdateGrade,
   validateAddGradeTag,
+  validateAddCondition,
   validateAddGradeScale,
   validateUpdateGradeTag,
   validateUpdateGradeScale,
+  validateAddConditionGroup,
 };

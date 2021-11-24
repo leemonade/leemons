@@ -1,21 +1,26 @@
 const _ = require('lodash');
 const { table } = require('../tables');
-const { validateAddRule } = require('../../validations/forms');
+const { validateAddConditionGroup } = require('../../validations/forms');
+const { addCondition } = require('../conditions/addCondition');
 
 async function addConditionGroup(data, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
-      await validateAddRule(data);
+      await validateAddConditionGroup(data);
 
-      const { group, ..._data } = data;
+      const { conditions, ..._data } = data;
 
-      let rule = await table.rules.create(_data, { transacting });
+      const conditionGroup = await table.conditionGroups.create(_data, { transacting });
 
-      const group = await
+      if (conditions) {
+        await Promise.all(
+          _.map(conditions, async (condition) =>
+            addCondition({ ...condition, rule: data.rule, parentGroup: conditionGroup.id })
+          )
+        );
+      }
 
-        rule = await table.rules.update({id: rule.id}, {group: group.id}, {transacting});
-
-      return (await gradeByIds(grade.id, { transacting }))[0];
+      return conditionGroup;
     },
     table.grades,
     _transacting
