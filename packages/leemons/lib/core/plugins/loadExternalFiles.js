@@ -224,15 +224,9 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
 
         // Only let the plugin to emit events on itself
         _.set(filter, 'leemons.events', {
-          emit: (event, ...args) => {
-            leemons.events.emit(event, `${target}.${plugin.name}`, ...args);
-          },
-          once: (...args) => {
-            leemons.events.once(...args);
-          },
-          on: (...args) => {
-            leemons.events.on(...args);
-          },
+          emit: (event, ...args) => leemons.events.emit(event, `${target}.${plugin.name}`, ...args),
+          once: (...args) => leemons.events.once(...args),
+          on: (...args) => leemons.events.on(...args),
         });
 
         // Expose leemons.plugin, leemons.provider... to each external file+

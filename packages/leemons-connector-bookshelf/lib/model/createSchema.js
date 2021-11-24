@@ -10,8 +10,13 @@ function getRelationCollectionName(properties) {
 }
 
 function getRelationPrimaryKey(properties) {
-  const model = getModel(properties.references.collection);
-  return model.schema.primaryKey;
+  try {
+    const model = getModel(properties.references.collection);
+    return model.schema.primaryKey;
+  } catch (err) {
+    console.error(`Error en collection: ${properties.references.collection}`);
+    throw err;
+  }
 }
 
 // TODO: Update columns with foreign keys (maybe as easy as delete the key?)

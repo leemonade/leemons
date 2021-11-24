@@ -3,7 +3,7 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const Static = require('koa-static');
 const request = require('request');
-const events = require('events');
+const events = require('events-async');
 const execa = require('execa');
 const _ = require('lodash');
 const chalk = require('chalk');
@@ -53,9 +53,11 @@ class Leemons {
 
     const emitCache = [];
     const arrayEvents = {};
+    // eslint-disable-next-line new-cap
     this.events = new events();
     const { emit, once } = this.events;
-    const emitArrayEventsIfNeed = (_event, { event, target }, ...args) => {
+    const emitArrayEventsIfNeed = async (_event, { event, target }, ...args) => {
+      const promises = [];
       _.forIn(arrayEvents, (values, key) => {
         if (values.indexOf(_event) >= 0) {
           let foundAll = true;
@@ -66,28 +68,28 @@ class Leemons {
             }
           });
           if (foundAll) {
-            emit.call(this.events, key, { event, target }, ...args);
+            promises.push(emit.call(this.events, key, { event, target }, ...args));
           }
         }
       });
+      await Promise.all(promises);
     };
     this.events.once = (event, ...args) => {
       if (_.isArray(event)) {
         const id = uuid.v4();
         arrayEvents[id] = event;
         once.call(this.events, id, ...args);
-      } else {
-        once.call(this.events, event, ...args);
       }
+      once.call(this.events, event, ...args);
     };
-    this.events.emit = (event, target = null, ...args) => {
-      emit.call(this.events, 'all', { event, target }, ...args);
-      emit.call(this.events, event, { event, target }, ...args);
-      emitArrayEventsIfNeed(event, { event, target }, ...args);
+    this.events.emit = async (event, target = null, ...args) => {
+      await emit.call(this.events, 'all', { event, target }, ...args);
+      await emit.call(this.events, event, { event, target }, ...args);
+      await emitArrayEventsIfNeed(event, { event, target }, ...args);
       if (emitCache.indexOf(event) < 0) emitCache.push(event);
       if (target) {
-        emit.call(this.events, `${target}:${event}`, { event, target }, ...args);
-        emitArrayEventsIfNeed(`${target}:${event}`, { event, target }, ...args);
+        await emit.call(this.events, `${target}:${event}`, { event, target }, ...args);
+        await emitArrayEventsIfNeed(`${target}:${event}`, { event, target }, ...args);
         if (emitCache.indexOf(`${target}:${event}`) < 0) emitCache.push(`${target}:${event}`);
       }
     };
