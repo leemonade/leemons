@@ -3,6 +3,7 @@ const { table } = require('../services/tables');
 
 const { LeemonsValidator } = global.utils;
 const { stringSchema } = require('./types');
+const { numberSchema } = require('leemons-plugin-menu-builder/src/validations/types');
 
 const addGradeSchema = {
   type: 'object',
@@ -242,7 +243,70 @@ async function validateUpdateGradeTag(data, { transacting } = {}) {
   if (!scale) throw new Error('Scale not found');
 }
 
+const conditionSchema = {
+  type: 'object',
+  properties: {
+    source: {
+      type: 'string',
+      enum: ['program', 'course', 'subject-type', 'knowledge', 'subject'],
+    },
+    sourceId: stringSchema,
+    data: {
+      type: 'string',
+      enum: ['gpa', 'cpp', 'cpc', 'grade'],
+    },
+    operator: {
+      type: 'string',
+      enum: ['lte', 'gte', 'lt', 'gt', 'eq', 'neq'],
+    },
+    target: numberSchema,
+    targetGradeScale: stringSchema,
+    // Se inserta mas abajo --> group: groupSchema,
+  },
+  required: [],
+  additionalProperties: false,
+};
+
+const groupSchema = {
+  type: 'object',
+  properties: {
+    operator: {
+      type: 'string',
+      enum: ['and', 'or'],
+    },
+    conditions: {
+      type: 'array',
+      items: conditionSchema,
+    },
+  },
+  required: ['operator'],
+  additionalProperties: false,
+};
+
+conditionSchema.properties.group = groupSchema;
+
+const addRuleSchema = {
+  type: 'object',
+  properties: {
+    name: stringSchema,
+    center: stringSchema,
+    grade: stringSchema,
+    program: stringSchema,
+    group: groupSchema,
+  },
+  required: ['name', 'center', 'grade', 'program', 'group'],
+  additionalProperties: false,
+};
+function validateAddRule(data) {
+  const validator = new LeemonsValidator(addRuleSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
+  validateAddRule,
   validateAddGrade,
   validateUpdateGrade,
   validateAddGradeTag,

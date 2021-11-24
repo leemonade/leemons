@@ -5,6 +5,7 @@ module.exports = {
     useTimestamps: true,
   },
   attributes: {
+    // and | or
     operator: {
       type: 'string',
       options: {

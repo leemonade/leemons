@@ -26,7 +26,7 @@ module.exports = {
         notNull: true,
       },
     },
-    // gte | lte | gt | lt | eq
+    // gte | lte | gt | lt | eq | neq
     operator: {
       type: 'string',
       options: {
