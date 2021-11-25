@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const loadSchemas = require('./model/loadSchemas');
+const mountModels = require('./model/mountModels');
 const initMongooseConnections = require('./mongoose');
 
 class Connector {
@@ -10,9 +12,10 @@ class Connector {
     // this.buildQuery = buildQuery;
   }
 
-  // query(model) {
-  //   return generateQueries(model, this);
-  // }
+  query(model) {
+    return {};
+    // return generateQueries(model, this);
+  }
 
   async init() {
     // Get connections made with mongoose
@@ -27,6 +30,7 @@ class Connector {
       mongooseConnections.map((connection) => {
         const ctx = {
           ODM: this.connections[connection.name],
+          schemas: new Map(),
           connection,
           connector: this,
         };
@@ -51,11 +55,18 @@ class Connector {
     const modelsPerConnection = _.groupBy(models, 'connection');
 
     return Promise.all(
-      Object.entries(modelsPerConnection).map(([connection, _models]) => {
+      Object.entries(modelsPerConnection).map(async ([connection, _models]) => {
+        const { collection: collections = [], schema: schemas = [] } = _.groupBy(_models, 'type');
         const ctx = this.contexts.get(connection);
 
-        console.log(ctx);
-        // return mountModels(_models, ctx);
+        if (collections.length) {
+          // Do not create schemas if are not going to be used
+          if (schemas.length) {
+            loadSchemas(ctx, schemas);
+          }
+
+          return mountModels(collections, ctx);
+        }
       })
     );
   }
