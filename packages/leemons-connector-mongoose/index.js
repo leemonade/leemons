@@ -2,6 +2,7 @@ const _ = require('lodash');
 const loadSchemas = require('./model/loadSchemas');
 const mountModels = require('./model/mountModels');
 const initMongooseConnections = require('./mongoose');
+const generateQueries = require('./queries/queries');
 
 class Connector {
   constructor(leemons) {
@@ -13,8 +14,7 @@ class Connector {
   }
 
   query(model) {
-    return {};
-    // return generateQueries(model, this);
+    return generateQueries(model, this);
   }
 
   async init() {
