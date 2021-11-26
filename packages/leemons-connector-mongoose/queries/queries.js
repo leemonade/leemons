@@ -1,3 +1,6 @@
+const { parseFilters } = require('leemons-utils');
+const buildQuery = require('./buildQuery');
+
 function generateQueries(model) {
   const MongooseModel = model.model;
 
@@ -18,6 +21,11 @@ function generateQueries(model) {
     return MongooseModel.insertMany(newItems, { session: transacting });
   }
 
+  async function find(query = {}, { transacting } = {}) {
+    const filters = parseFilters({ filters: query, model });
+    const finalQuery = buildQuery(model, filters);
+  }
+
   async function transaction(f) {
     return new Promise((resolve, reject) => {
       model.ODM.transaction(
@@ -35,6 +43,7 @@ function generateQueries(model) {
   return {
     create,
     createMany,
+    find,
     transaction,
   };
 }

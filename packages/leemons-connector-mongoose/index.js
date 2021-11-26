@@ -67,6 +67,7 @@ class Connector {
 
           return mountModels(collections, ctx);
         }
+        return null;
       })
     );
   }
