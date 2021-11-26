@@ -2,6 +2,7 @@ const _ = require('lodash');
 const { table } = require('../tables');
 const { validateAddRule } = require('../../validations/forms');
 const { addConditionGroup } = require('../condition-groups/addConditionGroup');
+const { ruleByIds } = require('./ruleByIds');
 
 async function addRule(data, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
@@ -16,7 +17,7 @@ async function addRule(data, { transacting: _transacting } = {}) {
 
       await table.rules.update({ id: rule.id }, { group: _group.id }, { transacting });
 
-      return null;
+      return (await ruleByIds(rule.id, { transacting }))[0];
     },
     table.grades,
     _transacting

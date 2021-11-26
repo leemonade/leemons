@@ -9,6 +9,7 @@ const { listStudentClasses } = require('./listStudentClasses');
 const { listTeacherClasses } = require('./listTeacherClasses');
 const { addClassStudentsMany } = require('./addClassStudentsMany');
 const { addClassTeachersMany } = require('./addClassTeachersMany');
+const { getBasicClassesByProgram } = require('./getBasicClassesByProgram');
 
 module.exports = {
   addClass,
@@ -22,4 +23,5 @@ module.exports = {
   listTeacherClasses,
   addClassStudentsMany,
   addClassTeachersMany,
+  getBasicClassesByProgram,
 };

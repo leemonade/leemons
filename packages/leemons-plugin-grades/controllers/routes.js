@@ -57,4 +57,10 @@ module.exports = [
     handler: 'rules.postRule',
     authenticated: true,
   },
+  {
+    path: '/rules/process',
+    method: 'POST',
+    handler: 'rules.postRuleProcess',
+    authenticated: true,
+  },
 ];

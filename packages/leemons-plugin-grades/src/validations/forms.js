@@ -261,7 +261,10 @@ const conditionSchema = {
     },
     target: numberSchema,
     targetGradeScale: stringSchema,
-    // Se inserta mas abajo --> group: groupSchema,
+    group: {
+      type: 'object',
+      additionalProperties: true,
+    },
   },
   required: [],
   additionalProperties: false,
@@ -276,14 +279,12 @@ const groupSchema = {
     },
     conditions: {
       type: 'array',
-      items: conditionSchema,
+      items: _.cloneDeep(conditionSchema),
     },
   },
   required: ['operator'],
   additionalProperties: false,
 };
-
-conditionSchema.properties.group = groupSchema;
 
 const addRuleSchema = {
   type: 'object',
@@ -292,7 +293,7 @@ const addRuleSchema = {
     center: stringSchema,
     grade: stringSchema,
     program: stringSchema,
-    group: groupSchema,
+    group: _.cloneDeep(groupSchema),
   },
   required: ['name', 'center', 'grade', 'program', 'group'],
   additionalProperties: false,
@@ -315,7 +316,7 @@ const addConditionGroupSchema = {
     rule: stringSchema,
     conditions: {
       type: 'array',
-      items: conditionSchema,
+      items: _.cloneDeep(conditionSchema),
     },
   },
   required: ['operator', 'rule', 'conditions'],
@@ -332,7 +333,7 @@ function validateAddConditionGroup(data) {
 const addConditionRefToGroupSchema = {
   type: 'object',
   properties: {
-    group: groupSchema,
+    group: _.cloneDeep(groupSchema),
     rule: stringSchema,
     parentGroup: stringSchema,
   },

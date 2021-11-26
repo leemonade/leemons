@@ -5,7 +5,7 @@ const { getGradeTagsByGrade } = require('../grade-tags/getGradeTagsByGrade');
 
 async function gradeByIds(ids, { transacting } = {}) {
   const [grades, gradeScales, gradeTags] = await Promise.all([
-    table.grades.find({ id_$in: ids }, { transacting }),
+    table.grades.find({ id_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
     getGradeScalesByGrade(ids, { transacting }),
     getGradeTagsByGrade(ids, { transacting }),
   ]);

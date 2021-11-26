@@ -1,6 +1,10 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 const { validateAddCondition } = require('../../validations/forms');
+
+// eslint-disable-next-line no-use-before-define
+module.exports = { addCondition };
+
 const { addConditionGroup } = require('../condition-groups/addConditionGroup');
 
 async function addCondition(data, { transacting: _transacting } = {}) {
@@ -21,5 +25,3 @@ async function addCondition(data, { transacting: _transacting } = {}) {
     _transacting
   );
 }
-
-module.exports = { addCondition };
