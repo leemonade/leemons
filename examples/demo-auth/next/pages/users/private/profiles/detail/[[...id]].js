@@ -149,10 +149,11 @@ function DatasetTabs({ profile, t, isEditMode }) {
   );
 
   const onSuccess = useMemo(
-    () => ({ dataset }) => {
-      setTableItems(getDatasetAsArrayOfProperties(dataset));
-      setLoading(false);
-    },
+    () =>
+      ({ dataset }) => {
+        setTableItems(getDatasetAsArrayOfProperties(dataset));
+        setLoading(false);
+      },
     []
   );
 
@@ -538,7 +539,7 @@ function ProfileDetail() {
                 }`}
                 style={{ width: '14px', height: '8px' }}
               >
-                <ImageLoader className="stroke-current" src={'/assets/svgs/re-order.svg'} />
+                <ImageLoader className="stroke-current" src={'/public/assets/svgs/re-order.svg'} />
               </div>
             ) : null}
             <span className="text-secondary">{watch('name')}</span>

@@ -1,8 +1,12 @@
 const {
   markAllUserAgentsForUserProfileToReloadPermissions,
-} = require('./markAllUserAgentsForUserProfileToReloadPermissions');
-const { removeCustomPermissionToUserProfile } = require('./removeCustomPermissionToUserProfile');
-const { addCustomPermissionToUserProfile } = require('./addCustomPermissionToUserProfile');
+} = require('./permissions/markAllUserAgentsForUserProfileToReloadPermissions');
+const {
+  removeCustomPermissionToUserProfile,
+} = require('./permissions/removeCustomPermissionToUserProfile');
+const {
+  addCustomPermissionToUserProfile,
+} = require('./permissions/addCustomPermissionToUserProfile');
 const { getRole } = require('./getRole');
 const { exist } = require('./exist');
 const { add } = require('./add');

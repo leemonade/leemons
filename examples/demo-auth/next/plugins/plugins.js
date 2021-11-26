@@ -1,6 +1,7 @@
 module.exports = {
   plugins: [
-    'onboarding',
+    'socket.io',
+		'onboarding',
 		'layout',
 		'emails',
 		'common',

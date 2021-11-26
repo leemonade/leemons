@@ -24,7 +24,7 @@ export default function HeroBgLayout({ children }) {
             style={{ width: '294.58px', height: '414px', maxWidth: '40%', maxHeight: '40%' }}
             className="absolute right-20 bottom-20"
           >
-            <ImageLoader className="object-contain" src="/assets/login/child.png" />
+            <ImageLoader className="object-contain" src="/public/assets/login/child.png" />
           </div>
 
           <div className="absolute left-6 right-6 top-1/3 transform -translate-y-1/4 max-w-sm">

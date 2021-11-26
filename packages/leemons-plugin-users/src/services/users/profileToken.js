@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const getUserProfiles = require('./profiles');
-const { generateJWTToken } = require('./generateJWTToken');
+const { profiles: getUserProfiles } = require('./profiles');
+const { generateJWTToken } = require('./jwt/generateJWTToken');
 const { table } = require('../tables');
 
 /**
@@ -62,4 +62,4 @@ async function profileToken(user, profile, { transacting } = {}) {
   };
 }
 
-module.exports = profileToken;
+module.exports = { profileToken };

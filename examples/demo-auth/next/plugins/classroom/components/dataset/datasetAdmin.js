@@ -1,15 +1,17 @@
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
 import { Button } from 'leemons-ui';
 import Table from 'leemons-ui/dist/components/ui/Table';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import useArrayState from '../../hooks/useArrayState';
 import ActionButtons from './actionButtons';
 
 export default function DatasetAdmin() {
   // The dataset fields with array state helpers
-  const [items, { pushItems, removeItems, findItems }] = useArrayState([]);
+  const [items, { pushItems, removeItems, findItems, setItems }] = useArrayState([]);
   // The dataset field that needs to be edited (null if new one)
   const [editItem, setEditItem] = useState(null);
+  // The dataset field index to edit
+  const editItemIndex = useRef(null);
   // The dataset drawer and the toggle dataset drawer
   const [toggle, DatasetItemDrawer] = useDatasetItemDrawer();
 
@@ -20,9 +22,20 @@ export default function DatasetAdmin() {
     { Header: 'Tipo', accessor: 'schemaConfig.schema.type' },
     {
       Header: 'Acciones',
-      accessor: (field) => ActionButtons({ removeItems, setEditItem, toggle, field }),
+      accessor: (field, index) =>
+        ActionButtons({
+          removeItems,
+          setEditItem: (item) => editItemAction(item, index),
+          toggle,
+          field,
+        }),
     },
   ]);
+
+  const editItemAction = (item, index) => {
+    editItemIndex.current = index;
+    setEditItem(item);
+  };
 
   /*
    * Handle dataset events
@@ -31,17 +44,27 @@ export default function DatasetAdmin() {
   // save item (not saved to server?)
   // TODO: check what we do receive when it saved to server
   const onSaveDatasetItem = (item) => {
-    console.log(item);
-    pushItems(item);
+    if (editItemIndex.current !== null) {
+      items[editItemIndex.current] = item;
+      editItemIndex.current = null;
+      setItems(items);
+    } else {
+      pushItems(item);
+    }
   };
 
   const onGetDataset = () => {
     console.log(items);
   };
 
+  const newField = () => {
+    setEditItem(null);
+    toggle();
+  };
+
   return (
     <>
-      <Button onClick={toggle} color="primary">
+      <Button onClick={newField} color="primary">
         Añadir campo
       </Button>
       <DatasetItemDrawer

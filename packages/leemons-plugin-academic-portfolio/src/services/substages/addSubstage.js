@@ -1,0 +1,26 @@
+const { table } = require('../tables');
+
+async function addSubstage(
+  { name, abbreviation, number, program },
+  { transacting: _transacting } = {}
+) {
+  return global.utils.withTransaction(
+    async (transacting) =>
+      table.groups.create(
+        {
+          name,
+          abbreviation,
+          number,
+          program,
+          type: 'substage',
+        },
+        {
+          transacting,
+        }
+      ),
+    table.programCenter,
+    _transacting
+  );
+}
+
+module.exports = { addSubstage };

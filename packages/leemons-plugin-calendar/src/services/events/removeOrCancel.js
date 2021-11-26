@@ -29,7 +29,7 @@ async function removeOrCancel(id, { forceDelete, transacting: _transacting } = {
       if (userAgentIds.length > 1 && !forceDelete) {
         return table.events.update({ id }, { status: 'cancel' }, { transacting });
       }
-      // ES: Si solo hay un invitado (Owner) borramos el evento
+
       return remove(id, { transacting });
     },
     table.events,

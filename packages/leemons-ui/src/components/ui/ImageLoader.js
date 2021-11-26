@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import Image from 'next/image';
+import React from 'react';
 import InlineSvg from './InlineSvg';
 
 export default function ImageLoader({ src, alt, forceImage, className }) {
@@ -10,7 +10,7 @@ export default function ImageLoader({ src, alt, forceImage, className }) {
       {isSvg ? (
         <InlineSvg src={src} className={className} />
       ) : (
-        <Image layout="fill" src={src} alt={alt} className={className} />
+        <img layout="fill" src={src} alt={alt} className={className} />
       )}
     </>
   );

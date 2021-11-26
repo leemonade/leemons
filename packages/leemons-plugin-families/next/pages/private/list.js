@@ -54,21 +54,23 @@ function List() {
     [t]
   );
 
-  const tableItems = useMemo(() => {
-    return pagination
-      ? _.map(pagination.items, (item) => {
-          item.name = <div className="font-semibold">{item.name}</div>;
-          item.actions = (
-            <div className="text-right">
-              <Link href={`/families/private/detail/${item.id}`}>
-                <a className="text-sm text-primary">{t('view')}</a>
-              </Link>
-            </div>
-          );
-          return item;
-        })
-      : [];
-  }, [t, pagination]);
+  const tableItems = useMemo(
+    () =>
+      pagination
+        ? _.map(pagination.items, (item) => {
+            item.name = <div className="font-semibold">{item.name}</div>;
+            item.actions = (
+              <div className="text-right">
+                <Link href={`/private/families/detail/${item.id}`}>
+                  <a className="text-sm text-primary">{t('view')}</a>
+                </Link>
+              </div>
+            );
+            return item;
+          })
+        : [],
+    [t, pagination]
+  );
 
   async function list() {
     const { data } = await listFamiliesRequest(config.current);
@@ -76,7 +78,7 @@ function List() {
   }
 
   const goDetailPage = () => {
-    router.push('/families/private/detail');
+    router.push('/private/families/detail');
   };
 
   const load = useMemo(

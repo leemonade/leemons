@@ -1,21 +1,23 @@
 const add = require('./add');
+const exist = require('./exist');
+const remove = require('./remove');
+const update = require('./update');
+const removeAll = require('./removeAll');
 const addCustomForUser = require('./addCustomForUser');
 const removeCustomForUser = require('./removeCustomForUser');
 const updateCustomForUser = require('./updateCustomForUser');
-const remove = require('./remove');
-const removeAll = require('./removeAll');
-const exist = require('./exist');
 const reOrderCustomUserItems = require('./reOrderCustomUserItems');
-const update = require('./update');
+const { addCustomForUserWithProfile } = require('./addCustomForUserWithProfile');
 
 module.exports = {
   add,
+  exist,
+  remove,
+  update,
+  removeAll,
   addCustomForUser,
   removeCustomForUser,
   updateCustomForUser,
-  remove,
-  removeAll,
-  exist,
   reOrderCustomUserItems,
-  update,
+  addCustomForUserWithProfile,
 };

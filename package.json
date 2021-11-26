@@ -5,7 +5,7 @@
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
     "@types/jest": "^26.0.23",
-    "eslint": "^7.21.0",
+    "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-import": "^2.22.1",
@@ -71,5 +71,7 @@
       "pre-push": "npm run lint -s"
     }
   },
-  "dependencies": {}
+  "dependencies": {
+    "babel-eslint": "^10.1.0"
+  }
 }

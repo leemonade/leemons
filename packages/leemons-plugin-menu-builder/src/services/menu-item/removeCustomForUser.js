@@ -55,7 +55,7 @@ async function removeCustomForUser(userSession, menuKey, key, { transacting: _tr
 
       // Remove de custom permission
       promises.push(
-        leemons.getPlugin('users').services.users.removeCustomPermission(
+        leemons.getPlugin('users').services.users.removeCustomUserAgentPermission(
           _.map(userSession.userAgents, 'id'),
           {
             permissionName: key,

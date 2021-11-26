@@ -3,13 +3,15 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const Static = require('koa-static');
 const request = require('request');
-const events = require('events');
+const events = require('events-async');
 const execa = require('execa');
 const _ = require('lodash');
 const chalk = require('chalk');
 const bodyParser = require('koa-bodyparser');
 const ora = require('ora');
 const uuid = require('uuid');
+const withTelemetry = require('leemons-telemetry/withTelemetry');
+const koaBody = require('koa-body')({ multipart: true });
 
 const leemonsUtils = require('leemons-utils');
 const { createDatabaseManager } = require('leemons-database');
@@ -21,6 +23,7 @@ const loadFront = require('./core/plugins/front/loadFront');
 const { loadExternalFiles } = require('./core/plugins/loadExternalFiles');
 const { PLUGIN_STATUS } = require('./core/plugins/pluginsStatus');
 const { nextTransform, frontLogger } = require('./core/front/streams');
+const { LeemonsSocket } = require('./socket.io');
 
 class Leemons {
   constructor(log) {
@@ -50,9 +53,11 @@ class Leemons {
 
     const emitCache = [];
     const arrayEvents = {};
+    // eslint-disable-next-line new-cap
     this.events = new events();
     const { emit, once } = this.events;
-    const emitArrayEventsIfNeed = (_event, { event, target }, ...args) => {
+    const emitArrayEventsIfNeed = async (_event, { event, target }, ...args) => {
+      const promises = [];
       _.forIn(arrayEvents, (values, key) => {
         if (values.indexOf(_event) >= 0) {
           let foundAll = true;
@@ -63,29 +68,30 @@ class Leemons {
             }
           });
           if (foundAll) {
-            emit.call(this.events, key, { event, target }, ...args);
+            promises.push(emit.call(this.events, key, { event, target }, ...args));
           }
         }
       });
+      await Promise.all(promises);
     };
     this.events.once = (event, ...args) => {
       if (_.isArray(event)) {
         const id = uuid.v4();
         arrayEvents[id] = event;
         once.call(this.events, id, ...args);
-      } else {
-        once.call(this.events, event, ...args);
       }
+      once.call(this.events, event, ...args);
     };
-    this.events.emit = (event, target = null, ...args) => {
-      emit.call(this.events, 'all', { event, target }, ...args);
-      emit.call(this.events, event, { event, target }, ...args);
-      emitArrayEventsIfNeed(event, { event, target }, ...args);
+    this.events.emit = async (event, target = null, ...args) => {
       if (emitCache.indexOf(event) < 0) emitCache.push(event);
+      if (target && emitCache.indexOf(`${target}:${event}`) < 0)
+        emitCache.push(`${target}:${event}`);
+      await emit.call(this.events, 'all', { event, target }, ...args);
+      await emit.call(this.events, event, { event, target }, ...args);
+      await emitArrayEventsIfNeed(event, { event, target }, ...args);
       if (target) {
-        emit.call(this.events, `${target}:${event}`, { event, target }, ...args);
-        emitArrayEventsIfNeed(`${target}:${event}`, { event, target }, ...args);
-        if (emitCache.indexOf(`${target}:${event}`) < 0) emitCache.push(`${target}:${event}`);
+        await emit.call(this.events, `${target}:${event}`, { event, target }, ...args);
+        await emitArrayEventsIfNeed(`${target}:${event}`, { event, target }, ...args);
       }
     };
 
@@ -109,6 +115,8 @@ class Leemons {
 
         timers.delete(eventName);
         this.log.debug(chalk`{green ${target}} emitted {magenta ${event}} {gray ${timeString}}`);
+      } else {
+        this.log.info(chalk`{red ${target}} emitted {magenta ${event}}`);
       }
     });
   }
@@ -189,14 +197,19 @@ class Leemons {
       }
     });
 
-    this.backRouter.use(bodyParser());
+    // this.backRouter.use(bodyParser({ multipart: true }));
+    this.backRouter.use(koaBody);
+
     this.events.emit('didSetMiddlewares', 'leemons');
   }
 
   authenticatedMiddleware(authenticated) {
     return async (ctx, next) => {
       try {
-        let authorization = ctx.headers.authorization;
+        let { authorization } = ctx.headers;
+
+        if (!authorization) authorization = ctx.request.query.authorization;
+
         try {
           authorization = JSON.parse(authorization);
         } catch (e) {}
@@ -342,40 +355,94 @@ class Leemons {
     return this.db.query(model, plugin);
   }
 
-  async loadBack() {
-    /*
-     * Create a DatabaseManager for managing the database connections and models
-     */
-    this.db = createDatabaseManager(this);
-    /*
-     * Initialize database connections
-     */
-    await this.db.init();
+  async loadBack(parent) {
+    return withTelemetry('loadBack', parent, async (loadBackTelemetry) => {
+      await withTelemetry('initDatabase', loadBackTelemetry, async (t) => {
+        /*
+         * Create a DatabaseManager for managing the database connections and models
+         */
+        let span = t.startSpan('createDatabaseManager');
+        this.db = createDatabaseManager(this);
+        if (span) {
+          span.end();
+        }
+        /*
+         * Initialize database connections
+         */
+        span = t.startSpan('initDatabase');
+        await this.db.init();
+        if (span) {
+          span.end();
+        }
 
-    /**
-     * Load core models
-     */
-    loadCoreModels(this);
-    await this.db.loadModels(_.omit(this.models, 'core_store'));
+        /**
+         * Load core models
+         */
+        span = t.startSpan('loadCoreModels');
+        loadCoreModels(this);
+        await this.db.loadModels(_.omit(this.models, 'core_store'));
+        if (span) {
+          span.end();
+        }
+      });
 
-    this.events.emit('appWillLoadBack', 'leemons');
+      this.events.emit('appWillLoadBack', 'leemons');
 
-    const plugins = await loadExternalFiles(this, 'plugins', 'plugin', {
-      getProvider: 'enabledProviders',
+      return withTelemetry('loadPlugins', loadBackTelemetry, async (t) => {
+        let span = t.startSpan('loadPlugins');
+        const listProviders = (plugin) =>
+          Object.values(leemons.providers).filter((provider) =>
+            provider?.config?.config?.pluginsCanUseMe.includes(plugin.name)
+          ); // provider.config.config.pluginsCanUseMe.includes(plugin.name)}
+
+        const plugins = await loadExternalFiles(this, 'plugins', 'plugin', {
+          // Get the given provider from the list of available providers
+          getProvider: listProviders,
+          // Get the list of available providers, return a function to immediate return
+          listProviders: (plugin) => (securePlugin) => listProviders(plugin).map(securePlugin),
+        });
+        if (span) {
+          await span.end();
+        }
+        span = t.startSpan('loadProviders');
+        const providers = await loadExternalFiles(this, 'providers', 'provider', {
+          getPlugin: () => Object.values(leemons.plugins),
+        });
+
+        if (span) {
+          span.end();
+        }
+
+        span = t.startSpan('setRouter');
+        this.setMiddlewares();
+        this.setRoutes([
+          ...plugins.filter((plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code),
+          ...providers.filter((provider) => provider.status.code === PLUGIN_STATUS.enabled.code),
+        ]);
+        if (span) {
+          span.end();
+        }
+
+        // Send the installed plugins to trace loading time
+        t.setCustomContext({
+          plugins: plugins.map(({ source, name, version, status }) => ({
+            source,
+            name,
+            version,
+            status,
+          })),
+          providers: providers.map(({ source, name, version, status }) => ({
+            source,
+            name,
+            version,
+            status,
+          })),
+        });
+        this.events.emit('appDidLoadBack', 'leemons');
+
+        return { plugins, providers };
+      });
     });
-    const providers = await loadExternalFiles(this, 'providers', 'provider', {
-      getPlugin: 'enabledPlugins',
-    });
-
-    this.setMiddlewares();
-    this.setRoutes([
-      ...plugins.filter((plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code),
-      ...providers.filter((provider) => provider.status.code === PLUGIN_STATUS.enabled.code),
-    ]);
-
-    this.events.emit('appDidLoadBack', 'leemons');
-
-    return { plugins, providers };
   }
 
   async loadFront(plugins, providers) {
@@ -426,17 +493,19 @@ class Leemons {
   }
 
   async loadAppConfig() {
-    leemons.events.emit('appWillLoadConfig', 'leemons');
-    this.config = (await loadConfiguration(this)).configProvider;
-    leemons.events.emit('appDidLoadConfig', 'leemons');
+    return withTelemetry('loadAppConfig', async () => {
+      leemons.events.emit('appWillLoadConfig', 'leemons');
+      this.config = (await loadConfiguration(this)).configProvider;
+      leemons.events.emit('appDidLoadConfig', 'leemons');
 
-    if (this.config.get('config.insecure', false)) {
-      this.log.warn(
-        'The app is running in insecure mode, this means all the plugins can require any file in your computer'
-      );
-    }
+      if (this.config.get('config.insecure', false)) {
+        this.log.warn(
+          'The app is running in insecure mode, this means all the plugins can require any file in your computer'
+        );
+      }
 
-    return this.config;
+      return this.config;
+    });
   }
 
   // Load all apps
@@ -481,6 +550,27 @@ class Leemons {
     this.events.emit('appWillStart', 'leemons');
 
     await this.load();
+
+    LeemonsSocket.worker.init(this.server);
+    LeemonsSocket.worker.onConnection((socket) => {
+      console.log('Connected to socket.io', socket.session.email);
+    });
+
+    LeemonsSocket.worker.use(async (socket, next) => {
+      const authenticate = this.authenticatedMiddleware(true);
+
+      const ctx = {
+        state: {},
+        headers: { authorization: socket.handshake.auth.token },
+      };
+
+      const response = await authenticate(ctx, () => true);
+
+      if (response) {
+        socket.session = ctx.state.userSession;
+        next();
+      }
+    });
 
     this.server.listen(process.env.PORT, () => {
       this.events.emit('appDidStart', 'leemons');

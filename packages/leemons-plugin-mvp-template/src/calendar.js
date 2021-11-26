@@ -44,7 +44,7 @@ async function addCalendarAndEventAsClassroom(users) {
     bgColor: '#ffe796',
     borderColor: '#ffe796',
     section,
-    icon: '/assets/svgs/family.svg',
+    icon: '/public/assets/svgs/family.svg',
   });
   await Promise.all(
     _.map(events, (event) =>

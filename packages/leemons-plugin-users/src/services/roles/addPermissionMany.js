@@ -1,7 +1,8 @@
 const _ = require('lodash');
 const { table } = require('../tables');
-const { validatePermissionName } = require('../../validations/exists');
-const searchUsersWithRoleAndMarkAsReloadPermissions = require('./searchUsersWithRoleAndMarkAsReloadPermissions');
+const {
+  searchUsersWithRoleAndMarkAsReloadPermissions,
+} = require('./searchUsersWithRoleAndMarkAsReloadPermissions');
 
 /**
  * Update the provided role

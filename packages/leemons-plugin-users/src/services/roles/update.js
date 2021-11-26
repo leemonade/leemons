@@ -4,7 +4,7 @@ const _ = require('lodash');
 const { validateRoleType } = require('../../validations/exists');
 const { manyPermissionsHasManyActions } = require('../permissions/manyPermissionsHasManyActions');
 const { addPermissionMany } = require('./addPermissionMany');
-const { removePermissionAll } = require('./removePermissionAll');
+const { removePermissionAll } = require('./permissions/removePermissionAll');
 const { table } = require('../tables');
 
 /**

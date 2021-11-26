@@ -16,7 +16,10 @@ async function add(key, url, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await validateExistEventTypeKey(key, { transacting });
-      return table.eventTypes.create({ key, url }, { transacting });
+      return table.eventTypes.create(
+        { key, url, pluginName: this.calledFrom.replace('plugins.', '') },
+        { transacting }
+      );
     },
     table.eventTypes,
     _transacting

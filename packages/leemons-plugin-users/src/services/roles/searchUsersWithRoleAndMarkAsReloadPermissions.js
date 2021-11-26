@@ -30,4 +30,4 @@ async function searchUsersWithRoleAndMarkAsReloadPermissions(roleId, { transacti
   );
 }
 
-module.exports = searchUsersWithRoleAndMarkAsReloadPermissions;
+module.exports = { searchUsersWithRoleAndMarkAsReloadPermissions };

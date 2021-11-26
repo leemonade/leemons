@@ -53,7 +53,6 @@ async function deleteLocation(locationName, pluginName, { transacting: _transact
           )
         );
       }
-      // TODO Añadir que se borre un el apartado del menu del plugin si es el ultimo dataset existente para ese plugin
       await Promise.all(promises);
       return true;
     },

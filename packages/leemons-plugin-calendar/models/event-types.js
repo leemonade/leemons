@@ -18,6 +18,12 @@ module.exports = {
         notNull: true,
       },
     },
+    pluginName: {
+      type: 'string',
+      options: {
+        notNull: true,
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

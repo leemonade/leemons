@@ -28,6 +28,28 @@ const VALID_REST_OPERATORS = [
 const BOOLEAN_OPERATORS = ['or'];
 const QUERY_OPERATORS = ['_$where', '_$or'];
 
+function omitEntries(model, query) {
+  if (model.schema.options?.omit) {
+    const stringifiedQuery = JSON.stringify(query);
+    const finalOmitEntries = Object.entries(model.schema.options.omit).filter(([entry]) => {
+      // Check if the entry is in the query, and if it is, ignore it
+      const regex = new RegExp(`"${entry.replace(/_\$.*/, '')}(_\\$.*)?"(?= ?:)`);
+      return !regex.test(stringifiedQuery);
+    });
+
+    // Do not add the omit entries if they are already in the query
+    if (finalOmitEntries.length) {
+      return {
+        $where: [
+          query,
+          { $not: { $or: finalOmitEntries.map(([key, value]) => ({ [key]: value })) } },
+        ],
+      };
+    }
+  }
+  return query;
+}
+
 function parseSortFilter(sort) {
   if (typeof sort !== 'string') {
     throw new Error(`parseSortFilter expected a string, instead got ${typeof sort}`);
@@ -91,8 +113,20 @@ function parseWhereClause(name, value, model) {
     if (name[0] === '$') {
       const operator = name.substring(1);
       if (BOOLEAN_OPERATORS.includes(operator)) {
-        // eslint-disable-next-line no-use-before-define
-        return { field: null, operator, value: [].concat(value).map(parseWhereParams) };
+        return {
+          field: null,
+          operator,
+          // eslint-disable-next-line no-use-before-define
+          value: [].concat(value).map((_value) => parseWhereParams(_value, model)),
+        };
+      }
+      if (['where', 'not'].includes(operator)) {
+        return {
+          field: null,
+          operator,
+          // eslint-disable-next-line no-use-before-define
+          value: parseWhereParams(value, model),
+        };
       }
     }
     let field = name;
@@ -161,7 +195,10 @@ function parseFilters({ filters = {}, defaults = {}, model } = {}) {
     throw new Error('A valid model must be provided');
   }
 
-  const finalFilters = _.defaultsDeep({}, defaults);
+  const finalFilters = {};
+
+  // eslint-disable-next-line no-param-reassign
+  filters = _.defaultsDeep(filters, defaults);
 
   // If there are no filters, return the finalFilter
   if (Object.keys(filters).length === 0) {
@@ -186,19 +223,15 @@ function parseFilters({ filters = {}, defaults = {}, model } = {}) {
     Object.assign(finalFilters, parseLimitFilter(filters.$limit));
   }
 
-  const params = _.omit(filters, ['$sort', '$offset', '$limit', '$where']);
+  // Apply omit filters excluding DB Engine actions
+  const params = omitEntries(model, _.omit(filters, ['$sort', '$offset', '$limit']));
   const where = [];
 
   if (_.keys(params).length > 0) {
     where.push(...parseWhereParams(params, model));
   }
 
-  if (_.has(filters, '$where')) {
-    where.push(...parseWhereParams(filters.$where, model));
-  }
-
   Object.assign(finalFilters, { where });
-
   return finalFilters;
 }
 

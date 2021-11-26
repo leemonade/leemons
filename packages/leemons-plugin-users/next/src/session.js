@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
-import React, { useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import SessionContext from '@users/context/session';
 import Cookies from 'js-cookie';
 import useSWR from 'swr';
-import Router from 'next/router';
+import { useHistory } from 'react-router-dom';
 
 /**
  * @private
@@ -48,9 +48,8 @@ function getUserToken(data) {
   if (data) {
     if (_.isString(data)) {
       return data;
-    } else {
-      return data.userToken;
     }
+    return data.userToken;
   }
   return null;
 }
@@ -73,6 +72,7 @@ function getContextToken() {
 }
 
 export function useSession({ redirectTo, redirectIfFound } = {}) {
+  const history = useHistory();
   let result = null;
   let finished = null;
   let hasUser = null;
@@ -114,7 +114,7 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
         if (_.isFunction(redirectTo)) {
           redirectTo();
         } else if (_.isString(redirectTo)) {
-          Router.push(`/${redirectTo}`);
+          history.push(`/${redirectTo}`);
         }
       }
     } else {
@@ -128,7 +128,7 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
         if (_.isFunction(redirectTo)) {
           redirectTo();
         } else if (_.isString(redirectTo)) {
-          Router.push(`/${redirectTo}`);
+          history.push(`/${redirectTo}`);
         }
       }
     }
@@ -137,66 +137,6 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
   return result;
 }
 
-/*
-export function useSession({ redirectTo, redirectIfFound } = {}) {
-  const context = useContext(SessionContext);
-  let effect = false;
-  if (!context) {
-    const token = Cookies.get('token');
-    if (token) {
-      const { data, error } = useSWR(`users/user/${token}`, fetcher(), {
-        revalidateOnFocus: false,
-      });
-
-      const user = data && data.user ? data.user : null;
-      const finished = Boolean(data || error);
-      const hasUser = Boolean(user);
-
-      useEffect(() => {
-        if (!redirectTo || !finished) return;
-        if (
-          // If redirectTo is set, redirect if the user was not found.
-          (redirectTo && !redirectIfFound && !hasUser) ||
-          // If redirectIfFound is also set, redirect if the user was found
-          (redirectIfFound && hasUser)
-        ) {
-          if (_.isFunction(redirectTo)) {
-            redirectTo();
-          } else if (_.isString(redirectTo)) {
-            Router.push(`/${redirectTo}`);
-          }
-        }
-      }, [redirectTo, redirectIfFound, finished, hasUser]);
-
-      return error ? null : user;
-    } else {
-      effect = true;
-    }
-  } else {
-    effect = true;
-  }
-  if (effect) {
-    const hasUser = Boolean(context);
-    useEffect(() => {
-      if (!redirectTo) return;
-      if (
-        // If redirectTo is set, redirect if the user was not found.
-        (redirectTo && !redirectIfFound && !hasUser) ||
-        // If redirectIfFound is also set, redirect if the user was found
-        (redirectIfFound && hasUser)
-      ) {
-        if (_.isFunction(redirectTo)) {
-          redirectTo();
-        } else if (_.isString(redirectTo)) {
-          Router.push(`/${redirectTo}`);
-        }
-      }
-    }, [redirectTo, redirectIfFound, hasUser]);
-  }
-  return context;
-}
- */
-
-export function logoutSession(redirectTo) {
-  Router.push(`/users/public/auth/logout?redirectTo=${redirectTo}`);
+export function logoutSession(history, redirectTo) {
+  history.push(`/users/public/auth/logout?redirectTo=${redirectTo}`);
 }

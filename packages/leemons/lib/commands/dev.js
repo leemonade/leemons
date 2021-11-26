@@ -1,20 +1,23 @@
+const apm = require('leemons-telemetry').start('Leemons App');
+
 const cluster = require('cluster');
 const path = require('path');
 const chalk = require('chalk');
 
 const createLogger = require('leemons-logger/lib/logger/multiThread');
 const { getAvailablePort } = require('leemons-utils/lib/port');
+const { Leemons } = require('../index');
 
 const { handleStdin } = require('./lib/io');
 const { createWorker } = require('./lib/worker');
 const { createReloader } = require('./lib/watch');
 
-const { Leemons } = require('../index');
 const loadFront = require('../core/plugins/front/loadFront');
 const build = require('../core/front/build');
 const { PLUGIN_STATUS } = require('../core/plugins/pluginsStatus');
+const { LeemonsSocket } = require('../socket.io');
 
-//TODO falta que al reiniciar los servidores manualmente se haga bien añadiendo o quitando a los watchers los nuevos plugins.
+// TODO falta que al reiniciar los servidores manualmente se haga bien añadiendo o quitando a los watchers los nuevos plugins.
 
 /**
  * Creates a watcher for frontend files and then sets up all the needed files
@@ -199,6 +202,8 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
       createWorker({ PORT, loggerId: logger.id, loggerLevel: logger.level });
     }
 
+    LeemonsSocket.main.init();
+
     /*
      * Thread communication listener
      *
@@ -302,7 +307,8 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
         case 'reload-back-front':
           (async () => {
             await setUpBack();
-            await setUpFront();
+            // TODO: ADD NEW FRONT LOGIC
+            // await setUpFront();
           })();
           break;
         default:
@@ -326,15 +332,17 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
      * and set the middlewares.
      */
 
-    let nextDir = leemons.config.get('config.dir.next', 'next');
-    nextDir = path.isAbsolute(nextDir) ? nextDir : path.join(cwd, nextDir);
-    const { handler: frontHandler } = await setupFront(
-      leemons,
-      leemons.enabledPlugins,
-      leemons.enabledProviders,
-      nextDir
-    );
-    setUpFront = frontHandler;
+    // TODO: ADD NEW FRONT LOGIC
+    leemons.setFrontRoutes();
+    // let nextDir = leemons.config.get('config.dir.next', 'next');
+    // nextDir = path.isAbsolute(nextDir) ? nextDir : path.join(cwd, nextDir);
+    // const { handler: frontHandler } = await setupFront(
+    //   leemons,
+    //   leemons.enabledPlugins,
+    //   leemons.enabledProviders,
+    //   nextDir
+    // );
+    // setUpFront = frontHandler;
 
     leemons.loaded = true;
 
