@@ -18,8 +18,8 @@ module.exports = {
   hasActionMany: permissions.hasActionMany,
   addActionMany: permissions.addActionMany,
   findUserAgentsWithPermission: permissions.findUserAgentsWithPermission,
+  removeCustomPermissionForAllUserAgents: permissions.removeCustomPermissionForAllUserAgents,
   manyPermissionsHasManyActions: permissions.manyPermissionsHasManyActions,
-
   // User agent
   getUserAgentPermissions: userAgents.permissions.getUserAgentPermissions,
   userAgentHasPermission: userAgentsService.permissions.userAgentHasPermission,

@@ -53,6 +53,7 @@ class BackgroundCells extends React.Component {
       localizer,
       events,
       accessors,
+      hideBgTitles,
     } = this.props;
 
     let { selecting, startIdx, endIdx } = this.state;
@@ -120,7 +121,7 @@ class BackgroundCells extends React.Component {
                       backgroundColor: eventsForDay[0].backgroundColor,
                     }}
                   >
-                    {eventsForDay[0].title}
+                    {!hideBgTitles ? eventsForDay[0].title : ''}
                   </div>
                 ) : null}
               </div>

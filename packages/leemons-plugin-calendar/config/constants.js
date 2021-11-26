@@ -10,6 +10,11 @@ module.exports = {
       actions: ['view', 'create', 'update', 'delete', 'admin'],
       localizationName: { es: 'Configurar calendario', en: 'Calendar setup' },
     },
+    {
+      permissionName: 'plugins.calendar.calendar-classroom',
+      actions: ['view', 'create', 'update', 'delete', 'admin'],
+      localizationName: { es: 'Calendarios aula', en: 'Classroom calendars' },
+    },
   ],
   menuItems: [
     {
@@ -37,6 +42,20 @@ module.exports = {
       permissions: [
         {
           permissionName: 'plugins.calendar.calendar-configs',
+          actionNames: ['view', 'admin'],
+        },
+      ],
+    },
+    {
+      config: {
+        key: 'calendar-classroom',
+        parentKey: 'plugins.calendar.calendar',
+        url: '/calendar/config/classroom',
+        label: { es: 'Calendarios', en: 'Calendars' },
+      },
+      permissions: [
+        {
+          permissionName: 'plugins.calendar.calendar-classroom',
           actionNames: ['view', 'admin'],
         },
       ],

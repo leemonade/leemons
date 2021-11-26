@@ -13,12 +13,25 @@ module.exports = {
   },
   get: async (ctx) => {
     try {
-      const levelSchema = await services.get(ctx.params.id, {
+      const level = await services.get(ctx.params.id, {
         userSession: ctx.state.userSession,
         locale: ctx.request.query.locale,
       });
       ctx.status = 200;
-      ctx.body = { status: 200, levelSchema };
+      ctx.body = { status: 200, level };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = { status: 400, error: e.message };
+    }
+  },
+  getAllParents: async (ctx) => {
+    try {
+      const levels = await services.getAllParents(ctx.params.id, {
+        userSession: ctx.state.userSession,
+        locale: ctx.request.query.locale,
+      });
+      ctx.status = 200;
+      ctx.body = { status: 200, levels };
     } catch (e) {
       ctx.status = 400;
       ctx.body = { status: 400, error: e.message };

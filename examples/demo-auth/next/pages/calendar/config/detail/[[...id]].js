@@ -149,8 +149,8 @@ function ConfigAdd() {
         setValue('endMonth', '_');
         setValue('endYear', '_');
         setValue('weekday', '_');
-        setValue('notSchoolDays', [6, 0]);
-        setValue('schoolDays', [1, 2, 3, 4, 5]);
+        setValue('notSchoolDays', [5, 6]);
+        setValue('schoolDays', [0, 1, 2, 3, 4]);
         setValue('centers', []);
         setCenters(_centers);
       }
@@ -212,6 +212,8 @@ function ConfigAdd() {
       const countryItem = _.find(countryList, { countryShortCode: country });
       const regionItem = _.find(countryItem.regions, { shortCode: region });
 
+      console.log(formData);
+
       const toSend = {
         ...formData,
         countryName: countryItem.countryName,
@@ -228,6 +230,8 @@ function ConfigAdd() {
       if (!toSend.description) {
         delete toSend.description;
       }
+
+      console.log(toSend);
 
       setSaveLoading(true);
       if (data) {
@@ -473,7 +477,7 @@ function ConfigAdd() {
                       {t('first_day_week_placeholder')}
                     </option>
                     {weekdays.map((day) => (
-                      <option key={day.value} value={day.value}>
+                      <option key={day.value} value={day.value.toString()}>
                         {t(day.name)}
                       </option>
                     ))}

@@ -1,5 +1,6 @@
 const { table } = require('../tables');
 const { getPermissionConfig } = require('./getPermissionConfig');
+const { remove } = require('./remove');
 
 /**
  * Add calendar with the provided key if not already exists
@@ -28,17 +29,8 @@ async function removeOrCancel(id, { forceDelete, transacting: _transacting } = {
       if (userAgentIds.length > 1 && !forceDelete) {
         return table.events.update({ id }, { status: 'cancel' }, { transacting });
       }
-      // ES: Si solo hay un invitado (Owner) borramos el evento
-      if (userAgentIds.length) {
-        await userPlugin.services.users.removeCustomUserAgentPermission(
-          userAgentIds[0],
-          permissionQuery,
-          {
-            transacting,
-          }
-        );
-      }
-      return table.events.delete({ id }, { transacting });
+
+      return remove(id, { transacting });
     },
     table.events,
     _transacting
