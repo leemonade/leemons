@@ -13,7 +13,7 @@ module.exports = {
     sourceId: {
       type: 'string',
     },
-    // gpa (Media) | cpp (Credits per program) | cpc (Credits per course) | grade
+    // gpa (Media) | cpp (Credits per program) | cpc (Credits per course) | grade | enrolled
     data: {
       type: 'string',
     },

@@ -253,7 +253,7 @@ const conditionSchema = {
     sourceId: stringSchema,
     data: {
       type: 'string',
-      enum: ['gpa', 'cpp', 'cpc', 'grade'],
+      enum: ['gpa', 'cpp', 'cpc', 'grade', 'enrolled'],
     },
     operator: {
       type: 'string',
