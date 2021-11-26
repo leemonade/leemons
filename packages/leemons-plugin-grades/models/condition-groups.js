@@ -15,6 +15,7 @@ module.exports = {
     rule: {
       references: {
         collection: 'plugins_grades::rules',
+        onDelete: 'cascade',
       },
     },
   },

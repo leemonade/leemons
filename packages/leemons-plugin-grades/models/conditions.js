@@ -33,16 +33,19 @@ module.exports = {
     rule: {
       references: {
         collection: 'plugins_grades::rules',
+        onDelete: 'cascade',
       },
     },
     childGroup: {
       references: {
         collection: 'plugins_grades::condition-groups',
+        onDelete: 'cascade',
       },
     },
     parentGroup: {
       references: {
         collection: 'plugins_grades::condition-groups',
+        onDelete: 'cascade',
       },
     },
   },

@@ -58,6 +58,18 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/rules',
+    method: 'PUT',
+    handler: 'rules.putRule',
+    authenticated: true,
+  },
+  {
+    path: '/rules/:id',
+    method: 'DELETE',
+    handler: 'rules.deleteRule',
+    authenticated: true,
+  },
+  {
     path: '/rules/process',
     method: 'POST',
     handler: 'rules.postRuleProcess',

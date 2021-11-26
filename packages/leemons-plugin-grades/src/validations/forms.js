@@ -306,6 +306,27 @@ function validateAddRule(data) {
   }
 }
 
+const updateRuleSchema = {
+  type: 'object',
+  properties: {
+    id: stringSchema,
+    name: stringSchema,
+    center: stringSchema,
+    grade: stringSchema,
+    program: stringSchema,
+    group: _.cloneDeep(groupSchema),
+  },
+  required: ['id', 'name', 'center', 'grade', 'program', 'group'],
+  additionalProperties: false,
+};
+function validateUpdateRule(data) {
+  const validator = new LeemonsValidator(updateRuleSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 const addConditionGroupSchema = {
   type: 'object',
   properties: {
@@ -359,6 +380,7 @@ function validateAddCondition({ group, ...rest }) {
 module.exports = {
   validateAddRule,
   validateAddGrade,
+  validateUpdateRule,
   validateUpdateGrade,
   validateAddGradeTag,
   validateAddCondition,
