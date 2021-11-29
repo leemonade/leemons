@@ -12,6 +12,8 @@ apm.start = (name, options) => {
 
       ...options,
       serviceName: name,
+      // do not send to apm but remain active
+      disableSend: true,
       serverUrl: 'https://apm.telemetry.leemons.io',
     });
   }
