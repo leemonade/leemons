@@ -19,6 +19,12 @@ async function getGrade(ctx) {
   ctx.body = { status: 200, grade };
 }
 
+async function removeGrade(ctx) {
+  await gradesService.removeGrade(ctx.request.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
 async function listGrades(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
@@ -47,4 +53,5 @@ module.exports = {
   putGrade,
   postGrade,
   listGrades,
+  removeGrade,
 };

@@ -12,7 +12,11 @@ async function updateRule(data, { isDependency = false, transacting: _transactin
 
       const { id, group, ..._data } = data;
 
-      const rule = await table.rules.update({ id, isDependency }, _data, { transacting });
+      const rule = await table.rules.update(
+        { id, isDependency },
+        { ..._data, group: null },
+        { transacting }
+      );
 
       // ES: Solo borramos los grupos por que hace un delete cascade y se borran las condiciones de dichos grupos
       // EN: Only delete the groups because it does a delete cascade and the conditions of those groups are deleted

@@ -31,7 +31,6 @@ module.exports = {
     group: {
       references: {
         collection: 'plugins_grades::condition-groups',
-        onDelete: 'set null',
       },
     },
     isDependency: {

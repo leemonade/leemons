@@ -24,6 +24,12 @@ module.exports = [
     handler: 'grades.getGrade',
     authenticated: true,
   },
+  {
+    path: '/grades/:id',
+    method: 'DELETE',
+    handler: 'grades.removeGrade',
+    authenticated: true,
+  },
   // Grade Scales
   {
     path: '/grade-scales',
