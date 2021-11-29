@@ -1,39 +1,101 @@
 const mongoose = require('mongoose');
+const _ = require('lodash');
 
-function parseQuery(filter) {
+function parseQuery(filter, { query: parentQuery = null } = {}) {
   const { field, operator, value } = filter;
   const query = new mongoose.Query();
+  const useParent = parentQuery || query;
 
-  console.log(field, operator, value);
+  // console.log(field, operator, value);
   switch (operator) {
     case 'where':
-      query.and(value.map(parseQuery));
+      console.log(_.groupBy(value, 'field'));
+      value.map((prop) => parseQuery(prop, { query: useParent }));
       break;
-    case 'or':
-      query.or(
-        value.map((element) => parseQuery({ field: null, operator: 'where', value: element }))
-      );
-      break;
+    // case 'or':
+    //   query.or(
+    //     value
+    //       .map((element) => parseQuery({ field: null, operator: 'where', value: element }))
+    //       .filter((q) => q)
+    //   );
+    //   break;
+    // case 'not':
+    //   query.where(parseQuery({ field: null, operator: 'where', value }));
+    //   break;
     case 'eq':
-      query.where(field).equals(value);
+      useParent.where(field).equals(value);
       break;
-    case 'gt':
-      query.where(field).gt(value);
-      break;
-    case 'gte':
-      query.where(field).gte(value);
+    case 'ne':
+      useParent.where(field).ne(value);
       break;
     case 'lt':
-      query.where(field).lt(value);
+      useParent.where(field).lt(value);
       break;
     case 'lte':
-      query.where(field).lte(value);
+      useParent.where(field).lte(value);
+      break;
+    case 'gt':
+      useParent.where(field).gt(value);
+      break;
+    case 'gte':
+      useParent.where(field).gte(value);
       break;
     case 'in':
-      query.where(field).in(value);
+      useParent.where(field).in(value);
+      break;
+    case 'nin':
+      useParent.where(field).nin(value);
+      break;
+    case 'contains':
+      useParent.where(field).regex(new RegExp(`.*${value}.*`, 'i'));
+      break;
+    // case 'ncontains':
+    //   useParent.where(field).not().regex(new RegExp(`.*${value}.*`, 'i'));
+    //   break;
+    case 'containss':
+      // Case sensitive
+      useParent.where(field).regex(new RegExp(`.*${value}.*`));
+      break;
+    // case 'ncontainss':
+    //   // Case sensitive
+    //   useParent.where(field).not().regex(new RegExp(`.*${value}.*`));
+    //   break;
+    case 'startsWith':
+      useParent.where(field).regex(new RegExp(`^${value}.*`, 'i'));
+      break;
+    // case 'nstartsWith':
+    //   useParent.where(field).not().regex(new RegExp(`^${value}.*`, 'i'));
+    //   break;
+    case 'endsWith':
+      useParent.where(field).regex(new RegExp(`.*${value}$`, 'i'));
+      break;
+    // case 'nendsWith':
+    //   useParent.where(field).not().regex(new RegExp(`.*${value}$`, 'i'));
+    //   break;
+
+    case 'startssWith':
+      useParent.where(field).regex(new RegExp(`^${value}.*`));
+      break;
+    // case 'nstartssWith':
+    //   useParent.where(field).not().regex(new RegExp(`^${value}.*`));
+    //   break;
+    case 'endssWith':
+      useParent.where(field).regex(new RegExp(`.*${value}$`));
+      break;
+    // case 'nendssWith':
+    //   useParent.where(field).not().regex(new RegExp(`.*${value}$`));
+    //   break;
+
+    case 'null':
+      useParent.where(field)[value ? 'equals' : 'ne'](null);
       break;
     default:
-      break;
+      return null;
+    // throw new Error(
+    //   `Unhandled whereClause: ${field} ${operator} ${
+    //     typeof value === 'object' ? JSON.stringify(value, null, 2) : value
+    //   }`
+    // );
   }
 
   return query.getQuery();
@@ -44,12 +106,13 @@ function buildQuery(model, filters = {}) {
 
   const { where } = filters;
 
+  // console.log(JSON.stringify(where, null, 2));
   console.log(
-    JSON.stringify(
-      where.map((filter) => parseQuery(filter)),
-      null,
-      2
-    )
+    // JSON.stringify(
+    where.map((filter) => parseQuery(filter))
+    //   null,
+    //   2
+    // )
   );
 }
 
