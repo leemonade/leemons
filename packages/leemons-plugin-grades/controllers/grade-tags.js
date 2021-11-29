@@ -13,7 +13,14 @@ async function putGradeTag(ctx) {
   ctx.body = { status: 200, gradeTag };
 }
 
+async function removeGradeTag(ctx) {
+  await gradesService.removeGradeTag(ctx.request.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
 module.exports = {
   putGradeTag,
   postGradeTag,
+  removeGradeTag,
 };

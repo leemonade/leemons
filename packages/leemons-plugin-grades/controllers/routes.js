@@ -43,6 +43,12 @@ module.exports = [
     handler: 'grade-scales.putGradeScale',
     authenticated: true,
   },
+  {
+    path: '/grade-scales/:id',
+    method: 'DELETE',
+    handler: 'grade-scales.removeGradeScale',
+    authenticated: true,
+  },
   // Grade Tags
   {
     path: '/grade-tags',
@@ -54,6 +60,12 @@ module.exports = [
     path: '/grade-tags',
     method: 'PUT',
     handler: 'grade-tags.putGradeTag',
+    authenticated: true,
+  },
+  {
+    path: '/grade-tags/:id',
+    method: 'DELETE',
+    handler: 'grade-tags.removeGradeTag',
     authenticated: true,
   },
   // Rules
