@@ -298,8 +298,13 @@ const addRuleSchema = {
   required: ['name', 'center', 'grade', 'program', 'group'],
   additionalProperties: false,
 };
-function validateAddRule(data) {
-  const validator = new LeemonsValidator(addRuleSchema);
+function validateAddRule(data, isDependency) {
+  const rules = _.cloneDeep(addRuleSchema);
+  if (isDependency) {
+    rules.properties.subject = stringSchema;
+    rules.required.push('subject');
+  }
+  const validator = new LeemonsValidator(rules);
 
   if (!validator.validate(data)) {
     throw validator.error;
@@ -319,8 +324,13 @@ const updateRuleSchema = {
   required: ['id', 'name', 'center', 'grade', 'program', 'group'],
   additionalProperties: false,
 };
-function validateUpdateRule(data) {
-  const validator = new LeemonsValidator(updateRuleSchema);
+function validateUpdateRule(data, isDependency) {
+  const rules = _.cloneDeep(updateRuleSchema);
+  if (isDependency) {
+    rules.properties.subject = stringSchema;
+    rules.required.push('subject');
+  }
+  const validator = new LeemonsValidator(rules);
 
   if (!validator.validate(data)) {
     throw validator.error;

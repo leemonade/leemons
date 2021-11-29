@@ -75,4 +75,23 @@ module.exports = [
     handler: 'rules.postRuleProcess',
     authenticated: true,
   },
+  // Dependencies
+  {
+    path: '/dependencies',
+    method: 'POST',
+    handler: 'dependency.postDependency',
+    authenticated: true,
+  },
+  {
+    path: '/dependencies',
+    method: 'PUT',
+    handler: 'dependency.putDependency',
+    authenticated: true,
+  },
+  {
+    path: '/dependencies/:id',
+    method: 'DELETE',
+    handler: 'dependency.deleteDependency',
+    authenticated: true,
+  },
 ];

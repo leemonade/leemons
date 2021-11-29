@@ -34,6 +34,18 @@ module.exports = {
         onDelete: 'set null',
       },
     },
+    isDependency: {
+      type: 'boolean',
+      options: {
+        defaultTo: false,
+        notNull: true,
+      },
+    },
+    subject: {
+      references: {
+        collection: 'plugins_academic-portfolio::subjects',
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',
