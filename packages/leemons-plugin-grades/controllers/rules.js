@@ -14,7 +14,7 @@ async function putRule(ctx) {
 }
 
 async function deleteRule(ctx) {
-  await rulesService.removeRule(ctx.request.query.id);
+  await rulesService.removeRule(ctx.request.params.id);
   ctx.status = 200;
   ctx.body = { status: 200 };
 }
