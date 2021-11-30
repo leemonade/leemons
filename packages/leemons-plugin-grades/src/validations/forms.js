@@ -248,12 +248,19 @@ const conditionSchema = {
   properties: {
     source: {
       type: 'string',
-      enum: ['program', 'course', 'subject-type', 'knowledge', 'subject'],
+      enum: ['program', 'course', 'subject-type', 'knowledge', 'subject', 'subject-group'],
     },
-    sourceId: stringSchema,
+    sourceIds: {
+      type: 'array',
+      items: stringSchema,
+    },
     data: {
       type: 'string',
-      enum: ['gpa', 'cpp', 'cpc', 'grade', 'enrolled'],
+      enum: ['gpa', 'cpp', 'cpc', 'grade', 'enrolled', 'credits', 'cbcg'],
+    },
+    dataTargets: {
+      type: 'array',
+      items: stringSchema,
     },
     operator: {
       type: 'string',
@@ -375,7 +382,7 @@ const addConditionRefToGroupSchema = {
 const addConditionSchema = _.cloneDeep(conditionSchema);
 addConditionSchema.properties.rule = stringSchema;
 addConditionSchema.properties.parentGroup = stringSchema;
-addConditionSchema.required = ['source', 'sourceId', 'data', 'operator', 'rule', 'parentGroup'];
+addConditionSchema.required = ['source', 'sourceIds', 'data', 'operator', 'rule', 'parentGroup'];
 function validateAddCondition({ group, ...rest }) {
   const schema = group ? addConditionRefToGroupSchema : addConditionSchema;
   const data = group ? { ...rest, group } : rest;

@@ -179,8 +179,8 @@ class RuleProcess {
       // EN: If the condition is credits by course we have to take the credits that the student adds to the course and check if it satisfies the condition
       if (condition.data === 'cpc') {
         const userCredits = this.getUserCreditsInCourses();
-        if (userCredits[condition.sourceId]) {
-          toEval += `${userCredits[condition.sourceId]} ${
+        if (userCredits[condition.sourceIds[0]]) {
+          toEval += `${userCredits[condition.sourceIds[0]]} ${
             conditionOperators[condition.operator]
           } ${this.getConditionTarget(condition)}`;
         } else {
@@ -188,7 +188,7 @@ class RuleProcess {
         }
       } else if (condition.data === 'gpa') {
         const coursesGPA = this.getUserGPAInCourses();
-        toEval = `${coursesGPA[condition.sourceId]} ${
+        toEval = `${coursesGPA[condition.sourceIds[0]]} ${
           conditionOperators[condition.operator]
         } ${this.getConditionTarget(condition)}`;
       }
@@ -201,8 +201,8 @@ class RuleProcess {
           knowledge: this.getUserCreditsInKnowledges,
         };
         const userCredits = func[condition.source]();
-        if (userCredits[condition.sourceId]) {
-          toEval += `${userCredits[condition.sourceId]} ${
+        if (userCredits[condition.sourceIds[0]]) {
+          toEval += `${userCredits[condition.sourceIds[0]]} ${
             conditionOperators[condition.operator]
           } ${this.getConditionTarget(condition)}`;
         }
@@ -226,23 +226,44 @@ class RuleProcess {
           knowledge: this.getUserGPAInKnowledges,
         };
         const gpas = func[condition.source]();
-        toEval = `${gpas[condition.sourceId]} ${
+        toEval = `${gpas[condition.sourceIds[0]]} ${
           conditionOperators[condition.operator]
         } ${this.getConditionTarget(condition)}`;
+      } else if (condition.data === 'cbcg') {
+        const func = {
+          'subject-type': this.getUserCreditsInSubjectTypeByCourses,
+          knowledge: this.getUserCreditsInKnowledgeByCourses,
+        };
+        const credits = func[condition.source](condition.sourceIds[0], condition.dataTargets);
+        toEval = `${credits} ${conditionOperators[condition.operator]} ${this.getConditionTarget(
+          condition
+        )}`;
       }
     }
     // --- SUBJECT ---
     else if (condition.source === 'subject') {
       if (condition.data === 'grade') {
-        if (!_.isNil(this.notes[condition.sourceId])) {
-          toEval += `${this.getSubjectCreditsIfPromote(condition.sourceId)} ${
+        if (!_.isNil(this.notes[condition.sourceIds[0]])) {
+          toEval += `${this.getSubjectCreditsIfPromote(condition.sourceIds[0])} ${
             conditionOperators[condition.operator]
           } ${this.getConditionTarget(condition)}`;
         } else {
           toEval = 'false';
         }
       } else if (condition.data === 'enrolled') {
-        toEval = this.userAgentSubjects.indexOf(condition.sourceId) >= 0 ? 'true' : 'false';
+        toEval = this.userAgentSubjects.indexOf(condition.sourceIds[0]) >= 0 ? 'true' : 'false';
+      }
+    }
+    // --- SUBJECT GROUP ---
+    else if (condition.source === 'subject-group') {
+      if (condition.data === 'gpa') {
+        toEval += `${this.getUserGPABySubjectIds(condition.sourceIds)} ${
+          conditionOperators[condition.operator]
+        } ${this.getConditionTarget(condition)}`;
+      } else if (condition.data === 'credits') {
+        toEval += `${this.getUserCreditsBySubjectIds(condition.sourceIds)} ${
+          conditionOperators[condition.operator]
+        } ${this.getConditionTarget(condition)}`;
       }
     }
 
@@ -265,107 +286,42 @@ class RuleProcess {
     return condition.target;
   }
 
-  getUserCreditsInSubjectTypesForCourse() {
-    const data = {};
-    _.forIn(this.subjectTypesCourseSubjectsBySubjectTypeCourseId, (subjects, key) => {
-      if (!data[key]) data[key] = 0;
-      _.forEach(subjects, (subjectId) => {
-        data[key] += this.getSubjectCreditsIfPromote(subjectId);
-      });
+  // -- CREDITS --
+
+  getUserCreditsBySubjectIds(subjectIds) {
+    let total = 0;
+    _.forEach(subjectIds, (subjectId) => {
+      total += this.getSubjectCreditsIfPromote(subjectId);
     });
-    return data;
+    return total;
+  }
+
+  getUserCreditsInData(data) {
+    const result = {};
+    _.forIn(data, (subjects, key) => {
+      result[key] = this.getUserCreditsBySubjectIds(subjects);
+    });
+    return result;
+  }
+
+  getUserCreditsInSubjectTypesForCourse() {
+    return this.getUserCreditsInData(this.subjectTypesCourseSubjectsBySubjectTypeCourseId);
   }
 
   getUserCreditsInSubjectTypes() {
-    const subjectTypes = {};
-    _.forIn(this.subjectTypesSubjectsBySubjectTypeId, (subjects, subjectTypeId) => {
-      if (!subjectTypes[subjectTypeId]) subjectTypes[subjectTypeId] = 0;
-      _.forEach(subjects, (subjectId) => {
-        subjectTypes[subjectTypeId] += this.getSubjectCreditsIfPromote(subjectId);
-      });
-    });
-    return subjectTypes;
+    return this.getUserCreditsInData(this.subjectTypesSubjectsBySubjectTypeId);
   }
 
   getUserCreditsInKnowledgesForCourse() {
-    const data = {};
-    _.forIn(this.knowledgeCourseSubjectsByKnowledgeCourseId, (subjects, key) => {
-      if (!data[key]) data[key] = 0;
-      _.forEach(subjects, (subjectId) => {
-        data[key] += this.getSubjectCreditsIfPromote(subjectId);
-      });
-    });
-    return data;
+    return this.getUserCreditsInData(this.knowledgeCourseSubjectsByKnowledgeCourseId);
   }
 
   getUserCreditsInKnowledges() {
-    const knowledges = {};
-    _.forIn(this.knowledgeSubjectsByKnowledgeId, (subjects, knowledgeId) => {
-      if (!knowledges[knowledgeId]) knowledges[knowledgeId] = 0;
-      _.forEach(subjects, (subjectId) => {
-        knowledges[knowledgeId] += this.getSubjectCreditsIfPromote(subjectId);
-      });
-    });
-    return knowledges;
+    return this.getUserCreditsInData(this.knowledgeSubjectsByKnowledgeId);
   }
 
   getUserCreditsInCourses() {
-    const courses = {};
-    _.forIn(this.courseSubjectsByCourseId, (subjects, courseId) => {
-      if (!courses[courseId]) courses[courseId] = 0;
-      _.forEach(subjects, (subjectId) => {
-        courses[courseId] += this.getSubjectCreditsIfPromote(subjectId);
-      });
-    });
-    return courses;
-  }
-
-  getUserGPAInCourses() {
-    const courses = {};
-    _.forIn(this.courseSubjectsByCourseId, (subjects, courseId) => {
-      let total = 0;
-      _.forEach(subjects, (subjectId) => {
-        total += this.getSubjectNote(subjectId);
-      });
-      courses[courseId] = total / subjects.length;
-    });
-    return courses;
-  }
-
-  getUserGPAInSubjectTypes() {
-    const data = {};
-    _.forIn(this.subjectTypesSubjectsBySubjectTypeId, (subjects, id) => {
-      let total = 0;
-      _.forEach(subjects, (subjectId) => {
-        total += this.getSubjectNote(subjectId);
-      });
-      data[id] = total / subjects.length;
-    });
-    return data;
-  }
-
-  getUserGPAInKnowledges() {
-    const data = {};
-    _.forIn(this.knowledgeSubjectsByKnowledgeId, (subjects, id) => {
-      let total = 0;
-      _.forEach(subjects, (subjectId) => {
-        total += this.getSubjectNote(subjectId);
-      });
-      data[id] = total / subjects.length;
-    });
-    return data;
-  }
-
-  getSubjectCreditsIfPromote(subjectId) {
-    const note = this.notes[subjectId] || -1;
-    if (note >= this.minNoteToPromote) {
-      return this.subjectByIds[subjectId].credits;
-    }
-    return 0;
-  }
-
-  getSubjectNote(subjectId) {
-    return this.notes[subjectId] || 0;
+    return this.getUserCreditsInData(this.courseSubjectsByCourseId);
   }
 
   getUserCreditsInProgram() {
@@ -376,14 +332,83 @@ class RuleProcess {
     return credits;
   }
 
-  getUserGPAInProgram() {
-    let total = 0;
-    let totalSubjects = 0;
-    _.forIn(this.subjectByIds, (subject) => {
-      total += this.getSubjectNote(subject.id);
-      totalSubjects++;
+  getUserCreditsInSubjectTypeOrKnowledgeByCourses(data, targetId, courseIds) {
+    let credits = 0;
+    const alreadyAddedSubjects = [];
+    _.forIn(data, (subjects, key) => {
+      const keySplitted = key.split('|');
+      if (keySplitted[0] === targetId && courseIds.indexOf(keySplitted[1]) >= 0) {
+        _.forEach(subjects, (subjectId) => {
+          if (alreadyAddedSubjects.indexOf(subjectId) < 0) {
+            credits += this.getSubjectCreditsIfPromote(subjectId);
+            alreadyAddedSubjects.push(subjectId);
+          }
+        });
+      }
     });
-    return total / totalSubjects;
+    return credits;
+  }
+
+  getUserCreditsInSubjectTypeByCourses(subjectTypeId, courseIds) {
+    return this.getUserCreditsInSubjectTypeOrKnowledgeByCourses(
+      this.subjectTypesCourseSubjectsBySubjectTypeCourseId,
+      subjectTypeId,
+      courseIds
+    );
+  }
+
+  getUserCreditsInKnowledgeByCourses(knowledgeId, courseIds) {
+    return this.getUserCreditsInSubjectTypeOrKnowledgeByCourses(
+      this.knowledgeCourseSubjectsByKnowledgeCourseId,
+      knowledgeId,
+      courseIds
+    );
+  }
+
+  getSubjectCreditsIfPromote(subjectId) {
+    const note = this.notes[subjectId] || -1;
+    if (note !== -1 && note >= this.minNoteToPromote) {
+      return this.subjectByIds[subjectId].credits;
+    }
+    return 0;
+  }
+
+  // -- GPA (Media) --
+
+  getUserGPABySubjectIds(subjectIds) {
+    let total = 0;
+    _.forEach(subjectIds, (subjectId) => {
+      total += this.getSubjectNote(subjectId);
+    });
+    return total / subjectIds.length;
+  }
+
+  getUserGPAByData(data) {
+    const result = {};
+    _.forIn(data, (subjects, id) => {
+      result[id] = this.getUserGPABySubjectIds(subjects);
+    });
+    return result;
+  }
+
+  getUserGPAInCourses() {
+    return this.getUserGPAByData(this.courseSubjectsByCourseId);
+  }
+
+  getUserGPAInSubjectTypes() {
+    return this.getUserGPAByData(this.subjectTypesSubjectsBySubjectTypeId);
+  }
+
+  getUserGPAInKnowledges() {
+    return this.getUserGPAByData(this.knowledgeSubjectsByKnowledgeId);
+  }
+
+  getUserGPAInProgram() {
+    return this.getUserGPABySubjectIds(_.keys(this.subjectByIds));
+  }
+
+  getSubjectNote(subjectId) {
+    return this.notes[subjectId] || 0;
   }
 
   process() {
