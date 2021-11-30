@@ -18,12 +18,36 @@ function generateQueries(model) {
         }`
       );
     }
+
     return MongooseModel.insertMany(newItems, { session: transacting });
   }
 
   async function find(query = {}, { transacting } = {}) {
     const filters = parseFilters({ filters: query, model });
+    const { $extras, ...finalQuery } = buildQuery(model, filters);
+
+    return $extras(MongooseModel.find(finalQuery, undefined, { session: transacting }));
+  }
+
+  async function findOne(query = {}, { transacting } = {}) {
+    const filters = parseFilters({ filters: query, model });
+    const { $extras, ...finalQuery } = buildQuery(model, filters);
+
+    return $extras(MongooseModel.findOne(finalQuery, undefined, { session: transacting }));
+  }
+
+  async function deleteOne(query = {}, { transacting } = {}) {
+    const filters = parseFilters({ filters: query, model });
     const finalQuery = buildQuery(model, filters);
+
+    return MongooseModel.deleteOne(finalQuery, { session: transacting });
+  }
+
+  async function deleteMany(query = {}, { transacting } = {}) {
+    const filters = parseFilters({ filters: query, model });
+    const { $extras, ...finalQuery } = buildQuery(model, filters);
+
+    return $extras(MongooseModel.deleteMany(finalQuery, { session: transacting }));
   }
 
   async function transaction(f) {
@@ -40,10 +64,14 @@ function generateQueries(model) {
       ).catch(() => {});
     });
   }
+
   return {
     create,
     createMany,
     find,
+    findOne,
+    delete: deleteOne,
+    deleteMany,
     transaction,
   };
 }
