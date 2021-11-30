@@ -9,10 +9,13 @@ function getType(property) {
   // Get the mongoose equivalent type
   switch (property?.type?.toLowerCase()) {
     case 'string':
+    case 'text':
+    case 'richtext':
       return String;
-    case 'number':
     case 'int':
     case 'integer':
+    case 'bigint':
+    case 'biginteger':
       return Number;
     case 'date':
       return Date;
@@ -22,14 +25,24 @@ function getType(property) {
     case 'bool':
       return Boolean;
     case 'mixed':
+    case 'json':
+    case 'jsonb':
       return Mixed;
     case 'objectid':
       return ObjectId;
+    // TODO: Enum
+    // TODO: Binary
+    // TODO: uuid
+    // case 'enum':
+    // case 'enu':
+    // case 'enumeration':
     // case 'array':
+    // case 'uuid'
+    // case 'binary':
+    case 'number':
     case 'decimal':
     case 'float':
     case 'double':
-    case 'decimal128':
       return Decimal128;
     // case 'map':
     default:

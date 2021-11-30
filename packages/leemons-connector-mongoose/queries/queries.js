@@ -1,13 +1,47 @@
 const { parseFilters } = require('leemons-utils');
 const buildQuery = require('./buildQuery');
 
+function transformId(result, reverse = false) {
+  const incoming = reverse ? 'id' : '_id';
+  const outgoing = reverse ? '_id' : 'id';
+
+  if (Array.isArray(result)) {
+    return result.map((item) => {
+      if (item[incoming]) {
+        const _item = item?._doc || item;
+        const returnObj = {
+          [outgoing]: _item[incoming]?.toString() || _item[incoming],
+          ..._item,
+        };
+
+        delete returnObj[incoming];
+        return returnObj;
+      }
+      return item?._doc || item;
+    });
+  }
+
+  if (result) {
+    const item = result?._doc || result;
+    if (item[incoming]) {
+      const returnObj = {
+        [outgoing]: item[incoming]?.toString() || item[incoming],
+        ...item,
+      };
+      delete returnObj[incoming];
+      return returnObj;
+    }
+  }
+
+  return result;
+}
 function generateQueries(model) {
   const MongooseModel = model.model;
 
   async function create(newItem, { transacting } = {}) {
-    const item = new MongooseModel(newItem);
+    const item = new MongooseModel(transformId(newItem));
     const response = await item.save({ session: transacting });
-    return response;
+    return transformId(response);
   }
 
   async function createMany(newItems, { transacting } = {}) {
@@ -19,28 +53,40 @@ function generateQueries(model) {
       );
     }
 
-    return MongooseModel.insertMany(newItems, { session: transacting });
+    const response = await MongooseModel.insertMany(transformId(newItems), {
+      session: transacting,
+    });
+    return transformId(response);
   }
 
   async function find(query = {}, { transacting } = {}) {
     const filters = parseFilters({ filters: query, model });
     const { $extras, ...finalQuery } = buildQuery(model, filters);
 
-    return $extras(MongooseModel.find(finalQuery, undefined, { session: transacting }));
+    const response = await $extras(
+      MongooseModel.find(finalQuery, undefined, { session: transacting })
+    );
+    return transformId(response);
   }
 
   async function findOne(query = {}, { transacting } = {}) {
     const filters = parseFilters({ filters: query, model });
     const { $extras, ...finalQuery } = buildQuery(model, filters);
 
-    return $extras(MongooseModel.findOne(finalQuery, undefined, { session: transacting }));
+    const response = await $extras(
+      MongooseModel.findOne(finalQuery, undefined, { session: transacting })
+    );
+    return transformId(response);
   }
 
   async function count(query = {}, { transacting } = {}) {
     const filters = parseFilters({ filters: query, model });
     const { $extras, ...finalQuery } = buildQuery(model, filters);
 
-    return $extras(MongooseModel.countDocuments(finalQuery, { session: transacting }));
+    const response = await $extras(
+      MongooseModel.countDocuments(finalQuery, { session: transacting })
+    );
+    return transformId(response);
   }
 
   async function search(query = {}, page = 0, size = 10, { transacting } = {}) {
@@ -67,9 +113,8 @@ function generateQueries(model) {
     }
 
     const items = await find({ ...query, $limit: size, $offset: page * size }, { transacting });
-
     return {
-      items,
+      items: transformId(items),
       count: items.length,
       totalCount,
       page,
@@ -83,48 +128,61 @@ function generateQueries(model) {
     const filters = parseFilters({ filters: query, model });
     const { $extras, ...finalQuery } = buildQuery(model, filters);
 
-    return $extras(MongooseModel.updateOne(finalQuery, item, { session: transacting }));
+    const response = await $extras(
+      MongooseModel.updateOne(finalQuery, transformId(item), { session: transacting })
+    );
+    return transformId(response);
   }
 
   async function updateMany(query = {}, item, { transacting } = {}) {
     const filters = parseFilters({ filters: query, model });
     const { $extras, ...finalQuery } = buildQuery(model, filters);
 
-    return $extras(MongooseModel.updateMany(finalQuery, item, { session: transacting }));
+    const response = await $extras(
+      MongooseModel.updateMany(finalQuery, transformId(item), { session: transacting })
+    );
+    return transformId(response);
   }
 
   async function set(query = {}, item, { transacting } = {}) {
     const filters = parseFilters({ filters: query, model });
     const { $extras, ...finalQuery } = buildQuery(model, filters);
 
-    return $extras(
-      MongooseModel.updateOne(finalQuery, item, { session: transacting, upsert: true })
+    const response = await $extras(
+      MongooseModel.updateOne(finalQuery, transformId(item), {
+        session: transacting,
+        upsert: true,
+      })
     );
+    return transformId(response);
   }
 
   async function setMany(query = {}, item, { transacting } = {}) {
     const filters = parseFilters({ filters: query, model });
     const { $extras, ...finalQuery } = buildQuery(model, filters);
 
-    return $extras(
-      MongooseModel.updateMany(finalQuery, item, {
+    const response = await $extras(
+      MongooseModel.updateMany(finalQuery, transformId(item), {
         session: transacting,
         upsert: true,
       })
     );
+    return transformId(response);
   }
   async function deleteOne(query = {}, { transacting } = {}) {
     const filters = parseFilters({ filters: query, model });
     const finalQuery = buildQuery(model, filters);
 
-    return MongooseModel.deleteOne(finalQuery, { session: transacting });
+    const response = await MongooseModel.deleteOne(finalQuery, { session: transacting });
+    return transformId(response);
   }
 
   async function deleteMany(query = {}, { transacting } = {}) {
     const filters = parseFilters({ filters: query, model });
     const { $extras, ...finalQuery } = buildQuery(model, filters);
 
-    return $extras(MongooseModel.deleteMany(finalQuery, { session: transacting }));
+    const response = await $extras(MongooseModel.deleteMany(finalQuery, { session: transacting }));
+    return transformId(response);
   }
 
   async function transaction(f) {
