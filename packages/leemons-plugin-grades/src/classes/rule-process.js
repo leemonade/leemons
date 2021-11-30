@@ -144,33 +144,44 @@ class RuleProcess {
   }
 
   calculeCondition(condition, lines) {
-    let toEval;
+    const skFunctions = {
+      'subject-type': {
+        cpp: this.getUserCreditsInSubjectTypes.bind(this),
+        cpc: this.getUserCreditsInSubjectTypesForCourse.bind(this),
+        gpa: this.getUserGPAInSubjectTypes.bind(this),
+        cbcg: this.getUserCreditsInSubjectTypeByCourses.bind(this),
+      },
+      knowledge: {
+        cpp: this.getUserCreditsInKnowledges.bind(this),
+        cpc: this.getUserCreditsInKnowledgesForCourse.bind(this),
+        gpa: this.getUserGPAInKnowledges.bind(this),
+        cbcg: this.getUserCreditsInKnowledgeByCourses.bind(this),
+      },
+    };
+
+    const toEval = {
+      autoResult: null,
+      from: [],
+      target: this.getConditionTarget(condition),
+      operator: condition.operator,
+    };
 
     // --- PROGRAM ---
     if (condition.source === 'program') {
       // ES: Si la condicion es creditos por programa tenemos que coger todas las notas de las asignaturas cursadas por el alumno en el programa ver cuales a aprobado y sumar sus creditos
       // EN: If the condition is credits by program we have to take all the notes of the subjects taken by the student in the program to see which ones passed and add their credits
       if (condition.data === 'cpp') {
-        toEval = `${this.getUserCreditsInProgram()} ${
-          conditionOperators[condition.operator]
-        } ${this.getConditionTarget(condition)}`;
+        toEval.from.push(this.getUserCreditsInProgram());
       }
       // ES: Si la condicion es creditos por curso tenemos que coger los creditos que suma el alumno para cada curso y comprobar si cada uno de los cursos cumple la condicion
       // EN: If the condition is credits by course we have to take the credits that the student adds to each course and check if each one of the courses satisfies the condition
       else if (condition.data === 'cpc') {
         const userCredits = this.getUserCreditsInCourses();
-        toEval = '';
-        let index = 0;
         _.forIn(userCredits, (courseCredits) => {
-          toEval += `${index > 0 ? ' && ' : ''}${courseCredits} ${
-            conditionOperators[condition.operator]
-          } ${this.getConditionTarget(condition)}`;
-          index++;
+          toEval.from.push(courseCredits);
         });
       } else if (condition.data === 'gpa') {
-        toEval = `${this.getUserGPAInProgram()} ${
-          conditionOperators[condition.operator]
-        } ${this.getConditionTarget(condition)}`;
+        toEval.from.push(this.getUserGPAInProgram());
       }
     }
     // --- COURSE ---
@@ -179,102 +190,116 @@ class RuleProcess {
       // EN: If the condition is credits by course we have to take the credits that the student adds to the course and check if it satisfies the condition
       if (condition.data === 'cpc') {
         const userCredits = this.getUserCreditsInCourses();
-        if (userCredits[condition.sourceIds[0]]) {
-          toEval += `${userCredits[condition.sourceIds[0]]} ${
-            conditionOperators[condition.operator]
-          } ${this.getConditionTarget(condition)}`;
-        } else {
-          toEval = 'false';
+        if (!_.isNil(userCredits[condition.sourceIds[0]])) {
+          toEval.from.push(userCredits[condition.sourceIds[0]]);
         }
       } else if (condition.data === 'gpa') {
         const coursesGPA = this.getUserGPAInCourses();
-        toEval = `${coursesGPA[condition.sourceIds[0]]} ${
-          conditionOperators[condition.operator]
-        } ${this.getConditionTarget(condition)}`;
+        toEval.from.push(coursesGPA[condition.sourceIds[0]]);
       }
     }
     // --- SUBJECT TYPE && KNOWLEDGE ---
     else if (condition.source === 'subject-type' || condition.source === 'knowledge') {
       if (condition.data === 'cpp') {
-        const func = {
-          'subject-type': this.getUserCreditsInSubjectTypes,
-          knowledge: this.getUserCreditsInKnowledges,
-        };
-        const userCredits = func[condition.source]();
-        if (userCredits[condition.sourceIds[0]]) {
-          toEval += `${userCredits[condition.sourceIds[0]]} ${
-            conditionOperators[condition.operator]
-          } ${this.getConditionTarget(condition)}`;
+        const userCredits = skFunctions[condition.source][condition.data]();
+        if (!_.isNil(userCredits[condition.sourceIds[0]])) {
+          toEval.from.push(userCredits[condition.sourceIds[0]]);
         }
       } else if (condition.data === 'cpc') {
-        const func = {
-          'subject-type': this.getUserCreditsInSubjectTypesForCourse,
-          knowledge: this.getUserCreditsInKnowledgesForCourse,
-        };
-        const userCredits = func[condition.source]();
-        toEval = '';
-        let index = 0;
+        const userCredits = skFunctions[condition.source][condition.data]();
         _.forIn(userCredits, (courseCredits) => {
-          toEval += `${index > 0 ? ' && ' : ''}${courseCredits} ${
-            conditionOperators[condition.operator]
-          } ${this.getConditionTarget(condition)}`;
-          index++;
+          toEval.from.push(courseCredits);
         });
       } else if (condition.data === 'gpa') {
-        const func = {
-          'subject-type': this.getUserGPAInSubjectTypes,
-          knowledge: this.getUserGPAInKnowledges,
-        };
-        const gpas = func[condition.source]();
-        toEval = `${gpas[condition.sourceIds[0]]} ${
-          conditionOperators[condition.operator]
-        } ${this.getConditionTarget(condition)}`;
+        const gpas = skFunctions[condition.source][condition.data]();
+        toEval.from.push(gpas[condition.sourceIds[0]]);
       } else if (condition.data === 'cbcg') {
-        const func = {
-          'subject-type': this.getUserCreditsInSubjectTypeByCourses,
-          knowledge: this.getUserCreditsInKnowledgeByCourses,
-        };
-        const credits = func[condition.source](condition.sourceIds[0], condition.dataTargets);
-        toEval = `${credits} ${conditionOperators[condition.operator]} ${this.getConditionTarget(
-          condition
-        )}`;
+        const credits = skFunctions[condition.source][condition.data](
+          condition.sourceIds[0],
+          condition.dataTargets
+        );
+        toEval.from.push(credits);
       }
     }
     // --- SUBJECT ---
     else if (condition.source === 'subject') {
       if (condition.data === 'grade') {
         if (!_.isNil(this.notes[condition.sourceIds[0]])) {
-          toEval += `${this.getSubjectCreditsIfPromote(condition.sourceIds[0])} ${
-            conditionOperators[condition.operator]
-          } ${this.getConditionTarget(condition)}`;
-        } else {
-          toEval = 'false';
+          toEval.from.push(this.getSubjectCreditsIfPromote(condition.sourceIds[0]));
         }
       } else if (condition.data === 'enrolled') {
-        toEval = this.userAgentSubjects.indexOf(condition.sourceIds[0]) >= 0 ? 'true' : 'false';
+        toEval.autoResult = this.userAgentSubjects.indexOf(condition.sourceIds[0]) >= 0;
       }
     }
     // --- SUBJECT GROUP ---
     else if (condition.source === 'subject-group') {
       if (condition.data === 'gpa') {
-        toEval += `${this.getUserGPABySubjectIds(condition.sourceIds)} ${
-          conditionOperators[condition.operator]
-        } ${this.getConditionTarget(condition)}`;
+        toEval.from.push(this.getUserGPABySubjectIds(condition.sourceIds));
       } else if (condition.data === 'credits') {
-        toEval += `${this.getUserCreditsBySubjectIds(condition.sourceIds)} ${
-          conditionOperators[condition.operator]
-        } ${this.getConditionTarget(condition)}`;
+        toEval.from.push(this.getUserCreditsBySubjectIds(condition.sourceIds));
       }
     }
 
-    if (toEval) {
+    try {
       // eslint-disable-next-line no-eval
-      const result = eval(toEval);
-      if (this.logs) console.log(`C ${lines}: Eval (${toEval}) -> ${result}`);
-      return result;
+      const response = RuleProcess.evalFromConfig(toEval);
+      if (this.logs)
+        console.log(
+          `C ${lines}: Eval (${response.eval}) -> ${response.result} | ${condition.source} -> ${condition.data} -> ${condition.operator}`
+        );
+      return response.result;
+    } catch (e) {
+      console.error(`Error on process eval: ${toEval} for condition: `, condition);
+      throw new Error('Error on eval rules');
     }
+  }
 
-    return false;
+  static evalFromConfig(config) {
+    const response = {
+      result: false,
+      eval: '',
+    };
+
+    const addEvalString = (from) => {
+      response.eval += `${response.eval ? ' && ' : ''}${from} ${
+        conditionOperators[config.operator]
+      } ${config.target}`;
+    };
+
+    if (config.autoResult !== null) {
+      response.result = !!config.autoResult;
+      response.eval = response.result ? 'true' : 'false';
+    } else if (config.from.length > 0) {
+      let done = true;
+      _.forEach(config.from, (from) => {
+        addEvalString(from);
+        switch (config.operator) {
+          case 'gte':
+            if (from < config.target) done = false;
+            break;
+          case 'lte':
+            if (from > config.target) done = false;
+            break;
+          case 'gt':
+            if (from < config.target) done = false;
+            break;
+          case 'lt':
+            if (from > config.target) done = false;
+            break;
+          case 'eq':
+            if (from !== config.target) done = false;
+            break;
+          case 'neq':
+            if (from === config.target) done = false;
+            break;
+          default:
+            done = false;
+            break;
+        }
+      });
+      response.result = done;
+    }
+    return response;
   }
 
   getConditionTarget(condition) {

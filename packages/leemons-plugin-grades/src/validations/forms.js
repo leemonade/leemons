@@ -382,7 +382,7 @@ const addConditionRefToGroupSchema = {
 const addConditionSchema = _.cloneDeep(conditionSchema);
 addConditionSchema.properties.rule = stringSchema;
 addConditionSchema.properties.parentGroup = stringSchema;
-addConditionSchema.required = ['source', 'sourceIds', 'data', 'operator', 'rule', 'parentGroup'];
+addConditionSchema.required = ['source', 'sourceIds', 'data', 'rule', 'parentGroup'];
 function validateAddCondition({ group, ...rest }) {
   const schema = group ? addConditionRefToGroupSchema : addConditionSchema;
   const data = group ? { ...rest, group } : rest;
