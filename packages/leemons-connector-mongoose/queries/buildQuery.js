@@ -2,7 +2,13 @@ const _ = require('lodash');
 const mongoose = require('mongoose');
 
 function parseQuery(filter, { query: parentQuery = null, negated = false } = {}) {
-  const { field, operator, value } = filter;
+  const { operator, value } = filter;
+  let { field } = filter;
+
+  if (field === 'id') {
+    field = '_id';
+  }
+
   const query = new mongoose.Query();
   const useParent = parentQuery || query;
 
