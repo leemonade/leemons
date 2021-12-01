@@ -66,6 +66,7 @@ function generateQueries(model) {
     const response = await $extras(
       MongooseModel.find(finalQuery, undefined, { session: transacting })
     );
+
     return transformId(response);
   }
 
@@ -76,6 +77,13 @@ function generateQueries(model) {
     const response = await $extras(
       MongooseModel.findOne(finalQuery, undefined, { session: transacting })
     );
+
+    if (response === null) {
+      const err = new Error('entry.notFound');
+      err.status = 404;
+      throw err;
+    }
+
     return transformId(response);
   }
 
@@ -128,9 +136,18 @@ function generateQueries(model) {
     const filters = parseFilters({ filters: query, model });
     const { $extras, ...finalQuery } = buildQuery(model, filters);
 
-    const response = await $extras(
+    const updateResult = await $extras(
       MongooseModel.updateOne(finalQuery, transformId(item), { session: transacting })
     );
+
+    if (updateResult.matchedCount === 0) {
+      const err = new Error('entry.notFound');
+      err.status = 404;
+      throw err;
+    }
+
+    const response = await findOne(query, { transacting });
+
     return transformId(response);
   }
 
@@ -141,7 +158,8 @@ function generateQueries(model) {
     const response = await $extras(
       MongooseModel.updateMany(finalQuery, transformId(item), { session: transacting })
     );
-    return transformId(response);
+
+    return { count: response.modifiedCount };
   }
 
   async function set(query = {}, item, { transacting } = {}) {
@@ -169,12 +187,21 @@ function generateQueries(model) {
     );
     return transformId(response);
   }
+
+  // TODO: soft delete
   async function deleteOne(query = {}, { transacting } = {}) {
     const filters = parseFilters({ filters: query, model });
     const finalQuery = buildQuery(model, filters);
 
     const response = await MongooseModel.deleteOne(finalQuery, { session: transacting });
-    return transformId(response);
+
+    if (response.deletedCount === 0) {
+      const err = new Error('entry.notFound');
+      err.status = 404;
+      throw err;
+    }
+
+    return { deleted: true };
   }
 
   async function deleteMany(query = {}, { transacting } = {}) {
@@ -182,7 +209,7 @@ function generateQueries(model) {
     const { $extras, ...finalQuery } = buildQuery(model, filters);
 
     const response = await $extras(MongooseModel.deleteMany(finalQuery, { session: transacting }));
-    return transformId(response);
+    return { count: response.deletedCount };
   }
 
   async function transaction(f) {
