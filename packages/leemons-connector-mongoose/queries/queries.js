@@ -8,7 +8,7 @@ function transformId(result, reverse = false) {
   if (Array.isArray(result)) {
     return result.map((item) => {
       if (item[incoming]) {
-        const _item = item?._doc || item;
+        const _item = item?.toJSON?.call(item) || item;
         const returnObj = {
           [outgoing]: _item[incoming]?.toString() || _item[incoming],
           ..._item,
@@ -17,12 +17,12 @@ function transformId(result, reverse = false) {
         delete returnObj[incoming];
         return returnObj;
       }
-      return item?._doc || item;
+      return item?.toJSON?.call(item) || item;
     });
   }
 
   if (result) {
-    const item = result?._doc || result;
+    const item = result?.toJSON?.call(result) || result;
     if (item[incoming]) {
       const returnObj = {
         [outgoing]: item[incoming]?.toString() || item[incoming],
@@ -189,10 +189,21 @@ function generateQueries(model) {
   }
 
   // TODO: soft delete
-  async function deleteOne(query = {}, { transacting } = {}) {
+  async function deleteOne(
+    query = {},
+    { soft = model.schema.options.softDelete || false, transacting } = {}
+  ) {
     const filters = parseFilters({ filters: query, model });
     const finalQuery = buildQuery(model, filters);
 
+    if (soft) {
+      await MongooseModel.updateOne(
+        finalQuery,
+        { deleted: true, deleted_at: new Date() },
+        { session: transacting }
+      );
+      return { soft: true, deleted: true };
+    }
     const response = await MongooseModel.deleteOne(finalQuery, { session: transacting });
 
     if (response.deletedCount === 0) {
@@ -201,15 +212,27 @@ function generateQueries(model) {
       throw err;
     }
 
-    return { deleted: true };
+    return { soft: false, deleted: true };
   }
 
-  async function deleteMany(query = {}, { transacting } = {}) {
+  async function deleteMany(
+    query = {},
+    { soft = model.schema.options.softDelete || false, transacting } = {}
+  ) {
+    if (soft) {
+      const { count: updateCount } = await updateMany(
+        query,
+        { deleted: true, deleted_at: new Date() },
+        { transacting }
+      );
+      return { soft: true, count: updateCount };
+    }
+
     const filters = parseFilters({ filters: query, model });
     const { $extras, ...finalQuery } = buildQuery(model, filters);
 
     const response = await $extras(MongooseModel.deleteMany(finalQuery, { session: transacting }));
-    return { count: response.deletedCount };
+    return { soft: false, count: response.deletedCount };
   }
 
   async function transaction(f) {

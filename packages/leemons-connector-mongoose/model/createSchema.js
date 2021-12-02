@@ -11,61 +11,126 @@ function getType(property) {
     case 'string':
     case 'text':
     case 'richtext':
-      return String;
+      return { type: String };
     case 'int':
     case 'integer':
     case 'bigint':
     case 'biginteger':
-      return Number;
+      return { type: Number };
     case 'date':
-      return Date;
+      return { type: Date };
     case 'buffer':
-      return Buffer;
+      return { type: Buffer };
     case 'boolean':
     case 'bool':
-      return Boolean;
+      return { type: Boolean };
     case 'mixed':
     case 'json':
     case 'jsonb':
-      return Mixed;
+      return { type: Mixed };
     case 'objectid':
-      return ObjectId;
-    // TODO: Enum
-    // TODO: Binary
-    // TODO: uuid
-    // case 'enum':
-    // case 'enu':
-    // case 'enumeration':
-    // case 'array':
-    // case 'uuid'
-    // case 'binary':
+      return { type: ObjectId };
+    case 'uuid':
+      return {
+        type: String,
+        validate: {
+          validator(v) {
+            return /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gm.test(
+              v
+            );
+          },
+          message: (props) => `${props.value} is not a valid UUID!`,
+        },
+      };
+    case 'enu':
+    case 'enumeration':
+      if (!Array.isArray(property.values)) {
+        return null;
+      }
+
+      if (property.enum.every((value) => typeof value === 'string')) {
+        return {
+          type: String,
+          enum: property.enum,
+        };
+      }
+
+      if (property.enum.every((value) => typeof value === 'number')) {
+        return {
+          type: Number,
+          enum: property.enum,
+        };
+      }
+      return null;
+    case 'array':
+      return { type: [getType({ type: property.of })] };
     case 'number':
     case 'decimal':
     case 'float':
     case 'double':
-      return Decimal128;
+      return { type: Decimal128 };
     // case 'map':
     default:
       return null;
   }
 }
 
+function getOptions(property) {
+  const options = {};
+  if (property.options) {
+    Object.entries(property.options).forEach(([name, value]) => {
+      if (value === true) {
+        switch (name.toLowerCase()) {
+          case 'unique':
+            options.unique = true;
+            break;
+          case 'notnullable':
+          case 'notnull':
+            options.required = '{PATH} is required!';
+            break;
+          default:
+        }
+      } else if (value !== undefined) {
+        switch (name.toLowerCase()) {
+          case 'defaultto':
+            options.default = value;
+            break;
+          default:
+        }
+      }
+    });
+  }
+
+  return options;
+}
+
 function createSchema(schema) {
   const attributes = Object.entries(schema.schema.attributes)
-    .map(([name, attribute]) => {
-      const type = getType(attribute);
-      return {
-        name,
-        type,
-      };
-    })
+    .map(([name, attribute]) => ({
+      name,
+      ...getType(attribute),
+      ...getOptions(attribute),
+    }))
     .filter((attribute) => attribute.type);
   const Schema = {};
-  attributes.forEach((attribute) => {
-    Schema[attribute.name] = attribute.type;
+  const options = {};
+  attributes.forEach(({ name, ...attribute }) => {
+    Schema[name] = attribute;
   });
 
-  const MS = new MongoSchema(Schema);
+  if (schema.schema.options?.useTimestamps) {
+    options.timestamps = {
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+    };
+
+    if (schema.schema.options?.softDelete) {
+      Schema.deleted_at = Date;
+    }
+  }
+
+  const MS = new MongoSchema(Schema, options);
+
   return { name: schema.modelName, schema: MS };
 }
 
