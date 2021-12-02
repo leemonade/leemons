@@ -5,7 +5,7 @@ const {
   Schema: MongoSchema,
 } = require('mongoose');
 
-function getType(property) {
+function getType(property, ctx) {
   // Get the mongoose equivalent type
   switch (property?.type?.toLowerCase()) {
     case 'string':
@@ -63,7 +63,7 @@ function getType(property) {
       }
       return null;
     case 'array':
-      return { type: [getType({ type: property.of })] };
+      return { type: [getType({ type: property.of }, ctx)] };
     case 'number':
     case 'decimal':
     case 'float':
@@ -71,6 +71,9 @@ function getType(property) {
       return { type: Decimal128 };
     // case 'map':
     default:
+      if (ctx.schemas.has(property.type)) {
+        return { type: ctx.schemas.get(property.type) };
+      }
       return null;
   }
 }
@@ -104,11 +107,11 @@ function getOptions(property) {
   return options;
 }
 
-function createSchema(schema) {
+function createSchema(schema, ctx) {
   const attributes = Object.entries(schema.schema.attributes)
     .map(([name, attribute]) => ({
       name,
-      ...getType(attribute),
+      ...getType(attribute, ctx),
       ...getOptions(attribute),
     }))
     .filter((attribute) => attribute.type);

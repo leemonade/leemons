@@ -3,7 +3,7 @@ const createSchema = require('./createSchema');
 
 function generateModel(models, ctx) {
   models.map((model) => {
-    const { schema } = createSchema(model);
+    const { schema } = createSchema(model, ctx);
 
     const Model = ctx.ODM.model(model.modelName, schema);
     // return Schema;
