@@ -12,7 +12,6 @@ function parseQuery(filter, { query: parentQuery = null, negated = false } = {})
   const query = new mongoose.Query();
   const useParent = parentQuery || query;
 
-  // console.log(field, operator, value);
   switch (operator) {
     case 'where':
       value.map((prop) => parseQuery(prop, { query, negated }));
@@ -255,19 +254,12 @@ function parseQuery(filter, { query: parentQuery = null, negated = false } = {})
       break;
     default:
       return null;
-    // throw new Error(
-    //   `Unhandled whereClause: ${field} ${operator} ${
-    //     typeof value === 'object' ? JSON.stringify(value, null, 2) : value
-    //   }`
-    // );
   }
 
   return query.getQuery();
 }
 
 function buildQuery(model, filters = {}) {
-  // console.log(JSON.stringify(filters, null, 2));
-
   const { where } = filters;
 
   let query = {};

@@ -87,6 +87,9 @@ function getOptions(property) {
           case 'unique':
             options.unique = true;
             break;
+          case 'index':
+            options.sparse = true;
+            break;
           case 'notnullable':
           case 'notnull':
             options.required = '{PATH} is required!';
@@ -133,6 +136,16 @@ function createSchema(schema, ctx) {
   }
 
   const MS = new MongoSchema(Schema, options);
+
+  if (schema.schema.options?.indexes) {
+    const { indexes } = schema.schema.options;
+    if (!Array.isArray(indexes)) {
+      throw new Error('Indexes must be an array');
+    }
+    indexes.forEach(({ $options, ...index }) => {
+      MS.index(index, $options);
+    });
+  }
 
   return { name: schema.modelName, schema: MS };
 }

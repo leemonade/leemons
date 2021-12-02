@@ -60,7 +60,7 @@ class Connector {
         const ctx = this.contexts.get(connection);
 
         if (collections.length) {
-          // Do not create schemas if are not going to be used
+          // Do not create schemas if they are not going to be used
           if (schemas.length) {
             loadSchemas(ctx, schemas);
           }

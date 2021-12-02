@@ -35,6 +35,7 @@ function transformId(result, reverse = false) {
 
   return result;
 }
+
 function generateQueries(model) {
   const MongooseModel = model.model;
 
@@ -188,7 +189,6 @@ function generateQueries(model) {
     return transformId(response);
   }
 
-  // TODO: soft delete
   async function deleteOne(
     query = {},
     { soft = model.schema.options.softDelete || false, transacting } = {}
