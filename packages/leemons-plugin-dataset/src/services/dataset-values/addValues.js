@@ -60,6 +60,12 @@ async function addValues(
     },
     { strict: false }
   );
+
+  console.log('formData');
+  console.log(formData);
+  console.log('jsonSchema');
+  console.log(jsonSchema);
+
   if (!validator.validate(formData)) throw validator.error;
 
   const toSave = [];

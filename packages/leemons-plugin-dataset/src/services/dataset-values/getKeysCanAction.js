@@ -17,6 +17,7 @@ const _ = require('lodash');
  *
  *  @return {any} Keys with permits
  *  */
+
 async function getKeysCanAction(
   locationName,
   pluginName,
@@ -33,6 +34,8 @@ async function getKeysCanAction(
       },
       transacting,
     });
+
+  console.log(userPermissions, leemons.plugin.prefixPN(`${locationName}.${pluginName}`));
 
   const goodKeys = [];
 

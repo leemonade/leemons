@@ -1,11 +1,11 @@
 const constants = require('../config/constants');
 
-const teacherProfileId = 'ee387729-6e77-4677-a93f-d45d396c8c1b';
-const studentProfileId = '571dfe59-d1c7-40ae-9e29-713901036d13';
+const teacherProfileId = 'd343b2fd-a24f-4935-aef9-f16c728ceaae';
+const studentProfileId = 'e0c4ba88-49ab-4a85-82f0-7868e43675c2';
 const locationName = 'user-dataset';
 
 const userAgent = {
-  id: '843887b7-f6a9-45c9-9cdb-d5d30281d918',
+  id: '718f3fc1-d941-4cd6-b01c-8df3146953ef',
   profile: teacherProfileId,
   reloadPermissions: 1,
 };
@@ -26,7 +26,8 @@ const jsonSchema = {
       type: 'string',
       title: 'First name',
       default: 'Chuck',
-      profilePermissions: {
+      permissionsType: 'profile',
+      permissions: {
         [teacherProfileId]: ['view'],
         [studentProfileId]: ['view', 'edit'],
       },
@@ -34,7 +35,8 @@ const jsonSchema = {
     lastName: {
       type: 'string',
       title: 'Last name',
-      profilePermissions: {
+      permissionsType: 'profile',
+      permissions: {
         [teacherProfileId]: ['view'],
         [studentProfileId]: ['view', 'edit'],
       },
@@ -43,7 +45,8 @@ const jsonSchema = {
       type: 'string',
       title: 'Telephone',
       minLength: 10,
-      profilePermissions: {
+      permissionsType: 'profile',
+      permissions: {
         [teacherProfileId]: ['view'],
         [studentProfileId]: ['view', 'edit'],
       },
@@ -61,15 +64,17 @@ const updatedJsonSchema = {
       type: 'string',
       title: 'First name',
       default: 'Chuck',
-      profilePermissions: {
+      permissionsType: 'profile',
+      permissions: {
         [teacherProfileId]: ['view', 'edit'],
-        [studentProfileId]: ['view'],
+        [studentProfileId]: ['view', 'edit'],
       },
     },
     lastName: {
       type: 'string',
       title: 'Last name',
-      profilePermissions: {
+      permissionsType: 'profile',
+      permissions: {
         [teacherProfileId]: ['view', 'edit'],
         [studentProfileId]: ['view', 'edit'],
       },
@@ -78,7 +83,8 @@ const updatedJsonSchema = {
       type: 'string',
       title: 'Telephone',
       minLength: 10,
-      profilePermissions: {
+      permissionsType: 'profile',
+      permissions: {
         [teacherProfileId]: ['view'],
         [studentProfileId]: ['view', 'edit'],
       },
@@ -120,7 +126,7 @@ const jsonUI = {
 
 async function addLocation() {
   try {
-    // console.log('---- Start addLocation ----');
+    console.log('---- Start addLocation ----');
     const data = await leemons.getPlugin('dataset').services.dataset.addLocation({
       name: {
         'es-ES': 'Usuarios',
@@ -135,27 +141,27 @@ async function addLocation() {
     });
     // console.log(data);
   } catch (e) {
-    // console.error(e);
+    console.error(e);
   }
-  // console.log('---- End addLocation ----');
+  console.log('---- End addLocation ----');
 }
 
 async function getLocation() {
   try {
-    // console.log('---- Start getLocation ----');
+    console.log('---- Start getLocation ----');
     const data = await leemons
       .getPlugin('dataset')
       .services.dataset.getLocation(locationName, constants.pluginName, { locale: 'en' });
     // console.log(data);
   } catch (e) {
-    // console.error(e);
+    console.error(e);
   }
-  // console.log('---- End getLocation ----');
+  console.log('---- End getLocation ----');
 }
 
 async function updateLocation() {
   try {
-    // console.log('---- Start updateLocation ----');
+    console.log('---- Start updateLocation ----');
     const data = await leemons.getPlugin('dataset').services.dataset.updateLocation({
       name: {
         en: 'Usersssss',
@@ -165,27 +171,27 @@ async function updateLocation() {
     });
     // console.log(data);
   } catch (e) {
-    // console.error(e);
+    console.error(e);
   }
-  // console.log('---- End updateLocation ----');
+  console.log('---- End updateLocation ----');
 }
 
 async function deleteLocation() {
   try {
-    // console.log('---- Start deleteLocation ----');
+    console.log('---- Start deleteLocation ----');
     const data = await leemons
       .getPlugin('dataset')
       .services.dataset.deleteLocation(locationName, constants.pluginName);
     // console.log(data);
   } catch (e) {
-    // console.error(e);
+    console.error(e);
   }
-  // console.log('---- End deleteLocation ----');
+  console.log('---- End deleteLocation ----');
 }
 
 async function addSchema(schema, ui) {
   try {
-    // console.log('---- Start addSchema ----');
+    console.log('---- Start addSchema ----');
     const data = await leemons.getPlugin('dataset').services.dataset.addSchema({
       jsonSchema: schema,
       jsonUI: ui,
@@ -194,14 +200,14 @@ async function addSchema(schema, ui) {
     });
     // console.log(data);
   } catch (e) {
-    // console.error(e);
+    console.error(e);
   }
-  // console.log('---- End addSchema ----');
+  console.log('---- End addSchema ----');
 }
 
 async function updateSchema(schema, ui) {
   try {
-    // console.log('---- Start addSchema ----');
+    console.log('---- Start addSchema ----');
     const data = await leemons.getPlugin('dataset').services.dataset.updateSchema({
       jsonSchema: schema,
       jsonUI: ui,
@@ -210,27 +216,27 @@ async function updateSchema(schema, ui) {
     });
     // console.log(data);
   } catch (e) {
-    // console.error(e);
+    console.error(e);
   }
-  // console.log('---- End addSchema ----');
+  console.log('---- End addSchema ----');
 }
 
 async function getSchema() {
   try {
-    // console.log('---- Start getSchema ----');
+    console.log('---- Start getSchema ----');
     const data = await leemons
       .getPlugin('dataset')
       .services.dataset.getSchema(locationName, constants.pluginName);
     // console.log(data);
   } catch (e) {
-    // console.error(e);
+    console.error(e);
   }
-  // console.log('---- End getSchema ----');
+  console.log('---- End getSchema ----');
 }
 
 async function addSchemaLocale(schema, ui) {
   try {
-    // console.log('---- Start addSchemaLocale ----');
+    console.log('---- Start addSchemaLocale ----');
     const data = await leemons.getPlugin('dataset').services.dataset.addSchemaLocale({
       schemaData: schema,
       uiData: ui,
@@ -238,55 +244,55 @@ async function addSchemaLocale(schema, ui) {
       locale: 'en',
       pluginName: constants.pluginName,
     });
-    // console.log(data);
+    //  console.log(data);
   } catch (e) {
-    // console.error(e);
+    console.error(e);
   }
-  // console.log('---- End addSchemaLocale ----');
+  console.log('---- End addSchemaLocale ----');
 }
 
 async function getSchemaLocale() {
   try {
-    // console.log('---- Start getSchemaLocale ----');
+    console.log('---- Start getSchemaLocale ----');
     const data = await leemons
       .getPlugin('dataset')
       .services.dataset.getSchemaLocale(locationName, constants.pluginName, 'en');
     // console.log(data);
   } catch (e) {
-    // console.error(e);
+    console.error(e);
   }
-  // console.log('---- End getSchemaLocale ----');
+  console.log('---- End getSchemaLocale ----');
 }
 
 async function getSchemaWithLocale() {
   try {
-    // console.log('---- Start getSchemaWithLocale ----');
+    console.log('---- Start getSchemaWithLocale ----');
     const data = await leemons
       .getPlugin('dataset')
       .services.dataset.getSchemaWithLocale(locationName, constants.pluginName, 'en');
     // console.log(data);
   } catch (e) {
-    // console.error(e);
+    console.error(e);
   }
-  // console.log('---- End getSchemaWithLocale ----');
+  console.log('---- End getSchemaWithLocale ----');
 }
 
 async function addValues() {
   try {
-    // console.log('---- Start addValues ----');
+    console.log('---- Start addValues ----');
     const data = await leemons
       .getPlugin('dataset')
       .services.dataset.addValues(locationName, constants.pluginName, schemaValues, userAgent);
     // console.log(data);
   } catch (e) {
-    // console.error(e);
+    console.error(e);
   }
-  // console.log('---- End addValues ----');
+  console.log('---- End addValues ----');
 }
 
 async function getValues() {
   try {
-    // console.log('---- Start getValues ----');
+    console.log('---- Start getValues ----');
     const data = await leemons
       .getPlugin('dataset')
       .services.dataset.getValues(locationName, constants.pluginName, userAgent, {
@@ -296,29 +302,27 @@ async function getValues() {
   } catch (e) {
     console.error(e);
   }
-  // console.log('---- End getValues ----');
+  console.log('---- End getValues ----');
 }
 
 async function deleteValues() {
   try {
-    // console.log('---- Start deleteValues ----');
+    console.log('---- Start deleteValues ----');
     const data = await leemons
       .getPlugin('dataset')
       .services.dataset.deleteValues(locationName, constants.pluginName);
     // console.log(data);
   } catch (e) {
-    // console.error(e);
+    console.error(e);
   }
-  // console.log('---- End deleteValues ----');
+  console.log('---- End deleteValues ----');
 }
 
 async function init() {
+  console.log('initDataset');
   const schema = leemons.getPlugin('dataset').services.dataset.transformJsonSchema(jsonSchema);
   const ui = leemons.getPlugin('dataset').services.dataset.transformUiSchema(jsonUI);
 
-  console.log(schema, ui);
-
-  /*
   const uPschema = leemons
     .getPlugin('dataset')
     .services.dataset.transformJsonSchema(updatedJsonSchema);
@@ -338,8 +342,6 @@ async function init() {
   await getValues();
 
   await deleteLocation();
-
-   */
 }
 
 module.exports = init;

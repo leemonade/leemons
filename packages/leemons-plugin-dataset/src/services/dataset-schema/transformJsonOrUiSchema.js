@@ -36,9 +36,8 @@ function transformJsonOrUiSchema(jsonSchema, saveKeys, replaces) {
       if (saveKeys.indexOf(p) >= 0) {
         keys.push(`${path}${p}`);
         return false;
-      } else {
-        path += `${prop}.`;
       }
+      path += `${prop}.`;
     });
   });
 
@@ -99,9 +98,10 @@ function getJsonSchemaProfilePermissionsKeys(jsonSchema) {
 module.exports = {
   arrKeys,
   getJsonSchemaProfilePermissionsKeys,
-  getJsonSchemaProfilePermissionsKeysByType(jsonSchema) {
-    const profiles = _.clone(jsonSchema);
-    const roles = _.clone(jsonSchema);
+  getJsonSchemaProfilePermissionsKeysByType(_jsonSchema) {
+    const jsonSchema = _.cloneDeep(_.isString(_jsonSchema) ? JSON.parse(_jsonSchema) : _jsonSchema);
+    const profiles = _.clone(_.isString(jsonSchema) ? JSON.parse(jsonSchema) : jsonSchema || {});
+    const roles = _.clone(_.isString(jsonSchema) ? JSON.parse(jsonSchema) : jsonSchema || {});
     profiles.properties = {};
     roles.properties = {};
     _.forIn(jsonSchema.properties, (value, key) => {

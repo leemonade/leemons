@@ -3,7 +3,7 @@ const { existUserAgent } = require('../existUserAgent');
 const { table } = require('../../tables');
 
 async function _updateUserAgentPermissions(userAgentId, { transacting: _transacting } = {}) {
-  return await global.utils.withTransaction(
+  return global.utils.withTransaction(
     async (transacting) => {
       await existUserAgent({ id: userAgentId }, true, { transacting });
       // ES: Borramos los permisos que salieran desde roles y sacamos todos los roles actuales del usuario, ya sea por que vienen desde grupos/perfiles/o el mismo rol que tiene
@@ -59,7 +59,7 @@ async function _updateUserAgentPermissions(userAgentId, { transacting: _transact
       ]);
 
       const roleCenterByRole = _.keyBy(roleCenter, 'role');
-      return await table.userAgentPermission.createMany(
+      return table.userAgentPermission.createMany(
         _.map(rolePermissions, (rolePermission) => ({
           userAgent: userAgentId,
           role: rolePermission.role,
@@ -100,9 +100,8 @@ async function updateUserAgentPermissions(userAgentId, { transacting } = {}) {
       results.push(await _updateUserAgentPermissions(userAgentId[i], { transacting }));
     }
     return results;
-  } else {
-    return _updateUserAgentPermissions(userAgentId, { transacting });
   }
+  return _updateUserAgentPermissions(userAgentId, { transacting });
 }
 
 module.exports = { updateUserAgentPermissions };
