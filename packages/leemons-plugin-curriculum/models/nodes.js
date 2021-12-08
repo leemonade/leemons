@@ -11,6 +11,9 @@ module.exports = {
         notNull: true,
       },
     },
+    fullName: {
+      type: 'string',
+    },
     // ES: Orden dentro del mismo padre
     // EN: Order inside the same parent
     nodeOrder: {

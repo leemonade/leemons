@@ -10,7 +10,8 @@ async function nodesTreeByCurriculum(id, { transacting } = {}) {
     node.childrens = nodesByParent[node.id] || [];
   });
 
-  return _.groupBy(nodesByParent.null, 'curriculum');
+  const group = _.groupBy(nodesByParent.null, 'curriculum');
+  return _.isArray(id) ? group : group[id];
 }
 
 module.exports = { nodesTreeByCurriculum };
