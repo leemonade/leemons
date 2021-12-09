@@ -313,7 +313,7 @@ const DatasetItemDrawer = ({
                   </div>
                 </div>
 
-                <SimpleBar className="flex-grow h-px">
+                <SimpleBar style={{ overflowY: 'auto' }} className="flex-grow h-px">
                   <div className="px-10 py-1">
                     {/* *** Centros *** */}
                     <div className="mb-6">
