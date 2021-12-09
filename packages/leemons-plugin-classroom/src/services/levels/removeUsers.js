@@ -82,7 +82,7 @@ module.exports = async function removeUsers(
 
           await leemons
             .getPlugin('users')
-            .services.users.removeCustomPermission(users, permission, {
+            .services.users.removeCustomUserAgentPermission(users, permission, {
               transacting: t,
             });
         } catch (e) {

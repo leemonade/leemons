@@ -172,7 +172,6 @@ async function saveField(
       });
       await Promise.all(promises);
 
-      // TODO Procesar todas las traducciones de los schemas para recarlcular los enumNames en funcion de su campo checkboxs
       // Vamos coger el schema tocho, que tiene que tener los checkboxs guays y recorrernos todas las traducciones calculando el enumNames
       await recalculeEnumNames(locationName, pluginName, { transacting });
 

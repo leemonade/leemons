@@ -10,6 +10,5 @@
     "swr": "^0.5.6"
   },
   "devDependencies": {
-    "@users": "file:src"
   }
 }

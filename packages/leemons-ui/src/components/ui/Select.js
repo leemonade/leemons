@@ -1,13 +1,12 @@
 import * as _ from 'lodash';
 import React, { createRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { XIcon } from '@heroicons/react/solid';
+import { XIcon } from '@heroicons/react/outline';
 import Badge from './Badge';
-import Button from './Button';
 
 function getAllOptions(children) {
   const childrens = React.Children.toArray(children);
-  let options = [];
+  const options = [];
   _.forEach(childrens, (child) => {
     if (child.type === 'option') {
       options.push({
@@ -34,6 +33,8 @@ const Select = React.forwardRef(
       onChange = () => {},
       multiple,
       value,
+      placeholderLabel,
+      placeholderValue,
       ...props
     },
     ref
@@ -72,8 +73,8 @@ const Select = React.forwardRef(
     let __defaultOption = _.find(__options, { selected: true, disabled: true });
     if (!__defaultOption && multiple) {
       __defaultOption = {
-        label: '-',
-        value: '-',
+        label: placeholderLabel || '-',
+        value: placeholderValue || '-',
         selected: true,
         disabled: true,
       };
@@ -101,15 +102,15 @@ const Select = React.forwardRef(
     }, []);
 
     useEffect(() => {
-      let _options = getAllOptions(children);
+      const _options = getAllOptions(children);
       if (!_.isEqual(_options, _.values(originalOptionsByValue))) {
         const defaultOption = _.find(_options, { selected: true, disabled: true });
         if (defaultOption) {
           setDefaultOption(defaultOption);
         } else if (multiple) {
           const def = {
-            label: '-',
-            value: '-',
+            label: placeholderLabel || '-',
+            value: placeholderValue || '-',
             selected: true,
             disabled: true,
           };
@@ -123,7 +124,7 @@ const Select = React.forwardRef(
 
     useEffect(() => {
       if (multiple) setItems(value || []);
-    }, [value]);
+    }, [JSON.stringify(value)]);
 
     useEffect(() => {
       setOptions(filterOptions(_.values(originalOptionsByValue)));
@@ -161,21 +162,20 @@ const Select = React.forwardRef(
         {!multiple && readOnly ? <>{value}</> : null}
 
         {multiple && items.length ? (
-          <div className="pt-4 flex flex-wrap gap-2">
+          <div className="pt-4">
             {items.map((item) => (
-              <Badge outlined={true} color="gray" key={item}>
-                <span>{originalOptionsByValue[item]?.label || item}</span>
-                {readOnly ? null : (
-                  <Button
-                    color="ghost"
-                    circle
-                    className="btn-xs ml-1 -mr-1"
-                    onClick={() => removeItem(item)}
-                  >
-                    <XIcon className="inline-block w-4 h-4 fill-current text-gray-50 hover:text-gray-100" />
-                  </Button>
-                )}
-              </Badge>
+              <div className="inline-block p-1" key={item}>
+                <Badge outlined={true}>
+                  {readOnly ? null : (
+                    <XIcon
+                      className="inline-block w-4 h-4 mr-2 stroke-current cursor-pointer"
+                      onClick={() => removeItem(item)}
+                    />
+                  )}
+
+                  {originalOptionsByValue[item]?.label || item}
+                </Badge>
+              </div>
             ))}
           </div>
         ) : null}

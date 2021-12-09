@@ -149,6 +149,13 @@ module.exports = [
     allowedPermissions: getPermissions(permissions.organization, ['view']),
   },
   {
+    path: '/level/all-parents/:id',
+    method: 'GET',
+    handler: 'levels.getAllParents',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.organization, ['view']),
+  },
+  {
     path: '/level',
     method: 'GET',
     handler: 'levels.list',

@@ -18,4 +18,4 @@ async function profiles(user, { transacting } = {}) {
   return table.profiles.find({ id_$in: _.map(profileRoles, 'profile') }, { transacting });
 }
 
-module.exports = profiles;
+module.exports = { profiles };

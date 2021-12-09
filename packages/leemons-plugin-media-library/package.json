@@ -1,0 +1,9 @@
+{
+  "name": "leemons-plugin-media-library",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "mime-types": "^2.1.33"
+  }
+}

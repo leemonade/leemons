@@ -1,67 +1,53 @@
-const { existUserAgent } = require('./existUserAgent');
+const { add } = require('./add');
 const { init } = require('./init');
 const { list } = require('./list');
-const { detailForJWT } = require('./detailForJWT');
-const { detail } = require('./detail');
-const { updateUserAgentPermissions } = require('./updateUserAgentPermissions');
-const { isSuperAdmin } = require('./isSuperAdmin');
-const { reset } = require('./reset');
-const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
-const { getResetConfig } = require('./getResetConfig');
-const { canReset } = require('./canReset');
-const { recover } = require('./recover');
-const { addFirstSuperAdminUser } = require('./addFirstSuperAdminUser');
-const { login } = require('./login');
-const { comparePassword } = require('./comparePassword');
-const { encryptPassword } = require('./encryptPassword');
-const { verifyJWTToken } = require('./verifyJWTToken');
-const { generateJWTToken } = require('./generateJWTToken');
-const { getJWTPrivateKey } = require('./getJWTPrivateKey');
-const { generateJWTPrivateKey } = require('./generateJWTPrivateKey');
 const { exist } = require('./exist');
-const add = require('./add');
-const profiles = require('./profiles');
-const profileToken = require('./profileToken');
-const hasPermission = require('./hasPermission');
-const hasPermissionCTX = require('./hasPermissionCTX');
-const removeCustomPermission = require('./removeCustomPermission');
-const { searchUserAgents } = require('./searchUserAgents');
-const { getUserAgentCenter } = require('./getUserAgentCenter');
+const { login } = require('./login');
+const { reset } = require('./reset');
+const { detail } = require('./detail');
+const { recover } = require('./recover');
+const { canReset } = require('./canReset');
+const { profiles } = require('./profiles');
+const { isSuperAdmin } = require('./isSuperAdmin');
+const { profileToken } = require('./profileToken');
+const { getResetConfig } = require('./getResetConfig');
+const { comparePassword } = require('./bcrypt/comparePassword');
+const { encryptPassword } = require('./bcrypt/encryptPassword');
+const { hasPermissionCTX } = require('./hasPermissionCTX');
+const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
+const { addFirstSuperAdminUser } = require('./addFirstSuperAdminUser');
+
+// JWT
+const { detailForJWT } = require('./jwt/detailForJWT');
+const { verifyJWTToken } = require('./jwt/verifyJWTToken');
+const { generateJWTToken } = require('./jwt/generateJWTToken');
+const { getJWTPrivateKey } = require('./jwt/getJWTPrivateKey');
+const { generateJWTPrivateKey } = require('./jwt/generateJWTPrivateKey');
 
 module.exports = {
+  add,
   init,
-
+  list,
+  exist,
   login,
-  recover,
   reset,
   detail,
-  list,
-
-  exist,
-  existUserAgent,
-
-  addFirstSuperAdminUser,
-  generateJWTPrivateKey,
-  getJWTPrivateKey,
-  generateJWTToken,
-  verifyJWTToken,
-  encryptPassword,
-  comparePassword,
+  recover,
   canReset,
-  getResetConfig,
-  getSuperAdminUserIds,
-  isSuperAdmin,
-  hasPermissionCTX,
-  updateUserAgentPermissions,
-  detailForJWT,
-
-  searchUserAgents,
-
-  add,
   profiles,
+  isSuperAdmin,
   profileToken,
-  hasPermission,
-  removeCustomPermission,
-
-  getUserAgentCenter,
+  getResetConfig,
+  comparePassword,
+  encryptPassword,
+  hasPermissionCTX,
+  getSuperAdminUserIds,
+  addFirstSuperAdminUser,
+  jwt: {
+    detailForJWT,
+    verifyJWTToken,
+    generateJWTToken,
+    getJWTPrivateKey,
+    generateJWTPrivateKey,
+  },
 };

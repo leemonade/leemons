@@ -94,9 +94,11 @@ function generateQueries(model /* connector */) {
     return { count: updatedCount };
   }
 
-  // TODO: soft delete
   // Deletes one item matching the query
-  async function deleteOne(query, { transacting } = {}) {
+  async function deleteOne(
+    query,
+    { soft = model.schema.options.softDelete || false, transacting } = {}
+  ) {
     const filters = parseFilters({ filters: { ...query, $limit: 1 }, model });
     const newQuery = buildQuery(model, filters);
 
@@ -108,11 +110,23 @@ function generateQueries(model /* connector */) {
       throw err;
     }
 
-    return entry.destroy({ transacting }).then(() => entry.toJSON());
+    if (soft) {
+      const fields = { deleted: true };
+      if (model.schema.options.useTimestamps) {
+        fields.deleted_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      }
+      await entry.save(fields, { method: 'update', patch: true, transacting });
+      return { deleted: true, soft: true };
+    }
+    await entry.destroy({ transacting });
+    return { deleted: true, soft: false };
   }
 
   // Deletes many items matching the query
-  async function deleteMany(query, { transacting } = {}) {
+  async function deleteMany(
+    query,
+    { soft = model.schema.options.softDelete || false, transacting } = {}
+  ) {
     const filters = parseFilters({ filters: query, model });
     const newQuery = buildQuery(model, filters);
 
@@ -121,10 +135,19 @@ function generateQueries(model /* connector */) {
     const deletedCount = await entries().count({ transacting });
 
     if (deletedCount > 0) {
-      await entries().destroy({ transacting });
+      if (soft) {
+        const fields = { deleted: true };
+        if (model.schema.options.useTimestamps) {
+          fields.deleted_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        }
+
+        await entries().save(fields, { method: 'update', patch: true, transacting });
+      } else {
+        await entries().destroy({ transacting });
+      }
     }
 
-    return { count: deletedCount };
+    return { count: deletedCount, soft };
   }
 
   // Finds all items based on a query
@@ -132,7 +155,6 @@ function generateQueries(model /* connector */) {
     const filters = parseFilters({ filters: query, model });
     const newQuery = buildQuery(model, filters);
 
-    // TODO: Move to joins
     const toJSONConfig = { omitPivot: true };
     if (columns && columns !== '*') {
       toJSONConfig.hidden = [];

@@ -124,9 +124,21 @@ async function update(ctx) {
   }
 }
 
+async function addAllPermissionsToAllProfiles(ctx) {
+  if (process.env.NODE_ENV !== 'production') {
+    const profile = await profileService.addAllPermissionsToAllProfiles();
+    ctx.status = 200;
+    ctx.body = { status: 200, profile };
+  } else {
+    ctx.status = 200;
+    ctx.body = { status: 200, message: 'Disabled in production' };
+  }
+}
+
 module.exports = {
   list,
   add,
   detail,
   update,
+  addAllPermissionsToAllProfiles,
 };

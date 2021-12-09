@@ -3,13 +3,13 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { getMenu } from '@menu-builder/helpers';
 import PropTypes from 'prop-types';
-import getActiveParentAndChild from '../../helpers/getActiveParentAndChild';
-import MainMenuItem from './mainMenuItem';
-import MainMenuSubmenu from './mainMenuSubmenu';
 import hooks from 'leemons-hooks';
 import SimpleBar from 'simplebar-react';
 import Link from 'next/link';
 import { UserImage } from '@common/userImage';
+import MainMenuSubmenu from './mainMenuSubmenu';
+import MainMenuItem from './mainMenuItem';
+import getActiveParentAndChild from '../../helpers/getActiveParentAndChild';
 
 const menuWidth = '52px';
 
@@ -77,6 +77,10 @@ export default function MainMenu({ onClose, onOpen, state: _state, setState }) {
         openSubMenu = false;
         closeSubMenu = true;
       }
+      if (parent.childrens) {
+        openSubMenu = true;
+        closeSubMenu = false;
+      }
       if (closeSubMenu) {
         closeMenu();
       }
@@ -122,17 +126,16 @@ export default function MainMenu({ onClose, onOpen, state: _state, setState }) {
           </a>
         </Link>
       );
-    } else {
-      return (
-        <MainMenuItem
-          onClick={() => onMenuItemClick(item)}
-          key={item.id}
-          active={state.menuActive.parent?.id === item.id}
-          item={item}
-          menuWidth={menuWidth}
-        />
-      );
     }
+    return (
+      <MainMenuItem
+        onClick={() => onMenuItemClick(item)}
+        key={item.id}
+        active={state.menuActive.parent?.id === item.id}
+        item={item}
+        menuWidth={menuWidth}
+      />
+    );
   };
 
   return (
@@ -141,7 +144,7 @@ export default function MainMenu({ onClose, onOpen, state: _state, setState }) {
         {/* Menu */}
         <div style={{ width: menuWidth }} className="h-screen flex-none bg-secondary">
           <div className="h-screen w-full flex flex-col justify-between">
-            <img className="w-6 mb-9 mx-auto" src="/assets/logo.svg" alt="" />
+            <img className="w-6 mb-9 mx-auto" src="/public/assets/logo.svg" alt="" />
 
             {/* Menu items */}
             <SimpleBar className="flex-grow h-px">

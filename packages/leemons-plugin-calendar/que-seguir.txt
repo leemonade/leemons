@@ -1,0 +1,32 @@
+Los calendarios deberian de poder tener el label/titulo en multiples idiomas, añadir como parametro opcional a la funcion de añadir/actualizar calendario.
+
+https://vldzx7.axshare.com/#id=jau2e2&p=06_01_01_02b_regional_calendars_-_form_scratch&g=1&sc=3&hi=1
+[Hecho] Hay que añadir un select de centros donde solo salgan los centros que aun no esten relacionados a ninguna configuracion de calendario
+
+https://vldzx7.axshare.com/#id=74ko1j&p=06_01_03_calendars&g=1&sc=3&hi=1
+Crear modelo agrupaciones de calendarios.
+
+Modelo: Agrupaciones de calendarios
+Modelo: Calendarios - agrupaciones de calendarios
+
+
+
+
+
+Configuración centro/regional (Fecha inicio fin - principio semana y dias no lectivos)
+  -> En el editar poner eun boton que lleve a la siguiente url
+  -> https://vldzx7.axshare.com/#id=7hqw0t&p=06_01_01_02b_01_regional_calendars_-_create_calend&g=1&sc=3&hi=1
+  -> Shool day y non school day son solo legendas
+  -> El resto son calendarios separados dentro d eun grupo de calendarios el cual va viculado a la configuracion del calendario
+
+Eventos para clases
+ https://vldzx7.axshare.com/#id=74ko1j&p=06_01_03_calendars&g=1&sc=3&hi=1
+ Hay que seleccionar el centro, y segun el centro salen los niveles de clases.
+ Solo obligatorio el primer nivel(esto quiere decir que la configuracion que hagamos luego puede darse para muchas clases)
+
+ https://vldzx7.axshare.com/#id=alpthi&p=06_01_03&g=1&sc=3&hi=1
+ De titulo ponemos los nombres de los niveles selccionados en la pantalla anterior
+ No se pueden crear duplicaciones de las configuracion para el mismo nivel
+ Esto es un solo calendario con eventos
+ El nombre que aparece en el calendario son los niveles.
+
