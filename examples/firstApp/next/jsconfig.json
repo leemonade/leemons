@@ -1,5 +1,0 @@
-<<<<<<< HEAD
-{"compilerOptions":{"baseUrl":".","paths":{"@user-admin/*":["plugins/user-admin/*"],"@plugins":["plugins/plugins.js"],"@users/*":["plugins/users/*"]}}}
-=======
-{"compilerOptions":{"baseUrl":".","paths":{"@user-admin/*":["plugins/user-admin/*"],"@plugins":["plugins/plugins.js"],"@users-groups-roles/*":["plugins/users-groups-roles/*"]}}}
->>>>>>> plugin/layout
