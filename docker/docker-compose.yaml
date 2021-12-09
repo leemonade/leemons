@@ -1,26 +1,18 @@
 version: "3.2"
 services:
-  # server:
-  #   image: node:8 # Docker image name
-  #   user: "node"
-  #   working_dir: /home/node/app
-  #   volumes:
-  #     - ./monorepo/examples/test:/home/node/app
-  #   expose:
-  #     - "8081"
-  #   command: "npm start"
-  #   restart: always
   leemons:
-    build:
-      dockerfile: ./monorepo.Dockerfile
-    image: leemons
+    image: node:16-alpine
     tty: true
     stdin_open: true
     volumes:
+      - ./src/package.json:/monorepo/package.json
+      - ./src/.yarnrc:/monorepo/.yarnrc
       - ../examples/demo-auth:/monorepo/app
       - ../packages:/monorepo/packages
     links:
       - db:mysql
+    working_dir: /monorepo
+    command: "sh -c 'yarn --cwd .. -s; yarn dev'"
     ports:
       - 8080:8080
   db:
@@ -36,3 +28,8 @@ services:
       - 3306
     ports:
       - 3306:3306
+
+  # MongoDB mono replica set
+  # mongo:
+
+
