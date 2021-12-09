@@ -29,11 +29,12 @@ async function detail(familyId, userSession, { transacting } = {}) {
   ]);
   const familyEmergencyNumbers = leemons.getPlugin('families-emergency-numbers');
   if (familyEmergencyNumbers) {
-    family.emergencyPhoneNumbers = await familyEmergencyNumbers.services.emergencyPhones.getFamilyPhones(
-      family.id,
-      userSession,
-      { transacting }
-    );
+    family.emergencyPhoneNumbers =
+      await familyEmergencyNumbers.services.emergencyPhones.getFamilyPhones(
+        family.id,
+        userSession,
+        { transacting }
+      );
   }
   family.guardians = members.guardians;
   family.students = members.students;
