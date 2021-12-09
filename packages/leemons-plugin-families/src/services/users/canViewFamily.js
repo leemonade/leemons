@@ -19,7 +19,7 @@ async function canViewFamily(familyId, userSession, { transacting } = {}) {
       transacting,
       query: {
         permissionName: 'plugins.families.families',
-        actionName: ['view', 'admin'],
+        actionName_$in: ['view', 'admin'],
       },
     });
   return !!permissions.length;
