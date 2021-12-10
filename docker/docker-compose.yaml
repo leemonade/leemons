@@ -1,21 +1,23 @@
 version: "3.2"
 services:
   leemons:
-    image: node:16-alpine
+    image: node:16
     tty: true
     stdin_open: true
     volumes:
       - ./src/package.json:/monorepo/package.json
-      - ./src/.yarnrc:/monorepo/.yarnrc
       - ../examples/demo-auth:/monorepo/app
       - ../packages:/monorepo/packages
+      - ../node_modules:/monorepo/node_modules
+      - ../yarn.lock:/monorepo/yarn.lock
     links:
-      - db:mysql
-    working_dir: /monorepo
+      - mysql
+    working_dir: /monorepo/app
     command: "sh -c 'yarn --cwd .. -s; yarn dev'"
+    restart: always
     ports:
       - 8080:8080
-  db:
+  mysql:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
     restart: always
