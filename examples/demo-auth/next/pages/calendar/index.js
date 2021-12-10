@@ -85,9 +85,13 @@ function Calendar() {
           events.push(event);
         }
       });
-      setFilteredEvents(
-        transformDBEventsToFullCalendarEvents(events, data.calendars, data.calendarConfig)
+      const calendarEvents = transformDBEventsToFullCalendarEvents(
+        events,
+        data.calendars,
+        data.calendarConfig
       );
+      console.log(JSON.stringify(calendarEvents));
+      setFilteredEvents(calendarEvents);
       // Secciones
       const calendarsBySection = _.groupBy(data.calendars, 'section');
       const calendarSections = [];
