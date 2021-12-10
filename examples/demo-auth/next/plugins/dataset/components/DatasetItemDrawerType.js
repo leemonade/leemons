@@ -1,12 +1,17 @@
 import React, { useContext } from 'react';
 import * as _ from 'lodash';
 import { Button, Checkbox, FormControl, ImageLoader, Input, Select } from 'leemons-ui';
-import DatasetItemDrawerContext from './DatasetItemDrawerContext';
+import DatasetItemDrawerContext, {
+  DatasetItemDrawerCentersContext,
+  DatasetItemDrawerProfilesContext,
+} from './DatasetItemDrawerContext';
 import datasetDataTypes from '../helpers/datasetDataTypes';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 
 export const DatasetItemDrawerType = () => {
   const { t, tCommon, item, form } = useContext(DatasetItemDrawerContext);
+  const { profiles } = useContext(DatasetItemDrawerProfilesContext);
+  const { centers } = useContext(DatasetItemDrawerCentersContext);
   const { t: tCommonTypes } = useCommonTranslate('form_field_types');
   const type = form.watch('frontConfig.type');
   const checkboxValues = form.watch('frontConfig.checkboxValues');
@@ -324,7 +329,7 @@ export const DatasetItemDrawerType = () => {
                         >
                           <ImageLoader
                             className="stroke-current fill-current"
-                            src={'/assets/svgs/remove.svg'}
+                            src={'/public/assets/svgs/remove.svg'}
                           />
                         </div>
                       </FormControl>
@@ -376,6 +381,65 @@ export const DatasetItemDrawerType = () => {
             </div>
           </div>
         </div>
+      ) : null}
+
+      {/* User */}
+      {type === datasetDataTypes.user.type ? (
+        <>
+          <div className="flex flex-row justify-between pt-6 w-7/12">
+            <div className="w-6/12">
+              <div className="text-sm text-secondary font-medium mr-6">{t('center_title')}</div>
+              <div className="text-sm text-neutral-content mr-6">{t('center_description')}</div>
+            </div>
+            <div className="w-6/12">
+              <FormControl formError={_.get(form.errors, 'frontConfig.center')}>
+                {centers ? (
+                  <Select
+                    outlined={true}
+                    className="w-full max-w-xs"
+                    multiple={true}
+                    placeholderLabel={t('center_all_centers')}
+                    value={form.watch('frontConfig.center') || []}
+                    onChange={(e) => form.setValue('frontConfig.center', e)}
+                  >
+                    {centers.map((center) => (
+                      <option key={center.id} value={center.id}>
+                        {center.name}
+                      </option>
+                    ))}
+                  </Select>
+                ) : null}
+              </FormControl>
+            </div>
+          </div>
+
+          <div className="flex flex-row justify-between pt-6 w-7/12">
+            <div className="w-6/12">
+              <div className="text-sm text-secondary font-medium mr-6">{t('profile_title')}</div>
+              <div className="text-sm text-neutral-content mr-6">{t('profile_description')}</div>
+            </div>
+            <div className="w-6/12">
+              <FormControl formError={_.get(form.errors, 'frontConfig.profile')}>
+                {profiles ? (
+                  <Select
+                    outlined={true}
+                    className="w-full max-w-xs"
+                    multiple={true}
+                    value={form.watch('frontConfig.profile') || []}
+                    placeholderLabel={t('all_profiles')}
+                    onChange={(e) => form.setValue('frontConfig.profile', e)}
+                  >
+                    {profiles.map((profile) => (
+                      <option key={profile.id} value={profile.id}>
+                        {profile.name}
+                      </option>
+                    ))}
+                  </Select>
+                ) : null}
+              </FormControl>
+            </div>
+          </div>
+        </>
       ) : null}
     </>
   );

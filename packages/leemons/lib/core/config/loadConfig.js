@@ -11,7 +11,8 @@ const leemonsDefaultDirs = {
   models: 'models',
   plugins: 'plugins',
   providers: 'providers',
-  next: envf('nextDir', 'next'),
+  // TODO: Add frontend dir for front dir
+  // next: envf('nextDir', 'frontend'),
   env: '.env',
 };
 

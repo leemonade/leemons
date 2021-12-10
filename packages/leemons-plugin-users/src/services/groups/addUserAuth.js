@@ -1,4 +1,4 @@
-const { existUserAgent } = require('../users');
+const { existUserAgent } = require('../user-agents/existUserAgent');
 const { exist: userExist } = require('../users/exist');
 const { exist: groupExist } = require('./exist');
 const { table } = require('../tables');

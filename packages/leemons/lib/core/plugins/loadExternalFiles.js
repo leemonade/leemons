@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 const _ = require('lodash');
 
+const fs = require('fs/promises');
 const execa = require('execa');
 const { loadConfiguration } = require('../config/loadConfig');
 const { getPluginsInfoFromDB, getLocalPlugins, getExternalPlugins } = require('./getPlugins');
@@ -8,6 +9,7 @@ const { computeDependencies, checkMissingDependencies, sortByDeps } = require('.
 const { getStatus, PLUGIN_STATUS } = require('./pluginsStatus');
 const ScriptLoader = require('./loadScripts');
 const transformServices = require('./transformServices');
+const { LeemonsSocket } = require('../../socket.io');
 
 /**
  * Loads all the external files of a type (plugins, providers, etc)
@@ -34,7 +36,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
           models: 'models',
           controllers: 'controllers',
           services: 'services',
-          next: 'next',
+          next: 'frontend',
           env: '.env',
           install: 'install.js',
           events: 'events.js',
@@ -113,9 +115,14 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
       // If the plugin does not have an id, it is not registered in the DB yet
       // so we need to register it
       if (plugin.id === undefined) {
-        const { name, path: pluginPath, version, id, source, ...pluginInfo } = await leemons.models[
-          target
-        ].add({
+        const {
+          name,
+          path: pluginPath,
+          version,
+          id,
+          source,
+          ...pluginInfo
+        } = await leemons.models[target].add({
           ...plugin,
           path: plugin.dir.app,
           // Use version 0.0.1 as default
@@ -165,9 +172,27 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
       // Expose some objects to the plugin (leemons.plugin, leemons.getplugin,
       // leemons.query)
       const vmFilter = (filter) => {
+        _.set(filter, 'leemons.socket', {
+          emit: LeemonsSocket.worker.emit,
+          onConnection: LeemonsSocket.worker.onConnection,
+        });
+        _.set(filter, 'leemons.fs', {
+          copyFile: (...rest) => {
+            if (plugin.name === 'media-library') return fs.copyFile(...rest);
+            throw new Error('Only the plugin media-library have access to copyFile');
+          },
+          readFile: (...rest) => {
+            if (plugin.name === 'media-library') return fs.readFile(...rest);
+            throw new Error('Only the plugin media-library have access to readFile');
+          },
+          unlink: (...rest) => {
+            if (plugin.name === 'media-library') return fs.unlink(...rest);
+            throw new Error('Only the plugin media-library have access to unlink');
+          },
+        });
         _.set(filter, 'leemons.utils', {
           stopAutoServerReload: () => {
-            if (plugin.name === 'package-manager') {
+            if (target === 'plugins' && plugin.name === 'package-manager') {
               leemons.canReloadFrontend = false;
               leemons.canReloadBackend = false;
               if (leemons.stopAutoReloadWorkers) leemons.stopAutoReloadWorkers();
@@ -176,7 +201,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
             throw new Error('Only the plugin package-manager have access to stopAutoServerReload');
           },
           startAutoServerReload: () => {
-            if (plugin.name === 'package-manager') {
+            if (target === 'plugins' && plugin.name === 'package-manager') {
               leemons.canReloadFrontend = true;
               leemons.canReloadBackend = true;
               if (leemons.startAutoReloadWorkers) leemons.startAutoReloadWorkers();
@@ -185,29 +210,23 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
             throw new Error('Only the plugin package-manager have access to startAutoServerReload');
           },
           reloadServer: () => {
-            if (plugin.name === 'package-manager') {
+            if (target === 'plugins' && plugin.name === 'package-manager') {
               leemons.reloadWorkers();
               return true;
             }
             throw new Error('Only the plugin package-manager have access to reloadServer');
           },
           getExeca: () => {
-            if (plugin.name === 'package-manager') return execa;
+            if (target === 'plugins' && plugin.name === 'package-manager') return execa;
             throw new Error('Only the plugin package-manager have access to execa');
           },
         });
 
         // Only let the plugin to emit events on itself
         _.set(filter, 'leemons.events', {
-          emit: (event, ...args) => {
-            leemons.events.emit(event, `${target}.${plugin.name}`, ...args);
-          },
-          once: (...args) => {
-            leemons.events.once(...args);
-          },
-          on: (...args) => {
-            leemons.events.on(...args);
-          },
+          emit: (event, ...args) => leemons.events.emit(event, `${target}.${plugin.name}`, ...args),
+          once: (...args) => leemons.events.once(...args),
+          on: (...args) => leemons.events.on(...args),
         });
 
         // Expose leemons.plugin, leemons.provider... to each external file+
@@ -221,27 +240,46 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
         // TODO: Convert the plugins array to a Map for more efficiency
         // Expose leemons.getPlugin, leemons.getProvider... to each external file
         const getPluggable = (pluggables) => (pluggableName) => {
+          // Remove plugins properties from the called pluggable due to security reasons
+          const secureDesiredPlugin = (_plugin) => {
+            const desiredPlugin = _.pick(_plugin, ['name', 'version', 'services']);
+            desiredPlugin.services = transformServices(
+              desiredPlugin.services,
+              `${target}.${plugin.name}`
+            );
+            return desiredPlugin;
+          };
+
+          // If the handler is a function, call it first
+          if (_.isFunction(pluggables)) {
+            // eslint-disable-next-line no-param-reassign
+            pluggables = pluggables(plugin, pluggableName);
+
+            // If the handler desires to handle everything itself, must return a function
+            if (_.isFunction(pluggables)) {
+              return pluggables(secureDesiredPlugin);
+            }
+          }
+
+          // If the handler is a string, get it from leemons global object
           if (_.isString(pluggables)) {
             // eslint-disable-next-line no-param-reassign
             pluggables = leemons[pluggables];
           }
 
+          // If the handler is the object itself, handle by default handler
           if (_.isArray(pluggables)) {
-            let desiredPluggable = pluggables.find(
+            const desiredPluggable = pluggables.find(
               (pluggable) =>
                 pluggable.name === pluggableName &&
                 pluggable.status.code === PLUGIN_STATUS.enabled.code
             );
 
             if (desiredPluggable) {
-              desiredPluggable = _.pick(desiredPluggable, ['name', 'version', 'services']);
-              desiredPluggable.services = transformServices(
-                desiredPluggable.services,
-                `${target}.${plugin.name}`
-              );
-              return desiredPluggable;
+              return secureDesiredPlugin(desiredPluggable);
             }
           }
+
           return null;
         };
 

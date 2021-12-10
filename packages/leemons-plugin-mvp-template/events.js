@@ -4,6 +4,7 @@ const initCenters = require('./src/centers');
 const initProfiles = require('./src/profiles');
 const { setFamilyProfiles } = require('./src/familyProfiles');
 const addCalendarAndEventAsClassroom = require('./src/calendar');
+const addAWSS3AsProvider = require('./src/mediaLibrary');
 
 async function events(isInstalled) {
   const config = {
@@ -40,12 +41,23 @@ async function events(isInstalled) {
 
     leemons.events.once(
       [
+        'plugins.media-library:pluginDidLoadServices',
+        'providers.media-library-aws-s3:providerDidLoadServices',
+      ],
+      async () => {
+        await addAWSS3AsProvider();
+      }
+    );
+
+    leemons.events.once(
+      [
         'plugins.users:init-permissions',
         'plugins.calendar:init-permissions',
         'plugins.calendar:init-event-types',
       ],
       async () => {
         try {
+          console.log('HOOOOOLAAAA ---------------');
           config.centers = await initCenters();
           leemons.events.emit('init-centers', config.centers);
           config.profiles = await initProfiles();

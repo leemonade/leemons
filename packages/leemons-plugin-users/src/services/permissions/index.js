@@ -12,25 +12,30 @@ const { updateMany } = require('./updateMany');
 const { removeMany } = require('./removeMany');
 const { addActionMany } = require('./addActionMany');
 const { hasActionMany } = require('./hasActionMany');
-const { getUserAgentPermissions } = require('./getUserAgentPermissions');
-const { userAgentHasCustomPermission } = require('./userAgentHasCustomPermission');
 const { findUserAgentsWithPermission } = require('./findUserAgentsWithPermission');
 const { manyPermissionsHasManyActions } = require('./manyPermissionsHasManyActions');
-const { addCustomPermissionToUserAgent } = require('./addCustomPermissionToUserAgent');
+
 const {
   removeCustomPermissionForAllUserAgents,
 } = require('./removeCustomPermissionForAllUserAgents');
+const { getUserAgentPermissions } = require('../user-agents/permissions/getUserAgentPermissions');
+const {
+  userAgentHasCustomPermission,
+} = require('../user-agents/permissions/userAgentHasCustomPermission');
+const {
+  addCustomPermissionToUserAgent,
+} = require('../user-agents/permissions/addCustomPermissionToUserAgent');
 
 module.exports = {
   add,
-  list,
   init,
+  list,
   exist,
   update,
   remove,
   addMany,
-  addAction,
   existMany,
+  addAction,
   hasAction,
   updateMany,
   removeMany,

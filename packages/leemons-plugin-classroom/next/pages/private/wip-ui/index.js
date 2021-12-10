@@ -21,15 +21,10 @@ function ClassList() {
   const [selectedLanguage, setSelectedLanguage] = useState(null);
 
   useEffect(async () => {
-    const request = await leemons.api(
-      {
-        url: 'multilanguage/locales',
-        allAgents: true,
-      },
-      {
-        method: 'GET',
-      }
-    );
+    const request = await leemons.api('multilanguage/locales', {
+      allAgents: true,
+      method: 'GET',
+    });
     if (request.locales && Array.isArray(request.locales)) {
       setLanguages(request.locales);
     }

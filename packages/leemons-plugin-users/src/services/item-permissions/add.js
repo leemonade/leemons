@@ -21,6 +21,20 @@ const { existMany } = require('../permissions/existMany');
  * @param {boolean=} isCustomPermission - If it is a custom permit, it is not checked if it exists in the list of permits.
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
+ *
+ * @example
+ *
+ * leemons.getPlugin('users').services.permissions.addItem(
+ * 'id del item por ejemplo el id de un calendario',
+ * 'plugins.calendar.calendar',
+ * {
+ *    permissionName: 'plugins.calendar.calendar.idcalendario',
+ *    actionNames: ['view', 'delete', 'admin', 'owner'],
+ * },
+ * {
+ *   isCustomPermission: true
+ * });
+ *
  * */
 async function add(item, type, data, { isCustomPermission, transacting } = {}) {
   const _data = _.isArray(data) ? data : [data];

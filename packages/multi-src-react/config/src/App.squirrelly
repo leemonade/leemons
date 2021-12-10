@@ -1,0 +1,74 @@
+import React from 'react';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
+import loadable from '@loadable/component';
+import "./global.css";
+
+// Plugins imports
+{{ @each(it.plugins) => plugin }}
+{{ @if(plugin.routers.public) }}
+const {{ plugin.name | clear | capitalize }}Public = loadable(() => import('@{{ plugin.name }}/../Public'));
+{{ /if }}
+{{ @if(plugin.routers.private) }}
+const {{ plugin.name | clear | capitalize }}Private = loadable(() => import('@{{ plugin.name }}/../Private'));
+{{ /if }}
+{{ @if(plugin.hooks) }}
+import use{{ plugin.name | clear | capitalize }} from '@{{ plugin.name }}/../globalHooks';
+{{ /if }}
+{{ @if(plugin.globalContext) }}
+import { Provider as {{ plugin.name | clear | capitalize }}GlobalProvider } from '@{{ plugin.name }}/../globalContext';
+{{ /if }}
+{{ @if(plugin.localContext && (plugin.routers.public || plugin.routers.private)) }}
+import { Provider as {{ plugin.name | clear | capitalize }}LocalProvider } from '@{{ plugin.name }}/../localContext';
+{{ /if }}
+{{ /each }}
+
+function App() {
+  // Plugins hooks
+{{ @each(it.plugins) => plugin }}
+{{ @if(plugin.hooks) }}
+  use{{ plugin.name | clear | capitalize }}();
+{{ /if }}
+{{ /each }}
+  return (
+    <>
+{{ @each(it.plugins) => plugin }}
+{{ @if(plugin.globalContext) }}
+        <{{ plugin.name | clear | capitalize }}GlobalProvider>
+{{ /if }}
+{{ /each }}
+          <Router>
+            <Switch>
+              {/* Define each plugin route */}
+{{ @each(it.plugins) => plugin }}
+{{ @if(plugin.localContext && (plugin.routers.public || plugin.routers.private)) }}
+              <{{ plugin.name | clear | capitalize }}LocalProvider>
+{{ /if }}
+{{ @if(plugin.routers.public) }}
+                <Route path="/{{ plugin.name }}">
+                  <{{ plugin.name | clear | capitalize }}Public fallback={<p>Loading...</p>} />
+                </Route>
+{{ /if }}
+{{ @if(plugin.routers.private) }}
+                <Route path="/private/{{ plugin.name }}">
+                  <{{ plugin.name | clear | capitalize }}Private fallback={<p>Loading...</p>} />
+                </Route>
+{{ /if }}
+{{ @if(plugin.localContext && (plugin.routers.public || plugin.routers.private)) }}
+              </{{ plugin.name | clear | capitalize }}LocalProvider>
+{{ /if }}
+{{ /each }}
+              <Route path="/">
+                <p>Not Found</p>
+              </Route>
+            </Switch>
+          </Router>
+{{ @each(it.plugins.reverse()) => plugin }}
+{{ @if(plugin.globalContext) }}
+        </{{ plugin.name | clear | capitalize }}GlobalProvider>
+{{ /if }}
+{{ /each }}
+    </>
+  );
+}
+
+export default App;

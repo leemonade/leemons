@@ -9,7 +9,7 @@ export default function MainMenuCloseSubmenuBtn({ onClick }) {
           {/* TODO: Add alt multilanguage */}
           <ImageLoader
             className="stroke-current text-secondary-content"
-            src="/assets/svgs/keyboard-previous.svg"
+            src="/public/assets/svgs/keyboard-previous.svg"
           />
         </div>
       </Button>

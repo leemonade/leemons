@@ -126,13 +126,10 @@ const Select = React.forwardRef(
       if (multiple) setItems(value || []);
     }, [JSON.stringify(value)]);
 
-    useEffect(
-      (a) => {
-        setOptions(filterOptions(_.values(originalOptionsByValue)));
-        if (multiple) onChange(items);
-      },
-      [items]
-    );
+    useEffect(() => {
+      setOptions(filterOptions(_.values(originalOptionsByValue)));
+      if (multiple) onChange(items);
+    }, [items]);
 
     return (
       <>

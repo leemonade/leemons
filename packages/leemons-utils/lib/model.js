@@ -43,8 +43,7 @@ function getModel(path, models = null, useLeemonsModels = false) {
   }
 
   const absolutePath = path.split('::')[0].replace(/_/g, '.');
-  const modelObject = _.get(leemons, `${absolutePath}.models.${path}`, null);
-  return modelObject;
+  return _.get(leemons, `${absolutePath}.models.${path}`, null);
 }
 
 module.exports = { getModel, generateModelName };

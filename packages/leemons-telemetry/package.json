@@ -1,0 +1,9 @@
+{
+  "name": "leemons-telemetry",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "elastic-apm-node": "^3.23.0"
+  }
+}
