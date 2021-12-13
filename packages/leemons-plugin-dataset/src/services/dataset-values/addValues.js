@@ -4,6 +4,8 @@ const getKeysCanAction = require('./getKeysCanAction');
 const { validateExistValues } = require('../../validations/exists');
 const { validatePluginName } = require('../../validations/exists');
 const { table } = require('../tables');
+const { getValuesForSave } = require('./getValuesForSave');
+const { validateDataForJsonSchema } = require('./validateDataForJsonSchema');
 
 /** *
  *  ES:
@@ -50,29 +52,18 @@ async function addValues(
   _.forIn(jsonSchema.properties, (p) => {
     delete p.id;
   });
+
   // ES: Comprobamos que los datos cumplen con la validacion
   // EN: We check that the data complies with validation
-  // TODO AÑADIR VALIDADOR CUSTOM PARA NUMEROS DE TELEFONO/ETZ
-  const validator = new global.utils.LeemonsValidator(
-    {
-      ...jsonSchema,
-      additionalProperties: false,
-    },
-    { strict: false }
-  );
-
-  console.log('formData');
-  console.log(formData);
-  console.log('jsonSchema');
-  console.log(jsonSchema);
-
-  if (!validator.validate(formData)) throw validator.error;
+  validateDataForJsonSchema(jsonSchema, formData);
 
   const toSave = [];
   _.forIn(formData, (value, key) => {
-    const data = { locationName, pluginName, key, value: JSON.stringify(value) };
+    const data = { locationName, pluginName, key };
     if (target) data.target = target;
-    toSave.push(data);
+    _.forEach(getValuesForSave(jsonSchema, key, value), (val) => {
+      toSave.push({ ...data, ...val });
+    });
   });
 
   await table.datasetValues.createMany(toSave, { transacting });

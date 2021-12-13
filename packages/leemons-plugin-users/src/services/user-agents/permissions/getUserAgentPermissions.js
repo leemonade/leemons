@@ -15,8 +15,6 @@ const { updateUserAgentPermissions } = require('./updateUserAgentPermissions');
 async function getUserAgentPermissions(userAgent, { query: _query, transacting } = {}) {
   const _userAgents = _.isArray(userAgent) ? userAgent : [userAgent];
 
-  console.log(_userAgents);
-
   const reloadUserAgents = [];
   _.forEach(_userAgents, (_userAgent) => {
     if (_userAgent.reloadPermissions) reloadUserAgents.push(_userAgent.id);
@@ -25,8 +23,6 @@ async function getUserAgentPermissions(userAgent, { query: _query, transacting }
   await updateUserAgentPermissions(reloadUserAgents, { transacting });
 
   const query = { ..._query, userAgent_$in: _.map(_userAgents, 'id') };
-
-  console.log('PETAZO', query);
 
   const results = await table.userAgentPermission.find(query, { transacting });
 

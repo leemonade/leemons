@@ -5,6 +5,8 @@ const getKeysCanAction = require('./getKeysCanAction');
 const { validateNotExistValues } = require('../../validations/exists');
 const { validatePluginName } = require('../../validations/exists');
 const { table } = require('../tables');
+const { getValuesForSave } = require('./getValuesForSave');
+const { validateDataForJsonSchema } = require('./validateDataForJsonSchema');
 
 /** *
  *  ES:
@@ -32,7 +34,7 @@ async function updateValues(
   pluginName,
   _formData,
   userAgent,
-  { target, transacting: _transacting, hardUpdate } = {}
+  { target, transacting: _transacting } = {}
 ) {
   validatePluginName(pluginName, this.calledFrom);
   await validateNotExistValues(locationName, pluginName, target, { transacting: _transacting });
@@ -52,35 +54,22 @@ async function updateValues(
   _.forIn(jsonSchema.properties, (p) => {
     delete p.id;
   });
-  // TODO AÑADIR VALIDADOR CUSTOM PARA NUMEROS DE TELEFONO/ETZ
-  const validator = new global.utils.LeemonsValidator(
-    {
-      ...jsonSchema,
-      additionalProperties: false,
-    },
-    { strict: false }
-  );
-  if (!validator.validate(formData)) throw validator.error;
+
+  validateDataForJsonSchema(jsonSchema, formData);
 
   const toSave = [];
   _.forIn(formData, (value, key) => {
-    const data = { locationName, pluginName, key, value: JSON.stringify(value) };
+    const data = { locationName, pluginName, key };
     if (target) data.target = target;
-    toSave.push(data);
+    _.forEach(getValuesForSave(jsonSchema, key, value), (val) => {
+      toSave.push({ ...data, ...val });
+    });
   });
 
   return global.utils.withTransaction(
     async (transacting) => {
-      if (hardUpdate) {
-        await deleteValues.call(this, locationName, pluginName, { target, transacting });
-        await table.datasetValues.createMany(toSave, { transacting });
-      } else {
-        const promises = [];
-        _.forEach(toSave, ({ value, ...rest }) => {
-          promises.push(table.datasetValues.set(rest, { value, ...rest }, { transacting }));
-        });
-        await Promise.all(promises);
-      }
+      await deleteValues.call(this, locationName, pluginName, { target, transacting });
+      await table.datasetValues.createMany(toSave, { transacting });
 
       return formData;
     },

@@ -35,8 +35,6 @@ async function getKeysCanAction(
       transacting,
     });
 
-  console.log(userPermissions, leemons.plugin.prefixPN(`${locationName}.${pluginName}`));
-
   const goodKeys = [];
 
   _.forEach(userPermissions, ({ permissionName, actionNames }) => {
