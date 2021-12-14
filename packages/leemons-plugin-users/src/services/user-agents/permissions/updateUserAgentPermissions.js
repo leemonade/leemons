@@ -6,6 +6,12 @@ async function _updateUserAgentPermissions(userAgentId, { transacting: _transact
   return global.utils.withTransaction(
     async (transacting) => {
       await existUserAgent({ id: userAgentId }, true, { transacting });
+
+      await table.groupUserAgent.find(
+        { userAgent: userAgentId },
+        { columns: ['group'], transacting }
+      );
+
       // ES: Borramos los permisos que salieran desde roles y sacamos todos los roles actuales del usuario, ya sea por que vienen desde grupos/perfiles/o el mismo rol que tiene
       const [groupUserAgent, userAgent] = await Promise.all([
         table.groupUserAgent.find({ userAgent: userAgentId }, { columns: ['group'], transacting }),
@@ -27,7 +33,6 @@ async function _updateUserAgentPermissions(userAgentId, { transacting: _transact
         ),
         table.profileRole.find({ role: userAgent.role }, { columns: ['profile'], transacting }),
       ]);
-
       const profileIds = _.map(profileRoles, 'profile');
       const [profiles, userProfiles] = await Promise.all([
         table.profiles.find(

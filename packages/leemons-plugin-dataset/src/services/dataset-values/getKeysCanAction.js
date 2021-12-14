@@ -27,8 +27,7 @@ async function getKeysCanAction(
   { transacting } = {}
 ) {
   const actions = _.isArray(_actions) ? _actions : [_actions];
-
-  const promises = [getSchema.call(this, locationName, pluginName)];
+  const promises = [getSchema.call(this, locationName, pluginName, { transacting })];
 
   if (userAgent) {
     promises.push(

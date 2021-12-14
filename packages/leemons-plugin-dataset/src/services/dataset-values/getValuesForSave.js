@@ -1,6 +1,15 @@
 const _ = require('lodash');
 
 function getValuesForSave(jsonSchema, key, value) {
+  if (!value)
+    return [
+      {
+        id: undefined,
+        value: JSON.stringify(undefined),
+        searchableValueString: undefined,
+      },
+    ];
+
   const config = jsonSchema.properties[key];
   if (config && config.frontConfig) {
     if (
@@ -8,7 +17,7 @@ function getValuesForSave(jsonSchema, key, value) {
       _.isArray(value)
     ) {
       return _.map(value, (val, index) => ({
-        id: val.id || undefined,
+        id: val?.id || undefined,
         value: JSON.stringify(val.value),
         searchableValueString: val.searchableValueString || val.value,
         metadata: JSON.stringify({ path: `[${index}]` }),
@@ -17,16 +26,17 @@ function getValuesForSave(jsonSchema, key, value) {
     if (config.frontConfig.type === 'text_field' && config.frontConfig.onlyNumbers) {
       return [
         {
-          id: value.id || undefined,
+          id: value?.id || undefined,
           value: JSON.stringify(value.value),
           searchableValueNumber: value.value,
         },
       ];
     }
   }
+
   return [
     {
-      id: value.id || undefined,
+      id: value?.id || undefined,
       value: JSON.stringify(value.value),
       searchableValueString: value.searchableValueString || value.value,
     },

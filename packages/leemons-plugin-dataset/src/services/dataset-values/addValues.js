@@ -38,11 +38,13 @@ async function addValues(
   validatePluginName(pluginName, this.calledFrom);
   await validateExistValues(locationName, pluginName, target, { transacting });
 
-  const { jsonSchema } = await getSchema.call(this, locationName, pluginName);
+  const { jsonSchema } = await getSchema.call(this, locationName, pluginName, { transacting });
 
   // ES: Cogemos solos los campos a los que el usuario tiene permiso de edicion
   // EN: We take only the fields to which the user has permission to edit.
-  const goodKeys = await getKeysCanAction(locationName, pluginName, userAgent, 'edit');
+  const goodKeys = await getKeysCanAction(locationName, pluginName, userAgent, 'edit', {
+    transacting,
+  });
 
   const formData = {};
   _.forEach(goodKeys, (k) => {

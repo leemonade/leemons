@@ -36,39 +36,41 @@ async function updateValues(
   userAgent,
   { target, transacting: _transacting } = {}
 ) {
-  validatePluginName(pluginName, this.calledFrom);
-  await validateNotExistValues(locationName, pluginName, target, { transacting: _transacting });
-
-  const { jsonSchema } = await getSchema.call(this, locationName, pluginName, {
-    transacting: _transacting,
-  });
-
-  // ES: Cogemos solos los campos a los que el usuario tiene permiso de edicion
-  // EN: We take only the fields to which the user has permission to edit.
-  const goodKeys = await getKeysCanAction(locationName, pluginName, userAgent, 'edit');
-
-  const formData = {};
-  _.forEach(goodKeys, (k) => {
-    formData[k] = _formData[k];
-  });
-  // EN: Remove id ajv not support name if for a field
-  _.forIn(jsonSchema.properties, (p) => {
-    delete p.id;
-  });
-
-  validateDataForJsonSchema(jsonSchema, formData);
-
-  const toSave = [];
-  _.forIn(formData, (value, key) => {
-    const data = { locationName, pluginName, key };
-    if (target) data.target = target;
-    _.forEach(getValuesForSave(jsonSchema, key, value), (val) => {
-      toSave.push({ ...data, ...val });
-    });
-  });
-
   return global.utils.withTransaction(
     async (transacting) => {
+      validatePluginName(pluginName, this.calledFrom);
+      await validateNotExistValues(locationName, pluginName, target, { transacting });
+
+      const { jsonSchema } = await getSchema.call(this, locationName, pluginName, {
+        transacting: _transacting,
+      });
+
+      // ES: Cogemos solos los campos a los que el usuario tiene permiso de edicion
+      // EN: We take only the fields to which the user has permission to edit.
+      const goodKeys = await getKeysCanAction(locationName, pluginName, userAgent, 'edit', {
+        transacting,
+      });
+
+      const formData = {};
+      _.forEach(goodKeys, (k) => {
+        formData[k] = _formData[k];
+      });
+      // EN: Remove id ajv not support name if for a field
+      _.forIn(jsonSchema.properties, (p) => {
+        delete p.id;
+      });
+
+      validateDataForJsonSchema(jsonSchema, formData);
+
+      const toSave = [];
+      _.forIn(formData, (value, key) => {
+        const data = { locationName, pluginName, key };
+        if (target) data.target = target;
+        _.forEach(getValuesForSave(jsonSchema, key, value), (val) => {
+          toSave.push({ ...data, ...val });
+        });
+      });
+
       await deleteValues.call(this, locationName, pluginName, { target, transacting });
       await table.datasetValues.createMany(toSave, { transacting });
 
