@@ -8,9 +8,24 @@ async function addNodeLevels(data, { transacting: _transacting } = {}) {
     async (transacting) => {
       await validateAddNodeLevels(data, { transacting });
 
-      await Promise.all(
+      const nodeLevels = await Promise.all(
         _.map(data.nodeLevels, (nodeLevel) =>
           table.nodeLevels.create({ curriculum: data.curriculum, ...nodeLevel }, { transacting })
+        )
+      );
+
+      await Promise.all(
+        _.map(nodeLevels, (nodeLevel) =>
+          leemons.getPlugin('dataset').services.dataset.addLocation(
+            {
+              name: {
+                en: `node-level-${nodeLevel.id}`,
+              },
+              locationName: `node-level-${nodeLevel.id}`,
+              pluginName: 'plugins.curriculum',
+            },
+            { transacting }
+          )
         )
       );
 

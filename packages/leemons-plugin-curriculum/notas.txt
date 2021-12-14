@@ -54,3 +54,10 @@ El backend tendra que recalcular todos los indices/ordenes de las listas cada ve
 
 
 Mirar en dataset si podriamos añadir un uevo tipo list y group para curriculum, poder definir a cada campo si se puede buscar por el o no, y si se puede crear una funcion donde pasandole un/unos datasets busque todos los registros con LIKE de los campos que sean buscables dentro de dichos datasets.
+
+
+
+
+
+
+Ver tiene que poder ver cualquier persona hasta los que no estan logados, y editar solo los perfiles que se especifiquen previamenteen una tabla, tocara editar todos los campos de todos los datasets cuando se modifique esa tabla.

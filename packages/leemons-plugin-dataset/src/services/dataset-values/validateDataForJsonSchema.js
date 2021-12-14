@@ -20,6 +20,9 @@ function validateDataForJsonSchema(jsonSchema, data) {
             id: {
               type: 'string',
             },
+            searchableValueString: {
+              type: 'string',
+            },
             value: value.items,
           },
         },
@@ -31,6 +34,9 @@ function validateDataForJsonSchema(jsonSchema, data) {
         required: ['value'],
         properties: {
           id: {
+            type: 'string',
+          },
+          searchableValueString: {
             type: 'string',
           },
           value,

@@ -7,6 +7,17 @@ async function postNode(ctx) {
   ctx.body = { status: 200, node };
 }
 
+async function saveNodeFormValues(ctx) {
+  const node = await nodesService.saveNodeFormValues(
+    ctx.request.params.id,
+    ctx.state.userSession,
+    ctx.request.body
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, node };
+}
+
 module.exports = {
   postNode,
+  saveNodeFormValues,
 };

@@ -43,6 +43,7 @@ async function addValues(
   // ES: Cogemos solos los campos a los que el usuario tiene permiso de edicion
   // EN: We take only the fields to which the user has permission to edit.
   const goodKeys = await getKeysCanAction(locationName, pluginName, userAgent, 'edit');
+
   const formData = {};
   _.forEach(goodKeys, (k) => {
     formData[k] = _formData[k];

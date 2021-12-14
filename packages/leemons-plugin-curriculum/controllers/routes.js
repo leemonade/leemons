@@ -39,4 +39,10 @@ module.exports = [
     handler: 'nodes.postNode',
     authenticated: true,
   },
+  {
+    path: '/node/:id/form-values',
+    method: 'POST',
+    handler: 'nodes.saveNodeFormValues',
+    authenticated: true,
+  },
 ];

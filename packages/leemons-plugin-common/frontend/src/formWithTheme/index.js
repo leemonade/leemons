@@ -360,6 +360,8 @@ function SelectWidget(props) {
     ...rest
   } = props;
 
+  console.log(props.value);
+
   return (
     <MyCustomFormControl {...props}>
       <Select
@@ -581,7 +583,10 @@ export default function index(schema, ui, conditions, props) {
       return (
         <FormWithConditionals.current
           {...props}
-          ref={ref}
+          ref={(e) => {
+            ref.current = e;
+            if (props.ref) props.ref = e;
+          }}
           schema={schema}
           uiSchema={ui}
           liveValidate={liveValidate.current}
@@ -668,6 +673,7 @@ export default function index(schema, ui, conditions, props) {
     {
       isLoaded: () => !!ref.current,
       submit: () => {
+        console.log(ref);
         ref.current.formElement.dispatchEvent(
           new Event('submit', {
             cancelable: true,

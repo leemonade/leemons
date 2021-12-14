@@ -8,7 +8,9 @@ async function postCurriculum(ctx) {
 }
 
 async function getCurriculum(ctx) {
-  const [curriculum] = await curriculumService.curriculumByIds(ctx.request.params.id);
+  const [curriculum] = await curriculumService.curriculumByIds(ctx.request.params.id, {
+    userSession: ctx.state.userSession,
+  });
   ctx.status = 200;
   ctx.body = { status: 200, curriculum };
 }

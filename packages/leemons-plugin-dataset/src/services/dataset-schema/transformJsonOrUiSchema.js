@@ -88,8 +88,11 @@ function getJsonSchemaProfilePermissionsKeys(jsonSchema) {
   _.forEach(arrKeys(jsonSchema), (key) => {
     if (key.indexOf('.permissions.') >= 0) {
       const k = _.split(key, '.');
-      k[k.length - 1] = removeArrayPropFromString(k[k.length - 1]);
-      keys.push(_.join(k, '.'));
+      const prop = removeArrayPropFromString(k[k.length - 1]);
+      if (prop !== '*') {
+        k[k.length - 1] = prop;
+        keys.push(_.join(k, '.'));
+      }
     }
   });
   return _.uniq(keys);
