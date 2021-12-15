@@ -4,13 +4,17 @@ function getValuesForReturn(items) {
   if (items) {
     const r = { r: undefined };
     _.forEach(items, (item) => {
+      const toAdd = { value: JSON.parse(item.value), id: item.id };
       let path = '';
       if (item.metadata) {
         const metadata = JSON.parse(item.metadata);
-        if (metadata.path) path = metadata.path;
+        const { path: p, ...restMetadata } = metadata;
+        if (p) path = p;
+        if (_.isObject(restMetadata) && Object.keys(restMetadata).length)
+          toAdd.metadata = restMetadata;
       }
-      // TODO Añadir que se devuelva el metadata si hay algo mas aparte del path
-      _.set(r, `r${path}`, { value: JSON.parse(item.value), id: item.id });
+
+      _.set(r, `r${path}`, toAdd);
     });
     return r.r;
   }

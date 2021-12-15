@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "//": "@rjsf/core -> https://gitpkg.now.sh/leemonade/react-jsonschema-form/packages/core?master",
   "dependencies": {
     "@babel/runtime-corejs2": "^7.14.8",
     "json-rules-engine-simplified": "^0.1.17",
-    "rjsf-conditionals": "^1.1.4"
+    "rjsf-conditionals": "^1.1.4",
+    "@leemonade/rjsf-core": "^3.0.0"
   },
   "devDependencies": {}
 }
