@@ -10,7 +10,7 @@ async function getNodeValues(node, userSession, { transacting } = {}) {
         .services.dataset.getValues(
           `node-level-${node.nodeLevel}`,
           'plugins.curriculum',
-          userSession.userAgents,
+          userSession?.userAgents,
           { target: node.id, transacting }
         ),
     };
@@ -26,16 +26,14 @@ async function nodesTreeByCurriculum(id, { userSession, transacting } = {}) {
   const ids = _.isArray(id) ? id : [id];
   const nodes = await table.nodes.find({ curriculum_$in: ids }, { transacting });
 
-  if (userSession) {
-    const values = await Promise.all(
-      _.map(nodes, (node) => getNodeValues(node, userSession, { transacting }))
-    );
-    const valuesById = _.keyBy(values, 'id');
-    _.forEach(nodes, (node) => {
-      // eslint-disable-next-line no-param-reassign
-      node.formValues = valuesById[node.id].values;
-    });
-  }
+  const values = await Promise.all(
+    _.map(nodes, (node) => getNodeValues(node, userSession, { transacting }))
+  );
+  const valuesById = _.keyBy(values, 'id');
+  _.forEach(nodes, (node) => {
+    // eslint-disable-next-line no-param-reassign
+    node.formValues = valuesById[node.id].values;
+  });
 
   const nodesByParent = _.groupBy(nodes, 'parentNode');
   _.forEach(nodes, (node) => {

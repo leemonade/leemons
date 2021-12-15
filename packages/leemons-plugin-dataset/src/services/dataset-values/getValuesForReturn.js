@@ -9,6 +9,7 @@ function getValuesForReturn(items) {
         const metadata = JSON.parse(item.metadata);
         if (metadata.path) path = metadata.path;
       }
+      // TODO Añadir que se devuelva el metadata si hay algo mas aparte del path
       _.set(r, `r${path}`, { value: JSON.parse(item.value), id: item.id });
     });
     return r.r;

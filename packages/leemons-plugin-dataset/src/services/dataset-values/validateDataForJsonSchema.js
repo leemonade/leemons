@@ -39,7 +39,10 @@ function validateDataForJsonSchema(jsonSchema, data) {
           searchableValueString: {
             type: 'string',
           },
-          value,
+          value: {
+            ...value,
+            nullable: true,
+          },
         },
       };
     }
