@@ -57,6 +57,27 @@ function ButtonPage() {
           </div>
         </Wrapper>
 
+        <Wrapper title="button + type link">
+          <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
+            <Button type="link">neutral</Button>
+            <Button type="link" color="primary">
+              primary
+            </Button>
+            <Button type="link" color="secondary">
+              secondary
+            </Button>
+            <Button type="link" color="accent">
+              accent
+            </Button>
+            <Button type="link" color="ghost">
+              ghost
+            </Button>
+            <Button type="link" link color="primary">
+              link
+            </Button>
+          </div>
+        </Wrapper>
+
         <Wrapper title="text buttons">
           <div className="flex flex-wrap items-start md:space-x-2 space-y-2 md:space-y-0 flex-col md:flex-row">
             <Button color="primary" text>

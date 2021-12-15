@@ -1,0 +1,10 @@
+{
+    "name": "monorepo",
+    "private": true,
+    "authors": "leemons",
+    "version": "1.0.0",
+    "workspaces": [
+        "packages/*",
+        "app"
+    ]
+}

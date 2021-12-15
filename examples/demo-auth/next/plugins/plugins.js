@@ -1,7 +1,6 @@
 module.exports = {
   plugins: [
-    'socket.io',
-		'onboarding',
+    'onboarding',
 		'layout',
 		'emails',
 		'common',
@@ -9,6 +8,7 @@ module.exports = {
 		'multilanguage',
 		'dataset',
 		'users',
+		'subjects',
 		'package-manager',
 		'mvp-template',
 		'menu-builder',

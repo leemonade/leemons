@@ -49,6 +49,7 @@ const TreeView = ({
   initialSelected,
   initialOpen,
   rootId,
+  className,
   ...otherProps
 }) => {
   const [initialized, setInitialized] = useState(false);
@@ -131,7 +132,7 @@ const TreeView = ({
   };
 
   return (
-    <div className="relative flex">
+    <div className={`relative flex ${className || ''} `}>
       <ReactTree
         ref={treeRef}
         tree={treeData}

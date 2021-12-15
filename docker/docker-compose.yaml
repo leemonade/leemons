@@ -1,0 +1,37 @@
+version: "3.2"
+services:
+  leemons:
+    image: node:16
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./src/package.json:/monorepo/package.json
+      - ../examples/demo-auth:/monorepo/app
+      - ../packages:/monorepo/packages
+      - ../node_modules:/monorepo/node_modules
+      - ../yarn.lock:/monorepo/yarn.lock
+    links:
+      - mysql
+    working_dir: /monorepo/app
+    command: "sh -c 'yarn --cwd .. -s; yarn dev'"
+    restart: always
+    ports:
+      - 8080:8080
+  mysql:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: leemons
+      MYSQL_USER: leemons
+      MYSQL_ROOT_PASSWORD: leemons
+      MYSQL_PASSWORD: leemons
+    expose:
+      - 3306
+    ports:
+      - 3306:3306
+
+  # MongoDB mono replica set
+  # mongo:
+
+

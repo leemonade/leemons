@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "leemons-utils": "1.0.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "wait-on": "^6.0.0"
   }
 }

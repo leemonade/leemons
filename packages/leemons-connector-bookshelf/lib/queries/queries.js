@@ -94,7 +94,6 @@ function generateQueries(model /* connector */) {
     return { count: updatedCount };
   }
 
-  // TODO: soft delete
   // Deletes one item matching the query
   async function deleteOne(
     query,
@@ -156,7 +155,6 @@ function generateQueries(model /* connector */) {
     const filters = parseFilters({ filters: query, model });
     const newQuery = buildQuery(model, filters);
 
-    // TODO: Move to joins
     const toJSONConfig = { omitPivot: true };
     if (columns && columns !== '*') {
       toJSONConfig.hidden = [];
