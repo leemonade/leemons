@@ -26,6 +26,15 @@ module.exports = {
     value: {
       type: 'json',
     },
+    searchableValueString: {
+      type: 'string',
+    },
+    searchableValueNumber: {
+      type: 'string',
+    },
+    metadata: {
+      type: 'json',
+    },
   },
   primaryKey: {
     type: 'uuid',

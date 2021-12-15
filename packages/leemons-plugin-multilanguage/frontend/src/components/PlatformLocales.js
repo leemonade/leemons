@@ -81,10 +81,16 @@ export default function PlatformLocales({
 
   if (!loading && !error) {
     return (
-      <Tabs activeIndex={index} setActiveIndex={setIndex}>
+      <Tabs activeIndex={index}>
         <TabList>
-          {locales.map(({ name, code }) => (
-            <Tab key={code} id={`id-${code}`} panelId={`panel-${code}`}>
+          {locales.map(({ name, code }, i) => (
+            <Tab
+              key={code}
+              id={`id-${code}`}
+              panelId={`panel-${code}`}
+              tabIndex={i}
+              onClick={() => setIndex(i)}
+            >
               {code === defaultLocale && showWarning ? (
                 <ExclamationIcon
                   className={`w-4 h-4 mr-2 ${
@@ -97,8 +103,8 @@ export default function PlatformLocales({
           ))}
         </TabList>
 
-        {locales.map(({ code }) => (
-          <TabPanel key={code} id={`panel-${code}`} tabId={`id-${code}`}>
+        {locales.map(({ code }, i) => (
+          <TabPanel key={code} id={`panel-${code}`} tabId={`id-${code}`} tabIndex={i}>
             {React.cloneElement(children, { localeConfig: configs[code] })}
           </TabPanel>
         ))}

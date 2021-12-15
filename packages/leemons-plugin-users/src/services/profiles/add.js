@@ -61,6 +61,8 @@ async function add(
         transacting,
       });
 
+      leemons.events.emit('profile-permissions-change', { profile, permissions });
+
       return profile;
     },
     table.profiles,

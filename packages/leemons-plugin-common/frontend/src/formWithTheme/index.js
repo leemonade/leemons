@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { withTheme } from '@rjsf/core';
 import {
   Checkbox,
@@ -20,37 +20,38 @@ import datasetDataTypes from '@dataset/helpers/datasetDataTypes';
 import { getContactsRequest } from '@users/request';
 import Autosuggest from 'react-autosuggest';
 
-const MyCustomFormControl = ({ children, required, rawErrors, schema, descriptionOutside }) => {
-  return (
-    <>
-      <div>
-        {schema.description && descriptionOutside ? (
-          <div className="text-sm pb-2 text-secondary">{schema.description}</div>
-        ) : null}
-        <div className="flex">
-          <FormControl
-            formError={rawErrors ? { message: rawErrors[0] } : null}
-            label={`${schema.title ? schema.title : ''}${required ? '*' : ''}`}
-            className={`${schema.type !== 'boolean' ? 'w-full' : ''}`}
-            labelPosition="right"
-          >
-            {schema.description && !descriptionOutside ? (
-              <div className="text-sm pb-2 text-secondary">{schema.description}</div>
-            ) : null}
-            {children}
-          </FormControl>
-        </div>
+const getId = (props) =>
+  props.schema && props.schema.id ? props.schema.id : props.id.replace('root_', '');
+
+const MyCustomFormControl = ({ children, required, rawErrors, schema, descriptionOutside }) => (
+  <>
+    <div>
+      {schema.description && descriptionOutside ? (
+        <div className="text-sm pb-2 text-secondary">{schema.description}</div>
+      ) : null}
+      <div className="flex">
+        <FormControl
+          formError={rawErrors ? { message: rawErrors[0] } : null}
+          label={`${schema.title ? schema.title : ''}${required ? '*' : ''}`}
+          className={`${schema.type !== 'boolean' ? 'w-full' : ''}`}
+          labelPosition="right"
+        >
+          {schema.description && !descriptionOutside ? (
+            <div className="text-sm pb-2 text-secondary">{schema.description}</div>
+          ) : null}
+          {children}
+        </FormControl>
       </div>
-    </>
-  );
-};
+    </div>
+  </>
+);
 
 const TextareaWidget = (props) => {
-  const { className, onChange, value, id, disabled, autofocus, type, readonly } = props;
+  const { className, onChange, disabled, id, autofocus, type, readonly, value } = props;
   return (
     <MyCustomFormControl {...props}>
       {readonly ? (
-        <>{value}</>
+        <>{value?.value}</>
       ) : (
         <Textarea
           id={id}
@@ -59,8 +60,8 @@ const TextareaWidget = (props) => {
           disabled={disabled}
           className={`mr-10 w-full ${className}`}
           outlined={true}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
+          value={value?.value}
+          onChange={(event) => onChange({ ...value, value: event.target.value })}
         />
       )}
     </MyCustomFormControl>
@@ -115,7 +116,7 @@ const UserSelect = (props) => {
             id,
             name:
               name +
-              (surnames ? surnames : '') +
+              (surnames || '') +
               (profileName ? ` - ${pName}` : '') +
               (centerName ? ` - ${cName}` : ''),
           })
@@ -131,7 +132,7 @@ const UserSelect = (props) => {
 
   useEffect(() => {
     if (value && userAgents) {
-      const agent = _.find(userAgents, { id: value });
+      const agent = _.find(userAgents, { id: state?.value });
       if (agent && agent.name !== suggestionInputValue) {
         setSuggestionInputValue(agent.name);
       }
@@ -164,15 +165,13 @@ const UserSelect = (props) => {
           onSuggestionsClearRequested={onSuggestionsClearRequested}
           getSuggestionValue={(item) => item.name}
           onSuggestionSelected={(e, event) => {
-            onChange(event.suggestion.id);
+            onChange({ ...value, value: event.suggestion.id });
           }}
-          renderSuggestion={(item) => {
-            return <UserCard className={`minimal`}>{item.name}</UserCard>;
-          }}
+          renderSuggestion={(item) => <UserCard className={`minimal`}>{item.name}</UserCard>}
           inputProps={{
             placeholder: schema.selectPlaceholder,
             value: suggestionInputValue,
-            disabled: disabled,
+            disabled,
             onChange: (e, { newValue }) => {
               setSuggestionInputValue(newValue);
             },
@@ -211,7 +210,7 @@ const BaseInput = (props) => {
   return (
     <MyCustomFormControl {...props}>
       {readonly ? (
-        <>{value}</>
+        <>{value?.value}</>
       ) : (
         <Input
           id={id}
@@ -220,20 +219,22 @@ const BaseInput = (props) => {
           disabled={disabled}
           className={`mr-10 w-full ${className}`}
           outlined={true}
-          value={value}
+          value={value?.value}
           min={min}
           max={max}
-          onChange={(event) =>
-            onChange(
-              type === 'number'
-                ? event.target.value
-                  ? parseFloat(event.target.value)
-                  : undefined
-                : event.target.value
-                ? event.target.value
-                : undefined
-            )
-          }
+          onChange={(event) => {
+            onChange({
+              ...value,
+              value:
+                type === 'number'
+                  ? event.target.value
+                    ? parseFloat(event.target.value)
+                    : undefined
+                  : event.target.value
+                  ? event.target.value
+                  : undefined,
+            });
+          }}
         />
       )}
     </MyCustomFormControl>
@@ -267,13 +268,18 @@ function NumberField({ ...props }) {
 function CheckboxesWidget(props) {
   const { options, onChange, schema, rawErrors, required, readonly, ...rest } = props;
 
+  const indexOf = (value) => {
+    const values = _.map(rest.value, 'value');
+    return values.indexOf(value);
+  };
+
   const onCheckboxChange = (event, value) => {
     if (event.target.checked) {
-      if (rest.value.indexOf(value) < 0) {
-        onChange([...rest.value, value]);
+      if (indexOf(value) < 0) {
+        onChange([...rest.value, { value }]);
       }
     } else {
-      const index = rest.value.indexOf(value);
+      const index = indexOf(value);
       if (index >= 0) {
         rest.value.splice(index, 1);
         onChange(rest.value);
@@ -292,7 +298,7 @@ function CheckboxesWidget(props) {
                 <FormControl label={label} labelPosition="right">
                   <Checkbox
                     color={rawErrors ? 'error' : 'primary'}
-                    checked={rest.value.indexOf(value) >= 0}
+                    checked={indexOf(value) >= 0}
                     readOnly={readonly}
                     onChange={(event) => onCheckboxChange(event, value)}
                   />
@@ -308,7 +314,6 @@ function CheckboxesWidget(props) {
 
 function transformErrors(errors, t) {
   return errors.map((error) => {
-    console.log('error', error);
     if (error.name === 'format') {
       error.message = t(`format.${error.params.format}`);
     }
@@ -355,6 +360,8 @@ function SelectWidget(props) {
     ...rest
   } = props;
 
+  console.log(props.value);
+
   return (
     <MyCustomFormControl {...props}>
       <Select
@@ -363,11 +370,15 @@ function SelectWidget(props) {
         onFocus={onFocus}
         autoFocus={autofocus}
         readOnly={readonly}
-        onChange={(e) => (multiple ? onChange(e) : onChange(e.target.value))}
+        onChange={(e) =>
+          multiple
+            ? onChange(_.map(e, (d) => ({ value: d })))
+            : onChange({ ...props.value, value: e.target.value })
+        }
         outlined={true}
         multiple={multiple}
         className="w-full"
-        value={props.value}
+        value={multiple ? _.map(props.value, 'value') : props.value?.value}
       >
         {schema.selectPlaceholder ? (
           <option value="-" selected disabled>
@@ -419,8 +430,8 @@ function RadioWidget(props) {
                   onFocus={onFocus}
                   autoFocus={autofocus}
                   readOnly={readonly}
-                  checked={_value === value}
-                  onChange={() => onChange(_value)}
+                  checked={_value === value?.value}
+                  onChange={() => onChange({ ...value, value: _value })}
                   value={_value}
                 />
               </FormControl>
@@ -433,17 +444,8 @@ function RadioWidget(props) {
 }
 
 function CheckboxWidget(props) {
-  const {
-    required,
-    readonly,
-    disabled,
-    autofocus,
-    onChange,
-    value,
-    rawErrors,
-    schema,
-    ...rest
-  } = props;
+  const { required, readonly, disabled, autofocus, onChange, value, rawErrors, schema, ...rest } =
+    props;
 
   return (
     <div>
@@ -455,9 +457,9 @@ function CheckboxWidget(props) {
             color={rawErrors ? 'error' : 'primary'}
             autoFocus={autofocus}
             readOnly={readonly}
-            checked={value}
+            checked={value?.value}
             disabled={disabled}
-            onChange={(event) => onChange(event.target.checked)}
+            onChange={(event) => onChange({ ...value, value: event.target.checked })}
           />
         </FormControl>
       </div>
@@ -467,17 +469,8 @@ function CheckboxWidget(props) {
 }
 
 function ToggleWidget(props) {
-  const {
-    required,
-    readonly,
-    disabled,
-    autofocus,
-    onChange,
-    value,
-    rawErrors,
-    schema,
-    ...rest
-  } = props;
+  const { required, readonly, disabled, autofocus, onChange, value, rawErrors, schema, ...rest } =
+    props;
 
   return (
     <div>
@@ -489,9 +482,9 @@ function ToggleWidget(props) {
             color={rawErrors ? 'error' : 'primary'}
             autoFocus={autofocus}
             readOnly={readonly}
-            checked={value}
+            checked={value?.value}
             disabled={disabled}
-            onChange={(event) => onChange(event.target.checked)}
+            onChange={(event) => onChange({ ...value, value: event.target.checked })}
           />
         </FormControl>
       </div>
@@ -521,21 +514,61 @@ function PartError({ rawErrors }) {
 function columnsObjectFieldTemplate({ properties, uiSchema, ...rest }) {
   return (
     <div className={`flex ${uiSchema['ui:className'] || 'w-full'}`}>
-      {properties.map((prop) => {
-        return (
-          <div
-            key={prop.content.key}
-            className={prop.content.props.uiSchema['ui:className'] || 'w-full'}
-          >
-            {prop.content}
-          </div>
-        );
-      })}
+      {properties.map((prop) => (
+        <div
+          key={prop.content.key}
+          className={prop.content.props.uiSchema['ui:className'] || 'w-full'}
+        >
+          {prop.content}
+        </div>
+      ))}
     </div>
   );
 }
 
-export default function formWithTheme(schema, ui, conditions, props) {
+function returnValidJsonSchema(jsonSchema) {
+  const schema = {
+    type: 'object',
+    additionalProperties: false,
+    required: jsonSchema.required,
+    properties: {},
+  };
+
+  _.forIn(jsonSchema.properties, (value, key) => {
+    if (value.type === 'array') {
+      schema.properties[key] = {
+        type: 'array',
+        items: {
+          type: 'object',
+          additionalProperties: false,
+          required: ['value'],
+          properties: {
+            id: {
+              type: 'string',
+            },
+            value: value.items,
+          },
+        },
+      };
+    } else {
+      schema.properties[key] = {
+        type: 'object',
+        additionalProperties: false,
+        required: ['value'],
+        properties: {
+          id: {
+            type: 'string',
+          },
+          value,
+        },
+      };
+    }
+  });
+
+  return schema;
+}
+
+export default function index(schema, ui, conditions, props) {
   const { t } = useCommonTranslate('forms');
   const [r, setR] = useState(null);
   const FormWithConditionals = useRef(null);
@@ -552,8 +585,10 @@ export default function formWithTheme(schema, ui, conditions, props) {
           {...props}
           ref={(e) => {
             ref.current = e;
-            if (props?.ref) props.ref = e;
+            if (props.ref) props.ref = e;
           }}
+          schema={schema}
+          uiSchema={ui}
           liveValidate={liveValidate.current}
           transformErrors={(e) => transformErrors(e, t)}
           customFormats={customFormats}
@@ -568,12 +603,12 @@ export default function formWithTheme(schema, ui, conditions, props) {
 
   useEffect(() => {
     if (schema && ui) {
-      const _form = withTheme({
+      FormWithConditionals.current = withTheme({
         FieldTemplate,
         ErrorList,
         fields: {
           NumberField,
-          //BooleanField,
+          // BooleanField,
         },
         widgets: {
           BaseInput,
@@ -584,8 +619,29 @@ export default function formWithTheme(schema, ui, conditions, props) {
           CheckboxWidget,
           toggle: ToggleWidget,
         },
+        validateSchema: returnValidJsonSchema(schema),
+        transformAjvErrors: (errors) => {
+          if (errors === null) {
+            return [];
+          }
+
+          return errors.map((e) => {
+            const { dataPath, keyword, message, params, schemaPath } = e;
+            const property = `${dataPath.split('.')[1]}`;
+
+            // put data in expected format
+            return {
+              name: keyword,
+              property,
+              message,
+              params, // specific to ajv
+              stack: `${property} ${message}`.trim(),
+              schemaPath,
+            };
+          });
+        },
       });
-      FormWithConditionals.current =
+      /*
         schema && ui
           ? applyRules(
               _.cloneDeep(schema),
@@ -594,6 +650,8 @@ export default function formWithTheme(schema, ui, conditions, props) {
               Engine
             )(_form)
           : () => null;
+
+       */
       Form.current = getForm();
       render();
     }
@@ -613,10 +671,9 @@ export default function formWithTheme(schema, ui, conditions, props) {
   return [
     form,
     {
-      isLoaded: () => {
-        return !!ref.current;
-      },
+      isLoaded: () => !!ref.current,
       submit: () => {
+        console.log(ref);
         ref.current.formElement.dispatchEvent(
           new Event('submit', {
             cancelable: true,

@@ -40,16 +40,17 @@ async function deleteSchema(locationName, pluginName, { transacting: _transactin
     async (transacting) => {
       // ES: Pillamos los permisos por perfil para el jsonSchema
       // EN: We set the permissions per profile for jsonSchema
-      const { jsonSchema } = await table.dataset.findOne({ locationName, pluginName });
-
-      const {
-        profiles: profilePermissions,
-        roles: rolesPermissions,
-      } = transformPermissionKeysToObjectsByType(
-        jsonSchema,
-        getJsonSchemaProfilePermissionsKeysByType(jsonSchema),
-        `${locationName}.${pluginName}`
+      const { jsonSchema } = await table.dataset.findOne(
+        { locationName, pluginName },
+        { transacting }
       );
+
+      const { profiles: profilePermissions, roles: rolesPermissions } =
+        transformPermissionKeysToObjectsByType(
+          jsonSchema,
+          getJsonSchemaProfilePermissionsKeysByType(jsonSchema),
+          `${locationName}.${pluginName}`
+        );
 
       const promises = [
         table.dataset.update(

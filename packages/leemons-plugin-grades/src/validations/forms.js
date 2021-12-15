@@ -2,8 +2,7 @@ const _ = require('lodash');
 const { table } = require('../services/tables');
 
 const { LeemonsValidator } = global.utils;
-const { stringSchema } = require('./types');
-const { numberSchema } = require('leemons-plugin-menu-builder/src/validations/types');
+const { stringSchema, numberSchema } = require('./types');
 
 const addGradeSchema = {
   type: 'object',

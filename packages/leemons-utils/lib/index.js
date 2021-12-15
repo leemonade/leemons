@@ -24,8 +24,9 @@ const paginate = require('./paginate');
 const randomString = require('./randomString');
 const getObjectArrayKeys = require('./getObjectArrayKeys');
 const { withTransaction } = require('./withTransaction');
+const numberToEncodedLetter = require('./numberToEncodedLetter');
 
-squirrelly.helpers.define('printWithOutErrors', function ({ params }) {
+squirrelly.helpers.define('printWithOutErrors', ({ params }) => {
   const it = params[0];
   const prop = params[1];
   const value = _.get(it, prop, '');
@@ -56,11 +57,11 @@ module.exports = {
   withTransaction,
   squirrelly,
   getObjectArrayKeys,
-  timeoutPromise: (time) => {
-    return new Promise((resolve) => {
+  numberToEncodedLetter,
+  timeoutPromise: (time) =>
+    new Promise((resolve) => {
       setTimeout(() => {
         resolve();
       }, time);
-    });
-  },
+    }),
 };

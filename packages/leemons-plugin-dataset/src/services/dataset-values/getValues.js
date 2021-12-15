@@ -2,6 +2,7 @@ const _ = require('lodash');
 const existValues = require('./existValues');
 const getKeysCanAction = require('./getKeysCanAction');
 const { table } = require('../tables');
+const { getValuesForReturn } = require('./getValuesForReturn');
 
 /** *
  *  ES:
@@ -31,9 +32,10 @@ async function getValues(locationName, pluginName, userAgent, { target, keys, tr
   if (_keys) query.key_$in = _keys;
 
   const response = await table.datasetValues.find(query, { transacting });
+  const valuesByKey = _.groupBy(response, 'key');
 
   const data = response.reduce((acc, value) => {
-    acc[value.key] = JSON.parse(value.value);
+    acc[value.key] = getValuesForReturn(valuesByKey[value.key]);
     return acc;
   }, {});
 

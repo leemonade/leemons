@@ -100,7 +100,6 @@ async function add(ctx) {
 }
 
 async function update(ctx) {
-  console.log(ctx.request.body.emergencyPhoneNumbers);
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
     properties: {
