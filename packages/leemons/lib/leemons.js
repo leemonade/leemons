@@ -339,8 +339,7 @@ class Leemons {
 
   // Initialize the frontend handler
   setFrontRoutes() {
-	// TODO: Catch error when port 3000 not available
-	return null;
+    // TODO: Catch error when port 3000 not available
     // Next.js public path
     this.app.use(Static('./next/public'));
 
