@@ -7,6 +7,7 @@ function getValuesForSave(jsonSchema, key, value) {
         id: undefined,
         value: JSON.stringify(undefined),
         searchableValueString: undefined,
+        metadata: undefined,
       },
     ];
 
@@ -20,7 +21,9 @@ function getValuesForSave(jsonSchema, key, value) {
         id: val?.id || undefined,
         value: JSON.stringify(val.value),
         searchableValueString: val.searchableValueString || val.value,
-        metadata: JSON.stringify({ path: `[${index}]` }),
+        metadata: val.metadata
+          ? JSON.stringify({ ...val.metadata, path: `[${index}]` })
+          : JSON.stringify({ path: `[${index}]` }),
       }));
     }
     if (config.frontConfig.type === 'text_field' && config.frontConfig.onlyNumbers) {
@@ -29,6 +32,7 @@ function getValuesForSave(jsonSchema, key, value) {
           id: value?.id || undefined,
           value: JSON.stringify(value.value),
           searchableValueNumber: value.value,
+          metadata: JSON.stringify(value.metadata),
         },
       ];
     }
@@ -39,6 +43,7 @@ function getValuesForSave(jsonSchema, key, value) {
       id: value?.id || undefined,
       value: JSON.stringify(value.value),
       searchableValueString: value.searchableValueString || value.value,
+      metadata: JSON.stringify(value.metadata),
     },
   ];
 }

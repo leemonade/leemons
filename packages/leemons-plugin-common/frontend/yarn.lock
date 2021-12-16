@@ -10,16 +10,16 @@
     core-js "^2.6.5"
     regenerator-runtime "^0.13.4"
 
-"@rjsf/core@^3.0.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@rjsf/core/-/core-3.2.0.tgz#189ff7fb132cb223463792d75fb1e04e9dd5d9f9"
-  integrity sha512-Cgonq9bBWlpE0yeeIv7rAIDuJvO1wAvp9G7tT/UvhODAyb4tDb1q8J/8ubWuRRiEyzYUkuxN0W8uPIzQsJgtTQ==
+"@leemonade/rjsf-core@^3.0.0":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@leemonade/rjsf-core/-/rjsf-core-3.2.1.tgz#830c25e0d2b780ae4622e7b5405b6f154aa01b71"
+  integrity sha512-uQT1zsHrQ0gAMGqwmCoKNLxWE5k66IR50UGRSgwZ78d3uQvGUEMrCiL7NpOFGSGsKkjS7KcnqXOy0tTmE4d2Uw==
   dependencies:
     "@types/json-schema" "^7.0.7"
     ajv "^6.7.0"
     core-js-pure "^3.6.5"
     json-schema-merge-allof "^0.6.0"
-    jsonpointer "^4.0.1"
+    jsonpointer "^5.0.0"
     lodash "^4.17.15"
     nanoid "^3.1.23"
     prop-types "^15.7.2"
@@ -160,10 +160,10 @@ json-schema-traverse@^0.4.1:
   resolved "https://registry.yarnpkg.com/json-schema-traverse/-/json-schema-traverse-0.4.1.tgz#69f6a87d9513ab8bb8fe63bdb0979c448e684660"
   integrity sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==
 
-jsonpointer@^4.0.1:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/jsonpointer/-/jsonpointer-4.1.0.tgz#501fb89986a2389765ba09e6053299ceb4f2c2cc"
-  integrity sha512-CXcRvMyTlnR53xMcKnuMzfCA5i/nfblTnnr74CZb6C4vG39eu6w51t7nKmU5MfLfbTgGItliNyjO/ciNPDqClg==
+jsonpointer@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/jsonpointer/-/jsonpointer-5.0.0.tgz#f802669a524ec4805fa7389eadbc9921d5dc8072"
+  integrity sha512-PNYZIdMjVIvVgDSYKTT63Y+KZ6IZvGRNNWcxwD+GNnUz1MKPfv30J8ueCjdwcN0nDx2SlshgyB7Oy0epAzVRRg==
 
 lodash@^4.17.15, lodash@^4.17.4:
   version "4.17.21"

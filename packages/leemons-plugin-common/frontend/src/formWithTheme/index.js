@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { withTheme } from '@rjsf/core';
+import { withTheme } from '@leemonade/rjsf-core';
 import {
   Checkbox,
   FormControl,
