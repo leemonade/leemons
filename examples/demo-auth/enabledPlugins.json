@@ -12,5 +12,6 @@
   {"name": "package-manager", "path": "../../packages/leemons-plugin-package-manager/frontend"},
   {"name": "classroom", "path": "../../packages/leemons-plugin-classroom/frontend"},
   {"name": "media-library", "path": "../../packages/leemons-plugin-media-library/frontend"},
-  {"name": "families-emergency-numbers", "path": "../../packages/leemons-plugin-families-emergency-numbers/frontend"}
+  {"name": "families-emergency-numbers", "path": "../../packages/leemons-plugin-families-emergency-numbers/frontend"},
+  {"name": "curriculum", "path": "../../packages/leemons-plugin-curriculum/frontend"}
 ]
