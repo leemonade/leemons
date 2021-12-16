@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
-import { withTheme } from '@rjsf/core';
+import { withTheme } from '@leemonade/rjsf-core';
 import {
   Checkbox,
   FormControl,
@@ -20,30 +20,28 @@ import datasetDataTypes from '@dataset/helpers/datasetDataTypes';
 import { getContactsRequest } from '@users/request';
 import Autosuggest from 'react-autosuggest';
 
-const MyCustomFormControl = ({ children, required, rawErrors, schema, descriptionOutside }) => {
-  return (
-    <>
-      <div>
-        {schema.description && descriptionOutside ? (
-          <div className="text-sm pb-2 text-secondary">{schema.description}</div>
-        ) : null}
-        <div className="flex">
-          <FormControl
-            formError={rawErrors ? { message: rawErrors[0] } : null}
-            label={`${schema.title ? schema.title : ''}${required ? '*' : ''}`}
-            className={`${schema.type !== 'boolean' ? 'w-full' : ''}`}
-            labelPosition="right"
-          >
-            {schema.description && !descriptionOutside ? (
-              <div className="text-sm pb-2 text-secondary">{schema.description}</div>
-            ) : null}
-            {children}
-          </FormControl>
-        </div>
+const MyCustomFormControl = ({ children, required, rawErrors, schema, descriptionOutside }) => (
+  <>
+    <div>
+      {schema.description && descriptionOutside ? (
+        <div className="text-sm pb-2 text-secondary">{schema.description}</div>
+      ) : null}
+      <div className="flex">
+        <FormControl
+          formError={rawErrors ? { message: rawErrors[0] } : null}
+          label={`${schema.title ? schema.title : ''}${required ? '*' : ''}`}
+          className={`${schema.type !== 'boolean' ? 'w-full' : ''}`}
+          labelPosition="right"
+        >
+          {schema.description && !descriptionOutside ? (
+            <div className="text-sm pb-2 text-secondary">{schema.description}</div>
+          ) : null}
+          {children}
+        </FormControl>
       </div>
-    </>
-  );
-};
+    </div>
+  </>
+);
 
 const TextareaWidget = (props) => {
   const { className, onChange, value, id, disabled, autofocus, type, readonly } = props;
@@ -115,7 +113,7 @@ const UserSelect = (props) => {
             id,
             name:
               name +
-              (surnames ? surnames : '') +
+              (surnames || '') +
               (profileName ? ` - ${pName}` : '') +
               (centerName ? ` - ${cName}` : ''),
           })
@@ -166,13 +164,11 @@ const UserSelect = (props) => {
           onSuggestionSelected={(e, event) => {
             onChange(event.suggestion.id);
           }}
-          renderSuggestion={(item) => {
-            return <UserCard className={`minimal`}>{item.name}</UserCard>;
-          }}
+          renderSuggestion={(item) => <UserCard className={`minimal`}>{item.name}</UserCard>}
           inputProps={{
             placeholder: schema.selectPlaceholder,
             value: suggestionInputValue,
-            disabled: disabled,
+            disabled,
             onChange: (e, { newValue }) => {
               setSuggestionInputValue(newValue);
             },
@@ -433,17 +429,8 @@ function RadioWidget(props) {
 }
 
 function CheckboxWidget(props) {
-  const {
-    required,
-    readonly,
-    disabled,
-    autofocus,
-    onChange,
-    value,
-    rawErrors,
-    schema,
-    ...rest
-  } = props;
+  const { required, readonly, disabled, autofocus, onChange, value, rawErrors, schema, ...rest } =
+    props;
 
   return (
     <div>
@@ -467,17 +454,8 @@ function CheckboxWidget(props) {
 }
 
 function ToggleWidget(props) {
-  const {
-    required,
-    readonly,
-    disabled,
-    autofocus,
-    onChange,
-    value,
-    rawErrors,
-    schema,
-    ...rest
-  } = props;
+  const { required, readonly, disabled, autofocus, onChange, value, rawErrors, schema, ...rest } =
+    props;
 
   return (
     <div>
@@ -521,16 +499,14 @@ function PartError({ rawErrors }) {
 function columnsObjectFieldTemplate({ properties, uiSchema, ...rest }) {
   return (
     <div className={`flex ${uiSchema['ui:className'] || 'w-full'}`}>
-      {properties.map((prop) => {
-        return (
-          <div
-            key={prop.content.key}
-            className={prop.content.props.uiSchema['ui:className'] || 'w-full'}
-          >
-            {prop.content}
-          </div>
-        );
-      })}
+      {properties.map((prop) => (
+        <div
+          key={prop.content.key}
+          className={prop.content.props.uiSchema['ui:className'] || 'w-full'}
+        >
+          {prop.content}
+        </div>
+      ))}
     </div>
   );
 }
@@ -573,7 +549,7 @@ export default function formWithTheme(schema, ui, conditions, props) {
         ErrorList,
         fields: {
           NumberField,
-          //BooleanField,
+          // BooleanField,
         },
         widgets: {
           BaseInput,
@@ -613,9 +589,7 @@ export default function formWithTheme(schema, ui, conditions, props) {
   return [
     form,
     {
-      isLoaded: () => {
-        return !!ref.current;
-      },
+      isLoaded: () => !!ref.current,
       submit: () => {
         ref.current.formElement.dispatchEvent(
           new Event('submit', {
