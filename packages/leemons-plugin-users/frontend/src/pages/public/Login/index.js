@@ -1,40 +1,23 @@
-import * as _ from 'lodash';
-import React, { useState } from 'react';
-
-import { useForm } from 'react-hook-form';
+import React, { useState, useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import _ from 'lodash';
+import { LoginForm, ThemeProvider } from '@bubbles-ui/components';
 import {
   getRememberProfileRequest,
   getUserProfilesRequest,
   getUserProfileTokenRequest,
   loginRequest,
 } from '@users/request';
-
 import { getCookieToken, useSession } from '@users/session';
-
 import { goRecoverPage } from '@users/navigate';
-
 import HeroBgLayout from '@users/layout/heroBgLayout';
-
 import prefixPN from '@users/helpers/prefixPN';
-
 import constants from '@users/constants';
-
 import useTranslate from '@multilanguage/useTranslate';
-
 import tLoader from '@multilanguage/helpers/tLoader';
-
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-
-import { Alert, Button, FormControl, ImageLoader, Input } from 'leemons-ui';
-
-import { Link, useHistory } from 'react-router-dom';
-
-import Cookies from 'js-cookie';
-
 import hooks from 'leemons-hooks';
-
-const emailRegex =
-  /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
 export default function Login() {
   useSession({
@@ -43,21 +26,17 @@ export default function Login() {
   });
   const history = useHistory();
   const [formStatus, setFormStatus] = useState('');
+  const [formError, setFormError] = useState(null);
 
   const { t: tCommon } = useCommonTranslate('forms');
 
   const [translations] = useTranslate({ keysStartsWith: prefixPN('login') });
   const t = tLoader(prefixPN('login'), translations);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-
   const onSubmit = async (data) => {
     try {
       setFormStatus('loading');
+      setFormError(null);
       const response = await loginRequest(data);
       try {
         // Comprobamos si tiene recordado un perfil
@@ -80,87 +59,58 @@ export default function Login() {
             response.jwtToken = jwtToken;
           }
         }
-      } catch (e) {}
+      } catch (e) {
+        //
+      }
       // Finalmente metemos el token
       Cookies.set('token', response.jwtToken);
     } catch (err) {
-      if (_.isObject(err) && err.status === 401) setFormStatus('error-match');
-      if (_.isObject(err) && err.status === 500) setFormStatus('unknown-error');
+      if (_.isObject(err) && err.status === 401) {
+        setFormStatus('error-match');
+        setFormError(t('form_error'));
+      }
+      if (_.isObject(err) && err.status === 500) {
+        setFormStatus('unknown-error');
+        setFormError(tCommon('unknown_error'));
+      }
     }
   };
 
+  const messages = useMemo(
+    () => ({
+      title: t('title'),
+      usernameLabel: t('email'),
+      usernamePlaceholder: t('email'),
+      passwordLabel: t('password'),
+      passwordPlaceholder: t('password'),
+      rememberButtonLabel: t('remember_password'),
+      loginButtonLabel: t('log_in'),
+      signupButtonLabel: t('not_registered'),
+    }),
+    [t]
+  );
+
+  const errorMessages = useMemo(
+    () => ({
+      usernameRequired: tCommon('required'),
+      usernameInvalidFormat: tCommon('email'),
+      passwordRequired: tCommon('required'),
+    }),
+    [tCommon]
+  );
+
   return (
     <HeroBgLayout>
-      <h1 className="text-2xl mb-12">{t('title')}</h1>
-
-      {formStatus === 'error-match' || formStatus === 'unknown-error' ? (
-        <Alert color="error mb-8 -mt-4">
-          <div className="flex-1">
-            <label>
-              {formStatus === 'error-match' ? t('form_error') : tCommon('unknown_error')}
-            </label>
-          </div>
-        </Alert>
-      ) : null}
-
-      {/* Login Form */}
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {/* Email input */}
-        <FormControl formError={errors.email} label={t('email')} className="mb-6">
-          <Input
-            outlined={true}
-            placeholder={t('email')}
-            defaultValue="jaime@leemons.io"
-            {...register('email', {
-              required: tCommon('required'),
-              pattern: {
-                value: emailRegex,
-                message: tCommon('email'),
-              },
-            })}
-          />
-        </FormControl>
-
-        {/* Password input */}
-        <FormControl formError={errors.password} label={t('password')}>
-          <Input
-            type="password"
-            outlined={true}
-            placeholder={t('password')}
-            defaultValue="testing"
-            {...register('password', { required: tCommon('required') })}
-          />
-        </FormControl>
-
-        {/* Go recover page */}
-        <div>
-          <Link to={goRecoverPage(history, true)} className="text-sm">
-            {t('remember_password')}
-          </Link>
-        </div>
-
-        {/* Send form */}
-        <Button
-          className="my-8 btn-block"
-          loading={formStatus === 'loading'}
-          color="primary"
-          rounded={true}
-        >
-          <div className="flex-1 text-left">{t('log_in')}</div>
-          <div className="relative" style={{ width: '8px', height: '14px' }}>
-            <ImageLoader src="/public/assets/svgs/chevron-right.svg" />
-          </div>
-        </Button>
-
-        {/* Go register page */}
-        {/*
-                <div className="text-center text-sm text-primary">
-                  <Link href="">
-                    <a>{t('not_registered')}</a>
-                  </Link>
-                </div>
-              */}
-      </form>
+      <ThemeProvider>
+        <LoginForm
+          messages={messages}
+          errorMessages={errorMessages}
+          recoverUrl={goRecoverPage(history, true)}
+          onSubmit={onSubmit}
+          isLoading={formStatus === 'loading'}
+          formError={formError}
+        />
+      </ThemeProvider>
     </HeroBgLayout>
   );
 }
