@@ -11,6 +11,15 @@ module.exports = {
         notNull: true,
       },
     },
+    description: {
+      type: 'string',
+    },
+    country: {
+      type: 'string',
+      options: {
+        notNull: true,
+      },
+    },
     locale: {
       type: 'string',
       options: {

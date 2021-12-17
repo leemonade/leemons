@@ -1,3 +1,3 @@
-import addFamily from './addFamily';
+import addCurriculum from './addCurriculum';
 
-export const addFamilyRequest = addFamily;
+export const addCurriculumRequest = addCurriculum;

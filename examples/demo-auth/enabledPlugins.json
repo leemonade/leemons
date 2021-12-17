@@ -13,5 +13,6 @@
   {"name": "classroom", "path": "../../packages/leemons-plugin-classroom/frontend"},
   {"name": "media-library", "path": "../../packages/leemons-plugin-media-library/frontend"},
   {"name": "families-emergency-numbers", "path": "../../packages/leemons-plugin-families-emergency-numbers/frontend"},
-  {"name": "curriculum", "path": "../../packages/leemons-plugin-curriculum/frontend"}
+  {"name": "curriculum", "path": "../../packages/leemons-plugin-curriculum/frontend"},
+  {"name": "academic-portfolio", "path": "../../packages/leemons-plugin-academic-portfolio/frontend"}
 ]

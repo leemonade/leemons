@@ -8,11 +8,13 @@ const addCurriculumSchema = {
   type: 'object',
   properties: {
     name: stringSchema,
+    description: stringSchema,
+    country: stringSchema,
     locale: stringSchema,
     center: stringSchema,
     program: stringSchema,
   },
-  required: ['name', 'locale', 'center', 'program'],
+  required: ['name', 'country', 'locale', 'center', 'program'],
   additionalProperties: false,
 };
 function validateAddCurriculum(data) {

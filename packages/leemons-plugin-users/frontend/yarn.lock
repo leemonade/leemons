@@ -9,10 +9,10 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@bubbles-ui/components@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.0.1.tgz#1be24acb71e4d5ff7a098442f43ee2ab367104b2"
-  integrity sha512-hcb02XSj97gBCujMSp088DiaQwUj9usrVFubg3yQRSojcVONGnuS+ZSREUPqu2EGmj5GIh15W4fYb5MLWISdkA==
+"@bubbles-ui/components@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.0.7.tgz#5b4b5a3f1fdb0a120d8b7caac223866bcaf05a14"
+  integrity sha512-q9MBJimk2tJJkylZNTrYB9SP89eYLkiU/1QsT+5C2ztzPFRZGiXZtBHnlAxDwRzbIVisRzvNsJsHCqf5/eB+Fg==
   dependencies:
     "@bubbles-ui/icons" "1.0.0"
     "@heroicons/react" "^1.0.5"
