@@ -196,6 +196,41 @@ function AddCurriculumStep2() {
     }
   }
 
+  const groupChilds = [
+    <Box key="child-1">
+      <Tree
+        {...tree}
+        rootId={0}
+        onAdd={() => setActiveRightSection('new-branch')}
+        onDelete={(node) => alert(`Delete nodeId: ${node.id}`)}
+        onEdit={(node) => alert(`Editing ${node.id}`)}
+        onSelect={onSelect}
+      />
+    </Box>,
+  ];
+
+  if (activeRightSection === 'new-branch') {
+    groupChilds.push(
+      <Box key="child-2">
+        <NewBranchConfig
+          messages={messages}
+          errorMessages={errorMessages}
+          orderedData={orderedData}
+          isLoading={saving}
+          onSubmit={addNewBranch}
+        />
+      </Box>
+    );
+  }
+
+  if (activeRightSection === 'detail-branch') {
+    groupChilds.push(
+      <Box>
+        <BranchContent branch={activeNodeLevel} onSaveBlock={onSaveBlock} />
+      </Box>
+    );
+  }
+
   if (loading) {
     return <Box>Loading...</Box>;
   }
@@ -215,33 +250,9 @@ function AddCurriculumStep2() {
       <Box mb={16}>
         <Text role={'productive'}>{t('description2')}</Text>
       </Box>
+
       <Group grow align="start">
-        <Box>
-          <Tree
-            {...tree}
-            rootId={0}
-            onAdd={() => setActiveRightSection('new-branch')}
-            onDelete={(node) => alert(`Delete nodeId: ${node.id}`)}
-            onEdit={(node) => alert(`Editing ${node.id}`)}
-            onSelect={onSelect}
-          />
-        </Box>
-        {activeRightSection === 'new-branch' ? (
-          <Box>
-            <NewBranchConfig
-              messages={messages}
-              errorMessages={errorMessages}
-              orderedData={orderedData}
-              isLoading={saving}
-              onSubmit={addNewBranch}
-            />
-          </Box>
-        ) : null}
-        {activeRightSection === 'detail-branch' ? (
-          <Box>
-            <BranchContent branch={activeNodeLevel} onSaveBlock={onSaveBlock} />
-          </Box>
-        ) : null}
+        {groupChilds}
       </Group>
     </Box>
   );

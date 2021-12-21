@@ -2,97 +2,12 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
 import { Box, Group, TextInput, Select, Button } from '@bubbles-ui/components';
-import { forIn } from 'lodash';
 import BranchBlockField from './BranchBlockField';
-
-export const BRANCH_BLOCK_MESSAGES = {
-  blockNameLabel: 'Content Block Name',
-  blockNamePlaceholder: 'Name...',
-  blockTypeLabel: 'Type',
-  blockTypePlaceholder: 'Select...',
-  blockTypeNothingFound: 'No data',
-  blockOrderedLabel: 'Ordered',
-  blockOrderedPlaceholder: 'Select...',
-  groupTypeOfContentLabel: 'Type of Content',
-  groupTypeOfContentPLaceholder: 'Select...',
-  groupContentConfigLabel: 'Content config',
-  groupAddColumnButtonLabel: 'Add Column',
-  fieldLimitCharactersLabel: 'Limited characters',
-  fieldMinLabel: 'Min',
-  fieldMinPlaceholder: 'Min...',
-  fieldMaxLabel: 'Max',
-  fieldMaxPlaceholder: 'Max...',
-  blockSaveConfigButtonLabel: 'Save Config',
-};
-
-export const BRANCH_BLOCK_ERROR_MESSAGES = {
-  blockNameRequired: 'Field required',
-  blockTypeRequired: 'Field required',
-  blockOrderedRequired: 'Field required',
-  fieldMinRequired: 'Field required',
-  fieldMaxRequired: 'Field required',
-};
-
-export const BRANCH_BLOCK_SELECT_DATA = {
-  blockType: [
-    {
-      label: 'Field',
-      value: 'field',
-    },
-    {
-      label: 'Code',
-      value: 'code',
-    },
-    {
-      label: 'Text area',
-      value: 'textarea',
-    },
-    {
-      label: 'List',
-      value: 'list',
-    },
-    {
-      label: 'Group',
-      value: 'group',
-    },
-  ],
-  blockOrdered: [
-    {
-      label: 'Not ordered',
-      value: 'not-ordered',
-    },
-    {
-      label: 'Only bullets',
-      value: 'bullets',
-    },
-    {
-      label: 'Numbering Style 1 (1,2,3,...)',
-      value: 'style-1',
-    },
-    {
-      label: 'Numbering Style 2 (A,B,C,...)',
-      value: 'style-2',
-    },
-  ],
-  groupTypeOfContents: [
-    {
-      label: 'Field',
-      value: 'field',
-    },
-    {
-      label: 'Code',
-      value: 'code',
-    },
-    {
-      label: 'Text area',
-      value: 'textarea',
-    },
-    {
-      label: 'List',
-      value: 'list',
-    },
-  ],
-};
+import {
+  BRANCH_CONTENT_ERROR_MESSAGES,
+  BRANCH_CONTENT_MESSAGES,
+  BRANCH_CONTENT_SELECT_DATA,
+} from './branchContentDefaultValues';
 
 function BranchBlock({ messages, errorMessages, isLoading, selectData, onSubmit }) {
   const form = useForm();
@@ -170,9 +85,9 @@ function BranchBlock({ messages, errorMessages, isLoading, selectData, onSubmit 
 }
 
 BranchBlock.defaultProps = {
-  messages: BRANCH_BLOCK_MESSAGES,
-  errorMessages: BRANCH_BLOCK_ERROR_MESSAGES,
-  selectData: BRANCH_BLOCK_SELECT_DATA,
+  messages: BRANCH_CONTENT_MESSAGES,
+  errorMessages: BRANCH_CONTENT_ERROR_MESSAGES,
+  selectData: BRANCH_CONTENT_SELECT_DATA,
   isLoading: false,
   onSubmit: () => {},
 };

@@ -1,27 +1,16 @@
 import React, { useState } from 'react';
+import { values } from 'lodash';
 import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
-import { Box, Title, Group, TextInput, Select, Button } from '@bubbles-ui/components';
+import { Box, Title, Group, TextInput, Select, Button, Table } from '@bubbles-ui/components';
 import BranchBlock from './BranchBlock';
+import {
+  BRANCH_CONTENT_ERROR_MESSAGES,
+  BRANCH_CONTENT_MESSAGES,
+  BRANCH_CONTENT_SELECT_DATA,
+} from './branchContentDefaultValues';
 
-export const BRANCH_CONTENT_MESSAGES = {
-  addContent: 'Add Content',
-};
-
-export const BRANCH_CONTENT_ERROR_MESSAGES = {
-  nameRequired: 'Field required',
-  orderedRequired: 'Field required',
-};
-
-function BranchContent({ messages, errorMessages, branch, isLoading, onSaveBlock }) {
+function BranchContent({ messages, errorMessages, selectData, branch, isLoading, onSaveBlock }) {
   const [addBlock, setAddBlock] = useState(false);
-
-  const {
-    watch,
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
 
   if (!branch) return 'Branch required';
 
@@ -29,8 +18,9 @@ function BranchContent({ messages, errorMessages, branch, isLoading, onSaveBlock
     if (addBlock) {
       return (
         <BranchBlock
-          // messages={messages}
-          // errorMessages={errorMessages}
+          messages={messages}
+          errorMessages={errorMessages}
+          selectData={selectData}
           isLoading={isLoading}
           branch={branch}
           onSubmit={onSaveBlock}
@@ -44,13 +34,36 @@ function BranchContent({ messages, errorMessages, branch, isLoading, onSaveBlock
     );
   }
 
-  // branch.schema.jsonSchema.properties
-  return <Box m={32}></Box>;
+  return (
+    <Box m={32}>
+      <Table>
+        <thead>
+          <tr>
+            <th>{messages.blockNameLabel}</th>
+            <th>{messages.blockTypeLabel}</th>
+            <th>{messages.blockOrderedLabel}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {values(branch.schema.jsonSchema.properties).map((item) => (
+            <tr key={item.id}>
+              <td>{item.frontConfig.name}</td>
+              <td>{item.frontConfig.type}</td>
+              <td></td>
+              <td></td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </Box>
+  );
 }
 
 BranchContent.defaultProps = {
   messages: BRANCH_CONTENT_MESSAGES,
   errorMessages: BRANCH_CONTENT_ERROR_MESSAGES,
+  selectData: BRANCH_CONTENT_SELECT_DATA,
   onSaveBlock: () => {},
   isLoading: false,
 };
@@ -58,6 +71,7 @@ BranchContent.defaultProps = {
 BranchContent.propTypes = {
   messages: PropTypes.object,
   errorMessages: PropTypes.object,
+  selectData: PropTypes.object,
   branch: PropTypes.object,
   onSaveBlock: PropTypes.func,
   isLoading: PropTypes.bool,
