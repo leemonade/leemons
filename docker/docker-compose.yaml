@@ -10,10 +10,12 @@ services:
       - ../packages:/monorepo/packages
       - ../node_modules:/monorepo/node_modules
       - ../yarn.lock:/monorepo/yarn.lock
+      - ./src/front:/front
+
     links:
       - mysql
     working_dir: /monorepo/app
-    command: "sh -c 'yarn --cwd .. -s; yarn dev'"
+    command: "sh -c 'yarn global add serve; yarn --cwd .. -s; serve -p 3000 /front & yarn dev'"
     restart: always
     ports:
       - 8080:8080
