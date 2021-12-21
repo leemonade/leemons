@@ -1,5 +1,9 @@
 module.exports = {
-  addCurriculumStep1: {
+  addCurriculum: {
+    newCurriculum: 'New curriculum',
+    description1:
+      'Start by defining the structure of your curricular content, later you can complete it by creating the specific content for each section',
+    description2: 'Start by choosing the program to create the structure of your curriculum',
     nameLabel: 'Name',
     namePlaceholder: 'Enter name...',
     countryLabel: 'Country',
@@ -27,5 +31,41 @@ module.exports = {
     languageRequired: 'Field required',
     centerRequired: 'Field required',
     programRequired: 'Field required',
+  },
+  addCurriculumStep1: {
+    description1:
+      'Start by defining the structure of your curricular content, later you can complete it by creating the specific content for each section',
+    description2:
+      'It is possible that not all branches of your programs have curriculum content. Select here which levels of your portfolio you will use to manage the curriculum content.',
+    saveButtonLabel: 'Save tree',
+    program: 'Program',
+    courses: 'Course',
+    groups: 'Group',
+    subjectType: 'Type',
+    knowledges: 'Area',
+  },
+  addCurriculumStep2: {
+    description1:
+      'Start by defining the structure of your curricular content, later you can complete it by creating the specific content for each section',
+    description2:
+      'It is possible that not all branches of your programs have curriculum content. Select here which levels of your portfolio you will use to manage the curriculum content.',
+    continueButtonLabel: 'Continue',
+    addBranchButtonLabel: 'Add branch',
+    title: 'Branch config',
+    nameLabel: 'New Branch Name',
+    namePlaceholder: 'Branch name...',
+    orderedLabel: 'Ordered:',
+    orderedPlaceholder: 'Select...',
+    orderedNothingFound: 'No data',
+    saveButtonLabel: 'Save config',
+    nameRequired: 'Field required',
+    orderedRequired: 'Field required',
+    orderedOptions: {
+      'not-ordered': 'Not ordered',
+      bullets: 'Only bullets',
+      'style-1': 'Numbering Style 1 (1,2,3,...)',
+      'style-2': 'Numbering Style 2 (A,B,C,...)',
+      custom: 'Custom numbering',
+    },
   },
 };

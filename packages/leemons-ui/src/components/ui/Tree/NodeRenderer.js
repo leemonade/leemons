@@ -146,7 +146,7 @@ export default function NodeRenderer({
         <div className="flex-1 pr-1">
           <Button color="primary" text className="btn-sm w-full mb-1" onClick={handleOnAdd}>
             <PlusCircleIcon className="text-primary w-4 h-4 mr-2" />
-            <div className="flex-1 text-left">{`${node.text}`}</div>
+            <div className="flex-1 text-left">{node.text}</div>
           </Button>
         </div>
       ) : (
@@ -156,7 +156,7 @@ export default function NodeRenderer({
             'text-primary': isSelected,
           })}
         >
-          <span>{`${node.text}`}</span>
+          <span>{node.text}</span>
         </div>
       )}
 

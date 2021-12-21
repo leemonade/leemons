@@ -1,5 +1,9 @@
 module.exports = {
-  addCurriculumStep1: {
+  addCurriculum: {
+    newCurriculum: 'Nuevo curriculum',
+    description1:
+      'Comience por definir la estructura de su contenido curricular, más tarde podrá completarlo creando el contenido específico de cada sección',
+    description2: 'Comience por elegir el programa para crear la estructura de su plan de estudios',
     nameLabel: 'Nombre',
     namePlaceholder: 'Introduzca el nombre...',
     countryLabel: 'País',
@@ -27,5 +31,41 @@ module.exports = {
     languageRequired: 'Campo requerido',
     centerRequired: 'Campo requerido',
     programRequired: 'Campo requerido',
+  },
+  addCurriculumStep1: {
+    description1:
+      'Comienza definiendo la estructura de tus contenidos curriculares, posteriormente puedes completarla creando los contenidos específicos de cada sección',
+    description2:
+      'Es posible que no todas las ramas de tus programas tengan contenido curricular. Seleccione aquí qué niveles de su cartera utilizará para gestionar el contenido curricular.',
+    saveButtonLabel: 'Guardar árbol',
+    program: 'Programa',
+    courses: 'Curso',
+    groups: 'Grupo',
+    subjectType: 'Tipo',
+    knowledges: 'Area',
+  },
+  addCurriculumStep2: {
+    description1:
+      'Comienza definiendo la estructura de tus contenidos curriculares, posteriormente puedes completarla creando los contenidos específicos de cada sección',
+    description2:
+      'Es posible que no todas las ramas de tus programas tengan contenido curricular. Seleccione aquí qué niveles de su cartera utilizará para gestionar el contenido curricular.',
+    continueButtonLabel: 'Continuar',
+    addBranchButtonLabel: 'Añadir rama',
+    title: 'Configuración de la rama',
+    nameLabel: 'Nombre de la nueva rama',
+    namePlaceholder: 'Nombre de la rama...',
+    orderedLabel: 'Orden:',
+    orderedPlaceholder: 'Seleccione...',
+    orderedNothingFound: 'Sin datos',
+    saveButtonLabel: 'Guardar configuración',
+    nameRequired: 'Campo necesario',
+    orderedRequired: 'Campo necesario',
+    orderedOptions: {
+      'not-ordered': 'Sin ordenar',
+      bullets: 'Solo circulos',
+      'style-1': 'Estilo de numeración 1 (1,2,3,...)',
+      'style-2': 'Estilo de numeración 2 (A,B,C,...)',
+      custom: 'Numeración personalizada',
+    },
   },
 };

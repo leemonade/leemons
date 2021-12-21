@@ -13,6 +13,12 @@ const addCurriculumSchema = {
     locale: stringSchema,
     center: stringSchema,
     program: stringSchema,
+    tags: {
+      type: 'array',
+      items: {
+        type: 'string',
+      },
+    },
   },
   required: ['name', 'country', 'locale', 'center', 'program'],
   additionalProperties: false,

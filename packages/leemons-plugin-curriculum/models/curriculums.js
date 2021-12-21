@@ -36,6 +36,13 @@ module.exports = {
         collection: 'plugins_academic-portfolio::programs',
       },
     },
+    status: {
+      type: 'string',
+      enum: ['draft', 'published', 'archived'],
+      options: {
+        defaultTo: 'draft',
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

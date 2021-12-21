@@ -1,121 +1,191 @@
-import React, { useMemo, useEffect, useState } from 'react';
-import { forIn, map } from 'lodash';
+import React, { useEffect, useState } from 'react';
+import { find, forEach } from 'lodash';
 import { withLayout } from '@layout/hoc';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getPlatformLocalesRequest, listCentersRequest } from '@users/request';
 import prefixPN from '@curriculum/helpers/prefixPN';
-import {
-  Box,
-  Title,
-  Text,
-  AddCurriculumForm,
-  ADD_CURRICULUM_FORM_MESSAGES,
-  ADD_CURRICULUM_FORM_ERROR_MESSAGES,
-} from '@bubbles-ui/components';
-import { listProgramsRequest } from '@academic-portfolio/request';
-import countryList from 'country-region-data';
-import { addCurriculumRequest } from '../../../request';
+import { listCentersRequest } from '@users/request';
+import { Box, Text, Title, Button } from '@bubbles-ui/components';
+import { useHistory, useParams } from 'react-router-dom';
+import { detailProgramRequest } from '@academic-portfolio/request';
+import { Tree, useTree } from 'leemons-ui';
+import { addNodeLevelsRequest, detailCurriculumRequest } from '../../../request';
 
 function AddCurriculumStep1() {
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [selectData, setSelectData] = useState({});
-  const [t] = useTranslateLoader(prefixPN('addCurriculumStep1'));
+  const [t, translations] = useTranslateLoader(prefixPN('addCurriculumStep1'));
+  const [curriculum, setCurriculum] = useState({});
+  const [nodeLevels, setNodeLevels] = useState([]);
 
-  const messages = useMemo(() => {
-    const result = {};
-    forIn(ADD_CURRICULUM_FORM_MESSAGES, (value, key) => {
-      result[key] = t(key);
-    });
-    return result;
-  }, [t]);
+  const tree = useTree();
+  const history = useHistory();
+  const { id } = useParams();
 
-  const errorMessages = useMemo(() => {
-    const result = {};
-    forIn(ADD_CURRICULUM_FORM_ERROR_MESSAGES, (value, key) => {
-      result[key] = t(key);
-    });
-    return result;
-  }, [t]);
+  function onCheckboxChange(event, nodeLevel, levelOrder) {
+    if (event.target.checked) {
+      nodeLevels[levelOrder] = nodeLevel;
+      setNodeLevels([...nodeLevels]);
+    } else {
+      delete nodeLevels[levelOrder];
+      setNodeLevels([...nodeLevels]);
+    }
+  }
 
-  const load = async () => {
+  // eslint-disable-next-line react/prop-types
+  function NodeLevelInput({ nodeLevel, levelOrder }) {
+    return (
+      <input
+        type="checkbox"
+        checked={nodeLevels.indexOf(nodeLevel) >= 0}
+        onChange={(e) => onCheckboxChange(e, nodeLevel, levelOrder)}
+      />
+    );
+  }
+
+  useEffect(() => {
+    tree.setTreeData([
+      {
+        id: 'program',
+        parent: 0,
+        draggable: false,
+        text: (
+          <>
+            <NodeLevelInput nodeLevel="program" levelOrder={1} />
+            {t('program')}
+          </>
+        ),
+      },
+      {
+        id: 'courses',
+        parent: 'program',
+        draggable: false,
+        text: (
+          <>
+            <NodeLevelInput nodeLevel="courses" levelOrder={2} />
+            {t('courses')}
+          </>
+        ),
+      },
+      {
+        id: 'groups',
+        parent: 'courses',
+        draggable: false,
+        text: (
+          <>
+            <NodeLevelInput nodeLevel="groups" levelOrder={3} />
+            {t('groups')}
+          </>
+        ),
+      },
+      {
+        id: 'knowledges',
+        parent: 'subjectType',
+        draggable: false,
+        text: (
+          <>
+            <NodeLevelInput nodeLevel="knowledges" levelOrder={4} />
+            {t('knowledges')}
+          </>
+        ),
+      },
+      {
+        id: 'subjectType',
+        parent: 'groups',
+        draggable: false,
+        text: (
+          <>
+            <NodeLevelInput nodeLevel="subjectType" levelOrder={5} />
+            {t('subjectType')}
+          </>
+        ),
+      },
+    ]);
+  }, [translations, nodeLevels]);
+
+  async function load() {
     try {
+      setLoading(true);
       const [
-        { locales },
+        { curriculum: c },
         {
           data: { items: centers },
         },
       ] = await Promise.all([
-        getPlatformLocalesRequest(),
+        detailCurriculumRequest(id),
         listCentersRequest({ page: 0, size: 999999 }),
       ]);
 
-      setSelectData({
-        country: map(countryList, (item) => ({
-          value: item.countryShortCode,
-          label: item.countryName,
-        })),
-        language: map(locales, (item) => ({ value: item.code, label: item.name })),
-        center: map(centers, (item) => ({ value: item.id, label: item.name })),
-      });
-    } catch (e) {
-      console.error('e', e);
-    }
-  };
+      const { program } = await detailProgramRequest(c.program);
 
-  const getProgramsListForCenter = async (center) => {
-    const {
-      data: { items: programs },
-    } = await listProgramsRequest({ page: 0, size: 999999, center });
-    return map(programs, (p) => ({ value: p.id, label: p.name }));
-  };
+      c.program = program;
+      c.center = find(centers, { id: c.center });
+
+      setCurriculum(c);
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
     load();
   }, []);
 
-  const onFormChange = async ({ value, name }) => {
-    if (name === 'center') {
-      const program = await getProgramsListForCenter(value.center);
-      setSelectData({ ...selectData, program });
-    }
-  };
-
-  const onSubmit = async ({ language, ...data }) => {
+  async function save() {
     try {
       setSaving(true);
-      const { curriculum } = await addCurriculumRequest({ ...data, locale: language });
-      console.log(curriculum);
+      const toSend = [];
+      forEach(nodeLevels, (nodeLevel) => {
+        if (nodeLevel) {
+          toSend.push({
+            name: t(nodeLevel),
+            type: nodeLevel,
+            listType: 'style-1',
+            levelOrder: toSend.length,
+          });
+        }
+      });
+      await addNodeLevelsRequest(curriculum.id, toSend);
+      await history.push(`/private/curriculum/${curriculum.id}/step/2`);
       setSaving(false);
     } catch (e) {
-      console.error('e', e);
       setSaving(false);
     }
-  };
+  }
 
+  if (loading) {
+    return <Box>Loading...</Box>;
+  }
   return (
     <Box m={32}>
       <Box mb={12}>
-        <Title>New curriculum</Title>
+        <Title>{curriculum.name}</Title>
       </Box>
       <Box mb={12}>
-        <Text role={'productive'}>
-          Start by defining the structure of your curricular content, later you can complete it by
-          creating the specific content for each section
-        </Text>
+        <Title order={3}>
+          {curriculum.center.name}|{curriculum.program.name}
+        </Title>
+      </Box>
+      <Box mb={12}>
+        <Text role={'productive'}>{t('description1')}</Text>
       </Box>
       <Box mb={16}>
-        <Text role={'productive'}>
-          Start by choosing the program to create the structure of your curriculum
-        </Text>
+        <Text role={'productive'}>{t('description2')}</Text>
       </Box>
-      <AddCurriculumForm
-        messages={messages}
-        errorMessages={errorMessages}
-        selectData={selectData}
-        isLoading={saving}
-        onSubmit={onSubmit}
-        onFormChange={onFormChange}
-      />
+      <Box>
+        <Tree
+          {...tree}
+          rootId={0}
+          onAdd={(id) => alert(`Add Node inside parentId: ${id}`)}
+          onDelete={(node) => alert(`Delete nodeId: ${node.id}`)}
+          onEdit={(node) => alert(`Editing ${node.id}`)}
+        />
+        <Box mt={16}>
+          <Button rounded size="xs" loading={saving} loaderPosition="right" onClick={save}>
+            {t('saveButtonLabel')}
+          </Button>
+        </Box>
+      </Box>
     </Box>
   );
 }
