@@ -9,8 +9,8 @@ import {
   BRANCH_CONTENT_SELECT_DATA,
 } from './branchContentDefaultValues';
 
-function BranchBlock({ messages, errorMessages, isLoading, selectData, onSubmit }) {
-  const form = useForm();
+function BranchBlock({ messages, errorMessages, isLoading, selectData, defaultValues, onSubmit }) {
+  const form = useForm({ defaultValues });
 
   const {
     watch,
@@ -30,7 +30,13 @@ function BranchBlock({ messages, errorMessages, isLoading, selectData, onSubmit 
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form
+      onSubmit={handleSubmit((data) => {
+        const d = { ...data };
+        if (defaultValues) d.id = defaultValues.id;
+        onSubmit(d);
+      })}
+    >
       <Group grow>
         <Box>
           <Controller
@@ -96,6 +102,7 @@ BranchBlock.propTypes = {
   messages: PropTypes.object,
   errorMessages: PropTypes.object,
   selectData: PropTypes.object.isRequired,
+  defaultValues: PropTypes.object,
   isLoading: PropTypes.bool,
   onSubmit: PropTypes.func,
 };

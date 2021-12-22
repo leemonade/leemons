@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { find, forEach, forIn, orderBy, cloneDeep } from 'lodash';
+import { find, forEach, forIn, orderBy, cloneDeep, findIndex } from 'lodash';
 import { withLayout } from '@layout/hoc';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { listCentersRequest } from '@users/request';
-import { Box, Text, Title, Button, Group } from '@bubbles-ui/components';
+import { Box, Text, Title, Button, Group, Tree, useTree } from '@bubbles-ui/components';
 import { useHistory, useParams } from 'react-router-dom';
 import { detailProgramRequest } from '@academic-portfolio/request';
-import { Tree, useTree } from 'leemons-ui';
 import { saveDatasetFieldRequest } from '@dataset/request';
 import { addNodeLevelsRequest, detailCurriculumRequest } from '../../../request';
 import NewBranchConfig, {
@@ -16,6 +15,11 @@ import NewBranchConfig, {
   NEW_BRANCH_CONFIG_ORDERED_OPTIONS,
 } from '../../../bubbles-components/NewBranchConfig';
 import BranchContent from '../../../bubbles-components/BranchContent';
+import {
+  BRANCH_CONTENT_ERROR_MESSAGES,
+  BRANCH_CONTENT_MESSAGES,
+  BRANCH_CONTENT_SELECT_DATA,
+} from '../../../bubbles-components/branchContentDefaultValues';
 
 function AddCurriculumStep2() {
   const [loading, setLoading] = useState(true);
@@ -29,7 +33,7 @@ function AddCurriculumStep2() {
   const history = useHistory();
   const { id } = useParams();
 
-  const messages = useMemo(() => {
+  const messagesConfig = useMemo(() => {
     const result = {};
     forIn(NEW_BRANCH_CONFIG_MESSAGES, (value, key) => {
       result[key] = t(key);
@@ -37,9 +41,25 @@ function AddCurriculumStep2() {
     return result;
   }, [t]);
 
-  const errorMessages = useMemo(() => {
+  const errorMessagesConfig = useMemo(() => {
     const result = {};
     forIn(NEW_BRANCH_CONFIG_ERROR_MESSAGES, (value, key) => {
+      result[key] = t(key);
+    });
+    return result;
+  }, [t]);
+
+  const messagesContent = useMemo(() => {
+    const result = {};
+    forIn(BRANCH_CONTENT_MESSAGES, (value, key) => {
+      result[key] = t(key);
+    });
+    return result;
+  }, [t]);
+
+  const errorMessagesContent = useMemo(() => {
+    const result = {};
+    forIn(BRANCH_CONTENT_ERROR_MESSAGES, (value, key) => {
       result[key] = t(key);
     });
     return result;
@@ -52,6 +72,20 @@ function AddCurriculumStep2() {
     });
     return result;
   }, [t]);
+
+  const blockTypeData = useMemo(() => {
+    const result = cloneDeep(BRANCH_CONTENT_SELECT_DATA.blockType);
+    forEach(result, ({ value }, key) => {
+      result[key].label = t(`blockTypeOptions.${value}`);
+    });
+    return result;
+  }, [t]);
+
+  const groupTypeOfContentsData = useMemo(() => {
+    const result = cloneDeep(blockTypeData);
+    result.splice(findIndex(result, { value: 'group' }), 1);
+    return result;
+  }, [blockTypeData]);
 
   async function load() {
     try {
@@ -148,7 +182,9 @@ function AddCurriculumStep2() {
             isAllCenterMode: true,
             masked: false,
             required: true,
+            blockData: data,
             name: data.name,
+            groupType: data.type,
           },
           permissions: {
             '*': ['view'],
@@ -183,6 +219,7 @@ function AddCurriculumStep2() {
 
     try {
       setSaving(true);
+
       await saveDatasetFieldRequest(
         toSave.locationName,
         toSave.pluginName,
@@ -190,6 +227,7 @@ function AddCurriculumStep2() {
         toSave.schemaLocales
       );
       await load();
+
       setSaving(false);
     } catch (e) {
       setSaving(false);
@@ -213,8 +251,8 @@ function AddCurriculumStep2() {
     groupChilds.push(
       <Box key="child-2">
         <NewBranchConfig
-          messages={messages}
-          errorMessages={errorMessages}
+          messages={messagesConfig}
+          errorMessages={errorMessagesConfig}
           orderedData={orderedData}
           isLoading={saving}
           onSubmit={addNewBranch}
@@ -225,8 +263,18 @@ function AddCurriculumStep2() {
 
   if (activeRightSection === 'detail-branch') {
     groupChilds.push(
-      <Box>
-        <BranchContent branch={activeNodeLevel} onSaveBlock={onSaveBlock} />
+      <Box key="child-3">
+        <BranchContent
+          messages={messagesContent}
+          errorMessages={errorMessagesContent}
+          selectData={{
+            blockType: blockTypeData,
+            blockOrdered: orderedData,
+            groupTypeOfContents: groupTypeOfContentsData,
+          }}
+          branch={activeNodeLevel}
+          onSaveBlock={onSaveBlock}
+        />
       </Box>
     );
   }
