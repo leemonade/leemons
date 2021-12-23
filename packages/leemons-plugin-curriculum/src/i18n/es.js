@@ -65,6 +65,8 @@ module.exports = {
     blockOrderedRequired: 'Campo necesario',
     fieldMinRequired: 'Campo necesario',
     fieldMaxRequired: 'Campo necesario',
+    codeTypeRequired: 'Campo necesario',
+    codeNodeLevelFieldRequired: 'Campo necesario',
     orderedOptions: {
       'not-ordered': 'Sin ordenar',
       bullets: 'Solo circulos',
@@ -79,6 +81,11 @@ module.exports = {
       list: 'Lista',
       group: 'Grupo',
     },
+    codeTypeOptions: {
+      manual: 'Manual',
+      autocomposed: 'Autocompuesto',
+    },
+    codeFieldNumbering: 'Numeración',
     addContent: 'Añadir contenido',
     blockNameLabel: 'Nombre del bloque de contenido',
     blockNamePlaceholder: 'Nombre...',
@@ -97,5 +104,10 @@ module.exports = {
     fieldMaxLabel: 'Max',
     fieldMaxPlaceholder: 'Max...',
     blockSaveConfigButtonLabel: 'Guardar configuración',
+    codeTypePlaceholder: 'Seleccione...',
+    codeTypeNothingFound: 'No hay datos',
+    codeComposerLabel: 'Compositor de código',
+    cancelCodeAutoComposedField: 'Cancelar',
+    saveCodeAutoComposedField: 'Guardar',
   },
 };

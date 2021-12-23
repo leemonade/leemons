@@ -17,6 +17,11 @@ export const BRANCH_CONTENT_MESSAGES = {
   fieldMaxLabel: 'Max',
   fieldMaxPlaceholder: 'Max...',
   blockSaveConfigButtonLabel: 'Save Config',
+  codeTypePlaceholder: 'Select...',
+  codeTypeNothingFound: 'No data',
+  codeComposerLabel: 'Code composer',
+  cancelCodeAutoComposedField: 'Cancel',
+  saveCodeAutoComposedField: 'Save',
 };
 
 export const BRANCH_CONTENT_ERROR_MESSAGES = {
@@ -27,6 +32,9 @@ export const BRANCH_CONTENT_ERROR_MESSAGES = {
   blockOrderedRequired: 'Field required',
   fieldMinRequired: 'Field required',
   fieldMaxRequired: 'Field required',
+  codeTypeRequired: 'Field required',
+  codeNodeLevelRequired: 'Field required',
+  codeNodeLevelFieldRequired: 'Field required',
 };
 
 export const BRANCH_CONTENT_SELECT_DATA = {
@@ -88,4 +96,28 @@ export const BRANCH_CONTENT_SELECT_DATA = {
       value: 'list',
     },
   ],
+  codeType: [
+    {
+      label: 'Manual',
+      value: 'manual',
+    },
+    {
+      label: 'Autocomposed',
+      value: 'autocomposed',
+    },
+  ],
+  parentNodeLevels: [
+    {
+      label: 'Program',
+      value: '--id--',
+    },
+  ],
+  nodeLevelsFields: {
+    '--id--': [
+      {
+        label: 'Field',
+        value: '--id--',
+      },
+    ],
+  },
 };

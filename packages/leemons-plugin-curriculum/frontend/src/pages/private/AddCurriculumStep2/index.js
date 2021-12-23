@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { find, forEach, forIn, orderBy, cloneDeep, findIndex } from 'lodash';
+import { find, forEach, forIn, orderBy, cloneDeep, findIndex, take, map } from 'lodash';
 import { withLayout } from '@layout/hoc';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
@@ -81,11 +81,53 @@ function AddCurriculumStep2() {
     return result;
   }, [t]);
 
+  const codeTypeData = useMemo(() => {
+    const result = cloneDeep(BRANCH_CONTENT_SELECT_DATA.codeType);
+    forEach(result, ({ value }, key) => {
+      result[key].label = t(`codeTypeOptions.${value}`);
+    });
+    return result;
+  }, [t]);
+
   const groupTypeOfContentsData = useMemo(() => {
     const result = cloneDeep(blockTypeData);
     result.splice(findIndex(result, { value: 'group' }), 1);
     return result;
   }, [blockTypeData]);
+
+  const parentNodeLevelsData = useMemo(() => {
+    if (activeNodeLevel && curriculum)
+      return map(take(curriculum.nodeLevels, activeNodeLevel.levelOrder), (item) => ({
+        label: item.name,
+        value: item.id,
+      }));
+    return [];
+  }, [activeNodeLevel, curriculum]);
+
+  const nodeLevelsFieldsData = useMemo(() => {
+    const result = [];
+    if (curriculum && t) {
+      forEach(curriculum.nodeLevels, (nodeLevel) => {
+        result[nodeLevel.id] = [
+          {
+            label: t('codeFieldNumbering'),
+            value: 'numbering',
+          },
+        ];
+        if (nodeLevel.schema) {
+          forIn(nodeLevel.schema.jsonSchema.properties, (value, key) => {
+            if (['field', 'code'].indexOf(value.frontConfig.blockData.type) >= 0) {
+              result[nodeLevel.id].push({
+                label: value.frontConfig.blockData.name,
+                value: key,
+              });
+            }
+          });
+        }
+      });
+    }
+    return result;
+  }, [curriculum, t]);
 
   async function load() {
     try {
@@ -145,6 +187,13 @@ function AddCurriculumStep2() {
     tree.setTreeData(items);
   }, [curriculum]);
 
+  async function onSelect({ id: nodeLevelId }) {
+    setActiveNodeLevel(find(curriculum.nodeLevels, { id: nodeLevelId }));
+    setActiveRightSection('detail-branch');
+  }
+
+  // CREATE NODE LEVEL
+
   async function addNewBranch({ ordered, ...rest }) {
     try {
       setSaving(true);
@@ -166,10 +215,7 @@ function AddCurriculumStep2() {
     }
   }
 
-  async function onSelect({ id: nodeLevelId }) {
-    setActiveNodeLevel(find(curriculum.nodeLevels, { id: nodeLevelId }));
-    setActiveRightSection('detail-branch');
-  }
+  // CREATE / UPDATE FIELD
 
   async function onSaveBlock(data) {
     const toSave = {
@@ -206,6 +252,14 @@ function AddCurriculumStep2() {
 
     switch (data.type) {
       case 'field':
+        toSave.schemaConfig.schema.type = 'string';
+        toSave.schemaConfig.schema.frontConfig.type = 'text_field';
+        if (data.limitCharacters) {
+          toSave.schemaConfig.schema.frontConfig.minLength = data.min;
+          toSave.schemaConfig.schema.frontConfig.maxLength = data.max;
+        }
+        break;
+      case 'code':
         toSave.schemaConfig.schema.type = 'string';
         toSave.schemaConfig.schema.frontConfig.type = 'text_field';
         if (data.limitCharacters) {
@@ -271,6 +325,9 @@ function AddCurriculumStep2() {
             blockType: blockTypeData,
             blockOrdered: orderedData,
             groupTypeOfContents: groupTypeOfContentsData,
+            codeType: codeTypeData,
+            parentNodeLevels: parentNodeLevelsData,
+            nodeLevelsFields: nodeLevelsFieldsData,
           }}
           branch={activeNodeLevel}
           onSaveBlock={onSaveBlock}
@@ -306,4 +363,4 @@ function AddCurriculumStep2() {
   );
 }
 
-export default withLayout(AddCurriculumStep2);
+export default AddCurriculumStep2; // withLayout(AddCurriculumStep2);
