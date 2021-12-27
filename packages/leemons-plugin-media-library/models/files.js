@@ -29,7 +29,10 @@ module.exports = {
         notNull: true,
       },
     },
-    url: {
+    description: {
+      type: 'string',
+    },
+    uri: {
       type: 'string',
       options: {
         notNull: true,

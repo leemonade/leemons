@@ -1,3 +1,4 @@
+const { saveAsset } = require('./saveAsset');
 const { uploadFiles } = require('./uploadFiles');
 const { filesByUser } = require('./filesByUser');
 const { dataForReturnFile } = require('./dataForReturnFile');
@@ -9,5 +10,6 @@ module.exports = {
   removeFiles,
   uploadFiles,
   filesByUser,
+  saveAsset,
   dataForReturnFile,
 };

@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 const { table } = require('../tables');
 
 async function filesByUser(userSession, { transacting } = {}) {
