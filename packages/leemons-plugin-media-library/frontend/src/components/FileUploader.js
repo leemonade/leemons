@@ -21,9 +21,13 @@ export default function FileUploader() {
         data.append('description', values.description);
         values.files.map((file) => data.append('files', file));
 
-        fetch('/api/library/upload', {
+        leemons.api('media-library/upload', {
+          allAgents: true,
           method: 'POST',
           body: data,
+          headers: {
+            'content-type': 'none',
+          },
         });
       })}
     >
