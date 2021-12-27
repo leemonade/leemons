@@ -267,6 +267,15 @@ function AddCurriculumStep2() {
           toSave.schemaConfig.schema.frontConfig.maxLength = data.max;
         }
         break;
+      case 'textarea':
+        toSave.schemaConfig.schema.type = 'string';
+        toSave.schemaConfig.schema.frontConfig.type = 'rich_text';
+        toSave.schemaConfig.ui['ui:widget'] = 'wysiwyg';
+        if (data.limitCharacters) {
+          toSave.schemaConfig.schema.frontConfig.minLength = data.min;
+          toSave.schemaConfig.schema.frontConfig.maxLength = data.max;
+        }
+        break;
       default:
         break;
     }

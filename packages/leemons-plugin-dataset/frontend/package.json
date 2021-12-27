@@ -5,9 +5,10 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime-corejs2": "^7.14.8",
+    "@leemonade/rjsf-core": "^3.0.0",
+    "@rjsf/core": "^3.2.1",
     "json-rules-engine-simplified": "^0.1.17",
-    "rjsf-conditionals": "^1.1.4",
-    "@leemonade/rjsf-core": "^3.0.0"
+    "rjsf-conditionals": "^1.1.4"
   },
   "devDependencies": {}
 }
