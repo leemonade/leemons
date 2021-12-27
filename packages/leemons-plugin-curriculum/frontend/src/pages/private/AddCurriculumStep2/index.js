@@ -8,7 +8,11 @@ import { Box, Text, Title, Button, Group, Tree, useTree } from '@bubbles-ui/comp
 import { useHistory, useParams } from 'react-router-dom';
 import { detailProgramRequest } from '@academic-portfolio/request';
 import { saveDatasetFieldRequest } from '@dataset/request';
-import { addNodeLevelsRequest, detailCurriculumRequest } from '../../../request';
+import {
+  addNodeLevelsRequest,
+  detailCurriculumRequest,
+  generateNodesFromAcademicPortfolioRequest,
+} from '../../../request';
 import NewBranchConfig, {
   NEW_BRANCH_CONFIG_MESSAGES,
   NEW_BRANCH_CONFIG_ERROR_MESSAGES,
@@ -23,6 +27,7 @@ import {
 
 function AddCurriculumStep2() {
   const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [activeRightSection, setActiveRightSection] = useState(null);
   const [activeNodeLevel, setActiveNodeLevel] = useState(null);
@@ -95,6 +100,22 @@ function AddCurriculumStep2() {
     return result;
   }, [blockTypeData]);
 
+  const listTypeData = useMemo(() => {
+    const result = cloneDeep(BRANCH_CONTENT_SELECT_DATA.listType);
+    forEach(result, ({ value }, key) => {
+      result[key].label = blockTypeData[findIndex(blockTypeData, { value })].label;
+    });
+    return result;
+  }, [blockTypeData]);
+
+  const listOrderedData = useMemo(() => {
+    const result = cloneDeep(BRANCH_CONTENT_SELECT_DATA.listOrdered);
+    forEach(result, ({ value }, key) => {
+      result[key].label = t(`orderedOptions.${value}`);
+    });
+    return result;
+  }, [t]);
+
   const parentNodeLevelsData = useMemo(() => {
     if (activeNodeLevel && curriculum)
       return map(take(curriculum.nodeLevels, activeNodeLevel.levelOrder), (item) => ({
@@ -147,8 +168,6 @@ function AddCurriculumStep2() {
       c.program = program;
       c.center = find(centers, { id: c.center });
       c.nodeLevels = orderBy(c.nodeLevels, ['levelOrder'], ['asc']);
-
-      console.log(c);
 
       setCurriculum(c);
       setLoading(false);
@@ -271,9 +290,13 @@ function AddCurriculumStep2() {
         toSave.schemaConfig.schema.type = 'string';
         toSave.schemaConfig.schema.frontConfig.type = 'rich_text';
         toSave.schemaConfig.ui['ui:widget'] = 'wysiwyg';
-        if (data.limitCharacters) {
-          toSave.schemaConfig.schema.frontConfig.minLength = data.min;
-          toSave.schemaConfig.schema.frontConfig.maxLength = data.max;
+        break;
+      case 'list':
+        toSave.schemaConfig.schema.type = 'array';
+        toSave.schemaConfig.schema.items = { type: 'string' };
+        toSave.schemaConfig.schema.frontConfig.type = 'list';
+        if (data.listType === 'textarea') {
+          toSave.schemaConfig.ui['ui:widget'] = 'wysiwyg';
         }
         break;
       default:
@@ -337,12 +360,26 @@ function AddCurriculumStep2() {
             codeType: codeTypeData,
             parentNodeLevels: parentNodeLevelsData,
             nodeLevelsFields: nodeLevelsFieldsData,
+            listType: listTypeData,
+            listOrdered: listOrderedData,
           }}
           branch={activeNodeLevel}
           onSaveBlock={onSaveBlock}
         />
       </Box>
     );
+  }
+
+  async function goStep3() {
+    try {
+      setGenerating(true);
+      await generateNodesFromAcademicPortfolioRequest(curriculum.id);
+      await history.push(`/private/curriculum/${curriculum.id}/step/3`);
+      setGenerating(false);
+    } catch (err) {
+      console.error(err);
+      setGenerating(false);
+    }
   }
 
   if (loading) {
@@ -363,6 +400,12 @@ function AddCurriculumStep2() {
       </Box>
       <Box mb={16}>
         <Text role={'productive'}>{t('description2')}</Text>
+      </Box>
+
+      <Box>
+        <Button loading={generating} onClick={goStep3}>
+          {t('continueButtonLabel')}
+        </Button>
       </Box>
 
       <Group grow align="start">

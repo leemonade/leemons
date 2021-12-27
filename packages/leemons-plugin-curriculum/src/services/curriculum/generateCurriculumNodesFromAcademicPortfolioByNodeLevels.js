@@ -62,8 +62,9 @@ async function generateCurriculumNodesFromAcademicPortfolioByNodeLevels(
         return results;
       };
 
-      await createNodes({ id: null }, tree[0].childrens, 0, nodeLevelsAcademicPortfolio);
-
+      if (tree.length) {
+        await createNodes({ id: null }, tree[0].childrens, 0, nodeLevelsAcademicPortfolio);
+      }
       return (await curriculumByIds(curriculum.id, { transacting }))[0];
     },
     table.curriculums,

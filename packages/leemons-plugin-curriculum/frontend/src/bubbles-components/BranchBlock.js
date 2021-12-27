@@ -9,6 +9,7 @@ import {
   BRANCH_CONTENT_SELECT_DATA,
 } from './branchContentDefaultValues';
 import BranchBlockCode from './BranchBlockCode';
+import BranchBlockList from './BranchBlockList';
 
 function BranchBlock({ messages, errorMessages, isLoading, selectData, defaultValues, onSubmit }) {
   const form = useForm({ defaultValues });
@@ -96,12 +97,64 @@ function BranchBlock({ messages, errorMessages, isLoading, selectData, defaultVa
         />
       </Box>
     );
+  } else if (formData.type === 'list') {
+    groupFields.push(
+      <Box key="item-3">
+        <Controller
+          name="listType"
+          control={control}
+          rules={{
+            required: errorMessages.listTypeRequired,
+          }}
+          render={({ field }) => (
+            <Select
+              label="&nbsp;"
+              placeholder={messages.listTypePlaceholder}
+              required
+              error={errors.listType}
+              data={selectData.listType || []}
+              {...field}
+            />
+          )}
+        />
+      </Box>
+    );
+    groupFields.push(
+      <Box key="item-4">
+        <Controller
+          name="listOrdered"
+          control={control}
+          rules={{
+            required: errorMessages.listOrderedRequired,
+          }}
+          render={({ field }) => (
+            <Select
+              label="&nbsp;"
+              placeholder={messages.listOrderedPlaceholder}
+              required
+              error={errors.listOrdered}
+              data={selectData.listOrdered || []}
+              {...field}
+            />
+          )}
+        />
+      </Box>
+    );
   }
 
   const branchBlocks = {
     field: <BranchBlockField messages={messages} errorMessages={errorMessages} form={form} />,
     code: (
       <BranchBlockCode
+        messages={messages}
+        errorMessages={errorMessages}
+        isLoading={isLoading}
+        selectData={selectData}
+        form={form}
+      />
+    ),
+    list: (
+      <BranchBlockList
         messages={messages}
         errorMessages={errorMessages}
         isLoading={isLoading}
