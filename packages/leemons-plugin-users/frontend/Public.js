@@ -1,8 +1,9 @@
 import React from 'react';
 import { Switch, Route, useRouteMatch, Redirect } from 'react-router-dom';
 import loadable from '@loadable/component';
+import Login from './src/pages/public/Login';
 
-const Login = loadable(() => import('./src/pages/public/Login'));
+// const Login = loadable(() => import('./src/pages/public/Login'));
 const Recover = loadable(() => import('./src/pages/public/Recover'));
 const Reset = loadable(() => import('./src/pages/public/Reset'));
 

@@ -24,6 +24,7 @@ export default function Login() {
     redirectTo: _.isString(getCookieToken(true)) ? 'private/users/select-profile' : constants.base,
     redirectIfFound: true,
   });
+
   const history = useHistory();
   const [formStatus, setFormStatus] = useState('');
   const [formError, setFormError] = useState(null);
@@ -100,8 +101,8 @@ export default function Login() {
   );
 
   return (
-    <HeroBgLayout>
-      <ThemeProvider>
+    <ThemeProvider>
+      <HeroBgLayout>
         <LoginForm
           messages={messages}
           errorMessages={errorMessages}
@@ -110,7 +111,7 @@ export default function Login() {
           isLoading={formStatus === 'loading'}
           formError={formError}
         />
-      </ThemeProvider>
-    </HeroBgLayout>
+      </HeroBgLayout>
+    </ThemeProvider>
   );
 }

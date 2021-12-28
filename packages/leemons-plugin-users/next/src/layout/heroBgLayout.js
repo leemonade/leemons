@@ -13,13 +13,14 @@ export default function HeroBgLayout({ children }) {
     <>
       <div className="flex h-screen">
         <div className="relative flex">
+          {/*
           <HeroBg
             style={{ backgroundColor: '#F4E6E6' }}
             type="x-md"
             speed={500}
             className="h-full w-auto text-primary-200"
           />
-
+*/}
           <Logo className="absolute left-8 top-8" />
 
           <div

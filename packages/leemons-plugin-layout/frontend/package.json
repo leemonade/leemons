@@ -1,0 +1,10 @@
+{
+  "name": "layout-front",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "@bubbles-ui/components": "^1.0.10",
+    "prop-types": "^15.7.2"
+  },
+  "devDependencies": {}
+}
