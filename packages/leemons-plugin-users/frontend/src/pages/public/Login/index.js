@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import _ from 'lodash';
-import { LoginForm, ThemeProvider } from '@bubbles-ui/components';
+import Cookies from 'js-cookie';
+import { LoginForm, ThemeProvider, Box, createStyles } from '@bubbles-ui/components';
 import {
   getRememberProfileRequest,
   getUserProfilesRequest,
@@ -18,6 +18,19 @@ import useTranslate from '@multilanguage/useTranslate';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import hooks from 'leemons-hooks';
+
+const LoginStyles = createStyles(() => ({
+  root: {
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    padding: 32,
+  },
+  content: {
+    maxWidth: 330,
+  },
+}));
 
 export default function Login() {
   useSession({
@@ -100,17 +113,23 @@ export default function Login() {
     [tCommon]
   );
 
+  const { classes } = LoginStyles();
+
   return (
     <ThemeProvider>
       <HeroBgLayout>
-        <LoginForm
-          messages={messages}
-          errorMessages={errorMessages}
-          recoverUrl={goRecoverPage(history, true)}
-          onSubmit={onSubmit}
-          isLoading={formStatus === 'loading'}
-          formError={formError}
-        />
+        <Box className={classes.root}>
+          <Box className={classes.content}>
+            <LoginForm
+              messages={messages}
+              errorMessages={errorMessages}
+              recoverUrl={goRecoverPage(history, true)}
+              onSubmit={onSubmit}
+              isLoading={formStatus === 'loading'}
+              formError={formError}
+            />
+          </Box>
+        </Box>
       </HeroBgLayout>
     </ThemeProvider>
   );

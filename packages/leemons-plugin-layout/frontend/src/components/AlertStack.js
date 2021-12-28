@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import hooks from 'leemons-hooks';
 import { Alert, Box } from '@bubbles-ui/components';
 
-const AlertStack = () => {
+export default function AlertStack() {
   const alertRef = useRef([]);
   const [alerts, setAlerts] = useState([]);
 
@@ -42,11 +42,11 @@ const AlertStack = () => {
     <Box>
       {alerts.map((alert) => (
         <Box key={alert.id} mb={2}>
-          <Alert severity={alert.type} title={alert.title} onClose={() => removeAlert(alert.id)}>{alert.message}</Alert>
+          <Alert severity={alert.type} title={alert.title} onClose={() => removeAlert(alert.id)}>
+            {alert.message}
+          </Alert>
         </Box>
       ))}
     </Box>
   );
 }
-
-export { AlertStack };
