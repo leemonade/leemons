@@ -1,24 +1,23 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import hooks from 'leemons-hooks';
-import _ from 'lodash';
 import { getMenu } from '@menu-builder/helpers';
-import { Avatar, MainNav, MAIN_NAV_WIDTH } from '@bubbles-ui/components';
+import { MainNav } from '@bubbles-ui/components';
 
 export default function MainMenu({ onClose, onOpen }) {
   const [isLoading, setIsLoading] = useState(false);
   const [menuData, setMenuData] = useState([]);
 
   const loadMenu = async () => {
+    setIsLoading(true);
     const menu = await getMenu('plugins.menu-builder.main');
     setMenuData(menu);
+    setIsLoading(false);
     return menu;
   };
 
-   const reloadMenu = async () => {
-    setIsLoading(true);
+  const reloadMenu = async () => {
     await loadMenu();
-    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -32,9 +31,7 @@ export default function MainMenu({ onClose, onOpen }) {
     await loadMenu();
   }, []);
 
-  return (
-    <MainNav menuData={menuData} onOpen={onOpen} onClose={onClose} isLoading={isLoading} />
-  );
+  return <MainNav menuData={menuData} onOpen={onOpen} onClose={onClose} isLoading={isLoading} />;
 }
 
 MainMenu.propTypes = {

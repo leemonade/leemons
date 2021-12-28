@@ -1,3 +1,5 @@
+const { fetchJson } = global.utils;
+
 async function status(ctx) {}
 
 async function testSocketIo(ctx) {
@@ -9,13 +11,9 @@ async function testSocketIo(ctx) {
 }
 
 async function todayQuote(ctx) {
-  const requestOptions = {
-    method: 'GET',
-    redirect: 'follow',
-  };
-  const data = await fetch('https://zenquotes.io/api/today', requestOptions);
+  const data = await fetchJson('https://zenquotes.io/api/today');
   ctx.status = 200;
-  ctx.body = { status: 200, data: data.json() };
+  ctx.body = { status: 200, data };
 }
 
 module.exports = {

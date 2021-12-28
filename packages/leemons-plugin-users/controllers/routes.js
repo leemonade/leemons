@@ -5,11 +5,6 @@ module.exports = [
     handler: 'init.testSocketIo',
     authenticated: true,
   },
-  {
-    path: '/init/today-quote',
-    method: 'GET',
-    handler: 'init.todayQuote',
-  },
   /**
    * Init config
    * */
@@ -17,6 +12,11 @@ module.exports = [
     path: '/init/status',
     method: 'GET',
     handler: 'init.status',
+  },
+  {
+    path: '/init/today-quote',
+    method: 'GET',
+    handler: 'init.todayQuote',
   },
   /**
    * Users

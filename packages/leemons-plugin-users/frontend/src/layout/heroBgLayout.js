@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { isArray } from 'lodash';
+import { todayQuoteRequest } from '@users/request';
 import { LoginBg, Box, createStyles } from '@bubbles-ui/components';
 
 const HeroBgLayoutStyles = createStyles(() => ({
@@ -18,19 +20,17 @@ export default function HeroBgLayout({ children }) {
   const [quote, setQuote] = useState({});
 
   useEffect(async () => {
-    const requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-    };
-    const data = await fetch('https://zenquotes.io/api/today', requestOptions);
-
-    console.log(data);
+    const response = await todayQuoteRequest();
+    if (isArray(response.data)) {
+      const { a, q } = response.data[0];
+      setQuote({ a, q });
+    }
   }, []);
 
   const { classes } = HeroBgLayoutStyles();
   return (
     <Box className={classes.root}>
-      <LoginBg />
+      <LoginBg author={quote.a} quote={quote.q} />
       <Box className={classes.content}>{children}</Box>
     </Box>
   );
