@@ -119,4 +119,7 @@ module.exports = {
     cancelCodeAutoComposedField: 'Cancel',
     saveCodeAutoComposedField: 'Save',
   },
+  addCurriculumStep3: {
+    addNode: 'Add {name}',
+  },
 };
