@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { LoginBg, Box, createStyles } from '@bubbles-ui/components';
 
-const HeroBgLayoutStyles = createStyles((theme, {}) => ({
+const HeroBgLayoutStyles = createStyles(() => ({
   root: {
     display: 'flex',
     height: '100vh',
@@ -11,10 +11,11 @@ const HeroBgLayoutStyles = createStyles((theme, {}) => ({
 }));
 
 export default function HeroBgLayout({ children }) {
+  const { classes } = HeroBgLayoutStyles();
   return (
-    <Box>
+    <Box className={classes.root}>
       <LoginBg />
-      <Box>{children}</Box>
+      <Box className={classes.content}>{children}</Box>
     </Box>
   );
 
