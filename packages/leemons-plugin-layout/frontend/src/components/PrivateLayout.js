@@ -1,13 +1,32 @@
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-
-import DndLayer from '@menu-builder/components/dnd/dndLayer';
+import { Box, createStyles, MAIN_NAV_WIDTH, ThemeProvider } from '@bubbles-ui/components';
 import MainMenu from '@menu-builder/components/mainMenu';
 
-import Alert from './Alert';
+import AlertStack from './AlertStack';
 import { LayoutContext } from '../context/layout';
 
-function PrivateLayout({ children }) {
+const NAV_OPEN_WIDTH = 280;
+
+const PrivateLayoutStyles = createStyles((theme, { width }) => ({
+  root: {
+    display: 'flex',
+    height: '100vh',
+  },
+  sideNav: {
+    width,
+    height: '100%',
+    overflowX: 'visible',
+    transition: 'width 0ms ease-out',
+  },
+  content: {
+    flex: 1,
+    height: '100vh',
+    overflowY: 'auto',
+  },
+}));
+
+const PrivateLayout = ({ children }) => {
   const { state, setState: _setState } = useContext(LayoutContext);
 
   const store = useRef({});
@@ -19,45 +38,37 @@ function PrivateLayout({ children }) {
 
   useEffect(() => {
     if (!state.menuWidth) {
-      setState({ menuWidth: 52 });
+      setState({ menuWidth: MAIN_NAV_WIDTH });
     }
   }, []);
 
   const onCloseMenu = useCallback(() => {
-    if (state.menuWidth !== 52) setState({ menuWidth: 52 });
+    if (state.menuWidth !== MAIN_NAV_WIDTH) setState({ menuWidth: MAIN_NAV_WIDTH });
   }, [state]);
 
   const onOpenMenu = useCallback(() => {
-    if (state.menuWidth !== 280) setState({ menuWidth: 280 });
+    if (state.menuWidth !== NAV_OPEN_WIDTH) setState({ menuWidth: NAV_OPEN_WIDTH });
   }, [state]);
 
+  const { classes } = PrivateLayoutStyles({ width: state.menuWidth });
+
   return (
-    <>
-      <div className={'flex h-screen'}>
-        <DndLayer />
-        <div
-          style={{ width: `${state.menuWidth}px` }}
-          className={'overflow-x-visible transition-all h-full'}
-        >
-          <MainMenu
-            state={store.current}
-            setState={setState}
-            onClose={onCloseMenu}
-            onOpen={onOpenMenu}
-          />
-        </div>
-        <div className="w-full bg-secondary-content h-screen overflow-y-auto">
-          <Alert />
+    <ThemeProvider>
+      <Box className={classes.root}>
+        <Box className={classes.sideNav}>
+          <MainMenu onClose={onCloseMenu} onOpen={onOpenMenu} subNavWidth={NAV_OPEN_WIDTH} />
+        </Box>
+        <Box className={classes.content}>
+          <AlertStack />
           {children}
-        </div>
-      </div>
-    </>
+        </Box>
+      </Box>
+    </ThemeProvider>
   );
-}
+};
 
 PrivateLayout.propTypes = {
-  children: PropTypes.any,
-  persistentState: PropTypes.any,
+  children: PropTypes.node,
 };
 
 export default PrivateLayout;

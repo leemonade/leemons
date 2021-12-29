@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import _ from 'lodash';
-import { LoginForm, ThemeProvider } from '@bubbles-ui/components';
+import Cookies from 'js-cookie';
+import { LoginForm, ThemeProvider, Box, createStyles } from '@bubbles-ui/components';
 import {
   getRememberProfileRequest,
   getUserProfilesRequest,
@@ -19,11 +19,25 @@ import tLoader from '@multilanguage/helpers/tLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import hooks from 'leemons-hooks';
 
+const LoginStyles = createStyles(() => ({
+  root: {
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    padding: 32,
+  },
+  content: {
+    maxWidth: 330,
+  },
+}));
+
 export default function Login() {
   useSession({
     redirectTo: _.isString(getCookieToken(true)) ? 'private/users/select-profile' : constants.base,
     redirectIfFound: true,
   });
+
   const history = useHistory();
   const [formStatus, setFormStatus] = useState('');
   const [formError, setFormError] = useState(null);
@@ -99,18 +113,24 @@ export default function Login() {
     [tCommon]
   );
 
+  const { classes } = LoginStyles();
+
   return (
-    <HeroBgLayout>
-      <ThemeProvider>
-        <LoginForm
-          messages={messages}
-          errorMessages={errorMessages}
-          recoverUrl={goRecoverPage(history, true)}
-          onSubmit={onSubmit}
-          isLoading={formStatus === 'loading'}
-          formError={formError}
-        />
-      </ThemeProvider>
-    </HeroBgLayout>
+    <ThemeProvider>
+      <HeroBgLayout>
+        <Box className={classes.root}>
+          <Box className={classes.content}>
+            <LoginForm
+              messages={messages}
+              errorMessages={errorMessages}
+              recoverUrl={goRecoverPage(history, true)}
+              onSubmit={onSubmit}
+              isLoading={formStatus === 'loading'}
+              formError={formError}
+            />
+          </Box>
+        </Box>
+      </HeroBgLayout>
+    </ThemeProvider>
   );
 }
