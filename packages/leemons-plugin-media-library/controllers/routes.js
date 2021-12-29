@@ -1,5 +1,20 @@
 module.exports = [
   /**
+   * Assets
+   */
+  {
+    path: '/assets',
+    method: 'POST',
+    handler: 'assets.add',
+    authenticated: true,
+  },
+  {
+    path: '/assets/:id',
+    method: 'DELETE',
+    handler: 'assets.remove',
+    authenticated: true,
+  },
+  /**
    * Files
    */
   {
@@ -74,6 +89,12 @@ module.exports = [
     path: '/file/:id/category/:category',
     method: 'GET',
     handler: 'filesCategories.has',
+    authenticated: true,
+  },
+  {
+    path: '/category/:category/files',
+    method: 'GET',
+    handler: 'filesCategories.getFiles',
     authenticated: true,
   },
 ];

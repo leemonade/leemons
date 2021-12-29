@@ -1,32 +1,28 @@
 const add = require('../src/services/files/categories/add');
 const get = require('../src/services/files/categories/get');
+const getFiles = require('../src/services/files/categories/getFiles');
 const has = require('../src/services/files/categories/has');
 const remove = require('../src/services/files/categories/remove');
-
-const { files } = require('../src/services/tables');
 
 module.exports = {
   add: async (ctx) => {
     const { id, category } = ctx.request.params;
 
     try {
-      // const added = await add({ id }, { name: category });
-      global.utils.withTransaction(async (transacting) => {
-        console.log(transacting);
-      }, files);
-      // if (added) {
-      //   ctx.status = 201;
-      //   ctx.body = {
-      //     status: 201,
-      //     added,
-      //   };
-      // } else {
-      //   ctx.status = 200;
-      //   ctx.body = {
-      //     status: 200,
-      //     added,
-      //   };
-      // }
+      const added = await add({ id }, { name: category });
+      if (added) {
+        ctx.status = 201;
+        ctx.body = {
+          status: 201,
+          added,
+        };
+      } else {
+        ctx.status = 200;
+        ctx.body = {
+          status: 200,
+          added,
+        };
+      }
     } catch (e) {
       ctx.status = 500;
       ctx.body = {
@@ -89,6 +85,21 @@ module.exports = {
       ctx.body = {
         status: 500,
         error: e.message,
+      };
+    }
+  },
+
+  getFiles: async (ctx) => {
+    const { category } = ctx.request.params;
+    try {
+      const files = await getFiles({ name: category }, { transacting: ctx.state.transacting });
+      ctx.status = 200;
+      ctx.body = { status: 200, files };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = {
+        status: 500,
+        message: e.message,
       };
     }
   },

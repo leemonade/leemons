@@ -1,4 +1,4 @@
-const { saveAsset } = require('./saveAsset');
+const { saveAsset } = require('../assets/add');
 const { uploadFiles } = require('./uploadFiles');
 const { filesByUser } = require('./filesByUser');
 const { dataForReturnFile } = require('./dataForReturnFile');

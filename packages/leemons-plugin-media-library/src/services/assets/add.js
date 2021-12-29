@@ -1,8 +1,8 @@
 const mime = require('mime-types');
 const { files: table } = require('../tables');
-const { uploadFile } = require('./uploadFile');
+const { uploadFile } = require('../files/uploadFile');
 
-function saveAsset(data, { userSession, transacting: t } = {}) {
+module.exports = function add(data, { userSession, transacting: t } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       const { type } = data.file;
@@ -41,5 +41,4 @@ function saveAsset(data, { userSession, transacting: t } = {}) {
     table,
     t
   );
-}
-module.exports = { saveAsset };
+};

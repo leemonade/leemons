@@ -1,5 +1,18 @@
 const { categories } = require('../tables');
 
-module.exports = function list(page = 0, size = 10, { transacting } = {}) {
-  return global.utils.paginate(categories, page, size, { id_$null: false }, { transacting });
+module.exports = async function list(page = 0, size = 10, { transacting } = {}) {
+  const result = await global.utils.paginate(
+    categories,
+    page,
+    size,
+    { id_$null: false },
+    { transacting }
+  );
+
+  result.items = result.items.map((item) => ({
+    name: item.name,
+    displayName: item.displayName,
+  }));
+
+  return result;
 };
