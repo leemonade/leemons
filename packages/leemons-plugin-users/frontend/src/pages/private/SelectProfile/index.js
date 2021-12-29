@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
   getUserProfilesRequest,
@@ -13,10 +13,12 @@ import constants from '@users/constants';
 import hooks from 'leemons-hooks';
 import Cookies from 'js-cookie';
 import { useHistory } from 'react-router-dom';
+import { LayoutContext } from '@layout/context/layout';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de crear usuarios
 export default function SelectProfile({ session }) {
   const history = useHistory();
+  const { setPrivateLayout } = useContext(LayoutContext);
 
   const [t] = useTranslateLoader(prefixPN('selectProfile'));
 
@@ -56,6 +58,7 @@ export default function SelectProfile({ session }) {
 
   useEffect(() => {
     getProfiles();
+    setPrivateLayout(false);
   }, []);
 
   return (

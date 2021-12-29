@@ -1,6 +1,6 @@
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Box, createStyles, MAIN_NAV_WIDTH, ThemeProvider } from '@bubbles-ui/components';
+import { Box, createStyles, MAIN_NAV_WIDTH } from '@bubbles-ui/components';
 import MainMenu from '@menu-builder/components/mainMenu';
 
 import AlertStack from './AlertStack';
@@ -27,43 +27,38 @@ const PrivateLayoutStyles = createStyles((theme, { width }) => ({
 }));
 
 const PrivateLayout = ({ children }) => {
-  const { state, setState: _setState } = useContext(LayoutContext);
+  const { layoutState, setLayoutState } = useContext(LayoutContext);
 
-  const store = useRef({});
-
-  const setState = ({ ...rest }) => {
-    store.current = { ...store.current, ...rest };
-    _setState(store.current);
+  const setState = (newState) => {
+    setLayoutState({ ...layoutState, ...newState });
   };
 
   useEffect(() => {
-    if (!state.menuWidth) {
+    if (!layoutState.menuWidth) {
       setState({ menuWidth: MAIN_NAV_WIDTH });
     }
   }, []);
 
   const onCloseMenu = useCallback(() => {
-    if (state.menuWidth !== MAIN_NAV_WIDTH) setState({ menuWidth: MAIN_NAV_WIDTH });
-  }, [state]);
+    if (layoutState.menuWidth !== MAIN_NAV_WIDTH) setState({ menuWidth: MAIN_NAV_WIDTH });
+  }, [layoutState]);
 
   const onOpenMenu = useCallback(() => {
-    if (state.menuWidth !== NAV_OPEN_WIDTH) setState({ menuWidth: NAV_OPEN_WIDTH });
-  }, [state]);
+    if (layoutState.menuWidth !== NAV_OPEN_WIDTH) setState({ menuWidth: NAV_OPEN_WIDTH });
+  }, [layoutState]);
 
-  const { classes } = PrivateLayoutStyles({ width: state.menuWidth });
+  const { classes } = PrivateLayoutStyles({ width: layoutState.menuWidth });
 
   return (
-    <ThemeProvider>
-      <Box className={classes.root}>
-        <Box className={classes.sideNav}>
-          <MainMenu onClose={onCloseMenu} onOpen={onOpenMenu} subNavWidth={NAV_OPEN_WIDTH} />
-        </Box>
-        <Box className={classes.content}>
-          <AlertStack />
-          {children}
-        </Box>
+    <Box className={classes.root}>
+      <Box className={classes.sideNav}>
+        <MainMenu onClose={onCloseMenu} onOpen={onOpenMenu} subNavWidth={NAV_OPEN_WIDTH} />
       </Box>
-    </ThemeProvider>
+      <Box className={classes.content}>
+        <AlertStack />
+        {children}
+      </Box>
+    </Box>
   );
 };
 

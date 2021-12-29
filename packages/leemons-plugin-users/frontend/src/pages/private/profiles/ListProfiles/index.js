@@ -109,4 +109,4 @@ function ListProfiles() {
   );
 }
 
-export default withLayout(ListProfiles);
+export default ListProfiles;
