@@ -1,7 +1,7 @@
-const { table } = require('../tables');
+const { files } = require('../tables');
 
 async function filesByUser(userSession, { transacting } = {}) {
-  return table.files.find({ fromUser: userSession.id }, { transacting });
+  return files.find({ fromUser: userSession.id }, { transacting });
 }
 
 module.exports = { filesByUser };

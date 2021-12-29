@@ -3,24 +3,23 @@ const fileService = require('../src/services/files');
 module.exports = {
   uploadFile: async (ctx) => {
     const { name, description } = ctx.request.body;
-    const { files: _files } = ctx.request.files;
+    const _files = ctx.request.files;
 
-    const files = _files.length ? _files : [_files];
+    if (!_files?.files) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        message: 'No file was uploaded',
+      };
+      return;
+    }
+    const files = _files.files.length ? _files.files : [_files.files];
 
     if (files.length > 1) {
       ctx.status = 400;
       ctx.body = {
         status: 400,
         message: 'Multiple file uploading is not enabled yet',
-      };
-      return;
-    }
-
-    if (!files.length) {
-      ctx.status = 400;
-      ctx.body = {
-        status: 400,
-        message: 'No file was uploaded',
       };
       return;
     }

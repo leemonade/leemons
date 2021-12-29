@@ -1,4 +1,4 @@
-const { table } = require('../tables');
+const { files: table } = require('../tables');
 
 async function removeFile(id, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
@@ -6,10 +6,10 @@ async function removeFile(id, { userSession, transacting: _transacting } = {}) {
       const query = { id };
       if (userSession) query.fromUser = userSession.id;
 
-      const file = await table.files.findOne(query, { transacting });
+      const file = await table.findOne(query, { transacting });
       // EN: First delete the file from the database so if it fails we don't have an entry without a file
       // ES: Primero eliminamos el archivo de la base de datos para que si falla no tengamos una entrada sin archivo
-      await table.files.delete({ id }, { transacting });
+      await table.delete({ id }, { transacting });
 
       // Default provider
       if (file.provider === 'sys') {
@@ -25,7 +25,7 @@ async function removeFile(id, { userSession, transacting: _transacting } = {}) {
 
       return true;
     },
-    table.files,
+    table,
     _transacting
   );
 }

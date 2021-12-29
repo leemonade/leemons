@@ -1,5 +1,4 @@
-const _ = require('lodash');
-const { table } = require('../tables');
+const { activeProvider } = require('../tables');
 const { setActiveProvider } = require('./setActiveProvider');
 
 async function setProviderConfig(providerName, config, { transacting: _transacting } = {}) {
@@ -18,7 +17,7 @@ async function setProviderConfig(providerName, config, { transacting: _transacti
       }
       throw new Error(`The provider "${providerName}" not found`);
     },
-    table.activeProvider,
+    activeProvider,
     _transacting
   );
 }

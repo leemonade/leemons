@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { table } = require('../tables');
+const { files } = require('../tables');
 const { removeFile } = require('./removeFile');
 
 async function removeFiles(ids, { userSession, transacting: _transacting } = {}) {
@@ -10,7 +10,7 @@ async function removeFiles(ids, { userSession, transacting: _transacting } = {})
       }
       return removeFile(ids, { userSession, transacting });
     },
-    table.files,
+    files,
     _transacting
   );
 }

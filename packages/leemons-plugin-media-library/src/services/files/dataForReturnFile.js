@@ -1,8 +1,8 @@
 const fs = require('fs');
-const { table } = require('../tables');
+const { files: table } = require('../tables');
 
 async function dataForReturnFile(id, { transacting } = {}) {
-  const file = await table.files.findOne({ id }, { transacting });
+  const file = await table.findOne({ id }, { transacting });
 
   // Default provider
   if (file.provider === 'sys') {

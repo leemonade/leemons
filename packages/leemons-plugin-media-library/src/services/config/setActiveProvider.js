@@ -1,16 +1,16 @@
-const { table } = require('../tables');
+const { activeProvider: activeProviderTable } = require('../tables');
 const { getActiveProvider } = require('./getActiveProvider');
 
 async function setActiveProvider(providerName, { transacting } = {}) {
   const activeProvider = await getActiveProvider({ transacting });
   if (activeProvider) {
-    return table.activeProvider.update(
+    return activeProviderTable.update(
       { providerName: activeProvider },
       { providerName },
       { transacting }
     );
   }
-  return table.activeProvider.create({ providerName }, { transacting });
+  return activeProviderTable.create({ providerName }, { transacting });
 }
 
 module.exports = { setActiveProvider };

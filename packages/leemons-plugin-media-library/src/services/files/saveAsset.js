@@ -1,5 +1,5 @@
 const mime = require('mime-types');
-const { table } = require('../tables');
+const { files: table } = require('../tables');
 const { uploadFile } = require('./uploadFile');
 
 function saveAsset(data, { userSession, transacting: t } = {}) {
@@ -27,7 +27,7 @@ function saveAsset(data, { userSession, transacting: t } = {}) {
 
       // EN: Firstly create the asset in the database to get the id
       // ES: Primero creamos el archivo en la base de datos para obtener el id
-      let item = await table.files.create(asset, { transacting });
+      let item = await table.create(asset, { transacting });
 
       // EN: Upload the file to the provider
       // ES: Subir el archivo al proveedor
@@ -35,10 +35,10 @@ function saveAsset(data, { userSession, transacting: t } = {}) {
 
       // EN: Update the asset with the new URI
       // ES: Actualizamos el archivo con la nueva URI
-      item = await table.files.update({ id: item.id }, { provider, uri }, { transacting });
+      item = await table.update({ id: item.id }, { provider, uri }, { transacting });
       return item;
     },
-    table.files,
+    table,
     t
   );
 }
