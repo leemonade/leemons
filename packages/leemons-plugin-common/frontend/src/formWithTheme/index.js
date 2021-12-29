@@ -541,7 +541,7 @@ function returnValidJsonSchema(jsonSchema) {
         items: {
           type: 'object',
           additionalProperties: false,
-          required: ['value'],
+          // required: ['value'],
           properties: {
             id: {
               type: 'string',
@@ -554,7 +554,7 @@ function returnValidJsonSchema(jsonSchema) {
       schema.properties[key] = {
         type: 'object',
         additionalProperties: false,
-        required: ['value'],
+        // required: ['value'],
         properties: {
           id: {
             type: 'string',
@@ -564,6 +564,8 @@ function returnValidJsonSchema(jsonSchema) {
       };
     }
   });
+
+  console.log(schema);
 
   return schema;
 }
@@ -673,7 +675,6 @@ export default function index(schema, ui, conditions, props) {
     {
       isLoaded: () => !!ref.current,
       submit: () => {
-        console.log(ref);
         ref.current.formElement.dispatchEvent(
           new Event('submit', {
             cancelable: true,
@@ -688,10 +689,10 @@ export default function index(schema, ui, conditions, props) {
       },
       getRef: () => ref.current,
       getErrors: () => ref.current.state.errors || [],
-      getValues: () => ref.current.props.formData,
+      getValues: () => ref.current.state.formData,
       setValue: (key, value) =>
         ref.current.onChange({
-          ...ref.current.props.formData,
+          ...ref.current.state.formData,
           [key]: value,
         }),
     },

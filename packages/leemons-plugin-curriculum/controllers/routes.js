@@ -32,6 +32,12 @@ module.exports = [
     handler: 'nodeLevel.postNodeLevels',
     authenticated: true,
   },
+  {
+    path: '/node-levels',
+    method: 'PUT',
+    handler: 'nodeLevel.putNodeLevel',
+    authenticated: true,
+  },
   // Nodes
   {
     path: '/node',
@@ -40,9 +46,9 @@ module.exports = [
     authenticated: true,
   },
   {
-    path: '/node/:id/form-values',
-    method: 'POST',
-    handler: 'nodes.saveNodeFormValues',
+    path: '/node',
+    method: 'PUT',
+    handler: 'nodes.saveNode',
     authenticated: true,
   },
 ];

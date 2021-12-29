@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { values, keys } from 'lodash';
+import { values, keys, compact } from 'lodash';
 import PropTypes from 'prop-types';
 import { Box, Title, Group, TextInput, Select, Button, Table } from '@bubbles-ui/components';
 import { EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
@@ -59,7 +59,7 @@ function BranchContent({
           {values(branch.schema.jsonSchema.properties).map((item, index) => {
             if (editingBlock && editingBlock.id === item.id) return null;
             return (
-              <tr key={item.id}>
+              <tr key={index}>
                 <td>{item.frontConfig.name}</td>
                 <td>{item.frontConfig.groupType}</td>
                 <td>{item.frontConfig.groupOrdered ? item.frontConfig.groupOrdered : '-'}</td>

@@ -1,24 +1,17 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 const { validateUpdateNodeLevel } = require('../../validations/forms');
-const { reloadNodeFullNamesForCurriculum } = require('../nodes/reloadNodeFullNamesForCurriculum');
 
-async function addNodeLevels(data, { transacting: _transacting } = {}) {
+async function updateNodeLevel(data, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await validateUpdateNodeLevel(data, { transacting });
 
-      const { id, ...rest } = data;
-
-      const nodeLevel = await table.nodeLevels.update({ id }, rest, { transacting });
-
-      await reloadNodeFullNamesForCurriculum(data.curriculum, { transacting });
-
-      return nodeLevel;
+      return table.nodeLevels.update({ id: data.id }, data, { transacting });
     },
     table.nodeLevels,
     _transacting
   );
 }
 
-module.exports = { addNodeLevels };
+module.exports = { updateNodeLevel };

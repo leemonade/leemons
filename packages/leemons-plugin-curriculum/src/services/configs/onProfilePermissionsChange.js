@@ -23,6 +23,7 @@ async function onProfilePermissionsChange(
           currentProfiles.splice(index, 1);
         }
       }
+
       await setCanEditProfiles(_.uniq(currentProfiles), { transacting });
       await updateAllNodeLevelFormsPermissions({ transacting });
     },

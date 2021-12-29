@@ -121,5 +121,11 @@ module.exports = {
   },
   addCurriculumStep3: {
     addNode: 'Add {name}',
+    newBranchValue: {
+      nameLabel: 'Name',
+      namePlaceholder: 'Name...',
+      saveButtonLabel: 'Save',
+      nameRequired: 'Field required',
+    },
   },
 };

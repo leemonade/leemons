@@ -1,9 +1,15 @@
+import addNode from './addNode';
+import saveNode from './saveNode';
 import addNodeLevels from './addNodeLevels';
 import addCurriculum from './addCurriculum';
+import updateNodeLevel from './updateNodeLevel';
 import detailCurriculum from './detailCurriculum';
 import generateNodesFromAcademicPortfolio from './generateNodesFromAcademicPortfolio';
 
+export const addNodeRequest = addNode;
+export const saveNodeRequest = saveNode;
 export const addNodeLevelsRequest = addNodeLevels;
 export const addCurriculumRequest = addCurriculum;
+export const updateNodeLevelRequest = updateNodeLevel;
 export const detailCurriculumRequest = detailCurriculum;
 export const generateNodesFromAcademicPortfolioRequest = generateNodesFromAcademicPortfolio;

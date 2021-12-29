@@ -14,7 +14,7 @@ async function updateNodeLevelFormPermissions(
       if (!_.isArray(profiles)) {
         profiles = await getCanEditProfiles({ transacting });
       }
-      const schema = await getNodeLevelSchema(nodeLevelId, { transacting });
+      const schema = await getNodeLevelSchema(nodeLevelId, null, { transacting });
       if (schema) {
         _.forIn(schema.jsonSchema.properties, (item, key) => {
           schema.jsonSchema.properties[key].permissions = {

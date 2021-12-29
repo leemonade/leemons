@@ -1,5 +1,17 @@
-async function getNodeLevelSchema(nodeLevelId, { transacting }) {
+async function getNodeLevelSchema(nodeLevelId, locale, { transacting }) {
   try {
+    if (locale) {
+      return await leemons
+        .getPlugin('dataset')
+        .services.dataset.getSchemaWithLocale(
+          `node-level-${nodeLevelId}`,
+          'plugins.curriculum',
+          locale,
+          {
+            transacting,
+          }
+        );
+    }
     return await leemons
       .getPlugin('dataset')
       .services.dataset.getSchema(`node-level-${nodeLevelId}`, 'plugins.curriculum', {
