@@ -6,6 +6,8 @@ import MainMenu from '@menu-builder/components/mainMenu';
 import AlertStack from './AlertStack';
 import { LayoutContext } from '../context/layout';
 
+const NAV_OPEN_WIDTH = 280;
+
 const PrivateLayoutStyles = createStyles((theme, { width }) => ({
   root: {
     display: 'flex',
@@ -15,10 +17,10 @@ const PrivateLayoutStyles = createStyles((theme, { width }) => ({
     width,
     height: '100%',
     overflowX: 'visible',
-    transition: 'width 100ms ease-in-out',
+    transition: 'width 0ms ease-out',
   },
   content: {
-    width: '100%',
+    flex: 1,
     height: '100vh',
     overflowY: 'auto',
   },
@@ -45,7 +47,7 @@ const PrivateLayout = ({ children }) => {
   }, [state]);
 
   const onOpenMenu = useCallback(() => {
-    if (state.menuWidth !== 280) setState({ menuWidth: 280 });
+    if (state.menuWidth !== NAV_OPEN_WIDTH) setState({ menuWidth: NAV_OPEN_WIDTH });
   }, [state]);
 
   const { classes } = PrivateLayoutStyles({ width: state.menuWidth });
@@ -54,7 +56,7 @@ const PrivateLayout = ({ children }) => {
     <ThemeProvider>
       <Box className={classes.root}>
         <Box className={classes.sideNav}>
-          <MainMenu onClose={onCloseMenu} onOpen={onOpenMenu} />
+          <MainMenu onClose={onCloseMenu} onOpen={onOpenMenu} subNavWidth={NAV_OPEN_WIDTH} />
         </Box>
         <Box className={classes.content}>
           <AlertStack />
