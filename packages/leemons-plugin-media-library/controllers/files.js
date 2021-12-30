@@ -27,10 +27,9 @@ module.exports = {
     const asset = {
       name,
       description,
-      file: files[0],
     };
 
-    const file = await fileService.saveAsset(asset, {
+    const file = await fileService.uploadFile(files[0], asset, {
       userSession: ctx.state.userSession,
     });
 
@@ -53,8 +52,8 @@ module.exports = {
   },
 
   removeFile: async (ctx) => {
-    await fileService.removeFiles(ctx.params.id);
+    const deleted = await fileService.removeFiles(ctx.params.id);
     ctx.status = 200;
-    ctx.body = { status: 200 };
+    ctx.body = { status: 200, deleted };
   },
 };

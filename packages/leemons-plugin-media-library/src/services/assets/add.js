@@ -1,20 +1,14 @@
-const mime = require('mime-types');
-const { files: table } = require('../tables');
+const { assets: table } = require('../tables');
 const { uploadFile } = require('../files/uploadFile');
+const addFiles = require('./files/addFiles');
 
 module.exports = function add(data, { userSession, transacting: t } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
-      const { type } = data.file;
-      const extension = mime.extension(type);
-
       const asset = {
-        provider: 'sys',
+        cover: data.cover,
         name: data.name,
         description: data.description,
-        type,
-        extension,
-        uri: '',
       };
 
       if (userSession) {
@@ -27,15 +21,23 @@ module.exports = function add(data, { userSession, transacting: t } = {}) {
 
       // EN: Firstly create the asset in the database to get the id
       // ES: Primero creamos el archivo en la base de datos para obtener el id
-      let item = await table.create(asset, { transacting });
+      const item = await table.create(asset, { transacting });
 
       // EN: Upload the file to the provider
       // ES: Subir el archivo al proveedor
-      const { provider, uri } = await uploadFile(data.file, item, { transacting });
+      const file = await uploadFile(
+        data.file,
+        { name: data.name, fromUser: asset.fromUser, fromUserAgent: asset.fromUserAgent },
+        { transacting }
+      );
+
+      // EN: Assign the file to the asset
+      // ES: Asignar el archivo al asset
+      await addFiles(file.id, item.id, { transacting });
 
       // EN: Update the asset with the new URI
       // ES: Actualizamos el archivo con la nueva URI
-      item = await table.update({ id: item.id }, { provider, uri }, { transacting });
+      // item = await table.update({ id: item.id }, { provider, uri }, { transacting });
       return item;
     },
     table,

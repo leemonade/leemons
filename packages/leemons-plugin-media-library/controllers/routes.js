@@ -14,6 +14,30 @@ module.exports = [
     handler: 'assets.remove',
     authenticated: true,
   },
+  {
+    path: '/assets/:id',
+    method: 'PUT',
+    handler: 'assets.update',
+    authenticated: true,
+  },
+  {
+    path: '/assets/:id/files/:file',
+    method: 'POST',
+    handler: 'assets.addFile',
+    authenticated: true,
+  },
+  {
+    path: '/assets/:id/files/:file',
+    method: 'DELETE',
+    handler: 'assets.unlinkFile',
+    authenticated: true,
+  },
+  {
+    path: '/assets/:id/files',
+    method: 'GET',
+    handler: 'assets.getFiles',
+    authenticated: true,
+  },
   /**
    * Files
    */

@@ -1,39 +1,20 @@
 module.exports = {
-  modelName: 'files',
-  collectionName: 'files',
+  modelName: 'assets',
   options: {
     useTimestamps: true,
   },
   attributes: {
-    provider: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
-    },
-    type: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
-    },
-    extension: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
-    },
     name: {
       type: 'string',
       options: {
         notNull: true,
       },
     },
-    uri: {
+    description: {
       type: 'string',
-      options: {
-        notNull: true,
-      },
+    },
+    cover: {
+      type: 'string',
     },
     fromUser: {
       references: {
