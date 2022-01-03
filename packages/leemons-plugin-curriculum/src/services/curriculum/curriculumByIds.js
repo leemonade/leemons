@@ -8,6 +8,7 @@ async function curriculumByIds(ids, { userSession, transacting } = {}) {
     { id_$in: _.isArray(ids) ? ids : [ids] },
     { transacting }
   );
+
   const [nodeLevels, nodes] = await Promise.all([
     nodeLevelsByCurriculum(_.map(curriculums, 'id'), { transacting }),
     nodesTreeByCurriculum(_.map(curriculums, 'id'), { userSession, transacting }),

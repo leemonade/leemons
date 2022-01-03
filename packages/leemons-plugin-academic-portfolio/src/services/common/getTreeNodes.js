@@ -4,6 +4,7 @@ const { getTree } = require('./getTree');
 async function getTreeNodes(nodeTypes, nodeType, nodeId, { transacting } = {}) {
   if (!_.isUndefined(this) && this.calledFrom !== 'plugins.curriculum')
     throw new Error('getTreeNodes only can be called by curriculum plugin');
+
   const nodeIds = _.isArray(nodeId) ? nodeId : [nodeId];
   const tree = await getTree(nodeTypes, { transacting });
 

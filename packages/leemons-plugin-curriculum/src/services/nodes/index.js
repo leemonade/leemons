@@ -1,9 +1,9 @@
 const { addNode } = require('./addNode');
-const { saveNodeFormValues } = require('./saveNodeFormValues');
+const { saveNode } = require('./saveNode');
 const { nodesTreeByCurriculum } = require('./nodesTreeByCurriculum');
 
 module.exports = {
   addNode,
-  saveNodeFormValues,
+  saveNode,
   nodesTreeByCurriculum,
 };

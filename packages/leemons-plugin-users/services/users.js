@@ -27,7 +27,7 @@ module.exports = {
   searchUserAgents: userAgentsService.searchUserAgents,
   getUserAgentCenter: userAgentsService.getUserAgentCenter,
 
-  //Contacts
+  // Contacts
   getUserAgentContacts: userAgentsService.contacts.getUserAgentContacts,
   addUserAgentContacts: userAgentsService.contacts.addUserAgentContacts,
   removeUserAgentContacts: userAgentsService.contacts.removeUserAgentContacts,
@@ -38,6 +38,7 @@ module.exports = {
   // Permissions
   getUserAgentPermissions: userAgents.permissions.getUserAgentPermissions,
   userAgentHasPermission: userAgentsService.permissions.userAgentHasPermission,
+  updateUserAgentPermissions: userAgents.permissions.updateUserAgentPermissions,
   userAgentHasCustomPermission: userAgents.permissions.userAgentHasCustomPermission,
   addCustomPermissionToUserAgent: userAgents.permissions.addCustomPermissionToUserAgent,
   removeCustomUserAgentPermission: userAgentsService.permissions.removeCustomUserAgentPermission,
