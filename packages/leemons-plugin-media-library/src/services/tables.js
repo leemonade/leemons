@@ -4,7 +4,7 @@ const table = {
   assetsFiles: leemons.query('plugins_media-library::assets_files'),
   activeProvider: leemons.query('plugins_media-library::active-provider'),
   categories: leemons.query('plugins_media-library::categories'),
-  fileCategories: leemons.query('plugins_media-library::files_categories'),
+  assetCategories: leemons.query('plugins_media-library::assets_categories'),
 };
 
 module.exports = table;

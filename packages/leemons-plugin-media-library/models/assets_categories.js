@@ -1,5 +1,5 @@
 module.exports = {
-  modelName: 'files_categories',
+  modelName: 'assets_categories',
   attributes: {
     asset: {
       type: 'uuid',

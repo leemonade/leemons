@@ -92,33 +92,33 @@ module.exports = [
    * Files Categories
    */
   {
-    path: '/file/:id/category/:category',
+    path: '/asset/:id/category/:category',
     method: 'POST',
-    handler: 'filesCategories.add',
+    handler: 'assetsCategories.add',
     authenticated: true,
   },
   {
-    path: '/file/:id/category/:category',
+    path: '/asset/:id/category/:category',
     method: 'DELETE',
-    handler: 'filesCategories.remove',
+    handler: 'assetsCategories.remove',
     authenticated: true,
   },
   {
-    path: '/file/:id/categories',
+    path: '/asset/:id/categories',
     method: 'GET',
-    handler: 'filesCategories.get',
+    handler: 'assetsCategories.get',
     authenticated: true,
   },
   {
-    path: '/file/:id/category/:category',
+    path: '/asset/:id/category/:category',
     method: 'GET',
-    handler: 'filesCategories.has',
+    handler: 'assetsCategories.has',
     authenticated: true,
   },
   {
-    path: '/category/:category/files',
+    path: '/category/:category/assets',
     method: 'GET',
-    handler: 'filesCategories.getFiles',
+    handler: 'assetsCategories.getAssets',
     authenticated: true,
   },
 ];
