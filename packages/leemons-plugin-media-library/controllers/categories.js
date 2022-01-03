@@ -1,6 +1,7 @@
 const register = require('../src/services/categories/register');
 const exists = require('../src/services/categories/exists');
 const list = require('../src/services/categories/list');
+const unregister = require('../src/services/categories/unregister');
 
 module.exports = {
   register: async (ctx) => {
@@ -42,6 +43,20 @@ module.exports = {
       const result = await list(page, size, { transacting: ctx.state.transacting });
       ctx.status = 200;
       ctx.body = { status: 200, ...result };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = {
+        status: 500,
+        message: e.message,
+      };
+    }
+  },
+  unregister: async (ctx) => {
+    const { name } = ctx.request.params;
+    try {
+      const deleted = await unregister({ name }, { transacting: ctx.state.transacting });
+      ctx.status = 200;
+      ctx.body = { status: 200, deleted };
     } catch (e) {
       ctx.status = 500;
       ctx.body = {

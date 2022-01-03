@@ -76,6 +76,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/categories/:name',
+    method: 'DELETE',
+    handler: 'categories.unregister',
+    authenticated: true,
+  },
+  {
     path: '/categories/exists/:name',
     method: 'GET',
     handler: 'categories.exists',
