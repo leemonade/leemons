@@ -11,21 +11,19 @@ export default function Public() {
   const { path } = useRouteMatch();
 
   return (
-    <div>
-      <Switch>
-        <Route path={`${path}/login`}>
-          <Login />
-        </Route>
-        <Route path={`${path}/recover`}>
-          <Recover />
-        </Route>
-        <Route path={`${path}/reset`}>
-          <Reset />
-        </Route>
-        <Route path={`${path}`}>
-          <Redirect to={`/private${path}/home`} />
-        </Route>
-      </Switch>
-    </div>
+    <Switch>
+      <Route path={`${path}/login`}>
+        <Login />
+      </Route>
+      <Route path={`${path}/recover`}>
+        <Recover />
+      </Route>
+      <Route path={`${path}/reset`}>
+        <Reset />
+      </Route>
+      <Route path={`${path}`}>
+        <Redirect to={`/private${path}/home`} />
+      </Route>
+    </Switch>
   );
 }

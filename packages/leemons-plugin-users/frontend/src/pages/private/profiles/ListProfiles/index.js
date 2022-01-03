@@ -1,14 +1,23 @@
-import * as _ from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
-import { listProfilesRequest } from '@users/request';
-import { goDetailProfilePage } from '@users/navigate';
-import { withLayout } from '@layout/hoc';
-import { PageContainer, PageHeader, Table } from 'leemons-ui';
+import {
+  AdminPageHeader,
+  Paper,
+  Box,
+  Text,
+  Stack,
+  Anchor,
+  Tabs,
+  Tab,
+} from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { listProfilesRequest } from '@users/request';
+import { goDetailProfilePage } from '@users/navigate';
 import prefixPN from '@users/helpers/prefixPN';
 import { Link, useHistory } from 'react-router-dom';
+import { Table } from 'leemons-ui';
+import _ from 'lodash';
 
 function ListProfiles() {
   const [t] = useTranslateLoader(prefixPN('list_profiles'));
@@ -45,16 +54,12 @@ function ListProfiles() {
       pagination
         ? _.map(pagination.items, (item) => ({
             ...item,
-            name: <div className="font-semibold">{item.name}</div>,
             actions: (
-              <div className="text-right">
-                <Link
-                  to={`/private/users/profiles/detail/${item.uri}`}
-                  className="text-sm text-primary"
-                >
+              <Stack justifyContent="end" fullWidth>
+                <Anchor as={Link} to={`/private/users/profiles/detail/${item.uri}`}>
                   {t('view')}
-                </Link>
-              </div>
+                </Anchor>
+              </Stack>
             ),
           }))
         : [],
@@ -83,29 +88,38 @@ function ListProfiles() {
     load();
   }, []);
 
+  const headerValues = useMemo(
+    () => ({
+      title: t('page_title'),
+      description: t('page_description'),
+    }),
+    [t]
+  );
+
   return (
-    <>
-      <PageHeader
-        title={t('page_title')}
-        newButton={tCommon('new')}
-        onNewButton={() => goDetailProfilePage(history)}
+    <Stack direction="column" fullWidth fullHeight>
+      <AdminPageHeader
+        values={headerValues}
+        buttons={{ new: tCommon('new') }}
+        onNew={() => goDetailProfilePage(history)}
       />
-      <div className="bg-primary-content">
-        <PageContainer>
-          <div className="page-description pb-6 max-w-screen-sm">{t('page_description')}</div>
-        </PageContainer>
-      </div>
-      <PageContainer>
-        <LoadingErrorAlert />
-        <div className="bg-primary-content p-4">
-          {!loading && !loadingError ? (
-            <div>
-              <Table columns={tableHeaders} data={tableItems} />
-            </div>
-          ) : null}
-        </div>
-      </PageContainer>
-    </>
+
+      <Box style={{ flex: 1 }}>
+        <Tabs usePageLayout={true} panelColor="solid" fullHeight>
+          <Tab label={t('page_title')}>
+            <Paper padding={5} style={{ marginTop: 20 }}>
+              <LoadingErrorAlert />
+              {!loading && !loadingError ? (
+                <Table columns={tableHeaders} data={tableItems} />
+              ) : null}
+            </Paper>
+          </Tab>
+          <Tab label="Permisos" disabled>
+            <Box></Box>
+          </Tab>
+        </Tabs>
+      </Box>
+    </Stack>
   );
 }
 
