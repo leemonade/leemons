@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash';
 import Cookies from 'js-cookie';
-import { LoginForm, ThemeProvider, Box, createStyles } from '@bubbles-ui/components';
+import { LoginForm, Box, createStyles } from '@bubbles-ui/components';
 import {
   getRememberProfileRequest,
   getUserProfilesRequest,
@@ -116,21 +116,19 @@ export default function Login() {
   const { classes } = LoginStyles();
 
   return (
-    <ThemeProvider>
-      <HeroBgLayout>
-        <Box className={classes.root}>
-          <Box className={classes.content}>
-            <LoginForm
-              messages={messages}
-              errorMessages={errorMessages}
-              recoverUrl={goRecoverPage(history, true)}
-              onSubmit={onSubmit}
-              isLoading={formStatus === 'loading'}
-              formError={formError}
-            />
-          </Box>
+    <HeroBgLayout>
+      <Box className={classes.root}>
+        <Box className={classes.content}>
+          <LoginForm
+            messages={messages}
+            errorMessages={errorMessages}
+            recoverUrl={goRecoverPage(history, true)}
+            onSubmit={onSubmit}
+            isLoading={formStatus === 'loading'}
+            formError={formError}
+          />
         </Box>
-      </HeroBgLayout>
-    </ThemeProvider>
+      </Box>
+    </HeroBgLayout>
   );
 }

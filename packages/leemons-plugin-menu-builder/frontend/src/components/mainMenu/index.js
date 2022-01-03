@@ -39,6 +39,7 @@ export default function MainMenu({ onClose, onOpen, subNavWidth }) {
       isLoading={isLoading}
       subNavWidth={subNavWidth}
       hideSubNavOnClose={false}
+      useRouter={true}
     />
   );
 }

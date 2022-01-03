@@ -311,4 +311,4 @@ function UserData() {
   );
 }
 
-export default withLayout(UserData);
+export default UserData;

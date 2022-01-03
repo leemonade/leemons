@@ -1,14 +1,14 @@
-import * as _ from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
-import hooks from 'leemons-hooks';
 import { Alert, Box } from '@bubbles-ui/components';
+import { findIndex } from 'lodash';
+import hooks from 'leemons-hooks';
 
 export default function AlertStack() {
   const alertRef = useRef([]);
   const [alerts, setAlerts] = useState([]);
 
   const removeAlert = (id) => {
-    const index = _.findIndex(alertRef.current, { id });
+    const index = findIndex(alertRef.current, { id });
     if (index >= 0) {
       alertRef.current.splice(index, 1);
       setAlerts([...alertRef.current]);

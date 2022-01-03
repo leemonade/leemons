@@ -745,4 +745,4 @@ LocaleTab.propTypes = {
   getValues: PropTypes.func,
   isEditMode: PropTypes.bool,
 };
-export default withLayout(ProfileDetail);
+export default ProfileDetail;
