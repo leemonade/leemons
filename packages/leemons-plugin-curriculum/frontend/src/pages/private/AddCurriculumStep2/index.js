@@ -79,6 +79,14 @@ function AddCurriculumStep2() {
     return result;
   }, [t]);
 
+  const groupOrderedData = useMemo(() => {
+    const result = cloneDeep(BRANCH_CONTENT_SELECT_DATA.groupOrdered);
+    forEach(result, ({ value }, key) => {
+      result[key].label = t(`orderedOptions.${value}`);
+    });
+    return result;
+  }, [t]);
+
   const blockTypeData = useMemo(() => {
     const result = cloneDeep(BRANCH_CONTENT_SELECT_DATA.blockType);
     forEach(result, ({ value }, key) => {
@@ -170,9 +178,12 @@ function AddCurriculumStep2() {
       c.center = find(centers, { id: c.center });
       c.nodeLevels = orderBy(c.nodeLevels, ['levelOrder'], ['asc']);
 
+      console.log(c);
+
       setCurriculum(c);
       setLoading(false);
     } catch (e) {
+      console.error(e);
       setLoading(false);
     }
   }
@@ -317,6 +328,11 @@ function AddCurriculumStep2() {
           toSave.schemaConfig.ui['ui:widget'] = 'wysiwyg';
         }
         break;
+      case 'group':
+        toSave.schemaConfig.schema.type = 'array';
+        toSave.schemaConfig.schema.items = { type: 'string' };
+        toSave.schemaConfig.schema.frontConfig.type = 'group';
+        break;
       default:
         break;
     }
@@ -392,6 +408,7 @@ function AddCurriculumStep2() {
             nodeLevelsFields: nodeLevelsFieldsData,
             listType: listTypeData,
             listOrdered: listOrderedData,
+            groupOrdered: groupOrderedData,
           }}
           branch={activeNodeLevel}
           onSaveBlock={onSaveBlock}

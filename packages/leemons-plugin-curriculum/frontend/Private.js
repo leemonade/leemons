@@ -8,6 +8,8 @@ const AddCurriculum = loadable(() => import('./src/pages/private/AddCurriculum')
 const AddCurriculumStep1 = loadable(() => import('./src/pages/private/AddCurriculumStep1'));
 const AddCurriculumStep2 = loadable(() => import('./src/pages/private/AddCurriculumStep2'));
 const AddCurriculumStep3 = loadable(() => import('./src/pages/private/AddCurriculumStep3'));
+const CurriculumView = loadable(() => import('./src/pages/private/CurriculumView'));
+const ListCurriculum = loadable(() => import('./src/pages/private/ListCurriculum'));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -28,7 +30,12 @@ export default function Private() {
         <Route path={`${path}/:id/step/3`}>
           <AddCurriculumStep3 session={session} />
         </Route>
-        <Route path={`${path}/list`}>Listado</Route>
+        <Route path={`${path}/:id/view`}>
+          <CurriculumView session={session} />
+        </Route>
+        <Route path={`${path}/list`}>
+          <ListCurriculum session={session} />
+        </Route>
       </Switch>
     </div>
   );

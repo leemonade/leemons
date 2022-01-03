@@ -10,6 +10,7 @@ import {
 } from './branchContentDefaultValues';
 import BranchBlockCode from './BranchBlockCode';
 import BranchBlockList from './BranchBlockList';
+import BranchBlockGroup from './BranchBlockGroup';
 
 function BranchBlock({ messages, errorMessages, isLoading, selectData, defaultValues, onSubmit }) {
   const form = useForm({ defaultValues });
@@ -140,6 +141,28 @@ function BranchBlock({ messages, errorMessages, isLoading, selectData, defaultVa
         />
       </Box>
     );
+  } else if (formData.type === 'group') {
+    groupFields.push(
+      <Box key="item-3">
+        <Controller
+          name="groupOrdered"
+          control={control}
+          rules={{
+            required: errorMessages.groupOrderedRequired,
+          }}
+          render={({ field }) => (
+            <Select
+              label="&nbsp;"
+              placeholder={messages.groupOrderedPlaceholder}
+              required
+              error={errors.groupOrdered}
+              data={selectData.groupOrdered || []}
+              {...field}
+            />
+          )}
+        />
+      </Box>
+    );
   }
 
   const branchBlocks = {
@@ -155,6 +178,15 @@ function BranchBlock({ messages, errorMessages, isLoading, selectData, defaultVa
     ),
     list: (
       <BranchBlockList
+        messages={messages}
+        errorMessages={errorMessages}
+        isLoading={isLoading}
+        selectData={selectData}
+        form={form}
+      />
+    ),
+    group: (
+      <BranchBlockGroup
         messages={messages}
         errorMessages={errorMessages}
         isLoading={isLoading}

@@ -24,6 +24,10 @@ function validateDataForJsonSchema(jsonSchema, data) {
               type: 'string',
             },
             value: value.items,
+            metadata: {
+              type: 'object',
+              additionalProperties: true,
+            },
           },
         },
       };

@@ -14,7 +14,9 @@ function getValuesForSave(jsonSchema, key, value) {
   const config = jsonSchema.properties[key];
   if (config && config.frontConfig) {
     if (
-      (config.frontConfig.type === 'multioption' || config.frontConfig.type === 'list') &&
+      (config.frontConfig.type === 'multioption' ||
+        config.frontConfig.type === 'list' ||
+        config.frontConfig.type === 'group') &&
       _.isArray(value)
     ) {
       return _.map(value, (val, index) => ({

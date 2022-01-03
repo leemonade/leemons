@@ -72,6 +72,10 @@ module.exports = {
     listNumberingStyleRequired: 'Field required',
     codeNodeLevelRequired: 'Field required',
     codeNodeLevelFieldRequired: 'Field required',
+    groupOrderedRequired: 'Field required',
+    groupColumnNameRequired: 'Field required',
+    groupColumnTypeRequired: 'Field required',
+    groupShowAsRequired: 'Field required',
     orderedOptions: {
       'not-ordered': 'Not ordered',
       bullets: 'Only bullets',
@@ -118,6 +122,12 @@ module.exports = {
     listNumberingContinueFromPrevious: 'Continue from previous parent block',
     cancelCodeAutoComposedField: 'Cancel',
     saveCodeAutoComposedField: 'Save',
+    groupOrderedPlaceholder: 'Select...',
+    groupColumnTypeLabel: 'Type',
+    groupColumnTypePlaceholder: 'Select...',
+    groupShowAs: 'Show as',
+    groupSaveConfig: 'Save config',
+    groupAddElement: 'Add element',
   },
   addCurriculumStep3: {
     addNode: 'Add {name}',

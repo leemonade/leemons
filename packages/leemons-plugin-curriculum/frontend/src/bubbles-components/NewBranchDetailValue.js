@@ -22,11 +22,13 @@ function NewBranchDetailValue({
   defaultValues,
   schema,
   schemaFormValues,
+  readonly,
 }) {
   const {
     reset,
     control,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm();
 
@@ -61,33 +63,40 @@ function NewBranchDetailValue({
 
   return (
     <Box m={32}>
-      <form>
-        <Box>
-          <Controller
-            name="name"
-            control={control}
-            rules={{
-              required: errorMessages.nameRequired,
-            }}
-            render={({ field }) => (
-              <TextInput
-                label={messages.nameLabel}
-                placeholder={messages.namePlaceholder}
-                error={errors.name}
-                required
-                {...field}
-              />
-            )}
-          />
-        </Box>
-      </form>
+      {!readonly ? (
+        <form>
+          <Box>
+            <Controller
+              name="name"
+              control={control}
+              rules={{
+                required: errorMessages.nameRequired,
+              }}
+              render={({ field }) => (
+                <TextInput
+                  label={messages.nameLabel}
+                  placeholder={messages.namePlaceholder}
+                  error={errors.name}
+                  required
+                  {...field}
+                />
+              )}
+            />
+          </Box>
+        </form>
+      ) : (
+        <Box>{watch('name')}</Box>
+      )}
+
       <Box>{form}</Box>
 
-      <Box>
-        <Button rounded size="xs" loading={isLoading} loaderPosition="right" onClick={save}>
-          {messages.saveButtonLabel}
-        </Button>
-      </Box>
+      {!readonly ? (
+        <Box>
+          <Button rounded size="xs" loading={isLoading} loaderPosition="right" onClick={save}>
+            {messages.saveButtonLabel}
+          </Button>
+        </Box>
+      ) : null}
     </Box>
   );
 }
@@ -116,6 +125,7 @@ NewBranchDetailValue.propTypes = {
   schemaFormValues: PropTypes.object,
   onSubmit: PropTypes.func,
   isLoading: PropTypes.bool,
+  readonly: PropTypes.bool,
 };
 
 export default NewBranchDetailValue;

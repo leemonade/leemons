@@ -26,6 +26,12 @@ export const BRANCH_CONTENT_MESSAGES = {
   listNumberingContinueFromPrevious: 'Continue from previous parent block',
   cancelCodeAutoComposedField: 'Cancel',
   saveCodeAutoComposedField: 'Save',
+  groupOrderedPlaceholder: 'Select...',
+  groupColumnTypeLabel: 'Type',
+  groupColumnTypePlaceholder: 'Select...',
+  groupShowAs: 'Show as',
+  groupSaveConfig: 'Save config',
+  groupAddElement: 'Add element',
 };
 
 export const BRANCH_CONTENT_ERROR_MESSAGES = {
@@ -43,6 +49,10 @@ export const BRANCH_CONTENT_ERROR_MESSAGES = {
   listNumberingStyleRequired: 'Field required',
   codeNodeLevelRequired: 'Field required',
   codeNodeLevelFieldRequired: 'Field required',
+  groupOrderedRequired: 'Field required',
+  groupColumnNameRequired: 'Field required',
+  groupColumnTypeRequired: 'Field required',
+  groupShowAsRequired: 'Field required',
 };
 
 export const BRANCH_CONTENT_SELECT_DATA = {
@@ -101,6 +111,24 @@ export const BRANCH_CONTENT_SELECT_DATA = {
     },
   ],
   blockOrdered: [
+    {
+      label: 'Not ordered',
+      value: 'not-ordered',
+    },
+    {
+      label: 'Only bullets',
+      value: 'bullets',
+    },
+    {
+      label: 'Numbering Style 1 (1,2,3,...)',
+      value: 'style-1',
+    },
+    {
+      label: 'Numbering Style 2 (A,B,C,...)',
+      value: 'style-2',
+    },
+  ],
+  groupOrdered: [
     {
       label: 'Not ordered',
       value: 'not-ordered',
