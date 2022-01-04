@@ -3,7 +3,7 @@ const pathSys = require('path');
 const { files } = require('../tables');
 const { getActiveProvider } = require('../config/getActiveProvider');
 
-async function uploadFile(file, data, { transacting } = {}) {
+async function uploadFile(file, data, { userSession, transacting } = {}) {
   const item = {};
   const { path, type } = file;
   const extension = mime.extension(type);
@@ -15,6 +15,12 @@ async function uploadFile(file, data, { transacting } = {}) {
     extension,
     uri: '',
   };
+
+  if (userSession) {
+    fileObj.fromUser = userSession.id;
+    fileObj.fromUserAgent =
+      userSession.userAgents && userSession.userAgents.length ? userSession.userAgents[0].id : null;
+  }
 
   // EN: Firstly save the file to the database and get the id
   // ES: Primero guardamos el archivo en la base de datos y obtenemos el id

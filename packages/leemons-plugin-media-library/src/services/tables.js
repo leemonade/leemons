@@ -5,6 +5,7 @@ const table = {
   activeProvider: leemons.query('plugins_media-library::active-provider'),
   categories: leemons.query('plugins_media-library::categories'),
   assetCategories: leemons.query('plugins_media-library::assets_categories'),
+  permissions: leemons.query('plugins_media-library::users_permissions'),
 };
 
 module.exports = table;

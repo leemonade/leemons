@@ -65,7 +65,6 @@ module.exports = [
     handler: 'files.file',
     authenticated: true,
   },
-
   /**
    * Categories
    */
@@ -125,6 +124,33 @@ module.exports = [
     path: '/category/:category/assets',
     method: 'GET',
     handler: 'assetsCategories.getAssets',
+    authenticated: true,
+  },
+  /**
+   * Permissions
+   */
+  {
+    path: '/asset/:asset/permissions',
+    method: 'POST',
+    handler: 'permissions.set',
+    authenticated: true,
+  },
+  {
+    path: '/asset/:asset/permissions',
+    method: 'DELETE',
+    handler: 'permissions.remove',
+    authenticated: true,
+  },
+  {
+    path: '/asset/:asset/permissions',
+    method: 'GET',
+    handler: 'permissions.get',
+    authenticated: true,
+  },
+  {
+    path: '/asset/:asset/permissions/has',
+    method: 'GET',
+    handler: 'permissions.has',
     authenticated: true,
   },
 ];
