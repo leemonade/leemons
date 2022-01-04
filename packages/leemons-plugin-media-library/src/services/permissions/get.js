@@ -1,15 +1,10 @@
 const { permissions } = require('../tables');
-const isAssetOwner = require('./helpers/isAssetOwner');
-const parsePermissions = require('./helpers/parsePermissions');
+const getRolePermissions = require('./helpers/getRolePermissions');
 
 module.exports = async function get(asset, { userSession, transacting } = {}) {
   const userAgent =
     userSession.userAgents && userSession.userAgents.length ? userSession.userAgents[0].id : null;
   try {
-    if (await isAssetOwner(asset, { userSession, transacting })) {
-      return ['share', 'delete', 'edit', 'view'];
-    }
-
     const [permission] = await permissions.find(
       {
         asset,
@@ -18,7 +13,7 @@ module.exports = async function get(asset, { userSession, transacting } = {}) {
       { transacting }
     );
 
-    return parsePermissions(permission?.permission || '');
+    return getRolePermissions(permission?.role);
   } catch (e) {
     throw new Error(`Failed to get permissions: ${e.message}`);
   }

@@ -7,7 +7,7 @@ module.exports = {
     userAgent: {
       type: 'string',
     },
-    permission: {
+    role: {
       type: 'string',
     },
   },

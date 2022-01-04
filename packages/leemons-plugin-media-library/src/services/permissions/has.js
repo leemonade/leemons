@@ -2,7 +2,9 @@ const get = require('./get');
 
 module.exports = async function has(asset, permission, { userSession, transacting } = {}) {
   try {
-    const current = await get(asset, { userSession, transacting });
+    const current = Object.entries(await get(asset, { userSession, transacting }))
+      .filter(([, value]) => value)
+      .map(([key]) => key);
 
     return permission.every((p) => current.includes(p));
   } catch (e) {

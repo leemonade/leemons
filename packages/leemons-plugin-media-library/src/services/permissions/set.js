@@ -1,13 +1,16 @@
 const { permissions: table } = require('../tables');
-const isAssetOwner = require('./helpers/isAssetOwner');
-const stringifyPermissions = require('./helpers/stringifyPermissions');
+const validateRole = require('./helpers/validateRole');
+// const isAssetOwner = require('./helpers/isAssetOwner');
 
-module.exports = async function set(asset, permissions, { userSession, transacting } = {}) {
+module.exports = async function set(asset, role, { userSession, transacting } = {}) {
   const userAgent =
     userSession.userAgents && userSession.userAgents.length ? userSession.userAgents[0].id : null;
   try {
-    if (await isAssetOwner(asset, { userSession, transacting })) {
-      return true;
+    // if (await isAssetOwner(asset, { userSession, transacting })) {
+    //   return true;
+    // }
+    if (!validateRole(role)) {
+      throw new Error('Invalid role');
     }
 
     await table.set(
@@ -16,7 +19,7 @@ module.exports = async function set(asset, permissions, { userSession, transacti
         userAgent,
       },
       {
-        permission: stringifyPermissions(permissions),
+        role,
       },
       { transacting }
     );

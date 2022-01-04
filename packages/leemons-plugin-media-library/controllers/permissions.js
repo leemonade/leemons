@@ -6,16 +6,16 @@ const set = require('../src/services/permissions/set');
 module.exports = {
   set: async (ctx) => {
     const { asset } = ctx.params;
-    const { permissions } = ctx.request.body;
+    const { role } = ctx.request.body;
     const { userSession } = ctx.state;
 
     try {
-      const permission = await set(asset, permissions, { userSession });
+      const permission = await set(asset, role, { userSession });
 
       ctx.status = 200;
       ctx.body = {
         status: 200,
-        permission,
+        role: permission,
       };
     } catch (e) {
       ctx.status = 400;
