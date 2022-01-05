@@ -6,11 +6,11 @@ const set = require('../src/services/permissions/set');
 module.exports = {
   set: async (ctx) => {
     const { asset } = ctx.params;
-    const { role } = ctx.request.body;
+    const { userAgent, role } = ctx.request.body;
     const { userSession } = ctx.state;
 
     try {
-      const permission = await set(asset, role, { userSession });
+      const permission = await set(asset, userAgent, role, { userSession });
 
       ctx.status = 200;
       ctx.body = {
@@ -27,10 +27,11 @@ module.exports = {
   },
   remove: async (ctx) => {
     const { asset } = ctx.params;
+    const { userAgent } = ctx.request.query;
     const { userSession } = ctx.state;
 
     try {
-      const deleted = await remove(asset, { userSession });
+      const deleted = await remove(asset, userAgent, { userSession });
 
       ctx.status = 200;
       ctx.body = {

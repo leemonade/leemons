@@ -13,7 +13,7 @@ module.exports = async function get(asset, { userSession, transacting } = {}) {
       { transacting }
     );
 
-    return getRolePermissions(permission?.role);
+    return { role: permission?.role, permissions: getRolePermissions(permission?.role) };
   } catch (e) {
     throw new Error(`Failed to get permissions: ${e.message}`);
   }

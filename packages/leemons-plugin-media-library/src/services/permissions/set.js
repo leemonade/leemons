@@ -1,18 +1,34 @@
 const { permissions: table } = require('../tables');
+const assetHasOwner = require('./helpers/assetHasOwner');
+const canAssignRole = require('./helpers/canAssignRole');
+const getAssignerAndAssigneeRoles = require('./helpers/getAssignerAndAssigneeRoles');
 const validateRole = require('./helpers/validateRole');
-// const isAssetOwner = require('./helpers/isAssetOwner');
 
-module.exports = async function set(asset, role, { userSession, transacting } = {}) {
-  const userAgent =
-    userSession.userAgents && userSession.userAgents.length ? userSession.userAgents[0].id : null;
+module.exports = async function set(asset, userAgent, role, { userSession, transacting } = {}) {
   try {
-    // if (await isAssetOwner(asset, { userSession, transacting })) {
-    //   return true;
-    // }
     if (!validateRole(role)) {
       throw new Error('Invalid role');
     }
 
+    // EN: Get the assigner and assignee roles
+    // ES: Obtener los roles del asignador y del asignado
+    const { assignerRole, assigneeRole } = await getAssignerAndAssigneeRoles(
+      asset,
+      userSession,
+      userAgent,
+      { transacting }
+    );
+
+    // EN: Check if assigner can assign role to assignee
+    // ES: Comprobar si el asignador puede asignar el rol al asignado
+    if (!canAssignRole(assignerRole, assigneeRole, role)) {
+      if (!(role === 'owner' && !(await assetHasOwner(asset, { transacting })))) {
+        throw new Error("You don't have permission to assign this role");
+      }
+    }
+
+    // EN: Set role
+    // ES: Asignar rol
     await table.set(
       {
         asset,
