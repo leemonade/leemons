@@ -1,6 +1,7 @@
 const { assets: table } = require('../tables');
 const { uploadFile } = require('../files/uploadFile');
 const addFiles = require('./files/addFiles');
+const setPermissions = require('../permissions/set');
 
 module.exports = function add(data, { userSession, transacting: t } = {}) {
   return global.utils.withTransaction(
@@ -23,6 +24,13 @@ module.exports = function add(data, { userSession, transacting: t } = {}) {
       // ES: Primero creamos el archivo en la base de datos para obtener el id
       const item = await table.create(asset, { transacting });
 
+      // EN: Set asset owner
+      // ES: Asignar propietario del archivo
+      await setPermissions(item.id, userSession.userAgents[0].id, 'owner', {
+        userSession,
+        transacting,
+      });
+
       // EN: Upload the file to the provider
       // ES: Subir el archivo al proveedor
       const file = await uploadFile(
@@ -35,9 +43,6 @@ module.exports = function add(data, { userSession, transacting: t } = {}) {
       // ES: Asignar el archivo al asset
       await addFiles(file.id, item.id, { transacting });
 
-      // EN: Update the asset with the new URI
-      // ES: Actualizamos el archivo con la nueva URI
-      // item = await table.update({ id: item.id }, { provider, uri }, { transacting });
       return item;
     },
     table,
