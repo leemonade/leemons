@@ -153,4 +153,10 @@ module.exports = [
     handler: 'permissions.has',
     authenticated: true,
   },
+  {
+    path: '/asset/:asset/permissions/users',
+    method: 'GET',
+    handler: 'permissions.list',
+    authenticated: true,
+  },
 ];

@@ -27,6 +27,20 @@ module.exports = async function set(asset, userAgent, role, { userSession, trans
       }
     }
 
+    // EN: When assigning owner role, replace current owner role by editor role
+    // ES: Cuando se asigna el rol de propietario, reemplazar el rol de propietario actual por el rol de editor
+    if (role === 'owner') {
+      await table.set(
+        {
+          asset,
+          userAgent: userSession.userAgents[0].id,
+        },
+        {
+          role: 'editor',
+        }
+      );
+    }
+
     // EN: Set role
     // ES: Asignar rol
     await table.set(

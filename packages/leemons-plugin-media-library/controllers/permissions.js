@@ -1,5 +1,6 @@
 const get = require('../src/services/permissions/get');
 const has = require('../src/services/permissions/has');
+const list = require('../src/services/permissions/list');
 const remove = require('../src/services/permissions/remove');
 const set = require('../src/services/permissions/set');
 
@@ -78,6 +79,26 @@ module.exports = {
       ctx.body = {
         status: 200,
         has: hasPermissions,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        message: e.message,
+      };
+    }
+  },
+  list: async (ctx) => {
+    const { asset } = ctx.params;
+    const { userSession } = ctx.state;
+
+    try {
+      const users = await list(asset, { userSession });
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        users,
       };
     } catch (e) {
       ctx.status = 400;
