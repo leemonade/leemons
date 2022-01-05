@@ -106,9 +106,10 @@ module.exports = {
   },
   unlinkFile: async (ctx) => {
     const { id, file } = ctx.params;
+    const { userSession } = ctx.state;
 
     try {
-      const removed = await unlinkFiles(file, id);
+      const removed = await unlinkFiles(file, id, { userSession });
       ctx.status = 200;
       ctx.body = {
         status: 200,
