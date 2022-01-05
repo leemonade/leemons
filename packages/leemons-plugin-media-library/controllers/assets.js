@@ -67,9 +67,10 @@ module.exports = {
   update: async (ctx) => {
     const { id } = ctx.params;
     const { name, description, cover } = ctx.request.body;
+    const { userSession } = ctx.state;
 
     try {
-      const item = await update(id, { name, description, cover });
+      const item = await update(id, { name, description, cover }, { userSession });
       ctx.status = 200;
       ctx.body = {
         status: 200,
