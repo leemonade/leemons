@@ -13,10 +13,6 @@ module.exports = async function removeAsset(id, { userSession, transacting: t } 
         // ES: Comprobar si el activo existe (si no, lanzará un error)
         await table.findOne({ id }, { transacting });
 
-        // EN: Remove all the users invited to the asset (if no permissions, it will throw an error)
-        // ES: Eliminar todos los usuarios invitados al activo (si no tiene permisos, lanzará un error)
-        await removeAllUsers(id, { userSession, transacting });
-
         // EN: Get the files associated with the asset
         // ES: Obtener los archivos asociados al asset
         const files = await getFiles(id, { transacting });
@@ -34,9 +30,17 @@ module.exports = async function removeAsset(id, { userSession, transacting: t } 
           // ES: También debemos eliminar las categorías del archivo
           // await removeCategories({ id }, null, { transacting });
 
+          // EN: Remove all the users invited to the asset (if no permissions, it will throw an error)
+          // ES: Eliminar todos los usuarios invitados al activo (si no tiene permisos, lanzará un error)
+          await removeAllUsers(id, { userSession, transacting });
+
           // EN: Finally, delete the file from the provider
           // ES: Finalmente, eliminamos el archivo del proveedor
           await removeFiles(files, { transacting });
+        } else {
+          // EN: Remove all the users invited to the asset (if no permissions, it will throw an error)
+          // ES: Eliminar todos los usuarios invitados al activo (si no tiene permisos, lanzará un error)
+          await removeAllUsers(id, { userSession, transacting });
         }
         return true;
       } catch (e) {
