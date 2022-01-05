@@ -46,9 +46,10 @@ module.exports = {
   },
   remove: async (ctx) => {
     const { id } = ctx.params;
+    const { userSession } = ctx.state;
 
     try {
-      const deleted = await remove(id);
+      const deleted = await remove(id, { userSession });
 
       ctx.status = 200;
       ctx.body = {

@@ -1,16 +1,21 @@
 const removeFiles = require('../files/removeFiles');
+const removeAllUsers = require('../permissions/removeAllUsers');
 // const removeCategories = require('../files/categories/remove');
 const { assets: table } = require('../tables');
 const getFiles = require('./files/getFiles');
 const unlinkFiles = require('./files/unlinkFiles');
 
-module.exports = async function removeAsset(id, { transacting: t } = {}) {
+module.exports = async function removeAsset(id, { userSession, transacting: t } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       try {
         // EN: Check if the asset exists (if not it will throw an error)
         // ES: Comprobar si el activo existe (si no, lanzará un error)
         await table.findOne({ id }, { transacting });
+
+        // EN: Remove all the users invited to the asset (if no permissions, it will throw an error)
+        // ES: Eliminar todos los usuarios invitados al activo (si no tiene permisos, lanzará un error)
+        await removeAllUsers(id, { userSession, transacting });
 
         // EN: Get the files associated with the asset
         // ES: Obtener los archivos asociados al asset
