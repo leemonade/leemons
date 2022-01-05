@@ -86,9 +86,10 @@ module.exports = {
   },
   addFile: async (ctx) => {
     const { id, file } = ctx.params;
+    const { userSession } = ctx.state;
 
     try {
-      await addFiles(id, file);
+      await addFiles(id, file, { userSession });
       ctx.status = 201;
       ctx.body = {
         status: 201,

@@ -41,7 +41,7 @@ module.exports = function add(data, { userSession, transacting: t } = {}) {
 
       // EN: Assign the file to the asset
       // ES: Asignar el archivo al asset
-      await addFiles(file.id, item.id, { transacting });
+      await addFiles(file.id, item.id, { userSession, transacting });
 
       return item;
     },
