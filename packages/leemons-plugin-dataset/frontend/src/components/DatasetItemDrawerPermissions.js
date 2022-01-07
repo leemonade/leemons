@@ -16,6 +16,7 @@ export const DatasetItemDrawerPermissions = ({ onChange = () => {} }) => {
   const [profileError, setError, ProfileErrorAlert] = useRequestErrorMessage();
   const { t, item } = useContext(DatasetItemDrawerContext);
   const { setState: setStateProfiles, profiles } = useContext(DatasetItemDrawerProfilesContext);
+  console.log('profiles', profiles);
   const tableHeaders = useMemo(
     () => [
       {
@@ -91,6 +92,7 @@ export const DatasetItemDrawerPermissions = ({ onChange = () => {} }) => {
   const onSuccess = useMemo(
     () =>
       ({ data }) => {
+        console.log('data', data);
         // ES: Si estamos editando un item nos viene la variable item o si ya hemos cambiado algun permiso
         let itemProfilesById = {};
         if (item && item.frontConfig) {
