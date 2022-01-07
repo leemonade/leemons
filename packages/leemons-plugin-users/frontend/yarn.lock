@@ -9,7 +9,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@bubbles-ui/components@^1.0.11":
+"@bubbles-ui/components@^1.0.13":
   version "1.0.13"
   resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.0.13.tgz#cb081c98d618b4b8c31fbf15acb1a0d3b5d4e089"
   integrity sha512-Y9AYJWtoQ7z1cV9xyJ0Vtu1CBtjitKJaxkLeg8iBKT0nDhEgR4pYwyhasberBIDz7LigVHUgG3Y0P544vI5Izg==
@@ -46,6 +46,11 @@
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.0.3.tgz#d84b80d36d80ffe174ce636545b29ccc7aba90a7"
   integrity sha512-53mHGfCWyFhd1YKNOf4NjIo3di0TrKEskEIVXFKyklkh2SLY/Apfp3muhfVf/qQGNXuqfr5ci90T2uTIp85OKg==
+
+"@bubbles-ui/icons@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.0.4.tgz#d64318013a0afe11b37577de4833fae58ff86588"
+  integrity sha512-5x2hgSHpaTukH644wyiUIKDqPTCh9PWRsjXfQGkXxHkunWvxHts9cOHxANCdzFxTIzf5Km8kEBk7LcHcigkGPg==
 
 "@emotion/cache@^11.4.0", "@emotion/cache@^11.7.1":
   version "11.7.1"
