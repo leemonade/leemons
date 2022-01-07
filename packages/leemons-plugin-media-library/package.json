@@ -4,6 +4,7 @@
   "main": "lib/index.js",
   "license": "MIT",
   "dependencies": {
+    "lodash.groupby": "^4.6.0",
     "mime-types": "^2.1.33"
   }
 }

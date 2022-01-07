@@ -94,7 +94,7 @@ module.exports = [
   },
 
   /**
-   * Files Categories
+   * Assets Categories
    */
   {
     path: '/asset/:id/category/:category',
@@ -124,6 +124,39 @@ module.exports = [
     path: '/category/:category/assets',
     method: 'GET',
     handler: 'assetsCategories.getAssets',
+    authenticated: true,
+  },
+  /**
+   * Assets Tags
+   */
+  {
+    path: '/asset/:id/tags',
+    method: 'POST',
+    handler: 'assetsTags.add',
+    authenticated: true,
+  },
+  {
+    path: '/asset/:id/tags/:tag',
+    method: 'DELETE',
+    handler: 'assetsTags.remove',
+    authenticated: true,
+  },
+  {
+    path: '/asset/:id/tags',
+    method: 'GET',
+    handler: 'assetsTags.get',
+    authenticated: true,
+  },
+  {
+    path: '/asset/:id/tags/:tag',
+    method: 'GET',
+    handler: 'assetsTags.has',
+    authenticated: true,
+  },
+  {
+    path: '/tags/assets',
+    method: 'GET',
+    handler: 'assetsTags.getAssets',
     authenticated: true,
   },
   /**
