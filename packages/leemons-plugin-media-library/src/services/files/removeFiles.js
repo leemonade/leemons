@@ -1,7 +1,7 @@
 const unlinkFiles = require('../assets/files/unlinkFiles');
 const { files: table } = require('../tables');
 
-module.exports = async function removeFile(files, { transacting } = {}) {
+module.exports = async function removeFile(files, asset, { userSession, transacting } = {}) {
   const _files = await table.find({ id_$in: files.length ? files : [files] });
 
   const deleted = await Promise.all(
@@ -12,7 +12,7 @@ module.exports = async function removeFile(files, { transacting } = {}) {
 
       // EN: Unlink the file from the asset
       // ES: Desvincular el archivo del asset
-      await unlinkFiles(files, null, { transacting });
+      await unlinkFiles(files, asset, { userSession, transacting });
 
       // EN: Delete the file from the provider
       // ES: Eliminar el archivo del proveedor
