@@ -192,4 +192,13 @@ module.exports = [
     handler: 'permissions.list',
     authenticated: true,
   },
+  /**
+   * Search
+   */
+  {
+    path: '/search',
+    method: 'GET',
+    handler: 'search.search',
+    authenticated: true,
+  },
 ];
