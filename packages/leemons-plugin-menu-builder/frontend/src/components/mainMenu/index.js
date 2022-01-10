@@ -6,18 +6,11 @@ import { MainNav } from '@bubbles-ui/components';
 
 export default function MainMenu({ onClose, onOpen, subNavWidth }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [loadMenu, setLoadMenu] = useState(false);
   const [menuData, setMenuData] = useState([]);
 
-  const loadMenu = async () => {
-    setIsLoading(true);
-    const menu = await getMenu('plugins.menu-builder.main');
-    setMenuData(menu);
-    setIsLoading(false);
-    return menu;
-  };
-
-  const reloadMenu = async () => {
-    await loadMenu();
+  const reloadMenu = () => {
+    setLoadMenu(true);
   };
 
   useEffect(() => {
@@ -27,9 +20,27 @@ export default function MainMenu({ onClose, onOpen, subNavWidth }) {
     };
   });
 
-  useEffect(async () => {
-    await loadMenu();
+  useEffect(() => {
+    setLoadMenu(true);
   }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      if (loadMenu) {
+        setIsLoading(true);
+        const menu = await getMenu('plugins.menu-builder.main');
+        if (mounted) {
+          setMenuData(menu);
+          setIsLoading(false);
+          setLoadMenu(false);
+        }
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [loadMenu]);
 
   return (
     <MainNav

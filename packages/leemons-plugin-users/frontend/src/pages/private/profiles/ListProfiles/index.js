@@ -3,12 +3,14 @@ import {
   AdminPageHeader,
   Paper,
   Box,
-  Text,
   Stack,
   Anchor,
+  ActionButton,
   Tabs,
   Tab,
+  Table,
 } from '@bubbles-ui/components';
+import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
@@ -16,7 +18,6 @@ import { listProfilesRequest } from '@users/request';
 import { goDetailProfilePage } from '@users/navigate';
 import prefixPN from '@users/helpers/prefixPN';
 import { Link, useHistory } from 'react-router-dom';
-import { Table } from 'leemons-ui';
 import _ from 'lodash';
 
 function ListProfiles() {
@@ -55,11 +56,14 @@ function ListProfiles() {
         ? _.map(pagination.items, (item) => ({
             ...item,
             actions: (
-              <Stack justifyContent="end" fullWidth>
-                <Anchor as={Link} to={`/private/users/profiles/detail/${item.uri}`}>
-                  {t('view')}
-                </Anchor>
-              </Stack>
+              <Box style={{ textAlign: 'right', width: '100%' }}>
+                <ActionButton
+                  as={Link}
+                  to={`/private/users/profiles/detail/${item.uri}`}
+                  tooltip={t('view')}
+                  icon={<ExpandDiagonalIcon />}
+                />
+              </Box>
             ),
           }))
         : [],
@@ -107,7 +111,7 @@ function ListProfiles() {
       <Box style={{ flex: 1 }}>
         <Tabs usePageLayout={true} panelColor="solid" fullHeight>
           <Tab label={t('page_title')}>
-            <Paper padding={5} style={{ marginTop: 20 }}>
+            <Paper padding={5} mt={20} mb={20}>
               <LoadingErrorAlert />
               {!loading && !loadingError ? (
                 <Table columns={tableHeaders} data={tableItems} />
