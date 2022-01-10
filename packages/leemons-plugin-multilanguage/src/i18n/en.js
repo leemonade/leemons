@@ -15,6 +15,7 @@ module.exports = {
       numbers: 'Only numbers are allowed',
       phone: 'Invalid phone',
     },
+    selectionRequired: 'Must select an option',
   },
   request_errors: {
     permission_error:

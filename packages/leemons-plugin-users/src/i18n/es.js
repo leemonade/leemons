@@ -45,8 +45,7 @@ module.exports = {
       'Aquí le recomendamos los primeros pasos para configurar correctamente su administración de usuarios.',
   },
   hero_bg: {
-    text:
-      '"¡No sé el significado de la mitad de esas largas palabras y, además, no creo que tú tampoco lo sepas!"',
+    text: '"¡No sé el significado de la mitad de esas largas palabras y, además, no creo que tú tampoco lo sepas!"',
     author: 'Alice in Wonderland <br/> Lewis Carrol',
   },
   list_profiles: {
@@ -69,6 +68,7 @@ module.exports = {
     save_done: 'Perfil creado',
     update_done: 'Perfil actualizado',
     translations: 'Traducciones',
+    translations_warning: 'Debes guardar el perfil para que se almacenen las traducciones',
     options_modal: {
       title: 'Traducción',
       description:

@@ -19,13 +19,15 @@ const HeroBgLayoutStyles = createStyles(() => ({
 export default function HeroBgLayout({ children }) {
   const [quote, setQuote] = useState({});
 
-  useEffect(async () => {
+  useEffect(() => {
     let mounted = true;
-    const response = await todayQuoteRequest();
-    if (isArray(response.data)) {
-      const { a, q } = response.data[0];
-      if (mounted) setQuote({ a, q });
-    }
+    (async () => {
+      const response = await todayQuoteRequest();
+      if (isArray(response.data)) {
+        const { a, q } = response.data[0];
+        if (mounted) setQuote({ a, q });
+      }
+    })();
     return () => {
       mounted = false;
     };

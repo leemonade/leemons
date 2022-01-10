@@ -45,8 +45,7 @@ module.exports = {
       'Here we recommend you the first steps to config properly your Users Administration setup.',
   },
   hero_bg: {
-    text:
-      '“I don’t know the meaning of half those long words, and, what’s more, I don’t believe you do either!”',
+    text: '“I don’t know the meaning of half those long words, and, what’s more, I don’t believe you do either!”',
     author: 'Alice in Wonderland <br/> Lewis Carrol',
   },
   list_profiles: {
@@ -69,6 +68,7 @@ module.exports = {
     save_done: 'Profile created',
     update_done: 'Profile updated',
     translations: 'Translations',
+    translations_warning: 'Must save the profile to keep translations stored',
     options_modal: {
       title: 'Translation',
       description: 'Add here the translations of the profile info to your system languages',

@@ -13,6 +13,7 @@ import {
   Paper,
   Tabs,
   Tab,
+  Alert,
 } from '@bubbles-ui/components';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -38,7 +39,7 @@ function ProfileDetail() {
   const history = useHistory();
   const { uri } = useParams();
 
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [profile, setProfile] = useState(null);
   const [permissions, setPermissions] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -49,27 +50,32 @@ function ProfileDetail() {
 
   useEffect(() => {
     if (!uri) {
-      setIsEditMode(true);
+      setEditMode(true);
     }
   }, []);
 
-  async function saveProfile(data) {
+  async function saveProfile({ name, description }) {
     try {
       setSaveLoading(true);
       let response;
 
       if (profile && profile.id) {
-        response = await updateProfileRequest({
-          ...data,
+        const body = {
+          name,
+          description,
           id: profile.id,
-        });
-        addSuccessAlert(t('update_done'));
+          translations: profile.translations,
+          permissions,
+        };
+        response = await updateProfileRequest(body);
+        // addSuccessAlert(t('update_done'));
       } else {
-        response = await addProfileRequest(data);
-        addSuccessAlert(t('save_done'));
+        response = await addProfileRequest({ ...profile, permissions });
+        // addSuccessAlert(t('save_done'));
       }
       await hooks.fireEvent('user:update:permissions', profile);
       setSaveLoading(false);
+      setEditMode(false);
       goDetailProfilePage(history, response.profile.uri);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
@@ -97,27 +103,32 @@ function ProfileDetail() {
   useEffect(() => {
     if (uri) {
       getProfile(uri);
-      setIsEditMode(false);
+      setEditMode(false);
     } else {
       setLoading(false);
     }
   }, [uri]);
 
-  const onSubmit = (data) => {
-    saveProfile({ ...data, permissions });
+  const handleOnSave = (data) => {
+    saveProfile({ name: data.title, description: data.description });
   };
 
   const handleLocalesOnSave = (data) => {
-    console.log('handleLocalesOnSave:', data);
+    setProfile({
+      ...profile,
+      name: data.name,
+      description: data.description,
+      translations: data.translations,
+    });
   };
 
   const handleOnEdit = () => {
-    setIsEditMode(true);
+    setEditMode(true);
   };
 
   const handleOnCancel = () => {
     if (profile?.id) {
-      setIsEditMode(false);
+      setEditMode(false);
     } else {
       goListProfilesPage(history);
     }
@@ -173,9 +184,9 @@ function ProfileDetail() {
 
   const headerButtons = useMemo(
     () => ({
-      save: isEditMode ? tCommonHeader('save') : null,
-      cancel: isEditMode ? tCommonHeader('cancel') : null,
-      edit: !isEditMode ? tCommonHeader('edit') : null,
+      save: editMode ? tCommonHeader('save') : null,
+      cancel: editMode ? tCommonHeader('cancel') : null,
+      edit: !editMode ? tCommonHeader('edit') : null,
     }),
     [tCommonHeader]
   );
@@ -189,16 +200,29 @@ function ProfileDetail() {
             labels={headerLabels}
             placeholders={headerPlaceholders}
             buttons={headerButtons}
-            editMode={isEditMode}
+            editMode={editMode}
             onCancel={handleOnCancel}
             onEdit={handleOnEdit}
+            onSave={handleOnSave}
+            loading={saveLoading && 'save'}
           />
+
           <PageContainer>
             <Divider />
           </PageContainer>
+
           <PageContainer>
             <PlatformLocalesModal
-              hasError={localesForm.formState.errors && localesForm.formState.errors.length}
+              editMode={editMode}
+              error={localesForm.formState.errors && localesForm.formState.errors.length}
+              warning={showDefaultLocaleWarning}
+              alert={
+                localesForm.formState.isDirty ? (
+                  <Alert severity="warning" closeable={false}>
+                    {t('translations_warning')}
+                  </Alert>
+                ) : null
+              }
               onBeforeSave={localesForm.trigger}
               onSave={() => localesForm.handleSubmit(handleLocalesOnSave)()}
               closeOnSave
@@ -212,7 +236,7 @@ function ProfileDetail() {
                   form={localesForm}
                   tCommonForm={tCommonForm}
                   profile={profile}
-                  isEditMode={isEditMode}
+                  isEditMode={editMode}
                 />
               </PlatformLocales>
             </PlatformLocalesModal>
@@ -225,13 +249,13 @@ function ProfileDetail() {
                     t={t}
                     profile={profile}
                     onPermissionsChange={setPermissions}
-                    isEditMode={isEditMode}
+                    isEditMode={editMode}
                   />
                 </Paper>
               </Tab>
               <Tab label={t('dataset')}>
                 <Paper padding={5} mt={20} mb={20}>
-                  <DatasetTab t={t} profile={profile} isEditMode={isEditMode} />
+                  <DatasetTab t={t} profile={profile} isEditMode={editMode} />
                 </Paper>
               </Tab>
             </Tabs>
