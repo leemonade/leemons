@@ -91,8 +91,9 @@ module.exports = {
 
   getAssets: async (ctx) => {
     const { category } = ctx.request.params;
+    const { details } = ctx.request.query;
     try {
-      const assets = await getAssets({ name: category }, { transacting: ctx.state.transacting });
+      const assets = await getAssets(category, { details: details !== 'false' });
       ctx.status = 200;
       ctx.body = { status: 200, assets };
     } catch (e) {

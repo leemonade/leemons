@@ -2,6 +2,7 @@ const byTags = require('../assets/tags/getAssets');
 const byDescription = require('./byDescription');
 const byName = require('./byName');
 const byCategory = require('../assets/categories/getAssets');
+const assetDetails = require('../assets/details');
 
 function saveResults(newResults, existingResults) {
   if (existingResults === null) {
@@ -10,7 +11,7 @@ function saveResults(newResults, existingResults) {
   return newResults;
 }
 
-module.exports = async function search(query, { userSession, transacting } = {}) {
+module.exports = async function search(query, { details = false, userSession, transacting } = {}) {
   let assets = null;
   try {
     if (query.name) {
@@ -33,6 +34,10 @@ module.exports = async function search(query, { userSession, transacting } = {})
 
     if (query.category) {
       assets = await saveResults(await byCategory(query.category, { assets, transacting }), assets);
+    }
+
+    if (details && assets.length) {
+      return await assetDetails(assets, { transacting });
     }
 
     return assets || [];

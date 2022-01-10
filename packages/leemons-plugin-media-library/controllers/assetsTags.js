@@ -91,10 +91,10 @@ module.exports = {
   },
 
   getAssets: async (ctx) => {
-    const { tags } = ctx.request.query;
+    const { tags, details } = ctx.request.query;
 
     try {
-      const assets = await getAssets(JSON.parse(tags), { transacting: ctx.state.transacting });
+      const assets = await getAssets(JSON.parse(tags), { details: details !== 'false' });
       ctx.status = 200;
       ctx.body = { status: 200, assets };
     } catch (e) {

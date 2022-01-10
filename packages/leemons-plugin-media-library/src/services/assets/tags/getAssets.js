@@ -1,7 +1,11 @@
 const groupBy = require('lodash.groupby');
 const { assetTags } = require('../../tables');
+const assetsDetails = require('../details');
 
-module.exports = async function getAssets(tags, { assets: limitTo, transacting } = {}) {
+module.exports = async function getAssets(
+  tags,
+  { details = false, assets: limitTo, transacting } = {}
+) {
   const _tags = [...new Set(Array.isArray(tags) ? tags : [tags])];
 
   try {
@@ -13,10 +17,16 @@ module.exports = async function getAssets(tags, { assets: limitTo, transacting }
       query.asset_$in = limitTo;
     }
 
-    const assets = await assetTags.find(query, { transacting });
-    return Object.entries(groupBy(assets, 'asset'))
+    let assets = await assetTags.find(query, { transacting });
+    assets = Object.entries(groupBy(assets, 'asset'))
       .filter(([, t]) => t.length === _tags.length)
       .map(([asset]) => asset);
+
+    if (details) {
+      return assetsDetails(assets, { transacting });
+    }
+
+    return assets;
   } catch (e) {
     throw new Error(`Failed to get assets with the given tags: ${e.message}`);
   }
