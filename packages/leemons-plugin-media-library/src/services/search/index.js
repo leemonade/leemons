@@ -3,6 +3,7 @@ const byDescription = require('./byDescription');
 const byName = require('./byName');
 const byCategory = require('../assets/categories/getAssets');
 const assetDetails = require('../assets/details');
+const has = require('../permissions/has');
 
 function saveResults(newResults, existingResults) {
   if (existingResults === null) {
@@ -36,6 +37,18 @@ module.exports = async function search(query, { details = false, userSession, tr
       assets = await saveResults(await byCategory(query.category, { assets, transacting }), assets);
     }
 
+    // EN: Only return assets that the user has permission to view
+    // ES: Sólo devuelve los recursos que el usuario tiene permiso para ver
+    assets = assets
+      .map(async (asset) => ({
+        permissions: await has(asset, 'view', { userSession, transacting }),
+        asset,
+      }))
+      .filter(({ permissions }) => permissions)
+      .map(({ asset }) => asset);
+
+    // EN: If the user wants to see the details of the assets, we need to get the details
+    // ES: Si el usuario quiere ver los detalles de los recursos, necesitamos obtener los detalles
     if (details && assets.length) {
       return await assetDetails(assets, { transacting });
     }
