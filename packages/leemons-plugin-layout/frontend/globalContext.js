@@ -23,16 +23,16 @@ export function Provider({ children }) {
   // ····································································
   // PRIVATE LAYOUT HANDLING
 
-  let ChildrenComponent = children;
+  let childrenComponent = children;
 
   if (layoutState.private) {
-    ChildrenComponent = <PrivateLayout>{children}</PrivateLayout>;
+    childrenComponent = <PrivateLayout>{children}</PrivateLayout>;
   }
 
   return (
     <ThemeProvider>
       <LayoutProvider value={{ layoutState, setLayoutState, setPrivateLayout }}>
-        {ChildrenComponent}
+        {childrenComponent}
       </LayoutProvider>
     </ThemeProvider>
   );

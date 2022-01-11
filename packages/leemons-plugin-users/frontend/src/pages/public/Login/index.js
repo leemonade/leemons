@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash';
 import Cookies from 'js-cookie';
-import { LoginForm, Box, createStyles } from '@bubbles-ui/components';
+import { LoginForm, Box, Stack, createStyles } from '@bubbles-ui/components';
 import {
   getRememberProfileRequest,
   getUserProfilesRequest,
@@ -19,13 +19,9 @@ import tLoader from '@multilanguage/helpers/tLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import hooks from 'leemons-hooks';
 
-const LoginStyles = createStyles(() => ({
+const PageStyles = createStyles((theme) => ({
   root: {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    padding: 32,
+    padding: theme.spacing[7],
   },
   content: {
     maxWidth: 330,
@@ -46,6 +42,9 @@ export default function Login() {
 
   const [translations] = useTranslate({ keysStartsWith: prefixPN('login') });
   const t = tLoader(prefixPN('login'), translations);
+
+  // ····················································································
+  // HANDLERS
 
   const onSubmit = async (data) => {
     try {
@@ -90,45 +89,57 @@ export default function Login() {
     }
   };
 
-  const messages = useMemo(
+  // ····················································································
+  // LITERALS
+
+  const labels = useMemo(
     () => ({
       title: t('title'),
-      usernameLabel: t('email'),
-      usernamePlaceholder: t('email'),
-      passwordLabel: t('password'),
-      passwordPlaceholder: t('password'),
-      rememberButtonLabel: t('remember_password'),
-      loginButtonLabel: t('log_in'),
-      signupButtonLabel: t('not_registered'),
+      username: t('email'),
+      password: t('password'),
+      remember: t('remember_password'),
+      login: t('log_in'),
+      signup: t('not_registered'),
+    }),
+    [t]
+  );
+
+  const placeholders = useMemo(
+    () => ({
+      username: t('email'),
+      password: t('password'),
     }),
     [t]
   );
 
   const errorMessages = useMemo(
     () => ({
-      usernameRequired: tCommon('required'),
-      usernameInvalidFormat: tCommon('email'),
-      passwordRequired: tCommon('required'),
+      username: { required: tCommon('required'), invalidFormat: tCommon('email') },
+      password: { required: tCommon('required') },
     }),
     [tCommon]
   );
 
-  const { classes } = LoginStyles();
+  // ····················································································
+  // STYLES
+
+  const { classes } = PageStyles();
 
   return (
     <HeroBgLayout>
-      <Box className={classes.root}>
+      <Stack className={classes.root} direction="column" justifyContent="center" fullHeight>
         <Box className={classes.content}>
           <LoginForm
-            messages={messages}
+            labels={labels}
+            placeholders={placeholders}
             errorMessages={errorMessages}
             recoverUrl={goRecoverPage(history, true)}
             onSubmit={onSubmit}
-            isLoading={formStatus === 'loading'}
+            loading={formStatus === 'loading'}
             formError={formError}
           />
         </Box>
-      </Box>
+      </Stack>
     </HeroBgLayout>
   );
 }
