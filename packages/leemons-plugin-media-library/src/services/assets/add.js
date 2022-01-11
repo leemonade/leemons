@@ -10,6 +10,7 @@ module.exports = function add(data, { userSession, transacting: t } = {}) {
         cover: data.cover,
         name: data.name,
         description: data.description,
+        public: data.public,
       };
 
       if (userSession) {

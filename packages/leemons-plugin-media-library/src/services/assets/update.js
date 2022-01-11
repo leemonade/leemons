@@ -17,6 +17,7 @@ module.exports = async function update(id, data, { userSession, transacting } = 
       cover: data.cover,
       name: data.name,
       description: data.description,
+      public: data.public,
     };
 
     // EN: Update the asset

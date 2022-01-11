@@ -7,7 +7,7 @@ const update = require('../src/services/assets/update');
 
 module.exports = {
   add: async (ctx) => {
-    const { name, description, cover } = ctx.request.body;
+    const { name, description, cover, public } = ctx.request.body;
     const _files = ctx.request.files;
 
     if (!_files?.files) {
@@ -35,6 +35,7 @@ module.exports = {
       description,
       cover,
       file: files[0],
+      public: public === 'true',
     };
 
     const file = await add(asset, {
@@ -66,11 +67,15 @@ module.exports = {
   },
   update: async (ctx) => {
     const { id } = ctx.params;
-    const { name, description, cover } = ctx.request.body;
+    const { name, description, cover, public } = ctx.request.body;
     const { userSession } = ctx.state;
 
     try {
-      const item = await update(id, { name, description, cover }, { userSession });
+      const item = await update(
+        id,
+        { name, description, cover, public: public === 'true' },
+        { userSession }
+      );
       ctx.status = 200;
       ctx.body = {
         status: 200,

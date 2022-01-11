@@ -26,6 +26,9 @@ module.exports = {
         collection: 'plugins_users::user-agent',
       },
     },
+    public: {
+      type: 'boolean',
+    },
   },
   primaryKey: {
     type: 'uuid',

@@ -1,11 +1,19 @@
 module.exports = {
   // EN: The roles must be ordered by allowance. Each role can only assign lower roles.
   // ES: Los roles deben estar ordenados por permisos. Cada rol sólo puede asignar roles inferiores.
-  roles: ['noPermission', 'viewer', 'commentor', 'editor', 'owner'],
+  roles: ['public', 'noPermission', 'viewer', 'commentor', 'editor', 'owner'],
 
   // EN: The permissions each role has.
   // ES: Los permisos que cada rol tiene.
   rolesPermissions: {
+    public: {
+      view: true,
+      comment: false,
+      edit: false,
+      delete: false,
+      canAssign: [],
+      canUnassign: [],
+    },
     noPermission: {
       view: false,
       comment: false,

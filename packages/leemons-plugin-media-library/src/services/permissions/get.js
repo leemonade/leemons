@@ -1,4 +1,4 @@
-const { permissions } = require('../tables');
+const { permissions, assets } = require('../tables');
 const getRolePermissions = require('./helpers/getRolePermissions');
 
 module.exports = async function get(asset, { userSession, transacting } = {}) {
@@ -12,6 +12,16 @@ module.exports = async function get(asset, { userSession, transacting } = {}) {
       },
       { transacting }
     );
+
+    if (!permission) {
+      const _asset = await assets.find({ id: asset }, { columns: ['public'], transacting });
+      if (_asset[0]?.public) {
+        return {
+          role: 'public',
+          permissions: getRolePermissions('public'),
+        };
+      }
+    }
 
     return { role: permission?.role, permissions: getRolePermissions(permission?.role) };
   } catch (e) {
