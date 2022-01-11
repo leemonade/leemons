@@ -715,7 +715,7 @@ function returnValidJsonSchema(jsonSchema) {
   return schema;
 }
 
-export default function index(schema, ui, conditions, props) {
+export default function index(schema, ui, conditions, props = {}) {
   const { t } = useCommonTranslate('forms');
   const [r, setR] = useState(null);
   const FormWithConditionals = useRef(null);
