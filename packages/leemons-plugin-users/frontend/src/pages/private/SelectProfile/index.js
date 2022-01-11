@@ -90,10 +90,11 @@ export default function SelectProfile({ session }) {
   }, []);
 
   const handleOnSubmit = async (data) => {
+    const _selectedProfile = find(profiles, { id: data.profile });
     if (data.remember) {
-      await setRememberProfileRequest(selectedProfile.id);
+      await setRememberProfileRequest(_selectedProfile.id);
     }
-    setSelectedProfile(find(profiles, { id: data.profile }));
+    setSelectedProfile(_selectedProfile);
     setLoginWithProfile(true);
   };
 
