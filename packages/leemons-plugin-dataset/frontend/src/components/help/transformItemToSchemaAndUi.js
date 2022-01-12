@@ -114,23 +114,7 @@ const transformItemToSchemaAndUi = (item, locale) => {
           ui['ui:widget'] = 'radio';
         }
       }
-
-      // Multioption / Select
-      if (
-        frontConfig.type === datasetDataTypes.select.type ||
-        frontConfig.type === datasetDataTypes.multioption.type
-      ) {
-        if (locale && locales && locales[locale] && locales[locale].schema.frontConfig) {
-          const schemaKeys = _.map(schema.frontConfig.checkboxValues, 'key');
-          _.forEachRight(locales[locale].schema.frontConfig.checkboxLabels, ({ key }, index) => {
-            if (schemaKeys.indexOf(key) < 0) {
-              locales[locale].schema.frontConfig.checkboxLabels.splice(index, 1);
-            }
-          });
-        }
-      }
     }
-
     if (locale && locales && locales[locale]) {
       schema = _.merge(_.cloneDeep(schema), _.cloneDeep(locales[locale].schema));
       ui = { ...ui, ...locales[locale].ui };
@@ -165,10 +149,7 @@ const transformItemToSchemaAndUi = (item, locale) => {
           schema.minItems = 1;
         }
         if (locale && locales && locales[locale] && locales[locale].schema.frontConfig) {
-          const checkLocalesByKey = _.keyBy(
-            locales[locale].schema.frontConfig.checkboxLabels,
-            'key'
-          );
+          const checkLocalesByKey = locales[locale].schema.frontConfig.checkboxLabels;
           _.forEach(schema.frontConfig.checkboxValues, ({ key, value }) => {
             schema.items.enum.push(value);
             schema.items.enumNames.push(
@@ -190,10 +171,7 @@ const transformItemToSchemaAndUi = (item, locale) => {
         schema.enum = [];
         schema.enumNames = [];
         if (locale && locales && locales[locale] && locales[locale].schema.frontConfig) {
-          const checkLocalesByKey = _.keyBy(
-            locales[locale].schema.frontConfig.checkboxLabels,
-            'key'
-          );
+          const checkLocalesByKey = locales[locale].schema.frontConfig.checkboxLabels;
           _.forEach(schema.frontConfig.checkboxValues, ({ key, value }) => {
             schema.enum.push(value);
             schema.enumNames.push(checkLocalesByKey[key] ? checkLocalesByKey[key].label : ' ');
