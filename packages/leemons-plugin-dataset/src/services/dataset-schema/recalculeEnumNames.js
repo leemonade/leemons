@@ -1,12 +1,5 @@
+/* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { transformPermissionKeysToObjectsByType } = require('./transformPermissionKeysToObjects');
-const { getJsonSchemaProfilePermissionsKeysByType } = require('./transformJsonOrUiSchema');
-const {
-  validatePluginName,
-  validateNotExistLocation,
-  validateExistSchema,
-} = require('../../validations/exists');
-const { validateAddSchema } = require('../../validations/dataset-schema');
 const { table } = require('../tables');
 const getSchema = require('./getSchema');
 const { translations, getTranslationKey } = require('../translations');
@@ -30,7 +23,7 @@ const { translations, getTranslationKey } = require('../translations');
 async function recalculeEnumNames(locationName, pluginName, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
-      let [dataset, localeSchemas, localeUi] = await Promise.all([
+      const [dataset, localeSchemas] = await Promise.all([
         getSchema(locationName, pluginName, { transacting }),
         translations().contents.getLocaleValueWithKey(
           getTranslationKey(locationName, pluginName, 'jsonSchema'),
@@ -45,49 +38,50 @@ async function recalculeEnumNames(locationName, pluginName, { transacting: _tran
          */
       ]);
 
+      // eslint-disable-next-line no-return-assign
       _.forIn(localeSchemas, (value, key) => (localeSchemas[key] = JSON.parse(value)));
       // _.forIn(localeUi, (value, key) => (localeUi[key] = JSON.parse(value)));
 
       _.forIn(dataset.jsonSchema.properties, (value, key) => {
         if (value.frontConfig.checkboxValues) {
-          _.forIn(localeSchemas, (localeSchema, locale) => {
+          _.forIn(localeSchemas, (localeSchema) => {
             // ES: Si no existe la propiedad la creamos con todos los campos vacios.
             if (!localeSchema.properties[key]) localeSchema.properties[key] = {};
             if (!localeSchema.properties[key].frontConfig)
               localeSchema.properties[key].frontConfig = {};
-            if (!localeSchema.properties[key].frontConfig.checkboxLabels)
-              localeSchema.properties[key].frontConfig.checkboxLabels = _.map(
-                value.frontConfig.checkboxValues,
-                ({ key }) => ({
-                  key,
+            if (!localeSchema.properties[key].frontConfig.checkboxLabels) {
+              localeSchema.properties[key].frontConfig.checkboxLabels = {};
+              _.forEach(value.frontConfig.checkboxValues, ({ key: generatedKey }) => {
+                localeSchema.properties[key].frontConfig.checkboxLabels[generatedKey] = {
+                  key: generatedKey,
                   label: '',
-                })
-              );
+                };
+              });
+            }
             if (!localeSchema.properties[key].items) localeSchema.properties[key].items = {};
             if (!localeSchema.properties[key].items.enumNames)
               localeSchema.properties[key].items.enumNames = [];
 
-            const localeCheckboxByKey = _.keyBy(
-              localeSchema.properties[key].frontConfig.checkboxLabels,
-              'key'
+            const localeCheckboxByKey = _.cloneDeep(
+              localeSchema.properties[key].frontConfig.checkboxLabels
             );
 
             localeSchema.properties[key].items.enumNames = [];
-            localeSchema.properties[key].frontConfig.checkboxLabels = [];
+            localeSchema.properties[key].frontConfig.checkboxLabels = {};
             _.forEach(value.frontConfig.checkboxValues, (checkbox) => {
               if (localeCheckboxByKey[checkbox.key]) {
-                localeSchema.properties[key].frontConfig.checkboxLabels.push({
+                localeSchema.properties[key].frontConfig.checkboxLabels[checkbox.key] = {
                   key: checkbox.key,
                   label: localeCheckboxByKey[checkbox.key].label,
-                });
+                };
                 localeSchema.properties[key].items.enumNames.push(
                   localeCheckboxByKey[checkbox.key].label
                 );
               } else {
-                localeSchema.properties[key].frontConfig.checkboxLabels.push({
+                localeSchema.properties[key].frontConfig.checkboxLabels[checkbox.key] = {
                   key: checkbox.key,
                   label: '',
-                });
+                };
                 localeSchema.properties[key].items.enumNames.push('');
               }
             });
@@ -95,6 +89,7 @@ async function recalculeEnumNames(locationName, pluginName, { transacting: _tran
         }
       });
 
+      // eslint-disable-next-line no-return-assign
       _.forIn(localeSchemas, (value, key) => (localeSchemas[key] = JSON.stringify(value)));
 
       await translations().contents.setKey(
