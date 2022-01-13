@@ -8,11 +8,10 @@ import {
   PageContainer,
   ContextContainer,
   Divider,
-  Stack,
   Box,
   Paper,
   Tabs,
-  Tab,
+  TabPanel,
   Alert,
 } from '@bubbles-ui/components';
 import tLoader from '@multilanguage/helpers/tLoader';
@@ -109,6 +108,9 @@ function ProfileDetail() {
     }
   }, [uri]);
 
+  // ····················································································
+  // HANDLERS
+
   const handleOnSave = (data) => {
     saveProfile({ name: data.title, description: data.description });
   };
@@ -134,8 +136,6 @@ function ProfileDetail() {
     }
   };
 
-  const showDefaultLocaleWarning = useMemo(() => !profile?.name, [profile]);
-
   /*
   const Name = () => (
     <MainMenuDropItem item={{ key: `profile.${profile?.id}` }}>
@@ -157,6 +157,9 @@ function ProfileDetail() {
     </MainMenuDropItem>
   );
   */
+
+  // ····················································································
+  // LITERALS
 
   const headerValues = useMemo(
     () => ({
@@ -191,6 +194,8 @@ function ProfileDetail() {
     [tCommonHeader]
   );
 
+  const showDefaultLocaleWarning = useMemo(() => !profile?.name, [profile]);
+
   return (
     <>
       {!error && !loading ? (
@@ -207,11 +212,11 @@ function ProfileDetail() {
             loading={saveLoading && 'save'}
           />
 
-          <PageContainer>
+          <PageContainer noFlex>
             <Divider />
           </PageContainer>
 
-          <PageContainer>
+          <PageContainer noFlex>
             <PlatformLocalesModal
               editMode={editMode}
               error={localesForm.formState.errors && localesForm.formState.errors.length}
@@ -243,7 +248,7 @@ function ProfileDetail() {
           </PageContainer>
           <Box style={{ flex: 1 }}>
             <Tabs usePageLayout={true} panelColor="solid" fullHeight>
-              <Tab label={t('permissions')}>
+              <TabPanel label={t('permissions')}>
                 <Paper padding={5} mt={20} mb={20}>
                   <PermissionsTab
                     t={t}
@@ -252,12 +257,12 @@ function ProfileDetail() {
                     isEditMode={editMode}
                   />
                 </Paper>
-              </Tab>
-              <Tab label={t('dataset')}>
+              </TabPanel>
+              <TabPanel label={t('dataset')}>
                 <Paper padding={5} mt={20} mb={20}>
                   <DatasetTab t={t} profile={profile} isEditMode={editMode} />
                 </Paper>
-              </Tab>
+              </TabPanel>
             </Tabs>
           </Box>
         </ContextContainer>

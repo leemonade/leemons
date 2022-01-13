@@ -7,7 +7,7 @@ import {
   Anchor,
   ActionButton,
   Tabs,
-  Tab,
+  TabPanel,
   Table,
 } from '@bubbles-ui/components';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
@@ -110,17 +110,17 @@ function ListProfiles() {
 
       <Box style={{ flex: 1 }}>
         <Tabs usePageLayout={true} panelColor="solid" fullHeight>
-          <Tab label={t('page_title')}>
+          <TabPanel label={t('page_title')}>
             <Paper padding={5} mt={20} mb={20}>
               <LoadingErrorAlert />
               {!loading && !loadingError ? (
                 <Table columns={tableHeaders} data={tableItems} />
               ) : null}
             </Paper>
-          </Tab>
-          <Tab label="Permisos" disabled>
+          </TabPanel>
+          <TabPanel label="Permisos" disabled>
             <Box></Box>
-          </Tab>
+          </TabPanel>
         </Tabs>
       </Box>
     </Stack>

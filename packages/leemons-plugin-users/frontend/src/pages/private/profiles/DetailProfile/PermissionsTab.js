@@ -1,11 +1,12 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { forEach, map, forIn, filter, find, uniqBy, orderBy, findIndex } from 'lodash';
+import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import { forEach, map, forIn, filter, find, uniqBy, orderBy, findIndex, isFunction } from 'lodash';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import { getTranslationKey as getTranslationKeyActions } from '@users/actions/getTranslationKey';
 import { getTranslationKey as getTranslationKeyPermissions } from '@users/permissions/getTranslationKey';
 import { listActionsRequest, listPermissionsRequest } from '@users/request';
 import { Table, Box, Select, Stack, createStyles } from '@bubbles-ui/components';
 import { CheckCircleIcon } from '@bubbles-ui/icons/outline';
+import { useAsync } from '@common/useAsync';
 import PropTypes from 'prop-types';
 
 const PermissionsTabStyles = createStyles((theme) => ({
@@ -115,8 +116,8 @@ export const PermissionsTab = ({ t, profile, onPermissionsChange = () => {}, isE
         dataTable.current[index] = d;
       }
     });
-    sendPermissionChange();
     setTableData(e);
+    sendPermissionChange();
   }
 
   async function updateSelectPermissions() {
@@ -129,32 +130,43 @@ export const PermissionsTab = ({ t, profile, onPermissionsChange = () => {}, isE
     );
   }
 
-  async function getPermissions() {
-    const response = await listPermissionsRequest();
-    const translate = await getLocalizationsByArrayOfItems(response.permissions, (permission) =>
-      getTranslationKeyPermissions(permission.permissionName, 'name')
+  // ·····················································································
+  // INIT DATA LOAD
+
+  const initDataLoad = useCallback(async () => {
+    const permissionsResponse = await listPermissionsRequest();
+    const permissionsTranslate = await getLocalizationsByArrayOfItems(
+      permissionsResponse.permissions,
+      (permission) => getTranslationKeyPermissions(permission.permissionName, 'name')
     );
 
-    initialArrayPermissions.current = orderBy(response.permissions, ['permissionName']);
-    setPermissionT(translate.items);
+    const actionsResponse = await listActionsRequest();
+    const actionsTranslate = await getLocalizationsByArrayOfItems(
+      actionsResponse.actions,
+      (action) => getTranslationKeyActions(action.actionName, 'name')
+    );
+
+    return {
+      permissions: { ...permissionsResponse, translate: permissionsTranslate },
+      actions: { ...actionsResponse, translate: actionsTranslate },
+    };
+  }, []);
+
+  const onDataLoadSuccess = useCallback(({ permissions: _permissions, actions: _actions }) => {
+    initialArrayPermissions.current = orderBy(_permissions.permissions, ['permissionName']);
+    setPermissionT(_permissions.translate.items);
     setPermissions(initialArrayPermissions.current);
     updateSelectPermissions();
-  }
 
-  async function getActions() {
-    const response = await listActionsRequest();
-    const translate = await getLocalizationsByArrayOfItems(response.actions, (action) =>
-      getTranslationKeyActions(action.actionName, 'name')
-    );
-
-    setActionT(translate.items);
-    setActions(response.actions);
-  }
-
-  useEffect(() => {
-    getPermissions();
-    getActions();
+    setActionT(_actions.translate.items);
+    setActions(_actions.actions);
   }, []);
+  const onDataLoadError = useCallback(() => {}, []);
+
+  useAsync(initDataLoad, onDataLoadSuccess, onDataLoadError);
+
+  // ··························································································
+  // TABLE SETUP
 
   const tableHeaders = useMemo(() => {
     const result = [
@@ -207,7 +219,7 @@ export const PermissionsTab = ({ t, profile, onPermissionsChange = () => {}, isE
         <Table
           columns={tableHeaders}
           data={tableData}
-          setData={(e) => (isEditMode ? updateTableData(e) : null)}
+          onChangeData={(val) => (isEditMode ? updateTableData(val.newData) : null)}
         />
       </Box>
     </Stack>

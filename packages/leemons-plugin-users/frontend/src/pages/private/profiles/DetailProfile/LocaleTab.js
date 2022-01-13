@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { get, isNil, keysIn } from 'lodash';
 import { Controller } from 'react-hook-form';
-import { ContextContainer, Stack, TextInput, Textarea, Loader } from '@bubbles-ui/components';
+import { ContextContainer, TextInput, Textarea, Loader } from '@bubbles-ui/components';
 import getProfileTranslations from '@users/request/getProfileTranslations';
 
 // eslint-disable-next-line import/prefer-default-export

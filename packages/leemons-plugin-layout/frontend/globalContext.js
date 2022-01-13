@@ -5,6 +5,18 @@ import { ThemeProvider } from '@bubbles-ui/components';
 import { LayoutContext, LayoutProvider } from './src/context/layout';
 import PrivateLayout from './src/components/PrivateLayout';
 
+function LayoutWrapper({ isPrivate, children }) {
+  if (isPrivate) {
+    return <PrivateLayout>{children}</PrivateLayout>;
+  }
+  return children;
+}
+
+LayoutWrapper.propTypes = {
+  children: PropTypes.node,
+  isPrivate: PropTypes.bool,
+};
+
 export function Provider({ children }) {
   const [layoutState, setLayoutState] = useState({});
   const location = useLocation();
@@ -20,19 +32,10 @@ export function Provider({ children }) {
     }
   }, [location]);
 
-  // ····································································
-  // PRIVATE LAYOUT HANDLING
-
-  let childrenComponent = children;
-
-  if (layoutState.private) {
-    childrenComponent = <PrivateLayout>{children}</PrivateLayout>;
-  }
-
   return (
     <ThemeProvider>
       <LayoutProvider value={{ layoutState, setLayoutState, setPrivateLayout }}>
-        {childrenComponent}
+        <LayoutWrapper isPrivate={layoutState.private}>{children}</LayoutWrapper>
       </LayoutProvider>
     </ThemeProvider>
   );
