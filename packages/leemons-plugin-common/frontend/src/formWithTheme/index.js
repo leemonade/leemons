@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { FormWithTheme } from '@bubbles-ui/components';
 import { withTheme } from '@leemonade/rjsf-core';
 import {
   Checkbox,
@@ -13,8 +14,7 @@ import {
   UserCard,
   Button,
 } from 'leemons-ui';
-import Engine from 'json-rules-engine-simplified';
-import applyRules from 'rjsf-conditionals';
+
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import regex from '@common/regex';
 import datasetDataTypes from '@dataset/helpers/datasetDataTypes';
@@ -715,7 +715,7 @@ function returnValidJsonSchema(jsonSchema) {
   return schema;
 }
 
-export default function index(schema, ui, conditions, props = {}) {
+function index(schema, ui, conditions, props = {}) {
   const { t } = useCommonTranslate('forms');
   const [r, setR] = useState(null);
   const FormWithConditionals = useRef(null);
@@ -843,4 +843,8 @@ export default function index(schema, ui, conditions, props = {}) {
         }),
     },
   ];
+}
+
+export default function formWithTheme(schema, ui, conditions, props = {}) {
+  return FormWithTheme(schema, ui, conditions, props);
 }
