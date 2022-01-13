@@ -18,6 +18,7 @@ module.exports = async function update(
     instructionsForTeacher,
     instructionsForStudent,
     state,
+    published,
   },
   { transacting } = {}
 ) {
@@ -37,6 +38,7 @@ module.exports = async function update(
     instructionsForTeacher,
     instructionsForStudent,
     state,
+    published,
   };
 
   task = await tasks.set({ id }, task, { transacting });

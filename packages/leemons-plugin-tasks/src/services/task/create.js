@@ -17,6 +17,7 @@ module.exports = async function create(
     instructionsForTeacher,
     instructionsForStudent,
     state,
+    published,
   },
   { transacting } = {}
 ) {
@@ -36,6 +37,7 @@ module.exports = async function create(
     instructionsForTeacher,
     instructionsForStudent,
     state,
+    published,
   };
 
   task = await tasks.create(task, { transacting });

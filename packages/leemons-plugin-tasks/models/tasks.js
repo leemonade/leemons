@@ -48,6 +48,12 @@ module.exports = {
     state: {
       type: 'string',
     },
+    published: {
+      type: 'boolean',
+      options: {
+        defaultTo: false,
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

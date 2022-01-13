@@ -22,6 +22,7 @@ module.exports = {
         instructionsForTeacher,
         instructionsForStudent,
         state,
+        published,
       } = ctx.request.body;
 
       let task = {
@@ -40,6 +41,7 @@ module.exports = {
         instructionsForTeacher,
         instructionsForStudent,
         state,
+        published,
       };
 
       task = await create(task);
@@ -76,6 +78,7 @@ module.exports = {
         instructionsForTeacher,
         instructionsForStudent,
         state,
+        published,
       } = ctx.request.body;
 
       let task = {
@@ -94,6 +97,7 @@ module.exports = {
         instructionsForTeacher,
         instructionsForStudent,
         state,
+        published,
       };
 
       task = await update(id, task);
