@@ -139,7 +139,7 @@ module.exports = {
       ctx.status = 200;
       ctx.body = {
         status: 200,
-        deleted,
+        ...deleted,
       };
     } catch (error) {
       ctx.status = 400;

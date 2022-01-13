@@ -26,4 +26,32 @@ module.exports = [
     handler: 'tasks.remove',
     authenticated: true,
   },
+
+  /**
+   * Tags
+   */
+  {
+    method: 'POST',
+    path: '/tasks/:task/tags',
+    handler: 'tags.add',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/:task/tags',
+    handler: 'tags.get',
+    authenticated: true,
+  },
+  {
+    method: 'DELETE',
+    path: '/tasks/:task/tags',
+    handler: 'tags.remove',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/:task/tags/has',
+    handler: 'tags.has',
+    authenticated: true,
+  },
 ];

@@ -49,4 +49,7 @@ module.exports = {
       type: 'string',
     },
   },
+  primaryKey: {
+    type: 'uuid',
+  },
 };
