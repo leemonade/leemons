@@ -54,4 +54,26 @@ module.exports = [
     handler: 'tags.has',
     authenticated: true,
   },
+
+  /**
+   * Attachments
+   */
+  {
+    method: 'POST',
+    path: '/tasks/:task/attachments',
+    handler: 'attachments.add',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/:task/attachments',
+    handler: 'attachments.get',
+    authenticated: true,
+  },
+  {
+    method: 'DELETE',
+    path: '/tasks/:task/attachments',
+    handler: 'attachments.remove',
+    authenticated: true,
+  },
 ];
