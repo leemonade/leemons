@@ -30,13 +30,12 @@ function App() {
 {{ /if }}
 {{ /each }}
   return (
-    <>
+    <Router>
 {{ @each(it.plugins) => plugin }}
 {{ @if(plugin.globalContext) }}
         <{{ plugin.name | clear | capitalize }}GlobalProvider>
 {{ /if }}
 {{ /each }}
-          <Router>
             <Switch>
               {/* Define each plugin route */}
 {{ @each(it.plugins) => plugin }}
@@ -61,13 +60,12 @@ function App() {
                 <p>Not Found</p>
               </Route>
             </Switch>
-          </Router>
 {{ @each(it.plugins.reverse()) => plugin }}
 {{ @if(plugin.globalContext) }}
         </{{ plugin.name | clear | capitalize }}GlobalProvider>
 {{ /if }}
 {{ /each }}
-    </>
+    </Router>
   );
 }
 

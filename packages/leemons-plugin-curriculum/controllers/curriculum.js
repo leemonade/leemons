@@ -8,6 +8,7 @@ async function postCurriculum(ctx) {
 }
 
 async function getCurriculum(ctx) {
+  await curriculumService.recalculeAllIndexes(ctx.request.params.id, ctx.state.userSession);
   const [curriculum] = await curriculumService.curriculumByIds(ctx.request.params.id, {
     userSession: ctx.state.userSession,
   });

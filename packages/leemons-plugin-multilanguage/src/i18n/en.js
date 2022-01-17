@@ -15,6 +15,7 @@ module.exports = {
       numbers: 'Only numbers are allowed',
       phone: 'Invalid phone',
     },
+    selectionRequired: 'Must select an option',
   },
   request_errors: {
     permission_error:
@@ -26,6 +27,7 @@ module.exports = {
     save: 'Save',
     edit: 'Edit',
     delete: 'Delete',
+    close: 'Close',
   },
   form_field_types: {
     view: 'View',
@@ -59,5 +61,10 @@ module.exports = {
       no: 'No',
       nothing: 'No selection',
     },
+  },
+  translation: {
+    label: 'Translations',
+    help: 'Untranslated content will appear in the default language',
+    title: 'Configuration & languages',
   },
 };

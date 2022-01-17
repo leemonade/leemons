@@ -14,6 +14,7 @@ module.exports = {
       numbers: 'Solo se permiten números',
       phone: 'Teléfono invalido (+xx xxxxxxxxx)',
     },
+    selectionRequired: 'Tiene que seleccionar una opción',
   },
   request_errors: {
     permission_error:
@@ -25,6 +26,7 @@ module.exports = {
     save: 'Guardar',
     edit: 'Editar',
     delete: 'Borrar',
+    close: 'Cerrar',
   },
   form_field_types: {
     view: 'Ver',
@@ -58,5 +60,10 @@ module.exports = {
       no: 'No',
       nothing: 'No hay selección',
     },
+  },
+  translation: {
+    label: 'Traducciones',
+    help: 'El contenido sin traducir aparecerá en el idioma predeterminado',
+    title: 'Configuración e idiomas',
   },
 };

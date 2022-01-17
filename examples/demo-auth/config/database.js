@@ -9,6 +9,10 @@ module.exports = {
         password: process.env['DATABASE_PASSWORD'],
         port: process.env['DATABASE_PORT'],
         host: process.env['DATABASE_HOST'],
+        pool: {
+          min: 5,
+          max: 1000,
+        },
       },
     },
   },

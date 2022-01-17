@@ -29,7 +29,7 @@ async function generateCurriculumNodesFromAcademicPortfolioByNodeLevels(
       const tree = await leemons
         .getPlugin('academic-portfolio')
         .services.common.getTreeNodes(
-          ['center', 'program'].concat(types),
+          _.uniq(['center', 'program'].concat(types)),
           'program',
           curriculum.program,
           { transacting }
@@ -42,7 +42,10 @@ async function generateCurriculumNodesFromAcademicPortfolioByNodeLevels(
             // eslint-disable-next-line no-await-in-loop
             const node = await table.nodes.create(
               {
-                name: childrens[i].value ? childrens[i].value.name : 'undefined',
+                name:
+                  childrens[i].value && childrens[i].value.name
+                    ? childrens[i].value.name
+                    : 'undefined',
                 nodeOrder: i,
                 parentNode: parentNode.id,
                 nodeLevel: levels[deepLevel].id,
@@ -62,8 +65,14 @@ async function generateCurriculumNodesFromAcademicPortfolioByNodeLevels(
         return results;
       };
 
-      await createNodes({ id: null }, tree[0].childrens, 0, nodeLevelsAcademicPortfolio);
-
+      if (tree.length) {
+        await createNodes(
+          { id: null },
+          types[0] === 'program' ? tree : tree[0].childrens,
+          0,
+          nodeLevelsAcademicPortfolio
+        );
+      }
       return (await curriculumByIds(curriculum.id, { transacting }))[0];
     },
     table.curriculums,

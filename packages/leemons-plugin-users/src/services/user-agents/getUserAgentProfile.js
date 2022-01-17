@@ -20,7 +20,7 @@ async function getUserAgentProfile(userAgent, { transacting } = {}) {
     }
   );
   const profiles = await table.profiles.find(
-    { id: _.map(roleProfiles, 'profile') },
+    { id_$in: _.map(roleProfiles, 'profile') },
     { transacting }
   );
   return isArray ? profiles : profiles[0];

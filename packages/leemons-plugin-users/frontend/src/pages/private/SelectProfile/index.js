@@ -1,113 +1,158 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
+import { isArray, find } from 'lodash';
 import {
   getUserProfilesRequest,
   getUserProfileTokenRequest,
   setRememberProfileRequest,
 } from '@users/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@users/helpers/prefixPN';
-import { Button, Checkbox, FormControl, ImageLoader } from 'leemons-ui';
 import HeroBgLayout from '@users/layout/heroBgLayout';
 import constants from '@users/constants';
 import hooks from 'leemons-hooks';
 import Cookies from 'js-cookie';
 import { useHistory } from 'react-router-dom';
+import { LayoutContext } from '@layout/context/layout';
+import { LoginProfileSelector, Stack, Box, createStyles } from '@bubbles-ui/components';
+
+const PageStyles = createStyles((theme) => ({
+  root: {
+    padding: theme.spacing[7],
+  },
+  content: {
+    maxWidth: 330,
+  },
+}));
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de crear usuarios
 export default function SelectProfile({ session }) {
-  const history = useHistory();
-
-  const [t] = useTranslateLoader(prefixPN('selectProfile'));
-
   const [loadingProfileToken, setLoadingProfileToken] = useState(false);
-  const [rememberProfile, setRememberProfile] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const [loginWithProfile, setLoginWithProfile] = useState(false);
   const [profiles, setProfiles] = useState([]);
 
-  const getProfileToken = async (_profile) => {
-    try {
-      const profil = selectedProfile || _profile;
-      if (profil) {
-        setLoadingProfileToken(true);
-        const { jwtToken } = await getUserProfileTokenRequest(profil.id);
-        if (rememberProfile) {
-          await setRememberProfileRequest(profil.id);
-        }
-        await hooks.fireEvent('user:change:profile', profil);
-        Cookies.set('token', jwtToken);
-        history.push(`/${constants.base}`);
-      }
-    } catch (e) {}
-    setLoadingProfileToken(false);
-  };
+  const history = useHistory();
+  const { setPrivateLayout } = useContext(LayoutContext);
 
-  async function getProfiles() {
-    try {
-      const { profiles: _profiles } = await getUserProfilesRequest();
-      if (_profiles.length === 1) {
-        await getProfileToken(_profiles[0]);
-      }
-      setProfiles(_profiles);
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  const { t: tCommon } = useCommonTranslate('forms');
+  const [t] = useTranslateLoader(prefixPN('selectProfile'));
+
+  // ····················································································
+  // HANDLERS
 
   useEffect(() => {
-    getProfiles();
+    let mounted = true;
+    (async () => {
+      if (loginWithProfile && selectedProfile) {
+        try {
+          setLoadingProfileToken(true);
+          const { jwtToken } = await getUserProfileTokenRequest(selectedProfile.id);
+          await hooks.fireEvent('user:change:profile', selectedProfile);
+          Cookies.set('token', jwtToken);
+          history.push(`/${constants.base}`);
+        } catch (e) {
+          console.error(e);
+          if (mounted) {
+            setLoadingProfileToken(false);
+            setLoginWithProfile(false);
+          }
+        }
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [loginWithProfile, selectedProfile]);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const { profiles: userProfiles } = await getUserProfilesRequest();
+        if (userProfiles.length === 1) {
+          if (mounted) {
+            setSelectedProfile(userProfiles[0]);
+            setLoginWithProfile(true);
+          }
+        } else if (mounted) {
+          setProfiles(userProfiles);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+    setPrivateLayout(false);
+    return () => {
+      mounted = false;
+    };
   }, []);
+
+  const handleOnSubmit = async (data) => {
+    const _selectedProfile = find(profiles, { id: data.profile });
+    if (data.remember) {
+      await setRememberProfileRequest(_selectedProfile.id);
+    }
+    setSelectedProfile(_selectedProfile);
+    setLoginWithProfile(true);
+  };
+
+  // ····················································································
+  // LITERALS
+
+  const labels = useMemo(
+    () => ({
+      title: t('title', { name: session?.name }),
+      description: t('number_of_profiles', { profiles: profiles?.length }),
+      remember: t('use_always_profile'),
+      help: t('change_easy'),
+      login: t('log_in'),
+    }),
+    [t, session, profiles]
+  );
+
+  const errorMessages = useMemo(
+    () => ({
+      profile: {
+        required: tCommon('selectionRequired'),
+      },
+    }),
+    [tCommon]
+  );
+
+  const profilesData = useMemo(
+    () =>
+      isArray(profiles) && profiles.length
+        ? profiles.map((profile) => ({
+            value: profile.id,
+            label: profile.name,
+            // icon: null,
+          }))
+        : [],
+    [profiles]
+  );
+
+  // ····················································································
+  // STYLES
+
+  const { classes } = PageStyles();
 
   return (
     <HeroBgLayout>
-      <h1 className="text-2xl mb-12">{t('title', { name: session?.name })}</h1>
-
-      <div className="text-base mb-12">
-        {t('number_of_profiles', { profiles: profiles?.length })}
-      </div>
-
-      {/* Profiles list */}
-      <div className="mb-12 grid grid-flow-col grid-cols-3 gap-2">
-        {profiles.map((profile) => (
-          <div
-            className={`p-5 cursor-pointer text-sm text-center ${
-              selectedProfile?.id === profile.id ? 'border rounded' : ''
-            }`}
-            key={profile.id}
-            onClick={() => setSelectedProfile(profile)}
-          >
-            {profile.name}
-          </div>
-        ))}
-      </div>
-
-      {/* Remember profile */}
-      <div className="mb-4">
-        <FormControl label={t('use_always_profile')} labelPosition="right">
-          <Checkbox
-            color="secondary"
-            checked={rememberProfile}
-            onChange={(event) => setRememberProfile(event.target.checked)}
-            className="text-base"
-          />
-        </FormControl>
-      </div>
-
-      <div className="text-base mb-12">{t('change_easy')}</div>
-
-      {/* Send form */}
-      <Button
-        className="btn-block"
-        color="primary"
-        loading={loadingProfileToken}
-        rounded={true}
-        onClick={() => getProfileToken()}
-      >
-        <div className="flex-1 text-left">{t('log_in')}</div>
-        <div className="relative" style={{ width: '8px', height: '14px' }}>
-          <ImageLoader src="/public/assets/svgs/chevron-right.svg" />
-        </div>
-      </Button>
+      <Stack className={classes.root} direction="column" justifyContent="center" fullHeight>
+        <Box className={classes.content}>
+          {isArray(profilesData) && profilesData.length > 0 && (
+            <LoginProfileSelector
+              labels={labels}
+              errorMessages={errorMessages}
+              profiles={profilesData}
+              loading={loadingProfileToken}
+              onSubmit={handleOnSubmit}
+            />
+          )}
+        </Box>
+      </Stack>
     </HeroBgLayout>
   );
 }

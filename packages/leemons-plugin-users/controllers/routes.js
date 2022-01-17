@@ -13,6 +13,11 @@ module.exports = [
     method: 'GET',
     handler: 'init.status',
   },
+  {
+    path: '/init/today-quote',
+    method: 'GET',
+    handler: 'init.todayQuote',
+  },
   /**
    * Users
    * */

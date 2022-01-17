@@ -117,6 +117,7 @@ function BasicTab({ t }) {
 
   useAsync(load2, onSuccess2, onError2);
 
+  console.log(JSON.stringify(dataTest));
   const [form] = formWithTheme(dataTest?.compileJsonSchema, dataTest?.compileJsonUI);
 
   async function reload() {
@@ -311,4 +312,4 @@ function UserData() {
   );
 }
 
-export default withLayout(UserData);
+export default UserData;
