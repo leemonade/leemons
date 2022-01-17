@@ -29,7 +29,7 @@ module.exports = {
         notNull: true,
       },
     },
-    url: {
+    uri: {
       type: 'string',
       options: {
         notNull: true,
