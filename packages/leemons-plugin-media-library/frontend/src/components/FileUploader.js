@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, TextInput } from '@bubbles-ui/components';
 import { CloudUploadIcon } from '@bubbles-ui/icons/outline';
-import { UploadArchive } from '@bubbles-ui/components/lib/form/UploadArchive';
+import { FileUpload } from '@bubbles-ui/components/lib/form/FileUpload';
 import { useForm } from '@mantine/hooks';
 
 export default function FileUploader() {
@@ -52,7 +52,7 @@ export default function FileUploader() {
         }}
       />
 
-      <UploadArchive
+      <FileUpload
         icon={<CloudUploadIcon height={32} />}
         title="Click to browse your file"
         subtitle="or drop here a file from your computer"
