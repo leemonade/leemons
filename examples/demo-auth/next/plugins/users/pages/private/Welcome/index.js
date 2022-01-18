@@ -33,4 +33,4 @@ function Welcome() {
   );
 }
 
-export default withLayout(Welcome);
+export default Welcome;

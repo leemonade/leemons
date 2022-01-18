@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { FormWithTheme } from '@bubbles-ui/components';
 import { withTheme } from '@leemonade/rjsf-core';
 import {
   Checkbox,
@@ -11,9 +12,9 @@ import {
   Textarea,
   Toggle,
   UserCard,
+  Button,
 } from 'leemons-ui';
-import Engine from 'json-rules-engine-simplified';
-import applyRules from 'rjsf-conditionals';
+
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import regex from '@common/regex';
 import datasetDataTypes from '@dataset/helpers/datasetDataTypes';
@@ -526,6 +527,148 @@ function columnsObjectFieldTemplate({ properties, uiSchema, ...rest }) {
   );
 }
 
+function ArrayField(props) {
+  const [showAdd, setShowAdd] = useState(false);
+  const [newValue, setNewValue] = useState('');
+  const [formData, setFormData] = useState(props.formData);
+
+  let listItemsDOM = <div>Type Not Found</div>;
+  let newItemDOM = <div>Type Not Found</div>;
+
+  function onChange(v) {
+    setFormData(v);
+    props.onChange(v);
+  }
+
+  function addNewValue() {
+    const data = formData ? [...formData] : [];
+    data.push({ value: newValue });
+    onChange(data);
+    setNewValue('');
+    setShowAdd(false);
+  }
+
+  switch (props.schema.items.type) {
+    case 'string':
+      if (props.schema.frontConfig.type === 'group') {
+        const formDataById = _.keyBy(formData, 'id');
+        const fieldType = props.schema.frontConfig.blockData.groupTypeOfContents;
+
+        listItemsDOM = (
+          <>
+            {props.schema.frontConfig.blockData.elements.map((element) => {
+              let array;
+              let finalText = _.clone(props.schema.frontConfig.blockData.showAs);
+              const regex = /(?:\[{2}\{).*?(?:\}\]{2})/g;
+              while ((array = regex.exec(props.schema.frontConfig.blockData.showAs)) !== null) {
+                const confObj = JSON.parse(array[0].slice(2, -2));
+                finalText = finalText.replace(array[0], element[confObj.id]);
+              }
+
+              if (props.readonly) {
+                finalText = `${formDataById[element.id]?.metadata.index} ${finalText}`;
+              }
+
+              let groupField = null;
+              if (fieldType === 'field') {
+                if (props.readonly) {
+                  groupField = <div>{formDataById[element.id]?.value}</div>;
+                } else {
+                  groupField = (
+                    <Input
+                      type={'text'}
+                      className={`mr-10 w-full`}
+                      outlined={true}
+                      value={formDataById[element.id]?.value}
+                      onChange={(event) => {
+                        let data = _.cloneDeep(formData);
+                        if (!_.isArray(data)) {
+                          data = [];
+                        }
+                        const index = _.findIndex(data, { id: element.id });
+                        if (index >= 0) {
+                          data[index].value = event.target.value;
+                        } else {
+                          data.push({ id: element.id, value: event.target.value });
+                        }
+
+                        onChange([...data]);
+                      }}
+                    />
+                  );
+                }
+              }
+
+              return (
+                <div key={element.id}>
+                  <div>{finalText}</div>
+                  <div>{groupField}</div>
+                </div>
+              );
+            })}
+          </>
+        );
+        newItemDOM = null;
+        if (!showAdd) setShowAdd(true);
+      } else {
+        listItemsDOM = (
+          <>
+            {formData
+              ? formData.map((item, i) =>
+                  props.readonly ? (
+                    <div>
+                      {item.metadata.index} {item.value}
+                    </div>
+                  ) : (
+                    <div key={i}>
+                      <Input
+                        type={'text'}
+                        className={`mr-10 w-full`}
+                        outlined={true}
+                        value={item.value}
+                        onChange={(event) => {
+                          formData[i].value = event.target.value;
+                          onChange([...formData]);
+                        }}
+                      />
+                    </div>
+                  )
+                )
+              : null}
+          </>
+        );
+        newItemDOM = (
+          <>
+            <Input
+              type={'text'}
+              className={`mr-10 w-full`}
+              outlined={true}
+              value={newValue}
+              onChange={(event) => {
+                setNewValue(event.target.value);
+              }}
+            />
+            {!props.readonly ? <Button onClick={addNewValue}>Añadir</Button> : null}
+          </>
+        );
+      }
+      break;
+    default:
+      break;
+  }
+
+  return (
+    <div>
+      {listItemsDOM}
+      {showAdd ? (
+        newItemDOM
+      ) : !props.readonly ? (
+        <Button onClick={() => setShowAdd(true)}>Mas</Button>
+      ) : null}
+    </div>
+  );
+}
+
 function returnValidJsonSchema(jsonSchema) {
   const schema = {
     type: 'object',
@@ -541,12 +684,16 @@ function returnValidJsonSchema(jsonSchema) {
         items: {
           type: 'object',
           additionalProperties: false,
-          required: ['value'],
+          // required: ['value'],
           properties: {
             id: {
               type: 'string',
             },
             value: value.items,
+            metadata: {
+              type: 'object',
+              additionalProperties: true,
+            },
           },
         },
       };
@@ -554,7 +701,7 @@ function returnValidJsonSchema(jsonSchema) {
       schema.properties[key] = {
         type: 'object',
         additionalProperties: false,
-        required: ['value'],
+        // required: ['value'],
         properties: {
           id: {
             type: 'string',
@@ -568,7 +715,7 @@ function returnValidJsonSchema(jsonSchema) {
   return schema;
 }
 
-export default function index(schema, ui, conditions, props) {
+function index(schema, ui, conditions, props = {}) {
   const { t } = useCommonTranslate('forms');
   const [r, setR] = useState(null);
   const FormWithConditionals = useRef(null);
@@ -608,6 +755,7 @@ export default function index(schema, ui, conditions, props) {
         ErrorList,
         fields: {
           NumberField,
+          ArrayField,
           // BooleanField,
         },
         widgets: {
@@ -673,7 +821,6 @@ export default function index(schema, ui, conditions, props) {
     {
       isLoaded: () => !!ref.current,
       submit: () => {
-        console.log(ref);
         ref.current.formElement.dispatchEvent(
           new Event('submit', {
             cancelable: true,
@@ -688,12 +835,17 @@ export default function index(schema, ui, conditions, props) {
       },
       getRef: () => ref.current,
       getErrors: () => ref.current.state.errors || [],
-      getValues: () => ref.current.props.formData,
+      getValues: () => ref.current.state.formData,
       setValue: (key, value) =>
         ref.current.onChange({
-          ...ref.current.props.formData,
+          ...ref.current.state.formData,
           [key]: value,
         }),
     },
   ];
+}
+
+export default function formWithTheme(schema, ui, conditions, props = {}) {
+  // Añadir otro parametro donde se le pase un onUserSearch y que este busque en el backend los usuarios y devuelva el formato que necesita el select
+  return FormWithTheme(schema, ui, conditions, props);
 }

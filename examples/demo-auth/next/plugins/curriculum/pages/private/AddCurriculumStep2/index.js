@@ -8,7 +8,12 @@ import { Box, Text, Title, Button, Group, Tree, useTree } from '@bubbles-ui/comp
 import { useHistory, useParams } from 'react-router-dom';
 import { detailProgramRequest } from '@academic-portfolio/request';
 import { saveDatasetFieldRequest } from '@dataset/request';
-import { addNodeLevelsRequest, detailCurriculumRequest } from '../../../request';
+import {
+  addNodeLevelsRequest,
+  detailCurriculumRequest,
+  generateNodesFromAcademicPortfolioRequest,
+  updateNodeLevelRequest,
+} from '../../../request';
 import NewBranchConfig, {
   NEW_BRANCH_CONFIG_MESSAGES,
   NEW_BRANCH_CONFIG_ERROR_MESSAGES,
@@ -23,6 +28,7 @@ import {
 
 function AddCurriculumStep2() {
   const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [activeRightSection, setActiveRightSection] = useState(null);
   const [activeNodeLevel, setActiveNodeLevel] = useState(null);
@@ -73,6 +79,14 @@ function AddCurriculumStep2() {
     return result;
   }, [t]);
 
+  const groupOrderedData = useMemo(() => {
+    const result = cloneDeep(BRANCH_CONTENT_SELECT_DATA.groupOrdered);
+    forEach(result, ({ value }, key) => {
+      result[key].label = t(`orderedOptions.${value}`);
+    });
+    return result;
+  }, [t]);
+
   const blockTypeData = useMemo(() => {
     const result = cloneDeep(BRANCH_CONTENT_SELECT_DATA.blockType);
     forEach(result, ({ value }, key) => {
@@ -94,6 +108,22 @@ function AddCurriculumStep2() {
     result.splice(findIndex(result, { value: 'group' }), 1);
     return result;
   }, [blockTypeData]);
+
+  const listTypeData = useMemo(() => {
+    const result = cloneDeep(BRANCH_CONTENT_SELECT_DATA.listType);
+    forEach(result, ({ value }, key) => {
+      result[key].label = blockTypeData[findIndex(blockTypeData, { value })].label;
+    });
+    return result;
+  }, [blockTypeData]);
+
+  const listOrderedData = useMemo(() => {
+    const result = cloneDeep(BRANCH_CONTENT_SELECT_DATA.listOrdered);
+    forEach(result, ({ value }, key) => {
+      result[key].label = t(`orderedOptions.${value}`);
+    });
+    return result;
+  }, [t]);
 
   const parentNodeLevelsData = useMemo(() => {
     if (activeNodeLevel && curriculum)
@@ -148,11 +178,10 @@ function AddCurriculumStep2() {
       c.center = find(centers, { id: c.center });
       c.nodeLevels = orderBy(c.nodeLevels, ['levelOrder'], ['asc']);
 
-      console.log(c);
-
       setCurriculum(c);
       setLoading(false);
     } catch (e) {
+      console.error(e);
       setLoading(false);
     }
   }
@@ -170,6 +199,7 @@ function AddCurriculumStep2() {
         parent: index === 0 ? 0 : items[index - 1].id,
         draggable: false,
         text: nodeLevel.name,
+        actions: ['edit'],
       });
     });
 
@@ -187,28 +217,39 @@ function AddCurriculumStep2() {
     tree.setTreeData(items);
   }, [curriculum]);
 
-  async function onSelect({ id: nodeLevelId }) {
+  function onSelect({ id: nodeLevelId }) {
     setActiveNodeLevel(find(curriculum.nodeLevels, { id: nodeLevelId }));
     setActiveRightSection('detail-branch');
   }
 
   // CREATE NODE LEVEL
 
-  async function addNewBranch({ ordered, ...rest }) {
+  async function addNewBranch({ id: nodeLevelId, ordered, ...rest }) {
     try {
       setSaving(true);
-      await addNodeLevelsRequest(curriculum.id, [
-        {
-          ...rest,
-          type: 'custom',
+      if (!nodeLevelId) {
+        await addNodeLevelsRequest(curriculum.id, [
+          {
+            ...rest,
+            type: 'custom',
+            listType: ordered,
+            levelOrder:
+              curriculum.nodeLevels && curriculum.nodeLevels.length
+                ? curriculum.nodeLevels[curriculum.nodeLevels.length - 1].levelOrder + 1
+                : 0,
+          },
+        ]);
+      } else {
+        await updateNodeLevelRequest({
+          id: nodeLevelId,
           listType: ordered,
-          levelOrder:
-            curriculum.nodeLevels && curriculum.nodeLevels.length
-              ? curriculum.nodeLevels[curriculum.nodeLevels.length - 1].levelOrder + 1
-              : 0,
-        },
-      ]);
+          ...rest,
+        });
+      }
+
       await load();
+      setActiveNodeLevel(null);
+      setActiveRightSection(null);
       setSaving(false);
     } catch (e) {
       setSaving(false);
@@ -242,7 +283,9 @@ function AddCurriculumStep2() {
       },
       schemaLocales: {
         [curriculum.locale]: {
-          schema: {},
+          schema: {
+            title: data.name,
+          },
           ui: {},
         },
       },
@@ -266,6 +309,27 @@ function AddCurriculumStep2() {
           toSave.schemaConfig.schema.frontConfig.minLength = data.min;
           toSave.schemaConfig.schema.frontConfig.maxLength = data.max;
         }
+        if (data.codeType === 'autocomposed') {
+          toSave.schemaConfig.schema.frontConfig.required = false;
+        }
+        break;
+      case 'textarea':
+        toSave.schemaConfig.schema.type = 'string';
+        toSave.schemaConfig.schema.frontConfig.type = 'rich_text';
+        toSave.schemaConfig.ui['ui:widget'] = 'wysiwyg';
+        break;
+      case 'list':
+        toSave.schemaConfig.schema.type = 'array';
+        toSave.schemaConfig.schema.items = { type: 'string' };
+        toSave.schemaConfig.schema.frontConfig.type = 'list';
+        if (data.listType === 'textarea') {
+          toSave.schemaConfig.ui['ui:widget'] = 'wysiwyg';
+        }
+        break;
+      case 'group':
+        toSave.schemaConfig.schema.type = 'array';
+        toSave.schemaConfig.schema.items = { type: 'string' };
+        toSave.schemaConfig.schema.frontConfig.type = 'group';
         break;
       default:
         break;
@@ -295,13 +359,16 @@ function AddCurriculumStep2() {
         rootId={0}
         onAdd={() => setActiveRightSection('new-branch')}
         onDelete={(node) => alert(`Delete nodeId: ${node.id}`)}
-        onEdit={(node) => alert(`Editing ${node.id}`)}
+        onEdit={(node) => {
+          onSelect(node);
+          setActiveRightSection('edit-branch');
+        }}
         onSelect={onSelect}
       />
     </Box>,
   ];
 
-  if (activeRightSection === 'new-branch') {
+  if (activeRightSection === 'new-branch' || activeRightSection === 'edit-branch') {
     groupChilds.push(
       <Box key="child-2">
         <NewBranchConfig
@@ -309,6 +376,15 @@ function AddCurriculumStep2() {
           errorMessages={errorMessagesConfig}
           orderedData={orderedData}
           isLoading={saving}
+          defaultValues={
+            activeRightSection === 'edit-branch'
+              ? {
+                  id: activeNodeLevel.id,
+                  name: activeNodeLevel.name,
+                  ordered: activeNodeLevel.listType,
+                }
+              : null
+          }
           onSubmit={addNewBranch}
         />
       </Box>
@@ -328,12 +404,27 @@ function AddCurriculumStep2() {
             codeType: codeTypeData,
             parentNodeLevels: parentNodeLevelsData,
             nodeLevelsFields: nodeLevelsFieldsData,
+            listType: listTypeData,
+            listOrdered: listOrderedData,
+            groupOrdered: groupOrderedData,
           }}
           branch={activeNodeLevel}
           onSaveBlock={onSaveBlock}
         />
       </Box>
     );
+  }
+
+  async function goStep3() {
+    try {
+      setGenerating(true);
+      await generateNodesFromAcademicPortfolioRequest(curriculum.id);
+      await history.push(`/private/curriculum/${curriculum.id}/step/3`);
+      setGenerating(false);
+    } catch (err) {
+      console.error(err);
+      setGenerating(false);
+    }
   }
 
   if (loading) {
@@ -354,6 +445,12 @@ function AddCurriculumStep2() {
       </Box>
       <Box mb={16}>
         <Text role={'productive'}>{t('description2')}</Text>
+      </Box>
+
+      <Box>
+        <Button loading={generating} onClick={goStep3}>
+          {t('continueButtonLabel')}
+        </Button>
       </Box>
 
       <Group grow align="start">

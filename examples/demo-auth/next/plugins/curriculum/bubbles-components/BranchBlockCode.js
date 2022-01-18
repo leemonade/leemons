@@ -14,6 +14,7 @@ function BranchBlockCode({ ...props }) {
     const subscription = watch(({ limitCharacters, codeType }, { name }) => {
       if (name === 'codeType') {
         if (codeType === 'manual') {
+          unregister('codeText');
         } else if (codeType === 'autocomposed') {
           unregister('limitCharacters');
           unregister('min');

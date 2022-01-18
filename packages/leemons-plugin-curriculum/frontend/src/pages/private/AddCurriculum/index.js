@@ -117,4 +117,4 @@ function AddCurriculum() {
   );
 }
 
-export default withLayout(AddCurriculum);
+export default AddCurriculum;
