@@ -1,14 +1,15 @@
 import * as _ from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Button, FormControl, Input } from 'leemons-ui';
 import { useForm } from 'react-hook-form';
 import { useAsync } from '@common/useAsync';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import RelationSelect from '@families/components/relationSelect';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { EmergencyNumbersService } from '../services';
 import formWithTheme from '@common/formWithTheme';
 import regex from '@common/regex';
+import PropTypes from 'prop-types';
+import { EmergencyNumbersService } from '../services';
 
 function PhoneNumbersModal({ t, item, onSave = () => {} }) {
   const { t: tCommonForm } = useCommonTranslate('forms');
@@ -51,9 +52,10 @@ function PhoneNumbersModal({ t, item, onSave = () => {} }) {
   );
 
   const onSuccess = useMemo(
-    () => ({ dataset }) => {
-      if (dataset) setDatasetConfig(dataset);
-    },
+    () =>
+      ({ dataset }) => {
+        if (dataset) setDatasetConfig(dataset);
+      },
     []
   );
 
@@ -164,5 +166,11 @@ function PhoneNumbersModal({ t, item, onSave = () => {} }) {
     </>
   );
 }
+
+PhoneNumbersModal.propTypes = {
+  t: PropTypes.func,
+  item: PropTypes.any,
+  onSave: PropTypes.func,
+};
 
 export default PhoneNumbersModal;

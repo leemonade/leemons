@@ -80,15 +80,15 @@ export function Provider({ children }) {
     }
   }, []);
 
-  const apiResponseParserMiddleware = useCallback((ctx) => {
+  const apiResponseParserMiddleware = useCallback(async (ctx) => {
     if (ctx.response.status >= 500) {
       // eslint-disable-next-line no-throw-literal
       throw { status: ctx.response.status, message: ctx.response.statusText };
     }
     if (ctx.response.status >= 400) {
-      throw ctx.response.json();
+      throw await ctx.response.json();
     }
-    ctx.response = ctx.response.json();
+    ctx.response = await ctx.response.json();
   }, []);
 
   useEffect(() => {

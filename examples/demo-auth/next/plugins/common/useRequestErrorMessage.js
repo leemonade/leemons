@@ -1,6 +1,6 @@
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import { useState } from 'react';
-import { Alert } from 'leemons-ui';
+import React, { useState } from 'react';
+import { Alert } from '@bubbles-ui/components';
 
 export function getRequestErrorMessage(error, t) {
   let result = null;
@@ -17,13 +17,12 @@ export default function useRequestErrorMessage() {
   if (state) {
     result = getRequestErrorMessage(state, t);
   }
-  const Component = result ? () => <Alert color="error">{result}</Alert> : () => null;
-  return [
-    result,
-    setState,
-    Component,
-    (error) => {
-      return getRequestErrorMessage(error, t);
-    },
-  ];
+  const Component = result
+    ? () => (
+        <Alert severity="error" closeable={false}>
+          {result}
+        </Alert>
+      )
+    : () => null;
+  return [result, setState, Component, (error) => getRequestErrorMessage(error, t)];
 }

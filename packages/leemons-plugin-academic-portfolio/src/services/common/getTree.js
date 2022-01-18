@@ -91,7 +91,10 @@ async function getTree(nodeTypes, { transacting } = {}) {
     const nodes = [];
     nodeTypes.forEach((nodeType) => {
       if (classroom[nodeType]) {
-        nodes.push({ type: nodeType, id: classroom[nodeType] });
+        nodes.push({
+          type: nodeType,
+          id: _.isString(classroom[nodeType]) ? classroom[nodeType] : classroom[nodeType].id,
+        });
       }
     });
 

@@ -4,13 +4,15 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import SimpleBar from 'simplebar-react';
 import { Button, FormControl, Input, Modal, useModal } from 'leemons-ui';
 import update from 'immutability-helper';
-import DatasetItemDrawerContext, {
+import PlatformLocales from '@multilanguage/components/PlatformLocales';
+import { useAsync } from '@common/useAsync';
+import PropTypes from 'prop-types';
+import {
+  DatasetItemDrawerContext,
   DatasetItemDrawerLocaleErrorContext,
 } from './DatasetItemDrawerContext';
 import { getDatasetSchemaFieldLocaleRequest } from '../request';
 import datasetDataTypes from '../helpers/datasetDataTypes';
-import PlatformLocales from '@multilanguage/components/PlatformLocales';
-import { useAsync } from '@common/useAsync';
 import setFormLocaleData from './help/setFormLocaleData';
 
 const LocaleTab = ({ localeConfig, loadedLocales, onLocaleLoaded = () => {} }) => {
@@ -39,8 +41,8 @@ const LocaleTab = ({ localeConfig, loadedLocales, onLocaleLoaded = () => {} }) =
   useEffect(() => {
     if (_.isArray(checkboxValues)) {
       const checkLabels = [];
-      _.forEach(checkboxValues, ({ key }, i) => {
-        let index = _.findIndex(checkboxLabels, ({ key: _key }) => key === _key);
+      _.forEach(checkboxValues, ({ key }) => {
+        const index = _.findIndex(checkboxLabels, ({ key: _key }) => key === _key);
         if (index < 0) {
           checkLabels.push({ key, label: '' });
         } else {
@@ -58,6 +60,7 @@ const LocaleTab = ({ localeConfig, loadedLocales, onLocaleLoaded = () => {} }) =
             allHaveValues = false;
             return false;
           }
+          return null;
         });
         setAllCheckboxsHaveLabels(allHaveValues);
         if (required && checkboxLabelsError !== !allHaveValues) {
@@ -70,8 +73,9 @@ const LocaleTab = ({ localeConfig, loadedLocales, onLocaleLoaded = () => {} }) =
   const load = useMemo(
     () => async () => {
       if (loadedLocales.indexOf(locale) < 0 && locationName && pluginName && item && item.id) {
-        return await getDatasetSchemaFieldLocaleRequest(locationName, pluginName, locale, item.id);
+        return getDatasetSchemaFieldLocaleRequest(locationName, pluginName, locale, item.id);
       }
+      return null;
     },
     []
   );
@@ -303,7 +307,7 @@ const LocaleTab = ({ localeConfig, loadedLocales, onLocaleLoaded = () => {} }) =
             <SimpleBar style={{ maxHeight: 'calc(100vh - 300px)' }} className="-mr-4 pr-4 py-1">
               {checkboxValues
                 ? checkboxValues.map(({ key, value }) => {
-                    let index = _.findIndex(checkboxLabels, ({ key: _key }) => key === _key);
+                    const index = _.findIndex(checkboxLabels, ({ key: _key }) => key === _key);
 
                     if (index < 0) return null;
 
@@ -343,6 +347,12 @@ const LocaleTab = ({ localeConfig, loadedLocales, onLocaleLoaded = () => {} }) =
   );
 };
 
+LocaleTab.propTypes = {
+  localeConfig: PropTypes.any,
+  loadedLocales: PropTypes.any,
+  onLocaleLoaded: PropTypes.func,
+};
+
 export const DatasetItemDrawerLocales = () => {
   const [defaultLocale, setDefaultLocale] = useState();
   const [loadedLocales, setLoadedLocales] = useState([]);
@@ -380,3 +390,5 @@ export const DatasetItemDrawerLocales = () => {
     </>
   );
 };
+
+export default DatasetItemDrawerLocales;

@@ -24,6 +24,12 @@ module.exports = [
     handler: 'grades.getGrade',
     authenticated: true,
   },
+  {
+    path: '/grades/:id',
+    method: 'DELETE',
+    handler: 'grades.removeGrade',
+    authenticated: true,
+  },
   // Grade Scales
   {
     path: '/grade-scales',
@@ -35,6 +41,12 @@ module.exports = [
     path: '/grade-scales',
     method: 'PUT',
     handler: 'grade-scales.putGradeScale',
+    authenticated: true,
+  },
+  {
+    path: '/grade-scales/:id',
+    method: 'DELETE',
+    handler: 'grade-scales.removeGradeScale',
     authenticated: true,
   },
   // Grade Tags
@@ -50,6 +62,12 @@ module.exports = [
     handler: 'grade-tags.putGradeTag',
     authenticated: true,
   },
+  {
+    path: '/grade-tags/:id',
+    method: 'DELETE',
+    handler: 'grade-tags.removeGradeTag',
+    authenticated: true,
+  },
   // Rules
   {
     path: '/rules',
@@ -58,9 +76,40 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/rules',
+    method: 'PUT',
+    handler: 'rules.putRule',
+    authenticated: true,
+  },
+  {
+    path: '/rules/:id',
+    method: 'DELETE',
+    handler: 'rules.deleteRule',
+    authenticated: true,
+  },
+  {
     path: '/rules/process',
     method: 'POST',
     handler: 'rules.postRuleProcess',
+    authenticated: true,
+  },
+  // Dependencies
+  {
+    path: '/dependencies',
+    method: 'POST',
+    handler: 'dependency.postDependency',
+    authenticated: true,
+  },
+  {
+    path: '/dependencies',
+    method: 'PUT',
+    handler: 'dependency.putDependency',
+    authenticated: true,
+  },
+  {
+    path: '/dependencies/:id',
+    method: 'DELETE',
+    handler: 'dependency.deleteDependency',
     authenticated: true,
   },
 ];

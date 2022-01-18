@@ -1,9 +1,6 @@
 async function getUserProfileToken(id, token) {
   return leemons.api(
-    {
-      url: 'users/user/profile/:id/token',
-      query: { id },
-    },
+    `users/user/profile/${id}/token`,
     token
       ? {
           headers: {

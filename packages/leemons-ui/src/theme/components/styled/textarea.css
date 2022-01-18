@@ -2,12 +2,19 @@
 @layer components {
   /* <: */
   .textarea {
-    @apply bg-base-100 rounded-btn border border-opacity-0 border-base-content;
+    @apply bg-base-100 font-inter rounded-btn border border-opacity-0 border-base-content;
     &-bordered {
       @apply border-opacity-20;
     }
+    &::placeholder {
+      @apply font-light text-gray-100;
+    }
     &:focus {
       box-shadow: 0 0 0 3px hsl(var(--b2));
+
+      &::placeholder {
+        @apply text-base-300;
+      }
     }
     &-ghost {
       @apply bg-opacity-5;

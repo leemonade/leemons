@@ -1,16 +1,11 @@
 async function addCalendarConfig(config) {
-  return leemons.api(
-    {
-      url: 'calendar/configs/add',
-      allAgents: true,
+  return leemons.api('calendar/configs/add', {
+    allAgents: true,
+    method: 'POST',
+    body: {
+      config,
     },
-    {
-      method: 'POST',
-      body: {
-        config,
-      },
-    }
-  );
+  });
 }
 
 export default addCalendarConfig;

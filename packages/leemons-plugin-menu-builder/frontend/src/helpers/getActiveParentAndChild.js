@@ -14,7 +14,7 @@ async function getActiveParentAndChild(_key) {
     if (parentItem.url === url) {
       result.parent = parentItem;
     }
-    _.forEach(parentItem.childrens, (childItem) => {
+    _.forEach(parentItem.children, (childItem) => {
       if (childItem.url === url) {
         result.parent = parentItem;
         result.child = childItem;

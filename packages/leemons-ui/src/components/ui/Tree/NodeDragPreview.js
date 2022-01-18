@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { DragLayerMonitorProps } from '@leemonade/react-dnd-treeview';
 
 export const NodeDragPreview = ({ monitorProps, ...otherProps }) => {
-  const item = monitorProps.item;
+  const { item } = monitorProps;
 
   return (
     <div className="flex transform -translate-x-4 -translate-y-4">
@@ -20,7 +20,7 @@ export const NodeDragPreview = ({ monitorProps, ...otherProps }) => {
           </svg>
         </div>
         <div className="text-sm text-gray-300">
-          <span>{`${item.text}`}</span>
+          <span>{item.text}</span>
         </div>
       </div>
     </div>

@@ -16,6 +16,7 @@ const Button = React.forwardRef(
       link,
       disableOnLoading,
       text,
+      type,
       ...props
     },
     ref
@@ -32,33 +33,47 @@ const Button = React.forwardRef(
     const textClass = text ? 'btn-text' : '';
     const disableClass = loading && disableOnLoading ? 'pointer-events-none' : '';
 
+    const allClasses = [
+      'btn',
+      outlinedClass,
+      colorClass,
+      wideClass,
+      roundClass,
+      loadingClass,
+      squareClass,
+      circleClass,
+      linkClass,
+      classes,
+      disableClass,
+      textClass,
+    ].join(' ');
+
+    if (type === 'button') {
+      return (
+        <button ref={ref} className={allClasses} {...props}>
+          {children}
+        </button>
+      );
+    }
+
+    if (type === 'link') {
+      return (
+        <a ref={ref} className={allClasses} {...props}>
+          {children}
+        </a>
+      );
+    }
+
     return (
-      <button
-        ref={ref}
-        className={[
-          'btn',
-          outlinedClass,
-          colorClass,
-          wideClass,
-          roundClass,
-          loadingClass,
-          squareClass,
-          circleClass,
-          linkClass,
-          classes,
-          disableClass,
-          textClass,
-        ].join(' ')}
-        {...props}
-      >
+      <div ref={ref} className={allClasses} {...props}>
         {children}
-      </button>
+      </div>
     );
   }
 );
 
 Button.displayName = 'Button';
-Button.defaultProps = { disableOnLoading: true };
+Button.defaultProps = { disableOnLoading: true, type: 'button' };
 
 Button.propTypes = {
   children: PropTypes.any,
@@ -73,6 +88,7 @@ Button.propTypes = {
   outlined: PropTypes.bool,
   disableOnLoading: PropTypes.bool,
   text: PropTypes.bool,
+  type: PropTypes.oneOf(['button', 'link']),
   color: PropTypes.oneOf([
     'primary',
     'secondary',

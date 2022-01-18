@@ -1,15 +1,16 @@
 import React, { useContext } from 'react';
 import * as _ from 'lodash';
 import { Button, Checkbox, FormControl, ImageLoader, Input, Select } from 'leemons-ui';
-import DatasetItemDrawerContext, {
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import {
+  DatasetItemDrawerContext,
   DatasetItemDrawerCentersContext,
   DatasetItemDrawerProfilesContext,
 } from './DatasetItemDrawerContext';
 import datasetDataTypes from '../helpers/datasetDataTypes';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 
 export const DatasetItemDrawerType = () => {
-  const { t, tCommon, item, form } = useContext(DatasetItemDrawerContext);
+  const { t, tCommon, form } = useContext(DatasetItemDrawerContext);
   const { profiles } = useContext(DatasetItemDrawerProfilesContext);
   const { centers } = useContext(DatasetItemDrawerCentersContext);
   const { t: tCommonTypes } = useCommonTranslate('form_field_types');
@@ -309,33 +310,31 @@ export const DatasetItemDrawerType = () => {
           </div>
           <div>
             {checkboxValues
-              ? checkboxValues.map((value, index) => {
-                  return (
-                    <div key={value.key} className="pb-4">
-                      <FormControl
-                        className="w-full relative"
-                        formError={_.get(form.errors, `frontConfig.checkboxValues[${index}].value`)}
+              ? checkboxValues.map((value, index) => (
+                  <div key={value.key} className="pb-4">
+                    <FormControl
+                      className="w-full relative"
+                      formError={_.get(form.errors, `frontConfig.checkboxValues[${index}].value`)}
+                    >
+                      <Input
+                        className="w-full"
+                        outlined={true}
+                        value={_.get(checkboxValues, `[${index}].value`)}
+                        onChange={(e) => inputCheckboxChange(e, index)}
+                      />
+                      <div
+                        onClick={() => removeOption(value.key)}
+                        className="absolute right-3 text-neutral-content hover:text-error cursor-pointer"
+                        style={{ width: '12px', height: '12px', top: '14px' }}
                       >
-                        <Input
-                          className="w-full"
-                          outlined={true}
-                          value={_.get(checkboxValues, `[${index}].value`)}
-                          onChange={(e) => inputCheckboxChange(e, index)}
+                        <ImageLoader
+                          className="stroke-current fill-current"
+                          src={'/public/assets/svgs/remove.svg'}
                         />
-                        <div
-                          onClick={() => removeOption(value.key)}
-                          className="absolute right-3 text-neutral-content hover:text-error cursor-pointer"
-                          style={{ width: '12px', height: '12px', top: '14px' }}
-                        >
-                          <ImageLoader
-                            className="stroke-current fill-current"
-                            src={'/public/assets/svgs/remove.svg'}
-                          />
-                        </div>
-                      </FormControl>
-                    </div>
-                  );
-                })
+                      </div>
+                    </FormControl>
+                  </div>
+                ))
               : null}
             <Button type="button" color="secondary" onClick={addNewOption}>
               {t('add_option')}
@@ -444,3 +443,5 @@ export const DatasetItemDrawerType = () => {
     </>
   );
 };
+
+export default DatasetItemDrawerType;

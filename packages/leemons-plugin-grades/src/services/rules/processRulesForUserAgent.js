@@ -18,7 +18,7 @@ async function processRulesForUserAgent(ruleIds, userAgent, { transacting } = {}
       .services.classes.getBasicClassesByProgram(_.map(rules, 'program'), { transacting }),
   ]);
 
-  const [userNotes, subjectCredits] = await Promise.all([
+  const [userNotes, subjectCredits, userAgentClasses] = await Promise.all([
     getUserAgentNotesForSubjects(userAgent, _.map(programsClasses, 'subject'), { transacting }),
     leemons
       .getPlugin('academic-portfolio')
@@ -27,6 +27,11 @@ async function processRulesForUserAgent(ruleIds, userAgent, { transacting } = {}
         _.map(rules, 'program'),
         { transacting }
       ),
+    leemons
+      .getPlugin('academic-portfolio')
+      .services.classes.student.getByClassAndUserAgent(_.map(programsClasses, 'id'), userAgent, {
+        transacting,
+      }),
   ]);
 
   const gradeByIds = _.keyBy(grades, 'id');
@@ -42,7 +47,8 @@ async function processRulesForUserAgent(ruleIds, userAgent, { transacting } = {}
       gradeByIds[rule.grade],
       classesByProgram[rule.program],
       userNotes,
-      subjectCreditsByProgram[rule.program]
+      subjectCreditsByProgram[rule.program],
+      userAgentClasses
     );
     result[rule.id] = process.process();
   });

@@ -1,58 +1,69 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import DndLayer from '@menu-builder/components/dnd/dndLayer';
+import { Box, createStyles, MAIN_NAV_WIDTH } from '@bubbles-ui/components';
 import MainMenu from '@menu-builder/components/mainMenu';
-import Alert from './Alert';
 
-function PrivateLayout({ persistentState: [state, _setState], children }) {
-  const store = useRef({});
+import AlertStack from './AlertStack';
+import { LayoutContext } from '../context/layout';
 
-  const setState = ({ ...rest }) => {
-    store.current = { ...store.current, ...rest };
-    _setState(store.current);
+const NAV_OPEN_WIDTH = 280;
+
+const PrivateLayoutStyles = createStyles((theme, { width }) => ({
+  root: {
+    display: 'flex',
+    height: '100vh',
+  },
+  sideNav: {
+    width,
+    height: '100%',
+    overflowX: 'visible',
+    transition: 'width 0ms ease-out',
+  },
+  content: {
+    flex: 1,
+    height: '100vh',
+    overflowY: 'auto',
+  },
+}));
+
+const PrivateLayout = ({ children }) => {
+  const { layoutState, setLayoutState } = useContext(LayoutContext);
+
+  const setState = (newState) => {
+    setLayoutState({ ...layoutState, ...newState });
   };
 
   useEffect(() => {
-    if (!state.menuWidth) {
-      setState({ menuWidth: 52 });
+    if (!layoutState.menuWidth) {
+      setState({ menuWidth: MAIN_NAV_WIDTH });
     }
   }, []);
 
   const onCloseMenu = useCallback(() => {
-    if (state.menuWidth !== 52) setState({ menuWidth: 52 });
-  }, [state]);
+    if (layoutState.menuWidth !== MAIN_NAV_WIDTH) setState({ menuWidth: MAIN_NAV_WIDTH });
+  }, [layoutState]);
 
   const onOpenMenu = useCallback(() => {
-    if (state.menuWidth !== 280) setState({ menuWidth: 280 });
-  }, [state]);
+    if (layoutState.menuWidth !== NAV_OPEN_WIDTH) setState({ menuWidth: NAV_OPEN_WIDTH });
+  }, [layoutState]);
+
+  const { classes } = PrivateLayoutStyles({ width: layoutState.menuWidth });
 
   return (
-    <>
-      <div className={'flex h-screen'}>
-        <DndLayer />
-        <div
-          style={{ width: `${state.menuWidth}px` }}
-          className={'overflow-x-visible transition-all h-full'}
-        >
-          <MainMenu
-            state={store.current}
-            setState={setState}
-            onClose={onCloseMenu}
-            onOpen={onOpenMenu}
-          />
-        </div>
-        <div className="w-full bg-secondary-content h-screen overflow-y-auto">
-          <Alert />
-          {children}
-        </div>
-      </div>
-    </>
+    <Box className={classes.root}>
+      <Box className={classes.sideNav}>
+        <MainMenu onClose={onCloseMenu} onOpen={onOpenMenu} subNavWidth={NAV_OPEN_WIDTH} />
+      </Box>
+      <Box className={classes.content}>
+        <AlertStack />
+        {children}
+      </Box>
+    </Box>
   );
-}
+};
 
 PrivateLayout.propTypes = {
-  children: PropTypes.any,
-  persistentState: PropTypes.any,
+  children: PropTypes.node,
 };
 
 export default PrivateLayout;

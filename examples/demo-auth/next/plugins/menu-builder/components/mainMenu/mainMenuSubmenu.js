@@ -3,7 +3,7 @@ import { Modal, useModal } from 'leemons-ui';
 import hooks from 'leemons-hooks';
 import SimpleBar from 'simplebar-react';
 import update from 'immutability-helper';
-import { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDrop } from 'react-dnd';
 import useTranslate from '@multilanguage/useTranslate';

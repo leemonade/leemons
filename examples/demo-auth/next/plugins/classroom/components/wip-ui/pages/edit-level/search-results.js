@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useTranslate from '@multilanguage/useTranslate';
 import { FormControl, Radio, Badge, Button, Alert } from 'leemons-ui';
@@ -103,7 +103,7 @@ export default function SearchResults() {
             <PlusIcon className="inline-block w-4 h-4 mr-2" />
             {t('btn_add_selected')}
           </Button>
-          <span class="font-inter"> 3 {t('counter_label')}</span>
+          <span className="font-inter"> 3 {t('counter_label')}</span>
         </div>
         <ListTable></ListTable>
         {/* Falta darle estilos al paginador */}

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Button, Modal, PageContainer, Table, useModal } from 'leemons-ui';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
@@ -23,6 +23,64 @@ function Config() {
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
   const [removingEmergencyNumber, setRemovingEmergencyNumber] = useState(false);
   const [emergencyNumberInstalled, setEmergencyNumberInstalled] = useState(true);
+
+  const [modalRemove, toggleModalRemove] = useModal({
+    animated: true,
+    title: removingEmergencyNumber ? null : t('phone_modal.title'),
+    closeButton: !removingEmergencyNumber,
+    overlayClose: !removingEmergencyNumber,
+  });
+
+  function newItem() {
+    setItem(null);
+    toggle();
+  }
+
+  function openItem(_item) {
+    setItem(_item);
+    toggle();
+  }
+
+  const load = useMemo(
+    () => () =>
+      getDatasetSchemaRequest(
+        `families-emergency-numbers-data`,
+        'plugins.families-emergency-numbers'
+      ),
+    []
+  );
+
+  const onSuccess = useMemo(
+    () =>
+      ({ dataset }) => {
+        setTableItems(getDatasetAsArrayOfProperties(dataset));
+        setLoading(false);
+      },
+    []
+  );
+
+  const onError = useMemo(
+    () => (e) => {
+      // ES: 4001 codigo de que aun no existe schema, como es posible ignoramos el error
+      if (e.code !== 4001) {
+        setError(e);
+      }
+      setLoading(false);
+    },
+    []
+  );
+
+  useAsync(load, onSuccess, onError);
+
+  async function reload() {
+    try {
+      setLoading(true);
+      await onSuccess(await load());
+    } catch (e) {
+      onError(e);
+    }
+  }
+
   const [modal, toggleModal] = useModal({
     animated: true,
     title: t('remove_modal.title'),
@@ -44,35 +102,9 @@ function Config() {
     },
   });
 
-  const [modalRemove, toggleModalRemove] = useModal({
-    animated: true,
-    title: removingEmergencyNumber ? null : t('phone_modal.title'),
-    closeButton: !removingEmergencyNumber,
-    overlayClose: !removingEmergencyNumber,
-  });
-
-  function newItem() {
-    setItem(null);
-    toggle();
-  }
-
-  function openItem(item) {
-    setItem(item);
-    toggle();
-  }
-
-  function removeItem(item) {
-    setItemToRemove(item);
+  function removeItem(_item) {
+    setItemToRemove(_item);
     toggleModal();
-  }
-
-  async function reload() {
-    try {
-      setLoading(true);
-      await onSuccess(await load());
-    } catch (e) {
-      onError(e);
-    }
   }
 
   async function onSave() {
@@ -119,36 +151,6 @@ function Config() {
     ],
     [t, tCommonTypes]
   );
-
-  const load = useMemo(
-    () => () =>
-      getDatasetSchemaRequest(
-        `families-emergency-numbers-data`,
-        'plugins.families-emergency-numbers'
-      ),
-    []
-  );
-
-  const onSuccess = useMemo(
-    () => ({ dataset }) => {
-      setTableItems(getDatasetAsArrayOfProperties(dataset));
-      setLoading(false);
-    },
-    []
-  );
-
-  const onError = useMemo(
-    () => (e) => {
-      // ES: 4001 codigo de que aun no existe schema, como es posible ignoramos el error
-      if (e.code !== 4001) {
-        setError(e);
-      }
-      setLoading(false);
-    },
-    []
-  );
-
-  useAsync(load, onSuccess, onError);
 
   const removeAddon = () => {
     toggleModalRemove();

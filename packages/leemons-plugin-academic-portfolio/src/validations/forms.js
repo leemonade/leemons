@@ -1,5 +1,4 @@
 const { LeemonsValidator } = global.utils;
-const { numberSchema } = require('leemons-plugin-menu-builder/src/validations/types');
 const _ = require('lodash');
 const {
   stringSchema,
@@ -8,6 +7,7 @@ const {
   arrayStringSchema,
   integerSchemaNullable,
   stringSchemaNullable,
+  numberSchema,
 } = require('./types');
 const { programsByIds } = require('../services/programs/programsByIds');
 const { table } = require('../services/tables');

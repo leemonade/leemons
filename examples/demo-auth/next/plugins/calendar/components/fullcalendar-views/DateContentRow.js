@@ -3,7 +3,6 @@ import getHeight from 'dom-helpers/height';
 import qsa from 'dom-helpers/querySelectorAll';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { findDOMNode } from 'react-dom';
 import EventRow from './EventRow';
 import EventEndingRow from './EventEndingRow';
 import NoopWrapper from './NoopWrapper';
@@ -26,13 +25,13 @@ class DateContentRow extends React.Component {
 
   handleShowMore = (slot, target) => {
     const { range, onShowMore } = this.props;
-    let metrics = this.slotMetrics(this.props);
-    let row = qsa(findDOMNode(this), '.rbc-row-bg')[0];
+    const metrics = this.slotMetrics(this.props);
+    const row = qsa(this.container, '.rbc-row-bg')[0];
 
     let cell;
     if (row) cell = row.children[slot - 1];
 
-    let events = metrics.getEventsForSlot(slot);
+    const events = metrics.getEventsForSlot(slot);
     onShowMore(events, range[slot - 1], cell, slot, target);
   };
 
@@ -46,19 +45,19 @@ class DateContentRow extends React.Component {
 
   getContainer = () => {
     const { container } = this.props;
-    return container ? container() : findDOMNode(this);
+    return container ? container() : this.container;
   };
 
   getRowLimit() {
-    let eventHeight = getHeight(this.eventRow);
-    let headingHeight = this.headingRow ? getHeight(this.headingRow) : 0;
-    let eventSpace = getHeight(findDOMNode(this)) - headingHeight;
+    const eventHeight = getHeight(this.eventRow);
+    const headingHeight = this.headingRow ? getHeight(this.headingRow) : 0;
+    const eventSpace = getHeight(this.container) - headingHeight;
 
     return Math.max(Math.floor(eventSpace / eventHeight), 1);
   }
 
   renderHeadingCell = (date, index) => {
-    let { renderHeader, getNow, localizer } = this.props;
+    const { renderHeader, getNow, localizer } = this.props;
 
     return renderHeader({
       date,
@@ -68,9 +67,9 @@ class DateContentRow extends React.Component {
   };
 
   renderDummy = () => {
-    let { className, range, renderHeader, showAllEvents } = this.props;
+    const { className, range, renderHeader, showAllEvents } = this.props;
     return (
-      <div className={className}>
+      <div className={className} ref={(r) => (this.container = r)}>
         <div className={clsx('rbc-row-content', showAllEvents && 'rbc-row-content-scrollable')}>
           {renderHeader && (
             <div className="rbc-row" ref={this.createHeadingRef}>
@@ -118,7 +117,6 @@ class DateContentRow extends React.Component {
       isAllDay,
       resizable,
       showAllEvents,
-      hideBgTitles,
     } = this.props;
 
     if (renderForMeasure) return this.renderDummy();
@@ -133,11 +131,11 @@ class DateContentRow extends React.Component {
       }
     });
 
-    let metrics = this.slotMetrics({ ...this.props, events: normalEvents });
-    let { levels, extra } = metrics;
+    const metrics = this.slotMetrics({ ...this.props, events: normalEvents });
+    const { levels, extra } = metrics;
 
-    let ScrollableWeekComponent = showAllEvents ? ScrollableWeekWrapper : NoopWrapper;
-    let WeekWrapper = components.weekWrapper;
+    const ScrollableWeekComponent = showAllEvents ? ScrollableWeekWrapper : NoopWrapper;
+    const WeekWrapper = components.weekWrapper;
 
     const eventRowProps = {
       selected,
@@ -154,7 +152,7 @@ class DateContentRow extends React.Component {
     };
 
     return (
-      <div className={className} role="rowgroup">
+      <div className={className} role="rowgroup" ref={(r) => (this.container = r)}>
         <BackgroundCells
           localizer={localizer}
           date={date}
@@ -172,7 +170,6 @@ class DateContentRow extends React.Component {
           components={components}
           longPressThreshold={longPressThreshold}
           resourceId={resourceId}
-          hideBgTitles={hideBgTitles}
         />
 
         <div

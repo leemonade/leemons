@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { Button, Checkbox, Drawer, FormControl, Input, Radio, Select, useDrawer } from 'leemons-ui';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -10,14 +10,14 @@ import prefixPN from '@calendar/helpers/prefixPN';
 import { useForm } from 'react-hook-form';
 import tKeys from '@multilanguage/helpers/tKeys';
 import PropTypes from 'prop-types';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import hooks from 'leemons-hooks';
 import getUTCString from '../helpers/getUTCString';
 import {
   addConfigEventRequest,
   removeConfigEventRequest,
   updateConfigEventRequest,
 } from '../request';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import hooks from 'leemons-hooks';
 
 function CalendarSimpleEventModal({ event, eventTypes, close, config, calendars }) {
   const [t] = useTranslateLoader(prefixPN('event_modal'));

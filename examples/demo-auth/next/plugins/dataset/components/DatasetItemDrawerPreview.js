@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Card } from 'leemons-ui';
 import formWithTheme from '@common/formWithTheme';
+import PropTypes from 'prop-types';
 
 export const DatasetItemDrawerPreview = ({ t, item }) => {
   const pName = '------------';
@@ -18,13 +19,14 @@ export const DatasetItemDrawerPreview = ({ t, item }) => {
     return response;
   }, [item]);
 
-  const ui = useMemo(() => {
-    return {
+  const ui = useMemo(
+    () => ({
       [pName]: item.ui,
-    };
-  }, [item]);
+    }),
+    [item]
+  );
 
-  let data = null;
+  const data = null;
   const props = useMemo(() => ({ formData: data }), [data]);
 
   const [form] = formWithTheme(schema, ui, undefined, props);
@@ -36,3 +38,10 @@ export const DatasetItemDrawerPreview = ({ t, item }) => {
     </>
   );
 };
+
+DatasetItemDrawerPreview.propTypes = {
+  t: PropTypes.func,
+  item: PropTypes.object,
+};
+
+export default DatasetItemDrawerPreview;

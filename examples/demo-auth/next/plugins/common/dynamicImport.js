@@ -1,5 +1,7 @@
-import dynamic from 'next/dynamic';
+import loadable from '@loadable/component';
 
 export function dynamicImport(path) {
-  return dynamic(() => import(`@plugins/../plugins/${path}`));
+  return loadable(() => import(`@leemons/plugins/${path}`));
 }
+
+export default dynamicImport;

@@ -4,14 +4,14 @@ const { validateAddRule } = require('../../validations/forms');
 const { addConditionGroup } = require('../condition-groups/addConditionGroup');
 const { ruleByIds } = require('./ruleByIds');
 
-async function addRule(data, { transacting: _transacting } = {}) {
+async function addRule(data, { isDependency = false, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
-      await validateAddRule(data);
+      await validateAddRule(data, isDependency);
 
       const { group, ..._data } = data;
 
-      const rule = await table.rules.create(_data, { transacting });
+      const rule = await table.rules.create({ ..._data, isDependency }, { transacting });
 
       const _group = await addConditionGroup({ ...group, rule: rule.id }, { transacting });
 

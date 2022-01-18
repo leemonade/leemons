@@ -35,14 +35,12 @@ async function addSchema(
 
   return global.utils.withTransaction(
     async (transacting) => {
-      const {
-        profiles: profilePermissions,
-        roles: rolesPermissions,
-      } = transformPermissionKeysToObjectsByType(
-        jsonSchema,
-        getJsonSchemaProfilePermissionsKeysByType(jsonSchema),
-        `${locationName}.${pluginName}`
-      );
+      const { profiles: profilePermissions, roles: rolesPermissions } =
+        transformPermissionKeysToObjectsByType(
+          jsonSchema,
+          getJsonSchemaProfilePermissionsKeysByType(jsonSchema),
+          `${locationName}.${pluginName}`
+        );
 
       const promises = [
         table.dataset.update(

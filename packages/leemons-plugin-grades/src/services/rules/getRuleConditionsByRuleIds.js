@@ -54,13 +54,18 @@ async function getRuleConditionsByRuleIds(ids, { transacting } = {}) {
 
   _.forEach(conditions, (condition) => {
     result[condition.rule].conditions.push(condition);
-    if (condition.source === 'program') result[condition.rule].programIds.push(condition.sourceId);
-    if (condition.source === 'course') result[condition.rule].courseIds.push(condition.sourceId);
+    if (condition.source === 'program')
+      result[condition.rule].programIds.push(condition.sourceIds[0]);
+    if (condition.source === 'course')
+      result[condition.rule].courseIds.push(condition.sourceIds[0]);
     if (condition.source === 'subject-type')
-      result[condition.rule].subjectTypeIds.push(condition.sourceId);
+      result[condition.rule].subjectTypeIds.push(condition.sourceIds[0]);
     if (condition.source === 'knowledge')
-      result[condition.rule].knowledgeIds.push(condition.sourceId);
-    if (condition.source === 'subject') result[condition.rule].subjectIds.push(condition.sourceId);
+      result[condition.rule].knowledgeIds.push(condition.sourceIds[0]);
+    if (condition.source === 'subject')
+      result[condition.rule].subjectIds.push(condition.sourceIds[0]);
+    if (condition.source === 'subject-group')
+      result[condition.rule].subjectIds.push(...condition.sourceIds);
     if (condition.childGroup) {
       // eslint-disable-next-line no-param-reassign
       condition.group = groupsById[condition.childGroup];

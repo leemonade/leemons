@@ -1,5 +1,5 @@
 import { Tree as UITree, useTree } from 'leemons-ui';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useTranslate from '@multilanguage/useTranslate';

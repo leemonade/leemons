@@ -5,15 +5,14 @@ async function getContacts({
   withProfile = null,
   centerToken = null,
 } = {}) {
-  let params = {
-    url: 'users/user/contacts',
-  };
+  const params = {};
   if (centerToken) {
     params.centerToken = centerToken;
   } else {
     params.allAgents = true;
   }
-  return leemons.api(params, {
+  return leemons.api('users/user/contacts', {
+    ...params,
     method: 'POST',
     body: { toProfile, toCenter, withCenter, withProfile },
   });

@@ -42,6 +42,8 @@ async function update(data, { transacting: _transacting } = {}) {
         { transacting }
       );
 
+      leemons.events.emit('profile-permissions-change', { profile, permissions: data.permissions });
+
       return profile;
     },
     table.profiles,

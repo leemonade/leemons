@@ -1,10 +1,8 @@
 export default async function updateLevelSchema(_levelSchema) {
   const { status, levelSchema, error } = await leemons.api(
+    `classroom/levelschema/${_levelSchema.id}`,
     {
-      url: `classroom/levelschema/${_levelSchema.id}`,
       allAgents: true,
-    },
-    {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

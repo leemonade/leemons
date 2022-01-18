@@ -1,0 +1,12 @@
+{
+  "name": "curriculum-front",
+  "version": "1.0.0",
+  "main": "Public.js",
+  "license": "MIT",
+  "dependencies": {
+    "@bubbles-ui/components": "^1.0.14",
+    "prop-types": "^15.7.2",
+    "react-hook-form": "^7.8.5"
+  },
+  "devDependencies": {}
+}

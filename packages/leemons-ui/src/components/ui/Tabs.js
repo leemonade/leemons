@@ -29,16 +29,19 @@ const useTabs = () => {
   return { activeIndex, setActiveIndex };
 };
 
-const useTabState = () => {
+const useTabState = (_tabIndex = null) => {
   const { activeIndex, setActiveIndex } = useContext(TabsState);
   const elements = useContext(Elements);
 
-  const tabIndex = useMemo(() => {
-    const currentIndex = elements.tabs;
-    elements.tabs += 1;
+  const tabIndex =
+    _tabIndex !== null
+      ? _tabIndex
+      : useMemo(() => {
+          const currentIndex = elements.tabs;
+          elements.tabs += 1;
 
-    return currentIndex;
-  }, []);
+          return currentIndex;
+        }, []);
 
   const registerTab = useCallback((id) => elements.tabIds.push(id), []);
 
@@ -56,16 +59,19 @@ const useTabState = () => {
   return state;
 };
 
-const usePanelState = () => {
+const usePanelState = (tabIndex = null) => {
   const { activeIndex } = useContext(TabsState);
   const elements = useContext(Elements);
 
-  const panelIndex = useMemo(() => {
-    const currentIndex = elements.panels;
-    elements.panels += 1;
+  const panelIndex =
+    tabIndex !== null
+      ? tabIndex
+      : useMemo(() => {
+          const currentIndex = elements.panels;
+          elements.panels += 1;
 
-    return currentIndex;
-  }, []);
+          return currentIndex;
+        }, []);
 
   return panelIndex === activeIndex;
 };
@@ -79,14 +85,16 @@ const Tab = ({
   className,
   selectedClassName,
   disabledClassName,
+  onClick: _onClick = () => {},
 }) => {
-  const { isActive, onClick, registerTab } = useTabState();
+  const { isActive, onClick, registerTab } = useTabState(tabIndex);
   const { saveHistory, router } = useContext(TabsState);
   const { tabIds } = useContext(Elements);
 
   useEffect(() => registerTab(id), []);
 
   const handleClick = (e) => {
+    _onClick();
     onClick();
     if (!_.isNil(router)) {
       let currentPath = router.pathname;
@@ -110,8 +118,8 @@ const Tab = ({
 
   useEffect(() => {
     if (!isActive && !_.isNil(router)) {
-      const query = router.query;
-      if (!!query[id]) {
+      const { query } = router;
+      if (query[id]) {
         onClick();
       }
     }
@@ -140,16 +148,23 @@ const Tab = ({
   );
 };
 
-const TabList = ({ children }) => {
-  return (
-    <ul role="tablist" className="tablist">
-      {children}
-    </ul>
-  );
-};
+const TabList = ({ children }) => (
+  <ul role="tablist" className="tablist">
+    {children}
+  </ul>
+);
 
-const TabPanel = ({ forceRender, children, id, tabId, className, selectedClassName, ...props }) => {
-  const isActive = usePanelState();
+const TabPanel = ({
+  forceRender,
+  children,
+  id,
+  tabId,
+  className,
+  selectedClassName,
+  tabIndex = null,
+  ...props
+}) => {
+  const isActive = usePanelState(tabIndex);
 
   if (forceRender || isActive) {
     return (

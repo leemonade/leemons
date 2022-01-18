@@ -1,8 +1,8 @@
 import { ImageLoader, Input } from 'leemons-ui';
-import Link from 'next/link';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import Router from 'next/router';
+
+import { Link, useHistory } from 'react-router-dom';
 
 export default function MainMenuSubmenuItem({
   item,
@@ -17,6 +17,7 @@ export default function MainMenuSubmenuItem({
   state,
   setState,
 }) {
+  const history = useHistory();
   const key = `label-${item.id}`;
   const setNewLabel = (label) => {
     if (setState) setState({ [key]: label });
@@ -70,7 +71,7 @@ export default function MainMenuSubmenuItem({
 
   const onClick = () => {
     if (!editMode && !editItemMode) {
-      Router.push(item.url);
+      history.push(item.url);
     } else {
       changeToEditItem(item);
     }
@@ -88,15 +89,14 @@ export default function MainMenuSubmenuItem({
 
   if (!isLayer && !editMode && !editItemMode && !isDragging) {
     return (
-      <Link href={item.url}>
-        <a
-          className={`relative w-full block font-lexend text-sm ${styles} ${
-            item.disabled ? 'cursor-not-allowed opacity-30' : 'cursor-pointer'
-          }`}
-          onClick={(e) => item.disabled && e.preventDefault()}
-        >
-          <span className="line-clamp-2">{item.label}</span>
-        </a>
+      <Link
+        to={item.url}
+        className={`relative w-full block font-lexend text-sm ${styles} ${
+          item.disabled ? 'cursor-not-allowed opacity-30' : 'cursor-pointer'
+        }`}
+        onClick={(e) => item.disabled && e.preventDefault()}
+      >
+        <span className="line-clamp-2">{item.label}</span>
       </Link>
     );
   }

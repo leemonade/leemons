@@ -1,1 +1,0 @@
-{"compilerOptions":{"baseUrl":".","paths":{"@plugins":["plugins/plugins.js"],"@users/*":["plugins/users/*"],"@classroom/*":["plugins/classroom/*"],"@layout/*":["plugins/layout/*"],"@users-groups-roles/*":["plugins/users-groups-roles/*"]}}}

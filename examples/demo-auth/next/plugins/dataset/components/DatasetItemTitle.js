@@ -4,7 +4,7 @@ import { FormControl, Input } from 'leemons-ui';
 import DatasetItemDrawerContext from './DatasetItemDrawerContext';
 
 export const DatasetItemTitle = () => {
-  const { t, tCommon, item, form } = useContext(DatasetItemDrawerContext);
+  const { t, tCommon, form } = useContext(DatasetItemDrawerContext);
   return (
     <FormControl className="w-full" formError={_.get(form.errors, 'frontConfig.name')}>
       <Input

@@ -48,22 +48,19 @@ async function updateSchema(
 
       // ES: Transformamos los jsonSchema
       // EN: We transform the jsonSchema
-      const {
-        profiles: oldProfilePermissions,
-        roles: oldRolesPermissions,
-      } = transformPermissionKeysToObjectsByType(
-        JSON.parse(oldJsonSchema),
-        getJsonSchemaProfilePermissionsKeysByType(JSON.parse(oldJsonSchema)),
-        `${locationName}.${pluginName}`
-      );
-      const {
-        profiles: newProfilePermissions,
-        roles: newRolesPermissions,
-      } = transformPermissionKeysToObjectsByType(
-        jsonSchema,
-        getJsonSchemaProfilePermissionsKeysByType(jsonSchema),
-        `${locationName}.${pluginName}`
-      );
+      const { profiles: oldProfilePermissions, roles: oldRolesPermissions } =
+        transformPermissionKeysToObjectsByType(
+          JSON.parse(oldJsonSchema),
+          getJsonSchemaProfilePermissionsKeysByType(JSON.parse(oldJsonSchema)),
+          `${locationName}.${pluginName}`
+        );
+
+      const { profiles: newProfilePermissions, roles: newRolesPermissions } =
+        transformPermissionKeysToObjectsByType(
+          jsonSchema,
+          getJsonSchemaProfilePermissionsKeysByType(jsonSchema),
+          `${locationName}.${pluginName}`
+        );
 
       const removePermissionsPromises = [];
 

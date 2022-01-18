@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { FormControl, Toggle, Divider } from '../../../src/components/ui';
 import ClassTable from '../../../src/components/ClassTable';
 import Wrapper from '../../../src/components/Wrapper';

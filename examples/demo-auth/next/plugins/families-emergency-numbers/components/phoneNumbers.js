@@ -1,13 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Button, Modal, PageContainer, Table, useModal } from 'leemons-ui';
 import { useAsync } from '@common/useAsync';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
 import { PlusIcon } from '@heroicons/react/outline';
+import * as _ from 'lodash';
 import { prefixPN } from '../helpers';
 import { constants } from '../constants';
-import * as _ from 'lodash';
 import PhoneNumbersModal from './phoneNumbersModal';
 
 function PhoneNumbers({ editMode, phoneNumbers = [], onChangePhoneNumbers = () => {} }) {
@@ -60,10 +61,11 @@ function PhoneNumbers({ editMode, phoneNumbers = [], onChangePhoneNumbers = () =
   );
 
   const onSuccess = useMemo(
-    () => ({ permissions }) => {
-      setPermissions(permissions);
-      setLoading(false);
-    },
+    () =>
+      ({ permissions }) => {
+        setPermissions(permissions);
+        setLoading(false);
+      },
     []
   );
 
@@ -182,5 +184,11 @@ function PhoneNumbers({ editMode, phoneNumbers = [], onChangePhoneNumbers = () =
     </>
   );
 }
+
+PhoneNumbers.propTypes = {
+  editMode: PropTypes.bool,
+  phoneNumbers: PropTypes.any,
+  onChangePhoneNumbers: PropTypes.func,
+};
 
 export default PhoneNumbers;

@@ -13,7 +13,14 @@ async function putGradeScale(ctx) {
   ctx.body = { status: 200, gradeScale };
 }
 
+async function removeGradeScale(ctx) {
+  await gradesService.removeGradeScale(ctx.request.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
 module.exports = {
   putGradeScale,
   postGradeScale,
+  removeGradeScale,
 };

@@ -1,18 +1,19 @@
 import * as _ from 'lodash';
-import { useContext, useEffect, useMemo, useState } from 'react';
-import {
-  DatasetItemDrawerCentersContext,
-  DatasetItemDrawerContext,
-} from './DatasetItemDrawerContext';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Badge, Button, Select } from 'leemons-ui';
 import { XIcon } from '@heroicons/react/outline';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { listCentersRequest } from '@users/request';
 import update from 'immutability-helper';
 import { useAsync } from '@common/useAsync';
+import PropTypes from 'prop-types';
+import {
+  DatasetItemDrawerCentersContext,
+  DatasetItemDrawerContext,
+} from './DatasetItemDrawerContext';
 
 export const DatasetItemDrawerCenters = ({ onChange = () => {} }) => {
-  const { t, tCommon, item, form } = useContext(DatasetItemDrawerContext);
+  const { t, item } = useContext(DatasetItemDrawerContext);
   const { setState: setStateCenters, centers } = useContext(DatasetItemDrawerCentersContext);
   const [isAllCenterMode, setIsAllCenterMode] = useState(
     item && item.id && item.frontConfig ? item.frontConfig.isAllCenterMode : true
@@ -21,8 +22,8 @@ export const DatasetItemDrawerCenters = ({ onChange = () => {} }) => {
     item && item.id && item.frontConfig ? item.frontConfig.centers : []
   );
   const [currentSelectValue, setCurrentSelectValue] = useState('all');
-  const [loading, setLoading] = useState(true);
-  const [error, setError, ErrorAlert] = useRequestErrorMessage();
+  const [, setLoading] = useState(true);
+  const [, setError, ErrorAlert] = useRequestErrorMessage();
 
   const centersById = useMemo(() => _.keyBy(centers, 'id'), [centers]);
 
@@ -37,10 +38,11 @@ export const DatasetItemDrawerCenters = ({ onChange = () => {} }) => {
   );
 
   const onSuccess = useMemo(
-    () => ({ data }) => {
-      setStateCenters({ centers: data.items });
-      setLoading(false);
-    },
+    () =>
+      ({ data }) => {
+        setStateCenters({ centers: data.items });
+        setLoading(false);
+      },
     []
   );
 
@@ -53,6 +55,10 @@ export const DatasetItemDrawerCenters = ({ onChange = () => {} }) => {
 
   useAsync(load, onSuccess, onError);
 
+  const sendOnChange = () => {
+    onChange({ isAllCenterMode, centers: selectedCenters });
+  };
+
   useEffect(() => {
     setTimeout(() => sendOnChange(), 10);
   }, []);
@@ -63,10 +69,6 @@ export const DatasetItemDrawerCenters = ({ onChange = () => {} }) => {
 
   const toggleCenterMode = () => {
     setIsAllCenterMode(!isAllCenterMode);
-  };
-
-  const sendOnChange = () => {
-    onChange({ isAllCenterMode, centers: selectedCenters });
   };
 
   const selectItem = () => {
@@ -158,4 +160,8 @@ export const DatasetItemDrawerCenters = ({ onChange = () => {} }) => {
       ) : null}
     </>
   );
+};
+
+DatasetItemDrawerCenters.propTypes = {
+  onChange: PropTypes.func,
 };

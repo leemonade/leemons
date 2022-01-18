@@ -1,0 +1,14 @@
+En el añadir/actualizar valores:
+  - Tenemos que en funcion del tipo de campo guardar multiples registros de dataset-values (listado, checkbox, grupo)
+   - Cuando es tipo listado añadir al metadadta el orden dentro de la lista para cada valor
+
+En el actualizar valores:
+  - En funcion del tipo de campo tenemos que hacer distntas cosas EJEMPLOS:
+    - string : Siempre se actualiza el valor y ya esta (EN NINGUN CASO SE DEBE DE BORRAR POR QUE SE PERDERIA LA ID)
+    - listado :
+      Antes:
+      {value: [{value: 'jaime', id: '1'}, {value: 'gomez', id: '2'}]}
+      Mandan:
+      {value: [{value: 'jaimeeeeeee', id: '1'}, {value: 'juanito'}]}
+      Resultado:
+      {value: [{value: 'jaimeeeeeee', id: '1'}, {value: 'juanito', id: '3'}]}

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import * as PropTypes from 'prop-types';
 import { Button, ImageLoader } from 'leemons-ui';
 import useTranslate from '@multilanguage/useTranslate';

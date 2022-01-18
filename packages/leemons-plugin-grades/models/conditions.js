@@ -5,17 +5,21 @@ module.exports = {
     useTimestamps: true,
   },
   attributes: {
-    // program | course | subject-type | knowledge | subject
+    // program | course | subject-type | knowledge | subject | subject-group
     source: {
       type: 'string',
     },
     // program ID | course ID | subject-type ID | knowledge ID | subject ID
-    sourceId: {
-      type: 'string',
+    sourceIds: {
+      type: 'json',
     },
-    // gpa (Media) | cpp (Credits per program) | cpc (Credits per course) | grade
+    // gpa (Media) | cpp (Credits per program) | cpc (Credits per course) | grade | enrolled | credits | cbcg (Credits by course group)
     data: {
       type: 'string',
+    },
+    // For now only courseIds
+    dataTargets: {
+      type: 'json',
     },
     // gte | lte | gt | lt | eq | neq
     operator: {

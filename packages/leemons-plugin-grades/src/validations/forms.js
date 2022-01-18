@@ -2,8 +2,7 @@ const _ = require('lodash');
 const { table } = require('../services/tables');
 
 const { LeemonsValidator } = global.utils;
-const { stringSchema } = require('./types');
-const { numberSchema } = require('leemons-plugin-menu-builder/src/validations/types');
+const { stringSchema, numberSchema } = require('./types');
 
 const addGradeSchema = {
   type: 'object',
@@ -248,12 +247,19 @@ const conditionSchema = {
   properties: {
     source: {
       type: 'string',
-      enum: ['program', 'course', 'subject-type', 'knowledge', 'subject'],
+      enum: ['program', 'course', 'subject-type', 'knowledge', 'subject', 'subject-group'],
     },
-    sourceId: stringSchema,
+    sourceIds: {
+      type: 'array',
+      items: stringSchema,
+    },
     data: {
       type: 'string',
-      enum: ['gpa', 'cpp', 'cpc', 'grade'],
+      enum: ['gpa', 'cpp', 'cpc', 'grade', 'enrolled', 'credits', 'cbcg'],
+    },
+    dataTargets: {
+      type: 'array',
+      items: stringSchema,
     },
     operator: {
       type: 'string',
@@ -298,8 +304,39 @@ const addRuleSchema = {
   required: ['name', 'center', 'grade', 'program', 'group'],
   additionalProperties: false,
 };
-function validateAddRule(data) {
-  const validator = new LeemonsValidator(addRuleSchema);
+function validateAddRule(data, isDependency) {
+  const rules = _.cloneDeep(addRuleSchema);
+  if (isDependency) {
+    rules.properties.subject = stringSchema;
+    rules.required.push('subject');
+  }
+  const validator = new LeemonsValidator(rules);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
+const updateRuleSchema = {
+  type: 'object',
+  properties: {
+    id: stringSchema,
+    name: stringSchema,
+    center: stringSchema,
+    grade: stringSchema,
+    program: stringSchema,
+    group: _.cloneDeep(groupSchema),
+  },
+  required: ['id', 'name', 'center', 'grade', 'program', 'group'],
+  additionalProperties: false,
+};
+function validateUpdateRule(data, isDependency) {
+  const rules = _.cloneDeep(updateRuleSchema);
+  if (isDependency) {
+    rules.properties.subject = stringSchema;
+    rules.required.push('subject');
+  }
+  const validator = new LeemonsValidator(rules);
 
   if (!validator.validate(data)) {
     throw validator.error;
@@ -344,7 +381,7 @@ const addConditionRefToGroupSchema = {
 const addConditionSchema = _.cloneDeep(conditionSchema);
 addConditionSchema.properties.rule = stringSchema;
 addConditionSchema.properties.parentGroup = stringSchema;
-addConditionSchema.required = ['source', 'sourceId', 'data', 'operator', 'rule', 'parentGroup'];
+addConditionSchema.required = ['source', 'sourceIds', 'data', 'rule', 'parentGroup'];
 function validateAddCondition({ group, ...rest }) {
   const schema = group ? addConditionRefToGroupSchema : addConditionSchema;
   const data = group ? { ...rest, group } : rest;
@@ -359,6 +396,7 @@ function validateAddCondition({ group, ...rest }) {
 module.exports = {
   validateAddRule,
   validateAddGrade,
+  validateUpdateRule,
   validateUpdateGrade,
   validateAddGradeTag,
   validateAddCondition,

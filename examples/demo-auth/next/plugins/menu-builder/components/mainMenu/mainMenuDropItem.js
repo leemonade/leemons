@@ -1,10 +1,9 @@
 import * as _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import Router from 'next/router';
+import hooks from 'leemons-hooks';
 import getInnerText from '../../helpers/getInnerText';
 import DndItem from '../dnd/dndItem';
-import hooks from 'leemons-hooks';
 
 export default function MainMenuDropItem({ children, className, item }) {
   const [isEditMode, setEditMode] = useState(false);
@@ -15,7 +14,7 @@ export default function MainMenuDropItem({ children, className, item }) {
   const _item = {
     ...item,
     menuKey: item.menuKey || 'plugins.menu-builder.main',
-    url: item.url || Router?.router?.asPath,
+    url: item.url || window.location.pathname,
     label: item.label || getInnerText(goodChildren),
   };
 

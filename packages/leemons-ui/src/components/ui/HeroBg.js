@@ -7,6 +7,8 @@ function HeroBg({ className, color, type, animate, decay, speed, solid, style })
   const [currentType, setCurrentType] = useState(null);
   const animationRef = useRef(0);
 
+  useEffect(() => doAnimation(true), [style, color, className]);
+
   const lg = (
     <svg
       style={style}
@@ -241,24 +243,24 @@ function HeroBg({ className, color, type, animate, decay, speed, solid, style })
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <rect x="266.667" width="266.667" height="155" fill="currentColor" />
-      <rect x="533.334" width="266.667" height="155" fill="currentColor" />
-      <rect x="1066.67" width="266.667" height="155" fill="currentColor" />
+      <rect x="266" width="269" height="155" fill="currentColor" />
+      <rect x="534" width="267" height="155" fill="currentColor" />
+      <rect x="1066" width="268" height="155" fill="currentColor" />
       <path
         transform="translate(0 -155)"
-        d="M266.666 0 H0 V43.3334 C0 190.609 119.39 310 266.666 310V0Z"
+        d="M267 0 H0 V44 C0 191 120 310 267 310V0Z"
         fill="currentColor"
       />
       <path
         transform="translate(0 -155)"
-        d="M1066.67 155H799.999C799.999 240.604 869.395 310 954.999 310H1066.67V155Z"
+        d="M1067 155H800C800 241 870 310 955 310H1067V155Z"
         fill="currentColor"
       />
       <path
         transform="translate(0 -155)"
         fillRule="evenodd"
         clipRule="evenodd"
-        d="M1556.35 232.502C1546.06 187.933 1509.78 155 1466.59 155C1423.41 155 1387.13 187.933 1376.84 232.502C1387.13 277.067 1423.41 310 1466.59 310C1509.78 310 1546.06 277.067 1556.35 232.502Z"
+        d="M1557 233C1546 188 1510 155 1467 155C1424 155 1387 188 1377 233C1387 277 1424 310 1467 310C1510 310 1546 277 1557 233Z"
         fill="currentColor"
       />
     </svg>

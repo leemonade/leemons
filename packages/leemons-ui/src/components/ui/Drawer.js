@@ -23,7 +23,7 @@ function Drawer({ isShown, isVisible, hide, options, children }) {
   const overlayClass = classNames({
     'draw-overlay': true,
     'modal-overlay': true,
-    'z-10': true,
+    'z-40': true,
     transition: options && options.animated,
     'opacity-100': isVisible,
     'opacity-0': !isVisible,
@@ -106,12 +106,14 @@ export const useDrawer = (options) => {
       }
       document.addEventListener('keydown', handleKeyDown);
       document.body.classList.add('drawer-open');
+      document.body.classList.add('overflow-hidden');
     }
     if (!isShown && hasToggledBefore) {
       if (options && options.hide) {
         options.hide();
       }
       document.body.classList.remove('drawer-open');
+      document.body.classList.remove('overflow-hidden');
     }
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isShown]);

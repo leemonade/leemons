@@ -7,15 +7,6 @@ const mountModels = require('./model/mountModel');
 const generateQueries = require('./queries/queries');
 const buildQuery = require('./queries/buildQuery');
 
-async function setupConnection(ctx, allModels) {
-  const models = Object.values(allModels).filter(
-    (model) => model.connection === ctx.connection.name
-  );
-
-  // First mount core_store for checking structure changes
-  return mountModels(models, ctx);
-}
-
 class Connector {
   constructor(leemons) {
     this.leemons = leemons;
@@ -68,26 +59,12 @@ class Connector {
    * @returns {Promise}
    */
   async loadModels(models) {
-    const modelsPerConnection = {};
     // Separate the models per connection
-    Object.values(models).forEach((model) => {
-      if (_.has(modelsPerConnection, model.connection)) {
-        modelsPerConnection[model.connection].push(model);
-      } else {
-        modelsPerConnection[model.connection] = [model];
-      }
-    });
+    const modelsPerConnection = _.groupBy(models, 'connection');
 
     // Load models per connection
     return Promise.all(
       Object.entries(modelsPerConnection).map(([connection, _models]) => {
-        // Throw if the connection does not exists
-        if (!this.contexts.has(connection)) {
-          throw new Error(
-            `No connection called ${connection} was setted up for connector: Bookshelf`
-          );
-        }
-
         // Get the ctx for the given connection
         const ctx = this.contexts.get(connection);
         // Mount the models

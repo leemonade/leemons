@@ -5,6 +5,8 @@ const getKeysCanAction = require('./getKeysCanAction');
 const { validateNotExistValues } = require('../../validations/exists');
 const { validatePluginName } = require('../../validations/exists');
 const { table } = require('../tables');
+const { getValuesForSave } = require('./getValuesForSave');
+const { validateDataForJsonSchema } = require('./validateDataForJsonSchema');
 
 /** *
  *  ES:
@@ -32,55 +34,45 @@ async function updateValues(
   pluginName,
   _formData,
   userAgent,
-  { target, transacting: _transacting, hardUpdate } = {}
+  { target, transacting: _transacting } = {}
 ) {
-  validatePluginName(pluginName, this.calledFrom);
-  await validateNotExistValues(locationName, pluginName, target, { transacting: _transacting });
-
-  const { jsonSchema } = await getSchema.call(this, locationName, pluginName, {
-    transacting: _transacting,
-  });
-
-  // ES: Cogemos solos los campos a los que el usuario tiene permiso de edicion
-  // EN: We take only the fields to which the user has permission to edit.
-  const goodKeys = await getKeysCanAction(locationName, pluginName, userAgent, 'edit');
-  const formData = {};
-  _.forEach(goodKeys, (k) => {
-    formData[k] = _formData[k];
-  });
-  // EN: Remove id ajv not support name if for a field
-  _.forIn(jsonSchema.properties, (p) => {
-    delete p.id;
-  });
-  // TODO AÑADIR VALIDADOR CUSTOM PARA NUMEROS DE TELEFONO/ETZ
-  const validator = new global.utils.LeemonsValidator(
-    {
-      ...jsonSchema,
-      additionalProperties: false,
-    },
-    { strict: false }
-  );
-  if (!validator.validate(formData)) throw validator.error;
-
-  const toSave = [];
-  _.forIn(formData, (value, key) => {
-    const data = { locationName, pluginName, key, value: JSON.stringify(value) };
-    if (target) data.target = target;
-    toSave.push(data);
-  });
-
   return global.utils.withTransaction(
     async (transacting) => {
-      if (hardUpdate) {
-        await deleteValues.call(this, locationName, pluginName, { target, transacting });
-        await table.datasetValues.createMany(toSave, { transacting });
-      } else {
-        const promises = [];
-        _.forEach(toSave, ({ value, ...rest }) => {
-          promises.push(table.datasetValues.set(rest, { value, ...rest }, { transacting }));
+      validatePluginName(pluginName, this.calledFrom);
+      await validateNotExistValues(locationName, pluginName, target, { transacting });
+
+      const { jsonSchema } = await getSchema.call(this, locationName, pluginName, {
+        transacting: _transacting,
+      });
+
+      // ES: Cogemos solos los campos a los que el usuario tiene permiso de edicion
+      // EN: We take only the fields to which the user has permission to edit.
+      const goodKeys = await getKeysCanAction(locationName, pluginName, userAgent, 'edit', {
+        transacting,
+      });
+
+      const formData = {};
+      _.forEach(goodKeys, (k) => {
+        formData[k] = _formData[k];
+      });
+      // EN: Remove id ajv not support name if for a field
+      _.forIn(jsonSchema.properties, (p) => {
+        delete p.id;
+      });
+
+      validateDataForJsonSchema(jsonSchema, formData);
+
+      const toSave = [];
+      _.forIn(formData, (value, key) => {
+        const data = { locationName, pluginName, key };
+        if (target) data.target = target;
+        _.forEach(getValuesForSave(jsonSchema, key, value), (val) => {
+          toSave.push({ ...data, ...val });
         });
-        await Promise.all(promises);
-      }
+      });
+
+      await deleteValues.call(this, locationName, pluginName, { target, transacting });
+      await table.datasetValues.createMany(toSave, { transacting });
 
       return formData;
     },

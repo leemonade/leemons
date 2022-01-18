@@ -45,31 +45,30 @@ async function saveLocale(
       },
       { transacting }
     );
-  } else {
-    let jsonSchema = {
-      type: 'object',
-      properties: {
-        [id]: schema,
-      },
-      required: [],
-    };
-    let jsonUI = {
-      [id]: ui,
-    };
-    const _schema = transformJsonSchema(jsonSchema);
-    const _ui = transformUiSchema(jsonUI);
-    return addSchemaLocale.call(
-      { calledFrom: pluginName },
-      {
-        schemaData: _schema.values,
-        uiData: _ui.values,
-        locationName,
-        locale,
-        pluginName,
-      },
-      { transacting }
-    );
   }
+  const jsonSchema = {
+    type: 'object',
+    properties: {
+      [id]: schema,
+    },
+    required: [],
+  };
+  const jsonUI = {
+    [id]: ui,
+  };
+  const _schema = transformJsonSchema(jsonSchema);
+  const _ui = transformUiSchema(jsonUI);
+  return addSchemaLocale.call(
+    { calledFrom: pluginName },
+    {
+      schemaData: _schema.values,
+      uiData: _ui.values,
+      locationName,
+      locale,
+      pluginName,
+    },
+    { transacting }
+  );
 }
 
 /** *

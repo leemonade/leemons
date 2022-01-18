@@ -1,12 +1,11 @@
 import * as _ from 'lodash';
 import { getMenu } from '@menu-builder/helpers';
-import Router from 'next/router';
 
 async function getActiveParentAndChild(_key) {
   let key = _key;
   if (_.isNil(key)) key = 'plugins.menu-builder.main';
   const menu = await getMenu(key);
-  const url = Router.router.route;
+  const url = window.location.pathname;
   const result = {
     parent: null,
     child: null,
@@ -15,7 +14,7 @@ async function getActiveParentAndChild(_key) {
     if (parentItem.url === url) {
       result.parent = parentItem;
     }
-    _.forEach(parentItem.childrens, (childItem) => {
+    _.forEach(parentItem.children, (childItem) => {
       if (childItem.url === url) {
         result.parent = parentItem;
         result.child = childItem;

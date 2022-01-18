@@ -2,9 +2,9 @@ import useTranslate from './useTranslate';
 import tLoader from './helpers/tLoader';
 
 function useTranslateLoader(prefix) {
-  const [translations] = useTranslate({ keysStartsWith: prefix });
+  const [translations, error, loading] = useTranslate({ keysStartsWith: prefix });
   const t = tLoader(prefix, translations);
-  return [t, translations];
+  return [t, translations, error, loading];
 }
 
-module.exports = useTranslateLoader;
+export default useTranslateLoader;

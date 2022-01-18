@@ -85,11 +85,11 @@ async function transformManyMenuItemsToFrontEndMenu(
 
   _.forEach(sortMenuItems, (_parentItem) => {
     const parentItem = _parentItem;
-    parentItem.childrens = _.filter(
+    parentItem.children = _.filter(
       sortMenuItems,
       (item) => item.parentKey === parentItem.key && customItemIds.indexOf(item.key) < 0
     );
-    parentItem.customChildrens = _.filter(
+    parentItem.customChildren = _.filter(
       sortMenuItems,
       (item) => item.parentKey === parentItem.key && customItemIds.indexOf(item.key) >= 0
     );

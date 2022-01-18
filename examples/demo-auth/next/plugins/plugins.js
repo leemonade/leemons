@@ -1,38 +1,33 @@
 module.exports = {
   plugins: [
-    'socket.io',
-		'onboarding',
-		'layout',
-		'emails',
+    'assets',
 		'common',
-		'assets',
+		'emails',
+		'layout',
+		'onboarding',
+		'socket-io',
+		'users',
 		'multilanguage',
 		'dataset',
-		'users',
-		'package-manager',
-		'mvp-template',
-		'menu-builder',
-		'families-emergency-numbers',
-		'families',
-		'dataset-test',
-		'classroom',
+		'academic-portfolio',
 		'calendar',
-		'provider-emails-amazon-ses'
+		'classroom',
+		'curriculum',
+		'dataset-test',
+		'families',
+		'families-emergency-numbers',
+		'grades',
+		'media-library',
+		'menu-builder',
+		'mvp-template',
+		'package-manager',
+		'provider-emails-amazon-ses',
+		'provider-media-library-aws-s3'
   ],
   frontPlugins: [{
-    name: 'onboarding',
-    version: '0.0.1',
-    load: require('@onboarding/index.js')
-  },
-	{
     name: 'layout',
     version: '0.0.1',
     load: require('@layout/index.js')
-  },
-	{
-    name: 'emails',
-    version: '0.0.1',
-    load: require('@emails/index.js')
   },
 	{
     name: 'multilanguage',
@@ -40,19 +35,9 @@ module.exports = {
     load: require('@multilanguage/index.js')
   },
 	{
-    name: 'users',
+    name: 'curriculum',
     version: '0.0.1',
-    load: require('@users/index.js')
-  },
-	{
-    name: 'package-manager',
-    version: '0.0.1',
-    load: require('@package-manager/index.js')
-  },
-	{
-    name: 'families-emergency-numbers',
-    version: '0.0.1',
-    load: require('@families-emergency-numbers/index.js')
+    load: require('@curriculum/index.js')
   },
 	{
     name: 'families',
@@ -60,13 +45,13 @@ module.exports = {
     load: require('@families/index.js')
   },
 	{
-    name: 'calendar',
+    name: 'families-emergency-numbers',
     version: '0.0.1',
-    load: require('@calendar/index.js')
+    load: require('@families-emergency-numbers/index.js')
   },
 	{
-    name: 'provider-emails-amazon-ses',
+    name: 'package-manager',
     version: '0.0.1',
-    load: require('@provider-emails-amazon-ses/index.js')
+    load: require('@package-manager/index.js')
   }]
 };

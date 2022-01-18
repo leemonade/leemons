@@ -19,7 +19,7 @@ async function canUpdateFamily(familyId, userSession, { transacting } = {}) {
       transacting,
       query: {
         permissionName: 'plugins.families.families',
-        actionName: ['update', 'admin'],
+        actionName_$in: ['update', 'admin'],
       },
     });
   return !!permissions.length;

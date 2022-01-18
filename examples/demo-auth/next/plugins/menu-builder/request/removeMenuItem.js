@@ -1,15 +1,5 @@
 async function removeMenuItem(menuKey, key) {
-  return leemons.api(
-    {
-      url: 'menu-builder/menu/:menuKey/:key',
-      allAgents: true,
-      query: {
-        menuKey,
-        key,
-      },
-    },
-    { method: 'DELETE' }
-  );
+  return leemons.api(`menu-builder/menu/${menuKey}/${key}`, { allAgents: true, method: 'DELETE' });
 }
 
 export default removeMenuItem;

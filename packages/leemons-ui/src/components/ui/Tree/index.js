@@ -49,19 +49,15 @@ const TreeView = ({
   initialSelected,
   initialOpen,
   rootId,
+  className,
+  onSelect: _onSelect = () => {},
+  onToggle: _onToggle = () => {},
   ...otherProps
 }) => {
   const [initialized, setInitialized] = useState(false);
   const currentNode = useRef(null);
-  const {
-    treeData,
-    setTreeData,
-    selectedNode,
-    setSelectedNode,
-    onAdd,
-    onDelete,
-    onSelect,
-  } = useContext(TreeContext);
+  const { treeData, setTreeData, selectedNode, setSelectedNode, onAdd, onDelete, onSelect } =
+    useContext(TreeContext);
 
   const treeRef = useRef(null);
 
@@ -103,6 +99,7 @@ const TreeView = ({
   };
   const handleCanDrag = (node, ...rest) => node.draggable !== false;
   const handleOnToggle = (node, isOpen, onToggle) => {
+    _onToggle(node, isOpen);
     if (!isOpen) {
       openBranch(node.id, true, !allowMultipleOpen);
     } else if (isOpen && node.parent === 0 && !allowMultipleOpen) {
@@ -122,6 +119,7 @@ const TreeView = ({
   };
 
   const handleSelect = (node, onSelect, e, onToggle) => {
+    _onSelect(node);
     if (onSelect) {
       onSelect(node, onToggle);
     } else {
@@ -131,7 +129,7 @@ const TreeView = ({
   };
 
   return (
-    <div className="relative flex">
+    <div className={`relative flex ${className || ''} `}>
       <ReactTree
         ref={treeRef}
         tree={treeData}

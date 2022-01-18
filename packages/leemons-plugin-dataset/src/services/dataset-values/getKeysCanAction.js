@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const getSchema = require('../dataset-schema/getSchema');
 
 /** *
  *  ES:
@@ -17,6 +18,7 @@ const _ = require('lodash');
  *
  *  @return {any} Keys with permits
  *  */
+
 async function getKeysCanAction(
   locationName,
   pluginName,
@@ -25,20 +27,36 @@ async function getKeysCanAction(
   { transacting } = {}
 ) {
   const actions = _.isArray(_actions) ? _actions : [_actions];
-  const userPermissions = await leemons
-    .getPlugin('users')
-    .services.permissions.getUserAgentPermissions(userAgent, {
-      query: {
-        permissionName_$startssWith: leemons.plugin.prefixPN(`${locationName}.${pluginName}`),
-      },
-      transacting,
-    });
+  const promises = [getSchema.call(this, locationName, pluginName, { transacting })];
+
+  if (userAgent) {
+    promises.push(
+      leemons.getPlugin('users').services.permissions.getUserAgentPermissions(userAgent, {
+        query: {
+          permissionName_$startssWith: leemons.plugin.prefixPN(`${locationName}.${pluginName}`),
+        },
+        transacting,
+      })
+    );
+  }
+
+  const [{ jsonSchema }, userPermissions] = await Promise.all(promises);
 
   const goodKeys = [];
 
-  _.forEach(userPermissions, ({ permissionName, actionNames }) => {
-    if (actionNames.some((r) => actions.indexOf(r) >= 0)) {
-      goodKeys.push(_.last(_.split(permissionName, '.')));
+  if (userPermissions) {
+    _.forEach(userPermissions, ({ permissionName, actionNames }) => {
+      if (actionNames.some((r) => actions.indexOf(r) >= 0)) {
+        goodKeys.push(_.last(_.split(permissionName, '.')));
+      }
+    });
+  }
+
+  _.forIn(jsonSchema.properties, (value, key) => {
+    if (value.permissions && value.permissions['*']) {
+      if (value.permissions['*'].some((r) => actions.indexOf(r) >= 0)) {
+        goodKeys.push(key);
+      }
     }
   });
 

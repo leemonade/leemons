@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const importConnector = require('./importConnector');
 
 function createConnectorRegistry({ connections, defaultConnection }, databaseManager) {
@@ -53,11 +54,28 @@ function createConnectorRegistry({ connections, defaultConnection }, databaseMan
           coreStoreConnector.models.get('models::core_store')
         );
       }
-      // Load the other models
+
+      // Get the other models grouped by connection
+      const modelsByConnector = _.groupBy(
+        Object.values(models).map((model) => ({
+          ...model,
+          connector: connections[model.connection].connector,
+        })),
+        'connector'
+      );
+
+      // Load each connector models
       return Promise.all(
-        [...connectors.values()].map(async (connector) => {
+        [...connectors.entries()].map(async ([name, connector]) => {
+          const connectorModels = modelsByConnector[name];
+
+          if (!connectorModels?.length) {
+            leemons.log.warn(`No models found for connector ${name}`);
+            return;
+          }
+
           // Load connector models
-          await connector.loadModels(models);
+          await connector.loadModels(connectorModels);
 
           // Save connector models
           [...connector.models.entries()].forEach(([key, value]) => {

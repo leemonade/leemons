@@ -1,5 +1,5 @@
 // TODO: Do not show again
-
+import React from 'react';
 import { Select, Button } from 'leemons-ui';
 
 export default function TemplatePanel() {

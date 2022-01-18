@@ -6,6 +6,10 @@ const textSchema = {
   maxLength: 65000,
 };
 
+const numberSchema = {
+  type: 'number',
+};
+
 const stringSchema = {
   type: 'string',
   minLength: 1,
@@ -64,6 +68,7 @@ const localeObjectSchema = () => ({
 module.exports = {
   dateSchema,
   textSchema,
+  numberSchema,
   stringSchema,
   booleanSchema,
   integerSchema,

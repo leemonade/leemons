@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import moment from 'moment';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
@@ -12,10 +12,10 @@ import prefixPN from '@calendar/helpers/prefixPN';
 import { useForm } from 'react-hook-form';
 import tKeys from '@multilanguage/helpers/tKeys';
 import PropTypes from 'prop-types';
-import { dynamicImport } from '@common/dynamicImport';
 import { getCalendarsToFrontendRequest } from '@calendar/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import hooks from 'leemons-hooks';
+import loadable from '@loadable/component';
 import {
   addEventRequest,
   getEventTypesRequest,
@@ -25,6 +25,12 @@ import {
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
 import getUTCString from '../helpers/getUTCString';
 
+function dynamicImport(pluginName, component) {
+  return loadable(() =>
+    import(`@leemons/plugins/${pluginName}/src/widgets/calendar/${component}.js`)
+  );
+}
+
 function CalendarEventModal({ event, centerToken, close, forceType }) {
   const session = useSession({ redirectTo: goLoginPage });
   const [t] = useTranslateLoader(prefixPN('event_modal'));
@@ -32,8 +38,7 @@ function CalendarEventModal({ event, centerToken, close, forceType }) {
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [isNew, setIsNew] = useState(true);
   const [isOwner, setIsOwner] = useState(false);
-  const [canRemove, setCanRemove] = useState(false);
-  const [calendarData, setCalendarData] = useState(null);
+  const [calendarData, setCalendarData] = useState([]);
   const [eventTypes, setEventTypes] = useState([]);
   const [eventTypesT, setEventTypesT] = useState([]);
   const eventTypeComponent = useRef();
@@ -50,10 +55,19 @@ function CalendarEventModal({ event, centerToken, close, forceType }) {
   } = useForm();
 
   const getCalendarsForCenter = async () => {
-    const response = await getCalendarsToFrontendRequest(centerToken);
+    const { calendars, events, userCalendar, ownerCalendars } = await getCalendarsToFrontendRequest(
+      centerToken
+    );
 
-    setCalendarData(response);
-    return response;
+    const _data = {
+      calendars,
+      events,
+      userCalendar,
+      ownerCalendars,
+    };
+
+    setCalendarData(_data);
+    return _data;
   };
 
   const getEventTypes = async () => {
@@ -185,14 +199,10 @@ function CalendarEventModal({ event, centerToken, close, forceType }) {
 
   useEffect(() => {
     if (event && calendarData) {
-      let calendar = _.find(calendarData.ownerCalendars, {
+      const calendar = _.find(calendarData.ownerCalendars, {
         id: _.isString(event.calendar) ? event.calendar : event.calendar.id,
       });
       setIsOwner(!!calendar);
-      calendar = _.find(calendarData.configCalendars, {
-        id: _.isString(event.calendar) ? event.calendar : event.calendar.id,
-      });
-      setCanRemove(!calendar);
     }
   }, [event, calendarData]);
 
@@ -211,7 +221,7 @@ function CalendarEventModal({ event, centerToken, close, forceType }) {
       (!eventTypeComponent.current || eventTypeComponent.current.type !== eventType.key)
     ) {
       eventTypeComponent.current = {
-        Component: dynamicImport(eventType.url),
+        Component: dynamicImport(`${eventType.pluginName}`, eventType.url),
         type: eventType.key,
       };
     }
@@ -371,7 +381,7 @@ function CalendarEventModal({ event, centerToken, close, forceType }) {
             {t('update')}
           </Button>
         ) : null}
-        {!isNew && canRemove ? (
+        {!isNew ? (
           <Button type="button" color="error" className="mt-4" onClick={removeEvent}>
             Borrar T
           </Button>
