@@ -1,7 +1,17 @@
-import React, { useState } from 'react';
-import { values, keys } from 'lodash';
+import React, { useState, useMemo } from 'react';
+import { values, keys, compact } from 'lodash';
 import PropTypes from 'prop-types';
-import { Box, Title, Group, TextInput, Select, Button, Table } from '@bubbles-ui/components';
+import {
+  Box,
+  Title,
+  Group,
+  TextInput,
+  Select,
+  Button,
+  Table,
+  Stack,
+  ActionButton,
+} from '@bubbles-ui/components';
 import { EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 import BranchBlock from './BranchBlock';
 import {
@@ -44,8 +54,69 @@ function BranchContent({
     );
   }
 
+  const columns = useMemo(
+    () => [
+      {
+        Header: messages.blockNameLabel,
+        accessor: 'name',
+      },
+      {
+        Header: messages.blockTypeLabel,
+        accessor: 'type',
+      },
+      {
+        Header: messages.blockOrderedLabel,
+        accessor: 'ordered',
+      },
+      {
+        Header: '',
+        accessor: 'actions',
+      },
+    ],
+    [messages]
+  );
+
+  const data = useMemo(
+    () =>
+      compact(
+        values(branch.schema.jsonSchema.properties).map((item, index) => {
+          if (editingBlock && editingBlock.id === item.id) return null;
+          return {
+            name: item.frontConfig.name,
+            type: item.frontConfig.groupType,
+            ordered: item.frontConfig.groupOrdered ? item.frontConfig.groupOrdered : '-',
+            actions: (
+              <Stack justifyContent="end" fullWidth>
+                <ActionButton
+                  icon={<EditIcon />}
+                  onClick={() =>
+                    setEditingBlock({
+                      ...item,
+                      id: keys(branch.schema.jsonSchema.properties)[index],
+                    })
+                  }
+                />
+                <ActionButton
+                  icon={<RemoveIcon />}
+                  onClick={() =>
+                    onRemoveBlock({
+                      ...item,
+                      id: keys(branch.schema.jsonSchema.properties)[index],
+                    })
+                  }
+                />
+              </Stack>
+            ),
+          };
+        })
+      ),
+    [branch.schema.jsonSchema.properties]
+  );
+
   return (
     <Box m={32}>
+      <Table columns={columns} data={data} />
+      {/*
       <Table>
         <thead>
           <tr>
@@ -59,7 +130,7 @@ function BranchContent({
           {values(branch.schema.jsonSchema.properties).map((item, index) => {
             if (editingBlock && editingBlock.id === item.id) return null;
             return (
-              <tr key={item.id}>
+              <tr key={index}>
                 <td>{item.frontConfig.name}</td>
                 <td>{item.frontConfig.groupType}</td>
                 <td>{item.frontConfig.groupOrdered ? item.frontConfig.groupOrdered : '-'}</td>
@@ -88,6 +159,7 @@ function BranchContent({
           })}
         </tbody>
       </Table>
+      */}
       {addBlock || editingBlock ? (
         <BranchBlock
           messages={messages}

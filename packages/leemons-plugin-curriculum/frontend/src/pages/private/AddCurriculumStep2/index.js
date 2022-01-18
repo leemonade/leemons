@@ -178,8 +178,6 @@ function AddCurriculumStep2() {
       c.center = find(centers, { id: c.center });
       c.nodeLevels = orderBy(c.nodeLevels, ['levelOrder'], ['asc']);
 
-      console.log(c);
-
       setCurriculum(c);
       setLoading(false);
     } catch (e) {

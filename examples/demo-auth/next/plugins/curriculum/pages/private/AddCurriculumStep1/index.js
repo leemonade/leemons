@@ -190,4 +190,4 @@ function AddCurriculumStep1() {
   );
 }
 
-export default withLayout(AddCurriculumStep1);
+export default AddCurriculumStep1;

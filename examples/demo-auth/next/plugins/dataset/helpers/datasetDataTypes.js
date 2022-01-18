@@ -1,42 +1,5 @@
-const datasetDataTypes = {
-  textField: {
-    type: 'text_field',
-  },
-  richText: {
-    type: 'rich_text',
-  },
-  number: {
-    type: 'number',
-  },
-  date: {
-    type: 'date',
-  },
-  email: {
-    type: 'email',
-  },
-  phone: {
-    type: 'phone',
-  },
-  link: {
-    type: 'link',
-  },
-  /*
-  archive: {
-    type: 'archive',
-  },
-   */
-  multioption: {
-    type: 'multioption',
-  },
-  boolean: {
-    type: 'boolean',
-  },
-  select: {
-    type: 'select',
-  },
-  user: {
-    type: 'user',
-  },
-};
+import { DATASET_DATA_TYPES } from '@bubbles-ui/components';
+
+const datasetDataTypes = DATASET_DATA_TYPES;
 
 export default datasetDataTypes;
