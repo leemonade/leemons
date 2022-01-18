@@ -1,0 +1,37 @@
+{
+  "name": "leemons-front",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@leemons/assets": "file:dependencies/assets",
+    "@leemons/calendar": "file:dependencies/calendar",
+    "@leemons/classroom": "file:dependencies/classroom",
+    "@leemons/common": "file:dependencies/common",
+    "@leemons/curriculum": "file:dependencies/curriculum",
+    "@leemons/dataset": "file:dependencies/dataset",
+    "@leemons/families-emergency-numbers": "file:dependencies/families-emergency-numbers",
+    "@leemons/media-library": "file:dependencies/media-library",
+    "@leemons/multilanguage": "file:dependencies/multilanguage",
+    "@leemons/package-manager": "file:dependencies/package-manager",
+    "@leemons/socket-io": "file:dependencies/socket-io",
+    "@leemons/users": "file:dependencies/users",
+    "@tailwindcss/line-clamp": "^0.2.1",
+    "js-cookie": "^2.2.1",
+    "prop-types": "^15.7.2",
+    "react-dnd": "^14.0.2",
+    "react-dnd-html5-backend": "^14.0.0",
+    "react-hook-form": "^7.8.3",
+    "tailwindcss": "^2.1.2",
+    "@leemons/layout": "file:dependencies/layout",
+    "@leemons/menu-builder": "file:dependencies/menu-builder"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.2.6",
+    "postcss": "^8.3.0"
+  }
+}

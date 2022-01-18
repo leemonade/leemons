@@ -15,7 +15,7 @@ function validateDataForJsonSchema(jsonSchema, data) {
         items: {
           type: 'object',
           additionalProperties: false,
-          required: ['value'],
+          // required: ['value'],
           properties: {
             id: {
               type: 'string',
@@ -24,6 +24,10 @@ function validateDataForJsonSchema(jsonSchema, data) {
               type: 'string',
             },
             value: value.items,
+            metadata: {
+              type: 'object',
+              additionalProperties: true,
+            },
           },
         },
       };
@@ -31,7 +35,7 @@ function validateDataForJsonSchema(jsonSchema, data) {
       schema.properties[key] = {
         type: 'object',
         additionalProperties: false,
-        required: ['value'],
+        // required: ['value'],
         properties: {
           id: {
             type: 'string',

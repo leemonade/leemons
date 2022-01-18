@@ -76,10 +76,18 @@ async function getSchemaWithLocale(
   );
 
   schema.compileJsonSchema = JSON.parse(
-    schema.compileJsonSchema.replaceAll('"-*-*-[', '[').replaceAll(']-*-*-"', ']')
+    schema.compileJsonSchema
+      .replaceAll('"-*-*-[', '[')
+      .replaceAll(']-*-*-"', ']')
+      .replaceAll('"-*-*-{', '{')
+      .replaceAll('}-*-*-"', '}')
   );
   schema.compileJsonUI = JSON.parse(
-    schema.compileJsonUI.replaceAll('"-*-*-[', '[').replaceAll(']-*-*-"', ']')
+    schema.compileJsonUI
+      .replaceAll('"-*-*-[', '[')
+      .replaceAll(']-*-*-"', ']')
+      .replaceAll('"-*-*-{', '{')
+      .replaceAll('}-*-*-"', '}')
   );
 
   if (userSession) {

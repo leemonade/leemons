@@ -6,6 +6,7 @@ const aws = require('aws-sdk');
 const slugify = require('slugify');
 const squirrelly = require('squirrelly');
 const execa = require('execa');
+const { fetch, fetchJson, fetchText } = require('./fetch');
 const { env } = require('./env');
 const { getModel, generateModelName } = require('./model');
 const buildQuery = require('./queryBuilder');
@@ -64,4 +65,7 @@ module.exports = {
         resolve();
       }, time);
     }),
+  fetch,
+  fetchJson,
+  fetchText,
 };

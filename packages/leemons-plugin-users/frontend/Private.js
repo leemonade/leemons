@@ -18,33 +18,31 @@ export default function Private() {
   const session = useSession({ redirectTo: goLoginPage });
 
   return (
-    <div>
-      <Switch>
-        <Route path={`${path}/home`}>
-          <Home session={session} />
-        </Route>
-        <Route path={`${path}/select-profile`}>
-          <SelectProfile session={session} />
-        </Route>
-        <Route path={`${path}/user-data`}>
-          <UserData session={session} />
-        </Route>
-        <Route path={`${path}/welcome`}>
-          <Welcome session={session} />
-        </Route>
-        <Route path={`${path}/socket-test`}>
-          <SocketTest session={session} />
-        </Route>
-        <Route path={`${path}/profiles/list`}>
-          <ListProfiles session={session} />
-        </Route>
-        <Route path={`${path}/profiles/detail/:uri`}>
-          <DetailProfile session={session} />
-        </Route>
-        <Route path={`${path}/profiles/detail`}>
-          <DetailProfile session={session} />
-        </Route>
-      </Switch>
-    </div>
+    <Switch>
+      <Route path={`${path}/home`}>
+        <Home session={session} />
+      </Route>
+      <Route path={`${path}/select-profile`}>
+        <SelectProfile session={session} />
+      </Route>
+      <Route path={`${path}/user-data`}>
+        <UserData session={session} />
+      </Route>
+      <Route path={`${path}/welcome`}>
+        <Welcome session={session} />
+      </Route>
+      <Route path={`${path}/socket-test`}>
+        <SocketTest session={session} />
+      </Route>
+      <Route path={`${path}/profiles/list`}>
+        <ListProfiles session={session} />
+      </Route>
+      <Route path={`${path}/profiles/detail/:uri`}>
+        <DetailProfile session={session} />
+      </Route>
+      <Route path={`${path}/profiles/detail`}>
+        <DetailProfile session={session} />
+      </Route>
+    </Switch>
   );
 }
