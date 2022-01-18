@@ -1,3 +1,4 @@
+const emit = require('../events/emit');
 const { tasks } = require('../table');
 
 module.exports = async function create(
@@ -41,6 +42,10 @@ module.exports = async function create(
   };
 
   task = await tasks.create(task, { transacting });
+
+  // EN: Emit the event.
+  // ES: Emitir el evento.
+  emit('task.created', { id: task.id });
 
   return task;
 };

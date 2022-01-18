@@ -1,3 +1,4 @@
+const emit = require('../events/emit');
 const { tasks } = require('../table');
 
 module.exports = async function update(
@@ -22,7 +23,7 @@ module.exports = async function update(
   },
   { transacting } = {}
 ) {
-  let task = {
+  const task = {
     tagline,
     level,
     summary,
@@ -41,7 +42,11 @@ module.exports = async function update(
     published,
   };
 
-  task = await tasks.set({ id }, task, { transacting });
+  const newTask = await tasks.set({ id }, task, { transacting });
 
-  return task;
+  // EN: Emit the event.
+  // ES: Emitir el evento.
+  emit(['task.updated', `task.${id}.updated`], { id, changes: task });
+
+  return newTask;
 };

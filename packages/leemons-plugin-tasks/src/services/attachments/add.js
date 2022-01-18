@@ -1,3 +1,4 @@
+const emit = require('../events/emit');
 const { attachments: table } = require('../table');
 const taskExists = require('../task/exists');
 
@@ -29,5 +30,12 @@ module.exports = async function addAttachment(task, attachments, { transacting }
     })),
     { transacting }
   );
+
+  // EN: Emit the event.
+  // ES: Emitir el evento.
+  emit(['task.attachment.added', `task.${task}.attachment.added`], {
+    id: task,
+  });
+
   return true;
 };
