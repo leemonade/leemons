@@ -501,6 +501,7 @@ const DatasetItemDrawer = ({
 
       if (locationName && pluginName) {
         try {
+          console.log(schemaWithAllConfig);
           contextRef.current.drawer.isSaving = true;
           render();
           const dataset = await saveDatasetFieldRequest(
@@ -615,6 +616,7 @@ const DatasetItemDrawer = ({
           );
           const configLocales = {};
           _.forEach(contextRef.current.drawer.locales, ({ code }, i) => {
+            console.log(itemLocales[i], code);
             const { schema, ui } = itemLocales[i];
             configLocales[code] = {};
             _.set(configLocales[code], 'schema.title', _.get(schema, 'title', ''));
@@ -655,6 +657,8 @@ const DatasetItemDrawer = ({
   useEffect(() => {
     load();
   }, [tLoading, item]);
+
+  console.log(contextRef.current.defaultValues);
 
   return (
     <DatasetItemDrawerBubbles

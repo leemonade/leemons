@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
 import { Box, Title, Group, TextInput, Select, Button } from '@bubbles-ui/components';
@@ -41,18 +41,33 @@ export const NEW_BRANCH_CONFIG_ORDERED_OPTIONS = [
   },
 ];
 
-function NewBranchConfig({ messages, errorMessages, orderedData, isLoading, onSubmit }) {
+function NewBranchConfig({
+  messages,
+  errorMessages,
+  orderedData,
+  isLoading,
+  onSubmit,
+  defaultValues,
+}) {
   const {
-    watch,
+    reset,
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({ defaultValues });
+
+  useEffect(() => {
+    reset(defaultValues);
+  }, [defaultValues]);
 
   return (
     <Box m={32}>
       <Title>{messages.title}</Title>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form
+        onSubmit={handleSubmit((data) => {
+          onSubmit({ ...data, id: defaultValues?.id });
+        })}
+      >
         <Group align="start" grow>
           <Box>
             <Controller
@@ -87,7 +102,6 @@ function NewBranchConfig({ messages, errorMessages, orderedData, isLoading, onSu
                   error={errors.ordered}
                   data={orderedData || []}
                   nothingFound={messages.orderedNothingFound}
-                  searchable={true}
                   {...field}
                 />
               )}
@@ -122,6 +136,7 @@ NewBranchConfig.propTypes = {
     orderedNothingFound: PropTypes.string,
     saveButtonLabel: PropTypes.string,
   }),
+  defaultValues: PropTypes.object,
   errorMessages: PropTypes.shape({
     nameRequired: PropTypes.string,
     orderedRequired: PropTypes.string,

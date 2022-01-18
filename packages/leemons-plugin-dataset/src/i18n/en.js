@@ -55,6 +55,7 @@ module.exports = {
       permissionsViewLabel: 'View',
       permissionsEditLabel: 'Edit',
       translateOptionsContinueButtonLabel: 'Continue',
+      previewLabel: 'Preview',
     },
     errorMessages: {
       nameRequired: 'Field required',
