@@ -56,6 +56,6 @@ module.exports = {
     },
   },
   primaryKey: {
-    type: 'uuid',
+    specificType: 'varchar(255)',
   },
 };
