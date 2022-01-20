@@ -19,51 +19,60 @@ module.exports = async function create(
     instructionsForTeacher,
     instructionsForStudent,
     state,
-    published,
   },
-  { transacting } = {}
+  { transacting: t } = {}
 ) {
-  let task = {
-    tagline,
-    level,
-    summary,
-    cover,
-    color,
-    methodology,
-    recommendedDuration,
-    statement,
-    development,
-    submissions,
-    selfReflection,
-    feedback,
-    instructionsForTeacher,
-    instructionsForStudent,
-    state,
-    published,
-  };
+  try {
+    return global.utils.withTransaction(
+      async (transacting) => {
+        let task = {
+          tagline,
+          level,
+          summary,
+          cover,
+          color,
+          methodology,
+          recommendedDuration,
+          statement,
+          development,
+          submissions,
+          selfReflection,
+          feedback,
+          instructionsForTeacher,
+          instructionsForStudent,
+          state,
+          published: false,
+        };
 
-  let taskInfo = {
-    last: '1.0.0',
-    current: '1.0.0',
-  };
+        let taskInfo = {
+          last: '1.0.0',
+          current: '0.0.0',
+        };
 
-  // EN: Create task versioning instance
-  // ES: Crear instancia de versionamiento de tarea
-  taskInfo = await tasksVersioning.create(taskInfo, { transacting });
+        // EN: Create task versioning instance
+        // ES: Crear instancia de versionamiento de tarea
+        taskInfo = await tasksVersioning.create(taskInfo, { transacting });
 
-  // EN: Generate an id with the task versioning id and the current version
-  // ES: Generar un id con el id de versionamiento de tarea y la versión actual
-  // id@version
-  const { fullId, id, version } = await parseId(taskInfo.id, taskInfo.current);
-  task.id = fullId;
+        // EN: Generate an id with the task versioning id and the current version
+        // ES: Generar un id con el id de versionamiento de tarea y la versión actual
+        // id@version
+        const { fullId, id, version } = await parseId(taskInfo.id, taskInfo.last);
+        task.id = fullId;
 
-  // EN: Create task instance
-  // ES: Crear instancia de tarea
-  task = await tasks.create(task, { transacting });
+        // EN: Create task instance
+        // ES: Crear instancia de tarea
+        task = await tasks.create(task, { transacting });
 
-  // EN: Emit the event.
-  // ES: Emitir el evento.
-  emit('task.created', { id: taskInfo.id });
+        // EN: Emit the event.
+        // ES: Emitir el evento.
+        emit('task.created', { id: taskInfo.id });
 
-  return { fullId, id, version, current: `${id}@current` };
+        return { fullId, id, version, current: `${id}@current` };
+      },
+      tasks,
+      t
+    );
+  } catch (error) {
+    throw new Error(`Error creating task: ${error.message}`);
+  }
 };

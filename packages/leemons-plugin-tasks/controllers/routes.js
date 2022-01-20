@@ -26,6 +26,12 @@ module.exports = [
     handler: 'tasks.remove',
     authenticated: true,
   },
+  {
+    method: 'POST',
+    path: '/tasks/:id/publish',
+    handler: 'tasks.publish',
+    authenticated: true,
+  },
 
   /**
    * Tags

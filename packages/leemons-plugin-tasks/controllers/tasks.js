@@ -1,5 +1,6 @@
 const create = require('../src/services/task/create');
 const get = require('../src/services/task/get');
+const publish = require('../src/services/task/publish');
 const remove = require('../src/services/task/remove');
 const update = require('../src/services/task/update');
 
@@ -150,6 +151,25 @@ module.exports = {
       ctx.body = {
         status: 400,
         error: error.message,
+      };
+    }
+  },
+  publish: async (ctx) => {
+    try {
+      const { id } = ctx.params;
+
+      const published = await publish(id);
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        published,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        error: e.message,
       };
     }
   },
