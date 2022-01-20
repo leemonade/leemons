@@ -1,16 +1,15 @@
 import * as _ from 'lodash';
+import { find, flatten, forEach, keyBy, map, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Stack, CalendarSubNavFilters } from '@bubbles-ui/components';
+import { BigCalendar, Box, CalendarSubNavFilters } from '@bubbles-ui/components';
 import { getCentersWithToken } from '@users/session';
 import { getCalendarsToFrontendRequest } from '@calendar/request';
-import { FullCalendar } from '@calendar/components/fullcalendar';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import hooks from 'leemons-hooks';
-import { find, flatten, forEach, keyBy, map, uniq } from 'lodash';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
 
 function Calendar({ session }) {
@@ -149,8 +148,8 @@ function Calendar({ session }) {
   });
 
   useEffect(() => {
-    init();
-  }, []);
+    if (session) init();
+  }, [session]);
 
   const onEventClick = (info) => {
     if (info.originalEvent) {
@@ -205,7 +204,7 @@ function Calendar({ session }) {
           }}
         />
       </Box>
-      <Box style={{ width: '100%' }}>
+      <Box sx={(theme) => ({ padding: theme.spacing[4], width: '100%', height: '100vh' })}>
         {ref.current.center ? (
           <EventModal
             centerToken={ref.current.center.token}
@@ -214,16 +213,15 @@ function Calendar({ session }) {
           />
         ) : null}
 
-        <div style={{ paddingBottom: '100%', position: 'relative' }}>
-          <FullCalendar
-            style={{ position: 'absolute', width: '100%', height: '100%' }}
-            defaultView="month"
-            eventClick={onEventClick}
-            events={ref.current.centersDataById[ref.current.center.id].events}
-            {...fullCalendarConfigs}
-            language={session?.locale}
-          />
-        </div>
+        <BigCalendar
+          style={{ height: '100%' }}
+          currentView="month"
+          eventClick={onEventClick}
+          addEventClick={onNewEvent}
+          events={ref.current.centersDataById[ref.current.center.id].events}
+          {...fullCalendarConfigs}
+          locale={session?.locale}
+        />
       </Box>
     </Box>
   );

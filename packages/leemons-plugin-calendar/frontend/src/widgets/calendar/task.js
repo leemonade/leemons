@@ -7,9 +7,11 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { listKanbanColumnsRequest } from '@calendar/request';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 
-export default function Task({ isEditing, event, form, data, allFormData, tCommon }) {
+export default function Task({ isEditing, event, form, data, allFormData }) {
   const [t] = useTranslateLoader(prefixPN('task_mode_event_type'));
+  const { t: tCommon } = useCommonTranslate('forms');
   const [columns, setColumns] = useState([]);
   const [columnsT, setColumnsT] = useState([]);
 

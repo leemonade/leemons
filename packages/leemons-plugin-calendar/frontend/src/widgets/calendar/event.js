@@ -4,9 +4,11 @@ import React, { useEffect } from 'react';
 import { FormControl, Input } from 'leemons-ui';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 
-export default function Event({ isEditing, event, form, data, allFormData, tCommon }) {
+export default function Event({ isEditing, event, form, data, allFormData }) {
   const [t] = useTranslateLoader(prefixPN('event_mode_event_type'));
+  const { t: tCommon } = useCommonTranslate('forms');
 
   useEffect(() => {
     if (event) {
