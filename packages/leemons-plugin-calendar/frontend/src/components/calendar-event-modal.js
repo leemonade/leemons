@@ -7,14 +7,25 @@ import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import { getCalendarsToFrontendRequest } from '@calendar/request';
 import loadable from '@loadable/component';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { CALENDAR_EVENT_MODAL_DEFAULT_PROPS, CalendarEventModal } from '@bubbles-ui/components';
-import { getEventTypesRequest } from '../request';
+import {
+  addEventRequest,
+  getEventTypesRequest,
+  removeEventRequest,
+  updateEventRequest,
+} from '../request';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
 import PropTypes from 'prop-types';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@calendar/helpers/prefixPN';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import getUTCString from '../helpers/getUTCString';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import hooks from 'leemons-hooks';
 
 function dynamicImport(pluginName, component) {
   return loadable(() =>
@@ -22,9 +33,11 @@ function dynamicImport(pluginName, component) {
   );
 }
 
-function NewCalendarEventModal({ opened, centerToken, event, forceType, onClose }) {
+function NewCalendarEventModal({ opened, centerToken, event, forceType, onClose, close }) {
   const ref = useRef({ loading: true });
+  const { t: tCommon } = useCommonTranslate('forms');
   const session = useSession({ redirectTo: goLoginPage });
+  const [, , , getErrorMessage] = useRequestErrorMessage();
   const [t] = useTranslateLoader(prefixPN('event_modal'));
   const [, setR] = useState();
 
@@ -111,6 +124,7 @@ function NewCalendarEventModal({ opened, centerToken, event, forceType, onClose 
     ref.current.isOwner = false;
 
     if (event) {
+      ref.current.fromCalendar = event.fromCalendar;
       ref.current.isNew = false;
       ref.current.isOwner = !!_.find(ref.current.calendarData.ownerCalendars, {
         id: _.isString(event.calendar) ? event.calendar : event.calendar.id,
@@ -121,10 +135,12 @@ function NewCalendarEventModal({ opened, centerToken, event, forceType, onClose 
         endDate,
         isAllDay,
         calendar,
-        data,
         id,
+        deleted,
+        fromCalendar,
         created_at,
         updated_at,
+        deleted_at,
         ...eventData
       } = event;
 
@@ -158,6 +174,65 @@ function NewCalendarEventModal({ opened, centerToken, event, forceType, onClose 
     render();
   }
 
+  async function reloadCalendar() {
+    await hooks.fireEvent('calendar:force:reload');
+  }
+
+  async function removeEvent() {
+    try {
+      await removeEventRequest(centerToken, event.id);
+      await reloadCalendar();
+      close();
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+  }
+
+  async function onSubmit(_formData) {
+    // eslint-disable-next-line prefer-const
+    let { startDate, endDate, startTime, endTime, ...formData } = _formData;
+    startDate = new Date(startDate);
+    endDate = new Date(endDate);
+    if (formData.isAllDay) {
+      startDate.setHours(0, 0, 0);
+      endDate.setHours(23, 59, 59);
+    } else {
+      startDate.setHours(
+        startTime ? startTime.getHours() : 0,
+        startTime ? startTime.getMinutes() : 0,
+        startTime ? startTime.getSeconds() : 0
+      );
+      endDate.setHours(
+        endTime ? endTime.getHours() : 0,
+        endTime ? endTime.getMinutes() : 0,
+        endTime ? endTime.getSeconds() : 0
+      );
+    }
+
+    const toSend = {
+      startDate: getUTCString(startDate),
+      endDate: getUTCString(endDate),
+      ...formData,
+    };
+
+    try {
+      if (ref.current.isNew) {
+        await addEventRequest(centerToken, toSend);
+        addSuccessAlert(t('add_done'));
+      } else {
+        delete toSend.calendar;
+        delete toSend.type;
+        delete toSend.status;
+        await updateEventRequest(centerToken, event.id, toSend);
+        addSuccessAlert(t('updated_done'));
+      }
+      reloadCalendar();
+      close();
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+  }
+
   useEffect(() => {
     if (session) init();
   }, [session, event]);
@@ -167,6 +242,8 @@ function NewCalendarEventModal({ opened, centerToken, event, forceType, onClose 
   return (
     <CalendarEventModal
       opened={opened}
+      fromCalendar={ref.current.fromCalendar}
+      onRemove={removeEvent}
       isNew={ref.current.isNew}
       isOwner={ref.current.isOwner}
       forceType={forceType}
@@ -175,9 +252,30 @@ function NewCalendarEventModal({ opened, centerToken, event, forceType, onClose 
         eventTypes: ref.current.eventTypes,
         calendars: ref.current.calendarData.ownerCalendars,
       }}
+      onSubmit={onSubmit}
       components={ref.current.components}
       onClose={onClose}
       defaultValues={ref.current.defaultValues}
+      messages={{
+        fromLabel: t('from'),
+        toLabel: t('to'),
+        repeatLabel: t('repeatLabel'),
+        allDayLabel: t('all_day'),
+        titlePlaceholder: t('title'),
+        cancelButtonLabel: t('cancel'),
+        saveButtonLabel: t('save'),
+        updateButtonLabel: t('update'),
+        calendarPlaceholder: t('selectCalendar'),
+      }}
+      errorMessages={{
+        titleRequired: tCommon('required'),
+        startDateRequired: tCommon('required'),
+        startTimeRequired: tCommon('required'),
+        endDateRequired: tCommon('required'),
+        endTimeRequired: tCommon('required'),
+        calendarRequired: tCommon('required'),
+        typeRequired: tCommon('required'),
+      }}
     />
   );
 }
@@ -188,6 +286,7 @@ NewCalendarEventModal.propTypes = {
   event: PropTypes.object,
   forceType: PropTypes.string,
   onClose: PropTypes.func,
+  removeEvent: PropTypes.func,
 };
 
 export const useCalendarEventModal = () => {

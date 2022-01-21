@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { validatePermissionName } = require('../../validations/exists');
-const { validateUserAddCustomPermission } = require('../../validations/permissions');
+const { validateUserRemoveCustomPermission } = require('../../validations/permissions');
 const { table } = require('../tables');
 
 /**
@@ -11,11 +11,11 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function removeCustomPermissionForAllUserAgents(data, { transacting } = {}) {
-  const _data = _.isArray(data) ? data : [data];
-  _.forEach(_data, (d) => {
+async function removeCustomPermissionForAllUserAgents(_data, { transacting } = {}) {
+  const data = _.isArray(_data) ? _data : [_data];
+  _.forEach(data, (d) => {
     validatePermissionName(d.permissionName, this.calledFrom);
-    validateUserAddCustomPermission(d);
+    validateUserRemoveCustomPermission(d);
   });
 
   const query = {

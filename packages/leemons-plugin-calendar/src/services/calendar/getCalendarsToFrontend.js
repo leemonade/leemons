@@ -176,7 +176,12 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     configCalendars,
     calendars: finalCalendars,
     events: events
-      .concat(eventsFromCalendars)
+      .concat(
+        eventsFromCalendars.map((e) => ({
+          ...e,
+          fromCalendar: true,
+        }))
+      )
       .concat(configCalendarEvents)
       .map((event) => ({
         ...event,

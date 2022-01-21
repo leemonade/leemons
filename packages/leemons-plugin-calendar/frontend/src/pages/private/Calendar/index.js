@@ -10,11 +10,14 @@ import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import hooks from 'leemons-hooks';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@calendar/helpers/prefixPN';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
 
 function Calendar({ session }) {
   const ref = useRef({ loading: true });
 
+  const [t] = useTranslateLoader(prefixPN('calendar'));
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [, setR] = useState(null);
 
@@ -140,10 +143,20 @@ function Calendar({ session }) {
     render();
   }
 
+  async function reloadCalendar() {
+    ref.current.centersDataById[ref.current.center.id].data = await getCalendarsForCenter(
+      ref.current.center
+    );
+    ref.current.centersDataById[ref.current.center.id].events = getFilteredEvents(
+      ref.current.centersDataById[ref.current.center.id].data
+    );
+    render();
+  }
+
   useEffect(() => {
-    hooks.addAction('calendar:force:reload', getCalendarsForCenter);
+    hooks.addAction('calendar:force:reload', reloadCalendar);
     return () => {
-      hooks.removeAction('calendar:force:reload', getCalendarsForCenter);
+      hooks.removeAction('calendar:force:reload', reloadCalendar);
     };
   });
 
@@ -221,6 +234,16 @@ function Calendar({ session }) {
           events={ref.current.centersDataById[ref.current.center.id].events}
           {...fullCalendarConfigs}
           locale={session?.locale}
+          messages={{
+            month: t('month'),
+            week: t('week'),
+            day: t('day'),
+            agenda: t('agenda'),
+            today: t('today'),
+            previous: t('previous'),
+            next: t('next'),
+            showWeekends: t('showWeekends'),
+          }}
         />
       </Box>
     </Box>
