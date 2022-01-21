@@ -1,0 +1,12 @@
+{
+  "name": "academic-portfolio-frontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@bubbles-ui/components": "^1.0.16",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+  }
+}
