@@ -1,6 +1,9 @@
 module.exports = {
   modelName: 'tasksVersioning',
   attributes: {
+    name: {
+      type: 'string',
+    },
     last: {
       type: 'string',
     },

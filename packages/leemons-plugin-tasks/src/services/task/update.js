@@ -6,6 +6,7 @@ const upgradeVersion = require('./helpers/upgradeVersion');
 module.exports = async function update(
   taskId,
   {
+    name,
     tagline,
     level,
     summary,
@@ -76,7 +77,7 @@ module.exports = async function update(
 
         // EN: Update the task versioning
         // ES: Actualizar el versionado de la tarea
-        await tasksVersioning.set({ id }, { last: version });
+        await tasksVersioning.set({ id }, { last: version, name });
 
         // EN: Update the task
         // ES: Actualizar la tareas
@@ -88,7 +89,7 @@ module.exports = async function update(
         // ES: Emitir el evento.
         emit(['task.updated', `task.${id}.updated`], { id, version, changes: task });
 
-        return { ...newTask, id, fullId, version };
+        return { ...newTask, id, fullId, version, name: name ?? taskInfo.name };
       } catch (error) {
         throw new Error(`Error updating task: ${error.message}`);
       }

@@ -8,6 +8,7 @@ module.exports = {
   create: async (ctx) => {
     try {
       const {
+        name,
         tagline,
         level,
         summary,
@@ -27,6 +28,7 @@ module.exports = {
       } = ctx.request.body;
 
       let task = {
+        name,
         tagline,
         level,
         summary,
@@ -64,6 +66,7 @@ module.exports = {
     try {
       const { id } = ctx.params;
       const {
+        name,
         tagline,
         level,
         summary,
@@ -83,6 +86,7 @@ module.exports = {
       } = ctx.request.body;
 
       let task = {
+        name,
         tagline,
         level,
         summary,

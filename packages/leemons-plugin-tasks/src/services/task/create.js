@@ -4,6 +4,7 @@ const parseId = require('./helpers/parseId');
 
 module.exports = async function create(
   {
+    name,
     tagline,
     level,
     summary,
@@ -45,6 +46,7 @@ module.exports = async function create(
         };
 
         let taskInfo = {
+          name,
           last: '1.0.0',
           current: '0.0.0',
         };
@@ -67,7 +69,7 @@ module.exports = async function create(
         // ES: Emitir el evento.
         emit('task.created', { id: taskInfo.id });
 
-        return { fullId, id, version, current: `${id}@current` };
+        return { name, fullId, id, version, current: `${id}@current` };
       },
       tasks,
       t
