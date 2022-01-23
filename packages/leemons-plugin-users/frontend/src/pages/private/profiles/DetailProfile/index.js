@@ -4,7 +4,6 @@ import useTranslate from '@multilanguage/useTranslate';
 import { addProfileRequest, getProfileRequest, updateProfileRequest } from '@users/request';
 import { goDetailProfilePage, goListProfilesPage } from '@users/navigate';
 import {
-  AdminPageHeader,
   PageContainer,
   ContextContainer,
   Divider,
@@ -14,6 +13,7 @@ import {
   TabPanel,
   Alert,
 } from '@bubbles-ui/components';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@users/helpers/prefixPN';
