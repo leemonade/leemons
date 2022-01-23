@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash';
 import Cookies from 'js-cookie';
-import { LoginForm, Box, Stack, createStyles } from '@bubbles-ui/components';
+import { Box, Stack, createStyles } from '@bubbles-ui/components';
+import { LoginForm } from '@bubbles-ui/leemons';
 import {
   getRememberProfileRequest,
   getUserProfilesRequest,

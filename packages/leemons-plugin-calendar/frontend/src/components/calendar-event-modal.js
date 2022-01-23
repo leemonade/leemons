@@ -8,7 +8,7 @@ import { goLoginPage } from '@users/navigate';
 import { getCalendarsToFrontendRequest } from '@calendar/request';
 import loadable from '@loadable/component';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { CALENDAR_EVENT_MODAL_DEFAULT_PROPS, CalendarEventModal } from '@bubbles-ui/components';
+import { CALENDAR_EVENT_MODAL_DEFAULT_PROPS, CalendarEventModal } from '@bubbles-ui/leemons';
 import {
   addEventRequest,
   getEventTypesRequest,

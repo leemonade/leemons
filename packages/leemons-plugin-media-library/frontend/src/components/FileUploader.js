@@ -1,7 +1,6 @@
 import React from 'react';
-import { Button, TextInput } from '@bubbles-ui/components';
+import { Button, TextInput, FileUpload } from '@bubbles-ui/components';
 import { CloudUploadIcon } from '@bubbles-ui/icons/outline';
-import { FileUpload } from '@bubbles-ui/components/lib/form/FileUpload';
 import { useForm } from '@mantine/hooks';
 
 export default function FileUploader() {
