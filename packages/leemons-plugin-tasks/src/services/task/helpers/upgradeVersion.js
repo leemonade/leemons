@@ -1,5 +1,4 @@
 module.exports = function upgradeVersion(version, level) {
-  console.log(version);
   let [major, minor, patch] = version.split('.');
 
   if (level === 'major') {
