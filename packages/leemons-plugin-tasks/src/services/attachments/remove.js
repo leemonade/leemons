@@ -3,7 +3,7 @@ const { attachments: table } = require('../table');
 const parseId = require('../task/helpers/parseId');
 
 module.exports = async function removeAttachment(task, attachments, { transacting } = {}) {
-  const { fullId } = await parseId(task, null, { transacting });
+  const { fullId, id, version } = await parseId(task, null, { transacting });
   const _attachments = Array.isArray(attachments) ? attachments : [attachments];
 
   const query = {
@@ -17,8 +17,9 @@ module.exports = async function removeAttachment(task, attachments, { transactin
 
   // EN: Emit the event.
   // ES: Emitir el evento.
-  emit(['task.attachment.removed', `task.${task}.attachment.removed`], {
-    id: task,
+  emit(['task.attachment.removed', `task.${id}.attachment.removed`], {
+    id,
+    version,
     attachments: _attachments,
   });
 

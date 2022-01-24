@@ -1,8 +1,11 @@
 const { tags: table } = require('../table');
+const parseId = require('../task/helpers/parseId');
 
 module.exports = async function getTags(task, { tags = [], transacting } = {}) {
+  const { id } = await parseId(task, null, { transacting });
+
   const query = {
-    task,
+    task: id,
   };
 
   if (tags?.length) {

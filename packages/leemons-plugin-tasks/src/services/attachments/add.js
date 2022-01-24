@@ -8,7 +8,7 @@ const attachmentExists = leemons.getPlugin('media-library').services.assets.exis
 module.exports = async function addAttachment(task, attachments, { transacting } = {}) {
   const _attachments = Array.isArray(attachments) ? attachments : [attachments];
 
-  const { fullId } = await parseId(task, null, { transacting });
+  const { fullId, id, version } = await parseId(task, null, { transacting });
 
   // EN: Check if the task exists.
   // ES: Comprobar si la tarea existe.
@@ -38,8 +38,9 @@ module.exports = async function addAttachment(task, attachments, { transacting }
 
   // EN: Emit the event.
   // ES: Emitir el evento.
-  emit(['task.attachment.added', `task.${task}.attachment.added`], {
-    id: task,
+  emit(['task.attachment.added', `task.${id}.attachment.added`], {
+    id,
+    version,
   });
 
   return true;
