@@ -1,11 +1,11 @@
 module.exports = {
-  modelName: 'attachments',
+  modelName: 'instances',
   attributes: {
     task: {
       type: 'string',
     },
-    attachment: {
-      type: 'uuid',
-    },
+  },
+  primaryKey: {
+    type: 'uuid',
   },
 };
