@@ -3,7 +3,7 @@ const parseId = require('./helpers/parseId');
 
 module.exports = async function get(taskId, { transacting } = {}) {
   try {
-    const { fullId, id } = await parseId(taskId);
+    const { fullId, id } = await parseId(taskId, null, { transacting });
     // EN: Get the name from the task (in taskVersioning)
     // ES: Obtener el nombre de la tarea (en taskVersioning)
     const [{ name }] = await tasksVersioning.find({ id }, { columns: ['name'], transacting });

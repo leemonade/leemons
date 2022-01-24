@@ -1,11 +1,13 @@
 const emit = require('../events/emit');
 const { attachments: table } = require('../table');
+const parseId = require('../task/helpers/parseId');
 
 module.exports = async function removeAttachment(task, attachments, { transacting } = {}) {
+  const { fullId } = await parseId(task, null, { transacting });
   const _attachments = Array.isArray(attachments) ? attachments : [attachments];
 
   const query = {
-    task,
+    task: fullId,
   };
 
   if (_attachments.length) {

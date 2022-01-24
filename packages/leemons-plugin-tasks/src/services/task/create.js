@@ -58,7 +58,7 @@ module.exports = async function create(
         // EN: Generate an id with the task versioning id and the current version
         // ES: Generar un id con el id de versionamiento de tarea y la versión actual
         // id@version
-        const { fullId, id, version } = await parseId(taskInfo.id, taskInfo.last);
+        const { fullId, id, version } = await parseId(taskInfo.id, taskInfo.last, { transacting });
         task.id = fullId;
 
         // EN: Create task instance

@@ -50,15 +50,15 @@ module.exports = async function update(
 
         // EN: Get the id from complete id@version
         // ES: Obtener el id de la id@version completa
-        const { id, fullId } = await parseId(taskId);
+        const { id, fullId } = await parseId(taskId, null, { transacting });
 
         // EN: Get the last version from the task
         // ES: Obtener la última versión de la tarea
-        const [taskInfo] = await tasksVersioning.find({ id });
+        const [taskInfo] = await tasksVersioning.find({ id }, { transacting });
 
         // EN: Get the task
         // ES: Obtener la tarea
-        const [taskToUpdate] = await tasks.find({ id: fullId });
+        const [taskToUpdate] = await tasks.find({ id: fullId }, { transacting });
 
         if (!taskToUpdate) {
           throw new Error('Task not found');
@@ -66,7 +66,7 @@ module.exports = async function update(
 
         // EN: Keep the same version if the task is not published yet
         // ES: Mantiene la misma versión si la tarea no está publicada aún
-        let { version } = await parseId(taskToUpdate.id);
+        let { version } = await parseId(taskToUpdate.id, null, { transacting });
 
         // EN: If the task is published, upgrade the version
         // ES: Si la tarea está publicada, actualizar la versión
@@ -77,7 +77,7 @@ module.exports = async function update(
 
         // EN: Update the task versioning
         // ES: Actualizar el versionado de la tarea
-        await tasksVersioning.set({ id }, { last: version, name });
+        await tasksVersioning.set({ id }, { last: version, name }, { transacting });
 
         // EN: Update the task
         // ES: Actualizar la tareas

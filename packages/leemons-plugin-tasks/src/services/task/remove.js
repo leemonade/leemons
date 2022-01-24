@@ -8,7 +8,7 @@ module.exports = async function remove(taskID, { transacting: t } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       try {
-        const { fullId, id } = await parseId(taskID);
+        const { fullId, id } = await parseId(taskID, null, { transacting });
         // EN: Before removing the task, we need to delete the associated elements.
         // ES: Antes de eliminar la tarea, necesitamos eliminar los elementos asociados.
 

@@ -1,6 +1,6 @@
 const { tasksVersioning } = require('../../table');
 
-module.exports = async function parseId(id, version) {
+module.exports = async function parseId(id, version, { transacting } = {}) {
   try {
     if (version) {
       return { id, version, fullId: `${id}@${version}` };
@@ -11,7 +11,7 @@ module.exports = async function parseId(id, version) {
 
     if (__version === 'current' || !__version) {
       try {
-        const [taskInfo] = await tasksVersioning.find({ id: _id });
+        const [taskInfo] = await tasksVersioning.find({ id: _id }, { transacting });
         __version = taskInfo.current;
       } catch (e) {
         throw new Error(`Task ${_id} not found`);

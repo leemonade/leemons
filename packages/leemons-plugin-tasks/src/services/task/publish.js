@@ -8,11 +8,11 @@ module.exports = async function publish(taskId, { transacting: t } = {}) {
       try {
         // EN: Get the id from complete id@version
         // ES: Obtener el id de la id@version completa
-        const { id, fullId, version } = await parseId(taskId);
+        const { id, fullId, version } = await parseId(taskId, null, { transacting });
 
         // EN: Get the task
         // ES: Obtener la tarea
-        const [taskToUpdate] = await tasks.find({ id: fullId });
+        const [taskToUpdate] = await tasks.find({ id: fullId }, { transacting });
 
         if (!taskToUpdate) {
           throw new Error('Task not found');
@@ -26,11 +26,11 @@ module.exports = async function publish(taskId, { transacting: t } = {}) {
 
         // EN: Update the task versioning
         // ES: Actualizar el versionado de la tarea
-        await tasksVersioning.set({ id }, { current: version });
+        await tasksVersioning.set({ id }, { current: version }, { transacting });
 
         // EN: Update the task
         // ES: Actualizar la tareas
-        const newTask = await tasks.set(
+        await tasks.set(
           { id: fullId },
           { published: true },
           {
