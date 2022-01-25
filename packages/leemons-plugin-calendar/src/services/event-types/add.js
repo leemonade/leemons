@@ -7,17 +7,18 @@ const { validateKeyPrefix, validateExistEventTypeKey } = require('../../validati
  * @static
  * @param {string} key - key
  * @param {string} url - Frontend url
+ * @param {any?} options - Additional options
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function add(key, url, { transacting: _transacting } = {}) {
+async function add(key, url,  options = {}, { transacting: _transacting } = {}) {
   validateKeyPrefix(key, this.calledFrom);
 
   return global.utils.withTransaction(
     async (transacting) => {
       await validateExistEventTypeKey(key, { transacting });
       return table.eventTypes.create(
-        { key, url, pluginName: this.calledFrom.replace('plugins.', '') },
+        { ...options, key, url, pluginName: this.calledFrom.replace('plugins.', '') },
         { transacting }
       );
     },

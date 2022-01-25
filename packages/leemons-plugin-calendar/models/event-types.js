@@ -24,7 +24,12 @@ module.exports = {
         notNull: true,
       },
     },
+    onlyOneDate: {
+      type: 'boolean',
+    },
   },
+  
+
   primaryKey: {
     type: 'uuid',
   },

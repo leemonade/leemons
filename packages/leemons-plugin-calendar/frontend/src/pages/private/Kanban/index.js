@@ -294,4 +294,4 @@ function Kanban({ session }) {
   );
 }
 
-export default withLayout(Kanban);
+export default Kanban;

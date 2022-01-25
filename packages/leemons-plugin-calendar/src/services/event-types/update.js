@@ -7,16 +7,20 @@ const { validateKeyPrefix, validateNotExistEventTypeKey } = require('../../valid
  * @static
  * @param {string} key - key
  * @param {string} url - Frontend url
+ * @param {any?} options - Additional options
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function update(key, url, { transacting: _transacting } = {}) {
+async function update(key, url, options = {}, { transacting: _transacting } = {}) {
   validateKeyPrefix(key, this.calledFrom);
 
   return global.utils.withTransaction(
     async (transacting) => {
       await validateNotExistEventTypeKey(key, { transacting });
-      return table.eventTypes.update({ key }, { url }, { transacting });
+      delete options.id;
+      delete options.key;
+      delete options.pluginName;
+      return table.eventTypes.update({ key }, { ...options, url }, { transacting });
     },
     table.eventTypes,
     _transacting

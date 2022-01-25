@@ -191,7 +191,9 @@ function Calendar({ session }) {
       }
     }
     return config;
-  }, [ref.current.center]);
+  }, [ref.current.center, ref.current.loading]);
+
+
 
   if (ref.current.loading) return <Box>Loading...</Box>;
 
@@ -219,7 +221,9 @@ function Calendar({ session }) {
           }}
         />
       </Box>
+
       <Box sx={(theme) => ({ padding: theme.spacing[4], width: '100%', height: '100vh' })}>
+
         {ref.current.center ? (
           <EventModal
             centerToken={ref.current.center.token}
@@ -247,7 +251,9 @@ function Calendar({ session }) {
             showWeekends: t('showWeekends'),
           }}
         />
+
       </Box>
+
     </Box>
   );
 }
