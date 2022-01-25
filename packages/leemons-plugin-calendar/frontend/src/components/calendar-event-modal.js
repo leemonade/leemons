@@ -239,6 +239,7 @@ function NewCalendarEventModal({ opened, centerToken, event, forceType, onClose,
 
   if (ref.current.loading) return null;
 
+
   return (
     <CalendarEventModal
       opened={opened}
