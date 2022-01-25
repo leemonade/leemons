@@ -32,6 +32,7 @@
     "leemons-plugin-onboarding": "1.0.0",
     "leemons-plugin-package-manager": "1.0.0",
     "leemons-plugin-socket-io": "1.0.0",
+    "leemons-plugin-timetable": "1.0.0",
     "leemons-plugin-users": "1.0.0",
     "leemons-provider-emails-amazon-ses": "1.0.0",
     "leemons-provider-media-library-aws-s3": "1.0.0",
