@@ -28,6 +28,7 @@ module.exports = {
       type: 'boolean',
     },
   },
+  
   primaryKey: {
     type: 'uuid',
   },
