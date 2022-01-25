@@ -1,7 +1,6 @@
 module.exports = {
   welcome_page: {
     page_title: 'Portafolio Académico',
-    page_subtitle: '',
     page_description:
       'El portafolio permite crear programas o etapas educativas y añadir asignaturas con curso, grupo, profesores... dentro de esta información, creamos un árbol visual para poder gestionar el portafolio, asignar alumnos, crear clusters, editar reglas y mucho más',
     hide_info_label: `Ok, ya lo tengo. Cuando la configuración esté completa, no muestres más esta información`,

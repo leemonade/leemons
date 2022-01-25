@@ -1,7 +1,6 @@
 module.exports = {
   welcome_page: {
     page_title: 'Academic Portfolio',
-    page_subtitle: '',
     page_description:
       'Portfolio allow you to create programs or educational stages and add subjects with course, group, professors… within this information, we create a visual tree in order to manage the portfolio, assign students, create clusters, edit rules and much more.',
     hide_info_label: `Ok, I've got it. When the configuration is complete, don't show this info anymore`,

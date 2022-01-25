@@ -2,7 +2,7 @@ const permissionsPrefix = 'plugins.academic-portfolio';
 
 const permissionNames = {
   portfolio: `${permissionsPrefix}.portfolio`,
-  program: `${permissionsPrefix}.program`,
+  programs: `${permissionsPrefix}.programs`,
   subjects: `${permissionsPrefix}.subjects`,
   tree: `${permissionsPrefix}.tree`,
 };
@@ -14,19 +14,25 @@ const permissions = [
     localizationName: { es: 'Portfolio Académico', en: 'Academic Portfolio' },
   },
   {
-    permissionName: permissionNames.program,
+    permissionName: permissionNames.programs,
     actions: ['view', 'update', 'create', 'delete', 'admin'],
-    localizationName: { es: 'Programas educativos', en: 'Learning programs' },
+    localizationName: {
+      es: 'Portfolio Académico - Programas',
+      en: 'Academic Portfolio - Programs',
+    },
   },
   {
     permissionName: permissionNames.subjects,
     actions: ['view', 'update', 'create', 'delete', 'admin'],
-    localizationName: { es: 'Asignaturas', en: 'Subjects' },
+    localizationName: {
+      es: 'Portfolio Académico - Asignaturas',
+      en: 'Academic Portfolio - Subjects',
+    },
   },
   {
     permissionName: permissionNames.tree,
     actions: ['view', 'update', 'create', 'delete', 'admin'],
-    localizationName: { es: 'Árbol académico', en: 'Portfolio Tree' },
+    localizationName: { es: 'Portfolio Académico - Árbol', en: 'Academic Portfolio - Tree' },
   },
 ];
 
@@ -49,21 +55,21 @@ const permissionsBundles = {
       actions: ['delete', 'admin'],
     },
   },
-  program: {
+  programs: {
     create: {
-      permission: permissionNames.program,
+      permission: permissionNames.programs,
       actions: ['create', 'admin'],
     },
     view: {
-      permission: permissionNames.program,
+      permission: permissionNames.programs,
       actions: ['view', 'admin'],
     },
     update: {
-      permission: permissionNames.program,
+      permission: permissionNames.programs,
       actions: ['update', 'admin'],
     },
     delete: {
-      permission: permissionNames.program,
+      permission: permissionNames.programs,
       actions: ['delete', 'admin'],
     },
   },
@@ -110,8 +116,8 @@ const menuItems = [
   {
     item: {
       key: 'portfolio',
-      iconSvg: '/academic-portfolio/menu-icon.svg',
-      activeIconSvg: '/academic-portfolio/menu-icon.svg',
+      iconSvg: '/public/academic-portfolio/menu-icon.svg',
+      activeIconSvg: '/public/academic-portfolio/menu-icon.svg',
       label: {
         en: 'Academic Portfolio',
         es: 'Portfolio Académico',
@@ -130,7 +136,7 @@ const menuItems = [
       key: 'welcome',
       order: 1,
       parentKey: 'portfolio',
-      url: '/academic-portfolio/private/welcome',
+      url: '/private/academic-portfolio/welcome',
       label: {
         en: 'Welcome',
         es: 'Bienvenida',
@@ -146,10 +152,10 @@ const menuItems = [
   // Learning Program
   {
     item: {
-      key: 'program',
+      key: 'programs',
       order: 2,
       parentKey: 'portfolio',
-      url: '/academic-portfolio/private/program',
+      url: '/private/academic-portfolio/programs',
       label: {
         en: 'Learning Programs',
         es: 'Programas educativos',
@@ -158,7 +164,7 @@ const menuItems = [
     },
     permissions: [
       {
-        permissionName: permissionNames.program,
+        permissionName: permissionNames.programs,
         actionNames: ['view', 'admin'],
       },
     ],
@@ -169,7 +175,7 @@ const menuItems = [
       key: 'subjects',
       order: 3,
       parentKey: 'portfolio',
-      url: '/academic-portfolio/private/subjects',
+      url: '/private/academic-portfolio/subjects',
       label: {
         en: 'Subjects',
         es: 'Asignaturas',
@@ -187,9 +193,9 @@ const menuItems = [
   {
     item: {
       key: 'tree',
-      order: 2,
+      order: 4,
       parentKey: 'portfolio',
-      url: '/academic-portfolio/private/tree',
+      url: '/private/academic-portfolio/tree',
       label: {
         en: 'Portfolio Tree',
         es: 'Árbol académico',

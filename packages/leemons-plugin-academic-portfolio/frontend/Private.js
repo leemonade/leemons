@@ -5,22 +5,20 @@ import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
 const Welcome = loadable(() => import('./src/pages/private/WelcomePage'));
-const ProgramList = loadable(() => import('./src/pages/private/program/ProgramList'));
+const ProgramList = loadable(() => import('./src/pages/private/programs/ProgramList'));
 
 export default function Private() {
   const { path } = useRouteMatch();
   const session = useSession({ redirectTo: goLoginPage });
 
   return (
-    <div>
-      <Switch>
-        <Route path={`${path}/welcome`}>
-          <Welcome session={session} />
-        </Route>
-        <Route path={`${path}/program`}>
-          <ProgramList session={session} />
-        </Route>
-      </Switch>
-    </div>
+    <Switch>
+      <Route path={`${path}/welcome`}>
+        <Welcome session={session} />
+      </Route>
+      <Route path={`${path}/programs`}>
+        <ProgramList session={session} />
+      </Route>
+    </Switch>
   );
 }

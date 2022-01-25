@@ -1,4 +1,27 @@
 // TODO [Importante]: Añadir autenticación y permisos
+const {
+  permissions: { names: permissions },
+} = require('../config/constants');
+
+const getPermissions = (permissionsArr, actions = null) => {
+  if (Array.isArray(permissionsArr)) {
+    return permissionsArr.reduce(
+      (obj, [permission, _actions]) => ({
+        ...obj,
+        [permission]: {
+          actions: _actions.includes('admin') ? _actions : ['admin', ..._actions],
+        },
+      }),
+      {}
+    );
+  }
+  return {
+    [permissionsArr]: {
+      actions: actions.includes('admin') ? actions : ['admin', ...actions],
+    },
+  };
+};
+
 module.exports = [
   // Programs
   {
@@ -274,5 +297,26 @@ module.exports = [
     method: 'POST',
     handler: 'common.addTeachersToClassesUnderNodeTree',
     authenticated: true,
+  },
+  {
+    path: '/settings',
+    method: 'GET',
+    handler: 'settings.findOne',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.portfolio, ['view']),
+  },
+  {
+    path: '/settings',
+    method: 'POST',
+    handler: 'settings.update',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.portfolio, ['edit']),
+  },
+  {
+    path: '/settings/enable-menu-item',
+    method: 'POST',
+    handler: 'settings.enableMenuItem',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.portfolio, ['edit']),
   },
 ];

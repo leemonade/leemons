@@ -26,13 +26,13 @@ async function events(isInstalled) {
     });
 
     leemons.events.once(
-      ['plugins.menu-builder:init-main-menu', 'plugins.subjects:init-permissions'],
+      ['plugins.menu-builder:init-main-menu', 'plugins.academic-portfolio:init-permissions'],
       async () => {
         await initMenuBuilder();
       }
     );
   } else {
-    leemons.events.once('plugins.subjects:pluginDidInit', async () => {
+    leemons.events.once('plugins.academic-portfolio:pluginDidInit', async () => {
       leemons.events.emit('init-permissions');
       leemons.events.emit('init-menu');
       leemons.events.emit('init-submenu');
