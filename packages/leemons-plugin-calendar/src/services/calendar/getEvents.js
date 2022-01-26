@@ -12,9 +12,14 @@ const _ = require('lodash');
  * */
 async function getEvents(calendar, { transacting } = {}) {
   await validateNotExistCalendar(calendar);
-  const events = await table.events.find({ calendar }, { transacting });
+  const eventCalendars = await table.eventCalendar.find({ calendar }, { transacting });
+  const events = await table.events.find(
+    { id_$in: _.map(eventCalendars, 'event') },
+    { transacting }
+  );
   return _.map(events, (event) => ({
     ...event,
+    calendar,
     data: _.isString(event.data) ? JSON.parse(event.data) : event.data,
   }));
 }

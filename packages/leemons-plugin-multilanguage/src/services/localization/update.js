@@ -134,10 +134,9 @@ module.exports = (Base) =>
           let localizations = _.flatten(
             Object.entries(
               _.pickBy(data, (value, key) => {
-                const _key = key.toLowerCase();
-                const exists = existingLocales.includes(_key);
+                const exists = existingLocales.includes(key);
                 if (!exists) {
-                  nonExistingLocales.push(_key);
+                  nonExistingLocales.push(key);
                 }
                 return exists;
               })

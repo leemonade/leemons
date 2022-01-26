@@ -38,6 +38,8 @@ async function remove(id, { transacting: _transacting } = {}) {
         ),
       ]);
 
+      await table.eventCalendar.deleteMany({ event: id }, { transacting });
+
       return table.events.delete({ id }, { transacting });
     },
     table.events,
