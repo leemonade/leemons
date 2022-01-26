@@ -4,6 +4,7 @@ const { table } = require('../tables');
 const { validateUpdateEvent } = require('../../validations/forms');
 const { addNexts } = require('../notifications');
 const { removeAll } = require('../notifications/removeAll');
+const { addToCalendar } = require('./addToCalendar');
 
 /**
  * Add calendar with the provided key if not already exists
@@ -28,7 +29,11 @@ async function update(id, data, { calendar, transacting: _transacting } = {}) {
         ...data,
         data: _.isObject(data.data) ? JSON.stringify(data.data) : data.data,
       };
-      if (calendar) toSave.calendar = calendar;
+      if (calendar) {
+        const calendars = _.isArray(calendar) ? calendar : [calendar];
+        await table.eventCalendar.deleteMany({ event: id }, { transacting });
+        await addToCalendar(id, calendars, { transacting });
+      }
       const event = await table.events.update({ id }, toSave, { transacting });
 
       await removeAll(event.id, { transacting });

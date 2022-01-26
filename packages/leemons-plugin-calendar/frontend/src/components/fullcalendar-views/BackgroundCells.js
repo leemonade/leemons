@@ -68,6 +68,7 @@ class BackgroundCells extends React.Component {
       return dates;
     };
 
+
     const eventsByDay = {};
 
     _.forEach(events, (event) => {

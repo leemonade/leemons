@@ -34,6 +34,21 @@ module.exports = {
     },
     {
       config: {
+        key: 'kanban',
+        iconSvg: '/public/calendar/plugin-dashboard.svg',
+        activeIconSvg: '/public/calendar/plugin-dashboard.svg',
+        url: '/private/calendar/kanban',
+        label: { es: 'Kanban', en: 'Kanban' },
+      },
+      permissions: [
+        {
+          permissionName: 'plugins.calendar.calendar',
+          actionNames: ['view', 'admin'],
+        },
+      ],
+    },
+    {
+      config: {
         key: 'calendar-config',
         parentKey: 'plugins.calendar.calendar',
         url: '/private/calendar/config',
