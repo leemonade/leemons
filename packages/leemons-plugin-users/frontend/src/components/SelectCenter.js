@@ -1,21 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { getCentersWithToken } from '@users/session';
 import { Select } from '@bubbles-ui/components';
-import {map, isArray} from "lodash";
+import { map, isArray } from 'lodash';
 
-function SelectCenter(props) {
+function SelectCenter({ ...props }) {
+  const [data, setData] = useState([]);
 
-  let data = [];
-  const centers = getCentersWithToken();
-  if (isArray(centers)) {
-    data = map(centers, ({name, id}) => ({
-      label: name,
-      value: id,
-    }));
-  }
+  useEffect(() => {
+    const centers = getCentersWithToken();
+    if (isArray(centers)) {
+      setData(
+        map(centers, ({ name, id }) => ({
+          label: name,
+          value: id,
+        }))
+      );
+    }
+  }, []);
 
-  return <Select {...props} data={data}/>
-
+  return <Select {...props} data={data} />;
 }
 
 export { SelectCenter };
+export default SelectCenter;

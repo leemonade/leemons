@@ -27,9 +27,13 @@ module.exports = {
     page_title: 'Learning programs',
     page_description:
       'Elementary, High School, Bachelor, Masters… define the programs and courses offered in your organization. If you do not have traditional stages, you can create simple programs or courses instead.',
+    common: {
+      select_center: 'Select center',
+      add_program: 'Add new program',
+    },
     setup: {
       title: 'Setup new program',
-      basic_data: {
+      basicData: {
         step_label: 'Basic Data',
         labels: {
           title: 'Basic Data',
@@ -56,7 +60,7 @@ module.exports = {
           maxGroupAbbreviation: '(i.e: G01, G02, G03…)',
         },
       },
-      courses_data: {
+      coursesData: {
         step_label: 'Courses',
         labels: {
           title: 'Courses',
@@ -80,7 +84,7 @@ module.exports = {
           substagesFrequency: 'Select frequency...',
         },
       },
-      subjects_data: {
+      subjectsData: {
         step_label: 'Subjects',
         labels: {
           title: 'Subjects',

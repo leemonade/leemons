@@ -27,9 +27,13 @@ module.exports = {
     page_title: 'Programas de aprendizaje',
     page_description:
       'Primaria, Secundaria, Bachillerato, Máster... define los programas y cursos que se ofrecen en tu organización. Si no tiene etapas tradicionales, puede crear programas o cursos simples en su lugar',
+    common: {
+      select_center: 'Selecciona centro',
+      add_program: 'Añadir nuevo programa',
+    },
     setup: {
       title: 'Configurar un nuevo programa',
-      basic_data: {
+      basicData: {
         step_label: 'Datos básicos',
         labels: {
           title: 'Datos básicos',
@@ -56,7 +60,7 @@ module.exports = {
           maxGroupAbbreviation: '(i.e: G01, G02, G03...)',
         },
       },
-      courses_data: {
+      coursesData: {
         step_label: 'Cursos',
         labels: {
           title: 'Cursos',
@@ -81,7 +85,7 @@ module.exports = {
           substagesFrequency: 'Seleccione la frecuencia...',
         },
       },
-      subjects_data: {
+      subjectsData: {
         step_label: 'Asignaturas',
         labels: {
           title: 'Asignaturas',
