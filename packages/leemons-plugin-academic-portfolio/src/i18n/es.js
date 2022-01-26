@@ -59,6 +59,11 @@ module.exports = {
           abbreviation: '(8 char. max)',
           maxGroupAbbreviation: '(i.e: G01, G02, G03...)',
         },
+        errorMessages: {
+          name: { required: 'Campo requerido' },
+          abbreviation: { required: 'Campo requerido' },
+          maxGroupAbbreviation: { required: 'Campo requerido' },
+        },
       },
       coursesData: {
         step_label: 'Cursos',
@@ -76,13 +81,22 @@ module.exports = {
           numberOfSubstages: 'Número de subestadios',
           subtagesNames: 'Nombre de los subestadios',
           useDefaultSubstagesName: 'Utilizar el nombre y la abreviatura por defecto',
+          abbreviation: 'Abreviatura',
           maxSubstageAbbreviation: 'Longitud máxima de la abreviatura',
           maxSubstageAbbreviationIsOnlyNumbers: 'Sólo números',
           buttonNext: 'Siguiente',
           buttonPrev: 'Anterior',
         },
         placeholders: {
-          substagesFrequency: 'Seleccione la frecuencia...',
+          substagesFrequency: 'Selecciona la frecuencia',
+        },
+        errorMessages: {
+          useDefaultSubstagesName: { required: 'Campo requerido' },
+          maxNumberOfCourses: { required: 'Campo requerido' },
+          courseCredits: { required: 'Campo requerido' },
+          substagesFrequency: { required: 'Campo requerido' },
+          numberOfSubstages: { required: 'Campo requerido' },
+          maxSubstageAbbreviation: { required: 'Campo requerido' },
         },
       },
       subjectsData: {
@@ -110,7 +124,21 @@ module.exports = {
         helps: {
           maxKnowledgeAbbreviation: '(i.e: MKTG, MATH, HIST...)',
         },
+        errorMessages: {
+          periodName: { required: 'Campo requerido' },
+          numOfPeriods: { required: 'Campo requerido' },
+          substagesFrequency: { required: 'Campo requerido' },
+        },
       },
+    },
+    frequencies: {
+      annual: 'Anual',
+      half_yearly: 'Medio-año(Semestre)',
+      four_month: 'Cuatrimestral',
+      quarterly: 'Trimestral',
+      monthly: 'Mensual',
+      weekly: 'Semanal',
+      daily: 'Diario',
     },
   },
 };

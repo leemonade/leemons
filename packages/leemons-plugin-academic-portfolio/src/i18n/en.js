@@ -38,12 +38,12 @@ module.exports = {
         labels: {
           title: 'Basic Data',
           name: 'Program name',
-          abbreviation: 'Program abbreviation/acronym:',
+          abbreviation: 'Program abbreviation/acronym',
           creditSystem: 'No need for credit system',
           credits: 'Total credits',
           oneStudentGroup: 'This program has only one group of students',
           groupsIDAbbrev: 'Groups ID Abbreviation',
-          maxGroupAbbreviation: 'Max abbreviation length for groups:',
+          maxGroupAbbreviation: 'Max abbreviation length for groups',
           maxGroupAbbreviationIsOnlyNumbers: 'Only numbers',
           buttonNext: 'Next',
         },
@@ -58,6 +58,11 @@ module.exports = {
         helps: {
           abbreviation: '(8 char. max)',
           maxGroupAbbreviation: '(i.e: G01, G02, G03…)',
+        },
+        errorMessages: {
+          name: { required: 'Required field' },
+          abbreviation: { required: 'Required field' },
+          maxGroupAbbreviation: { required: 'Required field' },
         },
       },
       coursesData: {
@@ -75,13 +80,22 @@ module.exports = {
           numberOfSubstages: 'Number of substages',
           subtagesNames: 'Name the substages',
           useDefaultSubstagesName: 'Use the default name and abbreviation',
+          abbreviation: 'Abbreviation',
           maxSubstageAbbreviation: 'Max abbrevation length',
           maxSubstageAbbreviationIsOnlyNumbers: 'Only numbers',
           buttonNext: 'Next',
           buttonPrev: 'Previous',
         },
         placeholders: {
-          substagesFrequency: 'Select frequency...',
+          substagesFrequency: 'Select frequency',
+        },
+        errorMessages: {
+          useDefaultSubstagesName: { required: 'Required field' },
+          maxNumberOfCourses: { required: 'Required field' },
+          courseCredits: { required: 'Required field' },
+          substagesFrequency: { required: 'Required field' },
+          numberOfSubstages: { required: 'Required field' },
+          maxSubstageAbbreviation: { required: 'Required field' },
         },
       },
       subjectsData: {
@@ -109,7 +123,21 @@ module.exports = {
         helps: {
           maxKnowledgeAbbreviation: '(i.e: MKTG, MATH, HIST…)',
         },
+        errorMessages: {
+          periodName: { required: 'Required field' },
+          numOfPeriods: { required: 'Required field' },
+          substagesFrequency: { required: 'Required field' },
+        },
       },
+    },
+    frequencies: {
+      annual: 'Annual',
+      half_yearly: 'Half-yearly(Semester)',
+      four_month: 'Four-month period',
+      quarterly: 'Quarterly(Trimester/Quarter)',
+      monthly: 'Monthly',
+      weekly: 'Weekly',
+      daily: 'Daily',
     },
   },
 };
