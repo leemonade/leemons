@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { isNil } from 'lodash';
 import { useLocation } from 'react-router-dom';
 import { ThemeProvider } from '@bubbles-ui/components';
 import { LayoutContext, LayoutProvider } from './src/context/layout';
@@ -18,11 +19,25 @@ LayoutWrapper.propTypes = {
 };
 
 export function Provider({ children }) {
-  const [layoutState, setLayoutState] = useState({});
+  const [layoutState, setLayoutState] = useState({ loading: false, contentRef: useRef() });
   const location = useLocation();
 
   const setPrivateLayout = (val) => {
     setLayoutState({ ...layoutState, private: val });
+  };
+
+  const setLoading = (loading) => {
+    setLayoutState({ ...layoutState, loading });
+  };
+
+  const setContentRef = (contentRef) => {
+    setLayoutState({ ...layoutState, contentRef });
+  };
+
+  const scrollTo = (props) => {
+    if (!isNil(layoutState.contentRef?.current)) {
+      layoutState.contentRef.current.scrollTo({ ...props, behavior: 'smooth' });
+    }
   };
 
   useEffect(() => {
@@ -34,7 +49,16 @@ export function Provider({ children }) {
 
   return (
     <ThemeProvider>
-      <LayoutProvider value={{ layoutState, setLayoutState, setPrivateLayout }}>
+      <LayoutProvider
+        value={{
+          layoutState,
+          setLayoutState,
+          setPrivateLayout,
+          setLoading,
+          setContentRef,
+          scrollTo,
+        }}
+      >
         <LayoutWrapper isPrivate={layoutState.private}>{children}</LayoutWrapper>
       </LayoutProvider>
     </ThemeProvider>

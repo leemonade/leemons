@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useState, useEffect, useContext } from 'react';
 import { isArray, isNil } from 'lodash';
 import {
   Paper,
@@ -13,6 +13,7 @@ import {
   Col,
   PageContainer,
   ContextContainer,
+  useScrollIntoView,
 } from '@bubbles-ui/components';
 import {
   AdminPageHeader,
@@ -24,11 +25,11 @@ import {
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useTranslate from '@multilanguage/useTranslate';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { useAsync } from '@common/useAsync';
 import hooks from 'leemons-hooks';
 import { SelectCenter } from '@users/components/SelectCenter';
 import { listProgramsRequest } from '@academic-portfolio/request';
 import unflatten from '@academic-portfolio/helpers/unflatten';
+import { LayoutContext } from '@layout/context/layout';
 
 const ACTIONS = {
   NEW: 'new',
@@ -48,6 +49,7 @@ export default function ProgramList() {
   const [setupLabels, setSetupLabels] = useState(null);
   const [action, setAction] = useState(ACTIONS.NEW);
   const [showDetail, setShowDetail] = useState(false);
+  const { setLoading, scrollTo } = useContext(LayoutContext);
 
   const treeProps = useTree();
 
@@ -59,6 +61,19 @@ export default function ProgramList() {
   const handleOnAddProgram = () => {
     setAction(ACTIONS.NEW);
     setShowDetail(true);
+  };
+
+  const handleOnSaveProgram = (values) => {
+    console.log(values);
+    setLoading(true);
+  };
+
+  const handleOnNext = () => {
+    scrollTo({ top: 110 });
+  };
+
+  const handleOnPrev = () => {
+    scrollTo({ top: 110 });
   };
 
   // ····················································································
@@ -128,8 +143,16 @@ export default function ProgramList() {
 
   const setupProps = useMemo(() => {
     if (!isNil(setupLabels)) {
-      console.log(setupLabels);
-      const { title, basicData, coursesData, subjectsData } = setupLabels;
+      const { title, basicData, coursesData, subjectsData, frequencies, firstDigits } = setupLabels;
+      const firstDigitOptions = Object.keys(firstDigits).map((key) => ({
+        label: firstDigits[key],
+        value: key,
+      }));
+      const frequencyOptions = Object.keys(frequencies).map((key) => ({
+        label: frequencies[key],
+        value: key,
+      }));
+
       return {
         labels: { title },
         data: [
@@ -139,11 +162,19 @@ export default function ProgramList() {
           },
           {
             label: coursesData.step_label,
-            content: <AcademicProgramSetupCourses {...coursesData} />,
+            content: (
+              <AcademicProgramSetupCourses {...coursesData} frequencyOptions={frequencyOptions} />
+            ),
           },
           {
             label: subjectsData.step_label,
-            content: <AcademicProgramSetupSubjects {...subjectsData} />,
+            content: (
+              <AcademicProgramSetupSubjects
+                {...subjectsData}
+                firstDigitOptions={firstDigitOptions}
+                frequencyOptions={frequencyOptions}
+              />
+            ),
           },
         ],
       };
@@ -155,12 +186,12 @@ export default function ProgramList() {
     <ContextContainer fullHeight>
       <AdminPageHeader values={headerValues} />
 
-      <Paper color="solid" shadow="none" padding="none">
+      <Paper color="solid" shadow="none" padding={0}>
         <PageContainer>
           <ContextContainer padded="vertical">
             <Grid grow>
               <Col span={5}>
-                <Paper fullWidth>
+                <Paper fullWidth padding={5}>
                   <ContextContainer divided>
                     <Box>
                       <SelectCenter
@@ -178,8 +209,13 @@ export default function ProgramList() {
               </Col>
               <Col span={7}>
                 {!isNil(setupProps) && showDetail && (
-                  <Paper fullWidth>
-                    <AcademicProgramSetup {...setupProps} />
+                  <Paper fullWidth padding={5}>
+                    <AcademicProgramSetup
+                      {...setupProps}
+                      onSave={handleOnSaveProgram}
+                      onNext={handleOnNext}
+                      onPrev={handleOnPrev}
+                    />
                   </Paper>
                 )}
               </Col>
