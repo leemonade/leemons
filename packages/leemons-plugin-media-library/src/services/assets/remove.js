@@ -21,17 +21,17 @@ module.exports = async function removeAsset(id, { userSession, transacting: t } 
         // ES: Primero eliminamos el archivo de la base de datos para que si falla no tengamos una entrada sin archivo
         await table.delete({ id }, { transacting });
 
+        // EN: Delete the asset categories to clean the database
+        // ES: Eliminar las categorias del asset para limpiar la base de datos
+        await removeCategories({ id }, null, { transacting });
+
+        // EN: Delete the asset tags to clean the database
+        // ES: Eliminar las etiquetas del asset para limpiar la base de datos
+        await removeTags(id, null, { transacting });
+
         // EN: Unlink the files from the asset
         // ES: Desvincular los archivos del asset
         if (files.length) {
-          // EN: Delete the asset categories to clean the database
-          // ES: Eliminar las categorias del asset para limpiar la base de datos
-          await removeCategories({ id }, null, { transacting });
-
-          // EN: Delete the asset tags to clean the database
-          // ES: Eliminar las etiquetas del asset para limpiar la base de datos
-          await removeTags(id, null, { transacting });
-
           // EN: Finally, delete the files from the provider
           // ES: Finalmente, eliminamos los archivos del proveedor
           await removeFiles(files, id, { userSession, transacting });

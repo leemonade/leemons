@@ -8,7 +8,7 @@ module.exports = async function remove(asset, tags, { transacting } = {}) {
       asset,
     };
 
-    if (tags.length) {
+    if (tags?.length) {
       query.tag_$in = _tags;
     }
     const deleted = await assetTags.deleteMany(query, { transacting });

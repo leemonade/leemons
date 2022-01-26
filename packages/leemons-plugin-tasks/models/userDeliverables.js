@@ -1,5 +1,5 @@
 module.exports = {
-  modelName: 'instance',
+  modelName: 'userDeliverables',
   attributes: {
     instance: {
       type: 'uuid',
