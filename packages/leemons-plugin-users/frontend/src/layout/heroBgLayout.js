@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isArray } from 'lodash';
 import { todayQuoteRequest } from '@users/request';
-import { LoginBg, Box, createStyles, ThemeProvider } from '@bubbles-ui/components';
+import { Box, createStyles, ThemeProvider } from '@bubbles-ui/components';
+import { LoginBg } from '@bubbles-ui/leemons';
 
 const HeroBgLayoutStyles = createStyles(() => ({
   root: {

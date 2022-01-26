@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { FormWithTheme } from '@bubbles-ui/components';
+import { FormWithTheme } from '@bubbles-ui/leemons';
 import { withTheme } from '@leemonade/rjsf-core';
 import {
   Checkbox,

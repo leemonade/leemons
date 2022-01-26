@@ -12,6 +12,7 @@ module.exports = {
     today: 'Hoy',
     previous: 'Anterior',
     next: 'Siguiente',
+    showWeekends: 'Mostrar fines de semana',
   },
   event_modal: {
     title: 'Titulo del evento',
@@ -20,6 +21,11 @@ module.exports = {
     all_day: 'Todo el dia',
     add_done: 'Añadido correctamente',
     updated_done: 'Actualizado correctamente',
+    from: 'Desde',
+    to: 'Hasta',
+    repeatLabel: 'Repetir',
+    cancel: 'Cancelar',
+    selectCalendar: 'Seleccionar calendario',
     repeat: {
       dont_repeat: 'No repetir',
       every_day: 'Cada día',

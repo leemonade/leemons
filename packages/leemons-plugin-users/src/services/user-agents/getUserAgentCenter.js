@@ -19,7 +19,10 @@ async function getUserAgentCenter(userAgent, { transacting } = {}) {
       transacting,
     }
   );
-  const centers = await table.centers.find({ id: _.map(roleCenters, 'center') }, { transacting });
+  const centers = await table.centers.find(
+    { id_$in: _.map(roleCenters, 'center') },
+    { transacting }
+  );
   return isArray ? centers : centers[0];
 }
 

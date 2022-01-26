@@ -4,7 +4,7 @@ const { codeSchema } = require('./locale');
 const { LeemonsValidator } = global.utils;
 
 LeemonsValidator.ajv.addFormat('localizationKey', {
-  validate: (x) => /^([a-z0-9_-]+\.){0,}[a-z0-9_-]{0,}$/.test(x),
+  validate: (x) => /^([a-zA-Z0-9_-]+\.){0,}[a-zA-Z0-9_-]{0,}$/.test(x),
 });
 
 module.exports = class Validator {
@@ -15,7 +15,7 @@ module.exports = class Validator {
      * If the prefix is required, the key must be the prefix of start with the '${prefix}.'
      */
     this.keySchema = (usePrefix) => {
-      const pattern = `([a-z0-9_-]+\\.){0,}[a-z0-9_-]{0,}`;
+      const pattern = `([a-zA-Z0-9_-]+\\.){0,}[a-zA-Z0-9_-]{0,}`;
       return {
         type: 'string',
         pattern: `^(${usePrefix && prefix ? `((${prefix})|(${prefix}\\.${pattern}))` : pattern})$`,
@@ -188,7 +188,7 @@ module.exports = class Validator {
     if (!locales) {
       // Always save locale in lowercase
       const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
-      const _key = typeof key === 'string' ? key.toLowerCase() : null;
+      const _key = typeof key === 'string' ? key : null;
 
       const validator = new LeemonsValidator(this.localizationTupleSchema(usePrefix));
 
@@ -198,21 +198,20 @@ module.exports = class Validator {
       }
 
       return { key: _key, locale: _locale };
-    } else {
-      const _locales = [];
-      const _key = typeof key === 'string' ? key.toLowerCase() : null;
-      _.forEach(locales, (locale) => {
-        const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
-        const validator = new LeemonsValidator(this.localizationTupleSchema(usePrefix));
-
-        // Throw validation error
-        if (!validator.validate({ key: _key, locale: _locale })) {
-          throw validator.error;
-        }
-        _locales.push(_locale);
-      });
-      return { key: _key, locales: _locales };
     }
+    const _locales = [];
+    const _key = typeof key === 'string' ? key : null;
+    _.forEach(locales, (locale) => {
+      const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
+      const validator = new LeemonsValidator(this.localizationTupleSchema(usePrefix));
+
+      // Throw validation error
+      if (!validator.validate({ key: _key, locale: _locale })) {
+        throw validator.error;
+      }
+      _locales.push(_locale);
+    });
+    return { key: _key, locales: _locales };
   }
 
   /**
@@ -227,7 +226,7 @@ module.exports = class Validator {
       Array.isArray(tuples) && tuples.every(Array.isArray)
         ? tuples.map(([key, locale]) => {
             const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
-            const _key = typeof key === 'string' ? key.toLowerCase() : null;
+            const _key = typeof key === 'string' ? key : null;
 
             return { key: _key, locale: _locale };
           })
@@ -252,7 +251,7 @@ module.exports = class Validator {
   validateLocalization({ key, locale, value }, usePrefix = false) {
     // Always save locale in lowercase
     const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
-    const _key = typeof key === 'string' ? key.toLowerCase() : null;
+    const _key = typeof key === 'string' ? key : null;
 
     const validator = new LeemonsValidator(this.localizationSchema(usePrefix));
 
@@ -271,7 +270,7 @@ module.exports = class Validator {
    * @returns {LocalizationKey}
    */
   validateLocalizationKey(key, usePrefix = false) {
-    const _key = typeof key === 'string' ? key.toLowerCase() : null;
+    const _key = typeof key === 'string' ? key : null;
 
     const validator = new LeemonsValidator(this.keySchema(usePrefix));
 
@@ -293,7 +292,7 @@ module.exports = class Validator {
     // Get the keys lowercased
     const _keys =
       Array.isArray(keys) && keys.every((key) => typeof key === 'string')
-        ? keys.map((key) => key.toLowerCase())
+        ? keys.map((key) => key)
         : null;
 
     const validator = new LeemonsValidator(this.keyArraySchema(usePrefix));
@@ -320,7 +319,7 @@ module.exports = class Validator {
     }
 
     const _localizations = localizations.map(({ key, locale, value }) => ({
-      key: key.toLowerCase(),
+      key,
       locale: locale.toLowerCase(),
       value,
     }));

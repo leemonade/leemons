@@ -11,11 +11,6 @@ module.exports = {
         notNull: true,
       },
     },
-    calendar: {
-      references: {
-        collection: 'plugins_calendar::calendars',
-      },
-    },
     startDate: {
       type: 'datetime',
       options: {

@@ -4,7 +4,8 @@
   "main": "Public.js",
   "license": "MIT",
   "dependencies": {
-    "@bubbles-ui/components": "^1.0.16",
+    "@bubbles-ui/leemons": "^1.0.1",
+    "@bubbles-ui/components": "^1.0.21",
     "prop-types": "^15.7.2",
     "react-hook-form": "^7.8.5"
   },

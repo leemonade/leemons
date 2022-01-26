@@ -1,16 +1,5 @@
-const _ = require('lodash');
 const { table } = require('../tables');
-const {
-  getPermissionConfig: getPermissionConfigCalendar,
-} = require('../calendar/getPermissionConfig');
-const {
-  getPermissionConfig: getPermissionConfigEvent,
-  getPermissionConfig,
-} = require('./getPermissionConfig');
-const { detail: detailEvent } = require('./detail');
-const { detail: detailCalendar } = require('../calendar/detail');
-const { removeOrCancel } = require('./removeOrCancel');
-const { unGrantAccessUserAgentToEvent } = require('./unGrantAccessUserAgentToEvent');
+const { getPermissionConfig } = require('./getPermissionConfig');
 
 /**
  *
@@ -38,7 +27,7 @@ async function remove(id, { transacting: _transacting } = {}) {
           }
         ),
         // ES: Borramos el elemento de la tabla items de permisos ya que dejara de existir
-        await userPlugin.permissions.removeItems(
+        await userPlugin.services.permissions.removeItems(
           {
             type: permissionConfig.type,
             item: id,
@@ -48,6 +37,8 @@ async function remove(id, { transacting: _transacting } = {}) {
           }
         ),
       ]);
+
+      await table.eventCalendar.deleteMany({ event: id }, { transacting });
 
       return table.events.delete({ id }, { transacting });
     },
