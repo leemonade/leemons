@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import { getCentersWithToken } from '@users/session';
-import { withLayout } from '@layout/hoc';
 import {
   getCalendarsToFrontendRequest,
   listKanbanColumnsRequest,
@@ -17,6 +16,8 @@ import hooks from 'leemons-hooks';
 import '@asseinfo/react-kanban/dist/styles.css';
 import KanbanCard from '@calendar/components/kanban-card';
 import getCalendarNameWithConfigAndSession from '@calendar/helpers/getCalendarNameWithConfigAndSession';
+import { Kanban as BubblesKanban } from '@bubbles-ui/components';
+import { KanbanTaskCard } from '@bubbles-ui/leemons';
 
 import Board from '@asseinfo/react-kanban';
 
@@ -54,7 +55,14 @@ function Kanban({ session }) {
     );
 
     setData({
-      calendars,
+      calendars: _.map(calendars, (calendar) => ({
+        ...calendar,
+        name: getCalendarNameWithConfigAndSession(
+          calendar,
+          { calendars, events, userCalendar, ownerCalendars },
+          session
+        ),
+      })),
       events,
       userCalendar,
       ownerCalendars,
@@ -188,7 +196,16 @@ function Kanban({ session }) {
       });
     }
     return { columns: cols };
-  }, [columns, columnsT, filteredEvents, columnsEventsOrder, onlyShowCalendars, showArchived]);
+  }, [
+    columns,
+    columnsT,
+    filteredEvents,
+    columnsEventsOrder,
+    onlyShowCalendars,
+    showArchived,
+    data,
+    session,
+  ]);
 
   const onCardDragEnd = async (event, from, to) => {
     const calendar = _.find(data.ownerCalendars, {
@@ -264,6 +281,13 @@ function Kanban({ session }) {
           <Checkbox checked={showArchived} onChange={() => setShowArchived(!showArchived)} />
         </FormControl>
       </div>
+
+      {board ? (
+        <BubblesKanban
+          value={board}
+          itemRender={(props) => <KanbanTaskCard config={data} {...props} />}
+        />
+      ) : null}
 
       {board ? (
         <Board

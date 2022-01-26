@@ -4,6 +4,7 @@ const { getPermissionConfig: getPermissionConfigCalendar } = require('./getPermi
 const { getPermissionConfig: getPermissionConfigEvent } = require('../events/getPermissionConfig');
 const { getByCenterId } = require('../calendar-configs');
 const { getCalendars } = require('../calendar-configs/getCalendars');
+const { getEvents } = require('./getEvents');
 
 /**
  * Add calendar with the provided key if not already exists
@@ -93,12 +94,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
         transacting,
       }
     ),
-    table.events.find(
-      { calendar_$in: calendarIds },
-      {
-        transacting,
-      }
-    ),
+    await Promise.all(_.map(calendarIds, (calendarId) => getEvents(calendarId, { transacting }))),
     table.events.find(
       { id_$in: eventIds },
       {
@@ -114,7 +110,9 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
         transacting,
       })
     );
-  const [calendars, eventsFromCalendars, events, configCalendars] = await Promise.all(promises);
+  const [calendars, eventsCalendars, events, configCalendars] = await Promise.all(promises);
+
+  const eventsFromCalendars = _.flatten(eventsCalendars);
 
   // ES: Buscamos si el user agent tiene calendario
   // EN: We check if the user agent has a calendar
