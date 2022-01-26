@@ -13,13 +13,9 @@ import { useCalendarEventModal } from '@calendar/components/calendar-event-modal
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
 import hooks from 'leemons-hooks';
-import '@asseinfo/react-kanban/dist/styles.css';
-import KanbanCard from '@calendar/components/kanban-card';
 import getCalendarNameWithConfigAndSession from '@calendar/helpers/getCalendarNameWithConfigAndSession';
 import { Kanban as BubblesKanban } from '@bubbles-ui/components';
 import { KanbanTaskCard } from '@bubbles-ui/leemons';
-
-import Board from '@asseinfo/react-kanban';
 
 function Kanban({ session }) {
   const [centers, setCenters] = useState([]);
@@ -35,21 +31,21 @@ function Kanban({ session }) {
   const [onlyShowCalendars, setOnlyShowCalendars] = useState([]);
   const [showArchived, setShowArchived] = useState(false);
 
-  const getKanbanColumnsEventsOrder = async () => {
+  async function getKanbanColumnsEventsOrder() {
     const { orders } = await listKanbanEventOrdersRequest(center.token);
     const obj = {};
     _.forEach(orders, (order) => {
       obj[order.column] = order.events;
     });
     setColumnsEventsOrder(obj);
-  };
+  }
 
-  const getKanbanColumns = async () => {
+  async function getKanbanColumns() {
     const { columns: _columns } = await listKanbanColumnsRequest();
     setColumns(_.orderBy(_columns, ['order'], ['asc']));
-  };
+  }
 
-  const getCalendarsForCenter = async () => {
+  async function getCalendarsForCenter() {
     const { calendars, events, userCalendar, ownerCalendars } = await getCalendarsToFrontendRequest(
       center.token
     );
@@ -67,15 +63,17 @@ function Kanban({ session }) {
       userCalendar,
       ownerCalendars,
     });
-  };
+  }
 
-  const getTranslationColumns = async () => {
+  async function getTranslationColumns() {
     const keys = _.map(columns, 'nameKey');
     const { items } = await getLocalizationsByArrayOfItems(keys);
     setColumnsT(items);
-  };
+  }
 
-  const getColumnName = (name) => tKeys(name, columnsT);
+  function getColumnName(name) {
+    return tKeys(name, columnsT);
+  }
 
   useEffect(() => {
     hooks.addAction('calendar:force:reload', getCalendarsForCenter);
@@ -136,17 +134,17 @@ function Kanban({ session }) {
     if (centers.length) setCenter(centers[0]);
   }, [centers]);
 
-  const onNewEvent = () => {
+  function onNewEvent() {
     setSelectedEvent(null);
     toggleEventModal();
-  };
+  }
 
-  const onClickCard = (event) => {
+  function onClickCard(event) {
     setSelectedEvent(event);
     toggleEventModal();
-  };
+  }
 
-  const onCalendarsChange = (event, calendar) => {
+  function onCalendarsChange(event, calendar) {
     const index = onlyShowCalendars.indexOf(calendar.id);
     if (index >= 0) {
       onlyShowCalendars.splice(index, 1);
@@ -157,7 +155,7 @@ function Kanban({ session }) {
       onlyShowCalendars.splice(0, onlyShowCalendars.length);
     }
     setOnlyShowCalendars([...onlyShowCalendars]);
-  };
+  }
 
   const board = useMemo(() => {
     const cols = [];
@@ -235,11 +233,38 @@ function Kanban({ session }) {
   };
 
   const disableCardDrag = useMemo(() => {
-    if (onlyShowCalendars && onlyShowCalendars.length) {
-      return true;
-    }
+    if (onlyShowCalendars && onlyShowCalendars.length) return true;
     return false;
   }, [onlyShowCalendars]);
+
+  function onChange(values) {
+    const cardsById = {};
+    _.forEach(values.columns, (column) => {
+      _.forEach(column.cards, (card) => {
+        cardsById[card.id] = { ...card, data: { ...card.data, column: column.id } };
+      });
+    });
+    const changedColumns = [];
+    _.forEach(data.events, (event) => {
+      const card = cardsById[event.id];
+      if (event.data && event.data.column && card && event.data.column !== card.data.column) {
+        // eslint-disable-next-line no-param-reassign
+        event.data.column = card.data.column;
+        changedColumns.push(card.data.column);
+        updateEventRequest(center.token, event.id, { data: event.data });
+      }
+    });
+
+    _.forEach(values.columns, (column) => {
+      if (changedColumns.indexOf(column.id) < 0) {
+        columnsEventsOrder[column.id] = _.map(column.cards, 'id');
+        saveKanbanEventOrdersRequest(center.token, column.id, columnsEventsOrder[column.id]);
+      }
+    });
+
+    setData({ ...data });
+    setColumnsEventsOrder({ ...columnsEventsOrder });
+  }
 
   return (
     <div className="bg-primary-content">
@@ -285,34 +310,10 @@ function Kanban({ session }) {
       {board ? (
         <BubblesKanban
           value={board}
+          onChange={onChange}
+          disableCardDrag={disableCardDrag}
           itemRender={(props) => <KanbanTaskCard config={data} {...props} />}
         />
-      ) : null}
-
-      {board ? (
-        <Board
-          allowAddColumn={false}
-          disableColumnDrag={true}
-          allowRemoveColumn={false}
-          allowRenameColumn={false}
-          allowRemoveCard={false}
-          allowAddCard={false}
-          onCardDragEnd={onCardDragEnd}
-          disableCardDrag={disableCardDrag}
-          renderCard={(event, options) => (
-            <KanbanCard
-              key={event.id}
-              event={event}
-              {...options}
-              config={data}
-              session={session}
-              columns={columns}
-              onClick={onClickCard}
-            />
-          )}
-        >
-          {board}
-        </Board>
       ) : null}
     </div>
   );
