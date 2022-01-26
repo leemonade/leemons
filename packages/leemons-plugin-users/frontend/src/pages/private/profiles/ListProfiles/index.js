@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import _ from 'lodash';
 import { Paper, Box, Stack, ActionButton, Tabs, TabPanel, Table } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
@@ -9,7 +10,6 @@ import { listProfilesRequest } from '@users/request';
 import { goDetailProfilePage } from '@users/navigate';
 import prefixPN from '@users/helpers/prefixPN';
 import { Link, useHistory } from 'react-router-dom';
-import _ from 'lodash';
 
 function ListProfiles() {
   const [t] = useTranslateLoader(prefixPN('list_profiles'));
