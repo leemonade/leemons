@@ -4,6 +4,21 @@ const { add: addMenuItem } = require('./src/services/menu-builder/add');
 const { translations } = require('./src/translations');
 const es = require('./src/i18n/es');
 const en = require('./src/i18n/en');
+const {
+  onAcademicPortfolioAddClass,
+} = require('./src/services/pluginEvents/onAcademicPortfolioAddClass');
+const {
+  onAcademicPortfolioRemoveClasses,
+} = require('./src/services/pluginEvents/onAcademicPortfolioRemoveClasses');
+const {
+  onAcademicPortfolioUpdateClass,
+} = require('./src/services/pluginEvents/onAcademicPortfolioUpdateClass');
+const {
+  onAcademicPortfolioAddClassStudent,
+} = require('./src/services/pluginEvents/onAcademicPortfolioAddClassStudent');
+const {
+  onAcademicPortfolioRemoveClassStudents,
+} = require('./src/services/pluginEvents/onAcademicPortfolioRemoveClassStudents');
 
 async function events(isInstalled) {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
@@ -17,6 +32,25 @@ async function events(isInstalled) {
       );
     }
   });
+
+  leemons.events.on(
+    'plugins.academic-portfolio:after-remove-classes-students',
+    onAcademicPortfolioRemoveClassStudents
+  );
+
+  leemons.events.on(
+    'plugins.academic-portfolio:after-add-class-student',
+    onAcademicPortfolioAddClassStudent
+  );
+  leemons.events.on(
+    'plugins.academic-portfolio:after-update-class',
+    onAcademicPortfolioUpdateClass
+  );
+  leemons.events.on('plugins.academic-portfolio:after-add-class', onAcademicPortfolioAddClass);
+  leemons.events.on(
+    'plugins.academic-portfolio:before-remove-classes',
+    onAcademicPortfolioRemoveClasses
+  );
 
   if (!isInstalled) {
     // Menu
@@ -47,7 +81,9 @@ async function events(isInstalled) {
         leemons.plugin.prefixPN('event'),
         'event'
       );
-      await leemons.plugin.services.calendar.addEventType(leemons.plugin.prefixPN('task'), 'task', {onlyOneDate: true});
+      await leemons.plugin.services.calendar.addEventType(leemons.plugin.prefixPN('task'), 'task', {
+        onlyOneDate: true,
+      });
       leemons.events.emit('init-event-types');
     });
 

@@ -36,6 +36,7 @@ async function updateClass(data, { transacting: _transacting } = {}) {
         }
         await addKnowledge(nClass.id, knowledge, { transacting });
       }
+
       if (_.isNull(substage) || substage) await removeSubstageByClass(nClass.id, { transacting });
       if (substage) {
         // ES: Comprobamos que todos los substages existen y pertenecen al programa
@@ -44,6 +45,7 @@ async function updateClass(data, { transacting: _transacting } = {}) {
         }
         await addSubstage(nClass.id, substage, { transacting });
       }
+
       if (_.isNull(course) || course) await removeCourseByClass(nClass.id, { transacting });
       if (course) {
         // ES: Comprobamos que todos los cursos existen y pertenecen al programa
@@ -52,6 +54,7 @@ async function updateClass(data, { transacting: _transacting } = {}) {
         }
         await addCourse(nClass.id, course, { transacting });
       }
+
       if (_.isNull(group) || group) await removeGroupByClass(nClass.id, { transacting });
       if (group) {
         // ES: Comprobamos que todos los cursos existen y pertenecen al programa
@@ -60,6 +63,7 @@ async function updateClass(data, { transacting: _transacting } = {}) {
         }
         await addGroup(nClass.id, group, { transacting });
       }
+
       if (_.isNull(group) || teachers) await removeTeachersByClass(nClass.id, { transacting });
       if (teachers)
         await Promise.all(
@@ -75,7 +79,10 @@ async function updateClass(data, { transacting: _transacting } = {}) {
         { transacting }
       );
 
-      return (await classByIds(nClass.id, { transacting }))[0];
+      const classe = (await classByIds(nClass.id, { transacting }))[0];
+      await leemons.events.emit('after-update-class', { class: classe, transacting });
+
+      return classe;
     },
     table.class,
     _transacting

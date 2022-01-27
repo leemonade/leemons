@@ -23,6 +23,7 @@ const PrivateLayoutStyles = createStyles((theme, { width }) => ({
     flex: 1,
     height: '100vh',
     overflowY: 'auto',
+    position: 'relative',
   },
 }));
 

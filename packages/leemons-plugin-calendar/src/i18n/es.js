@@ -1,4 +1,5 @@
 module.exports = {
+  classes: 'Clases',
   event: 'Evento',
   task: 'Tarea',
   holidays_vacation: 'Vacaciones / Días festivos',
@@ -119,5 +120,11 @@ module.exports = {
       'Dejar sin seleccionar el programa, grupo o curso para asignar el mismo calendario a todos los niveles del niño',
     create_plan: 'Crear un plan',
     min_select_center: 'Mínimo hay que seleccionar hasta el centro',
+  },
+  kanbanFiltersOptions: {
+    title: 'Kanban',
+    filter: 'Filtrar por',
+    archived: 'Ver tareas archivadas',
+    selectCalendarsSubjects: 'Todas las asignaturas',
   },
 };

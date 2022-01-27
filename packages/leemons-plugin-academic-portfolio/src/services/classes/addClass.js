@@ -63,7 +63,9 @@ async function addClass(data, { transacting: _transacting } = {}) {
         { transacting }
       );
 
-      return (await classByIds(nClass.id, { transacting }))[0];
+      const classe = (await classByIds(nClass.id, { transacting }))[0];
+      await leemons.events.emit('after-add-class', { class: classe, transacting });
+      return classe;
     },
     table.groups,
     _transacting
