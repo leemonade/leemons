@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useContext, useRef } from 'react';
+import React, { useMemo, useState, useEffect, useContext } from 'react';
 import { isArray, isNil, isEmpty } from 'lodash';
 import {
   Paper,
@@ -30,6 +30,7 @@ import {
 } from '@academic-portfolio/request';
 import unflatten from '@academic-portfolio/helpers/unflatten';
 import { ProgramItem } from '@academic-portfolio/components';
+import { useStore } from '@common/useStore';
 
 export default function ProgramList() {
   const [t, translations] = useTranslateLoader(prefixPN('programs_page'));
@@ -38,10 +39,8 @@ export default function ProgramList() {
   const [centerId, setCenterId] = useState(null);
   const [setupLabels, setSetupLabels] = useState(null);
   const [showDetail, setShowDetail] = useState(false);
-  const [, setRender] = useState(null);
   const { setLoading, scrollTo } = useContext(LayoutContext);
-
-  const store = useRef({
+  const [store, render] = useStore({
     mounted: true,
     programs: [],
     currentProgram: null,
@@ -54,14 +53,10 @@ export default function ProgramList() {
 
   useEffect(
     () => () => {
-      store.current.mounted = false;
+      store.mounted = false;
     },
     []
   );
-
-  const render = () => {
-    if (store.current.mounted) setRender(new Date().getTime());
-  };
 
   const loadTree = (data) => {
     if (isArray(data) && t) {
@@ -76,8 +71,6 @@ export default function ProgramList() {
         },
       };
 
-      console.log('data:', data);
-
       const programs = data.map((item) => ({
         id: item.id,
         parent: 0,
@@ -88,11 +81,11 @@ export default function ProgramList() {
       const treeData = [...programs, ADD_PROGRAM];
       treeProps.setTreeData(treeData);
 
-      if (!isEmpty(store.current.currentProgram)) {
+      if (!isEmpty(store.currentProgram)) {
         scrollTo({ top: 0 });
         // eslint-disable-next-line no-use-before-define
         handleShowDetail(() => {
-          treeProps.setSelectedNode(store.current.currentProgram.id);
+          treeProps.setSelectedNode(store.currentProgram.id);
         });
       }
 
@@ -104,7 +97,7 @@ export default function ProgramList() {
     try {
       const response = await listProgramsRequest({ page: 0, size: 9999, center });
       const data = response.data?.items || [];
-      store.current.programs = data;
+      store.programs = data;
       loadTree(data);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
@@ -118,10 +111,10 @@ export default function ProgramList() {
       let apiCall = createProgramRequest;
       let messageKey = 'common.create_done';
 
-      if (!isEmpty(store.current.currentProgram)) {
+      if (!isEmpty(store.currentProgram)) {
         const { name, abbreviation, credits } = values;
         body = {
-          id: store.current.currentProgram.id,
+          id: store.currentProgram.id,
           name,
           abbreviation,
           credits,
@@ -131,7 +124,7 @@ export default function ProgramList() {
       }
 
       const response = await apiCall(body);
-      store.current.currentProgram = response.program;
+      store.currentProgram = response.program;
 
       await loadPrograms(centerId);
       setLoading(false);
@@ -172,13 +165,19 @@ export default function ProgramList() {
 
   const handleOnSelectCenter = async (center) => {
     setCenterId(center);
-    loadPrograms(center);
+    scrollTo({ top: 0 });
+    treeProps.setSelectedNode(null);
+    setTimeout(() => {
+      store.currentProgram = null;
+      setShowDetail(false);
+      loadPrograms(center);
+    }, 300);
   };
 
   const handleOnAddProgram = () => {
     scrollTo({ top: 0 });
     handleShowDetail(() => {
-      store.current.currentProgram = null;
+      store.currentProgram = null;
       treeProps.setSelectedNode(null);
     });
   };
@@ -190,7 +189,7 @@ export default function ProgramList() {
   const handleOnEditProgram = (e) => {
     scrollTo({ top: 0 });
     handleShowDetail(() => {
-      store.current.currentProgram = e.program;
+      store.currentProgram = e.program;
       treeProps.setSelectedNode(e.id);
     });
   };
@@ -228,9 +227,9 @@ export default function ProgramList() {
       }));
 
       return {
-        editable: isEmpty(store.current.currentProgram),
-        values: store.current.currentProgram || {},
-        labels: { title: isEmpty(store.current.currentProgram) ? title : editTitle },
+        editable: isEmpty(store.currentProgram),
+        values: store.currentProgram || {},
+        labels: { title: isEmpty(store.currentProgram) ? title : editTitle },
         data: [
           {
             label: basicData.step_label,
@@ -256,7 +255,7 @@ export default function ProgramList() {
       };
     }
     return null;
-  }, [setupLabels, store.current.currentProgram]);
+  }, [setupLabels, store.currentProgram]);
 
   return (
     <ContextContainer fullHeight>
@@ -273,6 +272,7 @@ export default function ProgramList() {
                       <SelectCenter
                         label={t('common.select_center')}
                         onChange={handleOnSelectCenter}
+                        firstSelected
                       />
                     </Box>
                     {centerId && (
