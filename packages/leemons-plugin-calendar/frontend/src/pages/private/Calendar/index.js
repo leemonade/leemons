@@ -182,7 +182,8 @@ function Calendar({ session }) {
 
   const onEventClick = (info) => {
     if (info.originalEvent) {
-      setSelectedEvent(info.originalEvent);
+      const { bgColor, icon, borderColor, ...e } = info.originalEvent;
+      setSelectedEvent(e);
       toggleEventModal();
     }
   };

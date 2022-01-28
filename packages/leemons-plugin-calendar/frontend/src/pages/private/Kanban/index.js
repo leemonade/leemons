@@ -17,6 +17,7 @@ import { useCalendarEventModal } from '@calendar/components/calendar-event-modal
 import { KanbanFilters, KanbanTaskCard } from '@bubbles-ui/leemons';
 import * as _ from 'lodash';
 import hooks from 'leemons-hooks';
+import transformEvent from '../../../helpers/transformEvent';
 
 function Kanban({ session }) {
   const ref = useRef({
@@ -114,13 +115,23 @@ function Kanban({ session }) {
         cards = _.filter(cards, (c) => !!c);
 
         if (ref.current.filters.calendars.length) {
-          cards = _.filter(cards, (c) => ref.current.filters.calendars.indexOf(c.calendar) >= 0);
+          cards = _.filter(cards, (c) => {
+            let show = false;
+            // eslint-disable-next-line consistent-return
+            _.forEach(c.data.classes, (calendar) => {
+              if (ref.current.filters.calendars.indexOf(calendar) >= 0) {
+                show = true;
+                return false;
+              }
+            });
+            return show;
+          });
         }
 
         cols.push({
           id: column.id,
           title: getColumnName(column.nameKey),
-          cards,
+          cards: _.map(cards, (card) => transformEvent(card, ref.current.data.calendars)),
         });
       }
     });
@@ -170,7 +181,6 @@ function Kanban({ session }) {
   function onFiltersChange(event) {
     ref.current.filters = {
       ...event,
-      calendars: event.calendars && event.calendars !== '*' ? [event.calendars] : [],
     };
     ref.current.board = getKanbanBoard();
     render();
@@ -181,7 +191,7 @@ function Kanban({ session }) {
     toggleEventModal();
   }
 
-  function onClickCard(e) {
+  function onClickCard({ bgColor, icon, borderColor, ...e }) {
     ref.current.event = e;
     toggleEventModal();
   }
@@ -248,17 +258,8 @@ function Kanban({ session }) {
       ) : null}
       <Box sx={() => ({ position: 'absolute', top: 0, left: 0, width: '100%' })}>
         <KanbanFilters
-          data={{
-            ...ref.current.filtersData,
-            calendars: [
-              {
-                label: filterMessages.selectCalendarsSubjects,
-                value: '*',
-              },
-              ...ref.current.filtersData.calendars,
-            ],
-          }}
-          value={{ ...ref.current.filters, calendars: ref.current.filters.calendars[0] || '*' }}
+          data={ref.current.filtersData}
+          value={{ ...ref.current.filters }}
           onChange={onFiltersChange}
           messages={filterMessages}
           addEventClick={addEventClick}
