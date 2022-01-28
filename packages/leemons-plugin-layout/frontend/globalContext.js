@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { isNil } from 'lodash';
 import { useLocation } from 'react-router-dom';
 import { ThemeProvider } from '@bubbles-ui/components';
+import { NotificationProvider } from '@bubbles-ui/notifications';
 import { LayoutContext, LayoutProvider } from './src/context/layout';
 import PrivateLayout from './src/components/PrivateLayout';
 
@@ -49,18 +50,20 @@ export function Provider({ children }) {
 
   return (
     <ThemeProvider>
-      <LayoutProvider
-        value={{
-          layoutState,
-          setLayoutState,
-          setPrivateLayout,
-          setLoading,
-          setContentRef,
-          scrollTo,
-        }}
-      >
-        <LayoutWrapper isPrivate={layoutState.private}>{children}</LayoutWrapper>
-      </LayoutProvider>
+      <NotificationProvider leftOffset={layoutState.menuWidth}>
+        <LayoutProvider
+          value={{
+            layoutState,
+            setLayoutState,
+            setPrivateLayout,
+            setLoading,
+            setContentRef,
+            scrollTo,
+          }}
+        >
+          <LayoutWrapper isPrivate={layoutState.private}>{children}</LayoutWrapper>
+        </LayoutProvider>
+      </NotificationProvider>
     </ThemeProvider>
   );
 }
