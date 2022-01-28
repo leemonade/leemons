@@ -15,6 +15,7 @@ import hooks from 'leemons-hooks';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@calendar/helpers/prefixPN';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
+import transformEvent from '../../../helpers/transformEvent';
 
 function Calendar({ session }) {
   const ref = useRef({ loading: true });
@@ -68,7 +69,15 @@ function Calendar({ session }) {
     const events = [];
     const calendarsByKey = keyBy(data.calendars, 'id');
     _.forEach(data.events, (event) => {
-      if (calendarsByKey[event.calendar].showEvents) {
+      if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
+        // eslint-disable-next-line consistent-return
+        _.forEach(event.data.classes, (calendar) => {
+          if (calendarsByKey[calendar].showEvents) {
+            events.push(transformEvent(event, data.calendars));
+            return false;
+          }
+        });
+      } else if (calendarsByKey[event.calendar].showEvents) {
         events.push(event);
       }
     });
@@ -116,6 +125,11 @@ function Calendar({ session }) {
             data
           );
         });
+        // eslint-disable-next-line no-param-reassign
+        data.classCalendars = _.map(_.filter(data.calendars, { isClass: true }), (calendar) => ({
+          label: calendar.name,
+          value: calendar.id,
+        }));
       });
 
       // Eventos
@@ -193,8 +207,6 @@ function Calendar({ session }) {
     return config;
   }, [ref.current.center, ref.current.loading]);
 
-
-
   if (ref.current.loading) return <Box>Loading...</Box>;
 
   return (
@@ -223,12 +235,12 @@ function Calendar({ session }) {
       </Box>
 
       <Box sx={(theme) => ({ padding: theme.spacing[4], width: '100%', height: '100vh' })}>
-
         {ref.current.center ? (
           <EventModal
             centerToken={ref.current.center.token}
             event={selectedEvent}
             close={toggleEventModal}
+            classCalendars={ref.current.centersDataById[ref.current.center.id].data.classCalendars}
           />
         ) : null}
 
@@ -251,9 +263,7 @@ function Calendar({ session }) {
             showWeekends: t('showWeekends'),
           }}
         />
-
       </Box>
-
     </Box>
   );
 }

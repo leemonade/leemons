@@ -17,13 +17,14 @@ import {
   Col,
   ContextContainer,
   Grid,
+  MultiSelect,
   Select,
   Textarea,
   TextInput,
 } from '@bubbles-ui/components';
-import { PluginKanbanIcon, PluginRedactorIcon } from '@bubbles-ui/icons/outline';
+import { PluginKanbanIcon, PluginRedactorIcon, TagsIcon } from '@bubbles-ui/icons/outline';
 
-export default function Task({ event, form, classes, disabled }) {
+export default function Task({ event, form, classes, disabled, allProps: { classCalendars } }) {
   const {
     Controller,
     control,
@@ -181,6 +182,32 @@ export default function Task({ event, form, classes, disabled }) {
         </Box>
       ) : null}
 
+      {classCalendars && classCalendars.length ? (
+        <Box>
+          <Grid columns={100} gutter={0}>
+            <Col span={10} className={classes.icon}>
+              <TagsIcon />
+            </Col>
+            <Col span={90}>
+              <Controller
+                name="classes"
+                control={control}
+                render={({ field }) => (
+                  <MultiSelect
+                    size="xs"
+                    disabled={disabled}
+                    data={classCalendars}
+                    label={t('tags')}
+                    error={get(errors, 'classes')}
+                    {...field}
+                  />
+                )}
+              />
+            </Col>
+          </Grid>
+        </Box>
+      ) : null}
+
       {columnsData ? (
         <Box>
           <Grid columns={100} gutter={0}>
@@ -195,6 +222,7 @@ export default function Task({ event, form, classes, disabled }) {
                 render={({ field }) => (
                   <Select
                     size="xs"
+                    label={t('column')}
                     disabled={disabled}
                     data={columnsData}
                     {...field}
@@ -218,4 +246,7 @@ Task.propTypes = {
   data: PropTypes.object,
   allFormData: PropTypes.object,
   tCommon: PropTypes.func,
+  classes: PropTypes.object,
+  disabled: PropTypes.bool,
+  allProps: PropTypes.object,
 };

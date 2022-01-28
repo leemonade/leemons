@@ -12,6 +12,7 @@ const PrivateLayoutStyles = createStyles((theme, { width }) => ({
   root: {
     display: 'flex',
     height: '100vh',
+    overflow: 'hidden',
   },
   sideNav: {
     width,

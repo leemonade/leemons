@@ -240,6 +240,7 @@ function Kanban({ session }) {
       {ref.current.center ? (
         <EventModal
           centerToken={ref.current.center.token}
+          classCalendars={ref.current.filtersData.calendars}
           event={ref.current.event}
           close={toggleEventModal}
           forceType="plugins.calendar.task"

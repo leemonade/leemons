@@ -9,23 +9,23 @@ import { getCalendarsToFrontendRequest } from '@calendar/request';
 import loadable from '@loadable/component';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { CALENDAR_EVENT_MODAL_DEFAULT_PROPS, CalendarEventModal } from '@bubbles-ui/leemons';
+import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
+import tKeys from '@multilanguage/helpers/tKeys';
+import PropTypes from 'prop-types';
+
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@calendar/helpers/prefixPN';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import hooks from 'leemons-hooks';
+import getUTCString from '../helpers/getUTCString';
+import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
 import {
   addEventRequest,
   getEventTypesRequest,
   removeEventRequest,
   updateEventRequest,
 } from '../request';
-import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
-import tKeys from '@multilanguage/helpers/tKeys';
-import PropTypes from 'prop-types';
-
-import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@calendar/helpers/prefixPN';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import getUTCString from '../helpers/getUTCString';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import hooks from 'leemons-hooks';
 
 function dynamicImport(pluginName, component) {
   return loadable(() =>
@@ -33,7 +33,15 @@ function dynamicImport(pluginName, component) {
   );
 }
 
-function NewCalendarEventModal({ opened, centerToken, event, forceType, onClose, close }) {
+function NewCalendarEventModal({
+  opened,
+  centerToken,
+  event,
+  forceType,
+  onClose,
+  close,
+  classCalendars,
+}) {
   const ref = useRef({ loading: true });
   const { t: tCommon } = useCommonTranslate('forms');
   const session = useSession({ redirectTo: goLoginPage });
@@ -239,7 +247,6 @@ function NewCalendarEventModal({ opened, centerToken, event, forceType, onClose,
 
   if (ref.current.loading) return null;
 
-
   return (
     <CalendarEventModal
       opened={opened}
@@ -257,6 +264,7 @@ function NewCalendarEventModal({ opened, centerToken, event, forceType, onClose,
       components={ref.current.components}
       onClose={onClose}
       defaultValues={ref.current.defaultValues}
+      classCalendars={classCalendars}
       messages={{
         fromLabel: t('from'),
         toLabel: t('to'),
@@ -288,6 +296,8 @@ NewCalendarEventModal.propTypes = {
   forceType: PropTypes.string,
   onClose: PropTypes.func,
   removeEvent: PropTypes.func,
+  close: PropTypes.func,
+  classCalendars: PropTypes.array,
 };
 
 export const useCalendarEventModal = () => {

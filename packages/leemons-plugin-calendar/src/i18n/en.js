@@ -44,6 +44,8 @@ module.exports = {
     description: 'Description',
     subtask: 'Subtask',
     add_subtask: 'Add sub-task',
+    tags: 'Tags',
+    column: 'Column',
   },
   detail_page: {
     title_placeholder: 'Calendar setup name',

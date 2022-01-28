@@ -44,6 +44,8 @@ module.exports = {
     description: 'Descripción',
     subtask: 'Subtarea',
     add_subtask: 'Añadir subtarea',
+    tags: 'Etiquetas',
+    column: 'Columna',
   },
   detail_page: {
     title_placeholder: 'Nombre de la configuración del calendario',
