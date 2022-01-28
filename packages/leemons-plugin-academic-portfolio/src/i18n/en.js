@@ -30,9 +30,12 @@ module.exports = {
     common: {
       select_center: 'Select center',
       add_program: 'Add new program',
+      create_done: 'Program created',
+      update_done: 'Program updated',
     },
     setup: {
       title: 'Setup new program',
+      editTitle: 'Edit program',
       basicData: {
         step_label: 'Basic Data',
         labels: {
@@ -110,6 +113,7 @@ module.exports = {
           numOfPeriods: 'N. periods',
           substagesFrequency: 'Frecuency',
           knowledgeAreas: 'Knowledge areas abbreviation',
+          haveKnowledge: 'Program have Knowledge areas',
           maxKnowledgeAbbreviation: 'Max abbreviation length for areas:',
           maxKnowledgeAbbreviationIsOnlyNumbers: 'Only numbers',
           subjectsIDConfig: 'Subjects ID configuration',
@@ -130,13 +134,13 @@ module.exports = {
         },
       },
       frequencies: {
-        annual: 'Annual',
-        half_yearly: 'Half-yearly(Semester)',
-        four_month: 'Four-month period',
-        quarterly: 'Quarterly(Trimester/Quarter)',
-        monthly: 'Monthly',
-        weekly: 'Weekly',
-        daily: 'Daily',
+        year: 'Annual',
+        semester: 'Half-yearly(Semester)',
+        quarter: 'Four-month period',
+        trimester: 'Quarterly(Trimester/Quarter)',
+        month: 'Monthly',
+        week: 'Weekly',
+        day: 'Daily',
       },
       firstDigits: {
         course: 'Course Nº',
