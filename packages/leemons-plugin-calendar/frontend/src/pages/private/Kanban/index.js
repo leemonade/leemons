@@ -22,6 +22,7 @@ import transformEvent from '../../../helpers/transformEvent';
 function Kanban({ session }) {
   const ref = useRef({
     loading: true,
+    mounted: true,
     filtersData: {
       calendars: [],
     },
@@ -36,7 +37,7 @@ function Kanban({ session }) {
   const [, setR] = useState();
 
   function render() {
-    setR(new Date().getTime());
+    if (ref.current.mounted) setR(new Date().getTime());
   }
 
   const filterMessages = useMemo(() => {
@@ -229,7 +230,11 @@ function Kanban({ session }) {
   }
 
   useEffect(() => {
+    ref.current.mounted = true;
     if (session) init();
+    return () => {
+      ref.current.mounted = false;
+    };
   }, [session]);
 
   useEffect(() => {

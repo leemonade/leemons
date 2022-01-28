@@ -23,4 +23,9 @@ module.exports = {
       btn: 'Setup dependencies',
     },
   },
+  evaluations_page: {
+    page_title: 'Evaluation System',
+    page_description:
+      'With this tool you can create different types of evaluation systems that you can later assign to your programs.',
+  },
 };

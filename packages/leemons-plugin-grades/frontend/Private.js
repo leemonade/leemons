@@ -5,6 +5,7 @@ import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
 const Welcome = loadable(() => import('./src/pages/private/WelcomePage'));
+const EvaluationList = loadable(() => import('./src/pages/private/Evaluations/EvaluationList'));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -14,6 +15,9 @@ export default function Private() {
     <Switch>
       <Route path={`${path}/welcome`}>
         <Welcome session={session} />
+      </Route>
+      <Route path={`${path}/evaluations`}>
+        <EvaluationList session={session} />
       </Route>
     </Switch>
   );
