@@ -38,7 +38,7 @@ module.exports = {
         labels: {
           title: 'Basic Data',
           name: 'Program name',
-          abbreviation: 'Program abbreviation/acronym',
+          abbreviation: 'Program abbreviation',
           creditSystem: 'No need for credit system',
           credits: 'Total credits',
           oneStudentGroup: 'This program has only one group of students',
@@ -129,15 +129,19 @@ module.exports = {
           substagesFrequency: { required: 'Required field' },
         },
       },
-    },
-    frequencies: {
-      annual: 'Annual',
-      half_yearly: 'Half-yearly(Semester)',
-      four_month: 'Four-month period',
-      quarterly: 'Quarterly(Trimester/Quarter)',
-      monthly: 'Monthly',
-      weekly: 'Weekly',
-      daily: 'Daily',
+      frequencies: {
+        annual: 'Annual',
+        half_yearly: 'Half-yearly(Semester)',
+        four_month: 'Four-month period',
+        quarterly: 'Quarterly(Trimester/Quarter)',
+        monthly: 'Monthly',
+        weekly: 'Weekly',
+        daily: 'Daily',
+      },
+      firstDigits: {
+        course: 'Course Nº',
+        none: 'None',
+      },
     },
   },
 };

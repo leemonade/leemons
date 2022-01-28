@@ -33,5 +33,5 @@ export function addWarningAlert(title, message, options) {
 }
 
 export function addDefaultAlert(title, message, options) {
-  return addAlert('default', title, message, options);
+  return addAlert('none', title, message, options);
 }

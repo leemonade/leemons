@@ -102,10 +102,12 @@ function ListProfiles() {
       <Box style={{ flex: 1 }}>
         <Tabs usePageLayout={true} panelColor="solid" fullHeight>
           <TabPanel label={t('page_title')}>
-            <Paper padding={5} mt={20} mb={20} fullWidth>
+            <Paper padding={2} mt={20} mb={20} fullWidth>
               <LoadingErrorAlert />
               {!loading && !loadingError ? (
-                <Table columns={tableHeaders} data={tableItems} />
+                <Box>
+                  <Table columns={tableHeaders} data={tableItems} />
+                </Box>
               ) : null}
             </Paper>
           </TabPanel>

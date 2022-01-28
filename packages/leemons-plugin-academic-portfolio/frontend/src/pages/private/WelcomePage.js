@@ -108,7 +108,7 @@ export default function WelcomePage() {
         />
       </PageContainer>
 
-      <Paper color="solid" shadow="none" padding="none">
+      <Paper color="solid" shadow="none" padding={0}>
         <PageContainer>
           <ContextContainer direction="row" fullWidth padded="vertical">
             <StepCard

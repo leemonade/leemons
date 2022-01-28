@@ -1,9 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Box } from '@bubbles-ui/components';
-import { findIndex } from 'lodash';
+import { useEffect } from 'react';
+// import { Alert, Box } from '@bubbles-ui/components';
+// import { findIndex } from 'lodash';
 import hooks from 'leemons-hooks';
+import { useNotifications } from '@bubbles-ui/notifications';
 
 export default function AlertStack() {
+  /*
   const alertRef = useRef([]);
   const [alerts, setAlerts] = useState([]);
 
@@ -21,16 +23,26 @@ export default function AlertStack() {
     }, delay);
   };
 
-  const addAlert = ({ args }) => {
-    const { type, title, message, options } = args[0];
-    const id = new Date().getTime();
-    setAlerts([...alerts, { id, type, title, message, options }]);
-    waitAndCloseAlert(id, options?.closeDelay);
-  };
-
   useEffect(() => {
     alertRef.current = alerts;
   }, [alerts]);
+  */
+
+  const notifications = useNotifications();
+
+  const addAlert = ({ args }) => {
+    const { type, title, message, options } = args[0];
+    const id = new Date().getTime();
+    notifications.showNotification({
+      id,
+      title,
+      message,
+      severity: type,
+      autoClose: options?.closeDelay || 5000,
+    });
+    // setAlerts([...alerts, { id, type, title, message, options }]);
+    // waitAndCloseAlert(id, options?.closeDelay);
+  };
 
   useEffect(() => {
     hooks.addAction('layout:add:alert', addAlert);
@@ -38,6 +50,8 @@ export default function AlertStack() {
       hooks.removeAction('layout:add:alert', addAlert);
     };
   });
+  return null;
+  /*
   return (
     <Box>
       {alerts.map((alert) => (
@@ -49,4 +63,5 @@ export default function AlertStack() {
       ))}
     </Box>
   );
+  */
 }

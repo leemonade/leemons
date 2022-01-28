@@ -161,7 +161,8 @@ module.exports = ({ alias, filesToCopy, useLegacy = false }) => ({
           },
           {
             test: /\.js|mjs|jsx$/,
-            exclude: /node_modules/,
+            // exclude: /node_modules/,
+            exclude: /node_modules\/(?!(@bubbles-ui\/*)\/).*/,
             loader: 'babel-loader',
             options: {
               plugins: [isDev && require.resolve('react-refresh/babel')].filter(Boolean),

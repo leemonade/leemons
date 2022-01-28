@@ -38,7 +38,7 @@ module.exports = {
         labels: {
           title: 'Datos básicos',
           name: 'Nombre del programa',
-          abbreviation: 'Abreviatura/acrónimo del programa:',
+          abbreviation: 'Abreviatura del programa:',
           creditSystem: 'No es necesario el sistema de créditos',
           credits: 'Total de créditos',
           oneStudentGroup: 'Este programa sólo tiene un grupo de estudiantes',
@@ -130,15 +130,19 @@ module.exports = {
           substagesFrequency: { required: 'Campo requerido' },
         },
       },
-    },
-    frequencies: {
-      annual: 'Anual',
-      half_yearly: 'Medio-año(Semestre)',
-      four_month: 'Cuatrimestral',
-      quarterly: 'Trimestral',
-      monthly: 'Mensual',
-      weekly: 'Semanal',
-      daily: 'Diario',
+      frequencies: {
+        annual: 'Anual',
+        half_yearly: 'Medio-año(Semestre)',
+        four_month: 'Cuatrimestral',
+        quarterly: 'Trimestral',
+        monthly: 'Mensual',
+        weekly: 'Semanal',
+        daily: 'Diario',
+      },
+      firstDigits: {
+        course: 'Nº Curso',
+        none: 'Ninguno',
+      },
     },
   },
 };
