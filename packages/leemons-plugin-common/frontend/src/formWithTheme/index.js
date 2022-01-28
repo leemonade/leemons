@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FormWithTheme } from '@bubbles-ui/leemons';
 import { withTheme } from '@leemonade/rjsf-core';
 import {
+  Button,
   Checkbox,
   FormControl,
   Input,
@@ -12,7 +13,6 @@ import {
   Textarea,
   Toggle,
   UserCard,
-  Button,
 } from 'leemons-ui';
 
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -845,7 +845,9 @@ function index(schema, ui, conditions, props = {}) {
   ];
 }
 
-export default function formWithTheme(schema, ui, conditions, props = {}) {
+export function formWithTheme(schema, ui, conditions, props = {}) {
   // Añadir otro parametro donde se le pase un onUserSearch y que este busque en el backend los usuarios y devuelva el formato que necesita el select
   return FormWithTheme(schema, ui, conditions, props);
 }
+
+export default formWithTheme;

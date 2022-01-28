@@ -3,18 +3,15 @@ const en = require('./src/i18n/en');
 const { translations } = require('./src/translations');
 
 async function init() {
-  try {
-    if (translations()) {
-      await translations().common.setManyByJSON(
-        {
-          es,
-          en,
-        },
-        leemons.plugin.prefixPN('')
-      );
-    }
-  } catch (e) {
-    console.error(e);
+  const locales = translations();
+  if (locales) {
+    await locales.common.setManyByJSON(
+      {
+        es,
+        en,
+      },
+      leemons.plugin.prefixPN('')
+    );
   }
 }
 
