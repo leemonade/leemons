@@ -72,6 +72,12 @@ module.exports = [
     handler: 'grade-scales.removeGradeScale',
     authenticated: true,
   },
+  {
+    path: '/grade-scales/can/:id',
+    method: 'DELETE',
+    handler: 'grade-scales.canRemoveGradeScale',
+    authenticated: true,
+  },
   // Grade Tags
   {
     path: '/grade-tags',

@@ -6,4 +6,84 @@ async function listGrades({ page, size, center }) {
   });
 }
 
-export { listGrades };
+async function addGrade(body) {
+  return leemons.api(`${pluginPath}/grades`, {
+    method: 'POST',
+    body,
+    allAgents: true,
+  });
+}
+
+async function updateGrade(body) {
+  return leemons.api(`${pluginPath}/grades`, {
+    method: 'PUT',
+    body,
+    allAgents: true,
+  });
+}
+
+async function addGradeTag(body) {
+  return leemons.api(`${pluginPath}/grade-tags`, {
+    method: 'POST',
+    body,
+    allAgents: true,
+  });
+}
+
+async function updateGradeTag(body) {
+  return leemons.api(`${pluginPath}/grade-tags`, {
+    method: 'PUT',
+    body,
+    allAgents: true,
+  });
+}
+
+async function deleteGradeTag(id) {
+  return leemons.api(`${pluginPath}/grade-tags/${id}`, {
+    method: 'DELETE',
+    allAgents: true,
+  });
+}
+
+async function addGradeScale(body) {
+  return leemons.api(`${pluginPath}/grade-scales`, {
+    method: 'POST',
+    body,
+    allAgents: true,
+  });
+}
+
+async function updateGradeScale(body) {
+  return leemons.api(`${pluginPath}/grade-scales`, {
+    method: 'PUT',
+    body,
+    allAgents: true,
+  });
+}
+
+async function deleteGradeScale(id) {
+  return leemons.api(`${pluginPath}/grade-scales/${id}`, {
+    method: 'DELETE',
+    allAgents: true,
+  });
+}
+
+async function canDeleteGradeScale(id) {
+  return leemons.api(`${pluginPath}/grade-scales/${id}`, {
+    method: 'DELETE',
+    allAgents: true,
+  });
+}
+
+export {
+  listGrades,
+  addGrade,
+  updateGrade,
+  addGradeTag,
+  updateGradeTag,
+  deleteGradeTag,
+  addGradeScale,
+  updateGradeScale,
+  deleteGradeScale,
+  canDeleteGradeScale,
+};

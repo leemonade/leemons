@@ -1,19 +1,15 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
-import {
-  Box,
-  Button,
-  ContextContainer,
-  NumberInput,
-  RadioGroup,
-  Switch,
-  TableInput,
-  TextInput,
-  Title,
-} from '@bubbles-ui/components';
+import { useForm } from 'react-hook-form';
+import { Box, Button, ContextContainer, Paragraph, Title } from '@bubbles-ui/components';
 import { find } from 'lodash';
 import { EvaluationDetailStyles } from './styles';
+import { Name } from './components/Name';
+import { Type } from './components/Type';
+import { IsPercentage } from './components/IsPercentage';
+import { Scales } from './components/Scales';
+import { MinScaleToPromote } from './components/MinScaleToPromote';
+import { OtherTags } from './components/OtherTags';
 
 export const EVALUATION_DETAIL_FORM_MESSAGES = {
   nameLabel: 'Name',
@@ -23,6 +19,14 @@ export const EVALUATION_DETAIL_FORM_MESSAGES = {
   scalesNumberLabel: 'Number',
   scalesDescriptionLabel: 'Description',
   scalesPercentageLabel: '% Percentage',
+  scalesNumericalEquivalentLabel: 'Numerical equivalent',
+  scalesLetterLabel: 'Letter',
+  minScaleToPromoteLabel: 'Minimum value to pass/promote',
+  minScaleToPromotePlaceholder: 'Select value...',
+  otherTagsLabel: 'Other tags',
+  otherTagsDescription:
+    'If you need to use other tags to classify special conditions for some subjects, you can freely create them here.',
+  otherTagsRelationScaleLabel: 'Co-relation with some scale value',
   tableAdd: 'Add',
   tableRemove: 'Remove',
   tableEdit: 'Edit',
@@ -33,139 +37,106 @@ export const EVALUATION_DETAIL_FORM_MESSAGES = {
 export const EVALUATION_DETAIL_FORM_ERROR_MESSAGES = {
   nameRequired: 'Field required',
   typeRequired: 'Field required',
+  minScaleToPromoteRequired: 'Field required',
+  errorCode6003: 'Cannot delete grade scale because it is used in grade tags',
 };
 
-const EvaluationDetail = ({ messages, errorMessages, selectData, defaultValues, onSubmit }) => {
+const EvaluationDetail = ({
+  messages,
+  errorMessages,
+  selectData,
+  defaultValues,
+  onSubmit,
+  onBeforeRemoveScale,
+  onBeforeRemoveTag,
+}) => {
   const { classes, cx } = EvaluationDetailStyles({});
 
+  const form = useForm({ defaultValues });
   const {
     reset,
-    control,
     watch,
+    unregister,
+    resetField,
     handleSubmit,
     formState: { errors },
-  } = useForm({ defaultValues });
+  } = form;
 
   useEffect(() => {
-    reset(defaultValues);
+    console.log('Resteamos', defaultValues);
+    reset({ ...defaultValues });
   }, [defaultValues]);
 
-  const type = find(selectData.type, { value: watch('type') });
-  const isPercentage = watch('isPercentage');
+  useEffect(() => {
+    const subscription = watch(({ type }, { name }) => {
+      if (name === 'type') {
+        resetField('scales');
+        if (type !== 'numeric') {
+          unregister('isPercentage');
+        }
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
-  const tableInputConfig = {
-    columns: [
-      {
-        Header:
-          type && type.value === 'numeric' && !isPercentage
-            ? messages.scalesNumberLabel
-            : messages.scalesPercentageLabel,
-        accessor: 'number',
-        input: {
-          node: (
-            <NumberInput step={isPercentage ? 0.05 : 0.0005} precision={isPercentage ? 2 : 4} />
-          ),
-          rules: { required: 'Required field', max: isPercentage ? 100 : undefined },
-        },
-      },
-      {
-        Header: messages.scalesDescriptionLabel,
-        accessor: 'name',
-        input: {
-          node: <TextInput />,
-          rules: { required: 'Required field' },
-        },
-      },
-    ],
-    labels: {
-      add: 'Add',
-      remove: 'Remove',
-      edit: 'Edit',
-      accept: 'Accept',
-      cancel: 'Cancel',
-    },
-  };
+  const type = find(selectData.type, { value: watch('type') });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <ContextContainer>
         <Box>
-          <Controller
-            name="name"
-            control={control}
-            rules={{
-              required: errorMessages.nameRequired,
-            }}
-            render={({ field }) => (
-              <TextInput
-                label={messages.nameLabel}
-                placeholder={messages.namePlaceholder}
-                error={errors.name}
-                required
-                {...field}
-              />
-            )}
-          />
+          <Name messages={messages} errorMessages={errorMessages} form={form} />
         </Box>
         <Box>
-          <Controller
-            name="type"
-            control={control}
-            rules={{
-              required: errorMessages.typeRequired,
-            }}
-            render={({ field }) => (
-              <RadioGroup
-                label={messages.typeLabel}
-                data={selectData.type}
-                error={errors.type}
-                required
-                {...field}
-              />
-            )}
+          <Type
+            messages={messages}
+            errorMessages={errorMessages}
+            selectData={selectData}
+            form={form}
           />
         </Box>
         {type ? (
           <>
             <Box>
-              <Title order={4}>{type.label}</Title>
+              <Title order={5}>{type.label}</Title>
             </Box>
             {type.value === 'numeric' ? (
               <Box>
-                <Controller
-                  name="isPercentage"
-                  control={control}
-                  rules={{
-                    required: errorMessages.typeRequired,
-                  }}
-                  render={({ field }) => (
-                    <Switch
-                      label={messages.percentagesLabel}
-                      error={errors.isPercentage}
-                      required
-                      {...field}
-                    />
-                  )}
-                />
+                <IsPercentage messages={messages} errorMessages={errorMessages} form={form} />
               </Box>
             ) : null}
             <Box>
-              <Controller
-                name="scales"
-                control={control}
-                rules={{
-                  required: errorMessages.typeRequired,
-                }}
-                render={({ field }) => (
-                  <TableInput editable {...field} data={field.value} {...tableInputConfig} />
-                )}
+              <Scales
+                messages={messages}
+                errorMessages={errorMessages}
+                selectData={selectData}
+                onBeforeRemove={onBeforeRemoveScale}
+                form={form}
               />
             </Box>
           </>
         ) : null}
 
         <Box>
-          <Button>{messages.saveButtonLabel}</Button>
+          <MinScaleToPromote messages={messages} errorMessages={errorMessages} form={form} />
+        </Box>
+
+        <Box>
+          <Title order={5}>{messages.otherTagsLabel}</Title>
+          <Paragraph>{messages.otherTagsDescription}</Paragraph>
+        </Box>
+
+        <Box>
+          <OtherTags
+            messages={messages}
+            errorMessages={errorMessages}
+            form={form}
+            onBeforeRemove={onBeforeRemoveTag}
+          />
+        </Box>
+
+        <Box>
+          <Button type="submit">{messages.saveButtonLabel}</Button>
         </Box>
       </ContextContainer>
     </form>
@@ -191,6 +162,8 @@ EvaluationDetail.propTypes = {
   onSubmit: PropTypes.func,
   defaultValues: PropTypes.object,
   selectData: PropTypes.object,
+  onBeforeRemoveScale: PropTypes.func,
+  onBeforeRemoveTag: PropTypes.func,
 };
 
 export { EvaluationDetail };

@@ -24,4 +24,41 @@ module.exports = {
       btn: 'Configurar dependencias',
     },
   },
+  evaluationsPage: {
+    pageTitle: 'Sistema de evaluación',
+    pageDescription:
+      'Con esta herramienta puedes crear diferentes tipos de sistemas de evaluación que luego puedes asignar a tus programas.',
+    addGrade: 'Añadir nuevo sistema de evaluación',
+    selectCenter: 'Seleccionar centro',
+    errorCode6002:
+      'No se puede eliminar la escala de calificaciones porque se utiliza en las condiciones',
+    errorCode6003:
+      'No se puede eliminar la escala de calificaciones porque se utiliza en las etiquetas de calificación',
+    errorCode6004: 'No se puede eliminar la escala de grados porque se utiliza en los grados',
+    detail: {
+      nameLabel: 'Nombre',
+      saveButtonLabel: 'Guardar',
+      typeLabel: 'Elegir tipo de escala de notas:',
+      percentagesLabel: 'Usar porcentajes en lugar de números',
+      scalesNumberLabel: 'Número',
+      scalesDescriptionLabel: 'Descripción',
+      scalesPercentageLabel: 'Porcentaje',
+      scalesNumericalEquivalentLabel: 'Equivalente numérico',
+      scalesLetterLabel: 'Letra',
+      minScaleToPromoteLabel: 'Valor mínimo para aprobar/promover',
+      minScaleToPromotePlaceholder: 'Seleccione el valor...',
+      otherTagsLabel: 'Otras etiquetas',
+      otherTagsDescription:
+        'Si necesita utilizar otras etiquetas para clasificar condiciones especiales para algunos temas, puede crearlas libremente aquí.',
+      otherTagsRelationScaleLabel: 'Co-relación con algún valor de escala',
+      tableAdd: 'Añadir',
+      tableRemove: 'Quitar',
+      tableEdit: 'Editar',
+      tableAccept: 'Aceptar',
+      tableCancel: 'Cancelar',
+      nameRequired: 'Campo requerido',
+      typeRequired: 'Campo requerido',
+      minScaleToPromoteRequired: 'Campo requerido',
+    },
+  },
 };
