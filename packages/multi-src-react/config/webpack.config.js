@@ -31,7 +31,9 @@ module.exports = ({ alias, filesToCopy, useLegacy = false }) => ({
     chunkFilename: isProduction
       ? 'static/js/[name].[contenthash:8].chunk.js'
       : 'static/js/[name].chunk.js',
-    assetModuleFilename: 'static/media/[name].[hash][ext]',
+    assetModuleFilename: isProduction
+      ? 'static/media/[name].[hash][ext]'
+      : 'static/media/[name].[ext]',
     // webpack uses `publicPath` to determine where the app is being served from.
     // It requires a trailing slash, or the file assets will get an incorrect path.
     publicPath: '/',
@@ -107,7 +109,7 @@ module.exports = ({ alias, filesToCopy, useLegacy = false }) => ({
   },
   module: {
     // Enforce the named imports to be exported
-    strictExportPresence: true,
+    strictExportPresence: isProduction,
     rules: [
       {
         enforce: 'pre',
