@@ -82,4 +82,22 @@ module.exports = [
     handler: 'attachments.remove',
     authenticated: true,
   },
+
+  /**
+   *  Assignments
+   */
+
+  // Instance
+  {
+    method: 'POST',
+    path: '/tasks/:task/assignments/instance',
+    handler: 'assignments.instanceCreate',
+    authenticated: true,
+  },
+  {
+    method: 'DELETE',
+    path: '/tasks/:task/assignments/instance/:instance',
+    handler: 'assignments.instanceDelete',
+    authenticated: true,
+  },
 ];
