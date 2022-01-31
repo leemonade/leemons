@@ -2,7 +2,10 @@ const createInstance = require('../src/services/assignment/instance/create');
 const removeInstance = require('../src/services/assignment/instance/remove');
 
 const assignStudent = require('../src/services/assignment/student/assign');
+const listStudents = require('../src/services/assignment/student/list');
+
 const assignTeacher = require('../src/services/assignment/teacher/assign');
+const listTeachers = require('../src/services/assignment/teacher/list');
 
 module.exports = {
   /**
@@ -70,6 +73,26 @@ module.exports = {
       };
     }
   },
+  studentList: async (ctx) => {
+    try {
+      const { instance } = ctx.request.params;
+      const { page, size } = ctx.request.query;
+
+      const students = await listStudents(instance, parseInt(page, 10), parseInt(size, 10));
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        students,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        message: e.message,
+      };
+    }
+  },
 
   /**
    * Teachers
@@ -85,6 +108,26 @@ module.exports = {
       ctx.body = {
         status: 201,
         ...assigned,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        message: e.message,
+      };
+    }
+  },
+  teacherList: async (ctx) => {
+    try {
+      const { instance } = ctx.request.params;
+      const { page, size } = ctx.request.query;
+
+      const students = await listTeachers(instance, parseInt(page, 10), parseInt(size, 10));
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        students,
       };
     } catch (e) {
       ctx.status = 400;

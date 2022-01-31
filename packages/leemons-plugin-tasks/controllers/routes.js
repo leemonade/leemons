@@ -103,15 +103,27 @@ module.exports = [
   // Student
   {
     method: 'POST',
-    path: '/tasks/instances/:id/student',
+    path: '/tasks/instances/:instance/student',
     handler: 'assignments.studentAssign',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/instances/:instance/students',
+    handler: 'assignments.studentList',
     authenticated: true,
   },
   // Teacher
   {
     method: 'POST',
-    path: '/tasks/instances/:id/teacher',
+    path: '/tasks/instances/:instance/teacher',
     handler: 'assignments.teacherAssign',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/instances/:instance/teachers',
+    handler: 'assignments.teacherList',
     authenticated: true,
   },
 ];
