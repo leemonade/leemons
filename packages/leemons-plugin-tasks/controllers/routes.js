@@ -100,4 +100,18 @@ module.exports = [
     handler: 'assignments.instanceDelete',
     authenticated: true,
   },
+  // Student
+  {
+    method: 'POST',
+    path: '/tasks/instances/:id/student',
+    handler: 'assignments.studentAssign',
+    authenticated: true,
+  },
+  // Teacher
+  {
+    method: 'POST',
+    path: '/tasks/instances/:id/teacher',
+    handler: 'assignments.teacherAssign',
+    authenticated: true,
+  },
 ];
