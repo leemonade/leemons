@@ -108,6 +108,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    method: 'DELETE',
+    path: '/tasks/instances/:instance/student/:student',
+    handler: 'assignments.studentUnassign',
+    authenticated: true,
+  },
+  {
     method: 'GET',
     path: '/tasks/instances/:instance/students',
     handler: 'assignments.studentList',
@@ -118,6 +124,12 @@ module.exports = [
     method: 'POST',
     path: '/tasks/instances/:instance/teacher',
     handler: 'assignments.teacherAssign',
+    authenticated: true,
+  },
+  {
+    method: 'DELETE',
+    path: '/tasks/instances/:instance/teacher/:teacher',
+    handler: 'assignments.teacherUnassign',
     authenticated: true,
   },
   {

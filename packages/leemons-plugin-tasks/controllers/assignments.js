@@ -2,9 +2,11 @@ const createInstance = require('../src/services/assignment/instance/create');
 const removeInstance = require('../src/services/assignment/instance/remove');
 
 const assignStudent = require('../src/services/assignment/student/assign');
+const unassignStudent = require('../src/services/assignment/student/remove');
 const listStudents = require('../src/services/assignment/student/list');
 
 const assignTeacher = require('../src/services/assignment/teacher/assign');
+const unassignTeacher = require('../src/services/assignment/teacher/remove');
 const listTeachers = require('../src/services/assignment/teacher/list');
 
 module.exports = {
@@ -73,6 +75,25 @@ module.exports = {
       };
     }
   },
+  studentUnassign: async (ctx) => {
+    try {
+      const { instance, student } = ctx.request.params;
+
+      const unassigned = await unassignStudent(instance, student);
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        ...unassigned,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        message: e.message,
+      };
+    }
+  },
   studentList: async (ctx) => {
     try {
       const { instance } = ctx.request.params;
@@ -108,6 +129,25 @@ module.exports = {
       ctx.body = {
         status: 201,
         ...assigned,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        message: e.message,
+      };
+    }
+  },
+  teacherUnassign: async (ctx) => {
+    try {
+      const { instance, teacher } = ctx.request.params;
+
+      const unassigned = await unassignTeacher(instance, teacher);
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        ...unassigned,
       };
     } catch (e) {
       ctx.status = 400;
