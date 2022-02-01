@@ -35,7 +35,6 @@ async function removeProgramByIds(ids, { soft, transacting: _transacting } = {})
         substages = _.concat(substages, program.customSubstages);
         subjectTypes = _.concat(subjectTypes, program.subjectTypes);
       });
-
       // ES: Eliminamos primero las clases y las asignaturas por que si no la bbdd da error por las claves foraneas
       // EN: First we delete the classes and subjects because if the database gives an error for foreign keys
       await removeClassesByIds(_.map(classes, 'id'), { soft, transacting });

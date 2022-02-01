@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import _ from 'lodash';
 import { Paper, Box, Stack, ActionButton, Tabs, TabPanel, Table } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
@@ -9,7 +10,6 @@ import { listProfilesRequest } from '@users/request';
 import { goDetailProfilePage } from '@users/navigate';
 import prefixPN from '@users/helpers/prefixPN';
 import { Link, useHistory } from 'react-router-dom';
-import _ from 'lodash';
 
 function ListProfiles() {
   const [t] = useTranslateLoader(prefixPN('list_profiles'));
@@ -102,10 +102,12 @@ function ListProfiles() {
       <Box style={{ flex: 1 }}>
         <Tabs usePageLayout={true} panelColor="solid" fullHeight>
           <TabPanel label={t('page_title')}>
-            <Paper padding={5} mt={20} mb={20} fullWidth>
+            <Paper padding={2} mt={20} mb={20} fullWidth>
               <LoadingErrorAlert />
               {!loading && !loadingError ? (
-                <Table columns={tableHeaders} data={tableItems} />
+                <Box>
+                  <Table columns={tableHeaders} data={tableItems} />
+                </Box>
               ) : null}
             </Paper>
           </TabPanel>

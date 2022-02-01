@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FormWithTheme } from '@bubbles-ui/leemons';
 import { withTheme } from '@leemonade/rjsf-core';
 import {
+  Button,
   Checkbox,
   FormControl,
   Input,
@@ -12,7 +13,6 @@ import {
   Textarea,
   Toggle,
   UserCard,
-  Button,
 } from 'leemons-ui';
 
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';

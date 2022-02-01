@@ -27,8 +27,12 @@ async function removeClassesByIds(ids, { soft, transacting: _transacting } = {})
         { transacting }
       );
 
-      await removeClassesByIds(_.map(refClasses, 'id'), { soft, transacting });
+      const refIds = _.isArray(refClasses) ? _.map(refClasses, 'id') : [];
+      if (refIds && refIds.length) {
+        await removeClassesByIds(refIds, { soft, transacting });
+      }
 
+      await leemons.events.emit('before-remove-classes', { classes, soft, transacting });
       await table.class.deleteMany({ id_$in: _.map(classes, 'id') }, { soft, transacting });
       await leemons.events.emit('after-remove-classes', { classes, soft, transacting });
       return true;

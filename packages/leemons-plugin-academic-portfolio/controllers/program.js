@@ -79,7 +79,9 @@ async function programSubstages(ctx) {
 }
 
 async function deleteProgram(ctx) {
-  await programService.removeProgramByIds(ctx.request.params.id, { soft: ctx.request.query.soft });
+  await programService.removeProgramByIds(ctx.request.params.id, {
+    soft: ctx.request.query.soft === 'true',
+  });
   ctx.status = 200;
   ctx.body = { status: 200 };
 }

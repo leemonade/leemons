@@ -5,6 +5,7 @@ const table = {
   conditions: leemons.query('plugins_grades::conditions'),
   gradeScales: leemons.query('plugins_grades::grade-scales'),
   conditionGroups: leemons.query('plugins_grades::condition-groups'),
+  settings: leemons.query('plugins_grades::settings'),
 };
 
 module.exports = { table };

@@ -10,7 +10,7 @@ async function paginate(table, page, size, query, { transacting } = {}) {
     items: values[1],
     count: values[1].length,
     totalCount: values[0],
-    totalPages: values[0] / size,
+    totalPages: Math.ceil(values[0] / size),
     page,
     size,
     nextPage: page * size < values[0] ? page + 1 : page,
