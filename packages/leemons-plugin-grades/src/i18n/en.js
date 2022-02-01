@@ -28,6 +28,7 @@ module.exports = {
     pageDescription:
       'With this tool you can create different types of evaluation systems that you can later assign to your programs.',
     addGrade: 'Add new evaluation system',
+    successSave: 'Saved successfully',
     selectCenter: 'Seleccionar centro',
     errorCode6002: 'Cannot delete grade scale because it is used in conditions',
     errorCode6003: 'Cannot delete grade scale because it is used in grade tags',

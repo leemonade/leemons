@@ -29,6 +29,7 @@ module.exports = {
     pageDescription:
       'Con esta herramienta puedes crear diferentes tipos de sistemas de evaluación que luego puedes asignar a tus programas.',
     addGrade: 'Añadir nuevo sistema de evaluación',
+    successSave: 'Guardado correctamente',
     selectCenter: 'Seleccionar centro',
     errorCode6002:
       'No se puede eliminar la escala de calificaciones porque se utiliza en las condiciones',

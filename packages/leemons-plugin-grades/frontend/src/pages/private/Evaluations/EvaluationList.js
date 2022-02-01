@@ -14,17 +14,21 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@grades/helpers/prefixPN';
 import { SelectCenter } from '@users/components/SelectCenter';
 import { useStore } from '@common/useStore';
-import { addErrorAlert } from '@layout/alert';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import {
   addGradeRequest,
+  addGradeScaleRequest,
   addGradeTagRequest,
   canDeleteGradeScaleRequest,
+  deleteGradeScaleRequest,
   deleteGradeTagRequest,
   listGradesRequest,
   updateGradeRequest,
+  updateGradeScaleRequest,
   updateGradeTagRequest,
 } from '../../../request';
 import {
+  EVALUATION_DETAIL_FORM_ERROR_MESSAGES,
   EVALUATION_DETAIL_FORM_MESSAGES,
   EvaluationDetail,
 } from '../../../components/EvaluationDetail';
@@ -106,65 +110,127 @@ export default function EvaluationList() {
 
   async function onSubmit(e) {
     try {
-      let grade = e;
-      if (!e.id) {
-        // Add
-        const add = { name: e.name, type: e.type, scales: e.scales };
-        if (e.type === 'numeric') add.isPercentage = !!e.isPercentage;
-        const { grade: addGrade } = await addGradeRequest({ ...add, center: store.center });
-        grade = addGrade;
-      }
-      // Update
-      const update = {
-        id: grade.id,
-        name: grade.name,
-        minScaleToPromote: find(grade.scales, { number: e.minScaleToPromote }).id,
-      };
-      const { grade: updatedGrade } = await updateGradeRequest({ ...update });
+      if (!store.saving) {
+        store.saving = true;
+        render();
+        let grade = e;
+        if (!e.id) {
+          // Add
+          const add = { name: e.name, type: e.type, scales: [] };
+          if (e.type === 'numeric') add.isPercentage = !!e.isPercentage;
+          const { grade: addGrade } = await addGradeRequest({ ...add, center: store.center });
+          grade = addGrade;
+        }
 
-      // TODO Eliminar primero los tags, luego los scales, luego creamos/ actualizamos los scales y luego creamos / actualizamos los tags
+        let tagsToDelete = [];
+        let tagsToUpdate = [];
+        let tagsToAdd = [];
+        let scalesToDelete = [];
+        let scalesToUpdate = [];
+        let scalesToAdd = [];
 
-      if (e.tags) {
-        e.tags = map(e.tags, (tag) => ({
-          ...tag,
-          scale: find(grade.scales, { number: e.minScaleToPromote }).id,
-        }));
-        const currentTagIds = map(updatedGrade.tags, 'id');
+        if (!e.tags) e.tags = [];
+        if (!e.scales) e.scales = [];
+
+        const currentTagIds = map(store.selectedGrade.tags, 'id');
+        const currentScaleIds = map(store.selectedGrade.scales, 'id');
         const newTagIds = map(e.tags, 'id');
-        // ES: Cogemos las ids actuales que no existan dentro de las nuevas para borrarlas
-        const toDelete = currentTagIds.filter((id) => !newTagIds.includes(id));
-        // ES: Cogemos los tags nuevos que no tengan id para crearlos
-        const toCreate = e.tags.filter((tag) => !tag.id);
-        // ES: Cogemos los tags nuevos que tengan id para actualizarlos
-        const toUpdate = e.tags.filter((tag) => tag.id);
-        // ES: Borramos / Actualizamos / Creamos los tags
-        await Promise.all([
-          Promise.all(toDelete.map((id) => deleteGradeTagRequest(id))),
-          Promise.all(
-            toCreate.map((tag) => addGradeTagRequest({ ...tag, grade: updatedGrade.id }))
-          ),
-          Promise.all(toUpdate.map((tag) => updateGradeTagRequest({ ...tag }))),
-        ]);
-      }
+        const newScaleIds = map(e.scales, 'id');
 
-      await onSelectCenter(store.center);
+        e.scales = map(e.scales, (scale) => {
+          const item = {
+            description: scale.description,
+            number: scale.number,
+          };
+          if (scale.id) item.id = scale.id;
+          if (scale.letter) item.letter = scale.letter;
+          return item;
+        });
+
+        // ES: Cogemos las ids actuales que no existan dentro de las nuevas para borrarlas
+        tagsToDelete = currentTagIds.filter((id) => !newTagIds.includes(id));
+        scalesToDelete = currentScaleIds.filter((id) => !newScaleIds.includes(id));
+        scalesToAdd = e.scales.filter((scale) => !scale.id);
+        scalesToUpdate = e.scales.filter((scale) => scale.id);
+
+        const [newScales, updatedScales] = await Promise.all([
+          Promise.all(
+            scalesToAdd.map((scale) => addGradeScaleRequest({ ...scale, grade: grade.id }))
+          ),
+          Promise.all(scalesToUpdate.map((scale) => updateGradeScaleRequest(scale))),
+          Promise.all(tagsToDelete.map((id) => deleteGradeTagRequest(id))),
+        ]);
+
+        const scales = map(newScales, 'gradeScale').concat(map(updatedScales, 'gradeScale'));
+
+        // Update
+        const update = {
+          id: grade.id,
+          name: grade.name,
+          minScaleToPromote: find(
+            map(scales, (s) => ({ ...s, number: s.number.toString() })),
+            { number: e.minScaleToPromote.toString() }
+          ).id,
+        };
+        const { grade: updatedGrade } = await updateGradeRequest({ ...update });
+
+        e.tags = map(e.tags, (tag) => {
+          const item = {
+            letter: tag.letter,
+            description: tag.description,
+            scale: find(
+              map(updatedGrade.scales, (s) => ({ ...s, number: s.number.toString() })),
+              { number: tag.scale.toString() }
+            ).id,
+          };
+          if (tag.id) item.id = tag.id;
+          return item;
+        });
+
+        // ES: Cogemos los tags nuevos que no tengan id para crearlos
+        tagsToAdd = e.tags.filter((tag) => !tag.id);
+
+        // ES: Cogemos los tags nuevos que tengan id para actualizarlos
+        tagsToUpdate = e.tags.filter((tag) => tag.id);
+
+        await Promise.all([
+          Promise.all(scalesToDelete.map((id) => deleteGradeScaleRequest(id))),
+          Promise.all(
+            tagsToAdd.map((tag) => addGradeTagRequest({ ...tag, grade: updatedGrade.id }))
+          ),
+          Promise.all(tagsToUpdate.map((tag) => updateGradeTagRequest({ ...tag }))),
+        ]);
+
+        store.selectedGrade = null;
+        store.saving = false;
+        await onSelectCenter(store.center);
+        await addSuccessAlert(t('successSave'));
+      }
     } catch (error) {
-      console.log(error);
+      store.saving = false;
+      render();
+      await addErrorAlert(error.message);
     }
   }
 
-  async function onBeforeRemoveScale(e, { tags }) {
+  async function onBeforeRemoveScale(e, { tags, minScaleToPromote }) {
+    const tagsByScale = groupBy(tags, 'scale');
+
+    if (tagsByScale[e.number]) {
+      await addErrorAlert(t(`errorCode6003`));
+      return false;
+    }
+
+    if (minScaleToPromote.toString() === e.number.toString()) {
+      await addErrorAlert(t(`errorCode6004`));
+      return false;
+    }
+
     if (e.id) {
       try {
-        const tagsByScale = groupBy(tags, 'scale');
-
-        if (tagsByScale[e.number]) {
-          await addErrorAlert(t(`errorCode6003`));
-          return false;
-        }
         await canDeleteGradeScaleRequest(e.id);
       } catch (err) {
-        if (err.code !== 6003) {
+        if (err.code !== 6003 && err.code !== 6004) {
           await addErrorAlert(err.code ? t(`errorCode${err.code}`) : err.message);
           return false;
         }
@@ -182,7 +248,7 @@ export default function EvaluationList() {
   }, [t]);
 
   const errorMessages = useMemo(() => {
-    const m = clone(EVALUATION_DETAIL_FORM_MESSAGES);
+    const m = clone(EVALUATION_DETAIL_FORM_ERROR_MESSAGES);
     forIn(m, (value, key) => {
       m[key] = t(`detail.${key}`);
     });
@@ -220,6 +286,7 @@ export default function EvaluationList() {
                       defaultValues={store.selectedGrade}
                       onBeforeRemoveScale={onBeforeRemoveScale}
                       onSubmit={onSubmit}
+                      isSaving={store.saving}
                     />
                   </Paper>
                 )}

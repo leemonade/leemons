@@ -49,6 +49,7 @@ const EvaluationDetail = ({
   onSubmit,
   onBeforeRemoveScale,
   onBeforeRemoveTag,
+  isSaving,
 }) => {
   const { classes, cx } = EvaluationDetailStyles({});
 
@@ -63,7 +64,6 @@ const EvaluationDetail = ({
   } = form;
 
   useEffect(() => {
-    console.log('Resteamos', defaultValues);
     reset({ ...defaultValues });
   }, [defaultValues]);
 
@@ -136,7 +136,9 @@ const EvaluationDetail = ({
         </Box>
 
         <Box>
-          <Button type="submit">{messages.saveButtonLabel}</Button>
+          <Button type="submit" loading={isSaving}>
+            {messages.saveButtonLabel}
+          </Button>
         </Box>
       </ContextContainer>
     </form>
@@ -164,6 +166,7 @@ EvaluationDetail.propTypes = {
   selectData: PropTypes.object,
   onBeforeRemoveScale: PropTypes.func,
   onBeforeRemoveTag: PropTypes.func,
+  isSaving: PropTypes.bool,
 };
 
 export { EvaluationDetail };
