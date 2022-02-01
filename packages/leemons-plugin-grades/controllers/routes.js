@@ -42,6 +42,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/grades/have',
+    method: 'GET',
+    handler: 'grades.haveGrades',
+    authenticated: true,
+  },
+  {
     path: '/grades/:id',
     method: 'GET',
     handler: 'grades.getGrade',

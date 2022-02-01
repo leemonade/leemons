@@ -7,6 +7,7 @@ import {
   deleteGrade,
   deleteGradeScale,
   deleteGradeTag,
+  haveGrades,
   listGrades,
   updateGrade,
   updateGradeScale,
@@ -14,6 +15,7 @@ import {
 } from './evaluations';
 
 export const addGradeRequest = addGrade;
+export const haveGradesRequest = haveGrades;
 export const listGradesRequest = listGrades;
 export const deleteGradeRequest = deleteGrade;
 export const updateGradeRequest = updateGrade;
