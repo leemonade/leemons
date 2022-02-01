@@ -11,8 +11,8 @@ import {
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useStore, useRequestErrorMessage } from '@common';
-import hooks from 'leemons-hooks';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import hooks from 'leemons-hooks';
 import { prefixPN } from '../../../helpers';
 import { getSettingsRequest, updateSettingsRequest, enableMenuItemRequest } from '../../../request';
 import { WelcomeStepCard } from './components';
@@ -29,8 +29,8 @@ export default function WelcomePage() {
     try {
       store.settings = data;
       await updateSettingsRequest(data);
-      // render();
-      // addSuccessAlert(t('settings_updated'));
+      addSuccessAlert(t('settings_updated'));
+      render();
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }
