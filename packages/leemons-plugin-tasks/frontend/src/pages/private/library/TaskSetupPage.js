@@ -1,0 +1,157 @@
+import React, { useMemo, useEffect, useState } from 'react';
+import { isEmpty, isNil, isArray } from 'lodash';
+import { useParams } from 'react-router-dom';
+import { Paper, PageContainer, ContextContainer } from '@bubbles-ui/components';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useStore, useRequestErrorMessage, unflatten } from '@common';
+import {
+  Setup,
+  ConfigData,
+  DesignData,
+  ContentData,
+  InstructionData,
+  PublishData,
+} from './components';
+import { prefixPN } from '../../../helpers';
+
+export default function TaskSetupPage() {
+  const [t, translations] = useTranslateLoader(prefixPN('task_setup_page'));
+  const [, , , getErrorMessage] = useRequestErrorMessage();
+  const [labels, setLabels] = useState(null);
+  const [store, render] = useStore({
+    currentTask: null,
+  });
+
+  // ·········································································
+  // API CALLS
+
+  const saveTask = async (values) => {
+    try {
+      const body = { ...values };
+      let messageKey = 'create_done';
+      let apiCall = null;
+
+      if (!isEmpty(store.currentTask)) {
+        messageKey = 'update_done';
+        apiCall = null;
+        body.id = store.currentTask.id;
+      }
+
+      // TODO: Implement save task request call
+      // const response = await apiCall(values);
+      // store.currentTask = response.task;
+
+      addSuccessAlert(t(messageKey));
+      render();
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+  };
+
+  const getTask = () => {
+    try {
+      // TODO: Implement get task by id request
+      // const response = await apiCall(id);
+      // store.currentTask = response.task;
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+  };
+
+  // ·········································································
+  // LOAD INIT DATA
+
+  const { id } = useParams();
+
+  useEffect(() => {
+    if (!isEmpty(id)) {
+      getTask();
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = res.plugins.tasks.task_setup_page.setup;
+      setLabels(data);
+      // store.setupLabels = data;
+    }
+  }, [translations]);
+
+  // ·········································································
+  // HANDLERS
+
+  const handleOnSaveTask = (values) => {
+    console.log('handleOnSaveTask:', values);
+    saveTask(values);
+  };
+
+  // ·········································································
+  // INIT VALUES
+
+  const headerLabels = useMemo(
+    () => ({
+      title: isEmpty(store.currentTask) ? t('title') : t('edit_title'),
+    }),
+    [t, store.currentTask]
+  );
+
+  const setupProps = useMemo(() => {
+    if (!isNil(labels)) {
+      const { configData, designData, contentData, instructionData, publishData } = labels;
+
+      console.log('designData:', designData);
+
+      return {
+        editable: isEmpty(store.currentTask),
+        values: store.currentTask || {},
+        steps: [
+          {
+            label: configData.step_label,
+            content: <ConfigData {...configData} />,
+          },
+          {
+            label: designData.step_label,
+            content: <DesignData {...designData} />,
+          },
+          {
+            label: contentData.step_label,
+            content: <ContentData {...contentData} />,
+          },
+          {
+            label: instructionData.step_label,
+            content: <InstructionData {...instructionData} />,
+          },
+          {
+            label: publishData.step_label,
+            content: <PublishData {...publishData} />,
+          },
+        ],
+      };
+    }
+    return null;
+  }, [store.currentTask, labels]);
+
+  // -------------------------------------------------------------------------
+  // COMPONENT
+
+  return (
+    <ContextContainer fullHeight>
+      <AdminPageHeader values={headerLabels} />
+
+      <Paper color="solid" shadow="none" padding={0}>
+        <PageContainer>
+          <ContextContainer padded="vertical">
+            <Paper fullWidth padding={5}>
+              {!isEmpty(setupProps) && isArray(setupProps.steps) && (
+                <Setup {...setupProps} onSave={handleOnSaveTask} />
+              )}
+            </Paper>
+          </ContextContainer>
+        </PageContainer>
+      </Paper>
+    </ContextContainer>
+  );
+}

@@ -1,3 +1,26 @@
+const {
+  permissions: { names: permissions },
+} = require('../config/constants');
+
+const getPermissions = (permissionsArr, actions = null) => {
+  if (Array.isArray(permissionsArr)) {
+    return permissionsArr.reduce(
+      (obj, [permission, _actions]) => ({
+        ...obj,
+        [permission]: {
+          actions: _actions.includes('admin') ? _actions : ['admin', ..._actions],
+        },
+      }),
+      {}
+    );
+  }
+  return {
+    [permissionsArr]: {
+      actions: actions.includes('admin') ? actions : ['admin', ...actions],
+    },
+  };
+};
+
 module.exports = [
   /**
    * Tasks
@@ -81,5 +104,29 @@ module.exports = [
     path: '/tasks/:task/attachments',
     handler: 'attachments.remove',
     authenticated: true,
+  },
+  /**
+   * Settings
+   */
+  {
+    path: '/settings',
+    method: 'GET',
+    handler: 'settings.findOne',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tasks, ['view']),
+  },
+  {
+    path: '/settings',
+    method: 'POST',
+    handler: 'settings.update',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tasks, ['update']),
+  },
+  {
+    path: '/settings/enable-menu-item',
+    method: 'POST',
+    handler: 'settings.enableMenuItem',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tasks, ['update']),
   },
 ];
