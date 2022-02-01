@@ -1,19 +1,14 @@
 import React, { useMemo, useState, useEffect, useContext } from 'react';
-import { isArray, isNil } from 'lodash';
+import { isArray, isNil, isEmpty } from 'lodash';
 import {
   Paper,
-  Divider,
   Box,
-  Stack,
-  ImageLoader,
-  Button,
   Tree,
   useTree,
   Grid,
   Col,
   PageContainer,
   ContextContainer,
-  useScrollIntoView,
 } from '@bubbles-ui/components';
 import {
   AdminPageHeader,
@@ -23,97 +18,48 @@ import {
   AcademicProgramSetupCourses,
 } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useTranslate from '@multilanguage/useTranslate';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import hooks from 'leemons-hooks';
 import { SelectCenter } from '@users/components/SelectCenter';
-import { listProgramsRequest } from '@academic-portfolio/request';
-import unflatten from '@academic-portfolio/helpers/unflatten';
 import { LayoutContext } from '@layout/context/layout';
-
-const ACTIONS = {
-  NEW: 'new',
-  EDIT: 'edit',
-};
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import {
+  listProgramsRequest,
+  createProgramRequest,
+  updateProgramRequest,
+} from '@academic-portfolio/request';
+import unflatten from '@academic-portfolio/helpers/unflatten';
+import { ProgramItem } from '@academic-portfolio/components';
+import { useStore } from '@common/useStore';
 
 export default function ProgramList() {
-  const [t] = useTranslateLoader(prefixPN('programs_page'));
-  const [translations] = useTranslate({
-    keysStartsWith: prefixPN('programs_page'),
-  });
+  const [t, translations] = useTranslateLoader(prefixPN('programs_page'));
+  const [, , , getErrorMessage] = useRequestErrorMessage();
 
-  const [programs, setPrograms] = useState([]);
   const [centerId, setCenterId] = useState(null);
-  const [loadPrograms, setLoadPrograms] = useState(false);
-  const [loadTree, setLoadTree] = useState(false);
   const [setupLabels, setSetupLabels] = useState(null);
-  const [action, setAction] = useState(ACTIONS.NEW);
   const [showDetail, setShowDetail] = useState(false);
   const { setLoading, scrollTo } = useContext(LayoutContext);
+  const [store, render] = useStore({
+    mounted: true,
+    programs: [],
+    currentProgram: null,
+  });
 
   const treeProps = useTree();
 
-  const handleOnSelectCenter = async (center) => {
-    setCenterId(center);
-    setLoadPrograms(true);
-  };
-
-  const handleOnAddProgram = () => {
-    setAction(ACTIONS.NEW);
-    setShowDetail(true);
-  };
-
-  const handleOnSaveProgram = (values) => {
-    console.log(values);
-    setLoading(true);
-  };
-
-  const handleOnNext = () => {
-    scrollTo({ top: 110 });
-  };
-
-  const handleOnPrev = () => {
-    scrollTo({ top: 110 });
-  };
-
   // ····················································································
-  // CALLED EVERYTIME "loadPrograms" changes
+  // PROCESS DATA
 
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      if (loadPrograms) {
-        try {
-          const response = await listProgramsRequest({ page: 0, size: 9999, center: centerId });
-          if (mounted) {
-            const data = response.data?.items || [];
-            setPrograms(data);
-            setLoadTree(true);
-            setLoadPrograms(false);
-          }
-        } catch (e) {
-          setLoadPrograms(false);
-        }
-      }
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, [loadPrograms]);
+  useEffect(
+    () => () => {
+      store.mounted = false;
+    },
+    []
+  );
 
-  useEffect(() => {
-    if (translations && translations.items) {
-      const res = unflatten(translations.items);
-      const data = res.plugins['academic-portfolio'].programs_page.setup;
-      setSetupLabels(data);
-    }
-  }, [translations]);
-
-  // ····················································································
-  // CALLED EVERYTIME "processTreeData" changes
-
-  useEffect(() => {
-    if (loadTree && isArray(programs) && t) {
+  const loadTree = (data) => {
+    if (isArray(data) && t) {
       const ADD_PROGRAM = {
         id: 'PROGRAM-ADD',
         parent: 0,
@@ -124,11 +70,137 @@ export default function ProgramList() {
           action: 'add',
         },
       };
-      const data = [ADD_PROGRAM];
-      treeProps.setTreeData(data);
-      setLoadTree(false);
+
+      const programs = data.map((item) => ({
+        id: item.id,
+        parent: 0,
+        draggable: false,
+        program: item,
+        render: ProgramItem,
+      }));
+      const treeData = [...programs, ADD_PROGRAM];
+      treeProps.setTreeData(treeData);
+
+      if (!isEmpty(store.currentProgram)) {
+        scrollTo({ top: 0 });
+        // eslint-disable-next-line no-use-before-define
+        handleShowDetail(() => {
+          treeProps.setSelectedNode(store.currentProgram.id);
+        });
+      }
+
+      render();
     }
-  }, [loadTree, programs, t]);
+  };
+
+  const loadPrograms = async (center) => {
+    try {
+      const response = await listProgramsRequest({ page: 0, size: 9999, center });
+      const data = response.data?.items || [];
+      store.programs = data;
+      loadTree(data);
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+  };
+
+  const saveProgram = async (values) => {
+    try {
+      setLoading(true);
+      let body = { ...values, centers: [centerId] };
+      let apiCall = createProgramRequest;
+      let messageKey = 'common.create_done';
+
+      if (!isEmpty(store.currentProgram)) {
+        const { name, abbreviation, credits } = values;
+        body = {
+          id: store.currentProgram.id,
+          name,
+          abbreviation,
+          credits,
+        };
+        apiCall = updateProgramRequest;
+        messageKey = 'common.update_done';
+      }
+
+      const response = await apiCall(body);
+      store.currentProgram = response.program;
+
+      await loadPrograms(centerId);
+      setLoading(false);
+      addSuccessAlert(t(messageKey));
+    } catch (e) {
+      setLoading(false);
+      addErrorAlert(getErrorMessage(e));
+    }
+  };
+
+  useEffect(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = res.plugins['academic-portfolio'].programs_page.setup;
+      setSetupLabels(data);
+    }
+  }, [translations]);
+
+  // ····················································································
+  // HANDLERS
+
+  const handleShowDetail = (callback) => {
+    if (showDetail) {
+      setTimeout(
+        () => {
+          setShowDetail(false);
+          callback();
+
+          setTimeout(() => setShowDetail(true), 500);
+        },
+        showDetail ? 500 : 0
+      );
+    } else {
+      setShowDetail(true);
+      callback();
+    }
+  };
+
+  const handleOnSelectCenter = async (center) => {
+    setCenterId(center);
+    scrollTo({ top: 0 });
+    treeProps.setSelectedNode(null);
+    setTimeout(() => {
+      store.currentProgram = null;
+      setShowDetail(false);
+      loadPrograms(center);
+    }, 300);
+  };
+
+  const handleOnAddProgram = () => {
+    scrollTo({ top: 0 });
+    handleShowDetail(() => {
+      store.currentProgram = null;
+      treeProps.setSelectedNode(null);
+    });
+  };
+
+  const handleOnSaveProgram = (values) => {
+    saveProgram(values);
+  };
+
+  const handleOnEditProgram = (e) => {
+    scrollTo({ top: 0 });
+    handleShowDetail(() => {
+      store.currentProgram = e.program;
+      treeProps.setSelectedNode(e.id);
+    });
+  };
+
+  const handleOnNext = () => {
+    scrollTo({ top: 110 });
+  };
+
+  const handleOnPrev = () => {
+    scrollTo({ top: 110 });
+  };
 
   // ····················································································
   // STATIC VALUES
@@ -143,7 +215,8 @@ export default function ProgramList() {
 
   const setupProps = useMemo(() => {
     if (!isNil(setupLabels)) {
-      const { title, basicData, coursesData, subjectsData, frequencies, firstDigits } = setupLabels;
+      const { title, editTitle, basicData, coursesData, subjectsData, frequencies, firstDigits } =
+        setupLabels;
       const firstDigitOptions = Object.keys(firstDigits).map((key) => ({
         label: firstDigits[key],
         value: key,
@@ -154,7 +227,9 @@ export default function ProgramList() {
       }));
 
       return {
-        labels: { title },
+        editable: isEmpty(store.currentProgram),
+        values: store.currentProgram || {},
+        labels: { title: isEmpty(store.currentProgram) ? title : editTitle },
         data: [
           {
             label: basicData.step_label,
@@ -180,7 +255,7 @@ export default function ProgramList() {
       };
     }
     return null;
-  }, [setupLabels, action]);
+  }, [setupLabels, store.currentProgram]);
 
   return (
     <ContextContainer fullHeight>
@@ -197,11 +272,17 @@ export default function ProgramList() {
                       <SelectCenter
                         label={t('common.select_center')}
                         onChange={handleOnSelectCenter}
+                        firstSelected
                       />
                     </Box>
                     {centerId && (
                       <Box>
-                        <Tree {...treeProps} onAdd={handleOnAddProgram} />
+                        <Tree
+                          {...treeProps}
+                          allowDragParents={false}
+                          onSelect={handleOnEditProgram}
+                          onAdd={handleOnAddProgram}
+                        />
                       </Box>
                     )}
                   </ContextContainer>

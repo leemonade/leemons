@@ -63,7 +63,7 @@ const addProgramSubstage1Schema = {
   properties: {
     substagesFrequency: {
       type: 'string',
-      enum: ['year', 'semester', 'trimester', 'quarter', 'month', 'week', 'day'],
+      enum: ['year', 'semester', 'quarter', 'trimester', 'month', 'week', 'day'],
     },
     numberOfSubstages: numberSchema,
     useDefaultSubstagesName: booleanSchema,
@@ -73,10 +73,10 @@ const addProgramSubstage1Schema = {
         type: 'object',
         properties: {
           name: stringSchema,
-          abbreviation: stringSchema,
+          frequency: stringSchema,
           number: numberSchema,
         },
-        required: ['name', 'number'],
+        required: ['name', 'number', 'frequency'],
       },
     },
   },
