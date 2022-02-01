@@ -16,8 +16,15 @@ module.exports = {
   instanceCreate: async (ctx) => {
     try {
       const { task } = ctx.request.params;
+      const { deadline, available, executionTime, message } = ctx.request.body;
 
-      const instance = await createInstance(task);
+      const instance = await createInstance({
+        task,
+        deadline,
+        available,
+        executionTime,
+        message,
+      });
 
       ctx.status = 201;
       ctx.body = {
