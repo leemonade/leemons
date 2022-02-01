@@ -22,6 +22,13 @@ async function updateGrade(body) {
   });
 }
 
+async function deleteGrade(id) {
+  return leemons.api(`${pluginPath}/grades/${id}`, {
+    method: 'DELETE',
+    allAgents: true,
+  });
+}
+
 async function addGradeTag(body) {
   return leemons.api(`${pluginPath}/grade-tags`, {
     method: 'POST',
@@ -76,8 +83,9 @@ async function canDeleteGradeScale(id) {
 }
 
 export {
-  listGrades,
   addGrade,
+  listGrades,
+  deleteGrade,
   updateGrade,
   addGradeTag,
   updateGradeTag,

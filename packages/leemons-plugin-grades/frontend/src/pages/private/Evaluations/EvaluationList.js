@@ -20,6 +20,7 @@ import {
   addGradeScaleRequest,
   addGradeTagRequest,
   canDeleteGradeScaleRequest,
+  deleteGradeRequest,
   deleteGradeScaleRequest,
   deleteGradeTagRequest,
   listGradesRequest,
@@ -32,6 +33,7 @@ import {
   EVALUATION_DETAIL_FORM_MESSAGES,
   EvaluationDetail,
 } from '../../../components/EvaluationDetail';
+import { TreeItem } from '../../../components/TreeItem/TreeItem';
 
 export default function EvaluationList() {
   const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
@@ -59,6 +61,7 @@ export default function EvaluationList() {
       parent: 0,
       text: grade.name,
       draggable: false,
+      render: TreeItem,
     }));
     data.push({
       id: 'add',
@@ -106,6 +109,16 @@ export default function EvaluationList() {
       scale: tag.scale.number,
     }));
     render();
+  }
+
+  async function onDelete(e) {
+    try {
+      await deleteGradeRequest(e.id);
+      await onSelectCenter(store.center);
+      await addSuccessAlert(t('successDelete'));
+    } catch (err) {
+      await addErrorAlert(err.message);
+    }
   }
 
   async function onSubmit(e) {
@@ -271,7 +284,13 @@ export default function EvaluationList() {
                     </Box>
                     {store.center && (
                       <Box>
-                        <Tree treeData={store.treeData} onAdd={onAdd} onSelect={onSelect} />
+                        <Tree
+                          treeData={store.treeData}
+                          selectedNode={store.selectedGrade?.id}
+                          onAdd={onAdd}
+                          onDelete={onDelete}
+                          onSelect={onSelect}
+                        />
                       </Box>
                     )}
                   </ContextContainer>

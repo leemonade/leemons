@@ -4,6 +4,7 @@ import {
   addGradeScale,
   addGradeTag,
   canDeleteGradeScale,
+  deleteGrade,
   deleteGradeScale,
   deleteGradeTag,
   listGrades,
@@ -14,6 +15,7 @@ import {
 
 export const addGradeRequest = addGrade;
 export const listGradesRequest = listGrades;
+export const deleteGradeRequest = deleteGrade;
 export const updateGradeRequest = updateGrade;
 export const getSettingsRequest = getSettings;
 export const addGradeTagRequest = addGradeTag;
