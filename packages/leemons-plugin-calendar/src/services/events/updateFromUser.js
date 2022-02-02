@@ -7,6 +7,7 @@ const { getPermissionConfig: getPermissionConfigEvent } = require('./getPermissi
 const { detail: detailEvent } = require('./detail');
 const { detail: detailCalendar } = require('../calendar/detail');
 const { update } = require('./update');
+const { getEventCalendars } = require('./getEventCalendars');
 
 /**
  * Add event to calendar if the user have access
@@ -23,19 +24,24 @@ async function updateFromUser(userSession, id, data, { transacting: _transacting
     async (transacting) => {
       const userPlugin = leemons.getPlugin('users');
 
-      const event = await detailEvent(id);
-      const calendar = await detailCalendar(event.calendar);
+      const [event, calendars] = await Promise.all([detailEvent(id), getEventCalendars(id)]);
 
-      const permissionConfigCalendar = getPermissionConfigCalendar(calendar.key);
+      const permissionConfigCalendars = _.map(calendars, (calendar) =>
+        getPermissionConfigCalendar(calendar.key)
+      );
       const permissionConfigEvent = getPermissionConfigEvent(event.id);
 
-      const [[calendarPermission], [eventPermission]] = await Promise.all([
-        userPlugin.services.permissions.getUserAgentPermissions(userSession.userAgents, {
-          query: {
-            permissionName: permissionConfigCalendar.permissionName,
-          },
-          transacting,
-        }),
+      const [calendarPermissions, [eventPermission]] = await Promise.all([
+        await Promise.all(
+          _.map(permissionConfigCalendars, (permissionConfigCalendar) =>
+            userPlugin.services.permissions.getUserAgentPermissions(userSession.userAgents, {
+              query: {
+                permissionName: permissionConfigCalendar.permissionName,
+              },
+              transacting,
+            })
+          )
+        ),
         userPlugin.services.permissions.getUserAgentPermissions(userSession.userAgents, {
           query: {
             permissionName: permissionConfigEvent.permissionName,
@@ -44,9 +50,18 @@ async function updateFromUser(userSession, id, data, { transacting: _transacting
         }),
       ]);
 
+      let isOwnerCalendar = false;
+
+      _.forEach(calendarPermissions, ([calendarPermission]) => {
+        if (calendarPermission && calendarPermission.actionNames.indexOf('owner') >= 0) {
+          isOwnerCalendar = true;
+          return false;
+        }
+      });
+
       // ES: Por ahora cualquier persona con el evento puede actualizarlo
       if (
-        (calendarPermission && calendarPermission.actionNames.indexOf('owner') >= 0) ||
+        isOwnerCalendar ||
         (eventPermission && eventPermission.actionNames.indexOf('owner') >= 0) ||
         (eventPermission && eventPermission.actionNames.indexOf('view') >= 0)
       ) {

@@ -1,21 +1,44 @@
-import React from 'react';
-import { getCentersWithToken } from '@users/session';
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { map, isArray, isFunction } from 'lodash';
 import { Select } from '@bubbles-ui/components';
-import {map, isArray} from "lodash";
+import { getCentersWithToken } from '@users/session';
 
-function SelectCenter(props) {
+function SelectCenter({ firstSelected, onChange, ...props }) {
+  const [data, setData] = useState([]);
+  const [value, setValue] = useState(null);
 
-  let data = [];
-  const centers = getCentersWithToken();
-  if (isArray(centers)) {
-    data = map(centers, ({name, id}) => ({
-      label: name,
-      value: id,
-    }));
-  }
+  const handleOnChange = (val) => {
+    if (val !== value) {
+      setValue(val);
+      if (isFunction(onChange)) {
+        onChange(val);
+      }
+    }
+  };
 
-  return <Select {...props} data={data}/>
+  useEffect(() => {
+    const centers = getCentersWithToken();
+    if (isArray(centers)) {
+      const values = map(centers, ({ name, id }) => ({
+        label: name,
+        value: id,
+      }));
+      setData(values);
 
+      if (firstSelected) {
+        handleOnChange(values[0].value);
+      }
+    }
+  }, []);
+
+  return <Select {...props} data={data} value={value} onChange={handleOnChange} />;
 }
 
+SelectCenter.propTypes = {
+  firstSelected: PropTypes.bool,
+  onChange: PropTypes.func,
+};
+
 export { SelectCenter };
+export default SelectCenter;

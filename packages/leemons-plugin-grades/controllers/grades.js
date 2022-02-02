@@ -19,6 +19,12 @@ async function getGrade(ctx) {
   ctx.body = { status: 200, grade };
 }
 
+async function haveGrades(ctx) {
+  const have = await gradesService.haveGrades();
+  ctx.status = 200;
+  ctx.body = { status: 200, have };
+}
+
 async function removeGrade(ctx) {
   await gradesService.removeGrade(ctx.request.params.id);
   ctx.status = 200;
@@ -52,6 +58,7 @@ module.exports = {
   getGrade,
   putGrade,
   postGrade,
+  haveGrades,
   listGrades,
   removeGrade,
 };

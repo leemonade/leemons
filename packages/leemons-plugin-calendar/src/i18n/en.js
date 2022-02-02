@@ -1,4 +1,5 @@
 module.exports = {
+  classes: 'Classes',
   event: 'Event',
   task: 'Task',
   holidays_vacation: 'Holiday / Vacation',
@@ -43,6 +44,8 @@ module.exports = {
     description: 'Description',
     subtask: 'Subtask',
     add_subtask: 'Add sub-task',
+    tags: 'Tags',
+    column: 'Column',
   },
   detail_page: {
     title_placeholder: 'Calendar setup name',
@@ -119,5 +122,11 @@ module.exports = {
       'Leave program, group or course unselected to assig the same calendar to the whole child levels',
     create_plan: 'Create plan',
     min_select_center: 'Minimum to be selected to the center',
+  },
+  kanbanFiltersOptions: {
+    title: 'Kanban',
+    filter: 'Filter by',
+    archived: 'Show archived tasks',
+    selectCalendarsSubjects: 'All subjects',
   },
 };

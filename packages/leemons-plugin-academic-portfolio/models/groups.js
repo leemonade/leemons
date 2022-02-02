@@ -31,6 +31,10 @@ module.exports = {
     number: {
       type: 'integer',
     },
+    // Only for customSubstages
+    frequency: {
+      type: 'string',
+    },
   },
   primaryKey: {
     type: 'uuid',

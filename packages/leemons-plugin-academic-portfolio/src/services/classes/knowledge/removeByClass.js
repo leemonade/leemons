@@ -13,6 +13,7 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
         soft,
         transacting,
       });
+
       await table.classKnowledges.deleteMany(
         { id_$in: _.map(classKnowledges, 'id') },
         { soft, transacting }

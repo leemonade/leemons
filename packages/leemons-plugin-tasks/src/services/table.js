@@ -7,4 +7,5 @@ module.exports = {
   teacherInstances: leemons.query('plugins_tasks::teacherInstances'),
   userInstances: leemons.query('plugins_tasks::userInstances'),
   userDeliverables: leemons.query('plugins_tasks::userDeliverables'),
+  settings: leemons.query('plugins_tasks::settings'),
 };

@@ -1,7 +1,7 @@
 const { table } = require('../tables');
 
 async function addSubstage(
-  { name, abbreviation, number, program },
+  { name, abbreviation, number, program, frequency },
   { transacting: _transacting } = {}
 ) {
   return global.utils.withTransaction(
@@ -12,6 +12,7 @@ async function addSubstage(
           abbreviation,
           number,
           program,
+          frequency,
           type: 'substage',
         },
         {

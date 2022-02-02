@@ -3,6 +3,7 @@ const { table } = require('../tables');
 const { validateNotExistCalendar } = require('../../validations/exists');
 const { remove: removeEvent } = require('../events/remove');
 const { getPermissionConfig } = require('./getPermissionConfig');
+const { getEvents } = require('./getEvents');
 
 /**
  * Remove calendar if exists
@@ -15,20 +16,16 @@ const { getPermissionConfig } = require('./getPermissionConfig');
 async function remove(id, { _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
-      await validateNotExistCalendar(id);
+      await validateNotExistCalendar(id, { transacting });
 
       const userPlugin = leemons.getPlugin('users');
 
       // -- Calendar events
-      const events = await table.events.find({ calendar: id }, { columns: ['id'], transacting });
-      await Promise.all(
-        _.map(events, (event) => {
-          return removeEvent(event.id, { transacting });
-        })
-      );
+      const events = await getEvents(id, { transacting });
+      await Promise.all(_.map(events, (event) => removeEvent(event.id, { transacting })));
 
       // -- Calendar
-      const calendar = await table.calendar.findOne({ id }, { columns: ['key'], transacting });
+      const calendar = await table.calendars.findOne({ id }, { columns: ['key'], transacting });
       const permissionConfig = getPermissionConfig(calendar.key);
 
       await Promise.all([
@@ -40,7 +37,7 @@ async function remove(id, { _transacting } = {}) {
           }
         ),
         // ES: Borramos el elemento de la tabla items de permisos ya que dejara de existir
-        await userPlugin.permissions.removeItems(
+        await userPlugin.services.permissions.removeItems(
           {
             type: permissionConfig.type,
             item: id,
@@ -51,7 +48,9 @@ async function remove(id, { _transacting } = {}) {
         ),
       ]);
 
+      await table.classCalendar.deleteMany({ calendar: id }, { transacting });
       await table.calendars.delete({ id }, { transacting });
+
       return true;
     },
     table.calendars,

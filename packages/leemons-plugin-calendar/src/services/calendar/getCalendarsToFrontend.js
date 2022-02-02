@@ -101,6 +101,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
         transacting,
       }
     ),
+    table.classCalendar.find({ calendar_$in: calendarIds }, { transacting }),
   ];
 
   if (calendarConfig)
@@ -110,7 +111,9 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
         transacting,
       })
     );
-  const [calendars, eventsCalendars, events, configCalendars] = await Promise.all(promises);
+  const [calendars, eventsCalendars, events, classCalendars, configCalendars] = await Promise.all(
+    promises
+  );
 
   const eventsFromCalendars = _.flatten(eventsCalendars);
 
@@ -161,18 +164,25 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   if (_.isArray(configCalendars)) {
     _.forEach(configCalendars, (calendar) => {
       configCalendarEvents = configCalendarEvents.concat(calendar.events);
+      // eslint-disable-next-line no-param-reassign
       delete calendar.events;
+      // eslint-disable-next-line no-param-reassign
       calendar.section = 'plugins.users.calendar.user_section';
       finalCalendars.push(calendar);
     });
   }
+
+  const classCalendarsIds = _.map(classCalendars, 'calendar');
 
   return {
     userCalendar,
     ownerCalendars,
     calendarConfig,
     configCalendars,
-    calendars: finalCalendars,
+    calendars: _.map(finalCalendars, (calendar) => ({
+      ...calendar,
+      isClass: classCalendarsIds.indexOf(calendar.id) >= 0,
+    })),
     events: events
       .concat(
         eventsFromCalendars.map((e) => ({

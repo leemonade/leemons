@@ -67,10 +67,10 @@ function ProfileDetail() {
           permissions,
         };
         response = await updateProfileRequest(body);
-        // addSuccessAlert(t('update_done'));
+        addSuccessAlert(t('update_done'));
       } else {
         response = await addProfileRequest({ ...profile, permissions });
-        // addSuccessAlert(t('save_done'));
+        addSuccessAlert(t('save_done'));
       }
       await hooks.fireEvent('user:update:permissions', profile);
       setSaveLoading(false);
@@ -249,7 +249,7 @@ function ProfileDetail() {
           <Box style={{ flex: 1 }}>
             <Tabs usePageLayout={true} panelColor="solid" fullHeight>
               <TabPanel label={t('permissions')}>
-                <Paper padding={5} mt={20} mb={20}>
+                <Paper padding={2} mt={20} mb={20} fullWidth>
                   <PermissionsTab
                     t={t}
                     profile={profile}
@@ -259,7 +259,7 @@ function ProfileDetail() {
                 </Paper>
               </TabPanel>
               <TabPanel label={t('dataset')}>
-                <Paper padding={5} mt={20} mb={20}>
+                <Paper padding={2} mt={20} mb={20} fullWidth>
                   <DatasetTab t={t} profile={profile} isEditMode={editMode} />
                 </Paper>
               </TabPanel>
