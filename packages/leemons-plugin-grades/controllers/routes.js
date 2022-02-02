@@ -106,6 +106,12 @@ module.exports = [
   // Rules
   {
     path: '/rules',
+    method: 'GET',
+    handler: 'rules.listRules',
+    authenticated: true,
+  },
+  {
+    path: '/rules',
     method: 'POST',
     handler: 'rules.postRule',
     authenticated: true,

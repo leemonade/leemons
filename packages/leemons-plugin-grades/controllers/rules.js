@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const rulesService = require('../src/services/rules');
+const gradesService = require('../src/services/grades');
 
 async function postRule(ctx) {
   const rule = await rulesService.addRule(ctx.request.body);
@@ -28,9 +29,33 @@ async function postRuleProcess(ctx) {
   ctx.body = { status: 200, results };
 }
 
+async function listRules(ctx) {
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      page: { type: ['number', 'string'] },
+      size: { type: ['number', 'string'] },
+      center: { type: ['string'] },
+    },
+    required: ['page', 'size'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.query)) {
+    const { page, size, center, ...options } = ctx.request.query;
+    const data = await rulesService.listRules(parseInt(page, 10), parseInt(size, 10), center, {
+      ...options,
+    });
+    ctx.status = 200;
+    ctx.body = { status: 200, data };
+  } else {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   putRule,
   postRule,
+  listRules,
   deleteRule,
   postRuleProcess,
 };

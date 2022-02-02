@@ -17,6 +17,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@grades/helpers/prefixPN';
 import { enableMenuItemRequest, getSettingsRequest, updateSettingsRequest } from '@grades/request';
 import hooks from 'leemons-hooks';
+import { haveGradesRequest } from '../../request';
 
 // eslint-disable-next-line react/prop-types
 function StepCard({ t, step, disabled, to, onClick }) {
@@ -54,9 +55,12 @@ export default function WelcomePage() {
   // INIT DATA LOAD
 
   async function init() {
-    const [settingsResponse] = await Promise.all([getSettingsRequest]);
+    const [settingsResponse, haveGradesResponse] = await Promise.all([
+      getSettingsRequest(),
+      haveGradesRequest(),
+    ]);
 
-    // haveGradesRequest
+    store.haveGrades = haveGradesResponse.have;
     store.settings = settingsResponse.settings;
     render();
   }
@@ -125,7 +129,7 @@ export default function WelcomePage() {
               step="step_promotions"
               to="/private/grades/promotions"
               onClick={handleOnPromotions}
-              disabled
+              disabled={!store.haveGrades}
             />
             <StepCard
               t={t}
