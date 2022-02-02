@@ -41,19 +41,32 @@ module.exports = {
         labels: {
           title: 'Config',
           tagline: 'Tagline',
+          program: 'Programa',
+          course: 'Curso',
+          subject: 'Materia',
+          level: 'Nivel',
+          summary: 'Resumen',
+          tags: 'Etiquetas',
           buttonNext: 'Siguiente',
-        },
-        descriptions: {
-          tagline: '...',
         },
         placeholders: {
           tagline: '...',
-        },
-        helps: {
-          tagline: '...',
+          program: 'Seleccionar...',
+          course: 'Seleccionar...',
+          subject: 'Seleccionar...',
+          addSubject: 'Añadir materia',
+          level: 'Seleccionar...',
+          summary: '¿De qué trata esta tarea?',
+          tags: 'Escribe una etiqueta',
         },
         errorMessages: {
           tagline: { required: 'Campo requerido' },
+          program: { required: 'Campo requerido' },
+          course: { required: 'Campo requerido' },
+          subject: { required: 'Campo requerido' },
+          level: { required: 'Campo requerido' },
+          summary: { required: 'Campo requerido' },
+          tags: { required: 'Campo requerido' },
         },
       },
       designData: {
@@ -79,14 +92,13 @@ module.exports = {
         labels: {
           title: 'Contenido',
           methodology: 'Metodología',
+          recommendedDuration: 'Duración recomendada',
           buttonNext: 'Siguiente',
           buttonPrev: 'Anterior',
         },
-        helps: {
-          methodology: '...',
-        },
         errorMessages: {
           methodology: { required: 'Campo requerido' },
+          recommendedDuration: { required: 'Campo requerido' },
         },
       },
       instructionData: {

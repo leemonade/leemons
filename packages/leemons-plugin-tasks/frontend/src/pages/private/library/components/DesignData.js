@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isEmpty } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, Stack, ContextContainer, TextInput, Button } from '@bubbles-ui/components';
+import { Box, Stack, ContextContainer, ColorInput, Button } from '@bubbles-ui/components';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 
 function DesignData({
@@ -47,21 +47,13 @@ function DesignData({
     <form onSubmit={handleSubmit(handleOnNext)}>
       <ContextContainer {...props} divided>
         <ContextContainer title={labels.title}>
+          <Box>Media-Library picker</Box>
           <Box>
             <Controller
               control={control}
               name="color"
               rules={{ required: errorMessages.color?.required }}
-              render={({ field }) => (
-                <TextInput
-                  {...field}
-                  label={labels.color}
-                  placeholder={placeholders.color}
-                  help={helps.color}
-                  error={errors.color}
-                  required={!isEmpty(errorMessages.color?.required)}
-                />
-              )}
+              render={({ field }) => <ColorInput {...field} />}
             />
           </Box>
         </ContextContainer>

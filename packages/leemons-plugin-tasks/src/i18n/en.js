@@ -38,20 +38,37 @@ module.exports = {
         step_label: 'Config',
         labels: {
           title: 'Config',
+          name: 'Name',
           tagline: 'Tagline',
+          program: 'Program',
+          course: 'Course',
+          subject: 'Subject',
+          addSubject: 'Add subject',
+          level: 'Level',
+          summary: 'Summary',
+          tags: 'Tags',
           buttonNext: 'Next',
         },
-        descriptions: {
-          tagline: '...',
-        },
+
         placeholders: {
-          tagline: '...',
-        },
-        helps: {
-          tagline: '...',
+          tagline: ' ',
+          name: "Task's name",
+          program: 'Select...',
+          course: 'Select...',
+          subject: 'Select...',
+          level: 'Select...',
+          summary: 'What is this assignment about?',
+          tags: 'Start typing a tag',
         },
         errorMessages: {
+          name: { required: 'Field required' },
           tagline: { required: 'Required field' },
+          program: { required: 'Required field' },
+          course: { required: 'Required field' },
+          subject: { required: 'Required field' },
+          level: { required: 'Required field' },
+          summary: { required: 'Required field' },
+          tags: { required: 'Required field' },
         },
       },
       designData: {
@@ -77,14 +94,13 @@ module.exports = {
         labels: {
           title: 'Content',
           methodology: 'Methodology',
+          recommendedDuration: 'Recommended duration',
           buttonNext: 'Next',
           buttonPrev: 'Previous',
         },
-        helps: {
-          methodology: '...',
-        },
         errorMessages: {
           methodology: { required: 'Required field' },
+          recommendedDuration: { required: 'Required field' },
         },
       },
       instructionData: {

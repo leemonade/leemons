@@ -2,7 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isEmpty } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, Stack, ContextContainer, TextInput, Button } from '@bubbles-ui/components';
+import {
+  Box,
+  Stack,
+  ContextContainer,
+  TextInput,
+  Button,
+  Select,
+  Textarea,
+} from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 
 function ConfigData({
@@ -49,6 +57,22 @@ function ConfigData({
           <Box>
             <Controller
               control={control}
+              name="name"
+              rules={{ required: errorMessages.name?.required }}
+              render={({ field }) => (
+                <TextInput
+                  {...field}
+                  label={labels.name}
+                  placeholder={placeholders.name}
+                  error={errors.name}
+                  required={!isEmpty(errorMessages.name?.required)}
+                />
+              )}
+            />
+          </Box>
+          <Box>
+            <Controller
+              control={control}
               name="tagline"
               rules={{ required: errorMessages.tagline?.required }}
               render={({ field }) => (
@@ -56,13 +80,140 @@ function ConfigData({
                   {...field}
                   label={labels.tagline}
                   placeholder={placeholders.tagline}
-                  help={helps.tagline}
                   error={errors.tagline}
                   required={!isEmpty(errorMessages.tagline?.required)}
                 />
               )}
             />
           </Box>
+          <ContextContainer title="Config" direction="row">
+            <Controller
+              control={control}
+              name="program"
+              // rules={{ required: errorMessages.program?.required }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label={labels.program}
+                  placeholder={placeholders.program}
+                  error={errors.program}
+                  searchable={true}
+                  // required={!isEmpty(errorMessages.program?.required)}
+                  data={[
+                    {
+                      label: 'Primary',
+                      value: 'primary',
+                    },
+                    {
+                      label: 'Secondary',
+                      value: 'secondary',
+                    },
+                  ]}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="course"
+              // rules={{ required: errorMessages.course?.required }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label={labels.course}
+                  placeholder={placeholders.course}
+                  error={errors.course}
+                  searchable={true}
+                  // required={!isEmpty(errorMessages.course?.required)}
+                  data={[
+                    {
+                      label: 'First',
+                      value: 'first',
+                    },
+                    {
+                      label: 'Second',
+                      value: 'second',
+                    },
+                  ]}
+                />
+              )}
+            />
+          </ContextContainer>
+
+          <ContextContainer title="Subject" direction="row" alignItems="end">
+            <Controller
+              control={control}
+              name="subject"
+              // rules={{ required: errorMessages.subject?.required }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label={labels.subject}
+                  placeholder={placeholders.subject}
+                  error={errors.subject}
+                  searchable={true}
+                  // required={!isEmpty(errorMessages.subject?.required)}
+                  data={[
+                    {
+                      label: 'Language',
+                      value: 'language',
+                    },
+                    {
+                      label: 'Maths',
+                      value: 'maths',
+                    },
+                  ]}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="level"
+              // rules={{ required: errorMessages.level?.required }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  label={labels.level}
+                  placeholder={placeholders.level}
+                  error={errors.level}
+                  searchable={true}
+                  // required={!isEmpty(errorMessages.level?.required)}
+                  data={[
+                    {
+                      label: 'Begginer',
+                      value: 'begginer',
+                    },
+                    {
+                      label: 'Intermediate',
+                      value: 'intermediate',
+                    },
+                  ]}
+                />
+              )}
+            />
+            <Button variant="filled" color="primary" size="xs">
+              {labels.addSubject}
+            </Button>
+          </ContextContainer>
+
+          <ContextContainer title="Summary">
+            <Box>
+              <Controller
+                control={control}
+                name="summary"
+                rules={{ required: errorMessages.summary?.required }}
+                render={({ field }) => (
+                  <Textarea
+                    {...field}
+                    autosize={true}
+                    label={labels.summary}
+                    placeholder={placeholders.summary}
+                    required={!isEmpty(errorMessages.summary?.required)}
+                    error={errors.summary}
+                  />
+                )}
+              />
+            </Box>
+          </ContextContainer>
         </ContextContainer>
         <Stack fullWidth justifyContent="end">
           <Button type="submit" rightIcon={<ChevRightIcon height={20} width={20} />}>
@@ -74,13 +225,6 @@ function ConfigData({
   );
 }
 
-ConfigData.defaultProps = {
-  helps: {},
-  labels: {},
-  descriptions: {},
-  placeholders: {},
-  errorMessages: {},
-};
 ConfigData.propTypes = {
   labels: PropTypes.object,
   descriptions: PropTypes.object,

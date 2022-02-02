@@ -2,7 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isEmpty } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, Stack, ContextContainer, TextInput, Button } from '@bubbles-ui/components';
+import {
+  Box,
+  Stack,
+  ContextContainer,
+  TextInput,
+  Button,
+  NumberInput,
+} from '@bubbles-ui/components';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 
 function ContentData({
@@ -57,9 +64,25 @@ function ContentData({
                   {...field}
                   label={labels.methodology}
                   placeholder={placeholders.methodology}
-                  help={helps.methodology}
                   error={errors.methodology}
                   required={!isEmpty(errorMessages.methodology?.required)}
+                />
+              )}
+            />
+          </Box>
+          <Box>Add Resource from media-library component</Box>
+          <Box>
+            <Controller
+              control={control}
+              name="recommendedDuration"
+              rules={{ required: errorMessages.Recommendedduration?.required }}
+              render={({ field }) => (
+                <NumberInput
+                  {...field}
+                  label={labels.recommendedDuration}
+                  error={errors.recommendedDuration}
+                  min={0}
+                  required={!isEmpty(errorMessages.recommendedDuration?.required)}
                 />
               )}
             />
