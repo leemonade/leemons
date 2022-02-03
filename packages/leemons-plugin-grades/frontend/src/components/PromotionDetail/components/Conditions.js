@@ -15,6 +15,7 @@ const Conditions = ({ messages, errorMessages, selectData, form }) => {
   const [error, setError] = useState(false);
 
   const program = watch('program');
+
   register('group', {
     validate: () => {
       const err = edited.filter((item) => item.value === false).length !== 0;
@@ -32,7 +33,7 @@ const Conditions = ({ messages, errorMessages, selectData, form }) => {
     <Box>
       <RuleGroup
         program={program}
-        grades={selectData.grades}
+        grades={selectData.gradeScales}
         sources={selectData.sources}
         courses={selectData.courses}
         knowledges={selectData.knowledges}
@@ -49,6 +50,8 @@ const Conditions = ({ messages, errorMessages, selectData, form }) => {
         error={error}
         setError={setError}
         errorMessage={errorMessages.conditionErrorMessage}
+        labels={messages.conditions.labels}
+        placeholders={messages.conditions.placeholders}
       />
     </Box>
   );

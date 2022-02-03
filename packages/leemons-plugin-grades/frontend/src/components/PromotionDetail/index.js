@@ -1,7 +1,9 @@
+/* eslint-disable no-param-reassign */
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 import { Box, Button, Col, ContextContainer, Grid } from '@bubbles-ui/components';
+import { isString, map } from 'lodash';
 import { EvaluationDetailStyles } from './styles';
 import { Name } from './components/Name';
 import { Program } from './components/Program';
@@ -39,21 +41,39 @@ const PromotionDetail = ({
   const {
     reset,
     watch,
-    unregister,
-    resetField,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = form;
-
-  console.log(errors);
 
   useEffect(() => {
     reset({ ...defaultValues });
   }, [defaultValues]);
 
+  function removeAllConditionsScaleTargets(_group) {
+    function parseCondition(condition) {
+      if (isString(condition.target)) {
+        condition.target = null;
+      }
+      return condition;
+    }
+
+    function parseConditionGroup(group) {
+      return {
+        ...group,
+        conditions: map(group.conditions, parseCondition),
+      };
+    }
+
+    return parseConditionGroup(_group);
+  }
+
   useEffect(() => {
     const subscription = watch((formData, event) => {
       onChange(formData, event);
+      if (event.name === 'grade') {
+        setValue('group', removeAllConditionsScaleTargets(formData.group));
+      }
     });
     return () => subscription.unsubscribe();
   }, [watch]);

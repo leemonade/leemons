@@ -1,5 +1,6 @@
+/* eslint-disable no-param-reassign */
 import React, { useMemo } from 'react';
-import { clone, cloneDeep, find, forIn, map } from 'lodash';
+import { clone, cloneDeep, find, forIn, isNil, isString, map } from 'lodash';
 import {
   Box,
   Col,
@@ -9,7 +10,7 @@ import {
   Paper,
   Tree,
 } from '@bubbles-ui/components';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { AdminPageHeader, uuidv4 } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@grades/helpers/prefixPN';
 import { SelectCenter } from '@users/components/SelectCenter';
@@ -21,6 +22,7 @@ import {
   deletePromotionRequest,
   listGradesRequest,
   listPromotionsRequest,
+  updatePromotionRequest,
 } from '../../../request';
 import { TreeItem } from '../../../components/TreeItem/TreeItem';
 import {
@@ -211,7 +213,15 @@ export default function PromotionsList() {
     render();
   }
 
-  async function onChange({ program: programId }, { name }) {
+  async function onChange({ program: programId, grade: gradeId }, { name }, useRender = true) {
+    if (name === 'grade') {
+      store.selectData.gradeScales = map(find(store.grades, { id: gradeId }).scales, (scale) => ({
+        label: `${scale.letter ? `${scale.letter} (` : ''} ${scale.number}${
+          scale.letter ? `)` : ''
+        }`,
+        value: scale.id,
+      }));
+    }
     if (name === 'program') {
       const program = await getProgramDetail(programId);
       store.selectData.courses = map(program.courses, (course) => ({
@@ -234,12 +244,15 @@ export default function PromotionsList() {
         label: group.name,
         value: group.id,
       }));
-      render();
     }
+    if (useRender) render();
   }
 
   function onAdd() {
     store.selectedPromotion = {
+      name: null,
+      program: null,
+      grade: null,
       group: {
         operator: 'and',
         conditions: [{ id: '1', source: '', sourceIds: [], data: '', operator: '', target: 0 }],
@@ -248,14 +261,46 @@ export default function PromotionsList() {
     render();
   }
 
-  function onSelect(e) {
+  async function onSelect(e) {
+    function processGroup(group) {
+      return {
+        ...group,
+        // eslint-disable-next-line no-use-before-define
+        conditions: map(group.conditions, processCondition),
+      };
+    }
+
+    function processCondition(condition) {
+      if (condition.group) {
+        condition.group = processGroup(condition.group);
+      }
+      if (condition.targetGradeScale) {
+        condition.target = condition.targetGradeScale;
+        delete condition.targetGradeScale;
+      }
+      return {
+        id: uuidv4(),
+        ...condition,
+      };
+    }
+
     store.selectedPromotion = cloneDeep(find(store.promotions, { id: e.id }));
+    store.selectedPromotion.group = processGroup(store.selectedPromotion.group);
+
+    await Promise.all([
+      onChange(store.selectedPromotion, { name: 'program' }, false),
+      onChange(store.selectedPromotion, { name: 'grade' }, false),
+    ]);
+
     render();
   }
 
   async function onDelete(e) {
     try {
       await deletePromotionRequest(e.id);
+      if (store.selectedPromotion && store.selectedPromotion.id === e.id) {
+        store.selectedPromotion = null;
+      }
       await onSelectCenter(store.center);
       await addSuccessAlert(t('successDelete'));
     } catch (err) {
@@ -263,26 +308,33 @@ export default function PromotionsList() {
     }
   }
 
-  function removeConditionIds(_group) {
-    function removeConditionId({ id, ...condition }) {
+  function parseConditions(_group) {
+    function parseCondition({ id, ...condition }) {
+      if (isString(condition.target)) {
+        condition.targetGradeScale = condition.target;
+        delete condition.target;
+      }
+      if (isNil(condition.dataTargets)) {
+        delete condition.dataTargets;
+      }
       if (condition.group) {
         return {
           ...condition,
           // eslint-disable-next-line no-use-before-define
-          group: removeGroupConditionIds(condition.group),
+          group: parseConditionGroup(condition.group),
         };
       }
       return condition;
     }
 
-    function removeGroupConditionIds(group) {
+    function parseConditionGroup(group) {
       return {
         ...group,
-        conditions: map(group.conditions, removeConditionId),
+        conditions: map(group.conditions, parseCondition),
       };
     }
 
-    return removeGroupConditionIds(_group);
+    return parseConditionGroup(_group);
   }
 
   async function onSubmit(e) {
@@ -291,12 +343,19 @@ export default function PromotionsList() {
         store.saving = true;
         render();
 
-        const promotion = await addPromotionRequest({
-          ...e,
-          center: store.center,
-          group: removeConditionIds(e.group),
-        });
-        console.log(promotion);
+        if (e.id) {
+          const { created_at, deleted, deleted_at, updated_at, subject, isDependency, ...data } = e;
+          await updatePromotionRequest({
+            ...data,
+            group: parseConditions(e.group),
+          });
+        } else {
+          await addPromotionRequest({
+            ...e,
+            center: store.center,
+            group: parseConditions(e.group),
+          });
+        }
 
         store.selectedPromotion = null;
         store.saving = false;
@@ -315,6 +374,37 @@ export default function PromotionsList() {
     forIn(m, (value, key) => {
       m[key] = t(`detail.${key}`);
     });
+    m.conditions = {
+      labels: {
+        saveButton: t(`detail.labels.saveButton`),
+        newRule: t(`detail.labels.newRule`),
+        newRuleGroup: t(`detail.labels.newRuleGroup`),
+        menuLabels: {
+          remove: t(`detail.labels.menuLabels.remove`),
+          duplicate: t(`detail.labels.menuLabels.duplicate`),
+          turnIntoCondition: t(`detail.labels.menuLabels.turnIntoCondition`),
+          turnIntoGroup: t(`detail.labels.menuLabels.turnIntoGroup`),
+        },
+        where: t(`detail.labels.where`),
+      },
+      placeholders: {
+        programName: t(`detail.placeholders.programName`),
+        selectProgram: t(`detail.placeholders.selectProgram`),
+        selectGradeSystem: t(`detail.placeholders.selectGradeSystem`),
+        conditionPlaceholders: {
+          selectItem: t(`detail.placeholders.conditionPlaceholders.selectItem`),
+          selectCourse: t(`detail.placeholders.conditionPlaceholders.selectCourse`),
+          selectKnowledge: t(`detail.placeholders.conditionPlaceholders.selectKnowledge`),
+          selectSubject: t(`detail.placeholders.conditionPlaceholders.selectSubject`),
+          selectSubjectType: t(`detail.placeholders.conditionPlaceholders.selectSubjectType`),
+          selectSubjectGroup: t(`detail.placeholders.conditionPlaceholders.selectSubjectGroup`),
+          selectDataType: t(`detail.placeholders.conditionPlaceholders.selectDataType`),
+          selectOperator: t(`detail.placeholders.conditionPlaceholders.selectOperator`),
+          selectTargetGrade: t(`detail.placeholders.conditionPlaceholders.selectTargetGrade`),
+          enterTarget: t(`detail.placeholders.conditionPlaceholders.enterTarget`),
+        },
+      },
+    };
     return m;
   }, [t]);
 
