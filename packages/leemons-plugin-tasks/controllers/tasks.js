@@ -2,6 +2,7 @@ const create = require('../src/services/task/create');
 const get = require('../src/services/task/get');
 const publish = require('../src/services/task/publish');
 const remove = require('../src/services/task/remove');
+const search = require('../src/services/task/search');
 const update = require('../src/services/task/update');
 
 module.exports = {
@@ -168,6 +169,25 @@ module.exports = {
       ctx.body = {
         status: 200,
         published,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        error: e.message,
+      };
+    }
+  },
+  search: async (ctx) => {
+    try {
+      const { page, size } = ctx.request.query;
+
+      const tasks = await search({}, parseInt(page, 10), parseInt(size, 10));
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        ...tasks,
       };
     } catch (e) {
       ctx.status = 400;

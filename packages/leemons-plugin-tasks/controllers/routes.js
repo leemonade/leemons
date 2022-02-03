@@ -39,6 +39,12 @@ module.exports = [
   },
   {
     method: 'GET',
+    path: '/tasks/search',
+    handler: 'tasks.search',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
     path: '/tasks/:id',
     handler: 'tasks.get',
     authenticated: true,
