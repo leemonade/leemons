@@ -33,6 +33,7 @@ import { getSources } from '../../../helpers/getSources';
 import { getDataTypes } from '../../../helpers/getDataTypes';
 import { getOperators } from '../../../helpers/getOperators';
 import { getPromotionDetailMessages } from '../../../helpers/getPromotionDetailMessages';
+import { activeMenuItemDependencies } from '../../../helpers/activeMenuItemDependencies';
 
 export default function PromotionsList() {
   const [t] = useTranslateLoader(prefixPN('promotionsPage'));
@@ -268,7 +269,7 @@ export default function PromotionsList() {
 
         store.selectedPromotion = null;
         store.saving = false;
-        await onSelectCenter(store.center);
+        await Promise.all([onSelectCenter(store.center), activeMenuItemDependencies()]);
         await addSuccessAlert(t('successSave'));
       }
     } catch (error) {
