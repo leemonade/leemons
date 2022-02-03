@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Box, createStyles, MAIN_NAV_WIDTH } from '@bubbles-ui/components';
+import { Box, createStyles, LoadingOverlay, MAIN_NAV_WIDTH } from '@bubbles-ui/components';
 import MainMenu from '@menu-builder/components/mainMenu';
 
 import AlertStack from './AlertStack';
@@ -12,6 +12,8 @@ const PrivateLayoutStyles = createStyles((theme, { width }) => ({
   root: {
     display: 'flex',
     height: '100vh',
+    overflow: 'hidden',
+    position: 'relative',
   },
   sideNav: {
     width,
@@ -23,6 +25,7 @@ const PrivateLayoutStyles = createStyles((theme, { width }) => ({
     flex: 1,
     height: '100vh',
     overflowY: 'auto',
+    position: 'relative',
   },
 }));
 
@@ -51,10 +54,11 @@ const PrivateLayout = ({ children }) => {
 
   return (
     <Box className={classes.root}>
+      <LoadingOverlay visible={layoutState.loading} />
       <Box className={classes.sideNav}>
         <MainMenu onClose={onCloseMenu} onOpen={onOpenMenu} subNavWidth={NAV_OPEN_WIDTH} />
       </Box>
-      <Box className={classes.content}>
+      <Box ref={layoutState.contentRef} className={classes.content}>
         <AlertStack />
         {children}
       </Box>

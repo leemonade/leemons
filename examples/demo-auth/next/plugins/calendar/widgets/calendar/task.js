@@ -1,15 +1,38 @@
 import PropTypes from 'prop-types';
 import * as _ from 'lodash';
-import React, { useEffect, useState } from 'react';
-import { Button, Checkbox, FormControl, Input, Select, Textarea } from 'leemons-ui';
+import { get, map } from 'lodash';
+import React, { useEffect, useMemo, useState } from 'react';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { listKanbanColumnsRequest } from '@calendar/request';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+import {
+  ActionButton,
+  Box,
+  Button,
+  Checkbox,
+  Col,
+  ContextContainer,
+  Grid,
+  MultiSelect,
+  Select,
+  Textarea,
+  TextInput,
+} from '@bubbles-ui/components';
+import { PluginKanbanIcon, PluginRedactorIcon, TagsIcon } from '@bubbles-ui/icons/outline';
 
-export default function Task({ isEditing, event, form, data, allFormData, tCommon }) {
+export default function Task({ event, form, classes, disabled, allProps: { classCalendars } }) {
+  const {
+    Controller,
+    control,
+    formState: { errors },
+  } = form;
+
   const [t] = useTranslateLoader(prefixPN('task_mode_event_type'));
+  const { t: tCommon } = useCommonTranslate('forms');
   const [columns, setColumns] = useState([]);
   const [columnsT, setColumnsT] = useState([]);
 
@@ -25,6 +48,16 @@ export default function Task({ isEditing, event, form, data, allFormData, tCommo
   };
 
   const getColumnName = (name) => tKeys(name, columnsT);
+
+  const columnsData = useMemo(() => {
+    if (columns) {
+      return map(columns, (column) => ({
+        label: getColumnName(column.nameKey),
+        value: column.id,
+      }));
+    }
+    return null;
+  }, [columns, columnsT]);
 
   useEffect(() => {
     if (event) {
@@ -53,12 +86,12 @@ export default function Task({ isEditing, event, form, data, allFormData, tCommo
 
   const onInputCheckboxChange = (e, index) => {
     const subtask = form.getValues('subtask');
-    subtask[index].title = e.target.value;
+    subtask[index].title = e;
     form.setValue('subtask', subtask);
   };
   const onCheckedChange = (e, index) => {
     const subtask = form.getValues('subtask');
-    subtask[index].checked = e.target.checked;
+    subtask[index].checked = e;
     form.setValue('subtask', subtask);
   };
   const removeSubtask = (index) => {
@@ -67,70 +100,142 @@ export default function Task({ isEditing, event, form, data, allFormData, tCommo
     form.setValue('subtask', subtask);
   };
 
-  const subtasks = form.watch('subtask');
+  const subtask = form.watch('subtask');
 
   return (
-    <div>
-      <FormControl
-        label={t('description')}
-        className="w-full"
-        formError={_.get(form.formState.errors, `description`)}
-      >
-        <Textarea className="w-full" outlined={true} {...form.register(`description`)} />
-      </FormControl>
-      <div>
-        <FormControl
-          label={t('subtask')}
-          className="w-full"
-          formError={_.get(form.formState.errors, `subtask`)}
-        />
-        {subtasks ? (
-          <>
-            {subtasks.map((subtask, index) => (
-              <div key={index} className="relative">
-                <FormControl
-                  label={
-                    <Input
-                      outlined={true}
-                      value={subtask.title}
-                      onChange={(e) => onInputCheckboxChange(e, index)}
-                    />
-                  }
-                  labelPosition="right"
-                >
-                  <Checkbox checked={subtask.checked} onChange={(e) => onCheckedChange(e, index)} />
-                  <Button
-                    className="absolute right-1 top-1"
-                    type="button"
-                    color="error"
-                    onClick={() => removeSubtask(index)}
-                  >
-                    Borrar
+    <ContextContainer>
+      <Box>
+        <Grid columns={100} gutter={0}>
+          <Col span={10} className={classes.icon}>
+            <PluginRedactorIcon />
+          </Col>
+          <Col span={90}>
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <Textarea
+                  size="xs"
+                  disabled={disabled}
+                  label={t('description')}
+                  error={get(errors, 'description')}
+                  required
+                  {...field}
+                />
+              )}
+            />
+          </Col>
+        </Grid>
+      </Box>
+
+      {!disabled || (subtask && subtask.length) ? (
+        <Box>
+          <Grid columns={100} gutter={0}>
+            <Col span={10} className={classes.icon}>
+              <PluginKanbanIcon />
+            </Col>
+            <Col span={90}>
+              <Controller
+                name="subtask"
+                control={control}
+                render={({ field }) =>
+                  field.value
+                    ? field.value.map((item, index) => (
+                        <Grid key={index} columns={100}>
+                          <Col span={15}>
+                            <Checkbox
+                              disabled={disabled}
+                              checked={item.checked}
+                              onChange={(e) => onCheckedChange(e, index)}
+                            />
+                          </Col>
+                          <Col span={disabled ? 85 : 65}>
+                            <TextInput
+                              size="xs"
+                              disabled={disabled}
+                              value={item.title}
+                              onChange={(e) => onInputCheckboxChange(e, index)}
+                            />
+                          </Col>
+                          {!disabled ? (
+                            <Col span={20}>
+                              <ActionButton
+                                icon={<DeleteBinIcon />}
+                                onClick={() => removeSubtask(index)}
+                              />
+                            </Col>
+                          ) : null}
+                        </Grid>
+                      ))
+                    : null
+                }
+              />
+              {!disabled ? (
+                <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                  <Button size="xs" onClick={addSubTask}>
+                    {t('add_subtask')}
                   </Button>
-                </FormControl>
-              </div>
-            ))}
-          </>
-        ) : null}
-        <Button type="button" color="primary" onClick={addSubTask}>
-          {t('add_subtask')}
-        </Button>
-      </div>
-      {columns && columns.length ? (
-        <Select
-          outlined
-          {...form.register(`column`, {
-            required: tCommon('required'),
-          })}
-        >
-          {columns.map((column) => (
-            <option key={column.id} value={column.id}>
-              {getColumnName(column.nameKey)}
-            </option>
-          ))}
-        </Select>
+                </Box>
+              ) : null}
+            </Col>
+          </Grid>
+        </Box>
       ) : null}
-    </div>
+
+      {classCalendars && classCalendars.length ? (
+        <Box>
+          <Grid columns={100} gutter={0}>
+            <Col span={10} className={classes.icon}>
+              <TagsIcon />
+            </Col>
+            <Col span={90}>
+              <Controller
+                name="classes"
+                control={control}
+                render={({ field }) => (
+                  <MultiSelect
+                    size="xs"
+                    disabled={disabled}
+                    data={classCalendars}
+                    label={t('tags')}
+                    error={get(errors, 'classes')}
+                    {...field}
+                  />
+                )}
+              />
+            </Col>
+          </Grid>
+        </Box>
+      ) : null}
+
+      {columnsData ? (
+        <Box>
+          <Grid columns={100} gutter={0}>
+            <Col span={10} className={classes.icon} />
+            <Col span={90}>
+              <Controller
+                name="column"
+                control={control}
+                rules={{
+                  required: tCommon('required'),
+                }}
+                render={({ field }) => (
+                  <Select
+                    size="xs"
+                    label={t('column')}
+                    disabled={disabled}
+                    data={columnsData}
+                    {...field}
+                    required
+                    error={get(errors, 'column')}
+                  />
+                )}
+              />
+            </Col>
+          </Grid>
+        </Box>
+      ) : null}
+    </ContextContainer>
   );
 }
 
@@ -141,4 +246,7 @@ Task.propTypes = {
   data: PropTypes.object,
   allFormData: PropTypes.object,
   tCommon: PropTypes.func,
+  classes: PropTypes.object,
+  disabled: PropTypes.bool,
+  allProps: PropTypes.object,
 };

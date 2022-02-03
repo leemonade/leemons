@@ -5,14 +5,12 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getPlatformLocalesRequest, listCentersRequest } from '@users/request';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { useHistory } from 'react-router-dom';
+import { Box, Title, Text } from '@bubbles-ui/components';
 import {
-  Box,
-  Title,
-  Text,
   AddCurriculumForm,
   ADD_CURRICULUM_FORM_MESSAGES,
   ADD_CURRICULUM_FORM_ERROR_MESSAGES,
-} from '@bubbles-ui/components';
+} from '@bubbles-ui/leemons';
 import { listProgramsRequest } from '@academic-portfolio/request';
 import countryList from 'country-region-data';
 import { addCurriculumRequest } from '../../../request';

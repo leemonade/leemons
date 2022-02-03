@@ -1,1 +1,1 @@
-{"name":"layout-front","version":"1.0.0","license":"MIT","dependencies":{"@bubbles-ui/components":"^1.0.14","prop-types":"^15.7.2"},"devDependencies":{}}
+{"name":"layout-front","version":"1.0.0","license":"MIT","dependencies":{"@bubbles-ui/components":"^1.0.23","@bubbles-ui/notifications":"^1.0.0","prop-types":"^15.7.2"},"devDependencies":{}}
