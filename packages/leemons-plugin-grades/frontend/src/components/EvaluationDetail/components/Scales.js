@@ -87,7 +87,6 @@ const Scales = ({ messages, errorMessages, selectData, form, onBeforeRemove }) =
           // eslint-disable-next-line no-param-reassign
           if (tag.scale.toString() === oldN.toString()) tag.scale = newN;
         });
-        console.log(tags);
         setValue('tags', tags);
       }
     }
