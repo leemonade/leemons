@@ -34,6 +34,7 @@ import {
   EvaluationDetail,
 } from '../../../components/EvaluationDetail';
 import { TreeItem } from '../../../components/TreeItem/TreeItem';
+import { activeMenuItemPromotions } from '../../../helpers/activeMenuItemPromotions';
 
 export default function EvaluationList() {
   const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
@@ -216,7 +217,7 @@ export default function EvaluationList() {
 
         store.selectedGrade = null;
         store.saving = false;
-        await onSelectCenter(store.center);
+        await Promise.all([onSelectCenter(store.center), activeMenuItemPromotions()]);
         await addSuccessAlert(t('successSave'));
       }
     } catch (error) {
