@@ -301,7 +301,7 @@ export default function DependenciesList() {
         <PageContainer>
           <ContextContainer padded="vertical">
             <Grid grow>
-              <Col span={5}>
+              <Col span={4}>
                 <Paper fullWidth padding={5}>
                   <ContextContainer divided>
                     <Box>
@@ -321,7 +321,7 @@ export default function DependenciesList() {
                   </ContextContainer>
                 </Paper>
               </Col>
-              <Col span={7}>
+              <Col span={8}>
                 {store.selectedDependency && (
                   <Paper fullWidth padding={5}>
                     <PromotionDetail

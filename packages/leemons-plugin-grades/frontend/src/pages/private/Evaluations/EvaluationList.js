@@ -276,7 +276,7 @@ export default function EvaluationList() {
         <PageContainer>
           <ContextContainer padded="vertical">
             <Grid grow>
-              <Col span={5}>
+              <Col span={4}>
                 <Paper fullWidth padding={5}>
                   <ContextContainer divided>
                     <Box>
@@ -296,7 +296,7 @@ export default function EvaluationList() {
                   </ContextContainer>
                 </Paper>
               </Col>
-              <Col span={7}>
+              <Col span={8}>
                 {store.selectedGrade && (
                   <Paper fullWidth padding={5}>
                     <EvaluationDetail
