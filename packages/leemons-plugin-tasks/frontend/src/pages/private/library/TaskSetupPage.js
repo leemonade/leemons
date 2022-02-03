@@ -15,6 +15,7 @@ import {
   PublishData,
 } from './components';
 import { prefixPN } from '../../../helpers';
+import saveTaskRequest from '../../../request/task/saveTask';
 
 export default function TaskSetupPage() {
   const [t, translations] = useTranslateLoader(prefixPN('task_setup_page'));
@@ -31,13 +32,11 @@ export default function TaskSetupPage() {
     try {
       const body = { ...values };
       let messageKey = 'create_done';
-      let apiCall = null;
 
       if (!isEmpty(store.currentTask)) {
         messageKey = 'update_done';
-        apiCall = null;
-        body.id = store.currentTask.id;
       }
+      await saveTaskRequest(store?.currentTask?.id, body);
 
       // TODO: Implement save task request call
       // const response = await apiCall(values);
@@ -102,8 +101,6 @@ export default function TaskSetupPage() {
     if (!isNil(labels)) {
       const { configData, designData, contentData, instructionData, publishData } = labels;
 
-      console.log('designData:', designData);
-
       return {
         editable: isEmpty(store.currentTask),
         values: store.currentTask || {},
@@ -139,7 +136,11 @@ export default function TaskSetupPage() {
 
   return (
     <ContextContainer fullHeight>
-      <AdminPageHeader values={headerLabels} />
+      <AdminPageHeader
+        values={headerLabels}
+        buttons={{ edit: 'Save draft' }}
+        onEdit={handleOnSaveTask}
+      />
 
       <Paper color="solid" shadow="none" padding={0}>
         <PageContainer>

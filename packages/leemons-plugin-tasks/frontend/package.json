@@ -5,12 +5,11 @@
   "license": "MIT",
   "dependencies": {
     "@bubbles-ui/components": "^1.0.23",
+    "@bubbles-ui/editors": "^1.0.5",
     "@bubbles-ui/icons": "^1.0.10",
     "@bubbles-ui/leemons": "^1.0.4",
-    "@bubbles-ui/editors": "^1.0.5",
-    "react-hook-form": "^7.14.2",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "react-hook-form": "^7.25.3"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { isFunction, isEmpty } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
 import {
-  Box,
   Stack,
   ContextContainer,
   TextInput,
@@ -54,39 +53,39 @@ function ConfigData({
     <form onSubmit={handleSubmit(handleOnNext)}>
       <ContextContainer {...props} divided>
         <ContextContainer title={labels.title}>
-          <Box>
-            <Controller
-              control={control}
-              name="name"
-              rules={{ required: errorMessages.name?.required }}
-              render={({ field }) => (
-                <TextInput
-                  {...field}
-                  label={labels.name}
-                  placeholder={placeholders.name}
-                  error={errors.name}
-                  required={!isEmpty(errorMessages.name?.required)}
-                />
-              )}
-            />
-          </Box>
-          <Box>
-            <Controller
-              control={control}
-              name="tagline"
-              rules={{ required: errorMessages.tagline?.required }}
-              render={({ field }) => (
-                <TextInput
-                  {...field}
-                  label={labels.tagline}
-                  placeholder={placeholders.tagline}
-                  error={errors.tagline}
-                  required={!isEmpty(errorMessages.tagline?.required)}
-                />
-              )}
-            />
-          </Box>
+          {/* Name input */}
+          <Controller
+            control={control}
+            name="name"
+            rules={{ required: errorMessages.name?.required }}
+            render={({ field }) => (
+              <TextInput
+                {...field}
+                label={labels.name}
+                placeholder={placeholders.name}
+                error={errors.name}
+                required={!isEmpty(errorMessages.name?.required)}
+              />
+            )}
+          />
+          {/* Tagline input */}
+          <Controller
+            control={control}
+            name="tagline"
+            rules={{ required: errorMessages.tagline?.required }}
+            render={({ field }) => (
+              <TextInput
+                {...field}
+                label={labels.tagline}
+                placeholder={placeholders.tagline}
+                error={errors.tagline}
+                required={!isEmpty(errorMessages.tagline?.required)}
+              />
+            )}
+          />
+          {/* Config container */}
           <ContextContainer title="Config" direction="row">
+            {/* Program selector */}
             <Controller
               control={control}
               name="program"
@@ -112,6 +111,7 @@ function ConfigData({
                 />
               )}
             />
+            {/* Course selector */}
             <Controller
               control={control}
               name="course"
@@ -139,7 +139,9 @@ function ConfigData({
             />
           </ContextContainer>
 
+          {/* Subject container */}
           <ContextContainer title="Subject" direction="row" alignItems="end">
+            {/* Subject selector */}
             <Controller
               control={control}
               name="subject"
@@ -165,6 +167,7 @@ function ConfigData({
                 />
               )}
             />
+            {/* Difficulty selector */}
             <Controller
               control={control}
               name="level"
@@ -190,29 +193,30 @@ function ConfigData({
                 />
               )}
             />
+            {/* Add subject button */}
             <Button variant="filled" color="primary" size="xs">
               {labels.addSubject}
             </Button>
           </ContextContainer>
 
+          {/* Summary container */}
           <ContextContainer title="Summary">
-            <Box>
-              <Controller
-                control={control}
-                name="summary"
-                rules={{ required: errorMessages.summary?.required }}
-                render={({ field }) => (
-                  <Textarea
-                    {...field}
-                    autosize={true}
-                    label={labels.summary}
-                    placeholder={placeholders.summary}
-                    required={!isEmpty(errorMessages.summary?.required)}
-                    error={errors.summary}
-                  />
-                )}
-              />
-            </Box>
+            {/* Summary input */}
+            <Controller
+              control={control}
+              name="summary"
+              rules={{ required: errorMessages.summary?.required }}
+              render={({ field }) => (
+                <Textarea
+                  {...field}
+                  autosize={true}
+                  label={labels.summary}
+                  placeholder={placeholders.summary}
+                  required={!isEmpty(errorMessages.summary?.required)}
+                  error={errors.summary}
+                />
+              )}
+            />
           </ContextContainer>
         </ContextContainer>
         <Stack fullWidth justifyContent="end">
