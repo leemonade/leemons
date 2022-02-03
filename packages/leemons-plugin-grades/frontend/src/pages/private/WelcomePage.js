@@ -17,7 +17,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@grades/helpers/prefixPN';
 import { enableMenuItemRequest, getSettingsRequest, updateSettingsRequest } from '@grades/request';
 import hooks from 'leemons-hooks';
-import { haveGradesRequest } from '../../request';
+import { haveGradesRequest, havePromotionsRequest } from '../../request';
 
 // eslint-disable-next-line react/prop-types
 function StepCard({ t, step, disabled, to, onClick }) {
@@ -55,11 +55,13 @@ export default function WelcomePage() {
   // INIT DATA LOAD
 
   async function init() {
-    const [settingsResponse, haveGradesResponse] = await Promise.all([
+    const [settingsResponse, haveGradesResponse, havePromotionsResponse] = await Promise.all([
       getSettingsRequest(),
       haveGradesRequest(),
+      havePromotionsRequest(),
     ]);
 
+    store.havePromotions = havePromotionsResponse.have;
     store.haveGrades = haveGradesResponse.have;
     store.settings = settingsResponse.settings;
     render();
@@ -85,6 +87,12 @@ export default function WelcomePage() {
 
   async function handleOnPromotions() {
     const itemKey = 'promotions';
+    await enableMenuItemRequest(itemKey);
+    await hooks.fireEvent('menu-builder:user:updateItem', itemKey);
+  }
+
+  async function handleOnDependencies() {
+    const itemKey = 'dependencies';
     await enableMenuItemRequest(itemKey);
     await hooks.fireEvent('menu-builder:user:updateItem', itemKey);
   }
@@ -134,8 +142,9 @@ export default function WelcomePage() {
             <StepCard
               t={t}
               step="step_dependencies"
-              to="/private/academic-portfolio/dependencies"
-              disabled
+              to="/private/grades/dependencies"
+              onClick={handleOnDependencies}
+              disabled={!store.havePromotions}
             />
           </ContextContainer>
         </PageContainer>

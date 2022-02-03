@@ -18,24 +18,24 @@ import { useStore } from '@common/useStore';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { detailProgramRequest, listProgramsRequest } from '@academic-portfolio/request';
 import {
-  addPromotionRequest,
-  deletePromotionRequest,
+  addDependencyRequest,
+  deleteDependencyRequest,
+  listDependenciesRequest,
   listGradesRequest,
-  listPromotionsRequest,
-  updatePromotionRequest,
+  updateDependencyRequest,
 } from '../../../request';
 import { TreeItem } from '../../../components/TreeItem/TreeItem';
 import {
   PROMOTION_DETAIL_FORM_ERROR_MESSAGES,
   PromotionDetail,
 } from '../../../components/PromotionDetail';
-import { getSources } from '../../../helpers/getSources';
-import { getDataTypes } from '../../../helpers/getDataTypes';
 import { getOperators } from '../../../helpers/getOperators';
+import { getDataTypes } from '../../../helpers/getDataTypes';
+import { getSources } from '../../../helpers/getSources';
 import { getPromotionDetailMessages } from '../../../helpers/getPromotionDetailMessages';
 
-export default function PromotionsList() {
-  const [t] = useTranslateLoader(prefixPN('promotionsPage'));
+export default function DependenciesList() {
+  const [t] = useTranslateLoader(prefixPN('dependenciesPage'));
   const [tC] = useTranslateLoader(prefixPN('conditionOptions'));
   const [tP] = useTranslateLoader(prefixPN('promotionDetail'));
 
@@ -49,10 +49,10 @@ export default function PromotionsList() {
     [t]
   );
 
-  async function getPromotions() {
+  async function getDependencies() {
     const {
       data: { items },
-    } = await listPromotionsRequest({ page: 0, size: 9999, center: store.center });
+    } = await listDependenciesRequest({ page: 0, size: 9999, center: store.center });
     return items;
   }
 
@@ -76,7 +76,7 @@ export default function PromotionsList() {
   }
 
   function getTreeData() {
-    const data = map(store.promotions, (grade) => ({
+    const data = map(store.dependencies, (grade) => ({
       id: grade.id,
       parent: 0,
       text: grade.name,
@@ -101,12 +101,12 @@ export default function PromotionsList() {
     render();
 
     store.center = center;
-    const [promotions, programs, grades] = await Promise.all([
-      getPromotions(),
+    const [dependencies, programs, grades] = await Promise.all([
+      getDependencies(),
       getPrograms(),
       getGrades(),
     ]);
-    store.promotions = promotions;
+    store.dependencies = dependencies;
     store.programs = programs;
     store.grades = grades;
     store.selectData = {
@@ -158,10 +158,11 @@ export default function PromotionsList() {
   }
 
   function onAdd() {
-    store.selectedPromotion = {
+    store.selectedDependency = {
       name: null,
       program: null,
       grade: null,
+      subject: null,
       group: {
         operator: 'and',
         conditions: [{ id: '1', source: '', sourceIds: [], data: '', operator: '', target: 0 }],
@@ -193,12 +194,12 @@ export default function PromotionsList() {
       };
     }
 
-    store.selectedPromotion = cloneDeep(find(store.promotions, { id: e.id }));
-    store.selectedPromotion.group = processGroup(store.selectedPromotion.group);
+    store.selectedDependency = cloneDeep(find(store.dependencies, { id: e.id }));
+    store.selectedDependency.group = processGroup(store.selectedDependency.group);
 
     await Promise.all([
-      onChange(store.selectedPromotion, { name: 'program' }, false),
-      onChange(store.selectedPromotion, { name: 'grade' }, false),
+      onChange(store.selectedDependency, { name: 'program' }, false),
+      onChange(store.selectedDependency, { name: 'grade' }, false),
     ]);
 
     render();
@@ -206,9 +207,9 @@ export default function PromotionsList() {
 
   async function onDelete(e) {
     try {
-      await deletePromotionRequest(e.id);
-      if (store.selectedPromotion && store.selectedPromotion.id === e.id) {
-        store.selectedPromotion = null;
+      await deleteDependencyRequest(e.id);
+      if (store.selectedDependency && store.selectedDependency.id === e.id) {
+        store.selectedDependency = null;
       }
       await onSelectCenter(store.center);
       await addSuccessAlert(t('successDelete'));
@@ -253,20 +254,20 @@ export default function PromotionsList() {
         render();
 
         if (e.id) {
-          const { created_at, deleted, deleted_at, updated_at, subject, isDependency, ...data } = e;
-          await updatePromotionRequest({
+          const { created_at, deleted, deleted_at, updated_at, ...data } = e;
+          await updateDependencyRequest({
             ...data,
             group: parseConditions(e.group),
           });
         } else {
-          await addPromotionRequest({
+          await addDependencyRequest({
             ...e,
             center: store.center,
             group: parseConditions(e.group),
           });
         }
 
-        store.selectedPromotion = null;
+        store.selectedDependency = null;
         store.saving = false;
         await onSelectCenter(store.center);
         await addSuccessAlert(t('successSave'));
@@ -278,7 +279,11 @@ export default function PromotionsList() {
     }
   }
 
-  const messages = useMemo(() => getPromotionDetailMessages(tP), [t]);
+  const messages = useMemo(() => {
+    const m = getPromotionDetailMessages(tP);
+    m.nameLabel = t('nameLabel');
+    return m;
+  }, [t]);
 
   const errorMessages = useMemo(() => {
     const m = clone(PROMOTION_DETAIL_FORM_ERROR_MESSAGES);
@@ -306,7 +311,7 @@ export default function PromotionsList() {
                       <Box>
                         <Tree
                           treeData={store.treeData}
-                          selectedNode={store.selectedPromotion?.id}
+                          selectedNode={store.selectedDependency?.id}
                           onAdd={onAdd}
                           onDelete={onDelete}
                           onSelect={onSelect}
@@ -317,16 +322,17 @@ export default function PromotionsList() {
                 </Paper>
               </Col>
               <Col span={7}>
-                {store.selectedPromotion && (
+                {store.selectedDependency && (
                   <Paper fullWidth padding={5}>
                     <PromotionDetail
-                      defaultValues={store.selectedPromotion}
+                      defaultValues={store.selectedDependency}
                       selectData={store.selectData}
                       onChange={onChange}
                       messages={messages}
                       errorMessages={errorMessages}
                       onSubmit={onSubmit}
                       isSaving={store.saving}
+                      isDependency={true}
                     />
                   </Paper>
                 )}

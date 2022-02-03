@@ -63,15 +63,7 @@ module.exports = {
       minScaleToPromoteRequired: 'Campo requerido',
     },
   },
-  promotionsPage: {
-    pageTitle: 'Reglas de promoción',
-    pageDescription:
-      'Crea un conjunto de reglas de promoción basadas en créditos o en asignaturas troncales y optativas. También puedes añadir reglas para áreas de conocimiento específicas',
-    addPromotion: 'Nuevo grupo de reglas',
-    successSave: 'Guardado con éxito',
-    successDelete: 'Eliminado con éxito',
-    selectCenter: 'Seleccionar centro',
-    courseName: 'Curso {index}',
+  conditionOptions: {
     sourceProgram: 'Programa',
     sourceCourse: 'Curso',
     sourceKnowledge: 'Conocimiento',
@@ -92,17 +84,22 @@ module.exports = {
     operatorEQ: 'Igual',
     operatorNEQ: 'No igual',
     operatorContains: 'Contiene',
+  },
+  promotionDetail: {
     detail: {
       nameRequired: 'Campo requerido',
       programRequired: 'Campo requerido',
       gradeRequired: 'Campo requerido',
+      subjectRequired: 'Campo requerido',
       conditionErrorMessage: 'Por favor, seleccione un grado',
       nameLabel: 'Nombre de la promoción',
+      subjectLabel: 'Asignatura',
       saveButtonLabel: 'Guardar',
       programLabel: 'Programa',
       programPlaceholder: 'Seleccione uno...',
       gradeLabel: 'Evaluación del sistema',
       gradePlaceholder: 'Seleccione uno...',
+      subjectPlaceholder: 'Seleccione uno...',
       labels: {
         saveButton: 'Guardar',
         newRule: 'Nueva regla',
@@ -133,5 +130,26 @@ module.exports = {
         },
       },
     },
+  },
+  promotionsPage: {
+    pageTitle: 'Reglas de promoción',
+    pageDescription:
+      'Crea un conjunto de reglas de promoción basadas en créditos o en asignaturas troncales y optativas. También puedes añadir reglas para áreas de conocimiento específicas',
+    addPromotion: 'Nuevo grupo de reglas',
+    successSave: 'Guardado con éxito',
+    successDelete: 'Eliminado con éxito',
+    selectCenter: 'Seleccionar centro',
+    courseName: 'Curso {index}',
+  },
+  dependenciesPage: {
+    pageTitle: 'Dependencias de las asignaturas',
+    pageDescription:
+      'Nuestro sistema de mapas de dependencia permite establecer reglas específicas entre unas asignaturas y otras para permitir la matriculación de un alumno.',
+    addPromotion: 'Nuevo mapa de dependencia',
+    successSave: 'Guardado con éxito',
+    successDelete: 'Eliminado con éxito',
+    selectCenter: 'Seleccionar centro',
+    courseName: 'Curso {index}',
+    nameLabel: 'Nombre de la dependencia',
   },
 };

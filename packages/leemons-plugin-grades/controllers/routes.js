@@ -111,6 +111,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/rules/have',
+    method: 'GET',
+    handler: 'rules.haveRules',
+    authenticated: true,
+  },
+  {
     path: '/rules',
     method: 'POST',
     handler: 'rules.postRule',
@@ -135,6 +141,12 @@ module.exports = [
     authenticated: true,
   },
   // Dependencies
+  {
+    path: '/dependencies',
+    method: 'GET',
+    handler: 'dependency.listDependencies',
+    authenticated: true,
+  },
   {
     path: '/dependencies',
     method: 'POST',

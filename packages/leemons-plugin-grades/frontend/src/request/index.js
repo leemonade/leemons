@@ -13,7 +13,19 @@ import {
   updateGradeScale,
   updateGradeTag,
 } from './evaluations';
-import { addPromotion, deletePromotion, listPromotions, updatePromotion } from './promotions';
+import {
+  addPromotion,
+  deletePromotion,
+  havePromotions,
+  listPromotions,
+  updatePromotion,
+} from './promotions';
+import {
+  addDependency,
+  deleteDependency,
+  listDependencies,
+  updateDependency,
+} from './dependencies';
 
 export const addGradeRequest = addGrade;
 export const haveGradesRequest = haveGrades;
@@ -27,10 +39,17 @@ export const addGradeScaleRequest = addGradeScale;
 export const listPromotionsRequest = listPromotions;
 export const updatePromotionRequest = updatePromotion;
 export const deletePromotionRequest = deletePromotion;
+
+export const listDependenciesRequest = listDependencies;
+export const addDependencyRequest = addDependency;
+export const updateDependencyRequest = updateDependency;
+export const deleteDependencyRequest = deleteDependency;
+
 export const updateGradeTagRequest = updateGradeTag;
 export const deleteGradeTagRequest = deleteGradeTag;
 export const updateSettingsRequest = updateSettings;
 export const enableMenuItemRequest = enableMenuItem;
+export const havePromotionsRequest = havePromotions;
 export const updateGradeScaleRequest = updateGradeScale;
 export const deleteGradeScaleRequest = deleteGradeScale;
 export const canDeleteGradeScaleRequest = canDeleteGradeScale;

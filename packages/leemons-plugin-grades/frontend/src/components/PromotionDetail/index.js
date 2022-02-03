@@ -9,20 +9,24 @@ import { Name } from './components/Name';
 import { Program } from './components/Program';
 import { Grades } from './components/Grades';
 import { Conditions } from './components/Conditions';
+import { Subject } from './components/Subject';
 
 export const PROMOTION_DETAIL_FORM_MESSAGES = {
   nameLabel: 'Promotion name',
+  subjectLabel: 'Subject',
   saveButtonLabel: 'Save',
   programLabel: 'Program',
   programPlaceholder: 'Select one...',
   gradeLabel: 'System evaluation',
   gradePlaceholder: 'Select one...',
+  subjectPlaceholder: 'Select one...',
 };
 
 export const PROMOTION_DETAIL_FORM_ERROR_MESSAGES = {
   nameRequired: 'Field required',
   programRequired: 'Field required',
   gradeRequired: 'Field required',
+  subjectRequired: 'Field required',
   conditionErrorMessage: 'Please select a grade',
 };
 
@@ -34,6 +38,7 @@ const PromotionDetail = ({
   onSubmit,
   onChange,
   isSaving,
+  isDependency,
 }) => {
   const { classes, cx } = EvaluationDetailStyles({});
 
@@ -106,6 +111,17 @@ const PromotionDetail = ({
           </Grid>
         </Box>
 
+        {isDependency ? (
+          <Box>
+            <Subject
+              messages={messages}
+              errorMessages={errorMessages}
+              selectData={selectData}
+              form={form}
+            />
+          </Box>
+        ) : null}
+
         <Box>
           <Conditions
             messages={messages}
@@ -142,6 +158,7 @@ PromotionDetail.propTypes = {
   selectData: PropTypes.object,
   onChange: PropTypes.func,
   isSaving: PropTypes.bool,
+  isDependency: PropTypes.bool,
 };
 
 export { PromotionDetail };

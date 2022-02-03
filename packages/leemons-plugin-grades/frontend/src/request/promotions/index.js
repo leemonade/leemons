@@ -1,5 +1,11 @@
 const pluginPath = 'grades';
 
+async function havePromotions() {
+  return leemons.api(`${pluginPath}/rules/have`, {
+    allAgents: true,
+  });
+}
+
 async function listPromotions({ page, size, center }) {
   return leemons.api(`${pluginPath}/rules?page=${page}&size=${size}&center=${center}`, {
     allAgents: true,
@@ -29,4 +35,4 @@ async function deletePromotion(id) {
   });
 }
 
-export { listPromotions, deletePromotion, addPromotion, updatePromotion };
+export { listPromotions, deletePromotion, addPromotion, updatePromotion, havePromotions };

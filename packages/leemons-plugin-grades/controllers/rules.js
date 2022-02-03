@@ -1,6 +1,10 @@
-const _ = require('lodash');
 const rulesService = require('../src/services/rules');
-const gradesService = require('../src/services/grades');
+
+async function haveRules(ctx) {
+  const have = await rulesService.haveRules();
+  ctx.status = 200;
+  ctx.body = { status: 200, have };
+}
 
 async function postRule(ctx) {
   const rule = await rulesService.addRule(ctx.request.body);
@@ -55,6 +59,7 @@ async function listRules(ctx) {
 module.exports = {
   putRule,
   postRule,
+  haveRules,
   listRules,
   deleteRule,
   postRuleProcess,

@@ -60,15 +60,7 @@ module.exports = {
       minScaleToPromoteRequired: 'Field required',
     },
   },
-  promotionsPage: {
-    pageTitle: 'Promotion rules',
-    pageDescription:
-      'Creates a set of promotion rules based on credits or on core and elective subjects. You can also add rules for specific knowledge areas.',
-    addPromotion: 'New group of rules',
-    successSave: 'Saved successfully',
-    successDelete: 'Deleted successfully',
-    selectCenter: 'Select center',
-    courseName: 'Course {index}',
+  conditionOptions: {
     sourceProgram: 'Program',
     sourceCourse: 'Course',
     sourceKnowledge: 'Knowledge',
@@ -89,17 +81,22 @@ module.exports = {
     operatorEQ: 'Equal',
     operatorNEQ: 'Not equal',
     operatorContains: 'Contains',
+  },
+  promotionDetail: {
     detail: {
       nameRequired: 'Field required',
       programRequired: 'Field required',
       gradeRequired: 'Field required',
+      subjectRequired: 'Field required',
       conditionErrorMessage: 'Please select a grade',
       nameLabel: 'Promotion name',
+      subjectLabel: 'Subject',
       saveButtonLabel: 'Save',
       programLabel: 'Program',
       programPlaceholder: 'Select one...',
       gradeLabel: 'System evaluation',
       gradePlaceholder: 'Select one...',
+      subjectPlaceholder: 'Select one...',
       labels: {
         saveButton: 'Save',
         newRule: 'New rule',
@@ -130,5 +127,26 @@ module.exports = {
         },
       },
     },
+  },
+  promotionsPage: {
+    pageTitle: 'Promotion rules',
+    pageDescription:
+      'Creates a set of promotion rules based on credits or on core and elective subjects. You can also add rules for specific knowledge areas.',
+    addPromotion: 'New group of rules',
+    successSave: 'Saved successfully',
+    successDelete: 'Deleted successfully',
+    selectCenter: 'Select center',
+    courseName: 'Course {index}',
+  },
+  dependenciesPage: {
+    pageTitle: 'Subjects dependencies',
+    pageDescription:
+      'Our dependency mapping system allows you to establish specific rules between some subjects and others to allow the enrollment of a student.',
+    addPromotion: 'New dependency map',
+    successSave: 'Saved successfully',
+    successDelete: 'Deleted successfully',
+    selectCenter: 'Select center',
+    courseName: 'Course {index}',
+    nameLabel: 'Dependency name',
   },
 };
