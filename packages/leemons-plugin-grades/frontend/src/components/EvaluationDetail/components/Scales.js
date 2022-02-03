@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 import { NumberInput, TableInput, TextInput } from '@bubbles-ui/components';
-import { find } from 'lodash';
+import { find, forEach } from 'lodash';
 
 const Scales = ({ messages, errorMessages, selectData, form, onBeforeRemove }) => {
-  const { control, watch, getValues } = form;
+  const { control, watch, getValues, setValue } = form;
 
   const type = find(selectData.type, { value: watch('type') });
   const isPercentage = watch('isPercentage');
@@ -75,6 +75,25 @@ const Scales = ({ messages, errorMessages, selectData, form, onBeforeRemove }) =
     return onBeforeRemove(e, getValues());
   }
 
+  function onChange(newData, event, field) {
+    if (event.type === 'edit') {
+      const oldN = event.oldItem.number;
+      const newN = event.newItem.number;
+      const minScaleToPromote = getValues('minScaleToPromote');
+      const tags = getValues('tags');
+      if (oldN.toString() === minScaleToPromote.toString()) setValue('minScaleToPromote', newN);
+      if (tags) {
+        forEach(tags, (tag) => {
+          // eslint-disable-next-line no-param-reassign
+          if (tag.scale.toString() === oldN.toString()) tag.scale = newN;
+        });
+        console.log(tags);
+        setValue('tags', tags);
+      }
+    }
+    field.onChange(newData);
+  }
+
   return (
     <Controller
       name="scales"
@@ -86,6 +105,7 @@ const Scales = ({ messages, errorMessages, selectData, form, onBeforeRemove }) =
         <TableInput
           editable
           {...field}
+          onChange={(e1, e2) => onChange(e1, e2, field)}
           data={field.value}
           onBeforeRemove={_onBeforeRemove}
           {...tableInputConfig}
