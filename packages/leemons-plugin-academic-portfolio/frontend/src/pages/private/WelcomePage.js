@@ -1,26 +1,23 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Paper,
-  Divider,
   Box,
-  Stack,
-  ImageLoader,
   Button,
   Checkbox,
-  PageContainer,
   ContextContainer,
+  Divider,
+  ImageLoader,
+  PageContainer,
+  Paper,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { useAsync } from '@common/useAsync';
-import {
-  getSettingsRequest,
-  updateSettingsRequest,
-  enableMenuItemRequest,
-} from '@academic-portfolio/request';
-import hooks from 'leemons-hooks';
+import { getSettingsRequest, updateSettingsRequest } from '@academic-portfolio/request';
+import { useStore } from '@common';
+import { activeMenuItemPrograms } from '../../helpers/activeMenuItemPrograms';
+import { activeMenuItemSubjects } from '../../helpers/activeMenuItemSubjects';
+import { haveProgramsRequest } from '../../request';
 
 // eslint-disable-next-line react/prop-types
 function StepCard({ t, step, disabled, to, onClick }) {
@@ -45,44 +42,45 @@ export default function WelcomePage() {
 
   // ----------------------------------------------------------------------
   // SETTINGS
-  const [settings, setSettings] = useState({});
+  const [store, render] = useStore();
 
   const updateSettings = async (data) => {
-    setSettings(data);
+    store.settings = data;
     await updateSettingsRequest(data);
+    render();
   };
 
   // ·····················································································
   // INIT DATA LOAD
 
-  const initDataLoad = useCallback(async () => {
-    const settingsResponse = await getSettingsRequest();
+  async function init() {
+    const [settingsResponse, haveProgramsResponse] = await Promise.all([
+      getSettingsRequest(),
+      haveProgramsRequest(),
+    ]);
+    store.settings = settingsResponse.settings;
+    store.havePrograms = haveProgramsResponse.have;
+    render();
+  }
 
-    return {
-      settings: settingsResponse.settings,
-    };
+  useEffect(() => {
+    init();
   }, []);
-
-  const onDataLoadSuccess = useCallback(({ settings: _settings }) => {
-    setSettings(_settings);
-  }, []);
-  const onDataLoadError = useCallback(() => {}, []);
-
-  useAsync(initDataLoad, onDataLoadSuccess, onDataLoadError);
 
   // ----------------------------------------------------------------------
   // UI CONTROLS
 
   const handleOnHideHelp = () => {
-    const newSettings = { ...settings, hideWelcome: !settings?.hideWelcome };
+    const newSettings = { ...store.settings, hideWelcome: !store.settings?.hideWelcome };
     updateSettings(newSettings);
   };
 
   const handleOnPrograms = async () => {
-    // Let's enable Programs menu item
-    const itemKey = 'programs';
-    await enableMenuItemRequest(itemKey);
-    await hooks.fireEvent('menu-builder:user:updateItem', itemKey);
+    await activeMenuItemPrograms();
+  };
+
+  const handleOnSubjects = async () => {
+    await activeMenuItemSubjects();
   };
 
   const headerValues = useMemo(
@@ -103,8 +101,8 @@ export default function WelcomePage() {
         <Checkbox
           label={t('hide_info_label')}
           onChange={handleOnHideHelp}
-          checked={settings?.hideWelcome === 1}
-          value={settings?.hideWelcome === 1}
+          checked={store.settings?.hideWelcome === 1}
+          value={store.settings?.hideWelcome === 1}
         />
       </PageContainer>
 
@@ -121,7 +119,8 @@ export default function WelcomePage() {
               t={t}
               step="step_subjects"
               to="/private/academic-portfolio/subjects"
-              disabled
+              disabled={!store.havePrograms}
+              onClick={handleOnSubjects}
             />
             <StepCard t={t} step="step_tree" to="/private/academic-portfolio/tree" disabled />
           </ContextContainer>

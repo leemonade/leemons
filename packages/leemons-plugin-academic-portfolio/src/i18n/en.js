@@ -148,4 +148,28 @@ module.exports = {
       },
     },
   },
+  subject_page: {
+    page_title: 'Subjects configuration',
+    page_description:
+      'Configure your knowledge areas/topics and type (core, electives…), then you can upload your subject database or add them manually. After this, you are ready to create your tree portfolio schema.',
+    centerLabel: 'Center',
+    centerPlaceholder: 'Select a center',
+    programLabel: 'Program',
+    programPlaceholder: 'Select a program',
+    addKnowledgeDone: 'Knowledge saved',
+    knowledge: {
+      title: 'Knowledge areas',
+      name: 'Name',
+      nameRequired: 'Required field',
+      abbreviation: 'Abbr.',
+      abbreviationRequired: 'Required field',
+      color: 'Color',
+      colorRequired: 'Required field',
+      icon: 'Icon',
+      creditsCourse: 'Cr. Course',
+      creditsProgram: 'Cr. Program',
+      maxLength: 'Max length: {max}',
+      onlyNumbers: 'Only numbers',
+    },
+  },
 };

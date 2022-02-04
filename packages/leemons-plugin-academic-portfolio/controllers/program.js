@@ -1,5 +1,11 @@
 const programService = require('../src/services/programs');
 
+async function havePrograms(ctx) {
+  const have = await programService.havePrograms();
+  ctx.status = 200;
+  ctx.body = { status: 200, have };
+}
+
 async function postProgram(ctx) {
   const program = await programService.addProgram(ctx.request.body);
   ctx.status = 200;
@@ -96,6 +102,7 @@ module.exports = {
   putProgram,
   postProgram,
   listProgram,
+  havePrograms,
   detailProgram,
   programGroups,
   deleteProgram,
