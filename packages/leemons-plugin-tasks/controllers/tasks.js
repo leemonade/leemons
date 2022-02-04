@@ -182,7 +182,7 @@ module.exports = {
     try {
       const { page, size } = ctx.request.query;
 
-      const tasks = await search({}, parseInt(page, 10), parseInt(size, 10));
+      const tasks = await search({}, parseInt(page, 10) || 0, parseInt(size, 10) || 10);
 
       ctx.status = 200;
       ctx.body = {

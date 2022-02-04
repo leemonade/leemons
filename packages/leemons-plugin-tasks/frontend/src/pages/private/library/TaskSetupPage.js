@@ -13,7 +13,7 @@ import {
   ContentData,
   InstructionData,
   PublishData,
-} from './components';
+} from '../../../components/TaskSetupPage';
 import { prefixPN } from '../../../helpers';
 import saveTaskRequest from '../../../request/task/saveTask';
 

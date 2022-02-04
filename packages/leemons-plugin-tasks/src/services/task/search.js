@@ -3,7 +3,7 @@ const { tasksVersioning } = require('../table');
 const get = require('./get');
 const parseId = require('./helpers/parseId');
 
-module.exports = async function search(query, page, size, { transacting } = {}) {
+module.exports = async function search(query, page = 0, size = 10, { transacting } = {}) {
   try {
     // EN: Get the page x of size y from the tasksVersioning table.
     // ES: Obtener la página x de tamaño y de la tabla tasksVersioning.
