@@ -15,6 +15,7 @@ const Conditions = ({ messages, errorMessages, selectData, form }) => {
   const [error, setError] = useState(false);
 
   const program = watch('program');
+  const grade = watch('grade');
 
   register('group', {
     validate: () => {
@@ -32,8 +33,9 @@ const Conditions = ({ messages, errorMessages, selectData, form }) => {
   return (
     <Box>
       <RuleGroup
-        program={program}
+        program={{ value: program }}
         grades={selectData.gradeScales}
+        gradeSystem={grade}
         sources={selectData.sources}
         courses={selectData.courses}
         knowledges={selectData.knowledges}
