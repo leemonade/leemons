@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Box, ColorInput, NumberInput, TableInput, TextInput, Title } from '@bubbles-ui/components';
 import { regex } from '@common';
 
-function KnowledgeTable({ messages, program, onAdd = () => {} }) {
+function KnowledgeTable({ messages, program, tableLabels, onAdd = () => {} }) {
   const abbrRules = {
     required: messages.abbreviationRequired,
     maxLength: {
@@ -43,7 +43,7 @@ function KnowledgeTable({ messages, program, onAdd = () => {} }) {
       accessor: 'color',
       input: {
         node: <ColorInput required />,
-        rules: { required: messages.abbreviationRequired },
+        rules: { required: messages.colorRequired },
       },
       valueRender: (val) => (
         <>
@@ -84,13 +84,7 @@ function KnowledgeTable({ messages, program, onAdd = () => {} }) {
         columns={columns}
         sortable={false}
         removable={false}
-        labels={{
-          add: 'Add',
-          remove: 'Remove',
-          edit: 'Edit',
-          accept: 'Accept',
-          cancel: 'Cancel',
-        }}
+        labels={tableLabels}
       />
     </Box>
   );
@@ -100,6 +94,7 @@ KnowledgeTable.propTypes = {
   messages: PropTypes.object,
   onAdd: PropTypes.func,
   program: PropTypes.any,
+  tableLabels: PropTypes.object,
 };
 
 export { KnowledgeTable };
