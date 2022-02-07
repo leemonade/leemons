@@ -65,6 +65,7 @@ const addGradeLetterSchema = {
   required: ['scales'],
   additionalProperties: false,
 };
+
 function validateAddGrade(data) {
   const validator = new LeemonsValidator(addGradeSchema);
   const { name, type, center, ...rest } = data;
@@ -96,6 +97,7 @@ const updateGradeSchema = {
   required: ['id'],
   additionalProperties: false,
 };
+
 function validateUpdateGrade(data, { transacting } = {}) {
   const validator = new LeemonsValidator(updateGradeSchema);
 
@@ -130,6 +132,7 @@ const addGradeScaleSchema = {
   required: ['number', 'grade'],
   additionalProperties: false,
 };
+
 async function validateAddGradeScale(data, { transacting } = {}) {
   const validator = new LeemonsValidator(addGradeScaleSchema);
 
@@ -161,6 +164,7 @@ const updateGradeScaleSchema = {
   required: ['id', 'number'],
   additionalProperties: false,
 };
+
 async function validateUpdateGradeScale(data, { transacting } = {}) {
   const validator = new LeemonsValidator(updateGradeScaleSchema);
 
@@ -195,6 +199,7 @@ const addGradeTagSchema = {
   required: ['scale', 'grade', 'letter', 'description'],
   additionalProperties: false,
 };
+
 async function validateAddGradeTag(data, { transacting } = {}) {
   const validator = new LeemonsValidator(addGradeTagSchema);
 
@@ -224,6 +229,7 @@ const updateGradeTagSchema = {
   required: ['id', 'scale', 'letter', 'description'],
   additionalProperties: false,
 };
+
 async function validateUpdateGradeTag(data, { transacting } = {}) {
   const validator = new LeemonsValidator(updateGradeTagSchema);
 
@@ -304,6 +310,7 @@ const addRuleSchema = {
   required: ['name', 'center', 'grade', 'program', 'group'],
   additionalProperties: false,
 };
+
 function validateAddRule(data, isDependency) {
   const rules = _.cloneDeep(addRuleSchema);
   if (isDependency) {
@@ -330,6 +337,7 @@ const updateRuleSchema = {
   required: ['id', 'name', 'center', 'grade', 'program', 'group'],
   additionalProperties: false,
 };
+
 function validateUpdateRule(data, isDependency) {
   const rules = _.cloneDeep(updateRuleSchema);
   if (isDependency) {
@@ -359,6 +367,7 @@ const addConditionGroupSchema = {
   required: ['operator', 'rule', 'conditions'],
   additionalProperties: false,
 };
+
 function validateAddConditionGroup(data) {
   const validator = new LeemonsValidator(addConditionGroupSchema);
 
@@ -382,6 +391,7 @@ const addConditionSchema = _.cloneDeep(conditionSchema);
 addConditionSchema.properties.rule = stringSchema;
 addConditionSchema.properties.parentGroup = stringSchema;
 addConditionSchema.required = ['source', 'sourceIds', 'data', 'rule', 'parentGroup'];
+
 function validateAddCondition({ group, ...rest }) {
   const schema = group ? addConditionRefToGroupSchema : addConditionSchema;
   const data = group ? { ...rest, group } : rest;
