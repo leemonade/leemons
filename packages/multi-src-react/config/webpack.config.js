@@ -96,7 +96,9 @@ module.exports = ({ alias, filesToCopy, useLegacy = false }) => ({
         warnings: false,
       },
     },
-    historyApiFallback: true,
+    historyApiFallback: {
+      disableDotRule: true,
+    },
   },
   resolve: {
     symlinks: false,
