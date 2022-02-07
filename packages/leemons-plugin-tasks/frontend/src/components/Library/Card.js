@@ -22,7 +22,12 @@ export default function Card({ cover, name, color, tagline, summary, id }) {
       {contextMenu.opened && (
         <ContextMenu ref={ref} id={id} posX={contextMenu.posX} posY={contextMenu.posY} />
       )}
-      <Paper color="solid" shadow="level100" onContextMenu={handleContextMenu}>
+      <Paper
+        sx={{ cursor: 'pointer' }}
+        color="solid"
+        shadow="level100"
+        onContextMenu={handleContextMenu}
+      >
         <ImageLoader src={cover || ''} alt={name} />
         <Box style={{ backgroundColor: color }}>
           <Title padding={1}>{name}</Title>

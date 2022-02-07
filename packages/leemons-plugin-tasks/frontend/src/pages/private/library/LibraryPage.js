@@ -13,16 +13,20 @@ export default function LibraryPage() {
   const [t] = useTranslateLoader(prefixPN('library_page'));
   const { t: tCommonHeader } = useCommonTranslate('page_header');
   const [data, setData] = useState({ loading: true, data: [] });
+  const [draft, setDraft] = useState({ loading: true, data: [] });
 
-  const onData = useCallback((_data) => {
-    setData({ loading: false, data: _data });
-  }, []);
+  const onData = (setter) =>
+    useCallback((_data) => {
+      setter({ loading: false, data: _data });
+    }, []);
 
-  const onError = useCallback((error) => {
-    setData({ loading: false, error });
-  }, []);
+  const onError = (setter) =>
+    useCallback((error) => {
+      setter({ loading: false, error });
+    }, []);
 
-  useAsync(listTasks, onData, onError);
+  useAsync(listTasks, onData(setData), onError(setData));
+  useAsync(() => listTasks(true), onData(setDraft), onError(setDraft));
 
   const history = useHistory();
   // ·········································································
@@ -57,11 +61,21 @@ export default function LibraryPage() {
       <AdminPageHeader values={headerLabels} buttons={headerButtons} onNew={handleOnNewTask} />
 
       <PageContainer>
-        {data.error ? (
-          <Paragraph>Error {data.error}</Paragraph>
-        ) : (
-          <CardList data={data.data?.items} loading={data.loading} />
-        )}
+        <ContextContainer title="Draft">
+          {draft.error ? (
+            <Paragraph>Error {draft.error}</Paragraph>
+          ) : (
+            <CardList data={draft.data?.items} loading={draft.loading} />
+          )}
+        </ContextContainer>
+
+        <ContextContainer title="Published">
+          {data.error ? (
+            <Paragraph>Error {data.error}</Paragraph>
+          ) : (
+            <CardList data={data.data?.items} loading={data.loading} />
+          )}
+        </ContextContainer>
       </PageContainer>
     </ContextContainer>
   );

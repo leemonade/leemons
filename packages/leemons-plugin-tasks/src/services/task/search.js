@@ -3,7 +3,12 @@ const { tasksVersioning } = require('../table');
 const get = require('./get');
 const parseId = require('./helpers/parseId');
 
-module.exports = async function search(query, page = 0, size = 10, { transacting } = {}) {
+module.exports = async function search(
+  query,
+  page = 0,
+  size = 10,
+  { draft = false, transacting } = {}
+) {
   try {
     // EN: Get the page x of size y from the tasksVersioning table.
     // ES: Obtener la página x de tamaño y de la tabla tasksVersioning.
@@ -11,18 +16,17 @@ module.exports = async function search(query, page = 0, size = 10, { transacting
       tasksVersioning,
       page,
       size,
-      { id_$null: false, current_$ne: '0.0.0' },
+      { id_$null: false, current_$ne: draft ? '0.0.0' : '' },
       { transacting }
     );
 
     // EN: Create a fullId with the id and version so we can search.
     // ES: Crear un fullId con el id y la versión para buscar.
     const tasksIds = await Promise.all(
-      taskVersions.items.map(async ({ id, current, ...rest }) => ({
+      taskVersions.items.map(async ({ id, ...rest }) => ({
         ...rest,
         id,
-        current,
-        fullId: (await parseId(id, current, { transacting })).fullId,
+        fullId: (await parseId(id, draft ? rest.last : rest.current, { transacting })).fullId,
       }))
     );
 

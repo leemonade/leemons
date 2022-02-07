@@ -24,10 +24,12 @@ const ContextMenu = forwardRef(({ posX, posY, id }, ref) => {
         })}
         direction="column"
       >
-        <Button onClick={handleClick(`private/tasks/library/edit/${id}`)}>Edit</Button>
-        <Button onClick={handleClick(`private/tasks/library/edit/${id}`)}>Duplicate</Button>
-        <Button>Assign</Button>
-        <Button>Delete</Button>
+        <Button onClick={handleClick(`library/edit/${id}`)}>Edit</Button>
+        <Button disabled onClick={handleClick(`library/edit/${id}`)}>
+          Duplicate
+        </Button>
+        <Button disabled>Assign</Button>
+        <Button disabled>Delete</Button>
       </Stack>
     </Portal>
   );
@@ -36,6 +38,7 @@ const ContextMenu = forwardRef(({ posX, posY, id }, ref) => {
 ContextMenu.displayName = 'ContextMenu';
 
 ContextMenu.propTypes = {
+  id: PropTypes.string.isRequired,
   posX: PropTypes.number.isRequired,
   posY: PropTypes.number.isRequired,
 };

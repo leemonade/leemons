@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isEmpty } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
@@ -27,7 +27,6 @@ function ConfigData({
   // FORM
 
   const defaultValues = {
-    tagline: '',
     ...sharedData,
   };
 
@@ -35,7 +34,12 @@ function ConfigData({
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({ defaultValues });
+
+  useEffect(() => {
+    reset(sharedData);
+  }, [sharedData]);
 
   // ·······························································
   // HANDLERS

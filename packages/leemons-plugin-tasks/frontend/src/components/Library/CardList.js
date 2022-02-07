@@ -8,7 +8,7 @@ export default function CardList({ data, loading }) {
     return <Loader />;
   }
   return (
-    <Stack spacing={3} wrap="wrap" justifyContent="center">
+    <Stack spacing={3} wrap="wrap">
       {data.map((item) => (
         <Card key={item.id} {...item} />
       ))}
