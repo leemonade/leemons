@@ -1,11 +1,26 @@
 import {
+  createSubject,
+  getSubjectCredits,
+  listSubjectCreditsForProgram,
+  listSubjects,
+  updateSubject,
+  updateSubjectCredits,
+} from './subjects';
+import {
   createProgram,
   detailProgram,
   havePrograms,
   listPrograms,
   updateProgram,
 } from './programs';
-import { enableMenuItem, getSettings, updateSettings } from './settings';
+import {
+  enableMenuItem,
+  getProfiles,
+  getSettings,
+  isConfigProfiles,
+  setProfiles,
+  updateSettings,
+} from './settings';
 import { createKnowledge, listKnowledges } from './knowledges';
 import { createSubjectType, listSubjectTypes } from './subjectTypes';
 
@@ -18,6 +33,13 @@ import {
   updateClass,
   updateClassMany,
 } from './classes';
+
+export const listSubjectsRequest = listSubjects;
+export const createSubjectRequest = createSubject;
+export const updateSubjectRequest = updateSubject;
+export const updateSubjectCreditsRequest = updateSubjectCredits;
+export const getSubjectCreditsRequest = getSubjectCredits;
+export const listSubjectCreditsForProgramRequest = listSubjectCreditsForProgram;
 
 export const listClassesRequest = listClasses;
 export const createClassRequest = createClass;
@@ -42,3 +64,6 @@ export const updateProgramRequest = updateProgram;
 export const getSettingsRequest = getSettings;
 export const updateSettingsRequest = updateSettings;
 export const enableMenuItemRequest = enableMenuItem;
+export const isConfigProfilesRequest = isConfigProfiles;
+export const getProfilesRequest = getProfiles;
+export const setProfilesRequest = setProfiles;

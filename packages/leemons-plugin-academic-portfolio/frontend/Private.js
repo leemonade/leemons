@@ -5,6 +5,7 @@ import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
 const Welcome = loadable(() => import('./src/pages/private/WelcomePage'));
+const Profiles = loadable(() => import('./src/pages/private/ProfilesPage'));
 const ProgramList = loadable(() => import('./src/pages/private/programs/ProgramList'));
 const SubjectList = loadable(() => import('./src/pages/private/subjects/SubjectList'));
 
@@ -16,6 +17,9 @@ export default function Private() {
     <Switch>
       <Route path={`${path}/welcome`}>
         <Welcome session={session} />
+      </Route>
+      <Route path={`${path}/profiles`}>
+        <Profiles session={session} />
       </Route>
       <Route path={`${path}/programs`}>
         <ProgramList session={session} />

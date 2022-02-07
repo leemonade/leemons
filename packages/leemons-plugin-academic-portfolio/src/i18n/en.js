@@ -4,6 +4,12 @@ module.exports = {
     page_description:
       'Portfolio allow you to create programs or educational stages and add subjects with course, group, professors… within this information, we create a visual tree in order to manage the portfolio, assign students, create clusters, edit rules and much more.',
     hide_info_label: `Ok, I've got it. When the configuration is complete, don't show this info anymore`,
+    step_profiles: {
+      title: 'Match profiles',
+      description:
+        'Academic portfolio needs to clarify which are the key profiles to work on. You will only need to do this once.',
+      btn: 'Match profiles',
+    },
     step_programs: {
       title: 'Create programs',
       description:
@@ -188,7 +194,9 @@ module.exports = {
       subject: 'Subject',
       subjectRequired: 'Required field',
       knowledge: 'Knowledge',
+      knowledgeRequired: 'Required field',
       subjectType: 'Type',
+      subjectTypeRequired: 'Required field',
       credits: 'Credits',
       color: 'Color',
       group: 'Group',
@@ -206,5 +214,20 @@ module.exports = {
       accept: 'Accept',
       cancel: 'Cancel',
     },
+  },
+  profiles_page: {
+    page_title: 'Academic portfolio profiles',
+    page_description:
+      'First of all we need to match the system profiles with the custom profiles you have created on the platform (Please read carefully the characteristics of each profile. Once the profiles are linked, it cannot be undone.)',
+    save: 'Save',
+    profileSaved: 'Saved profiles',
+    profiles: 'Profiles',
+    teacher: 'Teacher',
+    teacherDescription: 'Responsible for teaching the subjects of a program/course',
+    teacherRequired: 'Field required',
+    student: 'Student',
+    studentDescription:
+      'Assigned to a classroom, studies the subjects of his program/course with a specific teachers',
+    studentRequired: 'Field required',
   },
 };

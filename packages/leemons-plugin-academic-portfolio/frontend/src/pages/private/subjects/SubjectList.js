@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, { useMemo } from 'react';
 import { ContextContainer, PageContainer, Select } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
@@ -6,13 +7,14 @@ import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { useStore } from '@common/useStore';
 import { SelectCenter } from '@users/components/SelectCenter';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { map } from 'lodash';
+import { keyBy, map } from 'lodash';
 import {
   createKnowledgeRequest,
   createSubjectTypeRequest,
   detailProgramRequest,
   listClassesRequest,
   listProgramsRequest,
+  listSubjectCreditsForProgramRequest,
 } from '../../../request';
 import { KnowledgeTable } from '../../../components/KnowledgeTable';
 import { getKnowledgesTranslation } from '../../../helpers/getKnowledgesTranslation';
@@ -45,16 +47,27 @@ export default function SubjectList() {
     [t]
   );
 
-  async function getProgramDetail() {
-    const { program } = await detailProgramRequest(store.selectProgram);
-    return program;
-  }
-
   async function getProgramClasses() {
     const {
       data: { items },
     } = await listClassesRequest({ page: 0, size: 9999, program: store.selectProgram });
     return items;
+  }
+
+  async function getProgramDetail() {
+    const [{ program }, { subjectCredits }, classes] = await Promise.all([
+      detailProgramRequest(store.selectProgram),
+      listSubjectCreditsForProgramRequest(store.selectProgram),
+      getProgramClasses(),
+    ]);
+    const creditsBySubject = keyBy(subjectCredits, 'subject');
+    map(program.subjects, (subject) => {
+      subject.credits = creditsBySubject[subject.id]?.credits;
+    });
+    map(classes, (classe) => {
+      classe.credits = creditsBySubject[classe.subject.id]?.credits;
+    });
+    return { ...program, classes };
   }
 
   async function onCenterChange(center) {
@@ -68,9 +81,7 @@ export default function SubjectList() {
 
   async function onProgramChange(programId) {
     store.selectProgram = programId;
-
-    const [program, classes] = await Promise.all([getProgramDetail(), getProgramClasses()]);
-    store.program = { ...program, classes };
+    store.program = await getProgramDetail();
     render();
   }
 

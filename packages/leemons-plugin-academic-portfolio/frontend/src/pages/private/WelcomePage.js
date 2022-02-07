@@ -17,7 +17,8 @@ import { getSettingsRequest, updateSettingsRequest } from '@academic-portfolio/r
 import { useStore } from '@common';
 import { activeMenuItemPrograms } from '../../helpers/activeMenuItemPrograms';
 import { activeMenuItemSubjects } from '../../helpers/activeMenuItemSubjects';
-import { haveProgramsRequest } from '../../request';
+import { haveProgramsRequest, isConfigProfilesRequest } from '../../request';
+import { activeMenuItemProfiles } from '../../helpers/activeMenuItemProfiles';
 
 // eslint-disable-next-line react/prop-types
 function StepCard({ t, step, disabled, to, onClick }) {
@@ -54,11 +55,13 @@ export default function WelcomePage() {
   // INIT DATA LOAD
 
   async function init() {
-    const [settingsResponse, haveProgramsResponse] = await Promise.all([
+    const [settingsResponse, haveProgramsResponse, profilesResponse] = await Promise.all([
       getSettingsRequest(),
       haveProgramsRequest(),
+      isConfigProfilesRequest(),
     ]);
     store.settings = settingsResponse.settings;
+    store.profilesConfig = profilesResponse.isConfig;
     store.havePrograms = haveProgramsResponse.have;
     render();
   }
@@ -73,6 +76,10 @@ export default function WelcomePage() {
   const handleOnHideHelp = () => {
     const newSettings = { ...store.settings, hideWelcome: !store.settings?.hideWelcome };
     updateSettings(newSettings);
+  };
+
+  const handleOnProfiles = async () => {
+    await activeMenuItemProfiles();
   };
 
   const handleOnPrograms = async () => {
@@ -111,9 +118,16 @@ export default function WelcomePage() {
           <ContextContainer direction="row" fullWidth padded="vertical">
             <StepCard
               t={t}
+              step="step_profiles"
+              to="/private/academic-portfolio/profiles"
+              onClick={handleOnProfiles}
+            />
+            <StepCard
+              t={t}
               step="step_programs"
               to="/private/academic-portfolio/programs"
               onClick={handleOnPrograms}
+              disabled={!store.profilesConfig}
             />
             <StepCard
               t={t}
