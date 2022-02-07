@@ -4,7 +4,7 @@ import hooks from 'leemons-hooks';
 import { getMenu } from '@menu-builder/helpers';
 import { MainNav } from '@bubbles-ui/components';
 
-export default function MainMenu({ onClose, onOpen, subNavWidth }) {
+export default function MainMenu({ subNavWidth, ...props }) {
   const [isLoading, setIsLoading] = useState(false);
   const [loadMenu, setLoadMenu] = useState(false);
   const [menuData, setMenuData] = useState([]);
@@ -44,9 +44,8 @@ export default function MainMenu({ onClose, onOpen, subNavWidth }) {
 
   return (
     <MainNav
+      {...props}
       menuData={menuData}
-      onOpen={onOpen}
-      onClose={onClose}
       isLoading={isLoading}
       subNavWidth={subNavWidth}
       hideSubNavOnClose={false}
@@ -56,7 +55,5 @@ export default function MainMenu({ onClose, onOpen, subNavWidth }) {
 }
 
 MainMenu.propTypes = {
-  onOpen: PropTypes.func,
-  onClose: PropTypes.func,
   subNavWidth: PropTypes.number,
 };

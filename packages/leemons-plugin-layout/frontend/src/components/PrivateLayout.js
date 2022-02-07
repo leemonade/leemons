@@ -50,13 +50,25 @@ const PrivateLayout = ({ children }) => {
     if (layoutState.menuWidth !== NAV_OPEN_WIDTH) setState({ menuWidth: NAV_OPEN_WIDTH });
   }, [layoutState]);
 
+  const onPinMenu = useCallback(
+    (pinned) => {
+      setState({ menuWidth: pinned ? NAV_OPEN_WIDTH : MAIN_NAV_WIDTH });
+    },
+    [layoutState]
+  );
+
   const { classes } = PrivateLayoutStyles({ width: layoutState.menuWidth });
 
   return (
     <Box className={classes.root}>
       <LoadingOverlay visible={layoutState.loading} />
       <Box className={classes.sideNav}>
-        <MainMenu onClose={onCloseMenu} onOpen={onOpenMenu} subNavWidth={NAV_OPEN_WIDTH} />
+        <MainMenu
+          onClose={onCloseMenu}
+          // onOpen={onOpenMenu}
+          onPin={onPinMenu}
+          subNavWidth={NAV_OPEN_WIDTH}
+        />
       </Box>
       <Box ref={layoutState.contentRef} className={classes.content}>
         <AlertStack />
