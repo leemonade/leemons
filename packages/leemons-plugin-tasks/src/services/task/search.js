@@ -16,7 +16,7 @@ module.exports = async function search(
       tasksVersioning,
       page,
       size,
-      { id_$null: false, current_$ne: draft ? '0.0.0' : '' },
+      { id_$null: false, current_$ne: draft ? '' : '0.0.0' },
       { transacting }
     );
 

@@ -27,6 +27,8 @@ export default function TaskSetupPage() {
     currentTask: null,
   });
 
+  //! Use an observer / event emitter to emit the children when to notify current data and use them to save or publish
+
   // ·········································································
   // API CALLS
 
