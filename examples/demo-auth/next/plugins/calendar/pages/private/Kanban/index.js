@@ -1,7 +1,6 @@
-import * as _ from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Box, Kanban as BubblesKanban } from '@bubbles-ui/components';
 import { getCentersWithToken } from '@users/session';
-import { withLayout } from '@layout/hoc';
 import {
   getCalendarsToFrontendRequest,
   listKanbanColumnsRequest,
@@ -9,289 +8,282 @@ import {
   saveKanbanEventOrdersRequest,
   updateEventRequest,
 } from '@calendar/request';
-import { Button, Checkbox, FormControl } from 'leemons-ui';
-import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@calendar/helpers/prefixPN';
+import getCalendarNameWithConfigAndSession from '@calendar/helpers/getCalendarNameWithConfigAndSession';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
+import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
+import { KanbanFilters, KanbanTaskCard } from '@bubbles-ui/leemons';
+import * as _ from 'lodash';
 import hooks from 'leemons-hooks';
-import '@asseinfo/react-kanban/dist/styles.css';
-import KanbanCard from '@calendar/components/kanban-card';
-import getCalendarNameWithConfigAndSession from '@calendar/helpers/getCalendarNameWithConfigAndSession';
-
-import Board from '@asseinfo/react-kanban';
+import transformEvent from '../../../helpers/transformEvent';
 
 function Kanban({ session }) {
-  const [centers, setCenters] = useState([]);
-  const [center, setCenter] = useState(null);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [data, setData] = useState(null);
-  const [taskCalendars, setTaskCalendars] = useState([]);
-  const [filteredEvents, setFilteredEvents] = useState([]);
+  const ref = useRef({
+    loading: true,
+    mounted: true,
+    filtersData: {
+      calendars: [],
+    },
+    filters: {
+      showArchived: false,
+      calendars: [],
+    },
+  });
+  const prefix = prefixPN('kanbanFiltersOptions');
+  const [, translations] = useTranslateLoader(prefix);
   const [toggleEventModal, EventModal] = useCalendarEventModal();
-  const [columns, setColumns] = useState([]);
-  const [columnsT, setColumnsT] = useState([]);
-  const [columnsEventsOrder, setColumnsEventsOrder] = useState({});
-  const [onlyShowCalendars, setOnlyShowCalendars] = useState([]);
-  const [showArchived, setShowArchived] = useState(false);
+  const [, setR] = useState();
 
-  const getKanbanColumnsEventsOrder = async () => {
-    const { orders } = await listKanbanEventOrdersRequest(center.token);
+  function render() {
+    if (ref.current.mounted) setR(new Date().getTime());
+  }
+
+  const filterMessages = useMemo(() => {
+    if (translations && translations.items) {
+      return _.reduce(
+        translations.items,
+        (acc, value, key) => {
+          acc[key.replace(`${prefix}.`, '')] = value;
+          return acc;
+        },
+        {}
+      );
+    }
+    return {};
+  }, [translations]);
+
+  // ES: Consultas
+  // EN: Queries
+  async function getKanbanColumns() {
+    const { columns } = await listKanbanColumnsRequest();
+    return _.orderBy(columns, ['order'], ['asc']);
+  }
+
+  async function getTranslationColumns() {
+    const keys = _.map(ref.current.columns, 'nameKey');
+    const { items } = await getLocalizationsByArrayOfItems(keys);
+    return items;
+  }
+
+  async function getKanbanColumnsEventsOrder() {
+    const { orders } = await listKanbanEventOrdersRequest(ref.current.center.token);
     const obj = {};
     _.forEach(orders, (order) => {
       obj[order.column] = order.events;
     });
-    setColumnsEventsOrder(obj);
-  };
+    return obj;
+  }
 
-  const getKanbanColumns = async () => {
-    const { columns: _columns } = await listKanbanColumnsRequest();
-    setColumns(_.orderBy(_columns, ['order'], ['asc']));
-  };
+  async function getCalendarsForCenter() {
+    const { status, ...response } = await getCalendarsToFrontendRequest(ref.current.center.token);
 
-  const getCalendarsForCenter = async () => {
-    const { calendars, events, userCalendar, ownerCalendars } = await getCalendarsToFrontendRequest(
-      center.token
-    );
+    return {
+      ...response,
+      calendars: _.map(response.calendars, (calendar) => ({
+        ...calendar,
+        name: getCalendarNameWithConfigAndSession(calendar, response, session),
+      })),
+    };
+  }
 
-    setData({
-      calendars,
-      events,
-      userCalendar,
-      ownerCalendars,
+  function getColumnName(name) {
+    return tKeys(name, ref.current.columnsT);
+  }
+
+  function getKanbanBoard() {
+    const cols = [];
+    const eventsByColumn = _.groupBy(ref.current.data.events, 'data.column');
+    _.forEach(ref.current.columns, (column) => {
+      if (!column.isArchived || (column.isArchived && ref.current.filters.showArchived)) {
+        let cards = [];
+        if (eventsByColumn[column.id] && ref.current.columnsEventsOrders[column.id]) {
+          const cardsNoOrdered = [];
+          _.forEach(eventsByColumn[column.id], (event) => {
+            const index = ref.current.columnsEventsOrders[column.id].indexOf(event.id);
+            if (index >= 0) {
+              cards[index] = event;
+            } else {
+              cardsNoOrdered.push(event);
+            }
+          });
+          cards = _.map(cardsNoOrdered, (c) => ({ ...c, notOrdered: true })).concat(cards);
+        } else {
+          cards = eventsByColumn[column.id] || [];
+        }
+
+        cards = _.filter(cards, (c) => !!c);
+
+        if (ref.current.filters.calendars.length) {
+          cards = _.filter(cards, (c) => {
+            let show = false;
+            // eslint-disable-next-line consistent-return
+            _.forEach(c.data.classes, (calendar) => {
+              if (ref.current.filters.calendars.indexOf(calendar) >= 0) {
+                show = true;
+                return false;
+              }
+            });
+            return show;
+          });
+        }
+
+        cols.push({
+          id: column.id,
+          title: getColumnName(column.nameKey),
+          cards: _.map(cards, (card) => transformEvent(card, ref.current.data.calendars)),
+        });
+      }
     });
-  };
+    return { columns: cols };
+  }
 
-  const getTranslationColumns = async () => {
-    const keys = _.map(columns, 'nameKey');
-    const { items } = await getLocalizationsByArrayOfItems(keys);
-    setColumnsT(items);
-  };
+  function onChange(values, event) {
+    const cardsById = {};
+    _.forEach(values.columns, (column) => {
+      _.forEach(column.cards, (card) => {
+        cardsById[card.id] = { ...card, data: { ...card.data, column: column.id } };
+      });
+    });
+    const changedColumns = [];
+    if (
+      event.destination &&
+      event.source &&
+      event.destination.droppableId === event.source.droppableId
+    ) {
+      changedColumns.push(event.destination.droppableId);
+    }
+    _.forEach(ref.current.data.events, (event) => {
+      const card = cardsById[event.id];
+      if (event.data && event.data.column && card && event.data.column !== card.data.column) {
+        changedColumns.push(card.data.column);
+        // eslint-disable-next-line no-param-reassign
+        event.data.column = card.data.column;
+        updateEventRequest(ref.current.center.token, event.id, { data: event.data });
+      }
+    });
 
-  const getColumnName = (name) => tKeys(name, columnsT);
+    _.forEach(values.columns, (column) => {
+      if (changedColumns.indexOf(column.id) >= 0) {
+        ref.current.columnsEventsOrders[column.id] = _.map(column.cards, 'id');
+        saveKanbanEventOrdersRequest(
+          ref.current.center.token,
+          column.id,
+          ref.current.columnsEventsOrders[column.id]
+        );
+      }
+    });
+
+    ref.current.board = getKanbanBoard();
+    render();
+  }
+
+  function onFiltersChange(event) {
+    ref.current.filters = {
+      ...event,
+    };
+    ref.current.board = getKanbanBoard();
+    render();
+  }
+
+  function addEventClick() {
+    ref.current.event = null;
+    toggleEventModal();
+  }
+
+  function onClickCard({ bgColor, icon, borderColor, ...e }) {
+    ref.current.event = e;
+    toggleEventModal();
+  }
+
+  // ES: Carga
+  // EN: Load
+
+  async function onCenterChange() {
+    ref.current.columnsEventsOrders = await getKanbanColumnsEventsOrder();
+    ref.current.data = await getCalendarsForCenter();
+    ref.current.filtersData.calendars = _.map(
+      _.filter(ref.current.data.calendars, { isClass: true }),
+      (calendar) => ({ label: calendar.name, value: calendar.id })
+    );
+  }
+
+  async function init() {
+    ref.current.columns = await getKanbanColumns();
+    ref.current.columnsT = await getTranslationColumns();
+    ref.current.centers = getCentersWithToken();
+    if (ref.current.centers.length) {
+      [ref.current.center] = ref.current.centers;
+      await onCenterChange();
+      ref.current.board = getKanbanBoard();
+    }
+
+    ref.current.loading = false;
+    render();
+  }
+
+  async function reload() {
+    await onCenterChange();
+    ref.current.board = getKanbanBoard();
+    render();
+  }
 
   useEffect(() => {
-    hooks.addAction('calendar:force:reload', getCalendarsForCenter);
+    ref.current.mounted = true;
+    if (session) init();
     return () => {
-      hooks.removeAction('calendar:force:reload', getCalendarsForCenter);
+      ref.current.mounted = false;
+    };
+  }, [session]);
+
+  useEffect(() => {
+    hooks.addAction('calendar:force:reload', reload);
+    return () => {
+      hooks.removeAction('calendar:force:reload', reload);
     };
   });
 
-  useEffect(() => {
-    getKanbanColumns();
-    setCenters(getCentersWithToken());
-  }, []);
-
-  useEffect(() => {
-    if (center) {
-      getKanbanColumnsEventsOrder();
-      getCalendarsForCenter();
-    }
-  }, [center]);
-
-  useEffect(() => {
-    getTranslationColumns();
-  }, [columns]);
-
-  useEffect(() => {
-    setOnlyShowCalendars([]);
-  }, [taskCalendars]);
-
-  useEffect(() => {
-    if (data) {
-      const eventsTasks = _.filter(data.events, { type: 'plugins.calendar.task' });
-      const calendarIds = _.uniq(_.map(eventsTasks, 'calendar'));
-
-      const calendars = _.filter(
-        data.calendars,
-        (calendar) => calendarIds.indexOf(calendar.id) >= 0
-      );
-      if (!_.isEqual(_.map(calendars, 'id'), _.map(taskCalendars, 'id'))) {
-        // Calendarios de la seccion tareas
-        setTaskCalendars(calendars);
-      }
-
-      // Eventos
-      /*
-      const events = [];
-      const calendarsByKey = _.keyBy(calendars, 'id');
-      _.forEach(data.events, (event) => {
-        if (calendarsByKey[event.calendar] && calendarsByKey[event.calendar].showEvents) {
-          events.push(event);
-        }
-      });
-       */
-      setFilteredEvents(data.events);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (centers.length) setCenter(centers[0]);
-  }, [centers]);
-
-  const onNewEvent = () => {
-    setSelectedEvent(null);
-    toggleEventModal();
-  };
-
-  const onClickCard = (event) => {
-    setSelectedEvent(event);
-    toggleEventModal();
-  };
-
-  const onCalendarsChange = (event, calendar) => {
-    const index = onlyShowCalendars.indexOf(calendar.id);
-    if (index >= 0) {
-      onlyShowCalendars.splice(index, 1);
-    } else {
-      onlyShowCalendars.push(calendar.id);
-    }
-    if (taskCalendars.length === onlyShowCalendars.length) {
-      onlyShowCalendars.splice(0, onlyShowCalendars.length);
-    }
-    setOnlyShowCalendars([...onlyShowCalendars]);
-  };
-
-  const board = useMemo(() => {
-    const cols = [];
-    if (columns && columnsT) {
-      const eventsByColumn = _.groupBy(filteredEvents, 'data.column');
-      _.forEach(columns, (column) => {
-        if (!column.isArchived || (column.isArchived && showArchived)) {
-          let cards = [];
-          if (eventsByColumn[column.id] && columnsEventsOrder[column.id]) {
-            const cardsNoOrdered = [];
-            _.forEach(eventsByColumn[column.id], (event) => {
-              const index = columnsEventsOrder[column.id].indexOf(event.id);
-              if (index >= 0) {
-                cards[index] = event;
-              } else {
-                cardsNoOrdered.push(event);
-              }
-            });
-            cards = _.map(cardsNoOrdered, (c) => ({ ...c, notOrdered: true })).concat(cards);
-          } else {
-            cards = eventsByColumn[column.id] || [];
-          }
-
-          cards = _.filter(cards, (c) => !!c);
-
-          if (onlyShowCalendars.length) {
-            cards = _.filter(cards, (c) => onlyShowCalendars.indexOf(c.calendar) >= 0);
-          }
-
-          cols.push({
-            id: column.id,
-            title: getColumnName(column.nameKey),
-            cards,
-          });
-        }
-      });
-    }
-    return { columns: cols };
-  }, [columns, columnsT, filteredEvents, columnsEventsOrder, onlyShowCalendars, showArchived]);
-
-  const onCardDragEnd = async (event, from, to) => {
-    const calendar = _.find(data.ownerCalendars, {
-      id: _.isString(event.calendar) ? event.calendar : event.calendar.id,
-    });
-    const isOwner = !!calendar;
-    if (isOwner) {
-      const index = _.findIndex(data.events, { id: event.id });
-
-      const { cards } = _.find(board.columns, { id: to.toColumnId });
-      const cardEventIndex = _.findIndex(cards, { id: event.id });
-      if (cardEventIndex >= 0) cards.splice(cardEventIndex, 1);
-      cards.splice(to.toPosition, 0, event);
-
-      columnsEventsOrder[to.toColumnId] = _.map(cards, 'id');
-
-      if (index >= 0 && event.data.column !== to.toColumnId) {
-        data.events[index].data.column = to.toColumnId;
-        updateEventRequest(center.token, event.id, { data: data.events[index].data });
-      }
-
-      saveKanbanEventOrdersRequest(center.token, to.toColumnId, columnsEventsOrder[to.toColumnId]);
-
-      setData({ ...data });
-      setColumnsEventsOrder({ ...columnsEventsOrder });
-    }
-  };
-
-  const disableCardDrag = useMemo(() => {
-    if (onlyShowCalendars && onlyShowCalendars.length) {
-      return true;
-    }
-    return false;
-  }, [onlyShowCalendars]);
-
   return (
-    <div className="bg-primary-content">
-      {center ? (
+    <Box
+      sx={(theme) => ({
+        height: '100vh',
+        paddingTop: theme.spacing[12],
+        background: theme.colors.uiBackground02,
+      })}
+    >
+      {ref.current.center ? (
         <EventModal
-          centerToken={center.token}
-          event={selectedEvent}
+          centerToken={ref.current.center.token}
+          classCalendars={ref.current.filtersData.calendars}
+          event={ref.current.event}
           close={toggleEventModal}
           forceType="plugins.calendar.task"
         />
       ) : null}
-      {centers.length > 1 ? (
-        <>
-          {centers.map((_center) => (
-            <Button key={_center.id} onClick={() => setCenter(_center)}>
-              {_center.name}
-            </Button>
-          ))}
-        </>
-      ) : null}
-      <Button color="primary" onClick={onNewEvent}>
-        Añadir tarea
-      </Button>
-      <div>
-        {taskCalendars.map((calendar) => (
-          <FormControl
-            key={calendar.id}
-            label={getCalendarNameWithConfigAndSession(calendar, data, session)}
-            labelPosition="right"
-          >
-            <Checkbox
-              checked={onlyShowCalendars.indexOf(calendar.id) >= 0}
-              onChange={(e) => onCalendarsChange(e, calendar)}
-            />
-          </FormControl>
-        ))}
-
-        <FormControl label={'Mostrar archivadas'} labelPosition="right">
-          <Checkbox checked={showArchived} onChange={() => setShowArchived(!showArchived)} />
-        </FormControl>
-      </div>
-
-      {board ? (
-        <Board
-          allowAddColumn={false}
-          disableColumnDrag={true}
-          allowRemoveColumn={false}
-          allowRenameColumn={false}
-          allowRemoveCard={false}
-          allowAddCard={false}
-          onCardDragEnd={onCardDragEnd}
-          disableCardDrag={disableCardDrag}
-          renderCard={(event, options) => (
-            <KanbanCard
-              key={event.id}
-              event={event}
-              {...options}
-              config={data}
-              session={session}
-              columns={columns}
-              onClick={onClickCard}
-            />
-          )}
-        >
-          {board}
-        </Board>
-      ) : null}
-    </div>
+      <Box sx={() => ({ position: 'absolute', top: 0, left: 0, width: '100%' })}>
+        <KanbanFilters
+          data={ref.current.filtersData}
+          value={{ ...ref.current.filters }}
+          onChange={onFiltersChange}
+          messages={filterMessages}
+          addEventClick={addEventClick}
+        />
+      </Box>
+      <Box sx={(theme) => ({ paddingTop: theme.spacing[5], height: '100%' })}>
+        {ref.current.board ? (
+          <BubblesKanban
+            value={ref.current.board}
+            onChange={onChange}
+            disableCardDrag={ref.current.filters.calendars.length}
+            itemRender={(props) => (
+              <KanbanTaskCard {...props} config={ref.current.data} onClick={onClickCard} />
+            )}
+          />
+        ) : null}
+      </Box>
+    </Box>
   );
 }
 
-export default withLayout(Kanban);
+export default Kanban;

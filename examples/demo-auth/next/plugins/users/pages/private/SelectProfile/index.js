@@ -15,7 +15,8 @@ import hooks from 'leemons-hooks';
 import Cookies from 'js-cookie';
 import { useHistory } from 'react-router-dom';
 import { LayoutContext } from '@layout/context/layout';
-import { LoginProfileSelector, Stack, Box, createStyles } from '@bubbles-ui/components';
+import { Stack, Box, createStyles } from '@bubbles-ui/components';
+import { LoginProfileSelector } from '@bubbles-ui/leemons';
 
 const PageStyles = createStyles((theme) => ({
   root: {

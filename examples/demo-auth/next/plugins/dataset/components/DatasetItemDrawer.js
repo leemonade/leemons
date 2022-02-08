@@ -19,7 +19,7 @@ import PropTypes from 'prop-types';
 import {
   DatasetItemDrawer as DatasetItemDrawerBubbles,
   DATASET_ITEM_DRAWER_DEFAULT_PROPS,
-} from '@bubbles-ui/components';
+} from '@bubbles-ui/leemons';
 import prefixPN from '../helpers/prefixPN';
 import { DatasetItemSeparator } from './DatasetItemSeparator';
 import { DatasetItemTitle } from './DatasetItemTitle';

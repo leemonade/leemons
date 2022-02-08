@@ -4,6 +4,7 @@ const { updateSubject } = require('./updateSubject');
 const { setSubjectCredits } = require('./setSubjectCredits');
 const { getSubjectCredits } = require('./getSubjectCredits');
 const { subjectNeedCourseForAdd } = require('./subjectNeedCourseForAdd');
+const { listSubjectCreditsForProgram } = require('./listSubjectCreditsForProgram');
 
 module.exports = {
   addSubject,
@@ -12,4 +13,5 @@ module.exports = {
   setSubjectCredits,
   getSubjectCredits,
   subjectNeedCourseForAdd,
+  listSubjectCreditsForProgram,
 };

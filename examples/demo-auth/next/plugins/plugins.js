@@ -25,6 +25,11 @@ module.exports = {
 		'provider-media-library-aws-s3'
   ],
   frontPlugins: [{
+    name: 'common',
+    version: '0.0.1',
+    load: require('@common/index.js')
+  },
+	{
     name: 'layout',
     version: '0.0.1',
     load: require('@layout/index.js')

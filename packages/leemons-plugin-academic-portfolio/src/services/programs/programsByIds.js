@@ -32,7 +32,7 @@ async function programsByIds(ids, { transacting } = {}) {
     ...program,
     centers: centersByProgram[program.id] ? _.map(centersByProgram[program.id], 'center') : [],
     groups: groupsByProgram[program.id] ? groupsByProgram[program.id] : [],
-    courses: coursesByProgram[program.id] ? coursesByProgram[program.id] : [],
+    courses: coursesByProgram[program.id] ? _.orderBy(coursesByProgram[program.id], 'index') : [],
     knowledges: knowledgesByProgram[program.id] ? knowledgesByProgram[program.id] : [],
     subjects: subjectsByProgram[program.id] ? subjectsByProgram[program.id] : [],
     subjectTypes: subjectTypesByProgram[program.id] ? subjectTypesByProgram[program.id] : [],

@@ -1,1 +1,1 @@
-{"name":"curriculum-front","version":"1.0.0","main":"Public.js","license":"MIT","dependencies":{"@bubbles-ui/components":"^1.0.14","prop-types":"^15.7.2","react-hook-form":"^7.8.5"},"devDependencies":{}}
+{"name":"curriculum-front","version":"1.0.0","main":"Public.js","license":"MIT","dependencies":{"@bubbles-ui/leemons":"^1.0.4","@bubbles-ui/components":"^1.0.23","prop-types":"^15.7.2","react-hook-form":"^7.8.5"},"devDependencies":{}}

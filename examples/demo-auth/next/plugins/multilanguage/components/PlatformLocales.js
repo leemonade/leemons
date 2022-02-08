@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { findIndex } from 'lodash';
 import { useAsync } from '@common/useAsync';
-import { TranslatorTabs } from '@bubbles-ui/components';
+import { TranslatorTabs } from '@bubbles-ui/leemons';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { getDefaultPlatformLocaleRequest, getPlatformLocalesRequest } from '@users/request';
 

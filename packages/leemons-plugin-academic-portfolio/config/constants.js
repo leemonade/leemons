@@ -2,6 +2,7 @@ const permissionsPrefix = 'plugins.academic-portfolio';
 
 const permissionNames = {
   portfolio: `${permissionsPrefix}.portfolio`,
+  profiles: `${permissionsPrefix}.profiles`,
   programs: `${permissionsPrefix}.programs`,
   subjects: `${permissionsPrefix}.subjects`,
   tree: `${permissionsPrefix}.tree`,
@@ -19,6 +20,14 @@ const permissions = [
     localizationName: {
       es: 'Portfolio Académico - Programas',
       en: 'Academic Portfolio - Programs',
+    },
+  },
+  {
+    permissionName: permissionNames.profiles,
+    actions: ['view', 'update', 'create', 'admin'],
+    localizationName: {
+      es: 'Portfolio Académico - Perfiles',
+      en: 'Academic Portfolio - Profiles',
     },
   },
   {
@@ -70,6 +79,24 @@ const permissionsBundles = {
     },
     delete: {
       permission: permissionNames.programs,
+      actions: ['delete', 'admin'],
+    },
+  },
+  profiles: {
+    create: {
+      permission: permissionNames.profiles,
+      actions: ['create', 'admin'],
+    },
+    view: {
+      permission: permissionNames.profiles,
+      actions: ['view', 'admin'],
+    },
+    update: {
+      permission: permissionNames.profiles,
+      actions: ['update', 'admin'],
+    },
+    delete: {
+      permission: permissionNames.profiles,
       actions: ['delete', 'admin'],
     },
   },
@@ -149,11 +176,31 @@ const menuItems = [
       },
     ],
   },
+  // Profiles
+  {
+    item: {
+      key: 'profiles',
+      order: 2,
+      parentKey: 'portfolio',
+      url: '/private/academic-portfolio/profiles',
+      label: {
+        en: 'Profiles',
+        es: 'Perfiles',
+      },
+      disabled: true,
+    },
+    permissions: [
+      {
+        permissionName: permissionNames.profiles,
+        actionNames: ['view', 'admin'],
+      },
+    ],
+  },
   // Learning Program
   {
     item: {
       key: 'programs',
-      order: 2,
+      order: 3,
       parentKey: 'portfolio',
       url: '/private/academic-portfolio/programs',
       label: {
@@ -173,7 +220,7 @@ const menuItems = [
   {
     item: {
       key: 'subjects',
-      order: 3,
+      order: 4,
       parentKey: 'portfolio',
       url: '/private/academic-portfolio/subjects',
       label: {
@@ -193,7 +240,7 @@ const menuItems = [
   {
     item: {
       key: 'tree',
-      order: 4,
+      order: 5,
       parentKey: 'portfolio',
       url: '/private/academic-portfolio/tree',
       label: {

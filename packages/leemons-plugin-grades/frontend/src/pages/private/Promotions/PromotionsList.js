@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import React, { useMemo } from 'react';
-import { clone, cloneDeep, find, forIn, isNil, isString, map } from 'lodash';
+import { clone, cloneDeep, find, forIn, identity, isNil, isString, map, pickBy } from 'lodash';
 import {
   Box,
   Col,
@@ -131,6 +131,7 @@ export default function PromotionsList() {
         }`,
         value: scale.id,
       }));
+      console.log(store.grades, useRender, store.selectData.gradeScales);
     }
     if (name === 'program') {
       const program = await getProgramDetail(programId);
@@ -234,7 +235,7 @@ export default function PromotionsList() {
           group: parseConditionGroup(condition.group),
         };
       }
-      return condition;
+      return pickBy(condition, identity);
     }
 
     function parseConditionGroup(group) {
@@ -249,6 +250,7 @@ export default function PromotionsList() {
 
   async function onSubmit(e) {
     try {
+      console.log(e);
       if (!store.saving) {
         store.saving = true;
         render();
