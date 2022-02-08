@@ -9,6 +9,8 @@ module.exports = {
       useCustomDates: 'Usar fechas personalizadas',
       startDate: 'Fecha de primera clase',
       endDate: 'Fecha de última clase',
+      apply: 'Aplicar',
+      clear: 'Limpiar',
     },
     errorMessages: {
       invalidSchedule: 'La clase debe tener una duración',

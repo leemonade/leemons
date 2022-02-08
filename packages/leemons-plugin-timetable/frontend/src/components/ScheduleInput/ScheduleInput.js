@@ -16,7 +16,7 @@ const ScheduleInput = ({ label, ...props }) => {
       const data = res.plugins.timetable.schedule_picker;
 
       if (!isNil(data.labels)) {
-        if (!label) data.labels.input = null;
+        if (!label) data.labels.input = '';
         if (isString(label)) data.labels.input = label;
 
         setPickerProps(data);
