@@ -40,7 +40,7 @@ export default function TaskSetupPage() {
       if (!isEmpty(store.currentTask)) {
         messageKey = 'update_done';
       }
-      await saveTaskRequest(store?.currentTask?.id, body);
+      await saveTaskRequest(store?.currentTask?.fullId, body);
 
       // TODO: Implement save task request call
       // const response = await apiCall(values);

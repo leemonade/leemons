@@ -4,7 +4,7 @@ const parseId = require('../helpers/parseId');
 const versionExists = require('./exists');
 const parseVersion = require('../helpers/parseVersion');
 
-module.exports = async function upgradeVersion(task, level = 'major', { transacting } = {}) {
+module.exports = async function upgradeTaskVersion(task, level = 'major', { transacting } = {}) {
   try {
     const { id, version } = await parseId(task, null, { transacting });
     // EN: Get the new version of the task.
@@ -12,9 +12,13 @@ module.exports = async function upgradeVersion(task, level = 'major', { transact
     const newVersion = upgradeVersion(version, level);
     const { major, minor, patch } = parseVersion(newVersion);
 
+    // EN: Get the new fullId
+    // ES: Obtener la nueva id completa
+    const { fullId } = await parseId(id, newVersion);
+
     // EN: Check if the version already exists.
     // ES: Comprobar si la versión ya existe.
-    if (await versionExists(task, { transacting })) {
+    if (await versionExists(fullId, { transacting })) {
       throw new Error(`Version ${newVersion} already exists for task ${id}`);
     }
 
@@ -29,7 +33,9 @@ module.exports = async function upgradeVersion(task, level = 'major', { transact
       { transacting }
     );
 
-    return true;
+    await tasksVersioning.set({ id }, { last: newVersion }, { transacting });
+
+    return parseId(id, newVersion);
   } catch (e) {
     throw new Error(`Error creating task ${task}: ${e.message}`);
   }
