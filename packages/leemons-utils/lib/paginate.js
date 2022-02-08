@@ -1,10 +1,10 @@
-async function paginate(table, page, size, query, { transacting } = {}) {
+async function paginate(table, page, size, query, { columns, transacting } = {}) {
   const _query = query || {};
   _query.$offset = page * size;
   _query.$limit = size;
   const values = await Promise.all([
     table.count(query || {}, { transacting }),
-    table.find(_query, { transacting }),
+    table.find(_query, { columns, transacting }),
   ]);
   return {
     items: values[1],

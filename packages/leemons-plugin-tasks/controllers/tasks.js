@@ -1,6 +1,6 @@
 const create = require('../src/services/task/create');
 const get = require('../src/services/task/get');
-const publish = require('../src/services/task/publish');
+const publish = require('../src/services/task/versions/publish');
 const remove = require('../src/services/task/remove');
 const search = require('../src/services/task/search');
 const update = require('../src/services/task/update');

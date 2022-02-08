@@ -1,6 +1,7 @@
 module.exports = {
   tasks: leemons.query('plugins_tasks::tasks'),
   tasksVersioning: leemons.query('plugins_tasks::tasksVersioning'),
+  tasksVersions: leemons.query('plugins_tasks::tasksVersions'),
   tags: leemons.query('plugins_tasks::tags'),
   attachments: leemons.query('plugins_tasks::attachments'),
   instances: leemons.query('plugins_tasks::instances'),

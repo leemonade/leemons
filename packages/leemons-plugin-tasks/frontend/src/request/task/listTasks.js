@@ -4,8 +4,5 @@ export default async function listTasks(draft = false) {
     method: 'GET',
   });
 
-  return {
-    ...response,
-    items: response.items.map((task) => ({ ...task, id: task.fullId })),
-  };
+  return response;
 }
