@@ -58,6 +58,7 @@ const PrivateLayout = ({ children }) => {
   );
 
   const { classes } = PrivateLayoutStyles({ width: layoutState.menuWidth });
+  const pinned = false; // Must come from user preferences
 
   return (
     <Box className={classes.root}>
@@ -68,6 +69,7 @@ const PrivateLayout = ({ children }) => {
           // onOpen={onOpenMenu}
           onPin={onPinMenu}
           subNavWidth={NAV_OPEN_WIDTH}
+          pinned={pinned}
         />
       </Box>
       <Box ref={layoutState.contentRef} className={classes.content}>
