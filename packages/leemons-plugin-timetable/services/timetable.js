@@ -3,6 +3,7 @@ const get = require('../src/services/timetables/get');
 const count = require('../src/services/timetables/count');
 const update = require('../src/services/timetables/update');
 const deleteOne = require('../src/services/timetables/delete');
+const listByClassIds = require('../src/services/timetables/listByClassIds');
 
 module.exports = {
   create,
@@ -10,4 +11,5 @@ module.exports = {
   count,
   update,
   delete: deleteOne,
+  listByClassIds,
 };

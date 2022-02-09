@@ -8,17 +8,28 @@ const { getByClass: getCourseByClass } = require('./course/getByClass');
 const { getByClass: getGroupByClass } = require('./group/getByClass');
 
 async function classByIds(ids, { noSearchChilds, noSearchParents, transacting } = {}) {
-  const [classes, knowledges, substages, courses, groups, teachers, students, _childClasses] =
-    await Promise.all([
-      table.class.find({ id_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
-      getKnowledgeByClass(ids, { transacting }),
-      getSubstageByClass(ids, { transacting }),
-      getCourseByClass(ids, { transacting }),
-      getGroupByClass(ids, { transacting }),
-      getTeacherByClass(ids, { transacting }),
-      getStudentByClass(ids, { transacting }),
-      table.class.find({ class_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
-    ]);
+  const timetableService = leemons.getPlugin('timetable').services.timetable;
+  const [
+    classes,
+    knowledges,
+    substages,
+    courses,
+    groups,
+    teachers,
+    students,
+    _childClasses,
+    timeTables,
+  ] = await Promise.all([
+    table.class.find({ id_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
+    getKnowledgeByClass(ids, { transacting }),
+    getSubstageByClass(ids, { transacting }),
+    getCourseByClass(ids, { transacting }),
+    getGroupByClass(ids, { transacting }),
+    getTeacherByClass(ids, { transacting }),
+    getStudentByClass(ids, { transacting }),
+    table.class.find({ class_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
+    timetableService.listByClassIds(ids, { transacting }),
+  ]);
 
   const [
     originalSubjectTypes,
@@ -59,6 +70,7 @@ async function classByIds(ids, { noSearchChilds, noSearchParents, transacting } 
       : [];
   }
 
+  const timetablesByClass = _.groupBy(timeTables, 'class');
   const parentClassesById = _.keyBy(parentClasses, 'id');
   const childClassesByClass = _.groupBy(childClasses, 'class');
   const knowledgesByClass = _.groupBy(knowledges, 'class');
@@ -100,6 +112,7 @@ async function classByIds(ids, { noSearchChilds, noSearchParents, transacting } 
       groups: groupsByClass[id] ? groupsById[groupsByClass[id][0].group] : null,
       students: _.uniq(_students),
       parentStudents: _.uniq(parentStudents),
+      schedule: timetablesByClass[id] ? timetablesByClass[id] : [],
       teachers: teachersByClass[id]
         ? _.map(teachersByClass[id], ({ teacher, type }) => ({ teacher, type }))
         : [],

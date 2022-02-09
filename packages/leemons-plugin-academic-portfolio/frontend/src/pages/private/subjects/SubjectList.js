@@ -71,6 +71,7 @@ export default function SubjectList() {
       });
       classe.credits = classSubjectCredits?.credits;
       classe.internalId = classSubjectCredits?.internalId;
+      classe.schedule = { days: classe.schedule };
     });
     return { ...program, classes, subjectCredits };
   }
@@ -160,6 +161,7 @@ export default function SubjectList() {
     credits,
     groups,
     internalId,
+    schedule,
     ...data
   }) {
     try {
@@ -170,6 +172,7 @@ export default function SubjectList() {
         substage: substages,
         program: store.program.id,
         group: groups,
+        schedule: schedule ? schedule.days : [],
       });
       return c;
     } catch (err) {
@@ -185,6 +188,7 @@ export default function SubjectList() {
     credits,
     groups,
     internalId,
+    schedule,
     ...data
   }) {
     try {
@@ -194,6 +198,7 @@ export default function SubjectList() {
         knowledge: knowledges,
         substage: substages,
         group: groups,
+        schedule: schedule ? schedule.days : [],
       });
       return c;
     } catch (err) {
@@ -223,12 +228,14 @@ export default function SubjectList() {
         if (!subject) return null;
       }
 
+      let classe = null;
       if (isUpdate) {
-        await updateClass(data);
+        classe = await updateClass(data);
       } else {
-        await addNewClass(data);
+        classe = await addNewClass(data);
       }
-      addSuccessAlert(isUpdate ? t('classUpdated') : t('classCreated'));
+
+      if (classe) addSuccessAlert(isUpdate ? t('classUpdated') : t('classCreated'));
       store.program = await getProgramDetail();
       render();
     } catch (err) {

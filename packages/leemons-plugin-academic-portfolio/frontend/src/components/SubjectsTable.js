@@ -285,6 +285,7 @@ function SubjectsTable({ messages, program, tableLabels, onAdd = () => {}, onUpd
     input: {
       node: <ScheduleInput label={false} />,
     },
+    valueRender: (value) => <>{JSON.stringify(value)}</>,
   });
 
   function _onAdd({ tableInputRowId, ...formData }) {
@@ -305,7 +306,7 @@ function SubjectsTable({ messages, program, tableLabels, onAdd = () => {}, onUpd
         knowledges: isObject(newItem.knowledges) ? newItem.knowledges.id : newItem.knowledges,
         subject,
         subjectType: isObject(newItem.subjectType) ? newItem.subjectType.id : newItem.subjectType,
-        group: isObject(newItem.group) ? newItem.group.id : newItem.group,
+        groups: isObject(newItem.groups) ? newItem.groups.id : newItem.groups,
         substages: isObject(newItem.substages) ? newItem.substages.id : newItem.substages,
       },
       { isNewSubject }
