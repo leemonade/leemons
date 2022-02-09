@@ -4,7 +4,7 @@ import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import { getTranslationKey as getTranslationKeyActions } from '@users/actions/getTranslationKey';
 import { getTranslationKey as getTranslationKeyPermissions } from '@users/permissions/getTranslationKey';
 import { listActionsRequest, listPermissionsRequest } from '@users/request';
-import { Table, Box, Select, Stack, createStyles } from '@bubbles-ui/components';
+import { Table, Box, Select, Stack, createStyles, useDebouncedValue } from '@bubbles-ui/components';
 import { CheckCircleIcon } from '@bubbles-ui/icons/outline';
 import { useAsync } from '@common/useAsync';
 import PropTypes from 'prop-types';
@@ -28,7 +28,11 @@ export const PermissionsTab = ({ t, profile, onPermissionsChange = () => {}, isE
   const [permissions, setPermissions] = useState(null);
   const [permissionT, setPermissionT] = useState(null);
 
+  const [tableDataDebounced] = useDebouncedValue(tableData, 2000);
   const { classes } = PermissionsTabStyles();
+
+  // ·····················································································
+  // DATA PROCESSING
 
   const sendPermissionChange = () => {
     onPermissionsChange(
@@ -44,14 +48,6 @@ export const PermissionsTab = ({ t, profile, onPermissionsChange = () => {}, isE
       })
     );
   };
-
-  useEffect(() => {
-    if (selectedPermission !== 'all') {
-      setPermissions(filter(initialArrayPermissions.current, { pluginName: selectedPermission }));
-    } else {
-      setPermissions(initialArrayPermissions.current);
-    }
-  }, [selectedPermission]);
 
   const getPermissionsForTable = (editMode) =>
     permissions.map((permission) => {
@@ -87,7 +83,7 @@ export const PermissionsTab = ({ t, profile, onPermissionsChange = () => {}, isE
                 : false;
               if (checked)
                 return (
-                  <Box>
+                  <Box style={{ textAlign: 'center' }}>
                     <CheckCircleIcon className={classes.icon} />
                   </Box>
                 );
@@ -100,24 +96,15 @@ export const PermissionsTab = ({ t, profile, onPermissionsChange = () => {}, isE
       return response;
     });
 
-  useEffect(() => {
-    if (permissions && actions && permissionT) {
-      setTableData(getPermissionsForTable(isEditMode));
-      const data = getPermissionsForTable(true);
-      if ((!dataTable.current || !dataTable.current.length) && data.length)
-        dataTable.current = data;
-    }
-  }, [profile, permissions, actions, permissionT, isEditMode]);
-
   async function updateTableData(e) {
+    setTableData(e);
+
     forEach(e, (d) => {
       const index = findIndex(dataTable.current, { permissionName: d.permissionName });
       if (index >= 0) {
         dataTable.current[index] = d;
       }
     });
-    setTableData(e);
-    sendPermissionChange();
   }
 
   async function updateSelectPermissions() {
@@ -129,6 +116,30 @@ export const PermissionsTab = ({ t, profile, onPermissionsChange = () => {}, isE
       }))
     );
   }
+
+  // ·····················································································
+  // EFFECTS
+
+  useEffect(() => {
+    if (selectedPermission !== 'all') {
+      setPermissions(filter(initialArrayPermissions.current, { pluginName: selectedPermission }));
+    } else {
+      setPermissions(initialArrayPermissions.current);
+    }
+  }, [selectedPermission]);
+
+  useEffect(() => {
+    if (permissions && actions && permissionT) {
+      setTableData(getPermissionsForTable(isEditMode));
+      const data = getPermissionsForTable(true);
+      if ((!dataTable.current || !dataTable.current.length) && data.length)
+        dataTable.current = data;
+    }
+  }, [profile, permissions, actions, permissionT, isEditMode]);
+
+  useEffect(() => {
+    sendPermissionChange();
+  }, [tableDataDebounced]);
 
   // ·····················································································
   // INIT DATA LOAD
