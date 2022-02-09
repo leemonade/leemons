@@ -1,5 +1,6 @@
-const { tasks, tasksVersioning } = require('../table');
+const { tasks } = require('../table');
 const removeTags = require('../tags/remove');
+const removeVersion = require('./versions/remove');
 const removeAttachments = require('../attachments/remove');
 const parseId = require('./helpers/parseId');
 const emit = require('../events/emit');
@@ -22,11 +23,11 @@ module.exports = async function remove(taskID, { transacting: t } = {}) {
 
         // EN: Finally, we can remove the task.
         // ES: Finalmente, podemos eliminar la tarea.
-        const task = await tasks.deleteMany({ id_$startsWith: id }, { transacting });
+        const task = await tasks.deleteMany({ id: fullId }, { transacting });
 
         // EN: Remove the task versioning.
         // ES: Eliminar el versionado de la tarea.
-        await tasksVersioning.deleteMany({ id }, { transacting });
+        await removeVersion(fullId, { transacting });
 
         // EN: Emit the event.
         // ES: Emitir el evento.

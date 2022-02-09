@@ -10,7 +10,15 @@ const ContextMenu = forwardRef(({ posX, posY, id }, ref) => {
     (url, target = 'self') =>
     () => {
       if (target === 'self') {
-        history.push(url);
+        return history.push(url);
+      }
+
+      if (target === 'api') {
+        const [method, uri] = url.split('://');
+        return leemons.api(uri, {
+          method,
+          allAgents: true,
+        });
       }
     };
   return (
@@ -29,7 +37,7 @@ const ContextMenu = forwardRef(({ posX, posY, id }, ref) => {
           Duplicate
         </Button>
         <Button disabled>Assign</Button>
-        <Button disabled>Delete</Button>
+        <Button onClick={handleClick(`DELETE://tasks/tasks/${id}`, 'api')}>Delete</Button>
       </Stack>
     </Portal>
   );
