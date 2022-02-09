@@ -165,6 +165,9 @@ module.exports = {
     programPlaceholder: 'Selecciona un programa',
     addKnowledgeDone: 'Conocimientos guardados',
     addSubjectTypeDone: 'Tipo de materia guardada',
+    subjectCreated: 'Asignatura creada',
+    classCreated: 'Clase creada',
+    classUpdated: 'Clase actualizada',
     knowledge: {
       title: 'Áreas de conocimiento',
       name: 'Nombre',
@@ -188,11 +191,14 @@ module.exports = {
       groupVisibility: 'Visibilidad del grupo',
       groupVisibilityLabel: 'Evitar grupos anidados',
     },
-    temas: {
+    subjects: {
       title: 'Asignaturas',
       course: 'Curso',
+      id: 'ID',
+      idRequired: 'Campo obligatorio',
       courseRequired: 'Campo obligatorio',
       subject: 'Asignatura',
+      noSubjectsFound: 'No se encuentran asignaturas',
       subjectRequired: 'Campo requerido',
       knowledge: 'Conocimiento',
       knowledgeRequired: 'Campo requerido',
@@ -200,6 +206,7 @@ module.exports = {
       subjectTypeRequired: 'Campo requerido',
       credits: 'Créditos',
       color: 'Color',
+      colorRequired: 'Campo requerido',
       group: 'Grupo',
       substage: 'Substage',
       seats: 'Asientos',
@@ -207,6 +214,7 @@ module.exports = {
       schedule: 'Horario',
       teacher: 'Profesor',
       description: 'Descripción',
+      maxInternalIdLength: 'Deben ser {max} numeros',
     },
     tableActions: {
       add: 'Añadir',

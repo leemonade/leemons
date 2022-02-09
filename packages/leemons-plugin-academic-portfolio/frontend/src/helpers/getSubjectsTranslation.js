@@ -10,7 +10,10 @@ export function getSubjectsTranslation(t) {
     subjectType: t('subjects.subjectType'),
     subjectTypeRequired: t('subjects.subjectTypeRequired'),
     credits: t('subjects.credits'),
+    id: t('subjects.id'),
+    idRequired: t('subjects.idRequired'),
     color: t('subjects.color'),
+    colorRequired: t('subjects.colorRequired'),
     group: t('subjects.group'),
     substage: t('subjects.substage'),
     seats: t('subjects.seats'),
@@ -18,5 +21,6 @@ export function getSubjectsTranslation(t) {
     schedule: t('subjects.schedule'),
     teacher: t('subjects.teacher'),
     description: t('subjects.description'),
+    maxInternalIdLength: t('subjects.maxInternalIdLength'),
   };
 }
