@@ -134,4 +134,35 @@ module.exports = {
       },
     },
   },
+  assignment_form: {
+    labels: {
+      assignTo: 'Asignar a',
+      classroomToAssign: 'Asignar a la clase',
+      mode: 'Modo',
+      deadline: 'Fecha límite',
+      availableInAdvance: 'Disponible en adelante',
+      limitedExecution: 'Tiempo limitado',
+      messageToStudents: 'Mensaje para los estudiantes',
+      submit: 'Asignar',
+    },
+    placeholders: {
+      date: 'dd/mm/aaaa',
+      time: 'hh:mm',
+      units: 'unidades',
+    },
+    descriptions: {
+      messageToStudents:
+        'Si asignas esta tarea a otros grupos en este paso, este mensaje será el mensaje predeterminado para todas las tareas (aunque puedes cambiarlo individualmente si lo deseas).',
+    },
+    modes: {
+      individual: 'Individual',
+      pairs: 'En pares',
+      groups: 'Equipos',
+    },
+    timeUnits: {
+      hours: 'horas',
+      minutes: 'minutos',
+      days: 'días',
+    },
+  },
 };

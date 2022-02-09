@@ -135,4 +135,35 @@ module.exports = {
       },
     },
   },
+  assignment_form: {
+    labels: {
+      assignTo: 'Assign to',
+      classroomToAssign: 'Classroom to assign',
+      mode: 'Mode',
+      deadline: 'Deadline',
+      availableInAdvance: 'Make available in advance',
+      limitedExecution: 'Limited execution time',
+      messageToStudents: 'Add a message to the students',
+      submit: 'Assign',
+    },
+    placeholders: {
+      date: 'dd/mm/yyyy',
+      time: 'hh:mm',
+      units: 'units',
+    },
+    descriptions: {
+      messageToStudents:
+        'If you assign this task to other groups in this step, this message will be the default message for all tasks (although you can change it individually if you wish).',
+    },
+    modes: {
+      individual: 'Individual',
+      pairs: 'In pairs',
+      groups: 'Teams',
+    },
+    timeUnits: {
+      hours: 'hours',
+      minutes: 'minutes',
+      days: 'days',
+    },
+  },
 };

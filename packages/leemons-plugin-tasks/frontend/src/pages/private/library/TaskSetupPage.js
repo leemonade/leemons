@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { isEmpty, isNil, isArray } from 'lodash';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { Paper, PageContainer, ContextContainer } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -27,6 +27,8 @@ export default function TaskSetupPage() {
     currentTask: null,
   });
 
+  const history = useHistory();
+
   //! Use an observer / event emitter to emit the children when to notify current data and use them to save or publish
 
   // ·········································································
@@ -47,7 +49,7 @@ export default function TaskSetupPage() {
       // store.currentTask = response.task;
 
       addSuccessAlert(t(messageKey));
-      render();
+      history.push('/private/tasks/library');
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }
