@@ -7,6 +7,7 @@ import {
   TimeInput,
   Button,
   Checkbox,
+  NumberInput,
   ContextContainer,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -26,11 +27,23 @@ export default function Form() {
       const res = unflatten(translations.items);
       const data = res.plugins.tasks.assignment_form;
 
+      setModes(
+        Object.entries(data.modes || {}).map(([key, value]) => ({
+          value: key,
+          label: value,
+        }))
+      );
+
+      setTimeUnits(
+        Object.entries(data.timeUnits || {}).map(([key, value]) => ({
+          value: key,
+          label: value,
+        }))
+      );
+
       setLabels(data.labels);
       setPlaceholders(data.placeholders);
       setDescriptions(data.descriptions);
-      setModes(data.modes);
-      setTimeUnits(data.timeUnits);
     }
   }, [translations]);
 
@@ -73,7 +86,7 @@ export default function Form() {
         <Controller
           control={control}
           name="mode"
-          render={({ field }) => <Select fullWidth label={labels?.mode} {...field} data={data} />}
+          render={({ field }) => <Select fullWidth label={labels?.mode} {...field} data={modes} />}
         />
       </ContextContainer>
 
@@ -135,15 +148,13 @@ export default function Form() {
             <Controller
               control={control}
               name="deadline"
-              render={({ field }) => (
-                <DatePicker placeholder={placeholders?.date} fullWidth {...field} data={data} />
-              )}
+              render={({ field }) => <NumberInput fullWidth {...field} data={data} />}
             />
             <Controller
               control={control}
               name="time"
               render={({ field }) => (
-                <TimeInput placeholder={placeholders?.time} fullWidth {...field} data={data} />
+                <Select placeholder={placeholders?.units} fullWidth {...field} data={timeUnits} />
               )}
             />
           </ContextContainer>

@@ -156,7 +156,7 @@ module.exports = {
     },
     modes: {
       individual: 'Individual',
-      pairs: 'En pares',
+      pairs: 'En parejas',
       groups: 'Equipos',
     },
     timeUnits: {
