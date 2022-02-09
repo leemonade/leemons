@@ -2,6 +2,7 @@ const subjectService = require('../src/services/subjects');
 const {
   validatePutSubjectCredits,
   validateGetSubjectCredits,
+  validateGetSubjectCreditsProgram,
 } = require('../src/validations/forms');
 
 async function postSubject(ctx) {
@@ -28,6 +29,14 @@ async function getSubjectCredits(ctx) {
   validateGetSubjectCredits(ctx.request.query);
   const { subject, program } = ctx.request.query;
   const subjectCredits = await subjectService.getSubjectCredits(subject, program);
+  ctx.status = 200;
+  ctx.body = { status: 200, subjectCredits };
+}
+
+async function listSubjectCreditsForProgram(ctx) {
+  validateGetSubjectCreditsProgram(ctx.request.query);
+  const { program } = ctx.request.query;
+  const subjectCredits = await subjectService.listSubjectCreditsForProgram(program);
   ctx.status = 200;
   ctx.body = { status: 200, subjectCredits };
 }
@@ -66,4 +75,5 @@ module.exports = {
   listSubject,
   putSubjectCredits,
   getSubjectCredits,
+  listSubjectCreditsForProgram,
 };

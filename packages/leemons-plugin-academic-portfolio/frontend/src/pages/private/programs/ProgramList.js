@@ -32,6 +32,7 @@ import unflatten from '@academic-portfolio/helpers/unflatten';
 import { ProgramItem } from '@academic-portfolio/components';
 import { useStore } from '@common/useStore';
 import { detailProgramRequest } from '../../../request';
+import { activeMenuItemSubjects } from '../../../helpers/activeMenuItemSubjects';
 
 export default function ProgramList() {
   const [t, translations] = useTranslateLoader(prefixPN('programs_page'));
@@ -128,6 +129,7 @@ export default function ProgramList() {
       store.currentProgram = response.program;
 
       await loadPrograms(centerId);
+      await activeMenuItemSubjects();
       setLoading(false);
       addSuccessAlert(t(messageKey));
     } catch (e) {
@@ -192,7 +194,6 @@ export default function ProgramList() {
     handleShowDetail(async () => {
       const { program } = await detailProgramRequest(e.program.id);
       store.currentProgram = program;
-      console.log(store.currentProgram);
       treeProps.setSelectedNode(e.id);
     });
   };

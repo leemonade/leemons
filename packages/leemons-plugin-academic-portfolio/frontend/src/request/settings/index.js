@@ -1,5 +1,25 @@
 const pluginPath = 'academic-portfolio';
 
+async function isConfigProfiles() {
+  return leemons.api(`${pluginPath}/settings/profiles/is-config`, {
+    allAgents: true,
+  });
+}
+
+async function getProfiles() {
+  return leemons.api(`${pluginPath}/settings/profiles`, {
+    allAgents: true,
+  });
+}
+
+async function setProfiles(body) {
+  return leemons.api(`${pluginPath}/settings/profiles`, {
+    allAgents: true,
+    method: 'PUT',
+    body,
+  });
+}
+
 async function getSettings() {
   return leemons.api(`${pluginPath}/settings`, {
     allAgents: true,
@@ -29,4 +49,4 @@ async function enableMenuItem(key) {
   });
 }
 
-export { getSettings, updateSettings, enableMenuItem };
+export { getSettings, updateSettings, enableMenuItem, isConfigProfiles, getProfiles, setProfiles };

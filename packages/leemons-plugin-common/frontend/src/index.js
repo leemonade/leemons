@@ -17,7 +17,7 @@ export {
   formWithTheme,
   getObjectArrayKeys,
   regex,
+  unflatten,
   useRequestErrorMessage,
   getRequestErrorMessage,
-  unflatten,
 };

@@ -5,6 +5,13 @@ async function listPrograms({ page, size, center }) {
   });
 }
 
+async function havePrograms() {
+  return leemons.api(`academic-portfolio/program/have`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
 async function detailProgram(id) {
   return leemons.api(`academic-portfolio/program/${id}`, {
     allAgents: true,
@@ -28,4 +35,4 @@ async function updateProgram(body) {
   });
 }
 
-export { listPrograms, detailProgram, createProgram, updateProgram };
+export { listPrograms, detailProgram, createProgram, updateProgram, havePrograms };
