@@ -1,8 +1,7 @@
 const timeToDayjs = require('../../helpers/dayjs/timeToDayjs');
 const validateDay = require('../../helpers/dayjs/validateDay');
 const count = require('./count');
-
-const timetableTable = leemons.query('plugins_timetable::timetable');
+const { table } = require('../tables');
 
 module.exports = async function create(
   { class: classId, day, start, duration },
@@ -56,6 +55,6 @@ module.exports = async function create(
     duration,
   };
 
-  const timetable = await timetableTable.create(data, { transacting });
+  const timetable = await table.timetable.create(data, { transacting });
   return timetable;
 };

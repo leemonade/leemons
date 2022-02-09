@@ -234,6 +234,7 @@ const addSubjectTypeSchema = {
   required: ['name', 'groupVisibility', 'program'],
   additionalProperties: false,
 };
+
 async function validateAddSubjectType(data, { transacting } = {}) {
   const validator = new LeemonsValidator(addSubjectTypeSchema);
 
@@ -270,6 +271,7 @@ const updateSubjectTypeSchema = {
   required: ['id', 'name', 'groupVisibility'],
   additionalProperties: false,
 };
+
 async function validateUpdateSubjectType(data, { transacting } = {}) {
   const validator = new LeemonsValidator(updateSubjectTypeSchema);
 
@@ -307,6 +309,7 @@ const addCourseSchema = {
   required: ['program'],
   additionalProperties: false,
 };
+
 async function validateAddCourse(data, { transacting } = {}) {
   const validator = new LeemonsValidator(addCourseSchema);
 
@@ -339,6 +342,7 @@ const addGroupSchema = {
   required: ['name', 'abbreviation', 'program'],
   additionalProperties: false,
 };
+
 async function validateAddGroup(data, { transacting } = {}) {
   const validator = new LeemonsValidator(addGroupSchema);
 
@@ -385,6 +389,7 @@ const updateCourseSchema = {
   required: ['id', 'name', 'abbreviation'],
   additionalProperties: false,
 };
+
 async function validateUpdateCourse(data, { transacting } = {}) {
   const validator = new LeemonsValidator(updateCourseSchema);
 
@@ -422,6 +427,7 @@ const updateGroupSchema = {
   required: ['id', 'name', 'abbreviation'],
   additionalProperties: false,
 };
+
 async function validateUpdateGroup(data, { transacting } = {}) {
   const validator = new LeemonsValidator(updateGroupSchema);
 
@@ -482,6 +488,7 @@ const addSubjectSchema = {
   required: ['name', 'program', 'internalId'],
   additionalProperties: false,
 };
+
 async function validateAddSubject(data, { transacting } = {}) {
   const { course: _course, ..._data } = data;
   const validator = new LeemonsValidator(addSubjectSchema);
@@ -535,6 +542,7 @@ const updateSubjectInternalIdSchema = {
   required: ['internalId', 'course'],
   additionalProperties: false,
 };
+
 async function validateUpdateSubject(data, { transacting } = {}) {
   const { course, internalId, ..._data } = data;
   const validator = new LeemonsValidator(updateSubjectSchema);
@@ -575,6 +583,7 @@ const putSubjectCreditsSchema = {
   required: ['subject', 'program', 'credits'],
   additionalProperties: false,
 };
+
 function validatePutSubjectCredits(data) {
   const validator = new LeemonsValidator(putSubjectCreditsSchema);
 
@@ -592,8 +601,26 @@ const getSubjectCreditsSchema = {
   required: ['subject', 'program'],
   additionalProperties: false,
 };
+
 function validateGetSubjectCredits(data) {
   const validator = new LeemonsValidator(getSubjectCreditsSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
+const getSubjectCreditsProgramSchema = {
+  type: 'object',
+  properties: {
+    program: stringSchema,
+  },
+  required: ['program'],
+  additionalProperties: false,
+};
+
+function validateGetSubjectCreditsProgram(data) {
+  const validator = new LeemonsValidator(getSubjectCreditsProgramSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
@@ -633,6 +660,7 @@ const addClassSchema = {
   required: ['program', 'subject'],
   additionalProperties: false,
 };
+
 function validateAddClass(data) {
   const validator = new LeemonsValidator(addClassSchema);
 
@@ -671,6 +699,7 @@ const addInstanceClass2Schema = {
   required: ['internalId'],
   additionalProperties: false,
 };
+
 async function validateAddInstanceClass(data, { transacting } = {}) {
   const { internalId, internalIdCourse, ..._data } = data;
 
@@ -727,6 +756,7 @@ const addClassStudentsSchema = {
   required: ['class', 'students'],
   additionalProperties: false,
 };
+
 function validateAddClassStudents(data) {
   const validator = new LeemonsValidator(addClassStudentsSchema);
 
@@ -744,6 +774,7 @@ const addClassStudentsManySchema = {
   required: ['class', 'students'],
   additionalProperties: false,
 };
+
 function validateAddClassStudentsMany(data) {
   const validator = new LeemonsValidator(addClassStudentsManySchema);
 
@@ -774,6 +805,7 @@ const addClassTeachersSchema = {
   required: ['class', 'teachers'],
   additionalProperties: false,
 };
+
 function validateAddClassTeachers(data) {
   const validator = new LeemonsValidator(addClassTeachersSchema);
 
@@ -804,6 +836,7 @@ const addClassTeachersManySchema = {
   required: ['class', 'teachers'],
   additionalProperties: false,
 };
+
 function validateAddClassTeachersMany(data) {
   const validator = new LeemonsValidator(addClassTeachersManySchema);
 
@@ -846,6 +879,7 @@ const updateClassSchema = {
   required: ['id'],
   additionalProperties: false,
 };
+
 function validateUpdateClass(data) {
   const validator = new LeemonsValidator(updateClassSchema);
 
@@ -873,6 +907,7 @@ const updateClassManySchema = {
   required: ['ids'],
   additionalProperties: false,
 };
+
 function validateUpdateClassMany(data) {
   const validator = new LeemonsValidator(updateClassManySchema);
 
@@ -904,5 +939,6 @@ module.exports = {
   validateGetSubjectCredits,
   validateAddClassStudentsMany,
   validateAddClassTeachersMany,
+  validateGetSubjectCreditsProgram,
   validateProgramNotUsingInternalId,
 };

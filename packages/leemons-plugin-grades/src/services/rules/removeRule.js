@@ -7,6 +7,7 @@ async function removeRule(id, { isDependency = false, transacting: _transacting 
     async (transacting) => {
       const rules = await table.rules.find({ id_$in: _.isArray(id) ? id : [id] });
       const ruleIds = _.map(rules, 'id');
+      await table.rules.update({ id_$in: ruleIds, isDependency }, { group: null }, { transacting });
       await leemons.events.emit('before-remove-rules', { rules, transacting });
       await removeConditionGroupsByRule(ruleIds, { transacting });
       await table.rules.deleteMany({ id_$in: ruleIds, isDependency }, { transacting });

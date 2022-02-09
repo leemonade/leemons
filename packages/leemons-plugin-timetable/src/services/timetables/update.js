@@ -1,7 +1,6 @@
 const timeToDayjs = require('../../helpers/dayjs/timeToDayjs');
 const validateDay = require('../../helpers/dayjs/validateDay');
-
-const timetableTable = leemons.query('plugins_timetable::timetable');
+const { table } = require('../tables');
 
 module.exports = async function updateTimetable(
   timetableId,
@@ -35,5 +34,5 @@ module.exports = async function updateTimetable(
     throw new Error('At least one of day, start and duration is required');
   }
 
-  return timetableTable.set({ id: timetableId }, data, { transacting });
+  return table.timetable.set({ id: timetableId }, data, { transacting });
 };

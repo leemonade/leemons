@@ -6,6 +6,10 @@ import { goLoginPage } from '@users/navigate';
 
 const Welcome = loadable(() => import('./src/pages/private/WelcomePage'));
 const EvaluationList = loadable(() => import('./src/pages/private/Evaluations/EvaluationList'));
+const PromotionsList = loadable(() => import('./src/pages/private/Promotions/PromotionsList'));
+const DependenciesList = loadable(() =>
+  import('./src/pages/private/Dependencies/DependenciesList')
+);
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -18,6 +22,12 @@ export default function Private() {
       </Route>
       <Route path={`${path}/evaluations`}>
         <EvaluationList session={session} />
+      </Route>
+      <Route path={`${path}/promotions`}>
+        <PromotionsList session={session} />
+      </Route>
+      <Route path={`${path}/dependencies`}>
+        <DependenciesList session={session} />
       </Route>
     </Switch>
   );

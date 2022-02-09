@@ -15,8 +15,11 @@ import { useStore } from '@common';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@grades/helpers/prefixPN';
-import { enableMenuItemRequest, getSettingsRequest, updateSettingsRequest } from '@grades/request';
-import hooks from 'leemons-hooks';
+import { getSettingsRequest, updateSettingsRequest } from '@grades/request';
+import { haveGradesRequest, havePromotionsRequest } from '../../request';
+import { activeMenuItemPromotions } from '../../helpers/activeMenuItemPromotions';
+import { activeMenuItemEvaluations } from '../../helpers/activeMenuItemEvaluations';
+import { activeMenuItemDependencies } from '../../helpers/activeMenuItemDependencies';
 
 // eslint-disable-next-line react/prop-types
 function StepCard({ t, step, disabled, to, onClick }) {
@@ -54,9 +57,14 @@ export default function WelcomePage() {
   // INIT DATA LOAD
 
   async function init() {
-    const [settingsResponse] = await Promise.all([getSettingsRequest]);
+    const [settingsResponse, haveGradesResponse, havePromotionsResponse] = await Promise.all([
+      getSettingsRequest(),
+      haveGradesRequest(),
+      havePromotionsRequest(),
+    ]);
 
-    // haveGradesRequest
+    store.havePromotions = havePromotionsResponse.have;
+    store.haveGrades = haveGradesResponse.have;
     store.settings = settingsResponse.settings;
     render();
   }
@@ -74,15 +82,15 @@ export default function WelcomePage() {
   }
 
   async function handleOnEvaluations() {
-    const itemKey = 'evaluations';
-    await enableMenuItemRequest(itemKey);
-    await hooks.fireEvent('menu-builder:user:updateItem', itemKey);
+    await activeMenuItemEvaluations();
   }
 
   async function handleOnPromotions() {
-    const itemKey = 'promotions';
-    await enableMenuItemRequest(itemKey);
-    await hooks.fireEvent('menu-builder:user:updateItem', itemKey);
+    await activeMenuItemPromotions();
+  }
+
+  async function handleOnDependencies() {
+    await activeMenuItemDependencies();
   }
 
   // ----------------------------------------------------------------------
@@ -125,13 +133,14 @@ export default function WelcomePage() {
               step="step_promotions"
               to="/private/grades/promotions"
               onClick={handleOnPromotions}
-              disabled
+              disabled={!store.haveGrades}
             />
             <StepCard
               t={t}
               step="step_dependencies"
-              to="/private/academic-portfolio/dependencies"
-              disabled
+              to="/private/grades/dependencies"
+              onClick={handleOnDependencies}
+              disabled={!store.havePromotions}
             />
           </ContextContainer>
         </PageContainer>

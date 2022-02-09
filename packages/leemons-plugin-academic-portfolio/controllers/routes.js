@@ -43,6 +43,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/program/have',
+    method: 'GET',
+    handler: 'program.havePrograms',
+    authenticated: true,
+  },
+  {
     path: '/program/:id/duplicate',
     method: 'POST',
     handler: 'program.duplicateProgram',
@@ -204,6 +210,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/subject/credits/list',
+    method: 'GET',
+    handler: 'subject.listSubjectCreditsForProgram',
+    authenticated: true,
+  },
+  {
     path: '/subject',
     method: 'GET',
     handler: 'subject.listSubject',
@@ -318,5 +330,26 @@ module.exports = [
     handler: 'settings.enableMenuItem',
     authenticated: true,
     allowedPermissions: getPermissions(permissions.portfolio, ['edit']),
+  },
+  {
+    path: '/settings/profiles/is-config',
+    method: 'GET',
+    handler: 'settings.isProfilesConfig',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.profiles, ['view']),
+  },
+  {
+    path: '/settings/profiles',
+    method: 'GET',
+    handler: 'settings.getProfiles',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.profiles, ['view']),
+  },
+  {
+    path: '/settings/profiles',
+    method: 'PUT',
+    handler: 'settings.setProfiles',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.profiles, ['create', 'update']),
   },
 ];

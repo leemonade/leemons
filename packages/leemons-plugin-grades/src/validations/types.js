@@ -52,6 +52,10 @@ const integerSchemaNullable = {
   nullable: true,
 };
 
+const numberSchema = {
+  type: 'number',
+};
+
 const localeObjectSchema = () => ({
   type: 'object',
   patternProperties: {
@@ -64,6 +68,7 @@ const localeObjectSchema = () => ({
 module.exports = {
   dateSchema,
   textSchema,
+  numberSchema,
   stringSchema,
   booleanSchema,
   integerSchema,

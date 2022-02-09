@@ -34,6 +34,7 @@ import {
   EvaluationDetail,
 } from '../../../components/EvaluationDetail';
 import { TreeItem } from '../../../components/TreeItem/TreeItem';
+import { activeMenuItemPromotions } from '../../../helpers/activeMenuItemPromotions';
 
 export default function EvaluationList() {
   const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
@@ -216,7 +217,7 @@ export default function EvaluationList() {
 
         store.selectedGrade = null;
         store.saving = false;
-        await onSelectCenter(store.center);
+        await Promise.all([onSelectCenter(store.center), activeMenuItemPromotions()]);
         await addSuccessAlert(t('successSave'));
       }
     } catch (error) {
@@ -276,7 +277,7 @@ export default function EvaluationList() {
         <PageContainer>
           <ContextContainer padded="vertical">
             <Grid grow>
-              <Col span={5}>
+              <Col span={4}>
                 <Paper fullWidth padding={5}>
                   <ContextContainer divided>
                     <Box>
@@ -296,7 +297,7 @@ export default function EvaluationList() {
                   </ContextContainer>
                 </Paper>
               </Col>
-              <Col span={7}>
+              <Col span={8}>
                 {store.selectedGrade && (
                   <Paper fullWidth padding={5}>
                     <EvaluationDetail

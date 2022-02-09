@@ -4,6 +4,22 @@ const removeMenuItemService = require('../src/services/menu-builder/remove');
 const settingsSchema = require('../models/settings');
 
 module.exports = {
+  getProfiles: async (ctx) => {
+    const profiles = await settingsService.getProfiles();
+    ctx.status = 200;
+    ctx.body = { status: 200, profiles };
+  },
+  setProfiles: async (ctx) => {
+    const profiles = await settingsService.setProfiles(ctx.request.body);
+    ctx.status = 200;
+    ctx.body = { status: 200, profiles };
+  },
+  isProfilesConfig: async (ctx) => {
+    const isConfig = await settingsService.isProfilesConfig();
+    console.log(isConfig);
+    ctx.status = 200;
+    ctx.body = { status: 200, isConfig };
+  },
   findOne: async (ctx) => {
     const settings = await settingsService.findOne();
     ctx.status = 200;

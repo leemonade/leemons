@@ -1,21 +1,21 @@
-import React, { useMemo, useState, useEffect, useContext } from 'react';
-import { isArray, isNil, isEmpty } from 'lodash';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { isArray, isEmpty, isNil } from 'lodash';
 import {
-  Paper,
   Box,
+  Col,
+  ContextContainer,
+  Grid,
+  PageContainer,
+  Paper,
   Tree,
   useTree,
-  Grid,
-  Col,
-  PageContainer,
-  ContextContainer,
 } from '@bubbles-ui/components';
 import {
-  AdminPageHeader,
   AcademicProgramSetup,
   AcademicProgramSetupBasicData,
-  AcademicProgramSetupSubjects,
   AcademicProgramSetupCourses,
+  AcademicProgramSetupSubjects,
+  AdminPageHeader,
 } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectCenter } from '@users/components/SelectCenter';
@@ -24,13 +24,15 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import {
-  listProgramsRequest,
   createProgramRequest,
+  listProgramsRequest,
   updateProgramRequest,
 } from '@academic-portfolio/request';
 import unflatten from '@academic-portfolio/helpers/unflatten';
 import { ProgramItem } from '@academic-portfolio/components';
 import { useStore } from '@common/useStore';
+import { detailProgramRequest } from '../../../request';
+import { activeMenuItemSubjects } from '../../../helpers/activeMenuItemSubjects';
 
 export default function ProgramList() {
   const [t, translations] = useTranslateLoader(prefixPN('programs_page'));
@@ -127,6 +129,7 @@ export default function ProgramList() {
       store.currentProgram = response.program;
 
       await loadPrograms(centerId);
+      await activeMenuItemSubjects();
       setLoading(false);
       addSuccessAlert(t(messageKey));
     } catch (e) {
@@ -188,8 +191,9 @@ export default function ProgramList() {
 
   const handleOnEditProgram = (e) => {
     scrollTo({ top: 0 });
-    handleShowDetail(() => {
-      store.currentProgram = e.program;
+    handleShowDetail(async () => {
+      const { program } = await detailProgramRequest(e.program.id);
+      store.currentProgram = program;
       treeProps.setSelectedNode(e.id);
     });
   };

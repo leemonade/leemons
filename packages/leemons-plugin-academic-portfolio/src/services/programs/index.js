@@ -8,11 +8,13 @@ const { getProgramGroups } = require('./getProgramGroups');
 const { programsByIds } = require('./programsByIds');
 const { updateProgram } = require('./updateProgram');
 const { listPrograms } = require('./listPrograms');
+const { havePrograms } = require('./havePrograms');
 const { addProgram } = require('./addProgram');
 
 module.exports = {
   addProgram,
   listPrograms,
+  havePrograms,
   programsByIds,
   updateProgram,
   getProgramGroups,

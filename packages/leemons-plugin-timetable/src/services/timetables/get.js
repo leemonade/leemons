@@ -1,6 +1,5 @@
 const timeFiltersQuery = require('../../helpers/timetable/timeFiltersQuery');
-
-const timetableTable = leemons.query('plugins_timetable::timetable');
+const { table } = require('../tables');
 
 module.exports = async function get(
   classId,
@@ -17,7 +16,7 @@ module.exports = async function get(
     endBetween,
   });
 
-  const timetables = await timetableTable.find(
+  const timetables = await table.timetable.find(
     {
       ...query,
       ...startQuery,

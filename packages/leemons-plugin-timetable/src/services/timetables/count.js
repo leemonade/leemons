@@ -1,6 +1,5 @@
 const timeFiltersQuery = require('../../helpers/timetable/timeFiltersQuery');
-
-const timetableTable = leemons.query('plugins_timetable::timetable');
+const { table } = require('../tables');
 
 module.exports = async function count(
   classId,
@@ -21,7 +20,7 @@ module.exports = async function count(
     query.day_$in = days;
   }
 
-  const hasTimetables = await timetableTable.count(
+  const hasTimetables = await table.timetable.count(
     {
       ...query,
       ...startQuery,

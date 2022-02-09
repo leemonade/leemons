@@ -34,6 +34,8 @@ async function listKnowledge(ctx) {
   }
 }
 
+// TODO: AÑADIR BORRAR Y ACTUALIZAR (HAY QUE MIRAR COMO Y EN QUE AFECTA)
+
 module.exports = {
   postKnowledge,
   listKnowledge,
