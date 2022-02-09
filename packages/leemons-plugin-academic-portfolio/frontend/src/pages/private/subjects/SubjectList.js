@@ -219,12 +219,14 @@ export default function SubjectList() {
         if (!subject) return null;
         data.subject = subject?.id;
       } else {
+        console.log('subject');
         const subject = await updateSubject({
           id: data.subject,
           course: data.courses,
           internalId: data.internalId,
           credits: data.credits,
         });
+        console.log(subject);
         if (!subject) return null;
       }
 
