@@ -26,6 +26,7 @@ const randomString = require('./randomString');
 const getObjectArrayKeys = require('./getObjectArrayKeys');
 const { withTransaction } = require('./withTransaction');
 const numberToEncodedLetter = require('./numberToEncodedLetter');
+const sqlDatetime = require('./sqlDatetime');
 
 squirrelly.helpers.define('printWithOutErrors', ({ params }) => {
   const it = params[0];
@@ -68,4 +69,5 @@ module.exports = {
   fetch,
   fetchJson,
   fetchText,
+  sqlDatetime,
 };
