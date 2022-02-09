@@ -52,7 +52,7 @@ function InstructionData({
           <Box>
             <Controller
               control={control}
-              name="forTeacher"
+              name="instructionsForTeacher"
               rules={{ required: errorMessages.forTeacher?.required }}
               render={({ field }) => (
                 <TextEditor
@@ -69,7 +69,7 @@ function InstructionData({
           <Box>
             <Controller
               control={control}
-              name="forStudent"
+              name="instructionsForStudent"
               rules={{ required: errorMessages.forStudent?.required }}
               render={({ field }) => (
                 <TextEditor

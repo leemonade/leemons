@@ -1,6 +1,6 @@
 const create = require('../src/services/task/create');
 const get = require('../src/services/task/get');
-const publish = require('../src/services/task/publish');
+const publish = require('../src/services/task/versions/publish');
 const remove = require('../src/services/task/remove');
 const search = require('../src/services/task/search');
 const update = require('../src/services/task/update');
@@ -180,9 +180,11 @@ module.exports = {
   },
   search: async (ctx) => {
     try {
-      const { page, size } = ctx.request.query;
+      const { page, size, draft } = ctx.request.query;
 
-      const tasks = await search({}, parseInt(page, 10), parseInt(size, 10));
+      const tasks = await search({}, parseInt(page, 10) || 0, parseInt(size, 10) || 10, {
+        draft: draft === 'true',
+      });
 
       ctx.status = 200;
       ctx.body = {

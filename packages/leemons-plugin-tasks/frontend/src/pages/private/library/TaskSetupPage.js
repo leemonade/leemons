@@ -13,9 +13,11 @@ import {
   ContentData,
   InstructionData,
   PublishData,
-} from './components';
+} from '../../../components/TaskSetupPage';
 import { prefixPN } from '../../../helpers';
 import saveTaskRequest from '../../../request/task/saveTask';
+import publishTaskRequest from '../../../request/task/publishTask';
+import getTaskRequest from '../../../request/task/getTask';
 
 export default function TaskSetupPage() {
   const [t, translations] = useTranslateLoader(prefixPN('task_setup_page'));
@@ -24,6 +26,8 @@ export default function TaskSetupPage() {
   const [store, render] = useStore({
     currentTask: null,
   });
+
+  //! Use an observer / event emitter to emit the children when to notify current data and use them to save or publish
 
   // ·········································································
   // API CALLS
@@ -36,7 +40,7 @@ export default function TaskSetupPage() {
       if (!isEmpty(store.currentTask)) {
         messageKey = 'update_done';
       }
-      await saveTaskRequest(store?.currentTask?.id, body);
+      await saveTaskRequest(store?.currentTask?.fullId, body);
 
       // TODO: Implement save task request call
       // const response = await apiCall(values);
@@ -49,13 +53,30 @@ export default function TaskSetupPage() {
     }
   };
 
-  const getTask = () => {
+  const publishTask = async (id) => {
     try {
+      if (isEmpty(id)) {
+        addErrorAlert('No task id provided');
+        return;
+      }
+
+      await publishTaskRequest(id);
+
+      addSuccessAlert(t('publish_done'));
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+  };
+
+  const getTask = async (id) => {
+    try {
+      return await getTaskRequest(id);
       // TODO: Implement get task by id request
       // const response = await apiCall(id);
       // store.currentTask = response.task;
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
+      return {};
     }
   };
 
@@ -64,9 +85,10 @@ export default function TaskSetupPage() {
 
   const { id } = useParams();
 
-  useEffect(() => {
+  useEffect(async () => {
     if (!isEmpty(id)) {
-      getTask();
+      store.currentTask = await getTask(id);
+      render();
     }
   }, [id]);
 
@@ -83,8 +105,11 @@ export default function TaskSetupPage() {
   // HANDLERS
 
   const handleOnSaveTask = (values) => {
-    console.log('handleOnSaveTask:', values);
     saveTask(values);
+  };
+
+  const handleOnPublishTask = () => {
+    publishTask(id);
   };
 
   // ·········································································
@@ -138,8 +163,9 @@ export default function TaskSetupPage() {
     <ContextContainer fullHeight>
       <AdminPageHeader
         values={headerLabels}
-        buttons={{ edit: 'Save draft' }}
+        buttons={{ edit: 'Save draft', duplicate: 'Publish' }}
         onEdit={handleOnSaveTask}
+        onDuplicate={handleOnPublishTask}
       />
 
       <Paper color="solid" shadow="none" padding={0}>

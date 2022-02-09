@@ -1,7 +1,10 @@
+const _ = require('lodash');
 const emit = require('../events/emit');
 const { tasks, tasksVersioning } = require('../table');
 const parseId = require('./helpers/parseId');
-const upgradeVersion = require('./helpers/upgradeVersion');
+const getTask = require('./get');
+const getVersion = require('./versions/get');
+const upgradeTaskVersion = require('./versions/upgrade');
 
 module.exports = async function update(
   taskId,
@@ -50,46 +53,71 @@ module.exports = async function update(
 
         // EN: Get the id from complete id@version
         // ES: Obtener el id de la id@version completa
-        const { id, fullId } = await parseId(taskId, null, { transacting });
 
-        // EN: Get the last version from the task
-        // ES: Obtener la última versión de la tarea
-        const [taskInfo] = await tasksVersioning.find({ id }, { transacting });
+        // eslint-disable-next-line prefer-const
+        let { id, fullId, version } = await parseId(taskId, null, { transacting });
+
+        // EN: Update task' shared data
+        // ES: Actualizar los datos compartidos de la tarea
+        if (name) {
+          await tasksVersioning.set(
+            {
+              id,
+            },
+            { name },
+            { transacting }
+          );
+        }
+
+        if (!Object.values(task).filter((value) => value !== undefined).length) {
+          throw new Error('Task not updated due to empty data');
+        }
 
         // EN: Get the task
         // ES: Obtener la tarea
-        const [taskToUpdate] = await tasks.find({ id: fullId }, { transacting });
+        const taskToUpdate = await getTask(fullId, { transacting });
 
         if (!taskToUpdate) {
           throw new Error('Task not found');
         }
 
-        // EN: Keep the same version if the task is not published yet
-        // ES: Mantiene la misma versión si la tarea no está publicada aún
-        let { version } = await parseId(taskToUpdate.id, null, { transacting });
+        // EN: Check if the task is not a draft
+        // ES: Comprobar si la tarea no es un borrador
+        const { status } = await getVersion(fullId, { transacting });
 
-        // EN: If the task is published, upgrade the version
-        // ES: Si la tarea está publicada, actualizar la versión
-        // TODO: For now, we only support updating the current version and major upgrade
-        if (taskToUpdate.published) {
-          version = upgradeVersion(taskInfo.last, 'major');
+        if (status === 'published') {
+          // TODO: For now, we only support updating the current version and major upgrade
+          const [{ last }] = await tasksVersioning.find({ id }, { columns: ['last'], transacting });
+          // TODO: For now, we only support updating the current version and major upgrade
+          fullId = (await parseId(id, last)).fullId;
+
+          // EN: Register the new task version
+          // ES: Registrar la nueva versión de la tarea
+          const newVersion = await upgradeTaskVersion(fullId, 'major', { transacting });
+
+          // EN: Get the new fullId and version
+          // ES: Obtener la nueva id completa y versión
+          fullId = newVersion.fullId;
+          version = newVersion.version;
         }
 
-        // EN: Update the task versioning
-        // ES: Actualizar el versionado de la tarea
-        await tasksVersioning.set({ id }, { last: version, name }, { transacting });
+        // TODO: Let the user modify the global task info
 
         // EN: Update the task
         // ES: Actualizar la tareas
-        const newTask = await tasks.set({ id: (await parseId(id, version)).fullId }, task, {
-          transacting,
-        });
+        const newTask = await tasks.set(
+          { id: fullId },
+          _.omit(_.merge(taskToUpdate, task), ['id']),
+          {
+            transacting,
+          }
+        );
 
         // EN: Emit the event.
         // ES: Emitir el evento.
         emit(['task.updated', `task.${id}.updated`], { id, version, changes: task });
 
-        return { ...newTask, id, fullId, version, name: name ?? taskInfo.name };
+        return { ...taskToUpdate, ...newTask, id, fullId, version };
       } catch (error) {
         throw new Error(`Error updating task: ${error.message}`);
       }

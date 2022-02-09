@@ -1,6 +1,7 @@
 const emit = require('../events/emit');
 const { tasks, tasksVersioning } = require('../table');
 const parseId = require('./helpers/parseId');
+const versioningCreate = require('./versions/create');
 
 module.exports = async function create(
   {
@@ -45,15 +46,14 @@ module.exports = async function create(
           published: false,
         };
 
-        let taskInfo = {
-          name,
-          last: '1.0.0',
-          current: '0.0.0',
-        };
-
-        // EN: Create task versioning instance
-        // ES: Crear instancia de versionamiento de tarea
-        taskInfo = await tasksVersioning.create(taskInfo, { transacting });
+        // EN: Register task versioning
+        // ES: Registrar versionado de tarea
+        const taskInfo = await versioningCreate(
+          {
+            name,
+          },
+          { transacting }
+        );
 
         // EN: Generate an id with the task versioning id and the current version
         // ES: Generar un id con el id de versionamiento de tarea y la versión actual

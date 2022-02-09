@@ -88,7 +88,7 @@ module.exports = async function get(
     // ES: Obtener tarea por id (id@version).
     const task = await tasks.find({ id: fullId }, { columns: taskColumns, transacting });
 
-    return task.length ? { ...task[0], ...versioning } : null;
+    return task.length ? { ...task[0], ...versioning, fullId } : null;
   } catch (e) {
     throw new Error(`Error getting task: ${e.message}`);
   }

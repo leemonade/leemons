@@ -8,8 +8,11 @@
     "@bubbles-ui/editors": "^1.0.5",
     "@bubbles-ui/icons": "^1.0.10",
     "@bubbles-ui/leemons": "^1.0.4",
+    "@mantine/core": "^3.6.5",
+    "@mantine/hooks": "^3.6.5",
     "lodash": "^4.17.21",
-    "react-hook-form": "^7.25.3"
+    "react-hook-form": "^7.26.0",
+    "react-router-dom": "^6.2.1"
   },
   "devDependencies": {}
 }
