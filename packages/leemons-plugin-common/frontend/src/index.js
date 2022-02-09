@@ -9,6 +9,7 @@ export * from './addHeaderStyle';
 export * from './existHeaderScript';
 export * from './existHeaderStyle';
 export * from './useAsync';
+export * from './useApi';
 export * from './userImage';
 export * from './useStore';
 
