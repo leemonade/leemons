@@ -1,10 +1,10 @@
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import { ContextContainer, PageContainer, Paragraph } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import { useAsync } from '@common';
+import { useApi } from '@common';
 import { prefixPN } from '../../../helpers';
 import listTasks from '../../../request/task/listTasks';
 import CardList from '../../../components/Library/CardList';
@@ -12,21 +12,9 @@ import CardList from '../../../components/Library/CardList';
 export default function LibraryPage() {
   const [t] = useTranslateLoader(prefixPN('library_page'));
   const { t: tCommonHeader } = useCommonTranslate('page_header');
-  const [data, setData] = useState({ loading: true, data: [] });
-  const [draft, setDraft] = useState({ loading: true, data: [] });
 
-  const onData = (setter) =>
-    useCallback((_data) => {
-      setter({ loading: false, data: _data });
-    }, []);
-
-  const onError = (setter) =>
-    useCallback((error) => {
-      setter({ loading: false, error });
-    }, []);
-
-  useAsync(listTasks, onData(setData), onError(setData));
-  useAsync(() => listTasks(true), onData(setDraft), onError(setDraft));
+  const [data, dataError, loadingData, refreshData] = useApi(listTasks, false, 30000);
+  const [draft, draftError, loadingDraft, refreshDraft] = useApi(listTasks, true, 30000);
 
   const history = useHistory();
   // ·········································································
@@ -62,18 +50,18 @@ export default function LibraryPage() {
 
       <PageContainer>
         <ContextContainer title="Draft">
-          {draft.error ? (
-            <Paragraph>Error {draft.error}</Paragraph>
+          {draftError ? (
+            <Paragraph>Error {draftError.message}</Paragraph>
           ) : (
-            <CardList data={draft.data?.items} loading={draft.loading} />
+            <CardList data={draft?.items} loading={loadingDraft} refresh={refreshDraft} />
           )}
         </ContextContainer>
 
         <ContextContainer title="Published">
-          {data.error ? (
-            <Paragraph>Error {data.error}</Paragraph>
+          {dataError ? (
+            <Paragraph>Error {dataError.message}</Paragraph>
           ) : (
-            <CardList data={data.data?.items} loading={data.loading} />
+            <CardList data={data?.items} loading={loadingData} refresh={refreshData} />
           )}
         </ContextContainer>
       </PageContainer>

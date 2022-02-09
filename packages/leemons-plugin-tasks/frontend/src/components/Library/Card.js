@@ -4,7 +4,7 @@ import { Paper, ImageLoader, Title, Paragraph, Box } from '@bubbles-ui/component
 import { useClickOutside } from '@mantine/hooks';
 import ContextMenu from './ContextMenu';
 
-export default function Card({ cover, name, color, tagline, summary, id }) {
+export default function Card({ cover, name, color, tagline, summary, id, refresh }) {
   const [contextMenu, setContextMenu] = React.useState({ opened: false, posX: 0, posY: 0 });
   const ref = useClickOutside(() => setContextMenu({ opened: false }));
   const handleContextMenu = (e) => {
@@ -20,7 +20,13 @@ export default function Card({ cover, name, color, tagline, summary, id }) {
   return (
     <>
       {contextMenu.opened && (
-        <ContextMenu ref={ref} id={id} posX={contextMenu.posX} posY={contextMenu.posY} />
+        <ContextMenu
+          ref={ref}
+          id={id}
+          posX={contextMenu.posX}
+          posY={contextMenu.posY}
+          refresh={refresh}
+        />
       )}
       <Paper
         sx={{ cursor: 'pointer' }}
@@ -46,4 +52,5 @@ Card.propTypes = {
   color: PropTypes.string.isRequired,
   tagline: PropTypes.string.isRequired,
   summary: PropTypes.string.isRequired,
+  refresh: PropTypes.func.isRequired,
 };

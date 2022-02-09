@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import { Stack, Loader } from '@bubbles-ui/components';
 import Card from './Card';
 
-export default function CardList({ data, loading }) {
-  if (loading) {
+export default function CardList({ data, loading, refresh }) {
+  if (loading && !data?.length) {
     return <Loader />;
   }
   return (
     <Stack spacing={3} wrap="wrap">
       {data.map((item) => (
-        <Card key={item.id} {...item} />
+        <Card key={item.id} {...item} refresh={refresh} />
       ))}
     </Stack>
   );
@@ -26,6 +26,7 @@ CardList.propTypes = {
       tagline: PropTypes.string.isRequired,
       summary: PropTypes.string.isRequired,
     })
-  ).isRequired,
+  ),
   loading: PropTypes.bool.isRequired,
+  refresh: PropTypes.func.isRequired,
 };
