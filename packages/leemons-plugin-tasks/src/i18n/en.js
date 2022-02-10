@@ -139,6 +139,7 @@ module.exports = {
     labels: {
       assignTo: 'Assign to',
       classroomToAssign: 'Classroom to assign',
+      studentToAssign: 'Student to assign',
       mode: 'Mode',
       deadline: 'Deadline',
       availableInAdvance: 'Make available in advance',
@@ -154,6 +155,10 @@ module.exports = {
     descriptions: {
       messageToStudents:
         'If you assign this task to other groups in this step, this message will be the default message for all tasks (although you can change it individually if you wish).',
+    },
+    assignTo: {
+      student: 'Student',
+      class: 'Class',
     },
     modes: {
       individual: 'Individual',

@@ -13,6 +13,8 @@ import {
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditor } from '@bubbles-ui/editors';
 import { prefixPN } from '../../helpers/prefixPN';
+import AssignUsers from './AssignUsers';
+import ConditionalInput from '../ConditionalInput';
 
 export default function Form() {
   const [, translations] = useTranslateLoader(prefixPN('assignment_form'));
@@ -21,6 +23,7 @@ export default function Form() {
   const [descriptions, setDescriptions] = useState({});
   const [modes, setModes] = useState({});
   const [timeUnits, setTimeUnits] = useState({});
+  const [assignTo, setAssignTo] = useState({});
 
   useEffect(() => {
     if (translations && translations.items) {
@@ -41,6 +44,17 @@ export default function Form() {
         }))
       );
 
+      setAssignTo([
+        {
+          label: data.assignTo.class,
+          value: 'class',
+        },
+        {
+          label: data.assignTo.student,
+          value: 'student',
+        },
+      ]);
+
       setLabels(data.labels);
       setPlaceholders(data.placeholders);
       setDescriptions(data.descriptions);
@@ -55,40 +69,9 @@ export default function Form() {
     console.log(data);
   };
 
-  const data = [
-    {
-      value: '1',
-      label: 'Option 1',
-    },
-    {
-      value: '2',
-      label: 'Option 2',
-    },
-  ];
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <ContextContainer direction="row">
-        <Controller
-          control={control}
-          name="assign"
-          render={({ field }) => (
-            <Select fullWidth label={labels?.assignTo} {...field} data={data} />
-          )}
-        />
-        <Controller
-          control={control}
-          name="class"
-          render={({ field }) => (
-            <Select fullWidth label={labels?.classroomToAssign} {...field} data={data} />
-          )}
-        />
-        <Controller
-          control={control}
-          name="mode"
-          render={({ field }) => <Select fullWidth label={labels?.mode} {...field} data={modes} />}
-        />
-      </ContextContainer>
+      <AssignUsers labels={labels} modes={modes} assignTo={assignTo} />
 
       <ContextContainer direction="row" alignItems="end">
         <Controller
@@ -100,7 +83,6 @@ export default function Form() {
               placeholder={placeholders?.date}
               fullWidth
               {...field}
-              data={data}
             />
           )}
         />
@@ -108,60 +90,79 @@ export default function Form() {
           control={control}
           name="time"
           render={({ field }) => (
-            <TimeInput placeholder={placeholders?.time} fullWidth {...field} data={data} />
+            <TimeInput placeholder={placeholders?.time} fullWidth {...field} />
           )}
         />
       </ContextContainer>
 
       <ContextContainer direction="row">
-        <ContextContainer>
-          <Controller
+        <ConditionalInput
+          label={labels?.availableInAdvance}
+          render={() => (
+            <ContextContainer direction="row" alignItems="end">
+              <Controller
+                control={control}
+                name="deadline"
+                render={({ field }) => (
+                  <DatePicker placeholder={placeholders?.date} fullWidth {...field} />
+                )}
+              />
+              <Controller
+                control={control}
+                name="time"
+                render={({ field }) => (
+                  <TimeInput placeholder={placeholders?.time} fullWidth {...field} />
+                )}
+              />
+            </ContextContainer>
+          )}
+        />
+        {/* <Controller
             control={control}
             name="availableCheck"
             render={({ field }) => <Checkbox label={labels?.availableInAdvance} {...field} />}
-          />
-          <ContextContainer direction="row" alignItems="end">
-            <Controller
-              control={control}
-              name="deadline"
-              render={({ field }) => (
-                <DatePicker placeholder={placeholders?.date} fullWidth {...field} data={data} />
-              )}
-            />
-            <Controller
-              control={control}
-              name="time"
-              render={({ field }) => (
-                <TimeInput placeholder={placeholders?.time} fullWidth {...field} data={data} />
-              )}
-            />
-          </ContextContainer>
-        </ContextContainer>
+          /> */}
 
         <ContextContainer>
-          <Controller
-            control={control}
-            name="limitedExecutionCheck"
-            render={({ field }) => <Checkbox label={labels?.limitedExecution} {...field} />}
+          <ConditionalInput
+            label={labels?.limitedExecution}
+            render={() => (
+              <ContextContainer direction="row" alignItems="end">
+                <Controller
+                  control={control}
+                  name="deadline"
+                  render={({ field }) => <NumberInput fullWidth {...field} />}
+                />
+                <Controller
+                  control={control}
+                  name="time"
+                  render={({ field }) => (
+                    <Select
+                      placeholder={placeholders?.units}
+                      fullWidth
+                      {...field}
+                      data={timeUnits}
+                    />
+                  )}
+                />
+              </ContextContainer>
+            )}
           />
-          <ContextContainer direction="row" alignItems="end">
-            <Controller
-              control={control}
-              name="deadline"
-              render={({ field }) => <NumberInput fullWidth {...field} data={data} />}
-            />
-            <Controller
-              control={control}
-              name="time"
-              render={({ field }) => (
-                <Select placeholder={placeholders?.units} fullWidth {...field} data={timeUnits} />
-              )}
-            />
-          </ContextContainer>
         </ContextContainer>
       </ContextContainer>
 
       <ContextContainer>
+        <ConditionalInput
+          label={labels?.messageToStudents}
+          help={descriptions?.messageToStudents}
+          render={() => <TextEditor />}
+        />
+        <ConditionalInput
+          label={labels?.messageToStudents}
+          help={descriptions?.messageToStudents}
+          render={() => <NumberInput label="Hola" />}
+        />
+
         <Controller
           control={control}
           name="limitedExecutionCheck"

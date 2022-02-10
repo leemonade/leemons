@@ -138,6 +138,7 @@ module.exports = {
     labels: {
       assignTo: 'Asignar a',
       classroomToAssign: 'Asignar a la clase',
+      studentToAssign: 'Asignar al estudiante',
       mode: 'Modo',
       deadline: 'Fecha límite',
       availableInAdvance: 'Disponible en adelante',
@@ -153,6 +154,10 @@ module.exports = {
     descriptions: {
       messageToStudents:
         'Si asignas esta tarea a otros grupos en este paso, este mensaje será el mensaje predeterminado para todas las tareas (aunque puedes cambiarlo individualmente si lo deseas).',
+    },
+    assignTo: {
+      student: 'Estudiante',
+      class: 'Clase',
     },
     modes: {
       individual: 'Individual',
