@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { Select } from '@bubbles-ui/components';
-import { listProgramsRequest } from '../../request';
+import { listClassesRequest } from '../../request';
 
-export default function SelectProgram({ center, value: userValue, onChange, ...props }) {
+export default function SelectClass({ program, value: userValue, onChange, ...props }) {
   const [data, setData] = useState([]);
   const [value, setValue] = useState(userValue);
 
@@ -35,22 +35,27 @@ export default function SelectProgram({ center, value: userValue, onChange, ...p
   // EN: Get programs from API on center change
   // ES: Obtener programas desde API en cambio de centro
   useEffect(async () => {
-    if (center) {
+    if (program) {
       const {
         data: { items },
-      } = await listProgramsRequest({ page: 0, size: 9999, center });
+      } = await listClassesRequest({ page: 0, size: 9999, program });
 
-      setData(items.map(({ id, name }) => ({ value: id, label: name })));
+      setData(
+        items.map(({ id, courses, subject }) => ({
+          value: id,
+          label: `${subject?.name} - ${courses?.name || courses?.index}`,
+        }))
+      );
     }
-  }, [center]);
+  }, [program]);
 
   return (
     <Select {...props} data={data} disabled={!data.length} onChange={handleChange} value={value} />
   );
 }
 
-SelectProgram.propTypes = {
-  center: PropTypes.string,
+SelectClass.propTypes = {
+  program: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func,
 };

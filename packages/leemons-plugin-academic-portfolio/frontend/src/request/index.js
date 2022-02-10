@@ -61,6 +61,8 @@ export const detailProgramRequest = detailProgram;
 export const createProgramRequest = createProgram;
 export const updateProgramRequest = updateProgram;
 
+export { listCourses as listCoursesRequest } from './courses';
+
 export const getSettingsRequest = getSettings;
 export const updateSettingsRequest = updateSettings;
 export const enableMenuItemRequest = enableMenuItem;
