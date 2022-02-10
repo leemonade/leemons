@@ -16,12 +16,13 @@ const { removeByClass: removeGroupByClass } = require('./group/removeByClass');
 const { add: addTeacher } = require('./teacher/add');
 const { removeByClass: removeTeachersByClass } = require('./teacher/removeByClass');
 const { classByIds } = require('./classByIds');
+const { processScheduleForClass } = require('./processScheduleForClass');
 
 async function updateClass(data, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await validateUpdateClass(data, { transacting });
-      const { id, course, group, knowledge, substage, teachers, ...rest } = data;
+      const { id, course, group, knowledge, substage, teachers, schedule, ...rest } = data;
       // ES: Actualizamos la clase
       const nClass = await table.class.update({ id }, rest, { transacting });
 
@@ -78,6 +79,8 @@ async function updateClass(data, { transacting: _transacting } = {}) {
         { subjectType: nClass.subjectType },
         { transacting }
       );
+
+      await processScheduleForClass(schedule, nClass.id, { transacting });
 
       const classe = (await classByIds(nClass.id, { transacting }))[0];
       await leemons.events.emit('after-update-class', { class: classe, transacting });

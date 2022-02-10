@@ -530,7 +530,7 @@ const updateSubjectSchema = {
     name: stringSchema,
     credits: numberSchema,
   },
-  required: ['id', 'name'],
+  required: ['id'],
   additionalProperties: false,
 };
 const updateSubjectInternalIdSchema = {
@@ -656,12 +656,20 @@ const addClassSchema = {
     },
     image: stringSchema,
     description: stringSchema,
+    schedule: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: true,
+      },
+    },
   },
   required: ['program', 'subject'],
   additionalProperties: false,
 };
 
 function validateAddClass(data) {
+  console.log(data);
   const validator = new LeemonsValidator(addClassSchema);
 
   if (!validator.validate(data)) {
@@ -875,6 +883,13 @@ const updateClassSchema = {
     },
     image: stringSchemaNullable,
     description: stringSchemaNullable,
+    schedule: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: true,
+      },
+    },
   },
   required: ['id'],
   additionalProperties: false,

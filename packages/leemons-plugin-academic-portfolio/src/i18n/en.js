@@ -164,6 +164,9 @@ module.exports = {
     programPlaceholder: 'Select a program',
     addKnowledgeDone: 'Knowledge saved',
     addSubjectTypeDone: 'Subject type saved',
+    subjectCreated: 'Subject created',
+    classCreated: 'Class created',
+    classUpdated: 'Class updated',
     knowledge: {
       title: 'Knowledge areas',
       name: 'Name',
@@ -190,8 +193,11 @@ module.exports = {
     subjects: {
       title: 'Subjects',
       course: 'Course',
+      id: 'ID',
+      idRequired: 'Required field',
       courseRequired: 'Required field',
       subject: 'Subject',
+      noSubjectsFound: 'No subjects found',
       subjectRequired: 'Required field',
       knowledge: 'Knowledge',
       knowledgeRequired: 'Required field',
@@ -199,6 +205,7 @@ module.exports = {
       subjectTypeRequired: 'Required field',
       credits: 'Credits',
       color: 'Color',
+      colorRequired: 'Required field',
       group: 'Group',
       substage: 'Substage',
       seats: 'Seats',
@@ -206,6 +213,7 @@ module.exports = {
       schedule: 'Schedule',
       teacher: 'Teacher',
       description: 'Description',
+      maxInternalIdLength: 'Must be {max} numbers',
     },
     tableActions: {
       add: 'Add',

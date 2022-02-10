@@ -11,12 +11,13 @@ const { existSubstageInProgram } = require('../substages/existSubstageInProgram'
 const { existCourseInProgram } = require('../courses/existCourseInProgram');
 const { existGroupInProgram } = require('../groups/existGroupInProgram');
 const { classByIds } = require('./classByIds');
+const { processScheduleForClass } = require('./processScheduleForClass');
 
 async function addClass(data, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await validateAddClass(data, { transacting });
-      const { course, group, knowledge, substage, teachers, ...rest } = data;
+      const { course, group, knowledge, substage, teachers, schedule, ...rest } = data;
       // ES: Creamos la clase
       const nClass = await table.class.create(rest, { transacting });
       // ES: Añadimos todas las relaciones de la clase
@@ -62,6 +63,10 @@ async function addClass(data, { transacting: _transacting } = {}) {
         { subjectType: nClass.subjectType },
         { transacting }
       );
+
+      if (schedule) {
+        await processScheduleForClass(schedule, nClass.id, { transacting });
+      }
 
       const classe = (await classByIds(nClass.id, { transacting }))[0];
       await leemons.events.emit('after-add-class', { class: classe, transacting });

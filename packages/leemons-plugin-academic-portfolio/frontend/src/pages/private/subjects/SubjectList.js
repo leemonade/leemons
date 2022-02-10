@@ -7,14 +7,18 @@ import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { useStore } from '@common/useStore';
 import { SelectCenter } from '@users/components/SelectCenter';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { keyBy, map } from 'lodash';
+import { find, map } from 'lodash';
 import {
+  createClassRequest,
   createKnowledgeRequest,
+  createSubjectRequest,
   createSubjectTypeRequest,
   detailProgramRequest,
   listClassesRequest,
   listProgramsRequest,
   listSubjectCreditsForProgramRequest,
+  updateClassRequest,
+  updateSubjectRequest,
 } from '../../../request';
 import { KnowledgeTable } from '../../../components/KnowledgeTable';
 import { getKnowledgesTranslation } from '../../../helpers/getKnowledgesTranslation';
@@ -60,14 +64,16 @@ export default function SubjectList() {
       listSubjectCreditsForProgramRequest(store.selectProgram),
       getProgramClasses(),
     ]);
-    const creditsBySubject = keyBy(subjectCredits, 'subject');
-    map(program.subjects, (subject) => {
-      subject.credits = creditsBySubject[subject.id]?.credits;
-    });
+
     map(classes, (classe) => {
-      classe.credits = creditsBySubject[classe.subject.id]?.credits;
+      const classSubjectCredits = find(subjectCredits, {
+        subject: classe.subject.id,
+      });
+      classe.credits = classSubjectCredits?.credits;
+      classe.internalId = classSubjectCredits?.internalId;
+      classe.schedule = { days: classe.schedule };
     });
-    return { ...program, classes };
+    return { ...program, classes, subjectCredits };
   }
 
   async function onCenterChange(center) {
@@ -116,17 +122,135 @@ export default function SubjectList() {
     render();
   }
 
-  async function addSubject(subject) {
-    console.log(subject);
+  async function addNewSubject({ name, course, internalId, credits, substages }) {
+    try {
+      const { subject } = await createSubjectRequest({
+        name,
+        course,
+        internalId,
+        program: store.program.id,
+        credits,
+      });
+      addSuccessAlert(t('subjectCreated'));
+      return subject;
+    } catch (err) {
+      addErrorAlert(err.message);
+    }
+    return null;
   }
 
-  console.log(store.program);
+  async function updateSubject({ id, course, internalId, credits }) {
+    try {
+      const { subject } = await updateSubjectRequest({
+        id,
+        course,
+        internalId,
+        credits,
+      });
+      return subject;
+    } catch (err) {
+      addErrorAlert(err.message);
+    }
+    return null;
+  }
+
+  async function addNewClass({
+    courses,
+    knowledges,
+    substages,
+    credits,
+    groups,
+    internalId,
+    schedule,
+    ...data
+  }) {
+    try {
+      const { class: c } = await createClassRequest({
+        ...data,
+        course: courses,
+        knowledge: knowledges,
+        substage: substages,
+        program: store.program.id,
+        group: groups,
+        schedule: schedule ? schedule.days : [],
+      });
+      return c;
+    } catch (err) {
+      addErrorAlert(err.message);
+    }
+    return null;
+  }
+
+  async function updateClass({
+    courses,
+    knowledges,
+    substages,
+    credits,
+    groups,
+    internalId,
+    schedule,
+    ...data
+  }) {
+    try {
+      const { class: c } = await updateClassRequest({
+        ...data,
+        course: courses,
+        knowledge: knowledges,
+        substage: substages,
+        group: groups,
+        schedule: schedule ? schedule.days : [],
+      });
+      return c;
+    } catch (err) {
+      addErrorAlert(err.message);
+    }
+    return null;
+  }
+
+  async function addUpdateClass(data, event, isUpdate) {
+    try {
+      if (event.isNewSubject) {
+        const subject = await addNewSubject({
+          name: data.subject,
+          course: data.courses,
+          internalId: data.internalId,
+          credits: data.credits,
+        });
+        if (!subject) return null;
+        data.subject = subject?.id;
+      } else {
+        console.log('subject');
+        const subject = await updateSubject({
+          id: data.subject,
+          course: data.courses,
+          internalId: data.internalId,
+          credits: data.credits,
+        });
+        console.log(subject);
+        if (!subject) return null;
+      }
+
+      let classe = null;
+      if (isUpdate) {
+        classe = await updateClass(data);
+      } else {
+        classe = await addNewClass(data);
+      }
+
+      if (classe) addSuccessAlert(isUpdate ? t('classUpdated') : t('classCreated'));
+      store.program = await getProgramDetail();
+      render();
+    } catch (err) {
+      addErrorAlert(err.message);
+    }
+    return null;
+  }
 
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader values={messages.header} />
       <PageContainer>
-        <ContextContainer>
+        <ContextContainer divided>
           <ContextContainer direction="row">
             <SelectCenter
               label={t('centerLabel')}
@@ -151,22 +275,25 @@ export default function SubjectList() {
               onAdd={addKnowledge}
             />
           ) : null}
-          {store.program ? (
-            <>
-              <SubjectTypesTable
-                messages={messages.subjectTypes}
-                tableLabels={messages.tableLabels}
-                program={store.program}
-                onAdd={addSubjectType}
-              />
-              <SubjectsTable
-                messages={messages.subjects}
-                tableLabels={messages.tableLabels}
-                program={store.program}
-                onAdd={addSubject}
-              />
-            </>
-          ) : null}
+          {store.program
+            ? [
+                <SubjectTypesTable
+                  key="1"
+                  messages={messages.subjectTypes}
+                  tableLabels={messages.tableLabels}
+                  program={store.program}
+                  onAdd={addSubjectType}
+                />,
+                <SubjectsTable
+                  key="2"
+                  messages={messages.subjects}
+                  tableLabels={messages.tableLabels}
+                  program={store.program}
+                  onAdd={(d, e) => addUpdateClass(d, e, false)}
+                  onUpdate={(d, e) => addUpdateClass(d, e, true)}
+                />,
+              ]
+            : null}
         </ContextContainer>
       </PageContainer>
     </ContextContainer>
