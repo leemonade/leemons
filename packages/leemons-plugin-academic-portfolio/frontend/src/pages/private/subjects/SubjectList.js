@@ -8,12 +8,15 @@ import { useStore } from '@common/useStore';
 import { SelectCenter } from '@users/components/SelectCenter';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { find, map } from 'lodash';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import SelectUserAgent from '@users/components/SelectUserAgent';
 import {
   createClassRequest,
   createKnowledgeRequest,
   createSubjectRequest,
   createSubjectTypeRequest,
   detailProgramRequest,
+  getProfilesRequest,
   listClassesRequest,
   listProgramsRequest,
   listSubjectCreditsForProgramRequest,
@@ -30,11 +33,13 @@ import { SubjectsTable } from '../../../components/SubjectsTable';
 
 export default function SubjectList() {
   const [t] = useTranslateLoader(prefixPN('subject_page'));
+  const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const [store, render] = useStore({
     mounted: true,
     programs: [],
     currentProgram: null,
+    teacherSelects: {},
   });
 
   const messages = useMemo(
@@ -72,6 +77,7 @@ export default function SubjectList() {
       classe.credits = classSubjectCredits?.credits;
       classe.internalId = classSubjectCredits?.internalId;
       classe.schedule = { days: classe.schedule };
+      classe.teacher = find(classe.teachers, { type: 'main-teacher' })?.teacher;
     });
     return { ...program, classes, subjectCredits };
   }
@@ -80,6 +86,7 @@ export default function SubjectList() {
     const {
       data: { items },
     } = await listProgramsRequest({ page: 0, size: 9999, center });
+    store.center = center;
     store.programs = map(items, ({ id, name }) => ({ value: id, label: name }));
     store.selectProgram = null;
     render();
@@ -87,7 +94,9 @@ export default function SubjectList() {
 
   async function onProgramChange(programId) {
     store.selectProgram = programId;
-    store.program = await getProgramDetail();
+    const [program, { profiles }] = await Promise.all([getProgramDetail(), getProfilesRequest()]);
+    store.program = program;
+    store.profiles = profiles;
     render();
   }
 
@@ -101,7 +110,7 @@ export default function SubjectList() {
       store.program.knowledges.push(response.knowledge);
       addSuccessAlert(t('addKnowledgeDone'));
     } catch (err) {
-      addErrorAlert(err.message);
+      addErrorAlert(getErrorMessage(err));
     }
     store.program.knowledges = [...store.program.knowledges];
     render();
@@ -116,7 +125,7 @@ export default function SubjectList() {
       store.program.subjectTypes.push(response.subjectType);
       addSuccessAlert(t('addSubjectTypeDone'));
     } catch (err) {
-      addErrorAlert(err.message);
+      addErrorAlert(getErrorMessage(err));
     }
     store.program.subjectTypes = [...store.program.subjectTypes];
     render();
@@ -134,7 +143,7 @@ export default function SubjectList() {
       addSuccessAlert(t('subjectCreated'));
       return subject;
     } catch (err) {
-      addErrorAlert(err.message);
+      addErrorAlert(getErrorMessage(err));
     }
     return null;
   }
@@ -149,7 +158,7 @@ export default function SubjectList() {
       });
       return subject;
     } catch (err) {
-      addErrorAlert(err.message);
+      addErrorAlert(getErrorMessage(err));
     }
     return null;
   }
@@ -162,6 +171,7 @@ export default function SubjectList() {
     groups,
     internalId,
     schedule,
+    teacher,
     ...data
   }) {
     try {
@@ -173,10 +183,11 @@ export default function SubjectList() {
         program: store.program.id,
         group: groups,
         schedule: schedule ? schedule.days : [],
+        teachers: teacher ? [{ teacher, type: 'main-teacher' }] : [],
       });
       return c;
     } catch (err) {
-      addErrorAlert(err.message);
+      addErrorAlert(getErrorMessage(err));
     }
     return null;
   }
@@ -189,6 +200,7 @@ export default function SubjectList() {
     groups,
     internalId,
     schedule,
+    teacher,
     ...data
   }) {
     try {
@@ -199,10 +211,11 @@ export default function SubjectList() {
         substage: substages,
         group: groups,
         schedule: schedule ? schedule.days : [],
+        teachers: teacher ? [{ teacher, type: 'main-teacher' }] : [],
       });
       return c;
     } catch (err) {
-      addErrorAlert(err.message);
+      addErrorAlert(getErrorMessage(err));
     }
     return null;
   }
@@ -219,14 +232,12 @@ export default function SubjectList() {
         if (!subject) return null;
         data.subject = subject?.id;
       } else {
-        console.log('subject');
         const subject = await updateSubject({
           id: data.subject,
           course: data.courses,
           internalId: data.internalId,
           credits: data.credits,
         });
-        console.log(subject);
         if (!subject) return null;
       }
 
@@ -241,7 +252,7 @@ export default function SubjectList() {
       store.program = await getProgramDetail();
       render();
     } catch (err) {
-      addErrorAlert(err.message);
+      addErrorAlert(getErrorMessage(err));
     }
     return null;
   }
@@ -291,6 +302,9 @@ export default function SubjectList() {
                   program={store.program}
                   onAdd={(d, e) => addUpdateClass(d, e, false)}
                   onUpdate={(d, e) => addUpdateClass(d, e, true)}
+                  teacherSelect={
+                    <SelectUserAgent profiles={store.profiles.student} centers={store.center} />
+                  }
                 />,
               ]
             : null}
