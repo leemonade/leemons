@@ -98,6 +98,12 @@ module.exports = {
         notNull: true,
       },
     },
+    treeType: {
+      type: 'integer',
+      options: {
+        defaultTo: 1,
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

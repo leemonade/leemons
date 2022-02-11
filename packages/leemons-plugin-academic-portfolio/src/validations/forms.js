@@ -42,6 +42,7 @@ const addProgramSchema = {
       enum: ['none', 'course'],
     },
     subjectsDigits: integerSchema,
+    treeType: integerSchema,
   },
   required: [
     'name',
@@ -141,8 +142,9 @@ const updateProgramSchema = {
       maxLength: 8,
     },
     credits: integerSchemaNullable,
+    treeType: integerSchema,
   },
-  required: ['id', 'name', 'abbreviation', 'credits'],
+  required: ['id'],
   additionalProperties: false,
 };
 

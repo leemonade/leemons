@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import React, { useMemo } from 'react';
-import { ContextContainer, PageContainer, Select } from '@bubbles-ui/components';
+import { Box, Button, ContextContainer, PageContainer, Select } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
@@ -21,6 +21,7 @@ import {
   listProgramsRequest,
   listSubjectCreditsForProgramRequest,
   updateClassRequest,
+  updateProgramRequest,
   updateSubjectRequest,
 } from '../../../request';
 import { KnowledgeTable } from '../../../components/KnowledgeTable';
@@ -30,6 +31,8 @@ import { getSubjectTypesTranslation } from '../../../helpers/getSubjectTypesTran
 import { getTableActionsTranslation } from '../../../helpers/getTableActionsTranslation';
 import { getSubjectsTranslation } from '../../../helpers/getSubjectsTranslation';
 import { SubjectsTable } from '../../../components/SubjectsTable';
+import { ProgramTreeType } from '../../../components/ProgramTreeType';
+import { getProgramTreeTypeTranslation } from '../../../helpers/getProgramTreeTypeTranslation';
 
 export default function SubjectList() {
   const [t] = useTranslateLoader(prefixPN('subject_page'));
@@ -52,6 +55,7 @@ export default function SubjectList() {
       subjectTypes: getSubjectTypesTranslation(t),
       subjects: getSubjectsTranslation(t),
       tableLabels: getTableActionsTranslation(t),
+      programTreeType: getProgramTreeTypeTranslation(t),
     }),
     [t]
   );
@@ -257,58 +261,114 @@ export default function SubjectList() {
     return null;
   }
 
+  async function onProgramTreeTypeChange(event) {
+    try {
+      await updateProgramRequest({
+        id: store.program.id,
+        treeType: event,
+      });
+      store.program.treeType = event;
+      render();
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+  }
+
+  async function goTree() {
+    console.log('goTree');
+  }
+
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader values={messages.header} />
       <PageContainer>
-        <ContextContainer divided>
-          <ContextContainer direction="row">
-            <SelectCenter
-              label={t('centerLabel')}
-              placeholder={t('centerPlaceholder')}
-              onChange={onCenterChange}
-              firstSelected
-            />
-            <Select
-              data={store.programs || []}
-              disabled={!store.programs}
-              label={t('programLabel')}
-              placeholder={t('programPlaceholder')}
-              onChange={onProgramChange}
-              value={store.selectProgram}
-            />
+        <Box sx={(theme) => ({ marginBottom: theme.spacing[12] })}>
+          <ContextContainer divided>
+            <ContextContainer direction="row">
+              <SelectCenter
+                label={t('centerLabel')}
+                placeholder={t('centerPlaceholder')}
+                onChange={onCenterChange}
+                firstSelected
+              />
+              <Select
+                data={store.programs || []}
+                disabled={!store.programs}
+                label={t('programLabel')}
+                placeholder={t('programPlaceholder')}
+                onChange={onProgramChange}
+                value={store.selectProgram}
+              />
+            </ContextContainer>
+            {store.program && store.program.haveKnowledge ? (
+              <KnowledgeTable
+                messages={messages.knowledge}
+                tableLabels={messages.tableLabels}
+                program={store.program}
+                onAdd={addKnowledge}
+              />
+            ) : null}
+            {store.program
+              ? [
+                  <SubjectTypesTable
+                    key="1"
+                    messages={messages.subjectTypes}
+                    tableLabels={messages.tableLabels}
+                    program={store.program}
+                    onAdd={addSubjectType}
+                  />,
+                  <SubjectsTable
+                    key="2"
+                    messages={messages.subjects}
+                    tableLabels={messages.tableLabels}
+                    program={store.program}
+                    onAdd={(d, e) => addUpdateClass(d, e, false)}
+                    onUpdate={(d, e) => addUpdateClass(d, e, true)}
+                    teacherSelect={
+                      <SelectUserAgent profiles={store.profiles.teacher} centers={store.center} />
+                    }
+                  />,
+                  <ProgramTreeType
+                    key="3"
+                    messages={messages.programTreeType}
+                    value={store.program.treeType}
+                    onChange={onProgramTreeTypeChange}
+                    data={[
+                      {
+                        value: 1,
+                        label: messages.programTreeType.opt1Label,
+                        help: messages.programTreeType.opt1Description,
+                        helpPosition: 'bottom',
+                      },
+                      {
+                        value: 2,
+                        label: messages.programTreeType.opt2Label,
+                        help: messages.programTreeType.opt2Description,
+                        helpPosition: 'bottom',
+                      },
+                      {
+                        value: 3,
+                        label: messages.programTreeType.opt3Label,
+                        help: messages.programTreeType.opt3Description,
+                        helpPosition: 'bottom',
+                      },
+                      {
+                        value: 4,
+                        label: messages.programTreeType.opt4Label,
+                        help: messages.programTreeType.opt4Description,
+                        helpPosition: 'bottom',
+                      },
+                    ]}
+                  />,
+                ]
+              : null}
           </ContextContainer>
-          {store.program && store.program.haveKnowledge ? (
-            <KnowledgeTable
-              messages={messages.knowledge}
-              tableLabels={messages.tableLabels}
-              program={store.program}
-              onAdd={addKnowledge}
-            />
+          {store.program ? (
+            <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+              <Button onClick={goTree}>{t('goTree')}</Button>
+            </Box>
           ) : null}
-          {store.program
-            ? [
-                <SubjectTypesTable
-                  key="1"
-                  messages={messages.subjectTypes}
-                  tableLabels={messages.tableLabels}
-                  program={store.program}
-                  onAdd={addSubjectType}
-                />,
-                <SubjectsTable
-                  key="2"
-                  messages={messages.subjects}
-                  tableLabels={messages.tableLabels}
-                  program={store.program}
-                  onAdd={(d, e) => addUpdateClass(d, e, false)}
-                  onUpdate={(d, e) => addUpdateClass(d, e, true)}
-                  teacherSelect={
-                    <SelectUserAgent profiles={store.profiles.student} centers={store.center} />
-                  }
-                />,
-              ]
-            : null}
-        </ContextContainer>
+        </Box>
       </PageContainer>
     </ContextContainer>
   );

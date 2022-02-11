@@ -167,6 +167,7 @@ module.exports = {
     subjectCreated: 'Subject created',
     classCreated: 'Class created',
     classUpdated: 'Class updated',
+    goTree: 'Go to tree',
     knowledge: {
       title: 'Knowledge areas',
       name: 'Name',
@@ -221,6 +222,22 @@ module.exports = {
       edit: 'Edit',
       accept: 'Accept',
       cancel: 'Cancel',
+    },
+    programTreeType: {
+      title: 'Portfolio tree schema',
+      description1:
+        'Config your portfolio tree view in order to adapt them to your specific program characteristics. You can change this setting whenever you need to.',
+      note: 'NOTE:',
+      description2:
+        'You only see the schemas that fit with your previous configuration. “Group visibility” (from Subject type configuration), will be respect independent of tree schema chosen.',
+      opt1Label: 'Classroom first',
+      opt1Description: 'Program > Course > Group > Type > Area > Subject',
+      opt2Label: 'Classroom + Area first',
+      opt2Description: 'Program > Course > Group > Area > Type > Subject',
+      opt3Label: 'Subject first',
+      opt3Description: 'Program > Course > Type > Area > Subject',
+      opt4Label: 'Free schema',
+      opt4Description: 'Program > Type > Area > Subject',
     },
   },
   profiles_page: {

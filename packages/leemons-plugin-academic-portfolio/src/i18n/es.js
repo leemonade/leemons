@@ -168,6 +168,7 @@ module.exports = {
     subjectCreated: 'Asignatura creada',
     classCreated: 'Clase creada',
     classUpdated: 'Clase actualizada',
+    goTree: 'Ir al arbol',
     knowledge: {
       title: 'Áreas de conocimiento',
       name: 'Nombre',
@@ -222,6 +223,22 @@ module.exports = {
       edit: 'Editar',
       accept: 'Aceptar',
       cancel: 'Cancelar',
+    },
+    programTreeType: {
+      title: 'Schema del árbol',
+      description1:
+        'Configure la vista de árbol de su cartera para adaptarla a las características específicas de su programa. Puede cambiar esta configuración siempre que lo necesite.',
+      note: 'NOTA:',
+      description2:
+        'Sólo se ven los esquemas que se ajustan a la configuración anterior. La "visibilidad del grupo" (de la configuración del tipo de materia), se respetará independientemente del esquema de árbol elegido.',
+      opt1Label: 'Aula primero',
+      opt1Description: 'Programa > Curso > Grupo > Tipo > Área > Materia',
+      opt2Label: 'Aula + Área primero',
+      opt2Description: 'Programa > Curso > Grupo > Área > Tipo > Materia',
+      opt3Label: 'Asignatura primero',
+      opt3Description: 'Programa > Curso > Tipo > Área > Materia',
+      opt4Label: 'Esquema libre',
+      opt4Description: 'Programa > Tipo > Área > Materia',
     },
   },
   profiles_page: {
