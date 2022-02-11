@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { cloneDeep, find, findIndex, map } from 'lodash';
 import { MultiSelect, UserDisplayItem } from '@bubbles-ui/components';
-import { addErrorAlert, useRequestErrorMessage, useStore } from '@common';
+import { useRequestErrorMessage, useStore } from '@common';
+import { addErrorAlert } from '@layout/alert';
 import { getUserAgentsInfoRequest, searchUserAgentsRequest } from '../request';
 
 function ValueItem(props) {
