@@ -35,7 +35,6 @@ export default function TreePage() {
         description: t('page_description'),
       },
     }),
-
     [t]
   );
 
