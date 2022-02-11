@@ -1,6 +1,12 @@
 const _ = require('lodash');
 const classService = require('../src/services/classes');
 
+async function haveClasses(ctx) {
+  const have = await classService.haveClasses();
+  ctx.status = 200;
+  ctx.body = { status: 200, have };
+}
+
 async function postClass(ctx) {
   const _class = await classService.addClass(ctx.request.body);
   ctx.status = 200;
@@ -133,6 +139,7 @@ module.exports = {
   postClass,
   putClass,
   listClass,
+  haveClasses,
   putClassMany,
   postClassInstance,
   postClassStudents,

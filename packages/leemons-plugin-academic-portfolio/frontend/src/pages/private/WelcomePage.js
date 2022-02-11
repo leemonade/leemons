@@ -15,13 +15,15 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { getSettingsRequest, updateSettingsRequest } from '@academic-portfolio/request';
 import { useStore } from '@common';
+import { getCentersWithToken } from '@users/session';
 import { activeMenuItemPrograms } from '../../helpers/activeMenuItemPrograms';
 import { activeMenuItemSubjects } from '../../helpers/activeMenuItemSubjects';
-import { haveProgramsRequest, isConfigProfilesRequest } from '../../request';
+import { haveClassesRequest, haveProgramsRequest, isConfigProfilesRequest } from '../../request';
 import { activeMenuItemProfiles } from '../../helpers/activeMenuItemProfiles';
 
 // eslint-disable-next-line react/prop-types
 function StepCard({ t, step, disabled, to, onClick }) {
+  console.log(getCentersWithToken());
   return (
     <Paper>
       <ContextContainer>
@@ -55,14 +57,17 @@ export default function WelcomePage() {
   // INIT DATA LOAD
 
   async function init() {
-    const [settingsResponse, haveProgramsResponse, profilesResponse] = await Promise.all([
-      getSettingsRequest(),
-      haveProgramsRequest(),
-      isConfigProfilesRequest(),
-    ]);
+    const [settingsResponse, haveProgramsResponse, profilesResponse, haveClassesResponse] =
+      await Promise.all([
+        getSettingsRequest(),
+        haveProgramsRequest(),
+        isConfigProfilesRequest(),
+        haveClassesRequest(),
+      ]);
     store.settings = settingsResponse.settings;
     store.profilesConfig = profilesResponse.isConfig;
     store.havePrograms = haveProgramsResponse.have;
+    store.haveClasses = haveClassesResponse.have;
     render();
   }
 
@@ -136,7 +141,12 @@ export default function WelcomePage() {
               disabled={!store.havePrograms}
               onClick={handleOnSubjects}
             />
-            <StepCard t={t} step="step_tree" to="/private/academic-portfolio/tree" disabled />
+            <StepCard
+              disabled={!store.haveClasses}
+              t={t}
+              step="step_tree"
+              to="/private/academic-portfolio/tree"
+            />
           </ContextContainer>
         </PageContainer>
       </Paper>
