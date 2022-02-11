@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { Select } from '@bubbles-ui/components';
@@ -27,9 +27,7 @@ export default function SelectProgram({ center, value: userValue, onChange, ...p
   // EN: Update the value when controlled value changes
   // ES: Actualizar el valor cuando el valor controlado cambia
   useEffect(() => {
-    if (data.length && userValue) {
-      setValue(userValue);
-    }
+    setValue(userValue);
   }, [userValue]);
 
   // EN: Get programs from API on center change

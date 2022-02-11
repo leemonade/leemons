@@ -255,4 +255,11 @@ module.exports = {
       'Assigned to a classroom, studies the subjects of his program/course with a specific teachers',
     studentRequired: 'Field required',
   },
+  tree_page: {
+    page_title: 'Academic Portofolio Tree',
+    page_description:
+      'This is your Portfolio Tree, you can edit, duplicate or create new elements for your program. You also can assign students at any level (all subjects under it will inherit this task).',
+    centerLabel: 'Select center',
+    programLabel: 'Select program',
+  },
 };

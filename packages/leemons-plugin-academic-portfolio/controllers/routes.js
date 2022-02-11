@@ -49,6 +49,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/program/:id/tree',
+    method: 'GET',
+    handler: 'program.getProgramTree',
+    authenticated: true,
+  },
+  {
     path: '/program/:id/duplicate',
     method: 'POST',
     handler: 'program.duplicateProgram',

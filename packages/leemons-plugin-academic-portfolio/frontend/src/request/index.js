@@ -9,6 +9,7 @@ import {
 import {
   createProgram,
   detailProgram,
+  getProgramTree,
   havePrograms,
   listPrograms,
   updateProgram,
@@ -57,6 +58,7 @@ export const listKnowledgesRequest = listKnowledges;
 export const createSubjectTypeRequest = createSubjectType;
 export const listSubjectTypesRequest = listSubjectTypes;
 
+export const getProgramTreeRequest = getProgramTree;
 export const listProgramsRequest = listPrograms;
 export const haveProgramsRequest = havePrograms;
 export const detailProgramRequest = detailProgram;

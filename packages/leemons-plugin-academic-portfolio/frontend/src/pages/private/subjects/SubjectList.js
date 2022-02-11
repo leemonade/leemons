@@ -142,6 +142,7 @@ export default function SubjectList() {
       addErrorAlert(getErrorMessage(err));
     }
     store.program.subjectTypes = [...store.program.subjectTypes];
+    store.program = { ...store.program };
     render();
   }
 
@@ -236,6 +237,7 @@ export default function SubjectList() {
 
   async function addUpdateClass(data, event, isUpdate) {
     try {
+      if (!data.credits) data.credits = 1;
       if (event.isNewSubject) {
         const subject = await addNewSubject({
           name: data.subject,
@@ -256,6 +258,7 @@ export default function SubjectList() {
       }
 
       let classe = null;
+
       if (isUpdate) {
         classe = await updateClass(data);
       } else {

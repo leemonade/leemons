@@ -137,9 +137,7 @@ function SubjectsTable({
 
   const columns = [];
 
-  console.log(program);
-
-  if (program.maxNumberOfCourses > 1) {
+  if (program.maxNumberOfCourses > 0) {
     columns.push({
       Header: messages.course,
       accessor: 'courses',

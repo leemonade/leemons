@@ -256,4 +256,11 @@ module.exports = {
       'Asignado a un aula, estudia las asignaturas de su programa/curso con un profesor concreto',
     studentRequired: 'Campo requerido',
   },
+  tree_page: {
+    page_title: 'Árbol de la cartera académica',
+    page_description:
+      'Este es su árbol de portafolio, puede editar, duplicar o crear nuevos elementos para su programa. También puede asignar a los estudiantes en cualquier nivel (todas las asignaturas por debajo de él heredarán esta tarea).',
+    centerLabel: 'Seleccione un centro',
+    programLabel: 'Seleccione un programa',
+  },
 };
