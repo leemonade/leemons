@@ -229,7 +229,7 @@ module.exports = [
     authenticated: true,
   },
   {
-    path: '/class/have',
+    path: '/classes/have',
     method: 'GET',
     handler: 'class.haveClasses',
     authenticated: true,

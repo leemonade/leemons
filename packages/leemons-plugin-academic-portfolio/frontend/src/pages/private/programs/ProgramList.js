@@ -125,6 +125,8 @@ export default function ProgramList() {
         messageKey = 'common.update_done';
       }
 
+      console.log(body);
+
       const response = await apiCall(body);
       store.currentProgram = response.program;
 

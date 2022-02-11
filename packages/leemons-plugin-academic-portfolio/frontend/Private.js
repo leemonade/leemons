@@ -6,6 +6,7 @@ import { goLoginPage } from '@users/navigate';
 
 const Welcome = loadable(() => import('./src/pages/private/WelcomePage'));
 const Profiles = loadable(() => import('./src/pages/private/ProfilesPage'));
+const Tree = loadable(() => import('./src/pages/private/TreePage'));
 const ProgramList = loadable(() => import('./src/pages/private/programs/ProgramList'));
 const SubjectList = loadable(() => import('./src/pages/private/subjects/SubjectList'));
 
@@ -26,6 +27,9 @@ export default function Private() {
       </Route>
       <Route path={`${path}/subjects`}>
         <SubjectList session={session} />
+      </Route>
+      <Route path={`${path}/tree`}>
+        <Tree session={session} />
       </Route>
     </Switch>
   );

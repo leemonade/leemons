@@ -137,22 +137,25 @@ function SubjectsTable({
 
   const columns = [];
 
-  columns.push({
-    Header: messages.course,
-    accessor: 'courses',
-    input: {
-      node: (
-        <EnableIfFormPropHasValue>
-          <Select data={selects.courses} required />
-        </EnableIfFormPropHasValue>
-      ),
-      rules: { required: messages.courseRequired },
-    },
-    valueRender: (value) => (
-      <>{`${value.name ? `${value.name} (${value.index}º)` : `${value.index}º`}`}</>
-    ),
-  });
+  console.log(program);
 
+  if (program.maxNumberOfCourses > 1) {
+    columns.push({
+      Header: messages.course,
+      accessor: 'courses',
+      input: {
+        node: (
+          <EnableIfFormPropHasValue>
+            <Select data={selects.courses} required />
+          </EnableIfFormPropHasValue>
+        ),
+        rules: { required: messages.courseRequired },
+      },
+      valueRender: (value) => (
+        <>{`${value.name ? `${value.name} (${value.index}º)` : `${value.index}º`}`}</>
+      ),
+    });
+  }
   columns.push({
     Header: messages.subject,
     accessor: 'subject',
@@ -193,19 +196,21 @@ function SubjectsTable({
     },
   });
 
-  columns.push({
-    Header: messages.knowledge,
-    accessor: 'knowledges',
-    input: {
-      node: (
-        <EnableIfFormPropHasValue>
-          <Select data={selects.knowledges} required />
-        </EnableIfFormPropHasValue>
-      ),
-      rules: { required: messages.knowledgeRequired },
-    },
-    valueRender: (value) => <>{value?.name}</>,
-  });
+  if (program.haveKnowledge) {
+    columns.push({
+      Header: messages.knowledge,
+      accessor: 'knowledges',
+      input: {
+        node: (
+          <EnableIfFormPropHasValue>
+            <Select data={selects.knowledges} required />
+          </EnableIfFormPropHasValue>
+        ),
+        rules: { required: messages.knowledgeRequired },
+      },
+      valueRender: (value) => <>{value?.name}</>,
+    });
+  }
 
   columns.push({
     Header: messages.subjectType,
@@ -221,18 +226,20 @@ function SubjectsTable({
     valueRender: (value) => <>{value?.name}</>,
   });
 
-  columns.push({
-    Header: messages.credits,
-    accessor: 'credits',
-    input: {
-      node: (
-        <EnableIfFormPropHasValue property="subject">
-          <NumberInput data={selects.subjectTypes} required />
-        </EnableIfFormPropHasValue>
-      ),
-      rules: { required: messages.subjectTypeRequired },
-    },
-  });
+  if (program.credits) {
+    columns.push({
+      Header: messages.credits,
+      accessor: 'credits',
+      input: {
+        node: (
+          <EnableIfFormPropHasValue property="subject">
+            <NumberInput data={selects.subjectTypes} required />
+          </EnableIfFormPropHasValue>
+        ),
+        rules: { required: messages.subjectTypeRequired },
+      },
+    });
+  }
 
   columns.push({
     Header: messages.color,
@@ -265,18 +272,20 @@ function SubjectsTable({
     valueRender: (value) => <>{value?.name}</>,
   });
 
-  columns.push({
-    Header: messages.substage,
-    accessor: 'substages',
-    input: {
-      node: (
-        <EnableIfFormPropHasValue>
-          <Select data={selects.substages} />
-        </EnableIfFormPropHasValue>
-      ),
-    },
-    valueRender: (value) => <>{value?.name}</>,
-  });
+  if (program.haveSubstagesPerCourse) {
+    columns.push({
+      Header: messages.substage,
+      accessor: 'substages',
+      input: {
+        node: (
+          <EnableIfFormPropHasValue>
+            <Select data={selects.substages} />
+          </EnableIfFormPropHasValue>
+        ),
+      },
+      valueRender: (value) => <>{value?.name}</>,
+    });
+  }
 
   columns.push({
     Header: messages.seats,

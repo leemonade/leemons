@@ -1,6 +1,7 @@
 const { addClass } = require('./addClass');
 const { listClasses } = require('./listClasses');
 const { updateClass } = require('./updateClass');
+const { haveClasses } = require('./haveClasses');
 const { updateClassMany } = require('./updateClassMany');
 const { addClassStudents } = require('./addClassStudents');
 const { addClassTeachers } = require('./addClassTeachers');
@@ -15,6 +16,7 @@ module.exports = {
   addClass,
   listClasses,
   updateClass,
+  haveClasses,
   updateClassMany,
   addClassTeachers,
   addClassStudents,
