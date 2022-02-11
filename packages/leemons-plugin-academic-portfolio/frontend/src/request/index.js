@@ -31,6 +31,8 @@ import {
   createClassInstance,
   haveClasses,
   listClasses,
+  listStudentClasses,
+  listTeacherClasses,
   updateClass,
   updateClassMany,
 } from './classes';
@@ -50,6 +52,8 @@ export const updateClassManyRequest = updateClassMany;
 export const createClassInstanceRequest = createClassInstance;
 export const addStudentsToClassRequest = addStudentsToClass;
 export const addTeachersToClassRequest = addTeachersToClass;
+export const listStudentClassesRequest = listStudentClasses;
+export const listTeacherClassesRequest = listTeacherClasses;
 
 export const createKnowledgeRequest = createKnowledge;
 export const listKnowledgesRequest = listKnowledges;

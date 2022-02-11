@@ -12,6 +12,20 @@ async function listClasses({ page, size, program }) {
   });
 }
 
+async function listStudentClasses({ page, size, student }) {
+  return leemons.api(`academic-portfolio/student/${student}/classes?page=${page}&size=${size}`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
+async function listTeacherClasses({ page, size, teacher }) {
+  return leemons.api(`academic-portfolio/teacher/${teacher}/classes?page=${page}&size=${size}`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
 async function createClass(body) {
   return leemons.api('academic-portfolio/class', {
     allAgents: true,
@@ -63,6 +77,8 @@ async function addTeachersToClass(body) {
 export {
   haveClasses,
   listClasses,
+  listStudentClasses,
+  listTeacherClasses,
   createClass,
   updateClass,
   updateClassMany,

@@ -6,7 +6,6 @@ import {
   DatePicker,
   TimeInput,
   Button,
-  Checkbox,
   NumberInput,
   ContextContainer,
 } from '@bubbles-ui/components';
@@ -117,12 +116,6 @@ export default function Form() {
             </ContextContainer>
           )}
         />
-        {/* <Controller
-            control={control}
-            name="availableCheck"
-            render={({ field }) => <Checkbox label={labels?.availableInAdvance} {...field} />}
-          /> */}
-
         <ContextContainer>
           <ConditionalInput
             label={labels?.limitedExecution}
@@ -156,28 +149,6 @@ export default function Form() {
           label={labels?.messageToStudents}
           help={descriptions?.messageToStudents}
           render={() => <TextEditor />}
-        />
-        <ConditionalInput
-          label={labels?.messageToStudents}
-          help={descriptions?.messageToStudents}
-          render={() => <NumberInput label="Hola" />}
-        />
-
-        <Controller
-          control={control}
-          name="limitedExecutionCheck"
-          render={({ field }) => (
-            <Checkbox
-              label={labels?.messageToStudents}
-              description={descriptions?.messageToStudents}
-              {...field}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="limitedExecutionCheck"
-          render={({ field }) => <TextEditor {...field} />}
         />
       </ContextContainer>
 
