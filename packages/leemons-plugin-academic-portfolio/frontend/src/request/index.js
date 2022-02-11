@@ -29,6 +29,7 @@ import {
   addTeachersToClass,
   createClass,
   createClassInstance,
+  haveClasses,
   listClasses,
   updateClass,
   updateClassMany,
@@ -41,6 +42,7 @@ export const updateSubjectCreditsRequest = updateSubjectCredits;
 export const getSubjectCreditsRequest = getSubjectCredits;
 export const listSubjectCreditsForProgramRequest = listSubjectCreditsForProgram;
 
+export const haveClassesRequest = haveClasses;
 export const listClassesRequest = listClasses;
 export const createClassRequest = createClass;
 export const updateClassRequest = updateClass;

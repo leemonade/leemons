@@ -93,7 +93,6 @@ async function profiles(ctx) {
 
 async function profileToken(ctx) {
   const jwtToken = await usersService.profileToken(ctx.state.userSession.id, ctx.params.id);
-
   ctx.status = 200;
   ctx.body = { status: 200, jwtToken };
 }

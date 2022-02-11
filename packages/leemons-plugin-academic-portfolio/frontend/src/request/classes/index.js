@@ -1,3 +1,10 @@
+async function haveClasses() {
+  return leemons.api(`academic-portfolio/classes/have`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
 async function listClasses({ page, size, program }) {
   return leemons.api(`academic-portfolio/class?page=${page}&size=${size}&program=${program}`, {
     allAgents: true,
@@ -54,6 +61,7 @@ async function addTeachersToClass(body) {
 }
 
 export {
+  haveClasses,
   listClasses,
   createClass,
   updateClass,

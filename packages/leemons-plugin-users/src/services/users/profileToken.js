@@ -54,10 +54,11 @@ async function profileToken(user, profile, { transacting } = {}) {
   const [userToken, ...centerTokens] = await Promise.all(promises);
 
   return {
-    userToken: userToken,
+    userToken,
     centers: _.map(centers, (center, index) => ({
       ...center,
       token: centerTokens[index],
+      userAgentId: userAgentsByRole[rolesCentersByCenter[centers[index].id].role].id,
     })),
   };
 }

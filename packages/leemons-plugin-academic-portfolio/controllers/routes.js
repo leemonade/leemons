@@ -229,6 +229,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/class/have',
+    method: 'GET',
+    handler: 'class.haveClasses',
+    authenticated: true,
+  },
+  {
     path: '/class',
     method: 'POST',
     handler: 'class.postClass',
