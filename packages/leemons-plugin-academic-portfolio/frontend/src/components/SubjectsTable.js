@@ -46,7 +46,14 @@ function EnableIfFormPropHasValue({
   });
 }
 
-function SubjectsTable({ messages, program, tableLabels, onAdd = () => {}, onUpdate = () => {} }) {
+function SubjectsTable({
+  messages,
+  program,
+  tableLabels,
+  teacherSelect,
+  onAdd = () => {},
+  onUpdate = () => {},
+}) {
   const [store, render] = useStore({
     tempSubjects: [],
   });
@@ -280,12 +287,28 @@ function SubjectsTable({ messages, program, tableLabels, onAdd = () => {}, onUpd
   });
 
   columns.push({
+    Header: messages.teacher,
+    accessor: 'teacher',
+    input: {
+      node: <EnableIfFormPropHasValue>{teacherSelect}</EnableIfFormPropHasValue>,
+    },
+    valueRender: (value) => (
+      <EnableIfFormPropHasValue value={value}>
+        {React.cloneElement(teacherSelect, {
+          readOnly: true,
+          disabled: true,
+        })}
+      </EnableIfFormPropHasValue>
+    ),
+  });
+
+  columns.push({
     Header: messages.schedule,
     accessor: 'schedule',
     input: {
       node: <ScheduleInput label={false} />,
     },
-    valueRender: (value) => <>{JSON.stringify(value)}</>,
+    valueRender: (value) => <ScheduleInput label={false} value={value} readOnly={true} />,
   });
 
   function _onAdd({ tableInputRowId, ...formData }) {
@@ -340,6 +363,8 @@ SubjectsTable.propTypes = {
   messages: PropTypes.object,
   onAdd: PropTypes.func,
   onUpdate: PropTypes.func,
+  teacherSelects: PropTypes.object,
+  onTeacherSearch: PropTypes.func,
   onCreateSubject: PropTypes.func,
   program: PropTypes.any,
   tableLabels: PropTypes.object,
