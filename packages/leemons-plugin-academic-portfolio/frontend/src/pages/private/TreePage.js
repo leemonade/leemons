@@ -13,15 +13,33 @@ import { SelectCenter } from '@users/components/SelectCenter';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { useQuery, useStore } from '@common';
-import { find } from 'lodash';
+import { find, map } from 'lodash';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import SelectProgram from '../../components/Selectors/SelectProgram';
-import { getProgramTreeRequest, listSubjectCreditsForProgramRequest } from '../../request';
+import {
+  getProgramTreeRequest,
+  listSubjectCreditsForProgramRequest,
+  updateCourseRequest,
+  updateProgramRequest,
+} from '../../request';
+import { TreeProgramDetail } from '../../components/Tree/TreeProgramDetail';
+import { getTreeProgramDetailTranslation } from '../../helpers/getTreeProgramDetailTranslation';
+import { getTreeCourseDetailTranslation } from '../../helpers/getTreeCourseDetailTranslation';
+import { TreeCourseDetail } from '../../components/Tree/TreeCourseDetail';
 
 export default function TreePage() {
-  const [t] = useTranslateLoader(prefixPN('tree_page'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN('tree_page'));
+  const [, , , getErrorMessage] = useRequestErrorMessage();
   const [store, render] = useStore();
 
   const params = useQuery();
+
+  async function onEdit(item) {
+    console.log(item);
+    store.editingItem = item;
+    render();
+  }
 
   async function getProgramTree() {
     const [{ tree }, { subjectCredits }] = await Promise.all([
@@ -29,6 +47,8 @@ export default function TreePage() {
       listSubjectCreditsForProgramRequest(store.programId),
     ]);
     const result = [];
+
+    const editLabel = t('treeEdit');
 
     function processItem(item, parents, parentId, childIndex) {
       let text = item.value.name;
@@ -42,22 +62,27 @@ export default function TreePage() {
           subject: item.value.subject.id,
         });
         const course = find(parents, { nodeType: 'courses' });
-        text = `${course ? course.value.index : ''}${classSubjectCredits?.internalId} ${
-          item.value.subject.name
-        }`;
+        const groups = find(parents, { nodeType: 'groups' });
+        const courseName = course ? course.value.index : '';
+        const substageName = item.value.substages ? ` - ${item.value.substages.abbreviation}` : '';
+        let groupName = '';
+        if (!groups) {
+          groupName = item.value.groups ? ` - ${item.value.groups.abbreviation}` : '';
+        }
+        text = `${courseName}${classSubjectCredits?.internalId} ${item.value.subject.name}${groupName}${substageName}`;
       }
+      const treeId = `${childIndex}.${parentId}.${item.value.id}`;
       result.push({
-        id: `${childIndex}.${parentId}.${item.value.id}`,
+        id: treeId,
         parent: parents[parents.length - 1] ? parentId : 0,
         text,
         actions: [
           {
-            name: 'rename',
-            showOnHover: false,
-            icon: () => <span>R</span>,
-            handler: () => alert('Handler works'),
+            name: 'edit',
+            tooltip: editLabel,
+            showOnHover: true,
+            handler: () => onEdit({ ...item, treeId }),
           },
-          'edit',
           {
             name: 'delete',
           },
@@ -65,12 +90,7 @@ export default function TreePage() {
       });
       if (item.childrens && item.childrens.length) {
         item.childrens.forEach((child, index) =>
-          processItem(
-            child,
-            [...parents, item],
-            `${childIndex}.${parentId}.${item.value.id}`,
-            index
-          )
+          processItem(child, [...parents, item], treeId, index)
         );
       }
     }
@@ -94,6 +114,8 @@ export default function TreePage() {
         title: t('page_title'),
         description: t('page_description'),
       },
+      treeProgram: getTreeProgramDetailTranslation(t),
+      treeCourse: getTreeCourseDetailTranslation(t),
     }),
     [t]
   );
@@ -110,12 +132,34 @@ export default function TreePage() {
   }
 
   useEffect(() => {
-    init();
-  }, [params]);
+    if (!tLoading) init();
+  }, [params, tLoading]);
 
   async function onSelect() {}
 
   async function onAdd() {}
+
+  async function onSaveProgram({ id, name, abbreviation, credits }) {
+    try {
+      await updateProgramRequest({ id, name, abbreviation, credits });
+      store.tree = await getProgramTree();
+      render();
+      addSuccessAlert(t('programUpdated'));
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+  }
+
+  async function onSaveCourse({ id, name, credits }) {
+    try {
+      await updateCourseRequest({ id, name, abbreviation: name, number: credits });
+      store.tree = await getProgramTree();
+      render();
+      addSuccessAlert(t('courseUpdated'));
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+  }
 
   return (
     <ContextContainer fullHeight>
@@ -149,9 +193,11 @@ export default function TreePage() {
                       <Box>
                         <Tree
                           treeData={store.tree}
+                          selectedNode={store.editingItem ? { id: store.editingItem.treeId } : null}
                           allowDragParents={false}
                           onSelect={onSelect}
                           onAdd={onAdd}
+                          initialOpen={map(store.tree, 'id')}
                         />
                       </Box>
                     ) : null}
@@ -159,9 +205,24 @@ export default function TreePage() {
                 </Paper>
               </Col>
               <Col span={7}>
-                {store.program ? (
+                {store.editingItem ? (
                   <Paper fullWidth padding={5}>
-                    Gatitos
+                    {store.editingItem.nodeType === 'program' ? (
+                      <TreeProgramDetail
+                        onSave={onSaveProgram}
+                        program={store.editingItem.value}
+                        messages={messages.treeProgram}
+                        saving={store.saving}
+                      />
+                    ) : null}
+                    {store.editingItem.nodeType === 'courses' ? (
+                      <TreeCourseDetail
+                        onSave={onSaveCourse}
+                        course={store.editingItem.value}
+                        messages={messages.treeCourse}
+                        saving={store.saving}
+                      />
+                    ) : null}
                   </Paper>
                 ) : null}
               </Col>

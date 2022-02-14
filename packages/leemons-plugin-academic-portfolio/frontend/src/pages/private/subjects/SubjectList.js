@@ -20,6 +20,7 @@ import SelectUserAgent from '@users/components/SelectUserAgent';
 import { useHistory } from 'react-router-dom';
 import {
   createClassRequest,
+  createGroupRequest,
   createKnowledgeRequest,
   createSubjectRequest,
   createSubjectTypeRequest,
@@ -146,7 +147,22 @@ export default function SubjectList() {
     render();
   }
 
-  async function addNewSubject({ name, course, internalId, credits, substages }) {
+  async function createGroup({ name, abbreviation }) {
+    try {
+      const { group } = await createGroupRequest({
+        name,
+        abbreviation,
+        program: store.program.id,
+      });
+      addSuccessAlert(t('groupCreated'));
+      return group;
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    return null;
+  }
+
+  async function addNewSubject({ name, course, internalId, credits }) {
     try {
       const { subject } = await createSubjectRequest({
         name,
@@ -255,6 +271,16 @@ export default function SubjectList() {
           credits: data.credits,
         });
         if (!subject) return null;
+      }
+
+      if (event.isNewGroup) {
+        const group = await createGroup({
+          name: data.groups,
+          abbreviation: data.groups,
+        });
+        console.log(group);
+        if (!group) return null;
+        data.groups = group?.id;
       }
 
       let classe = null;

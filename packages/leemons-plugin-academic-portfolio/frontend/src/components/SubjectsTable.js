@@ -56,6 +56,7 @@ function SubjectsTable({
 }) {
   const [store, render] = useStore({
     tempSubjects: [],
+    tempGroups: [],
   });
 
   const form = useForm();
@@ -103,7 +104,7 @@ function SubjectsTable({
       groups: map(program.groups, ({ name, id }) => ({
         label: name,
         value: id,
-      })),
+      })).concat(store.tempGroups),
       subjectTypes: map(program.subjectTypes, ({ name, id }) => ({
         label: name,
         value: id,
@@ -121,12 +122,23 @@ function SubjectsTable({
         value: internalId,
       })),
     }),
-    [program, store.tempSubjects]
+    [program, store.tempSubjects, store.tempGroups]
   );
 
   function onCreateSubject(event) {
     store.tempSubjects = [
       ...store.tempSubjects,
+      {
+        label: event.value,
+        value: event.value,
+      },
+    ];
+    render();
+  }
+
+  function onCreateGroup(event) {
+    store.tempGroups = [
+      ...store.tempGroups,
       {
         label: event.value,
         value: event.value,
@@ -261,9 +273,30 @@ function SubjectsTable({
     Header: messages.group,
     accessor: 'groups',
     input: {
+      rules: {
+        pattern: {
+          message: (program.maxGroupAbbreviationIsOnlyNumbers
+            ? messages.groupNumbers
+            : messages.groupAny
+          ).replace('{max}', program.maxGroupAbbreviation),
+          value: new RegExp(
+            `^[${program.maxGroupAbbreviationIsOnlyNumbers ? '0-9' : `\S`}]{${
+              program.maxGroupAbbreviation
+            }}$`,
+            'g'
+          ),
+        },
+      },
       node: (
-        <EnableIfFormPropHasValue>
-          <Select data={selects.groups} />
+        <EnableIfFormPropHasValue onCreate={onCreateGroup}>
+          <Select
+            data={selects.groups}
+            required
+            searchable
+            creatable
+            getCreateLabel={(value) => `+ ${value}`}
+            nothingFound={messages.noSubjectsFound}
+          />
         </EnableIfFormPropHasValue>
       ),
     },
@@ -318,17 +351,25 @@ function SubjectsTable({
     valueRender: (value) => <ScheduleInput label={false} value={value} readOnly={true} />,
   });
 
-  function _onAdd({ tableInputRowId, ...formData }) {
+  async function _onAdd({ tableInputRowId, ...formData }) {
     const tempSubjectsValues = map(store.tempSubjects, 'value');
+    const tempGroupsValues = map(store.tempGroups, 'value');
     const isNewSubject = tempSubjectsValues.indexOf(formData.subject) >= 0;
-    onAdd(formData, { isNewSubject });
+    const isNewGroup = tempGroupsValues.indexOf(formData.groups) >= 0;
+    await onAdd(formData, { isNewSubject, isNewGroup });
+    store.tempSubjects = [];
+    store.tempGroups = [];
+    render();
   }
 
-  function _onUpdate({ oldItem, newItem }) {
+  async function _onUpdate({ oldItem, newItem }) {
     const tempSubjectsValues = map(store.tempSubjects, 'value');
+    const tempGroupsValues = map(store.tempGroups, 'value');
     const subject = isObject(newItem.subject) ? newItem.subject.id : newItem.subject;
+    const groups = isObject(newItem.groups) ? newItem.groups.id : newItem.groups;
     const isNewSubject = tempSubjectsValues.indexOf(subject) >= 0;
-    onUpdate(
+    const isNewGroup = tempGroupsValues.indexOf(groups) >= 0;
+    await onUpdate(
       {
         id: oldItem.id,
         ...newItem,
@@ -336,11 +377,14 @@ function SubjectsTable({
         knowledges: isObject(newItem.knowledges) ? newItem.knowledges.id : newItem.knowledges,
         subject,
         subjectType: isObject(newItem.subjectType) ? newItem.subjectType.id : newItem.subjectType,
-        groups: isObject(newItem.groups) ? newItem.groups.id : newItem.groups,
+        groups,
         substages: isObject(newItem.substages) ? newItem.substages.id : newItem.substages,
       },
-      { isNewSubject }
+      { isNewSubject, isNewGroup }
     );
+    store.tempSubjects = [];
+    store.tempGroups = [];
+    render();
   }
 
   return (
@@ -370,7 +414,7 @@ SubjectsTable.propTypes = {
   messages: PropTypes.object,
   onAdd: PropTypes.func,
   onUpdate: PropTypes.func,
-  teacherSelects: PropTypes.object,
+  teacherSelect: PropTypes.any,
   onTeacherSearch: PropTypes.func,
   onCreateSubject: PropTypes.func,
   program: PropTypes.any,
