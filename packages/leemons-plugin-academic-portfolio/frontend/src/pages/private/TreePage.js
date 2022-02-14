@@ -1,12 +1,21 @@
 import React, { useEffect, useMemo } from 'react';
-import { Box, Col, ContextContainer, Grid, PageContainer, Paper } from '@bubbles-ui/components';
+import {
+  Box,
+  Col,
+  ContextContainer,
+  Grid,
+  PageContainer,
+  Paper,
+  Tree,
+} from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { SelectCenter } from '@users/components/SelectCenter';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { useQuery, useStore } from '@common';
+import { find } from 'lodash';
 import SelectProgram from '../../components/Selectors/SelectProgram';
-import { getProgramTreeRequest } from '../../request';
+import { getProgramTreeRequest, listSubjectCreditsForProgramRequest } from '../../request';
 
 export default function TreePage() {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
@@ -15,8 +24,59 @@ export default function TreePage() {
   const params = useQuery();
 
   async function getProgramTree() {
-    const tree = await getProgramTreeRequest(store.programId);
-    console.log(tree);
+    const [{ tree }, { subjectCredits }] = await Promise.all([
+      getProgramTreeRequest(store.programId),
+      listSubjectCreditsForProgramRequest(store.programId),
+    ]);
+    const result = [];
+
+    function processItem(item, parents, parentId, childIndex) {
+      let text = item.value.name;
+      if (item.nodeType === 'courses') {
+        text = item.value.name
+          ? `${item.value.name} (${item.value.index}º)`
+          : `${item.value.index}º`;
+      }
+      if (item.nodeType === 'class') {
+        const classSubjectCredits = find(subjectCredits, {
+          subject: item.value.subject.id,
+        });
+        const course = find(parents, { nodeType: 'courses' });
+        text = `${course ? course.value.index : ''}${classSubjectCredits?.internalId} ${
+          item.value.subject.name
+        }`;
+      }
+      result.push({
+        id: `${childIndex}.${parentId}.${item.value.id}`,
+        parent: parents[parents.length - 1] ? parentId : 0,
+        text,
+        actions: [
+          {
+            name: 'rename',
+            showOnHover: false,
+            icon: () => <span>R</span>,
+            handler: () => alert('Handler works'),
+          },
+          'edit',
+          {
+            name: 'delete',
+          },
+        ],
+      });
+      if (item.childrens && item.childrens.length) {
+        item.childrens.forEach((child, index) =>
+          processItem(
+            child,
+            [...parents, item],
+            `${childIndex}.${parentId}.${item.value.id}`,
+            index
+          )
+        );
+      }
+    }
+
+    processItem(tree, [], '0');
+    return result;
   }
 
   async function init() {
@@ -53,6 +113,10 @@ export default function TreePage() {
     init();
   }, [params]);
 
+  async function onSelect() {}
+
+  async function onAdd() {}
+
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader values={messages.header} />
@@ -81,14 +145,14 @@ export default function TreePage() {
                         />
                       </Col>
                     </Grid>
-                    {store.program ? (
+                    {store.tree ? (
                       <Box>
-                        {/* <Tree
-                          {...treeProps}
+                        <Tree
+                          treeData={store.tree}
                           allowDragParents={false}
-                          onSelect={handleOnEditProgram}
-                          onAdd={handleOnAddProgram}
-                        /> */}
+                          onSelect={onSelect}
+                          onAdd={onAdd}
+                        />
                       </Box>
                     ) : null}
                   </ContextContainer>
