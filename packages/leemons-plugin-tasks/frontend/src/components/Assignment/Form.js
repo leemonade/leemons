@@ -13,7 +13,9 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditor } from '@bubbles-ui/editors';
 import { prefixPN } from '../../helpers/prefixPN';
 import AssignUsers from './AssignUsers';
-import ConditionalInput from '../ConditionalInput';
+import ConditionalInput from '../Inputs/ConditionalInput';
+import DateTime from '../Inputs/DateTime';
+import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 
 export default function Form() {
   const [, translations] = useTranslateLoader(prefixPN('assignment_form'));
@@ -70,26 +72,20 @@ export default function Form() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <AssignUsers labels={labels} modes={modes} assignTo={assignTo} />
+      <Controller
+        control={control}
+        name="assignees"
+        render={({ field }) => (
+          <AssignUsers {...field} labels={labels} modes={modes} assignTo={assignTo} />
+        )}
+      />
 
       <ContextContainer direction="row" alignItems="end">
         <Controller
           control={control}
           name="deadline"
           render={({ field }) => (
-            <DatePicker
-              label={labels?.deadline}
-              placeholder={placeholders?.date}
-              fullWidth
-              {...field}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="time"
-          render={({ field }) => (
-            <TimeInput placeholder={placeholders?.time} fullWidth {...field} />
+            <DateTime {...field} label={labels?.deadline} placeholder={placeholders?.date} />
           )}
         />
       </ContextContainer>
@@ -101,34 +97,26 @@ export default function Form() {
             <ContextContainer direction="row" alignItems="end">
               <Controller
                 control={control}
-                name="deadline"
-                render={({ field }) => (
-                  <DatePicker placeholder={placeholders?.date} fullWidth {...field} />
-                )}
-              />
-              <Controller
-                control={control}
-                name="time"
-                render={({ field }) => (
-                  <TimeInput placeholder={placeholders?.time} fullWidth {...field} />
-                )}
+                name="availableInAdvance"
+                render={({ field }) => <DateTime {...field} placeholder={placeholders?.date} />}
               />
             </ContextContainer>
           )}
         />
         <ContextContainer>
+          <TimeUnitsInput />
           <ConditionalInput
             label={labels?.limitedExecution}
             render={() => (
               <ContextContainer direction="row" alignItems="end">
                 <Controller
                   control={control}
-                  name="deadline"
+                  name="limitedExecutionDate"
                   render={({ field }) => <NumberInput fullWidth {...field} />}
                 />
                 <Controller
                   control={control}
-                  name="time"
+                  name="limitedExecutionTime"
                   render={({ field }) => (
                     <Select
                       placeholder={placeholders?.units}
@@ -148,7 +136,13 @@ export default function Form() {
         <ConditionalInput
           label={labels?.messageToStudents}
           help={descriptions?.messageToStudents}
-          render={() => <TextEditor />}
+          render={() => (
+            <Controller
+              control={control}
+              name="messageToStudents"
+              render={({ field }) => <TextEditor {...field} />}
+            />
+          )}
         />
       </ContextContainer>
 
