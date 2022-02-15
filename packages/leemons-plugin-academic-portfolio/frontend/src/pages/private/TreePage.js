@@ -21,12 +21,21 @@ import {
   getProgramTreeRequest,
   listSubjectCreditsForProgramRequest,
   updateCourseRequest,
+  updateGroupRequest,
+  updateKnowledgeRequest,
   updateProgramRequest,
+  updateSubjectTypeRequest,
 } from '../../request';
 import { TreeProgramDetail } from '../../components/Tree/TreeProgramDetail';
 import { getTreeProgramDetailTranslation } from '../../helpers/getTreeProgramDetailTranslation';
 import { getTreeCourseDetailTranslation } from '../../helpers/getTreeCourseDetailTranslation';
 import { TreeCourseDetail } from '../../components/Tree/TreeCourseDetail';
+import { TreeGroupDetail } from '../../components/Tree/TreeGroupDetail';
+import { getTreeGroupDetailTranslation } from '../../helpers/getTreeGroupDetailTranslation';
+import { TreeSubjectTypeDetail } from '../../components/Tree/TreeSubjectTypeDetail';
+import { getTreeSubjectTypeDetailTranslation } from '../../helpers/getTreeSubjectTypeDetailTranslation';
+import { getTreeKnowledgeDetailTranslation } from '../../helpers/getTreeKnowledgeDetailTranslation';
+import { TreeKnowledgeDetail } from '../../components/Tree/TreeKnowledgeDetail';
 
 export default function TreePage() {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('tree_page'));
@@ -46,6 +55,7 @@ export default function TreePage() {
       getProgramTreeRequest(store.programId),
       listSubjectCreditsForProgramRequest(store.programId),
     ]);
+
     const result = [];
 
     const editLabel = t('treeEdit');
@@ -96,6 +106,7 @@ export default function TreePage() {
     }
 
     processItem(tree, [], '0');
+    store.program = tree.value;
     return result;
   }
 
@@ -116,6 +127,9 @@ export default function TreePage() {
       },
       treeProgram: getTreeProgramDetailTranslation(t),
       treeCourse: getTreeCourseDetailTranslation(t),
+      treeGroup: getTreeGroupDetailTranslation(t),
+      treeSubjectType: getTreeSubjectTypeDetailTranslation(t),
+      treeKnowledge: getTreeKnowledgeDetailTranslation(t),
     }),
     [t]
   );
@@ -141,24 +155,93 @@ export default function TreePage() {
 
   async function onSaveProgram({ id, name, abbreviation, credits }) {
     try {
+      store.saving = true;
+      render();
       await updateProgramRequest({ id, name, abbreviation, credits });
       store.tree = await getProgramTree();
-      render();
       addSuccessAlert(t('programUpdated'));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
+    store.saving = false;
+    render();
   }
 
   async function onSaveCourse({ id, name, credits }) {
     try {
+      store.saving = true;
+      render();
       await updateCourseRequest({ id, name, abbreviation: name, number: credits });
       store.tree = await getProgramTree();
-      render();
       addSuccessAlert(t('courseUpdated'));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
+    store.saving = false;
+    render();
+  }
+
+  async function onSaveGroup({ id, name, abbreviation }) {
+    try {
+      store.saving = true;
+      render();
+      await updateGroupRequest({ id, name, abbreviation });
+      store.tree = await getProgramTree();
+      addSuccessAlert(t('groupUpdated'));
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    store.saving = false;
+    render();
+  }
+
+  async function onSaveSubjectType({ id, name, groupVisibility, credits_course, credits_program }) {
+    try {
+      store.saving = true;
+      render();
+      await updateSubjectTypeRequest({
+        id,
+        name,
+        groupVisibility: !!groupVisibility,
+        credits_course,
+        credits_program,
+      });
+      store.tree = await getProgramTree();
+      addSuccessAlert(t('subjectTypeUpdated'));
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    store.saving = false;
+    render();
+  }
+
+  async function onSaveKnowledge({
+    id,
+    name,
+    abbreviation,
+    color,
+    credits_course,
+    credits_program,
+  }) {
+    try {
+      store.saving = true;
+      render();
+      await updateKnowledgeRequest({
+        id,
+        name,
+        abbreviation,
+        color,
+        credits_course,
+        credits_program,
+        icon: ' ',
+      });
+      store.tree = await getProgramTree();
+      addSuccessAlert(t('knowledgeUpdated'));
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    store.saving = false;
+    render();
   }
 
   return (
@@ -220,6 +303,32 @@ export default function TreePage() {
                         onSave={onSaveCourse}
                         course={store.editingItem.value}
                         messages={messages.treeCourse}
+                        saving={store.saving}
+                      />
+                    ) : null}
+                    {store.editingItem.nodeType === 'groups' ? (
+                      <TreeGroupDetail
+                        onSave={onSaveGroup}
+                        program={store.program}
+                        group={store.editingItem.value}
+                        messages={messages.treeGroup}
+                        saving={store.saving}
+                      />
+                    ) : null}
+                    {store.editingItem.nodeType === 'subjectType' ? (
+                      <TreeSubjectTypeDetail
+                        onSave={onSaveSubjectType}
+                        subjectType={store.editingItem.value}
+                        messages={messages.treeSubjectType}
+                        saving={store.saving}
+                      />
+                    ) : null}
+                    {store.editingItem.nodeType === 'knowledges' ? (
+                      <TreeKnowledgeDetail
+                        onSave={onSaveKnowledge}
+                        program={store.program}
+                        knowledge={store.editingItem.value}
+                        messages={messages.treeKnowledge}
                         saving={store.saving}
                       />
                     ) : null}

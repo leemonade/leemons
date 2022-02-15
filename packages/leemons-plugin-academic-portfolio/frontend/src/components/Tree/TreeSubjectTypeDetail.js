@@ -6,17 +6,22 @@ import {
   Button,
   ContextContainer,
   NumberInput,
-  Paragraph,
+  Switch,
   TextInput,
   Title,
 } from '@bubbles-ui/components';
 
-const TreeCourseDetail = ({ course, messages, onSave, onGoProgram, saving }) => {
-  const { reset, control, handleSubmit } = useForm({ defaultValues: course });
+const TreeSubjectTypeDetail = ({ subjectType, messages, onSave, saving }) => {
+  const {
+    reset,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ defaultValues: subjectType });
 
   React.useEffect(() => {
-    reset(course);
-  }, [course]);
+    reset(subjectType);
+  }, [subjectType]);
 
   return (
     <Box>
@@ -24,33 +29,34 @@ const TreeCourseDetail = ({ course, messages, onSave, onGoProgram, saving }) => 
         <ContextContainer direction="column" fullWidth>
           <Title order={4}>{messages.title}</Title>
           <Box>
-            <TextInput disabled label={messages.numberLabel} value={course.index} />
-          </Box>
-          <Box>
             <Controller
               control={control}
               name="name"
-              render={({ field }) => (
-                <TextInput label={messages.nameLabel} help={messages.nameHelper} {...field} />
-              )}
+              render={({ field }) => <TextInput label={messages.nameLabel} {...field} />}
             />
           </Box>
           <Box>
             <Controller
-              name="number"
               control={control}
-              render={({ field }) => (
-                <NumberInput defaultValue={0} min={0} label={messages.creditsLabel} {...field} />
-              )}
+              name="credits_course"
+              render={({ field }) => <NumberInput label={messages.crCourse} {...field} />}
             />
           </Box>
           <Box>
-            <Paragraph>
-              {messages.visitProgramDescription}&nbsp;
-              <Button variant="link" onClick={onGoProgram}>
-                {messages.visitProgramLabel}
-              </Button>
-            </Paragraph>
+            <Controller
+              control={control}
+              name="credits_program"
+              render={({ field }) => <NumberInput label={messages.crProgram} {...field} />}
+            />
+          </Box>
+          <Box>
+            <Controller
+              control={control}
+              name="groupVisibility"
+              render={({ field }) => (
+                <Switch {...field} label={messages.nested} checked={!!field.value} />
+              )}
+            />
           </Box>
           <Box>
             <Button loading={saving} type="submit">
@@ -63,8 +69,8 @@ const TreeCourseDetail = ({ course, messages, onSave, onGoProgram, saving }) => 
   );
 };
 
-TreeCourseDetail.propTypes = {
-  course: PropTypes.object,
+TreeSubjectTypeDetail.propTypes = {
+  subjectType: PropTypes.object,
   messages: PropTypes.object,
   onSave: PropTypes.func,
   onGoProgram: PropTypes.func,
@@ -72,4 +78,4 @@ TreeCourseDetail.propTypes = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export { TreeCourseDetail };
+export { TreeSubjectTypeDetail };

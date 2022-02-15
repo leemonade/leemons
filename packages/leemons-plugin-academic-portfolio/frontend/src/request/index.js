@@ -22,8 +22,8 @@ import {
   setProfiles,
   updateSettings,
 } from './settings';
-import { createKnowledge, listKnowledges } from './knowledges';
-import { createSubjectType, listSubjectTypes } from './subjectTypes';
+import { createKnowledge, listKnowledges, updateKnowledge } from './knowledges';
+import { createSubjectType, listSubjectTypes, updateSubjectType } from './subjectTypes';
 
 import {
   addStudentsToClass,
@@ -58,9 +58,11 @@ export const addTeachersToClassRequest = addTeachersToClass;
 
 export const createKnowledgeRequest = createKnowledge;
 export const listKnowledgesRequest = listKnowledges;
+export const updateKnowledgeRequest = updateKnowledge;
 
 export const createSubjectTypeRequest = createSubjectType;
 export const listSubjectTypesRequest = listSubjectTypes;
+export const updateSubjectTypeRequest = updateSubjectType;
 
 export const getProgramTreeRequest = getProgramTree;
 export const listProgramsRequest = listPrograms;

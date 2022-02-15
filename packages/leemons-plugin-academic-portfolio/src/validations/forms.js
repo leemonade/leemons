@@ -224,6 +224,67 @@ async function validateAddKnowledge(data, { transacting } = {}) {
   if (knowledge) throw new Error('The knowledge already exists');
 }
 
+const updateKnowledgeSchema = {
+  type: 'object',
+  properties: {
+    id: stringSchema,
+    name: stringSchema,
+    abbreviation: stringSchema,
+    color: stringSchema,
+    icon: stringSchema,
+    credits_course: integerSchemaNullable,
+    credits_program: integerSchemaNullable,
+  },
+  required: ['id', 'name', 'abbreviation', 'color', 'icon'],
+  additionalProperties: false,
+};
+
+async function validateUpdateKnowledge(data, { transacting } = {}) {
+  const validator = new LeemonsValidator(updateKnowledgeSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+
+  const _knowledge = await table.knowledges.findOne({ id: data.id }, { transacting });
+  if (!_knowledge) {
+    throw new Error('The knowledge does not exist');
+  }
+
+  const [program] = await programsByIds(_knowledge.program, { transacting });
+
+  if (!program) {
+    throw new Error('The program does not exist');
+  }
+
+  // ES: Comprobamos si el programa puede tener areas de conocimiento
+  if (!program.haveKnowledge) {
+    throw new Error('The program does not have knowledges');
+  }
+
+  if (program.maxKnowledgeAbbreviation) {
+    // ES: Comprobamos si el nombre del conocimiento es mayor que el maximo
+    if (data.abbreviation.length > program.maxKnowledgeAbbreviation)
+      throw new Error('The knowledge abbreviation is longer than the specified length');
+  }
+
+  // ES: Comprobamos si el nobre del conocimiento es solo numeros
+  if (program.maxKnowledgeAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
+    throw new Error('The knowledge abbreviation must be only numbers');
+
+  // ES: Comprobamos si el conocimiento ya existe
+  const knowledge = await table.knowledges.count(
+    {
+      id_$ne: data.id,
+      abbreviation: data.abbreviation,
+      program: program.id,
+    },
+    { transacting }
+  );
+
+  if (knowledge) throw new Error('The knowledge already exists');
+}
+
 const addSubjectTypeSchema = {
   type: 'object',
   properties: {
@@ -946,6 +1007,7 @@ module.exports = {
   validateUpdateProgram,
   validateUpdateSubject,
   validateAddSubjectType,
+  validateUpdateKnowledge,
   validateUpdateClassMany,
   validateSubstagesFormat,
   validateAddClassStudents,

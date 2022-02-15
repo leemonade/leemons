@@ -13,10 +13,15 @@ import {
 
 const TreeProgramDetail = ({ program, messages, onSave, onGoProgram, saving }) => {
   const {
+    reset,
     control,
     handleSubmit,
     formState: { errors },
   } = useForm({ defaultValues: program });
+
+  React.useEffect(() => {
+    reset(program);
+  }, [program]);
 
   return (
     <Box>

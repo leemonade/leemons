@@ -117,6 +117,12 @@ module.exports = [
   },
   {
     path: '/knowledge',
+    method: 'PUT',
+    handler: 'knowledge.putKnowledge',
+    authenticated: true,
+  },
+  {
+    path: '/knowledge',
     method: 'GET',
     handler: 'knowledge.listKnowledge',
     authenticated: true,
