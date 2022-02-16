@@ -5,16 +5,18 @@ module.exports = async function assignStudent(
   user,
   { type = 'direct', transacting } = {}
 ) {
+  const users = Array.isArray(user) ? user : [user];
+
   try {
-    await userInstances.create(
-      {
+    await userInstances.createMany(
+      users.map((u) => ({
         instance,
-        user,
+        user: u,
         type,
-      },
+      })),
       { transacting }
     );
   } catch (e) {
-    throw new Error('Error assigning user to instance');
+    throw new Error('Error assigning users to instance');
   }
 };

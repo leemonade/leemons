@@ -24,11 +24,11 @@ export default function Private() {
       <Route path={`${path}/library/create`}>
         <SetupTask session={session} />
       </Route>
+      <Route path={`${path}/library/assign/:id`}>
+        <AssignmentPage session={session} />
+      </Route>
       <Route path={`${path}/library`}>
         <Library session={session} />
-      </Route>
-      <Route path={`${path}/assign/:id`}>
-        <AssignmentPage session={session} />
       </Route>
     </Switch>
   );

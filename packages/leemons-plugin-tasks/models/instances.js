@@ -4,13 +4,16 @@ module.exports = {
     task: {
       type: 'string',
     },
+    startDate: {
+      type: 'datetime',
+    },
     deadline: {
       type: 'datetime',
     },
-    available: {
+    visualizationDate: {
       type: 'datetime',
     },
-    executionTime: {
+    limitedExecution: {
       type: 'integer',
     },
     message: { type: 'string' },

@@ -176,7 +176,7 @@ export default function AssignUsers({ labels, assignTo, onChange }) {
 }
 
 AssignUsers.propTypes = {
-  labels: PropTypes.Object,
-  assignTo: PropTypes.Array,
-  onChange: PropTypes.Function,
+  labels: PropTypes.object,
+  assignTo: PropTypes.array,
+  onChange: PropTypes.func,
 };

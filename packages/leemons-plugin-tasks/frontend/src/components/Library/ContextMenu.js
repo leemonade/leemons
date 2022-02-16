@@ -40,11 +40,11 @@ const ContextMenu = forwardRef(({ posX, posY, id, refresh }, ref) => {
         })}
         direction="column"
       >
-        <Button onClick={handleClick(`library/edit/${id}`)}>Edit</Button>
-        <Button disabled onClick={handleClick(`library/edit/${id}`)}>
+        <Button onClick={handleClick(`/private/tasks/library/edit/${id}`)}>Edit</Button>
+        <Button disabled onClick={handleClick(`/private/tasks/library/edit/${id}`)}>
           Duplicate
         </Button>
-        <Button disabled>Assign</Button>
+        <Button onClick={handleClick(`/private/tasks/library/assign/${id}`)}>Assign</Button>
         <Button
           loading={state.loadingDelete}
           onClick={() => {

@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { unflatten } from '@common';
 import { useForm, Controller } from 'react-hook-form';
-import {
-  Select,
-  DatePicker,
-  TimeInput,
-  Button,
-  NumberInput,
-  ContextContainer,
-} from '@bubbles-ui/components';
+import { Button, ContextContainer } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditor } from '@bubbles-ui/editors';
 import { prefixPN } from '../../helpers/prefixPN';
@@ -17,14 +11,13 @@ import ConditionalInput from '../Inputs/ConditionalInput';
 import DateTime from '../Inputs/DateTime';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 
-export default function Form() {
+export default function Form({ onSubmit: parentSubmit }) {
   const [, translations] = useTranslateLoader(prefixPN('assignment_form'));
   const [labels, setLabels] = useState({});
   const [placeholders, setPlaceholders] = useState({});
   const [descriptions, setDescriptions] = useState({});
   const [modes, setModes] = useState({});
-  const [timeUnits, setTimeUnits] = useState({});
-  const [assignTo, setAssignTo] = useState({});
+  const [assignTo, setAssignTo] = useState([]);
 
   useEffect(() => {
     if (translations && translations.items) {
@@ -33,13 +26,6 @@ export default function Form() {
 
       setModes(
         Object.entries(data.modes || {}).map(([key, value]) => ({
-          value: key,
-          label: value,
-        }))
-      );
-
-      setTimeUnits(
-        Object.entries(data.timeUnits || {}).map(([key, value]) => ({
           value: key,
           label: value,
         }))
@@ -62,12 +48,14 @@ export default function Form() {
     }
   }, [translations]);
 
-  const { handleSubmit, errors, control } = useForm({
+  const { handleSubmit, control } = useForm({
     defaultValues: {},
   });
 
   const onSubmit = (data) => {
-    console.log(data);
+    if (typeof parentSubmit === 'function') {
+      parentSubmit(data);
+    }
   };
 
   return (
@@ -80,7 +68,15 @@ export default function Form() {
         )}
       />
 
-      <ContextContainer direction="row" alignItems="end">
+      <ContextContainer direction="row">
+        <Controller
+          control={control}
+          name="startDate"
+          render={({ field }) => (
+            <DateTime {...field} label={labels?.startDate} placeholder={placeholders?.date} />
+          )}
+        />
+
         <Controller
           control={control}
           name="deadline"
@@ -88,45 +84,29 @@ export default function Form() {
             <DateTime {...field} label={labels?.deadline} placeholder={placeholders?.date} />
           )}
         />
-      </ContextContainer>
 
-      <ContextContainer direction="row">
         <ConditionalInput
-          label={labels?.availableInAdvance}
+          label={labels?.visualizationDate}
           render={() => (
             <ContextContainer direction="row" alignItems="end">
               <Controller
                 control={control}
-                name="availableInAdvance"
+                name="visualizationDate"
                 render={({ field }) => <DateTime {...field} placeholder={placeholders?.date} />}
               />
             </ContextContainer>
           )}
         />
+
         <ContextContainer>
-          <TimeUnitsInput />
           <ConditionalInput
             label={labels?.limitedExecution}
             render={() => (
-              <ContextContainer direction="row" alignItems="end">
-                <Controller
-                  control={control}
-                  name="limitedExecutionDate"
-                  render={({ field }) => <NumberInput fullWidth {...field} />}
-                />
-                <Controller
-                  control={control}
-                  name="limitedExecutionTime"
-                  render={({ field }) => (
-                    <Select
-                      placeholder={placeholders?.units}
-                      fullWidth
-                      {...field}
-                      data={timeUnits}
-                    />
-                  )}
-                />
-              </ContextContainer>
+              <Controller
+                control={control}
+                name="executionTime"
+                render={({ field }) => <TimeUnitsInput {...field} />}
+              />
             )}
           />
         </ContextContainer>
@@ -139,7 +119,7 @@ export default function Form() {
           render={() => (
             <Controller
               control={control}
-              name="messageToStudents"
+              name="message"
               render={({ field }) => <TextEditor {...field} />}
             />
           )}
@@ -150,3 +130,7 @@ export default function Form() {
     </form>
   );
 }
+
+Form.propTypes = {
+  onSubmit: PropTypes.func,
+};
