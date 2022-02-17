@@ -3,6 +3,7 @@ import { ContextContainer, PageContainer, Paper } from '@bubbles-ui/components';
 import { useParams } from 'react-router-dom';
 import { getCentersWithToken } from '@users/session';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import Form from '../../../components/Assignment/Form';
 import createInstanceRequest from '../../../request/instance/createInstance';
 import assignStudentRequest from '../../../request/instance/assignStudent';
@@ -33,21 +34,27 @@ export default function AssignmentPage() {
       [[], []]
     );
 
-    const instance = await createInstanceRequest(id, {
-      ...instanceData,
-      startDate: parseDates(startDate),
-      deadline: parseDates(deadline),
-      visualizationDate: parseDates(visualizationDate),
-    });
+    try {
+      const instance = await createInstanceRequest(id, {
+        ...instanceData,
+        startDate: parseDates(startDate),
+        deadline: parseDates(deadline),
+        visualizationDate: parseDates(visualizationDate),
+      });
 
-    await assignStudentRequest(instance, students);
+      await assignStudentRequest(instance, students);
 
-    const userAgents = (await getCentersWithToken()).map((token) => token.userAgentId);
+      const userAgents = (await getCentersWithToken()).map((token) => token.userAgentId);
 
-    // TODO: Get the desired userAgent, for now we just get the first one
-    const userAgent = userAgents[0];
+      // TODO: Get the desired userAgent, for now we just get the first one
+      const userAgent = userAgents[0];
 
-    await assignTeacherRequest(instance, userAgent);
+      await assignTeacherRequest(instance, userAgent);
+
+      addSuccessAlert('Assignment created successfully');
+    } catch (e) {
+      addErrorAlert(e.message);
+    }
   };
 
   return (

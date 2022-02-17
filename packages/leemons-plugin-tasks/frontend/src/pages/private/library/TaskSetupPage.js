@@ -165,7 +165,7 @@ export default function TaskSetupPage() {
     <ContextContainer fullHeight>
       <AdminPageHeader
         values={headerLabels}
-        buttons={{ edit: 'Save draft', duplicate: 'Publish' }}
+        buttons={{ edit: 'Save draft', duplicate: id && 'Publish' }}
         onEdit={handleOnSaveTask}
         onDuplicate={handleOnPublishTask}
       />

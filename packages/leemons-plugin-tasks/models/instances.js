@@ -13,7 +13,7 @@ module.exports = {
     visualizationDate: {
       type: 'datetime',
     },
-    limitedExecution: {
+    executionTime: {
       type: 'integer',
     },
     message: { type: 'string' },

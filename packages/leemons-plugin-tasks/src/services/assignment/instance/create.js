@@ -3,7 +3,7 @@ const { instances } = require('../../table');
 const parseId = require('../../task/helpers/parseId');
 
 module.exports = async function create(
-  { task, startDate, deadline, visualizationDate = null, limitedExecution = 0, message },
+  { task, startDate, deadline, visualizationDate = null, executionTime = 0, message },
   { transacting } = {}
 ) {
   const { fullId, id } = await parseId(task, null, { transacting });
@@ -22,7 +22,7 @@ module.exports = async function create(
         global.utils.sqlDatetime(
           visualizationDate instanceof Date ? visualizationDate : new Date(visualizationDate)
         ),
-      limitedExecution,
+      executionTime,
       message,
     },
     {
