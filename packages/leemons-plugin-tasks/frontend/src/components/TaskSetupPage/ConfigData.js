@@ -21,6 +21,7 @@ function ConfigData({
   sharedData,
   setSharedData,
   editable,
+  useObserver,
   ...props
 }) {
   // ·······························································
@@ -37,10 +38,25 @@ function ConfigData({
     reset,
   } = useForm({ defaultValues });
 
+  const { subscribe, unsubscribe, emitEvent } = useObserver();
+
   useEffect(() => {
     reset(sharedData);
   }, [sharedData]);
 
+  useEffect(() => {
+    const f = (event) => {
+      if (event === 'saveTask') {
+        handleSubmit((data) => {
+          setSharedData(data);
+          emitEvent('saveData');
+        })();
+      }
+    };
+
+    subscribe(f);
+    return () => unsubscribe(f);
+  }, []);
   // ·······························································
   // HANDLERS
 
@@ -243,6 +259,7 @@ ConfigData.propTypes = {
   setSharedData: PropTypes.func,
   editable: PropTypes.bool,
   onNext: PropTypes.func,
+  useObserver: PropTypes.func,
 };
 
 // eslint-disable-next-line import/prefer-default-export

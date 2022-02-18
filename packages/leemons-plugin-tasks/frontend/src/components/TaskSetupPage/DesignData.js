@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isEmpty } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
@@ -15,6 +15,7 @@ function DesignData({
   onNext,
   onPrevious,
   editable,
+  useObserver,
   ...props
 }) {
   // ·······························································
@@ -30,6 +31,22 @@ function DesignData({
     handleSubmit,
     formState: { errors },
   } = useForm({ defaultValues });
+
+  const { subscribe, unsubscribe, emitEvent } = useObserver();
+
+  useEffect(() => {
+    const f = (event) => {
+      if (event === 'saveTask') {
+        handleSubmit((data) => {
+          setSharedData(data);
+          emitEvent('saveData');
+        })();
+      }
+    };
+    subscribe(f);
+
+    return () => unsubscribe(f);
+  }, []);
 
   // ·······························································
   // HANDLERS
@@ -97,6 +114,7 @@ DesignData.propTypes = {
   editable: PropTypes.bool,
   onNext: PropTypes.func,
   onPrevious: PropTypes.func,
+  useObserver: PropTypes.func,
 };
 
 // eslint-disable-next-line import/prefer-default-export

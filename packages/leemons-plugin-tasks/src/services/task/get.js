@@ -1,5 +1,6 @@
 const { tasks, tasksVersioning } = require('../table');
 const parseId = require('./helpers/parseId');
+const getVersion = require('./versions/get');
 
 const taskVersioningExistingColumns = ['id', 'name', 'current', 'last'];
 const taskExistingColumns = [
@@ -20,8 +21,12 @@ const taskExistingColumns = [
   'state',
   'published',
 ];
+const taskVersionsExistingColumns = ['status'];
 
-async function getMany(taskIds, { versioningColumns, taskColumns, transacting } = {}) {
+async function getMany(
+  taskIds,
+  { versioningColumns, taskColumns, versionsColumns, transacting } = {}
+) {
   try {
     // EN: Get each task' id and fullId
     // ES: Obtener cada id y fullId de la tarea
@@ -53,10 +58,20 @@ async function getMany(taskIds, { versioningColumns, taskColumns, transacting } 
 
     // EN: Map the tasks by id
     // ES: Mapear las tareas por id
-    return ids.map((id, i) => ({
-      ...versioning.find(({ id: _id }) => id === _id),
-      ..._tasks.find(({ id: _id }) => _id === fullIds[i]),
-    }));
+    return Promise.all(
+      ids.map(async (id, i) => {
+        const t = {
+          ...versioning.find(({ id: _id }) => id === _id),
+          ..._tasks.find(({ id: _id }) => _id === fullIds[i]),
+        };
+
+        if (versionsColumns.length) {
+          t.status = (await getVersion(fullIds[i], { transacting })).status;
+        }
+
+        return t;
+      })
+    );
   } catch (e) {
     throw new Error(`Error getting multiple tasks: ${e.message}`);
   }
@@ -64,7 +79,7 @@ async function getMany(taskIds, { versioningColumns, taskColumns, transacting } 
 
 module.exports = async function get(
   taskId,
-  { columns = ['id', 'current', 'last', 'name'], transacting } = {}
+  { columns = ['id', 'current', 'last', 'name', 'status'], transacting } = {}
 ) {
   try {
     // EN: Get the requested columns
@@ -73,22 +88,22 @@ module.exports = async function get(
       taskVersioningExistingColumns.includes(column)
     );
     const taskColumns = columns.filter((column) => taskExistingColumns.includes(column));
+    const versionsColumns = columns.filter((column) =>
+      taskVersionsExistingColumns.includes(column)
+    );
+
     if (Array.isArray(taskId)) {
-      return getMany(taskId, { versioningColumns, taskColumns, transacting });
+      return getMany(taskId, { versioningColumns, taskColumns, versionsColumns, transacting });
     }
 
-    const { fullId, id } = await parseId(taskId, null, { transacting });
-    // EN: Get the name from the task (in taskVersioning)
-    // ES: Obtener el nombre de la tarea (en taskVersioning)
-    const [versioning] = await tasksVersioning.find(
-      { id },
-      { columns: versioningColumns, transacting }
-    );
-    // EN: Get task by id (id@version).
-    // ES: Obtener tarea por id (id@version).
-    const task = await tasks.find({ id: fullId }, { columns: taskColumns, transacting });
+    const result = await getMany([taskId], {
+      versioningColumns,
+      taskColumns,
+      versionsColumns,
+      transacting,
+    });
 
-    return task.length ? { ...task[0], ...versioning, fullId } : null;
+    return result[0];
   } catch (e) {
     throw new Error(`Error getting task: ${e.message}`);
   }

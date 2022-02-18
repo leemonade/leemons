@@ -18,6 +18,7 @@ import { prefixPN } from '../../../helpers';
 import saveTaskRequest from '../../../request/task/saveTask';
 import publishTaskRequest from '../../../request/task/publishTask';
 import getTaskRequest from '../../../request/task/getTask';
+import useObserver from '../../../helpers/useObserver';
 
 export default function TaskSetupPage() {
   const [t, translations] = useTranslateLoader(prefixPN('task_setup_page'));
@@ -27,14 +28,14 @@ export default function TaskSetupPage() {
     currentTask: null,
   });
 
-  const history = useHistory();
+  const { useObserver: useSaveObserver, emitEvent, subscribe, unsubscribe } = useObserver();
 
-  //! Use an observer / event emitter to emit the children when to notify current data and use them to save or publish
+  const history = useHistory();
 
   // ·········································································
   // API CALLS
 
-  const saveTask = async (values) => {
+  const saveTask = async (values, redirectTo = 'library') => {
     try {
       const body = { ...values };
       let messageKey = 'create_done';
@@ -42,14 +43,23 @@ export default function TaskSetupPage() {
       if (!isEmpty(store.currentTask)) {
         messageKey = 'update_done';
       }
-      await saveTaskRequest(store?.currentTask?.fullId, body);
+      const {
+        task: { fullId },
+      } = await saveTaskRequest(store?.currentTask?.fullId, body);
 
       // TODO: Implement save task request call
       // const response = await apiCall(values);
       // store.currentTask = response.task;
 
       addSuccessAlert(t(messageKey));
-      history.push('/private/tasks/library');
+
+      history.push(
+        redirectTo === 'library'
+          ? '/private/tasks/library'
+          : `/private/tasks/library/edit/${fullId}`
+      );
+
+      emitEvent('taskSaved');
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }
@@ -106,12 +116,21 @@ export default function TaskSetupPage() {
   // ·········································································
   // HANDLERS
 
-  const handleOnSaveTask = (values) => {
-    saveTask(values);
+  const handleOnSaveTask = (values, redirectTo) => {
+    saveTask(values, redirectTo);
   };
 
   const handleOnPublishTask = () => {
-    publishTask(id);
+    emitEvent('saveTask');
+
+    const f = (event) => {
+      if (event === 'taskSaved') {
+        publishTask(id);
+        unsubscribe(f);
+      }
+    };
+
+    subscribe(f);
   };
 
   // ·········································································
@@ -134,19 +153,19 @@ export default function TaskSetupPage() {
         steps: [
           {
             label: configData.step_label,
-            content: <ConfigData {...configData} />,
+            content: <ConfigData useObserver={useSaveObserver} {...configData} />,
           },
           {
             label: designData.step_label,
-            content: <DesignData {...designData} />,
+            content: <DesignData useObserver={useSaveObserver} {...designData} />,
           },
           {
             label: contentData.step_label,
-            content: <ContentData {...contentData} />,
+            content: <ContentData useObserver={useSaveObserver} {...contentData} />,
           },
           {
             label: instructionData.step_label,
-            content: <InstructionData {...instructionData} />,
+            content: <InstructionData useObserver={useSaveObserver} {...instructionData} />,
           },
           {
             label: publishData.step_label,
@@ -166,7 +185,7 @@ export default function TaskSetupPage() {
       <AdminPageHeader
         values={headerLabels}
         buttons={{ edit: 'Save draft', duplicate: id && 'Publish' }}
-        onEdit={handleOnSaveTask}
+        onEdit={() => emitEvent('saveTask')}
         onDuplicate={handleOnPublishTask}
       />
 
@@ -175,7 +194,7 @@ export default function TaskSetupPage() {
           <ContextContainer padded="vertical">
             <Paper fullWidth padding={5}>
               {!isEmpty(setupProps) && isArray(setupProps.steps) && (
-                <Setup {...setupProps} onSave={handleOnSaveTask} />
+                <Setup {...setupProps} useObserver={useSaveObserver} onSave={handleOnSaveTask} />
               )}
             </Paper>
           </ContextContainer>
