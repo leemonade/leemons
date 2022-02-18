@@ -14,7 +14,7 @@ import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { useStore } from '@common/useStore';
 import { SelectCenter } from '@users/components/SelectCenter';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { find, map } from 'lodash';
+import { find, isArray, map } from 'lodash';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import { useHistory } from 'react-router-dom';
@@ -257,7 +257,7 @@ export default function SubjectList() {
       if (event.isNewSubject) {
         const subject = await addNewSubject({
           name: data.subject,
-          course: data.courses,
+          course: isArray(data.courses) ? null : data.courses,
           internalId: data.internalId,
           credits: data.credits,
         });
@@ -266,7 +266,7 @@ export default function SubjectList() {
       } else {
         const subject = await updateSubject({
           id: data.subject,
-          course: data.courses,
+          course: isArray(data.courses) ? null : data.courses,
           internalId: data.internalId,
           credits: data.credits,
         });
@@ -278,7 +278,6 @@ export default function SubjectList() {
           name: data.groups,
           abbreviation: data.groups,
         });
-        console.log(group);
         if (!group) return null;
         data.groups = group?.id;
       }
@@ -387,19 +386,25 @@ export default function SubjectList() {
                               {
                                 value: 1,
                                 label: messages.programTreeType.opt1Label,
-                                help: messages.programTreeType.opt1Description,
+                                help: store.program.moreThanOneAcademicYear
+                                  ? messages.programTreeType.opt1DescriptionNoCourse
+                                  : messages.programTreeType.opt1Description,
                                 helpPosition: 'bottom',
                               },
                               {
                                 value: 2,
                                 label: messages.programTreeType.opt2Label,
-                                help: messages.programTreeType.opt2Description,
+                                help: store.program.moreThanOneAcademicYear
+                                  ? messages.programTreeType.opt2DescriptionNoCourse
+                                  : messages.programTreeType.opt2Description,
                                 helpPosition: 'bottom',
                               },
                               {
                                 value: 3,
                                 label: messages.programTreeType.opt3Label,
-                                help: messages.programTreeType.opt3Description,
+                                help: store.program.moreThanOneAcademicYear
+                                  ? messages.programTreeType.opt3DescriptionNoCourse
+                                  : messages.programTreeType.opt3Description,
                                 helpPosition: 'bottom',
                               },
                               {

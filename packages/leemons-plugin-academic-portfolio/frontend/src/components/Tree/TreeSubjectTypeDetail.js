@@ -6,12 +6,13 @@ import {
   Button,
   ContextContainer,
   NumberInput,
+  Paragraph,
   Switch,
   TextInput,
   Title,
 } from '@bubbles-ui/components';
 
-const TreeSubjectTypeDetail = ({ subjectType, messages, onSave, saving }) => {
+const TreeSubjectTypeDetail = ({ subjectType, messages, onSave, saving, selectSubjectsNode }) => {
   const {
     reset,
     control,
@@ -27,12 +28,13 @@ const TreeSubjectTypeDetail = ({ subjectType, messages, onSave, saving }) => {
     <Box>
       <form onSubmit={handleSubmit(onSave)}>
         <ContextContainer direction="column" fullWidth>
-          <Title order={4}>{messages.title}</Title>
+          <Title order={4}>{subjectType ? messages.title : messages.titleNew}</Title>
           <Box>
             <Controller
               control={control}
               name="name"
-              render={({ field }) => <TextInput label={messages.nameLabel} {...field} />}
+              rules={{ required: messages.nameRequired }}
+              render={({ field }) => <TextInput required label={messages.nameLabel} {...field} />}
             />
           </Box>
           <Box>
@@ -58,6 +60,24 @@ const TreeSubjectTypeDetail = ({ subjectType, messages, onSave, saving }) => {
               )}
             />
           </Box>
+
+          {!subjectType ? (
+            <>
+              <Box>
+                <Title order={4}>{messages.assignSubjects.title}</Title>
+                <Paragraph>{messages.assignSubjects.description}</Paragraph>
+              </Box>
+
+              <Box>
+                <Controller
+                  control={control}
+                  name="subjects"
+                  render={({ field }) => React.cloneElement(selectSubjectsNode, { ...field })}
+                />
+              </Box>
+            </>
+          ) : null}
+
           <Box>
             <Button loading={saving} type="submit">
               {messages.save}
@@ -75,6 +95,7 @@ TreeSubjectTypeDetail.propTypes = {
   onSave: PropTypes.func,
   onGoProgram: PropTypes.func,
   saving: PropTypes.bool,
+  selectSubjectsNode: PropTypes.any,
 };
 
 // eslint-disable-next-line import/prefer-default-export

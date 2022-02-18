@@ -125,8 +125,6 @@ export default function ProgramList() {
         messageKey = 'common.update_done';
       }
 
-      console.log(body);
-
       const response = await apiCall(body);
       store.currentProgram = response.program;
 
@@ -167,6 +165,12 @@ export default function ProgramList() {
       callback();
     }
   };
+
+  React.useEffect(() => {
+    if (centerId) {
+      loadPrograms(centerId);
+    }
+  }, [translations]);
 
   const handleOnSelectCenter = async (center) => {
     setCenterId(center);

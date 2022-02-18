@@ -1,5 +1,6 @@
 const { LeemonsValidator } = global.utils;
 const _ = require('lodash');
+const { isArray } = require('lodash');
 const {
   stringSchema,
   booleanSchema,
@@ -14,6 +15,7 @@ const { table } = require('../services/tables');
 const { subjectNeedCourseForAdd } = require('../services/subjects/subjectNeedCourseForAdd');
 const { getCourseIndex } = require('../services/courses/getCourseIndex');
 const { getProgramSubjectDigits } = require('../services/programs/getProgramSubjectDigits');
+const { programHaveMultiCourses } = require('../services/programs/programHaveMultiCourses');
 
 const teacherTypes = ['main-teacher', 'teacher'];
 
@@ -31,6 +33,7 @@ const addProgramSchema = {
     maxGroupAbbreviation: integerSchema,
     maxGroupAbbreviationIsOnlyNumbers: booleanSchema,
     maxNumberOfCourses: integerSchema,
+    moreThanOneAcademicYear: booleanSchema,
     courseCredits: integerSchema,
     hideCoursesInTree: booleanSchema,
     haveSubstagesPerCourse: booleanSchema,
@@ -179,6 +182,7 @@ const addKnowledgeSchema = {
     program: stringSchema,
     credits_course: integerSchemaNullable,
     credits_program: integerSchemaNullable,
+    subjects: arrayStringSchema,
   },
   required: ['name', 'abbreviation', 'program', 'color', 'icon'],
   additionalProperties: false,
@@ -293,6 +297,7 @@ const addSubjectTypeSchema = {
     program: stringSchema,
     credits_course: integerSchemaNullable,
     credits_program: integerSchemaNullable,
+    subjects: arrayStringSchema,
   },
   required: ['name', 'groupVisibility', 'program'],
   additionalProperties: false,
@@ -401,6 +406,16 @@ const addGroupSchema = {
     name: stringSchema,
     abbreviation: stringSchema,
     program: stringSchema,
+    subjects: arrayStringSchema,
+    aditionalData: {
+      type: 'object',
+      properties: {
+        group: stringSchema,
+        course: stringSchema,
+        knowledge: stringSchema,
+        subjectType: stringSchema,
+      },
+    },
   },
   required: ['name', 'abbreviation', 'program'],
   additionalProperties: false,
@@ -600,9 +615,9 @@ const updateSubjectInternalIdSchema = {
   type: 'object',
   properties: {
     internalId: stringSchema,
-    course: stringSchema,
+    course: stringSchemaNullable,
   },
-  required: ['internalId', 'course'],
+  required: ['internalId'],
   additionalProperties: false,
 };
 
@@ -694,11 +709,13 @@ const addClassSchema = {
   type: 'object',
   properties: {
     program: stringSchema,
-    course: stringSchema,
+    course: {
+      oneOf: [stringSchema, arrayStringSchema],
+    },
     group: stringSchema,
     subject: stringSchema,
     subjectType: stringSchema,
-    knowledge: stringSchema,
+    knowledge: stringSchemaNullable,
     color: stringSchema,
     icon: stringSchema,
     substage: stringSchema,
@@ -731,12 +748,19 @@ const addClassSchema = {
   additionalProperties: false,
 };
 
-function validateAddClass(data) {
-  console.log(data);
+async function validateAddClass(data, { transacting }) {
   const validator = new LeemonsValidator(addClassSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
+  }
+
+  const haveMultiCourses = await programHaveMultiCourses(data.program, { transacting });
+
+  if (!haveMultiCourses) {
+    if (isArray(data.course) && data.course.length > 1) {
+      throw new Error('Class does not have multi courses');
+    }
   }
 
   if (data.teachers) {
@@ -920,7 +944,9 @@ const updateClassSchema = {
   type: 'object',
   properties: {
     id: stringSchema,
-    course: stringSchemaNullable,
+    course: {
+      oneOf: [stringSchema, arrayStringSchema, { type: 'null' }],
+    },
     group: stringSchemaNullable,
     subject: stringSchemaNullable,
     subjectType: stringSchemaNullable,
@@ -958,11 +984,20 @@ const updateClassSchema = {
   additionalProperties: false,
 };
 
-function validateUpdateClass(data) {
+async function validateUpdateClass(data, { transacting }) {
   const validator = new LeemonsValidator(updateClassSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
+  }
+
+  const classe = await table.class.findOne({ id: data.id }, { columns: 'program', transacting });
+  const haveMultiCourses = await programHaveMultiCourses(classe.program, { transacting });
+
+  if (!haveMultiCourses) {
+    if (isArray(data.course) && data.course.length > 1) {
+      throw new Error('Class does not have multi courses');
+    }
   }
 
   if (data.teachers) {

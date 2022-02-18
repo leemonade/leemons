@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { map } = require('lodash');
 const { table } = require('../tables');
 const { getByClass: getKnowledgeByClass } = require('./knowledge/getByClass');
 const { getByClass: getSubstageByClass } = require('./substage/getByClass');
@@ -6,6 +7,7 @@ const { getByClass: getStudentByClass } = require('./student/getByClass');
 const { getByClass: getTeacherByClass } = require('./teacher/getByClass');
 const { getByClass: getCourseByClass } = require('./course/getByClass');
 const { getByClass: getGroupByClass } = require('./group/getByClass');
+const { programHaveMultiCourses } = require('../programs/programHaveMultiCourses');
 
 async function classByIds(ids, { noSearchChilds, noSearchParents, transacting } = {}) {
   const timetableService = leemons.getPlugin('timetable').services.timetable;
@@ -31,6 +33,10 @@ async function classByIds(ids, { noSearchChilds, noSearchParents, transacting } 
     timetableService.listByClassIds(ids, { transacting }),
   ]);
 
+  let haveMultiCourses = false;
+  if (classes[0]) {
+    haveMultiCourses = await programHaveMultiCourses(classes[0].program, { transacting });
+  }
   const [
     originalSubjectTypes,
     originalKnowledges,
@@ -108,7 +114,12 @@ async function classByIds(ids, { noSearchChilds, noSearchParents, transacting } 
       parentClass: parentClassesById[rest.class],
       knowledges: knowledgesByClass[id] ? knowledgesById[knowledgesByClass[id][0].knowledge] : null,
       substages: substagesByClass[id] ? substagesById[substagesByClass[id][0].substage] : null,
-      courses: coursesByClass[id] ? coursesById[coursesByClass[id][0].course] : null,
+      // eslint-disable-next-line no-nested-ternary
+      courses: coursesByClass[id]
+        ? haveMultiCourses
+          ? map(coursesByClass[id], ({ course }) => coursesById[course])
+          : coursesById[coursesByClass[id][0].course]
+        : null,
       groups: groupsByClass[id] ? groupsById[groupsByClass[id][0].group] : null,
       students: _.uniq(_students),
       parentStudents: _.uniq(parentStudents),

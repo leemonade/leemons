@@ -1,5 +1,6 @@
 export function getTreeKnowledgeDetailTranslation(t) {
   return {
+    titleNew: t('knowledge.titleNew'),
     title: t('knowledge.title'),
     nameLabel: t('knowledge.nameLabel'),
     nameRequired: t('knowledge.nameRequired'),
@@ -12,5 +13,9 @@ export function getTreeKnowledgeDetailTranslation(t) {
     crProgram: t('knowledge.crProgram'),
     maxLength: t('knowledge.maxLength'),
     save: t('knowledge.save'),
+    assignSubjects: {
+      title: t('knowledge.assignSubjects.title'),
+      description: t('knowledge.assignSubjects.description'),
+    },
   };
 }

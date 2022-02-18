@@ -8,22 +8,32 @@ import {
   Paper,
   Tree,
 } from '@bubbles-ui/components';
+import { AddCircleIcon } from '@bubbles-ui/icons/outline';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { SelectCenter } from '@users/components/SelectCenter';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { useQuery, useStore } from '@common';
-import { find, map } from 'lodash';
+import { find, forEach, isArray, map } from 'lodash';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import SelectUserAgent from '@users/components/SelectUserAgent';
 import SelectProgram from '../../components/Selectors/SelectProgram';
 import {
+  createGroupRequest,
+  createKnowledgeRequest,
+  createSubjectTypeRequest,
+  detailProgramRequest,
+  getProfilesRequest,
   getProgramTreeRequest,
   listSubjectCreditsForProgramRequest,
+  removeGroupFromClassesRequest,
+  updateClassRequest,
   updateCourseRequest,
   updateGroupRequest,
   updateKnowledgeRequest,
   updateProgramRequest,
+  updateSubjectRequest,
   updateSubjectTypeRequest,
 } from '../../request';
 import { TreeProgramDetail } from '../../components/Tree/TreeProgramDetail';
@@ -36,6 +46,9 @@ import { TreeSubjectTypeDetail } from '../../components/Tree/TreeSubjectTypeDeta
 import { getTreeSubjectTypeDetailTranslation } from '../../helpers/getTreeSubjectTypeDetailTranslation';
 import { getTreeKnowledgeDetailTranslation } from '../../helpers/getTreeKnowledgeDetailTranslation';
 import { TreeKnowledgeDetail } from '../../components/Tree/TreeKnowledgeDetail';
+import { TreeClassDetail } from '../../components/Tree/TreeClassDetail';
+import { getTreeClassDetailTranslation } from '../../helpers/getTreeClassDetailTranslation';
+import SelectSubjectsByTable from '../../components/Selectors/SelectSubjectsByTable';
 
 export default function TreePage() {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('tree_page'));
@@ -45,23 +58,48 @@ export default function TreePage() {
   const params = useQuery();
 
   async function onEdit(item) {
-    console.log(item);
+    store.newItem = null;
     store.editingItem = item;
     render();
   }
 
+  async function onRemove(item) {
+    try {
+      if (item.nodeType === 'groups') {
+        await removeGroupFromClassesRequest(item.value.id);
+      }
+      // eslint-disable-next-line no-use-before-define
+      store.tree = await getProgramTree();
+      addSuccessAlert(t(`${item.nodeType}Removed`));
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    render();
+  }
+
+  async function onNew(item) {
+    store.editingItem = null;
+    store.newItem = item;
+    render();
+  }
+
   async function getProgramTree() {
-    const [{ tree }, { subjectCredits }] = await Promise.all([
+    const [{ tree }, { subjectCredits }, { program }, { profiles }] = await Promise.all([
       getProgramTreeRequest(store.programId),
       listSubjectCreditsForProgramRequest(store.programId),
+      detailProgramRequest(store.programId),
+      getProfilesRequest(),
     ]);
 
+    const classesBySubject = {};
     const result = [];
 
     const editLabel = t('treeEdit');
+    const removeLabel = t('treeRemove');
 
     function processItem(item, parents, parentId, childIndex) {
       let text = item.value.name;
+      const treeId = `${childIndex}.${parentId}.${item.value.id}`;
       if (item.nodeType === 'courses') {
         text = item.value.name
           ? `${item.value.name} (${item.value.index}º)`
@@ -80,23 +118,44 @@ export default function TreePage() {
           groupName = item.value.groups ? ` - ${item.value.groups.abbreviation}` : '';
         }
         text = `${courseName}${classSubjectCredits?.internalId} ${item.value.subject.name}${groupName}${substageName}`;
+        if (!isArray(classesBySubject[item.value.subject?.id]))
+          classesBySubject[item.value.subject?.id] = [];
+        classesBySubject[item.value.subject?.id].push({ ...item.value, treeName: text, treeId });
       }
-      const treeId = `${childIndex}.${parentId}.${item.value.id}`;
+
+      const actions = [
+        {
+          name: 'edit',
+          tooltip: editLabel,
+          showOnHover: true,
+          handler: () => onEdit({ ...item, treeId }),
+        },
+      ];
+
+      if (item.nodeType === 'groups' || item.nodeType === 'class') {
+        actions.push({
+          name: 'delete',
+          tooltip: removeLabel,
+          showOnHover: true,
+          handler: () => onRemove({ ...item, treeId, parents }),
+        });
+      }
+
+      if (item.nodeType !== 'program' && item.nodeType !== 'courses') {
+        actions.push({
+          name: 'new',
+          tooltip: t(`new${item.nodeType}`),
+          showOnHover: true,
+          icon: () => <AddCircleIcon />,
+          handler: () => onNew({ ...item, treeId, parents }),
+        });
+      }
+
       result.push({
         id: treeId,
         parent: parents[parents.length - 1] ? parentId : 0,
         text,
-        actions: [
-          {
-            name: 'edit',
-            tooltip: editLabel,
-            showOnHover: true,
-            handler: () => onEdit({ ...item, treeId }),
-          },
-          {
-            name: 'delete',
-          },
-        ],
+        actions,
       });
       if (item.childrens && item.childrens.length) {
         item.childrens.forEach((child, index) =>
@@ -106,7 +165,9 @@ export default function TreePage() {
     }
 
     processItem(tree, [], '0');
-    store.program = tree.value;
+    store.profiles = profiles;
+    store.program = program;
+    store.classesBySubject = classesBySubject;
     return result;
   }
 
@@ -130,6 +191,7 @@ export default function TreePage() {
       treeGroup: getTreeGroupDetailTranslation(t),
       treeSubjectType: getTreeSubjectTypeDetailTranslation(t),
       treeKnowledge: getTreeKnowledgeDetailTranslation(t),
+      treeClass: getTreeClassDetailTranslation(t),
     }),
     [t]
   );
@@ -244,6 +306,120 @@ export default function TreePage() {
     render();
   }
 
+  async function onSaveSubject({ id, name }) {
+    try {
+      store.saving = true;
+      render();
+      await updateSubjectRequest({
+        id,
+        name,
+      });
+      store.tree = await getProgramTree();
+      addSuccessAlert(t('subjectUpdated'));
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    store.saving = false;
+    render();
+  }
+
+  function selectClass(classId) {
+    store.editingItem.value = find(store.classesBySubject[store.editingItem.value.subject?.id], {
+      id: classId,
+    });
+    store.editingItem.treeId = store.editingItem.value.treeId;
+    render();
+  }
+
+  async function onSaveClass({ schedule, teacher, ...data }) {
+    try {
+      store.saving = true;
+      render();
+      await updateClassRequest({
+        ...data,
+        teachers: teacher ? [{ type: 'main-teacher', teacher }] : [],
+        schedule: schedule ? schedule.days : [],
+      });
+      store.tree = await getProgramTree();
+      addSuccessAlert(t('classUpdated'));
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    store.saving = false;
+    render();
+    selectClass(data.id);
+  }
+
+  async function onNewGroup(data) {
+    try {
+      store.saving = true;
+      render();
+      const aditionalData = {};
+      if (data.subjects) {
+        const types = {
+          groups: 'group',
+          courses: 'course',
+          knowledges: 'knowledge',
+          subjectType: 'subjectType',
+        };
+        forEach(store.newItem.parents, (parent) => {
+          if (types[parent.nodeType]) {
+            aditionalData[types[parent.nodeType]] = parent.value.id;
+          }
+        });
+      }
+      await createGroupRequest({
+        ...data,
+        aditionalData,
+        program: store.program.id,
+      });
+      store.tree = await getProgramTree();
+      store.newItem = null;
+      addSuccessAlert(t('groupCreated'));
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    store.saving = false;
+    render();
+  }
+
+  async function onNewSubjectType({ groupVisibility, ...data }) {
+    try {
+      store.saving = true;
+      render();
+      await createSubjectTypeRequest({
+        ...data,
+        groupVisibility: !!groupVisibility,
+        program: store.program.id,
+      });
+      store.tree = await getProgramTree();
+      store.newItem = null;
+      addSuccessAlert(t('subjectTypeCreated'));
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    store.saving = false;
+    render();
+  }
+
+  async function onNewKnowledge({ ...data }) {
+    try {
+      store.saving = true;
+      render();
+      await createKnowledgeRequest({
+        ...data,
+        program: store.program.id,
+      });
+      store.tree = await getProgramTree();
+      store.newItem = null;
+      addSuccessAlert(t('knowledgeCreated'));
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    store.saving = false;
+    render();
+  }
+
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader values={messages.header} />
@@ -332,6 +508,51 @@ export default function TreePage() {
                         saving={store.saving}
                       />
                     ) : null}
+                    {store.editingItem.nodeType === 'class' ? (
+                      <TreeClassDetail
+                        onSaveSubject={onSaveSubject}
+                        onSaveClass={onSaveClass}
+                        selectClass={selectClass}
+                        program={store.program}
+                        classe={store.editingItem.value}
+                        classes={store.classesBySubject[store.editingItem.value.subject?.id]}
+                        messages={messages.treeClass}
+                        saving={store.saving}
+                        teacherSelect={
+                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
+                        }
+                      />
+                    ) : null}
+                  </Paper>
+                ) : null}
+                {store.newItem ? (
+                  <Paper fullWidth padding={5}>
+                    {store.newItem.nodeType === 'groups' ? (
+                      <TreeGroupDetail
+                        onSave={onNewGroup}
+                        program={store.program}
+                        messages={messages.treeGroup}
+                        saving={store.saving}
+                        selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
+                      />
+                    ) : null}
+                    {store.newItem.nodeType === 'subjectType' ? (
+                      <TreeSubjectTypeDetail
+                        onSave={onNewSubjectType}
+                        messages={messages.treeSubjectType}
+                        saving={store.saving}
+                        selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
+                      />
+                    ) : null}
+                    {store.newItem.nodeType === 'knowledges' ? (
+                      <TreeKnowledgeDetail
+                        onSave={onNewKnowledge}
+                        program={store.program}
+                        messages={messages.treeKnowledge}
+                        saving={store.saving}
+                        selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
+                      />
+                    ) : null}
                   </Paper>
                 ) : null}
               </Col>
@@ -341,4 +562,8 @@ export default function TreePage() {
       </Paper>
     </ContextContainer>
   );
+}
+
+function SelectAgent(props) {
+  return <SelectUserAgent {...props} />;
 }

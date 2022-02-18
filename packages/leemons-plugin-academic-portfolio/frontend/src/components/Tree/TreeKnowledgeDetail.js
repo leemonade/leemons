@@ -7,11 +7,19 @@ import {
   ColorInput,
   ContextContainer,
   NumberInput,
+  Paragraph,
   TextInput,
   Title,
 } from '@bubbles-ui/components';
 
-const TreeKnowledgeDetail = ({ knowledge, program, messages, onSave, saving }) => {
+const TreeKnowledgeDetail = ({
+  knowledge,
+  program,
+  messages,
+  onSave,
+  saving,
+  selectSubjectsNode,
+}) => {
   const {
     reset,
     control,
@@ -35,7 +43,7 @@ const TreeKnowledgeDetail = ({ knowledge, program, messages, onSave, saving }) =
     <Box>
       <form onSubmit={handleSubmit(onSave)}>
         <ContextContainer direction="column" fullWidth>
-          <Title order={4}>{messages.title}</Title>
+          <Title order={4}>{knowledge ? messages.title : messages.titleNew}</Title>
           <Box>
             <Controller
               control={control}
@@ -91,6 +99,24 @@ const TreeKnowledgeDetail = ({ knowledge, program, messages, onSave, saving }) =
               render={({ field }) => <NumberInput label={messages.crProgram} {...field} />}
             />
           </Box>
+
+          {!knowledge ? (
+            <>
+              <Box>
+                <Title order={4}>{messages.assignSubjects.title}</Title>
+                <Paragraph>{messages.assignSubjects.description}</Paragraph>
+              </Box>
+
+              <Box>
+                <Controller
+                  control={control}
+                  name="subjects"
+                  render={({ field }) => React.cloneElement(selectSubjectsNode, { ...field })}
+                />
+              </Box>
+            </>
+          ) : null}
+
           <Box>
             <Button loading={saving} type="submit">
               {messages.save}
@@ -108,6 +134,7 @@ TreeKnowledgeDetail.propTypes = {
   messages: PropTypes.object,
   onSave: PropTypes.func,
   saving: PropTypes.bool,
+  selectSubjectsNode: PropTypes.any,
 };
 
 // eslint-disable-next-line import/prefer-default-export

@@ -4,13 +4,14 @@ import { ScheduleInput } from '@timetable/components';
 import {
   Box,
   ColorInput,
+  MultiSelect,
   NumberInput,
   Select,
   TableInput,
   TextInput,
   Title,
 } from '@bubbles-ui/components';
-import { find, forEach, isArray, isObject, map, set } from 'lodash';
+import { find, forEach, isArray, isObject, isObjectLike, map, set } from 'lodash';
 import { useStore } from '@common';
 import { useForm } from 'react-hook-form';
 
@@ -21,7 +22,17 @@ function EnableIfFormPropHasValue({
   onCreate = () => {},
   ...props
 }) {
-  const value = isObject(props.value) ? props.value.id : props.value;
+  let value = null;
+  if (isArray(props.value)) {
+    value = map(props.value, (val) => {
+      if (isObject(val)) return val.id;
+      return val;
+    });
+  } else if (isObjectLike(props.value)) {
+    value = props.value.id;
+  } else {
+    value = props.value;
+  }
 
   // eslint-disable-next-line no-nested-ternary
   const properties = property ? (isArray(property) ? property : [property]) : [];
@@ -80,6 +91,7 @@ function SubjectsTable({
         evForm.setValue(`${prefix}internalId`, subjectCredit?.internalId || null);
         evForm.setValue(`${prefix}credits`, subjectCredit?.credits || null);
         evForm.setValue(`${prefix}subjectType`, classe?.subjectType.id || null);
+        evForm.setValue(`${prefix}knowledges`, classe?.knowledges.id || null);
       }
     }
   }
@@ -156,14 +168,25 @@ function SubjectsTable({
       input: {
         node: (
           <EnableIfFormPropHasValue>
-            <Select data={selects.courses} required />
+            {program.moreThanOneAcademicYear ? (
+              <MultiSelect data={selects.courses} required />
+            ) : (
+              <Select data={selects.courses} required />
+            )}
           </EnableIfFormPropHasValue>
         ),
         rules: { required: messages.courseRequired },
       },
-      valueRender: (value) => (
-        <>{`${value.name ? `${value.name} (${value.index}º)` : `${value.index}º`}`}</>
-      ),
+      valueRender: (v) => {
+        const values = isArray(v) ? v : [v];
+        return map(
+          values,
+          (value, index) =>
+            `${index ? ', ' : ''}${
+              value.name ? `${value.name} (${value.index}º)` : `${value.index}º`
+            }`
+        );
+      },
     });
   }
   columns.push({
@@ -280,7 +303,7 @@ function SubjectsTable({
             : messages.groupAny
           ).replace('{max}', program.maxGroupAbbreviation),
           value: new RegExp(
-            `^[${program.maxGroupAbbreviationIsOnlyNumbers ? '0-9' : `\S`}]{${
+            `^${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
               program.maxGroupAbbreviation
             }}$`,
             'g'

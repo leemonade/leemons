@@ -14,4 +14,11 @@ async function updateGroup(body) {
   });
 }
 
-export { createGroup, updateGroup };
+async function removeGroupFromClasses(groupId) {
+  return leemons.api(`academic-portfolio/group-from-classes-under-node-tree?group=${groupId}`, {
+    allAgents: true,
+    method: 'DELETE',
+  });
+}
+
+export { createGroup, updateGroup, removeGroupFromClasses };

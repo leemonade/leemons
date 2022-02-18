@@ -38,7 +38,11 @@ import {
 
 export { listCourses as listCoursesRequest, updateCourse as updateCourseRequest } from './courses';
 
-export { createGroup as createGroupRequest, updateGroup as updateGroupRequest } from './groups';
+export {
+  createGroup as createGroupRequest,
+  updateGroup as updateGroupRequest,
+  removeGroupFromClasses as removeGroupFromClassesRequest,
+} from './groups';
 
 export const listSubjectsRequest = listSubjects;
 export const createSubjectRequest = createSubject;
