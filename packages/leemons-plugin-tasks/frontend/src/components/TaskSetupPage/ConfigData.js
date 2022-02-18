@@ -55,7 +55,9 @@ function ConfigData({
     };
 
     subscribe(f);
-    return () => unsubscribe(f);
+    return () => {
+      unsubscribe(f);
+    };
   }, []);
   // ·······························································
   // HANDLERS

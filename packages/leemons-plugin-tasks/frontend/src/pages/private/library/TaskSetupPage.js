@@ -24,6 +24,7 @@ export default function TaskSetupPage() {
   const [t, translations] = useTranslateLoader(prefixPN('task_setup_page'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [labels, setLabels] = useState(null);
+  const [status, setStatus] = useState('published');
   const [store, render] = useStore({
     currentTask: null,
   });
@@ -43,9 +44,10 @@ export default function TaskSetupPage() {
       if (!isEmpty(store.currentTask)) {
         messageKey = 'update_done';
       }
+
       const {
         task: { fullId },
-      } = await saveTaskRequest(store?.currentTask?.fullId, body);
+      } = await saveTaskRequest(store?.currentTask?.id, body);
 
       // TODO: Implement save task request call
       // const response = await apiCall(values);
@@ -73,6 +75,7 @@ export default function TaskSetupPage() {
       }
 
       await publishTaskRequest(id);
+      setStatus('published');
 
       addSuccessAlert(t('publish_done'));
     } catch (e) {
@@ -100,6 +103,9 @@ export default function TaskSetupPage() {
   useEffect(async () => {
     if (!isEmpty(id)) {
       store.currentTask = await getTask(id);
+
+      setStatus(store.currentTask.status);
+
       render();
     }
   }, [id]);
@@ -120,18 +126,34 @@ export default function TaskSetupPage() {
     saveTask(values, redirectTo);
   };
 
-  const handleOnPublishTask = () => {
-    emitEvent('saveTask');
+  const handleOnPublishTask = () =>
+    new Promise((resolve) => {
+      emitEvent('saveTask');
 
-    const f = (event) => {
-      if (event === 'taskSaved') {
-        publishTask(id);
-        unsubscribe(f);
+      const f = async (event) => {
+        if (event === 'taskSaved') {
+          resolve(await publishTask(id));
+          unsubscribe(f);
+        }
+      };
+
+      subscribe(f);
+    });
+
+  useEffect(() => {
+    const f = async (event) => {
+      if (event === 'publishTask') {
+        handleOnPublishTask(id);
+      } else if (event === 'publishTaskAndAssign') {
+        await handleOnPublishTask(id);
+        history.push(`/private/tasks/library/assign/${id}`);
       }
     };
 
     subscribe(f);
-  };
+
+    return () => unsubscribe(f);
+  }, []);
 
   // ·········································································
   // INIT VALUES
@@ -184,7 +206,7 @@ export default function TaskSetupPage() {
     <ContextContainer fullHeight>
       <AdminPageHeader
         values={headerLabels}
-        buttons={{ edit: 'Save draft', duplicate: id && 'Publish' }}
+        buttons={{ edit: 'Save draft', duplicate: status === 'draft' && 'Publish' }}
         onEdit={() => emitEvent('saveTask')}
         onDuplicate={handleOnPublishTask}
       />

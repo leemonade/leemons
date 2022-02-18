@@ -107,7 +107,8 @@ module.exports = {
           title: 'Instrucciones',
           forTeacher: 'Instrucciones para Profesores',
           forStudent: 'Instructions para Estudiantes',
-          buttonNext: 'Siguiente',
+          buttonPublish: 'Solo publicar',
+          buttonNext: 'Publicar y asignar',
           buttonPrev: 'Anterior',
         },
         placeholders: {

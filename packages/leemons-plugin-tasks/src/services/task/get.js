@@ -84,13 +84,18 @@ module.exports = async function get(
   try {
     // EN: Get the requested columns
     // ES: Obtener las columnas solicitadas
-    const versioningColumns = columns.filter((column) =>
-      taskVersioningExistingColumns.includes(column)
-    );
-    const taskColumns = columns.filter((column) => taskExistingColumns.includes(column));
-    const versionsColumns = columns.filter((column) =>
-      taskVersionsExistingColumns.includes(column)
-    );
+    const versioningColumns =
+      columns === '*'
+        ? taskVersioningExistingColumns
+        : columns.filter((column) => taskVersioningExistingColumns.includes(column));
+    const taskColumns =
+      columns === '*'
+        ? taskExistingColumns
+        : columns.filter((column) => taskExistingColumns.includes(column));
+    const versionsColumns =
+      columns === '*'
+        ? taskVersionsExistingColumns
+        : columns.filter((column) => taskVersionsExistingColumns.includes(column));
 
     if (Array.isArray(taskId)) {
       return getMany(taskId, { versioningColumns, taskColumns, versionsColumns, transacting });

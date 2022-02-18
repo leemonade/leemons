@@ -113,9 +113,14 @@ function InstructionData({
             </Button>
           </Box>
           <Box>
-            <Button type="submit" rightIcon={<ChevRightIcon height={20} width={20} />}>
-              {labels.buttonNext}
-            </Button>
+            <ContextContainer direction="row">
+              <Button variant="outline" onClick={() => emitEvent('publishTask')}>
+                {labels.buttonPublish}
+              </Button>
+              <Button type="submit" onClick={() => emitEvent('publishTaskAndAssign')}>
+                {labels.buttonNext}
+              </Button>
+            </ContextContainer>
           </Box>
         </Stack>
       </ContextContainer>

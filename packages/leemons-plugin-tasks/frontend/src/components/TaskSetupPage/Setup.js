@@ -7,7 +7,7 @@ function Setup({ labels, steps, values, editable, onSave, useObserver, ...props 
   const [sharedData, setSharedData] = useState(values || {});
   const [active, setActive] = useState(0);
 
-  const { subscribe } = useObserver();
+  const { subscribe, unsubscribe } = useObserver();
 
   const [callOnSave, setCallOnSave] = useState(false);
 
@@ -25,11 +25,15 @@ function Setup({ labels, steps, values, editable, onSave, useObserver, ...props 
   }, [values]);
 
   useEffect(() => {
-    subscribe((event) => {
+    const f = (event) => {
       if (event === 'saveData') {
         setCallOnSave('edit');
       }
-    }, []);
+    };
+
+    subscribe(f);
+
+    return () => unsubscribe(f);
   }, []);
 
   // ·······························································

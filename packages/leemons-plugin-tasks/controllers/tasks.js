@@ -124,8 +124,9 @@ module.exports = {
   get: async (ctx) => {
     try {
       const { id } = ctx.params;
+      const { columns } = ctx.query;
 
-      const task = await get(id);
+      const task = await get(id, { columns: columns === '*' ? columns : JSON.parse(columns) });
 
       ctx.status = 200;
       ctx.body = {

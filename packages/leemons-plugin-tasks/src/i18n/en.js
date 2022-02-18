@@ -109,7 +109,8 @@ module.exports = {
           title: 'Instructions',
           forTeacher: 'Instructions for Teacher',
           forStudent: 'Instructions for Student',
-          buttonNext: 'Next',
+          buttonPublish: 'Only publish',
+          buttonNext: 'Publish and assign',
           buttonPrev: 'Previous',
         },
         placeholders: {
