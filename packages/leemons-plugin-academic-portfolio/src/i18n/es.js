@@ -194,6 +194,7 @@ module.exports = {
       groupVisibilityLabel: 'Evitar grupos anidados',
     },
     subjects: {
+      newTitle: 'Nueva asignatura',
       title: 'Asignaturas',
       course: 'Curso',
       id: 'ID',
@@ -271,12 +272,15 @@ module.exports = {
     programUpdated: 'Programa actualizado',
     courseUpdated: 'Curso actualizado',
     groupUpdated: 'Grupo actualizado',
+    groupDuplicated: 'Grupo duplicado',
     knowledgeUpdated: 'Area actualizada',
     subjectTypeUpdated: 'Tipo de materia actualizado',
     subjectUpdated: 'Asignatura actualizada',
+    classCreated: 'Clase creada',
     classUpdated: 'Clase actualizada',
     treeEdit: 'Editar',
     treeRemove: 'Borrar',
+    treeDuplicate: 'Duplicar',
     groupsRemoved: 'Grupo borrado de las clases',
     groupCreated: 'Grupo creado',
     subjectTypeCreated: 'Tipo de materia creado',
@@ -285,6 +289,7 @@ module.exports = {
     newsubjectType: 'Nuevo tipo de asignatura',
     newclass: 'Nueva clase',
     newknowledges: 'Nueva área',
+    newsubject: 'Nueva asignatura',
     program: {
       title: 'Configuración del programa',
       nameLabel: 'Nombre del programa:',
@@ -310,7 +315,10 @@ module.exports = {
     },
     group: {
       titleNew: 'Nuevo grupo',
+      duplicateTitle: 'Duplicar grupo',
       title: 'Configuración del grupo',
+      duplicateWarning:
+        'Duplicating a group creates new classrooms that inherit the basic configuration of the subjects nested in the current group (such as type, or knowledge area), but you must specify a new set of students, teachers, places, etc... for these new classrooms..',
       abbreviationLabel: 'Abreviatura del grupo:',
       abbreviationHelper: '3 carac. max',
       aliasLabel: 'Alias del grupo:',
@@ -380,6 +388,7 @@ module.exports = {
       teacherLabel: 'Profesor principal:',
       teacherDescription: 'Asignar un profesor principal para esta aula',
       changeTeacherButtonLabel: 'Cambiar',
+      newClass: 'Nueva clase',
     },
   },
   selectSubjectsByTable: {

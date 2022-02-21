@@ -4,6 +4,7 @@ import { ScheduleInput } from '@timetable/components';
 import {
   Box,
   ColorInput,
+  ContextContainer,
   MultiSelect,
   NumberInput,
   Select,
@@ -64,6 +65,7 @@ function SubjectsTable({
   teacherSelect,
   onAdd = () => {},
   onUpdate = () => {},
+  onlyNewSubject = false,
 }) {
   const [store, render] = useStore({
     tempSubjects: [],
@@ -90,8 +92,8 @@ function SubjectsTable({
 
         evForm.setValue(`${prefix}internalId`, subjectCredit?.internalId || null);
         evForm.setValue(`${prefix}credits`, subjectCredit?.credits || null);
-        evForm.setValue(`${prefix}subjectType`, classe?.subjectType.id || null);
-        evForm.setValue(`${prefix}knowledges`, classe?.knowledges.id || null);
+        evForm.setValue(`${prefix}subjectType`, classe?.subjectType?.id || null);
+        evForm.setValue(`${prefix}knowledges`, classe?.knowledges?.id || null);
       }
     }
   }
@@ -178,7 +180,8 @@ function SubjectsTable({
         rules: { required: messages.courseRequired },
       },
       valueRender: (v) => {
-        const values = isArray(v) ? v : [v];
+        // eslint-disable-next-line no-nested-ternary
+        const values = v ? (isArray(v) ? v : [v]) : [];
         return map(
           values,
           (value, index) =>
@@ -196,7 +199,7 @@ function SubjectsTable({
       node: (
         <EnableIfFormPropHasValue onCreate={onCreateSubject}>
           <Select
-            data={selects.subjects}
+            data={onlyNewSubject ? store.tempSubjects : selects.subjects}
             required
             searchable
             creatable
@@ -303,9 +306,9 @@ function SubjectsTable({
             : messages.groupAny
           ).replace('{max}', program.maxGroupAbbreviation),
           value: new RegExp(
-            `^${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
+            `^(${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
               program.maxGroupAbbreviation
-            }}$`,
+            }}|.{36})$`,
             'g'
           ),
         },
@@ -316,7 +319,7 @@ function SubjectsTable({
             data={selects.groups}
             required
             searchable
-            creatable
+            creatable={!onlyNewSubject}
             getCreateLabel={(value) => `+ ${value}`}
             nothingFound={messages.noSubjectsFound}
           />
@@ -379,10 +382,12 @@ function SubjectsTable({
     const tempGroupsValues = map(store.tempGroups, 'value');
     const isNewSubject = tempSubjectsValues.indexOf(formData.subject) >= 0;
     const isNewGroup = tempGroupsValues.indexOf(formData.groups) >= 0;
-    await onAdd(formData, { isNewSubject, isNewGroup });
-    store.tempSubjects = [];
-    store.tempGroups = [];
-    render();
+    const good = await onAdd(formData, { isNewSubject, isNewGroup });
+    if (good !== null) {
+      store.tempSubjects = [];
+      store.tempGroups = [];
+      render();
+    }
   }
 
   async function _onUpdate({ oldItem, newItem }) {
@@ -411,8 +416,8 @@ function SubjectsTable({
   }
 
   return (
-    <Box>
-      <Title order={4}>{messages.title}</Title>
+    <ContextContainer direction="column" fullWidth>
+      <Title order={4}>{onlyNewSubject ? messages.newTitle : messages.title}</Title>
       <Box sx={(theme) => ({ paddingBottom: theme.spacing[3], width: '100%', overflow: 'auto' })}>
         <Box style={{ width: '2000px' }}>
           <TableInput
@@ -429,7 +434,7 @@ function SubjectsTable({
           />
         </Box>
       </Box>
-    </Box>
+    </ContextContainer>
   );
 }
 
@@ -442,6 +447,7 @@ SubjectsTable.propTypes = {
   onCreateSubject: PropTypes.func,
   program: PropTypes.any,
   tableLabels: PropTypes.object,
+  onlyNewSubject: PropTypes.bool,
 };
 
 export { SubjectsTable };

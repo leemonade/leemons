@@ -1,9 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
-import { Box, Button, ContextContainer, Paragraph, TextInput, Title } from '@bubbles-ui/components';
+import {
+  Alert,
+  Box,
+  Button,
+  ContextContainer,
+  Paragraph,
+  TextInput,
+  Title,
+} from '@bubbles-ui/components';
 
-const TreeGroupDetail = ({ group, program, messages, onSave, saving, selectSubjectsNode }) => {
+const TreeGroupDetail = ({
+  duplicateMode,
+  group,
+  program,
+  messages,
+  onSave,
+  saving,
+  selectSubjectsNode,
+}) => {
   const {
     reset,
     control,
@@ -19,7 +35,11 @@ const TreeGroupDetail = ({ group, program, messages, onSave, saving, selectSubje
     <Box>
       <form onSubmit={handleSubmit(onSave)}>
         <ContextContainer direction="column" fullWidth>
-          <Title order={4}>{group ? messages.title : messages.titleNew}</Title>
+          <Title order={4}>
+            {/* eslint-disable-next-line no-nested-ternary */}
+            {duplicateMode ? messages.duplicateTitle : group ? messages.title : messages.titleNew}
+          </Title>
+          <Alert>{messages.duplicateWarning}</Alert>
           <Box>
             <Controller
               name="abbreviation"
@@ -110,6 +130,7 @@ TreeGroupDetail.propTypes = {
   onGoProgram: PropTypes.func,
   saving: PropTypes.bool,
   selectSubjectsNode: PropTypes.any,
+  duplicateMode: PropTypes.bool,
 };
 
 // eslint-disable-next-line import/prefer-default-export

@@ -1,7 +1,9 @@
 export function getTreeGroupDetailTranslation(t) {
   return {
     titleNew: t('group.titleNew'),
+    duplicateTitle: t('group.duplicateTitle'),
     title: t('group.title'),
+    duplicateWarning: t('group.duplicateWarning'),
     abbreviationLabel: t('group.abbreviationLabel'),
     abbreviationHelper: t('group.abbreviationHelper'),
     aliasLabel: t('group.aliasLabel'),

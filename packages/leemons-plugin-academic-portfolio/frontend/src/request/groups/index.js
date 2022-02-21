@@ -21,4 +21,12 @@ async function removeGroupFromClasses(groupId) {
   });
 }
 
-export { createGroup, updateGroup, removeGroupFromClasses };
+async function duplicateGroup(body) {
+  return leemons.api(`academic-portfolio/group/duplicate`, {
+    allAgents: true,
+    method: 'POST',
+    body,
+  });
+}
+
+export { createGroup, updateGroup, removeGroupFromClasses, duplicateGroup };

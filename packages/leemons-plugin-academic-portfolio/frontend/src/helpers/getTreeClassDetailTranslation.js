@@ -16,5 +16,6 @@ export function getTreeClassDetailTranslation(t) {
     teacherLabel: t('class.teacherLabel'),
     teacherDescription: t('class.teacherDescription'),
     changeTeacherButtonLabel: t('class.changeTeacherButtonLabel'),
+    newClass: t('class.newClass'),
   };
 }

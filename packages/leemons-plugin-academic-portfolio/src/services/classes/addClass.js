@@ -18,7 +18,6 @@ const { changeBySubject } = require('./knowledge/changeBySubject');
 async function addClass(data, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
-      console.log(data);
       await validateAddClass(data, { transacting });
       const { course, group, knowledge, substage, teachers, schedule, ...rest } = data;
       // ES: Creamos la clase

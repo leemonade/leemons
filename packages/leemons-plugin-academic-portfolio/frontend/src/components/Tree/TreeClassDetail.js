@@ -10,6 +10,7 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
+import { useStore } from '@common';
 import { TreeClassroomDetail } from './TreeClassroomDetail';
 
 const TreeClassDetail = ({
@@ -22,7 +23,11 @@ const TreeClassDetail = ({
   selectClass,
   saving,
   teacherSelect,
+  createMode = false,
 }) => {
+  const [store, render] = useStore({
+    createMode,
+  });
   const {
     reset,
     control,
@@ -33,6 +38,22 @@ const TreeClassDetail = ({
   React.useEffect(() => {
     reset(classe.subject);
   }, [classe.subject]);
+
+  const tabs = [];
+
+  if (store.createMode) {
+    tabs.push(
+      <TabPanel key="newItem" label={messages.newClass}>
+        <TreeClassroomDetail
+          program={program}
+          messages={messages}
+          saving={saving}
+          onSave={onSaveClass}
+          teacherSelect={teacherSelect}
+        />
+      </TabPanel>
+    );
+  }
 
   return (
     <Box>
@@ -62,9 +83,10 @@ const TreeClassDetail = ({
           <ContextContainer direction="column" fullWidth>
             <Title order={4}>{messages.classrooms}</Title>
             <Box>
-              <Tabs activeKey={classe.id} onTabClick={selectClass}>
+              <Tabs activeKey={store.createMode ? 'newItem' : classe.id} onTabClick={selectClass}>
+                {tabs}
                 {classes.map((item) => (
-                  <TabPanel key={item.id} label={item.treeName}>
+                  <TabPanel disabled={store.createMode} key={item.id} label={item.treeName}>
                     <TreeClassroomDetail
                       program={program}
                       classe={item}
@@ -94,6 +116,7 @@ TreeClassDetail.propTypes = {
   onSaveClass: PropTypes.func,
   saving: PropTypes.bool,
   teacherSelect: PropTypes.any,
+  createMode: PropTypes.bool,
 };
 
 // eslint-disable-next-line import/prefer-default-export

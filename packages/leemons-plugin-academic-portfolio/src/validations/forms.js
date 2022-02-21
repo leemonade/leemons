@@ -456,6 +456,57 @@ async function validateAddGroup(data, { transacting } = {}) {
   if (groupCount) throw new Error('The group already exists');
 }
 
+const duplicateGroupSchema = {
+  type: 'object',
+  properties: {
+    id: stringSchema,
+    name: stringSchema,
+    abbreviation: stringSchema,
+  },
+  required: ['id', 'name', 'abbreviation'],
+  additionalProperties: false,
+};
+
+async function validateDuplicateGroup(data, { transacting } = {}) {
+  const validator = new LeemonsValidator(duplicateGroupSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+
+  const group = await table.groups.findOne({ id: data.id }, { transacting });
+  if (!group) {
+    throw new Error('The group does not exist');
+  }
+
+  const program = await table.programs.findOne({ id: group.program }, { transacting });
+  if (!program) {
+    throw new Error('The program does not exist');
+  }
+
+  if (program.maxGroupAbbreviation) {
+    // ES: Comprobamos si el nombre del grupo es mayor que el maximo
+    if (data.abbreviation.length > program.maxGroupAbbreviation)
+      throw new Error('The group abbreviation is longer than the specified length');
+  }
+
+  // ES: Comprobamos si el nombre del grupo es solo numeros
+  if (program.maxGroupAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
+    throw new Error('The group abbreviation must be only numbers');
+
+  // ES: Comprobamos que no exista ya el grupo
+  const groupCount = await table.groups.count(
+    {
+      abbreviation: data.abbreviation,
+      program: program.id,
+      type: 'group',
+    },
+    { transacting }
+  );
+
+  if (groupCount) throw new Error('The group already exists');
+}
+
 const updateCourseSchema = {
   type: 'object',
   properties: {
@@ -1041,6 +1092,7 @@ module.exports = {
   validateAddKnowledge,
   validateUpdateProgram,
   validateUpdateSubject,
+  validateDuplicateGroup,
   validateAddSubjectType,
   validateUpdateKnowledge,
   validateUpdateClassMany,

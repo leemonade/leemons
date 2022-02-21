@@ -196,6 +196,12 @@ module.exports = [
     handler: 'group.duplicateGroupWithClassesUnderNodeTree',
     authenticated: true,
   },
+  {
+    path: '/group/duplicate',
+    method: 'POST',
+    handler: 'group.duplicateGroup',
+    authenticated: true,
+  },
   // Subjects
   {
     path: '/subject',

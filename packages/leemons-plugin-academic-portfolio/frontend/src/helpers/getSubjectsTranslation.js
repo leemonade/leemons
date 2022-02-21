@@ -1,5 +1,6 @@
 export function getSubjectsTranslation(t) {
   return {
+    newTitle: t('subjects.newTitle'),
     title: t('subjects.title'),
     course: t('subjects.course'),
     courseRequired: t('subjects.courseRequired'),

@@ -41,6 +41,7 @@ export { listCourses as listCoursesRequest, updateCourse as updateCourseRequest 
 export {
   createGroup as createGroupRequest,
   updateGroup as updateGroupRequest,
+  duplicateGroup as duplicateGroupRequest,
   removeGroupFromClasses as removeGroupFromClassesRequest,
 } from './groups';
 

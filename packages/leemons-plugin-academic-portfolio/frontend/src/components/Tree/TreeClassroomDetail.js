@@ -39,16 +39,16 @@ const TreeClassroomDetail = ({ classe, program, messages, onSave, saving, teache
   );
 
   function classForForm() {
-    const teacher = find(classe.teachers, { type: 'main-teacher' });
+    const teacher = find(classe?.teachers, { type: 'main-teacher' });
     return {
-      id: classe.id,
-      course: program.moreThanOneAcademicYear ? map(classe.courses, 'id') : classe.courses?.id,
-      knowledge: classe.knowledges?.id,
-      substage: classe.substages?.id,
-      group: classe.groups?.id,
-      color: classe.color,
-      seats: classe.seats,
-      schedule: classe.schedule ? { days: classe.schedule } : { days: [] },
+      id: classe?.id,
+      course: program.moreThanOneAcademicYear ? map(classe?.courses, 'id') : classe?.courses?.id,
+      knowledge: classe?.knowledges?.id,
+      substage: classe?.substages?.id,
+      group: classe?.groups?.id,
+      color: classe?.color,
+      seats: classe?.seats,
+      schedule: classe?.schedule ? { days: classe.schedule } : { days: [] },
       teacher: teacher ? teacher.teacher : null,
     };
   }

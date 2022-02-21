@@ -175,6 +175,9 @@ export default function SubjectList() {
       return subject;
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
+      store.program.classes = [...store.program.classes];
+      store.program = { ...store.program };
+      render();
     }
     return null;
   }
@@ -190,6 +193,9 @@ export default function SubjectList() {
       return subject;
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
+      store.program.classes = [...store.program.classes];
+      store.program = { ...store.program };
+      render();
     }
     return null;
   }
@@ -219,6 +225,9 @@ export default function SubjectList() {
       return c;
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
+      store.program.classes = [...store.program.classes];
+      store.program = { ...store.program };
+      render();
     }
     return null;
   }
@@ -247,6 +256,9 @@ export default function SubjectList() {
       return c;
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
+      store.program.classes = [...store.program.classes];
+      store.program = { ...store.program };
+      render();
     }
     return null;
   }
@@ -294,8 +306,12 @@ export default function SubjectList() {
       if (classe) addSuccessAlert(isUpdate ? t('classUpdated') : t('classCreated'));
       store.program = await getProgramDetail();
       render();
+      return true;
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
+      store.program.classes = [...store.program.classes];
+      store.program = { ...store.program };
+      render();
     }
     return null;
   }

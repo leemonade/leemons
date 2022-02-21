@@ -50,9 +50,16 @@ async function duplicateGroupWithClassesUnderNodeTree(ctx) {
   ctx.body = { status: 200, duplications };
 }
 
+async function duplicateGroup(ctx) {
+  const duplications = await groupService.duplicateGroup(ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, duplications };
+}
+
 module.exports = {
   duplicateGroupWithClassesUnderNodeTree,
   deleteGroupFromClassesUnderNodeTree,
+  duplicateGroup,
   postGroup,
   listGroup,
   putGroup,
