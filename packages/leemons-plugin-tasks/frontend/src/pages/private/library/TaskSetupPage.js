@@ -12,7 +12,6 @@ import {
   DesignData,
   ContentData,
   InstructionData,
-  PublishData,
 } from '../../../components/TaskSetupPage';
 import { prefixPN } from '../../../helpers';
 import saveTaskRequest from '../../../request/task/saveTask';
@@ -49,9 +48,11 @@ export default function TaskSetupPage() {
         task: { fullId },
       } = await saveTaskRequest(store?.currentTask?.id, body);
 
-      // TODO: Implement save task request call
-      // const response = await apiCall(values);
-      // store.currentTask = response.task;
+      if (!store.currentTask) {
+        store.currentTask = {};
+      }
+
+      store.currentTask.id = fullId;
 
       addSuccessAlert(t(messageKey));
 
@@ -67,8 +68,10 @@ export default function TaskSetupPage() {
     }
   };
 
-  const publishTask = async (id) => {
+  const publishTask = async () => {
     try {
+      const { id } = store.currentTask;
+
       if (isEmpty(id)) {
         addErrorAlert('No task id provided');
         return;
@@ -132,7 +135,7 @@ export default function TaskSetupPage() {
 
       const f = async (event) => {
         if (event === 'taskSaved') {
-          resolve(await publishTask(id));
+          resolve(await publishTask());
           unsubscribe(f);
         }
       };
@@ -142,11 +145,12 @@ export default function TaskSetupPage() {
 
   useEffect(() => {
     const f = async (event) => {
-      if (event === 'publishTask') {
-        handleOnPublishTask(id);
+      if (event === 'publishTaskAndLibrary') {
+        await handleOnPublishTask();
+        history.push(`/private/tasks/library`);
       } else if (event === 'publishTaskAndAssign') {
-        await handleOnPublishTask(id);
-        history.push(`/private/tasks/library/assign/${id}`);
+        await handleOnPublishTask();
+        history.push(`/private/tasks/library/assign/${store.currentTask.id}`);
       }
     };
 
@@ -167,7 +171,7 @@ export default function TaskSetupPage() {
 
   const setupProps = useMemo(() => {
     if (!isNil(labels)) {
-      const { configData, designData, contentData, instructionData, publishData } = labels;
+      const { configData, designData, contentData, instructionData } = labels;
 
       return {
         editable: isEmpty(store.currentTask),
@@ -188,10 +192,6 @@ export default function TaskSetupPage() {
           {
             label: instructionData.step_label,
             content: <InstructionData useObserver={useSaveObserver} {...instructionData} />,
-          },
-          {
-            label: publishData.step_label,
-            content: <PublishData {...publishData} />,
           },
         ],
       };

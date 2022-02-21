@@ -60,70 +60,71 @@ export default function Form({ onSubmit: parentSubmit }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Controller
-        control={control}
-        name="assignees"
-        render={({ field }) => (
-          <AssignUsers {...field} labels={labels} modes={modes} assignTo={assignTo} />
-        )}
-      />
-
-      <ContextContainer direction="row">
+      <ContextContainer>
         <Controller
           control={control}
-          name="startDate"
+          name="assignees"
           render={({ field }) => (
-            <DateTime {...field} label={labels?.startDate} placeholder={placeholders?.date} />
+            <AssignUsers {...field} labels={labels} modes={modes} assignTo={assignTo} />
           )}
         />
+        <ContextContainer direction="row">
+          <Controller
+            control={control}
+            name="startDate"
+            render={({ field }) => (
+              <DateTime {...field} label={labels?.startDate} placeholder={placeholders?.date} />
+            )}
+          />
 
-        <Controller
-          control={control}
-          name="deadline"
-          render={({ field }) => (
-            <DateTime {...field} label={labels?.deadline} placeholder={placeholders?.date} />
-          )}
-        />
+          <Controller
+            control={control}
+            name="deadline"
+            render={({ field }) => (
+              <DateTime {...field} label={labels?.deadline} placeholder={placeholders?.date} />
+            )}
+          />
 
-        <ConditionalInput
-          label={labels?.visualizationDate}
-          render={() => (
-            <ContextContainer direction="row" alignItems="end">
-              <Controller
-                control={control}
-                name="visualizationDate"
-                render={({ field }) => <DateTime {...field} placeholder={placeholders?.date} />}
-              />
-            </ContextContainer>
-          )}
-        />
+          <ConditionalInput
+            label={labels?.visualizationDate}
+            render={() => (
+              <ContextContainer direction="row" alignItems="end">
+                <Controller
+                  control={control}
+                  name="visualizationDate"
+                  render={({ field }) => <DateTime {...field} placeholder={placeholders?.date} />}
+                />
+              </ContextContainer>
+            )}
+          />
+
+          <ContextContainer>
+            <ConditionalInput
+              label={labels?.limitedExecution}
+              render={() => (
+                <Controller
+                  control={control}
+                  name="executionTime"
+                  render={({ field }) => <TimeUnitsInput {...field} />}
+                />
+              )}
+            />
+          </ContextContainer>
+        </ContextContainer>
 
         <ContextContainer>
           <ConditionalInput
-            label={labels?.limitedExecution}
+            label={labels?.messageToStudents}
+            help={descriptions?.messageToStudents}
             render={() => (
               <Controller
                 control={control}
-                name="executionTime"
-                render={({ field }) => <TimeUnitsInput {...field} />}
+                name="message"
+                render={({ field }) => <TextEditor {...field} />}
               />
             )}
           />
         </ContextContainer>
-      </ContextContainer>
-
-      <ContextContainer>
-        <ConditionalInput
-          label={labels?.messageToStudents}
-          help={descriptions?.messageToStudents}
-          render={() => (
-            <Controller
-              control={control}
-              name="message"
-              render={({ field }) => <TextEditor {...field} />}
-            />
-          )}
-        />
       </ContextContainer>
 
       <Button type="submit">{labels?.submit}</Button>

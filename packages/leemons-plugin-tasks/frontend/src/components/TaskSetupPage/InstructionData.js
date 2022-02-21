@@ -114,12 +114,10 @@ function InstructionData({
           </Box>
           <Box>
             <ContextContainer direction="row">
-              <Button variant="outline" onClick={() => emitEvent('publishTask')}>
+              <Button variant="outline" onClick={() => emitEvent('publishTaskAndLibrary')}>
                 {labels.buttonPublish}
               </Button>
-              <Button type="submit" onClick={() => emitEvent('publishTaskAndAssign')}>
-                {labels.buttonNext}
-              </Button>
+              <Button onClick={() => emitEvent('publishTaskAndAssign')}>{labels.buttonNext}</Button>
             </ContextContainer>
           </Box>
         </Stack>
