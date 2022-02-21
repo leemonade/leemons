@@ -84,47 +84,44 @@ export default function Form({ onSubmit: parentSubmit }) {
               <DateTime {...field} label={labels?.deadline} placeholder={placeholders?.date} />
             )}
           />
-
-          <ConditionalInput
-            label={labels?.visualizationDate}
-            render={() => (
-              <ContextContainer direction="row" alignItems="end">
-                <Controller
-                  control={control}
-                  name="visualizationDate"
-                  render={({ field }) => <DateTime {...field} placeholder={placeholders?.date} />}
-                />
-              </ContextContainer>
-            )}
-          />
-
-          <ContextContainer>
-            <ConditionalInput
-              label={labels?.limitedExecution}
-              render={() => (
-                <Controller
-                  control={control}
-                  name="executionTime"
-                  render={({ field }) => <TimeUnitsInput {...field} />}
-                />
-              )}
-            />
-          </ContextContainer>
         </ContextContainer>
 
-        <ContextContainer>
-          <ConditionalInput
-            label={labels?.messageToStudents}
-            help={descriptions?.messageToStudents}
-            render={() => (
+        <ConditionalInput
+          label={labels?.visualizationDate}
+          render={() => (
+            <ContextContainer direction="row" alignItems="end">
               <Controller
                 control={control}
-                name="message"
-                render={({ field }) => <TextEditor {...field} />}
+                name="visualizationDate"
+                render={({ field }) => (
+                  <DateTime {...field} label="AÑADIR UN LABEL" placeholder={placeholders?.date} />
+                )}
               />
-            )}
-          />
-        </ContextContainer>
+            </ContextContainer>
+          )}
+        />
+
+        <ConditionalInput
+          label={labels?.limitedExecution}
+          render={() => (
+            <Controller
+              control={control}
+              name="executionTime"
+              render={({ field }) => <TimeUnitsInput label="AÑADIR UN LABEL" {...field} />}
+            />
+          )}
+        />
+        <ConditionalInput
+          label={labels?.messageToStudents}
+          help={descriptions?.messageToStudents}
+          render={() => (
+            <Controller
+              control={control}
+              name="message"
+              render={({ field }) => <TextEditor label="AÑADIR UN LABEL" {...field} />}
+            />
+          )}
+        />
       </ContextContainer>
 
       <Button type="submit">{labels?.submit}</Button>

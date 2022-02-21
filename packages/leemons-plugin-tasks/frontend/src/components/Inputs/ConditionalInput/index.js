@@ -1,18 +1,34 @@
 import React, { useState } from 'react';
-import { Box, Checkbox } from '@bubbles-ui/components';
+import PropTypes from 'prop-types';
+import { Switch, ContextContainer } from '@bubbles-ui/components';
 
 export default function ConditionalInput({
   showOnTrue = true,
   render,
   helpPosition = 'bottom',
+  onChange,
   ...props
 }) {
   const [show, setShow] = useState(false);
 
+  const handleChange = (value) => {
+    setShow(value);
+    if (typeof onChange === 'function') {
+      onChange(value);
+    }
+  };
+
   return (
-    <Box>
-      <Checkbox {...props} helpPosition={helpPosition} value={show} onChange={setShow} />
+    <ContextContainer>
+      <Switch {...props} helpPosition={helpPosition} value={show} onChange={handleChange} />
       {showOnTrue === show && render()}
-    </Box>
+    </ContextContainer>
   );
 }
+
+ConditionalInput.propTypes = {
+  showOnTrue: PropTypes.bool,
+  render: PropTypes.func,
+  helpPosition: PropTypes.string,
+  onChange: PropTypes.func,
+};
