@@ -1,7 +1,6 @@
 import React from 'react';
 import { ContextContainer, PageContainer, Paper } from '@bubbles-ui/components';
 import { useParams } from 'react-router-dom';
-import { getCentersWithToken } from '@users/session';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import Form from '../../../components/Assignment/Form';
@@ -21,7 +20,7 @@ export default function AssignmentPage() {
   const { id } = useParams();
 
   const handleAssignment = async (values) => {
-    const { assignees, startDate, deadline, visualizationDate, ...instanceData } = values;
+    const { assignees, teachers, startDate, deadline, visualizationDate, ...instanceData } = values;
 
     const [students, classes] = assignees.reduce(
       ([s, c], { type, assignee }) => {
@@ -43,13 +42,10 @@ export default function AssignmentPage() {
       });
 
       await assignStudentRequest(instance, students);
-
-      const userAgents = (await getCentersWithToken()).map((token) => token.userAgentId);
-
-      // TODO: Get the desired userAgent, for now we just get the first one
-      const userAgent = userAgents[0];
-
-      await assignTeacherRequest(instance, userAgent);
+      await assignTeacherRequest(
+        instance,
+        teachers.map((t) => t.assignee)
+      );
 
       addSuccessAlert('Assignment created successfully');
     } catch (e) {

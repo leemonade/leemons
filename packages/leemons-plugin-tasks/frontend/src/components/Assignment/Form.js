@@ -63,6 +63,13 @@ export default function Form({ onSubmit: parentSubmit }) {
       <ContextContainer>
         <Controller
           control={control}
+          name="teachers"
+          render={({ field }) => (
+            <AssignUsers {...field} labels={labels} modes={modes} assignTo={assignTo} />
+          )}
+        />
+        <Controller
+          control={control}
           name="assignees"
           render={({ field }) => (
             <AssignUsers {...field} labels={labels} modes={modes} assignTo={assignTo} />
