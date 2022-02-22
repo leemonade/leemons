@@ -259,6 +259,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/class/:id',
+    method: 'DELETE',
+    handler: 'class.removeClass',
+    authenticated: true,
+  },
+  {
     path: '/class',
     method: 'PUT',
     handler: 'class.putClass',

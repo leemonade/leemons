@@ -281,6 +281,7 @@ module.exports = {
     treeRemove: 'Remove',
     treeDuplicate: 'Duplicate',
     groupsRemoved: 'Group removed from classes',
+    classRemoved: 'Class removed',
     groupCreated: 'Group created',
     subjectTypeCreated: 'Subject type created',
     knowledgeCreated: 'Area created',

@@ -60,11 +60,19 @@ async function addTeachersToClass(body) {
   });
 }
 
+async function removeClass(id) {
+  return leemons.api(`academic-portfolio/class/${id}`, {
+    allAgents: true,
+    method: 'DELETE',
+  });
+}
+
 export {
   haveClasses,
   listClasses,
   createClass,
   updateClass,
+  removeClass,
   updateClassMany,
   createClassInstance,
   addStudentsToClass,

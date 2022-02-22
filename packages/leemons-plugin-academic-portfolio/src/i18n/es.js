@@ -282,6 +282,7 @@ module.exports = {
     treeRemove: 'Borrar',
     treeDuplicate: 'Duplicar',
     groupsRemoved: 'Grupo borrado de las clases',
+    classRemoved: 'Clase borrada',
     groupCreated: 'Grupo creado',
     subjectTypeCreated: 'Tipo de materia creado',
     knowledgeCreated: 'Area creada',

@@ -32,6 +32,7 @@ import {
   createClassInstance,
   haveClasses,
   listClasses,
+  removeClass,
   updateClass,
   updateClassMany,
 } from './classes';
@@ -56,6 +57,7 @@ export const haveClassesRequest = haveClasses;
 export const listClassesRequest = listClasses;
 export const createClassRequest = createClass;
 export const updateClassRequest = updateClass;
+export const removeClassRequest = removeClass;
 export const updateClassManyRequest = updateClassMany;
 export const createClassInstanceRequest = createClassInstance;
 export const addStudentsToClassRequest = addStudentsToClass;

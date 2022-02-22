@@ -30,6 +30,7 @@ import {
   getProfilesRequest,
   getProgramTreeRequest,
   listSubjectCreditsForProgramRequest,
+  removeClassRequest,
   removeGroupFromClassesRequest,
   updateClassRequest,
   updateCourseRequest,
@@ -83,6 +84,10 @@ export default function TreePage() {
       if (item.nodeType === 'groups') {
         await removeGroupFromClassesRequest(item.value.id);
       }
+      if (item.nodeType === 'class') {
+        await removeClassRequest(item.value.id);
+      }
+
       // eslint-disable-next-line no-use-before-define
       store.tree = await getProgramTree();
       addSuccessAlert(t(`${item.nodeType}Removed`));
