@@ -23,6 +23,27 @@ const getPermissions = (permissionsArr, actions = null) => {
 
 module.exports = [
   /**
+   * Profiles
+   */
+  {
+    method: 'GET',
+    path: '/profiles/:key',
+    handler: 'profiles.get',
+    authenticated: true,
+  },
+  {
+    method: 'POST',
+    path: '/profiles/:key',
+    handler: 'profiles.set',
+    authenticated: true,
+  },
+  {
+    method: 'POST',
+    path: '/profiles',
+    handler: 'profiles.setMany',
+    authenticated: true,
+  },
+  /**
    * Tasks
    */
   {
@@ -165,6 +186,12 @@ module.exports = [
     method: 'GET',
     path: '/tasks/instances/:instance/teachers',
     handler: 'assignments.teacherList',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/instances/teacher/:user',
+    handler: 'assignments.teacherListAssigned',
     authenticated: true,
   },
 

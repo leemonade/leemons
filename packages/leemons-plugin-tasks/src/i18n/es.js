@@ -4,6 +4,11 @@ module.exports = {
     page_description:
       'Gracias al módulo de tareas puedes crear nuevas tareas, asignarlas a grupos de estudiantes o individuos, controlar su estado actual e iniciar evaluaciones de las tareas completadas.',
     hide_info_label: `Ok, ya lo tengo. Cuando la configuración esté completa, no muestres más esta información`,
+    step_profiles: {
+      title: 'Vincular perfiles',
+      description: 'Identifica que perfiles coinciden con los profesores y estudiantes',
+      btn: 'Vincular perfiles',
+    },
     step_library: {
       title: 'Biblioteca de tareas',
       description:

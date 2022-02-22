@@ -8,6 +8,7 @@ const AssignmentPage = loadable(() => import('./src/pages/private/assignment/Ass
 const Welcome = loadable(() => import('./src/pages/private/welcome/WelcomePage'));
 const Library = loadable(() => import('./src/pages/private/library/LibraryPage'));
 const SetupTask = loadable(() => import('./src/pages/private/library/TaskSetupPage'));
+const Profiles = loadable(() => import('./src/pages/private/profiles/ProfilesPage'));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -17,6 +18,9 @@ export default function Private() {
     <Switch>
       <Route path={`${path}/welcome`}>
         <Welcome session={session} />
+      </Route>
+      <Route path={`${path}/profiles`}>
+        <Profiles session={session} />
       </Route>
       <Route path={`${path}/library/edit/:id`}>
         <SetupTask session={session} />

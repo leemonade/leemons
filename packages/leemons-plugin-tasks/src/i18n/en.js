@@ -4,6 +4,11 @@ module.exports = {
     page_description:
       'Thanks to the tasks module you can create new tasks, assign them to groups of students or individuals, monitor their current status and start evaluations of completed tasks.',
     hide_info_label: `Ok, I've got it. When the configuration is complete, don't show this info anymore`,
+    step_profiles: {
+      title: 'Link profiles',
+      description: 'Identify which profiles match the teachers and students',
+      btn: 'Link profiles',
+    },
     step_library: {
       title: 'Tasks Library',
       description:

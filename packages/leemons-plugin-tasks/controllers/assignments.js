@@ -7,7 +7,8 @@ const listStudents = require('../src/services/assignment/student/list');
 
 const assignTeacher = require('../src/services/assignment/teacher/assign');
 const unassignTeacher = require('../src/services/assignment/teacher/remove');
-const listTeachers = require('../src/services/assignment/teacher/list');
+const listTeachers = require('../src/services/assignment/teacher/listTeachers');
+const listAssigned = require('../src/services/assignment/teacher/listAssigned');
 
 module.exports = {
   /**
@@ -156,6 +157,26 @@ module.exports = {
       ctx.body = {
         status: 200,
         ...unassigned,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        message: e.message,
+      };
+    }
+  },
+  teacherListAssigned: async (ctx) => {
+    try {
+      const { user } = ctx.request.params;
+      const { page, size } = ctx.request.query;
+
+      const tasks = await listAssigned(user, parseInt(page, 10), parseInt(size, 10));
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        tasks,
       };
     } catch (e) {
       ctx.status = 400;

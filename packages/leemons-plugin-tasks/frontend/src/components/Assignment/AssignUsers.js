@@ -8,12 +8,14 @@ import { getCentersWithToken } from '@users/session';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import { listTeacherClassesRequest } from '@academic-portfolio/request';
 import { useApi } from '@common';
+import { getProfiles } from '../../request/profiles';
 
-export default function AssignUsers({ labels, assignTo, onChange }) {
+export default function AssignUsers({ labels, profile, assignTo, onChange }) {
   const [data, setData] = useState([]);
   const [centers] = useApi(getCentersWithToken);
   const [assignees, setAssignees] = useState([]);
   const userAgents = useRef({ centers: [], agents: [] });
+  const [profiles, setProfiles] = useState(null);
 
   const {
     handleSubmit,
@@ -42,6 +44,11 @@ export default function AssignUsers({ labels, assignTo, onChange }) {
   });
 
   AssigneeSelector.displayName = 'AssigneeSelector';
+
+  useEffect(async () => {
+    const p = await getProfiles(profile);
+    setProfiles([p[0].profile]);
+  }, []);
 
   // EN: When the assignee changes, we need to reset the form
   // ES: Cuando el asignado cambia, necesitamos resetear el formulario
@@ -153,7 +160,12 @@ export default function AssignUsers({ labels, assignTo, onChange }) {
             name="assignee"
             rules={{ required: 'Assignee Required' }}
             render={({ field }) => (
-              <AssigneeSelector error={errors.assignee} label={assigneeLabel} {...field} />
+              <AssigneeSelector
+                profiles={profiles}
+                error={errors.assignee}
+                label={assigneeLabel}
+                {...field}
+              />
             )}
           />
         )}

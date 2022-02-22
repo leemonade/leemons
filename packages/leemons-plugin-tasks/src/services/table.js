@@ -9,4 +9,5 @@ module.exports = {
   userInstances: leemons.query('plugins_tasks::userInstances'),
   userDeliverables: leemons.query('plugins_tasks::userDeliverables'),
   settings: leemons.query('plugins_tasks::settings'),
+  profiles: leemons.query('plugins_tasks::profiles'),
 };

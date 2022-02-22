@@ -3,10 +3,12 @@ import { ContextContainer, PageContainer, Paper } from '@bubbles-ui/components';
 import { useParams } from 'react-router-dom';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import hooks from 'leemons-hooks';
 import Form from '../../../components/Assignment/Form';
 import createInstanceRequest from '../../../request/instance/createInstance';
 import assignStudentRequest from '../../../request/instance/assignStudent';
 import assignTeacherRequest from '../../../request/instance/assignTeacher';
+import { enableMenuItemRequest } from '../../../request';
 
 function parseDates(date) {
   if (date instanceof Date) {
@@ -46,6 +48,12 @@ export default function AssignmentPage() {
         instance,
         teachers.map((t) => t.assignee)
       );
+
+      await enableMenuItemRequest('ongoing');
+      await enableMenuItemRequest('history');
+
+      await hooks.fireEvent('menu-builder:user:updateItem', 'ongoing');
+      await hooks.fireEvent('menu-builder:user:updateItem', 'history');
 
       addSuccessAlert('Assignment created successfully');
     } catch (e) {

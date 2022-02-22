@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { unflatten } from '@common';
 import { useForm, Controller } from 'react-hook-form';
-import { Button, ContextContainer } from '@bubbles-ui/components';
+import { Button, ContextContainer, DatePicker } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditor } from '@bubbles-ui/editors';
 import { prefixPN } from '../../helpers/prefixPN';
 import AssignUsers from './AssignUsers';
 import ConditionalInput from '../Inputs/ConditionalInput';
-import DateTime from '../Inputs/DateTime';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 
 export default function Form({ onSubmit: parentSubmit }) {
@@ -65,14 +64,26 @@ export default function Form({ onSubmit: parentSubmit }) {
           control={control}
           name="teachers"
           render={({ field }) => (
-            <AssignUsers {...field} labels={labels} modes={modes} assignTo={assignTo} />
+            <AssignUsers
+              {...field}
+              profile="teacher"
+              labels={labels}
+              modes={modes}
+              assignTo={assignTo}
+            />
           )}
         />
         <Controller
           control={control}
           name="assignees"
           render={({ field }) => (
-            <AssignUsers {...field} labels={labels} modes={modes} assignTo={assignTo} />
+            <AssignUsers
+              {...field}
+              profile="student"
+              labels={labels}
+              modes={modes}
+              assignTo={assignTo}
+            />
           )}
         />
         <ContextContainer direction="row">
@@ -80,7 +91,12 @@ export default function Form({ onSubmit: parentSubmit }) {
             control={control}
             name="startDate"
             render={({ field }) => (
-              <DateTime {...field} label={labels?.startDate} placeholder={placeholders?.date} />
+              <DatePicker
+                withTime
+                {...field}
+                label={labels?.startDate}
+                placeholder={placeholders?.date}
+              />
             )}
           />
 
@@ -88,7 +104,12 @@ export default function Form({ onSubmit: parentSubmit }) {
             control={control}
             name="deadline"
             render={({ field }) => (
-              <DateTime {...field} label={labels?.deadline} placeholder={placeholders?.date} />
+              <DatePicker
+                withTime
+                {...field}
+                label={labels?.deadline}
+                placeholder={placeholders?.date}
+              />
             )}
           />
         </ContextContainer>
@@ -100,8 +121,14 @@ export default function Form({ onSubmit: parentSubmit }) {
               <Controller
                 control={control}
                 name="visualizationDate"
+                shouldUnregister={true}
                 render={({ field }) => (
-                  <DateTime {...field} label="AÑADIR UN LABEL" placeholder={placeholders?.date} />
+                  <DatePicker
+                    withTime
+                    {...field}
+                    label="AÑADIR UN LABEL"
+                    placeholder={placeholders?.date}
+                  />
                 )}
               />
             </ContextContainer>
@@ -114,6 +141,7 @@ export default function Form({ onSubmit: parentSubmit }) {
             <Controller
               control={control}
               name="executionTime"
+              shouldUnregister={true}
               render={({ field }) => <TimeUnitsInput label="AÑADIR UN LABEL" {...field} />}
             />
           )}
@@ -125,6 +153,7 @@ export default function Form({ onSubmit: parentSubmit }) {
             <Controller
               control={control}
               name="message"
+              shouldUnregister={true}
               render={({ field }) => <TextEditor label="AÑADIR UN LABEL" {...field} />}
             />
           )}
