@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { isFunction, isEmpty, find } from 'lodash';
+import { isFunction, isEmpty, isNil, find, isArray, map } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
 import {
   Box,
@@ -14,6 +14,7 @@ import {
 } from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { SelectProgram, SelectCourse, SelectSubject } from '@academic-portfolio/components';
+import { detailProgramRequest } from '@academic-portfolio/request';
 import { SelectCenter } from '@users/components';
 
 function ConfigData({
@@ -33,10 +34,12 @@ function ConfigData({
 
   const defaultValues = {
     ...sharedData,
+    subjects: [],
   };
 
   const {
     control,
+    watch,
     handleSubmit,
     formState: { errors },
     reset,
@@ -44,6 +47,8 @@ function ConfigData({
 
   const { subscribe, unsubscribe, emitEvent } = useObserver();
   const [centerId, setCenterId] = useState(null);
+  const [program, setProgram] = useState({});
+  const programId = watch('program');
 
   useEffect(() => {
     reset(sharedData);
@@ -78,21 +83,36 @@ function ConfigData({
     setCenterId(id);
   };
 
+  const handleOnProgramChange = async (id) => {
+    try {
+      const { program: detail } = await detailProgramRequest(id);
+      setProgram(detail);
+    } catch (err) {
+      //
+    }
+  };
+
+  useEffect(() => {
+    if (!isEmpty(programId)) {
+      handleOnProgramChange(programId);
+    }
+  }, [programId]);
+
   // ·······························································
   // SUBJECTS
 
-  const subjectsList = useMemo(
-    () => [
-      {
-        label: 'Language',
-        value: 'language',
-      },
-      {
-        label: 'Maths',
-        value: 'maths',
-      },
-    ],
-    []
+  const selects = useMemo(
+    () => ({
+      courses: map(program.courses, ({ name, index, id }) => ({
+        label: `${name ? `${name} (${index}º)` : `${index}º`}`,
+        value: id,
+      })),
+      subjects: map(program.subjects, ({ name, id }) => ({
+        label: name,
+        value: id,
+      })),
+    }),
+    [program]
   );
 
   const levelsList = useMemo(
@@ -109,35 +129,44 @@ function ConfigData({
     []
   );
 
-  const tableData = useMemo(() => []);
+  const subjectsColumns = useMemo(() => {
+    const columns = [];
 
-  const tableColumns = useMemo(
-    () => [
-      {
-        Header: labels.subject,
-        accessor: 'subject',
+    if (!isNil(program) && program.maxNumberOfCourses > 1) {
+      columns.push({
+        Header: labels.course,
+        accessor: 'course',
         input: {
-          node: <Select placeholder={placeholders.subject} searchable />,
+          node: <Select data={selects.courses} placeholder={placeholders.course} required />,
           rules: { required: 'Required field' },
-          data: subjectsList,
         },
-        valueRender: (value) => find(subjectsList, { value })?.label,
-      },
-      {
-        Header: labels.level,
-        accessor: 'level',
-        input: {
-          node: <Select placeholder={placeholders.level} searchable />,
-          rules: { required: 'Required field' },
-          data: levelsList,
-        },
-        valueRender: (value) => find(levelsList, { value })?.label,
-      },
-    ],
-    [labels]
-  );
+        valueRender: (value) => find(selects.courses, { value })?.label,
+      });
+    }
 
-  const tableLabels = useMemo(
+    columns.push({
+      Header: labels.subject,
+      accessor: 'subject',
+      input: {
+        node: <Select data={selects.subjects} placeholder={placeholders.subject} required />,
+        rules: { required: 'Required field' },
+      },
+      valueRender: (value) => find(selects.subjects, { value })?.label,
+    });
+
+    columns.push({
+      Header: labels.level,
+      accessor: 'level',
+      input: {
+        node: <Select data={levelsList} placeholder={placeholders.level} required />,
+        rules: { required: 'Required field' },
+      },
+      valueRender: (value) => find(levelsList, { value })?.label,
+    });
+    return columns;
+  }, [labels, program]);
+
+  const subjectsLabels = useMemo(
     () => ({
       add: labels.addSubject,
       remove: 'Remove',
@@ -188,7 +217,7 @@ function ConfigData({
             />
 
             <ContextContainer direction="row">
-              {/* Center Selector */}
+              {/* Center Selector - MUST COME FROM A PREVIOUS SCREEN */}
               <Box skipFlex>
                 <SelectCenter label="Center" onChange={handleOnSelectCenter} firstSelected />
               </Box>
@@ -212,15 +241,25 @@ function ConfigData({
           </ContextContainer>
 
           {/* Subject container */}
-          <ContextContainer title={labels.subjects}>
-            <TableInput
-              data={tableData}
-              columns={tableColumns}
-              labels={tableLabels}
-              sortable={false}
-              onChange={(e) => console.table(e)}
-            />
-          </ContextContainer>
+          {!isEmpty(program) && (
+            <ContextContainer title={labels.subjects}>
+              <Controller
+                control={control}
+                name="subjects"
+                rules={{ required: errorMessages.summary?.required }}
+                render={({ field: { ref, value, onChange, ...field } }) => (
+                  <TableInput
+                    {...field}
+                    data={value}
+                    onChange={onChange}
+                    columns={subjectsColumns}
+                    labels={subjectsLabels}
+                    sortable={false}
+                  />
+                )}
+              />
+            </ContextContainer>
+          )}
 
           {/* Summary container */}
           <ContextContainer title={labels.summary}>

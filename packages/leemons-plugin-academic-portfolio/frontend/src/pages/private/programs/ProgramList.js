@@ -28,9 +28,8 @@ import {
   listProgramsRequest,
   updateProgramRequest,
 } from '@academic-portfolio/request';
-import unflatten from '@academic-portfolio/helpers/unflatten';
 import { ProgramItem } from '@academic-portfolio/components';
-import { useStore } from '@common/useStore';
+import { useStore, unflatten } from '@common';
 import { detailProgramRequest } from '../../../request';
 import { activeMenuItemSubjects } from '../../../helpers/activeMenuItemSubjects';
 

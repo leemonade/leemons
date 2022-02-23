@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import { isArray, isFunction, map } from 'lodash';
 import { useStore } from '@common';
 import { Select } from '@bubbles-ui/components';
 import { listProfilesRequest } from '../request';
 
-function SelectProfile({ firstSelected, onChange, ...props }) {
+const SelectProfile = forwardRef(({ firstSelected, onChange, ...props }, ref) => {
   const [store, render] = useStore({
     data: [],
   });
@@ -43,9 +43,10 @@ function SelectProfile({ firstSelected, onChange, ...props }) {
     init();
   }, []);
 
-  return <Select {...props} data={store.data} onChange={handleOnChange} />;
-}
+  return <Select {...props} ref={ref} data={store.data} onChange={handleOnChange} />;
+});
 
+SelectProfile.displayName = '@users/components/SelectProfile';
 SelectProfile.propTypes = {
   firstSelected: PropTypes.bool,
   onChange: PropTypes.func,

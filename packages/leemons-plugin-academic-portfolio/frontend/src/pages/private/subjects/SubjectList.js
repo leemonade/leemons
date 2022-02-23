@@ -343,20 +343,24 @@ export default function SubjectList() {
           <Box sx={(theme) => ({ marginBottom: theme.spacing[12] })}>
             <ContextContainer>
               <ContextContainer direction="row">
-                <SelectCenter
-                  label={t('centerLabel')}
-                  placeholder={t('centerPlaceholder')}
-                  onChange={onCenterChange}
-                  firstSelected
-                />
-                <Select
-                  data={store.programs || []}
-                  disabled={!store.programs}
-                  label={t('programLabel')}
-                  placeholder={t('programPlaceholder')}
-                  onChange={onProgramChange}
-                  value={store.selectProgram}
-                />
+                <Box skipFlex>
+                  <SelectCenter
+                    label={t('centerLabel')}
+                    placeholder={t('centerPlaceholder')}
+                    onChange={onCenterChange}
+                    firstSelected
+                  />
+                </Box>
+                <Box skipFlex>
+                  <Select
+                    data={store.programs || []}
+                    disabled={!store.programs}
+                    label={t('programLabel')}
+                    placeholder={t('programPlaceholder')}
+                    onChange={onProgramChange}
+                    value={store.selectProgram}
+                  />
+                </Box>
               </ContextContainer>
 
               {store.program ? (

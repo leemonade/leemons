@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import { cloneDeep, find, findIndex, map } from 'lodash';
 import { ActionButton, Box, MultiSelect, UserDisplayItem } from '@bubbles-ui/components';
@@ -30,7 +30,7 @@ function ValueItem(props) {
   );
 }
 
-function SelectUserAgent({ profiles, centers, ...props }) {
+const SelectUserAgent = forwardRef(({ profiles, centers, ...props }, ref) => {
   const [store, render] = useStore({
     data: [],
   });
@@ -112,6 +112,7 @@ function SelectUserAgent({ profiles, centers, ...props }) {
   return (
     <MultiSelect
       {...props}
+      ref={ref}
       searchable
       onSearchChange={search}
       itemComponent={UserDisplayItem}
@@ -128,13 +129,13 @@ function SelectUserAgent({ profiles, centers, ...props }) {
       }}
     />
   );
-}
-
+});
+SelectUserAgent.displayName = '@users/components/SelectUserAgent';
 SelectUserAgent.propTypes = {
   onChange: PropTypes.func,
   value: PropTypes.string,
-  profiles: PropTypes.oneOf([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
-  centers: PropTypes.oneOf([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+  profiles: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+  centers: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
 };
 
 export { SelectUserAgent };
