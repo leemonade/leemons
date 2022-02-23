@@ -9,7 +9,7 @@ export default function OngoingPage() {
     <ContextContainer fullHeight>
       <AdminPageHeader values={{ title: 'ONGOING' }} />
       <PageContainer>
-        <TeacherAssignedTasksLists />;
+        <TeacherAssignedTasksLists />
       </PageContainer>
     </ContextContainer>
   );

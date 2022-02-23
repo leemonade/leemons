@@ -6,7 +6,18 @@ import listTeacherTasks from '../../request/instance/listTeacherTasks';
 
 async function getTasks(userAgent, setTasks) {
   const response = await listTeacherTasks(userAgent, true);
-  const assignedTasks = response.tasks.items;
+  const assignedTasks = response.tasks.items.map((t) => {
+    // eslint-disable-next-line no-param-reassign
+    const task = t;
+    task.students.count = t.students.count;
+    task.group = '-';
+    task.status = '-';
+    task.students.open = '-';
+    task.students.ongoing = '-';
+    task.students.completed = '-';
+
+    return task;
+  });
 
   setTasks((t) => [...t, ...assignedTasks]);
 
@@ -20,39 +31,39 @@ export default function TeacherAssignedTasksLists() {
   const columns = useMemo(
     () => [
       {
-        Header: 'Group',
+        Header: 'GROUP',
         accessor: 'group',
       },
       {
-        Header: 'Task',
+        Header: 'TASK',
         accessor: 'task.name',
       },
       {
-        Header: 'Deadline',
+        Header: 'DEADLINE',
         accessor: 'deadline',
       },
       {
-        Header: 'Students',
+        Header: 'STUDENTS',
         accessor: 'students.count',
       },
       {
-        Header: 'Status',
+        Header: 'STATUS',
         accessor: 'status',
       },
       {
-        Header: 'Open',
+        Header: 'OPEN',
         accessor: 'students.open',
       },
       {
-        Header: 'Ongoing',
+        Header: 'ONGOING',
         accessor: 'students.ongoing',
       },
       {
-        Header: 'Completed',
+        Header: 'COMPLETED',
         accessor: 'students.completed',
       },
       {
-        Header: 'Actions',
+        Header: 'ACTIONS',
         accessor: 'data.actions',
       },
     ],
