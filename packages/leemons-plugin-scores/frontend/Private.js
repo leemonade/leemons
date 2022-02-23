@@ -4,7 +4,7 @@ import loadable from '@loadable/component';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const AddCurriculum = loadable(() => import('./src/pages/private/AddCurriculum'));
+const Setup = loadable(() => import('./src/pages/private/Setup'));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -14,7 +14,7 @@ export default function Private() {
     <div>
       <Switch>
         <Route path={`${path}/setup`}>
-          <AddCurriculum session={session} />
+          <Setup session={session} />
         </Route>
       </Switch>
     </div>

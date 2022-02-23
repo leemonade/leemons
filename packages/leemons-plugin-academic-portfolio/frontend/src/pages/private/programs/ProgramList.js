@@ -35,7 +35,7 @@ import { detailProgramRequest } from '../../../request';
 import { activeMenuItemSubjects } from '../../../helpers/activeMenuItemSubjects';
 
 export default function ProgramList() {
-  const [t, translations] = useTranslateLoader(prefixPN('programs_page'));
+  const [t, translations, , loading] = useTranslateLoader(prefixPN('programs_page'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const [centerId, setCenterId] = useState(null);
@@ -167,10 +167,10 @@ export default function ProgramList() {
   };
 
   React.useEffect(() => {
-    if (centerId) {
+    if (centerId && !loading) {
       loadPrograms(centerId);
     }
-  }, [translations]);
+  }, [loading, centerId]);
 
   const handleOnSelectCenter = async (center) => {
     setCenterId(center);
@@ -179,7 +179,7 @@ export default function ProgramList() {
     setTimeout(() => {
       store.currentProgram = null;
       setShowDetail(false);
-      loadPrograms(center);
+      // loadPrograms(center);
     }, 300);
   };
 

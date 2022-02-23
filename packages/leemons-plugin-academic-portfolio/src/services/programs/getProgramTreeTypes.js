@@ -1,8 +1,15 @@
+const _ = require('lodash');
 const { table } = require('../tables');
 
 async function getProgramTreeTypes(programId, { transacting } = {}) {
+  let program = null;
+  if (_.isString(programId)) {
+    program = await table.programs.findOne({ id: programId }, { transacting });
+  } else {
+    program = programId;
+  }
+
   // subject
-  const program = await table.programs.findOne({ id: programId }, { transacting });
   let result = [];
   switch (program.treeType) {
     case 2:

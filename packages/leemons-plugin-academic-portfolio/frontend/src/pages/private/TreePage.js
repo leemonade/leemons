@@ -119,6 +119,8 @@ export default function TreePage() {
       getProfilesRequest(),
     ]);
 
+    console.log(tree);
+
     const classesBySubject = {};
     const result = [];
 
