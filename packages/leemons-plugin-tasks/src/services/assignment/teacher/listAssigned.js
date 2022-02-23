@@ -1,8 +1,14 @@
 const { teacherInstances } = require('../../table');
+const { get } = require('../instance/get');
 
-module.exports = async function listAssigned(userAgent, page, size, { transacting } = {}) {
+module.exports = async function listAssigned(
+  userAgent,
+  page,
+  size,
+  { details = false, columns, transacting } = {}
+) {
   try {
-    const students = await global.utils.paginate(
+    const instances = await global.utils.paginate(
       teacherInstances,
       page,
       size,
@@ -10,7 +16,21 @@ module.exports = async function listAssigned(userAgent, page, size, { transactin
       { transacting }
     );
 
-    return students;
+    if (details) {
+      const data = (
+        await get(
+          instances.items.map((i) => i.instance),
+          { columns, transacting }
+        )
+      ).reduce((o, d) => ({ ...o, [d.id]: d }), {});
+
+      instances.items = instances.items.map((i) => ({
+        ...i,
+        ...data[i.instance],
+      }));
+    }
+
+    return instances;
   } catch (e) {
     throw new Error('Error getting teacher instances');
   }

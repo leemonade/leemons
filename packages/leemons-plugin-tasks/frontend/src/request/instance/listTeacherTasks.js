@@ -1,3 +1,3 @@
-export default function listTeacherTasks(teacherId) {
-  return leemons.api(`tasks/tasks/instances/teacher/${teacherId}`);
+export default function listTeacherTasks(teacherId, details = false) {
+  return leemons.api(`tasks/tasks/instances/teacher/${teacherId}?details=${details}`);
 }

@@ -18,6 +18,14 @@ export default function Form({ onSubmit: parentSubmit }) {
   const [modes, setModes] = useState({});
   const [assignTo, setAssignTo] = useState([]);
 
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {},
+  });
+
   useEffect(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
@@ -47,10 +55,6 @@ export default function Form({ onSubmit: parentSubmit }) {
     }
   }, [translations]);
 
-  const { handleSubmit, control } = useForm({
-    defaultValues: {},
-  });
-
   const onSubmit = (data) => {
     if (typeof parentSubmit === 'function') {
       parentSubmit(data);
@@ -63,9 +67,11 @@ export default function Form({ onSubmit: parentSubmit }) {
         <Controller
           control={control}
           name="teachers"
+          rules={{ required: true }}
           render={({ field }) => (
             <AssignUsers
               {...field}
+              error={errors.teachers}
               profile="teacher"
               labels={labels}
               modes={modes}
@@ -76,9 +82,11 @@ export default function Form({ onSubmit: parentSubmit }) {
         <Controller
           control={control}
           name="assignees"
+          rules={{ required: true }}
           render={({ field }) => (
             <AssignUsers
               {...field}
+              error={errors.assignees}
               profile="student"
               labels={labels}
               modes={modes}
@@ -90,10 +98,12 @@ export default function Form({ onSubmit: parentSubmit }) {
           <Controller
             control={control}
             name="startDate"
+            rules={{ required: true }}
             render={({ field }) => (
               <DatePicker
-                withTime
                 {...field}
+                withTime
+                error={errors.startDate}
                 label={labels?.startDate}
                 placeholder={placeholders?.date}
               />
@@ -103,10 +113,12 @@ export default function Form({ onSubmit: parentSubmit }) {
           <Controller
             control={control}
             name="deadline"
+            rules={{ required: true }}
             render={({ field }) => (
               <DatePicker
-                withTime
                 {...field}
+                withTime
+                error={errors.deadline}
                 label={labels?.deadline}
                 placeholder={placeholders?.date}
               />
@@ -122,10 +134,12 @@ export default function Form({ onSubmit: parentSubmit }) {
                 control={control}
                 name="visualizationDate"
                 shouldUnregister={true}
+                rules={{ required: true }}
                 render={({ field }) => (
                   <DatePicker
-                    withTime
                     {...field}
+                    withTime
+                    error={errors.visualizationDate}
                     label="AÑADIR UN LABEL"
                     placeholder={placeholders?.date}
                   />
@@ -142,7 +156,10 @@ export default function Form({ onSubmit: parentSubmit }) {
               control={control}
               name="executionTime"
               shouldUnregister={true}
-              render={({ field }) => <TimeUnitsInput label="AÑADIR UN LABEL" {...field} />}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <TimeUnitsInput error={errors.executionTime} label="AÑADIR UN LABEL" {...field} />
+              )}
             />
           )}
         />
@@ -154,7 +171,10 @@ export default function Form({ onSubmit: parentSubmit }) {
               control={control}
               name="message"
               shouldUnregister={true}
-              render={({ field }) => <TextEditor label="AÑADIR UN LABEL" {...field} />}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <TextEditor error={errors.message} label="AÑADIR UN LABEL" {...field} />
+              )}
             />
           )}
         />
