@@ -6,6 +6,7 @@ const { getProgramKnowledges } = require('./getProgramKnowledges');
 const { getProgramGroups } = require('./getProgramGroups');
 const { getProgramCourses } = require('./getProgramCourses');
 const { getProgramSubstages } = require('./getProgramSubstages');
+const { getProgramTreeTypes } = require('./getProgramTreeTypes');
 
 async function programsByIds(ids, { transacting } = {}) {
   const [programs, programCenter, substages, courses, groups, knowledges, subjects, subjectTypes] =
@@ -28,8 +29,13 @@ async function programsByIds(ids, { transacting } = {}) {
   const subjectTypesByProgram = _.groupBy(subjectTypes, 'program');
   const centersByProgram = _.groupBy(programCenter, 'program');
 
-  return programs.map((program) => ({
+  const treeTypes = await Promise.all(
+    programs.map((program) => getProgramTreeTypes(program, { transacting }))
+  );
+
+  return programs.map((program, i) => ({
     ...program,
+    treeTypeNodes: treeTypes[i],
     centers: centersByProgram[program.id] ? _.map(centersByProgram[program.id], 'center') : [],
     groups: groupsByProgram[program.id] ? groupsByProgram[program.id] : [],
     courses: coursesByProgram[program.id] ? _.orderBy(coursesByProgram[program.id], 'index') : [],

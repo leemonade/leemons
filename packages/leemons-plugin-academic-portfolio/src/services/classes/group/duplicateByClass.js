@@ -12,7 +12,7 @@ async function duplicateByClass(
         { class_$in: _.isArray(classIds) ? classIds : [classIds] },
         { transacting }
       );
-      await leemons.events.emit('before-duplicate-classes-courses', {
+      await leemons.events.emit('before-duplicate-classes-groups', {
         classGroups,
         transacting,
       });
@@ -42,12 +42,12 @@ async function duplicateByClass(
       // EN: Add the duplicated items in such a way that the index is the original id and the value is the new duplicated item
       if (!_.isObject(duplications.classGroups)) duplications.classGroups = {};
       _.forEach(classGroups, ({ id }, index) => {
-        classGroups.classGroups[id] = newItems[index];
+        duplications.classGroups[id] = newItems[index];
       });
 
-      await leemons.events.emit('after-duplicate-classes-courses', {
+      await leemons.events.emit('after-duplicate-classes-groups', {
         classGroups,
-        duplications: duplications.classCourses,
+        duplications: duplications.classGroups,
         transacting,
       });
       return duplications;

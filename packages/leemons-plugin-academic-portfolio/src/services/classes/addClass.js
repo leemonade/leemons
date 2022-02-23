@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { isArray, map } = require('lodash');
 const { table } = require('../tables');
 const { validateAddClass } = require('../../validations/forms');
 const { add: addKnowledge } = require('./knowledge/add');
@@ -12,6 +13,7 @@ const { existCourseInProgram } = require('../courses/existCourseInProgram');
 const { existGroupInProgram } = require('../groups/existGroupInProgram');
 const { classByIds } = require('./classByIds');
 const { processScheduleForClass } = require('./processScheduleForClass');
+const { changeBySubject } = require('./knowledge/changeBySubject');
 
 async function addClass(data, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
@@ -41,7 +43,8 @@ async function addClass(data, { transacting: _transacting } = {}) {
         if (!(await existCourseInProgram(course, nClass.program, { transacting }))) {
           throw new Error('course not in program');
         }
-        await addCourse(nClass.id, course, { transacting });
+        const courses = isArray(course) ? course : [course];
+        await Promise.all(map(courses, (c) => addCourse(nClass.id, c, { transacting })));
       }
       if (group) {
         // ES: Comprobamos que todos los cursos existen y pertenecen al programa
@@ -63,6 +66,9 @@ async function addClass(data, { transacting: _transacting } = {}) {
         { subjectType: nClass.subjectType },
         { transacting }
       );
+
+      // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo knowledge
+      await changeBySubject(nClass.subject, knowledge, { transacting });
 
       if (schedule) {
         await processScheduleForClass(schedule, nClass.id, { transacting });

@@ -4,3 +4,11 @@ export async function listCourses({ page, size, program }) {
     method: 'GET',
   });
 }
+
+export async function updateCourse(body) {
+  return leemons.api(`academic-portfolio/course`, {
+    allAgents: true,
+    method: 'PUT',
+    body,
+  });
+}

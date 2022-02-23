@@ -48,7 +48,11 @@ function SubjectTypesTable({ messages, program, tableLabels, onAdd = () => {} })
   ];
 
   function onChange(items) {
-    onAdd(items[items.length - 1]);
+    const item = items[items.length - 1];
+    onAdd({
+      ...item,
+      groupVisibility: !!item.groupVisibility,
+    });
   }
 
   return (

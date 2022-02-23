@@ -1,17 +1,26 @@
 /* eslint-disable no-param-reassign */
 import React, { useMemo } from 'react';
-import { Box, Button, ContextContainer, PageContainer, Select } from '@bubbles-ui/components';
+import {
+  Box,
+  Button,
+  ContextContainer,
+  PageContainer,
+  Paper,
+  Select,
+} from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { useStore } from '@common/useStore';
 import { SelectCenter } from '@users/components/SelectCenter';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { find, map } from 'lodash';
+import { find, isArray, map } from 'lodash';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import SelectUserAgent from '@users/components/SelectUserAgent';
+import { useHistory } from 'react-router-dom';
 import {
   createClassRequest,
+  createGroupRequest,
   createKnowledgeRequest,
   createSubjectRequest,
   createSubjectTypeRequest,
@@ -33,10 +42,12 @@ import { getSubjectsTranslation } from '../../../helpers/getSubjectsTranslation'
 import { SubjectsTable } from '../../../components/SubjectsTable';
 import { ProgramTreeType } from '../../../components/ProgramTreeType';
 import { getProgramTreeTypeTranslation } from '../../../helpers/getProgramTreeTypeTranslation';
+import { activeMenuItemTree } from '../../../helpers/activeMenuItemTree';
 
 export default function SubjectList() {
   const [t] = useTranslateLoader(prefixPN('subject_page'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
+  const history = useHistory();
 
   const [store, render] = useStore({
     mounted: true,
@@ -132,10 +143,26 @@ export default function SubjectList() {
       addErrorAlert(getErrorMessage(err));
     }
     store.program.subjectTypes = [...store.program.subjectTypes];
+    store.program = { ...store.program };
     render();
   }
 
-  async function addNewSubject({ name, course, internalId, credits, substages }) {
+  async function createGroup({ name, abbreviation }) {
+    try {
+      const { group } = await createGroupRequest({
+        name,
+        abbreviation,
+        program: store.program.id,
+      });
+      addSuccessAlert(t('groupCreated'));
+      return group;
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    return null;
+  }
+
+  async function addNewSubject({ name, course, internalId, credits }) {
     try {
       const { subject } = await createSubjectRequest({
         name,
@@ -148,6 +175,9 @@ export default function SubjectList() {
       return subject;
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
+      store.program.classes = [...store.program.classes];
+      store.program = { ...store.program };
+      render();
     }
     return null;
   }
@@ -163,6 +193,9 @@ export default function SubjectList() {
       return subject;
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
+      store.program.classes = [...store.program.classes];
+      store.program = { ...store.program };
+      render();
     }
     return null;
   }
@@ -192,6 +225,9 @@ export default function SubjectList() {
       return c;
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
+      store.program.classes = [...store.program.classes];
+      store.program = { ...store.program };
+      render();
     }
     return null;
   }
@@ -220,16 +256,20 @@ export default function SubjectList() {
       return c;
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
+      store.program.classes = [...store.program.classes];
+      store.program = { ...store.program };
+      render();
     }
     return null;
   }
 
   async function addUpdateClass(data, event, isUpdate) {
     try {
+      if (!data.credits) data.credits = 1;
       if (event.isNewSubject) {
         const subject = await addNewSubject({
           name: data.subject,
-          course: data.courses,
+          course: isArray(data.courses) ? null : data.courses,
           internalId: data.internalId,
           credits: data.credits,
         });
@@ -238,25 +278,40 @@ export default function SubjectList() {
       } else {
         const subject = await updateSubject({
           id: data.subject,
-          course: data.courses,
+          course: isArray(data.courses) ? null : data.courses,
           internalId: data.internalId,
           credits: data.credits,
         });
         if (!subject) return null;
       }
 
+      if (event.isNewGroup) {
+        const group = await createGroup({
+          name: data.groups,
+          abbreviation: data.groups,
+        });
+        if (!group) return null;
+        data.groups = group?.id;
+      }
+
       let classe = null;
+
       if (isUpdate) {
         classe = await updateClass(data);
       } else {
         classe = await addNewClass(data);
+        await activeMenuItemTree();
       }
 
       if (classe) addSuccessAlert(isUpdate ? t('classUpdated') : t('classCreated'));
       store.program = await getProgramDetail();
       render();
+      return true;
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
+      store.program.classes = [...store.program.classes];
+      store.program = { ...store.program };
+      render();
     }
     return null;
   }
@@ -275,101 +330,121 @@ export default function SubjectList() {
   }
 
   async function goTree() {
-    console.log('goTree');
+    await history.push(
+      `/private/academic-portfolio/tree?center=${store.center}&program=${store.program.id}`
+    );
   }
 
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader values={messages.header} />
-      <PageContainer>
-        <Box sx={(theme) => ({ marginBottom: theme.spacing[12] })}>
-          <ContextContainer divided>
-            <ContextContainer direction="row">
-              <SelectCenter
-                label={t('centerLabel')}
-                placeholder={t('centerPlaceholder')}
-                onChange={onCenterChange}
-                firstSelected
-              />
-              <Select
-                data={store.programs || []}
-                disabled={!store.programs}
-                label={t('programLabel')}
-                placeholder={t('programPlaceholder')}
-                onChange={onProgramChange}
-                value={store.selectProgram}
-              />
+      <Paper color="solid" shadow="none">
+        <PageContainer>
+          <Box sx={(theme) => ({ marginBottom: theme.spacing[12] })}>
+            <ContextContainer>
+              <ContextContainer direction="row">
+                <SelectCenter
+                  label={t('centerLabel')}
+                  placeholder={t('centerPlaceholder')}
+                  onChange={onCenterChange}
+                  firstSelected
+                />
+                <Select
+                  data={store.programs || []}
+                  disabled={!store.programs}
+                  label={t('programLabel')}
+                  placeholder={t('programPlaceholder')}
+                  onChange={onProgramChange}
+                  value={store.selectProgram}
+                />
+              </ContextContainer>
+
+              {store.program ? (
+                <Paper>
+                  <ContextContainer divided>
+                    {store.program && store.program.haveKnowledge ? (
+                      <KnowledgeTable
+                        messages={messages.knowledge}
+                        tableLabels={messages.tableLabels}
+                        program={store.program}
+                        onAdd={addKnowledge}
+                      />
+                    ) : null}
+                    {store.program
+                      ? [
+                          <SubjectTypesTable
+                            key="1"
+                            messages={messages.subjectTypes}
+                            tableLabels={messages.tableLabels}
+                            program={store.program}
+                            onAdd={addSubjectType}
+                          />,
+                          <SubjectsTable
+                            key="2"
+                            messages={messages.subjects}
+                            tableLabels={messages.tableLabels}
+                            program={store.program}
+                            onAdd={(d, e) => addUpdateClass(d, e, false)}
+                            onUpdate={(d, e) => addUpdateClass(d, e, true)}
+                            teacherSelect={
+                              <SelectUserAgent
+                                profiles={store.profiles.teacher}
+                                centers={store.center}
+                              />
+                            }
+                          />,
+                          <ProgramTreeType
+                            key="3"
+                            messages={messages.programTreeType}
+                            value={store.program.treeType}
+                            onChange={onProgramTreeTypeChange}
+                            data={[
+                              {
+                                value: 1,
+                                label: messages.programTreeType.opt1Label,
+                                help: store.program.moreThanOneAcademicYear
+                                  ? messages.programTreeType.opt1DescriptionNoCourse
+                                  : messages.programTreeType.opt1Description,
+                                helpPosition: 'bottom',
+                              },
+                              {
+                                value: 2,
+                                label: messages.programTreeType.opt2Label,
+                                help: store.program.moreThanOneAcademicYear
+                                  ? messages.programTreeType.opt2DescriptionNoCourse
+                                  : messages.programTreeType.opt2Description,
+                                helpPosition: 'bottom',
+                              },
+                              {
+                                value: 3,
+                                label: messages.programTreeType.opt3Label,
+                                help: store.program.moreThanOneAcademicYear
+                                  ? messages.programTreeType.opt3DescriptionNoCourse
+                                  : messages.programTreeType.opt3Description,
+                                helpPosition: 'bottom',
+                              },
+                              {
+                                value: 4,
+                                label: messages.programTreeType.opt4Label,
+                                help: messages.programTreeType.opt4Description,
+                                helpPosition: 'bottom',
+                              },
+                            ]}
+                          />,
+                        ]
+                      : null}
+                  </ContextContainer>
+                </Paper>
+              ) : null}
             </ContextContainer>
-            {store.program && store.program.haveKnowledge ? (
-              <KnowledgeTable
-                messages={messages.knowledge}
-                tableLabels={messages.tableLabels}
-                program={store.program}
-                onAdd={addKnowledge}
-              />
+            {store.program ? (
+              <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                <Button onClick={goTree}>{t('goTree')}</Button>
+              </Box>
             ) : null}
-            {store.program
-              ? [
-                  <SubjectTypesTable
-                    key="1"
-                    messages={messages.subjectTypes}
-                    tableLabels={messages.tableLabels}
-                    program={store.program}
-                    onAdd={addSubjectType}
-                  />,
-                  <SubjectsTable
-                    key="2"
-                    messages={messages.subjects}
-                    tableLabels={messages.tableLabels}
-                    program={store.program}
-                    onAdd={(d, e) => addUpdateClass(d, e, false)}
-                    onUpdate={(d, e) => addUpdateClass(d, e, true)}
-                    teacherSelect={
-                      <SelectUserAgent profiles={store.profiles.teacher} centers={store.center} />
-                    }
-                  />,
-                  <ProgramTreeType
-                    key="3"
-                    messages={messages.programTreeType}
-                    value={store.program.treeType}
-                    onChange={onProgramTreeTypeChange}
-                    data={[
-                      {
-                        value: 1,
-                        label: messages.programTreeType.opt1Label,
-                        help: messages.programTreeType.opt1Description,
-                        helpPosition: 'bottom',
-                      },
-                      {
-                        value: 2,
-                        label: messages.programTreeType.opt2Label,
-                        help: messages.programTreeType.opt2Description,
-                        helpPosition: 'bottom',
-                      },
-                      {
-                        value: 3,
-                        label: messages.programTreeType.opt3Label,
-                        help: messages.programTreeType.opt3Description,
-                        helpPosition: 'bottom',
-                      },
-                      {
-                        value: 4,
-                        label: messages.programTreeType.opt4Label,
-                        help: messages.programTreeType.opt4Description,
-                        helpPosition: 'bottom',
-                      },
-                    ]}
-                  />,
-                ]
-              : null}
-          </ContextContainer>
-          {store.program ? (
-            <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-              <Button onClick={goTree}>{t('goTree')}</Button>
-            </Box>
-          ) : null}
-        </Box>
-      </PageContainer>
+          </Box>
+        </PageContainer>
+      </Paper>
     </ContextContainer>
   );
 }

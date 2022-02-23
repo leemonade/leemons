@@ -1,14 +1,13 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 const { getClassesUnderNodeTree } = require('../common/getClassesUnderNodeTree');
+const { getProgramTreeTypes } = require('../programs/getProgramTreeTypes');
 
-async function removeGroupFromClassesUnderNodeTree(
-  nodeTypes,
-  groupId,
-  { transacting: _transacting } = {}
-) {
+async function removeGroupFromClassesUnderNodeTree(groupId, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
+      const group = await table.groups.findOne({ id: groupId }, { transacting });
+      const nodeTypes = await getProgramTreeTypes(group.program, { transacting });
       const classes = await getClassesUnderNodeTree(nodeTypes, 'groups', groupId, { transacting });
       await leemons.events.emit('before-remove-groups-from-classes', {
         groupId,

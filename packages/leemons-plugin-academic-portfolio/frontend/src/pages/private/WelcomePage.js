@@ -15,15 +15,14 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { getSettingsRequest, updateSettingsRequest } from '@academic-portfolio/request';
 import { useStore } from '@common';
-import { getCentersWithToken } from '@users/session';
 import { activeMenuItemPrograms } from '../../helpers/activeMenuItemPrograms';
 import { activeMenuItemSubjects } from '../../helpers/activeMenuItemSubjects';
 import { haveClassesRequest, haveProgramsRequest, isConfigProfilesRequest } from '../../request';
 import { activeMenuItemProfiles } from '../../helpers/activeMenuItemProfiles';
+import { activeMenuItemTree } from '../../helpers/activeMenuItemTree';
 
 // eslint-disable-next-line react/prop-types
 function StepCard({ t, step, disabled, to, onClick }) {
-  console.log(getCentersWithToken());
   return (
     <Paper>
       <ContextContainer>
@@ -95,6 +94,10 @@ export default function WelcomePage() {
     await activeMenuItemSubjects();
   };
 
+  const handleOnTree = async () => {
+    await activeMenuItemTree();
+  };
+
   const headerValues = useMemo(
     () => ({
       title: t('page_title'),
@@ -146,6 +149,7 @@ export default function WelcomePage() {
               t={t}
               step="step_tree"
               to="/private/academic-portfolio/tree"
+              onClick={handleOnTree}
             />
           </ContextContainer>
         </PageContainer>

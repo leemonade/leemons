@@ -55,6 +55,12 @@ module.exports = {
         defaultTo: false,
       },
     },
+    moreThanOneAcademicYear: {
+      type: 'boolean',
+      options: {
+        defaultTo: false,
+      },
+    },
     haveSubstagesPerCourse: {
       type: 'boolean',
     },

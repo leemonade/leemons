@@ -11,7 +11,7 @@ const { removeByClass: removeGroupByClass } = require('./group/removeByClass');
 async function removeClassesByIds(ids, { soft, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
-      const classes = await classByIds(ids, { transacting });
+      const classes = await classByIds(_.isArray(ids) ? ids : [ids], { transacting });
       const classesIds = _.map(classes, 'id');
       await leemons.events.emit('before-remove-classes', { classes, soft, transacting });
 

@@ -1,13 +1,33 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { cloneDeep, find, findIndex, map } from 'lodash';
-import { MultiSelect, UserDisplayItem } from '@bubbles-ui/components';
+import { ActionButton, Box, MultiSelect, UserDisplayItem } from '@bubbles-ui/components';
 import { useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
+import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import { getUserAgentsInfoRequest, searchUserAgentsRequest } from '../request';
 
 function ValueItem(props) {
-  return <UserDisplayItem {...props} size="xs" />;
+  return (
+    <Box>
+      {props.onRemove ? (
+        <Box
+          sx={(theme) => ({
+            position: 'absolute',
+            zIndex: 9,
+            right: theme.spacing[2],
+            top: `calc(50% - ${theme.spacing[1] / 2}px  )`,
+            transform: 'translateY(-50%)',
+            backgroundColor: theme.colors.uiBackground01,
+          })}
+        >
+          <ActionButton icon={<RemoveIcon />} onClick={() => props.onRemove()} />
+        </Box>
+      ) : null}
+
+      <UserDisplayItem {...props} size="xs" />
+    </Box>
+  );
 }
 
 function SelectUserAgent({ profiles, centers, ...props }) {
@@ -93,7 +113,6 @@ function SelectUserAgent({ profiles, centers, ...props }) {
     <MultiSelect
       {...props}
       searchable
-      clearable={' '}
       onSearchChange={search}
       itemComponent={UserDisplayItem}
       valueComponent={ValueItem}

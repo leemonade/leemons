@@ -33,16 +33,29 @@ async function getTree(nodeTypes, { transacting } = {}) {
     listClasses(0, 99999, undefined, { query: { program_$in: programIds }, transacting }),
   ]);
 
-  // ES: Cogemos los nodos sin usar en las clases para posteriormente ponerlos al nivel del programa
-  const groupsUnused = _.filter(groups, (group) => !_.find(classes, { group }));
-  const coursesUnused = _.filter(courses, (course) => !_.find(classes, { course }));
-  const substagesUnused = _.filter(substages, (substage) => !_.find(classes, { substage }));
-  const knowledgesUnused = _.filter(knowledges, (knowledge) => !_.find(classes, { knowledge }));
-  const subjectsUnused = _.filter(subjects, (subject) => !_.find(classes, { subject }));
-  const subjectTypeUnused = _.filter(
-    subjectTypes,
-    (subjectType) => !_.find(classes, { subjectType })
+  const classCoursesIds = _.flatten(
+    _.map(classes, (classe) => {
+      if (classe.courses) {
+        if (_.isArray(classe.courses)) {
+          return _.map(classe.courses, 'id');
+        }
+        return classe.courses.id;
+      }
+    })
   );
+  const classGroupsIds = _.map(classes, 'groups.id');
+  const classSubstagesIds = _.map(classes, 'substages.id');
+  const classKnowledgesIds = _.map(classes, 'knowledges.id');
+  const classSubjectIds = _.map(classes, 'subject.id');
+  const classSubjectTypeIds = _.map(classes, 'subjectType.id');
+
+  // ES: Cogemos los nodos sin usar en las clases para posteriormente ponerlos al nivel del programa
+  const groupsUnused = _.filter(groups, ({ id }) => classGroupsIds.indexOf(id) < 0);
+  const coursesUnused = _.filter(courses, ({ id }) => classCoursesIds.indexOf(id) < 0);
+  const substagesUnused = _.filter(substages, ({ id }) => classSubstagesIds.indexOf(id) < 0);
+  const knowledgesUnused = _.filter(knowledges, ({ id }) => classKnowledgesIds.indexOf(id) < 0);
+  const subjectsUnused = _.filter(subjects, ({ id }) => classSubjectIds.indexOf(id) < 0);
+  const subjectTypeUnused = _.filter(subjectTypes, ({ id }) => classSubjectTypeIds.indexOf(id) < 0);
 
   const unusedNodesByProgram = {
     courses: _.groupBy(coursesUnused, 'program'),

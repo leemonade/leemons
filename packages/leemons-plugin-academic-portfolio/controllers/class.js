@@ -135,11 +135,18 @@ async function listTeacherClasses(ctx) {
   }
 }
 
+async function removeClass(ctx) {
+  const data = await classService.removeClassesByIds(ctx.request.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
 module.exports = {
   postClass,
   putClass,
   listClass,
   haveClasses,
+  removeClass,
   putClassMany,
   postClassInstance,
   postClassStudents,

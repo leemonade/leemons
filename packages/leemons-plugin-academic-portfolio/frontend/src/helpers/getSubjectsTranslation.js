@@ -1,5 +1,6 @@
 export function getSubjectsTranslation(t) {
   return {
+    newTitle: t('subjects.newTitle'),
     title: t('subjects.title'),
     course: t('subjects.course'),
     courseRequired: t('subjects.courseRequired'),
@@ -22,5 +23,7 @@ export function getSubjectsTranslation(t) {
     teacher: t('subjects.teacher'),
     description: t('subjects.description'),
     maxInternalIdLength: t('subjects.maxInternalIdLength'),
+    groupAny: t('subjects.groupAny'),
+    groupNumbers: t('subjects.groupNumbers'),
   };
 }

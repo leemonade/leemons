@@ -4,13 +4,15 @@ import { ScheduleInput } from '@timetable/components';
 import {
   Box,
   ColorInput,
+  ContextContainer,
+  MultiSelect,
   NumberInput,
   Select,
   TableInput,
   TextInput,
   Title,
 } from '@bubbles-ui/components';
-import { find, forEach, isArray, isObject, map, set } from 'lodash';
+import { find, forEach, isArray, isObject, isObjectLike, map, set } from 'lodash';
 import { useStore } from '@common';
 import { useForm } from 'react-hook-form';
 
@@ -21,7 +23,17 @@ function EnableIfFormPropHasValue({
   onCreate = () => {},
   ...props
 }) {
-  const value = isObject(props.value) ? props.value.id : props.value;
+  let value = null;
+  if (isArray(props.value)) {
+    value = map(props.value, (val) => {
+      if (isObject(val)) return val.id;
+      return val;
+    });
+  } else if (isObjectLike(props.value)) {
+    value = props.value.id;
+  } else {
+    value = props.value;
+  }
 
   // eslint-disable-next-line no-nested-ternary
   const properties = property ? (isArray(property) ? property : [property]) : [];
@@ -53,9 +65,11 @@ function SubjectsTable({
   teacherSelect,
   onAdd = () => {},
   onUpdate = () => {},
+  onlyNewSubject = false,
 }) {
   const [store, render] = useStore({
     tempSubjects: [],
+    tempGroups: [],
   });
 
   const form = useForm();
@@ -78,7 +92,8 @@ function SubjectsTable({
 
         evForm.setValue(`${prefix}internalId`, subjectCredit?.internalId || null);
         evForm.setValue(`${prefix}credits`, subjectCredit?.credits || null);
-        evForm.setValue(`${prefix}subjectType`, classe?.subjectType.id || null);
+        evForm.setValue(`${prefix}subjectType`, classe?.subjectType?.id || null);
+        evForm.setValue(`${prefix}knowledges`, classe?.knowledges?.id || null);
       }
     }
   }
@@ -103,7 +118,7 @@ function SubjectsTable({
       groups: map(program.groups, ({ name, id }) => ({
         label: name,
         value: id,
-      })),
+      })).concat(store.tempGroups),
       subjectTypes: map(program.subjectTypes, ({ name, id }) => ({
         label: name,
         value: id,
@@ -121,7 +136,7 @@ function SubjectsTable({
         value: internalId,
       })),
     }),
-    [program, store.tempSubjects]
+    [program, store.tempSubjects, store.tempGroups]
   );
 
   function onCreateSubject(event) {
@@ -135,24 +150,48 @@ function SubjectsTable({
     render();
   }
 
+  function onCreateGroup(event) {
+    store.tempGroups = [
+      ...store.tempGroups,
+      {
+        label: event.value,
+        value: event.value,
+      },
+    ];
+    render();
+  }
+
   const columns = [];
 
-  columns.push({
-    Header: messages.course,
-    accessor: 'courses',
-    input: {
-      node: (
-        <EnableIfFormPropHasValue>
-          <Select data={selects.courses} required />
-        </EnableIfFormPropHasValue>
-      ),
-      rules: { required: messages.courseRequired },
-    },
-    valueRender: (value) => (
-      <>{`${value.name ? `${value.name} (${value.index}º)` : `${value.index}º`}`}</>
-    ),
-  });
-
+  if (program.maxNumberOfCourses > 0) {
+    columns.push({
+      Header: messages.course,
+      accessor: 'courses',
+      input: {
+        node: (
+          <EnableIfFormPropHasValue>
+            {program.moreThanOneAcademicYear ? (
+              <MultiSelect data={selects.courses} required />
+            ) : (
+              <Select data={selects.courses} required />
+            )}
+          </EnableIfFormPropHasValue>
+        ),
+        rules: { required: messages.courseRequired },
+      },
+      valueRender: (v) => {
+        // eslint-disable-next-line no-nested-ternary
+        const values = v ? (isArray(v) ? v : [v]) : [];
+        return map(
+          values,
+          (value, index) =>
+            `${index ? ', ' : ''}${
+              value.name ? `${value.name} (${value.index}º)` : `${value.index}º`
+            }`
+        );
+      },
+    });
+  }
   columns.push({
     Header: messages.subject,
     accessor: 'subject',
@@ -160,7 +199,7 @@ function SubjectsTable({
       node: (
         <EnableIfFormPropHasValue onCreate={onCreateSubject}>
           <Select
-            data={selects.subjects}
+            data={onlyNewSubject ? store.tempSubjects : selects.subjects}
             required
             searchable
             creatable
@@ -193,19 +232,21 @@ function SubjectsTable({
     },
   });
 
-  columns.push({
-    Header: messages.knowledge,
-    accessor: 'knowledges',
-    input: {
-      node: (
-        <EnableIfFormPropHasValue>
-          <Select data={selects.knowledges} required />
-        </EnableIfFormPropHasValue>
-      ),
-      rules: { required: messages.knowledgeRequired },
-    },
-    valueRender: (value) => <>{value?.name}</>,
-  });
+  if (program.haveKnowledge) {
+    columns.push({
+      Header: messages.knowledge,
+      accessor: 'knowledges',
+      input: {
+        node: (
+          <EnableIfFormPropHasValue>
+            <Select data={selects.knowledges} required />
+          </EnableIfFormPropHasValue>
+        ),
+        rules: { required: messages.knowledgeRequired },
+      },
+      valueRender: (value) => <>{value?.name}</>,
+    });
+  }
 
   columns.push({
     Header: messages.subjectType,
@@ -221,18 +262,20 @@ function SubjectsTable({
     valueRender: (value) => <>{value?.name}</>,
   });
 
-  columns.push({
-    Header: messages.credits,
-    accessor: 'credits',
-    input: {
-      node: (
-        <EnableIfFormPropHasValue property="subject">
-          <NumberInput data={selects.subjectTypes} required />
-        </EnableIfFormPropHasValue>
-      ),
-      rules: { required: messages.subjectTypeRequired },
-    },
-  });
+  if (program.credits) {
+    columns.push({
+      Header: messages.credits,
+      accessor: 'credits',
+      input: {
+        node: (
+          <EnableIfFormPropHasValue property="subject">
+            <NumberInput data={selects.subjectTypes} required />
+          </EnableIfFormPropHasValue>
+        ),
+        rules: { required: messages.subjectTypeRequired },
+      },
+    });
+  }
 
   columns.push({
     Header: messages.color,
@@ -256,27 +299,50 @@ function SubjectsTable({
     Header: messages.group,
     accessor: 'groups',
     input: {
+      rules: {
+        pattern: {
+          message: (program.maxGroupAbbreviationIsOnlyNumbers
+            ? messages.groupNumbers
+            : messages.groupAny
+          ).replace('{max}', program.maxGroupAbbreviation),
+          value: new RegExp(
+            `^(${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
+              program.maxGroupAbbreviation
+            }}|.{36})$`,
+            'g'
+          ),
+        },
+      },
       node: (
-        <EnableIfFormPropHasValue>
-          <Select data={selects.groups} />
+        <EnableIfFormPropHasValue onCreate={onCreateGroup}>
+          <Select
+            data={selects.groups}
+            required
+            searchable
+            creatable={!onlyNewSubject}
+            getCreateLabel={(value) => `+ ${value}`}
+            nothingFound={messages.noSubjectsFound}
+          />
         </EnableIfFormPropHasValue>
       ),
     },
     valueRender: (value) => <>{value?.name}</>,
   });
 
-  columns.push({
-    Header: messages.substage,
-    accessor: 'substages',
-    input: {
-      node: (
-        <EnableIfFormPropHasValue>
-          <Select data={selects.substages} />
-        </EnableIfFormPropHasValue>
-      ),
-    },
-    valueRender: (value) => <>{value?.name}</>,
-  });
+  if (program.haveSubstagesPerCourse) {
+    columns.push({
+      Header: messages.substage,
+      accessor: 'substages',
+      input: {
+        node: (
+          <EnableIfFormPropHasValue>
+            <Select data={selects.substages} />
+          </EnableIfFormPropHasValue>
+        ),
+      },
+      valueRender: (value) => <>{value?.name}</>,
+    });
+  }
 
   columns.push({
     Header: messages.seats,
@@ -311,17 +377,27 @@ function SubjectsTable({
     valueRender: (value) => <ScheduleInput label={false} value={value} readOnly={true} />,
   });
 
-  function _onAdd({ tableInputRowId, ...formData }) {
+  async function _onAdd({ tableInputRowId, ...formData }) {
     const tempSubjectsValues = map(store.tempSubjects, 'value');
+    const tempGroupsValues = map(store.tempGroups, 'value');
     const isNewSubject = tempSubjectsValues.indexOf(formData.subject) >= 0;
-    onAdd(formData, { isNewSubject });
+    const isNewGroup = tempGroupsValues.indexOf(formData.groups) >= 0;
+    const good = await onAdd(formData, { isNewSubject, isNewGroup });
+    if (good !== null) {
+      store.tempSubjects = [];
+      store.tempGroups = [];
+      render();
+    }
   }
 
-  function _onUpdate({ oldItem, newItem }) {
+  async function _onUpdate({ oldItem, newItem }) {
     const tempSubjectsValues = map(store.tempSubjects, 'value');
+    const tempGroupsValues = map(store.tempGroups, 'value');
     const subject = isObject(newItem.subject) ? newItem.subject.id : newItem.subject;
+    const groups = isObject(newItem.groups) ? newItem.groups.id : newItem.groups;
     const isNewSubject = tempSubjectsValues.indexOf(subject) >= 0;
-    onUpdate(
+    const isNewGroup = tempGroupsValues.indexOf(groups) >= 0;
+    await onUpdate(
       {
         id: oldItem.id,
         ...newItem,
@@ -329,16 +405,19 @@ function SubjectsTable({
         knowledges: isObject(newItem.knowledges) ? newItem.knowledges.id : newItem.knowledges,
         subject,
         subjectType: isObject(newItem.subjectType) ? newItem.subjectType.id : newItem.subjectType,
-        groups: isObject(newItem.groups) ? newItem.groups.id : newItem.groups,
+        groups,
         substages: isObject(newItem.substages) ? newItem.substages.id : newItem.substages,
       },
-      { isNewSubject }
+      { isNewSubject, isNewGroup }
     );
+    store.tempSubjects = [];
+    store.tempGroups = [];
+    render();
   }
 
   return (
-    <Box>
-      <Title order={4}>{messages.title}</Title>
+    <ContextContainer direction="column" fullWidth>
+      <Title order={4}>{onlyNewSubject ? messages.newTitle : messages.title}</Title>
       <Box sx={(theme) => ({ paddingBottom: theme.spacing[3], width: '100%', overflow: 'auto' })}>
         <Box style={{ width: '2000px' }}>
           <TableInput
@@ -355,7 +434,7 @@ function SubjectsTable({
           />
         </Box>
       </Box>
-    </Box>
+    </ContextContainer>
   );
 }
 
@@ -363,11 +442,12 @@ SubjectsTable.propTypes = {
   messages: PropTypes.object,
   onAdd: PropTypes.func,
   onUpdate: PropTypes.func,
-  teacherSelects: PropTypes.object,
+  teacherSelect: PropTypes.any,
   onTeacherSearch: PropTypes.func,
   onCreateSubject: PropTypes.func,
   program: PropTypes.any,
   tableLabels: PropTypes.object,
+  onlyNewSubject: PropTypes.bool,
 };
 
 export { SubjectsTable };

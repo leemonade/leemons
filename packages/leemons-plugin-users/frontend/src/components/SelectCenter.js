@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { map, isArray, isFunction } from 'lodash';
+import { isArray, isFunction, map } from 'lodash';
 import { Select } from '@bubbles-ui/components';
 import { getCentersWithToken } from '@users/session';
 
-function SelectCenter({ firstSelected, onChange, ...props }) {
+function SelectCenter({ firstSelected, onChange, value: userValue, ...props }) {
   const [data, setData] = useState([]);
   const [value, setValue] = useState(null);
 
@@ -16,6 +16,10 @@ function SelectCenter({ firstSelected, onChange, ...props }) {
       }
     }
   };
+
+  useEffect(() => {
+    setValue(userValue);
+  }, [userValue]);
 
   useEffect(() => {
     const centers = getCentersWithToken();
@@ -38,6 +42,7 @@ function SelectCenter({ firstSelected, onChange, ...props }) {
 SelectCenter.propTypes = {
   firstSelected: PropTypes.bool,
   onChange: PropTypes.func,
+  value: PropTypes.string,
 };
 
 export { SelectCenter };

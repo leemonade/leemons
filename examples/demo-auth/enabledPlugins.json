@@ -1,27 +1,82 @@
 [
-  { "name": "users", "path": "../../packages/leemons-plugin-users/frontend" },
-  { "name": "layout", "path": "../../packages/leemons-plugin-layout/frontend" },
-  { "name": "common", "path": "../../packages/leemons-plugin-common/frontend" },
-  { "name": "menu-builder", "path": "../../packages/leemons-plugin-menu-builder/frontend" },
-  { "name": "multilanguage", "path": "../../packages/leemons-plugin-multilanguage/frontend" },
-  { "name": "assets", "path": "../../packages/leemons-plugin-assets/frontend" },
-  { "name": "dataset", "path": "../../packages/leemons-plugin-dataset/frontend" },
-  { "name": "socket-io", "path": "../../packages/leemons-plugin-socket-io/frontend" },
-  { "name": "calendar", "path": "../../packages/leemons-plugin-calendar/frontend" },
-  { "name": "families", "path": "../../packages/leemons-plugin-families/frontend" },
-  { "name": "package-manager", "path": "../../packages/leemons-plugin-package-manager/frontend" },
-  { "name": "classroom", "path": "../../packages/leemons-plugin-classroom/frontend" },
-  { "name": "media-library", "path": "../../packages/leemons-plugin-media-library/frontend" },
+  {
+    "name": "users",
+    "path": "../../packages/leemons-plugin-users/frontend"
+  },
+  {
+    "name": "layout",
+    "path": "../../packages/leemons-plugin-layout/frontend"
+  },
+  {
+    "name": "common",
+    "path": "../../packages/leemons-plugin-common/frontend"
+  },
+  {
+    "name": "menu-builder",
+    "path": "../../packages/leemons-plugin-menu-builder/frontend"
+  },
+  {
+    "name": "multilanguage",
+    "path": "../../packages/leemons-plugin-multilanguage/frontend"
+  },
+  {
+    "name": "assets",
+    "path": "../../packages/leemons-plugin-assets/frontend"
+  },
+  {
+    "name": "dataset",
+    "path": "../../packages/leemons-plugin-dataset/frontend"
+  },
+  {
+    "name": "socket-io",
+    "path": "../../packages/leemons-plugin-socket-io/frontend"
+  },
+  {
+    "name": "calendar",
+    "path": "../../packages/leemons-plugin-calendar/frontend"
+  },
+  {
+    "name": "families",
+    "path": "../../packages/leemons-plugin-families/frontend"
+  },
+  {
+    "name": "package-manager",
+    "path": "../../packages/leemons-plugin-package-manager/frontend"
+  },
+  {
+    "name": "classroom",
+    "path": "../../packages/leemons-plugin-classroom/frontend"
+  },
+  {
+    "name": "media-library",
+    "path": "../../packages/leemons-plugin-media-library/frontend"
+  },
   {
     "name": "families-emergency-numbers",
     "path": "../../packages/leemons-plugin-families-emergency-numbers/frontend"
   },
-  { "name": "curriculum", "path": "../../packages/leemons-plugin-curriculum/frontend" },
+  {
+    "name": "curriculum",
+    "path": "../../packages/leemons-plugin-curriculum/frontend"
+  },
   {
     "name": "academic-portfolio",
     "path": "../../packages/leemons-plugin-academic-portfolio/frontend"
   },
-  { "name": "grades", "path": "../../packages/leemons-plugin-grades/frontend" },
-  { "name": "tasks", "path": "../../packages/leemons-plugin-tasks/frontend" },
-  { "name": "timetable", "path": "../../packages/leemons-plugin-timetable/frontend" }
+  {
+    "name": "grades",
+    "path": "../../packages/leemons-plugin-grades/frontend"
+  },
+  {
+    "name": "tasks",
+    "path": "../../packages/leemons-plugin-tasks/frontend"
+  },
+  {
+    "name": "timetable",
+    "path": "../../packages/leemons-plugin-timetable/frontend"
+  },
+  {
+    "name": "scores",
+    "path": "../../packages/leemons-plugin-scores/frontend"
+  }
 ]

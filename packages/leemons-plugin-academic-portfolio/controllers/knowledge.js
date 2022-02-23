@@ -6,6 +6,12 @@ async function postKnowledge(ctx) {
   ctx.body = { status: 200, knowledge };
 }
 
+async function putKnowledge(ctx) {
+  const knowledge = await knowledgeService.updateKnowledge(ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, knowledge };
+}
+
 async function listKnowledge(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
@@ -39,4 +45,5 @@ async function listKnowledge(ctx) {
 module.exports = {
   postKnowledge,
   listKnowledge,
+  putKnowledge,
 };
