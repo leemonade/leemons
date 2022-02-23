@@ -200,9 +200,21 @@ module.exports = {
   teacherListAssigned: async (ctx) => {
     try {
       const { user } = ctx.request.params;
-      const { page, size } = ctx.request.query;
+      const { page, size, details } = ctx.request.query;
+      let { columns } = ctx.request.query;
 
-      const tasks = await listAssigned(user, parseInt(page, 10) || 0, parseInt(size, 10) || 10);
+      try {
+        columns = JSON.parse(columns);
+      } catch (e) {
+        if (columns !== '*') {
+          columns = undefined;
+        }
+      }
+
+      const tasks = await listAssigned(user, parseInt(page, 10) || 0, parseInt(size, 10) || 10, {
+        details: details === 'true',
+        columns,
+      });
 
       ctx.status = 200;
       ctx.body = {
