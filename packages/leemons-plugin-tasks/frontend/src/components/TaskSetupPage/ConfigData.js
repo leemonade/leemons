@@ -1,16 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { isFunction, isEmpty } from 'lodash';
+import { isFunction, isEmpty, find } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
 import {
+  Box,
   Stack,
   ContextContainer,
   TextInput,
   Button,
   Select,
   Textarea,
+  TableInput,
 } from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
+import { SelectProgram, SelectCourse, SelectSubject } from '@academic-portfolio/components';
+import { SelectCenter } from '@users/components';
 
 function ConfigData({
   labels,
@@ -39,6 +43,7 @@ function ConfigData({
   } = useForm({ defaultValues });
 
   const { subscribe, unsubscribe, emitEvent } = useObserver();
+  const [centerId, setCenterId] = useState(null);
 
   useEffect(() => {
     reset(sharedData);
@@ -59,6 +64,7 @@ function ConfigData({
       unsubscribe(f);
     };
   }, []);
+
   // ·······························································
   // HANDLERS
 
@@ -68,161 +74,156 @@ function ConfigData({
     if (isFunction(onNext)) onNext(data);
   };
 
+  const handleOnSelectCenter = (id) => {
+    setCenterId(id);
+  };
+
+  // ·······························································
+  // SUBJECTS
+
+  const subjectsList = useMemo(
+    () => [
+      {
+        label: 'Language',
+        value: 'language',
+      },
+      {
+        label: 'Maths',
+        value: 'maths',
+      },
+    ],
+    []
+  );
+
+  const levelsList = useMemo(
+    () => [
+      {
+        label: 'Beginner',
+        value: 'beginner',
+      },
+      {
+        label: 'Intermediate',
+        value: 'intermediate',
+      },
+    ],
+    []
+  );
+
+  const tableData = useMemo(() => []);
+
+  const tableColumns = useMemo(
+    () => [
+      {
+        Header: labels.subject,
+        accessor: 'subject',
+        input: {
+          node: <Select placeholder={placeholders.subject} searchable />,
+          rules: { required: 'Required field' },
+          data: subjectsList,
+        },
+        valueRender: (value) => find(subjectsList, { value })?.label,
+      },
+      {
+        Header: labels.level,
+        accessor: 'level',
+        input: {
+          node: <Select placeholder={placeholders.level} searchable />,
+          rules: { required: 'Required field' },
+          data: levelsList,
+        },
+        valueRender: (value) => find(levelsList, { value })?.label,
+      },
+    ],
+    [labels]
+  );
+
+  const tableLabels = useMemo(
+    () => ({
+      add: labels.addSubject,
+      remove: 'Remove',
+      edit: 'Edit',
+      accept: 'Accept',
+      cancel: 'Cancel',
+    }),
+    [labels]
+  );
+
   // ---------------------------------------------------------------
   // COMPONENT
 
   return (
     <form onSubmit={handleSubmit(handleOnNext)}>
       <ContextContainer {...props} divided>
-        <ContextContainer title={labels.title}>
-          {/* Name input */}
-          <Controller
-            control={control}
-            name="name"
-            rules={{ required: errorMessages.name?.required }}
-            render={({ field }) => (
-              <TextInput
-                {...field}
-                label={labels.name}
-                placeholder={placeholders.name}
-                error={errors.name}
-                required={!isEmpty(errorMessages.name?.required)}
-              />
-            )}
-          />
-          {/* Tagline input */}
-          <Controller
-            control={control}
-            name="tagline"
-            rules={{ required: errorMessages.tagline?.required }}
-            render={({ field }) => (
-              <TextInput
-                {...field}
-                label={labels.tagline}
-                placeholder={placeholders.tagline}
-                error={errors.tagline}
-                required={!isEmpty(errorMessages.tagline?.required)}
-              />
-            )}
-          />
-          {/* Config container */}
-          <ContextContainer title="Config" direction="row">
-            {/* Program selector */}
+        <ContextContainer title={labels.title} divided>
+          <ContextContainer>
+            {/* Name input */}
             <Controller
               control={control}
-              name="program"
-              // rules={{ required: errorMessages.program?.required }}
+              name="name"
+              rules={{ required: errorMessages.name?.required }}
               render={({ field }) => (
-                <Select
+                <TextInput
                   {...field}
-                  label={labels.program}
-                  placeholder={placeholders.program}
-                  error={errors.program}
-                  searchable={true}
-                  // required={!isEmpty(errorMessages.program?.required)}
-                  data={[
-                    {
-                      label: 'Primary',
-                      value: 'primary',
-                    },
-                    {
-                      label: 'Secondary',
-                      value: 'secondary',
-                    },
-                  ]}
+                  label={labels.name}
+                  placeholder={placeholders.name}
+                  error={errors.name}
+                  required={!isEmpty(errorMessages.name?.required)}
                 />
               )}
             />
-            {/* Course selector */}
+            {/* Tagline input */}
             <Controller
               control={control}
-              name="course"
-              // rules={{ required: errorMessages.course?.required }}
+              name="tagline"
+              rules={{ required: errorMessages.tagline?.required }}
               render={({ field }) => (
-                <Select
+                <TextInput
                   {...field}
-                  label={labels.course}
-                  placeholder={placeholders.course}
-                  error={errors.course}
-                  searchable={true}
-                  // required={!isEmpty(errorMessages.course?.required)}
-                  data={[
-                    {
-                      label: 'First',
-                      value: 'first',
-                    },
-                    {
-                      label: 'Second',
-                      value: 'second',
-                    },
-                  ]}
+                  label={labels.tagline}
+                  placeholder={placeholders.tagline}
+                  error={errors.tagline}
+                  required={!isEmpty(errorMessages.tagline?.required)}
                 />
               )}
             />
+
+            <ContextContainer direction="row">
+              {/* Center Selector */}
+              <Box skipFlex>
+                <SelectCenter label="Center" onChange={handleOnSelectCenter} firstSelected />
+              </Box>
+
+              {/* Program selector */}
+              <Controller
+                control={control}
+                name="program"
+                rules={{ required: errorMessages.program?.required }}
+                render={({ field }) => (
+                  <SelectProgram
+                    {...field}
+                    center={centerId}
+                    label={labels.program}
+                    placeholder={placeholders.program}
+                    error={errors.program}
+                  />
+                )}
+              />
+            </ContextContainer>
           </ContextContainer>
 
           {/* Subject container */}
-          <ContextContainer title="Subject" direction="row" alignItems="end">
-            {/* Subject selector */}
-            <Controller
-              control={control}
-              name="subject"
-              // rules={{ required: errorMessages.subject?.required }}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  label={labels.subject}
-                  placeholder={placeholders.subject}
-                  error={errors.subject}
-                  searchable={true}
-                  // required={!isEmpty(errorMessages.subject?.required)}
-                  data={[
-                    {
-                      label: 'Language',
-                      value: 'language',
-                    },
-                    {
-                      label: 'Maths',
-                      value: 'maths',
-                    },
-                  ]}
-                />
-              )}
+          <ContextContainer title={labels.subjects}>
+            <TableInput
+              data={tableData}
+              columns={tableColumns}
+              labels={tableLabels}
+              sortable={false}
+              onChange={(e) => console.table(e)}
             />
-            {/* Difficulty selector */}
-            <Controller
-              control={control}
-              name="level"
-              // rules={{ required: errorMessages.level?.required }}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  label={labels.level}
-                  placeholder={placeholders.level}
-                  error={errors.level}
-                  searchable={true}
-                  // required={!isEmpty(errorMessages.level?.required)}
-                  data={[
-                    {
-                      label: 'Begginer',
-                      value: 'begginer',
-                    },
-                    {
-                      label: 'Intermediate',
-                      value: 'intermediate',
-                    },
-                  ]}
-                />
-              )}
-            />
-            {/* Add subject button */}
-            <Button variant="filled" color="primary" size="xs">
-              {labels.addSubject}
-            </Button>
           </ContextContainer>
 
           {/* Summary container */}
-          <ContextContainer title="Summary">
+          <ContextContainer title={labels.summary}>
             {/* Summary input */}
             <Controller
               control={control}
@@ -236,6 +237,9 @@ function ConfigData({
                   placeholder={placeholders.summary}
                   required={!isEmpty(errorMessages.summary?.required)}
                   error={errors.summary}
+                  counter="word"
+                  counterLabels={{ single: 'word', plural: 'words' }}
+                  showCounter
                 />
               )}
             />

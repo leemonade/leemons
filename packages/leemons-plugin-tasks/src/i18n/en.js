@@ -47,6 +47,7 @@ module.exports = {
           tagline: 'Tagline',
           program: 'Program',
           course: 'Course',
+          subjects: 'Subjects',
           subject: 'Subject',
           addSubject: 'Add subject',
           level: 'Level',
@@ -177,5 +178,19 @@ module.exports = {
       minutes: 'minutes',
       days: 'days',
     },
+  },
+  profiles_page: {
+    page_title: 'Tasks - Profile setup',
+    page_description:
+      'First of all we need to match the system profiles with the custom profiles you have created on the platform (Please read carefully the characteristics of each profile. Once the profiles are linked, it cannot be undone.)',
+    save: 'Save',
+    profileSaved: 'Saved profiles',
+    profiles: 'Profiles',
+    teacher: 'Teacher',
+    teacherDescription: 'Responsible for the creation and assignment of tasks',
+    teacherRequired: 'Field required',
+    student: 'Student',
+    studentDescription: 'Will be assigned the tasks and will be responsible for executing them',
+    studentRequired: 'Field required',
   },
 };

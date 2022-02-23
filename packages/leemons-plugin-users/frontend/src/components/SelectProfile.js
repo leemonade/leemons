@@ -53,3 +53,4 @@ SelectProfile.propTypes = {
 };
 
 export { SelectProfile };
+export default SelectProfile;
