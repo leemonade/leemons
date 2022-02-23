@@ -1,5 +1,6 @@
 const createInstance = require('../src/services/assignment/instance/create');
 const removeInstance = require('../src/services/assignment/instance/remove');
+const { get: getInstance } = require('../src/services/assignment/instance/get');
 
 const assignStudent = require('../src/services/assignment/student/assign');
 const unassignStudent = require('../src/services/assignment/student/remove');
@@ -32,6 +33,36 @@ module.exports = {
       ctx.body = {
         status: 201,
         instance,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        message: e.message,
+      };
+    }
+  },
+  instanceGet: async (ctx) => {
+    try {
+      const { instance } = ctx.request.params;
+      let { columns } = ctx.query;
+
+      try {
+        columns = JSON.parse(columns);
+      } catch (e) {
+        if (columns !== '*') {
+          columns = undefined;
+        }
+      }
+
+      const data = await getInstance(instance, {
+        columns,
+      });
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        data,
       };
     } catch (e) {
       ctx.status = 400;
@@ -171,7 +202,7 @@ module.exports = {
       const { user } = ctx.request.params;
       const { page, size } = ctx.request.query;
 
-      const tasks = await listAssigned(user, parseInt(page, 10), parseInt(size, 10));
+      const tasks = await listAssigned(user, parseInt(page, 10) || 0, parseInt(size, 10) || 10);
 
       ctx.status = 200;
       ctx.body = {

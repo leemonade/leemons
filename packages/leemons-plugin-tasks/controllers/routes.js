@@ -150,6 +150,12 @@ module.exports = [
     handler: 'assignments.instanceDelete',
     authenticated: true,
   },
+  {
+    method: 'GET',
+    path: '/tasks/instances/:instance',
+    handler: 'assignments.instanceGet',
+    authenticated: true,
+  },
   // Student
   {
     method: 'POST',

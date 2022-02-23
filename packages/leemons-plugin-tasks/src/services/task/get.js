@@ -2,8 +2,9 @@ const { tasks, tasksVersioning } = require('../table');
 const parseId = require('./helpers/parseId');
 const getVersion = require('./versions/get');
 
-const taskVersioningExistingColumns = ['id', 'name', 'current', 'last'];
-const taskExistingColumns = [
+const DEFAULT_COLUMNS = ['id', 'current', 'last', 'name', 'status'];
+const TASK_VERSIONING_EXISTING_COLUMNS = ['id', 'name', 'current', 'last'];
+const TASK_EXISTING_COLUMNS = [
   'tagline',
   'level',
   'summary',
@@ -21,13 +22,25 @@ const taskExistingColumns = [
   'state',
   'published',
 ];
-const taskVersionsExistingColumns = ['status'];
+const TASK_VERSIONS_EXISTING_COLUMNS = ['status'];
 
-async function getMany(
-  taskIds,
-  { versioningColumns, taskColumns, versionsColumns, transacting } = {}
-) {
+async function getMany(taskIds, { columns, transacting } = {}) {
   try {
+    // EN: Get the requested columns
+    // ES: Obtener las columnas solicitadas
+    const versioningColumns =
+      columns === '*'
+        ? TASK_VERSIONING_EXISTING_COLUMNS
+        : columns.filter((column) => TASK_VERSIONING_EXISTING_COLUMNS.includes(column));
+    const taskColumns =
+      columns === '*'
+        ? TASK_EXISTING_COLUMNS
+        : columns.filter((column) => TASK_EXISTING_COLUMNS.includes(column));
+    const versionsColumns =
+      columns === '*'
+        ? TASK_VERSIONS_EXISTING_COLUMNS
+        : columns.filter((column) => TASK_VERSIONS_EXISTING_COLUMNS.includes(column));
+
     // EN: Get each task' id and fullId
     // ES: Obtener cada id y fullId de la tarea
     const [ids, fullIds] = await taskIds.reduce(
@@ -77,39 +90,25 @@ async function getMany(
   }
 }
 
-module.exports = async function get(
-  taskId,
-  { columns = ['id', 'current', 'last', 'name', 'status'], transacting } = {}
-) {
+async function get(taskId, { columns = DEFAULT_COLUMNS, transacting } = {}) {
   try {
-    // EN: Get the requested columns
-    // ES: Obtener las columnas solicitadas
-    const versioningColumns =
-      columns === '*'
-        ? taskVersioningExistingColumns
-        : columns.filter((column) => taskVersioningExistingColumns.includes(column));
-    const taskColumns =
-      columns === '*'
-        ? taskExistingColumns
-        : columns.filter((column) => taskExistingColumns.includes(column));
-    const versionsColumns =
-      columns === '*'
-        ? taskVersionsExistingColumns
-        : columns.filter((column) => taskVersionsExistingColumns.includes(column));
-
     if (Array.isArray(taskId)) {
-      return getMany(taskId, { versioningColumns, taskColumns, versionsColumns, transacting });
+      return getMany(taskId, { columns, transacting });
     }
 
     const result = await getMany([taskId], {
-      versioningColumns,
-      taskColumns,
-      versionsColumns,
-      transacting,
+      columns,
     });
 
     return result[0];
   } catch (e) {
     throw new Error(`Error getting task: ${e.message}`);
   }
+}
+
+module.exports = {
+  get,
+  TASK_VERSIONING_EXISTING_COLUMNS,
+  TASK_EXISTING_COLUMNS,
+  TASK_VERSIONS_EXISTING_COLUMNS,
 };
