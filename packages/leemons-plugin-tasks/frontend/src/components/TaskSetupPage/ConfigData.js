@@ -246,7 +246,7 @@ function ConfigData({
               <Controller
                 control={control}
                 name="subjects"
-                rules={{ required: errorMessages.summary?.required }}
+                rules={{ required: errorMessages.subject?.required }}
                 render={({ field: { ref, value, onChange, ...field } }) => (
                   <TableInput
                     {...field}
@@ -255,6 +255,7 @@ function ConfigData({
                     columns={subjectsColumns}
                     labels={subjectsLabels}
                     sortable={false}
+                    error={errors.subjects}
                   />
                 )}
               />
