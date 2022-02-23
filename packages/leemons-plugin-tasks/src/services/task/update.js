@@ -2,7 +2,7 @@ const _ = require('lodash');
 const emit = require('../events/emit');
 const { tasks, tasksVersioning } = require('../table');
 const parseId = require('./helpers/parseId');
-const getTask = require('./get');
+const { get: getTask } = require('./get');
 const getVersion = require('./versions/get');
 const upgradeTaskVersion = require('./versions/upgrade');
 
