@@ -5,10 +5,12 @@ import { useForm, Controller } from 'react-hook-form';
 import { Button, ContextContainer, DatePicker } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditor } from '@bubbles-ui/editors';
+import { assign } from 'lodash';
 import { prefixPN } from '../../helpers/prefixPN';
 import AssignUsers from './AssignUsers';
 import ConditionalInput from '../Inputs/ConditionalInput';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
+import SelectTeachers from './SelectTeachers';
 
 export default function Form({ onSubmit: parentSubmit }) {
   const [, translations] = useTranslateLoader(prefixPN('assignment_form'));
@@ -69,14 +71,15 @@ export default function Form({ onSubmit: parentSubmit }) {
           name="teachers"
           rules={{ required: true }}
           render={({ field }) => (
-            <AssignUsers
-              {...field}
-              error={errors.teachers}
-              profile="teacher"
-              labels={labels}
-              modes={modes}
-              assignTo={assignTo}
-            />
+            <SelectTeachers {...field} role="teacher" />
+            // <AssignUsers
+            //   {...field}
+            //   error={errors.teachers}
+            //   profile="teacher"
+            //   labels={labels}
+            //   modes={modes}
+            //   assignTo={assignTo}
+            // />
           )}
         />
         <Controller
