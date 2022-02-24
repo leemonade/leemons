@@ -24,6 +24,7 @@ module.exports = async function create(
         ),
       executionTime,
       message,
+      status: 'assigned',
     },
     {
       transacting,

@@ -17,6 +17,7 @@ module.exports = {
       type: 'integer',
     },
     message: { type: 'string' },
+    status: { type: 'string' },
   },
   primaryKey: {
     type: 'uuid',

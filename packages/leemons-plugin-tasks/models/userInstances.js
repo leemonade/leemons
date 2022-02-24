@@ -7,6 +7,9 @@ module.exports = {
     user: {
       type: 'uuid',
     },
+    opened: {
+      type: 'datetime',
+    },
     start: {
       type: 'datetime',
     },

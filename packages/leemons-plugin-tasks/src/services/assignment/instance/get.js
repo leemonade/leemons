@@ -2,9 +2,19 @@ const { instances: instancesTable } = require('../../table');
 const { get: getTask } = require('../../task/get');
 const count = require('../student/count');
 const list = require('../student/list');
+const { DEFAULT_COLUMNS: STATS_COLUMNS, getStats } = require('../student/stats');
 
-const INSTANCE_COLUMNS = ['startDate', 'deadline', 'visualizationDate', 'executionTime', 'message'];
-const DEFAULT_COLUMNS = ['name', 'deadline', 'studentCount'];
+const TASK_COLUMNS_DEFAULT = ['name', 'deadline'];
+
+const INSTANCE_COLUMNS = [
+  'startDate',
+  'deadline',
+  'visualizationDate',
+  'executionTime',
+  'message',
+  'status',
+];
+const DEFAULT_COLUMNS = [...TASK_COLUMNS_DEFAULT, 'status', 'studentCount', ...STATS_COLUMNS];
 
 async function getInstanceTask(instance, { columns = DEFAULT_COLUMNS, transacting } = {}) {
   // EN: Parse the desired columns to only include the ones we want.
@@ -13,6 +23,8 @@ async function getInstanceTask(instance, { columns = DEFAULT_COLUMNS, transactin
     columns === '*'
       ? INSTANCE_COLUMNS
       : INSTANCE_COLUMNS.filter((column) => columns.includes(column));
+
+  const otherColumns = columns.filter((column) => !INSTANCE_COLUMNS.includes(column));
 
   const instances = Array.isArray(instance) ? instance : [instance];
 
@@ -34,7 +46,7 @@ async function getInstanceTask(instance, { columns = DEFAULT_COLUMNS, transactin
 
   // EN: Get the tasks info (and save on an object with the id as key to avoid searches)
   // ES: Obtenemos la información de los tasks (y guardamos en un objeto con el id como clave para evitar búsquedas)
-  const tasks = (await getTask(tasksIds, { columns, transacting })).reduce(
+  const tasks = (await getTask(tasksIds, { columns: otherColumns, transacting })).reduce(
     (o, t) => ({ ...o, [t.id]: t }),
     {}
   );
@@ -52,6 +64,18 @@ async function getInstanceTask(instance, { columns = DEFAULT_COLUMNS, transactin
       })
     );
   }
+
+  // EN: Get the students stats for each instance and save it on the students object
+  // ES: Obtenemos los stats de estudiantes para cada instancia y guardamoslo en el objeto de estudiantes
+  await Promise.all(
+    instanceTasks.map(async (i) => {
+      const stats = await getStats(i.id, { columns, transacting });
+      students[i.id] = {
+        ...students[i.id],
+        ...stats,
+      };
+    })
+  );
 
   // TODO: Get all the students and make info meaningful
   if (columns === '*' || columns.includes('studentList')) {

@@ -11,10 +11,15 @@ async function getTasks(userAgent, setTasks) {
     const task = t;
     task.students.count = t.students.count;
     task.group = '-';
-    task.status = '-';
-    task.students.open = '-';
-    task.students.ongoing = '-';
-    task.students.completed = '-';
+    task.students.open = `${t.students.open} | ${Math.round(
+      (t.students.open / t.students.count) * 100
+    )}%`;
+    task.students.ongoing = `${t.students.ongoing} | ${Math.round(
+      (t.students.ongoing / t.students.count) * 100
+    )}%`;
+    task.students.completed = `${t.students.completed} | ${Math.round(
+      (t.students.completed / t.students.count) * 100
+    )}%`;
 
     return task;
   });
