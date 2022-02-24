@@ -193,4 +193,19 @@ module.exports = {
     studentDescription: 'Will be assigned the tasks and will be responsible for executing them',
     studentRequired: 'Field required',
   },
+  teacher_assignments: {
+    table: {
+      headers: {
+        group: 'Group',
+        task: 'Task',
+        deadline: 'Deadline',
+        students: 'Students',
+        status: 'Status',
+        open: 'Open',
+        ongoing: 'Ongoing',
+        completed: 'Completed',
+        actions: 'Actions',
+      },
+    },
+  },
 };

@@ -194,4 +194,19 @@ module.exports = {
     studentDescription: 'Se le asignarán las tareas y será responsable de ejecutarlas',
     studentRequired: 'Campo requerido',
   },
+  teacher_assignments: {
+    table: {
+      headers: {
+        group: 'Grupo',
+        task: 'Tarea',
+        deadline: 'Fecha límite',
+        students: 'Estudiantes',
+        status: 'Estado',
+        open: 'Abierta',
+        ongoing: 'En curso',
+        completed: 'Completada',
+        actions: 'Acciones',
+      },
+    },
+  },
 };

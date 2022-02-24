@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useApi } from '@common';
+import { useApi, unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getCentersWithToken } from '@users/session';
 import { Table } from '@bubbles-ui/components';
+import { prefixPN } from '../../helpers/prefixPN';
 import listTeacherTasks from '../../request/instance/listTeacherTasks';
 
 async function getTasks(userAgent, setTasks) {
@@ -30,49 +32,64 @@ async function getTasks(userAgent, setTasks) {
 }
 
 export default function TeacherAssignedTasksLists() {
+  const [, translations] = useTranslateLoader(prefixPN('teacher_assignments'));
+  const [tableLabels, setTableLabels] = useState({});
   const [centers] = useApi(getCentersWithToken);
   const [tasks, setTasks] = useState([]);
+
+  // EN: Parse the translations object
+  // ES: Procesar el objeto de traducciones
+  useEffect(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = res.plugins.tasks.teacher_assignments;
+
+      // EN: Save your translations keys to use them in your component
+      // ES: Guarda tus traducciones para usarlas en tu componente
+      setTableLabels(data.table.headers);
+    }
+  }, [translations]);
 
   const columns = useMemo(
     () => [
       {
-        Header: 'GROUP',
+        Header: tableLabels?.group,
         accessor: 'group',
       },
       {
-        Header: 'TASK',
+        Header: tableLabels?.task,
         accessor: 'task.name',
       },
       {
-        Header: 'DEADLINE',
+        Header: tableLabels?.deadline,
         accessor: 'deadline',
       },
       {
-        Header: 'STUDENTS',
+        Header: tableLabels?.students,
         accessor: 'students.count',
       },
       {
-        Header: 'STATUS',
+        Header: tableLabels?.status,
         accessor: 'status',
       },
       {
-        Header: 'OPEN',
+        Header: tableLabels?.open,
         accessor: 'students.open',
       },
       {
-        Header: 'ONGOING',
+        Header: tableLabels?.ongoing,
         accessor: 'students.ongoing',
       },
       {
-        Header: 'COMPLETED',
+        Header: tableLabels?.completed,
         accessor: 'students.completed',
       },
       {
-        Header: 'ACTIONS',
+        Header: tableLabels?.actions,
         accessor: 'data.actions',
       },
     ],
-    []
+    [tableLabels]
   );
 
   useEffect(() => {
