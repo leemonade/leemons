@@ -1,6 +1,7 @@
 const emit = require('../events/emit');
 const { tasks, tasksVersioning } = require('../table');
 const parseId = require('./helpers/parseId');
+const addSubjects = require('./subjects/add');
 const versioningCreate = require('./versions/create');
 
 module.exports = async function create(
@@ -21,6 +22,7 @@ module.exports = async function create(
     instructionsForTeacher,
     instructionsForStudent,
     state,
+    subjects,
   },
   { transacting: t } = {}
 ) {
@@ -64,6 +66,10 @@ module.exports = async function create(
         // EN: Create task instance
         // ES: Crear instancia de tarea
         task = await tasks.create(task, { transacting });
+
+        // EN: Create task subjects
+        // ES: Crear asignaturas de tarea
+        await addSubjects(task.id, subjects, { transacting });
 
         // EN: Emit the event.
         // ES: Emitir el evento.

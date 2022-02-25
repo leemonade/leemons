@@ -1,8 +1,9 @@
 const { tasks, tasksVersioning } = require('../table');
 const parseId = require('./helpers/parseId');
 const getVersion = require('./versions/get');
+const getSubjects = require('./subjects/get');
 
-const DEFAULT_COLUMNS = ['id', 'current', 'last', 'name', 'status'];
+const DEFAULT_COLUMNS = ['id', 'current', 'last', 'name', 'status', 'subjects'];
 const TASK_VERSIONING_EXISTING_COLUMNS = ['id', 'name', 'current', 'last'];
 const TASK_EXISTING_COLUMNS = [
   'tagline',
@@ -23,6 +24,7 @@ const TASK_EXISTING_COLUMNS = [
   'published',
 ];
 const TASK_VERSIONS_EXISTING_COLUMNS = ['status'];
+const TASK_SUBJECTS_EXISTING_COLUMNS = ['subjects'];
 
 async function getMany(taskIds, { columns, transacting } = {}) {
   try {
@@ -40,6 +42,10 @@ async function getMany(taskIds, { columns, transacting } = {}) {
       columns === '*'
         ? TASK_VERSIONS_EXISTING_COLUMNS
         : columns.filter((column) => TASK_VERSIONS_EXISTING_COLUMNS.includes(column));
+    const subjectsColumns =
+      columns === '*'
+        ? TASK_SUBJECTS_EXISTING_COLUMNS
+        : columns.filter((column) => TASK_SUBJECTS_EXISTING_COLUMNS.includes(column));
 
     // EN: Get each task' id and fullId
     // ES: Obtener cada id y fullId de la tarea
@@ -69,6 +75,13 @@ async function getMany(taskIds, { columns, transacting } = {}) {
       { columns: ['id', ...taskColumns], transacting }
     );
 
+    // EN: Get the tasks subjects by id (id@version)
+    // ES: Obtener las tareas por id (id@version)
+    let _subjects;
+    if (subjectsColumns.includes('subjects')) {
+      _subjects = await getSubjects(fullIds, { transacting });
+    }
+
     // EN: Map the tasks by id
     // ES: Mapear las tareas por id
     return Promise.all(
@@ -77,6 +90,9 @@ async function getMany(taskIds, { columns, transacting } = {}) {
           ...versioning.find(({ id: _id }) => id === _id),
           ..._tasks.find(({ id: _id }) => _id === fullIds[i]),
         };
+        if (subjectsColumns.includes('subjects')) {
+          t.subjects = _subjects[t.id] || [];
+        }
 
         if (versionsColumns.length) {
           t.status = (await getVersion(fullIds[i], { transacting })).status;
@@ -111,4 +127,5 @@ module.exports = {
   TASK_VERSIONING_EXISTING_COLUMNS,
   TASK_EXISTING_COLUMNS,
   TASK_VERSIONS_EXISTING_COLUMNS,
+  TASK_SUBJECTS_EXISTING_COLUMNS,
 };
