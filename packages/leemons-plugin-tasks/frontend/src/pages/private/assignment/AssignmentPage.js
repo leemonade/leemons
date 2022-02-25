@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ContextContainer, PageContainer, Paper } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { unflatten } from '@common';
 import { useParams } from 'react-router-dom';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -9,6 +11,7 @@ import createInstanceRequest from '../../../request/instance/createInstance';
 import assignStudentRequest from '../../../request/instance/assignStudent';
 import assignTeacherRequest from '../../../request/instance/assignTeacher';
 import { enableMenuItemRequest } from '../../../request';
+import { prefixPN } from '../../../helpers/prefixPN';
 
 function parseDates(date) {
   if (date instanceof Date) {
@@ -19,6 +22,20 @@ function parseDates(date) {
 }
 
 export default function AssignmentPage() {
+  const [, translations] = useTranslateLoader(prefixPN('assignment_page'));
+  const [labels, setLabels] = useState({});
+
+  useEffect(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = res.plugins.tasks.assignment_page;
+
+      setLabels(data);
+      // EN: Save your translations keys to use them in your component
+      // ES: Guarda tus traducciones para usarlas en tu componente
+    }
+  }, [translations]);
+
   const { id } = useParams();
 
   const handleAssignment = async (values) => {
@@ -63,7 +80,7 @@ export default function AssignmentPage() {
 
   return (
     <ContextContainer fullHeight>
-      <AdminPageHeader values={{ title: 'AssignmentPage' }} />
+      <AdminPageHeader values={{ title: labels?.page_title }} />
       <Paper color="solid" shadow="none" padding={0}>
         <PageContainer>
           <ContextContainer padded="vertical">

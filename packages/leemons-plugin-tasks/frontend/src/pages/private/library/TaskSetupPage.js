@@ -54,7 +54,7 @@ export default function TaskSetupPage() {
 
       store.currentTask.id = fullId;
 
-      addSuccessAlert(t(messageKey));
+      addSuccessAlert(t(`common.${messageKey}`));
 
       history.push(
         redirectTo === 'library'
@@ -80,7 +80,7 @@ export default function TaskSetupPage() {
       await publishTaskRequest(id);
       setStatus('published');
 
-      addSuccessAlert(t('publish_done'));
+      addSuccessAlert(t('common.publish_done'));
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }

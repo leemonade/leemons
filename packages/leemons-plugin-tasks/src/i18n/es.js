@@ -37,6 +37,7 @@ module.exports = {
       select_center: 'Seleccionar centro',
       create_done: 'Tarea creada',
       update_done: 'Tarea actualizada',
+      publish_done: 'Tarea publicada',
     },
     setup: {
       title: 'Crear nueva tarea',
@@ -143,6 +144,9 @@ module.exports = {
       },
     },
   },
+  assignment_page: {
+    page_title: 'Asignar tarea',
+  },
   assignment_form: {
     labels: {
       assignTo: 'Asignar a',
@@ -151,10 +155,14 @@ module.exports = {
       mode: 'Modo',
       startDate: 'Fecha de inicio',
       deadline: 'Fecha límite',
-      visualizationDate: 'Visible con antelación',
-      limitedExecution: 'Tiempo limitado',
+      visualizationDateToogle: 'Visible con antelación',
+      visualizationDate: 'Fecha de visualización',
+      limitedExecutionToogle: 'Tiempo limitado',
+      limitedExecution: 'Tiempo de ejecución',
+      messageToStudentsToogle: 'Añadir un mensaje para los estudiantes',
       messageToStudents: 'Mensaje para los estudiantes',
       submit: 'Asignar',
+      add: 'Añadir',
     },
     placeholders: {
       date: 'dd/mm/aaaa',
@@ -193,6 +201,12 @@ module.exports = {
     student: 'Estudiante',
     studentDescription: 'Se le asignarán las tareas y será responsable de ejecutarlas',
     studentRequired: 'Campo requerido',
+  },
+  ongoing_page: {
+    page_title: 'Tareas en curso',
+  },
+  history_page: {
+    page_title: 'Tareas finalizadas',
   },
   teacher_assignments: {
     table: {

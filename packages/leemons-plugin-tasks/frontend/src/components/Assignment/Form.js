@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { unflatten } from '@common';
 import { useForm, Controller } from 'react-hook-form';
-import { Button, ContextContainer, DatePicker } from '@bubbles-ui/components';
+import { Button, ContextContainer, DatePicker, Box } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditor } from '@bubbles-ui/editors';
 import { assign } from 'lodash';
@@ -130,7 +130,7 @@ export default function Form({ onSubmit: parentSubmit }) {
         </ContextContainer>
 
         <ConditionalInput
-          label={labels?.visualizationDate}
+          label={labels?.visualizationDateToogle}
           render={() => (
             <ContextContainer direction="row" alignItems="end">
               <Controller
@@ -143,7 +143,7 @@ export default function Form({ onSubmit: parentSubmit }) {
                     {...field}
                     withTime
                     error={errors.visualizationDate}
-                    label="AÑADIR UN LABEL"
+                    label={labels?.visualizationDate}
                     placeholder={placeholders?.date}
                   />
                 )}
@@ -153,7 +153,7 @@ export default function Form({ onSubmit: parentSubmit }) {
         />
 
         <ConditionalInput
-          label={labels?.limitedExecution}
+          label={labels?.limitedExecutionToogle}
           render={() => (
             <Controller
               control={control}
@@ -161,13 +161,17 @@ export default function Form({ onSubmit: parentSubmit }) {
               shouldUnregister={true}
               rules={{ required: true }}
               render={({ field }) => (
-                <TimeUnitsInput error={errors.executionTime} label="AÑADIR UN LABEL" {...field} />
+                <TimeUnitsInput
+                  error={errors.executionTime}
+                  label={labels?.limitedExecution}
+                  {...field}
+                />
               )}
             />
           )}
         />
         <ConditionalInput
-          label={labels?.messageToStudents}
+          label={labels?.messageToStudentsToogle}
           help={descriptions?.messageToStudents}
           render={() => (
             <Controller
@@ -176,14 +180,16 @@ export default function Form({ onSubmit: parentSubmit }) {
               shouldUnregister={true}
               rules={{ required: true }}
               render={({ field }) => (
-                <TextEditor error={errors.message} label="AÑADIR UN LABEL" {...field} />
+                <TextEditor error={errors.message} label={labels?.messageToStudents} {...field} />
               )}
             />
           )}
         />
-      </ContextContainer>
 
-      <Button type="submit">{labels?.submit}</Button>
+        <Box>
+          <Button type="submit">{labels?.submit}</Button>
+        </Box>
+      </ContextContainer>
     </form>
   );
 }

@@ -37,6 +37,7 @@ module.exports = {
       select_center: 'Select center',
       create_done: 'Task created',
       update_done: 'Task updated',
+      publish_done: 'Task published',
     },
     setup: {
       configData: {
@@ -142,6 +143,9 @@ module.exports = {
       },
     },
   },
+  assignment_page: {
+    page_title: 'Assign tasks',
+  },
   assignment_form: {
     labels: {
       assignTo: 'Assign to',
@@ -150,10 +154,14 @@ module.exports = {
       mode: 'Mode',
       startDate: 'Start date',
       deadline: 'Deadline',
-      visualizationDate: 'Make visible in advance',
+      visualizationDateToogle: 'Make visible in advance',
+      visualizationDate: 'Visualization date',
+      limitedExecutionToogle: 'Limit execution time',
       limitedExecution: 'Limited execution time',
-      messageToStudents: 'Add a message to the students',
+      messageToStudentsToogle: 'Add a message to the students',
+      messageToStudents: 'Message to the students',
       submit: 'Assign',
+      add: 'Add',
     },
     placeholders: {
       date: 'dd/mm/yyyy',
@@ -192,6 +200,12 @@ module.exports = {
     student: 'Student',
     studentDescription: 'Will be assigned the tasks and will be responsible for executing them',
     studentRequired: 'Field required',
+  },
+  ongoing_pae: {
+    page_title: 'Ongoing tasks',
+  },
+  history_page: {
+    page_title: 'History',
   },
   teacher_assignments: {
     table: {

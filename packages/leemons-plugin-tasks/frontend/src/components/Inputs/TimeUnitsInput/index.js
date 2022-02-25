@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { unflatten } from '@common';
-import { NumberInput, Select, ContextContainer } from '@bubbles-ui/components';
+import { NumberInput, Select, Stack, InputWrapper, Box } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '../../../helpers/prefixPN';
 
-export default function TimeUnitsInput({ onChange }) {
+export default function TimeUnitsInput({ onChange, ...props }) {
   const [, translations] = useTranslateLoader(prefixPN('assignment_form.timeUnits'));
   const [labels, setLabels] = useState({});
 
@@ -64,27 +64,29 @@ export default function TimeUnitsInput({ onChange }) {
   };
 
   return (
-    <ContextContainer direction="row">
-      <NumberInput value={value} onChange={(v) => handleChange(v, units)} />
-      <Select
-        value={units}
-        onChange={(u) => handleChange(value, u)}
-        data={[
-          {
-            label: labels.minutes,
-            value: 'minutes',
-          },
-          {
-            label: labels.hours,
-            value: 'hours',
-          },
-          {
-            label: labels.days,
-            value: 'days',
-          },
-        ]}
-      />
-    </ContextContainer>
+    <InputWrapper {...props}>
+      <Stack direction="row" spacing={1}>
+        <NumberInput value={value} onChange={(v) => handleChange(v, units)} />
+        <Select
+          value={units}
+          onChange={(u) => handleChange(value, u)}
+          data={[
+            {
+              label: labels.minutes,
+              value: 'minutes',
+            },
+            {
+              label: labels.hours,
+              value: 'hours',
+            },
+            {
+              label: labels.days,
+              value: 'days',
+            },
+          ]}
+        />
+      </Stack>
+    </InputWrapper>
   );
 }
 
