@@ -23,6 +23,8 @@ module.exports = async function create(
     instructionsForStudent,
     state,
     subjects,
+    center,
+    program,
   },
   { transacting: t } = {}
 ) {
@@ -46,6 +48,8 @@ module.exports = async function create(
           instructionsForStudent,
           state,
           published: false,
+          center,
+          program,
         };
 
         // EN: Register task versioning

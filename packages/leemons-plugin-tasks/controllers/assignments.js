@@ -139,7 +139,11 @@ module.exports = {
       const { instance } = ctx.request.params;
       const { page, size } = ctx.request.query;
 
-      const students = await listStudents(instance, parseInt(page, 10), parseInt(size, 10));
+      const students = await listStudents(
+        instance,
+        parseInt(page, 10) || undefined,
+        parseInt(size, 10) || undefined
+      );
 
       ctx.status = 200;
       ctx.body = {

@@ -6,7 +6,7 @@ module.exports = async function listUsers(instance, page = 0, size = 60, { trans
       userInstances,
       page,
       size,
-      { id_$null: false, instance },
+      { instance },
       { transacting }
     );
 

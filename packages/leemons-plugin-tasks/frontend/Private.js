@@ -39,7 +39,7 @@ export default function Private() {
       <Route path={`${path}/ongoing`}>
         <Ongoing session={session} />
       </Route>
-      <Route path={`${path}/details/:id`}>
+      <Route path={`${path}/details/:instance`}>
         <Details session={session} />
       </Route>
     </Switch>

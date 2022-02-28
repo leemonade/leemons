@@ -44,6 +44,12 @@ module.exports = {
     instructionsForStudent: {
       type: 'richtext',
     },
+    center: {
+      type: 'uuid',
+    },
+    program: {
+      type: 'uuid',
+    },
     // Track the current state, including setup steps
     state: {
       type: 'string',

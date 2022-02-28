@@ -22,6 +22,8 @@ const TASK_EXISTING_COLUMNS = [
   'instructionsForStudent',
   'state',
   'published',
+  'center',
+  'program',
 ];
 const TASK_VERSIONS_EXISTING_COLUMNS = ['status'];
 const TASK_SUBJECTS_EXISTING_COLUMNS = ['subjects'];

@@ -29,6 +29,8 @@ module.exports = async function update(
     state,
     published,
     subjects,
+    center,
+    program,
   },
   { transacting: t } = {}
 ) {
@@ -52,6 +54,8 @@ module.exports = async function update(
           instructionsForStudent,
           state,
           published,
+          center,
+          program,
         };
 
         // EN: Get the id from complete id@version
