@@ -1,10 +1,25 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useApi, unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getCentersWithToken } from '@users/session';
-import { Table } from '@bubbles-ui/components';
+import { Table, ContextContainer } from '@bubbles-ui/components';
+import { ViewOnIcon } from '@bubbles-ui/icons/outline';
 import { prefixPN } from '../../helpers/prefixPN';
 import listTeacherTasks from '../../request/instance/listTeacherTasks';
+
+function Actions({ id }) {
+  const history = useHistory();
+  return (
+    <ContextContainer alignItems="center">
+      <ViewOnIcon
+        as="button"
+        color="secondary"
+        onClick={() => history.push(`/private/tasks/details/${id}`)}
+      />
+    </ContextContainer>
+  );
+}
 
 async function getTasks(userAgent, setTasks) {
   const response = await listTeacherTasks(userAgent, true);
@@ -22,6 +37,8 @@ async function getTasks(userAgent, setTasks) {
     task.students.completed = `${t.students.completed} | ${Math.round(
       (t.students.completed / t.students.count) * 100
     )}%`;
+
+    task.actions = <Actions id={task.id} />;
 
     return task;
   });
@@ -86,7 +103,7 @@ export default function TeacherAssignedTasksLists() {
       },
       {
         Header: tableLabels?.actions,
-        accessor: 'data.actions',
+        accessor: 'actions',
       },
     ],
     [tableLabels]

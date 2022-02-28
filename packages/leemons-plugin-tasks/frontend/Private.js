@@ -10,6 +10,7 @@ const Library = loadable(() => import('./src/pages/private/library/LibraryPage')
 const SetupTask = loadable(() => import('./src/pages/private/library/TaskSetupPage'));
 const Profiles = loadable(() => import('./src/pages/private/profiles/ProfilesPage'));
 const Ongoing = loadable(() => import('./src/pages/private/ongoing/OngoingPage'));
+const Details = loadable(() => import('./src/pages/private/assignment/DetailsPage'));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -37,6 +38,9 @@ export default function Private() {
       </Route>
       <Route path={`${path}/ongoing`}>
         <Ongoing session={session} />
+      </Route>
+      <Route path={`${path}/details/:id`}>
+        <Details session={session} />
       </Route>
     </Switch>
   );
