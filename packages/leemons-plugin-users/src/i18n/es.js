@@ -122,6 +122,7 @@ module.exports = {
     pageTitle: 'Listado de usuarios',
     centerLabel: 'Centro',
     profileLabel: 'Perfil',
+    searchLabel: 'Buscar',
     nameHeader: 'Nombre',
     surnameHeader: 'Apellidos',
     emailHeader: 'Email',
@@ -129,5 +130,9 @@ module.exports = {
     phoneHeader: 'Teléfono',
     actionsHeader: 'Acciones',
     usersTab: 'Usuarios',
+    clearFilter: 'Limpiar filtro',
+    view: 'Ver',
+    show: 'Mostrar',
+    goTo: 'Ir a',
   },
 };

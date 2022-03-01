@@ -3,8 +3,11 @@ import _ from 'lodash';
 import {
   ActionButton,
   Box,
+  ContextContainer,
   PageContainer,
+  Pager,
   Paper,
+  SearchInput,
   Stack,
   Table,
   TabPanel,
@@ -21,11 +24,14 @@ import { Link, useHistory } from 'react-router-dom';
 import { useStore } from '@common';
 import { listUsersRequest } from '../../../../request';
 import { SelectCenter } from '../../../../components/SelectCenter';
-import SelectProfile from '../../SelectProfile';
+import { SelectProfile } from '../../../../components/SelectProfile';
 
 function ListUsers() {
   const [t] = useTranslateLoader(prefixPN('list_users'));
-  const [store, render] = useStore();
+  const [store, render] = useStore({
+    page: 0,
+    size: 10,
+  });
   const { t: tCommon } = useCommonTranslate('page_header');
   const [loadingError, setLoadingError, LoadingErrorAlert] = useRequestErrorMessage();
 
@@ -88,23 +94,43 @@ function ListUsers() {
   );
 
   async function listUsers() {
+    const query = {};
+    if (store.search) {
+      query.$or = [
+        { name_$contains: store.search.toLowerCase() },
+        { surnames_$contains: store.search.toLowerCase() },
+        { email_$contains: store.search.toLowerCase() },
+        { phone_$contains: store.search.toLowerCase() },
+        { birthdate_$contains: store.search.toLowerCase() },
+      ];
+    }
+    if (store.profile) {
+      query.profiles = store.profile;
+    }
+    if (store.center) {
+      query.centers = store.center;
+    }
+
     const { data } = await listUsersRequest({
-      page: 0,
-      size: 99999999,
+      page: store.page,
+      size: store.size,
+      query,
     });
 
     return data;
   }
 
-  const load = async () => {
+  async function load() {
     try {
+      store.loading = true;
+      render();
       store.pagination = await listUsers();
       store.loading = false;
       render();
     } catch (err) {
       setLoadingError(err);
     }
-  };
+  }
 
   useEffect(() => {
     load();
@@ -117,6 +143,31 @@ function ListUsers() {
     [t]
   );
 
+  async function centerChange(center) {
+    store.center = center;
+    await load();
+  }
+
+  async function profileChange(profile) {
+    store.profile = profile;
+    await load();
+  }
+
+  async function searchChange(value) {
+    store.search = value;
+    await load();
+  }
+
+  async function onPageChange(page) {
+    store.page = page;
+    await load();
+  }
+
+  async function onPageSizeChange(size) {
+    store.size = size;
+    await load();
+  }
+
   return (
     <Stack direction="column" fullWidth fullHeight>
       <AdminPageHeader
@@ -126,8 +177,23 @@ function ListUsers() {
       />
 
       <PageContainer noFlex>
-        <SelectCenter label={t('centerLabel')} />
-        <SelectProfile label={t('profileLabel')} />
+        <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+          <ContextContainer direction="row">
+            <SelectCenter
+              clearable={t('clearFilter')}
+              label={t('centerLabel')}
+              value={store.center}
+              onChange={centerChange}
+            />
+            <SelectProfile
+              clearable={t('clearFilter')}
+              label={t('profileLabel')}
+              value={store.profile}
+              onChange={profileChange}
+            />
+            <SearchInput label={t('searchLabel')} value={store.search} onChange={searchChange} />
+          </ContextContainer>
+        </Box>
       </PageContainer>
 
       <Box style={{ flex: 1 }}>
@@ -140,6 +206,20 @@ function ListUsers() {
                   <Table columns={tableHeaders} data={tableItems} />
                 </Box>
               ) : null}
+              <Stack fullWidth justifyContent="center">
+                <Pager
+                  page={store.pagination?.page || 0}
+                  total={store.pagination?.totalPages || 0}
+                  size={store.size}
+                  withSize={true}
+                  onChange={(val) => onPageChange(val - 1)}
+                  onSizeChange={onPageSizeChange}
+                  labels={{
+                    show: t('show'),
+                    goTo: t('goTo'),
+                  }}
+                />
+              </Stack>
             </Paper>
           </TabPanel>
         </Tabs>
