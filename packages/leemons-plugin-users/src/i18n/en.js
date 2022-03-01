@@ -117,4 +117,14 @@ module.exports = {
       'You can easily change your profile by clicking on your avatar in the sidebar of the application',
     log_in: 'Log in',
   },
+  list_users: {
+    pageTitle: 'Users list',
+    nameHeader: 'Name',
+    surnameHeader: 'Surname',
+    emailHeader: 'Email',
+    birthdayHeader: 'Birthday',
+    phoneHeader: 'Phone',
+    actionsHeader: 'Actions',
+    usersTab: 'Users',
+  },
 };

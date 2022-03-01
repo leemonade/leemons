@@ -21,6 +21,12 @@ module.exports = {
         notNull: true,
       },
     },
+    phone: {
+      type: 'string',
+    },
+    birthdate: {
+      type: 'datetime',
+    },
     password: {
       type: 'string',
       options: {

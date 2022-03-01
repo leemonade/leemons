@@ -13,6 +13,8 @@ const SocketTest = loadable(() => import('./src/pages/private/SocketTest'));
 const ListProfiles = loadable(() => import('./src/pages/private/profiles/ListProfiles'));
 const DetailProfile = loadable(() => import('./src/pages/private/profiles/DetailProfile'));
 
+const ListUsers = loadable(() => import('./src/pages/private/users/ListUsers'));
+
 export default function Private() {
   const { path } = useRouteMatch();
   const session = useSession({ redirectTo: goLoginPage });
@@ -21,6 +23,9 @@ export default function Private() {
     <Switch>
       <Route path={`${path}/home`}>
         <Home session={session} />
+      </Route>
+      <Route path={`${path}/list`}>
+        <ListUsers session={session} />
       </Route>
       <Route path={`${path}/select-profile`}>
         <SelectProfile session={session} />

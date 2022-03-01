@@ -118,4 +118,14 @@ module.exports = {
       'Puede cambiar fácilmente su perfil haciendo clic en su avatar en la barra lateral de la aplicación',
     log_in: 'Entrar',
   },
+  list_users: {
+    pageTitle: 'Listado de usuarios',
+    nameHeader: 'Nombre',
+    surnameHeader: 'Apellidos',
+    emailHeader: 'Email',
+    birthdayHeader: 'Fecha de nacimiento',
+    phoneHeader: 'Teléfono',
+    actionsHeader: 'Acciones',
+    usersTab: 'Usuarios',
+  },
 };
