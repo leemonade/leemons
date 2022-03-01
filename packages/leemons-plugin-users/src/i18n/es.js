@@ -120,6 +120,8 @@ module.exports = {
   },
   list_users: {
     pageTitle: 'Listado de usuarios',
+    centerLabel: 'Centro',
+    profileLabel: 'Perfil',
     nameHeader: 'Nombre',
     surnameHeader: 'Apellidos',
     emailHeader: 'Email',

@@ -127,6 +127,7 @@ function validateAddProgram(data) {
     if (!data.useDefaultSubstagesName) {
       validator = new LeemonsValidator(addProgramSubstage2Schema);
 
+      console.log(data.substages);
       if (!validator.validate(data)) {
         throw validator.error;
       }

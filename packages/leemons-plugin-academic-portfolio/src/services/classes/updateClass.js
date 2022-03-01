@@ -77,9 +77,9 @@ async function updateClass(data, { transacting: _transacting } = {}) {
         );
 
       // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo tipo de asignatura
-      await table.class.update(
+      await table.class.updateMany(
         { subject: nClass.subject },
-        { subjectType: nClass.subjectType },
+        { subjectType: nClass.subjectType, color: nClass.color },
         { transacting }
       );
 

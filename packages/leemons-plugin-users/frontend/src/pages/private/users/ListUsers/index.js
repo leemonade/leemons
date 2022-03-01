@@ -21,6 +21,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { useStore } from '@common';
 import { listUsersRequest } from '../../../../request';
 import { SelectCenter } from '../../../../components/SelectCenter';
+import SelectProfile from '../../SelectProfile';
 
 function ListUsers() {
   const [t] = useTranslateLoader(prefixPN('list_users'));
@@ -125,7 +126,8 @@ function ListUsers() {
       />
 
       <PageContainer noFlex>
-        <SelectCenter />
+        <SelectCenter label={t('centerLabel')} />
+        <SelectProfile label={t('profileLabel')} />
       </PageContainer>
 
       <Box style={{ flex: 1 }}>

@@ -119,6 +119,8 @@ module.exports = {
   },
   list_users: {
     pageTitle: 'Users list',
+    centerLabel: 'Center',
+    profileLabel: 'Profile',
     nameHeader: 'Name',
     surnameHeader: 'Surname',
     emailHeader: 'Email',
