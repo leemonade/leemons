@@ -10,14 +10,15 @@ import {
   SearchInput,
   Stack,
   Table,
+  TabPanel,
+  Tabs,
 } from '@bubbles-ui/components';
-
-import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { goDetailProfilePage } from '@users/navigate';
 import prefixPN from '@users/helpers/prefixPN';
 import { Link, useHistory } from 'react-router-dom';
 import { useStore } from '@common';
@@ -25,7 +26,7 @@ import { listUsersRequest } from '../../../../request';
 import { SelectCenter } from '../../../../components/SelectCenter';
 import { SelectProfile } from '../../../../components/SelectProfile';
 
-function ListUsers() {
+function CreateUsers() {
   const [t] = useTranslateLoader(prefixPN('list_users'));
   const [store, render] = useStore({
     page: 0,
@@ -131,19 +132,8 @@ function ListUsers() {
     }
   }
 
-  async function getPermissions() {
-    const { permissions } = await getPermissionsWithActionsIfIHaveRequest(['plugins.users.users']);
-    if (permissions[0]) {
-      store.canAdd =
-        permissions[0].actionNames.includes('create') ||
-        permissions[0].actionNames.includes('admin');
-      render();
-    }
-  }
-
   useEffect(() => {
     load();
-    getPermissions();
   }, []);
 
   const headerValues = useMemo(
@@ -178,63 +168,64 @@ function ListUsers() {
     await load();
   }
 
-  function goCreatePage() {
-    history.push('/private/users/create');
-  }
-
   return (
-    <ContextContainer fullHeight>
+    <Stack direction="column" fullWidth fullHeight>
       <AdminPageHeader
         values={headerValues}
-        buttons={store.canAdd ? { new: tCommon('new') } : {}}
-        onNew={() => goCreatePage()}
+        buttons={{ new: tCommon('new') }}
+        onNew={() => goDetailProfilePage(history)}
       />
-      <Paper color="solid" shadow="none">
-        <PageContainer noFlex>
-          <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-            <ContextContainer direction="row">
-              <SelectCenter
-                clearable={t('clearFilter')}
-                label={t('centerLabel')}
-                value={store.center}
-                onChange={centerChange}
-              />
-              <SelectProfile
-                clearable={t('clearFilter')}
-                label={t('profileLabel')}
-                value={store.profile}
-                onChange={profileChange}
-              />
-              <SearchInput label={t('searchLabel')} value={store.search} onChange={searchChange} />
-            </ContextContainer>
-          </Box>
 
-          <Paper padding={2} mt={20} mb={20} fullWidth>
-            <LoadingErrorAlert />
-            {!store.loading && !loadingError ? (
-              <Box>
-                <Table columns={tableHeaders} data={tableItems} />
-              </Box>
-            ) : null}
-            <Stack fullWidth justifyContent="center">
-              <Pager
-                page={store.pagination?.page || 0}
-                total={store.pagination?.totalPages || 0}
-                size={store.size}
-                withSize={true}
-                onChange={(val) => onPageChange(val - 1)}
-                onSizeChange={onPageSizeChange}
-                labels={{
-                  show: t('show'),
-                  goTo: t('goTo'),
-                }}
-              />
-            </Stack>
-          </Paper>
-        </PageContainer>
-      </Paper>
-    </ContextContainer>
+      <PageContainer noFlex>
+        <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+          <ContextContainer direction="row">
+            <SelectCenter
+              clearable={t('clearFilter')}
+              label={t('centerLabel')}
+              value={store.center}
+              onChange={centerChange}
+            />
+            <SelectProfile
+              clearable={t('clearFilter')}
+              label={t('profileLabel')}
+              value={store.profile}
+              onChange={profileChange}
+            />
+            <SearchInput label={t('searchLabel')} value={store.search} onChange={searchChange} />
+          </ContextContainer>
+        </Box>
+      </PageContainer>
+
+      <Box style={{ flex: 1 }}>
+        <Tabs usePageLayout={true} panelColor="solid" fullHeight>
+          <TabPanel label={t('usersTab')}>
+            <Paper padding={2} mt={20} mb={20} fullWidth>
+              <LoadingErrorAlert />
+              {!store.loading && !loadingError ? (
+                <Box>
+                  <Table columns={tableHeaders} data={tableItems} />
+                </Box>
+              ) : null}
+              <Stack fullWidth justifyContent="center">
+                <Pager
+                  page={store.pagination?.page || 0}
+                  total={store.pagination?.totalPages || 0}
+                  size={store.size}
+                  withSize={true}
+                  onChange={(val) => onPageChange(val - 1)}
+                  onSizeChange={onPageSizeChange}
+                  labels={{
+                    show: t('show'),
+                    goTo: t('goTo'),
+                  }}
+                />
+              </Stack>
+            </Paper>
+          </TabPanel>
+        </Tabs>
+      </Box>
+    </Stack>
   );
 }
 
-export default ListUsers;
+export default CreateUsers;

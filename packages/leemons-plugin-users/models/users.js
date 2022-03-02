@@ -14,6 +14,9 @@ module.exports = {
     surnames: {
       type: 'string',
     },
+    secondSurnames: {
+      type: 'string',
+    },
     email: {
       type: 'string',
       options: {

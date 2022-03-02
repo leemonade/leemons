@@ -7,12 +7,60 @@ module.exports = {
     page_description:
       'In this section you can configure the dataset fields for your users. The identification data are mandatory for the operation of the platform and mandatory for all users of any profile. The common fields are those shared by all users, they can be mandatory or optional (they are useful to save time when defining fields common to all users of the platform such as a name or surname). <br/> Last but not least, profiles have their own data sets that you can consult in the profiles section.',
     tabs: {
-      login_data: 'Login data',
-      basic_data: 'Basic data',
+      system_data: 'System data',
+      common_fields: 'Common fields',
     },
-    login: {
-      description:
-        'Mandatory fields in order to create user accounts (you cannot edit o delete it)',
+    systemData: {
+      save: 'Save',
+      saveSuccess: 'Data saved successfully',
+      description1:
+        'Mandatory fields in order to create user accounts (you can not edit o deleted)',
+      description2: 'Fields included in the Leemons system that you can configure',
+      table: {
+        name: 'Name',
+        description: 'Description',
+        type: 'Type',
+        actions: 'Actions',
+        makeMandatory: 'Make mandatory',
+        disableField: 'Disable field',
+      },
+      tableItems: {
+        email: {
+          name: 'Email',
+          description: 'Unique identifier',
+          type: 'Email',
+        },
+        password: {
+          name: 'Password',
+          description: '8 characters, 1 number, 1 uppercase, 1 special character',
+          type: 'Password',
+        },
+        name: {
+          name: 'Name',
+          description: 'String, 26 regular characters (without special characters)',
+          type: 'String',
+        },
+        surname: {
+          name: 'Surname',
+          description: 'String, 26 regular characters (without special characters)',
+          type: 'String',
+        },
+        birthday: {
+          name: 'Birthday',
+          description: 'dd/mm/yyyy',
+          type: 'Date',
+        },
+        surname2: {
+          name: '2nd Surname',
+          description: 'String, 26 regular characters (without special characters)',
+          type: 'String',
+        },
+        avatar: {
+          name: 'Avatar',
+          description: 'Format: PNG, JPG, size 400x400px, max 500kb)',
+          type: 'Image',
+        },
+      },
     },
     basic: {
       description: 'Configuration of general fields for your users',

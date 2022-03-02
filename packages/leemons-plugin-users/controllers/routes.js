@@ -19,6 +19,19 @@ module.exports = [
     handler: 'init.todayQuote',
   },
   /**
+   * Config
+   * */
+  {
+    path: '/config/system-data-fields',
+    method: 'GET',
+    handler: 'config.getSystemDataFieldsConfig',
+  },
+  {
+    path: '/config/system-data-fields',
+    method: 'POST',
+    handler: 'config.saveSystemDataFieldsConfig',
+  },
+  /**
    * Users
    * */
   {

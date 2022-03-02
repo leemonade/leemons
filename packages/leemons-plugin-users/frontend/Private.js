@@ -14,6 +14,7 @@ const ListProfiles = loadable(() => import('./src/pages/private/profiles/ListPro
 const DetailProfile = loadable(() => import('./src/pages/private/profiles/DetailProfile'));
 
 const ListUsers = loadable(() => import('./src/pages/private/users/ListUsers'));
+const CreateUsers = loadable(() => import('./src/pages/private/users/CreateUsers'));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -26,6 +27,9 @@ export default function Private() {
       </Route>
       <Route path={`${path}/list`}>
         <ListUsers session={session} />
+      </Route>
+      <Route path={`${path}/create`}>
+        <CreateUsers session={session} />
       </Route>
       <Route path={`${path}/select-profile`}>
         <SelectProfile session={session} />
