@@ -6,6 +6,7 @@ const { setSubjectInternalId } = require('./setSubjectInternalId');
 async function updateSubject(data, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
+      console.log(data);
       await validateUpdateSubject(data, { transacting });
       const { id, credits, internalId, ..._data } = data;
       const subject = await table.subjects.update({ id }, _data, { transacting });

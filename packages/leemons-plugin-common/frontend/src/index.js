@@ -12,6 +12,7 @@ export * from './useAsync';
 export * from './useApi';
 export * from './userImage';
 export * from './useStore';
+export * from './useQuery';
 
 export {
   formWithTheme,

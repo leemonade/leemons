@@ -1,5 +1,5 @@
 const create = require('../src/services/task/create');
-const get = require('../src/services/task/get');
+const { get } = require('../src/services/task/get');
 const publish = require('../src/services/task/versions/publish');
 const remove = require('../src/services/task/remove');
 const search = require('../src/services/task/search');
@@ -26,6 +26,9 @@ module.exports = {
         instructionsForStudent,
         state,
         published,
+        subjects,
+        center,
+        program,
       } = ctx.request.body;
 
       let task = {
@@ -46,6 +49,9 @@ module.exports = {
         instructionsForStudent,
         state,
         published,
+        subjects,
+        center,
+        program,
       };
 
       task = await create(task);
@@ -84,6 +90,9 @@ module.exports = {
         instructionsForStudent,
         state,
         published,
+        subjects,
+        center,
+        program,
       } = ctx.request.body;
 
       let task = {
@@ -104,6 +113,9 @@ module.exports = {
         instructionsForStudent,
         state,
         published,
+        subjects,
+        center,
+        program,
       };
 
       task = await update(id, task);
@@ -124,8 +136,17 @@ module.exports = {
   get: async (ctx) => {
     try {
       const { id } = ctx.params;
-
-      const task = await get(id);
+      let { columns } = ctx.query;
+      try {
+        columns = JSON.parse(columns);
+      } catch (e) {
+        if (columns !== '*') {
+          columns = undefined;
+        }
+      }
+      const task = await get(id, {
+        columns,
+      });
 
       ctx.status = 200;
       ctx.body = {

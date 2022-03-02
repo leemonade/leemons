@@ -4,14 +4,14 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@bubbles-ui/components": "^1.0.23",
-    "@bubbles-ui/editors": "^1.0.5",
-    "@bubbles-ui/icons": "^1.0.10",
-    "@bubbles-ui/leemons": "^1.0.4",
+    "@bubbles-ui/components": "^1.0.24",
+    "@bubbles-ui/editors": "^1.0.24",
+    "@bubbles-ui/icons": "^1.0.24",
+    "@bubbles-ui/leemons": "^1.0.24",
     "@mantine/core": "^3.6.5",
     "@mantine/hooks": "^3.6.5",
     "lodash": "^4.17.21",
-    "react-hook-form": "^7.26.0",
+    "react-hook-form": "^7.27.1",
     "react-router-dom": "^6.2.1"
   },
   "devDependencies": {}

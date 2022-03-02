@@ -1,5 +1,6 @@
 const { LeemonsValidator } = global.utils;
 const _ = require('lodash');
+const { isArray } = require('lodash');
 const {
   stringSchema,
   booleanSchema,
@@ -14,6 +15,7 @@ const { table } = require('../services/tables');
 const { subjectNeedCourseForAdd } = require('../services/subjects/subjectNeedCourseForAdd');
 const { getCourseIndex } = require('../services/courses/getCourseIndex');
 const { getProgramSubjectDigits } = require('../services/programs/getProgramSubjectDigits');
+const { programHaveMultiCourses } = require('../services/programs/programHaveMultiCourses');
 
 const teacherTypes = ['main-teacher', 'teacher'];
 
@@ -31,6 +33,7 @@ const addProgramSchema = {
     maxGroupAbbreviation: integerSchema,
     maxGroupAbbreviationIsOnlyNumbers: booleanSchema,
     maxNumberOfCourses: integerSchema,
+    moreThanOneAcademicYear: booleanSchema,
     courseCredits: integerSchema,
     hideCoursesInTree: booleanSchema,
     haveSubstagesPerCourse: booleanSchema,
@@ -42,6 +45,7 @@ const addProgramSchema = {
       enum: ['none', 'course'],
     },
     subjectsDigits: integerSchema,
+    treeType: integerSchema,
   },
   required: [
     'name',
@@ -141,8 +145,9 @@ const updateProgramSchema = {
       maxLength: 8,
     },
     credits: integerSchemaNullable,
+    treeType: integerSchema,
   },
-  required: ['id', 'name', 'abbreviation', 'credits'],
+  required: ['id'],
   additionalProperties: false,
 };
 
@@ -177,6 +182,7 @@ const addKnowledgeSchema = {
     program: stringSchema,
     credits_course: integerSchemaNullable,
     credits_program: integerSchemaNullable,
+    subjects: arrayStringSchema,
   },
   required: ['name', 'abbreviation', 'program', 'color', 'icon'],
   additionalProperties: false,
@@ -222,6 +228,67 @@ async function validateAddKnowledge(data, { transacting } = {}) {
   if (knowledge) throw new Error('The knowledge already exists');
 }
 
+const updateKnowledgeSchema = {
+  type: 'object',
+  properties: {
+    id: stringSchema,
+    name: stringSchema,
+    abbreviation: stringSchema,
+    color: stringSchema,
+    icon: stringSchema,
+    credits_course: integerSchemaNullable,
+    credits_program: integerSchemaNullable,
+  },
+  required: ['id', 'name', 'abbreviation', 'color', 'icon'],
+  additionalProperties: false,
+};
+
+async function validateUpdateKnowledge(data, { transacting } = {}) {
+  const validator = new LeemonsValidator(updateKnowledgeSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+
+  const _knowledge = await table.knowledges.findOne({ id: data.id }, { transacting });
+  if (!_knowledge) {
+    throw new Error('The knowledge does not exist');
+  }
+
+  const [program] = await programsByIds(_knowledge.program, { transacting });
+
+  if (!program) {
+    throw new Error('The program does not exist');
+  }
+
+  // ES: Comprobamos si el programa puede tener areas de conocimiento
+  if (!program.haveKnowledge) {
+    throw new Error('The program does not have knowledges');
+  }
+
+  if (program.maxKnowledgeAbbreviation) {
+    // ES: Comprobamos si el nombre del conocimiento es mayor que el maximo
+    if (data.abbreviation.length > program.maxKnowledgeAbbreviation)
+      throw new Error('The knowledge abbreviation is longer than the specified length');
+  }
+
+  // ES: Comprobamos si el nobre del conocimiento es solo numeros
+  if (program.maxKnowledgeAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
+    throw new Error('The knowledge abbreviation must be only numbers');
+
+  // ES: Comprobamos si el conocimiento ya existe
+  const knowledge = await table.knowledges.count(
+    {
+      id_$ne: data.id,
+      abbreviation: data.abbreviation,
+      program: program.id,
+    },
+    { transacting }
+  );
+
+  if (knowledge) throw new Error('The knowledge already exists');
+}
+
 const addSubjectTypeSchema = {
   type: 'object',
   properties: {
@@ -230,6 +297,7 @@ const addSubjectTypeSchema = {
     program: stringSchema,
     credits_course: integerSchemaNullable,
     credits_program: integerSchemaNullable,
+    subjects: arrayStringSchema,
   },
   required: ['name', 'groupVisibility', 'program'],
   additionalProperties: false,
@@ -338,6 +406,16 @@ const addGroupSchema = {
     name: stringSchema,
     abbreviation: stringSchema,
     program: stringSchema,
+    subjects: arrayStringSchema,
+    aditionalData: {
+      type: 'object',
+      properties: {
+        group: stringSchema,
+        course: stringSchema,
+        knowledge: stringSchema,
+        subjectType: stringSchema,
+      },
+    },
   },
   required: ['name', 'abbreviation', 'program'],
   additionalProperties: false,
@@ -370,6 +448,57 @@ async function validateAddGroup(data, { transacting } = {}) {
     {
       abbreviation: data.abbreviation,
       program: data.program,
+      type: 'group',
+    },
+    { transacting }
+  );
+
+  if (groupCount) throw new Error('The group already exists');
+}
+
+const duplicateGroupSchema = {
+  type: 'object',
+  properties: {
+    id: stringSchema,
+    name: stringSchema,
+    abbreviation: stringSchema,
+  },
+  required: ['id', 'name', 'abbreviation'],
+  additionalProperties: false,
+};
+
+async function validateDuplicateGroup(data, { transacting } = {}) {
+  const validator = new LeemonsValidator(duplicateGroupSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+
+  const group = await table.groups.findOne({ id: data.id }, { transacting });
+  if (!group) {
+    throw new Error('The group does not exist');
+  }
+
+  const program = await table.programs.findOne({ id: group.program }, { transacting });
+  if (!program) {
+    throw new Error('The program does not exist');
+  }
+
+  if (program.maxGroupAbbreviation) {
+    // ES: Comprobamos si el nombre del grupo es mayor que el maximo
+    if (data.abbreviation.length > program.maxGroupAbbreviation)
+      throw new Error('The group abbreviation is longer than the specified length');
+  }
+
+  // ES: Comprobamos si el nombre del grupo es solo numeros
+  if (program.maxGroupAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
+    throw new Error('The group abbreviation must be only numbers');
+
+  // ES: Comprobamos que no exista ya el grupo
+  const groupCount = await table.groups.count(
+    {
+      abbreviation: data.abbreviation,
+      program: program.id,
       type: 'group',
     },
     { transacting }
@@ -530,16 +659,16 @@ const updateSubjectSchema = {
     name: stringSchema,
     credits: numberSchema,
   },
-  required: ['id', 'name'],
+  required: ['id'],
   additionalProperties: false,
 };
 const updateSubjectInternalIdSchema = {
   type: 'object',
   properties: {
     internalId: stringSchema,
-    course: stringSchema,
+    course: stringSchemaNullable,
   },
-  required: ['internalId', 'course'],
+  required: ['internalId'],
   additionalProperties: false,
 };
 
@@ -631,11 +760,13 @@ const addClassSchema = {
   type: 'object',
   properties: {
     program: stringSchema,
-    course: stringSchema,
+    course: {
+      oneOf: [stringSchema, arrayStringSchema],
+    },
     group: stringSchema,
     subject: stringSchema,
     subjectType: stringSchema,
-    knowledge: stringSchema,
+    knowledge: stringSchemaNullable,
     color: stringSchema,
     icon: stringSchema,
     substage: stringSchema,
@@ -656,16 +787,31 @@ const addClassSchema = {
     },
     image: stringSchema,
     description: stringSchema,
+    schedule: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: true,
+      },
+    },
   },
   required: ['program', 'subject'],
   additionalProperties: false,
 };
 
-function validateAddClass(data) {
+async function validateAddClass(data, { transacting }) {
   const validator = new LeemonsValidator(addClassSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
+  }
+
+  const haveMultiCourses = await programHaveMultiCourses(data.program, { transacting });
+
+  if (!haveMultiCourses) {
+    if (isArray(data.course) && data.course.length > 1) {
+      throw new Error('Class does not have multi courses');
+    }
   }
 
   if (data.teachers) {
@@ -849,7 +995,9 @@ const updateClassSchema = {
   type: 'object',
   properties: {
     id: stringSchema,
-    course: stringSchemaNullable,
+    course: {
+      oneOf: [stringSchema, arrayStringSchema, { type: 'null' }],
+    },
     group: stringSchemaNullable,
     subject: stringSchemaNullable,
     subjectType: stringSchemaNullable,
@@ -875,16 +1023,32 @@ const updateClassSchema = {
     },
     image: stringSchemaNullable,
     description: stringSchemaNullable,
+    schedule: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: true,
+      },
+    },
   },
   required: ['id'],
   additionalProperties: false,
 };
 
-function validateUpdateClass(data) {
+async function validateUpdateClass(data, { transacting }) {
   const validator = new LeemonsValidator(updateClassSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
+  }
+
+  const classe = await table.class.findOne({ id: data.id }, { columns: 'program', transacting });
+  const haveMultiCourses = await programHaveMultiCourses(classe.program, { transacting });
+
+  if (!haveMultiCourses) {
+    if (isArray(data.course) && data.course.length > 1) {
+      throw new Error('Class does not have multi courses');
+    }
   }
 
   if (data.teachers) {
@@ -928,7 +1092,9 @@ module.exports = {
   validateAddKnowledge,
   validateUpdateProgram,
   validateUpdateSubject,
+  validateDuplicateGroup,
   validateAddSubjectType,
+  validateUpdateKnowledge,
   validateUpdateClassMany,
   validateSubstagesFormat,
   validateAddClassStudents,

@@ -48,16 +48,18 @@ async function listSubject(ctx) {
       page: { type: ['number', 'string'] },
       size: { type: ['number', 'string'] },
       program: { type: 'string' },
+      course: { type: 'string' },
     },
     required: ['page', 'size'],
     additionalProperties: false,
   });
   if (validator.validate(ctx.request.query)) {
-    const { page, size, program, ...options } = ctx.request.query;
+    const { page, size, program, course, ...options } = ctx.request.query;
     const data = await subjectService.listSubjects(
       parseInt(page, 10),
       parseInt(size, 10),
       program,
+      course,
       {
         ...options,
       }

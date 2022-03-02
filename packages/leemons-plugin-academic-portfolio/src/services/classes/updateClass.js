@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { isArray, map } = require('lodash');
 const { table } = require('../tables');
 const { validateUpdateClass } = require('../../validations/forms');
 const { existKnowledgeInProgram } = require('../knowledges/existKnowledgeInProgram');
@@ -16,12 +17,14 @@ const { removeByClass: removeGroupByClass } = require('./group/removeByClass');
 const { add: addTeacher } = require('./teacher/add');
 const { removeByClass: removeTeachersByClass } = require('./teacher/removeByClass');
 const { classByIds } = require('./classByIds');
+const { processScheduleForClass } = require('./processScheduleForClass');
+const { changeBySubject } = require('./knowledge/changeBySubject');
 
 async function updateClass(data, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await validateUpdateClass(data, { transacting });
-      const { id, course, group, knowledge, substage, teachers, ...rest } = data;
+      const { id, course, group, knowledge, substage, teachers, schedule, ...rest } = data;
       // ES: Actualizamos la clase
       const nClass = await table.class.update({ id }, rest, { transacting });
 
@@ -52,7 +55,8 @@ async function updateClass(data, { transacting: _transacting } = {}) {
         if (!(await existCourseInProgram(course, nClass.program, { transacting }))) {
           throw new Error('course not in program');
         }
-        await addCourse(nClass.id, course, { transacting });
+        const courses = isArray(course) ? course : [course];
+        await Promise.all(map(courses, (c) => addCourse(nClass.id, c, { transacting })));
       }
 
       if (_.isNull(group) || group) await removeGroupByClass(nClass.id, { transacting });
@@ -78,6 +82,11 @@ async function updateClass(data, { transacting: _transacting } = {}) {
         { subjectType: nClass.subjectType },
         { transacting }
       );
+
+      // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo knowledge
+      await changeBySubject(nClass.subject, knowledge, { transacting });
+
+      await processScheduleForClass(schedule, nClass.id, { transacting });
 
       const classe = (await classByIds(nClass.id, { transacting }))[0];
       await leemons.events.emit('after-update-class', { class: classe, transacting });

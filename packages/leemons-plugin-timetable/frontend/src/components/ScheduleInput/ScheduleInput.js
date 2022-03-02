@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, forwardRef } from 'react';
 import PropTypes from 'prop-types';
-import { isNil, isString } from 'lodash';
+import { isArray, isNil, isString, map } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SchedulePicker } from '@bubbles-ui/leemons';
 import { unflatten } from '@common';
 import { prefixPN } from '../../helpers';
 
-const ScheduleInput = ({ label, ...props }) => {
+const dayWeeks = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+const ScheduleInput = forwardRef(({ label, ...props }, ref) => {
   const [pickerProps, setPickerProps] = useState(null);
   const [, translations] = useTranslateLoader(prefixPN('schedule_picker'));
 
@@ -24,9 +26,18 @@ const ScheduleInput = ({ label, ...props }) => {
     }
   }, [translations, label]);
 
-  return !isNil(pickerProps) ? <SchedulePicker {...pickerProps} {...props} /> : null;
-};
+  let value;
+  if (props.value && isArray(props.value.days)) {
+    value = { ...props.value };
+    value.days = map(value.days, (day) => ({ ...day, dayWeek: dayWeeks.indexOf(day.day) }));
+  }
 
+  return !isNil(pickerProps) ? (
+    <SchedulePicker {...pickerProps} {...props} ref={ref} value={value} />
+  ) : null;
+});
+
+ScheduleInput.displayName = '@timetable/components/ScheduleInput';
 ScheduleInput.defaultProps = {
   label: true,
 };

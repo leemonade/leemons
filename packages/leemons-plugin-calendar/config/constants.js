@@ -35,8 +35,8 @@ module.exports = {
     {
       config: {
         key: 'kanban',
-        iconSvg: '/public/calendar/plugin-dashboard.svg',
-        activeIconSvg: '/public/calendar/plugin-dashboard.svg',
+        iconSvg: '/public/calendar/plugin-kanban.svg',
+        activeIconSvg: '/public/calendar/plugin-kanban-active.svg',
         url: '/private/calendar/kanban',
         label: { es: 'Kanban', en: 'Kanban' },
       },

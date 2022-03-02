@@ -1,3 +1,10 @@
+async function getProgramTree(programId) {
+  return leemons.api(`academic-portfolio/program/${programId}/tree`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
 async function listPrograms({ page, size, center }) {
   return leemons.api(`academic-portfolio/program?page=${page}&size=${size}&center=${center}`, {
     allAgents: true,
@@ -35,4 +42,4 @@ async function updateProgram(body) {
   });
 }
 
-export { listPrograms, detailProgram, createProgram, updateProgram, havePrograms };
+export { listPrograms, detailProgram, createProgram, updateProgram, havePrograms, getProgramTree };

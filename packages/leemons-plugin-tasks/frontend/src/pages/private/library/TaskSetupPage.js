@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { isEmpty, isNil, isArray } from 'lodash';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { Paper, PageContainer, ContextContainer } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -12,27 +12,30 @@ import {
   DesignData,
   ContentData,
   InstructionData,
-  PublishData,
 } from '../../../components/TaskSetupPage';
 import { prefixPN } from '../../../helpers';
 import saveTaskRequest from '../../../request/task/saveTask';
 import publishTaskRequest from '../../../request/task/publishTask';
 import getTaskRequest from '../../../request/task/getTask';
+import useObserver from '../../../helpers/useObserver';
 
 export default function TaskSetupPage() {
   const [t, translations] = useTranslateLoader(prefixPN('task_setup_page'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [labels, setLabels] = useState(null);
+  const [status, setStatus] = useState('published');
   const [store, render] = useStore({
     currentTask: null,
   });
 
-  //! Use an observer / event emitter to emit the children when to notify current data and use them to save or publish
+  const { useObserver: useSaveObserver, emitEvent, subscribe, unsubscribe } = useObserver();
+
+  const history = useHistory();
 
   // ·········································································
   // API CALLS
 
-  const saveTask = async (values) => {
+  const saveTask = async (values, redirectTo = 'library') => {
     try {
       const body = { ...values };
       let messageKey = 'create_done';
@@ -40,29 +43,44 @@ export default function TaskSetupPage() {
       if (!isEmpty(store.currentTask)) {
         messageKey = 'update_done';
       }
-      await saveTaskRequest(store?.currentTask?.fullId, body);
 
-      // TODO: Implement save task request call
-      // const response = await apiCall(values);
-      // store.currentTask = response.task;
+      const {
+        task: { fullId },
+      } = await saveTaskRequest(store?.currentTask?.id, body);
 
-      addSuccessAlert(t(messageKey));
-      render();
+      if (!store.currentTask) {
+        store.currentTask = {};
+      }
+
+      store.currentTask.id = fullId;
+
+      addSuccessAlert(t(`common.${messageKey}`));
+
+      history.push(
+        redirectTo === 'library'
+          ? '/private/tasks/library'
+          : `/private/tasks/library/edit/${fullId}`
+      );
+
+      emitEvent('taskSaved');
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }
   };
 
-  const publishTask = async (id) => {
+  const publishTask = async () => {
     try {
+      const { id } = store.currentTask;
+
       if (isEmpty(id)) {
         addErrorAlert('No task id provided');
         return;
       }
 
       await publishTaskRequest(id);
+      setStatus('published');
 
-      addSuccessAlert(t('publish_done'));
+      addSuccessAlert(t('common.publish_done'));
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }
@@ -88,6 +106,9 @@ export default function TaskSetupPage() {
   useEffect(async () => {
     if (!isEmpty(id)) {
       store.currentTask = await getTask(id);
+
+      setStatus(store.currentTask.status);
+
       render();
     }
   }, [id]);
@@ -104,13 +125,39 @@ export default function TaskSetupPage() {
   // ·········································································
   // HANDLERS
 
-  const handleOnSaveTask = (values) => {
-    saveTask(values);
+  const handleOnSaveTask = (values, redirectTo) => {
+    saveTask(values, redirectTo);
   };
 
-  const handleOnPublishTask = () => {
-    publishTask(id);
-  };
+  const handleOnPublishTask = () =>
+    new Promise((resolve) => {
+      emitEvent('saveTask');
+
+      const f = async (event) => {
+        if (event === 'taskSaved') {
+          resolve(await publishTask());
+          unsubscribe(f);
+        }
+      };
+
+      subscribe(f);
+    });
+
+  useEffect(() => {
+    const f = async (event) => {
+      if (event === 'publishTaskAndLibrary') {
+        await handleOnPublishTask();
+        history.push(`/private/tasks/library`);
+      } else if (event === 'publishTaskAndAssign') {
+        await handleOnPublishTask();
+        history.push(`/private/tasks/library/assign/${store.currentTask.id}`);
+      }
+    };
+
+    subscribe(f);
+
+    return () => unsubscribe(f);
+  }, []);
 
   // ·········································································
   // INIT VALUES
@@ -124,7 +171,7 @@ export default function TaskSetupPage() {
 
   const setupProps = useMemo(() => {
     if (!isNil(labels)) {
-      const { configData, designData, contentData, instructionData, publishData } = labels;
+      const { configData, designData, contentData, instructionData } = labels;
 
       return {
         editable: isEmpty(store.currentTask),
@@ -132,23 +179,19 @@ export default function TaskSetupPage() {
         steps: [
           {
             label: configData.step_label,
-            content: <ConfigData {...configData} />,
+            content: <ConfigData useObserver={useSaveObserver} {...configData} />,
           },
           {
             label: designData.step_label,
-            content: <DesignData {...designData} />,
+            content: <DesignData useObserver={useSaveObserver} {...designData} />,
           },
           {
             label: contentData.step_label,
-            content: <ContentData {...contentData} />,
+            content: <ContentData useObserver={useSaveObserver} {...contentData} />,
           },
           {
             label: instructionData.step_label,
-            content: <InstructionData {...instructionData} />,
-          },
-          {
-            label: publishData.step_label,
-            content: <PublishData {...publishData} />,
+            content: <InstructionData useObserver={useSaveObserver} {...instructionData} />,
           },
         ],
       };
@@ -163,8 +206,8 @@ export default function TaskSetupPage() {
     <ContextContainer fullHeight>
       <AdminPageHeader
         values={headerLabels}
-        buttons={{ edit: 'Save draft', duplicate: 'Publish' }}
-        onEdit={handleOnSaveTask}
+        buttons={{ edit: 'Save draft', duplicate: status === 'draft' && 'Publish' }}
+        onEdit={() => emitEvent('saveTask')}
         onDuplicate={handleOnPublishTask}
       />
 
@@ -173,7 +216,7 @@ export default function TaskSetupPage() {
           <ContextContainer padded="vertical">
             <Paper fullWidth padding={5}>
               {!isEmpty(setupProps) && isArray(setupProps.steps) && (
-                <Setup {...setupProps} onSave={handleOnSaveTask} />
+                <Setup {...setupProps} useObserver={useSaveObserver} onSave={handleOnSaveTask} />
               )}
             </Paper>
           </ContextContainer>

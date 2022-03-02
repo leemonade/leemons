@@ -1,4 +1,4 @@
-const get = require('./get');
+const { get } = require('./get');
 const parseId = require('./helpers/parseId');
 const list = require('./versions/list');
 

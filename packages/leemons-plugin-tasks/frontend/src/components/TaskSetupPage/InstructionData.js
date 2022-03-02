@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isEmpty } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
@@ -16,6 +16,7 @@ function InstructionData({
   editable,
   onNext,
   onPrevious,
+  useObserver,
   ...props
 }) {
   // ·······························································
@@ -32,6 +33,22 @@ function InstructionData({
     handleSubmit,
     formState: { errors },
   } = useForm({ defaultValues });
+
+  const { subscribe, unsubscribe, emitEvent } = useObserver();
+
+  useEffect(() => {
+    const f = (event) => {
+      if (event === 'saveTask') {
+        handleSubmit((data) => {
+          setSharedData(data);
+          emitEvent('saveData');
+        })();
+      }
+    };
+    subscribe(f);
+
+    return () => unsubscribe(f);
+  }, []);
 
   // ·······························································
   // HANDLERS
@@ -96,9 +113,12 @@ function InstructionData({
             </Button>
           </Box>
           <Box>
-            <Button type="submit" rightIcon={<ChevRightIcon height={20} width={20} />}>
-              {labels.buttonNext}
-            </Button>
+            <ContextContainer direction="row">
+              <Button variant="outline" onClick={() => emitEvent('publishTaskAndLibrary')}>
+                {labels.buttonPublish}
+              </Button>
+              <Button onClick={() => emitEvent('publishTaskAndAssign')}>{labels.buttonNext}</Button>
+            </ContextContainer>
           </Box>
         </Stack>
       </ContextContainer>
@@ -124,6 +144,7 @@ InstructionData.propTypes = {
   editable: PropTypes.bool,
   onNext: PropTypes.func,
   onPrevious: PropTypes.func,
+  useObserver: PropTypes.func,
 };
 
 // eslint-disable-next-line import/prefer-default-export

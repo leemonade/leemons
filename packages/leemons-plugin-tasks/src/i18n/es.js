@@ -4,6 +4,11 @@ module.exports = {
     page_description:
       'Gracias al módulo de tareas puedes crear nuevas tareas, asignarlas a grupos de estudiantes o individuos, controlar su estado actual e iniciar evaluaciones de las tareas completadas.',
     hide_info_label: `Ok, ya lo tengo. Cuando la configuración esté completa, no muestres más esta información`,
+    step_profiles: {
+      title: 'Vincular perfiles',
+      description: 'Identifica que perfiles coinciden con los profesores y estudiantes',
+      btn: 'Vincular perfiles',
+    },
     step_library: {
       title: 'Biblioteca de tareas',
       description:
@@ -32,6 +37,7 @@ module.exports = {
       select_center: 'Seleccionar centro',
       create_done: 'Tarea creada',
       update_done: 'Tarea actualizada',
+      publish_done: 'Tarea publicada',
     },
     setup: {
       title: 'Crear nueva tarea',
@@ -41,16 +47,21 @@ module.exports = {
         labels: {
           title: 'Config',
           tagline: 'Tagline',
+          name: 'Nombre',
+          center: 'Centro',
           program: 'Programa',
           course: 'Curso',
-          subject: 'Materia',
+          subjects: 'Asignaturas',
+          subject: 'Asignatura',
           level: 'Nivel',
           summary: 'Resumen',
           tags: 'Etiquetas',
           buttonNext: 'Siguiente',
         },
         placeholders: {
-          tagline: '...',
+          name: 'Nombre de la tarea',
+          tagline: 'Subtitulo de la task',
+          center: 'Seleccionar...',
           program: 'Seleccionar...',
           course: 'Seleccionar...',
           subject: 'Seleccionar...',
@@ -93,6 +104,7 @@ module.exports = {
           title: 'Contenido',
           methodology: 'Metodología',
           recommendedDuration: 'Duración recomendada',
+          statement: 'Enunciado',
           buttonNext: 'Siguiente',
           buttonPrev: 'Anterior',
         },
@@ -107,7 +119,8 @@ module.exports = {
           title: 'Instrucciones',
           forTeacher: 'Instrucciones para Profesores',
           forStudent: 'Instructions para Estudiantes',
-          buttonNext: 'Siguiente',
+          buttonPublish: 'Solo publicar',
+          buttonNext: 'Publicar y asignar',
           buttonPrev: 'Anterior',
         },
         placeholders: {
@@ -131,6 +144,85 @@ module.exports = {
           buttonNext: 'Publicar tarea',
           buttonPrev: 'Anterior',
         },
+      },
+    },
+  },
+  assignment_page: {
+    page_title: 'Asignar tarea',
+  },
+  assignment_form: {
+    labels: {
+      assignTo: 'Asignar a',
+      classroomToAssign: 'Asignar a la clase',
+      studentToAssign: 'Asignar al estudiante',
+      mode: 'Modo',
+      startDate: 'Fecha de inicio',
+      deadline: 'Fecha límite',
+      visualizationDateToogle: 'Visible con antelación',
+      visualizationDate: 'Fecha de visualización',
+      limitedExecutionToogle: 'Tiempo limitado',
+      limitedExecution: 'Tiempo de ejecución',
+      messageToStudentsToogle: 'Añadir un mensaje para los estudiantes',
+      messageToStudents: 'Mensaje para los estudiantes',
+      submit: 'Asignar',
+      add: 'Añadir',
+    },
+    placeholders: {
+      date: 'dd/mm/aaaa',
+      time: 'hh:mm',
+      units: 'unidades',
+    },
+    descriptions: {
+      messageToStudents:
+        'Si asignas esta tarea a otros grupos en este paso, este mensaje será el mensaje predeterminado para todas las tareas (aunque puedes cambiarlo individualmente si lo deseas).',
+    },
+    assignTo: {
+      student: 'Estudiante',
+      class: 'Clase',
+    },
+    modes: {
+      individual: 'Individual',
+      pairs: 'En parejas',
+      groups: 'Equipos',
+    },
+    timeUnits: {
+      hours: 'horas',
+      minutes: 'minutos',
+      days: 'días',
+    },
+  },
+  profiles_page: {
+    page_title: 'Tareas - Configuración de perfiles',
+    page_description:
+      'En primer lugar, debemos vincular los perfiles del sistema con los perfiles personalizados que has creado en la plataforma. (Por favor, lee atentamente las características de cada perfil. Una vez vinculados los perfiles, no se puede deshacer)',
+    save: 'Guardar',
+    profileSaved: 'Perfiles guardados',
+    profiles: 'Perfiles',
+    teacher: 'Profesor',
+    teacherDescription: 'Responsable de la creación y asignación de tareas',
+    teacherRequired: 'Campo requerido',
+    student: 'Estudiante',
+    studentDescription: 'Se le asignarán las tareas y será responsable de ejecutarlas',
+    studentRequired: 'Campo requerido',
+  },
+  ongoing_page: {
+    page_title: 'Tareas en curso',
+  },
+  history_page: {
+    page_title: 'Tareas finalizadas',
+  },
+  teacher_assignments: {
+    table: {
+      headers: {
+        group: 'Grupo',
+        task: 'Tarea',
+        deadline: 'Fecha límite',
+        students: 'Estudiantes',
+        status: 'Estado',
+        open: 'Abierta',
+        ongoing: 'En curso',
+        completed: 'Completada',
+        actions: 'Acciones',
       },
     },
   },

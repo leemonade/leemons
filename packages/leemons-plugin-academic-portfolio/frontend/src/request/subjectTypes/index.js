@@ -16,4 +16,12 @@ async function createSubjectType(body) {
   });
 }
 
-export { listSubjectTypes, createSubjectType };
+async function updateSubjectType(body) {
+  return leemons.api('academic-portfolio/subject-type', {
+    allAgents: true,
+    method: 'PUT',
+    body,
+  });
+}
+
+export { listSubjectTypes, createSubjectType, updateSubjectType };

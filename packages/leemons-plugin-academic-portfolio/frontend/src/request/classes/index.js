@@ -1,5 +1,26 @@
+async function haveClasses() {
+  return leemons.api(`academic-portfolio/classes/have`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
 async function listClasses({ page, size, program }) {
   return leemons.api(`academic-portfolio/class?page=${page}&size=${size}&program=${program}`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
+async function listStudentClasses({ page, size, student }) {
+  return leemons.api(`academic-portfolio/student/${student}/classes?page=${page}&size=${size}`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
+async function listTeacherClasses({ page, size, teacher }) {
+  return leemons.api(`academic-portfolio/teacher/${teacher}/classes?page=${page}&size=${size}`, {
     allAgents: true,
     method: 'GET',
   });
@@ -53,10 +74,21 @@ async function addTeachersToClass(body) {
   });
 }
 
+async function removeClass(id) {
+  return leemons.api(`academic-portfolio/class/${id}`, {
+    allAgents: true,
+    method: 'DELETE',
+  });
+}
+
 export {
+  haveClasses,
   listClasses,
+  listStudentClasses,
+  listTeacherClasses,
   createClass,
   updateClass,
+  removeClass,
   updateClassMany,
   createClassInstance,
   addStudentsToClass,

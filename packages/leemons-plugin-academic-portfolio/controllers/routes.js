@@ -49,6 +49,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/program/:id/tree',
+    method: 'GET',
+    handler: 'program.getProgramTree',
+    authenticated: true,
+  },
+  {
     path: '/program/:id/duplicate',
     method: 'POST',
     handler: 'program.duplicateProgram',
@@ -107,6 +113,12 @@ module.exports = [
     path: '/knowledge',
     method: 'POST',
     handler: 'knowledge.postKnowledge',
+    authenticated: true,
+  },
+  {
+    path: '/knowledge',
+    method: 'PUT',
+    handler: 'knowledge.putKnowledge',
     authenticated: true,
   },
   {
@@ -184,6 +196,12 @@ module.exports = [
     handler: 'group.duplicateGroupWithClassesUnderNodeTree',
     authenticated: true,
   },
+  {
+    path: '/group/duplicate',
+    method: 'POST',
+    handler: 'group.duplicateGroup',
+    authenticated: true,
+  },
   // Subjects
   {
     path: '/subject',
@@ -229,9 +247,21 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/classes/have',
+    method: 'GET',
+    handler: 'class.haveClasses',
+    authenticated: true,
+  },
+  {
     path: '/class',
     method: 'POST',
     handler: 'class.postClass',
+    authenticated: true,
+  },
+  {
+    path: '/class/:id',
+    method: 'DELETE',
+    handler: 'class.removeClass',
     authenticated: true,
   },
   {

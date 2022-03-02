@@ -1,6 +1,6 @@
 const { teacherInstances } = require('../../table');
 
-module.exports = async function listUsers(instance, page, size, { transacting } = {}) {
+module.exports = async function listTeachers(instance, page, size, { transacting } = {}) {
   try {
     const students = await global.utils.paginate(
       teacherInstances,

@@ -21,7 +21,7 @@ function observerState() {
   // ES: Eliminar el callback de la lista de suscriptores
   const unsubscribe = (callback) => {
     if (Array.isArray(subscribers())) {
-      const index = subscribers().findIndex(callback);
+      const index = subscribers().findIndex((cb) => cb === callback);
       subscribers().splice(index, 1);
     }
   };

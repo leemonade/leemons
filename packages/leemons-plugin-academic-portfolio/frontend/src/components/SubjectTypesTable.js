@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import { Box, NumberInput, Switch, TableInput, TextInput, Title } from '@bubbles-ui/components';
 
-function SwitchInput({ label, value, ...props }) {
-  return <Switch {...props} checked={!!value} label={label} />;
-}
+const SwitchInput = forwardRef(({ label, value, ...props }, ref) => (
+  <Switch {...props} ref={ref} checked={!!value} label={label} />
+));
 
+SwitchInput.displayName = '@academic-portfolio/components/SwitchInput';
 SwitchInput.propTypes = {
   value: PropTypes.bool,
   label: PropTypes.string,
@@ -48,7 +49,11 @@ function SubjectTypesTable({ messages, program, tableLabels, onAdd = () => {} })
   ];
 
   function onChange(items) {
-    onAdd(items[items.length - 1]);
+    const item = items[items.length - 1];
+    onAdd({
+      ...item,
+      groupVisibility: !!item.groupVisibility,
+    });
   }
 
   return (
@@ -74,3 +79,4 @@ SubjectTypesTable.propTypes = {
 };
 
 export { SubjectTypesTable };
+export default SubjectTypesTable;

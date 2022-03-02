@@ -1,5 +1,11 @@
 const programService = require('../src/services/programs');
 
+async function getProgramTree(ctx) {
+  const tree = await programService.getProgramTree(ctx.request.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200, tree };
+}
+
 async function havePrograms(ctx) {
   const have = await programService.havePrograms();
   ctx.status = 200;
@@ -107,6 +113,7 @@ module.exports = {
   programGroups,
   deleteProgram,
   programCourses,
+  getProgramTree,
   programHasGroups,
   duplicateProgram,
   programSubstages,

@@ -83,6 +83,29 @@ module.exports = [
     },
   },
   {
+    path: '/user-agents/search',
+    method: 'POST',
+    handler: 'users.searchUserAgents',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/user-agents/info',
+    method: 'POST',
+    handler: 'users.getUserAgentsInfo',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+
+  {
     path: '/user',
     method: 'POST',
     handler: 'users.create',

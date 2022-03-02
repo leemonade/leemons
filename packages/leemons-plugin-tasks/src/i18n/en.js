@@ -4,6 +4,11 @@ module.exports = {
     page_description:
       'Thanks to the tasks module you can create new tasks, assign them to groups of students or individuals, monitor their current status and start evaluations of completed tasks.',
     hide_info_label: `Ok, I've got it. When the configuration is complete, don't show this info anymore`,
+    step_profiles: {
+      title: 'Link profiles',
+      description: 'Identify which profiles match the teachers and students',
+      btn: 'Link profiles',
+    },
     step_library: {
       title: 'Tasks Library',
       description:
@@ -32,6 +37,7 @@ module.exports = {
       select_center: 'Select center',
       create_done: 'Task created',
       update_done: 'Task updated',
+      publish_done: 'Task published',
     },
     setup: {
       configData: {
@@ -40,8 +46,10 @@ module.exports = {
           title: 'Config',
           name: 'Name',
           tagline: 'Tagline',
+          center: 'Center',
           program: 'Program',
           course: 'Course',
+          subjects: 'Subjects',
           subject: 'Subject',
           addSubject: 'Add subject',
           level: 'Level',
@@ -51,8 +59,9 @@ module.exports = {
         },
 
         placeholders: {
-          tagline: ' ',
+          tagline: 'Subtitle of the task',
           name: "Task's name",
+          center: 'Select...',
           program: 'Select...',
           course: 'Select...',
           subject: 'Select...',
@@ -95,6 +104,7 @@ module.exports = {
           title: 'Content',
           methodology: 'Methodology',
           recommendedDuration: 'Recommended duration',
+          statement: 'Statement',
           buttonNext: 'Next',
           buttonPrev: 'Previous',
         },
@@ -109,7 +119,8 @@ module.exports = {
           title: 'Instructions',
           forTeacher: 'Instructions for Teacher',
           forStudent: 'Instructions for Student',
-          buttonNext: 'Next',
+          buttonPublish: 'Only publish',
+          buttonNext: 'Publish and assign',
           buttonPrev: 'Previous',
         },
         placeholders: {
@@ -132,6 +143,85 @@ module.exports = {
           buttonNext: 'Publish',
           buttonPrev: 'Previous',
         },
+      },
+    },
+  },
+  assignment_page: {
+    page_title: 'Assign tasks',
+  },
+  assignment_form: {
+    labels: {
+      assignTo: 'Assign to',
+      classroomToAssign: 'Classroom to assign',
+      studentToAssign: 'Student to assign',
+      mode: 'Mode',
+      startDate: 'Start date',
+      deadline: 'Deadline',
+      visualizationDateToogle: 'Make visible in advance',
+      visualizationDate: 'Visualization date',
+      limitedExecutionToogle: 'Limit execution time',
+      limitedExecution: 'Limited execution time',
+      messageToStudentsToogle: 'Add a message to the students',
+      messageToStudents: 'Message to the students',
+      submit: 'Assign',
+      add: 'Add',
+    },
+    placeholders: {
+      date: 'dd/mm/yyyy',
+      time: 'hh:mm',
+      units: 'units',
+    },
+    descriptions: {
+      messageToStudents:
+        'If you assign this task to other groups in this step, this message will be the default message for all tasks (although you can change it individually if you wish).',
+    },
+    assignTo: {
+      student: 'Student',
+      class: 'Class',
+    },
+    modes: {
+      individual: 'Individual',
+      pairs: 'In pairs',
+      groups: 'Teams',
+    },
+    timeUnits: {
+      hours: 'hours',
+      minutes: 'minutes',
+      days: 'days',
+    },
+  },
+  profiles_page: {
+    page_title: 'Tasks - Profile setup',
+    page_description:
+      'First of all we need to match the system profiles with the custom profiles you have created on the platform (Please read carefully the characteristics of each profile. Once the profiles are linked, it cannot be undone.)',
+    save: 'Save',
+    profileSaved: 'Saved profiles',
+    profiles: 'Profiles',
+    teacher: 'Teacher',
+    teacherDescription: 'Responsible for the creation and assignment of tasks',
+    teacherRequired: 'Field required',
+    student: 'Student',
+    studentDescription: 'Will be assigned the tasks and will be responsible for executing them',
+    studentRequired: 'Field required',
+  },
+  ongoing_pae: {
+    page_title: 'Ongoing tasks',
+  },
+  history_page: {
+    page_title: 'History',
+  },
+  teacher_assignments: {
+    table: {
+      headers: {
+        group: 'Group',
+        task: 'Task',
+        deadline: 'Deadline',
+        students: 'Students',
+        status: 'Status',
+        open: 'Open',
+        ongoing: 'Ongoing',
+        completed: 'Completed',
+        actions: 'Actions',
       },
     },
   },

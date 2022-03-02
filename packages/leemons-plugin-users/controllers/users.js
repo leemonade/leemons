@@ -93,7 +93,6 @@ async function profiles(ctx) {
 
 async function profileToken(ctx) {
   const jwtToken = await usersService.profileToken(ctx.state.userSession.id, ctx.params.id);
-
   ctx.status = 200;
   ctx.body = { status: 200, jwtToken };
 }
@@ -156,6 +155,24 @@ async function list(ctx) {
   }
 }
 
+async function getUserAgentsInfo(ctx) {
+  const userAgents = await userAgentsService.getUserAgentsInfo(
+    ctx.request.body.ids,
+    ctx.request.body.options
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, userAgents };
+}
+
+async function searchUserAgents(ctx) {
+  const userAgents = await userAgentsService.searchUserAgents(
+    ctx.request.body.filters,
+    ctx.request.body.options
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, userAgents };
+}
+
 async function contacts(ctx) {
   const userAgents = await userAgentsService.contacts.getUserAgentContacts(
     _.map(ctx.state.userSession.userAgents, 'id'),
@@ -187,7 +204,9 @@ module.exports = {
   canReset,
   profiles,
   profileToken,
+  searchUserAgents,
   createSuperAdmin,
+  getUserAgentsInfo,
   setRememberProfile,
   getRememberProfile,
 };

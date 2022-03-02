@@ -17,8 +17,9 @@ import { getSettingsRequest, updateSettingsRequest } from '@academic-portfolio/r
 import { useStore } from '@common';
 import { activeMenuItemPrograms } from '../../helpers/activeMenuItemPrograms';
 import { activeMenuItemSubjects } from '../../helpers/activeMenuItemSubjects';
-import { haveProgramsRequest, isConfigProfilesRequest } from '../../request';
+import { haveClassesRequest, haveProgramsRequest, isConfigProfilesRequest } from '../../request';
 import { activeMenuItemProfiles } from '../../helpers/activeMenuItemProfiles';
+import { activeMenuItemTree } from '../../helpers/activeMenuItemTree';
 
 // eslint-disable-next-line react/prop-types
 function StepCard({ t, step, disabled, to, onClick }) {
@@ -55,14 +56,17 @@ export default function WelcomePage() {
   // INIT DATA LOAD
 
   async function init() {
-    const [settingsResponse, haveProgramsResponse, profilesResponse] = await Promise.all([
-      getSettingsRequest(),
-      haveProgramsRequest(),
-      isConfigProfilesRequest(),
-    ]);
+    const [settingsResponse, haveProgramsResponse, profilesResponse, haveClassesResponse] =
+      await Promise.all([
+        getSettingsRequest(),
+        haveProgramsRequest(),
+        isConfigProfilesRequest(),
+        haveClassesRequest(),
+      ]);
     store.settings = settingsResponse.settings;
     store.profilesConfig = profilesResponse.isConfig;
     store.havePrograms = haveProgramsResponse.have;
+    store.haveClasses = haveClassesResponse.have;
     render();
   }
 
@@ -88,6 +92,10 @@ export default function WelcomePage() {
 
   const handleOnSubjects = async () => {
     await activeMenuItemSubjects();
+  };
+
+  const handleOnTree = async () => {
+    await activeMenuItemTree();
   };
 
   const headerValues = useMemo(
@@ -136,7 +144,13 @@ export default function WelcomePage() {
               disabled={!store.havePrograms}
               onClick={handleOnSubjects}
             />
-            <StepCard t={t} step="step_tree" to="/private/academic-portfolio/tree" disabled />
+            <StepCard
+              disabled={!store.haveClasses}
+              t={t}
+              step="step_tree"
+              to="/private/academic-portfolio/tree"
+              onClick={handleOnTree}
+            />
           </ContextContainer>
         </PageContainer>
       </Paper>

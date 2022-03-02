@@ -6,7 +6,7 @@ const { duplicateClassesByIds } = require('../classes/duplicateClassesByIds');
 async function duplicateGroupWithClassesUnderNodeTreeByIds(
   nodeTypes,
   ids,
-  { students = false, teachers = false, transacting: _transacting } = {}
+  { students = false, teachers = false, name, abbreviation, transacting: _transacting } = {}
 ) {
   return global.utils.withTransaction(
     async (transacting) => {
@@ -24,7 +24,16 @@ async function duplicateGroupWithClassesUnderNodeTreeByIds(
       // ES: Empezamos la duplicación de los items
       // EN: Start the duplication of the items
       const newGroups = await Promise.all(
-        _.map(groups, ({ id, ...item }) => table.groups.create({ ...item }, { transacting }))
+        _.map(groups, ({ id, ...item }) =>
+          table.groups.create(
+            {
+              ...item,
+              name: name || item.name,
+              abbreviation: abbreviation || item.abbreviation,
+            },
+            { transacting }
+          )
+        )
       );
 
       // ES: Añadimos los items duplicados de tal forma que el indice es el id original y el valor es el nuevo item duplicado
@@ -36,6 +45,10 @@ async function duplicateGroupWithClassesUnderNodeTreeByIds(
 
       await duplicateClassesByIds(_.map(classes, 'id'), {
         duplications,
+        groups: true,
+        courses: true,
+        substages: true,
+        knowledges: true,
         students,
         teachers,
         transacting,

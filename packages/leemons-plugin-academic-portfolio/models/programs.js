@@ -55,6 +55,12 @@ module.exports = {
         defaultTo: false,
       },
     },
+    moreThanOneAcademicYear: {
+      type: 'boolean',
+      options: {
+        defaultTo: false,
+      },
+    },
     haveSubstagesPerCourse: {
       type: 'boolean',
     },
@@ -96,6 +102,12 @@ module.exports = {
       type: 'integer',
       options: {
         notNull: true,
+      },
+    },
+    treeType: {
+      type: 'integer',
+      options: {
+        defaultTo: 1,
       },
     },
   },
