@@ -46,6 +46,7 @@ module.exports = {
           title: 'Config',
           name: 'Name',
           tagline: 'Tagline',
+          center: 'Center',
           program: 'Program',
           course: 'Course',
           subjects: 'Subjects',
@@ -58,8 +59,9 @@ module.exports = {
         },
 
         placeholders: {
-          tagline: ' ',
+          tagline: 'Subtitle of the task',
           name: "Task's name",
+          center: 'Select...',
           program: 'Select...',
           course: 'Select...',
           subject: 'Select...',
@@ -102,6 +104,7 @@ module.exports = {
           title: 'Content',
           methodology: 'Methodology',
           recommendedDuration: 'Recommended duration',
+          statement: 'Statement',
           buttonNext: 'Next',
           buttonPrev: 'Previous',
         },
