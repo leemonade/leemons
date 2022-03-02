@@ -1,3 +1,5 @@
+// TODO: Add columns and select distinct
+
 const { parseFilters } = require('leemons-utils');
 const buildQuery = require('./buildQuery');
 
