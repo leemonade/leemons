@@ -3,6 +3,7 @@ const { tasks, tasksVersioning } = require('../table');
 const parseId = require('./helpers/parseId');
 const addSubjects = require('./subjects/add');
 const versioningCreate = require('./versions/create');
+const addTags = require('../tags/add');
 
 module.exports = async function create(
   {
@@ -25,6 +26,7 @@ module.exports = async function create(
     subjects,
     center,
     program,
+    tags,
   },
   { transacting: t } = {}
 ) {
@@ -74,6 +76,10 @@ module.exports = async function create(
         // EN: Create task subjects
         // ES: Crear asignaturas de tarea
         await addSubjects(task.id, subjects, { transacting });
+
+        // EN: Create the task tags
+        // ES: Crear etiquetas de tarea
+        await addTags(task.id, tags, { transacting });
 
         // EN: Emit the event.
         // ES: Emitir el evento.

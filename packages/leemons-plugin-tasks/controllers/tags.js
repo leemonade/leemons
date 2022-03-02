@@ -1,6 +1,7 @@
 const add = require('../src/services/tags/add');
 const get = require('../src/services/tags/get');
 const has = require('../src/services/tags/has');
+const list = require('../src/services/tags/list');
 const remove = require('../src/services/tags/remove');
 
 module.exports = {
@@ -74,6 +75,23 @@ module.exports = {
       ctx.body = {
         status: 200,
         ...response,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        error: e.message,
+      };
+    }
+  },
+  list: async (ctx) => {
+    try {
+      const tags = await list();
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        tags,
       };
     } catch (e) {
       ctx.status = 400;

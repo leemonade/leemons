@@ -10,7 +10,7 @@ module.exports = async function removeTags(task, tags, { transacting } = {}) {
     task: id,
   };
 
-  if (_tags.length) {
+  if (tags && _tags?.length) {
     query.tag_$in = _tags;
   }
 

@@ -110,6 +110,12 @@ module.exports = [
     handler: 'tags.has',
     authenticated: true,
   },
+  {
+    method: 'GET',
+    path: '/tasks/tags/list',
+    handler: 'tags.list',
+    authenticated: true,
+  },
 
   /**
    * Attachments

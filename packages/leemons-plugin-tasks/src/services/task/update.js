@@ -7,6 +7,7 @@ const getVersion = require('./versions/get');
 const upgradeTaskVersion = require('./versions/upgrade');
 const deleteSubjects = require('./subjects/delete');
 const addSubjects = require('./subjects/add');
+const setTags = require('../tags/set');
 
 module.exports = async function update(
   taskId,
@@ -31,6 +32,7 @@ module.exports = async function update(
     subjects,
     center,
     program,
+    tags,
   },
   { transacting: t } = {}
 ) {
@@ -130,6 +132,12 @@ module.exports = async function update(
           if (subjects.length) {
             await addSubjects(fullId, subjects, { transacting });
           }
+        }
+
+        if (tags) {
+          // EN: Update the tags
+          // ES: Actualizar las etiquetas
+          await setTags(fullId, tags, { transacting });
         }
 
         // EN: Emit the event.

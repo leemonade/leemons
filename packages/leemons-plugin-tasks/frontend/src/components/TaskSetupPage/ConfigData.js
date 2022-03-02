@@ -6,6 +6,7 @@ import { Stack, ContextContainer, TextInput, Button, Textarea } from '@bubbles-u
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import SelectProgram from './PickSubject/SelectProgram';
 import SelectSubjects from './PickSubject/SelectSubjects';
+import TagSelect from './Tags/TagSelect';
 
 function ConfigData({
   labels,
@@ -158,6 +159,8 @@ function ConfigData({
                   )}
                 />
               </ContextContainer>
+
+              <TagSelect />
             </ContextContainer>
           </ContextContainer>
           <Stack fullWidth justifyContent="end">

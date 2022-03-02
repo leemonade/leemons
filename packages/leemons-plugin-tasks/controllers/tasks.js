@@ -29,6 +29,7 @@ module.exports = {
         subjects,
         center,
         program,
+        tags,
       } = ctx.request.body;
 
       let task = {
@@ -52,6 +53,7 @@ module.exports = {
         subjects,
         center,
         program,
+        tags,
       };
 
       task = await create(task);
@@ -93,6 +95,7 @@ module.exports = {
         subjects,
         center,
         program,
+        tags,
       } = ctx.request.body;
 
       let task = {
@@ -116,6 +119,7 @@ module.exports = {
         subjects,
         center,
         program,
+        tags,
       };
 
       task = await update(id, task);
