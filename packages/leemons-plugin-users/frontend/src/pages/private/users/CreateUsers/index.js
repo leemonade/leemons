@@ -1,5 +1,12 @@
 import React, { useMemo } from 'react';
-import { Box, PageContainer, Stack, TableInput, TextInput } from '@bubbles-ui/components';
+import {
+  Box,
+  PageContainer,
+  Stack,
+  TableInput,
+  TextInput,
+  useDebouncedCallback,
+} from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -17,8 +24,22 @@ function CreateUsers() {
   const { t: tCommon } = useCommonTranslate('page_header');
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
+  const debouncedFunction = useDebouncedCallback(1000);
+
   const form = useForm();
   const history = useHistory();
+
+  React.useEffect(() => {
+    const subscription = form.watch((value, event) => {
+      if (event.name === 'email') {
+        debouncedFunction(() => {
+          console.log('Se ejecuta');
+          console.log(value, event);
+        });
+      }
+    });
+    return () => subscription.unsubscribe();
+  });
 
   async function init() {
     const { config } = await getSystemDataFieldsConfigRequest();
@@ -57,7 +78,7 @@ function CreateUsers() {
   );
 
   function onChange(e) {
-    console.log(e);
+    store.usersToCreate = e;
   }
 
   return (
@@ -79,7 +100,6 @@ function CreateUsers() {
             sortable={false}
             removable={false}
             labels={data.tableLabels}
-            onChangeRow={onChangeRow}
           />
         </Box>
       </PageContainer>

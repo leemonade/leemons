@@ -5,10 +5,12 @@ const { find } = require('../../item-permissions/find');
 async function getAllItemsForTheUserAgentHasPermissionsByType(
   _userAgentId,
   _type,
+  // eslint-disable-next-line camelcase
   { returnAllItemPermission, type_$startssWith, transacting } = {}
 ) {
   const query = await getBaseAllPermissionsQuery(_userAgentId, { transacting });
 
+  // eslint-disable-next-line camelcase
   if (type_$startssWith) {
     query.type_$startssWith = _type;
   } else {
