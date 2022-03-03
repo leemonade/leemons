@@ -1,58 +1,109 @@
-const _ = require('lodash');
+const { map } = require('lodash');
 
 async function initUsers(centers, profiles) {
-  const roles = await Promise.all([
+  const { centerA, centerB } = centers;
+  const { admin, student, teacher, guardian } = profiles;
+
+  // ·······························································
+  // ROLES
+
+  const adminRoles = await Promise.all([
     leemons
       .getPlugin('users')
-      .services.profiles.getRoleForRelationshipProfileCenter(
-        profiles.student.id,
-        centers.leemon.id
-      ),
+      .services.profiles.getRoleForRelationshipProfileCenter(admin.id, centerA.id),
     leemons
       .getPlugin('users')
-      .services.profiles.getRoleForRelationshipProfileCenter(
-        profiles.student.id,
-        centers.orange.id
-      ),
-  ]);
-  const roles2 = await Promise.all([
-    leemons
-      .getPlugin('users')
-      .services.profiles.getRoleForRelationshipProfileCenter(
-        profiles.guardian.id,
-        centers.leemon.id
-      ),
+      .services.profiles.getRoleForRelationshipProfileCenter(admin.id, centerB.id),
   ]);
 
-  const user1 = await leemons.getPlugin('users').services.users.add(
+  const studentRoles = await Promise.all([
+    leemons
+      .getPlugin('users')
+      .services.profiles.getRoleForRelationshipProfileCenter(student.id, centerA.id),
+    leemons
+      .getPlugin('users')
+      .services.profiles.getRoleForRelationshipProfileCenter(student.id, centerB.id),
+  ]);
+
+  const teacherRoles = await Promise.all([
+    leemons
+      .getPlugin('users')
+      .services.profiles.getRoleForRelationshipProfileCenter(teacher.id, centerA.id),
+    leemons
+      .getPlugin('users')
+      .services.profiles.getRoleForRelationshipProfileCenter(teacher.id, centerB.id),
+  ]);
+
+  const guardianRoles = await Promise.all([
+    leemons
+      .getPlugin('users')
+      .services.profiles.getRoleForRelationshipProfileCenter(guardian.id, centerA.id),
+  ]);
+
+  // ·······························································
+  // USERS
+
+  const adminUser = await leemons.getPlugin('users').services.users.add(
     {
-      name: 'Jaime',
-      email: 'jaime@leemons.io',
-      password: 'testing',
-      locale: 'es',
-      active: true,
-    },
-    _.map(roles, 'id').concat(_.map(roles2, 'id'))
-  );
-  const user2 = await leemons.getPlugin('users').services.users.add(
-    {
-      name: 'Jaime Guardian',
-      email: 'jaime2@leemons.io',
+      name: 'Administrator',
+      surname: 'Leemons',
+      email: 'admin@leemons.io',
       password: 'testing',
       locale: 'en',
       active: true,
     },
-    _.map(roles2, 'id')
+    map(adminRoles, 'id')
   );
+
+  const teacherUser = await leemons.getPlugin('users').services.users.add(
+    {
+      name: 'Will',
+      surname: 'Teacher',
+      email: 'teacher@leemons.io',
+      password: 'testing',
+      locale: 'en',
+      active: true,
+    },
+    map(teacherRoles, 'id')
+  );
+
+  const studentUser = await leemons.getPlugin('users').services.users.add(
+    {
+      name: 'John',
+      surname: 'Student',
+      email: 'student@leemons.io',
+      password: 'testing',
+      locale: 'en',
+      active: true,
+    },
+    map(studentRoles, 'id')
+  );
+
+  const guardianUser = await leemons.getPlugin('users').services.users.add(
+    {
+      name: 'Nicole',
+      surname: 'Guardian',
+      email: 'guardian@leemons.io',
+      password: 'testing',
+      locale: 'en',
+      active: true,
+    },
+    map(guardianRoles, 'id')
+  );
+
+  // ·······························································
+  // USER AGENTS
 
   await leemons
     .getPlugin('users')
     .services.users.addUserAgentContacts(
-      _.map(user1.userAgents, 'id'),
-      _.map(user2.userAgents, 'id')
+      map(adminUser.userAgents, 'id'),
+      map(studentUser.userAgents, 'id'),
+      map(teacherUser.userAgents, 'id'),
+      map(guardianUser.userAgents, 'id')
     );
 
-  return [user1, user2];
+  return { admin: adminUser, student: studentUser, teacher: teacherUser, guardian: guardianUser };
 }
 
 module.exports = initUsers;

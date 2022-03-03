@@ -1,19 +1,24 @@
 async function initCenters() {
+  let result = null;
+
   try {
-    const leemon = await leemons.getPlugin('users').services.centers.add({
-      name: 'Villa limones',
-      description: 'Los mejores limones del lugar',
-      locale: 'es',
-    });
-    const orange = await leemons.getPlugin('users').services.centers.add({
-      name: 'Villa naranja',
-      description: 'Todas sus naranjas son una caca',
+    const centerA = await leemons.getPlugin('users').services.centers.add({
+      name: 'Elementary School',
+      description: 'Elementary school only to perform the tests',
       locale: 'en',
     });
-    return { leemon, orange };
+    const centerB = await leemons.getPlugin('users').services.centers.add({
+      name: 'High School',
+      description: 'High school only to perform the tests',
+      locale: 'en',
+    });
+
+    result = { centerA, centerB };
   } catch (err) {
     console.error(err);
   }
+
+  return result;
 }
 
 module.exports = initCenters;
