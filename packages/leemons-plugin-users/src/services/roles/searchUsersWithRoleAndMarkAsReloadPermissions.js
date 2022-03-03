@@ -13,12 +13,12 @@ const { table } = require('../tables');
 async function searchUsersWithRoleAndMarkAsReloadPermissions(roleId, { transacting } = {}) {
   const [userAgents, groupRoles] = await Promise.all([
     table.userAgent.find({ role: roleId }, { columns: ['id'], transacting }),
-    table.groupRole.find({ role: roleId }, { columns: ['group'], transacting }),
+    table.groupRole.find({ role: roleId }, { columns: ['id', 'group'], transacting }),
   ]);
 
   const groupUser = await table.groupUserAgent.find(
     { group_$in: _.map(groupRoles, 'group') },
-    { columns: ['userAgent'], transacting }
+    { columns: ['id', 'userAgent'], transacting }
   );
 
   const userIds = _.uniq(_.map(userAgents, 'id').concat(_.map(groupUser, 'userAgent')));

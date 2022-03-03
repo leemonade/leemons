@@ -7,12 +7,61 @@ module.exports = {
     page_description:
       'En esta sección puede configurar los campos del conjunto de datos de sus usuarios. Los datos de identificación son obligatorios para el funcionamiento de la plataforma y obligatorios para todos los usuarios de cualquier perfil. Los campos comunes son los que comparten todos los usuarios, pueden ser obligatorios u opcionales (son útiles para ahorrar tiempo a la hora de definir campos comunes a todos los usuarios de la plataforma como un nombre o un apellido). <br/> Por último, los perfiles tienen sus propios conjuntos de datos que puedes consultar en la sección de perfiles.',
     tabs: {
-      login_data: 'Login',
-      basic_data: 'Basicos',
+      system_data: 'Datos del sistema',
+      common_fields: 'Campos comunes',
     },
-    login: {
-      description:
+
+    systemData: {
+      save: 'Guardar',
+      saveSuccess: 'Guardado correctamente',
+      description1:
         'Campos obligatorios para crear cuentas de usuario (no se pueden editar o eliminar)',
+      description2: 'Campos incluidos en el sistema Leemons que puede configurar',
+      table: {
+        name: 'Nombre',
+        description: 'Descripción',
+        type: 'Tipo',
+        actions: 'Acciones',
+        makeMandatory: 'Hacer obligatorio',
+        disableField: 'Deshabilitar',
+      },
+      tableItems: {
+        email: {
+          name: 'Email',
+          description: 'Identificador único',
+          type: 'Email',
+        },
+        password: {
+          name: 'Contraseña',
+          description: '8 caracteres, 1 número, 1 mayúscula, 1 carácter especial',
+          type: 'Password',
+        },
+        name: {
+          name: 'Nombre',
+          description: 'Cadena, 26 caracteres regulares (sin caracteres especiales)',
+          type: 'String',
+        },
+        surname: {
+          name: 'Apellido',
+          description: 'Cadena, 26 caracteres regulares (sin caracteres especiales)',
+          type: 'String',
+        },
+        birthday: {
+          name: 'Cumpleaños',
+          description: 'dd/mm/yyyy',
+          type: 'Date',
+        },
+        surname2: {
+          name: '2do. Apellido',
+          description: 'Cadena, 26 caracteres regulares (sin caracteres especiales)',
+          type: 'String',
+        },
+        avatar: {
+          name: 'Avatar',
+          description: 'Formato: PNG, JPG, tamaño 400x400px, máximo 500kb)',
+          type: 'Image',
+        },
+      },
     },
     basic: {
       description: 'Configuración de campos generales para sus usuarios',
@@ -117,5 +166,41 @@ module.exports = {
     change_easy:
       'Puede cambiar fácilmente su perfil haciendo clic en su avatar en la barra lateral de la aplicación',
     log_in: 'Entrar',
+  },
+  list_users: {
+    pageTitle: 'Listado de usuarios',
+    centerLabel: 'Centro',
+    profileLabel: 'Perfil',
+    searchLabel: 'Buscar',
+    nameHeader: 'Nombre',
+    surnameHeader: 'Apellidos',
+    emailHeader: 'Email',
+    birthdayHeader: 'Fecha de nacimiento',
+    phoneHeader: 'Teléfono',
+    actionsHeader: 'Acciones',
+    usersTab: 'Usuarios',
+    clearFilter: 'Limpiar filtro',
+    view: 'Ver',
+    show: 'Mostrar',
+    goTo: 'Ir a',
+  },
+  create_users: {
+    pageTitle: 'Crear usuarios',
+    centerLabel: 'Centro',
+    profileLabel: 'Perfil',
+    emailHeader: 'Email',
+    emailHeaderRequired: 'El correo electrónico es obligatorio',
+    nameHeader: 'Nombre',
+    nameHeaderRequired: 'El nombre es obligatorio',
+    surnameHeader: 'Apellido',
+    surnameHeaderRequired: 'Se requiere el apellido',
+    birthdayHeader: 'Cumpleaños',
+    birthdayHeaderRequired: 'Birthday is required',
+    avatarHeader: 'Avatar',
+    avatarHeaderRequired: 'El avatar es obligatorio',
+    secondSurnameHeader: 'Segundo apellido',
+    secondSurnameHeaderRequired: 'Se requiere el segundo apellido',
+    tableAdd: 'Añadir',
+    tableRemove: 'Eliminar',
   },
 };

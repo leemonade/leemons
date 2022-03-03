@@ -14,7 +14,7 @@ module.exports = async function get(asset, { userSession, transacting } = {}) {
     );
 
     if (!permission) {
-      const _asset = await assets.find({ id: asset }, { columns: ['public'], transacting });
+      const _asset = await assets.find({ id: asset }, { columns: ['id', 'public'], transacting });
       if (_asset[0]?.public) {
         return {
           role: 'public',

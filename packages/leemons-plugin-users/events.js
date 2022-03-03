@@ -2,7 +2,13 @@ const _ = require('lodash');
 const constants = require('./config/constants');
 const recoverEmail = require('./emails/recoverPassword');
 const resetPassword = require('./emails/resetPassword');
-const { addMain, addWelcome, addProfiles, addUserData } = require('./src/services/menu-builder');
+const {
+  addMain,
+  addWelcome,
+  addProfiles,
+  addUserData,
+  addUsers,
+} = require('./src/services/menu-builder');
 const init = require('./init');
 
 async function events(isInstalled) {
@@ -91,7 +97,7 @@ async function events(isInstalled) {
       try {
         await addMain();
         leemons.events.emit('init-menu');
-        await Promise.all([addWelcome(), addProfiles(), addUserData()]);
+        await Promise.all([addWelcome(), addProfiles(), addUserData(), addUsers()]);
         leemons.events.emit('init-submenu');
       } catch (e) {
         console.error('Error users menu', e);

@@ -17,7 +17,7 @@ function tLoader(prefix, translations) {
       }
       return item;
     }
-    return key;
+    return '';
   };
 }
 

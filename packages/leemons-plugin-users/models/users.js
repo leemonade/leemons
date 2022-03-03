@@ -14,12 +14,21 @@ module.exports = {
     surnames: {
       type: 'string',
     },
+    secondSurnames: {
+      type: 'string',
+    },
     email: {
       type: 'string',
       options: {
         unique: true,
         notNull: true,
       },
+    },
+    phone: {
+      type: 'string',
+    },
+    birthdate: {
+      type: 'datetime',
     },
     password: {
       type: 'string',

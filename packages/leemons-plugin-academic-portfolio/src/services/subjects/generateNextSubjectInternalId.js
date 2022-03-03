@@ -7,7 +7,7 @@ async function generateNextSubjectInternalId(program, { course, transacting } = 
   const internalIndex = await getNextSubjectIndex(program, { course, transacting });
   const { subjectsDigits } = await table.programs.findOne(
     { id: program },
-    { columns: ['subjectsDigits'], transacting }
+    { columns: ['id', 'subjectsDigits'], transacting }
   );
   let internalId = internalIndex.toString().padStart(subjectsDigits, '0');
 
@@ -15,7 +15,7 @@ async function generateNextSubjectInternalId(program, { course, transacting } = 
   if (course) {
     const { index } = await table.groups.findOne(
       { id: course, type: 'course' },
-      { columns: ['index'], transacting }
+      { columns: ['id', 'index'], transacting }
     );
     internalId = `${index}${internalId}`;
   }

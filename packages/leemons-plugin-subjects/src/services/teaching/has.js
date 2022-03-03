@@ -5,7 +5,7 @@ module.exports = async (levelSchema, items, { transacting } = {}) => {
     // Get the items registered in the table
     const savedItems = await table.find(
       { levelSchemas_id: levelSchema, teachingItems_id_$in: items },
-      { columns: ['teachingItems_id'], transacting }
+      { columns: ['id', 'teachingItems_id'], transacting }
     );
 
     // Generate the object of booleans

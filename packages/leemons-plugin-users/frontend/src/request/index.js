@@ -24,6 +24,8 @@ import setRememberProfile from './setRememberProfile';
 import getPlatformLocales from './getPlatformLocales';
 import getUserProfileToken from './getUserProfileToken';
 import getDefaultPlatformLocale from './getDefaultPlatformLocale';
+import getSystemDataFieldsConfig from './getSystemDataFieldsConfig';
+import saveSystemDataFieldsConfig from './saveSystemDataFieldsConfig';
 import getPermissionsWithActionsIfIHave from './getPermissionsWithActionsIfIHave';
 
 export const loginRequest = login;
@@ -52,4 +54,6 @@ export const setRememberProfileRequest = setRememberProfile;
 export const getPlatformLocalesRequest = getPlatformLocales;
 export const getUserProfileTokenRequest = getUserProfileToken;
 export const getDefaultPlatformLocaleRequest = getDefaultPlatformLocale;
+export const getSystemDataFieldsConfigRequest = getSystemDataFieldsConfig;
+export const saveSystemDataFieldsConfigRequest = saveSystemDataFieldsConfig;
 export const getPermissionsWithActionsIfIHaveRequest = getPermissionsWithActionsIfIHave;

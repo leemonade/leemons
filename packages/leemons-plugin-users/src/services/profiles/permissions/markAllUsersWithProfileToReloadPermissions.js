@@ -18,7 +18,7 @@ async function markAllUsersWithProfileToReloadPermissions(
       const profileRoles = await table.profileRole.find(
         { profile: profileId },
         {
-          columns: ['role'],
+          columns: ['id', 'role'],
           transacting,
         }
       );

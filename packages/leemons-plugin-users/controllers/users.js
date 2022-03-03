@@ -142,12 +142,17 @@ async function list(ctx) {
     properties: {
       page: { type: 'number' },
       size: { type: 'number' },
+      query: { type: 'object', additionalProperties: true },
     },
     required: ['page', 'size'],
     additionalProperties: false,
   });
   if (validator.validate(ctx.request.body)) {
-    const data = await usersService.list(ctx.request.body.page, ctx.request.body.size);
+    const data = await usersService.list(
+      ctx.request.body.page,
+      ctx.request.body.size,
+      ctx.request.body.query
+    );
     ctx.status = 200;
     ctx.body = { status: 200, data };
   } else {

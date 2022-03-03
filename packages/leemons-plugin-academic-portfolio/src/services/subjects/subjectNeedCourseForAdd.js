@@ -10,7 +10,7 @@ async function subjectNeedCourseForAdd(program, { transacting } = {}) {
     // ES: Si puede tener cursos comprobamos si dentro de la configuracion del programa hay que meter a las asignaturas el indice del curso
     const { subjectsFirstDigit } = await table.programs.findOne(
       { id: program },
-      { columns: ['subjectsFirstDigit'], transacting }
+      { columns: ['id', 'subjectsFirstDigit'], transacting }
     );
     return subjectsFirstDigit === 'course';
   }
