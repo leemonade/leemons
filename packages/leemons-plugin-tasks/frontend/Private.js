@@ -18,12 +18,15 @@ export default function Private() {
 
   return (
     <Switch>
+      {/* ADMIN VIEW */}
       <Route path={`${path}/welcome`}>
         <Welcome session={session} />
       </Route>
       <Route path={`${path}/profiles`}>
         <Profiles session={session} />
       </Route>
+
+      {/* TEACHER VIEW */}
       <Route path={`${path}/library/edit/:id`}>
         <SetupTask session={session} />
       </Route>
@@ -42,6 +45,9 @@ export default function Private() {
       <Route path={`${path}/details/:instance`}>
         <Details session={session} />
       </Route>
+
+      {/* STUDENT VIEW */}
+      <Route path={`${path}/tasks/student-detail`}></Route>
     </Switch>
   );
 }

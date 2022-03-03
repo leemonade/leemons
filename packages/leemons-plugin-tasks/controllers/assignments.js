@@ -5,11 +5,11 @@ const { get: getInstance } = require('../src/services/assignment/instance/get');
 const assignStudent = require('../src/services/assignment/student/assign');
 const unassignStudent = require('../src/services/assignment/student/remove');
 const listStudents = require('../src/services/assignment/student/list');
+const listAssignedStudents = require('../src/services/assignment/teacher/listAssigned');
 
 const assignTeacher = require('../src/services/assignment/teacher/assign');
 const unassignTeacher = require('../src/services/assignment/teacher/remove');
 const listTeachers = require('../src/services/assignment/teacher/listTeachers');
-const listAssigned = require('../src/services/assignment/teacher/listAssigned');
 
 module.exports = {
   /**
@@ -125,6 +125,26 @@ module.exports = {
       ctx.body = {
         status: 200,
         ...unassigned,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        message: e.message,
+      };
+    }
+  },
+  studentListAssigned: async (ctx) => {
+    try {
+      const { user } = ctx.request.params;
+      const { page, size } = ctx.request.query;
+
+      const tasks = await listAssignedStudents(user, page, size);
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        tasks,
       };
     } catch (e) {
       ctx.status = 400;

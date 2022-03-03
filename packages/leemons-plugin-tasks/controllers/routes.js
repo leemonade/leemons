@@ -205,6 +205,12 @@ module.exports = [
   },
   {
     method: 'GET',
+    path: '/tasks/instances/student/:user',
+    handler: 'assignments.studentListAssigned',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
     path: '/tasks/instances/:instance/students',
     handler: 'assignments.studentList',
     authenticated: true,
