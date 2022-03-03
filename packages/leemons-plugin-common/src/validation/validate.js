@@ -2,4 +2,4 @@ function validateTypePrefix(type, calledFrom) {
   if (!type.startsWith(calledFrom)) throw new Error(`The type name must begin with ${calledFrom}`);
 }
 
-export { validateTypePrefix };
+module.exports = { validateTypePrefix };
