@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
-import { TableInput } from '@bubbles-ui/components';
+import { TableInput, Box } from '@bubbles-ui/components';
 import { TextEditor } from '@bubbles-ui/editors';
 
 export default function Objectives({ id }) {
@@ -11,6 +11,7 @@ export default function Objectives({ id }) {
       Header: 'Objective',
       accessor: 'objective',
       input: { node: <TextEditor />, rules: { required: true } },
+      valueRender: (value) => <Box dangerouslySetInnerHTML={{ __html: value }} />,
     },
   ]);
 
