@@ -18,9 +18,9 @@ async function markAllUserAgentsForUserProfileToReloadPermissions(
   return global.utils.withTransaction(
     async (transacting) => {
       const profileRoles = await table.profileRole.find(
-        { profile: profile },
+        { profile },
         {
-          columns: ['role'],
+          columns: ['id', 'role'],
           transacting,
         }
       );

@@ -23,6 +23,7 @@ const addCurriculumSchema = {
   required: ['name', 'country', 'locale', 'center', 'program'],
   additionalProperties: false,
 };
+
 function validateAddCurriculum(data) {
   const validator = new LeemonsValidator(addCurriculumSchema);
 
@@ -58,6 +59,7 @@ const addNodeLevelSchema = {
   required: ['curriculum', 'nodeLevels'],
   additionalProperties: false,
 };
+
 async function validateAddNodeLevels(data, { transacting }) {
   const validator = new LeemonsValidator(addNodeLevelSchema);
 
@@ -72,7 +74,7 @@ async function validateAddNodeLevels(data, { transacting }) {
   // EN: Check that there are no duplicate levels
   const currentLevels = await table.nodeLevels.find(
     { curriculum: data.curriculum },
-    { columns: ['levelOrder'], transacting }
+    { columns: ['id', 'levelOrder'], transacting }
   );
   let levelOrders = _.map(data.nodeLevels, 'levelOrder');
   levelOrders = levelOrders.concat(_.map(currentLevels, 'levelOrder'));
@@ -90,6 +92,7 @@ const updateNodeLevelSchema = {
   required: ['id', 'name', 'listType'],
   additionalProperties: false,
 };
+
 async function validateUpdateNodeLevel(data, { transacting }) {
   const validator = new LeemonsValidator(updateNodeLevelSchema);
 
@@ -113,6 +116,7 @@ const addNodeSchema = {
   required: ['name', 'curriculum', 'nodeLevel', 'parentNode', 'nodeOrder'],
   additionalProperties: false,
 };
+
 async function validateAddNode(data, { transacting }) {
   const validator = new LeemonsValidator(addNodeSchema);
 

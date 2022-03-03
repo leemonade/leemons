@@ -322,7 +322,7 @@ class Email {
         language,
         type: Email.types.active,
       },
-      { columns: ['subject', 'html'] }
+      { columns: ['id', 'subject', 'html'] }
     );
   }
 }

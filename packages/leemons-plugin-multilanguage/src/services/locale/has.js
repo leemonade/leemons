@@ -38,7 +38,7 @@ module.exports = (Base) =>
           async (t) => {
             let existingLocales = await this.model.find(
               { code_$in: _codes },
-              { columns: ['code'] },
+              { columns: ['id', 'code'] },
               { transacting: t }
             );
             existingLocales = existingLocales.map((locale) => locale.code);

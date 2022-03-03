@@ -25,7 +25,10 @@ async function remove(id, { _transacting } = {}) {
       await Promise.all(_.map(events, (event) => removeEvent(event.id, { transacting })));
 
       // -- Calendar
-      const calendar = await table.calendars.findOne({ id }, { columns: ['key'], transacting });
+      const calendar = await table.calendars.findOne(
+        { id },
+        { columns: ['id', 'key'], transacting }
+      );
       const permissionConfig = getPermissionConfig(calendar.key);
 
       await Promise.all([

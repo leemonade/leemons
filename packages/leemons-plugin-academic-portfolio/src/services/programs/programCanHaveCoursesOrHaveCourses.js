@@ -5,7 +5,7 @@ const { getProgramCourses } = require('./getProgramCourses');
 async function programCanHaveCoursesOrHaveCourses(id, { transacting } = {}) {
   const program = await table.programs.findOne(
     { id },
-    { columns: ['maxNumberOfCourses'], transacting }
+    { columns: ['id', 'maxNumberOfCourses'], transacting }
   );
   if (program.maxNumberOfCourses > 0) {
     return true;
