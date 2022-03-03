@@ -111,6 +111,21 @@ function ContentData({
 
             <Controller
               control={control}
+              name="development"
+              rules={{ required: errorMessages.development?.required }}
+              render={({ field }) => (
+                <TextEditor
+                  {...field}
+                  label={labels.development}
+                  placeholder={placeholders.development}
+                  error={errors.development}
+                  required={!isEmpty(errorMessages.development?.required)}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
               name="statement"
               rules={{ required: errorMessages.statement?.required }}
               render={({ field }) => (

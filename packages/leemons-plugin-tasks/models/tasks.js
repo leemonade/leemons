@@ -21,7 +21,7 @@ module.exports = {
       type: 'string',
     },
     recommendedDuration: {
-      type: 'number',
+      type: 'integer',
     },
     statement: {
       type: 'richtext',
