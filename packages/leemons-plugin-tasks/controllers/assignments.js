@@ -5,11 +5,12 @@ const { get: getInstance } = require('../src/services/assignment/instance/get');
 const assignStudent = require('../src/services/assignment/student/assign');
 const unassignStudent = require('../src/services/assignment/student/remove');
 const listStudents = require('../src/services/assignment/student/list');
-const listAssignedStudents = require('../src/services/assignment/teacher/listAssigned');
+const listAssignedStudents = require('../src/services/assignment/student/listAssigned');
 
 const assignTeacher = require('../src/services/assignment/teacher/assign');
 const unassignTeacher = require('../src/services/assignment/teacher/remove');
 const listTeachers = require('../src/services/assignment/teacher/listTeachers');
+const listAssignedTeacher = require('../src/services/assignment/teacher/listAssigned');
 
 module.exports = {
   /**
@@ -235,10 +236,15 @@ module.exports = {
         }
       }
 
-      const tasks = await listAssigned(user, parseInt(page, 10) || 0, parseInt(size, 10) || 10, {
-        details: details === 'true',
-        columns,
-      });
+      const tasks = await listAssignedTeacher(
+        user,
+        parseInt(page, 10) || 0,
+        parseInt(size, 10) || 10,
+        {
+          details: details === 'true',
+          columns,
+        }
+      );
 
       ctx.status = 200;
       ctx.body = {

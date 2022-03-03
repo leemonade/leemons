@@ -11,6 +11,7 @@ const SetupTask = loadable(() => import('./src/pages/private/library/TaskSetupPa
 const Profiles = loadable(() => import('./src/pages/private/profiles/ProfilesPage'));
 const Ongoing = loadable(() => import('./src/pages/private/ongoing/OngoingPage'));
 const Details = loadable(() => import('./src/pages/private/assignment/DetailsPage'));
+const UserDetails = loadable(() => import('./src/pages/private/student/Details'));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -47,7 +48,9 @@ export default function Private() {
       </Route>
 
       {/* STUDENT VIEW */}
-      <Route path={`${path}/tasks/student-detail`}></Route>
+      <Route path={`${path}/student-detail`}>
+        <UserDetails session={session} />
+      </Route>
     </Switch>
   );
 }

@@ -61,10 +61,7 @@ export default function AssignmentPage() {
       });
 
       await assignStudentRequest(instance, students);
-      await assignTeacherRequest(
-        instance,
-        teachers.map((t) => t.assignee)
-      );
+      await assignTeacherRequest(instance, teachers);
 
       await enableMenuItemRequest('ongoing');
       await enableMenuItemRequest('history');
