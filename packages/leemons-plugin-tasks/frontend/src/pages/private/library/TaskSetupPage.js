@@ -37,7 +37,7 @@ export default function TaskSetupPage() {
 
   const saveTask = async (values, redirectTo = 'library') => {
     try {
-      const body = { ...values };
+      const body = { ...values, objectives: values.objectives.map(({ objective }) => objective) };
       let messageKey = 'create_done';
 
       if (!isEmpty(store.currentTask)) {

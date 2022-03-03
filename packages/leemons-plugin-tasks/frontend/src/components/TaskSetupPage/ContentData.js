@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isEmpty } from 'lodash';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, FormProvider } from 'react-hook-form';
 import {
   Box,
   Stack,
@@ -12,6 +12,8 @@ import {
 } from '@bubbles-ui/components';
 import { TextEditor } from '@bubbles-ui/editors';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import TimeUnitsInput from '../Inputs/TimeUnitsInput';
+import Objectives from './Objectives';
 
 function ContentData({
   labels,
@@ -34,11 +36,12 @@ function ContentData({
     ...sharedData,
   };
 
+  const formData = useForm({ defaultValues });
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm({ defaultValues });
+  } = formData;
 
   const { subscribe, unsubscribe, emitEvent } = useObserver();
 
@@ -61,6 +64,7 @@ function ContentData({
 
   const handleOnNext = (e) => {
     const data = { ...sharedData, ...e };
+
     if (isFunction(setSharedData)) setSharedData(data);
     if (isFunction(onNext)) onNext(data);
   };
@@ -69,67 +73,71 @@ function ContentData({
   // COMPONENT
 
   return (
-    <form onSubmit={handleSubmit(handleOnNext)}>
-      <ContextContainer {...props} divided>
-        <ContextContainer title={labels.title}>
-          <Controller
-            control={control}
-            name="methodology"
-            rules={{ required: errorMessages.methodology?.required }}
-            render={({ field }) => (
-              <TextInput
-                {...field}
-                label={labels.methodology}
-                placeholder={placeholders.methodology}
-                error={errors.methodology}
-                required={!isEmpty(errorMessages.methodology?.required)}
-              />
-            )}
-          />
-          <Box>Add Resource from media-library component</Box>
-          <Controller
-            control={control}
-            name="recommendedDuration"
-            rules={{ required: errorMessages.Recommendedduration?.required }}
-            render={({ field }) => (
-              <NumberInput
-                {...field}
-                label={labels.recommendedDuration}
-                error={errors.recommendedDuration}
-                min={0}
-                required={!isEmpty(errorMessages.recommendedDuration?.required)}
-              />
-            )}
-          />
+    <FormProvider {...formData}>
+      <form onSubmit={handleSubmit(handleOnNext)}>
+        <ContextContainer {...props} divided>
+          <ContextContainer title={labels.title}>
+            <Controller
+              control={control}
+              name="methodology"
+              rules={{ required: errorMessages.methodology?.required }}
+              render={({ field }) => (
+                <TextInput
+                  {...field}
+                  label={labels.methodology}
+                  placeholder={placeholders.methodology}
+                  error={errors.methodology}
+                  required={!isEmpty(errorMessages.methodology?.required)}
+                />
+              )}
+            />
+            <Box>Add Resource from media-library component</Box>
+            <Controller
+              control={control}
+              name="recommendedDuration"
+              rules={{ required: errorMessages.Recommendedduration?.required }}
+              render={({ field }) => (
+                <TimeUnitsInput
+                  {...field}
+                  label={labels.recommendedDuration}
+                  error={errors.recommendedDuration}
+                  min={0}
+                  required={!isEmpty(errorMessages.recommendedDuration?.required)}
+                />
+              )}
+            />
 
-          <Controller
-            control={control}
-            name="statement"
-            rules={{ required: errorMessages.statement?.required }}
-            render={({ field }) => (
-              <TextEditor {...field} label={labels.statement} error={errors.statement} />
-            )}
-          />
+            <Objectives label={labels.objectives} error={errors.objectives} />
+
+            <Controller
+              control={control}
+              name="statement"
+              rules={{ required: errorMessages.statement?.required }}
+              render={({ field }) => (
+                <TextEditor {...field} label={labels.statement} error={errors.statement} />
+              )}
+            />
+          </ContextContainer>
+          <Stack fullWidth justifyContent="space-between">
+            <Box>
+              <Button
+                compact
+                variant="light"
+                leftIcon={<ChevLeftIcon height={20} width={20} />}
+                onClick={onPrevious}
+              >
+                {labels.buttonPrev}
+              </Button>
+            </Box>
+            <Box>
+              <Button type="submit" rightIcon={<ChevRightIcon height={20} width={20} />}>
+                {labels.buttonNext}
+              </Button>
+            </Box>
+          </Stack>
         </ContextContainer>
-        <Stack fullWidth justifyContent="space-between">
-          <Box>
-            <Button
-              compact
-              variant="light"
-              leftIcon={<ChevLeftIcon height={20} width={20} />}
-              onClick={onPrevious}
-            >
-              {labels.buttonPrev}
-            </Button>
-          </Box>
-          <Box>
-            <Button type="submit" rightIcon={<ChevRightIcon height={20} width={20} />}>
-              {labels.buttonNext}
-            </Button>
-          </Box>
-        </Stack>
-      </ContextContainer>
-    </form>
+      </form>
+    </FormProvider>
   );
 }
 

@@ -8,6 +8,7 @@ const upgradeTaskVersion = require('./versions/upgrade');
 const deleteSubjects = require('./subjects/delete');
 const addSubjects = require('./subjects/add');
 const setTags = require('../tags/set');
+const setObjectives = require('./objectives/set');
 
 module.exports = async function update(
   taskId,
@@ -33,6 +34,7 @@ module.exports = async function update(
     center,
     program,
     tags,
+    objectives,
   },
   { transacting: t } = {}
 ) {
@@ -138,6 +140,12 @@ module.exports = async function update(
           // EN: Update the tags
           // ES: Actualizar las etiquetas
           await setTags(fullId, tags, { transacting });
+        }
+
+        if (objectives) {
+          // EN: Update objectives
+          // ES: Actualizar objetivos
+          await setObjectives(fullId, objectives, { transacting });
         }
 
         // EN: Emit the event.

@@ -119,7 +119,7 @@ export default function SelectSubjects({
         onChange={onChange}
         columns={subjectsColumns}
         labels={subjectsLabels}
-        sortable={false}
+        sortable={true}
         error={errors.subjects}
       />
     </ContextContainer>

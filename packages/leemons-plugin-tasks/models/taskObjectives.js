@@ -7,5 +7,8 @@ module.exports = {
     objective: {
       type: 'string',
     },
+    position: {
+      type: 'integer',
+    },
   },
 };

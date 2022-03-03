@@ -3,6 +3,7 @@ const parseId = require('./helpers/parseId');
 const getVersion = require('./versions/get');
 const getSubjects = require('./subjects/get');
 const getTags = require('../tags/get');
+const getObjectives = require('./objectives/get');
 
 const DEFAULT_COLUMNS = ['id', 'current', 'last', 'name', 'status', 'subjects', 'tags'];
 const TASK_VERSIONING_EXISTING_COLUMNS = ['id', 'name', 'current', 'last'];
@@ -98,6 +99,19 @@ async function getMany(taskIds, { columns, transacting } = {}) {
       }, {});
     }
 
+    let objectives;
+    if (columns === '*' || columns.includes('objectives')) {
+      objectives = await fullIds.reduce(async (accum, id) => {
+        await accum;
+        const o = await getObjectives(id, { transacting });
+
+        return {
+          ...accum,
+          [id]: o.objectives,
+        };
+      }, {});
+    }
+
     // EN: Map the tasks by id
     // ES: Mapear las tareas por id
     return Promise.all(
@@ -116,6 +130,10 @@ async function getMany(taskIds, { columns, transacting } = {}) {
 
         if (tags) {
           t.tags = tags[fullIds[i]];
+        }
+
+        if (objectives) {
+          t.objectives = objectives[fullIds[i]];
         }
 
         return t;

@@ -16,9 +16,10 @@ module.exports = async function addObjectives(task, objectives, { transacting } 
   }
 
   const createdObjectives = await table.createMany(
-    _objectives.map((objective) => ({
+    _objectives.map((objective, i) => ({
       task: id,
       objective,
+      position: i,
     })),
     {
       transacting,

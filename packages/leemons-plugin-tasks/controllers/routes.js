@@ -118,6 +118,34 @@ module.exports = [
   },
 
   /**
+   * Objectives
+   */
+  {
+    method: 'POST',
+    path: '/tasks/:task/objectives',
+    handler: 'objectives.add',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/:task/objectives',
+    handler: 'objectives.get',
+    authenticated: true,
+  },
+  {
+    method: 'DELETE',
+    path: '/tasks/:task/objectives',
+    handler: 'objectives.remove',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/:task/objectives/list',
+    handler: 'objectives.list',
+    authenticated: true,
+  },
+
+  /**
    * Attachments
    */
   {

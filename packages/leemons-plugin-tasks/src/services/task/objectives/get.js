@@ -7,6 +7,7 @@ module.exports = async function getObjectives(task, { transacting } = {}) {
   const existingObjectives = await table.find(
     {
       task: id,
+      $sort: 'position:ASC',
     },
     {
       transacting,
@@ -15,6 +16,6 @@ module.exports = async function getObjectives(task, { transacting } = {}) {
 
   return {
     count: existingObjectives.length,
-    objectives: existingObjectives.map(({ objective }) => objective),
+    objectives: existingObjectives.map(({ objective, position }) => ({ objective, position })),
   };
 };

@@ -1,9 +1,10 @@
 const emit = require('../events/emit');
-const { tasks, tasksVersioning } = require('../table');
+const { tasks } = require('../table');
 const parseId = require('./helpers/parseId');
 const addSubjects = require('./subjects/add');
 const versioningCreate = require('./versions/create');
 const addTags = require('../tags/add');
+const addObjectives = require('./objectives/add');
 
 module.exports = async function create(
   {
@@ -27,6 +28,7 @@ module.exports = async function create(
     center,
     program,
     tags,
+    objectives,
   },
   { transacting: t } = {}
 ) {
@@ -80,6 +82,10 @@ module.exports = async function create(
         // EN: Create the task tags
         // ES: Crear etiquetas de tarea
         await addTags(task.id, tags, { transacting });
+
+        // EN: Add objectives
+        // ES: Añadir objetivos
+        await addObjectives(task.id, objectives, { transacting });
 
         // EN: Emit the event.
         // ES: Emitir el evento.

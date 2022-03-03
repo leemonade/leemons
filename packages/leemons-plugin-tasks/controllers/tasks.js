@@ -30,6 +30,7 @@ module.exports = {
         center,
         program,
         tags,
+        objectives,
       } = ctx.request.body;
 
       let task = {
@@ -54,6 +55,7 @@ module.exports = {
         center,
         program,
         tags,
+        objectives,
       };
 
       task = await create(task);
@@ -96,6 +98,7 @@ module.exports = {
         center,
         program,
         tags,
+        objectives,
       } = ctx.request.body;
 
       let task = {
@@ -120,6 +123,7 @@ module.exports = {
         center,
         program,
         tags,
+        objectives,
       };
 
       task = await update(id, task);
