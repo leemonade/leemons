@@ -1,15 +1,41 @@
 import React from 'react';
-import { ContextContainer, Stack, Button, Paragraph, Text } from '@bubbles-ui/components';
+import {
+  ContextContainer,
+  Stack,
+  Button,
+  Paragraph,
+  Text,
+  Alert,
+  Paper,
+} from '@bubbles-ui/components';
 
-export default function DeliveryStep() {
+function TaggedText({ tag, text }) {
+  return (
+    <Stack>
+      <Text strong>{tag}:&nbsp;</Text>
+      <Text>{text}</Text>
+    </Stack>
+  );
+}
+
+export default function DeliveryStep({ onNext, onPrevious }) {
   return (
     <ContextContainer title="Delivery">
       <Paragraph>DELIVERY</Paragraph>
 
-      <Stack>
-        {/* Space in html */}
-        <Text strong>Hola &nbsp;</Text>
-        <Text>Adios</Text>
+      <TaggedText tag="Tipo de archivo" text="CONFIG DE ARCHIVOS" />
+      <TaggedText tag="Evaluable" text="CONFIG DE EVALUACION" />
+      <Alert title="Recuerda" severity="info" closeable={false}>
+        una vez entregado el archivo podrás sustituirlo tantas veces como necesites hasta la fecha
+        de expiración de la prueba pero solo se guardará la última versión
+      </Alert>
+      <Paper color="solid">
+        <ContextContainer title="Your deliver">DELIVERIES</ContextContainer>
+      </Paper>
+
+      <Stack fullWidth justifyContent="space-between">
+        <Button onClick={onPrevious}>Previous</Button>
+        <Button onClick={onNext}>Next</Button>
       </Stack>
     </ContextContainer>
   );
