@@ -138,9 +138,16 @@ module.exports = {
   studentListAssigned: async (ctx) => {
     try {
       const { user } = ctx.request.params;
-      const { page, size } = ctx.request.query;
+      const { page, size, details } = ctx.request.query;
 
-      const tasks = await listAssignedStudents(user, page, size);
+      const tasks = await listAssignedStudents(
+        user,
+        parseInt(page, 10) || 0,
+        parseInt(size, 10) || 20,
+        {
+          details: details === 'true',
+        }
+      );
 
       ctx.status = 200;
       ctx.body = {

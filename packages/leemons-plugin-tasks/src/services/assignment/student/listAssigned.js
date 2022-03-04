@@ -32,6 +32,6 @@ module.exports = async function listAssigned(
 
     return instances;
   } catch (e) {
-    throw new Error('Error getting student instances');
+    throw new Error(`Error getting student instances ${e.message}`);
   }
 };
