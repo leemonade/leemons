@@ -4,9 +4,11 @@ import { isFunction, isEmpty } from 'lodash';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import { Stack, ContextContainer, TextInput, Button, Textarea } from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-import SelectProgram from './PickSubject/SelectProgram';
-import SelectSubjects from './PickSubject/SelectSubjects';
-import TagSelect from './Tags/TagSelect';
+import SelectProgram from './components/PickSubject/SelectProgram';
+import SelectSubjects from './components/PickSubject/SelectSubjects';
+import TagSelect from './components/Tags/TagSelect';
+import ConditionalInput from '../Inputs/ConditionalInput';
+import PreTaskSelector from './components/PreTaskSelector/PreTaskSelector';
 
 function ConfigData({
   labels,
@@ -116,13 +118,11 @@ function ConfigData({
                   />
                 )}
               />
-
               <SelectProgram
                 errorMessages={errorMessages}
                 labels={labels}
                 placeholders={placeholders}
               />
-
               <Controller
                 control={control}
                 name="subjects"
@@ -137,7 +137,6 @@ function ConfigData({
                   />
                 )}
               />
-
               {/* Summary container */}
               <ContextContainer title={labels.summary}>
                 {/* Summary input */}
@@ -159,8 +158,8 @@ function ConfigData({
                   )}
                 />
               </ContextContainer>
-
               <TagSelect />
+              <PreTaskSelector />
             </ContextContainer>
           </ContextContainer>
           <Stack fullWidth justifyContent="end">

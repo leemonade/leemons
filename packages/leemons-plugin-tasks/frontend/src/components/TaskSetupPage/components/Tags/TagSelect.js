@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import { MultiSelect } from '@bubbles-ui/components';
 import { useApi } from '@common';
-import listTags from '../../../request/tags/list';
+import listTags from '../../../../request/tags/list';
 
 export default function TagSelect() {
   const [data, setData] = useState([]);

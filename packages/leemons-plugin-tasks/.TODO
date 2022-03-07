@@ -8,21 +8,17 @@ Peticiones Johan
 
 Preguntas
   El tiempo de ejecución incluye Pretask, Self Reflection y Feedback?
+  El Development lo podemos dejar como RichText por ahora (Se debería de poder poner en lista de preguntas) (El problema por ahora son los checkbox)
 
 
 Task Creation
-  [X] Save Center and Program (D1)
   [-] Programs dedupe (D1)
-  [X] Statement (RichText) (D1)
   [B] Upload Task Cover (D2)
-  [X] Tags (D2)
-  [X] Objectives (List) (D3)
-  [X] Development (RichText or List) (D3) (For now only richtext)
   [] Resources (Library dependency) (D2)
+  [] Previous Task (D4)
   [] Self Reflection (08.02.02.02D) (D3)
   [] Feedback (08.02.02.02D) (D3)
   [] Submissions (08.02.02.02D) (D3)
-  [] Previous Task (D4)
   [] Content (Curriculum) (D4)
   [] Assessment Criteria (List and tagged to content) (D4)
 

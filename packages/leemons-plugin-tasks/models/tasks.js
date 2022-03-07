@@ -32,11 +32,20 @@ module.exports = {
     submissions: {
       type: 'boolean',
     },
+    preTask: {
+      type: 'string',
+    },
+    preTaskOptions: {
+      type: 'string',
+    },
     selfReflection: {
-      type: 'boolean',
+      type: 'string',
+    },
+    selfReflectionDescription: {
+      type: 'string',
     },
     feedback: {
-      type: 'boolean',
+      type: 'string',
     },
     instructionsForTeacher: {
       type: 'richtext',
