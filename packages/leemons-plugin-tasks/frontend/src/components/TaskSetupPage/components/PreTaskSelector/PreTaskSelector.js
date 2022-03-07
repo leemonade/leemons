@@ -6,7 +6,7 @@ import ConditionalInput from '../../../Inputs/ConditionalInput';
 
 export default function PreTaskSelector() {
   const originalForm = useFormContext();
-  const { control, watch } = useForm({
+  const { control, watch, setValue } = useForm({
     defaultValues: (() => {
       const preTaskOptions = originalForm.getValues('preTaskOptions');
       const preTask = originalForm.getValues('preTask');
@@ -26,16 +26,23 @@ export default function PreTaskSelector() {
     // EN: When PreTask hidden, reset every preTask field
     // ES: Cuando el PreTask está oculto, resetea cada campo de PreTask
     if (!showPreTask) {
-      originalForm.setValue('preTask', undefined);
-      originalForm.setValue('preTaskOptions', undefined);
+      originalForm.setValue('preTask', null);
+      originalForm.setValue('preTaskOptions', null);
+      setValue('condition', null);
+      setValue('minScore', null);
+    }
+  }, [showPreTask]);
+
+  useEffect(() => {
+    // EN: When PreTask is visible, but no condition is selected, reset mandatory fields
+    if (!condition && !minScore) {
+      if (originalForm.getValues('preTaskOptions')?.mandatory) {
+        originalForm.setValue('preTaskOptions', { mandatory: false });
+      }
       return;
     }
 
-    // EN: When PreTask is visible, but no condition is selected, reset mandatory fields
-    if (!condition && !minScore) {
-      originalForm.setValue('preTaskOptions', { mandatory: false });
-      return;
-    }
+    setValue('showPreTask', true);
 
     // EN: Set mandatory fields
     // ES: Establece los campos obligatorios
@@ -48,7 +55,7 @@ export default function PreTaskSelector() {
       preTaskOptions.minScore = minScore;
     }
     originalForm.setValue('preTaskOptions', preTaskOptions);
-  }, [condition, minScore, showPreTask]);
+  }, [condition, minScore]);
 
   return (
     <>

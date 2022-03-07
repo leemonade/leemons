@@ -50,7 +50,7 @@ module.exports = async function create(
           development,
           submissions,
           preTask,
-          preTaskOptions,
+          preTaskOptions: preTaskOptions && JSON.stringify(preTaskOptions),
           selfReflection,
           selfReflectionDescription,
           feedback,

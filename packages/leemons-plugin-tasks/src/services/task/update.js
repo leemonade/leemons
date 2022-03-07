@@ -56,7 +56,7 @@ module.exports = async function update(
           development,
           submissions,
           preTask,
-          preTaskOptions,
+          preTaskOptions: preTaskOptions && JSON.stringify(preTaskOptions),
           selfReflection,
           selfReflectionDescription,
           feedback,

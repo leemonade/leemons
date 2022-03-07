@@ -77,10 +77,15 @@ async function getMany(taskIds, { columns, transacting } = {}) {
 
     // EN: Get the tasks by id (id@version)
     // ES: Obtener las tareas por id (id@version)
-    const _tasks = await tasks.find(
+    let _tasks = await tasks.find(
       { id_$in: fullIds },
       { columns: ['id', ...taskColumns], transacting }
     );
+
+    _tasks = _tasks?.map((task) => ({
+      ...task,
+      preTaskOptions: task.preTaskOptions && JSON.parse(task.preTaskOptions),
+    }));
 
     // EN: Get the tasks subjects by id (id@version)
     // ES: Obtener las tareas por id (id@version)
