@@ -4,25 +4,25 @@ import PreTaskStep from '../Steps/PreTaskStep';
 import StatementAndDevelopmentStep from '../Steps/StatementAndDevelopmentStep';
 import SummaryStep from '../Steps/SummaryStep';
 
-export default function useGetSteps() {
+export default function useGetSteps(id) {
   // TODO: Calculate steps
 
   const steps = useMemo(() => [
     {
       label: 'Summary',
-      content: <SummaryStep />,
+      content: <SummaryStep id={id} />,
     },
     {
       label: 'Pretask',
-      content: <PreTaskStep />,
+      content: <PreTaskStep id={id} />,
     },
     {
       label: 'Statement && Development',
-      content: <StatementAndDevelopmentStep />,
+      content: <StatementAndDevelopmentStep id={id} />,
     },
     {
       label: 'Delivery',
-      content: <DeliveryStep />,
+      content: <DeliveryStep id={id} />,
     },
     {
       label: 'Self Reflection',

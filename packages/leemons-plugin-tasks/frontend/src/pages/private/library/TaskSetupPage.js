@@ -88,7 +88,7 @@ export default function TaskSetupPage() {
 
   const getTask = async (id) => {
     try {
-      return await getTaskRequest(id);
+      return await getTaskRequest({ id });
       // TODO: Implement get task by id request
       // const response = await apiCall(id);
       // store.currentTask = response.task;
