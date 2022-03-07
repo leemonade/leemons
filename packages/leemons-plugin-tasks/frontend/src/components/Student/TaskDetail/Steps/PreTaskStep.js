@@ -1,7 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { ContextContainer, Button } from '@bubbles-ui/components';
 
-export default function PreTask({ onNext }) {
+export default function PreTaskStep({ onNext }) {
   return (
     <ContextContainer title="Pretask">
       <p>Aquí iría la info del Pretask</p>
@@ -9,3 +10,7 @@ export default function PreTask({ onNext }) {
     </ContextContainer>
   );
 }
+
+PreTaskStep.propTypes = {
+  onNext: PropTypes.func.isRequired,
+};

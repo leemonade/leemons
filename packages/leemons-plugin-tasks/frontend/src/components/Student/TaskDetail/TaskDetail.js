@@ -5,7 +5,7 @@ import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useGetSteps from './helpers/useGetSteps';
 
 export default function TaskDetail({ id }) {
-  const steps = useGetSteps(id);
+  const steps = useGetSteps('f306743c-0d9e-4a26-b2d9-0f8996822ea8@2.0.0');
 
   return (
     <ContextContainer>

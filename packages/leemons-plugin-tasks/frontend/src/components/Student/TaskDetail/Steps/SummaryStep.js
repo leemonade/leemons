@@ -17,17 +17,14 @@ import getTaskRequest from '../../../../request/task/getTask';
 export default function SummaryStep({ id, onNext }) {
   const options = useMemo(
     () => ({
-      id: 'f306743c-0d9e-4a26-b2d9-0f8996822ea8@2.0.0',
+      id,
       columns: JSON.stringify(['tagline', 'summary', 'objectives', 'cover']),
     }),
     [id]
   );
 
-  const [task, error, loading] = useApi(getTaskRequest, options);
+  const [task] = useApi(getTaskRequest, options);
 
-  useEffect(() => {
-    console.log('Updated task:', task);
-  }, [task, loading]);
   return (
     <ContextContainer direction="row" fullHeight fullWidth>
       <ContextContainer>

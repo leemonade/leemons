@@ -1,14 +1,28 @@
-import React from 'react';
-import { ContextContainer, Paragraph, Button, Box, Stack } from '@bubbles-ui/components';
+import React, { useEffect, useMemo } from 'react';
+import PropTypes from 'prop-types';
+import { useApi } from '@common';
 
-export default function StatementAndDevelopmentStep({ onNext, onPrevious }) {
+import { ContextContainer, HtmlText, Button, Box, Stack } from '@bubbles-ui/components';
+import getTaskRequest from '../../../../request/task/getTask';
+
+export default function StatementAndDevelopmentStep({ id, onNext, onPrevious }) {
+  const options = useMemo(
+    () => ({
+      id,
+      columns: JSON.stringify(['statement', 'development']),
+    }),
+    [id]
+  );
+
+  const [task] = useApi(getTaskRequest, options);
+
   return (
     <ContextContainer>
       <ContextContainer title="Statement">
-        <Paragraph>STATEMENT</Paragraph>
+        <HtmlText>{task?.statement}</HtmlText>
       </ContextContainer>
       <ContextContainer title="Development">
-        <Paragraph>DEVELOPMENT</Paragraph>
+        <HtmlText>{task?.development}</HtmlText>
       </ContextContainer>
       <Stack fullWidth justifyContent="space-between">
         <Button onClick={onPrevious}>Previous</Button>
@@ -17,3 +31,9 @@ export default function StatementAndDevelopmentStep({ onNext, onPrevious }) {
     </ContextContainer>
   );
 }
+
+StatementAndDevelopmentStep.propTypes = {
+  id: PropTypes.string.isRequired,
+  onNext: PropTypes.func.isRequired,
+  onPrevious: PropTypes.func.isRequired,
+};

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   ContextContainer,
   Stack,
@@ -40,3 +41,8 @@ export default function DeliveryStep({ onNext, onPrevious }) {
     </ContextContainer>
   );
 }
+
+DeliveryStep.propTypes = {
+  onNext: PropTypes.func.isRequired,
+  onPrevious: PropTypes.func.isRequired,
+};
