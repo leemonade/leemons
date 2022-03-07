@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { ContextContainer, PageContainer, Stepper } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useGetSteps from './helpers/useGetSteps';
+import getInstanceRequest from '../../../request/instance/get';
 
-export default function TaskDetail({ id }) {
-  const steps = useGetSteps('f306743c-0d9e-4a26-b2d9-0f8996822ea8@2.0.0');
+export default function TaskDetail({ id = 'beab7544-090b-4add-8111-ac628b20e2e3' }) {
+  const [task, setTask] = useState(null);
+
+  useEffect(async () => {
+    const instance = await getInstanceRequest(id);
+
+    setTask(instance.task.id);
+  }, [id]);
+
+  const steps = useGetSteps(task);
 
   return (
     <ContextContainer>

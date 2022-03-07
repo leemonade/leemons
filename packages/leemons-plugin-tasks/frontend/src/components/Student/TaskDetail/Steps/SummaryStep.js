@@ -39,9 +39,7 @@ export default function SummaryStep({ id, onNext }) {
         <ContextContainer subtitle="Objectives">
           <Box>
             {task?.objectives?.map(({ objective, position }) => (
-              <HtmlText noFlex key={position}>
-                {objective}
-              </HtmlText>
+              <HtmlText key={position}>{objective}</HtmlText>
             ))}
           </Box>
         </ContextContainer>
