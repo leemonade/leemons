@@ -14,6 +14,8 @@ import { TextEditor } from '@bubbles-ui/editors';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 import Objectives from './Objectives';
+import { Feedback } from './components/Feedback';
+import { SelfReflection } from './components/SelfReflection';
 
 function ContentData({
   labels,
@@ -132,6 +134,10 @@ function ContentData({
                 <TextEditor {...field} label={labels.statement} error={errors.statement} />
               )}
             />
+
+            <SelfReflection label="Self reflection" description="Add a space for the student to reflect on what he/she has learned." name="selfReflection" />
+            <Feedback label="Feedback" description="Ask the student for a quick evaluation of this exercise." name="feedback" />
+
           </ContextContainer>
           <Stack fullWidth justifyContent="space-between">
             <Box>

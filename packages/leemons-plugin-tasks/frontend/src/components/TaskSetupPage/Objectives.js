@@ -3,7 +3,7 @@ import { useFormContext, Controller } from 'react-hook-form';
 import { TableInput, Box } from '@bubbles-ui/components';
 import { TextEditor } from '@bubbles-ui/editors';
 
-export default function Objectives({ id }) {
+export default function Objectives() {
   const { control } = useFormContext();
 
   const columns = useMemo(() => [
@@ -24,6 +24,7 @@ export default function Objectives({ id }) {
           <TableInput
             {...field}
             columns={columns}
+            editable
             data={field.value || []}
             labels={{
               add: 'ADD',
