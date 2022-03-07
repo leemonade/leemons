@@ -15,9 +15,9 @@ Task Creation
   [-] Programs dedupe (D1)
   [B] Upload Task Cover (D2)
   [] Resources (Library dependency) (D2)
-  [] Previous Task (D4)
-  [] Self Reflection (08.02.02.02D) (D3)
-  [] Feedback (08.02.02.02D) (D3)
+  [X STILL NEEDS TESTS INTEGRATION] Previous Task (D4)
+  [X STILL NEEDS TESTS INTEGRATION] Self Reflection (08.02.02.02D) (D3)
+  [X STILL NEEDS TESTS INTEGRATION] Feedback (08.02.02.02D) (D3)
   [] Submissions (08.02.02.02D) (D3)
   [] Content (Curriculum) (D4)
   [] Assessment Criteria (List and tagged to content) (D4)
@@ -46,13 +46,3 @@ Students
   Task details
     [] Get tasks
   Correction Details
-
-
-Permissions
-  [] Create Task
-  [] View Published Tasks
-  [] View Draft Tasks
-  [] Edit Tasks
-  [] Delete Tasks
-  [] View ongoing tasks
-  [] View history tasks
