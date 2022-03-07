@@ -1,0 +1,62 @@
+[X] Visualización draft/published (Tabs)
+  [-] Multi-Assign visualization (creo que ya está definidio)
+  [X] Assign more students/teachers? (ongoing and history)
+
+Peticiones Johan
+  [] Selector de archivos Media-Library
+  Tenemos que ver como hacer los search en multitabla
+
+Preguntas
+  El tiempo de ejecución incluye Pretask, Self Reflection y Feedback?
+
+
+Task Creation
+  [X] Save Center and Program (D1)
+  [-] Programs dedupe (D1)
+  [X] Statement (RichText) (D1)
+  [B] Upload Task Cover (D2)
+  [X] Tags (D2)
+  [X] Objectives (List) (D3)
+  [X] Development (RichText or List) (D3) (For now only richtext)
+  [] Resources (Library dependency) (D2)
+  [] Self Reflection (08.02.02.02D) (D3)
+  [] Feedback (08.02.02.02D) (D3)
+  [] Submissions (08.02.02.02D) (D3)
+  [] Previous Task (D4)
+  [] Content (Curriculum) (D4)
+  [] Assessment Criteria (List and tagged to content) (D4)
+
+Library
+  [] Library view as table or Cards (D1)
+  [] Library filters (Easy filters, complicated pagination) (D2)
+  [] Library search (D2)
+  [] New sticker en task/library (D3)
+
+Assignment
+  [] Individual deadlines (Differenciate between inherited or assigned deadline) (D2)
+  [] Assignment show curriculum content to students. (Dependency on Content) (D3)
+  [] Gradable (Dependency on Grades) (D3)
+  [] Mandatory || Final examen (Consultar a Johan) (D3)
+  [] Rubrics (Dependency on Rubrics plugin) (D3)
+
+Ongoing & History
+  [] Ongoing filters (Easy filters, complicated pagination) (D2)
+  [] History filters (Easy filters, complicated pagination) (D2)
+
+
+Students
+  Dashboard
+    [B] List students tasks
+  Task details
+    [] Get tasks
+  Correction Details
+
+
+Permissions
+  [] Create Task
+  [] View Published Tasks
+  [] View Draft Tasks
+  [] Edit Tasks
+  [] Delete Tasks
+  [] View ongoing tasks
+  [] View history tasks

@@ -11,6 +11,7 @@ const assignTeacher = require('../src/services/assignment/teacher/assign');
 const unassignTeacher = require('../src/services/assignment/teacher/remove');
 const listTeachers = require('../src/services/assignment/teacher/listTeachers');
 const listAssignedTeacher = require('../src/services/assignment/teacher/listAssigned');
+const updateStudent = require('../src/services/assignment/student/update');
 
 module.exports = {
   /**
@@ -177,6 +178,25 @@ module.exports = {
       ctx.body = {
         status: 200,
         students,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        message: e.message,
+      };
+    }
+  },
+  studentUpdate: async (ctx) => {
+    try {
+      const { instance, student, key, value } = ctx.request.params;
+
+      const updated = await updateStudent({ instance, student, key, value });
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        updated,
       };
     } catch (e) {
       ctx.status = 400;

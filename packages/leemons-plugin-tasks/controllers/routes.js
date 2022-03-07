@@ -215,6 +215,12 @@ module.exports = [
     handler: 'assignments.studentList',
     authenticated: true,
   },
+  {
+    method: 'PUT',
+    path: '/tasks/instances/:instance/students/:student/key/:key/value/:value',
+    handler: 'assignments.studentUpdate',
+    authenticated: true,
+  },
   // Teacher
   {
     method: 'POST',
