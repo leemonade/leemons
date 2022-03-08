@@ -2,14 +2,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isEmpty } from 'lodash';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
-import {
-  Box,
-  Stack,
-  ContextContainer,
-  TextInput,
-  Button,
-  NumberInput,
-} from '@bubbles-ui/components';
+import { Box, Stack, ContextContainer, Select, Button } from '@bubbles-ui/components';
 import { TextEditor } from '@bubbles-ui/editors';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
@@ -17,7 +10,7 @@ import Objectives from './components/Objectives';
 import { Feedback } from './components/Feedback';
 import { SelfReflection } from './components/SelfReflection';
 import Contents from './components/Contents';
-import AssessmentCriteria from './components/assessmentCriteria';
+import AssessmentCriteria from './components/AssessmentCriteria';
 
 function ContentData({
   labels,
@@ -86,8 +79,14 @@ function ContentData({
               name="methodology"
               rules={{ required: errorMessages.methodology?.required }}
               render={({ field }) => (
-                <TextInput
+                <Select
                   {...field}
+                  data={[
+                    {
+                      label: 'Direct instruction',
+                      value: 'direct instruction',
+                    },
+                  ]}
                   label={labels.methodology}
                   placeholder={placeholders.methodology}
                   error={errors.methodology}

@@ -1,6 +1,3 @@
-[X] Visualización draft/published (Tabs)
-  [-] Multi-Assign visualization (creo que ya está definidio)
-  [X] Assign more students/teachers? (ongoing and history)
 
 Peticiones Johan
   [] Selector de archivos Media-Library
@@ -9,6 +6,8 @@ Peticiones Johan
 Preguntas
   El tiempo de ejecución incluye Pretask, Self Reflection y Feedback?
   El Development lo podemos dejar como RichText por ahora (Se debería de poder poner en lista de preguntas) (El problema por ahora son los checkbox)
+  Individual deadlines
+  Las metodologías de dónde salen?
 
 
 Task Creation
@@ -20,6 +19,7 @@ Task Creation
   [X STILL NEEDS CURRICULUM INTEGRATION] Content (Curriculum) (D4)
   [X STILL NEEDS CURRICULUM INTEGRATION] Assessment Criteria (List and tagged to content) (D4)
 
+  [] Methodology select
   [] Submissions (08.02.02.02D) (D3)
   [] Resources (Library dependency) (D2)
 
@@ -39,6 +39,8 @@ Assignment
 Ongoing & History
   [] Ongoing filters (Easy filters, complicated pagination) (D2)
   [] History filters (Easy filters, complicated pagination) (D2)
+
+Task Correction
 
 
 Students
