@@ -2,11 +2,11 @@ const { taskAssessmentCriteria: table } = require('../../table');
 const parseId = require('../helpers/parseId');
 
 module.exports = async function getAssessmentCriteria(task, { transacting } = {}) {
-  const { id } = await parseId(task, null, { transacting });
+  const { fullId } = await parseId(task, null, { transacting });
 
   const existingCriteria = await table.find(
     {
-      task: id,
+      task: fullId,
       $sort: 'position:ASC',
     },
     {
@@ -16,8 +16,8 @@ module.exports = async function getAssessmentCriteria(task, { transacting } = {}
 
   return {
     count: existingCriteria.length,
-    assessmentCriteria: existingCriteria.map(({ content: assessmentCriteria, position }) => ({
-      content: assessmentCriteria,
+    assessmentCriteria: existingCriteria.map(({ assessmentCriteria, position }) => ({
+      assessmentCriteria,
       position,
     })),
   };

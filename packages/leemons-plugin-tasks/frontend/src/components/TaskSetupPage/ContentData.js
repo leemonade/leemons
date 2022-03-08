@@ -13,9 +13,11 @@ import {
 import { TextEditor } from '@bubbles-ui/editors';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
-import Objectives from './Objectives';
+import Objectives from './components/Objectives';
 import { Feedback } from './components/Feedback';
 import { SelfReflection } from './components/SelfReflection';
+import Contents from './components/Contents';
+import AssessmentCriteria from './components/assessmentCriteria';
 
 function ContentData({
   labels,
@@ -109,7 +111,12 @@ function ContentData({
               )}
             />
 
+            <Contents label={labels.content} error={errors.content} />
             <Objectives label={labels.objectives} error={errors.objectives} />
+            <AssessmentCriteria
+              label={labels.assessmentCriteria}
+              error={errors.assessmentCriteria}
+            />
 
             <Controller
               control={control}
@@ -135,9 +142,16 @@ function ContentData({
               )}
             />
 
-            <SelfReflection label="Self reflection" description="Add a space for the student to reflect on what he/she has learned." name="selfReflection" />
-            <Feedback label="Feedback" description="Ask the student for a quick evaluation of this exercise." name="feedback" />
-
+            <SelfReflection
+              label="Self reflection"
+              description="Add a space for the student to reflect on what he/she has learned."
+              name="selfReflection"
+            />
+            <Feedback
+              label="Feedback"
+              description="Ask the student for a quick evaluation of this exercise."
+              name="feedback"
+            />
           </ContextContainer>
           <Stack fullWidth justifyContent="space-between">
             <Box>

@@ -4,8 +4,7 @@ const taskExists = require('../exists');
 const parseId = require('../helpers/parseId');
 
 module.exports = async function addAssessmentCriteria(task, criterias, { transacting } = {}) {
-  const { id } = await parseId(task, null, { transacting });
-  const { fullId } = await parseId(id, 'any', { transacting });
+  const { fullId } = await parseId(task, null, { transacting });
 
   const _criterias = Array.isArray(criterias) ? criterias : [criterias];
 
@@ -17,7 +16,7 @@ module.exports = async function addAssessmentCriteria(task, criterias, { transac
 
   const createdCriterias = await table.createMany(
     _criterias.map((assessmentCriteria, i) => ({
-      task: id,
+      task: fullId,
       assessmentCriteria,
       position: i,
     })),
@@ -28,7 +27,9 @@ module.exports = async function addAssessmentCriteria(task, criterias, { transac
 
   // EN: Emit the event.
   // ES: Emitir el evento.
-  emit(['task.assessmentCriteria.added', `task.${id}.assessmentCriteria.added`], { id });
+  emit(['task.assessmentCriteria.added', `task.${fullId}.assessmentCriteria.added`], {
+    id: fullId,
+  });
 
   return createdCriterias.map(({ assessmentCriteria }) => assessmentCriteria);
 };

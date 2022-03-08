@@ -14,13 +14,14 @@ Preguntas
 Task Creation
   [-] Programs dedupe (D1)
   [B] Upload Task Cover (D2)
-  [] Resources (Library dependency) (D2)
   [X STILL NEEDS TESTS INTEGRATION] Previous Task (D4)
   [X STILL NEEDS TESTS INTEGRATION] Self Reflection (08.02.02.02D) (D3)
   [X STILL NEEDS TESTS INTEGRATION] Feedback (08.02.02.02D) (D3)
+  [X STILL NEEDS CURRICULUM INTEGRATION] Content (Curriculum) (D4)
+  [X STILL NEEDS CURRICULUM INTEGRATION] Assessment Criteria (List and tagged to content) (D4)
+
   [] Submissions (08.02.02.02D) (D3)
-  [] Content (Curriculum) (D4)
-  [] Assessment Criteria (List and tagged to content) (D4)
+  [] Resources (Library dependency) (D2)
 
 Library
   [] Library view as table or Cards (D1)

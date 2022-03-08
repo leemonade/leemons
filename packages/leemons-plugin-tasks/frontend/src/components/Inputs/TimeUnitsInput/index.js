@@ -6,7 +6,6 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '../../../helpers/prefixPN';
 
 export default function TimeUnitsInput({ onChange, value: userValue, ...props }) {
-
   const [, translations] = useTranslateLoader(prefixPN('assignment_form.timeUnits'));
   const [labels, setLabels] = useState({});
 
@@ -49,6 +48,9 @@ export default function TimeUnitsInput({ onChange, value: userValue, ...props })
   };
 
   const handleChange = (v, u) => {
+    if (typeof v !== 'number' || typeof u !== 'string') {
+      return;
+    }
     if (v !== value) {
       setValue(v);
     }
@@ -65,10 +67,10 @@ export default function TimeUnitsInput({ onChange, value: userValue, ...props })
   };
 
   useEffect(() => {
-    if (userValue !== time) {
+    if (userValue !== time && userValue !== undefined) {
       handleChange(userValue / getMultiplier(units), units);
     }
-  }, [userValue])
+  }, [userValue]);
 
   return (
     <InputWrapper {...props}>
@@ -99,4 +101,5 @@ export default function TimeUnitsInput({ onChange, value: userValue, ...props })
 
 TimeUnitsInput.propTypes = {
   onChange: PropTypes.func,
+  value: PropTypes.number,
 };

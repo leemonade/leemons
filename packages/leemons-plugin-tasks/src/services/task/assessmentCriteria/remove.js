@@ -7,13 +7,14 @@ module.exports = async function removeAssessmentCriteria(
   assessmentCriterias,
   { transacting } = {}
 ) {
-  const { id } = await parseId(task, null, { transacting });
+  const { fullId } = await parseId(task, null, { transacting });
+
   const _criterias = Array.isArray(assessmentCriterias)
     ? assessmentCriterias
     : [assessmentCriterias];
 
   const query = {
-    task: id,
+    task: fullId,
   };
 
   if (assessmentCriterias && _criterias?.length) {
@@ -26,8 +27,8 @@ module.exports = async function removeAssessmentCriteria(
 
   // EN: Emit the event.
   // ES: Emitir el evento.
-  emit(['task.assessmentCriteria.removed', `task.${id}.assessmentCriteria.removed`], {
-    id,
+  emit(['task.assessmentCriteria.removed', `task.${fullId}.assessmentCriteria.removed`], {
+    id: fullId,
     assessmentCriteria: _criterias,
   });
 
