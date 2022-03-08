@@ -7,6 +7,8 @@ const emit = require('../events/emit');
 const deleteSubjects = require('./subjects/delete');
 const deleteTags = require('../tags/remove');
 const deleteObjectives = require('./objectives/remove');
+const deletecontents = require('./contents/remove');
+const deleteAssessmentCriteria = require('./assessmentCriteria/remove');
 
 module.exports = async function remove(taskID, { transacting: t } = {}) {
   return global.utils.withTransaction(
@@ -43,6 +45,14 @@ module.exports = async function remove(taskID, { transacting: t } = {}) {
         // EN: Remove objectives
         // ES: Eliminar objetivos
         await deleteObjectives(fullId, undefined, { transacting });
+
+        // EN: Remove contents
+        // ES: Eliminar contenidos
+        await deletecontents(fullId, undefined, { transacting });
+
+        // EN: Remove assessment criteria
+        // ES: Eliminar criterios de evaluación
+        await deleteAssessmentCriteria(fullId, undefined, { transacting });
 
         // EN: Emit the event.
         // ES: Emitir el evento.

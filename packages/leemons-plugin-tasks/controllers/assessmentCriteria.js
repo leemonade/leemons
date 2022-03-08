@@ -1,15 +1,15 @@
-const add = require('../src/services/task/objectives/add');
-const get = require('../src/services/task/objectives/get');
-const list = require('../src/services/task/objectives/list');
-const remove = require('../src/services/task/objectives/remove');
+const add = require('../src/services/task/assessmentCriteria/add');
+const get = require('../src/services/task/assessmentCriteria/get');
+const list = require('../src/services/task/assessmentCriteria/list');
+const remove = require('../src/services/task/assessmentCriteria/remove');
 
 module.exports = {
   add: async (ctx) => {
     try {
       const { task } = ctx.request.params;
-      const { objectives } = ctx.request.body;
+      const { assessmentCriteria } = ctx.request.body;
 
-      const response = await add(task, objectives);
+      const response = await add(task, assessmentCriteria);
 
       ctx.status = 201;
       ctx.body = {
@@ -46,9 +46,9 @@ module.exports = {
   remove: async (ctx) => {
     try {
       const { task } = ctx.request.params;
-      const { tags: objectives } = ctx.request.query;
+      const { assessmentCriteria } = ctx.request.query;
 
-      const response = await remove(task, JSON.parse(objectives));
+      const response = await remove(task, JSON.parse(assessmentCriteria));
 
       ctx.status = 200;
       ctx.body = {
@@ -65,14 +65,12 @@ module.exports = {
   },
   list: async (ctx) => {
     try {
-      const { objectives } = ctx.request.params;
-
       const items = await list();
 
       ctx.status = 200;
       ctx.body = {
         status: 200,
-        objectives: items,
+        assessmentCriteria: items,
       };
     } catch (e) {
       ctx.status = 400;

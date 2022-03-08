@@ -9,6 +9,8 @@ const deleteSubjects = require('./subjects/delete');
 const addSubjects = require('./subjects/add');
 const setTags = require('../tags/set');
 const setObjectives = require('./objectives/set');
+const setContent = require('./contents/set');
+const setAssessmentCriteria = require('./assessmentCriteria/set');
 
 module.exports = async function update(
   taskId,
@@ -38,6 +40,8 @@ module.exports = async function update(
     program,
     tags,
     objectives,
+    content,
+    assessmentCriteria,
   },
   { transacting: t } = {}
 ) {
@@ -152,6 +156,18 @@ module.exports = async function update(
           // EN: Update objectives
           // ES: Actualizar objetivos
           await setObjectives(fullId, objectives, { transacting });
+        }
+
+        if (content) {
+          // EN: Update the content
+          // ES: Actualizar el contenido
+          await setContent(fullId, content, { transacting });
+        }
+
+        if (assessmentCriteria) {
+          // EN: Update the assessment criteria
+          // ES: Actualizar los criterios de evaluación
+          await setAssessmentCriteria(fullId, assessmentCriteria, { transacting });
         }
 
         // EN: Emit the event.

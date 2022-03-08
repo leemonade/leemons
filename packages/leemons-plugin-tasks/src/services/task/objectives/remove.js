@@ -20,7 +20,7 @@ module.exports = async function removeObjectives(task, objectives, { transacting
 
   // EN: Emit the event.
   // ES: Emitir el evento.
-  emit(['task.objetive.removed', `task.${id}.objetive.removed`], { id, objetvives: _objectives });
+  emit(['task.objetive.removed', `task.${id}.objetive.removed`], { id, objectives: _objectives });
 
   return deleted;
 };

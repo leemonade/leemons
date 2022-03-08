@@ -7,6 +7,12 @@ module.exports = {
         notNull: true,
       },
     },
+    course: {
+      type: 'string',
+      options: {
+        notNull: true,
+      },
+    },
     subject: {
       type: 'uuid',
       options: {

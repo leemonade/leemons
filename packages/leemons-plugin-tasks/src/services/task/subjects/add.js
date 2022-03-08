@@ -9,6 +9,7 @@ module.exports = async function addSubjects(task, subject, { transacting } = {})
         task,
         subject: s.subject,
         level: s.level,
+        course: s.course,
       })),
       { transacting }
     );

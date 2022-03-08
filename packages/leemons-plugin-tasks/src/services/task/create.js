@@ -5,6 +5,8 @@ const addSubjects = require('./subjects/add');
 const versioningCreate = require('./versions/create');
 const addTags = require('../tags/add');
 const addObjectives = require('./objectives/add');
+const addAssessmentCriteria = require('./assessmentCriteria/add');
+const addContent = require('./contents/add');
 
 module.exports = async function create(
   {
@@ -32,6 +34,8 @@ module.exports = async function create(
     program,
     tags,
     objectives,
+    content,
+    assessmentCriteria,
   },
   { transacting: t } = {}
 ) {
@@ -92,6 +96,14 @@ module.exports = async function create(
         // EN: Add objectives
         // ES: Añadir objetivos
         await addObjectives(task.id, objectives, { transacting });
+
+        // EN: Add assessment criteria
+        // ES: Añadir criterios de evaluación
+        await addAssessmentCriteria(task.id, assessmentCriteria, { transacting });
+
+        // EN: Add content
+        // ES: Añadir contenido
+        await addContent(task.id, content, { transacting });
 
         // EN: Emit the event.
         // ES: Emitir el evento.

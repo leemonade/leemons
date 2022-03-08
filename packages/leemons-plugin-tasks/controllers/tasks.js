@@ -34,6 +34,8 @@ module.exports = {
         program,
         tags,
         objectives,
+        content,
+        assessmentCriteria,
       } = ctx.request.body;
 
       let task = {
@@ -62,6 +64,8 @@ module.exports = {
         program,
         tags,
         objectives,
+        content,
+        assessmentCriteria,
       };
 
       task = await create(task);
@@ -108,6 +112,8 @@ module.exports = {
         program,
         tags,
         objectives,
+        content,
+        assessmentCriteria,
       } = ctx.request.body;
 
       let task = {
@@ -136,6 +142,8 @@ module.exports = {
         program,
         tags,
         objectives,
+        content,
+        assessmentCriteria,
       };
 
       task = await update(id, task);
