@@ -21,7 +21,7 @@ module.exports = async function search(
       await Promise.all(
         versions.items.map(async ({ task, version }) => (await parseId(task, version)).fullId)
       ),
-      { columns: ['name', 'tagline', 'summary', 'cover', 'color'], transacting }
+      { columns: ['name', 'tagline', 'summary', 'cover', 'color', 'tags'], transacting }
     );
 
     return { ...versions, items: taskInfo };
