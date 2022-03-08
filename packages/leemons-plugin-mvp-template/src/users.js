@@ -1,109 +1,48 @@
-const { map } = require('lodash');
+/* eslint-disable no-await-in-loop */
+const { keys, map, uniq } = require('lodash');
+const importUsers = require('./bulk/users');
 
 async function initUsers(centers, profiles) {
-  const { centerA, centerB } = centers;
-  const { admin, student, teacher, guardian } = profiles;
+  const { services } = leemons.getPlugin('users');
 
-  // ·······························································
-  // ROLES
+  try {
+    const users = await importUsers(centers, profiles);
+    const itemsKeys = keys(users);
 
-  const adminRoles = await Promise.all([
-    leemons
-      .getPlugin('users')
-      .services.profiles.getRoleForRelationshipProfileCenter(admin.id, centerA.id),
-    leemons
-      .getPlugin('users')
-      .services.profiles.getRoleForRelationshipProfileCenter(admin.id, centerB.id),
-  ]);
+    // console.log('------ USERS ------');
 
-  const studentRoles = await Promise.all([
-    leemons
-      .getPlugin('users')
-      .services.profiles.getRoleForRelationshipProfileCenter(student.id, centerA.id),
-    leemons
-      .getPlugin('users')
-      .services.profiles.getRoleForRelationshipProfileCenter(student.id, centerB.id),
-  ]);
+    for (let i = 0, len = itemsKeys.length; i < len; i++) {
+      const itemKey = itemsKeys[i];
+      const { roles, ...item } = users[itemKey];
 
-  const teacherRoles = await Promise.all([
-    leemons
-      .getPlugin('users')
-      .services.profiles.getRoleForRelationshipProfileCenter(teacher.id, centerA.id),
-    leemons
-      .getPlugin('users')
-      .services.profiles.getRoleForRelationshipProfileCenter(teacher.id, centerB.id),
-  ]);
+      // console.log('user roles:', roles);
 
-  const guardianRoles = await Promise.all([
-    leemons
-      .getPlugin('users')
-      .services.profiles.getRoleForRelationshipProfileCenter(guardian.id, centerA.id),
-  ]);
+      const itemRoles = await Promise.all(
+        roles.map((rol) =>
+          services.profiles.getRoleForRelationshipProfileCenter(rol.profile, rol.center)
+        )
+      );
 
-  // ·······························································
-  // USERS
+      // console.log('user roles created:', itemRoles);
 
-  const adminUser = await leemons.getPlugin('users').services.users.add(
-    {
-      name: 'Administrator',
-      surname: 'Leemons',
-      email: 'admin@leemons.io',
-      password: 'testing',
-      locale: 'en',
-      active: true,
-    },
-    map(adminRoles, 'id')
-  );
+      // console.log('Vamos a crear el usuario:');
+      // console.dir({ ...item, active: true }, { depth: null });
 
-  const teacherUser = await leemons.getPlugin('users').services.users.add(
-    {
-      name: 'Will',
-      surname: 'Teacher',
-      email: 'teacher@leemons.io',
-      password: 'testing',
-      locale: 'en',
-      active: true,
-    },
-    map(teacherRoles, 'id')
-  );
+      const itemData = await services.users.add({ ...item, active: true }, map(itemRoles, 'id'));
+      const userProfiles = roles.map((rol) => rol.profileKey);
 
-  const studentUser = await leemons.getPlugin('users').services.users.add(
-    {
-      name: 'John',
-      surname: 'Student',
-      email: 'student@leemons.io',
-      password: 'testing',
-      locale: 'en',
-      active: true,
-    },
-    map(studentRoles, 'id')
-  );
+      users[itemKey] = { ...itemData, profiles: uniq(userProfiles) };
+    }
 
-  const guardianUser = await leemons.getPlugin('users').services.users.add(
-    {
-      name: 'Nicole',
-      surname: 'Guardian',
-      email: 'guardian@leemons.io',
-      password: 'testing',
-      locale: 'en',
-      active: true,
-    },
-    map(guardianRoles, 'id')
-  );
+    // console.log('tenemos los usuarios creados:');
+    // console.dir(users, { depth: null });
 
-  // ·······························································
-  // USER AGENTS
+    return users;
+  } catch (err) {
+    console.error(err);
+  }
 
-  await leemons
-    .getPlugin('users')
-    .services.users.addUserAgentContacts(
-      map(adminUser.userAgents, 'id'),
-      map(studentUser.userAgents, 'id'),
-      map(teacherUser.userAgents, 'id'),
-      map(guardianUser.userAgents, 'id')
-    );
-
-  return { admin: adminUser, student: studentUser, teacher: teacherUser, guardian: guardianUser };
+  return null;
 }
 
 module.exports = initUsers;

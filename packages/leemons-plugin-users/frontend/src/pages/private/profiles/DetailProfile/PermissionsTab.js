@@ -138,6 +138,7 @@ export const PermissionsTab = ({ t, profile, onPermissionsChange = () => {}, isE
   }, [profile, permissions, actions, permissionT, isEditMode]);
 
   useEffect(() => {
+    // TODO: El sendPermissionChange se ha movido aquí porque estaba retrasando el render de la página. Sin embargo, si se pulsa en el botón de guardar rápidamente, no dará tiempo a que se haya lanzado esta función y por lo tanto ocurrirá un error. Hay que revisarlo para ver cómo podemos optimizar la función y mover esto dentro de updateTableData()
     sendPermissionChange();
   }, [tableDataDebounced]);
 

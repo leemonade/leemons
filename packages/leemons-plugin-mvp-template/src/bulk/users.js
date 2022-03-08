@@ -1,0 +1,101 @@
+const { range, keys, findIndex, trim, isEmpty } = require('lodash');
+const path = require('path');
+const getColumns = require('./helpers/getColumns');
+
+const { XlsxImporter } = global.utils;
+
+const factory = new XlsxImporter();
+const filePath = path.resolve(__dirname, 'data.xlsx');
+
+async function importUsers(centers, profiles) {
+  const importer = await factory.from(filePath);
+  const config = {
+    data: {
+      worksheet: 'users',
+      type: 'list',
+      columns: getColumns(20),
+    },
+  };
+
+  const data = importer.getAllItems(config.data);
+
+  // ·····················································
+  // HEADER FIELDS
+
+  const fields = keys(data[0])
+    .map((key) => data[0][key])
+    .filter((val) => val !== '');
+
+  // ·····················································
+  // ITEM FIELDS START COLUMN INDEX
+
+  const fieldStartColumnOffset = 1; // first column is omitted
+  const fieldStartColumn =
+    findIndex(fields, (field) => field.indexOf('root') > -1) + fieldStartColumnOffset;
+
+  // ·····················································
+  // PROFILES START COLUMN INDEX
+
+  const profilesColumn = findIndex(fields, (field) => field.indexOf('profiles') > -1);
+
+  // ·····················································
+  // ITEMS START ROW INDEX
+
+  const itemsStartRowOffset = 2; // fields names and header items
+  const itemsStartRow = findIndex(data.slice(1), (item) => item[1] !== '') + itemsStartRowOffset;
+
+  const items = data
+    .slice(itemsStartRow)
+    .map((row) => {
+      const item = { root: row[1], roles: [] };
+
+      // Add user fields
+      range(fieldStartColumn, profilesColumn).forEach((index) => {
+        item[fields[index]] = row[fieldStartColumn + index];
+      });
+
+      // Add profiles fields
+      item.roles = row[profilesColumn + 1]
+        .split(',')
+        .map((val) => trim(val))
+        .filter((val) => !isEmpty(val))
+        .map((val) => {
+          const [profile, center] = val.split('@');
+          return {
+            profile: profiles[profile]?.id,
+            center: centers[center]?.id,
+            profileKey: profile,
+          };
+        });
+
+      return item;
+    })
+    .reduce((acc, item) => {
+      const { root, ...rest } = item;
+      acc[root] = rest;
+      return acc;
+    }, {});
+
+  // console.dir(items, { depth: null });
+  return items;
+}
+
+// ·····················································
+// TESTING
+/*
+const CENTERS = {
+  centerA: { id: 'A' },
+  centerB: { id: 'B' },
+};
+
+const PROFILES = {
+  admin: { id: 'A' },
+  teacher: { id: 'T' },
+  student: { id: 'S' },
+  guardian: { id: 'G' },
+};
+
+importUsers(CENTERS, PROFILES);
+*/
+
+module.exports = importUsers;

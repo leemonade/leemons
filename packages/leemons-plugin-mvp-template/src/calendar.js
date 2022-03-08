@@ -30,19 +30,21 @@ const events = [
 ];
 
 async function addCalendarAndEventAsClassroom(users) {
-  const { student } = users;
+  const { studentA01 } = users;
   const calendarKey = leemons.plugin.prefixPN('calendar-test');
   const calendarKey2 = leemons.plugin.prefixPN('calendar-test2');
   const section = leemons.plugin.prefixPN('Testing');
 
-  await leemons.getPlugin('calendar').services.calendar.add(calendarKey, {
+  const { services } = leemons.getPlugin('calendar');
+
+  await services.calendar.add(calendarKey, {
     name: 'Biology',
     bgColor: '#aaff96',
     borderColor: '#aaff96',
     section,
   });
 
-  await leemons.getPlugin('calendar').services.calendar.add(calendarKey2, {
+  await services.calendar.add(calendarKey2, {
     name: 'Math',
     bgColor: '#ffe796',
     borderColor: '#ffe796',
@@ -50,26 +52,18 @@ async function addCalendarAndEventAsClassroom(users) {
     icon: '/public/assets/svgs/family.svg',
   });
 
-  await Promise.all(
-    map(events, (event) =>
-      leemons.getPlugin('calendar').services.calendar.addEvent(calendarKey, event)
-    )
-  );
+  await Promise.all(map(events, (event) => services.calendar.addEvent(calendarKey, event)));
 
-  await leemons
-    .getPlugin('calendar')
-    .services.calendar.grantAccessUserAgentToCalendar(
-      calendarKey,
-      student.userAgents[0].id,
-      'view'
-    );
-  await leemons
-    .getPlugin('calendar')
-    .services.calendar.grantAccessUserAgentToCalendar(
-      calendarKey2,
-      student.userAgents[0].id,
-      'view'
-    );
+  await services.calendar.grantAccessUserAgentToCalendar(
+    calendarKey,
+    studentA01.userAgents[0].id,
+    'view'
+  );
+  await services.calendar.grantAccessUserAgentToCalendar(
+    calendarKey2,
+    studentA01.userAgents[0].id,
+    'view'
+  );
 }
 
 module.exports = addCalendarAndEventAsClassroom;

@@ -1,24 +1,29 @@
+/* eslint-disable no-await-in-loop */
+const { keys } = require('lodash');
+const importCenters = require('./bulk/centers');
+
 async function initCenters() {
-  let result = null;
+  const { services } = leemons.getPlugin('users');
 
   try {
-    const centerA = await leemons.getPlugin('users').services.centers.add({
-      name: 'Elementary School',
-      description: 'Elementary school only to perform the tests',
-      locale: 'en',
-    });
-    const centerB = await leemons.getPlugin('users').services.centers.add({
-      name: 'High School',
-      description: 'High school only to perform the tests',
-      locale: 'en',
-    });
+    const centers = await importCenters();
+    const centersKeys = keys(centers);
 
-    result = { centerA, centerB };
+    for (let i = 0, len = centersKeys.length; i < len; i++) {
+      const centerKey = centersKeys[i];
+      const centerData = await services.centers.add(centers[centerKey]);
+      centers[centerKey] = centerData;
+    }
+
+    // console.log('------ CENTERS ------');
+    // console.dir(centers, { depth: null });
+
+    return centers;
   } catch (err) {
     console.error(err);
   }
 
-  return result;
+  return null;
 }
 
 module.exports = initCenters;
