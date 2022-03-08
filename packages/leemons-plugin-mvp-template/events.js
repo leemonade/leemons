@@ -5,6 +5,7 @@ const initProfiles = require('./src/profiles');
 const { setFamilyProfiles } = require('./src/familyProfiles');
 const addCalendarAndEventAsClassroom = require('./src/calendar');
 const addAWSS3AsProvider = require('./src/mediaLibrary');
+const addAWSEmailAsProvider = require('./src/emails');
 
 async function events(isInstalled) {
   const config = {
@@ -46,6 +47,16 @@ async function events(isInstalled) {
       ],
       async () => {
         await addAWSS3AsProvider();
+      }
+    );
+
+    leemons.events.once(
+      [
+        'plugins.emails:pluginDidLoadServices',
+        'providers.emails-amazon-ses:providerDidLoadServices',
+      ],
+      async () => {
+        await addAWSEmailAsProvider();
       }
     );
 

@@ -118,7 +118,8 @@
  * @typedef CenterAdd
  * @property {string} name Center name
  * @property {number} description Center description
- * @property {number} locale Center locale
+ * @property {string} locale Center locale
+ * @property {string} email Center email
  *
  */
 
@@ -178,6 +179,10 @@
  * @property {string} name User name
  * @property {string | undefined} surnames User surnames
  * @property {string} email User email
+ * @property {string} secondSurname Second surname
+ * @property {string} avatar User avatar
+ * @property {string} birthDate User birthDate
+ * @property {string[]} tags User tags
  * @property {string} password User password
  * @property {string} language User locale language
  */

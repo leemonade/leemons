@@ -11,7 +11,7 @@ const createNecessaryRolesForProfilesAccordingToCenters = require('../profiles/c
  * @param {any=} _transacting -  DB Transaction
  * @return {Promise<Center>} Created / Updated role
  * */
-async function add({ name, description, locale }, { transacting: _transacting } = {}) {
+async function add({ name, description, locale, email }, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       if (await existName(name, { transacting }))
@@ -29,6 +29,7 @@ async function add({ name, description, locale }, { transacting: _transacting } 
           name,
           description,
           locale,
+          email,
           uri: global.utils.slugify(name, { lower: true }),
         },
         { transacting }

@@ -15,7 +15,16 @@ async function getUserAgentsInfo(
   {
     withProfile,
     withCenter,
-    userColumns = ['id', 'email', 'name', 'surnames', 'created_at'],
+    userColumns = [
+      'id',
+      'email',
+      'name',
+      'surnames',
+      'secondSurname',
+      'birthdate',
+      'avatar',
+      'created_at',
+    ],
     transacting,
   } = {}
 ) {
@@ -38,7 +47,7 @@ async function getUserAgentsInfo(
 
   const roles = _.uniq(_.map(userAgents, 'role'));
 
-  let usersById = _.keyBy(users, 'id');
+  const usersById = _.keyBy(users, 'id');
   let profileRoleByRole = null;
   let profilesById = null;
   let roleCentersByRole = null;

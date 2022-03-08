@@ -1,4 +1,12 @@
 module.exports = [
+  ...leemons.getPlugin('common').services.tags.getRoutes('tags', {
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['update', 'create', 'delete', 'admin'],
+      },
+    },
+  }),
   {
     path: '/test-socket-io',
     method: 'GET',
@@ -25,11 +33,23 @@ module.exports = [
     path: '/config/system-data-fields',
     method: 'GET',
     handler: 'config.getSystemDataFieldsConfig',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
   },
   {
     path: '/config/system-data-fields',
     method: 'POST',
     handler: 'config.saveSystemDataFieldsConfig',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['update', 'create', 'delete', 'admin'],
+      },
+    },
   },
   /**
    * Users
@@ -53,6 +73,16 @@ module.exports = [
     path: '/user/can/reset',
     method: 'POST',
     handler: 'users.canReset',
+  },
+  {
+    path: '/user/can/register-password',
+    method: 'POST',
+    handler: 'users.canRegisterPassword',
+  },
+  {
+    path: '/user/register-password',
+    method: 'POST',
+    handler: 'users.registerPassword',
   },
   {
     path: '/user',
@@ -119,9 +149,15 @@ module.exports = [
   },
 
   {
-    path: '/user',
+    path: '/user/create/bulk',
     method: 'POST',
-    handler: 'users.create',
+    handler: 'users.createBulk',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['create', 'admin'],
+      },
+    },
   },
   {
     path: '/super-admin',
