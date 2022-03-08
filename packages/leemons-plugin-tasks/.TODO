@@ -24,7 +24,8 @@ Task Creation
   [] Resources (Library dependency) (D2)
 
 Library
-  [] Library view as table or Cards (D1)
+  [X] Library new cards (D1)
+  [] Library view as table  (D1)
   [] Library filters (Easy filters, complicated pagination) (D2)
   [] Library search (D2)
   [] New sticker en task/library (D3)
