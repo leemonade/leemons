@@ -1,1 +1,3 @@
-export { default as SelfReflection } from "./SelfReflection";
+import SelfReflection from './SelfReflection';
+
+export default SelfReflection;

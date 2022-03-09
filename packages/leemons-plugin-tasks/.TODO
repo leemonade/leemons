@@ -10,21 +10,19 @@ Preguntas
   El tiempo de ejecución incluye Pretask, Self Reflection y Feedback?
   El Development lo podemos dejar como RichText por ahora (Se debería de poder poner en lista de preguntas) (El problema por ahora son los checkbox)
   Individual deadlines
-  Las metodologías de dónde salen?
+  Las metodologías de dónde salen? De momento es una constante, en un futuro ya se verá
 
 
 Task Creation
-  [-] Programs dedupe (D1)
   [B] Upload Task Cover (D2)
   [X STILL NEEDS TESTS INTEGRATION] Previous Task (D4)
   [X STILL NEEDS TESTS INTEGRATION] Self Reflection (08.02.02.02D) (D3)
   [X STILL NEEDS TESTS INTEGRATION] Feedback (08.02.02.02D) (D3)
   [X STILL NEEDS CURRICULUM INTEGRATION] Content (Curriculum) (D4)
   [X STILL NEEDS CURRICULUM INTEGRATION] Assessment Criteria (List and tagged to content) (D4)
+  [X STILL NEEDS MEDIA-LIBRARY INTEGRATION] Resources (Library dependency) (D2)
 
-  [X DEFINE VALUES] Methodology select
   [] Submissions (08.02.02.02D) (D3)
-  [] Resources (Library dependency) (D2)
 
 Library
   [X] Library new cards (D1)

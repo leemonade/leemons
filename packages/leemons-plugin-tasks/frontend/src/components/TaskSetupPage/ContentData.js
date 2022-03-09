@@ -7,8 +7,9 @@ import { TextEditor } from '@bubbles-ui/editors';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 import Objectives from './components/Objectives';
-import { Feedback } from './components/Feedback';
-import { SelfReflection } from './components/SelfReflection';
+import Feedback from './components/Feedback';
+import SelfReflection from './components/SelfReflection';
+import Submissions from './components/Submissions';
 import Contents from './components/Contents';
 import AssessmentCriteria from './components/AssessmentCriteria';
 import Attachments from './components/Attachments';
@@ -186,6 +187,7 @@ function ContentData({
               )}
             />
 
+            <Submissions />
             <SelfReflection
               label="Self reflection"
               description="Add a space for the student to reflect on what he/she has learned."

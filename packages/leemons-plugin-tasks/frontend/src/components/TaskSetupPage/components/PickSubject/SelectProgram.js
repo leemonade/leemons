@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import { ContextContainer, Box } from '@bubbles-ui/components';
@@ -6,14 +6,9 @@ import { SelectProgram as APSelectProgram } from '@academic-portfolio/components
 import { SelectCenter } from '@users/components';
 
 export default function SelectProgram({ errorMessages, labels, placeholders }) {
-  const isFirstRender = useRef(true);
   const { control, watch } = useFormContext();
 
   const centerId = watch('center');
-
-  useEffect(() => {
-    isFirstRender.current = false;
-  }, []);
 
   return (
     <ContextContainer direction="row">
