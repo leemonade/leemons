@@ -87,6 +87,50 @@ function ContentData({
                       label: 'Direct instruction',
                       value: 'direct instruction',
                     },
+                    {
+                      label: 'FLipped Classroom',
+                      value: 'flipped classroom',
+                    },
+                    {
+                      label: 'Project-Based Learning',
+                      value: 'project-based learning',
+                    },
+                    {
+                      label: 'Inquiry-Based Learning',
+                      value: 'inquiry-based learning',
+                    },
+                    {
+                      label: 'Expeditionary Learning',
+                      value: 'expeditionary learning',
+                    },
+                    {
+                      label: 'Cooperative Learning',
+                      value: 'cooperative learning',
+                    },
+                    {
+                      label: 'Personalized Learning',
+                      value: 'personalized learning',
+                    },
+                    {
+                      label: 'Game-Based Learning',
+                      value: 'game-based learning',
+                    },
+                    {
+                      label: 'Kinesthetic Learning',
+                      value: 'kinesthetic learning',
+                    },
+                    {
+                      label: 'Differentiated Instruction',
+                      value: 'differentiated instruction',
+                    },
+                    {
+                      label: 'UDL (Unified Design for Learning)',
+                      value: 'udl',
+                    },
+                    {
+                      label: 'Other',
+                      value: 'other',
+                    },
                   ]}
                   label={labels.methodology}
                   placeholder={placeholders.methodology}
