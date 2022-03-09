@@ -102,7 +102,7 @@ async function events(isInstalled) {
         'providers.emails-amazon-ses:providerDidLoadServices',
       ],
       async () => {
-        // await addAWSEmailAsProvider();
+        await addAWSEmailAsProvider();
       }
     );
 
@@ -118,7 +118,6 @@ async function events(isInstalled) {
       ],
       async () => {
         try {
-          // console.log(config);
           config.programs = await initAcademicPortfolio(config);
           leemons.events.emit('init-academic-portfolio', config.programs);
         } catch (e) {

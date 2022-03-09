@@ -31,6 +31,7 @@ const table = {
   userAgentContacts: leemons.query('plugins_users::user-agent-contacts'),
 
   profileContacts: leemons.query('plugins_users::profile-contacts'),
+  userRegisterPassword: leemons.query('plugins_users::user-register-password'),
 };
 
 module.exports = { table };

@@ -21,6 +21,24 @@ async function canReset(ctx) {
   }
 }
 
+async function canRegisterPassword(ctx) {
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      token: { type: 'string' },
+    },
+    required: ['token'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.body)) {
+    const can = await usersService.canRegisterPassword(ctx.request.body.token);
+    ctx.status = 200;
+    ctx.body = { status: 200, can };
+  } else {
+    throw validator.error;
+  }
+}
+
 async function reset(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
@@ -33,6 +51,28 @@ async function reset(ctx) {
   });
   if (validator.validate(ctx.request.body)) {
     const user = await usersService.reset(ctx.request.body.token, ctx.request.body.password);
+    ctx.status = 200;
+    ctx.body = { status: 200, user };
+  } else {
+    throw validator.error;
+  }
+}
+
+async function registerPassword(ctx) {
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      token: { type: 'string' },
+      password: { type: 'string' },
+    },
+    required: ['token', 'password'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.body)) {
+    const user = await usersService.registerPassword(
+      ctx.request.body.token,
+      ctx.request.body.password
+    );
     ctx.status = 200;
     ctx.body = { status: 200, user };
   } else {
@@ -134,7 +174,11 @@ async function getRememberProfile(ctx) {
   }
 }
 
-async function create() {}
+async function createBulk(ctx) {
+  const users = await usersService.addBulk(ctx.request.body, ctx);
+  ctx.status = 200;
+  ctx.body = { status: 200, users };
+}
 
 async function list(ctx) {
   const validator = new global.utils.LeemonsValidator({
@@ -203,15 +247,17 @@ module.exports = {
   reset,
   login,
   detail,
-  create,
   recover,
   contacts,
   canReset,
   profiles,
+  createBulk,
   profileToken,
   searchUserAgents,
   createSuperAdmin,
+  registerPassword,
   getUserAgentsInfo,
   setRememberProfile,
   getRememberProfile,
+  canRegisterPassword,
 };

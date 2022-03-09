@@ -1,6 +1,6 @@
 const { encryptPassword } = require('./bcrypt/encryptPassword');
 const { table } = require('../tables');
-const constants = require('../../../config/constants');
+const { getResetConfig } = require('./getResetConfig');
 
 /**
  * If there is a user with that email we check if there is already a recovery in progress, if
@@ -14,7 +14,7 @@ const constants = require('../../../config/constants');
  * @return {Promise<undefined>} Updated user
  * */
 async function reset(token, password, ctx) {
-  const config = await this.getResetConfig(token);
+  const config = await getResetConfig(token);
 
   return table.users.transaction(async (transacting) => {
     const values = await Promise.all([

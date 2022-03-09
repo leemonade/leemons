@@ -109,7 +109,7 @@ async function initAcademicPortfolio({ centers, profiles, users }) {
           }),
         };
 
-        console.dir(classroom, { depth: null });
+        // console.dir(classroom, { depth: null });
 
         classesData.push(await services.classes.addClass(classroom));
       }

@@ -13,13 +13,14 @@ const {
  * @static
  * @param {AddUser} userData - User data
  * @param {string[]} roles - Roles that the new user will have
+ * @param {boolean} sendWellcomeEmail
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
 async function add(
-  { name, surnames, password, email, locale, active },
+  { name, surnames, secondSurname, avatar, birthDate, tags, email, locale, password, active },
   roles,
-  { transacting: _transacting } = {}
+  { sendWellcomeEmail, transacting: _transacting } = {}
 ) {
   if (await exist({ email })) throw new Error(`"${email}" email already exists`);
   if (!(await existManyRoles(roles, { transacting: _transacting })))
@@ -31,6 +32,9 @@ async function add(
         {
           name,
           surnames,
+          secondSurname,
+          avatar,
+          birthDate,
           email,
           password: password ? await encryptPassword(password) : undefined,
           locale,

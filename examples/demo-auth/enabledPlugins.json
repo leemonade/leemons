@@ -78,5 +78,14 @@
   {
     "name": "scores",
     "path": "../../packages/leemons-plugin-scores/frontend"
+  },
+  {
+    "name": "emails",
+    "path": "../../packages/leemons-plugin-emails/frontend"
+  },
+  {
+    "name": "emails-amazon-ses",
+    "path": "../../packages/leemons-provider-emails-amazon-ses/frontend"
   }
 ]
+

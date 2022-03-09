@@ -17,6 +17,9 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
         { id_$in: _.map(classStudents, 'id') },
         { soft, transacting }
       );
+      // TODO: remove classStudent permission from class
+      /* Eliminar permiso de la clase
+       * removeCustomUserAgentPermission */
       await leemons.events.emit('after-remove-classes-students', {
         classStudents,
         classIds,

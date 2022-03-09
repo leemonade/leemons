@@ -21,6 +21,9 @@ module.exports = {
         notNull: true,
       },
     },
+    email: {
+      type: 'string',
+    },
     uri: {
       type: 'string',
       options: {

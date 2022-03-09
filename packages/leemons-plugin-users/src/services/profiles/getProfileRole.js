@@ -4,7 +4,7 @@ async function getProfileRole(profileId, { transacting } = {}) {
   const profileRole = await table.profiles.findOne(
     { id: profileId },
     {
-      columns: ['role'],
+      columns: ['id', 'role'],
       transacting,
     }
   );

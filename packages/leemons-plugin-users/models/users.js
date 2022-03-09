@@ -14,7 +14,7 @@ module.exports = {
     surnames: {
       type: 'string',
     },
-    secondSurnames: {
+    secondSurname: {
       type: 'string',
     },
     email: {
@@ -25,6 +25,9 @@ module.exports = {
       },
     },
     phone: {
+      type: 'string',
+    },
+    avatar: {
       type: 'string',
     },
     birthdate: {
@@ -48,6 +51,9 @@ module.exports = {
         notNull: true,
         defaultTo: false,
       },
+    },
+    status: {
+      type: 'string',
     },
   },
   primaryKey: {

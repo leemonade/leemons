@@ -1,6 +1,12 @@
 import { useRouter } from 'next/router';
 import React from 'react';
-import dynamic from 'next/dynamic';
+import loadable from '@loadable/component';
+
+function dynamicImport(component) {
+  return loadable(() =>
+    import(/* webpackInclude: /(emails-amazon-ses.+)\.js/ */ `@leemons/plugins${component}.js`)
+  );
+}
 
 export default function OnboarderForm() {
   const router = useRouter();
@@ -8,7 +14,7 @@ export default function OnboarderForm() {
   let Component = () => <></>;
 
   if (router.query.providerName === 'emails-amazon-ses') {
-    Component = dynamic(() => import('@provider-emails-amazon-ses/onboarder-form'));
+    Component = dynamicImport('/emails-amazon-ses/onboarder-form');
   }
 
   async function onSubmit(config) {

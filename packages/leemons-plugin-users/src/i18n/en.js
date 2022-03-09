@@ -156,6 +156,16 @@ module.exports = {
     not_registered: 'I am not registered',
     form_error: 'Email or password does not match',
   },
+  registerPassword: {
+    title: 'Create your password',
+    password: 'Password',
+    repeatPassword: 'Repeat password',
+    setPassword: 'Set password',
+    repeatPasswordPlaceholder: 'Your password',
+    passwordPlaceholder: 'Repeat your password',
+    passwordMatch: 'Passwords not match',
+    tokenError: 'The code to set the password has expired or is not valid, contact your center.',
+  },
   selectProfile: {
     title: 'Hi {name}',
     number_of_profiles:
@@ -188,6 +198,7 @@ module.exports = {
     profileLabel: 'Profile',
     emailHeader: 'Email',
     emailHeaderRequired: 'Email is required',
+    emailHeaderNotEmail: 'Email is not valid',
     nameHeader: 'Name',
     nameHeaderRequired: 'Name is required',
     surnameHeader: 'Surname',
@@ -198,7 +209,13 @@ module.exports = {
     avatarHeaderRequired: 'Avatar is required',
     secondSurnameHeader: 'Second surname',
     secondSurnameHeaderRequired: 'Second surname is required',
+    tagsHeader: 'Tags',
     tableAdd: 'Add',
     tableRemove: 'Remove',
+    userAlreadyHaveThisConfig: 'The user already exists in that center with that profile.',
+    userEmailAlreadyAdded: 'You already have a user added with that email',
+    tagsForAllUsers: 'Tags for all users to add',
+    save: 'Save',
+    usersAddedSuccessfully: 'Users added successfully',
   },
 };

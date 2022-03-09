@@ -24,13 +24,13 @@ async function recover(email, ctx) {
     if (now.diff(updatedAt, 'minutes') >= constants.timeForRecoverPassword) {
       recovery = await table.userRecoverPassword.update(
         { id: recovery.id },
-        { code: _.random(100000, 999999).toString() }
+        { code: global.utils.randomString(12) }
       );
     }
   } else {
     recovery = await table.userRecoverPassword.create({
       user: user.id,
-      code: _.random(100000, 999999).toString(),
+      code: global.utils.randomString(12),
     });
   }
   if (leemons.getPlugin('emails')) {

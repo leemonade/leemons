@@ -9,6 +9,14 @@ async function add(_class, teacher, type, { transacting } = {}) {
     },
     { transacting }
   );
+  // TODO: Añadir el permiso del profesor a la clase
+  /*
+  permissions.addCustomPermissionToUserAgent(jaimeid, {
+    permissionName: 'plugins.academic-portfolio.clasroom.clase1',
+    actionNames: ['view'],
+  })
+
+   */
   await leemons.events.emit('after-add-class-teacher', { class: _class, teacher, transacting });
   return classTeacher;
 }

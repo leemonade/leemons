@@ -45,7 +45,7 @@ async function addCalendarToUserAgentsIfNeedByUser(user, { transacting: _transac
         _.map(userAgents, ({ id }) =>
           leemons
             .getPlugin('calendar')
-            .services.calendar.exist(getUserAgentCalendarKey(id), { transacting })
+            .services.calendar.existByKey(getUserAgentCalendarKey(id), { transacting })
         )
       );
 
