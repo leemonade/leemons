@@ -16,7 +16,7 @@ async function addLocale(locale, name, { transacting } = {}) {
     console.log('Ya existe el locale', locale);
     return trans.locales.get(locale, { transacting });
   }
-  console.log('añadimos el locale', locale);
+  // console.log('añadimos el locale', locale);
   return trans.locales.add(locale, name, { transacting });
 }
 

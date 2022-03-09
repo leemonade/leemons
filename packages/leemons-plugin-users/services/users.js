@@ -26,6 +26,7 @@ module.exports = {
   // User agents
   searchUserAgents: userAgentsService.searchUserAgents,
   getUserAgentCenter: userAgentsService.getUserAgentCenter,
+  getUserAgentByCenterProfile: userAgentsService.getUserAgentByCenterProfile,
 
   // Contacts
   getUserAgentContacts: userAgentsService.contacts.getUserAgentContacts,

@@ -1,11 +1,26 @@
-const { range, keys, findIndex } = require('lodash');
+const { range, keys, findIndex, toLower, isNaN, isEmpty } = require('lodash');
 const getColumns = require('./getColumns');
 
-const { XlsxImporter } = global.utils;
+let DataImporter;
 
-const factory = new XlsxImporter();
+if (global.utils) {
+  const { XlsxImporter } = global.utils;
+  DataImporter = XlsxImporter;
+} else {
+  // eslint-disable-next-line global-require
+  const { ImporterFactory } = require('xlsx-import/lib/ImporterFactory');
+  DataImporter = ImporterFactory;
+}
 
-async function simpleListImport(filePath, worksheet, columnLength = 20) {
+const factory = new DataImporter();
+
+async function simpleListImport(
+  filePath,
+  worksheet,
+  columnLength = 20,
+  autoDetectType = true,
+  cleanEmpty = false
+) {
   const importer = await factory.from(filePath);
   const config = {
     data: {
@@ -45,7 +60,24 @@ async function simpleListImport(filePath, worksheet, columnLength = 20) {
       const item = { root: row[1] };
 
       range(fieldStartColumn, fieldEndColumn).forEach((index) => {
-        item[fields[index]] = row[fieldStartColumn + index];
+        let value = row[fieldStartColumn + index];
+
+        if (!cleanEmpty || (cleanEmpty && !isEmpty(value))) {
+          if (autoDetectType) {
+            // Boolean check
+            if (toLower(value) === 'no') {
+              value = false;
+            } else if (toLower(value) === 'yes') {
+              value = true;
+            }
+            // Number check
+            else if (!isNaN(parseFloat(value))) {
+              value = parseFloat(value);
+            }
+          }
+
+          item[fields[index]] = value;
+        }
       });
 
       return item;

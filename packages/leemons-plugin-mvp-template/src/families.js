@@ -14,16 +14,10 @@ async function initFamilies(profiles, users) {
     await services.config.setGuardianProfile(guardian.id);
     await services.config.setStudentProfile(student.id);
 
-    // console.log('------ FAMILY PROFILES -----');
-    // console.dir({ guardian, student }, { depth: null });
-
     // ·····················································
     // FAMILY RELATIONSHIPS
 
     const families = await importFamilies(users);
-
-    // console.log('------ FAMILIES -----');
-    // console.dir(families, { depth: null });
 
     // ·······························································
     // USER AGENTS ACCESS TO

@@ -2,7 +2,7 @@ const initUsers = require('./src/users');
 const initCenters = require('./src/centers');
 const initProfiles = require('./src/profiles');
 const initFamilies = require('./src/families');
-// const initAcademicPortfolio = require('./src/academicPortfolio');
+const initAcademicPortfolio = require('./src/academicPortfolio');
 const addCalendarAndEventAsClassroom = require('./src/calendar');
 const addAWSS3AsProvider = require('./src/mediaLibrary');
 const addAWSEmailAsProvider = require('./src/emails');
@@ -57,7 +57,7 @@ async function events(isInstalled) {
           leemons.events.emit('init-profiles', config.profiles);
 
           config.users = await initUsers(config.centers, config.profiles);
-          leemons.events.emit('init-users', config.profiles);
+          leemons.events.emit('init-users', config.users);
 
           await addCalendarAndEventAsClassroom(config.users);
         } catch (e) {
@@ -114,12 +114,13 @@ async function events(isInstalled) {
         'plugins.academic-portfolio:pluginDidLoadServices',
         'plugins.mvp-template:init-profiles',
         'plugins.mvp-template:init-centers',
+        'plugins.mvp-template:init-users',
       ],
       async () => {
         try {
           // console.log(config);
-          // config.programs = await initAcademicPortfolio(config.centers, config.profiles);
-          // leemons.events.emit('init-academic-portfolio', config.programs);
+          config.programs = await initAcademicPortfolio(config);
+          leemons.events.emit('init-academic-portfolio', config.programs);
         } catch (e) {
           console.error(e);
         }

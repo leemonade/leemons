@@ -1,226 +1,127 @@
-const PROGRAM_A = {
-  name: 'Elementary',
-  abbreviation: 'ELEM',
-  allSubjectsSameDuration: true,
-  centers: [],
-  courseCredits: 0,
-  creditSystem: false,
-  credits: null,
-  customSubstages: [],
-  haveKnowledge: true,
-  haveSubstagesPerCourse: false,
-  hideCoursesInTree: false,
-  maxGroupAbbreviation: 2,
-  maxGroupAbbreviationIsOnlyNumbers: false,
-  maxKnowledgeAbbreviation: 4,
-  maxKnowledgeAbbreviationIsOnlyNumbers: false,
-  maxNumberOfCourses: 6,
-  moreThanOneAcademicYear: false,
-  oneStudentGroup: false,
-  subjectsDigits: 2,
-  subjectsFirstDigit: 'course',
-  useOneStudentGroup: false,
-};
+/* eslint-disable no-unreachable */
+/* eslint-disable no-await-in-loop */
+const { keys, find, flattenDeep, uniq } = require('lodash');
+const importProfiles = require('./bulk/academic-portfolio/profiles');
+const importPrograms = require('./bulk/academic-portfolio/programs');
+const importSubjectTypes = require('./bulk/academic-portfolio/subjectTypes');
+const importKnowledgeAreas = require('./bulk/academic-portfolio/knowledgeAreas');
+const importSubjects = require('./bulk/academic-portfolio/subjects');
 
-const PROGRAM_B = {
-  name: 'High School',
-  abbreviation: 'HIGH',
-  allSubjectsSameDuration: true,
-  centers: [],
-  courseCredits: 0,
-  creditSystem: false,
-  credits: null,
-  customSubstages: [],
-  haveKnowledge: true,
-  haveSubstagesPerCourse: false,
-  hideCoursesInTree: false,
-  maxGroupAbbreviation: 2,
-  maxGroupAbbreviationIsOnlyNumbers: false,
-  maxKnowledgeAbbreviation: 4,
-  maxKnowledgeAbbreviationIsOnlyNumbers: false,
-  maxNumberOfCourses: 2,
-  moreThanOneAcademicYear: false,
-  oneStudentGroup: false,
-  subjectsDigits: 2,
-  subjectsFirstDigit: 'course',
-  useOneStudentGroup: false,
-};
-
-const KNOWLEDGE_A = {
-  name: 'Science',
-  abbreviation: 'SCNC',
-  color: '#1B72E8',
-  icon: 'science',
-  program: null,
-  credits_course: 1,
-  credits_program: null,
-};
-
-const KNOWLEDGE_B = {
-  name: 'Maths',
-  abbreviation: 'MATH',
-  color: '#E81B4A',
-  icon: 'maths',
-  program: null,
-  credits_course: 1,
-  credits_program: null,
-};
-
-const SUBJECT_TYPE = {
-  name: 'Core',
-  program: null,
-  groupVisibility: false,
-  credits_course: 1,
-  credits_program: null,
-};
-
-const SUBJECTS_A = ['Biology', 'Chemistry'];
-const SUBJECTS_B = ['Geometry', 'Algebra'];
-const GROUPS = ['A', 'B'];
-
-function generateSubjects(names, courses, program) {
-  const subjects = [];
-  names.forEach((name) => {
-    for (let i = 1; i <= courses.length; i++) {
-      subjects.push({
-        name: `${name} ${i}`,
-        program,
-        course: courses[i].id,
-      });
-    }
-  });
-  return subjects;
-}
-
-function generateClassrooms(subjects, subjectType, knowledge) {
-  const classrooms = [];
-
-  subjects.forEach((subject) => {
-    classrooms.push({
-      program: subject.program,
-      course: subject.course,
-      subject: subject.id,
-      subjectType,
-      knowledge,
-    });
-  });
-
-  return classrooms;
-}
-
-function generateGroups(names, program) {
-  const groups = [];
-
-  names.forEach((name) => {
-    groups.push({
-      name: `Section ${name}`,
-      abbreviation: `S${name}`,
-      program,
-    });
-  });
-
-  return groups;
-}
-
-async function initAcademicPortfolio(centers, profiles) {
+async function initAcademicPortfolio({ centers, profiles, users }) {
   const { services } = leemons.getPlugin('academic-portfolio');
 
   try {
     // ·····················································
     // SETTINGS
 
-    const { student, teacher } = profiles;
-
-    await services.settings.setProfiles({ student, teacher });
+    let apProfiles = await importProfiles(profiles);
+    apProfiles = await services.settings.setProfiles(apProfiles);
 
     // ·····················································
     // PROGRAMS
 
-    const { centerA, centerB } = centers;
+    const programs = await importPrograms(centers);
+    const programsKeys = keys(programs);
 
-    const programA = await services.programs.addProgram({ ...PROGRAM_A, centers: [centerA] });
-    const programB = await services.programs.addProgram({ ...PROGRAM_B, centers: [centerB] });
+    for (let i = 0, len = programsKeys.length; i < len; i++) {
+      const program = programs[programsKeys[i]];
+      const programData = await services.programs.addProgram(program);
+      programs[programsKeys[i]] = { ...programData };
+    }
 
     // ·····················································
     // KNOWLEDGE AREAS
 
-    const knowledgeA = await Promise.all([
-      services.knowledges.addKnowledge({ ...KNOWLEDGE_A, program: programA.id }),
-      services.knowledges.addKnowledge({ ...KNOWLEDGE_A, program: programB.id }),
-    ]);
+    const knowledgeAreas = await importKnowledgeAreas(programs);
+    const knowledgeAreasKeys = keys(knowledgeAreas);
 
-    const knowledgeB = await Promise.all([
-      services.knowledges.addKnowledge({ ...KNOWLEDGE_B, program: programA.id }),
-      services.knowledges.addKnowledge({ ...KNOWLEDGE_B, program: programB.id }),
-    ]);
+    for (let i = 0, len = knowledgeAreasKeys.length; i < len; i++) {
+      const key = knowledgeAreasKeys[i];
+      const knowledgeArea = knowledgeAreas[key];
+      const knowledgeAreaData = await services.knowledges.addKnowledge(knowledgeArea);
+      knowledgeAreas[key] = { ...knowledgeAreaData };
+    }
 
     // ·····················································
     // SUBJECT TYPES
 
-    const subjectTypeA = await services.subjectType.addSubjectType({
-      ...SUBJECT_TYPE,
-      program: programA.id,
-    });
+    const subjectTypes = await importSubjectTypes(programs);
+    const subjectTypesKeys = keys(subjectTypes);
 
-    const subjectTypeB = await services.subjectType.addSubjectType({
-      ...SUBJECT_TYPE,
-      program: programB.id,
-    });
+    for (let i = 0, len = subjectTypesKeys.length; i < len; i++) {
+      const key = subjectTypesKeys[i];
+      const subjectType = subjectTypes[key];
+      const subjectTypeData = await services.subjectType.addSubjectType(subjectType);
+      subjectTypes[key] = { ...subjectTypeData };
+    }
 
     // ·····················································
     // SUBJECTS
 
-    const subjectsAA = await Promise.all(
-      generateSubjects(SUBJECTS_A, programA.courses, programA.id).map((subject) =>
-        services.subjects.addSubject(subject)
-      )
-    );
+    const subjects = await importSubjects({
+      programs,
+      knowledgeAreas,
+      subjectTypes,
+      users,
+    });
+    const subjectsKeys = keys(subjects);
 
-    const subjectsAB = await Promise.all(
-      generateSubjects(SUBJECTS_A, programB.courses, programB.id).map((subject) =>
-        services.subjects.addSubject(subject)
-      )
-    );
+    for (let i = 0, len = subjectsKeys.length; i < len; i++) {
+      const key = subjectsKeys[i];
+      const { classes, ...subject } = subjects[key];
+      const subjectData = await services.subjects.addSubject(subject);
+      subjects[key] = { ...subjectData };
 
-    const subjectsBA = await Promise.all(
-      generateSubjects(SUBJECTS_B, programA.courses, programA.id).map((subject) =>
-        services.subjects.addSubject(subject)
-      )
-    );
+      // ·····················································
+      // CLASSES
 
-    const subjectsBB = await Promise.all(
-      generateSubjects(SUBJECTS_B, programB.courses, programB.id).map((subject) =>
-        services.subjects.addSubject(subject)
-      )
-    );
+      const groups = classes.map((classroom) => classroom.group);
+
+      // First create the class group
+      const groupsData = await Promise.all(
+        groups.map((group) => services.groups.addGroupIfNotExists(group))
+      );
+
+      // Then create the classes
+      const classesData = [];
+
+      for (let j = 0, l = classes.length; j < l; j++) {
+        const { program, teachers, ...rest } = classes[j];
+        const programData = find(programs, { id: program });
+        const [center] = programData.centers;
+
+        const teachersData = await Promise.all(
+          teachers.map(({ teacher }) =>
+            leemons
+              .getPlugin('users')
+              .services.users.getUserAgentByCenterProfile(teacher, center, apProfiles.teacher)
+          )
+        );
+
+        const classroom = {
+          ...rest,
+          program,
+          subject: subjectData.id,
+          group: groupsData[j].id,
+          teachers: teachersData.map((teacherData) => {
+            const teacher = find(teachers, { teacher: teacherData.user });
+            return { teacher: teacherData.id, type: teacher.type };
+          }),
+        };
+
+        console.dir(classroom, { depth: null });
+
+        classesData.push(await services.classes.addClass(classroom));
+      }
+
+      subjects[key].classes = classesData;
+    }
 
     // ·····················································
-    // CLASSES
+    // MENU BUILDER
+    await services.settings.enableAllMenuItems();
 
-    await Promise.all([
-      ...generateClassrooms(subjectsAA, subjectTypeA.id, knowledgeA[0].id).map((classroom) =>
-        services.class.addClass(classroom)
-      ),
-      ...generateClassrooms(subjectsAB, subjectTypeA.id, knowledgeA[1].id).map((classroom) =>
-        services.class.addClass(classroom)
-      ),
-      ...generateClassrooms(subjectsBA, subjectTypeB.id, knowledgeB[0].id).map((classroom) =>
-        services.class.addClass(classroom)
-      ),
-      ...generateClassrooms(subjectsBB, subjectTypeB.id, knowledgeB[1].id).map((classroom) =>
-        services.class.addClass(classroom)
-      ),
-    ]);
-
-    // ·····················································
-    // GROUPS
-
-    await Promise.all([
-      ...generateGroups(GROUPS, programA.id),
-      ...generateGroups(GROUPS, programB.id),
-    ]);
-
-    return { programA, programB };
+    return programs;
   } catch (err) {
     console.error(err);
   }
