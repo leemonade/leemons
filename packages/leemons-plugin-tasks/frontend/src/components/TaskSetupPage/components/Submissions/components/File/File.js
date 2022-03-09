@@ -9,7 +9,9 @@ export default function File() {
       <Controller
         control={control}
         name="data.multipleFiles"
-        render={({ field }) => <Checkbox {...field} label="Allow multiple files" />}
+        render={({ field }) => (
+          <Checkbox {...field} checked={field.value} label="Allow multiple files" />
+        )}
       />
       <Controller
         control={control}

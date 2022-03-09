@@ -30,7 +30,7 @@ module.exports = {
       type: 'richtext',
     },
     submissions: {
-      type: 'boolean',
+      type: 'string',
     },
     preTask: {
       type: 'string',

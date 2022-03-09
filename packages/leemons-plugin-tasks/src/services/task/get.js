@@ -88,6 +88,7 @@ async function getMany(taskIds, { columns, transacting } = {}) {
     _tasks = _tasks?.map((task) => ({
       ...task,
       preTaskOptions: task.preTaskOptions && JSON.parse(task.preTaskOptions),
+      submissions: task.submissions && JSON.parse(task.submissions),
     }));
 
     // EN: Get the tasks subjects by id (id@version)

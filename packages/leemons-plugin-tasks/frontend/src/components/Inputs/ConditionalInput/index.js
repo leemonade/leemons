@@ -25,7 +25,7 @@ export default function ConditionalInput({
 
   return (
     <ContextContainer>
-      <Switch {...props} helpPosition={helpPosition} value={show} onChange={handleChange} />
+      <Switch {...props} helpPosition={helpPosition} checked={show} onChange={handleChange} />
       {showOnTrue === show && render()}
     </ContextContainer>
   );

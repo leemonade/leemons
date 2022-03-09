@@ -60,7 +60,7 @@ module.exports = async function update(
           recommendedDuration,
           statement,
           development,
-          submissions,
+          submissions: submissions && JSON.stringify(submissions),
           preTask,
           preTaskOptions: preTaskOptions && JSON.stringify(preTaskOptions),
           selfReflection,
