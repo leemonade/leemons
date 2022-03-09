@@ -6,6 +6,7 @@ const getTags = require('../tags/get');
 const getObjectives = require('./objectives/get');
 const getContent = require('./contents/get');
 const getAssessmentCriteria = require('./assessmentCriteria/get');
+const getAttachments = require('../attachments/get');
 
 const DEFAULT_COLUMNS = ['id', 'current', 'last', 'name', 'status', 'subjects', 'tags'];
 const TASK_VERSIONING_EXISTING_COLUMNS = ['id', 'name', 'current', 'last'];
@@ -154,6 +155,21 @@ async function getMany(taskIds, { columns, transacting } = {}) {
       }, {});
     }
 
+    // EN: Get the attachments
+    // ES: Obtener los adjuntos
+    let attachments;
+    if (columns === '*' || columns.includes('attachments')) {
+      attachments = await fullIds.reduce(async (accum, id) => {
+        await accum;
+        const a = await getAttachments(id, { transacting });
+
+        return {
+          ...accum,
+          [id]: a.attachments,
+        };
+      }, {});
+    }
+
     // EN: Map the tasks by id
     // ES: Mapear las tareas por id
     return Promise.all(
@@ -184,6 +200,10 @@ async function getMany(taskIds, { columns, transacting } = {}) {
 
         if (criteria) {
           t.assessmentCriteria = criteria[fullIds[i]];
+        }
+
+        if (attachments) {
+          t.attachments = attachments[fullIds[i]];
         }
 
         return t;

@@ -11,6 +11,7 @@ const setTags = require('../tags/set');
 const setObjectives = require('./objectives/set');
 const setContent = require('./contents/set');
 const setAssessmentCriteria = require('./assessmentCriteria/set');
+const setAttachments = require('../attachments/set');
 
 module.exports = async function update(
   taskId,
@@ -42,6 +43,7 @@ module.exports = async function update(
     objectives,
     content,
     assessmentCriteria,
+    attachments,
   },
   { transacting: t } = {}
 ) {
@@ -168,6 +170,12 @@ module.exports = async function update(
           // EN: Update the assessment criteria
           // ES: Actualizar los criterios de evaluación
           await setAssessmentCriteria(fullId, assessmentCriteria, { transacting });
+        }
+
+        if (attachments) {
+          // EN: Update the attachments
+          // ES: Actualizar los adjuntos
+          await setAttachments(fullId, attachments, { transacting });
         }
 
         // EN: Emit the event.

@@ -36,6 +36,7 @@ module.exports = {
         objectives,
         content,
         assessmentCriteria,
+        attachments,
       } = ctx.request.body;
 
       let task = {
@@ -66,6 +67,7 @@ module.exports = {
         objectives,
         content,
         assessmentCriteria,
+        attachments,
       };
 
       task = await create(task);
@@ -114,6 +116,7 @@ module.exports = {
         objectives,
         content,
         assessmentCriteria,
+        attachments,
       } = ctx.request.body;
 
       let task = {
@@ -144,6 +147,7 @@ module.exports = {
         objectives,
         content,
         assessmentCriteria,
+        attachments,
       };
 
       task = await update(id, task);

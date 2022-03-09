@@ -7,6 +7,7 @@ const addTags = require('../tags/add');
 const addObjectives = require('./objectives/add');
 const addAssessmentCriteria = require('./assessmentCriteria/add');
 const addContent = require('./contents/add');
+const addAttachments = require('../attachments/add');
 
 module.exports = async function create(
   {
@@ -36,6 +37,7 @@ module.exports = async function create(
     objectives,
     content,
     assessmentCriteria,
+    attachments,
   },
   { transacting: t } = {}
 ) {
@@ -104,6 +106,10 @@ module.exports = async function create(
         // EN: Add content
         // ES: Añadir contenido
         await addContent(task.id, content, { transacting });
+
+        // EN: Add attachments
+        // ES: Añadir adjuntos
+        await addAttachments(task.id, attachments, { transacting });
 
         // EN: Emit the event.
         // ES: Emitir el evento.

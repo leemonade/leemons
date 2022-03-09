@@ -11,6 +11,7 @@ import { Feedback } from './components/Feedback';
 import { SelfReflection } from './components/SelfReflection';
 import Contents from './components/Contents';
 import AssessmentCriteria from './components/AssessmentCriteria';
+import Attachments from './components/Attachments';
 
 function ContentData({
   labels,
@@ -94,7 +95,7 @@ function ContentData({
                 />
               )}
             />
-            <Box>Add Resource from media-library component</Box>
+            <Attachments />
             <Controller
               control={control}
               name="recommendedDuration"
