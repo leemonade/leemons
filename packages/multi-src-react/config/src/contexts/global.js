@@ -14,24 +14,34 @@ class LeemonsApi {
 
   #resMiddlewares;
 
+  #resErrorMiddlewares;
+
   constructor() {
     this.#reqMiddlewares = [];
     this.#resMiddlewares = [];
+    this.#resErrorMiddlewares = [];
     this.api.useReq = this.#use('req');
     this.api.useRes = this.#use('res');
+    this.api.useResError = this.#use('resError');
   }
 
   api = async (url, options) => {
     const ctx = { url, options, middlewares: [] };
 
-    await this.#callMiddleware(this.#reqMiddlewares, 0, ctx);
+    try {
+      await this.#callMiddleware(this.#reqMiddlewares, 0, ctx);
 
-    const response = await fetch(`${window.location.origin}/api/${ctx.url}`, ctx.options);
+      const response = await fetch(`${window.location.origin}/api/${ctx.url}`, ctx.options);
 
-    const responseCtx = { middlewares: [], response };
-    await this.#callMiddleware(this.#resMiddlewares, 0, responseCtx);
+      const responseCtx = { middlewares: [], response };
+      await this.#callMiddleware(this.#resMiddlewares, 0, responseCtx);
 
-    return responseCtx.response;
+      return responseCtx.response;
+    } catch (response) {
+      const responseCtx = { middlewares: [], response: response.response };
+      await this.#callMiddleware(this.#resErrorMiddlewares, 0, responseCtx);
+      return responseCtx.response;
+    }
   };
 
   #callMiddleware = async (middlewares, i, ctx) => {
@@ -46,8 +56,15 @@ class LeemonsApi {
     }
   };
 
-  #use = (type) => (middleware) =>
-    (type === 'req' ? this.#reqMiddlewares : this.#resMiddlewares).push(middleware);
+  #use = (type) => (middleware) => {
+    if (type === 'req') {
+      this.#reqMiddlewares.push(middleware);
+    } else if (type === 'res') {
+      this.#resMiddlewares.push(middleware);
+    } else if (type === 'resError') {
+      this.#resErrorMiddlewares.push(middleware);
+    }
+  };
 }
 
 export function Provider({ children }) {
