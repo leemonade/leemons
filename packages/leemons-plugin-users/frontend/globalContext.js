@@ -1,6 +1,6 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { SessionProvider, SessionContext } from '@users/context/session';
+import { SessionContext, SessionProvider } from '@users/context/session';
 import _ from 'lodash';
 import { getCookieToken } from '@users/session';
 
@@ -28,8 +28,13 @@ export function Provider({ children }) {
     }
   }, []);
 
+  const apiBadDatasetData = useCallback(async (ctx) => {
+    console.log(ctx);
+  }, []);
+
   useEffect(() => {
     leemons.api.useReq(apiSessionMiddleware);
+    leemons.api.useResError(apiBadDatasetData);
   }, []);
 
   return <SessionProvider value={{}}>{children}</SessionProvider>;

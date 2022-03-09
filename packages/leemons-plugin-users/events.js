@@ -2,6 +2,7 @@ const _ = require('lodash');
 const constants = require('./config/constants');
 const recoverEmail = require('./emails/recoverPassword');
 const welcomeEmail = require('./emails/welcome');
+const newProfileAdded = require('./emails/newProfileAdded');
 const resetPassword = require('./emails/resetPassword');
 const {
   addMain,
@@ -106,6 +107,24 @@ async function events(isInstalled) {
           'en',
           'Welcome',
           welcomeEmail.en,
+          leemons.getPlugin('emails').services.email.types.active
+        );
+      await leemons
+        .getPlugin('emails')
+        .services.email.addIfNotExist(
+          'user-new-profile-added',
+          'es-ES',
+          'Nuevo perfil',
+          newProfileAdded.es,
+          leemons.getPlugin('emails').services.email.types.active
+        );
+      await leemons
+        .getPlugin('emails')
+        .services.email.addIfNotExist(
+          'user-new-profile-added',
+          'en',
+          'New profile',
+          newProfileAdded.en,
           leemons.getPlugin('emails').services.email.types.active
         );
       leemons.events.emit('init-email-reset-password');

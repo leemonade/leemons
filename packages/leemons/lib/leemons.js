@@ -281,6 +281,28 @@ class Leemons {
     };
   }
 
+  userAgentDatasetMiddleware() {
+    return async (ctx, next) => {
+      try {
+        const isGood = await this.plugins.users.services.users.userSessionCheckUserAgentDatasets(
+          ctx.state.userSession
+        );
+        if (isGood) {
+          return next();
+        }
+        ctx.status = 401;
+        ctx.body = {
+          status: 401,
+          message: 'One of user agents need update dataset data',
+          errorCode: 'USER_AGENT_NEED_UPDATE_DATASET',
+        };
+        return undefined;
+      } catch (err) {
+        console.error(err);
+      }
+    };
+  }
+
   /**
    * Initializes the api endpoints
    * @param {{
@@ -307,8 +329,13 @@ class Leemons {
             if (_.get(plugin.controllers, route.handler)) {
               const handler = _.get(plugin.controllers, route.handler);
               const functions = [];
-              if (route.authenticated)
+              if (route.authenticated) {
                 functions.push(this.authenticatedMiddleware(route.authenticated));
+                if (!route.disableUserAgentDatasetCheck) {
+                  functions.push(this.userAgentDatasetMiddleware());
+                }
+              }
+
               if (route.allowedPermissions)
                 functions.push(this.permissionsMiddleware(route.allowedPermissions));
               functions.push(handler);

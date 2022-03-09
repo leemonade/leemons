@@ -493,6 +493,8 @@ const DatasetItemDrawer = ({
         }
       }
 
+      console.log(permissions);
+
       schemaWithAllConfig.schema = { ...schemaWithAllConfig.schema, ...permissions };
 
       if (item && item.id) {
@@ -664,6 +666,7 @@ const DatasetItemDrawer = ({
           config: {
             type: 'text_field',
             centers: ['*'],
+            isAllCenterMode: true,
           },
         }
       }

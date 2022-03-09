@@ -22,6 +22,7 @@ const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
 const { addFirstSuperAdminUser } = require('./addFirstSuperAdminUser');
 const { sendWelcomeEmailToUser } = require('./sendWelcomeEmailToUser');
 const { getRegisterPasswordConfig } = require('./getRegisterPasswordConfig');
+const { userSessionCheckUserAgentDatasets } = require('./userSessionCheckUserAgentDatasets');
 
 // JWT
 const { detailForJWT } = require('./jwt/detailForJWT');
@@ -54,6 +55,7 @@ module.exports = {
   addFirstSuperAdminUser,
   sendWelcomeEmailToUser,
   getRegisterPasswordConfig,
+  userSessionCheckUserAgentDatasets,
   jwt: {
     detailForJWT,
     verifyJWTToken,

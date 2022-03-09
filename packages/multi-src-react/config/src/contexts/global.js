@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React, { createContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 const context = createContext();
@@ -28,6 +28,7 @@ class LeemonsApi {
 
     const response = await fetch(`${window.location.origin}/api/${ctx.url}`, ctx.options);
 
+    console.log(this.#resMiddlewares);
     const responseCtx = { middlewares: [], response };
     await this.#callMiddleware(this.#resMiddlewares, 0, responseCtx);
 
@@ -85,6 +86,7 @@ export function Provider({ children }) {
       // eslint-disable-next-line no-throw-literal
       throw { status: ctx.response.status, message: ctx.response.statusText };
     }
+
     if (ctx.response.status >= 400) {
       throw await ctx.response.json();
     }
