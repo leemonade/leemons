@@ -193,7 +193,7 @@ function ContentData({
               description="Add a space for the student to reflect on what he/she has learned."
               name="selfReflection"
             />
-            <Feedback
+            <SelfReflection
               label="Feedback"
               description="Ask the student for a quick evaluation of this exercise."
               name="feedback"

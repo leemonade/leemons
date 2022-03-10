@@ -115,7 +115,7 @@ export default function TaskSetupPage() {
     if (!isEmpty(id)) {
       store.currentTask = await getTask(id);
 
-      setStatus(store.currentTask.status);
+      setStatus(store?.currentTask?.status);
 
       render();
     }

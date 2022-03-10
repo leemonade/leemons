@@ -7,5 +7,5 @@ export default async function updateStudentRequest({ instance, student, key, val
     }
   );
 
-  return result.updated;
+  return result?.updated === true;
 }

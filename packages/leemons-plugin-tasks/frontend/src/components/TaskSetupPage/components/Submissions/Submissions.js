@@ -12,9 +12,9 @@ function useValueUpdater(form, originalForm) {
   // ES: Manejar cambios en el formulario dinámico
   useEffect(() => {
     const subscription = form.watch((value, field) => {
-      if (field.name.startsWith('data')) {
+      if (field.name?.startsWith('data')) {
         shouldUpdate.current = false;
-        originalForm.setValue('submissions.data', value.data);
+        originalForm.setValue('submissions.data', value?.data);
       }
     });
     return () => subscription.unsubscribe();
@@ -24,11 +24,10 @@ function useValueUpdater(form, originalForm) {
   // ES: Propagar cambios del formulario padre al formulario hijo
   useEffect(() => {
     const subscription = originalForm.watch((value, field) => {
-      if (shouldUpdate.current && field.name.startsWith('submissions.data')) {
+      if (shouldUpdate.current && field.name?.startsWith('submissions.data')) {
         form.setValue('data', value);
       }
 
-      form.setValue('show');
       shouldUpdate.current = true;
     });
 
@@ -37,7 +36,7 @@ function useValueUpdater(form, originalForm) {
 
   useEffect(() => {
     const subscription = originalForm.watch((value, field) => {
-      if (field.name.startsWith('submissions')) {
+      if (field.name?.startsWith('submissions')) {
         form.setValue('show', value !== undefined);
       }
     });
@@ -51,8 +50,8 @@ function useValueUpdater(form, originalForm) {
     const s = originalForm.getValues('submissions');
     form.setValue('show', s !== undefined);
 
-    if (s.data) {
-      form.setValue('data', s.data);
+    if (s?.data) {
+      form.setValue('data', s?.data);
     }
   }, []);
 }

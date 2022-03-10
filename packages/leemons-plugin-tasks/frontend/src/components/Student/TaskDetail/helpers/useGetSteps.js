@@ -3,6 +3,8 @@ import DeliveryStep from '../Steps/DeliveryStep';
 import PreTaskStep from '../Steps/PreTaskStep';
 import StatementAndDevelopmentStep from '../Steps/StatementAndDevelopmentStep';
 import SummaryStep from '../Steps/SummaryStep';
+import SelfReflectionStep from '../Steps/SelfReflectionStep';
+import FeedbackStep from '../Steps/FeedbackStep';
 
 export default function useGetSteps(id) {
   // TODO: Calculate steps
@@ -26,11 +28,11 @@ export default function useGetSteps(id) {
     },
     {
       label: 'Self Reflection',
-      content: <p>Self Reflection step</p>,
+      content: <SelfReflectionStep id={id} />,
     },
     {
       label: 'Feedback',
-      content: <p>Feedback step</p>,
+      content: <FeedbackStep id={id} />,
     },
   ]);
 

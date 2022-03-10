@@ -8,5 +8,5 @@ export default async function getTaskRequest({ id: taskId, columns = '*' }) {
     method: 'GET',
   });
 
-  return response.task;
+  return response?.task;
 }

@@ -41,9 +41,6 @@ module.exports = {
     selfReflection: {
       type: 'string',
     },
-    selfReflectionDescription: {
-      type: 'string',
-    },
     feedback: {
       type: 'string',
     },

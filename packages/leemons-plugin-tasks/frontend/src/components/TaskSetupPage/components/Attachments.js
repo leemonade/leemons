@@ -35,7 +35,7 @@ export default function Attachments() {
           }}
           // EN: Parse the data to be displayed in the table
           // ES: Procesa los datos a mostrar en la tabla
-          data={value.map((item) => ({ attachment: item }))}
+          data={value?.map((item) => ({ attachment: item }))}
           // EN: Parse the data to be sent to the server
           // ES: Procesa los datos a enviar al servidor
           onChange={(v) => {

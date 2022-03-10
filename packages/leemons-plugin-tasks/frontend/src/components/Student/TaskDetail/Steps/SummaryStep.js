@@ -18,7 +18,14 @@ export default function SummaryStep({ id, onNext }) {
   const options = useMemo(
     () => ({
       id,
-      columns: JSON.stringify(['tagline', 'summary', 'objectives', 'cover']),
+      columns: JSON.stringify([
+        'tagline',
+        'summary',
+        'content',
+        'objectives',
+        'assessmentCriteria',
+        'cover',
+      ]),
     }),
     [id]
   );
@@ -34,7 +41,9 @@ export default function SummaryStep({ id, onNext }) {
           <Paragraph>{task?.summary}</Paragraph>
         </ContextContainer>
         <ContextContainer subtitle="Content">
-          <Paragraph>{task?.content}</Paragraph>
+          {task?.content?.map(({ content, position }) => (
+            <HtmlText key={position}>{content}</HtmlText>
+          ))}
         </ContextContainer>
         <ContextContainer subtitle="Objectives">
           <Box>
@@ -44,7 +53,9 @@ export default function SummaryStep({ id, onNext }) {
           </Box>
         </ContextContainer>
         <ContextContainer subtitle="Assesment Criteria">
-          <Paragraph>ASSESMENT CRITERIA</Paragraph>
+          {task?.assessmentCriteria?.map(({ assessmentCriteria, position }) => (
+            <HtmlText key={position}>{assessmentCriteria}</HtmlText>
+          ))}
         </ContextContainer>
         <Stack fullWidth justifyContent="end">
           <Button onClick={onNext}>Next</Button>

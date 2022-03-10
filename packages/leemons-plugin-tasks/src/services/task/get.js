@@ -24,7 +24,6 @@ const TASK_EXISTING_COLUMNS = [
   'preTask',
   'preTaskOptions',
   'selfReflection',
-  'selfReflectionDescription',
   'feedback',
   'instructionsForTeacher',
   'instructionsForStudent',
@@ -89,6 +88,8 @@ async function getMany(taskIds, { columns, transacting } = {}) {
       ...task,
       preTaskOptions: task.preTaskOptions && JSON.parse(task.preTaskOptions),
       submissions: task.submissions && JSON.parse(task.submissions),
+      selfReflection: task.selfReflection && JSON.parse(task.selfReflection),
+      feedback: task.feedback && JSON.parse(task.feedback),
     }));
 
     // EN: Get the tasks subjects by id (id@version)
