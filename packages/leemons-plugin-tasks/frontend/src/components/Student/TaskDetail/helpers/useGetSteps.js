@@ -6,33 +6,33 @@ import SummaryStep from '../Steps/SummaryStep';
 import SelfReflectionStep from '../Steps/SelfReflectionStep';
 import FeedbackStep from '../Steps/FeedbackStep';
 
-export default function useGetSteps(id) {
+export default function useGetSteps(instance, taskId, student) {
   // TODO: Calculate steps
 
   const steps = useMemo(() => [
     {
       label: 'Summary',
-      content: <SummaryStep id={id} />,
+      content: <SummaryStep id={taskId} />,
     },
     {
       label: 'Pretask',
-      content: <PreTaskStep id={id} />,
+      content: <PreTaskStep id={taskId} />,
     },
     {
       label: 'Statement && Development',
-      content: <StatementAndDevelopmentStep id={id} />,
+      content: <StatementAndDevelopmentStep student={student} instance={instance} id={taskId} />,
     },
     {
       label: 'Delivery',
-      content: <DeliveryStep id={id} />,
+      content: <DeliveryStep id={taskId} />,
     },
     {
       label: 'Self Reflection',
-      content: <SelfReflectionStep id={id} />,
+      content: <SelfReflectionStep id={taskId} />,
     },
     {
       label: 'Feedback',
-      content: <FeedbackStep id={id} />,
+      content: <FeedbackStep id={taskId} />,
     },
   ]);
 

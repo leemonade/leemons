@@ -2,10 +2,12 @@ import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useApi } from '@common';
 
-import { ContextContainer, HtmlText, Button, Box, Stack } from '@bubbles-ui/components';
+import { ContextContainer, HtmlText, Button, Stack } from '@bubbles-ui/components';
 import getTaskRequest from '../../../../request/task/getTask';
 
-export default function StatementAndDevelopmentStep({ id, onNext, onPrevious }) {
+import updateStudentRequest from '../../../../request/instance/updateStudent';
+
+export default function StatementAndDevelopmentStep({ id, instance, student, onNext, onPrevious }) {
   const options = useMemo(
     () => ({
       id,
@@ -15,6 +17,14 @@ export default function StatementAndDevelopmentStep({ id, onNext, onPrevious }) 
   );
 
   const [task] = useApi(getTaskRequest, options);
+  useEffect(() => {
+    updateStudentRequest({
+      instance,
+      student,
+      key: 'start',
+      value: new Date().getTime(),
+    });
+  }, []);
 
   return (
     <ContextContainer>
@@ -34,6 +44,8 @@ export default function StatementAndDevelopmentStep({ id, onNext, onPrevious }) 
 
 StatementAndDevelopmentStep.propTypes = {
   id: PropTypes.string.isRequired,
+  student: PropTypes.string.isRequired,
+  instance: PropTypes.string.isRequired,
   onNext: PropTypes.func.isRequired,
   onPrevious: PropTypes.func.isRequired,
 };
