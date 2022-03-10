@@ -17,6 +17,14 @@ async function events(isInstalled) {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
     init();
   });
+  leemons.events.once('plugins.dataset:save-field', async (a, event) => {
+    const {
+      updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset,
+      // eslint-disable-next-line global-require
+    } = require('./src/services/user-agents/updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset');
+
+    await updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset(event);
+  });
 
   if (!isInstalled) {
     const initUsers = async () => {

@@ -22,6 +22,7 @@ async function _updateUserAgentPermissions(userAgentId, { transacting: _transact
           }
         ),
         table.userAgent.update({ id: userAgentId }, { reloadPermissions: false }, { transacting }),
+
         table.userAgentPermission.deleteMany(
           {
             userAgent: userAgentId,

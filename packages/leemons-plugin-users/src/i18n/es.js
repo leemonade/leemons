@@ -221,4 +221,13 @@ module.exports = {
     save: 'Guardar',
     usersAddedSuccessfully: 'Usuarios añadidos correctamente',
   },
+  needDatasetDataModal: {
+    goPageButton: 'Ir a la página',
+  },
+  userDataDatasetPage: {
+    pageTitle: 'Datos de usuario',
+    pageDescription: 'Añade los datos necesarios',
+    save: 'Guardar',
+    saveSuccess: 'Datos guardados correctamente',
+  },
 };

@@ -15,7 +15,10 @@ async function userSessionUserAgentNeedUpdateDataset(userSession, { transacting 
         transacting,
       }
     );
-  } catch (e) {}
+  } catch (e) {
+    console.log('ERROR');
+    console.error(e);
+  }
 
   if (!schema) {
     return false;
@@ -31,6 +34,7 @@ async function userSessionUserAgentNeedUpdateDataset(userSession, { transacting 
       'plugins.users',
       userSession.userAgents,
       {
+        target: userSession.userAgents[0].id,
         transacting,
       }
     );

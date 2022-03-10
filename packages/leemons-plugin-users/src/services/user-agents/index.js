@@ -33,12 +33,16 @@ const {
 const {
   getAllItemsForTheUserAgentHasPermissionsByType,
 } = require('./item-permissions/getAllItemsForTheUserAgentHasPermissionsByType');
+const { getDataForUserAgentDatasets } = require('./getDataForUserAgentDatasets');
+const { saveDataForUserAgentDatasets } = require('./saveDataForUserAgentDatasets');
 
 module.exports = {
   existUserAgent,
   searchUserAgents,
   getUserAgentsInfo,
   getUserAgentCenter,
+  getDataForUserAgentDatasets,
+  saveDataForUserAgentDatasets,
   calendars: {
     getUserAgentCalendarKey,
     addCalendarToUserAgentsIfNeedByUser,

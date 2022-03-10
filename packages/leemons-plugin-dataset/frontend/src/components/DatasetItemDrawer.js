@@ -493,8 +493,6 @@ const DatasetItemDrawer = ({
         }
       }
 
-      console.log(permissions);
-
       schemaWithAllConfig.schema = { ...schemaWithAllConfig.schema, ...permissions };
 
       if (item && item.id) {

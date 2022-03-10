@@ -29,6 +29,8 @@ import getUserProfileToken from './getUserProfileToken';
 import getDefaultPlatformLocale from './getDefaultPlatformLocale';
 import getSystemDataFieldsConfig from './getSystemDataFieldsConfig';
 import saveSystemDataFieldsConfig from './saveSystemDataFieldsConfig';
+import getDataForUserAgentDatasets from './getDataForUserAgentDatasets';
+import saveDataForUserAgentDatasets from './saveDataForUserAgentDatasets';
 import getPermissionsWithActionsIfIHave from './getPermissionsWithActionsIfIHave';
 
 export const loginRequest = login;
@@ -62,4 +64,6 @@ export const getUserProfileTokenRequest = getUserProfileToken;
 export const getDefaultPlatformLocaleRequest = getDefaultPlatformLocale;
 export const getSystemDataFieldsConfigRequest = getSystemDataFieldsConfig;
 export const saveSystemDataFieldsConfigRequest = saveSystemDataFieldsConfig;
+export const getDataForUserAgentDatasetsRequest = getDataForUserAgentDatasets;
+export const saveDataForUserAgentDatasetsRequest = saveDataForUserAgentDatasets;
 export const getPermissionsWithActionsIfIHaveRequest = getPermissionsWithActionsIfIHave;

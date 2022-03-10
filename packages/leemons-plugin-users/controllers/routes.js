@@ -103,6 +103,20 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/get-data-for-user-agent-datasets',
+    method: 'GET',
+    handler: 'users.getDataForUserAgentDatasets',
+    authenticated: true,
+    disableUserAgentDatasetCheck: true,
+  },
+  {
+    path: '/save-data-for-user-agent-datasets',
+    method: 'POST',
+    handler: 'users.saveDataForUserAgentDatasets',
+    authenticated: true,
+    disableUserAgentDatasetCheck: true,
+  },
+  {
     path: '/user/remember/profile',
     method: 'POST',
     handler: 'users.setRememberProfile',

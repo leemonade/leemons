@@ -218,4 +218,13 @@ module.exports = {
     save: 'Save',
     usersAddedSuccessfully: 'Users added successfully',
   },
+  needDatasetDataModal: {
+    goPageButton: 'Go to page',
+  },
+  userDataDatasetPage: {
+    pageTitle: 'User data',
+    pageDescription: 'Add required data',
+    save: 'Save',
+    saveSuccess: 'Data saved successfully',
+  },
 };

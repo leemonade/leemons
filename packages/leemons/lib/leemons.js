@@ -287,16 +287,11 @@ class Leemons {
         const isGood = await this.plugins.users.services.users.userSessionCheckUserAgentDatasets(
           ctx.state.userSession
         );
-        if (isGood) {
-          return next();
+
+        if (!isGood) {
+          LeemonsSocket.worker.emit(ctx.state.userSession.id, 'USER_AGENT_NEED_UPDATE_DATASET');
         }
-        ctx.status = 401;
-        ctx.body = {
-          status: 401,
-          message: 'One of user agents need update dataset data',
-          errorCode: 'USER_AGENT_NEED_UPDATE_DATASET',
-        };
-        return undefined;
+        return next();
       } catch (err) {
         console.error(err);
       }

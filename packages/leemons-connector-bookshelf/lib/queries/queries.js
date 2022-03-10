@@ -143,7 +143,13 @@ function generateQueries(model /* connector */) {
 
         await entries().save(fields, { method: 'update', patch: true, transacting });
       } else {
-        await entries().destroy({ transacting });
+        try {
+          await entries().destroy({ transacting });
+        } catch (err) {
+          if (err.message.indexOf('No Rows Deleted') === -1) {
+            throw err;
+          }
+        }
       }
     }
 
@@ -272,9 +278,13 @@ function generateQueries(model /* connector */) {
     try {
       return await func(...args);
     } catch (e) {
-      if (n < 10000 && e.code === 'ER_LOCK_DEADLOCK') {
+      const str = `${e.code} ${e.message} ${e.sqlMessage}`;
+      if (
+        n < 10000 &&
+        (str.toLowerCase().indexOf('deadlock') >= 0 || str.toLowerCase().indexOf('timeout') >= 0)
+      ) {
         await timeoutPromise(time);
-        return reTry(func, args, n + 1);
+        return reTry(func, args, time, n + 1);
       }
       throw e;
     }
