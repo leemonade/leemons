@@ -1,4 +1,4 @@
-const { range, keys, findIndex, trim, isEmpty } = require('lodash');
+const { range, keys, findIndex, trim, isEmpty, toLower } = require('lodash');
 const path = require('path');
 const getColumns = require('./helpers/getColumns');
 
@@ -67,6 +67,8 @@ async function importUsers(centers, profiles) {
             profileKey: profile,
           };
         });
+
+      item.genre = toLower(item.genre);
 
       return item;
     })

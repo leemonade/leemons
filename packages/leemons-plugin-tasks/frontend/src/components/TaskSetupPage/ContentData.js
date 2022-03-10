@@ -70,7 +70,7 @@ function ContentData({
               )}
             />
           </Box>
-          <Box>Add Resource from media-library component</Box>
+          <Box>Add Resource from leebrary component</Box>
           <Box>
             <Controller
               control={control}

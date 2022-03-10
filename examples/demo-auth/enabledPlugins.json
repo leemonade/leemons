@@ -48,8 +48,8 @@
     "path": "../../packages/leemons-plugin-classroom/frontend"
   },
   {
-    "name": "media-library",
-    "path": "../../packages/leemons-plugin-media-library/frontend"
+    "name": "leebrary",
+    "path": "../../packages/leemons-plugin-leebrary/frontend"
   },
   {
     "name": "families-emergency-numbers",

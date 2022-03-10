@@ -178,16 +178,16 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
         });
         _.set(filter, 'leemons.fs', {
           copyFile: (...rest) => {
-            if (plugin.name === 'media-library') return fs.copyFile(...rest);
-            throw new Error('Only the plugin media-library have access to copyFile');
+            if (plugin.name === 'leebrary') return fs.copyFile(...rest);
+            throw new Error('Only the plugin leebrary have access to copyFile');
           },
           readFile: (...rest) => {
-            if (plugin.name === 'media-library') return fs.readFile(...rest);
-            throw new Error('Only the plugin media-library have access to readFile');
+            if (plugin.name === 'leebrary') return fs.readFile(...rest);
+            throw new Error('Only the plugin leebrary have access to readFile');
           },
           unlink: (...rest) => {
-            if (plugin.name === 'media-library') return fs.unlink(...rest);
-            throw new Error('Only the plugin media-library have access to unlink');
+            if (plugin.name === 'leebrary') return fs.unlink(...rest);
+            throw new Error('Only the plugin leebrary have access to unlink');
           },
         });
         _.set(filter, 'leemons.utils', {
