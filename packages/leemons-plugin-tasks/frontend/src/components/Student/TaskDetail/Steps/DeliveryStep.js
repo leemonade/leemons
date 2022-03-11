@@ -33,7 +33,6 @@ export default function DeliveryStep({ onNext, onPrevious, id }) {
   );
   const [task] = useApi(getTaskRequest, options);
 
-  console.log(task);
   return (
     <ContextContainer title="Delivery">
       <HtmlText>{task?.submissions?.description}</HtmlText>

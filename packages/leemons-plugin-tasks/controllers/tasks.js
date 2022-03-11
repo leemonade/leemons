@@ -229,11 +229,16 @@ module.exports = {
   },
   search: async (ctx) => {
     try {
-      const { page, size, draft } = ctx.request.query;
+      const { offset, size, draft, ...query } = ctx.request.query;
 
-      const tasks = await search({}, parseInt(page, 10) || 0, parseInt(size, 10) || 10, {
-        draft: draft === 'true',
-      });
+      const tasks = await search(
+        { ...query },
+        parseInt(offset, 10) || 0,
+        parseInt(size, 10) || 10,
+        {
+          draft: draft === 'true',
+        }
+      );
 
       ctx.status = 200;
       ctx.body = {

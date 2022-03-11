@@ -48,3 +48,21 @@ Students
   Task details
     [] Get tasks
   Correction Details
+
+
+Library Filter by:
+  Name
+  Program
+  Course
+  Subject
+  Level
+  Methodology
+
+Ongoing Filter by:
+  Name
+  Group
+  Knowledge Area
+  Date of: (from...to)
+    - Assigned
+    - Deadline
+  Status
