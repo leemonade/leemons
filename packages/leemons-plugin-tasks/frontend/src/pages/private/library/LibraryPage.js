@@ -4,17 +4,19 @@ import { ContextContainer, PageContainer, Paragraph } from '@bubbles-ui/componen
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import { useApi } from '@common';
 import { prefixPN } from '../../../helpers';
-import listTasks from '../../../request/task/listTasks';
-import CardList from '../../../components/Library/CardList';
+// import { useApi } from '@common';
+// import listTasks from '../../../request/task/listTasks';
+// import CardList from '../../../components/Library/CardList';
+// import Filters from '../../../components/Library/Filters';
+import ListTasks from '../../../components/Library/ListTasks';
 
 export default function LibraryPage() {
   const [t] = useTranslateLoader(prefixPN('library_page'));
   const { t: tCommonHeader } = useCommonTranslate('page_header');
 
-  const [data, dataError, loadingData, refreshData] = useApi(listTasks, false, 30000);
-  const [draft, draftError, loadingDraft, refreshDraft] = useApi(listTasks, true, 30000);
+  // const [data, dataError, loadingData, refreshData] = useApi(listTasks, false, 30000);
+  // const [draft, draftError, loadingDraft, refreshDraft] = useApi(listTasks, true, 30000);
 
   const history = useHistory();
   // ·········································································
@@ -49,6 +51,8 @@ export default function LibraryPage() {
       <AdminPageHeader values={headerLabels} buttons={headerButtons} onNew={handleOnNewTask} />
 
       <PageContainer>
+        <ListTasks draft />
+        {/* <Filters />
         <ContextContainer title="Draft">
           {draftError ? (
             <Paragraph>Error {draftError.message}</Paragraph>
@@ -63,7 +67,7 @@ export default function LibraryPage() {
           ) : (
             <CardList data={data?.items} loading={loadingData} refresh={refreshData} />
           )}
-        </ContextContainer>
+        </ContextContainer> */}
       </PageContainer>
     </ContextContainer>
   );

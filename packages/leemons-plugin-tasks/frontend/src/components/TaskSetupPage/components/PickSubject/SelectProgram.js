@@ -17,32 +17,29 @@ export default function SelectProgram({ errorMessages, labels, placeholders }) {
         <Controller
           control={control}
           name="center"
-          rules={{ required: errorMessages.center?.required }}
+          rules={{ required: errorMessages?.center?.required }}
           render={({ field }) => (
-            <SelectCenter
-              {...field}
-              label={labels?.center}
-              placeholder={placeholders?.center}
-              firstSelected
-            />
+            <SelectCenter {...field} label={labels?.center} placeholder={placeholders?.center} />
           )}
         />
       </Box>
       {/* Program selector */}
-      <Controller
-        control={control}
-        name="program"
-        rules={{ required: errorMessages.program?.required }}
-        render={({ field }) => (
-          <APSelectProgram
-            {...field}
-            ensureIntegrity
-            center={centerId}
-            label={labels?.program}
-            placeholder={placeholders?.program}
-          />
-        )}
-      />
+      {
+        <Controller
+          control={control}
+          name="program"
+          rules={{ required: errorMessages?.program?.required }}
+          render={({ field }) => (
+            <APSelectProgram
+              {...field}
+              ensureIntegrity
+              center={centerId}
+              label={labels?.program}
+              placeholder={placeholders?.program}
+            />
+          )}
+        />
+      }
     </ContextContainer>
   );
 }

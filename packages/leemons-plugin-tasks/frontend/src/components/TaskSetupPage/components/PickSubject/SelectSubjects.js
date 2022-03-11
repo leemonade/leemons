@@ -25,11 +25,11 @@ export default function SelectSubjects({
 
   const selects = useMemo(
     () => ({
-      courses: map(program.courses, ({ name, index, id }) => ({
+      courses: map(program?.courses, ({ name, index, id }) => ({
         label: `${name ? `${name} (${index}º)` : `${index}º`}`,
         value: id,
       })),
-      subjects: map(program.subjects, ({ name, id }) => ({
+      subjects: map(program?.subjects, ({ name, id }) => ({
         label: name,
         value: id,
       })),
@@ -63,45 +63,45 @@ export default function SelectSubjects({
   const subjectsColumns = useMemo(() => {
     const columns = [];
 
-    if (!isNil(program) && program.maxNumberOfCourses > 1) {
+    if (!isNil(program) && program?.maxNumberOfCourses > 1) {
       columns.push({
         Header: labels.course,
         accessor: 'course',
         input: {
-          node: <Select data={selects.courses} placeholder={placeholders.course} required />,
+          node: <Select data={selects?.courses} placeholder={placeholders?.course} required />,
           rules: { required: 'Required field' },
         },
-        valueRender: (v) => find(selects.courses, { value: v })?.label,
+        valueRender: (v) => find(selects?.courses, { value: v })?.label,
       });
     }
 
     columns.push({
-      Header: labels.subject,
+      Header: labels?.subject,
       accessor: 'subject',
       input: {
         node: (
           <Select
-            data={selects.subjects}
-            placeholder={placeholders.subject}
-            disabled={!selects.subjects.length}
+            data={selects?.subjects}
+            placeholder={placeholders?.subject}
+            disabled={!selects?.subjects?.length}
             required
           />
         ),
         rules: { required: 'Required field' },
       },
-      valueRender: (v) => find(selects.subjects, { value: v })?.label,
+      valueRender: (v) => find(selects?.subjects, { value: v })?.label,
     });
 
     columns.push({
-      Header: labels.level,
+      Header: labels?.level,
       accessor: 'level',
       input: {
         node: (
           <Select
             data={levelsList}
-            placeholder={placeholders.level}
+            placeholder={placeholders?.level}
             required
-            disabled={!selects.subjects.length}
+            disabled={!selects?.subjects?.length}
           />
         ),
         rules: { required: 'Required field' },
@@ -113,7 +113,7 @@ export default function SelectSubjects({
 
   return (
     /* Subject container */
-    <ContextContainer title={labels.subjects}>
+    <ContextContainer title={labels?.subjects}>
       <TableInput
         data={value}
         onChange={onChange}
@@ -121,7 +121,7 @@ export default function SelectSubjects({
         labels={subjectsLabels}
         unique
         sortable
-        error={errors.subjects}
+        error={errors?.subjects}
       />
     </ContextContainer>
   );
