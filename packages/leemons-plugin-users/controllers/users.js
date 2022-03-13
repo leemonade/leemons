@@ -126,9 +126,15 @@ async function detail(ctx) {
 }
 
 async function detailForPage(ctx) {
-  const user = await usersService.detailForPage(ctx.state.userSession.id);
+  const data = await usersService.detailForPage(ctx.params.id);
   ctx.status = 200;
-  ctx.body = { status: 200, user };
+  ctx.body = { status: 200, data };
+}
+
+async function agentDetailForPage(ctx) {
+  const data = await userAgentsService.agentDetailForPage(ctx.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
 }
 
 async function profiles(ctx) {
@@ -263,6 +269,18 @@ async function saveDataForUserAgentDatasets(ctx) {
   ctx.body = { status: 200, data };
 }
 
+async function updateUser(ctx) {
+  const data = await usersService.update(ctx.params.id, ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
+async function updateUserAgent(ctx) {
+  const data = await userAgentsService.update(ctx.params.id, ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
 module.exports = {
   list,
   reset,
@@ -272,13 +290,16 @@ module.exports = {
   contacts,
   canReset,
   profiles,
+  updateUser,
   createBulk,
   profileToken,
   detailForPage,
+  updateUserAgent,
   searchUserAgents,
   createSuperAdmin,
   registerPassword,
   getUserAgentsInfo,
+  agentDetailForPage,
   setRememberProfile,
   getRememberProfile,
   canRegisterPassword,

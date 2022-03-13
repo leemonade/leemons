@@ -5,12 +5,14 @@ const { exist } = require('./exist');
 const { login } = require('./login');
 const { reset } = require('./reset');
 const { detail } = require('./detail');
+const { update } = require('./update');
 const { addBulk } = require('./addBulk');
 const { recover } = require('./recover');
 const { canReset } = require('./canReset');
 const { profiles } = require('./profiles');
 const { isSuperAdmin } = require('./isSuperAdmin');
 const { profileToken } = require('./profileToken');
+const { detailForPage } = require('./detailForPage');
 const { getResetConfig } = require('./getResetConfig');
 const { canRegisterPassword } = require('./canRegisterPassword');
 const { comparePassword } = require('./bcrypt/comparePassword');
@@ -39,12 +41,14 @@ module.exports = {
   login,
   reset,
   detail,
+  update,
   addBulk,
   recover,
   canReset,
   profiles,
   isSuperAdmin,
   profileToken,
+  detailForPage,
   getResetConfig,
   comparePassword,
   encryptPassword,

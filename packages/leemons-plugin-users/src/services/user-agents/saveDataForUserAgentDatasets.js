@@ -3,7 +3,7 @@ const { table } = require('../tables');
 
 async function saveData(userSession, value, { transacting } = {}) {
   const datasetService = leemons.getPlugin('dataset').services.dataset;
-  const response = datasetService.setValues(
+  const response = await datasetService.setValues(
     'user-data',
     'plugins.users',
     value,

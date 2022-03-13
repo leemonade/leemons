@@ -174,6 +174,50 @@ module.exports = [
     },
   },
   {
+    path: '/user/:id/detail/page',
+    method: 'GET',
+    handler: 'users.detailForPage',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/user/:id/update',
+    method: 'POST',
+    handler: 'users.updateUser',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['update', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/user-agent/:id/update',
+    method: 'POST',
+    handler: 'users.updateUserAgent',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['update', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/user-agent/:id/detail/page',
+    method: 'GET',
+    handler: 'users.agentDetailForPage',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+  {
     path: '/super-admin',
     method: 'POST',
     handler: 'users.createSuperAdmin',

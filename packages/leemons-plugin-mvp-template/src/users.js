@@ -30,6 +30,8 @@ async function initUsers(centers, profiles) {
       email: 'jaime@leemons.io',
       password: 'testing',
       locale: 'es',
+      gender: 'male',
+      birthdate: new Date(),
       active: true,
     },
     _.map(roles, 'id').concat(_.map(roles2, 'id'))
@@ -40,6 +42,8 @@ async function initUsers(centers, profiles) {
       email: 'jaime2@leemons.io',
       password: 'testing',
       locale: 'en',
+      gender: 'male',
+      birthdate: new Date(),
       active: true,
     },
     _.map(roles2, 'id')

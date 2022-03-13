@@ -1,20 +1,30 @@
 const _ = require('lodash');
 const { table } = require('../tables');
+const { getUserAgentsInfo } = require('../user-agents/getUserAgentsInfo');
+const { getPreferences } = require('../user-preferences/getPreferences');
 
 async function detailForPage(userId, { transacting } = {}) {
-  const users = await table.users.find(
-    { id_$in: _.isArray(userId) ? userId : [userId] },
-    { transacting }
+  const [user, preferences] = await Promise.all([
+    table.users.findOne({ id: userId }, { transacting }),
+    getPreferences(userId, { transacting }),
+  ]);
+  if (!user) throw new Error('User not found');
+  const userAgentsIds = await table.userAgent.find(
+    { user: user.id },
+    { columns: ['id'], transacting }
   );
-  if (users.length !== (_.isArray(userId) ? userId : [userId]).length) {
-    if (_.isArray(userId)) {
-      throw new Error('One of users not found for the ids provided');
-    } else {
-      throw new Error('No user found for the id provided');
-    }
-  }
-
-  return _.isArray(userId) ? users : users[0];
+  const userAgents = await getUserAgentsInfo(_.map(userAgentsIds, 'id'), {
+    withProfile: true,
+    withCenter: true,
+    transacting,
+  });
+  return {
+    user: {
+      ...user,
+      preferences,
+    },
+    userAgents,
+  };
 }
 
 module.exports = { detailForPage };
