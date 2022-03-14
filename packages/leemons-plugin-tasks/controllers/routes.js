@@ -246,6 +246,12 @@ module.exports = [
     handler: 'assignments.teacherListAssigned',
     authenticated: true,
   },
+  {
+    method: 'GET',
+    path: '/tasks/instances/teacher/:user/search',
+    handler: 'assignments.teacherSearch',
+    authenticated: true,
+  },
 
   /**
    * Settings

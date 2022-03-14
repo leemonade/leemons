@@ -1,5 +1,8 @@
 module.exports = {
   modelName: 'instances',
+  options: {
+    useTimestamps: true,
+  },
   attributes: {
     task: {
       type: 'string',

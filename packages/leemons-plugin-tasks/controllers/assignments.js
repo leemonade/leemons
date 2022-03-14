@@ -12,6 +12,7 @@ const unassignTeacher = require('../src/services/assignment/teacher/remove');
 const listTeachers = require('../src/services/assignment/teacher/listTeachers');
 const listAssignedTeacher = require('../src/services/assignment/teacher/listAssigned');
 const updateStudent = require('../src/services/assignment/student/update');
+const searchTeachers = require('../src/services/assignment/teacher/search');
 
 module.exports = {
   /**
@@ -277,6 +278,33 @@ module.exports = {
       ctx.body = {
         status: 200,
         tasks,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        message: e.message,
+      };
+    }
+  },
+  teacherSearch: async (ctx) => {
+    try {
+      const { user } = ctx.request.params;
+      const { offset, size, ...query } = ctx.request.query;
+
+      const data = await searchTeachers(
+        {
+          ...query,
+          teacher: user,
+        },
+        parseInt(offset, 10) || 0,
+        parseInt(size, 10) || 10
+      );
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        data,
       };
     } catch (e) {
       ctx.status = 400;
