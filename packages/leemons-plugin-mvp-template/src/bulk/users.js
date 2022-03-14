@@ -68,7 +68,7 @@ async function importUsers(centers, profiles) {
           };
         });
 
-      item.genre = toLower(item.genre);
+      item.gender = toLower(item.gender);
 
       if (!isEmpty(item.birthdate) && item.birthdate.indexOf('/') > 0) {
         const [day, month, year] = item.birthdate.split('/');
