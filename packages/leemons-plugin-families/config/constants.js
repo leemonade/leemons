@@ -102,4 +102,13 @@ module.exports = {
       ],
     },
   ],
+  widgets: {
+    items: [
+      {
+        zoneKey: 'plugins.users.user-detail',
+        key: 'plugins.families.user-detail',
+        url: 'user-detail/index',
+      },
+    ],
+  },
 };

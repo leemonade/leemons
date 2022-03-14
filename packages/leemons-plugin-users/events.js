@@ -53,6 +53,18 @@ async function events(isInstalled) {
       }
     );
 
+    leemons.events.once('plugins.widgets:pluginDidLoad', async () => {
+      await Promise.all(
+        _.map(constants.widgets.zones, (config) =>
+          leemons.getPlugin('widgets').services.widgets.addZone(config.key, {
+            name: config.name,
+            description: config.description,
+          })
+        )
+      );
+      leemons.events.emit('init-widget-zones');
+    });
+
     leemons.events.once(
       ['plugins.users:pluginDidLoad', 'plugins.multilanguage:pluginDidLoad'],
       async () => {

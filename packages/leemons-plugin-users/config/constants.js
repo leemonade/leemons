@@ -66,4 +66,7 @@ module.exports = {
       recover: 'users/user/recover',
     },
   },
+  widgets: {
+    zones: [{ key: 'plugins.users.user-detail' }],
+  },
 };

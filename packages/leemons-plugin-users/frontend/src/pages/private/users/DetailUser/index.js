@@ -18,6 +18,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { useStore } from '@common';
 import { find, forEach, forIn } from 'lodash';
 import { useForm } from 'react-hook-form';
+import { ZoneWidgets } from '@widgets';
 import {
   getSystemDataFieldsConfigRequest,
   getUserDetailForPageRequest,
@@ -259,7 +260,19 @@ function DetailUser({ session }) {
               />
             ) : null}
           </ContextContainer>
-          <ContextContainer></ContextContainer>
+          <ContextContainer>
+            <ZoneWidgets zone="plugins.users.user-detail">
+              {({ Component, key }) => (
+                <Box key={key}>
+                  <Component
+                    user={store.user}
+                    userAgent={store.userAgent}
+                    isEditMode={store.isEditMode}
+                  />
+                </Box>
+              )}
+            </ZoneWidgets>
+          </ContextContainer>
         </ContextContainer>
       </PageContainer>
     </Box>
