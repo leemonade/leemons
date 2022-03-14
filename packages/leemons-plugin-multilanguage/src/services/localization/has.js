@@ -39,7 +39,7 @@ module.exports = (Base) =>
           async (t) => {
             const existingLocalizations = await this.model.find(
               { $or: _localizations },
-              { columns: ['key', 'locale'] },
+              { columns: ['id', 'key', 'locale'] },
               { transacting: t }
             );
 

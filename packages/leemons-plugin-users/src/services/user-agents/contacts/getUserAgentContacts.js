@@ -43,7 +43,7 @@ async function getUserAgentContacts(
 
   const userAgents = await table.userAgent.find(
     { id_$in: fromUserAgents },
-    { columns: ['role'], transacting }
+    { columns: ['id', 'role'], transacting }
   );
   const userAgentsProfiles = await getUserAgentProfile(userAgents, { transacting });
   let profileContacts = await getProfileContacts(_.map(userAgentsProfiles, 'id'), {

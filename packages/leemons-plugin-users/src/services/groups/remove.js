@@ -13,7 +13,7 @@ async function remove(groupId) {
   await exist({ id: groupId }, true);
   const groupUserAgents = await table.groupUserAgent.find(
     { group: groupId },
-    { columns: ['user'] }
+    { columns: ['id', 'user'] }
   );
   const userAgentIdsInGroup = _.map(groupUserAgents, 'userAgent');
   return table.groupUserAgent.transaction(async () => {

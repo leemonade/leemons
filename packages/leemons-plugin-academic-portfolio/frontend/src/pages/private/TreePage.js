@@ -112,114 +112,118 @@ export default function TreePage() {
   }
 
   async function getProgramTree() {
-    const [{ tree }, { subjectCredits }, { program }, { profiles }] = await Promise.all([
-      getProgramTreeRequest(store.programId),
-      listSubjectCreditsForProgramRequest(store.programId),
-      detailProgramRequest(store.programId),
-      getProfilesRequest(),
-    ]);
+    try {
+      const [{ tree }, { subjectCredits }, { program }, { profiles }] = await Promise.all([
+        getProgramTreeRequest(store.programId),
+        listSubjectCreditsForProgramRequest(store.programId),
+        detailProgramRequest(store.programId),
+        getProfilesRequest(),
+      ]);
 
-    console.log(tree);
+      const classesBySubject = {};
+      const result = [];
 
-    const classesBySubject = {};
-    const result = [];
+      const editLabel = t('treeEdit');
+      const removeLabel = t('treeRemove');
+      const duplicateLabel = t('treeDuplicate');
 
-    const editLabel = t('treeEdit');
-    const removeLabel = t('treeRemove');
-    const duplicateLabel = t('treeDuplicate');
-
-    function processItem(item, parents, parentId, childIndex) {
-      let text = item.value.name;
-      const treeId = `${childIndex}.${parentId}.${item.value.id}`;
-      if (item.nodeType === 'courses') {
-        text = item.value.name
-          ? `${item.value.name} (${item.value.index}º)`
-          : `${item.value.index}º`;
-      }
-      if (item.nodeType === 'class') {
-        const classSubjectCredits = find(subjectCredits, {
-          subject: item.value.subject.id,
-        });
-        const course = find(parents, { nodeType: 'courses' });
-        const groups = find(parents, { nodeType: 'groups' });
-        const courseName = course ? course.value.index : '';
-        const substageName = item.value.substages ? ` - ${item.value.substages.abbreviation}` : '';
-        let groupName = '';
-        if (!groups) {
-          groupName = item.value.groups ? ` - ${item.value.groups.abbreviation}` : '';
+      function processItem(item, parents, parentId, childIndex) {
+        let text = item.value.name;
+        const treeId = `${childIndex}.${parentId}.${item.value.id}`;
+        if (item.nodeType === 'courses') {
+          text = item.value.name
+            ? `${item.value.name} (${item.value.index}º)`
+            : `${item.value.index}º`;
         }
-        text = `${courseName}${classSubjectCredits?.internalId} ${item.value.subject.name}${groupName}${substageName}`;
-        if (!isArray(classesBySubject[item.value.subject?.id]))
-          classesBySubject[item.value.subject?.id] = [];
-        classesBySubject[item.value.subject?.id].push({ ...item.value, treeName: text, treeId });
-      }
+        if (item.nodeType === 'class') {
+          const classSubjectCredits = find(subjectCredits, {
+            subject: item.value.subject.id,
+          });
+          const course = find(parents, { nodeType: 'courses' });
+          const groups = find(parents, { nodeType: 'groups' });
+          const courseName = course ? course.value.index : '';
+          const substageName = item.value.substages
+            ? ` - ${item.value.substages.abbreviation}`
+            : '';
+          let groupName = '';
+          if (!groups) {
+            groupName = item.value.groups ? ` - ${item.value.groups.abbreviation}` : '';
+          }
+          text = `${courseName}${classSubjectCredits?.internalId} ${item.value.subject.name}${groupName}${substageName}`;
+          if (!isArray(classesBySubject[item.value.subject?.id]))
+            classesBySubject[item.value.subject?.id] = [];
+          classesBySubject[item.value.subject?.id].push({ ...item.value, treeName: text, treeId });
+        }
 
-      const actions = [
-        {
-          name: 'edit',
-          tooltip: editLabel,
-          showOnHover: true,
-          handler: () => onEdit({ ...item, treeId }),
-        },
-      ];
+        const actions = [
+          {
+            name: 'edit',
+            tooltip: editLabel,
+            showOnHover: true,
+            handler: () => onEdit({ ...item, treeId }),
+          },
+        ];
 
-      if (item.nodeType === 'groups' || item.nodeType === 'class') {
-        actions.push({
-          name: 'delete',
-          tooltip: removeLabel,
-          showOnHover: true,
-          handler: () => onRemove({ ...item, treeId, parents }),
+        if (item.nodeType === 'groups' || item.nodeType === 'class') {
+          actions.push({
+            name: 'delete',
+            tooltip: removeLabel,
+            showOnHover: true,
+            handler: () => onRemove({ ...item, treeId, parents }),
+          });
+        }
+
+        if (item.nodeType === 'groups') {
+          actions.push({
+            name: 'duplicate',
+            tooltip: duplicateLabel,
+            showOnHover: true,
+            icon: () => <DuplicateIcon />,
+            handler: () => onDuplicate({ ...item, treeId, parents }),
+          });
+        }
+
+        if (item.nodeType === 'class') {
+          actions.push({
+            name: 'add-subject',
+            tooltip: t('newsubject'),
+            showOnHover: true,
+            icon: () => <AddCircleIcon />,
+            handler: () => onNewSubject({ ...item, treeId, parents }),
+          });
+        }
+
+        if (item.nodeType !== 'program' && item.nodeType !== 'courses') {
+          actions.push({
+            name: 'new',
+            tooltip: t(`new${item.nodeType}`),
+            showOnHover: true,
+            icon: () => <AddCircleIcon />,
+            handler: () => onNew({ ...item, treeId, parents }),
+          });
+        }
+
+        result.push({
+          id: treeId,
+          parent: parents[parents.length - 1] ? parentId : 0,
+          text,
+          actions,
         });
+        if (item.childrens && item.childrens.length) {
+          item.childrens.forEach((child, index) =>
+            processItem(child, [...parents, item], treeId, index)
+          );
+        }
       }
 
-      if (item.nodeType === 'groups') {
-        actions.push({
-          name: 'duplicate',
-          tooltip: duplicateLabel,
-          showOnHover: true,
-          icon: () => <DuplicateIcon />,
-          handler: () => onDuplicate({ ...item, treeId, parents }),
-        });
-      }
-
-      if (item.nodeType === 'class') {
-        actions.push({
-          name: 'add-subject',
-          tooltip: t('newsubject'),
-          showOnHover: true,
-          icon: () => <AddCircleIcon />,
-          handler: () => onNewSubject({ ...item, treeId, parents }),
-        });
-      }
-
-      if (item.nodeType !== 'program' && item.nodeType !== 'courses') {
-        actions.push({
-          name: 'new',
-          tooltip: t(`new${item.nodeType}`),
-          showOnHover: true,
-          icon: () => <AddCircleIcon />,
-          handler: () => onNew({ ...item, treeId, parents }),
-        });
-      }
-
-      result.push({
-        id: treeId,
-        parent: parents[parents.length - 1] ? parentId : 0,
-        text,
-        actions,
-      });
-      if (item.childrens && item.childrens.length) {
-        item.childrens.forEach((child, index) =>
-          processItem(child, [...parents, item], treeId, index)
-        );
-      }
+      processItem(tree, [], '0');
+      store.profiles = profiles;
+      store.program = program;
+      store.classesBySubject = classesBySubject;
+      return result;
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
     }
-
-    processItem(tree, [], '0');
-    store.profiles = profiles;
-    store.program = program;
-    store.classesBySubject = classesBySubject;
-    return result;
   }
 
   async function init() {

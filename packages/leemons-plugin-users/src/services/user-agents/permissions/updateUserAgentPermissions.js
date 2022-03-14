@@ -9,12 +9,18 @@ async function _updateUserAgentPermissions(userAgentId, { transacting: _transact
 
       await table.groupUserAgent.find(
         { userAgent: userAgentId },
-        { columns: ['group'], transacting }
+        { columns: ['id', 'group'], transacting }
       );
 
       // ES: Borramos los permisos que salieran desde roles y sacamos todos los roles actuales del usuario, ya sea por que vienen desde grupos/perfiles/o el mismo rol que tiene
       const [groupUserAgent, userAgent] = await Promise.all([
-        table.groupUserAgent.find({ userAgent: userAgentId }, { columns: ['group'], transacting }),
+        table.groupUserAgent.find(
+          { userAgent: userAgentId },
+          {
+            columns: ['id', 'group'],
+            transacting,
+          }
+        ),
         table.userAgent.update({ id: userAgentId }, { reloadPermissions: false }, { transacting }),
         table.userAgentPermission.deleteMany(
           {
@@ -29,23 +35,26 @@ async function _updateUserAgentPermissions(userAgentId, { transacting: _transact
       const [groupRoles, profileRoles] = await Promise.all([
         table.groupRole.find(
           { group_$in: _.map(groupUserAgent, 'group') },
-          { columns: ['role'], transacting }
+          { columns: ['id', 'role'], transacting }
         ),
-        table.profileRole.find({ role: userAgent.role }, { columns: ['profile'], transacting }),
+        table.profileRole.find(
+          { role: userAgent.role },
+          { columns: ['id', 'profile'], transacting }
+        ),
       ]);
       const profileIds = _.map(profileRoles, 'profile');
       const [profiles, userProfiles] = await Promise.all([
         table.profiles.find(
           { id_$in: profileIds },
           {
-            columns: ['role'],
+            columns: ['id', 'role'],
             transacting,
           }
         ),
         table.userProfile.find(
           { profile_$in: profileIds, user: userAgent.user },
           {
-            columns: ['role'],
+            columns: ['id', 'role'],
             transacting,
           }
         ),

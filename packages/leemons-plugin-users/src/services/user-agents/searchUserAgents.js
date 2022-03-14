@@ -21,7 +21,7 @@ const { getUserAgentsInfo } = require('./getUserAgentsInfo');
 
 async function searchUserAgents(
   { profile, center, user, ignoreUserIds },
-  { withProfile, withCenter, userColumns, transacting } = {}
+  { withProfile, withCenter, userColumns, queryWithContains = true, transacting } = {}
 ) {
   const finalQuery = {};
   // ES: Como es posible que se quiera filtrar desde multiples sitios por usuarios añadimos un array
@@ -88,9 +88,15 @@ async function searchUserAgents(
   // then filter the agents to get only those of those users.
   if (user && (user.name || user.surnames || user.email)) {
     const query = { $or: [] };
-    if (user.name) query.$or.push({ name_$contains: user.name });
-    if (user.surnames) query.$or.push({ surnames_$contains: user.surnames });
-    if (user.email) query.$or.push({ email_$contains: user.email });
+    if (queryWithContains) {
+      if (user.name) query.$or.push({ name_$contains: user.name });
+      if (user.surnames) query.$or.push({ surnames_$contains: user.surnames });
+      if (user.email) query.$or.push({ email_$contains: user.email });
+    } else {
+      if (user.name) query.$or.push({ name: user.name });
+      if (user.surnames) query.$or.push({ surnames: user.surnames });
+      if (user.email) query.$or.push({ email: user.email });
+    }
     const users = await table.users.find(query, { columns: ['id'], transacting });
     userIds = userIds.concat(_.map(users, 'id'));
     addUserIdsToQuery = true;

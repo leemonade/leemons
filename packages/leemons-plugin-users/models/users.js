@@ -14,12 +14,24 @@ module.exports = {
     surnames: {
       type: 'string',
     },
+    secondSurname: {
+      type: 'string',
+    },
     email: {
       type: 'string',
       options: {
         unique: true,
         notNull: true,
       },
+    },
+    phone: {
+      type: 'string',
+    },
+    avatar: {
+      type: 'string',
+    },
+    birthdate: {
+      type: 'datetime',
     },
     password: {
       type: 'string',
@@ -39,6 +51,9 @@ module.exports = {
         notNull: true,
         defaultTo: false,
       },
+    },
+    status: {
+      type: 'string',
     },
   },
   primaryKey: {

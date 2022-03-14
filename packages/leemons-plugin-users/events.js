@@ -1,8 +1,15 @@
 const _ = require('lodash');
 const constants = require('./config/constants');
 const recoverEmail = require('./emails/recoverPassword');
+const welcomeEmail = require('./emails/welcome');
 const resetPassword = require('./emails/resetPassword');
-const { addMain, addWelcome, addProfiles, addUserData } = require('./src/services/menu-builder');
+const {
+  addMain,
+  addWelcome,
+  addProfiles,
+  addUserData,
+  addUsers,
+} = require('./src/services/menu-builder');
 const init = require('./init');
 
 async function events(isInstalled) {
@@ -83,6 +90,24 @@ async function events(isInstalled) {
           resetPassword.en,
           leemons.getPlugin('emails').services.email.types.active
         );
+      await leemons
+        .getPlugin('emails')
+        .services.email.addIfNotExist(
+          'user-welcome',
+          'es-ES',
+          'Bienvenida',
+          welcomeEmail.es,
+          leemons.getPlugin('emails').services.email.types.active
+        );
+      await leemons
+        .getPlugin('emails')
+        .services.email.addIfNotExist(
+          'user-welcome',
+          'en',
+          'Welcome',
+          welcomeEmail.en,
+          leemons.getPlugin('emails').services.email.types.active
+        );
       leemons.events.emit('init-email-reset-password');
       leemons.events.emit('init-emails');
     });
@@ -91,7 +116,7 @@ async function events(isInstalled) {
       try {
         await addMain();
         leemons.events.emit('init-menu');
-        await Promise.all([addWelcome(), addProfiles(), addUserData()]);
+        await Promise.all([addWelcome(), addProfiles(), addUserData(), addUsers()]);
         leemons.events.emit('init-submenu');
       } catch (e) {
         console.error('Error users menu', e);

@@ -7,12 +7,60 @@ module.exports = {
     page_description:
       'In this section you can configure the dataset fields for your users. The identification data are mandatory for the operation of the platform and mandatory for all users of any profile. The common fields are those shared by all users, they can be mandatory or optional (they are useful to save time when defining fields common to all users of the platform such as a name or surname). <br/> Last but not least, profiles have their own data sets that you can consult in the profiles section.',
     tabs: {
-      login_data: 'Login data',
-      basic_data: 'Basic data',
+      system_data: 'System data',
+      common_fields: 'Common fields',
     },
-    login: {
-      description:
-        'Mandatory fields in order to create user accounts (you cannot edit o delete it)',
+    systemData: {
+      save: 'Save',
+      saveSuccess: 'Data saved successfully',
+      description1:
+        'Mandatory fields in order to create user accounts (you can not edit o deleted)',
+      description2: 'Fields included in the Leemons system that you can configure',
+      table: {
+        name: 'Name',
+        description: 'Description',
+        type: 'Type',
+        actions: 'Actions',
+        makeMandatory: 'Make mandatory',
+        disableField: 'Disable field',
+      },
+      tableItems: {
+        email: {
+          name: 'Email',
+          description: 'Unique identifier',
+          type: 'Email',
+        },
+        password: {
+          name: 'Password',
+          description: '8 characters, 1 number, 1 uppercase, 1 special character',
+          type: 'Password',
+        },
+        name: {
+          name: 'Name',
+          description: 'String, 26 regular characters (without special characters)',
+          type: 'String',
+        },
+        surname: {
+          name: 'Surname',
+          description: 'String, 26 regular characters (without special characters)',
+          type: 'String',
+        },
+        birthday: {
+          name: 'Birthday',
+          description: 'dd/mm/yyyy',
+          type: 'Date',
+        },
+        surname2: {
+          name: '2nd Surname',
+          description: 'String, 26 regular characters (without special characters)',
+          type: 'String',
+        },
+        avatar: {
+          name: 'Avatar',
+          description: 'Format: PNG, JPG, size 400x400px, max 500kb)',
+          type: 'Image',
+        },
+      },
     },
     basic: {
       description: 'Configuration of general fields for your users',
@@ -108,6 +156,16 @@ module.exports = {
     not_registered: 'I am not registered',
     form_error: 'Email or password does not match',
   },
+  registerPassword: {
+    title: 'Create your password',
+    password: 'Password',
+    repeatPassword: 'Repeat password',
+    setPassword: 'Set password',
+    repeatPasswordPlaceholder: 'Your password',
+    passwordPlaceholder: 'Repeat your password',
+    passwordMatch: 'Passwords not match',
+    tokenError: 'The code to set the password has expired or is not valid, contact your center.',
+  },
   selectProfile: {
     title: 'Hi {name}',
     number_of_profiles:
@@ -116,5 +174,48 @@ module.exports = {
     change_easy:
       'You can easily change your profile by clicking on your avatar in the sidebar of the application',
     log_in: 'Log in',
+  },
+  list_users: {
+    pageTitle: 'Users list',
+    centerLabel: 'Center',
+    profileLabel: 'Profile',
+    searchLabel: 'Search',
+    nameHeader: 'Name',
+    surnameHeader: 'Surname',
+    emailHeader: 'Email',
+    birthdayHeader: 'Birthday',
+    phoneHeader: 'Phone',
+    actionsHeader: 'Actions',
+    usersTab: 'Users',
+    clearFilter: 'Clear filter',
+    view: 'View',
+    show: 'Show',
+    goTo: 'Go to',
+  },
+  create_users: {
+    pageTitle: 'Create users',
+    centerLabel: 'Center',
+    profileLabel: 'Profile',
+    emailHeader: 'Email',
+    emailHeaderRequired: 'Email is required',
+    emailHeaderNotEmail: 'Email is not valid',
+    nameHeader: 'Name',
+    nameHeaderRequired: 'Name is required',
+    surnameHeader: 'Surname',
+    surnameHeaderRequired: 'Surname is required',
+    birthdayHeader: 'Birthday',
+    birthdayHeaderRequired: 'Birthday is required',
+    avatarHeader: 'Avatar',
+    avatarHeaderRequired: 'Avatar is required',
+    secondSurnameHeader: 'Second surname',
+    secondSurnameHeaderRequired: 'Second surname is required',
+    tagsHeader: 'Tags',
+    tableAdd: 'Add',
+    tableRemove: 'Remove',
+    userAlreadyHaveThisConfig: 'The user already exists in that center with that profile.',
+    userEmailAlreadyAdded: 'You already have a user added with that email',
+    tagsForAllUsers: 'Tags for all users to add',
+    save: 'Save',
+    usersAddedSuccessfully: 'Users added successfully',
   },
 };

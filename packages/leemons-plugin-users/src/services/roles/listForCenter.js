@@ -10,7 +10,10 @@ const { table } = require('../tables');
  * @return {Promise<Role>} Created / Updated role
  * */
 async function listForCenter(center, { transacting } = {}) {
-  const centerRoles = await table.roleCenter.find({ center }, { columns: ['role'], transacting });
+  const centerRoles = await table.roleCenter.find(
+    { center },
+    { columns: ['id', 'role'], transacting }
+  );
   return table.role.find({ id_$in: _.map(centerRoles, 'role') }, { transacting });
 }
 

@@ -174,7 +174,7 @@ async function validateUpdateGradeScale(data, { transacting } = {}) {
 
   const scale = await table.gradeScales.findOne(
     { id: data.id },
-    { columns: ['grade'], transacting }
+    { columns: ['id', 'grade'], transacting }
   );
   if (!scale) throw new Error('Scale not found');
 

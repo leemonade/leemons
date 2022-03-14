@@ -44,7 +44,42 @@ function validateFindItemPermission(data) {
   }
 }
 
+const saveSystemDataFieldsConfigSchema = {
+  type: 'object',
+  properties: {
+    secondSurname: {
+      type: 'object',
+      properties: {
+        required: { type: 'boolean' },
+        disabled: { type: 'boolean' },
+      },
+      required: ['required', 'disabled'],
+      additionalProperties: false,
+    },
+    avatar: {
+      type: 'object',
+      properties: {
+        required: { type: 'boolean' },
+        disabled: { type: 'boolean' },
+      },
+      required: ['required', 'disabled'],
+      additionalProperties: false,
+    },
+  },
+  required: ['secondSurname', 'avatar'],
+  additionalProperties: false,
+};
+
+function validateSaveSystemDataFieldsConfig(data) {
+  const validator = new LeemonsValidator(saveSystemDataFieldsConfigSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   validateItemPermission,
   validateFindItemPermission,
+  validateSaveSystemDataFieldsConfig,
 };
