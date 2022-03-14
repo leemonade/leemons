@@ -10,7 +10,7 @@ async function unlink(fileIds, assetId, { userSession, transacting } = {}) {
     // EN: Check if the user has permissions to delete the asset
     // ES: Comprobar si el usuario tiene permisos para eliminar el asset
     if (!permissions.delete) {
-      throw new Error("You don't have permissions to delete this asset");
+      throw new global.utils.HttpError(401, "You don't have permissions to delete this asset");
     }
 
     const query = {
@@ -25,7 +25,7 @@ async function unlink(fileIds, assetId, { userSession, transacting } = {}) {
 
     return deleted.count > 0;
   } catch (e) {
-    throw new Error(`Failed to delete file: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to delete file: ${e.message}`);
   }
 }
 

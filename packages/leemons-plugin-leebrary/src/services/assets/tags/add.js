@@ -6,7 +6,7 @@ module.exports = async function add(asset, tags, { transacting } = {}) {
   try {
     // TODO: Add permissions to tags
     if (!(await assetExists(asset, { transacting }))) {
-      throw new Error(`Asset with id ${asset} does not exist`);
+      throw new global.utils.HttpError(422, `Asset with id ${asset} does not exist`);
     }
 
     const existingTags = await getByAsset(asset, { transacting });
@@ -20,6 +20,6 @@ module.exports = async function add(asset, tags, { transacting } = {}) {
     }
     return false;
   } catch (e) {
-    throw new Error(`Failed to add tag: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to add tag: ${e.message}`);
   }
 };

@@ -5,6 +5,6 @@ module.exports = async function getByAsset(assetId, { transacting } = {}) {
     const tags = await tables.assetTags.find({ asset: assetId }, { transacting });
     return tags.map(({ tag }) => tag);
   } catch (e) {
-    throw new Error(`Failed to get tags: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to get tags: ${e.message}`);
   }
 };

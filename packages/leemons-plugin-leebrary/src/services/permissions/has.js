@@ -8,7 +8,7 @@ async function has(assetId, permission, { userSession, transacting } = {}) {
 
     return permission.every((p) => current.includes(p));
   } catch (e) {
-    throw new Error(`Failed to get permissions: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);
   }
 }
 

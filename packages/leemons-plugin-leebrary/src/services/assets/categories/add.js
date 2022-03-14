@@ -6,11 +6,11 @@ const { exists: categoryExists } = require('../../categories/exists');
 async function add(assetId, categoryId, { transacting } = {}) {
   try {
     if (!(await assetExists(assetId, { transacting }))) {
-      throw new Error(`Asset with id ${assetId} does not exist`);
+      throw new global.utils.HttpError(422, `Asset with id ${assetId} does not exist`);
     }
 
     if (!(await categoryExists(categoryId, { transacting }))) {
-      throw new Error(`Category with id ${categoryId} does not exist`);
+      throw new global.utils.HttpError(422, `Category with id ${categoryId} does not exist`);
     }
 
     if (!(await exists(assetId, categoryId, { transacting }))) {
@@ -21,7 +21,7 @@ async function add(assetId, categoryId, { transacting } = {}) {
     }
     return null;
   } catch (e) {
-    throw new Error(`Failed to add category: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to add category: ${e.message}`);
   }
 }
 

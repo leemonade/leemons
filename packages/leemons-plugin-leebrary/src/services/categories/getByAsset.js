@@ -6,7 +6,7 @@ async function getByAsset(assetId, { transacting } = {}) {
     const categories = await tables.assetCategories.find({ asset: assetId }, { transacting });
     return getByIds(categories.map(({ category }) => category));
   } catch (e) {
-    throw new Error(`Failed to get categories: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to get categories: ${e.message}`);
   }
 }
 

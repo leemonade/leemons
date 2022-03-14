@@ -7,7 +7,7 @@ const validateRole = require('./helpers/validateRole');
 async function set(assetId, userAgent, role, { userSession, transacting } = {}) {
   try {
     if (!validateRole(role)) {
-      throw new Error('Invalid role');
+      throw new global.utils.HttpError(412, 'Invalid role');
     }
 
     // EN: Get the assigner and assignee roles
@@ -23,7 +23,7 @@ async function set(assetId, userAgent, role, { userSession, transacting } = {}) 
     // ES: Comprobar si el asignador puede asignar el rol al asignado
     if (!canAssignRole(assignerRole, assigneeRole, role)) {
       if (!(role === 'owner' && !(await assetHasOwner(assetId, { transacting })))) {
-        throw new Error("You don't have permission to assign this role");
+        throw new global.utils.HttpError(401, "You don't have permission to assign this role");
       }
     }
 
@@ -55,7 +55,7 @@ async function set(assetId, userAgent, role, { userSession, transacting } = {}) 
       { transacting }
     );
   } catch (e) {
-    throw new Error(`Failed to set permissions: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to set permissions: ${e.message}`);
   }
 }
 

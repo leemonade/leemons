@@ -16,9 +16,9 @@ async function list(assetId, { userSession, transacting } = {}) {
       return entries.map(({ role, userAgent }) => ({ role, userAgent }));
     }
 
-    throw new Error("You don't have permission to list users");
+    throw new global.utils.HttpError(401, "You don't have permission to list users");
   } catch (e) {
-    throw new Error(`Failed to get permissions: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);
   }
 }
 

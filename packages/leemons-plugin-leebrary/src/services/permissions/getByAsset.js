@@ -5,6 +5,9 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
   const userAgent =
     userSession.userAgents && userSession.userAgents.length ? userSession.userAgents[0].id : null;
   try {
+    // const { services: userService } = leemons.getPlugin('users');
+    // const permissions = await userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType();
+
     const [permission] = await tables.permissions.find(
       {
         asset: assetId,
@@ -28,7 +31,7 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
 
     return { role: permission?.role, permissions: getRolePermissions(permission?.role) };
   } catch (e) {
-    throw new Error(`Failed to get permissions: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);
   }
 }
 

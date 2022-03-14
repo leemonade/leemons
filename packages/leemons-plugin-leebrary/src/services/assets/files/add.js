@@ -12,20 +12,20 @@ async function add(fileId, assetId, { userSession, transacting } = {}) {
     // EN: Check if the user has permissions to update the asset
     // ES: Comprobar si el usuario tiene permisos para actualizar el activo
     if (!permissions.edit) {
-      throw new Error("You don't have permissions to update this asset");
+      throw new global.utils.HttpError(401, "You don't have permissions to update this asset");
     }
 
     if (!(await fileExists(fileId, { transacting }))) {
-      throw new Error('File not found');
+      throw new global.utils.HttpError(422, 'File not found');
     }
 
     if (!(await assetExists(assetId, { transacting }))) {
-      throw new Error('Asset not found');
+      throw new global.utils.HttpError(422, 'Asset not found');
     }
 
     return tables.assetsFiles.set({ asset: assetId, file: fileId }, { transacting });
   } catch (e) {
-    throw new Error(`Failed to add file: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to add file: ${e.message}`);
   }
 }
 

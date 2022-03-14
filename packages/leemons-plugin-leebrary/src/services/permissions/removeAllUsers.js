@@ -8,7 +8,7 @@ async function removeAllUsers(assetId, { userSession, transacting } = {}) {
     const { permissions } = await getByAsset(assetId, { userSession, transacting });
 
     if (!permissions.delete) {
-      throw new Error("You don't have permission to remove this role");
+      throw new global.utils.HttpError(401, "You don't have permission to remove this role");
     }
 
     // EN: Remove all the users
@@ -20,7 +20,7 @@ async function removeAllUsers(assetId, { userSession, transacting } = {}) {
       { transacting }
     );
   } catch (e) {
-    throw new Error(`Failed to delete role: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to delete role: ${e.message}`);
   }
 }
 

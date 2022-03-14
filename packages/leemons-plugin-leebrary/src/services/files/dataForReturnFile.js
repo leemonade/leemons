@@ -5,7 +5,7 @@ async function dataForReturnFile(id, { transacting } = {}) {
   const file = await getById(id, { transacting });
 
   if (!file) {
-    throw new Error(`File with id ${id} does not exists`);
+    throw new global.utils.HttpError(422, `File with id ${id} does not exists`);
   }
 
   // Default provider
@@ -27,7 +27,7 @@ async function dataForReturnFile(id, { transacting } = {}) {
     };
   }
 
-  throw new Error(`Provider "${file.provider}" not found`);
+  throw new global.utils.HttpError(400, `Provider "${file.provider}" not found`);
 }
 
 module.exports = { dataForReturnFile };

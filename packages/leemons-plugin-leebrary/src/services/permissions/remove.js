@@ -17,7 +17,7 @@ async function remove(assetId, assigneeAgent, { userSession, transacting } = {})
     // EN: Check if assigner can remove role from assignee
     // ES: Comprobar si el asignador puede eliminar el rol del asignado
     if (!canUnassignRole(assignerRole, assigneeRole, null)) {
-      throw new Error("You don't have permission to remove this role");
+      throw new global.utils.HttpError(401, "You don't have permission to remove this role");
     }
 
     // EN: Remove role
@@ -30,7 +30,7 @@ async function remove(assetId, assigneeAgent, { userSession, transacting } = {})
       { transacting }
     );
   } catch (e) {
-    throw new Error(`Failed to delete role: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to delete role: ${e.message}`);
   }
 }
 module.exports = { remove };

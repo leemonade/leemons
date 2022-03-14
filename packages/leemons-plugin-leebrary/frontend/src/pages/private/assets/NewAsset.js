@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState, useContext } from 'react';
 import { isEmpty } from 'lodash';
 import { useHistory } from 'react-router-dom';
-import { Box, Stack, ContextContainer, ActionButton } from '@bubbles-ui/components';
+import { Box, Stack, ContextContainer, ActionButton, Grid, Col } from '@bubbles-ui/components';
 import { ChevronLeftIcon } from '@bubbles-ui/icons/outline';
 import { LibraryForm } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -48,31 +48,35 @@ const NewAssetPage = () => {
   }, [translations]);
 
   return (
-    <Box>
-      <Box sx={(theme) => ({ padding: `${theme.spacing[3]}px ${theme.spacing[9]}px` })}>
-        <Stack fullWidth justifyContent="start">
-          <ActionButton
-            icon={<ChevronLeftIcon />}
-            label={formLabels?.header?.back || 'Back'}
-            tooltip={formLabels?.header?.back || 'Back'}
-            onClick={handleOnBack}
-          />
-        </Stack>
-      </Box>
-      <Box padding={9}>
-        <LibraryForm {...formLabels} asset={{ file }} onSubmit={handleOnSubmit}>
-          <ContextContainer subtitle="Tags" spacing={1}>
-            <TagsAutocomplete
-              pluginName="leebrary"
-              labels={{ addButton: formLabels?.labels?.addTag }}
-              placeholder={formLabels?.placeholders?.tagsInput}
-              value={tags}
-              onChange={handleOnTagsChange}
-            />
-          </ContextContainer>
-        </LibraryForm>
-      </Box>
-    </Box>
+    <Grid columns={10}>
+      <Col span={5}>
+        <Box>
+          <Box sx={(theme) => ({ padding: `${theme.spacing[3]}px ${theme.spacing[9]}px` })}>
+            <Stack fullWidth justifyContent="start">
+              <ActionButton
+                icon={<ChevronLeftIcon />}
+                label={formLabels?.header?.back || 'Back'}
+                tooltip={formLabels?.header?.back || 'Back'}
+                onClick={handleOnBack}
+              />
+            </Stack>
+          </Box>
+          <Box padding={9}>
+            <LibraryForm {...formLabels} asset={{ file }} onSubmit={handleOnSubmit}>
+              <ContextContainer subtitle="Tags" spacing={1}>
+                <TagsAutocomplete
+                  pluginName="leebrary"
+                  labels={{ addButton: formLabels?.labels?.addTag }}
+                  placeholder={formLabels?.placeholders?.tagsInput}
+                  value={tags}
+                  onChange={handleOnTagsChange}
+                />
+              </ContextContainer>
+            </LibraryForm>
+          </Box>
+        </Box>
+      </Col>
+    </Grid>
   );
 };
 
