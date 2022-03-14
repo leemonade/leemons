@@ -25,8 +25,9 @@ Task Creation
 Library
   [X] Library new cards (D1)
   [] Library view as table  (D1)
-  [] Library filters (Easy filters, complicated pagination) (D2)
-  [] Library search (D2)
+  [X] Library filters (Easy filters, complicated pagination) (D2)
+  [X] Library search (D2)
+  [] Library pagination
   [] New sticker en task/library (D3)
 
 Assignment
@@ -51,12 +52,13 @@ Students
 
 
 Library Filter by:
-  Name
-  Program
-  Course
-  Subject
-  Level
-  Methodology
+ X Name
+ X Draft/Published
+ X Program
+ X Course
+ X Subject
+ X Level
+ X Methodology
 
 Ongoing Filter by:
   Name

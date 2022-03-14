@@ -57,22 +57,6 @@ export default function LibraryPage() {
         <ContextContainer title="published">
           <ListTasks />
         </ContextContainer>
-        {/* <Filters />
-        <ContextContainer title="Draft">
-          {draftError ? (
-            <Paragraph>Error {draftError.message}</Paragraph>
-          ) : (
-            <CardList data={draft?.items} loading={loadingDraft} refresh={refreshDraft} />
-          )}
-        </ContextContainer>
-
-        <ContextContainer title="Published">
-          {dataError ? (
-            <Paragraph>Error {dataError.message}</Paragraph>
-          ) : (
-            <CardList data={data?.items} loading={loadingData} refresh={refreshData} />
-          )}
-        </ContextContainer> */}
       </PageContainer>
     </ContextContainer>
   );
