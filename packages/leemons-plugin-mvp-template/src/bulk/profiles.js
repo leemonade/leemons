@@ -13,7 +13,7 @@ async function importProfiles() {
     profiles: {
       worksheet: 'profiles',
       type: 'list',
-      columns: getColumns(50),
+      columns: getColumns(100),
     },
   };
 

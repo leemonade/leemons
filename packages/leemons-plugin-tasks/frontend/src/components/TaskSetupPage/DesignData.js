@@ -47,7 +47,7 @@ function DesignData({
     <form onSubmit={handleSubmit(handleOnNext)}>
       <ContextContainer {...props} divided>
         <ContextContainer title={labels.title}>
-          <Box>Media-Library picker</Box>
+          <Box>leebrary picker</Box>
           <Box>
             <Controller
               control={control}

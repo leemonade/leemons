@@ -4,7 +4,7 @@ const initProfiles = require('./src/profiles');
 const initFamilies = require('./src/families');
 const initAcademicPortfolio = require('./src/academicPortfolio');
 const addCalendarAndEventAsClassroom = require('./src/calendar');
-const addAWSS3AsProvider = require('./src/mediaLibrary');
+const addAWSS3AsProvider = require('./src/leebrary');
 const addAWSEmailAsProvider = require('./src/emails');
 
 async function events(isInstalled) {
@@ -47,6 +47,7 @@ async function events(isInstalled) {
         'plugins.calendar:init-permissions',
         'plugins.calendar:init-event-types',
         'plugins.academic-portfolio:init-permissions',
+        'plugins.leebrary:init-permissions',
       ],
       async () => {
         try {
@@ -85,8 +86,8 @@ async function events(isInstalled) {
 
     leemons.events.once(
       [
-        'plugins.media-library:pluginDidLoadServices',
-        'providers.media-library-aws-s3:providerDidLoadServices',
+        'plugins.leebrary:pluginDidLoadServices',
+        'providers.leebrary-aws-s3:providerDidLoadServices',
       ],
       async () => {
         await addAWSS3AsProvider();

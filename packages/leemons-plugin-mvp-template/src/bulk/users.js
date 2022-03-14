@@ -1,4 +1,4 @@
-const { range, keys, findIndex, trim, isEmpty } = require('lodash');
+const { range, keys, findIndex, trim, isEmpty, toLower } = require('lodash');
 const path = require('path');
 const getColumns = require('./helpers/getColumns');
 
@@ -67,6 +67,13 @@ async function importUsers(centers, profiles) {
             profileKey: profile,
           };
         });
+
+      item.genre = toLower(item.genre);
+
+      if (!isEmpty(item.birthdate) && item.birthdate.indexOf('/') > 0) {
+        const [day, month, year] = item.birthdate.split('/');
+        item.birthdate = new Date(year, month - 1, day);
+      }
 
       return item;
     })
