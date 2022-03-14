@@ -4,6 +4,7 @@ const remove = require('./remove');
 const update = require('./update');
 const removeAll = require('./removeAll');
 const addCustomForUser = require('./addCustomForUser');
+const addItemsFromPlugin = require('./addItemsFromPlugin');
 const removeCustomForUser = require('./removeCustomForUser');
 const updateCustomForUser = require('./updateCustomForUser');
 const reOrderCustomUserItems = require('./reOrderCustomUserItems');
@@ -16,6 +17,7 @@ module.exports = {
   update,
   removeAll,
   addCustomForUser,
+  addItemsFromPlugin,
   removeCustomForUser,
   updateCustomForUser,
   reOrderCustomUserItems,

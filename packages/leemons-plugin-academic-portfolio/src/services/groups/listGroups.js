@@ -1,11 +1,11 @@
 const { table } = require('../tables');
 
-async function listGroups(page, size, program, { transacting } = {}) {
+async function listGroups(page, size, program, { query, transacting } = {}) {
   return global.utils.paginate(
     table.groups,
     page,
     size,
-    { program, type: 'group' },
+    { ...query, program, type: 'group' },
     {
       transacting,
     }

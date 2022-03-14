@@ -3,7 +3,7 @@ const { attachments: table } = require('../table');
 const taskExists = require('../task/exists');
 const parseId = require('../task/helpers/parseId');
 
-// const attachmentExists = leemons.getPlugin('media-library').services.assets.exists;
+const attachmentExists = leemons.getPlugin('leebrary').services.assets.exists;
 
 module.exports = async function addAttachment(task, attachments, { transacting } = {}) {
   try {

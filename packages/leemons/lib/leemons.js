@@ -55,6 +55,10 @@ class Leemons {
     const arrayEvents = {};
     // eslint-disable-next-line new-cap
     this.events = new events();
+
+    // TODO: Find best value for listeners in order to memory comsuption
+    this.events.setMaxListeners(50);
+
     const { emit, once } = this.events;
     const emitArrayEventsIfNeed = async (_event, { event, target }, ...args) => {
       const promises = [];
@@ -575,7 +579,7 @@ class Leemons {
 
     this.server.listen(process.env.PORT, () => {
       this.events.emit('appDidStart', 'leemons');
-      this.log.debug(`Listening on http://localhost:${process.env.PORT}`);
+      this.log.info(`Listening on http://localhost:${process.env.PORT}`);
       if (process.send) {
         process.send('running');
       }

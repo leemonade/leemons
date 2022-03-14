@@ -19,6 +19,7 @@
     "nodemailer": "^6.6.1",
     "object-hash": "^2.1.1",
     "slugify": "^1.5.3",
-    "squirrelly": "^8.0.8"
+    "squirrelly": "^8.0.8",
+    "xlsx-import": "^2.4.4"
   }
 }

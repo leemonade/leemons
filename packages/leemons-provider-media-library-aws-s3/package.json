@@ -1,7 +1,0 @@
-{
-  "name": "leemons-provider-media-library-aws-s3",
-  "version": "1.0.0",
-  "main": "lib/index.js",
-  "license": "MIT",
-  "dependencies": {}
-}
