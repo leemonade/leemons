@@ -51,7 +51,12 @@ export default function LibraryPage() {
       <AdminPageHeader values={headerLabels} buttons={headerButtons} onNew={handleOnNewTask} />
 
       <PageContainer>
-        <ListTasks draft />
+        <ContextContainer title="draft">
+          <ListTasks draft />
+        </ContextContainer>
+        <ContextContainer title="published">
+          <ListTasks />
+        </ContextContainer>
         {/* <Filters />
         <ContextContainer title="Draft">
           {draftError ? (

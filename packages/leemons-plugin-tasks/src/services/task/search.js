@@ -106,10 +106,14 @@ async function filterByAttributes(
   };
 }
 
-async function filterBySubject(tasks, { subject, level } = {}, { transacting } = {}) {
+async function filterBySubject(tasks, { subject, level, course } = {}, { transacting } = {}) {
   const query = {
     task_$in: tasks.items.map((task) => task.id),
   };
+
+  if (course) {
+    query.course = course;
+  }
 
   if (subject) {
     query.subject = subject;

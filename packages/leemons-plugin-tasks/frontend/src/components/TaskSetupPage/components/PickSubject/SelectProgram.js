@@ -5,21 +5,30 @@ import { ContextContainer, Box } from '@bubbles-ui/components';
 import { SelectProgram as APSelectProgram } from '@academic-portfolio/components';
 import { SelectCenter } from '@users/components';
 
-export default function SelectProgram({ errorMessages, labels, placeholders }) {
-  const { control, watch } = useFormContext();
+export default function SelectProgram({ errorMessages, labels, placeholders, required }) {
+  const {
+    control,
+    watch,
+    formState: { errors },
+  } = useFormContext();
 
   const centerId = watch('center');
 
   return (
     <ContextContainer direction="row">
       {/* Center Selector - MUST COME FROM A PREVIOUS SCREEN */}
-      <Box skipFlex>
+      <Box>
         <Controller
           control={control}
           name="center"
-          rules={{ required: errorMessages?.center?.required }}
+          rules={{ required: required && errorMessages?.center?.required }}
           render={({ field }) => (
-            <SelectCenter {...field} label={labels?.center} placeholder={placeholders?.center} />
+            <SelectCenter
+              {...field}
+              label={labels?.center}
+              placeholder={placeholders?.center}
+              error={errors?.center}
+            />
           )}
         />
       </Box>
@@ -28,7 +37,7 @@ export default function SelectProgram({ errorMessages, labels, placeholders }) {
         <Controller
           control={control}
           name="program"
-          rules={{ required: errorMessages?.program?.required }}
+          rules={{ required: required && errorMessages?.program?.required }}
           render={({ field }) => (
             <APSelectProgram
               {...field}
@@ -36,6 +45,7 @@ export default function SelectProgram({ errorMessages, labels, placeholders }) {
               center={centerId}
               label={labels?.program}
               placeholder={placeholders?.program}
+              error={errors?.program}
             />
           )}
         />
@@ -49,4 +59,5 @@ SelectProgram.propTypes = {
   labels: PropTypes.object,
   placeholders: PropTypes.object,
   errorMessages: PropTypes.object,
+  required: PropTypes.bool,
 };

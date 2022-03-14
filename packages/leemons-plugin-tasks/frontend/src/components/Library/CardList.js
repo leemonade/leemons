@@ -9,7 +9,7 @@ export default function CardList({ data, loading, refresh }) {
   }
   return (
     <Stack spacing={3} wrap="wrap">
-      {data.map((item) => (
+      {data?.map((item) => (
         <Card key={item.id} {...item} refresh={refresh} />
       ))}
     </Stack>
