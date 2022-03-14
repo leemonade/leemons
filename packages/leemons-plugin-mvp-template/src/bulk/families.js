@@ -1,5 +1,5 @@
 const path = require('path');
-const { keys, trim, isEmpty } = require('lodash');
+const { keys, trim, isEmpty, toLower } = require('lodash');
 const itemsImport = require('./helpers/simpleListImport');
 
 async function importFamilies(users) {
@@ -8,6 +8,10 @@ async function importFamilies(users) {
 
   keys(items).forEach((key) => {
     const family = items[key];
+    family.maritalStatus = `plugins.families.detail_page.maritalStatus.${toLower(
+      family.maritalStatus
+    ).replace(/ /g, '_')}`;
+
     family.relations = family.relations
       .split(',')
       .map((val) => trim(val))
