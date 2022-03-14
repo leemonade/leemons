@@ -1,5 +1,6 @@
-const { getSubjectCredits } = require('../src/services/subjects');
+const { getSubjectCredits, addSubject } = require('../src/services/subjects');
 
 module.exports = {
   getSubjectCredits,
+  addSubject,
 };

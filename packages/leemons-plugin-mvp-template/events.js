@@ -1,8 +1,8 @@
-const _ = require('lodash');
 const initUsers = require('./src/users');
 const initCenters = require('./src/centers');
 const initProfiles = require('./src/profiles');
-const { setFamilyProfiles } = require('./src/familyProfiles');
+const initFamilies = require('./src/families');
+const initAcademicPortfolio = require('./src/academicPortfolio');
 const addCalendarAndEventAsClassroom = require('./src/calendar');
 const addAWSS3AsProvider = require('./src/mediaLibrary');
 const addAWSEmailAsProvider = require('./src/emails');
@@ -12,9 +12,13 @@ async function events(isInstalled) {
     profiles: null,
     centers: null,
     users: null,
+    programs: null,
   };
 
   if (!isInstalled) {
+    // ·······························································
+    // LOCALES
+
     const configLocales = async () => {
       try {
         await leemons.getPlugin('users').services.platform.addLocale('es', 'Español');
@@ -33,12 +37,51 @@ async function events(isInstalled) {
       }
     );
 
+    // ·······························································
+    // CENTERS, PROFILES & USERS
+
     leemons.events.once(
-      ['plugins.families:pluginDidLoadServices', 'plugins.mvp-template:init-profiles'],
+      [
+        'plugins.users:init-permissions',
+        'plugins.dataset:init-permissions',
+        'plugins.calendar:init-permissions',
+        'plugins.calendar:init-event-types',
+        'plugins.academic-portfolio:init-permissions',
+      ],
       async () => {
-        await setFamilyProfiles(config.profiles);
+        try {
+          config.centers = await initCenters();
+          leemons.events.emit('init-centers', config.centers);
+
+          config.profiles = await initProfiles();
+          leemons.events.emit('init-profiles', config.profiles);
+
+          config.users = await initUsers(config.centers, config.profiles);
+          leemons.events.emit('init-users', config.users);
+
+          await addCalendarAndEventAsClassroom(config.users);
+        } catch (e) {
+          console.error(e);
+        }
       }
     );
+
+    // ·······························································
+    // FAMILIES
+
+    leemons.events.once(
+      [
+        'plugins.families:pluginDidLoadServices',
+        'plugins.mvp-template:init-profiles',
+        'plugins.mvp-template:init-users',
+      ],
+      async () => {
+        await initFamilies(config.profiles, config.users);
+      }
+    );
+
+    // ·······························································
+    // MEDIA LIBRARY
 
     leemons.events.once(
       [
@@ -50,6 +93,9 @@ async function events(isInstalled) {
       }
     );
 
+    // ·······························································
+    // EMAILS
+
     leemons.events.once(
       [
         'plugins.emails:pluginDidLoadServices',
@@ -60,21 +106,20 @@ async function events(isInstalled) {
       }
     );
 
+    // ·······························································
+    // ACADEMIC PORTFOLIO
+
     leemons.events.once(
       [
-        'plugins.users:init-permissions',
-        'plugins.calendar:init-permissions',
-        'plugins.calendar:init-event-types',
+        'plugins.academic-portfolio:pluginDidLoadServices',
+        'plugins.mvp-template:init-profiles',
+        'plugins.mvp-template:init-centers',
+        'plugins.mvp-template:init-users',
       ],
       async () => {
         try {
-          config.centers = await initCenters();
-          leemons.events.emit('init-centers', config.centers);
-          config.profiles = await initProfiles();
-          leemons.events.emit('init-profiles', config.profiles);
-          config.users = await initUsers(config.centers, config.profiles);
-          leemons.events.emit('init-users', config.profiles);
-          await addCalendarAndEventAsClassroom(config.users);
+          config.programs = await initAcademicPortfolio(config);
+          leemons.events.emit('init-academic-portfolio', config.programs);
         } catch (e) {
           console.error(e);
         }

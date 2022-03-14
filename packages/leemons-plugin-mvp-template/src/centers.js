@@ -1,19 +1,29 @@
+/* eslint-disable no-await-in-loop */
+const { keys } = require('lodash');
+const importCenters = require('./bulk/centers');
+
 async function initCenters() {
+  const { services } = leemons.getPlugin('users');
+
   try {
-    const leemon = await leemons.getPlugin('users').services.centers.add({
-      name: 'Villa limones',
-      description: 'Los mejores limones del lugar',
-      locale: 'es',
-    });
-    const orange = await leemons.getPlugin('users').services.centers.add({
-      name: 'Villa naranja',
-      description: 'Todas sus naranjas son una caca',
-      locale: 'en',
-    });
-    return { leemon, orange };
+    const centers = await importCenters();
+    const centersKeys = keys(centers);
+
+    for (let i = 0, len = centersKeys.length; i < len; i++) {
+      const centerKey = centersKeys[i];
+      const centerData = await services.centers.add(centers[centerKey]);
+      centers[centerKey] = centerData;
+    }
+
+    // console.log('------ CENTERS ------');
+    // console.dir(centers, { depth: null });
+
+    return centers;
   } catch (err) {
     console.error(err);
   }
+
+  return null;
 }
 
 module.exports = initCenters;

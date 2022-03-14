@@ -4,6 +4,7 @@ const { updateGroup } = require('./updateGroup');
 const { duplicateGroup } = require('./duplicateGroup');
 const { addNextGroupIndex } = require('./addNextGroupIndex');
 const { getNextGroupIndex } = require('./getNextGroupIndex');
+const { addGroupIfNotExists } = require('./addGroupIfNotExists');
 const { removeGroupFromClassesUnderNodeTree } = require('./removeGroupFromClassesUnderNodeTree');
 const {
   duplicateGroupWithClassesUnderNodeTreeByIds,
@@ -16,6 +17,7 @@ module.exports = {
   duplicateGroup,
   addNextGroupIndex,
   getNextGroupIndex,
+  addGroupIfNotExists,
   removeGroupFromClassesUnderNodeTree,
   duplicateGroupWithClassesUnderNodeTreeByIds,
 };

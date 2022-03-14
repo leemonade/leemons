@@ -194,6 +194,8 @@ function ProfileDetail() {
     [tCommonHeader]
   );
 
+  useEffect(() => console.log('headerButtons:', headerButtons), [headerButtons]);
+
   const showDefaultLocaleWarning = useMemo(() => !profile?.name, [profile]);
 
   return (

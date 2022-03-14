@@ -1,62 +1,48 @@
-const _ = require('lodash');
+/* eslint-disable no-await-in-loop */
+const { keys, map, uniq } = require('lodash');
+const importUsers = require('./bulk/users');
 
 async function initUsers(centers, profiles) {
-  const roles = await Promise.all([
-    leemons
-      .getPlugin('users')
-      .services.profiles.getRoleForRelationshipProfileCenter(
-        profiles.student.id,
-        centers.leemon.id
-      ),
-    leemons
-      .getPlugin('users')
-      .services.profiles.getRoleForRelationshipProfileCenter(
-        profiles.student.id,
-        centers.orange.id
-      ),
-  ]);
-  const roles2 = await Promise.all([
-    leemons
-      .getPlugin('users')
-      .services.profiles.getRoleForRelationshipProfileCenter(
-        profiles.guardian.id,
-        centers.leemon.id
-      ),
-  ]);
+  const { services } = leemons.getPlugin('users');
 
-  const user1 = await leemons.getPlugin('users').services.users.add(
-    {
-      name: 'Jaime',
-      email: 'jaime@leemons.io',
-      password: 'testing',
-      locale: 'es',
-      gender: 'male',
-      birthdate: new Date(),
-      active: true,
-    },
-    _.map(roles, 'id').concat(_.map(roles2, 'id'))
-  );
-  const user2 = await leemons.getPlugin('users').services.users.add(
-    {
-      name: 'Jaime Guardian',
-      email: 'jaime2@leemons.io',
-      password: 'testing',
-      locale: 'en',
-      gender: 'male',
-      birthdate: new Date(),
-      active: true,
-    },
-    _.map(roles2, 'id')
-  );
+  try {
+    const users = await importUsers(centers, profiles);
+    const itemsKeys = keys(users);
 
-  await leemons
-    .getPlugin('users')
-    .services.users.addUserAgentContacts(
-      _.map(user1.userAgents, 'id'),
-      _.map(user2.userAgents, 'id')
-    );
+    // console.log('------ USERS ------');
 
-  return [user1, user2];
+    for (let i = 0, len = itemsKeys.length; i < len; i++) {
+      const itemKey = itemsKeys[i];
+      const { roles, ...item } = users[itemKey];
+
+      // console.log('user roles:', roles);
+
+      const itemRoles = await Promise.all(
+        roles.map((rol) =>
+          services.profiles.getRoleForRelationshipProfileCenter(rol.profile, rol.center)
+        )
+      );
+
+      // console.log('user roles created:', itemRoles);
+
+      // console.log('Vamos a crear el usuario:');
+      // console.dir({ ...item, active: true }, { depth: null });
+
+      const itemData = await services.users.add({ ...item, active: true }, map(itemRoles, 'id'));
+      const userProfiles = roles.map((rol) => rol.profileKey);
+
+      users[itemKey] = { ...itemData, profiles: uniq(userProfiles) };
+    }
+
+    // console.log('tenemos los usuarios creados:');
+    // console.dir(users, { depth: null });
+
+    return users;
+  } catch (err) {
+    console.error(err);
+  }
+
+  return null;
 }
 
 module.exports = initUsers;
