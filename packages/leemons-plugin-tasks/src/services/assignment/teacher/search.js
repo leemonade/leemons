@@ -2,6 +2,8 @@ const { teacherInstances, instances, tasksVersioning } = require('../../table');
 const { search } = require('../../../helpers/search');
 const parseId = require('../../task/helpers/parseId');
 
+// EN: Get the tasks you have been assigned to (order by assignment date)
+// ES: Obtener las tareas que tienes asignadas (ordenar por fecha de asignación)
 async function getTeacherTasks(tasks, { teacher, offset, size } = {}, { transacting } = {}) {
   const query = {
     id_$null: false,
@@ -37,6 +39,8 @@ async function getTeacherTasks(tasks, { teacher, offset, size } = {}, { transact
   };
 }
 
+// EN: Filter by assignmentDate or deadline and by status
+// ES: Filtrar por fecha de asignación o fecha de vencimiento y por estado
 async function filterByInstanceAttributes(
   results,
   { assignmentDate, deadline, status } = {},
@@ -101,17 +105,19 @@ async function filterByInstanceAttributes(
   };
 }
 
+// EN: Filter by task name
+// ES: Filtrar por nombre de tarea
 async function filterByTaskAttributes(tasks, { name } = {}, { transacting } = {}) {
   if (!tasks.count) {
     return tasks;
   }
 
-  tasks.items = await Promise.all(
+  const tasksItems = await Promise.all(
     tasks.items.map(async (task) => ({ ...task, taskId: (await parseId(task.task)).id }))
   );
 
   const query = {
-    id_$in: tasks.items.map((t) => t.taskId),
+    id_$in: tasksItems.map((t) => t.taskId),
   };
 
   if (name) {
@@ -124,7 +130,7 @@ async function filterByTaskAttributes(tasks, { name } = {}, { transacting } = {}
 
   const result = await tasksVersioning.find(query, { columns: ['id'], transacting });
 
-  const items = tasks.items.filter((task) => {
+  const items = tasksItems.filter((task) => {
     const found = result.find((t) => t.id === task.taskId);
 
     return !!found;
