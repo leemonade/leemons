@@ -1,15 +1,17 @@
 const { add } = require('./add');
-const { detail } = require('./detail');
-const { getMembers } = require('./getMembers');
 const { list } = require('./list');
+const { detail } = require('./detail');
 const { update } = require('./update');
 const { remove } = require('./remove');
+const { getMembers } = require('./getMembers');
+const { listDetailPage } = require('./listDetailPage');
 
 module.exports = {
   add,
-  detail,
-  getMembers,
   list,
+  detail,
   update,
   remove,
+  getMembers,
+  listDetailPage,
 };
