@@ -1,9 +1,9 @@
 const byTags = require('../assets/tags/getAssets');
-const byDescription = require('./byDescription');
-const byName = require('./byName');
-const byCategory = require('../assets/categories/getAssets');
-const assetDetails = require('../assets/details');
-const has = require('../permissions/has');
+const { byDescription } = require('./byDescription');
+const { byName } = require('./byName');
+const { getByCategory: byCategory } = require('../assets/getByCategory');
+const { getByIds } = require('../assets/getByIds');
+const { has } = require('../permissions/has');
 
 function saveResults(newResults, existingResults) {
   if (existingResults === null) {
@@ -12,7 +12,7 @@ function saveResults(newResults, existingResults) {
   return newResults;
 }
 
-module.exports = async function search(query, { details = false, userSession, transacting } = {}) {
+async function search(query, { details = false, userSession, transacting } = {}) {
   let assets = null;
   try {
     if (query.name) {
@@ -50,11 +50,13 @@ module.exports = async function search(query, { details = false, userSession, tr
     // EN: If the user wants to see the details of the assets, we need to get the details
     // ES: Si el usuario quiere ver los detalles de los recursos, necesitamos obtener los detalles
     if (details && assets.length) {
-      return await assetDetails(assets, { transacting });
+      return await getByIds(assets, { transacting });
     }
 
     return assets || [];
   } catch (e) {
     throw new Error(`Failed to find asset with query: ${e.message}`);
   }
-};
+}
+
+module.exports = { search };

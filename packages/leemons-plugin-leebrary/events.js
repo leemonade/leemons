@@ -1,13 +1,13 @@
-const { permissions, menuItems, pluginName } = require('./config/constants');
-const addMenuItems = require('./src/services/menu-builder/add');
+const { find, isEmpty } = require('lodash');
+const {
+  permissions,
+  menuItems,
+  pluginName,
+  categories,
+  categoriesMenu,
+} = require('./config/constants');
+const { defaultCategory: defaultCategoryKey } = require('./config/config');
 const init = require('./init');
-
-async function initMenuBuilder() {
-  const [mainItem] = menuItems;
-
-  await addMenuItems(mainItem);
-  leemons.events.emit('init-menu');
-}
 
 async function events(isInstalled) {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
@@ -15,16 +15,42 @@ async function events(isInstalled) {
   });
 
   if (!isInstalled) {
+    // ·······························································
+    // REGISTER PERMISSIONS
+
     leemons.events.once('plugins.users:init-permissions', async () => {
       const { services } = leemons.getPlugin('users');
       await services.permissions.addMany(permissions.permissions);
       leemons.events.emit('init-permissions');
     });
 
+    // ·······························································
+    // REGISTER MENU ITEMS & CATEGORIES
+
     leemons.events.once(
       ['plugins.menu-builder:init-main-menu', `${pluginName}:init-permissions`],
       async () => {
-        await initMenuBuilder();
+        const { services } = leemons.getPlugin('menu-builder');
+        const [mainItem] = menuItems;
+        const { add: addCategory } = leemons.plugin.services.categories;
+        const { setDefaultCategory } = leemons.plugin.services.settings;
+
+        await Promise.all([
+          // Adds item to Main menu
+          services.menuItem.addItemsFromPlugin(mainItem),
+          // Create categories Menu
+          services.menu.add(categoriesMenu.key, categoriesMenu.permissions),
+        ]);
+        leemons.events.emit('init-menu');
+
+        const initialCategories = await Promise.all(
+          categories.map((category) => addCategory(category))
+        );
+        const defaultCategory = find(initialCategories, { key: defaultCategoryKey });
+        if (!isEmpty(defaultCategory)) {
+          await setDefaultCategory(defaultCategory.id);
+        }
+        leemons.events.emit('init-categories');
       }
     );
   } else {

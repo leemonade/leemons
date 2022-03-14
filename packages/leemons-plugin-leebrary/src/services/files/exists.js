@@ -1,7 +1,8 @@
-const { files: table } = require('../tables');
+const { tables } = require('../tables');
 
-module.exports = async function fileExists(file, { transacting } = {}) {
-  const _file = await table.count({ id: file }, { transacting });
+async function exists(fileId, { transacting } = {}) {
+  const count = await tables.files.count({ id: fileId }, { transacting });
+  return count > 0;
+}
 
-  return _file > 0;
-};
+module.exports = { exists };

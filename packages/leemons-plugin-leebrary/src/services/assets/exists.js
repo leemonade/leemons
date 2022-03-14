@@ -1,7 +1,8 @@
-const { assets: table } = require('../tables');
+const { tables } = require('../tables');
 
-module.exports = async function assetExists(asset, { transacting } = {}) {
-  const _asset = await table.count({ id: asset }, { transacting });
+async function exists(assetId, { transacting } = {}) {
+  const count = await tables.assets.count({ id: assetId }, { transacting });
+  return count > 0;
+}
 
-  return _asset > 0;
-};
+module.exports = { exists };

@@ -1,4 +1,4 @@
-const { assetTags } = require('../../tables');
+const { tables } = require('../../tables');
 
 module.exports = async function remove(asset, tags, { transacting } = {}) {
   const _tags = Array.isArray(tags) ? tags : [tags];
@@ -11,7 +11,7 @@ module.exports = async function remove(asset, tags, { transacting } = {}) {
     if (tags?.length) {
       query.tag_$in = _tags;
     }
-    const deleted = await assetTags.deleteMany(query, { transacting });
+    const deleted = await tables.assetTags.deleteMany(query, { transacting });
     return {
       deleted: deleted.count,
       soft: deleted.soft,

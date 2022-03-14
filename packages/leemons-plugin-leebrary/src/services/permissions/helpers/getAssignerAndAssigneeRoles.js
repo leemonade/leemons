@@ -1,21 +1,21 @@
-const get = require('../get');
+const { getByAsset } = require('../getByAsset');
 
 module.exports = async function getAssignerAndAssigneeRoles(
-  asset,
+  assetId,
   assignerSession,
   assigneeId,
   { transacting } = {}
 ) {
   // EN: Get assigner role
   // ES: Obtener rol del asignador
-  const { role: assignerRole } = await get(asset, {
+  const { role: assignerRole } = await getByAsset(assetId, {
     userSession: assignerSession,
     transacting,
   });
 
   // EN: Get assignee role
   // ES: Obtener rol del asignado
-  const { role: assigneeRole } = await get(asset, {
+  const { role: assigneeRole } = await getByAsset(assetId, {
     userSession: {
       userAgents: [{ id: assigneeId }],
     },

@@ -39,7 +39,7 @@ const menuItems = [
       key: 'library',
       iconSvg: '/public/leebrary/menu-icon.svg',
       activeIconSvg: '/public/leebrary/menu-icon.svg',
-      url: '/private/leebrary/home',
+      url: '/private/leebrary/',
       label: {
         en: 'Library',
         es: 'Library',
@@ -51,6 +51,59 @@ const menuItems = [
         actionNames: ['view', 'update', 'create', 'delete', 'admin'],
       },
     ],
+  },
+];
+
+const categoriesMenu = {
+  key: `${permissionsPrefix}.categories`,
+  permissions: [
+    {
+      permissionName: permissionNames.library,
+      actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+    },
+  ],
+};
+
+const categories = [
+  {
+    key: 'media-files',
+    creatable: true,
+    menu: {
+      item: {
+        iconSvg: '/public/leebrary/media-files.svg',
+        activeIconSvg: '/public/leebrary/media-files.svg',
+        label: {
+          en: 'Media files',
+          es: 'Archivos multimedia',
+        },
+      },
+      permissions: [
+        {
+          permissionName: permissionNames.library,
+          actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+        },
+      ],
+    },
+  },
+  {
+    key: 'bookmarks',
+    creatable: true,
+    menu: {
+      item: {
+        iconSvg: '/public/leebrary/bookmarks.svg',
+        activeIconSvg: '/public/leebrary/bookmarks.svg',
+        label: {
+          en: 'Bookmarks',
+          es: 'Marcadores',
+        },
+      },
+      permissions: [
+        {
+          permissionName: permissionNames.library,
+          actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+        },
+      ],
+    },
   },
 ];
 
@@ -121,4 +174,6 @@ module.exports = {
     bundles: permissionsBundles,
   },
   menuItems,
+  categories,
+  categoriesMenu,
 };

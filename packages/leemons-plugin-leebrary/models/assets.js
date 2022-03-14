@@ -1,5 +1,6 @@
 module.exports = {
   modelName: 'assets',
+  collectionName: 'assets',
   options: {
     useTimestamps: true,
   },

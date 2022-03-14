@@ -1,12 +1,12 @@
-const { permissions: table } = require('../../tables');
+const { tables } = require('../../tables');
 
-module.exports = async function assetHasOwner(asset, { transacting } = {}) {
+module.exports = async function assetHasOwner(assetId, { transacting } = {}) {
   try {
     // EN: Get users with owner role
     // ES: Obtener usuarios con rol de propietario
-    const owners = await table.count(
+    const owners = await tables.permissions.count(
       {
-        asset,
+        asset: assetId,
         role: 'owner',
       },
       { transacting }

@@ -1,14 +1,14 @@
-const { permissions: table } = require('../tables');
+const { tables } = require('../tables');
 const canUnassignRole = require('./helpers/canUnassignRole');
 const getAssignerAndAssigneeRoles = require('./helpers/getAssignerAndAssigneeRoles');
 // const isAssetOwner = require('./helpers/isAssetOwner');
 
-module.exports = async function remove(asset, assigneeAgent, { userSession, transacting } = {}) {
+async function remove(assetId, assigneeAgent, { userSession, transacting } = {}) {
   try {
     // EN: Get assigner and assignee roles
     // ES: Obtener los roles del asignador y del asignado
     const { assignerRole, assigneeRole } = await getAssignerAndAssigneeRoles(
-      asset,
+      assetId,
       userSession,
       assigneeAgent,
       { transacting }
@@ -22,9 +22,9 @@ module.exports = async function remove(asset, assigneeAgent, { userSession, tran
 
     // EN: Remove role
     // ES: Eliminar rol
-    return await table.deleteMany(
+    return await tables.permissions.deleteMany(
       {
-        asset,
+        asset: assetId,
         userAgent: assigneeAgent,
       },
       { transacting }
@@ -32,4 +32,5 @@ module.exports = async function remove(asset, assigneeAgent, { userSession, tran
   } catch (e) {
     throw new Error(`Failed to delete role: ${e.message}`);
   }
-};
+}
+module.exports = { remove };

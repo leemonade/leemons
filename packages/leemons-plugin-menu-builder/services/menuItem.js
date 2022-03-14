@@ -5,6 +5,7 @@ const {
   removeAll,
   update,
   addCustomForUser,
+  addItemsFromPlugin,
   addCustomForUserWithProfile,
 } = require('../src/services/menu-item');
 
@@ -15,5 +16,6 @@ module.exports = {
   exist,
   update,
   addCustomForUser,
+  addItemsFromPlugin,
   addCustomForUserWithProfile,
 };

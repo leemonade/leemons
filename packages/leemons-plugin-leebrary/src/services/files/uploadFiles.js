@@ -1,4 +1,4 @@
-// const { table } = require('../tables');
+// const { tables } = require('../tables');
 // const { uploadFile } = require('./uploadFile');
 
 async function uploadFiles(files, { userSession, transacting: _transacting } = {}) {
@@ -10,7 +10,7 @@ async function uploadFiles(files, { userSession, transacting: _transacting } = {
   //     }
   //     return uploadFile(files, { userSession, transacting });
   //   },
-  //   table.files,
+  //   tables.files,
   //   _transacting
   // );
 }

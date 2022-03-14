@@ -1,29 +1,32 @@
-const removeFiles = require('../files/removeFiles');
-const removeAllUsers = require('../permissions/removeAllUsers');
-const removeCategories = require('./categories/remove');
+const { remove: removeFiles } = require('../files/remove');
+const { removeAllUsers } = require('../permissions/removeAllUsers');
+const { remove: removeCategories } = require('./categories/remove');
 const removeTags = require('./tags/remove');
-const { assets: table } = require('../tables');
-const getFiles = require('./files/getFiles');
+const { getByAsset: getFilesByAsset } = require('./files/getByAsset');
+const { tables } = require('../tables');
+const { exists } = require('./exists');
 
-module.exports = async function removeAsset(id, { userSession, transacting: t } = {}) {
+async function remove(id, { userSession, transacting: t } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       try {
         // EN: Check if the asset exists (if not it will throw an error)
         // ES: Comprobar si el activo existe (si no, lanzará un error)
-        await table.findOne({ id }, { transacting });
+        if (!(await exists(id, { transacting }))) {
+          throw new Error(`Asset with ${id} does not exists`);
+        }
 
         // EN: Get the files associated with the asset
         // ES: Obtener los archivos asociados al asset
-        const files = await getFiles(id, { userSession, transacting });
+        const files = await getFilesByAsset(id, { userSession, transacting });
 
         // EN: First delete the file from the database so if it fails we don't have an entry without a file
         // ES: Primero eliminamos el archivo de la base de datos para que si falla no tengamos una entrada sin archivo
-        await table.delete({ id }, { transacting });
+        await tables.assets.delete({ id }, { transacting });
 
         // EN: Delete the asset categories to clean the database
         // ES: Eliminar las categorias del asset para limpiar la base de datos
-        await removeCategories({ id }, null, { transacting });
+        await removeCategories(id, null, { transacting });
 
         // EN: Delete the asset tags to clean the database
         // ES: Eliminar las etiquetas del asset para limpiar la base de datos
@@ -50,7 +53,9 @@ module.exports = async function removeAsset(id, { userSession, transacting: t } 
         throw new Error(`Failed to remove asset: ${e.message}`);
       }
     },
-    table,
+    tables.assets,
     t
   );
-};
+}
+
+module.exports = { remove };

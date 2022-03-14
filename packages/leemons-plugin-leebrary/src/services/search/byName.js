@@ -1,23 +1,27 @@
-const { assets: table } = require('../tables');
-const assetDetails = require('../assets/details');
+const { tables } = require('../tables');
+const { getByIds: getAssetsByIds } = require('../assets/getByIds');
 
-module.exports = async function byName(name, { details = false, assets, transacting } = {}) {
+async function byName(name, { details = false, assets: assetsIds, transacting } = {}) {
   try {
     const query = {
       name_$contains: name,
     };
 
-    if (assets) {
-      query.id_$in = assets;
+    if (assetsIds) {
+      query.id_$in = assetsIds;
     }
 
-    let entries = await table.find(query, { columns: ['id'], transacting });
-    entries = entries.map((entry) => entry.id);
+    let assets = await tables.find(query, { columns: ['id'], transacting });
+    assets = assets.map((entry) => entry.id);
+
     if (details) {
-      return assetDetails(entries, { transacting });
+      return getAssetsByIds(assets, { transacting });
     }
-    return entries;
+
+    return assets;
   } catch (e) {
     throw new Error(`Failed to find asset with name: ${e.message}`);
   }
-};
+}
+
+module.exports = { byName };

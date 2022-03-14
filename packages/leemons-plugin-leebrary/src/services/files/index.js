@@ -1,13 +1,17 @@
-const { uploadFile } = require('./uploadFile');
+const { exists } = require('./exists');
+const { upload } = require('./upload');
+const { remove } = require('./remove');
+const { getById } = require('./getById');
 const { uploadFiles } = require('./uploadFiles');
-const { filesByUser } = require('./filesByUser');
+const { getByUser } = require('./getByUser');
 const { dataForReturnFile } = require('./dataForReturnFile');
-const removeFiles = require('./removeFiles');
 
 module.exports = {
-  removeFiles,
+  exists,
+  upload,
+  remove,
+  getById,
+  getByUser,
   uploadFiles,
-  filesByUser,
-  uploadFile,
   dataForReturnFile,
 };

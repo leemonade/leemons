@@ -1,11 +1,11 @@
-const { permissions: table } = require('../tables');
-const getRole = require('./get');
+const { tables } = require('../tables');
+const { getByAsset } = require('./getByAsset');
 
-module.exports = async function removeAllUsers(asset, { userSession, transacting } = {}) {
+async function removeAllUsers(assetId, { userSession, transacting } = {}) {
   try {
     // EN: Get user role
     // ES: Obtener rol del usuario
-    const { permissions } = await getRole(asset, { userSession, transacting });
+    const { permissions } = await getByAsset(assetId, { userSession, transacting });
 
     if (!permissions.delete) {
       throw new Error("You don't have permission to remove this role");
@@ -13,13 +13,15 @@ module.exports = async function removeAllUsers(asset, { userSession, transacting
 
     // EN: Remove all the users
     // ES: Eliminar todos los usuarios
-    return await table.deleteMany(
+    return await tables.permissions.deleteMany(
       {
-        asset,
+        asset: assetId,
       },
       { transacting }
     );
   } catch (e) {
     throw new Error(`Failed to delete role: ${e.message}`);
   }
-};
+}
+
+module.exports = { removeAllUsers };

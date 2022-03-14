@@ -1,135 +1,72 @@
-const remove = require('../src/services/assets/remove');
-const add = require('../src/services/assets/add');
-const addFiles = require('../src/services/assets/files/addFiles');
-const unlinkFiles = require('../src/services/assets/files/unlinkFiles');
-const getFiles = require('../src/services/assets/files/getFiles');
-const update = require('../src/services/assets/update');
+const { add } = require('../src/services/assets/add');
+const { update } = require('../src/services/assets/update');
+const { remove } = require('../src/services/assets/remove');
+const { getByUser } = require('../src/services/assets/getByUser');
 
-module.exports = {
-  add: async (ctx) => {
-    const { name, description, cover, public } = ctx.request.body;
-    const _files = ctx.request.files;
+async function addAsset(ctx) {
+  const { ...assetData } = ctx.request.body;
+  const filesData = ctx.request.files;
+  const { userSession } = ctx.state;
 
-    if (!_files?.files) {
-      ctx.status = 400;
-      ctx.body = {
-        status: 400,
-        message: 'No file was uploaded',
-      };
-      return;
-    }
-
-    const files = _files.files.length ? _files.files : [_files.files];
-
-    if (files.length > 1) {
-      ctx.status = 400;
-      ctx.body = {
-        status: 400,
-        message: 'Multiple file uploading is not enabled yet',
-      };
-      return;
-    }
-
-    const asset = {
-      name,
-      description,
-      cover,
-      file: files[0],
-      public: public === 'true',
+  if (!filesData?.files) {
+    ctx.status = 400;
+    ctx.body = {
+      status: 400,
+      message: 'No file was uploaded',
     };
+    return;
+  }
 
-    const file = await add(asset, {
-      userSession: ctx.state.userSession,
-    });
+  const files = filesData.files.length ? filesData.files : [filesData.files];
 
-    ctx.status = 200;
-    ctx.body = { status: 200, file };
-  },
-  remove: async (ctx) => {
-    const { id } = ctx.params;
-    const { userSession } = ctx.state;
+  if (files.length > 1) {
+    ctx.status = 400;
+    ctx.body = {
+      status: 400,
+      message: 'Multiple file uploading is not enabled yet',
+    };
+    return;
+  }
 
-    try {
-      const deleted = await remove(id, { userSession });
+  const asset = await add({ ...assetData, file: files[0] }, { userSession });
 
-      ctx.status = 200;
-      ctx.body = {
-        status: 200,
-        deleted,
-      };
-    } catch (e) {
-      ctx.status = 400;
-      ctx.body = {
-        status: 400,
-        message: e.message,
-      };
-    }
-  },
-  update: async (ctx) => {
-    const { id } = ctx.params;
-    const { name, description, cover, public } = ctx.request.body;
-    const { userSession } = ctx.state;
+  ctx.status = 200;
+  ctx.body = { status: 200, asset };
+}
 
-    try {
-      const item = await update(
-        id,
-        { name, description, cover, public: public === 'true' },
-        { userSession }
-      );
-      ctx.status = 200;
-      ctx.body = {
-        status: 200,
-        item,
-      };
-    } catch (e) {
-      ctx.status = 400;
-      ctx.body = {
-        status: 400,
-        message: e.message,
-      };
-    }
-  },
-  addFile: async (ctx) => {
-    const { id, file } = ctx.params;
-    const { userSession } = ctx.state;
+async function removeAsset(ctx) {
+  const { id } = ctx.params;
+  const { userSession } = ctx.state;
 
-    try {
-      await addFiles(id, file, { userSession });
-      ctx.status = 201;
-      ctx.body = {
-        status: 201,
-        added: true,
-      };
-    } catch (e) {
-      ctx.status = 400;
-      ctx.body = {
-        status: 400,
-        message: e.message,
-        added: false,
-      };
-    }
-  },
-  unlinkFile: async (ctx) => {
-    const { id, file } = ctx.params;
-    const { userSession } = ctx.state;
+  const deleted = await remove(id, { userSession });
+  ctx.status = 200;
+  ctx.body = {
+    status: 200,
+    deleted,
+  };
+}
 
-    try {
-      const removed = await unlinkFiles(file, id, { userSession });
-      ctx.status = 200;
-      ctx.body = {
-        status: 200,
-        message: 'File removed',
-        removed,
-      };
-    } catch (e) {
-      ctx.status = 400;
-      ctx.body = {
-        status: 400,
-        message: e.message,
-        removed: false,
-      };
-    }
-  },
+async function updateAsset(ctx) {
+  const { id: assetId } = ctx.params;
+  const { id, ...assetData } = ctx.request.body;
+  const { userSession } = ctx.state;
+
+  const asset = await update(assetId, { ...assetData }, { userSession });
+  ctx.status = 200;
+  ctx.body = {
+    status: 200,
+    asset,
+  };
+}
+
+async function myAssets(ctx) {
+  const { userSession } = ctx.state;
+  const assets = await getByUser(userSession.id);
+  ctx.status = 200;
+  ctx.body = { status: 200, assets };
+}
+
+/*
   getFiles: async (ctx) => {
     const { id } = ctx.params;
     const { userSession } = ctx.state;
@@ -150,4 +87,10 @@ module.exports = {
       };
     }
   },
+*/
+module.exports = {
+  add: addAsset,
+  remove: removeAsset,
+  update: updateAsset,
+  my: myAssets,
 };

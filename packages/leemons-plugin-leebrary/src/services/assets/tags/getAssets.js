@@ -1,6 +1,6 @@
-const groupBy = require('lodash.groupby');
-const { assetTags } = require('../../tables');
-const assetsDetails = require('../details');
+const { groupBy } = require('lodash');
+const { tables } = require('../../tables');
+const { getByIds: getAssetsByIds } = require('../getByIds');
 
 module.exports = async function getAssets(
   tags,
@@ -17,13 +17,13 @@ module.exports = async function getAssets(
       query.asset_$in = limitTo;
     }
 
-    let assets = await assetTags.find(query, { transacting });
+    let assets = await tables.assetTags.find(query, { transacting });
     assets = Object.entries(groupBy(assets, 'asset'))
       .filter(([, t]) => t.length === _tags.length)
       .map(([asset]) => asset);
 
     if (details) {
-      return assetsDetails(assets, { transacting });
+      return getAssetsByIds(assets, { transacting });
     }
 
     return assets;

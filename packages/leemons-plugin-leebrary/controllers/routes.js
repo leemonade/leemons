@@ -1,5 +1,16 @@
 module.exports = [
   /**
+   * Tags
+   */
+  ...leemons.getPlugin('common').services.tags.getRoutes('tags', {
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.leebrary.library': {
+        actions: ['update', 'create', 'delete', 'admin'],
+      },
+    },
+  }),
+  /**
    * Assets
    */
   {
@@ -21,6 +32,13 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/assets/my',
+    method: 'GET',
+    handler: 'assets.my',
+    authenticated: true,
+  },
+  /*
+  {
     path: '/assets/:id/files/:file',
     method: 'POST',
     handler: 'assets.addFile',
@@ -38,9 +56,11 @@ module.exports = [
     handler: 'assets.getFiles',
     authenticated: true,
   },
+  */
   /**
    * Files
    */
+  /*
   {
     path: '/upload',
     method: 'POST',
@@ -65,23 +85,25 @@ module.exports = [
     handler: 'files.file',
     authenticated: true,
   },
+  */
   /**
    * Categories
    */
+  /*
   {
     path: '/categories',
     method: 'POST',
-    handler: 'categories.register',
+    handler: 'categories.add',
     authenticated: true,
   },
   {
-    path: '/categories/:name',
+    path: '/categories/:key',
     method: 'DELETE',
-    handler: 'categories.unregister',
+    handler: 'categories.remove',
     authenticated: true,
   },
   {
-    path: '/categories/exists/:name',
+    path: '/categories/exists/:key',
     method: 'GET',
     handler: 'categories.exists',
     authenticated: true,
@@ -92,10 +114,17 @@ module.exports = [
     handler: 'categories.list',
     authenticated: true,
   },
-
+  */
+  {
+    path: '/categories/menu-list',
+    method: 'GET',
+    handler: 'categories.listWithMenuItem',
+    authenticated: true,
+  },
   /**
    * Assets Categories
    */
+  /*
   {
     path: '/asset/:id/category/:category',
     method: 'POST',
@@ -120,48 +149,17 @@ module.exports = [
     handler: 'assetsCategories.has',
     authenticated: true,
   },
+  */
   {
     path: '/category/:category/assets',
     method: 'GET',
-    handler: 'assetsCategories.getAssets',
-    authenticated: true,
-  },
-  /**
-   * Assets Tags
-   */
-  {
-    path: '/asset/:id/tags',
-    method: 'POST',
-    handler: 'assetsTags.add',
-    authenticated: true,
-  },
-  {
-    path: '/asset/:id/tags/:tag',
-    method: 'DELETE',
-    handler: 'assetsTags.remove',
-    authenticated: true,
-  },
-  {
-    path: '/asset/:id/tags',
-    method: 'GET',
-    handler: 'assetsTags.get',
-    authenticated: true,
-  },
-  {
-    path: '/asset/:id/tags/:tag',
-    method: 'GET',
-    handler: 'assetsTags.has',
-    authenticated: true,
-  },
-  {
-    path: '/tags/assets',
-    method: 'GET',
-    handler: 'assetsTags.getAssets',
+    handler: 'assetsCategories.getByCategory',
     authenticated: true,
   },
   /**
    * Permissions
    */
+  /*
   {
     path: '/asset/:asset/permissions',
     method: 'POST',
@@ -192,6 +190,7 @@ module.exports = [
     handler: 'permissions.list',
     authenticated: true,
   },
+  */
   /**
    * Search
    */

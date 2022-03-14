@@ -1,17 +1,16 @@
-const { assetCategories } = require('../../tables');
+const { tables } = require('../../tables');
 
-module.exports = async function remove(asset, category, { transacting } = {}) {
-  const { id } = asset;
-
+async function remove(assetId, categoryId, { transacting } = {}) {
   try {
     const query = {
-      asset: id,
+      asset: assetId,
     };
 
-    if (category?.name) {
-      query.category = category.name;
+    if (categoryId) {
+      query.category = categoryId;
     }
-    const deleted = await assetCategories.deleteMany(query, { transacting });
+
+    const deleted = await tables.assetCategories.deleteMany(query, { transacting });
     return {
       deleted: deleted.count,
       soft: deleted.soft,
@@ -19,4 +18,6 @@ module.exports = async function remove(asset, category, { transacting } = {}) {
   } catch (e) {
     throw new Error(`Failed to delete category: ${e.message}`);
   }
-};
+}
+
+module.exports = { remove };

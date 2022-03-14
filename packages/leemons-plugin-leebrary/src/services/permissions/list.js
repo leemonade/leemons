@@ -1,23 +1,25 @@
-const get = require('./get');
-const { permissions } = require('../tables');
+const { getByAsset } = require('./getByAsset');
+const { tables } = require('../tables');
 
-module.exports = async function list(asset, { userSession, transacting } = {}) {
+async function list(assetId, { userSession, transacting } = {}) {
   try {
-    const { role } = await get(asset, { userSession, transacting });
+    const { role: permissionRole } = await getByAsset(assetId, { userSession, transacting });
 
-    if (role) {
-      const entries = await permissions.find(
+    if (permissionRole) {
+      const entries = await tables.permissions.find(
         {
-          asset,
+          asset: assetId,
         },
         { transacting }
       );
 
-      return entries.map(({ role: r, userAgent: u }) => ({ role: r, userAgent: u }));
+      return entries.map(({ role, userAgent }) => ({ role, userAgent }));
     }
 
     throw new Error("You don't have permission to list users");
   } catch (e) {
     throw new Error(`Failed to get permissions: ${e.message}`);
   }
-};
+}
+
+module.exports = { list };

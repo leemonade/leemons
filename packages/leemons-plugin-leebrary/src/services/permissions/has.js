@@ -1,8 +1,8 @@
-const get = require('./get');
+const { getByAsset } = require('./getByAsset');
 
-module.exports = async function has(asset, permission, { userSession, transacting } = {}) {
+async function has(assetId, permission, { userSession, transacting } = {}) {
   try {
-    const current = Object.entries(await get(asset, { userSession, transacting }))
+    const current = Object.entries(await getByAsset(assetId, { userSession, transacting }))
       .filter(([, value]) => value)
       .map(([key]) => key);
 
@@ -10,4 +10,6 @@ module.exports = async function has(asset, permission, { userSession, transactin
   } catch (e) {
     throw new Error(`Failed to get permissions: ${e.message}`);
   }
-};
+}
+
+module.exports = { has };

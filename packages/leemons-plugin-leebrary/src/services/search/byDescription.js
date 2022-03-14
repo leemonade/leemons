@@ -1,27 +1,29 @@
-const assetDetails = require('../assets/details');
-const { assets: table } = require('../tables');
+const { getByIds: getAssetsByIds } = require('../assets/getByIds');
+const { tables } = require('../tables');
 
-module.exports = async function byDescription(
+async function byDescription(
   description,
-  { details = false, assets, transacting } = {}
+  { details = false, assets: assetsIds, transacting } = {}
 ) {
   try {
     const query = {
       description_$contains: description,
     };
 
-    if (assets) {
-      query.id_$in = assets;
+    if (assetsIds) {
+      query.id_$in = assetsIds;
     }
 
-    let entries = await table.find(query, { columns: ['id'], transacting });
-    entries = entries.map((entry) => entry.id);
+    let assets = await tables.assets.find(query, { columns: ['id'], transacting });
+    assets = assets.map((entry) => entry.id);
 
     if (details) {
-      return assetDetails(entries, { transacting });
+      return getAssetsByIds(assets, { transacting });
     }
-    return entries;
+    return assets;
   } catch (e) {
     throw new Error(`Failed to find asset with description: ${e.message}`);
   }
-};
+}
+
+module.exports = { byDescription };

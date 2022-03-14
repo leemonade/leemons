@@ -4,6 +4,7 @@ import loadable from '@loadable/component';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
+const HomePage = loadable(() => import('./src/pages/private/library/Library'));
 const TestPage = loadable(() => import('./src/pages/private/test'));
 const UploadPage = loadable(() => import('./src/pages/private/test/upload'));
 
@@ -14,8 +15,8 @@ export default function Private() {
   return (
     <div>
       <Switch>
-        <Route path={`${path}/home`}>
-          <TestPage session={session} />
+        <Route path={`${path}/`}>
+          <HomePage session={session} />
         </Route>
         <Route path={`${path}/test`}>
           <TestPage session={session} />

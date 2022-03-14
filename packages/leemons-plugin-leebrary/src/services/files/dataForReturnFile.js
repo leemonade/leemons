@@ -1,8 +1,12 @@
 const fs = require('fs');
-const { files: table } = require('../tables');
+const { getById } = require('./getById');
 
 async function dataForReturnFile(id, { transacting } = {}) {
-  const file = await table.findOne({ id }, { transacting });
+  const file = await getById(id, { transacting });
+
+  if (!file) {
+    throw new Error(`File with id ${id} does not exists`);
+  }
 
   // Default provider
   if (file.provider === 'sys') {

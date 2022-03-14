@@ -1,17 +1,21 @@
 module.exports = {
   modelName: 'categories',
+  collectionName: 'categories',
   attributes: {
-    name: {
+    key: {
       type: 'string',
       options: {
         notNull: true,
       },
     },
-    displayName: {
-      type: 'string',
+    creatable: {
+      type: 'boolean',
       options: {
-        notNull: true,
+        defaultTo: false,
       },
     },
+  },
+  primaryKey: {
+    type: 'uuid',
   },
 };

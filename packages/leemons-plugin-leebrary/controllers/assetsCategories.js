@@ -1,11 +1,25 @@
+const { getByCategory } = require('../src/services/assets/getByCategory');
+
+async function getAssetsByCategory(ctx) {
+  const { category: categoryId } = ctx.request.params;
+  const { details } = ctx.request.query;
+
+  const assets = await getByCategory(categoryId, { details: details !== 'false' });
+  ctx.status = 200;
+  ctx.body = { status: 200, assets };
+}
+
+module.exports = {
+  getByCategory: getAssetsByCategory,
+};
+
+/*
 const add = require('../src/services/assets/categories/add');
 const get = require('../src/services/assets/categories/get');
-const getAssets = require('../src/services/assets/categories/getAssets');
 const has = require('../src/services/assets/categories/has');
 const remove = require('../src/services/assets/categories/remove');
 
-module.exports = {
-  add: async (ctx) => {
+async function add(ctx) => {
     const { id, category } = ctx.request.params;
 
     try {
@@ -88,20 +102,4 @@ module.exports = {
       };
     }
   },
-
-  getAssets: async (ctx) => {
-    const { category } = ctx.request.params;
-    const { details } = ctx.request.query;
-    try {
-      const assets = await getAssets(category, { details: details !== 'false' });
-      ctx.status = 200;
-      ctx.body = { status: 200, assets };
-    } catch (e) {
-      ctx.status = 500;
-      ctx.body = {
-        status: 500,
-        message: e.message,
-      };
-    }
-  },
-};
+*/

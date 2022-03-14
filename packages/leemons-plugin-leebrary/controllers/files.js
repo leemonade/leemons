@@ -1,3 +1,4 @@
+/*
 const fileService = require('../src/services/files');
 
 module.exports = {
@@ -57,3 +58,5 @@ module.exports = {
     ctx.body = { status: 200, deleted };
   },
 };
+*/
+module.exports = {};

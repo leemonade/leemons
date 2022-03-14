@@ -70,6 +70,11 @@ async function importUsers(centers, profiles) {
 
       item.genre = toLower(item.genre);
 
+      if (!isEmpty(item.birthdate) && item.birthdate.indexOf('/') > 0) {
+        const [day, month, year] = item.birthdate.split('/');
+        item.birthdate = new Date(year, month - 1, day);
+      }
+
       return item;
     })
     .reduce((acc, item) => {

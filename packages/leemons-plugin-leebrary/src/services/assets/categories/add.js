@@ -1,22 +1,28 @@
-const { assetCategories } = require('../../tables');
-const has = require('./has');
-const assetExists = require('../exists');
+const { tables } = require('../../tables');
+const { exists } = require('./exists');
+const { exists: assetExists } = require('../exists');
+const { exists: categoryExists } = require('../../categories/exists');
 
-module.exports = async function add(asset, category, { transacting } = {}) {
-  const { name } = category;
-  const { id } = asset;
-
+async function add(assetId, categoryId, { transacting } = {}) {
   try {
-    if (!(await assetExists(id, { transacting }))) {
-      throw new Error(`Asset with id ${id} does not exist`);
+    if (!(await assetExists(assetId, { transacting }))) {
+      throw new Error(`Asset with id ${assetId} does not exist`);
     }
 
-    if (!(await has(asset, category, { transacting }))) {
-      await assetCategories.create({ asset: id, category: name }, { transacting });
-      return true;
+    if (!(await categoryExists(categoryId, { transacting }))) {
+      throw new Error(`Category with id ${categoryId} does not exist`);
     }
-    return false;
+
+    if (!(await exists(assetId, categoryId, { transacting }))) {
+      return await tables.assetCategories.create(
+        { asset: assetId, category: categoryId },
+        { transacting }
+      );
+    }
+    return null;
   } catch (e) {
     throw new Error(`Failed to add category: ${e.message}`);
   }
-};
+}
+
+module.exports = { add };

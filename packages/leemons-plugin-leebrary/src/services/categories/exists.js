@@ -1,8 +1,9 @@
-const { categories } = require('../tables');
+const { tables } = require('../tables');
 
-module.exports = async function register(category, { transacting } = {}) {
-  const { name } = category;
-  const count = await categories.count({ name }, { transacting });
-
+async function exists(category, { transacting } = {}) {
+  const { key } = category;
+  const count = await tables.categories.count({ key }, { transacting });
   return count > 0;
-};
+}
+
+module.exports = { exists };

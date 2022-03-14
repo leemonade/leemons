@@ -1,3 +1,4 @@
+/*
 const get = require('../src/services/permissions/get');
 const has = require('../src/services/permissions/has');
 const list = require('../src/services/permissions/list');
@@ -109,3 +110,5 @@ module.exports = {
     }
   },
 };
+*/
+module.exports = {};
