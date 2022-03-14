@@ -4,14 +4,14 @@ import useTranslate from '@multilanguage/useTranslate';
 import { addProfileRequest, getProfileRequest, updateProfileRequest } from '@users/request';
 import { goDetailProfilePage, goListProfilesPage } from '@users/navigate';
 import {
-  PageContainer,
+  Alert,
+  Box,
   ContextContainer,
   Divider,
-  Box,
+  PageContainer,
   Paper,
-  Tabs,
   TabPanel,
-  Alert,
+  Tabs,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import tLoader from '@multilanguage/helpers/tLoader';
@@ -23,7 +23,7 @@ import PlatformLocales from '@multilanguage/components/PlatformLocales';
 import PlatformLocalesModal from '@multilanguage/components/PlatformLocalesModal';
 import hooks from 'leemons-hooks';
 // import MainMenuDropItem from '@menu-builder/components/mainMenu/mainMenuDropItem';
-import { useParams, useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { DatasetTab } from './DatasetTab';
 import { PermissionsTab } from './PermissionsTab';
@@ -193,8 +193,6 @@ function ProfileDetail() {
     }),
     [tCommonHeader]
   );
-
-  useEffect(() => console.log('headerButtons:', headerButtons), [headerButtons]);
 
   const showDefaultLocaleWarning = useMemo(() => !profile?.name, [profile]);
 

@@ -9,8 +9,8 @@ module.exports = {
     const response = [];
     _.forEach(
       _.isArray(users) ? users : [users],
-      ({ id, email, name, surnames, locale, created_at }) => {
-        response.push({ id, email, name, surnames, locale, created_at });
+      ({ id, email, name, surnames, secondSurname, avatar, locale, created_at }) => {
+        response.push({ id, email, name, surnames, secondSurname, avatar, locale, created_at });
       }
     );
     return _.isArray(users) ? response : response[0];
