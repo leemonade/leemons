@@ -11,7 +11,9 @@ module.exports = {
   instances: leemons.query('plugins_tasks::instances'),
   teacherInstances: leemons.query('plugins_tasks::teacherInstances'),
   userInstances: leemons.query('plugins_tasks::userInstances'),
+  groupsInstances: leemons.query('plugins_tasks::groupsInstances'),
   userDeliverables: leemons.query('plugins_tasks::userDeliverables'),
   settings: leemons.query('plugins_tasks::settings'),
   profiles: leemons.query('plugins_tasks::profiles'),
+  groups: leemons.query('plugins_tasks::groups'),
 };

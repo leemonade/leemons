@@ -253,6 +253,14 @@ module.exports = [
     authenticated: true,
   },
 
+  // Group
+  {
+    method: 'POST',
+    path: '/tasks/instances/:instance/group',
+    handler: 'assignments.groupAssign',
+    authenticated: true,
+  },
+
   /**
    * Settings
    */

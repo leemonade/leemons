@@ -60,7 +60,20 @@ export default function AssignmentPage() {
         visualizationDate: parseDates(visualizationDate),
       });
 
-      await assignStudentRequest(instance, students);
+      // TODO: Add subject selector
+      await assignStudentRequest(
+        instance,
+        students
+          .map((s) => ({
+            subject: 'SUBJECT TEST',
+            students: [s],
+          }))
+          .concat(
+            classes.map((c) => ({
+              group: c,
+            }))
+          )
+      );
       await assignTeacherRequest(instance, teachers);
 
       await enableMenuItemRequest('ongoing');

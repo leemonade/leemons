@@ -13,6 +13,7 @@ const listTeachers = require('../src/services/assignment/teacher/listTeachers');
 const listAssignedTeacher = require('../src/services/assignment/teacher/listAssigned');
 const updateStudent = require('../src/services/assignment/student/update');
 const searchTeachers = require('../src/services/assignment/teacher/search');
+const assignGroup = require('../src/services/assignment/groups/add');
 
 module.exports = {
   /**
@@ -333,5 +334,21 @@ module.exports = {
         message: e.message,
       };
     }
+  },
+
+  /**
+   * Groups
+   */
+  groupAssign: async (ctx) => {
+    const { instance } = ctx.request.params;
+    const { groups } = ctx.request.body;
+
+    const result = await assignGroup(instance, groups);
+
+    ctx.status = 200;
+    ctx.body = {
+      status: 200,
+      ...result,
+    };
   },
 };

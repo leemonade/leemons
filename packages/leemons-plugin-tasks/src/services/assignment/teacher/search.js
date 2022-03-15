@@ -1,6 +1,8 @@
 const { teacherInstances, instances, tasksVersioning } = require('../../table');
 const { search } = require('../../../helpers/search');
 const parseId = require('../../task/helpers/parseId');
+const getGroups = require('../groups/get');
+const getGroupDetails = require('../groups/groups/get');
 
 // EN: Get the tasks you have been assigned to (order by assignment date)
 // ES: Obtener las tareas que tienes asignadas (ordenar por fecha de asignación)
@@ -143,9 +145,73 @@ async function filterByTaskAttributes(tasks, { name } = {}, { transacting } = {}
   };
 }
 
+// EN: Filter by subject and group
+// ES: Filtrar por asignatura y grupo
+async function filterBySubjectAndGroup(tasks, { subject, group } = {}, { transacting } = {}) {
+  if (!tasks.count) {
+    return tasks;
+  }
+
+  const query = {
+    id_$in: tasks.items.map((task) => task.id),
+  };
+
+  if (subject) {
+    query.subject = subject;
+  }
+
+  if (group) {
+    query.group = group;
+  }
+
+  let { items } = tasks;
+
+  // EN: Get groups of each task
+  // ES: Obtener los grupos de cada tarea
+  if (group) {
+    items = (
+      await Promise.all(
+        items.map(async (task) => {
+          const groups = await getGroups(task.id, { transacting });
+
+          if (groups.includes(group)) {
+            return { ...task, groups };
+          }
+
+          return null;
+        })
+      )
+    ).filter(Boolean);
+  }
+
+  if (subject) {
+    items = (
+      await Promise.all(
+        items.map(async (task) => {
+          const groups = task.groups || (await getGroups(task.id, { transacting }));
+
+          const groupDetails = await getGroupDetails(groups, { transacting });
+
+          if (groupDetails.map((g) => g.subject).includes(subject)) {
+            return task;
+          }
+
+          return null;
+        })
+      )
+    ).filter(Boolean);
+  }
+
+  return {
+    ...tasks,
+    items,
+    count: items.length,
+  };
+}
+
 module.exports = async function searchInstance(query, offset, size, { transacting } = {}) {
   const tasks = await search(
-    [getTeacherTasks, filterByInstanceAttributes, filterByTaskAttributes],
+    [getTeacherTasks, filterByInstanceAttributes, filterByTaskAttributes, filterBySubjectAndGroup],
     query,
     offset,
     size,
