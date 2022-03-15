@@ -147,6 +147,14 @@ const SelectUserAgent = forwardRef(
       onValueChange(props.value);
     }, [props.value]);
 
+    // EN: Initial search for the first render
+    // ES: Búsqueda inicial para la primera renderización
+    useEffect(() => {
+      if (!store.data?.length) {
+        search('');
+      }
+    }, [profiles]);
+
     // EN: Concat the selected values with the data array
     // ES: Concatenamos los valores seleccionados con el array de datos
     const data = cloneDeep(store.data);
