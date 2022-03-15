@@ -2,6 +2,7 @@ const _ = require('lodash');
 const constants = require('./config/constants');
 const recoverEmail = require('./emails/recoverPassword');
 const welcomeEmail = require('./emails/welcome');
+const newProfileAdded = require('./emails/newProfileAdded');
 const resetPassword = require('./emails/resetPassword');
 const {
   addMain,
@@ -15,6 +16,14 @@ const init = require('./init');
 async function events(isInstalled) {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
     init();
+  });
+  leemons.events.once('plugins.dataset:save-field', async (a, event) => {
+    const {
+      updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset,
+      // eslint-disable-next-line global-require
+    } = require('./src/services/user-agents/updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset');
+
+    await updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset(event);
   });
 
   if (!isInstalled) {
@@ -43,6 +52,18 @@ async function events(isInstalled) {
         await initDataset();
       }
     );
+
+    leemons.events.once('plugins.widgets:pluginDidLoad', async () => {
+      await Promise.all(
+        _.map(constants.widgets.zones, (config) =>
+          leemons.getPlugin('widgets').services.widgets.addZone(config.key, {
+            name: config.name,
+            description: config.description,
+          })
+        )
+      );
+      leemons.events.emit('init-widget-zones');
+    });
 
     leemons.events.once(
       ['plugins.users:pluginDidLoad', 'plugins.multilanguage:pluginDidLoad'],
@@ -106,6 +127,24 @@ async function events(isInstalled) {
           'en',
           'Welcome',
           welcomeEmail.en,
+          leemons.getPlugin('emails').services.email.types.active
+        );
+      await leemons
+        .getPlugin('emails')
+        .services.email.addIfNotExist(
+          'user-new-profile-added',
+          'es-ES',
+          'Nuevo perfil',
+          newProfileAdded.es,
+          leemons.getPlugin('emails').services.email.types.active
+        );
+      await leemons
+        .getPlugin('emails')
+        .services.email.addIfNotExist(
+          'user-new-profile-added',
+          'en',
+          'New profile',
+          newProfileAdded.en,
           leemons.getPlugin('emails').services.email.types.active
         );
       leemons.events.emit('init-email-reset-password');

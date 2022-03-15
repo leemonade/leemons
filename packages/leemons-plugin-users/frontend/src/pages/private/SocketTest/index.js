@@ -8,6 +8,7 @@ function SocketTest() {
   const [state, setState] = useState(null);
 
   SocketIoService.useOn('gatitos', (event, args) => {
+    console.log(event, args);
     setState(args);
   });
 

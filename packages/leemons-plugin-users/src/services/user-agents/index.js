@@ -2,6 +2,7 @@ const { existUserAgent } = require('./existUserAgent');
 const { searchUserAgents } = require('./searchUserAgents');
 const { getUserAgentsInfo } = require('./getUserAgentsInfo');
 const { getUserAgentCenter } = require('./getUserAgentCenter');
+const { agentDetailForPage } = require('./agentDetailForPage');
 const { getUserAgentByCenterProfile } = require('./getUserAgentByCenterProfile');
 
 // Calendars
@@ -40,6 +41,7 @@ module.exports = {
   searchUserAgents,
   getUserAgentsInfo,
   getUserAgentCenter,
+  agentDetailForPage,
   getUserAgentByCenterProfile,
   calendars: {
     getUserAgentCalendarKey,

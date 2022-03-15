@@ -175,12 +175,19 @@ async function list(ctx) {
   }
 }
 
+async function listDetailPage(ctx) {
+  const data = await familiesService.listDetailPage(ctx.state.userSession, ctx.params.user);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
 module.exports = {
-  searchUsers,
-  getDatasetForm,
   add,
-  detail,
   list,
+  detail,
   update,
   remove,
+  searchUsers,
+  getDatasetForm,
+  listDetailPage,
 };

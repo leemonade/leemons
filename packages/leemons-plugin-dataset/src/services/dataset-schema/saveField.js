@@ -174,6 +174,12 @@ async function saveField(
       // Vamos coger el schema tocho, que tiene que tener los checkboxs guays y recorrernos todas las traducciones calculando el enumNames
       await recalculeEnumNames(locationName, pluginName, { transacting });
 
+      await leemons.events.emit('save-field', {
+        locationName,
+        pluginName,
+        transacting,
+      });
+
       return dataset;
     },
     table.dataset,

@@ -22,25 +22,28 @@ const { getFamilyMenuBuilderData } = require('./getFamilyMenuBuilderData');
 async function add(
   { name, guardians = [], students = [], datasetValues, maritalStatus, emergencyPhoneNumbers = [] },
   userSession,
-  { transacting: _transacting } = {}
+  { fromBulk, transacting: _transacting } = {}
 ) {
   return global.utils.withTransaction(
     async (transacting) => {
       // ES: Primero sacamos los permisos para comprobar a que tiene acceso y a que no
       // EN: First we pull the permissions to check what you have access to and what you do not have access to.
-      const permissions = await getSessionFamilyPermissions(userSession, { transacting });
-      if (!permissions.basicInfo.update)
-        throw new global.utils.HttpErrorPermissions(401, [
-          {
-            permissionName: permissions.permissionsNames.basicInfo,
-            actions: ['update'],
-          },
-        ]);
+      let permissions;
+      if (!fromBulk) {
+        permissions = await getSessionFamilyPermissions(userSession, { transacting });
+        if (!permissions.basicInfo.update)
+          throw new global.utils.HttpErrorPermissions(401, [
+            {
+              permissionName: permissions.permissionsNames.basicInfo,
+              actions: ['update'],
+            },
+          ]);
+      }
 
       // Creating the family
       const familyData = { name };
 
-      if (permissions.guardiansInfo.update && maritalStatus) {
+      if (fromBulk || (permissions.guardiansInfo.update && maritalStatus)) {
         familyData.maritalStatus = maritalStatus;
       }
 
@@ -58,13 +61,13 @@ async function add(
       );
 
       // Add guardians if have permission
-      if (permissions.guardiansInfo.update) {
+      if (fromBulk || permissions.guardiansInfo.update) {
         _.forEach(guardians, ({ user, memberType }) => {
           promises.push(addMember({ user, memberType, family: family.id }, { transacting }));
         });
       }
       // Add students if have permission
-      if (permissions.studentsInfo.update) {
+      if (fromBulk || permissions.studentsInfo.update) {
         _.forEach(students, ({ user }) => {
           promises.push(
             addMember({ user, memberType: 'student', family: family.id }, { transacting })
@@ -72,7 +75,7 @@ async function add(
         });
       }
       // Add datasetvalues if have permission and have data
-      if (permissions.customInfo.update && datasetValues) {
+      if ((fromBulk && datasetValues) || (permissions?.customInfo.update && datasetValues)) {
         promises.push(setDatasetValues(family.id, userSession, datasetValues, { transacting }));
       }
 
@@ -85,7 +88,7 @@ async function add(
             family.id,
             emergencyPhoneNumbers,
             userSession,
-            { transacting }
+            { fromBulk, transacting }
           )
         );
       }

@@ -18,13 +18,22 @@ const { removePhone } = require('./removePhone');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function saveFamilyPhones(family, phones, userSession, { transacting: _transacting } = {}) {
+async function saveFamilyPhones(
+  family,
+  phones,
+  userSession,
+  { fromBulk, transacting: _transacting } = {}
+) {
   return global.utils.withTransaction(
     async (transacting) => {
-      const permissions = await getSessionEmergencyPhoneNumbersPermissions(userSession, {
-        transacting,
-      });
-      if (permissions.phoneNumbersInfo.update) {
+      let permissions;
+
+      if (!fromBulk) {
+        permissions = await getSessionEmergencyPhoneNumbersPermissions(userSession, {
+          transacting,
+        });
+      }
+      if (fromBulk || permissions.phoneNumbersInfo.update) {
         const alreadyPhones = await table.emergencyPhones.find({ family }, { transacting });
 
         const alreadyPhonesById = _.keyBy(alreadyPhones, 'id');
