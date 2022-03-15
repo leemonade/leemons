@@ -820,19 +820,23 @@ function index(schema, ui, conditions, props = {}) {
     form,
     {
       isLoaded: () => !!ref.current,
-      submit: () => {
-        ref.current.formElement.dispatchEvent(
-          new Event('submit', {
-            cancelable: true,
-            bubbles: true,
-          })
-        );
-        if (!liveValidate.current) {
-          liveValidate.current = true;
-          Form.current = getForm();
-          render();
-        }
-      },
+      submit: () =>
+        new Promise((resolve) => {
+          ref.current.formElement.dispatchEvent(
+            new Event('submit', {
+              cancelable: true,
+              bubbles: true,
+            })
+          );
+          if (!liveValidate.current) {
+            liveValidate.current = true;
+            Form.current = getForm();
+            render();
+          }
+          setTimeout(() => {
+            resolve();
+          }, 100);
+        }),
       getRef: () => ref.current,
       getErrors: () => ref.current.state.errors || [],
       getValues: () => ref.current.state.formData,

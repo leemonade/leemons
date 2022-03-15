@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 // TODO AÑADIR VALIDADOR CUSTOM PARA NUMEROS DE TELEFONO/ETZ
 function validateDataForJsonSchema(jsonSchema, data) {
   const schema = {
@@ -7,6 +8,10 @@ function validateDataForJsonSchema(jsonSchema, data) {
     required: jsonSchema.required,
     properties: {},
   };
+
+  _.forIn(jsonSchema.properties, (p) => {
+    delete p.id;
+  });
 
   _.forIn(jsonSchema.properties, (value, key) => {
     if (value.type === 'array') {

@@ -1,10 +1,21 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { SessionProvider, SessionContext } from '@users/context/session';
+import { SessionContext, SessionProvider } from '@users/context/session';
+import { Box, Button, Modal } from '@bubbles-ui/components';
 import _ from 'lodash';
+import { useStore } from '@common';
 import { getCookieToken } from '@users/session';
+import { SocketIoService } from '@socket-io/service';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@users/helpers/prefixPN';
+import { useHistory } from 'react-router-dom';
 
 export function Provider({ children }) {
+  const [t] = useTranslateLoader(prefixPN('needDatasetDataModal'));
+  const [store, render] = useStore();
+
+  const history = useHistory();
+
   const apiSessionMiddleware = useCallback((ctx) => {
     if (!ctx.options) ctx.options = {};
     if (ctx.options && !ctx.options.headers) ctx.options.headers = {};
@@ -32,7 +43,36 @@ export function Provider({ children }) {
     leemons.api.useReq(apiSessionMiddleware);
   }, []);
 
-  return <SessionProvider value={{}}>{children}</SessionProvider>;
+  SocketIoService.useOn('USER_AGENT_NEED_UPDATE_DATASET', () => {
+    if (!store.showUpdateDatasetModal) {
+      store.showUpdateDatasetModal = true;
+      render();
+    }
+  });
+
+  function goSetDatasetValues() {
+    history.push(`/private/users/set-dataset-values?callback=${window.location.pathname}`);
+    store.showUpdateDatasetModal = false;
+    render();
+  }
+
+  return (
+    <SessionProvider value={{}}>
+      <Modal
+        hideCloseButton
+        closeOnClickOutside={false}
+        closeOnEscape={false}
+        opened={store.showUpdateDatasetModal}
+      >
+        <Box>
+          <Button color="fatic" onClick={goSetDatasetValues}>
+            {t('goPageButton')}
+          </Button>
+        </Box>
+      </Modal>
+      {children}
+    </SessionProvider>
+  );
 }
 
 Provider.propTypes = {

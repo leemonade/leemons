@@ -86,6 +86,10 @@
   {
     "name": "emails-amazon-ses",
     "path": "../../packages/leemons-provider-emails-amazon-ses/frontend"
+  },
+  {
+    "name": "widgets",
+    "path": "../../packages/leemons-plugin-widgets/frontend"
   }
 ]
 

@@ -103,6 +103,20 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/get-data-for-user-agent-datasets',
+    method: 'GET',
+    handler: 'users.getDataForUserAgentDatasets',
+    authenticated: true,
+    disableUserAgentDatasetCheck: true,
+  },
+  {
+    path: '/save-data-for-user-agent-datasets',
+    method: 'POST',
+    handler: 'users.saveDataForUserAgentDatasets',
+    authenticated: true,
+    disableUserAgentDatasetCheck: true,
+  },
+  {
     path: '/user/remember/profile',
     method: 'POST',
     handler: 'users.setRememberProfile',
@@ -156,6 +170,50 @@ module.exports = [
     allowedPermissions: {
       'plugins.users.users': {
         actions: ['create', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/user/:id/detail/page',
+    method: 'GET',
+    handler: 'users.detailForPage',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/user/:id/update',
+    method: 'POST',
+    handler: 'users.updateUser',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['update', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/user-agent/:id/update',
+    method: 'POST',
+    handler: 'users.updateUserAgent',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['update', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/user-agent/:id/detail/page',
+    method: 'GET',
+    handler: 'users.agentDetailForPage',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
       },
     },
   },

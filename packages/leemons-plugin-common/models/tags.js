@@ -18,7 +18,7 @@ module.exports = {
       },
     },
     value: {
-      type: 'json',
+      type: 'string',
     },
   },
   primaryKey: {

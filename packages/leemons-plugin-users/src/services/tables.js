@@ -32,6 +32,7 @@ const table = {
 
   profileContacts: leemons.query('plugins_users::profile-contacts'),
   userRegisterPassword: leemons.query('plugins_users::user-register-password'),
+  userPreferences: leemons.query('plugins_users::user-preferences'),
 };
 
 module.exports = { table };

@@ -19,6 +19,20 @@ async function events(isInstalled) {
       }
     );
 
+    leemons.events.once('plugins.users:init-widget-zones', async () => {
+      await Promise.all(
+        _.map(constants.widgets.items, (config) =>
+          leemons
+            .getPlugin('widgets')
+            .services.widgets.addItemToZone(config.zoneKey, config.key, config.url, {
+              name: config.name,
+              description: config.description,
+            })
+        )
+      );
+      leemons.events.emit('init-widget-items');
+    });
+
     // Permissions
     leemons.events.once('plugins.users:init-permissions', async () => {
       await leemons.getPlugin('users').services.permissions.addMany(constants.permissions);
