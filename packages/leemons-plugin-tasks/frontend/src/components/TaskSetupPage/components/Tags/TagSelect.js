@@ -24,6 +24,9 @@ export default function TagSelect() {
       render={({ field }) => (
         <MultiSelect
           {...field}
+          // TRANSLATE: Localizate the label and placeholder
+          label="Tags"
+          placeholder="Start typing a tag"
           data={data.concat(extraTags)}
           creatable
           searchable

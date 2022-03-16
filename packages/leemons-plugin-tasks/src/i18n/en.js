@@ -38,18 +38,21 @@ module.exports = {
       create_done: 'Task created',
       update_done: 'Task updated',
       publish_done: 'Task published',
+      no_id_error: 'No task id provided',
+      save: 'Save draft',
+      publish: 'Publish',
     },
     setup: {
       configData: {
         step_label: 'Config',
         labels: {
-          title: 'Config',
           name: 'Name',
           tagline: 'Tagline',
+          configTitle: 'Config',
           center: 'Center',
           program: 'Program',
           course: 'Course',
-          subjects: 'Subjects',
+          subjectsTitle: 'Subjects',
           subject: 'Subject',
           addSubject: 'Add subject',
           level: 'Level',

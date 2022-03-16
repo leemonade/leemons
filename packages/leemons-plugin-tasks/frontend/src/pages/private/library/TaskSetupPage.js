@@ -81,7 +81,7 @@ export default function TaskSetupPage() {
       const { id } = store.currentTask;
 
       if (isEmpty(id)) {
-        addErrorAlert('No task id provided');
+        addErrorAlert(t('common.no_id_error'));
         return;
       }
 
@@ -97,9 +97,6 @@ export default function TaskSetupPage() {
   const getTask = async (id) => {
     try {
       return await getTaskRequest({ id });
-      // TODO: Implement get task by id request
-      // const response = await apiCall(id);
-      // store.currentTask = response.task;
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
       return {};
@@ -126,7 +123,6 @@ export default function TaskSetupPage() {
       const res = unflatten(translations.items);
       const data = res.plugins.tasks.task_setup_page.setup;
       setLabels(data);
-      // store.setupLabels = data;
     }
   }, [translations]);
 
@@ -214,7 +210,7 @@ export default function TaskSetupPage() {
     <ContextContainer fullHeight>
       <AdminPageHeader
         values={headerLabels}
-        buttons={{ edit: 'Save draft', duplicate: status === 'draft' && 'Publish' }}
+        buttons={{ edit: t('common.save'), duplicate: status === 'draft' && t('common.publish') }}
         onEdit={() => emitEvent('saveTask')}
         onDuplicate={handleOnPublishTask}
       />

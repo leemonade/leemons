@@ -37,6 +37,7 @@ export default function SelectSubjects({
     [program]
   );
 
+  // TRANSLATE: Add localization to TableInput labels
   const subjectsLabels = useMemo(
     () => ({
       add: 'Add',
@@ -47,6 +48,8 @@ export default function SelectSubjects({
     }),
     [labels]
   );
+
+  // TRANSLATE: Localizate the level of difficulty
   const levelsList = useMemo(
     () => [
       {
@@ -69,6 +72,7 @@ export default function SelectSubjects({
         accessor: 'course',
         input: {
           node: <Select data={selects?.courses} placeholder={placeholders?.course} required />,
+          // TRANSLATE: Localizate the required field
           rules: { required: 'Required field' },
         },
         valueRender: (v) => find(selects?.courses, { value: v })?.label,
@@ -87,6 +91,7 @@ export default function SelectSubjects({
             required
           />
         ),
+        // TRANSLATE: Localizate the required field
         rules: { required: 'Required field' },
       },
       valueRender: (v) => find(selects?.subjects, { value: v })?.label,
@@ -104,6 +109,7 @@ export default function SelectSubjects({
             disabled={!selects?.subjects?.length}
           />
         ),
+        // TRANSLATE: Localizate the required field
         rules: { required: 'Required field' },
       },
       valueRender: (v) => find(levelsList, { value: v })?.label,

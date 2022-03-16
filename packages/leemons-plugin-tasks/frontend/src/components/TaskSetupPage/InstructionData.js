@@ -4,7 +4,7 @@ import { isFunction, isEmpty } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Stack, ContextContainer, Button } from '@bubbles-ui/components';
 import { TextEditor } from '@bubbles-ui/editors';
-import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 
 function InstructionData({
   labels,

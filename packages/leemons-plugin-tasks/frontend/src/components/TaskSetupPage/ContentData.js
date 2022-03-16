@@ -7,7 +7,6 @@ import { TextEditor } from '@bubbles-ui/editors';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 import Objectives from './components/Objectives';
-import Feedback from './components/Feedback';
 import SelfReflection from './components/SelfReflection';
 import Submissions from './components/Submissions';
 import Contents from './components/Contents';
@@ -83,6 +82,7 @@ function ContentData({
               render={({ field }) => (
                 <Select
                   {...field}
+                  // TRANSLATE: Localizate the methodology select
                   data={[
                     {
                       label: 'Direct instruction',
@@ -190,11 +190,13 @@ function ContentData({
             <Submissions />
             <SelfReflection
               label="Self reflection"
+              // TRANSLATE: Localizate self Reflection
               description="Add a space for the student to reflect on what he/she has learned."
               name="selfReflection"
             />
             <SelfReflection
               label="Feedback"
+              // TRANSLATE: Localizate feedback
               description="Ask the student for a quick evaluation of this exercise."
               name="feedback"
             />

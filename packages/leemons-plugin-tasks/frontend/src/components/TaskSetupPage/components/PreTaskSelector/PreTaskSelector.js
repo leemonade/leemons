@@ -70,6 +70,7 @@ export default function PreTaskSelector() {
           <ConditionalInput
             {...field}
             showOnTrue
+            // TRANSLATE: Localizate the label
             label="Add a pre-task activity"
             render={() => (
               <>
@@ -81,6 +82,7 @@ export default function PreTaskSelector() {
                   control={originalForm.control}
                   name="preTask"
                   render={({ field }) => (
+                    // TRANSLATE: Localizate the label
                     <TextInput {...field} label="Task Id  (REPLACE IN FUTURE BY TEST SELECTOR)" />
                   )}
                 />
@@ -96,6 +98,7 @@ export default function PreTaskSelector() {
                     // ES: Condición de obligatoriedad de la pregunta de tarea previa
                     <ConditionalInput
                       {...field}
+                      // TRANSLATE: Localizate the label
                       label="Mandatory to start the Task"
                       showOnTrue
                       render={() => (
@@ -107,10 +110,13 @@ export default function PreTaskSelector() {
                             render={({ field }) => (
                               <Select
                                 {...field}
+                                // TRANSLATE: Localizate the label
                                 label="Condition to start the Task"
                                 data={[
+                                  // TRANSLATE: Localizate the label
                                   { label: 'Only take the test', value: 'take' },
                                   {
+                                    // TRANSLATE: Localizate the label
                                     label: 'Pass the test with a score higher than',
                                     value: 'greater',
                                   },

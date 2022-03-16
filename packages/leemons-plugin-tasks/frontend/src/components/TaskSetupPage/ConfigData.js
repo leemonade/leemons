@@ -86,38 +86,38 @@ function ConfigData({
     <FormProvider {...formData}>
       <form onSubmit={handleSubmit(handleOnNext)}>
         <ContextContainer {...props} divided>
-          <ContextContainer title={labels.title} divided>
-            <ContextContainer>
-              {/* Name input */}
-              <Controller
-                control={control}
-                name="name"
-                rules={{ required: errorMessages.name?.required }}
-                render={({ field }) => (
-                  <TextInput
-                    {...field}
-                    label={labels.name}
-                    placeholder={placeholders.name}
-                    error={errors.name}
-                    required={!isEmpty(errorMessages.name?.required)}
-                  />
-                )}
-              />
-              {/* Tagline input */}
-              <Controller
-                control={control}
-                name="tagline"
-                rules={{ required: errorMessages.tagline?.required }}
-                render={({ field }) => (
-                  <TextInput
-                    {...field}
-                    label={labels.tagline}
-                    placeholder={placeholders.tagline}
-                    error={errors.tagline}
-                    required={!isEmpty(errorMessages.tagline?.required)}
-                  />
-                )}
-              />
+          <ContextContainer>
+            {/* Name input */}
+            <Controller
+              control={control}
+              name="name"
+              rules={{ required: errorMessages.name?.required }}
+              render={({ field }) => (
+                <TextInput
+                  {...field}
+                  label={labels.name}
+                  placeholder={placeholders.name}
+                  error={errors.name}
+                  required={!isEmpty(errorMessages.name?.required)}
+                />
+              )}
+            />
+            {/* Tagline input */}
+            <Controller
+              control={control}
+              name="tagline"
+              rules={{ required: errorMessages.tagline?.required }}
+              render={({ field }) => (
+                <TextInput
+                  {...field}
+                  label={labels.tagline}
+                  placeholder={placeholders.tagline}
+                  error={errors.tagline}
+                  required={!isEmpty(errorMessages.tagline?.required)}
+                />
+              )}
+            />
+            <ContextContainer title={labels?.configTitle}>
               <SelectProgram
                 errorMessages={errorMessages}
                 labels={labels}
@@ -137,30 +137,32 @@ function ConfigData({
                   />
                 )}
               />
-              {/* Summary container */}
-              <ContextContainer title={labels.summary}>
-                {/* Summary input */}
-                <Controller
-                  control={control}
-                  name="summary"
-                  rules={{ required: errorMessages.summary?.required }}
-                  render={({ field }) => (
-                    <Textarea
-                      {...field}
-                      autosize={true}
-                      label={labels.summary}
-                      placeholder={placeholders.summary}
-                      error={errors.summary}
-                      counter="word"
-                      counterLabels={{ single: 'WORD', plural: 'WORDS' }}
-                      showCounter
-                    />
-                  )}
-                />
-              </ContextContainer>
-              <TagSelect />
-              <PreTaskSelector />
             </ContextContainer>
+
+            {/* Summary container */}
+            <ContextContainer title={labels.summary}>
+              {/* Summary input */}
+              <Controller
+                control={control}
+                name="summary"
+                rules={{ required: errorMessages.summary?.required }}
+                render={({ field }) => (
+                  <Textarea
+                    {...field}
+                    autosize={true}
+                    label={labels.summary}
+                    placeholder={placeholders.summary}
+                    error={errors.summary}
+                    counter="word"
+                    // TRANSLATE: Localizate the word key
+                    counterLabels={{ single: 'WORD', plural: 'WORDS' }}
+                    showCounter
+                  />
+                )}
+              />
+            </ContextContainer>
+            <TagSelect />
+            <PreTaskSelector />
           </ContextContainer>
           <Stack fullWidth justifyContent="end">
             <Button type="submit" rightIcon={<ChevRightIcon height={20} width={20} />}>
