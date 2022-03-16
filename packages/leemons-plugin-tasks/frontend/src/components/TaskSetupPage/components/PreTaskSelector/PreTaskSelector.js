@@ -1,10 +1,10 @@
-/* eslint-disable no-shadow */
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useForm, useFormContext, Controller } from 'react-hook-form';
 import { TextInput, Select, ContextContainer } from '@bubbles-ui/components';
 import ConditionalInput from '../../../Inputs/ConditionalInput';
 
-export default function PreTaskSelector() {
+export default function PreTaskSelector({ labels }) {
   const originalForm = useFormContext();
   const { control, watch, setValue } = useForm({
     defaultValues: (() => {
@@ -66,12 +66,11 @@ export default function PreTaskSelector() {
       <Controller
         control={control}
         name="showPreTask"
-        render={({ field }) => (
+        render={({ field: showField }) => (
           <ConditionalInput
-            {...field}
+            {...showField}
             showOnTrue
-            // TRANSLATE: Localizate the label
-            label="Add a pre-task activity"
+            label={labels?.toggler}
             render={() => (
               <>
                 {/*
@@ -82,7 +81,6 @@ export default function PreTaskSelector() {
                   control={originalForm.control}
                   name="preTask"
                   render={({ field }) => (
-                    // TRANSLATE: Localizate the label
                     <TextInput {...field} label="Task Id  (REPLACE IN FUTURE BY TEST SELECTOR)" />
                   )}
                 />
@@ -93,13 +91,12 @@ export default function PreTaskSelector() {
                 <Controller
                   control={control}
                   name="mandatory"
-                  render={({ field }) => (
+                  render={({ field: mandatoryField }) => (
                     // EN: PreTask mandatory condition
                     // ES: Condición de obligatoriedad de la pregunta de tarea previa
                     <ConditionalInput
-                      {...field}
-                      // TRANSLATE: Localizate the label
-                      label="Mandatory to start the Task"
+                      {...mandatoryField}
+                      label={labels?.mandatory}
                       showOnTrue
                       render={() => (
                         <ContextContainer direction="row">
@@ -110,14 +107,11 @@ export default function PreTaskSelector() {
                             render={({ field }) => (
                               <Select
                                 {...field}
-                                // TRANSLATE: Localizate the label
-                                label="Condition to start the Task"
+                                label={labels?.condition}
                                 data={[
-                                  // TRANSLATE: Localizate the label
-                                  { label: 'Only take the test', value: 'take' },
+                                  { label: labels?.conditions?.take, value: 'take' },
                                   {
-                                    // TRANSLATE: Localizate the label
-                                    label: 'Pass the test with a score higher than',
+                                    label: labels?.conditions?.greater,
                                     value: 'greater',
                                   },
                                 ]}
@@ -155,3 +149,15 @@ export default function PreTaskSelector() {
     </>
   );
 }
+
+PreTaskSelector.propTypes = {
+  labels: PropTypes.shape({
+    toggler: PropTypes.string,
+    mandatory: PropTypes.string,
+    condition: PropTypes.string,
+    conditions: PropTypes.shape({
+      take: PropTypes.string,
+      greater: PropTypes.string,
+    }),
+  }),
+};

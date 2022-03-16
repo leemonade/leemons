@@ -56,9 +56,33 @@ module.exports = {
           subject: 'Subject',
           addSubject: 'Add subject',
           level: 'Level',
+          levelValues: {
+            begginer: 'Beginner',
+            intermediate: 'Intermediate',
+          },
           summary: 'Summary',
           tags: 'Tags',
           buttonNext: 'Next',
+          wordCounter: {
+            single: 'Word',
+            plural: 'Words',
+          },
+          tableInput: {
+            add: 'Add',
+            remove: 'Remove',
+            edit: 'Edit',
+            accept: 'Accept',
+            cancel: 'Cancel',
+          },
+          preTask: {
+            toggler: 'Add a pre-task activity',
+            mandatory: 'Mandatory to start the Task',
+            condition: 'Condition to start the Task',
+            conditions: {
+              take: 'Only take the test',
+              greater: 'Pass the test with a score higher than',
+            },
+          },
         },
 
         placeholders: {

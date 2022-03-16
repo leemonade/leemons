@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
 import { MultiSelect } from '@bubbles-ui/components';
 import { useApi } from '@common';
 import listTags from '../../../../request/tags/list';
 
-export default function TagSelect() {
+export default function TagSelect({ labels, placeholders }) {
   const [data, setData] = useState([]);
   const [extraTags, setExtraTags] = useState([]);
   const { control } = useFormContext();
@@ -24,9 +25,8 @@ export default function TagSelect() {
       render={({ field }) => (
         <MultiSelect
           {...field}
-          // TRANSLATE: Localizate the label and placeholder
-          label="Tags"
-          placeholder="Start typing a tag"
+          label={labels?.tags}
+          placeholder={placeholders?.tags}
           data={data.concat(extraTags)}
           creatable
           searchable
@@ -38,3 +38,12 @@ export default function TagSelect() {
     />
   );
 }
+
+TagSelect.propTypes = {
+  labels: PropTypes.shape({
+    tags: PropTypes.string,
+  }),
+  placeholders: PropTypes.shape({
+    tags: PropTypes.string,
+  }),
+};

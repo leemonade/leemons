@@ -7,7 +7,6 @@ import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import SelectProgram from './components/PickSubject/SelectProgram';
 import SelectSubjects from './components/PickSubject/SelectSubjects';
 import TagSelect from './components/Tags/TagSelect';
-import ConditionalInput from '../Inputs/ConditionalInput';
 import PreTaskSelector from './components/PreTaskSelector/PreTaskSelector';
 
 function ConfigData({
@@ -132,6 +131,7 @@ function ConfigData({
                     {...field}
                     labels={labels}
                     placeholders={placeholders}
+                    errorMessages={errorMessages}
                     errors={errors}
                     program={program}
                   />
@@ -154,15 +154,17 @@ function ConfigData({
                     placeholder={placeholders.summary}
                     error={errors.summary}
                     counter="word"
-                    // TRANSLATE: Localizate the word key
-                    counterLabels={{ single: 'WORD', plural: 'WORDS' }}
+                    counterLabels={{
+                      single: labels.wordCounter.single,
+                      plural: labels.wordCounter.plural,
+                    }}
                     showCounter
                   />
                 )}
               />
             </ContextContainer>
-            <TagSelect />
-            <PreTaskSelector />
+            <TagSelect labels={labels} placeholders={placeholders} />
+            <PreTaskSelector labels={labels?.preTask} />
           </ContextContainer>
           <Stack fullWidth justifyContent="end">
             <Button type="submit" rightIcon={<ChevRightIcon height={20} width={20} />}>

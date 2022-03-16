@@ -9,6 +9,7 @@ export default function SelectSubjects({
   program: programId,
   labels,
   placeholders,
+  errorMessages,
   errors,
   onChange,
 }) {
@@ -37,27 +38,14 @@ export default function SelectSubjects({
     [program]
   );
 
-  // TRANSLATE: Add localization to TableInput labels
-  const subjectsLabels = useMemo(
-    () => ({
-      add: 'Add',
-      remove: 'Remove',
-      edit: 'Edit',
-      accept: 'Accept',
-      cancel: 'Cancel',
-    }),
-    [labels]
-  );
-
-  // TRANSLATE: Localizate the level of difficulty
   const levelsList = useMemo(
     () => [
       {
-        label: 'Beginner',
+        label: labels.levelValues.begginer,
         value: 'beginner',
       },
       {
-        label: 'Intermediate',
+        label: labels.levelValues.intermediate,
         value: 'intermediate',
       },
     ],
@@ -72,8 +60,7 @@ export default function SelectSubjects({
         accessor: 'course',
         input: {
           node: <Select data={selects?.courses} placeholder={placeholders?.course} required />,
-          // TRANSLATE: Localizate the required field
-          rules: { required: 'Required field' },
+          rules: { required: errorMessages?.course?.required },
         },
         valueRender: (v) => find(selects?.courses, { value: v })?.label,
       });
@@ -91,8 +78,7 @@ export default function SelectSubjects({
             required
           />
         ),
-        // TRANSLATE: Localizate the required field
-        rules: { required: 'Required field' },
+        rules: { required: errorMessages?.subject?.required },
       },
       valueRender: (v) => find(selects?.subjects, { value: v })?.label,
     });
@@ -109,8 +95,7 @@ export default function SelectSubjects({
             disabled={!selects?.subjects?.length}
           />
         ),
-        // TRANSLATE: Localizate the required field
-        rules: { required: 'Required field' },
+        rules: { required: errorMessages?.level?.required },
       },
       valueRender: (v) => find(levelsList, { value: v })?.label,
     });
@@ -124,7 +109,7 @@ export default function SelectSubjects({
         data={value}
         onChange={onChange}
         columns={subjectsColumns}
-        labels={subjectsLabels}
+        labels={labels.tableInput}
         unique
         sortable
         error={errors?.subjects}
@@ -142,6 +127,17 @@ SelectSubjects.propTypes = {
     course: PropTypes.string,
     subject: PropTypes.string,
     level: PropTypes.string,
+    levelValues: PropTypes.shape({
+      begginer: PropTypes.string,
+      intermediate: PropTypes.string,
+    }),
+    tableInput: PropTypes.shape({
+      add: PropTypes.string,
+      remove: PropTypes.string,
+      edit: PropTypes.string,
+      accept: PropTypes.string,
+      cancel: PropTypes.string,
+    }),
   }),
   placeholders: PropTypes.shape({
     subjects: PropTypes.string,
@@ -149,6 +145,17 @@ SelectSubjects.propTypes = {
     course: PropTypes.string,
     subject: PropTypes.string,
     level: PropTypes.string,
+  }),
+  errorMessages: PropTypes.shape({
+    course: PropTypes.shape({
+      required: PropTypes.string,
+    }),
+    subject: PropTypes.shape({
+      required: PropTypes.string,
+    }),
+    level: PropTypes.shape({
+      required: PropTypes.string,
+    }),
   }),
   errors: PropTypes.shape({
     subjects: PropTypes.string,
