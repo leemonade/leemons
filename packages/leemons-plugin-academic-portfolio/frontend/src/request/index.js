@@ -7,6 +7,7 @@ import {
   updateSubjectCredits,
 } from './subjects';
 import {
+  addStudentsToClassesUnderNodeTree,
   createProgram,
   detailProgram,
   getProgramTree,
@@ -36,6 +37,7 @@ import {
   updateClass,
   updateClassMany,
 } from './classes';
+import { getStudentsByTags } from './common';
 
 export { listCourses as listCoursesRequest, updateCourse as updateCourseRequest } from './courses';
 
@@ -84,3 +86,6 @@ export const enableMenuItemRequest = enableMenuItem;
 export const isConfigProfilesRequest = isConfigProfiles;
 export const getProfilesRequest = getProfiles;
 export const setProfilesRequest = setProfiles;
+export const addStudentsToClassesUnderNodeTreeRequest = addStudentsToClassesUnderNodeTree;
+
+export const getStudentsByTagsRequest = getStudentsByTags;

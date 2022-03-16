@@ -20,6 +20,7 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import SelectProgram from '../../components/Selectors/SelectProgram';
 import {
+  addStudentsToClassesUnderNodeTreeRequest,
   createClassRequest,
   createGroupRequest,
   createKnowledgeRequest,
@@ -298,11 +299,22 @@ export default function TreePage() {
     render();
   }
 
-  async function onSaveGroup({ id, name, abbreviation }) {
+  async function onSaveGroup({ id, name, abbreviation, students }) {
     try {
       store.saving = true;
       render();
+      console.log(students);
       await updateGroupRequest({ id, name, abbreviation });
+      if (students) {
+        const a = await addStudentsToClassesUnderNodeTreeRequest({
+          program: store.programId,
+          nodeType: 'groups',
+          nodeId: id,
+          students,
+        });
+        console.log(a);
+      }
+
       store.tree = await getProgramTree();
       addSuccessAlert(t('groupUpdated'));
     } catch (err) {
@@ -641,6 +653,7 @@ export default function TreePage() {
                       <TreeProgramDetail
                         onSave={onSaveProgram}
                         program={store.editingItem.value}
+                        center={store.centerId}
                         item={store.editingItem}
                         messages={messages.treeProgram}
                         messagesAddUsers={messages.addUsers}
@@ -651,6 +664,7 @@ export default function TreePage() {
                       <TreeCourseDetail
                         onSave={onSaveCourse}
                         course={store.editingItem.value}
+                        center={store.centerId}
                         item={store.editingItem}
                         messages={messages.treeCourse}
                         messagesAddUsers={messages.addUsers}
@@ -662,6 +676,7 @@ export default function TreePage() {
                         onSave={onSaveGroup}
                         program={store.program}
                         group={store.editingItem.value}
+                        center={store.centerId}
                         item={store.editingItem}
                         messages={messages.treeGroup}
                         messagesAddUsers={messages.addUsers}
@@ -672,6 +687,7 @@ export default function TreePage() {
                       <TreeSubjectTypeDetail
                         onSave={onSaveSubjectType}
                         subjectType={store.editingItem.value}
+                        center={store.centerId}
                         item={store.editingItem}
                         messages={messages.treeSubjectType}
                         messagesAddUsers={messages.addUsers}
@@ -682,6 +698,7 @@ export default function TreePage() {
                       <TreeKnowledgeDetail
                         onSave={onSaveKnowledge}
                         program={store.program}
+                        center={store.centerId}
                         knowledge={store.editingItem.value}
                         item={store.editingItem}
                         messages={messages.treeKnowledge}
@@ -695,6 +712,7 @@ export default function TreePage() {
                         onSaveClass={onSaveClass}
                         selectClass={selectClass}
                         program={store.program}
+                        center={store.centerId}
                         messagesAddUsers={messages.addUsers}
                         classe={store.editingItem.value}
                         item={store.editingItem}

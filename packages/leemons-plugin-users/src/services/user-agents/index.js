@@ -35,6 +35,7 @@ const {
 const {
   getAllItemsForTheUserAgentHasPermissionsByType,
 } = require('./item-permissions/getAllItemsForTheUserAgentHasPermissionsByType');
+const { filterUserAgentsByProfileAndCenter } = require('./filterUserAgentsByProfileAndCenter');
 
 module.exports = {
   existUserAgent,
@@ -43,6 +44,7 @@ module.exports = {
   getUserAgentCenter,
   agentDetailForPage,
   getUserAgentByCenterProfile,
+  filterUserAgentsByProfileAndCenter,
   calendars: {
     getUserAgentCalendarKey,
     addCalendarToUserAgentsIfNeedByUser,

@@ -6,5 +6,13 @@ export function getTreeAddUsersComponentTranslation(t) {
     noteDescription: t('addUsers.noteDescription'),
     byTag: t('addUsers.byTag'),
     byData: t('addUsers.byData'),
+    addTag: t('addUsers.addTag'),
+    emailHeader: t('addUsers.emailHeader'),
+    nameHeader: t('addUsers.nameHeader'),
+    surnameHeader: t('addUsers.surnameHeader'),
+    birthdayHeader: t('addUsers.birthdayHeader'),
+    studentsFound: t('addUsers.studentsFound'),
+    studentsError: t('addUsers.studentsError'),
+    studentsWarning: t('addUsers.studentsWarning'),
   };
 }

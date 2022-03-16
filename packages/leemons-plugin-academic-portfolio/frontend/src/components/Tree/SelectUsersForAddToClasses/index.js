@@ -4,7 +4,7 @@ import { Box, Paragraph, TabPanel, Tabs, Title } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import { ByTag } from './ByTag';
 
-const SelectUsersForAddToClasses = ({ tree, messages }) => {
+const SelectUsersForAddToClasses = ({ tree, center, messages, onChange }) => {
   const [store, render] = useStore({});
 
   return (
@@ -19,7 +19,7 @@ const SelectUsersForAddToClasses = ({ tree, messages }) => {
       </Box>
       <Tabs>
         <TabPanel label={messages.byTag}>
-          <ByTag />
+          <ByTag center={center} messages={messages} tree={tree} onChange={onChange} />
         </TabPanel>
         <TabPanel label={messages.byData}>
           <Box>Contewefnt ofwhat</Box>
@@ -31,7 +31,9 @@ const SelectUsersForAddToClasses = ({ tree, messages }) => {
 
 SelectUsersForAddToClasses.propTypes = {
   tree: PropTypes.object,
+  center: PropTypes.string,
   messages: PropTypes.object,
+  onChange: PropTypes.func,
 };
 
 // eslint-disable-next-line import/prefer-default-export

@@ -18,6 +18,7 @@ const TreeGroupDetail = ({
   program,
   messages,
   messagesAddUsers,
+  center,
   onSave,
   saving,
   item,
@@ -26,6 +27,7 @@ const TreeGroupDetail = ({
   const {
     reset,
     control,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm({ defaultValues: group });
@@ -33,6 +35,10 @@ const TreeGroupDetail = ({
   React.useEffect(() => {
     reset(group);
   }, [group]);
+
+  function onChangeAddUsers(e) {
+    setValue('students', e);
+  }
 
   return (
     <Box>
@@ -42,7 +48,7 @@ const TreeGroupDetail = ({
             {/* eslint-disable-next-line no-nested-ternary */}
             {duplicateMode ? messages.duplicateTitle : group ? messages.title : messages.titleNew}
           </Title>
-          <Alert>{messages.duplicateWarning}</Alert>
+          <Alert closeable={false}>{messages.duplicateWarning}</Alert>
           <Box>
             <Controller
               name="abbreviation"
@@ -93,7 +99,14 @@ const TreeGroupDetail = ({
             />
           </Box>
 
-          {group ? <SelectUsersForAddToClasses messages={messagesAddUsers} tree={item} /> : null}
+          {group ? (
+            <SelectUsersForAddToClasses
+              onChange={onChangeAddUsers}
+              center={center}
+              messages={messagesAddUsers}
+              tree={item}
+            />
+          ) : null}
 
           {!group ? (
             <>
@@ -137,6 +150,8 @@ TreeGroupDetail.propTypes = {
   selectSubjectsNode: PropTypes.any,
   duplicateMode: PropTypes.bool,
   item: PropTypes.object,
+  messagesAddUsers: PropTypes.object,
+  center: PropTypes.string,
 };
 
 // eslint-disable-next-line import/prefer-default-export

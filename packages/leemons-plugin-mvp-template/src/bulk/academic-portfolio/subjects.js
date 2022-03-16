@@ -73,6 +73,8 @@ async function importAcademicPortfolioSubjects({ programs, users, knowledgeAreas
       return classroom;
     });
 
+    items[key].seats = Number(items[key].seats);
+
     delete items[key].groups;
     delete items[key].color;
     delete items[key].teachers;

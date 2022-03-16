@@ -1,4 +1,5 @@
 const { programCanHaveCoursesOrHaveCourses } = require('./programCanHaveCoursesOrHaveCourses');
+const { addStudentsToClassesUnderNodeTree } = require('./addStudentsToClassesUnderNodeTree');
 const { duplicateProgramByIds } = require('./duplicateProgramByIds');
 const { getProgramSubstages } = require('./getProgramSubstages');
 const { removeProgramByIds } = require('./removeProgramByIds');
@@ -25,5 +26,6 @@ module.exports = {
   removeProgramByIds,
   getProgramSubstages,
   duplicateProgramByIds,
+  addStudentsToClassesUnderNodeTree,
   programCanHaveCoursesOrHaveCourses,
 };

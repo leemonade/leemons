@@ -68,7 +68,7 @@ async function initAcademicPortfolio({ centers, profiles, users }) {
 
     for (let i = 0, len = subjectsKeys.length; i < len; i++) {
       const key = subjectsKeys[i];
-      const { classes, ...subject } = subjects[key];
+      const { classes, seats, ...subject } = subjects[key];
       const subjectData = await services.subjects.addSubject(subject);
       subjects[key] = { ...subjectData };
 
@@ -98,9 +98,11 @@ async function initAcademicPortfolio({ centers, profiles, users }) {
           )
         );
 
+        // Todo : Mover los seats de la asignatura a la clase
         const classroom = {
           ...rest,
           program,
+          seats,
           subject: subjectData.id,
           group: groupsData[j].id,
           teachers: teachersData.map((teacherData) => {
