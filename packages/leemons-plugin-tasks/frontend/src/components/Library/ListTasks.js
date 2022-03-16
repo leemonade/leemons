@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useApi } from '@common';
-import { Paragraph, useDebouncedValue, SearchInput } from '@bubbles-ui/components';
+import {
+  Paragraph,
+  useDebouncedValue,
+  SearchInput,
+  ContextContainer,
+} from '@bubbles-ui/components';
 import listTasksRequest from '../../request/task/listTasks';
 import Filters from './Filters';
 import CardList from './CardList';
@@ -22,7 +28,7 @@ export default function ListTasks({ draft = false }) {
   const [data, dataError, loadingData, refreshData] = useApi(listTasksRequest, options, 30000);
 
   return (
-    <>
+    <ContextContainer padded="vertical">
       <Filters
         onChange={(value) => {
           setOptions({
@@ -37,6 +43,10 @@ export default function ListTasks({ draft = false }) {
       ) : (
         <CardList data={data?.items} loading={loadingData} refresh={refreshData} />
       )}
-    </>
+    </ContextContainer>
   );
 }
+
+ListTasks.propTypes = {
+  draft: PropTypes.bool,
+};
