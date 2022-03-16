@@ -290,6 +290,16 @@ module.exports = {
     newclass: 'New class',
     newknowledges: 'New area',
     newsubject: 'New subject',
+    addUsers: {
+      title: 'Assign Students',
+      description:
+        'Assign students to all classrooms nested on this level from the students database.',
+      note: 'NOTE:',
+      noteDescription:
+        'selected students will be added to the current student lists for each classroom. If you want to consult or edit a group of students, you must do it directly in each classroom.',
+      byTag: 'Select by tag',
+      byData: 'Search by user data',
+    },
     program: {
       title: 'Program configuration',
       nameLabel: 'Program name:',

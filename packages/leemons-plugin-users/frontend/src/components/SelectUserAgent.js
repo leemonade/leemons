@@ -1,4 +1,4 @@
-import React, { useEffect, forwardRef } from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { cloneDeep, find, findIndex, map } from 'lodash';
 import { ActionButton, Box, MultiSelect, UserDisplayItem } from '@bubbles-ui/components';
@@ -33,7 +33,7 @@ function ValueItem(props) {
 }
 
 const SelectUserAgent = forwardRef(
-  ({ profiles, centers, maxSelectedValues = 1, ...props }, ref) => {
+  ({ profiles, centers, maxSelectedValues = 1, onlyContacts, ...props }, ref) => {
     const [store, render] = useStore({
       data: [],
     });
@@ -61,6 +61,7 @@ const SelectUserAgent = forwardRef(
         const response = await searchUserAgentsRequest(filters, {
           withCenter: true,
           withProfile: true,
+          onlyContacts,
         });
         const data = map(response.userAgents, (item) => ({
           ...item.user,
@@ -194,6 +195,7 @@ SelectUserAgent.propTypes = {
   profiles: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   centers: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   maxSelectedValues: PropTypes.number,
+  onlyContacts: PropTypes.bool,
 };
 
 ValueItem.propTypes = {

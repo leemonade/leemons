@@ -56,6 +56,7 @@ import SelectSubjectsByTable from '../../components/Selectors/SelectSubjectsByTa
 import { getSubjectsTranslation } from '../../helpers/getSubjectsTranslation';
 import { getTableActionsTranslation } from '../../helpers/getTableActionsTranslation';
 import { TreeNewSubjectDetail } from '../../components/Tree/TreeNewSubjectDetail';
+import { getTreeAddUsersComponentTranslation } from '../../helpers/getTreeAddUsersComponentTranslation';
 
 export default function TreePage() {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('tree_page'));
@@ -241,6 +242,7 @@ export default function TreePage() {
         title: t('page_title'),
         description: t('page_description'),
       },
+      addUsers: getTreeAddUsersComponentTranslation(t),
       treeProgram: getTreeProgramDetailTranslation(t),
       treeCourse: getTreeCourseDetailTranslation(t),
       treeGroup: getTreeGroupDetailTranslation(t),
@@ -639,7 +641,9 @@ export default function TreePage() {
                       <TreeProgramDetail
                         onSave={onSaveProgram}
                         program={store.editingItem.value}
+                        item={store.editingItem}
                         messages={messages.treeProgram}
+                        messagesAddUsers={messages.addUsers}
                         saving={store.saving}
                       />
                     ) : null}
@@ -647,7 +651,9 @@ export default function TreePage() {
                       <TreeCourseDetail
                         onSave={onSaveCourse}
                         course={store.editingItem.value}
+                        item={store.editingItem}
                         messages={messages.treeCourse}
+                        messagesAddUsers={messages.addUsers}
                         saving={store.saving}
                       />
                     ) : null}
@@ -656,7 +662,9 @@ export default function TreePage() {
                         onSave={onSaveGroup}
                         program={store.program}
                         group={store.editingItem.value}
+                        item={store.editingItem}
                         messages={messages.treeGroup}
+                        messagesAddUsers={messages.addUsers}
                         saving={store.saving}
                       />
                     ) : null}
@@ -664,7 +672,9 @@ export default function TreePage() {
                       <TreeSubjectTypeDetail
                         onSave={onSaveSubjectType}
                         subjectType={store.editingItem.value}
+                        item={store.editingItem}
                         messages={messages.treeSubjectType}
+                        messagesAddUsers={messages.addUsers}
                         saving={store.saving}
                       />
                     ) : null}
@@ -673,7 +683,9 @@ export default function TreePage() {
                         onSave={onSaveKnowledge}
                         program={store.program}
                         knowledge={store.editingItem.value}
+                        item={store.editingItem}
                         messages={messages.treeKnowledge}
+                        messagesAddUsers={messages.addUsers}
                         saving={store.saving}
                       />
                     ) : null}
@@ -683,7 +695,9 @@ export default function TreePage() {
                         onSaveClass={onSaveClass}
                         selectClass={selectClass}
                         program={store.program}
+                        messagesAddUsers={messages.addUsers}
                         classe={store.editingItem.value}
+                        item={store.editingItem}
                         classes={store.classesBySubject[store.editingItem.value.subject?.id]}
                         messages={messages.treeClass}
                         saving={store.saving}
@@ -700,6 +714,7 @@ export default function TreePage() {
                       <TreeGroupDetail
                         onSave={onNewGroup}
                         program={store.program}
+                        item={store.newItem}
                         messages={messages.treeGroup}
                         saving={store.saving}
                         selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
@@ -708,6 +723,7 @@ export default function TreePage() {
                     {store.newItem.nodeType === 'subjectType' ? (
                       <TreeSubjectTypeDetail
                         onSave={onNewSubjectType}
+                        item={store.newItem}
                         messages={messages.treeSubjectType}
                         saving={store.saving}
                         selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
@@ -717,6 +733,7 @@ export default function TreePage() {
                       <TreeKnowledgeDetail
                         onSave={onNewKnowledge}
                         program={store.program}
+                        item={store.newItem}
                         messages={messages.treeKnowledge}
                         saving={store.saving}
                         selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
@@ -725,6 +742,7 @@ export default function TreePage() {
                     {store.newItem.nodeType === 'subject' ? (
                       <TreeNewSubjectDetail
                         onSave={onNewSubjectSave}
+                        item={store.newItem}
                         program={store.program}
                         messages={{
                           subjects: messages.subjects,
@@ -744,6 +762,7 @@ export default function TreePage() {
                         onSaveSubject={onSaveSubject}
                         onSaveClass={onSaveClass}
                         selectClass={selectClass}
+                        item={store.newItem}
                         program={store.program}
                         classe={store.newItem.value}
                         classes={store.classesBySubject[store.newItem.value.subject?.id]}

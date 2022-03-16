@@ -10,14 +10,17 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
+import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
 
 const TreeGroupDetail = ({
   duplicateMode,
   group,
   program,
   messages,
+  messagesAddUsers,
   onSave,
   saving,
+  item,
   selectSubjectsNode,
 }) => {
   const {
@@ -90,6 +93,8 @@ const TreeGroupDetail = ({
             />
           </Box>
 
+          {group ? <SelectUsersForAddToClasses messages={messagesAddUsers} tree={item} /> : null}
+
           {!group ? (
             <>
               <Box>
@@ -131,6 +136,7 @@ TreeGroupDetail.propTypes = {
   saving: PropTypes.bool,
   selectSubjectsNode: PropTypes.any,
   duplicateMode: PropTypes.bool,
+  item: PropTypes.object,
 };
 
 // eslint-disable-next-line import/prefer-default-export
