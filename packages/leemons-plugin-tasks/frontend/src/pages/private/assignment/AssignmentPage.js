@@ -41,17 +41,6 @@ export default function AssignmentPage() {
   const handleAssignment = async (values) => {
     const { assignees, teachers, startDate, deadline, visualizationDate, ...instanceData } = values;
 
-    const [students, classes] = assignees.reduce(
-      ([s, c], { type, assignee }) => {
-        if (type === 'student') {
-          return [[...s, assignee], c];
-        }
-
-        return [s, [...c, assignee]];
-      },
-      [[], []]
-    );
-
     try {
       const instance = await createInstanceRequest(id, {
         ...instanceData,
@@ -61,19 +50,7 @@ export default function AssignmentPage() {
       });
 
       // TODO: Add subject selector
-      await assignStudentRequest(
-        instance,
-        students
-          .map((s) => ({
-            subject: 'SUBJECT TEST',
-            students: [s],
-          }))
-          .concat(
-            classes.map((c) => ({
-              group: c,
-            }))
-          )
-      );
+      await assignStudentRequest(instance, assignees);
       await assignTeacherRequest(instance, teachers);
 
       await enableMenuItemRequest('ongoing');
