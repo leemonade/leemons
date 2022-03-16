@@ -9,23 +9,13 @@ async function addAsset(ctx) {
   const { userSession } = ctx.state;
 
   if (!filesData?.files) {
-    ctx.status = 400;
-    ctx.body = {
-      status: 400,
-      message: 'No file was uploaded',
-    };
-    return;
+    throw new global.utils.HttpError(400, 'No file was uploaded');
   }
 
   const files = filesData.files.length ? filesData.files : [filesData.files];
 
   if (files.length > 1) {
-    ctx.status = 400;
-    ctx.body = {
-      status: 400,
-      message: 'Multiple file uploading is not enabled yet',
-    };
-    return;
+    throw new global.utils.HttpError(501, 'Multiple file uploading is not enabled yet');
   }
 
   const asset = await add({ ...assetData, file: files[0] }, { userSession });

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState, useContext } from 'react';
 import { isEmpty } from 'lodash';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { Box, Stack, ContextContainer, ActionButton, Grid, Col } from '@bubbles-ui/components';
 import { ChevronLeftIcon } from '@bubbles-ui/icons/outline';
 import { LibraryForm } from '@bubbles-ui/leemons';
@@ -13,15 +13,17 @@ import LibraryContext from '../../../context/LibraryContext';
 import { VIEWS } from '../library/Library.constants';
 
 const NewAssetPage = () => {
-  const { file, setView } = useContext(LibraryContext);
+  const { file, setView, category, selectCategory } = useContext(LibraryContext);
   const [, translations] = useTranslateLoader(prefixPN('form'));
   const history = useHistory();
+  const params = useParams();
   const [tags, setTags] = useState([]);
-  const { setLoading, scrollTo } = useContext(LayoutContext);
+  const { setLoading } = useContext(LayoutContext);
 
   useEffect(() => {
     setView(VIEWS.NEW);
-  }, []);
+    selectCategory(params.category);
+  }, [params]);
 
   const handleOnBack = () => {
     history.goBack();
@@ -32,9 +34,17 @@ const NewAssetPage = () => {
     setTags(val);
   };
 
-  const handleOnSubmit = (data) => {
+  const handleOnSubmit = async (data) => {
     console.log(data);
     setLoading(true);
+
+    try {
+      await newAssetRequest(data, category.id);
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      console.error(err);
+    }
   };
 
   const formLabels = useMemo(() => {

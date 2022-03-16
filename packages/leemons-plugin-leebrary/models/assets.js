@@ -15,7 +15,9 @@ module.exports = {
       type: 'string',
     },
     cover: {
-      type: 'string',
+      references: {
+        collection: 'plugins_leebrary::files',
+      }
     },
     fromUser: {
       references: {

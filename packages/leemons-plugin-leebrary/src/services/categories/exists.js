@@ -1,8 +1,7 @@
 const { tables } = require('../tables');
 
-async function exists(category, { transacting } = {}) {
-  const { key } = category;
-  const count = await tables.categories.count({ key }, { transacting });
+async function exists(id, { transacting } = {}) {
+  const count = await tables.categories.count({ id }, { transacting });
   return count > 0;
 }
 

@@ -109,7 +109,8 @@ const categories = [
 
 // EN: The roles must be ordered by allowance. Each role can only assign lower roles.
 // ES: Los roles deben estar ordenados por permisos. Cada rol sólo puede asignar roles inferiores.
-const roles = ['public', 'noPermission', 'viewer', 'commentor', 'editor', 'owner'];
+const assetRoles = ['viewer', 'commentor', 'editor', 'owner'];
+const roles = ['public', 'noPermission', ...assetRoles];
 
 // EN: The permissions each role has.
 // ES: Los permisos que cada rol tiene.
@@ -166,6 +167,7 @@ const rolesPermissions = {
 
 module.exports = {
   roles,
+  assetRoles,
   rolesPermissions,
   pluginName: permissionsPrefix,
   permissions: {

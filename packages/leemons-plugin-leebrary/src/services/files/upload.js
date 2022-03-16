@@ -3,7 +3,7 @@ const pathSys = require('path');
 const { tables } = require('../tables');
 const { findOne: getSettings } = require('../settings');
 
-async function upload(file, { name }, { userSession, transacting } = {}) {
+async function upload(file, { name }, { transacting } = {}) {
   const { path, type } = file;
   const extension = mime.extension(type);
 
@@ -14,12 +14,6 @@ async function upload(file, { name }, { userSession, transacting } = {}) {
     extension,
     uri: '',
   };
-
-  if (userSession) {
-    fileData.fromUser = userSession.id;
-    fileData.fromUserAgent =
-      userSession.userAgents && userSession.userAgents.length ? userSession.userAgents[0].id : null;
-  }
 
   // EN: Firstly save the file to the database and get the id
   // ES: Primero guardamos el archivo en la base de datos y obtenemos el id

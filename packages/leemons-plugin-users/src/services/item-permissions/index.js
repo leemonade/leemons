@@ -3,6 +3,7 @@ const { find } = require('./find');
 const { count } = require('./count');
 const { exist } = require('./exist');
 const { remove } = require('./remove');
+const { findOne } = require('./findOne');
 const { addBasicIfNeed } = require('./addBasicIfNeed');
 
 module.exports = {
@@ -11,5 +12,6 @@ module.exports = {
   count,
   exist,
   remove,
+  findOne,
   addBasicIfNeed,
 };
