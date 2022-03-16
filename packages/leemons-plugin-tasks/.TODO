@@ -31,6 +31,7 @@ Library
   [] New sticker en task/library (D3)
 
 Assignment
+  [] Unassign students
   [] Assignment show curriculum content to students. (Dependency on Content) (D3)
   [] Gradable (Dependency on Grades) (D3)
   [] Mandatory || Final examen (Consultar a Johan) (D3)
