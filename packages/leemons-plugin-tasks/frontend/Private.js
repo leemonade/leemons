@@ -48,7 +48,7 @@ export default function Private() {
       </Route>
 
       {/* STUDENT VIEW */}
-      <Route path={`${path}/student-detail`}>
+      <Route path={`${path}/student-detail/:id`}>
         <UserDetails session={session} />
       </Route>
     </Switch>

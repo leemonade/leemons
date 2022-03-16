@@ -4,17 +4,24 @@ import { useApi, unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getCentersWithToken } from '@users/session';
 import { Table, ContextContainer } from '@bubbles-ui/components';
-import { ViewOnIcon } from '@bubbles-ui/icons/outline';
+import { ViewOnIcon, StudyDeskIcon } from '@bubbles-ui/icons/outline';
 import { prefixPN } from '../../helpers/prefixPN';
 import listTeacherTasks from '../../request/instance/listTeacherTasks';
 
 function Actions({ id }) {
   const history = useHistory();
   return (
-    <ContextContainer alignItems="center">
+    <ContextContainer alignItems="center" direction="row">
+      <StudyDeskIcon
+        as="button"
+        color="secondary"
+        style={{ cursor: 'pointer' }}
+        onClick={() => history.push(`/private/tasks/student-detail/${id}`)}
+      />
       <ViewOnIcon
         as="button"
         color="secondary"
+        style={{ cursor: 'pointer' }}
         onClick={() => history.push(`/private/tasks/details/${id}`)}
       />
     </ContextContainer>
@@ -23,7 +30,7 @@ function Actions({ id }) {
 
 async function getTasks(userAgent, setTasks) {
   const response = await listTeacherTasks(userAgent, true);
-  const assignedTasks = response.tasks.items.map((t) => {
+  const assignedTasks = response?.tasks?.items?.map((t) => {
     // eslint-disable-next-line no-param-reassign
     const task = t;
     task.students.count = t.students.count;
@@ -37,6 +44,8 @@ async function getTasks(userAgent, setTasks) {
     task.students.completed = `${t.students.completed} | ${Math.round(
       (t.students.completed / t.students.count) * 100
     )}%`;
+
+    task.deadline = new Date(t.deadline).toLocaleString();
 
     task.actions = <Actions id={task.id} />;
 
@@ -59,7 +68,7 @@ export default function TeacherAssignedTasksLists() {
   useEffect(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = res.plugins.tasks.teacher_assignments;
+      const data = res?.plugins?.tasks?.teacher_assignments;
 
       // EN: Save your translations keys to use them in your component
       // ES: Guarda tus traducciones para usarlas en tu componente
@@ -117,5 +126,5 @@ export default function TeacherAssignedTasksLists() {
     }
   }, [centers]);
 
-  return <>{tasks.length && <Table columns={columns} data={tasks} />}</>;
+  return <>{tasks?.length && <Table columns={columns} data={tasks} />}</>;
 }

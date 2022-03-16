@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import { useApi } from '@common';
 import { getCentersWithToken } from '@users/session';
 import { Table, PageContainer } from '@bubbles-ui/components';
@@ -19,6 +20,7 @@ async function getTasks(userAgent, setTasks) {
 }
 
 export default function Details() {
+  const { id } = useParams();
   const [centers] = useApi(getCentersWithToken);
   const [tasks, setTasks] = React.useState([]);
 
@@ -41,5 +43,9 @@ export default function Details() {
     }
   }, [centers]);
 
-  return <TaskDetail />;
+  if (centers.length) {
+    return <TaskDetail id={id} student={centers[0].userAgentId} />;
+  }
+
+  return null;
 }

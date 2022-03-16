@@ -14,7 +14,7 @@ export default function OngoingPage() {
   useEffect(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = res.plugins.tasks.ongoing_page;
+      const data = res?.plugins?.tasks?.ongoing_page;
 
       setLabels(data);
 
