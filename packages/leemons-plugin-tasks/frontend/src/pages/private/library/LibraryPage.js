@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
-import { ContextContainer, PageContainer, Paragraph } from '@bubbles-ui/components';
+import { ContextContainer, PageContainer, Tabs, TabPanel } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -44,12 +44,14 @@ export default function LibraryPage() {
       <AdminPageHeader values={headerLabels} buttons={headerButtons} onNew={handleOnNewTask} />
 
       <PageContainer>
-        <ContextContainer title="draft">
-          <ListTasks draft />
-        </ContextContainer>
-        <ContextContainer title="published">
-          <ListTasks />
-        </ContextContainer>
+        <Tabs>
+          <TabPanel label="Published">
+            <ListTasks />
+          </TabPanel>
+          <TabPanel label="Draft">
+            <ListTasks draft />
+          </TabPanel>
+        </Tabs>
       </PageContainer>
     </ContextContainer>
   );
