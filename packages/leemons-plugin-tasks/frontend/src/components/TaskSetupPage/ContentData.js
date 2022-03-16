@@ -86,25 +86,32 @@ function ContentData({
             <Controller
               control={control}
               name="recommendedDuration"
-              rules={{ required: errorMessages.Recommendedduration?.required }}
               render={({ field }) => (
                 <TimeUnitsInput
                   {...field}
                   label={labels.recommendedDuration}
                   error={errors.recommendedDuration}
                   min={0}
-                  required={!isEmpty(errorMessages.recommendedDuration?.required)}
                 />
               )}
             />
-
-            <Contents label={labels.content} error={errors.content} />
-            <Objectives label={labels.objectives} error={errors.objectives} />
+            <Contents required label={labels.content} error={errors.content} />
+            <Objectives required label={labels.objectives} error={errors.objectives} />
             <AssessmentCriteria
               label={labels.assessmentCriteria}
               error={errors.assessmentCriteria}
             />
-
+            {/* TODO: Make the statement required (Not allowed with TextEditor) */}
+            <Controller
+              control={control}
+              name="statement"
+              rules={{
+                required: errorMessages.statement?.required,
+              }}
+              render={({ field }) => (
+                <TextEditor required {...field} label={labels.statement} error={errors.statement} />
+              )}
+            />
             <Controller
               control={control}
               name="development"
@@ -119,16 +126,6 @@ function ContentData({
                 />
               )}
             />
-
-            <Controller
-              control={control}
-              name="statement"
-              rules={{ required: errorMessages.statement?.required }}
-              render={({ field }) => (
-                <TextEditor {...field} label={labels.statement} error={errors.statement} />
-              )}
-            />
-
             <Submissions labels={labels} />
             <SelfReflection
               labels={labels?.selfReflection}

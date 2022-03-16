@@ -69,7 +69,6 @@ function DesignData({
             <Controller
               control={control}
               name="color"
-              rules={{ required: errorMessages.color?.required }}
               render={({ field }) => <ColorInput label={labels?.color} {...field} />}
             />
           </Box>

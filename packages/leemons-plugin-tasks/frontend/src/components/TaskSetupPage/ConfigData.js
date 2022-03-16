@@ -149,6 +149,7 @@ function ConfigData({
                 render={({ field }) => (
                   <Textarea
                     {...field}
+                    required
                     autosize={true}
                     label={labels.summary}
                     placeholder={placeholders.summary}
