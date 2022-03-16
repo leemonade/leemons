@@ -32,14 +32,15 @@ Library
 
 Assignment
   [] Unassign students
+  [] Optional Dates
   [] Assignment show curriculum content to students. (Dependency on Content) (D3)
   [] Gradable (Dependency on Grades) (D3)
   [] Mandatory || Final examen (Consultar a Johan) (D3)
   [] Rubrics (Dependency on Rubrics plugin) (D3)
 
 Ongoing & History
-  [] Ongoing filters (Easy filters, complicated pagination) (D2)
-  [] History filters (Easy filters, complicated pagination) (D2)
+  [Backend] Ongoing filters (Easy filters, complicated pagination) (D2)
+  [Backend] History filters (Easy filters, complicated pagination) (D2)
 
 Task Correction
 
@@ -50,16 +51,6 @@ Students
   Task details
     [] Get tasks
   Correction Details
-
-
-Library Filter by:
- X Name
- X Draft/Published
- X Program
- X Course
- X Subject
- X Level
- X Methodology
 
 Ongoing Filter by:
   Name
