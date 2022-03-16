@@ -16,6 +16,7 @@ import Attachments from './components/Attachments';
 function ContentData({
   labels,
   placeholders,
+  descriptions,
   helps,
   errorMessages,
   sharedData,
@@ -187,17 +188,15 @@ function ContentData({
               )}
             />
 
-            <Submissions />
+            <Submissions labels={labels} />
             <SelfReflection
-              label="Self reflection"
-              // TRANSLATE: Localizate self Reflection
-              description="Add a space for the student to reflect on what he/she has learned."
+              labels={labels?.selfReflection}
+              description={descriptions?.selfReflection}
               name="selfReflection"
             />
             <SelfReflection
-              label="Feedback"
-              // TRANSLATE: Localizate feedback
-              description="Ask the student for a quick evaluation of this exercise."
+              labels={labels?.feedback}
+              description={descriptions?.feedback}
               name="feedback"
             />
           </ContextContainer>

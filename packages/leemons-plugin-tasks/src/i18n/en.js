@@ -1,4 +1,25 @@
 module.exports = {
+  tableInput: {
+    add: 'Add',
+    remove: 'Remove',
+    edit: 'Edit',
+    accept: 'Accept',
+    cancel: 'Cancel',
+  },
+  methodology: {
+    directInstruction: 'Direct Instruction',
+    flippedClassroom: 'Flipped Classroom',
+    projectBasedLearning: 'Project-Based Learning',
+    inquiryBasedLearning: 'Inquiry-Based Learning',
+    expeditionaryLearning: 'Expeditionary Learning',
+    cooperativeLearning: 'Cooperative Learning',
+    personalizedLearning: 'Personalized Learning',
+    gameBasedLearning: 'Game-Based Learning',
+    kinestheticLearning: 'Kinesthetic Learning',
+    differentiatedInstruction: 'Differentiated Instruction',
+    udl: 'UDL (Unified Design for Learning)',
+    other: 'Other',
+  },
   welcome_page: {
     page_title: 'Tasks',
     page_description:
@@ -67,13 +88,7 @@ module.exports = {
             single: 'Word',
             plural: 'Words',
           },
-          tableInput: {
-            add: 'Add',
-            remove: 'Remove',
-            edit: 'Edit',
-            accept: 'Accept',
-            cancel: 'Cancel',
-          },
+
           preTask: {
             toggler: 'Add a pre-task activity',
             mandatory: 'Mandatory to start the Task',
@@ -132,8 +147,40 @@ module.exports = {
           methodology: 'Methodology',
           recommendedDuration: 'Recommended duration',
           statement: 'Statement',
+          objectives: 'Objectives',
           buttonNext: 'Next',
           buttonPrev: 'Previous',
+          selfReflection: {
+            title: 'Self reflection',
+            description: 'Description',
+            id: 'WIP: Id of the test',
+            mandatory: 'Mandatory to fill the task',
+          },
+          feedback: {
+            title: 'Feedback',
+            description: 'Description',
+            id: 'WIP: Id of the test',
+            mandatory: 'Mandatory to fill the task',
+          },
+          submission: {
+            title: 'This task is comppleted with the submission of a paper or activity',
+            type: 'Type of submission',
+            types: {
+              file: 'File',
+              link: 'Link',
+            },
+            description: 'Description',
+            FileType: {
+              multiFile: 'Allow multiple files',
+              type: 'Type',
+              typePlaceholder: 'Add extension',
+              maxSize: 'Max size',
+            },
+          },
+        },
+        descriptions: {
+          selfReflection: 'Add a space for the student to reflect on what he/she has learned.',
+          feedback: 'Ask the student for a quick evaluation of this exercise.',
         },
         errorMessages: {
           methodology: { required: 'Required field' },

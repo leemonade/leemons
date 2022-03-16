@@ -3,6 +3,7 @@ import { isNil, find, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { ContextContainer, TableInput, Select } from '@bubbles-ui/components';
 import { detailProgramRequest } from '@academic-portfolio/request';
+import useTableInputLabels from '../../../../helpers/useTableInputLabels';
 
 export default function SelectSubjects({
   value,
@@ -16,6 +17,7 @@ export default function SelectSubjects({
   if (!programId) {
     return null;
   }
+  const tableInputLabels = useTableInputLabels();
 
   const [program, setProgram] = useState({});
 
@@ -109,7 +111,7 @@ export default function SelectSubjects({
         data={value}
         onChange={onChange}
         columns={subjectsColumns}
-        labels={labels.tableInput}
+        labels={tableInputLabels}
         unique
         sortable
         error={errors?.subjects}

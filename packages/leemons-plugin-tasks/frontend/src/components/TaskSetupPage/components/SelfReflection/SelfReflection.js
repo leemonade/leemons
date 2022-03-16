@@ -5,7 +5,7 @@ import { ContextContainer, TextInput, Checkbox } from '@bubbles-ui/components';
 import { TextEditor } from '@bubbles-ui/editors';
 import ConditionalInput from '../../../Inputs/ConditionalInput';
 
-export default function SelfReflection({ name, label, description }) {
+export default function SelfReflection({ name, labels, description }) {
   const [show, setShow] = useState(false);
   const firstRender = useRef(true);
   const { control, setValue } = useFormContext();
@@ -21,7 +21,7 @@ export default function SelfReflection({ name, label, description }) {
   }, []);
 
   return (
-    <ContextContainer title={label}>
+    <ContextContainer title={labels?.title}>
       <Controller
         name={name}
         control={control}
@@ -37,20 +37,20 @@ export default function SelfReflection({ name, label, description }) {
                   name={`${name}.id`}
                   control={control}
                   shouldUnregister
-                  render={({ field }) => <TextInput {...field} label="Feedback" />}
+                  render={({ field }) => <TextInput {...field} label={labels?.id} />}
                 />
                 <Controller
                   name={`${name}.description`}
                   control={control}
                   shouldUnregister
-                  render={({ field }) => <TextEditor {...field} label="Description" />}
+                  render={({ field }) => <TextEditor {...field} label={labels?.description} />}
                 />
                 <Controller
                   name={`${name}.mandatory`}
                   control={control}
                   shouldUnregister
                   render={({ field }) => (
-                    <Checkbox {...field} checked={field.value} label="Mandatory to fill the Task" />
+                    <Checkbox {...field} checked={field.value} label={labels?.mandatory} />
                   )}
                 />
               </>
@@ -64,6 +64,11 @@ export default function SelfReflection({ name, label, description }) {
 
 SelfReflection.propTypes = {
   name: PropTypes.string,
-  label: PropTypes.string,
+  labels: PropTypes.shape({
+    title: PropTypes.string,
+    id: PropTypes.string,
+    description: PropTypes.string,
+    mandatory: PropTypes.string,
+  }),
   description: PropTypes.string,
 };

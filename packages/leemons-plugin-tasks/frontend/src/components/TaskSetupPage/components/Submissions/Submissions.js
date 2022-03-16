@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import loadable from '@loadable/component';
 import { useFormContext, FormProvider, useForm, Controller } from 'react-hook-form';
 import { ContextContainer, Select } from '@bubbles-ui/components';
@@ -56,7 +57,7 @@ function useValueUpdater(form, originalForm) {
   }, []);
 }
 
-export default function Submissions() {
+export default function Submissions({ labels }) {
   const form = useForm();
   const { control } = form;
   const originalForm = useFormContext();
@@ -84,7 +85,7 @@ export default function Submissions() {
           render={({ field }) => (
             <ConditionalInput
               {...field}
-              label="This task is comppleted with the submission of a paper or activity"
+              label={labels?.submission?.title}
               showOnTrue
               render={() => (
                 <>
@@ -94,13 +95,14 @@ export default function Submissions() {
                     render={({ field: type }) => (
                       <Select
                         {...type}
+                        label={labels?.submission?.type}
                         data={[
                           {
-                            label: 'File',
+                            label: labels?.submission?.types?.file,
                             value: 'File',
                           },
                           {
-                            label: 'Link',
+                            label: labels?.submission?.types?.link,
                             value: 'Link',
                           },
                         ]}
@@ -114,14 +116,16 @@ export default function Submissions() {
                     render={({ field: { value } }) => {
                       const C = Component(value);
 
-                      return <C />;
+                      return <C labels={labels?.submission[`${value}Type`]} />;
                     }}
                   />
 
                   <Controller
                     control={contextControl}
                     name="submissions.description"
-                    render={({ field: f }) => <TextEditor {...f} label="Description" />}
+                    render={({ field: f }) => (
+                      <TextEditor {...f} label={labels?.submission?.description} />
+                    )}
                   />
                 </>
               )}
@@ -132,3 +136,17 @@ export default function Submissions() {
     </FormProvider>
   );
 }
+
+Submissions.propTypes = {
+  labels: PropTypes.shape({
+    submission: PropTypes.shape({
+      title: PropTypes.string,
+      type: PropTypes.string,
+      types: PropTypes.shape({
+        file: PropTypes.string,
+        link: PropTypes.string,
+      }),
+      description: PropTypes.string,
+    }).isRequired,
+  }).isRequired,
+};
