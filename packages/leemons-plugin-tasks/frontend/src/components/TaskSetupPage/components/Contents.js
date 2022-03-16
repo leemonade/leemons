@@ -26,7 +26,7 @@ export default function Contents({ required }) {
     <Controller
       control={control}
       name="content"
-      rules={{ validate: (value) => !required || value.length > 0 }}
+      rules={{ validate: (value) => !required || value?.length > 0 }}
       render={({ field }) => (
         <>
           <TableInput

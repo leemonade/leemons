@@ -26,7 +26,7 @@ export default function Objectives({ label, required }) {
     <Controller
       control={control}
       name="objectives"
-      rules={{ validate: (value) => !required || value.length > 0 }}
+      rules={{ validate: (value) => !required || value?.length > 0 }}
       render={({ field }) => (
         <>
           <TableInput
