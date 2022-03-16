@@ -1,6 +1,10 @@
 const { taskSubjects } = require('../../table');
 
 module.exports = async function addSubjects(task, subject, { transacting } = {}) {
+  if (!subject) {
+    return false;
+  }
+
   const subjects = Array.isArray(subject) ? subject : [subject];
 
   try {

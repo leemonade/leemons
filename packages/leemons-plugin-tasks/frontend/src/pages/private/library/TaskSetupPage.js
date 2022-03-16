@@ -5,7 +5,7 @@ import { Paper, PageContainer, ContextContainer } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useStore, useRequestErrorMessage, unflatten } from '@common';
+import { useStore, unflatten } from '@common';
 import {
   Setup,
   ConfigData,
@@ -21,7 +21,6 @@ import useObserver from '../../../helpers/useObserver';
 
 export default function TaskSetupPage() {
   const [t, translations] = useTranslateLoader(prefixPN('task_setup_page'));
-  const [, , , getErrorMessage] = useRequestErrorMessage();
   const [labels, setLabels] = useState(null);
   const [status, setStatus] = useState('published');
   const [store, render] = useStore({
@@ -72,7 +71,7 @@ export default function TaskSetupPage() {
 
       emitEvent('taskSaved');
     } catch (e) {
-      addErrorAlert(getErrorMessage(e));
+      addErrorAlert(e.message);
     }
   };
 
@@ -90,7 +89,7 @@ export default function TaskSetupPage() {
 
       addSuccessAlert(t('common.publish_done'));
     } catch (e) {
-      addErrorAlert(getErrorMessage(e));
+      addErrorAlert(e.error);
     }
   };
 
@@ -98,7 +97,7 @@ export default function TaskSetupPage() {
     try {
       return await getTaskRequest({ id });
     } catch (e) {
-      addErrorAlert(getErrorMessage(e));
+      addErrorAlert(e.message);
       return {};
     }
   };

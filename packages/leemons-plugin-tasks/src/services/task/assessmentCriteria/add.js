@@ -6,6 +6,9 @@ const parseId = require('../helpers/parseId');
 module.exports = async function addAssessmentCriteria(task, criterias, { transacting } = {}) {
   const { fullId } = await parseId(task, null, { transacting });
 
+  if (!criterias) {
+    return [];
+  }
   const _criterias = Array.isArray(criterias) ? criterias : [criterias];
 
   // EN: Check if task exists.

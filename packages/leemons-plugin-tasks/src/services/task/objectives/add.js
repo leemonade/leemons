@@ -7,6 +7,9 @@ module.exports = async function addObjectives(task, objectives, { transacting } 
   const { id } = await parseId(task, null, { transacting });
   const { fullId } = await parseId(id, 'any', { transacting });
 
+  if (!objectives) {
+    return [];
+  }
   const _objectives = Array.isArray(objectives) ? objectives : [objectives];
 
   // EN: Check if task exists.

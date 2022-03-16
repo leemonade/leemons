@@ -6,6 +6,10 @@ const parseId = require('../helpers/parseId');
 module.exports = async function addContent(task, contents, { transacting } = {}) {
   const { fullId } = await parseId(task, null, { transacting });
 
+  if (!contents) {
+    return [];
+  }
+
   const _content = Array.isArray(contents) ? contents : [contents];
 
   // EN: Check if task exists.
