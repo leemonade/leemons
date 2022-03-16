@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Switch, ContextContainer } from '@bubbles-ui/components';
+import { Switch, ContextContainer, PageContainer } from '@bubbles-ui/components';
 
 export default function ConditionalInput({
   showOnTrue = true,
@@ -26,7 +26,8 @@ export default function ConditionalInput({
   return (
     <ContextContainer>
       <Switch {...props} helpPosition={helpPosition} checked={show} onChange={handleChange} />
-      {showOnTrue === show && render()}
+
+      {showOnTrue === show && <PageContainer>{render()}</PageContainer>}
     </ContextContainer>
   );
 }
