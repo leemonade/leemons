@@ -1,12 +1,11 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import { FilterIcon } from '@bubbles-ui/icons/outline';
 import { Text, Box, Button, Stack, PageContainer, ContextContainer } from '@bubbles-ui/components';
-import { useApi } from '@common';
 import SelectProgram from '../TaskSetupPage/components/PickSubject/SelectProgram';
 import SelectSubject from '../TaskSetupPage/components/PickSubject/SelectSubject';
-import listTasks from '../../request/task/listTasks';
+import Methodology from '../TaskSetupPage/components/Methodology';
 
 export default function Filters({ onChange }) {
   const form = useForm({
@@ -22,7 +21,7 @@ export default function Filters({ onChange }) {
   } = form;
 
   const onSubmit = (values) => {
-    const { center, program, subject } = values;
+    const { center, program, subject, methodology } = values;
 
     onChange({
       draft: true,
@@ -31,6 +30,7 @@ export default function Filters({ onChange }) {
       course: subject && subject?.course,
       subject: subject && subject?.subject,
       level: subject && subject?.level,
+      methodology,
     });
   };
 
@@ -50,6 +50,15 @@ export default function Filters({ onChange }) {
               <FormProvider {...form}>
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <Stack spacing={5} direction="row" alignItems={'end'}>
+                    {/* TRANSLATE: Methodology labels on Filters */}
+                    <Methodology
+                      labels={{
+                        methodology: 'Methodology',
+                      }}
+                      placeholders={{
+                        methodology: 'Select methodology',
+                      }}
+                    />
                     <SelectProgram
                       labels={{
                         center: 'Select Center',
