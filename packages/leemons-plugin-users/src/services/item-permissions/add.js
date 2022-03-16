@@ -85,7 +85,7 @@ async function add(item, type, data, { isCustomPermission, transacting } = {}) {
     });
   });
 
-  return table.itemPermissions.createMany(toSave);
+  return table.itemPermissions.createMany(toSave, { transacting });
 }
 
 module.exports = { add };
