@@ -12,6 +12,7 @@ import Submissions from './components/Submissions';
 import Contents from './components/Contents';
 import AssessmentCriteria from './components/AssessmentCriteria';
 import Attachments from './components/Attachments';
+import Methodology from './components/Methodology';
 
 function ContentData({
   labels,
@@ -76,70 +77,10 @@ function ContentData({
       <form onSubmit={handleSubmit(handleOnNext)}>
         <ContextContainer {...props} divided>
           <ContextContainer title={labels.title}>
-            <Controller
-              control={control}
-              name="methodology"
-              rules={{ required: errorMessages.methodology?.required }}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  // TRANSLATE: Localizate the methodology select
-                  data={[
-                    {
-                      label: 'Direct instruction',
-                      value: 'direct instruction',
-                    },
-                    {
-                      label: 'FLipped Classroom',
-                      value: 'flipped classroom',
-                    },
-                    {
-                      label: 'Project-Based Learning',
-                      value: 'project-based learning',
-                    },
-                    {
-                      label: 'Inquiry-Based Learning',
-                      value: 'inquiry-based learning',
-                    },
-                    {
-                      label: 'Expeditionary Learning',
-                      value: 'expeditionary learning',
-                    },
-                    {
-                      label: 'Cooperative Learning',
-                      value: 'cooperative learning',
-                    },
-                    {
-                      label: 'Personalized Learning',
-                      value: 'personalized learning',
-                    },
-                    {
-                      label: 'Game-Based Learning',
-                      value: 'game-based learning',
-                    },
-                    {
-                      label: 'Kinesthetic Learning',
-                      value: 'kinesthetic learning',
-                    },
-                    {
-                      label: 'Differentiated Instruction',
-                      value: 'differentiated instruction',
-                    },
-                    {
-                      label: 'UDL (Unified Design for Learning)',
-                      value: 'udl',
-                    },
-                    {
-                      label: 'Other',
-                      value: 'other',
-                    },
-                  ]}
-                  label={labels.methodology}
-                  placeholder={placeholders.methodology}
-                  error={errors.methodology}
-                  required={!isEmpty(errorMessages.methodology?.required)}
-                />
-              )}
+            <Methodology
+              labels={labels}
+              errorMessages={errorMessages}
+              placeholders={placeholders}
             />
             <Attachments />
             <Controller
