@@ -25,6 +25,7 @@ export default function SummaryStep({ id, onNext }) {
         'objectives',
         'assessmentCriteria',
         'cover',
+        'attachments',
       ]),
     }),
     [id]
@@ -65,11 +66,15 @@ export default function SummaryStep({ id, onNext }) {
       <Stack skipFlex style={{ width: 300 }}>
         <ContextContainer noFlex>
           <ContextContainer title="Resources">
-            <Anchor href="http://google.com" taget="_blank">
-              Hola
-            </Anchor>
+            <Stack direction="column">
+              {task?.attachments?.map((a, i) => (
+                <Anchor href="https://leemons.io" taget="_blank" key={i}>
+                  {a}
+                </Anchor>
+              ))}
+            </Stack>
           </ContextContainer>
-          <ContextContainer title="Your team"></ContextContainer>
+          {/* <ContextContainer title="Your team"></ContextContainer> */}
         </ContextContainer>
       </Stack>
     </ContextContainer>
