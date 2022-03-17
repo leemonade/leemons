@@ -10,7 +10,10 @@ import {
   UserDisplayItem,
 } from '@bubbles-ui/components';
 import { getUserAgentsInfoRequest } from '@users/request';
+import { useApi } from '@common';
 import listStudents from '../../../request/instance/listStudents';
+import getTaskRequest from '../../../request/task/getTask';
+import getInstanceRequest from '../../../request/instance/get';
 
 function getStatus({ start, end, opened }) {
   if (end) {
@@ -33,6 +36,9 @@ export default function DetailsPage() {
 
   const [students, setStudents] = useState();
 
+  const [task] = useApi(getInstanceRequest, instance);
+
+  // TRANSLATE: Teacher details columns
   const columns = useMemo(
     () => [
       {
@@ -83,9 +89,15 @@ export default function DetailsPage() {
       setStudents(users);
     }
   }, []);
+
   return (
     <ContextContainer>
-      <AdminPageHeader values={{ title: 'NOMBRE DE LA TAREA', description: 'GRUPO Y FECHA' }} />
+      <AdminPageHeader
+        values={{
+          title: task?.task?.name,
+          description: `Deadline: ${new Date(task?.deadline).toLocaleString()}`,
+        }}
+      />
       <PageContainer>
         <ContextContainer>
           <ContextContainer direction="row">
@@ -97,7 +109,7 @@ export default function DetailsPage() {
           </ContextContainer>
 
           {/* Students */}
-          <ContextContainer title="x STUDENTS">
+          <ContextContainer title={`${students?.length || 0} Students`}>
             <ContextContainer direction="row">
               <Select
                 label="BULK ACTION (0 Selected)"
