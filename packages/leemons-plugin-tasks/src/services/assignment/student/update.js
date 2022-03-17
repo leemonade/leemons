@@ -11,6 +11,9 @@ module.exports = async function update({ student, instance, key, value }, { tran
   // EN: Check if the key is already setted
   // ES: Comprobar si la clave ya está establecida
   const details = await getStudentDetails(student, instance, { columns: [key], transacting });
+  if (!details) {
+    throw new Error("Student or instance doesn't exist");
+  }
   if (details[key]) {
     return false;
   }
