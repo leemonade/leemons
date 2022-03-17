@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { useApi, unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getCentersWithToken } from '@users/session';
-import { Table, ContextContainer } from '@bubbles-ui/components';
+import { Table, ContextContainer, Button, Text } from '@bubbles-ui/components';
 import { ViewOnIcon, StudyDeskIcon } from '@bubbles-ui/icons/outline';
 import { prefixPN } from '../../helpers/prefixPN';
 import listTeacherTasks from '../../request/instance/listTeacherTasks';
@@ -62,6 +62,7 @@ export default function TeacherAssignedTasksLists() {
   const [tableLabels, setTableLabels] = useState({});
   const [centers] = useApi(getCentersWithToken);
   const [tasks, setTasks] = useState([]);
+  const history = useHistory();
 
   // EN: Parse the translations object
   // ES: Procesar el objeto de traducciones
@@ -126,5 +127,15 @@ export default function TeacherAssignedTasksLists() {
     }
   }, [centers]);
 
+  if (!tasks?.length) {
+    return (
+      <ContextContainer direction="row" justifyContent="start" alignItems="center">
+        <Text>You don&apos;t have ongoing tasks. Assign a new one</Text>
+        <Button noFlex onClick={() => history.push('/private/tasks/library')}>
+          Go to Library
+        </Button>
+      </ContextContainer>
+    );
+  }
   return <>{tasks?.length && <Table columns={columns} data={tasks} />}</>;
 }

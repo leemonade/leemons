@@ -1,11 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Stack, Loader } from '@bubbles-ui/components';
+import { Stack, Loader, Text } from '@bubbles-ui/components';
 import Card from './Card';
 
 export default function CardList({ data, loading, refresh }) {
   if (loading && !data?.length) {
     return <Loader />;
+  }
+
+  if (!data.length) {
+    return <Text>No tasks were found</Text>;
   }
   return (
     <Stack spacing={3} wrap="wrap">
