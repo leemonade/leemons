@@ -6,10 +6,7 @@ import useGetSteps from './helpers/useGetSteps';
 import getInstanceRequest from '../../../request/instance/get';
 import updateStudentRequest from '../../../request/instance/updateStudent';
 
-export default function TaskDetail({
-  id = '1c7e0b22-8dec-4dfa-bab9-4b16304d0515',
-  student = '8d5b2118-73e6-4d2b-87be-190d1a43d39a',
-}) {
+export default function TaskDetail({ id, student }) {
   const [task, setTask] = useState(null);
 
   useEffect(async () => {
