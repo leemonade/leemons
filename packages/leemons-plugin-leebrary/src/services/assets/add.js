@@ -12,9 +12,6 @@ async function add({ file, cover, ...data }, { userSession, transacting: t } = {
 
       const { categoryId, ...assetData } = data;
 
-      console.log('--- USER AGENTS ---');
-      console.dir(userSession, { depth: null });
-
       if (userSession) {
         assetData.fromUser = userSession.id;
         assetData.fromUserAgent =
@@ -28,14 +25,16 @@ async function add({ file, cover, ...data }, { userSession, transacting: t } = {
 
       // EN: Upload the file to the provider
       // ES: Subir el archivo al proveedor
-      const filePromises = [uploadFile(file, { name: assetData.name }, { transacting })];
+      const newFile = await uploadFile(file, { name: assetData.name }, { transacting });
+      let coverFile;
 
-      if (cover) {
-        filePromises.push(uploadFile(file, { name: assetData.name }, { transacting }));
+      if (newFile?.type?.indexOf('image') === 0) {
+        coverFile = newFile;
       }
 
-      const uploadedFiles = await Promise.all(filePromises);
-      const [newFile, coverFile] = uploadedFiles;
+      if (!coverFile && cover) {
+        coverFile = await uploadFile(cover, { name: assetData.name }, { transacting });
+      }
 
       // ··········································································
       // CREATE ASSET
@@ -46,9 +45,6 @@ async function add({ file, cover, ...data }, { userSession, transacting: t } = {
         { ...assetData, cover: coverFile?.id },
         { transacting }
       );
-
-      console.log('--- TENEMOS ASSET ---');
-      console.dir(newAsset, { depth: null });
 
       // ··········································································
       // ADD PERMISSIONS
@@ -67,7 +63,7 @@ async function add({ file, cover, ...data }, { userSession, transacting: t } = {
       );
 
       // Second, add the same permission to the user
-      const uaPermission = await userService.permissions.addCustomPermissionToUserAgent(
+      await userService.permissions.addCustomPermissionToUserAgent(
         map(userSession.userAgents, 'id'),
         {
           permissionName: leemons.plugin.prefixPN(newAsset.id),
@@ -75,9 +71,6 @@ async function add({ file, cover, ...data }, { userSession, transacting: t } = {
         },
         { transacting }
       );
-
-      console.log('userAgent Permission:');
-      console.dir(uaPermission, { depth: null });
 
       // ··········································································
       // ADD FILES
@@ -98,7 +91,7 @@ async function add({ file, cover, ...data }, { userSession, transacting: t } = {
 
       await Promise.all(promises);
 
-      return newAsset;
+      return { ...newAsset, file: newFile, cover: coverFile };
     },
     tables.assets,
     t

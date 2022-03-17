@@ -9,7 +9,7 @@ async function add(assetId, categoryId, { transacting } = {}) {
       throw new global.utils.HttpError(422, `Asset with id ${assetId} does not exist`);
     }
 
-    if (!(await categoryExists(categoryId, { transacting }))) {
+    if (!(await categoryExists({ id: categoryId }, { transacting }))) {
       throw new global.utils.HttpError(422, `Category with id ${categoryId} does not exist`);
     }
 

@@ -16,14 +16,14 @@ const addAssetSchema = {
     tags: arrayStringSchema,
     color: stringSchemaNullable,
     description: stringSchemaNullable,
-    categoryId: stringSchema
+    categoryId: stringSchema,
   },
-  required: [ 'name', 'categoryId' ],
+  required: ['name', 'categoryId'],
   additionalProperties: true,
 };
 
-function validateAddAsset(data) {
-  let validator = new LeemonsValidator(addAssetSchema);
+async function validateAddAsset(data) {
+  const validator = new LeemonsValidator(addAssetSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;

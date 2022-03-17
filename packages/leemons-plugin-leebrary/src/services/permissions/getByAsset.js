@@ -1,14 +1,9 @@
-const { find, isEmpty } = require('lodash');
+const { find, isEmpty, last } = require('lodash');
 const { tables } = require('../tables');
 const getRolePermissions = require('./helpers/getRolePermissions');
 
 async function getByAsset(assetId, { userSession, transacting } = {}) {
-  const userAgent =
-    userSession.userAgents && userSession.userAgents.length ? userSession.userAgents[0].id : null;
   try {
-    console.log('--- Vamos a pillar los permisos ---');
-    console.log('permissionName:', leemons.plugin.prefixPN(assetId));
-
     const { services: userService } = leemons.getPlugin('users');
     const permissions = await userService.permissions.getUserAgentPermissions(
       userSession.userAgents,
@@ -17,8 +12,6 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
         transacting,
       }
     );
-    // leemons.plugin.prefixPN('asset'),
-    console.dir(permissions, { depth: null });
 
     if (isEmpty(permissions)) {
       const asset = await tables.assets.find(
@@ -33,23 +26,10 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
       }
     }
 
-    // const actions = item.actionNames; // ['view'],
-    /*
-    const [permission] = await tables.permissions.find(
-      {
-        asset: assetId,
-        userAgent,
-      },
-      { transacting }
+    const permission = find(
+      permissions,
+      (item) => assetId === last(item.permissionName.split('.')) // 'plugins.leebrary.23ee5f1b-9e71-4a39-9ddf-db472c7cdefd',
     );
-    */
-
-    const permission = find(permissions, (item) => {
-      console.log('permission:', item);
-      const id = item.permissionName.split('.').at(-1); // 'plugins.media-library.files.archivo1',
-      console.log('permission assetId:', id);
-      return id === assetId;
-    });
 
     const role = permission?.actionNames[0];
 

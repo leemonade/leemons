@@ -79,13 +79,14 @@ module.exports = [
     handler: 'files.myFiles',
     authenticated: true,
   },
+  */
   {
     path: '/file/:id',
     method: 'GET',
     handler: 'files.file',
     authenticated: true,
   },
-  */
+
   /**
    * Categories
    */

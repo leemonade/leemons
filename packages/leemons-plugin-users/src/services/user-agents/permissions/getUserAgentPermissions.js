@@ -23,15 +23,8 @@ async function getUserAgentPermissions(userAgent, { query: _query, transacting }
   await updateUserAgentPermissions(reloadUserAgents, { transacting });
 
   const query = { ..._query, userAgent_$in: _.map(_userAgents, 'id') };
-  // const query = { ..._query };
-
-  console.log('--- vamos a lanzar la query ---');
-  console.dir(query, { depth: null });
 
   const results = await table.userAgentPermission.find(query, { transacting });
-
-  console.log('-- Tenemos results ---');
-  console.dir(results, { depth: null });
 
   const group = _.groupBy(
     results,

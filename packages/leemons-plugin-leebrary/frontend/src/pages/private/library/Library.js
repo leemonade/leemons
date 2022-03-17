@@ -11,7 +11,7 @@ import { listCategoriesRequest } from '../../../request';
 import LibraryContext, { LibraryProvider } from '../../../context/LibraryContext';
 import { VIEWS } from './Library.constants';
 
-const NewAssetPage = loadable(() => import('../assets/NewAsset'));
+const NewAssetPage = loadable(() => import('../assets/NewAssetPage'));
 
 const LibraryPageContent = () => {
   const { path } = useRouteMatch();
