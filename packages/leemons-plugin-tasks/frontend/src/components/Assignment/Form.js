@@ -70,17 +70,7 @@ export default function Form({ onSubmit: parentSubmit }) {
           control={control}
           name="teachers"
           rules={{ required: true }}
-          render={({ field }) => (
-            <SelectTeachers {...field} role="teacher" />
-            // <AssignUsers
-            //   {...field}
-            //   error={errors.teachers}
-            //   profile="teacher"
-            //   labels={labels}
-            //   modes={modes}
-            //   assignTo={assignTo}
-            // />
-          )}
+          render={({ field }) => <SelectTeachers {...field} role="teacher" />}
         />
         <Controller
           control={control}

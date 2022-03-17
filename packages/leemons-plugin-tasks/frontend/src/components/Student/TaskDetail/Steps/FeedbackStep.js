@@ -1,11 +1,15 @@
 import React, { useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { ContextContainer, Button, Stack, Paragraph, HtmlText } from '@bubbles-ui/components';
 
 import { useApi } from '@common';
 import getTaskRequest from '../../../../request/task/getTask';
+import updateStudentRequest from '../../../../request/instance/updateStudent';
 
-export default function FeedbackStep({ id, onNext, onPrevious }) {
+export default function FeedbackStep({ instance, student, id, onPrevious }) {
+  const history = useHistory();
+
   const options = useMemo(
     () => ({
       id,
@@ -13,6 +17,16 @@ export default function FeedbackStep({ id, onNext, onPrevious }) {
     }),
     [id]
   );
+
+  const onNext = () => {
+    updateStudentRequest({
+      instance,
+      student,
+      key: 'end',
+      value: new Date().getTime(),
+    });
+    history.push(`/private/tasks/ongoing`);
+  };
 
   const [task] = useApi(getTaskRequest, options);
 
@@ -27,13 +41,15 @@ export default function FeedbackStep({ id, onNext, onPrevious }) {
       </ContextContainer>
       <Stack fullWidth justifyContent="space-between">
         <Button onClick={onPrevious}>Previous</Button>
-        <Button onClick={onNext}>Next</Button>
+        <Button onClick={onNext}>Finish</Button>
       </Stack>
     </ContextContainer>
   );
 }
 
 FeedbackStep.propTypes = {
+  instance: PropTypes.string.isRequired,
+  student: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   onNext: PropTypes.func.isRequired,
   onPrevious: PropTypes.func.isRequired,

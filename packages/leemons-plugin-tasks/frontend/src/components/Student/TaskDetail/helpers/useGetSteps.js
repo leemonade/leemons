@@ -32,7 +32,7 @@ export default function useGetSteps(instance, taskId, student) {
     },
     {
       label: 'Feedback',
-      content: <FeedbackStep id={taskId} />,
+      content: <FeedbackStep id={taskId} instance={instance} student={student} />,
     },
   ]);
 
