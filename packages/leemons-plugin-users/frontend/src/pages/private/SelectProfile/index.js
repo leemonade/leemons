@@ -1,6 +1,6 @@
-import React, { useMemo, useEffect, useState, useContext } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { isArray, find } from 'lodash';
+import { find, isArray } from 'lodash';
 import {
   getUserProfilesRequest,
   getUserProfileTokenRequest,
@@ -15,7 +15,7 @@ import hooks from 'leemons-hooks';
 import Cookies from 'js-cookie';
 import { useHistory } from 'react-router-dom';
 import { LayoutContext } from '@layout/context/layout';
-import { Stack, Box, createStyles } from '@bubbles-ui/components';
+import { Box, createStyles, Stack } from '@bubbles-ui/components';
 import { LoginProfileSelector } from '@bubbles-ui/leemons';
 
 const PageStyles = createStyles((theme) => ({
@@ -52,6 +52,7 @@ export default function SelectProfile({ session }) {
           const { jwtToken } = await getUserProfileTokenRequest(selectedProfile.id);
           await hooks.fireEvent('user:change:profile', selectedProfile);
           Cookies.set('token', jwtToken);
+          hooks.fireEvent('user:cookie:session:change');
           history.push(`/${constants.base}`);
         } catch (e) {
           console.error(e);

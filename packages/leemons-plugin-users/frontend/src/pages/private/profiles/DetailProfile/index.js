@@ -22,6 +22,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import PlatformLocales from '@multilanguage/components/PlatformLocales';
 import PlatformLocalesModal from '@multilanguage/components/PlatformLocalesModal';
 import hooks from 'leemons-hooks';
+
 // import MainMenuDropItem from '@menu-builder/components/mainMenu/mainMenuDropItem';
 import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';

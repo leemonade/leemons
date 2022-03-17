@@ -4,6 +4,7 @@ import { SessionContext } from '@users/context/session';
 import Cookies from 'js-cookie';
 import useSWR from 'swr';
 import { useHistory } from 'react-router-dom';
+import hooks from 'leemons-hooks';
 
 /**
  * @private
@@ -147,5 +148,6 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
 export function logoutSession(history, redirectTo) {
   Cookies.remove('token');
   history.push(redirectTo);
+  hooks.fireEvent('user:cookie:session:change');
   // history.push(`/users/public/auth/logout?redirectTo=${redirectTo}`);
 }

@@ -41,6 +41,8 @@ const ByTag = ({ tree, center, messages, onChange }) => {
     return { classes: getClasses(tree) };
   }, [tree]);
 
+  console.log(data.classes);
+
   function emit() {
     onChange(difference(store.userAgentsChecked, store.allUsedUserAgents));
   }
