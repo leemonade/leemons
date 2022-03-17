@@ -12,6 +12,7 @@ const deleteAssessmentCriteria = require('./assessmentCriteria/remove');
 const deleteAttachments = require('../attachments/remove');
 const getVersion = require('./versions/get');
 const getVersions = require('./versions/getVersions');
+const removeInstances = require('../assignment/instance/remove');
 
 async function remove(taskID, { transacting: t } = {}) {
   return global.utils.withTransaction(
@@ -60,6 +61,10 @@ async function remove(taskID, { transacting: t } = {}) {
         // EN: Remove attachments
         // ES: Eliminar adjuntos
         await deleteAttachments(fullId, undefined, { transacting });
+
+        // EN: Remove the assigned instances
+        // ES: Eliminar las instancias asignadas
+        await removeInstances(fullId, undefined, { transacting });
 
         // EN: Emit the event.
         // ES: Emitir el evento.
