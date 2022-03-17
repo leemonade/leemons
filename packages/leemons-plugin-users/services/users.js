@@ -9,8 +9,8 @@ module.exports = {
     const response = [];
     _.forEach(
       _.isArray(users) ? users : [users],
-      ({ id, email, name, surnames, locale, created_at }) => {
-        response.push({ id, email, name, surnames, locale, created_at });
+      ({ id, email, name, surnames, secondSurname, avatar, locale, created_at }) => {
+        response.push({ id, email, name, surnames, secondSurname, avatar, locale, created_at });
       }
     );
     return _.isArray(users) ? response : response[0];
@@ -19,13 +19,16 @@ module.exports = {
   detailForJWT: usersService.jwt.detailForJWT,
 
   hasPermissionCTX: usersService.hasPermissionCTX,
+  userSessionCheckUserAgentDatasets: usersService.userSessionCheckUserAgentDatasets,
 
   // TODO Solo deberian de tener acceso los plugins que tengan permiso a ejecutar dichas funciones o los usuarios con permiso
   add: usersService.add,
 
   // User agents
   searchUserAgents: userAgentsService.searchUserAgents,
+  getUserAgentsInfo: userAgentsService.getUserAgentsInfo,
   getUserAgentCenter: userAgentsService.getUserAgentCenter,
+  filterUserAgentsByProfileAndCenter: userAgentsService.filterUserAgentsByProfileAndCenter,
   getUserAgentByCenterProfile: userAgentsService.getUserAgentByCenterProfile,
 
   // Contacts

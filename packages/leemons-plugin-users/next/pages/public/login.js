@@ -69,6 +69,7 @@ export default function Login() {
       } catch (e) {}
       // Finalmente metemos el token
       Cookies.set('token', response.jwtToken);
+      hooks.fireEvent('user:cookie:session:change');
     } catch (err) {
       if (_.isObject(err) && err.status === 401) setFormStatus('error-match');
       if (_.isObject(err) && err.status === 500) setFormStatus('unknown-error');

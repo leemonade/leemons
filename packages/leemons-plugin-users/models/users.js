@@ -32,6 +32,9 @@ module.exports = {
     },
     birthdate: {
       type: 'datetime',
+      options: {
+        notNull: true,
+      },
     },
     password: {
       type: 'string',
@@ -54,6 +57,13 @@ module.exports = {
     },
     status: {
       type: 'string',
+    },
+    // masculino, femenino
+    gender: {
+      type: 'string',
+      options: {
+        notNull: true,
+      },
     },
   },
   primaryKey: {

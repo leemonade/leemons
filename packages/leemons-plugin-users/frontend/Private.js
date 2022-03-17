@@ -15,6 +15,9 @@ const DetailProfile = loadable(() => import('./src/pages/private/profiles/Detail
 
 const ListUsers = loadable(() => import('./src/pages/private/users/ListUsers'));
 const CreateUsers = loadable(() => import('./src/pages/private/users/CreateUsers'));
+const DetailUser = loadable(() => import('./src/pages/private/users/DetailUser'));
+
+const UserDataDatasetValues = loadable(() => import('./src/pages/private/UserDataDatasetValues'));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -51,6 +54,12 @@ export default function Private() {
       </Route>
       <Route path={`${path}/profiles/detail`}>
         <DetailProfile session={session} />
+      </Route>
+      <Route path={`${path}/set-dataset-values`}>
+        <UserDataDatasetValues session={session} />
+      </Route>
+      <Route path={`${path}/detail/:userId`}>
+        <DetailUser session={session} />
       </Route>
     </Switch>
   );

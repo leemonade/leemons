@@ -18,7 +18,19 @@ const {
  * @return {Promise<boolean>}
  * */
 async function add(
-  { name, surnames, secondSurname, avatar, birthDate, tags, email, locale, password, active },
+  {
+    name,
+    surnames,
+    secondSurname,
+    avatar,
+    birthdate,
+    tags,
+    gender,
+    email,
+    locale,
+    password,
+    active,
+  },
   roles,
   { sendWellcomeEmail, transacting: _transacting } = {}
 ) {
@@ -34,8 +46,9 @@ async function add(
           surnames,
           secondSurname,
           avatar,
-          birthDate,
+          birthdate: birthdate ? global.utils.sqlDatetime(birthdate) : birthdate,
           email,
+          gender,
           password: password ? await encryptPassword(password) : undefined,
           locale,
           active: active || false,
@@ -51,6 +64,17 @@ async function add(
         })),
         { transacting }
       );
+
+      if (tags && _.isArray(tags) && tags.length) {
+        const tagsService = leemons.getPlugin('common').services.tags;
+        await Promise.all(
+          _.map(user.userAgents, (userAgent) =>
+            tagsService.setTagsToValues('plugins.users.user-agent', tags, userAgent.id, {
+              transacting,
+            })
+          )
+        );
+      }
 
       if (leemons.getPlugin('calendar')) {
         await addCalendarToUserAgentsIfNeedByUser(user.id, { transacting });

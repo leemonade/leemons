@@ -15,6 +15,11 @@ async function removeClassesByIds(ids, { soft, transacting: _transacting } = {})
       const classesIds = _.map(classes, 'id');
       await leemons.events.emit('before-remove-classes', { classes, soft, transacting });
 
+      await leemons.getPlugin('users').services.permissions.removeItems({
+        item_$in: _.map(classes, 'id'),
+        type: 'plugins.academic-portfolio.class',
+      });
+
       await removeKnowledgeByClass(classesIds, { soft, transacting });
       await removeSubstageByClass(classesIds, { soft, transacting });
       await removeStudentsByClass(classesIds, { soft, transacting });

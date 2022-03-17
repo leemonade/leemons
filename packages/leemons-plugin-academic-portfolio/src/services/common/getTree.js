@@ -164,7 +164,8 @@ async function getTree(nodeTypes, { transacting } = {}) {
         }
       });
     }
-    return nodes;
+
+    return _.sortBy(nodes, (n) => n.value.index || n.value.name);
   };
 
   return getNodeObjectKeysAsArray(tree);

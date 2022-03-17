@@ -5,12 +5,14 @@ const { exist } = require('./exist');
 const { login } = require('./login');
 const { reset } = require('./reset');
 const { detail } = require('./detail');
+const { update } = require('./update');
 const { addBulk } = require('./addBulk');
 const { recover } = require('./recover');
 const { canReset } = require('./canReset');
 const { profiles } = require('./profiles');
 const { isSuperAdmin } = require('./isSuperAdmin');
 const { profileToken } = require('./profileToken');
+const { detailForPage } = require('./detailForPage');
 const { getResetConfig } = require('./getResetConfig');
 const { canRegisterPassword } = require('./canRegisterPassword');
 const { comparePassword } = require('./bcrypt/comparePassword');
@@ -22,6 +24,7 @@ const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
 const { addFirstSuperAdminUser } = require('./addFirstSuperAdminUser');
 const { sendWelcomeEmailToUser } = require('./sendWelcomeEmailToUser');
 const { getRegisterPasswordConfig } = require('./getRegisterPasswordConfig');
+const { userSessionCheckUserAgentDatasets } = require('./userSessionCheckUserAgentDatasets');
 
 // JWT
 const { detailForJWT } = require('./jwt/detailForJWT');
@@ -38,12 +41,14 @@ module.exports = {
   login,
   reset,
   detail,
+  update,
   addBulk,
   recover,
   canReset,
   profiles,
   isSuperAdmin,
   profileToken,
+  detailForPage,
   getResetConfig,
   comparePassword,
   encryptPassword,
@@ -54,6 +59,7 @@ module.exports = {
   addFirstSuperAdminUser,
   sendWelcomeEmailToUser,
   getRegisterPasswordConfig,
+  userSessionCheckUserAgentDatasets,
   jwt: {
     detailForJWT,
     verifyJWTToken,

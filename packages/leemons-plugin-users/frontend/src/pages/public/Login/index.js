@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash';
 import Cookies from 'js-cookie';
-import { Box, Stack, createStyles } from '@bubbles-ui/components';
+import { Box, createStyles, Stack } from '@bubbles-ui/components';
 import { LoginForm } from '@bubbles-ui/leemons';
 import {
   getRememberProfileRequest,
@@ -78,6 +78,8 @@ export default function Login() {
       }
       // Finalmente metemos el token
       Cookies.set('token', response.jwtToken);
+      hooks.fireEvent('user:cookie:session:change');
+      history.push('private/users/select-profile');
     } catch (err) {
       if (_.isObject(err) && err.status === 401) {
         setFormStatus('error-match');

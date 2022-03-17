@@ -20,6 +20,19 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
       // TODO: remove classStudent permission from class
       /* Eliminar permiso de la clase
        * removeCustomUserAgentPermission */
+
+      await Promise.all(
+        _.map(classStudents, (classStudent) =>
+          leemons.getPlugin('users').services.permissions.removeCustomUserAgentPermission(
+            classStudent.student,
+            {
+              permissionName: `plugins.academic-portfolio.class.${classStudent.class}`,
+            },
+            { transacting }
+          )
+        )
+      );
+
       await leemons.events.emit('after-remove-classes-students', {
         classStudents,
         classIds,

@@ -34,6 +34,23 @@ async function duplicateByClass(
         )
       );
 
+      await Promise.all(
+        _.map(classStudents, ({ student, ...item }) =>
+          leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
+            student,
+            {
+              permissionName: `plugins.academic-portfolio.class.${
+                duplications.classes && duplications.classes[item.class]
+                  ? duplications.classes[item.class].id
+                  : item.class
+              }`,
+              actionNames: ['view'],
+            },
+            { transacting }
+          )
+        )
+      );
+
       // ES: Añadimos los items duplicados de tal forma que el indice es el id original y el valor es el nuevo item duplicado
       // EN: Add the duplicated items in such a way that the index is the original id and the value is the new duplicated item
       if (!_.isObject(duplications.classStudents)) duplications.classStudents = {};

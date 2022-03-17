@@ -664,6 +664,7 @@ const DatasetItemDrawer = ({
           config: {
             type: 'text_field',
             centers: ['*'],
+            isAllCenterMode: true,
           },
         }
       }

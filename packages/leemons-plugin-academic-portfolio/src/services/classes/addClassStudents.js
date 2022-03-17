@@ -21,6 +21,7 @@ async function addClassStudents(data, { transacting: _transacting } = {}) {
       let nAddStudents = 0;
       const promises = [];
       _.forEach(data.students, (student) => {
+        // Si el alumno ya esta añadido no lo añadimos
         if (_class.students.indexOf(student) < 0 && _class.parentStudents.indexOf(student) < 0) {
           // ES: Comprobamos si quedan espacios en la clase
           if (_.isNil(seats))

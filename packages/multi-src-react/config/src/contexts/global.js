@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React, { createContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 const context = createContext();
@@ -38,9 +38,9 @@ class LeemonsApi {
 
       return responseCtx.response;
     } catch (response) {
-      const responseCtx = { middlewares: [], response: response.response };
+      const responseCtx = { middlewares: [], response };
       await this.#callMiddleware(this.#resErrorMiddlewares, 0, responseCtx);
-      return responseCtx.response;
+      throw responseCtx.response;
     }
   };
 

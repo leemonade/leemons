@@ -104,6 +104,17 @@ async function duplicateProgram(ctx) {
   ctx.body = { status: 200, program };
 }
 
+async function addStudentsToClassesUnderNodeTree(ctx) {
+  const data = await programService.addStudentsToClassesUnderNodeTree(
+    ctx.request.body.program,
+    ctx.request.body.nodeType,
+    ctx.request.body.nodeId,
+    ctx.request.body.students
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
 module.exports = {
   putProgram,
   postProgram,
@@ -119,4 +130,5 @@ module.exports = {
   programSubstages,
   programHasCourses,
   programHasSubstages,
+  addStudentsToClassesUnderNodeTree,
 };

@@ -2,6 +2,7 @@ const { existUserAgent } = require('./existUserAgent');
 const { searchUserAgents } = require('./searchUserAgents');
 const { getUserAgentsInfo } = require('./getUserAgentsInfo');
 const { getUserAgentCenter } = require('./getUserAgentCenter');
+const { agentDetailForPage } = require('./agentDetailForPage');
 const { getUserAgentByCenterProfile } = require('./getUserAgentByCenterProfile');
 
 // Calendars
@@ -34,13 +35,20 @@ const {
 const {
   getAllItemsForTheUserAgentHasPermissionsByType,
 } = require('./item-permissions/getAllItemsForTheUserAgentHasPermissionsByType');
+const { filterUserAgentsByProfileAndCenter } = require('./filterUserAgentsByProfileAndCenter');
+const { getDataForUserAgentDatasets } = require('./getDataForUserAgentDatasets');
+const { saveDataForUserAgentDatasets } = require('./saveDataForUserAgentDatasets');
 
 module.exports = {
   existUserAgent,
   searchUserAgents,
   getUserAgentsInfo,
   getUserAgentCenter,
+  agentDetailForPage,
+  getDataForUserAgentDatasets,
+  saveDataForUserAgentDatasets,
   getUserAgentByCenterProfile,
+  filterUserAgentsByProfileAndCenter,
   calendars: {
     getUserAgentCalendarKey,
     addCalendarToUserAgentsIfNeedByUser,

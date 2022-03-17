@@ -5,6 +5,7 @@ import addFamily from './addFamily';
 import updateFamily from './updateFamily';
 import detailFamily from './detailFamily';
 import removeFamily from './removeFamily';
+import listDetailPage from './listDetailPage';
 
 export const listFamiliesRequest = listFamilies;
 export const searchUsersRequest = searchUsers;
@@ -13,3 +14,4 @@ export const addFamilyRequest = addFamily;
 export const updateFamilyRequest = updateFamily;
 export const detailFamilyRequest = detailFamily;
 export const removeFamilyRequest = removeFamily;
+export const listDetailPageRequest = listDetailPage;

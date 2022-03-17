@@ -7,6 +7,7 @@ import {
   ContextContainer,
   DatePicker,
   PageContainer,
+  Select,
   Stack,
   TableInput,
   TextInput,
@@ -172,6 +173,25 @@ function CreateUsers() {
         rules: { required: t('birthdayHeaderRequired') },
       },
       valueRender: (value) => <>{new Date(value).toLocaleString()}</>,
+    });
+    result.tableColumns.push({
+      Header: t('genderHeader'),
+      accessor: 'gender',
+      className: 'text-left',
+      input: {
+        node: (
+          <Select
+            data={[
+              { label: t('male'), value: 'male' },
+              { label: t('female'), value: 'female' },
+            ]}
+            disabled={!store.center || !store.profile || !!store.user}
+            required
+          />
+        ),
+        rules: { required: t('genderHeaderRequired') },
+      },
+      valueRender: (value) => <>{t(value)}</>,
     });
     if (store.avatar && !store.avatar.disabled) {
       result.tableColumns.push({

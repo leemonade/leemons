@@ -1,4 +1,5 @@
 const init = require('./init');
+
 module.exports = async (isInstalled) => {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
     init();
@@ -15,8 +16,11 @@ module.exports = async (isInstalled) => {
       }
     );
   } else {
-    leemons.events.once('plugins.menu-builder:pluginDidInit', async () => {
-      leemons.events.emit('init-main-menu');
-    });
+    leemons.events.once(
+      ['plugins.menu-builder:pluginDidInit', 'plugins.menu-builder:pluginDidLoad'],
+      async () => {
+        leemons.events.emit('init-main-menu');
+      }
+    );
   }
 };

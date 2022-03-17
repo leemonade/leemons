@@ -125,6 +125,18 @@ async function detail(ctx) {
   ctx.body = { status: 200, user };
 }
 
+async function detailForPage(ctx) {
+  const data = await usersService.detailForPage(ctx.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
+async function agentDetailForPage(ctx) {
+  const data = await userAgentsService.agentDetailForPage(ctx.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
 async function profiles(ctx) {
   const _profiles = await usersService.profiles(ctx.state.userSession.id);
   ctx.status = 200;
@@ -242,6 +254,33 @@ async function createSuperAdmin(ctx) {
   );
 }
 
+async function getDataForUserAgentDatasets(ctx) {
+  const data = await userAgentsService.getDataForUserAgentDatasets(ctx.state.userSession);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
+async function saveDataForUserAgentDatasets(ctx) {
+  const data = await userAgentsService.saveDataForUserAgentDatasets(
+    ctx.state.userSession,
+    ctx.request.body
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
+async function updateUser(ctx) {
+  const data = await usersService.update(ctx.params.id, ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
+async function updateUserAgent(ctx) {
+  const data = await userAgentsService.update(ctx.params.id, ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
 module.exports = {
   list,
   reset,
@@ -251,13 +290,19 @@ module.exports = {
   contacts,
   canReset,
   profiles,
+  updateUser,
   createBulk,
   profileToken,
+  detailForPage,
+  updateUserAgent,
   searchUserAgents,
   createSuperAdmin,
   registerPassword,
   getUserAgentsInfo,
+  agentDetailForPage,
   setRememberProfile,
   getRememberProfile,
   canRegisterPassword,
+  getDataForUserAgentDatasets,
+  saveDataForUserAgentDatasets,
 };

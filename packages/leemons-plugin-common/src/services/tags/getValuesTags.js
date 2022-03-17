@@ -9,7 +9,7 @@ async function getValuesTags(values, { type, transacting }) {
     throw new Error(`Values cannot be empty.`);
   }
 
-  const query = { values_$in: _values };
+  const query = { value_$in: _values };
   if (type) {
     query.type = type;
   }

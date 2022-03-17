@@ -189,49 +189,55 @@ function ListUsers() {
         buttons={store.canAdd ? { new: tCommon('new') } : {}}
         onNew={() => goCreatePage()}
       />
-      <Paper color="solid" shadow="none">
-        <PageContainer noFlex>
-          <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-            <ContextContainer direction="row">
-              <SelectCenter
-                clearable={t('clearFilter')}
-                label={t('centerLabel')}
-                value={store.center}
-                onChange={centerChange}
-              />
-              <SelectProfile
-                clearable={t('clearFilter')}
-                label={t('profileLabel')}
-                value={store.profile}
-                onChange={profileChange}
-              />
-              <SearchInput label={t('searchLabel')} value={store.search} onChange={searchChange} />
-            </ContextContainer>
-          </Box>
+      <Paper color="solid" shadow="none" padding="none">
+        <Box>
+          <PageContainer noFlex>
+            <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+              <ContextContainer direction="row">
+                <SelectCenter
+                  clearable={t('clearFilter')}
+                  label={t('centerLabel')}
+                  value={store.center}
+                  onChange={centerChange}
+                />
+                <SelectProfile
+                  clearable={t('clearFilter')}
+                  label={t('profileLabel')}
+                  value={store.profile}
+                  onChange={profileChange}
+                />
+                <SearchInput
+                  label={t('searchLabel')}
+                  value={store.search}
+                  onChange={searchChange}
+                />
+              </ContextContainer>
+            </Box>
 
-          <Paper padding={2} mt={20} mb={20} fullWidth>
-            <LoadingErrorAlert />
-            {!store.loading && !loadingError ? (
-              <Box>
-                <Table columns={tableHeaders} data={tableItems} />
-              </Box>
-            ) : null}
-            <Stack fullWidth justifyContent="center">
-              <Pager
-                page={store.pagination?.page || 0}
-                total={store.pagination?.totalPages || 0}
-                size={store.size}
-                withSize={true}
-                onChange={(val) => onPageChange(val - 1)}
-                onSizeChange={onPageSizeChange}
-                labels={{
-                  show: t('show'),
-                  goTo: t('goTo'),
-                }}
-              />
-            </Stack>
-          </Paper>
-        </PageContainer>
+            <Paper padding={2} mt={20} mb={20} fullWidth>
+              <LoadingErrorAlert />
+              {!store.loading && !loadingError ? (
+                <Box>
+                  <Table columns={tableHeaders} data={tableItems} />
+                </Box>
+              ) : null}
+              <Stack fullWidth justifyContent="center">
+                <Pager
+                  page={store.pagination?.page || 0}
+                  total={store.pagination?.totalPages || 0}
+                  size={store.size}
+                  withSize={true}
+                  onChange={(val) => onPageChange(val - 1)}
+                  onSizeChange={onPageSizeChange}
+                  labels={{
+                    show: t('show'),
+                    goTo: t('goTo'),
+                  }}
+                />
+              </Stack>
+            </Paper>
+          </PageContainer>
+        </Box>
       </Paper>
     </ContextContainer>
   );

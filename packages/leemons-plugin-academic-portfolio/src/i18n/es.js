@@ -291,6 +291,26 @@ module.exports = {
     newclass: 'Nueva clase',
     newknowledges: 'Nueva área',
     newsubject: 'Nueva asignatura',
+    addUsers: {
+      title: 'Asignar estudiantes',
+      description:
+        'Asignar estudiantes a todas las aulas anidadas en este nivel desde la base de datos de estudiantes.',
+      note: 'NOTA:',
+      noteDescription:
+        'Los alumnos seleccionados se añadirán a las listas de alumnos actuales de cada aula. Si desea consultar o editar un grupo de estudiantes, debe hacerlo directamente en cada aula.',
+      byTag: 'Seleccionar por etiqueta',
+      byData: 'Buscar por datos de usuario',
+      addTag: 'Añadir Tag',
+      emailHeader: 'Email',
+      nameHeader: 'Nombre',
+      surnameHeader: 'Apellidos',
+      birthdayHeader: 'Fecha de nacimiento',
+      studentsFound: 'Hemos encontrado {{count}} Estudiantes',
+      studentsError:
+        '{{count}} estudiantes ya están incluidos en todas las clases y no se pueden añadir de nuevo',
+      studentsWarning:
+        '{{count}} de los estudiantes ya están incluidos en una de las clases y puede añadirlos al resto de las clases.',
+    },
     program: {
       title: 'Configuración del programa',
       nameLabel: 'Nombre del programa:',

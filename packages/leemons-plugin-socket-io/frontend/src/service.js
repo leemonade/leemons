@@ -7,6 +7,7 @@ let socket = null;
 export const SocketIoService = {
   connect: (endpoint, config) => {
     socket = io(endpoint, config);
+    console.log('Socket.io connected');
     return socket;
   },
   emit: (event, data, callback) => socket.emit(event, data, callback),
@@ -34,7 +35,11 @@ export const SocketIoService = {
     });
   },
   disconnect: () => {
-    if (socket) socket.disconnect();
+    if (socket) {
+      socket.disconnect();
+      socket = null;
+      console.log('Socket.io disconnected');
+    }
   },
 };
 
