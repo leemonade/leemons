@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ContextContainer, PageContainer, Paper } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import hooks from 'leemons-hooks';
@@ -22,6 +22,7 @@ function parseDates(date) {
 }
 
 export default function AssignmentPage() {
+  const history = useHistory();
   const [, translations] = useTranslateLoader(prefixPN('assignment_page'));
   const [labels, setLabels] = useState({});
 
@@ -60,6 +61,7 @@ export default function AssignmentPage() {
       await hooks.fireEvent('menu-builder:user:updateItem', 'history');
 
       addSuccessAlert('Assignment created successfully');
+      history.push('/private/tasks/ongoing');
     } catch (e) {
       addErrorAlert(e.message);
     }
