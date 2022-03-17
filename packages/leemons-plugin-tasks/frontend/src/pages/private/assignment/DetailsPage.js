@@ -1,7 +1,15 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { PageContainer, ContextContainer, Select, TextInput, Table } from '@bubbles-ui/components';
+import {
+  PageContainer,
+  ContextContainer,
+  Select,
+  TextInput,
+  Table,
+  UserDisplayItem,
+} from '@bubbles-ui/components';
+import { getUserAgentsInfoRequest } from '@users/request';
 import listStudents from '../../../request/instance/listStudents';
 
 function getStatus({ start, end, opened }) {
@@ -59,8 +67,12 @@ export default function DetailsPage() {
     const result = await listStudents(instance);
 
     if (result) {
+      const usersInfo = await getUserAgentsInfoRequest(result.items.map((s) => s.user));
+
       const users = result.items.map((student) => ({
-        student: student.user,
+        student: (
+          <UserDisplayItem {...usersInfo?.userAgents?.find((u) => u.id === student.user)?.user} />
+        ),
         status: getStatus(student),
         completed: student.end ? new Date(student.end).toLocaleString() : '-',
         avgTime: student.end ? (new Date(student.end) - new Date(student.start)) / 1000 / 60 : '-',
