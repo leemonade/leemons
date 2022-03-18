@@ -1,12 +1,22 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { Button, Box, ContextContainer, Stack } from '@bubbles-ui/components';
+import { Button, Box, Paper, ContextContainer, Stack } from '@bubbles-ui/components';
+import { useLayout } from '@layout/context';
 import selectFile from '../../../helpers/selectFile';
 import { listAllMyFilesRequest, uploadFilesRequest, removeFileRequest } from '../../../request';
 import IconByMimeType from '../../../components/IconByMimeType';
 
 export default function TestPage() {
   const [items, setItems] = useState([]);
+  const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
+
+  const showConfirmDelete = openDeleteConfirmationModal({
+    onConfirm: () => console.log('Confirmado'),
+  });
+
+  const showConfirm = openConfirmationModal({
+    onConfirm: () => console.log('Confirmado'),
+  });
 
   const listMyFiles = async () => {
     const { files } = await listAllMyFilesRequest();
@@ -25,11 +35,11 @@ export default function TestPage() {
   };
 
   useEffect(() => {
-    listMyFiles();
+    // listMyFiles();
   }, []);
 
   return (
-    <Box>
+    <Paper shadow="none">
       <Button onClick={uploadFile}>Añadir archivo</Button>
       <ContextContainer title="Archivos">
         <Box>
@@ -58,7 +68,15 @@ export default function TestPage() {
           </Stack>
         </Box>
       </ContextContainer>
-    </Box>
+      <ContextContainer title="Modales de confirmación">
+        <Box>
+          <Button onClick={showConfirm}>Confirmar</Button>
+        </Box>
+        <Box>
+          <Button onClick={showConfirmDelete}>Borrar</Button>
+        </Box>
+      </ContextContainer>
+    </Paper>
   );
 }
 

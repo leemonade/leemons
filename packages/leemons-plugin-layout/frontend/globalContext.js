@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { isNil } from 'lodash';
 import { useLocation } from 'react-router-dom';
-import { ThemeProvider } from '@bubbles-ui/components';
+import { ThemeProvider, ModalsProvider, useModals, Paragraph } from '@bubbles-ui/components';
 import { NotificationProvider } from '@bubbles-ui/notifications';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from './src/helpers/prefixPN';
 import { LayoutContext, LayoutProvider } from './src/context/layout';
 import PrivateLayout from './src/components/PrivateLayout';
 
@@ -19,9 +21,57 @@ LayoutWrapper.propTypes = {
   isPrivate: PropTypes.bool,
 };
 
-export function Provider({ children }) {
+function LayoutProviderWrapper({ children }) {
   const [layoutState, setLayoutState] = useState({ loading: false, contentRef: useRef() });
   const location = useLocation();
+  const modals = useModals();
+  const [t] = useTranslateLoader(prefixPN('modals'));
+
+  // TODO: Las traducciones se están tardando una eternidad, por eso al inicio se cargan solo las keys
+  const openDeleteConfirmationModal =
+    ({ title, description, labels, onCancel = () => {}, onConfirm = () => {} }) =>
+    () =>
+      modals.openConfirmModal({
+        title: title || t('title.delete', { 'title.delete': 'Esta muriendo' }),
+        children: (
+          <Paragraph
+            sx={(theme) => ({
+              paddingBottom: theme.spacing[5],
+            })}
+          >
+            {description || t('description.delete')}
+          </Paragraph>
+        ),
+        labels: {
+          confirm: labels?.confirm || t('buttons.confirm'),
+          cancel: labels?.cancel || t('buttons.cancel'),
+        },
+        confirmProps: { color: 'fatic' },
+        onCancel,
+        onConfirm,
+      });
+
+  const openConfirmationModal =
+    ({ title, description, labels, onCancel = () => {}, onConfirm = () => {} }) =>
+    () =>
+      modals.openConfirmModal({
+        title: title || t('title.confirm'),
+        children: (
+          <Paragraph
+            sx={(theme) => ({
+              paddingBottom: theme.spacing[5],
+            })}
+          >
+            {description || t('description.confirm')}
+          </Paragraph>
+        ),
+        labels: {
+          confirm: labels?.confirm || t('buttons.confirm'),
+          cancel: labels?.cancel || t('buttons.cancel'),
+        },
+        onCancel,
+        onConfirm,
+      });
 
   const setPrivateLayout = (val) => {
     setLayoutState({ ...layoutState, private: val });
@@ -49,21 +99,35 @@ export function Provider({ children }) {
   }, [location]);
 
   return (
+    <NotificationProvider leftOffset={layoutState.menuWidth}>
+      <LayoutProvider
+        value={{
+          layoutState,
+          setLayoutState,
+          setPrivateLayout,
+          setLoading,
+          setContentRef,
+          scrollTo,
+          openDeleteConfirmationModal,
+          openConfirmationModal,
+        }}
+      >
+        <LayoutWrapper isPrivate={layoutState.private}>{children}</LayoutWrapper>
+      </LayoutProvider>
+    </NotificationProvider>
+  );
+}
+
+LayoutProviderWrapper.propTypes = {
+  children: PropTypes.node,
+};
+
+export function Provider({ children }) {
+  return (
     <ThemeProvider>
-      <NotificationProvider leftOffset={layoutState.menuWidth}>
-        <LayoutProvider
-          value={{
-            layoutState,
-            setLayoutState,
-            setPrivateLayout,
-            setLoading,
-            setContentRef,
-            scrollTo,
-          }}
-        >
-          <LayoutWrapper isPrivate={layoutState.private}>{children}</LayoutWrapper>
-        </LayoutProvider>
-      </NotificationProvider>
+      <ModalsProvider>
+        <LayoutProviderWrapper>{children}</LayoutProviderWrapper>
+      </ModalsProvider>
     </ThemeProvider>
   );
 }
