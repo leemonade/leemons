@@ -15,7 +15,7 @@ export default function Private() {
   return (
     <div>
       <Switch>
-        <Route path={`${path}/`}>
+        <Route exact path={`${path}/`}>
           <HomePage session={session} />
         </Route>
         <Route path={`${path}/test`}>

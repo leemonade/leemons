@@ -68,7 +68,8 @@ async function get(ctx) {
 
   // Validate body
   if (!validator.validate(ctx.request.body)) {
-    ctx.body = { error: validator.error };
+    ctx.status = 400;
+    ctx.body = { status: 400, error: validator.error };
     return;
   }
 
@@ -104,7 +105,8 @@ async function get(ctx) {
 
     ctx.body = { items: resolvedLocalizations };
   } catch (e) {
-    ctx.body = { error: e.message };
+    ctx.status = 400;
+    ctx.body = { status: 400, error: e.message };
   }
 }
 
