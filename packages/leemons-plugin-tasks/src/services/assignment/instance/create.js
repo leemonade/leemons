@@ -12,6 +12,7 @@ module.exports = async function create(
     alwaysOpen = false,
     closeDate = null,
     message,
+    showCurriculum,
   },
   { transacting } = {}
 ) {
@@ -38,6 +39,7 @@ module.exports = async function create(
       executionTime,
       message,
       status: 'assigned',
+      showCurriculum: showCurriculum && JSON.stringify(showCurriculum),
     },
     {
       transacting,

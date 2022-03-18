@@ -15,6 +15,7 @@ const INSTANCE_COLUMNS = [
   'status',
   'alwaysOpen',
   'closeDate',
+  'showCurriculum',
 ];
 const DEFAULT_COLUMNS = [...TASK_COLUMNS_DEFAULT, 'status', 'studentCount', ...STATS_COLUMNS];
 
@@ -32,7 +33,7 @@ async function getInstanceTask(instance, { columns = DEFAULT_COLUMNS, transactin
 
   // EN: Get the related task to each instance
   // ES: Obtenemos el task relacionado a cada instancia
-  const instanceTasks = await instancesTable.find(
+  let instanceTasks = await instancesTable.find(
     {
       id_$in: instances,
     },
@@ -41,6 +42,11 @@ async function getInstanceTask(instance, { columns = DEFAULT_COLUMNS, transactin
       transacting,
     }
   );
+
+  instanceTasks = instanceTasks.map((instanceTask) => ({
+    ...instanceTask,
+    showCurriculum: instanceTask.showCurriculum ? JSON.parse(instanceTask.showCurriculum) : null,
+  }));
 
   // EN: Get the de-duplicated tasks' ids to reduce the number of queries
   // ES: Obtenemos los ids de los tasks de-duplicados para reducir el número de consultas

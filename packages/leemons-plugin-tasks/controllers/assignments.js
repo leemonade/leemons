@@ -31,6 +31,7 @@ module.exports = {
         alwaysOpen,
         closeDate,
         message,
+        showCurriculum,
       } = ctx.request.body;
 
       const instance = await createInstance({
@@ -42,6 +43,7 @@ module.exports = {
         alwaysOpen,
         closeDate,
         message,
+        showCurriculum,
       });
 
       ctx.status = 201;

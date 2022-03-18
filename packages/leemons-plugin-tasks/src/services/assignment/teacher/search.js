@@ -109,7 +109,11 @@ async function filterByInstanceAttributes(
 
 // EN: Filter by task name
 // ES: Filtrar por nombre de tarea
-async function filterByTaskAttributes(tasks, { name } = {}, { transacting } = {}) {
+async function filterByTaskAttributes(
+  tasks,
+  { name, showClosed, hideClosed = true, hideOpened } = {},
+  { transacting } = {}
+) {
   if (!tasks.count) {
     return tasks;
   }
@@ -124,6 +128,17 @@ async function filterByTaskAttributes(tasks, { name } = {}, { transacting } = {}
 
   if (name) {
     query.name_$contains = name;
+  }
+
+  if (!showClosed && hideClosed) {
+    query.closeDate_$lte = global.utils.sqlDatetime(new Date());
+  }
+
+  if (hideOpened) {
+    query.$or = [
+      { closeDate_$null: true },
+      { closeDate_$gt: global.utils.sqlDatetime(new Date()) },
+    ];
   }
 
   if (Object.keys(query).length === 1) {

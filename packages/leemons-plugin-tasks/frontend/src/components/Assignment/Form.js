@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { unflatten } from '@common';
 import { useForm, Controller } from 'react-hook-form';
-import { Button, ContextContainer, DatePicker, Box } from '@bubbles-ui/components';
+import { Button, ContextContainer, DatePicker, Box, Switch } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditor } from '@bubbles-ui/editors';
 import { assign } from 'lodash';
@@ -214,6 +214,45 @@ export default function Form({ onSubmit: parentSubmit }) {
               rules={{ required: true }}
               render={({ field }) => (
                 <TextEditor error={errors.message} label={labels?.messageToStudents} {...field} />
+              )}
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="showCurriculum.toogle"
+          render={({ field: showField }) => (
+            <ConditionalInput
+              {...showField}
+              label={labels?.showCurriculumToogle}
+              render={() => (
+                <>
+                  <Controller
+                    control={control}
+                    name="showCurriculum.content"
+                    shouldUnregister={true}
+                    render={({ field }) => (
+                      <Switch {...field} checked={field.value} label={labels?.content} />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="showCurriculum.objectives"
+                    shouldUnregister={true}
+                    render={({ field }) => (
+                      <Switch {...field} checked={field.value} label={labels?.objectives} />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="showCurriculum.assessmentCriteria"
+                    shouldUnregister={true}
+                    render={({ field }) => (
+                      <Switch {...field} checked={field.value} label={labels?.assessmentCriteria} />
+                    )}
+                  />
+                </>
               )}
             />
           )}

@@ -27,6 +27,9 @@ module.exports = {
     },
     message: { type: 'string' },
     status: { type: 'string' },
+    showCurriculum: {
+      type: 'json',
+    },
   },
   primaryKey: {
     type: 'uuid',

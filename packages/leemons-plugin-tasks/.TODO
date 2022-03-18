@@ -3,6 +3,7 @@
 Peticiones Johan
   [] Selector de archivos Media-Library
   [] Ver menú LibraryCard
+  Related subjects como seleccionarlo?
 
 Preguntas
   El Development lo podemos dejar como RichText por ahora (Se debería de poder poner en lista de preguntas) (El problema por ahora son los checkbox)
@@ -14,7 +15,6 @@ Library
 
 Assignment
   [] Unassign students
-  [] Optional Dates
   [] Student subject selector
   [] Assignment show curriculum content to students. (Dependency on Content) (D3)
   [] Gradable (Dependency on Grades) (D3)

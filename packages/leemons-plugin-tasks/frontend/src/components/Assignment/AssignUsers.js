@@ -164,6 +164,7 @@ export default function AssignUsers({ labels, profile, assignTo, onChange }) {
             />
           )}
         />
+        {assignToValue === 'student' && <p>Select subject</p>}
         {assignToValue && (
           <Controller
             control={control}
