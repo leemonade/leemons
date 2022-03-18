@@ -40,7 +40,15 @@ export default function AssignmentPage() {
   const { id } = useParams();
 
   const handleAssignment = async (values) => {
-    const { assignees, teachers, startDate, deadline, visualizationDate, ...instanceData } = values;
+    const {
+      assignees,
+      teachers,
+      startDate,
+      deadline,
+      visualizationDate,
+      closeDate,
+      ...instanceData
+    } = values;
 
     try {
       const instance = await createInstanceRequest(id, {
@@ -48,6 +56,7 @@ export default function AssignmentPage() {
         startDate: parseDates(startDate),
         deadline: parseDates(deadline),
         visualizationDate: parseDates(visualizationDate),
+        closeDate: parseDates(closeDate),
       });
 
       // TODO: Add subject selector

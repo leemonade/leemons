@@ -13,9 +13,11 @@ export default function ConditionalInput({
   const [show, setShow] = useState(userValue || false);
 
   const handleChange = (value) => {
-    setShow(value);
-    if (typeof onChange === 'function') {
-      onChange(value);
+    if (value !== undefined) {
+      setShow(value);
+      if (typeof onChange === 'function') {
+        onChange(value);
+      }
     }
   };
 

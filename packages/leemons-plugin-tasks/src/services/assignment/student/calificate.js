@@ -5,7 +5,7 @@ module.exports = async function calificate(
   user,
   grade,
   teacherFeedback,
-  { transacting }
+  { transacting } = {}
 ) {
   try {
     return await userInstances.update(

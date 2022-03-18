@@ -87,63 +87,106 @@ export default function Form({ onSubmit: parentSubmit }) {
             />
           )}
         />
-        <ContextContainer direction="row">
-          <Controller
-            control={control}
-            name="startDate"
-            rules={{ required: true }}
-            render={({ field }) => (
-              <DatePicker
-                {...field}
-                withTime
-                error={errors.startDate}
-                label={labels?.startDate}
-                placeholder={placeholders?.date}
-              />
-            )}
-          />
+        <Controller
+          control={control}
+          name="alwaysOpen"
+          render={({ field: alwaysOpenField }) => (
+            <ConditionalInput
+              {...alwaysOpenField}
+              label={labels?.alwaysOpenToogle}
+              showOnTrue={false}
+              render={() => (
+                <>
+                  <ContextContainer direction="row">
+                    <Controller
+                      control={control}
+                      name="startDate"
+                      rules={{ required: true }}
+                      render={({ field }) => (
+                        <DatePicker
+                          {...field}
+                          withTime
+                          error={errors.startDate}
+                          label={labels?.startDate}
+                          placeholder={placeholders?.date}
+                        />
+                      )}
+                    />
 
-          <Controller
-            control={control}
-            name="deadline"
-            rules={{ required: true }}
-            render={({ field }) => (
-              <DatePicker
-                {...field}
-                withTime
-                error={errors.deadline}
-                label={labels?.deadline}
-                placeholder={placeholders?.date}
-              />
-            )}
-          />
-        </ContextContainer>
-
-        <ConditionalInput
-          label={labels?.visualizationDateToogle}
-          render={() => (
-            <ContextContainer direction="row" alignItems="end">
-              <Controller
-                control={control}
-                name="visualizationDate"
-                shouldUnregister={true}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <DatePicker
-                    {...field}
-                    withTime
-                    error={errors.visualizationDate}
-                    label={labels?.visualizationDate}
-                    placeholder={placeholders?.date}
-                  />
-                )}
-              />
-            </ContextContainer>
+                    <Controller
+                      control={control}
+                      name="deadline"
+                      rules={{ required: true }}
+                      render={({ field }) => (
+                        <DatePicker
+                          {...field}
+                          withTime
+                          error={errors.deadline}
+                          label={labels?.deadline}
+                          placeholder={placeholders?.date}
+                        />
+                      )}
+                    />
+                  </ContextContainer>
+                  <Box>
+                    <ContextContainer direction="row">
+                      <ConditionalInput
+                        label={labels?.visualizationDateToogle}
+                        help={descriptions?.visualizationDate}
+                        render={() => (
+                          <ContextContainer direction="row" alignItems="end">
+                            <Controller
+                              control={control}
+                              name="visualizationDate"
+                              shouldUnregister={true}
+                              rules={{ required: true }}
+                              render={({ field }) => (
+                                <DatePicker
+                                  {...field}
+                                  withTime
+                                  error={errors.visualizationDate}
+                                  label={labels?.visualizationDate}
+                                  placeholder={placeholders?.date}
+                                />
+                              )}
+                            />
+                          </ContextContainer>
+                        )}
+                      />
+                      <ConditionalInput
+                        label={labels?.correctionDeadline}
+                        help={descriptions?.correctionDeadline}
+                        render={() => (
+                          <ContextContainer direction="row" alignItems="end">
+                            <Controller
+                              control={control}
+                              name="closeDate"
+                              shouldUnregister={true}
+                              rules={{ required: true }}
+                              render={({ field }) => (
+                                <DatePicker
+                                  {...field}
+                                  withTime
+                                  error={errors.visualizationDate}
+                                  label={labels?.visualizationDate}
+                                  placeholder={placeholders?.date}
+                                />
+                              )}
+                            />
+                          </ContextContainer>
+                        )}
+                      />
+                    </ContextContainer>
+                  </Box>
+                </>
+              )}
+            />
           )}
         />
 
         <ConditionalInput
           label={labels?.limitedExecutionToogle}
+          help={descriptions?.limitedExecution}
           render={() => (
             <Controller
               control={control}

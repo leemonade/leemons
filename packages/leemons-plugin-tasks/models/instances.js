@@ -19,6 +19,12 @@ module.exports = {
     executionTime: {
       type: 'integer',
     },
+    alwaysOpen: {
+      type: 'boolean',
+    },
+    closeDate: {
+      type: 'datetime',
+    },
     message: { type: 'string' },
     status: { type: 'string' },
   },

@@ -12,6 +12,7 @@ const Profiles = loadable(() => import('./src/pages/private/profiles/ProfilesPag
 const Ongoing = loadable(() => import('./src/pages/private/ongoing/OngoingPage'));
 const Details = loadable(() => import('./src/pages/private/assignment/DetailsPage'));
 const UserDetails = loadable(() => import('./src/pages/private/student/Details'));
+const Correction = loadable(() => import('./src/pages/private/assignment/Correction'));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -45,6 +46,9 @@ export default function Private() {
       </Route>
       <Route path={`${path}/details/:instance`}>
         <Details session={session} />
+      </Route>
+      <Route path={`${path}/correction/:instance/:student`}>
+        <Correction session={session} />
       </Route>
 
       {/* STUDENT VIEW */}

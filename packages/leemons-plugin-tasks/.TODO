@@ -1,49 +1,28 @@
+  [] Estructura datos componentes
 
 Peticiones Johan
   [] Selector de archivos Media-Library
-  [X] Tenemos que ver como hacer los search en multitabla
-  [X] Ver assignments
   [] Ver menú LibraryCard
 
-
 Preguntas
-  El tiempo de ejecución incluye Pretask, Self Reflection y Feedback?
   El Development lo podemos dejar como RichText por ahora (Se debería de poder poner en lista de preguntas) (El problema por ahora son los checkbox)
-  Individual deadlines
-  Las metodologías de dónde salen? De momento es una constante, en un futuro ya se verá
-
-
-Task Creation
-  [B] Upload Task Cover (D2)
-  [X STILL NEEDS TESTS INTEGRATION] Previous Task (D4)
-  [X STILL NEEDS TESTS INTEGRATION] Self Reflection (08.02.02.02D) (D3)
-  [X STILL NEEDS TESTS INTEGRATION] Feedback (08.02.02.02D) (D3)
-  [X STILL NEEDS CURRICULUM INTEGRATION] Content (Curriculum) (D4)
-  [X STILL NEEDS CURRICULUM INTEGRATION] Assessment Criteria (List and tagged to content) (D4)
-  [X STILL NEEDS MEDIA-LIBRARY INTEGRATION] Resources (Library dependency) (D2)
 
 Library
-  [X] Library new cards (D1)
   [] Library view as table  (D1)
-  [X] Library filters (Easy filters, complicated pagination) (D2)
-  [X] Library search (D2)
   [] Library pagination
   [] New sticker en task/library (D3)
 
 Assignment
   [] Unassign students
   [] Optional Dates
+  [] Student subject selector
   [] Assignment show curriculum content to students. (Dependency on Content) (D3)
   [] Gradable (Dependency on Grades) (D3)
   [] Mandatory || Final examen (Consultar a Johan) (D3)
   [] Rubrics (Dependency on Rubrics plugin) (D3)
 
 Ongoing & History
-  [Backend] Ongoing filters (Easy filters, complicated pagination) (D2)
-  [Backend] History filters (Easy filters, complicated pagination) (D2)
-
-Task Correction
-
+  [Backend] Ongoing filters (D2)
 
 Students
   Dashboard
@@ -52,6 +31,7 @@ Students
     [] Get tasks
   Correction Details
 
+[] Dashboard widget
 Ongoing Filter by:
   Name
   Group
@@ -72,4 +52,17 @@ Integraciones
   Fase 2 - Rubcris
   Calendar
 
-  [] Estructura datos componentes
+
+
+
+
+Dependencies Needed:
+  Task Creation
+    [] Upload Task Cover (D2)
+    [] Previous Task (D4)
+    [] Self Reflection (08.02.02.02D) (D3)
+    [] Feedback (08.02.02.02D) (D3)
+    [] Content (Curriculum) (D4)
+    [] Assessment Criteria (List and tagged to content) (D4)
+    [] Resources (Library dependency) (D2)
+

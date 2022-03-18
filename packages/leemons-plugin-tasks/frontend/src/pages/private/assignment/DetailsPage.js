@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import {
   PageContainer,
@@ -8,6 +8,7 @@ import {
   TextInput,
   Table,
   UserDisplayItem,
+  Button,
 } from '@bubbles-ui/components';
 import { getUserAgentsInfoRequest } from '@users/request';
 import { useApi } from '@common';
@@ -32,6 +33,7 @@ function getStatus({ start, end, opened }) {
 }
 
 export default function DetailsPage() {
+  const history = useHistory();
   const { instance } = useParams();
 
   const [students, setStudents] = useState();
@@ -83,7 +85,14 @@ export default function DetailsPage() {
         completed: student.end ? new Date(student.end).toLocaleString() : '-',
         avgTime: student.end ? (new Date(student.end) - new Date(student.start)) / 1000 / 60 : '-',
         score: 'NYI',
-        actions: 'NYI',
+        actions: (
+          <Button
+            variant="link"
+            onClick={() => history.push(`/private/tasks/correction/${instance}/${student.user}`)}
+          >
+            Assess
+          </Button>
+        ),
       }));
 
       setStudents(users);

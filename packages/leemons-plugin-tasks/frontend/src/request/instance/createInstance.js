@@ -1,6 +1,6 @@
 export default function createInstanceRequest(
   taskId,
-  { deadline, executionTime, message, startDate, visualizationDate }
+  { deadline, executionTime, message, startDate, visualizationDate, alwaysOpen, closeDate }
 ) {
   const instance = leemons
     .api(`tasks/tasks/${taskId}/assignments/instance`, {
@@ -12,6 +12,8 @@ export default function createInstanceRequest(
         visualizationDate,
         // Time in ms, 0 for not limit time
         executionTime,
+        alwaysOpen,
+        closeDate,
         message,
       },
     })
