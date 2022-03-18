@@ -38,6 +38,8 @@ const TreeClassroomDetail = ({ classe, program, messages, onSave, saving, teache
     [program]
   );
 
+  console.log(classe);
+
   function classForForm() {
     const teacher = find(classe?.teachers, { type: 'main-teacher' });
     return {

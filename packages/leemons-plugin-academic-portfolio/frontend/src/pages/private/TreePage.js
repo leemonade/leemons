@@ -129,9 +129,8 @@ export default function TreePage() {
       const removeLabel = t('treeRemove');
       const duplicateLabel = t('treeDuplicate');
 
-      function processItem(item, parents, parentId, childIndex) {
+      function processItem(item, parents) {
         let text = item.value.name;
-        const treeId = `${childIndex}.${parentId}.${item.value.id}`;
         if (item.nodeType === 'courses') {
           text = item.value.name
             ? `${item.value.name} (${item.value.index}º)`
@@ -154,7 +153,11 @@ export default function TreePage() {
           text = `${courseName}${classSubjectCredits?.internalId} ${item.value.subject.name}${groupName}${substageName}`;
           if (!isArray(classesBySubject[item.value.subject?.id]))
             classesBySubject[item.value.subject?.id] = [];
-          classesBySubject[item.value.subject?.id].push({ ...item.value, treeName: text, treeId });
+          classesBySubject[item.value.subject?.id].push({
+            ...item.value,
+            treeName: text,
+            treeId: item.treeId,
+          });
         }
 
         const actions = [
@@ -162,7 +165,7 @@ export default function TreePage() {
             name: 'edit',
             tooltip: editLabel,
             showOnHover: true,
-            handler: () => onEdit({ ...item, treeId }),
+            handler: () => onEdit({ ...item }),
           },
         ];
 
@@ -171,7 +174,7 @@ export default function TreePage() {
             name: 'delete',
             tooltip: removeLabel,
             showOnHover: true,
-            handler: () => onRemove({ ...item, treeId, parents }),
+            handler: () => onRemove({ ...item, parents }),
           });
         }
 
@@ -181,7 +184,7 @@ export default function TreePage() {
             tooltip: duplicateLabel,
             showOnHover: true,
             icon: () => <DuplicateIcon />,
-            handler: () => onDuplicate({ ...item, treeId, parents }),
+            handler: () => onDuplicate({ ...item, parents }),
           });
         }
 
@@ -191,7 +194,7 @@ export default function TreePage() {
             tooltip: t('newsubject'),
             showOnHover: true,
             icon: () => <AddCircleIcon />,
-            handler: () => onNewSubject({ ...item, treeId, parents }),
+            handler: () => onNewSubject({ ...item, parents }),
           });
         }
 
@@ -201,29 +204,28 @@ export default function TreePage() {
             tooltip: t(`new${item.nodeType}`),
             showOnHover: true,
             icon: () => <AddCircleIcon />,
-            handler: () => onNew({ ...item, treeId, parents }),
+            handler: () => onNew({ ...item, parents }),
           });
         }
 
         result.push({
-          id: treeId,
-          parent: parents[parents.length - 1] ? parentId : 0,
+          id: item.treeId,
+          parent: parents[parents.length - 1]?.treeId || 0,
           text,
           actions,
         });
         if (item.childrens && item.childrens.length) {
-          item.childrens.forEach((child, index) =>
-            processItem(child, [...parents, item], treeId, index)
-          );
+          item.childrens.forEach((child) => processItem(child, [...parents, item]));
         }
       }
 
-      processItem(tree, [], '0');
+      processItem(tree, []);
       store.profiles = profiles;
       store.program = program;
       store.classesBySubject = classesBySubject;
       return result;
     } catch (err) {
+      console.log(err);
       addErrorAlert(getErrorMessage(err));
     }
   }
@@ -271,11 +273,23 @@ export default function TreePage() {
     if (!tLoading && !tsLoading) init();
   }, [params, tLoading, tsLoading]);
 
-  async function onSaveProgram({ id, name, abbreviation, credits }) {
+  async function addStudentIfNeed(students, id, nodeType) {
+    if (students) {
+      await addStudentsToClassesUnderNodeTreeRequest({
+        program: store.programId,
+        nodeType,
+        nodeId: store.editingItem.treeId,
+        students,
+      });
+    }
+  }
+
+  async function onSaveProgram({ id, name, abbreviation, credits, students }) {
     try {
       store.saving = true;
       render();
       await updateProgramRequest({ id, name, abbreviation, credits });
+      await addStudentIfNeed(students, id, 'program');
       store.tree = await getProgramTree();
       addSuccessAlert(t('programUpdated'));
     } catch (err) {
@@ -285,11 +299,12 @@ export default function TreePage() {
     render();
   }
 
-  async function onSaveCourse({ id, name, credits }) {
+  async function onSaveCourse({ id, name, credits, students }) {
     try {
       store.saving = true;
       render();
       await updateCourseRequest({ id, name, abbreviation: name, number: credits });
+      await addStudentIfNeed(students, id, 'courses');
       store.tree = await getProgramTree();
       addSuccessAlert(t('courseUpdated'));
     } catch (err) {
@@ -303,17 +318,8 @@ export default function TreePage() {
     try {
       store.saving = true;
       render();
-      console.log(students);
       await updateGroupRequest({ id, name, abbreviation });
-      if (students) {
-        const a = await addStudentsToClassesUnderNodeTreeRequest({
-          program: store.programId,
-          nodeType: 'groups',
-          nodeId: id,
-          students,
-        });
-        console.log(a);
-      }
+      await addStudentIfNeed(students, id, 'groups');
 
       store.tree = await getProgramTree();
       addSuccessAlert(t('groupUpdated'));
@@ -324,7 +330,14 @@ export default function TreePage() {
     render();
   }
 
-  async function onSaveSubjectType({ id, name, groupVisibility, credits_course, credits_program }) {
+  async function onSaveSubjectType({
+    students,
+    id,
+    name,
+    groupVisibility,
+    credits_course,
+    credits_program,
+  }) {
     try {
       store.saving = true;
       render();
@@ -335,6 +348,7 @@ export default function TreePage() {
         credits_course,
         credits_program,
       });
+      await addStudentIfNeed(students, id, 'subjectType');
       store.tree = await getProgramTree();
       addSuccessAlert(t('subjectTypeUpdated'));
     } catch (err) {
@@ -351,6 +365,7 @@ export default function TreePage() {
     color,
     credits_course,
     credits_program,
+    students,
   }) {
     try {
       store.saving = true;
@@ -364,6 +379,7 @@ export default function TreePage() {
         credits_program,
         icon: ' ',
       });
+      await addStudentIfNeed(students, id, 'knowledges');
       store.tree = await getProgramTree();
       addSuccessAlert(t('knowledgeUpdated'));
     } catch (err) {
@@ -637,7 +653,7 @@ export default function TreePage() {
                       <Box>
                         <Tree
                           treeData={store.tree}
-                          selectedNode={store.editingItem ? { id: store.editingItem.treeId } : null}
+                          selectedNode={store.editingItem ? store.editingItem.treeId : null}
                           allowDragParents={false}
                           initialOpen={map(store.tree, 'id')}
                         />

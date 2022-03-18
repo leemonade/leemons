@@ -14,5 +14,12 @@ export function getTreeAddUsersComponentTranslation(t) {
     studentsFound: t('addUsers.studentsFound'),
     studentsError: t('addUsers.studentsError'),
     studentsWarning: t('addUsers.studentsWarning'),
+    seatsError1: t('addUsers.seatsError1'),
+    seatsError2: t('addUsers.seatsError2'),
+    seatsClassError: t('addUsers.seatsClassError'),
+    selected: t('addUsers.selected'),
+    addStudent: t('addUsers.addStudent'),
+    userAlreadySelected: t('addUsers.userAlreadySelected'),
+    removeUser: t('addUsers.removeUser'),
   };
 }

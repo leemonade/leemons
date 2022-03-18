@@ -10,11 +10,24 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
+import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
 
-const TreeProgramDetail = ({ program, messages, onSave, onGoProgram, saving }) => {
+const TreeProgramDetail = ({
+  item,
+  center,
+  messagesAddUsers,
+  program,
+  messages,
+  onSave,
+  onGoProgram,
+  saving,
+}) => {
+  const [disableSave, setDisabledSave] = React.useState(false);
+
   const {
     reset,
     control,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm({ defaultValues: program });
@@ -22,6 +35,14 @@ const TreeProgramDetail = ({ program, messages, onSave, onGoProgram, saving }) =
   React.useEffect(() => {
     reset(program);
   }, [program]);
+
+  function onChangeAddUsers(e) {
+    setValue('students', e);
+  }
+
+  function onDisableSave(e) {
+    setDisabledSave(e);
+  }
 
   return (
     <Box>
@@ -78,8 +99,17 @@ const TreeProgramDetail = ({ program, messages, onSave, onGoProgram, saving }) =
               </Button>
             </Paragraph>
           </Box>
+
+          <SelectUsersForAddToClasses
+            onChange={onChangeAddUsers}
+            disableSave={onDisableSave}
+            center={center}
+            messages={messagesAddUsers}
+            tree={item}
+          />
+
           <Box>
-            <Button loading={saving} type="submit">
+            <Button disabled={disableSave} loading={saving} type="submit">
               {messages.save}
             </Button>
           </Box>
@@ -95,6 +125,9 @@ TreeProgramDetail.propTypes = {
   onSave: PropTypes.func,
   onGoProgram: PropTypes.func,
   saving: PropTypes.bool,
+  item: PropTypes.object,
+  center: PropTypes.string,
+  messagesAddUsers: PropTypes.object,
 };
 
 // eslint-disable-next-line import/prefer-default-export

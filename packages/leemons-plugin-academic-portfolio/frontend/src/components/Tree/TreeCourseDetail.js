@@ -10,13 +10,33 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
+import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
 
-const TreeCourseDetail = ({ course, messages, onSave, onGoProgram, saving }) => {
-  const { reset, control, handleSubmit } = useForm({ defaultValues: course });
+const TreeCourseDetail = ({
+  item,
+  center,
+  messagesAddUsers,
+  course,
+  messages,
+  onSave,
+  onGoProgram,
+  saving,
+}) => {
+  const [disableSave, setDisabledSave] = React.useState(false);
+
+  const { reset, control, setValue, handleSubmit } = useForm({ defaultValues: course });
 
   React.useEffect(() => {
     reset(course);
   }, [course]);
+
+  function onChangeAddUsers(e) {
+    setValue('students', e);
+  }
+
+  function onDisableSave(e) {
+    setDisabledSave(e);
+  }
 
   return (
     <Box>
@@ -24,7 +44,7 @@ const TreeCourseDetail = ({ course, messages, onSave, onGoProgram, saving }) => 
         <ContextContainer direction="column" fullWidth>
           <Title order={4}>{messages.title}</Title>
           <Box>
-            <TextInput disabled label={messages.numberLabel} value={course.index} />
+            <TextInput disabled label={messages.numberLabel} value={course.index.toString()} />
           </Box>
           <Box>
             <Controller
@@ -52,8 +72,19 @@ const TreeCourseDetail = ({ course, messages, onSave, onGoProgram, saving }) => 
               </Button>
             </Paragraph>
           </Box>
+
+          {course ? (
+            <SelectUsersForAddToClasses
+              onChange={onChangeAddUsers}
+              disableSave={onDisableSave}
+              center={center}
+              messages={messagesAddUsers}
+              tree={item}
+            />
+          ) : null}
+
           <Box>
-            <Button loading={saving} type="submit">
+            <Button disabled={disableSave} loading={saving} type="submit">
               {messages.save}
             </Button>
           </Box>
@@ -69,6 +100,9 @@ TreeCourseDetail.propTypes = {
   onSave: PropTypes.func,
   onGoProgram: PropTypes.func,
   saving: PropTypes.bool,
+  item: PropTypes.object,
+  center: PropTypes.string,
+  messagesAddUsers: PropTypes.object,
 };
 
 // eslint-disable-next-line import/prefer-default-export

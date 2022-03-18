@@ -13,7 +13,6 @@ export function Provider({ children }) {
     SocketIoService.disconnect();
     const token = getCookieToken(true);
     if (token && token !== store.token) {
-      console.log(token);
       const config = {
         auth: {},
       };
