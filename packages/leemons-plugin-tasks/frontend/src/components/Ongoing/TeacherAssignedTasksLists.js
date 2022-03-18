@@ -31,21 +31,20 @@ function Actions({ id }) {
 async function getTasks(userAgent, setTasks) {
   const response = await listTeacherTasks(userAgent, true);
   const assignedTasks = response?.tasks?.items?.map((t) => {
-    // eslint-disable-next-line no-param-reassign
     const task = t;
     task.students.count = t.students.count;
     task.group = '-';
-    task.students.open = `${t.students.open} | ${Math.round(
-      (t.students.open / t.students.count) * 100
-    )}%`;
-    task.students.ongoing = `${t.students.ongoing} | ${Math.round(
-      (t.students.ongoing / t.students.count) * 100
-    )}%`;
-    task.students.completed = `${t.students.completed} | ${Math.round(
-      (t.students.completed / t.students.count) * 100
-    )}%`;
+    task.students.open = `${t.students.open} | ${
+      t.students.count ? Math.round((t.students.open / t.students.count) * 100) : 0
+    }%`;
+    task.students.ongoing = `${t.students.ongoing} | ${
+      t.students.count ? Math.round((t.students.ongoing / t.students.count) * 100) : 0
+    }%`;
+    task.students.completed = `${t.students.completed} | ${
+      t.students.count ? Math.round((t.students.completed / t.students.count) * 100) : 0
+    }%`;
 
-    task.deadline = new Date(t.deadline).toLocaleString();
+    task.deadline = t.alwaysOpen ? '-' : new Date(t.deadline).toLocaleString();
 
     task.actions = <Actions id={task.id} />;
 

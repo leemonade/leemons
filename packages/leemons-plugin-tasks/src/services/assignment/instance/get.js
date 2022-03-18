@@ -4,7 +4,7 @@ const count = require('../student/count');
 const list = require('../student/list');
 const { DEFAULT_COLUMNS: STATS_COLUMNS, getStats } = require('../student/stats');
 
-const TASK_COLUMNS_DEFAULT = ['name', 'deadline'];
+const TASK_COLUMNS_DEFAULT = ['name', 'deadline', 'alwaysOpen'];
 
 const INSTANCE_COLUMNS = [
   'startDate',
@@ -13,6 +13,8 @@ const INSTANCE_COLUMNS = [
   'executionTime',
   'message',
   'status',
+  'alwaysOpen',
+  'closeDate',
 ];
 const DEFAULT_COLUMNS = [...TASK_COLUMNS_DEFAULT, 'status', 'studentCount', ...STATS_COLUMNS];
 
