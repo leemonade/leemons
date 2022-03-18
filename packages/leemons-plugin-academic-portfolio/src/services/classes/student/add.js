@@ -12,7 +12,7 @@ async function add(_class, student, { transacting } = {}) {
     { transacting }
   );
 
-  // TODO: Añadir al profesor que pueda ver a los alumnos y añadir al alumno que pueda ver al profesor y al resto de alumnos
+  // TODO: Añadir al profesor que pueda ver a los alumnos y al resto de profesores y añadir al alumno que pueda ver al profesor y al resto de alumnos
 
   await leemons.events.emit('after-add-class-student', { class: _class, student, transacting });
   return classStudent;

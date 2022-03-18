@@ -14,6 +14,7 @@ import { useStore } from '@common';
 import { TreeClassroomDetail } from './TreeClassroomDetail';
 
 const TreeClassDetail = ({
+  messagesAddUsers,
   classe,
   classes,
   program,
@@ -88,6 +89,7 @@ const TreeClassDetail = ({
                 {classes.map((item) => (
                   <TabPanel disabled={store.createMode} key={item.id} label={item.treeName}>
                     <TreeClassroomDetail
+                      messagesAddUsers={messagesAddUsers}
                       program={program}
                       classe={item}
                       messages={messages}
@@ -117,6 +119,7 @@ TreeClassDetail.propTypes = {
   saving: PropTypes.bool,
   teacherSelect: PropTypes.any,
   createMode: PropTypes.bool,
+  messagesAddUsers: PropTypes.object,
 };
 
 // eslint-disable-next-line import/prefer-default-export

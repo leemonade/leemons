@@ -295,6 +295,12 @@ module.exports = [
     handler: 'class.postClassTeachers',
     authenticated: true,
   },
+  {
+    path: '/class/remove/students',
+    method: 'POST',
+    handler: 'class.removeStudent',
+    authenticated: true,
+  },
   // Student
   {
     path: '/student/:id/classes',

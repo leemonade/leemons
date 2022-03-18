@@ -17,6 +17,8 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
         { id_$in: _.map(classTeachers, 'id') },
         { soft, transacting }
       );
+      // TODO: Quitar permiso de que pueda ver al resto de alumnos y profesores
+
       // TODO: remove classTeacher permission from class
       /* Eliminar permiso de la clase
        * removeCustomUserAgentPermission */

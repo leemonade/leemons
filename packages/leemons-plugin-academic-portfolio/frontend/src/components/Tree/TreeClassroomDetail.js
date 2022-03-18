@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
 import {
+  ActionButton,
+  Avatar,
   Box,
   Button,
   ColorInput,
@@ -9,12 +11,30 @@ import {
   MultiSelect,
   NumberInput,
   Select,
+  Table,
   Title,
 } from '@bubbles-ui/components';
+import { RemoveIcon } from '@bubbles-ui/icons/outline';
+import getUserFullName from '@users/helpers/getUserFullName';
 import { ScheduleInput } from '@timetable/components';
-import { find, map } from 'lodash';
+import { LocaleDate, useStore } from '@common';
+import { find, findIndex, map } from 'lodash';
+import { getUserAgentsInfoRequest } from '@users/request';
+import { addErrorAlert } from '@layout/alert';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { removeStudentFromClassRequest } from '../../request';
 
-const TreeClassroomDetail = ({ classe, program, messages, onSave, saving, teacherSelect }) => {
+const TreeClassroomDetail = ({
+  messagesAddUsers,
+  classe,
+  program,
+  messages,
+  onSave,
+  saving,
+  teacherSelect,
+}) => {
+  const [, , , getErrorMessage] = useRequestErrorMessage();
+  const [store, render] = useStore({ students: [] });
   const selects = React.useMemo(
     () => ({
       courses: map(program.courses, ({ name, index, id }) => ({
@@ -38,8 +58,6 @@ const TreeClassroomDetail = ({ classe, program, messages, onSave, saving, teache
     [program]
   );
 
-  console.log(classe);
-
   function classForForm() {
     const teacher = find(classe?.teachers, { type: 'main-teacher' });
     return {
@@ -55,6 +73,42 @@ const TreeClassroomDetail = ({ classe, program, messages, onSave, saving, teache
     };
   }
 
+  async function removeUserAgent(userAgentId) {
+    try {
+      await removeStudentFromClassRequest(classe.id, userAgentId);
+      const index = findIndex(store.students, { id: userAgentId });
+      if (index !== -1) store.students.splice(index, 1);
+      render();
+    } catch (error) {
+      addErrorAlert(getErrorMessage(error));
+    }
+  }
+
+  async function getClassStudents() {
+    const { userAgents } = await getUserAgentsInfoRequest(classe.students, {
+      withCenter: true,
+      withProfile: true,
+    });
+    store.students = map(userAgents, (userAgent) => ({
+      ...userAgent,
+      user: {
+        ...userAgent.user,
+        avatar: <Avatar image={userAgent.user.avatar} fullName={getUserFullName(userAgent.user)} />,
+        birthdate: <LocaleDate date={userAgent.user.birthdate} />,
+      },
+      actions: (
+        <Box style={{ textAlign: 'right', width: '100%' }}>
+          <ActionButton
+            onClick={() => removeUserAgent(userAgent.id)}
+            tooltip={messages.removeUser}
+            icon={<RemoveIcon />}
+          />
+        </Box>
+      ),
+    }));
+    render();
+  }
+
   const {
     reset,
     control,
@@ -65,6 +119,43 @@ const TreeClassroomDetail = ({ classe, program, messages, onSave, saving, teache
   React.useEffect(() => {
     reset(classForForm());
   }, [classe]);
+
+  React.useEffect(() => {
+    getClassStudents();
+  }, [classe.students]);
+
+  const tableHeaders = [
+    {
+      Header: ' ',
+      accessor: 'user.avatar',
+      className: 'text-left',
+    },
+    {
+      Header: messagesAddUsers.emailHeader,
+      accessor: 'user.email',
+      className: 'text-left',
+    },
+    {
+      Header: messagesAddUsers.nameHeader,
+      accessor: 'user.name',
+      className: 'text-left',
+    },
+    {
+      Header: messagesAddUsers.surnameHeader,
+      accessor: 'user.surnames',
+      className: 'text-left',
+    },
+    {
+      Header: messagesAddUsers.birthdayHeader,
+      accessor: 'user.birthdate',
+      className: 'text-left',
+    },
+    {
+      Header: ' ',
+      accessor: 'actions',
+      className: 'text-left',
+    },
+  ];
 
   return (
     <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
@@ -153,6 +244,8 @@ const TreeClassroomDetail = ({ classe, program, messages, onSave, saving, teache
             />
           </Box>
 
+          {store.students.length ? <Table columns={tableHeaders} data={store.students} /> : null}
+
           <Box>
             <Button loading={saving} type="submit">
               {messages.save}
@@ -171,6 +264,7 @@ TreeClassroomDetail.propTypes = {
   saving: PropTypes.bool,
   program: PropTypes.object,
   teacherSelect: PropTypes.any,
+  messagesAddUsers: PropTypes.object,
 };
 
 // eslint-disable-next-line import/prefer-default-export
