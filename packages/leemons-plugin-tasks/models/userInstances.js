@@ -16,10 +16,11 @@ module.exports = {
     end: {
       type: 'datetime',
     },
-    // EN: Type of assignment: ['direct', 'group']
-    // ES: Tipo de asignación: ['directa', 'grupal']
-    type: {
-      type: 'string',
+    grade: {
+      type: 'integer',
+    },
+    teacherFeedback: {
+      type: 'richtext',
     },
   },
 };

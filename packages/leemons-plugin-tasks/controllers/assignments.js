@@ -14,6 +14,7 @@ const listAssignedTeacher = require('../src/services/assignment/teacher/listAssi
 const updateStudent = require('../src/services/assignment/student/update');
 const searchTeachers = require('../src/services/assignment/teacher/search');
 const assignGroup = require('../src/services/assignment/groups/add');
+const calificateStudent = require('../src/services/assignment/student/calificate');
 
 module.exports = {
   /**
@@ -207,6 +208,18 @@ module.exports = {
         message: e.message,
       };
     }
+  },
+  studentCalificate: async (ctx) => {
+    const { instance, student } = ctx.request.params;
+    const { grade, teacherFeedback } = ctx.request.body;
+
+    const calificated = await calificateStudent(instance, student, grade, teacherFeedback);
+
+    ctx.status = 200;
+    ctx.body = {
+      status: 200,
+      calificated,
+    };
   },
 
   /**

@@ -1,6 +1,6 @@
 const { userInstances } = require('../../table');
 
-const COLUMNS = ['opened', 'start', 'end', 'type'];
+const COLUMNS = ['opened', 'start', 'end', 'grade', 'teacherFeedback'];
 const DEFAULT_COLUMNS = ['opened', 'start', 'end'];
 
 module.exports = async function getStudentDetails(

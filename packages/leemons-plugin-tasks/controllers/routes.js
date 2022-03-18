@@ -221,6 +221,12 @@ module.exports = [
     handler: 'assignments.studentUpdate',
     authenticated: true,
   },
+  {
+    method: 'POST',
+    path: '/tasks/instances/:instance/students/:student/calification',
+    handler: 'assignments.studentCalificate',
+    authenticated: true,
+  },
   // Teacher
   {
     method: 'POST',
