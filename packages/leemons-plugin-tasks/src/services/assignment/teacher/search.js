@@ -106,16 +106,13 @@ async function filterByInstanceAttributes(
 
   if (!showClosed && hideClosed) {
     query.$or = [
-      { closeDate_$lte: global.utils.sqlDatetime(new Date()) },
+      { closeDate_$gte: global.utils.sqlDatetime(new Date()) },
       {
         closeDate_$null: true,
       },
     ];
   } else if (hideOpened) {
-    query.$or = [
-      { closeDate_$null: true },
-      { closeDate_$gt: global.utils.sqlDatetime(new Date()) },
-    ];
+    query.closeDate_$lt = global.utils.sqlDatetime(new Date());
   }
 
   const tasks = await instances.find(query, {

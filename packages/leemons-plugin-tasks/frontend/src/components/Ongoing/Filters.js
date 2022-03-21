@@ -11,6 +11,7 @@ import {
   PageContainer,
   ContextContainer,
   Select,
+  DatePicker,
 } from '@bubbles-ui/components';
 import { listTeacherClassesRequest } from '@academic-portfolio/request';
 import { getCentersWithToken } from '@users/session';
@@ -71,20 +72,19 @@ export default function Filters({ onChange }) {
   });
   const {
     control,
-    watch,
     handleSubmit,
     formState: { errors },
   } = form;
 
   const onSubmit = (values) => {
-    const { group } = values;
+    const { group, date } = values;
 
     onChange({
       group,
+      [date?.type]: JSON.stringify([date.from?.getTime(), date.to?.getTime()]),
     });
   };
 
-  const program = watch('program');
   return (
     <Controller
       name="show"
@@ -105,6 +105,39 @@ export default function Filters({ onChange }) {
                       name="group"
                       render={({ field }) => (
                         <SelectClass {...field} label="class" error={errors?.class} />
+                      )}
+                    />
+                    <Controller
+                      control={control}
+                      name="date.type"
+                      render={({ field }) => (
+                        <Select
+                          {...field}
+                          data={[
+                            {
+                              label: 'Deadline',
+                              value: 'deadline',
+                            },
+                            {
+                              label: 'Assigned',
+                              value: 'assignmentDate',
+                            },
+                          ]}
+                        />
+                      )}
+                    />
+                    <Controller
+                      control={control}
+                      name="date.from"
+                      render={({ field }) => (
+                        <DatePicker {...field} label="from" error={errors?.date?.from} />
+                      )}
+                    />
+                    <Controller
+                      control={control}
+                      name="date.to"
+                      render={({ field }) => (
+                        <DatePicker {...field} label="to" error={errors?.date?.to} />
                       )}
                     />
                     <Button type="submit" variant="light">

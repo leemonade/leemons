@@ -58,7 +58,7 @@ async function getTasks(userAgent, filters, setTasks) {
   return response;
 }
 
-export default function TeacherAssignedTasksLists() {
+export default function TeacherAssignedTasksLists({ showClosed }) {
   const [, translations] = useTranslateLoader(prefixPN('teacher_assignments'));
   const [tableLabels, setTableLabels] = useState({});
   const [centers] = useApi(getCentersWithToken);
@@ -124,7 +124,7 @@ export default function TeacherAssignedTasksLists() {
   useEffect(() => {
     if (centers.length) {
       centers.forEach((center) => {
-        getTasks(center.userAgentId, filters, setTasks);
+        getTasks(center.userAgentId, { showClosed, hideOpened: showClosed, ...filters }, setTasks);
       });
     }
   }, [centers, filters]);
