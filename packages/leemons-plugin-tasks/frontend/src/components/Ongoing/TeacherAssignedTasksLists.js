@@ -7,6 +7,7 @@ import { Table, ContextContainer, Button, Text } from '@bubbles-ui/components';
 import { ViewOnIcon, StudyDeskIcon } from '@bubbles-ui/icons/outline';
 import { prefixPN } from '../../helpers/prefixPN';
 import listTeacherTasks from '../../request/instance/listTeacherTasks';
+import Filters from './Filters';
 
 function Actions({ id }) {
   const history = useHistory();
@@ -28,8 +29,8 @@ function Actions({ id }) {
   );
 }
 
-async function getTasks(userAgent, setTasks) {
-  const response = await listTeacherTasks(userAgent, true);
+async function getTasks(userAgent, filters, setTasks) {
+  const response = await listTeacherTasks(userAgent, { ...filters, details: true });
   const assignedTasks = response?.tasks?.items?.map((t) => {
     const task = t;
     task.students.count = t.students.count;
@@ -60,6 +61,7 @@ export default function TeacherAssignedTasksLists() {
   const [, translations] = useTranslateLoader(prefixPN('teacher_assignments'));
   const [tableLabels, setTableLabels] = useState({});
   const [centers] = useApi(getCentersWithToken);
+  const [filters, setFilters] = useState({});
   const [tasks, setTasks] = useState([]);
   const history = useHistory();
 
@@ -121,10 +123,10 @@ export default function TeacherAssignedTasksLists() {
   useEffect(() => {
     if (centers.length) {
       centers.forEach((center) => {
-        getTasks(center.userAgentId, setTasks);
+        getTasks(center.userAgentId, filters, setTasks);
       });
     }
-  }, [centers]);
+  }, [centers, filters]);
 
   if (!tasks?.length) {
     return (
@@ -136,5 +138,10 @@ export default function TeacherAssignedTasksLists() {
       </ContextContainer>
     );
   }
-  return <>{tasks?.length && <Table columns={columns} data={tasks} />}</>;
+  return (
+    <>
+      <Filters onChange={setFilters} />
+      {tasks?.length && <Table columns={columns} data={tasks} />}
+    </>
+  );
 }

@@ -45,7 +45,7 @@ async function getTeacherTasks(tasks, { teacher, offset, size } = {}, { transact
 // ES: Filtrar por fecha de asignación o fecha de vencimiento y por estado
 async function filterByInstanceAttributes(
   results,
-  { assignmentDate, deadline, status } = {},
+  { assignmentDate, deadline, status, showClosed, hideClosed = true, hideOpened } = {},
   { transacting } = {}
 ) {
   if (!results.count) {
@@ -80,6 +80,17 @@ async function filterByInstanceAttributes(
     }
   }
 
+  if (!showClosed && hideClosed) {
+    query.closeDate_$lte = global.utils.sqlDatetime(new Date());
+  }
+
+  if (hideOpened) {
+    query.$or = [
+      { closeDate_$null: true },
+      { closeDate_$gt: global.utils.sqlDatetime(new Date()) },
+    ];
+  }
+
   const tasks = await instances.find(query, {
     columns: ['task', 'id'],
     transacting,
@@ -109,11 +120,7 @@ async function filterByInstanceAttributes(
 
 // EN: Filter by task name
 // ES: Filtrar por nombre de tarea
-async function filterByTaskAttributes(
-  tasks,
-  { name, showClosed, hideClosed = true, hideOpened } = {},
-  { transacting } = {}
-) {
+async function filterByTaskAttributes(tasks, { name } = {}, { transacting } = {}) {
   if (!tasks.count) {
     return tasks;
   }
@@ -128,17 +135,6 @@ async function filterByTaskAttributes(
 
   if (name) {
     query.name_$contains = name;
-  }
-
-  if (!showClosed && hideClosed) {
-    query.closeDate_$lte = global.utils.sqlDatetime(new Date());
-  }
-
-  if (hideOpened) {
-    query.$or = [
-      { closeDate_$null: true },
-      { closeDate_$gt: global.utils.sqlDatetime(new Date()) },
-    ];
   }
 
   if (Object.keys(query).length === 1) {
@@ -226,7 +222,12 @@ async function filterBySubjectAndGroup(tasks, { subject, group } = {}, { transac
 
 module.exports = async function searchInstance(query, offset, size, { transacting } = {}) {
   const tasks = await search(
-    [getTeacherTasks, filterByInstanceAttributes, filterByTaskAttributes, filterBySubjectAndGroup],
+    [
+      getTeacherTasks,
+      filterByInstanceAttributes,
+      // filterByTaskAttributes,
+      //  filterBySubjectAndGroup
+    ],
     query,
     offset,
     size,
