@@ -11,6 +11,7 @@ import {
   UserDisplayItem,
   Button,
   DatePicker,
+  Switch,
 } from '@bubbles-ui/components';
 import { getUserAgentsInfoRequest } from '@users/request';
 import { useApi } from '@common';
@@ -43,6 +44,7 @@ export default function DetailsPage() {
   const options = useMemo(
     () => ({
       id: instance,
+      columns: JSON.stringify(['deadline', 'closeDate']),
     }),
     [instance]
   );
@@ -108,6 +110,12 @@ export default function DetailsPage() {
     }
   }, []);
 
+  const handleTaskClose = async (v) => {
+    await updateInstanceRequest(instance, {
+      closeDate: v ? new Date() : null,
+    });
+  };
+
   const updateDeadline = async (date) => {
     task.deadline = date;
 
@@ -139,6 +147,8 @@ export default function DetailsPage() {
         <Button onClick={() => updateDeadline(dayjs(task?.deadline).add(7, 'day').toDate())}>
           +7D
         </Button>
+
+        <Switch onChange={handleTaskClose} checked={task?.closeDate} label="Close task" />
         <ContextContainer>
           <ContextContainer direction="row">
             {/* Graphs */}
