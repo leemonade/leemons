@@ -5,7 +5,7 @@ async function getRolesProfiles(roleIds, { transacting } = {}) {
   const profilesRoles = await table.profileRole.find(
     { role_$in: roleIds },
     {
-      columns: ['profile'],
+      columns: ['id', 'profile'],
       transacting,
     }
   );

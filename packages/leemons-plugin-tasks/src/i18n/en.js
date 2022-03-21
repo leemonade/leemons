@@ -1,4 +1,25 @@
 module.exports = {
+  tableInput: {
+    add: 'Add',
+    remove: 'Remove',
+    edit: 'Edit',
+    accept: 'Accept',
+    cancel: 'Cancel',
+  },
+  methodology: {
+    directInstruction: 'Direct Instruction',
+    flippedClassroom: 'Flipped Classroom',
+    projectBasedLearning: 'Project-Based Learning',
+    inquiryBasedLearning: 'Inquiry-Based Learning',
+    expeditionaryLearning: 'Expeditionary Learning',
+    cooperativeLearning: 'Cooperative Learning',
+    personalizedLearning: 'Personalized Learning',
+    gameBasedLearning: 'Game-Based Learning',
+    kinestheticLearning: 'Kinesthetic Learning',
+    differentiatedInstruction: 'Differentiated Instruction',
+    udl: 'UDL (Unified Design for Learning)',
+    other: 'Other',
+  },
   welcome_page: {
     page_title: 'Tasks',
     page_description:
@@ -38,24 +59,45 @@ module.exports = {
       create_done: 'Task created',
       update_done: 'Task updated',
       publish_done: 'Task published',
+      no_id_error: 'No task id provided',
+      save: 'Save draft',
+      publish: 'Publish',
     },
     setup: {
       configData: {
         step_label: 'Config',
         labels: {
-          title: 'Config',
           name: 'Name',
           tagline: 'Tagline',
+          configTitle: 'Config',
           center: 'Center',
           program: 'Program',
           course: 'Course',
-          subjects: 'Subjects',
+          subjectsTitle: 'Subjects',
           subject: 'Subject',
           addSubject: 'Add subject',
           level: 'Level',
+          levelValues: {
+            begginer: 'Beginner',
+            intermediate: 'Intermediate',
+          },
           summary: 'Summary',
           tags: 'Tags',
           buttonNext: 'Next',
+          wordCounter: {
+            single: 'Word',
+            plural: 'Words',
+          },
+
+          preTask: {
+            toggler: 'Add a pre-task activity',
+            mandatory: 'Mandatory to start the Task',
+            condition: 'Condition to start the Task',
+            conditions: {
+              take: 'Only take the test',
+              greater: 'Pass the test with a score higher than',
+            },
+          },
         },
 
         placeholders: {
@@ -105,8 +147,41 @@ module.exports = {
           methodology: 'Methodology',
           recommendedDuration: 'Recommended duration',
           statement: 'Statement',
+          development: 'Development',
+          objectives: 'Objectives',
           buttonNext: 'Next',
           buttonPrev: 'Previous',
+          selfReflection: {
+            title: 'Self reflection',
+            description: 'Description',
+            id: 'WIP: Id of the test',
+            mandatory: 'Mandatory to fill the task',
+          },
+          feedback: {
+            title: 'Feedback',
+            description: 'Description',
+            id: 'WIP: Id of the test',
+            mandatory: 'Mandatory to fill the task',
+          },
+          submission: {
+            title: 'This task is comppleted with the submission of a paper or activity',
+            type: 'Type of submission',
+            types: {
+              file: 'File',
+              link: 'Link',
+            },
+            description: 'Description',
+            FileType: {
+              multiFile: 'Allow multiple files',
+              type: 'Type',
+              typePlaceholder: 'Add extension',
+              maxSize: 'Max size',
+            },
+          },
+        },
+        descriptions: {
+          selfReflection: 'Add a space for the student to reflect on what he/she has learned.',
+          feedback: 'Ask the student for a quick evaluation of this exercise.',
         },
         errorMessages: {
           methodology: { required: 'Required field' },
@@ -161,8 +236,14 @@ module.exports = {
       visualizationDate: 'Visualization date',
       limitedExecutionToogle: 'Limit execution time',
       limitedExecution: 'Limited execution time',
+      alwaysOpenToogle: 'This task is always available and can be performed at any time.',
+      correctionDeadline: 'Deadline for teacher corrections',
       messageToStudentsToogle: 'Add a message to the students',
       messageToStudents: 'Message to the students',
+      showCurriculumToogle: 'Show curriculum',
+      content: 'Content',
+      objectives: 'Objectives',
+      assessmentCriteria: 'Assessment criteria',
       submit: 'Assign',
       add: 'Add',
     },
@@ -174,6 +255,11 @@ module.exports = {
     descriptions: {
       messageToStudents:
         'If you assign this task to other groups in this step, this message will be the default message for all tasks (although you can change it individually if you wish).',
+      visualizationDate:
+        'NOTE: The task will be available for review, but cannot be completed until the start date.',
+      correctionDeadline: 'NOTE: After this date, no corrections can be made',
+      limitedExecution:
+        'NOTE: This is the time interval after reviewing the task summary until the submission of the deliverable.',
     },
     assignTo: {
       student: 'Student',

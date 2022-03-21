@@ -1,4 +1,12 @@
 module.exports = [
+  ...leemons.getPlugin('common').services.tags.getRoutes('tags', {
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['update', 'create', 'delete', 'admin'],
+      },
+    },
+  }),
   {
     path: '/test-socket-io',
     method: 'GET',
@@ -17,6 +25,31 @@ module.exports = [
     path: '/init/today-quote',
     method: 'GET',
     handler: 'init.todayQuote',
+  },
+  /**
+   * Config
+   * */
+  {
+    path: '/config/system-data-fields',
+    method: 'GET',
+    handler: 'config.getSystemDataFieldsConfig',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/config/system-data-fields',
+    method: 'POST',
+    handler: 'config.saveSystemDataFieldsConfig',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['update', 'create', 'delete', 'admin'],
+      },
+    },
   },
   /**
    * Users
@@ -42,6 +75,16 @@ module.exports = [
     handler: 'users.canReset',
   },
   {
+    path: '/user/can/register-password',
+    method: 'POST',
+    handler: 'users.canRegisterPassword',
+  },
+  {
+    path: '/user/register-password',
+    method: 'POST',
+    handler: 'users.registerPassword',
+  },
+  {
     path: '/user',
     method: 'GET',
     handler: 'users.detail',
@@ -58,6 +101,20 @@ module.exports = [
     method: 'GET',
     handler: 'users.getRememberProfile',
     authenticated: true,
+  },
+  {
+    path: '/get-data-for-user-agent-datasets',
+    method: 'GET',
+    handler: 'users.getDataForUserAgentDatasets',
+    authenticated: true,
+    disableUserAgentDatasetCheck: true,
+  },
+  {
+    path: '/save-data-for-user-agent-datasets',
+    method: 'POST',
+    handler: 'users.saveDataForUserAgentDatasets',
+    authenticated: true,
+    disableUserAgentDatasetCheck: true,
   },
   {
     path: '/user/remember/profile',
@@ -106,9 +163,59 @@ module.exports = [
   },
 
   {
-    path: '/user',
+    path: '/user/create/bulk',
     method: 'POST',
-    handler: 'users.create',
+    handler: 'users.createBulk',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['create', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/user/:id/detail/page',
+    method: 'GET',
+    handler: 'users.detailForPage',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/user/:id/update',
+    method: 'POST',
+    handler: 'users.updateUser',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['update', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/user-agent/:id/update',
+    method: 'POST',
+    handler: 'users.updateUserAgent',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['update', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/user-agent/:id/detail/page',
+    method: 'GET',
+    handler: 'users.agentDetailForPage',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
   },
   {
     path: '/super-admin',

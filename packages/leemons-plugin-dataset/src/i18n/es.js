@@ -1,5 +1,7 @@
 module.exports = {
   datasetItemDrawer: {
+    save_done: 'Campo creado',
+    update_done: 'Campo actualizado',
     messages: {
       saveButtonLabel: 'Guardar',
       namePlaceholder: 'Nuevo campo',

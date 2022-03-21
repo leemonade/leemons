@@ -2,8 +2,13 @@ const { tasks, tasksVersioning } = require('../table');
 const parseId = require('./helpers/parseId');
 const getVersion = require('./versions/get');
 const getSubjects = require('./subjects/get');
+const getTags = require('../tags/get');
+const getObjectives = require('./objectives/get');
+const getContent = require('./contents/get');
+const getAssessmentCriteria = require('./assessmentCriteria/get');
+const getAttachments = require('../attachments/get');
 
-const DEFAULT_COLUMNS = ['id', 'current', 'last', 'name', 'status', 'subjects'];
+const DEFAULT_COLUMNS = ['id', 'current', 'last', 'name', 'status', 'subjects', 'tags'];
 const TASK_VERSIONING_EXISTING_COLUMNS = ['id', 'name', 'current', 'last'];
 const TASK_EXISTING_COLUMNS = [
   'tagline',
@@ -16,6 +21,8 @@ const TASK_EXISTING_COLUMNS = [
   'statement',
   'development',
   'submissions',
+  'preTask',
+  'preTaskOptions',
   'selfReflection',
   'feedback',
   'instructionsForTeacher',
@@ -72,16 +79,97 @@ async function getMany(taskIds, { columns, transacting } = {}) {
 
     // EN: Get the tasks by id (id@version)
     // ES: Obtener las tareas por id (id@version)
-    const _tasks = await tasks.find(
+    let _tasks = await tasks.find(
       { id_$in: fullIds },
       { columns: ['id', ...taskColumns], transacting }
     );
+
+    _tasks = _tasks?.map((task) => ({
+      ...task,
+      preTaskOptions: task.preTaskOptions && JSON.parse(task.preTaskOptions),
+      submissions: task.submissions && JSON.parse(task.submissions),
+      selfReflection: task.selfReflection && JSON.parse(task.selfReflection),
+      feedback: task.feedback && JSON.parse(task.feedback),
+    }));
 
     // EN: Get the tasks subjects by id (id@version)
     // ES: Obtener las tareas por id (id@version)
     let _subjects;
     if (subjectsColumns.includes('subjects')) {
       _subjects = await getSubjects(fullIds, { transacting });
+    }
+
+    let tags;
+    if (columns === '*' || columns.includes('tags')) {
+      tags = await fullIds.reduce(async (accum, id) => {
+        await accum;
+        const t = await getTags(id, { transacting });
+
+        return {
+          ...accum,
+          [id]: t.tags,
+        };
+      }, {});
+    }
+
+    // EN: Get the task objectives
+    // ES: Obtener los objetivos de la tarea
+    let objectives;
+    if (columns === '*' || columns.includes('objectives')) {
+      objectives = await fullIds.reduce(async (accum, id) => {
+        await accum;
+        const o = await getObjectives(id, { transacting });
+
+        return {
+          ...accum,
+          [id]: o.objectives,
+        };
+      }, {});
+    }
+
+    // EN: Get the task content
+    // ES: Obtener el contenido de la tarea
+    let content;
+    if (columns === '*' || columns.includes('content')) {
+      content = await fullIds.reduce(async (accum, id) => {
+        await accum;
+        const c = await getContent(id, { transacting });
+
+        return {
+          ...accum,
+          [id]: c.content,
+        };
+      }, {});
+    }
+
+    // EN: Get the assessment criteria
+    // ES: Obtener los criterios de evaluación
+    let criteria;
+    if (columns === '*' || columns.includes('assessmentCriteria')) {
+      criteria = await fullIds.reduce(async (accum, id) => {
+        await accum;
+        const c = await getAssessmentCriteria(id, { transacting });
+
+        return {
+          ...accum,
+          [id]: c.assessmentCriteria,
+        };
+      }, {});
+    }
+
+    // EN: Get the attachments
+    // ES: Obtener los adjuntos
+    let attachments;
+    if (columns === '*' || columns.includes('attachments')) {
+      attachments = await fullIds.reduce(async (accum, id) => {
+        await accum;
+        const a = await getAttachments(id, { transacting });
+
+        return {
+          ...accum,
+          [id]: a.attachments,
+        };
+      }, {});
     }
 
     // EN: Map the tasks by id
@@ -98,6 +186,26 @@ async function getMany(taskIds, { columns, transacting } = {}) {
 
         if (versionsColumns.length) {
           t.status = (await getVersion(fullIds[i], { transacting })).status;
+        }
+
+        if (tags) {
+          t.tags = tags[fullIds[i]];
+        }
+
+        if (objectives) {
+          t.objectives = objectives[fullIds[i]];
+        }
+
+        if (content) {
+          t.content = content[fullIds[i]];
+        }
+
+        if (criteria) {
+          t.assessmentCriteria = criteria[fullIds[i]];
+        }
+
+        if (attachments) {
+          t.attachments = attachments[fullIds[i]];
         }
 
         return t;

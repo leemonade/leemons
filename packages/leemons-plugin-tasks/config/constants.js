@@ -211,6 +211,20 @@ const menuItems = [
       },
     ],
   },
+  // Student
+  {
+    item: {
+      key: 'studentDetail',
+      order: 6,
+      parentKey: 'tasks',
+      url: '/private/tasks/student-detail',
+      label: {
+        en: 'Student Detail',
+        es: 'Detalle del estudiante',
+      },
+      disabled: false,
+    },
+  },
 ];
 
 module.exports = {

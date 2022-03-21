@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ContextContainer, PageContainer, Paper } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import hooks from 'leemons-hooks';
@@ -22,6 +22,7 @@ function parseDates(date) {
 }
 
 export default function AssignmentPage() {
+  const history = useHistory();
   const [, translations] = useTranslateLoader(prefixPN('assignment_page'));
   const [labels, setLabels] = useState({});
 
@@ -39,18 +40,15 @@ export default function AssignmentPage() {
   const { id } = useParams();
 
   const handleAssignment = async (values) => {
-    const { assignees, teachers, startDate, deadline, visualizationDate, ...instanceData } = values;
-
-    const [students, classes] = assignees.reduce(
-      ([s, c], { type, assignee }) => {
-        if (type === 'student') {
-          return [[...s, assignee], c];
-        }
-
-        return [s, [...c, assignee]];
-      },
-      [[], []]
-    );
+    const {
+      assignees,
+      teachers,
+      startDate,
+      deadline,
+      visualizationDate,
+      closeDate,
+      ...instanceData
+    } = values;
 
     try {
       const instance = await createInstanceRequest(id, {
@@ -58,13 +56,12 @@ export default function AssignmentPage() {
         startDate: parseDates(startDate),
         deadline: parseDates(deadline),
         visualizationDate: parseDates(visualizationDate),
+        closeDate: parseDates(closeDate),
       });
 
-      await assignStudentRequest(instance, students);
-      await assignTeacherRequest(
-        instance,
-        teachers.map((t) => t.assignee)
-      );
+      // TODO: Add subject selector
+      await assignStudentRequest(instance, assignees);
+      await assignTeacherRequest(instance, teachers);
 
       await enableMenuItemRequest('ongoing');
       await enableMenuItemRequest('history');
@@ -73,6 +70,7 @@ export default function AssignmentPage() {
       await hooks.fireEvent('menu-builder:user:updateItem', 'history');
 
       addSuccessAlert('Assignment created successfully');
+      history.push('/private/tasks/ongoing');
     } catch (e) {
       addErrorAlert(e.message);
     }

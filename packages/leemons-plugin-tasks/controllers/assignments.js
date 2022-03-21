@@ -5,11 +5,16 @@ const { get: getInstance } = require('../src/services/assignment/instance/get');
 const assignStudent = require('../src/services/assignment/student/assign');
 const unassignStudent = require('../src/services/assignment/student/remove');
 const listStudents = require('../src/services/assignment/student/list');
+const listAssignedStudents = require('../src/services/assignment/student/listAssigned');
 
 const assignTeacher = require('../src/services/assignment/teacher/assign');
 const unassignTeacher = require('../src/services/assignment/teacher/remove');
 const listTeachers = require('../src/services/assignment/teacher/listTeachers');
-const listAssigned = require('../src/services/assignment/teacher/listAssigned');
+const listAssignedTeacher = require('../src/services/assignment/teacher/listAssigned');
+const updateStudent = require('../src/services/assignment/student/update');
+const searchTeachers = require('../src/services/assignment/teacher/search');
+const assignGroup = require('../src/services/assignment/groups/add');
+const calificateStudent = require('../src/services/assignment/student/calificate');
 
 module.exports = {
   /**
@@ -18,7 +23,16 @@ module.exports = {
   instanceCreate: async (ctx) => {
     try {
       const { task } = ctx.request.params;
-      const { startDate, deadline, visualizationDate, executionTime, message } = ctx.request.body;
+      const {
+        startDate,
+        deadline,
+        visualizationDate,
+        executionTime,
+        alwaysOpen,
+        closeDate,
+        message,
+        showCurriculum,
+      } = ctx.request.body;
 
       const instance = await createInstance({
         task,
@@ -26,7 +40,10 @@ module.exports = {
         deadline,
         visualizationDate,
         executionTime,
+        alwaysOpen,
+        closeDate,
         message,
+        showCurriculum,
       });
 
       ctx.status = 201;
@@ -134,6 +151,33 @@ module.exports = {
       };
     }
   },
+  studentListAssigned: async (ctx) => {
+    try {
+      const { user } = ctx.request.params;
+      const { page, size, details } = ctx.request.query;
+
+      const tasks = await listAssignedStudents(
+        user,
+        parseInt(page, 10) || 0,
+        parseInt(size, 10) || 20,
+        {
+          details: details === 'true',
+        }
+      );
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        tasks,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        message: e.message,
+      };
+    }
+  },
   studentList: async (ctx) => {
     try {
       const { instance } = ctx.request.params;
@@ -157,6 +201,37 @@ module.exports = {
         message: e.message,
       };
     }
+  },
+  studentUpdate: async (ctx) => {
+    try {
+      const { instance, student, key, value } = ctx.request.params;
+
+      const updated = await updateStudent({ instance, student, key, value });
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        updated,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        message: e.message,
+      };
+    }
+  },
+  studentCalificate: async (ctx) => {
+    const { instance, student } = ctx.request.params;
+    const { grade, teacherFeedback } = ctx.request.body;
+
+    const calificated = await calificateStudent(instance, student, grade, teacherFeedback);
+
+    ctx.status = 200;
+    ctx.body = {
+      status: 200,
+      calificated,
+    };
   },
 
   /**
@@ -215,15 +290,47 @@ module.exports = {
         }
       }
 
-      const tasks = await listAssigned(user, parseInt(page, 10) || 0, parseInt(size, 10) || 10, {
-        details: details === 'true',
-        columns,
-      });
+      const tasks = await listAssignedTeacher(
+        user,
+        parseInt(page, 10) || 0,
+        parseInt(size, 10) || 10,
+        {
+          details: details === 'true',
+          columns,
+        }
+      );
 
       ctx.status = 200;
       ctx.body = {
         status: 200,
         tasks,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        message: e.message,
+      };
+    }
+  },
+  teacherSearch: async (ctx) => {
+    try {
+      const { user } = ctx.request.params;
+      const { offset, size, ...query } = ctx.request.query;
+
+      const data = await searchTeachers(
+        {
+          ...query,
+          teacher: user,
+        },
+        parseInt(offset, 10) || 0,
+        parseInt(size, 10) || 10
+      );
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        data,
       };
     } catch (e) {
       ctx.status = 400;
@@ -252,5 +359,21 @@ module.exports = {
         message: e.message,
       };
     }
+  },
+
+  /**
+   * Groups
+   */
+  groupAssign: async (ctx) => {
+    const { instance } = ctx.request.params;
+    const { groups } = ctx.request.body;
+
+    const result = await assignGroup(instance, groups);
+
+    ctx.status = 200;
+    ctx.body = {
+      status: 200,
+      ...result,
+    };
   },
 };

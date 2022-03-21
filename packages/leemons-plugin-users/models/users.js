@@ -14,10 +14,25 @@ module.exports = {
     surnames: {
       type: 'string',
     },
+    secondSurname: {
+      type: 'string',
+    },
     email: {
       type: 'string',
       options: {
         unique: true,
+        notNull: true,
+      },
+    },
+    phone: {
+      type: 'string',
+    },
+    avatar: {
+      type: 'string',
+    },
+    birthdate: {
+      type: 'datetime',
+      options: {
         notNull: true,
       },
     },
@@ -38,6 +53,16 @@ module.exports = {
       options: {
         notNull: true,
         defaultTo: false,
+      },
+    },
+    status: {
+      type: 'string',
+    },
+    // masculino, femenino
+    gender: {
+      type: 'string',
+      options: {
+        notNull: true,
       },
     },
   },

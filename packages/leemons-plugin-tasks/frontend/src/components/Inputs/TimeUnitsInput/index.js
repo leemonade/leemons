@@ -5,7 +5,7 @@ import { NumberInput, Select, Stack, InputWrapper, Box } from '@bubbles-ui/compo
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '../../../helpers/prefixPN';
 
-export default function TimeUnitsInput({ onChange, ...props }) {
+export default function TimeUnitsInput({ onChange, value: userValue, ...props }) {
   const [, translations] = useTranslateLoader(prefixPN('assignment_form.timeUnits'));
   const [labels, setLabels] = useState({});
 
@@ -48,6 +48,9 @@ export default function TimeUnitsInput({ onChange, ...props }) {
   };
 
   const handleChange = (v, u) => {
+    if (typeof v !== 'number' || typeof u !== 'string') {
+      return;
+    }
     if (v !== value) {
       setValue(v);
     }
@@ -62,6 +65,12 @@ export default function TimeUnitsInput({ onChange, ...props }) {
       setTime(t);
     }
   };
+
+  useEffect(() => {
+    if (userValue !== time && userValue !== undefined) {
+      handleChange(userValue / getMultiplier(units), units);
+    }
+  }, [userValue]);
 
   return (
     <InputWrapper {...props}>
@@ -92,4 +101,5 @@ export default function TimeUnitsInput({ onChange, ...props }) {
 
 TimeUnitsInput.propTypes = {
   onChange: PropTypes.func,
+  value: PropTypes.number,
 };

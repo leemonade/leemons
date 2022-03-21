@@ -1,25 +1,60 @@
+/* eslint-disable no-await-in-loop */
+const { keys, isArray, isEmpty } = require('lodash');
+const importProfiles = require('./bulk/profiles');
+
 async function initProfiles() {
-  const student = await leemons.getPlugin('users').services.profiles.add({
-    name: 'Estudiante',
-    description: 'Estudiante para login',
-    permissions: [
-      {
-        permissionName: 'plugins.users.profiles',
-        actionNames: ['view', 'admin'],
-      },
-      { permissionName: 'plugins.users.user-data', actionNames: ['admin'] },
-      { permissionName: 'plugins.users.users', actionNames: ['view'] },
-    ],
-  });
-  const guardian = await leemons.getPlugin('users').services.profiles.add({
-    name: 'Guardian',
-    description: 'Tutor legal de los alumnos vease un padre/madre',
-    permissions: [],
-  });
+  const { services } = leemons.getPlugin('users');
 
-  await leemons.getPlugin('users').services.profiles.addProfileContact(student.id, guardian.id);
+  try {
+    const profiles = await importProfiles();
+    const itemsKeys = keys(profiles);
 
-  return { student, guardian };
+    // ·····················································
+    // PROFILES & PERSMISSIONS
+
+    // console.log('------ PROFILES ------');
+
+    for (let i = 0, len = itemsKeys.length; i < len; i++) {
+      const itemKey = itemsKeys[i];
+      const { accessTo, ...item } = profiles[itemKey];
+
+      // console.dir(item, { depth: null });
+
+      const itemData = await services.profiles.add(item);
+      profiles[itemKey] = { ...itemData, accessTo };
+    }
+
+    // console.log('------ PROFILES CREATED ------');
+    // console.dir(profiles, { depth: null });
+
+    // ·····················································
+    // ACCESS
+    // Some profiles can access to other profiles userAgents
+
+    for (let i = 0, len = itemsKeys.length; i < len; i++) {
+      const itemKey = itemsKeys[i];
+      const item = profiles[itemKey];
+      if (isArray(item.accessTo) && !isEmpty(item.accessTo)) {
+        // console.log('------ ACCESS TO ------');
+        /* console.dir(
+          item.accessTo.map((profileFrom) => ({ from: profiles[profileFrom].id, to: item.id })),
+          { depth: null }
+        );
+        */
+        await Promise.all(
+          item.accessTo.map((profileFrom) =>
+            services.profiles.addProfileContact(profiles[profileFrom].id, item.id)
+          )
+        );
+      }
+    }
+
+    return profiles;
+  } catch (err) {
+    console.error(err);
+  }
+
+  return null;
 }
 
 module.exports = initProfiles;

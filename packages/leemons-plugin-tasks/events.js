@@ -13,13 +13,6 @@ async function initMenuBuilder() {
 }
 
 async function events(isInstalled) {
-  // Debug self events
-  leemons.events.on('all', ({ event, target }, data) => {
-    if (target === pluginName) {
-      console.log('Event', event, 'data', data);
-    }
-  });
-
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
     init();
   });

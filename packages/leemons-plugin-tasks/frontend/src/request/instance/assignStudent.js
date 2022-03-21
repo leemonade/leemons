@@ -1,8 +1,8 @@
-export default async function assignStudentRequest(instance, students) {
-  await leemons.api(`tasks/tasks/instances/${instance}/student`, {
+export default async function assignStudentRequest(instance, groups) {
+  await leemons.api(`tasks/tasks/instances/${instance}/group`, {
     method: 'POST',
     body: {
-      student: students,
+      groups,
     },
   });
 

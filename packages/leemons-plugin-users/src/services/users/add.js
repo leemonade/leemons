@@ -13,13 +13,26 @@ const {
  * @static
  * @param {AddUser} userData - User data
  * @param {string[]} roles - Roles that the new user will have
+ * @param {boolean} sendWellcomeEmail
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
 async function add(
-  { name, surnames, password, email, locale, active },
+  {
+    name,
+    surnames,
+    secondSurname,
+    avatar,
+    birthdate,
+    tags,
+    gender,
+    email,
+    locale,
+    password,
+    active,
+  },
   roles,
-  { transacting: _transacting } = {}
+  { sendWellcomeEmail, transacting: _transacting } = {}
 ) {
   if (await exist({ email })) throw new Error(`"${email}" email already exists`);
   if (!(await existManyRoles(roles, { transacting: _transacting })))
@@ -31,7 +44,11 @@ async function add(
         {
           name,
           surnames,
+          secondSurname,
+          avatar,
+          birthdate: birthdate ? global.utils.sqlDatetime(birthdate) : birthdate,
           email,
+          gender,
           password: password ? await encryptPassword(password) : undefined,
           locale,
           active: active || false,
@@ -47,6 +64,17 @@ async function add(
         })),
         { transacting }
       );
+
+      if (tags && _.isArray(tags) && tags.length) {
+        const tagsService = leemons.getPlugin('common').services.tags;
+        await Promise.all(
+          _.map(user.userAgents, (userAgent) =>
+            tagsService.setTagsToValues('plugins.users.user-agent', tags, userAgent.id, {
+              transacting,
+            })
+          )
+        );
+      }
 
       if (leemons.getPlugin('calendar')) {
         await addCalendarToUserAgentsIfNeedByUser(user.id, { transacting });

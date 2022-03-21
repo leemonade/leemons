@@ -26,11 +26,13 @@ const {
 } = require('../src/services/dataset-schema-locale');
 
 const {
+  setValues,
   getValues,
   addValues,
   updateValues,
   deleteValues,
   existValues,
+  validateDataForJsonSchema,
 } = require('../src/services/dataset-values');
 
 module.exports = {
@@ -55,9 +57,11 @@ module.exports = {
   deleteSchemaLocale,
   existSchemaLocale,
 
+  setValues,
   getValues,
   addValues,
   updateValues,
   deleteValues,
   existValues,
+  validateDataForJsonSchema,
 };

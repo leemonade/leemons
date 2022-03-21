@@ -13,6 +13,12 @@ const SocketTest = loadable(() => import('./src/pages/private/SocketTest'));
 const ListProfiles = loadable(() => import('./src/pages/private/profiles/ListProfiles'));
 const DetailProfile = loadable(() => import('./src/pages/private/profiles/DetailProfile'));
 
+const ListUsers = loadable(() => import('./src/pages/private/users/ListUsers'));
+const CreateUsers = loadable(() => import('./src/pages/private/users/CreateUsers'));
+const DetailUser = loadable(() => import('./src/pages/private/users/DetailUser'));
+
+const UserDataDatasetValues = loadable(() => import('./src/pages/private/UserDataDatasetValues'));
+
 export default function Private() {
   const { path } = useRouteMatch();
   const session = useSession({ redirectTo: goLoginPage });
@@ -21,6 +27,12 @@ export default function Private() {
     <Switch>
       <Route path={`${path}/home`}>
         <Home session={session} />
+      </Route>
+      <Route path={`${path}/list`}>
+        <ListUsers session={session} />
+      </Route>
+      <Route path={`${path}/create`}>
+        <CreateUsers session={session} />
       </Route>
       <Route path={`${path}/select-profile`}>
         <SelectProfile session={session} />
@@ -42,6 +54,12 @@ export default function Private() {
       </Route>
       <Route path={`${path}/profiles/detail`}>
         <DetailProfile session={session} />
+      </Route>
+      <Route path={`${path}/set-dataset-values`}>
+        <UserDataDatasetValues session={session} />
+      </Route>
+      <Route path={`${path}/detail/:userId`}>
+        <DetailUser session={session} />
       </Route>
     </Switch>
   );

@@ -1,8 +1,20 @@
 import React, { useMemo, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { PageContainer, ContextContainer, Select, TextInput, Table } from '@bubbles-ui/components';
+import {
+  PageContainer,
+  ContextContainer,
+  Select,
+  TextInput,
+  Table,
+  UserDisplayItem,
+  Button,
+} from '@bubbles-ui/components';
+import { getUserAgentsInfoRequest } from '@users/request';
+import { useApi } from '@common';
 import listStudents from '../../../request/instance/listStudents';
+import getTaskRequest from '../../../request/task/getTask';
+import getInstanceRequest from '../../../request/instance/get';
 
 function getStatus({ start, end, opened }) {
   if (end) {
@@ -21,10 +33,14 @@ function getStatus({ start, end, opened }) {
 }
 
 export default function DetailsPage() {
+  const history = useHistory();
   const { instance } = useParams();
 
   const [students, setStudents] = useState();
 
+  const [task] = useApi(getInstanceRequest, instance);
+
+  // TRANSLATE: Teacher details columns
   const columns = useMemo(
     () => [
       {
@@ -59,21 +75,38 @@ export default function DetailsPage() {
     const result = await listStudents(instance);
 
     if (result) {
+      const usersInfo = await getUserAgentsInfoRequest(result.items.map((s) => s.user));
+
       const users = result.items.map((student) => ({
-        student: student.user,
+        student: (
+          <UserDisplayItem {...usersInfo?.userAgents?.find((u) => u.id === student.user)?.user} />
+        ),
         status: getStatus(student),
         completed: student.end ? new Date(student.end).toLocaleString() : '-',
         avgTime: student.end ? (new Date(student.end) - new Date(student.start)) / 1000 / 60 : '-',
         score: 'NYI',
-        actions: 'NYI',
+        actions: (
+          <Button
+            variant="link"
+            onClick={() => history.push(`/private/tasks/correction/${instance}/${student.user}`)}
+          >
+            Assess
+          </Button>
+        ),
       }));
 
       setStudents(users);
     }
   }, []);
+
   return (
     <ContextContainer>
-      <AdminPageHeader values={{ title: 'NOMBRE DE LA TAREA', description: 'GRUPO Y FECHA' }} />
+      <AdminPageHeader
+        values={{
+          title: task?.task?.name,
+          description: `Deadline: ${new Date(task?.deadline).toLocaleString()}`,
+        }}
+      />
       <PageContainer>
         <ContextContainer>
           <ContextContainer direction="row">
@@ -85,7 +118,7 @@ export default function DetailsPage() {
           </ContextContainer>
 
           {/* Students */}
-          <ContextContainer title="x STUDENTS">
+          <ContextContainer title={`${students?.length || 0} Students`}>
             <ContextContainer direction="row">
               <Select
                 label="BULK ACTION (0 Selected)"

@@ -21,6 +21,24 @@ async function canReset(ctx) {
   }
 }
 
+async function canRegisterPassword(ctx) {
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      token: { type: 'string' },
+    },
+    required: ['token'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.body)) {
+    const can = await usersService.canRegisterPassword(ctx.request.body.token);
+    ctx.status = 200;
+    ctx.body = { status: 200, can };
+  } else {
+    throw validator.error;
+  }
+}
+
 async function reset(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
@@ -33,6 +51,28 @@ async function reset(ctx) {
   });
   if (validator.validate(ctx.request.body)) {
     const user = await usersService.reset(ctx.request.body.token, ctx.request.body.password);
+    ctx.status = 200;
+    ctx.body = { status: 200, user };
+  } else {
+    throw validator.error;
+  }
+}
+
+async function registerPassword(ctx) {
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      token: { type: 'string' },
+      password: { type: 'string' },
+    },
+    required: ['token', 'password'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.body)) {
+    const user = await usersService.registerPassword(
+      ctx.request.body.token,
+      ctx.request.body.password
+    );
     ctx.status = 200;
     ctx.body = { status: 200, user };
   } else {
@@ -85,6 +125,18 @@ async function detail(ctx) {
   ctx.body = { status: 200, user };
 }
 
+async function detailForPage(ctx) {
+  const data = await usersService.detailForPage(ctx.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
+async function agentDetailForPage(ctx) {
+  const data = await userAgentsService.agentDetailForPage(ctx.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
 async function profiles(ctx) {
   const _profiles = await usersService.profiles(ctx.state.userSession.id);
   ctx.status = 200;
@@ -134,7 +186,11 @@ async function getRememberProfile(ctx) {
   }
 }
 
-async function create() {}
+async function createBulk(ctx) {
+  const users = await usersService.addBulk(ctx.request.body, ctx);
+  ctx.status = 200;
+  ctx.body = { status: 200, users };
+}
 
 async function list(ctx) {
   const validator = new global.utils.LeemonsValidator({
@@ -142,12 +198,17 @@ async function list(ctx) {
     properties: {
       page: { type: 'number' },
       size: { type: 'number' },
+      query: { type: 'object', additionalProperties: true },
     },
     required: ['page', 'size'],
     additionalProperties: false,
   });
   if (validator.validate(ctx.request.body)) {
-    const data = await usersService.list(ctx.request.body.page, ctx.request.body.size);
+    const data = await usersService.list(
+      ctx.request.body.page,
+      ctx.request.body.size,
+      ctx.request.body.query
+    );
     ctx.status = 200;
     ctx.body = { status: 200, data };
   } else {
@@ -193,20 +254,55 @@ async function createSuperAdmin(ctx) {
   );
 }
 
+async function getDataForUserAgentDatasets(ctx) {
+  const data = await userAgentsService.getDataForUserAgentDatasets(ctx.state.userSession);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
+async function saveDataForUserAgentDatasets(ctx) {
+  const data = await userAgentsService.saveDataForUserAgentDatasets(
+    ctx.state.userSession,
+    ctx.request.body
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
+async function updateUser(ctx) {
+  const data = await usersService.update(ctx.params.id, ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
+async function updateUserAgent(ctx) {
+  const data = await userAgentsService.update(ctx.params.id, ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
 module.exports = {
   list,
   reset,
   login,
   detail,
-  create,
   recover,
   contacts,
   canReset,
   profiles,
+  updateUser,
+  createBulk,
   profileToken,
+  detailForPage,
+  updateUserAgent,
   searchUserAgents,
   createSuperAdmin,
+  registerPassword,
   getUserAgentsInfo,
+  agentDetailForPage,
   setRememberProfile,
   getRememberProfile,
+  canRegisterPassword,
+  getDataForUserAgentDatasets,
+  saveDataForUserAgentDatasets,
 };

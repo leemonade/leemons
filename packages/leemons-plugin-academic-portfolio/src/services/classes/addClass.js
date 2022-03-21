@@ -61,11 +61,23 @@ async function addClass(data, { transacting: _transacting } = {}) {
         );
 
       // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo tipo de asignatura
-      await table.class.update(
+      await table.class.updateMany(
         { subject: nClass.subject },
         { subjectType: nClass.subjectType },
         { transacting }
       );
+
+      // TODO: Añadir el item permission a la clase
+      /*
+     permissions.addItem(
+  clase1,
+  clase,
+  {
+       permissionName: 'plugins.academic-portfolio.clasroom.clase1',
+       actionNames: ['view'],
+  }
+)
+       */
 
       // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo knowledge
       await changeBySubject(nClass.subject, knowledge, { transacting });

@@ -12,6 +12,7 @@ module.exports = async function addSubjects(task, { transacting } = {}) {
         const obj = {
           subject: s.subject,
           level: s.level,
+          course: s.course,
         };
 
         acc[s.task] = Array.isArray(acc[s.task]) ? [...acc[s.task], obj] : [obj];
@@ -19,7 +20,7 @@ module.exports = async function addSubjects(task, { transacting } = {}) {
       }, {});
     }
 
-    return subjects.map((s) => ({ subject: s.subject, level: s.level }));
+    return subjects.map((s) => ({ subject: s.subject, level: s.level, course: s.course }));
   } catch (e) {
     throw new Error(`Error getting subjects from task ${task.id}: ${e.message}`);
   }

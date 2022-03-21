@@ -48,8 +48,8 @@
     "path": "../../packages/leemons-plugin-classroom/frontend"
   },
   {
-    "name": "media-library",
-    "path": "../../packages/leemons-plugin-media-library/frontend"
+    "name": "leebrary",
+    "path": "../../packages/leemons-plugin-leebrary/frontend"
   },
   {
     "name": "families-emergency-numbers",
@@ -78,5 +78,18 @@
   {
     "name": "scores",
     "path": "../../packages/leemons-plugin-scores/frontend"
+  },
+  {
+    "name": "emails",
+    "path": "../../packages/leemons-plugin-emails/frontend"
+  },
+  {
+    "name": "emails-amazon-ses",
+    "path": "../../packages/leemons-provider-emails-amazon-ses/frontend"
+  },
+  {
+    "name": "widgets",
+    "path": "../../packages/leemons-plugin-widgets/frontend"
   }
 ]
+

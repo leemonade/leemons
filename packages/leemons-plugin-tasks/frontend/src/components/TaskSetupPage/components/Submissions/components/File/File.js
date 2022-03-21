@@ -1,0 +1,33 @@
+import React from 'react';
+import { useFormContext, Controller } from 'react-hook-form';
+import { Checkbox, TagsInput, NumberInput, Stack, Text } from '@bubbles-ui/components';
+
+export default function File({ labels }) {
+  const { control } = useFormContext();
+  return (
+    <>
+      <Controller
+        control={control}
+        name="data.multipleFiles"
+        render={({ field }) => (
+          <Checkbox {...field} checked={field.value} label={labels?.multiFile} />
+        )}
+      />
+      <Controller
+        control={control}
+        name="data.extensions"
+        render={({ field }) => (
+          <TagsInput {...field} label={labels?.type} placeholder={labels?.typePlaceholder} />
+        )}
+      />
+      <Stack direction="row">
+        <Controller
+          control={control}
+          name="data.maxSize"
+          render={({ field }) => <NumberInput {...field} label={labels?.maxSize} />}
+        />
+        <Text>Kb</Text>
+      </Stack>
+    </>
+  );
+}

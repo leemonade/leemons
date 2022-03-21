@@ -21,6 +21,9 @@ module.exports = {
         defaultTo: false,
       },
     },
+    datasetIsGood: {
+      type: 'boolean',
+    },
   },
   primaryKey: {
     type: 'uuid',

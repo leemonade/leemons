@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, forwardRef } from 'react';
+import React, { useState, useEffect, useRef, forwardRef, useMemo } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { Select, Button, ContextContainer, Box, Text } from '@bubbles-ui/components';
@@ -8,6 +8,7 @@ import { getCentersWithToken } from '@users/session';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import { listTeacherClassesRequest } from '@academic-portfolio/request';
 import { useApi } from '@common';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { getProfiles } from '../../request/profiles';
 
 export default function AssignUsers({ labels, profile, assignTo, onChange }) {
@@ -33,17 +34,20 @@ export default function AssignUsers({ labels, profile, assignTo, onChange }) {
 
   // EN: Render the needed selector (class or student)
   // ES: Renderiza el selector necesario (clase o estudiante)
-  const AssigneeSelector = forwardRef((props, ref) => {
-    if (assignToValue === 'class') {
-      return <Select fullWidth {...props} ref={ref} data={data} disabled={!data.length} />;
-    }
-    if (assignToValue === 'student') {
-      return <SelectUserAgent {...props} />;
-    }
-    return <></>;
-  });
+  const AssigneeSelector = useMemo(() => {
+    const Component = forwardRef((props, ref) => {
+      if (assignToValue === 'class') {
+        return <Select fullWidth {...props} ref={ref} data={data} disabled={!data.length} />;
+      }
+      if (assignToValue === 'student') {
+        return <SelectUserAgent maxSelectedValues={0} {...props} />;
+      }
+      return <></>;
+    });
+    Component.displayName = 'AssigneeSelector';
 
-  AssigneeSelector.displayName = 'AssigneeSelector';
+    return Component;
+  }, [assignToValue, data]);
 
   useEffect(async () => {
     const p = await getProfiles(profile);
@@ -113,28 +117,34 @@ export default function AssignUsers({ labels, profile, assignTo, onChange }) {
   // ES: Maneja el submit del formulario
   const onSubmit = (value) => {
     if (value.assign && value.assignee) {
-      const exists = assignees.reduce((acc, { type, assignee }) => {
-        if (acc === true) {
-          return acc;
+      if (value.assign === 'class') {
+        const exists = assignees.find((assignee) => assignee.group === value.assignee);
+
+        // EN: Do not allow to duplicate existing classes
+        // ES: No permitir duplicar clases existentes
+        if (exists) {
+          addErrorAlert('Tried to assign a class that is already assigned');
+          return;
         }
 
-        if (type === value.assign && assignee === value.assignee) {
-          return true;
-        }
-
-        return acc;
-      }, false);
-
-      if (!exists) {
-        setAssignees((a) => [...a, { type: value.assign, assignee: value.assignee }]);
+        setAssignees((a) => [
+          ...a,
+          {
+            group: value.assignee,
+            label: data.find((d) => d.value === value.assignee)?.label,
+            type: 'class',
+          },
+        ]);
+        return;
       }
+      setAssignees((a) => [...a, { students: value.assignee, subject: 'WIP', type: 'students' }]);
     }
   };
 
   // EN: Handle the assignee delete
   // ES: Maneja el eliminado del asignado
-  const removeAssignee = (type, assignee) => {
-    setAssignees((a) => a.filter((assign) => assign.type !== type && assign.assignee !== assignee));
+  const removeAssignee = (assigneeToRemove) => {
+    setAssignees((a) => a.filter((assigneeToTest) => assigneeToTest !== assigneeToRemove));
   };
 
   return (
@@ -154,6 +164,7 @@ export default function AssignUsers({ labels, profile, assignTo, onChange }) {
             />
           )}
         />
+        {assignToValue === 'student' && <p>Select subject</p>}
         {assignToValue && (
           <Controller
             control={control}
@@ -174,14 +185,17 @@ export default function AssignUsers({ labels, profile, assignTo, onChange }) {
         </Button>
       </ContextContainer>
       <Box>
-        {assignees.map(({ type, assignee }) => (
-          <Box key={`${type} - ${assignee}`}>
-            <Text>
-              {type} - {assignee}
-            </Text>
-            <DeleteIcon onClick={() => removeAssignee(type, assignee)} />
-          </Box>
-        ))}
+        {assignees.map((o, i) => {
+          const { type, label, students } = o;
+          return (
+            <Box key={i}>
+              <Text>
+                {type} - {type === 'class' ? label : `${students.length} students`}
+              </Text>
+              <DeleteIcon onClick={() => removeAssignee(o)} />
+            </Box>
+          );
+        })}
       </Box>
     </>
   );

@@ -64,13 +64,12 @@ function DesignData({
     <form onSubmit={handleSubmit(handleOnNext)}>
       <ContextContainer {...props} divided>
         <ContextContainer title={labels.title}>
-          <Box>Media-Library picker</Box>
+          <Box>leebrary picker</Box>
           <Box>
             <Controller
               control={control}
               name="color"
-              rules={{ required: errorMessages.color?.required }}
-              render={({ field }) => <ColorInput {...field} />}
+              render={({ field }) => <ColorInput label={labels?.color} {...field} />}
             />
           </Box>
         </ContextContainer>

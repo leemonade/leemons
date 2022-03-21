@@ -1,6 +1,7 @@
 module.exports = {
   // Time in minutes
   timeForRecoverPassword: 15,
+  daysForRegisterPassword: 30,
   // All users always have this permission
   basicPermission: {
     permissionName: 'plugins.users.any',
@@ -64,5 +65,8 @@ module.exports = {
       login: 'users/user/login',
       recover: 'users/user/recover',
     },
+  },
+  widgets: {
+    zones: [{ key: 'plugins.users.user-detail' }],
   },
 };

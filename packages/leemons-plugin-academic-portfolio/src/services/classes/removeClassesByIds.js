@@ -34,6 +34,9 @@ async function removeClassesByIds(ids, { soft, transacting: _transacting } = {})
 
       await leemons.events.emit('before-remove-classes', { classes, soft, transacting });
       await table.class.deleteMany({ id_$in: _.map(classes, 'id') }, { soft, transacting });
+      // TODO: Borrar permiso de la clase a todo quisqui
+      /*
+       * permissions.removeItems */
       await leemons.events.emit('after-remove-classes', { classes, soft, transacting });
       return true;
     },

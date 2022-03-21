@@ -1,5 +1,8 @@
 module.exports = {
   modelName: 'instances',
+  options: {
+    useTimestamps: true,
+  },
   attributes: {
     task: {
       type: 'string',
@@ -16,8 +19,17 @@ module.exports = {
     executionTime: {
       type: 'integer',
     },
+    alwaysOpen: {
+      type: 'boolean',
+    },
+    closeDate: {
+      type: 'datetime',
+    },
     message: { type: 'string' },
     status: { type: 'string' },
+    showCurriculum: {
+      type: 'json',
+    },
   },
   primaryKey: {
     type: 'uuid',

@@ -21,7 +21,7 @@ module.exports = {
       type: 'string',
     },
     recommendedDuration: {
-      type: 'number',
+      type: 'integer',
     },
     statement: {
       type: 'richtext',
@@ -30,13 +30,19 @@ module.exports = {
       type: 'richtext',
     },
     submissions: {
-      type: 'boolean',
+      type: 'string',
+    },
+    preTask: {
+      type: 'string',
+    },
+    preTaskOptions: {
+      type: 'string',
     },
     selfReflection: {
-      type: 'boolean',
+      type: 'string',
     },
     feedback: {
-      type: 'boolean',
+      type: 'string',
     },
     instructionsForTeacher: {
       type: 'richtext',

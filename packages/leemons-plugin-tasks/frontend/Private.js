@@ -11,6 +11,8 @@ const SetupTask = loadable(() => import('./src/pages/private/library/TaskSetupPa
 const Profiles = loadable(() => import('./src/pages/private/profiles/ProfilesPage'));
 const Ongoing = loadable(() => import('./src/pages/private/ongoing/OngoingPage'));
 const Details = loadable(() => import('./src/pages/private/assignment/DetailsPage'));
+const UserDetails = loadable(() => import('./src/pages/private/student/Details'));
+const Correction = loadable(() => import('./src/pages/private/assignment/Correction'));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -18,12 +20,15 @@ export default function Private() {
 
   return (
     <Switch>
+      {/* ADMIN VIEW */}
       <Route path={`${path}/welcome`}>
         <Welcome session={session} />
       </Route>
       <Route path={`${path}/profiles`}>
         <Profiles session={session} />
       </Route>
+
+      {/* TEACHER VIEW */}
       <Route path={`${path}/library/edit/:id`}>
         <SetupTask session={session} />
       </Route>
@@ -41,6 +46,14 @@ export default function Private() {
       </Route>
       <Route path={`${path}/details/:instance`}>
         <Details session={session} />
+      </Route>
+      <Route path={`${path}/correction/:instance/:student`}>
+        <Correction session={session} />
+      </Route>
+
+      {/* STUDENT VIEW */}
+      <Route path={`${path}/student-detail/:id`}>
+        <UserDetails session={session} />
       </Route>
     </Switch>
   );

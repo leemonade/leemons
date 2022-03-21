@@ -34,14 +34,14 @@ async function addUserAgentContacts(
         table.roleCenter.find(
           { role_$in: userAgentRoles },
           {
-            columns: ['role', 'center'],
+            columns: ['id', 'role', 'center'],
             transacting,
           }
         ),
         table.profileRole.find(
           { role_$in: userAgentRoles },
           {
-            columns: ['role', 'profile'],
+            columns: ['id', 'role', 'profile'],
             transacting,
           }
         ),

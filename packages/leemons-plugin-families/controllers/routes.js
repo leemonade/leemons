@@ -75,4 +75,15 @@ module.exports = [
       },
     },
   },
+  {
+    path: '/list/detail/page/:user',
+    method: 'GET',
+    handler: 'families.listDetailPage',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
 ];

@@ -1,8 +1,14 @@
-export default async function listTasks(draft = false) {
-  const response = await leemons.api(`tasks/tasks/search?draft=${draft}`, {
-    allAgents: true,
-    method: 'GET',
-  });
+export default async function listTasks(query) {
+  const response = await leemons.api(
+    `tasks/tasks/search?${Object.entries(query)
+      .filter(([, value]) => value)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&')}`,
+    {
+      allAgents: true,
+      method: 'GET',
+    }
+  );
 
   return response;
 }

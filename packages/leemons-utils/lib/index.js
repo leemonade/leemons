@@ -6,6 +6,7 @@ const aws = require('aws-sdk');
 const slugify = require('slugify');
 const squirrelly = require('squirrelly');
 const execa = require('execa');
+const { ImporterFactory } = require('xlsx-import/lib/ImporterFactory');
 const { fetch, fetchJson, fetchText } = require('./fetch');
 const { env } = require('./env');
 const { getModel, generateModelName } = require('./model');
@@ -70,4 +71,5 @@ module.exports = {
   fetchJson,
   fetchText,
   sqlDatetime,
+  XlsxImporter: ImporterFactory,
 };

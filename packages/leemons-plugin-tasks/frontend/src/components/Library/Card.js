@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Paper, ImageLoader, Title, Paragraph, Box } from '@bubbles-ui/components';
+import { Box } from '@bubbles-ui/components';
+import { LibraryCard } from '@bubbles-ui/leemons';
 import { useClickOutside } from '@mantine/hooks';
 import ContextMenu from './ContextMenu';
 
-export default function Card({ cover, name, color, tagline, summary, id, refresh }) {
+export default function Card({ refresh, ...task }) {
   const [contextMenu, setContextMenu] = React.useState({ opened: false, posX: 0, posY: 0 });
   const ref = useClickOutside(() => setContextMenu({ opened: false }));
   const handleContextMenu = (e) => {
@@ -22,25 +23,19 @@ export default function Card({ cover, name, color, tagline, summary, id, refresh
       {contextMenu.opened && (
         <ContextMenu
           ref={ref}
-          id={id}
+          id={task.id}
           posX={contextMenu.posX}
           posY={contextMenu.posY}
           refresh={refresh}
         />
       )}
-      <Paper
-        sx={{ cursor: 'pointer' }}
-        color="solid"
-        shadow="level100"
-        onContextMenu={handleContextMenu}
-      >
-        <ImageLoader src={cover || ''} alt={name} />
-        <Box style={{ backgroundColor: color }}>
-          <Title padding={1}>{name}</Title>
-        </Box>
-        <Paragraph size="md">{tagline}</Paragraph>
-        <Paragraph>{summary}</Paragraph>
-      </Paper>
+      <Box onContextMenu={handleContextMenu} style={{ width: 322 }}>
+        <LibraryCard
+          asset={{ ...task, subtitle: task.tagline, description: task.summary }}
+          showImage
+          variant="task"
+        />
+      </Box>
     </>
   );
 }

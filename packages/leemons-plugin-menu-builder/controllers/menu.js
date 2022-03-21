@@ -10,8 +10,8 @@ const {
 
 async function getMenu(ctx) {
   const menu = await menuService.getIfHasPermission(ctx.params.key, ctx.state.userSession);
-  ctx.status = 201;
-  ctx.body = { status: 201, menu };
+  ctx.status = 200;
+  ctx.body = { status: 200, menu };
 }
 
 async function addMenuItem(ctx) {

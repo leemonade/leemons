@@ -56,7 +56,7 @@ module.exports = async function addUsers(
 
         try {
           alreadySavedUsers = (
-            await tables.levelUsers.find({ user_$in: users }, { columns: ['user'] })
+            await tables.levelUsers.find({ user_$in: users }, { columns: ['id', 'user'] })
           ).map(({ user }) => user);
         } catch (e) {
           throw new Error("Can't check if the users already exists");

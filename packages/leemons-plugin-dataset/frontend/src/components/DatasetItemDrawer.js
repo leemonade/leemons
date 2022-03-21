@@ -1,13 +1,13 @@
 import * as _ from 'lodash';
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   getDefaultPlatformLocaleRequest,
   getPlatformLocalesRequest,
-  listProfilesRequest,
   listCentersRequest,
+  listProfilesRequest,
 } from '@users/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { Button, Drawer, ImageLoader, useDrawer } from 'leemons-ui';
+import { Button, ImageLoader } from 'leemons-ui';
 import useTranslate from '@multilanguage/useTranslate';
 import tLoader from '@multilanguage/helpers/tLoader';
 import { useForm } from 'react-hook-form';
@@ -17,8 +17,8 @@ import SimpleBar from 'simplebar-react';
 import { addSuccessAlert } from '@layout/alert';
 import PropTypes from 'prop-types';
 import {
-  DatasetItemDrawer as DatasetItemDrawerBubbles,
   DATASET_ITEM_DRAWER_DEFAULT_PROPS,
+  DatasetItemDrawer as DatasetItemDrawerBubbles,
 } from '@bubbles-ui/leemons';
 import prefixPN from '../helpers/prefixPN';
 import { DatasetItemSeparator } from './DatasetItemSeparator';
@@ -501,7 +501,6 @@ const DatasetItemDrawer = ({
 
       if (locationName && pluginName) {
         try {
-          console.log(schemaWithAllConfig);
           contextRef.current.drawer.isSaving = true;
           render();
           const dataset = await saveDatasetFieldRequest(
@@ -616,7 +615,6 @@ const DatasetItemDrawer = ({
           );
           const configLocales = {};
           _.forEach(contextRef.current.drawer.locales, ({ code }, i) => {
-            console.log(itemLocales[i], code);
             const { schema, ui } = itemLocales[i];
             configLocales[code] = {};
             _.set(configLocales[code], 'schema.title', _.get(schema, 'title', ''));
@@ -658,12 +656,18 @@ const DatasetItemDrawer = ({
     load();
   }, [tLoading, item]);
 
-  console.log(contextRef.current.defaultValues);
-
   return (
     <DatasetItemDrawerBubbles
       {...contextRef.current.drawer}
-      defaultValues={contextRef.current.defaultValues || { config: { centers: ['*'] } }}
+      defaultValues={
+        contextRef.current.defaultValues || {
+          config: {
+            type: 'text_field',
+            centers: ['*'],
+            isAllCenterMode: true,
+          },
+        }
+      }
       opened={opened}
       onClose={onClose}
       onSave={onSave}

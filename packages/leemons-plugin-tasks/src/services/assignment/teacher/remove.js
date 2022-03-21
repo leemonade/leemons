@@ -2,13 +2,18 @@ const { teacherInstances } = require('../../table');
 
 module.exports = async function removeTeacher(instance, teacher, { transacting } = {}) {
   try {
-    const deleted = await teacherInstances.deleteMany(
-      {
-        instance,
-        teacher,
-      },
-      { transacting }
-    );
+    const query = {
+      instance,
+    };
+
+    if (teacher) {
+      if (Array.isArray(teacher)) {
+        query.teacher_$in = teacher;
+      } else {
+        query.teacher = teacher;
+      }
+    }
+    const deleted = await teacherInstances.deleteMany(query, { transacting });
 
     return deleted;
   } catch (e) {

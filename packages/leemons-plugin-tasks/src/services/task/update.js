@@ -7,6 +7,11 @@ const getVersion = require('./versions/get');
 const upgradeTaskVersion = require('./versions/upgrade');
 const deleteSubjects = require('./subjects/delete');
 const addSubjects = require('./subjects/add');
+const setTags = require('../tags/set');
+const setObjectives = require('./objectives/set');
+const setContent = require('./contents/set');
+const setAssessmentCriteria = require('./assessmentCriteria/set');
+const setAttachments = require('../attachments/set');
 
 module.exports = async function update(
   taskId,
@@ -22,6 +27,8 @@ module.exports = async function update(
     statement,
     development,
     submissions,
+    preTask,
+    preTaskOptions,
     selfReflection,
     feedback,
     instructionsForTeacher,
@@ -31,6 +38,11 @@ module.exports = async function update(
     subjects,
     center,
     program,
+    tags,
+    objectives,
+    content,
+    assessmentCriteria,
+    attachments,
   },
   { transacting: t } = {}
 ) {
@@ -47,9 +59,11 @@ module.exports = async function update(
           recommendedDuration,
           statement,
           development,
-          submissions,
-          selfReflection,
-          feedback,
+          submissions: submissions && JSON.stringify(submissions),
+          preTask,
+          preTaskOptions: preTaskOptions && JSON.stringify(preTaskOptions),
+          selfReflection: selfReflection && JSON.stringify(selfReflection),
+          feedback: feedback && JSON.stringify(feedback),
           instructionsForTeacher,
           instructionsForStudent,
           state,
@@ -130,6 +144,36 @@ module.exports = async function update(
           if (subjects.length) {
             await addSubjects(fullId, subjects, { transacting });
           }
+        }
+
+        if (tags) {
+          // EN: Update the tags
+          // ES: Actualizar las etiquetas
+          await setTags(fullId, tags, { transacting });
+        }
+
+        if (objectives) {
+          // EN: Update objectives
+          // ES: Actualizar objetivos
+          await setObjectives(fullId, objectives, { transacting });
+        }
+
+        if (content) {
+          // EN: Update the content
+          // ES: Actualizar el contenido
+          await setContent(fullId, content, { transacting });
+        }
+
+        if (assessmentCriteria) {
+          // EN: Update the assessment criteria
+          // ES: Actualizar los criterios de evaluación
+          await setAssessmentCriteria(fullId, assessmentCriteria, { transacting });
+        }
+
+        if (attachments) {
+          // EN: Update the attachments
+          // ES: Actualizar los adjuntos
+          await setAttachments(fullId, attachments, { transacting });
         }
 
         // EN: Emit the event.

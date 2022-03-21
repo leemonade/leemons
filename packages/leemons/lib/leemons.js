@@ -55,6 +55,10 @@ class Leemons {
     const arrayEvents = {};
     // eslint-disable-next-line new-cap
     this.events = new events();
+
+    // TODO: Find best value for listeners in order to memory comsuption
+    this.events.setMaxListeners(50);
+
     const { emit, once } = this.events;
     const emitArrayEventsIfNeed = async (_event, { event, target }, ...args) => {
       const promises = [];
@@ -281,6 +285,23 @@ class Leemons {
     };
   }
 
+  userAgentDatasetMiddleware() {
+    return async (ctx, next) => {
+      try {
+        const isGood = await this.plugins.users.services.users.userSessionCheckUserAgentDatasets(
+          ctx.state.userSession
+        );
+
+        if (!isGood) {
+          LeemonsSocket.worker.emit(ctx.state.userSession.id, 'USER_AGENT_NEED_UPDATE_DATASET');
+        }
+        return next();
+      } catch (err) {
+        console.error(err);
+      }
+    };
+  }
+
   /**
    * Initializes the api endpoints
    * @param {{
@@ -307,8 +328,13 @@ class Leemons {
             if (_.get(plugin.controllers, route.handler)) {
               const handler = _.get(plugin.controllers, route.handler);
               const functions = [];
-              if (route.authenticated)
+              if (route.authenticated) {
                 functions.push(this.authenticatedMiddleware(route.authenticated));
+                if (!route.disableUserAgentDatasetCheck) {
+                  functions.push(this.userAgentDatasetMiddleware());
+                }
+              }
+
               if (route.allowedPermissions)
                 functions.push(this.permissionsMiddleware(route.allowedPermissions));
               functions.push(handler);
@@ -575,7 +601,7 @@ class Leemons {
 
     this.server.listen(process.env.PORT, () => {
       this.events.emit('appDidStart', 'leemons');
-      this.log.debug(`Listening on http://localhost:${process.env.PORT}`);
+      this.log.info(`Listening on http://localhost:${process.env.PORT}`);
       if (process.send) {
         process.send('running');
       }

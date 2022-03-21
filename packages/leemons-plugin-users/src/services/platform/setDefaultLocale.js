@@ -12,7 +12,7 @@ const { table } = require('../tables');
 async function setDefaultLocale(locale, { transacting } = {}) {
   if (!(await translations().locales.has(locale, { transacting })))
     throw new Error(`The locale '${locale}' not exists`);
-  return await table.config.set(
+  return table.config.set(
     { key: 'platform-locale' },
     {
       key: 'platform-locale',

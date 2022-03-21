@@ -5,7 +5,7 @@ import { Paper, PageContainer, ContextContainer } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useStore, useRequestErrorMessage, unflatten } from '@common';
+import { useStore, unflatten } from '@common';
 import {
   Setup,
   ConfigData,
@@ -21,7 +21,6 @@ import useObserver from '../../../helpers/useObserver';
 
 export default function TaskSetupPage() {
   const [t, translations] = useTranslateLoader(prefixPN('task_setup_page'));
-  const [, , , getErrorMessage] = useRequestErrorMessage();
   const [labels, setLabels] = useState(null);
   const [status, setStatus] = useState('published');
   const [store, render] = useStore({
@@ -37,7 +36,15 @@ export default function TaskSetupPage() {
 
   const saveTask = async (values, redirectTo = 'library') => {
     try {
-      const body = { ...values };
+      const body = {
+        ...values,
+        objectives: values?.objectives?.map(({ objective }) => objective),
+        content: values?.content?.map(({ content }) => content),
+        assessmentCriteria: values?.assessmentCriteria?.map(
+          ({ assessmentCriteria }) => assessmentCriteria
+        ),
+      };
+
       let messageKey = 'create_done';
 
       if (!isEmpty(store.currentTask)) {
@@ -64,7 +71,7 @@ export default function TaskSetupPage() {
 
       emitEvent('taskSaved');
     } catch (e) {
-      addErrorAlert(getErrorMessage(e));
+      addErrorAlert(e.message);
     }
   };
 
@@ -73,7 +80,7 @@ export default function TaskSetupPage() {
       const { id } = store.currentTask;
 
       if (isEmpty(id)) {
-        addErrorAlert('No task id provided');
+        addErrorAlert(t('common.no_id_error'));
         return;
       }
 
@@ -82,18 +89,15 @@ export default function TaskSetupPage() {
 
       addSuccessAlert(t('common.publish_done'));
     } catch (e) {
-      addErrorAlert(getErrorMessage(e));
+      addErrorAlert(e.error);
     }
   };
 
   const getTask = async (id) => {
     try {
-      return await getTaskRequest(id);
-      // TODO: Implement get task by id request
-      // const response = await apiCall(id);
-      // store.currentTask = response.task;
+      return await getTaskRequest({ id });
     } catch (e) {
-      addErrorAlert(getErrorMessage(e));
+      addErrorAlert(e.message);
       return {};
     }
   };
@@ -107,7 +111,7 @@ export default function TaskSetupPage() {
     if (!isEmpty(id)) {
       store.currentTask = await getTask(id);
 
-      setStatus(store.currentTask.status);
+      setStatus(store?.currentTask?.status);
 
       render();
     }
@@ -118,7 +122,6 @@ export default function TaskSetupPage() {
       const res = unflatten(translations.items);
       const data = res.plugins.tasks.task_setup_page.setup;
       setLabels(data);
-      // store.setupLabels = data;
     }
   }, [translations]);
 
@@ -206,7 +209,7 @@ export default function TaskSetupPage() {
     <ContextContainer fullHeight>
       <AdminPageHeader
         values={headerLabels}
-        buttons={{ edit: 'Save draft', duplicate: status === 'draft' && 'Publish' }}
+        buttons={{ edit: t('common.save'), duplicate: status === 'draft' && t('common.publish') }}
         onEdit={() => emitEvent('saveTask')}
         onDuplicate={handleOnPublishTask}
       />

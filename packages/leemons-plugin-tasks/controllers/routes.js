@@ -110,6 +110,40 @@ module.exports = [
     handler: 'tags.has',
     authenticated: true,
   },
+  {
+    method: 'GET',
+    path: '/tasks/tags/list',
+    handler: 'tags.list',
+    authenticated: true,
+  },
+
+  /**
+   * Objectives
+   */
+  {
+    method: 'POST',
+    path: '/tasks/:task/objectives',
+    handler: 'objectives.add',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/:task/objectives',
+    handler: 'objectives.get',
+    authenticated: true,
+  },
+  {
+    method: 'DELETE',
+    path: '/tasks/:task/objectives',
+    handler: 'objectives.remove',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/:task/objectives/list',
+    handler: 'objectives.list',
+    authenticated: true,
+  },
 
   /**
    * Attachments
@@ -171,8 +205,26 @@ module.exports = [
   },
   {
     method: 'GET',
+    path: '/tasks/instances/student/:user',
+    handler: 'assignments.studentListAssigned',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
     path: '/tasks/instances/:instance/students',
     handler: 'assignments.studentList',
+    authenticated: true,
+  },
+  {
+    method: 'PUT',
+    path: '/tasks/instances/:instance/students/:student/key/:key/value/:value',
+    handler: 'assignments.studentUpdate',
+    authenticated: true,
+  },
+  {
+    method: 'POST',
+    path: '/tasks/instances/:instance/students/:student/calification',
+    handler: 'assignments.studentCalificate',
     authenticated: true,
   },
   // Teacher
@@ -198,6 +250,20 @@ module.exports = [
     method: 'GET',
     path: '/tasks/instances/teacher/:user',
     handler: 'assignments.teacherListAssigned',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/instances/teacher/:user/search',
+    handler: 'assignments.teacherSearch',
+    authenticated: true,
+  },
+
+  // Group
+  {
+    method: 'POST',
+    path: '/tasks/instances/:instance/group',
+    handler: 'assignments.groupAssign',
     authenticated: true,
   },
 

@@ -8,6 +8,10 @@ module.exports = async function addTags(task, tags, { transacting } = {}) {
   const { id } = await parseId(task, null, { transacting });
   const { fullId } = await parseId(id, 'any', { transacting });
 
+  if (!tags) {
+    return { count: 0, tags: [] };
+  }
+
   const _tags = Array.isArray(tags) ? tags : [tags];
 
   // EN: Check if task exists.

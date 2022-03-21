@@ -30,6 +30,7 @@ async function update(data, { transacting: _transacting } = {}) {
       if (data.translations)
         await updateProfileTranslations(profile, data.translations, { transacting });
       const profileRole = await getProfileRole(profile.id, { transacting });
+
       // Formato: data.permissions
       // [{ permissionName, actionNames }]
       await leemons.plugin.services.roles.update(
