@@ -1,5 +1,5 @@
 async function paginate(table, page, size, query, { columns, transacting } = {}) {
-  const _query = query || {};
+  const _query = { ...query };
   _query.$offset = page * size;
   _query.$limit = size;
   const values = await Promise.all([
