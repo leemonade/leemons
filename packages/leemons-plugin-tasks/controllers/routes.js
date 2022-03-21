@@ -179,6 +179,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    method: 'PUT',
+    path: '/tasks/assignments/instance/:instance',
+    handler: 'assignments.instanceUpdate',
+    authenticated: true,
+  },
+  {
     method: 'DELETE',
     path: '/tasks/:task/assignments/instance/:instance',
     handler: 'assignments.instanceDelete',

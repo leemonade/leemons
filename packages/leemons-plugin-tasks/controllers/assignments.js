@@ -15,6 +15,7 @@ const updateStudent = require('../src/services/assignment/student/update');
 const searchTeachers = require('../src/services/assignment/teacher/search');
 const assignGroup = require('../src/services/assignment/groups/add');
 const calificateStudent = require('../src/services/assignment/student/calificate');
+const updateInstance = require('../src/services/assignment/instance/update');
 
 module.exports = {
   /**
@@ -50,6 +51,45 @@ module.exports = {
       ctx.body = {
         status: 201,
         instance,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        message: e.message,
+      };
+    }
+  },
+  instanceUpdate: async (ctx) => {
+    try {
+      const { instance } = ctx.request.params;
+      const {
+        startDate,
+        deadline,
+        visualizationDate,
+        executionTime,
+        alwaysOpen,
+        closeDate,
+        message,
+        showCurriculum,
+      } = ctx.request.body;
+
+      const instanceUpdated = await updateInstance({
+        instance,
+        startDate,
+        deadline,
+        visualizationDate,
+        executionTime,
+        alwaysOpen,
+        closeDate,
+        message,
+        showCurriculum,
+      });
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        instance: instanceUpdated,
       };
     } catch (e) {
       ctx.status = 400;
