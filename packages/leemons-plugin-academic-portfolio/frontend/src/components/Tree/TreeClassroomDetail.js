@@ -8,21 +8,24 @@ import {
   Button,
   ColorInput,
   ContextContainer,
+  InputWrapper,
   MultiSelect,
   NumberInput,
+  Paragraph,
   Select,
+  Stack,
   Table,
+  TextInput,
   Title,
 } from '@bubbles-ui/components';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import getUserFullName from '@users/helpers/getUserFullName';
 import { ScheduleInput } from '@timetable/components';
 import { LocaleDate, useStore } from '@common';
-import { find, findIndex, map } from 'lodash';
+import { filter, find, map } from 'lodash';
 import { getUserAgentsInfoRequest } from '@users/request';
-import { addErrorAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { removeStudentFromClassRequest } from '../../request';
+import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
 
 const TreeClassroomDetail = ({
   messagesAddUsers,
@@ -31,6 +34,10 @@ const TreeClassroomDetail = ({
   messages,
   onSave,
   saving,
+  center,
+  addClassUsers,
+  removeUserFromClass,
+  item,
   teacherSelect,
 }) => {
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -73,14 +80,24 @@ const TreeClassroomDetail = ({
     };
   }
 
-  async function removeUserAgent(userAgentId) {
-    try {
-      await removeStudentFromClassRequest(classe.id, userAgentId);
-      const index = findIndex(store.students, { id: userAgentId });
-      if (index !== -1) store.students.splice(index, 1);
-      render();
-    } catch (error) {
-      addErrorAlert(getErrorMessage(error));
+  function removeUserAgent(userAgentId) {
+    removeUserFromClass(userAgentId, classe.id)
+      .then(() => {})
+      .catch(() => {});
+  }
+
+  function filterStudents() {
+    if (store.studentsFilter) {
+      store.studentsFiltered = filter(
+        store.students,
+        (student) =>
+          student.user.name?.toLowerCase().includes(store.studentsFilter.toLowerCase()) ||
+          student.user.surnames?.toLowerCase().includes(store.studentsFilter.toLowerCase()) ||
+          student.user.secondSurname?.toLowerCase().includes(store.studentsFilter.toLowerCase()) ||
+          student.user.email?.toLowerCase().includes(store.studentsFilter.toLowerCase())
+      );
+    } else {
+      store.studentsFiltered = store.students;
     }
   }
 
@@ -106,6 +123,8 @@ const TreeClassroomDetail = ({
         </Box>
       ),
     }));
+    store.studentsFilter = '';
+    filterStudents();
     render();
   }
 
@@ -156,6 +175,34 @@ const TreeClassroomDetail = ({
       className: 'text-left',
     },
   ];
+
+  function studentsFilterChange(e) {
+    store.studentsFilter = e;
+    filterStudents();
+    render();
+  }
+
+  function toggleAddStudents() {
+    store.addStudents = !store.addStudents;
+    store.studentsToAdd = [];
+    store.disabledSave = false;
+    render();
+  }
+
+  function onChangeAddUsers(e) {
+    store.studentsToAdd = e;
+  }
+
+  function onDisableSave(e) {
+    store.disabledSave = e;
+    render();
+  }
+
+  async function saveNewStudents() {
+    addClassUsers(store.studentsToAdd, classe.id)
+      .then(() => toggleAddStudents())
+      .catch(() => {});
+  }
 
   return (
     <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
@@ -244,13 +291,61 @@ const TreeClassroomDetail = ({
             />
           </Box>
 
-          {store.students.length ? <Table columns={tableHeaders} data={store.students} /> : null}
+          <InputWrapper label={messages.studentsLabel}>
+            {/* eslint-disable-next-line no-nested-ternary */}
+            {store.addStudents ? (
+              <ContextContainer>
+                <Paragraph>{messages.addStudentsDescription}</Paragraph>
+                <SelectUsersForAddToClasses
+                  showMessages={false}
+                  onChange={onChangeAddUsers}
+                  disableSave={onDisableSave}
+                  center={center}
+                  messages={messagesAddUsers}
+                  tree={item}
+                />
+                <ContextContainer direction="row" fullWidth justifyContent="end">
+                  <Box>
+                    <Button variant="link" loading={saving} onClick={toggleAddStudents}>
+                      {messages.cancelAddStudents}
+                    </Button>
+                  </Box>
+                  <Box>
+                    <Button
+                      disabled={!store.studentsToAdd.length || store.disabledSave}
+                      loading={saving}
+                      onClick={saveNewStudents}
+                    >
+                      {messages.addStudents}
+                    </Button>
+                  </Box>
+                </ContextContainer>
+              </ContextContainer>
+            ) : store.students.length ? (
+              <ContextContainer>
+                <Stack fullWidth alignItems="center" justifyContent="space-between">
+                  <Box>
+                    <TextInput value={store.studentsFilter} onChange={studentsFilterChange} />
+                  </Box>
+                  <Button onClick={toggleAddStudents}>{messages.addStudents}</Button>
+                </Stack>
+                <Table columns={tableHeaders} data={store.studentsFiltered} />
+              </ContextContainer>
+            ) : (
+              <Stack fullWidth alignItems="center" justifyContent="space-between">
+                <Paragraph>{messages.noStudentsYet}</Paragraph>
+                <Button onClick={toggleAddStudents}>{messages.addStudents}</Button>
+              </Stack>
+            )}
+          </InputWrapper>
 
-          <Box>
-            <Button loading={saving} type="submit">
-              {messages.save}
-            </Button>
-          </Box>
+          {!store.addStudents ? (
+            <Stack justifyContent="end">
+              <Button loading={saving} type="submit">
+                {messages.save}
+              </Button>
+            </Stack>
+          ) : null}
         </ContextContainer>
       </form>
     </Box>
@@ -263,8 +358,12 @@ TreeClassroomDetail.propTypes = {
   onSave: PropTypes.func,
   saving: PropTypes.bool,
   program: PropTypes.object,
+  center: PropTypes.string,
   teacherSelect: PropTypes.any,
+  item: PropTypes.object,
+  addClassUsers: PropTypes.func,
   messagesAddUsers: PropTypes.object,
+  removeUserFromClass: PropTypes.func,
 };
 
 // eslint-disable-next-line import/prefer-default-export

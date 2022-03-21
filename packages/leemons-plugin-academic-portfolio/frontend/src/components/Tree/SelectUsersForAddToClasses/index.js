@@ -5,7 +5,14 @@ import { forEach } from 'lodash';
 import { ByTag } from './ByTag';
 import { ByData } from './ByData';
 
-const SelectUsersForAddToClasses = ({ tree, center, messages, onChange, disableSave }) => {
+const SelectUsersForAddToClasses = ({
+  showMessages = true,
+  tree,
+  center,
+  messages,
+  onChange,
+  disableSave,
+}) => {
   const _classes = React.useMemo(() => {
     const getClasses = (item) => {
       let classes = [];
@@ -25,14 +32,17 @@ const SelectUsersForAddToClasses = ({ tree, center, messages, onChange, disableS
 
   return (
     <Box>
-      <Box>
-        <Title order={4}>{messages.title}</Title>
-        <Paragraph>{messages.description}</Paragraph>
-        <Paragraph>
-          <strong>{messages.note}</strong>
-          {messages.noteDescription}
-        </Paragraph>
-      </Box>
+      {showMessages ? (
+        <Box>
+          <Title order={4}>{messages.title}</Title>
+          <Paragraph>{messages.description}</Paragraph>
+          <Paragraph>
+            <strong>{messages.note}</strong>
+            {messages.noteDescription}
+          </Paragraph>
+        </Box>
+      ) : null}
+
       <Tabs destroyInactiveTabPanel>
         <TabPanel label={messages.byTag}>
           <ByTag
@@ -60,6 +70,7 @@ const SelectUsersForAddToClasses = ({ tree, center, messages, onChange, disableS
 SelectUsersForAddToClasses.propTypes = {
   tree: PropTypes.object,
   center: PropTypes.string,
+  showMessages: PropTypes.bool,
   messages: PropTypes.object,
   onChange: PropTypes.func,
   disableSave: PropTypes.func,

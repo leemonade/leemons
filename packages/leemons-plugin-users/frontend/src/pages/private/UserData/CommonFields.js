@@ -10,7 +10,6 @@ import {
   Table,
 } from '@bubbles-ui/components';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
-import { Modal, useModal } from 'leemons-ui';
 import { PlusIcon } from '@heroicons/react/outline';
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
 import { useAsync } from '@common/useAsync';
@@ -24,6 +23,7 @@ import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfP
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import formWithTheme from '@common/formWithTheme';
 import PropTypes from 'prop-types';
+import { useLayout } from '@layout/context';
 
 function TabDescription({ t, type, className }) {
   return <div className={`page-description ${className}`}>{t(`${type}.description`)}</div>;
@@ -41,10 +41,10 @@ function CommonFields({ t }) {
   const [loading, setLoading] = useState(true);
   const [tableItems, setTableItems] = useState([]);
   const [item, setItem] = useState(null);
-  const [itemToRemove, setItemToRemove] = useState(null);
   const [toggle, DatasetItemDrawer] = useDatasetItemDrawer();
   const { t: tCommonTypes } = useCommonTranslate('form_field_types');
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
+  const { openDeleteConfirmationModal } = useLayout();
 
   const load = useMemo(() => () => getDatasetSchemaRequest('user-data', 'plugins.users'), []);
 
@@ -112,23 +112,6 @@ function CommonFields({ t }) {
     reload();
   }
 
-  const [modal, toggleModal] = useModal({
-    animated: true,
-    title: t('remove_modal.title'),
-    message: t('remove_modal.message'),
-    cancelLabel: t('remove_modal.cancel'),
-    actionLabel: t('remove_modal.action'),
-    onAction: async () => {
-      try {
-        await removeDatasetFieldRequest('user-data', 'plugins.users', itemToRemove.id);
-        addSuccessAlert(t('dataset.deleted_done'));
-        await reload();
-      } catch (e) {
-        addErrorAlert(getErrorMessage(e));
-      }
-    },
-  });
-
   function newItem() {
     setItem(null);
     toggle();
@@ -140,8 +123,19 @@ function CommonFields({ t }) {
   }
 
   function removeItem(_item) {
-    setItemToRemove(_item);
-    toggleModal();
+    openDeleteConfirmationModal({
+      title: t('remove_modal.title'),
+      description: t('remove_modal.message'),
+      onConfirm: async () => {
+        try {
+          await removeDatasetFieldRequest('user-data', 'plugins.users', _item.id);
+          addSuccessAlert(t('dataset.deleted_done'));
+          await reload();
+        } catch (e) {
+          addErrorAlert(getErrorMessage(e));
+        }
+      },
+    })();
   }
 
   const tableHeaders = useMemo(
@@ -197,7 +191,6 @@ function CommonFields({ t }) {
         item={item}
         onSave={onSave}
       />
-      <Modal {...modal} />
       <ContextContainer
         sx={(theme) => ({ paddingTop: theme.spacing[4], paddingBottom: theme.spacing[4] })}
       >
