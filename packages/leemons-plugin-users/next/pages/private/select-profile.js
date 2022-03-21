@@ -37,6 +37,7 @@ export default function SelectProfile() {
         }
         await hooks.fireEvent('user:change:profile', profil);
         Cookies.set('token', jwtToken);
+        hooks.fireEvent('user:cookie:session:change');
         Router.push(`/${constants.base}`);
       }
     } catch (e) {}

@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 const { getUserAgentsInfo } = require('./getUserAgentsInfo');
+const { getUserAgentContacts } = require('./contacts/getUserAgentContacts');
 
 /**
  * Returns all agents that meet the specified parameters.
@@ -12,6 +13,7 @@ const { getUserAgentsInfo } = require('./getUserAgentsInfo');
  *    user: {
  *      name: string | undefined,
  *      surnames: string | undefined,
+ *      secondSurname: string | undefined,
  *      email: string | undefined
  *    } | undefined}
  * } filters - To search
@@ -21,7 +23,15 @@ const { getUserAgentsInfo } = require('./getUserAgentsInfo');
 
 async function searchUserAgents(
   { profile, center, user, ignoreUserIds },
-  { withProfile, withCenter, userColumns, queryWithContains = true, transacting } = {}
+  {
+    withProfile,
+    withCenter,
+    userColumns,
+    onlyContacts,
+    userSession,
+    queryWithContains = true,
+    transacting,
+  } = {}
 ) {
   const finalQuery = {};
   // ES: Como es posible que se quiera filtrar desde multiples sitios por usuarios añadimos un array
@@ -68,6 +78,17 @@ async function searchUserAgents(
     profileRoles = _.map(profileRoles, 'role');
   }
 
+  if (onlyContacts) {
+    if (!userSession) {
+      throw new Error('User session is required to get contacts');
+    }
+    // ES: Si solo queremos los contactos de un usuario, lo buscamos y lo añadimos a la query
+    const userAgentContacts = await getUserAgentContacts(_.map(userSession.userAgents, 'id'), {
+      transacting,
+    });
+    finalQuery.id_$in = _.map(userAgentContacts, 'toUserAgent');
+  }
+
   // ES: Si solo viene perfil o solo viene centro se pasan sus respectivos roles para solo sacar
   // los agentes con dichos roles, pero si vienen ambos (perfil y centro) solo tenemos que sacar
   // aquellos agentes donde el rol exista tanto en el centro como en el perfil
@@ -92,10 +113,12 @@ async function searchUserAgents(
       if (user.name) query.$or.push({ name_$contains: user.name });
       if (user.surnames) query.$or.push({ surnames_$contains: user.surnames });
       if (user.email) query.$or.push({ email_$contains: user.email });
+      if (user.secondSurname) query.$or.push({ secondSurname_$contains: user.secondSurname });
     } else {
       if (user.name) query.$or.push({ name: user.name });
       if (user.surnames) query.$or.push({ surnames: user.surnames });
       if (user.email) query.$or.push({ email: user.email });
+      if (user.secondSurname) query.$or.push({ secondSurname: user.secondSurname });
     }
     const users = await table.users.find(query, { columns: ['id'], transacting });
     userIds = userIds.concat(_.map(users, 'id'));

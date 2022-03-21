@@ -12,9 +12,60 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
-import { find, forEach, isArray, isObject, isObjectLike, map, set } from 'lodash';
+import {
+  cloneDeep,
+  filter,
+  find,
+  forEach,
+  get,
+  isArray,
+  isObject,
+  isObjectLike,
+  map,
+  set,
+} from 'lodash';
 import { useStore } from '@common';
 import { useForm } from 'react-hook-form';
+import { forEachRight } from 'lodash/collection';
+
+function getGroups({ program, selectGroups, subject }) {
+  const classes = filter(program.classes, (cl) => cl.subject.id === subject);
+  const result = cloneDeep(selectGroups);
+  forEach(classes, (classe) => {
+    if (classe.groups) {
+      forEachRight(result, (group, i) => {
+        if (group.value === classe.groups.id) {
+          // eslint-disable-next-line no-param-reassign
+          result[i].disabled = true;
+        }
+      });
+    }
+  });
+  return result;
+}
+
+// eslint-disable-next-line react/prop-types
+function Group({ selectGroups, program, onCreateGroup, onlyNewSubject, messages, ...props }) {
+  let subject = null;
+  if (props.name === 'groups') {
+    subject = props.formValues.subject;
+  } else {
+    const nameS = props.name.split('.');
+    subject = get(props.form.getValues(), `${nameS[0]}.subject.id`);
+  }
+  return (
+    <EnableIfFormPropHasValue {...props} property="subject" onCreate={onCreateGroup}>
+      <Select
+        data={getGroups({ program, selectGroups, subject })}
+        required
+        searchable
+        creatable={!onlyNewSubject}
+        getCreateLabel={(value) => `+ ${value}`}
+        nothingFound={messages.noSubjectsFound}
+      />
+    </EnableIfFormPropHasValue>
+  );
+}
 
 const EnableIfFormPropHasValue = forwardRef(
   ({ property, formValues, children, onCreate = () => {}, ...props }, ref) => {
@@ -97,6 +148,17 @@ function SubjectsTable({
         });
         const classe = find(program.classes, (cl) => cl.subject.id === value.subject);
 
+        if (program.maxNumberOfCourses > 0) {
+          if (program.moreThanOneAcademicYear) {
+            evForm.setValue(
+              `${prefix}courses`,
+              isArray(classe?.courses) ? map(classe?.courses, 'id') : []
+            );
+          } else {
+            evForm.setValue(`${prefix}courses`, classe?.courses?.id || null);
+          }
+        }
+
         evForm.setValue(`${prefix}internalId`, subjectCredit?.internalId || null);
         evForm.setValue(`${prefix}credits`, subjectCredit?.credits || null);
         evForm.setValue(`${prefix}subjectType`, classe?.subjectType?.id || null);
@@ -170,14 +232,34 @@ function SubjectsTable({
 
   const columns = [];
 
-  // COURSES
-  if (program.maxNumberOfCourses > 1) {
+  columns.push({
+    Header: messages.subject,
+    accessor: 'subject',
+    input: {
+      node: (
+        <EnableIfFormPropHasValue onCreate={onCreateSubject}>
+          <Select
+            data={onlyNewSubject ? store.tempSubjects : selects.subjects}
+            required
+            searchable
+            creatable
+            getCreateLabel={(value) => `+ ${value}`}
+            nothingFound={messages.noSubjectsFound}
+          />
+        </EnableIfFormPropHasValue>
+      ),
+      rules: { required: messages.subjectRequired },
+    },
+    valueRender: (value) => <>{value?.name}</>,
+  });
+
+  if (program.maxNumberOfCourses > 0) {
     columns.push({
       Header: messages.course,
       accessor: 'courses',
       input: {
         node: (
-          <EnableIfFormPropHasValue>
+          <EnableIfFormPropHasValue property="subject">
             {program.moreThanOneAcademicYear ? (
               <MultiSelect data={selects.courses} required />
             ) : (
@@ -200,28 +282,6 @@ function SubjectsTable({
       },
     });
   }
-
-  // SUBJECTS
-  columns.push({
-    Header: messages.subject,
-    accessor: 'subject',
-    input: {
-      node: (
-        <EnableIfFormPropHasValue onCreate={onCreateSubject}>
-          <Select
-            data={onlyNewSubject ? store.tempSubjects : selects.subjects}
-            required
-            searchable
-            creatable
-            getCreateLabel={(value) => `+ ${value}`}
-            nothingFound={messages.noSubjectsFound}
-          />
-        </EnableIfFormPropHasValue>
-      ),
-      rules: { required: messages.subjectRequired },
-    },
-    valueRender: (value) => <>{value?.name}</>,
-  });
 
   // SUBJECT ID
   columns.push({
@@ -328,17 +388,15 @@ function SubjectsTable({
           ),
         },
       },
+
       node: (
-        <EnableIfFormPropHasValue onCreate={onCreateGroup}>
-          <Select
-            data={selects.groups}
-            required
-            searchable
-            creatable={!onlyNewSubject}
-            getCreateLabel={(value) => `+ ${value}`}
-            nothingFound={messages.noSubjectsFound}
-          />
-        </EnableIfFormPropHasValue>
+        <Group
+          selectGroups={selects.groups}
+          program={program}
+          onCreateGroup={onCreateGroup}
+          onlyNewSubject={onlyNewSubject}
+          messages={messages}
+        />
       ),
     },
     valueRender: (value) => <>{value?.name}</>,

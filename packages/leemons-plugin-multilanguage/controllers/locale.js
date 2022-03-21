@@ -11,7 +11,8 @@ async function add(ctx) {
 
     ctx.body = { message: 'Locale already exists' };
   } catch (e) {
-    ctx.body = { error: e.message };
+    ctx.status = 400;
+    ctx.body = { status: 400, error: e.message };
   }
 }
 
@@ -20,7 +21,8 @@ async function list(ctx) {
     const locales = await leemons.plugin.services.locales.getProvider().getAll();
     ctx.body = { locales };
   } catch (e) {
-    ctx.body = { error: e.message };
+    ctx.status = 400;
+    ctx.body = { status: 400, error: e.message };
   }
 }
 

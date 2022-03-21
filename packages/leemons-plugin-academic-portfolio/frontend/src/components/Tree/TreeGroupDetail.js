@@ -10,19 +10,26 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
+import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
 
 const TreeGroupDetail = ({
   duplicateMode,
   group,
   program,
   messages,
+  messagesAddUsers,
+  center,
   onSave,
   saving,
+  item,
   selectSubjectsNode,
 }) => {
+  const [disableSave, setDisabledSave] = React.useState(false);
+
   const {
     reset,
     control,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm({ defaultValues: group });
@@ -30,6 +37,14 @@ const TreeGroupDetail = ({
   React.useEffect(() => {
     reset(group);
   }, [group]);
+
+  function onChangeAddUsers(e) {
+    setValue('students', e);
+  }
+
+  function onDisableSave(e) {
+    setDisabledSave(e);
+  }
 
   return (
     <Box>
@@ -39,7 +54,7 @@ const TreeGroupDetail = ({
             {/* eslint-disable-next-line no-nested-ternary */}
             {duplicateMode ? messages.duplicateTitle : group ? messages.title : messages.titleNew}
           </Title>
-          <Alert>{messages.duplicateWarning}</Alert>
+          <Alert closeable={false}>{messages.duplicateWarning}</Alert>
           <Box>
             <Controller
               name="abbreviation"
@@ -90,6 +105,16 @@ const TreeGroupDetail = ({
             />
           </Box>
 
+          {group ? (
+            <SelectUsersForAddToClasses
+              onChange={onChangeAddUsers}
+              disableSave={onDisableSave}
+              center={center}
+              messages={messagesAddUsers}
+              tree={item}
+            />
+          ) : null}
+
           {!group ? (
             <>
               <Box>
@@ -112,7 +137,7 @@ const TreeGroupDetail = ({
           ) : null}
 
           <Box>
-            <Button loading={saving} type="submit">
+            <Button disabled={disableSave} loading={saving} type="submit">
               {messages.save}
             </Button>
           </Box>
@@ -131,6 +156,9 @@ TreeGroupDetail.propTypes = {
   saving: PropTypes.bool,
   selectSubjectsNode: PropTypes.any,
   duplicateMode: PropTypes.bool,
+  item: PropTypes.object,
+  messagesAddUsers: PropTypes.object,
+  center: PropTypes.string,
 };
 
 // eslint-disable-next-line import/prefer-default-export

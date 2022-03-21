@@ -81,6 +81,17 @@ async function removeClass(id) {
   });
 }
 
+async function removeStudentFromClass(classId, student) {
+  return leemons.api(`academic-portfolio/class/remove/students`, {
+    allAgents: true,
+    method: 'POST',
+    body: {
+      class: classId,
+      student,
+    },
+  });
+}
+
 export {
   haveClasses,
   listClasses,
@@ -93,4 +104,5 @@ export {
   createClassInstance,
   addStudentsToClass,
   addTeachersToClass,
+  removeStudentFromClass,
 };

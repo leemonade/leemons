@@ -1,4 +1,4 @@
-import React, { useEffect, forwardRef } from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { cloneDeep, find, findIndex, map } from 'lodash';
 import { ActionButton, Box, MultiSelect, UserDisplayItem } from '@bubbles-ui/components';
@@ -9,7 +9,7 @@ import { getUserAgentsInfoRequest, searchUserAgentsRequest } from '../request';
 
 // EN: The Component for MultiSelect selected values component
 // ES: El componente para el componente MultiSelect de valores seleccionados
-function ValueItem(props) {
+export function SelectUserAgentValueComponent(props) {
   return (
     <Box>
       {props.onRemove ? (
@@ -33,7 +33,7 @@ function ValueItem(props) {
 }
 
 const SelectUserAgent = forwardRef(
-  ({ profiles, centers, maxSelectedValues = 1, ...props }, ref) => {
+  ({ profiles, centers, maxSelectedValues = 1, onlyContacts, ...props }, ref) => {
     const [store, render] = useStore({
       data: [],
     });
@@ -47,6 +47,7 @@ const SelectUserAgent = forwardRef(
           user: {
             name: value,
             surnames: value,
+            secondSurname: value,
             email: value,
           },
         };
@@ -61,6 +62,7 @@ const SelectUserAgent = forwardRef(
         const response = await searchUserAgentsRequest(filters, {
           withCenter: true,
           withProfile: true,
+          onlyContacts,
         });
         const data = map(response.userAgents, (item) => ({
           ...item.user,
@@ -82,7 +84,11 @@ const SelectUserAgent = forwardRef(
     // ES: Permite la compatibilidad con versiones antiguas, devolviendo un valor si es necesario
     function handleChange(value) {
       if (maxSelectedValues === 1) {
-        props.onChange(value[0]);
+        if (value.length >= 0) {
+          props.onChange(value[0], find(store.data, { value: value[0] }));
+        } else {
+          props.onChange(null);
+        }
       } else {
         props.onChange(value);
       }
@@ -167,15 +173,15 @@ const SelectUserAgent = forwardRef(
         }
       });
     }
-
+    //
     return (
       <MultiSelect
         {...props}
         ref={ref}
         searchable
         onSearchChange={search}
-        itemComponent={UserDisplayItem}
-        valueComponent={ValueItem}
+        itemComponent={props.itemComponent || UserDisplayItem}
+        valueComponent={props.valueComponent || SelectUserAgentValueComponent}
         maxSelectedValues={maxSelectedValues}
         data={data}
         // EN: The value can be an array or a single value (string), so convert it to an array
@@ -194,9 +200,12 @@ SelectUserAgent.propTypes = {
   profiles: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   centers: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   maxSelectedValues: PropTypes.number,
+  onlyContacts: PropTypes.bool,
+  itemComponent: PropTypes.element,
+  valueComponent: PropTypes.element,
 };
 
-ValueItem.propTypes = {
+SelectUserAgentValueComponent.propTypes = {
   onRemove: PropTypes.func,
 };
 

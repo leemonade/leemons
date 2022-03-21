@@ -2,14 +2,17 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { getCookieToken } from '@users/session';
+import { useStore } from '@common';
 import { SocketIoService } from '@socket-io/service';
 import hooks from 'leemons-hooks';
 
 export function Provider({ children }) {
-  const token = getCookieToken(true);
+  const [store] = useStore();
 
-  useEffect(() => {
-    if (token) {
+  function init() {
+    SocketIoService.disconnect();
+    const token = getCookieToken(true);
+    if (token && token !== store.token) {
       const config = {
         auth: {},
       };
@@ -27,9 +30,18 @@ export function Provider({ children }) {
           data,
         })
       );
+      store.token = token;
     }
-    return () => SocketIoService.disconnect();
-  }, [token]);
+  }
+
+  useEffect(() => {
+    init();
+    hooks.addAction('user:cookie:session:change', init);
+    return () => {
+      SocketIoService.disconnect();
+      hooks.removeAction('user:cookie:session:change', init);
+    };
+  });
 
   return children;
 }

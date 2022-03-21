@@ -11,11 +11,24 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
+import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
 
-const TreeSubjectTypeDetail = ({ subjectType, messages, onSave, saving, selectSubjectsNode }) => {
+const TreeSubjectTypeDetail = ({
+  item,
+  center,
+  messagesAddUsers,
+  subjectType,
+  messages,
+  onSave,
+  saving,
+  selectSubjectsNode,
+}) => {
+  const [disableSave, setDisabledSave] = React.useState(false);
+
   const {
     reset,
     control,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm({ defaultValues: subjectType });
@@ -23,6 +36,14 @@ const TreeSubjectTypeDetail = ({ subjectType, messages, onSave, saving, selectSu
   React.useEffect(() => {
     reset(subjectType);
   }, [subjectType]);
+
+  function onChangeAddUsers(e) {
+    setValue('students', e);
+  }
+
+  function onDisableSave(e) {
+    setDisabledSave(e);
+  }
 
   return (
     <Box>
@@ -78,8 +99,18 @@ const TreeSubjectTypeDetail = ({ subjectType, messages, onSave, saving, selectSu
             </>
           ) : null}
 
+          {subjectType ? (
+            <SelectUsersForAddToClasses
+              onChange={onChangeAddUsers}
+              disableSave={onDisableSave}
+              center={center}
+              messages={messagesAddUsers}
+              tree={item}
+            />
+          ) : null}
+
           <Box>
-            <Button loading={saving} type="submit">
+            <Button disabled={disableSave} loading={saving} type="submit">
               {messages.save}
             </Button>
           </Box>
@@ -96,6 +127,9 @@ TreeSubjectTypeDetail.propTypes = {
   onGoProgram: PropTypes.func,
   saving: PropTypes.bool,
   selectSubjectsNode: PropTypes.any,
+  item: PropTypes.object,
+  center: PropTypes.string,
+  messagesAddUsers: PropTypes.object,
 };
 
 // eslint-disable-next-line import/prefer-default-export

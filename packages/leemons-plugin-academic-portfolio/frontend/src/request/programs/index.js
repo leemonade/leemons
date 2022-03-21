@@ -42,4 +42,20 @@ async function updateProgram(body) {
   });
 }
 
-export { listPrograms, detailProgram, createProgram, updateProgram, havePrograms, getProgramTree };
+async function addStudentsToClassesUnderNodeTree(body) {
+  return leemons.api('academic-portfolio/program/add-students-to-classes-under-node-tree', {
+    allAgents: true,
+    method: 'POST',
+    body,
+  });
+}
+
+export {
+  listPrograms,
+  detailProgram,
+  createProgram,
+  updateProgram,
+  havePrograms,
+  getProgramTree,
+  addStudentsToClassesUnderNodeTree,
+};

@@ -100,10 +100,19 @@ async function addTeachersToClassesUnderNodeTree(ctx) {
   ctx.body = { status: 200, classes };
 }
 
+async function getStudentsByTags(ctx) {
+  const students = await commonService.getStudentsByTags(ctx.request.body.tags, {
+    center: ctx.request.body.center,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, students };
+}
+
 module.exports = {
   addTeachersToClassesUnderNodeTree,
   addStudentsToClassesUnderNodeTree,
   getClassesUnderNodeTree,
   listClassSubjects,
+  getStudentsByTags,
   getTree,
 };

@@ -19,6 +19,8 @@ const { removeByClass: removeTeachersByClass } = require('./teacher/removeByClas
 const { classByIds } = require('./classByIds');
 const { processScheduleForClass } = require('./processScheduleForClass');
 const { changeBySubject } = require('./knowledge/changeBySubject');
+const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubject');
+const { isUsedInSubject } = require('./group/isUsedInSubject');
 
 async function updateClass(data, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
@@ -28,6 +30,7 @@ async function updateClass(data, { transacting: _transacting } = {}) {
       // ES: Actualizamos la clase
       const nClass = await table.class.update({ id }, rest, { transacting });
 
+      const promises = [];
       // ES: Añadimos todas las relaciones de la clase
 
       if (_.isNull(knowledge) || knowledge)
@@ -37,7 +40,7 @@ async function updateClass(data, { transacting: _transacting } = {}) {
         if (!(await existKnowledgeInProgram(knowledge, nClass.program, { transacting }))) {
           throw new Error('knowledge not in program');
         }
-        await addKnowledge(nClass.id, knowledge, { transacting });
+        promises.push(addKnowledge(nClass.id, knowledge, { transacting }));
       }
 
       if (_.isNull(substage) || substage) await removeSubstageByClass(nClass.id, { transacting });
@@ -46,17 +49,27 @@ async function updateClass(data, { transacting: _transacting } = {}) {
         if (!(await existSubstageInProgram(substage, nClass.program, { transacting }))) {
           throw new Error('substage not in program');
         }
-        await addSubstage(nClass.id, substage, { transacting });
+        promises.push(addSubstage(nClass.id, substage, { transacting }));
       }
 
-      if (_.isNull(course) || course) await removeCourseByClass(nClass.id, { transacting });
+      if (_.isNull(course) || course) {
+        await Promise.all([
+          removeCourseByClass(nClass.id, { transacting }),
+          setToAllClassesWithSubject(nClass.subject, [], { transacting }),
+        ]);
+      }
       if (course) {
         // ES: Comprobamos que todos los cursos existen y pertenecen al programa
         if (!(await existCourseInProgram(course, nClass.program, { transacting }))) {
           throw new Error('course not in program');
         }
         const courses = isArray(course) ? course : [course];
-        await Promise.all(map(courses, (c) => addCourse(nClass.id, c, { transacting })));
+        promises.push(
+          Promise.all([
+            Promise.all(map(courses, (c) => addCourse(nClass.id, c, { transacting }))),
+            setToAllClassesWithSubject(nClass.subject, courses, { transacting }),
+          ])
+        );
       }
 
       if (_.isNull(group) || group) await removeGroupByClass(nClass.id, { transacting });
@@ -65,28 +78,37 @@ async function updateClass(data, { transacting: _transacting } = {}) {
         if (!(await existGroupInProgram(group, nClass.program, { transacting }))) {
           throw new Error('group not in program');
         }
-        await addGroup(nClass.id, group, { transacting });
+        if (await isUsedInSubject(nClass.subject, group, { classe: nClass.id, transacting })) {
+          throw new Error('group is already used in subject');
+        }
+        promises.push(addGroup(nClass.id, group, { transacting }));
       }
 
       if (_.isNull(group) || teachers) await removeTeachersByClass(nClass.id, { transacting });
       if (teachers)
-        await Promise.all(
-          _.map(teachers, ({ teacher, type }) =>
-            addTeacher(nClass.id, teacher, type, { transacting })
+        promises.push(
+          Promise.all(
+            _.map(teachers, ({ teacher, type }) =>
+              addTeacher(nClass.id, teacher, type, { transacting })
+            )
           )
         );
 
       // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo tipo de asignatura
-      await table.class.updateMany(
-        { subject: nClass.subject },
-        { subjectType: nClass.subjectType, color: nClass.color },
-        { transacting }
+      promises.push(
+        table.class.updateMany(
+          { subject: nClass.subject },
+          { subjectType: nClass.subjectType, color: nClass.color },
+          { transacting }
+        )
       );
 
       // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo knowledge
-      await changeBySubject(nClass.subject, knowledge, { transacting });
+      promises.push(changeBySubject(nClass.subject, knowledge, { transacting }));
 
-      await processScheduleForClass(schedule, nClass.id, { transacting });
+      promises.push(await processScheduleForClass(schedule, nClass.id, { transacting }));
+
+      await Promise.all(promises);
 
       const classe = (await classByIds(nClass.id, { transacting }))[0];
       await leemons.events.emit('after-update-class', { class: classe, transacting });

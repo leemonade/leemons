@@ -11,7 +11,10 @@ async function getTreeNodes(nodeTypes, nodeType, nodeId, { transacting } = {}) {
   const getParentNodes = (nodes) => {
     let pNodes = [];
     _.forEach(nodes, (node) => {
-      if (node.nodeType === nodeType && nodeIds.indexOf(node.value?.id) >= 0) {
+      if (
+        node.nodeType === nodeType &&
+        (nodeIds.indexOf(node.value?.id) >= 0 || nodeIds.indexOf(node.treeId) >= 0)
+      ) {
         pNodes.push(node);
       } else {
         pNodes = pNodes.concat(getParentNodes(node.childrens));

@@ -7,6 +7,7 @@ import {
   updateSubjectCredits,
 } from './subjects';
 import {
+  addStudentsToClassesUnderNodeTree,
   createProgram,
   detailProgram,
   getProgramTree,
@@ -35,9 +36,11 @@ import {
   listStudentClasses,
   listTeacherClasses,
   removeClass,
+  removeStudentFromClass,
   updateClass,
   updateClassMany,
 } from './classes';
+import { getStudentsByTags } from './common';
 
 export { listCourses as listCoursesRequest, updateCourse as updateCourseRequest } from './courses';
 
@@ -66,6 +69,7 @@ export const addStudentsToClassRequest = addStudentsToClass;
 export const addTeachersToClassRequest = addTeachersToClass;
 export const listStudentClassesRequest = listStudentClasses;
 export const listTeacherClassesRequest = listTeacherClasses;
+export const removeStudentFromClassRequest = removeStudentFromClass;
 
 export const createKnowledgeRequest = createKnowledge;
 export const listKnowledgesRequest = listKnowledges;
@@ -88,3 +92,6 @@ export const enableMenuItemRequest = enableMenuItem;
 export const isConfigProfilesRequest = isConfigProfiles;
 export const getProfilesRequest = getProfiles;
 export const setProfilesRequest = setProfiles;
+export const addStudentsToClassesUnderNodeTreeRequest = addStudentsToClassesUnderNodeTree;
+
+export const getStudentsByTagsRequest = getStudentsByTags;

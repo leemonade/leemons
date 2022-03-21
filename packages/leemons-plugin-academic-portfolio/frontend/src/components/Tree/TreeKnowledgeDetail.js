@@ -11,8 +11,12 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
+import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
 
 const TreeKnowledgeDetail = ({
+  item,
+  center,
+  messagesAddUsers,
   knowledge,
   program,
   messages,
@@ -20,9 +24,12 @@ const TreeKnowledgeDetail = ({
   saving,
   selectSubjectsNode,
 }) => {
+  const [disableSave, setDisabledSave] = React.useState(false);
+
   const {
     reset,
     control,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm({ defaultValues: knowledge });
@@ -38,6 +45,14 @@ const TreeKnowledgeDetail = ({
       message: messages.maxLength.replace('{max}', program.maxKnowledgeAbbreviation),
     },
   };
+
+  function onChangeAddUsers(e) {
+    setValue('students', e);
+  }
+
+  function onDisableSave(e) {
+    setDisabledSave(e);
+  }
 
   return (
     <Box>
@@ -117,8 +132,18 @@ const TreeKnowledgeDetail = ({
             </>
           ) : null}
 
+          {knowledge ? (
+            <SelectUsersForAddToClasses
+              onChange={onChangeAddUsers}
+              disableSave={onDisableSave}
+              center={center}
+              messages={messagesAddUsers}
+              tree={item}
+            />
+          ) : null}
+
           <Box>
-            <Button loading={saving} type="submit">
+            <Button disabled={disableSave} loading={saving} type="submit">
               {messages.save}
             </Button>
           </Box>
@@ -135,6 +160,9 @@ TreeKnowledgeDetail.propTypes = {
   onSave: PropTypes.func,
   saving: PropTypes.bool,
   selectSubjectsNode: PropTypes.any,
+  item: PropTypes.object,
+  center: PropTypes.string,
+  messagesAddUsers: PropTypes.object,
 };
 
 // eslint-disable-next-line import/prefer-default-export

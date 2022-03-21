@@ -85,7 +85,7 @@ async function addUserAgentContacts(
         promises.push(Promise.all(gPromises));
       });
 
-      return await Promise.all(promises);
+      return Promise.all(promises);
     },
     table.userAgentContacts,
     _transacting

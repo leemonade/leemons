@@ -32,6 +32,7 @@ TagsAutocomplete.propTypes = {
   pluginName: PropTypes.string.isRequired,
   type: PropTypes.string,
   value: PropTypes.array,
+  onChange: PropTypes.func,
 };
 
 // eslint-disable-next-line import/prefer-default-export

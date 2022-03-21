@@ -290,6 +290,34 @@ module.exports = {
     newclass: 'New class',
     newknowledges: 'New area',
     newsubject: 'New subject',
+    addUsers: {
+      title: 'Assign Students',
+      description:
+        'Assign students to all classrooms nested on this level from the students database.',
+      note: 'NOTE:',
+      noteDescription:
+        'selected students will be added to the current student lists for each classroom. If you want to consult or edit a group of students, you must do it directly in each classroom.',
+      byTag: 'Select by tag',
+      byData: 'Search by user data',
+      addTag: 'Add tag',
+      emailHeader: 'Email',
+      nameHeader: 'Name',
+      surnameHeader: 'Surname',
+      birthdayHeader: 'Birthday',
+      studentsFound: 'We have found {{count}} Students',
+      selected: '{{count}} Selected',
+      studentsError:
+        '{{count}} students are already included in all classes and you can not add them again',
+      studentsWarning:
+        '{{count}} students are already included in one of the classes and you can add them to the rest of the classes.',
+      seatsError1: 'The following classes are already fully booked:',
+      seatsError2:
+        'Please access each class individually and add as many students as you need, or reduce the number of students.',
+      seatsClassError: '- {{className}} ({{seats}} seats left)',
+      addStudent: 'Add student',
+      userAlreadySelected: 'User already selected',
+      removeUser: 'Remove',
+    },
     program: {
       title: 'Program configuration',
       nameLabel: 'Program name:',

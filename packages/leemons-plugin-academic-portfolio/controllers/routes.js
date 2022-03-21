@@ -108,6 +108,13 @@ module.exports = [
     handler: 'program.deleteProgram',
     authenticated: true,
   },
+  {
+    path: '/program/add-students-to-classes-under-node-tree',
+    method: 'POST',
+    handler: 'program.addStudentsToClassesUnderNodeTree',
+    authenticated: true,
+  },
+
   // Knowledges
   {
     path: '/knowledge',
@@ -288,6 +295,12 @@ module.exports = [
     handler: 'class.postClassTeachers',
     authenticated: true,
   },
+  {
+    path: '/class/remove/students',
+    method: 'POST',
+    handler: 'class.removeStudent',
+    authenticated: true,
+  },
   // Student
   {
     path: '/student/:id/classes',
@@ -338,6 +351,12 @@ module.exports = [
     path: '/add-teachers-to-classes-under-node-tree',
     method: 'POST',
     handler: 'common.addTeachersToClassesUnderNodeTree',
+    authenticated: true,
+  },
+  {
+    path: '/students/by/tags',
+    method: 'POST',
+    handler: 'common.getStudentsByTags',
     authenticated: true,
   },
   {
