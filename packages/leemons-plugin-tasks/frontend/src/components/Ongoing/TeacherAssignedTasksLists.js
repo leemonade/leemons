@@ -3,7 +3,14 @@ import { useHistory } from 'react-router-dom';
 import { useApi, unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getCentersWithToken } from '@users/session';
-import { Table, ContextContainer, Button, Text } from '@bubbles-ui/components';
+import {
+  Table,
+  ContextContainer,
+  Button,
+  Text,
+  SearchInput,
+  useDebouncedValue,
+} from '@bubbles-ui/components';
 import { ViewOnIcon, StudyDeskIcon } from '@bubbles-ui/icons/outline';
 import { prefixPN } from '../../helpers/prefixPN';
 import listTeacherTasks from '../../request/instance/listTeacherTasks';
@@ -62,9 +69,19 @@ export default function TeacherAssignedTasksLists({ showClosed }) {
   const [, translations] = useTranslateLoader(prefixPN('teacher_assignments'));
   const [tableLabels, setTableLabels] = useState({});
   const [centers] = useApi(getCentersWithToken);
+  const [name, setName] = useState('');
+  const [debouncedName] = useDebouncedValue(name, 500);
   const [filters, setFilters] = useState({});
   const [tasks, setTasks] = useState([]);
   const history = useHistory();
+
+  useEffect(() => {
+    setTasks([]);
+    setFilters((f) => ({
+      ...f,
+      name: debouncedName,
+    }));
+  }, [debouncedName]);
 
   // EN: Parse the translations object
   // ES: Procesar el objeto de traducciones
@@ -137,6 +154,7 @@ export default function TeacherAssignedTasksLists({ showClosed }) {
           setFilters(f);
         }}
       />
+      <SearchInput value={name} onChange={setName} />
       {tasks?.length === 0 && (
         <ContextContainer direction="row" justifyContent="start" alignItems="center">
           <Text>You don&apos;t have ongoing tasks with the applied filters. Assign a new one</Text>
