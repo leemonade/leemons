@@ -1,4 +1,5 @@
 import React, { useMemo, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
 import { useHistory, useParams } from 'react-router-dom';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
@@ -7,11 +8,11 @@ import {
   ContextContainer,
   Select,
   TextInput,
-  Table,
   UserDisplayItem,
   Button,
   DatePicker,
   Switch,
+  PaginatedList,
 } from '@bubbles-ui/components';
 import { getUserAgentsInfoRequest } from '@users/request';
 import { useApi } from '@common';
@@ -37,23 +38,49 @@ function getStatus({ start, end, opened }) {
   return 'Not Opened';
 }
 
-export default function DetailsPage() {
+function ListStudents({ instance }) {
   const history = useHistory();
-  const layout = useLayout();
-  const { instance } = useParams();
 
+  const [filters, setFilters] = useState({
+    page: 0,
+    size: 1,
+  });
   const [students, setStudents] = useState();
-  const [closed, setClosed] = useState();
 
-  const options = useMemo(
-    () => ({
-      id: instance,
-      columns: JSON.stringify(['deadline', 'closeDate']),
-    }),
-    [instance]
-  );
+  const fetchStudents = async () => {
+    const result = await listStudents(instance, filters);
 
-  const [task, , , reFetch] = useApi(getInstanceRequest, options);
+    if (result) {
+      const usersInfo = await getUserAgentsInfoRequest(result.items.map((s) => s.user));
+
+      setStudents({
+        ...result,
+        items: result.items.map((student) => ({
+          student: (
+            <UserDisplayItem {...usersInfo?.userAgents?.find((u) => u.id === student.user)?.user} />
+          ),
+          status: getStatus(student),
+          completed: student.end ? new Date(student.end).toLocaleString() : '-',
+          avgTime: student.end
+            ? (new Date(student.end) - new Date(student.start)) / 1000 / 60
+            : '-',
+          score: 'NYI',
+          actions: (
+            <Button
+              variant="link"
+              onClick={() => history.push(`/private/tasks/correction/${instance}/${student.user}`)}
+            >
+              Assess
+            </Button>
+          ),
+        })),
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchStudents();
+  }, [filters]);
 
   // TRANSLATE: Teacher details columns
   const columns = useMemo(
@@ -86,33 +113,52 @@ export default function DetailsPage() {
     []
   );
 
-  useEffect(async () => {
-    const result = await listStudents(instance);
+  /* Students */
+  return (
+    <ContextContainer title={`${students?.length || 0} Students`}>
+      <ContextContainer direction="row">
+        <Select
+          label="BULK ACTION (0 Selected)"
+          orientation="horizontal"
+          placeholder="SELECT ACTION..."
+          data={[{ value: 'Hola', label: 'Holaasa' }]}
+        />
+        <TextInput placeholder="SEARCH STUDENTS" />
+      </ContextContainer>
 
-    if (result) {
-      const usersInfo = await getUserAgentsInfoRequest(result.items.map((s) => s.user));
+      {/* List */}
+      <PaginatedList
+        columns={columns}
+        items={students?.items}
+        page={students?.page}
+        size={students?.size}
+        totalCount={students?.totalPages}
+        onSizeChange={(s) => setFilters((f) => ({ ...f, size: s }))}
+        onPageChange={(p) => setFilters((f) => ({ ...f, page: p }))}
+      />
+    </ContextContainer>
+  );
+}
 
-      const users = result.items.map((student) => ({
-        student: (
-          <UserDisplayItem {...usersInfo?.userAgents?.find((u) => u.id === student.user)?.user} />
-        ),
-        status: getStatus(student),
-        completed: student.end ? new Date(student.end).toLocaleString() : '-',
-        avgTime: student.end ? (new Date(student.end) - new Date(student.start)) / 1000 / 60 : '-',
-        score: 'NYI',
-        actions: (
-          <Button
-            variant="link"
-            onClick={() => history.push(`/private/tasks/correction/${instance}/${student.user}`)}
-          >
-            Assess
-          </Button>
-        ),
-      }));
+ListStudents.propTypes = {
+  instance: PropTypes.string.isRequired,
+};
 
-      setStudents(users);
-    }
-  }, []);
+export default function DetailsPage() {
+  const layout = useLayout();
+  const { instance } = useParams();
+
+  const [closed, setClosed] = useState();
+
+  const options = useMemo(
+    () => ({
+      id: instance,
+      columns: JSON.stringify(['deadline', 'closeDate']),
+    }),
+    [instance]
+  );
+
+  const [task, , , reFetch] = useApi(getInstanceRequest, options);
 
   useEffect(() => {
     if (!!task?.closeDate !== closed) {
@@ -205,21 +251,7 @@ export default function DetailsPage() {
             <ContextContainer title="TIMELINE">-</ContextContainer>
           </ContextContainer>
 
-          {/* Students */}
-          <ContextContainer title={`${students?.length || 0} Students`}>
-            <ContextContainer direction="row">
-              <Select
-                label="BULK ACTION (0 Selected)"
-                orientation="horizontal"
-                placeholder="SELECT ACTION..."
-                data={[{ value: 'Hola', label: 'Holaasa' }]}
-              />
-              <TextInput placeholder="SEARCH STUDENTS" />
-            </ContextContainer>
-
-            {/* List */}
-            <Table columns={columns} data={students} />
-          </ContextContainer>
+          <ListStudents instance={instance} />
         </ContextContainer>
       </PageContainer>
     </ContextContainer>
