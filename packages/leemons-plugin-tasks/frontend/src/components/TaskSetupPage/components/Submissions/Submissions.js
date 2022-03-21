@@ -38,19 +38,19 @@ function useValueUpdater(form, originalForm) {
   useEffect(() => {
     const subscription = originalForm.watch((value, field) => {
       if (field.name?.startsWith('submissions')) {
-        form.setValue('show', value !== undefined);
+        form.setValue('show', !!value?.submissions?.type || !!value?.submissions?.description);
       }
     });
 
     return () => subscription.unsubscribe();
-  });
+  }, [originalForm]);
 
   // EN: Propagate the first value to the child form
   // ES: Propagar el primer valor al formulario hijo
   useEffect(() => {
     const s = originalForm.getValues('submissions');
 
-    form.setValue('show', s?.type !== null);
+    form.setValue('show', !!s?.type || !!s?.description);
 
     if (s?.data) {
       form.setValue('data', s?.data);
