@@ -12,7 +12,7 @@ export default function useGetSteps(instance, taskId, student) {
   const steps = useMemo(() => [
     {
       label: 'Summary',
-      content: <SummaryStep id={taskId} />,
+      content: <SummaryStep id={taskId} instance={instance} />,
     },
     {
       label: 'Pretask',
