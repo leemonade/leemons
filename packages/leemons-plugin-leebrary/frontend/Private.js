@@ -7,6 +7,7 @@ import { goLoginPage } from '@users/navigate';
 const HomePage = loadable(() => import('./src/pages/private/library/Library'));
 const TestPage = loadable(() => import('./src/pages/private/test'));
 const UploadPage = loadable(() => import('./src/pages/private/test/upload'));
+const TestPermissionsPage = loadable(() => import('./src/pages/private/test/PermissionsData'));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -17,6 +18,9 @@ export default function Private() {
       <Switch>
         <Route exact path={`${path}/`}>
           <HomePage session={session} />
+        </Route>
+        <Route path={`${path}/test-permissions`}>
+          <TestPermissionsPage session={session} />
         </Route>
         <Route path={`${path}/test`}>
           <TestPage session={session} />
