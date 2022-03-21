@@ -77,7 +77,6 @@ export default function Filters({ onChange }) {
   } = form;
 
   const onSubmit = (values) => {
-    console.log(values);
     const { group } = values;
 
     onChange({

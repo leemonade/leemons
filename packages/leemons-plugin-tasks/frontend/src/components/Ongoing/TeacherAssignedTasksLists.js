@@ -31,7 +31,8 @@ function Actions({ id }) {
 
 async function getTasks(userAgent, filters, setTasks) {
   const response = await listTeacherTasks(userAgent, { ...filters, details: true });
-  const assignedTasks = response?.tasks?.items?.map((t) => {
+
+  const assignedTasks = response?.data?.items?.map((t) => {
     const task = t;
     task.students.count = t.students.count;
     task.group = '-';
@@ -128,20 +129,23 @@ export default function TeacherAssignedTasksLists() {
     }
   }, [centers, filters]);
 
-  if (!tasks?.length) {
-    return (
-      <ContextContainer direction="row" justifyContent="start" alignItems="center">
-        <Text>You don&apos;t have ongoing tasks. Assign a new one</Text>
-        <Button noFlex onClick={() => history.push('/private/tasks/library')}>
-          Go to Library
-        </Button>
-      </ContextContainer>
-    );
-  }
   return (
     <>
-      <Filters onChange={setFilters} />
-      {tasks?.length && <Table columns={columns} data={tasks} />}
+      <Filters
+        onChange={(f) => {
+          setTasks([]);
+          setFilters(f);
+        }}
+      />
+      {tasks?.length === 0 && (
+        <ContextContainer direction="row" justifyContent="start" alignItems="center">
+          <Text>You don&apos;t have ongoing tasks with the applied filters. Assign a new one</Text>
+          <Button noFlex onClick={() => history.push('/private/tasks/library')}>
+            Go to Library
+          </Button>
+        </ContextContainer>
+      )}
+      {tasks?.length > 0 && <Table columns={columns} data={tasks} />}
     </>
   );
 }

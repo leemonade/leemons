@@ -3,6 +3,7 @@ const { search } = require('../../../helpers/search');
 const parseId = require('../../task/helpers/parseId');
 const getGroups = require('../groups/get');
 const getGroupDetails = require('../groups/groups/get');
+const { get: getInstance } = require('../instance/get');
 
 // EN: Get the tasks you have been assigned to (order by assignment date)
 // ES: Obtener las tareas que tienes asignadas (ordenar por fecha de asignación)
@@ -45,12 +46,31 @@ async function getTeacherTasks(tasks, { teacher, offset, size } = {}, { transact
 // ES: Filtrar por fecha de asignación o fecha de vencimiento y por estado
 async function filterByInstanceAttributes(
   results,
-  { assignmentDate, deadline, status, showClosed, hideClosed = true, hideOpened } = {},
+  { assignmentDate, deadline, status, ...searchParams } = {},
   { transacting } = {}
 ) {
   if (!results.count) {
     return results;
   }
+
+  const showClosed =
+    typeof searchParams.showClosed === 'boolean'
+      ? searchParams.showClosed
+      : searchParams.showClosed === 'true';
+  let hideClosed;
+
+  if (searchParams.hideClosed === undefined) {
+    hideClosed = !showClosed;
+  } else {
+    hideClosed =
+      typeof searchParams.hideClosed === 'boolean'
+        ? searchParams.hideClosed
+        : searchParams.hideClosed === 'true';
+  }
+  const hideOpened =
+    typeof searchParams.hideOpened === 'boolean'
+      ? searchParams.hideOpened
+      : searchParams.hideOpened === 'true';
 
   const query = {
     id_$in: results.items.map((task) => task.id),
@@ -80,11 +100,18 @@ async function filterByInstanceAttributes(
     }
   }
 
-  if (!showClosed && hideClosed) {
-    query.closeDate_$lte = global.utils.sqlDatetime(new Date());
+  if (!showClosed && hideClosed && hideOpened) {
+    query.id_$null = true;
   }
 
-  if (hideOpened) {
+  if (!showClosed && hideClosed) {
+    query.$or = [
+      { closeDate_$lte: global.utils.sqlDatetime(new Date()) },
+      {
+        closeDate_$null: true,
+      },
+    ];
+  } else if (hideOpened) {
     query.$or = [
       { closeDate_$null: true },
       { closeDate_$gt: global.utils.sqlDatetime(new Date()) },
@@ -222,12 +249,7 @@ async function filterBySubjectAndGroup(tasks, { subject, group } = {}, { transac
 
 module.exports = async function searchInstance(query, offset, size, { transacting } = {}) {
   const tasks = await search(
-    [
-      getTeacherTasks,
-      filterByInstanceAttributes,
-      // filterByTaskAttributes,
-      //  filterBySubjectAndGroup
-    ],
+    [getTeacherTasks, filterByInstanceAttributes, filterByTaskAttributes, filterBySubjectAndGroup],
     query,
     offset,
     size,
@@ -236,5 +258,13 @@ module.exports = async function searchInstance(query, offset, size, { transactin
     }
   );
 
-  return tasks;
+  const results = await getInstance(
+    tasks.items.map(({ id }) => id),
+    { transacting }
+  );
+
+  return {
+    ...tasks,
+    items: results,
+  };
 };
