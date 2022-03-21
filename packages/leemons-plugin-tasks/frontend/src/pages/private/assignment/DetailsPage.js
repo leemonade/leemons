@@ -15,6 +15,8 @@ import {
 } from '@bubbles-ui/components';
 import { getUserAgentsInfoRequest } from '@users/request';
 import { useApi } from '@common';
+import { useLayout } from '@layout/context';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import listStudents from '../../../request/instance/listStudents';
 import getInstanceRequest from '../../../request/instance/get';
 import updateInstanceRequest from '../../../request/instance/updateInstance';
@@ -37,9 +39,11 @@ function getStatus({ start, end, opened }) {
 
 export default function DetailsPage() {
   const history = useHistory();
+  const layout = useLayout();
   const { instance } = useParams();
 
   const [students, setStudents] = useState();
+  const [closed, setClosed] = useState();
 
   const options = useMemo(
     () => ({
@@ -110,20 +114,63 @@ export default function DetailsPage() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!!task?.closeDate !== closed) {
+      setClosed(!!task?.closeDate);
+    }
+  }, [task]);
+
   const handleTaskClose = async (v) => {
-    await updateInstanceRequest(instance, {
-      closeDate: v ? new Date() : null,
-    });
+    setClosed(v);
+    if (v) {
+      // TRANSLATE: Add copy to this message
+      layout?.openDeleteConfirmationModal({
+        onConfirm: async () => {
+          try {
+            await updateInstanceRequest(instance, {
+              closeDate: v ? new Date() : null,
+            });
+
+            addSuccessAlert('Task closed');
+
+            reFetch();
+          } catch (e) {
+            addErrorAlert(`Task can't be closed ${e.message}`);
+          }
+        },
+        onCancel: () => {
+          setClosed(false);
+        },
+      })();
+    } else {
+      try {
+        await updateInstanceRequest(instance, {
+          closeDate: null,
+        });
+
+        addSuccessAlert('Task opened');
+
+        reFetch();
+      } catch (e) {
+        addErrorAlert(`Task can't be opened ${e.message}`);
+      }
+    }
   };
 
   const updateDeadline = async (date) => {
-    task.deadline = date;
+    try {
+      task.deadline = date;
 
-    await updateInstanceRequest(instance, {
-      deadline: date,
-    });
+      await updateInstanceRequest(instance, {
+        deadline: date,
+      });
 
-    reFetch();
+      addSuccessAlert('Deadline updated');
+
+      reFetch();
+    } catch (e) {
+      addErrorAlert(`Task deadline can't be updated: ${e.message}`);
+    }
   };
 
   return (
@@ -148,7 +195,7 @@ export default function DetailsPage() {
           +7D
         </Button>
 
-        <Switch onChange={handleTaskClose} checked={task?.closeDate} label="Close task" />
+        <Switch onChange={handleTaskClose} checked={closed} label="Close task" />
         <ContextContainer>
           <ContextContainer direction="row">
             {/* Graphs */}
