@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isEmpty } from 'lodash';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
-import { Box, Stack, ContextContainer, Select, Button } from '@bubbles-ui/components';
+import { Box, Stack, ContextContainer, Button } from '@bubbles-ui/components';
 import { TextEditor } from '@bubbles-ui/editors';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';

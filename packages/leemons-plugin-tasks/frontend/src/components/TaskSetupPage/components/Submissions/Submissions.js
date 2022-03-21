@@ -49,7 +49,8 @@ function useValueUpdater(form, originalForm) {
   // ES: Propagar el primer valor al formulario hijo
   useEffect(() => {
     const s = originalForm.getValues('submissions');
-    form.setValue('show', s !== undefined);
+
+    form.setValue('show', s?.type !== null);
 
     if (s?.data) {
       form.setValue('data', s?.data);

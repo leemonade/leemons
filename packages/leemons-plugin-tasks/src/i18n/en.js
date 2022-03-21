@@ -147,6 +147,7 @@ module.exports = {
           methodology: 'Methodology',
           recommendedDuration: 'Recommended duration',
           statement: 'Statement',
+          development: 'Development',
           objectives: 'Objectives',
           buttonNext: 'Next',
           buttonPrev: 'Previous',
