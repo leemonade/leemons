@@ -43,7 +43,7 @@ function ListStudents({ instance }) {
 
   const [filters, setFilters] = useState({
     page: 0,
-    size: 1,
+    size: 10,
   });
   const [students, setStudents] = useState();
 
@@ -130,11 +130,11 @@ function ListStudents({ instance }) {
       <PaginatedList
         columns={columns}
         items={students?.items}
-        page={students?.page}
+        page={students?.page + 1}
         size={students?.size}
         totalCount={students?.totalPages}
         onSizeChange={(s) => setFilters((f) => ({ ...f, size: s }))}
-        onPageChange={(p) => setFilters((f) => ({ ...f, page: p }))}
+        onPageChange={(p) => setFilters((f) => ({ ...f, page: p - 1 }))}
       />
     </ContextContainer>
   );
