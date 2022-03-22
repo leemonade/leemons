@@ -6,45 +6,67 @@ import {
   Checkbox,
   COLORS,
   ContextContainer,
+  Paragraph,
   Stack,
   Table,
   Title,
 } from '@bubbles-ui/components';
 import { addErrorAlert } from '@layout/alert';
-import { TagsAutocomplete, useStore } from '@common';
+import { LocaleDate, TagsAutocomplete, useStore } from '@common';
 import { AlertWarningTriangleIcon, BlockIcon } from '@bubbles-ui/icons/solid';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { difference, forEach, map } from 'lodash';
+import { cloneDeep, difference, forEach, isNil, map } from 'lodash';
 import getUserFullName from '@users/helpers/getUserFullName';
 import { getStudentsByTagsRequest } from '../../../request';
 
-const ByTag = ({ tree, center, messages, onChange }) => {
+const ByTag = ({ classes, center, messages, onChange, disableSave }) => {
   const [store, render] = useStore({
     allChecked: false,
     userAgentsChecked: [],
+    allUsedUserAgents: [],
   });
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const data = React.useMemo(() => {
-    const getClasses = (item) => {
-      let classes = [];
-      if (item.nodeType === 'class') {
-        classes.push(item.value);
-      }
-      if (item.childrens) {
-        forEach(item.childrens, (e) => {
-          classes = classes.concat(getClasses(e));
+
+  function getSelectedUserAgents() {
+    return difference(store.userAgentsChecked, store.allUsedUserAgents);
+  }
+
+  function getClassesThatExceedSeatLimit() {
+    const userAgents = getSelectedUserAgents();
+    const _classes = cloneDeep(classes);
+    forEach(userAgents, (student) => {
+      forEach(_classes, (classe) => {
+        if (classe.students.indexOf(student) < 0 && classe.parentStudents.indexOf(student) < 0) {
+          classe.students.push(student);
+        }
+      });
+    });
+    store.classesExceed = [];
+    forEach(_classes, (classe, index) => {
+      if (
+        isNil(classe.seats) ||
+        classe.seats < classe.students.length + classe.parentStudents.length
+      ) {
+        store.classesExceed.push({
+          classe: classes[index],
+          seats: isNil(classe.seats)
+            ? 0
+            : classe.seats -
+              (classes[index].students.length + classes[index].parentStudents.length),
         });
       }
-      return classes;
-    };
+    });
 
-    return { classes: getClasses(tree) };
-  }, [tree]);
-
-  console.log(data.classes);
+    if (userAgents.length && store.classesExceed.length) {
+      disableSave(true);
+    } else {
+      disableSave(false);
+    }
+  }
 
   function emit() {
-    onChange(difference(store.userAgentsChecked, store.allUsedUserAgents));
+    onChange(getSelectedUserAgents());
+    getClassesThatExceedSeatLimit();
   }
 
   function processUsers() {
@@ -52,7 +74,11 @@ const ByTag = ({ tree, center, messages, onChange }) => {
       ...student,
       checked: (
         <Checkbox
-          checked={store.allChecked || store.userAgentsChecked.includes(student.id)}
+          checked={
+            store.allUsedUserAgents.indexOf(student.id) >= 0
+              ? false
+              : store.allChecked || store.userAgentsChecked.includes(student.id)
+          }
           disabled={student.classStatus === 'all-used'}
           onChange={(ev) => {
             if (!ev) {
@@ -91,13 +117,13 @@ const ByTag = ({ tree, center, messages, onChange }) => {
 
         store.students = map(students, (student) => {
           let count = 0;
-          forEach(data.classes, (classe) => {
+          forEach(classes, (classe) => {
             if (classe.students.includes(student.id)) {
               count++;
             }
           });
           let classStatus = 'un-used';
-          if (count === data.classes.length) {
+          if (count === classes.length) {
             classStatus = 'all-used';
             store.allUsedUserAgents.push(student.id);
           } else if (count > 0) {
@@ -119,7 +145,7 @@ const ByTag = ({ tree, center, messages, onChange }) => {
                 ) : null}
               </Stack>
             ),
-            user: { ...student.user, birthdate: new Date(student.user.birthdate).toLocaleString() },
+            user: { ...student.user, birthdate: <LocaleDate date={student.user.birthdate} /> },
           };
         });
         processUsers();
@@ -129,6 +155,21 @@ const ByTag = ({ tree, center, messages, onChange }) => {
       addErrorAlert(getErrorMessage(err));
     }
   }
+
+  React.useEffect(() => {
+    (async () => {
+      if (store.tags?.length) {
+        getClassesThatExceedSeatLimit();
+        await onTagsChange(store.tags);
+        emit();
+      }
+    })();
+  }, [classes]);
+
+  React.useEffect(() => {
+    getClassesThatExceedSeatLimit();
+    emit();
+  }, []);
 
   let tableHeaders = [
     {
@@ -207,16 +248,36 @@ const ByTag = ({ tree, center, messages, onChange }) => {
           </Stack>
           {store.students.length ? (
             <ContextContainer>
+              {store.classesExceed.length ? (
+                <Alert severity="error" closeable={false}>
+                  {messages.seatsError1}
+                  <br />
+                  {store.classesExceed.map((classe) => (
+                    <>
+                      {messages.seatsClassError
+                        .replace('{{className}}', classe.classe.name)
+                        .replace('{{seats}}', classe.seats)}
+                      <br />
+                    </>
+                  ))}
+                  {messages.seatsError2}
+                </Alert>
+              ) : null}
               {store.allUsedUserAgents.length ? (
                 <Alert severity="error" closeable={false}>
                   {messages.studentsError.replace('{{count}}', store.allUsedUserAgents.length)}
                 </Alert>
               ) : null}
+
               {store.usedUserAgents.length ? (
                 <Alert severity="warning" closeable={false}>
                   {messages.studentsWarning.replace('{{count}}', store.usedUserAgents.length)}
                 </Alert>
               ) : null}
+
+              <Paragraph>
+                {messages.selected.replace('{{count}}', getSelectedUserAgents().length)}
+              </Paragraph>
 
               <Table columns={tableHeaders} data={store.students} />
             </ContextContainer>
@@ -231,7 +292,8 @@ ByTag.propTypes = {
   messages: PropTypes.object,
   center: PropTypes.string,
   onChange: PropTypes.func,
-  tree: PropTypes.any,
+  disableSave: PropTypes.func,
+  classes: PropTypes.array,
 };
 
 // eslint-disable-next-line import/prefer-default-export

@@ -8,7 +8,6 @@ import { getUserAgentDetailForPageRequest } from '../../../../request';
 function UserAgentTags({ t, userAgent, form, isEditMode }) {
   async function init() {
     const { data } = await getUserAgentDetailForPageRequest(userAgent.id);
-    console.log(data.tags);
     form.setValue('tags', data.tags);
   }
 

@@ -24,6 +24,8 @@ const TreeGroupDetail = ({
   item,
   selectSubjectsNode,
 }) => {
+  const [disableSave, setDisabledSave] = React.useState(false);
+
   const {
     reset,
     control,
@@ -38,6 +40,10 @@ const TreeGroupDetail = ({
 
   function onChangeAddUsers(e) {
     setValue('students', e);
+  }
+
+  function onDisableSave(e) {
+    setDisabledSave(e);
   }
 
   return (
@@ -102,6 +108,7 @@ const TreeGroupDetail = ({
           {group ? (
             <SelectUsersForAddToClasses
               onChange={onChangeAddUsers}
+              disableSave={onDisableSave}
               center={center}
               messages={messagesAddUsers}
               tree={item}
@@ -130,7 +137,7 @@ const TreeGroupDetail = ({
           ) : null}
 
           <Box>
-            <Button loading={saving} type="submit">
+            <Button disabled={disableSave} loading={saving} type="submit">
               {messages.save}
             </Button>
           </Box>

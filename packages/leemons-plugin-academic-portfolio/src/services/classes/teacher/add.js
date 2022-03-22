@@ -9,6 +9,8 @@ async function add(_class, teacher, type, { transacting } = {}) {
     },
     { transacting }
   );
+  // TODO: Añadir al profesor que pueda ver a los alumnos y al resto de profesores y añadir al alumno que pueda ver al profesor y al resto de alumnos
+
   // TODO: Añadir el permiso del profesor a la clase
   /*
   permissions.addCustomPermissionToUserAgent(jaimeid, {

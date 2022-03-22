@@ -14,6 +14,7 @@ export function Provider({ children }) {
     const token = getCookieToken(true);
     if (token && token !== store.token) {
       // console.log(token);
+
       const config = {
         auth: {},
       };

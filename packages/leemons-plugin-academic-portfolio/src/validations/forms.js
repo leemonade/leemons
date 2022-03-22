@@ -659,6 +659,8 @@ const updateSubjectSchema = {
     id: stringSchema,
     name: stringSchema,
     credits: numberSchema,
+    subjectType: stringSchema,
+    knowledge: stringSchemaNullable,
   },
   required: ['id'],
   additionalProperties: false,

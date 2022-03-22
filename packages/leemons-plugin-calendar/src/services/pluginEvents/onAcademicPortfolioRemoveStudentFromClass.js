@@ -9,17 +9,11 @@ async function remove(classId, student, { transacting }) {
   );
 }
 
-function onAcademicPortfolioRemoveClassStudents(data, { classIds, classStudents, transacting }) {
+function onAcademicPortfolioRemoveStudentFromClass(data, { classId, studentId, transacting }) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     try {
-      const promises = [];
-      _.forEach(classIds, (classId) => {
-        _.forEach(classStudents, ({ student }) => {
-          promises.push(remove(classId, student, { transacting }));
-        });
-      });
-      await Promise.all(promises);
+      await remove(classId, studentId, { transacting });
       resolve();
     } catch (e) {
       console.error(e);
@@ -27,4 +21,4 @@ function onAcademicPortfolioRemoveClassStudents(data, { classIds, classStudents,
   });
 }
 
-module.exports = { onAcademicPortfolioRemoveClassStudents };
+module.exports = { onAcademicPortfolioRemoveStudentFromClass };

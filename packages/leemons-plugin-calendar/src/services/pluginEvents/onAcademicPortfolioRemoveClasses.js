@@ -9,6 +9,7 @@ async function remove(id, { transacting }) {
   );
 
   if (classCalendar) {
+    console.log(classCalendar);
     await leemons.plugin.services.calendar.remove(classCalendar.calendar, { transacting });
   }
 }

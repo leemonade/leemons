@@ -19,6 +19,9 @@ const {
 const {
   onAcademicPortfolioRemoveClassStudents,
 } = require('./src/services/pluginEvents/onAcademicPortfolioRemoveClassStudents');
+const {
+  onAcademicPortfolioRemoveStudentFromClass,
+} = require('./src/services/pluginEvents/onAcademicPortfolioRemoveStudentFromClass');
 
 async function events(isInstalled) {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
@@ -41,6 +44,10 @@ async function events(isInstalled) {
   leemons.events.on(
     'plugins.academic-portfolio:after-add-class-student',
     onAcademicPortfolioAddClassStudent
+  );
+  leemons.events.on(
+    'plugins.academic-portfolio:after-remove-students-from-class',
+    onAcademicPortfolioRemoveStudentFromClass
   );
   leemons.events.on(
     'plugins.academic-portfolio:after-update-class',

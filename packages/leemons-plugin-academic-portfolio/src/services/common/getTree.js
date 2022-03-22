@@ -168,7 +168,18 @@ async function getTree(nodeTypes, { transacting } = {}) {
     return _.sortBy(nodes, (n) => n.value.index || n.value.name);
   };
 
-  return getNodeObjectKeysAsArray(tree);
+  function setTreeIds(nodes, parentId) {
+    _.forEach(nodes, (node, i) => {
+      // eslint-disable-next-line no-param-reassign
+      node.treeId = `${parentId ? `${parentId}.` : ''}${i}|${node.nodeType}|${node.value.id}`;
+      if (node.childrens) {
+        setTreeIds(node.childrens, node.treeId);
+      }
+    });
+    return nodes;
+  }
+
+  return setTreeIds(getNodeObjectKeysAsArray(tree));
 }
 
 module.exports = { getTree };

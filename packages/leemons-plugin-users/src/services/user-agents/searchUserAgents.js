@@ -13,6 +13,7 @@ const { getUserAgentContacts } = require('./contacts/getUserAgentContacts');
  *    user: {
  *      name: string | undefined,
  *      surnames: string | undefined,
+ *      secondSurname: string | undefined,
  *      email: string | undefined
  *    } | undefined}
  * } filters - To search
@@ -112,10 +113,12 @@ async function searchUserAgents(
       if (user.name) query.$or.push({ name_$contains: user.name });
       if (user.surnames) query.$or.push({ surnames_$contains: user.surnames });
       if (user.email) query.$or.push({ email_$contains: user.email });
+      if (user.secondSurname) query.$or.push({ secondSurname_$contains: user.secondSurname });
     } else {
       if (user.name) query.$or.push({ name: user.name });
       if (user.surnames) query.$or.push({ surnames: user.surnames });
       if (user.email) query.$or.push({ email: user.email });
+      if (user.secondSurname) query.$or.push({ secondSurname: user.secondSurname });
     }
     const users = await table.users.find(query, { columns: ['id'], transacting });
     userIds = userIds.concat(_.map(users, 'id'));

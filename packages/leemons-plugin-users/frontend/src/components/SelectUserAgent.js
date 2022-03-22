@@ -9,7 +9,7 @@ import { getUserAgentsInfoRequest, searchUserAgentsRequest } from '../request';
 
 // EN: The Component for MultiSelect selected values component
 // ES: El componente para el componente MultiSelect de valores seleccionados
-function ValueItem({ onRemove, ...props }) {
+export function SelectUserAgentValueComponent({ onRemove, ...props }) {
   return (
     <Box>
       {onRemove ? (
@@ -42,6 +42,8 @@ const SelectUserAgent = forwardRef(
       returnItem,
       itemRenderProps = { variant: 'rol' },
       valueRenderProps = { variant: 'inline', size: 'xs', style: { padding: 0 } },
+      itemComponent: ItemComponent = UserDisplayItem,
+      valueComponent: ValueComponent = SelectUserAgentValueComponent,
       ...props
     },
     ref
@@ -59,6 +61,7 @@ const SelectUserAgent = forwardRef(
           user: {
             name: value,
             surnames: value,
+            secondSurname: value,
             email: value,
           },
         };
@@ -96,7 +99,11 @@ const SelectUserAgent = forwardRef(
     function handleChange(value) {
       /*
       if (maxSelectedValues === 1) {
-        props.onChange(value[0]);
+        if (value.length >= 0) {
+          props.onChange(value[0], find(store.data, { value: value[0] }));
+        } else {
+          props.onChange(null);
+        }
       } else {
         props.onChange(value);
       }
@@ -227,8 +234,8 @@ const SelectUserAgent = forwardRef(
         ref={ref}
         searchable
         onSearchChange={search}
-        itemComponent={(p) => <UserDisplayItem {...p} {...itemRenderProps} />}
-        valueComponent={(p) => <ValueItem {...p} {...valueRenderProps} />}
+        itemComponent={(p) => <ItemComponent {...p} {...itemRenderProps} />}
+        valueComponent={(p) => <ValueComponent {...p} {...valueRenderProps} />}
         maxSelectedValues={maxSelectedValues}
         data={data}
         // EN: The value can be an array or a single value (string), so convert it to an array
@@ -251,9 +258,11 @@ SelectUserAgent.propTypes = {
   returnItem: PropTypes.bool,
   itemRenderProps: PropTypes.object,
   valueRenderProps: PropTypes.object,
+  itemComponent: PropTypes.element,
+  valueComponent: PropTypes.element,
 };
 
-ValueItem.propTypes = {
+SelectUserAgentValueComponent.propTypes = {
   onRemove: PropTypes.func,
 };
 
