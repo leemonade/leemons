@@ -123,18 +123,19 @@ export default function PromotionsList() {
     render();
   }
 
-  async function onChange({ program: programId, grade: gradeId }, { name }, useRender = true) {
-    if (name === 'grade') {
-      store.selectData.gradeScales = map(find(store.grades, { id: gradeId }).scales, (scale) => ({
-        label: `${scale.letter ? `${scale.letter} (` : ''} ${scale.number}${
-          scale.letter ? `)` : ''
-        }`,
-        value: scale.id,
-      }));
-      console.log(store.grades, useRender, store.selectData.gradeScales);
-    }
+  async function onChange({ program: programId }, { name }, useRender = true) {
     if (name === 'program') {
       const program = await getProgramDetail(programId);
+      store.selectData.gradeScales = map(
+        find(store.grades, { id: program.evaluationSystem }).scales,
+        (scale) => ({
+          label: `${scale.letter ? `${scale.letter} (` : ''} ${scale.number}${
+            scale.letter ? `)` : ''
+          }`,
+          value: scale.id,
+        })
+      );
+
       store.selectData.courses = map(program.courses, (course) => ({
         label: course.name || t('courseName', { index: course.index }),
         value: course.id,

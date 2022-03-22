@@ -22,9 +22,12 @@ module.exports = {
       },
     },
     program: {
-      references: {
+      type: 'string',
+      /*
+       references: {
         collection: 'plugins_academic-portfolio::programs',
       },
+      */
     },
     // ES: Grupo desde el que empezar a evaluar las condiciones
     // EN: Group from which start to evaluate the conditions

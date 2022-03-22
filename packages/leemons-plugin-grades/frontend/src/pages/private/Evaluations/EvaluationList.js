@@ -269,6 +269,16 @@ export default function EvaluationList() {
     return m;
   }, [t]);
 
+  function getCenter() {
+    const query = new URLSearchParams(window.location.search);
+    return query.get('center');
+  }
+
+  React.useEffect(() => {
+    const center = getCenter();
+    if (center) onSelectCenter(center);
+  }, []);
+
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader values={headerValues} />
@@ -281,7 +291,11 @@ export default function EvaluationList() {
                 <Paper fullWidth padding={5}>
                   <ContextContainer divided>
                     <Box>
-                      <SelectCenter label={t('selectCenter')} onChange={onSelectCenter} />
+                      <SelectCenter
+                        value={store.center}
+                        label={t('selectCenter')}
+                        onChange={onSelectCenter}
+                      />
                     </Box>
                     {store.center && (
                       <Box>
