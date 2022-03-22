@@ -64,6 +64,16 @@ const LibraryPageContent = () => {
       </Box>
       <Box style={{ overflowY: 'scroll' }}>
         <Switch>
+          <Route path={`${path}/:category/new`.replace('//', '/')}>
+            <NewAssetPage />
+          </Route>
+          <Route path={`${path}/edit/:id`.replace('//', '/')}>
+            <Box>
+              <Paper shadow="none">
+                <Text>Editando el asset</Text>
+              </Paper>
+            </Box>
+          </Route>
           <Route exact path={path}>
             <Stack direction="column" fullHeight>
               <Paper shadow="none" skipFlex>
@@ -77,16 +87,6 @@ const LibraryPageContent = () => {
                 </Stack>
               </Box>
             </Stack>
-          </Route>
-          <Route path={`${path}/:category/new`.replace('//', '/')}>
-            <NewAssetPage />
-          </Route>
-          <Route path={`${path}/edit/:id`.replace('//', '/')}>
-            <Box>
-              <Paper shadow="none">
-                <Text>Editando el asset</Text>
-              </Paper>
-            </Box>
           </Route>
           <Route>
             <Redirect to={path} />

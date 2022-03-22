@@ -69,7 +69,15 @@ module.exports = {
       errorMessages: {
         user: 'User is required',
         userRole: 'Role is required',
+        share: 'You are not allowed to share this resource',
       },
     },
+  },
+  roleLabels: {
+    viewer: 'Viewer',
+    commentor: 'Commentor',
+    editor: 'Editor',
+    owner: 'Owner',
+    public: 'Public',
   },
 };

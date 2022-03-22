@@ -12,6 +12,7 @@ const { updateMany } = require('./updateMany');
 const { removeMany } = require('./removeMany');
 const { addActionMany } = require('./addActionMany');
 const { hasActionMany } = require('./hasActionMany');
+const { findUsersWithPermissions } = require('./findUsersWithPermissions');
 const { findUserAgentsWithPermission } = require('./findUserAgentsWithPermission');
 const { manyPermissionsHasManyActions } = require('./manyPermissionsHasManyActions');
 
@@ -42,6 +43,7 @@ module.exports = {
   addActionMany,
   hasActionMany,
   getUserAgentPermissions,
+  findUsersWithPermissions,
   userAgentHasCustomPermission,
   findUserAgentsWithPermission,
   manyPermissionsHasManyActions,

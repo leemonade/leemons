@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { find, isEmpty } from 'lodash';
+import { find, isArray, isEmpty, isNil } from 'lodash';
+import { useParams } from 'react-router-dom';
 import {
   Box,
   Paper,
@@ -8,7 +9,7 @@ import {
   Button,
   TableInput,
   Stack,
-  TextInput,
+  Alert,
   Select,
   Title,
   Paragraph,
@@ -19,48 +20,81 @@ import { LibraryItem } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import prefixPN from '../../../helpers/prefixPN';
+import { prepareAsset } from '../../../helpers/prepareAsset';
+import { getAssetRequest, setPermissionsRequest } from '../../../request';
 
 const ROLES = [
+  { label: 'Owner', value: 'owner' },
   { label: 'Viewer', value: 'viewer' },
   { label: 'Editor', value: 'editor' },
+  { label: 'Commentor', value: 'commentor' },
 ];
 
-const ASSET = {
-  id: '620bbb607129df59430f3329',
-  color: '#DC5571',
-  name: 'The Roman Empire',
-  fileType: 'video',
-  description:
-    'We’ve always been told that the brain contains billions of neurons, which, of course, have an essential role in all the processes we do. But what is the role of the neurons in the brain?',
-  metadata: [
-    { label: 'Quality', value: '128kb' },
-    { label: 'Format', value: 'mp3' },
-    { label: 'Duration', value: '10 min' },
-    { label: 'Transcript', value: 'Not available' },
-  ],
-  tags: ['Rome', 'Docu'],
-  cover:
-    'https://images.unsplash.com/photo-1627552245715-77d79bbf6fe2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=640&q=80',
-  url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-  public: false,
-};
-
 const PermissionsData = ({ sharing }) => {
-  const asset = ASSET;
+  const [asset, setAsset] = useState(null);
 
   const [t] = useTranslateLoader(prefixPN('assetSetup'));
   const [loading, setLoading] = useState(false);
   const [usersData, setUsersData] = useState([]);
   const [roles, setRoles] = useState(ROLES);
   const [isPublic, setIsPublic] = useState(asset?.public);
+  const params = useParams();
 
-  useEffect(() => console.log(usersData), [usersData]);
+  const loadAsset = async (id) => {
+    const results = await getAssetRequest(id);
+    if (results.asset && results.asset.id !== asset?.id) {
+      setAsset(prepareAsset(results.asset));
+      const { canAccess } = results.asset;
+      if (isArray(canAccess)) {
+        setUsersData(
+          canAccess.map((user) => ({
+            user,
+            role: user.permissions[0],
+            editable: user.permissions[0] !== 'owner',
+          }))
+        );
+      }
+    }
+  };
+
+  const savePermissions = async () => {
+    try {
+      setLoading(true);
+      // console.log('usersData:', usersData);
+      const userAgentsAndRoles = usersData
+        .filter((item) => item.editable !== false)
+        .map((userData) => ({
+          userAgent: userData.user.value || userData.user.userAgentIds[0],
+          role: userData.role,
+        }));
+
+      // console.log('userAgentsAndRoles:', userAgentsAndRoles);
+      await setPermissionsRequest(asset.id, userAgentsAndRoles);
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    loadAsset(params.asset);
+  }, [params]);
 
   useEffect(() => {
     if (asset?.public !== isPublic) {
       setIsPublic(asset?.public);
     }
   }, [asset]);
+
+  const handleOnClick = () => {
+    savePermissions();
+  };
+
+  const checkIfUserIsAdded = (userData) => {
+    const found = find(usersData, (data) => data.user.id === userData.user.id);
+    return isNil(found);
+  };
 
   const USERS_COLUMNS = useMemo(
     () => [
@@ -73,7 +107,7 @@ const PermissionsData = ({ sharing }) => {
         },
         editable: false,
         valueRender: (value) => <UserDisplayItem {...value} variant="inline" size="xs" />,
-        style: { width: '65%' },
+        style: { width: '60%' },
       },
       {
         Header: 'Role',
@@ -112,42 +146,51 @@ const PermissionsData = ({ sharing }) => {
             <Paper bordered padding={1} shadow="none">
               <LibraryItem asset={asset} />
             </Paper>
-            <ContextContainer divided>
-              <Box>
-                <Switch
-                  checked={isPublic}
-                  onChange={setIsPublic}
-                  label={t('permissionsData.labels.isPublic')}
-                />
-              </Box>
-              {!isPublic && (
-                <ContextContainer>
-                  <Box>
-                    <Title order={5}>{t('permissionsData.labels.addUsers')}</Title>
-                    <Paragraph>{t('permissionsData.labels.addUsersDescription')}</Paragraph>
-                  </Box>
-                  {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
-                    <TableInput
-                      data={usersData}
-                      onChange={setUsersData}
-                      columns={USERS_COLUMNS}
-                      labels={USER_LABELS}
-                      showHeaders={false}
-                      sortable={false}
-                      resetOnAdd
-                      editable
-                    />
-                  )}
-                </ContextContainer>
-              )}
-              <Stack justifyContent={'end'} fullWidth>
-                <Button loading={loading}>
-                  {sharing
-                    ? t('permissionsData.labels.shareButton')
-                    : t('permissionsData.labels.saveButton')}
-                </Button>
-              </Stack>
-            </ContextContainer>
+            {isArray(asset?.canAccess) ? (
+              <ContextContainer divided>
+                <Box>
+                  <Switch
+                    checked={isPublic}
+                    onChange={setIsPublic}
+                    label={t('permissionsData.labels.isPublic')}
+                  />
+                </Box>
+
+                {!isPublic && (
+                  <ContextContainer>
+                    <Box>
+                      <Title order={5}>{t('permissionsData.labels.addUsers')}</Title>
+                      <Paragraph>{t('permissionsData.labels.addUsersDescription')}</Paragraph>
+                    </Box>
+                    {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
+                      <TableInput
+                        data={usersData}
+                        onChange={setUsersData}
+                        columns={USERS_COLUMNS}
+                        labels={USER_LABELS}
+                        showHeaders={false}
+                        sortable={false}
+                        onBeforeAdd={checkIfUserIsAdded}
+                        resetOnAdd
+                        editable
+                        unique
+                      />
+                    )}
+                  </ContextContainer>
+                )}
+                <Stack justifyContent={'end'} fullWidth>
+                  <Button loading={loading} onClick={handleOnClick}>
+                    {sharing
+                      ? t('permissionsData.labels.shareButton')
+                      : t('permissionsData.labels.saveButton')}
+                  </Button>
+                </Stack>
+              </ContextContainer>
+            ) : (
+              <Alert severity="error" closeable={false}>
+                {t('permissionsData.errorMessages.share')}
+              </Alert>
+            )}
           </ContextContainer>
         )}
       </Paper>

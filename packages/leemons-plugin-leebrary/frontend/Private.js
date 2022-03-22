@@ -16,10 +16,7 @@ export default function Private() {
   return (
     <div>
       <Switch>
-        <Route exact path={`${path}/`}>
-          <HomePage session={session} />
-        </Route>
-        <Route path={`${path}/test-permissions`}>
+        <Route path={`${path}/test-permissions/:asset`}>
           <TestPermissionsPage session={session} />
         </Route>
         <Route path={`${path}/test`}>
@@ -27,6 +24,9 @@ export default function Private() {
         </Route>
         <Route path={`${path}/upload`}>
           <UploadPage session={session} />
+        </Route>
+        <Route path={`${path}/`}>
+          <HomePage session={session} />
         </Route>
       </Switch>
     </div>

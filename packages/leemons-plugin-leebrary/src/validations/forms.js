@@ -30,6 +30,35 @@ async function validateAddAsset(data) {
   }
 }
 
+const setPermissionsSchema = {
+  type: 'object',
+  properties: {
+    asset: stringSchema,
+    userAgentsAndRoles: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          userAgent: stringSchema,
+          role: stringSchema,
+        },
+        required: ['userAgent', 'role'],
+      },
+    },
+  },
+  required: ['asset', 'userAgentsAndRoles'],
+  additionalProperties: true,
+};
+
+async function validateSetPermissions(data) {
+  const validator = new LeemonsValidator(setPermissionsSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   validateAddAsset,
+  validateSetPermissions,
 };

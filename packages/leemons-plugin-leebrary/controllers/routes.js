@@ -21,6 +21,12 @@ module.exports = [
   },
   {
     path: '/assets/:id',
+    method: 'GET',
+    handler: 'assets.get',
+    authenticated: true,
+  },
+  {
+    path: '/assets/:id',
     method: 'DELETE',
     handler: 'assets.remove',
     authenticated: true,
@@ -160,13 +166,13 @@ module.exports = [
   /**
    * Permissions
    */
-  /*
   {
     path: '/asset/:asset/permissions',
     method: 'POST',
     handler: 'permissions.set',
     authenticated: true,
   },
+  /*
   {
     path: '/asset/:asset/permissions',
     method: 'DELETE',

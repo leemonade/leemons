@@ -69,7 +69,15 @@ module.exports = {
       errorMessages: {
         user: 'Usuario es requerido',
         userRole: 'Rol es requerido',
+        share: 'No tienes permiso para compartir el recurso',
       },
     },
+  },
+  roleLabels: {
+    viewer: 'Lectura',
+    commentor: 'Comentador',
+    editor: 'Editor',
+    owner: 'Propietario',
+    public: 'Público',
   },
 };

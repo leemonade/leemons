@@ -1,3 +1,4 @@
+/* eslint-disable no-unreachable */
 import React, { useEffect, useMemo, useState, useContext } from 'react';
 import { isEmpty, isArray } from 'lodash';
 import { useHistory, useParams } from 'react-router-dom';
@@ -52,7 +53,7 @@ const NewAssetPage = () => {
       };
     }
     return null;
-  }, [file, category, asset]);
+  }, [t, file, category, asset]);
 
   return (
     <Grid columns={10}>

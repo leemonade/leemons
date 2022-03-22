@@ -5,8 +5,8 @@ import { ContextContainer } from '@bubbles-ui/components';
 import { LibraryForm } from '@bubbles-ui/leemons';
 import { unflatten, TagsAutocomplete } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getAuthorizationTokenForAllCenters } from '@users/session';
 import prefixPN from '../../helpers/prefixPN';
+import { prepareAsset } from '../../helpers/prepareAsset';
 import { newAssetRequest } from '../../request';
 
 const BasicData = ({ file, categoryId, onSave = () => {}, onNext = () => {} }) => {
@@ -23,20 +23,8 @@ const BasicData = ({ file, categoryId, onSave = () => {}, onNext = () => {} }) =
 
     try {
       const { asset } = await newAssetRequest(data, categoryId);
-      [asset.fileType] = asset.file.type.split('/');
-      asset.url = `${window.location.origin}/api/leebrary/file/${
-        asset.file.id
-      }?authorization=${getAuthorizationTokenForAllCenters()}`;
-
-      if (asset.cover) {
-        asset.cover = `${window.location.origin}/api/leebrary/file/${
-          asset.cover.id
-        }?authorization=${getAuthorizationTokenForAllCenters()}`;
-      }
-
       console.log(asset);
-
-      onSave(asset);
+      onSave(prepareAsset(asset));
       onNext();
       setLoading(false);
     } catch (err) {
