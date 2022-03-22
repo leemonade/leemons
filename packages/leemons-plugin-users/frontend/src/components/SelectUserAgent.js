@@ -109,13 +109,13 @@ const SelectUserAgent = forwardRef(
       }
       */
 
-      let values = value;
+      let values = value || [];
 
       if (returnItem) {
         values = values.map((item) => find(store.data, { value: item }));
       }
 
-      values = maxSelectedValues === 1 ? values[0] : values;
+      values = maxSelectedValues === 1 ? values[0] || null : values;
 
       props.onChange(values);
     }
