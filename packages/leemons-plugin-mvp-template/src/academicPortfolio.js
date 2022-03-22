@@ -1,13 +1,13 @@
 /* eslint-disable no-unreachable */
 /* eslint-disable no-await-in-loop */
-const { keys, find, flattenDeep, uniq } = require('lodash');
+const { keys, find } = require('lodash');
 const importProfiles = require('./bulk/academic-portfolio/profiles');
 const importPrograms = require('./bulk/academic-portfolio/programs');
 const importSubjectTypes = require('./bulk/academic-portfolio/subjectTypes');
 const importKnowledgeAreas = require('./bulk/academic-portfolio/knowledgeAreas');
 const importSubjects = require('./bulk/academic-portfolio/subjects');
 
-async function initAcademicPortfolio({ centers, profiles, users }) {
+async function initAcademicPortfolio({ centers, profiles, users, grades }) {
   const { services } = leemons.getPlugin('academic-portfolio');
 
   try {
@@ -20,7 +20,7 @@ async function initAcademicPortfolio({ centers, profiles, users }) {
     // ·····················································
     // PROGRAMS
 
-    const programs = await importPrograms(centers);
+    const programs = await importPrograms(centers, grades);
     const programsKeys = keys(programs);
 
     for (let i = 0, len = programsKeys.length; i < len; i++) {

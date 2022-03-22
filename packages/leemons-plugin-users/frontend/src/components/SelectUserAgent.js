@@ -1,7 +1,8 @@
+/* eslint-disable no-unreachable */
 import React, { forwardRef, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { cloneDeep, find, findIndex, map, isEmpty, isArray } from 'lodash';
-import { ActionButton, Box, MultiSelect, UserDisplayItem } from '@bubbles-ui/components';
+import { cloneDeep, find, findIndex, map, isEmpty, isArray, flatten, uniq } from 'lodash';
+import { ActionButton, Box, Stack, MultiSelect, UserDisplayItem } from '@bubbles-ui/components';
 import { useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
@@ -11,24 +12,14 @@ import { getUserAgentsInfoRequest, searchUserAgentsRequest } from '../request';
 // ES: El componente para el componente MultiSelect de valores seleccionados
 export function SelectUserAgentValueComponent({ onRemove, ...props }) {
   return (
-    <Box>
+    <Stack sx={(theme) => ({ paddingRight: theme.spacing[1] })}>
+      <UserDisplayItem {...props} />
       {onRemove ? (
-        <Box
-          sx={(theme) => ({
-            position: 'absolute',
-            zIndex: 9,
-            right: theme.spacing[2],
-            top: `calc(50% - ${theme.spacing[1] / 2}px  )`,
-            transform: 'translateY(-50%)',
-            backgroundColor: theme.colors.uiBackground01,
-          })}
-        >
+        <Box>
           <ActionButton icon={<RemoveIcon />} onClick={() => onRemove()} />
         </Box>
       ) : null}
-
-      <UserDisplayItem {...props} />
-    </Box>
+    </Stack>
   );
 }
 
@@ -44,6 +35,8 @@ const SelectUserAgent = forwardRef(
       valueRenderProps = { variant: 'inline', size: 'xs', style: { padding: 0 } },
       itemComponent: ItemComponent = UserDisplayItem,
       valueComponent: ValueComponent = SelectUserAgentValueComponent,
+      value: inputValue,
+      onChange = () => {},
       ...props
     },
     ref
@@ -116,8 +109,7 @@ const SelectUserAgent = forwardRef(
       }
 
       values = maxSelectedValues === 1 ? values[0] || null : values;
-
-      props.onChange(values);
+      onChange(values);
     }
 
     // EN: Handle controlled input value by adding the selected values to the data array
@@ -181,8 +173,8 @@ const SelectUserAgent = forwardRef(
     }
 
     useEffect(() => {
-      onValueChange(props.value);
-    }, [props.value]);
+      onValueChange(uniq(flatten(inputValue)));
+    }, [inputValue]);
 
     // EN: Initial search for the first render
     // ES: Búsqueda inicial para la primera renderización
@@ -206,7 +198,7 @@ const SelectUserAgent = forwardRef(
     }
 
     const propValue = useMemo(() => {
-      const { value } = props;
+      const value = inputValue;
 
       if (isEmpty(value)) {
         return [];
@@ -226,7 +218,7 @@ const SelectUserAgent = forwardRef(
       }
 
       return [value];
-    }, [props.value]);
+    }, [inputValue]);
 
     return (
       <MultiSelect
@@ -240,7 +232,7 @@ const SelectUserAgent = forwardRef(
         data={data}
         // EN: The value can be an array or a single value (string), so convert it to an array
         // ES: El valor puede ser un array o un valor simple (string), por lo que lo convertimos a un array
-        value={propValue}
+        value={uniq(flatten(propValue))}
         onChange={handleChange}
       />
     );

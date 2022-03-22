@@ -2,7 +2,7 @@ const { keys, trim, isEmpty, toLower } = require('lodash');
 const path = require('path');
 const itemsImport = require('../helpers/simpleListImport');
 
-async function importAcademicPortfolioPrograms(centers) {
+async function importAcademicPortfolioPrograms(centers, grades) {
   const filePath = path.resolve(__dirname, '../data.xlsx');
   const items = await itemsImport(filePath, 'ap_programs', 30, true, true);
 
@@ -17,6 +17,11 @@ async function importAcademicPortfolioPrograms(centers) {
       .map((val) => trim(val))
       .filter((val) => !isEmpty(val))
       .map((val) => centers[val]?.id);
+
+    // ·····················································
+    // GRADES
+
+    program.evaluationSystem = grades[program.evaluationSystem]?.id;
 
     // ·····················································
     // SUBSTAGES

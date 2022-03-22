@@ -44,9 +44,12 @@ module.exports = {
       },
     },
     subject: {
+      type: 'string',
+      /*
       references: {
         collection: 'plugins_academic-portfolio::subjects',
       },
+      */
     },
   },
   primaryKey: {
