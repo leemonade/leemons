@@ -7,6 +7,7 @@ import {
   deleteGrade,
   deleteGradeScale,
   deleteGradeTag,
+  getGrade,
   haveGrades,
   listGrades,
   updateGrade,
@@ -27,6 +28,7 @@ import {
   updateDependency,
 } from './dependencies';
 
+export const getGradeRequest = getGrade;
 export const addGradeRequest = addGrade;
 export const haveGradesRequest = haveGrades;
 export const listGradesRequest = listGrades;

@@ -33,6 +33,9 @@ module.exports = {
     page_title: 'Learning programs',
     page_description:
       'Elementary, High School, Bachelor, Masters… define the programs and courses offered in your organization. If you do not have traditional stages, you can create simple programs or courses instead.',
+    errorNoEvaluationSystems:
+      'There are no evaluation systems defined. Please, create one or more evaluation systems.',
+    errorNoEvaluationSystemsGoTo: 'Go to evaluation systems',
     common: {
       select_center: 'Select center',
       add_program: 'Add new program',
@@ -48,6 +51,7 @@ module.exports = {
           title: 'Basic Data',
           name: 'Program name',
           abbreviation: 'Program abbreviation',
+          evaluationSystem: 'Evaluation system',
           creditSystem: 'No need for credit system',
           credits: 'Total credits',
           oneStudentGroup: 'This program has only one group of students',
@@ -71,6 +75,7 @@ module.exports = {
         errorMessages: {
           name: { required: 'Required field' },
           abbreviation: { required: 'Required field' },
+          evaluationSystem: { required: 'Required field' },
           maxGroupAbbreviation: { required: 'Required field' },
         },
       },

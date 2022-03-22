@@ -24,6 +24,7 @@ const addProgramSchema = {
   properties: {
     name: stringSchema,
     centers: arrayStringSchema,
+    evaluationSystem: stringSchema,
     abbreviation: {
       type: 'string',
       minLength: 1,
@@ -58,6 +59,7 @@ const addProgramSchema = {
     'haveKnowledge',
     'subjectsFirstDigit',
     'subjectsDigits',
+    'evaluationSystem',
   ],
   additionalProperties: true,
 };

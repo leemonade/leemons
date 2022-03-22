@@ -15,7 +15,6 @@ const Conditions = ({ messages, errorMessages, selectData, form }) => {
   const [error, setError] = useState(false);
 
   const program = watch('program');
-  const grade = watch('grade');
 
   register('group', {
     validate: () => {
@@ -30,12 +29,14 @@ const Conditions = ({ messages, errorMessages, selectData, form }) => {
     setValue('group', e);
   }
 
+  console.log(selectData);
+
   return (
     <Box>
       <RuleGroup
         program={{ value: program }}
         grades={selectData.gradeScales}
-        gradeSystem={grade}
+        gradeSystem={program?.gradeSystem} // Antes se pasaba grade pero como ya no hay que seleccionarlo le paso programa para que la logica interna siga funcionando igual
         sources={selectData.sources}
         courses={selectData.courses}
         knowledges={selectData.knowledges}

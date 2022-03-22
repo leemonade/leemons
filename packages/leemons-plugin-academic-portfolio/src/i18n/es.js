@@ -33,6 +33,9 @@ module.exports = {
     page_title: 'Programas de aprendizaje',
     page_description:
       'Primaria, Secundaria, Bachillerato, Máster... define los programas y cursos que se ofrecen en tu organización. Si no tiene etapas tradicionales, puede crear programas o cursos simples en su lugar',
+    errorNoEvaluationSystems:
+      'No hay sistemas de evaluación disponibles. Por favor, cree uno o mas sistema de evaluación',
+    errorNoEvaluationSystemsGoTo: 'Ir a sistemas de evaluación',
     common: {
       select_center: 'Selecciona centro',
       add_program: 'Añadir nuevo programa',
@@ -48,6 +51,7 @@ module.exports = {
           title: 'Datos básicos',
           name: 'Nombre del programa',
           abbreviation: 'Abreviatura del programa:',
+          evaluationSystem: 'Sistema de evaluación:',
           creditSystem: 'No es necesario el sistema de créditos',
           credits: 'Total de créditos',
           oneStudentGroup: 'Este programa sólo tiene un grupo de estudiantes',
@@ -71,6 +75,7 @@ module.exports = {
         errorMessages: {
           name: { required: 'Campo requerido' },
           abbreviation: { required: 'Campo requerido' },
+          evaluationSystem: { required: 'Campo requerido' },
           maxGroupAbbreviation: { required: 'Campo requerido' },
         },
       },
