@@ -1,14 +1,17 @@
 import React, { useMemo } from 'react';
-import DeliveryStep from '../Steps/DeliveryStep';
-import PreTaskStep from '../Steps/PreTaskStep';
-import StatementAndDevelopmentStep from '../Steps/StatementAndDevelopmentStep';
-import SummaryStep from '../Steps/SummaryStep';
-import SelfReflectionStep from '../Steps/SelfReflectionStep';
-import FeedbackStep from '../Steps/FeedbackStep';
+import loadable from '@loadable/component';
+
+const DeliveryStep = loadable(() => import('../Steps/DeliveryStep'));
+const PreTaskStep = loadable(() => import('../Steps/PreTaskStep'));
+const StatementAndDevelopmentStep = loadable(() => import('../Steps/StatementAndDevelopmentStep'));
+const SummaryStep = loadable(() => import('../Steps/SummaryStep'));
+const SelfReflectionStep = loadable(() => import('../Steps/SelfReflectionStep'));
+const FeedbackStep = loadable(() => import('../Steps/FeedbackStep'));
+const CorrectionStep = loadable(() => import('../Steps/CorrectionStep'));
 
 export default function useGetSteps(instance, taskId, student) {
   // TODO: Calculate steps
-
+  // TRANSLATE: Steps labels on Student/TaskDetail and all the steps
   const steps = useMemo(() => [
     {
       label: 'Summary',
@@ -33,6 +36,10 @@ export default function useGetSteps(instance, taskId, student) {
     {
       label: 'Feedback',
       content: <FeedbackStep id={taskId} instance={instance} student={student} />,
+    },
+    {
+      label: 'Correction',
+      content: <CorrectionStep id={taskId} />,
     },
   ]);
 

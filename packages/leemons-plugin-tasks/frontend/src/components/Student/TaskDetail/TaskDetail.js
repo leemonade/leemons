@@ -21,6 +21,7 @@ export default function TaskDetail({ id, student }) {
           value: new Date().getTime(),
         });
       } catch (e) {
+        // TRANSLATE: Student not assigned to the task
         if (e.message === "Student or instance doesn't exist") {
           setTask({ error: 'Student not assigned to the task' });
           return;
@@ -36,6 +37,7 @@ export default function TaskDetail({ id, student }) {
   if (task?.error) {
     return (
       <PageContainer>
+        {/* TRANSLATE: Task detail title */}
         <AdminPageHeader title="Task Detail" />
         <ContextContainer>
           <Text>{task.error}</Text>
@@ -46,6 +48,7 @@ export default function TaskDetail({ id, student }) {
 
   return (
     <ContextContainer>
+      {/* TRANSLATE: Task name */}
       <AdminPageHeader title="FUTURE HEADER - TASK NAME" />
       <PageContainer>
         <Stepper data={steps} />

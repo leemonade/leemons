@@ -40,6 +40,7 @@ export default function SelectSubjects({
     [program]
   );
 
+  // TRANSLATE: Level labels
   const levelsList = useMemo(
     () => [
       {

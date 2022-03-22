@@ -104,6 +104,7 @@ export default function Filters({ onChange }) {
                       control={control}
                       name="group"
                       render={({ field }) => (
+                        // TRANSLATE: Class label
                         <SelectClass {...field} label="class" error={errors?.class} />
                       )}
                     />
@@ -113,6 +114,7 @@ export default function Filters({ onChange }) {
                       render={({ field }) => (
                         <Select
                           {...field}
+                          // TRANSLATE: Date type label
                           data={[
                             {
                               label: 'Deadline',
@@ -130,6 +132,7 @@ export default function Filters({ onChange }) {
                       control={control}
                       name="date.from"
                       render={({ field }) => (
+                        // TRANSLATE: From label
                         <DatePicker {...field} label="from" error={errors?.date?.from} />
                       )}
                     />
@@ -137,9 +140,11 @@ export default function Filters({ onChange }) {
                       control={control}
                       name="date.to"
                       render={({ field }) => (
+                        // TRANSLATE: To label
                         <DatePicker {...field} label="to" error={errors?.date?.to} />
                       )}
                     />
+                    {/* TRANSLATE: Apply button */}
                     <Button type="submit" variant="light">
                       Apply
                     </Button>

@@ -123,6 +123,7 @@ export default function AssignUsers({ labels, profile, assignTo, onChange }) {
         // EN: Do not allow to duplicate existing classes
         // ES: No permitir duplicar clases existentes
         if (exists) {
+          // TRANSLATE: Already assigned class error
           addErrorAlert('Tried to assign a class that is already assigned');
           return;
         }
@@ -153,6 +154,7 @@ export default function AssignUsers({ labels, profile, assignTo, onChange }) {
         <Controller
           control={control}
           name="assign"
+          // TRANSLATE: Assign required
           rules={{ required: 'Assign required' }}
           render={({ field }) => (
             <Select
@@ -169,6 +171,7 @@ export default function AssignUsers({ labels, profile, assignTo, onChange }) {
           <Controller
             control={control}
             name="assignee"
+            // TRANSLATE: Asssignee Required
             rules={{ required: 'Assignee Required' }}
             render={({ field }) => (
               <AssigneeSelector
@@ -190,6 +193,7 @@ export default function AssignUsers({ labels, profile, assignTo, onChange }) {
           return (
             <Box key={i}>
               <Text>
+                {/* TRANSLATE: Class name display and students length display */}
                 {type} - {type === 'class' ? label : `${students.length} students`}
               </Text>
               <DeleteIcon onClick={() => removeAssignee(o)} />

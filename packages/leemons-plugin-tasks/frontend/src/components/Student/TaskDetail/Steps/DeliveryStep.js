@@ -4,7 +4,6 @@ import {
   ContextContainer,
   Stack,
   Button,
-  Paragraph,
   Text,
   Alert,
   Paper,
@@ -22,6 +21,11 @@ function TaggedText({ tag, text }) {
     </Stack>
   );
 }
+
+TaggedText.propTypes = {
+  tag: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+};
 
 export default function DeliveryStep({ onNext, onPrevious, id }) {
   const options = useMemo(

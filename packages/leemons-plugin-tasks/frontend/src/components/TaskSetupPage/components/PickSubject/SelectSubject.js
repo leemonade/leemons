@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { isNil, find, map } from 'lodash';
+import { map } from 'lodash';
 import PropTypes from 'prop-types';
-import { ContextContainer, TableInput, Select } from '@bubbles-ui/components';
+import { ContextContainer, Select } from '@bubbles-ui/components';
 import { detailProgramRequest } from '@academic-portfolio/request';
 
 export default function SelectSubject({
@@ -64,6 +64,7 @@ export default function SelectSubject({
     [program]
   );
 
+  // TRANSLATE: Add level labels
   const levelsList = useMemo(
     () => [
       {

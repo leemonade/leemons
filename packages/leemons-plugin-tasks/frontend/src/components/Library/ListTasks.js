@@ -37,6 +37,7 @@ export default function ListTasks({ draft = false }) {
           });
         }}
       />
+      {/* TRANSLATE: Search input */}
       <SearchInput onChange={(value) => setName(value)} value={name} placeholder="search task" />
       {dataError ? (
         <Paragraph>Error {dataError.message}</Paragraph>

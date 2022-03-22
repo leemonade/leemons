@@ -45,9 +45,11 @@ export default function LibraryPage() {
 
       <PageContainer>
         <Tabs>
+          {/* TRANSLATE: Published tab */}
           <TabPanel label="Published">
             <ListTasks />
           </TabPanel>
+          {/* TRANSLATE: Draft tab */}
           <TabPanel label="Draft">
             <ListTasks draft />
           </TabPanel>

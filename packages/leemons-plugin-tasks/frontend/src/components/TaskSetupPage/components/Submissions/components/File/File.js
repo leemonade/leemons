@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
 import { Checkbox, TagsInput, NumberInput, Stack, Text } from '@bubbles-ui/components';
 
@@ -31,3 +32,12 @@ export default function File({ labels }) {
     </>
   );
 }
+
+File.propTypes = {
+  labels: PropTypes.shape({
+    multiFile: PropTypes.string,
+    type: PropTypes.string,
+    typePlaceholder: PropTypes.string,
+    maxSize: PropTypes.string,
+  }),
+};

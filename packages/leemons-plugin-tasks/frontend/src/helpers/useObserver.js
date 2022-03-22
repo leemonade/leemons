@@ -1,4 +1,5 @@
 import React, { useRef, useContext } from 'react';
+import PropTypes from 'prop-types';
 
 function observerState() {
   const ref = useRef({
@@ -51,6 +52,9 @@ function createContext() {
   const { Provider } = context;
 
   const Observer = ({ children }) => <Provider value={state}>{children}</Provider>;
+  Observer.propTypes = {
+    children: PropTypes.node,
+  };
 
   return { ...state, Observer, useObserver: () => useContext(context) };
 }

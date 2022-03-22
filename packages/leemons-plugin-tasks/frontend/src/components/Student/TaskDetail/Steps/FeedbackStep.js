@@ -7,7 +7,7 @@ import { useApi } from '@common';
 import getTaskRequest from '../../../../request/task/getTask';
 import updateStudentRequest from '../../../../request/instance/updateStudent';
 
-export default function FeedbackStep({ instance, student, id, onPrevious }) {
+export default function FeedbackStep({ instance, student, id, onPrevious, onNext }) {
   const history = useHistory();
 
   const options = useMemo(
@@ -18,14 +18,22 @@ export default function FeedbackStep({ instance, student, id, onPrevious }) {
     [id]
   );
 
-  const onNext = () => {
+  const updateStudent = () =>
     updateStudentRequest({
       instance,
       student,
       key: 'end',
       value: new Date().getTime(),
     });
+
+  const onFinish = async () => {
+    await updateStudent();
     history.push(`/private/tasks/ongoing`);
+  };
+
+  const handleNext = async () => {
+    await updateStudent();
+    onNext();
   };
 
   const [task] = useApi(getTaskRequest, options);
@@ -41,7 +49,8 @@ export default function FeedbackStep({ instance, student, id, onPrevious }) {
       </ContextContainer>
       <Stack fullWidth justifyContent="space-between">
         <Button onClick={onPrevious}>Previous</Button>
-        <Button onClick={onNext}>Finish</Button>
+        <Button onClick={handleNext}>See Correction</Button>
+        <Button onClick={onFinish}>Finish</Button>
       </Stack>
     </ContextContainer>
   );

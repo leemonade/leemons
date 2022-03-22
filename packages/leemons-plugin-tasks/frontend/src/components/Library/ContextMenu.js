@@ -69,6 +69,7 @@ ContextMenu.propTypes = {
   id: PropTypes.string.isRequired,
   posX: PropTypes.number.isRequired,
   posY: PropTypes.number.isRequired,
+  refresh: PropTypes.func.isRequired,
 };
 
 export default ContextMenu;

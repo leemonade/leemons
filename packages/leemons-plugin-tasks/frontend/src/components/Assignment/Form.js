@@ -5,7 +5,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { Button, ContextContainer, DatePicker, Box, Switch } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditor } from '@bubbles-ui/editors';
-import { assign } from 'lodash';
 import { prefixPN } from '../../helpers/prefixPN';
 import AssignUsers from './AssignUsers';
 import ConditionalInput from '../Inputs/ConditionalInput';

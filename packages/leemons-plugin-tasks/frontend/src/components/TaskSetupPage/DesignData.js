@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { isFunction, isEmpty } from 'lodash';
+import { isFunction } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Stack, ContextContainer, ColorInput, Button } from '@bubbles-ui/components';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
@@ -26,11 +26,7 @@ function DesignData({
     ...sharedData,
   };
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({ defaultValues });
+  const { control, handleSubmit } = useForm({ defaultValues });
 
   const { subscribe, unsubscribe, emitEvent } = useObserver();
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { useApi, unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -35,6 +36,10 @@ function Actions({ id }) {
     </ContextContainer>
   );
 }
+
+Actions.propTypes = {
+  id: PropTypes.string.isRequired,
+};
 
 async function getTasks(userAgent, filters, setTasks) {
   const response = await listTeacherTasks(userAgent, { ...filters, details: true });
@@ -157,6 +162,7 @@ export default function TeacherAssignedTasksLists({ showClosed }) {
       <SearchInput value={name} onChange={setName} />
       {tasks?.length === 0 && (
         <ContextContainer direction="row" justifyContent="start" alignItems="center">
+          {/* TRANSLATE: You do not have ongoing tasks */}
           <Text>You don&apos;t have ongoing tasks with the applied filters. Assign a new one</Text>
           <Button noFlex onClick={() => history.push('/private/tasks/library')}>
             Go to Library
@@ -167,3 +173,7 @@ export default function TeacherAssignedTasksLists({ showClosed }) {
     </>
   );
 }
+
+TeacherAssignedTasksLists.propTypes = {
+  showClosed: PropTypes.bool,
+};

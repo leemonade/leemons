@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, forwardRef } from 'react';
+import PropTypes from 'prop-types';
 import { useForm, Controller } from 'react-hook-form';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import { Button, ContextContainer, Table } from '@bubbles-ui/components';
@@ -14,10 +15,15 @@ function Actions({ id, onDelete }) {
   );
 }
 
+Actions.propTypes = {
+  id: PropTypes.string.isRequired,
+  onDelete: PropTypes.func,
+};
+
 export default function SelectTeachers({ role, onChange }) {
   const [profiles, setProfiles] = useState([null]);
   const [assignees, setAssignees] = useState([]);
-  const { control, handleSubmit, resetField } = useForm();
+  const { control, handleSubmit } = useForm();
 
   const onDelete = (id) => {
     setAssignees((assignee) => assignee.filter((a) => a.id !== id));
@@ -61,6 +67,8 @@ export default function SelectTeachers({ role, onChange }) {
           Add
         </Button>
       </ContextContainer>
+
+      {/* TRANSLATE: Localizate the teacher columns */}
       <Table
         columns={[
           { Header: 'userId', accessor: 'id' },
@@ -71,3 +79,8 @@ export default function SelectTeachers({ role, onChange }) {
     </ContextContainer>
   );
 }
+
+SelectTeachers.propTypes = {
+  role: PropTypes.string.isRequired,
+  onChange: PropTypes.func,
+};
