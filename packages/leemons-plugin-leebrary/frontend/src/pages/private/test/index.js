@@ -10,9 +10,11 @@ export default function TestPage() {
   const [items, setItems] = useState([]);
   const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
 
-  const showConfirmDelete = openDeleteConfirmationModal({
-    onConfirm: () => console.log('Confirmado'),
-  });
+  const showConfirmDelete = (userID) => {
+    openDeleteConfirmationModal({
+      onConfirm: () => console.log('Confirmado:', userID),
+    })();
+  };
 
   const showConfirm = openConfirmationModal({
     onConfirm: () => console.log('Confirmado'),
@@ -73,7 +75,7 @@ export default function TestPage() {
           <Button onClick={showConfirm}>Confirmar</Button>
         </Box>
         <Box>
-          <Button onClick={showConfirmDelete}>Borrar</Button>
+          <Button onClick={() => showConfirmDelete(1234)}>Borrar</Button>
         </Box>
       </ContextContainer>
     </Paper>

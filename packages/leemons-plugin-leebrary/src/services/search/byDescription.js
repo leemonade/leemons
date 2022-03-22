@@ -22,7 +22,7 @@ async function byDescription(
     }
     return assets;
   } catch (e) {
-    throw new Error(`Failed to find asset with description: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to find asset with description: ${e.message}`);
   }
 }
 

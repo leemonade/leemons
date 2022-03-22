@@ -1,7 +1,7 @@
-/*
 const fileService = require('../src/services/files');
 
 module.exports = {
+  /*
   uploadFile: async (ctx) => {
     const { name, description } = ctx.request.body;
     const _files = ctx.request.files;
@@ -43,7 +43,7 @@ module.exports = {
     ctx.status = 200;
     ctx.body = { status: 200, files };
   },
-
+*/
   file: async (ctx) => {
     const data = await fileService.dataForReturnFile(ctx.params.id);
     ctx.status = 200;
@@ -51,12 +51,11 @@ module.exports = {
     ctx.set('Content-Type', data.contentType);
     ctx.set('Content-disposition', `attachment; filename=${data.fileName}`);
   },
-
+  /*
   removeFile: async (ctx) => {
     const deleted = await fileService.removeFiles(ctx.params.id);
     ctx.status = 200;
     ctx.body = { status: 200, deleted };
   },
+  */
 };
-*/
-module.exports = {};

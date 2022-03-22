@@ -1,6 +1,6 @@
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { cloneDeep, find, findIndex, map } from 'lodash';
+import { cloneDeep, find, findIndex, map, isEmpty, isArray } from 'lodash';
 import { ActionButton, Box, MultiSelect, UserDisplayItem } from '@bubbles-ui/components';
 import { useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
@@ -9,10 +9,10 @@ import { getUserAgentsInfoRequest, searchUserAgentsRequest } from '../request';
 
 // EN: The Component for MultiSelect selected values component
 // ES: El componente para el componente MultiSelect de valores seleccionados
-export function SelectUserAgentValueComponent(props) {
+export function SelectUserAgentValueComponent({ onRemove, ...props }) {
   return (
     <Box>
-      {props.onRemove ? (
+      {onRemove ? (
         <Box
           sx={(theme) => ({
             position: 'absolute',
@@ -23,17 +23,31 @@ export function SelectUserAgentValueComponent(props) {
             backgroundColor: theme.colors.uiBackground01,
           })}
         >
-          <ActionButton icon={<RemoveIcon />} onClick={() => props.onRemove()} />
+          <ActionButton icon={<RemoveIcon />} onClick={() => onRemove()} />
         </Box>
       ) : null}
 
-      <UserDisplayItem {...props} size="xs" />
+      <UserDisplayItem {...props} />
     </Box>
   );
 }
 
 const SelectUserAgent = forwardRef(
-  ({ profiles, centers, maxSelectedValues = 1, onlyContacts, ...props }, ref) => {
+  (
+    {
+      profiles,
+      centers,
+      maxSelectedValues = 1,
+      onlyContacts,
+      returnItem,
+      itemRenderProps = { variant: 'rol' },
+      valueRenderProps = { variant: 'inline', size: 'xs', style: { padding: 0 } },
+      itemComponent: ItemComponent = UserDisplayItem,
+      valueComponent: ValueComponent = SelectUserAgentValueComponent,
+      ...props
+    },
+    ref
+  ) => {
     const [store, render] = useStore({
       data: [],
     });
@@ -83,6 +97,7 @@ const SelectUserAgent = forwardRef(
     // EN: Allow compatibility with old versions, returning a single value if required
     // ES: Permite la compatibilidad con versiones antiguas, devolviendo un valor si es necesario
     function handleChange(value) {
+      /*
       if (maxSelectedValues === 1) {
         if (value.length >= 0) {
           props.onChange(value[0], find(store.data, { value: value[0] }));
@@ -92,6 +107,17 @@ const SelectUserAgent = forwardRef(
       } else {
         props.onChange(value);
       }
+      */
+
+      let values = value;
+
+      if (returnItem) {
+        values = values.map((item) => find(store.data, { value: item }));
+      }
+
+      values = maxSelectedValues === 1 ? values[0] : values;
+
+      props.onChange(values);
     }
 
     // EN: Handle controlled input value by adding the selected values to the data array
@@ -115,6 +141,11 @@ const SelectUserAgent = forwardRef(
         // ES: Obtenemos la información de los agentes de usuario para las entradas seleccionadas pero no están aún en el array de datos
         const selectedAgents = await Promise.all(
           values.map(async (value) => {
+            // ES: en caso de que el value sea el mismo objeto/s devuelto por el Select
+            if (!isEmpty(value?.value) && !isEmpty(value?.id)) {
+              return value;
+            }
+
             const selectedAgentData = find(store.data, { value });
 
             // EN: Check if the id is inside the data if not we have to get the detail and add it to the data
@@ -173,20 +204,43 @@ const SelectUserAgent = forwardRef(
         }
       });
     }
-    //
+
+    const propValue = useMemo(() => {
+      const { value } = props;
+
+      if (isEmpty(value)) {
+        return [];
+      }
+
+      if (isArray(value)) {
+        return value.map((item) => {
+          if (!isEmpty(item?.value) && !isEmpty(item?.id)) {
+            return item.value;
+          }
+          return value;
+        });
+      }
+
+      if (!isEmpty(value?.value) && !isEmpty(value?.id)) {
+        return [value.value];
+      }
+
+      return [value];
+    }, [props.value]);
+
     return (
       <MultiSelect
         {...props}
         ref={ref}
         searchable
         onSearchChange={search}
-        itemComponent={props.itemComponent || UserDisplayItem}
-        valueComponent={props.valueComponent || SelectUserAgentValueComponent}
+        itemComponent={(p) => <ItemComponent {...p} {...itemRenderProps} />}
+        valueComponent={(p) => <ValueComponent {...p} {...valueRenderProps} />}
         maxSelectedValues={maxSelectedValues}
         data={data}
         // EN: The value can be an array or a single value (string), so convert it to an array
         // ES: El valor puede ser un array o un valor simple (string), por lo que lo convertimos a un array
-        value={props?.value ? [props?.value].flat() : []}
+        value={propValue}
         onChange={handleChange}
       />
     );
@@ -201,6 +255,9 @@ SelectUserAgent.propTypes = {
   centers: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   maxSelectedValues: PropTypes.number,
   onlyContacts: PropTypes.bool,
+  returnItem: PropTypes.bool,
+  itemRenderProps: PropTypes.object,
+  valueRenderProps: PropTypes.object,
   itemComponent: PropTypes.element,
   valueComponent: PropTypes.element,
 };

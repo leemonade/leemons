@@ -14,6 +14,6 @@ module.exports = async function assetHasOwner(assetId, { transacting } = {}) {
 
     return owners > 0;
   } catch (e) {
-    throw new Error(`Failed to determine if asset has owner: ${e.message}`);
+    throw new global.utils.HttpError(412, `Failed to determine if asset has owner: ${e.message}`);
   }
 };

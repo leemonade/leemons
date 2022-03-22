@@ -1,19 +1,19 @@
+const { find, isEmpty, last } = require('lodash');
 const { tables } = require('../tables');
 const getRolePermissions = require('./helpers/getRolePermissions');
 
 async function getByAsset(assetId, { userSession, transacting } = {}) {
-  const userAgent =
-    userSession.userAgents && userSession.userAgents.length ? userSession.userAgents[0].id : null;
   try {
-    const [permission] = await tables.permissions.find(
+    const { services: userService } = leemons.getPlugin('users');
+    const permissions = await userService.permissions.getUserAgentPermissions(
+      userSession.userAgents,
       {
-        asset: assetId,
-        userAgent,
-      },
-      { transacting }
+        query: { permissionName: leemons.plugin.prefixPN(assetId) },
+        transacting,
+      }
     );
 
-    if (!permission) {
+    if (isEmpty(permissions)) {
       const asset = await tables.assets.find(
         { id: assetId },
         { columns: ['id', 'public'], transacting }
@@ -26,9 +26,16 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
       }
     }
 
-    return { role: permission?.role, permissions: getRolePermissions(permission?.role) };
+    const permission = find(
+      permissions,
+      (item) => assetId === last(item.permissionName.split('.')) // 'plugins.leebrary.23ee5f1b-9e71-4a39-9ddf-db472c7cdefd',
+    );
+
+    const role = permission?.actionNames[0];
+
+    return { role, permissions: getRolePermissions(role) };
   } catch (e) {
-    throw new Error(`Failed to get permissions: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);
   }
 }
 

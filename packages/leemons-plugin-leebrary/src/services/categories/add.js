@@ -7,15 +7,18 @@ async function add(data, { transacting } = {}) {
   const { menu, ...categoryData } = data;
 
   if (isEmpty(categoryData.key)) {
-    throw new Error('Category `key` is required');
+    throw new global.utils.HttpError(400, 'Category `key` is required');
   }
 
   if (isEmpty(menu)) {
-    throw new Error('Category `menu` is required');
+    throw new global.utils.HttpError(400, 'Category `menu` is required');
   }
 
   if (await exists(categoryData, { transacting })) {
-    throw new Error('Previous category with this `key` was already registered');
+    throw new global.utils.HttpError(
+      409,
+      'Previous category with this `key` was already registered'
+    );
   }
 
   try {
@@ -33,7 +36,7 @@ async function add(data, { transacting } = {}) {
 
     return newCategory;
   } catch (e) {
-    throw new Error(`Failed to register category: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to register category: ${e.message}`);
   }
 }
 

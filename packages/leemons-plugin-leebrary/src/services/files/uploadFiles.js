@@ -2,7 +2,7 @@
 // const { uploadFile } = require('./uploadFile');
 
 async function uploadFiles(files, { userSession, transacting: _transacting } = {}) {
-  throw new Error('Method not implemented.');
+  throw new global.utils.HttpError(501, 'Method not implemented.');
   // return global.utils.withTransaction(
   //   async (transacting) => {
   //     if (_.isArray(files)) {

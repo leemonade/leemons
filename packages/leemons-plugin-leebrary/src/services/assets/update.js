@@ -10,7 +10,7 @@ async function update(id, data, { userSession, transacting } = {}) {
     // EN: Check if the user has permissions to update the asset
     // ES: Comprobar si el usuario tiene permisos para actualizar el activo
     if (!permissions.edit) {
-      throw new Error("You don't have permissions to update this asset");
+      throw new global.utils.HttpError(401, "You don't have permissions to update this asset");
     }
 
     // EN: Update the asset
@@ -18,7 +18,7 @@ async function update(id, data, { userSession, transacting } = {}) {
     const asset = await tables.assets.update({ id }, data, { transacting });
     return asset;
   } catch (e) {
-    throw new Error(`Failed to update asset: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to update asset: ${e.message}`);
   }
 }
 

@@ -1,33 +1,33 @@
-import React, { useEffect, useMemo, useState, useContext } from 'react';
-import { isEmpty } from 'lodash';
-import { Route, Switch, useRouteMatch, useHistory } from 'react-router-dom';
+import React, { useEffect, useMemo, useState, useContext, useCallback } from 'react';
+import { isEmpty, find } from 'lodash';
+import { Route, Switch, useRouteMatch, useHistory, Redirect, useParams } from 'react-router-dom';
 import { Box, Paper, Stack, Text, SearchInput } from '@bubbles-ui/components';
 import { LibraryNavbar } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten, useStore } from '@common';
+import loadable from '@loadable/component';
 import prefixPN from '../../../helpers/prefixPN';
 import { listCategoriesRequest } from '../../../request';
 import LibraryContext, { LibraryProvider } from '../../../context/LibraryContext';
 import { VIEWS } from './Library.constants';
-import loadable from '@loadable/component';
 
-const NewAssetPage = loadable(() => import('../assets/NewAsset'));
+const NewAssetPage = loadable(() => import('../assets/NewAssetPage'));
 
 const LibraryPageContent = () => {
   const { path } = useRouteMatch();
-  const { newAsset } = useContext(LibraryContext);
+  const { newAsset, category, setCategory, setCategories, categories } = useContext(LibraryContext);
   const [, translations] = useTranslateLoader(prefixPN('home'));
-  const [store, render] = useStore({ category: null, categories: [] });
 
   const getCategories = async () => {
-    const categories = await listCategoriesRequest();
-    store.categories = categories.map((category) => ({
-      ...category,
-      icon: category.menuItem.iconSvg,
-      name: category.menuItem.label,
-      creatable: true,
-    }));
-    render();
+    const result = await listCategoriesRequest();
+    setCategories(
+      result.map((data) => ({
+        ...data,
+        icon: data.menuItem.iconSvg,
+        name: data.menuItem.label,
+        creatable: true,
+      }))
+    );
   };
 
   useEffect(() => getCategories(), []);
@@ -42,22 +42,21 @@ const LibraryPageContent = () => {
   }, [translations]);
 
   const handleOnNav = (data) => {
-    store.category = data;
-    render();
+    setCategory(data);
   };
 
   const handleOnFile = (data) => {
-    newAsset(data);
+    newAsset(data, find(categories, { key: 'media-files' }));
   };
 
   return (
     <Stack style={{ height: '100vh' }} fullWidth>
       <Box style={{ width: 240, height: '100%' }} skipFlex>
-        {!isEmpty(store.categories) && (
+        {!isEmpty(categories) && (
           <LibraryNavbar
             labels={navbarLabels}
-            categories={store.categories}
-            selectedCategory={store.category?.id}
+            categories={categories}
+            selectedCategory={category?.id}
             onNav={handleOnNav}
             onFile={handleOnFile}
           />
@@ -65,6 +64,16 @@ const LibraryPageContent = () => {
       </Box>
       <Box style={{ overflowY: 'scroll' }}>
         <Switch>
+          <Route path={`${path}/:category/new`.replace('//', '/')}>
+            <NewAssetPage />
+          </Route>
+          <Route path={`${path}/edit/:id`.replace('//', '/')}>
+            <Box>
+              <Paper shadow="none">
+                <Text>Editando el asset</Text>
+              </Paper>
+            </Box>
+          </Route>
           <Route exact path={path}>
             <Stack direction="column" fullHeight>
               <Paper shadow="none" skipFlex>
@@ -79,15 +88,8 @@ const LibraryPageContent = () => {
               </Box>
             </Stack>
           </Route>
-          <Route path={`${path}/new`.replace('//', '/')}>
-            <NewAssetPage />
-          </Route>
-          <Route path={`${path}/edit/:id`.replace('//', '/')}>
-            <Box>
-              <Paper shadow="none">
-                <Text>Editando el asset</Text>
-              </Paper>
-            </Box>
+          <Route>
+            <Redirect to={path} />
           </Route>
         </Switch>
       </Box>
@@ -99,6 +101,7 @@ const LibraryPage = () => {
   const [file, setFile] = useState(null);
   const [asset, setAsset] = useState(null);
   const [category, setCategory] = useState(null);
+  const [categories, setCategories] = useState([]);
   const [view, setView] = useState(VIEWS.LIST);
   const { path } = useRouteMatch();
   const history = useHistory();
@@ -109,11 +112,22 @@ const LibraryPage = () => {
     history.push(`${path}/edit/${data?.id}`.replace('//', '/'));
   };
 
-  const newAsset = (data) => {
+  const newAsset = (data, categoryItem) => {
     setFile(data);
+    setCategory(categoryItem);
     setView(VIEWS.NEW);
-    history.push(`${path}/new`.replace('//', '/'));
+    history.push(`${path}/${categoryItem.key}/new`.replace('//', '/'));
   };
+
+  const selectCategory = useCallback(
+    (key) => {
+      const item = find(categories, { key });
+      if (!isEmpty(item) && item.key !== category?.key) {
+        setCategory(item);
+      }
+    },
+    [category, categories]
+  );
 
   const values = useMemo(
     () => ({
@@ -123,12 +137,15 @@ const LibraryPage = () => {
       setFile,
       category,
       setCategory,
+      categories,
+      setCategories,
       view,
       setView,
       newAsset,
       editAsset,
+      selectCategory,
     }),
-    [file, category]
+    [file, category, categories, view, asset]
   );
   return (
     <LibraryProvider value={values}>

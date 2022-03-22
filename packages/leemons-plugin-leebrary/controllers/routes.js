@@ -21,6 +21,12 @@ module.exports = [
   },
   {
     path: '/assets/:id',
+    method: 'GET',
+    handler: 'assets.get',
+    authenticated: true,
+  },
+  {
+    path: '/assets/:id',
     method: 'DELETE',
     handler: 'assets.remove',
     authenticated: true,
@@ -79,13 +85,14 @@ module.exports = [
     handler: 'files.myFiles',
     authenticated: true,
   },
+  */
   {
     path: '/file/:id',
     method: 'GET',
     handler: 'files.file',
     authenticated: true,
   },
-  */
+
   /**
    * Categories
    */
@@ -159,13 +166,13 @@ module.exports = [
   /**
    * Permissions
    */
-  /*
   {
     path: '/asset/:asset/permissions',
     method: 'POST',
     handler: 'permissions.set',
     authenticated: true,
   },
+  /*
   {
     path: '/asset/:asset/permissions',
     method: 'DELETE',

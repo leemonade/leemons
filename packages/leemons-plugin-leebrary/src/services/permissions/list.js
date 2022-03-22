@@ -1,24 +1,21 @@
 const { getByAsset } = require('./getByAsset');
-const { tables } = require('../tables');
 
 async function list(assetId, { userSession, transacting } = {}) {
   try {
-    const { role: permissionRole } = await getByAsset(assetId, { userSession, transacting });
+    const { permissions } = await getByAsset(assetId, { userSession, transacting });
 
-    if (permissionRole) {
-      const entries = await tables.permissions.find(
-        {
-          asset: assetId,
-        },
-        { transacting }
-      );
-
-      return entries.map(({ role, userAgent }) => ({ role, userAgent }));
+    // If user has at least VIEW permission
+    if (permissions.view) {
+      const { services } = leemons.getPlugin('users');
+      const users = await services.permissions.findUsersWithPermissions({
+        permissionName: leemons.plugin.prefixPN(assetId),
+      });
+      return users;
     }
 
-    throw new Error("You don't have permission to list users");
+    throw new global.utils.HttpError(401, "You don't have permission to list users");
   } catch (e) {
-    throw new Error(`Failed to get permissions: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);
   }
 }
 

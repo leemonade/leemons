@@ -20,7 +20,7 @@ async function byName(name, { details = false, assets: assetsIds, transacting } 
 
     return assets;
   } catch (e) {
-    throw new Error(`Failed to find asset with name: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to find asset with name: ${e.message}`);
   }
 }
 

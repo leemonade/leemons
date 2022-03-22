@@ -2,6 +2,10 @@ const { add } = require('../src/services/assets/add');
 const { update } = require('../src/services/assets/update');
 const { remove } = require('../src/services/assets/remove');
 const { getByUser } = require('../src/services/assets/getByUser');
+const { getByIds } = require('../src/services/assets/getByIds');
+const { getByAsset: getPermissions } = require('../src/services/permissions/getByAsset');
+const { list } = require('../src/services/permissions/list');
+const canAssignRole = require('../src/services/permissions/helpers/canAssignRole');
 
 async function addAsset(ctx) {
   const { ...assetData } = ctx.request.body;
@@ -9,23 +13,13 @@ async function addAsset(ctx) {
   const { userSession } = ctx.state;
 
   if (!filesData?.files) {
-    ctx.status = 400;
-    ctx.body = {
-      status: 400,
-      message: 'No file was uploaded',
-    };
-    return;
+    throw new global.utils.HttpError(400, 'No file was uploaded');
   }
 
   const files = filesData.files.length ? filesData.files : [filesData.files];
 
   if (files.length > 1) {
-    ctx.status = 400;
-    ctx.body = {
-      status: 400,
-      message: 'Multiple file uploading is not enabled yet',
-    };
-    return;
+    throw new global.utils.HttpError(501, 'Multiple file uploading is not enabled yet');
   }
 
   const asset = await add({ ...assetData, file: files[0] }, { userSession });
@@ -56,6 +50,40 @@ async function updateAsset(ctx) {
   ctx.body = {
     status: 200,
     asset,
+  };
+}
+
+async function getAsset(ctx) {
+  const { id: assetId } = ctx.params;
+  const { userSession } = ctx.state;
+
+  const [asset] = await getByIds(assetId, { withFiles: true });
+
+  if (!asset) {
+    throw new global.utils.HttpError(400, 'Asset not found');
+  }
+
+  const { role: assignerRole, permissions } = await getPermissions(assetId, { userSession });
+
+  if (!permissions?.view) {
+    throw new global.utils.HttpError(401, 'Unauthorized to view this asset');
+  }
+
+  let assetPermissions = false;
+
+  if (assignerRole === 'owner') {
+    assetPermissions = await list(assetId, { userSession });
+    assetPermissions = assetPermissions.map((user) => {
+      const item = { ...user };
+      item.editable = canAssignRole(assignerRole, item.permissions[0], item.permissions[0]);
+      return item;
+    });
+  }
+
+  ctx.status = 200;
+  ctx.body = {
+    status: 200,
+    asset: { ...asset, canAccess: assetPermissions },
   };
 }
 
@@ -93,4 +121,5 @@ module.exports = {
   remove: removeAsset,
   update: updateAsset,
   my: myAssets,
+  get: getAsset,
 };

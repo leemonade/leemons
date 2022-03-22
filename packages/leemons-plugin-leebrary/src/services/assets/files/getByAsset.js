@@ -22,7 +22,7 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
       )
       .then((files) => files.map((file) => file.file));
   } catch (e) {
-    throw new Error(`Failed to get files: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to get files: ${e.message}`);
   }
 }
 
