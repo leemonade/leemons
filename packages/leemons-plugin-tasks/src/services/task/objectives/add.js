@@ -3,7 +3,7 @@ const { taskObjectives: table } = require('../../table');
 const taskExists = require('../exists');
 const parseId = require('../helpers/parseId');
 
-module.exports = async function addObjectives(task, objectives, { transacting } = {}) {
+module.exports = async function addObjectives(task, subject, objectives, { transacting } = {}) {
   const { id } = await parseId(task, null, { transacting });
   const { fullId } = await parseId(id, 'any', { transacting });
 
@@ -21,6 +21,7 @@ module.exports = async function addObjectives(task, objectives, { transacting } 
   const createdObjectives = await table.createMany(
     _objectives.map((objective, i) => ({
       task: id,
+      subject,
       objective,
       position: i,
     })),
@@ -31,7 +32,7 @@ module.exports = async function addObjectives(task, objectives, { transacting } 
 
   // EN: Emit the event.
   // ES: Emitir el evento.
-  emit(['task.objectives.added', `task.${id}.objectives.added`], { id });
+  emit(['task.objectives.added', `task.${id}.objectives.added`], { id, subject });
 
   return createdObjectives.map(({ objective }) => objective);
 };

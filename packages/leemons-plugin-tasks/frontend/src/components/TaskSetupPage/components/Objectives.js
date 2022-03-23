@@ -5,7 +5,7 @@ import { TableInput, Box } from '@bubbles-ui/components';
 import { TextEditor } from '@bubbles-ui/editors';
 import useTableInputLabels from '../../../helpers/useTableInputLabels';
 
-export default function Objectives({ label, required }) {
+export default function Objectives({ name, label, required }) {
   const tableInputLabels = useTableInputLabels();
 
   const {
@@ -25,7 +25,7 @@ export default function Objectives({ label, required }) {
   return (
     <Controller
       control={control}
-      name="objectives"
+      name={name}
       rules={{ validate: (value) => !required || value?.length > 0 }}
       render={({ field }) => (
         <>
@@ -47,4 +47,5 @@ export default function Objectives({ label, required }) {
 Objectives.propTypes = {
   label: PropTypes.string.isRequired,
   required: PropTypes.bool,
+  name: PropTypes.string.isRequired,
 };

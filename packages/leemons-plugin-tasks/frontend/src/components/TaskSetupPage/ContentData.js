@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isEmpty } from 'lodash';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
-import { Box, Stack, ContextContainer, Button } from '@bubbles-ui/components';
+import { Box, Stack, ContextContainer, Button, Tabs, TabPanel } from '@bubbles-ui/components';
 import { TextEditor } from '@bubbles-ui/editors';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
@@ -32,7 +32,6 @@ function ContentData({
   // FORM
 
   const defaultValues = {
-    methodology: '',
     ...sharedData,
   };
 
@@ -95,12 +94,32 @@ function ContentData({
                 />
               )}
             />
-            <Contents required label={labels.content} error={errors.content} />
-            <Objectives required label={labels.objectives} error={errors.objectives} />
-            <AssessmentCriteria
-              label={labels.assessmentCriteria}
-              error={errors.assessmentCriteria}
-            />
+            {!!sharedData?.subjects?.length && (
+              <Tabs>
+                {sharedData?.subjects?.map((subject, index) => (
+                  <TabPanel key={index} label={subject?.subject}>
+                    <Contents
+                      name={`curriculum.${subject.subject}.contents`}
+                      required
+                      label={labels.content || ''}
+                      error={errors.content}
+                    />
+                    <Objectives
+                      name={`curriculum.${subject.subject}.objectives`}
+                      required
+                      label={labels.objectives || ''}
+                      error={errors.objectives}
+                    />
+                    <AssessmentCriteria
+                      name={`curriculum.${subject.subject}.assessmentCriteria`}
+                      label={labels.assessmentCriteria || ''}
+                      error={errors.assessmentCriteria}
+                    />
+                  </TabPanel>
+                ))}
+              </Tabs>
+            )}
+
             {/* TODO: Make the statement required (Not allowed with TextEditor) */}
             <Controller
               control={control}

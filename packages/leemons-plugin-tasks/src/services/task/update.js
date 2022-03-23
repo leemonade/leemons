@@ -39,9 +39,6 @@ module.exports = async function update(
     center,
     program,
     tags,
-    objectives,
-    content,
-    assessmentCriteria,
     attachments,
   },
   { transacting: t } = {}
@@ -150,24 +147,6 @@ module.exports = async function update(
           // EN: Update the tags
           // ES: Actualizar las etiquetas
           await setTags(fullId, tags, { transacting });
-        }
-
-        if (objectives) {
-          // EN: Update objectives
-          // ES: Actualizar objetivos
-          await setObjectives(fullId, objectives, { transacting });
-        }
-
-        if (content) {
-          // EN: Update the content
-          // ES: Actualizar el contenido
-          await setContent(fullId, content, { transacting });
-        }
-
-        if (assessmentCriteria) {
-          // EN: Update the assessment criteria
-          // ES: Actualizar los criterios de evaluación
-          await setAssessmentCriteria(fullId, assessmentCriteria, { transacting });
         }
 
         if (attachments) {

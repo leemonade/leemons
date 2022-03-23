@@ -5,7 +5,7 @@ import { TableInput, Box } from '@bubbles-ui/components';
 import { TextEditor } from '@bubbles-ui/editors';
 import useTableInputLabels from '../../../helpers/useTableInputLabels';
 
-export default function Contents({ required }) {
+export default function Contents({ name, label, required }) {
   const tableInputLabels = useTableInputLabels();
   const {
     control,
@@ -14,8 +14,7 @@ export default function Contents({ required }) {
 
   const columns = useMemo(() => [
     {
-      // TRANSLATE: Column header for the content title
-      Header: `Content${required ? '*' : ''}`,
+      Header: `${label}${required ? '*' : ''}`,
       accessor: 'content',
       input: { node: <TextEditor />, rules: { required: true } },
       valueRender: (value) => <Box dangerouslySetInnerHTML={{ __html: value }} />,
@@ -25,7 +24,7 @@ export default function Contents({ required }) {
   return (
     <Controller
       control={control}
-      name="content"
+      name={name}
       rules={{ validate: (value) => !required || value?.length > 0 }}
       render={({ field }) => (
         <>
@@ -46,4 +45,6 @@ export default function Contents({ required }) {
 
 Contents.propTypes = {
   required: PropTypes.bool,
+  name: PropTypes.string,
+  label: PropTypes.string,
 };

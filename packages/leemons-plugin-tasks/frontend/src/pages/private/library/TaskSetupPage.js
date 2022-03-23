@@ -38,11 +38,18 @@ export default function TaskSetupPage() {
     try {
       const body = {
         ...values,
-        objectives: values?.objectives?.map(({ objective }) => objective),
-        content: values?.content?.map(({ content }) => content),
-        assessmentCriteria: values?.assessmentCriteria?.map(
-          ({ assessmentCriteria }) => assessmentCriteria
-        ),
+        subjects: values.subjects.map((subject) => ({
+          ...subject,
+          curriculum: {
+            objectives: values?.curriculum[subject.subject].objectives?.map(
+              ({ objective }) => objective
+            ),
+            contents: values?.curriculum[subject.subject].contents?.map(({ content }) => content),
+            assessmentCriteria: values?.curriculum[subject.subject].assessmentCriteria?.map(
+              ({ assessmentCriteria }) => assessmentCriteria
+            ),
+          },
+        })),
       };
 
       let messageKey = 'create_done';
@@ -95,7 +102,17 @@ export default function TaskSetupPage() {
 
   const getTask = async (id) => {
     try {
-      return await getTaskRequest({ id });
+      const task = await getTaskRequest({ id });
+      if (!task) {
+        return task;
+      }
+
+      task.curriculum = {};
+      task?.subjects?.forEach((subject) => {
+        task.curriculum[subject.subject] = subject.curriculum;
+      });
+
+      return task;
     } catch (e) {
       addErrorAlert(e.message);
       return {};

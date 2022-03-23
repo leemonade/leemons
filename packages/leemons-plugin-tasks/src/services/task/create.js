@@ -33,9 +33,6 @@ module.exports = async function create(
     center,
     program,
     tags,
-    objectives,
-    content,
-    assessmentCriteria,
     attachments,
   },
   { transacting: t } = {}
@@ -92,18 +89,6 @@ module.exports = async function create(
         // EN: Create the task tags
         // ES: Crear etiquetas de tarea
         await addTags(task.id, tags, { transacting });
-
-        // EN: Add objectives
-        // ES: Añadir objetivos
-        await addObjectives(task.id, objectives, { transacting });
-
-        // EN: Add assessment criteria
-        // ES: Añadir criterios de evaluación
-        await addAssessmentCriteria(task.id, assessmentCriteria, { transacting });
-
-        // EN: Add content
-        // ES: Añadir contenido
-        await addContent(task.id, content, { transacting });
 
         // EN: Add attachments
         // ES: Añadir adjuntos

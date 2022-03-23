@@ -4,6 +4,7 @@ const parseId = require('../helpers/parseId');
 
 module.exports = async function removeAssessmentCriteria(
   task,
+  subject,
   assessmentCriterias,
   { transacting } = {}
 ) {
@@ -13,9 +14,15 @@ module.exports = async function removeAssessmentCriteria(
     ? assessmentCriterias
     : [assessmentCriterias];
 
+  const _subjects = Array.isArray(subject) ? subject : [subject];
+
   const query = {
     task: fullId,
   };
+
+  if (subject && _subjects?.length) {
+    query.subject_$in = _subjects;
+  }
 
   if (assessmentCriterias && _criterias?.length) {
     query.assessmentCriteria_$in = _criterias;
@@ -29,6 +36,7 @@ module.exports = async function removeAssessmentCriteria(
   // ES: Emitir el evento.
   emit(['task.assessmentCriteria.removed', `task.${fullId}.assessmentCriteria.removed`], {
     id: fullId,
+    subject,
     assessmentCriteria: _criterias,
   });
 

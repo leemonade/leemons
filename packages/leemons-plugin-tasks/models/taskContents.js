@@ -7,6 +7,9 @@ module.exports = {
     content: {
       type: 'string',
     },
+    subject: {
+      type: 'uuid',
+    },
     position: {
       type: 'integer',
     },

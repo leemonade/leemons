@@ -1,17 +1,17 @@
 import React, { useMemo } from 'react';
+import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
 import { TableInput, Box } from '@bubbles-ui/components';
 import { TextEditor } from '@bubbles-ui/editors';
 import useTableInputLabels from '../../../helpers/useTableInputLabels';
 
-export default function AssessmentCriteria() {
+export default function AssessmentCriteria({ label, name, error }) {
   const tableInputLabels = useTableInputLabels();
   const { control } = useFormContext();
 
   const columns = useMemo(() => [
     {
-      // TRANSLATE: Column header for the assessment criteria title
-      Header: 'Assessment criteria',
+      Header: label,
       accessor: 'assessmentCriteria',
       input: { node: <TextEditor />, rules: { required: true } },
       valueRender: (value) => <Box dangerouslySetInnerHTML={{ __html: value }} />,
@@ -21,11 +21,12 @@ export default function AssessmentCriteria() {
   return (
     <Controller
       control={control}
-      name="assessmentCriteria"
+      name={name}
       render={({ field }) => (
         <>
           <TableInput
             {...field}
+            error={error}
             columns={columns}
             editable
             data={field.value || []}
@@ -36,3 +37,9 @@ export default function AssessmentCriteria() {
     />
   );
 }
+
+AssessmentCriteria.propTypes = {
+  name: PropTypes.string,
+  label: PropTypes.string,
+  error: PropTypes.string,
+};

@@ -32,9 +32,6 @@ module.exports = {
         center,
         program,
         tags,
-        objectives,
-        content,
-        assessmentCriteria,
         attachments,
       } = ctx.request.body;
 
@@ -62,9 +59,6 @@ module.exports = {
         center,
         program,
         tags,
-        objectives,
-        content,
-        assessmentCriteria,
         attachments,
       };
 
@@ -110,9 +104,6 @@ module.exports = {
         center,
         program,
         tags,
-        objectives,
-        content,
-        assessmentCriteria,
         attachments,
       } = ctx.request.body;
 
@@ -140,9 +131,6 @@ module.exports = {
         center,
         program,
         tags,
-        objectives,
-        content,
-        assessmentCriteria,
         attachments,
       };
 

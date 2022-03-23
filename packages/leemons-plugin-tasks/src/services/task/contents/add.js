@@ -3,7 +3,7 @@ const { taskContents: table } = require('../../table');
 const taskExists = require('../exists');
 const parseId = require('../helpers/parseId');
 
-module.exports = async function addContent(task, contents, { transacting } = {}) {
+module.exports = async function addContent(task, subject, contents, { transacting } = {}) {
   const { fullId } = await parseId(task, null, { transacting });
 
   if (!contents) {
@@ -21,6 +21,7 @@ module.exports = async function addContent(task, contents, { transacting } = {})
   const createdContent = await table.createMany(
     _content.map((content, i) => ({
       task: fullId,
+      subject,
       content,
       position: i,
     })),
@@ -31,7 +32,7 @@ module.exports = async function addContent(task, contents, { transacting } = {})
 
   // EN: Emit the event.
   // ES: Emitir el evento.
-  emit(['task.content.added', `task.${fullId}.content.added`], { id: fullId });
+  emit(['task.content.added', `task.${fullId}.content.added`], { id: fullId, subject });
 
   return createdContent.map(({ content }) => content);
 };

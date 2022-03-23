@@ -7,6 +7,9 @@ module.exports = {
     assessmentCriteria: {
       type: 'string',
     },
+    subject: {
+      type: 'uuid',
+    },
     position: {
       type: 'integer',
     },

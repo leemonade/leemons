@@ -7,6 +7,9 @@ module.exports = {
     objective: {
       type: 'string',
     },
+    subject: {
+      type: 'uuid',
+    },
     position: {
       type: 'integer',
     },

@@ -149,6 +149,8 @@ module.exports = {
           statement: 'Statement',
           development: 'Development',
           objectives: 'Objectives',
+          content: 'Content',
+          assessmentCriteria: 'Assessment criteria',
           buttonNext: 'Next',
           buttonPrev: 'Previous',
           selfReflection: {

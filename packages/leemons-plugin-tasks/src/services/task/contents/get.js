@@ -1,12 +1,13 @@
 const { taskContents: table } = require('../../table');
 const parseId = require('../helpers/parseId');
 
-module.exports = async function getContent(task, { transacting } = {}) {
+module.exports = async function getContent(task, subject, { transacting } = {}) {
   const { fullId } = await parseId(task, null, { transacting });
 
   const existingContent = await table.find(
     {
       task: fullId,
+      subject,
       $sort: 'position:ASC',
     },
     {

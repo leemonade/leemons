@@ -3,9 +3,6 @@ const parseId = require('./helpers/parseId');
 const getVersion = require('./versions/get');
 const getSubjects = require('./subjects/get');
 const getTags = require('../tags/get');
-const getObjectives = require('./objectives/get');
-const getContent = require('./contents/get');
-const getAssessmentCriteria = require('./assessmentCriteria/get');
 const getAttachments = require('../attachments/get');
 
 const DEFAULT_COLUMNS = ['id', 'current', 'last', 'name', 'status', 'subjects', 'tags'];
@@ -112,53 +109,6 @@ async function getMany(taskIds, { columns, transacting } = {}) {
       }, {});
     }
 
-    // EN: Get the task objectives
-    // ES: Obtener los objetivos de la tarea
-    let objectives;
-    if (columns === '*' || columns.includes('objectives')) {
-      objectives = await fullIds.reduce(async (accum, id) => {
-        await accum;
-        const o = await getObjectives(id, { transacting });
-
-        return {
-          ...accum,
-          [id]: o.objectives,
-        };
-      }, {});
-    }
-
-    // EN: Get the task content
-    // ES: Obtener el contenido de la tarea
-    let content;
-    if (columns === '*' || columns.includes('content')) {
-      content = await fullIds.reduce(async (accum, id) => {
-        await accum;
-        const c = await getContent(id, { transacting });
-
-        return {
-          ...accum,
-          [id]: c.content,
-        };
-      }, {});
-    }
-
-    // EN: Get the assessment criteria
-    // ES: Obtener los criterios de evaluación
-    let criteria;
-    if (columns === '*' || columns.includes('assessmentCriteria')) {
-      criteria = await fullIds.reduce(async (accum, id) => {
-        await accum;
-        const c = await getAssessmentCriteria(id, { transacting });
-
-        return {
-          ...accum,
-          [id]: c.assessmentCriteria,
-        };
-      }, {});
-    }
-
-    // EN: Get the attachments
-    // ES: Obtener los adjuntos
     let attachments;
     if (columns === '*' || columns.includes('attachments')) {
       attachments = await fullIds.reduce(async (accum, id) => {
@@ -190,18 +140,6 @@ async function getMany(taskIds, { columns, transacting } = {}) {
 
         if (tags) {
           t.tags = tags[fullIds[i]];
-        }
-
-        if (objectives) {
-          t.objectives = objectives[fullIds[i]];
-        }
-
-        if (content) {
-          t.content = content[fullIds[i]];
-        }
-
-        if (criteria) {
-          t.assessmentCriteria = criteria[fullIds[i]];
         }
 
         if (attachments) {
