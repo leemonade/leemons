@@ -46,18 +46,6 @@ async function remove(taskID, { transacting: t } = {}) {
         // ES: Eliminar etiquetas
         await deleteTags(fullId, undefined, { transacting });
 
-        // EN: Remove objectives
-        // ES: Eliminar objetivos
-        await deleteObjectives(fullId, undefined, { transacting });
-
-        // EN: Remove contents
-        // ES: Eliminar contenidos
-        await deletecontents(fullId, undefined, { transacting });
-
-        // EN: Remove assessment criteria
-        // ES: Eliminar criterios de evaluación
-        await deleteAssessmentCriteria(fullId, undefined, { transacting });
-
         // EN: Remove attachments
         // ES: Eliminar adjuntos
         await deleteAttachments(fullId, undefined, { transacting });
