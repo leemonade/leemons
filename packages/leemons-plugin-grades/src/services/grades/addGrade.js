@@ -9,12 +9,21 @@ async function addGrade(data, { transacting: _transacting } = {}) {
     async (transacting) => {
       await validateAddGrade(data);
 
-      const { scales, ..._data } = data;
+      const { scales, minScaleToPromote, ..._data } = data;
 
       const grade = await table.grades.create(_data, { transacting });
 
-      await Promise.all(
+      const newScales = await Promise.all(
         _.map(scales, (scale) => addGradeScale({ ...scale, grade: grade.id }, { transacting }))
+      );
+
+      const minScale = _.find(newScales, { number: minScaleToPromote });
+      if (!minScale) throw new Error('minScaleToPromote not found inside scales');
+
+      await table.grades.update(
+        { id: grade.id },
+        { minScaleToPromote: minScale.id },
+        { transacting }
       );
 
       return (await gradeByIds(grade.id, { transacting }))[0];

@@ -34,6 +34,7 @@ import { getDataTypes } from '../../../helpers/getDataTypes';
 import { getOperators } from '../../../helpers/getOperators';
 import { getPromotionDetailMessages } from '../../../helpers/getPromotionDetailMessages';
 import { activeMenuItemDependencies } from '../../../helpers/activeMenuItemDependencies';
+import { getScaleLabel } from '../../../helpers/getScaleLabel';
 
 export default function PromotionsList() {
   const [t] = useTranslateLoader(prefixPN('promotionsPage'));
@@ -129,9 +130,7 @@ export default function PromotionsList() {
       store.selectData.gradeScales = map(
         find(store.grades, { id: program.evaluationSystem }).scales,
         (scale) => ({
-          label: `${scale.letter ? `${scale.letter} (` : ''} ${scale.number}${
-            scale.letter ? `)` : ''
-          }`,
+          label: getScaleLabel(scale),
           value: scale.id,
         })
       );

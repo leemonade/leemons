@@ -4,6 +4,7 @@ import { useStore } from '@common';
 import { Select } from '@bubbles-ui/components';
 import { map } from 'lodash';
 import { getGradeRequest } from '../../request';
+import { getScaleLabel } from '../../helpers/getScaleLabel';
 
 const EvaluationNotesSelect = ({ evaluation, valueKey = 'number', ...props }) => {
   const [store, render] = useStore({ notes: [] });
@@ -16,9 +17,7 @@ const EvaluationNotesSelect = ({ evaluation, valueKey = 'number', ...props }) =>
       if (grade) {
         store.notes = map(grade.scales, (item) => ({
           value: item[valueKey],
-          label: item.letter
-            ? `${item.number} [${item.letter}] ${item.description ? `(${item.description})` : ''}`
-            : `${item.number} ${item.description ? `(${item.description})` : ''}`,
+          label: getScaleLabel(item),
         }));
       }
 
