@@ -22,18 +22,7 @@ Actions.propTypes = {
 
 export default function SelectTeachers({ role, onChange }) {
   const [profiles, setProfiles] = useState([null]);
-  const [assignees, setAssignees] = useState([]);
-  const { control, handleSubmit } = useForm();
-
-  const onDelete = (id) => {
-    setAssignees((assignee) => assignee.filter((a) => a.id !== id));
-  };
-  const onSubmit = ({ assignee }) => {
-    setAssignees((a) => [
-      ...a,
-      { id: assignee, actions: <Actions id={assignee} onDelete={onDelete} /> },
-    ]);
-  };
+  const { control, setValue } = useForm();
 
   // EN: Get the teacher profile selected on the plugin settings
   // ES: Obtenemos el perfil de profesor seleccionado en la configuración del plugin
@@ -46,35 +35,27 @@ export default function SelectTeachers({ role, onChange }) {
   }, [role]);
 
   useEffect(() => {
-    setAssignees([]);
+    setValue('assignee', []);
   }, [profiles]);
 
-  useEffect(() => {
-    if (typeof onChange === 'function') {
-      onChange(assignees.map((a) => a.id));
-    }
-  }, [assignees]);
-
   return (
-    <ContextContainer spacing={1}>
-      <ContextContainer direction="row" alignItems="center">
-        <Controller
-          name="assignee"
-          control={control}
-          render={({ field }) => <SelectUserAgent {...field} profiles={profiles} />}
-        />
-        <Button leftIcon={<AddCircleIcon />} variant="link" noFlex onClick={handleSubmit(onSubmit)}>
-          Add
-        </Button>
-      </ContextContainer>
-
-      {/* TRANSLATE: Localizate the teacher columns */}
-      <Table
-        columns={[
-          { Header: 'userId', accessor: 'id' },
-          { Header: '', accessor: 'actions' },
-        ]}
-        data={assignees}
+    <ContextContainer direction="row" alignItems="center" spacing={1}>
+      <Controller
+        name="assignee"
+        control={control}
+        render={({ field }) => (
+          <SelectUserAgent
+            {...field}
+            // TRANSLATE: Teacher label
+            label="Teachers"
+            onChange={(v) => {
+              field.onChange(v);
+              onChange(v);
+            }}
+            maxSelectedValues={0}
+            profiles={profiles}
+          />
+        )}
       />
     </ContextContainer>
   );
