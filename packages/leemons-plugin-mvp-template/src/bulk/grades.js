@@ -10,6 +10,7 @@ async function importGrades(centers) {
     const grade = items[key];
     grade.center = centers[grade.center]?.id;
     grade.type = toLower(grade.type);
+    grade.minScaleToPromote = Number(grade.minScaleToPromote);
 
     if (grade.type !== 'numeric') {
       delete grade.isPercentage;

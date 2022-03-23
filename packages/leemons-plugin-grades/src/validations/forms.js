@@ -9,12 +9,13 @@ const addGradeSchema = {
   properties: {
     name: stringSchema,
     center: stringSchema,
+    minScaleToPromote: numberSchema,
     type: {
       type: 'string',
       enum: ['numeric', 'letter'],
     },
   },
-  required: ['name', 'type', 'center'],
+  required: ['name', 'type', 'center', 'minScaleToPromote'],
   additionalProperties: false,
 };
 const addGradeNumericSchema = {
@@ -68,9 +69,9 @@ const addGradeLetterSchema = {
 
 function validateAddGrade(data) {
   const validator = new LeemonsValidator(addGradeSchema);
-  const { name, type, center, ...rest } = data;
+  const { name, type, center, minScaleToPromote, ...rest } = data;
 
-  if (!validator.validate({ name, type, center })) {
+  if (!validator.validate({ name, type, center, minScaleToPromote })) {
     throw validator.error;
   }
 
