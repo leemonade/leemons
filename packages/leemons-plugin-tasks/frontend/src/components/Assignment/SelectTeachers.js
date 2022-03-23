@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef, forwardRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useForm, Controller } from 'react-hook-form';
 import SelectUserAgent from '@users/components/SelectUserAgent';
-import { Button, ContextContainer, Table } from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/outline';
+import { ContextContainer } from '@bubbles-ui/components';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { getProfiles } from '../../request/profiles';
 
