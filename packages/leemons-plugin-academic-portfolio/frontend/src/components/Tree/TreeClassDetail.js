@@ -5,12 +5,14 @@ import {
   Box,
   Button,
   ContextContainer,
+  Select,
   TabPanel,
   Tabs,
   TextInput,
   Title,
 } from '@bubbles-ui/components';
 import { useStore } from '@common';
+import { forEach, map } from 'lodash';
 import { TreeClassroomDetail } from './TreeClassroomDetail';
 
 const TreeClassDetail = ({
@@ -21,8 +23,12 @@ const TreeClassDetail = ({
   messages,
   onSaveSubject,
   onSaveClass,
+  addClassUsers,
   selectClass,
   saving,
+  removeUserFromClass,
+  center,
+  item: treeItem,
   teacherSelect,
   createMode = false,
 }) => {
@@ -37,7 +43,21 @@ const TreeClassDetail = ({
   } = useForm({ defaultValues: classe.subject });
 
   React.useEffect(() => {
-    reset(classe.subject);
+    let subjectType = null;
+    let knowledge = null;
+    forEach(classes, (item) => {
+      if (subjectType == null && item.subjectType) {
+        subjectType = item.subjectType.id;
+      }
+      if (knowledge == null && item.knowledge) {
+        knowledge = item.knowledge.id;
+      }
+    });
+    reset({
+      ...classe.subject,
+      subjectType,
+      knowledge,
+    });
   }, [classe.subject]);
 
   const tabs = [];
@@ -56,6 +76,20 @@ const TreeClassDetail = ({
     );
   }
 
+  const selects = React.useMemo(
+    () => ({
+      knowledges: map(program.knowledges, ({ name, id }) => ({
+        label: name,
+        value: id,
+      })),
+      subjectTypes: map(program.subjectTypes, ({ name, id }) => ({
+        label: name,
+        value: id,
+      })),
+    }),
+    [program]
+  );
+
   return (
     <Box>
       <ContextContainer direction="column" fullWidth divided>
@@ -72,6 +106,38 @@ const TreeClassDetail = ({
                 )}
               />
             </Box>
+            <Box>
+              <Controller
+                control={control}
+                name="subjectType"
+                rules={{ required: messages.subjectTypeRequired }}
+                render={({ field }) => (
+                  <Select
+                    data={selects.subjectTypes}
+                    error={errors.subjectType}
+                    label={messages.subjectType}
+                    {...field}
+                  />
+                )}
+              />
+            </Box>
+            {program.haveKnowledge ? (
+              <Box>
+                <Controller
+                  control={control}
+                  name="knowledge"
+                  rules={{ required: messages.knowledgeRequired }}
+                  render={({ field }) => (
+                    <Select
+                      data={selects.knowledges}
+                      error={errors.knowledge}
+                      label={messages.knowledge}
+                      {...field}
+                    />
+                  )}
+                />
+              </Box>
+            ) : null}
 
             <Box>
               <Button loading={saving} type="submit">
@@ -90,11 +156,15 @@ const TreeClassDetail = ({
                   <TabPanel disabled={store.createMode} key={item.id} label={item.treeName}>
                     <TreeClassroomDetail
                       messagesAddUsers={messagesAddUsers}
+                      removeUserFromClass={removeUserFromClass}
                       program={program}
                       classe={item}
                       messages={messages}
                       saving={saving}
                       onSave={onSaveClass}
+                      center={center}
+                      item={treeItem}
+                      addClassUsers={addClassUsers}
                       teacherSelect={teacherSelect}
                     />
                   </TabPanel>
@@ -119,7 +189,11 @@ TreeClassDetail.propTypes = {
   saving: PropTypes.bool,
   teacherSelect: PropTypes.any,
   createMode: PropTypes.bool,
+  center: PropTypes.string,
+  item: PropTypes.object,
+  addClassUsers: PropTypes.func,
   messagesAddUsers: PropTypes.object,
+  removeUserFromClass: PropTypes.func,
 };
 
 // eslint-disable-next-line import/prefer-default-export

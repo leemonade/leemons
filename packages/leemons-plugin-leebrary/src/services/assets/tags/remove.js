@@ -17,6 +17,6 @@ module.exports = async function remove(asset, tags, { transacting } = {}) {
       soft: deleted.soft,
     };
   } catch (e) {
-    throw new Error(`Failed to delete tags: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to delete tags: ${e.message}`);
   }
 };

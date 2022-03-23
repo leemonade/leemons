@@ -28,6 +28,6 @@ module.exports = async function getAssets(
 
     return assets;
   } catch (e) {
-    throw new Error(`Failed to get assets with the given tags: ${e.message}`);
+    throw new global.utils.HttpError(422, `Failed to get assets with the given tags: ${e.message}`);
   }
 };

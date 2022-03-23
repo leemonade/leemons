@@ -13,7 +13,7 @@ async function remove(id, { userSession, transacting: t } = {}) {
         // EN: Check if the asset exists (if not it will throw an error)
         // ES: Comprobar si el activo existe (si no, lanzará un error)
         if (!(await exists(id, { transacting }))) {
-          throw new Error(`Asset with ${id} does not exists`);
+          throw new global.utils.HttpError(500, `Asset with ${id} does not exists`);
         }
 
         // EN: Get the files associated with the asset
@@ -50,7 +50,7 @@ async function remove(id, { userSession, transacting: t } = {}) {
         if (e.message === 'entry.notFound') {
           return false;
         }
-        throw new Error(`Failed to remove asset: ${e.message}`);
+        throw new global.utils.HttpError(500, `Failed to remove asset: ${e.message}`);
       }
     },
     tables.assets,

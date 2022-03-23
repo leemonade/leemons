@@ -110,6 +110,11 @@ module.exports = {
         defaultTo: 1,
       },
     },
+    evaluationSystem: {
+      references: {
+        collection: 'plugins_grades::grades',
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

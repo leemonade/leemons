@@ -32,9 +32,12 @@ module.exports = {
       },
     },
     program: {
+      type: 'string',
+      /*
       references: {
         collection: 'plugins_academic-portfolio::programs',
       },
+      */
     },
     status: {
       type: 'string',

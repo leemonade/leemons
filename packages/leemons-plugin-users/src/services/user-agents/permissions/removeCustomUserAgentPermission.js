@@ -5,7 +5,7 @@ const { validatePermissionName } = require('../../../validations/exists');
 const { table } = require('../../tables');
 
 /**
- * Add a user to platform
+ * Remove permissions from userAgent
  * @public
  * @static
  * @param {string} userAgentId - User auth id
@@ -26,19 +26,20 @@ async function removeCustomUserAgentPermission(userAgentId, data, { transacting 
   validatePermissionName(data.permissionName, this.calledFrom);
   validateUserRemoveCustomPermission(data);
 
+  // console.log(userAgentId, data);
+
   if (_.isArray(userAgentId)) {
     return global.utils.settledResponseToManyResponse(
       await Promise.allSettled(
         _.map(userAgentId, (id) => _removeCustomPermission(id, data, { transacting }))
       )
     );
-  } else {
-    return _removeCustomPermission(userAgentId, data, { transacting });
   }
+  return _removeCustomPermission(userAgentId, data, { transacting });
 }
 
 async function _removeCustomPermission(userAgentId, data, { transacting } = {}) {
-  await existUserAgent({ id: userAgentId }, { transacting });
+  await existUserAgent({ id: userAgentId }, true, { transacting });
 
   const query = {
     permissionName: data.permissionName,

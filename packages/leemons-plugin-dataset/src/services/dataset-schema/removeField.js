@@ -63,15 +63,17 @@ async function removeField(locationName, pluginName, item, { transacting: _trans
       const savePromises = [];
       _.forIn(schema, (value, locale) => {
         const jsonValue = JSON.parse(value);
-        delete jsonValue.properties[item];
-        savePromises.push(
-          translations().contents.setValue(
-            getTranslationKey(locationName, pluginName, 'jsonSchema'),
-            locale,
-            JSON.stringify(jsonValue),
-            { transacting }
-          )
-        );
+        if (jsonValue && jsonValue.properties && jsonValue.properties[item]) {
+          delete jsonValue.properties[item];
+          savePromises.push(
+            translations().contents.setValue(
+              getTranslationKey(locationName, pluginName, 'jsonSchema'),
+              locale,
+              JSON.stringify(jsonValue),
+              { transacting }
+            )
+          );
+        }
       });
 
       _.forIn(ui, (value, locale) => {

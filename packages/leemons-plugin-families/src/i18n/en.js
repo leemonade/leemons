@@ -113,4 +113,11 @@ module.exports = {
       action: 'Accept',
     },
   },
+  userDetailWidget: {
+    family: 'Family',
+    notifiedBy: 'Notified by',
+    name: 'Name',
+    phone: 'Phone',
+    relation: 'Relation',
+  },
 };

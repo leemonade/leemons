@@ -1,32 +1,11 @@
+const { set } = require('../src/services/permissions/set');
 /*
 const get = require('../src/services/permissions/get');
 const has = require('../src/services/permissions/has');
 const list = require('../src/services/permissions/list');
 const remove = require('../src/services/permissions/remove');
-const set = require('../src/services/permissions/set');
 
 module.exports = {
-  set: async (ctx) => {
-    const { asset } = ctx.params;
-    const { userAgent, role } = ctx.request.body;
-    const { userSession } = ctx.state;
-
-    try {
-      const permission = await set(asset, userAgent, role, { userSession });
-
-      ctx.status = 200;
-      ctx.body = {
-        status: 200,
-        role: permission,
-      };
-    } catch (e) {
-      ctx.status = 400;
-      ctx.body = {
-        status: 400,
-        message: e.message,
-      };
-    }
-  },
   remove: async (ctx) => {
     const { asset } = ctx.params;
     const { userAgent } = ctx.request.query;
@@ -111,4 +90,18 @@ module.exports = {
   },
 };
 */
-module.exports = {};
+module.exports = {
+  set: async (ctx) => {
+    const { asset } = ctx.params;
+    const { userAgentsAndRoles } = ctx.request.body;
+    const { userSession } = ctx.state;
+
+    const permissions = await set(asset, userAgentsAndRoles, { userSession });
+
+    ctx.status = 200;
+    ctx.body = {
+      status: 200,
+      permissions,
+    };
+  },
+};

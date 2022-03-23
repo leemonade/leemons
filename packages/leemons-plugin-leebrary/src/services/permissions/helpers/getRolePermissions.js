@@ -7,5 +7,5 @@ module.exports = function getRolePermissions(role = 'noPermission') {
     return rolesPermissions[role];
   }
 
-  throw new Error(`The role "${role}" is not valid.`);
+  throw new global.utils.HttpError(412, `The role "${role}" is not valid.`);
 };

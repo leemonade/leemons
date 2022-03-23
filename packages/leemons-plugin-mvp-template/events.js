@@ -2,6 +2,7 @@ const initUsers = require('./src/users');
 const initCenters = require('./src/centers');
 const initProfiles = require('./src/profiles');
 const initFamilies = require('./src/families');
+const initGrades = require('./src/grades');
 const initAcademicPortfolio = require('./src/academicPortfolio');
 const addCalendarAndEventAsClassroom = require('./src/calendar');
 const addAWSS3AsProvider = require('./src/leebrary');
@@ -48,6 +49,7 @@ async function events(isInstalled) {
         'plugins.calendar:init-event-types',
         'plugins.academic-portfolio:init-permissions',
         'plugins.leebrary:init-permissions',
+        'plugins.grades:init-permissions',
       ],
       async () => {
         try {
@@ -59,6 +61,9 @@ async function events(isInstalled) {
 
           config.users = await initUsers(config.centers, config.profiles);
           leemons.events.emit('init-users', config.users);
+
+          config.grades = await initGrades(config.centers);
+          leemons.events.emit('init-grades', config.grades);
 
           await addCalendarAndEventAsClassroom(config.users);
         } catch (e) {
@@ -116,6 +121,7 @@ async function events(isInstalled) {
         'plugins.mvp-template:init-profiles',
         'plugins.mvp-template:init-centers',
         'plugins.mvp-template:init-users',
+        'plugins.mvp-template:init-grades',
       ],
       async () => {
         try {

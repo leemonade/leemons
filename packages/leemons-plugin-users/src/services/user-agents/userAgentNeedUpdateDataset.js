@@ -40,7 +40,7 @@ async function userSessionUserAgentNeedUpdateDataset(userSession, { transacting 
     );
 
     try {
-      datasetService.validateDataForJsonSchema(schema.compileJsonSchema, values);
+      datasetService.validateDataForJsonSchema(schema.compileJsonSchema, values || {});
     } catch (e) {
       return true;
     }

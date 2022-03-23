@@ -18,9 +18,10 @@ import {
   Table,
   useModal,
 } from 'leemons-ui';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@families/helpers/prefixPN';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { PlusIcon, TrashIcon } from '@heroicons/react/outline';
 import {

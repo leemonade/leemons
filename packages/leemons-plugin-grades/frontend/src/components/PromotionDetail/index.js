@@ -7,7 +7,6 @@ import { isString, map } from 'lodash';
 import { EvaluationDetailStyles } from './styles';
 import { Name } from './components/Name';
 import { Program } from './components/Program';
-import { Grades } from './components/Grades';
 import { Conditions } from './components/Conditions';
 import { Subject } from './components/Subject';
 
@@ -100,6 +99,7 @@ const PromotionDetail = ({
                 form={form}
               />
             </Col>
+            {/*
             <Col span={50}>
               <Grades
                 messages={messages}
@@ -108,6 +108,7 @@ const PromotionDetail = ({
                 form={form}
               />
             </Col>
+            */}
           </Grid>
         </Box>
 

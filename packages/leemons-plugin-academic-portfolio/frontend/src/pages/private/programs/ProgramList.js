@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { isArray, isEmpty, isNil } from 'lodash';
 import {
+  Alert,
+  Anchor,
   Box,
   Col,
   ContextContainer,
@@ -30,6 +32,9 @@ import {
 } from '@academic-portfolio/request';
 import { ProgramItem } from '@academic-portfolio/components';
 import { useStore, unflatten } from '@common';
+import { EvaluationsSelect } from '@grades/components/EvaluationsSelect';
+import { listGradesRequest } from '@grades/request';
+import { Link, useHistory } from 'react-router-dom';
 import { detailProgramRequest } from '../../../request';
 import { activeMenuItemSubjects } from '../../../helpers/activeMenuItemSubjects';
 
@@ -37,6 +42,7 @@ export default function ProgramList() {
   const [t, translations, , loading] = useTranslateLoader(prefixPN('programs_page'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
+  const [errorNoEvaluation, setErrorNoEvaluation] = useState(false);
   const [centerId, setCenterId] = useState(null);
   const [setupLabels, setSetupLabels] = useState(null);
   const [showDetail, setShowDetail] = useState(false);
@@ -46,6 +52,8 @@ export default function ProgramList() {
     programs: [],
     currentProgram: null,
   });
+
+  const history = useHistory();
 
   const treeProps = useTree();
 
@@ -165,8 +173,20 @@ export default function ProgramList() {
     }
   };
 
+  async function checkIfExistsEvaluationSystemsOnSelectedCenter() {
+    try {
+      const {
+        data: { items },
+      } = await listGradesRequest({ page: 0, size: 1, center: centerId });
+      setErrorNoEvaluation(!items.length);
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+  }
+
   React.useEffect(() => {
     if (centerId && !loading) {
+      checkIfExistsEvaluationSystemsOnSelectedCenter();
       loadPrograms(centerId);
     }
   }, [loading, centerId]);
@@ -242,7 +262,12 @@ export default function ProgramList() {
         data: [
           {
             label: basicData.step_label,
-            content: <AcademicProgramSetupBasicData {...basicData} />,
+            content: (
+              <AcademicProgramSetupBasicData
+                {...basicData}
+                evaluationSystemSelect={<EvaluationsSelect center={centerId} />}
+              />
+            ),
           },
           {
             label: coursesData.step_label,
@@ -264,7 +289,7 @@ export default function ProgramList() {
       };
     }
     return null;
-  }, [setupLabels, store.currentProgram]);
+  }, [setupLabels, centerId, store.currentProgram]);
 
   return (
     <ContextContainer fullHeight>
@@ -284,7 +309,23 @@ export default function ProgramList() {
                         firstSelected
                       />
                     </Box>
-                    {centerId && (
+                    {errorNoEvaluation ? (
+                      <Box>
+                        <Alert severity="error" closeable={false}>
+                          {t('errorNoEvaluationSystems')}
+                          <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
+                            <Anchor
+                              component={Link}
+                              to={`/private/grades/evaluations?center=${centerId}`}
+                            >
+                              {t('errorNoEvaluationSystemsGoTo')}
+                            </Anchor>
+                          </Box>
+                        </Alert>
+                      </Box>
+                    ) : null}
+
+                    {centerId && !errorNoEvaluation && (
                       <Box>
                         <Tree
                           {...treeProps}
@@ -299,14 +340,16 @@ export default function ProgramList() {
               </Col>
               <Col span={7}>
                 {!isNil(setupProps) && showDetail && (
-                  <Paper fullWidth padding={5}>
-                    <AcademicProgramSetup
-                      {...setupProps}
-                      onSave={handleOnSaveProgram}
-                      onNext={handleOnNext}
-                      onPrev={handleOnPrev}
-                    />
-                  </Paper>
+                  <>
+                    <Paper fullWidth padding={5}>
+                      <AcademicProgramSetup
+                        {...setupProps}
+                        onSave={handleOnSaveProgram}
+                        onNext={handleOnNext}
+                        onPrev={handleOnPrev}
+                      />
+                    </Paper>
+                  </>
                 )}
               </Col>
             </Grid>

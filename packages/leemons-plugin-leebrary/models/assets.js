@@ -14,8 +14,13 @@ module.exports = {
     description: {
       type: 'string',
     },
-    cover: {
+    color: {
       type: 'string',
+    },
+    cover: {
+      references: {
+        collection: 'plugins_leebrary::files',
+      },
     },
     fromUser: {
       references: {

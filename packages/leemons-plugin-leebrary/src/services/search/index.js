@@ -55,7 +55,7 @@ async function search(query, { details = false, userSession, transacting } = {})
 
     return assets || [];
   } catch (e) {
-    throw new Error(`Failed to find asset with query: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to find asset with query: ${e.message}`);
   }
 }
 
