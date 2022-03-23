@@ -1,11 +1,22 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { find, forEach, orderBy, isArray, forIn, findIndex } from 'lodash';
+import React, { useEffect, useMemo, useState } from 'react';
+import { find, findIndex, forEach, forIn, isArray, orderBy } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { listCentersRequest } from '@users/request';
-import { Box, Text, Title, Group, Tree, useTree } from '@bubbles-ui/components';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
+import {
+  Box,
+  Col,
+  ContextContainer,
+  Grid,
+  PageContainer,
+  Paper,
+  Tree,
+  useTree,
+} from '@bubbles-ui/components';
 import { useParams } from 'react-router-dom';
 import { detailProgramRequest } from '@academic-portfolio/request';
+import { useStore } from '@common';
 import { addNodeRequest, detailCurriculumRequest, saveNodeRequest } from '../../../request';
 import NewBranchValue, {
   NEW_BRANCH_VALUE_ERROR_MESSAGES,
@@ -14,12 +25,12 @@ import NewBranchValue, {
 import NewBranchDetailValue from '../../../bubbles-components/NewBranchDetailValue';
 
 function AddCurriculumStep3() {
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [activeNode, setActiveNode] = useState(null);
+  const [store, render] = useStore({
+    loading: true,
+  });
+
   const [activeRightSection, setActiveRightSection] = useState(null);
   const [t] = useTranslateLoader(prefixPN('addCurriculumStep3'));
-  const [curriculum, setCurriculum] = useState(null);
 
   const tree = useTree();
   const { id } = useParams();
@@ -42,7 +53,8 @@ function AddCurriculumStep3() {
 
   async function load() {
     try {
-      setLoading(true);
+      store.loading = true;
+      render();
       const [
         { curriculum: c },
         {
@@ -58,13 +70,13 @@ function AddCurriculumStep3() {
       c.program = program;
       c.center = find(centers, { id: c.center });
       c.nodeLevels = orderBy(c.nodeLevels, ['levelOrder'], ['asc']);
-      console.log(c);
 
-      setCurriculum(c);
-      setLoading(false);
+      store.curriculum = c;
+      store.loading = false;
     } catch (e) {
-      setLoading(false);
+      store.loading = false;
     }
+    render();
   }
 
   useEffect(() => {
@@ -72,10 +84,10 @@ function AddCurriculumStep3() {
   }, []);
 
   useEffect(() => {
-    if (curriculum) {
+    if (store.curriculum) {
       const items = [];
 
-      if (isArray(curriculum.nodes) && curriculum.nodes.length) {
+      if (isArray(store.curriculum.nodes) && store.curriculum.nodes.length) {
         const addNodes = (nodes, parent, nextDeep) => {
           forEach(nodes, (node) => {
             items.push({
@@ -85,11 +97,11 @@ function AddCurriculumStep3() {
               text: node.fullName,
               node,
             });
-            if (curriculum.nodeLevels[nextDeep]) {
+            if (store.curriculum.nodeLevels[nextDeep]) {
               items.push({
                 id: `add-button-${node.id}`,
                 parent: node.id,
-                text: t('addNode', { name: curriculum.nodeLevels[nextDeep].name }),
+                text: t('addNode', { name: store.curriculum.nodeLevels[nextDeep].name }),
                 type: 'button',
                 draggable: false,
                 node,
@@ -103,12 +115,12 @@ function AddCurriculumStep3() {
             }
           });
         };
-        addNodes(curriculum.nodes, 0, 1);
+        addNodes(store.curriculum.nodes, 0, 1);
       }
       items.push({
         id: 'add-button',
         parent: 0,
-        text: t('addNode', { name: curriculum.nodeLevels[0].name }),
+        text: t('addNode', { name: store.curriculum.nodeLevels[0].name }),
         type: 'button',
         draggable: false,
         node: null,
@@ -119,36 +131,42 @@ function AddCurriculumStep3() {
 
       tree.setTreeData(items);
     }
-  }, [curriculum]);
+  }, [store.curriculum]);
 
   async function onSelect({ node }) {
-    setActiveNode({ ...node, nodeLevel: find(curriculum.nodeLevels, { id: node.nodeLevel }) });
+    store.activeNode = {
+      ...node,
+      nodeLevel: find(store.curriculum.nodeLevels, { id: node.nodeLevel }),
+    };
     setActiveRightSection('detail-branch-value');
+    render();
   }
 
   async function onAdd({ node }) {
-    setActiveNode(node);
+    store.activeNode = node;
     setActiveRightSection('add-branch-value');
+    render();
   }
 
   async function onAddBranchValue(data) {
     try {
-      setSaving(true);
+      store.saving = true;
+      render();
       if (!data.id) {
         const toSend = {
-          curriculum: curriculum.id,
+          curriculum: store.curriculum.id,
           name: data.name,
-          nodeLevel: curriculum.nodeLevels[0].id,
+          nodeLevel: store.curriculum.nodeLevels[0].id,
           parentNode: null,
-          nodeOrder: curriculum.nodes.length,
+          nodeOrder: store.curriculum.nodes.length,
         };
-        if (activeNode) {
-          const parentNodeLevelIndex = findIndex(curriculum.nodeLevels, {
-            id: activeNode.nodeLevel,
+        if (store.activeNode) {
+          const parentNodeLevelIndex = findIndex(store.curriculum.nodeLevels, {
+            id: store.activeNode.nodeLevel,
           });
-          toSend.nodeLevel = curriculum.nodeLevels[parentNodeLevelIndex + 1].id;
-          toSend.parentNode = activeNode.id;
-          toSend.nodeOrder = activeNode.childrens.length;
+          toSend.nodeLevel = store.curriculum.nodeLevels[parentNodeLevelIndex + 1].id;
+          toSend.parentNode = store.activeNode.id;
+          toSend.nodeOrder = store.activeNode.childrens.length;
         }
         await addNodeRequest(toSend);
       } else {
@@ -156,86 +174,93 @@ function AddCurriculumStep3() {
       }
       await load();
       setActiveRightSection(null);
-      setActiveNode(null);
-      setSaving(false);
+      store.activeNode = null;
+      store.saving = false;
     } catch (err) {
       console.error(err);
-      setSaving(false);
+      store.saving = false;
     }
+    render();
   }
 
-  const groupChilds = [
-    <Box key="child-1">
-      <Tree
-        {...tree}
-        rootId={0}
-        onAdd={onAdd}
-        onDelete={(node) => alert(`Delete nodeId: ${node.id}`)}
-        onEdit={(node) => alert(`Editing ${node.id}`)}
-        onSelect={onSelect}
-      />
-    </Box>,
-  ];
+  let groupChilds = null;
 
   if (activeRightSection === 'add-branch-value') {
-    groupChilds.push(
-      <Box key="child-2">
-        <NewBranchValue
-          messages={messagesBranchValues}
-          errorMessages={errorMessagesBranchValues}
-          onSubmit={onAddBranchValue}
-          isLoading={saving}
-        />
-      </Box>
+    groupChilds = (
+      <NewBranchValue
+        messages={messagesBranchValues}
+        errorMessages={errorMessagesBranchValues}
+        onSubmit={onAddBranchValue}
+        isLoading={store.saving}
+      />
     );
   }
   if (activeRightSection === 'detail-branch-value') {
-    groupChilds.push(
-      <Box key="child-2">
-        <NewBranchDetailValue
-          messages={messagesBranchValues}
-          errorMessages={errorMessagesBranchValues}
-          onSubmit={onAddBranchValue}
-          isLoading={saving}
-          defaultValues={{ name: activeNode.name, id: activeNode.id }}
-          schema={
-            activeNode.nodeLevel.schema
-              ? {
-                  jsonSchema: activeNode.nodeLevel.schema.compileJsonSchema,
-                  jsonUI: activeNode.nodeLevel.schema.compileJsonUI,
-                }
-              : null
-          }
-          schemaFormValues={activeNode.formValues}
-        />
-      </Box>
+    groupChilds = (
+      <NewBranchDetailValue
+        messages={messagesBranchValues}
+        errorMessages={errorMessagesBranchValues}
+        onSubmit={onAddBranchValue}
+        isLoading={store.saving}
+        defaultValues={{ name: store.activeNode.name, id: store.activeNode.id }}
+        schema={
+          store.activeNode.nodeLevel.schema
+            ? {
+                jsonSchema: store.activeNode.nodeLevel.schema.compileJsonSchema,
+                jsonUI: store.activeNode.nodeLevel.schema.compileJsonUI,
+              }
+            : null
+        }
+        schemaFormValues={store.activeNode.formValues}
+      />
     );
   }
 
-  if (loading) {
+  if (store.loading) {
     return <Box>Loading...</Box>;
   }
-  return (
-    <Box m={32}>
-      <Box mb={12}>
-        <Title>{curriculum.name}</Title>
-      </Box>
-      <Box mb={12}>
-        <Title order={3}>
-          {curriculum.center.name}|{curriculum.program.name}
-        </Title>
-      </Box>
-      <Box mb={12}>
-        <Text role={'productive'}>{t('description1')}</Text>
-      </Box>
-      <Box mb={16}>
-        <Text role={'productive'}>{t('description2')}</Text>
-      </Box>
 
-      <Group grow align="start">
-        {groupChilds}
-      </Group>
-    </Box>
+  return (
+    <ContextContainer fullHeight>
+      <AdminPageHeader
+        values={{
+          title: `${store.curriculum.name} (${store.curriculum.center.name}|${store.curriculum.program.name})`,
+          description: t('description1') + t('description2'),
+        }}
+      />
+
+      <Paper fullHeight color="solid" shadow="none" padding={0}>
+        <PageContainer>
+          <ContextContainer padded="vertical">
+            <Grid grow>
+              <Col span={5}>
+                <Paper fullWidth padding={5}>
+                  <ContextContainer divided>
+                    <Tree
+                      {...tree}
+                      rootId={0}
+                      onAdd={onAdd}
+                      onDelete={(node) => alert(`Delete nodeId: ${node.id}`)}
+                      onEdit={(node) => alert(`Editing ${node.id}`)}
+                      onSelect={onSelect}
+                    />
+                  </ContextContainer>
+                </Paper>
+              </Col>
+              <Col span={7}>
+                {groupChilds ? (
+                  <>
+                    <Paper fullWidth padding={5}>
+                      {groupChilds}
+                    </Paper>
+                  </>
+                ) : null}
+              </Col>
+            </Grid>
+          </ContextContainer>
+        </PageContainer>
+      </Paper>
+    </ContextContainer>
   );
 }
 

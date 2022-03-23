@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
 import formWithTheme from '@common/formWithTheme';
-import { Box, Title, Group, TextInput, Select, Button } from '@bubbles-ui/components';
+import { Box, Button, TextInput } from '@bubbles-ui/components';
 
 export const NEW_BRANCH_DETAIL_VALUE_MESSAGES = {
   nameLabel: 'Name',
@@ -64,7 +64,7 @@ function NewBranchDetailValue({
   }
 
   return (
-    <Box m={32}>
+    <Box>
       {!readonly ? (
         <form>
           <Box>

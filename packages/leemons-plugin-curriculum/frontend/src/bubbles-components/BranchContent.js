@@ -1,18 +1,15 @@
-import React, { useState, useMemo } from 'react';
-import { values, keys, compact } from 'lodash';
+import React, { useMemo, useState } from 'react';
+import { compact, keys, values } from 'lodash';
 import PropTypes from 'prop-types';
-import {
-  Box,
-  Title,
-  Group,
-  TextInput,
-  Select,
-  Button,
-  Table,
-  Stack,
-  ActionButton,
-} from '@bubbles-ui/components';
 import { EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import {
+  ActionButton,
+  Button,
+  ContextContainer,
+  Stack,
+  Table,
+  Title,
+} from '@bubbles-ui/components';
 import BranchBlock from './BranchBlock';
 import {
   BRANCH_CONTENT_ERROR_MESSAGES,
@@ -27,32 +24,11 @@ function BranchContent({
   branch,
   isLoading,
   onSaveBlock,
+  onCloseBranch,
   onRemoveBlock,
 }) {
   const [addBlock, setAddBlock] = useState(false);
   const [editingBlock, setEditingBlock] = useState(null);
-
-  if (!branch) return 'Branch required';
-
-  if (!branch.schema) {
-    if (addBlock) {
-      return (
-        <BranchBlock
-          messages={messages}
-          errorMessages={errorMessages}
-          selectData={selectData}
-          isLoading={isLoading}
-          branch={branch}
-          onSubmit={onSaveBlock}
-        />
-      );
-    }
-    return (
-      <Button variant="link" onClick={() => setAddBlock(true)}>
-        {messages.addContent}
-      </Button>
-    );
-  }
 
   const columns = useMemo(
     () => [
@@ -79,7 +55,7 @@ function BranchContent({
   const data = useMemo(
     () =>
       compact(
-        values(branch.schema.jsonSchema.properties).map((item, index) => {
+        values(branch?.schema?.jsonSchema.properties || []).map((item, index) => {
           if (editingBlock && editingBlock.id === item.id) return null;
           return {
             name: item.frontConfig.name,
@@ -110,56 +86,26 @@ function BranchContent({
           };
         })
       ),
-    [branch.schema.jsonSchema.properties]
+    [JSON.stringify(branch?.schema?.jsonSchema.properties), JSON.stringify(editingBlock)]
   );
 
+  async function sendOnSaveBlock(block) {
+    await onSaveBlock(block);
+    setEditingBlock(null);
+    setAddBlock(false);
+  }
+
+  if (!branch) return 'Branch required';
+
   return (
-    <Box m={32}>
-      <Table columns={columns} data={data} />
-      {/*
-      <Table>
-        <thead>
-          <tr>
-            <th>{messages.blockNameLabel}</th>
-            <th>{messages.blockTypeLabel}</th>
-            <th>{messages.blockOrderedLabel}</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {values(branch.schema.jsonSchema.properties).map((item, index) => {
-            if (editingBlock && editingBlock.id === item.id) return null;
-            return (
-              <tr key={index}>
-                <td>{item.frontConfig.name}</td>
-                <td>{item.frontConfig.groupType}</td>
-                <td>{item.frontConfig.groupOrdered ? item.frontConfig.groupOrdered : '-'}</td>
-                <td>
-                  <Group>
-                    <EditIcon
-                      onClick={() =>
-                        setEditingBlock({
-                          ...item,
-                          id: keys(branch.schema.jsonSchema.properties)[index],
-                        })
-                      }
-                    />
-                    <RemoveIcon
-                      onClick={() =>
-                        onRemoveBlock({
-                          ...item,
-                          id: keys(branch.schema.jsonSchema.properties)[index],
-                        })
-                      }
-                    />
-                  </Group>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </Table>
-      */}
+    <ContextContainer>
+      <Stack fullWidth justifyContent="space-between" alignItems="center">
+        <Title order={4}>{branch.name}</Title>
+        <ActionButton icon={<RemoveIcon />} onClick={onCloseBranch} />
+      </Stack>
+
+      {branch.schema ? <Table columns={columns} data={data} /> : null}
+
       {addBlock || editingBlock ? (
         <BranchBlock
           messages={messages}
@@ -170,13 +116,19 @@ function BranchContent({
           defaultValues={
             editingBlock ? { ...editingBlock.frontConfig.blockData, id: editingBlock.id } : null
           }
-          onSubmit={onSaveBlock}
+          onCancel={() => {
+            setEditingBlock(null);
+            setAddBlock(false);
+          }}
+          onSubmit={sendOnSaveBlock}
         />
       ) : null}
-      <Button variant="link" onClick={() => setAddBlock(true)}>
-        {messages.addContent}
-      </Button>
-    </Box>
+      {!editingBlock && !addBlock ? (
+        <Stack justifyContent="end">
+          <Button onClick={() => setAddBlock(true)}>{messages.addContent}</Button>
+        </Stack>
+      ) : null}
+    </ContextContainer>
   );
 }
 
@@ -185,6 +137,8 @@ BranchContent.defaultProps = {
   errorMessages: BRANCH_CONTENT_ERROR_MESSAGES,
   selectData: BRANCH_CONTENT_SELECT_DATA,
   onSaveBlock: () => {},
+  onCloseBranch: () => {},
+  onRemoveBlock: () => {},
   isLoading: false,
 };
 
@@ -194,6 +148,8 @@ BranchContent.propTypes = {
   selectData: PropTypes.object,
   branch: PropTypes.object,
   onSaveBlock: PropTypes.func,
+  onCloseBranch: PropTypes.func,
+  onRemoveBlock: PropTypes.func,
   isLoading: PropTypes.bool,
 };
 

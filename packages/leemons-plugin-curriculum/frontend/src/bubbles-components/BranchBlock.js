@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
-import { Box, Group, TextInput, Select, Button } from '@bubbles-ui/components';
+import { Box, Button, ContextContainer, Group, Select, TextInput } from '@bubbles-ui/components';
 import BranchBlockField from './BranchBlockField';
 import {
   BRANCH_CONTENT_ERROR_MESSAGES,
@@ -12,7 +12,15 @@ import BranchBlockCode from './BranchBlockCode';
 import BranchBlockList from './BranchBlockList';
 import BranchBlockGroup from './BranchBlockGroup';
 
-function BranchBlock({ messages, errorMessages, isLoading, selectData, defaultValues, onSubmit }) {
+function BranchBlock({
+  messages,
+  errorMessages,
+  isLoading,
+  selectData,
+  defaultValues,
+  onSubmit,
+  onCancel,
+}) {
   const form = useForm({ defaultValues });
 
   const {
@@ -22,6 +30,10 @@ function BranchBlock({ messages, errorMessages, isLoading, selectData, defaultVa
     formState: { errors },
     reset,
   } = form;
+
+  React.useEffect(() => {
+    reset(defaultValues);
+  }, [JSON.stringify(defaultValues)]);
 
   const formData = watch();
 
@@ -204,13 +216,18 @@ function BranchBlock({ messages, errorMessages, isLoading, selectData, defaultVa
         onSubmit(d);
       })}
     >
-      <Group grow>{groupFields}</Group>
-      {branchBlocks[formData.type] || null}
-      <Box>
-        <Button rounded size="xs" loading={isLoading} loaderPosition="right" type="submit">
-          {messages.blockSaveConfigButtonLabel}
-        </Button>
-      </Box>
+      <ContextContainer>
+        <Group grow>{groupFields}</Group>
+        {branchBlocks[formData.type] || null}
+        <ContextContainer direction="row" justifyContent="end">
+          <Button variant="link" loading={isLoading} onClick={onCancel}>
+            {messages.blockCancelConfigButtonLabel}
+          </Button>
+          <Button loading={isLoading} type="submit">
+            {messages.blockSaveConfigButtonLabel}
+          </Button>
+        </ContextContainer>
+      </ContextContainer>
     </form>
   );
 }
@@ -221,6 +238,7 @@ BranchBlock.defaultProps = {
   selectData: BRANCH_CONTENT_SELECT_DATA,
   isLoading: false,
   onSubmit: () => {},
+  onCancel: () => {},
 };
 
 BranchBlock.propTypes = {
@@ -230,6 +248,7 @@ BranchBlock.propTypes = {
   defaultValues: PropTypes.object,
   isLoading: PropTypes.bool,
   onSubmit: PropTypes.func,
+  onCancel: PropTypes.func,
 };
 
 export default BranchBlock;

@@ -127,6 +127,7 @@ module.exports = {
     groupShowAs: 'Mostrar como',
     groupSaveConfig: 'Guardar configuración',
     groupAddElement: 'Añadir elemento',
+    blockCancelConfigButtonLabel: 'Cancelar',
   },
   addCurriculumStep3: {
     addNode: 'Añadir {name}',

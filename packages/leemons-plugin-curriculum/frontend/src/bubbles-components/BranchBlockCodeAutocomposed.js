@@ -42,22 +42,29 @@ function BranchBlockCodeAutocomposed({ ...props }) {
           required: errorMessages.codeNodeLevelRequired,
         }}
         render={({ field }) => (
-          <TagifyInput
-            value={field.value}
-            onChange={(e) => field.onChange(e.detail.value)}
-            settings={{
-              mode: 'mix',
-              pattern: /@/,
-              editTags: false,
-              dropdown: {
-                enabled: 1,
-                position: 'text',
-              },
-              whitelist,
-            }}
-            label={messages.codeComposerLabel}
-            required
-          />
+          <>
+            yeeeh
+            <TagifyInput
+              value={field.value}
+              error={errors.codeText}
+              onChange={(e) => {
+                console.log(e);
+                field.onChange(e.detail.value);
+              }}
+              settings={{
+                mode: 'mix',
+                pattern: /@/,
+                editTags: false,
+                dropdown: {
+                  enabled: 1,
+                  position: 'text',
+                },
+                whitelist,
+              }}
+              label={messages.codeComposerLabel}
+              required
+            />
+          </>
         )}
       />
     </Box>

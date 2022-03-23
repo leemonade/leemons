@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
-import { Box, Title, Group, TextInput, Select, Button } from '@bubbles-ui/components';
+import { Box, Button, TextInput } from '@bubbles-ui/components';
 
 export const NEW_BRANCH_VALUE_MESSAGES = {
   nameLabel: 'Name',
@@ -26,7 +26,7 @@ function NewBranchValue({ messages, errorMessages, isLoading, onSubmit, defaultV
   }, [defaultValues]);
 
   return (
-    <Box m={32}>
+    <Box>
       <form
         onSubmit={handleSubmit((data) => {
           onSubmit({ ...data, id: defaultValues?.id });

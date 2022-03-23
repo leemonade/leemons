@@ -52,7 +52,7 @@ async function getSchemaLocale(ctx) {
     additionalProperties: false,
   });
   if (validator.validate(ctx.request.body)) {
-    let locale = ctx.request.body.locale;
+    let { locale } = ctx.request.body;
     if (!locale) locale = await leemons.getPlugin('users').services.platform.getDefaultLocale();
     // TODO Esto es "inseguro" ya que se le esta pasando el calledFrom
     const dataset = await schemaService.getSchemaWithLocale.call(
@@ -116,6 +116,13 @@ async function saveField(ctx) {
           [translations().functions.localeRegexString]: schemaConfig,
         },
       },
+      options: {
+        type: 'object',
+        properties: {
+          useDefaultLocaleCallback: { type: 'boolean' },
+        },
+        additionalProperties: false,
+      },
     },
     required: ['locationName', 'pluginName', 'schemaConfig', 'schemaLocales'],
     additionalProperties: false,
@@ -126,7 +133,8 @@ async function saveField(ctx) {
       ctx.request.body.locationName,
       ctx.request.body.pluginName,
       ctx.request.body.schemaConfig,
-      ctx.request.body.schemaLocales
+      ctx.request.body.schemaLocales,
+      ctx.request.body.options
     );
     ctx.status = 200;
     ctx.body = { status: 200, dataset };

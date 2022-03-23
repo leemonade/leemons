@@ -32,6 +32,7 @@ export const BRANCH_CONTENT_MESSAGES = {
   groupShowAs: 'Show as',
   groupSaveConfig: 'Save config',
   groupAddElement: 'Add element',
+  blockCancelConfigButtonLabel: 'Cancel',
 };
 
 export const BRANCH_CONTENT_ERROR_MESSAGES = {
