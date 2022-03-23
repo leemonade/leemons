@@ -97,6 +97,7 @@ export default function TaskSetupPage() {
       addSuccessAlert(t('common.publish_done'));
     } catch (e) {
       addErrorAlert(e.error);
+      throw e;
     }
   };
 
@@ -150,13 +151,17 @@ export default function TaskSetupPage() {
   };
 
   const handleOnPublishTask = () =>
-    new Promise((resolve) => {
+    new Promise((resolve, reject) => {
       emitEvent('saveTask');
 
       const f = async (event) => {
         if (event === 'taskSaved') {
-          resolve(await publishTask());
-          unsubscribe(f);
+          try {
+            unsubscribe(f);
+            resolve(await publishTask());
+          } catch (e) {
+            reject(e);
+          }
         }
       };
 
@@ -165,12 +170,17 @@ export default function TaskSetupPage() {
 
   useEffect(() => {
     const f = async (event) => {
-      if (event === 'publishTaskAndLibrary') {
-        await handleOnPublishTask();
-        history.push(`/private/tasks/library`);
-      } else if (event === 'publishTaskAndAssign') {
-        await handleOnPublishTask();
-        history.push(`/private/tasks/library/assign/${store.currentTask.id}`);
+      try {
+        if (event === 'publishTaskAndLibrary') {
+          await handleOnPublishTask();
+          history.push(`/private/tasks/library`);
+        } else if (event === 'publishTaskAndAssign') {
+          await handleOnPublishTask();
+          history.push(`/private/tasks/library/assign/${store.currentTask.id}`);
+        }
+      } catch (e) {
+        // EN: The error was previously handled
+        // ES: El error ya fue manejado previamente
       }
     };
 
@@ -228,7 +238,7 @@ export default function TaskSetupPage() {
         values={headerLabels}
         buttons={{ edit: t('common.save'), duplicate: status === 'draft' && t('common.publish') }}
         onEdit={() => emitEvent('saveTask')}
-        onDuplicate={handleOnPublishTask}
+        onDuplicate={() => handleOnPublishTask().catch(() => {})}
       />
 
       <Paper color="solid" shadow="none" padding={0}>

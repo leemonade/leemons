@@ -42,20 +42,12 @@ module.exports = async function publishVersion(taskId, { setCurrent = false, tra
         type: 'string',
         minLength: 1,
       },
-      content: {
-        type: 'array',
-        minItems: 1,
-      },
-      objectives: {
-        type: 'array',
-        minItems: 1,
-      },
       statement: {
         type: 'string',
         minLength: 1,
       },
     },
-    required: ['name', 'tagline', 'summary', 'content', 'objectives', 'statement'],
+    required: ['name', 'tagline', 'summary', 'statement'],
   });
 
   if (!validator.validate(taskToUpdate)) {
