@@ -35,7 +35,7 @@ const SelectUserAgent = forwardRef(
       valueRenderProps = { variant: 'inline', size: 'xs', style: { padding: 0 } },
       itemComponent: ItemComponent = UserDisplayItem,
       valueComponent: ValueComponent = SelectUserAgentValueComponent,
-      value: inputValue,
+      value: inputValue = [],
       onChange = () => {},
       ...props
     },
