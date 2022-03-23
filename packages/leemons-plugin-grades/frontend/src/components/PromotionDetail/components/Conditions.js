@@ -29,14 +29,12 @@ const Conditions = ({ messages, errorMessages, selectData, form }) => {
     setValue('group', e);
   }
 
-  console.log(selectData);
-
   return (
     <Box>
       <RuleGroup
         program={{ value: program }}
         grades={selectData.gradeScales}
-        gradeSystem={program?.gradeSystem} // Antes se pasaba grade pero como ya no hay que seleccionarlo le paso programa para que la logica interna siga funcionando igual
+        gradeSystem={program} // Antes se pasaba grade pero como ya no hay que seleccionarlo le paso programa para que la logica interna siga funcionando igual
         sources={selectData.sources}
         courses={selectData.courses}
         knowledges={selectData.knowledges}
