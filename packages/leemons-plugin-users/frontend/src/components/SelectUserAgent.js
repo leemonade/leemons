@@ -1,7 +1,7 @@
 /* eslint-disable no-unreachable */
 import React, { forwardRef, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { cloneDeep, find, findIndex, map, isEmpty, isArray, flatten, uniq } from 'lodash';
+import { cloneDeep, find, findIndex, map, isEmpty, isArray, flattenDeep, uniq } from 'lodash';
 import { ActionButton, Box, Stack, MultiSelect, UserDisplayItem } from '@bubbles-ui/components';
 import { useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
@@ -35,7 +35,7 @@ const SelectUserAgent = forwardRef(
       valueRenderProps = { variant: 'inline', size: 'xs', style: { padding: 0 } },
       itemComponent: ItemComponent = UserDisplayItem,
       valueComponent: ValueComponent = SelectUserAgentValueComponent,
-      value: inputValue,
+      value: inputValue = [],
       onChange = () => {},
       ...props
     },
@@ -173,7 +173,7 @@ const SelectUserAgent = forwardRef(
     }
 
     useEffect(() => {
-      onValueChange(uniq(flatten(inputValue)));
+      onValueChange(uniq(flattenDeep([inputValue])));
     }, [inputValue]);
 
     // EN: Initial search for the first render
@@ -232,7 +232,7 @@ const SelectUserAgent = forwardRef(
         data={data}
         // EN: The value can be an array or a single value (string), so convert it to an array
         // ES: El valor puede ser un array o un valor simple (string), por lo que lo convertimos a un array
-        value={uniq(flatten(propValue))}
+        value={uniq(flattenDeep(propValue))}
         onChange={handleChange}
       />
     );
