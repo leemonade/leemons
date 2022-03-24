@@ -396,6 +396,7 @@ function AddCurriculumStep2() {
               : null
           }
           onSubmit={addNewBranch}
+          onCloseBranch={onCloseBranch}
         />
       </Box>
     );

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { find, findIndex, forEach, forIn, isArray, orderBy } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
@@ -28,8 +28,6 @@ function AddCurriculumStep3() {
   const [store, render] = useStore({
     loading: true,
   });
-
-  const [activeRightSection, setActiveRightSection] = useState(null);
   const [t] = useTranslateLoader(prefixPN('addCurriculumStep3'));
 
   const tree = useTree();
@@ -51,10 +49,12 @@ function AddCurriculumStep3() {
     return result;
   }, [t]);
 
-  async function load() {
+  async function load(hideLoading = false) {
     try {
-      store.loading = true;
-      render();
+      if (!hideLoading) {
+        store.loading = true;
+        render();
+      }
       const [
         { curriculum: c },
         {
@@ -138,13 +138,13 @@ function AddCurriculumStep3() {
       ...node,
       nodeLevel: find(store.curriculum.nodeLevels, { id: node.nodeLevel }),
     };
-    setActiveRightSection('detail-branch-value');
+    store.activeRightSection = 'detail-branch-value';
     render();
   }
 
   async function onAdd({ node }) {
     store.activeNode = node;
-    setActiveRightSection('add-branch-value');
+    store.activeRightSection = 'add-branch-value';
     render();
   }
 
@@ -172,8 +172,8 @@ function AddCurriculumStep3() {
       } else {
         await saveNodeRequest(data);
       }
-      await load();
-      setActiveRightSection(null);
+      await load(true);
+      store.activeRightSection = null;
       store.activeNode = null;
       store.saving = false;
     } catch (err) {
@@ -185,17 +185,22 @@ function AddCurriculumStep3() {
 
   let groupChilds = null;
 
-  if (activeRightSection === 'add-branch-value') {
+  if (store.activeRightSection === 'add-branch-value') {
     groupChilds = (
       <NewBranchValue
         messages={messagesBranchValues}
         errorMessages={errorMessagesBranchValues}
         onSubmit={onAddBranchValue}
         isLoading={store.saving}
+        onCloseBranch={() => {
+          store.activeRightSection = null;
+          store.activeNode = null;
+          render();
+        }}
       />
     );
   }
-  if (activeRightSection === 'detail-branch-value') {
+  if (store.activeRightSection === 'detail-branch-value') {
     groupChilds = (
       <NewBranchDetailValue
         messages={messagesBranchValues}
@@ -212,6 +217,11 @@ function AddCurriculumStep3() {
             : null
         }
         schemaFormValues={store.activeNode.formValues}
+        onCloseBranch={() => {
+          store.activeRightSection = null;
+          store.activeNode = null;
+          render();
+        }}
       />
     );
   }
@@ -243,6 +253,7 @@ function AddCurriculumStep3() {
                       onDelete={(node) => alert(`Delete nodeId: ${node.id}`)}
                       onEdit={(node) => alert(`Editing ${node.id}`)}
                       onSelect={onSelect}
+                      selectedNode={store.activeNode?.id}
                     />
                   </ContextContainer>
                 </Paper>

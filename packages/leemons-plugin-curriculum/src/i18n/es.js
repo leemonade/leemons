@@ -138,4 +138,13 @@ module.exports = {
       nameRequired: 'Field required',
     },
   },
+  selectContentModal: {
+    title: 'Contenido',
+    saveButtonLabel: 'Añadir contenido',
+    selectFromCurriculum: 'Seleccionar del plan de estudios',
+    clearAll: 'Borrar todo',
+    curriculum: 'Plan de estudios',
+    added: 'Añadido',
+    searchContent: 'Buscar contenido',
+  },
 };

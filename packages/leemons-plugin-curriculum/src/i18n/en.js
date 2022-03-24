@@ -139,4 +139,13 @@ module.exports = {
       nameRequired: 'Field required',
     },
   },
+  selectContentModal: {
+    title: 'Content',
+    saveButtonLabel: 'Add contents',
+    selectFromCurriculum: 'Select from curriculum',
+    clearAll: 'Clear all',
+    curriculum: 'Curriculum',
+    added: 'Added',
+    searchContent: 'Search content',
+  },
 };
