@@ -3,16 +3,21 @@ import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { ContextContainer } from '@bubbles-ui/components';
 import { LibraryForm } from '@bubbles-ui/leemons';
-import { unflatten, TagsAutocomplete } from '@common';
+import { unflatten, TagsAutocomplete, useRequestErrorMessage } from '@common';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '../../helpers/prefixPN';
 import { prepareAsset } from '../../helpers/prepareAsset';
 import { newAssetRequest } from '../../request';
 
 const BasicData = ({ file, categoryId, onSave = () => {}, onNext = () => {} }) => {
-  const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
+  const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const [loading, setLoading] = useState(false);
   const [tags, setTags] = useState([]);
+  const [, , , getErrorMessage] = useRequestErrorMessage();
+
+  // ··············································································
+  // HANDLERS
 
   const handleOnTagsChange = (val) => {
     setTags(val);
@@ -25,13 +30,17 @@ const BasicData = ({ file, categoryId, onSave = () => {}, onNext = () => {} }) =
       const { asset } = await newAssetRequest(data, categoryId);
       console.log(asset);
       onSave(prepareAsset(asset));
-      onNext();
       setLoading(false);
+      addSuccessAlert(t('basicData.labels.createdSuccess'));
+      onNext();
     } catch (err) {
       setLoading(false);
-      console.error(err);
+      addErrorAlert(getErrorMessage(err));
     }
   };
+
+  // ··············································································
+  // LABELS & STATICS
 
   const formLabels = useMemo(() => {
     if (!isEmpty(translations)) {
@@ -42,6 +51,9 @@ const BasicData = ({ file, categoryId, onSave = () => {}, onNext = () => {} }) =
     }
     return {};
   }, [translations]);
+
+  // ··············································································
+  // RENDER
 
   return (
     <LibraryForm {...formLabels} loading={loading} asset={{ file }} onSubmit={handleOnSubmit}>

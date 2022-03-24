@@ -30,6 +30,7 @@ module.exports = {
         submitForm: 'Add to library',
         name: 'Name',
         description: 'Description',
+        createdSuccess: 'Asset successfully created',
       },
       placeholders: {
         tagsInput: 'Name of tag',
@@ -61,6 +62,8 @@ module.exports = {
         removeUserButton: 'Remove',
         acceptButton: 'Accept',
         cancelButton: 'Cancel',
+        permissionsSuccess: 'Permissions successfully established',
+        shareSuccess: 'Asset successfully shared',
       },
       placeholders: {
         userInput: 'Start typing a name',
@@ -72,12 +75,12 @@ module.exports = {
         share: 'You are not allowed to share this resource',
       },
     },
-  },
-  roleLabels: {
-    viewer: 'Viewer',
-    commentor: 'Commentor',
-    editor: 'Editor',
-    owner: 'Owner',
-    public: 'Public',
+    roleLabels: {
+      viewer: 'Viewer',
+      commentor: 'Commentor',
+      editor: 'Editor',
+      owner: 'Owner',
+      public: 'Public',
+    },
   },
 };

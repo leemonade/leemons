@@ -24,8 +24,17 @@ async function addAsset(ctx) {
 
   const asset = await add({ ...assetData, file: files[0] }, { userSession });
 
+  const { role } = await getPermissions(asset.id, { userSession });
+
+  let assetPermissions = await list(asset.id, { userSession });
+  assetPermissions = assetPermissions.map((user) => {
+    const item = { ...user };
+    item.editable = canAssignRole(role, item.permissions[0], item.permissions[0]);
+    return item;
+  });
+
   ctx.status = 200;
-  ctx.body = { status: 200, asset };
+  ctx.body = { status: 200, asset: { ...asset, canAccess: assetPermissions } };
 }
 
 async function removeAsset(ctx) {

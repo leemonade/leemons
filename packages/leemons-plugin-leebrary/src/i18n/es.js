@@ -30,6 +30,7 @@ module.exports = {
         submitForm: 'Añadir a la librería',
         name: 'Nombre',
         description: 'Descripción',
+        createdSuccess: 'Recurso creado con éxito',
       },
       placeholders: {
         tagsInput: 'Escribe un tag',
@@ -61,6 +62,8 @@ module.exports = {
         removeUserButton: 'Eliminar',
         acceptButton: 'Aceptar',
         cancelButton: 'Cancelar',
+        permissionsSuccess: 'Permisos establecidos con éxito',
+        shareSuccess: 'Recurso compartido con éxito',
       },
       placeholders: {
         userInput: 'Escribe un nombre',
@@ -72,12 +75,12 @@ module.exports = {
         share: 'No tienes permiso para compartir el recurso',
       },
     },
-  },
-  roleLabels: {
-    viewer: 'Lectura',
-    commentor: 'Comentador',
-    editor: 'Editor',
-    owner: 'Propietario',
-    public: 'Público',
+    roleLabels: {
+      viewer: 'Lectura',
+      commentor: 'Comentador',
+      editor: 'Editor',
+      owner: 'Propietario',
+      public: 'Público',
+    },
   },
 };

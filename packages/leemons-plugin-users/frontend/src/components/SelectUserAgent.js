@@ -1,7 +1,17 @@
 /* eslint-disable no-unreachable */
 import React, { forwardRef, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { cloneDeep, find, findIndex, map, isEmpty, isArray, flattenDeep, uniq } from 'lodash';
+import {
+  cloneDeep,
+  find,
+  findIndex,
+  map,
+  isEmpty,
+  isArray,
+  flattenDeep,
+  uniq,
+  isNil,
+} from 'lodash';
 import { ActionButton, Box, Stack, MultiSelect, UserDisplayItem } from '@bubbles-ui/components';
 import { useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
@@ -173,7 +183,9 @@ const SelectUserAgent = forwardRef(
     }
 
     useEffect(() => {
-      onValueChange(uniq(flattenDeep([inputValue])));
+      // In case of inputValue is "undefined" or "null"
+      const value = inputValue || [];
+      onValueChange(uniq(flattenDeep([value])));
     }, [inputValue]);
 
     // EN: Initial search for the first render
@@ -200,7 +212,7 @@ const SelectUserAgent = forwardRef(
     const propValue = useMemo(() => {
       const value = inputValue;
 
-      if (isEmpty(value)) {
+      if (isEmpty(value) || isNil(value)) {
         return [];
       }
 
