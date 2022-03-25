@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   ActionButton,
+  Badge,
   Button,
   ContextContainer,
   Modal,
@@ -14,9 +15,10 @@ import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { useStore } from '@common';
-import { forEach, isArray } from 'lodash';
+import { filter, find, forEach, isArray } from 'lodash';
 import { detailCurriculumRequest } from '../../request';
 import { CurriculumTab } from './components/CurriculumTab';
+import { CurriculumAdded } from './components/CurriculumAdded';
 
 // eslint-disable-next-line import/prefer-default-export
 export function CurriculumSelectContentsModal({
@@ -36,12 +38,26 @@ export function CurriculumSelectContentsModal({
     if (isArray(store.curriculum.nodes) && store.curriculum.nodes.length) {
       const addNodes = (nodes, parent, nextDeep) => {
         forEach(nodes, (node) => {
+          const valuesInside = filter(store.value, (val) => val.indexOf(`node.${node.id}`) >= 0);
           items.push({
             id: node.id,
             parent,
             draggable: false,
             text: node.fullName,
-            node,
+            node: {
+              ...node,
+              valuesInside,
+              _nodeLevel: find(store.curriculum.nodeLevels, { id: node.nodeLevel }),
+            },
+            actions: [
+              {
+                name: 'badge',
+                icon: () =>
+                  valuesInside.length ? (
+                    <Badge closable={false} label={valuesInside.length} />
+                  ) : null,
+              },
+            ],
           });
           if (node.childrens) {
             addNodes(node.childrens, node.id, nextDeep + 1);
@@ -69,6 +85,13 @@ export function CurriculumSelectContentsModal({
   }, [id]);
 
   React.useEffect(() => {
+    if (store.curriculum) {
+      store.treeData = getTreeData();
+      render();
+    }
+  }, [JSON.stringify(store.value)]);
+
+  React.useEffect(() => {
     store.value = value;
     render();
   }, [JSON.stringify(value)]);
@@ -83,12 +106,17 @@ export function CurriculumSelectContentsModal({
 
         <Tabs>
           <TabPanel label={t('curriculum')}>
-            <CurriculumTab store={store} render={render} />
+            <CurriculumTab t={t} store={store} render={render} />
           </TabPanel>
-          <TabPanel label={t('added')}>Miau</TabPanel>
+          <TabPanel
+            notification={store.value?.length ? store.value?.length : null}
+            label={t('added')}
+          >
+            <CurriculumAdded t={t} store={store} render={render} />
+          </TabPanel>
         </Tabs>
 
-        <Stack justifyContent="end">
+        <Stack justifyContent="end" onClick={() => onChange(store.value)}>
           <Button>{t('saveButtonLabel')}</Button>
         </Stack>
       </ContextContainer>

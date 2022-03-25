@@ -54,9 +54,16 @@ async function listCurriculum(ctx) {
   }
 }
 
+async function getDataForKeys(ctx) {
+  const data = await curriculumService.getDataForKeys(ctx.request.body.keys, ctx.state.userSession);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
 module.exports = {
   getCurriculum,
   postCurriculum,
   listCurriculum,
+  getDataForKeys,
   generateCurriculum,
 };

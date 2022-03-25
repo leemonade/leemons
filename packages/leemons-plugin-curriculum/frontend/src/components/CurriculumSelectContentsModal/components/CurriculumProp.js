@@ -1,19 +1,28 @@
 /* eslint-disable no-param-reassign */
+/* eslint-disable no-nested-ternary */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Checkbox, InputWrapper, Paragraph, Stack } from '@bubbles-ui/components';
-import { isArray, isNil, isString } from 'lodash';
+import { isArray, isNil } from 'lodash';
 
 function Value({ item, store, render, property }) {
-  console.log(item);
-  const key = ``;
+  const key = `curriculum.${store.curriculum.id}|nodeLevel.${store.selectedNode.nodeLevel}|node.${store.selectedNode.id}|property.${property.id}|value.${item.id}`;
 
-  function onChange(e) {}
+  function onChange() {
+    if (!isArray(store.value)) store.value = [];
+    const index = store.value.indexOf(key);
+    if (index >= 0) {
+      store.value.splice(index, 1);
+    } else {
+      store.value.push(key);
+    }
+    render();
+  }
 
   return (
     <Stack fullWidth alignItems="start">
-      <Checkbox onChange={onChange} />
+      <Checkbox checked={store.value?.indexOf(key) >= 0} onChange={onChange} />
       <Stack alignItems="baseline">
         {item.metadata?.index ? <Paragraph>{`${item.metadata?.index}`}</Paragraph> : null}
         <Box sx={(theme) => ({ flex: 1, paddingLeft: theme.spacing[3] })}>
@@ -37,19 +46,22 @@ Value.propTypes = {
 
 // eslint-disable-next-line import/prefer-default-export
 export function CurriculumProp({ store, render, item }) {
-  const values = store.selectedNode.formValues[item.id];
+  let values;
+  if (store.selectedNode?.formValues) {
+    values = store.selectedNode?.formValues[item.id];
+  }
   return (
     <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
-      <InputWrapper label={item.name}>
-        {isNil(values) ? '-' : null}
-        {isString(values) ? (
+      <InputWrapper label={item.title}>
+        {isNil(values) ? (
+          '-'
+        ) : isArray(values) ? (
+          values.map((value) => (
+            <Value key={value.id} store={store} render={render} item={value} property={item} />
+          ))
+        ) : (
           <Value store={store} render={render} item={values} property={item} />
-        ) : null}
-        {isArray(values)
-          ? values.map((value) => (
-              <Value store={store} render={render} item={value} property={item} />
-            ))
-          : null}
+        )}
       </InputWrapper>
     </Box>
   );

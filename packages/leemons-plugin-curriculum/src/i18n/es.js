@@ -143,6 +143,7 @@ module.exports = {
     saveButtonLabel: 'Añadir contenido',
     selectFromCurriculum: 'Seleccionar del plan de estudios',
     clearAll: 'Borrar todo',
+    clearSelected: 'Borrar seleccionados',
     curriculum: 'Plan de estudios',
     added: 'Añadido',
     searchContent: 'Buscar contenido',

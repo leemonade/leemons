@@ -12,7 +12,6 @@ import NewBranchDetailValue, {
   NEW_BRANCH_DETAIL_VALUE_ERROR_MESSAGES,
   NEW_BRANCH_DETAIL_VALUE_MESSAGES,
 } from '../../../bubbles-components/NewBranchDetailValue';
-import { CurriculumSelectContentsModal } from '../../../components/CurriculumSelectContentsModal';
 
 function CurriculumView() {
   const [loading, setLoading] = useState(true);
@@ -149,6 +148,7 @@ function CurriculumView() {
   if (loading) {
     return <Box>Loading...</Box>;
   }
+
   return (
     <Box m={32}>
       <Box mb={12}>
@@ -159,7 +159,6 @@ function CurriculumView() {
           {curriculum.center.name}|{curriculum.program.name}
         </Title>
       </Box>
-      <CurriculumSelectContentsModal opened={true} curriculum={curriculum.id} />
       <Box mb={12}>
         <Text role={'productive'}>{t('description1')}</Text>
       </Box>

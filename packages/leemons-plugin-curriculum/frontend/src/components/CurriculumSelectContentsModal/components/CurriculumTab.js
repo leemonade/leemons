@@ -2,12 +2,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Col, Grid, Tree } from '@bubbles-ui/components';
+import { Box, Button, Col, Grid, Stack, Title, Tree } from '@bubbles-ui/components';
 import { find, values } from 'lodash';
 import { CurriculumProp } from './CurriculumProp';
 
 // eslint-disable-next-line import/prefer-default-export
-export function CurriculumTab({ store, render }) {
+export function CurriculumTab({ store, render, t }) {
   function onSelect({ node }) {
     store.selectedNode = {
       ...node,
@@ -19,16 +19,34 @@ export function CurriculumTab({ store, render }) {
     render();
   }
 
+  function clearAll() {
+    store.value = [];
+    render();
+  }
+
   return (
     <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+      <Box sx={(theme) => ({ marginBottom: theme.spacing[2] })}>
+        <Grid columns={100}>
+          <Col span={30}>
+            <Stack fullWidth alignItems="center" justifyContent="space-between">
+              <Title order={6}>{t('selectFromCurriculum')}</Title>
+              <Button variant="link" onClick={clearAll}>
+                {t('clearAll')}
+              </Button>
+            </Stack>
+          </Col>
+          <Col span={70}></Col>
+        </Grid>
+      </Box>
       <Grid columns={100}>
         <Col span={30}>
           <Tree rootId={0} treeData={store.treeData} onSelect={onSelect} />
         </Col>
         <Col span={70}>
           {store.selectedNode
-            ? store.selectedNode._formProperties.map((prop) => (
-                <CurriculumProp key={prop.id} store={store} render={render} item={prop} />
+            ? store.selectedNode._formProperties.map((prop, i) => (
+                <CurriculumProp key={i} store={store} render={render} item={prop} />
               ))
             : null}
         </Col>
@@ -40,4 +58,5 @@ export function CurriculumTab({ store, render }) {
 CurriculumTab.propTypes = {
   store: PropTypes.object,
   render: PropTypes.func,
+  t: PropTypes.func,
 };
