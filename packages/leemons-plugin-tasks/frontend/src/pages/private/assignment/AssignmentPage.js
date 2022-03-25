@@ -6,10 +6,12 @@ import { useParams, useHistory } from 'react-router-dom';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import hooks from 'leemons-hooks';
+import { useLayout } from '@layout/context';
 import Form from '../../../components/Assignment/Form';
 import createInstanceRequest from '../../../request/instance/createInstance';
 import assignStudentRequest from '../../../request/instance/assignStudent';
 import assignTeacherRequest from '../../../request/instance/assignTeacher';
+import getTaskRequest from '../../../request/task/getTask';
 import { enableMenuItemRequest } from '../../../request';
 import { prefixPN } from '../../../helpers/prefixPN';
 
@@ -25,6 +27,9 @@ export default function AssignmentPage() {
   const history = useHistory();
   const [, translations] = useTranslateLoader(prefixPN('assignment_page'));
   const [labels, setLabels] = useState({});
+  const [task, setTask] = useState(null);
+
+  const { setLoading } = useLayout();
 
   useEffect(() => {
     if (translations && translations.items) {
@@ -38,6 +43,17 @@ export default function AssignmentPage() {
   }, [translations]);
 
   const { id } = useParams();
+
+  useEffect(async () => {
+    setLoading(true);
+    if (!id) {
+      return;
+    }
+    const t = await getTaskRequest({ id });
+
+    setLoading(false);
+    setTask(t);
+  }, [id]);
 
   const handleAssignment = async (values) => {
     const {
@@ -76,14 +92,18 @@ export default function AssignmentPage() {
     }
   };
 
+  if (!task) {
+    return null;
+  }
+
   return (
     <ContextContainer fullHeight>
-      <AdminPageHeader values={{ title: labels?.page_title }} />
+      <AdminPageHeader values={{ title: `${labels?.page_title}: ${task?.name}` }} />
       <Paper color="solid" shadow="none" padding={0}>
         <PageContainer>
           <ContextContainer padded="vertical">
             <Paper fullWidth padding={5}>
-              <Form onSubmit={handleAssignment} />
+              <Form onSubmit={handleAssignment} task={task} />
             </Paper>
           </ContextContainer>
         </PageContainer>

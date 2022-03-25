@@ -41,11 +41,11 @@ export default function TaskSetupPage() {
         subjects: values.subjects.map((subject) => ({
           ...subject,
           curriculum: {
-            objectives: values?.curriculum[subject.subject].objectives?.map(
+            objectives: values?.curriculum[subject.subject]?.objectives?.map(
               ({ objective }) => objective
             ),
-            contents: values?.curriculum[subject.subject].contents?.map(({ content }) => content),
-            assessmentCriteria: values?.curriculum[subject.subject].assessmentCriteria?.map(
+            contents: values?.curriculum[subject.subject]?.contents?.map(({ content }) => content),
+            assessmentCriteria: values?.curriculum[subject.subject]?.assessmentCriteria?.map(
               ({ assessmentCriteria }) => assessmentCriteria
             ),
           },

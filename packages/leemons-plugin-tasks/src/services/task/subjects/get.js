@@ -27,8 +27,8 @@ module.exports = async function getSubjects(task, { transacting } = {}) {
     );
 
     if (Array.isArray(task)) {
-      return subjects.reduce(async (acc, s) => {
-        await acc;
+      return subjects.reduce(async (accum, s) => {
+        const acc = await accum;
 
         const obj = {
           subject: s.subject,

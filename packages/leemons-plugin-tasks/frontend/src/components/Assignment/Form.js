@@ -6,12 +6,12 @@ import { Button, ContextContainer, DatePicker, Box, Switch } from '@bubbles-ui/c
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditor } from '@bubbles-ui/editors';
 import { prefixPN } from '../../helpers/prefixPN';
-import AssignUsers from './AssignUsers';
+import AssignStudents from './AssignStudents';
 import ConditionalInput from '../Inputs/ConditionalInput';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 import SelectTeachers from './SelectTeachers';
 
-export default function Form({ onSubmit: parentSubmit }) {
+export default function Form({ onSubmit: parentSubmit, task }) {
   const [, translations] = useTranslateLoader(prefixPN('assignment_form'));
   const [labels, setLabels] = useState({});
   const [placeholders, setPlaceholders] = useState({});
@@ -76,11 +76,12 @@ export default function Form({ onSubmit: parentSubmit }) {
           name="assignees"
           rules={{ required: true }}
           render={({ field }) => (
-            <AssignUsers
+            <AssignStudents
               {...field}
               error={errors.assignees}
               profile="student"
-              labels={labels}
+              task={task}
+              // labels={labels}
               modes={modes}
               assignTo={assignTo}
             />
@@ -267,4 +268,5 @@ export default function Form({ onSubmit: parentSubmit }) {
 
 Form.propTypes = {
   onSubmit: PropTypes.func,
+  task: PropTypes.object,
 };
