@@ -1,10 +1,17 @@
 /* eslint-disable no-param-reassign */
 const { isEmpty, flatten, map, find } = require('lodash');
 const { tables } = require('../tables');
+const { getByAssets: getPermissions } = require('../permissions/getByAssets');
 
-async function getByIds(assetsIds, { withFiles, transacting } = {}) {
+async function getByIds(assetsIds, { withFiles, checkPermissions, userSession, transacting } = {}) {
   const ids = flatten([assetsIds]);
   let assets = await tables.assets.find({ id_$in: ids }, { transacting });
+
+  if (checkPermissions && userSession) {
+    const privateAssets = await getPermissions(assetsIds, { userSession, transacting });
+    const permissions = privateAssets.map((item) => item.asset);
+    assets = assets.filter((asset) => permissions.includes(asset.id));
+  }
 
   if (!isEmpty(assets) && withFiles) {
     const assetsFiles = await tables.assetsFiles.find({ asset_$in: ids }, { transacting });

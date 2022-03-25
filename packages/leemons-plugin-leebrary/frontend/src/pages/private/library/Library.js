@@ -12,6 +12,11 @@ import LibraryContext, { LibraryProvider } from '../../../context/LibraryContext
 import { VIEWS } from './Library.constants';
 
 const NewAssetPage = loadable(() => import('../assets/NewAssetPage'));
+const ListAssetPage = loadable(() => import('../assets/ListAssetPage'));
+
+function cleanPath(path) {
+  return path.replace('//', '/');
+}
 
 const LibraryPageContent = () => {
   const { path } = useRouteMatch();
@@ -43,6 +48,7 @@ const LibraryPageContent = () => {
 
   const handleOnNav = (data) => {
     setCategory(data);
+    console.log(data);
   };
 
   const handleOnFile = (data) => {
@@ -64,32 +70,28 @@ const LibraryPageContent = () => {
       </Box>
       <Box style={{ overflowY: 'scroll' }}>
         <Switch>
-          <Route path={`${path}/:category/new`.replace('//', '/')}>
+          {/* NEW ASSET ·························································· */}
+          <Route path={cleanPath(`${path}/:category/new`)}>
             <NewAssetPage />
           </Route>
-          <Route path={`${path}/edit/:id`.replace('//', '/')}>
+
+          {/* EDIT ASSET ·························································· */}
+          <Route path={cleanPath(`${path}/edit/:id`)}>
             <Box>
               <Paper shadow="none">
                 <Text>Editando el asset</Text>
               </Paper>
             </Box>
           </Route>
-          <Route exact path={path}>
-            <Stack direction="column" fullHeight>
-              <Paper shadow="none" skipFlex>
-                <SearchInput variant="filled" />
-              </Paper>
-              <Box>
-                <Stack fullWidth>
-                  <Paper shadow="none">
-                    <Text>Hola</Text>
-                  </Paper>
-                </Stack>
-              </Box>
-            </Stack>
+
+          {/* LIST ASSETS ························································ */}
+          <Route path={cleanPath(`${path}/:category/list`)}>
+            <ListAssetPage />
           </Route>
+
+          {/* DEFAULT exact path={path} */}
           <Route>
-            <Redirect to={path} />
+            <Redirect to={cleanPath(`${path}/media-files/list`)} />
           </Route>
         </Switch>
       </Box>

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { Button, Box, Paper, ContextContainer, Stack } from '@bubbles-ui/components';
+import { Button, Box, Paper, ContextContainer, Stack, TagifyInput } from '@bubbles-ui/components';
 import { useLayout } from '@layout/context';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import selectFile from '../../../helpers/selectFile';
@@ -94,6 +94,32 @@ export default function TestPage() {
             />
           </ContextContainer>
         </ContextContainer>
+        <TagifyInput
+          label="Tagify"
+          description="Probando el Tagify"
+          value={''}
+          settings={{
+            mode: 'mix',
+            pattern: /@/, // <- must define "patten" in mixed mode
+            dropdown: {
+              enabled: 1,
+              position: 'text',
+            },
+            whitelist: [
+              {
+                id: 100,
+                value: 'Subject:Numering',
+                title: 'Subject:Numering',
+              },
+              { id: 101, value: 'Subject:Code', title: 'Subject:Code' },
+              { id: 102, value: 'Block:Numering', title: 'Block:Numering' },
+              { id: 103, value: 'Block:Code', title: 'Block:Code' },
+              { id: 104, value: 'Stage:Numering', title: 'Stage:Numering' },
+              { id: 105, value: 'Stage:Code', title: 'Stage:Code' },
+              { id: 105, value: '01, 02, ..', title: '01, 02, ..' },
+            ],
+          }}
+        />
       </ContextContainer>
     </Paper>
   );

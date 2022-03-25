@@ -51,7 +51,7 @@ module.exports = {
         close: 'Cerrar',
       },
       labels: {
-        title: 'Ajustes de permisos',
+        title: 'Permisos del recurso',
         addUsers: 'Añadir usuarios',
         addUsersDescription: 'Para compartir el recurso y especificar permisos',
         isPublic: 'Este recurso es público',

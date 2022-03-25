@@ -1,6 +1,5 @@
 const { remove: removeFiles } = require('../files/remove');
 const { removeAllUsers } = require('../permissions/removeAllUsers');
-const { remove: removeCategories } = require('./categories/remove');
 const removeTags = require('./tags/remove');
 const { getByAsset: getFilesByAsset } = require('./files/getByAsset');
 const { tables } = require('../tables');
@@ -23,10 +22,6 @@ async function remove(id, { userSession, transacting: t } = {}) {
         // EN: First delete the file from the database so if it fails we don't have an entry without a file
         // ES: Primero eliminamos el archivo de la base de datos para que si falla no tengamos una entrada sin archivo
         await tables.assets.delete({ id }, { transacting });
-
-        // EN: Delete the asset categories to clean the database
-        // ES: Eliminar las categorias del asset para limpiar la base de datos
-        await removeCategories(id, null, { transacting });
 
         // EN: Delete the asset tags to clean the database
         // ES: Eliminar las etiquetas del asset para limpiar la base de datos

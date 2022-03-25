@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 const { map } = require('lodash');
 const { validateSetPermissions } = require('../../validations/forms');
+const { getByIds } = require('../assets/getByIds');
 const { getByAsset } = require('./getByAsset');
 const canAssignRole = require('./helpers/canAssignRole');
 const canUnassignRole = require('./helpers/canUnassignRole');
@@ -29,6 +30,8 @@ async function set(assetId, userAgentsAndRoles, { deleteMissing, userSession, tr
     // EN: Get the assigner and assignee roles
     // ES: Obtener los roles del asignador y del asignado
     const { role: assignerRole } = await getByAsset(assetId, { userSession, transacting });
+    const [assetData] = await getByIds([assetId]);
+    const categoryId = assetData?.category;
 
     const permissionName = leemons.plugin.prefixPN(assetId);
     const { services: userService } = leemons.getPlugin('users');
@@ -82,6 +85,7 @@ async function set(assetId, userAgentsAndRoles, { deleteMissing, userSession, tr
             {
               permissionName,
               actionNames: ['editor'],
+              target: categoryId,
             },
             { transacting }
           )
@@ -105,6 +109,7 @@ async function set(assetId, userAgentsAndRoles, { deleteMissing, userSession, tr
           {
             permissionName,
             actionNames: [role],
+            target: categoryId,
           },
           { transacting }
         )

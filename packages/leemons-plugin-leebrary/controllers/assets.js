@@ -1,10 +1,12 @@
+const { isEmpty } = require('lodash');
 const { add } = require('../src/services/assets/add');
 const { update } = require('../src/services/assets/update');
 const { remove } = require('../src/services/assets/remove');
 const { getByUser } = require('../src/services/assets/getByUser');
+const { getByCategory } = require('../src/services/permissions/getByCategory');
 const { getByIds } = require('../src/services/assets/getByIds');
 const { getByAsset: getPermissions } = require('../src/services/permissions/getByAsset');
-const { list } = require('../src/services/permissions/list');
+const { getUsersByAsset } = require('../src/services/permissions/getUsersByAsset');
 const canAssignRole = require('../src/services/permissions/helpers/canAssignRole');
 
 async function addAsset(ctx) {
@@ -26,7 +28,7 @@ async function addAsset(ctx) {
 
   const { role } = await getPermissions(asset.id, { userSession });
 
-  let assetPermissions = await list(asset.id, { userSession });
+  let assetPermissions = await getUsersByAsset(asset.id, { userSession });
   assetPermissions = assetPermissions.map((user) => {
     const item = { ...user };
     item.editable = canAssignRole(role, item.permissions[0], item.permissions[0]);
@@ -81,7 +83,7 @@ async function getAsset(ctx) {
   let assetPermissions = false;
 
   if (assignerRole === 'owner') {
-    assetPermissions = await list(assetId, { userSession });
+    assetPermissions = await getUsersByAsset(assetId, { userSession });
     assetPermissions = assetPermissions.map((user) => {
       const item = { ...user };
       item.editable = canAssignRole(assignerRole, item.permissions[0], item.permissions[0]);
@@ -93,6 +95,40 @@ async function getAsset(ctx) {
   ctx.body = {
     status: 200,
     asset: { ...asset, canAccess: assetPermissions },
+  };
+}
+
+async function getAssets(ctx) {
+  const { category } = ctx.request.query;
+  const { userSession } = ctx.state;
+
+  if (isEmpty(category)) {
+    throw new global.utils.HttpError(400, 'Not category was specified');
+  }
+
+  const assets = await getByCategory(category, { userSession });
+
+  ctx.status = 200;
+  ctx.body = {
+    status: 200,
+    assets,
+  };
+}
+
+async function getAssetsByIds(ctx) {
+  const { userSession } = ctx.state;
+  const { assets: assetIds } = ctx.request.body;
+
+  if (isEmpty(assetIds)) {
+    throw new global.utils.HttpError(400, 'Not assets was specified');
+  }
+
+  const assets = await getByIds(assetIds, { withFiles: true, checkPermissions: true, userSession });
+
+  ctx.status = 200;
+  ctx.body = {
+    status: 200,
+    assets,
   };
 }
 
@@ -131,4 +167,6 @@ module.exports = {
   update: updateAsset,
   my: myAssets,
   get: getAsset,
+  list: getAssets,
+  listByIds: getAssetsByIds,
 };

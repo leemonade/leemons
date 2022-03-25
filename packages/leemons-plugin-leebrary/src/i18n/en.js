@@ -51,9 +51,9 @@ module.exports = {
         close: 'Close',
       },
       labels: {
-        title: 'Share settings',
+        title: 'Resource permissions',
         addUsers: 'Add users',
-        addUsersDescription: 'To share resources and specify permissions',
+        addUsersDescription: 'To share resource and set permissions',
         isPublic: 'This resource is public',
         saveButton: 'Save permissions',
         shareButton: 'Share',
@@ -63,7 +63,7 @@ module.exports = {
         acceptButton: 'Accept',
         cancelButton: 'Cancel',
         permissionsSuccess: 'Permissions successfully established',
-        shareSuccess: 'Asset successfully shared',
+        shareSuccess: 'Resource successfully shared',
       },
       placeholders: {
         userInput: 'Start typing a name',

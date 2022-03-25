@@ -20,6 +20,18 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/assets/list',
+    method: 'POST',
+    handler: 'assets.listByIds',
+    authenticated: true,
+  },
+  {
+    path: '/assets/list',
+    method: 'GET',
+    handler: 'assets.list',
+    authenticated: true,
+  },
+  {
     path: '/assets/:id',
     method: 'GET',
     handler: 'assets.get',
@@ -126,41 +138,6 @@ module.exports = [
     path: '/categories/menu-list',
     method: 'GET',
     handler: 'categories.listWithMenuItem',
-    authenticated: true,
-  },
-  /**
-   * Assets Categories
-   */
-  /*
-  {
-    path: '/asset/:id/category/:category',
-    method: 'POST',
-    handler: 'assetsCategories.add',
-    authenticated: true,
-  },
-  {
-    path: '/asset/:id/category/:category',
-    method: 'DELETE',
-    handler: 'assetsCategories.remove',
-    authenticated: true,
-  },
-  {
-    path: '/asset/:id/categories',
-    method: 'GET',
-    handler: 'assetsCategories.get',
-    authenticated: true,
-  },
-  {
-    path: '/asset/:id/category/:category',
-    method: 'GET',
-    handler: 'assetsCategories.has',
-    authenticated: true,
-  },
-  */
-  {
-    path: '/category/:category/assets',
-    method: 'GET',
-    handler: 'assetsCategories.getByCategory',
     authenticated: true,
   },
   /**

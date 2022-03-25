@@ -35,6 +35,11 @@ module.exports = {
     public: {
       type: 'boolean',
     },
+    category: {
+      references: {
+        collection: 'plugins_leebrary::categories',
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

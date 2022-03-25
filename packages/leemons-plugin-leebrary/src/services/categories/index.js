@@ -3,6 +3,7 @@ const { list } = require('./list');
 const { remove } = require('./remove');
 const { exists } = require('./exists');
 const { getByIds } = require('./getByIds');
+const { getByKeys } = require('./getByKeys');
 const { getByAsset } = require('./getByAsset');
 const { listWithMenuItem } = require('./listWithMenuItem');
 
@@ -12,6 +13,7 @@ module.exports = {
   remove,
   exists,
   getByIds,
+  getByKeys,
   getByAsset,
   listWithMenuItem,
 };

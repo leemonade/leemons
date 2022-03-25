@@ -1,6 +1,6 @@
 const { getByAsset } = require('./getByAsset');
 
-async function list(assetId, { userSession, transacting } = {}) {
+async function getUsersByAsset(assetId, { userSession, transacting } = {}) {
   try {
     const { permissions } = await getByAsset(assetId, { userSession, transacting });
 
@@ -19,4 +19,4 @@ async function list(assetId, { userSession, transacting } = {}) {
   }
 }
 
-module.exports = { list };
+module.exports = { getUsersByAsset };

@@ -32,7 +32,7 @@ const ROLES = [
   { label: 'Commentor', value: 'commentor' },
 ];
 
-const PermissionsData = ({ asset: assetProp, sharing }) => {
+const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
   const [asset, setAsset] = useState(assetProp);
   const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const [loading, setLoading] = useState(false);
@@ -70,6 +70,7 @@ const PermissionsData = ({ asset: assetProp, sharing }) => {
           ? t(`permissionsData.labels.shareSuccess`)
           : t(`permissionsData.labels.permissionsSuccess`)
       );
+      onNext();
     } catch (err) {
       setLoading(false);
       addErrorAlert(getErrorMessage(err));
@@ -238,6 +239,7 @@ PermissionsData.propTypes = {
   asset: PropTypes.object,
   loading: PropTypes.bool,
   sharing: PropTypes.bool,
+  onNext: PropTypes.func,
 };
 
 export default PermissionsData;

@@ -1,9 +1,9 @@
 const byTags = require('../assets/tags/getAssets');
 const { byDescription } = require('./byDescription');
 const { byName } = require('./byName');
-const { getByCategory: byCategory } = require('../assets/getByCategory');
+const { getByCategory } = require('../assets/getByCategory');
 const { getByIds } = require('../assets/getByIds');
-const { has } = require('../permissions/has');
+const { getByAssets: getPermissions } = require('../permissions/getByAssets');
 
 function saveResults(newResults, existingResults) {
   if (existingResults === null) {
@@ -34,23 +34,22 @@ async function search(query, { details = false, userSession, transacting } = {})
     }
 
     if (query.category) {
-      assets = await saveResults(await byCategory(query.category, { assets, transacting }), assets);
+      assets = await saveResults(
+        await getByCategory(query.category, { assets, transacting }),
+        assets
+      );
     }
+
+    const permissions = await getPermissions(assets, { userSession, transacting });
 
     // EN: Only return assets that the user has permission to view
     // ES: Sólo devuelve los recursos que el usuario tiene permiso para ver
-    assets = assets
-      .map(async (asset) => ({
-        permissions: await has(asset, 'view', { userSession, transacting }),
-        asset,
-      }))
-      .filter(({ permissions }) => permissions)
-      .map(({ asset }) => asset);
+    assets = permissions.map(({ asset }) => asset);
 
     // EN: If the user wants to see the details of the assets, we need to get the details
     // ES: Si el usuario quiere ver los detalles de los recursos, necesitamos obtener los detalles
     if (details && assets.length) {
-      return await getByIds(assets, { transacting });
+      return await getByIds(assets, { withFiles: true, transacting });
     }
 
     return assets || [];

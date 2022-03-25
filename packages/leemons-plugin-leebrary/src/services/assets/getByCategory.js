@@ -9,9 +9,10 @@ async function getByCategory(categoryId, { details = false, assets: assetIds, tr
     };
 
     if (!isEmpty(assetIds)) {
-      query.asset_$in = assetIds;
+      query.id_$in = assetIds;
     }
-    let assets = await tables.assetCategories.find(query, { transacting });
+
+    let assets = await tables.assets.find(query, { transacting });
     assets = assets.map(({ asset }) => asset);
 
     if (details) {
