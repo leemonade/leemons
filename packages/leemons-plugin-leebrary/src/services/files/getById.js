@@ -7,7 +7,11 @@ const { tables } = require('../tables');
  * */
 async function getById(id, { transacting } = {}) {
   const results = await tables.files.findOne({ id }, { transacting });
-  return results;
+  return results.map((item) => {
+    const data = { ...item };
+    if (data.metadata) data.metadata = JSON.parse(data.metadata);
+    return data;
+  });
 }
 
 module.exports = { getById };

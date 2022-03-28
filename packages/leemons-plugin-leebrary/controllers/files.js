@@ -51,6 +51,14 @@ module.exports = {
     ctx.set('Content-Type', data.contentType);
     ctx.set('Content-disposition', `attachment; filename=${data.fileName}`);
   },
+  metas: async (ctx) => {
+    const { url } = ctx.request.query;
+    const html = await global.utils.fetchText(url);
+    const metas = await global.utils.metascraper({ html, url });
+
+    ctx.status = 200;
+    ctx.body = { status: 200, metas };
+  },
   /*
   removeFile: async (ctx) => {
     const deleted = await fileService.removeFiles(ctx.params.id);

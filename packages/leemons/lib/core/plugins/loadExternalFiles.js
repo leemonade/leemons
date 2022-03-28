@@ -185,6 +185,10 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
             if (plugin.name === 'leebrary') return fs.readFile(...rest);
             throw new Error('Only the plugin leebrary have access to readFile');
           },
+          open: (...rest) => {
+            if (plugin.name === 'leebrary') return fs.open(...rest);
+            throw new Error('Only the plugin leebrary have access to open');
+          },
           unlink: (...rest) => {
             if (plugin.name === 'leebrary') return fs.unlink(...rest);
             throw new Error('Only the plugin leebrary have access to unlink');

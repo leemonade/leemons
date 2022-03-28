@@ -99,6 +99,11 @@ module.exports = [
   },
   */
   {
+    path: '/file/metas',
+    method: 'GET',
+    handler: 'files.metas',
+  },
+  {
     path: '/file/:id',
     method: 'GET',
     handler: 'files.file',

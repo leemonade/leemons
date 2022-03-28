@@ -12,13 +12,14 @@ import LibraryContext from '../../../context/LibraryContext';
 import { VIEWS } from '../library/Library.constants';
 import { getPageItems } from '../../../helpers/getPageItems';
 import { CardWrapper } from '../../../components/CardWrapper';
+import prepareAsset from '../../../helpers/prepareAsset';
 
 const ListAssetPage = () => {
   const { file, setView, category, selectCategory, setAsset, asset } = useContext(LibraryContext);
   const [t] = useTranslateLoader(prefixPN('list'));
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
-  const [size, setSize] = useState(10);
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(6);
   const [assets, setAssets] = useState([]);
   const [serverData, setServerData] = useState({});
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -45,7 +46,7 @@ const ListAssetPage = () => {
   const loadAssetsData = async () => {
     try {
       setLoading(true);
-      const paginated = getPageItems({ data: assets, page, size });
+      const paginated = getPageItems({ data: assets, page: page - 1, size });
       const assetIds = paginated.items.map((item) => item.asset);
       const response = await getAssetsByIdsRequest(assetIds);
       console.log('loadAssetsData:', response);
