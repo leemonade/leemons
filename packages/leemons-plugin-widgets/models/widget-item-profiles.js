@@ -1,6 +1,6 @@
 module.exports = {
-  modelName: 'widget-item',
-  collectionName: 'widget-item',
+  modelName: 'widget-item-profile',
+  collectionName: 'widget-item-profile',
   options: {
     useTimestamps: true,
   },
@@ -14,30 +14,14 @@ module.exports = {
     key: {
       type: 'string',
       options: {
-        unique: true,
         notNull: true,
       },
     },
-    url: {
+    profile: {
       type: 'string',
       options: {
         notNull: true,
       },
-    },
-    pluginName: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
-    },
-    name: {
-      type: 'string',
-    },
-    description: {
-      type: 'string',
-    },
-    order: {
-      type: 'number',
     },
   },
   primaryKey: {

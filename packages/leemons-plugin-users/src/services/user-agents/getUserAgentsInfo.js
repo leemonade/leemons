@@ -37,7 +37,6 @@ async function getUserAgentsInfo(
     }
   );
 
-  // TODO IMAGEN Si se añade imagen añadir al array de columnas
   const users = await table.users.find(
     { id_$in: _.map(userAgents, 'user') },
     {
