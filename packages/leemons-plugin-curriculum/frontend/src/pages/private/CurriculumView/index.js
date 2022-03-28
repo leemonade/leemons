@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { find, forEach, orderBy, isArray, forIn, findIndex } from 'lodash';
+import React, { useEffect, useMemo, useState } from 'react';
+import * as _ from 'lodash';
+import { find, forEach, forIn, isArray, orderBy } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { listCentersRequest } from '@users/request';
-import { Box, Text, Title, Group, Tree, useTree } from '@bubbles-ui/components';
+import { Box, Group, Text, Title, Tree, useTree } from '@bubbles-ui/components';
 import { useParams } from 'react-router-dom';
 import { detailProgramRequest } from '@academic-portfolio/request';
-import * as _ from 'lodash';
 import { detailCurriculumRequest } from '../../../request';
 import NewBranchDetailValue, {
   NEW_BRANCH_DETAIL_VALUE_ERROR_MESSAGES,
@@ -148,6 +148,7 @@ function CurriculumView() {
   if (loading) {
     return <Box>Loading...</Box>;
   }
+
   return (
     <Box m={32}>
       <Box mb={12}>

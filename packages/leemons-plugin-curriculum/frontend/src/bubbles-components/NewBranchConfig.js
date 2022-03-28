@@ -1,7 +1,18 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
-import { Box, Title, Group, TextInput, Select, Button } from '@bubbles-ui/components';
+import {
+  ActionButton,
+  Box,
+  Button,
+  ContextContainer,
+  Group,
+  Select,
+  Stack,
+  TextInput,
+  Title,
+} from '@bubbles-ui/components';
+import { RemoveIcon } from '@bubbles-ui/icons/outline';
 
 export const NEW_BRANCH_CONFIG_MESSAGES = {
   title: 'Branch config',
@@ -47,6 +58,7 @@ function NewBranchConfig({
   orderedData,
   isLoading,
   onSubmit,
+  onCloseBranch,
   defaultValues,
 }) {
   const {
@@ -61,13 +73,17 @@ function NewBranchConfig({
   }, [defaultValues]);
 
   return (
-    <Box m={32}>
-      <Title>{messages.title}</Title>
-      <form
-        onSubmit={handleSubmit((data) => {
-          onSubmit({ ...data, id: defaultValues?.id });
-        })}
-      >
+    <form
+      onSubmit={handleSubmit((data) => {
+        onSubmit({ ...data, id: defaultValues?.id });
+      })}
+    >
+      <ContextContainer>
+        <Stack fullWidth justifyContent="space-between" alignItems="center">
+          <Title order={4}>{messages.title}</Title>
+          <ActionButton icon={<RemoveIcon />} onClick={onCloseBranch} />
+        </Stack>
+
         <Group align="start" grow>
           <Box>
             <Controller
@@ -108,13 +124,13 @@ function NewBranchConfig({
             />
           </Box>
         </Group>
-        <Box>
-          <Button rounded size="xs" loading={isLoading} loaderPosition="right" type="submit">
+        <Stack justifyContent="end">
+          <Button loading={isLoading} type="submit">
             {messages.saveButtonLabel}
           </Button>
-        </Box>
-      </form>
-    </Box>
+        </Stack>
+      </ContextContainer>
+    </form>
   );
 }
 
@@ -124,9 +140,11 @@ NewBranchConfig.defaultProps = {
   orderedData: NEW_BRANCH_CONFIG_ORDERED_OPTIONS,
   isLoading: false,
   onSubmit: () => {},
+  onCloseBranch: () => {},
 };
 
 NewBranchConfig.propTypes = {
+  onCloseBranch: PropTypes.func,
   messages: PropTypes.shape({
     title: PropTypes.string,
     nameLabel: PropTypes.string,

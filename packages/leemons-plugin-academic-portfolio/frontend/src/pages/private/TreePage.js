@@ -60,6 +60,7 @@ import { getSubjectsTranslation } from '../../helpers/getSubjectsTranslation';
 import { getTableActionsTranslation } from '../../helpers/getTableActionsTranslation';
 import { TreeNewSubjectDetail } from '../../components/Tree/TreeNewSubjectDetail';
 import { getTreeAddUsersComponentTranslation } from '../../helpers/getTreeAddUsersComponentTranslation';
+import getCourseName from '../../helpers/getCourseName';
 
 export default function TreePage() {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('tree_page'));
@@ -157,9 +158,7 @@ export default function TreePage() {
       function processItem(item, parents) {
         let text = item.value.name;
         if (item.nodeType === 'courses') {
-          text = item.value.name
-            ? `${item.value.name} (${item.value.index}º)`
-            : `${item.value.index}º`;
+          text = getCourseName(item.value);
         }
         if (item.nodeType === 'class') {
           const classSubjectCredits = find(subjectCredits, {

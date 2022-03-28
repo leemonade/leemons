@@ -52,4 +52,4 @@ async function nodesTreeByCurriculum(id, { userSession, transacting } = {}) {
   return _.isArray(id) ? group : group[id];
 }
 
-module.exports = { nodesTreeByCurriculum };
+module.exports = { nodesTreeByCurriculum, getNodeValues };

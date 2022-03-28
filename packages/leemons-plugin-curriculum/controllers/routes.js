@@ -2,6 +2,12 @@
 module.exports = [
   // Curriculum
   {
+    path: '/data-for-keys',
+    method: 'POST',
+    handler: 'curriculum.getDataForKeys',
+    authenticated: true,
+  },
+  {
     path: '/curriculum',
     method: 'POST',
     handler: 'curriculum.postCurriculum',

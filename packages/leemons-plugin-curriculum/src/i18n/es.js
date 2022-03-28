@@ -127,6 +127,7 @@ module.exports = {
     groupShowAs: 'Mostrar como',
     groupSaveConfig: 'Guardar configuración',
     groupAddElement: 'Añadir elemento',
+    blockCancelConfigButtonLabel: 'Cancelar',
   },
   addCurriculumStep3: {
     addNode: 'Añadir {name}',
@@ -136,5 +137,15 @@ module.exports = {
       saveButtonLabel: 'Guardar',
       nameRequired: 'Field required',
     },
+  },
+  selectContentModal: {
+    title: 'Contenido',
+    saveButtonLabel: 'Añadir contenido',
+    selectFromCurriculum: 'Seleccionar del plan de estudios',
+    clearAll: 'Borrar todo',
+    clearSelected: 'Borrar seleccionados',
+    curriculum: 'Plan de estudios',
+    added: 'Añadido',
+    searchContent: 'Buscar contenido',
   },
 };

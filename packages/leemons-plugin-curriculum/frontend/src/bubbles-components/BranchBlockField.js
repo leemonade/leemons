@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
-import { Box, Group, NumberInput, Checkbox } from '@bubbles-ui/components';
+import { Box, Checkbox, Group, NumberInput } from '@bubbles-ui/components';
 
 function BranchBlockField({
   messages,
@@ -32,7 +32,9 @@ function BranchBlockField({
           name="limitCharacters"
           control={control}
           defaultValue={false}
-          render={({ field }) => <Checkbox label={messages.fieldLimitCharactersLabel} {...field} />}
+          render={({ field }) => (
+            <Checkbox checked={field.value} label={messages.fieldLimitCharactersLabel} {...field} />
+          )}
         />
       </Box>
       {watch('limitCharacters') ? (

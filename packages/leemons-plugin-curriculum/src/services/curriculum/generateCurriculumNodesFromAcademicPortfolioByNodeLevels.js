@@ -39,6 +39,12 @@ async function generateCurriculumNodesFromAcademicPortfolioByNodeLevels(
         const results = [];
         for (let i = 0, l = childrens.length; i < l; i++) {
           if (childrens[i].nodeType !== 'class') {
+            if (childrens[i].value.type === 'course') {
+              // eslint-disable-next-line no-param-reassign
+              childrens[i].value.name = leemons
+                .getPlugin('academic-portfolio')
+                .services.courses.getCourseName(childrens[i].value);
+            }
             // eslint-disable-next-line no-await-in-loop
             const node = await table.nodes.create(
               {

@@ -17,7 +17,7 @@ async function saveLocale(
   locationName,
   pluginName,
   id,
-  { transacting } = {}
+  { transacting, useDefaultLocaleCallback = true } = {}
 ) {
   if (await existSchemaLocale(locationName, pluginName, locale, { transacting })) {
     const { compileJsonSchema, compileJsonUI } = await getSchemaWithLocale.call(
@@ -25,7 +25,7 @@ async function saveLocale(
       locationName,
       pluginName,
       locale,
-      { transacting }
+      { transacting, useDefaultLocaleCallback }
     );
 
     compileJsonSchema.properties[id] = schema;
@@ -88,7 +88,7 @@ async function saveField(
   pluginName,
   schemaConfig,
   schemaLocales,
-  { transacting: _transacting } = {}
+  { useDefaultLocaleCallback = true, transacting: _transacting } = {}
 ) {
   return global.utils.withTransaction(
     async (transacting) => {
@@ -167,7 +167,12 @@ async function saveField(
       // ES: Traducciones
       const promises = [];
       _.forIn(schemaLocales, (value, locale) => {
-        promises.push(saveLocale(locale, value, locationName, pluginName, id, { transacting }));
+        promises.push(
+          saveLocale(locale, value, locationName, pluginName, id, {
+            transacting,
+            useDefaultLocaleCallback,
+          })
+        );
       });
       await Promise.all(promises);
 
