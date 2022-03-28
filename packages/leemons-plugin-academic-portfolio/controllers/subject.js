@@ -71,6 +71,13 @@ async function listSubject(ctx) {
   }
 }
 
+async function subjectByIds(ctx) {
+  const { id } = ctx.request.params;
+  const data = await subjectService.subjectByIds([id]);
+  ctx.status = 200;
+  ctx.body = { status: 200, data: data && data[0] };
+}
+
 module.exports = {
   postSubject,
   putSubject,
@@ -78,4 +85,5 @@ module.exports = {
   putSubjectCredits,
   getSubjectCredits,
   listSubjectCreditsForProgram,
+  subjectByIds,
 };

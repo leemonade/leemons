@@ -46,6 +46,13 @@ async function listSubjectCreditsForProgram(program) {
   });
 }
 
+async function getSubjectDetails(subject) {
+  return leemons.api(`academic-portfolio/subject/${subject}`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
 export {
   listSubjects,
   createSubject,
@@ -53,4 +60,5 @@ export {
   updateSubjectCredits,
   getSubjectCredits,
   listSubjectCreditsForProgram,
+  getSubjectDetails,
 };
