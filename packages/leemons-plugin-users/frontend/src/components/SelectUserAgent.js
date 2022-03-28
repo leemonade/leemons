@@ -1,5 +1,5 @@
 /* eslint-disable no-unreachable */
-import React, { forwardRef, useEffect, useMemo } from 'react';
+import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { cloneDeep, find, findIndex, map, isEmpty, isArray, flattenDeep, uniq } from 'lodash';
 import { ActionButton, Box, Stack, MultiSelect, UserDisplayItem } from '@bubbles-ui/components';
@@ -29,6 +29,7 @@ const SelectUserAgent = forwardRef(
       profiles,
       centers,
       maxSelectedValues = 1,
+      users,
       onlyContacts,
       returnItem,
       itemRenderProps = { variant: 'rol' },
@@ -41,6 +42,7 @@ const SelectUserAgent = forwardRef(
     },
     ref
   ) => {
+    const [usersData, setUsersData] = useState(null);
     const [store, render] = useStore({
       data: [],
     });
@@ -71,6 +73,7 @@ const SelectUserAgent = forwardRef(
           withProfile: true,
           onlyContacts,
         });
+
         const data = map(response.userAgents, (item) => ({
           ...item.user,
           variant: 'rol',
@@ -176,10 +179,38 @@ const SelectUserAgent = forwardRef(
       onValueChange(uniq(flattenDeep([inputValue])));
     }, [inputValue]);
 
+    // EN: Allow the user to select the users to display
+    // ES: Permite al usuario seleccionar los usuarios a mostrar
+    useEffect(async () => {
+      if (users) {
+        if (users.length && users[0].name) {
+          setUsersData(users);
+        } else {
+          let data = await getUserAgentsInfoRequest(users, {
+            withCenter: true,
+            withProfile: true,
+          });
+
+          data = data.userAgents.map((item) => ({
+            ...item.user,
+            variant: 'rol',
+            rol: item.profile.name,
+            center: item.center.name,
+            value: item.id,
+            label: `${item.user.name}${item.user.surnames ? ` ${item.user.surnames}` : ''}`,
+          }));
+
+          setUsersData(data);
+        }
+      } else if (usersData) {
+        setUsersData(null);
+      }
+    }, [users]);
+
     // EN: Initial search for the first render
     // ES: Búsqueda inicial para la primera renderización
     useEffect(() => {
-      if (!store.data?.length) {
+      if (!store.data?.length && !users) {
         search('');
       }
     }, [profiles]);
@@ -188,7 +219,7 @@ const SelectUserAgent = forwardRef(
     // ES: Concatenamos los valores seleccionados con el array de datos
     const data = cloneDeep(store.data);
 
-    if (store.selectedAgents?.length) {
+    if (store.selectedAgents?.length && !users) {
       store.selectedAgents?.forEach((agent) => {
         const hasValueInData = findIndex(data, { value: agent?.value });
         if (hasValueInData < 0) {
@@ -225,11 +256,11 @@ const SelectUserAgent = forwardRef(
         {...props}
         ref={ref}
         searchable
-        onSearchChange={search}
+        onSearchChange={usersData ? undefined : search}
         itemComponent={(p) => <ItemComponent {...p} {...itemRenderProps} />}
         valueComponent={(p) => <ValueComponent {...p} {...valueRenderProps} />}
         maxSelectedValues={maxSelectedValues}
-        data={data}
+        data={usersData || data}
         // EN: The value can be an array or a single value (string), so convert it to an array
         // ES: El valor puede ser un array o un valor simple (string), por lo que lo convertimos a un array
         value={uniq(flattenDeep(propValue))}
@@ -242,6 +273,7 @@ const SelectUserAgent = forwardRef(
 SelectUserAgent.displayName = 'SelectUserAgent';
 SelectUserAgent.propTypes = {
   onChange: PropTypes.func,
+  users: PropTypes.array,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   profiles: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   centers: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
