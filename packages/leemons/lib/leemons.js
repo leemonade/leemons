@@ -339,10 +339,12 @@ class Leemons {
                 functions.push(this.permissionsMiddleware(route.allowedPermissions));
               }
 
-              functions.push(async (ctx) => {
-                await handler(ctx);
-                console.log('TODO LO QUE SEA');
+              functions.push(async (ctx, next) => {
+                await next();
+                console.log('XAPI AQUI', ctx.status, ctx.request.url);
               });
+
+              functions.push(handler);
 
               this.backRouter[route.method.toLocaleLowerCase()](
                 `/api/${plugin.name}${route.path}`,
