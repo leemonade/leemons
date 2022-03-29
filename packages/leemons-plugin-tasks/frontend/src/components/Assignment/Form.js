@@ -154,8 +154,8 @@ export default function Form({ onSubmit: parentSubmit, task }) {
                         )}
                       />
                       <ConditionalInput
-                        label={labels?.correctionDeadline}
-                        help={descriptions?.correctionDeadline}
+                        label={labels?.closeDateToogle}
+                        help={descriptions?.closeDateToogle}
                         render={() => (
                           <ContextContainer direction="row" alignItems="end">
                             <Controller
@@ -167,8 +167,8 @@ export default function Form({ onSubmit: parentSubmit, task }) {
                                 <DatePicker
                                   {...field}
                                   withTime
-                                  error={errors.visualizationDate}
-                                  label={labels?.visualizationDate}
+                                  error={errors.closeDate}
+                                  label={labels?.closeDate}
                                   placeholder={placeholders?.date}
                                 />
                               )}

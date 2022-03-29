@@ -238,7 +238,8 @@ module.exports = {
       limitedExecutionToogle: 'Limit execution time',
       limitedExecution: 'Limited execution time',
       alwaysOpenToogle: 'This task is always available and can be performed at any time.',
-      correctionDeadline: 'Deadline for teacher corrections',
+      closeDateToogle: 'Deadline for teacher corrections',
+      closeDate: 'Close date',
       messageToStudentsToogle: 'Add a message to the students',
       messageToStudents: 'Message to the students',
       showCurriculumToogle: 'Show curriculum',
@@ -272,7 +273,7 @@ module.exports = {
         'If you assign this task to other groups in this step, this message will be the default message for all tasks (although you can change it individually if you wish).',
       visualizationDate:
         'NOTE: The task will be available for review, but cannot be completed until the start date.',
-      correctionDeadline: 'NOTE: After this date, no corrections can be made',
+      closeDateToogle: 'NOTE: After this date, no corrections can be made',
       limitedExecution:
         'NOTE: This is the time interval after reviewing the task summary until the submission of the deliverable.',
     },
