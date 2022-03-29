@@ -32,7 +32,7 @@ const SelectUserAgent = forwardRef(
       users,
       onlyContacts,
       returnItem,
-      itemRenderProps = { variant: 'rol' },
+      itemRenderProps = { variant: 'rol', style: { cursor: 'pointer' } },
       valueRenderProps = { variant: 'inline', size: 'xs', style: { padding: 0 } },
       itemComponent: ItemComponent = UserDisplayItem,
       valueComponent: ValueComponent = SelectUserAgentValueComponent,
