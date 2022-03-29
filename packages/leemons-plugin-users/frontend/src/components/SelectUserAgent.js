@@ -16,7 +16,7 @@ export function SelectUserAgentValueComponent({ onRemove, ...props }) {
       <UserDisplayItem {...props} />
       {onRemove ? (
         <Box>
-          <ActionButton icon={<RemoveIcon />} onClick={() => onRemove()} />
+          <ActionButton icon={<RemoveIcon />} onClick={onRemove} />
         </Box>
       ) : null}
     </Stack>
