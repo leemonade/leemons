@@ -15,7 +15,8 @@ export default function PreTaskSelector({ labels }) {
   useEffect(() => {
     const subscription = originalForm.watch((v) => {
       if (v.name) {
-        setValue('show', (v.preTaskOptions?.mandatory || v.preTask) !== null);
+        const value = v.preTaskOptions?.mandatory || v.preTask;
+        setValue('show', value !== null && value !== undefined);
         subscription.unsubscribe();
       }
     });
@@ -31,10 +32,10 @@ export default function PreTaskSelector({ labels }) {
         <ConditionalInput
           {...show}
           onChange={(value) => {
+            show.onChange(value);
             if (!value) {
               originalForm.setValue('preTask', null);
               originalForm.setValue('preTaskOptions', null);
-              show.onChange(value);
             }
           }}
           showOnTrue
@@ -59,9 +60,9 @@ export default function PreTaskSelector({ labels }) {
                     showOnTrue
                     label={labels?.mandatory}
                     onChange={(value) => {
+                      mandatory.onChange(value);
                       if (!value) {
                         originalForm.setValue('preTaskOptions', null);
-                        mandatory.onChange(value);
                       }
                     }}
                     render={() => (
