@@ -12,6 +12,14 @@ async function listClasses({ page, size, program }) {
   });
 }
 
+async function listSessionClasses(body) {
+  return leemons.api(`academic-portfolio/session/classes`, {
+    allAgents: true,
+    method: 'POST',
+    body,
+  });
+}
+
 async function createClass(body) {
   return leemons.api('academic-portfolio/class', {
     allAgents: true,
@@ -85,6 +93,7 @@ export {
   updateClass,
   removeClass,
   updateClassMany,
+  listSessionClasses,
   createClassInstance,
   addStudentsToClass,
   addTeachersToClass,

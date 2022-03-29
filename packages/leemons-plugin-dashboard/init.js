@@ -5,6 +5,7 @@ const { translations } = require('./src/translations');
 async function init() {
   try {
     if (translations()) {
+      console.log(es, en);
       await translations().common.setManyByJSON(
         {
           es,

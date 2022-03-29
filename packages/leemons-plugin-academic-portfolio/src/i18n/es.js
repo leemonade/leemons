@@ -441,4 +441,7 @@ module.exports = {
     knowledgeLabel: 'Area:',
     subjectLabel: 'Buscar asignatura:',
   },
+  userClassesSwiperWidget: {
+    multiCourse: 'Varios cursos',
+  },
 };

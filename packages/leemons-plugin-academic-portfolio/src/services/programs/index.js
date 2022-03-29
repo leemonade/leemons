@@ -6,6 +6,7 @@ const { removeProgramByIds } = require('./removeProgramByIds');
 const { getProgramCourses } = require('./getProgramCourses');
 const { programsByCenters } = require('./programsByCenters');
 const { getProgramGroups } = require('./getProgramGroups');
+const { getUserPrograms } = require('./getUserPrograms');
 const { getProgramTree } = require('./getProgramTree');
 const { programsByIds } = require('./programsByIds');
 const { updateProgram } = require('./updateProgram');
@@ -20,6 +21,7 @@ module.exports = {
   programsByIds,
   updateProgram,
   getProgramTree,
+  getUserPrograms,
   getProgramGroups,
   programsByCenters,
   getProgramCourses,

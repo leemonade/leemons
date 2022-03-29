@@ -115,6 +115,12 @@ async function addStudentsToClassesUnderNodeTree(ctx) {
   ctx.body = { status: 200, data };
 }
 
+async function getUserPrograms(ctx) {
+  const programs = await programService.getUserPrograms(ctx.state.userSession);
+  ctx.status = 200;
+  ctx.body = { status: 200, programs };
+}
+
 module.exports = {
   putProgram,
   postProgram,
@@ -125,6 +131,7 @@ module.exports = {
   deleteProgram,
   programCourses,
   getProgramTree,
+  getUserPrograms,
   programHasGroups,
   duplicateProgram,
   programSubstages,

@@ -8,7 +8,7 @@ const menuItems = [
       key: 'dashboard',
       iconSvg: '/public/assets/svgs/plugin-dashboard.svg',
       activeIconSvg: '/public/assets/svgs/plugin-dashboard.svg',
-      url: '/private',
+      url: '/private/dashboard',
       label: {
         en: 'Dashboard',
         es: 'Dashboard',

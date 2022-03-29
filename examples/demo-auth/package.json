@@ -18,6 +18,7 @@
     "leemons-plugin-classroom": "1.0.0",
     "leemons-plugin-common": "1.0.0",
     "leemons-plugin-curriculum": "1.0.0",
+    "leemons-plugin-dashboard": "1.0.0",
     "leemons-plugin-dataset": "1.0.0",
     "leemons-plugin-dataset-test": "1.0.0",
     "leemons-plugin-emails": "1.0.0",

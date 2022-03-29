@@ -11,6 +11,7 @@ import {
   createProgram,
   detailProgram,
   getProgramTree,
+  getUserPrograms,
   havePrograms,
   listPrograms,
   updateProgram,
@@ -33,6 +34,7 @@ import {
   createClassInstance,
   haveClasses,
   listClasses,
+  listSessionClasses,
   removeClass,
   removeStudentFromClass,
   updateClass,
@@ -62,6 +64,7 @@ export const createClassRequest = createClass;
 export const updateClassRequest = updateClass;
 export const removeClassRequest = removeClass;
 export const updateClassManyRequest = updateClassMany;
+export const listSessionClassesRequest = listSessionClasses;
 export const createClassInstanceRequest = createClassInstance;
 export const addStudentsToClassRequest = addStudentsToClass;
 export const addTeachersToClassRequest = addTeachersToClass;
@@ -81,6 +84,7 @@ export const haveProgramsRequest = havePrograms;
 export const detailProgramRequest = detailProgram;
 export const createProgramRequest = createProgram;
 export const updateProgramRequest = updateProgram;
+export const getUserProgramsRequest = getUserPrograms;
 
 export const getSettingsRequest = getSettings;
 export const updateSettingsRequest = updateSettings;

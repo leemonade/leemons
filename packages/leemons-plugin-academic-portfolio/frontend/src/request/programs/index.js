@@ -26,6 +26,13 @@ async function detailProgram(id) {
   });
 }
 
+async function getUserPrograms() {
+  return leemons.api(`academic-portfolio/user/programs`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
 async function createProgram(body) {
   return leemons.api('academic-portfolio/program', {
     allAgents: true,
@@ -57,5 +64,6 @@ export {
   updateProgram,
   havePrograms,
   getProgramTree,
+  getUserPrograms,
   addStudentsToClassesUnderNodeTree,
 };

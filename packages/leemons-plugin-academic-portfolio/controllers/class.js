@@ -148,6 +148,12 @@ async function removeStudent(ctx) {
   ctx.body = { status: 200, data };
 }
 
+async function listSessionClasses(ctx) {
+  const classes = await classService.listSessionClasses(ctx.state.userSession, ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, classes };
+}
+
 module.exports = {
   postClass,
   putClass,
@@ -159,6 +165,7 @@ module.exports = {
   postClassInstance,
   postClassStudents,
   postClassTeachers,
+  listSessionClasses,
   listStudentClasses,
   listTeacherClasses,
 };

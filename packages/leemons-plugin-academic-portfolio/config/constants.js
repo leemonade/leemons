@@ -258,6 +258,16 @@ const menuItems = [
   },
 ];
 
+const widgets = {
+  items: [
+    {
+      zoneKey: 'plugins.dashboard.program.left',
+      key: `${permissionsPrefix}.user.classes.swiper`,
+      url: 'user-classes-swiper/index',
+    },
+  ],
+};
+
 module.exports = {
   pluginName: permissionsPrefix,
   permissions: {
@@ -266,4 +276,5 @@ module.exports = {
     bundles: permissionsBundles,
   },
   menuItems,
+  widgets,
 };

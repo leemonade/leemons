@@ -335,9 +335,14 @@ class Leemons {
                 }
               }
 
-              if (route.allowedPermissions)
+              if (route.allowedPermissions) {
                 functions.push(this.permissionsMiddleware(route.allowedPermissions));
-              functions.push(handler);
+              }
+
+              functions.push(async (ctx) => {
+                await handler(ctx);
+                console.log('TODO LO QUE SEA');
+              });
 
               this.backRouter[route.method.toLocaleLowerCase()](
                 `/api/${plugin.name}${route.path}`,
