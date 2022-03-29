@@ -94,7 +94,7 @@ export default function TaskSetupPage() {
       await publishTaskRequest(id);
       setStatus('published');
 
-      addSuccessAlert(t('common.publish_done'));
+      addSuccessAlert(t('common.publish'));
     } catch (e) {
       addErrorAlert(e.error);
       throw e;
@@ -187,7 +187,7 @@ export default function TaskSetupPage() {
     subscribe(f);
 
     return () => unsubscribe(f);
-  }, []);
+  }, [handleOnPublishTask]);
 
   // ·········································································
   // INIT VALUES
