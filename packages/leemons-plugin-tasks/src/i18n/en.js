@@ -228,7 +228,6 @@ module.exports = {
   },
   assignment_form: {
     labels: {
-      assignTo: 'Assign to',
       classroomToAssign: 'Classroom to assign',
       studentToAssign: 'Student to assign',
       mode: 'Mode',
@@ -248,6 +247,20 @@ module.exports = {
       assessmentCriteria: 'Assessment criteria',
       submit: 'Assign',
       add: 'Add',
+      assignTo: {
+        class: 'Class',
+        customGroups: 'Custom Groups',
+        session: 'Session',
+      },
+      selectStudentsTitle: 'Who will perform the task?',
+      excludeStudents: 'Exclude students',
+      subjects: {
+        title: 'Subjects to be evaluated in this task',
+        subtitle: 'NOTE: At least one of them',
+      },
+      unableToAssignStudentsMessage:
+        'The students which are not enrolled in all the selected subjects will not be assigned',
+      matchingStudents: 'matching students',
     },
     placeholders: {
       date: 'dd/mm/yyyy',

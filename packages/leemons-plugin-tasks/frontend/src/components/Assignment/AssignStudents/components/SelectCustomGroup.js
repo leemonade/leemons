@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 
 export default function SelectCustomGroup({ labels, profiles, onChange, value }) {
+  // TODO: Mostrar solo los que están matriculados en las asignaturas
   return (
     <>
-      TODO: Mostrar solo los que están matriculados en las asignaturas
       <SelectUserAgent
         maxSelectedValues={0}
         onChange={onChange}

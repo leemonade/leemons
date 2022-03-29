@@ -7,15 +7,15 @@ export default function AssigneeTypeSelector({ labels, onChange, value }) {
     () => [
       {
         value: 'class',
-        label: labels.assignTo.class,
+        label: labels?.assignTo?.class,
       },
       {
         value: 'customGroups',
-        label: labels.assignTo.customGroups,
+        label: labels?.assignTo?.customGroups,
       },
       {
         value: 'session',
-        label: labels.assignTo.session,
+        label: labels?.assignTo?.session,
       },
     ],
     [labels]
@@ -31,7 +31,7 @@ AssigneeTypeSelector.propTypes = {
       customGroups: PropTypes.string,
       session: PropTypes.string,
     }).isRequired,
-  }).isRequired,
+  }),
   onChange: PropTypes.func.isRequired,
   value: PropTypes.func,
 };

@@ -44,23 +44,6 @@ export default function AssignStudents({ labels, profile, onChange, task }) {
   );
 }
 
-AssignStudents.defaultProps = {
-  labels: {
-    assignTo: {
-      class: 'Class',
-      customGroups: 'Custom Groups',
-      session: 'Session',
-    },
-    selectStudentsTitle: 'Who will perform the task?',
-    excludeStudents: 'Exclude students',
-    subjects: {
-      title: 'Subjects to be evaluated in this task',
-      subtitle: 'NOTE: At least one of them',
-    },
-    unableToAssignStudentsMessage:
-      'The students which are not enrolled in all the selected subjects will not be assigned',
-  },
-};
 AssignStudents.propTypes = {
   labels: PropTypes.object,
   profile: PropTypes.string.isRequired,

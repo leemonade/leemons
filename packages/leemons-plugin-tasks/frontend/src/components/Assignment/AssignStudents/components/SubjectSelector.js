@@ -15,7 +15,7 @@ export default function SubjectSelector({ labels, onChange, value, task }) {
   }
 
   return (
-    <ContextContainer title={labels.subjects.title} subtitle={labels.subjects.subtitle}>
+    <ContextContainer title={labels?.subjects?.title} subtitle={labels?.subjects?.subtitle}>
       <CheckBoxGroup variant="boxed" data={subjects} value={value} onChange={onChange} />
     </ContextContainer>
   );
@@ -27,7 +27,7 @@ SubjectSelector.propTypes = {
       title: PropTypes.string,
       subtitle: PropTypes.string,
     }).isRequired,
-  }).isRequired,
+  }),
   onChange: PropTypes.func.isRequired,
   value: PropTypes.array.isRequired,
   task: PropTypes.shape({

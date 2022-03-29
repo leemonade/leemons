@@ -45,7 +45,7 @@ export default function SelectClass({ labels, profiles, onChange, value }) {
                 return {
                   value: `${c.id}${disabled ? '-disabled' : ''}`,
                   disabled,
-                  label: `${c.label} (${c.assignableStudents.length}/${c.totalStudents} matching students)`,
+                  label: `${c.label} (${c.assignableStudents.length}/${c.totalStudents} ${labels?.matchingStudents})`,
                   _type: c.type,
                 };
               })
@@ -104,7 +104,8 @@ SelectClass.propTypes = {
   labels: PropTypes.shape({
     excludeStudents: PropTypes.string,
     unableToAssignStudentsMessage: PropTypes.string,
-  }).isRequired,
+    matchingStudents: PropTypes.string,
+  }),
   profiles: PropTypes.arrayOf(PropTypes.string).isRequired,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.arrayOf(PropTypes.string),

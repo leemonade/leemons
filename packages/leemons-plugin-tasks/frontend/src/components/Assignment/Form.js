@@ -81,7 +81,7 @@ export default function Form({ onSubmit: parentSubmit, task }) {
               error={errors.assignees}
               profile="student"
               task={task}
-              // labels={labels}
+              labels={labels}
               modes={modes}
               assignTo={assignTo}
             />

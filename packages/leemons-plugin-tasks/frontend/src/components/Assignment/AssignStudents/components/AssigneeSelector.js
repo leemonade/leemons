@@ -31,7 +31,8 @@ export default function AssigneeSelector({ labels, profile, onChange, value }) {
         <SelectCustomGroup labels={labels} profiles={profiles} value={value} onChange={onChange} />
       );
     case 'session':
-      return <p>Session</p>;
+      // TODO: Implement session selector for tasks
+      return null;
     default:
       return null;
   }
