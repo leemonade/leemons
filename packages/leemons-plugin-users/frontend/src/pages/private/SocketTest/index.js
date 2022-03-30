@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { withLayout } from '@layout/hoc';
-import { PageContainer, PageHeader } from 'leemons-ui';
 import { SocketIoService } from '@socket-io/service';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de crear usuarios
@@ -20,16 +19,12 @@ function SocketTest() {
 
   return (
     <>
-      <PageHeader
-        title={'Prueba socket.io'}
-        description={
-          'Pincha en el boton mandar mensaje y mira como recibes desde socket.io un mensaje, Miau!'
-        }
-      />
-      <PageContainer>
-        <button onClick={sendMessage}>Mandar mensaje</button>
-        <div>{JSON.stringify(state)}</div>
-      </PageContainer>
+      Prueba socket.io
+      <br />
+      Pincha en el boton mandar mensaje y mira como recibes desde socket.io un mensaje, Miau!
+      <br />
+      <button onClick={sendMessage}>Mandar mensaje</button>
+      <div>{JSON.stringify(state)}</div>
     </>
   );
 }
