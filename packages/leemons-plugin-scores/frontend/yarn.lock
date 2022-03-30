@@ -57,10 +57,10 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
-"@bubbles-ui/components@^1.0.26":
-  version "1.0.27"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.0.27.tgz#22427680da4818e0370529935ba932cf6f0a972a"
-  integrity sha512-N1Ln0NDwt7b8j/0yr4U4rNa2LEKl26tY39n+0hLoLuHEa1Iqn9TXi/c2hu4XMFFUJbqrePkYinyX64G6wf4AMg==
+"@bubbles-ui/components@^1.0.28":
+  version "1.0.28"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.0.28.tgz#8b528e9d3605c1b63c27058fd686b56db5b5dae3"
+  integrity sha512-gL/6FfjfnMMB8qa7KavlgBzemxVehHhYEQjrc1SgONw6tpLoDehcxPWNkG2IuWSZIsXoefL4yB91zolL//FtSA==
   dependencies:
     "@bubbles-ui/icons" "^1.0.10"
     "@heroicons/react" "^1.0.5"
@@ -94,10 +94,10 @@
   resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.0.24.tgz#24115b725131f94323c44578b15775a028f25557"
   integrity sha512-DI4g9qT2lWaqrPjB/GNPvel8VbovwONbAVPGpzarN4feZ3gKIfol+8yo4JGAM4pt/kF7ObuK+eToC0aBAEvvyw==
 
-"@bubbles-ui/leemons@^1.0.26":
-  version "1.0.26"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/leemons/-/leemons-1.0.26.tgz#29af3713274843fe70788328d9e131066a8a346a"
-  integrity sha512-wLrZZA6mpUrHHAZqXmTrksqRSc1DWeyMCXsEvSKNkk+8I07HSM9ASFF/H6wHKPuJ/XcmDbGORVHWxgL89ZYCvg==
+"@bubbles-ui/leemons@^1.0.27":
+  version "1.0.27"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/leemons/-/leemons-1.0.27.tgz#1845cf06b5294437cddbf52b44cd2e10804b7a6f"
+  integrity sha512-Iwqu4cNd2UEOK6fai0uZPXYaVutY47J37Tey1rqwaLTrXxn5fgMcVHA64NjWfPOlgzMat5tkZsaikoLoVnVLEw==
   dependencies:
     "@leemonade/rjsf-core" "^3.0.0"
     "@rjsf/core" "^3.2.1"
