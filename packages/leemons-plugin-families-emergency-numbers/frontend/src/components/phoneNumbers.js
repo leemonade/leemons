@@ -1,17 +1,24 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal, PageContainer, Table, useModal } from 'leemons-ui';
+// import { Button, Modal, PageContainer, Table, useModal } from 'leemons--ui';
+
+/*
+import { Button } from '@bubbles-ui/components';
 import { useAsync } from '@common/useAsync';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
-import { PlusIcon } from '@heroicons/react/outline';
 import * as _ from 'lodash';
 import { prefixPN } from '../helpers';
 import { constants } from '../constants';
-import PhoneNumbersModal from './phoneNumbersModal';
+
+ */
 
 function PhoneNumbers({ editMode, phoneNumbers = [], onChangePhoneNumbers = () => {} }) {
+  return 'Hay que cambiar a bubbles-ui';
+
+  /*
+
   const [loading, setLoading] = useState(true);
   const [_permissions, setPermissions] = useState([]);
   const [tRelations] = useTranslateLoader('plugins.families.detail_page.relations');
@@ -152,7 +159,8 @@ function PhoneNumbers({ editMode, phoneNumbers = [], onChangePhoneNumbers = () =
 
   if (loading) return null;
   if (!permissions.phoneNumbersInfo.view && !permissions.phoneNumbersInfo.update) return null;
-
+*/
+  /*
   return (
     <>
       {error ? (
@@ -183,6 +191,8 @@ function PhoneNumbers({ editMode, phoneNumbers = [], onChangePhoneNumbers = () =
       )}
     </>
   );
+
+   */
 }
 
 PhoneNumbers.propTypes = {

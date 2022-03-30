@@ -1,3 +1,4 @@
+/*
 import * as _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
@@ -46,3 +47,4 @@ MainMenuDropItem.propTypes = {
   className: PropTypes.string,
   item: PropTypes.any,
 };
+*/

@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { Button, CheckBox, TextInput, Radio, Select, Drawer } from '@bubbles-ui/components';
+import { Button, Checkbox, Drawer, Radio, Select, TextInput } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -216,7 +216,7 @@ function CalendarSimpleEventModal({ event, eventTypes, close, config, calendars 
             })}
           />
         ) : null}
-        <CheckBox
+        <Checkbox
           label={t('all_day')}
           color="secondary"
           checked={watch('isAllDay')}

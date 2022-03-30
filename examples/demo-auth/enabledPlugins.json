@@ -44,10 +44,6 @@
     "path": "../../packages/leemons-plugin-package-manager/frontend"
   },
   {
-    "name": "classroom",
-    "path": "../../packages/leemons-plugin-classroom/frontend"
-  },
-  {
     "name": "leebrary",
     "path": "../../packages/leemons-plugin-leebrary/frontend"
   },
