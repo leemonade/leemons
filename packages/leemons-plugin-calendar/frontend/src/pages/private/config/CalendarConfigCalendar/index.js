@@ -7,7 +7,8 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { PageContainer, PageHeader } from 'leemons-ui';
+import { PageContainer } from '@bubbles-ui/components';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
 import {
@@ -190,10 +191,14 @@ function ConfigAdd({ session }) {
             eventTypes={eventTypes}
             event={event}
           />
-          <PageHeader
-            title={config.title}
-            saveButton={tCommonHeader('save')}
-            saveButtonLoading={saveLoading}
+          <AdminPageHeader
+            labels={{
+              title: config.title,
+            }}
+            buttons={{
+              save: tCommonHeader('save'),
+            }}
+            loading={saveLoading && 'save'}
           />
           <div className="bg-primary-content">
             <PageContainer>

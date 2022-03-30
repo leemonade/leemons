@@ -1,15 +1,13 @@
 import * as _ from 'lodash';
 import React, { useMemo, useRef, useState } from 'react';
 import { listFamiliesRequest } from '@families/request';
-import { withLayout } from '@layout/hoc';
-import { FormControl, Input, PageContainer, PageHeader, Table } from 'leemons-ui';
+// import { FormControl, Input, PageContainer, PageHeader, Table } from 'leemons--ui';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import prefixPN from '@families/helpers/prefixPN';
-import { useHistory, Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useAsync } from '@common/useAsync';
-import { SearchIcon } from '@heroicons/react/outline';
 
 function List() {
   const config = useRef({
@@ -111,6 +109,8 @@ function List() {
     setPagination(await list());
   };
 
+  return 'Hay que remaquetar esta pagina con bubbles-ui';
+  /*
   return (
     <>
       <PageHeader title={t('title')} newButton={tCommon('new')} onNewButton={goDetailPage} />
@@ -158,6 +158,8 @@ function List() {
       </PageContainer>
     </>
   );
+
+   */
 }
 
-export default withLayout(List);
+export default List;
