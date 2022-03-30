@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { Button, Checkbox, Drawer, FormControl, Input, Radio, Select, useDrawer } from 'leemons-ui';
+import { Button, CheckBox, TextInput, Radio, Select, Drawer } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -30,11 +30,8 @@ function CalendarSimpleEventModal({ event, eventTypes, close, config, calendars 
     register,
     handleSubmit,
     setValue,
-    getValues,
     watch,
-    unregister,
-    trigger,
-    formState: { errors, isSubmitted },
+    formState: { errors },
   } = useForm();
 
   const init = async () => {
@@ -158,79 +155,73 @@ function CalendarSimpleEventModal({ event, eventTypes, close, config, calendars 
   return (
     <div style={{ width: '400px' }} className="p-4">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <FormControl label={t('title')} className="w-full" formError={_.get(errors, `title`)}>
-          <Input
-            className="w-full"
-            outlined={true}
-            {...register(`title`, {
-              required: tCommon('required'),
-            })}
-          />
-        </FormControl>
+        <TextInput
+          label={t('title')}
+          error={_.get(errors, `title`)}
+          className="w-full"
+          outlined={true}
+          {...register(`title`, {
+            required: tCommon('required'),
+          })}
+        />
         {eventTypes.map((eventType) => (
           <div key={eventType.key} className="flex">
-            <FormControl label={getEventTypeName(eventType.key)} labelPosition="right">
-              <Radio
-                color={_.get(errors, `type`) ? 'error' : 'primary'}
-                name={eventType.key}
-                checked={watch('type') === eventType.key}
-                onChange={() => setValue('type', eventType.key)}
-                value={eventType.key}
-              />
-            </FormControl>
+            <Radio
+              label={getEventTypeName(eventType.key)}
+              color={_.get(errors, `type`) ? 'error' : 'primary'}
+              name={eventType.key}
+              checked={watch('type') === eventType.key}
+              onChange={() => setValue('type', eventType.key)}
+              value={eventType.key}
+            />
           </div>
         ))}
-        <FormControl className="w-full" formError={_.get(errors, `startDate`)}>
-          <Input
-            type="date"
+        <TextInput
+          type="date"
+          error={_.get(errors, `startDate`)}
+          className="w-full"
+          outlined={true}
+          {...register(`startDate`, {
+            required: tCommon('required'),
+          })}
+        />
+        {!isAllDay ? (
+          <TextInput
+            type="time"
+            error={_.get(errors, `startTime`)}
             className="w-full"
             outlined={true}
-            {...register(`startDate`, {
+            {...register(`startTime`, {
               required: tCommon('required'),
             })}
           />
-        </FormControl>
-        {!isAllDay ? (
-          <FormControl className="w-full" formError={_.get(errors, `startTime`)}>
-            <Input
-              type="time"
-              className="w-full"
-              outlined={true}
-              {...register(`startTime`, {
-                required: tCommon('required'),
-              })}
-            />
-          </FormControl>
         ) : null}
-        <FormControl className="w-full" formError={_.get(errors, `endDate`)}>
-          <Input
-            type="date"
+        <TextInput
+          type="date"
+          className="w-full"
+          outlined={true}
+          error={_.get(errors, `endDate`)}
+          {...register(`endDate`, {
+            required: tCommon('required'),
+          })}
+        />
+        {!isAllDay ? (
+          <TextInput
+            type="time"
             className="w-full"
             outlined={true}
-            {...register(`endDate`, {
+            error={_.get(errors, `endTime`)}
+            {...register(`endTime`, {
               required: tCommon('required'),
             })}
           />
-        </FormControl>
-        {!isAllDay ? (
-          <FormControl className="w-full" formError={_.get(errors, `endTime`)}>
-            <Input
-              type="time"
-              className="w-full"
-              outlined={true}
-              {...register(`endTime`, {
-                required: tCommon('required'),
-              })}
-            />
-          </FormControl>
         ) : null}
-        <FormControl labelPosition="right" label={t('all_day')}>
-          <Checkbox
-            color="secondary"
-            checked={watch('isAllDay')}
-            onChange={(e) => setValue('isAllDay', e.target.checked)}
-          />
-        </FormControl>
+        <CheckBox
+          label={t('all_day')}
+          color="secondary"
+          checked={watch('isAllDay')}
+          onChange={(e) => setValue('isAllDay', e.target.checked)}
+        />
         <Select
           outlined
           {...register(`repeat`, {
@@ -266,26 +257,23 @@ function CalendarSimpleEventModal({ event, eventTypes, close, config, calendars 
 
 CalendarSimpleEventModal.propTypes = {
   event: PropTypes.object,
-  close: PropTypes.func.isRequired,
-  eventTypes: PropTypes.any.isRequired,
+  calendars: PropTypes.array,
+  eventTypes: PropTypes.array,
+  close: PropTypes.func,
   config: PropTypes.object,
-  calendars: PropTypes.any,
 };
 
 export const useCalendarSimpleEventModal = () => {
-  const [drawer, toggleDrawer] = useDrawer({
-    animated: true,
-    side: 'right',
-  });
+  const [drawer, setDrawer] = useState(false);
 
   return [
-    toggleDrawer,
-    function (data) {
-      return (
-        <Drawer {...drawer}>
-          <CalendarSimpleEventModal {...data} />
-        </Drawer>
-      );
-    },
+    () => setDrawer((d) => !d),
+    (data) => (
+      <Drawer opened={drawer}>
+        <CalendarSimpleEventModal {...data} />
+      </Drawer>
+    ),
   ];
 };
+
+export default useCalendarSimpleEventModal;
