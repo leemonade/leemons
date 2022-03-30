@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
-import { Avatar, Card } from 'leemons-ui';
+import { Paper, Avatar } from '@bubbles-ui/components';
 import moment from 'moment';
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
 
@@ -56,41 +56,30 @@ export default function KanbanCard({
     style.backgroundColor = calendar.bgColor;
   }
 
-  let avatarContent = getInitials();
   let avatarType = 'initials';
   if (calendar.icon) {
     avatarType = 'icon';
-    avatarContent = getIcon();
   }
   if (config.userCalendar && config.userCalendar.id === calendar.id) {
     avatarType = 'avatar';
-    avatarContent = getAvatar();
   }
   return (
-    <Card
-      className="shadow p-4 mt-2 mb-2 bg-white"
-      dragging={dragging.toString()}
-      onClick={() => onClick(event)}
-    >
+    <Paper shadow="level03" dragging={dragging.toString()} onClick={() => onClick(event)}>
       <div>{event.title}</div>
       <div>{moment.utc(event.endDate).format('DD-MM-YYYY')}</div>
       {event.data && event.data.description ? <div>{event.data.description}</div> : null}
       <div>
         <Avatar
-          type={avatarType === 'initials' ? 'placeholder' : null}
-          circle={true}
-          size={6}
+          fullName={calendar.name}
+          image="http://daisyui.com/tailwind-css-component-profile-1@40w.png"
           style={style}
-          className={className.join(' ')}
-        >
-          {avatarContent}
-        </Avatar>
+        />
         {avatarType === 'avatar'
           ? getCalendarNameWithConfigAndSession(calendar, config, session)
           : null}
       </div>
       {percentaje !== null ? <div>{percentaje.toFixed(2)}%</div> : null}
-    </Card>
+    </Paper>
   );
 }
 
