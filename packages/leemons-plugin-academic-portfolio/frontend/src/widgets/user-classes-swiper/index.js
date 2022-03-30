@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Avatar, Box, createStyles, Paragraph, Stack, Title } from '@bubbles-ui/components';
+import { Box, createStyles, ImageLoader, Stack, Text } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import prefixPN from '@families/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -10,11 +10,21 @@ import { listSessionClassesRequest } from '../../request';
 
 const Styles = createStyles((theme) => ({
   root: {
+    overflow: 'auto',
+    width: '100%',
+  },
+  cardContainer: {
     backgroundColor: theme.colors.uiBackground02,
   },
   imageContainer: {
     position: 'relative',
     paddingRight: theme.spacing[2],
+  },
+  image: {
+    height: '48px',
+    width: '48px',
+    borderRadius: '50%',
+    backgroundColor: theme.colors.uiBackground02,
   },
   card: {
     backgroundColor: theme.colors.uiBackground01,
@@ -26,6 +36,24 @@ const Styles = createStyles((theme) => ({
     '&:first-of-type': {
       marginLeft: '2px',
     },
+  },
+  colorIcon: {
+    position: 'absolute',
+    width: '20px',
+    height: '20px',
+    borderRadius: '50%',
+    right: '6px',
+    bottom: '0px',
+    backgroundColor: theme.colors.uiBackground02,
+  },
+  icon: {
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '12px',
+    height: '12px',
+    color: theme.colors.text07,
   },
 }));
 
@@ -54,31 +82,47 @@ function UserClassesSwiperWidget({ program }) {
   if (store.loading || !store.classes) return null;
 
   return (
-    <Stack className={styles.root}>
-      {store.classes.map((classe) => {
-        const name = `${classe.subject.name} - ${classe.subject.internalId}`;
-        const group = classe.groups ? classe.groups.abbreviation : null;
-        const course = isArray(classe.courses)
-          ? t('multiCourse')
-          : classe.courses
-          ? `${classe.courses.index}º`
-          : null;
-        return (
-          <Stack key={classe.id} className={styles.card}>
-            <Box className={styles.imageContainer}>
-              <Avatar size="md" />
-            </Box>
-            <Stack direction="column">
-              <Paragraph>{name}</Paragraph>
-              <Title order={6}>
-                {course}
-                {group ? (course ? `- ${group}` : group) : null}
-              </Title>
+    <Box className={styles.root}>
+      <Stack className={styles.cardContainer}>
+        {store.classes.map((classe) => {
+          const name = `${classe.subject.name} - ${classe.subject.internalId}`;
+          const group = classe.groups ? classe.groups.abbreviation : null;
+          const course = isArray(classe.courses)
+            ? t('multiCourse')
+            : classe.courses
+            ? `${classe.courses.index}º`
+            : null;
+          return (
+            <Stack key={classe.id} className={styles.card} alignItems="center">
+              <Box className={styles.imageContainer}>
+                <Box className={styles.image} />
+                {classe.color || classe.icon ? (
+                  <Box
+                    style={classe.color ? { backgroundColor: classe.color } : {}}
+                    className={styles.colorIcon}
+                  >
+                    <Box className={styles.icon}>
+                      <ImageLoader
+                        src="/public/assets/svgs/plugin-dashboard-black.svg"
+                        strokeCurrent
+                        fillCurrent
+                      />
+                    </Box>
+                  </Box>
+                ) : null}
+              </Box>
+              <Stack direction="column">
+                <Text size="xs">{name}</Text>
+                <Text strong>
+                  {course}
+                  {group ? (course ? `- ${group}` : group) : null}
+                </Text>
+              </Stack>
             </Stack>
-          </Stack>
-        );
-      })}
-    </Stack>
+          );
+        })}
+      </Stack>
+    </Box>
   );
 }
 
