@@ -63,7 +63,7 @@ function InstructionData({
   // COMPONENT
 
   return (
-    <form onSubmit={handleSubmit(handleOnNext)}>
+    <form onSubmit={handleSubmit(handleOnNext)} autoComplete="off">
       <ContextContainer {...props} divided>
         <ContextContainer title={labels.title}>
           <Box>

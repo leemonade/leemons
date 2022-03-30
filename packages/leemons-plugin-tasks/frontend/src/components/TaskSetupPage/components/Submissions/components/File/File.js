@@ -21,13 +21,13 @@ export default function File({ labels }) {
           <TagsInput {...field} label={labels?.type} placeholder={labels?.typePlaceholder} />
         )}
       />
-      <Stack direction="row">
+      <Stack direction="row" alignItems="end">
         <Controller
           control={control}
           name="data.maxSize"
           render={({ field }) => <NumberInput {...field} label={labels?.maxSize} />}
         />
-        <Text>Kb</Text>
+        <Text>MB</Text>
       </Stack>
     </>
   );

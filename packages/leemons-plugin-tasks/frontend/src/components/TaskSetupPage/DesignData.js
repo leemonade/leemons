@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, Stack, ContextContainer, ColorInput, Button } from '@bubbles-ui/components';
+import { Box, Stack, ContextContainer, Button } from '@bubbles-ui/components';
+import { ColorInput } from '@mantine/core';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 
 function DesignData({
@@ -57,37 +58,38 @@ function DesignData({
   // COMPONENT
 
   return (
-    <form onSubmit={handleSubmit(handleOnNext)}>
-      <ContextContainer {...props} divided>
-        <ContextContainer title={labels.title}>
-          <Box>leebrary picker</Box>
-          <Box>
-            <Controller
-              control={control}
-              name="color"
-              render={({ field }) => <ColorInput label={labels?.color} {...field} />}
-            />
-          </Box>
-        </ContextContainer>
-        <Stack fullWidth justifyContent="space-between">
-          <Box>
-            <Button
-              compact
-              variant="light"
-              leftIcon={<ChevLeftIcon height={20} width={20} />}
-              onClick={onPrevious}
-            >
-              {labels.buttonPrev}
-            </Button>
-          </Box>
-          <Box>
-            <Button type="submit" rightIcon={<ChevRightIcon height={20} width={20} />}>
-              {labels.buttonNext}
-            </Button>
-          </Box>
-        </Stack>
+    <ContextContainer {...props} divided>
+      <ContextContainer title={labels.title}>
+        <Box>leebrary picker</Box>
+        <Box>
+          <Controller
+            control={control}
+            name="color"
+            render={({ field }) => <ColorInput label={labels?.color} {...field} />}
+          />
+        </Box>
       </ContextContainer>
-    </form>
+      <Stack fullWidth justifyContent="space-between">
+        <Box>
+          <Button
+            compact
+            variant="light"
+            leftIcon={<ChevLeftIcon height={20} width={20} />}
+            onClick={onPrevious}
+          >
+            {labels.buttonPrev}
+          </Button>
+        </Box>
+        <Box>
+          <Button
+            onClick={handleSubmit(handleOnNext)}
+            rightIcon={<ChevRightIcon height={20} width={20} />}
+          >
+            {labels.buttonNext}
+          </Button>
+        </Box>
+      </Stack>
+    </ContextContainer>
   );
 }
 

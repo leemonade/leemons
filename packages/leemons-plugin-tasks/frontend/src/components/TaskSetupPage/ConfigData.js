@@ -83,12 +83,13 @@ function ConfigData({
 
   return (
     <FormProvider {...formData}>
-      <form onSubmit={handleSubmit(handleOnNext)}>
+      <form onSubmit={handleSubmit(handleOnNext)} autoComplete="off">
         <ContextContainer {...props} divided>
           <ContextContainer>
             {/* Name input */}
             <Controller
               control={control}
+              autoComplete="off"
               name="name"
               rules={{ required: errorMessages.name?.required }}
               render={({ field }) => (
