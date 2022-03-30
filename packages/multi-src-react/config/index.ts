@@ -186,7 +186,7 @@ async function generateMonorepo(dir: string, plugins: Plugin[]): Promise<void> {
   // Generate App index.js
   await copyFile(path.resolve(configDir.src, 'index.js'), path.resolve(frontDir, 'index.js'));
 
-  // Generate Tailwind global.css
+  // Generate reset global.css
   await copyFile(path.resolve(configDir.src, 'global.css'), path.resolve(frontDir, 'global.css'));
 
   // Generate App contexts folder
