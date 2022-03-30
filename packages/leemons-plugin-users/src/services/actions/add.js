@@ -1,4 +1,3 @@
-const { getTranslationKey } = require('../../../next/src/actions/getTranslationKey');
 const { translations } = require('../translations');
 const { table } = require('../tables');
 
@@ -26,7 +25,7 @@ async function add(data) {
     if (translations()) {
       promises.push(
         translations().common.addManyByKey(
-          getTranslationKey(data.actionName, 'name'),
+          `plugins.users.${data.actionName}.name`,
           data.localizationName,
           { transacting }
         )

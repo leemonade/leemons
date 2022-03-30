@@ -1,6 +1,5 @@
 const { validateExistPermission } = require('../../validations/exists');
 const { validatePermissionName } = require('../../validations/exists');
-const { getTranslationKey } = require('../../../next/src/permissions/getTranslationKey');
 const { translations } = require('../translations');
 const { addActionMany } = require('./addActionMany');
 const { table } = require('../tables');
@@ -32,7 +31,7 @@ async function add(data) {
     if (translations()) {
       promises.push(
         translations().common.addManyByKey(
-          getTranslationKey(data.permissionName, 'name'),
+          `plugins.users.${data.permissionName}.name`,
           data.localizationName,
           { transacting }
         )

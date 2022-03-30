@@ -1,4 +1,3 @@
-const { getTranslationKey } = require('../../../next/src/permissions/getTranslationKey');
 const { translations } = require('../translations');
 const { table } = require('../tables');
 
@@ -33,7 +32,7 @@ async function remove(permissionName) {
     if (translations()) {
       promises.push(
         translations().common.deleteAll(
-          { key: getTranslationKey(permissionName, 'name') },
+          { key: `plugins.users.${permissionName}.name` },
           { transacting }
         )
       );
