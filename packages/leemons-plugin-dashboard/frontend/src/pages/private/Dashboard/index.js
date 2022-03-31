@@ -1,5 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useStore } from '@common';
 import {
   Box,
@@ -23,7 +24,7 @@ import { ZoneWidgets } from '@widgets';
 
 const rightZoneWidth = '320px';
 
-export default function Dashboard() {
+export default function Dashboard({ session }) {
   const [store, render] = useStore({
     loading: true,
     isAcademicMode: false,
@@ -49,6 +50,9 @@ export default function Dashboard() {
     if (store.isAcademicMode) {
       const { programs } = await getUserProgramsRequest();
       store.programs = programs;
+      if (store.programs.length === 1) {
+        [store.selectedProgram] = store.programs;
+      }
     }
 
     store.loading = false;
@@ -107,14 +111,11 @@ export default function Dashboard() {
           <>
             {/* -- LEFT ZONE -- */}
             <ZoneWidgets zone="plugins.dashboard.program.left">
-              {({ Component, key }) => {
-                console.log(Component, key);
-                return (
-                  <Box key={key}>
-                    <Component program={store.selectedProgram} />
-                  </Box>
-                );
-              }}
+              {({ Component, key }) => (
+                <Box key={key}>
+                  <Component program={store.selectedProgram} session={session} />
+                </Box>
+              )}
             </ZoneWidgets>
             {/* -- RIGHT ZONE -- */}
             <Paper
@@ -130,7 +131,7 @@ export default function Dashboard() {
               <ZoneWidgets zone="plugins.dashboard.program.right">
                 {({ Component, key }) => (
                   <Box key={key}>
-                    <Component program={store.selectedProgram} />
+                    <Component program={store.selectedProgram} session={session} />
                   </Box>
                 )}
               </ZoneWidgets>
@@ -141,3 +142,7 @@ export default function Dashboard() {
     </ContextContainer>
   );
 }
+
+Dashboard.propTypes = {
+  session: PropTypes.object,
+};

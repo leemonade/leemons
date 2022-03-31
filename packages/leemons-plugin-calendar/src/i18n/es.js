@@ -129,4 +129,9 @@ module.exports = {
     archived: 'Ver tareas archivadas',
     selectCalendarsSubjects: 'Todas las asignaturas',
   },
+  userProgramCalendar: {
+    calendar: 'Calendario',
+    allSubjects: 'Todas las asignaturas',
+    showAllCalendar: 'Ver calendario completo',
+  },
 };

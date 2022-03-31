@@ -129,4 +129,9 @@ module.exports = {
     archived: 'Show archived tasks',
     selectCalendarsSubjects: 'All subjects',
   },
+  userProgramCalendar: {
+    calendar: 'Calendar',
+    allSubjects: 'All subjects',
+    showAllCalendar: 'Show all calendar',
+  },
 };
