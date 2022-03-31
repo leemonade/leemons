@@ -33,19 +33,14 @@ async function listCurriculum(ctx) {
     properties: {
       page: { type: ['number', 'string'] },
       size: { type: ['number', 'string'] },
-      query: {
-        type: 'object',
-        additionalProperties: true,
-      },
     },
     required: ['page', 'size'],
-    additionalProperties: false,
+    additionalProperties: true,
   });
   if (validator.validate(ctx.request.query)) {
-    const { page, size, query, ...options } = ctx.request.query;
+    const { page, size, ...query } = ctx.request.query;
     const data = await curriculumService.listCurriculums(parseInt(page, 10), parseInt(size, 10), {
       query,
-      ...options,
     });
     ctx.status = 200;
     ctx.body = { status: 200, data };
