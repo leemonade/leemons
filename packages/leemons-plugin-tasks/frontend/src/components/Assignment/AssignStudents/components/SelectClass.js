@@ -1,12 +1,52 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { CheckBoxGroup, Alert, Loader, ContextContainer } from '@bubbles-ui/components';
+import {
+  CheckBoxGroup,
+  Alert,
+  Stack,
+  Loader,
+  ContextContainer,
+  UserDisplayItem,
+} from '@bubbles-ui/components';
 import { SelectUserAgent } from '@users/components';
 import { useForm, Controller } from 'react-hook-form';
+import { getUserAgentsInfoRequest } from '@users/request';
+import { useApi } from '@common';
 import ConditionalInput from '../../../Inputs/ConditionalInput';
 import { useGroupedClassesWithSelectedSubjects } from '../hooks';
 
+function useUserAgentsInfo(users) {
+  const [data] = useApi(getUserAgentsInfoRequest, users);
+
+  if (data?.userAgents) {
+    return data?.userAgents.map(({ user }) => user);
+  }
+
+  return null;
+}
+
+function NonAssignableStudents({ users, labels }) {
+  const students = useUserAgentsInfo(users);
+
+  return (
+    <p>
+      {labels?.unableToAssignStudentsMessage}:{' '}
+      <Stack>
+        {students?.map((student) => (
+          <UserDisplayItem key={student.id} {...student} size="xs" />
+        ))}
+      </Stack>
+    </p>
+  );
+}
+
+NonAssignableStudents.propTypes = {
+  users: PropTypes.arrayOf(PropTypes.string).isRequired,
+  labels: PropTypes.shape({
+    unableToAssignStudentsMessage: PropTypes.string,
+  }),
+};
 export default function SelectClass({ labels, profiles, onChange, value }) {
   const { control, watch, getValues } = useForm({
     defaultValues: {
@@ -107,9 +147,7 @@ export default function SelectClass({ labels, profiles, onChange, value }) {
         )}
       />
       {!!nonAssignableStudents?.length && (
-        <p>
-          {labels?.unableToAssignStudentsMessage}: {nonAssignableStudents.join(', ')}
-        </p>
+        <NonAssignableStudents users={nonAssignableStudents} labels={labels} />
       )}
       <Controller
         name="excluded"
@@ -117,7 +155,8 @@ export default function SelectClass({ labels, profiles, onChange, value }) {
         render={({ field: { value: show } }) => (
           <ConditionalInput
             label={labels?.excludeStudents}
-            value={!!show}
+            value={!!show?.length}
+            showOnTrue
             render={() => (
               <Controller
                 name="excluded"
