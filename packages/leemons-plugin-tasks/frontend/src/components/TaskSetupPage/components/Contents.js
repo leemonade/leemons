@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
 import { TableInput, Box } from '@bubbles-ui/components';
-import { TextEditor } from '@bubbles-ui/editors';
+import { TextEditorInput } from '@bubbles-ui/editors/es/form/TextEditorInput';
 import useTableInputLabels from '../../../helpers/useTableInputLabels';
 
 export default function Contents({ name, label, required }) {
@@ -16,7 +16,7 @@ export default function Contents({ name, label, required }) {
     {
       Header: `${label}${required ? '*' : ''}`,
       accessor: 'content',
-      input: { node: <TextEditor />, rules: { required: true } },
+      input: { node: <TextEditorInput />, rules: { required: true } },
       valueRender: (value) => <Box dangerouslySetInnerHTML={{ __html: value }} />,
     },
   ]);

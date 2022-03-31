@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { isFunction, isEmpty } from 'lodash';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import { Box, Stack, ContextContainer, Button, Tabs, TabPanel } from '@bubbles-ui/components';
-import { TextEditor } from '@bubbles-ui/editors';
+import { TextEditorInput } from '@bubbles-ui/editors/es/form/TextEditorInput';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 import Objectives from './components/Objectives';
@@ -131,7 +131,12 @@ function ContentData({
                 required: errorMessages.statement?.required,
               }}
               render={({ field }) => (
-                <TextEditor required {...field} label={labels.statement} error={errors.statement} />
+                <TextEditorInput
+                  required
+                  {...field}
+                  label={labels.statement}
+                  error={errors.statement}
+                />
               )}
             />
             <Controller
@@ -139,7 +144,7 @@ function ContentData({
               name="development"
               rules={{ required: errorMessages.development?.required }}
               render={({ field }) => (
-                <TextEditor
+                <TextEditorInput
                   {...field}
                   label={labels.development}
                   placeholder={placeholders.development}

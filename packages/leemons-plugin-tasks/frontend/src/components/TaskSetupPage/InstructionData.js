@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { isFunction, isEmpty } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Stack, ContextContainer, Button } from '@bubbles-ui/components';
-import { TextEditor } from '@bubbles-ui/editors';
+import { TextEditorInput } from '@bubbles-ui/editors/es/form/TextEditorInput';
+
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 
 function InstructionData({
@@ -72,7 +73,7 @@ function InstructionData({
               name="instructionsForTeacher"
               rules={{ required: errorMessages.forTeacher?.required }}
               render={({ field }) => (
-                <TextEditor
+                <TextEditorInput
                   {...field}
                   label={labels.forTeacher}
                   placeholder={placeholders.forTeacher}
@@ -89,7 +90,7 @@ function InstructionData({
               name="instructionsForStudent"
               rules={{ required: errorMessages.forStudent?.required }}
               render={({ field }) => (
-                <TextEditor
+                <TextEditorInput
                   {...field}
                   label={labels.forStudent}
                   placeholder={placeholders.forStudent}

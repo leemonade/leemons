@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
 import { ContextContainer, TextInput, Checkbox } from '@bubbles-ui/components';
-import { TextEditor } from '@bubbles-ui/editors';
+import { TextEditorInput } from '@bubbles-ui/editors/es/form/TextEditorInput';
 import ConditionalInput from '../../../Inputs/ConditionalInput';
 
 export default function SelfReflection({ name, labels, description }) {
@@ -43,7 +43,7 @@ export default function SelfReflection({ name, labels, description }) {
                   name={`${name}.description`}
                   control={control}
                   shouldUnregister
-                  render={({ field }) => <TextEditor {...field} label={labels?.description} />}
+                  render={({ field }) => <TextEditorInput {...field} label={labels?.description} />}
                 />
                 <Controller
                   name={`${name}.mandatory`}

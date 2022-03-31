@@ -4,7 +4,8 @@ import { unflatten } from '@common';
 import { useForm, Controller } from 'react-hook-form';
 import { Button, ContextContainer, DatePicker, Box, Switch } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { TextEditor } from '@bubbles-ui/editors';
+import { TextEditorInput } from '@bubbles-ui/editors/es/form/TextEditorInput';
+
 import { prefixPN } from '../../helpers/prefixPN';
 import AssignStudents from './AssignStudents';
 import ConditionalInput from '../Inputs/ConditionalInput';
@@ -213,7 +214,11 @@ export default function Form({ onSubmit: parentSubmit, task }) {
               shouldUnregister={true}
               rules={{ required: true }}
               render={({ field }) => (
-                <TextEditor error={errors.message} label={labels?.messageToStudents} {...field} />
+                <TextEditorInput
+                  error={errors.message}
+                  label={labels?.messageToStudents}
+                  {...field}
+                />
               )}
             />
           )}

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import loadable from '@loadable/component';
 import { useFormContext, FormProvider, useForm, Controller } from 'react-hook-form';
 import { ContextContainer, Select } from '@bubbles-ui/components';
-import { TextEditor } from '@bubbles-ui/editors';
+import { TextEditorInput } from '@bubbles-ui/editors/es/form/TextEditorInput';
 import ConditionalInput from '../../../Inputs/ConditionalInput';
 
 function useValueUpdater(form, originalForm) {
@@ -125,7 +125,7 @@ export default function Submissions({ labels }) {
                     control={contextControl}
                     name="submissions.description"
                     render={({ field: f }) => (
-                      <TextEditor {...f} label={labels?.submission?.description} />
+                      <TextEditorInput {...f} label={labels?.submission?.description} />
                     )}
                   />
                 </>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { ContextContainer, Text, Select, Button, PageContainer } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { TextEditor } from '@bubbles-ui/editors';
+import { TextEditorInput } from '@bubbles-ui/editors/es/form/TextEditorInput';
 import { useParams, useHistory } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
 import { useApi } from '@common';
@@ -58,7 +58,7 @@ export default function Correction() {
             <Controller
               control={control}
               name="teacherFeedback"
-              render={({ field }) => <TextEditor {...field} label="Comentarios" />}
+              render={({ field }) => <TextEditorInput {...field} label="Comentarios" />}
             />
             <Button onClick={handleSubmit(onSubmit)}>Calificate</Button>
           </ContextContainer>
