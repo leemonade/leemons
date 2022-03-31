@@ -32,7 +32,7 @@ const Styles = createStyles((theme) => ({
   },
 }));
 
-function UserProgramCalendar({ program, session }) {
+function UserProgramKanban({ program, session }) {
   const { classes: styles } = Styles();
   const [store, render] = useStore({
     loading: true,
@@ -200,9 +200,9 @@ function UserProgramCalendar({ program, session }) {
   );
 }
 
-UserProgramCalendar.propTypes = {
+UserProgramKanban.propTypes = {
   program: PropTypes.object.isRequired,
   session: PropTypes.object,
 };
 
-export default UserProgramCalendar;
+export default UserProgramKanban;
