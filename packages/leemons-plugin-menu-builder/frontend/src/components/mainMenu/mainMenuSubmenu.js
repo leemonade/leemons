@@ -1,5 +1,6 @@
+/*
 import * as _ from 'lodash';
-import { Modal, useModal } from 'leemons-ui';
+import { Modal, useModal } from 'leemons--ui';
 import hooks from 'leemons-hooks';
 import SimpleBar from 'simplebar-react';
 import update from 'immutability-helper';
@@ -204,17 +205,17 @@ export default function MainMenuSubmenu({ item, onClose, activeItem, state, setS
         <>
           <Modal {...modal} />
           <div className="w-full overflow-hidden h-screen bg-secondary-focus flex flex-col justify-between">
-            {/* Header submenu */}
+
             <div className={'flex flex-row justify-between items-center mb-6 pt-3'}>
               <div className={'w-full pl-6 font-lexend text-base text-secondary-content'}>
                 {item.label}
               </div>
-              {/* Close submenu */}
+
               <div className={'px-2'}>
                 <MainMenuCloseSubmenuBtn onClick={onClose} />
               </div>
             </div>
-            {/* Items submenu */}
+
             <DndDropZone type={'menu-item'} onDrop={onDrop} className="flex-grow h-px">
               {() => (
                 <SimpleBar className="h-full">
@@ -274,7 +275,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem, state, setS
                 </SimpleBar>
               )}
             </DndDropZone>
-            {/* Menu constructor */}
+
             <div>
               <MainMenuInfo
                 state={state}
@@ -297,3 +298,4 @@ MainMenuSubmenu.propTypes = {
   state: PropTypes.object.isRequired,
   setState: PropTypes.func.isRequired,
 };
+*/

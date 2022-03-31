@@ -2,7 +2,16 @@ import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
 import formWithTheme from '@common/formWithTheme';
-import { Box, Title, Group, TextInput, Select, Button } from '@bubbles-ui/components';
+import {
+  ActionButton,
+  Box,
+  Button,
+  ContextContainer,
+  Stack,
+  TextInput,
+} from '@bubbles-ui/components';
+import { RemoveIcon } from '@bubbles-ui/icons/outline';
+import * as _ from 'lodash';
 
 export const NEW_BRANCH_DETAIL_VALUE_MESSAGES = {
   nameLabel: 'Name',
@@ -23,6 +32,7 @@ function NewBranchDetailValue({
   schema,
   schemaFormValues,
   readonly,
+  onCloseBranch,
 }) {
   const {
     reset,
@@ -36,24 +46,39 @@ function NewBranchDetailValue({
     reset(defaultValues);
   }, [defaultValues]);
 
-  const datasetProps = useMemo(() => ({ formData: schemaFormValues }), [schemaFormValues]);
+  const datasetProps = useMemo(
+    () => ({ formData: schemaFormValues }),
+    [JSON.stringify(schemaFormValues)]
+  );
 
-  console.log(JSON.stringify(schema));
+  const goodDatasetConfig = useMemo(() => {
+    const response = _.cloneDeep(schema);
+    if (readonly) {
+      if (response && response.jsonSchema) {
+        _.forIn(response.jsonSchema.properties, (value, key) => {
+          if (!response.jsonUI[key]) response.jsonUI[key] = {};
+          response.jsonUI[key]['ui:readonly'] = true;
+        });
+      }
+    }
+    return response;
+  }, [schema, readonly]);
 
   const [form, formActions] = formWithTheme(
-    schema?.jsonSchema,
-    schema?.jsonUI,
+    goodDatasetConfig?.jsonSchema,
+    goodDatasetConfig?.jsonUI,
     undefined,
     datasetProps
   );
 
-  function save() {
-    handleSubmit((data) => {
+  async function save() {
+    handleSubmit(async (data) => {
       const toSend = { ...data, id: defaultValues?.id };
       let fErrors = [];
       if (formActions.isLoaded()) {
-        formActions.submit();
+        await formActions.submit();
         fErrors = formActions.getErrors();
+
         toSend.datasetValues = formActions.getValues();
       }
 
@@ -64,7 +89,10 @@ function NewBranchDetailValue({
   }
 
   return (
-    <Box m={32}>
+    <ContextContainer>
+      <Stack fullWidth justifyContent="end">
+        <ActionButton icon={<RemoveIcon />} onClick={onCloseBranch} />
+      </Stack>
       {!readonly ? (
         <form>
           <Box>
@@ -93,13 +121,13 @@ function NewBranchDetailValue({
       <Box>{form}</Box>
 
       {!readonly ? (
-        <Box>
-          <Button rounded size="xs" loading={isLoading} loaderPosition="right" onClick={save}>
+        <Stack justifyContent="end">
+          <Button loading={isLoading} onClick={save}>
             {messages.saveButtonLabel}
           </Button>
-        </Box>
+        </Stack>
       ) : null}
-    </Box>
+    </ContextContainer>
   );
 }
 
@@ -108,6 +136,7 @@ NewBranchDetailValue.defaultProps = {
   errorMessages: NEW_BRANCH_DETAIL_VALUE_ERROR_MESSAGES,
   isLoading: false,
   onSubmit: () => {},
+  onCloseBranch: () => {},
 };
 
 NewBranchDetailValue.propTypes = {
@@ -128,6 +157,7 @@ NewBranchDetailValue.propTypes = {
   onSubmit: PropTypes.func,
   isLoading: PropTypes.bool,
   readonly: PropTypes.bool,
+  onCloseBranch: PropTypes.func,
 };
 
 export default NewBranchDetailValue;

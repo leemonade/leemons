@@ -24,13 +24,14 @@ const getKeysCanAction = require('../dataset-values/getKeysCanAction');
  *  @param {any=} transacting - DB Transaction
  *  @param {any=} userSession - If the user's session comes up, it is checked and returned those fields that at least the user has permissions to view.
  *  @param {boolean=} defaultWithEmptyValues - Define if the values of default locales is empty = ""
+ *  @param {boolean=} useDefaultLocaleCallback - Define is use the default locale callback
  *  @return {Promise<Action>} The new dataset location
  *  */
 async function getSchemaWithLocale(
   locationName,
   pluginName,
   locale,
-  { defaultWithEmptyValues, userSession, transacting } = {}
+  { defaultWithEmptyValues, useDefaultLocaleCallback = true, userSession, transacting } = {}
 ) {
   validateLocationAndPluginAndLocale(locationName, pluginName, locale, true);
   await validateNotExistLocation(locationName, pluginName, { transacting });
@@ -48,11 +49,21 @@ async function getSchemaWithLocale(
     }
   }
 
-  const [schema, schemaLocale, defaultSchemaLocale] = await Promise.all([
+  const promises = [
     getSchema.call(this, locationName, pluginName),
     getSchemaLocale.call(this, locationName, pluginName, locale),
-    getSchemaLocale.call(this, locationName, pluginName, defaultLocale),
-  ]);
+  ];
+
+  if (useDefaultLocaleCallback) {
+    promises.push(getSchemaLocale.call(this, locationName, pluginName, defaultLocale));
+  }
+
+  // eslint-disable-next-line prefer-const
+  let [schema, schemaLocale, defaultSchemaLocale] = await Promise.all(promises);
+
+  if (!useDefaultLocaleCallback) {
+    defaultSchemaLocale = schemaLocale;
+  }
 
   if (defaultWithEmptyValues) {
     _.forEach(global.utils.getObjectArrayKeys(defaultSchemaLocale.schemaData), (key) => {

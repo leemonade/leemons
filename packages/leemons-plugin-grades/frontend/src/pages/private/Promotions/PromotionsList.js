@@ -291,6 +291,8 @@ export default function PromotionsList() {
     return m;
   }, [t]);
 
+  console.log(store.selectData);
+
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader values={headerValues} />

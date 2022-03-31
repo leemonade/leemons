@@ -1,11 +1,21 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { find, forEach, forIn, orderBy, cloneDeep, findIndex, take, map } from 'lodash';
-import { withLayout } from '@layout/hoc';
+import React, { useEffect, useMemo } from 'react';
+import { cloneDeep, find, findIndex, forEach, forIn, map, orderBy, take } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { listCentersRequest } from '@users/request';
-import { Box, Text, Title, Button, Group, Tree, useTree } from '@bubbles-ui/components';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
+import {
+  Box,
+  Col,
+  ContextContainer,
+  Grid,
+  PageContainer,
+  Paper,
+  Tree,
+  useTree,
+} from '@bubbles-ui/components';
 import { useHistory, useParams } from 'react-router-dom';
+import { useStore } from '@common';
 import { detailProgramRequest } from '@academic-portfolio/request';
 import { saveDatasetFieldRequest } from '@dataset/request';
 import {
@@ -15,8 +25,8 @@ import {
   updateNodeLevelRequest,
 } from '../../../request';
 import NewBranchConfig, {
-  NEW_BRANCH_CONFIG_MESSAGES,
   NEW_BRANCH_CONFIG_ERROR_MESSAGES,
+  NEW_BRANCH_CONFIG_MESSAGES,
   NEW_BRANCH_CONFIG_ORDERED_OPTIONS,
 } from '../../../bubbles-components/NewBranchConfig';
 import BranchContent from '../../../bubbles-components/BranchContent';
@@ -27,13 +37,11 @@ import {
 } from '../../../bubbles-components/branchContentDefaultValues';
 
 function AddCurriculumStep2() {
-  const [loading, setLoading] = useState(true);
-  const [generating, setGenerating] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [activeRightSection, setActiveRightSection] = useState(null);
-  const [activeNodeLevel, setActiveNodeLevel] = useState(null);
+  const [store, render] = useStore({
+    loading: true,
+    curriculum: {},
+  });
   const [t] = useTranslateLoader(prefixPN('addCurriculumStep2'));
-  const [curriculum, setCurriculum] = useState({});
 
   const tree = useTree();
   const history = useHistory();
@@ -126,18 +134,18 @@ function AddCurriculumStep2() {
   }, [t]);
 
   const parentNodeLevelsData = useMemo(() => {
-    if (activeNodeLevel && curriculum)
-      return map(take(curriculum.nodeLevels, activeNodeLevel.levelOrder), (item) => ({
+    if (store.activeNodeLevel && store.curriculum)
+      return map(take(store.curriculum.nodeLevels, store.activeNodeLevel.levelOrder), (item) => ({
         label: item.name,
         value: item.id,
       }));
     return [];
-  }, [activeNodeLevel, curriculum]);
+  }, [store.activeNodeLevel, store.curriculum]);
 
   const nodeLevelsFieldsData = useMemo(() => {
     const result = [];
-    if (curriculum && t) {
-      forEach(curriculum.nodeLevels, (nodeLevel) => {
+    if (store.curriculum && t) {
+      forEach(store.curriculum.nodeLevels, (nodeLevel) => {
         result[nodeLevel.id] = [
           {
             label: t('codeFieldNumbering'),
@@ -157,11 +165,14 @@ function AddCurriculumStep2() {
       });
     }
     return result;
-  }, [curriculum, t]);
+  }, [store.curriculum, t]);
 
-  async function load() {
+  async function load(skipLoading = false) {
     try {
-      setLoading(true);
+      if (!skipLoading) {
+        store.loading = true;
+        render();
+      }
       const [
         { curriculum: c },
         {
@@ -178,12 +189,12 @@ function AddCurriculumStep2() {
       c.center = find(centers, { id: c.center });
       c.nodeLevels = orderBy(c.nodeLevels, ['levelOrder'], ['asc']);
 
-      setCurriculum(c);
-      setLoading(false);
+      store.curriculum = c;
     } catch (e) {
       console.error(e);
-      setLoading(false);
     }
+    store.loading = false;
+    render();
   }
 
   useEffect(() => {
@@ -193,7 +204,7 @@ function AddCurriculumStep2() {
   useEffect(() => {
     const items = [];
 
-    forEach(curriculum.nodeLevels, (nodeLevel, index) => {
+    forEach(store.curriculum.nodeLevels, (nodeLevel, index) => {
       items.push({
         id: nodeLevel.id,
         parent: index === 0 ? 0 : items[index - 1].id,
@@ -215,27 +226,35 @@ function AddCurriculumStep2() {
     });
 
     tree.setTreeData(items);
-  }, [curriculum]);
+  }, [store.curriculum]);
 
   function onSelect({ id: nodeLevelId }) {
-    setActiveNodeLevel(find(curriculum.nodeLevels, { id: nodeLevelId }));
-    setActiveRightSection('detail-branch');
+    store.activeNodeLevel = find(store.curriculum.nodeLevels, { id: nodeLevelId });
+    store.activeRightSection = 'detail-branch';
+    render();
+  }
+
+  function onCloseBranch() {
+    store.activeNodeLevel = null;
+    store.activeRightSection = null;
+    render();
   }
 
   // CREATE NODE LEVEL
 
   async function addNewBranch({ id: nodeLevelId, ordered, ...rest }) {
     try {
-      setSaving(true);
+      store.saving = true;
+      render();
       if (!nodeLevelId) {
-        await addNodeLevelsRequest(curriculum.id, [
+        await addNodeLevelsRequest(store.curriculum.id, [
           {
             ...rest,
             type: 'custom',
             listType: ordered,
             levelOrder:
-              curriculum.nodeLevels && curriculum.nodeLevels.length
-                ? curriculum.nodeLevels[curriculum.nodeLevels.length - 1].levelOrder + 1
+              store.curriculum.nodeLevels && store.curriculum.nodeLevels.length
+                ? store.curriculum.nodeLevels[store.curriculum.nodeLevels.length - 1].levelOrder + 1
                 : 0,
           },
         ]);
@@ -247,20 +266,21 @@ function AddCurriculumStep2() {
         });
       }
 
-      await load();
-      setActiveNodeLevel(null);
-      setActiveRightSection(null);
-      setSaving(false);
+      await load(true);
+      store.activeNodeLevel = null;
+      store.activeRightSection = null;
+      store.saving = false;
     } catch (e) {
-      setSaving(false);
+      store.saving = false;
     }
+    render();
   }
 
   // CREATE / UPDATE FIELD
 
   async function onSaveBlock(data) {
     const toSave = {
-      locationName: `node-level-${activeNodeLevel.id}`,
+      locationName: `node-level-${store.activeNodeLevel.id}`,
       pluginName: 'plugins.curriculum',
       schemaConfig: {
         schema: {
@@ -282,7 +302,7 @@ function AddCurriculumStep2() {
         ui: {},
       },
       schemaLocales: {
-        [curriculum.locale]: {
+        [store.curriculum.locale]: {
           schema: {
             title: data.name,
           },
@@ -336,64 +356,55 @@ function AddCurriculumStep2() {
     }
 
     try {
-      setSaving(true);
+      store.saving = true;
+      render();
 
       await saveDatasetFieldRequest(
         toSave.locationName,
         toSave.pluginName,
         toSave.schemaConfig,
-        toSave.schemaLocales
+        toSave.schemaLocales,
+        { useDefaultLocaleCallback: false }
       );
-      await load();
+      await load(true);
 
-      setSaving(false);
+      store.activeNodeLevel = find(store.curriculum.nodeLevels, { id: store.activeNodeLevel.id });
+      store.saving = false;
     } catch (e) {
-      setSaving(false);
+      store.saving = false;
     }
+    render();
   }
 
-  const groupChilds = [
-    <Box key="child-1">
-      <Tree
-        {...tree}
-        rootId={0}
-        onAdd={() => setActiveRightSection('new-branch')}
-        onDelete={(node) => alert(`Delete nodeId: ${node.id}`)}
-        onEdit={(node) => {
-          onSelect(node);
-          setActiveRightSection('edit-branch');
-        }}
-        onSelect={onSelect}
-      />
-    </Box>,
-  ];
+  let rightSection;
 
-  if (activeRightSection === 'new-branch' || activeRightSection === 'edit-branch') {
-    groupChilds.push(
-      <Box key="child-2">
+  if (store.activeRightSection === 'new-branch' || store.activeRightSection === 'edit-branch') {
+    rightSection = (
+      <Box>
         <NewBranchConfig
           messages={messagesConfig}
           errorMessages={errorMessagesConfig}
           orderedData={orderedData}
-          isLoading={saving}
+          isLoading={store.saving}
           defaultValues={
-            activeRightSection === 'edit-branch'
+            store.activeRightSection === 'edit-branch'
               ? {
-                  id: activeNodeLevel.id,
-                  name: activeNodeLevel.name,
-                  ordered: activeNodeLevel.listType,
+                  id: store.activeNodeLevel.id,
+                  name: store.activeNodeLevel.name,
+                  ordered: store.activeNodeLevel.listType,
                 }
               : null
           }
           onSubmit={addNewBranch}
+          onCloseBranch={onCloseBranch}
         />
       </Box>
     );
   }
 
-  if (activeRightSection === 'detail-branch') {
-    groupChilds.push(
-      <Box key="child-3">
+  if (store.activeRightSection === 'detail-branch') {
+    rightSection = (
+      <Box>
         <BranchContent
           messages={messagesContent}
           errorMessages={errorMessagesContent}
@@ -408,8 +419,10 @@ function AddCurriculumStep2() {
             listOrdered: listOrderedData,
             groupOrdered: groupOrderedData,
           }}
-          branch={activeNodeLevel}
+          isLoading={store.saving}
+          branch={store.activeNodeLevel}
           onSaveBlock={onSaveBlock}
+          onCloseBranch={onCloseBranch}
         />
       </Box>
     );
@@ -417,46 +430,74 @@ function AddCurriculumStep2() {
 
   async function goStep3() {
     try {
-      setGenerating(true);
-      await generateNodesFromAcademicPortfolioRequest(curriculum.id);
-      await history.push(`/private/curriculum/${curriculum.id}/step/3`);
-      setGenerating(false);
+      store.generating = true;
+      render();
+      await generateNodesFromAcademicPortfolioRequest(store.curriculum.id);
+      await history.push(`/private/curriculum/${store.curriculum.id}/step/3`);
+      store.generating = false;
     } catch (err) {
       console.error(err);
-      setGenerating(false);
+      store.generating = false;
     }
+    render();
   }
 
-  if (loading) {
+  if (store.loading) {
     return <Box>Loading...</Box>;
   }
+
   return (
-    <Box m={32}>
-      <Box mb={12}>
-        <Title>{curriculum.name}</Title>
-      </Box>
-      <Box mb={12}>
-        <Title order={3}>
-          {curriculum.center.name}|{curriculum.program.name}
-        </Title>
-      </Box>
-      <Box mb={12}>
-        <Text role={'productive'}>{t('description1')}</Text>
-      </Box>
-      <Box mb={16}>
-        <Text role={'productive'}>{t('description2')}</Text>
-      </Box>
+    <ContextContainer fullHeight>
+      <AdminPageHeader
+        loading={store.generating ? 'edit' : null}
+        buttons={{ edit: t('continueButtonLabel') }}
+        onEdit={goStep3}
+        values={{
+          title: `${store.curriculum.name} (${store.curriculum.center.name}|${store.curriculum.program.name})`,
+          description: t('description1') + t('description2'),
+        }}
+      />
 
-      <Box>
-        <Button loading={generating} onClick={goStep3}>
-          {t('continueButtonLabel')}
-        </Button>
-      </Box>
-
-      <Group grow align="start">
-        {groupChilds}
-      </Group>
-    </Box>
+      <Paper fullHeight color="solid" shadow="none" padding={0}>
+        <PageContainer>
+          <ContextContainer padded="vertical">
+            <Grid grow>
+              <Col span={5}>
+                <Paper fullWidth padding={5}>
+                  <ContextContainer divided>
+                    <Tree
+                      {...tree}
+                      rootId={0}
+                      onAdd={() => {
+                        store.activeRightSection = 'new-branch';
+                        render();
+                      }}
+                      onDelete={(node) => alert(`Delete nodeId: ${node.id}`)}
+                      onEdit={(node) => {
+                        onSelect(node);
+                        store.activeRightSection = 'edit-branch';
+                        render();
+                      }}
+                      selectedNode={store.activeNodeLevel?.id}
+                      onSelect={onSelect}
+                    />
+                  </ContextContainer>
+                </Paper>
+              </Col>
+              <Col span={7}>
+                {rightSection ? (
+                  <>
+                    <Paper fullWidth padding={5}>
+                      {rightSection}
+                    </Paper>
+                  </>
+                ) : null}
+              </Col>
+            </Grid>
+          </ContextContainer>
+        </PageContainer>
+      </Paper>
+    </ContextContainer>
   );
 }
 

@@ -1,8 +1,8 @@
 /* eslint-disable no-unreachable */
 import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { cloneDeep, find, findIndex, map, isEmpty, isArray, flattenDeep, uniq } from 'lodash';
-import { ActionButton, Box, Stack, MultiSelect, UserDisplayItem } from '@bubbles-ui/components';
+import { cloneDeep, find, findIndex, flattenDeep, isArray, isEmpty, map, uniq } from 'lodash';
+import { ActionButton, Box, MultiSelect, Stack, UserDisplayItem } from '@bubbles-ui/components';
 import { useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
@@ -112,7 +112,8 @@ const SelectUserAgent = forwardRef(
       }
 
       values = maxSelectedValues === 1 ? values[0] || null : values;
-      onChange(values);
+      const userAgent = maxSelectedValues === 1 ? find(store.data, { value: values }) : undefined;
+      onChange(values, userAgent);
     }
 
     // EN: Handle controlled input value by adding the selected values to the data array
@@ -282,8 +283,8 @@ SelectUserAgent.propTypes = {
   returnItem: PropTypes.bool,
   itemRenderProps: PropTypes.object,
   valueRenderProps: PropTypes.object,
-  itemComponent: PropTypes.element,
-  valueComponent: PropTypes.element,
+  itemComponent: PropTypes.any,
+  valueComponent: PropTypes.any,
 };
 
 SelectUserAgentValueComponent.propTypes = {

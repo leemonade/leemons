@@ -1,20 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox, FormControl } from 'leemons-ui';
+import { Checkbox } from '@bubbles-ui/components';
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
 
 export function CalendarFilter({ calendar, session, config, showEventsChange = () => {} }) {
   return (
-    <div>
-      <FormControl
-        label={getCalendarNameWithConfigAndSession(calendar, config, session)}
-        labelPosition="right"
-      >
-        <Checkbox checked={calendar.showEvents} onChange={showEventsChange} />
-      </FormControl>
-    </div>
+    <Checkbox
+      label={getCalendarNameWithConfigAndSession(calendar, config, session)}
+      checked={calendar.showEvents}
+      onChange={showEventsChange}
+    />
   );
 }
+
+export default CalendarFilter;
 
 CalendarFilter.propTypes = {
   calendar: PropTypes.object,

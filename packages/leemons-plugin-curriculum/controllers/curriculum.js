@@ -8,7 +8,9 @@ async function postCurriculum(ctx) {
 }
 
 async function getCurriculum(ctx) {
-  await curriculumService.recalculeAllIndexes(ctx.request.params.id, ctx.state.userSession);
+  try {
+    await curriculumService.recalculeAllIndexes(ctx.request.params.id, ctx.state.userSession);
+  } catch (e) {}
   const [curriculum] = await curriculumService.curriculumByIds(ctx.request.params.id, {
     userSession: ctx.state.userSession,
   });
@@ -52,9 +54,16 @@ async function listCurriculum(ctx) {
   }
 }
 
+async function getDataForKeys(ctx) {
+  const data = await curriculumService.getDataForKeys(ctx.request.body.keys, ctx.state.userSession);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
 module.exports = {
   getCurriculum,
   postCurriculum,
   listCurriculum,
+  getDataForKeys,
   generateCurriculum,
 };

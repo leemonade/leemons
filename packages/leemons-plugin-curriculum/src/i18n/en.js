@@ -128,6 +128,7 @@ module.exports = {
     groupShowAs: 'Show as',
     groupSaveConfig: 'Save config',
     groupAddElement: 'Add element',
+    blockCancelConfigButtonLabel: 'Cancel',
   },
   addCurriculumStep3: {
     addNode: 'Add {name}',
@@ -137,5 +138,15 @@ module.exports = {
       saveButtonLabel: 'Save',
       nameRequired: 'Field required',
     },
+  },
+  selectContentModal: {
+    title: 'Content',
+    saveButtonLabel: 'Add contents',
+    selectFromCurriculum: 'Select from curriculum',
+    clearAll: 'Clear all',
+    clearSelected: 'Clear selected',
+    curriculum: 'Curriculum',
+    added: 'Added',
+    searchContent: 'Search content',
   },
 };

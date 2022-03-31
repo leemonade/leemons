@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { find, forEach } from 'lodash';
-import { withLayout } from '@layout/hoc';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { listCentersRequest } from '@users/request';
-import { Box, Text, Title, Button } from '@bubbles-ui/components';
+import {
+  Box,
+  Checkbox,
+  ContextContainer,
+  PageContainer,
+  Paper,
+  Tree,
+  useTree,
+} from '@bubbles-ui/components';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { useHistory, useParams } from 'react-router-dom';
 import { detailProgramRequest } from '@academic-portfolio/request';
-import { Tree, useTree } from 'leemons-ui';
 import { addNodeLevelsRequest, detailCurriculumRequest } from '../../../request';
 
 function AddCurriculumStep1() {
@@ -22,24 +29,13 @@ function AddCurriculumStep1() {
   const { id } = useParams();
 
   function onCheckboxChange(event, nodeLevel, levelOrder) {
-    if (event.target.checked) {
+    if (event) {
       nodeLevels[levelOrder] = nodeLevel;
       setNodeLevels([...nodeLevels]);
     } else {
       delete nodeLevels[levelOrder];
       setNodeLevels([...nodeLevels]);
     }
-  }
-
-  // eslint-disable-next-line react/prop-types
-  function NodeLevelInput({ nodeLevel, levelOrder }) {
-    return (
-      <input
-        type="checkbox"
-        checked={nodeLevels.indexOf(nodeLevel) >= 0}
-        onChange={(e) => onCheckboxChange(e, nodeLevel, levelOrder)}
-      />
-    );
   }
 
   useEffect(() => {
@@ -49,10 +45,11 @@ function AddCurriculumStep1() {
         parent: 0,
         draggable: false,
         text: (
-          <>
-            <NodeLevelInput nodeLevel="program" levelOrder={1} />
-            {t('program')}
-          </>
+          <Checkbox
+            label={t('program')}
+            checked={nodeLevels.indexOf('program') >= 0}
+            onChange={(e) => onCheckboxChange(e, 'program', 1)}
+          />
         ),
       },
       {
@@ -60,10 +57,11 @@ function AddCurriculumStep1() {
         parent: 'program',
         draggable: false,
         text: (
-          <>
-            <NodeLevelInput nodeLevel="courses" levelOrder={2} />
-            {t('courses')}
-          </>
+          <Checkbox
+            label={t('courses')}
+            checked={nodeLevels.indexOf('courses') >= 0}
+            onChange={(e) => onCheckboxChange(e, 'courses', 2)}
+          />
         ),
       },
       {
@@ -71,10 +69,11 @@ function AddCurriculumStep1() {
         parent: 'courses',
         draggable: false,
         text: (
-          <>
-            <NodeLevelInput nodeLevel="groups" levelOrder={3} />
-            {t('groups')}
-          </>
+          <Checkbox
+            label={t('groups')}
+            checked={nodeLevels.indexOf('groups') >= 0}
+            onChange={(e) => onCheckboxChange(e, 'groups', 3)}
+          />
         ),
       },
       {
@@ -82,10 +81,11 @@ function AddCurriculumStep1() {
         parent: 'subjectType',
         draggable: false,
         text: (
-          <>
-            <NodeLevelInput nodeLevel="knowledges" levelOrder={4} />
-            {t('knowledges')}
-          </>
+          <Checkbox
+            label={t('knowledges')}
+            checked={nodeLevels.indexOf('knowledges') >= 0}
+            onChange={(e) => onCheckboxChange(e, 'knowledges', 4)}
+          />
         ),
       },
       {
@@ -93,10 +93,11 @@ function AddCurriculumStep1() {
         parent: 'groups',
         draggable: false,
         text: (
-          <>
-            <NodeLevelInput nodeLevel="subjectType" levelOrder={5} />
-            {t('subjectType')}
-          </>
+          <Checkbox
+            label={t('subjectType')}
+            checked={nodeLevels.indexOf('subjectType') >= 0}
+            onChange={(e) => onCheckboxChange(e, 'subjectType', 5)}
+          />
         ),
       },
     ]);
@@ -157,36 +158,29 @@ function AddCurriculumStep1() {
     return <Box>Loading...</Box>;
   }
   return (
-    <Box m={32}>
-      <Box mb={12}>
-        <Title>{curriculum.name}</Title>
-      </Box>
-      <Box mb={12}>
-        <Title order={3}>
-          {curriculum.center.name}|{curriculum.program.name}
-        </Title>
-      </Box>
-      <Box mb={12}>
-        <Text role={'productive'}>{t('description1')}</Text>
-      </Box>
-      <Box mb={16}>
-        <Text role={'productive'}>{t('description2')}</Text>
-      </Box>
-      <Box>
-        <Tree
-          {...tree}
-          rootId={0}
-          onAdd={(id) => alert(`Add Node inside parentId: ${id}`)}
-          onDelete={(node) => alert(`Delete nodeId: ${node.id}`)}
-          onEdit={(node) => alert(`Editing ${node.id}`)}
-        />
-        <Box mt={16}>
-          <Button rounded size="xs" loading={saving} loaderPosition="right" onClick={save}>
-            {t('saveButtonLabel')}
-          </Button>
-        </Box>
-      </Box>
-    </Box>
+    <ContextContainer fullHeight>
+      <AdminPageHeader
+        loading={saving ? 'edit' : null}
+        buttons={{ edit: t('saveButtonLabel') }}
+        onEdit={save}
+        values={{
+          title: `${curriculum.name} (${curriculum.center.name}|${curriculum.program.name})`,
+          description: t('description1') + t('description2'),
+        }}
+      />
+
+      <Paper fullHeight color="solid" shadow="none" padding={0}>
+        <PageContainer>
+          <ContextContainer padded="vertical">
+            <Paper fullWidth padding={5}>
+              <ContextContainer divided>
+                <Tree {...tree} rootId={0} />
+              </ContextContainer>
+            </Paper>
+          </ContextContainer>
+        </PageContainer>
+      </Paper>
+    </ContextContainer>
   );
 }
 

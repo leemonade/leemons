@@ -26,7 +26,7 @@ export default function Public() {
         <Reset />
       </Route>
       <Route path={`${path}`}>
-        <Redirect to={`/private${path}/home`} />
+        <Redirect to={`/private/dashboard`} />
       </Route>
     </Switch>
   );

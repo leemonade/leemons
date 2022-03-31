@@ -1,5 +1,6 @@
+/*
 import React from 'react';
-import { Button, ImageLoader } from 'leemons-ui';
+import { Button, ImageLoader } from 'leemons--ui';
 import * as PropTypes from 'prop-types';
 
 export default function MainMenuCloseSubmenuBtn({ onClick }) {
@@ -7,7 +8,7 @@ export default function MainMenuCloseSubmenuBtn({ onClick }) {
     <>
       <Button color="secondary" circle onClick={onClick} className="btn-sm">
         <div className={'w-4 h-full mx-auto relative'}>
-          {/* TODO: Add alt multilanguage */}
+
           <ImageLoader
             className="stroke-current text-secondary-content"
             src="/public/assets/svgs/keyboard-previous.svg"
@@ -21,3 +22,4 @@ export default function MainMenuCloseSubmenuBtn({ onClick }) {
 MainMenuCloseSubmenuBtn.propTypes = {
   onClick: PropTypes.func,
 };
+*/

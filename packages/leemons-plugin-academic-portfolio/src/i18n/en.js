@@ -444,4 +444,7 @@ module.exports = {
     tableKnowledge: 'Knowledge',
     tableType: 'Type',
   },
+  userClassesSwiperWidget: {
+    multiCourse: 'Multi-course',
+  },
 };

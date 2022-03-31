@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal, PageContainer, Table, useModal } from 'leemons-ui';
+import { Button, PageContainer, Table } from '@bubbles-ui/components';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
@@ -9,6 +9,8 @@ import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfP
 import { useAsync } from '@common/useAsync';
 import { PlusIcon } from '@heroicons/react/outline';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+
+import { useLayout } from '@layout/context';
 
 // eslint-disable-next-line import/prefer-default-export
 export const DatasetTab = ({ profile, t, isEditMode }) => {
@@ -19,6 +21,7 @@ export const DatasetTab = ({ profile, t, isEditMode }) => {
   const [toggle, DatasetItemDrawer] = useDatasetItemDrawer();
   const { t: tCommonTypes } = useCommonTranslate('form_field_types');
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
+  const { openDeleteConfirmationModal } = useLayout();
 
   function newItem() {
     setItem(null);
@@ -70,13 +73,14 @@ export const DatasetTab = ({ profile, t, isEditMode }) => {
     reload();
   }
 
-  const [modal, toggleModal] = useModal({
-    animated: true,
+  const toggleModal = openDeleteConfirmationModal({
     title: t('remove_modal.title'),
-    message: t('remove_modal.message'),
-    cancelLabel: t('remove_modal.cancel'),
-    actionLabel: t('remove_modal.action'),
-    onAction: async () => {
+    description: t('remove_modal.message'),
+    labels: {
+      confirm: t('remove_modal.action'),
+      cancel: t('remove_modal.cancel'),
+    },
+    onConfirm: async () => {
       try {
         await removeDatasetFieldRequest(`profile.${profile.id}`, 'plugins.users', itemToRemove.id);
         addSuccessAlert(t('dataset_tab.deleted_done'));
@@ -137,7 +141,6 @@ export const DatasetTab = ({ profile, t, isEditMode }) => {
 
   return (
     <>
-      <Modal {...modal} />
       <div className="bg-primary-content">
         <PageContainer className="pt-0">
           <ErrorAlert />

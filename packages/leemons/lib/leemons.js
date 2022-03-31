@@ -335,8 +335,15 @@ class Leemons {
                 }
               }
 
-              if (route.allowedPermissions)
+              if (route.allowedPermissions) {
                 functions.push(this.permissionsMiddleware(route.allowedPermissions));
+              }
+
+              functions.push(async (ctx, next) => {
+                await next();
+                console.log('XAPI AQUI', ctx.status, ctx.request.url);
+              });
+
               functions.push(handler);
 
               this.backRouter[route.method.toLocaleLowerCase()](

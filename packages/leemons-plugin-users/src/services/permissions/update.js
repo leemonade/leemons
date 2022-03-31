@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const { addActionMany } = require('./addActionMany');
-const { getTranslationKey } = require('../../../next/src/permissions/getTranslationKey');
 const { translations } = require('../translations');
 const { table } = require('../tables');
 
@@ -32,7 +31,7 @@ async function update(data) {
 
     if (translations()) {
       translations().common.setKey(
-        getTranslationKey(data.permissionName, 'name'),
+        `plugins.users.${data.permissionName}.name`,
         data.localizationName,
         { transacting }
       );

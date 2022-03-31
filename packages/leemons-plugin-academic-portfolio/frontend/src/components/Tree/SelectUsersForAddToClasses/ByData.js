@@ -186,6 +186,7 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
   ]);
 
   function onChangeUserAgent(e, userAgent) {
+    console.log(e, userAgent);
     const ids = getSelectedUserAgentsIds();
     if (!ids.includes(e)) {
       store.selectUserAgent = userAgent;
@@ -256,6 +257,8 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
             centers={[center]}
             profiles={[store.profile]}
             onChange={onChangeUserAgent}
+            itemRenderProps={{}}
+            valueRenderProps={{}}
             itemComponent={(e) => <ItemComponent {...e} classes={classes} />}
             valueComponent={(e) => <ValueComponent {...e} classes={classes} />}
           />

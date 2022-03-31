@@ -9,6 +9,7 @@ async function getNodeLevelSchema(nodeLevelId, locale, { transacting }) {
           locale,
           {
             transacting,
+            useDefaultLocaleCallback: false,
           }
         );
     }

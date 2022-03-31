@@ -1,7 +1,15 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
-import { Box, Title, Group, TextInput, Select, Button } from '@bubbles-ui/components';
+import {
+  ActionButton,
+  Box,
+  Button,
+  ContextContainer,
+  Stack,
+  TextInput,
+} from '@bubbles-ui/components';
+import { RemoveIcon } from '@bubbles-ui/icons/outline';
 
 export const NEW_BRANCH_VALUE_MESSAGES = {
   nameLabel: 'Name',
@@ -13,7 +21,14 @@ export const NEW_BRANCH_VALUE_ERROR_MESSAGES = {
   nameRequired: 'Field required',
 };
 
-function NewBranchValue({ messages, errorMessages, isLoading, onSubmit, defaultValues }) {
+function NewBranchValue({
+  onCloseBranch,
+  messages,
+  errorMessages,
+  isLoading,
+  onSubmit,
+  defaultValues,
+}) {
   const {
     reset,
     control,
@@ -26,12 +41,16 @@ function NewBranchValue({ messages, errorMessages, isLoading, onSubmit, defaultV
   }, [defaultValues]);
 
   return (
-    <Box m={32}>
-      <form
-        onSubmit={handleSubmit((data) => {
-          onSubmit({ ...data, id: defaultValues?.id });
-        })}
-      >
+    <form
+      onSubmit={handleSubmit((data) => {
+        onSubmit({ ...data, id: defaultValues?.id });
+      })}
+    >
+      <ContextContainer>
+        <Stack fullWidth justifyContent="end">
+          <ActionButton icon={<RemoveIcon />} onClick={onCloseBranch} />
+        </Stack>
+
         <Box>
           <Controller
             name="name"
@@ -50,13 +69,13 @@ function NewBranchValue({ messages, errorMessages, isLoading, onSubmit, defaultV
             )}
           />
         </Box>
-        <Box>
-          <Button rounded size="xs" loading={isLoading} loaderPosition="right" type="submit">
+        <Stack justifyContent="end">
+          <Button loading={isLoading} type="submit">
             {messages.saveButtonLabel}
           </Button>
-        </Box>
-      </form>
-    </Box>
+        </Stack>
+      </ContextContainer>
+    </form>
   );
 }
 
@@ -65,6 +84,7 @@ NewBranchValue.defaultProps = {
   errorMessages: NEW_BRANCH_VALUE_ERROR_MESSAGES,
   isLoading: false,
   onSubmit: () => {},
+  onCloseBranch: () => {},
 };
 
 NewBranchValue.propTypes = {
@@ -79,6 +99,7 @@ NewBranchValue.propTypes = {
   }),
   onSubmit: PropTypes.func,
   isLoading: PropTypes.bool,
+  onCloseBranch: PropTypes.func,
 };
 
 export default NewBranchValue;

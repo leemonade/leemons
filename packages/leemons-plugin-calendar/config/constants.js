@@ -1,17 +1,19 @@
+const permissionsPrefix = 'plugins.calendar';
+
 module.exports = {
   permissions: [
     {
-      permissionName: 'plugins.calendar.calendar',
+      permissionName: `${permissionsPrefix}.calendar`,
       actions: ['view', 'admin'],
       localizationName: { es: 'Calendario', en: 'Calendar' },
     },
     {
-      permissionName: 'plugins.calendar.calendar-configs',
+      permissionName: `${permissionsPrefix}.calendar-configs`,
       actions: ['view', 'create', 'update', 'delete', 'admin'],
       localizationName: { es: 'Configurar calendario', en: 'Calendar setup' },
     },
     {
-      permissionName: 'plugins.calendar.calendar-classroom',
+      permissionName: `${permissionsPrefix}.calendar-classroom`,
       actions: ['view', 'create', 'update', 'delete', 'admin'],
       localizationName: { es: 'Calendarios aula', en: 'Classroom calendars' },
     },
@@ -27,7 +29,7 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: 'plugins.calendar.calendar',
+          permissionName: `${permissionsPrefix}.calendar`,
           actionNames: ['view', 'admin'],
         },
       ],
@@ -42,7 +44,7 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: 'plugins.calendar.calendar',
+          permissionName: `${permissionsPrefix}.calendar`,
           actionNames: ['view', 'admin'],
         },
       ],
@@ -56,7 +58,7 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: 'plugins.calendar.calendar-configs',
+          permissionName: `${permissionsPrefix}.calendar-configs`,
           actionNames: ['view', 'admin'],
         },
       ],
@@ -70,7 +72,7 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: 'plugins.calendar.calendar-classroom',
+          permissionName: `${permissionsPrefix}.calendar-classroom`,
           actionNames: ['view', 'admin'],
         },
       ],
@@ -128,4 +130,13 @@ module.exports = {
       bgColor: '#a1a1a1',
     },
   ],
+  widgets: {
+    items: [
+      {
+        zoneKey: 'plugins.dashboard.program.left',
+        key: `${permissionsPrefix}.user.program.calendar`,
+        url: 'user-program-calendar/index',
+      },
+    ],
+  },
 };
