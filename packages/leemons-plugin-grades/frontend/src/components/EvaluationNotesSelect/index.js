@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useStore } from '@common';
 import { Select } from '@bubbles-ui/components';
-import { map } from 'lodash';
+import { map, orderBy } from 'lodash';
 import { getGradeRequest } from '../../request';
 import { getScaleLabel } from '../../helpers/getScaleLabel';
 
@@ -15,7 +15,8 @@ const EvaluationNotesSelect = ({ evaluation, valueKey = 'number', ...props }) =>
 
       store.notes = [];
       if (grade) {
-        store.notes = map(grade.scales, (item) => ({
+        const scales = orderBy(grade.scales, ['number'], ['asc']);
+        store.notes = map(scales, (item) => ({
           value: item[valueKey],
           label: getScaleLabel(item),
         }));
