@@ -13,6 +13,7 @@ import Contents from './components/Contents';
 import AssessmentCriteria from './components/AssessmentCriteria';
 import Attachments from './components/Attachments';
 import Methodology from './components/Methodology';
+import useSubjects from '../Assignment/AssignStudents/hooks/useSubjects';
 
 function ContentData({
   labels,
@@ -41,6 +42,8 @@ function ContentData({
     handleSubmit,
     formState: { errors },
   } = formData;
+
+  const subjects = useSubjects(sharedData);
 
   const { subscribe, unsubscribe, emitEvent } = useObserver();
 
@@ -94,10 +97,10 @@ function ContentData({
                 />
               )}
             />
-            {!!sharedData?.subjects?.length && (
+            {!!subjects?.length && (
               <Tabs>
-                {sharedData?.subjects?.map((subject, index) => (
-                  <TabPanel key={index} label={subject?.subject}>
+                {subjects?.map((subject, index) => (
+                  <TabPanel key={index} label={subject?.label}>
                     <Contents
                       name={`curriculum.${subject.subject}.contents`}
                       required
