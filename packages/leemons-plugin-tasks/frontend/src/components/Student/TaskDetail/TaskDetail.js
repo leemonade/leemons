@@ -10,8 +10,7 @@ export default function TaskDetail({ id, student }) {
   const [task, setTask] = useState(null);
 
   useEffect(async () => {
-    const instance = await getInstanceRequest(id);
-
+    const instance = await getInstanceRequest({ id, columns: ['id'] });
     if (instance) {
       try {
         await updateStudentRequest({
@@ -30,7 +29,7 @@ export default function TaskDetail({ id, student }) {
 
       setTask(instance.task.id);
     }
-  }, [id]);
+  }, [id, student]);
 
   const steps = useGetSteps(id, task, student);
 

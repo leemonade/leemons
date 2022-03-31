@@ -17,7 +17,7 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
 
   return useMemo(() => {
     if (!classes?.length) {
-      return { classes: [], students: [], nonAssignableStudents: [] };
+      return { classes: [], students: [], nonAssignableStudents: [], assignableStudents: [] };
     }
 
     const classesOfSubject = _.groupBy(classes, (c) => c.subject);

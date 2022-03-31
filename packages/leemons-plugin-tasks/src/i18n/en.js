@@ -262,6 +262,10 @@ module.exports = {
       unableToAssignStudentsMessage:
         'The students which are not enrolled in all the selected subjects will not be assigned',
       matchingStudents: 'matching students',
+      groupName: "Group's name",
+      students: 'Students',
+      noStudentsToAssign:
+        'There are no students enrrolled in the selected subjects, please select other combination',
     },
     placeholders: {
       date: 'dd/mm/yyyy',

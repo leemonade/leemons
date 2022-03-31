@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const { groupsInstances } = require('../../table');
 const { get: getInstance } = require('../instance/get');
 const assignStudents = require('../student/assign');
@@ -10,10 +11,6 @@ module.exports = async function addGroupOfStudents(instance, groups, { transacti
   if ((await getInstance(instance, { columns: ['id'], transacting })).length === 0) {
     throw new global.utils.HttpError(400, 'Instance does not exist');
   }
-
-  // const groupsAlreadyExisting = [];
-  // const alreadyAssignedUsers = [];
-  // const assignedUsers = [];
 
   const { classByIds } = leemons.getPlugin('academic-portfolio').services.classes;
 
@@ -84,7 +81,7 @@ module.exports = async function addGroupOfStudents(instance, groups, { transacti
     await groupsInstances.createMany(usersGroupInstances, { transacting });
   }
 
-  const students = agroupations.map(({ students: s }) => s).flat();
+  const students = [...new Set(agroupations.map(({ students: s }) => s).flat())];
 
   // EN: Assign students to the instance
   // ES: Asignar estudiantes a la instancia

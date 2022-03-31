@@ -63,7 +63,7 @@ export default function Form({ onSubmit: parentSubmit, task }) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
       <ContextContainer>
         <Controller
           control={control}

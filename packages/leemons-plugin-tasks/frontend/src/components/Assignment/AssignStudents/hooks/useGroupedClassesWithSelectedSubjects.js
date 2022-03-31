@@ -10,5 +10,5 @@ export default function useGroupedClassesWithSelectedSubjects(disableGrouping) {
   const { control } = form;
   const subjects = useWatch({ name: 'subjects', control });
 
-  return useGroupedClasses(subjects, disableGrouping);
+  return { ...useGroupedClasses(subjects, disableGrouping), subjects };
 }

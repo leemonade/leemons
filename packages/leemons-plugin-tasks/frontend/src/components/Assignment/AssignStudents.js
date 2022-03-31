@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { ContextContainer } from '@bubbles-ui/components';
+import { ContextContainer, PageContainer } from '@bubbles-ui/components';
 import { useForm, FormProvider, Controller } from 'react-hook-form';
 import SubjectSelector from './AssignStudents/components/SubjectSelector';
 import AssigneeTypeSelector from './AssignStudents/components/AssigneeTypeSelector';
@@ -16,7 +16,7 @@ export default function AssignStudents({ labels, profile, onChange, task }) {
 
   useEffect(() => {
     const subscription = watch((data) => {
-      console.log(data);
+      onChange(data.assignee);
     });
     return () => subscription.unsubscribe();
   }, [watch]);
@@ -34,11 +34,15 @@ export default function AssignStudents({ labels, profile, onChange, task }) {
           name="type"
           render={({ field }) => <AssigneeTypeSelector {...field} labels={labels} />}
         />
-        <Controller
-          control={control}
-          name="assignee"
-          render={({ field }) => <AssigneeSelector {...field} labels={labels} profile={profile} />}
-        />
+        <PageContainer>
+          <Controller
+            control={control}
+            name="assignee"
+            render={({ field }) => (
+              <AssigneeSelector {...field} labels={labels} profile={profile} />
+            )}
+          />
+        </PageContainer>
       </ContextContainer>
     </FormProvider>
   );
