@@ -149,6 +149,7 @@ module.exports = {
           statement: 'Statement',
           development: 'Development',
           objectives: 'Objectives',
+          curriculum: 'Curriculum',
           content: 'Content',
           assessmentCriteria: 'Assessment criteria',
           buttonNext: 'Next',

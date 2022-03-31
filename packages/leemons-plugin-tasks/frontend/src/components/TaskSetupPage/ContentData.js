@@ -2,18 +2,27 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isEmpty } from 'lodash';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
-import { Box, Stack, ContextContainer, Button, Tabs, TabPanel } from '@bubbles-ui/components';
+import {
+  Box,
+  Stack,
+  ContextContainer,
+  Button,
+  Tabs,
+  TabPanel,
+  InputWrapper,
+} from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors/es/form/TextEditorInput';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
-import Objectives from './components/Objectives';
 import SelfReflection from './components/SelfReflection';
 import Submissions from './components/Submissions';
-import Contents from './components/Contents';
-import AssessmentCriteria from './components/AssessmentCriteria';
+// import Objectives from './components/Objectives';
+// import Contents from './components/Contents';
+// import AssessmentCriteria from './components/AssessmentCriteria';
 import Attachments from './components/Attachments';
 import Methodology from './components/Methodology';
 import useSubjects from '../Assignment/AssignStudents/hooks/useSubjects';
+import Curriculum from './components/Curriculum';
 
 function ContentData({
   labels,
@@ -98,10 +107,21 @@ function ContentData({
               )}
             />
             {!!subjects?.length && (
-              <Tabs>
-                {subjects?.map((subject, index) => (
-                  <TabPanel key={index} label={subject?.label}>
-                    <Contents
+              <InputWrapper label={labels?.curriculum} required>
+                <Tabs>
+                  {subjects?.map((subject, index) => (
+                    <TabPanel key={index} label={subject?.label}>
+                      <Controller
+                        control={control}
+                        name="program"
+                        render={({ field: { value: program } }) => (
+                          <Curriculum
+                            program={program}
+                            name={`curriculum.${subject.value}.contents`}
+                          />
+                        )}
+                      />
+                      {/* <Contents
                       name={`curriculum.${subject.subject}.contents`}
                       required
                       label={labels.content || ''}
@@ -117,10 +137,11 @@ function ContentData({
                       name={`curriculum.${subject.subject}.assessmentCriteria`}
                       label={labels.assessmentCriteria || ''}
                       error={errors.assessmentCriteria}
-                    />
-                  </TabPanel>
-                ))}
-              </Tabs>
+                    /> */}
+                    </TabPanel>
+                  ))}
+                </Tabs>
+              </InputWrapper>
             )}
 
             {/* TODO: Make the statement required (Not allowed with TextEditor) */}
