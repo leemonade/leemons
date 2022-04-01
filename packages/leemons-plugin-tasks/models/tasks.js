@@ -20,6 +20,7 @@ module.exports = {
     methodology: {
       type: 'string',
     },
+    // TODO: Move to string (20min | 20years), because if not, it can overflow
     recommendedDuration: {
       type: 'integer',
     },
@@ -30,7 +31,7 @@ module.exports = {
       type: 'richtext',
     },
     submissions: {
-      type: 'string',
+      type: 'json',
     },
     preTask: {
       type: 'string',

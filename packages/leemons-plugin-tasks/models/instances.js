@@ -25,7 +25,7 @@ module.exports = {
     closeDate: {
       type: 'datetime',
     },
-    message: { type: 'string' },
+    message: { type: 'richtext' },
     status: { type: 'string' },
     showCurriculum: {
       type: 'json',

@@ -9,7 +9,7 @@ import useTask from './helpers/useTask';
 
 export default function TaskDetail({ id, student }) {
   const instance = useInstance(id);
-  const task = useTask(instance?.task?.id);
+  const task = useTask(instance?.task?.id, ['name']);
 
   useEffect(async () => {
     if (instance) {
@@ -43,7 +43,7 @@ export default function TaskDetail({ id, student }) {
   return (
     <ContextContainer>
       {/* TRANSLATE: Task name */}
-      <AdminPageHeader title="FUTURE HEADER - TASK NAME" />
+      <AdminPageHeader values={{ title: task?.name }} />
       <PageContainer>
         <Stepper data={steps} />
       </PageContainer>

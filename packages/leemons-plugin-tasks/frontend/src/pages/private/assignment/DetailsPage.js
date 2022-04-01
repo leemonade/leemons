@@ -13,6 +13,7 @@ import {
   DatePicker,
   Switch,
   PaginatedList,
+  Loader,
 } from '@bubbles-ui/components';
 import { getUserAgentsInfoRequest } from '@users/request';
 import { useApi } from '@common';
@@ -62,7 +63,7 @@ function ListStudents({ instance }) {
           status: getStatus(student),
           completed: student.end ? new Date(student.end).toLocaleString() : '-',
           avgTime: student.end
-            ? (new Date(student.end) - new Date(student.start)) / 1000 / 60
+            ? ((new Date(student.end) - new Date(student.start)) / 1000 / 60).toFixed(2)
             : '-',
           score: 'NYI',
           actions: (
@@ -132,7 +133,7 @@ function ListStudents({ instance }) {
         items={students?.items}
         page={students?.page + 1}
         size={students?.size}
-        totalCount={students?.totalPages}
+        totalPages={students?.totalPages}
         onSizeChange={(s) => setFilters((f) => ({ ...f, size: s }))}
         onPageChange={(p) => setFilters((f) => ({ ...f, page: p - 1 }))}
       />
@@ -161,8 +162,9 @@ export default function DetailsPage() {
   const [task, , , reFetch] = useApi(getInstanceRequest, options);
 
   useEffect(() => {
-    if (!!task?.closeDate !== closed) {
-      setClosed(!!task?.closeDate);
+    const shouldBeClosed = dayjs(task?.closeDate).isBefore(dayjs());
+    if (shouldBeClosed !== closed) {
+      setClosed(shouldBeClosed);
     }
   }, [task]);
 
@@ -218,6 +220,10 @@ export default function DetailsPage() {
       addErrorAlert(`Task deadline can't be updated: ${e.message}`);
     }
   };
+
+  if (!task) {
+    return <Loader />;
+  }
 
   return (
     <ContextContainer>
