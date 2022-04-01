@@ -1,12 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
-import { Checkbox, TagsInput, NumberInput, Stack, Text } from '@bubbles-ui/components';
+import {
+  Checkbox,
+  TagsInput,
+  NumberInput,
+  Stack,
+  Text,
+  ContextContainer,
+} from '@bubbles-ui/components';
 
 export default function File({ labels }) {
   const { control } = useFormContext();
   return (
-    <>
+    <ContextContainer>
       <Controller
         control={control}
         name="data.multipleFiles"
@@ -29,7 +36,7 @@ export default function File({ labels }) {
         />
         <Text>MB</Text>
       </Stack>
-    </>
+    </ContextContainer>
   );
 }
 

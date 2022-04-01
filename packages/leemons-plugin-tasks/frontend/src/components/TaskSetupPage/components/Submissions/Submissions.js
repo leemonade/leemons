@@ -89,7 +89,7 @@ export default function Submissions({ labels }) {
               label={labels?.submission?.title}
               showOnTrue
               render={() => (
-                <>
+                <ContextContainer>
                   <Controller
                     control={contextControl}
                     name="submissions.type"
@@ -128,7 +128,7 @@ export default function Submissions({ labels }) {
                       <TextEditorInput {...f} label={labels?.submission?.description} />
                     )}
                   />
-                </>
+                </ContextContainer>
               )}
             />
           )}

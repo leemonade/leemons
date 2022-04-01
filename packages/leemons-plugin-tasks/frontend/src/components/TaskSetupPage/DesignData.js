@@ -5,6 +5,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { Box, Stack, ContextContainer, Button } from '@bubbles-ui/components';
 import { ColorInput } from '@mantine/core';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import { FilePicker } from './components/FilePicker';
 
 function DesignData({
   labels,
@@ -60,7 +61,9 @@ function DesignData({
   return (
     <ContextContainer {...props} divided>
       <ContextContainer title={labels.title}>
-        <Box>leebrary picker</Box>
+        <Box>
+          <FilePicker />
+        </Box>
         <Box>
           <Controller
             control={control}

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useForm, useFormContext, Controller } from 'react-hook-form';
-import { TextInput, Select, NumberInput } from '@bubbles-ui/components';
+import { TextInput, Select, NumberInput, ContextContainer } from '@bubbles-ui/components';
 import ConditionalInput from '../../../Inputs/ConditionalInput';
 
 export default function PreTaskSelector({ labels }) {
@@ -41,7 +41,7 @@ export default function PreTaskSelector({ labels }) {
           showOnTrue
           label={labels?.toggler}
           render={() => (
-            <>
+            <ContextContainer>
               <Controller
                 name="preTask"
                 control={originalForm.control}
@@ -102,7 +102,7 @@ export default function PreTaskSelector({ labels }) {
                   />
                 )}
               />
-            </>
+            </ContextContainer>
           )}
         />
       )}

@@ -32,7 +32,7 @@ export default function SelfReflection({ name, labels, description }) {
             label={description}
             showOnTrue
             render={() => (
-              <>
+              <ContextContainer>
                 <Controller
                   name={`${name}.id`}
                   control={control}
@@ -53,7 +53,7 @@ export default function SelfReflection({ name, labels, description }) {
                     <Checkbox {...field} checked={field.value} label={labels?.mandatory} />
                   )}
                 />
-              </>
+              </ContextContainer>
             )}
           />
         )}
