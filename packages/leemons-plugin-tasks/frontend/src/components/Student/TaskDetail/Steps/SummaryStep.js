@@ -13,6 +13,7 @@ import {
 } from '@bubbles-ui/components';
 import useInstance from '../helpers/useInstance';
 import useTask from '../helpers/useTask';
+import getFakeImage from '../../../../helpers/getFakeImage';
 
 function useTaskInfo(instanceId, id) {
   const instance = useInstance(instanceId, ['showCurriculum']);
@@ -56,8 +57,7 @@ export default function SummaryStep({ id, instance, onNext }) {
         <ImageLoader
           src={
             // TODO: Remove image fake
-            task?.cover ||
-            'https://images.unsplash.com/photo-1596603324167-4cbb7a0de677?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2662&q=80'
+            getFakeImage(task?.cover) || ''
           }
           height="300px"
           withPlaceholder={true}

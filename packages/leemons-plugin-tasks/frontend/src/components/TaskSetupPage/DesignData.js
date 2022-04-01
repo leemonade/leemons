@@ -62,7 +62,16 @@ function DesignData({
     <ContextContainer {...props} divided>
       <ContextContainer title={labels.title}>
         <Box>
-          <FilePicker />
+          <Controller
+            control={control}
+            name="cover"
+            render={({ field }) => (
+              <FilePicker
+                onChange={(v) => field.onChange(v?.name)}
+                initialFiles={field?.value ? [{ name: field?.value }] : undefined}
+              />
+            )}
+          />
         </Box>
         <Box>
           <Controller
