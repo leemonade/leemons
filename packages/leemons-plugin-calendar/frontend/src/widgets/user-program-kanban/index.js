@@ -1,20 +1,26 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button, createStyles, Select, Stack, Text } from '@bubbles-ui/components';
-import { ChevRightIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
+import { Box, createStyles, Kanban as BubblesKanban, Stack, Text } from '@bubbles-ui/components';
+import { PluginKanbanIcon } from '@bubbles-ui/icons/outline';
+import { KanbanTaskCard } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { BigCalendar } from '@bubbles-ui/calendars';
-import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
 import { getCentersWithToken } from '@users/session';
 import * as _ from 'lodash';
 import { forEach, keyBy, map } from 'lodash';
+import tKeys from '@multilanguage/helpers/tKeys';
 import { useHistory } from 'react-router-dom';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
+import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
+import getCalendarNameWithConfigAndSession from '@calendar/helpers/getCalendarNameWithConfigAndSession';
 import { listSessionClassesRequest } from '@academic-portfolio/request';
-import { getCalendarsToFrontendRequest } from '../../request';
+import {
+  getCalendarsToFrontendRequest,
+  listKanbanColumnsRequest,
+  listKanbanEventOrdersRequest,
+} from '../../request';
 import transformEvent from '../../helpers/transformEvent';
 
 const Styles = createStyles((theme) => ({
@@ -36,113 +42,150 @@ function UserProgramKanban({ program, session }) {
   const { classes: styles } = Styles();
   const [store, render] = useStore({
     loading: true,
+    filtersData: {
+      calendars: [],
+    },
+    filters: {
+      calendars: [],
+    },
   });
-  const [t] = useTranslateLoader(prefixPN('userProgramCalendar'));
-  const [tC] = useTranslateLoader(prefixPN('calendar'));
+  const [t] = useTranslateLoader(prefixPN('userProgramKanban'));
   const [toggleEventModal, EventModal] = useCalendarEventModal();
   const history = useHistory();
 
-  function getEvents() {
-    const events = [];
-    const calendarIds = map(store.calendarFilters, 'value');
-    forEach(store.centerData.events, (event) => {
-      if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
-        // eslint-disable-next-line consistent-return
-        forEach(event.data.classes, (calendar) => {
-          if (
-            (!store.selectedCalendar ||
-              store.selectedCalendar === '*' ||
-              calendar === store.selectedCalendar) &&
-            calendarIds.includes(calendar)
-          ) {
-            events.push(transformEvent(event, store.centerData.calendars));
-            return false;
-          }
-        });
-      } else if (
-        (!store.selectedCalendar ||
-          store.selectedCalendar === '*' ||
-          event.calendar === store.selectedCalendar) &&
-        calendarIds.includes(event.calendar)
-      ) {
-        events.push(event);
-      }
-    });
-    return events;
+  async function getKanbanColumns() {
+    const { columns } = await listKanbanColumnsRequest();
+    return _.filter(_.orderBy(columns, ['order'], ['asc']), (column) =>
+      [1, 2, 3].includes(column.order)
+    );
   }
 
-  function getFilteredEvents() {
-    return transformDBEventsToFullCalendarEvents(
-      getEvents(),
-      store.centerData.calendars,
-      store.centerData.calendarConfig
-    );
+  async function getTranslationColumns() {
+    const keys = _.map(store.columns, 'nameKey');
+    const { items } = await getLocalizationsByArrayOfItems(keys);
+    return items;
+  }
+
+  async function getKanbanColumnsEventsOrder() {
+    const { orders } = await listKanbanEventOrdersRequest(store.center.token);
+    const obj = {};
+    _.forEach(orders, (order) => {
+      obj[order.column] = order.events;
+    });
+    return obj;
+  }
+
+  async function getCalendarsForCenter() {
+    const { status, ...response } = await getCalendarsToFrontendRequest(store.center.token);
+
+    return {
+      ...response,
+      calendars: _.map(response.calendars, (calendar) => ({
+        ...calendar,
+        name: getCalendarNameWithConfigAndSession(calendar, response, session),
+      })),
+    };
+  }
+
+  function getColumnName(name) {
+    return tKeys(name, store.columnsT);
+  }
+
+  function getKanbanBoard() {
+    const cols = [];
+    const eventsByColumn = _.groupBy(store.data.events, 'data.column');
+    _.forEach(store.columns, (column) => {
+      let cards = [];
+      if (eventsByColumn[column.id] && store.columnsEventsOrders[column.id]) {
+        const cardsNoOrdered = [];
+        _.forEach(eventsByColumn[column.id], (event) => {
+          const index = store.columnsEventsOrders[column.id].indexOf(event.id);
+          if (index >= 0) {
+            cards[index] = event;
+          } else {
+            cardsNoOrdered.push(event);
+          }
+        });
+        cards = _.map(cardsNoOrdered, (c) => ({ ...c, notOrdered: true })).concat(cards);
+      } else {
+        cards = eventsByColumn[column.id] || [];
+      }
+
+      cards = _.filter(cards, (c) => !!c);
+
+      if (store.filters.calendars.length) {
+        cards = _.filter(cards, (c) => {
+          let show = false;
+          // eslint-disable-next-line consistent-return
+          _.forEach(c.data.classes, (calendar) => {
+            if (store.filters.calendars.indexOf(calendar) >= 0) {
+              show = true;
+              return false;
+            }
+          });
+          return show;
+        });
+      }
+
+      const calendarIds = map(store.data.onlyProgramCalendars, 'id');
+      cards = _.filter(cards, (c) => {
+        if (calendarIds.includes(c.calendar)) {
+          return true;
+        }
+        let toReturn = false;
+        if (c.type === 'plugins.calendar.task' && c.data && c.data.classes) {
+          // eslint-disable-next-line consistent-return
+          forEach(c.data.classes, (calendar) => {
+            if (calendarIds.includes(calendar)) {
+              toReturn = true;
+              return false;
+            }
+          });
+        }
+        return toReturn;
+      });
+
+      cols.push({
+        id: column.id,
+        title: getColumnName(column.nameKey),
+        cards: _.map(cards, (card) => transformEvent(card, store.data.calendars)),
+      });
+    });
+    return { columns: cols };
   }
 
   async function load() {
     store.centers = getCentersWithToken();
     if (store.centers) {
+      [store.center] = store.centers;
+      store.columns = await getKanbanColumns();
+      store.columnsT = await getTranslationColumns();
+      store.columnsEventsOrders = await getKanbanColumnsEventsOrder();
       const [centerData, { classes }] = await Promise.all([
-        getCalendarsToFrontendRequest(store.centers[0].token),
+        getCalendarsForCenter(),
         listSessionClassesRequest({ program: program.id }),
       ]);
-      store.centerData = centerData;
+      store.data = centerData;
       store.classesById = keyBy(classes, 'id');
-
-      if (store.centerData) {
-        store.calendarFilters = map(
-          _.filter(store.centerData.calendars, (calendar) => {
-            if (calendar.isClass) {
-              const keySplit = calendar.key.split('.');
-              const classId = keySplit[keySplit.length - 1];
-              return !!store.classesById[classId];
-            }
-            return false;
-          }),
-          (calendar) => ({
-            label: calendar.name,
-            value: calendar.id,
-          })
-        );
-
-        if (store.centerData.calendarConfig) {
-          store.fullCalendarConfig = {
-            firstDay: store.centerData.calendarConfig.weekday,
-            validRange: {
-              start: new Date(
-                store.centerData.calendarConfig.startYear,
-                store.centerData.calendarConfig.startMonth,
-                1
-              ),
-              end: new Date(
-                store.centerData.calendarConfig.endYear,
-                store.centerData.calendarConfig.endMonth + 1,
-                0
-              ),
-            },
-          };
-        }
-
-        store.filteredEvents = getFilteredEvents();
-      }
+      store.data.onlyProgramCalendars = _.filter(store.data.calendars, (calendar) => {
+        const keySplit = calendar.key.split('.');
+        const classId = keySplit[keySplit.length - 1];
+        return !!store.classesById[classId];
+      });
+      store.filtersData.calendars = _.map(store.data.onlyProgramCalendars, (calendar) => ({
+        label: calendar.name,
+        value: calendar.id,
+      }));
+      store.board = getKanbanBoard();
     }
 
     store.loading = false;
     render();
   }
 
-  function onChangeSelectedCalendar(value) {
-    store.selectedCalendar = value;
-    store.filteredEvents = getFilteredEvents();
-    render();
-  }
-
-  function onEventClick(info) {
-    if (info.originalEvent) {
-      const { bgColor, icon, borderColor, ...e } = info.originalEvent;
-      store.selectedEvent = e;
-      toggleEventModal();
-    }
+  function onClickCard({ bgColor, icon, borderColor, ...e }) {
+    store.selectedEvent = e;
+    toggleEventModal();
   }
 
   React.useEffect(() => {
@@ -151,49 +194,29 @@ function UserProgramKanban({ program, session }) {
 
   if (store.loading) return null;
 
-  // TODO VER CON JOHAN COMO FILTRAR SOLO LOS EVENTOS DEL PROGRAMA
-
   return (
     <Box className={styles.root}>
       <Stack alignItems="center">
-        <PluginCalendarIcon />
+        <PluginKanbanIcon />
         <Text size="lg" color="primary" className={styles.title}>
-          {t('calendar')}
+          {t('kanban')}
         </Text>
-        <Select
-          data={[{ label: t('allSubjects'), value: '*' }, ...store.calendarFilters]}
-          value={store.selectedCalendar || '*'}
-          onChange={onChangeSelectedCalendar}
-        />
+        <Text color="soft">{t('description')}</Text>
       </Stack>
       <Box className={styles.calendarContainer}>
         <EventModal
           centerToken={store.centers[0].token}
           event={store.selectedEvent}
           close={toggleEventModal}
-          classCalendars={store.calendarFilters}
+          classCalendars={store.filtersData.calendars}
         />
-        <BigCalendar
-          style={{ height: '100%' }}
-          currentView="week"
-          eventClick={onEventClick}
-          events={store.filteredEvents || []}
-          {...store.fullCalendarConfig}
-          locale={session?.locale}
-          showToolbarAddButton={false}
-          showToolbarViewSwitcher={false}
-          toolbarRightNode={
-            <Button variant="link" onClick={() => history.push('/private/calendar/home')}>
-              {t('showAllCalendar')}
-              <ChevRightIcon />
-            </Button>
-          }
-          messages={{
-            today: tC('today'),
-            previous: tC('previous'),
-            next: tC('next'),
-            showWeekends: tC('showWeekends'),
-          }}
+        <BubblesKanban
+          value={store.board}
+          onChange={() => {}}
+          disableCardDrag={true}
+          itemRender={(props) => (
+            <KanbanTaskCard {...props} config={store.data} onClick={onClickCard} />
+          )}
         />
       </Box>
     </Box>

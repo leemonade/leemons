@@ -134,4 +134,8 @@ module.exports = {
     allSubjects: 'All subjects',
     showAllCalendar: 'Show all calendar',
   },
+  userProgramKanban: {
+    kanban: 'Kanban highlight',
+    description: 'Outstanding tasks completed in less than 5 days',
+  },
 };

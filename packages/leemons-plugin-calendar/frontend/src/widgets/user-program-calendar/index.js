@@ -15,11 +15,9 @@ import { useHistory } from 'react-router-dom';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import { listSessionClassesRequest } from '@academic-portfolio/request';
 import { getCalendarsToFrontendRequest } from '../../request';
-import transformEvent from '../../helpers/transformEvent';
 
 const Styles = createStyles((theme) => ({
   root: {
-    paddingTop: theme.spacing[11],
     width: '100%',
   },
   title: {
@@ -48,7 +46,10 @@ function UserProgramCalendar({ program, session }) {
     forEach(store.centerData.events, (event) => {
       if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
         // eslint-disable-next-line consistent-return
+        /*
+        31/03/22 Juanjo dijo que no se mostraran los eventos tipo tarea
         forEach(event.data.classes, (calendar) => {
+
           if (
             (!store.selectedCalendar ||
               store.selectedCalendar === '*' ||
@@ -59,6 +60,7 @@ function UserProgramCalendar({ program, session }) {
             return false;
           }
         });
+         */
       } else if (
         (!store.selectedCalendar ||
           store.selectedCalendar === '*' ||

@@ -134,4 +134,8 @@ module.exports = {
     allSubjects: 'Todas las asignaturas',
     showAllCalendar: 'Ver calendario completo',
   },
+  userProgramKanban: {
+    kanban: 'Kanban destacado',
+    description: 'Tareas destacadas que finalizan en menos de 5 días',
+  },
 };
