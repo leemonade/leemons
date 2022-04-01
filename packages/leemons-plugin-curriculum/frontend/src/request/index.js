@@ -7,6 +7,7 @@ import listCurriculum from './listCurriculum';
 import updateNodeLevel from './updateNodeLevel';
 import detailCurriculum from './detailCurriculum';
 import generateNodesFromAcademicPortfolio from './generateNodesFromAcademicPortfolio';
+import listCurriculumsByProgram from './listCurriculumsByProgram';
 
 export const addNodeRequest = addNode;
 export const saveNodeRequest = saveNode;
@@ -17,3 +18,4 @@ export const listCurriculumRequest = listCurriculum;
 export const updateNodeLevelRequest = updateNodeLevel;
 export const detailCurriculumRequest = detailCurriculum;
 export const generateNodesFromAcademicPortfolioRequest = generateNodesFromAcademicPortfolio;
+export const listCurriculumsByProgramRequest = listCurriculumsByProgram;
