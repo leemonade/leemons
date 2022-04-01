@@ -8,7 +8,6 @@ import SelectProgram from './components/PickSubject/SelectProgram';
 import SelectSubjects from './components/PickSubject/SelectSubjects';
 import TagSelect from './components/Tags/TagSelect';
 import PreTaskSelector from './components/PreTaskSelector/PreTaskSelector';
-import Curriculum from './components/Curriculum';
 
 function ConfigData({
   labels,

@@ -18,14 +18,14 @@ function useCurriculum(program) {
     const { data: curriculumData } = await listCurriculumsByProgramRequest(program);
 
     if (curriculumData.count) {
-      setCurriculum(curriculumData.items);
+      setCurriculum(curriculumData.items[0]);
     }
   }, program);
 
   return curriculum;
 }
 
-export default function Curriculum({ program, name }) {
+export default function Curriculum({ program, name, type }) {
   const [show, setShow] = useState(false);
   const curriculum = useCurriculum(program);
 
@@ -35,27 +35,28 @@ export default function Curriculum({ program, name }) {
     return null;
   }
 
-  return curriculum.map((c, i) => (
+  return (
     <Controller
-      key={c.id}
-      name={name + i}
+      name={name}
       control={control}
       render={({ field }) => {
-        const value = field.value?.map(({ content }) => content);
+        const value = field.value?.map((v) => v[type]);
         return (
           <>
             <CurriculumSelectContentsModal
               {...field}
-              opened={show === i}
+              opened={show}
               value={value}
-              curriculum={c?.id}
-              onChange={(contents) => field.onChange(contents.map((content) => ({ content })))}
+              curriculum={curriculum?.id}
+              onChange={(contents) =>
+                field.onChange(contents.map((content) => ({ [type]: content })))
+              }
               onClose={() => setShow(false)}
             />
             <CurriculumListContents {...field} value={value} />
 
             <Stack>
-              <Button leftIcon={<AddCircleIcon />} variant="light" onClick={() => setShow(i)}>
+              <Button leftIcon={<AddCircleIcon />} variant="light" onClick={() => setShow(true)}>
                 Add from curriculum
               </Button>
             </Stack>
@@ -63,10 +64,11 @@ export default function Curriculum({ program, name }) {
         );
       }}
     />
-  ));
+  );
 }
 
 Curriculum.propTypes = {
   program: PropTypes.string,
   name: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
 };

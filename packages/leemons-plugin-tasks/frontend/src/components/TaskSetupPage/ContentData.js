@@ -111,16 +111,47 @@ function ContentData({
                 <Tabs>
                   {subjects?.map((subject, index) => (
                     <TabPanel key={index} label={subject?.label}>
-                      <Controller
-                        control={control}
-                        name="program"
-                        render={({ field: { value: program } }) => (
-                          <Curriculum
-                            program={program}
-                            name={`curriculum.${subject.value}.contents`}
+                      <ContextContainer>
+                        <InputWrapper label={labels?.content}>
+                          <Controller
+                            control={control}
+                            name="program"
+                            render={({ field: { value: program } }) => (
+                              <Curriculum
+                                program={program}
+                                name={`curriculum.${subject.value}.contents`}
+                                type="content"
+                              />
+                            )}
                           />
-                        )}
-                      />
+                        </InputWrapper>
+                        <InputWrapper label={labels?.objectives}>
+                          <Controller
+                            control={control}
+                            name="program"
+                            render={({ field: { value: program } }) => (
+                              <Curriculum
+                                program={program}
+                                name={`curriculum.${subject.value}.objectives`}
+                                type="objective"
+                              />
+                            )}
+                          />
+                        </InputWrapper>
+                        <InputWrapper label={labels?.assessmentCriteria}>
+                          <Controller
+                            control={control}
+                            name="program"
+                            render={({ field: { value: program } }) => (
+                              <Curriculum
+                                program={program}
+                                name={`curriculum.${subject.value}.assessmentCriteria`}
+                                type="assessmentCriteria"
+                              />
+                            )}
+                          />
+                        </InputWrapper>
+                      </ContextContainer>
                       {/* <Contents
                       name={`curriculum.${subject.subject}.contents`}
                       required
