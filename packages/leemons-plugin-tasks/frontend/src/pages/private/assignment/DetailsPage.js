@@ -98,7 +98,7 @@ function ListStudents({ instance }) {
         accessor: 'completed',
       },
       {
-        Header: 'AV. TIME (MIN)',
+        Header: 'AV. TIME (min)',
         accessor: 'avgTime',
       },
       {

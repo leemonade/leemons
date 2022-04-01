@@ -11,7 +11,7 @@ import {
   TabPanel,
   InputWrapper,
 } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors/es/form/TextEditorInput';
+import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 import SelfReflection from './components/SelfReflection';

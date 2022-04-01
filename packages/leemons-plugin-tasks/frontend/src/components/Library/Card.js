@@ -9,17 +9,6 @@ import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 
 export default function Card({ refresh, ...task }) {
   const history = useHistory();
-  // const [contextMenu, setContextMenu] = React.useState({ opened: false, posX: 0, posY: 0 });
-  // const ref = useClickOutside(() => setContextMenu({ opened: false }));
-  // const handleContextMenu = (e) => {
-  //   e.preventDefault();
-
-  //   setContextMenu({
-  //     opened: true,
-  //     posX: e.clientX,
-  //     posY: e.clientY,
-  //   });
-  // };
 
   const handleClick =
     (url, target = 'self', callback) =>
@@ -75,7 +64,14 @@ export default function Card({ refresh, ...task }) {
     <>
       <Box style={{ width: 322 }}>
         <LibraryCard
-          asset={{ ...task, subtitle: task.tagline, description: task.summary }}
+          asset={{
+            ...task,
+            // TODO: Remove image
+            cover:
+              'https://images.unsplash.com/photo-1596603324167-4cbb7a0de677?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2662&q=80',
+            subtitle: task.tagline,
+            description: task.summary,
+          }}
           menuItems={menuItems}
           showImage
           variant="task"

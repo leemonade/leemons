@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import loadable from '@loadable/component';
 import { useFormContext, FormProvider, useForm, Controller } from 'react-hook-form';
 import { ContextContainer, Select } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors/es/form/TextEditorInput';
+import { TextEditorInput } from '@bubbles-ui/editors';
 import ConditionalInput from '../../../Inputs/ConditionalInput';
 
 function useValueUpdater(form, originalForm) {

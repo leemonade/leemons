@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import {
   ContextContainer,
@@ -11,54 +11,58 @@ import {
   HtmlText,
   Box,
 } from '@bubbles-ui/components';
-import getTaskRequest from '../../../../request/task/getTask';
-import getInstanceRequest from '../../../../request/instance/get';
+import useInstance from '../helpers/useInstance';
+import useTask from '../helpers/useTask';
 
-function useTaskInfo(instance, id) {
-  const [task, setTask] = useState(null);
+function useTaskInfo(instanceId, id) {
+  const instance = useInstance(instanceId, ['showCurriculum']);
 
-  useEffect(async () => {
-    const inst = await getInstanceRequest({
-      id: instance,
-      columns: JSON.stringify(['showCurriculum']),
-    });
-    if (!inst) {
-      return;
-    }
-
-    const options = {
-      id: inst?.task?.id,
-      columns: ['tagline', 'summary', 'cover', 'attachments'],
+  const columns = useMemo(() => {
+    const cols = ['tagline', 'summary', 'cover', 'attachments', 'subjects'];
+    const instance = {
+      showCurriculum: {
+        content: true,
+        objectives: true,
+        assessmentCriteria: true,
+      },
     };
 
-    if (inst?.showCurriculum?.content) {
-      options.columns.push('content');
+    // TODO: To get the curriculum, backend must be changed to return it
+    if (instance?.showCurriculum?.content) {
+      cols.push('content');
     }
 
-    if (inst?.showCurriculum?.objectives) {
-      options.columns.push('objectives');
+    if (instance?.showCurriculum?.objectives) {
+      cols.push('objectives');
     }
 
-    if (inst?.showCurriculum?.assessmentCriteria) {
-      options.columns.push('assessmentCriteria');
+    if (instance?.showCurriculum?.assessmentCriteria) {
+      cols.push('assessmentCriteria');
     }
+    return cols;
+  }, [instance]);
 
-    options.columns = JSON.stringify(options.columns);
-
-    const t = await getTaskRequest(options);
-
-    setTask(t);
-  }, [id, instance]);
+  const task = useTask(id || instance?.task?.id, columns);
 
   return task;
 }
+
 export default function SummaryStep({ id, instance, onNext }) {
   const task = useTaskInfo(instance, id);
 
   return (
     <ContextContainer direction="row" fullHeight fullWidth>
       <ContextContainer>
-        <ImageLoader src={task?.cover || ''} withPlaceholder={true} placeholder="Image not found" />
+        <ImageLoader
+          src={
+            // TODO: Remove image fake
+            task?.cover ||
+            'https://images.unsplash.com/photo-1596603324167-4cbb7a0de677?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2662&q=80'
+          }
+          height="300px"
+          withPlaceholder={true}
+          placeholder="Image not found"
+        />
         <Paragraph size="md">{task?.tagline}</Paragraph>
         <ContextContainer title="Summary">
           <Paragraph>{task?.summary}</Paragraph>

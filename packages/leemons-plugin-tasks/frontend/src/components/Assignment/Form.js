@@ -4,7 +4,7 @@ import { unflatten } from '@common';
 import { useForm, Controller } from 'react-hook-form';
 import { Button, ContextContainer, DatePicker, Box, Switch } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { TextEditorInput } from '@bubbles-ui/editors/es/form/TextEditorInput';
+import { TextEditorInput } from '@bubbles-ui/editors';
 
 import { prefixPN } from '../../helpers/prefixPN';
 import AssignStudents from './AssignStudents';

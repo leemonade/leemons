@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
 import { TableInput, Box } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors/es/form/TextEditorInput';
+import { TextEditorInput } from '@bubbles-ui/editors';
 import useTableInputLabels from '../../../helpers/useTableInputLabels';
 
 export default function Contents({ name, label, required }) {

@@ -65,7 +65,9 @@ function DesignData({
           <Controller
             control={control}
             name="color"
-            render={({ field }) => <ColorInput label={labels?.color} {...field} />}
+            render={({ field }) => (
+              <ColorInput useHsl compact={false} manual={false} label={labels?.color} {...field} />
+            )}
           />
         </Box>
       </ContextContainer>

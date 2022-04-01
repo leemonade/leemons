@@ -6,17 +6,11 @@ import { ContextContainer, HtmlText, Button, Stack } from '@bubbles-ui/component
 import getTaskRequest from '../../../../request/task/getTask';
 
 import updateStudentRequest from '../../../../request/instance/updateStudent';
+import useTask from '../helpers/useTask';
 
 export default function StatementAndDevelopmentStep({ id, instance, student, onNext, onPrevious }) {
-  const options = useMemo(
-    () => ({
-      id,
-      columns: JSON.stringify(['statement', 'development']),
-    }),
-    [id]
-  );
+  const task = useTask(id, ['statement', 'development']);
 
-  const [task] = useApi(getTaskRequest, options);
   useEffect(() => {
     updateStudentRequest({
       instance,

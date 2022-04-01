@@ -36,13 +36,13 @@ module.exports = {
       type: 'string',
     },
     preTaskOptions: {
-      type: 'string',
+      type: 'json',
     },
     selfReflection: {
-      type: 'string',
+      type: 'json',
     },
     feedback: {
-      type: 'string',
+      type: 'json',
     },
     instructionsForTeacher: {
       type: 'richtext',

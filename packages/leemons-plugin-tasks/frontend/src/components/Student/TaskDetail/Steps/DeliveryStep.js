@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
 import {
   ContextContainer,
@@ -12,52 +13,28 @@ import {
 
 import { useApi } from '@common';
 import getTaskRequest from '../../../../request/task/getTask';
-
-function TaggedText({ tag, text }) {
-  return (
-    <Stack>
-      <Text strong>{tag}:&nbsp;</Text>
-      <Text>{text}</Text>
-    </Stack>
-  );
-}
-
-TaggedText.propTypes = {
-  tag: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
-};
+import useTask from '../helpers/useTask';
 
 export default function DeliveryStep({ onNext, onPrevious, id }) {
-  const options = useMemo(
-    () => ({
-      id,
-      columns: JSON.stringify(['submissions']),
-    }),
-    [id]
-  );
-  const [task] = useApi(getTaskRequest, options);
+  const task = useTask(id, ['submissions']);
+
+  const Component = (type) =>
+    loadable(() => {
+      const validTypes = ['File', 'Link'];
+
+      if (!validTypes.includes(type)) {
+        return Promise.resolve(() => <></>);
+      }
+
+      return import(`./Delivery/${type}`);
+    });
+
+  const C = Component(task?.submissions?.type);
 
   return (
     <ContextContainer title="Delivery">
       <HtmlText>{task?.submissions?.description}</HtmlText>
-
-      <TaggedText
-        tag="Tipo de archivo"
-        text={`${
-          task?.submissions?.data?.multipleFiles ? 'Multiple files of: ' : 'One file of: '
-        }${task?.submissions?.data?.extensions?.join(', ')} con un peso máximo de ${
-          task?.submissions?.data?.maxSize
-        }Kb`}
-      />
-      <TaggedText tag="Evaluable" text="CONFIG DE EVALUACION" />
-      <Alert title="Recuerda" severity="info" closeable={false}>
-        una vez entregado el archivo podrás sustituirlo tantas veces como necesites hasta la fecha
-        de expiración de la prueba pero solo se guardará la última versión
-      </Alert>
-      <Paper color="solid">
-        <ContextContainer title="Your deliver">DELIVERIES</ContextContainer>
-      </Paper>
-
+      <C task={task} />
       <Stack fullWidth justifyContent="space-between">
         <Button onClick={onPrevious}>Previous</Button>
         <Button onClick={onNext}>Next</Button>

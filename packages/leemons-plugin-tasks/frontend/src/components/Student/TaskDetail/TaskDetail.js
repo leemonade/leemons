@@ -1,37 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { ContextContainer, PageContainer, Stepper, Text } from '@bubbles-ui/components';
+import { ContextContainer, PageContainer, Stepper, Text, Loader } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useGetSteps from './helpers/useGetSteps';
-import getInstanceRequest from '../../../request/instance/get';
 import updateStudentRequest from '../../../request/instance/updateStudent';
+import useInstance from './helpers/useInstance';
+import useTask from './helpers/useTask';
 
 export default function TaskDetail({ id, student }) {
-  const [task, setTask] = useState(null);
+  const instance = useInstance(id);
+  const task = useTask(instance?.task?.id);
 
   useEffect(async () => {
-    const instance = await getInstanceRequest({ id, columns: ['id'] });
     if (instance) {
-      try {
-        await updateStudentRequest({
-          instance: id,
-          student,
-          key: 'opened',
-          value: new Date().getTime(),
-        });
-      } catch (e) {
-        // TRANSLATE: Student not assigned to the task
-        if (e.message === "Student or instance doesn't exist") {
-          setTask({ error: 'Student not assigned to the task' });
-          return;
-        }
-      }
-
-      setTask(instance.task.id);
+      await updateStudentRequest({
+        instance: id,
+        student,
+        key: 'opened',
+        value: new Date().getTime(),
+      });
     }
-  }, [id, student]);
+  }, [instance, student]);
 
-  const steps = useGetSteps(id, task, student);
+  const steps = useGetSteps(id, task?.id, student);
+
+  if (!task) {
+    return <Loader />;
+  }
 
   if (task?.error) {
     return (

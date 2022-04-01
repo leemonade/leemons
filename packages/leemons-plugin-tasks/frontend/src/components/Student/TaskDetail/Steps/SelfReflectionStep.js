@@ -4,18 +4,10 @@ import { ContextContainer, Button, Stack, Paragraph, HtmlText } from '@bubbles-u
 
 import { useApi } from '@common';
 import getTaskRequest from '../../../../request/task/getTask';
+import useTask from '../helpers/useTask';
 
 export default function SelfReflectionStep({ id, onNext, onPrevious }) {
-  const options = useMemo(
-    () => ({
-      id,
-      columns: JSON.stringify(['selfReflection']),
-    }),
-    [id]
-  );
-
-  const [task] = useApi(getTaskRequest, options);
-
+  const task = useTask(id, ['selfReflection']);
   return (
     <ContextContainer>
       <ContextContainer title="¿Qué has aprendido en este ejercicio?">

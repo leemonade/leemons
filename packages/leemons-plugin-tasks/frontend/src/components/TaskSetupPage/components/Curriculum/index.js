@@ -18,7 +18,7 @@ function useCurriculum(program) {
     const { data: curriculumData } = await listCurriculumsByProgramRequest(program);
 
     if (curriculumData.count) {
-      setCurriculum(curriculumData.items[0]);
+      setCurriculum(curriculumData.items);
     }
   }, program);
 
@@ -35,9 +35,10 @@ export default function Curriculum({ program, name }) {
     return null;
   }
 
-  return (
+  return curriculum.map((c, i) => (
     <Controller
-      name={name}
+      key={c.id}
+      name={name + i}
       control={control}
       render={({ field }) => {
         const value = field.value?.map(({ content }) => content);
@@ -45,20 +46,16 @@ export default function Curriculum({ program, name }) {
           <>
             <CurriculumSelectContentsModal
               {...field}
-              opened={show}
+              opened={show === i}
               value={value}
-              curriculum={curriculum?.id}
+              curriculum={c?.id}
               onChange={(contents) => field.onChange(contents.map((content) => ({ content })))}
               onClose={() => setShow(false)}
             />
             <CurriculumListContents {...field} value={value} />
 
             <Stack>
-              <Button
-                leftIcon={<AddCircleIcon />}
-                variant="light"
-                onClick={() => setShow((s) => !s)}
-              >
+              <Button leftIcon={<AddCircleIcon />} variant="light" onClick={() => setShow(i)}>
                 Add from curriculum
               </Button>
             </Stack>
@@ -66,7 +63,7 @@ export default function Curriculum({ program, name }) {
         );
       }}
     />
-  );
+  ));
 }
 
 Curriculum.propTypes = {

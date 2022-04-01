@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
 import { ContextContainer, TextInput, Checkbox } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors/es/form/TextEditorInput';
+import { TextEditorInput } from '@bubbles-ui/editors';
 import ConditionalInput from '../../../Inputs/ConditionalInput';
 
 export default function SelfReflection({ name, labels, description }) {

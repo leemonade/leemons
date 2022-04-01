@@ -6,17 +6,11 @@ import { ContextContainer, Button, Stack, Paragraph, HtmlText } from '@bubbles-u
 import { useApi } from '@common';
 import getTaskRequest from '../../../../request/task/getTask';
 import updateStudentRequest from '../../../../request/instance/updateStudent';
+import useTask from '../helpers/useTask';
 
 export default function FeedbackStep({ instance, student, id, onPrevious, onNext }) {
   const history = useHistory();
-
-  const options = useMemo(
-    () => ({
-      id,
-      columns: JSON.stringify(['feedback']),
-    }),
-    [id]
-  );
+  const task = useTask(id, ['feedback']);
 
   const updateStudent = () =>
     updateStudentRequest({
@@ -35,8 +29,6 @@ export default function FeedbackStep({ instance, student, id, onPrevious, onNext
     await updateStudent();
     onNext();
   };
-
-  const [task] = useApi(getTaskRequest, options);
 
   return (
     <ContextContainer>

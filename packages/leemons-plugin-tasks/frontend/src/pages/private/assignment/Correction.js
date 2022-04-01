@@ -1,7 +1,7 @@
 import React from 'react';
 import { ContextContainer, Text, Select, Button, PageContainer } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { TextEditorInput } from '@bubbles-ui/editors/es/form/TextEditorInput';
+import { TextEditorInput } from '@bubbles-ui/editors';
 import { useParams, useHistory } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
 import { useApi } from '@common';

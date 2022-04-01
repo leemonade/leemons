@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { ContextContainer, Button, Text } from '@bubbles-ui/components';
 import { useApi } from '@common';
 import getTaskRequest from '../../../../request/task/getTask';
+import useTask from '../helpers/useTask';
 
 function getCondition(options) {
   if (options?.condition === 'take') {
@@ -16,14 +17,7 @@ function getCondition(options) {
 }
 
 export default function PreTaskStep({ onNext, id }) {
-  const options = useMemo(
-    () => ({
-      id,
-      columns: JSON.stringify(['preTask', 'preTaskOptions']),
-    }),
-    [id]
-  );
-  const [task] = useApi(getTaskRequest, options);
+  const task = useTask(id, ['preTask', 'preTaskOptions']);
 
   return (
     <ContextContainer title="Pretask">
