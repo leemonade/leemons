@@ -7,6 +7,7 @@ const initAcademicPortfolio = require('./src/academicPortfolio');
 const addCalendarAndEventAsClassroom = require('./src/calendar');
 const addAWSS3AsProvider = require('./src/leebrary');
 const addAWSEmailAsProvider = require('./src/emails');
+const initWidgets = require('./src/widgets');
 
 async function events(isInstalled) {
   const config = {
@@ -127,6 +128,25 @@ async function events(isInstalled) {
         try {
           config.programs = await initAcademicPortfolio(config);
           leemons.events.emit('init-academic-portfolio', config.programs);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    );
+
+    // ·······························································
+    // WIDGETS
+
+    leemons.events.once(
+      [
+        'plugins.dashboard:init-widget-zones',
+        'plugins.academic-portfolio:init-widget-items',
+        'plugins.calendar:init-widget-items',
+      ],
+      async () => {
+        try {
+          await initWidgets();
+          leemons.events.emit('init-widgets');
         } catch (e) {
           console.error(e);
         }
