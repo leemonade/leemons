@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import loadable from '@loadable/component';
 import useTask from './useTask';
+import useCorrection from '../../../Grade/hooks/useCorrection';
 
 const DeliveryStep = loadable(() => import('../Steps/DeliveryStep'));
 const PreTaskStep = loadable(() => import('../Steps/PreTaskStep'));
@@ -11,7 +12,8 @@ const FeedbackStep = loadable(() => import('../Steps/FeedbackStep'));
 const CorrectionStep = loadable(() => import('../Steps/CorrectionStep'));
 
 export default function useGetSteps(instance, taskId, student) {
-  const task = useTask(taskId, ['preTask', 'selfReflection', 'feedback']);
+  const task = useTask(taskId, ['preTask', 'selfReflection', 'feedback', 'program']);
+  const correction = useCorrection(instance, student);
   /*
     Siempre renderizar:
       Summary
@@ -48,7 +50,7 @@ export default function useGetSteps(instance, taskId, student) {
       },
       delivery: {
         label: 'Submission',
-        content: <DeliveryStep id={taskId} />,
+        content: <DeliveryStep instance={instance} student={student} id={taskId} />,
       },
       // EN: Only must be shown when the task has a selfReflection
       // ES: Solo debe mostrarse cuando la tarea tenga una reflexión personal
@@ -64,14 +66,17 @@ export default function useGetSteps(instance, taskId, student) {
       },
       // EN: Only must be shown when the correction is visible to the student
       // ES: Solo debe mostrarse cuando la corrección sea visible para el estudiante
-      correction: {
+      correction: correction?.grade && {
         label: 'Correction',
-        content: <CorrectionStep id={taskId} />,
+        content: <CorrectionStep id={taskId} correction={correction} program={task?.program} />,
       },
     };
 
+    if (correction?.grade) {
+      return [stepsObject.correction];
+    }
     return Object.values(stepsObject).filter((step) => step);
-  }, [taskId, instance, student, task]);
+  }, [taskId, instance, student, task, correction]);
 
   return steps;
 }

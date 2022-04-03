@@ -8,10 +8,8 @@ module.exports = {
       type: 'uuid',
     },
     deliverable: {
-      type: 'string',
+      type: 'json',
     },
-    // EN: Type of assignment: ['direct', 'group']
-    // ES: Tipo de asignación: ['directa', 'grupal']
     type: {
       type: 'string',
     },

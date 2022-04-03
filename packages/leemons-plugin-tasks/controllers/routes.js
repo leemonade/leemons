@@ -204,6 +204,12 @@ module.exports = [
     handler: 'assignments.studentCalificate',
     authenticated: true,
   },
+  {
+    method: 'GET',
+    path: '/tasks/instances/:instance/students/:student/calification',
+    handler: 'assignments.studentGetCalification',
+    authenticated: true,
+  },
   // Teacher
   {
     method: 'POST',
@@ -241,6 +247,20 @@ module.exports = [
     method: 'POST',
     path: '/tasks/instances/:instance/group',
     handler: 'assignments.groupAssign',
+    authenticated: true,
+  },
+
+  // Deliverables
+  {
+    method: 'POST',
+    path: '/tasks/instances/:instance/:user/deliverables/:type',
+    handler: 'assignments.setDeliverable',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/instances/:instance/:user/deliverables/:type',
+    handler: 'assignments.getDeliverable',
     authenticated: true,
   },
 

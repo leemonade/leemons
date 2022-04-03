@@ -17,7 +17,7 @@ module.exports = {
       type: 'datetime',
     },
     grade: {
-      type: 'integer',
+      type: 'uuid',
     },
     teacherFeedback: {
       type: 'richtext',

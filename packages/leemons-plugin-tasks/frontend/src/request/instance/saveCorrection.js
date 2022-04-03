@@ -1,4 +1,4 @@
-module.exports = function correctionRequest(instance, student, { grade, teacherFeedback }) {
+module.exports = function saveCorrectionRequest(instance, student, { grade, teacherFeedback }) {
   return leemons.api(`tasks/tasks/instances/${instance}/students/${student}/calification`, {
     allAgents: true,
     method: 'POST',

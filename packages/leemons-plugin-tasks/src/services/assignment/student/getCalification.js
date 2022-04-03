@@ -1,23 +1,14 @@
 const { userInstances } = require('../../table');
 
-module.exports = async function calificate(
-  instance,
-  user,
-  grade,
-  teacherFeedback,
-  { transacting } = {}
-) {
+module.exports = async function getCalification(instance, user, { transacting } = {}) {
   try {
-    return await userInstances.update(
+    return await userInstances.findOne(
       {
         instance,
         user,
       },
       {
-        grade,
-        teacherFeedback,
-      },
-      {
+        columns: ['grade', 'teacherFeedback'],
         transacting,
       }
     );

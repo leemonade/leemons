@@ -15,7 +15,10 @@ const updateStudent = require('../src/services/assignment/student/update');
 const searchTeachers = require('../src/services/assignment/teacher/search');
 const assignGroup = require('../src/services/assignment/groups/add');
 const calificateStudent = require('../src/services/assignment/student/calificate');
+const getStudentCalification = require('../src/services/assignment/student/getCalification');
 const updateInstance = require('../src/services/assignment/instance/update');
+const setDeliverable = require('../src/services/assignment/student/deliverable/set');
+const getDeliverable = require('../src/services/assignment/student/deliverable/get');
 
 module.exports = {
   /**
@@ -273,6 +276,17 @@ module.exports = {
       calificated,
     };
   },
+  studentGetCalification: async (ctx) => {
+    const { instance, student } = ctx.request.params;
+
+    const calification = await getStudentCalification(instance, student);
+
+    ctx.status = 200;
+    ctx.body = {
+      status: 200,
+      calification,
+    };
+  },
 
   /**
    * Teachers
@@ -409,6 +423,34 @@ module.exports = {
     const { groups } = ctx.request.body;
 
     const result = await assignGroup(instance, groups);
+
+    ctx.status = 200;
+    ctx.body = {
+      status: 200,
+      ...result,
+    };
+  },
+
+  /**
+   * User Deliverables
+   */
+  setDeliverable: async (ctx) => {
+    const { instance, user, type } = ctx.request.params;
+    const { deliverable } = ctx.request.body;
+
+    const result = await setDeliverable({ instance, user, type, deliverable });
+
+    ctx.status = 200;
+    ctx.body = {
+      status: 200,
+      ...result,
+    };
+  },
+
+  getDeliverable: async (ctx) => {
+    const { instance, user, type } = ctx.request.params;
+
+    const result = await getDeliverable({ instance, user, type });
 
     ctx.status = 200;
     ctx.body = {

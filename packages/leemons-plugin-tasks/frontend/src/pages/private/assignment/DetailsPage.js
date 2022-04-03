@@ -22,6 +22,10 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import listStudents from '../../../request/instance/listStudents';
 import getInstanceRequest from '../../../request/instance/get';
 import updateInstanceRequest from '../../../request/instance/updateInstance';
+import { Grade } from '../../../components/Grade';
+import useTask from '../../../components/Student/TaskDetail/helpers/useTask';
+import useInstance from '../../../components/Student/TaskDetail/helpers/useInstance';
+import useProgram from '../../../components/Student/TaskDetail/helpers/useProgram';
 
 function getStatus({ start, end, opened }) {
   if (end) {
@@ -41,6 +45,10 @@ function getStatus({ start, end, opened }) {
 
 function ListStudents({ instance }) {
   const history = useHistory();
+
+  const inst = useInstance(instance, ['task']);
+  const task = useTask(inst?.task?.id, ['program']);
+  const program = useProgram(task?.program);
 
   const [filters, setFilters] = useState({
     page: 0,
@@ -65,7 +73,7 @@ function ListStudents({ instance }) {
           avgTime: student.end
             ? ((new Date(student.end) - new Date(student.start)) / 1000 / 60).toFixed(2)
             : '-',
-          score: 'NYI',
+          score: <Grade evaluation={program?.evaluationSystem} value={student.grade} />,
           actions: (
             <Button
               variant="link"
@@ -81,7 +89,7 @@ function ListStudents({ instance }) {
 
   useEffect(() => {
     fetchStudents();
-  }, [filters]);
+  }, [filters, program?.evaluationSystem]);
 
   // TRANSLATE: Teacher details columns
   const columns = useMemo(
