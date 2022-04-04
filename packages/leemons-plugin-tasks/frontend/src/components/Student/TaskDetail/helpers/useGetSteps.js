@@ -45,7 +45,7 @@ export default function useGetSteps(instance, taskId, student) {
         content: <PreTaskStep id={taskId} />,
       },
       statement: {
-        label: 'Statement && Development',
+        label: 'Statement & Development',
         content: <StatementAndDevelopmentStep student={student} instance={instance} id={taskId} />,
       },
       delivery: {

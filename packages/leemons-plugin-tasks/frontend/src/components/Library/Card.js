@@ -65,12 +65,14 @@ export default function Card({ refresh, ...task }) {
     <>
       <Box style={{ width: 322 }}>
         <LibraryCard
+          dashboard={false}
           asset={{
             ...task,
             // TODO: Remove image
             cover: getFakeImage(task?.cover),
             subtitle: task.tagline,
             description: task.summary,
+            type: 'task',
           }}
           menuItems={menuItems}
           showImage

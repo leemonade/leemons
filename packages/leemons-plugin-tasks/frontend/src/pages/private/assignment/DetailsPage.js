@@ -65,6 +65,7 @@ function ListStudents({ instance }) {
       setStudents({
         ...result,
         items: result.items.map((student) => ({
+          id: student.id,
           student: (
             <UserDisplayItem {...usersInfo?.userAgents?.find((u) => u.id === student.user)?.user} />
           ),

@@ -2,8 +2,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, Stack, ContextContainer, Button } from '@bubbles-ui/components';
-import { ColorInput } from '@mantine/core';
+import { Box, Stack, ContextContainer, Button, ColorInput } from '@bubbles-ui/components';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { FilePicker } from './components/FilePicker';
 
