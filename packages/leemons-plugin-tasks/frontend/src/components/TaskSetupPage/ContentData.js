@@ -16,7 +16,7 @@ import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 import SelfReflection from './components/SelfReflection';
 import Submissions from './components/Submissions';
-// import Objectives from './components/Objectives';
+import Objectives from './components/Objectives';
 // import Contents from './components/Contents';
 // import AssessmentCriteria from './components/AssessmentCriteria';
 import Attachments from './components/Attachments';
@@ -125,7 +125,7 @@ function ContentData({
                             )}
                           />
                         </InputWrapper>
-                        <InputWrapper label={labels?.objectives}>
+                        {/* <InputWrapper label={labels?.objectives}>
                           <Controller
                             control={control}
                             name="program"
@@ -137,7 +137,7 @@ function ContentData({
                               />
                             )}
                           />
-                        </InputWrapper>
+                        </InputWrapper> */}
                         <InputWrapper label={labels?.assessmentCriteria}>
                           <Controller
                             control={control}
@@ -151,6 +151,12 @@ function ContentData({
                             )}
                           />
                         </InputWrapper>
+                        <Objectives
+                          name={`curriculum.${subject.subject}.objectives`}
+                          required
+                          label={labels.objectives || ''}
+                          error={errors.objectives}
+                        />
                       </ContextContainer>
                       {/* <Contents
                       name={`curriculum.${subject.subject}.contents`}

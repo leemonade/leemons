@@ -2,9 +2,17 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, Stack, ContextContainer, Button, ColorInput } from '@bubbles-ui/components';
+import {
+  Box,
+  Stack,
+  ContextContainer,
+  Button,
+  ColorInput,
+  InputWrapper,
+} from '@bubbles-ui/components';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { FilePicker } from './components/FilePicker';
+import Card from '../Library/Card';
 
 function DesignData({
   labels,
@@ -27,7 +35,7 @@ function DesignData({
     ...sharedData,
   };
 
-  const { control, handleSubmit } = useForm({ defaultValues });
+  const { control, handleSubmit, watch } = useForm({ defaultValues });
 
   const { subscribe, unsubscribe, emitEvent } = useObserver();
 
@@ -82,6 +90,18 @@ function DesignData({
           />
         </Box>
       </ContextContainer>
+
+      <Controller
+        control={control}
+        render={() => {
+          const data = watch();
+          return (
+            <InputWrapper label="Card preview">
+              <Card {...data} />
+            </InputWrapper>
+          );
+        }}
+      />
       <Stack fullWidth justifyContent="space-between">
         <Box>
           <Button
