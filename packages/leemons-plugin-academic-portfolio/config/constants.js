@@ -259,11 +259,27 @@ const menuItems = [
 ];
 
 const widgets = {
+  zones: [{ key: `${permissionsPrefix}.class.detail` }],
   items: [
     {
       zoneKey: 'plugins.dashboard.program.left',
       key: `${permissionsPrefix}.user.classes.swiper`,
       url: 'user-classes-swiper/index',
+    },
+    // ---- Class (Detail)
+    {
+      zoneKey: `${permissionsPrefix}.class.detail`,
+      key: `${permissionsPrefix}.user.class.detail`,
+      url: 'class-detail/index',
+    },
+    // ---- Class (Detail [Tab])
+    {
+      zoneKey: 'plugins.dashboard.class.tabs',
+      key: `${permissionsPrefix}.class.tab.detail`,
+      url: 'tab-detail/index',
+      properties: {
+        label: 'plugins.academic-portfolio.tabDetail.label',
+      },
     },
   ],
 };

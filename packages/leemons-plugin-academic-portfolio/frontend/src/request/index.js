@@ -30,6 +30,7 @@ import { createSubjectType, listSubjectTypes, updateSubjectType } from './subjec
 import {
   addStudentsToClass,
   addTeachersToClass,
+  classDetailForDashboard,
   createClass,
   createClassInstance,
   haveClasses,
@@ -72,6 +73,7 @@ export const addStudentsToClassRequest = addStudentsToClass;
 export const addTeachersToClassRequest = addTeachersToClass;
 export const listStudentClassesRequest = listStudentClasses;
 export const listTeacherClassesRequest = listTeacherClasses;
+export const classDetailForDashboardRequest = classDetailForDashboard;
 export const removeStudentFromClassRequest = removeStudentFromClass;
 
 export const createKnowledgeRequest = createKnowledge;

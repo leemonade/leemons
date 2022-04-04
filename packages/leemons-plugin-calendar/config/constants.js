@@ -131,7 +131,12 @@ module.exports = {
     },
   ],
   widgets: {
+    zones: [
+      { key: `${permissionsPrefix}.class.kanban` },
+      { key: `${permissionsPrefix}.class.calendar` },
+    ],
     items: [
+      // ---- Dashboard
       {
         zoneKey: 'plugins.dashboard.program.left',
         key: `${permissionsPrefix}.user.program.calendar`,
@@ -141,6 +146,45 @@ module.exports = {
         zoneKey: 'plugins.dashboard.program.left',
         key: `${permissionsPrefix}.user.program.kanban`,
         url: 'user-program-kanban/index',
+      },
+      // ---- Class (Control Panel)
+      {
+        zoneKey: 'plugins.dashboard.class.control-panel',
+        key: `${permissionsPrefix}.user.class.kanban`,
+        url: 'user-program-kanban/index',
+      },
+      // ---- Class (Kanban)
+      {
+        zoneKey: `${permissionsPrefix}.class.kanban`,
+        key: `${permissionsPrefix}.user.class.kanban.kanban`,
+        url: 'user-program-kanban/index',
+        properties: {
+          useAllColumns: true,
+        },
+      },
+      // ---- Class (Calendar)
+      {
+        zoneKey: `${permissionsPrefix}.class.calendar`,
+        key: `${permissionsPrefix}.user.class.calendar.calendar`,
+        url: 'user-program-calendar/index',
+      },
+      // ---- Class (Kanban [Tab])
+      {
+        zoneKey: 'plugins.dashboard.class.tabs',
+        key: `${permissionsPrefix}.class.tab.kanban`,
+        url: 'tab-kanban/index',
+        properties: {
+          label: `${permissionsPrefix}.tabKanban.label`,
+        },
+      },
+      // ---- Class (Calendar [Tab])
+      {
+        zoneKey: 'plugins.dashboard.class.tabs',
+        key: `${permissionsPrefix}.class.tab.calendar`,
+        url: 'tab-calendar/index',
+        properties: {
+          label: `${permissionsPrefix}.tabCalendar.label`,
+        },
       },
     ],
   },

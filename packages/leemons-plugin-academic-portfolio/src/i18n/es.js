@@ -444,4 +444,7 @@ module.exports = {
   userClassesSwiperWidget: {
     multiCourse: 'Varios cursos',
   },
+  tabDetail: {
+    label: 'Clase',
+  },
 };

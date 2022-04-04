@@ -27,6 +27,7 @@ async function events(isInstalled) {
             .services.widgets.addItemToZone(config.zoneKey, config.key, config.url, {
               name: config.name,
               description: config.description,
+              properties: config.properties,
             })
         )
       );

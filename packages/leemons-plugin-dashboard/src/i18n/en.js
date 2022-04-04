@@ -4,4 +4,10 @@ module.exports = {
     dashboard: 'Dashboard',
     controlPanel: 'Control Panel',
   },
+  classDashboard: {
+    multipleCourses: 'Various courses',
+  },
+  tabControlPanel: {
+    label: 'Control Panel',
+  },
 };

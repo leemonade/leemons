@@ -38,7 +38,7 @@ const Styles = createStyles((theme) => ({
   },
 }));
 
-function UserProgramKanban({ program, session }) {
+function UserProgramKanban({ program, classe, session, useAllColumns = false }) {
   const { classes: styles } = Styles();
   const [store, render] = useStore({
     loading: true,
@@ -55,9 +55,10 @@ function UserProgramKanban({ program, session }) {
 
   async function getKanbanColumns() {
     const { columns } = await listKanbanColumnsRequest();
-    return _.filter(_.orderBy(columns, ['order'], ['asc']), (column) =>
-      [1, 2, 3].includes(column.order)
-    );
+    const orderedColumns = _.orderBy(columns, ['order'], ['asc']);
+    return useAllColumns
+      ? orderedColumns
+      : _.filter(orderedColumns, (column) => [1, 2, 3].includes(column.order));
   }
 
   async function getTranslationColumns() {
@@ -161,12 +162,20 @@ function UserProgramKanban({ program, session }) {
       store.columns = await getKanbanColumns();
       store.columnsT = await getTranslationColumns();
       store.columnsEventsOrders = await getKanbanColumnsEventsOrder();
-      const [centerData, { classes }] = await Promise.all([
-        getCalendarsForCenter(),
-        listSessionClassesRequest({ program: program.id }),
-      ]);
+      const promises = [getCalendarsForCenter()];
+      if (program) {
+        promises.push(listSessionClassesRequest({ program: program.id }));
+      }
+      const [centerData, programData] = await Promise.all(promises);
       store.data = centerData;
-      store.classesById = keyBy(classes, 'id');
+      if (program) {
+        store.classesById = keyBy(programData.classes, 'id');
+      }
+      if (classe) {
+        store.classesById = {
+          [classe.id]: classe,
+        };
+      }
       store.data.onlyProgramCalendars = _.filter(store.data.calendars, (calendar) => {
         const keySplit = calendar.key.split('.');
         const classId = keySplit[keySplit.length - 1];
@@ -189,8 +198,8 @@ function UserProgramKanban({ program, session }) {
   }
 
   React.useEffect(() => {
-    if (program) load();
-  }, [program]);
+    if (program || classe) load();
+  }, [program, classe]);
 
   if (store.loading) return null;
 
@@ -224,7 +233,8 @@ function UserProgramKanban({ program, session }) {
 }
 
 UserProgramKanban.propTypes = {
-  program: PropTypes.object.isRequired,
+  program: PropTypes.object,
+  classe: PropTypes.object,
   session: PropTypes.object,
 };
 

@@ -3,12 +3,18 @@ const { table } = require('../tables');
 const { classByIds } = require('./classByIds');
 
 async function listSessionClasses(userSession, { program } = {}, { transacting } = {}) {
-  const classStudent = await table.classStudent.find(
-    { student_$in: _.map(userSession.userAgents, 'id') },
-    { columns: ['class'], transacting }
-  );
+  const [classStudent, classTeacher] = await Promise.all([
+    table.classStudent.find(
+      { student_$in: _.map(userSession.userAgents, 'id') },
+      { columns: ['class'], transacting }
+    ),
+    table.classTeacher.find(
+      { teacher_$in: _.map(userSession.userAgents, 'id') },
+      { columns: ['class'], transacting }
+    ),
+  ]);
 
-  let classIds = _.map(classStudent, 'class');
+  let classIds = _.map(classStudent, 'class').concat(_.map(classTeacher, 'class'));
   if (program) {
     const programClasses = await table.class.find(
       { program, id_$in: classIds },

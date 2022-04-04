@@ -100,6 +100,13 @@ async function removeStudentFromClass(classId, student) {
   });
 }
 
+async function classDetailForDashboard(classId) {
+  return leemons.api(`academic-portfolio/class/dashboard/${classId}`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
 export {
   haveClasses,
   listClasses,
@@ -114,4 +121,5 @@ export {
   addStudentsToClass,
   addTeachersToClass,
   removeStudentFromClass,
+  classDetailForDashboard,
 };
