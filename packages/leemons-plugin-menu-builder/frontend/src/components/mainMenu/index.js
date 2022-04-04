@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import hooks from 'leemons-hooks';
 import { getMenu } from '@menu-builder/helpers';
 import { MainNav } from '@bubbles-ui/components';
+import { useSession } from '@users/session';
 
 export default function MainMenu({ subNavWidth, ...props }) {
+  const session = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [loadMenu, setLoadMenu] = useState(false);
   const [menuData, setMenuData] = useState([]);
@@ -50,6 +52,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
       subNavWidth={subNavWidth}
       hideSubNavOnClose={false}
       useRouter={true}
+      session={session}
     />
   );
 }
