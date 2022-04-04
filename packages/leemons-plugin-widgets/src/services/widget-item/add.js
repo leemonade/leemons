@@ -3,7 +3,12 @@ const { table } = require('../tables');
 const { validatePrefix } = require('../../validation/validate');
 const { exists: existsZone } = require('../widget-zone/exists');
 
-async function add(zoneKey, key, url, { name, description, profiles, transacting } = {}) {
+async function add(
+  zoneKey,
+  key,
+  url,
+  { name, description, profiles, properties = {}, transacting } = {}
+) {
   validatePrefix(key, this.calledFrom);
   if (!url || !_.isString(url)) {
     throw new Error('url is required');
@@ -34,6 +39,7 @@ async function add(zoneKey, key, url, { name, description, profiles, transacting
         url,
         name,
         description,
+        properties: JSON.stringify(properties),
         pluginName: split.join('.'),
       },
       { transacting }

@@ -154,6 +154,15 @@ async function listSessionClasses(ctx) {
   ctx.body = { status: 200, classes };
 }
 
+async function classDetailForDashboard(ctx) {
+  const data = await classService.classDetailForDashboard(
+    ctx.request.params.id,
+    ctx.state.userSession
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, ...data };
+}
+
 module.exports = {
   postClass,
   putClass,
@@ -168,4 +177,5 @@ module.exports = {
   listSessionClasses,
   listStudentClasses,
   listTeacherClasses,
+  classDetailForDashboard,
 };

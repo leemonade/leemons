@@ -5,6 +5,7 @@ import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
 const Dashboard = loadable(() => import('./src/pages/private/Dashboard'));
+const ClassDashboard = loadable(() => import('./src/pages/private/ClassDashboard'));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -13,6 +14,9 @@ export default function Private() {
   return (
     <div>
       <Switch>
+        <Route path={`${path}/class/:id`}>
+          <ClassDashboard session={session} />
+        </Route>
         <Route path={`${path}`}>
           <Dashboard session={session} />
         </Route>

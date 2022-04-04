@@ -6,6 +6,7 @@ import { useStore } from '@common';
 import prefixPN from '@families/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { isArray } from 'lodash';
+import { useHistory } from 'react-router-dom';
 import { listSessionClassesRequest } from '../../request';
 
 const Styles = createStyles((theme) => ({
@@ -36,6 +37,7 @@ const Styles = createStyles((theme) => ({
     '&:first-of-type': {
       marginLeft: '2px',
     },
+    cursor: 'pointer',
   },
   colorIcon: {
     position: 'absolute',
@@ -64,6 +66,8 @@ function UserClassesSwiperWidget({ program }) {
   });
   const [t] = useTranslateLoader(prefixPN('userClassesSwiperWidget'));
 
+  const history = useHistory();
+
   async function load() {
     try {
       const { classes } = await listSessionClassesRequest({ program: program.id });
@@ -73,6 +77,10 @@ function UserClassesSwiperWidget({ program }) {
     }
     store.loading = false;
     render();
+  }
+
+  function goClassDashboard(classe) {
+    history.push(`/private/dashboard/class/${classe.id}`);
   }
 
   React.useEffect(() => {
@@ -93,21 +101,27 @@ function UserClassesSwiperWidget({ program }) {
             ? `${classe.courses.index}º`
             : null;
           return (
-            <Stack key={classe.id} className={styles.card} alignItems="center">
-              <Box className={styles.imageContainer}>
+            <Stack
+              key={classe.id}
+              className={styles.card}
+              alignItems="center"
+              onClick={() => goClassDashboard(classe)}
+            >
+              <Box
+                className={styles.imageContainer}
+                style={classe.image ? { backgroundImage: `url("${classe.image}")` } : {}}
+              >
                 <Box className={styles.image} />
                 {classe.color || classe.icon ? (
                   <Box
                     style={classe.color ? { backgroundColor: classe.color } : {}}
                     className={styles.colorIcon}
                   >
-                    <Box className={styles.icon}>
-                      <ImageLoader
-                        src="/public/assets/svgs/plugin-dashboard-black.svg"
-                        strokeCurrent
-                        fillCurrent
-                      />
-                    </Box>
+                    {classe.icon ? (
+                      <Box className={styles.icon}>
+                        <ImageLoader src={classe.icon} strokeCurrent fillCurrent />
+                      </Box>
+                    ) : null}
                   </Box>
                 ) : null}
               </Box>

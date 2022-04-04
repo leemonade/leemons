@@ -14,8 +14,6 @@ async function _addCustomPermissionToUserAgent(userAgentId, data, { transacting 
     )
   );
   if (hasPermissions.length > 1 || hasPermissions[0]) {
-    console.dir(data, { depth: null });
-
     throw new Error(`You have already been assigned this custom permit`);
   }
 

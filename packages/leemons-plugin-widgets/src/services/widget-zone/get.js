@@ -41,7 +41,13 @@ async function get(key, { userSession, transacting } = {}) {
     });
   }
 
-  return { ...zone, widgetItems };
+  return {
+    ...zone,
+    widgetItems: _.map(widgetItems, (widgetItem) => ({
+      ...widgetItem,
+      properties: JSON.parse(widgetItem.properties),
+    })),
+  };
 }
 
 module.exports = { get };

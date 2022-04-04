@@ -23,8 +23,8 @@ async function userAgentHasCustomPermission(
     role_$null: true,
     userAgent_$in: _.isArray(userAgentId) ? userAgentId : [userAgentId],
     permissionName,
-    actionName_$in: actionNames,
   };
+  if (actionNames) query.actionName_$in = actionNames;
   if (target) query.target = target;
   if (center) query.center = center;
   const response = await table.userAgentPermission.count(query, { transacting });

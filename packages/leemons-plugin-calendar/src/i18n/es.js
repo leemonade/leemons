@@ -138,4 +138,10 @@ module.exports = {
     kanban: 'Kanban destacado',
     description: 'Tareas destacadas que finalizan en menos de 5 días',
   },
+  tabKanban: {
+    label: 'Kanban',
+  },
+  tabCalendar: {
+    label: 'Calendario',
+  },
 };

@@ -30,7 +30,7 @@ const Styles = createStyles((theme) => ({
   },
 }));
 
-function UserProgramCalendar({ program, session }) {
+function UserProgramCalendar({ program, classe, session }) {
   const { classes: styles } = Styles();
   const [store, render] = useStore({
     loading: true,
@@ -84,12 +84,18 @@ function UserProgramCalendar({ program, session }) {
   async function load() {
     store.centers = getCentersWithToken();
     if (store.centers) {
-      const [centerData, { classes }] = await Promise.all([
-        getCalendarsToFrontendRequest(store.centers[0].token),
-        listSessionClassesRequest({ program: program.id }),
-      ]);
+      const promises = [getCalendarsToFrontendRequest(store.centers[0].token)];
+      if (program) promises.push(listSessionClassesRequest({ program: program.id }));
+      const [centerData, programData] = await Promise.all(promises);
       store.centerData = centerData;
-      store.classesById = keyBy(classes, 'id');
+      if (program) {
+        store.classesById = keyBy(programData.classes, 'id');
+      }
+      if (classe) {
+        store.classesById = {
+          [classe.id]: classe,
+        };
+      }
 
       if (store.centerData) {
         store.calendarFilters = map(
@@ -148,8 +154,8 @@ function UserProgramCalendar({ program, session }) {
   }
 
   React.useEffect(() => {
-    if (program) load();
-  }, [program]);
+    if (program || classe) load();
+  }, [program, classe]);
 
   if (store.loading) return null;
 
@@ -162,11 +168,13 @@ function UserProgramCalendar({ program, session }) {
         <Text size="lg" color="primary" className={styles.title}>
           {t('calendar')}
         </Text>
-        <Select
-          data={[{ label: t('allSubjects'), value: '*' }, ...store.calendarFilters]}
-          value={store.selectedCalendar || '*'}
-          onChange={onChangeSelectedCalendar}
-        />
+        {program ? (
+          <Select
+            data={[{ label: t('allSubjects'), value: '*' }, ...store.calendarFilters]}
+            value={store.selectedCalendar || '*'}
+            onChange={onChangeSelectedCalendar}
+          />
+        ) : null}
       </Stack>
       <Box className={styles.calendarContainer}>
         <EventModal
@@ -203,7 +211,8 @@ function UserProgramCalendar({ program, session }) {
 }
 
 UserProgramCalendar.propTypes = {
-  program: PropTypes.object.isRequired,
+  program: PropTypes.object,
+  classe: PropTypes.object,
   session: PropTypes.object,
 };
 

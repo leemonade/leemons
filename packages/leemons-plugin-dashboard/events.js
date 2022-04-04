@@ -39,6 +39,18 @@ async function events(isInstalled) {
         )
       );
       leemons.events.emit('init-widget-zones');
+      await Promise.all(
+        _.map(constants.widgets.items, (config) =>
+          leemons
+            .getPlugin('widgets')
+            .services.widgets.addItemToZone(config.zoneKey, config.key, config.url, {
+              name: config.name,
+              description: config.description,
+              properties: config.properties,
+            })
+        )
+      );
+      leemons.events.emit('init-widget-items');
     });
   }
 }

@@ -278,6 +278,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/class/dashboard/:id',
+    method: 'GET',
+    handler: 'class.classDetailForDashboard',
+    authenticated: true,
+  },
+  {
     path: '/class',
     method: 'PUT',
     handler: 'class.putClass',
