@@ -152,7 +152,7 @@ function ContentData({
                           />
                         </InputWrapper>
                         <Objectives
-                          name={`curriculum.${subject.subject}.objectives`}
+                          name={`curriculum.${subject.value}.objectives`}
                           required
                           label={labels.objectives || ''}
                           error={errors.objectives}
