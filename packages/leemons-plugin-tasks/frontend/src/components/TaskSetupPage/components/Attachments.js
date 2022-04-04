@@ -30,7 +30,15 @@ export default function Attachments() {
         <FilePicker
           accept={null}
           multipleUpload
-          onChange={(files) => onChange(files.map((file) => file.name))}
+          onChange={(files) => {
+            if (!files) {
+              onChange([]);
+              return;
+            }
+
+            const fls = Array.isArray(files) ? files : [files];
+            onChange(fls?.map((file) => file.name));
+          }}
           initialFiles={value?.map((file) => ({ name: file }))}
         />
         // <TableInput

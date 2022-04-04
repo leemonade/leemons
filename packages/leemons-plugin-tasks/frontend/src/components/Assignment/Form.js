@@ -23,6 +23,7 @@ export default function Form({ onSubmit: parentSubmit, task }) {
   const {
     handleSubmit,
     control,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {},
@@ -107,6 +108,7 @@ export default function Form({ onSubmit: parentSubmit, task }) {
                         <DatePicker
                           {...field}
                           withTime
+                          minDate={new Date()}
                           error={errors.startDate}
                           label={labels?.startDate}
                           placeholder={placeholders?.date}
@@ -118,15 +120,19 @@ export default function Form({ onSubmit: parentSubmit, task }) {
                       control={control}
                       name="deadline"
                       rules={{ required: true }}
-                      render={({ field }) => (
-                        <DatePicker
-                          {...field}
-                          withTime
-                          error={errors.deadline}
-                          label={labels?.deadline}
-                          placeholder={placeholders?.date}
-                        />
-                      )}
+                      render={({ field }) => {
+                        const startDate = watch('startDate');
+                        return (
+                          <DatePicker
+                            {...field}
+                            withTime
+                            error={errors.deadline}
+                            label={labels?.deadline}
+                            minDate={startDate}
+                            placeholder={placeholders?.date}
+                          />
+                        );
+                      }}
                     />
                   </ContextContainer>
                   <Box>
@@ -141,15 +147,19 @@ export default function Form({ onSubmit: parentSubmit, task }) {
                               name="visualizationDate"
                               shouldUnregister={true}
                               rules={{ required: true }}
-                              render={({ field }) => (
-                                <DatePicker
-                                  {...field}
-                                  withTime
-                                  error={errors.visualizationDate}
-                                  label={labels?.visualizationDate}
-                                  placeholder={placeholders?.date}
-                                />
-                              )}
+                              render={({ field }) => {
+                                const startDate = watch('startDate');
+                                return (
+                                  <DatePicker
+                                    {...field}
+                                    withTime
+                                    maxDate={startDate}
+                                    error={errors.visualizationDate}
+                                    label={labels?.visualizationDate}
+                                    placeholder={placeholders?.date}
+                                  />
+                                );
+                              }}
                             />
                           </ContextContainer>
                         )}
@@ -164,15 +174,19 @@ export default function Form({ onSubmit: parentSubmit, task }) {
                               name="closeDate"
                               shouldUnregister={true}
                               rules={{ required: true }}
-                              render={({ field }) => (
-                                <DatePicker
-                                  {...field}
-                                  withTime
-                                  error={errors.closeDate}
-                                  label={labels?.closeDate}
-                                  placeholder={placeholders?.date}
-                                />
-                              )}
+                              render={({ field }) => {
+                                const deadline = watch('deadline');
+                                return (
+                                  <DatePicker
+                                    {...field}
+                                    withTime
+                                    minDate={deadline}
+                                    error={errors.closeDate}
+                                    label={labels?.closeDate}
+                                    placeholder={placeholders?.date}
+                                  />
+                                );
+                              }}
                             />
                           </ContextContainer>
                         )}
