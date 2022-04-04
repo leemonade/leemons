@@ -10,15 +10,14 @@ import { BigCalendar } from '@bubbles-ui/calendars';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
 import { getCentersWithToken } from '@users/session';
 import * as _ from 'lodash';
-import { forEach, map } from 'lodash';
+import { forEach, keyBy, map } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
+import { listSessionClassesRequest } from '@academic-portfolio/request';
 import { getCalendarsToFrontendRequest } from '../../request';
-import transformEvent from '../../helpers/transformEvent';
 
 const Styles = createStyles((theme) => ({
   root: {
-    paddingTop: theme.spacing[11],
     width: '100%',
   },
   title: {
@@ -43,23 +42,30 @@ function UserProgramCalendar({ program, session }) {
 
   function getEvents() {
     const events = [];
+    const calendarIds = map(store.calendarFilters, 'value');
     forEach(store.centerData.events, (event) => {
       if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
         // eslint-disable-next-line consistent-return
+        /*
+        31/03/22 Juanjo dijo que no se mostraran los eventos tipo tarea
         forEach(event.data.classes, (calendar) => {
+
           if (
-            !store.selectedCalendar ||
-            store.selectedCalendar === '*' ||
-            calendar === store.selectedCalendar
+            (!store.selectedCalendar ||
+              store.selectedCalendar === '*' ||
+              calendar === store.selectedCalendar) &&
+            calendarIds.includes(calendar)
           ) {
             events.push(transformEvent(event, store.centerData.calendars));
             return false;
           }
         });
+         */
       } else if (
-        !store.selectedCalendar ||
-        store.selectedCalendar === '*' ||
-        event.calendar === store.selectedCalendar
+        (!store.selectedCalendar ||
+          store.selectedCalendar === '*' ||
+          event.calendar === store.selectedCalendar) &&
+        calendarIds.includes(event.calendar)
       ) {
         events.push(event);
       }
@@ -78,11 +84,23 @@ function UserProgramCalendar({ program, session }) {
   async function load() {
     store.centers = getCentersWithToken();
     if (store.centers) {
-      store.centerData = await getCalendarsToFrontendRequest(store.centers[0].token);
+      const [centerData, { classes }] = await Promise.all([
+        getCalendarsToFrontendRequest(store.centers[0].token),
+        listSessionClassesRequest({ program: program.id }),
+      ]);
+      store.centerData = centerData;
+      store.classesById = keyBy(classes, 'id');
 
       if (store.centerData) {
         store.calendarFilters = map(
-          _.filter(store.centerData.calendars, { isClass: true }),
+          _.filter(store.centerData.calendars, (calendar) => {
+            if (calendar.isClass) {
+              const keySplit = calendar.key.split('.');
+              const classId = keySplit[keySplit.length - 1];
+              return !!store.classesById[classId];
+            }
+            return false;
+          }),
           (calendar) => ({
             label: calendar.name,
             value: calendar.id,

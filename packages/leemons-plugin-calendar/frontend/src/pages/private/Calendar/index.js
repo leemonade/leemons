@@ -112,14 +112,9 @@ function Calendar({ session }) {
       const centersData = await Promise.all(
         map(ref.current.centers, (center) => getCalendarsForCenter(center))
       );
-      console.log(centersData);
+
       ref.current.calendarNamesTranslations = await getTranslationDataCalendars(centersData);
       ref.current.calendarSectionNamesTranslations = await getTranslationSections(centersData);
-
-      console.log(
-        ref.current.calendarNamesTranslations,
-        ref.current.calendarSectionNamesTranslations
-      );
 
       forEach(centersData, (data) => {
         forEach(data.calendars, (calendar) => {

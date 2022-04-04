@@ -112,7 +112,13 @@ export default function Dashboard({ session }) {
             {/* -- LEFT ZONE -- */}
             <ZoneWidgets zone="plugins.dashboard.program.left">
               {({ Component, key }) => (
-                <Box key={key}>
+                <Box
+                  key={key}
+                  sx={(theme) => ({
+                    paddingTop: theme.spacing[6],
+                    paddingBottom: theme.spacing[6],
+                  })}
+                >
                   <Component program={store.selectedProgram} session={session} />
                 </Box>
               )}
@@ -120,7 +126,7 @@ export default function Dashboard({ session }) {
             {/* -- RIGHT ZONE -- */}
             <Paper
               sx={(theme) => ({
-                position: 'absolute',
+                position: 'fixed',
                 right: 0,
                 top: 0,
                 bottom: 0,

@@ -13,4 +13,5 @@ module.exports = {
   existsItemInZone: items.exists,
   updateItemInZone: items.update,
   deleteItemInZone: items.remove,
+  updateOrderItemsInZone: items.updateOrders,
 };

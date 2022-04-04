@@ -137,6 +137,11 @@ module.exports = {
         key: `${permissionsPrefix}.user.program.calendar`,
         url: 'user-program-calendar/index',
       },
+      {
+        zoneKey: 'plugins.dashboard.program.left',
+        key: `${permissionsPrefix}.user.program.kanban`,
+        url: 'user-program-kanban/index',
+      },
     ],
   },
 };
