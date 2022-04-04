@@ -153,6 +153,7 @@ export default function Form({ onSubmit: parentSubmit, task }) {
                                   <DatePicker
                                     {...field}
                                     withTime
+                                    minDate={new Date()}
                                     maxDate={startDate}
                                     error={errors.visualizationDate}
                                     label={labels?.visualizationDate}

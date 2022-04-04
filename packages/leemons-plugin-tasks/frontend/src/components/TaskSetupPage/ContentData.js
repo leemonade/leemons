@@ -209,6 +209,7 @@ function ContentData({
             <SelfReflection
               labels={labels?.selfReflection}
               description={descriptions?.selfReflection}
+              showType
               name="selfReflection"
             />
             <SelfReflection

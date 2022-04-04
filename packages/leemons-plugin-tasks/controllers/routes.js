@@ -163,6 +163,12 @@ module.exports = [
   },
   {
     method: 'GET',
+    path: '/tasks/instances/search',
+    handler: 'assignments.search',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
     path: '/tasks/instances/:instance',
     handler: 'assignments.instanceGet',
     authenticated: true,

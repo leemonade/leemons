@@ -1,10 +1,20 @@
 import React from 'react';
-import { ContextContainer, Text, Button, PageContainer, Anchor } from '@bubbles-ui/components';
+import {
+  ContextContainer,
+  Text,
+  Button,
+  PageContainer,
+  Anchor,
+  UserDisplayItem,
+  Stack,
+} from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { useParams, useHistory } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
 import { EvaluationNotesSelect } from '@grades/components/EvaluationNotesSelect';
+import { getUserAgentsInfoRequest } from '@users/request';
+import { useApi } from '@common';
 import saveCorrectionRequest from '../../../request/instance/saveCorrection';
 import useTask from '../../../components/Student/TaskDetail/helpers/useTask';
 import useInstance from '../../../components/Student/TaskDetail/helpers/useInstance';
@@ -12,6 +22,13 @@ import useCorrection from '../../../components/Grade/hooks/useCorrection';
 import useProgram from '../../../components/Student/TaskDetail/helpers/useProgram';
 import { Grade } from '../../../components/Grade';
 import useDeliverable from '../../../components/Student/TaskDetail/helpers/useDelivery';
+
+function useUser(user) {
+  const users = React.useMemo(() => [user], user);
+  const [data] = useApi(getUserAgentsInfoRequest, users);
+
+  return data?.userAgents?.length ? data.userAgents[0]?.user : null;
+}
 
 export default function Correction() {
   const { control, handleSubmit, setValue, getValues } = useForm({
@@ -21,12 +38,17 @@ export default function Correction() {
     },
   });
   const { instance: instanceId, student } = useParams();
+
+  const instance = useInstance(instanceId, ['task']);
+  const task = useTask(instance?.task?.id, ['program', 'name']);
+
   const deliverable = useDeliverable(instanceId, student, 'submission');
+  const selfReflection = useDeliverable(instanceId, student, 'selfReflection');
   const history = useHistory();
+  const studentInfo = useUser(student);
 
   const correction = useCorrection(instanceId, student);
-  const instance = useInstance(instanceId, ['task']);
-  const task = useTask(instance?.task?.id, ['program']);
+
   const program = useProgram(task?.program);
 
   const onSubmit = async (values) => {
@@ -50,13 +72,24 @@ export default function Correction() {
 
   return (
     <>
-      <AdminPageHeader />
+      <AdminPageHeader
+        values={{
+          title: task?.name,
+        }}
+      />
       <PageContainer>
+        {studentInfo && (
+          <Stack alignItems="center">
+            <Text>Student: </Text>
+            <UserDisplayItem {...studentInfo} />
+          </Stack>
+        )}
+
         <ContextContainer>
           {/* TRANSLATE: Previous task title */}
-          <ContextContainer title="Previous task">
+          {/* <ContextContainer title="Previous task">
             <Text>Display the task results</Text>
-          </ContextContainer>
+          </ContextContainer> */}
           {/* TRANSLATE: Submission title */}
           <ContextContainer title="Submission">
             <Anchor href={deliverable?.value} target="_blank">
@@ -65,7 +98,7 @@ export default function Correction() {
           </ContextContainer>
           {/* TRANSLATE: Self Reflection title */}
           <ContextContainer title="Self Reflection">
-            <Text>Display the self reflection</Text>
+            <Text>{selfReflection}</Text>
           </ContextContainer>
           {/* TRANSLATE: punctuation */}
           <ContextContainer title="Punctuation">

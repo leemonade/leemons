@@ -19,6 +19,7 @@ const getStudentCalification = require('../src/services/assignment/student/getCa
 const updateInstance = require('../src/services/assignment/instance/update');
 const setDeliverable = require('../src/services/assignment/student/deliverable/set');
 const getDeliverable = require('../src/services/assignment/student/deliverable/get');
+const searchInstance = require('../src/services/assignment/instance/search');
 
 module.exports = {
   /**
@@ -142,6 +143,32 @@ module.exports = {
       ctx.body = {
         status: 200,
         ...deleted,
+      };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        message: e.message,
+      };
+    }
+  },
+  search: async (ctx) => {
+    try {
+      const { offset, size, ...query } = ctx.request.query;
+
+      const data = await searchInstance(
+        ctx.state.userSession.userAgents,
+        {
+          ...query,
+        },
+        parseInt(offset, 10) || 0,
+        parseInt(size, 10) || 10
+      );
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        data,
       };
     } catch (e) {
       ctx.status = 400;

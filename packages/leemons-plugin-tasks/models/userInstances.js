@@ -1,5 +1,8 @@
 module.exports = {
   modelName: 'userInstances',
+  options: {
+    useTimestamps: true,
+  },
   attributes: {
     instance: {
       type: 'uuid',

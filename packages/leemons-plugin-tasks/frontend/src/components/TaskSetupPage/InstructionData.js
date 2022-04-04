@@ -22,6 +22,7 @@ function InstructionData({
 }) {
   // ·······························································
   // FORM
+  const [loading, setLoading] = React.useState(null);
 
   const defaultValues = {
     forTeacher: '',
@@ -115,10 +116,25 @@ function InstructionData({
           </Box>
           <Box>
             <ContextContainer direction="row">
-              <Button variant="outline" onClick={() => emitEvent('publishTaskAndLibrary')}>
+              <Button
+                loading={loading === 'onlyPublish'}
+                variant="outline"
+                onClick={() => {
+                  setLoading('onlyPublish');
+                  emitEvent('publishTaskAndLibrary');
+                }}
+              >
                 {labels.buttonPublish}
               </Button>
-              <Button onClick={() => emitEvent('publishTaskAndAssign')}>{labels.buttonNext}</Button>
+              <Button
+                loading={loading === 'publishAndAssign'}
+                onClick={() => {
+                  setLoading('publishAndAssign');
+                  emitEvent('publishTaskAndAssign');
+                }}
+              >
+                {labels.buttonNext}
+              </Button>
             </ContextContainer>
           </Box>
         </Stack>

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
-import { useApi, unflatten } from '@common';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getCentersWithToken } from '@users/session';
 import {
   Table,
   ContextContainer,
@@ -14,24 +14,22 @@ import {
 } from '@bubbles-ui/components';
 import { ViewOnIcon, StudyDeskIcon } from '@bubbles-ui/icons/outline';
 import { prefixPN } from '../../helpers/prefixPN';
-import listTeacherTasks from '../../request/instance/listTeacherTasks';
 import Filters from './Filters';
+import listUserTasks from '../../request/instance/listUserTasks';
 
-function Actions({ id }) {
+function Actions({ id, profile }) {
   const history = useHistory();
   return (
     <ContextContainer alignItems="center" direction="row">
-      <StudyDeskIcon
-        as="button"
-        color="secondary"
-        style={{ cursor: 'pointer' }}
-        onClick={() => history.push(`/private/tasks/student-detail/${id}`)}
-      />
       <ViewOnIcon
         as="button"
         color="secondary"
         style={{ cursor: 'pointer' }}
-        onClick={() => history.push(`/private/tasks/details/${id}`)}
+        onClick={() =>
+          profile === 'teacher'
+            ? history.push(`/private/tasks/details/${id}`)
+            : history.push(`/private/tasks/student-detail/${id}`)
+        }
       />
     </ContextContainer>
   );
@@ -39,10 +37,11 @@ function Actions({ id }) {
 
 Actions.propTypes = {
   id: PropTypes.string.isRequired,
+  profile: PropTypes.string.isRequired,
 };
 
-async function getTasks(userAgent, filters, setTasks) {
-  const response = await listTeacherTasks(userAgent, { ...filters, details: true });
+async function getTasks(filters, setTasks, setProfile) {
+  const response = await listUserTasks({ ...filters, details: true });
 
   const assignedTasks = response?.data?.items?.map((t) => {
     const task = t;
@@ -58,14 +57,17 @@ async function getTasks(userAgent, filters, setTasks) {
       t.students.count ? Math.round((t.students.completed / t.students.count) * 100) : 0
     }%`;
 
+    task.timeUntilDeadline = dayjs(task.deadline).diff(dayjs(), 'days');
+
     task.deadline = t.alwaysOpen ? '-' : new Date(t.deadline).toLocaleString();
 
-    task.actions = <Actions id={task.id} />;
+    task.actions = <Actions id={task.id} profile={response?.data?.profile} />;
 
     return task;
   });
 
-  setTasks((t) => [...t, ...assignedTasks]);
+  setProfile(response?.data?.profile);
+  setTasks(assignedTasks);
 
   return response;
 }
@@ -73,11 +75,11 @@ async function getTasks(userAgent, filters, setTasks) {
 export default function TeacherAssignedTasksLists({ showClosed }) {
   const [, translations] = useTranslateLoader(prefixPN('teacher_assignments'));
   const [tableLabels, setTableLabels] = useState({});
-  const [centers] = useApi(getCentersWithToken);
   const [name, setName] = useState('');
   const [debouncedName] = useDebouncedValue(name, 500);
   const [filters, setFilters] = useState({});
   const [tasks, setTasks] = useState([]);
+  const [profile, setProfile] = useState(null);
   const history = useHistory();
 
   useEffect(() => {
@@ -101,55 +103,91 @@ export default function TeacherAssignedTasksLists({ showClosed }) {
     }
   }, [translations]);
 
-  const columns = useMemo(
-    () => [
-      {
+  const columns = useMemo(() => {
+    const cols = {
+      group: {
         Header: tableLabels?.group,
         accessor: 'group',
       },
-      {
+      task: {
         Header: tableLabels?.task,
         accessor: 'task.name',
       },
-      {
+      startDate: {
+        Header: tableLabels?.startDate,
+        accessor: 'task.startDate',
+      },
+      deadline: {
         Header: tableLabels?.deadline,
         accessor: 'deadline',
       },
-      {
+      timeReference: {
+        Header: tableLabels?.timeReference,
+        accessor: 'task.timeUntilDeadline',
+      },
+      studentCount: {
         Header: tableLabels?.students,
         accessor: 'students.count',
       },
-      {
+      status: {
         Header: tableLabels?.status,
         accessor: 'status',
       },
-      {
+      opened: {
         Header: tableLabels?.open,
         accessor: 'students.open',
       },
-      {
+      ongoing: {
         Header: tableLabels?.ongoing,
         accessor: 'students.ongoing',
       },
-      {
+      completed: {
         Header: tableLabels?.completed,
         accessor: 'students.completed',
       },
-      {
+      actions: {
         Header: tableLabels?.actions,
         accessor: 'actions',
       },
-    ],
-    [tableLabels]
-  );
+    };
+
+    const teacherColumns = [
+      cols.group,
+      cols.task,
+      cols.deadline,
+      cols.studentCount,
+      cols.status,
+      cols.opened,
+      cols.ongoing,
+      cols.completed,
+      cols.actions,
+    ];
+
+    const studentColumns = [
+      cols.task,
+      cols.startDate, // TODO
+      cols.deadline,
+      cols.status,
+      cols.timeReference, // TODO
+      cols.actions,
+    ];
+
+    if (profile?.role === 'teacher') {
+      return teacherColumns;
+    }
+
+    if (profile?.role === 'student') {
+      return studentColumns;
+    }
+
+    return teacherColumns;
+  }, [tableLabels, profile]);
+
+  console.log(columns, profile);
 
   useEffect(() => {
-    if (centers.length) {
-      centers.forEach((center) => {
-        getTasks(center.userAgentId, { showClosed, hideOpened: showClosed, ...filters }, setTasks);
-      });
-    }
-  }, [centers, filters]);
+    getTasks({ showClosed, hideOpened: showClosed, ...filters }, setTasks, setProfile);
+  }, [filters]);
 
   return (
     <>

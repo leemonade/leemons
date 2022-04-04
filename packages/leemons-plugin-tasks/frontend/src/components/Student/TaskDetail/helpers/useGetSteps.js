@@ -56,7 +56,7 @@ export default function useGetSteps(instance, taskId, student) {
       // ES: Solo debe mostrarse cuando la tarea tenga una reflexión personal
       selfReflection: task?.selfReflection && {
         label: 'Self Reflection',
-        content: <SelfReflectionStep id={taskId} />,
+        content: <SelfReflectionStep id={taskId} instance={instance} student={student} />,
       },
       // EN: Only must be shown when the task has a feedback
       // ES: Solo debe mostrarse cuando la tarea tenga un feedback

@@ -162,7 +162,7 @@ export default function DetailsPage() {
   const options = useMemo(
     () => ({
       id: instance,
-      columns: JSON.stringify(['deadline', 'closeDate']),
+      columns: JSON.stringify(['deadline', 'closeDate', 'name']),
     }),
     [instance]
   );

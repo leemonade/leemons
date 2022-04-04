@@ -311,7 +311,7 @@ module.exports = {
     studentDescription: 'Will be assigned the tasks and will be responsible for executing them',
     studentRequired: 'Field required',
   },
-  ongoing_pae: {
+  ongoing_page: {
     page_title: 'Ongoing tasks',
   },
   history_page: {
