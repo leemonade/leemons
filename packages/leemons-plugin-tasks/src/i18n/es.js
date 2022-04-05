@@ -226,4 +226,7 @@ module.exports = {
       },
     },
   },
+  tabStudentTasks: {
+    label: 'Tareas y actividades',
+  },
 };

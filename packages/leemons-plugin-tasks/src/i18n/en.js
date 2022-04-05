@@ -332,4 +332,7 @@ module.exports = {
       },
     },
   },
+  tabStudentTasks: {
+    label: 'Task & Activities',
+  },
 };
