@@ -17,7 +17,13 @@ const INSTANCE_COLUMNS = [
   'closeDate',
   'showCurriculum',
 ];
-const DEFAULT_COLUMNS = [...TASK_COLUMNS_DEFAULT, 'status', 'studentCount', ...STATS_COLUMNS];
+const DEFAULT_COLUMNS = [
+  ...TASK_COLUMNS_DEFAULT,
+  'startDate',
+  'status',
+  'studentCount',
+  ...STATS_COLUMNS,
+];
 
 async function getInstanceTask(instance, { columns = DEFAULT_COLUMNS, transacting } = {}) {
   // EN: Parse the desired columns to only include the ones we want.

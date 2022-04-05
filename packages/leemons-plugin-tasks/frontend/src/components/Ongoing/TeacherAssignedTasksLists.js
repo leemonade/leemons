@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
-import { unflatten } from '@common';
+import { unflatten, LocaleDate } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import {
   Table,
@@ -57,9 +57,18 @@ async function getTasks(filters, setTasks, setProfile) {
       t.students.count ? Math.round((t.students.completed / t.students.count) * 100) : 0
     }%`;
 
-    task.timeUntilDeadline = dayjs(task.deadline).diff(dayjs(), 'days');
+    task.startDate = t.startDate ? (
+      <LocaleDate date={t.startDate} options={{ dateStyle: 'short', timeStyle: 'short' }} />
+    ) : (
+      '-'
+    );
+    task.timeUntilDeadline = `${dayjs(t.deadline).diff(dayjs(), 'days')} days left`;
 
-    task.deadline = t.alwaysOpen ? '-' : new Date(t.deadline).toLocaleString();
+    task.deadline = t.alwaysOpen ? (
+      '-'
+    ) : (
+      <LocaleDate date={t.deadline} options={{ dateStyle: 'short', timeStyle: 'short' }} />
+    );
 
     task.actions = <Actions id={task.id} profile={response?.data?.profile} />;
 
@@ -114,16 +123,16 @@ export default function TeacherAssignedTasksLists({ showClosed }) {
         accessor: 'task.name',
       },
       startDate: {
-        Header: tableLabels?.startDate,
-        accessor: 'task.startDate',
+        Header: tableLabels?.startDate || 'Start Date',
+        accessor: 'startDate',
       },
       deadline: {
         Header: tableLabels?.deadline,
         accessor: 'deadline',
       },
       timeReference: {
-        Header: tableLabels?.timeReference,
-        accessor: 'task.timeUntilDeadline',
+        Header: tableLabels?.timeReference || 'Time reference',
+        accessor: 'timeUntilDeadline',
       },
       studentCount: {
         Header: tableLabels?.students,
@@ -172,18 +181,16 @@ export default function TeacherAssignedTasksLists({ showClosed }) {
       cols.actions,
     ];
 
-    if (profile?.role === 'teacher') {
+    if (profile === 'teacher') {
       return teacherColumns;
     }
 
-    if (profile?.role === 'student') {
+    if (profile === 'student') {
       return studentColumns;
     }
 
-    return teacherColumns;
+    return [];
   }, [tableLabels, profile]);
-
-  console.log(columns, profile);
 
   useEffect(() => {
     getTasks({ showClosed, hideOpened: showClosed, ...filters }, setTasks, setProfile);
