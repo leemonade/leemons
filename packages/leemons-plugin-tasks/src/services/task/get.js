@@ -103,7 +103,7 @@ async function getMany(taskIds, { columns, transacting } = {}) {
         const t = await getTags(id, { transacting });
 
         return {
-          ...accum,
+          ...(await accum),
           [id]: t.tags,
         };
       }, {});
