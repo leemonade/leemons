@@ -22,6 +22,7 @@ const widgets = {
     { key: 'plugins.dashboard.program.left' },
     { key: 'plugins.dashboard.program.right' },
     { key: 'plugins.dashboard.class.tabs' },
+    { key: 'plugins.dashboard.class.right-tabs' },
     { key: 'plugins.dashboard.class.control-panel' },
   ],
   items: [

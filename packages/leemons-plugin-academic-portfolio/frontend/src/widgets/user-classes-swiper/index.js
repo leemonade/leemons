@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, createStyles, ImageLoader, Stack, Text } from '@bubbles-ui/components';
 import { useStore } from '@common';
-import prefixPN from '@families/helpers/prefixPN';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { isArray } from 'lodash';
 import { useHistory } from 'react-router-dom';

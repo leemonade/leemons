@@ -15,6 +15,12 @@ async function initWidgets() {
       'plugins.calendar.user.program.calendar',
       'plugins.calendar.user.program.kanban',
     ],
+    'plugins.dashboard.class.tabs': [
+      'plugins.dashboard.class.tab.control-panel',
+      'plugins.academic-portfolio.class.tab.detail',
+      'plugins.calendar.class.tab.kanban',
+      'plugins.calendar.class.tab.calendar',
+    ],
   };
 
   const zones = await Promise.all(

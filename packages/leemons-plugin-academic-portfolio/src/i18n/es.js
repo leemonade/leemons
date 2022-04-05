@@ -447,4 +447,15 @@ module.exports = {
   tabDetail: {
     label: 'Clase',
   },
+  classDetailWidget: {
+    emailHeader: 'Email',
+    nameHeader: 'Nombre',
+    surnameHeader: 'Apellido',
+    birthdayHeader: 'Fecha nacimiento',
+    teachers: 'Profesores',
+    students: 'Estudiantes',
+  },
+  classStudents: {
+    label: 'Estudiantes',
+  },
 };

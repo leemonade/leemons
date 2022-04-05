@@ -9,6 +9,7 @@ import {
   Box,
   createStyles,
   ImageLoader,
+  RadioGroup,
   Select,
   Stack,
   TabPanel,
@@ -32,6 +33,10 @@ const Styles = createStyles((theme) => ({
     right: 0,
     top: 0,
     backgroundColor: theme.colors.uiBackground02,
+    padding: theme.spacing[4],
+  },
+  rightSidewidgetsContainer: {
+    paddingTop: theme.spacing[4],
   },
   header: {
     height: '152px',
@@ -113,9 +118,23 @@ export default function ClassDashboard({ session }) {
   }
 
   async function onGetZone(zone) {
+    console.log(zone);
     const { items } = await getLocalizations({ keys: map(zone.widgetItems, 'properties.label') });
     store.widgetLabels = items;
     render();
+  }
+
+  async function onGetRightZone(zone) {
+    if (zone.widgetItems && zone.widgetItems.length) {
+      const { items } = await getLocalizations({ keys: map(zone.widgetItems, 'properties.label') });
+      store.selectedRightTab = zone.widgetItems[0].id;
+      store.rightWidgetSelect = map(zone.widgetItems, (item) => ({
+        value: item.id,
+        label: items[item.properties.label],
+        icon: <></>,
+      }));
+      render();
+    }
   }
 
   React.useEffect(() => {
@@ -161,7 +180,30 @@ export default function ClassDashboard({ session }) {
           )}
         </ZoneWidgets>
       </Box>
-      <Box className={styles.rightSide}>b</Box>
+      <Box className={styles.rightSide}>
+        {store.rightWidgetSelect ? (
+          <RadioGroup
+            variant="icon"
+            data={store.rightWidgetSelect || []}
+            fullWidth
+            onChange={(e) => {
+              store.selectedRightTab = e;
+              render();
+            }}
+            value={store.selectedRightTab}
+          />
+        ) : null}
+
+        <Box className={styles.rightSidewidgetsContainer}>
+          <ZoneWidgets zone="plugins.dashboard.class.right-tabs" onGetZone={onGetRightZone}>
+            {({ Component, key, properties }) =>
+              store.selectedRightTab === key ? (
+                <Component {...properties} key={key} classe={store.class} session={session} />
+              ) : null
+            }
+          </ZoneWidgets>
+        </Box>
+      </Box>
     </>
   );
 }
