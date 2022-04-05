@@ -4,8 +4,17 @@ const removeVersion = require('./versions/remove');
 const removeAttachments = require('../attachments/remove');
 const parseId = require('./helpers/parseId');
 const emit = require('../events/emit');
+const deleteSubjects = require('./subjects/delete');
+const deleteTags = require('../tags/remove');
+const deleteObjectives = require('./objectives/remove');
+const deletecontents = require('./contents/remove');
+const deleteAssessmentCriteria = require('./assessmentCriteria/remove');
+const deleteAttachments = require('../attachments/remove');
+const getVersion = require('./versions/get');
+const getVersions = require('./versions/getVersions');
+const removeInstances = require('../assignment/instance/remove');
 
-module.exports = async function remove(taskID, { transacting: t } = {}) {
+async function remove(taskID, { transacting: t } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       try {
@@ -29,6 +38,22 @@ module.exports = async function remove(taskID, { transacting: t } = {}) {
         // ES: Eliminar el versionado de la tarea.
         await removeVersion(fullId, { transacting });
 
+        // EN: Remove the subjects
+        // ES: Eliminar las asignaturas
+        await deleteSubjects(fullId, undefined, { transacting });
+
+        // EN: Remove tags
+        // ES: Eliminar etiquetas
+        await deleteTags(fullId, undefined, { transacting });
+
+        // EN: Remove attachments
+        // ES: Eliminar adjuntos
+        await deleteAttachments(fullId, undefined, { transacting });
+
+        // EN: Remove the assigned instances
+        // ES: Eliminar las instancias asignadas
+        await removeInstances(fullId, undefined, { transacting });
+
         // EN: Emit the event.
         // ES: Emitir el evento.
         emit(['task.remove', `task.${id}.remove`], { id });
@@ -36,6 +61,44 @@ module.exports = async function remove(taskID, { transacting: t } = {}) {
         return {
           soft: task.soft,
           versionsDeleted: task.count,
+        };
+      } catch (e) {
+        throw new Error(`Error removing task: ${e.message}`);
+      }
+    },
+    tasks,
+    t
+  );
+}
+
+module.exports = async function removeAllTasks(taskId, { transacting: t } = {}) {
+  return global.utils.withTransaction(
+    async (transacting) => {
+      try {
+        const { fullId, id } = await parseId(taskId, null, { transacting });
+
+        // EN: Check if the task version is published or draft.
+        // ES: Comprobar si la versión de la tarea está publicada o borrador.
+        const task = await getVersion(fullId, { transacting });
+
+        const status = task?.status;
+
+        if (!status) {
+          return {
+            soft: false,
+            versionsDeleted: 0,
+          };
+        }
+
+        const versions = await getVersions(id, { status, transacting });
+
+        const result = await Promise.all(
+          versions.map((version) => remove(version.id, { transacting }))
+        );
+
+        return {
+          soft: false,
+          versionsDeleted: result.length,
         };
       } catch (e) {
         throw new Error(`Error removing task: ${e.message}`);

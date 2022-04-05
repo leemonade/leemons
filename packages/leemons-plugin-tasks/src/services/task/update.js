@@ -2,9 +2,16 @@ const _ = require('lodash');
 const emit = require('../events/emit');
 const { tasks, tasksVersioning } = require('../table');
 const parseId = require('./helpers/parseId');
-const getTask = require('./get');
+const { get: getTask } = require('./get');
 const getVersion = require('./versions/get');
 const upgradeTaskVersion = require('./versions/upgrade');
+const deleteSubjects = require('./subjects/delete');
+const addSubjects = require('./subjects/add');
+const setTags = require('../tags/set');
+const setObjectives = require('./objectives/set');
+const setContent = require('./contents/set');
+const setAssessmentCriteria = require('./assessmentCriteria/set');
+const setAttachments = require('../attachments/set');
 
 module.exports = async function update(
   taskId,
@@ -20,12 +27,19 @@ module.exports = async function update(
     statement,
     development,
     submissions,
+    preTask,
+    preTaskOptions,
     selfReflection,
     feedback,
     instructionsForTeacher,
     instructionsForStudent,
     state,
     published,
+    subjects,
+    center,
+    program,
+    tags,
+    attachments,
   },
   { transacting: t } = {}
 ) {
@@ -42,13 +56,17 @@ module.exports = async function update(
           recommendedDuration,
           statement,
           development,
-          submissions,
-          selfReflection,
-          feedback,
+          submissions: submissions && JSON.stringify(submissions),
+          preTask,
+          preTaskOptions: preTaskOptions && JSON.stringify(preTaskOptions),
+          selfReflection: selfReflection && JSON.stringify(selfReflection),
+          feedback: feedback && JSON.stringify(feedback),
           instructionsForTeacher,
           instructionsForStudent,
           state,
           published,
+          center,
+          program,
         };
 
         // EN: Get the id from complete id@version
@@ -113,11 +131,35 @@ module.exports = async function update(
           }
         );
 
+        if (subjects) {
+          // EN: Remove the old subjects
+          // ES: Eliminar las asignaturas antiguas
+          await deleteSubjects(fullId, undefined, { transacting });
+
+          // EN: Register the new subjects
+          // ES: Registrar las nuevas asignaturas
+          if (subjects.length) {
+            await addSubjects(fullId, subjects, { transacting });
+          }
+        }
+
+        if (tags) {
+          // EN: Update the tags
+          // ES: Actualizar las etiquetas
+          await setTags(fullId, tags, { transacting });
+        }
+
+        if (attachments) {
+          // EN: Update the attachments
+          // ES: Actualizar los adjuntos
+          await setAttachments(fullId, attachments, { transacting });
+        }
+
         // EN: Emit the event.
         // ES: Emitir el evento.
         emit(['task.updated', `task.${id}.updated`], { id, version, changes: task });
 
-        return { ...taskToUpdate, ...newTask, id, fullId, version };
+        return { ...taskToUpdate, ...newTask, subjects, id, fullId, version };
       } catch (error) {
         throw new Error(`Error updating task: ${error.message}`);
       }

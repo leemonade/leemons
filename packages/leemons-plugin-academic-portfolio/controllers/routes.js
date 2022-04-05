@@ -252,6 +252,12 @@ module.exports = [
     handler: 'subject.listSubject',
     authenticated: true,
   },
+  {
+    path: '/subject/:id',
+    method: 'GET',
+    handler: 'subject.subjectByIds',
+    authenticated: true,
+  },
   // Class
   {
     path: '/class',

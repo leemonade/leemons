@@ -35,6 +35,8 @@ import {
   createClassInstance,
   haveClasses,
   listClasses,
+  listStudentClasses,
+  listTeacherClasses,
   listSessionClasses,
   removeClass,
   removeStudentFromClass,
@@ -69,6 +71,8 @@ export const listSessionClassesRequest = listSessionClasses;
 export const createClassInstanceRequest = createClassInstance;
 export const addStudentsToClassRequest = addStudentsToClass;
 export const addTeachersToClassRequest = addTeachersToClass;
+export const listStudentClassesRequest = listStudentClasses;
+export const listTeacherClassesRequest = listTeacherClasses;
 export const classDetailForDashboardRequest = classDetailForDashboard;
 export const removeStudentFromClassRequest = removeStudentFromClass;
 

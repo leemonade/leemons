@@ -1,7 +1,13 @@
 const emit = require('../events/emit');
-const { tasks, tasksVersioning } = require('../table');
+const { tasks } = require('../table');
 const parseId = require('./helpers/parseId');
+const addSubjects = require('./subjects/add');
 const versioningCreate = require('./versions/create');
+const addTags = require('../tags/add');
+const addObjectives = require('./objectives/add');
+const addAssessmentCriteria = require('./assessmentCriteria/add');
+const addContent = require('./contents/add');
+const addAttachments = require('../attachments/add');
 
 module.exports = async function create(
   {
@@ -16,11 +22,18 @@ module.exports = async function create(
     statement,
     development,
     submissions,
+    preTask,
+    preTaskOptions,
     selfReflection,
     feedback,
     instructionsForTeacher,
     instructionsForStudent,
     state,
+    subjects,
+    center,
+    program,
+    tags,
+    attachments,
   },
   { transacting: t } = {}
 ) {
@@ -37,13 +50,17 @@ module.exports = async function create(
           recommendedDuration,
           statement,
           development,
-          submissions,
-          selfReflection,
-          feedback,
+          submissions: submissions && JSON.stringify(submissions),
+          preTask,
+          preTaskOptions: preTaskOptions && JSON.stringify(preTaskOptions),
+          selfReflection: selfReflection && JSON.stringify(selfReflection),
+          feedback: feedback && JSON.stringify(feedback),
           instructionsForTeacher,
           instructionsForStudent,
           state,
           published: false,
+          center,
+          program,
         };
 
         // EN: Register task versioning
@@ -64,6 +81,18 @@ module.exports = async function create(
         // EN: Create task instance
         // ES: Crear instancia de tarea
         task = await tasks.create(task, { transacting });
+
+        // EN: Create task subjects
+        // ES: Crear asignaturas de tarea
+        await addSubjects(task.id, subjects, { transacting });
+
+        // EN: Create the task tags
+        // ES: Crear etiquetas de tarea
+        await addTags(task.id, tags, { transacting });
+
+        // EN: Add attachments
+        // ES: Añadir adjuntos
+        await addAttachments(task.id, attachments, { transacting });
 
         // EN: Emit the event.
         // ES: Emitir el evento.

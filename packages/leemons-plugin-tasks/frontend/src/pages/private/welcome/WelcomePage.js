@@ -59,6 +59,17 @@ export default function WelcomePage() {
     updateSettings(newSettings);
   };
 
+  const handleOnSelectProfiles = async () => {
+    try {
+      // EN: Enable the menu item
+      // ES: Habilitar el item del menú
+      await enableMenuItemRequest('profiles');
+      await hooks.fireEvent('menu-build:user:updateItem', 'profiles');
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+  };
+
   const handleOnCreateTask = async () => {
     try {
       // Let's enable Library menu item
@@ -103,7 +114,15 @@ export default function WelcomePage() {
         <PageContainer>
           <ContextContainer padded="vertical">
             <Grid>
-              <Col span={4}>
+              <Col span={3}>
+                <WelcomeStepCard
+                  t={t}
+                  step="step_profiles"
+                  to="/private/tasks/profiles"
+                  onClick={handleOnSelectProfiles}
+                />
+              </Col>
+              <Col span={3}>
                 <WelcomeStepCard
                   t={t}
                   step="step_library"
@@ -111,10 +130,10 @@ export default function WelcomePage() {
                   onClick={handleOnCreateTask}
                 />
               </Col>
-              <Col span={4}>
+              <Col span={3}>
                 <WelcomeStepCard t={t} step="step_ongoing" to="/private/tasks/ongoing" disabled />
               </Col>
-              <Col span={4}>
+              <Col span={3}>
                 <WelcomeStepCard t={t} step="step_history" to="/private/tasks/history" disabled />
               </Col>
             </Grid>

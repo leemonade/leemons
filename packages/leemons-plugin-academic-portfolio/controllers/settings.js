@@ -16,7 +16,6 @@ module.exports = {
   },
   isProfilesConfig: async (ctx) => {
     const isConfig = await settingsService.isProfilesConfig();
-    console.log(isConfig);
     ctx.status = 200;
     ctx.body = { status: 200, isConfig };
   },

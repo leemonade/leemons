@@ -1,12 +1,13 @@
 const { teacherInstances } = require('../../table');
 
 module.exports = async function assignTeacher(instance, teacher, { transacting } = {}) {
+  const teachers = Array.isArray(teacher) ? teacher : [teacher];
   try {
-    await teacherInstances.create(
-      {
+    await teacherInstances.createMany(
+      teachers.map((t) => ({
         instance,
-        teacher,
-      },
+        teacher: t,
+      })),
       { transacting }
     );
   } catch (e) {

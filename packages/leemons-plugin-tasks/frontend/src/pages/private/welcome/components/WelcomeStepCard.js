@@ -10,7 +10,13 @@ function WelcomeStepCard({ t, step, disabled, to, onClick }) {
         <ImageLoader src="" withPlaceholder height={100} noFlex />
         <ContextContainer title={t(`${step}.title`)} description={t(`${step}.description`)}>
           <Box noFlex>
-            <Button as={Link} to={to} fullWidth onClick={onClick} disabled={disabled}>
+            <Button
+              as={disabled ? undefined : Link}
+              to={disabled ? undefined : to}
+              fullWidth
+              onClick={disabled ? () => {} : onClick}
+              disabled={disabled}
+            >
               {t(`${step}.btn`)}
             </Button>
           </Box>

@@ -1,8 +1,11 @@
-async function listSubjects({ page, size, program }) {
-  return leemons.api(`academic-portfolio/subject?page=${page}&size=${size}&program=${program}`, {
-    allAgents: true,
-    method: 'GET',
-  });
+async function listSubjects({ page, size, program, course }) {
+  return leemons.api(
+    `academic-portfolio/subject?page=${page}&size=${size}&program=${program}&course=${course}`,
+    {
+      allAgents: true,
+      method: 'GET',
+    }
+  );
 }
 
 async function createSubject(body) {
@@ -43,6 +46,13 @@ async function listSubjectCreditsForProgram(program) {
   });
 }
 
+async function getSubjectDetails(subject) {
+  return leemons.api(`academic-portfolio/subject/${subject}`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
 export {
   listSubjects,
   createSubject,
@@ -50,4 +60,5 @@ export {
   updateSubjectCredits,
   getSubjectCredits,
   listSubjectCreditsForProgram,
+  getSubjectDetails,
 };

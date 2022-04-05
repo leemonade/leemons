@@ -128,7 +128,7 @@ module.exports = {
           haveKnowledge: 'El programa tiene áreas de conocimiento',
           maxKnowledgeAbbreviation: 'Longitud máxima de la abreviatura de las áreas:',
           maxKnowledgeAbbreviationIsOnlyNumbers: 'Sólo números',
-          subjectsIDConfig: 'Configuración del ID de los sujetos',
+          subjectsIDConfig: 'Configuración del ID de las asignaturas',
           subjectsFirstDigit: 'Primer dígito',
           subjectsDigits: 'Dígitos',
           buttonNext: 'Guardar programa',
@@ -161,7 +161,7 @@ module.exports = {
     },
   },
   subject_page: {
-    page_title: 'Configuración de temas',
+    page_title: 'Configuración de Asignaturas',
     page_description:
       'Configura tus áreas de conocimiento/temas y tipo (troncales, optativas...), después puedes subir tu base de datos de asignaturas o añadirlas manualmente. Después de esto, usted está listo para crear su esquema de portafolio de árbol.',
     centerLabel: 'Centro',
@@ -254,7 +254,7 @@ module.exports = {
     },
   },
   profiles_page: {
-    page_title: 'Perfiles de la cartera académica',
+    page_title: 'Portfolio Académico - Configuración de perfiles',
     page_description:
       'En primer lugar, debemos vincular los perfiles del sistema con los perfiles personalizados que has creado en la plataforma. (Por favor, lee atentamente las características de cada perfil. Una vez vinculados los perfiles, no se puede deshacer)',
     save: 'Guardar',

@@ -1,5 +1,8 @@
 module.exports = {
   modelName: 'tasksVersioning',
+  options: {
+    useTimestamps: true,
+  },
   attributes: {
     name: {
       type: 'string',
