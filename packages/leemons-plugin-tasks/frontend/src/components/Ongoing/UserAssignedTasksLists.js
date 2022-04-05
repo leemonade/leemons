@@ -81,7 +81,7 @@ async function getTasks(filters, setTasks, setProfile) {
   return response;
 }
 
-export default function TeacherAssignedTasksLists({ showClosed }) {
+export default function UserAssignedTasksList({ showClosed }) {
   const [, translations] = useTranslateLoader(prefixPN('teacher_assignments'));
   const [tableLabels, setTableLabels] = useState({});
   const [name, setName] = useState('');
@@ -219,6 +219,6 @@ export default function TeacherAssignedTasksLists({ showClosed }) {
   );
 }
 
-TeacherAssignedTasksLists.propTypes = {
+UserAssignedTasksList.propTypes = {
   showClosed: PropTypes.bool,
 };

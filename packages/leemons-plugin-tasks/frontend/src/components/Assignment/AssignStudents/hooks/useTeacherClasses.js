@@ -15,6 +15,7 @@ export default function useTeacherClasses() {
       setData([]);
       return;
     }
+
     // EN: Get the classes the teacher has
     // ES: Obtener las clases que tiene el profesor
     const classes = _.flatten(
@@ -37,6 +38,7 @@ export default function useTeacherClasses() {
         _class.groups?.abbreviation
       })`,
       subject: _class.subject.id,
+      teachers: _class.teachers,
       c: _class,
     }));
 

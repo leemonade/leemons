@@ -4,7 +4,7 @@ import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
 
-import TeacherAssignedTasksLists from '../../../components/Ongoing/TeacherAssignedTasksLists';
+import UserAssignedTasksList from '../../../components/Ongoing/UserAssignedTasksList';
 import { prefixPN } from '../../../helpers';
 
 export default function OngoingPage() {
@@ -27,7 +27,7 @@ export default function OngoingPage() {
     <ContextContainer fullHeight>
       <AdminPageHeader values={{ title: labels?.page_title }} />
       <PageContainer>
-        <TeacherAssignedTasksLists />
+        <UserAssignedTasksList />
       </PageContainer>
     </ContextContainer>
   );
