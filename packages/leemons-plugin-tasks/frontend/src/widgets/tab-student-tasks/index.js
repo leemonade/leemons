@@ -23,7 +23,6 @@ function TabStudentTasksWidget(props) {
 
 TabStudentTasksWidget.propTypes = {
   classe: PropTypes.object.isRequired,
-  key: PropTypes.string.isRequired,
 };
 
 export default TabStudentTasksWidget;
