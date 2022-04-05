@@ -81,12 +81,16 @@ async function getTasks(filters, setTasks, setProfile) {
   return response;
 }
 
-export default function UserAssignedTasksList({ showClosed }) {
+export default function UserAssignedTasksList({
+  showClosed,
+  defaultFilters = {},
+  showFilters = true,
+}) {
   const [, translations] = useTranslateLoader(prefixPN('teacher_assignments'));
   const [tableLabels, setTableLabels] = useState({});
   const [name, setName] = useState('');
   const [debouncedName] = useDebouncedValue(name, 500);
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState(defaultFilters);
   const [tasks, setTasks] = useState([]);
   const [profile, setProfile] = useState(null);
   const history = useHistory();
@@ -198,12 +202,14 @@ export default function UserAssignedTasksList({ showClosed }) {
 
   return (
     <>
-      <Filters
-        onChange={(f) => {
-          setTasks([]);
-          setFilters(f);
-        }}
-      />
+      {showFilters && (
+        <Filters
+          onChange={(f) => {
+            setTasks([]);
+            setFilters(f);
+          }}
+        />
+      )}
       <SearchInput value={name} onChange={setName} />
       {tasks?.length === 0 && (
         <ContextContainer direction="row" justifyContent="start" alignItems="center">
