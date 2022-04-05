@@ -6,7 +6,7 @@ import { ContextContainer, Button, Stack, Paragraph, HtmlText } from '@bubbles-u
 import updateStudentRequest from '../../../../request/instance/updateStudent';
 import useTask from '../helpers/useTask';
 
-export default function FeedbackStep({ instance, student, id, onPrevious, onNext }) {
+export default function FeedbackStep({ instance, student, id, onPrevious }) {
   const history = useHistory();
   const task = useTask(id, ['feedback']);
 
@@ -25,12 +25,12 @@ export default function FeedbackStep({ instance, student, id, onPrevious, onNext
 
   return (
     <ContextContainer>
-      <ContextContainer title="¿Qué has aprendido en este ejercicio?">
+      <ContextContainer title="What have you learned in this exercise?">
         <HtmlText>{task?.feedback?.description}</HtmlText>
         {task?.feedback?.mandatory && (
-          <Paragraph>Recuerda: este feedback es obligatorio para completar el ejercicio</Paragraph>
+          <Paragraph>Remember: This feedback is mandatory to submit this task</Paragraph>
         )}
-        <Paragraph>Pintar aquí el formulario: {task?.feedback?.id}</Paragraph>
+        <Paragraph>Show feedback form: {task?.feedback?.id}</Paragraph>
       </ContextContainer>
       <Stack fullWidth justifyContent="space-between">
         <Button onClick={onPrevious}>Previous</Button>

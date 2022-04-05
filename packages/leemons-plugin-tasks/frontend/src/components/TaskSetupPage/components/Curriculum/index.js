@@ -48,9 +48,10 @@ export default function Curriculum({ program, name, type }) {
               opened={show}
               value={value}
               curriculum={curriculum?.id}
-              onChange={(contents) =>
-                field.onChange(contents.map((content) => ({ [type]: content })))
-              }
+              onChange={(contents) => {
+                field.onChange(contents.map((content) => ({ [type]: content })));
+                setShow(false);
+              }}
               onClose={() => setShow(false)}
             />
             <CurriculumListContents {...field} value={value} />
