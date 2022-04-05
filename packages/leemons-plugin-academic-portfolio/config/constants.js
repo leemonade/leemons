@@ -272,6 +272,15 @@ const widgets = {
       key: `${permissionsPrefix}.user.class.detail`,
       url: 'class-detail/index',
     },
+    // ---- Class Right (Students)
+    {
+      zoneKey: `plugins.dashboard.class.right-tabs`,
+      key: `${permissionsPrefix}.user.class.students`,
+      url: 'class-students/index',
+      properties: {
+        label: 'plugins.academic-portfolio.classStudents.label',
+      },
+    },
     // ---- Class (Detail [Tab])
     {
       zoneKey: 'plugins.dashboard.class.tabs',

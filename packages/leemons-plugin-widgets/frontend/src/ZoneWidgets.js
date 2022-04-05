@@ -31,12 +31,14 @@ function ZoneWidgets({ zone, container = <Box />, onGetZone = () => {}, children
             if (isFunction(children)) {
               return children({
                 key: item.id,
+                item,
                 Component: dynamicImport(item.pluginName, item.url),
                 properties: item.properties,
               });
             }
             React.cloneElement(children, {
               key: item.id,
+              item,
               Component: dynamicImport(item.pluginName, item.url),
               properties: item.properties,
             });
