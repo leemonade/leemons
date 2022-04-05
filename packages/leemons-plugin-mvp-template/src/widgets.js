@@ -18,6 +18,7 @@ async function initWidgets() {
     'plugins.dashboard.class.tabs': [
       'plugins.dashboard.class.tab.control-panel',
       'plugins.academic-portfolio.class.tab.detail',
+      'plugins.tasks.class.tab.students.tasks',
       'plugins.calendar.class.tab.kanban',
       'plugins.calendar.class.tab.calendar',
     ],

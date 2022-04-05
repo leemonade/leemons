@@ -195,6 +195,25 @@ const menuItems = [
   },
 ];
 
+const widgets = {
+  zones: [{ key: `${permissionsPrefix}.class.students.tasks` }],
+  items: [
+    {
+      zoneKey: 'plugins.dashboard.class.tabs',
+      key: `${permissionsPrefix}.class.tab.students.tasks`,
+      url: 'tab-student-tasks/index',
+      properties: {
+        label: `${permissionsPrefix}.tabStudentTasks.label`,
+      },
+    },
+    {
+      zoneKey: `${permissionsPrefix}.class.students.tasks`,
+      key: `${permissionsPrefix}.class.students.tasks`,
+      url: 'student-tasks/index',
+    },
+  ],
+};
+
 module.exports = {
   pluginName: permissionsPrefix,
   permissions: {
@@ -203,4 +222,5 @@ module.exports = {
     bundles: permissionsBundles,
   },
   menuItems,
+  widgets,
 };

@@ -1,6 +1,8 @@
+const _ = require('lodash');
 const { pluginName, permissions, menuItems } = require('./config/constants');
 const addMenuItems = require('./src/services/menu-builder/add');
 const init = require('./init');
+const constants = require('./config/constants');
 
 // TODO: el proceso de gestionar los elementos que se añaden al MenuBuilder debería estar abstraido
 // tal y como se está haciendo ahora pero, en lugar de en cada Plugin, hacerlo a nivel del propio MenuBuilder
@@ -37,6 +39,29 @@ async function events(isInstalled) {
         await initMenuBuilder();
       }
     );
+    leemons.events.once('plugins.dashboard:init-widget-zones', async () => {
+      await Promise.all(
+        _.map(constants.widgets.zones, (config) =>
+          leemons.getPlugin('widgets').services.widgets.addZone(config.key, {
+            name: config.name,
+            description: config.description,
+          })
+        )
+      );
+      leemons.events.emit('init-widget-zones');
+      await Promise.all(
+        _.map(constants.widgets.items, (config) =>
+          leemons
+            .getPlugin('widgets')
+            .services.widgets.addItemToZone(config.zoneKey, config.key, config.url, {
+              name: config.name,
+              description: config.description,
+              properties: config.properties,
+            })
+        )
+      );
+      leemons.events.emit('init-widget-items');
+    });
   } else {
     leemons.events.once(`${pluginName}:pluginDidInit`, async () => {
       leemons.events.emit('init-permissions');
