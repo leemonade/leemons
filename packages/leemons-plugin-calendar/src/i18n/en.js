@@ -137,6 +137,7 @@ module.exports = {
   userProgramKanban: {
     kanban: 'Kanban highlight',
     description: 'Outstanding tasks completed in less than 5 days',
+    showAllKanban: 'View full kanban',
   },
   tabKanban: {
     label: 'Kanban',

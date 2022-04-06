@@ -1,8 +1,15 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, createStyles, Kanban as BubblesKanban, Stack, Text } from '@bubbles-ui/components';
-import { PluginKanbanIcon } from '@bubbles-ui/icons/outline';
+import {
+  Box,
+  Button,
+  createStyles,
+  Kanban as BubblesKanban,
+  Stack,
+  Text,
+} from '@bubbles-ui/components';
+import { ChevRightIcon, PluginKanbanIcon } from '@bubbles-ui/icons/outline';
 import { KanbanTaskCard } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
@@ -212,12 +219,18 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
 
   return (
     <Box className={styles.root}>
-      <Stack alignItems="center">
-        <PluginKanbanIcon />
-        <Text size="lg" color="primary" className={styles.title}>
-          {t('kanban')}
-        </Text>
-        <Text color="soft">{t('description')}</Text>
+      <Stack fullWidth alignItems="center" justifyContent="space-between">
+        <Box>
+          <PluginKanbanIcon />
+          <Text size="lg" color="primary" className={styles.title}>
+            {t('kanban')}
+          </Text>
+          <Text color="soft">{t('description')}</Text>
+        </Box>
+        <Button variant="link" onClick={() => history.push('/private/calendar/kanban')}>
+          {t('showAllKanban')}
+          <ChevRightIcon />
+        </Button>
       </Stack>
       <Box className={styles.calendarContainer}>
         <EventModal
@@ -243,6 +256,7 @@ UserProgramKanban.propTypes = {
   program: PropTypes.object,
   classe: PropTypes.object,
   session: PropTypes.object,
+  useAllColumns: PropTypes.bool,
 };
 
 export default UserProgramKanban;
