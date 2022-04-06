@@ -1,0 +1,13 @@
+{
+  "name": "tests-frontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@bubbles-ui/components": "^1.0.28",
+    "@bubbles-ui/icons": "^1.0.24",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+  }
+}

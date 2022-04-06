@@ -90,6 +90,10 @@
   {
     "name": "dashboard",
     "path": "../../packages/leemons-plugin-dashboard/frontend"
+  },
+  {
+    "name": "tests",
+    "path": "../../packages/leemons-plugin-tests/frontend"
   }
 ]
 
