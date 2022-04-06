@@ -142,6 +142,7 @@ async function events(isInstalled) {
         'plugins.dashboard:init-widget-zones',
         'plugins.academic-portfolio:init-widget-items',
         'plugins.calendar:init-widget-items',
+        'plugins.mvp-template:init-academic-portfolio',
       ],
       async () => {
         try {

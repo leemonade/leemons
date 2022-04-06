@@ -128,8 +128,15 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
         });
       }
 
+      const start = new Date();
+      const end = new Date();
+      end.setDate(end.getDate() + 5);
       const calendarIds = map(store.data.onlyProgramCalendars, 'id');
       cards = _.filter(cards, (c) => {
+        const endDate = new Date(c.endDate);
+        if (endDate < start || endDate > end) {
+          return false;
+        }
         if (calendarIds.includes(c.calendar)) {
           return true;
         }

@@ -14,4 +14,5 @@ module.exports = {
   updateItemInZone: items.update,
   deleteItemInZone: items.remove,
   updateOrderItemsInZone: items.updateOrders,
+  updateProfileItemsInZone: items.updateProfiles,
 };

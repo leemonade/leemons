@@ -3,6 +3,7 @@ const { exists } = require('./exists');
 const { update } = require('./update');
 const { remove } = require('./remove');
 const { updateOrders } = require('./updateOrders');
+const { updateProfiles } = require('./updateProfiles');
 
 module.exports = {
   add,
@@ -10,4 +11,5 @@ module.exports = {
   update,
   remove,
   updateOrders,
+  updateProfiles,
 };

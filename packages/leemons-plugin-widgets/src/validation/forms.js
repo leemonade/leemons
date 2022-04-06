@@ -26,6 +26,38 @@ function validateUpdateItemOrders(data) {
   }
 }
 
+const updateItemProfilesSchema = {
+  type: 'array',
+  items: {
+    type: 'object',
+    properties: {
+      zoneKey: {
+        type: 'string',
+      },
+      key: {
+        type: 'string',
+      },
+      profiles: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+      },
+    },
+    required: ['zoneKey', 'key', 'profiles'],
+    additionalProperties: false,
+  },
+};
+
+function validateUpdateItemProfiles(data) {
+  const validator = new LeemonsValidator(updateItemProfilesSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   validateUpdateItemOrders,
+  validateUpdateItemProfiles,
 };

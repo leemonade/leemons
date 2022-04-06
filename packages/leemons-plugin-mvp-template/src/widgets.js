@@ -2,12 +2,9 @@ const _ = require('lodash');
 
 async function initWidgets() {
   const { widgets } = leemons.getPlugin('widgets').services;
+  const { settings } = leemons.getPlugin('academic-portfolio').services;
 
-  /*
-   * {
-   *   zoneKey: [itemKey, itemKey, ...],
-   * }
-   * */
+  const profiles = await settings.getProfiles();
 
   const zoneReorders = {
     'plugins.dashboard.program.left': [
@@ -23,6 +20,14 @@ async function initWidgets() {
       'plugins.calendar.class.tab.calendar',
     ],
   };
+
+  const itemProfiles = [
+    {
+      zoneKey: 'plugins.dashboard.class.tabs',
+      key: 'plugins.tasks.class.tab.students.tasks',
+      profiles: [profiles.student],
+    },
+  ];
 
   const zones = await Promise.all(
     _.map(Object.keys(zoneReorders), (zoneKey) => widgets.getZone(zoneKey))
@@ -43,6 +48,7 @@ async function initWidgets() {
   });
 
   await widgets.updateOrderItemsInZone(itemsToUpdate);
+  await widgets.updateProfileItemsInZone(itemProfiles);
 
   return null;
 }
