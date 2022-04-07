@@ -16,12 +16,18 @@ module.exports = async function parseId(
   if (_version) {
     let v = _version;
     if (typeof v !== 'string') {
-      v = stringifyVersion(v);
+      try {
+        v = stringifyVersion(v);
+      } catch (e) {
+        if (verifyVersion) {
+          throw e;
+        }
+      }
     } else if (verifyVersion && !isValidVersion(v)) {
       throw new Error(`Version ${v} is not a valid version`);
     }
 
-    return { fullId: stringifyId(uuid, v), version: v, uuid };
+    return { fullId: stringifyId(uuid, v, { verifyVersion }), version: v, uuid };
   }
 
   // TODO: If version is @last, get the latest version

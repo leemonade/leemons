@@ -18,4 +18,5 @@ module.exports = {
   groups: leemons.query('plugins_tasks::groups'),
   // Version Control
   versions: leemons.query('plugins_tasks::versions'),
+  currentVersions: leemons.query('plugins_tasks::currentVersions'),
 };

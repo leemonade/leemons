@@ -1,11 +1,17 @@
 const parseVersion = require('../versions/parseVersion');
 const stringifyVersion = require('../versions/stringifyVersion');
 
-module.exports = function stringifyId(id, _version) {
-  let version;
+module.exports = function stringifyId(id, _version, { verifyVersion = true } = {}) {
+  let version = _version;
   if (typeof id !== 'string') {
-    version = stringifyVersion(_version);
-  } else {
+    try {
+      version = stringifyVersion(_version);
+    } catch (e) {
+      if (verifyVersion) {
+        throw e;
+      }
+    }
+  } else if (verifyVersion) {
     // EN: Verify version format
     // ES: Verificar formato de versión
     parseVersion(_version);
