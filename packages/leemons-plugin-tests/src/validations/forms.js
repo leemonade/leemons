@@ -1,25 +1,58 @@
-const { LeemonsValidator } = global.utils;
-const { stringSchema, integerSchema, integerSchemaNullable } = require('./types');
+const _ = require('lodash');
 
-const updateProgramSchema = {
+const { LeemonsValidator } = global.utils;
+const { stringSchema, booleanSchema } = require('./types');
+
+const saveQuestionBankSchema = {
   type: 'object',
   properties: {
     id: stringSchema,
     name: stringSchema,
-    abbreviation: {
-      type: 'string',
-      minLength: 1,
-      maxLength: 8,
+    tagline: stringSchema,
+    summary: stringSchema,
+    tags: {
+      type: 'array',
+      items: stringSchema,
     },
-    credits: integerSchemaNullable,
-    treeType: integerSchema,
+    published: booleanSchema,
+    questions: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: [],
+        properties: {
+          type: stringSchema,
+          level: stringSchema,
+          withImages: booleanSchema,
+          tags: {
+            type: 'array',
+            items: stringSchema,
+          },
+          question: stringSchema,
+          properties: {
+            type: 'object',
+            additionalProperties: true,
+          },
+          clues: {
+            type: 'array',
+            items: stringSchema,
+          },
+        },
+      },
+    },
   },
-  required: ['id'],
+  required: [],
   additionalProperties: false,
 };
 
-function validateUpdateProgram(data) {
-  const validator = new LeemonsValidator(updateProgramSchema);
+function validateSaveQuestionBank(data) {
+  const schema = _.cloneDeep(saveQuestionBankSchema);
+  if (data.published) {
+    schema.required = ['name', 'tagline', 'summary', 'questions'];
+    schema.properties.questions.items.required = ['type', 'question'];
+  }
+  const validator = new LeemonsValidator(schema);
 
   if (!validator.validate(data)) {
     throw validator.error;
@@ -27,5 +60,5 @@ function validateUpdateProgram(data) {
 }
 
 module.exports = {
-  validateUpdateProgram,
+  validateSaveQuestionBank,
 };

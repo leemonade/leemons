@@ -22,6 +22,20 @@ async function listQuestionBanks(ctx) {
   }
 }
 
+async function saveQuestionBanks(ctx) {
+  const questionBank = await questionsBanksService.save(ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, questionBank };
+}
+
+async function getQuestionBankDetail(ctx) {
+  const [questionBank] = await questionsBanksService.details(ctx.request.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200, questionBank };
+}
+
 module.exports = {
   listQuestionBanks,
+  saveQuestionBanks,
+  getQuestionBankDetail,
 };

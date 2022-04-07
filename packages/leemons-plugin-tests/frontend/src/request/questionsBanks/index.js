@@ -5,7 +5,7 @@ async function listQuestionsBanks({ page, size }) {
   });
 }
 
-async function createQuestionBank(body) {
+async function saveQuestionBank(body) {
   return leemons.api('tests/question-bank', {
     allAgents: true,
     method: 'POST',
@@ -13,12 +13,11 @@ async function createQuestionBank(body) {
   });
 }
 
-async function updateQuestionBank(body) {
-  return leemons.api('tests/question-bank', {
+async function getQuestionBank(id) {
+  return leemons.api(`tests/question-bank/${id}`, {
     allAgents: true,
-    method: 'PUT',
-    body,
+    method: 'GET',
   });
 }
 
-export { listQuestionsBanks, createQuestionBank, updateQuestionBank };
+export { listQuestionsBanks, saveQuestionBank, getQuestionBank };

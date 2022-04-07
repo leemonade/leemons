@@ -18,6 +18,7 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { Link, useHistory } from 'react-router-dom';
 import _ from 'lodash';
+import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
 import { listQuestionsBanksRequest } from '../../../request';
 
 export default function List() {
@@ -55,6 +56,18 @@ export default function List() {
     }
   }
 
+  async function getPermissions() {
+    const { permissions } = await getPermissionsWithActionsIfIHaveRequest([
+      'plugins.tests.questionsBanks',
+    ]);
+    if (permissions[0]) {
+      store.canAdd =
+        permissions[0].actionNames.includes('create') ||
+        permissions[0].actionNames.includes('admin');
+      render();
+    }
+  }
+
   async function onPageChange(page) {
     store.page = page;
     await load();
@@ -71,6 +84,7 @@ export default function List() {
 
   React.useEffect(() => {
     load();
+    getPermissions();
   }, []);
 
   const tableHeaders = React.useMemo(
