@@ -4,6 +4,9 @@ module.exports = {
     published: {
       type: 'string',
     },
+    type: {
+      type: 'string',
+    },
   },
   primaryKey: { type: 'uuid' },
 };

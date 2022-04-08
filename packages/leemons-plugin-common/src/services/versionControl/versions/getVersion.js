@@ -1,4 +1,4 @@
-const { versions } = require('../../table');
+const { versions } = require('../../tables');
 const { parseId, parseVersion } = require('../helpers');
 
 module.exports = async function getVersion(id, { published, version, transacting } = {}) {

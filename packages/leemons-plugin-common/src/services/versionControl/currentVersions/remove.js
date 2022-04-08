@@ -1,4 +1,4 @@
-const { currentVersions } = require('../../table');
+const { currentVersions } = require('../../tables');
 const { removeVersion } = require('../versions');
 const getVersion = require('../versions/getVersion');
 

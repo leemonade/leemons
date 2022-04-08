@@ -1,4 +1,4 @@
-const { currentVersions } = require('../../table');
+const { currentVersions } = require('../../tables');
 
 module.exports = async function get(uuid, { transacting } = {}) {
   try {

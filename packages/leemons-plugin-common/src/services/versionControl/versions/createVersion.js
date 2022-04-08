@@ -1,4 +1,4 @@
-const { versions } = require('../../table');
+const { versions } = require('../../tables');
 const get = require('../currentVersions/get');
 const { parseId, parseVersion } = require('../helpers');
 const getVersion = require('./getVersion');
@@ -37,7 +37,7 @@ module.exports = async function createVersion(
       major,
       minor,
       patch,
-      published,
+      published: Boolean(published),
     },
     { transacting }
   );

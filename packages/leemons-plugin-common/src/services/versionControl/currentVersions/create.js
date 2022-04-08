@@ -1,4 +1,4 @@
-const { currentVersions } = require('../../table');
+const { currentVersions } = require('../../tables');
 const { createVersion } = require('../versions');
 
 module.exports = async function create({ published = false, transacting: t } = {}) {

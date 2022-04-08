@@ -16,7 +16,4 @@ module.exports = {
   settings: leemons.query('plugins_tasks::settings'),
   profiles: leemons.query('plugins_tasks::profiles'),
   groups: leemons.query('plugins_tasks::groups'),
-  // Version Control
-  versions: leemons.query('plugins_tasks::versions'),
-  currentVersions: leemons.query('plugins_tasks::currentVersions'),
 };
