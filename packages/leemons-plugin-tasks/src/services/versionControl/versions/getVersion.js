@@ -2,7 +2,7 @@ const { versions } = require('../../table');
 const { parseId, parseVersion } = require('../helpers');
 
 module.exports = async function getVersion(id, { published, version, transacting } = {}) {
-  const { uuid, version: v } = await parseId(id, version, { verifyVersion: false });
+  const { uuid, version: v, fullId } = await parseId(id, version, { verifyVersion: false });
   const query = {
     uuid,
     $limit: 1,
@@ -28,7 +28,7 @@ module.exports = async function getVersion(id, { published, version, transacting
   const results = await versions.find(query, { transacting });
 
   if (results?.length) {
-    return { ...results[0], published: Boolean(results[0].published) };
+    return { uuid, version: v, fullId, published: Boolean(results[0].published) };
   }
 
   throw new Error('Version not found');
