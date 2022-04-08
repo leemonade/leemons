@@ -16,9 +16,15 @@ async function saveQuestionsBanks(data, { transacting: _transacting } = {}) {
       } else {
         questionBank = await table.questionsBanks.create(props, { transacting });
       }
-      await tagsService.setTagsToValues('plugins.tests.questionBanks', tags, questionBank.id, {
-        transacting,
-      });
+
+      await tagsService.setTagsToValues(
+        'plugins.tests.questionBanks',
+        tags || [],
+        questionBank.id,
+        {
+          transacting,
+        }
+      );
 
       const currentQuestions = await table.questions.find(
         { questionBank: questionBank.id },

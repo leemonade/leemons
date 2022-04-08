@@ -104,6 +104,11 @@ export default function List() {
         accessor: 'level',
         className: 'text-right',
       },
+      {
+        Header: t('actionsHeader'),
+        accessor: 'actions',
+        className: 'text-right',
+      },
     ],
     [t]
   );

@@ -14,7 +14,7 @@ import { TextEditorInput } from '@bubbles-ui/editors';
 import { Controller, useForm } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete } from '@common';
-import MonoResponse from './question-types/MonoResponse';
+import { MonoResponse } from './question-types/MonoResponse';
 
 const typesWithImage = ['mono-response'];
 const questionComponents = {

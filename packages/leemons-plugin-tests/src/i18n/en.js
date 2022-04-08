@@ -4,6 +4,7 @@ module.exports = {
     nameHeader: 'Name',
     nQuestionsHeader: 'Questions',
     levelHeader: 'Level',
+    actionsHeader: 'Actions',
     view: 'View',
     show: 'Show',
     goTo: 'Go to',
@@ -35,9 +36,12 @@ module.exports = {
     withImagesLabel: 'With images',
     questionLabel: 'Question',
     responsesLabel: 'Responses',
+    responseLabel: 'Response',
     responsesDescription:
       'Select the correct answer by clicking on the circular icon, mark ({{icon}}) the response that will be hidden when the user requests a hint (you can set the hint mode in the assignment section).',
     addResponse: 'Add response',
+    responseRequired: 'Field required',
+    explanationRequired: 'Field required',
     includeExplanationToEveryAnswerLabel:
       'Include an explanation to every answer (right and wrong ones)',
     explanationLabel: 'Explanation',
@@ -50,5 +54,6 @@ module.exports = {
     captionAltLabel: 'Caption / alt text',
     saveResponse: 'Save response',
     monoResponse: 'Mono response',
+    savedAsDraft: 'Saved as draft',
   },
 };

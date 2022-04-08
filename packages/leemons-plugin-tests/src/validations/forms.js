@@ -1,15 +1,18 @@
 const _ = require('lodash');
 
 const { LeemonsValidator } = global.utils;
-const { stringSchema, booleanSchema } = require('./types');
+const { stringSchema, booleanSchema, stringSchemaNullable } = require('./types');
 
 const saveQuestionBankSchema = {
   type: 'object',
   properties: {
     id: stringSchema,
     name: stringSchema,
-    tagline: stringSchema,
-    summary: stringSchema,
+    tagline: stringSchemaNullable,
+    summary: stringSchemaNullable,
+    color: stringSchemaNullable,
+    cover: stringSchemaNullable,
+    state: stringSchemaNullable,
     tags: {
       type: 'array',
       items: stringSchema,

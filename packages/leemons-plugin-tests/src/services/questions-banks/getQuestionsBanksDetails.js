@@ -10,16 +10,30 @@ async function getQuestionsBanksDetails(id, { transacting } = {}) {
     table.questions.find({ questionBank_$in: ids }, { transacting }),
   ]);
 
-  const [questionBanksTags, questionsTags] = await Promise.all([
-    tagsService.getValuesTags(_.map(questionsBanks, 'id'), {
-      type: 'plugins.tests.questionBanks',
-      transacting,
-    }),
-    tagsService.getValuesTags(_.map(questions, 'id'), {
-      type: 'plugins.tests.questions',
-      transacting,
-    }),
-  ]);
+  const promises = [];
+  if (questionsBanks.length) {
+    promises.push(
+      tagsService.getValuesTags(_.map(questionsBanks, 'id'), {
+        type: 'plugins.tests.questionBanks',
+        transacting,
+      })
+    );
+  } else {
+    promises.push(Promise.resolve([]));
+  }
+
+  if (questions.length) {
+    promises.push(
+      tagsService.getValuesTags(_.map(questions, 'id'), {
+        type: 'plugins.tests.questions',
+        transacting,
+      })
+    );
+  } else {
+    promises.push(Promise.resolve([]));
+  }
+
+  const [questionBanksTags, questionsTags] = await Promise.all(promises);
 
   _.forEach(questionsBanks, (questionBank, i) => {
     questionBank.tags = questionBanksTags[i];

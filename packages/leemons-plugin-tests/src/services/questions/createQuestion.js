@@ -6,7 +6,7 @@ async function createQuestion(data, { transacting: _transacting } = {}) {
     async (transacting) => {
       const { tags, ...props } = data;
       const question = await table.questions.create(props, { transacting });
-      await tagsService.setTagsToValues('plugins.tests.questions', tags, question.id, {
+      await tagsService.setTagsToValues('plugins.tests.questions', tags || [], question.id, {
         transacting,
       });
       return question;

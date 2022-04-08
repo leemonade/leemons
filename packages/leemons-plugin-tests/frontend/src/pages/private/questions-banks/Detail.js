@@ -4,11 +4,13 @@ import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import DetailConfig from './components/DetailConfig';
 import DetailDesign from './components/DetailDesign';
 import DetailQuestions from './components/DetailQuestions';
+import { getQuestionBankRequest, saveQuestionBankRequest } from '../../../request';
 
 export default function Detail() {
   const [t] = useTranslateLoader(prefixPN('questionsBanksDetail'));
@@ -20,16 +22,40 @@ export default function Detail() {
     isNew: false,
   });
 
+  const history = useHistory();
   const params = useParams();
 
   const form = useForm();
   const formValues = form.watch();
 
-  function saveAsDraft() {}
+  async function saveAsDraft() {
+    try {
+      store.saving = 'edit';
+      render();
+      await saveQuestionBankRequest({ ...formValues, published: false });
+      addSuccessAlert(t('savedAsDraft'));
+      history.push('/private/tests/questions-banks');
+    } catch (error) {
+      addErrorAlert(error);
+    }
+    store.saving = null;
+    render();
+  }
 
   async function init() {
-    store.isNew = params.id === 'new';
-    render();
+    try {
+      store.isNew = params.id === 'new';
+      render();
+      if (!store.isNew) {
+        const {
+          // eslint-disable-next-line camelcase
+          questionBank: { deleted, deleted_at, created_at, updated_at, ...props },
+        } = await getQuestionBankRequest(params.id);
+        form.reset(props);
+      }
+    } catch (error) {
+      addErrorAlert(error);
+    }
   }
 
   React.useEffect(() => {
@@ -43,10 +69,11 @@ export default function Detail() {
           title: store.isNew ? t('pageTitleNew') : t('pageTitle'),
         }}
         buttons={{
-          edit: t('saveDraft'),
+          edit: formValues.name && !formValues.published ? t('saveDraft') : undefined,
           duplicate: store.isNew && formValues.questions?.length ? t('publish') : undefined,
         }}
         onEdit={() => saveAsDraft()}
+        loading={store.saving}
       />
 
       <PageContainer noFlex>

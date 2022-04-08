@@ -4,6 +4,7 @@ module.exports = {
     nameHeader: 'Nombre',
     nQuestionsHeader: 'Preguntas',
     levelHeader: 'Nivel',
+    actionsHeader: 'Acciones',
     view: 'Ver',
     show: 'Mostrar',
     goTo: 'Ir a',
@@ -35,9 +36,12 @@ module.exports = {
     withImagesLabel: 'Con imágenes',
     questionLabel: 'Pregunta',
     responsesLabel: 'Respuestas',
+    responseLabel: 'Respuesta',
     responsesDescription:
       'Selecciona la respuesta correcta haciendo clic en el icono circular, marca ({{icon}}) la respuesta que se ocultará cuando el usuario solicite una pista (puedes configurar el modo de pista en la sección de asignación).',
     addResponse: 'Añadir respuesta',
+    responseRequired: 'Campo obligatorio',
+    explanationRequired: 'Campo obligatorio',
     includeExplanationToEveryAnswerLabel:
       'Incluir una explicación a cada respuesta (las correctas y las incorrectas)',
     explanationLabel: 'Explicación',
@@ -50,5 +54,6 @@ module.exports = {
     captionAltLabel: 'Leyenda / texto alt',
     saveResponse: 'Guardar respuesta',
     monoResponse: 'Respuesta única',
+    savedAsDraft: 'Guardado como borrador',
   },
 };

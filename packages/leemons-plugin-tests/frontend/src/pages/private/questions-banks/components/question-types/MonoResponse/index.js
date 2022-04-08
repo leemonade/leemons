@@ -1,10 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox, ContextContainer, InputWrapper } from '@bubbles-ui/components';
+import {
+  Checkbox,
+  ContextContainer,
+  InputWrapper,
+  ListInput,
+  ListItem,
+} from '@bubbles-ui/components';
 import { Controller } from 'react-hook-form';
 import { TextEditorInput } from '@bubbles-ui/editors';
+import { ListInputRender } from './components/ListInputRender';
+import { ListItemValueRender } from './components/ListItemValueRender';
 
-export default function MonoResponse({ form, t }) {
+// eslint-disable-next-line import/prefer-default-export
+export function MonoResponse({ form, t }) {
   const explanationInResponses = form.watch('properties.explanationInResponses');
   return (
     <ContextContainer>
@@ -27,6 +36,21 @@ export default function MonoResponse({ form, t }) {
             render={({ field }) => <TextEditorInput {...field} />}
           />
         ) : null}
+      </InputWrapper>
+      <InputWrapper required label={t('responsesLabel')} description={t('responsesDescription')}>
+        <Controller
+          control={form.control}
+          name="properties.responses"
+          render={({ field }) => (
+            <ListInput
+              {...field}
+              inputRender={<ListInputRender t={t} useExplanation={explanationInResponses} />}
+              listRender={<ListItem itemValueRender={ListItemValueRender} />}
+              hideAddButton
+              canAdd
+            />
+          )}
+        />
       </InputWrapper>
     </ContextContainer>
   );
