@@ -1,14 +1,16 @@
 const { versions } = require('../../table');
 const { parseId, parseVersion } = require('../helpers');
 
-module.exports = async function getVersion(id, { published = true, version, transacting } = {}) {
+module.exports = async function getVersion(id, { published, version, transacting } = {}) {
   const { uuid, version: v } = await parseId(id, version, { verifyVersion: false });
   const query = {
     uuid,
-    published,
     $limit: 1,
   };
 
+  if (published !== undefined) {
+    query.published = published;
+  }
   if (v === 'latest') {
     query.$sort = 'major:DESC,minor:DESC,patch:DESC';
   } else if (v === 'current') {
@@ -23,10 +25,10 @@ module.exports = async function getVersion(id, { published = true, version, tran
 
   // TODO: Add more difficult searches (between versions, greather than, etc)
 
-  const results = versions.find(query, { transacting });
+  const results = await versions.find(query, { transacting });
 
   if (results?.length) {
-    return results[0];
+    return { ...results[0], published: Boolean(results[0].published) };
   }
 
   throw new Error('Version not found');

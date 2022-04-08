@@ -2,26 +2,39 @@ const { versions } = require('../../table');
 const { parseId } = require('../helpers');
 const getVersion = require('./getVersion');
 
-module.exports = async function publishVersion(id, publish = true, { version, transacting } = {}) {
-  const { fullId } = await parseId(id, version);
+module.exports = async function publishVersion(
+  id,
+  publish = true,
+  { version: v, transacting } = {}
+) {
+  const { fullId } = await parseId(id, v);
+  let _id;
   try {
-    const versionToUpdate = await getVersion(id, { published: !publish, version, transacting });
+    const versionToUpdate = await getVersion(fullId, { transacting });
 
-    await versions.update(
-      {
-        id: versionToUpdate.id,
-      },
-      {
-        published: publish,
-      }
-    );
+    _id = versionToUpdate.id;
 
-    return { fullId, published: publish };
+    if (versionToUpdate.published === publish) {
+      throw new Error('already published');
+    }
   } catch (e) {
-    throw new Error(
-      `Could not publish ${fullId} as it does not exist or is already ${
-        publish ? 'published' : 'in draft'
-      }`
-    );
+    if (e.message === 'already published') {
+      throw new Error(
+        `Could not publish ${fullId} as it is already ${publish ? 'published' : 'in draft'}`
+      );
+    }
+    throw new Error(`Could not publish ${fullId} as it does not exist`);
   }
+
+  await versions.update(
+    {
+      id: _id,
+    },
+    {
+      published: publish,
+    },
+    { transacting }
+  );
+
+  return { fullId, published: publish };
 };
