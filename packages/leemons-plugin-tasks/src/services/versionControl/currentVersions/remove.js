@@ -21,13 +21,11 @@ module.exports = async function remove(uuid, published = 'all', { transacting: t
       // ES: Comprueba si el sistema de control de versiones debe ser eliminado en esta entidad
       if (published !== 'all') {
         try {
-          console.log('Checking if', uuid, !published, 'exists');
-          const exV = await getVersion(uuid, {
+          await getVersion(uuid, {
             published: !published,
             version: 'latest',
             transacting,
           });
-          console.log('verson exists', exV);
 
           return {
             uuid,
@@ -35,7 +33,6 @@ module.exports = async function remove(uuid, published = 'all', { transacting: t
             reason: `There are still ${published ? 'draft' : 'published'} versions`,
           };
         } catch (e) {
-          console.log("version doesn't exist", e);
           // EN: The version control should be removed
           // ES: El sistema de control de versiones debe ser eliminado
         }
