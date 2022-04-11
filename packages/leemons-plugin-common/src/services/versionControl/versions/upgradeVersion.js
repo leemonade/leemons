@@ -68,5 +68,5 @@ module.exports = async function upgradeVersion(
     await update.bind(this)(uuid, newVersion, { transacting });
   }
 
-  return createdVersion;
+  return { ...createdVersion, published };
 };

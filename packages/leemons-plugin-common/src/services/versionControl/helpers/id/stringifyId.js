@@ -1,4 +1,4 @@
-const parseVersion = require('../versions/parseVersion');
+const { isValidVersion } = require('../versions');
 const stringifyVersion = require('../versions/stringifyVersion');
 
 module.exports = function stringifyId(id, _version, { verifyVersion = true } = {}) {
@@ -11,10 +11,8 @@ module.exports = function stringifyId(id, _version, { verifyVersion = true } = {
         throw e;
       }
     }
-  } else if (verifyVersion) {
-    // EN: Verify version format
-    // ES: Verificar formato de versión
-    parseVersion(_version);
+  } else if (verifyVersion && !isValidVersion(_version)) {
+    throw new Error('The provided version must be valid');
   }
 
   return `${id}@${version}`;

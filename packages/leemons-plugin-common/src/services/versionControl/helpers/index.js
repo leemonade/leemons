@@ -1,15 +1,9 @@
-const parseId = require('./id/parseId');
-const stringifyId = require('./id/stringifyId');
-const isValidVersion = require('./versions/isValidVersion');
-const parseVersion = require('./versions/parseVersion');
-const stringifyVersion = require('./versions/stringifyVersion');
+const id = require('./id');
+const type = require('./type');
+const versions = require('./versions');
 
 module.exports = {
-  // Versions
-  isValidVersion,
-  parseVersion,
-  stringifyVersion,
-  // Ids
-  parseId,
-  stringifyId,
+  ...id,
+  ...type,
+  ...versions,
 };
