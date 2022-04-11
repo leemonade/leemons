@@ -1,6 +1,5 @@
 const { remove: removeFiles } = require('../files/remove');
 const { removeAllUsers } = require('../permissions/removeAllUsers');
-const removeTags = require('./tags/remove');
 const { getByAsset: getFilesByAsset } = require('./files/getByAsset');
 const { tables } = require('../tables');
 const { exists } = require('./exists');
@@ -25,7 +24,8 @@ async function remove(id, { userSession, transacting: t } = {}) {
 
         // EN: Delete the asset tags to clean the database
         // ES: Eliminar las etiquetas del asset para limpiar la base de datos
-        await removeTags(id, null, { transacting });
+        const tagsService = leemons.getPlugin('common').services.tags;
+        await tagsService.removeAllTagsForValues(leemons.plugin.prefixPN(''), id, { transacting });
 
         // EN: Unlink the files from the asset
         // ES: Desvincular los archivos del asset

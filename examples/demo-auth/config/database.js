@@ -15,7 +15,7 @@ module.exports = {
         },
       },
     },
-    mongodb: {
+    mongo: {
       connector: 'mongoose',
       settings: {
         database: process.env['NOSQL_DATABASE'],
@@ -24,6 +24,7 @@ module.exports = {
         password: process.env['NOSQL_PASSWORD'],
         port: process.env['NOSQL_PORT'],
         host: process.env['NOSQL_HOST'],
+        // replicaSet: process.env['NOSQL_CLUSTER'],
         pool: {
           min: 5,
           max: 1000,

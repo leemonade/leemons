@@ -1,3 +1,3 @@
-const pluginManager = require('../src/services/package-manager');
+const xapi = require('../src/services/xapi');
 
-module.exports = {};
+module.exports = xapi;

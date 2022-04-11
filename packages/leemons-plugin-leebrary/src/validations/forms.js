@@ -13,7 +13,6 @@ const addAssetSchema = {
   type: 'object',
   properties: {
     name: stringSchema,
-    tags: arrayStringSchema,
     color: stringSchemaNullable,
     description: stringSchemaNullable,
     categoryId: stringSchema,
@@ -58,7 +57,27 @@ async function validateSetPermissions(data) {
   }
 }
 
+const addBookmarSchema = {
+  type: 'object',
+  properties: {
+    url: stringSchema,
+    iconUrl: stringSchemaNullable,
+    assetId: stringSchema,
+  },
+  required: ['url', 'assetId'],
+  additionalProperties: true,
+};
+
+async function validateAddBookmark(data) {
+  const validator = new LeemonsValidator(addBookmarSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   validateAddAsset,
   validateSetPermissions,
+  validateAddBookmark,
 };

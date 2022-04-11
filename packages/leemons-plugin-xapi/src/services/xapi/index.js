@@ -1,9 +1,5 @@
-const { install } = require('./install');
-const { remove } = require('./remove');
-const { info } = require('./info');
+const statement = require('./statement');
 
 module.exports = {
-  install,
-  remove,
-  info,
+  statement,
 };

@@ -33,12 +33,6 @@ module.exports = [
   },
   {
     path: '/assets/:id',
-    method: 'GET',
-    handler: 'assets.get',
-    authenticated: true,
-  },
-  {
-    path: '/assets/:id',
     method: 'DELETE',
     handler: 'assets.remove',
     authenticated: true,
@@ -54,6 +48,22 @@ module.exports = [
     method: 'GET',
     handler: 'assets.my',
     authenticated: true,
+  },
+  {
+    path: '/assets/url-metadata',
+    method: 'GET',
+    handler: 'assets.urlMetadata',
+    authenticated: true,
+  },
+  {
+    path: '/assets/:id',
+    method: 'GET',
+    handler: 'assets.get',
+    authenticated: true,
+    xapi: {
+      verb: 'access',
+      object: 'params.id',
+    },
   },
   /*
   {
@@ -98,11 +108,6 @@ module.exports = [
     authenticated: true,
   },
   */
-  {
-    path: '/file/metas',
-    method: 'GET',
-    handler: 'files.metas',
-  },
   {
     path: '/file/:id',
     method: 'GET',

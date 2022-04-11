@@ -1,15 +1,18 @@
-const { map } = require('lodash');
+const { map, isString, isEmpty } = require('lodash');
+const { CATEGORIES } = require('../../../config/constants');
 const { tables } = require('../tables');
-const { upload: uploadFile } = require('../files/upload');
+const { upload: uploadFile, uploadFromUrl: uploadFileFromUrl } = require('../files/upload');
 const { add: addFiles } = require('./files/add');
+const { getById: getCategory } = require('../categories/getById');
 const { validateAddAsset } = require('../../validations/forms');
+const { add: addBookmark } = require('../bookmarks/add');
 
-async function add({ file, cover, ...data }, { userSession, transacting: t } = {}) {
+async function add({ file, cover, category, ...data }, { userSession, transacting: t } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await validateAddAsset(data);
 
-      const { categoryId, ...assetData } = data;
+      const { categoryId, tags, ...assetData } = data;
 
       if (userSession) {
         assetData.fromUser = userSession.id;
@@ -19,20 +22,41 @@ async function add({ file, cover, ...data }, { userSession, transacting: t } = {
             : null;
       }
 
+      if (isEmpty(category)) {
+        // eslint-disable-next-line no-param-reassign
+        category = await getCategory(categoryId, { transacting });
+      }
+
       // ··········································································
       // UPLOAD FILE
 
       // EN: Upload the file to the provider
       // ES: Subir el archivo al proveedor
-      const newFile = await uploadFile(file, { name: assetData.name }, { transacting });
+
+      let newFile;
       let coverFile;
 
-      if (newFile?.type?.indexOf('image') === 0) {
+      // Bookmarks
+      if (category.key === CATEGORIES.BOOKMARKS && !isEmpty(cover)) {
+        if (isString(cover)) {
+          newFile = await uploadFileFromUrl(cover, { name: assetData.name }, { transacting });
+        } else {
+          newFile = await uploadFile(cover, { name: assetData.name }, { transacting });
+        }
+
         coverFile = newFile;
       }
+      // Media files
+      else if (category.key === CATEGORIES.MEDIA_FILES && !isEmpty(file)) {
+        newFile = await uploadFile(file, { name: assetData.name }, { transacting });
 
-      if (!coverFile && cover) {
-        coverFile = await uploadFile(cover, { name: assetData.name }, { transacting });
+        if (newFile?.type?.indexOf('image') === 0) {
+          coverFile = newFile;
+        }
+
+        if (!coverFile && cover) {
+          coverFile = await uploadFile(cover, { name: assetData.name }, { transacting });
+        }
       }
 
       // ··········································································
@@ -81,14 +105,46 @@ async function add({ file, cover, ...data }, { userSession, transacting: t } = {
 
       // EN: Assign the file to the asset
       // ES: Asignar el archivo al asset
-      promises.push(addFiles(newFile.id, newAsset.id, { userSession, transacting }));
+
+      if (newFile?.id) {
+        promises.push(addFiles(newFile.id, newAsset.id, { userSession, transacting }));
+      }
+
+      // ··········································································
+      // CREATE BOOKMARK
+
+      if (category.key === CATEGORIES.BOOKMARKS) {
+        promises.push(
+          addBookmark({ url: assetData.url, iconUrl: assetData.icon }, newAsset, {
+            transacting,
+          })
+        );
+      }
+
+      // ··········································································
+      // ADD TAGS
+
+      let tagValues = tags || [];
+
+      if (isString(tagValues)) {
+        tagValues = tagValues.split(',');
+      }
+
+      if (tagValues?.length > 0) {
+        const tagsService = leemons.getPlugin('common').services.tags;
+        promises.push(
+          tagsService.setTagsToValues(leemons.plugin.prefixPN(''), tagValues, newAsset.id, {
+            transacting,
+          })
+        );
+      }
 
       // ··········································································
       // PROCCESS EVERYTHING
 
       await Promise.all(promises);
 
-      return { ...newAsset, file: newFile, cover: coverFile };
+      return { ...newAsset, file: newFile, cover: coverFile, tags };
     },
     tables.assets,
     t

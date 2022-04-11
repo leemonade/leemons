@@ -22,6 +22,9 @@ const ADMITTED_METADATA = [
   // 'channels',
 ];
 
+// -----------------------------------------------------------------------------
+// HELPERS
+
 function getReadableDuration(milliseconds, padStart) {
   function pad(num) {
     return `${num}`.padStart(2, '0');
@@ -75,6 +78,31 @@ function getMetaProps(data, result = {}) {
 
   return result;
 }
+
+function download(url) {
+  return new Promise((resolve, reject) => {
+    const downloadStream = global.utils.got(url, { isStream: true });
+    const fileWriterStream = leemons.fs.createTempWriteStream();
+    let contentType = '';
+
+    downloadStream
+      .on('response', (response) => {
+        contentType = response.headers['content-type'];
+      })
+      .on('error', (error) => reject(error));
+
+    fileWriterStream
+      .on('error', (error) => reject(error))
+      .on('finish', () => {
+        fileWriterStream.end();
+        resolve({ stream: fileWriterStream, path: fileWriterStream.path, contentType });
+      });
+    downloadStream.pipe(fileWriterStream);
+  });
+}
+
+// -----------------------------------------------------------------------------
+// MAIN FUNCTIONS
 
 async function upload(file, { name }, { transacting } = {}) {
   const { path, type } = file;
@@ -165,7 +193,14 @@ async function upload(file, { name }, { transacting } = {}) {
   if (urlData.uri === '') {
     // Generamos la nueva url y copiamos desde la carpeta temporal a la nuestra donde se almacenan todos los archivos
     urlData.provider = 'sys';
-    urlData.uri = pathSys.resolve(__dirname, '..', '..', '..', 'files', newFile.id);
+    urlData.uri = pathSys.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      'files',
+      `${newFile.id}.${newFile.extension}`
+    );
     await leemons.fs.copyFile(path, urlData.uri);
   }
 
@@ -176,4 +211,10 @@ async function upload(file, { name }, { transacting } = {}) {
   return { ...newFile, metadata };
 }
 
-module.exports = { upload };
+async function uploadFromUrl(url, { name }, { transacting } = {}) {
+  const { path, contentType } = await download(url);
+
+  return upload({ path, type: contentType }, { name }, { transacting });
+}
+
+module.exports = { upload, uploadFromUrl };

@@ -1,4 +1,5 @@
 const { isEmpty } = require('lodash');
+const { CATEGORIES } = require('../config/constants');
 const { add } = require('../src/services/assets/add');
 const { update } = require('../src/services/assets/update');
 const { remove } = require('../src/services/assets/remove');
@@ -8,23 +9,43 @@ const { getByIds } = require('../src/services/assets/getByIds');
 const { getByAsset: getPermissions } = require('../src/services/permissions/getByAsset');
 const { getUsersByAsset } = require('../src/services/permissions/getUsersByAsset');
 const canAssignRole = require('../src/services/permissions/helpers/canAssignRole');
+const { getById: getCategory } = require('../src/services/categories/getById');
 
 async function addAsset(ctx) {
-  const { ...assetData } = ctx.request.body;
+  const { categoryId, ...assetData } = ctx.request.body;
   const filesData = ctx.request.files;
   const { userSession } = ctx.state;
 
-  if (!filesData?.files) {
-    throw new global.utils.HttpError(400, 'No file was uploaded');
+  if (isEmpty(categoryId)) {
+    throw new global.utils.HttpError(400, 'Category is required');
   }
 
-  const files = filesData.files.length ? filesData.files : [filesData.files];
+  const category = await getCategory(categoryId);
 
-  if (files.length > 1) {
-    throw new global.utils.HttpError(501, 'Multiple file uploading is not enabled yet');
+  let file;
+  let cover;
+
+  // Media files
+  if (category.key === CATEGORIES.MEDIA_FILES) {
+    if (!filesData?.files) {
+      throw new global.utils.HttpError(400, 'No file was uploaded');
+    }
+
+    const files = filesData.files.length ? filesData.files : [filesData.files];
+
+    if (files.length > 1) {
+      throw new global.utils.HttpError(501, 'Multiple file uploading is not enabled yet');
+    }
+
+    [file] = files;
+    cover = filesData.coverFile;
+  }
+  // Bookmarks
+  else if (category.key === CATEGORIES.BOOKMARKS) {
+    cover = assetData.cover || filesData.coverFile;
   }
 
-  const asset = await add({ ...assetData, file: files[0] }, { userSession });
+  const asset = await add({ ...assetData, category, categoryId, cover, file }, { userSession });
 
   const { role } = await getPermissions(asset.id, { userSession });
 
@@ -139,6 +160,22 @@ async function myAssets(ctx) {
   ctx.body = { status: 200, assets };
 }
 
+/**
+ * Get URL metadata
+ * @param {*} ctx
+ */
+async function getUrlMetadata(ctx) {
+  const { url } = ctx.request.query;
+  if (isEmpty(url)) {
+    throw new global.utils.HttpError(400, 'url is required');
+  }
+  const { body: html } = await global.utils.got(url);
+  const metas = await global.utils.metascraper({ html, url });
+
+  ctx.status = 200;
+  ctx.body = { status: 200, metas };
+}
+
 /*
   getFiles: async (ctx) => {
     const { id } = ctx.params;
@@ -169,4 +206,5 @@ module.exports = {
   get: getAsset,
   list: getAssets,
   listByIds: getAssetsByIds,
+  urlMetadata: getUrlMetadata,
 };

@@ -20,8 +20,9 @@ function cleanPath(path) {
 
 const LibraryPageContent = () => {
   const { path } = useRouteMatch();
-  const { newAsset, category, setCategory, setCategories, categories } = useContext(LibraryContext);
+  const { newAsset, category, setAsset, setCategories, categories } = useContext(LibraryContext);
   const [, translations] = useTranslateLoader(prefixPN('home'));
+  const history = useHistory();
 
   const getCategories = async () => {
     const result = await listCategoriesRequest();
@@ -47,8 +48,15 @@ const LibraryPageContent = () => {
   }, [translations]);
 
   const handleOnNav = (data) => {
-    setCategory(data);
-    console.log(data);
+    setAsset(null);
+    history.push(cleanPath(`${path}/${data.key}/list`));
+  };
+
+  const handleOnNew = (data) => {
+    // setCategory(data);
+    // history.push(cleanPath(`${path}/${data.key}/new`));
+    // console.log(data);
+    newAsset(null, data);
   };
 
   const handleOnFile = (data) => {
@@ -65,6 +73,7 @@ const LibraryPageContent = () => {
             selectedCategory={category?.id}
             onNav={handleOnNav}
             onFile={handleOnFile}
+            onNew={handleOnNew}
           />
         )}
       </Box>

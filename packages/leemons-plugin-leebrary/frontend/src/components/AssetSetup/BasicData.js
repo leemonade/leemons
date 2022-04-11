@@ -27,7 +27,7 @@ const BasicData = ({ file, categoryId, onSave = () => {}, onNext = () => {} }) =
     setLoading(true);
 
     try {
-      const { asset } = await newAssetRequest(data, categoryId);
+      const { asset } = await newAssetRequest({ ...data, tags }, categoryId, 'media-files');
       console.log(asset);
       onSave(prepareAsset(asset));
       setLoading(false);

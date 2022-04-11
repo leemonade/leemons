@@ -21,6 +21,7 @@ async function dataForReturnFile(id, { transacting } = {}) {
   const provider = leemons.getProvider(file.provider);
   if (provider?.services?.provider?.getReadStream) {
     return {
+      file,
       contentType: file.type,
       fileName: `${file.name}.${file.extension}`,
       readStream: await provider.services.provider.getReadStream(file.uri, { transacting }),

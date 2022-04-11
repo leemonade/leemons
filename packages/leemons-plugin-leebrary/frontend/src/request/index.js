@@ -7,6 +7,7 @@ import getAsset from './getAsset';
 import getAssets from './getAssets';
 import getAssetsByIds from './getAssetsByIds';
 import setPermissions from './setPermissions';
+import getUrlMetadata from './getUrlMetadata';
 
 export const removeFileRequest = removeFile;
 export const uploadFilesRequest = uploadFiles;
@@ -17,3 +18,4 @@ export const getAssetRequest = getAsset;
 export const getAssetsRequest = getAssets;
 export const getAssetsByIdsRequest = getAssetsByIds;
 export const setPermissionsRequest = setPermissions;
+export const getUrlMetadataRequest = getUrlMetadata;

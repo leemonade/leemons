@@ -1,10 +1,17 @@
-async function newAsset(assetData, categoryId) {
+async function newAsset(assetData, categoryId, categoryKey) {
   const { file, cover, ...data } = assetData;
   const formData = new FormData();
 
-  formData.append('files', file, file.name);
+  if (categoryKey === 'media-files') {
+    formData.append('files', file, file.name);
 
-  if (cover) formData.append('cover', cover, cover.name);
+    if (cover) formData.append('cover', cover, cover.name);
+  }
+
+  if (categoryKey === 'bookmarks') {
+    if (data.coverFile) formData.append('cover', data.coverFile);
+  }
+
   if (categoryId) formData.append('categoryId', categoryId);
 
   Object.keys(data).forEach((key) => {
@@ -12,6 +19,8 @@ async function newAsset(assetData, categoryId) {
       formData.append(key, data[key]);
     }
   });
+
+  console.log(JSON.stringify(Object.fromEntries(formData)));
 
   return leemons.api('leebrary/assets', {
     allAgents: true,

@@ -1,31 +1,21 @@
 module.exports = {
   modelName: 'statement',
   collectionName: 'statement',
-  connection: 'mongodb',
+  connection: 'mongo',
   options: {
     useTimestamps: true,
   },
   attributes: {
+    // https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Data.md#24-statement-properties
     statement: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
+      type: 'mixed',
     },
+    // log | learning
     type: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
-    },
-    person: {
       type: 'string',
     },
     organization: {
       type: 'string',
     },
-  },
-  primaryKey: {
-    type: 'uuid',
   },
 };

@@ -64,10 +64,16 @@ const categoriesMenu = {
   ],
 };
 
+const CATEGORIES = {
+  BOOKMARKS: 'bookmarks',
+  MEDIA_FILES: 'media-files',
+};
+
 const categories = [
   {
-    key: 'media-files',
+    key: CATEGORIES.MEDIA_FILES,
     creatable: true,
+    provider: 'leebrary',
     menu: {
       item: {
         iconSvg: '/public/leebrary/media-files.svg',
@@ -86,8 +92,9 @@ const categories = [
     },
   },
   {
-    key: 'bookmarks',
+    key: CATEGORIES.BOOKMARKS,
     creatable: true,
+    provider: 'leebrary',
     menu: {
       item: {
         iconSvg: '/public/leebrary/bookmarks.svg',
@@ -178,4 +185,5 @@ module.exports = {
   menuItems,
   categories,
   categoriesMenu,
+  CATEGORIES,
 };

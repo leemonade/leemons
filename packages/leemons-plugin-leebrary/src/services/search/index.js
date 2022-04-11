@@ -1,4 +1,3 @@
-const byTags = require('../assets/tags/getAssets');
 const { byDescription } = require('./byDescription');
 const { byName } = require('./byName');
 const { getByCategory } = require('../assets/getByCategory');
@@ -27,10 +26,12 @@ async function search(query, { details = false, userSession, transacting } = {})
     }
 
     if (query.tags) {
-      assets = await saveResults(
-        await byTags(JSON.parse(query.tags), { assets, transacting }),
-        assets
-      );
+      const tagsService = leemons.getPlugin('common').services.tags;
+      const results = await tagsService.getTagsValues(JSON.parse(query.tags), {
+        type: leemons.plugin.prefixPN(''),
+        transacting,
+      });
+      assets = saveResults(results, assets);
     }
 
     if (query.category) {

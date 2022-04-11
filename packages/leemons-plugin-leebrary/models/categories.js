@@ -14,6 +14,12 @@ module.exports = {
         defaultTo: false,
       },
     },
+    provider: {
+      type: 'string',
+      options: {
+        notNull: true,
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

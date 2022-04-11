@@ -20,6 +20,9 @@ module.exports = {
         titleEdit: 'Editar recurso',
         back: 'Volver',
       },
+      bookmark: {
+        title: 'Nuevo marcador',
+      },
       labels: {
         title: 'Subir archivo',
         featuredImage: 'Imagen destacada',
@@ -31,17 +34,24 @@ module.exports = {
         name: 'Nombre',
         description: 'Descripción',
         createdSuccess: 'Recurso creado con éxito',
+        url: 'URL (enlace web)',
+        checkUrl: 'Comprobar url',
+      },
+      descriptions: {
+        featuredImage: 'Sólo si quieres cambiar la imagen destacada por defecto de la página web',
       },
       placeholders: {
         tagsInput: 'Escribe un tag',
         name: 'Nombre del recurso',
         description: 'Descripción del recurso',
         color: 'Selecciona un color',
+        url: 'Enlace web',
       },
       errorMessages: {
         name: 'Nombre es requerido',
         file: 'Archivo es requerido',
         tags: 'Escribe un tag para añadirlo',
+        url: 'URL es requerido',
       },
     },
     permissionsData: {

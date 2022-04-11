@@ -8,7 +8,12 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '../../../helpers/prefixPN';
 import LibraryContext from '../../../context/LibraryContext';
 import { VIEWS } from '../library/Library.constants';
-import { Setup, BasicData, PermissionsData } from '../../../components/AssetSetup';
+import {
+  Setup,
+  BasicData as MediaBasicData,
+  PermissionsData,
+  BookmarkBasicData,
+} from '../../../components/AssetSetup';
 
 const NewAssetPage = () => {
   const { file, setView, category, selectCategory, setAsset, asset } = useContext(LibraryContext);
@@ -43,7 +48,12 @@ const NewAssetPage = () => {
         steps: [
           {
             label: labels.basicData,
-            content: <BasicData file={file} categoryId={category?.id} onSave={setAsset} />,
+            content:
+              category.key === 'bookmarks' ? (
+                <BookmarkBasicData categoryId={category?.id} onSave={setAsset} />
+              ) : (
+                <MediaBasicData file={file} categoryId={category?.id} onSave={setAsset} />
+              ),
           },
           {
             label: labels.permissionsData,

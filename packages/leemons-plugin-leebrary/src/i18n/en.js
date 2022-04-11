@@ -20,6 +20,9 @@ module.exports = {
         titleEdit: 'Edit resource',
         back: 'Back',
       },
+      bookmark: {
+        title: 'New bookmark',
+      },
       labels: {
         title: 'Upload file',
         featuredImage: 'Featured image',
@@ -31,15 +34,22 @@ module.exports = {
         name: 'Name',
         description: 'Description',
         createdSuccess: 'Asset successfully created',
+        url: 'URL (webpage link)',
+        checkUrl: 'Check url',
+      },
+      descriptions: {
+        featuredImage: "Only if you want to change the webpage's default featured image",
       },
       placeholders: {
         tagsInput: 'Name of tag',
         name: 'Name of the resource',
+        url: 'Webpage link',
         description: 'Description of the resource',
         color: 'Select a color',
       },
       errorMessages: {
         name: 'Name is required',
+        url: 'URL is required',
         file: 'File is required',
         tags: 'Write a tag to add it',
       },

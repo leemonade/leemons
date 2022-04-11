@@ -8,6 +8,7 @@ const squirrelly = require('squirrelly');
 // const execa = require('execa');
 const { ImporterFactory } = require('xlsx-import/lib/ImporterFactory');
 const mediaInfo = require('mediainfo.js');
+const got = require('got');
 const documentInfo = require('./documentInfo');
 const { fetch, fetchJson, fetchText } = require('./fetch');
 const { env } = require('./env');
@@ -78,4 +79,5 @@ module.exports = {
   metascraper,
   mediaInfo,
   documentInfo,
+  got,
 };

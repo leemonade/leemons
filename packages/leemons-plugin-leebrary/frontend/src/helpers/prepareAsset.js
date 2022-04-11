@@ -1,4 +1,4 @@
-import { capitalize } from 'lodash';
+import { capitalize, isEmpty } from 'lodash';
 import { getAuthorizationTokenForAllCenters } from '@users/session';
 
 function getFileUrl(fileID) {
@@ -9,11 +9,26 @@ function getFileUrl(fileID) {
 function prepareAsset(assetFromApi) {
   const asset = { ...assetFromApi };
 
-  [asset.fileType] = asset.file.type.split('/');
-  asset.url = getFileUrl(asset.file.id);
+  if (isEmpty(asset.fileType)) {
+    const fileType = asset.file.type;
 
-  if (asset.cover) {
+    if (fileType.indexOf('xml') > -1 || fileType.indexOf('document') > -1) {
+      asset.fileType = 'document';
+    } else {
+      [asset.fileType] = fileType.split('/');
+    }
+  }
+
+  asset.fileExtension = asset.fileExtension || asset.file.extension;
+
+  asset.url = asset.url || getFileUrl(asset.file.id);
+
+  if (!isEmpty(asset.cover?.id)) {
     asset.cover = getFileUrl(asset.cover.id);
+  }
+
+  if (!isEmpty(asset.icon?.id)) {
+    asset.icon = getFileUrl(asset.icon.id);
   }
 
   if (asset.file?.metadata) {
