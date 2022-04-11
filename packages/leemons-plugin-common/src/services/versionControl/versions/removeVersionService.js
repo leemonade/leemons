@@ -6,7 +6,7 @@ module.exports = async function removeVersionService(id, { published, version, t
   const { uuid, version: v, fullId } = await parseId(id, version, { verifyVersion: false });
 
   try {
-    const { current } = await get(uuid, { transacting });
+    const { current } = await get.bind(this)(uuid, { transacting });
     if (version !== 'all' && current === v) {
       // EN: Check if current version is the same as the version to remove
       // ES: Comprueba si la versión actual es la misma que la versión a eliminar
@@ -23,5 +23,5 @@ module.exports = async function removeVersionService(id, { published, version, t
     throw new Error('The requested uuid does not exist in the version control system');
   }
 
-  return removeVersion(fullId, { published, transacting });
+  return removeVersion.bind(this)(fullId, { published, transacting });
 };

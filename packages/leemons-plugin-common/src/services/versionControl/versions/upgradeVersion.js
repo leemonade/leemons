@@ -56,10 +56,14 @@ module.exports = async function upgradeVersion(
 
   // EN: Update the current version.
   // ES: Actualiza la versión actual.
-  const createdVersion = createVersion(uuid, { version: newVersion, published, transacting });
+  const createdVersion = createVersion.bind(this)(uuid, {
+    version: newVersion,
+    published,
+    transacting,
+  });
 
   if (published && setAsCurrent) {
-    await update(uuid, newVersion, { transacting });
+    await update.bind(this)(uuid, newVersion, { transacting });
   }
 
   return createdVersion;

@@ -12,7 +12,7 @@ module.exports = async function publishVersion(
   const { fullId, uuid, version } = await parseId(id, v);
   let versionToUpdate;
   try {
-    versionToUpdate = await getVersion(fullId, { transacting });
+    versionToUpdate = await getVersion.bind(this)(fullId, { transacting });
 
     if (versionToUpdate.published === publish) {
       throw new Error('already published');
@@ -27,7 +27,7 @@ module.exports = async function publishVersion(
   }
 
   try {
-    const currentVersions = get(uuid, { transacting });
+    const currentVersions = get.bind(this)(uuid, { transacting });
 
     if (currentVersions.current === version) {
       throw new Error("Can't modify status of current version");

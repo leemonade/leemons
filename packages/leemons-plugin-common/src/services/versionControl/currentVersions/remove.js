@@ -5,23 +5,27 @@ const getVersion = require('../versions/getVersion');
 module.exports = async function remove(uuid, published = 'all', { transacting: t } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
+      if (!['all', true, false].includes(published)) {
+        throw new Error('published must be one of: all, true, false');
+      }
+
       // EN: Remove all the published versions if needed
       // ES: Elimina todas las versiones publicadas si es necesario
       if (published === true || published === 'all') {
-        await removeVersion(uuid, { published: true, version: 'all', transacting });
+        await removeVersion.bind(this)(uuid, { published: true, version: 'all', transacting });
       }
 
       // EN: Remove all the draft versions if needed
       // ES: Elimina todas las versiones en borrador si es necesario
       if (published === false || published === 'all') {
-        await removeVersion(uuid, { published: false, version: 'all', transacting });
+        await removeVersion.bind(this)(uuid, { published: false, version: 'all', transacting });
       }
 
       // EN: Check if the version control should be removed on this entity
       // ES: Comprueba si el sistema de control de versiones debe ser eliminado en esta entidad
       if (published !== 'all') {
         try {
-          await getVersion(uuid, {
+          await getVersion.bind(this)(uuid, {
             published: !published,
             version: 'latest',
             transacting,

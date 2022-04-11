@@ -1,9 +1,14 @@
 const { versions } = require('../../tables');
+const { get } = require('../currentVersions');
 const { parseId, parseVersion } = require('../helpers');
 
 module.exports = async function removeVersion(id, { published, version, transacting } = {}) {
   const { uuid, version: v } = await parseId(id, version, { verifyVersion: false });
   const query = { uuid };
+
+  // EN: Verify ownership (get throws an error if not owned)
+  // ES: Verificar propiedad (get lanza un error si no es propiedad)
+  await get.bind(this)(uuid, { transacting });
 
   // EN: If version is 'all', remove all versions.
   // ES: Si la versión es 'all', elimina todas las versiones.

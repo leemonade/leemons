@@ -1,4 +1,5 @@
 const { versions } = require('../../tables');
+const { get } = require('../currentVersions');
 const { parseId, parseVersion } = require('../helpers');
 
 module.exports = async function getVersion(id, { published, version, transacting } = {}) {
@@ -7,6 +8,10 @@ module.exports = async function getVersion(id, { published, version, transacting
     uuid,
     $limit: 1,
   };
+
+  // EN: Verify ownership (get throws an error if not owned)
+  // ES: Verificar propiedad (get lanza un error si no es propiedad)
+  await get.bind(this)(uuid, { transacting });
 
   if (published !== undefined) {
     query.published = published;
