@@ -224,7 +224,7 @@ function ListUsers() {
               <Stack fullWidth justifyContent="center">
                 <Pager
                   page={store.pagination?.page || 0}
-                  total={store.pagination?.totalPages || 0}
+                  totalPages={store.pagination?.totalPages || 0}
                   size={store.size}
                   withSize={true}
                   onChange={(val) => onPageChange(val - 1)}

@@ -5,8 +5,6 @@ import useTranslate from '@multilanguage/useTranslate';
 import tLoader from '@multilanguage/helpers/tLoader';
 
 import prefixPN from '@users/helpers/prefixPN';
-import { withLayout } from '@layout/hoc';
-import { PageContainer, PageHeader } from 'leemons-ui';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de crear usuarios
 function Welcome() {
@@ -27,8 +25,9 @@ function Welcome() {
 
   return (
     <>
-      <PageHeader title={t('page_title')} description={t('page_description')} />
-      <PageContainer>Hola</PageContainer>
+      {t('page_title')}
+      <br />
+      {t('page_description')}
     </>
   );
 }

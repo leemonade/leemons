@@ -1,13 +1,11 @@
 import * as _ from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Button, FormControl, Input } from 'leemons-ui';
+// import { Button, FormControl, Input } from 'leemons--ui';
 import { useForm } from 'react-hook-form';
 import { useAsync } from '@common/useAsync';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import RelationSelect from '@families/components/relationSelect';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import formWithTheme from '@common/formWithTheme';
-import regex from '@common/regex';
 import PropTypes from 'prop-types';
 import { EmergencyNumbersService } from '../services';
 
@@ -18,6 +16,15 @@ function PhoneNumbersModal({ t, item, onSave = () => {} }) {
   const [datasetData, setDatasetData] = useState(null);
   const [otherRelationValue, setOtherRelationValue] = useState('');
   const [error, setError, ErrorAlert] = useRequestErrorMessage();
+
+  const {
+    register,
+    setValue,
+    watch,
+    getValues,
+    handleSubmit,
+    formState: { errors, isSubmitted },
+  } = useForm();
 
   useEffect(() => {
     if (item) {
@@ -72,15 +79,6 @@ function PhoneNumbersModal({ t, item, onSave = () => {} }) {
 
   useAsync(load, onSuccess, onError);
 
-  const {
-    register,
-    setValue,
-    watch,
-    getValues,
-    handleSubmit,
-    formState: { errors, isSubmitted },
-  } = useForm();
-
   const [form, formActions] = formWithTheme(
     datasetConfig?.jsonSchema,
     datasetConfig?.jsonUI,
@@ -113,6 +111,9 @@ function PhoneNumbersModal({ t, item, onSave = () => {} }) {
     onSave(data);
   };
 
+  return 'Hay que migrar a bubbles-ui';
+
+  /*
   return (
     <>
       <form id="form-numbers-modal" onSubmit={_onSubmit}>
@@ -165,6 +166,8 @@ function PhoneNumbersModal({ t, item, onSave = () => {} }) {
       </div>
     </>
   );
+
+   */
 }
 
 PhoneNumbersModal.propTypes = {

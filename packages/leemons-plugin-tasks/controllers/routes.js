@@ -23,6 +23,27 @@ const getPermissions = (permissionsArr, actions = null) => {
 
 module.exports = [
   /**
+   * Profiles
+   */
+  {
+    method: 'GET',
+    path: '/profiles/:key',
+    handler: 'profiles.get',
+    authenticated: true,
+  },
+  {
+    method: 'POST',
+    path: '/profiles/:key',
+    handler: 'profiles.set',
+    authenticated: true,
+  },
+  {
+    method: 'POST',
+    path: '/profiles',
+    handler: 'profiles.setMany',
+    authenticated: true,
+  },
+  /**
    * Tasks
    */
   {
@@ -89,7 +110,12 @@ module.exports = [
     handler: 'tags.has',
     authenticated: true,
   },
-
+  {
+    method: 'GET',
+    path: '/tasks/tags/list',
+    handler: 'tags.list',
+    authenticated: true,
+  },
   /**
    * Attachments
    */
@@ -124,9 +150,27 @@ module.exports = [
     authenticated: true,
   },
   {
+    method: 'PUT',
+    path: '/tasks/assignments/instance/:instance',
+    handler: 'assignments.instanceUpdate',
+    authenticated: true,
+  },
+  {
     method: 'DELETE',
     path: '/tasks/:task/assignments/instance/:instance',
     handler: 'assignments.instanceDelete',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/instances/search',
+    handler: 'assignments.search',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/instances/:instance',
+    handler: 'assignments.instanceGet',
     authenticated: true,
   },
   // Student
@@ -144,8 +188,32 @@ module.exports = [
   },
   {
     method: 'GET',
+    path: '/tasks/instances/student/:user',
+    handler: 'assignments.studentListAssigned',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
     path: '/tasks/instances/:instance/students',
     handler: 'assignments.studentList',
+    authenticated: true,
+  },
+  {
+    method: 'PUT',
+    path: '/tasks/instances/:instance/students/:student/key/:key/value/:value',
+    handler: 'assignments.studentUpdate',
+    authenticated: true,
+  },
+  {
+    method: 'POST',
+    path: '/tasks/instances/:instance/students/:student/calification',
+    handler: 'assignments.studentCalificate',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/instances/:instance/students/:student/calification',
+    handler: 'assignments.studentGetCalification',
     authenticated: true,
   },
   // Teacher
@@ -165,6 +233,40 @@ module.exports = [
     method: 'GET',
     path: '/tasks/instances/:instance/teachers',
     handler: 'assignments.teacherList',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/instances/teacher/:user',
+    handler: 'assignments.teacherListAssigned',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/instances/teacher/:user/search',
+    handler: 'assignments.teacherSearch',
+    authenticated: true,
+  },
+
+  // Group
+  {
+    method: 'POST',
+    path: '/tasks/instances/:instance/group',
+    handler: 'assignments.groupAssign',
+    authenticated: true,
+  },
+
+  // Deliverables
+  {
+    method: 'POST',
+    path: '/tasks/instances/:instance/:user/deliverables/:type',
+    handler: 'assignments.setDeliverable',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/tasks/instances/:instance/:user/deliverables/:type',
+    handler: 'assignments.getDeliverable',
     authenticated: true,
   },
 

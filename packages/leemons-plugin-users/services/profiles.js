@@ -6,6 +6,7 @@ module.exports = {
   list: profiles.list,
   update: profiles.update,
   existName: profiles.existName,
+  existMany: profiles.existMany,
   detailByUri: profiles.detailByUri,
   // TODO Comprobar acceso
   addProfileContact: profiles.addProfileContact,

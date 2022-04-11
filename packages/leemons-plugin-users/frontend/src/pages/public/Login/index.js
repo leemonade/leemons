@@ -14,7 +14,6 @@ import { getCookieToken, useSession } from '@users/session';
 import { goRecoverPage } from '@users/navigate';
 import HeroBgLayout from '@users/layout/heroBgLayout';
 import prefixPN from '@users/helpers/prefixPN';
-import constants from '@users/constants';
 import useTranslate from '@multilanguage/useTranslate';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -31,7 +30,9 @@ const PageStyles = createStyles((theme) => ({
 
 export default function Login() {
   useSession({
-    redirectTo: _.isString(getCookieToken(true)) ? 'private/users/select-profile' : constants.base,
+    redirectTo: _.isString(getCookieToken(true))
+      ? 'private/users/select-profile'
+      : 'private/dashboard',
     redirectIfFound: true,
   });
 

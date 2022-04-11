@@ -7,7 +7,7 @@ module.exports = function sqlDatetime(value) {
     return dateToSql(value);
   }
 
-  if (typeof value === 'string') {
+  if (typeof value === 'string' || typeof value === 'number') {
     return dateToSql(new Date(value));
   }
 

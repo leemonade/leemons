@@ -1,4 +1,5 @@
-import { ImageLoader, Input } from 'leemons-ui';
+/*
+import { ImageLoader, Input } from 'leemons--ui';
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
@@ -173,3 +174,4 @@ MainMenuSubmenuItem.propTypes = {
   state: PropTypes.object,
   setState: PropTypes.func,
 };
+*/

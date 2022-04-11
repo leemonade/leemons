@@ -1,17 +1,19 @@
+const permissionsPrefix = 'plugins.calendar';
+
 module.exports = {
   permissions: [
     {
-      permissionName: 'plugins.calendar.calendar',
+      permissionName: `${permissionsPrefix}.calendar`,
       actions: ['view', 'admin'],
       localizationName: { es: 'Calendario', en: 'Calendar' },
     },
     {
-      permissionName: 'plugins.calendar.calendar-configs',
+      permissionName: `${permissionsPrefix}.calendar-configs`,
       actions: ['view', 'create', 'update', 'delete', 'admin'],
       localizationName: { es: 'Configurar calendario', en: 'Calendar setup' },
     },
     {
-      permissionName: 'plugins.calendar.calendar-classroom',
+      permissionName: `${permissionsPrefix}.calendar-classroom`,
       actions: ['view', 'create', 'update', 'delete', 'admin'],
       localizationName: { es: 'Calendarios aula', en: 'Classroom calendars' },
     },
@@ -27,7 +29,7 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: 'plugins.calendar.calendar',
+          permissionName: `${permissionsPrefix}.calendar`,
           actionNames: ['view', 'admin'],
         },
       ],
@@ -42,7 +44,7 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: 'plugins.calendar.calendar',
+          permissionName: `${permissionsPrefix}.calendar`,
           actionNames: ['view', 'admin'],
         },
       ],
@@ -56,7 +58,7 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: 'plugins.calendar.calendar-configs',
+          permissionName: `${permissionsPrefix}.calendar-configs`,
           actionNames: ['view', 'admin'],
         },
       ],
@@ -70,7 +72,7 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: 'plugins.calendar.calendar-classroom',
+          permissionName: `${permissionsPrefix}.calendar-classroom`,
           actionNames: ['view', 'admin'],
         },
       ],
@@ -128,4 +130,62 @@ module.exports = {
       bgColor: '#a1a1a1',
     },
   ],
+  widgets: {
+    zones: [
+      { key: `${permissionsPrefix}.class.kanban` },
+      { key: `${permissionsPrefix}.class.calendar` },
+    ],
+    items: [
+      // ---- Dashboard
+      {
+        zoneKey: 'plugins.dashboard.program.left',
+        key: `${permissionsPrefix}.user.program.calendar`,
+        url: 'user-program-calendar/index',
+      },
+      {
+        zoneKey: 'plugins.dashboard.program.left',
+        key: `${permissionsPrefix}.user.program.kanban`,
+        url: 'user-program-kanban/index',
+      },
+      // ---- Class (Control Panel)
+      {
+        zoneKey: 'plugins.dashboard.class.control-panel',
+        key: `${permissionsPrefix}.user.class.kanban`,
+        url: 'user-program-kanban/index',
+      },
+      // ---- Class (Kanban)
+      {
+        zoneKey: `${permissionsPrefix}.class.kanban`,
+        key: `${permissionsPrefix}.user.class.kanban.kanban`,
+        url: 'user-program-kanban/index',
+        properties: {
+          useAllColumns: true,
+        },
+      },
+      // ---- Class (Calendar)
+      {
+        zoneKey: `${permissionsPrefix}.class.calendar`,
+        key: `${permissionsPrefix}.user.class.calendar.calendar`,
+        url: 'user-program-calendar/index',
+      },
+      // ---- Class (Kanban [Tab])
+      {
+        zoneKey: 'plugins.dashboard.class.tabs',
+        key: `${permissionsPrefix}.class.tab.kanban`,
+        url: 'tab-kanban/index',
+        properties: {
+          label: `${permissionsPrefix}.tabKanban.label`,
+        },
+      },
+      // ---- Class (Calendar [Tab])
+      {
+        zoneKey: 'plugins.dashboard.class.tabs',
+        key: `${permissionsPrefix}.class.tab.calendar`,
+        url: 'tab-calendar/index',
+        properties: {
+          label: `${permissionsPrefix}.tabCalendar.label`,
+        },
+      },
+    ],
+  },
 };

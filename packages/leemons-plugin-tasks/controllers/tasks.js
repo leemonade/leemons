@@ -1,5 +1,5 @@
 const create = require('../src/services/task/create');
-const get = require('../src/services/task/get');
+const { get } = require('../src/services/task/get');
 const publish = require('../src/services/task/versions/publish');
 const remove = require('../src/services/task/remove');
 const search = require('../src/services/task/search');
@@ -20,12 +20,19 @@ module.exports = {
         statement,
         development,
         submissions,
+        preTask,
+        preTaskOptions,
         selfReflection,
         feedback,
         instructionsForTeacher,
         instructionsForStudent,
         state,
         published,
+        subjects,
+        center,
+        program,
+        tags,
+        attachments,
       } = ctx.request.body;
 
       let task = {
@@ -40,12 +47,19 @@ module.exports = {
         statement,
         development,
         submissions,
+        preTask,
+        preTaskOptions,
         selfReflection,
         feedback,
         instructionsForTeacher,
         instructionsForStudent,
         state,
         published,
+        subjects,
+        center,
+        program,
+        tags,
+        attachments,
       };
 
       task = await create(task);
@@ -78,12 +92,19 @@ module.exports = {
         statement,
         development,
         submissions,
+        preTask,
+        preTaskOptions,
         selfReflection,
         feedback,
         instructionsForTeacher,
         instructionsForStudent,
         state,
         published,
+        subjects,
+        center,
+        program,
+        tags,
+        attachments,
       } = ctx.request.body;
 
       let task = {
@@ -98,12 +119,19 @@ module.exports = {
         statement,
         development,
         submissions,
+        preTask,
+        preTaskOptions,
         selfReflection,
         feedback,
         instructionsForTeacher,
         instructionsForStudent,
         state,
         published,
+        subjects,
+        center,
+        program,
+        tags,
+        attachments,
       };
 
       task = await update(id, task);
@@ -124,8 +152,17 @@ module.exports = {
   get: async (ctx) => {
     try {
       const { id } = ctx.params;
-
-      const task = await get(id);
+      let { columns } = ctx.query;
+      try {
+        columns = JSON.parse(columns);
+      } catch (e) {
+        if (columns !== '*') {
+          columns = undefined;
+        }
+      }
+      const task = await get(id, {
+        columns,
+      });
 
       ctx.status = 200;
       ctx.body = {
@@ -180,11 +217,16 @@ module.exports = {
   },
   search: async (ctx) => {
     try {
-      const { page, size, draft } = ctx.request.query;
+      const { offset, size, draft, ...query } = ctx.request.query;
 
-      const tasks = await search({}, parseInt(page, 10) || 0, parseInt(size, 10) || 10, {
-        draft: draft === 'true',
-      });
+      const tasks = await search(
+        { ...query },
+        parseInt(offset, 10) || 0,
+        parseInt(size, 10) || 10,
+        {
+          draft: draft === 'true',
+        }
+      );
 
       ctx.status = 200;
       ctx.body = {

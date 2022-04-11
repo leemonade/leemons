@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import { ScheduleInput } from '@timetable/components';
 import {
@@ -67,47 +67,54 @@ function Group({ selectGroups, program, onCreateGroup, onlyNewSubject, messages,
   );
 }
 
-function EnableIfFormPropHasValue({
-  property,
-  formValues,
-  children,
-  onCreate = () => {},
-  ...props
-}) {
-  let value = null;
-  if (isArray(props.value)) {
-    value = map(props.value, (val) => {
-      if (isObject(val)) return val.id;
-      return val;
-    });
-  } else if (isObjectLike(props.value)) {
-    value = props.value.id;
-  } else {
-    value = props.value;
-  }
-
-  // eslint-disable-next-line no-nested-ternary
-  const properties = property ? (isArray(property) ? property : [property]) : [];
-  let disabled = false;
-  forEach(properties, (p) => {
-    if (formValues && !formValues[p]) {
-      disabled = true;
+const EnableIfFormPropHasValue = forwardRef(
+  ({ property, formValues, children, onCreate = () => {}, ...props }, ref) => {
+    let value = null;
+    if (isArray(props.value)) {
+      value = map(props.value, (val) => {
+        if (isObject(val)) return val.id;
+        return val;
+      });
+    } else if (isObjectLike(props.value)) {
+      value = props.value.id;
+    } else {
+      value = props.value;
     }
-  });
 
-  function _onCreate(value) {
-    const toSend = { ...formValues };
-    set(toSend, props.name, value);
-    onCreate({ formValues, onCreateFieldName: props.name, value });
+    // eslint-disable-next-line no-nested-ternary
+    const properties = property ? (isArray(property) ? property : [property]) : [];
+    let disabled = false;
+    forEach(properties, (p) => {
+      if (formValues && !formValues[p]) {
+        disabled = true;
+      }
+    });
+
+    function _onCreate(val) {
+      const toSend = { ...formValues };
+      set(toSend, props.name, val);
+      onCreate({ formValues, onCreateFieldName: props.name, value: val });
+    }
+
+    return React.cloneElement(children, {
+      ...props,
+      ref,
+      disabled,
+      onCreate: _onCreate,
+      value,
+    });
   }
+);
 
-  return React.cloneElement(children, {
-    ...props,
-    disabled,
-    onCreate: _onCreate,
-    value,
-  });
-}
+EnableIfFormPropHasValue.displayName = '@academic-portfolio/components/EnableIfFormPropHasValue';
+EnableIfFormPropHasValue.propTypes = {
+  name: PropTypes.string,
+  value: PropTypes.any,
+  property: PropTypes.any,
+  formValues: PropTypes.any,
+  children: PropTypes.any,
+  onCreate: PropTypes.func,
+};
 
 function SubjectsTable({
   messages,
@@ -276,6 +283,7 @@ function SubjectsTable({
     });
   }
 
+  // SUBJECT ID
   columns.push({
     Header: messages.id,
     accessor: 'internalId',
@@ -295,6 +303,7 @@ function SubjectsTable({
     },
   });
 
+  // KNOWLEDGE
   if (program.haveKnowledge) {
     columns.push({
       Header: messages.knowledge,
@@ -311,6 +320,7 @@ function SubjectsTable({
     });
   }
 
+  // SUBJECT TYPE
   columns.push({
     Header: messages.subjectType,
     accessor: 'subjectType',
@@ -325,6 +335,7 @@ function SubjectsTable({
     valueRender: (value) => <>{value?.name}</>,
   });
 
+  // CREDITS
   if (program.credits) {
     columns.push({
       Header: messages.credits,
@@ -340,6 +351,7 @@ function SubjectsTable({
     });
   }
 
+  // COLORS
   columns.push({
     Header: messages.color,
     accessor: 'color',

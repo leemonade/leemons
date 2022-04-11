@@ -25,6 +25,12 @@ const getPermissions = (permissionsArr, actions = null) => {
 module.exports = [
   // Programs
   {
+    path: '/user/programs',
+    method: 'GET',
+    handler: 'program.getUserPrograms',
+    authenticated: true,
+  },
+  {
     path: '/program',
     method: 'PUT',
     handler: 'program.putProgram',
@@ -246,6 +252,12 @@ module.exports = [
     handler: 'subject.listSubject',
     authenticated: true,
   },
+  {
+    path: '/subject/:id',
+    method: 'GET',
+    handler: 'subject.subjectByIds',
+    authenticated: true,
+  },
   // Class
   {
     path: '/class',
@@ -269,6 +281,12 @@ module.exports = [
     path: '/class/:id',
     method: 'DELETE',
     handler: 'class.removeClass',
+    authenticated: true,
+  },
+  {
+    path: '/class/dashboard/:id',
+    method: 'GET',
+    handler: 'class.classDetailForDashboard',
     authenticated: true,
   },
   {
@@ -306,6 +324,12 @@ module.exports = [
     path: '/student/:id/classes',
     method: 'GET',
     handler: 'class.listStudentClasses',
+    authenticated: true,
+  },
+  {
+    path: '/session/classes',
+    method: 'POST',
+    handler: 'class.listSessionClasses',
     authenticated: true,
   },
   // Teacher
@@ -392,7 +416,7 @@ module.exports = [
     method: 'GET',
     handler: 'settings.getProfiles',
     authenticated: true,
-    allowedPermissions: getPermissions(permissions.profiles, ['view']),
+    // allowedPermissions: getPermissions(permissions.profiles, ['view']),
   },
   {
     path: '/settings/profiles',

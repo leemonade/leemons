@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from 'react';
-import { Button, Modal, PageContainer, Table, useModal } from 'leemons-ui';
+import React from 'react';
+// import { Button, Modal, PageContainer, Table, useModal } from 'leemons--ui';
+/*
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
@@ -11,8 +12,10 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@families-emergency-numbers/helpers/prefixPN';
 import { PackageManagerService } from '@package-manager/services';
-
+*/
 function Config() {
+  return 'Pasar a bubbles-ui';
+  /*
   const [loading, setLoading] = useState(true);
   const [tableItems, setTableItems] = useState([]);
   const [item, setItem] = useState(null);
@@ -248,6 +251,7 @@ function Config() {
       ) : null}
     </>
   );
+  */
 }
 
 export default Config;

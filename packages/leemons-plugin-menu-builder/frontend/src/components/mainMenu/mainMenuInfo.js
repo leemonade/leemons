@@ -1,6 +1,7 @@
+/*
 import React, { useEffect } from 'react';
 import * as PropTypes from 'prop-types';
-import { Button, ImageLoader } from 'leemons-ui';
+import { Button, ImageLoader } from 'leemons--ui';
 import useTranslate from '@multilanguage/useTranslate';
 import tLoader from '@multilanguage/helpers/tLoader';
 import prefixPN from '../../helpers/prefixPN';
@@ -111,3 +112,4 @@ MainMenuInfo.propTypes = {
   state: PropTypes.object.isRequired,
   setState: PropTypes.func.isRequired,
 };
+*/

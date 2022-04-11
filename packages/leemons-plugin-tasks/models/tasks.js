@@ -20,8 +20,9 @@ module.exports = {
     methodology: {
       type: 'string',
     },
+    // TODO: Move to string (20min | 20years), because if not, it can overflow
     recommendedDuration: {
-      type: 'number',
+      type: 'integer',
     },
     statement: {
       type: 'richtext',
@@ -30,19 +31,31 @@ module.exports = {
       type: 'richtext',
     },
     submissions: {
-      type: 'boolean',
+      type: 'json',
+    },
+    preTask: {
+      type: 'string',
+    },
+    preTaskOptions: {
+      type: 'json',
     },
     selfReflection: {
-      type: 'boolean',
+      type: 'json',
     },
     feedback: {
-      type: 'boolean',
+      type: 'json',
     },
     instructionsForTeacher: {
       type: 'richtext',
     },
     instructionsForStudent: {
       type: 'richtext',
+    },
+    center: {
+      type: 'uuid',
+    },
+    program: {
+      type: 'uuid',
     },
     // Track the current state, including setup steps
     state: {

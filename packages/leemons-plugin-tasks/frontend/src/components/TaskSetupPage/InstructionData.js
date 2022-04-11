@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isEmpty } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Stack, ContextContainer, Button } from '@bubbles-ui/components';
-import { TextEditor } from '@bubbles-ui/editors';
-import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import { TextEditorInput } from '@bubbles-ui/editors';
+
+import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 
 function InstructionData({
   labels,
@@ -16,10 +17,12 @@ function InstructionData({
   editable,
   onNext,
   onPrevious,
+  useObserver,
   ...props
 }) {
   // ·······························································
   // FORM
+  const [loading, setLoading] = React.useState(null);
 
   const defaultValues = {
     forTeacher: '',
@@ -32,6 +35,22 @@ function InstructionData({
     handleSubmit,
     formState: { errors },
   } = useForm({ defaultValues });
+
+  const { subscribe, unsubscribe, emitEvent } = useObserver();
+
+  useEffect(() => {
+    const f = (event) => {
+      if (event === 'saveTask') {
+        handleSubmit((data) => {
+          setSharedData(data);
+          emitEvent('saveData');
+        })();
+      }
+    };
+    subscribe(f);
+
+    return () => unsubscribe(f);
+  }, []);
 
   // ·······························································
   // HANDLERS
@@ -46,7 +65,7 @@ function InstructionData({
   // COMPONENT
 
   return (
-    <form onSubmit={handleSubmit(handleOnNext)}>
+    <form onSubmit={handleSubmit(handleOnNext)} autoComplete="off">
       <ContextContainer {...props} divided>
         <ContextContainer title={labels.title}>
           <Box>
@@ -55,7 +74,7 @@ function InstructionData({
               name="instructionsForTeacher"
               rules={{ required: errorMessages.forTeacher?.required }}
               render={({ field }) => (
-                <TextEditor
+                <TextEditorInput
                   {...field}
                   label={labels.forTeacher}
                   placeholder={placeholders.forTeacher}
@@ -72,7 +91,7 @@ function InstructionData({
               name="instructionsForStudent"
               rules={{ required: errorMessages.forStudent?.required }}
               render={({ field }) => (
-                <TextEditor
+                <TextEditorInput
                   {...field}
                   label={labels.forStudent}
                   placeholder={placeholders.forStudent}
@@ -96,9 +115,27 @@ function InstructionData({
             </Button>
           </Box>
           <Box>
-            <Button type="submit" rightIcon={<ChevRightIcon height={20} width={20} />}>
-              {labels.buttonNext}
-            </Button>
+            <ContextContainer direction="row">
+              <Button
+                loading={loading === 'onlyPublish'}
+                variant="outline"
+                onClick={() => {
+                  setLoading('onlyPublish');
+                  emitEvent('publishTaskAndLibrary');
+                }}
+              >
+                {labels.buttonPublish}
+              </Button>
+              <Button
+                loading={loading === 'publishAndAssign'}
+                onClick={() => {
+                  setLoading('publishAndAssign');
+                  emitEvent('publishTaskAndAssign');
+                }}
+              >
+                {labels.buttonNext}
+              </Button>
+            </ContextContainer>
           </Box>
         </Stack>
       </ContextContainer>
@@ -124,6 +161,7 @@ InstructionData.propTypes = {
   editable: PropTypes.bool,
   onNext: PropTypes.func,
   onPrevious: PropTypes.func,
+  useObserver: PropTypes.func,
 };
 
 // eslint-disable-next-line import/prefer-default-export

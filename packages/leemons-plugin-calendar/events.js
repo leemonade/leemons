@@ -99,6 +99,30 @@ async function events(isInstalled) {
       await leemons.getPlugin('users').services.permissions.addMany(constants.permissions);
       leemons.events.emit('init-permissions');
     });
+
+    leemons.events.once('plugins.dashboard:init-widget-zones', async () => {
+      await Promise.all(
+        _.map(constants.widgets.zones, (config) =>
+          leemons.getPlugin('widgets').services.widgets.addZone(config.key, {
+            name: config.name,
+            description: config.description,
+          })
+        )
+      );
+      leemons.events.emit('init-widget-zones');
+      await Promise.all(
+        _.map(constants.widgets.items, (config) =>
+          leemons
+            .getPlugin('widgets')
+            .services.widgets.addItemToZone(config.zoneKey, config.key, config.url, {
+              name: config.name,
+              description: config.description,
+              properties: config.properties,
+            })
+        )
+      );
+      leemons.events.emit('init-widget-items');
+    });
   } else {
     leemons.events.once('plugins.calendar:pluginDidInit', async () => {
       leemons.events.emit('init-menu');

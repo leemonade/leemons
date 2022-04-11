@@ -253,7 +253,7 @@ module.exports = {
     },
   },
   profiles_page: {
-    page_title: 'Academic portfolio profiles',
+    page_title: 'Academic portfolio - Profiles setup',
     page_description:
       'First of all we need to match the system profiles with the custom profiles you have created on the platform (Please read carefully the characteristics of each profile. Once the profiles are linked, it cannot be undone.)',
     save: 'Save',
@@ -443,5 +443,22 @@ module.exports = {
     tableName: 'Name',
     tableKnowledge: 'Knowledge',
     tableType: 'Type',
+  },
+  userClassesSwiperWidget: {
+    multiCourse: 'Multi-course',
+  },
+  tabDetail: {
+    label: 'Classroom',
+  },
+  classDetailWidget: {
+    emailHeader: 'Email',
+    nameHeader: 'Name',
+    surnameHeader: 'Surname',
+    birthdayHeader: 'Birthday',
+    teachers: 'Teachers',
+    students: 'Students',
+  },
+  classStudents: {
+    label: 'Students',
   },
 };

@@ -1,6 +1,7 @@
-import * as _ from 'lodash';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { withLayout } from '@layout/hoc';
+import React from 'react';
+
+/*
+
 import { useForm } from 'react-hook-form';
 import { useAsync } from '@common/useAsync';
 import { useHistory, useParams } from 'react-router-dom';
@@ -15,11 +16,15 @@ import {
 } from '@calendar/request';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { Badge, FormControl, PageContainer, PageHeader, Radio, Select } from 'leemons-ui';
+// import { Badge, FormControl, PageHeader } from 'leemons--ui';
+import { PageContainer, RadioGroup, Select } from '@bubbles-ui/components';
 import { addErrorAlert } from '@layout/alert';
 import countryList from 'country-region-data';
 
+ */
+
 function ConfigAdd() {
+  /*
   const weekdays = useMemo(
     () => [
       { value: 0, name: 'monday' },
@@ -267,33 +272,24 @@ function ConfigAdd() {
                 <div className="page-description max-w-screen-sm">{t('description')}</div>
                 {!data ? (
                   <>
-                    <div className="mt-4">
-                      <FormControl label={t('add_calendar')} />
-                      <div className="flex gap-4">
-                        <FormControl label={t('from_market')} labelPosition="right">
-                          <Radio
-                            color={_.get(errors, `addedFrom`) ? 'error' : 'primary'}
-                            name="addedFrom"
-                            checked={formAddedFrom === 'market'}
-                            onChange={() => setValue('addedFrom', 'market')}
-                            value={'market'}
-                          />
-                        </FormControl>
-                        <FormControl label={t('from_scratch')} labelPosition="right">
-                          <Radio
-                            color={_.get(errors, `addedFrom`) ? 'error' : 'primary'}
-                            name="addedFrom"
-                            checked={formAddedFrom === 'scratch'}
-                            onChange={() => setValue('addedFrom', 'scratch')}
-                            value={'scratch'}
-                          />
-                        </FormControl>
-                      </div>
-                    </div>
+                    <RadioGroup
+                      label={t('add_calendar_from')}
+                      onChange={(v) => setValue('addedFrom', v)}
+                      data={[
+                        {
+                          label: t('from_market'),
+                          value: 'market',
+                        },
+                        {
+                          label: t('from_scratch'),
+                          value: 'scratch',
+                        },
+                      ]}
+                    />
                   </>
                 ) : null}
 
-                {/* Centers */}
+
                 <FormControl label={t('centers')} formError={_.get(errors, 'centers')}>
                   <Select
                     outlined
@@ -301,18 +297,18 @@ function ConfigAdd() {
                     value={watch('centers')}
                     onChange={(e) => setValue('centers', e)}
                     placeholderLabel={t('centers_placeholder')}
-                  >
-                    {centers
-                      ? centers.map((center) => (
-                          <option key={center.id} value={center.id}>
-                            {center.name}
-                          </option>
-                        ))
-                      : null}
-                  </Select>
+                    data={
+                      centers
+                        ? centers.map((center) => ({
+                            label: center.name,
+                            value: center.id,
+                          }))
+                        : []
+                    }
+                  />
                 </FormControl>
 
-                {/* Country/Region */}
+
                 <div className="flex gap-4">
                   <FormControl label={t('country')} formError={_.get(errors, 'country')}>
                     <Select
@@ -325,16 +321,17 @@ function ConfigAdd() {
                         },
                       })}
                       value={watch('country')}
-                    >
-                      <option value="_" disabled>
-                        {t('country_placeholder')}
-                      </option>
-                      {countryList.map((country) => (
-                        <option key={country.countryShortCode} value={country.countryShortCode}>
-                          {country.countryName}
-                        </option>
-                      ))}
-                    </Select>
+                      data={[
+                        {
+                          label: t('country_placeholder'),
+                          value: '_',
+                        },
+                        ...countryList.map((country) => ({
+                          label: country.countryName,
+                          value: country.countryShortCode,
+                        })),
+                      ]}
+                    />
                   </FormControl>
                   <FormControl label={t('region')} formError={_.get(errors, 'region')}>
                     <Select
@@ -364,9 +361,9 @@ function ConfigAdd() {
                   </FormControl>
                 </div>
 
-                {/* Start/End */}
+
                 <div className="flex gap-4">
-                  {/* Start */}
+
                   <div>
                     <FormControl label={t('starts')} />
                     <div className="flex gap-4">
@@ -378,16 +375,17 @@ function ConfigAdd() {
                             validate: (value) => (value === '_' ? tCommonForm('required') : true),
                           })}
                           value={watch('startMonth')}
-                        >
-                          <option value="_" disabled>
-                            {t('month_placeholder')}
-                          </option>
-                          {months.map((month) => (
-                            <option key={month.value} value={month.value.toString()}>
-                              {t(month.name)}
-                            </option>
-                          ))}
-                        </Select>
+                          data={[
+                            {
+                              label: t('month_placeholder'),
+                              value: '_',
+                            },
+                            ...months.map((month) => ({
+                              label: t(month.name),
+                              value: month.id,
+                            })),
+                          ]}
+                        />
                       </FormControl>
                       <FormControl formError={_.get(errors, 'startYear')}>
                         <Select
@@ -397,20 +395,21 @@ function ConfigAdd() {
                             validate: (value) => (value === '_' ? tCommonForm('required') : true),
                           })}
                           value={watch('startYear')}
-                        >
-                          <option value="_" disabled>
-                            {t('year_placeholder')}
-                          </option>
-                          {years.map((year) => (
-                            <option key={year} value={year.toString()}>
-                              {year}
-                            </option>
-                          ))}
-                        </Select>
+                          data={[
+                            {
+                              label: t('year_placeholder'),
+                              value: '_',
+                            },
+                            ...years.map((year) => ({
+                              label: year.name,
+                              value: year.toString(),
+                            })),
+                          ]}
+                        />
                       </FormControl>
                     </div>
                   </div>
-                  {/* End */}
+
                   <div>
                     <FormControl label={t('ends')} />
                     <div className="flex gap-4">
@@ -422,16 +421,17 @@ function ConfigAdd() {
                             validate: (value) => (value === '_' ? tCommonForm('required') : true),
                           })}
                           value={watch('endMonth')}
-                        >
-                          <option value="_" disabled>
-                            {t('month_placeholder')}
-                          </option>
-                          {months.map((month) => (
-                            <option key={month.value} value={month.value.toString()}>
-                              {t(month.name)}
-                            </option>
-                          ))}
-                        </Select>
+                          data={[
+                            {
+                              label: t('month_placeholder'),
+                              value: '_',
+                            },
+                            ...months.map((month) => ({
+                              label: t(month.name),
+                              value: month.id,
+                            })),
+                          ]}
+                        />
                       </FormControl>
                       <FormControl formError={_.get(errors, 'endYear')}>
                         <Select
@@ -441,22 +441,23 @@ function ConfigAdd() {
                             validate: (value) => (value === '_' ? tCommonForm('required') : true),
                           })}
                           value={watch('endYear')}
-                        >
-                          <option value="_" disabled>
-                            {t('year_placeholder')}
-                          </option>
-                          {years.map((year) => (
-                            <option key={year} value={year.toString()}>
-                              {year}
-                            </option>
-                          ))}
-                        </Select>
+                          data={[
+                            {
+                              label: t('year_placeholder'),
+                              value: '_',
+                            },
+                            ...years.map((year) => ({
+                              label: year,
+                              value: year.toString(),
+                            })),
+                          ]}
+                        />
                       </FormControl>
                     </div>
                   </div>
                 </div>
 
-                {/* First day of week */}
+
                 <FormControl label={t('first_day_week')} formError={_.get(errors, 'weekday')}>
                   <Select
                     outlined
@@ -465,19 +466,20 @@ function ConfigAdd() {
                       validate: (value) => (value === '_' ? tCommonForm('required') : true),
                     })}
                     value={watch('weekday')}
-                  >
-                    <option value="_" disabled>
-                      {t('first_day_week_placeholder')}
-                    </option>
-                    {weekdays.map((day) => (
-                      <option key={day.value} value={day.value}>
-                        {t(day.name)}
-                      </option>
-                    ))}
-                  </Select>
+                    data={[
+                      {
+                        label: t('day_placeholder'),
+                        value: '_',
+                      },
+                      ...weekdays.map((day) => ({
+                        label: t(day.name),
+                        value: day.value,
+                      })),
+                    ]}
+                  />
                 </FormControl>
 
-                {/* School days */}
+
                 <FormControl label={t('school_and_non_school_days')} />
                 <div className="page-description max-w-screen-sm">
                   {t('school_and_non_school_days_description')}
@@ -503,6 +505,8 @@ function ConfigAdd() {
       )}
     </>
   );
+
+   */
 }
 
-export default withLayout(ConfigAdd);
+export default ConfigAdd;

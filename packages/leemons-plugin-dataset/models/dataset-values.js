@@ -27,10 +27,10 @@ module.exports = {
       type: 'json',
     },
     searchableValueString: {
-      type: 'string',
+      type: 'richtext',
     },
     searchableValueNumber: {
-      type: 'string',
+      type: 'richtext',
     },
     metadata: {
       type: 'json',

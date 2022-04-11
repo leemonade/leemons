@@ -1,4 +1,4 @@
-const { tasksVersions, tasksVersioning } = require('../../table');
+const { tasksVersions } = require('../../table');
 
 module.exports = async function listVersions(
   { status } = {},

@@ -36,6 +36,12 @@ module.exports = {
     description: {
       type: 'string',
     },
+    order: {
+      type: 'number',
+    },
+    properties: {
+      type: 'text',
+    },
   },
   primaryKey: {
     type: 'uuid',

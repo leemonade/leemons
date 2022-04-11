@@ -10,7 +10,6 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@users/helpers/prefixPN';
 import HeroBgLayout from '@users/layout/heroBgLayout';
-import constants from '@users/constants';
 import hooks from 'leemons-hooks';
 import Cookies from 'js-cookie';
 import { useHistory } from 'react-router-dom';
@@ -53,7 +52,7 @@ export default function SelectProfile({ session }) {
           await hooks.fireEvent('user:change:profile', selectedProfile);
           Cookies.set('token', jwtToken);
           hooks.fireEvent('user:cookie:session:change');
-          history.push(`/${constants.base}`);
+          history.push(`/private/dashboard`);
         } catch (e) {
           console.error(e);
           if (mounted) {

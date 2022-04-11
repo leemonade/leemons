@@ -1,6 +1,7 @@
+/*
 import * as PropTypes from 'prop-types';
 import React from 'react';
-import { Button, ImageLoader, Tooltip } from 'leemons-ui';
+import { Button, ImageLoader, Tooltip } from 'leemons--ui';
 
 export default function MainMenuItem({ item, menuWidth, active, onClick }) {
   return (
@@ -37,3 +38,4 @@ MainMenuItem.propTypes = {
   active: PropTypes.bool,
   onClick: PropTypes.func,
 };
+*/

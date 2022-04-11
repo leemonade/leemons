@@ -180,29 +180,4 @@ module.exports = [
       },
     },
   },
-  /**
-   * Classroom level
-   * */
-  {
-    path: '/classroom-level/add',
-    method: 'POST',
-    handler: 'calendar.addClassroomLevel',
-    authenticated: true,
-    allowedPermissions: {
-      'plugins.calendar.calendar-classroom': {
-        actions: ['create', 'update', 'admin'],
-      },
-    },
-  },
-  {
-    path: '/classroom-level/detail/:id',
-    method: 'GET',
-    handler: 'calendar.detailClassroomLevel',
-    authenticated: true,
-    allowedPermissions: {
-      'plugins.calendar.calendar-classroom': {
-        actions: ['view', 'admin'],
-      },
-    },
-  },
 ];

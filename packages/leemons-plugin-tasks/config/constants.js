@@ -133,11 +133,29 @@ const menuItems = [
       },
     ],
   },
+  {
+    item: {
+      key: 'profiles',
+      order: 2,
+      parentKey: 'tasks',
+      url: '/private/tasks/profiles',
+      label: {
+        en: 'Profiles',
+        es: 'Perfiles',
+      },
+    },
+    permissions: [
+      {
+        permissionName: permissionNames.tasks,
+        actionNames: ['admin'],
+      },
+    ],
+  },
   // Library
   {
     item: {
       key: 'library',
-      order: 2,
+      order: 3,
       parentKey: 'tasks',
       url: '/private/tasks/library',
       label: {
@@ -157,7 +175,7 @@ const menuItems = [
   {
     item: {
       key: 'ongoing',
-      order: 3,
+      order: 4,
       parentKey: 'tasks',
       url: '/private/tasks/ongoing',
       label: {
@@ -177,7 +195,7 @@ const menuItems = [
   {
     item: {
       key: 'history',
-      order: 4,
+      order: 5,
       parentKey: 'tasks',
       url: '/private/tasks/history',
       label: {
@@ -195,6 +213,25 @@ const menuItems = [
   },
 ];
 
+const widgets = {
+  zones: [{ key: `${permissionsPrefix}.class.students.tasks` }],
+  items: [
+    {
+      zoneKey: 'plugins.dashboard.class.tabs',
+      key: `${permissionsPrefix}.class.tab.students.tasks`,
+      url: 'tab-student-tasks/index',
+      properties: {
+        label: `${permissionsPrefix}.tabStudentTasks.label`,
+      },
+    },
+    {
+      zoneKey: `${permissionsPrefix}.class.students.tasks`,
+      key: `${permissionsPrefix}.class.students.tasks`,
+      url: 'student-tasks/index',
+    },
+  ],
+};
+
 module.exports = {
   pluginName: permissionsPrefix,
   permissions: {
@@ -203,4 +240,5 @@ module.exports = {
     bundles: permissionsBundles,
   },
   menuItems,
+  widgets,
 };

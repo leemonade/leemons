@@ -10,7 +10,7 @@ module.exports = async function removeAttachment(task, attachments, { transactin
     task: fullId,
   };
 
-  if (_attachments.length) {
+  if (attachments && _attachments.length) {
     query.attachment_$in = _attachments;
   }
   const deleted = await table.deleteMany(query, { transacting });

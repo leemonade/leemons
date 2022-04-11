@@ -23,7 +23,18 @@ export function useApi(uri, options) {
       setLoading(true);
     }
 
-    func()
+    let result;
+    try {
+      result = func();
+    } catch (e) {
+      result = e;
+    }
+
+    if (!result.then) {
+      result = Promise.resolve(result);
+    }
+
+    result
       .then((d) => {
         if (isActive) {
           setData(d);
@@ -38,6 +49,7 @@ export function useApi(uri, options) {
           setLoading(false);
         }
       });
+
     return () => {
       isActive = false;
     };

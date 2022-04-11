@@ -112,6 +112,7 @@ function Calendar({ session }) {
       const centersData = await Promise.all(
         map(ref.current.centers, (center) => getCalendarsForCenter(center))
       );
+
       ref.current.calendarNamesTranslations = await getTranslationDataCalendars(centersData);
       ref.current.calendarSectionNamesTranslations = await getTranslationSections(centersData);
 
@@ -212,8 +213,9 @@ function Calendar({ session }) {
 
   return (
     <Box style={{ display: 'flex', width: '100%', height: '100vh' }}>
-      <Box style={{ width: '228px', height: '100vh' }}>
+      <Box style={{ width: '250px', height: '100vh' }}>
         <CalendarSubNavFilters
+          style={{ position: 'static' }}
           value={ref.current.centersDataById[ref.current.center.id].sections}
           onChange={(event) => {
             ref.current.centersDataById[ref.current.center.id].sections = event;

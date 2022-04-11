@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 import PropTypes from 'prop-types';
-
 import { Select } from '@bubbles-ui/components';
 import { listCoursesRequest } from '../../request';
 
-export default function SelectCourse({ program, value: userValue, onChange, ...props }) {
+const SelectCourse = forwardRef(({ program, value: userValue, onChange, ...props }, ref) => {
   const [data, setData] = useState([]);
   const [value, setValue] = useState(userValue);
 
@@ -49,12 +48,23 @@ export default function SelectCourse({ program, value: userValue, onChange, ...p
   }, [program]);
 
   return (
-    <Select {...props} data={data} disabled={!data.length} onChange={handleChange} value={value} />
+    <Select
+      {...props}
+      ref={ref}
+      data={data}
+      disabled={!data.length}
+      onChange={handleChange}
+      value={value}
+    />
   );
-}
+});
 
+SelectCourse.displayName = '@academic-portfolio/components/SelectCourse';
 SelectCourse.propTypes = {
   program: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func,
 };
+
+export { SelectCourse };
+export default SelectCourse;

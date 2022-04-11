@@ -12,8 +12,7 @@ export default async function saveTaskRequest(taskId, task) {
       body: task,
     });
 
-    console.log(response);
-    return true;
+    return response;
   }
 
   // EN: Update an existing task
@@ -24,6 +23,5 @@ export default async function saveTaskRequest(taskId, task) {
     body: task,
   });
 
-  console.log(response);
-  return true;
+  return response;
 }

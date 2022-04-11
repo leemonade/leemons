@@ -1,5 +1,8 @@
 module.exports = {
   modelName: 'userInstances',
+  options: {
+    useTimestamps: true,
+  },
   attributes: {
     instance: {
       type: 'uuid',
@@ -7,16 +10,20 @@ module.exports = {
     user: {
       type: 'uuid',
     },
+    opened: {
+      type: 'datetime',
+    },
     start: {
       type: 'datetime',
     },
     end: {
       type: 'datetime',
     },
-    // EN: Type of assignment: ['direct', 'group']
-    // ES: Tipo de asignación: ['directa', 'grupal']
-    type: {
-      type: 'string',
+    grade: {
+      type: 'uuid',
+    },
+    teacherFeedback: {
+      type: 'richtext',
     },
   },
 };

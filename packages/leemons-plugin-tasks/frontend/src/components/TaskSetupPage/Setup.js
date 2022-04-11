@@ -3,14 +3,17 @@ import PropTypes from 'prop-types';
 import { isFunction, isNil } from 'lodash';
 import { Stepper } from '@bubbles-ui/components';
 
-function Setup({ labels, steps, values, editable, onNext, onPrev, onSave, ...props }) {
+function Setup({ labels, steps, values, editable, onSave, useObserver, ...props }) {
   const [sharedData, setSharedData] = useState(values || {});
   const [active, setActive] = useState(0);
+
+  const { subscribe, unsubscribe } = useObserver();
+
   const [callOnSave, setCallOnSave] = useState(false);
 
   useEffect(() => {
     if (callOnSave) {
-      if (isFunction(onSave)) onSave(sharedData);
+      if (isFunction(onSave)) onSave(sharedData, callOnSave);
       setCallOnSave(false);
     }
   }, [callOnSave]);
@@ -21,22 +24,32 @@ function Setup({ labels, steps, values, editable, onNext, onPrev, onSave, ...pro
     }
   }, [values]);
 
+  useEffect(() => {
+    const f = (event) => {
+      if (event === 'saveData') {
+        setCallOnSave('edit');
+      }
+    };
+
+    subscribe(f);
+
+    return () => unsubscribe(f);
+  }, []);
+
   // ·······························································
   // HANDLERS
 
   const handleOnNext = () => {
     if (active < steps.length - 1) {
       setActive(active + 1);
-      if (isFunction(onNext)) onNext(sharedData);
     } else {
-      setCallOnSave(true);
+      setCallOnSave('library');
     }
   };
 
   const handleOnPrev = () => {
     if (active > 0) {
       setActive(active - 1);
-      if (isFunction(onPrev)) onPrev(sharedData);
     }
   };
 
@@ -76,6 +89,7 @@ Setup.propTypes = {
   onNext: PropTypes.func,
   onPrev: PropTypes.func,
   onSave: PropTypes.func,
+  useObserver: PropTypes.func,
 };
 
 // eslint-disable-next-line import/prefer-default-export

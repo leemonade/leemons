@@ -1,6 +1,7 @@
 /* eslint-disable no-unreachable */
-import React, { forwardRef, useEffect, useMemo } from 'react';
+import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
+
 import {
   cloneDeep,
   find,
@@ -26,7 +27,7 @@ export function SelectUserAgentValueComponent({ onRemove, ...props }) {
       <UserDisplayItem {...props} />
       {onRemove ? (
         <Box>
-          <ActionButton icon={<RemoveIcon />} onClick={() => onRemove()} />
+          <ActionButton icon={<RemoveIcon />} onClick={onRemove} />
         </Box>
       ) : null}
     </Stack>
@@ -39,9 +40,10 @@ const SelectUserAgent = forwardRef(
       profiles,
       centers,
       maxSelectedValues = 1,
+      users,
       onlyContacts,
       returnItem,
-      itemRenderProps = { variant: 'rol' },
+      itemRenderProps = { variant: 'rol', style: { cursor: 'pointer' } },
       valueRenderProps = { variant: 'inline', size: 'xs', style: { padding: 0 } },
       itemComponent: ItemComponent = UserDisplayItem,
       valueComponent: ValueComponent = SelectUserAgentValueComponent,
@@ -51,6 +53,7 @@ const SelectUserAgent = forwardRef(
     },
     ref
   ) => {
+    const [usersData, setUsersData] = useState(null);
     const [store, render] = useStore({
       data: [],
     });
@@ -81,6 +84,7 @@ const SelectUserAgent = forwardRef(
           withProfile: true,
           onlyContacts,
         });
+
         const data = map(response.userAgents, (item) => ({
           ...item.user,
           variant: 'rol',
@@ -119,7 +123,8 @@ const SelectUserAgent = forwardRef(
       }
 
       values = maxSelectedValues === 1 ? values[0] || null : values;
-      onChange(values);
+      const userAgent = maxSelectedValues === 1 ? find(store.data, { value: values }) : undefined;
+      onChange(values, userAgent);
     }
 
     // EN: Handle controlled input value by adding the selected values to the data array
@@ -188,10 +193,38 @@ const SelectUserAgent = forwardRef(
       onValueChange(uniq(flattenDeep([value])));
     }, [inputValue]);
 
+    // EN: Allow the user to select the users to display
+    // ES: Permite al usuario seleccionar los usuarios a mostrar
+    useEffect(async () => {
+      if (users) {
+        if (users.length && users[0].name) {
+          setUsersData(users);
+        } else {
+          let data = await getUserAgentsInfoRequest(users, {
+            withCenter: true,
+            withProfile: true,
+          });
+
+          data = data.userAgents.map((item) => ({
+            ...item.user,
+            variant: 'rol',
+            rol: item.profile.name,
+            center: item.center.name,
+            value: item.id,
+            label: `${item.user.name}${item.user.surnames ? ` ${item.user.surnames}` : ''}`,
+          }));
+
+          setUsersData(data);
+        }
+      } else if (usersData) {
+        setUsersData(null);
+      }
+    }, [users]);
+
     // EN: Initial search for the first render
     // ES: Búsqueda inicial para la primera renderización
     useEffect(() => {
-      if (!store.data?.length) {
+      if (!store.data?.length && !users) {
         search('');
       }
     }, [profiles]);
@@ -200,7 +233,7 @@ const SelectUserAgent = forwardRef(
     // ES: Concatenamos los valores seleccionados con el array de datos
     const data = cloneDeep(store.data);
 
-    if (store.selectedAgents?.length) {
+    if (store.selectedAgents?.length && !users) {
       store.selectedAgents?.forEach((agent) => {
         const hasValueInData = findIndex(data, { value: agent?.value });
         if (hasValueInData < 0) {
@@ -237,11 +270,11 @@ const SelectUserAgent = forwardRef(
         {...props}
         ref={ref}
         searchable
-        onSearchChange={search}
+        onSearchChange={usersData ? undefined : search}
         itemComponent={(p) => <ItemComponent {...p} {...itemRenderProps} />}
         valueComponent={(p) => <ValueComponent {...p} {...valueRenderProps} />}
         maxSelectedValues={maxSelectedValues}
-        data={data}
+        data={usersData || data}
         // EN: The value can be an array or a single value (string), so convert it to an array
         // ES: El valor puede ser un array o un valor simple (string), por lo que lo convertimos a un array
         value={uniq(flattenDeep(propValue))}
@@ -254,6 +287,7 @@ const SelectUserAgent = forwardRef(
 SelectUserAgent.displayName = 'SelectUserAgent';
 SelectUserAgent.propTypes = {
   onChange: PropTypes.func,
+  users: PropTypes.array,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   profiles: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   centers: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
@@ -262,8 +296,8 @@ SelectUserAgent.propTypes = {
   returnItem: PropTypes.bool,
   itemRenderProps: PropTypes.object,
   valueRenderProps: PropTypes.object,
-  itemComponent: PropTypes.element,
-  valueComponent: PropTypes.element,
+  itemComponent: PropTypes.any,
+  valueComponent: PropTypes.any,
 };
 
 SelectUserAgentValueComponent.propTypes = {

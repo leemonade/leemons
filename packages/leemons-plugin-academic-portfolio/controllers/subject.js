@@ -48,16 +48,18 @@ async function listSubject(ctx) {
       page: { type: ['number', 'string'] },
       size: { type: ['number', 'string'] },
       program: { type: 'string' },
+      course: { type: 'string' },
     },
     required: ['page', 'size'],
     additionalProperties: false,
   });
   if (validator.validate(ctx.request.query)) {
-    const { page, size, program, ...options } = ctx.request.query;
+    const { page, size, program, course, ...options } = ctx.request.query;
     const data = await subjectService.listSubjects(
       parseInt(page, 10),
       parseInt(size, 10),
       program,
+      course,
       {
         ...options,
       }
@@ -69,6 +71,13 @@ async function listSubject(ctx) {
   }
 }
 
+async function subjectByIds(ctx) {
+  const { id } = ctx.request.params;
+  const data = await subjectService.subjectByIds([id]);
+  ctx.status = 200;
+  ctx.body = { status: 200, data: data && data[0] };
+}
+
 module.exports = {
   postSubject,
   putSubject,
@@ -76,4 +85,5 @@ module.exports = {
   putSubjectCredits,
   getSubjectCredits,
   listSubjectCreditsForProgram,
+  subjectByIds,
 };

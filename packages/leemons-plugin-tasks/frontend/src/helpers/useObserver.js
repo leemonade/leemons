@@ -1,4 +1,5 @@
 import React, { useRef, useContext } from 'react';
+import PropTypes from 'prop-types';
 
 function observerState() {
   const ref = useRef({
@@ -21,7 +22,7 @@ function observerState() {
   // ES: Eliminar el callback de la lista de suscriptores
   const unsubscribe = (callback) => {
     if (Array.isArray(subscribers())) {
-      const index = subscribers().findIndex(callback);
+      const index = subscribers().findIndex((cb) => cb === callback);
       subscribers().splice(index, 1);
     }
   };
@@ -51,6 +52,9 @@ function createContext() {
   const { Provider } = context;
 
   const Observer = ({ children }) => <Provider value={state}>{children}</Provider>;
+  Observer.propTypes = {
+    children: PropTypes.node,
+  };
 
   return { ...state, Observer, useObserver: () => useContext(context) };
 }

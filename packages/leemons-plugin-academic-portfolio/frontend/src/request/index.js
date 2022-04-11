@@ -11,6 +11,7 @@ import {
   createProgram,
   detailProgram,
   getProgramTree,
+  getUserPrograms,
   havePrograms,
   listPrograms,
   updateProgram,
@@ -29,10 +30,14 @@ import { createSubjectType, listSubjectTypes, updateSubjectType } from './subjec
 import {
   addStudentsToClass,
   addTeachersToClass,
+  classDetailForDashboard,
   createClass,
   createClassInstance,
   haveClasses,
   listClasses,
+  listStudentClasses,
+  listTeacherClasses,
+  listSessionClasses,
   removeClass,
   removeStudentFromClass,
   updateClass,
@@ -62,9 +67,13 @@ export const createClassRequest = createClass;
 export const updateClassRequest = updateClass;
 export const removeClassRequest = removeClass;
 export const updateClassManyRequest = updateClassMany;
+export const listSessionClassesRequest = listSessionClasses;
 export const createClassInstanceRequest = createClassInstance;
 export const addStudentsToClassRequest = addStudentsToClass;
 export const addTeachersToClassRequest = addTeachersToClass;
+export const listStudentClassesRequest = listStudentClasses;
+export const listTeacherClassesRequest = listTeacherClasses;
+export const classDetailForDashboardRequest = classDetailForDashboard;
 export const removeStudentFromClassRequest = removeStudentFromClass;
 
 export const createKnowledgeRequest = createKnowledge;
@@ -81,6 +90,7 @@ export const haveProgramsRequest = havePrograms;
 export const detailProgramRequest = detailProgram;
 export const createProgramRequest = createProgram;
 export const updateProgramRequest = updateProgram;
+export const getUserProgramsRequest = getUserPrograms;
 
 export const getSettingsRequest = getSettings;
 export const updateSettingsRequest = updateSettings;

@@ -129,4 +129,20 @@ module.exports = {
     archived: 'Show archived tasks',
     selectCalendarsSubjects: 'All subjects',
   },
+  userProgramCalendar: {
+    calendar: 'Calendar',
+    allSubjects: 'All subjects',
+    showAllCalendar: 'Show all calendar',
+  },
+  userProgramKanban: {
+    kanban: 'Kanban highlight',
+    description: 'Outstanding tasks completed in less than 5 days',
+    showAllKanban: 'View full kanban',
+  },
+  tabKanban: {
+    label: 'Kanban',
+  },
+  tabCalendar: {
+    label: 'Calendar',
+  },
 };

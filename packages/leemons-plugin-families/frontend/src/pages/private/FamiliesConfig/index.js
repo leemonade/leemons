@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { withLayout } from '@layout/hoc';
+/*
 import {
   Button,
   Modal,
@@ -11,14 +11,16 @@ import {
   TabPanel,
   Tabs,
   useModal,
-} from 'leemons-ui';
+} from 'leemons--ui';
+
+ */
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
 import { getDatasetSchemaRequest, removeDatasetFieldRequest } from '@dataset/request';
 import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
 import { useHistory } from 'react-router-dom';
-import { CheckIcon, PlusIcon } from '@heroicons/react/outline';
+import { PlusIcon } from '@heroicons/react/outline';
 import prefixPN from '@families/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useAsync } from '@common/useAsync';
@@ -256,6 +258,9 @@ function Config() {
     EmergencyNumbersTabs = dynamicImport('/families-emergency-numbers/src/components/config');
   }
 
+  return 'Hay que pasar el diseño a bubbles-ui';
+
+  /*
   return (
     <>
       <Modal {...modal}>
@@ -338,6 +343,8 @@ function Config() {
       </Tabs>
     </>
   );
+
+   */
 }
 
-export default withLayout(Config);
+export default Config;

@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import React, { useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
-import { withLayout } from '@layout/hoc';
+/*
 import {
   Alert,
   Button,
@@ -17,13 +17,13 @@ import {
   Select,
   Table,
   useModal,
-} from 'leemons-ui';
+} from 'leemons--ui';
 
+ */
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@families/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { PlusIcon, TrashIcon } from '@heroicons/react/outline';
 import {
   addFamilyRequest,
   detailFamilyRequest,
@@ -538,6 +538,9 @@ function Detail() {
     setValue('emergencyPhoneNumbers', e);
   };
 
+  return 'Hay que remaquetar esta pagina con bubbles-ui';
+
+  /*
   return (
     <>
       {!error && !loading ? (
@@ -576,7 +579,7 @@ function Detail() {
             <div className="bg-primary-content">
               <PageContainer>
                 <div className="flex flex-row gap-6">
-                  {/* Guardians section */}
+
                   {permissions.guardiansInfo.view ? (
                     <div className="w-full">
                       <div className="flex flex-row justify-between items-center">
@@ -588,7 +591,7 @@ function Detail() {
                           </Button>
                         ) : null}
                       </div>
-                      {/* Guardians list */}
+
                       <div className="flex flex-row">
                         {guardians.map((guardian) => (
                           <div key={guardian.id} className="flex flex-row items-center p-4">
@@ -612,7 +615,7 @@ function Detail() {
                           </div>
                         ))}
                       </div>
-                      {/* Guardians marital status */}
+
                       {guardians.length >= 2 && permissions.guardiansInfo.view ? (
                         <div className="flex">
                           <FormControl
@@ -649,7 +652,7 @@ function Detail() {
                     </div>
                   ) : null}
 
-                  {/* Students section */}
+
                   {permissions.studentsInfo.view ? (
                     <div className="w-full">
                       <div className="flex flex-row justify-between items-center">
@@ -661,7 +664,7 @@ function Detail() {
                           </Button>
                         ) : null}
                       </div>
-                      {/* Students list */}
+
                       <div className="flex flex-row">
                         {students.map((student) => (
                           <div key={student.id} className="flex flex-row items-center p-4">
@@ -691,7 +694,7 @@ function Detail() {
             <div className="bg-primary-content">
               <PageContainer>
                 <div>{t('other_information')}</div>
-                {/* Dataset form */}
+
                 {form}
               </PageContainer>
             </div>
@@ -708,6 +711,8 @@ function Detail() {
       )}
     </>
   );
+
+   */
 }
 
-export default withLayout(Detail);
+export default Detail;

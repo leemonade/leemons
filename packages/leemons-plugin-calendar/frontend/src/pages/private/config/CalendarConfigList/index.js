@@ -1,15 +1,20 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { withLayout } from '@layout/hoc';
+import React from 'react';
+
+/*
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@calendar/helpers/prefixPN';
 import { Link, useHistory } from 'react-router-dom';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import { PageContainer, PageHeader, Table } from 'leemons-ui';
+// import { PageContainer, PageHeader, Table } from 'leemons--ui';
 import { addErrorAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { listCalendarConfigsRequest, removeCalendarConfigRequest } from '@calendar/request';
 
+
+ */
 function ConfigsList() {
+  return 'Pasar a bubbles-ui';
+  /*
   const [t] = useTranslateLoader(prefixPN('list_page'));
   const { t: tCommon } = useCommonTranslate('page_header');
 
@@ -107,6 +112,8 @@ function ConfigsList() {
       </div>
     </>
   );
+
+   */
 }
 
-export default withLayout(ConfigsList);
+export default ConfigsList;
