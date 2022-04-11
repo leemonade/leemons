@@ -1,7 +1,8 @@
-const { versions } = require('../../tables');
+const {
+  table: { versions },
+} = require('../../tables');
 const get = require('../currentVersions/get');
 const { parseId, parseVersion } = require('../helpers');
-const verifyOwnership = require('../helpers/type/verifyOwnership');
 const getVersion = require('./getVersion');
 
 module.exports = async function createVersion(
@@ -11,13 +12,10 @@ module.exports = async function createVersion(
   const { uuid, version: v, fullId } = await parseId(id, version);
   const { major, minor, patch } = parseVersion(v);
 
-  // TODO: Check if uuid exists
+  // EN: Check if uuid exists
+  // ES: Comprueba si el uuid existe
   try {
-    const { type } = await get(uuid, { transacting });
-
-    if (!verifyOwnership(type, this)) {
-      throw new Error('You are not allowed to access this version');
-    }
+    await get.bind(this)(uuid, { transacting });
   } catch (e) {
     throw new Error(
       "The uuid doesn't exist in the version control system or you don't have permissions"

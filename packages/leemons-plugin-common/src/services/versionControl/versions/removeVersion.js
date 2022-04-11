@@ -1,5 +1,7 @@
-const { versions } = require('../../tables');
-const { get } = require('../currentVersions');
+const {
+  table: { versions },
+} = require('../../tables');
+const get = require('../currentVersions/get');
 const { parseId, parseVersion } = require('../helpers');
 
 module.exports = async function removeVersion(id, { published, version, transacting } = {}) {

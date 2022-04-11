@@ -11,30 +11,40 @@ module.exports = async function parseId(
     throw new Error('Id must be a string');
   }
 
-  const [uuid, version] = fullId.split('@');
+  // eslint-disable-next-line prefer-const
+  let [uuid, version] = fullId.split('@');
 
   if (_version) {
-    let v = _version;
-    if (typeof v !== 'string') {
+    version = _version;
+    if (typeof _version !== 'string') {
       try {
-        v = stringifyVersion(v);
+        version = stringifyVersion(_version);
       } catch (e) {
         if (verifyVersion) {
           throw e;
         }
       }
-    } else if (verifyVersion && !isValidVersion(v)) {
-      throw new Error(`Version ${v} is not a valid version`);
     }
-
-    return { fullId: stringifyId(uuid, v, { verifyVersion }), version: v, uuid };
   }
 
   // TODO: If version is @last, get the latest version
+  if (verifyVersion) {
+    if (['latest', 'current', 'published', 'draft'].includes(version)) {
+      // eslint-disable-next-line global-require
+      const getVersion = require('../../versions/getVersion');
 
-  if (verifyVersion && !isValidVersion(version)) {
-    throw new Error('The provided version must be valid');
+      const { version: v } = await getVersion.bind({ calledFrom: 'plugins.common' })(uuid, {
+        version,
+        transacting,
+      });
+
+      version = v;
+    }
+
+    if (!isValidVersion(version)) {
+      throw new Error('The provided version must be valid');
+    }
   }
 
-  return { fullId, uuid, version };
+  return { fullId: await stringifyId(uuid, version, { verifyVersion }), uuid, version };
 };

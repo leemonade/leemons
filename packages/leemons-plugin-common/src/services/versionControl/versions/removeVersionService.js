@@ -20,7 +20,9 @@ module.exports = async function removeVersionService(id, { published, version, t
     if (e.message === 'isCurrentVersion') {
       throw new Error("Can't remove current version");
     }
-    throw new Error('The requested uuid does not exist in the version control system');
+    throw new Error(
+      "The requested uuid does not exist in the version control system or you don' have permissions"
+    );
   }
 
   return removeVersion.bind(this)(fullId, { published, transacting });

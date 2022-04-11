@@ -1,5 +1,9 @@
 module.exports = function parseType(type) {
-  const [calledFrom, t] = type.split('.');
+  if (typeof type === 'string') {
+    const [calledFrom, t] = type.split('::');
 
-  return { calledFrom, type: t };
+    return { calledFrom, type: t };
+  }
+
+  throw new Error('The type must be a string');
 };

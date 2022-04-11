@@ -1,5 +1,7 @@
-const { currentVersions } = require('../../tables');
-const { removeVersion } = require('../versions');
+const {
+  table: { currentVersions },
+} = require('../../tables');
+const removeVersion = require('../versions/removeVersion');
 const getVersion = require('../versions/getVersion');
 
 module.exports = async function remove(uuid, published = 'all', { transacting: t } = {}) {

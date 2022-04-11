@@ -1,6 +1,8 @@
-const { currentVersions } = require('../../tables');
+const {
+  table: { currentVersions },
+} = require('../../tables');
 const { stringifyType } = require('../helpers/type');
-const { createVersion } = require('../versions');
+const createVersion = require('../versions/createVersion');
 
 module.exports = async function create(type, { published = false, transacting: t } = {}) {
   const stringifiedType = stringifyType(this.calledFrom, type);

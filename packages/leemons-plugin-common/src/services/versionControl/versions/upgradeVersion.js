@@ -1,7 +1,9 @@
 const semver = require('semver');
 const { parseId, parseVersion } = require('../helpers');
 const createVersion = require('./createVersion');
-const { versions } = require('../../tables');
+const {
+  table: { versions },
+} = require('../../tables');
 const update = require('../currentVersions/update');
 
 module.exports = async function upgradeVersion(
@@ -56,7 +58,7 @@ module.exports = async function upgradeVersion(
 
   // EN: Update the current version.
   // ES: Actualiza la versión actual.
-  const createdVersion = createVersion.bind(this)(uuid, {
+  const createdVersion = await createVersion.bind(this)(uuid, {
     version: newVersion,
     published,
     transacting,

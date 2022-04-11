@@ -1,4 +1,6 @@
-const { versions } = require('../../tables');
+const {
+  table: { versions },
+} = require('../../tables');
 const get = require('../currentVersions/get');
 const update = require('../currentVersions/update');
 const { parseId, parseVersion } = require('../helpers');
@@ -23,7 +25,9 @@ module.exports = async function publishVersion(
         `Could not publish ${fullId} as it is already ${publish ? 'published' : 'in draft'}`
       );
     }
-    throw new Error(`Could not publish ${fullId} as it does not exist`);
+    throw new Error(
+      `Could not publish ${fullId} as it does not exist or you don't have permissions`
+    );
   }
 
   try {
