@@ -1,6 +1,7 @@
 const {
   table: { currentVersions },
 } = require('../../tables');
+const { stringifyId } = require('../helpers');
 const { stringifyType } = require('../helpers/type');
 const createVersion = require('../versions/createVersion');
 
@@ -22,7 +23,11 @@ module.exports = async function create(type, { published = false, transacting: t
         transacting,
       });
 
-      return { uuid: versionedEntity.id, currentPublished: versionedEntity.published };
+      return {
+        uuid: versionedEntity.id,
+        currentPublished: versionedEntity.published,
+        fullId: stringifyId(versionedEntity.id, '1.0.0'),
+      };
     },
     currentVersions,
     t
