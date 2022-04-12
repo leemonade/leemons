@@ -31,6 +31,7 @@ module.exports = async function getAssignable(id, { transacting } = {}) {
   // ES: Parsear objetos.
   assignable = {
     ...assignable,
+    gradable: Boolean(assignable.gradable),
     submission: JSON.parse(assignable.submission),
     metadata: JSON.parse(assignable.metadata),
     subjects,

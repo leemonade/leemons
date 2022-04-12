@@ -1,7 +1,9 @@
 const _ = require('lodash');
 const { validateAssignable } = require('../../helpers/validators/assignable');
+const updateSubjects = require('../subjects/updateSubjects');
 const { assignables } = require('../tables');
 const versionControl = require('../versionControl');
+const createAssignable = require('./createAssignable');
 const getAssignable = require('./getAssignable');
 
 function getDiff(a, b) {
@@ -51,15 +53,27 @@ module.exports = async function updateAssignable(assignable, { transacting } = {
   // ES: Actualiza la versión.
   if (shouldUpgrade) {
     // TODO: Let the user decide which upgrade scale to use.
-    const { fullId } = await versionControl.upgradeVersion(id, 'major');
+    const { fullId } = await versionControl.upgradeVersion(id, 'major', {
+      transacting,
+    });
 
     // TODO: Duplicate everything and apply changes
-    return { id: fullId, ...object };
+    return {
+      ...(await createAssignable(_.omit(object, ['published', 'id']), { id: fullId, transacting })),
+      published: false,
+    };
   }
   // EN: Update the assignable.
   // ES: Actualizar el asignable.
+
   if (diff.includes('subjects')) {
-    // TODO: Update subjects
+    const subjects = await updateSubjects(id, object.subjects, { transacting });
+
+    object.subjects = subjects;
+  }
+
+  if (!_.difference(diff, ['subjects']).length) {
+    return { id, ...object };
   }
 
   const updateObject = _.omit(_.pick(assignableObject, diff), ['subjects']);

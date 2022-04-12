@@ -3,23 +3,33 @@ const saveSubjects = require('../subjects/saveSubjects');
 const { assignables } = require('../tables');
 const versionControl = require('../versionControl');
 
-module.exports = async function createAssignable(assignable, { transacting: t } = {}) {
+module.exports = async function createAssignable(
+  assignable,
+  { id: _id = null, transacting: t } = {}
+) {
   return global.utils.withTransaction(
     async (transacting) => {
+      let id = _id;
+
       validateAssignable(assignable);
 
       const { subjects, submission, metadata, ...assignableObject } = assignable;
 
       // EN: Register a new versioned entity.
       // ES: Registra una nueva versión de una entidad.
-      const version = await versionControl.register('assignable', { transacting });
+      if (!id) {
+        const version = await versionControl.register('assignable', {
+          transacting,
+        });
+        id = version.fullId;
+      }
 
       // EN: Create the assignable for the given version.
       // ES: Crea el asignable para la versión dada.
       try {
         const assignableCreated = await assignables.create(
           {
-            id: version.fullId,
+            id,
             ...assignableObject,
             submission: JSON.stringify(submission),
             metadata: JSON.stringify(metadata),
