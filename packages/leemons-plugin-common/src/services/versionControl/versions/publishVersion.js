@@ -54,7 +54,7 @@ module.exports = async function publishVersion(
   );
 
   if (publish && setAsCurrent) {
-    await update(uuid, version, { transacting });
+    await update.bind(this)(uuid, version, { transacting });
   }
 
   return { fullId, published: publish };
