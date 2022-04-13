@@ -3,6 +3,7 @@ const removeSubjects = require('../subjects/removeSubjects');
 const { assignables: table } = require('../tables');
 const versionControl = require('../versionControl');
 const getAssignable = require('./getAssignable');
+const { removeAssignablePermission } = require('./permissions');
 
 module.exports = async function removeAssignables(assignables, { transacting: t }) {
   return global.utils.withTransaction(
@@ -11,7 +12,11 @@ module.exports = async function removeAssignables(assignables, { transacting: t 
         assignables.map(async (assignable) => {
           // EN: Get the assignable to validate ownership.
           // ES: Obtiene el asignable para validar la propiedad.
-          await getAssignable.call(this, assignable, { transacting });
+          const a = await getAssignable.call(this, assignable, { transacting });
+
+          // EN: Remove the permission
+          // ES: Elimina el permiso
+          await removeAssignablePermission(a, { transacting });
 
           // EN: Remove versions for each assignable
           // ES: Eliminar versiones para cada asignable

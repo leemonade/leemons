@@ -3,10 +3,12 @@ const getRole = require('../roles/getRole');
 const saveSubjects = require('../subjects/saveSubjects');
 const { assignables } = require('../tables');
 const versionControl = require('../versionControl');
+const { registerAssignablePermission } = require('./permissions');
+const addPermissionToUser = require('./permissions/assignable/users/addPermissionToUser');
 
 module.exports = async function createAssignable(
   assignable,
-  { id: _id = null, transacting: t } = {}
+  { id: _id = null, userSession, transacting: t } = {}
 ) {
   return global.utils.withTransaction(
     async (transacting) => {
@@ -40,6 +42,19 @@ module.exports = async function createAssignable(
             metadata: JSON.stringify(metadata),
           },
           { transacting }
+        );
+
+        // EN: Register permission for assignable.
+        // ES: Registra permisos para el asignable.
+        await registerAssignablePermission(assignableCreated, { transacting });
+
+        // EN: Add user permissions for assignable.
+        // ES: Añade permisos de usuario para el asignable.
+        await addPermissionToUser(
+          assignableCreated,
+          userSession.userAgents.map((u) => u.id),
+          'owner',
+          { userSession, transacting }
         );
 
         // EN: Save the subjects for the given assignable.

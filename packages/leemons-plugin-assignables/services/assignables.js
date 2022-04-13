@@ -7,8 +7,8 @@ const getRole = require('../src/services/roles/getRole');
 const registerRole = require('../src/services/roles/registerRole');
 const unregisterRole = require('../src/services/roles/unregisterRole');
 
-function createAssignableService(assignable, { transacting }) {
-  return createAssignable.call(this, assignable, { transacting });
+function createAssignableService(assignable, { userSession, transacting }) {
+  return createAssignable.call(this, assignable, { userSession, transacting });
 }
 
 module.exports = {
