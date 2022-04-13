@@ -3,12 +3,19 @@ const {
 } = require('../../tables');
 const removeVersion = require('../versions/removeVersion');
 const getVersion = require('../versions/getVersion');
+const { parseId } = require('../helpers');
 
-module.exports = async function remove(uuid, published = 'all', { transacting: t } = {}) {
+module.exports = async function remove(id, published = 'all', { transacting: t } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
-      if (!['all', true, false].includes(published)) {
+      const { uuid, fullId } = await parseId(id, null, { transacting });
+
+      if (!['all', 'version', true, false].includes(published)) {
         throw new Error('published must be one of: all, true, false');
+      }
+
+      if (published === 'version') {
+        await removeVersion.bind(this)(fullId, { transacting });
       }
 
       // EN: Remove all the published versions if needed
@@ -28,7 +35,6 @@ module.exports = async function remove(uuid, published = 'all', { transacting: t
       if (published !== 'all') {
         try {
           await getVersion.bind(this)(uuid, {
-            published: !published,
             version: 'latest',
             transacting,
           });
