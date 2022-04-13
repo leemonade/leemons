@@ -57,8 +57,6 @@ export default function SelectClass({ labels, profiles, onChange, value }) {
   const { classes, nonAssignableStudents, assignableStudents } =
     useGroupedClassesWithSelectedSubjects();
 
-  console.log(classes);
-
   useEffect(() => {
     const handleChange = (data) => {
       if (!data?.assignees) {
