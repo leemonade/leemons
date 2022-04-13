@@ -10,7 +10,7 @@ module.exports = async function removeAssignables(assignables, { transacting: t 
         assignables.map(async (assignable) => {
           // EN: Remove versions for each assignable
           // ES: Eliminar versiones para cada asignable
-          // TODO: Remove versions for each assignable
+          await versionControl.unregister(assignable, 'version', { transacting });
 
           // EN: Remove subjects for each assignable
           // ES: Eliminar asignables para cada asignable
