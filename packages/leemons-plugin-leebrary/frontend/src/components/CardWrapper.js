@@ -5,9 +5,12 @@ import { LibraryCard } from '@bubbles-ui/leemons';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { prepareAsset } from '../helpers/prepareAsset';
 
-const CardWrapperStyles = createStyles((theme, {}) => ({
+const CardWrapperStyles = createStyles((theme, { selected }) => ({
   root: {
     cursor: 'pointer',
+    borderColor: selected && theme.colors.interactive01d,
+    borderWidth: selected && '1px',
+    boxShadow: selected && theme.shadows.shadow03,
   },
 }));
 
@@ -19,14 +22,14 @@ const CardWrapper = ({
   className,
   variant = 'media',
   onDelete = () => {},
-  onClick = () => {},
   ...props
 }) => {
   const asset = prepareAsset(item.original);
   const menuItems = [];
-  const { classes } = CardWrapperStyles({});
+  const { classes } = CardWrapperStyles({ selected });
+
   return (
-    <Box key={key} {...props} onClick={() => onClick(asset)}>
+    <Box key={key} {...props}>
       <LibraryCard asset={asset} menuItems={menuItems} variant={variant} className={classes.root} />
     </Box>
   );

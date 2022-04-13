@@ -31,6 +31,7 @@ const LibraryPageContent = () => {
         ...data,
         icon: data.menuItem.iconSvg,
         name: data.menuItem.label,
+        creatable: data.creatable === true || data.creatable === 1,
       }))
     );
   };

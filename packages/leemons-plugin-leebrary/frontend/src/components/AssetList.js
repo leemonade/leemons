@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty, find, isString } from 'lodash';
+import { isEmpty, find, isString, isNil } from 'lodash';
 import {
   Box,
   Stack,
@@ -10,11 +10,13 @@ import {
   Title,
   LoadingOverlay,
   useResizeObserver,
+  RadioGroup,
 } from '@bubbles-ui/components';
-import { LibraryDetail } from '@bubbles-ui/leemons';
+import { LibraryDetail, LibraryItem } from '@bubbles-ui/leemons';
 import { CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
+import { LayoutModuleIcon, LayoutHeadlineIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useRequestErrorMessage } from '@common';
+import { useRequestErrorMessage, LocaleDate } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import prefixPN from '../helpers/prefixPN';
 import { getAssetsRequest, getAssetsByIdsRequest, listCategoriesRequest } from '../request';
@@ -22,17 +24,25 @@ import { getPageItems } from '../helpers/getPageItems';
 import { CardWrapper } from './CardWrapper';
 import { prepareAsset } from '../helpers/prepareAsset';
 
+function getOwner(asset) {
+  const owner = (asset?.canAccess || []).filter((person) =>
+    person.permissions.includes('owner')
+  )[0];
+  return `${owner.name} ${owner.surnames}`;
+}
+
 const AssetList = ({
   category: categoryProp,
   categories: categoriesProp,
   asset: assetProp,
-  layout,
+  layout: layoutProp,
   itemMinWidth,
   onItemClick = () => {},
 }) => {
   const [t] = useTranslateLoader(prefixPN('list'));
   const [category, setCategory] = useState(categoryProp);
   const [categories, setCategories] = useState(categoriesProp);
+  const [layout, setLayout] = useState(layoutProp);
   const [asset, setAsset] = useState(assetProp);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -95,15 +105,13 @@ const AssetList = ({
   };
 
   const loadAsset = async (id) => {
-    console.log('loadAsset > id:', id);
     try {
       const item = find(serverData.items, { id });
       if (item) {
-        console.log(prepareAsset(item));
         setAsset(prepareAsset(item));
       } else {
+        console.log('loadAsset > id:', id);
         const response = await getAssetsByIdsRequest([id]);
-        console.log('response:', response);
         if (!isEmpty(response?.assets)) {
           setAsset(prepareAsset(response.assets[0]));
         } else {
@@ -118,13 +126,16 @@ const AssetList = ({
   // ·········································································
   // EFFECTS
 
+  useEffect(() => setLayout(layoutProp), [layoutProp]);
   useEffect(() => setCategories(categoriesProp), [categoriesProp]);
 
   useEffect(() => {
-    if (!isEmpty(assetProp?.id)) {
+    if (!isEmpty(assetProp?.id) && assetProp.id !== asset?.id) {
       setAsset(assetProp);
-    } else if (isString(assetProp)) {
+    } else if (isString(assetProp) && assetProp !== asset?.id) {
       loadAsset(assetProp);
+    } else {
+      setAsset(null);
     }
   }, [assetProp]);
 
@@ -151,7 +162,7 @@ const AssetList = ({
   // ·········································································
   // HANDLERS
 
-  const handleOnCardClick = (item) => {
+  const handleOnSelect = (item) => {
     setOpenDetail(true);
     onItemClick(item);
   };
@@ -167,14 +178,17 @@ const AssetList = ({
     {
       Header: 'Name',
       accessor: 'name',
+      valueRender: (_, row) => <LibraryItem asset={prepareAsset(row)} />,
     },
     {
       Header: 'Owner',
       accessor: 'owner',
+      valueRender: (_, row) => getOwner(row),
     },
     {
       Header: 'Last change',
       accessor: 'updated',
+      valueRender: (_, row) => <LocaleDate date={row.updated_at} />,
     },
   ];
 
@@ -190,29 +204,65 @@ const AssetList = ({
     return variant;
   }, [category]);
 
-  const showDrawer = useMemo(() => !loading && !isEmpty(asset), [loading, asset]);
+  const showDrawer = useMemo(() => !loading && !isNil(asset) && !isEmpty(asset), [loading, asset]);
 
   const headerOffset = useMemo(() => Math.round(childRect.bottom + childRect.top), [childRect]);
+
+  const listProps = useMemo(() => {
+    if (layout === 'grid') {
+      return {
+        itemRender: (p) => (
+          <CardWrapper {...p} variant={cardVariant} onDelete={handleOnCardDelete} />
+        ),
+        itemMinWidth,
+        margin: 16,
+        spacing: 4,
+      };
+    }
+
+    return {};
+  }, [layout]);
+
+  const listLayouts = useMemo(
+    () => [
+      { value: 'grid', icon: <LayoutModuleIcon /> },
+      { value: 'table', icon: <LayoutHeadlineIcon /> },
+    ],
+    []
+  );
 
   // ·········································································
   // RENDER
 
   return (
     <Stack ref={containerRef} direction="column" fullHeight style={{ position: 'relative' }}>
-      <Paper
+      <Stack
         ref={childRef}
-        shadow="none"
-        radius="none"
-        skipFlex
+        fullWidth
+        spacing={5}
+        padding={5}
         style={{
           width: containerRect.width,
           top: containerRect.top,
           position: 'fixed',
           zIndex: 999,
+          backgroundColor: '#fff',
         }}
       >
-        <SearchInput variant="filled" />
-      </Paper>
+        <Box>
+          <SearchInput variant="filled" />
+        </Box>
+        <Box skipFlex>
+          <RadioGroup
+            data={listLayouts}
+            variant="icon"
+            size="xs"
+            value={layout}
+            onChange={setLayout}
+          />
+        </Box>
+      </Stack>
+
       <Stack
         fullHeight
         style={{
@@ -237,21 +287,13 @@ const AssetList = ({
             >
               <PaginatedList
                 {...serverData}
-                margin={16}
-                spacing={4}
+                {...listProps}
+                selectable
                 paperProps={{ shadow: 'none', padding: 0 }}
-                itemRender={(p) => (
-                  <CardWrapper
-                    {...p}
-                    variant={cardVariant}
-                    onClick={handleOnCardClick}
-                    onDelete={handleOnCardDelete}
-                  />
-                )}
-                itemMinWidth={itemMinWidth}
                 columns={columns}
                 loading={loading}
                 layout={layout}
+                onSelect={handleOnSelect}
                 onPageChange={setPage}
                 onSizeChange={setSize}
               />
@@ -285,7 +327,7 @@ const AssetList = ({
         }}
       >
         {showDrawer && (
-          <Box style={{ background: '#FFF', maxWidth: openDetail ? 360 : 'auto', height: '100%' }}>
+          <Box style={{ background: '#FFF', width: openDetail ? 360 : 'auto', height: '100%' }}>
             <LibraryDetail
               asset={asset}
               variant={cardVariant}
@@ -307,8 +349,8 @@ AssetList.defaultProps = {
   itemMinWidth: 340,
 };
 AssetList.propTypes = {
-  category: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
-  layout: PropTypes.oneOf(['grid', 'list']),
+  category: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+  layout: PropTypes.oneOf(['grid', 'table']),
   searchable: PropTypes.bool,
   asset: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   categories: PropTypes.arrayOf(PropTypes.object),
