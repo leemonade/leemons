@@ -28,7 +28,7 @@ const BookmarkBasicData = ({ categoryId, onSave = () => {}, onNext = () => {} })
 
     try {
       console.log('categoryId:', categoryId);
-      const { asset } = await newAssetRequest(data, categoryId, 'bookmarks');
+      const { asset } = await newAssetRequest({ ...data, tags }, categoryId, 'bookmarks');
       console.log(asset);
       onSave(prepareAsset(asset));
       setLoading(false);
@@ -47,7 +47,6 @@ const BookmarkBasicData = ({ categoryId, onSave = () => {}, onNext = () => {} })
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
       const data = items.plugins.leebrary.assetSetup.basicData;
-      console.log(data);
       data.labels.title = data.bookmark.title;
       return data;
     }

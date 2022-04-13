@@ -8,7 +8,8 @@
     "@bubbles-ui/icons": "^1.0.24",
     "@bubbles-ui/leemons": "^1.0.27",
     "lodash": "^4.17.21",
-    "react-hook-form": "^7.22.1"
+    "react-hook-form": "^7.22.1",
+    "prop-types": "^15.7.2"
   },
   "devDependencies": {
     "react-hook-form": "^7.22.1"

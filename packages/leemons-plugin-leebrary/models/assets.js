@@ -40,6 +40,12 @@ module.exports = {
         collection: 'plugins_leebrary::categories',
       },
     },
+    indexable: {
+      type: 'boolean',
+      options: {
+        defaultTo: true,
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

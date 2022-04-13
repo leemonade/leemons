@@ -22,7 +22,10 @@ async function add(data, { transacting } = {}) {
   }
 
   try {
-    const newCategory = await tables.categories.create(categoryData, { transacting });
+    const newCategory = await tables.categories.create(
+      { ...categoryData, pluginOwner: this.calledFrom },
+      { transacting }
+    );
 
     // Add Menu item
     const { services } = leemons.getPlugin('menu-builder');

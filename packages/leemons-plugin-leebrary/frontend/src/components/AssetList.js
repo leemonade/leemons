@@ -1,7 +1,6 @@
-/* eslint-disable no-unreachable */
-import React, { useEffect, useMemo, useState, useContext, useCallback } from 'react';
-import { isEmpty, find } from 'lodash';
-import { useHistory, useParams, useLocation } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import PropTypes from 'prop-types';
+import { isEmpty, find, isString } from 'lodash';
 import {
   Box,
   Stack,
@@ -17,22 +16,24 @@ import { CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useRequestErrorMessage } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import prefixPN from '../../../helpers/prefixPN';
-import { getAssetsRequest, getAssetsByIdsRequest } from '../../../request';
-import LibraryContext from '../../../context/LibraryContext';
-import { VIEWS } from '../library/Library.constants';
-import { getPageItems } from '../../../helpers/getPageItems';
-import { CardWrapper } from '../../../components/CardWrapper';
-import { prepareAsset } from '../../../helpers/prepareAsset';
+import prefixPN from '../helpers/prefixPN';
+import { getAssetsRequest, getAssetsByIdsRequest, listCategoriesRequest } from '../request';
+import { getPageItems } from '../helpers/getPageItems';
+import { CardWrapper } from './CardWrapper';
+import { prepareAsset } from '../helpers/prepareAsset';
 
-function useQuery() {
-  const { search } = useLocation();
-  return useMemo(() => new URLSearchParams(search), [search]);
-}
-
-const ListAssetPage = () => {
-  const { setView, view, category, selectCategory, setAsset, asset } = useContext(LibraryContext);
+const AssetList = ({
+  category: categoryProp,
+  categories: categoriesProp,
+  asset: assetProp,
+  layout,
+  itemMinWidth,
+  onItemClick = () => {},
+}) => {
   const [t] = useTranslateLoader(prefixPN('list'));
+  const [category, setCategory] = useState(categoryProp);
+  const [categories, setCategories] = useState(categoriesProp);
+  const [asset, setAsset] = useState(assetProp);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(6);
@@ -40,16 +41,25 @@ const ListAssetPage = () => {
   const [openDetail, setOpenDetail] = useState(true);
   const [serverData, setServerData] = useState({});
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const history = useHistory();
-  const params = useParams();
-  const query = useQuery();
-  const location = useLocation();
   const [containerRef, containerRect] = useResizeObserver();
   const [childRef, childRect] = useResizeObserver();
   const [drawerRef, drawerRect] = useResizeObserver();
 
   // ·········································································
   // DATA PROCESSING
+
+  const loadCategories = async (selectedCategoryKey) => {
+    const result = await listCategoriesRequest();
+    const items = result.map((data) => ({
+      ...data,
+      icon: data.menuItem.iconSvg,
+      name: data.menuItem.label,
+    }));
+    setCategories(items);
+    if (!isEmpty(selectedCategoryKey)) {
+      setCategory(find(items, { key: selectedCategoryKey }));
+    }
+  };
 
   const loadAssets = async (categoryId) => {
     console.log('loadAssets > categoryId:', categoryId);
@@ -108,12 +118,25 @@ const ListAssetPage = () => {
   // ·········································································
   // EFFECTS
 
+  useEffect(() => setCategories(categoriesProp), [categoriesProp]);
+
   useEffect(() => {
-    if (view !== VIEWS.LIST) setView(VIEWS.LIST);
-    if (!isEmpty(params?.category) && category?.key !== params?.category) {
-      selectCategory(params?.category);
+    if (!isEmpty(assetProp?.id)) {
+      setAsset(assetProp);
+    } else if (isString(assetProp)) {
+      loadAsset(assetProp);
     }
-  }, [params, category, view]);
+  }, [assetProp]);
+
+  useEffect(() => {
+    if (!isEmpty(categoryProp?.id)) {
+      setCategory(categoryProp);
+    } else if (isString(categoryProp) && isEmpty(categories)) {
+      loadCategories(categoryProp);
+    } else if (isString(categoryProp) && !isEmpty(categories)) {
+      setCategory(find(categories, { key: categoryProp }));
+    }
+  }, [categoryProp, categories]);
 
   useEffect(() => {
     if (!isEmpty(category?.id)) {
@@ -122,30 +145,15 @@ const ListAssetPage = () => {
   }, [category]);
 
   useEffect(() => {
-    // if (!isEmpty(assets)) {
     loadAssetsData();
-    // }
   }, [assets, page, size]);
-
-  useEffect(() => {
-    const assetId = query.get('open');
-    if (isEmpty(assetId)) {
-      setAsset(null);
-    } else if (asset?.id !== assetId) {
-      loadAsset(assetId);
-    }
-  }, [query, asset]);
 
   // ·········································································
   // HANDLERS
 
-  const handleOnBack = () => {
-    history.goBack();
-  };
-
   const handleOnCardClick = (item) => {
     setOpenDetail(true);
-    history.push(`${location.pathname}?open=${item.id}`);
+    onItemClick(item);
   };
 
   const handleOnCardDelete = (item) => {
@@ -240,10 +248,10 @@ const ListAssetPage = () => {
                     onDelete={handleOnCardDelete}
                   />
                 )}
-                itemMinWidth={340}
+                itemMinWidth={itemMinWidth}
                 columns={columns}
                 loading={loading}
-                layout={'grid'}
+                layout={layout}
                 onPageChange={setPage}
                 onSizeChange={setSize}
               />
@@ -291,5 +299,22 @@ const ListAssetPage = () => {
   );
 };
 
-export { ListAssetPage };
-export default ListAssetPage;
+AssetList.defaultProps = {
+  layout: 'grid',
+  searchable: true,
+  category: 'media-files',
+  categories: [],
+  itemMinWidth: 340,
+};
+AssetList.propTypes = {
+  category: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
+  layout: PropTypes.oneOf(['grid', 'list']),
+  searchable: PropTypes.bool,
+  asset: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+  categories: PropTypes.arrayOf(PropTypes.object),
+  onItemClick: PropTypes.func,
+  itemMinWidth: PropTypes.number,
+};
+
+export { AssetList };
+export default AssetList;

@@ -16,8 +16,10 @@ const addAssetSchema = {
     color: stringSchemaNullable,
     description: stringSchemaNullable,
     categoryId: stringSchema,
+    categoryKey: stringSchema,
   },
-  required: ['name', 'categoryId'],
+  required: ['name'],
+  anyOf: [{ required: ['categoryId'] }, { required: ['categoryKey'] }],
   additionalProperties: true,
 };
 

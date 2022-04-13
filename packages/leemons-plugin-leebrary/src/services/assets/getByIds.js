@@ -2,17 +2,37 @@
 const { isEmpty, flatten, map, find, compact, uniq } = require('lodash');
 const { tables } = require('../tables');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
+const { getUsersByAsset } = require('../permissions/getUsersByAsset');
 const { find: findCategories } = require('../categories/find');
 const { find: findBookmarks } = require('../bookmarks/find');
+const canAssignRole = require('../permissions/helpers/canAssignRole');
 
 async function getByIds(assetsIds, { withFiles, checkPermissions, userSession, transacting } = {}) {
   const ids = flatten([assetsIds]);
   let assets = await tables.assets.find({ id_$in: ids }, { transacting });
 
   if (checkPermissions && userSession) {
-    const privateAssets = await getPermissions(assetsIds, { userSession, transacting });
-    const permissions = privateAssets.map((item) => item.asset);
-    assets = assets.filter((asset) => permissions.includes(asset.id));
+    const permissions = await getPermissions(assetsIds, { userSession, transacting });
+    const privateAssets = permissions.map((item) => item.asset);
+    assets = assets.filter((asset) => privateAssets.includes(asset.id));
+
+    for (let i = 0, l = assets.length; i < l; i++) {
+      const asset = assets[i];
+      const permission = permissions.find((item) => item.asset === asset.id);
+      if (!isEmpty(permission?.permissions)) {
+        const { role: userRole, permissions: userPermissions } = permission;
+        if (userPermissions.edit) {
+          // eslint-disable-next-line no-await-in-loop
+          let assetPermissions = await getUsersByAsset(asset.id, { userSession });
+          assetPermissions = assetPermissions.map((user) => {
+            const item = { ...user };
+            item.editable = canAssignRole(userRole, item.permissions[0], item.permissions[0]);
+            return item;
+          });
+          assets[i].canAccess = assetPermissions;
+        }
+      }
+    }
   }
 
   if (!isEmpty(assets) && withFiles) {
@@ -43,6 +63,7 @@ async function getByIds(assetsIds, { withFiles, checkPermissions, userSession, t
         asset.url = bookmark.url;
         asset.icon = find(files, { id: bookmark.icon });
         asset.fileType = 'bookmark';
+        asset.metadata = [];
       }
 
       if (!isEmpty(items)) {

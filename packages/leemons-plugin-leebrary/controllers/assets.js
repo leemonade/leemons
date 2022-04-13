@@ -45,7 +45,11 @@ async function addAsset(ctx) {
     cover = assetData.cover || filesData.coverFile;
   }
 
-  const asset = await add({ ...assetData, category, categoryId, cover, file }, { userSession });
+  const asset = await add.call(
+    { calledFrom: leemons.plugin.prefixPN('') },
+    { ...assetData, category, categoryId, cover, file },
+    { userSession }
+  );
 
   const { role } = await getPermissions(asset.id, { userSession });
 
@@ -89,7 +93,7 @@ async function getAsset(ctx) {
   const { id: assetId } = ctx.params;
   const { userSession } = ctx.state;
 
-  const [asset] = await getByIds(assetId, { withFiles: true });
+  const [asset] = await getByIds(assetId, { withFiles: true, checkPermissions: true, userSession });
 
   if (!asset) {
     throw new global.utils.HttpError(400, 'Asset not found');
@@ -103,7 +107,7 @@ async function getAsset(ctx) {
 
   let assetPermissions = false;
 
-  if (assignerRole === 'owner') {
+  if (permissions?.edit) {
     assetPermissions = await getUsersByAsset(assetId, { userSession });
     assetPermissions = assetPermissions.map((user) => {
       const item = { ...user };

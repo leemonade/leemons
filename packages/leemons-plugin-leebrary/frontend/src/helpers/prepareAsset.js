@@ -1,4 +1,4 @@
-import { capitalize, isEmpty } from 'lodash';
+import { capitalize, isEmpty, isNil } from 'lodash';
 import { getAuthorizationTokenForAllCenters } from '@users/session';
 
 function getFileUrl(fileID) {
@@ -9,19 +9,36 @@ function getFileUrl(fileID) {
 function prepareAsset(assetFromApi) {
   const asset = { ...assetFromApi };
 
-  if (isEmpty(asset.fileType)) {
-    const fileType = asset.file.type;
+  if (!isEmpty(asset.file)) {
+    if (isEmpty(asset.fileType)) {
+      const fileType = asset.file.type;
 
-    if (fileType.indexOf('xml') > -1 || fileType.indexOf('document') > -1) {
-      asset.fileType = 'document';
-    } else {
-      [asset.fileType] = fileType.split('/');
+      if (fileType.indexOf('xml') > -1 || fileType.indexOf('document') > -1) {
+        asset.fileType = 'document';
+      } else {
+        [asset.fileType] = fileType.split('/');
+      }
+    }
+
+    if (isEmpty(asset.url)) {
+      asset.url = getFileUrl(asset.file.id);
+    }
+
+    if (isEmpty(asset.fileExtension)) {
+      asset.fileExtension = asset.file.extension;
+    }
+
+    if (isNil(asset.metadata) && asset.file.metadata) {
+      let { metadata } = asset.file;
+      if (typeof metadata === 'string') {
+        metadata = JSON.parse(metadata);
+      }
+      asset.metadata = Object.keys(metadata).map((key) => ({
+        value: metadata[key],
+        label: capitalize(key),
+      }));
     }
   }
-
-  asset.fileExtension = asset.fileExtension || asset.file.extension;
-
-  asset.url = asset.url || getFileUrl(asset.file.id);
 
   if (!isEmpty(asset.cover?.id)) {
     asset.cover = getFileUrl(asset.cover.id);
@@ -31,15 +48,12 @@ function prepareAsset(assetFromApi) {
     asset.icon = getFileUrl(asset.icon.id);
   }
 
-  if (asset.file?.metadata) {
-    let { metadata } = asset.file;
-    if (typeof metadata === 'string') {
-      metadata = JSON.parse(metadata);
-    }
-    asset.metadata = Object.keys(metadata).map((key) => ({
-      value: metadata[key],
-      label: capitalize(key),
-    }));
+  if (!isEmpty(asset.canAccess)) {
+    asset.canAccess = asset.canAccess.map((user) => {
+      const item = { ...user };
+      item.fullName = `${user.name} ${user.surnames}`;
+      return item;
+    });
   }
 
   return asset;

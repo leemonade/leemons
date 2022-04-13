@@ -8,6 +8,12 @@ module.exports = {
         notNull: true,
       },
     },
+    pluginOwner: {
+      type: 'string',
+      options: {
+        notNull: true,
+      },
+    },
     creatable: {
       type: 'boolean',
       options: {

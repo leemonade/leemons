@@ -3,7 +3,8 @@ const { CATEGORIES } = require('../../../config/constants');
 const { tables } = require('../tables');
 const { upload: uploadFile, uploadFromUrl: uploadFileFromUrl } = require('../files/upload');
 const { add: addFiles } = require('./files/add');
-const { getById: getCategory } = require('../categories/getById');
+const { getById: getCategoryById } = require('../categories/getById');
+const { getByKey: getCategoryByKey } = require('../categories/getByKey');
 const { validateAddAsset } = require('../../validations/forms');
 const { add: addBookmark } = require('../bookmarks/add');
 
@@ -12,7 +13,7 @@ async function add({ file, cover, category, ...data }, { userSession, transactin
     async (transacting) => {
       await validateAddAsset(data);
 
-      const { categoryId, tags, ...assetData } = data;
+      const { categoryId, categoryKey, tags, ...assetData } = data;
 
       if (userSession) {
         assetData.fromUser = userSession.id;
@@ -23,8 +24,20 @@ async function add({ file, cover, category, ...data }, { userSession, transactin
       }
 
       if (isEmpty(category)) {
-        // eslint-disable-next-line no-param-reassign
-        category = await getCategory(categoryId, { transacting });
+        if (!isEmpty(categoryId)) {
+          // eslint-disable-next-line no-param-reassign
+          category = await getCategoryById(categoryId, { transacting });
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          category = await getCategoryByKey(categoryKey, { transacting });
+        }
+      }
+
+      if (![leemons.plugin.prefixPN(''), category?.pluginOwner].includes(this.calledFrom)) {
+        throw new global.utils.HttpError(
+          403,
+          `Category "${category.key}" was not created by the plugin "${this.calledFrom}". You can only add assets to categories created by the plugin "${this.calledFrom}".`
+        );
       }
 
       // ··········································································
@@ -36,25 +49,19 @@ async function add({ file, cover, category, ...data }, { userSession, transactin
       let newFile;
       let coverFile;
 
-      // Bookmarks
-      if (category.key === CATEGORIES.BOOKMARKS && !isEmpty(cover)) {
-        if (isString(cover)) {
-          newFile = await uploadFileFromUrl(cover, { name: assetData.name }, { transacting });
-        } else {
-          newFile = await uploadFile(cover, { name: assetData.name }, { transacting });
-        }
-
-        coverFile = newFile;
-      }
       // Media files
-      else if (category.key === CATEGORIES.MEDIA_FILES && !isEmpty(file)) {
+      if (!isEmpty(file)) {
         newFile = await uploadFile(file, { name: assetData.name }, { transacting });
 
         if (newFile?.type?.indexOf('image') === 0) {
           coverFile = newFile;
         }
+      }
 
-        if (!coverFile && cover) {
+      if (!coverFile && !isEmpty(cover)) {
+        if (isString(cover)) {
+          coverFile = await uploadFileFromUrl(cover, { name: assetData.name }, { transacting });
+        } else {
           coverFile = await uploadFile(cover, { name: assetData.name }, { transacting });
         }
       }
