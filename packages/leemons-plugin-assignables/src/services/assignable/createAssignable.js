@@ -1,4 +1,5 @@
 const { validateAssignable } = require('../../helpers/validators/assignable');
+const getRole = require('../roles/getRole');
 const saveSubjects = require('../subjects/saveSubjects');
 const { assignables } = require('../tables');
 const versionControl = require('../versionControl');
@@ -14,6 +15,10 @@ module.exports = async function createAssignable(
       validateAssignable(assignable);
 
       const { subjects, submission, metadata, ...assignableObject } = assignable;
+
+      // EN: Check if the role exists
+      // ES: Comprueba si el rol existe
+      await getRole.call(this, assignable.role, { transacting });
 
       // EN: Register a new versioned entity.
       // ES: Registra una nueva versión de una entidad.

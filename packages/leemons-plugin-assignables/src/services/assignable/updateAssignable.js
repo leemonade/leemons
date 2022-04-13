@@ -31,7 +31,7 @@ module.exports = async function updateAssignable(assignable, { transacting } = {
 
   // EN: Get the current values
   // ES: Obtenemos los valores actuales
-  const currentAssignable = await getAssignable(id, { transacting });
+  const currentAssignable = await getAssignable.call(this, id, { transacting });
 
   // EN: Diff the current values with the new ones
   // ES: Compara los valores actuales con los nuevos
@@ -59,7 +59,10 @@ module.exports = async function updateAssignable(assignable, { transacting } = {
 
     // TODO: Duplicate everything and apply changes
     return {
-      ...(await createAssignable(_.omit(object, ['published', 'id']), { id: fullId, transacting })),
+      ...(await createAssignable.call(this, _.omit(object, ['published', 'id']), {
+        id: fullId,
+        transacting,
+      })),
       published: false,
     };
   }

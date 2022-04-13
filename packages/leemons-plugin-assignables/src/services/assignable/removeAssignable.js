@@ -7,7 +7,7 @@ module.exports = async function removeAssignable(assignable, { removeAll = 2, tr
   const isPublished = version.published;
 
   if (removeAll === 0) {
-    return removeAssignables([assignable], { transacting });
+    return removeAssignables.call(this, [assignable], { transacting });
   }
 
   if (removeAll === 1 || removeAll === 2) {
@@ -18,7 +18,7 @@ module.exports = async function removeAssignable(assignable, { removeAll = 2, tr
       })
     ).map((v) => v.fullId);
 
-    return removeAssignables(versions, { transacting });
+    return removeAssignables.call(this, versions, { transacting });
   }
 
   throw new Error('Invalid removeAll value');
