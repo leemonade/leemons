@@ -5,11 +5,12 @@ import { useStore } from '@common';
 import { TextEditorInput } from '@bubbles-ui/editors';
 
 // eslint-disable-next-line import/prefer-default-export
-export function ListInputRender({ t, useExplanation, addItem, ...props }) {
-  const [store, render] = useStore();
+export function ListInputRender({ t, useExplanation, addItem, value, ...props }) {
+  const [store, render] = useStore(value || { useButton: true });
 
   function emit() {
     props.onChange({
+      ...value,
       response: store.response,
       explanation: store.explanation,
     });
@@ -51,9 +52,11 @@ export function ListInputRender({ t, useExplanation, addItem, ...props }) {
     render();
   }
 
+  const Container = store.useButton ? Paper : Box;
+
   return (
     <Box>
-      <Paper fullWidth>
+      <Container fullWidth>
         <ContextContainer>
           <Box>
             <TextInput
@@ -74,11 +77,13 @@ export function ListInputRender({ t, useExplanation, addItem, ...props }) {
             </Box>
           ) : null}
         </ContextContainer>
-      </Paper>
+      </Container>
 
-      <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-        <Button onClick={add}>{t('addResponse')}</Button>
-      </Box>
+      {store.useButton ? (
+        <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+          <Button onClick={add}>{t('addResponse')}</Button>
+        </Box>
+      ) : null}
     </Box>
   );
 }
@@ -88,4 +93,5 @@ ListInputRender.propTypes = {
   useExplanation: PropTypes.bool,
   onChange: PropTypes.func,
   addItem: PropTypes.func,
+  value: PropTypes.any,
 };

@@ -35,8 +35,10 @@ module.exports = {
     levelLabel: 'Nivel',
     withImagesLabel: 'Con imágenes',
     questionLabel: 'Pregunta',
+    questionRequired: 'Campo obligatorio',
     responsesLabel: 'Respuestas',
     responseLabel: 'Respuesta',
+    errorMarkGoodResponse: 'La respuesta correcta debe ser marcada',
     responsesDescription:
       'Selecciona la respuesta correcta haciendo clic en el icono circular, marca ({{icon}}) la respuesta que se ocultará cuando el usuario solicite una pista (puedes configurar el modo de pista en la sección de asignación).',
     addResponse: 'Añadir respuesta',
@@ -55,5 +57,6 @@ module.exports = {
     saveResponse: 'Guardar respuesta',
     monoResponse: 'Respuesta única',
     savedAsDraft: 'Guardado como borrador',
+    actionsHeader: 'Acciones',
   },
 };

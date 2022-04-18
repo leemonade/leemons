@@ -21,119 +21,134 @@ const questionComponents = {
   'mono-response': <MonoResponse />,
 };
 
+export const questionTypeT = {
+  'mono-response': 'monoResponse',
+};
+
 export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
-  const questionTypes = [{ value: 'mono-response', label: t('monoResponse') }];
+  const questionTypes = [{ value: 'mono-response', label: t(questionTypeT['mono-response']) }];
 
   const form = useForm({ defaultValues });
   const type = form.watch('type');
 
   function save() {
     form.handleSubmit((data) => {
+      console.log(data);
       onSave(data);
     })();
   }
 
   return (
-    <ContextContainer>
-      <Box>
-        <Button variant="link" onClick={onCancel}>
-          <ChevLeftIcon />
-          {t('returnToList')}
-        </Button>
-      </Box>
+    <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
+      <ContextContainer>
+        <Box>
+          <Button variant="link" onClick={onCancel}>
+            <ChevLeftIcon />
+            {t('returnToList')}
+          </Button>
+        </Box>
 
-      <Title order={4}>{t('questionDetail')}</Title>
+        <Title order={4}>{t('questionDetail')}</Title>
 
-      <ContextContainer direction="row">
+        <ContextContainer direction="row">
+          <Controller
+            control={form.control}
+            name="type"
+            rules={{ required: t('typeRequired') }}
+            render={({ field }) => (
+              <Select
+                required
+                data={questionTypes}
+                error={form.formState.errors.type}
+                label={t('typeLabel')}
+                {...field}
+              />
+            )}
+          />
+
+          <Controller
+            control={form.control}
+            name="level"
+            render={({ field }) => (
+              <Select
+                data={[{ value: 'falta-implementar', label: 'Falta implementar' }]}
+                error={form.formState.errors.level}
+                label={t('levelLabel')}
+                {...field}
+              />
+            )}
+          />
+
+          {typesWithImage.includes(form.watch('type')) && (
+            <Box style={{ alignSelf: 'flex-end' }}>
+              <Controller
+                control={form.control}
+                name="withImages"
+                render={({ field }) => (
+                  <Checkbox
+                    checked={field.value}
+                    error={form.formState.errors.withImages}
+                    label={t('withImagesLabel')}
+                    {...field}
+                  />
+                )}
+              />
+            </Box>
+          )}
+        </ContextContainer>
+
         <Controller
           control={form.control}
-          name="type"
-          rules={{ required: t('typeRequired') }}
+          name="tags"
           render={({ field }) => (
-            <Select
+            <TagsAutocomplete
+              pluginName="tests"
+              label={t('tagsLabel')}
+              labels={{ addButton: t('addTag') }}
+              {...field}
+            />
+          )}
+        />
+
+        <Controller
+          control={form.control}
+          name="question"
+          rules={{ required: t('questionRequired') }}
+          render={({ field }) => (
+            <TextEditorInput
               required
-              data={questionTypes}
-              error={form.formState.errors.type}
-              label={t('typeLabel')}
+              error={form.formState.errors.question}
+              label={t('questionLabel')}
               {...field}
             />
           )}
         />
+
+        {type
+          ? React.cloneElement(questionComponents[type], {
+              form,
+              t,
+            })
+          : null}
 
         <Controller
           control={form.control}
-          name="level"
+          name="clues"
           render={({ field }) => (
-            <Select
-              data={[{ value: 'falta-implementar', label: 'Falta implementar' }]}
-              error={form.formState.errors.level}
-              label={t('levelLabel')}
+            <ListInput
+              canAdd
+              label={t('cluesLabel')}
+              description={t('cluesDescription')}
               {...field}
             />
           )}
         />
 
-        {typesWithImage.includes(form.watch('type')) && (
-          <Box style={{ alignSelf: 'flex-end' }}>
-            <Controller
-              control={form.control}
-              name="withImages"
-              render={({ field }) => (
-                <Checkbox
-                  checked={field.value}
-                  error={form.formState.errors.withImages}
-                  label={t('withImagesLabel')}
-                  {...field}
-                />
-              )}
-            />
-          </Box>
-        )}
+        <Stack justifyContent="end">
+          <Button onClick={save}>{t('save')}</Button>
+        </Stack>
       </ContextContainer>
-
-      <Controller
-        control={form.control}
-        name="tags"
-        render={({ field }) => (
-          <TagsAutocomplete
-            pluginName="tests"
-            label={t('tagsLabel')}
-            labels={{ addButton: t('addTag') }}
-            {...field}
-          />
-        )}
-      />
-
-      <Controller
-        control={form.control}
-        name="question"
-        render={({ field }) => <TextEditorInput label={t('questionLabel')} {...field} />}
-      />
-
-      {type
-        ? React.cloneElement(questionComponents[type], {
-            form,
-            t,
-          })
-        : null}
-
-      <Controller
-        control={form.control}
-        name="clues"
-        render={({ field }) => (
-          <ListInput
-            canAdd
-            label={t('cluesLabel')}
-            description={t('cluesDescription')}
-            {...field}
-          />
-        )}
-      />
-
-      <Stack justifyContent="end">
-        <Button onClick={save}>{t('save')}</Button>
-      </Stack>
-    </ContextContainer>
+    </Box>
   );
 }
 

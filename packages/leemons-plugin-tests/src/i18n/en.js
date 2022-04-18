@@ -35,8 +35,10 @@ module.exports = {
     levelLabel: 'Level',
     withImagesLabel: 'With images',
     questionLabel: 'Question',
+    questionRequired: 'Field required',
     responsesLabel: 'Responses',
     responseLabel: 'Response',
+    errorMarkGoodResponse: 'You must mark a good response',
     responsesDescription:
       'Select the correct answer by clicking on the circular icon, mark ({{icon}}) the response that will be hidden when the user requests a hint (you can set the hint mode in the assignment section).',
     addResponse: 'Add response',
@@ -55,5 +57,6 @@ module.exports = {
     saveResponse: 'Save response',
     monoResponse: 'Mono response',
     savedAsDraft: 'Saved as draft',
+    actionsHeader: 'Actions',
   },
 };

@@ -45,7 +45,10 @@ async function getQuestionsBanksDetails(id, { transacting } = {}) {
   const questionsByQuestionBank = _.groupBy(questions, 'questionBank');
   return _.map(questionsBanks, (questionBank) => ({
     ...questionBank,
-    questions: questionsByQuestionBank[questionBank.id] || [],
+    questions: _.map(questionsByQuestionBank[questionBank.id] || [], (question) => ({
+      ...question,
+      properties: JSON.parse(question.properties),
+    })),
   }));
 }
 

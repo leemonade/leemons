@@ -54,7 +54,7 @@ async function saveQuestionsBanks(data, { transacting: _transacting } = {}) {
         }
       });
       if (questionsToDelete.length) {
-        await table.questions.removeMany({ id_$in: questionsToDelete }, { transacting });
+        await table.questions.deleteMany({ id_$in: questionsToDelete }, { transacting });
       }
       if (questionsToUpdate.length) {
         await Promise.all(
