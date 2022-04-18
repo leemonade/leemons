@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { forIn } from 'lodash';
 import {
   Box,
   Button,
@@ -15,18 +16,24 @@ import { Controller, useForm } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete } from '@common';
 import { MonoResponse } from './question-types/MonoResponse';
+import { Map } from './question-types/Map';
 
 const typesWithImage = ['mono-response'];
 const questionComponents = {
   'mono-response': <MonoResponse />,
+  map: <Map />,
 };
 
 export const questionTypeT = {
   'mono-response': 'monoResponse',
+  map: 'map',
 };
 
 export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
-  const questionTypes = [{ value: 'mono-response', label: t(questionTypeT['mono-response']) }];
+  const questionTypes = [];
+  forIn(questionTypeT, (value, key) => {
+    questionTypes.push({ value: key, label: t(value) });
+  });
 
   const form = useForm({ defaultValues });
   const type = form.watch('type');

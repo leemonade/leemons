@@ -56,6 +56,13 @@ module.exports = {
     captionAltLabel: 'Caption / alt text',
     saveResponse: 'Save response',
     monoResponse: 'Mono response',
+    map: 'Map',
+    mapLabel: 'Map',
+    addMap: 'Add map',
+    itemsLabel: 'Items',
+    itemsDescriptionBeforeMap:
+      'Once you have added the number stickers to the image you can include the names',
+    createNumbering: 'Create numbering',
     savedAsDraft: 'Saved as draft',
     actionsHeader: 'Actions',
   },

@@ -56,6 +56,12 @@ module.exports = {
     captionAltLabel: 'Leyenda / texto alt',
     saveResponse: 'Guardar respuesta',
     monoResponse: 'Respuesta única',
+    map: 'Mapa',
+    mapLabel: 'Mapa',
+    addMap: 'Añadir mapa',
+    itemsDescriptionBeforeMap:
+      'Una vez que hayas añadido las pegatinas de números a la imagen, puedes incluir los nombres',
+    createNumbering: 'Crear numeración',
     savedAsDraft: 'Guardado como borrador',
     actionsHeader: 'Acciones',
   },

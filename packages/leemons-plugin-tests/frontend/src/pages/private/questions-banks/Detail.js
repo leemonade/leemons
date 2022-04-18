@@ -80,16 +80,16 @@ export default function Detail() {
         <Stepper
           data={[
             {
+              label: t('questions'),
+              content: <DetailQuestions t={t} form={form} store={store} render={render} />,
+            },
+            {
               label: t('config'),
               content: <DetailConfig t={t} form={form} store={store} render={render} />,
             },
             {
               label: t('design'),
               content: <DetailDesign t={t} form={form} store={store} render={render} />,
-            },
-            {
-              label: t('questions'),
-              content: <DetailQuestions t={t} form={form} store={store} render={render} />,
             },
           ]}
         />
