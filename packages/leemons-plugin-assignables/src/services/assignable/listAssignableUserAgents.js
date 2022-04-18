@@ -3,7 +3,7 @@ const getPermissionName = require('./permissions/assignable/getPermissionName');
 const getUserPermission = require('./permissions/assignable/users/getUserPermission');
 const permission = require('./permissions/permission');
 
-module.exports = async function listAssignableUserSessions(
+module.exports = async function listAssignableUserAgents(
   assignableId,
   { userSession, transacting } = {}
 ) {

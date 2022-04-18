@@ -8,11 +8,12 @@ module.exports = function main(userSession) {
     createAssignable,
     addUserToAssignable,
     removeUserFromAssignable,
-    listAssignableUserSessions,
+    listAssignableUserAgents,
+    searchAssignables,
     // getAssignable,
-    // publishAssignable,
+    publishAssignable,
     removeAssignable,
-    // updateAssignable,
+    updateAssignable,
   } = services;
 
   const unit = {
@@ -141,7 +142,7 @@ module.exports = function main(userSession) {
     // console.log('task', inspect(taskAssignable, { depth: null, colors: true }));
     // console.log('pretask', inspect(preTaskAssignable, { depth: null, colors: true }));
 
-    const data = await createAssignable(task, { userSession, transacting });
+    let data = await createAssignable(task, { userSession, transacting });
     const { id } = data;
 
     const results = await addUserToAssignable(
@@ -151,9 +152,9 @@ module.exports = function main(userSession) {
       { userSession, transacting }
     );
 
-    // console.log('results', results);
+    console.log('results', results);
 
-    // console.log('users', await listAssignableUserSessions(id, { userSession, transacting }));
+    // await listAssignableUserAgents(id, { userSession, transacting });
 
     // const removedPermissions = await removeUserFromAssignable(
     //   id,
@@ -161,40 +162,51 @@ module.exports = function main(userSession) {
     //   { userSession, transacting }
     // );
 
-    const removed = await removeAssignable(id, { userSession, transacting });
-
-    console.log('removed', removed);
-
     // console.log('removedPermission', removedPermissions);
 
     // console.log('created', data);
 
-    // data = await publishAssignable(id, { transacting });
+    data = await publishAssignable(id, { userSession, transacting });
 
-    // console.log('published', data);
+    console.log('published', data);
 
     // data = await getAssignable(id, { transacting });
 
     // console.log('get', data);
 
-    // data = await updateAssignable(
-    //   {
-    //     id,
-    //     subjects: [
-    //       {
-    //         subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
-    //         level: '1',
-    //         curriculum: {},
-    //       },
-    //       {
-    //         subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
-    //         level: 'Hard',
-    //       },
-    //     ],
-    //   },
-    //   { transacting }
-    // );
-    // console.log('Updated', data);
+    data = await updateAssignable(
+      {
+        id,
+        subjects: [
+          {
+            subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+            level: '1',
+            curriculum: {},
+          },
+          {
+            subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+            level: 'Hard',
+          },
+        ],
+      },
+      { userSession, transacting }
+    );
+    console.log('Updated', data);
+
+    const search = await searchAssignables(
+      'task',
+      {
+        published: false,
+      },
+      {},
+      { userSession, transacting }
+    );
+
+    console.log('Search', search);
+
+    const removed = await removeAssignable(id, { userSession, transacting });
+
+    console.log('removed', removed);
 
     // data = await publishAssignable(data.id, { transacting });
     // console.log('published', data);

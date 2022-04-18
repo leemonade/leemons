@@ -49,7 +49,6 @@ module.exports = async function createAssignable(
         // EN: Register permission for assignable.
         // ES: Registra permisos para el asignable.
         await registerAssignablePermission(assignableCreated, { transacting });
-
         // EN: Add user permissions for assignable.
         // ES: Añade permisos de usuario para el asignable.
         await addPermissionToUser(

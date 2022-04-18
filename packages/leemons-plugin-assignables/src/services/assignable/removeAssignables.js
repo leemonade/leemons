@@ -3,7 +3,7 @@ const removeSubjects = require('../subjects/removeSubjects');
 const { assignables: table } = require('../tables');
 const versionControl = require('../versionControl');
 const getAssignable = require('./getAssignable');
-const listAssignableUserSessions = require('./listAssignableUserSessions');
+const listAssignableUserAgents = require('./listAssignableUserAgents');
 const { removeAssignablePermission } = require('./permissions');
 const removeUserFromAssignable = require('./removeUserFromAssignable');
 
@@ -19,7 +19,7 @@ module.exports = async function removeAssignables(assignables, { userSession, tr
           // EN: Get the users that have access to the assignable.
           // ES: Obtiene los usuarios que tienen acceso al asignable.
           const userAgents = (
-            await listAssignableUserSessions.call(this, assignable, {
+            await listAssignableUserAgents.call(this, assignable, {
               userSession,
               transacting,
             })

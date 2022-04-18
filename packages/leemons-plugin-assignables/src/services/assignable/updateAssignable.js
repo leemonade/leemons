@@ -3,8 +3,10 @@ const { validateAssignable } = require('../../helpers/validators/assignable');
 const updateSubjects = require('../subjects/updateSubjects');
 const { assignables } = require('../tables');
 const versionControl = require('../versionControl');
+const addUserToAssignable = require('./addUserToAssignable');
 const createAssignable = require('./createAssignable');
 const getAssignable = require('./getAssignable');
+const listAssignableUserAgents = require('./listAssignableUserAgents');
 const getUserPermission = require('./permissions/assignable/users/getUserPermission');
 
 function getDiff(a, b) {
@@ -67,11 +69,34 @@ module.exports = async function updateAssignable(assignable, { userSession, tran
     });
 
     // TODO: Duplicate everything and apply changes
+    // TODO: Ensure to keep original owner
+    const newAssignable = await createAssignable.call(this, _.omit(object, ['published', 'id']), {
+      id: fullId,
+      userSession,
+      transacting,
+    });
+
+    // EN: Get the users that have access to the assignable.
+    // ES: Obtiene los usuarios que tienen acceso al asignable.
+    const users = await listAssignableUserAgents.call(this, id, { userSession, transacting });
+
+    const userAgents = userSession.userAgents.map((u) => u.id);
+
+    // EN: Add the permissions to the users.
+    // ES: Añade los permisos a los usuarios.
+    await Promise.all(
+      users
+        .filter((user) => !userAgents.includes(user.userAgent))
+        .map((user) =>
+          addUserToAssignable.call(this, fullId, user.userAgent, user.role, {
+            userSession,
+            transacting,
+          })
+        )
+    );
+
     return {
-      ...(await createAssignable.call(this, _.omit(object, ['published', 'id']), {
-        id: fullId,
-        transacting,
-      })),
+      ...newAssignable,
       published: false,
     };
   }
