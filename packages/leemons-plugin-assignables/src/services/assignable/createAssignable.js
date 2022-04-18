@@ -14,6 +14,8 @@ module.exports = async function createAssignable(
     async (transacting) => {
       let id = _id;
 
+      // EN: Verify assignable object properties.
+      // ES: Verificar que el objeto asignable tenga las propiedades correctas.
       validateAssignable(assignable);
 
       const { subjects, submission, metadata, ...assignableObject } = assignable;

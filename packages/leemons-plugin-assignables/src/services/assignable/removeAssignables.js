@@ -3,16 +3,34 @@ const removeSubjects = require('../subjects/removeSubjects');
 const { assignables: table } = require('../tables');
 const versionControl = require('../versionControl');
 const getAssignable = require('./getAssignable');
+const listAssignableUserSessions = require('./listAssignableUserSessions');
 const { removeAssignablePermission } = require('./permissions');
+const removeUserFromAssignable = require('./removeUserFromAssignable');
 
-module.exports = async function removeAssignables(assignables, { transacting: t }) {
+module.exports = async function removeAssignables(assignables, { userSession, transacting: t }) {
   return global.utils.withTransaction(
     async (transacting) => {
       await Promise.all(
         assignables.map(async (assignable) => {
           // EN: Get the assignable to validate ownership.
           // ES: Obtiene el asignable para validar la propiedad.
-          const a = await getAssignable.call(this, assignable, { transacting });
+          const a = await getAssignable.call(this, assignable, { userSession, transacting });
+
+          // EN: Get the users that have access to the assignable.
+          // ES: Obtiene los usuarios que tienen acceso al asignable.
+          const userAgents = (
+            await listAssignableUserSessions.call(this, assignable, {
+              userSession,
+              transacting,
+            })
+          ).map((u) => u.userAgent);
+
+          // EN: Remove the users that have access to the assignable.
+          // ES: Elimina los usuarios que tienen acceso al asignable.
+          await removeUserFromAssignable.call(this, assignable, userAgents, {
+            userSession,
+            transacting,
+          });
 
           // EN: Remove the permission
           // ES: Elimina el permiso

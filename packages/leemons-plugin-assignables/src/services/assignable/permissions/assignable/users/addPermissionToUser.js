@@ -1,14 +1,13 @@
 const permission = require('../../permission');
 const getPermissionName = require('../getPermissionName');
-const getUserPermission = require('./getUserPermission');
 
 module.exports = async function addPermissionToUser(
   assignable,
   userAgents,
   role,
-  { userSession, transacting } = {}
+  { transacting } = {}
 ) {
-  const permissions = await permission.addCustomPermissionToUserAgent(
+  await permission.addCustomPermissionToUserAgent(
     userAgents,
     {
       permissionName: getPermissionName(assignable),
@@ -17,10 +16,9 @@ module.exports = async function addPermissionToUser(
     { transacting }
   );
 
-  await getUserPermission(assignable, {
-    userSession,
-    transacting,
-  });
-
-  return { role, actions: leemons.plugin.config.constants.assignableRolesObject[role].actions };
+  return {
+    userAgents,
+    role,
+    actions: leemons.plugin.config.constants.assignableRolesObject[role].actions,
+  };
 };

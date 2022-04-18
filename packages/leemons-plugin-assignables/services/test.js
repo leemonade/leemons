@@ -6,9 +6,12 @@ module.exports = function main(userSession) {
   const {
     registerRole,
     createAssignable,
+    addUserToAssignable,
+    removeUserFromAssignable,
+    listAssignableUserSessions,
     // getAssignable,
     // publishAssignable,
-    // removeAssignable,
+    removeAssignable,
     // updateAssignable,
   } = services;
 
@@ -140,6 +143,29 @@ module.exports = function main(userSession) {
 
     const data = await createAssignable(task, { userSession, transacting });
     const { id } = data;
+
+    const results = await addUserToAssignable(
+      id,
+      ['98e5f5d0-7f59-4629-8c47-23928e5b48e0'],
+      'viewer',
+      { userSession, transacting }
+    );
+
+    // console.log('results', results);
+
+    // console.log('users', await listAssignableUserSessions(id, { userSession, transacting }));
+
+    // const removedPermissions = await removeUserFromAssignable(
+    //   id,
+    //   ['98e5f5d0-7f59-4629-8c47-23928e5b48e1'],
+    //   { userSession, transacting }
+    // );
+
+    const removed = await removeAssignable(id, { userSession, transacting });
+
+    console.log('removed', removed);
+
+    // console.log('removedPermission', removedPermissions);
 
     // console.log('created', data);
 

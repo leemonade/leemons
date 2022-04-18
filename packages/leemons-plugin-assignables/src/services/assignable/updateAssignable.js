@@ -5,6 +5,7 @@ const { assignables } = require('../tables');
 const versionControl = require('../versionControl');
 const createAssignable = require('./createAssignable');
 const getAssignable = require('./getAssignable');
+const getUserPermission = require('./permissions/assignable/users/getUserPermission');
 
 function getDiff(a, b) {
   const _a = _.defaults(_.cloneDeep(a), b);
@@ -19,7 +20,7 @@ function getDiff(a, b) {
   };
 }
 
-module.exports = async function updateAssignable(assignable, { transacting } = {}) {
+module.exports = async function updateAssignable(assignable, { userSession, transacting } = {}) {
   const { id, ...assignableObject } = assignable;
   let shouldUpgrade = false;
 
@@ -31,7 +32,15 @@ module.exports = async function updateAssignable(assignable, { transacting } = {
 
   // EN: Get the current values
   // ES: Obtenemos los valores actuales
-  const currentAssignable = await getAssignable.call(this, id, { transacting });
+  const currentAssignable = await getAssignable.call(this, id, { userSession, transacting });
+
+  // EN: Check if the user has permission to update the assignable.
+  // ES: Comprueba si el usuario tiene permiso para actualizar el asignable.
+  const { actions } = await getUserPermission(currentAssignable, { userSession, transacting });
+
+  if (!actions.includes('edit')) {
+    throw new Error('You do not have permission to update this assignable.');
+  }
 
   // EN: Diff the current values with the new ones
   // ES: Compara los valores actuales con los nuevos

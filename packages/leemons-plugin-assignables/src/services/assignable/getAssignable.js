@@ -2,13 +2,14 @@ const getRole = require('../roles/getRole');
 const getSubjects = require('../subjects/getSubjects');
 const { assignables } = require('../tables');
 const versionControl = require('../versionControl');
+const getUserPermission = require('./permissions/assignable/users/getUserPermission');
 
-module.exports = async function getAssignable(id, { transacting } = {}) {
+module.exports = async function getAssignable(id, { userSession, transacting } = {}) {
   let isPublished = false;
 
-  // EN: Check if the current version is published.
-  // ES: Comprueba si la versión actual está publicada.
   try {
+    // EN: Check if the current version is published.
+    // ES: Comprueba si la versión actual está publicada.
     const version = await versionControl.getVersion(id, { transacting });
 
     isPublished = version.published;
@@ -40,6 +41,13 @@ module.exports = async function getAssignable(id, { transacting } = {}) {
       metadata: JSON.parse(assignable.metadata),
       subjects,
     };
+
+    // EN: Check if the user has permissions to view the assignable.
+    // ES: Comprueba si el usuario tiene permisos para ver el asignable.
+    const { actions } = await getUserPermission(assignable, { userSession, transacting });
+    if (!actions.includes('view')) {
+      throw new Error('You do not have permission to view this assignable.');
+    }
 
     return {
       ...assignable,
