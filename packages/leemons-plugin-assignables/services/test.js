@@ -1,3 +1,4 @@
+const { inspect } = require('util');
 const { assignables } = require('../src/services/tables');
 
 module.exports = function main(userSession) {
@@ -162,7 +163,7 @@ module.exports = function main(userSession) {
     // preTask
     const { id: preTaskId } = await createAssignable(preTask, { userSession, transacting });
     // task
-    let data = await createAssignable(
+    const data = await createAssignable(
       {
         ...task,
         relatedAssignables: {
@@ -206,11 +207,16 @@ module.exports = function main(userSession) {
       {
         assignable: id,
         ...taskInstance,
+        relatedAssignables: {
+          [id]: {
+            duration: '2 hours',
+          },
+        },
       },
       { userSession, transacting }
     );
 
-    console.log(assignableInstance);
+    console.log(inspect(assignableInstance, { depth: null, colors: true }));
 
     // await listAssignableUserAgents(id, { userSession, transacting });
 
@@ -224,43 +230,43 @@ module.exports = function main(userSession) {
 
     // console.log('created', data);
 
-    data = await publishAssignable(id, { userSession, transacting });
+    // data = await publishAssignable(id, { userSession, transacting });
 
-    console.log('published', data);
+    // console.log('published', data);
 
     // data = await getAssignable(id, { transacting });
 
     // console.log('get', data);
 
-    data = await updateAssignable(
-      {
-        id,
-        subjects: [
-          {
-            subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
-            level: '1',
-            curriculum: {},
-          },
-          {
-            subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
-            level: 'Hard',
-          },
-        ],
-      },
-      { userSession, transacting }
-    );
-    console.log('Updated', data);
+    // data = await updateAssignable(
+    //   {
+    //     id,
+    //     subjects: [
+    //       {
+    //         subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+    //         level: '1',
+    //         curriculum: {},
+    //       },
+    //       {
+    //         subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+    //         level: 'Hard',
+    //       },
+    //     ],
+    //   },
+    //   { userSession, transacting }
+    // );
+    // console.log('Updated', data);
 
-    const search = await searchAssignables(
-      'task',
-      {
-        published: false,
-      },
-      {},
-      { userSession, transacting }
-    );
+    // const search = await searchAssignables(
+    //   'task',
+    //   {
+    //     published: false,
+    //   },
+    //   {},
+    //   { userSession, transacting }
+    // );
 
-    console.log('Search', search);
+    // console.log('Search', search);
 
     const removed = await removeAssignable(id, { userSession, transacting });
 
