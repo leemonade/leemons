@@ -1,20 +1,58 @@
+/* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const { table } = require('../tables');
 const { validateSaveQuestionBank } = require('../../validations/forms');
 const { updateQuestion } = require('../questions/updateQuestion');
 const { createQuestion } = require('../questions/createQuestion');
 
-async function saveQuestionsBanks(data, { transacting: _transacting } = {}) {
+async function saveQuestionsBanks(_data, { transacting: _transacting } = {}) {
   const tagsService = leemons.getPlugin('common').services.tags;
+  const versionControlService = leemons.getPlugin('common').services.versionControl;
   return global.utils.withTransaction(
     async (transacting) => {
+      const data = _.cloneDeep(_data);
+      _.forEach(data.questions, (question) => {
+        delete question.questionBank;
+        delete question.deleted;
+        delete question.created_at;
+        delete question.updated_at;
+        delete question.deleted_at;
+      });
       validateSaveQuestionBank(data);
-      const { id, questions, tags, ...props } = data;
+      const { id, questions, tags, published, ...props } = data;
       let questionBank;
+
       if (id) {
-        questionBank = await table.questionsBanks.update({ id }, props, { transacting });
+        let version = await versionControlService.getVersion(id, { transacting });
+        if (version.published) {
+          version = await versionControlService.upgradeVersion(id, 'major', {
+            published,
+            transacting,
+          });
+          questionBank = await table.questionsBanks.create(
+            { id: version.fullId, ...props },
+            { transacting }
+          );
+          // ES - Borramos las id para que se creen nuevas
+          // EN - Delete the id to create new
+          _.forEach(data.questions, (question) => {
+            delete question.id;
+          });
+        } else {
+          if (published) {
+            await versionControlService.publishVersion(id, true, { transacting });
+          }
+          questionBank = await table.questionsBanks.update({ id }, props, { transacting });
+        }
       } else {
-        questionBank = await table.questionsBanks.create(props, { transacting });
+        const version = await versionControlService.register('question-bank', {
+          published,
+          transacting,
+        });
+        questionBank = await table.questionsBanks.create(
+          { id: version.fullId, ...props },
+          { transacting }
+        );
       }
 
       await tagsService.setTagsToValues(

@@ -25,12 +25,14 @@ const saveQuestionBankSchema = {
         additionalProperties: false,
         required: [],
         properties: {
+          id: stringSchema,
           type: stringSchema,
-          level: stringSchema,
+          level: stringSchemaNullable,
           withImages: booleanSchema,
           tags: {
             type: 'array',
             items: stringSchema,
+            nullable: true,
           },
           question: stringSchema,
           properties: {
@@ -40,6 +42,7 @@ const saveQuestionBankSchema = {
           clues: {
             type: 'array',
             items: stringSchema,
+            nullable: true,
           },
         },
       },

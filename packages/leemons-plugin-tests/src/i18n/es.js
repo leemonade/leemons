@@ -63,6 +63,7 @@ module.exports = {
       'Una vez que hayas añadido las pegatinas de números a la imagen, puedes incluir los nombres',
     createNumbering: 'Crear numeración',
     savedAsDraft: 'Guardado como borrador',
+    published: 'Publicado',
     actionsHeader: 'Acciones',
   },
 };

@@ -6,9 +6,12 @@ module.exports = {
   },
   attributes: {
     questionBank: {
+      type: 'string',
+      /*
       references: {
         collection: 'plugins_tests::questions-banks',
       },
+       */
     },
     type: {
       type: 'string',

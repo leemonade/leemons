@@ -3,11 +3,12 @@ import {
   ActionButton,
   Box,
   ContextContainer,
-  PageContainer,
   Pager,
   Paper,
   Stack,
   Table,
+  TabPanel,
+  Tabs,
 } from '@bubbles-ui/components';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
@@ -143,8 +144,8 @@ export default function List() {
         onNew={() => goCreatePage()}
       />
       <Paper color="solid" shadow="none" padding="none">
-        <Box>
-          <PageContainer noFlex>
+        <Tabs usePageLayout={true} panelColor="solid" fullHeight>
+          <TabPanel label={t('permissions')}>
             <Paper padding={2} mt={20} mb={20} fullWidth>
               <LoadingErrorAlert />
               {!store.loading && !loadingError ? (
@@ -169,8 +170,8 @@ export default function List() {
                 </>
               ) : null}
             </Paper>
-          </PageContainer>
-        </Box>
+          </TabPanel>
+        </Tabs>
       </Paper>
     </ContextContainer>
   );

@@ -64,6 +64,7 @@ module.exports = {
       'Once you have added the number stickers to the image you can include the names',
     createNumbering: 'Create numbering',
     savedAsDraft: 'Saved as draft',
+    published: 'Published',
     actionsHeader: 'Actions',
   },
 };

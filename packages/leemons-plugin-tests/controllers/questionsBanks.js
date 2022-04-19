@@ -6,12 +6,18 @@ async function listQuestionBanks(ctx) {
     properties: {
       page: { type: ['number', 'string'] },
       size: { type: ['number', 'string'] },
+      published: { type: ['boolean', 'string'] },
     },
     required: ['page', 'size'],
     additionalProperties: false,
   });
   if (validator.validate(ctx.request.query)) {
     const { page, size, ...options } = ctx.request.query;
+    if (options.published === 'true') {
+      options.published = true;
+    } else if (options.published === 'false') {
+      options.published = false;
+    }
     const data = await questionsBanksService.list(parseInt(page, 10), parseInt(size, 10), {
       ...options,
     });

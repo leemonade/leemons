@@ -42,6 +42,20 @@ export default function Detail() {
     render();
   }
 
+  async function saveAsPublish() {
+    try {
+      store.saving = 'duplicate';
+      render();
+      await saveQuestionBankRequest({ ...formValues, published: true });
+      addSuccessAlert(t('published'));
+      history.push('/private/tests/questions-banks');
+    } catch (error) {
+      addErrorAlert(error);
+    }
+    store.saving = null;
+    render();
+  }
+
   async function init() {
     try {
       store.isNew = params.id === 'new';
@@ -70,8 +84,14 @@ export default function Detail() {
         }}
         buttons={{
           edit: formValues.name && !formValues.published ? t('saveDraft') : undefined,
-          duplicate: store.isNew && formValues.questions?.length ? t('publish') : undefined,
+          duplicate:
+            store.isNew && formValues.questions?.length
+              ? t('publish')
+              : formValues.questions?.length
+              ? t('publish')
+              : undefined,
         }}
+        onDuplicate={() => saveAsPublish()}
         onEdit={() => saveAsDraft()}
         loading={store.saving}
       />
@@ -80,16 +100,16 @@ export default function Detail() {
         <Stepper
           data={[
             {
-              label: t('questions'),
-              content: <DetailQuestions t={t} form={form} store={store} render={render} />,
-            },
-            {
               label: t('config'),
               content: <DetailConfig t={t} form={form} store={store} render={render} />,
             },
             {
               label: t('design'),
               content: <DetailDesign t={t} form={form} store={store} render={render} />,
+            },
+            {
+              label: t('questions'),
+              content: <DetailQuestions t={t} form={form} store={store} render={render} />,
             },
           ]}
         />
