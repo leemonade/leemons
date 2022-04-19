@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const list = require('../currentVersions/list');
 const { parseId } = require('../helpers');
 const getVersion = require('./getVersion');
@@ -25,17 +26,25 @@ module.exports = async function listVersionOfType(
     transacting,
   });
 
-  return Promise.all(
+  const result = await Promise.all(
     listOfEntities.map(async (entity) => {
-      const { fullId } = await parseId(
-        entity.uuid,
-        getDesiredVersion(entity.current, published, preferCurrent),
-        {
-          transacting,
-        }
-      );
+      try {
+        const { fullId } = await parseId(
+          entity.uuid,
+          getDesiredVersion(entity.current, published, preferCurrent),
+          {
+            transacting,
+          }
+        );
 
-      return getVersion.bind(this)(fullId, { transacting });
+        return getVersion.bind(this)(fullId, { transacting });
+      } catch (error) {
+        if (error.message === 'Version not found') {
+          return null;
+        }
+        throw error;
+      }
     })
   );
+  return _.compact(result);
 };

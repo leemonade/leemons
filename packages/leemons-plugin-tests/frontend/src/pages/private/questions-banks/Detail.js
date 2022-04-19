@@ -80,7 +80,7 @@ export default function Detail() {
     <ContextContainer fullHeight>
       <AdminPageHeader
         values={{
-          title: store.isNew ? t('pageTitleNew') : t('pageTitle'),
+          title: store.isNew ? t('pageTitleNew') : t('pageTitle', { name: formValues.name }),
         }}
         buttons={{
           edit: formValues.name && !formValues.published ? t('saveDraft') : undefined,

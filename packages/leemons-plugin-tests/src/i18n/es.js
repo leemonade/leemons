@@ -8,6 +8,8 @@ module.exports = {
     view: 'Ver',
     show: 'Mostrar',
     goTo: 'Ir a',
+    published: 'Publicados',
+    draft: 'Borradores',
   },
   questionsBanksDetail: {
     pageTitle: 'Editando banco de preguntas: {name}',
