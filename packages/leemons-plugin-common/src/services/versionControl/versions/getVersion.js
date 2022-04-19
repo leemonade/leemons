@@ -29,7 +29,7 @@ module.exports = async function getVersion(id, { published, version, transacting
       query.published = false;
     }
   } else if (v === 'current') {
-    const { current } = await get(uuid, { transacting });
+    const { current } = await get.call(this, uuid, { transacting });
     const { major, minor, patch } = parseVersion(current);
     query.major = major;
     query.minor = minor;
