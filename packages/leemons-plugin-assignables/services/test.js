@@ -152,6 +152,11 @@ module.exports = function main(userSession) {
       { userSession, transacting }
     );
 
+    await addUserToAssignable(id, ['cf02401d-0eea-4bbb-89b4-ca02a9ebfe61'], 'student', {
+      userSession,
+      transacting,
+    });
+
     console.log('results', results);
 
     // await listAssignableUserAgents(id, { userSession, transacting });

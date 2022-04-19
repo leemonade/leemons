@@ -86,7 +86,7 @@ module.exports = async function updateAssignable(assignable, { userSession, tran
     // ES: Añade los permisos a los usuarios.
     await Promise.all(
       users
-        .filter((user) => !userAgents.includes(user.userAgent))
+        .filter((user) => !userAgents.includes(user.userAgent) && user.role !== 'student')
         .map((user) =>
           addUserToAssignable.call(this, fullId, user.userAgent, user.role, {
             userSession,
