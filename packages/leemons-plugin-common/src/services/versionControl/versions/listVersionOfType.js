@@ -29,7 +29,8 @@ module.exports = async function listVersionOfType(
   const result = await Promise.all(
     listOfEntities.map(async (entity) => {
       try {
-        const { fullId } = await parseId(
+        const { fullId } = await parseId.call(
+          this,
           entity.uuid,
           getDesiredVersion(entity.current, published, preferCurrent),
           {
