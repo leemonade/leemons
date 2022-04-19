@@ -95,6 +95,29 @@ module.exports = function main(userSession) {
         curriculum: {},
       },
     ],
+    relatedAssignables: {
+      before: [
+        {
+          id: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+          type: 'preTask',
+          conditionsToPass: [
+            { type: 'grade', minGrade: 5 },
+            { type: 'pass' },
+            { type: 'time', minTime: '10 minutes', maxTime: '15 minutes' },
+          ],
+          conditionsToDo: [],
+          maxRetries: 3,
+        },
+      ],
+      after: [
+        {
+          id: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+          type: 'postTask',
+          conditionsToPass: [],
+          conditionsToDo: [],
+        },
+      ],
+    },
     methodology: 'PBL',
     statement: 'This is the statement of the task',
     development: 'This is the development of the task',

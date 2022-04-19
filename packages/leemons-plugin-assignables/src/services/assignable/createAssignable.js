@@ -18,7 +18,8 @@ module.exports = async function createAssignable(
       // ES: Verificar que el objeto asignable tenga las propiedades correctas.
       validateAssignable(assignable);
 
-      const { subjects, submission, metadata, ...assignableObject } = assignable;
+      const { subjects, submission, metadata, relatedAssignables, ...assignableObject } =
+        assignable;
 
       // EN: Check if the role exists
       // ES: Comprueba si el rol existe
@@ -40,6 +41,7 @@ module.exports = async function createAssignable(
           {
             id,
             ...assignableObject,
+            relatedAssignables: JSON.stringify(relatedAssignables),
             submission: JSON.stringify(submission),
             metadata: JSON.stringify(metadata),
           },

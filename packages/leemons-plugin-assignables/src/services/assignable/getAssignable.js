@@ -37,6 +37,7 @@ module.exports = async function getAssignable(id, { userSession, transacting } =
     assignable = {
       ...assignable,
       gradable: Boolean(assignable.gradable),
+      relatedAssignables: JSON.parse(assignable.relatedAssignables),
       submission: JSON.parse(assignable.submission),
       metadata: JSON.parse(assignable.metadata),
       subjects,

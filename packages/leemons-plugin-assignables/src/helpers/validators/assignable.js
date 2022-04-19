@@ -46,6 +46,23 @@ const assignableValidationObject = {
       maxLength: 16777215,
       nullable: true,
     },
+    relatedAssignables: {
+      type: 'object',
+      properties: {
+        before: {
+          type: 'array',
+          items: {
+            type: 'object',
+          },
+        },
+        after: {
+          type: 'array',
+          items: {
+            type: 'object',
+          },
+        },
+      },
+    },
     duration: {
       type: 'string',
       maxLength: 255,

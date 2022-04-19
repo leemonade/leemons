@@ -41,6 +41,9 @@ module.exports = {
     instructionsForTeachers: {
       type: 'richtext',
     },
+    relatedAssignables: {
+      type: 'json',
+    },
     instructionsForStudents: {
       type: 'richtext',
     },
