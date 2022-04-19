@@ -1,8 +1,10 @@
+const _ = require('lodash');
 const { validateAssignable } = require('../../helpers/validators/assignable');
 const getRole = require('../roles/getRole');
 const saveSubjects = require('../subjects/saveSubjects');
 const { assignables } = require('../tables');
 const versionControl = require('../versionControl');
+const getAssignable = require('./getAssignable');
 const { registerAssignablePermission } = require('./permissions');
 const addPermissionToUser = require('./permissions/assignable/users/addPermissionToUser');
 
@@ -32,6 +34,22 @@ module.exports = async function createAssignable(
           transacting,
         });
         id = version.fullId;
+      }
+
+      if (relatedAssignables?.before?.length || relatedAssignables?.after?.length) {
+        try {
+          // EN: Check every assignable exists
+          // ES: Comprueba que todos los asignables existan
+          await Promise.all(
+            _.concat(relatedAssignables?.before, relatedAssignables?.after).map((a) =>
+              getAssignable.call(this, a.id, { userSession, transacting })
+            )
+          );
+        } catch (e) {
+          throw new Error(
+            "Some of the related assignables don't exists or you don't have permissions to access them"
+          );
+        }
       }
 
       // EN: Create the assignable for the given version.

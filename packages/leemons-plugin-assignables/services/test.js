@@ -1,7 +1,7 @@
 const { assignables } = require('../src/services/tables');
 
 module.exports = function main(userSession) {
-  const services = leemons.getPlugin('assignables').services.assignables;
+  const { services } = leemons.getPlugin('assignables');
 
   const {
     registerRole,
@@ -14,7 +14,9 @@ module.exports = function main(userSession) {
     publishAssignable,
     removeAssignable,
     updateAssignable,
-  } = services;
+  } = services.assignables;
+
+  const { createAssignableInstance } = services.assignableInstances;
 
   const unit = {
     asset: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f@1.0.0',
@@ -96,26 +98,14 @@ module.exports = function main(userSession) {
       },
     ],
     relatedAssignables: {
-      before: [
-        {
-          id: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
-          type: 'preTask',
-          conditionsToPass: [
-            { type: 'grade', minGrade: 5 },
-            { type: 'pass' },
-            { type: 'time', minTime: '10 minutes', maxTime: '15 minutes' },
-          ],
-          conditionsToDo: [],
-          maxRetries: 3,
-        },
-      ],
+      before: [],
       after: [
-        {
-          id: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
-          type: 'postTask',
-          conditionsToPass: [],
-          conditionsToDo: [],
-        },
+        // {
+        //   id: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+        //   type: 'postTask',
+        //   conditionsToPass: [],
+        //   conditionsToDo: [],
+        // },
       ],
     },
     methodology: 'PBL',
@@ -132,42 +122,72 @@ module.exports = function main(userSession) {
     instructionsForStudents: 'Plan and do the task',
   };
 
+  const taskInstance = {
+    // assignable: task.id,
+    alwaysAvailable: false,
+    dates: {
+      // AJV date-time
+      start: '2019-01-01T00:00:00.000Z',
+      deadline: '2019-01-01T00:00:00.000Z',
+      visibility: '2019-01-01T00:00:00.000Z',
+      close: '2019-01-01T00:00:00.000Z',
+    },
+    duration: '5 minutes',
+    gradable: true,
+    classes: [
+      {
+        id: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+        date: '2019-01-01T00:00:00.000Z',
+      },
+    ],
+    messageToAssignees: '<p>This is the message</p>',
+    curriculum: {
+      content: true,
+      assessmentCriteria: true,
+      objectives: true,
+    },
+    metadata: {},
+  };
+
   return global.utils.withTransaction(async (transacting) => {
     // EN: Register role for the assignables.
     // ES: Registra el rol para el asignables.
-    await registerRole('unit', { transacting });
+    // await registerRole('unit', { transacting });
     await registerRole('task', { transacting });
     await registerRole('pretask', { transacting });
 
-    // const preTaskAssignable = await createAssignable(
-    //   {
-    //     ...preTask,
-    //     metadata: { conditions: { complete: { condition: 'minGrade', minGrade: 7 } } },
-    //   },
-    //   { transacting }
-    // );
-    // const taskAssignable = await createAssignable(
-    //   {
-    //     ...task,
-    //     metadata: {
-    //       related: [{ type: 'pre', id: preTaskAssignable.id }],
-    //       conditions: { complete: { condition: 'submit' } },
-    //     },
-    //   },
-    //   { transacting }
-    // );
-    // const unitAssignable = await createAssignable(
-    //   { ...unit, metadata: { related: [{ type: 'pre', id: taskAssignable.id }], conditions: {} } },
-    //   { transacting }
-    // );
+    // EN: Create the assignable
+    // ES: Crea el asignable
 
-    // console.log('unit', inspect(unitAssignable, { depth: null, colors: true }));
-    // console.log('task', inspect(taskAssignable, { depth: null, colors: true }));
-    // console.log('pretask', inspect(preTaskAssignable, { depth: null, colors: true }));
-
-    let data = await createAssignable(task, { userSession, transacting });
+    // preTask
+    const { id: preTaskId } = await createAssignable(preTask, { userSession, transacting });
+    // task
+    let data = await createAssignable(
+      {
+        ...task,
+        relatedAssignables: {
+          ...task.relatedAssignables,
+          before: [
+            {
+              id: preTaskId,
+              type: 'preTask',
+              conditionsToPass: [
+                { type: 'grade', minGrade: 5 },
+                { type: 'pass' },
+                { type: 'time', minTime: '10 minutes', maxTime: '15 minutes' },
+              ],
+              conditionsToDo: [],
+              maxRetries: 3,
+            },
+          ],
+        },
+      },
+      { userSession, transacting }
+    );
     const { id } = data;
 
+    // EN: Add other teachers to the assignable
+    // ES: Añade otros profesores al asignable
     const results = await addUserToAssignable(
       id,
       ['98e5f5d0-7f59-4629-8c47-23928e5b48e0'],
@@ -180,7 +200,17 @@ module.exports = function main(userSession) {
       transacting,
     });
 
-    console.log('results', results);
+    // EN: Assign the assignable to the students
+    // ES: Asigna el asignable a los estudiantes
+    const assignableInstance = await createAssignableInstance(
+      {
+        assignable: id,
+        ...taskInstance,
+      },
+      { userSession, transacting }
+    );
+
+    console.log(assignableInstance);
 
     // await listAssignableUserAgents(id, { userSession, transacting });
 

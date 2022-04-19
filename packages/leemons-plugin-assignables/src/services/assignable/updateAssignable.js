@@ -123,6 +123,29 @@ module.exports = async function updateAssignable(assignable, { userSession, tran
     updateObject.metadata = JSON.stringify(assignableObject.metadata);
   }
 
+  if (diff.includes('relatedAssignables')) {
+    updateObject.relatedAssignables = JSON.stringify(assignableObject.relatedAssignables);
+
+    if (
+      updateObject.relatedAssignables?.before?.length ||
+      updateObject.relatedAssignables?.after?.length
+    ) {
+      try {
+        // EN: Check every assignable exists
+        // ES: Comprueba que todos los asignables existan
+        await Promise.all(
+          _.concat(
+            updateObject.relatedAssignables?.before,
+            updateObject.relatedAssignables?.after
+          ).map((a) => getAssignable.call(this, a.id, { userSession, transacting }))
+        );
+      } catch (e) {
+        throw new Error(
+          "Some of the related assignables don't exists or you don't have permissions to access them"
+        );
+      }
+    }
+  }
   await assignables.update({ id }, updateObject, {
     transacting,
   });
