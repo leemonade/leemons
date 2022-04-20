@@ -65,6 +65,57 @@ function validateSaveQuestionBank(data) {
   }
 }
 
+const saveTestSchema = {
+  type: 'object',
+  properties: {
+    id: stringSchema,
+    name: stringSchema,
+    type: stringSchemaNullable,
+    tagline: stringSchemaNullable,
+    summary: stringSchemaNullable,
+    tags: {
+      type: 'array',
+      items: stringSchema,
+    },
+    level: stringSchemaNullable,
+    statement: stringSchemaNullable,
+    instructionsForTeacher: stringSchemaNullable,
+    instructionsForStudent: stringSchemaNullable,
+    questionBank: stringSchemaNullable,
+    questions: {
+      type: 'array',
+      items: {
+        type: 'string',
+      },
+    },
+    published: booleanSchema,
+  },
+  required: [],
+  additionalProperties: false,
+};
+
+function validateSaveTest(data) {
+  const schema = _.cloneDeep(saveTestSchema);
+  if (data.published) {
+    schema.required = [
+      'name',
+      'type',
+      'tagline',
+      'summary',
+      'level',
+      'questionBank',
+      'questions',
+      'statement',
+    ];
+  }
+  const validator = new LeemonsValidator(schema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   validateSaveQuestionBank,
+  validateSaveTest,
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, ContextContainer, Stack } from '@bubbles-ui/components';
 
-export default function DetailDesign({ form, t, onNext }) {
+export default function DetailQuestions({ form, t, onNext }) {
   function next() {
     form.handleSubmit(() => {
       onNext();
@@ -18,7 +18,7 @@ export default function DetailDesign({ form, t, onNext }) {
   );
 }
 
-DetailDesign.propTypes = {
+DetailQuestions.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   onNext: PropTypes.func.isRequired,

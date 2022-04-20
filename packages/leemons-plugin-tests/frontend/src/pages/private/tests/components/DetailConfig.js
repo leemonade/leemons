@@ -1,14 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, ContextContainer, Stack, Textarea, TextInput } from '@bubbles-ui/components';
+import {
+  Button,
+  ContextContainer,
+  Select,
+  Stack,
+  Textarea,
+  TextInput,
+} from '@bubbles-ui/components';
 import { Controller } from 'react-hook-form';
 import { TagsAutocomplete } from '@common';
 
 export default function DetailConfig({ form, t, onNext }) {
-  function next() {
-    form.handleSubmit(() => {
+  async function next() {
+    const formGood = await form.trigger(['name', 'type', 'tagline', 'summary', 'tags']);
+    if (formGood) {
       onNext();
-    })();
+    }
   }
 
   return (
@@ -16,7 +24,6 @@ export default function DetailConfig({ form, t, onNext }) {
       <Controller
         control={form.control}
         name="name"
-        rules={{ required: t('nameRequired') }}
         render={({ field }) => (
           <TextInput
             required
@@ -28,8 +35,25 @@ export default function DetailConfig({ form, t, onNext }) {
       />
       <Controller
         control={form.control}
+        name="type"
+        render={({ field }) => (
+          <Select
+            required
+            error={form.formState.errors.type}
+            label={t('typeLabel')}
+            data={[
+              {
+                label: t('learn'),
+                value: 'learn',
+              },
+            ]}
+            {...field}
+          />
+        )}
+      />
+      <Controller
+        control={form.control}
         name="tagline"
-        rules={{ required: t('taglineRequired') }}
         render={({ field }) => (
           <TextInput
             required
@@ -42,7 +66,6 @@ export default function DetailConfig({ form, t, onNext }) {
       <Controller
         control={form.control}
         name="summary"
-        rules={{ required: t('summaryRequired') }}
         render={({ field }) => (
           <Textarea
             required

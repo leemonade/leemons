@@ -16,7 +16,7 @@ import { useStore } from '@common';
 import { useLayout } from '@layout/context';
 import QuestionForm, { questionTypeT } from './QuestionForm';
 
-export default function DetailQuestions({ form, t, store, render, onNext }) {
+export default function DetailQuestions({ form, t, onNext }) {
   const [qStore, qRender] = useStore({
     newQuestion: false,
   });
@@ -52,12 +52,6 @@ export default function DetailQuestions({ form, t, store, render, onNext }) {
     form.setValue('questions', currentQuestions);
     onCancel();
   }
-
-  React.useEffect(() => {
-    // eslint-disable-next-line no-param-reassign
-    store.activeStep = 'questions';
-    render();
-  }, []);
 
   if (qStore.newQuestion || qStore.question) {
     return (
@@ -147,6 +141,4 @@ DetailQuestions.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   onNext: PropTypes.func.isRequired,
-  store: PropTypes.object.isRequired,
-  render: PropTypes.func.isRequired,
 };

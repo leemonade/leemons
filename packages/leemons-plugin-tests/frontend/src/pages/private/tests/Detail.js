@@ -8,12 +8,13 @@ import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import DetailConfig from './components/DetailConfig';
-import DetailDesign from './components/DetailDesign';
-import DetailQuestions from './components/DetailQuestions';
 import { getQuestionBankRequest, saveQuestionBankRequest } from '../../../request';
+import DetailDesign from './components/DetailDesign';
+import DetailQuestionsBanks from './components/DetailQuestionsBanks';
+import DetailQuestions from './components/DetailQuestions';
 
 export default function Detail() {
-  const [t] = useTranslateLoader(prefixPN('questionsBanksDetail'));
+  const [t] = useTranslateLoader(prefixPN('testsDetail'));
 
   // ----------------------------------------------------------------------
   // SETTINGS
@@ -76,6 +77,38 @@ export default function Detail() {
     if (params?.id) init();
   }, [params]);
 
+  const steps = [
+    {
+      label: t('config'),
+      content: <DetailConfig t={t} form={form} />,
+    },
+  ];
+
+  if (formValues.type) {
+    steps.push({
+      label: t('design'),
+      content: <DetailDesign t={t} form={form} />,
+    });
+  }
+
+  form.register('name', { required: t('nameRequired') });
+  form.register('type', { required: t('typeRequired') });
+  form.register('tagline', { required: t('taglineRequired') });
+  form.register('summary', { required: t('summaryRequired') });
+
+  if (formValues.type === 'learn') {
+    form.register('questionBank', { required: t('questionBankRequired') });
+    form.register('questions', { required: true });
+    steps.push({
+      label: t('questionsBank'),
+      content: <DetailQuestionsBanks t={t} form={form} />,
+    });
+    steps.push({
+      label: t('questions'),
+      content: <DetailQuestions t={t} form={form} />,
+    });
+  }
+
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader
@@ -85,9 +118,10 @@ export default function Detail() {
         buttons={{
           edit: formValues.name && !formValues.published ? t('saveDraft') : undefined,
           duplicate:
-            store.isNew && formValues.questions?.length
+            // eslint-disable-next-line no-nested-ternary
+            store.isNew && form.formState.isValid
               ? t('publish')
-              : formValues.questions?.length
+              : form.formState.isValid
               ? t('publish')
               : undefined,
         }}
@@ -97,22 +131,7 @@ export default function Detail() {
       />
 
       <PageContainer noFlex>
-        <Stepper
-          data={[
-            {
-              label: t('config'),
-              content: <DetailConfig t={t} form={form} />,
-            },
-            {
-              label: t('design'),
-              content: <DetailDesign t={t} form={form} />,
-            },
-            {
-              label: t('questions'),
-              content: <DetailQuestions t={t} form={form} />,
-            },
-          ]}
-        />
+        <Stepper data={steps} />
       </PageContainer>
     </ContextContainer>
   );
