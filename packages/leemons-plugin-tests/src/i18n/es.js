@@ -63,9 +63,24 @@ module.exports = {
     addMap: 'Añadir mapa',
     itemsDescriptionBeforeMap:
       'Una vez que hayas añadido las pegatinas de números a la imagen, puedes incluir los nombres',
+    itemsDescription:
+      'Marque ({{icon}}) el elemento que se resolverá cuando el usuario solicite una pista (puede establecer el modo de pista en la sección de asignación).',
     createNumbering: 'Crear numeración',
     savedAsDraft: 'Guardado como borrador',
     published: 'Publicado',
     actionsHeader: 'Acciones',
+    markersRequired: 'Debes marcar al menos un elemento',
+    markersNeedResponseInAllItems: 'Hay que añadir un texto a todos los elementos',
+  },
+  questionImageModal: {
+    createNumbering: 'Crear numeración',
+    save: 'Guardar',
+    cancel: 'Cancelar',
+    type: 'Tipo',
+    color: 'Color',
+    delete: 'Eliminar',
+    move: 'Mover',
+    numberingStyle1: 'Estilo de numeración 1 (1, 2, 3, ...)',
+    numberingStyle2: 'Estilo de numeración 2 (A, B, C, ...)',
   },
 };

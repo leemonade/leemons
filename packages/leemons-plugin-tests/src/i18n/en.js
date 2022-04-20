@@ -64,9 +64,24 @@ module.exports = {
     itemsLabel: 'Items',
     itemsDescriptionBeforeMap:
       'Once you have added the number stickers to the image you can include the names',
+    itemsDescription:
+      'Mark ({{icon}}) the item that will be solved when the user requests a hint (you can set the hint mode in the assignment section).',
     createNumbering: 'Create numbering',
     savedAsDraft: 'Saved as draft',
     published: 'Published',
     actionsHeader: 'Actions',
+    markersRequired: 'You must mark at least one item',
+    markersNeedResponseInAllItems: 'A text must be added to all elements',
+  },
+  questionImageModal: {
+    createNumbering: 'Create numbering',
+    save: 'Save',
+    cancel: 'Cancel',
+    type: 'Type',
+    color: 'Color',
+    delete: 'Delete',
+    move: 'Move',
+    numberingStyle1: 'Numbering style 1 (1, 2, 3, ...)',
+    numberingStyle2: 'Numbering style 2 (A, B, C, ...)',
   },
 };
