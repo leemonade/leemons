@@ -22,6 +22,15 @@ const getPermissions = (permissionsArr, actions = null) => {
 };
 
 module.exports = [
+  // Tags
+  ...leemons.getPlugin('common').services.tags.getRoutes('tags', {
+    authenticated: true,
+    allowedPermissions: {
+      [permissions.questionBanks]: {
+        actions: ['update', 'create', 'delete', 'admin'],
+      },
+    },
+  }),
   // Questions banks
   {
     path: '/question-bank',
@@ -29,5 +38,19 @@ module.exports = [
     handler: 'questionsBanks.listQuestionBanks',
     authenticated: true,
     allowedPermissions: getPermissions(permissions.questionBanks, ['view']),
+  },
+  {
+    path: '/question-bank/:id',
+    method: 'GET',
+    handler: 'questionsBanks.getQuestionBankDetail',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.questionBanks, ['view']),
+  },
+  {
+    path: '/question-bank',
+    method: 'POST',
+    handler: 'questionsBanks.saveQuestionBanks',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.questionBanks, ['create', 'update']),
   },
 ];

@@ -1,0 +1,197 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import {
+  Box,
+  Button,
+  ContextContainer,
+  InputWrapper,
+  ListInput,
+  ListItem,
+  Paper,
+  Stack,
+  Textarea,
+  TextInput,
+} from '@bubbles-ui/components';
+import { Controller } from 'react-hook-form';
+import { TextEditorInput } from '@bubbles-ui/editors';
+import { useStore } from '@common';
+import { ViewOffIcon } from '@bubbles-ui/icons/outline';
+import { findIndex, forEach, map } from 'lodash';
+import { QuestionImage } from '../../../../../../components/QuestionImage';
+import { QuestionImageMarkersModal } from '../../../../../../components/QuestionImageMarkersModal';
+import { ListItemValueRender } from './components/ListItemValueRender';
+
+// eslint-disable-next-line import/prefer-default-export
+export function Map({ form, t }) {
+  const [store, render] = useStore();
+  const image = form.watch('properties.image');
+  const markers = form.watch('properties.markers');
+
+  function addMap() {
+    form.setValue(
+      'properties.image',
+      'https://www.xtrafondos.com/wallpapers/gato-con-mariposa-de-fantasia-4560.jpg'
+    );
+  }
+
+  function showMarkersModal() {
+    store.showMarkersModal = true;
+    render();
+  }
+
+  function closeMarkersModal() {
+    store.showMarkersModal = false;
+    render();
+  }
+
+  function toggleHideOnHelp(item) {
+    const data = form.getValues('properties.markers');
+    const index = findIndex(data.list, item);
+    if (index >= 0) {
+      data.list[index].hideOnHelp = !data.list[index].hideOnHelp;
+      form.setValue('properties.markers', data);
+    }
+  }
+
+  const splits = t('itemsDescription').split('{{icon}}');
+  const itemsDescription = [
+    splits[0],
+    <Box
+      key={2}
+      sx={(theme) => ({
+        display: 'inline',
+        fontSize: theme.fontSizes[3],
+        verticalAlign: 'middle',
+      })}
+    >
+      <ViewOffIcon />
+    </Box>,
+    splits[1],
+  ];
+
+  return (
+    <ContextContainer>
+      <InputWrapper required label={t('mapLabel')}>
+        {image ? (
+          <ContextContainer>
+            <QuestionImage src={image} markers={markers} />
+            <Box>
+              <Button onClick={showMarkersModal}>{t('createNumbering')}</Button>
+            </Box>
+            <Controller
+              control={form.control}
+              name="properties.markers"
+              render={({ field }) => (
+                <QuestionImageMarkersModal
+                  {...field}
+                  src={image}
+                  opened={store.showMarkersModal}
+                  onClose={closeMarkersModal}
+                />
+              )}
+            />
+            <Controller
+              control={form.control}
+              name="properties.caption"
+              render={({ field }) => <Textarea label={t('captionAltLabel')} {...field} />}
+            />
+          </ContextContainer>
+        ) : (
+          <Box>
+            <Button onClick={addMap}>{t('addMap')}</Button>
+          </Box>
+        )}
+      </InputWrapper>
+      <InputWrapper
+        required
+        label={t('itemsLabel')}
+        description={
+          markers && markers.list && markers.list.length
+            ? itemsDescription
+            : t('itemsDescriptionBeforeMap')
+        }
+      >
+        <Controller
+          control={form.control}
+          name="properties.markers"
+          rules={{
+            required: t('markersRequired'),
+            validate: (m) => {
+              if (!m.list || m.list.length === 0) {
+                return t('markersRequired');
+              }
+              let allHasResponse = true;
+              forEach(m.list, (e) => {
+                if (!e.response) {
+                  allHasResponse = false;
+                }
+              });
+              return allHasResponse ? undefined : t('markersNeedResponseInAllItems');
+            },
+          }}
+          render={({ field }) => (
+            <ListInput
+              {...field}
+              value={map(field.value?.list || [], (item) => ({ value: item }))}
+              onChange={(value) => {
+                field.onChange({
+                  ...field.value,
+                  list: map(field.value.list, (item, i) => ({
+                    ...item,
+                    response: value[i].value.response,
+                    hideOnHelp: value[i].value.hideOnHelp,
+                  })),
+                });
+              }}
+              error={form.formState.errors.properties?.markers}
+              inputRender={(props) => (
+                <TextInput
+                  {...props}
+                  value={props.value.response}
+                  onChange={(e) => props.onChange({ ...props.value, response: e })}
+                />
+              )}
+              listRender={
+                <ListItem
+                  itemContainerRender={({ children }) => (
+                    <Paper
+                      fullWidth
+                      sx={(theme) => ({
+                        marginTop: theme.spacing[2],
+                        marginBottom: theme.spacing[2],
+                        width: '100%',
+                      })}
+                    >
+                      <Stack alignItems="center" fullWidth>
+                        {children}
+                      </Stack>
+                    </Paper>
+                  )}
+                  itemValueRender={
+                    <ListItemValueRender
+                      markers={markers}
+                      t={t}
+                      toggleHideOnHelp={toggleHideOnHelp}
+                    />
+                  }
+                />
+              }
+            />
+          )}
+        />
+      </InputWrapper>
+      <InputWrapper label={t('explanationLabel')}>
+        <Controller
+          control={form.control}
+          name="properties.explanation"
+          render={({ field }) => <TextEditorInput {...field} />}
+        />
+      </InputWrapper>
+    </ContextContainer>
+  );
+}
+
+Map.propTypes = {
+  form: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
+};

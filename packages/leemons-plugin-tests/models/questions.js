@@ -5,8 +5,13 @@ module.exports = {
     useTimestamps: true,
   },
   attributes: {
-    references: {
-      collection: 'plugins_tests::questions-banks',
+    questionBank: {
+      type: 'string',
+      /*
+      references: {
+        collection: 'plugins_tests::questions-banks',
+      },
+       */
     },
     type: {
       type: 'string',
