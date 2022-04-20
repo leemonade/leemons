@@ -15,6 +15,7 @@ export * from './useStore';
 export * from './useQuery';
 export * from './tags';
 export * from './LocaleDate';
+export * from './numberToEncodedLetter';
 
 export {
   formWithTheme,

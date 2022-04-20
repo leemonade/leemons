@@ -5,6 +5,7 @@ import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
 const QuestionBanksList = loadable(() => import('./src/pages/private/questions-banks/List'));
+const QuestionBankDetail = loadable(() => import('./src/pages/private/questions-banks/Detail'));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -12,6 +13,9 @@ export default function Private() {
 
   return (
     <Switch>
+      <Route path={`${path}/questions-banks/:id`}>
+        <QuestionBankDetail session={session} />
+      </Route>
       <Route path={`${path}/questions-banks`}>
         <QuestionBanksList session={session} />
       </Route>
