@@ -31,5 +31,8 @@ module.exports = {
     metadata: {
       type: 'json',
     },
+    relatedAssignableInstances: {
+      type: 'json',
+    },
   },
 };

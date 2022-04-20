@@ -36,7 +36,7 @@ module.exports = async function createAssignableInstance(
     // EN: Create the assignableInstance of each related assignable
     // ES: Crea el asignableInstance de cada asignable relacionado
     relatedAssignableInstances.push(
-      await Promise.all(
+      ...(await Promise.all(
         assignables.map((ass) =>
           createAssignableInstance.call(
             this,
@@ -50,24 +50,28 @@ module.exports = async function createAssignableInstance(
             { userSession, transacting }
           )
         )
-      )
+      ))
     );
   }
 
   // EN: Create the assignable instance
   // ES: Crea el asignable instance
-  await assignableInstances.create(
+  const { id } = await assignableInstances.create(
     {
       ...assignableInstanceObj,
 
       metadata: JSON.stringify(metadata),
       curriculum: JSON.stringify(curriculum),
+      relatedAssignableInstances: JSON.stringify(
+        relatedAssignableInstances.map((instance) => instance.id).filter((instance) => instance)
+      ),
     },
     { transacting }
   );
 
   return {
     ...assignableInstanceObj,
+    id,
     dates,
     classes,
     metadata,

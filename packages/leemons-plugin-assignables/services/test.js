@@ -17,7 +17,7 @@ module.exports = function main(userSession) {
     updateAssignable,
   } = services.assignables;
 
-  const { createAssignableInstance } = services.assignableInstances;
+  const { createAssignableInstance, getAssignableInstance } = services.assignableInstances;
 
   const unit = {
     asset: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f@1.0.0',
@@ -203,7 +203,7 @@ module.exports = function main(userSession) {
 
     // EN: Assign the assignable to the students
     // ES: Asigna el asignable a los estudiantes
-    const assignableInstance = await createAssignableInstance(
+    let assignableInstance = await createAssignableInstance(
       {
         assignable: id,
         ...taskInstance,
@@ -216,7 +216,22 @@ module.exports = function main(userSession) {
       { userSession, transacting }
     );
 
-    console.log(inspect(assignableInstance, { depth: null, colors: true }));
+    console.log(
+      'Create assignable instance',
+      inspect(assignableInstance, { depth: null, colors: true })
+    );
+
+    assignableInstance = await getAssignableInstance(assignableInstance.id, {
+      relatedAssignableInstances: true,
+      details: true,
+      userSession,
+      transacting,
+    });
+
+    console.log(
+      'Get assignable instance',
+      inspect(assignableInstance, { depth: null, colors: true })
+    );
 
     // await listAssignableUserAgents(id, { userSession, transacting });
 
