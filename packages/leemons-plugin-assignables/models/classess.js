@@ -4,6 +4,9 @@ module.exports = {
     assignableInstance: {
       type: 'string',
     },
+    assignable: {
+      type: 'string',
+    },
     class: {
       type: 'uuid',
     },

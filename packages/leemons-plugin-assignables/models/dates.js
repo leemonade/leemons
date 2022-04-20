@@ -1,7 +1,10 @@
 module.exports = {
   modelName: 'dates',
   attributes: {
-    assignableInstance: {
+    type: {
+      type: 'string',
+    },
+    instance: {
       type: 'string',
     },
     name: {

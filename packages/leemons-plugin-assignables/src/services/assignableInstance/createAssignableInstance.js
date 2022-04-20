@@ -1,6 +1,8 @@
 const _ = require('lodash');
+const { registerDates } = require('../../dates');
 const { validateAssignableInstance } = require('../../helpers/validators/assignableInstance');
 const getAssignable = require('../assignable/getAssignable');
+const { registerClass } = require('../classes');
 const { assignableInstances } = require('../tables');
 
 module.exports = async function createAssignableInstance(
@@ -68,6 +70,14 @@ module.exports = async function createAssignableInstance(
     },
     { transacting }
   );
+
+  // EN: Save the dates
+  // ES: Guarda las fechas
+  await registerDates('assignableInstance', id, dates, { userSession, transacting });
+
+  // EN: Save the classes
+  // ES: Guarda las clases
+  await registerClass(id, classes, { userSession, transacting });
 
   return {
     ...assignableInstanceObj,

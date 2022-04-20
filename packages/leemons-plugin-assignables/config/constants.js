@@ -19,8 +19,25 @@ const assignableRolesObject = {
   },
 };
 
+const assignableInstanceActions = ['view'];
+const assignableInstanceRoles = ['student', 'class'];
+const assignableInstanceRolesObject = {
+  student: {
+    actions: ['view'],
+    canAssign: [],
+  },
+  class: {
+    actions: ['view'],
+    canAssign: [],
+  },
+};
+
 module.exports = {
   assignableRoles,
   assignableActions,
   assignableRolesObject,
+
+  assignableInstanceRoles,
+  assignableInstanceActions,
+  assignableInstanceRolesObject,
 };

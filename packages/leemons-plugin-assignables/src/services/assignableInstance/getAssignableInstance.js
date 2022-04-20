@@ -1,10 +1,14 @@
+const { getDates } = require('../../dates');
 const getAssignable = require('../assignable/getAssignable');
+const listAssignableInstanceClasses = require('../classes/listAssignableInstanceClasses');
 const { assignableInstances } = require('../tables');
 
 module.exports = async function getAssignableInstance(
   id,
   { relatedAssignableInstances, details, userSession, transacting } = {}
 ) {
+  // EN: Get the provided assignableInstance
+  // ES: Obtiene el asignableInstance proporcionado
   let assignableInstance;
   try {
     assignableInstance = await assignableInstances.findOne({ id }, { transacting });
@@ -18,7 +22,32 @@ module.exports = async function getAssignableInstance(
     throw new Error("The assignable instance doesn't exist or you don't have access");
   }
 
+  // EN: Get the requested details
+  // ES: Obtiene los detalles solicitados
   if (details) {
+    // EN: Get the classes of the assignable instance
+    // ES: Obtiene las clases del asignable instance
+    try {
+      assignableInstance.classes = (
+        await listAssignableInstanceClasses.call(this, id, {
+          userSession,
+          transacting,
+        })
+      ).map((c) => c.class);
+    } catch (e) {
+      throw new Error(`Error getting the classes of the assignable instance: ${e.message}`);
+    }
+
+    // EN: Get the dates
+    // ES: Obtiene las fechas
+    try {
+      assignableInstance.dates = await getDates('assignableInstance', id, { transacting });
+    } catch (e) {
+      throw new Error(`Error getting the dates of the assignable instance: ${e.message}`);
+    }
+
+    // EN: Get the assignable data
+    // ES: Obtiene los datos del asignable
     try {
       assignableInstance.assignable = await getAssignable.call(
         this,
@@ -30,6 +59,8 @@ module.exports = async function getAssignableInstance(
     }
   }
 
+  // EN: Get the related assignable instances
+  // ES: Obtiene los asignable instances relacionados
   try {
     if (relatedAssignableInstances && assignableInstance.relatedAssignableInstances?.length) {
       assignableInstance.relatedAssignableInstances = await Promise.all(

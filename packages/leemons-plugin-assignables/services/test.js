@@ -128,19 +128,14 @@ module.exports = function main(userSession) {
     alwaysAvailable: false,
     dates: {
       // AJV date-time
-      start: '2019-01-01T00:00:00.000Z',
-      deadline: '2019-01-01T00:00:00.000Z',
-      visibility: '2019-01-01T00:00:00.000Z',
-      close: '2019-01-01T00:00:00.000Z',
+      start: new Date('2019-01-01T00:00:00.000Z'),
+      deadline: new Date('2019-01-01T00:00:00.000Z'),
+      visibility: new Date('2019-01-01T00:00:00.000Z'),
+      close: new Date('2019-01-01T00:00:00.000Z'),
     },
     duration: '5 minutes',
     gradable: true,
-    classes: [
-      {
-        id: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
-        date: '2019-01-01T00:00:00.000Z',
-      },
-    ],
+    classes: ['bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f'],
     messageToAssignees: '<p>This is the message</p>',
     curriculum: {
       content: true,

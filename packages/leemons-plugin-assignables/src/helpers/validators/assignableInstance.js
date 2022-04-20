@@ -13,8 +13,15 @@ const assignableInstanceValidationObject = {
       type: 'object',
       patternProperties: {
         '^.*$': {
-          type: 'string',
-          format: 'date-time',
+          oneOf: [
+            {
+              type: 'string',
+              format: 'date-time',
+            },
+            {
+              instanceof: 'Date',
+            },
+          ],
         },
       },
     },
@@ -27,17 +34,8 @@ const assignableInstanceValidationObject = {
     classes: {
       type: 'array',
       items: {
-        type: 'object',
-        properties: {
-          id: {
-            type: 'string',
-            format: 'uuid',
-          },
-          date: {
-            type: 'string',
-            format: 'date-time',
-          },
-        },
+        type: 'string',
+        format: 'uuid',
       },
     },
     messageToAssignees: {
