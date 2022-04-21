@@ -124,5 +124,35 @@ module.exports = {
     actionsHeader: 'Actions',
     questionBankRequired: 'You must select one question bank',
     questions: 'Questions',
+    savedAsDraft: 'Saved as draft',
+    published: 'Published',
+    questionsDescription:
+      'Select the questions you want to add to this test question bank to use in this test.',
+    questionBank: 'Question Bank: {name}',
+    nQuestions: '{n} questions',
+    questionFiltersDescription1:
+      'This way of selecting questions automates the process through a configuration of question type, category and level.',
+    questionFiltersDescription2:
+      'If you need a test with specific questions, go to the questions list detail and select the ones you want to use in the text, then click on “Select marked questions"',
+    numberOfQuestions: 'Number of questions',
+    useAllQuestions: 'Use all questions',
+    addType: 'Add type',
+    levelLabel: 'Level',
+    addLevel: 'Add level',
+    selectByTag: 'Select by tag',
+    showQuestions: 'Show questions',
+    nQuestionsRequired: 'Field required',
+    minOneQuestion: 'Minimum one question',
+    selectQuestionDescription:
+      'These are the selected questions, check if this is the content you want for this test or edit the questions you are interested in.',
+    selectQuestionNothingToSelect:
+      'No questions were found for the criteria you entered, please go back and expand your search settings.',
+    returnFilters: 'Return to Select questions',
+    assignSelectedQuestions: 'Assign selected Questions to Test',
+    responsesLabel: 'Responses',
+    questionLabel: 'Question',
+    questionsRequired: 'Minimum select one question',
+    reorderQuestionsDescription:
+      'These are the questions you have selected for this test, if you wish, you can order them at your convenience',
   },
 };

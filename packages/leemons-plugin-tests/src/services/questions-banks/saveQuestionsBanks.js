@@ -24,9 +24,11 @@ async function saveQuestionsBanks(_data, { transacting: _transacting } = {}) {
 
       if (id) {
         let version = await versionControlService.getVersion(id, { transacting });
+
         if (version.published) {
           version = await versionControlService.upgradeVersion(id, 'major', {
             published,
+            setAsCurrent: true,
             transacting,
           });
           questionBank = await table.questionsBanks.create(

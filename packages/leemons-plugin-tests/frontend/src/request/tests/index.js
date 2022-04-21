@@ -5,4 +5,19 @@ async function listTests({ page, size, published }) {
   });
 }
 
-export { listTests };
+async function saveTest(body) {
+  return leemons.api('tests/tests', {
+    allAgents: true,
+    method: 'POST',
+    body,
+  });
+}
+
+async function getTest(id) {
+  return leemons.api(`tests/tests/${id}`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
+export { listTests, saveTest, getTest };

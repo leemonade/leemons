@@ -61,4 +61,18 @@ module.exports = [
     authenticated: true,
     allowedPermissions: getPermissions(permissions.tests, ['view']),
   },
+  {
+    path: '/tests/:id',
+    method: 'GET',
+    handler: 'tests.getTest',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tests, ['view']),
+  },
+  {
+    path: '/tests',
+    method: 'POST',
+    handler: 'tests.saveTest',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tests, ['create', 'update']),
+  },
 ];

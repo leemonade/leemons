@@ -34,7 +34,14 @@ async function saveTest(ctx) {
   ctx.body = { status: 200, test };
 }
 
+async function getTest(ctx) {
+  const [test] = await testsService.details(ctx.request.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200, test };
+}
+
 module.exports = {
   listTests,
   saveTest,
+  getTest,
 };

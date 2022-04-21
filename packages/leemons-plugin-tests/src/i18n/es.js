@@ -123,5 +123,35 @@ module.exports = {
     actionsHeader: 'Acciones',
     questionBankRequired: 'Debes seleccionar un banco de preguntas',
     questions: 'Preguntas',
+    savedAsDraft: 'Guardado como borrador',
+    published: 'Publicado',
+    questionsDescription:
+      'Seleccione las preguntas que desea añadir a este banco de preguntas para utilizarlas en esta prueba',
+    questionBank: 'Banco de preguntas: {{name}}',
+    nQuestions: '{{n}} preguntas',
+    questionFiltersDescription1:
+      'Esta forma de seleccionar las preguntas automatiza el proceso mediante una configuración de tipo de pregunta, categoría y nivel.',
+    questionFiltersDescription2:
+      'Si necesita una prueba con preguntas específicas, vaya al detalle de la lista de preguntas y seleccione las que desea utilizar en el texto, luego haga clic en "Seleccionar preguntas marcadas".',
+    numberOfQuestions: 'Número de preguntas',
+    useAllQuestions: 'Utilizar todas las preguntas',
+    addType: 'Añadir tipo',
+    levelLabel: 'Nivel',
+    addLevel: 'Añadir nivel',
+    selectByTag: 'Seleccionar por etiqueta',
+    showQuestions: 'Mostrar preguntas',
+    nQuestionsRequired: 'Campo obligatorio',
+    minOneQuestion: 'Mínimo una pregunta',
+    selectQuestionDescription:
+      'Estas son las preguntas seleccionadas, comprueba si este es el contenido que quieres para este test o edita las preguntas que te interesan.',
+    selectQuestionNothingToSelect:
+      'No se han encontrado preguntas para los criterios que ha introducido, por favor, vuelva atrás y amplíe la configuración de la búsqueda.',
+    returnFilters: 'Volver a Seleccionar preguntas',
+    assignSelectedQuestions: 'Asignar las preguntas seleccionadas a la prueba',
+    responsesLabel: 'Respuestas',
+    questionLabel: 'Pregunta',
+    questionsRequired: 'Mínimo selecciona una pregunta',
+    reorderQuestionsDescription:
+      'Estas son las preguntas que ha seleccionado para este examen, si lo desea, puede pedirlas a su conveniencia',
   },
 };

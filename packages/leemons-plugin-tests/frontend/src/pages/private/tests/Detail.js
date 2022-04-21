@@ -8,7 +8,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import DetailConfig from './components/DetailConfig';
-import { getQuestionBankRequest, saveQuestionBankRequest } from '../../../request';
+import { getTestRequest, saveTestRequest } from '../../../request';
 import DetailDesign from './components/DetailDesign';
 import DetailQuestionsBanks from './components/DetailQuestionsBanks';
 import DetailQuestions from './components/DetailQuestions';
@@ -33,9 +33,9 @@ export default function Detail() {
     try {
       store.saving = 'edit';
       render();
-      await saveQuestionBankRequest({ ...formValues, published: false });
+      await saveTestRequest({ ...formValues, published: false });
       addSuccessAlert(t('savedAsDraft'));
-      history.push('/private/tests/questions-banks');
+      history.push('/private/tests');
     } catch (error) {
       addErrorAlert(error);
     }
@@ -47,9 +47,9 @@ export default function Detail() {
     try {
       store.saving = 'duplicate';
       render();
-      await saveQuestionBankRequest({ ...formValues, published: true });
+      await saveTestRequest({ ...formValues, published: true });
       addSuccessAlert(t('published'));
-      history.push('/private/tests/questions-banks');
+      history.push('/private/tests');
     } catch (error) {
       addErrorAlert(error);
     }
@@ -64,8 +64,8 @@ export default function Detail() {
       if (!store.isNew) {
         const {
           // eslint-disable-next-line camelcase
-          questionBank: { deleted, deleted_at, created_at, updated_at, ...props },
-        } = await getQuestionBankRequest(params.id);
+          test: { deleted, deleted_at, created_at, updated_at, ...props },
+        } = await getTestRequest(params.id);
         form.reset(props);
       }
     } catch (error) {
@@ -131,7 +131,7 @@ export default function Detail() {
       />
 
       <PageContainer noFlex>
-        <Stepper data={steps} />
+        <Stepper data={steps} active={2} />
       </PageContainer>
     </ContextContainer>
   );

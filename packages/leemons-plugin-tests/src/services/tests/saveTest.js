@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const { table } = require('../tables');
-const { validateSaveQuestionBank } = require('../../validations/forms');
+const { validateSaveTest } = require('../../validations/forms');
 const { removeTestQuestions } = require('./removeTestQuestions');
 const { addQuestionToTest } = require('./addQuestionToTest');
 
@@ -11,7 +11,7 @@ async function saveTest(_data, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       const data = _.cloneDeep(_data);
-      validateSaveQuestionBank(data);
+      validateSaveTest(data);
       const { id, questions, tags, published, ...props } = data;
       let test;
 
@@ -42,7 +42,11 @@ async function saveTest(_data, { transacting: _transacting } = {}) {
       });
 
       await removeTestQuestions(test.id, { transacting });
-      await addQuestionToTest(test.id, questions, { transacting });
+      if (questions && questions.length) {
+        await addQuestionToTest(test.id, questions, { transacting });
+      }
+
+      return test;
     },
     table.questionsBanks,
     _transacting

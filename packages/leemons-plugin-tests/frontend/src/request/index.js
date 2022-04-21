@@ -4,4 +4,8 @@ export {
   getQuestionBank as getQuestionBankRequest,
 } from './questionsBanks';
 
-export { listTests as listTestsRequest } from './tests';
+export {
+  listTests as listTestsRequest,
+  saveTest as saveTestRequest,
+  getTest as getTestRequest,
+} from './tests';

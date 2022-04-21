@@ -5,6 +5,9 @@ module.exports = {
     useTimestamps: true,
   },
   attributes: {
+    name: {
+      type: 'string',
+    },
     questionBank: {
       type: 'string',
     },

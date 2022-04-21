@@ -90,7 +90,7 @@ const saveTestSchema = {
     },
     published: booleanSchema,
   },
-  required: [],
+  required: ['name'],
   additionalProperties: false,
 };
 
