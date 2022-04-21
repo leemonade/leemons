@@ -1,4 +1,4 @@
-const { dates } = require('../services/tables');
+const { dates } = require('../tables');
 
 module.exports = async function registeDate(type, instance, name, date, { transacting } = {}) {
   await dates.create(

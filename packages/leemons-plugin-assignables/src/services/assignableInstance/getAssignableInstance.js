@@ -1,4 +1,4 @@
-const { getDates } = require('../../dates');
+const { getDates } = require('../dates');
 const getAssignable = require('../assignable/getAssignable');
 const listAssignableInstanceClasses = require('../classes/listAssignableInstanceClasses');
 const { assignableInstances } = require('../tables');

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { registerDates } = require('../../dates');
+const { registerDates } = require('../dates');
 const { validateAssignableInstance } = require('../../helpers/validators/assignableInstance');
 const getAssignable = require('../assignable/getAssignable');
 const { registerClass } = require('../classes');
