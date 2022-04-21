@@ -2,15 +2,23 @@ const { getDates } = require('../dates');
 const getAssignable = require('../assignable/getAssignable');
 const listAssignableInstanceClasses = require('../classes/listAssignableInstanceClasses');
 const { assignableInstances } = require('../tables');
+const getUserPermission = require('./permissions/assignableInstance/users/getUserPermission');
 
 module.exports = async function getAssignableInstance(
   id,
   { relatedAssignableInstances, details, userSession, transacting } = {}
 ) {
-  // EN: Get the provided assignableInstance
-  // ES: Obtiene el asignableInstance proporcionado
   let assignableInstance;
   try {
+    // EN: Check the user permissions
+    // ES: Comprueba los permisos del usuario
+    const permissions = await getUserPermission(id, { userSession, transacting });
+    if (!permissions.actions.includes('view')) {
+      throw new Error('You do not have permissions');
+    }
+
+    // EN: Get the provided assignableInstance
+    // ES: Obtiene el asignableInstance proporcionado
     assignableInstance = await assignableInstances.findOne({ id }, { transacting });
 
     assignableInstance.curriculum = JSON.parse(assignableInstance.curriculum);

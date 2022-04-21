@@ -35,4 +35,8 @@ module.exports = {
       type: 'json',
     },
   },
+  primaryKey: {
+    type: 'uuid',
+    name: 'id',
+  },
 };

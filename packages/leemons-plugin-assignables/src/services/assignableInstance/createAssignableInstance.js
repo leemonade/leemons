@@ -4,6 +4,8 @@ const { validateAssignableInstance } = require('../../helpers/validators/assigna
 const getAssignable = require('../assignable/getAssignable');
 const { registerClass } = require('../classes');
 const { assignableInstances } = require('../tables');
+const registerPermission = require('./permissions/assignableInstance/assignableInstance/registerPermission');
+const addPermissionToUser = require('./permissions/assignableInstance/users/addPermissionToUser');
 
 module.exports = async function createAssignableInstance(
   assignableInstance,
@@ -13,8 +15,15 @@ module.exports = async function createAssignableInstance(
   // ES: Validar las propiedades del asignable instance
   validateAssignableInstance(assignableInstance, { useRequired: true });
 
-  const { dates, classes, metadata, curriculum, relatedAssignables, ...assignableInstanceObj } =
-    assignableInstance;
+  const {
+    dates,
+    classes,
+    metadata,
+    curriculum,
+    relatedAssignables,
+    students,
+    ...assignableInstanceObj
+  } = assignableInstance;
 
   // EN: Check that the assignable exists (if not, it will throw)
   // ES: Comprueba que el asignable existe (if not, it will throw)
@@ -71,24 +80,39 @@ module.exports = async function createAssignableInstance(
     { transacting }
   );
 
+  // EN: Create the item permission
+  // ES: Crea el permiso del item
+  await registerPermission(id, { userSession, transacting });
+
+  // EN: Save the classes
+  // ES: Guarda las clases
+  await registerClass(id, assignable.id, classes, { userSession, transacting });
+
+  // EN: Register the students permissions
+  // ES: Registra los permisos de los estudiantes
+  if (students.length) {
+    await addPermissionToUser(
+      id,
+      students.map((s) => s.id),
+      'student',
+      { transacting }
+    );
+  }
+
+  // TODO: Create the student instance object
+
   // EN: Save the dates
   // ES: Guarda las fechas
   await registerDates('assignableInstance', id, dates, { userSession, transacting });
 
-  // EN: Save the classes
-  // ES: Guarda las clases
-  await registerClass(id, classes, { userSession, transacting });
-
   return {
     ...assignableInstanceObj,
     id,
+    students,
     dates,
     classes,
     metadata,
     curriculum,
     relatedAssignableInstances,
   };
-
-  // TODO: Register the item
-  // TODO: Add permissions to the user
 };

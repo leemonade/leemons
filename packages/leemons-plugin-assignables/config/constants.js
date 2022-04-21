@@ -19,16 +19,16 @@ const assignableRolesObject = {
   },
 };
 
-const assignableInstanceActions = ['view'];
-const assignableInstanceRoles = ['student', 'class'];
+const assignableInstanceActions = ['view', 'edit'];
+const assignableInstanceRoles = ['student', 'teacher'];
 const assignableInstanceRolesObject = {
   student: {
     actions: ['view'],
     canAssign: [],
   },
-  class: {
-    actions: ['view'],
-    canAssign: [],
+  teacher: {
+    actions: ['view', 'edit'],
+    canAssign: ['student'],
   },
 };
 

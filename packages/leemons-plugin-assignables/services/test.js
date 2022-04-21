@@ -8,16 +8,17 @@ module.exports = function main(userSession) {
     registerRole,
     createAssignable,
     addUserToAssignable,
-    removeUserFromAssignable,
-    listAssignableUserAgents,
-    searchAssignables,
+    // removeUserFromAssignable,
+    // listAssignableUserAgents,
+    // searchAssignables,
     // getAssignable,
-    publishAssignable,
+    // publishAssignable,
     removeAssignable,
-    updateAssignable,
+    // updateAssignable,
   } = services.assignables;
 
-  const { createAssignableInstance, getAssignableInstance } = services.assignableInstances;
+  const { createAssignableInstance, getAssignableInstance, removeAssignableInstance } =
+    services.assignableInstances;
 
   const unit = {
     asset: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f@1.0.0',
@@ -135,7 +136,13 @@ module.exports = function main(userSession) {
     },
     duration: '5 minutes',
     gradable: true,
-    classes: ['bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f'],
+    classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507'],
+    students: [
+      {
+        id: '98e5f5d0-7f59-4629-8c47-23928e5b48e0',
+        classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507'],
+      },
+    ],
     messageToAssignees: '<p>This is the message</p>',
     curriculum: {
       content: true,
@@ -227,6 +234,8 @@ module.exports = function main(userSession) {
       'Get assignable instance',
       inspect(assignableInstance, { depth: null, colors: true })
     );
+
+    await removeAssignableInstance(assignableInstance.id, { userSession, transacting });
 
     // await listAssignableUserAgents(id, { userSession, transacting });
 

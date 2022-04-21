@@ -1,20 +1,16 @@
-// eslint-disable-next-line no-use-before-define
-module.exports = listClasses;
-
 const { classes } = require('../tables');
-const getAssignableInstance = require('../assignableInstance/getAssignableInstance');
-const getAssignable = require('../assignable/getAssignable');
 
-async function listClasses({ assignable, assignableInstance }, { userSession, transacting } = {}) {
+module.exports = async function listClasses(
+  { assignable, assignableInstance },
+  { transacting } = {}
+) {
   let query;
 
   if (assignable) {
-    await getAssignable.call(this, assignable, { userSession, transacting });
     query = {
       assignable,
     };
   } else if (assignableInstance) {
-    await getAssignableInstance.call(this, assignableInstance, { userSession, transacting });
     query = {
       assignableInstance,
     };
@@ -23,4 +19,4 @@ async function listClasses({ assignable, assignableInstance }, { userSession, tr
   }
 
   return classes.find(query, { transacting });
-}
+};

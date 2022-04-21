@@ -4,7 +4,7 @@ const getPermissionType = require('../getPermissionType');
 
 module.exports = async function removePermission(asignableInstance, { transacting }) {
   try {
-    await permission.removeItems(
+    return await permission.removeItems(
       {
         type: getPermissionType(),
         permissionName: getPermissionName(asignableInstance),

@@ -1,17 +1,12 @@
-// eslint-disable-next-line no-use-before-define
-module.exports = registerClass;
-
-const getAssignableInstance = require('../assignableInstance/getAssignableInstance');
 const { classes } = require('../tables');
 
-async function registerClass(assignableInstanceId, classId, { userSession, transacting }) {
+module.exports = async function registerClass(
+  assignableInstanceId,
+  assignable,
+  classId,
+  { transacting }
+) {
   const classIds = Array.isArray(classId) ? classId : [classId].filter((id) => id);
-  // EN: Check if the assignable instance exists
-  // ES: Comprobar si la instancia asignable existe
-  const assignableInstance = await getAssignableInstance.call(this, assignableInstanceId, {
-    userSession,
-    transacting,
-  });
 
   // TODO: Check if class exists
 
@@ -21,7 +16,7 @@ async function registerClass(assignableInstanceId, classId, { userSession, trans
   await classes.createMany(
     classIds.map((id) => ({
       assignableInstance: assignableInstanceId,
-      assignable: assignableInstance.assignable,
+      assignable,
       class: id,
       date: now,
     })),
@@ -30,8 +25,8 @@ async function registerClass(assignableInstanceId, classId, { userSession, trans
 
   return {
     assignableInstance: assignableInstanceId,
-    assignable: assignableInstance.assignable,
+    assignable,
     classes: classIds,
     date: new Date(now),
   };
-}
+};
