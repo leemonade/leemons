@@ -152,9 +152,7 @@ export default function Detail() {
         }}
         buttons={{
           edit: formValues.name && !formValues.published ? t('saveDraft') : undefined,
-          duplicate:
-            // eslint-disable-next-line no-nested-ternary
-            store.isNew && store.isValid ? t('publish') : store.isValid ? t('publish') : undefined,
+          duplicate: store.isValid ? t('publish') : undefined,
         }}
         onDuplicate={() => saveAsPublish()}
         onEdit={() => saveAsDraft()}

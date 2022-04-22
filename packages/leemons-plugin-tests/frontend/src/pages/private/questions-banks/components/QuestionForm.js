@@ -109,6 +109,7 @@ export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
           render={({ field }) => (
             <TagsAutocomplete
               pluginName="tests"
+              type="plugins.tests.questionBanks"
               label={t('tagsLabel')}
               labels={{ addButton: t('addTag') }}
               {...field}
@@ -159,8 +160,8 @@ export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
 }
 
 QuestionForm.propTypes = {
-  onSave: PropTypes.func.isRequired,
+  onSave: PropTypes.func,
   defaultValues: PropTypes.object,
   t: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
+  onCancel: PropTypes.func,
 };

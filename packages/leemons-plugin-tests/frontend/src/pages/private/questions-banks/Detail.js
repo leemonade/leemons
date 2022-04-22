@@ -1,5 +1,10 @@
 import React from 'react';
-import { ContextContainer, PageContainer, Stepper } from '@bubbles-ui/components';
+import {
+  ContextContainer,
+  PageContainer,
+  Stepper,
+  useDebouncedCallback,
+} from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
@@ -17,6 +22,7 @@ export default function Detail() {
 
   // ----------------------------------------------------------------------
   // SETTINGS
+  const debounce = useDebouncedCallback(1000);
   const [store, render] = useStore({
     loading: true,
     isNew: false,
@@ -76,6 +82,17 @@ export default function Detail() {
     if (params?.id) init();
   }, [params]);
 
+  React.useEffect(() => {
+    const subscription = form.watch(() => {
+      debounce(async () => {
+        store.isValid = await form.trigger();
+        render();
+      });
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader
@@ -84,12 +101,7 @@ export default function Detail() {
         }}
         buttons={{
           edit: formValues.name && !formValues.published ? t('saveDraft') : undefined,
-          duplicate:
-            store.isNew && formValues.questions?.length
-              ? t('publish')
-              : formValues.questions?.length
-              ? t('publish')
-              : undefined,
+          duplicate: store.isValid ? t('publish') : undefined,
         }}
         onDuplicate={() => saveAsPublish()}
         onEdit={() => saveAsDraft()}

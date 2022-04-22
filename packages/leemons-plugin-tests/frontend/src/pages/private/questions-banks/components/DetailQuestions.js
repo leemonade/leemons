@@ -24,12 +24,6 @@ export default function DetailQuestions({ form, t, onNext }) {
   const { openDeleteConfirmationModal } = useLayout();
   const questions = form.watch('questions');
 
-  function next() {
-    form.handleSubmit(() => {
-      onNext();
-    })();
-  }
-
   function addQuestion() {
     qStore.newQuestion = true;
     qRender();
@@ -131,5 +125,5 @@ export default function DetailQuestions({ form, t, onNext }) {
 DetailQuestions.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  onNext: PropTypes.func.isRequired,
+  onNext: PropTypes.func,
 };

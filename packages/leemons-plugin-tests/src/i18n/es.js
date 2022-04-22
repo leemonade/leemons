@@ -12,6 +12,11 @@ module.exports = {
     draft: 'Borradores',
   },
   questionsBanksDetail: {
+    categoriesLabel: 'Categorías',
+    programLabel: 'Programa',
+    programRequired: 'Campo obligatorio',
+    subjectLabel: 'Asignatura',
+    subjectRequired: 'Campo obligatorio',
     pageTitle: 'Editando banco de preguntas: {name}',
     pageTitleNew: 'Nuevo banco de preguntas',
     saveDraft: 'Guardar borrador',

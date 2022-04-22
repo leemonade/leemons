@@ -12,7 +12,7 @@ async function createQuestion(data, { transacting: _transacting } = {}) {
         },
         { transacting }
       );
-      await tagsService.setTagsToValues('plugins.tests.questions', tags || [], question.id, {
+      await tagsService.setTagsToValues('plugins.tests.questionBanks', tags || [], question.id, {
         transacting,
       });
       return question;

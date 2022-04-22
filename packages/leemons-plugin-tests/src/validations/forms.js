@@ -13,6 +13,23 @@ const saveQuestionBankSchema = {
     color: stringSchemaNullable,
     cover: stringSchemaNullable,
     state: stringSchemaNullable,
+    program: stringSchemaNullable,
+    categories: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['value'],
+        properties: {
+          id: stringSchema,
+          value: stringSchema,
+        },
+      },
+    },
+    subjects: {
+      type: 'array',
+      items: stringSchema,
+    },
     tags: {
       type: 'array',
       items: stringSchema,
@@ -55,7 +72,7 @@ const saveQuestionBankSchema = {
 function validateSaveQuestionBank(data) {
   const schema = _.cloneDeep(saveQuestionBankSchema);
   if (data.published) {
-    schema.required = ['name', 'tagline', 'summary', 'questions'];
+    schema.required = ['name', 'tagline', 'summary', 'questions', 'program', 'subjects'];
     schema.properties.questions.items.required = ['type', 'question'];
   }
   const validator = new LeemonsValidator(schema);

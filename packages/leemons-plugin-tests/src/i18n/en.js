@@ -12,6 +12,11 @@ module.exports = {
     draft: 'Drafts',
   },
   questionsBanksDetail: {
+    categoriesLabel: 'Categories',
+    programLabel: 'Program',
+    programRequired: 'Field required',
+    subjectLabel: 'Subject',
+    subjectRequired: 'Field required',
     pageTitle: 'Editing question bank: {name}',
     pageTitleNew: 'New questions bank',
     saveDraft: 'Save as draft',
