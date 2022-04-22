@@ -11,6 +11,9 @@ module.exports = {
         notNull: true,
       },
     },
+    tagline: {
+      type: 'string',
+    },
     description: {
       type: 'string',
     },
@@ -48,6 +51,6 @@ module.exports = {
     },
   },
   primaryKey: {
-    type: 'uuid',
+    specificType: 'varchar(255)',
   },
 };

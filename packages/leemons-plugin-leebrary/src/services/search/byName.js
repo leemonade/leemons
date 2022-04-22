@@ -11,7 +11,7 @@ async function byName(name, { details = false, assets: assetsIds, transacting } 
       query.id_$in = assetsIds;
     }
 
-    let assets = await tables.find(query, { columns: ['id'], transacting });
+    let assets = await tables.assets.find(query, { columns: ['id'], transacting });
     assets = assets.map((entry) => entry.id);
 
     if (details) {

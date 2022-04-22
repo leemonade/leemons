@@ -17,9 +17,11 @@ async function getTagsValues(tags, { type, transacting }) {
 
   const valuesByTag = _.groupBy(values, 'tag');
 
-  return _.map(tags, (value) =>
+  const result = _.map(_tags, (value) =>
     valuesByTag[value] ? _.map(valuesByTag[value], (v) => JSON.parse(v.value)) : []
   );
+
+  return result;
 }
 
 module.exports = { getTagsValues };

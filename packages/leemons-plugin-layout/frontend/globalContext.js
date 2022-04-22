@@ -110,6 +110,8 @@ function LayoutProviderWrapper({ children }) {
           scrollTo,
           openDeleteConfirmationModal,
           openConfirmationModal,
+          openModal: modals.openModal,
+          closeModal: modals.closeModal,
         }}
       >
         <LayoutWrapper isPrivate={layoutState.private}>{children}</LayoutWrapper>

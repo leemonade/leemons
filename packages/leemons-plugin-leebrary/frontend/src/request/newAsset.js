@@ -20,8 +20,6 @@ async function newAsset(assetData, categoryId, categoryKey) {
     }
   });
 
-  console.log(JSON.stringify(Object.fromEntries(formData)));
-
   return leemons.api('leebrary/assets', {
     allAgents: true,
     method: 'POST',

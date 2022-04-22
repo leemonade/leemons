@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty, find, isString, isNil } from 'lodash';
+import { isEmpty, find, isString, isNil, isFunction } from 'lodash';
 import {
   Box,
   Stack,
@@ -11,6 +11,10 @@ import {
   LoadingOverlay,
   useResizeObserver,
   RadioGroup,
+  useDebouncedValue,
+  Text,
+  Button,
+  Select,
 } from '@bubbles-ui/components';
 import { LibraryDetail, LibraryItem } from '@bubbles-ui/leemons';
 import { CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
@@ -18,11 +22,22 @@ import { LayoutModuleIcon, LayoutHeadlineIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useRequestErrorMessage, LocaleDate } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
 import prefixPN from '../helpers/prefixPN';
-import { getAssetsRequest, getAssetsByIdsRequest, listCategoriesRequest } from '../request';
+import {
+  getAssetsRequest,
+  getAssetsByIdsRequest,
+  listCategoriesRequest,
+  duplicateAssetRequest,
+  deleteAssetRequest,
+  getAssetTypesRequest,
+} from '../request';
 import { getPageItems } from '../helpers/getPageItems';
 import { CardWrapper } from './CardWrapper';
+import { AssetThumbnail } from './AssetThumbnail';
 import { prepareAsset } from '../helpers/prepareAsset';
+import { prepareAssetType } from '../helpers/prepareAssetType';
+import { PermissionsData } from './AssetSetup/PermissionsData';
 
 function getOwner(asset) {
   const owner = (asset?.canAccess || []).filter((person) =>
@@ -35,9 +50,21 @@ const AssetList = ({
   category: categoryProp,
   categories: categoriesProp,
   asset: assetProp,
+  assetType: assetTypeProp,
+  search: searchProp,
   layout: layoutProp,
   itemMinWidth,
-  onItemClick = () => {},
+  canChangeLayout,
+  canChangeType,
+  canSearch,
+  variant,
+  onlyThumbnails,
+  page: pageProp,
+  pageSize,
+  onSelectItem = () => {},
+  onEditItem = () => {},
+  onTypeChange = () => {},
+  onSearch,
 }) => {
   const [t] = useTranslateLoader(prefixPN('list'));
   const [category, setCategory] = useState(categoryProp);
@@ -45,15 +72,26 @@ const AssetList = ({
   const [layout, setLayout] = useState(layoutProp);
   const [asset, setAsset] = useState(assetProp);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [size, setSize] = useState(6);
+  const [page, setPage] = useState(pageProp);
+  const [size, setSize] = useState(pageSize);
   const [assets, setAssets] = useState([]);
+  const [assetTypes, setAssetTypes] = useState([]);
+  const [assetType, setAssetType] = useState(assetTypeProp);
   const [openDetail, setOpenDetail] = useState(true);
   const [serverData, setServerData] = useState({});
+  const [searchCriteria, setSearhCriteria] = useState(searchProp);
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [containerRef, containerRect] = useResizeObserver();
   const [childRef, childRect] = useResizeObserver();
   const [drawerRef, drawerRect] = useResizeObserver();
+  const {
+    openConfirmationModal,
+    openDeleteConfirmationModal,
+    setLoading: setAppLoading,
+    openModal,
+    closeModal,
+  } = useLayout();
+  const [searchDebounced] = useDebouncedValue(searchCriteria, 300);
 
   // ·········································································
   // DATA PROCESSING
@@ -71,13 +109,28 @@ const AssetList = ({
     }
   };
 
-  const loadAssets = async (categoryId) => {
+  const loadAssetTypes = async (categoryId) => {
+    try {
+      const response = await getAssetTypesRequest(categoryId);
+      const types = response.types.map((type) => ({
+        label: prepareAssetType(type),
+        value: prepareAssetType(type, false),
+      }));
+      setAssetTypes(types);
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+  };
+
+  const loadAssets = async (categoryId, criteria = '', type = '') => {
     console.log('loadAssets > categoryId:', categoryId);
     try {
       setLoading(true);
-      const response = await getAssetsRequest({ category: categoryId });
+      setAsset(null);
+      const response = await getAssetsRequest({ category: categoryId, criteria, type });
+      console.log('assets:', response.assets);
       setAssets(response?.assets || []);
-      setTimeout(() => setLoading(false), 1000);
+      setTimeout(() => setLoading(false), 200);
     } catch (err) {
       setLoading(false);
       addErrorAlert(getErrorMessage(err));
@@ -104,16 +157,24 @@ const AssetList = ({
     }
   };
 
-  const loadAsset = async (id) => {
+  const loadAsset = async (id, forceLoad) => {
     try {
       const item = find(serverData.items, { id });
-      if (item) {
+
+      if (item && !forceLoad) {
         setAsset(prepareAsset(item));
       } else {
         console.log('loadAsset > id:', id);
         const response = await getAssetsByIdsRequest([id]);
         if (!isEmpty(response?.assets)) {
-          setAsset(prepareAsset(response.assets[0]));
+          const value = response.assets[0];
+          setAsset(prepareAsset(value));
+
+          if (forceLoad && item) {
+            const index = serverData.items.findIndex((i) => i.id === id);
+            serverData.items[index] = value;
+            setServerData(serverData);
+          }
         } else {
           setAsset(null);
         }
@@ -123,11 +184,43 @@ const AssetList = ({
     }
   };
 
+  const duplicateAsset = async (id) => {
+    setAppLoading(true);
+    try {
+      const response = await duplicateAssetRequest(id);
+      if (response?.asset) {
+        setAppLoading(false);
+        addSuccessAlert(t('labels.duplicateSuccess'));
+        loadAssets(category.id);
+      }
+    } catch (err) {
+      setAppLoading(false);
+      addErrorAlert(getErrorMessage(err));
+    }
+  };
+
+  const deleteAsset = async (id) => {
+    setAppLoading(true);
+    try {
+      await deleteAssetRequest(id);
+      setAppLoading(false);
+      addSuccessAlert(t('labels.removeSuccess'));
+      setAsset(null);
+      loadAssets(category.id);
+    } catch (err) {
+      setAppLoading(false);
+      addErrorAlert(getErrorMessage(err));
+    }
+  };
+
   // ·········································································
   // EFFECTS
 
+  useEffect(() => setSize(pageSize), [pageSize]);
+  useEffect(() => setPage(pageProp), [pageProp]);
   useEffect(() => setLayout(layoutProp), [layoutProp]);
   useEffect(() => setCategories(categoriesProp), [categoriesProp]);
+  useEffect(() => setAssetType(assetTypeProp), [assetTypeProp]);
 
   useEffect(() => {
     if (!isEmpty(assetProp?.id) && assetProp.id !== asset?.id) {
@@ -151,7 +244,8 @@ const AssetList = ({
 
   useEffect(() => {
     if (!isEmpty(category?.id)) {
-      loadAssets(category.id);
+      // loadAssets(category.id);
+      loadAssetTypes(category.id);
     }
   }, [category]);
 
@@ -159,16 +253,69 @@ const AssetList = ({
     loadAssetsData();
   }, [assets, page, size]);
 
+  useEffect(() => {
+    if (isFunction(onSearch)) {
+      onSearch(searchDebounced);
+    } else {
+      loadAssets(category.id, searchDebounced, assetType);
+    }
+  }, [searchDebounced]);
+
+  useEffect(() => {
+    if (!isEmpty(category?.id)) {
+      loadAssets(category.id, searchProp, assetType);
+    }
+    /*
+    if (!isEmpty(searchProp) && !isEmpty(category?.id)) {
+      loadAssets(category.id, searchProp, assetType);
+    }
+
+    if ((isEmpty(searchProp) || isNil(searchProp)) && !isEmpty(category?.id)) {
+      loadAssets(category.id);
+    }
+    */
+  }, [searchProp, category, assetType]);
+
   // ·········································································
   // HANDLERS
 
   const handleOnSelect = (item) => {
     setOpenDetail(true);
-    onItemClick(item);
+    onSelectItem(item);
   };
 
-  const handleOnCardDelete = (item) => {
-    console.log(item);
+  const handleOnDelete = (item) => {
+    openDeleteConfirmationModal({
+      onConfirm: () => deleteAsset(item.id),
+    })();
+  };
+
+  const handleOnDuplicate = (item) => {
+    openConfirmationModal({
+      onConfirm: () => duplicateAsset(item.id),
+    })();
+  };
+
+  const handleOnEdit = (item) => {
+    setAsset(item);
+    onEditItem(item);
+  };
+
+  const handleOnShare = (item) => {
+    const id = openModal({
+      children: (
+        <PermissionsData
+          asset={item}
+          sharing={true}
+          onNext={() => {
+            closeModal(id);
+            loadAsset(item.id, true);
+          }}
+        />
+      ),
+      size: 'lg',
+      withCloseButton: true,
+    });
   };
 
   // ·········································································
@@ -193,15 +340,15 @@ const AssetList = ({
   ];
 
   const cardVariant = useMemo(() => {
-    let variant = 'media';
+    let option = 'media';
     switch (category?.key) {
       case 'bookmarks':
-        variant = 'bookmark';
+        option = 'bookmark';
         break;
       default:
         break;
     }
-    return variant;
+    return option;
   }, [category]);
 
   const showDrawer = useMemo(() => !loading && !isNil(asset) && !isEmpty(asset), [loading, asset]);
@@ -209,18 +356,29 @@ const AssetList = ({
   const headerOffset = useMemo(() => Math.round(childRect.bottom + childRect.top), [childRect]);
 
   const listProps = useMemo(() => {
-    if (layout === 'grid') {
+    const paperProps = { shadow: 'none', padding: 0 };
+
+    if (!onlyThumbnails && layout === 'grid') {
       return {
-        itemRender: (p) => (
-          <CardWrapper {...p} variant={cardVariant} onDelete={handleOnCardDelete} />
-        ),
+        itemRender: (p) => <CardWrapper {...p} variant={cardVariant} />,
         itemMinWidth,
         margin: 16,
         spacing: 4,
+        paperProps,
       };
     }
 
-    return {};
+    if (onlyThumbnails && layout === 'grid') {
+      return {
+        itemRender: (p) => <AssetThumbnail {...p} />,
+        itemMinWidth,
+        margin: 16,
+        spacing: 4,
+        paperProps: { shadow: 'none', padding: 4 },
+      };
+    }
+
+    return { paperProps };
   }, [layout]);
 
   const listLayouts = useMemo(
@@ -231,6 +389,21 @@ const AssetList = ({
     []
   );
 
+  const toolbarItems = useMemo(
+    () => ({
+      edit: 'Edit',
+      duplicate: asset?.duplicable ? 'Duplicate' : false,
+      download: asset?.downloadable ? 'Download' : false,
+      delete: 'Delete',
+      share: 'Share',
+      assign: asset?.assignable ? 'Assign' : false,
+      toggle: 'Toggle',
+    }),
+    [asset]
+  );
+
+  const isEmbedded = useMemo(() => variant === 'embedded', [variant]);
+
   // ·········································································
   // RENDER
 
@@ -240,42 +413,68 @@ const AssetList = ({
         ref={childRef}
         fullWidth
         spacing={5}
-        padding={5}
-        style={{
-          width: containerRect.width,
-          top: containerRect.top,
-          position: 'fixed',
-          zIndex: 999,
-          backgroundColor: '#fff',
-        }}
+        padding={isEmbedded ? 0 : 5}
+        style={
+          isEmbedded
+            ? {}
+            : {
+                width: containerRect.width,
+                top: containerRect.top,
+                position: 'fixed',
+                zIndex: 101,
+                backgroundColor: '#fff',
+              }
+        }
       >
-        <Box>
-          <SearchInput variant="filled" />
-        </Box>
-        <Box skipFlex>
-          <RadioGroup
-            data={listLayouts}
-            variant="icon"
-            size="xs"
-            value={layout}
-            onChange={setLayout}
-          />
-        </Box>
+        <Stack fullWidth spacing={5}>
+          {canSearch && (
+            <SearchInput
+              variant={isEmbedded ? 'default' : 'filled'}
+              onChange={setSearhCriteria}
+              value={searchCriteria}
+            />
+          )}
+          {!isEmpty(assetTypes) && canChangeType && (
+            <Select
+              skipFlex
+              data={assetTypes}
+              value={assetType}
+              onChange={onTypeChange}
+              placeholder="Type of resource"
+            />
+          )}
+        </Stack>
+        {canChangeLayout && (
+          <Box skipFlex>
+            <RadioGroup
+              data={listLayouts}
+              variant="icon"
+              size="xs"
+              value={layout}
+              onChange={setLayout}
+            />
+          </Box>
+        )}
       </Stack>
 
       <Stack
         fullHeight
-        style={{
-          marginTop: headerOffset,
-          marginRight: drawerRect.width,
-        }}
+        style={
+          isEmbedded
+            ? {}
+            : {
+                marginTop: headerOffset,
+                marginRight: drawerRect.width,
+              }
+        }
       >
         <Box
           sx={(theme) => ({
             flex: 1,
             position: 'relative',
-            paddingRight: theme.spacing[5],
-            paddingLeft: theme.spacing[5],
+            marginTop: isEmbedded && theme.spacing[5],
+            paddingRight: !isEmbedded && theme.spacing[5],
+            paddingLeft: !isEmbedded && theme.spacing[5],
           })}
         >
           <LoadingOverlay visible={loading} />
@@ -289,10 +488,12 @@ const AssetList = ({
                 {...serverData}
                 {...listProps}
                 selectable
-                paperProps={{ shadow: 'none', padding: 0 }}
+                selected={asset}
                 columns={columns}
                 loading={loading}
                 layout={layout}
+                page={page}
+                size={size}
                 onSelect={handleOnSelect}
                 onPageChange={setPage}
                 onSizeChange={setSize}
@@ -323,7 +524,7 @@ const AssetList = ({
           height: `calc(100% - ${headerOffset}px)`,
           right: 0,
           top: headerOffset,
-          zIndex: 999,
+          zIndex: 99,
         }}
       >
         {showDrawer && (
@@ -332,7 +533,12 @@ const AssetList = ({
               asset={asset}
               variant={cardVariant}
               open={openDetail}
+              toolbarItems={toolbarItems}
               onToggle={() => setOpenDetail(!openDetail)}
+              onDuplicate={handleOnDuplicate}
+              onDelete={handleOnDelete}
+              onEdit={handleOnEdit}
+              onShare={handleOnShare}
             />
           </Box>
         )}
@@ -347,6 +553,13 @@ AssetList.defaultProps = {
   category: 'media-files',
   categories: [],
   itemMinWidth: 340,
+  search: '',
+  page: 1,
+  pageSize: 6,
+  canChangeLayout: true,
+  canChangeType: true,
+  canSearch: true,
+  variant: 'full',
 };
 AssetList.propTypes = {
   category: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
@@ -354,8 +567,20 @@ AssetList.propTypes = {
   searchable: PropTypes.bool,
   asset: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   categories: PropTypes.arrayOf(PropTypes.object),
-  onItemClick: PropTypes.func,
+  search: PropTypes.string,
+  assetType: PropTypes.string,
+  onSelectItem: PropTypes.func,
+  onEditItem: PropTypes.func,
+  onSearch: PropTypes.func,
+  onTypeChange: PropTypes.func,
   itemMinWidth: PropTypes.number,
+  canChangeLayout: PropTypes.bool,
+  canChangeType: PropTypes.bool,
+  canSearch: PropTypes.bool,
+  onlyThumbnails: PropTypes.bool,
+  variant: PropTypes.oneOf(['full', 'embedded']),
+  page: PropTypes.number,
+  pageSize: PropTypes.number,
 };
 
 export { AssetList };

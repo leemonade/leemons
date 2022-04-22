@@ -3,9 +3,7 @@ module.exports = {
   collectionName: 'assets-files',
   attributes: {
     asset: {
-      references: {
-        collection: 'plugins_leebrary::assets',
-      },
+      specificType: 'varchar(255)',
     },
     file: {
       references: {

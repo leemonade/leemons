@@ -4,6 +4,8 @@ const mime = require('mime-types');
 const pathSys = require('path');
 const { tables } = require('../tables');
 const { findOne: getSettings } = require('../settings');
+const { getById } = require('./getById');
+const { dataForReturnFile } = require('./dataForReturnFile');
 
 const ADMITTED_METADATA = [
   'format',
@@ -16,8 +18,8 @@ const ADMITTED_METADATA = [
   'slides',
   'spreadsheets',
   'books',
-  // 'height',
-  // 'width',
+  'height',
+  'width',
   'bitrate',
   // 'channels',
 ];
@@ -101,10 +103,33 @@ function download(url) {
   });
 }
 
+function createTemp(readStream, contentType) {
+  return new Promise((resolve, reject) => {
+    leemons.fs.openTemp('leebrary', (err, info) => {
+      if (err) {
+        reject(err);
+      }
+
+      leemons.fs.write(info.fd, readStream, (e) => {
+        if (e) {
+          reject(e);
+        }
+
+        leemons.fs.close(info.fd, (error) => {
+          if (error) {
+            reject(error);
+          }
+          resolve({ path: info.path, contentType });
+        });
+      });
+    });
+  });
+}
+
 // -----------------------------------------------------------------------------
 // MAIN FUNCTIONS
 
-async function upload(file, { name }, { transacting } = {}) {
+async function upload(file, { name }, { userSession, transacting } = {}) {
   const { path, type } = file;
   const extension = mime.extension(type);
 
@@ -169,6 +194,14 @@ async function upload(file, { name }, { transacting } = {}) {
     metadata: JSON.stringify(metadata),
   };
 
+  /*
+  if (userSession) {
+    fileData.fromUser = userSession.id;
+    fileData.fromUserAgent =
+      userSession.userAgents && userSession.userAgents.length ? userSession.userAgents[0].id : null;
+  }
+  */
+
   // EN: Firstly save the file to the database and get the id
   // ES: Primero guardamos el archivo en la base de datos y obtenemos el id
   let newFile = await tables.files.create(fileData, { transacting });
@@ -211,10 +244,25 @@ async function upload(file, { name }, { transacting } = {}) {
   return { ...newFile, metadata };
 }
 
-async function uploadFromUrl(url, { name }, { transacting } = {}) {
-  const { path, contentType } = await download(url);
+async function uploadFromFileStream(file, { name }, { userSession, transacting } = {}) {
+  const { readStream, contentType } = file;
+  const { path } = await createTemp(readStream, contentType);
 
-  return upload({ path, type: contentType }, { name }, { transacting });
+  return upload({ path, type: contentType }, { name }, { userSession, transacting });
 }
 
-module.exports = { upload, uploadFromUrl };
+async function uploadFromUrl(url, { name }, { userSession, transacting } = {}) {
+  // ES: Primero comprobamos que la URL no sea un FILE_ID
+  // EN: First check if the URL is a FILE_ID
+  const file = await getById(url);
+  if (file?.id) {
+    const fileStream = await dataForReturnFile(file.id);
+    return uploadFromFileStream(fileStream, { name }, { userSession, transacting });
+  }
+
+  const { path, contentType } = await download(url);
+
+  return upload({ path, type: contentType }, { name }, { userSession, transacting });
+}
+
+module.exports = { upload, uploadFromUrl, uploadFromFileStream };

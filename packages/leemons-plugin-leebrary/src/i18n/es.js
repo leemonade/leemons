@@ -31,9 +31,11 @@ module.exports = {
         changeImage: 'Cambiar imagen',
         uploadButton: 'Subir imagen',
         submitForm: 'Añadir a la librería',
+        submitChanges: 'Guardar cambios',
         name: 'Nombre',
         description: 'Descripción',
         createdSuccess: 'Recurso creado con éxito',
+        updatedSuccess: 'Recurso actualizado con éxito',
         url: 'URL (enlace web)',
         checkUrl: 'Comprobar url',
       },
@@ -91,6 +93,12 @@ module.exports = {
       editor: 'Editor',
       owner: 'Propietario',
       public: 'Público',
+    },
+  },
+  list: {
+    labels: {
+      duplicateSuccess: 'Recurso duplicado con éxito',
+      removeSuccess: 'Recurso eliminado con éxito',
     },
   },
 };

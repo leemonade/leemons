@@ -1,5 +1,5 @@
-const { last } = require('lodash');
 const getRolePermissions = require('./helpers/getRolePermissions');
+const getAssetIdFromPermissionName = require('./helpers/getAssetIdFromPermissionName');
 
 async function getByCategory(categoryId, { userSession, transacting } = {}) {
   try {
@@ -16,7 +16,7 @@ async function getByCategory(categoryId, { userSession, transacting } = {}) {
     );
 
     return permissions.map((item) => ({
-      asset: last(item.permissionName.split('.')),
+      asset: getAssetIdFromPermissionName(item.permissionName),
       role: item.actionNames[0],
       permissions: getRolePermissions(item.actionNames[0]),
     }));

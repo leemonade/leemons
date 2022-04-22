@@ -1,6 +1,6 @@
 const { isEmpty } = require('lodash');
 const { tables } = require('../tables');
-const { getByIds: getAssets } = require('./getByIds');
+const { getByIds } = require('./getByIds');
 
 async function getByCategory(categoryId, { details = false, assets: assetIds, transacting } = {}) {
   try {
@@ -12,11 +12,13 @@ async function getByCategory(categoryId, { details = false, assets: assetIds, tr
       query.id_$in = assetIds;
     }
 
-    let assets = await tables.assets.find(query, { transacting });
-    assets = assets.map(({ asset }) => asset);
+    const assets = await tables.assets.find(query, { transacting });
 
     if (details) {
-      return getAssets(assets, { transacting });
+      return getByIds(
+        assets.map(({ id }) => id),
+        { transacting }
+      );
     }
     return assets;
   } catch (e) {

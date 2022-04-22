@@ -1,6 +1,8 @@
 const { last, flattenDeep } = require('lodash');
 const { tables } = require('../tables');
 const getRolePermissions = require('./helpers/getRolePermissions');
+const getAssetPermissionName = require('./helpers/getAssetPermissionName');
+const getAssetIdFromPermissionName = require('./helpers/getAssetIdFromPermissionName');
 
 async function getByAssets(assetIds, { userSession, transacting } = {}) {
   const assetsIds = flattenDeep([assetIds]);
@@ -11,7 +13,7 @@ async function getByAssets(assetIds, { userSession, transacting } = {}) {
       userSession.userAgents,
       {
         query: {
-          $or: assetsIds.map((id) => ({ permissionName_$contains: leemons.plugin.prefixPN(id) })),
+          $or: assetsIds.map((id) => ({ permissionName_$contains: getAssetPermissionName(id) })),
         },
         transacting,
       }
@@ -23,7 +25,7 @@ async function getByAssets(assetIds, { userSession, transacting } = {}) {
     );
 
     return permissions.concat(publicAssets).map((item) => ({
-      asset: item.public ? item.id : last(item.permissionName.split('.')),
+      asset: item.public ? item.id : getAssetIdFromPermissionName(item.permissionName),
       role: item.public ? 'public' : item.actionNames[0],
       permissions: getRolePermissions(item.public ? 'public' : item.actionNames[0]),
     }));

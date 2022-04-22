@@ -3,9 +3,7 @@ module.exports = {
   collectionName: 'bookmarks',
   attributes: {
     asset: {
-      references: {
-        collection: 'plugins_leebrary::assets',
-      },
+      specificType: 'varchar(255)',
     },
     url: {
       type: 'string',

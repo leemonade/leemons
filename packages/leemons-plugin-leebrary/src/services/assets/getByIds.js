@@ -3,13 +3,16 @@ const { isEmpty, flatten, map, find, compact, uniq } = require('lodash');
 const { tables } = require('../tables');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
 const { getUsersByAsset } = require('../permissions/getUsersByAsset');
-const { find: findCategories } = require('../categories/find');
 const { find: findBookmarks } = require('../bookmarks/find');
 const canAssignRole = require('../permissions/helpers/canAssignRole');
+const { getByIds: getCategories } = require('../categories/getByIds');
 
 async function getByIds(assetsIds, { withFiles, checkPermissions, userSession, transacting } = {}) {
   const ids = flatten([assetsIds]);
   let assets = await tables.assets.find({ id_$in: ids }, { transacting });
+
+  // ·········································································
+  // PERMISSIONS & PERSONS
 
   if (checkPermissions && userSession) {
     const permissions = await getPermissions(assetsIds, { userSession, transacting });
@@ -34,6 +37,9 @@ async function getByIds(assetsIds, { withFiles, checkPermissions, userSession, t
       }
     }
   }
+
+  // ·········································································
+  // FILES
 
   if (!isEmpty(assets) && withFiles) {
     const assetsFiles = await tables.assetsFiles.find({ asset_$in: ids }, { transacting });
@@ -79,6 +85,9 @@ async function getByIds(assetsIds, { withFiles, checkPermissions, userSession, t
     });
   }
 
+  // ·········································································
+  // TAGS
+
   const tagsService = leemons.getPlugin('common').services.tags;
   const tags = await Promise.all(
     assets.map((item) =>
@@ -86,7 +95,22 @@ async function getByIds(assetsIds, { withFiles, checkPermissions, userSession, t
     )
   );
 
-  return assets.map((asset, index) => ({ ...asset, tags: tags[index][0] }));
+  // ·········································································
+  // CATEGORY DATA
+
+  const categories = await getCategories(uniq(assets.map((item) => item.category)), {
+    transacting,
+  });
+
+  return assets.map((asset, index) => {
+    const { duplicable, assignable } = find(categories, { id: asset.category });
+    return {
+      ...asset,
+      tags: tags[index][0],
+      duplicable,
+      assignable,
+    };
+  });
 }
 
 module.exports = { getByIds };

@@ -73,6 +73,7 @@ const categories = [
   {
     key: CATEGORIES.MEDIA_FILES,
     creatable: true,
+    duplicable: true,
     provider: 'leebrary',
     menu: {
       item: {
@@ -186,4 +187,5 @@ module.exports = {
   categories,
   categoriesMenu,
   CATEGORIES,
+  permissionSeparator: '(ASSET_ID)',
 };

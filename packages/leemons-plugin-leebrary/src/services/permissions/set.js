@@ -6,6 +6,7 @@ const { getByAsset } = require('./getByAsset');
 const canAssignRole = require('./helpers/canAssignRole');
 const canUnassignRole = require('./helpers/canUnassignRole');
 const validateRole = require('./helpers/validateRole');
+const getAssetPermissionName = require('./helpers/getAssetPermissionName');
 
 /**
  * Set userAgents permissions / roles in order to access to the specified assetID
@@ -33,7 +34,7 @@ async function set(assetId, userAgentsAndRoles, { deleteMissing, userSession, tr
     const [assetData] = await getByIds([assetId]);
     const categoryId = assetData?.category;
 
-    const permissionName = leemons.plugin.prefixPN(assetId);
+    const permissionName = getAssetPermissionName(assetId);
     const { services: userService } = leemons.getPlugin('users');
     const result = [];
 
@@ -53,12 +54,10 @@ async function set(assetId, userAgentsAndRoles, { deleteMissing, userSession, tr
         transacting,
       });
 
-      /*
-      console.log('--- CHECK canAssignRole ---');
-      console.log('assignerRole:', assignerRole);
-      console.log('assigneeRole:', assigneeRole);
-      console.log('role:', role);
-      */
+      // console.log('--- CHECK canAssignRole ---');
+      // console.log('assignerRole:', assignerRole);
+      // console.log('assigneeRole:', assigneeRole);
+      // console.log('role:', role);
 
       // EN: Check if assigner can assign role to assignee
       // ES: Comprobar si el asignador puede asignar el rol al asignado
@@ -101,19 +100,25 @@ async function set(assetId, userAgentsAndRoles, { deleteMissing, userSession, tr
         { transacting }
       );
 
-      // EN: Set role
-      // ES: Asignar rol
-      result.push(
-        await userService.permissions.addCustomPermissionToUserAgent(
-          userAgent,
-          {
-            permissionName,
-            actionNames: [role],
-            target: categoryId,
-          },
-          { transacting }
-        )
-      );
+      try {
+        // EN: Set role
+        // ES: Asignar rol
+        result.push(
+          await userService.permissions.addCustomPermissionToUserAgent(
+            userAgent,
+            {
+              permissionName,
+              actionNames: [role],
+              target: categoryId,
+            },
+            { transacting }
+          )
+        );
+      } catch (e) {
+        leemons.log.info(
+          `Cannot assign custom permissions to UserAgent ${userAgent}: ${e.message}`
+        );
+      }
     }
 
     if (deleteMissing) {
@@ -124,7 +129,7 @@ async function set(assetId, userAgentsAndRoles, { deleteMissing, userSession, tr
       toRemove = toRemove.filter((ua) => !toUpdate.includes(ua));
 
       console.log('--- toRemove ---');
-      console.dir(toRemove, { depth: null });
+      // console.dir(toRemove, { depth: null });
 
       for (let i = 0, len = toRemove.length; i < len; i++) {
         const userAgent = toRemove[i];
@@ -143,8 +148,8 @@ async function set(assetId, userAgentsAndRoles, { deleteMissing, userSession, tr
         });
 
         console.log('--- CHECK canUnAssignRole ---');
-        console.log('assignerRole:', assignerRole);
-        console.log('assigneeRole:', assigneeRole);
+        // console.log('assignerRole:', assignerRole);
+        // console.log('assigneeRole:', assigneeRole);
 
         // EN: Check if assigner can assign role to assignee
         // ES: Comprobar si el asignador puede asignar el rol al asignado

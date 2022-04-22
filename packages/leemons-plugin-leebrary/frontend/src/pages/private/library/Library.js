@@ -12,6 +12,7 @@ import LibraryContext, { LibraryProvider } from '../../../context/LibraryContext
 import { VIEWS } from './Library.constants';
 
 const NewAssetPage = loadable(() => import('../assets/NewAssetPage'));
+const EditAssetPage = loadable(() => import('../assets/EditAssetPage'));
 const ListAssetPage = loadable(() => import('../assets/ListAssetPage'));
 
 function cleanPath(path) {
@@ -86,11 +87,7 @@ const LibraryPageContent = () => {
 
           {/* EDIT ASSET ·························································· */}
           <Route path={cleanPath(`${path}/edit/:id`)}>
-            <Box>
-              <Paper shadow="none">
-                <Text>Editando el asset</Text>
-              </Paper>
-            </Box>
+            <EditAssetPage />
           </Route>
 
           {/* LIST ASSETS ························································ */}

@@ -1,56 +1,61 @@
+const { compact, uniq, flattenDeep, isEmpty } = require('lodash');
 const { byDescription } = require('./byDescription');
 const { byName } = require('./byName');
 const { getByCategory } = require('../assets/getByCategory');
 const { getByIds } = require('../assets/getByIds');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
+const { getAssetsByType } = require('../files/getAssetsByType');
 
-function saveResults(newResults, existingResults) {
-  if (existingResults === null) {
-    return newResults;
-  }
-  return newResults;
-}
+async function search(
+  { criteria = '', type, category },
+  { details = false, userSession, transacting } = {}
+) {
+  let assets = [];
+  let nothingFound = false;
 
-async function search(query, { details = false, userSession, transacting } = {}) {
-  let assets = null;
   try {
-    if (query.name) {
-      assets = await saveResults(await byName(query.name, { assets, transacting }), assets);
-    }
-
-    if (query.description) {
-      assets = await saveResults(
-        await byDescription(query.description, { assets, transacting }),
-        assets
-      );
-    }
-
-    if (query.tags) {
+    if (!isEmpty(criteria)) {
       const tagsService = leemons.getPlugin('common').services.tags;
-      const results = await tagsService.getTagsValues(JSON.parse(query.tags), {
-        type: leemons.plugin.prefixPN(''),
-        transacting,
-      });
-      assets = saveResults(results, assets);
+
+      const result = await Promise.all([
+        byName(criteria, { transacting }),
+        byDescription(criteria, { transacting }),
+        tagsService.getTagsValues(criteria, {
+          type: leemons.plugin.prefixPN(''),
+          transacting,
+        }),
+      ]);
+
+      assets = result[0].concat(result[1]);
+      assets = compact(uniq(assets.concat(flattenDeep(result[2]))));
+      nothingFound = assets.length === 0;
     }
 
-    if (query.category) {
-      assets = await saveResults(
-        await getByCategory(query.category, { assets, transacting }),
-        assets
+    // ES: Si viene la categoría, filtramos todo el array de Assets con respecto a esa categoría
+    // EN: If we have the category, we filter the array of Assets with respect to that category
+    if (!nothingFound && category) {
+      assets = (await getByCategory(category, { assets: uniq(assets), transacting })).map(
+        ({ id }) => id
       );
     }
 
-    const permissions = await getPermissions(assets, { userSession, transacting });
+    if (!nothingFound && type) {
+      assets = await getAssetsByType(type, { assets, transacting });
+    }
 
     // EN: Only return assets that the user has permission to view
     // ES: Sólo devuelve los recursos que el usuario tiene permiso para ver
-    assets = permissions.map(({ asset }) => asset);
+    if (!isEmpty(assets)) {
+      assets = await getPermissions(uniq(assets), { userSession, transacting });
+    }
 
     // EN: If the user wants to see the details of the assets, we need to get the details
     // ES: Si el usuario quiere ver los detalles de los recursos, necesitamos obtener los detalles
-    if (details && assets.length) {
-      return await getByIds(assets, { withFiles: true, transacting });
+    if (details && !isEmpty(assets)) {
+      return await getByIds(
+        assets.map(({ asset }) => asset),
+        { withFiles: true, transacting }
+      );
     }
 
     return assets || [];

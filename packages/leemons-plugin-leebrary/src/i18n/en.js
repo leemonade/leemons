@@ -31,9 +31,11 @@ module.exports = {
         changeImage: 'Change image',
         uploadButton: 'Upload image',
         submitForm: 'Add to library',
+        submitChanges: 'Save changes',
         name: 'Name',
         description: 'Description',
         createdSuccess: 'Asset successfully created',
+        updatedSuccess: 'Asset successfully updated',
         url: 'URL (webpage link)',
         checkUrl: 'Check url',
       },
@@ -91,6 +93,12 @@ module.exports = {
       editor: 'Editor',
       owner: 'Owner',
       public: 'Public',
+    },
+  },
+  list: {
+    labels: {
+      duplicateSuccess: 'Asset successfully duplicated',
+      removeSuccess: 'Asset successfully removed',
     },
   },
 };

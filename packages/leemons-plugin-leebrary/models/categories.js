@@ -20,6 +20,12 @@ module.exports = {
         defaultTo: false,
       },
     },
+    duplicable: {
+      type: 'boolean',
+      options: {
+        defaultTo: false,
+      },
+    },
     provider: {
       type: 'string',
       options: {

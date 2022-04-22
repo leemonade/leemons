@@ -1,16 +1,24 @@
-const { map, isString, isEmpty } = require('lodash');
+/* eslint-disable no-param-reassign */
+const { map, isEmpty, isNil } = require('lodash');
 const { CATEGORIES } = require('../../../config/constants');
 const { tables } = require('../tables');
-const { upload: uploadFile, uploadFromUrl: uploadFileFromUrl } = require('../files/upload');
+const { uploadFromSource } = require('../files/helpers/uploadFromSource');
 const { add: addFiles } = require('./files/add');
 const { getById: getCategoryById } = require('../categories/getById');
 const { getByKey: getCategoryByKey } = require('../categories/getByKey');
 const { validateAddAsset } = require('../../validations/forms');
 const { add: addBookmark } = require('../bookmarks/add');
+const getAssetPermissionName = require('../permissions/helpers/getAssetPermissionName');
 
-async function add({ file, cover, category, ...data }, { userSession, transacting: t } = {}) {
+async function add(
+  { file, cover, category, ...data },
+  { newId, published = true, userSession, transacting: t } = {}
+) {
   return global.utils.withTransaction(
     async (transacting) => {
+      // ES: Asignamos la categoría de "media-files" por defecto.
+      // EN: Assign the "media-files" category by default.
+      data.categoryKey = data.categoryKey || CATEGORIES.MEDIA_FILES;
       await validateAddAsset(data);
 
       const { categoryId, categoryKey, tags, ...assetData } = data;
@@ -51,7 +59,7 @@ async function add({ file, cover, category, ...data }, { userSession, transactin
 
       // Media files
       if (!isEmpty(file)) {
-        newFile = await uploadFile(file, { name: assetData.name }, { transacting });
+        newFile = await uploadFromSource(file, { name: assetData.name }, { transacting });
 
         if (newFile?.type?.indexOf('image') === 0) {
           coverFile = newFile;
@@ -59,20 +67,29 @@ async function add({ file, cover, category, ...data }, { userSession, transactin
       }
 
       if (!coverFile && !isEmpty(cover)) {
-        if (isString(cover)) {
-          coverFile = await uploadFileFromUrl(cover, { name: assetData.name }, { transacting });
-        } else {
-          coverFile = await uploadFile(cover, { name: assetData.name }, { transacting });
-        }
+        coverFile = await uploadFromSource(cover, { name: assetData.name }, { transacting });
       }
 
       // ··········································································
       // CREATE ASSET
 
+      if (isNil(newId) || isEmpty(newId)) {
+        // ES: Añadimos el control de versiones
+        // EN: Add version control
+        const { versionControl } = leemons.getPlugin('common').services;
+        const { fullId } = await versionControl.register(leemons.plugin.prefixPN(''), {
+          published,
+          transacting,
+        });
+
+        // eslint-disable-next-line no-param-reassign
+        newId = fullId;
+      }
+
       // EN: Firstly create the asset in the database to get the id
       // ES: Primero creamos el archivo en la base de datos para obtener el id
       const newAsset = await tables.assets.create(
-        { ...assetData, category: categoryId, cover: coverFile?.id },
+        { ...assetData, id: newId, category: categoryId, cover: coverFile?.id },
         { transacting }
       );
 
@@ -80,7 +97,7 @@ async function add({ file, cover, category, ...data }, { userSession, transactin
       // ADD PERMISSIONS
 
       const { services: userService } = leemons.getPlugin('users');
-      const permissionName = leemons.plugin.prefixPN(newAsset.id);
+      const permissionName = getAssetPermissionName(newAsset.id);
 
       // First, add permission to the asset
       await userService.permissions.addItem(
@@ -131,16 +148,10 @@ async function add({ file, cover, category, ...data }, { userSession, transactin
       // ··········································································
       // ADD TAGS
 
-      let tagValues = tags || [];
-
-      if (isString(tagValues)) {
-        tagValues = tagValues.split(',');
-      }
-
-      if (tagValues?.length > 0) {
+      if (tags?.length > 0) {
         const tagsService = leemons.getPlugin('common').services.tags;
         promises.push(
-          tagsService.setTagsToValues(leemons.plugin.prefixPN(''), tagValues, newAsset.id, {
+          tagsService.setTagsToValues(leemons.plugin.prefixPN(''), tags, newAsset.id, {
             transacting,
           })
         );

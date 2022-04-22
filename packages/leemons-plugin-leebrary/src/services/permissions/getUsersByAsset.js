@@ -1,4 +1,5 @@
 const { getByAsset } = require('./getByAsset');
+const getAssetPermissionName = require('./helpers/getAssetPermissionName');
 
 async function getUsersByAsset(assetId, { userSession, transacting } = {}) {
   try {
@@ -8,7 +9,7 @@ async function getUsersByAsset(assetId, { userSession, transacting } = {}) {
     if (permissions.view) {
       const { services } = leemons.getPlugin('users');
       const users = await services.permissions.findUsersWithPermissions({
-        permissionName: leemons.plugin.prefixPN(assetId),
+        permissionName: getAssetPermissionName(assetId),
       });
       return users;
     }

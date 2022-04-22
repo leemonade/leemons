@@ -1,5 +1,6 @@
 import { capitalize, isEmpty, isNil } from 'lodash';
 import { getAuthorizationTokenForAllCenters } from '@users/session';
+import { prepareAssetType } from './prepareAssetType';
 
 function getFileUrl(fileID) {
   const authTokens = getAuthorizationTokenForAllCenters();
@@ -7,17 +8,15 @@ function getFileUrl(fileID) {
 }
 
 function prepareAsset(assetFromApi) {
-  const asset = { ...assetFromApi };
+  if (assetFromApi.prepared && assetFromApi.original) {
+    return assetFromApi;
+  }
+
+  const asset = { ...assetFromApi, original: assetFromApi, prepared: true };
 
   if (!isEmpty(asset.file)) {
     if (isEmpty(asset.fileType)) {
-      const fileType = asset.file.type;
-
-      if (fileType.indexOf('xml') > -1 || fileType.indexOf('document') > -1) {
-        asset.fileType = 'document';
-      } else {
-        [asset.fileType] = fileType.split('/');
-      }
+      asset.fileType = prepareAssetType(asset.file.type, false);
     }
 
     if (isEmpty(asset.url)) {

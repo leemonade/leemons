@@ -1,9 +1,11 @@
-const { isEmpty } = require('lodash');
+const { isEmpty, isString } = require('lodash');
 const { CATEGORIES } = require('../config/constants');
 const { add } = require('../src/services/assets/add');
 const { update } = require('../src/services/assets/update');
+const { duplicate } = require('../src/services/assets/duplicate');
 const { remove } = require('../src/services/assets/remove');
 const { getByUser } = require('../src/services/assets/getByUser');
+const { search: getByCriteria } = require('../src/services/search');
 const { getByCategory } = require('../src/services/permissions/getByCategory');
 const { getByIds } = require('../src/services/assets/getByIds');
 const { getByAsset: getPermissions } = require('../src/services/permissions/getByAsset');
@@ -11,8 +13,9 @@ const { getUsersByAsset } = require('../src/services/permissions/getUsersByAsset
 const canAssignRole = require('../src/services/permissions/helpers/canAssignRole');
 const { getById: getCategory } = require('../src/services/categories/getById');
 
-async function addAsset(ctx) {
-  const { categoryId, ...assetData } = ctx.request.body;
+async function setAsset(ctx) {
+  const { id } = ctx.params;
+  const { categoryId, tags, file: assetFile, cover: assetCover, ...assetData } = ctx.request.body;
   const filesData = ctx.request.files;
   const { userSession } = ctx.state;
 
@@ -27,29 +30,52 @@ async function addAsset(ctx) {
 
   // Media files
   if (category.key === CATEGORIES.MEDIA_FILES) {
-    if (!filesData?.files) {
+    if (!filesData && !assetFile) {
       throw new global.utils.HttpError(400, 'No file was uploaded');
     }
 
-    const files = filesData.files.length ? filesData.files : [filesData.files];
+    if (filesData?.files) {
+      const files = filesData.files.length ? filesData.files : [filesData.files];
 
-    if (files.length > 1) {
-      throw new global.utils.HttpError(501, 'Multiple file uploading is not enabled yet');
+      if (files.length > 1) {
+        throw new global.utils.HttpError(501, 'Multiple file uploading is not enabled yet');
+      }
+
+      [file] = files;
+    } else {
+      file = assetFile;
     }
 
-    [file] = files;
-    cover = filesData.coverFile;
+    cover = filesData?.cover || assetCover || assetData.coverFile;
   }
   // Bookmarks
   else if (category.key === CATEGORIES.BOOKMARKS) {
-    cover = assetData.cover || filesData.coverFile;
+    cover = assetCover || filesData?.cover || assetData.coverFile;
   }
 
-  const asset = await add.call(
-    { calledFrom: leemons.plugin.prefixPN('') },
-    { ...assetData, category, categoryId, cover, file },
-    { userSession }
-  );
+  // ES: Preparamos las Tags en caso de que lleguen como string
+  // EN: Prepare the tags in case they come as string
+  let tagValues = tags || [];
+
+  if (isString(tagValues)) {
+    tagValues = tagValues.split(',');
+  }
+
+  let asset;
+
+  if (id) {
+    asset = await update.call(
+      { calledFrom: leemons.plugin.prefixPN('') },
+      { ...assetData, id, category, categoryId, cover, file, tags: tagValues },
+      { userSession }
+    );
+  } else {
+    asset = await add.call(
+      { calledFrom: leemons.plugin.prefixPN('') },
+      { ...assetData, category, categoryId, cover, file, tags: tagValues },
+      { userSession }
+    );
+  }
 
   const { role } = await getPermissions(asset.id, { userSession });
 
@@ -76,12 +102,13 @@ async function removeAsset(ctx) {
   };
 }
 
-async function updateAsset(ctx) {
+async function duplicateAsset(ctx) {
   const { id: assetId } = ctx.params;
-  const { id, ...assetData } = ctx.request.body;
   const { userSession } = ctx.state;
 
-  const asset = await update(assetId, { ...assetData }, { userSession });
+  const asset = await duplicate.call({ calledFrom: leemons.plugin.prefixPN('') }, assetId, {
+    userSession,
+  });
   ctx.status = 200;
   ctx.body = {
     status: 200,
@@ -124,14 +151,20 @@ async function getAsset(ctx) {
 }
 
 async function getAssets(ctx) {
-  const { category } = ctx.request.query;
+  const { category, criteria, type } = ctx.request.query;
   const { userSession } = ctx.state;
 
   if (isEmpty(category)) {
     throw new global.utils.HttpError(400, 'Not category was specified');
   }
 
-  const assets = await getByCategory(category, { userSession });
+  let assets;
+
+  if (!isEmpty(criteria) || !isEmpty(type)) {
+    assets = await getByCriteria({ category, criteria, type }, { userSession });
+  } else {
+    assets = await getByCategory(category, { userSession });
+  }
 
   ctx.status = 200;
   ctx.body = {
@@ -180,32 +213,11 @@ async function getUrlMetadata(ctx) {
   ctx.body = { status: 200, metas };
 }
 
-/*
-  getFiles: async (ctx) => {
-    const { id } = ctx.params;
-    const { userSession } = ctx.state;
-
-    try {
-      const files = await getFiles(id, { userSession });
-
-      ctx.status = 200;
-      ctx.body = {
-        status: 200,
-        files,
-      };
-    } catch (e) {
-      ctx.status = 400;
-      ctx.body = {
-        status: 400,
-        message: e.message,
-      };
-    }
-  },
-*/
 module.exports = {
-  add: addAsset,
+  add: setAsset,
+  update: setAsset,
   remove: removeAsset,
-  update: updateAsset,
+  duplicate: duplicateAsset,
   my: myAssets,
   get: getAsset,
   list: getAssets,

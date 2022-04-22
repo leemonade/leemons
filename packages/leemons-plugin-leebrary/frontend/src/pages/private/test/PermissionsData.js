@@ -73,7 +73,6 @@ const PermissionsData = ({ sharing }) => {
           role: userData.role,
         }));
 
-      // console.log('userAgentsAndRoles:', userAgentsAndRoles);
       await setPermissionsRequest(asset.id, userAgentsAndRoles);
       setLoading(false);
       addSuccessAlert(

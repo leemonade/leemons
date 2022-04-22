@@ -1,4 +1,4 @@
-const { isEmpty, compact, uniq } = require('lodash');
+const { compact, uniq } = require('lodash');
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
 const { find: findAssets } = require('../find');
 const { find: findBookmarks } = require('../../bookmarks/find');

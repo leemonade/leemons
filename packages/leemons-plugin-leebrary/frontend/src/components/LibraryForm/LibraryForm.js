@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { isFunction, isEmpty, toLower } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import {
@@ -12,6 +12,8 @@ import {
   Stack,
   Button,
   ImageLoader,
+  useResizeObserver,
+  useViewportSize,
 } from '@bubbles-ui/components';
 import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -22,6 +24,8 @@ import {
   LIBRARY_FORM_TYPES,
 } from './LibraryForm.constants';
 import { getUrlMetadataRequest } from '../../request';
+import { AssetListDrawer } from '../AssetListDrawer';
+import { prepareAsset } from '../../helpers/prepareAsset';
 
 // -----------------------------------------------------------------------------
 // HELPERS
@@ -61,11 +65,17 @@ const LibraryForm = ({
   children,
   loading,
   type,
+  onlyImages,
+  hideTitle,
 }) => {
-  const [isImage, setIsImage] = useState(false);
+  const [isImage, setIsImage] = useState(onlyImages);
   const [checking, setChecking] = useState(false);
   const [urlMetadata, setUrlMetadata] = useState({});
+  const [showAssetDrawer, setShowAssetDrawer] = useState(false);
+  const [coverAsset, setCoverAsset] = useState(null);
   const [, , , getErrorMessage] = useRequestErrorMessage();
+  const [boxRef, rect] = useResizeObserver();
+  const { width: viewportWidth } = useViewportSize();
 
   // ························································
   // FORM SETUP
@@ -94,8 +104,17 @@ const LibraryForm = ({
   useEffect(() => {
     if (!isEmpty(assetFile)) {
       setIsImage(isImageFile(assetFile));
+      setValue('name', assetFile.name.match(/(.+?)(\.[^.]+$|$)/)[1]);
     }
   }, [assetFile]);
+
+  useEffect(() => {
+    if (isEmpty(watchCoverFile)) {
+      setCoverAsset(null);
+    }
+  }, [watchCoverFile]);
+
+  useEffect(() => setIsImage(onlyImages), [onlyImages]);
 
   // ························································
   // HANDLERS
@@ -104,12 +123,13 @@ const LibraryForm = ({
     if (!isEmpty(e.file) && e.file.length === 1) [e.file] = e.file;
     if (asset.id) e.id = asset.id;
     if (urlMetadata?.logo) e.icon = urlMetadata.logo;
+    if (coverAsset) e.coverFile = coverAsset.file.id;
+    console.log('onSubmit:', e);
     if (isFunction(onSubmit)) onSubmit(e);
   };
 
   const validateUrl = async () => {
     const isValid = await trigger('url', { shouldFocus: true });
-    console.log('isValid:', isValid);
     return isValid;
   };
 
@@ -138,6 +158,17 @@ const LibraryForm = ({
     }
   };
 
+  const handleOnCloseAssetDrawer = () => {
+    setShowAssetDrawer(false);
+  };
+
+  const handleOnSelectAsset = (item) => {
+    const preparedAsset = prepareAsset(item);
+    setCoverAsset(preparedAsset);
+    setValue('coverFile', preparedAsset.cover);
+    setShowAssetDrawer(false);
+  };
+
   // ························································
   // RENDER
 
@@ -151,10 +182,15 @@ const LibraryForm = ({
     return {};
   }, [type, urlMetadata]);
 
+  const drawerSize = useMemo(
+    () => Math.max(viewportWidth - rect.width - 370, 500),
+    [viewportWidth, rect]
+  );
+
   return (
-    <Box>
+    <Box ref={boxRef}>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
-        <ContextContainer title={labels.title} divided>
+        <ContextContainer title={!hideTitle ? labels.title : undefined} divided>
           <ContextContainer>
             {type === LIBRARY_FORM_TYPES.MEDIA_FILES && (
               <Controller
@@ -172,6 +208,7 @@ const LibraryForm = ({
                     single
                     initialFiles={value ? [value] : []}
                     inputWrapperProps={{ error: errors.file }}
+                    accept={onlyImages ? ['image/*'] : undefined}
                     {...field}
                   />
                 )}
@@ -260,7 +297,11 @@ const LibraryForm = ({
               description={type === LIBRARY_FORM_TYPES.BOOKMARKS && descriptions?.featuredImage}
             >
               <Stack direction="row" spacing={3}>
-                {!watchCoverFile && <Button variant={'outline'}>Search from library</Button>}
+                {!watchCoverFile && (
+                  <Button variant={'outline'} onClick={() => setShowAssetDrawer(true)}>
+                    Search from library
+                  </Button>
+                )}
                 <Controller
                   control={control}
                   name="coverFile"
@@ -286,6 +327,15 @@ const LibraryForm = ({
           </Stack>
         </ContextContainer>
       </form>
+      <AssetListDrawer
+        opened={showAssetDrawer}
+        onClose={handleOnCloseAssetDrawer}
+        size={drawerSize}
+        shadow={drawerSize <= 500}
+        onSelect={handleOnSelectAsset}
+        creatable
+        onlyCreateImages
+      />
     </Box>
   );
 };
