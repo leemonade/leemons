@@ -52,6 +52,7 @@ async function getTestsDetails(id, { transacting } = {}) {
 
   return _.map(tests, (test) => ({
     ...test,
+    filters: JSON.parse(test.filters),
     questions: _.map(questionsTestsByTest[test.id] || [], (quest) => ({
       ...questionsById[quest.question],
       properties: JSON.parse(questionsById[quest.question].properties),

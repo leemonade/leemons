@@ -19,7 +19,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { questionTypeT } from '../../questions-banks/components/QuestionForm';
 
-export default function DetailQuestionsFilters({ defaultValues, questionBank, t, next }) {
+export default function DetailQuestionsFilters({ defaultValues, questionBank, t, onChange }) {
   const [t2] = useTranslateLoader(prefixPN('questionsBanksDetail'));
   const form = useForm({ defaultValues });
   const useAllQuestions = form.watch('useAllQuestions');
@@ -31,7 +31,7 @@ export default function DetailQuestionsFilters({ defaultValues, questionBank, t,
 
   async function showQuestions() {
     form.handleSubmit((data) => {
-      next(data);
+      onChange(data);
     })();
   }
 
@@ -126,6 +126,7 @@ export default function DetailQuestionsFilters({ defaultValues, questionBank, t,
 
 DetailQuestionsFilters.propTypes = {
   t: PropTypes.func.isRequired,
-  next: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired,
   questionBank: PropTypes.object,
+  defaultValues: PropTypes.object,
 };

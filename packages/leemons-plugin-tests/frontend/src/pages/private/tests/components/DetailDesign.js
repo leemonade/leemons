@@ -22,5 +22,5 @@ export default function DetailDesign({ form, t, onNext }) {
 DetailDesign.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  onNext: PropTypes.func.isRequired,
+  onNext: PropTypes.func,
 };

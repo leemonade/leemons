@@ -23,6 +23,7 @@ import { listQuestionsBanksRequest } from '../../../../request';
 
 export default function DetailQuestionsBanks({ form, t, onNext }) {
   const [, , , getErrorMessage] = useRequestErrorMessage();
+  const [isDirty, setIsDirty] = React.useState(false);
   const [store, render] = useStore({
     loading: true,
     page: 0,
@@ -31,6 +32,7 @@ export default function DetailQuestionsBanks({ form, t, onNext }) {
   const questionBank = form.watch('questionBank');
 
   async function next() {
+    setIsDirty(true);
     const formGood = await form.trigger(['questionBank']);
     if (formGood) {
       onNext();
@@ -142,7 +144,7 @@ export default function DetailQuestionsBanks({ form, t, onNext }) {
             <Box>
               <Button onClick={next}>{t('continue')}</Button>
             </Box>
-            <InputWrapper error={form.formState.errors.questionBank} />
+            <InputWrapper error={isDirty ? form.formState.errors.questionBank : null} />
           </ContextContainer>
         </Box>
       </Stack>
@@ -173,5 +175,5 @@ export default function DetailQuestionsBanks({ form, t, onNext }) {
 DetailQuestionsBanks.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  onNext: PropTypes.func.isRequired,
+  onNext: PropTypes.func,
 };

@@ -154,5 +154,11 @@ module.exports = {
     questionsRequired: 'Minimum select one question',
     reorderQuestionsDescription:
       'These are the questions you have selected for this test, if you wish, you can order them at your convenience',
+    statementLabel: 'Statement',
+    statementRequired: 'Field required',
+    contentLabel: 'Content',
+    instructionsForTeacherLabel: 'Instructions for teacher',
+    instructionsForStudentLabel: 'Instructions for student',
+    instructions: 'Instructions',
   },
 };

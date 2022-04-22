@@ -153,5 +153,11 @@ module.exports = {
     questionsRequired: 'Mínimo selecciona una pregunta',
     reorderQuestionsDescription:
       'Estas son las preguntas que ha seleccionado para este examen, si lo desea, puede pedirlas a su conveniencia',
+    statementLabel: 'Pregunta',
+    statementRequired: 'Campo obligatorio',
+    contentLabel: 'Contenido',
+    instructionsForTeacherLabel: 'Instrucciones para el profesor',
+    instructionsForStudentLabel: 'Instrucciones para el alumno',
+    instructions: 'Instrucciones',
   },
 };

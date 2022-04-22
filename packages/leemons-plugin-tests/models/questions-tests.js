@@ -18,6 +18,9 @@ module.exports = {
         collection: 'plugins_tests::questions',
       },
     },
+    order: {
+      type: 'number',
+    },
   },
   primaryKey: {
     type: 'uuid',

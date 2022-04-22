@@ -82,6 +82,11 @@ const saveTestSchema = {
     instructionsForTeacher: stringSchemaNullable,
     instructionsForStudent: stringSchemaNullable,
     questionBank: stringSchemaNullable,
+    filters: {
+      type: 'object',
+      additionalProperties: true,
+      nullable: true,
+    },
     questions: {
       type: 'array',
       items: {

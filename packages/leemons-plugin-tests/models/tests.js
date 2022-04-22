@@ -26,6 +26,9 @@ module.exports = {
     instructionsForStudent: {
       type: 'text',
     },
+    filters: {
+      type: 'text',
+    },
   },
   primaryKey: {
     name: 'id',

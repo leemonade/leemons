@@ -16,12 +16,13 @@ async function addQuestionToTest(test, question, { transacting: _transacting } =
       const questions = _.isArray(question) ? question : [question];
       const promises = [];
       _.forEach(tests, (_test) => {
-        _.forEach(questions, (_question) => {
+        _.forEach(questions, (_question, order) => {
           promises.push(
             table.questionsTests.create(
               {
                 test: _test,
                 question: _question,
+                order,
               },
               { transacting }
             )

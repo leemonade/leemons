@@ -11,44 +11,33 @@ import DetailQuestionsFilters from './DetailQuestionsFilters';
 import DetailQuestionsSelect from './DetailQuestionsSelect';
 
 export default function DetailQuestions({ form, t, onNext }) {
+  const [isDirty, setIsDirty] = React.useState(false);
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [store, render] = useStore();
-  const questions = form.watch('questions');
 
-  async function load() {
-    try {
-      const currentQuestions = form.getValues('questions');
-      if (currentQuestions.length > 0) {
-        store.reorderPage = true;
-      }
-      const questionBankId = form.getValues('questionBank');
-      const { questionBank } = await getQuestionBankRequest(questionBankId);
-      store.questionBank = questionBank;
-      render();
-    } catch (e) {
-      addErrorAlert(getErrorMessage(e));
-    }
-  }
+  const questions = form.watch('questions');
+  const filters = form.watch('filters');
 
   function getQuestionsApplyingFilters() {
+    const f = form.getValues('filters');
     const q = filter(store.questionBank.questions, (question) => {
-      if (store.filters.useAllQuestions) {
+      if (f.useAllQuestions) {
         return true;
       }
       let good = true;
-      if (store.filters.type && store.filters.type.length > 0) {
-        if (!store.filters.type.includes(question.type)) {
+      if (f.type && f.type.length > 0) {
+        if (!f.type.includes(question.type)) {
           good = false;
         }
       }
-      if (store.filters.level && store.filters.level.length > 0) {
-        if (!store.filters.level.includes(question.level)) {
+      if (f.level && f.level.length > 0) {
+        if (!f.level.includes(question.level)) {
           good = false;
         }
       }
-      if (store.filters.tags && store.filters.tags.length > 0) {
+      if (f.tags && f.tags.length > 0) {
         let tagsGood = true;
-        store.filters.tags.forEach((tag) => {
+        f.tags.forEach((tag) => {
           if (!question.tags.includes(tag)) {
             tagsGood = false;
           }
@@ -59,13 +48,31 @@ export default function DetailQuestions({ form, t, onNext }) {
       }
       return good;
     });
-    return q.slice(0, store.filters.nQuestions);
+    return q.slice(0, f.nQuestions);
   }
 
-  function onFiltersChange(filters) {
-    store.filters = filters;
+  function onFiltersChange() {
     store.questionsFiltered = getQuestionsApplyingFilters();
     render();
+  }
+
+  async function load() {
+    try {
+      const questionBankId = form.getValues('questionBank');
+      const { questionBank } = await getQuestionBankRequest(questionBankId);
+      store.questionBank = questionBank;
+      const currentQuestions = form.getValues('questions');
+      const currentFilters = form.getValues('filters');
+      if (currentQuestions.length > 0) {
+        store.reorderPage = true;
+      }
+      if (currentFilters) {
+        store.questionsFiltered = getQuestionsApplyingFilters();
+      }
+      render();
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
   }
 
   function returnToFilters() {
@@ -78,10 +85,15 @@ export default function DetailQuestions({ form, t, onNext }) {
   }
 
   async function questionsSelected() {
+    setIsDirty(true);
     const isGood = await form.trigger(['questions']);
     if (isGood) {
-      store.reorderPage = true;
-      render();
+      if (store.reorderPage) {
+        onNext();
+      } else {
+        store.reorderPage = true;
+        render();
+      }
     }
   }
 
@@ -93,49 +105,47 @@ export default function DetailQuestions({ form, t, onNext }) {
     return null;
   }
 
-  let component = null;
-  if (!isNil(store.questionsFiltered)) {
-    component = (
-      <Controller
-        control={form.control}
-        name="questions"
-        rules={{
-          required: t('questionsRequired'),
-          min: {
-            value: 1,
-            message: t('questionsRequired'),
-          },
-        }}
-        render={({ field }) => (
-          <DetailQuestionsSelect
-            questions={store.questionsFiltered}
-            questionBank={store.questionBank}
-            t={t}
-            next={questionsSelected}
-            back={returnToFilters}
-            error={form.formState.errors.questions}
-            reorderMode={questions.length && store.reorderPage}
-            {...field}
-          />
-        )}
-      />
-    );
-  } else {
-    component = (
-      <DetailQuestionsFilters
-        defaultValues={store.filters}
-        questionBank={store.questionBank}
-        t={t}
-        next={onFiltersChange}
-      />
-    );
-  }
-
   return (
     <ContextContainer>
       <Paragraph>{t('questionsDescription')}</Paragraph>
       <Title order={4}>{t('questionBank', { name: store.questionBank.name })}</Title>
-      {component}
+      {!isNil(store.questionsFiltered) ? (
+        <Controller
+          key={1}
+          control={form.control}
+          name="questions"
+          render={({ field }) => (
+            <DetailQuestionsSelect
+              questions={store.questionsFiltered}
+              questionBank={store.questionBank}
+              t={t}
+              next={questionsSelected}
+              back={returnToFilters}
+              error={isDirty ? form.formState.errors.questions : null}
+              reorderMode={questions.length && store.reorderPage}
+              {...field}
+            />
+          )}
+        />
+      ) : (
+        <Controller
+          key={2}
+          control={form.control}
+          name="filters"
+          render={({ field }) => (
+            <DetailQuestionsFilters
+              defaultValues={filters}
+              questionBank={store.questionBank}
+              t={t}
+              {...field}
+              onChange={(v) => {
+                field.onChange(v);
+                onFiltersChange();
+              }}
+            />
+          )}
+        />
+      )}
     </ContextContainer>
   );
 }
@@ -143,5 +153,5 @@ export default function DetailQuestions({ form, t, onNext }) {
 DetailQuestions.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  onNext: PropTypes.func.isRequired,
+  onNext: PropTypes.func,
 };

@@ -14,7 +14,7 @@ import {
   TableInput,
   Title,
 } from '@bubbles-ui/components';
-import _ from 'lodash';
+import { keyBy, map } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { Link } from 'react-router-dom';
@@ -84,11 +84,11 @@ export default function DetailQuestionsSelect({
   const tableItems = React.useMemo(
     () =>
       questions && questions.length
-        ? _.map(questions, (item) => ({
+        ? map(questions, (item) => ({
             ...getQuestionForTable(item, t2),
             check: (
               <Checkbox
-                checked={value.includes(item.id)}
+                checked={value ? value.includes(item.id) : false}
                 onChange={() => {
                   const index = value.indexOf(item.id);
                   if (index >= 0) {
@@ -118,8 +118,21 @@ export default function DetailQuestionsSelect({
 
   let tableComponent = <Table columns={tableHeaders} data={tableItems} />;
   if (reorderMode) {
+    const itemsById = keyBy(tableItems, 'id');
+    const items = map(value, (id) => itemsById[id]);
+    console.log(items, 'Hola');
+
     tableComponent = (
-      <TableInput disabled forceSortable labels={{}} columns={tableHeaders} data={tableItems} />
+      <TableInput
+        disabled
+        forceSortable
+        labels={{}}
+        columns={tableHeaders}
+        data={items}
+        onChange={(e) => {
+          onChange(e.map((item) => item.id));
+        }}
+      />
     );
   }
 
@@ -177,4 +190,5 @@ DetailQuestionsSelect.propTypes = {
   value: PropTypes.array,
   onChange: PropTypes.func,
   reorderMode: PropTypes.bool,
+  error: PropTypes.any,
 };

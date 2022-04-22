@@ -1,5 +1,10 @@
 import React from 'react';
-import { ContextContainer, PageContainer, Stepper } from '@bubbles-ui/components';
+import {
+  ContextContainer,
+  PageContainer,
+  Stepper,
+  useDebouncedCallback,
+} from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
@@ -7,14 +12,18 @@ import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { map } from 'lodash';
 import DetailConfig from './components/DetailConfig';
 import { getTestRequest, saveTestRequest } from '../../../request';
 import DetailDesign from './components/DetailDesign';
 import DetailQuestionsBanks from './components/DetailQuestionsBanks';
 import DetailQuestions from './components/DetailQuestions';
+import DetailContent from './components/DetailContent';
+import DetailInstructions from './components/DetailInstructions';
 
 export default function Detail() {
   const [t] = useTranslateLoader(prefixPN('testsDetail'));
+  const debounce = useDebouncedCallback(1000);
 
   // ----------------------------------------------------------------------
   // SETTINGS
@@ -66,7 +75,7 @@ export default function Detail() {
           // eslint-disable-next-line camelcase
           test: { deleted, deleted_at, created_at, updated_at, ...props },
         } = await getTestRequest(params.id);
-        form.reset(props);
+        form.reset({ ...props, questions: map(props.questions, 'id') });
       }
     } catch (error) {
       addErrorAlert(error);
@@ -98,7 +107,14 @@ export default function Detail() {
 
   if (formValues.type === 'learn') {
     form.register('questionBank', { required: t('questionBankRequired') });
-    form.register('questions', { required: true });
+    form.register('questions', {
+      required: t('questionsRequired'),
+      min: {
+        value: 1,
+        message: t('questionsRequired'),
+      },
+    });
+    form.register('statement', { required: t('statementRequired') });
     steps.push({
       label: t('questionsBank'),
       content: <DetailQuestionsBanks t={t} form={form} />,
@@ -107,7 +123,26 @@ export default function Detail() {
       label: t('questions'),
       content: <DetailQuestions t={t} form={form} />,
     });
+    steps.push({
+      label: t('contentLabel'),
+      content: <DetailContent t={t} form={form} />,
+    });
+    steps.push({
+      label: t('instructions'),
+      content: <DetailInstructions t={t} form={form} />,
+    });
   }
+
+  React.useEffect(() => {
+    const subscription = form.watch(() => {
+      debounce(async () => {
+        store.isValid = await form.trigger();
+        render();
+      });
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <ContextContainer fullHeight>
@@ -119,11 +154,7 @@ export default function Detail() {
           edit: formValues.name && !formValues.published ? t('saveDraft') : undefined,
           duplicate:
             // eslint-disable-next-line no-nested-ternary
-            store.isNew && form.formState.isValid
-              ? t('publish')
-              : form.formState.isValid
-              ? t('publish')
-              : undefined,
+            store.isNew && store.isValid ? t('publish') : store.isValid ? t('publish') : undefined,
         }}
         onDuplicate={() => saveAsPublish()}
         onEdit={() => saveAsDraft()}
@@ -131,7 +162,7 @@ export default function Detail() {
       />
 
       <PageContainer noFlex>
-        <Stepper data={steps} active={2} />
+        <Stepper data={steps} />
       </PageContainer>
     </ContextContainer>
   );

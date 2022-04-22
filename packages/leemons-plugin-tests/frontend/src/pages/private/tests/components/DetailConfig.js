@@ -12,7 +12,10 @@ import { Controller } from 'react-hook-form';
 import { TagsAutocomplete } from '@common';
 
 export default function DetailConfig({ form, t, onNext }) {
+  const [isDirty, setIsDirty] = React.useState(false);
+
   async function next() {
+    setIsDirty(true);
     const formGood = await form.trigger(['name', 'type', 'tagline', 'summary', 'tags']);
     if (formGood) {
       onNext();
@@ -27,7 +30,7 @@ export default function DetailConfig({ form, t, onNext }) {
         render={({ field }) => (
           <TextInput
             required
-            error={form.formState.errors.name}
+            error={isDirty ? form.formState.errors.name : null}
             label={t('nameLabel')}
             {...field}
           />
@@ -39,7 +42,7 @@ export default function DetailConfig({ form, t, onNext }) {
         render={({ field }) => (
           <Select
             required
-            error={form.formState.errors.type}
+            error={isDirty ? form.formState.errors.type : null}
             label={t('typeLabel')}
             data={[
               {
@@ -57,7 +60,7 @@ export default function DetailConfig({ form, t, onNext }) {
         render={({ field }) => (
           <TextInput
             required
-            error={form.formState.errors.tagline}
+            error={isDirty ? form.formState.errors.tagline : null}
             label={t('taglineLabel')}
             {...field}
           />
@@ -69,7 +72,7 @@ export default function DetailConfig({ form, t, onNext }) {
         render={({ field }) => (
           <Textarea
             required
-            error={form.formState.errors.summary}
+            error={isDirty ? form.formState.errors.summary : null}
             label={t('summaryLabel')}
             {...field}
           />
@@ -98,5 +101,5 @@ export default function DetailConfig({ form, t, onNext }) {
 DetailConfig.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  onNext: PropTypes.func.isRequired,
+  onNext: PropTypes.func,
 };

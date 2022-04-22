@@ -20,21 +20,43 @@ async function saveTest(_data, { transacting: _transacting } = {}) {
         if (version.published) {
           version = await versionControlService.upgradeVersion(id, 'major', {
             published,
+            setAsCurrent: true,
             transacting,
           });
-          test = await table.tests.create({ id: version.fullId, ...props }, { transacting });
+          test = await table.tests.create(
+            {
+              id: version.fullId,
+              ...props,
+              filters: JSON.stringify(props.filters),
+            },
+            { transacting }
+          );
         } else {
           if (published) {
             await versionControlService.publishVersion(id, true, { transacting });
           }
-          test = await table.tests.update({ id }, props, { transacting });
+          test = await table.tests.update(
+            { id },
+            {
+              ...props,
+              filters: JSON.stringify(props.filters),
+            },
+            { transacting }
+          );
         }
       } else {
         const version = await versionControlService.register('test', {
           published,
           transacting,
         });
-        test = await table.tests.create({ id: version.fullId, ...props }, { transacting });
+        test = await table.tests.create(
+          {
+            id: version.fullId,
+            ...props,
+            filters: JSON.stringify(props.filters),
+          },
+          { transacting }
+        );
       }
 
       await tagsService.setTagsToValues('plugins.tests.tests', tags || [], test.id, {
