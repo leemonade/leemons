@@ -48,11 +48,11 @@ module.exports = async function upgradeVersion(
   // ES: Si existe una mayor, crea la nueva versión.
   if (versionFound.length) {
     if (upgrade === 'major') {
-      newVersion.major = version[0].major + 1;
+      newVersion.major = versionFound[0].major + 1;
     } else if (upgrade === 'minor') {
-      newVersion.minor = version[0].minor + 1;
+      newVersion.minor = versionFound[0].minor + 1;
     } else if (upgrade === 'patch') {
-      newVersion.patch = version[0].patch + 1;
+      newVersion.patch = versionFound[0].patch + 1;
     }
   }
 

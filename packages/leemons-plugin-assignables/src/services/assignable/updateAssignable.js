@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const getDiff = require('../../helpers/getDiff');
 const { validateAssignable } = require('../../helpers/validators/assignable');
 const updateSubjects = require('../subjects/updateSubjects');
 const { assignables } = require('../tables');
@@ -9,21 +10,30 @@ const getAssignable = require('./getAssignable');
 const listAssignableUserAgents = require('./listAssignableUserAgents');
 const getUserPermission = require('./permissions/assignable/users/getUserPermission');
 
-function getDiff(a, b) {
-  const _a = _.defaults(_.cloneDeep(a), b);
-
-  if (_.isEqual(_a, b)) {
-    return { object: _a, diff: [] };
-  }
-
-  return {
-    object: _a,
-    diff: _.differenceWith(Object.entries(_a), Object.entries(b), _.isEqual).map(([key]) => key),
-  };
-}
+const updatableFields = [
+  'asset',
+  // role,
+  'gradable',
+  'program',
+  'subjects',
+  'relatedAssignables',
+  'methodology',
+  'statement',
+  'development',
+  'duration',
+  'submission',
+  'instructionsForTeachers',
+  'instructionsForStudents',
+];
 
 module.exports = async function updateAssignable(assignable, { userSession, transacting } = {}) {
   const { id, ...assignableObject } = assignable;
+
+  // Check if any of the keys are not updatable (use lodash)
+  if (_.keys(_.omit(assignableObject, updatableFields))?.length) {
+    throw new Error('Some of the provided keys are not updatable');
+  }
+
   let shouldUpgrade = false;
 
   if (_.isEmpty(assignable)) {

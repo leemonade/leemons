@@ -11,7 +11,7 @@ module.exports = async function createAssignableInstance(
   assignableInstance,
   { userSession, transacting } = {}
 ) {
-  // EN: Validate the assignable instance propperties
+  // EN: Validate the assignable instance properties
   // ES: Validar las propiedades del asignable instance
   validateAssignableInstance(assignableInstance, { useRequired: true });
 

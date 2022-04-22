@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const assignableInstanceValidationObject = {
   type: 'object',
   properties: {
@@ -65,7 +67,7 @@ const assignableInstanceValidationObject = {
 const assignableInstanceRequiredProperties = ['assignable', 'alwaysAvailable', 'dates', 'gradable'];
 
 function validateAssignableInstance(assignable, { useRequired = false } = {}) {
-  const obj = assignableInstanceValidationObject;
+  const obj = _.clone(assignableInstanceValidationObject);
 
   if (useRequired) {
     obj.required = assignableInstanceRequiredProperties;

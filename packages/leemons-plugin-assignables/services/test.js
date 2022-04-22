@@ -17,8 +17,12 @@ module.exports = function main(userSession) {
     // updateAssignable,
   } = services.assignables;
 
-  const { createAssignableInstance, getAssignableInstance, removeAssignableInstance } =
-    services.assignableInstances;
+  const {
+    createAssignableInstance,
+    getAssignableInstance,
+    removeAssignableInstance,
+    updateAssignableInstance,
+  } = services.assignableInstances;
 
   const unit = {
     asset: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f@1.0.0',
@@ -221,6 +225,17 @@ module.exports = function main(userSession) {
     console.log(
       'Create assignable instance',
       inspect(assignableInstance, { depth: null, colors: true })
+    );
+
+    console.log(
+      'Update',
+      await updateAssignableInstance(
+        {
+          id: assignableInstance.id,
+          classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507', '5c1a0489-8e1d-4ba2-ac0d-d195144f1508'],
+        },
+        { userSession, transacting }
+      )
     );
 
     assignableInstance = await getAssignableInstance(assignableInstance.id, {

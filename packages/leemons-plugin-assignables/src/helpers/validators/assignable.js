@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const { subjectsValidationObject } = require('./subjects');
 
 // AJV Validator
@@ -100,7 +101,7 @@ const assignableRequiredProperties = [
 ];
 
 function validateAssignable(assignable, { useRequired = false } = {}) {
-  const obj = assignableValidationObject;
+  const obj = _.clone(assignableValidationObject);
   if (useRequired) {
     obj.required = assignableRequiredProperties;
   }
