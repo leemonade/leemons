@@ -233,6 +233,10 @@ module.exports = function main(userSession) {
         {
           id: assignableInstance.id,
           classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507', '5c1a0489-8e1d-4ba2-ac0d-d195144f1508'],
+          dates: {
+            start: new Date('2019-01-01T00:00:00.000Z'),
+            pepe: new Date('2019-01-01T00:00:00.000Z'),
+          },
         },
         { userSession, transacting }
       )

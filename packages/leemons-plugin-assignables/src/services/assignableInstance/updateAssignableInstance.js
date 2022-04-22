@@ -2,6 +2,7 @@ const _ = require('lodash');
 const getDiff = require('../../helpers/getDiff');
 const { validateAssignableInstance } = require('../../helpers/validators/assignableInstance');
 const updateClasses = require('../classes/updateClasses');
+const updateDates = require('../dates/updateDates');
 const { assignableInstances } = require('../tables');
 const getAssignableInstance = require('./getAssignableInstance');
 const getUserPermission = require('./permissions/assignableInstance/users/getUserPermission');
@@ -77,7 +78,7 @@ module.exports = async function updateAssignableInstance(
   // EN: Update dates
   // ES: Actualizar las fechas
   if (diff.includes('dates')) {
-    // TODO: Update the dates
+    await updateDates('assignableInstance', id, object.dates, { transacting });
   }
 
   // EN: Update the classes
