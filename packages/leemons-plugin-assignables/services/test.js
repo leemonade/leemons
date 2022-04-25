@@ -24,7 +24,7 @@ module.exports = function main(userSession) {
     updateAssignableInstance,
   } = services.assignableInstances;
 
-  const { createAssignation } = services.assignations;
+  const { createAssignation, getAssignation } = services.assignations;
 
   const unit = {
     asset: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f@1.0.0',
@@ -267,11 +267,31 @@ module.exports = function main(userSession) {
         metadata: {
           groupsAreTeams: true,
         },
+        grades: [
+          {
+            subject: '5c1a0489-8e1d-4ba2-ac0d-d195144f1507',
+            type: 'main',
+            grade: '5c1a0489-8e1d-4ba2-ac0d-d195144f1507',
+            gradedBy: '98e5f5d0-7f59-4629-8c47-23928e5b48e0',
+            feedback: '<p>This is the feedback</p>',
+          },
+        ],
+        timestamps: {
+          opened: new Date(),
+        },
       },
       { userSession, transacting }
     );
 
     console.log('assignation', assignation);
+
+    const gotAssignation = await getAssignation(
+      assignableInstance.id,
+      '98e5f5d0-7f59-4629-8c47-23928e5b48e0',
+      { transacting }
+    );
+
+    console.log('gotAssignation', gotAssignation);
 
     await removeAssignableInstance(assignableInstance.id, { userSession, transacting });
 

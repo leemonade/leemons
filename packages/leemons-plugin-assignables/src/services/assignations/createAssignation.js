@@ -11,6 +11,7 @@ module.exports = async function createAssignation(
   options,
   { userSession, transacting: t } = {}
 ) {
+  // TODO: Permissions like `task.${taskId}.instance.${instanceId}` to allow assignation removals and permissions changes
   return global.utils.withTransaction(
     async (transacting) => {
       // EN: Get the assignable instance, if not permissions, it will throw an error
