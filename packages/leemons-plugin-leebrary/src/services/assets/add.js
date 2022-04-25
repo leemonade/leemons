@@ -11,7 +11,7 @@ const { add: addBookmark } = require('../bookmarks/add');
 const getAssetPermissionName = require('../permissions/helpers/getAssetPermissionName');
 
 async function add(
-  { file, cover, category, ...data },
+  { file, cover, category, canAccess, ...data },
   { newId, published = true, userSession, transacting: t } = {}
 ) {
   return global.utils.withTransaction(
@@ -99,7 +99,8 @@ async function add(
       const { services: userService } = leemons.getPlugin('users');
       const permissionName = getAssetPermissionName(newAsset.id);
 
-      // First, add permission to the asset
+      // ES: Primero, añadimos permisos al archivo
+      // EN: First, add permission to the asset
       await userService.permissions.addItem(
         newAsset.id,
         leemons.plugin.prefixPN(categoryId),
@@ -110,17 +111,45 @@ async function add(
         { isCustomPermission: true, transacting }
       );
 
-      // TODO: move permission "target" prop to "type" in IntemPermission
-      // Second, add the same permission to the user
-      await userService.permissions.addCustomPermissionToUserAgent(
-        map(userSession.userAgents, 'id'),
-        {
-          permissionName,
-          actionNames: ['owner'],
-          target: categoryId,
-        },
-        { transacting }
-      );
+      // ES: Luego, añade los permisos a los usuarios
+      // EN: Then, add the permissions to the users
+      const permissions = [];
+      let hasOwner = false;
+
+      if (canAccess && !isEmpty(canAccess)) {
+        for (let i = 0, len = canAccess.length; i < len; i++) {
+          const { userAgent, role } = canAccess[i];
+          hasOwner = hasOwner || role === 'owner';
+
+          permissions.push(
+            userService.permissions.addCustomPermissionToUserAgent(
+              userAgent,
+              {
+                permissionName,
+                actionNames: [role],
+                target: categoryId,
+              },
+              { transacting }
+            )
+          );
+        }
+      }
+
+      if (!hasOwner) {
+        permissions.push(
+          userService.permissions.addCustomPermissionToUserAgent(
+            map(userSession.userAgents, 'id'),
+            {
+              permissionName,
+              actionNames: ['owner'],
+              target: categoryId,
+            },
+            { transacting }
+          )
+        );
+      }
+
+      await Promise.all(permissions);
 
       // ··········································································
       // ADD FILES

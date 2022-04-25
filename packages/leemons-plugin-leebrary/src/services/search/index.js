@@ -1,4 +1,4 @@
-const { compact, uniq, flattenDeep, isEmpty } = require('lodash');
+const { compact, uniq, flattenDeep, isEmpty, sortBy } = require('lodash');
 const { byDescription } = require('./byDescription');
 const { byName } = require('./byName');
 const { getByCategory } = require('../assets/getByCategory');
@@ -8,7 +8,7 @@ const { getAssetsByType } = require('../files/getAssetsByType');
 
 async function search(
   { criteria = '', type, category },
-  { details = false, userSession, transacting } = {}
+  { sortBy: sortingBy, sortDirection = 'asc', userSession, transacting } = {}
 ) {
   let assets = [];
   let nothingFound = false;
@@ -49,13 +49,24 @@ async function search(
       assets = await getPermissions(uniq(assets), { userSession, transacting });
     }
 
-    // EN: If the user wants to see the details of the assets, we need to get the details
-    // ES: Si el usuario quiere ver los detalles de los recursos, necesitamos obtener los detalles
-    if (details && !isEmpty(assets)) {
-      return await getByIds(
-        assets.map(({ asset }) => asset),
-        { withFiles: true, transacting }
-      );
+    // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
+    // EN: For the case that you need sorting, we need a different logic
+    if (!isEmpty(assets) && sortingBy && !isEmpty(sortingBy)) {
+      const assetIds = assets.map((item) => item.asset);
+
+      const [items] = await Promise.all([
+        getByIds(assetIds, { withCategory: false, withTags: false, userSession, transacting }),
+      ]);
+
+      let sortedAssets = sortBy(items, sortingBy);
+
+      if (sortDirection === 'desc') {
+        sortedAssets = sortedAssets.reverse();
+      }
+
+      const sortedIds = sortedAssets.map((item) => item.id);
+
+      assets.sort((a, b) => sortedIds.indexOf(a.asset) - sortedIds.indexOf(b.asset));
     }
 
     return assets || [];

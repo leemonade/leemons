@@ -83,12 +83,12 @@ async function update(
   newData.file = assetData.file || null;
   newData.cover = assetData.cover || assetData.coverFile || null;
 
-  console.log('-- VAMOS A ACTUALIZAR --');
-  console.log('-- currentData:');
-  console.dir(currentData, { depth: null });
+  // console.log('-- VAMOS A ACTUALIZAR --');
+  // console.log('-- currentData:');
+  // console.dir(currentData, { depth: null });
 
-  console.log('-- newData:');
-  console.dir(newData, { depth: 1 });
+  // console.log('-- newData:');
+  // console.dir(newData, { depth: 1 });
 
   // EN: Diff the current values with the new ones
   // ES: Compara los valores actuales con los nuevos
@@ -98,9 +98,9 @@ async function update(
     throw new Error('No changes detected');
   }
 
-  console.log('-- DIFF / UPDATE --');
-  console.dir(diff, { depth: null });
-  console.dir(updateObject, { depth: 1 });
+  // console.log('-- DIFF / UPDATE --');
+  // console.dir(diff, { depth: null });
+  // console.dir(updateObject, { depth: 1 });
 
   // ·········································································
   // DUPLICATE ASSET
@@ -127,7 +127,7 @@ async function update(
   // CHECKING TAGS
 
   if (diff.includes('tags')) {
-    console.log('-- HAN CAMBIADO LOS TAGS --');
+    // console.log('-- HAN CAMBIADO LOS TAGS --');
     const tagsService = leemons.getPlugin('common').services.tags;
     const tagsType = leemons.plugin.prefixPN('');
 
@@ -136,7 +136,7 @@ async function update(
       transacting,
     });
 
-    console.log('-- Tags actualizados !');
+    // console.log('-- Tags actualizados !');
   }
 
   // ·········································································
@@ -148,7 +148,7 @@ async function update(
   let coverFile;
 
   if (diff.includes('file') && !isEmpty(file)) {
-    console.log('-- HA CAMBIADO EL ARCHIVO --');
+    // console.log('-- HA CAMBIADO EL ARCHIVO --');
     newFile = await uploadFromSource(file, { name: assetData.name }, { transacting });
 
     if (newFile?.type?.indexOf('image') === 0) {
@@ -157,16 +157,16 @@ async function update(
 
     await addFiles(newFile.id, assetId, { userSession, transacting });
     delete updateObject.file;
-    console.log('-- Archivo actualizado !');
+    // console.log('-- Archivo actualizado !');
   }
 
   if (diff.includes('cover') && !coverFile && !isEmpty(cover)) {
-    console.log('-- HA CAMBIADO EL COVER --');
+    // console.log('-- HA CAMBIADO EL COVER --');
     coverFile = await uploadFromSource(cover, { name: assetData.name }, { transacting });
   }
 
   if (coverFile?.id) {
-    console.log('-- Cover Actualizado !');
+    // console.log('-- Cover Actualizado !');
     updateObject.cover = coverFile.id;
   }
 
@@ -186,7 +186,7 @@ async function update(
   // EN: Update the asset
   // ES: Actualizar el asset
   const asset = await tables.assets.update({ id: assetId }, updateObject, { transacting });
-  console.log('-- Asset actualizado !');
+  // console.log('-- Asset actualizado !');
 
   return { ...asset, file: newFile, cover: coverFile, tags: newData.tags };
 }

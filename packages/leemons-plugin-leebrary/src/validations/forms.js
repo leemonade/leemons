@@ -17,9 +17,10 @@ const addAssetSchema = {
     description: stringSchemaNullable,
     categoryId: stringSchema,
     categoryKey: stringSchema,
+    category: stringSchema,
   },
   required: ['name'],
-  anyOf: [{ required: ['categoryId'] }, { required: ['categoryKey'] }],
+  anyOf: [{ required: ['categoryId'] }, { required: ['categoryKey'] }, { required: ['category'] }],
   additionalProperties: true,
 };
 
@@ -35,7 +36,8 @@ const setPermissionsSchema = {
   type: 'object',
   properties: {
     asset: stringSchema,
-    userAgentsAndRoles: {
+    isPublic: booleanSchema,
+    canAccess: {
       type: 'array',
       items: {
         type: 'object',
@@ -47,7 +49,8 @@ const setPermissionsSchema = {
       },
     },
   },
-  required: ['asset', 'userAgentsAndRoles'],
+  required: ['asset'],
+  anyOf: [{ required: ['canAccess'] }, { required: ['isPublic'] }],
   additionalProperties: true,
 };
 

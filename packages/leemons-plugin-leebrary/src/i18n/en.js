@@ -99,6 +99,11 @@ module.exports = {
     labels: {
       duplicateSuccess: 'Asset successfully duplicated',
       removeSuccess: 'Asset successfully removed',
+      copy: 'Copy',
+      copied: 'Copied',
+      sharedWith: 'Shared with',
+      sharedViewAll: 'View all',
+      sharedWithEverybody: 'Shared with everybody',
     },
   },
 };

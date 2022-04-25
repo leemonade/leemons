@@ -7,7 +7,17 @@ const { find: findBookmarks } = require('../bookmarks/find');
 const canAssignRole = require('../permissions/helpers/canAssignRole');
 const { getByIds: getCategories } = require('../categories/getByIds');
 
-async function getByIds(assetsIds, { withFiles, checkPermissions, userSession, transacting } = {}) {
+async function getByIds(
+  assetsIds,
+  {
+    withFiles,
+    withTags = true,
+    withCategory = true,
+    checkPermissions,
+    userSession,
+    transacting,
+  } = {}
+) {
   const ids = flatten([assetsIds]);
   let assets = await tables.assets.find({ id_$in: ids }, { transacting });
 
@@ -87,29 +97,41 @@ async function getByIds(assetsIds, { withFiles, checkPermissions, userSession, t
 
   // ·········································································
   // TAGS
+  let tags = [];
 
-  const tagsService = leemons.getPlugin('common').services.tags;
-  const tags = await Promise.all(
-    assets.map((item) =>
-      tagsService.getValuesTags(item.id, { type: leemons.plugin.prefixPN(''), transacting })
-    )
-  );
+  if (withTags) {
+    const tagsService = leemons.getPlugin('common').services.tags;
+    tags = await Promise.all(
+      assets.map((item) =>
+        tagsService.getValuesTags(item.id, { type: leemons.plugin.prefixPN(''), transacting })
+      )
+    );
+  }
 
   // ·········································································
   // CATEGORY DATA
+  let categories = [];
 
-  const categories = await getCategories(uniq(assets.map((item) => item.category)), {
-    transacting,
-  });
+  if (withCategory) {
+    categories = await getCategories(uniq(assets.map((item) => item.category)), {
+      transacting,
+    });
+  }
 
   return assets.map((asset, index) => {
-    const { duplicable, assignable } = find(categories, { id: asset.category });
-    return {
-      ...asset,
-      tags: tags[index][0],
-      duplicable,
-      assignable,
-    };
+    const item = { ...asset };
+
+    if (withCategory) {
+      const { duplicable, assignable } = find(categories, { id: asset.category });
+      item.duplicable = duplicable;
+      item.assignable = assignable;
+    }
+
+    if (withTags) {
+      [item.tags] = tags[index];
+    }
+
+    return item;
   });
 }
 

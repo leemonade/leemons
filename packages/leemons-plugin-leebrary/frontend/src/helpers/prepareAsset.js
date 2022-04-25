@@ -13,6 +13,7 @@ function prepareAsset(assetFromApi) {
   }
 
   const asset = { ...assetFromApi, original: assetFromApi, prepared: true };
+  asset.public = [1, '1', true, 'true'].includes(asset.public);
 
   if (!isEmpty(asset.file)) {
     if (isEmpty(asset.fileType)) {

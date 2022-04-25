@@ -49,4 +49,6 @@ export const LIBRARY_FORM_PROP_TYPES = {
   onSubmit: PropTypes.func,
   loading: PropTypes.bool,
   type: PropTypes.oneOf(Object.keys(LIBRARY_FORM_TYPES).map((key) => LIBRARY_FORM_TYPES[key])),
+  hideSubmit: PropTypes.bool,
+  form: PropTypes.any,
 };

@@ -20,7 +20,7 @@ import { LibraryDetail, LibraryItem } from '@bubbles-ui/leemons';
 import { CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
 import { LayoutModuleIcon, LayoutHeadlineIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useRequestErrorMessage, LocaleDate } from '@common';
+import { unflatten, useRequestErrorMessage, LocaleDate } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import prefixPN from '../helpers/prefixPN';
@@ -66,7 +66,7 @@ const AssetList = ({
   onTypeChange = () => {},
   onSearch,
 }) => {
-  const [t] = useTranslateLoader(prefixPN('list'));
+  const [t, translations] = useTranslateLoader(prefixPN('list'));
   const [category, setCategory] = useState(categoryProp);
   const [categories, setCategories] = useState(categoriesProp);
   const [layout, setLayout] = useState(layoutProp);
@@ -168,6 +168,7 @@ const AssetList = ({
         const response = await getAssetsByIdsRequest([id]);
         if (!isEmpty(response?.assets)) {
           const value = response.assets[0];
+          console.log('asset:', value);
           setAsset(prepareAsset(value));
 
           if (forceLoad && item) {
@@ -404,6 +405,15 @@ const AssetList = ({
 
   const isEmbedded = useMemo(() => variant === 'embedded', [variant]);
 
+  const detailLabels = useMemo(() => {
+    if (!isEmpty(translations)) {
+      const items = unflatten(translations.items);
+      const data = items.plugins.leebrary.list.labels;
+      return data;
+    }
+    return {};
+  }, [translations]);
+
   // ·········································································
   // RENDER
 
@@ -531,6 +541,7 @@ const AssetList = ({
           <Box style={{ background: '#FFF', width: openDetail ? 360 : 'auto', height: '100%' }}>
             <LibraryDetail
               asset={asset}
+              labels={detailLabels}
               variant={cardVariant}
               open={openDetail}
               toolbarItems={toolbarItems}

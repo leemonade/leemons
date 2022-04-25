@@ -331,11 +331,13 @@ class Leemons {
         }
 
         const { userSession } = ctx.state;
-        const { services } = this.plugins.xapi;
-        await services.statement.add(
-          { actor: actor || userSession.id, verb, object, context, pluginName },
-          { userSession }
-        );
+        if(this.plugins.xapi) {
+          const { services } = this.plugins.xapi;
+          await services.statement.add(
+            { actor: actor || userSession.id, verb, object, context, pluginName },
+            { userSession }
+          );
+        }
       } catch (err) {
         console.error(err);
       }

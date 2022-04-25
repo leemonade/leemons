@@ -65,8 +65,10 @@ const LibraryForm = ({
   children,
   loading,
   type,
+  form,
   onlyImages,
   hideTitle,
+  hideSubmit,
 }) => {
   const [isImage, setIsImage] = useState(onlyImages);
   const [checking, setChecking] = useState(false);
@@ -95,7 +97,7 @@ const LibraryForm = ({
     trigger,
     setValue,
     formState: { errors },
-  } = useForm({ defaultValues });
+  } = form || useForm({ defaultValues });
 
   const watchCoverFile = watch('coverFile');
   const assetFile = watch('file');
@@ -320,11 +322,13 @@ const LibraryForm = ({
             </ContextContainer>
           )}
           {children}
-          <Stack justifyContent={'end'} fullWidth>
-            <Button type="submit" loading={loading}>
-              {labels.submitForm}
-            </Button>
-          </Stack>
+          {!hideSubmit && (
+            <Stack justifyContent={'end'} fullWidth>
+              <Button type="submit" loading={loading}>
+                {labels.submitForm}
+              </Button>
+            </Stack>
+          )}
         </ContextContainer>
       </form>
       <AssetListDrawer

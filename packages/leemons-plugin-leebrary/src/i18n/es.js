@@ -99,6 +99,11 @@ module.exports = {
     labels: {
       duplicateSuccess: 'Recurso duplicado con éxito',
       removeSuccess: 'Recurso eliminado con éxito',
+      copy: 'Copiar',
+      copied: 'Copiado',
+      sharedWith: 'Compartido con',
+      sharedViewAll: 'Ver todos',
+      sharedWithEverybody: 'Compartido con todos',
     },
   },
 };

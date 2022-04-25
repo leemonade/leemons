@@ -66,14 +66,14 @@ const PermissionsData = ({ sharing }) => {
   const savePermissions = async () => {
     try {
       setLoading(true);
-      const userAgentsAndRoles = usersData
+      const canAccess = usersData
         .filter((item) => item.editable !== false)
         .map((userData) => ({
           userAgent: userData.user.value || userData.user.userAgentIds[0],
           role: userData.role,
         }));
 
-      await setPermissionsRequest(asset.id, userAgentsAndRoles);
+      await setPermissionsRequest(asset.id, { canAccess });
       setLoading(false);
       addSuccessAlert(
         sharing
