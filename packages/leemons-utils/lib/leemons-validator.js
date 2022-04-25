@@ -1,9 +1,11 @@
 const _ = require('lodash');
 const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
+const addKeywords = require('ajv-keywords');
 
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
+addKeywords(ajv);
 
 class LeemonsValidator {
   constructor(schema, options) {
@@ -23,9 +25,10 @@ class LeemonsValidator {
   }
 
   get errorMessage() {
-    return _.map(_.uniqBy(this.validate.errors, 'message'), (error) => {
-      return `"${error.instancePath}": ${error.message}`;
-    }).join('\n');
+    return _.map(
+      _.uniqBy(this.validate.errors, 'message'),
+      (error) => `"${error.instancePath}": ${error.message}`
+    ).join('\n');
   }
 
   get ajvError() {
