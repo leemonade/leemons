@@ -143,6 +143,7 @@ module.exports = {
     useAllQuestions: 'Utilizar todas las preguntas',
     addType: 'Añadir tipo',
     levelLabel: 'Nivel',
+    categoriesLabel: 'Categorías',
     addLevel: 'Añadir nivel',
     selectByTag: 'Seleccionar por etiqueta',
     showQuestions: 'Mostrar preguntas',

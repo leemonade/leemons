@@ -35,6 +35,11 @@ export default function DetailQuestions({ form, t, onNext }) {
           good = false;
         }
       }
+      if (f.categories && f.categories.length > 0) {
+        if (!f.categories.includes(question.category)) {
+          good = false;
+        }
+      }
       if (f.tags && f.tags.length > 0) {
         let tagsGood = true;
         f.tags.forEach((tag) => {
@@ -63,7 +68,7 @@ export default function DetailQuestions({ form, t, onNext }) {
       store.questionBank = questionBank;
       const currentQuestions = form.getValues('questions');
       const currentFilters = form.getValues('filters');
-      if (currentQuestions.length > 0) {
+      if (currentQuestions?.length > 0) {
         store.reorderPage = true;
       }
       if (currentFilters) {
@@ -122,7 +127,7 @@ export default function DetailQuestions({ form, t, onNext }) {
               next={questionsSelected}
               back={returnToFilters}
               error={isDirty ? form.formState.errors.questions : null}
-              reorderMode={questions.length && store.reorderPage}
+              reorderMode={questions?.length && store.reorderPage}
               {...field}
             />
           )}

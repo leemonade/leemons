@@ -144,6 +144,7 @@ module.exports = {
     useAllQuestions: 'Use all questions',
     addType: 'Add type',
     levelLabel: 'Level',
+    categoriesLabel: 'Categories',
     addLevel: 'Add level',
     selectByTag: 'Select by tag',
     showQuestions: 'Show questions',

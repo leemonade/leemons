@@ -12,11 +12,11 @@ import {
   Stack,
   Title,
 } from '@bubbles-ui/components';
-import { TagsAutocomplete } from '@common';
 import { Controller, useForm } from 'react-hook-form';
-import { forIn } from 'lodash';
+import { forIn, map } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
+import { TagsAutocomplete } from '@common';
 import { questionTypeT } from '../../questions-banks/components/QuestionForm';
 
 export default function DetailQuestionsFilters({ defaultValues, questionBank, t, onChange }) {
@@ -28,6 +28,11 @@ export default function DetailQuestionsFilters({ defaultValues, questionBank, t,
   forIn(questionTypeT, (value, key) => {
     questionTypes.push({ value: key, label: t2(value) });
   });
+
+  const categoriesData = map(questionBank.categories, (category) => ({
+    value: category.id,
+    label: category.value,
+  }));
 
   async function showQuestions() {
     form.handleSubmit((data) => {
@@ -86,7 +91,19 @@ export default function DetailQuestionsFilters({ defaultValues, questionBank, t,
                 )}
               />
             </Box>,
-            <Box key={2}>
+            categoriesData.length > 0 ? (
+              <Box key={2}>
+                <Controller
+                  control={form.control}
+                  name="categories"
+                  shouldUnregister
+                  render={({ field }) => (
+                    <MultiSelect label={t('categoriesLabel')} data={categoriesData} {...field} />
+                  )}
+                />
+              </Box>
+            ) : null,
+            <Box key={3}>
               <Controller
                 control={form.control}
                 name="level"
@@ -100,7 +117,7 @@ export default function DetailQuestionsFilters({ defaultValues, questionBank, t,
                 )}
               />
             </Box>,
-            <Box key={3}>
+            <Box key={4}>
               <Controller
                 control={form.control}
                 name="tags"
