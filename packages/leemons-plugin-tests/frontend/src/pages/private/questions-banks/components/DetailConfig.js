@@ -44,7 +44,6 @@ export default function DetailConfig({ form, t, onNext }) {
       })),
       'program'
     );
-    console.log(store);
     store.programs = programs;
     store.programsData = map(programs, ({ id, name }) => ({ value: id, label: name }));
     render();

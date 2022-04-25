@@ -3,10 +3,14 @@ import PropTypes from 'prop-types';
 import { Button, ContextContainer, Stack } from '@bubbles-ui/components';
 
 export default function DetailDesign({ form, t, onNext }) {
-  function next() {
-    form.handleSubmit(() => {
+  const [isDirty, setIsDirty] = React.useState(false);
+
+  async function next() {
+    setIsDirty(true);
+    const formGood = await form.trigger([]);
+    if (formGood) {
       onNext();
-    })();
+    }
   }
 
   return (

@@ -13,6 +13,7 @@ module.exports = {
   },
   questionsBanksDetail: {
     categoriesLabel: 'Categorías',
+    categoryLabel: 'Categoría',
     programLabel: 'Programa',
     programRequired: 'Campo obligatorio',
     subjectLabel: 'Asignatura',

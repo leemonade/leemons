@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { forIn } from 'lodash';
+import { forIn, map } from 'lodash';
 import {
   Box,
   Button,
@@ -29,7 +29,7 @@ export const questionTypeT = {
   map: 'map',
 };
 
-export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
+export default function QuestionForm({ t, onSave, defaultValues, categories, onCancel }) {
   const questionTypes = [];
   forIn(questionTypeT, (value, key) => {
     questionTypes.push({ value: key, label: t(value) });
@@ -40,9 +40,15 @@ export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
 
   function save() {
     form.handleSubmit((data) => {
+      console.log(data);
       onSave(data);
     })();
   }
+
+  const categoryData = map(categories, (category, index) => ({
+    value: category.id ? category.id : index,
+    label: category.value,
+  }));
 
   return (
     <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
@@ -68,6 +74,28 @@ export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
                 error={form.formState.errors.type}
                 label={t('typeLabel')}
                 {...field}
+              />
+            )}
+          />
+
+          <Controller
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <Select
+                required
+                data={categoryData}
+                error={form.formState.errors.category}
+                label={t('categoryLabel')}
+                {...field}
+                onChange={(e) => {
+                  const item = categoryData[e];
+                  if (item) {
+                    field.onChange(item.value);
+                  } else {
+                    field.onChange(e);
+                  }
+                }}
               />
             )}
           />
@@ -164,4 +192,5 @@ QuestionForm.propTypes = {
   defaultValues: PropTypes.object,
   t: PropTypes.func.isRequired,
   onCancel: PropTypes.func,
+  categories: PropTypes.array,
 };

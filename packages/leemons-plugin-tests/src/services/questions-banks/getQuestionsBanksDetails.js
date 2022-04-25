@@ -48,21 +48,25 @@ async function getQuestionsBanksDetails(id, { transacting } = {}) {
   const questionBankCategoriesByQuestionBank = _.groupBy(questionBankCategories, 'questionBank');
   const questionBankSubjectsByQuestionBank = _.groupBy(questionBankSubjects, 'questionBank');
   const questionsByQuestionBank = _.groupBy(questions, 'questionBank');
-  return _.map(questionsBanks, (questionBank) => ({
-    ...questionBank,
-    categories: _.map(
-      _.orderBy(questionBankCategoriesByQuestionBank[questionBank.id], ['order']),
-      (item) => ({
+  return _.map(questionsBanks, (questionBank) => {
+    const categories = _.orderBy(questionBankCategoriesByQuestionBank[questionBank.id], ['order']);
+    const questionCategories = {};
+    _.forEach(categories, (category, index) => {
+      questionCategories[category.id] = index;
+    });
+    return {
+      ...questionBank,
+      categories: _.map(categories, (item) => ({
         value: item.category,
         id: item.id,
-      })
-    ),
-    subjects: _.map(questionBankSubjectsByQuestionBank[questionBank.id], 'subject'),
-    questions: _.map(questionsByQuestionBank[questionBank.id] || [], (question) => ({
-      ...question,
-      properties: JSON.parse(question.properties),
-    })),
-  }));
+      })),
+      subjects: _.map(questionBankSubjectsByQuestionBank[questionBank.id], 'subject'),
+      questions: _.map(questionsByQuestionBank[questionBank.id] || [], (question) => ({
+        ...question,
+        properties: JSON.parse(question.properties),
+      })),
+    };
+  });
 }
 
 module.exports = { getQuestionsBanksDetails };

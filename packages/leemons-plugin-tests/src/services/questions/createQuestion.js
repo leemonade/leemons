@@ -2,6 +2,7 @@ const { table } = require('../tables');
 
 async function createQuestion(data, { transacting: _transacting } = {}) {
   const tagsService = leemons.getPlugin('common').services.tags;
+  console.log('create question', data);
   return global.utils.withTransaction(
     async (transacting) => {
       const { tags, properties, ...props } = data;

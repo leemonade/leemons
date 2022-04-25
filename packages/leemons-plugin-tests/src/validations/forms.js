@@ -45,6 +45,12 @@ const saveQuestionBankSchema = {
           id: stringSchema,
           type: stringSchema,
           level: stringSchemaNullable,
+          category: {
+            type: ['string', 'number'],
+            minLength: 1,
+            maxLength: 255,
+            nullable: true,
+          },
           withImages: booleanSchema,
           tags: {
             type: 'array',

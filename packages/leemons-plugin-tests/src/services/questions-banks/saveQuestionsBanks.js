@@ -117,10 +117,14 @@ async function saveQuestionsBanks(_data, { transacting: _transacting } = {}) {
         }
       });
       if (categoriesToDelete.length) {
-        await table.questionBankCategories.deleteMany(
-          { id_$in: categoriesToDelete },
-          { transacting }
-        );
+        await Promise.all([
+          table.questionBankCategories.deleteMany({ id_$in: categoriesToDelete }, { transacting }),
+          table.questions.updateMany(
+            { category_$in: categoriesToDelete },
+            { category: null },
+            { transacting }
+          ),
+        ]);
       }
       if (categoriesToUpdate.length) {
         await Promise.all(
@@ -146,6 +150,12 @@ async function saveQuestionsBanks(_data, { transacting: _transacting } = {}) {
           )
         );
       }
+
+      let orderedCategories = await table.questionBankCategories.find(
+        { questionBank: questionBank.id },
+        { transacting }
+      );
+      orderedCategories = _.orderBy(orderedCategories, ['order']);
 
       // -- Questions --
       const currentQuestionsIds = _.map(currentQuestions, 'id');
@@ -173,13 +183,43 @@ async function saveQuestionsBanks(_data, { transacting: _transacting } = {}) {
       }
       if (questionsToUpdate.length) {
         await Promise.all(
-          _.map(questionsToUpdate, (question) => updateQuestion(question, { transacting }))
+          _.map(questionsToUpdate, (question) =>
+            updateQuestion(
+              {
+                ...question,
+                category:
+                  // eslint-disable-next-line no-nested-ternary
+                  _.isNumber(question.category) && question.category >= 0
+                    ? orderedCategories[question.category].id
+                    : _.isString(question.category)
+                    ? question.category
+                    : null,
+              },
+              { transacting }
+            )
+          )
         );
       }
       if (questionsToCreate.length) {
+        console.log('questionsToCreate', questionsToCreate);
         await Promise.all(
           _.map(questionsToCreate, (question) =>
-            createQuestion({ ...question, questionBank: questionBank.id }, { transacting })
+            createQuestion(
+              {
+                ...question,
+                questionBank: questionBank.id,
+                category:
+                  // eslint-disable-next-line no-nested-ternary
+                  _.isNumber(question.category) && question.category >= 0
+                    ? orderedCategories[question.category].id
+                    : _.isString(question.category)
+                    ? question.category
+                    : null,
+              },
+              {
+                transacting,
+              }
+            )
           )
         );
       }

@@ -21,6 +21,8 @@ export default function DetailQuestions({ form, t, onNext }) {
     newQuestion: false,
   });
 
+  const categories = form.watch('categories');
+
   const { openDeleteConfirmationModal } = useLayout();
   const questions = form.watch('questions');
 
@@ -37,12 +39,14 @@ export default function DetailQuestions({ form, t, onNext }) {
   }
 
   function onSave(question) {
+    console.log('question', question);
     const currentQuestions = form.getValues('questions') || [];
     if (qStore.questionIndex >= 0) {
       currentQuestions[qStore.questionIndex] = question;
     } else {
       currentQuestions.push(question);
     }
+    console.log('currentQuestions', currentQuestions);
     form.setValue('questions', currentQuestions);
     onCancel();
   }
@@ -54,6 +58,7 @@ export default function DetailQuestions({ form, t, onNext }) {
         onSave={onSave}
         defaultValues={qStore.newQuestion ? {} : qStore.question}
         onCancel={onCancel}
+        categories={categories}
       />
     );
   }

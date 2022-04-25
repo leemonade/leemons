@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Box,
   ContextContainer,
   PageContainer,
   Stepper,
@@ -82,6 +83,16 @@ export default function Detail() {
     if (params?.id) init();
   }, [params]);
 
+  form.register('questions', {
+    required: true,
+    validate: (value) => {
+      if (value.length === 0) {
+        return true;
+      }
+      return undefined;
+    },
+  });
+
   React.useEffect(() => {
     const subscription = form.watch(() => {
       debounce(async () => {
@@ -94,38 +105,40 @@ export default function Detail() {
   }, []);
 
   return (
-    <ContextContainer fullHeight>
-      <AdminPageHeader
-        values={{
-          title: store.isNew ? t('pageTitleNew') : t('pageTitle', { name: formValues.name }),
-        }}
-        buttons={{
-          edit: formValues.name && !formValues.published ? t('saveDraft') : undefined,
-          duplicate: store.isValid ? t('publish') : undefined,
-        }}
-        onDuplicate={() => saveAsPublish()}
-        onEdit={() => saveAsDraft()}
-        loading={store.saving}
-      />
-
-      <PageContainer noFlex>
-        <Stepper
-          data={[
-            {
-              label: t('config'),
-              content: <DetailConfig t={t} form={form} />,
-            },
-            {
-              label: t('design'),
-              content: <DetailDesign t={t} form={form} />,
-            },
-            {
-              label: t('questions'),
-              content: <DetailQuestions t={t} form={form} />,
-            },
-          ]}
+    <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
+      <ContextContainer fullHeight>
+        <AdminPageHeader
+          values={{
+            title: store.isNew ? t('pageTitleNew') : t('pageTitle', { name: formValues.name }),
+          }}
+          buttons={{
+            edit: formValues.name && !formValues.published ? t('saveDraft') : undefined,
+            duplicate: store.isValid ? t('publish') : undefined,
+          }}
+          onDuplicate={() => saveAsPublish()}
+          onEdit={() => saveAsDraft()}
+          loading={store.saving}
         />
-      </PageContainer>
-    </ContextContainer>
+
+        <PageContainer noFlex>
+          <Stepper
+            data={[
+              {
+                label: t('config'),
+                content: <DetailConfig t={t} form={form} />,
+              },
+              {
+                label: t('design'),
+                content: <DetailDesign t={t} form={form} />,
+              },
+              {
+                label: t('questions'),
+                content: <DetailQuestions t={t} form={form} />,
+              },
+            ]}
+          />
+        </PageContainer>
+      </ContextContainer>
+    </Box>
   );
 }
