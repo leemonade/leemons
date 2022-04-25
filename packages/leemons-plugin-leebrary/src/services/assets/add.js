@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const { map, isEmpty, isNil } = require('lodash');
+const { map, isEmpty, isNil, isString } = require('lodash');
 const { CATEGORIES } = require('../../../config/constants');
 const { tables } = require('../tables');
 const { uploadFromSource } = require('../files/helpers/uploadFromSource');
@@ -39,6 +39,19 @@ async function add(
           // eslint-disable-next-line no-param-reassign
           category = await getCategoryByKey(categoryKey, { transacting });
         }
+      } else if (isString(category)) {
+        // Checks if uuid is passed
+        if (
+          category.match(
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+          )
+        ) {
+          // eslint-disable-next-line no-param-reassign
+          category = await getCategoryById(category, { transacting });
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          category = await getCategoryByKey(category, { transacting });
+        }
       }
 
       if (![leemons.plugin.prefixPN(''), category?.pluginOwner].includes(this.calledFrom)) {
@@ -77,7 +90,7 @@ async function add(
         // ES: Añadimos el control de versiones
         // EN: Add version control
         const { versionControl } = leemons.getPlugin('common').services;
-        const { fullId } = await versionControl.register(leemons.plugin.prefixPN(''), {
+        const { fullId } = await versionControl.register(leemons.plugin.prefixPN(category.id), {
           published,
           transacting,
         });

@@ -61,8 +61,6 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
           userAgent: userData.user.value || userData.user.userAgentIds[0],
           role: userData.role,
         }));
-
-      // console.log('canAccess:', canAccess);
       await setPermissionsRequest(asset.id, { canAccess, isPublic });
       setLoading(false);
       addSuccessAlert(

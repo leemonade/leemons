@@ -1,4 +1,4 @@
-const { isEmpty, sortBy } = require('lodash');
+const { isEmpty, sortBy, intersection } = require('lodash');
 const getRolePermissions = require('./helpers/getRolePermissions');
 const getAssetIdFromPermissionName = require('./helpers/getAssetIdFromPermissionName');
 const { getPublic } = require('./getPublic');
@@ -7,7 +7,14 @@ const { getByAssets } = require('./getByAssets');
 
 async function getByCategory(
   categoryId,
-  { sortBy: sortingBy, sortDirection = 'asc', userSession, transacting } = {}
+  {
+    sortBy: sortingBy,
+    sortDirection = 'asc',
+    published = true,
+    preferCurrent,
+    userSession,
+    transacting,
+  } = {}
 ) {
   try {
     const { services: userService } = leemons.getPlugin('users');
@@ -24,13 +31,26 @@ async function getByCategory(
 
     const publicAssets = await getPublic(categoryId, { transacting });
 
+    // ES: Concatenamos todas las IDs, y luego obtenemos la intersección en función de su status
+    // EN: Concatenate all IDs, and then get the intersection in accordance with their status
+    let assetIds = permissions
+      .map((item) => getAssetIdFromPermissionName(item.permissionName))
+      .concat(publicAssets.map((item) => item.asset));
+
+    const { versionControl } = leemons.getPlugin('common').services;
+    const assetByStatus = await versionControl.listVersionsOfType(
+      leemons.plugin.prefixPN(categoryId),
+      { published, preferCurrent, transacting }
+    );
+
+    assetIds = intersection(
+      assetIds,
+      assetByStatus.map((item) => item.fullId)
+    );
+
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
     // EN: For the case that you need sorting, we need a different logic
     if (sortingBy && !isEmpty(sortingBy)) {
-      const assetIds = permissions
-        .map((item) => getAssetIdFromPermissionName(item.permissionName))
-        .concat(publicAssets.map((item) => item.asset));
-
       const [assets, assetsAccessibles] = await Promise.all([
         getByIds(assetIds, { withCategory: false, withTags: false, userSession, transacting }),
         getByAssets(assetIds, { userSession, transacting }),
@@ -55,7 +75,8 @@ async function getByCategory(
         role: item.actionNames[0],
         permissions: getRolePermissions(item.actionNames[0]),
       }))
-      .concat(publicAssets);
+      .concat(publicAssets)
+      .filter((item) => assetIds.includes(item.asset));
   } catch (e) {
     throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);
   }

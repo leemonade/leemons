@@ -1,8 +1,9 @@
-async function getAssetsByIds(assets) {
+async function getAssetsByIds(assets, filters = {}) {
   return leemons.api(`leebrary/assets/list`, {
     allAgents: true,
     body: {
       assets,
+      filters,
     },
     method: 'POST',
   });

@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState, useContext, useCallback } from 'react';
 import { isEmpty, find } from 'lodash';
-import { Route, Switch, useRouteMatch, useHistory, Redirect, useParams } from 'react-router-dom';
-import { Box, Paper, Stack, Text, SearchInput } from '@bubbles-ui/components';
+import { Route, Switch, useRouteMatch, useHistory, Redirect } from 'react-router-dom';
+import { Box, Stack } from '@bubbles-ui/components';
 import { LibraryNavbar } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { unflatten, useStore } from '@common';
+import { unflatten } from '@common';
 import loadable from '@loadable/component';
 import prefixPN from '../../../helpers/prefixPN';
 import { listCategoriesRequest } from '../../../request';
@@ -32,7 +32,7 @@ const LibraryPageContent = () => {
         ...data,
         icon: data.menuItem.iconSvg,
         name: data.menuItem.label,
-        creatable: data.creatable === true || data.creatable === 1,
+        creatable: [1, '1', true, 'true'].includes(data.creatable),
       }))
     );
   };
@@ -53,11 +53,14 @@ const LibraryPageContent = () => {
     history.push(cleanPath(`${path}/${data.key}/list`));
   };
 
-  const handleOnNew = (data) => {
-    // setCategory(data);
-    // history.push(cleanPath(`${path}/${data.key}/new`));
-    // console.log(data);
-    newAsset(null, data);
+  const handleOnNew = (item) => {
+    if (!isEmpty(item?.createUrl)) {
+      const newURL = new URL(item.createUrl, window?.location);
+      newURL.searchParams.set('from', 'leebrary');
+      history.push(newURL.href.substring(newURL.origin.length));
+    } else {
+      newAsset(null, item);
+    }
   };
 
   const handleOnFile = (data) => {

@@ -173,6 +173,14 @@ const rolesPermissions = {
   },
 };
 
+const widgets = {
+  zones: [
+    { key: `${permissionsPrefix}.list.card` },
+    { key: `${permissionsPrefix}.list.item` },
+    { key: `${permissionsPrefix}.detail` },
+  ],
+};
+
 module.exports = {
   roles,
   assetRoles,
@@ -188,4 +196,5 @@ module.exports = {
   categoriesMenu,
   CATEGORIES,
   permissionSeparator: '(ASSET_ID)',
+  widgets,
 };

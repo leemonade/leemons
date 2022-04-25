@@ -29,8 +29,6 @@ async function add({ url, iconUrl }, asset, { transacting: t } = {}) {
         { url, asset: asset.id, icon },
         { transacting }
       );
-      // console.log('-- BOOKMARK --');
-      // console.dir(bookmark, { depth: null });
       return bookmark;
     },
     tables.bookmarks,

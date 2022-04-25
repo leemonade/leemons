@@ -1,9 +1,16 @@
 import React from 'react';
+import { isNil } from 'lodash';
 import PropTypes from 'prop-types';
-import { Box, Paper, Stack, Text, createStyles } from '@bubbles-ui/components';
+import { Box, createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+import loadable from '@loadable/component';
 import { prepareAsset } from '../helpers/prepareAsset';
+
+function dynamicImport(pluginName, component) {
+  return loadable(() =>
+    import(`@leemons/plugins/${pluginName}/src/widgets/leebrary/${component}.js`)
+  );
+}
 
 const CardWrapperStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -21,18 +28,28 @@ const CardWrapper = ({
   selected,
   className,
   variant = 'media',
-  onDelete = () => {},
+  category,
   ...props
 }) => {
   const asset = prepareAsset(item.original);
   const menuItems = [];
   const { classes } = CardWrapperStyles({ selected });
 
-  return (
+  let Component = LibraryCard;
+
+  if (category?.listCardComponent && category?.pluginOwner) {
+    try {
+      Component = dynamicImport(category?.pluginOwner, category?.listCardComponent);
+    } catch (e) {
+      //
+    }
+  }
+
+  return !isNil(category) ? (
     <Box key={key} {...props}>
-      <LibraryCard asset={asset} menuItems={menuItems} variant={variant} className={classes.root} />
+      <Component asset={asset} menuItems={menuItems} variant={variant} className={classes.root} />
     </Box>
-  );
+  ) : null;
 };
 
 CardWrapper.propTypes = {
@@ -42,8 +59,8 @@ CardWrapper.propTypes = {
   selected: PropTypes.bool,
   className: PropTypes.string,
   onClick: PropTypes.func,
-  onDelete: PropTypes.func,
   variant: PropTypes.string,
+  category: PropTypes.any,
 };
 
 export { CardWrapper };

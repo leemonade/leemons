@@ -20,6 +20,7 @@ module.exports = {
         defaultTo: false,
       },
     },
+    createUrl: { type: 'string' },
     duplicable: {
       type: 'boolean',
       options: {
@@ -32,6 +33,9 @@ module.exports = {
         notNull: true,
       },
     },
+    listCardComponent: { type: 'string' },
+    listItemComponent: { type: 'string' },
+    detailComponent: { type: 'string' },
   },
   primaryKey: {
     type: 'uuid',

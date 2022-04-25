@@ -111,11 +111,30 @@ async function getByIds(
   // ·········································································
   // CATEGORY DATA
   let categories = [];
+  let assetCategoryData = [];
 
   if (withCategory) {
     categories = await getCategories(uniq(assets.map((item) => item.category)), {
       transacting,
     });
+
+    // CATEGORY ROVIDER DATA
+    const providersResults = await Promise.all(
+      categories.map((category) => {
+        if (category.provider === 'leebrary') {
+          return null;
+        }
+
+        const categoryProvider = category.provider;
+        const assetProviderService = leemons.getProvider(categoryProvider).services.assets;
+        return assetProviderService.getByIds(
+          assets.filter((item) => item.category === category.id),
+          { userSession, transacting }
+        );
+      })
+    );
+
+    assetCategoryData = providersResults.flat();
   }
 
   return assets.map((asset, index) => {
@@ -125,6 +144,7 @@ async function getByIds(
       const { duplicable, assignable } = find(categories, { id: asset.category });
       item.duplicable = duplicable;
       item.assignable = assignable;
+      item.providerData = find(assetCategoryData, { asset: asset.id });
     }
 
     if (withTags) {

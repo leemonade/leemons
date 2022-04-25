@@ -70,11 +70,6 @@ async function set(
         transacting,
       });
 
-      // console.log('--- CHECK canAssignRole ---');
-      // console.log('assignerRole:', assignerRole);
-      // console.log('assigneeRole:', assigneeRole);
-      // console.log('role:', role);
-
       // EN: Check if assigner can assign role to assignee
       // ES: Comprobar si el asignador puede asignar el rol al asignado
       if (!canAssignRole(assignerRole, assigneeRole, role)) {
@@ -144,9 +139,6 @@ async function set(
       });
       toRemove = toRemove.filter((ua) => !toUpdate.includes(ua));
 
-      console.log('--- toRemove ---');
-      // console.dir(toRemove, { depth: null });
-
       for (let i = 0, len = toRemove.length; i < len; i++) {
         const userAgent = toRemove[i];
 
@@ -162,10 +154,6 @@ async function set(
           },
           transacting,
         });
-
-        console.log('--- CHECK canUnAssignRole ---');
-        // console.log('assignerRole:', assignerRole);
-        // console.log('assigneeRole:', assigneeRole);
 
         // EN: Check if assigner can assign role to assignee
         // ES: Comprobar si el asignador puede asignar el rol al asignado

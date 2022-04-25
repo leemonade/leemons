@@ -151,7 +151,7 @@ async function getAsset(ctx) {
 }
 
 async function getAssets(ctx) {
-  const { category, criteria, type } = ctx.request.query;
+  const { category, criteria, type, published, preferCurrent } = ctx.request.query;
   const { userSession } = ctx.state;
 
   if (isEmpty(category)) {
@@ -159,11 +159,19 @@ async function getAssets(ctx) {
   }
 
   let assets;
+  const assetPublished = ['true', true, '1', 1].includes(published);
 
   if (!isEmpty(criteria) || !isEmpty(type)) {
-    assets = await getByCriteria({ category, criteria, type }, { userSession });
+    assets = await getByCriteria(
+      { category, criteria, type },
+      { published: assetPublished, preferCurrent, userSession }
+    );
   } else {
-    assets = await getByCategory(category, { userSession });
+    assets = await getByCategory(category, {
+      published: assetPublished,
+      preferCurrent,
+      userSession,
+    });
   }
 
   ctx.status = 200;
@@ -175,13 +183,21 @@ async function getAssets(ctx) {
 
 async function getAssetsByIds(ctx) {
   const { userSession } = ctx.state;
-  const { assets: assetIds } = ctx.request.body;
+  const {
+    assets: assetIds,
+    filters: { published },
+  } = ctx.request.body;
 
   if (isEmpty(assetIds)) {
     throw new global.utils.HttpError(400, 'Not assets was specified');
   }
 
-  const assets = await getByIds(assetIds, { withFiles: true, checkPermissions: true, userSession });
+  const assets = await getByIds(assetIds, {
+    withFiles: true,
+    checkPermissions: true,
+    published,
+    userSession,
+  });
 
   ctx.status = 200;
   ctx.body = {

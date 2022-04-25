@@ -1,4 +1,4 @@
-const { compact, uniq, flattenDeep, isEmpty, sortBy } = require('lodash');
+const { compact, uniq, flattenDeep, isEmpty, sortBy, intersection } = require('lodash');
 const { byDescription } = require('./byDescription');
 const { byName } = require('./byName');
 const { getByCategory } = require('../assets/getByCategory');
@@ -8,7 +8,14 @@ const { getAssetsByType } = require('../files/getAssetsByType');
 
 async function search(
   { criteria = '', type, category },
-  { sortBy: sortingBy, sortDirection = 'asc', userSession, transacting } = {}
+  {
+    sortBy: sortingBy,
+    sortDirection = 'asc',
+    published = true,
+    preferCurrent,
+    userSession,
+    transacting,
+  } = {}
 ) {
   let assets = [];
   let nothingFound = false;
@@ -31,27 +38,45 @@ async function search(
       nothingFound = assets.length === 0;
     }
 
+    if (type) {
+      assets = await getAssetsByType(type, { assets, transacting });
+      nothingFound = assets.length === 0;
+    }
+
+    if (!nothingFound) {
+      const { versionControl } = leemons.getPlugin('common').services;
+      const assetByStatus = await versionControl.listVersionsOfType(
+        leemons.plugin.prefixPN(category),
+        { published, preferCurrent, transacting }
+      );
+
+      assets = intersection(
+        assets,
+        assetByStatus.map((item) => item.fullId)
+      );
+
+      nothingFound = assets.length === 0;
+    }
+
     // ES: Si viene la categoría, filtramos todo el array de Assets con respecto a esa categoría
     // EN: If we have the category, we filter the array of Assets with respect to that category
     if (!nothingFound && category) {
       assets = (await getByCategory(category, { assets: uniq(assets), transacting })).map(
         ({ id }) => id
       );
-    }
-
-    if (!nothingFound && type) {
-      assets = await getAssetsByType(type, { assets, transacting });
+      nothingFound = assets.length === 0;
     }
 
     // EN: Only return assets that the user has permission to view
     // ES: Sólo devuelve los recursos que el usuario tiene permiso para ver
-    if (!isEmpty(assets)) {
+    if (!nothingFound) {
       assets = await getPermissions(uniq(assets), { userSession, transacting });
+      nothingFound = assets.length === 0;
     }
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
     // EN: For the case that you need sorting, we need a different logic
-    if (!isEmpty(assets) && sortingBy && !isEmpty(sortingBy)) {
+    if (!nothingFound && sortingBy && !isEmpty(sortingBy)) {
       const assetIds = assets.map((item) => item.asset);
 
       const [items] = await Promise.all([

@@ -27,9 +27,7 @@ const BookmarkBasicData = ({ categoryId, onSave = () => {}, onNext = () => {} })
     setLoading(true);
 
     try {
-      console.log('categoryId:', categoryId);
       const { asset } = await newAssetRequest({ ...data, tags }, categoryId, 'bookmarks');
-      console.log(asset);
       onSave(prepareAsset(asset));
       setLoading(false);
       addSuccessAlert(t('basicData.labels.createdSuccess'));

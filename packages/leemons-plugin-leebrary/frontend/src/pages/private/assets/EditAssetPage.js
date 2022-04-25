@@ -32,7 +32,6 @@ const EditAssetPage = () => {
 
   const loadAsset = async (id) => {
     try {
-      console.log('loadAsset > id:', id);
       const response = await getAssetsByIdsRequest([id]);
       if (!isEmpty(response?.assets)) {
         const value = response.assets[0];

@@ -4,7 +4,6 @@ import { isEmpty, find, isString, isNil, isFunction } from 'lodash';
 import {
   Box,
   Stack,
-  Paper,
   SearchInput,
   PaginatedList,
   Title,
@@ -12,11 +11,9 @@ import {
   useResizeObserver,
   RadioGroup,
   useDebouncedValue,
-  Text,
-  Button,
   Select,
 } from '@bubbles-ui/components';
-import { LibraryDetail, LibraryItem } from '@bubbles-ui/leemons';
+import { LibraryItem } from '@bubbles-ui/leemons';
 import { CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
 import { LayoutModuleIcon, LayoutHeadlineIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -34,6 +31,7 @@ import {
 } from '../request';
 import { getPageItems } from '../helpers/getPageItems';
 import { CardWrapper } from './CardWrapper';
+import { CardDetailWrapper } from './CardDetailWrapper';
 import { AssetThumbnail } from './AssetThumbnail';
 import { prepareAsset } from '../helpers/prepareAsset';
 import { prepareAssetType } from '../helpers/prepareAssetType';
@@ -61,6 +59,7 @@ const AssetList = ({
   onlyThumbnails,
   page: pageProp,
   pageSize,
+  published,
   onSelectItem = () => {},
   onEditItem = () => {},
   onTypeChange = () => {},
@@ -123,12 +122,12 @@ const AssetList = ({
   };
 
   const loadAssets = async (categoryId, criteria = '', type = '') => {
-    console.log('loadAssets > categoryId:', categoryId);
+    // console.log('loadAssets > categoryId:', categoryId);
     try {
       setLoading(true);
       setAsset(null);
-      const response = await getAssetsRequest({ category: categoryId, criteria, type });
-      console.log('assets:', response.assets);
+      const response = await getAssetsRequest({ category: categoryId, criteria, type, published });
+      // console.log('assets:', response.assets);
       setAssets(response?.assets || []);
       setTimeout(() => setLoading(false), 200);
     } catch (err) {
@@ -138,13 +137,13 @@ const AssetList = ({
   };
 
   const loadAssetsData = async () => {
-    console.log('loadAssetsData');
+    // console.log('loadAssetsData');
     try {
       setLoading(true);
       if (!isEmpty(assets)) {
         const paginated = getPageItems({ data: assets, page: page - 1, size });
         const assetIds = paginated.items.map((item) => item.asset);
-        const response = await getAssetsByIdsRequest(assetIds);
+        const response = await getAssetsByIdsRequest(assetIds, { published });
         paginated.items = response.assets || [];
         setServerData(paginated);
       } else {
@@ -164,11 +163,11 @@ const AssetList = ({
       if (item && !forceLoad) {
         setAsset(prepareAsset(item));
       } else {
-        console.log('loadAsset > id:', id);
+        // console.log('loadAsset > id:', id);
         const response = await getAssetsByIdsRequest([id]);
         if (!isEmpty(response?.assets)) {
           const value = response.assets[0];
-          console.log('asset:', value);
+          // console.log('asset:', value);
           setAsset(prepareAsset(value));
 
           if (forceLoad && item) {
@@ -361,7 +360,7 @@ const AssetList = ({
 
     if (!onlyThumbnails && layout === 'grid') {
       return {
-        itemRender: (p) => <CardWrapper {...p} variant={cardVariant} />,
+        itemRender: (p) => <CardWrapper {...p} variant={cardVariant} category={category} />,
         itemMinWidth,
         margin: 16,
         spacing: 4,
@@ -380,7 +379,7 @@ const AssetList = ({
     }
 
     return { paperProps };
-  }, [layout]);
+  }, [layout, category]);
 
   const listLayouts = useMemo(
     () => [
@@ -539,7 +538,8 @@ const AssetList = ({
       >
         {showDrawer && (
           <Box style={{ background: '#FFF', width: openDetail ? 360 : 'auto', height: '100%' }}>
-            <LibraryDetail
+            <CardDetailWrapper
+              category={category}
               asset={asset}
               labels={detailLabels}
               variant={cardVariant}
@@ -571,6 +571,7 @@ AssetList.defaultProps = {
   canChangeType: true,
   canSearch: true,
   variant: 'full',
+  published: true,
 };
 AssetList.propTypes = {
   category: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
@@ -592,6 +593,7 @@ AssetList.propTypes = {
   variant: PropTypes.oneOf(['full', 'embedded']),
   page: PropTypes.number,
   pageSize: PropTypes.number,
+  published: PropTypes.bool,
 };
 
 export { AssetList };

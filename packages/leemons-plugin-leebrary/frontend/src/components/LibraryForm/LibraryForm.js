@@ -126,7 +126,7 @@ const LibraryForm = ({
     if (asset.id) e.id = asset.id;
     if (urlMetadata?.logo) e.icon = urlMetadata.logo;
     if (coverAsset) e.coverFile = coverAsset.file.id;
-    console.log('onSubmit:', e);
+
     if (isFunction(onSubmit)) onSubmit(e);
   };
 
