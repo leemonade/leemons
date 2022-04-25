@@ -1,5 +1,11 @@
 import React from 'react';
-import { ContextContainer, PageContainer, Stepper } from '@bubbles-ui/components';
+import {
+  Box,
+  ContextContainer,
+  PageContainer,
+  Stepper,
+  useDebouncedCallback,
+} from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
@@ -17,6 +23,7 @@ export default function Detail() {
 
   // ----------------------------------------------------------------------
   // SETTINGS
+  const debounce = useDebouncedCallback(1000);
   const [store, render] = useStore({
     loading: true,
     isNew: false,
@@ -76,44 +83,62 @@ export default function Detail() {
     if (params?.id) init();
   }, [params]);
 
-  return (
-    <ContextContainer fullHeight>
-      <AdminPageHeader
-        values={{
-          title: store.isNew ? t('pageTitleNew') : t('pageTitle', { name: formValues.name }),
-        }}
-        buttons={{
-          edit: formValues.name && !formValues.published ? t('saveDraft') : undefined,
-          duplicate:
-            store.isNew && formValues.questions?.length
-              ? t('publish')
-              : formValues.questions?.length
-              ? t('publish')
-              : undefined,
-        }}
-        onDuplicate={() => saveAsPublish()}
-        onEdit={() => saveAsDraft()}
-        loading={store.saving}
-      />
+  form.register('questions', {
+    required: true,
+    validate: (value) => {
+      if (value.length === 0) {
+        return true;
+      }
+      return undefined;
+    },
+  });
 
-      <PageContainer noFlex>
-        <Stepper
-          data={[
-            {
-              label: t('config'),
-              content: <DetailConfig t={t} form={form} store={store} render={render} />,
-            },
-            {
-              label: t('design'),
-              content: <DetailDesign t={t} form={form} store={store} render={render} />,
-            },
-            {
-              label: t('questions'),
-              content: <DetailQuestions t={t} form={form} store={store} render={render} />,
-            },
-          ]}
+  React.useEffect(() => {
+    const subscription = form.watch(() => {
+      debounce(async () => {
+        store.isValid = await form.trigger();
+        render();
+      });
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  return (
+    <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
+      <ContextContainer fullHeight>
+        <AdminPageHeader
+          values={{
+            title: store.isNew ? t('pageTitleNew') : t('pageTitle', { name: formValues.name }),
+          }}
+          buttons={{
+            edit: formValues.name && !formValues.published ? t('saveDraft') : undefined,
+            duplicate: store.isValid ? t('publish') : undefined,
+          }}
+          onDuplicate={() => saveAsPublish()}
+          onEdit={() => saveAsDraft()}
+          loading={store.saving}
         />
-      </PageContainer>
-    </ContextContainer>
+
+        <PageContainer noFlex>
+          <Stepper
+            data={[
+              {
+                label: t('config'),
+                content: <DetailConfig t={t} form={form} />,
+              },
+              {
+                label: t('design'),
+                content: <DetailDesign t={t} form={form} />,
+              },
+              {
+                label: t('questions'),
+                content: <DetailQuestions t={t} form={form} />,
+              },
+            ]}
+          />
+        </PageContainer>
+      </ContextContainer>
+    </Box>
   );
 }

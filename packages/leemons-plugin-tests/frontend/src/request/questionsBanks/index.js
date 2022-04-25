@@ -1,7 +1,8 @@
-async function listQuestionsBanks({ page, size, published }) {
-  return leemons.api(`tests/question-bank?page=${page}&size=${size}&published=${published}`, {
+async function listQuestionsBanks(body) {
+  return leemons.api(`tests/question-bank/list`, {
     allAgents: true,
-    method: 'GET',
+    method: 'POST',
+    body,
   });
 }
 

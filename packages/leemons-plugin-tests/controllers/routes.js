@@ -33,8 +33,8 @@ module.exports = [
   }),
   // Questions banks
   {
-    path: '/question-bank',
-    method: 'GET',
+    path: '/question-bank/list',
+    method: 'POST',
     handler: 'questionsBanks.listQuestionBanks',
     authenticated: true,
     allowedPermissions: getPermissions(permissions.questionBanks, ['view']),
@@ -52,5 +52,27 @@ module.exports = [
     handler: 'questionsBanks.saveQuestionBanks',
     authenticated: true,
     allowedPermissions: getPermissions(permissions.questionBanks, ['create', 'update']),
+  },
+  // Tests
+  {
+    path: '/tests',
+    method: 'GET',
+    handler: 'tests.listTests',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tests, ['view']),
+  },
+  {
+    path: '/tests/:id',
+    method: 'GET',
+    handler: 'tests.getTest',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tests, ['view']),
+  },
+  {
+    path: '/tests',
+    method: 'POST',
+    handler: 'tests.saveTest',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tests, ['create', 'update']),
   },
 ];

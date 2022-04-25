@@ -4,6 +4,14 @@ const { table } = require('../tables');
 const { validateSaveQuestionBank } = require('../../validations/forms');
 const { updateQuestion } = require('../questions/updateQuestion');
 const { createQuestion } = require('../questions/createQuestion');
+const {
+  removeSubjectsFromQuestionBanks,
+} = require('../question-bank-subjects/removeSubjectsFromQuestionBanks');
+const {
+  addSubjectsToQuestionBanks,
+} = require('../question-bank-subjects/addSubjectsToQuestionBanks');
+const { updateCategory } = require('../question-bank-categories/updateCategory');
+const { createCategory } = require('../question-bank-categories/createCategory');
 
 async function saveQuestionsBanks(_data, { transacting: _transacting } = {}) {
   const tagsService = leemons.getPlugin('common').services.tags;
@@ -19,14 +27,16 @@ async function saveQuestionsBanks(_data, { transacting: _transacting } = {}) {
         delete question.deleted_at;
       });
       validateSaveQuestionBank(data);
-      const { id, questions, tags, published, ...props } = data;
+      const { id, questions, categories, tags, published, subjects, ...props } = data;
       let questionBank;
 
       if (id) {
         let version = await versionControlService.getVersion(id, { transacting });
+
         if (version.published) {
           version = await versionControlService.upgradeVersion(id, 'major', {
             published,
+            setAsCurrent: true,
             transacting,
           });
           questionBank = await table.questionsBanks.create(
@@ -55,8 +65,13 @@ async function saveQuestionsBanks(_data, { transacting: _transacting } = {}) {
         );
       }
 
+      await removeSubjectsFromQuestionBanks(questionBank.id, { transacting });
+      if (_.isArray(subjects) && subjects.length > 0) {
+        await addSubjectsToQuestionBanks(subjects, questionBank.id, { transacting });
+      }
+
       await tagsService.setTagsToValues(
-        'plugins.tests.questionBanks',
+        `plugins.tests.questionBanks`,
         tags || [],
         questionBank.id,
         {
@@ -64,13 +79,85 @@ async function saveQuestionsBanks(_data, { transacting: _transacting } = {}) {
         }
       );
 
-      const currentQuestions = await table.questions.find(
-        { questionBank: questionBank.id },
-        {
-          columns: ['id'],
-          transacting,
+      const [currentCategories, currentQuestions] = await Promise.all([
+        table.questionBankCategories.find(
+          { questionBank: questionBank.id },
+          {
+            columns: ['id'],
+            transacting,
+          }
+        ),
+        table.questions.find(
+          { questionBank: questionBank.id },
+          {
+            columns: ['id'],
+            transacting,
+          }
+        ),
+      ]);
+      // -- Categories --
+      const currentCategoriesIds = _.map(currentCategories, 'id');
+      const categoriesToCreate = [];
+      const categoriesToUpdate = [];
+      const categoriesToDelete = [];
+      _.forEach(categories, (category, order) => {
+        if (category.id) {
+          if (currentCategoriesIds.includes(category.id)) {
+            categoriesToUpdate.push({ ...category, order });
+          } else {
+            categoriesToCreate.push({ ...category, order });
+          }
+        } else {
+          categoriesToCreate.push({ ...category, order });
         }
+      });
+      _.forEach(currentCategoriesIds, (categoryId) => {
+        if (!_.find(categories, { id: categoryId })) {
+          categoriesToDelete.push(categoryId);
+        }
+      });
+      if (categoriesToDelete.length) {
+        await Promise.all([
+          table.questionBankCategories.deleteMany({ id_$in: categoriesToDelete }, { transacting }),
+          table.questions.updateMany(
+            { category_$in: categoriesToDelete },
+            { category: null },
+            { transacting }
+          ),
+        ]);
+      }
+      if (categoriesToUpdate.length) {
+        await Promise.all(
+          _.map(categoriesToUpdate, (question) =>
+            updateCategory(
+              {
+                id: question.id,
+                category: question.value,
+                order: question.order,
+              },
+              { transacting }
+            )
+          )
+        );
+      }
+      if (categoriesToCreate.length) {
+        await Promise.all(
+          _.map(categoriesToCreate, (question) =>
+            createCategory(
+              { category: question.value, order: question.order, questionBank: questionBank.id },
+              { transacting }
+            )
+          )
+        );
+      }
+
+      let orderedCategories = await table.questionBankCategories.find(
+        { questionBank: questionBank.id },
+        { transacting }
       );
+      orderedCategories = _.orderBy(orderedCategories, ['order']);
+
+      // -- Questions --
       const currentQuestionsIds = _.map(currentQuestions, 'id');
       const questionsToCreate = [];
       const questionsToUpdate = [];
@@ -96,13 +183,43 @@ async function saveQuestionsBanks(_data, { transacting: _transacting } = {}) {
       }
       if (questionsToUpdate.length) {
         await Promise.all(
-          _.map(questionsToUpdate, (question) => updateQuestion(question, { transacting }))
+          _.map(questionsToUpdate, (question) =>
+            updateQuestion(
+              {
+                ...question,
+                category:
+                  // eslint-disable-next-line no-nested-ternary
+                  _.isNumber(question.category) && question.category >= 0
+                    ? orderedCategories[question.category].id
+                    : _.isString(question.category)
+                    ? question.category
+                    : null,
+              },
+              { transacting }
+            )
+          )
         );
       }
       if (questionsToCreate.length) {
+        console.log('questionsToCreate', questionsToCreate);
         await Promise.all(
           _.map(questionsToCreate, (question) =>
-            createQuestion({ ...question, questionBank: questionBank.id }, { transacting })
+            createQuestion(
+              {
+                ...question,
+                questionBank: questionBank.id,
+                category:
+                  // eslint-disable-next-line no-nested-ternary
+                  _.isNumber(question.category) && question.category >= 0
+                    ? orderedCategories[question.category].id
+                    : _.isString(question.category)
+                    ? question.category
+                    : null,
+              },
+              {
+                transacting,
+              }
+            )
           )
         );
       }

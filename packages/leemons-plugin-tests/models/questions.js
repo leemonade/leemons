@@ -26,6 +26,11 @@ module.exports = {
     clues: {
       type: 'json',
     },
+    category: {
+      references: {
+        collection: 'plugins_tests::question-bank-categories',
+      },
+    },
     // ES: Aqui se almacena toda la configuración adicional segun el tipo de pregunta
     properties: {
       type: 'json',

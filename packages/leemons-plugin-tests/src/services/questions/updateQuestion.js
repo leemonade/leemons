@@ -14,7 +14,7 @@ async function updateQuestion(data, { transacting: _transacting } = {}) {
           },
           { transacting }
         ),
-        tagsService.setTagsToValues('plugins.tests.questions', tags || [], id, {
+        tagsService.setTagsToValues('plugins.tests.questionBanks', tags || [], id, {
           transacting,
         }),
       ]);

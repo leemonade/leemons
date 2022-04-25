@@ -6,7 +6,6 @@ import {
   Box,
   Button,
   ContextContainer,
-  HtmlText,
   Stack,
   Table,
   Title,
@@ -14,21 +13,18 @@ import {
 import { EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import { useLayout } from '@layout/context';
-import QuestionForm, { questionTypeT } from './QuestionForm';
+import QuestionForm from './QuestionForm';
+import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
 
-export default function DetailQuestions({ form, t, store, render, onNext }) {
+export default function DetailQuestions({ form, t, onNext }) {
   const [qStore, qRender] = useStore({
     newQuestion: false,
   });
 
+  const categories = form.watch('categories');
+
   const { openDeleteConfirmationModal } = useLayout();
   const questions = form.watch('questions');
-
-  function next() {
-    form.handleSubmit(() => {
-      onNext();
-    })();
-  }
 
   function addQuestion() {
     qStore.newQuestion = true;
@@ -43,21 +39,17 @@ export default function DetailQuestions({ form, t, store, render, onNext }) {
   }
 
   function onSave(question) {
+    console.log('question', question);
     const currentQuestions = form.getValues('questions') || [];
     if (qStore.questionIndex >= 0) {
       currentQuestions[qStore.questionIndex] = question;
     } else {
       currentQuestions.push(question);
     }
+    console.log('currentQuestions', currentQuestions);
     form.setValue('questions', currentQuestions);
     onCancel();
   }
-
-  React.useEffect(() => {
-    // eslint-disable-next-line no-param-reassign
-    store.activeStep = 'questions';
-    render();
-  }, []);
 
   if (qStore.newQuestion || qStore.question) {
     return (
@@ -66,6 +58,7 @@ export default function DetailQuestions({ form, t, store, render, onNext }) {
         onSave={onSave}
         defaultValues={qStore.newQuestion ? {} : qStore.question}
         onCancel={onCancel}
+        categories={categories}
       />
     );
   }
@@ -119,24 +112,15 @@ export default function DetailQuestions({ form, t, store, render, onNext }) {
       {questions && questions.length ? (
         <Table
           columns={tableHeaders}
-          data={map(questions, (question, i) => {
-            let responses = '-';
-            if (question.type === 'mono-response') {
-              responses = question.properties.responses.length;
-            }
-            return {
-              ...question,
-              question: <HtmlText>{question.question}</HtmlText>,
-              responses,
-              type: t(questionTypeT[question.type]),
-              actions: (
-                <Stack justifyContent="end" fullWidth>
-                  <ActionButton icon={<EditIcon />} onClick={() => editQuestion(i)} />
-                  <ActionButton icon={<RemoveIcon />} onClick={() => deleteQuestion(i)} />
-                </Stack>
-              ),
-            };
-          })}
+          data={map(questions, (question, i) => ({
+            ...getQuestionForTable(question, t),
+            actions: (
+              <Stack justifyContent="end" fullWidth>
+                <ActionButton icon={<EditIcon />} onClick={() => editQuestion(i)} />
+                <ActionButton icon={<RemoveIcon />} onClick={() => deleteQuestion(i)} />
+              </Stack>
+            ),
+          }))}
         />
       ) : null}
     </ContextContainer>
@@ -146,7 +130,5 @@ export default function DetailQuestions({ form, t, store, render, onNext }) {
 DetailQuestions.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  onNext: PropTypes.func.isRequired,
-  store: PropTypes.object.isRequired,
-  render: PropTypes.func.isRequired,
+  onNext: PropTypes.func,
 };

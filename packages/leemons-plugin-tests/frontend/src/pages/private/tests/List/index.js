@@ -10,7 +10,7 @@ import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
 import ListByPublished from './components/ListByPublished';
 
 export default function List() {
-  const [t] = useTranslateLoader(prefixPN('questionsBanksList'));
+  const [t] = useTranslateLoader(prefixPN('testsList'));
   const { t: tCommon } = useCommonTranslate('page_header');
 
   const history = useHistory();
@@ -24,9 +24,7 @@ export default function List() {
   });
 
   async function getPermissions() {
-    const { permissions } = await getPermissionsWithActionsIfIHaveRequest([
-      'plugins.tests.questionsBanks',
-    ]);
+    const { permissions } = await getPermissionsWithActionsIfIHaveRequest(['plugins.tests.tests']);
     if (permissions[0]) {
       store.canAdd =
         permissions[0].actionNames.includes('create') ||
@@ -36,7 +34,7 @@ export default function List() {
   }
 
   function goCreatePage() {
-    history.push('/private/tests/questions-banks/new');
+    history.push('/private/tests/new');
   }
 
   React.useEffect(() => {
