@@ -1,3 +1,4 @@
+const permission = require('../../permission');
 const getPermissionName = require('../getPermissionName');
 
 module.exports = async function addPermissionToUser(
@@ -6,7 +7,7 @@ module.exports = async function addPermissionToUser(
   role,
   { transacting } = {}
 ) {
-  await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
+  await permission.addCustomPermissionToUserAgent(
     userAgents,
     {
       permissionName: getPermissionName(assignableInstance),

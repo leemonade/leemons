@@ -3,6 +3,7 @@ const getAssignableInstance = require('../assignableInstance/getAssignableInstan
 const { registerDates } = require('../dates');
 const { assignations } = require('../tables');
 const registerGrade = require('../grades/registerGrade');
+const addPermissionToUser = require('../assignableInstance/permissions/assignableInstance/users/addPermissionToUser');
 
 module.exports = async function createAssignation(
   assignableInstanceId,
@@ -14,10 +15,18 @@ module.exports = async function createAssignation(
     async (transacting) => {
       // EN: Get the assignable instance, if not permissions, it will throw an error
       // ES: Obtiene la instancia asignable, si no tiene permisos, lanzará un error
-      await getAssignableInstance(assignableInstanceId, {
+      await getAssignableInstance.call(this, assignableInstanceId, {
         userSession,
         transacting,
       });
+
+      // Create the user permissions
+      // Crear los permisos de usuario
+      try {
+        await addPermissionToUser(assignableInstanceId, users, 'student', { transacting });
+      } catch (e) {
+        throw new Error('');
+      }
 
       try {
         const { indexable, classes, group, grades, timestamps, status, metadata } = options;
@@ -60,7 +69,16 @@ module.exports = async function createAssignation(
               );
             }
 
-            return assignation;
+            return {
+              instance: assignableInstanceId,
+              indexable,
+              classes,
+              group,
+              grades,
+              timestamps,
+              status,
+              metadata,
+            };
           })
         );
       } catch (e) {

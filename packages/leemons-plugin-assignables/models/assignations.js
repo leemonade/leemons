@@ -1,5 +1,5 @@
 module.exports = {
-  modelName: 'asignations',
+  modelName: 'assignations',
   attributes: {
     instance: {
       type: 'uuid',
@@ -36,7 +36,7 @@ module.exports = {
     },
   },
   primaryKey: {
-    type: 'uuid',
     name: 'id',
+    type: 'uuid',
   },
 };

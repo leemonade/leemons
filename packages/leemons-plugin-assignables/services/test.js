@@ -24,6 +24,8 @@ module.exports = function main(userSession) {
     updateAssignableInstance,
   } = services.assignableInstances;
 
+  const { createAssignation } = services.assignations;
+
   const unit = {
     asset: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f@1.0.0',
     role: 'unit',
@@ -209,7 +211,7 @@ module.exports = function main(userSession) {
 
     // EN: Assign the assignable to the students
     // ES: Asigna el asignable a los estudiantes
-    let assignableInstance = await createAssignableInstance(
+    const assignableInstance = await createAssignableInstance(
       {
         assignable: id,
         ...taskInstance,
@@ -222,37 +224,54 @@ module.exports = function main(userSession) {
       { userSession, transacting }
     );
 
-    console.log(
-      'Create assignable instance',
-      inspect(assignableInstance, { depth: null, colors: true })
-    );
+    // console.log(
+    //   'Create assignable instance',
+    //   inspect(assignableInstance, { depth: null, colors: true })
+    // );
 
-    console.log(
-      'Update',
-      await updateAssignableInstance(
-        {
-          id: assignableInstance.id,
-          classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507', '5c1a0489-8e1d-4ba2-ac0d-d195144f1508'],
-          dates: {
-            start: new Date('2019-01-01T00:00:00.000Z'),
-            pepe: new Date('2019-01-01T00:00:00.000Z'),
-          },
+    // console.log(
+    //   'Update',
+    //   await updateAssignableInstance(
+    //     {
+    //       id: assignableInstance.id,
+    //       classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507', '5c1a0489-8e1d-4ba2-ac0d-d195144f1508'],
+    //       dates: {
+    //         start: new Date('2019-01-01T00:00:00.000Z'),
+    //         pepe: new Date('2019-01-01T00:00:00.000Z'),
+    //       },
+    //     },
+    //     { userSession, transacting }
+    //   )
+    // );
+
+    // assignableInstance = await getAssignableInstance(assignableInstance.id, {
+    //   relatedAssignableInstances: true,
+    //   details: true,
+    //   userSession,
+    //   transacting,
+    // });
+
+    // console.log(
+    //   'Get assignable instance',
+    //   inspect(assignableInstance, { depth: null, colors: true })
+    // );
+
+    const assignation = await createAssignation(
+      assignableInstance.id,
+      ['98e5f5d0-7f59-4629-8c47-23928e5b48e0', 'cf02401d-0eea-4bbb-89b4-ca02a9ebfe61'],
+      {
+        indexable: true,
+        classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507'],
+        group: 'group1',
+        status: 'assigned',
+        metadata: {
+          groupsAreTeams: true,
         },
-        { userSession, transacting }
-      )
+      },
+      { userSession, transacting }
     );
 
-    assignableInstance = await getAssignableInstance(assignableInstance.id, {
-      relatedAssignableInstances: true,
-      details: true,
-      userSession,
-      transacting,
-    });
-
-    console.log(
-      'Get assignable instance',
-      inspect(assignableInstance, { depth: null, colors: true })
-    );
+    console.log('assignation', assignation);
 
     await removeAssignableInstance(assignableInstance.id, { userSession, transacting });
 
