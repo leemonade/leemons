@@ -31,11 +31,11 @@ async function duplicate(assetId, { newId, userSession, transacting }) {
   const filesData = {};
 
   if (!isEmpty(asset.file?.id)) {
-    filesData.file = await dataForReturnFile(asset.file.id);
+    filesData.file = await dataForReturnFile(asset.file.id, { transacting });
   }
 
   if (!isEmpty(asset.cover?.id)) {
-    filesData.cover = await dataForReturnFile(asset.cover.id);
+    filesData.cover = await dataForReturnFile(asset.cover.id, { transacting });
   }
 
   const assetData = omit(asset, [

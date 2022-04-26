@@ -170,10 +170,13 @@ module.exports = {
     title: 'Hi {name}',
     number_of_profiles:
       'You have {profiles} profiles on leemons, please select the one with you want to access',
-    use_always_profile: 'Always use this profile for quick access',
+    several_centers:
+      'You have several centers and profiles on Leemons, please select the properly ones to access.',
+    use_always_profile: 'Always use this config for quick access',
     change_easy:
       'You can easily change your profile by clicking on your avatar in the sidebar of the application',
     log_in: 'Log in',
+    choose_center: 'Choose center',
   },
   list_users: {
     pageTitle: 'Users list',
