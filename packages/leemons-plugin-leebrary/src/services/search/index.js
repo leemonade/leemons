@@ -12,6 +12,7 @@ async function search(
     sortBy: sortingBy,
     sortDirection = 'asc',
     published = true,
+    showPublic,
     preferCurrent,
     userSession,
     transacting,
@@ -70,7 +71,7 @@ async function search(
     // EN: Only return assets that the user has permission to view
     // ES: Sólo devuelve los recursos que el usuario tiene permiso para ver
     if (!nothingFound) {
-      assets = await getPermissions(uniq(assets), { userSession, transacting });
+      assets = await getPermissions(uniq(assets), { showPublic, userSession, transacting });
       nothingFound = assets.length === 0;
     }
 

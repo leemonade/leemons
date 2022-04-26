@@ -12,34 +12,36 @@ const { CATEGORIES } = require('../../../config/constants');
 async function remove(id, { soft, userSession, transacting: t } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
+      // ··········································································
+      // CHECKING
+
+      // EN: Check if the asset exists (if not it will throw an error)
+      // ES: Comprobar si el activo existe (si no, lanzará un error)
+      const asset = (await getByIds(id, { transacting }))[0];
+      if (!asset) {
+        throw new global.utils.HttpError(500, `Asset with ${id} does not exists`);
+      }
+
+      // EN: Get user role
+      // ES: Obtener rol del usuario
+      const { permissions } = await getPermissions(id, { userSession, transacting });
+
+      if (!permissions.delete) {
+        throw new global.utils.HttpError(401, "You don't have permission to remove this asset");
+      }
+
+      await leemons.events.emit('before-remove-asset', { id, soft, transacting });
+
       try {
-        // ··········································································
-        // CHECKING
-
-        // EN: Check if the asset exists (if not it will throw an error)
-        // ES: Comprobar si el activo existe (si no, lanzará un error)
-        const asset = (await getByIds(id, { transacting }))[0];
-        if (!asset) {
-          throw new global.utils.HttpError(500, `Asset with ${id} does not exists`);
-        }
-
-        // EN: Get user role
-        // ES: Obtener rol del usuario
-        const { permissions } = await getPermissions(id, { userSession, transacting });
-
-        if (!permissions.delete) {
-          throw new global.utils.HttpError(401, "You don't have permission to remove this role");
-        }
-
-        await leemons.events.emit('before-remove-asset', { id, soft, transacting });
-
         // ··········································································
         // REMOVE TAGS
 
         // EN: Delete the asset tags to clean the database
         // ES: Eliminar las etiquetas del asset para limpiar la base de datos
         const tagsService = leemons.getPlugin('common').services.tags;
-        await tagsService.removeAllTagsForValues(leemons.plugin.prefixPN(''), id, { transacting });
+        await tagsService.removeAllTagsForValues(leemons.plugin.prefixPN(''), id, {
+          transacting,
+        });
 
         // ··········································································
         // REMOVE FILES

@@ -12,6 +12,7 @@ async function getByCategory(
     sortDirection = 'asc',
     published = true,
     preferCurrent,
+    showPublic,
     userSession,
     transacting,
   } = {}
@@ -29,7 +30,7 @@ async function getByCategory(
       }
     );
 
-    const publicAssets = await getPublic(categoryId, { transacting });
+    const publicAssets = showPublic ? await getPublic(categoryId, { transacting }) : [];
 
     // ES: Concatenamos todas las IDs, y luego obtenemos la intersección en función de su status
     // EN: Concatenate all IDs, and then get the intersection in accordance with their status
@@ -52,8 +53,14 @@ async function getByCategory(
     // EN: For the case that you need sorting, we need a different logic
     if (sortingBy && !isEmpty(sortingBy)) {
       const [assets, assetsAccessibles] = await Promise.all([
-        getByIds(assetIds, { withCategory: false, withTags: false, userSession, transacting }),
-        getByAssets(assetIds, { userSession, transacting }),
+        getByIds(assetIds, {
+          withCategory: false,
+          withTags: false,
+          showPublic,
+          userSession,
+          transacting,
+        }),
+        getByAssets(assetIds, { showPublic, userSession, transacting }),
       ]);
 
       let sortedAssets = sortBy(assets, sortingBy);
@@ -69,7 +76,7 @@ async function getByCategory(
       );
     }
 
-    return permissions
+    const results = permissions
       .map((item) => ({
         asset: getAssetIdFromPermissionName(item.permissionName),
         role: item.actionNames[0],
@@ -77,6 +84,8 @@ async function getByCategory(
       }))
       .concat(publicAssets)
       .filter((item) => assetIds.includes(item.asset));
+
+    return results;
   } catch (e) {
     throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);
   }

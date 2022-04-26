@@ -32,8 +32,7 @@ module.exports = {
         },
       },
     },
-
-     */
+    */
   },
   defaultConnection: 'mysql',
 };

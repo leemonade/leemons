@@ -1,10 +1,10 @@
-const { last, flattenDeep } = require('lodash');
+const { flattenDeep } = require('lodash');
 const { tables } = require('../tables');
 const getRolePermissions = require('./helpers/getRolePermissions');
 const getAssetPermissionName = require('./helpers/getAssetPermissionName');
 const getAssetIdFromPermissionName = require('./helpers/getAssetIdFromPermissionName');
 
-async function getByAssets(assetIds, { userSession, transacting } = {}) {
+async function getByAssets(assetIds, { showPublic, userSession, transacting } = {}) {
   const assetsIds = flattenDeep([assetIds]);
 
   try {
@@ -19,10 +19,12 @@ async function getByAssets(assetIds, { userSession, transacting } = {}) {
       }
     );
 
-    const publicAssets = await tables.assets.find(
-      { id_$in: assetsIds, public: true },
-      { columns: ['id', 'public'], transacting }
-    );
+    const publicAssets = showPublic
+      ? await tables.assets.find(
+          { id_$in: assetsIds, public: true },
+          { columns: ['id', 'public'], transacting }
+        )
+      : [];
 
     return permissions.concat(publicAssets).map((item) => ({
       asset: item.public ? item.id : getAssetIdFromPermissionName(item.permissionName),
