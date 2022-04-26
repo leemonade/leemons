@@ -87,10 +87,6 @@ async function update(
   // ES: Compara los valores actuales con los nuevos
   const { object: updateObject, diff } = getDiff(newData, currentData);
 
-  if (!diff.length) {
-    throw new Error('No changes detected');
-  }
-
   // ·········································································
   // DUPLICATE ASSET
 
@@ -108,8 +104,25 @@ async function update(
       transacting,
     });
 
-    const duplicatedAsset = await duplicate(assetId, { newId: fullId, transacting });
+    const duplicatedAsset = await duplicate.call(this, assetId, {
+      newId: fullId,
+      userSession,
+      transacting,
+    });
+    currentVersion.published = published;
     assetId = duplicatedAsset.id;
+  }
+
+  // EN: If the asset is not published and we want to publish it, we do it
+  // ES: Si el activo no está publicado y queremos publicarlo, lo hacemos
+  if (published && !currentVersion.published) {
+    await versionControl.publishVersion(assetId, published, { transacting });
+
+    if (!diff.length) {
+      return currentAsset;
+    }
+  } else if (!diff.length) {
+    throw new Error('No changes detected');
   }
 
   // ·········································································
