@@ -48,6 +48,10 @@
     "path": "../../packages/leemons-plugin-leebrary/frontend"
   },
   {
+    "name": "leebrary-tasks",
+    "path": "../../packages/leemons-provider-leebrary-tasks/frontend"
+  },
+  {
     "name": "families-emergency-numbers",
     "path": "../../packages/leemons-plugin-families-emergency-numbers/frontend"
   },

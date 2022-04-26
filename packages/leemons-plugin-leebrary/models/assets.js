@@ -11,6 +11,9 @@ module.exports = {
         notNull: true,
       },
     },
+    tagline: {
+      type: 'string',
+    },
     description: {
       type: 'string',
     },
@@ -35,8 +38,19 @@ module.exports = {
     public: {
       type: 'boolean',
     },
+    category: {
+      references: {
+        collection: 'plugins_leebrary::categories',
+      },
+    },
+    indexable: {
+      type: 'boolean',
+      options: {
+        defaultTo: true,
+      },
+    },
   },
   primaryKey: {
-    type: 'uuid',
+    specificType: 'varchar(255)',
   },
 };

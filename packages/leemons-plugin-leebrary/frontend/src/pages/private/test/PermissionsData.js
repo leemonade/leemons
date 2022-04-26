@@ -19,12 +19,14 @@ import {
 import { LibraryItem } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import SelectUserAgent from '@users/components/SelectUserAgent';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { unflatten, useRequestErrorMessage } from '@common';
 import prefixPN from '../../../helpers/prefixPN';
 import { prepareAsset } from '../../../helpers/prepareAsset';
 import { getAssetRequest, setPermissionsRequest } from '../../../request';
 
 const ROLES = [
-  { label: 'Owner', value: 'owner' },
+  { label: 'Ownerr', value: 'owner' },
   { label: 'Viewer', value: 'viewer' },
   { label: 'Editor', value: 'editor' },
   { label: 'Commentor', value: 'commentor' },
@@ -33,12 +35,16 @@ const ROLES = [
 const PermissionsData = ({ sharing }) => {
   const [asset, setAsset] = useState(null);
 
-  const [t] = useTranslateLoader(prefixPN('assetSetup'));
+  const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const [loading, setLoading] = useState(false);
   const [usersData, setUsersData] = useState([]);
-  const [roles, setRoles] = useState(ROLES);
+  const [roles, setRoles] = useState([]);
   const [isPublic, setIsPublic] = useState(asset?.public);
   const params = useParams();
+  const [, , , getErrorMessage] = useRequestErrorMessage();
+
+  // ··············································································
+  // DATA PROCESS
 
   const loadAsset = async (id) => {
     const results = await getAssetRequest(id);
@@ -60,20 +66,23 @@ const PermissionsData = ({ sharing }) => {
   const savePermissions = async () => {
     try {
       setLoading(true);
-      // console.log('usersData:', usersData);
-      const userAgentsAndRoles = usersData
+      const canAccess = usersData
         .filter((item) => item.editable !== false)
         .map((userData) => ({
           userAgent: userData.user.value || userData.user.userAgentIds[0],
           role: userData.role,
         }));
 
-      // console.log('userAgentsAndRoles:', userAgentsAndRoles);
-      await setPermissionsRequest(asset.id, userAgentsAndRoles);
+      await setPermissionsRequest(asset.id, { canAccess });
       setLoading(false);
+      addSuccessAlert(
+        sharing
+          ? t(`permissionsData.labels.shareSuccess`)
+          : t(`permissionsData.labels.permissionsSuccess`)
+      );
     } catch (err) {
       setLoading(false);
-      console.error(err);
+      addErrorAlert(getErrorMessage(err));
     }
   };
 
@@ -87,6 +96,20 @@ const PermissionsData = ({ sharing }) => {
     }
   }, [asset]);
 
+  useEffect(() => {
+    if (!isEmpty(translations)) {
+      const items = unflatten(translations.items);
+      const { roleLabels } = items.plugins.leebrary.assetSetup;
+      ROLES.forEach((rol, index) => {
+        ROLES[index].label = roleLabels[rol.value] || ROLES[index].label;
+      });
+      setRoles(ROLES);
+    }
+  }, [translations]);
+
+  // ··············································································
+  // HANDLERS
+
   const handleOnClick = () => {
     savePermissions();
   };
@@ -95,6 +118,9 @@ const PermissionsData = ({ sharing }) => {
     const found = find(usersData, (data) => data.user.id === userData.user.id);
     return isNil(found);
   };
+
+  // ··············································································
+  // LABELS & STATICS
 
   const USERS_COLUMNS = useMemo(
     () => [
@@ -133,6 +159,9 @@ const PermissionsData = ({ sharing }) => {
     }),
     [t]
   );
+
+  // ··············································································
+  // RENDER
 
   return (
     <Box style={{ width: 600, margin: 50 }}>

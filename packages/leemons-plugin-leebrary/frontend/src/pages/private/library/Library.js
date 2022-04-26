@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState, useContext, useCallback } from 'react';
 import { isEmpty, find } from 'lodash';
-import { Route, Switch, useRouteMatch, useHistory, Redirect, useParams } from 'react-router-dom';
-import { Box, Paper, Stack, Text, SearchInput } from '@bubbles-ui/components';
+import { Route, Switch, useRouteMatch, useHistory, Redirect } from 'react-router-dom';
+import { Box, Stack } from '@bubbles-ui/components';
 import { LibraryNavbar } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { unflatten, useStore } from '@common';
+import { unflatten } from '@common';
 import loadable from '@loadable/component';
 import prefixPN from '../../../helpers/prefixPN';
 import { listCategoriesRequest } from '../../../request';
@@ -12,11 +12,18 @@ import LibraryContext, { LibraryProvider } from '../../../context/LibraryContext
 import { VIEWS } from './Library.constants';
 
 const NewAssetPage = loadable(() => import('../assets/NewAssetPage'));
+const EditAssetPage = loadable(() => import('../assets/EditAssetPage'));
+const ListAssetPage = loadable(() => import('../assets/ListAssetPage'));
+
+function cleanPath(path) {
+  return path.replace('//', '/');
+}
 
 const LibraryPageContent = () => {
   const { path } = useRouteMatch();
-  const { newAsset, category, setCategory, setCategories, categories } = useContext(LibraryContext);
+  const { newAsset, category, setAsset, setCategories, categories } = useContext(LibraryContext);
   const [, translations] = useTranslateLoader(prefixPN('home'));
+  const history = useHistory();
 
   const getCategories = async () => {
     const result = await listCategoriesRequest();
@@ -25,7 +32,7 @@ const LibraryPageContent = () => {
         ...data,
         icon: data.menuItem.iconSvg,
         name: data.menuItem.label,
-        creatable: true,
+        creatable: [1, '1', true, 'true'].includes(data.creatable),
       }))
     );
   };
@@ -42,7 +49,18 @@ const LibraryPageContent = () => {
   }, [translations]);
 
   const handleOnNav = (data) => {
-    setCategory(data);
+    setAsset(null);
+    history.push(cleanPath(`${path}/${data.key}/list`));
+  };
+
+  const handleOnNew = (item) => {
+    if (!isEmpty(item?.createUrl)) {
+      const newURL = new URL(item.createUrl, window?.location);
+      newURL.searchParams.set('from', 'leebrary');
+      history.push(newURL.href.substring(newURL.origin.length));
+    } else {
+      newAsset(null, item);
+    }
   };
 
   const handleOnFile = (data) => {
@@ -59,37 +77,30 @@ const LibraryPageContent = () => {
             selectedCategory={category?.id}
             onNav={handleOnNav}
             onFile={handleOnFile}
+            onNew={handleOnNew}
           />
         )}
       </Box>
       <Box style={{ overflowY: 'scroll' }}>
         <Switch>
-          <Route path={`${path}/:category/new`.replace('//', '/')}>
+          {/* NEW ASSET ·························································· */}
+          <Route path={cleanPath(`${path}/:category/new`)}>
             <NewAssetPage />
           </Route>
-          <Route path={`${path}/edit/:id`.replace('//', '/')}>
-            <Box>
-              <Paper shadow="none">
-                <Text>Editando el asset</Text>
-              </Paper>
-            </Box>
+
+          {/* EDIT ASSET ·························································· */}
+          <Route path={cleanPath(`${path}/edit/:id`)}>
+            <EditAssetPage />
           </Route>
-          <Route exact path={path}>
-            <Stack direction="column" fullHeight>
-              <Paper shadow="none" skipFlex>
-                <SearchInput variant="filled" />
-              </Paper>
-              <Box>
-                <Stack fullWidth>
-                  <Paper shadow="none">
-                    <Text>Hola</Text>
-                  </Paper>
-                </Stack>
-              </Box>
-            </Stack>
+
+          {/* LIST ASSETS ························································ */}
+          <Route path={cleanPath(`${path}/:category/list`)}>
+            <ListAssetPage />
           </Route>
+
+          {/* DEFAULT exact path={path} */}
           <Route>
-            <Redirect to={path} />
+            <Redirect to={cleanPath(`${path}/media-files/list`)} />
           </Route>
         </Switch>
       </Box>

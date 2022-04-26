@@ -5,8 +5,11 @@ const jwt = require('jsonwebtoken');
 const aws = require('aws-sdk');
 const slugify = require('slugify');
 const squirrelly = require('squirrelly');
-const execa = require('execa');
+// const execa = require('execa');
 const { ImporterFactory } = require('xlsx-import/lib/ImporterFactory');
+const mediaInfo = require('mediainfo.js');
+const got = require('got');
+const documentInfo = require('./documentInfo');
 const { fetch, fetchJson, fetchText } = require('./fetch');
 const { env } = require('./env');
 const { getModel, generateModelName } = require('./model');
@@ -28,6 +31,7 @@ const getObjectArrayKeys = require('./getObjectArrayKeys');
 const { withTransaction } = require('./withTransaction');
 const numberToEncodedLetter = require('./numberToEncodedLetter');
 const sqlDatetime = require('./sqlDatetime');
+const metascraper = require('./metascraper');
 
 squirrelly.helpers.define('printWithOutErrors', ({ params }) => {
   const it = params[0];
@@ -72,4 +76,8 @@ module.exports = {
   fetchText,
   sqlDatetime,
   XlsxImporter: ImporterFactory,
+  metascraper,
+  mediaInfo,
+  documentInfo,
+  got,
 };

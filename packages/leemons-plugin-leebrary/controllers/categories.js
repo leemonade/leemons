@@ -1,3 +1,5 @@
+const { getByCategory } = require('../src/services/assets/getByCategory');
+const { getTypesByAssets } = require('../src/services/files/getTypesByAssets');
 const { add } = require('../src/services/categories/add');
 const { exists } = require('../src/services/categories/exists');
 const { list } = require('../src/services/categories/list');
@@ -37,10 +39,21 @@ async function removeCategory(ctx) {
   ctx.body = { status: 200, deleted };
 }
 
+async function getAssetTypes(ctx) {
+  const { id } = ctx.request.params;
+  const { transacting } = ctx.state;
+  const assets = (await getByCategory(id, { transacting })).map((item) => item.id);
+  const types = await getTypesByAssets(assets, { transacting });
+
+  ctx.status = 200;
+  ctx.body = { status: 200, types };
+}
+
 module.exports = {
   add: addCategory,
   exists: existsCategory,
   list: listCategories,
   remove: removeCategory,
   listWithMenuItem: listCategoriesWithMenuItem,
+  assetTypes: getAssetTypes,
 };

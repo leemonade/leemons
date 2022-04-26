@@ -6,15 +6,7 @@ import { LayoutContext } from '@layout/context/layout';
 
 function Setup({ steps, onNext, onPrev, onFinish, ...props }) {
   const [active, setActive] = useState(0);
-  const [callOnSave, setCallOnSave] = useState(false);
   const { scrollTo } = useContext(LayoutContext);
-
-  useEffect(() => {
-    if (callOnSave) {
-      if (isFunction(onFinish)) onFinish();
-      setCallOnSave(false);
-    }
-  }, [callOnSave]);
 
   // ·······························································
   // HANDLERS
@@ -23,8 +15,8 @@ function Setup({ steps, onNext, onPrev, onFinish, ...props }) {
     if (active < steps.length - 1) {
       setActive(active + 1);
       if (isFunction(onNext)) onNext();
-    } else {
-      setCallOnSave(true);
+    } else if (isFunction(onFinish)) {
+      onFinish();
     }
     scrollTo({ top: 0 });
   };

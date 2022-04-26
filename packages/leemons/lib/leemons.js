@@ -282,6 +282,7 @@ class Leemons {
       } catch (err) {
         console.error(err);
       }
+      return undefined;
     };
   }
 
@@ -296,6 +297,47 @@ class Leemons {
           LeemonsSocket.worker.emit(ctx.state.userSession.id, 'USER_AGENT_NEED_UPDATE_DATASET');
         }
         return next();
+      } catch (err) {
+        console.error(err);
+      }
+      return undefined;
+    };
+  }
+
+  xapiMiddleware({ actor, verb, object, context }, pluginName) {
+    return async (ctx, next) => {
+      await next();
+      try {
+        // ES: Comprobamos si las propiedades hacen referencia al request
+        // EN: Check if the properties reference the request
+        if (!_.isEmpty(actor) && actor.indexOf('request.') === 0) {
+          // eslint-disable-next-line no-param-reassign
+          actor = _.get(ctx, actor);
+        }
+
+        if (!_.isEmpty(verb) && verb.indexOf('request.') === 0) {
+          // eslint-disable-next-line no-param-reassign
+          verb = _.get(ctx, verb);
+        }
+
+        if (!_.isEmpty(object) && object.indexOf('request.') === 0) {
+          // eslint-disable-next-line no-param-reassign
+          object = _.get(ctx, object);
+        }
+
+        if (!_.isEmpty(context) && context.indexOf('request.') === 0) {
+          // eslint-disable-next-line no-param-reassign
+          context = _.get(ctx, context);
+        }
+
+        const { userSession } = ctx.state;
+        if(this.plugins.xapi) {
+          const { services } = this.plugins.xapi;
+          await services.statement.add(
+            { actor: actor || userSession.id, verb, object, context, pluginName },
+            { userSession }
+          );
+        }
       } catch (err) {
         console.error(err);
       }
@@ -339,10 +381,9 @@ class Leemons {
                 functions.push(this.permissionsMiddleware(route.allowedPermissions));
               }
 
-              functions.push(async (ctx, next) => {
-                await next();
-                console.log('XAPI AQUI', ctx.status, ctx.request.url);
-              });
+              if (!_.isEmpty(route.xapi)) {
+                functions.push(this.xapiMiddleware(route.xapi, plugin.name));
+              }
 
               functions.push(handler);
 

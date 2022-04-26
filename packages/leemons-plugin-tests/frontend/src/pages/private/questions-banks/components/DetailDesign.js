@@ -2,18 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, ContextContainer, Stack } from '@bubbles-ui/components';
 
-export default function DetailDesign({ form, t, store, render, onNext }) {
-  function next() {
-    form.handleSubmit(() => {
-      onNext();
-    })();
-  }
+export default function DetailDesign({ form, t, onNext }) {
+  const [isDirty, setIsDirty] = React.useState(false);
 
-  React.useEffect(() => {
-    // eslint-disable-next-line no-param-reassign
-    store.activeStep = 'design';
-    render();
-  }, []);
+  async function next() {
+    setIsDirty(true);
+    const formGood = await form.trigger([]);
+    if (formGood) {
+      onNext();
+    }
+  }
 
   return (
     <ContextContainer>
@@ -27,7 +25,5 @@ export default function DetailDesign({ form, t, store, render, onNext }) {
 DetailDesign.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  onNext: PropTypes.func.isRequired,
-  store: PropTypes.object.isRequired,
-  render: PropTypes.func.isRequired,
+  onNext: PropTypes.func,
 };

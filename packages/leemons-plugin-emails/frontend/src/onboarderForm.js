@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import React from 'react';
 import loadable from '@loadable/component';
 
@@ -9,19 +8,17 @@ function dynamicImport(component) {
 }
 
 export default function OnboarderForm() {
-  const router = useRouter();
+  const providerName = 'emails-amazon-ses';
 
   let Component = () => <></>;
 
-  if (router.query.providerName === 'emails-amazon-ses') {
-    Component = dynamicImport('/emails-amazon-ses/onboarder-form');
-  }
+  Component = dynamicImport('/emails-amazon-ses/onboarder-form');
 
   async function onSubmit(config) {
     await leemons.api('emails/add-provider', {
       method: 'POST',
       body: {
-        providerName: router.query.providerName,
+        providerName,
         config,
       },
     });
@@ -31,7 +28,7 @@ export default function OnboarderForm() {
     const data = await leemons.api('emails/send-test', {
       method: 'POST',
       body: {
-        providerName: router.query.providerName,
+        providerName,
         config,
       },
     });

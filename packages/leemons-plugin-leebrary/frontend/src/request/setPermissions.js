@@ -1,8 +1,8 @@
-async function setPermissions(assetId, userAgentsAndRoles) {
+async function setPermissions(assetId, { canAccess, isPublic } = {}) {
   return leemons.api(`leebrary/asset/${assetId}/permissions`, {
     allAgents: true,
     method: 'POST',
-    body: { userAgentsAndRoles },
+    body: { canAccess, isPublic },
   });
 }
 

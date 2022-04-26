@@ -1,8 +1,19 @@
 /* eslint-disable no-unreachable */
 import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { cloneDeep, find, findIndex, flattenDeep, isArray, isEmpty, map, uniq } from 'lodash';
-import { ActionButton, Box, MultiSelect, Stack, UserDisplayItem } from '@bubbles-ui/components';
+
+import {
+  cloneDeep,
+  find,
+  findIndex,
+  map,
+  isEmpty,
+  isArray,
+  flattenDeep,
+  uniq,
+  isNil,
+} from 'lodash';
+import { ActionButton, Box, Stack, MultiSelect, UserDisplayItem } from '@bubbles-ui/components';
 import { useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
@@ -177,7 +188,9 @@ const SelectUserAgent = forwardRef(
     }
 
     useEffect(() => {
-      onValueChange(uniq(flattenDeep([inputValue])));
+      // In case of inputValue is "undefined" or "null"
+      const value = inputValue || [];
+      onValueChange(uniq(flattenDeep([value])));
     }, [inputValue]);
 
     // EN: Allow the user to select the users to display
@@ -232,7 +245,7 @@ const SelectUserAgent = forwardRef(
     const propValue = useMemo(() => {
       const value = inputValue;
 
-      if (isEmpty(value)) {
+      if (isEmpty(value) || isNil(value)) {
         return [];
       }
 

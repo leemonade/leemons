@@ -1,8 +1,9 @@
 /* eslint-disable no-await-in-loop */
 const _ = require('lodash');
-
 const fs = require('fs/promises');
+const fss = require('fs');
 const execa = require('execa');
+const temp = require('temp');
 const { loadConfiguration } = require('../config/loadConfig');
 const { getPluginsInfoFromDB, getLocalPlugins, getExternalPlugins } = require('./getPlugins');
 const { computeDependencies, checkMissingDependencies, sortByDeps } = require('./dependencies');
@@ -10,6 +11,9 @@ const { getStatus, PLUGIN_STATUS } = require('./pluginsStatus');
 const ScriptLoader = require('./loadScripts');
 const transformServices = require('./transformServices');
 const { LeemonsSocket } = require('../../socket.io');
+
+// Automatically track and cleanup files at exit
+temp.track();
 
 /**
  * Loads all the external files of a type (plugins, providers, etc)
@@ -185,9 +189,37 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
             if (plugin.name === 'leebrary') return fs.readFile(...rest);
             throw new Error('Only the plugin leebrary have access to readFile');
           },
+          open: (...rest) => {
+            if (plugin.name === 'leebrary') return fs.open(...rest);
+            throw new Error('Only the plugin leebrary have access to open');
+          },
+          close: (...rest) => {
+            if (plugin.name === 'leebrary') return fss.close(...rest);
+            throw new Error('Only the plugin leebrary have access to close');
+          },
           unlink: (...rest) => {
             if (plugin.name === 'leebrary') return fs.unlink(...rest);
             throw new Error('Only the plugin leebrary have access to unlink');
+          },
+          write: (...rest) => {
+            if (plugin.name === 'leebrary') return fss.write(...rest);
+            throw new Error('Only the plugin leebrary have access to write');
+          },
+          createWriteStream: (...rest) => {
+            if (plugin.name === 'leebrary') return fs.createWriteStream(...rest);
+            throw new Error('Only the plugin leebrary have access to createWriteStream');
+          },
+          createTempWriteStream: () => {
+            if (plugin.name === 'leebrary') return temp.createWriteStream();
+            throw new Error('Only the plugin leebrary have access to createTempWriteStream');
+          },
+          mkTempDir: (...rest) => {
+            if (plugin.name === 'leebrary') return temp.mkdir(...rest);
+            throw new Error('Only the plugin leebrary have access to mkTempDir');
+          },
+          openTemp: (...rest) => {
+            if (plugin.name === 'leebrary') return temp.open(...rest);
+            throw new Error('Only the plugin leebrary have access to open temp files');
           },
         });
         _.set(filter, 'leemons.utils', {

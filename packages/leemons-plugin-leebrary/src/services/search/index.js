@@ -1,56 +1,97 @@
-const byTags = require('../assets/tags/getAssets');
+const { compact, uniq, flattenDeep, isEmpty, sortBy, intersection } = require('lodash');
 const { byDescription } = require('./byDescription');
 const { byName } = require('./byName');
-const { getByCategory: byCategory } = require('../assets/getByCategory');
+const { getByCategory } = require('../assets/getByCategory');
 const { getByIds } = require('../assets/getByIds');
-const { has } = require('../permissions/has');
+const { getByAssets: getPermissions } = require('../permissions/getByAssets');
+const { getAssetsByType } = require('../files/getAssetsByType');
 
-function saveResults(newResults, existingResults) {
-  if (existingResults === null) {
-    return newResults;
-  }
-  return newResults;
-}
+async function search(
+  { criteria = '', type, category },
+  {
+    sortBy: sortingBy,
+    sortDirection = 'asc',
+    published = true,
+    preferCurrent,
+    userSession,
+    transacting,
+  } = {}
+) {
+  let assets = [];
+  let nothingFound = false;
 
-async function search(query, { details = false, userSession, transacting } = {}) {
-  let assets = null;
   try {
-    if (query.name) {
-      assets = await saveResults(await byName(query.name, { assets, transacting }), assets);
+    if (!isEmpty(criteria)) {
+      const tagsService = leemons.getPlugin('common').services.tags;
+
+      const result = await Promise.all([
+        byName(criteria, { transacting }),
+        byDescription(criteria, { transacting }),
+        tagsService.getTagsValues(criteria, {
+          type: leemons.plugin.prefixPN(''),
+          transacting,
+        }),
+      ]);
+
+      assets = result[0].concat(result[1]);
+      assets = compact(uniq(assets.concat(flattenDeep(result[2]))));
+      nothingFound = assets.length === 0;
     }
 
-    if (query.description) {
-      assets = await saveResults(
-        await byDescription(query.description, { assets, transacting }),
-        assets
+    if (type) {
+      assets = await getAssetsByType(type, { assets, transacting });
+      nothingFound = assets.length === 0;
+    }
+
+    if (!nothingFound) {
+      const { versionControl } = leemons.getPlugin('common').services;
+      const assetByStatus = await versionControl.listVersionsOfType(
+        leemons.plugin.prefixPN(category),
+        { published, preferCurrent, transacting }
       );
-    }
 
-    if (query.tags) {
-      assets = await saveResults(
-        await byTags(JSON.parse(query.tags), { assets, transacting }),
-        assets
+      assets = intersection(
+        assets,
+        assetByStatus.map((item) => item.fullId)
       );
+
+      nothingFound = assets.length === 0;
     }
 
-    if (query.category) {
-      assets = await saveResults(await byCategory(query.category, { assets, transacting }), assets);
+    // ES: Si viene la categoría, filtramos todo el array de Assets con respecto a esa categoría
+    // EN: If we have the category, we filter the array of Assets with respect to that category
+    if (!nothingFound && category) {
+      assets = (await getByCategory(category, { assets: uniq(assets), transacting })).map(
+        ({ id }) => id
+      );
+      nothingFound = assets.length === 0;
     }
 
     // EN: Only return assets that the user has permission to view
     // ES: Sólo devuelve los recursos que el usuario tiene permiso para ver
-    assets = assets
-      .map(async (asset) => ({
-        permissions: await has(asset, 'view', { userSession, transacting }),
-        asset,
-      }))
-      .filter(({ permissions }) => permissions)
-      .map(({ asset }) => asset);
+    if (!nothingFound) {
+      assets = await getPermissions(uniq(assets), { userSession, transacting });
+      nothingFound = assets.length === 0;
+    }
 
-    // EN: If the user wants to see the details of the assets, we need to get the details
-    // ES: Si el usuario quiere ver los detalles de los recursos, necesitamos obtener los detalles
-    if (details && assets.length) {
-      return await getByIds(assets, { transacting });
+    // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
+    // EN: For the case that you need sorting, we need a different logic
+    if (!nothingFound && sortingBy && !isEmpty(sortingBy)) {
+      const assetIds = assets.map((item) => item.asset);
+
+      const [items] = await Promise.all([
+        getByIds(assetIds, { withCategory: false, withTags: false, userSession, transacting }),
+      ]);
+
+      let sortedAssets = sortBy(items, sortingBy);
+
+      if (sortDirection === 'desc') {
+        sortedAssets = sortedAssets.reverse();
+      }
+
+      const sortedIds = sortedAssets.map((item) => item.id);
+
+      assets.sort((a, b) => sortedIds.indexOf(a.asset) - sortedIds.indexOf(b.asset));
     }
 
     return assets || [];

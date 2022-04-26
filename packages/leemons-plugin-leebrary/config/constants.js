@@ -64,10 +64,17 @@ const categoriesMenu = {
   ],
 };
 
+const CATEGORIES = {
+  BOOKMARKS: 'bookmarks',
+  MEDIA_FILES: 'media-files',
+};
+
 const categories = [
   {
-    key: 'media-files',
+    key: CATEGORIES.MEDIA_FILES,
     creatable: true,
+    duplicable: true,
+    provider: 'leebrary',
     menu: {
       item: {
         iconSvg: '/public/leebrary/media-files.svg',
@@ -86,8 +93,9 @@ const categories = [
     },
   },
   {
-    key: 'bookmarks',
+    key: CATEGORIES.BOOKMARKS,
     creatable: true,
+    provider: 'leebrary',
     menu: {
       item: {
         iconSvg: '/public/leebrary/bookmarks.svg',
@@ -165,6 +173,14 @@ const rolesPermissions = {
   },
 };
 
+const widgets = {
+  zones: [
+    { key: `${permissionsPrefix}.list.card` },
+    { key: `${permissionsPrefix}.list.item` },
+    { key: `${permissionsPrefix}.detail` },
+  ],
+};
+
 module.exports = {
   roles,
   assetRoles,
@@ -178,4 +194,7 @@ module.exports = {
   menuItems,
   categories,
   categoriesMenu,
+  CATEGORIES,
+  permissionSeparator: '(ASSET_ID)',
+  widgets,
 };

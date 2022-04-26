@@ -13,12 +13,16 @@ const addAssetSchema = {
   type: 'object',
   properties: {
     name: stringSchema,
-    tags: arrayStringSchema,
     color: stringSchemaNullable,
     description: stringSchemaNullable,
     categoryId: stringSchema,
+    categoryKey: stringSchema,
+    category: {
+      oneOf: [stringSchemaNullable, { type: 'object', nullable: true }],
+    },
   },
-  required: ['name', 'categoryId'],
+  required: ['name'],
+  anyOf: [{ required: ['categoryId'] }, { required: ['categoryKey'] }, { required: ['category'] }],
   additionalProperties: true,
 };
 
@@ -34,7 +38,8 @@ const setPermissionsSchema = {
   type: 'object',
   properties: {
     asset: stringSchema,
-    userAgentsAndRoles: {
+    isPublic: booleanSchema,
+    canAccess: {
       type: 'array',
       items: {
         type: 'object',
@@ -46,7 +51,8 @@ const setPermissionsSchema = {
       },
     },
   },
-  required: ['asset', 'userAgentsAndRoles'],
+  required: ['asset'],
+  anyOf: [{ required: ['canAccess'] }, { required: ['isPublic'] }],
   additionalProperties: true,
 };
 
@@ -58,7 +64,27 @@ async function validateSetPermissions(data) {
   }
 }
 
+const addBookmarSchema = {
+  type: 'object',
+  properties: {
+    url: stringSchema,
+    iconUrl: stringSchemaNullable,
+    assetId: stringSchema,
+  },
+  required: ['url', 'assetId'],
+  additionalProperties: true,
+};
+
+async function validateAddBookmark(data) {
+  const validator = new LeemonsValidator(addBookmarSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   validateAddAsset,
   validateSetPermissions,
+  validateAddBookmark,
 };

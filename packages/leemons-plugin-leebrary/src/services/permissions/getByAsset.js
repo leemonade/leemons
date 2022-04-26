@@ -1,6 +1,7 @@
-const { find, isEmpty, last } = require('lodash');
+const { find, isEmpty } = require('lodash');
 const { tables } = require('../tables');
 const getRolePermissions = require('./helpers/getRolePermissions');
+const getAssetPermissionName = require('./helpers/getAssetPermissionName');
 
 async function getByAsset(assetId, { userSession, transacting } = {}) {
   try {
@@ -8,7 +9,7 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
     const permissions = await userService.permissions.getUserAgentPermissions(
       userSession.userAgents,
       {
-        query: { permissionName: leemons.plugin.prefixPN(assetId) },
+        query: { permissionName: getAssetPermissionName(assetId) },
         transacting,
       }
     );
@@ -28,7 +29,7 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
 
     const permission = find(
       permissions,
-      (item) => assetId === last(item.permissionName.split('.')) // 'plugins.leebrary.23ee5f1b-9e71-4a39-9ddf-db472c7cdefd',
+      (item) => item.permissionName.indexOf(assetId) > -1 // 'plugins.leebrary.23ee5f1b-9e71-4a39-9ddf-db472c7cdefd',
     );
 
     const role = permission?.actionNames[0];

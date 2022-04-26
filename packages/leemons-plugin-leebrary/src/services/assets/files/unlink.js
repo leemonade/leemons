@@ -1,7 +1,7 @@
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
 const { tables } = require('../../tables');
 
-async function unlink(fileIds, assetId, { userSession, transacting } = {}) {
+async function unlink(fileIds, assetId, { userSession, soft, transacting } = {}) {
   try {
     // EN: Get the user permissions
     // ES: Obtener los permisos del usuario
@@ -21,7 +21,7 @@ async function unlink(fileIds, assetId, { userSession, transacting } = {}) {
       query.asset = assetId;
     }
 
-    const deleted = await tables.assetsFiles.deleteMany(query, { transacting });
+    const deleted = await tables.assetsFiles.deleteMany(query, { soft, transacting });
 
     return deleted.count > 0;
   } catch (e) {

@@ -9,6 +9,11 @@ module.exports = {
       type: 'string',
       required: true,
     },
+    program: {
+      references: {
+        collection: 'plugins_academic-portfolio::programs',
+      },
+    },
     published: {
       type: 'boolean',
       options: {

@@ -52,16 +52,19 @@ export default function List() {
         buttons={store.canAdd ? { new: tCommon('new') } : {}}
         onNew={() => goCreatePage()}
       />
-      <Paper color="solid" shadow="none" padding="none">
-        <Tabs usePageLayout={true} panelColor="solid" fullHeight>
-          <TabPanel label={t('published')}>
+
+      <Tabs usePageLayout={true} panelColor="solid" fullHeight>
+        <TabPanel label={t('published')}>
+          <Paper fullWidth color="solid" shadow="none" padding="none">
             <ListByPublished t={t} published={true} />
-          </TabPanel>
-          <TabPanel label={t('draft')}>
+          </Paper>
+        </TabPanel>
+        <TabPanel label={t('draft')}>
+          <Paper fullWidth color="solid" shadow="none" padding="none">
             <ListByPublished t={t} published={false} />
-          </TabPanel>
-        </Tabs>
-      </Paper>
+          </Paper>
+        </TabPanel>
+      </Tabs>
     </ContextContainer>
   );
 }

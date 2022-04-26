@@ -5,7 +5,7 @@ const remove = require('../src/services/versionControl/currentVersions/remove');
 const update = require('../src/services/versionControl/currentVersions/update');
 const helpers = require('../src/services/versionControl/helpers');
 const { getVersion, publishVersion } = require('../src/services/versionControl/versions');
-const listVersionOfType = require('../src/services/versionControl/versions/listVersionOfType');
+const listVersionsOfType = require('../src/services/versionControl/versions/listVersionOfType');
 const listVersions = require('../src/services/versionControl/versions/listVersions');
 const removeVersionService = require('../src/services/versionControl/versions/removeVersionService');
 const upgradeVersion = require('../src/services/versionControl/versions/upgradeVersion');
@@ -22,7 +22,7 @@ module.exports = {
   removeVersion: removeVersionService,
   publishVersion,
   listVersions,
-  listVersionOfType,
+  listVersionsOfType,
 
   ...helpers,
 };

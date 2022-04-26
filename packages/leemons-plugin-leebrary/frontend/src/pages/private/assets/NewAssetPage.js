@@ -1,17 +1,31 @@
 /* eslint-disable no-unreachable */
 import React, { useEffect, useMemo, useState, useContext } from 'react';
-import { isEmpty, isArray } from 'lodash';
+import { isEmpty, isArray, find } from 'lodash';
 import { useHistory, useParams } from 'react-router-dom';
-import { Box, Stack, ActionButton, Grid, Col } from '@bubbles-ui/components';
-import { ChevronLeftIcon } from '@bubbles-ui/icons/outline';
+import { Box, Stack, ActionButton, Paper, createStyles, SearchInput } from '@bubbles-ui/components';
+import { ChevronLeftIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { PluginLeebraryIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '../../../helpers/prefixPN';
 import LibraryContext from '../../../context/LibraryContext';
 import { VIEWS } from '../library/Library.constants';
-import { Setup, BasicData, PermissionsData } from '../../../components/AssetSetup';
+import {
+  Setup,
+  BasicData as MediaBasicData,
+  PermissionsData,
+  BookmarkBasicData,
+} from '../../../components/AssetSetup';
+
+const NewAssetPageStyles = createStyles((theme) => ({
+  root: {
+    maxWidth: theme.breakpoints.xs,
+    flex: 1,
+  },
+}));
 
 const NewAssetPage = () => {
-  const { file, setView, category, selectCategory, setAsset, asset } = useContext(LibraryContext);
+  const { file, setView, category, categories, selectCategory, setAsset, asset } =
+    useContext(LibraryContext);
   const [t] = useTranslateLoader(prefixPN('assetSetup'));
   const history = useHistory();
   const params = useParams();
@@ -43,7 +57,12 @@ const NewAssetPage = () => {
         steps: [
           {
             label: labels.basicData,
-            content: <BasicData file={file} categoryId={category?.id} onSave={setAsset} />,
+            content:
+              category.key === 'bookmarks' ? (
+                <BookmarkBasicData categoryId={category?.id} onSave={setAsset} />
+              ) : (
+                <MediaBasicData file={file} categoryId={category?.id} onSave={setAsset} />
+              ),
           },
           {
             label: labels.permissionsData,
@@ -55,28 +74,30 @@ const NewAssetPage = () => {
     return null;
   }, [t, file, category, asset]);
 
+  const mediaFileCategory = useMemo(() => find(categories, { key: 'media-files' }), [categories]);
+
+  const { classes, cx } = NewAssetPageStyles({}, { name: 'NewAssetPage' });
+
   return (
-    <Grid columns={10}>
-      <Col span={5}>
-        <Box>
-          <Box sx={(theme) => ({ padding: `${theme.spacing[3]}px ${theme.spacing[9]}px` })}>
-            <Stack fullWidth justifyContent="start">
-              <ActionButton
-                icon={<ChevronLeftIcon />}
-                label={t('header.back')}
-                tooltip={t('header.back')}
-                onClick={handleOnBack}
-              />
-            </Stack>
-          </Box>
-          <Box sx={(theme) => ({ padding: `${theme.spacing[3]}px ${theme.spacing[9]}px` })}>
-            {!isEmpty(setupProps) && isArray(setupProps.steps) && (
-              <Setup {...setupProps} onFinish={handleOnFinish} />
-            )}
-          </Box>
+    <Stack fullWidth fullHeight>
+      <Box className={classes.root} skipFlex>
+        <Box sx={(theme) => ({ padding: `${theme.spacing[4]}px ${theme.spacing[7]}px` })}>
+          <Stack fullWidth justifyContent="start">
+            <ActionButton
+              icon={<ChevronLeftIcon />}
+              label={t('header.back')}
+              tooltip={t('header.back')}
+              onClick={handleOnBack}
+            />
+          </Stack>
         </Box>
-      </Col>
-    </Grid>
+        <Box sx={(theme) => ({ padding: `${theme.spacing[4]}px ${theme.spacing[8]}px` })}>
+          {!isEmpty(setupProps) && isArray(setupProps.steps) && (
+            <Setup {...setupProps} onFinish={handleOnFinish} />
+          )}
+        </Box>
+      </Box>
+    </Stack>
   );
 };
 

@@ -35,6 +35,9 @@ module.exports = {
         notNull: true,
       },
     },
+    metadata: {
+      type: 'string',
+    },
   },
   primaryKey: {
     type: 'uuid',

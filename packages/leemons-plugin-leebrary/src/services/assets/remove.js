@@ -1,55 +1,115 @@
+const { isEmpty } = require('lodash');
 const { remove: removeFiles } = require('../files/remove');
-const { removeAllUsers } = require('../permissions/removeAllUsers');
-const { remove: removeCategories } = require('./categories/remove');
-const removeTags = require('./tags/remove');
 const { getByAsset: getFilesByAsset } = require('./files/getByAsset');
 const { tables } = require('../tables');
-const { exists } = require('./exists');
+const { getById: getCategoryById } = require('../categories/getById');
+const { getByAsset: getPermissions } = require('../permissions/getByAsset');
+const getAssetPermissionName = require('../permissions/helpers/getAssetPermissionName');
+const { getByIds } = require('./getByIds');
+const { remove: removeBookmark } = require('../bookmarks/remove');
+const { CATEGORIES } = require('../../../config/constants');
 
-async function remove(id, { userSession, transacting: t } = {}) {
+async function remove(id, { soft, userSession, transacting: t } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       try {
+        // ··········································································
+        // CHECKING
+
         // EN: Check if the asset exists (if not it will throw an error)
         // ES: Comprobar si el activo existe (si no, lanzará un error)
-        if (!(await exists(id, { transacting }))) {
+        const asset = (await getByIds(id, { transacting }))[0];
+        if (!asset) {
           throw new global.utils.HttpError(500, `Asset with ${id} does not exists`);
         }
+
+        // EN: Get user role
+        // ES: Obtener rol del usuario
+        const { permissions } = await getPermissions(id, { userSession, transacting });
+
+        if (!permissions.delete) {
+          throw new global.utils.HttpError(401, "You don't have permission to remove this role");
+        }
+
+        await leemons.events.emit('before-remove-asset', { id, soft, transacting });
+
+        // ··········································································
+        // REMOVE TAGS
+
+        // EN: Delete the asset tags to clean the database
+        // ES: Eliminar las etiquetas del asset para limpiar la base de datos
+        const tagsService = leemons.getPlugin('common').services.tags;
+        await tagsService.removeAllTagsForValues(leemons.plugin.prefixPN(''), id, { transacting });
+
+        // ··········································································
+        // REMOVE FILES
 
         // EN: Get the files associated with the asset
         // ES: Obtener los archivos asociados al asset
         const files = await getFilesByAsset(id, { userSession, transacting });
-
-        // EN: First delete the file from the database so if it fails we don't have an entry without a file
-        // ES: Primero eliminamos el archivo de la base de datos para que si falla no tengamos una entrada sin archivo
-        await tables.assets.delete({ id }, { transacting });
-
-        // EN: Delete the asset categories to clean the database
-        // ES: Eliminar las categorias del asset para limpiar la base de datos
-        await removeCategories(id, null, { transacting });
-
-        // EN: Delete the asset tags to clean the database
-        // ES: Eliminar las etiquetas del asset para limpiar la base de datos
-        await removeTags(id, null, { transacting });
 
         // EN: Unlink the files from the asset
         // ES: Desvincular los archivos del asset
         if (files.length) {
           // EN: Finally, delete the files from the provider
           // ES: Finalmente, eliminamos los archivos del proveedor
-          await removeFiles(files, id, { userSession, transacting });
+          await removeFiles(files, id, { userSession, soft, transacting });
         }
 
-        // EN: Remove all the users invited to the asset (if no permissions, it will throw an error)
-        // ES: Eliminar todos los usuarios invitados al activo (si no tiene permisos, lanzará un error)
-        await removeAllUsers(id, { userSession, transacting });
+        // ··········································································
+        // REMOVE BOOKMARK
+
+        const category = await getCategoryById(asset.category, { transacting });
+        if (category.key === CATEGORIES.BOOKMARKS) {
+          await removeBookmark(id, { transacting });
+        }
+
+        // ··········································································
+        // REMOVE ASSET
+
+        // EN: First delete the file from the database so if it fails we don't have an entry without a file
+        // ES: Primero eliminamos el archivo de la base de datos para que si falla no tengamos una entrada sin archivo
+        await tables.assets.delete({ id }, { soft, transacting });
+
+        // ··········································································
+        // REMOVE COVER
+
+        if (!isEmpty(asset.cover)) {
+          await removeFiles(asset.cover, id, { userSession, soft, transacting });
+        }
+
+        // ··········································································
+        // REMOVE PERMISSIONS
+
+        // EN: Remove all the permissions associated with the asset
+        // ES: Eliminar todos los permisos asociados al asset
+        const { services: userService } = leemons.getPlugin('users');
+        const permissionQuery = {
+          permissionName: getAssetPermissionName(id),
+        };
+
+        await Promise.all([
+          // ES: Borramos a todos los agentes el permiso del evento ya que este dejara de existir
+          await userService.permissions.removeCustomPermissionForAllUserAgents(permissionQuery, {
+            soft,
+            transacting,
+          }),
+          // ES: Borramos el elemento de la tabla items de permisos ya que dejara de existir
+          await userService.permissions.removeItems(
+            {
+              type: leemons.plugin.prefixPN(asset.category),
+              item: id,
+            },
+            {
+              soft,
+              transacting,
+            }
+          ),
+        ]);
+
+        await leemons.events.emit('after-remove-asset', { id, soft, transacting });
         return true;
       } catch (e) {
-        // EN: The asset doesn't exist, so we don't need to do anything
-        // ES: El asset no existe, por lo que no necesitamos hacer nada
-        if (e.message === 'entry.notFound') {
-          return false;
-        }
         throw new global.utils.HttpError(500, `Failed to remove asset: ${e.message}`);
       }
     },

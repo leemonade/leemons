@@ -20,6 +20,9 @@ module.exports = {
         titleEdit: 'Edit resource',
         back: 'Back',
       },
+      bookmark: {
+        title: 'New bookmark',
+      },
       labels: {
         title: 'Upload file',
         featuredImage: 'Featured image',
@@ -28,17 +31,27 @@ module.exports = {
         changeImage: 'Change image',
         uploadButton: 'Upload image',
         submitForm: 'Add to library',
+        submitChanges: 'Save changes',
         name: 'Name',
         description: 'Description',
+        createdSuccess: 'Asset successfully created',
+        updatedSuccess: 'Asset successfully updated',
+        url: 'URL (webpage link)',
+        checkUrl: 'Check url',
+      },
+      descriptions: {
+        featuredImage: "Only if you want to change the webpage's default featured image",
       },
       placeholders: {
         tagsInput: 'Name of tag',
         name: 'Name of the resource',
+        url: 'Webpage link',
         description: 'Description of the resource',
         color: 'Select a color',
       },
       errorMessages: {
         name: 'Name is required',
+        url: 'URL is required',
         file: 'File is required',
         tags: 'Write a tag to add it',
       },
@@ -50,9 +63,9 @@ module.exports = {
         close: 'Close',
       },
       labels: {
-        title: 'Share settings',
+        title: 'Resource permissions',
         addUsers: 'Add users',
-        addUsersDescription: 'To share resources and specify permissions',
+        addUsersDescription: 'To share resource and set permissions',
         isPublic: 'This resource is public',
         saveButton: 'Save permissions',
         shareButton: 'Share',
@@ -61,6 +74,8 @@ module.exports = {
         removeUserButton: 'Remove',
         acceptButton: 'Accept',
         cancelButton: 'Cancel',
+        permissionsSuccess: 'Permissions successfully established',
+        shareSuccess: 'Resource successfully shared',
       },
       placeholders: {
         userInput: 'Start typing a name',
@@ -72,12 +87,23 @@ module.exports = {
         share: 'You are not allowed to share this resource',
       },
     },
+    roleLabels: {
+      viewer: 'Viewer',
+      commentor: 'Commentor',
+      editor: 'Editor',
+      owner: 'Owner',
+      public: 'Public',
+    },
   },
-  roleLabels: {
-    viewer: 'Viewer',
-    commentor: 'Commentor',
-    editor: 'Editor',
-    owner: 'Owner',
-    public: 'Public',
+  list: {
+    labels: {
+      duplicateSuccess: 'Asset successfully duplicated',
+      removeSuccess: 'Asset successfully removed',
+      copy: 'Copy',
+      copied: 'Copied',
+      sharedWith: 'Shared with',
+      sharedViewAll: 'View all',
+      sharedWithEverybody: 'Shared with everybody',
+    },
   },
 };

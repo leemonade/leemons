@@ -20,6 +20,9 @@ module.exports = {
         titleEdit: 'Editar recurso',
         back: 'Volver',
       },
+      bookmark: {
+        title: 'Nuevo marcador',
+      },
       labels: {
         title: 'Subir archivo',
         featuredImage: 'Imagen destacada',
@@ -28,19 +31,29 @@ module.exports = {
         changeImage: 'Cambiar imagen',
         uploadButton: 'Subir imagen',
         submitForm: 'Añadir a la librería',
+        submitChanges: 'Guardar cambios',
         name: 'Nombre',
         description: 'Descripción',
+        createdSuccess: 'Recurso creado con éxito',
+        updatedSuccess: 'Recurso actualizado con éxito',
+        url: 'URL (enlace web)',
+        checkUrl: 'Comprobar url',
+      },
+      descriptions: {
+        featuredImage: 'Sólo si quieres cambiar la imagen destacada por defecto de la página web',
       },
       placeholders: {
         tagsInput: 'Escribe un tag',
         name: 'Nombre del recurso',
         description: 'Descripción del recurso',
         color: 'Selecciona un color',
+        url: 'Enlace web',
       },
       errorMessages: {
         name: 'Nombre es requerido',
         file: 'Archivo es requerido',
         tags: 'Escribe un tag para añadirlo',
+        url: 'URL es requerido',
       },
     },
     permissionsData: {
@@ -50,7 +63,7 @@ module.exports = {
         close: 'Cerrar',
       },
       labels: {
-        title: 'Ajustes de permisos',
+        title: 'Permisos del recurso',
         addUsers: 'Añadir usuarios',
         addUsersDescription: 'Para compartir el recurso y especificar permisos',
         isPublic: 'Este recurso es público',
@@ -61,6 +74,8 @@ module.exports = {
         removeUserButton: 'Eliminar',
         acceptButton: 'Aceptar',
         cancelButton: 'Cancelar',
+        permissionsSuccess: 'Permisos establecidos con éxito',
+        shareSuccess: 'Recurso compartido con éxito',
       },
       placeholders: {
         userInput: 'Escribe un nombre',
@@ -72,12 +87,23 @@ module.exports = {
         share: 'No tienes permiso para compartir el recurso',
       },
     },
+    roleLabels: {
+      viewer: 'Lectura',
+      commentor: 'Comentador',
+      editor: 'Editor',
+      owner: 'Propietario',
+      public: 'Público',
+    },
   },
-  roleLabels: {
-    viewer: 'Lectura',
-    commentor: 'Comentador',
-    editor: 'Editor',
-    owner: 'Propietario',
-    public: 'Público',
+  list: {
+    labels: {
+      duplicateSuccess: 'Recurso duplicado con éxito',
+      removeSuccess: 'Recurso eliminado con éxito',
+      copy: 'Copiar',
+      copied: 'Copiado',
+      sharedWith: 'Compartido con',
+      sharedViewAll: 'Ver todos',
+      sharedWithEverybody: 'Compartido con todos',
+    },
   },
 };

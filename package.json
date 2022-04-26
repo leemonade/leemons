@@ -65,12 +65,6 @@
     "prettier:other": "prettier \"**/*.{md,css,scss,yaml,yml}\"",
     "test": "jest"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint -s",
-      "pre-push": "npm run lint -s"
-    }
-  },
   "dependencies": {
     "babel-eslint": "^10.1.0"
   }
