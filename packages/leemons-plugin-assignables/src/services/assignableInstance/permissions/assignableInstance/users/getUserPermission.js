@@ -8,7 +8,7 @@ module.exports = async function getUserPermission(
   { userSession, transacting } = {}
 ) {
   const permissions = await permission.getUserAgentPermissions(userSession.userAgents, {
-    query: { permissionName: getPermissionName(assignableInstance) },
+    query: { permissionName_$contains: getPermissionName(assignableInstance) },
     transacting,
   });
 
