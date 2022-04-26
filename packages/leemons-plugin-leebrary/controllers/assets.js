@@ -46,11 +46,11 @@ async function setAsset(ctx) {
       file = assetFile;
     }
 
-    cover = filesData?.cover || assetCover || assetData.coverFile;
+    cover = filesData?.cover || filesData?.coverFile || assetCover || assetData.coverFile;
   }
   // Bookmarks
   else if (category.key === CATEGORIES.BOOKMARKS) {
-    cover = assetCover || filesData?.cover || assetData.coverFile;
+    cover = assetCover || filesData?.cover || filesData?.coverFile || assetData.coverFile;
   }
 
   // ES: Preparamos las Tags en caso de que lleguen como string
@@ -151,7 +151,7 @@ async function getAsset(ctx) {
 }
 
 async function getAssets(ctx) {
-  const { category, criteria, type, published, preferCurrent } = ctx.request.query;
+  const { category, criteria, type, published, preferCurrent, showPublic } = ctx.request.query;
   const { userSession } = ctx.state;
 
   if (isEmpty(category)) {
@@ -160,16 +160,18 @@ async function getAssets(ctx) {
 
   let assets;
   const assetPublished = ['true', true, '1', 1].includes(published);
+  const displayPublic = ['true', true, '1', 1].includes(showPublic);
 
   if (!isEmpty(criteria) || !isEmpty(type)) {
     assets = await getByCriteria(
       { category, criteria, type },
-      { published: assetPublished, preferCurrent, userSession }
+      { published: assetPublished, showPublic: displayPublic, preferCurrent, userSession }
     );
   } else {
     assets = await getByCategory(category, {
       published: assetPublished,
       preferCurrent,
+      showPublic: displayPublic,
       userSession,
     });
   }
@@ -185,7 +187,7 @@ async function getAssetsByIds(ctx) {
   const { userSession } = ctx.state;
   const {
     assets: assetIds,
-    filters: { published },
+    filters: { published, showPublic },
   } = ctx.request.body;
 
   if (isEmpty(assetIds)) {
@@ -196,6 +198,7 @@ async function getAssetsByIds(ctx) {
     withFiles: true,
     checkPermissions: true,
     published,
+    showPublic,
     userSession,
   });
 

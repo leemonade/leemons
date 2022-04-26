@@ -113,6 +113,15 @@ const AssetListDrawer = ({
         >
           {creatable ? (
             <Tabs>
+              <TabPanel key="library" label="Library">
+                <Box
+                  sx={(theme) => ({
+                    marginTop: theme.spacing[5],
+                  })}
+                >
+                  {LibraryList}
+                </Box>
+              </TabPanel>
               <TabPanel key="create" label="New resource">
                 <Box
                   sx={(theme) => ({
@@ -129,15 +138,6 @@ const AssetListDrawer = ({
                   ) : (
                     <Box>{JSON.stringify(category)}</Box>
                   )}
-                </Box>
-              </TabPanel>
-              <TabPanel key="library" label="Library">
-                <Box
-                  sx={(theme) => ({
-                    marginTop: theme.spacing[5],
-                  })}
-                >
-                  {LibraryList}
                 </Box>
               </TabPanel>
             </Tabs>

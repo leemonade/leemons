@@ -12,6 +12,7 @@ import {
   RadioGroup,
   useDebouncedValue,
   Select,
+  Switch,
 } from '@bubbles-ui/components';
 import { LibraryItem } from '@bubbles-ui/leemons';
 import { CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
@@ -51,6 +52,7 @@ const AssetList = ({
   assetType: assetTypeProp,
   search: searchProp,
   layout: layoutProp,
+  showPublic: showPublicProp,
   itemMinWidth,
   canChangeLayout,
   canChangeType,
@@ -60,10 +62,11 @@ const AssetList = ({
   page: pageProp,
   pageSize,
   published,
+  onSearch,
   onSelectItem = () => {},
   onEditItem = () => {},
   onTypeChange = () => {},
-  onSearch,
+  onShowPublic = () => {},
 }) => {
   const [t, translations] = useTranslateLoader(prefixPN('list'));
   const [category, setCategory] = useState(categoryProp);
@@ -78,6 +81,7 @@ const AssetList = ({
   const [assetType, setAssetType] = useState(assetTypeProp);
   const [openDetail, setOpenDetail] = useState(true);
   const [serverData, setServerData] = useState({});
+  const [showPublic, setShowPublic] = useState(showPublicProp);
   const [searchCriteria, setSearhCriteria] = useState(searchProp);
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [containerRef, containerRect] = useResizeObserver();
@@ -126,7 +130,13 @@ const AssetList = ({
     try {
       setLoading(true);
       setAsset(null);
-      const response = await getAssetsRequest({ category: categoryId, criteria, type, published });
+      const response = await getAssetsRequest({
+        category: categoryId,
+        criteria,
+        type,
+        published,
+        showPublic,
+      });
       // console.log('assets:', response.assets);
       setAssets(response?.assets || []);
       setTimeout(() => setLoading(false), 200);
@@ -143,7 +153,7 @@ const AssetList = ({
       if (!isEmpty(assets)) {
         const paginated = getPageItems({ data: assets, page: page - 1, size });
         const assetIds = paginated.items.map((item) => item.asset);
-        const response = await getAssetsByIdsRequest(assetIds, { published });
+        const response = await getAssetsByIdsRequest(assetIds, { published, showPublic });
         paginated.items = response.assets || [];
         setServerData(paginated);
       } else {
@@ -221,6 +231,7 @@ const AssetList = ({
   useEffect(() => setLayout(layoutProp), [layoutProp]);
   useEffect(() => setCategories(categoriesProp), [categoriesProp]);
   useEffect(() => setAssetType(assetTypeProp), [assetTypeProp]);
+  useEffect(() => setShowPublic(showPublicProp), [showPublicProp]);
 
   useEffect(() => {
     if (!isEmpty(assetProp?.id) && assetProp.id !== asset?.id) {
@@ -265,16 +276,7 @@ const AssetList = ({
     if (!isEmpty(category?.id)) {
       loadAssets(category.id, searchProp, assetType);
     }
-    /*
-    if (!isEmpty(searchProp) && !isEmpty(category?.id)) {
-      loadAssets(category.id, searchProp, assetType);
-    }
-
-    if ((isEmpty(searchProp) || isNil(searchProp)) && !isEmpty(category?.id)) {
-      loadAssets(category.id);
-    }
-    */
-  }, [searchProp, category, assetType]);
+  }, [searchProp, category, assetType, showPublic]);
 
   // ·········································································
   // HANDLERS
@@ -316,6 +318,12 @@ const AssetList = ({
       size: 'lg',
       withCloseButton: true,
     });
+  };
+
+  const handleOnShowPublic = (value) => {
+    console.log('showPublic:', value);
+    setShowPublic(value);
+    onShowPublic(value);
   };
 
   // ·········································································
@@ -391,11 +399,11 @@ const AssetList = ({
 
   const toolbarItems = useMemo(
     () => ({
-      edit: 'Edit',
+      edit: asset?.editable ? 'Edit' : false,
       duplicate: asset?.duplicable ? 'Duplicate' : false,
       download: asset?.downloadable ? 'Download' : false,
-      delete: 'Delete',
-      share: 'Share',
+      delete: asset?.deleteable ? 'Delete' : false,
+      share: asset?.shareable ? 'Share' : false,
       assign: asset?.assignable ? 'Assign' : false,
       toggle: 'Toggle',
     }),
@@ -487,6 +495,9 @@ const AssetList = ({
           })}
         >
           <LoadingOverlay visible={loading} />
+          {!loading && (
+            <Switch label="Show public assets" checked={showPublic} onChange={handleOnShowPublic}/>
+          )}
           {!loading && !isEmpty(serverData?.items) && (
             <Box
               sx={(theme) => ({
@@ -572,6 +583,7 @@ AssetList.defaultProps = {
   canSearch: true,
   variant: 'full',
   published: true,
+  showPublic: false,
 };
 AssetList.propTypes = {
   category: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
@@ -585,6 +597,8 @@ AssetList.propTypes = {
   onEditItem: PropTypes.func,
   onSearch: PropTypes.func,
   onTypeChange: PropTypes.func,
+  onShowPublic: PropTypes.func,
+  showPublic: PropTypes.bool,
   itemMinWidth: PropTypes.number,
   canChangeLayout: PropTypes.bool,
   canChangeType: PropTypes.bool,
