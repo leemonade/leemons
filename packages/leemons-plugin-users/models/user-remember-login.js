@@ -1,6 +1,6 @@
 module.exports = {
-  modelName: 'user-remember-profile',
-  collectionName: 'user-remember-profile',
+  modelName: 'user-remember-login',
+  collectionName: 'user-remember-login',
   options: {
     useTimestamps: true,
   },
@@ -13,6 +13,11 @@ module.exports = {
     profile: {
       references: {
         collection: 'plugins_users::profiles',
+      },
+    },
+    center: {
+      references: {
+        collection: 'plugins_users::centers',
       },
     },
   },

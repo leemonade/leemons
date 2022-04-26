@@ -67,7 +67,7 @@ export function getCookieToken(onlyCookie) {
 
 export function getCentersWithToken() {
   const token = getCookieToken(true);
-  return _.isString(token) ? null : token.centers;
+  return _.isString(token) ? null : token?.centers;
 }
 
 export function getAuthorizationTokenForAllCenters() {

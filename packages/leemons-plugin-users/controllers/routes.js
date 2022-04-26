@@ -97,9 +97,15 @@ module.exports = [
     authenticated: true,
   },
   {
-    path: '/user/remember/profile',
+    path: '/user/centers',
     method: 'GET',
-    handler: 'users.getRememberProfile',
+    handler: 'users.centers',
+    authenticated: true,
+  },
+  {
+    path: '/user/remember/login',
+    method: 'GET',
+    handler: 'users.getRememberLogin',
     authenticated: true,
   },
   {
@@ -117,15 +123,21 @@ module.exports = [
     disableUserAgentDatasetCheck: true,
   },
   {
-    path: '/user/remember/profile',
+    path: '/user/remember/login',
     method: 'POST',
-    handler: 'users.setRememberProfile',
+    handler: 'users.setRememberLogin',
     authenticated: true,
   },
   {
     path: '/user/profile/:id/token',
     method: 'GET',
     handler: 'users.profileToken',
+    authenticated: true,
+  },
+  {
+    path: '/user/center/:centerId/profile/:profileId/token',
+    method: 'GET',
+    handler: 'users.centerProfileToken',
     authenticated: true,
   },
   {

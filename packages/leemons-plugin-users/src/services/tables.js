@@ -25,7 +25,7 @@ const table = {
   profileRole: leemons.query('plugins_users::profile-role'),
 
   centers: leemons.query('plugins_users::centers'),
-  userRememberProfile: leemons.query('plugins_users::user-remember-profile'),
+  userRememberLogin: leemons.query('plugins_users::user-remember-login'),
 
   userProfile: leemons.query('plugins_users::user-profile'),
   userAgentContacts: leemons.query('plugins_users::user-agent-contacts'),
