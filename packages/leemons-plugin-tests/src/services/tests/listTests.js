@@ -3,7 +3,7 @@ const { table } = require('../tables');
 
 async function listTests(page, size, { published, transacting } = {}) {
   const versionControlService = leemons.getPlugin('common').services.versionControl;
-  const versions = await versionControlService.listVersionOfType('test', {
+  const versions = await versionControlService.listVersionsOfType('test', {
     published,
     transacting,
   });
