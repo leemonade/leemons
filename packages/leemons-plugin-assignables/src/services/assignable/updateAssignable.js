@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const updateAsset = require('../leebrary/assets/updateAsset');
 const getDiff = require('../../helpers/getDiff');
 const { validateAssignable } = require('../../helpers/validators/assignable');
 const updateSubjects = require('../subjects/updateSubjects');
@@ -36,7 +37,7 @@ module.exports = async function updateAssignable(assignable, { userSession, tran
 
   let shouldUpgrade = false;
 
-  if (_.isEmpty(assignable)) {
+  if (_.isEmpty(assignableObject)) {
     throw new Error('No changes detected');
   }
 
@@ -70,6 +71,26 @@ module.exports = async function updateAssignable(assignable, { userSession, tran
     shouldUpgrade = true;
   }
 
+  let assetId = currentAssignable.asset.id;
+
+  if (diff.includes('asset')) {
+    const asset = await updateAsset(
+      {
+        ..._.defaults(object.asset, currentAssignable.asset),
+        id: currentAssignable.asset.id,
+      },
+      {
+        transacting,
+        userSession,
+        upgrade: true,
+        published: false,
+        scale: 'major',
+      }
+    );
+
+    assetId = asset.id;
+  }
+
   // EN: Update the version.
   // ES: Actualiza la versión.
   if (shouldUpgrade) {
@@ -80,11 +101,15 @@ module.exports = async function updateAssignable(assignable, { userSession, tran
 
     // TODO: Duplicate everything and apply changes
     // TODO: Ensure to keep original owner
-    const newAssignable = await createAssignable.call(this, _.omit(object, ['published', 'id']), {
-      id: fullId,
-      userSession,
-      transacting,
-    });
+    const newAssignable = await createAssignable.call(
+      this,
+      _.omit({ ...object, asset: assetId }, ['published', 'id']),
+      {
+        id: fullId,
+        userSession,
+        transacting,
+      }
+    );
 
     // EN: Get the users that have access to the assignable.
     // ES: Obtiene los usuarios que tienen acceso al asignable.
@@ -123,7 +148,7 @@ module.exports = async function updateAssignable(assignable, { userSession, tran
     return { id, ...object };
   }
 
-  const updateObject = _.omit(_.pick(assignableObject, diff), ['subjects']);
+  const updateObject = { ..._.omit(_.pick(assignableObject, diff), ['subjects']), asset: assetId };
 
   if (diff.includes('submission')) {
     updateObject.submission = JSON.stringify(assignableObject.submission);

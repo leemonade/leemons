@@ -1,3 +1,4 @@
+const addCategory = require('../leebrary/categories/addCategory');
 const { roles } = require('../tables');
 const getRole = require('./getRole');
 
@@ -23,6 +24,18 @@ module.exports = async function registerRole(role, { transacting }) {
   // EN: Register role
   // ES: Registrar rol
   await roles.create({ name: role, plugin: this.calledFrom }, { transacting });
+
+  // EN: Register the leebrary category
+  // ES: Registrar la categoría de leebrary
+  await addCategory(
+    {
+      role: `assignables.${role}`,
+      label: { en: role, es: role },
+      creatable: false,
+      provider: null,
+    },
+    { transacting }
+  );
 
   // TODO: Register leebrary category
 

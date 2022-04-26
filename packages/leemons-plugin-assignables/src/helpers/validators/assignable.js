@@ -14,9 +14,37 @@ const assignableValidationObject = {
       cover
     */
     asset: {
-      type: 'string',
-      minLength: 36,
-      maxLength: 255,
+      oneOf: [
+        {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              maxLength: 255,
+            },
+            description: {
+              type: 'string',
+              maxLength: 16777215,
+            },
+            tags: {
+              type: 'array',
+              items: {
+                type: 'string',
+                maxLength: 255,
+              },
+            },
+            color: {
+              type: 'string',
+            },
+            cover: {
+              type: 'string',
+            },
+          },
+        },
+        {
+          type: 'string',
+        },
+      ],
     },
     role: {
       type: 'string',

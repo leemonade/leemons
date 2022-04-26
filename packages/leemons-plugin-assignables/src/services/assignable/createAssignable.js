@@ -7,6 +7,8 @@ const versionControl = require('../versionControl');
 const getAssignable = require('./getAssignable');
 const { registerAssignablePermission } = require('./permissions');
 const addPermissionToUser = require('./permissions/assignable/users/addPermissionToUser');
+const saveAsset = require('../leebrary/assets/saveAsset');
+const updateAsset = require('../leebrary/assets/updateAsset');
 
 module.exports = async function createAssignable(
   assignable,
@@ -20,8 +22,14 @@ module.exports = async function createAssignable(
       // ES: Verificar que el objeto asignable tenga las propiedades correctas.
       validateAssignable(assignable);
 
-      const { subjects, submission, metadata, relatedAssignables, ...assignableObject } =
-        assignable;
+      const {
+        asset: assignableAsset,
+        subjects,
+        submission,
+        metadata,
+        relatedAssignables,
+        ...assignableObject
+      } = assignable;
 
       // EN: Check if the role exists
       // ES: Comprueba si el rol existe
@@ -52,6 +60,24 @@ module.exports = async function createAssignable(
         }
       }
 
+      // EN: Create the asset
+      // ES: Crea el asset
+      let asset;
+      try {
+        if (!_id) {
+          const savedAsset = await saveAsset(
+            { ...assignableAsset, category: `assignables.${assignable.role}` },
+            { userSession, transacting }
+          );
+
+          asset = savedAsset.id;
+        } else {
+          asset = assignableAsset;
+        }
+      } catch (e) {
+        throw new Error(`Error creating the asset: ${e.message}`);
+      }
+
       // EN: Create the assignable for the given version.
       // ES: Crea el asignable para la versión dada.
       try {
@@ -59,6 +85,7 @@ module.exports = async function createAssignable(
           {
             id,
             ...assignableObject,
+            asset,
             relatedAssignables: JSON.stringify(relatedAssignables),
             submission: JSON.stringify(submission),
             metadata: JSON.stringify(metadata),

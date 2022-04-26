@@ -3,6 +3,7 @@ const getSubjects = require('../subjects/getSubjects');
 const { assignables } = require('../tables');
 const versionControl = require('../versionControl');
 const getUserPermission = require('./permissions/assignable/users/getUserPermission');
+const getAsset = require('../leebrary/assets/getAsset');
 
 module.exports = async function getAssignable(id, { userSession, transacting } = {}) {
   let isPublished = false;
@@ -32,6 +33,9 @@ module.exports = async function getAssignable(id, { userSession, transacting } =
 
     const subjects = await getSubjects(id, { transacting });
 
+    // EN: Get the asset data
+    // ES: Obtiene los datos del asset
+    assignable.asset = await getAsset(assignable.asset, { userSession, transacting });
     // EN: Parse objects.
     // ES: Parsear objetos.
     assignable = {

@@ -11,10 +11,10 @@ module.exports = function main(userSession) {
     // removeUserFromAssignable,
     // listAssignableUserAgents,
     // searchAssignables,
-    // getAssignable,
-    // publishAssignable,
+    getAssignable,
+    publishAssignable,
     removeAssignable,
-    // updateAssignable,
+    updateAssignable,
   } = services.assignables;
 
   const {
@@ -54,7 +54,16 @@ module.exports = function main(userSession) {
   };
 
   const preTask = {
-    asset: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f@1.0.0',
+    asset: {
+      name: 'preTask Name - Los Romanos',
+      cover:
+        'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.MDtnZnjX1nSoMUc1vEQl0QHaEK%26pid%3DApi&f=1',
+      color: '#ff0000',
+      description: 'This is the description of the pretask',
+      tags: ['tag1', 'tag2'],
+      indexable: true,
+      public: true,
+    },
     role: 'pretask',
     gradable: false,
     program: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
@@ -84,7 +93,23 @@ module.exports = function main(userSession) {
   };
 
   const task = {
-    asset: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f@1.0.0',
+    asset: {
+      name: 'Task Name - Los Romanos',
+      cover:
+        'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.MDtnZnjX1nSoMUc1vEQl0QHaEK%26pid%3DApi&f=1',
+      color: '#ff0000',
+      description: 'This is the description of the task',
+      tags: ['tag1', 'tag2'],
+      indexable: true,
+      public: true,
+    },
+    // name: 'Task Name - Los Romanos',
+    // cover: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.MDtnZnjX1nSoMUc1vEQl0QHaEK%26pid%3DApi&f=1',
+    // color: '#ff0000',
+    // description: 'This is the description of the task',
+    // tags: ['tag1', 'tag2'],
+    // indexable: true,
+    // public: true,
     role: 'task',
     gradable: true,
     program: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
@@ -163,66 +188,106 @@ module.exports = function main(userSession) {
     // ES: Registra el rol para el asignables.
     // await registerRole('unit', { transacting });
     await registerRole('task', { transacting });
-    await registerRole('pretask', { transacting });
+    // await registerRole('pretask', { transacting });
 
     // EN: Create the assignable
     // ES: Crea el asignable
 
     // preTask
-    const { id: preTaskId } = await createAssignable(preTask, { userSession, transacting });
+    // const { id: preTaskId } = await createAssignable(preTask, { userSession, transacting });
     // task
     const data = await createAssignable(
       {
         ...task,
-        relatedAssignables: {
-          ...task.relatedAssignables,
-          before: [
-            {
-              id: preTaskId,
-              type: 'preTask',
-              conditionsToPass: [
-                { type: 'grade', minGrade: 5 },
-                { type: 'pass' },
-                { type: 'time', minTime: '10 minutes', maxTime: '15 minutes' },
-              ],
-              conditionsToDo: [],
-              maxRetries: 3,
-            },
-          ],
-        },
+        // relatedAssignables: {
+        //   ...task.relatedAssignables,
+        //   before: [
+        //     {
+        //       id: preTaskId,
+        //       type: 'preTask',
+        //       conditionsToPass: [
+        //         { type: 'grade', minGrade: 5 },
+        //         { type: 'pass' },
+        //         { type: 'time', minTime: '10 minutes', maxTime: '15 minutes' },
+        //       ],
+        //       conditionsToDo: [],
+        //       maxRetries: 3,
+        //     },
+        //   ],
+        // },
       },
       { userSession, transacting }
     );
-    const { id } = data;
+    let { id } = data;
+
+    console.log('Created data', data);
+
+    await publishAssignable(id, { userSession, transacting });
+    let updated = await updateAssignable(
+      {
+        id,
+        gradable: false,
+      },
+      { userSession, transacting }
+    );
+
+    if (id !== updated.id) {
+      id = updated.id;
+    }
+
+    console.log('Updated assginable but not the asset', updated);
+    console.log('pre-Publish');
+    console.log('post-Publish');
+
+    try {
+      updated = await updateAssignable(
+        {
+          id,
+          gradable: true,
+          asset: {
+            name: 'Los Romanos - Task',
+          },
+        },
+        { userSession, transacting }
+      );
+      console.log('Updated assginable and the asset', updated);
+      if (id !== updated.id) {
+        id = updated.id;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    console.log('assignable', await getAssignable(id, { userSession, transacting }));
 
     // EN: Add other teachers to the assignable
     // ES: Añade otros profesores al asignable
-    const results = await addUserToAssignable(
-      id,
-      ['98e5f5d0-7f59-4629-8c47-23928e5b48e0'],
-      'viewer',
-      { userSession, transacting }
-    );
+    // const results = await addUserToAssignable(
+    //   id,
+    //   ['98e5f5d0-7f59-4629-8c47-23928e5b48e0'],
+    //   'viewer',
+    //   { userSession, transacting }
+    // );
 
-    await addUserToAssignable(id, ['cf02401d-0eea-4bbb-89b4-ca02a9ebfe61'], 'student', {
-      userSession,
-      transacting,
-    });
+    // await addUserToAssignable(id, ['cf02401d-0eea-4bbb-89b4-ca02a9ebfe61'], 'student', {
+    //   userSession,
+    //   transacting,
+    // });
 
     // EN: Assign the assignable to the students
     // ES: Asigna el asignable a los estudiantes
-    const assignableInstance = await createAssignableInstance(
-      {
-        assignable: id,
-        ...taskInstance,
-        relatedAssignables: {
-          [id]: {
-            duration: '2 hours',
-          },
-        },
-      },
-      { userSession, transacting }
-    );
+    // const assignableInstance = await createAssignableInstance(
+    //   {
+    //     assignable: id,
+    //     ...taskInstance,
+    //     relatedAssignables: {
+    //       [id]: {
+    //         duration: '2 hours',
+    //       },
+    //     },
+    //   },
+    //   { userSession, transacting }
+    // );
 
     // console.log(
     //   'Create assignable instance',
@@ -256,44 +321,44 @@ module.exports = function main(userSession) {
     //   inspect(assignableInstance, { depth: null, colors: true })
     // );
 
-    const assignation = await createAssignation(
-      assignableInstance.id,
-      ['98e5f5d0-7f59-4629-8c47-23928e5b48e0', 'cf02401d-0eea-4bbb-89b4-ca02a9ebfe61'],
-      {
-        indexable: true,
-        classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507'],
-        group: 'group1',
-        status: 'assigned',
-        metadata: {
-          groupsAreTeams: true,
-        },
-        grades: [
-          {
-            subject: '5c1a0489-8e1d-4ba2-ac0d-d195144f1507',
-            type: 'main',
-            grade: '5c1a0489-8e1d-4ba2-ac0d-d195144f1507',
-            gradedBy: '98e5f5d0-7f59-4629-8c47-23928e5b48e0',
-            feedback: '<p>This is the feedback</p>',
-          },
-        ],
-        timestamps: {
-          opened: new Date(),
-        },
-      },
-      { userSession, transacting }
-    );
+    // const assignation = await createAssignation(
+    //   assignableInstance.id,
+    //   ['98e5f5d0-7f59-4629-8c47-23928e5b48e0', 'cf02401d-0eea-4bbb-89b4-ca02a9ebfe61'],
+    //   {
+    //     indexable: true,
+    //     classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507'],
+    //     group: 'group1',
+    //     status: 'assigned',
+    //     metadata: {
+    //       groupsAreTeams: true,
+    //     },
+    //     grades: [
+    //       {
+    //         subject: '5c1a0489-8e1d-4ba2-ac0d-d195144f1507',
+    //         type: 'main',
+    //         grade: '5c1a0489-8e1d-4ba2-ac0d-d195144f1507',
+    //         gradedBy: '98e5f5d0-7f59-4629-8c47-23928e5b48e0',
+    //         feedback: '<p>This is the feedback</p>',
+    //       },
+    //     ],
+    //     timestamps: {
+    //       opened: new Date(),
+    //     },
+    //   },
+    //   { userSession, transacting }
+    // );
 
-    console.log('assignation', assignation);
+    // console.log('assignation', assignation);
 
-    const gotAssignation = await getAssignation(
-      assignableInstance.id,
-      '98e5f5d0-7f59-4629-8c47-23928e5b48e0',
-      { transacting }
-    );
+    // const gotAssignation = await getAssignation(
+    //   assignableInstance.id,
+    //   '98e5f5d0-7f59-4629-8c47-23928e5b48e0',
+    //   { transacting }
+    // );
 
-    console.log('gotAssignation', gotAssignation);
+    // console.log('gotAssignation', gotAssignation);
 
-    await removeAssignableInstance(assignableInstance.id, { userSession, transacting });
+    // await removeAssignableInstance(assignableInstance.id, { userSession, transacting });
 
     // await listAssignableUserAgents(id, { userSession, transacting });
 
@@ -345,9 +410,9 @@ module.exports = function main(userSession) {
 
     // console.log('Search', search);
 
-    const removed = await removeAssignable(id, { userSession, transacting });
+    // const removed = await removeAssignable(id, { userSession, transacting });
 
-    console.log('removed', removed);
+    // console.log('removed', removed);
 
     // data = await publishAssignable(data.id, { transacting });
     // console.log('published', data);
