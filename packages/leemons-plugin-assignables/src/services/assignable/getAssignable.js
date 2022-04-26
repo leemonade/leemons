@@ -36,6 +36,7 @@ module.exports = async function getAssignable(id, { userSession, transacting } =
     // EN: Get the asset data
     // ES: Obtiene los datos del asset
     assignable.asset = await getAsset(assignable.asset, { userSession, transacting });
+
     // EN: Parse objects.
     // ES: Parsear objetos.
     assignable = {

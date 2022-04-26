@@ -1,3 +1,4 @@
+const removeAsset = require('../leebrary/assets/removeAsset');
 const getSubjects = require('../subjects/getSubjects');
 const removeSubjects = require('../subjects/removeSubjects');
 const { assignables: table } = require('../tables');
@@ -15,6 +16,10 @@ module.exports = async function removeAssignables(assignables, { userSession, tr
           // EN: Get the assignable to validate ownership.
           // ES: Obtiene el asignable para validar la propiedad.
           const a = await getAssignable.call(this, assignable, { userSession, transacting });
+
+          // EN: Remove the asset.
+          // ES: Elimina el activo.
+          await removeAsset(a.asset.id, { userSession, transacting });
 
           // EN: Get the users that have access to the assignable.
           // ES: Obtiene los usuarios que tienen acceso al asignable.

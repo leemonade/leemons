@@ -8,7 +8,6 @@ const getAssignable = require('./getAssignable');
 const { registerAssignablePermission } = require('./permissions');
 const addPermissionToUser = require('./permissions/assignable/users/addPermissionToUser');
 const saveAsset = require('../leebrary/assets/saveAsset');
-const updateAsset = require('../leebrary/assets/updateAsset');
 
 module.exports = async function createAssignable(
   assignable,

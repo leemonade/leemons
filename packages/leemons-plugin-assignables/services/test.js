@@ -220,7 +220,7 @@ module.exports = function main(userSession) {
     );
     let { id } = data;
 
-    console.log('Created data', data);
+    // console.log('Created data', data);
 
     await publishAssignable(id, { userSession, transacting });
     let updated = await updateAssignable(
@@ -236,8 +236,6 @@ module.exports = function main(userSession) {
     }
 
     console.log('Updated assginable but not the asset', updated);
-    console.log('pre-Publish');
-    console.log('post-Publish');
 
     try {
       updated = await updateAssignable(
@@ -410,9 +408,9 @@ module.exports = function main(userSession) {
 
     // console.log('Search', search);
 
-    // const removed = await removeAssignable(id, { userSession, transacting });
+    const removed = await removeAssignable(id, { userSession, transacting });
 
-    // console.log('removed', removed);
+    console.log('removed', removed);
 
     // data = await publishAssignable(data.id, { transacting });
     // console.log('published', data);
