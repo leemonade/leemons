@@ -30,6 +30,7 @@ module.exports = {
         addTag: 'Añadir tag',
         changeImage: 'Cambiar imagen',
         uploadButton: 'Subir imagen',
+        search: 'Buscar en la librería',
         submitForm: 'Añadir a la librería',
         submitChanges: 'Guardar cambios',
         name: 'Nombre',
