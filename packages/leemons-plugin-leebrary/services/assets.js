@@ -6,4 +6,5 @@ module.exports = {
   getByIds,
   exists,
   add,
+  getByIds,
 };
