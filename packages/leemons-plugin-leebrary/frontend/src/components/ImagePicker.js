@@ -6,14 +6,15 @@ import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '../helpers/prefixPN';
 import { AssetListDrawer } from './AssetListDrawer';
+import { AssetListModal } from './AssetListModal';
 import { prepareAsset } from '../helpers/prepareAsset';
 
 const ImagePicker = ({
   labels,
   value: valueProp,
+  modal,
   styles,
   className,
-  form,
   onChange = () => {},
   ...props
 }) => {
@@ -55,6 +56,8 @@ const ImagePicker = ({
     return labels;
   }, [translations, labels]);
 
+  const ListComponent = modal ? AssetListModal : AssetListDrawer;
+
   // ························································
   // HANDLERS
 
@@ -89,7 +92,8 @@ const ImagePicker = ({
           onChange={onChange}
         />
       </Stack>
-      <AssetListDrawer
+
+      <ListComponent
         {...props}
         opened={showAssetDrawer}
         onClose={handleOnCloseAssetDrawer}
@@ -106,7 +110,8 @@ ImagePicker.defaultProps = {
     uploadButton: 'Upload',
     search: 'Search from library',
   },
-  creatable: true,
+  creatable: false,
+  modal: true,
 };
 ImagePicker.propTypes = {
   labels: PropTypes.shape({
@@ -118,8 +123,8 @@ ImagePicker.propTypes = {
   onChange: PropTypes.func,
   styles: PropTypes.object,
   className: PropTypes.string,
-  form: PropTypes.any,
   creatable: PropTypes.bool,
+  modal: PropTypes.bool,
 };
 
 export { ImagePicker };

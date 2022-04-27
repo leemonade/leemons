@@ -42,6 +42,18 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/assets/pins',
+    method: 'POST',
+    handler: 'assets.addPin',
+    authenticated: true,
+  },
+  {
+    path: '/assets/pins',
+    method: 'GET',
+    handler: 'assets.pins',
+    authenticated: true,
+  },
+  {
     path: '/assets/:id',
     method: 'POST',
     handler: 'assets.duplicate',
@@ -57,6 +69,12 @@ module.exports = [
     path: '/assets/url-metadata',
     method: 'GET',
     handler: 'assets.urlMetadata',
+    authenticated: true,
+  },
+  {
+    path: '/assets/pins/:id',
+    method: 'DELETE',
+    handler: 'assets.removePin',
     authenticated: true,
   },
   {

@@ -1,10 +1,13 @@
 const { compact, uniq, flattenDeep, isEmpty, sortBy, intersection } = require('lodash');
-const { byDescription } = require('./byDescription');
-const { byName } = require('./byName');
+const { byName: getByName } = require('./byName');
+const { byTagline: getByTagline } = require('./byTagline');
+const { byProvider: getByProvider } = require('./byProvider');
+const { byDescription: getByDescription } = require('./byDescription');
 const { getByCategory } = require('../assets/getByCategory');
 const { getByIds } = require('../assets/getByIds');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
 const { getAssetsByType } = require('../files/getAssetsByType');
+const { getByUser: getPinsByUser } = require('../pins/getByUser');
 
 async function search(
   { criteria = '', type, category },
@@ -12,8 +15,9 @@ async function search(
     sortBy: sortingBy,
     sortDirection = 'asc',
     published = true,
-    showPublic,
     preferCurrent,
+    pinned,
+    showPublic,
     userSession,
     transacting,
   } = {}
@@ -22,20 +26,39 @@ async function search(
   let nothingFound = false;
 
   try {
+    if (pinned) {
+      console.log('-- Vamos a buscar en los assets pinneados --');
+      const pins = await getPinsByUser({ userSession, transacting });
+      assets = intersection(
+        pins.map((pin) => pin.asset),
+        assets
+      );
+    }
+
     if (!isEmpty(criteria)) {
       const tagsService = leemons.getPlugin('common').services.tags;
 
-      const result = await Promise.all([
-        byName(criteria, { transacting }),
-        byDescription(criteria, { transacting }),
+      const [byName, byTagline, byDescription, byTags] = await Promise.all([
+        getByName(criteria, { assets, transacting }),
+        getByTagline(criteria, { assets, transacting }),
+        getByDescription(criteria, { assets, transacting }),
+        // getByProvider(category, criteria, { assets, transacting }),
         tagsService.getTagsValues(criteria, {
           type: leemons.plugin.prefixPN(''),
           transacting,
         }),
       ]);
 
-      assets = result[0].concat(result[1]);
-      assets = compact(uniq(assets.concat(flattenDeep(result[2]))));
+      const matches = byName.concat(byTagline).concat(byDescription);
+
+      // ES: Si existen recursos, se debe a un filtro previo que debemos aplicar como intersección
+      // EN: If there are resources, we must apply a previous filter as an intersection
+      if (!isEmpty(assets)) {
+        assets = intersection(matches, compact(uniq(flattenDeep(byTags))));
+      } else {
+        assets = compact(uniq(matches.concat(flattenDeep(byTags))));
+      }
+
       nothingFound = assets.length === 0;
     }
 

@@ -1,14 +1,11 @@
 const { isEmpty } = require('lodash');
-const { getByIds: getAssetsByIds } = require('../assets/getByIds');
 const { tables } = require('../tables');
+const { getByIds: getAssetsByIds } = require('../assets/getByIds');
 
-async function byDescription(
-  description,
-  { details = false, assets: assetsIds, transacting } = {}
-) {
+async function byTagline(tagline, { details = false, assets: assetsIds, transacting } = {}) {
   try {
     const query = {
-      description_$contains: description,
+      tagline_$contains: tagline,
     };
 
     if (!isEmpty(assetsIds)) {
@@ -21,10 +18,11 @@ async function byDescription(
     if (details) {
       return getAssetsByIds(assets, { transacting });
     }
+
     return assets;
   } catch (e) {
-    throw new global.utils.HttpError(500, `Failed to find asset with description: ${e.message}`);
+    throw new global.utils.HttpError(500, `Failed to find asset with tagline: ${e.message}`);
   }
 }
 
-module.exports = { byDescription };
+module.exports = { byTagline };
