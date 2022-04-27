@@ -29,6 +29,8 @@ import {
   duplicateAssetRequest,
   deleteAssetRequest,
   getAssetTypesRequest,
+  pinAssetRequest,
+  unpinAssetRequest,
 } from '../request';
 import { getPageItems } from '../helpers/getPageItems';
 import { CardWrapper } from './CardWrapper';
@@ -63,6 +65,7 @@ const AssetList = ({
   pageSize,
   published,
   onSearch,
+  pinned,
   onSelectItem = () => {},
   onEditItem = () => {},
   onTypeChange = () => {},
@@ -136,10 +139,11 @@ const AssetList = ({
         type,
         published,
         showPublic,
+        pinned,
       });
       // console.log('assets:', response.assets);
       setAssets(response?.assets || []);
-      setTimeout(() => setLoading(false), 200);
+      setTimeout(() => setLoading(false), 500);
     } catch (err) {
       setLoading(false);
       addErrorAlert(getErrorMessage(err));
@@ -171,14 +175,14 @@ const AssetList = ({
       const item = find(serverData.items, { id });
 
       if (item && !forceLoad) {
-        setAsset(prepareAsset(item));
+        setAsset(prepareAsset(item, published));
       } else {
         // console.log('loadAsset > id:', id);
         const response = await getAssetsByIdsRequest([id]);
         if (!isEmpty(response?.assets)) {
           const value = response.assets[0];
           // console.log('asset:', value);
-          setAsset(prepareAsset(value));
+          setAsset(prepareAsset(value, published));
 
           if (forceLoad && item) {
             const index = serverData.items.findIndex((i) => i.id === id);
@@ -217,6 +221,32 @@ const AssetList = ({
       addSuccessAlert(t('labels.removeSuccess'));
       setAsset(null);
       loadAssets(category.id);
+    } catch (err) {
+      setAppLoading(false);
+      addErrorAlert(getErrorMessage(err));
+    }
+  };
+
+  const pinAsset = async (item) => {
+    setAppLoading(true);
+    try {
+      await pinAssetRequest(item.id);
+      setAppLoading(false);
+      addSuccessAlert(t('labels.pinnedSuccess'));
+      loadAsset(item.id, true);
+    } catch (err) {
+      setAppLoading(false);
+      addErrorAlert(getErrorMessage(err));
+    }
+  };
+
+  const unpinAsset = async (item) => {
+    setAppLoading(true);
+    try {
+      await unpinAssetRequest(item.id);
+      setAppLoading(false);
+      addSuccessAlert(t('labels.unpinnedSuccess'));
+      loadAsset(item.id, true);
     } catch (err) {
       setAppLoading(false);
       addErrorAlert(getErrorMessage(err));
@@ -321,9 +351,18 @@ const AssetList = ({
   };
 
   const handleOnShowPublic = (value) => {
-    console.log('showPublic:', value);
     setShowPublic(value);
     onShowPublic(value);
+  };
+
+  const handleOnPin = (item) => {
+    pinAsset(item);
+  };
+
+  const handleOnUnpin = (item) => {
+    openConfirmationModal({
+      onConfirm: () => unpinAsset(item),
+    })();
   };
 
   // ·········································································
@@ -333,7 +372,7 @@ const AssetList = ({
     {
       Header: 'Name',
       accessor: 'name',
-      valueRender: (_, row) => <LibraryItem asset={prepareAsset(row)} />,
+      valueRender: (_, row) => <LibraryItem asset={prepareAsset(row, published)} />,
     },
     {
       Header: 'Owner',
@@ -368,7 +407,9 @@ const AssetList = ({
 
     if (!onlyThumbnails && layout === 'grid') {
       return {
-        itemRender: (p) => <CardWrapper {...p} variant={cardVariant} category={category} />,
+        itemRender: (p) => (
+          <CardWrapper {...p} variant={cardVariant} category={category} published={published} />
+        ),
         itemMinWidth,
         margin: 16,
         spacing: 4,
@@ -405,6 +446,9 @@ const AssetList = ({
       delete: asset?.deleteable ? 'Delete' : false,
       share: asset?.shareable ? 'Share' : false,
       assign: asset?.assignable ? 'Assign' : false,
+      // eslint-disable-next-line no-nested-ternary
+      pin: asset?.pinned ? false : asset?.pinneable && published ? 'Pin' : false,
+      unpin: asset?.pinned ? 'Unpin' : false,
       toggle: 'Toggle',
     }),
     [asset]
@@ -496,7 +540,7 @@ const AssetList = ({
         >
           <LoadingOverlay visible={loading} />
           {!loading && (
-            <Switch label="Show public assets" checked={showPublic} onChange={handleOnShowPublic}/>
+            <Switch label="Show public assets" checked={showPublic} onChange={handleOnShowPublic} />
           )}
           {!loading && !isEmpty(serverData?.items) && (
             <Box
@@ -561,6 +605,8 @@ const AssetList = ({
               onDelete={handleOnDelete}
               onEdit={handleOnEdit}
               onShare={handleOnShare}
+              onPin={handleOnPin}
+              onUnpin={handleOnUnpin}
             />
           </Box>
         )}
@@ -584,6 +630,7 @@ AssetList.defaultProps = {
   variant: 'full',
   published: true,
   showPublic: false,
+  pinned: false,
 };
 AssetList.propTypes = {
   category: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
@@ -608,6 +655,7 @@ AssetList.propTypes = {
   page: PropTypes.number,
   pageSize: PropTypes.number,
   published: PropTypes.bool,
+  pinned: PropTypes.bool,
 };
 
 export { AssetList };

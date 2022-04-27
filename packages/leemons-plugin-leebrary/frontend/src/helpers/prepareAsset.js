@@ -7,7 +7,7 @@ function getFileUrl(fileID) {
   return `${window.location.origin}/api/leebrary/file/${fileID}?authorization=${authTokens}`;
 }
 
-function prepareAsset(assetFromApi) {
+function prepareAsset(assetFromApi, isPublished = true) {
   if (assetFromApi.prepared && assetFromApi.original) {
     return assetFromApi;
   }
@@ -21,6 +21,10 @@ function prepareAsset(assetFromApi) {
   const deleteRoles = ['owner'];
   const shareRoles = ['owner', 'editor'];
   const editRoles = ['owner', 'editor'];
+
+  if (isNil(asset.pinneable)) {
+    asset.pinneable = isPublished;
+  }
 
   if (isNil(asset.editable)) {
     const canEdit = asset.canAccess.some(

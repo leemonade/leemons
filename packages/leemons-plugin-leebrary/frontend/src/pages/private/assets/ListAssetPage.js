@@ -1,6 +1,6 @@
 /* eslint-disable no-unreachable */
 import React, { useEffect, useMemo, useState, useContext, useCallback } from 'react';
-import { isEmpty } from 'lodash';
+import { isEmpty, isNil } from 'lodash';
 import { useHistory, useParams, useLocation } from 'react-router-dom';
 import LibraryContext from '../../../context/LibraryContext';
 import { VIEWS } from '../library/Library.constants';
@@ -35,7 +35,9 @@ const ListAssetPage = () => {
     if (view !== VIEWS.LIST) setView(VIEWS.LIST);
     if (!isEmpty(params?.category) && category?.key !== params?.category) {
       selectCategory(params?.category);
-      setCurrentAsset(null);
+      if (category) {
+        setCurrentAsset(null);
+      }
     }
   }, [params, category, view]);
 
@@ -44,17 +46,12 @@ const ListAssetPage = () => {
     const criteria = query.get('search');
     const type = query.get('type');
     const displayPublic = [1, '1', true, 'true'].includes(query.get('showPublic'));
-    const published = [1, '1', true, 'true'].includes(query.get('published'));
-
-    if (published !== showPublished) {
-      setShowPublished(published);
-    }
 
     if (displayPublic !== showPublic) {
       setShowPublic(displayPublic);
     }
 
-    if (isEmpty(assetId)) {
+    if (!assetId || isEmpty(assetId)) {
       setCurrentAsset(null);
       setAsset(null);
     } else if (asset?.id !== assetId) {
@@ -83,7 +80,6 @@ const ListAssetPage = () => {
       const search = query.get('search');
       const type = query.get('type');
       const displayPublic = [1, '1', true, 'true'].includes(query.get('showPublic'));
-      const published = [1, '1', true, 'true'].includes(query.get('published'));
       const result = [];
 
       if (!isEmpty(open) && includeOpen) {
@@ -102,7 +98,7 @@ const ListAssetPage = () => {
       }
 
       if (includePublished) {
-        result.push(`published=${published}`);
+        result.push(`published=${showPublished}`);
       }
 
       if (!isEmpty(suffix)) {
@@ -131,12 +127,14 @@ const ListAssetPage = () => {
   };
 
   const handleOnSearch = (criteria) => {
-    history.push(
-      `${location.pathname}?${getQueryParams(
-        { includeType: true, includePublic: true, includePublished: true },
-        `search=${criteria}`
-      )}`
-    );
+    if (!isEmpty(criteria)) {
+      history.push(
+        `${location.pathname}?${getQueryParams(
+          { includeType: true, includePublic: true, includePublished: true },
+          `search=${criteria}`
+        )}`
+      );
+    }
   };
 
   const handleOnShowPublic = (value) => {
@@ -175,6 +173,7 @@ const ListAssetPage = () => {
       onTypeChange={handleOnTypeChange}
       onShowPublic={handleOnShowPublic}
       assetType={assetType}
+      pinned={isNil(category)}
     />
   ) : null;
 };

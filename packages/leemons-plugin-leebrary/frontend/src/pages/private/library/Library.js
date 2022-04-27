@@ -21,7 +21,8 @@ function cleanPath(path) {
 
 const LibraryPageContent = () => {
   const { path } = useRouteMatch();
-  const { newAsset, category, setAsset, setCategories, categories } = useContext(LibraryContext);
+  const { newAsset, category, setCategory, setAsset, setCategories, categories } =
+    useContext(LibraryContext);
   const [, translations] = useTranslateLoader(prefixPN('home'));
   const history = useHistory();
 
@@ -50,7 +51,12 @@ const LibraryPageContent = () => {
 
   const handleOnNav = (data) => {
     setAsset(null);
-    history.push(cleanPath(`${path}/${data.key}/list`));
+    if (data) {
+      history.push(cleanPath(`${path}/${data.key}/list`));
+    } else {
+      setCategory(null);
+      history.push(cleanPath(`${path}/pins`));
+    }
   };
 
   const handleOnNew = (item) => {
@@ -95,6 +101,11 @@ const LibraryPageContent = () => {
 
           {/* LIST ASSETS ························································ */}
           <Route path={cleanPath(`${path}/:category/list`)}>
+            <ListAssetPage />
+          </Route>
+
+          {/* PINNED ASSETS ························································ */}
+          <Route path={cleanPath(`${path}/pins`)}>
             <ListAssetPage />
           </Route>
 

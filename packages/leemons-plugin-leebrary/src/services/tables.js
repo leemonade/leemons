@@ -5,6 +5,7 @@ const tables = {
   assetsFiles: leemons.query('plugins_leebrary::assets-files'),
   categories: leemons.query('plugins_leebrary::categories'),
   bookmarks: leemons.query('plugins_leebrary::bookmarks'),
+  pins: leemons.query('plugins_leebrary::pins'),
 };
 
 module.exports = { tables };
