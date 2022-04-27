@@ -10,11 +10,12 @@ module.exports = async function removeAssignableInstance(
 ) {
   // EN: Get the assignable instance
   // ES: Obtiene el asignable instance
-  const { relatedAssignableInstances, dates, classes } = await getAssignableInstance.call(
-    this,
-    assignableInstanceId,
-    { details: true, userSession, transacting }
-  );
+  const { relatedAssignableInstances, dates, classes, assignable } =
+    await getAssignableInstance.call(this, assignableInstanceId, {
+      details: true,
+      userSession,
+      transacting,
+    });
 
   // EN: Remove each relatedAssignableInstance
   // ES: Elimina cada relatedAssignableInstance
@@ -45,7 +46,7 @@ module.exports = async function removeAssignableInstance(
 
   // EN: Remove the assignable instance permission item
   // ES: Elimina el item de permiso del asignable instance
-  await removePermission(assignableInstanceId, { transacting });
+  await removePermission(assignableInstanceId, assignable.id, { transacting });
 
   // EN: Remove the assignable instance
   // ES: Elimina el asignable instance

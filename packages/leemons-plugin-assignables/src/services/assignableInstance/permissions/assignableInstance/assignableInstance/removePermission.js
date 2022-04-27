@@ -2,12 +2,12 @@ const permission = require('../../permission');
 const getPermissionName = require('../getPermissionName');
 const getPermissionType = require('../getPermissionType');
 
-module.exports = async function removePermission(asignableInstance, { transacting }) {
+module.exports = async function removePermission(asignableInstance, assignable, { transacting }) {
   try {
     return await permission.removeItems(
       {
         type: getPermissionType(),
-        permissionName: getPermissionName(asignableInstance),
+        permissionName: getPermissionName(asignableInstance, { assignable, prefix: true }),
       },
       { transacting }
     );

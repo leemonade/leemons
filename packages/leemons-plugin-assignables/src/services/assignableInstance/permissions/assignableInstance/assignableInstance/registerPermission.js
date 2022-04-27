@@ -2,13 +2,17 @@ const permission = require('../../permission');
 const getPermissionName = require('../getPermissionName');
 const getPermissionType = require('../getPermissionType');
 
-module.exports = async function registerPermission(assignableInstance, { transacting } = {}) {
+module.exports = async function registerPermission(
+  assignableInstance,
+  assignable,
+  { transacting } = {}
+) {
   try {
     return await permission.addItem(
       assignableInstance,
       getPermissionType(),
       {
-        permissionName: getPermissionName(assignableInstance),
+        permissionName: getPermissionName(assignableInstance, { assignable, prefix: true }),
         actionNames: leemons.plugin.config.constants.assignableInstanceActions,
       },
       { isCustomPermission: true, transacting }

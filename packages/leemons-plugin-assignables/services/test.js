@@ -8,7 +8,7 @@ module.exports = function main(userSession) {
     registerRole,
     createAssignable,
     addUserToAssignable,
-    // removeUserFromAssignable,
+    removeUserFromAssignable,
     // listAssignableUserAgents,
     // searchAssignables,
     getAssignable,
@@ -168,12 +168,12 @@ module.exports = function main(userSession) {
     duration: '5 minutes',
     gradable: true,
     classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507'],
-    students: [
-      {
-        id: '98e5f5d0-7f59-4629-8c47-23928e5b48e0',
-        classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507'],
-      },
-    ],
+    // students: [
+    //   {
+    //     id: '98e5f5d0-7f59-4629-8c47-23928e5b48e0',
+    //     classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507'],
+    //   },
+    // ],
     messageToAssignees: '<p>This is the message</p>',
     curriculum: {
       content: true,
@@ -181,6 +181,16 @@ module.exports = function main(userSession) {
       objectives: true,
     },
     metadata: {},
+  };
+
+  const userSession1 = {
+    ...userSession,
+    userAgents: [userSession.userAgents[0]],
+  };
+
+  const userSession2 = {
+    ...userSession,
+    userAgents: [userSession.userAgents[1]],
   };
 
   return global.utils.withTransaction(async (transacting) => {
@@ -216,7 +226,7 @@ module.exports = function main(userSession) {
         //   ],
         // },
       },
-      { userSession, transacting }
+      { userSession: userSession1, transacting }
     );
     const { id } = data;
 
@@ -226,8 +236,26 @@ module.exports = function main(userSession) {
       {
         assignable: id,
         ...taskInstance,
+        students: [
+          {
+            id: userSession2.userAgents[0].id,
+            classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507'],
+          },
+        ],
       },
-      { userSession, transacting }
+      { userSession: userSession1, transacting }
+    );
+
+    console.log(taskInstanceData);
+
+    // await removeUserFromAssignable(id, userSession2.userAgents[0].id, {
+    //   userSession: userSession1,
+    //   transacting,
+    // });
+
+    console.log(
+      'Get Assignable as student',
+      await getAssignable(id, { userSession: userSession2, transacting })
     );
 
     // // EN: Create the assignation

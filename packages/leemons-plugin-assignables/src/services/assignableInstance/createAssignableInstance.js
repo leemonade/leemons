@@ -82,7 +82,7 @@ module.exports = async function createAssignableInstance(
 
   // EN: Create the item permission
   // ES: Crea el permiso del item
-  await registerPermission(id, { userSession, transacting });
+  await registerPermission(id, assignable.id, { userSession, transacting });
 
   // EN: Save the classes
   // ES: Guarda las clases
@@ -93,6 +93,7 @@ module.exports = async function createAssignableInstance(
   if (students.length) {
     await addPermissionToUser(
       id,
+      assignable.id,
       students.map((s) => s.id),
       'student',
       { transacting }
