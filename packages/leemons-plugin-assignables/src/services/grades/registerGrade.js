@@ -4,11 +4,13 @@ module.exports = async function registerGrade(
   { assignation, subject, type, grade, gradedBy, feedback },
   { transacting } = {}
 ) {
-  return grades.create(
+  return grades.set(
     {
       assignation,
       subject,
       type,
+    },
+    {
       grade,
       gradedBy,
       feedback,
