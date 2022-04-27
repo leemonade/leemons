@@ -5,7 +5,7 @@ const getTeacherPermission = require('./getTeacherPermission');
 
 module.exports = async function getUserPermission(assignable, { userSession, transacting } = {}) {
   const permissions = await permission.getUserAgentPermissions(userSession.userAgents, {
-    query: { permissionName_$contains: getPermissionName(assignable) },
+    query: { permissionName_$contains: getPermissionName(assignable.id) },
     transacting,
   });
 

@@ -230,54 +230,54 @@ module.exports = function main(userSession) {
       { userSession, transacting }
     );
 
-    // EN: Create the assignation
-    // ES: Crea la asignación
-    const userAssignationData = await createAssignation(
-      taskInstanceData.id,
-      [userSession.userAgents[0].id],
-      {
-        indexable: false,
-        classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507'],
-        group: null,
-        grades: [
-          {
-            subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
-            type: 'main',
-            grade: '5c1a0489-8e1d-4ba2-ac0d-d195144f1507',
-            gradedBy: '5c1a0489-8e1d-4ba2-ac0d-d195144f1507',
-            feedback: '<p>This is the feedback</p>',
-          },
-        ],
-        timestamps: {
-          opened: new Date('2019-01-01T00:00:00.000Z'),
-        },
-        status: 'opened',
-        metadata: { invented: true },
-      },
-      { userSession, transacting }
-    );
+    // // EN: Create the assignation
+    // // ES: Crea la asignación
+    // const userAssignationData = await createAssignation(
+    //   taskInstanceData.id,
+    //   [userSession.userAgents[0].id],
+    //   {
+    //     indexable: false,
+    //     classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507'],
+    //     group: null,
+    //     grades: [
+    //       {
+    //         subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+    //         type: 'main',
+    //         grade: '5c1a0489-8e1d-4ba2-ac0d-d195144f1507',
+    //         gradedBy: '5c1a0489-8e1d-4ba2-ac0d-d195144f1507',
+    //         feedback: '<p>This is the feedback</p>',
+    //       },
+    //     ],
+    //     timestamps: {
+    //       opened: new Date('2019-01-01T00:00:00.000Z'),
+    //     },
+    //     status: 'opened',
+    //     metadata: { invented: true },
+    //   },
+    //   { userSession, transacting }
+    // );
 
-    console.log('assignation', userAssignationData);
+    // console.log('assignation', userAssignationData);
 
     // EN: Update the assignation
     // ES: Actualiza la asignación
-    const updatedAssignation = await updateAssignation({
-      id: userAssignationData.id,
-      grades: [
-        {
-          subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
-          type: 'main',
-          grade: '5c1a0489-8e1d-4ba2-ac0d-d195144f1509',
-          gradedBy: '5c1a0489-8e1d-4ba2-ac0d-d195144f1509',
-          feedback: '<p>This is the feedback (Not changed)</p>',
-        },
-      ],
-      timestamps: {
-        closed: new Date('2019-01-01T00:00:00.000Z'),
-      },
-    });
+    // const updatedAssignation = await updateAssignation({
+    //   id: userAssignationData.id,
+    //   grades: [
+    //     {
+    //       subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+    //       type: 'main',
+    //       grade: '5c1a0489-8e1d-4ba2-ac0d-d195144f1509',
+    //       gradedBy: '5c1a0489-8e1d-4ba2-ac0d-d195144f1509',
+    //       feedback: '<p>This is the feedback (Not changed)</p>',
+    //     },
+    //   ],
+    //   timestamps: {
+    //     closed: new Date('2019-01-01T00:00:00.000Z'),
+    //   },
+    // });
 
-    console.log('UpdatedAssignation', updatedAssignation);
+    // console.log('UpdatedAssignation', updatedAssignation);
 
     // EN: Remove the assignation
     // ES: Elimina la asignación
