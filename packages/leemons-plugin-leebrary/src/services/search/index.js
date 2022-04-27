@@ -27,12 +27,12 @@ async function search(
 
   try {
     if (pinned) {
-      console.log('-- Vamos a buscar en los assets pinneados --');
+      // console.log('-- Vamos a buscar en los assets pinneados --');
       const pins = await getPinsByUser({ userSession, transacting });
-      assets = intersection(
-        pins.map((pin) => pin.asset),
-        assets
-      );
+      assets = pins.map((pin) => pin.asset);
+      nothingFound = assets.length === 0;
+      // console.log('assets:');
+      // console.log(assets);
     }
 
     if (!isEmpty(criteria)) {
@@ -62,12 +62,18 @@ async function search(
       nothingFound = assets.length === 0;
     }
 
+    // console.log('-- Después de CRITERIA:');
+    // console.log(assets);
+
     if (type) {
       assets = await getAssetsByType(type, { assets, transacting });
       nothingFound = assets.length === 0;
     }
 
-    if (!nothingFound) {
+    // console.log('-- Después de TYPE:');
+    // console.log(assets);
+
+    if (!nothingFound && !pinned) {
       const { versionControl } = leemons.getPlugin('common').services;
       const assetByStatus = await versionControl.listVersionsOfType(
         leemons.plugin.prefixPN(category),
@@ -82,6 +88,9 @@ async function search(
       nothingFound = assets.length === 0;
     }
 
+    // console.log('-- Después de VERSION CONTROL:');
+    // console.log(assets);
+
     // ES: Si viene la categoría, filtramos todo el array de Assets con respecto a esa categoría
     // EN: If we have the category, we filter the array of Assets with respect to that category
     if (!nothingFound && category) {
@@ -91,12 +100,18 @@ async function search(
       nothingFound = assets.length === 0;
     }
 
+    // console.log('-- Después de CATEGORY:');
+    // console.log(assets);
+
     // EN: Only return assets that the user has permission to view
     // ES: Sólo devuelve los recursos que el usuario tiene permiso para ver
     if (!nothingFound) {
       assets = await getPermissions(uniq(assets), { showPublic, userSession, transacting });
       nothingFound = assets.length === 0;
     }
+
+    // console.log('-- Después de PERMISSIONS:');
+    // console.log(assets);
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
     // EN: For the case that you need sorting, we need a different logic
@@ -117,6 +132,9 @@ async function search(
 
       assets.sort((a, b) => sortedIds.indexOf(a.asset) - sortedIds.indexOf(b.asset));
     }
+
+    // console.log('-- Después de SORT BY:');
+    // console.log(assets);
 
     return assets || [];
   } catch (e) {
