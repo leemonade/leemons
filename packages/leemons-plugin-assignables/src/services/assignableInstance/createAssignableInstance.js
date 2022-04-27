@@ -6,6 +6,7 @@ const { registerClass } = require('../classes');
 const { assignableInstances } = require('../tables');
 const registerPermission = require('./permissions/assignableInstance/assignableInstance/registerPermission');
 const addPermissionToUser = require('./permissions/assignableInstance/users/addPermissionToUser');
+const createAssignation = require('../assignations/createAssignation');
 
 module.exports = async function createAssignableInstance(
   assignableInstance,
@@ -88,19 +89,22 @@ module.exports = async function createAssignableInstance(
   // ES: Guarda las clases
   await registerClass(id, assignable.id, classes, { userSession, transacting });
 
-  // EN: Register the students permissions
-  // ES: Registra los permisos de los estudiantes
   if (students.length) {
-    await addPermissionToUser(
+    // EN: Register the students permissions
+    // ES: Registra los permisos de los estudiantes
+    const studentsIds = students.map((student) => student.id);
+    await addPermissionToUser(id, assignable.id, studentsIds, 'student', { transacting });
+
+    // EN: Create student assignations
+    // ES: Crea asignaciones de estudiantes
+    await createAssignation.call(
+      this,
       id,
-      assignable.id,
-      students.map((s) => s.id),
-      'student',
-      { transacting }
+      studentsIds,
+      { indexable: false },
+      { userSession, transacting }
     );
   }
-
-  // TODO: Create the student instance object
 
   // EN: Save the dates
   // ES: Guarda las fechas

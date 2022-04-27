@@ -1,6 +1,8 @@
 const { inspect } = require('util');
 const { assignables } = require('../src/services/tables');
 
+const classId = '980d8513-178b-47a1-8006-3635ec0b640d';
+
 module.exports = function main(userSession) {
   const { services } = leemons.getPlugin('assignables');
 
@@ -167,7 +169,7 @@ module.exports = function main(userSession) {
     },
     duration: '5 minutes',
     gradable: true,
-    classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507'],
+    classes: [classId],
     // students: [
     //   {
     //     id: '98e5f5d0-7f59-4629-8c47-23928e5b48e0',
@@ -192,6 +194,15 @@ module.exports = function main(userSession) {
     ...userSession,
     userAgents: [userSession.userAgents[1]],
   };
+
+  const userSession3 = {
+    ...userSession,
+    userAgents: [userSession.userAgents[2]],
+  };
+
+  const student = userSession2.userAgents[0].id;
+
+  const studentSession = userSession2;
 
   return global.utils.withTransaction(async (transacting) => {
     // EN: Register role for the assignables.
@@ -238,8 +249,8 @@ module.exports = function main(userSession) {
         ...taskInstance,
         students: [
           {
-            id: userSession2.userAgents[0].id,
-            classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507'],
+            id: student,
+            classes: [classId],
           },
         ],
       },
@@ -248,71 +259,21 @@ module.exports = function main(userSession) {
 
     console.log(taskInstanceData);
 
-    // await removeUserFromAssignable(id, userSession2.userAgents[0].id, {
-    //   userSession: userSession1,
-    //   transacting,
-    // });
-
+    console.log('Before get');
     console.log(
       'Get Assignable as student',
-      await getAssignable(id, { userSession: userSession2, transacting })
+      await getAssignation(taskInstanceData.id, student, {
+        userSession: userSession3,
+        transacting,
+      })
     );
-
-    // // EN: Create the assignation
-    // // ES: Crea la asignación
-    // const userAssignationData = await createAssignation(
-    //   taskInstanceData.id,
-    //   [userSession.userAgents[0].id],
-    //   {
-    //     indexable: false,
-    //     classes: ['5c1a0489-8e1d-4ba2-ac0d-d195144f1507'],
-    //     group: null,
-    //     grades: [
-    //       {
-    //         subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
-    //         type: 'main',
-    //         grade: '5c1a0489-8e1d-4ba2-ac0d-d195144f1507',
-    //         gradedBy: '5c1a0489-8e1d-4ba2-ac0d-d195144f1507',
-    //         feedback: '<p>This is the feedback</p>',
-    //       },
-    //     ],
-    //     timestamps: {
-    //       opened: new Date('2019-01-01T00:00:00.000Z'),
-    //     },
-    //     status: 'opened',
-    //     metadata: { invented: true },
-    //   },
-    //   { userSession, transacting }
-    // );
-
-    // console.log('assignation', userAssignationData);
-
-    // EN: Update the assignation
-    // ES: Actualiza la asignación
-    // const updatedAssignation = await updateAssignation({
-    //   id: userAssignationData.id,
-    //   grades: [
-    //     {
-    //       subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
-    //       type: 'main',
-    //       grade: '5c1a0489-8e1d-4ba2-ac0d-d195144f1509',
-    //       gradedBy: '5c1a0489-8e1d-4ba2-ac0d-d195144f1509',
-    //       feedback: '<p>This is the feedback (Not changed)</p>',
-    //     },
-    //   ],
-    //   timestamps: {
-    //     closed: new Date('2019-01-01T00:00:00.000Z'),
-    //   },
-    // });
-
-    // console.log('UpdatedAssignation', updatedAssignation);
 
     // EN: Remove the assignation
     // ES: Elimina la asignación
 
-    const removed = await removeAssignable(id, { userSession, transacting });
+    // const removed = await removeAssignable(id, { userSession, transacting });
 
-    console.log('removed', removed);
+    // console.log('removed', removed);
 
     throw new Error('cleanup');
   }, assignables);

@@ -31,14 +31,6 @@ module.exports = async function createAssignation(
         transacting,
       });
 
-      // Create the user permissions
-      // Crear los permisos de usuario
-      try {
-        await addPermissionToUser(assignableInstanceId, users, 'student', { transacting });
-      } catch (e) {
-        throw new Error('');
-      }
-
       try {
         const { indexable, classes, group, grades, timestamps, status, metadata } = options;
 

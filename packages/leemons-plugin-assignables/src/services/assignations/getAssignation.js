@@ -1,16 +1,24 @@
-const _ = require('lodash');
-const getAssignableInstance = require('../assignableInstance/getAssignableInstance');
-const { registerDates, getDates } = require('../dates');
+const { getDates } = require('../dates');
 const { assignations } = require('../tables');
-const registerGrade = require('../grades/registerGrade');
 const getGrade = require('../grades/getGrade');
-const addPermissionToUser = require('../assignableInstance/permissions/assignableInstance/users/addPermissionToUser');
+const getTeacherPermission = require('../assignableInstance/permissions/assignableInstance/users/getTeacherPermission');
 
 module.exports = async function getAssignation(
   assignableInstanceId,
   user,
   { userSession, transacting } = {}
 ) {
+  // EN: Check permissions (or teacher or student)
+  // ES: Comprueba permisos (o profesor o estudiante)
+  if (
+    !(
+      userSession.userAgents.map((u) => u.id).includes(user) ||
+      (await getTeacherPermission(assignableInstanceId, { userSession, transacting })).length
+    )
+  ) {
+    throw new Error('Assignation not found or your are not allowed to view it');
+  }
+
   let assignation = await assignations.findOne(
     {
       instance: assignableInstanceId,
@@ -20,7 +28,7 @@ module.exports = async function getAssignation(
   );
 
   if (!assignation) {
-    throw new Error('Assignation not found or not allowed');
+    throw new Error('Assignation not found or your are not allowed to view it');
   }
 
   assignation = {
