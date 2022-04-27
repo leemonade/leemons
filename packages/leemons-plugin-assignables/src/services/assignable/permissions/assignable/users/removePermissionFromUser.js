@@ -15,7 +15,7 @@ module.exports = async function removePermissionFromUser(
   await permission.removeCustomUserAgentPermission(
     userAgent.id,
     {
-      permissionName: getPermissionName(assignable),
+      permissionName: getPermissionName(assignable.id, { prefix: true }),
       actionNames: actions,
     },
     { transacting }
