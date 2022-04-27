@@ -30,6 +30,7 @@ module.exports = {
         addTag: 'Add tag',
         changeImage: 'Change image',
         uploadButton: 'Upload image',
+        search: 'Search from library',
         submitForm: 'Add to library',
         submitChanges: 'Save changes',
         name: 'Name',

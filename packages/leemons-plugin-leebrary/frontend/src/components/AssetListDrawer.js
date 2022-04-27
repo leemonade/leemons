@@ -153,7 +153,7 @@ const AssetListDrawer = ({
 AssetListDrawer.defaultProps = {
   opened: false,
   position: 'right',
-  size: 1187,
+  size: 500,
   layout: 'grid',
   assetType: 'image',
   canChangeType: false,

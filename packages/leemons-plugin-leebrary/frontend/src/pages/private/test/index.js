@@ -6,11 +6,13 @@ import SelectUserAgent from '@users/components/SelectUserAgent';
 import selectFile from '../../../helpers/selectFile';
 import { listAllMyFilesRequest, uploadFilesRequest, removeFileRequest } from '../../../request';
 import IconByMimeType from '../../../components/IconByMimeType';
+import { ImagePicker } from '../../../components/ImagePicker';
 
 export default function TestPage() {
   const [items, setItems] = useState([]);
   const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
   const [users, setUsers] = useState([]);
+  const [selectedCover, setSelectedCover] = useState(null);
 
   const showConfirmDelete = (userID) => {
     openDeleteConfirmationModal({
@@ -73,6 +75,7 @@ export default function TestPage() {
             </Stack>
           </Box>
         </ContextContainer>
+
         <ContextContainer title="Modales de confirmación">
           <Box>
             <Button onClick={showConfirm}>Confirmar</Button>
@@ -81,6 +84,7 @@ export default function TestPage() {
             <Button onClick={() => showConfirmDelete(1234)}>Borrar</Button>
           </Box>
         </ContextContainer>
+
         <ContextContainer title="Select UserAgents">
           <ContextContainer subtitle="maxSelectedValues (3)">
             <SelectUserAgent
@@ -94,6 +98,7 @@ export default function TestPage() {
             />
           </ContextContainer>
         </ContextContainer>
+
         <TagifyInput
           label="Tagify"
           description="Probando el Tagify"
@@ -120,6 +125,15 @@ export default function TestPage() {
             ],
           }}
         />
+        <ContextContainer title="ImagePicker example">
+          <ImagePicker
+            value={selectedCover}
+            onChange={(e) => {
+              console.log(e);
+              setSelectedCover(e);
+            }}
+          />
+        </ContextContainer>
       </ContextContainer>
     </Paper>
   );
