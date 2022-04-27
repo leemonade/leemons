@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, ContextContainer, Stack } from '@bubbles-ui/components';
+import { Box, Button, ContextContainer, Stack } from '@bubbles-ui/components';
+import { Controller } from 'react-hook-form';
+import ImagePicker from '@leebrary/components/ImagePicker';
 
 export default function DetailDesign({ form, t, onNext }) {
   const [isDirty, setIsDirty] = React.useState(false);
@@ -15,7 +17,17 @@ export default function DetailDesign({ form, t, onNext }) {
 
   return (
     <ContextContainer>
-      <Stack justifyContent="end">
+      <Stack justifyContent="space-between">
+        <Box sx={(theme) => ({ marginRight: theme.spacing[8] })}>
+          <Controller
+            control={form.control}
+            name="cover"
+            render={({ field }) => {
+              console.log(field);
+              return <ImagePicker {...field} />;
+            }}
+          />
+        </Box>
         <Button onClick={next}>{t('continue')}</Button>
       </Stack>
     </ContextContainer>

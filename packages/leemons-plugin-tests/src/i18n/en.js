@@ -12,6 +12,9 @@ module.exports = {
     draft: 'Drafts',
   },
   questionsBanksDetail: {
+    coverImage: 'Cover Image',
+    coverImageAdd: 'Add image',
+    coverImageRemove: 'Delete image',
     categoriesLabel: 'Categories',
     categoryLabel: 'Category',
     programLabel: 'Program',

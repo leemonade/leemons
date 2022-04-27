@@ -25,9 +25,15 @@ async function listQuestionBanks(ctx) {
 }
 
 async function saveQuestionBanks(ctx) {
-  const questionBank = await questionsBanksService.save(ctx.request.body, {
-    userSession: ctx.state.userSession,
-  });
+  const questionBank = await questionsBanksService.save(
+    {
+      ...JSON.parse(ctx.request.body.data),
+      ...ctx.request.files,
+    },
+    {
+      userSession: ctx.state.userSession,
+    }
+  );
   ctx.status = 200;
   ctx.body = { status: 200, questionBank };
 }

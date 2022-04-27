@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
-import { ImagePreviewInput, Stack, Button, Box } from '@bubbles-ui/components';
+import { Box, Button, ImagePreviewInput, Stack } from '@bubbles-ui/components';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '../helpers/prefixPN';
@@ -29,7 +29,7 @@ const ImagePicker = ({
     } else if (!isEmpty(valueProp) && valueProp !== asset) {
       setAsset(valueProp);
 
-      if (valueProp.id && valueProp.file) {
+      if (valueProp.id && valueProp.cover) {
         const preparedAsset = prepareAsset(valueProp);
         setAssetUrl(preparedAsset.cover);
       } else if (valueProp.name && valueProp.path) {

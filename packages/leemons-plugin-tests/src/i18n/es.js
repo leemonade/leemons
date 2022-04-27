@@ -12,6 +12,9 @@ module.exports = {
     draft: 'Borradores',
   },
   questionsBanksDetail: {
+    coverImage: 'Imagen de portada',
+    coverImageAdd: 'Añadir imagen',
+    coverImageRemove: 'Eliminar imagen',
     categoriesLabel: 'Categorías',
     categoryLabel: 'Categoría',
     programLabel: 'Programa',

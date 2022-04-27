@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { LibraryForm } from '../LibraryForm/LibraryForm';
 import prefixPN from '../helpers/prefixPN';
 import { prepareAsset } from '../helpers/prepareAsset';
+import { LibraryForm } from './LibraryForm/LibraryForm';
 
 const AssetForm = ({
   file,

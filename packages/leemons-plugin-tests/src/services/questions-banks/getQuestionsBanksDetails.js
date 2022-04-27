@@ -29,6 +29,7 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
       const assetService = leemons.getPlugin('leebrary').services.assets;
       promises.push(
         assetService.getByIds(_.map(questionsBanks, 'asset'), {
+          withFiles: true,
           userSession,
           transacting,
         })
@@ -60,6 +61,7 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
       questionBank.asset = questionBanksAssets[i];
       questionBank.tagline = questionBanksAssets[i].tagline;
       questionBank.summary = questionBanksAssets[i].description;
+      questionBank.cover = questionBanksAssets[i];
     }
   });
   _.forEach(questions, (question, i) => {
