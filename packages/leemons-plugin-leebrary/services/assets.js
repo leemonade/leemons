@@ -6,7 +6,6 @@ const { update } = require('../src/services/assets/update');
 module.exports = {
   getByIds,
   exists,
-  add,
-  getByIds,
   update,
+  add,
 };

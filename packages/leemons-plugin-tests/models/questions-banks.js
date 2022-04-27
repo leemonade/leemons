@@ -20,6 +20,9 @@ module.exports = {
         defaultTo: false,
       },
     },
+    asset: {
+      specificType: 'varchar(255)',
+    },
   },
   primaryKey: {
     name: 'id',

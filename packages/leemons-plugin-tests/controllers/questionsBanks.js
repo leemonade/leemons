@@ -25,13 +25,17 @@ async function listQuestionBanks(ctx) {
 }
 
 async function saveQuestionBanks(ctx) {
-  const questionBank = await questionsBanksService.save(ctx.request.body);
+  const questionBank = await questionsBanksService.save(ctx.request.body, {
+    userSession: ctx.state.userSession,
+  });
   ctx.status = 200;
   ctx.body = { status: 200, questionBank };
 }
 
 async function getQuestionBankDetail(ctx) {
-  const [questionBank] = await questionsBanksService.details(ctx.request.params.id);
+  const [questionBank] = await questionsBanksService.details(ctx.request.params.id, {
+    userSession: ctx.state.userSession,
+  });
   ctx.status = 200;
   ctx.body = { status: 200, questionBank };
 }
