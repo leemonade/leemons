@@ -138,7 +138,7 @@ const AssetList = ({
         criteria,
         type,
         published,
-        showPublic,
+        showPublic: !pinned ? showPublic : true,
         pinned,
       });
       // console.log('assets:', response.assets);
@@ -157,7 +157,10 @@ const AssetList = ({
       if (!isEmpty(assets)) {
         const paginated = getPageItems({ data: assets, page: page - 1, size });
         const assetIds = paginated.items.map((item) => item.asset);
-        const response = await getAssetsByIdsRequest(assetIds, { published, showPublic });
+        const response = await getAssetsByIdsRequest(assetIds, {
+          published,
+          showPublic: !pinned ? showPublic : true,
+        });
         paginated.items = response.assets || [];
         setServerData(paginated);
       } else {
@@ -287,6 +290,8 @@ const AssetList = ({
     if (!isEmpty(category?.id)) {
       // loadAssets(category.id);
       loadAssetTypes(category.id);
+    } else {
+      setAssetTypes(null);
     }
   }, [category]);
 
@@ -303,10 +308,10 @@ const AssetList = ({
   }, [searchDebounced]);
 
   useEffect(() => {
-    if (!isEmpty(category?.id)) {
+    if (!isEmpty(category?.id) || pinned) {
       loadAssets(category.id, searchProp, assetType);
     }
-  }, [searchProp, category, assetType, showPublic]);
+  }, [searchProp, category, assetType, showPublic, pinned]);
 
   // ·········································································
   // HANDLERS
@@ -539,7 +544,7 @@ const AssetList = ({
           })}
         >
           <LoadingOverlay visible={loading} />
-          {!loading && (
+          {!loading && !pinned && (
             <Switch label="Show public assets" checked={showPublic} onChange={handleOnShowPublic} />
           )}
           {!loading && !isEmpty(serverData?.items) && (

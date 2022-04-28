@@ -54,8 +54,7 @@ const LibraryPageContent = () => {
     if (data) {
       history.push(cleanPath(`${path}/${data.key}/list`));
     } else {
-      setCategory(null);
-      history.push(cleanPath(`${path}/pins`));
+      history.push(cleanPath(`${path}/pins/list`));
     }
   };
 
@@ -104,11 +103,6 @@ const LibraryPageContent = () => {
             <ListAssetPage />
           </Route>
 
-          {/* PINNED ASSETS ························································ */}
-          <Route path={cleanPath(`${path}/pins`)}>
-            <ListAssetPage />
-          </Route>
-
           {/* DEFAULT exact path={path} */}
           <Route>
             <Redirect to={cleanPath(`${path}/media-files/list`)} />
@@ -143,9 +137,13 @@ const LibraryPage = () => {
 
   const selectCategory = useCallback(
     (key) => {
-      const item = find(categories, { key });
-      if (!isEmpty(item) && item.key !== category?.key) {
-        setCategory(item);
+      if (key === 'pins' && category?.key !== 'pins') {
+        setCategory({ key: 'pins', id: null });
+      } else {
+        const item = find(categories, { key });
+        if (!isEmpty(item) && item.key !== category?.key) {
+          setCategory(item);
+        }
       }
     },
     [category, categories]

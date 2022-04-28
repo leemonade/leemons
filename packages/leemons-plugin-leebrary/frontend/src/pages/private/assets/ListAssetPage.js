@@ -12,7 +12,7 @@ function useQuery() {
 }
 
 const ListAssetPage = () => {
-  const { setView, view, categories, asset, setAsset, category, selectCategory } =
+  const { setView, view, categories, asset, setAsset, category, setCategory, selectCategory } =
     useContext(LibraryContext);
   const [currentAsset, setCurrentAsset] = useState(asset);
   const [searchCriteria, setSearchCriteria] = useState('');
@@ -33,6 +33,7 @@ const ListAssetPage = () => {
 
   useEffect(() => {
     if (view !== VIEWS.LIST) setView(VIEWS.LIST);
+
     if (!isEmpty(params?.category) && category?.key !== params?.category) {
       selectCategory(params?.category);
       if (category) {
@@ -158,7 +159,7 @@ const ListAssetPage = () => {
   // ·········································································
   // RENDER
 
-  return !isEmpty(categories) ? (
+  return !isNil(categories) && !isEmpty(categories) ? (
     <AssetList
       category={category}
       categories={categories}
@@ -173,7 +174,7 @@ const ListAssetPage = () => {
       onTypeChange={handleOnTypeChange}
       onShowPublic={handleOnShowPublic}
       assetType={assetType}
-      pinned={isNil(category)}
+      pinned={category?.key === 'pins'}
     />
   ) : null;
 };
