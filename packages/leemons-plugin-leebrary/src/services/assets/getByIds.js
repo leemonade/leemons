@@ -150,6 +150,9 @@ async function getByIds(
     pins = await getPins(assetsIds, { userSession, transacting });
   }
 
+  // ·········································································
+  // FINALLY
+
   return assets.map((asset, index) => {
     const item = { ...asset };
 
