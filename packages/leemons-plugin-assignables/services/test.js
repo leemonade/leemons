@@ -259,11 +259,45 @@ module.exports = function main(userSession) {
 
     console.log(taskInstanceData);
 
-    console.log('Before get');
+    await updateAssignation(
+      {
+        assignableInstance: taskInstanceData.id,
+        user: student,
+        grades: [
+          {
+            subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+            type: 'grade',
+            grade: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+            gradedBy: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+            feedback: 'This is the feedback',
+          },
+        ],
+      },
+      { userSession: userSession1, transacting }
+    );
+
+    await updateAssignation(
+      {
+        assignableInstance: taskInstanceData.id,
+        user: student,
+        status: 'done',
+        // grades: [
+        //   {
+        //     subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+        //     type: 'grade',
+        //     grade: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+        //     gradedBy: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+        //     feedback: 'This is the feedback',
+        //   },
+        // ],
+      },
+      { userSession: studentSession, transacting }
+    );
+
     console.log(
-      'Get Assignable as student',
+      'Assignation updated',
       await getAssignation(taskInstanceData.id, student, {
-        userSession: userSession3,
+        userSession: studentSession,
         transacting,
       })
     );

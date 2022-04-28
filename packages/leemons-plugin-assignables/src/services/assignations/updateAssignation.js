@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const getDiff = require('../../helpers/getDiff');
 const { validateAssignation } = require('../../helpers/validators/assignation');
+const getAssignableInstance = require('../assignableInstance/getAssignableInstance');
 const updateDates = require('../dates/updateDates');
 const registerGrade = require('../grades/registerGrade');
 const { assignations } = require('../tables');
@@ -17,19 +18,32 @@ const updatableFields = [
 ];
 
 module.exports = async function updateAssignation(assignation, { userSession, transacting } = {}) {
-  const { id, ...assignationObj } = assignation;
-
-  // EN: Check if any non-updatable field is being updated
-  // ES: Comprueba si se está actualizando algún campo no actualizable
-  if (_.keys(_.omit(assignationObj, updatableFields)).length) {
-    throw new Error('Some of the provided keys are not updatable');
-  }
+  const { assignableInstance, user, ...assignationObj } = assignation;
 
   validateAssignation(assignationObj);
 
   // TODO: Check permissions
 
-  const currentAssignation = await getAssignation.call(this, id, { userSession, transacting });
+  const currentAssignation = await getAssignation.call(this, assignableInstance, user, {
+    userSession,
+    transacting,
+  });
+
+  const { id } = currentAssignation;
+
+  // EN: Check if the user agent is not the user (if it is not, it is a teacher)
+  // ES: Comprueba si el usuario no es el usuario (si no es, es un profesor)
+  let userUpdatableFields = updatableFields;
+
+  if (userSession.userAgents.map((u) => u.id).includes(currentAssignation.user)) {
+    userUpdatableFields = ['timestamps', 'status'];
+  }
+
+  // EN: Check if any non-updatable field is being updated
+  // ES: Comprueba si se está actualizando algún campo no actualizable
+  if (_.keys(_.omit(assignationObj, userUpdatableFields)).length) {
+    throw new Error('Some of the provided keys are not updatable by the current user');
+  }
 
   // EN: Get the fields that are being updated
   // ES: Obtener los campos que se están actualizando
@@ -52,7 +66,7 @@ module.exports = async function updateAssignation(assignation, { userSession, tr
       object.grades.map((grade) =>
         registerGrade(
           {
-            assignation,
+            assignation: id,
             subject: grade.subject,
             grade: grade.grade,
             feedback: grade.feedback,
