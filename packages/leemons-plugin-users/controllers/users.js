@@ -137,10 +137,16 @@ async function agentDetailForPage(ctx) {
   ctx.body = { status: 200, data };
 }
 
-async function profiles(ctx) {
-  const _profiles = await usersService.profiles(ctx.state.userSession.id);
+async function _profiles(ctx) {
+  const profiles = await usersService.profiles(ctx.state.userSession.id);
   ctx.status = 200;
-  ctx.body = { status: 200, profiles: _profiles };
+  ctx.body = { status: 200, profiles };
+}
+
+async function _centers(ctx) {
+  const centers = await usersService.centers(ctx.state.userSession.id);
+  ctx.status = 200;
+  ctx.body = { status: 200, centers };
 }
 
 async function profileToken(ctx) {
@@ -149,40 +155,70 @@ async function profileToken(ctx) {
   ctx.body = { status: 200, jwtToken };
 }
 
-async function setRememberProfile(ctx) {
-  const profiles = await usersService.profiles(ctx.state.userSession.id);
-  const index = _.findIndex(profiles, { id: ctx.request.body.id });
-  if (index >= 0) {
-    await table.userRememberProfile.set(
-      { user: ctx.state.userSession.id },
-      {
-        user: ctx.state.userSession.id,
-        profile: ctx.request.body.id,
-      }
-    );
+async function centerProfileToken(ctx) {
+  const jwtToken = await usersService.centerProfileToken(
+    ctx.state.userSession.id,
+    ctx.params.centerId,
+    ctx.params.profileId
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, jwtToken };
+}
 
-    ctx.status = 200;
-    ctx.body = { status: 200, profile: profiles[index] };
+async function setRememberLogin(ctx) {
+  const centers = await usersService.centers(ctx.state.userSession.id);
+  const centerI = _.findIndex(centers, { id: ctx.request.body.center });
+  if (centerI >= 0) {
+    const profileI = _.findIndex(centers[centerI].profiles, { id: ctx.request.body.profile });
+    if (profileI >= 0) {
+      await table.userRememberLogin.set(
+        { user: ctx.state.userSession.id },
+        {
+          user: ctx.state.userSession.id,
+          profile: ctx.request.body.profile,
+          center: ctx.request.body.center,
+        }
+      );
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        profile: centers[centerI].profiles[profileI],
+        center: centers[centerI],
+      };
+    } else {
+      throw new Error('You do not have access to the specified profile');
+    }
   } else {
-    throw new Error('You do not have access to the specified profile');
+    throw new Error('You do not have access to the specified center');
   }
 }
 
-async function getRememberProfile(ctx) {
-  const remember = await table.userRememberProfile.findOne({ user: ctx.state.userSession.id });
+async function getRememberLogin(ctx) {
+  const remember = await table.userRememberLogin.findOne({ user: ctx.state.userSession.id });
   if (remember) {
-    const profiles = await usersService.profiles(ctx.state.userSession.id);
-    const index = _.findIndex(profiles, { id: remember.profile });
-    if (index >= 0) {
-      ctx.status = 200;
-      ctx.body = { status: 200, profile: profiles[index] };
+    const centers = await usersService.centers(ctx.state.userSession.id);
+    const centerI = _.findIndex(centers, { id: remember.center });
+    if (centerI >= 0) {
+      const profileI = _.findIndex(centers[centerI].profiles, { id: remember.profile });
+      if (profileI >= 0) {
+        ctx.status = 200;
+        ctx.body = {
+          status: 200,
+          profile: centers[centerI].profiles[profileI],
+          center: centers[centerI],
+        };
+      } else {
+        ctx.status = 200;
+        ctx.body = { status: 200, profile: null, center: null };
+      }
     } else {
       ctx.status = 200;
-      ctx.body = { status: 200, profile: null };
+      ctx.body = { status: 200, profile: null, center: null };
     }
   } else {
     ctx.status = 200;
-    ctx.body = { status: 200, profile: null };
+    ctx.body = { status: 200, profile: null, center: null };
   }
 }
 
@@ -289,7 +325,8 @@ module.exports = {
   recover,
   contacts,
   canReset,
-  profiles,
+  profiles: _profiles,
+  centers: _centers,
   updateUser,
   createBulk,
   profileToken,
@@ -300,8 +337,9 @@ module.exports = {
   registerPassword,
   getUserAgentsInfo,
   agentDetailForPage,
-  setRememberProfile,
-  getRememberProfile,
+  setRememberLogin,
+  getRememberLogin,
+  centerProfileToken,
   canRegisterPassword,
   getDataForUserAgentDatasets,
   saveDataForUserAgentDatasets,

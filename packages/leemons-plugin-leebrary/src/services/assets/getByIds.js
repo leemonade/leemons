@@ -1,11 +1,12 @@
 /* eslint-disable no-param-reassign */
-const { isEmpty, flatten, map, find, compact, uniq } = require('lodash');
+const { isEmpty, flatten, map, find, compact, uniq, isNil } = require('lodash');
 const { tables } = require('../tables');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
 const { getUsersByAsset } = require('../permissions/getUsersByAsset');
 const { find: findBookmarks } = require('../bookmarks/find');
 const canAssignRole = require('../permissions/helpers/canAssignRole');
 const { getByIds: getCategories } = require('../categories/getByIds');
+const { getByAssets: getPins } = require('../pins/getByAssets');
 
 async function getByIds(
   assetsIds,
@@ -13,6 +14,7 @@ async function getByIds(
     withFiles,
     withTags = true,
     withCategory = true,
+    checkPins = true,
     checkPermissions,
     userSession,
     showPublic,
@@ -129,13 +131,23 @@ async function getByIds(
         const categoryProvider = category.provider;
         const assetProviderService = leemons.getProvider(categoryProvider).services.assets;
         return assetProviderService.getByIds(
-          assets.filter((item) => item.category === category.id),
+          assets
+            .filter((item) => item.category === category.id)
+            .map((item) => ({ ...item, category })),
           { userSession, transacting }
         );
       })
     );
 
     assetCategoryData = providersResults.flat();
+  }
+
+  // ·········································································
+  // PINS DATA
+  let pins = [];
+
+  if (checkPins) {
+    pins = await getPins(assetsIds, { userSession, transacting });
   }
 
   return assets.map((asset, index) => {
@@ -150,6 +162,11 @@ async function getByIds(
 
     if (withTags) {
       [item.tags] = tags[index];
+    }
+
+    if (checkPins) {
+      const pin = find(pins, { asset: asset.id });
+      item.pinned = !isNil(pin?.id);
     }
 
     return item;

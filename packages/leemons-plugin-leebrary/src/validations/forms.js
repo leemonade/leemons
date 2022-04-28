@@ -64,7 +64,7 @@ async function validateSetPermissions(data) {
   }
 }
 
-const addBookmarSchema = {
+const addBookmarkSchema = {
   type: 'object',
   properties: {
     url: stringSchema,
@@ -76,7 +76,7 @@ const addBookmarSchema = {
 };
 
 async function validateAddBookmark(data) {
-  const validator = new LeemonsValidator(addBookmarSchema);
+  const validator = new LeemonsValidator(addBookmarkSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;

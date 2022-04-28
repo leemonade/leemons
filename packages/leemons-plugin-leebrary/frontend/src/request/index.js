@@ -12,6 +12,8 @@ import setPermissions from './setPermissions';
 import getUrlMetadata from './getUrlMetadata';
 import updateAsset from './updateAsset';
 import getAssetTypes from './getAssetTypes';
+import pinAsset from './pinAsset';
+import unpinAsset from './unpinAsset';
 
 export const removeFileRequest = removeFile;
 export const uploadFilesRequest = uploadFiles;
@@ -27,3 +29,5 @@ export const duplicateAssetRequest = duplicateAsset;
 export const deleteAssetRequest = deleteAsset;
 export const updateAssetRequest = updateAsset;
 export const getAssetTypesRequest = getAssetTypes;
+export const pinAssetRequest = pinAsset;
+export const unpinAssetRequest = unpinAsset;

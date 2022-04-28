@@ -1,12 +1,14 @@
 const { compact, uniq, uniqBy, flattenDeep, isEmpty, sortBy, intersection } = require('lodash');
-const { byDescription } = require('./byDescription');
-const { byName } = require('./byName');
+const { byName: getByName } = require('./byName');
+const { byTagline: getByTagline } = require('./byTagline');
+const { byDescription: getByDescription } = require('./byDescription');
 const { getByCategory } = require('../assets/getByCategory');
 const { getByIds } = require('../assets/getByIds');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
 const { getAssetsByType } = require('../files/getAssetsByType');
 const { getById: getCategoryById } = require('../categories/getById');
 const { getByKey: getCategoryByKey } = require('../categories/getByKey');
+const { getByUser: getPinsByUser } = require('../pins/getByUser');
 
 async function search(
   { criteria = '', type, category },
@@ -15,8 +17,9 @@ async function search(
     sortBy: sortingBy,
     sortDirection = 'asc',
     published = true,
-    showPublic,
     preferCurrent,
+    pinned,
+    showPublic,
     userSession,
     transacting,
   } = {}
@@ -41,29 +44,54 @@ async function search(
       categoryId = _category.id;
     }
 
+    if (pinned) {
+      // console.log('-- Vamos a buscar en los assets pinneados --');
+      const pins = await getPinsByUser({ userSession, transacting });
+      assets = pins.map((pin) => pin.asset);
+      nothingFound = assets.length === 0;
+      // console.log('assets:');
+      // console.log(assets);
+    }
+
     if (!isEmpty(criteria)) {
       const tagsService = leemons.getPlugin('common').services.tags;
 
-      const result = await Promise.all([
-        byName(criteria, { transacting }),
-        byDescription(criteria, { transacting }),
+      const [byName, byTagline, byDescription, byTags] = await Promise.all([
+        getByName(criteria, { assets, transacting }),
+        getByTagline(criteria, { assets, transacting }),
+        getByDescription(criteria, { assets, transacting }),
+        // getByProvider(category, criteria, { assets, transacting }),
         tagsService.getTagsValues(criteria, {
           type: leemons.plugin.prefixPN(''),
           transacting,
         }),
       ]);
 
-      assets = result[0].concat(result[1]);
-      assets = compact(uniq(assets.concat(flattenDeep(result[2]))));
+      const matches = byName.concat(byTagline).concat(byDescription);
+
+      // ES: Si existen recursos, se debe a un filtro previo que debemos aplicar como intersección
+      // EN: If there are resources, we must apply a previous filter as an intersection
+      if (!isEmpty(assets)) {
+        assets = intersection(matches, compact(uniq(flattenDeep(byTags))));
+      } else {
+        assets = compact(uniq(matches.concat(flattenDeep(byTags))));
+      }
+
       nothingFound = assets.length === 0;
     }
+
+    // console.log('-- Después de CRITERIA:');
+    // console.log(assets);
 
     if (type) {
       assets = await getAssetsByType(type, { assets, transacting });
       nothingFound = assets.length === 0;
     }
 
-    if (!nothingFound) {
+    // console.log('-- Después de TYPE:');
+    // console.log(assets);
+
+    if (!nothingFound && !pinned) {
       const { versionControl } = leemons.getPlugin('common').services;
       const assetByStatus = await versionControl.listVersionsOfType(
         leemons.plugin.prefixPN(categoryId),
@@ -78,6 +106,9 @@ async function search(
       nothingFound = assets.length === 0;
     }
 
+    // console.log('-- Después de VERSION CONTROL:');
+    // console.log(assets);
+
     // ES: Si viene la categoría, filtramos todo el array de Assets con respecto a esa categoría
     // EN: If we have the category, we filter the array of Assets with respect to that category
     if (!nothingFound && categoryId) {
@@ -87,12 +118,18 @@ async function search(
       nothingFound = assets.length === 0;
     }
 
+    // console.log('-- Después de CATEGORY:');
+    // console.log(assets);
+
     // EN: Only return assets that the user has permission to view
     // ES: Sólo devuelve los recursos que el usuario tiene permiso para ver
     if (!nothingFound) {
       assets = await getPermissions(uniq(assets), { showPublic, userSession, transacting });
       nothingFound = assets.length === 0;
     }
+
+    // console.log('-- Después de PERMISSIONS:');
+    // console.log(assets);
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
     // EN: For the case that you need sorting, we need a different logic

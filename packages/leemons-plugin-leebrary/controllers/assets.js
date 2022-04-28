@@ -12,6 +12,8 @@ const { getByAsset: getPermissions } = require('../src/services/permissions/getB
 const { getUsersByAsset } = require('../src/services/permissions/getUsersByAsset');
 const canAssignRole = require('../src/services/permissions/helpers/canAssignRole');
 const { getById: getCategory } = require('../src/services/categories/getById');
+const { add: addPin } = require('../src/services/pins/add');
+const { removeByAsset: removePin } = require('../src/services/pins/removeByAsset');
 
 async function setAsset(ctx) {
   const { id } = ctx.params;
@@ -216,10 +218,9 @@ async function myAssets(ctx) {
   ctx.body = { status: 200, assets };
 }
 
-/**
- * Get URL metadata
- * @param {*} ctx
- */
+// ························································
+// METADATA
+
 async function getUrlMetadata(ctx) {
   const { url } = ctx.request.query;
   if (isEmpty(url)) {
@@ -232,6 +233,56 @@ async function getUrlMetadata(ctx) {
   ctx.body = { status: 200, metas };
 }
 
+// ························································
+// PINS
+
+async function addAssetPin(ctx) {
+  const { asset: assetId } = ctx.request.body;
+  const { userSession } = ctx.state;
+
+  if (!assetId || isEmpty(assetId)) {
+    throw new global.utils.HttpError(400, 'Asset id is required');
+  }
+
+  const pin = await addPin(assetId, { userSession });
+  ctx.status = 200;
+  ctx.body = { status: 200, pin };
+}
+
+async function removeAssetPin(ctx) {
+  const { id: assetId } = ctx.params;
+  const { userSession } = ctx.state;
+
+  const pin = await removePin(assetId, { userSession });
+  ctx.status = 200;
+  ctx.body = { status: 200, pin };
+}
+
+async function getPinnedAssets(ctx) {
+  const { criteria, type, published, preferCurrent, showPublic } = ctx.request.query;
+  const { userSession } = ctx.state;
+
+  const assetPublished = ['true', true, '1', 1].includes(published);
+  const displayPublic = ['true', true, '1', 1].includes(showPublic);
+
+  const assets = await getByCriteria(
+    { criteria, type },
+    {
+      pinned: true,
+      published: assetPublished,
+      showPublic: displayPublic,
+      preferCurrent,
+      userSession,
+    }
+  );
+
+  ctx.status = 200;
+  ctx.body = {
+    status: 200,
+    assets,
+  };
+}
+
 module.exports = {
   add: setAsset,
   update: setAsset,
@@ -242,4 +293,7 @@ module.exports = {
   list: getAssets,
   listByIds: getAssetsByIds,
   urlMetadata: getUrlMetadata,
+  addPin: addAssetPin,
+  removePin: removeAssetPin,
+  pins: getPinnedAssets,
 };

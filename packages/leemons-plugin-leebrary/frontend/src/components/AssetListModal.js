@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty, isString, find } from 'lodash';
-import { Drawer, Box, Paper, Stack, ActionButton, Tabs, TabPanel } from '@bubbles-ui/components';
+import { Modal, Box, Paper, Stack, ActionButton, Tabs, TabPanel } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import { PluginLeebraryIcon } from '@bubbles-ui/icons/solid';
@@ -10,15 +10,13 @@ import { AssetList } from './AssetList';
 import { BasicData } from './AssetSetup/BasicData';
 import prefixPN from '../helpers/prefixPN';
 
-const AssetListDrawer = ({
-  position,
+const AssetListModal = ({
   opened,
   size,
   layout,
   assetType,
   creatable,
   onlyCreateImages,
-  shadow,
   categories: categoriesProp,
   category: categoryProp,
   onClose = () => {},
@@ -85,13 +83,14 @@ const AssetListDrawer = ({
   );
 
   return (
-    <Drawer position={position} opened={opened} size={size} close={false} shadow={shadow} empty>
+    <Modal opened={opened} size={size} withCloseButton={false} trapFocus={false} empty>
       <Paper
         color="solid"
         shadow="none"
         padding="none"
+        radius="none"
         fullWidth
-        style={{ flex: 1, height: '100%' }}
+        style={{ flex: 1, height: '100%', minHeight: 300 }}
       >
         <Stack
           sx={(theme) => ({
@@ -146,26 +145,23 @@ const AssetListDrawer = ({
           )}
         </Box>
       </Paper>
-    </Drawer>
+    </Modal>
   );
 };
 
-AssetListDrawer.defaultProps = {
+AssetListModal.defaultProps = {
   opened: false,
-  position: 'right',
-  size: 500,
+  size: 'xl',
   layout: 'grid',
   assetType: 'image',
   canChangeType: false,
   onlyThumbnails: true,
   creatable: false,
   onlyCreateImages: false,
-  shadow: true,
 };
-AssetListDrawer.propTypes = {
+AssetListModal.propTypes = {
   opened: PropTypes.bool,
-  position: PropTypes.oneOf(['left', 'right']),
-  size: PropTypes.number,
+  size: PropTypes.string,
   onClose: PropTypes.func,
   categories: PropTypes.arrayOf(PropTypes.object),
   category: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
@@ -176,8 +172,7 @@ AssetListDrawer.propTypes = {
   onlyThumbnails: PropTypes.bool,
   creatable: PropTypes.bool,
   onlyCreateImages: PropTypes.bool,
-  shadow: PropTypes.bool,
 };
 
-export { AssetListDrawer };
-export default AssetListDrawer;
+export { AssetListModal };
+export default AssetListModal;
