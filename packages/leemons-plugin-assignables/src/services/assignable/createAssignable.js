@@ -65,7 +65,7 @@ module.exports = async function createAssignable(
       try {
         if (!_id) {
           const savedAsset = await saveAsset(
-            { ...assignableAsset, category: `assignables.${assignable.role}` },
+            { ...assignableAsset, category: `assignables.${assignable.role}`, public: true },
             { userSession, transacting }
           );
 

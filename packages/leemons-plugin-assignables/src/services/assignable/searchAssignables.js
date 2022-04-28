@@ -3,6 +3,7 @@ const semver = require('semver');
 const versionControl = require('../versionControl');
 const { assignables } = require('../tables');
 const getUserPermission = require('./permissions/assignable/users/getUserPermission');
+const leebrary = require('../leebrary/leebrary');
 
 async function asyncFilter(array, f) {
   const results = await Promise.all(array.map(f));
@@ -12,7 +13,7 @@ async function asyncFilter(array, f) {
 
 module.exports = async function searchAssignables(
   role,
-  { published, preferCurrent, ..._query },
+  { published, preferCurrent, search, ..._query },
   sort,
   { userSession, transacting } = {}
 ) {
@@ -24,10 +25,38 @@ module.exports = async function searchAssignables(
     4. Sort them by the sort
   */
 
+    /*
+      Filter by:
+
+      ASSET:
+        - Nombre ✅
+        - Tags ✅
+        ASSIGNABLE:
+        - Role ✅
+        - Assessable ❌
+        - Program ❌
+        - Subject ❌
+        - Methodology ❌
+
+      Sort by:
+      - Nombre ❌
+      - Dates ❌
+    */
+
     const query = {
       role,
     };
 
+    if (search) {
+      query.asset_$in = (
+        await leebrary.search.search(
+          { criteria: search, category: `assignables.${role}` },
+          { allVersions: true, published: 'all', transacting, userSession }
+        )
+      ).map(({ asset }) => asset);
+    }
+
+    console.log(query);
     // EN: Get all the assignables matching the query
     // ES: Obtener todos los asignables que coincidan con la query
     let assignablesIds = (await assignables.find(query, { columns: ['id'], transacting })).map(
@@ -92,6 +121,7 @@ module.exports = async function searchAssignables(
 
     return assignablesIds;
   } catch (e) {
+    console.log(e);
     throw new Error(`Error searching assignables: ${e.message}`);
   }
 };
