@@ -68,7 +68,7 @@ const ImagePicker = ({
   const handleOnSelectAsset = (item) => {
     const preparedAsset = prepareAsset(item);
     setAssetUrl(preparedAsset.cover);
-    onChange(item.file.id);
+    onChange(preparedAsset.original.cover.id);
     setShowAssetDrawer(false);
   };
 

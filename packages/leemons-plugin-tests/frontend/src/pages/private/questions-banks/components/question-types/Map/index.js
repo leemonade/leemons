@@ -17,6 +17,7 @@ import { TextEditorInput } from '@bubbles-ui/editors';
 import { useStore } from '@common';
 import { ViewOffIcon } from '@bubbles-ui/icons/outline';
 import { findIndex, forEach, map } from 'lodash';
+import ImagePicker from '@leebrary/components/ImagePicker';
 import { QuestionImage } from '../../../../../../components/QuestionImage';
 import { QuestionImageMarkersModal } from '../../../../../../components/QuestionImageMarkersModal';
 import { ListItemValueRender } from './components/ListItemValueRender';
@@ -26,13 +27,6 @@ export function Map({ form, t }) {
   const [store, render] = useStore();
   const image = form.watch('properties.image');
   const markers = form.watch('properties.markers');
-
-  function addMap() {
-    form.setValue(
-      'properties.image',
-      'https://www.xtrafondos.com/wallpapers/gato-con-mariposa-de-fantasia-4560.jpg'
-    );
-  }
 
   function showMarkersModal() {
     store.showMarkersModal = true;
@@ -69,6 +63,8 @@ export function Map({ form, t }) {
     splits[1],
   ];
 
+  console.log(image);
+
   return (
     <ContextContainer>
       <InputWrapper required label={t('mapLabel')}>
@@ -98,7 +94,11 @@ export function Map({ form, t }) {
           </ContextContainer>
         ) : (
           <Box>
-            <Button onClick={addMap}>{t('addMap')}</Button>
+            <Controller
+              control={form.control}
+              name="properties.image"
+              render={({ field }) => <ImagePicker {...field} />}
+            />
           </Box>
         )}
       </InputWrapper>

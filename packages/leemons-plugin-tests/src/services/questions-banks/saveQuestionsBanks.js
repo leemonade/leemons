@@ -266,6 +266,8 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
                     : null,
               },
               {
+                published,
+                userSession,
                 transacting,
               }
             )

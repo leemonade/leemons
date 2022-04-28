@@ -22,10 +22,7 @@ export default function DetailDesign({ form, t, onNext }) {
           <Controller
             control={form.control}
             name="cover"
-            render={({ field }) => {
-              console.log(field);
-              return <ImagePicker {...field} />;
-            }}
+            render={({ field }) => <ImagePicker {...field} />}
           />
         </Box>
         <Button onClick={next}>{t('continue')}</Button>

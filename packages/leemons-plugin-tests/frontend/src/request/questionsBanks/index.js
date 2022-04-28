@@ -1,4 +1,4 @@
-import { isString } from 'lodash';
+import { forEach, isString } from 'lodash';
 
 async function listQuestionsBanks(body) {
   return leemons.api(`tests/question-bank/list`, {
@@ -10,14 +10,28 @@ async function listQuestionsBanks(body) {
 
 async function saveQuestionBank(body) {
   const form = new FormData();
-  if (!isString(body.cover)) {
+  const questionsFiles = [];
+  forEach(body.questions || [], (question, index) => {
+    if (!isString(question.properties.image)) {
+      if (question.properties.image.id) {
+        // eslint-disable-next-line no-param-reassign
+        body.questions[index].properties.image = question.properties.image.cover.id;
+      } else {
+        questionsFiles.push({ index, name: 'properties.image', file: question.properties.image });
+      }
+    }
+  });
+  if (!isString(body.cover) || questionsFiles.length) {
     const { cover, ...data } = body;
     if (body.cover.id) {
-      form.append('data', JSON.stringify({ ...data, cover: body.cover.file.id }));
+      data.cover = body.cover.cover.id;
     } else {
       form.append('cover', body.cover, body.cover.name);
-      form.append('data', JSON.stringify(data));
     }
+    forEach(questionsFiles, ({ index, name, file }) => {
+      form.append(`questions[${index}].${name}`, file, file.name);
+    });
+    form.append('data', JSON.stringify(data));
   } else {
     form.append('data', JSON.stringify(body));
   }
