@@ -69,10 +69,12 @@ async function search(
         { allVersions, published, preferCurrent, transacting }
       );
 
-      assets = intersection(
-        assets,
-        assetByStatus.map((item) => item.fullId)
-      );
+      assets = assets.length
+        ? intersection(
+            assets,
+            assetByStatus.map((item) => item.fullId)
+          )
+        : assetByStatus.map((item) => item.fullId);
 
       nothingFound = assets.length === 0;
     }
@@ -90,7 +92,6 @@ async function search(
     // ES: Sólo devuelve los recursos que el usuario tiene permiso para ver
     if (!nothingFound) {
       assets = await getPermissions(uniq(assets), { userSession, transacting });
-
       nothingFound = assets.length === 0;
     }
 
@@ -114,7 +115,7 @@ async function search(
       assets.sort((a, b) => sortedIds.indexOf(a.asset) - sortedIds.indexOf(b.asset));
     }
 
-    return uniqBy(assets, 'id') || [];
+    return uniqBy(assets, 'asset') || [];
   } catch (e) {
     throw new global.utils.HttpError(500, `Failed to find asset with query: ${e.message}`);
   }
