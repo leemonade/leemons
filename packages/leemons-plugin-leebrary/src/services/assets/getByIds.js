@@ -131,7 +131,9 @@ async function getByIds(
         const categoryProvider = category.provider;
         const assetProviderService = leemons.getProvider(categoryProvider).services.assets;
         return assetProviderService.getByIds(
-          assets.filter((item) => item.category === category.id),
+          assets
+            .filter((item) => item.category === category.id)
+            .map((item) => ({ ...item, category })),
           { userSession, transacting }
         );
       })
@@ -161,6 +163,7 @@ async function getByIds(
     if (withTags) {
       [item.tags] = tags[index];
     }
+
     if (checkPins) {
       const pin = find(pins, { asset: asset.id });
       item.pinned = !isNil(pin?.id);
