@@ -1,17 +1,19 @@
-const { compact, uniq, flattenDeep, isEmpty, sortBy, intersection } = require('lodash');
+const { compact, uniq, uniqBy, flattenDeep, isEmpty, sortBy, intersection } = require('lodash');
 const { byName: getByName } = require('./byName');
 const { byTagline: getByTagline } = require('./byTagline');
-const { byProvider: getByProvider } = require('./byProvider');
 const { byDescription: getByDescription } = require('./byDescription');
 const { getByCategory } = require('../assets/getByCategory');
 const { getByIds } = require('../assets/getByIds');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
 const { getAssetsByType } = require('../files/getAssetsByType');
+const { getById: getCategoryById } = require('../categories/getById');
+const { getByKey: getCategoryByKey } = require('../categories/getByKey');
 const { getByUser: getPinsByUser } = require('../pins/getByUser');
 
 async function search(
   { criteria = '', type, category },
   {
+    allVersions = false,
     sortBy: sortingBy,
     sortDirection = 'asc',
     published = true,
@@ -26,6 +28,22 @@ async function search(
   let nothingFound = false;
 
   try {
+    let categoryId;
+    if (category) {
+      let _category;
+
+      if (
+        category.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)
+      ) {
+        // eslint-disable-next-line no-param-reassign
+        _category = await getCategoryById(category, { columns: ['id'], transacting });
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        _category = await getCategoryByKey(category, { columns: ['id'], transacting });
+      }
+      categoryId = _category.id;
+    }
+
     if (pinned) {
       // console.log('-- Vamos a buscar en los assets pinneados --');
       const pins = await getPinsByUser({ userSession, transacting });
@@ -76,8 +94,8 @@ async function search(
     if (!nothingFound && !pinned) {
       const { versionControl } = leemons.getPlugin('common').services;
       const assetByStatus = await versionControl.listVersionsOfType(
-        leemons.plugin.prefixPN(category),
-        { published, preferCurrent, transacting }
+        leemons.plugin.prefixPN(categoryId),
+        { allVersions, published, preferCurrent, transacting }
       );
 
       assets = intersection(
@@ -93,8 +111,8 @@ async function search(
 
     // ES: Si viene la categoría, filtramos todo el array de Assets con respecto a esa categoría
     // EN: If we have the category, we filter the array of Assets with respect to that category
-    if (!nothingFound && category) {
-      assets = (await getByCategory(category, { assets: uniq(assets), transacting })).map(
+    if (!nothingFound && categoryId) {
+      assets = (await getByCategory(categoryId, { assets: uniq(assets), transacting })).map(
         ({ id }) => id
       );
       nothingFound = assets.length === 0;
@@ -133,10 +151,7 @@ async function search(
       assets.sort((a, b) => sortedIds.indexOf(a.asset) - sortedIds.indexOf(b.asset));
     }
 
-    // console.log('-- Después de SORT BY:');
-    // console.log(assets);
-
-    return assets || [];
+    return uniqBy(assets, 'id') || [];
   } catch (e) {
     throw new global.utils.HttpError(500, `Failed to find asset with query: ${e.message}`);
   }

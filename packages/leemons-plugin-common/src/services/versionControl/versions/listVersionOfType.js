@@ -1,7 +1,10 @@
 const _ = require('lodash');
 const list = require('../currentVersions/list');
-const { parseId } = require('../helpers');
+const { parseId, stringifyId, stringifyVersion } = require('../helpers');
 const getVersion = require('./getVersion');
+const {
+  table: { versions },
+} = require('../../tables');
 
 function getDesiredVersion(current, published, preferCurrent) {
   if (current && preferCurrent && (published === true || published === 'all')) {
@@ -20,11 +23,32 @@ function getDesiredVersion(current, published, preferCurrent) {
 
 module.exports = async function listVersionOfType(
   type,
-  { published = 'all', transacting, preferCurrent = true } = {}
+  { allVersions = false, published = 'all', transacting, preferCurrent = true } = {}
 ) {
   const listOfEntities = await list.bind(this)(type, {
     transacting,
   });
+
+  if (allVersions) {
+    const foundVersions = await versions.find(
+      {
+        uuid_$in: listOfEntities.map((entity) => entity.uuid),
+      },
+      { transacting }
+    );
+
+    const result = await Promise.all(
+      foundVersions.map(async (v) => {
+        const fullId = stringifyId(v.uuid, stringifyVersion(v));
+
+        const version = await getVersion.call(this, fullId, { transacting });
+
+        return version;
+      })
+    );
+
+    return _.compact(result);
+  }
 
   const result = await Promise.all(
     listOfEntities.map(async (entity) => {
