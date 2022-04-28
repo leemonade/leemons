@@ -21,12 +21,14 @@ async function saveQuestionBank(body) {
       }
     }
   });
-  if (!isString(body.cover) || questionsFiles.length) {
+  if ((body.cover && !isString(body.cover)) || questionsFiles.length) {
     const { cover, ...data } = body;
-    if (body.cover.id) {
-      data.cover = body.cover.cover.id;
-    } else {
-      form.append('cover', body.cover, body.cover.name);
+    if (body.cover) {
+      if (body.cover.id) {
+        data.cover = body.cover.cover?.id;
+      } else {
+        form.append('cover', body.cover, body.cover.name);
+      }
     }
     forEach(questionsFiles, ({ index, name, file }) => {
       form.append(`questions[${index}].${name}`, file, file.name);

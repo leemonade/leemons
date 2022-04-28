@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { permissions, menuItems } = require('./config/constants');
+const { permissions, menuItems, category } = require('./config/constants');
 const addMenuItems = require('./src/services/menu-builder/add');
 const init = require('./init');
 
@@ -30,6 +30,17 @@ async function events(isInstalled) {
       ['plugins.menu-builder:init-main-menu', 'plugins.academic-portfolio:init-permissions'],
       async () => {
         await initMenuBuilder();
+      }
+    );
+
+    leemons.events.once(
+      [
+        'plugins.leebrary:init-categories',
+        `plugins.tests:init-permissions`,
+        `providers.leebrary-tests:pluginDidSetEvents`,
+      ],
+      async () => {
+        leemons.events.emit('init-provider');
       }
     );
   } else {

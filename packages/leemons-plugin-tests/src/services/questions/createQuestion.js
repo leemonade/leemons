@@ -5,21 +5,14 @@ async function createQuestion(data, { userSession, published, transacting: _tran
   return global.utils.withTransaction(
     async (transacting) => {
       const { tags, properties, ...props } = data;
-      delete properties.image;
-      const question = await table.questions.create(
-        {
-          ...props,
-          properties: JSON.stringify(properties),
-        },
-        { transacting }
-      );
-
       // ES: Si el tipo es map creamos el asset
       if (data.type === 'map') {
         const asset = await leemons.getPlugin('leebrary').services.assets.add(
           {
-            name: `Image question - ${question.id}`,
+            name: `Image question`,
             cover: data.properties.image,
+            indexable: true,
+            public: true, // TODO Cambiar a false despues de hacer la demo
           },
           {
             published,
@@ -27,14 +20,15 @@ async function createQuestion(data, { userSession, published, transacting: _tran
             transacting,
           }
         );
-        await table.questions.update(
-          { id: question.id },
-          {
-            properties: JSON.stringify({ ...properties, image: asset.id }),
-          },
-          { transacting }
-        );
+        properties.image = asset.id;
       }
+      const question = await table.questions.create(
+        {
+          ...props,
+          properties: JSON.stringify(properties),
+        },
+        { transacting }
+      );
 
       await tagsService.setTagsToValues('plugins.tests.questionBanks', tags || [], question.id, {
         transacting,

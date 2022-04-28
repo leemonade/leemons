@@ -12,6 +12,7 @@ const {
 } = require('../question-bank-subjects/addSubjectsToQuestionBanks');
 const { updateCategory } = require('../question-bank-categories/updateCategory');
 const { createCategory } = require('../question-bank-categories/createCategory');
+const { deleteQuestions } = require('../questions/deleteQuestions');
 
 async function saveQuestionsBanks(_data, { userSession, transacting: _transacting } = {}) {
   const tagsService = leemons.getPlugin('common').services.tags;
@@ -73,7 +74,7 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
       if (props.name) {
         const assetsToSave = {
           indexable: true,
-          public: false,
+          public: true, // TODO Cambiar a false despues de hacer la demo
           category: 'tests-questions-banks',
         };
         assetsToSave.name = props.name;
@@ -229,7 +230,7 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
         }
       });
       if (questionsToDelete.length) {
-        await table.questions.deleteMany({ id_$in: questionsToDelete }, { transacting });
+        await deleteQuestions(questionsToDelete, { userSession, transacting });
       }
       if (questionsToUpdate.length) {
         await Promise.all(

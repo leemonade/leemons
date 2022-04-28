@@ -17,6 +17,10 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
       table.questionBankCategories.find({ questionBank_$in: ids }, { transacting }),
     ]);
 
+  _.forEach(questions, (question) => {
+    question.properties = JSON.parse(question.properties);
+  });
+
   const promises = [];
   if (questionsBanks.length) {
     promises.push(
@@ -34,7 +38,23 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
           transacting,
         })
       );
+
+      const assetIds = [];
+      _.forEach(questions, (question) => {
+        if (question.properties?.image) {
+          assetIds.push(question.properties.image);
+        }
+      });
+
+      promises.push(
+        assetService.getByIds(assetIds, {
+          withFiles: true,
+          userSession,
+          transacting,
+        })
+      );
     } else {
+      promises.push(Promise.resolve([]));
       promises.push(Promise.resolve([]));
     }
   } else {
@@ -53,7 +73,9 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
     promises.push(Promise.resolve([]));
   }
 
-  const [questionBanksTags, questionBanksAssets, questionsTags] = await Promise.all(promises);
+  const [questionBanksTags, questionBanksAssets, questionAssets, questionsTags] = await Promise.all(
+    promises
+  );
 
   _.forEach(questionsBanks, (questionBank, i) => {
     questionBank.tags = questionBanksTags[i];
@@ -64,8 +86,13 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
       questionBank.cover = questionBanksAssets[i];
     }
   });
+
+  const questionAssetsById = _.keyBy(questionAssets, 'id');
   _.forEach(questions, (question, i) => {
     question.tags = questionsTags[i];
+    if (question.properties?.image) {
+      question.properties.image = questionAssetsById[question.properties.image];
+    }
   });
 
   const questionBankCategoriesByQuestionBank = _.groupBy(questionBankCategories, 'questionBank');
@@ -86,7 +113,6 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
       subjects: _.map(questionBankSubjectsByQuestionBank[questionBank.id], 'subject'),
       questions: _.map(questionsByQuestionBank[questionBank.id] || [], (question) => ({
         ...question,
-        properties: JSON.parse(question.properties),
       })),
     };
   });

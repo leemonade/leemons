@@ -8,7 +8,7 @@ async function updateQuestion(data, { userSession, published, transacting: _tran
 
       // Si el tipo es mapa, comprobamos si ya existia un asset, si ya existia lo actualizamos, si no existia lo creamos.
       if (data.type === 'map') {
-        const question = await table.findOne({ id });
+        const question = await table.questions.findOne({ id });
         question.properties = JSON.parse(question.properties);
         if (question.properties.image) {
           const asset = await leemons.getPlugin('leebrary').services.assets.update(

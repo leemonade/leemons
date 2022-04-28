@@ -43,6 +43,7 @@ export default function Detail() {
       addSuccessAlert(t('savedAsDraft'));
       history.push('/private/tests/questions-banks');
     } catch (error) {
+      console.log(error);
       addErrorAlert(error);
     }
     store.saving = null;

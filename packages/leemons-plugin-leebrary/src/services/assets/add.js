@@ -55,10 +55,11 @@ async function add(
       }
 
       let canUse = [leemons.plugin.prefixPN(''), category?.pluginOwner];
-      if (isArray(category.canUse) && category.canUse.length) {
+      if (isArray(category?.canUse) && category?.canUse.length) {
         canUse = canUse.concat(category.canUse);
       }
-      if (category.canUse !== '*' && !canUse.includes(this.calledFrom)) {
+
+      if (category?.canUse !== '*' && !canUse.includes(this.calledFrom)) {
         throw new global.utils.HttpError(
           403,
           `Category "${category.key}" was not created by the plugin "${this.calledFrom}". You can only add assets to categories created by the plugin "${this.calledFrom}".`
