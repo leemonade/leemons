@@ -255,8 +255,7 @@ module.exports = function main(userSession) {
 
     const searchedAssignables = await searchAssignables(
       'task',
-      { published: 'all', preferCurrent: true, search: 'Task Name - Los Romanos' },
-      false,
+      { published: 'all', preferCurrent: false, sort: 'name:asc' },
       {
         userSession: userSession1,
         transacting,

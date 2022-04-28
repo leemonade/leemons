@@ -4,6 +4,7 @@ const versionControl = require('../versionControl');
 const { assignables } = require('../tables');
 const getUserPermission = require('./permissions/assignable/users/getUserPermission');
 const leebrary = require('../leebrary/leebrary');
+const searchBySubject = require('../subjects/searchBySubject');
 
 async function asyncFilter(array, f) {
   const results = await Promise.all(array.map(f));
@@ -13,8 +14,7 @@ async function asyncFilter(array, f) {
 
 module.exports = async function searchAssignables(
   role,
-  { published, preferCurrent, search, ..._query },
-  sort,
+  { published, preferCurrent, search, subjects, sort, ..._query },
   { userSession, transacting } = {}
 ) {
   try {
@@ -33,35 +33,97 @@ module.exports = async function searchAssignables(
         - Tags ✅
         ASSIGNABLE:
         - Role ✅
-        - Assessable ❌
-        - Program ❌
-        - Subject ❌
-        - Methodology ❌
+        - Gradable ✅
+        - Program ✅
+        - Subject ✅
+        - Methodology ✅
 
       Sort by:
-      - Nombre ❌
+      - Nombre ✅
       - Dates ❌
     */
 
     const query = {
       role,
+      ..._query,
     };
 
-    if (search) {
-      query.asset_$in = (
-        await leebrary.search.search(
-          { criteria: search, category: `assignables.${role}` },
-          { allVersions: true, published: 'all', transacting, userSession }
-        )
-      ).map(({ asset }) => asset);
+    let assets;
+    let sorting;
+
+    if (sort) {
+      sorting = sort.split(',').map((s) => {
+        const [key, direction] = s.trim().split(':');
+
+        return {
+          key,
+          direction: direction || 'asc',
+        };
+      });
+
+      const nameSort = _.find(sorting, { key: 'name' });
+
+      if (nameSort) {
+        assets = (
+          await leebrary.search.search(
+            { category: `assignables.${role}`, criteria: search },
+            {
+              allVersions: true,
+              published: 'all',
+              sortBy: ['name'],
+              sortDirection: nameSort.direction,
+              transacting,
+              userSession,
+            }
+          )
+        ).map(({ asset }) => asset);
+      }
     }
 
-    console.log(query);
+    if (search) {
+      assets =
+        assets ||
+        (
+          await leebrary.search.search(
+            { criteria: search, category: `assignables.${role}` },
+            { allVersions: true, published: 'all', transacting, userSession }
+          )
+        ).map(({ asset }) => asset);
+
+      query.asset_$in = assets;
+    }
+
+    if (subjects) {
+      query.id_$in = await searchBySubject(subjects, { transacting });
+    }
+
     // EN: Get all the assignables matching the query
     // ES: Obtener todos los asignables que coincidan con la query
-    let assignablesIds = (await assignables.find(query, { columns: ['id'], transacting })).map(
-      (assignable) => assignable.id
-    );
+    let assignablesIds = await assignables.find(query, { columns: ['id', 'asset'], transacting });
+
+    if (sorting) {
+      if (_.find(sorting, { key: 'name' })) {
+        assignablesIds = assignablesIds.map((assignable) => {
+          const asset = _.findIndex(assets, (a) => a === assignable.asset);
+
+          let position;
+          if (asset > -1) {
+            position = asset;
+          } else {
+            position = Math.max();
+          }
+
+          return {
+            ...assignable,
+            position,
+          };
+        });
+
+        assignablesIds = assignablesIds.sort((a, b) => a.position - b.position);
+      }
+    }
+
+    assignablesIds = assignablesIds.map(({ id }) => id);
 
     // EN: Filter the assignables based on user permissions
     // ES: Filtrar los asignables según los permisos del usuario
@@ -121,7 +183,6 @@ module.exports = async function searchAssignables(
 
     return assignablesIds;
   } catch (e) {
-    console.log(e);
     throw new Error(`Error searching assignables: ${e.message}`);
   }
 };

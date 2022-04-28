@@ -13,6 +13,7 @@ module.exports = async function createAssignable(
   assignable,
   { id: _id = null, userSession, transacting: t } = {}
 ) {
+  // TODO: Add creation published/draft
   return global.utils.withTransaction(
     async (transacting) => {
       let id = _id;
