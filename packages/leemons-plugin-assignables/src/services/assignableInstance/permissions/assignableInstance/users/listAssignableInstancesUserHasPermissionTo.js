@@ -1,13 +1,13 @@
 const permission = require('../../permission');
 const getPermissionType = require('../getPermissionType');
 
-module.exports = async function listAssignablesUserHasPermissionTo(
-  role,
-  { userSession, transacting } = {}
-) {
+module.exports = async function listAssignableInstancesUserHasPermissionTo({
+  userSession,
+  transacting,
+} = {}) {
   const items = await permission.getAllItemsForTheUserAgentHasPermissionsByType(
     userSession.userAgents.map((u) => u.id),
-    getPermissionType({ role }),
+    getPermissionType(),
     { transacting }
   );
 

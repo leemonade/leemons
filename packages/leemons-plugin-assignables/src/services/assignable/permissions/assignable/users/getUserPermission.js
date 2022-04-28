@@ -10,7 +10,14 @@ module.exports = async function getUserPermission(assignable, { userSession, tra
   });
 
   if (!permissions.length) {
-    permissions.push(...(await getTeacherPermission(assignable, { userSession, transacting })));
+    permissions.push(...(await getTeacherPermission(assignable.id, { userSession, transacting })));
+  }
+
+  if (!permissions.length) {
+    return {
+      role: null,
+      actions: [],
+    };
   }
 
   return {

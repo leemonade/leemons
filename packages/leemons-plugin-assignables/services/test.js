@@ -12,7 +12,7 @@ module.exports = function main(userSession) {
     addUserToAssignable,
     removeUserFromAssignable,
     // listAssignableUserAgents,
-    // searchAssignables,
+    searchAssignables,
     getAssignable,
     publishAssignable,
     removeAssignable,
@@ -241,66 +241,89 @@ module.exports = function main(userSession) {
     );
     const { id } = data;
 
+    await publishAssignable(id, { userSession: userSession1, transacting });
+
+    await updateAssignable(
+      {
+        id,
+        asset: {
+          name: 'Pedro',
+        },
+      },
+      { userSession: userSession1, transacting }
+    );
+
+    const searchedAssignables = await searchAssignables(
+      'task',
+      { published: 'all', preferCurrent: true },
+      false,
+      {
+        userSession: userSession1,
+        transacting,
+      }
+    );
+    console.log('SearchedAssignables:', searchedAssignables);
+
     // EN: Create the task instance
     // ES: Crea la instancia de la tarea
-    const taskInstanceData = await createAssignableInstance(
-      {
-        assignable: id,
-        ...taskInstance,
-        students: [
-          {
-            id: student,
-            classes: [classId],
-          },
-        ],
-      },
-      { userSession: userSession1, transacting }
-    );
+    // const taskInstanceData = await createAssignableInstance(
+    //   {
+    //     assignable: id,
+    //     ...taskInstance,
+    //     students: [
+    //       {
+    //         id: student,
+    //         classes: [classId],
+    //       },
+    //     ],
+    //   },
+    //   { userSession: userSession1, transacting }
+    // );
 
-    console.log(taskInstanceData);
+    // console.log(taskInstanceData);
 
-    await updateAssignation(
-      {
-        assignableInstance: taskInstanceData.id,
-        user: student,
-        grades: [
-          {
-            subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
-            type: 'grade',
-            grade: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
-            gradedBy: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
-            feedback: 'This is the feedback',
-          },
-        ],
-      },
-      { userSession: userSession1, transacting }
-    );
+    // await updateAssignation(
+    //   {
+    //     assignableInstance: taskInstanceData.id,
+    //     user: student,
+    //     grades: [
+    //       {
+    //         subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+    //         type: 'grade',
+    //         grade: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+    //         gradedBy: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+    //         feedback: 'This is the feedback',
+    //       },
+    //     ],
+    //   },
+    //   { userSession: userSession1, transacting }
+    // );
 
-    await updateAssignation(
-      {
-        assignableInstance: taskInstanceData.id,
-        user: student,
-        status: 'done',
-        // grades: [
-        //   {
-        //     subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
-        //     type: 'grade',
-        //     grade: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
-        //     gradedBy: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
-        //     feedback: 'This is the feedback',
-        //   },
-        // ],
-      },
-      { userSession: studentSession, transacting }
-    );
+    // await updateAssignation(
+    //   {
+    //     assignableInstance: taskInstanceData.id,
+    //     user: student,
+    //     status: 'done',
+    //     // grades: [
+    //     //   {
+    //     //     subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+    //     //     type: 'grade',
+    //     //     grade: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+    //     //     gradedBy: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+    //     //     feedback: 'This is the feedback',
+    //     //   },
+    //     // ],
+    //   },
+    //   { userSession: studentSession, transacting }
+    // );
 
-    console.log(
-      'Assignation updated',
-      await getAssignation(taskInstanceData.id, student, {
-        userSession: studentSession,
-        transacting,
-      })
-    );
+    // console.log(
+    //   'Assignation updated',
+    //   await getAssignation(taskInstanceData.id, student, {
+    //     userSession: studentSession,
+    //     transacting,
+    //   })
+    // );
 
     // EN: Remove the assignation
     // ES: Elimina la asignación
