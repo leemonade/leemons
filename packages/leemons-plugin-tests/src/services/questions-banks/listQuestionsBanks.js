@@ -3,7 +3,7 @@ const { table } = require('../tables');
 
 async function listQuestionsBanks(page, size, { published, query = {}, transacting } = {}) {
   const versionControlService = leemons.getPlugin('common').services.versionControl;
-  const versions = await versionControlService.listVersionOfType('question-bank', {
+  const versions = await versionControlService.listVersionsOfType('question-bank', {
     published,
     transacting,
   });

@@ -41,6 +41,7 @@
     "leemons-provider-emails-amazon-ses": "1.0.0",
     "leemons-provider-leebrary-aws-s3": "1.0.0",
     "leemons-provider-leebrary-tasks": "1.0.0",
+    "leemons-provider-leebrary-tests": "1.0.0",
     "mysql": "^2.18.1",
     "simplebar-react": "^2.3.4"
   },

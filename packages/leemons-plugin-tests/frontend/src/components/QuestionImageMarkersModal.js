@@ -17,6 +17,7 @@ import {
 import { numberToEncodedLetter, useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
+import { LeebraryImage } from '@leebrary/components';
 
 export const QuestionImageMarkersModalStyles = createStyles((theme, { isLight }) => ({
   root: {},
@@ -163,7 +164,7 @@ export function QuestionImageMarkersModal({ src, value = {}, onChange, onClose, 
         </ContextContainer>
 
         <Box className={classes.imageContainer} onClick={addMarker} onMouseMove={getPosition}>
-          <img className={classes.image} src={src} />
+          <LeebraryImage className={classes.image} src={src} />
           {store.list.map((marker, index) => {
             if (store.moveIndex === index) {
               return (

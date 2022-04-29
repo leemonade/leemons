@@ -11,7 +11,10 @@ const saveQuestionBankSchema = {
     tagline: stringSchemaNullable,
     summary: stringSchemaNullable,
     color: stringSchemaNullable,
-    cover: stringSchemaNullable,
+    cover: {
+      type: ['object', 'string'],
+      nullable: true,
+    },
     state: stringSchemaNullable,
     program: stringSchemaNullable,
     categories: {

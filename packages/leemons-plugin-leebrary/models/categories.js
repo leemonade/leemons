@@ -36,6 +36,9 @@ module.exports = {
     listCardComponent: { type: 'string' },
     listItemComponent: { type: 'string' },
     detailComponent: { type: 'string' },
+    canUse: {
+      type: 'json',
+    },
   },
   primaryKey: {
     type: 'uuid',

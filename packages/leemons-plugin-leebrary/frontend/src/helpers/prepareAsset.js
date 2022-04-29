@@ -1,4 +1,4 @@
-import { capitalize, isEmpty, isNil, intersection } from 'lodash';
+import { capitalize, intersection, isEmpty, isNil } from 'lodash';
 import { getAuthorizationTokenForAllCenters, getCentersWithToken } from '@users/session';
 import { prepareAssetType } from './prepareAssetType';
 
@@ -80,8 +80,13 @@ function prepareAsset(assetFromApi, isPublished = true) {
     }
   }
 
-  if (!isEmpty(asset.cover?.id)) {
-    asset.cover = getFileUrl(asset.cover.id);
+  if (asset.cover) {
+    if (!isEmpty(asset.cover?.id)) {
+      asset.cover = getFileUrl(asset.cover.id);
+    }
+    if (asset.cover instanceof File) {
+      asset.cover = URL.createObjectURL(asset.cover);
+    }
   }
 
   if (!isEmpty(asset.icon?.id)) {
