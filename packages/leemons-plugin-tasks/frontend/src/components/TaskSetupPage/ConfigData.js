@@ -2,7 +2,14 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isEmpty } from 'lodash';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
-import { Stack, ContextContainer, TextInput, Button, Textarea } from '@bubbles-ui/components';
+import {
+  Stack,
+  ContextContainer,
+  TextInput,
+  Button,
+  Textarea,
+  Paragraph,
+} from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import SelectProgram from './components/PickSubject/SelectProgram';
 import SelectSubjects from './components/PickSubject/SelectSubjects';
@@ -84,7 +91,7 @@ function ConfigData({
   return (
     <FormProvider {...formData}>
       <form onSubmit={handleSubmit(handleOnNext)} autoComplete="off">
-        <ContextContainer {...props} divided>
+        <ContextContainer {...props} pt={20} divided>
           <ContextContainer>
             {/* Name input */}
             <Controller

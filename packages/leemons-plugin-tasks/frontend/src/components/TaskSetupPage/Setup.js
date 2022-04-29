@@ -66,6 +66,8 @@ function Setup({ labels, steps, values, editable, onSave, useObserver, ...props 
       sharedData={sharedData}
       setSharedData={setSharedData}
       editable={editable}
+      orientation="vertical"
+      usePageContainer
     />
   );
 }
