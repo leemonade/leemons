@@ -12,6 +12,8 @@ module.exports = {
     draft: 'Borradores',
   },
   questionsBanksDetail: {
+    basic: 'Información básica',
+    coverRequired: 'La imagen de portada es obligatoria',
     coverImage: 'Imagen de portada',
     coverImageAdd: 'Añadir imagen',
     coverImageRemove: 'Eliminar imagen',
@@ -22,7 +24,7 @@ module.exports = {
     subjectLabel: 'Asignatura',
     subjectRequired: 'Campo obligatorio',
     pageTitle: 'Editando banco de preguntas: {name}',
-    pageTitleNew: 'Nuevo banco de preguntas',
+    pageTitleNew: 'Nuevo banco de preguntas: {name}',
     saveDraft: 'Guardar borrador',
     publish: 'Publicar',
     config: 'Configuración',

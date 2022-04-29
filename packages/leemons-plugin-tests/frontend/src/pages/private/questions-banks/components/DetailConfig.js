@@ -7,11 +7,9 @@ import {
   MultiSelect,
   Select,
   Stack,
-  Textarea,
-  TextInput,
 } from '@bubbles-ui/components';
 import { Controller } from 'react-hook-form';
-import { TagsAutocomplete, useStore } from '@common';
+import { useStore } from '@common';
 import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import { groupBy, map, uniqBy } from 'lodash';
 
@@ -24,7 +22,7 @@ export default function DetailConfig({ form, t, onNext }) {
 
   async function next() {
     setIsDirty(true);
-    const formGood = await form.trigger(['name', 'program', 'subjects', 'tagline', 'summary']);
+    const formGood = await form.trigger(['program', 'subjects']);
     if (formGood) {
       onNext();
     }
@@ -55,20 +53,6 @@ export default function DetailConfig({ form, t, onNext }) {
 
   return (
     <ContextContainer>
-      <Controller
-        control={form.control}
-        name="name"
-        rules={{ required: t('nameRequired') }}
-        render={({ field }) => (
-          <TextInput
-            required
-            error={isDirty ? form.formState.errors.name : null}
-            label={t('nameLabel')}
-            {...field}
-          />
-        )}
-      />
-
       <Controller
         control={form.control}
         name="program"
@@ -106,46 +90,6 @@ export default function DetailConfig({ form, t, onNext }) {
         render={({ field }) => <ListInput {...field} label={t('categoriesLabel')} canAdd />}
       />
 
-      <Controller
-        control={form.control}
-        name="tagline"
-        rules={{ required: t('taglineRequired') }}
-        render={({ field }) => (
-          <TextInput
-            required
-            error={isDirty ? form.formState.errors.tagline : null}
-            label={t('taglineLabel')}
-            {...field}
-          />
-        )}
-      />
-      <Controller
-        control={form.control}
-        name="summary"
-        rules={{ required: t('summaryRequired') }}
-        render={({ field }) => (
-          <Textarea
-            required
-            error={isDirty ? form.formState.errors.summary : null}
-            label={t('summaryLabel')}
-            {...field}
-          />
-        )}
-      />
-
-      <Controller
-        control={form.control}
-        name="tags"
-        render={({ field }) => (
-          <TagsAutocomplete
-            pluginName="tests"
-            type="plugins.tests.questionBanks"
-            label={t('tagsLabel')}
-            labels={{ addButton: t('addTag') }}
-            {...field}
-          />
-        )}
-      />
       <Stack justifyContent="end">
         <Button onClick={next}>{t('continue')}</Button>
       </Stack>

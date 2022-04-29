@@ -80,7 +80,6 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
         assetsToSave.name = props.name;
         if (props.summary) assetsToSave.description = props.summary;
         if (props.tagline) assetsToSave.tagline = props.tagline;
-        // if (props.cover) assetsToSave.file = props.cover;
         if (props.cover) assetsToSave.cover = props.cover;
         if (tags) assetsToSave.tags = tags;
         const assetService = leemons.getPlugin('leebrary').services.assets;
@@ -113,6 +112,8 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
           );
         }
       }
+
+      console.log('Despues de subir cover');
 
       // -- Subjects --
       await removeSubjectsFromQuestionBanks(questionBank.id, { transacting });
@@ -246,7 +247,11 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
                     ? question.category
                     : null,
               },
-              { transacting }
+              {
+                published,
+                userSession,
+                transacting,
+              }
             )
           )
         );

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const { defaults, cloneDeep, isEqual, differenceWith, isEmpty, pick } = require('lodash');
 const { getByAsset: getPermissions } = require('../permissions/getByAsset');
 const { tables } = require('../tables');
@@ -35,7 +36,7 @@ async function update(
   if (isEmpty(data)) {
     throw new Error('No changes detected');
   }
-
+  data.categoryKey = data.categoryKey || CATEGORIES.MEDIA_FILES;
   const { id, ...assetData } = data;
   let assetId = id;
   await validateAddAsset(assetData);
@@ -122,7 +123,8 @@ async function update(
       return currentAsset;
     }
   } else if (!diff.length) {
-    throw new Error('No changes detected');
+    return currentAsset;
+    // throw new Error('No changes detected');
   }
 
   // ·········································································

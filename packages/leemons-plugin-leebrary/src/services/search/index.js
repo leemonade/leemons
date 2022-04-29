@@ -153,6 +153,7 @@ async function search(
 
     return uniqBy(assets, 'id') || [];
   } catch (e) {
+    console.log(e);
     throw new global.utils.HttpError(500, `Failed to find asset with query: ${e.message}`);
   }
 }

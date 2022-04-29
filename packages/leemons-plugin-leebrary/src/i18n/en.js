@@ -34,6 +34,7 @@ module.exports = {
         submitForm: 'Add to library',
         submitChanges: 'Save changes',
         name: 'Name',
+        tagline: 'Tagline',
         description: 'Description',
         createdSuccess: 'Asset successfully created',
         updatedSuccess: 'Asset successfully updated',
@@ -46,6 +47,8 @@ module.exports = {
       placeholders: {
         tagsInput: 'Name of tag',
         name: 'Name of the resource',
+        tagline: 'Tagline of the resource',
+        tags: 'Tags of the resource',
         url: 'Webpage link',
         description: 'Description of the resource',
         color: 'Select a color',

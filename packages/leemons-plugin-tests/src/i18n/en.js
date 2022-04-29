@@ -12,6 +12,8 @@ module.exports = {
     draft: 'Drafts',
   },
   questionsBanksDetail: {
+    basic: 'Basic',
+    coverRequired: 'Cover is required',
     coverImage: 'Cover Image',
     coverImageAdd: 'Add image',
     coverImageRemove: 'Delete image',
@@ -22,7 +24,7 @@ module.exports = {
     subjectLabel: 'Subject',
     subjectRequired: 'Field required',
     pageTitle: 'Editing question bank: {name}',
-    pageTitleNew: 'New questions bank',
+    pageTitleNew: 'New questions bank: {name}',
     saveDraft: 'Save as draft',
     publish: 'Publish',
     config: 'Config',
