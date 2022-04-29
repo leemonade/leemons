@@ -7,7 +7,7 @@ import { useStore } from '@common';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { useHistory } from 'react-router-dom';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
-import ListByPublished from './components/ListByPublished';
+import AssetList from '@leebrary/components/AssetList';
 
 export default function List() {
   const [t] = useTranslateLoader(prefixPN('questionsBanksList'));
@@ -55,13 +55,25 @@ export default function List() {
 
       <Tabs usePageLayout={true} panelColor="solid" fullHeight>
         <TabPanel label={t('published')}>
-          <Paper fullWidth color="solid" shadow="none" padding="none">
-            <ListByPublished t={t} published={true} />
+          <Paper padding={2} mt={20} mb={20} fullWidth color="solid" shadow="none">
+            <AssetList
+              canShowPublicToggle={false}
+              published={true}
+              showPublic
+              variant="embedded"
+              category="tests-questions-banks"
+            />
           </Paper>
         </TabPanel>
         <TabPanel label={t('draft')}>
-          <Paper fullWidth color="solid" shadow="none" padding="none">
-            <ListByPublished t={t} published={false} />
+          <Paper padding={2} mt={20} mb={20} fullWidth color="solid" shadow="none">
+            <AssetList
+              canShowPublicToggle={false}
+              published={false}
+              showPublic
+              variant="embedded"
+              category="tests-questions-banks"
+            />
           </Paper>
         </TabPanel>
       </Tabs>

@@ -31,6 +31,7 @@ function getReadableDuration(milliseconds, padStart) {
   function pad(num) {
     return `${num}`.padStart(2, '0');
   }
+
   const asSeconds = milliseconds / 1000;
 
   let hours;
@@ -255,6 +256,7 @@ async function uploadFromUrl(url, { name }, { userSession, transacting } = {}) {
   // ES: Primero comprobamos que la URL no sea un FILE_ID
   // EN: First check if the URL is a FILE_ID
   const file = await getById(url);
+  console.log(file);
   if (file?.id) {
     const fileStream = await dataForReturnFile(file.id);
     return uploadFromFileStream(fileStream, { name }, { userSession, transacting });

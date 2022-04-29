@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const { map, isEmpty, isNil, isString } = require('lodash');
+const { map, isEmpty, isNil, isString, isArray } = require('lodash');
 const { CATEGORIES } = require('../../../config/constants');
 const { tables } = require('../tables');
 const { uploadFromSource } = require('../files/helpers/uploadFromSource');
@@ -54,7 +54,12 @@ async function add(
         }
       }
 
-      if (![leemons.plugin.prefixPN(''), category?.pluginOwner].includes(this.calledFrom)) {
+      let canUse = [leemons.plugin.prefixPN(''), category?.pluginOwner];
+      if (isArray(category?.canUse) && category?.canUse.length) {
+        canUse = canUse.concat(category.canUse);
+      }
+
+      if (category?.canUse !== '*' && !canUse.includes(this.calledFrom)) {
         throw new global.utils.HttpError(
           403,
           `Category "${category.key}" was not created by the plugin "${this.calledFrom}". You can only add assets to categories created by the plugin "${this.calledFrom}".`

@@ -1,34 +1,34 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty, find, isString, isNil, isFunction } from 'lodash';
+import { find, isEmpty, isFunction, isNil, isString } from 'lodash';
 import {
   Box,
-  Stack,
-  SearchInput,
-  PaginatedList,
-  Title,
   LoadingOverlay,
-  useResizeObserver,
+  PaginatedList,
   RadioGroup,
-  useDebouncedValue,
+  SearchInput,
   Select,
+  Stack,
   Switch,
+  Title,
+  useDebouncedValue,
+  useResizeObserver,
 } from '@bubbles-ui/components';
 import { LibraryItem } from '@bubbles-ui/leemons';
 import { CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
-import { LayoutModuleIcon, LayoutHeadlineIcon } from '@bubbles-ui/icons/solid';
+import { LayoutHeadlineIcon, LayoutModuleIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { unflatten, useRequestErrorMessage, LocaleDate } from '@common';
+import { LocaleDate, unflatten, useRequestErrorMessage } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import prefixPN from '../helpers/prefixPN';
 import {
-  getAssetsRequest,
-  getAssetsByIdsRequest,
-  listCategoriesRequest,
-  duplicateAssetRequest,
   deleteAssetRequest,
+  duplicateAssetRequest,
+  getAssetsByIdsRequest,
+  getAssetsRequest,
   getAssetTypesRequest,
+  listCategoriesRequest,
   pinAssetRequest,
   unpinAssetRequest,
 } from '../request';
@@ -55,6 +55,7 @@ const AssetList = ({
   search: searchProp,
   layout: layoutProp,
   showPublic: showPublicProp,
+  canShowPublicToggle,
   itemMinWidth,
   canChangeLayout,
   canChangeType,
@@ -544,7 +545,7 @@ const AssetList = ({
           })}
         >
           <LoadingOverlay visible={loading} />
-          {!loading && !pinned && (
+          {!loading && !pinned && canShowPublicToggle && (
             <Switch label="Show public assets" checked={showPublic} onChange={handleOnShowPublic} />
           )}
           {!loading && !isEmpty(serverData?.items) && (
@@ -636,6 +637,7 @@ AssetList.defaultProps = {
   published: true,
   showPublic: false,
   pinned: false,
+  canShowPublicToggle: true,
 };
 AssetList.propTypes = {
   category: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
@@ -661,6 +663,7 @@ AssetList.propTypes = {
   pageSize: PropTypes.number,
   published: PropTypes.bool,
   pinned: PropTypes.bool,
+  canShowPublicToggle: PropTypes.bool,
 };
 
 export { AssetList };

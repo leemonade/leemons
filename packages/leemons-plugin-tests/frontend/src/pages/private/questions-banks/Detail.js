@@ -3,8 +3,8 @@ import {
   Box,
   ContextContainer,
   PageContainer,
-  Stepper,
   useDebouncedCallback,
+  VerticalStepperContainer,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -13,10 +13,11 @@ import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import DetailConfig from './components/DetailConfig';
-import DetailDesign from './components/DetailDesign';
-import DetailQuestions from './components/DetailQuestions';
+import { isString } from 'lodash';
 import { getQuestionBankRequest, saveQuestionBankRequest } from '../../../request';
+import DetailQuestions from './components/DetailQuestions';
+import DetailBasic from './components/DetailBasic';
+import DetailConfig from './components/DetailConfig';
 
 export default function Detail() {
   const [t] = useTranslateLoader(prefixPN('questionsBanksDetail'));
@@ -27,6 +28,7 @@ export default function Detail() {
   const [store, render] = useStore({
     loading: true,
     isNew: false,
+    currentStep: 0,
   });
 
   const history = useHistory();
@@ -34,6 +36,24 @@ export default function Detail() {
 
   const form = useForm();
   const formValues = form.watch();
+
+  form.register('cover', {
+    validate: (cover) => {
+      if (isString(cover)) {
+        return true;
+      }
+      if (cover) {
+        if (cover.id) {
+          if (cover.cover) {
+            return true;
+          }
+        } else {
+          return true;
+        }
+      }
+      return t('coverRequired');
+    },
+  });
 
   async function saveAsDraft() {
     try {
@@ -79,6 +99,11 @@ export default function Detail() {
     }
   }
 
+  function setStep(step) {
+    store.currentStep = step;
+    render();
+  }
+
   React.useEffect(() => {
     if (params?.id) init();
   }, [params]);
@@ -109,7 +134,9 @@ export default function Detail() {
       <ContextContainer fullHeight>
         <AdminPageHeader
           values={{
-            title: store.isNew ? t('pageTitleNew') : t('pageTitle', { name: formValues.name }),
+            title: store.isNew
+              ? t('pageTitleNew', { name: formValues.name || '' })
+              : t('pageTitle', { name: formValues.name || '' }),
           }}
           buttons={{
             edit: formValues.name && !formValues.published ? t('saveDraft') : undefined,
@@ -121,22 +148,24 @@ export default function Detail() {
         />
 
         <PageContainer noFlex>
-          <Stepper
+          <VerticalStepperContainer
+            currentStep={
+              store.currentStep === 2 && formValues.questions?.length ? 3 : store.currentStep
+            }
             data={[
-              {
-                label: t('config'),
-                content: <DetailConfig t={t} form={form} />,
-              },
-              {
-                label: t('design'),
-                content: <DetailDesign t={t} form={form} />,
-              },
-              {
-                label: t('questions'),
-                content: <DetailQuestions t={t} form={form} />,
-              },
+              { label: t('basic'), status: 'OK' },
+              { label: t('config'), status: 'OK' },
+              { label: t('questions'), status: 'OK' },
             ]}
-          />
+          >
+            {store.currentStep === 0 && <DetailBasic t={t} form={form} onNext={() => setStep(1)} />}
+            {store.currentStep === 1 && (
+              <DetailConfig t={t} form={form} onNext={() => setStep(2)} />
+            )}
+            {store.currentStep === 2 || store.currentStep === 3 ? (
+              <DetailQuestions t={t} form={form} />
+            ) : null}
+          </VerticalStepperContainer>
         </PageContainer>
       </ContextContainer>
     </Box>

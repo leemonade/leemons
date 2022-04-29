@@ -23,7 +23,11 @@ async function add(data, { transacting } = {}) {
 
   try {
     const newCategory = await tables.categories.create(
-      { ...categoryData, pluginOwner: this.calledFrom },
+      {
+        ...categoryData,
+        canUse: JSON.stringify(categoryData.canUse),
+        pluginOwner: this.calledFrom,
+      },
       { transacting }
     );
 

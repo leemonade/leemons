@@ -34,6 +34,7 @@ module.exports = {
         submitForm: 'Añadir a la librería',
         submitChanges: 'Guardar cambios',
         name: 'Nombre',
+        tagline: 'Tagline',
         description: 'Descripción',
         createdSuccess: 'Recurso creado con éxito',
         updatedSuccess: 'Recurso actualizado con éxito',
@@ -46,6 +47,8 @@ module.exports = {
       placeholders: {
         tagsInput: 'Escribe un tag',
         name: 'Nombre del recurso',
+        tagline: 'Tagline del recurso',
+        tags: 'Escribe un tag',
         description: 'Descripción del recurso',
         color: 'Selecciona un color',
         url: 'Enlace web',

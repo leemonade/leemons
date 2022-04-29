@@ -39,14 +39,12 @@ export default function DetailQuestions({ form, t, onNext }) {
   }
 
   function onSave(question) {
-    console.log('question', question);
     const currentQuestions = form.getValues('questions') || [];
-    if (qStore.questionIndex >= 0) {
+    if (qStore.questionIndex !== null && qStore.questionIndex >= 0) {
       currentQuestions[qStore.questionIndex] = question;
     } else {
       currentQuestions.push(question);
     }
-    console.log('currentQuestions', currentQuestions);
     form.setValue('questions', currentQuestions);
     onCancel();
   }
