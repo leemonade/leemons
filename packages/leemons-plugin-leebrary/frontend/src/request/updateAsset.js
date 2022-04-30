@@ -1,7 +1,7 @@
 import { isEmpty, isNil, isString } from 'lodash';
 
 async function updateAsset(assetData, categoryId, categoryKey) {
-  const { id, file, coverFile, category, ...data } = assetData;
+  const { id, file, cover, category, ...data } = assetData;
   const formData = new FormData();
 
   if (categoryKey === 'media-files') {
@@ -14,12 +14,12 @@ async function updateAsset(assetData, categoryId, categoryKey) {
     }
   }
 
-  if (coverFile?.id) {
-    formData.append('cover', coverFile.id);
-  } else if (isString(coverFile) && !isEmpty(coverFile)) {
-    formData.append('cover', coverFile);
-  } else if (!isNil(coverFile)) {
-    formData.append('cover', coverFile, coverFile.name);
+  if (cover?.id) {
+    formData.append('cover', cover.id);
+  } else if (isString(cover) && !isEmpty(cover)) {
+    formData.append('cover', cover);
+  } else if (!isNil(cover)) {
+    formData.append('cover', cover, cover.name);
   }
 
   formData.append('categoryId', categoryId || category);

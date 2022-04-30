@@ -38,6 +38,8 @@ module.exports = {
         description: 'Description',
         createdSuccess: 'Asset successfully created',
         updatedSuccess: 'Asset successfully updated',
+        pinnedSuccess: 'Asset successfully pinned',
+        unpinnedSuccess: 'Asset successfully unpinned',
         url: 'URL (webpage link)',
         checkUrl: 'Check url',
       },

@@ -38,6 +38,8 @@ module.exports = {
         description: 'Descripción',
         createdSuccess: 'Recurso creado con éxito',
         updatedSuccess: 'Recurso actualizado con éxito',
+        pinnedSuccess: 'Recurso anclado con éxito',
+        unpinnedSuccess: 'Recurso desanclado con éxito',
         url: 'URL (enlace web)',
         checkUrl: 'Comprobar url',
       },
