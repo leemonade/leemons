@@ -51,6 +51,7 @@ export default function Login() {
       setFormStatus('loading');
       setFormError(null);
       const response = await loginRequest(data);
+
       try {
         // Comprobamos si tiene recordado un perfil
         const { profile, center } = await getRememberLoginRequest(response.jwtToken);
@@ -62,6 +63,7 @@ export default function Login() {
             profile.id,
             response.jwtToken
           );
+
           await hooks.fireEvent('user:change:profile', profile);
           response.jwtToken = jwtToken;
         } else {
@@ -74,6 +76,7 @@ export default function Login() {
               centers[0].profiles[0].id,
               response.jwtToken
             );
+
             await hooks.fireEvent('user:change:profile', centers[0].profiles[0]);
             response.jwtToken = jwtToken;
           }
