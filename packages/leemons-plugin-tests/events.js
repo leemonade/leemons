@@ -38,10 +38,9 @@ async function events(isInstalled) {
       async () => {
         const assignablesPlugin = leemons.getPlugin('assignables');
         await Promise.all(
-          _.map(assignableRoles, (role) => {
-            console.log(role);
-            return assignablesPlugin.services.assignables.registerRole(role);
-          })
+          _.map(assignableRoles, (role) =>
+            assignablesPlugin.services.assignables.registerRole(role)
+          )
         );
       }
     );
@@ -57,18 +56,6 @@ async function events(isInstalled) {
       }
     );
   } else {
-    leemons.events.once(
-      ['plugins.assignables:pluginDidLoadServices', 'plugins.leebrary:pluginDidLoadServices'],
-      async () => {
-        const assignablesPlugin = leemons.getPlugin('assignables');
-        const a = await Promise.all(
-          _.map(assignableRoles, (role) =>
-            assignablesPlugin.services.assignables.registerRole(role)
-          )
-        );
-        console.log(a);
-      }
-    );
     leemons.events.once('plugins.tests:pluginDidInit', async () => {
       leemons.events.emit('init-permissions');
       leemons.events.emit('init-menu');
