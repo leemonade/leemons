@@ -39,6 +39,10 @@ export default function List() {
     history.push('/private/tests/questions-banks/new');
   }
 
+  function goDetailPage(asset) {
+    history.push(`/private/tests/questions-banks/${asset.id}`);
+  }
+
   React.useEffect(() => {
     getPermissions();
   }, []);
@@ -62,6 +66,7 @@ export default function List() {
               showPublic
               variant="embedded"
               category="tests-questions-banks"
+              onSelectItem={goDetailPage}
             />
           </Paper>
         </TabPanel>
@@ -73,6 +78,7 @@ export default function List() {
               showPublic
               variant="embedded"
               category="tests-questions-banks"
+              onSelectItem={goDetailPage}
             />
           </Paper>
         </TabPanel>

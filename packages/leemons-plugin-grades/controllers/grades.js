@@ -2,7 +2,7 @@ const _ = require('lodash');
 const gradesService = require('../src/services/grades');
 
 async function postGrade(ctx) {
-  const grade = await gradesService.addGrade(ctx.request.body);
+  const grade = await gradesService.addGrade(ctx.request.body, { fromFrontend: true });
   ctx.status = 200;
   ctx.body = { status: 200, grade };
 }

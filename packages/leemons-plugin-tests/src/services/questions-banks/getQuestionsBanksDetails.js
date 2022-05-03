@@ -9,13 +9,16 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
 
   const tagsService = leemons.getPlugin('common').services.tags;
   const ids = _.isArray(id) ? id : [id];
-  const [questionsBanks, questions, questionBankSubjects, questionBankCategories] =
-    await Promise.all([
-      table.questionsBanks.find({ id_$in: ids }, { transacting }),
-      table.questions.find({ questionBank_$in: ids }, { transacting }),
-      table.questionBankSubjects.find({ questionBank_$in: ids }, { transacting }),
-      table.questionBankCategories.find({ questionBank_$in: ids }, { transacting }),
-    ]);
+  const questionsBanks = table.questionsBanks.find(
+    { $or: [{ id_$in: ids }, { asset_$in: ids }] },
+    { transacting }
+  );
+  const questionBankIds = _.map(questionsBanks, 'id');
+  const [questions, questionBankSubjects, questionBankCategories] = await Promise.all([
+    table.questions.find({ questionBank_$in: questionBankIds }, { transacting }),
+    table.questionBankSubjects.find({ questionBank_$in: questionBankIds }, { transacting }),
+    table.questionBankCategories.find({ questionBank_$in: questionBankIds }, { transacting }),
+  ]);
 
   _.forEach(questions, (question) => {
     question.properties = JSON.parse(question.properties);

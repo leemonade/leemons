@@ -39,7 +39,7 @@ const PrivateLayout = ({ children }) => {
   };
 
   const handleChangeProfile = async () => {
-    const profileState = { profileChecked: true, isAcademicMode: false };
+    const profileState = { profileChecked: true, isAcademicMode: true };
     const token = getCookieToken(true);
     if (!isEmpty(token?.profile)) {
       const { profiles: academicProfiles } = await getProfilesRequest();
@@ -47,9 +47,9 @@ const PrivateLayout = ({ children }) => {
       profileState.isAcademicMode = [academicProfiles.teacher, academicProfiles.student].includes(
         token?.profile
       );
-
-      setState(profileState);
     }
+
+    setState(profileState);
   };
 
   useEffect(() => {
