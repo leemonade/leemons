@@ -25,6 +25,7 @@ const updatableFields = [
   'submission',
   'instructionsForTeachers',
   'instructionsForStudents',
+  'metadata',
 ];
 
 module.exports = async function updateAssignable(assignable, { userSession, transacting } = {}) {
