@@ -53,9 +53,9 @@ const BasicData = ({
   };
 
   const handleOnSubmit = async (data) => {
-    let { coverFile } = data;
-    if (coverFile === preparedAsset.cover) {
-      coverFile = assetProp.cover;
+    let { cover } = data;
+    if (cover === preparedAsset.cover) {
+      cover = assetProp.cover;
     }
 
     const requestMethod = editing ? updateAssetRequest : newAssetRequest;
@@ -63,11 +63,7 @@ const BasicData = ({
     setLoading(true);
 
     try {
-      const { asset } = await requestMethod(
-        { ...data, coverFile, tags },
-        categoryId,
-        'media-files'
-      );
+      const { asset } = await requestMethod({ ...data, cover, tags }, categoryId, 'media-files');
 
       onSave(prepareAsset(asset));
       setLoading(false);

@@ -21,7 +21,8 @@ function cleanPath(path) {
 
 const LibraryPageContent = () => {
   const { path } = useRouteMatch();
-  const { newAsset, category, setAsset, setCategories, categories } = useContext(LibraryContext);
+  const { newAsset, category, setCategory, setAsset, setCategories, categories } =
+    useContext(LibraryContext);
   const [, translations] = useTranslateLoader(prefixPN('home'));
   const history = useHistory();
 
@@ -50,7 +51,11 @@ const LibraryPageContent = () => {
 
   const handleOnNav = (data) => {
     setAsset(null);
-    history.push(cleanPath(`${path}/${data.key}/list`));
+    if (data) {
+      history.push(cleanPath(`${path}/${data.key}/list`));
+    } else {
+      history.push(cleanPath(`${path}/pins/list`));
+    }
   };
 
   const handleOnNew = (item) => {
@@ -132,9 +137,13 @@ const LibraryPage = () => {
 
   const selectCategory = useCallback(
     (key) => {
-      const item = find(categories, { key });
-      if (!isEmpty(item) && item.key !== category?.key) {
-        setCategory(item);
+      if (key === 'pins' && category?.key !== 'pins') {
+        setCategory({ key: 'pins', id: null });
+      } else {
+        const item = find(categories, { key });
+        if (!isEmpty(item) && item.key !== category?.key) {
+          setCategory(item);
+        }
       }
     },
     [category, categories]

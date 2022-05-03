@@ -1,33 +1,36 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty, find, isString, isNil, isFunction } from 'lodash';
+import { find, isEmpty, isFunction, isNil, isString } from 'lodash';
 import {
   Box,
-  Stack,
-  SearchInput,
-  PaginatedList,
-  Title,
   LoadingOverlay,
-  useResizeObserver,
+  PaginatedList,
   RadioGroup,
-  useDebouncedValue,
+  SearchInput,
   Select,
+  Stack,
+  Switch,
+  Title,
+  useDebouncedValue,
+  useResizeObserver,
 } from '@bubbles-ui/components';
 import { LibraryItem } from '@bubbles-ui/leemons';
 import { CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
-import { LayoutModuleIcon, LayoutHeadlineIcon } from '@bubbles-ui/icons/solid';
+import { LayoutHeadlineIcon, LayoutModuleIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { unflatten, useRequestErrorMessage, LocaleDate } from '@common';
+import { LocaleDate, unflatten, useRequestErrorMessage } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import prefixPN from '../helpers/prefixPN';
 import {
-  getAssetsRequest,
-  getAssetsByIdsRequest,
-  listCategoriesRequest,
-  duplicateAssetRequest,
   deleteAssetRequest,
+  duplicateAssetRequest,
+  getAssetsByIdsRequest,
+  getAssetsRequest,
   getAssetTypesRequest,
+  listCategoriesRequest,
+  pinAssetRequest,
+  unpinAssetRequest,
 } from '../request';
 import { getPageItems } from '../helpers/getPageItems';
 import { CardWrapper } from './CardWrapper';
@@ -51,6 +54,8 @@ const AssetList = ({
   assetType: assetTypeProp,
   search: searchProp,
   layout: layoutProp,
+  showPublic: showPublicProp,
+  canShowPublicToggle,
   itemMinWidth,
   canChangeLayout,
   canChangeType,
@@ -60,10 +65,12 @@ const AssetList = ({
   page: pageProp,
   pageSize,
   published,
+  onSearch,
+  pinned,
   onSelectItem = () => {},
   onEditItem = () => {},
   onTypeChange = () => {},
-  onSearch,
+  onShowPublic = () => {},
 }) => {
   const [t, translations] = useTranslateLoader(prefixPN('list'));
   const [category, setCategory] = useState(categoryProp);
@@ -78,6 +85,7 @@ const AssetList = ({
   const [assetType, setAssetType] = useState(assetTypeProp);
   const [openDetail, setOpenDetail] = useState(true);
   const [serverData, setServerData] = useState({});
+  const [showPublic, setShowPublic] = useState(showPublicProp);
   const [searchCriteria, setSearhCriteria] = useState(searchProp);
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [containerRef, containerRect] = useResizeObserver();
@@ -126,10 +134,17 @@ const AssetList = ({
     try {
       setLoading(true);
       setAsset(null);
-      const response = await getAssetsRequest({ category: categoryId, criteria, type, published });
+      const response = await getAssetsRequest({
+        category: categoryId,
+        criteria,
+        type,
+        published,
+        showPublic: !pinned ? showPublic : true,
+        pinned,
+      });
       // console.log('assets:', response.assets);
       setAssets(response?.assets || []);
-      setTimeout(() => setLoading(false), 200);
+      setTimeout(() => setLoading(false), 500);
     } catch (err) {
       setLoading(false);
       addErrorAlert(getErrorMessage(err));
@@ -143,7 +158,10 @@ const AssetList = ({
       if (!isEmpty(assets)) {
         const paginated = getPageItems({ data: assets, page: page - 1, size });
         const assetIds = paginated.items.map((item) => item.asset);
-        const response = await getAssetsByIdsRequest(assetIds, { published });
+        const response = await getAssetsByIdsRequest(assetIds, {
+          published,
+          showPublic: !pinned ? showPublic : true,
+        });
         paginated.items = response.assets || [];
         setServerData(paginated);
       } else {
@@ -161,14 +179,14 @@ const AssetList = ({
       const item = find(serverData.items, { id });
 
       if (item && !forceLoad) {
-        setAsset(prepareAsset(item));
+        setAsset(prepareAsset(item, published));
       } else {
         // console.log('loadAsset > id:', id);
         const response = await getAssetsByIdsRequest([id]);
         if (!isEmpty(response?.assets)) {
           const value = response.assets[0];
           // console.log('asset:', value);
-          setAsset(prepareAsset(value));
+          setAsset(prepareAsset(value, published));
 
           if (forceLoad && item) {
             const index = serverData.items.findIndex((i) => i.id === id);
@@ -213,6 +231,32 @@ const AssetList = ({
     }
   };
 
+  const pinAsset = async (item) => {
+    setAppLoading(true);
+    try {
+      await pinAssetRequest(item.id);
+      setAppLoading(false);
+      addSuccessAlert(t('labels.pinnedSuccess'));
+      loadAsset(item.id, true);
+    } catch (err) {
+      setAppLoading(false);
+      addErrorAlert(getErrorMessage(err));
+    }
+  };
+
+  const unpinAsset = async (item) => {
+    setAppLoading(true);
+    try {
+      await unpinAssetRequest(item.id);
+      setAppLoading(false);
+      addSuccessAlert(t('labels.unpinnedSuccess'));
+      loadAsset(item.id, true);
+    } catch (err) {
+      setAppLoading(false);
+      addErrorAlert(getErrorMessage(err));
+    }
+  };
+
   // ·········································································
   // EFFECTS
 
@@ -221,6 +265,7 @@ const AssetList = ({
   useEffect(() => setLayout(layoutProp), [layoutProp]);
   useEffect(() => setCategories(categoriesProp), [categoriesProp]);
   useEffect(() => setAssetType(assetTypeProp), [assetTypeProp]);
+  useEffect(() => setShowPublic(showPublicProp), [showPublicProp]);
 
   useEffect(() => {
     if (!isEmpty(assetProp?.id) && assetProp.id !== asset?.id) {
@@ -246,6 +291,8 @@ const AssetList = ({
     if (!isEmpty(category?.id)) {
       // loadAssets(category.id);
       loadAssetTypes(category.id);
+    } else {
+      setAssetTypes(null);
     }
   }, [category]);
 
@@ -262,19 +309,10 @@ const AssetList = ({
   }, [searchDebounced]);
 
   useEffect(() => {
-    if (!isEmpty(category?.id)) {
+    if (!isEmpty(category?.id) || pinned) {
       loadAssets(category.id, searchProp, assetType);
     }
-    /*
-    if (!isEmpty(searchProp) && !isEmpty(category?.id)) {
-      loadAssets(category.id, searchProp, assetType);
-    }
-
-    if ((isEmpty(searchProp) || isNil(searchProp)) && !isEmpty(category?.id)) {
-      loadAssets(category.id);
-    }
-    */
-  }, [searchProp, category, assetType]);
+  }, [searchProp, category, assetType, showPublic, pinned]);
 
   // ·········································································
   // HANDLERS
@@ -318,6 +356,21 @@ const AssetList = ({
     });
   };
 
+  const handleOnShowPublic = (value) => {
+    setShowPublic(value);
+    onShowPublic(value);
+  };
+
+  const handleOnPin = (item) => {
+    pinAsset(item);
+  };
+
+  const handleOnUnpin = (item) => {
+    openConfirmationModal({
+      onConfirm: () => unpinAsset(item),
+    })();
+  };
+
   // ·········································································
   // LABELS & STATIC
 
@@ -325,7 +378,7 @@ const AssetList = ({
     {
       Header: 'Name',
       accessor: 'name',
-      valueRender: (_, row) => <LibraryItem asset={prepareAsset(row)} />,
+      valueRender: (_, row) => <LibraryItem asset={prepareAsset(row, published)} />,
     },
     {
       Header: 'Owner',
@@ -360,7 +413,9 @@ const AssetList = ({
 
     if (!onlyThumbnails && layout === 'grid') {
       return {
-        itemRender: (p) => <CardWrapper {...p} variant={cardVariant} category={category} />,
+        itemRender: (p) => (
+          <CardWrapper {...p} variant={cardVariant} category={category} published={published} />
+        ),
         itemMinWidth,
         margin: 16,
         spacing: 4,
@@ -391,12 +446,15 @@ const AssetList = ({
 
   const toolbarItems = useMemo(
     () => ({
-      edit: 'Edit',
+      edit: asset?.editable ? 'Edit' : false,
       duplicate: asset?.duplicable ? 'Duplicate' : false,
       download: asset?.downloadable ? 'Download' : false,
-      delete: 'Delete',
-      share: 'Share',
+      delete: asset?.deleteable ? 'Delete' : false,
+      share: asset?.shareable ? 'Share' : false,
       assign: asset?.assignable ? 'Assign' : false,
+      // eslint-disable-next-line no-nested-ternary
+      pin: asset?.pinned ? false : asset?.pinneable && published ? 'Pin' : false,
+      unpin: asset?.pinned ? 'Unpin' : false,
       toggle: 'Toggle',
     }),
     [asset]
@@ -487,6 +545,9 @@ const AssetList = ({
           })}
         >
           <LoadingOverlay visible={loading} />
+          {!loading && !pinned && canShowPublicToggle && (
+            <Switch label="Show public assets" checked={showPublic} onChange={handleOnShowPublic} />
+          )}
           {!loading && !isEmpty(serverData?.items) && (
             <Box
               sx={(theme) => ({
@@ -550,6 +611,8 @@ const AssetList = ({
               onDelete={handleOnDelete}
               onEdit={handleOnEdit}
               onShare={handleOnShare}
+              onPin={handleOnPin}
+              onUnpin={handleOnUnpin}
             />
           </Box>
         )}
@@ -572,6 +635,9 @@ AssetList.defaultProps = {
   canSearch: true,
   variant: 'full',
   published: true,
+  showPublic: false,
+  pinned: false,
+  canShowPublicToggle: true,
 };
 AssetList.propTypes = {
   category: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
@@ -585,6 +651,8 @@ AssetList.propTypes = {
   onEditItem: PropTypes.func,
   onSearch: PropTypes.func,
   onTypeChange: PropTypes.func,
+  onShowPublic: PropTypes.func,
+  showPublic: PropTypes.bool,
   itemMinWidth: PropTypes.number,
   canChangeLayout: PropTypes.bool,
   canChangeType: PropTypes.bool,
@@ -594,6 +662,8 @@ AssetList.propTypes = {
   page: PropTypes.number,
   pageSize: PropTypes.number,
   published: PropTypes.bool,
+  pinned: PropTypes.bool,
+  canShowPublicToggle: PropTypes.bool,
 };
 
 export { AssetList };

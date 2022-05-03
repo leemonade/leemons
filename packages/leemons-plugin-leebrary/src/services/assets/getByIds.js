@@ -1,11 +1,12 @@
 /* eslint-disable no-param-reassign */
-const { isEmpty, flatten, map, find, compact, uniq } = require('lodash');
+const { isEmpty, flatten, map, find, compact, uniq, isNil } = require('lodash');
 const { tables } = require('../tables');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
 const { getUsersByAsset } = require('../permissions/getUsersByAsset');
 const { find: findBookmarks } = require('../bookmarks/find');
 const canAssignRole = require('../permissions/helpers/canAssignRole');
 const { getByIds: getCategories } = require('../categories/getByIds');
+const { getByAssets: getPins } = require('../pins/getByAssets');
 
 async function getByIds(
   assetsIds,
@@ -13,8 +14,10 @@ async function getByIds(
     withFiles,
     withTags = true,
     withCategory = true,
+    checkPins = true,
     checkPermissions,
     userSession,
+    showPublic,
     transacting,
   } = {}
 ) {
@@ -25,7 +28,7 @@ async function getByIds(
   // PERMISSIONS & PERSONS
 
   if (checkPermissions && userSession) {
-    const permissions = await getPermissions(assetsIds, { userSession, transacting });
+    const permissions = await getPermissions(assetsIds, { showPublic, userSession, transacting });
     const privateAssets = permissions.map((item) => item.asset);
     assets = assets.filter((asset) => privateAssets.includes(asset.id));
 
@@ -128,7 +131,9 @@ async function getByIds(
         const categoryProvider = category.provider;
         const assetProviderService = leemons.getProvider(categoryProvider).services.assets;
         return assetProviderService.getByIds(
-          assets.filter((item) => item.category === category.id),
+          assets
+            .filter((item) => item.category === category.id)
+            .map((item) => ({ ...item, category })),
           { userSession, transacting }
         );
       })
@@ -136,6 +141,17 @@ async function getByIds(
 
     assetCategoryData = providersResults.flat();
   }
+
+  // ·········································································
+  // PINS DATA
+  let pins = [];
+
+  if (checkPins) {
+    pins = await getPins(assetsIds, { userSession, transacting });
+  }
+
+  // ·········································································
+  // FINALLY
 
   return assets.map((asset, index) => {
     const item = { ...asset };
@@ -149,6 +165,11 @@ async function getByIds(
 
     if (withTags) {
       [item.tags] = tags[index];
+    }
+
+    if (checkPins) {
+      const pin = find(pins, { asset: asset.id });
+      item.pinned = !isNil(pin?.id);
     }
 
     return item;

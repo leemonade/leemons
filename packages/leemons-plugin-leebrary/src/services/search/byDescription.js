@@ -1,3 +1,4 @@
+const { isEmpty } = require('lodash');
 const { getByIds: getAssetsByIds } = require('../assets/getByIds');
 const { tables } = require('../tables');
 
@@ -10,7 +11,7 @@ async function byDescription(
       description_$contains: description,
     };
 
-    if (assetsIds) {
+    if (!isEmpty(assetsIds)) {
       query.id_$in = assetsIds;
     }
 

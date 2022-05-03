@@ -12,13 +12,15 @@ const {
 } = require('../question-bank-subjects/addSubjectsToQuestionBanks');
 const { updateCategory } = require('../question-bank-categories/updateCategory');
 const { createCategory } = require('../question-bank-categories/createCategory');
+const { deleteQuestions } = require('../questions/deleteQuestions');
 
-async function saveQuestionsBanks(_data, { transacting: _transacting } = {}) {
+async function saveQuestionsBanks(_data, { userSession, transacting: _transacting } = {}) {
   const tagsService = leemons.getPlugin('common').services.tags;
   const versionControlService = leemons.getPlugin('common').services.versionControl;
   return global.utils.withTransaction(
     async (transacting) => {
       const data = _.cloneDeep(_data);
+      delete data.asset;
       _.forEach(data.questions, (question) => {
         delete question.questionBank;
         delete question.deleted;
@@ -26,6 +28,8 @@ async function saveQuestionsBanks(_data, { transacting: _transacting } = {}) {
         delete question.updated_at;
         delete question.deleted_at;
       });
+      // Check is userSession is provided
+      if (!userSession) throw new Error('User session is required (saveQuestionsBanks)');
       validateSaveQuestionBank(data);
       const { id, questions, categories, tags, published, subjects, ...props } = data;
       let questionBank;
@@ -65,11 +69,59 @@ async function saveQuestionsBanks(_data, { transacting: _transacting } = {}) {
         );
       }
 
+      // -- Asset ---
+
+      if (props.name) {
+        const assetsToSave = {
+          indexable: true,
+          public: true, // TODO Cambiar a false despues de hacer la demo
+          category: 'tests-questions-banks',
+        };
+        assetsToSave.name = props.name;
+        if (props.summary) assetsToSave.description = props.summary;
+        if (props.tagline) assetsToSave.tagline = props.tagline;
+        if (props.cover) assetsToSave.cover = props.cover;
+        if (tags) assetsToSave.tags = tags;
+        const assetService = leemons.getPlugin('leebrary').services.assets;
+
+        if (questionBank.asset) {
+          // -- Asset update
+          assetsToSave.id = questionBank.asset;
+          const asset = await assetService.update(assetsToSave, {
+            upgrade: true,
+            published,
+            userSession,
+            transacting,
+          });
+          questionBank = await table.questionsBanks.update(
+            { id: questionBank.id },
+            { asset: asset.id },
+            { transacting }
+          );
+        } else {
+          // -- Asset create
+          const asset = await assetService.add(assetsToSave, {
+            published,
+            userSession,
+            transacting,
+          });
+          questionBank = await table.questionsBanks.update(
+            { id: questionBank.id },
+            { asset: asset.id },
+            { transacting }
+          );
+        }
+      }
+
+      console.log('Despues de subir cover');
+
+      // -- Subjects --
       await removeSubjectsFromQuestionBanks(questionBank.id, { transacting });
       if (_.isArray(subjects) && subjects.length > 0) {
         await addSubjectsToQuestionBanks(subjects, questionBank.id, { transacting });
       }
 
+      // -- Tags --
       await tagsService.setTagsToValues(
         `plugins.tests.questionBanks`,
         tags || [],
@@ -179,7 +231,7 @@ async function saveQuestionsBanks(_data, { transacting: _transacting } = {}) {
         }
       });
       if (questionsToDelete.length) {
-        await table.questions.deleteMany({ id_$in: questionsToDelete }, { transacting });
+        await deleteQuestions(questionsToDelete, { userSession, transacting });
       }
       if (questionsToUpdate.length) {
         await Promise.all(
@@ -195,13 +247,16 @@ async function saveQuestionsBanks(_data, { transacting: _transacting } = {}) {
                     ? question.category
                     : null,
               },
-              { transacting }
+              {
+                published,
+                userSession,
+                transacting,
+              }
             )
           )
         );
       }
       if (questionsToCreate.length) {
-        console.log('questionsToCreate', questionsToCreate);
         await Promise.all(
           _.map(questionsToCreate, (question) =>
             createQuestion(
@@ -217,6 +272,8 @@ async function saveQuestionsBanks(_data, { transacting: _transacting } = {}) {
                     : null,
               },
               {
+                published,
+                userSession,
                 transacting,
               }
             )

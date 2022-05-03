@@ -9,7 +9,7 @@ async function newAsset(assetData, categoryId, categoryKey) {
   }
 
   if (categoryKey === 'bookmarks') {
-    if (data.coverFile) formData.append('cover', data.coverFile);
+    if (cover) formData.append('cover', cover);
   }
 
   if (categoryId) formData.append('categoryId', categoryId);

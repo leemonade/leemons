@@ -1,5 +1,6 @@
-import { AssetForm } from './AssetForm';
+import { AssetFormInput } from './AssetFormInput';
 import { AssetList } from './AssetList';
+import { LeebraryImage } from './LeebraryImage';
 import { AssetListDrawer } from './AssetListDrawer';
 
-export { AssetForm, AssetList, AssetListDrawer };
+export { LeebraryImage, AssetFormInput, AssetList, AssetListDrawer };

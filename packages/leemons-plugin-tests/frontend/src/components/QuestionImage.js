@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, colord, createStyles } from '@bubbles-ui/components';
 import { numberToEncodedLetter } from '@common';
+import { LeebraryImage } from '@leebrary/components';
 
 export const QuestionImageStyles = createStyles((theme, { isLight }) => ({
   root: {},
@@ -30,7 +31,7 @@ export function QuestionImage({ src, markers }) {
   });
   return (
     <Box className={classes.imageContainer}>
-      <img className={classes.image} src={src} />
+      <LeebraryImage className={classes.image} src={src} />
       {markers && markers.list
         ? markers.list.map((marker, index) => (
             <Box

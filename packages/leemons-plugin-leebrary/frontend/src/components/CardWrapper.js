@@ -1,5 +1,5 @@
 import React from 'react';
-import { isNil } from 'lodash';
+import { isNil, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Box, createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
@@ -8,7 +8,7 @@ import { prepareAsset } from '../helpers/prepareAsset';
 
 function dynamicImport(pluginName, component) {
   return loadable(() =>
-    import(`@leemons/plugins/${pluginName}/src/widgets/leebrary/${component}.js`)
+    import(`@leemons/plugins/${pluginName.split('.')[1]}/src/widgets/leebrary/${component}.js`)
   );
 }
 
@@ -31,7 +31,7 @@ const CardWrapper = ({
   category,
   ...props
 }) => {
-  const asset = prepareAsset(item.original);
+  const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
   const menuItems = [];
   const { classes } = CardWrapperStyles({ selected });
 
@@ -45,7 +45,7 @@ const CardWrapper = ({
     }
   }
 
-  return !isNil(category) ? (
+  return !isNil(category) && !isEmpty(asset) ? (
     <Box key={key} {...props}>
       <Component asset={asset} menuItems={menuItems} variant={variant} className={classes.root} />
     </Box>

@@ -1,8 +1,10 @@
 import React, { useCallback, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { isEmpty } from 'lodash';
 import { Box, createStyles, LoadingOverlay, MAIN_NAV_WIDTH } from '@bubbles-ui/components';
 import MainMenu from '@menu-builder/components/mainMenu';
-
+import { getProfilesRequest } from '@academic-portfolio/request';
+import { getCookieToken } from '@users/session';
 import AlertStack from './AlertStack';
 import { LayoutContext } from '../context/layout';
 
@@ -36,11 +38,34 @@ const PrivateLayout = ({ children }) => {
     setLayoutState({ ...layoutState, ...newState });
   };
 
+  const handleChangeProfile = async () => {
+    const profileState = { profileChecked: true, isAcademicMode: false };
+    const token = getCookieToken(true);
+    if (!isEmpty(token?.profile)) {
+      const { profiles: academicProfiles } = await getProfilesRequest();
+
+      profileState.isAcademicMode = [academicProfiles.teacher, academicProfiles.student].includes(
+        token?.profile
+      );
+
+      setState(profileState);
+    }
+  };
+
   useEffect(() => {
     if (!layoutState.menuWidth) {
       setState({ menuWidth: MAIN_NAV_WIDTH });
     }
   }, []);
+
+  useEffect(() => {
+    if (layoutState.private && !layoutState.profileChecked) {
+      handleChangeProfile();
+    }
+  }, [layoutState.private]);
+
+  // ····················································································
+  // MENU HANDLERS
 
   const onCloseMenu = useCallback(() => {
     if (layoutState.menuWidth !== MAIN_NAV_WIDTH) setState({ menuWidth: MAIN_NAV_WIDTH });
@@ -57,10 +82,13 @@ const PrivateLayout = ({ children }) => {
     [layoutState]
   );
 
+  // ····················································································
+  // RENDER & STYLES
+
   const { classes } = PrivateLayoutStyles({ width: layoutState.menuWidth });
   const pinned = false; // Must come from user preferences
 
-  return (
+  return layoutState.profileChecked ? (
     <Box className={classes.root}>
       <LoadingOverlay visible={layoutState.loading} />
       <Box className={classes.sideNav}>
@@ -70,6 +98,7 @@ const PrivateLayout = ({ children }) => {
           onPin={onPinMenu}
           subNavWidth={NAV_OPEN_WIDTH}
           pinned={pinned}
+          lightMode={layoutState.isAcademicMode}
         />
       </Box>
       <Box ref={layoutState.contentRef} className={classes.content}>
@@ -77,7 +106,7 @@ const PrivateLayout = ({ children }) => {
         {children}
       </Box>
     </Box>
-  );
+  ) : null;
 };
 
 PrivateLayout.propTypes = {

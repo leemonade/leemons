@@ -1,11 +1,27 @@
 const { table } = require('../tables');
 
-async function createQuestion(data, { transacting: _transacting } = {}) {
+async function createQuestion(data, { userSession, published, transacting: _transacting } = {}) {
   const tagsService = leemons.getPlugin('common').services.tags;
-  console.log('create question', data);
   return global.utils.withTransaction(
     async (transacting) => {
       const { tags, properties, ...props } = data;
+      // ES: Si el tipo es map creamos el asset
+      if (data.type === 'map') {
+        const asset = await leemons.getPlugin('leebrary').services.assets.add(
+          {
+            name: `Image question`,
+            cover: data.properties.image,
+            indexable: true,
+            public: true, // TODO Cambiar a false despues de hacer la demo
+          },
+          {
+            published,
+            userSession,
+            transacting,
+          }
+        );
+        properties.image = asset.id;
+      }
       const question = await table.questions.create(
         {
           ...props,
@@ -13,6 +29,7 @@ async function createQuestion(data, { transacting: _transacting } = {}) {
         },
         { transacting }
       );
+
       await tagsService.setTagsToValues('plugins.tests.questionBanks', tags || [], question.id, {
         transacting,
       });

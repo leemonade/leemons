@@ -1,21 +1,24 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { find, isArray } from 'lodash';
-import {
-  getUserProfilesRequest,
-  getUserProfileTokenRequest,
-  setRememberProfileRequest,
-} from '@users/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@users/helpers/prefixPN';
 import HeroBgLayout from '@users/layout/heroBgLayout';
-import hooks from 'leemons-hooks';
-import Cookies from 'js-cookie';
 import { useHistory } from 'react-router-dom';
-import { LayoutContext } from '@layout/context/layout';
 import { Box, createStyles, Stack } from '@bubbles-ui/components';
 import { LoginProfileSelector } from '@bubbles-ui/leemons';
+import { useStore } from '@common';
+import { LayoutContext } from '@layout/context/layout';
+import hooks from 'leemons-hooks';
+import Cookies from 'js-cookie';
+import {
+  getRememberLoginRequest,
+  getUserCenterProfileTokenRequest,
+  getUserCentersRequest,
+  setRememberLoginRequest,
+} from '../../../request';
+import { getCookieToken } from '../../../session';
 
 const PageStyles = createStyles((theme) => ({
   root: {
@@ -28,13 +31,16 @@ const PageStyles = createStyles((theme) => ({
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de crear usuarios
 export default function SelectProfile({ session }) {
-  const [loadingProfileToken, setLoadingProfileToken] = useState(false);
-  const [selectedProfile, setSelectedProfile] = useState(null);
-  const [loginWithProfile, setLoginWithProfile] = useState(false);
-  const [profiles, setProfiles] = useState([]);
+  const [store, render] = useStore({
+    loading: false,
+    selectedProfile: null,
+    selectedCenter: null,
+    loginWithProfile: false,
+    profiles: [],
+  });
 
   const history = useHistory();
-  const { setPrivateLayout } = useContext(LayoutContext);
+  const { layoutState, setLayoutState } = useContext(LayoutContext);
 
   const { t: tCommon } = useCommonTranslate('forms');
   const [t] = useTranslateLoader(prefixPN('selectProfile'));
@@ -42,62 +48,50 @@ export default function SelectProfile({ session }) {
   // ····················································································
   // HANDLERS
 
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      if (loginWithProfile && selectedProfile) {
-        try {
-          setLoadingProfileToken(true);
-          const { jwtToken } = await getUserProfileTokenRequest(selectedProfile.id);
-          await hooks.fireEvent('user:change:profile', selectedProfile);
-          Cookies.set('token', jwtToken);
-          hooks.fireEvent('user:cookie:session:change');
-          history.push(`/private/dashboard`);
-        } catch (e) {
-          console.error(e);
-          if (mounted) {
-            setLoadingProfileToken(false);
-            setLoginWithProfile(false);
-          }
-        }
-      }
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, [loginWithProfile, selectedProfile]);
+  async function init() {
+    setLayoutState({ ...layoutState, private: false, profileChecked: false });
+    const [{ centers }, { profile, center }] = await Promise.all([
+      getUserCentersRequest(),
+      getRememberLoginRequest(getCookieToken()),
+    ]);
+    store.centers = centers;
+    if (profile && center) {
+      store.defaultValues = {
+        profile: profile.id,
+        center: center.id,
+        remember: true,
+      };
+    }
+    render();
+  }
 
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        const { profiles: userProfiles } = await getUserProfilesRequest();
-        if (userProfiles.length === 1) {
-          if (mounted) {
-            setSelectedProfile(userProfiles[0]);
-            setLoginWithProfile(true);
-          }
-        } else if (mounted) {
-          setProfiles(userProfiles);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    })();
-    setPrivateLayout(false);
-    return () => {
-      mounted = false;
-    };
+  React.useEffect(() => {
+    init();
   }, []);
 
-  const handleOnSubmit = async (data) => {
-    const _selectedProfile = find(profiles, { id: data.profile });
-    if (data.remember) {
-      await setRememberProfileRequest(_selectedProfile.id);
+  async function handleOnSubmit(data) {
+    try {
+      store.loading = true;
+      render();
+      const center = find(store.centers, { id: data.center });
+      const profile = find(center.profiles, { id: data.profile });
+      if (data.remember) {
+        await setRememberLoginRequest({
+          center: data.center,
+          profile: data.profile,
+        });
+      }
+      const { jwtToken } = await getUserCenterProfileTokenRequest(data.center, data.profile);
+      await hooks.fireEvent('user:change:profile', profile);
+      const newToken = { ...jwtToken, profile: data.profile };
+      console.log('newToken: ', newToken);
+      Cookies.set('token', newToken);
+      hooks.fireEvent('user:cookie:session:change');
+      history.push(`/private/dashboard`);
+    } catch (e) {
+      console.error(e);
     }
-    setSelectedProfile(_selectedProfile);
-    setLoginWithProfile(true);
-  };
+  }
 
   // ····················································································
   // LITERALS
@@ -105,12 +99,16 @@ export default function SelectProfile({ session }) {
   const labels = useMemo(
     () => ({
       title: t('title', { name: session?.name }),
-      description: t('number_of_profiles', { profiles: profiles?.length }),
+      description:
+        store.centers?.length > 1
+          ? t('several_centers')
+          : t('number_of_profiles', { profiles: store.profiles?.length }),
       remember: t('use_always_profile'),
       help: t('change_easy'),
       login: t('log_in'),
+      centerPlaceholder: t('choose_center'),
     }),
-    [t, session, profiles]
+    [t, session, store.profiles, store.centers]
   );
 
   const errorMessages = useMemo(
@@ -118,20 +116,11 @@ export default function SelectProfile({ session }) {
       profile: {
         required: tCommon('selectionRequired'),
       },
+      center: {
+        required: tCommon('selectionRequired'),
+      },
     }),
     [tCommon]
-  );
-
-  const profilesData = useMemo(
-    () =>
-      isArray(profiles) && profiles.length
-        ? profiles.map((profile) => ({
-            value: profile.id,
-            label: profile.name,
-            // icon: null,
-          }))
-        : [],
-    [profiles]
   );
 
   // ····················································································
@@ -143,13 +132,14 @@ export default function SelectProfile({ session }) {
     <HeroBgLayout>
       <Stack className={classes.root} direction="column" justifyContent="center" fullHeight>
         <Box className={classes.content}>
-          {isArray(profilesData) && profilesData.length > 0 && (
+          {isArray(store.centers) && store.centers.length > 0 && (
             <LoginProfileSelector
               labels={labels}
               errorMessages={errorMessages}
-              profiles={profilesData}
-              loading={loadingProfileToken}
+              centers={store.centers}
+              loading={store.loading}
               onSubmit={handleOnSubmit}
+              defaultValues={store.defaultValues}
             />
           )}
         </Box>

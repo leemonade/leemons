@@ -173,10 +173,13 @@ module.exports = {
     title: 'Hola {name}',
     number_of_profiles:
       'Tienes {profiles} perfiles en leemons, por favor selecciona con el que quieres acceder',
-    use_always_profile: 'Utilizar siempre este perfil para acceder rápidamente',
+    several_centers:
+      'Tienes varios centros y perfiles en Leemons, por favor selecciona los adecuados para acceder.',
+    use_always_profile: 'Utilizar siempre esta configuración para acceder rápidamente',
     change_easy:
       'Puede cambiar fácilmente su perfil haciendo clic en su avatar en la barra lateral de la aplicación',
     log_in: 'Entrar',
+    choose_center: 'Selecciona un centro',
   },
   list_users: {
     pageTitle: 'Listado de usuarios',

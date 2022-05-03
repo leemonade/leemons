@@ -5,9 +5,9 @@ const { update } = require('../src/services/assets/update');
 const { remove } = require('../src/services/assets/remove');
 
 module.exports = {
-  exists,
-  add,
   getByIds,
+  exists,
   update,
+  add,
   remove,
 };

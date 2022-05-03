@@ -27,7 +27,6 @@ export const LIBRARY_FORM_DEFAULT_PROPS = {
   },
   loading: false,
   type: LIBRARY_FORM_TYPES.MEDIA_FILES,
-  onlyImages: false,
   hideTitle: false,
 };
 export const LIBRARY_FORM_PROP_TYPES = {

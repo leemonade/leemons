@@ -1,6 +1,6 @@
 /* eslint-disable no-unreachable */
 import React, { useEffect, useMemo, useState, useContext, useCallback } from 'react';
-import { isEmpty } from 'lodash';
+import { isEmpty, isNil } from 'lodash';
 import { useHistory, useParams, useLocation } from 'react-router-dom';
 import LibraryContext from '../../../context/LibraryContext';
 import { VIEWS } from '../library/Library.constants';
@@ -12,11 +12,13 @@ function useQuery() {
 }
 
 const ListAssetPage = () => {
-  const { setView, view, categories, asset, setAsset, category, selectCategory } =
+  const { setView, view, categories, asset, setAsset, category, setCategory, selectCategory } =
     useContext(LibraryContext);
   const [currentAsset, setCurrentAsset] = useState(asset);
   const [searchCriteria, setSearchCriteria] = useState('');
   const [assetType, setAssetType] = useState('');
+  const [showPublic, setShowPublic] = useState(false);
+  const [showPublished, setShowPublished] = useState(true);
   const history = useHistory();
   const params = useParams();
   const query = useQuery();
@@ -31,9 +33,12 @@ const ListAssetPage = () => {
 
   useEffect(() => {
     if (view !== VIEWS.LIST) setView(VIEWS.LIST);
+
     if (!isEmpty(params?.category) && category?.key !== params?.category) {
       selectCategory(params?.category);
-      setCurrentAsset(null);
+      if (category) {
+        setCurrentAsset(null);
+      }
     }
   }, [params, category, view]);
 
@@ -41,8 +46,13 @@ const ListAssetPage = () => {
     const assetId = query.get('open');
     const criteria = query.get('search');
     const type = query.get('type');
+    const displayPublic = [1, '1', true, 'true'].includes(query.get('showPublic'));
 
-    if (isEmpty(assetId)) {
+    if (displayPublic !== showPublic) {
+      setShowPublic(displayPublic);
+    }
+
+    if (!assetId || isEmpty(assetId)) {
       setCurrentAsset(null);
       setAsset(null);
     } else if (asset?.id !== assetId) {
@@ -66,10 +76,11 @@ const ListAssetPage = () => {
   // LABELS & STATIC
 
   const getQueryParams = useCallback(
-    ({ includeSearch, includeOpen, includeType }, suffix) => {
+    ({ includeSearch, includeOpen, includeType, includePublic, includePublished }, suffix) => {
       const open = query.get('open');
       const search = query.get('search');
       const type = query.get('type');
+      const displayPublic = [1, '1', true, 'true'].includes(query.get('showPublic'));
       const result = [];
 
       if (!isEmpty(open) && includeOpen) {
@@ -81,6 +92,14 @@ const ListAssetPage = () => {
 
       if (!isEmpty(type) && includeType) {
         result.push(`type=${type}`);
+      }
+
+      if (includePublic) {
+        result.push(`showPublic=${displayPublic}`);
+      }
+
+      if (includePublished) {
+        result.push(`published=${showPublished}`);
       }
 
       if (!isEmpty(suffix)) {
@@ -97,7 +116,10 @@ const ListAssetPage = () => {
 
   const handleOnSelectItem = (item) => {
     history.push(
-      `${location.pathname}?${getQueryParams({ includeSearch: true }, `open=${item.id}`)}`
+      `${location.pathname}?${getQueryParams(
+        { includeSearch: true, includeType: true, includePublic: true, includePublished: true },
+        `open=${item.id}`
+      )}`
     );
   };
 
@@ -106,30 +128,53 @@ const ListAssetPage = () => {
   };
 
   const handleOnSearch = (criteria) => {
+    if (!isEmpty(criteria)) {
+      history.push(
+        `${location.pathname}?${getQueryParams(
+          { includeType: true, includePublic: true, includePublished: true },
+          `search=${criteria}`
+        )}`
+      );
+    }
+  };
+
+  const handleOnShowPublic = (value) => {
     history.push(
-      `${location.pathname}?${getQueryParams({ includeType: true }, `search=${criteria}`)}`
+      `${location.pathname}?${getQueryParams(
+        { includeType: true, includePublished: true, includeSearch: true },
+        `showPublic=${value}`
+      )}`
     );
   };
 
   const handleOnTypeChange = (type) => {
-    history.push(`${location.pathname}?${getQueryParams({ includeSearch: true }, `type=${type}`)}`);
+    history.push(
+      `${location.pathname}?${getQueryParams(
+        { includeSearch: true, includePublic: true, includePublished: true },
+        `type=${type}`
+      )}`
+    );
   };
 
   // ·········································································
   // RENDER
 
-  return !isEmpty(categories) ? (
+  return !isNil(categories) && !isEmpty(categories) ? (
     <AssetList
       category={category}
       categories={categories}
       asset={currentAsset}
       search={searchCriteria}
       layout="grid"
+      published={showPublished}
+      showPublic={showPublic}
       onSelectItem={handleOnSelectItem}
       onEditItem={handleOnEditItem}
       onSearch={handleOnSearch}
       onTypeChange={handleOnTypeChange}
+      onShowPublic={handleOnShowPublic}
       assetType={assetType}
+      pinned={category?.key === 'pins'}
     />
   ) : null;
 };

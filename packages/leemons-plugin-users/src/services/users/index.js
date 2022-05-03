@@ -8,6 +8,7 @@ const { detail } = require('./detail');
 const { update } = require('./update');
 const { addBulk } = require('./addBulk');
 const { recover } = require('./recover');
+const { centers } = require('./centers');
 const { canReset } = require('./canReset');
 const { profiles } = require('./profiles');
 const { isSuperAdmin } = require('./isSuperAdmin');
@@ -19,6 +20,7 @@ const { comparePassword } = require('./bcrypt/comparePassword');
 const { encryptPassword } = require('./bcrypt/encryptPassword');
 const { hasPermissionCTX } = require('./hasPermissionCTX');
 const { registerPassword } = require('./registerPassword');
+const { centerProfileToken } = require('./centerProfileToken');
 
 const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
 const { addFirstSuperAdminUser } = require('./addFirstSuperAdminUser');
@@ -44,6 +46,7 @@ module.exports = {
   update,
   addBulk,
   recover,
+  centers,
   canReset,
   profiles,
   isSuperAdmin,
@@ -54,6 +57,7 @@ module.exports = {
   encryptPassword,
   registerPassword,
   hasPermissionCTX,
+  centerProfileToken,
   canRegisterPassword,
   getSuperAdminUserIds,
   addFirstSuperAdminUser,

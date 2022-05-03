@@ -1,23 +1,23 @@
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
-import { isFunction, isEmpty, toLower } from 'lodash';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { isEmpty, isFunction, toLower, isNil } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
+  Button,
+  ColorInput,
   ContextContainer,
   FileUpload,
-  ImagePreviewInput,
-  TextInput,
-  Textarea,
-  ColorInput,
-  Stack,
-  Button,
   ImageLoader,
+  ImagePreviewInput,
+  Stack,
+  Textarea,
+  TextInput,
   useResizeObserver,
   useViewportSize,
 } from '@bubbles-ui/components';
 import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useRequestErrorMessage } from '@common';
+import { addErrorAlert } from '@layout/alert';
+import { TagsAutocomplete, useRequestErrorMessage } from '@common';
 import {
   LIBRARY_FORM_DEFAULT_PROPS,
   LIBRARY_FORM_PROP_TYPES,
@@ -51,6 +51,16 @@ function isImageFile(file) {
   return false;
 }
 
+function isNullish(obj) {
+  return Object.values(obj).every((value) => {
+    if (isNil(value)) {
+      return true;
+    }
+
+    return false;
+  });
+}
+
 // -----------------------------------------------------------------------------
 // COMPONENT
 
@@ -60,6 +70,9 @@ const LibraryForm = ({
   helps,
   descriptions,
   errorMessages,
+  useTags,
+  pluginName,
+  tagsType,
   asset,
   onSubmit,
   children,
@@ -85,9 +98,10 @@ const LibraryForm = ({
   const defaultValues = {
     file: asset.file || null,
     name: asset.name || '',
+    tagline: asset.tagline || '',
     description: asset.description || '',
     color: asset.color || '',
-    coverFile: asset.cover || null,
+    cover: asset.cover || null,
   };
 
   const {
@@ -96,16 +110,28 @@ const LibraryForm = ({
     watch,
     trigger,
     setValue,
+    getValues,
     formState: { errors },
   } = form || useForm({ defaultValues });
 
-  const watchCoverFile = watch('coverFile');
+  const watchCoverFile = watch('cover');
   const assetFile = watch('file');
   const bookmarkUrl = watch('url');
 
   useEffect(() => {
+    if (!isNullish(asset) && isEmpty(asset?.id)) {
+      const valueNames = ['file', 'name', 'tagline', 'description', 'color', 'cover'];
+      const values = getValues(valueNames);
+      valueNames.forEach((valueName, index) => {
+        setValue(valueName, asset[valueName] || values[index]);
+      });
+    }
+  }, [asset]);
+
+  useEffect(() => {
     if (!isEmpty(assetFile)) {
-      setIsImage(isImageFile(assetFile));
+      const isImageType = isImageFile(assetFile);
+      setIsImage(isImageType);
       setValue('name', assetFile.name.match(/(.+?)(\.[^.]+$|$)/)[1]);
     }
   }, [assetFile]);
@@ -116,7 +142,13 @@ const LibraryForm = ({
     }
   }, [watchCoverFile]);
 
-  useEffect(() => setIsImage(onlyImages), [onlyImages]);
+  useEffect(() => {
+    // ES: El caso de uso es que el usuario cambie de soportar archivos, a solo imágenes
+    // EN: The use case is that the user changes from supporting files to only images
+    if (!isImage && !isNil(onlyImages)) {
+      setIsImage(onlyImages);
+    }
+  }, [onlyImages, isImage]);
 
   // ························································
   // HANDLERS
@@ -125,7 +157,7 @@ const LibraryForm = ({
     if (!isEmpty(e.file) && e.file.length === 1) [e.file] = e.file;
     if (asset.id) e.id = asset.id;
     if (urlMetadata?.logo) e.icon = urlMetadata.logo;
-    if (coverAsset) e.coverFile = coverAsset.file.id;
+    if (coverAsset) e.cover = coverAsset.file.id;
 
     if (isFunction(onSubmit)) onSubmit(e);
   };
@@ -149,7 +181,7 @@ const LibraryForm = ({
           setValue('description', metadata.description);
 
           if (!isEmpty(metadata.image)) {
-            setValue('coverFile', metadata.image);
+            setValue('cover', metadata.image);
           }
         }
         setChecking(false);
@@ -167,7 +199,7 @@ const LibraryForm = ({
   const handleOnSelectAsset = (item) => {
     const preparedAsset = prepareAsset(item);
     setCoverAsset(preparedAsset);
-    setValue('coverFile', preparedAsset.cover);
+    setValue('cover', preparedAsset.cover);
     setShowAssetDrawer(false);
   };
 
@@ -269,6 +301,18 @@ const LibraryForm = ({
             />
             <Controller
               control={control}
+              name="tagline"
+              render={({ field }) => (
+                <TextInput
+                  label={labels.tagline}
+                  placeholder={placeholders.tagline}
+                  error={errors.tagline}
+                  {...field}
+                />
+              )}
+            />
+            <Controller
+              control={control}
               name="description"
               render={({ field }) => (
                 <Textarea
@@ -278,6 +322,23 @@ const LibraryForm = ({
                 />
               )}
             />
+            {useTags && (
+              <Controller
+                control={form.control}
+                name="tags"
+                render={({ field }) => (
+                  <TagsAutocomplete
+                    pluginName={pluginName}
+                    type={tagsType}
+                    label={labels.tags}
+                    labels={{ addButton: labels.addTag }}
+                    placeholder={placeholders.tags}
+                    {...field}
+                  />
+                )}
+              />
+            )}
+
             <Controller
               control={control}
               name="color"
@@ -306,7 +367,7 @@ const LibraryForm = ({
                 )}
                 <Controller
                   control={control}
-                  name="coverFile"
+                  name="cover"
                   render={({ field: { ref, value, ...field } }) => (
                     <ImagePreviewInput
                       labels={{

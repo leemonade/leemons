@@ -4,12 +4,7 @@ import _ from 'lodash';
 import Cookies from 'js-cookie';
 import { Box, createStyles, Stack } from '@bubbles-ui/components';
 import { LoginForm } from '@bubbles-ui/leemons';
-import {
-  getRememberProfileRequest,
-  getUserProfilesRequest,
-  getUserProfileTokenRequest,
-  loginRequest,
-} from '@users/request';
+import { getRememberLoginRequest, loginRequest } from '@users/request';
 import { getCookieToken, useSession } from '@users/session';
 import { goRecoverPage } from '@users/navigate';
 import HeroBgLayout from '@users/layout/heroBgLayout';
@@ -18,6 +13,7 @@ import useTranslate from '@multilanguage/useTranslate';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import hooks from 'leemons-hooks';
+import { getUserCenterProfileTokenRequest, getUserCentersRequest } from '../../../request';
 
 const PageStyles = createStyles((theme) => ({
   root: {
@@ -30,9 +26,11 @@ const PageStyles = createStyles((theme) => ({
 
 export default function Login() {
   useSession({
-    redirectTo: _.isString(getCookieToken(true))
-      ? 'private/users/select-profile'
-      : 'private/dashboard',
+    redirectTo: (history) => {
+      history.push(
+        _.isString(getCookieToken(true)) ? '/private/users/select-profile' : '/private/dashboard'
+      );
+    },
     redirectIfFound: true,
   });
 
@@ -53,24 +51,33 @@ export default function Login() {
       setFormStatus('loading');
       setFormError(null);
       const response = await loginRequest(data);
+
       try {
         // Comprobamos si tiene recordado un perfil
-        const { profile } = await getRememberProfileRequest(response.jwtToken);
-        if (profile) {
-          // Si lo tiene sacamos el token para dicho perfil
-          const { jwtToken } = await getUserProfileTokenRequest(profile.id, response.jwtToken);
+        const { profile, center } = await getRememberLoginRequest(response.jwtToken);
+
+        if (profile && center) {
+          // Si lo tiene sacamos el token para dicho centro y perfil
+          const { jwtToken } = await getUserCenterProfileTokenRequest(
+            center.id,
+            profile.id,
+            response.jwtToken
+          );
+
           await hooks.fireEvent('user:change:profile', profile);
           response.jwtToken = jwtToken;
         } else {
           // Si no lo tiene sacamos todos los perfiles a los que tiene acceso para hacer login
-          const { profiles } = await getUserProfilesRequest(response.jwtToken);
+          const { centers } = await getUserCentersRequest(response.jwtToken);
           // Si solo tiene un perfil hacemos login automaticamente con ese
-          if (profiles.length === 1) {
-            const { jwtToken } = await getUserProfileTokenRequest(
-              profiles[0].id,
+          if (centers.length === 1 && centers[0].profiles.length === 1) {
+            const { jwtToken } = await getUserCenterProfileTokenRequest(
+              centers[0].id,
+              centers[0].profiles[0].id,
               response.jwtToken
             );
-            await hooks.fireEvent('user:change:profile', profiles[0]);
+
+            await hooks.fireEvent('user:change:profile', centers[0].profiles[0]);
             response.jwtToken = jwtToken;
           }
         }
@@ -80,7 +87,9 @@ export default function Login() {
       // Finalmente metemos el token
       Cookies.set('token', response.jwtToken);
       hooks.fireEvent('user:cookie:session:change');
-      history.push('private/users/select-profile');
+      history.push(
+        _.isString(response.jwtToken) ? '/private/users/select-profile' : '/private/dashboard'
+      );
     } catch (err) {
       if (_.isObject(err) && err.status === 401) {
         setFormStatus('error-match');

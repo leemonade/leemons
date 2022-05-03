@@ -113,6 +113,15 @@ const AssetListDrawer = ({
         >
           {creatable ? (
             <Tabs>
+              <TabPanel key="library" label="Library">
+                <Box
+                  sx={(theme) => ({
+                    marginTop: theme.spacing[5],
+                  })}
+                >
+                  {LibraryList}
+                </Box>
+              </TabPanel>
               <TabPanel key="create" label="New resource">
                 <Box
                   sx={(theme) => ({
@@ -131,15 +140,6 @@ const AssetListDrawer = ({
                   )}
                 </Box>
               </TabPanel>
-              <TabPanel key="library" label="Library">
-                <Box
-                  sx={(theme) => ({
-                    marginTop: theme.spacing[5],
-                  })}
-                >
-                  {LibraryList}
-                </Box>
-              </TabPanel>
             </Tabs>
           ) : (
             LibraryList
@@ -153,7 +153,7 @@ const AssetListDrawer = ({
 AssetListDrawer.defaultProps = {
   opened: false,
   position: 'right',
-  size: 1187,
+  size: 500,
   layout: 'grid',
   assetType: 'image',
   canChangeType: false,

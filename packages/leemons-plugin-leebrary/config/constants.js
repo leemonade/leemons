@@ -75,6 +75,7 @@ const categories = [
     creatable: true,
     duplicable: true,
     provider: 'leebrary',
+    canUse: '*',
     menu: {
       item: {
         iconSvg: '/public/leebrary/media-files.svg',

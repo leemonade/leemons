@@ -22,7 +22,12 @@ LayoutWrapper.propTypes = {
 };
 
 function LayoutProviderWrapper({ children }) {
-  const [layoutState, setLayoutState] = useState({ loading: false, contentRef: useRef() });
+  const [layoutState, setLayoutState] = useState({
+    loading: false,
+    contentRef: useRef(),
+    isAcademicMode: true,
+    profileChecked: false,
+  });
   const location = useLocation();
   const modals = useModals();
   const [t] = useTranslateLoader(prefixPN('modals'));
