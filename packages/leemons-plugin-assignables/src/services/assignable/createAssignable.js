@@ -11,7 +11,7 @@ const saveAsset = require('../leebrary/assets/saveAsset');
 
 module.exports = async function createAssignable(
   assignable,
-  { id: _id = null, userSession, transacting: t } = {}
+  { published = false, id: _id = null, userSession, transacting: t } = {}
 ) {
   // TODO: Add creation published/draft
   return global.utils.withTransaction(
@@ -39,6 +39,7 @@ module.exports = async function createAssignable(
       // ES: Registra una nueva versión de una entidad.
       if (!id) {
         const version = await versionControl.register('assignable', {
+          published,
           transacting,
         });
         id = version.fullId;
@@ -67,7 +68,7 @@ module.exports = async function createAssignable(
         if (!_id) {
           const savedAsset = await saveAsset(
             { ...assignableAsset, category: `assignables.${assignable.role}`, public: true },
-            { userSession, transacting }
+            { published, userSession, transacting }
           );
 
           asset = savedAsset.id;
