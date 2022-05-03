@@ -28,7 +28,11 @@ async function events(isInstalled) {
     // REGISTER MENU ITEMS & CATEGORIES
 
     leemons.events.once(
-      ['plugins.menu-builder:init-main-menu', `${pluginName}:init-permissions`],
+      [
+        'plugins.menu-builder:init-main-menu',
+        `${pluginName}:init-permissions`,
+        `${pluginName}:pluginDidLoadServices`,
+      ],
       async () => {
         const { services } = leemons.getPlugin('menu-builder');
         const [mainItem] = menuItems;
