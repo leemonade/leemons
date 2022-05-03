@@ -45,9 +45,9 @@ const assignableValidationObject = {
             },
           },
         },
-        {
-          type: 'string',
-        },
+        // {
+        //   type: 'string',
+        // },
       ],
     },
     role: {
@@ -95,6 +95,7 @@ const assignableValidationObject = {
           },
         },
       },
+      nullable: true,
     },
     duration: {
       type: 'string',

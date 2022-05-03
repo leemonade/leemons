@@ -8,6 +8,8 @@ module.exports = async function publishAssignable(assignableId, { userSession, t
   // ES: Obtiene el asignable para validar la propiedad.
   const assignable = await getAssignable.call(this, assignableId, { userSession, transacting });
 
+  // TODO: Add required properties verification
+
   // EN: Check if the user has permission to publish the assignable.
   // ES: Comprueba si el usuario tiene permiso para publicar el asignable.
   const { actions } = await getUserPermission(assignable, { userSession, transacting });

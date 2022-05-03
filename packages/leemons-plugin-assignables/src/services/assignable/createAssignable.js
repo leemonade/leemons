@@ -64,16 +64,12 @@ module.exports = async function createAssignable(
       // ES: Crea el asset
       let asset;
       try {
-        if (!_id) {
-          const savedAsset = await saveAsset(
-            { ...assignableAsset, category: `assignables.${assignable.role}`, public: true },
-            { userSession, transacting }
-          );
+        const savedAsset = await saveAsset(
+          { ...assignableAsset, category: `assignables.${assignable.role}`, public: true },
+          { userSession, transacting }
+        );
 
-          asset = savedAsset.id;
-        } else {
-          asset = assignableAsset;
-        }
+        asset = savedAsset.id;
       } catch (e) {
         throw new Error(`Error creating the asset: ${e.message}`);
       }
