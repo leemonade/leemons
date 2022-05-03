@@ -14,7 +14,7 @@ module.exports = async function addUserToAssignable(
   try {
     // EN: Get the assignable and check the permissions.
     // ES: Obtenemos el asignable y comprobamos los permisos.
-    assignable = await getAssignable.bind(this)(assignableId, { transacting });
+    assignable = await getAssignable.bind(this)(assignableId, { userSession, transacting });
     assignerRole = (await getUserPermission(assignable, { userSession, transacting })).role;
   } catch (e) {
     throw new Error(

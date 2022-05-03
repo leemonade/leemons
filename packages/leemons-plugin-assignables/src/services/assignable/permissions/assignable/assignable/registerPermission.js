@@ -4,12 +4,12 @@ const permission = require('../../permission');
 
 module.exports = async function registerPermission(assignable, { transacting }) {
   try {
-    await permission.addItem(
+    return await permission.addItem(
       assignable.id,
-      getPermissionType(assignable),
+      getPermissionType(assignable.role),
       {
-        permissionName: getPermissionName(assignable),
-        actionNames: leemons.plugin.config.constants.assignableRoles,
+        permissionName: getPermissionName(assignable.id, { prefix: true }),
+        actionNames: leemons.plugin.config.constants.assignableActions,
       },
       { isCustomPermission: true, transacting }
     );

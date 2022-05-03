@@ -1,15 +1,19 @@
+const _ = require('lodash');
 const { validateAssignable } = require('../../helpers/validators/assignable');
 const getRole = require('../roles/getRole');
 const saveSubjects = require('../subjects/saveSubjects');
 const { assignables } = require('../tables');
 const versionControl = require('../versionControl');
+const getAssignable = require('./getAssignable');
 const { registerAssignablePermission } = require('./permissions');
 const addPermissionToUser = require('./permissions/assignable/users/addPermissionToUser');
+const saveAsset = require('../leebrary/assets/saveAsset');
 
 module.exports = async function createAssignable(
   assignable,
   { id: _id = null, userSession, transacting: t } = {}
 ) {
+  // TODO: Add creation published/draft
   return global.utils.withTransaction(
     async (transacting) => {
       let id = _id;
@@ -18,7 +22,14 @@ module.exports = async function createAssignable(
       // ES: Verificar que el objeto asignable tenga las propiedades correctas.
       validateAssignable(assignable);
 
-      const { subjects, submission, metadata, ...assignableObject } = assignable;
+      const {
+        asset: assignableAsset,
+        subjects,
+        submission,
+        metadata,
+        relatedAssignables,
+        ...assignableObject
+      } = assignable;
 
       // EN: Check if the role exists
       // ES: Comprueba si el rol existe
@@ -33,6 +44,40 @@ module.exports = async function createAssignable(
         id = version.fullId;
       }
 
+      if (relatedAssignables?.before?.length || relatedAssignables?.after?.length) {
+        try {
+          // EN: Check every assignable exists
+          // ES: Comprueba que todos los asignables existan
+          await Promise.all(
+            _.concat(relatedAssignables?.before, relatedAssignables?.after).map((a) =>
+              getAssignable.call(this, a.id, { userSession, transacting })
+            )
+          );
+        } catch (e) {
+          throw new Error(
+            "Some of the related assignables don't exists or you don't have permissions to access them"
+          );
+        }
+      }
+
+      // EN: Create the asset
+      // ES: Crea el asset
+      let asset;
+      try {
+        if (!_id) {
+          const savedAsset = await saveAsset(
+            { ...assignableAsset, category: `assignables.${assignable.role}`, public: true },
+            { userSession, transacting }
+          );
+
+          asset = savedAsset.id;
+        } else {
+          asset = assignableAsset;
+        }
+      } catch (e) {
+        throw new Error(`Error creating the asset: ${e.message}`);
+      }
+
       // EN: Create the assignable for the given version.
       // ES: Crea el asignable para la versión dada.
       try {
@@ -40,6 +85,8 @@ module.exports = async function createAssignable(
           {
             id,
             ...assignableObject,
+            asset,
+            relatedAssignables: JSON.stringify(relatedAssignables),
             submission: JSON.stringify(submission),
             metadata: JSON.stringify(metadata),
           },
@@ -49,7 +96,6 @@ module.exports = async function createAssignable(
         // EN: Register permission for assignable.
         // ES: Registra permisos para el asignable.
         await registerAssignablePermission(assignableCreated, { transacting });
-
         // EN: Add user permissions for assignable.
         // ES: Añade permisos de usuario para el asignable.
         await addPermissionToUser(

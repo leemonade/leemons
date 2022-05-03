@@ -246,8 +246,8 @@ export default function TaskSetupPage() {
         icon={<PluginAssignmentsIcon />}
         values={headerLabels}
         buttons={{ duplicate: t('common.save'), edit: status === 'draft' && t('common.publish') }}
-        onEdit={() => emitEvent('saveTask')}
-        onDuplicate={() => handleOnPublishTask().catch(() => {})}
+        onDuplicate={() => emitEvent('saveTask')}
+        onEdit={() => handleOnPublishTask().catch(() => {})}
         onResize={handleOnHeaderResize}
       />
 

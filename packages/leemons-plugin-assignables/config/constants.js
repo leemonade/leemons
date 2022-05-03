@@ -1,5 +1,5 @@
-const assignableActions = ['edit', 'view', 'assign', 'delete'];
-const assignableRoles = ['viewer', 'editor', 'owner'];
+const assignableActions = ['edit', 'view', 'view+student', 'assign', 'delete'];
+const assignableRoles = ['viewer', 'student', 'editor', 'owner'];
 const assignableRolesObject = {
   owner: {
     actions: assignableActions,
@@ -7,11 +7,28 @@ const assignableRolesObject = {
   },
   editor: {
     actions: ['edit', 'view', 'assign'],
-    canAssign: ['viewer'],
+    canAssign: ['viewer', 'student'],
   },
   viewer: {
     actions: ['view'],
     canAssign: [],
+  },
+  student: {
+    actions: ['view', 'view+student'],
+    canAssign: [],
+  },
+};
+
+const assignableInstanceActions = ['view', 'edit'];
+const assignableInstanceRoles = ['student', 'teacher'];
+const assignableInstanceRolesObject = {
+  student: {
+    actions: ['view'],
+    canAssign: [],
+  },
+  teacher: {
+    actions: ['view', 'edit'],
+    canAssign: ['student'],
   },
 };
 
@@ -19,4 +36,8 @@ module.exports = {
   assignableRoles,
   assignableActions,
   assignableRolesObject,
+
+  assignableInstanceRoles,
+  assignableInstanceActions,
+  assignableInstanceRolesObject,
 };

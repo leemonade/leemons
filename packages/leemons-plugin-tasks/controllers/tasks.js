@@ -1,6 +1,6 @@
 const create = require('../src/services/task/create');
 const { get } = require('../src/services/task/get');
-const publish = require('../src/services/task/versions/publish');
+const publish = require('../src/services/task/publish');
 const remove = require('../src/services/task/remove');
 const search = require('../src/services/task/search');
 const update = require('../src/services/task/update');
@@ -8,61 +8,9 @@ const update = require('../src/services/task/update');
 module.exports = {
   create: async (ctx) => {
     try {
-      const {
-        name,
-        tagline,
-        level,
-        summary,
-        cover,
-        color,
-        methodology,
-        recommendedDuration,
-        statement,
-        development,
-        submissions,
-        preTask,
-        preTaskOptions,
-        selfReflection,
-        feedback,
-        instructionsForTeacher,
-        instructionsForStudent,
-        state,
-        published,
-        subjects,
-        center,
-        program,
-        tags,
-        attachments,
-      } = ctx.request.body;
+      let task = ctx.request.body;
 
-      let task = {
-        name,
-        tagline,
-        level,
-        summary,
-        cover,
-        color,
-        methodology,
-        recommendedDuration,
-        statement,
-        development,
-        submissions,
-        preTask,
-        preTaskOptions,
-        selfReflection,
-        feedback,
-        instructionsForTeacher,
-        instructionsForStudent,
-        state,
-        published,
-        subjects,
-        center,
-        program,
-        tags,
-        attachments,
-      };
-
-      task = await create(task);
+      task = await create(task, { userSession: ctx.state.userSession });
 
       ctx.status = 201;
       ctx.body = {
@@ -80,61 +28,9 @@ module.exports = {
   update: async (ctx) => {
     try {
       const { id } = ctx.params;
-      const {
-        name,
-        tagline,
-        level,
-        summary,
-        cover,
-        color,
-        methodology,
-        recommendedDuration,
-        statement,
-        development,
-        submissions,
-        preTask,
-        preTaskOptions,
-        selfReflection,
-        feedback,
-        instructionsForTeacher,
-        instructionsForStudent,
-        state,
-        published,
-        subjects,
-        center,
-        program,
-        tags,
-        attachments,
-      } = ctx.request.body;
+      let task = ctx.request.body;
 
-      let task = {
-        name,
-        tagline,
-        level,
-        summary,
-        cover,
-        color,
-        methodology,
-        recommendedDuration,
-        statement,
-        development,
-        submissions,
-        preTask,
-        preTaskOptions,
-        selfReflection,
-        feedback,
-        instructionsForTeacher,
-        instructionsForStudent,
-        state,
-        published,
-        subjects,
-        center,
-        program,
-        tags,
-        attachments,
-      };
-
-      task = await update(id, task);
+      task = await update(id, task, { userSession: ctx.state.userSession });
 
       ctx.status = 200;
       ctx.body = {
@@ -161,6 +57,7 @@ module.exports = {
         }
       }
       const task = await get(id, {
+        userSession: ctx.state.userSession,
         columns,
       });
 
@@ -181,7 +78,7 @@ module.exports = {
     try {
       const { id } = ctx.params;
 
-      const deleted = await remove(id);
+      const deleted = await remove(id, { userSession: ctx.state.userSession });
 
       ctx.status = 200;
       ctx.body = {
@@ -200,7 +97,7 @@ module.exports = {
     try {
       const { id } = ctx.params;
 
-      const published = await publish(id);
+      const published = await publish(id, { userSession: ctx.state.userSession });
 
       ctx.status = 200;
       ctx.body = {
@@ -217,21 +114,21 @@ module.exports = {
   },
   search: async (ctx) => {
     try {
-      const { offset, size, draft, ...query } = ctx.request.query;
+      const { offset, size, draft, preferCurrent, ...query } = ctx.request.query;
 
-      const tasks = await search(
-        { ...query },
-        parseInt(offset, 10) || 0,
-        parseInt(size, 10) || 10,
-        {
-          draft: draft === 'true',
-        }
-      );
+      const tasks = await search({
+        // offset: parseInt(offset, 10) || 0,
+        // size: parseInt(size, 10) || 10,
+        draft: draft === 'true',
+        preferCurrent: preferCurrent === 'true',
+        ...query,
+        userSession: ctx.state.userSession,
+      });
 
       ctx.status = 200;
       ctx.body = {
         status: 200,
-        ...tasks,
+        tasks,
       };
     } catch (e) {
       ctx.status = 400;
