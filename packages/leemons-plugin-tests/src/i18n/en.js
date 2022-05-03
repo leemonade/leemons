@@ -108,6 +108,7 @@ module.exports = {
     draft: 'Drafts',
   },
   testsDetail: {
+    basic: 'Basic',
     pageTitle: 'Editing test: {name}',
     pageTitleNew: 'New test',
     saveDraft: 'Save as draft',

@@ -107,6 +107,7 @@ module.exports = {
     draft: 'Borradores',
   },
   testsDetail: {
+    basic: 'Basico',
     pageTitle: 'Editando test: {name}',
     pageTitleNew: 'Nuevo test',
     saveDraft: 'Guardar borrador',

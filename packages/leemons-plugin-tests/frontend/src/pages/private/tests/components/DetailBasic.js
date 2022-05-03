@@ -16,7 +16,7 @@ export default function DetailBasic({ form, t, onNext }) {
       form={form}
       preview
       tagsPluginName="tests"
-      tagsType="plugins.tests.questionBanks"
+      tagsType="plugins.tests.tests"
       category="tests-questions-banks"
     >
       <Stack justifyContent="end">

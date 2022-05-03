@@ -51,7 +51,6 @@ const AssetFormInput = ({
 
   function getValuesAsAsset() {
     const values = form.getValues();
-    console.log(values);
     return {
       original: {
         ...values,

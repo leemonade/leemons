@@ -2,8 +2,8 @@ import React from 'react';
 import {
   ContextContainer,
   PageContainer,
-  Stepper,
   useDebouncedCallback,
+  VerticalStepperContainer,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -13,9 +13,10 @@ import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { map } from 'lodash';
+import { PluginTestIcon } from '@bubbles-ui/icons/outline';
 import DetailConfig from './components/DetailConfig';
 import { getTestRequest, saveTestRequest } from '../../../request';
-import DetailDesign from './components/DetailDesign';
+import DetailBasic from '../questions-banks/components/DetailBasic';
 import DetailQuestionsBanks from './components/DetailQuestionsBanks';
 import DetailQuestions from './components/DetailQuestions';
 import DetailContent from './components/DetailContent';
@@ -30,6 +31,7 @@ export default function Detail() {
   const [store, render] = useStore({
     loading: true,
     isNew: false,
+    currentStep: 0,
   });
 
   const history = useHistory();
@@ -82,28 +84,23 @@ export default function Detail() {
     }
   }
 
+  function setStep(step) {
+    store.currentStep = step;
+    render();
+  }
+
   React.useEffect(() => {
     if (params?.id) init();
   }, [params]);
 
+  let component = null;
   const steps = [
-    {
-      label: t('config'),
-      content: <DetailConfig t={t} form={form} />,
-    },
+    { label: t('basic'), status: 'OK' },
+    { label: t('config'), status: 'OK' },
   ];
-
-  if (formValues.type) {
-    steps.push({
-      label: t('design'),
-      content: <DetailDesign t={t} form={form} />,
-    });
-  }
 
   form.register('name', { required: t('nameRequired') });
   form.register('type', { required: t('typeRequired') });
-  form.register('tagline', { required: t('taglineRequired') });
-  form.register('summary', { required: t('summaryRequired') });
 
   if (formValues.type === 'learn') {
     form.register('questionBank', { required: t('questionBankRequired') });
@@ -115,22 +112,18 @@ export default function Detail() {
       },
     });
     form.register('statement', { required: t('statementRequired') });
-    steps.push({
-      label: t('questionsBank'),
-      content: <DetailQuestionsBanks t={t} form={form} />,
-    });
-    steps.push({
-      label: t('questions'),
-      content: <DetailQuestions t={t} form={form} />,
-    });
-    steps.push({
-      label: t('contentLabel'),
-      content: <DetailContent t={t} form={form} />,
-    });
-    steps.push({
-      label: t('instructions'),
-      content: <DetailInstructions t={t} form={form} />,
-    });
+    steps.push({ label: t('questionsBank'), status: 'OK' });
+    steps.push({ label: t('questions'), status: 'OK' });
+    steps.push({ label: t('contentLabel'), status: 'OK' });
+    steps.push({ label: t('instructions'), status: 'OK' });
+    if (store.currentStep === 2)
+      component = <DetailQuestionsBanks t={t} form={form} onNext={() => setStep(3)} />;
+    if (store.currentStep === 3)
+      component = <DetailQuestions t={t} form={form} onNext={() => setStep(4)} />;
+    if (store.currentStep === 4)
+      component = <DetailContent t={t} form={form} onNext={() => setStep(5)} />;
+    if (store.currentStep === 5)
+      component = <DetailInstructions t={t} form={form} onNext={() => setStep(6)} />;
   }
 
   React.useEffect(() => {
@@ -151,16 +144,22 @@ export default function Detail() {
           title: store.isNew ? t('pageTitleNew') : t('pageTitle', { name: formValues.name }),
         }}
         buttons={{
-          edit: formValues.name && !formValues.published ? t('saveDraft') : undefined,
-          duplicate: store.isValid ? t('publish') : undefined,
+          duplicate: formValues.name && !formValues.published ? t('saveDraft') : undefined,
+          edit: store.isValid ? t('publish') : undefined,
         }}
-        onDuplicate={() => saveAsPublish()}
-        onEdit={() => saveAsDraft()}
+        icon={<PluginTestIcon />}
+        variant="teacher"
+        onEdit={() => saveAsPublish()}
+        onDuplicate={() => saveAsDraft()}
         loading={store.saving}
       />
 
       <PageContainer noFlex>
-        <Stepper data={steps} />
+        <VerticalStepperContainer currentStep={store.currentStep} data={steps}>
+          {store.currentStep === 0 && <DetailBasic t={t} form={form} onNext={() => setStep(1)} />}
+          {store.currentStep === 1 && <DetailConfig t={t} form={form} onNext={() => setStep(2)} />}
+          {component}
+        </VerticalStepperContainer>
       </PageContainer>
     </ContextContainer>
   );

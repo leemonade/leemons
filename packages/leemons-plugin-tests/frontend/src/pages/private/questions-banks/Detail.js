@@ -14,7 +14,6 @@ import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { isString } from 'lodash';
 import { getQuestionBankRequest, saveQuestionBankRequest } from '../../../request';
 import DetailQuestions from './components/DetailQuestions';
 import DetailBasic from './components/DetailBasic';
@@ -37,24 +36,6 @@ export default function Detail() {
 
   const form = useForm();
   const formValues = form.watch();
-
-  form.register('cover', {
-    validate: (cover) => {
-      if (isString(cover)) {
-        return true;
-      }
-      if (cover) {
-        if (cover.id) {
-          if (cover.cover) {
-            return true;
-          }
-        } else {
-          return true;
-        }
-      }
-      return t('coverRequired');
-    },
-  });
 
   async function saveAsDraft() {
     try {
@@ -122,7 +103,9 @@ export default function Detail() {
   React.useEffect(() => {
     const subscription = form.watch(() => {
       debounce(async () => {
+        console.log(form.getValues());
         store.isValid = await form.trigger();
+        console.log(form.formState.errors);
         render();
       });
     });
