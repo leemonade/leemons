@@ -40,7 +40,7 @@ export default function SelectProfile({ session }) {
   });
 
   const history = useHistory();
-  const { setPrivateLayout } = useContext(LayoutContext);
+  const { layoutState, setLayoutState } = useContext(LayoutContext);
 
   const { t: tCommon } = useCommonTranslate('forms');
   const [t] = useTranslateLoader(prefixPN('selectProfile'));
@@ -49,7 +49,7 @@ export default function SelectProfile({ session }) {
   // HANDLERS
 
   async function init() {
-    setPrivateLayout(false);
+    setLayoutState({ ...layoutState, private: false, profileChecked: false });
     const [{ centers }, { profile, center }] = await Promise.all([
       getUserCentersRequest(),
       getRememberLoginRequest(getCookieToken()),
@@ -83,7 +83,9 @@ export default function SelectProfile({ session }) {
       }
       const { jwtToken } = await getUserCenterProfileTokenRequest(data.center, data.profile);
       await hooks.fireEvent('user:change:profile', profile);
-      Cookies.set('token', jwtToken);
+      const newToken = { ...jwtToken, profile: data.profile };
+      console.log('newToken: ', newToken);
+      Cookies.set('token', newToken);
       hooks.fireEvent('user:cookie:session:change');
       history.push(`/private/dashboard`);
     } catch (e) {

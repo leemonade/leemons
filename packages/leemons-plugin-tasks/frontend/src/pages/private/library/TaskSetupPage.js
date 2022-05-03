@@ -1,8 +1,9 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { isEmpty, isNil, isArray } from 'lodash';
 import { useParams, useHistory } from 'react-router-dom';
-import { Paper, PageContainer, ContextContainer } from '@bubbles-ui/components';
+import { Box, PageContainer, ContextContainer, Stack } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useStore, unflatten } from '@common';
@@ -25,6 +26,7 @@ export default function TaskSetupPage() {
   const [status, setStatus] = useState('published');
   const [store, render] = useStore({
     currentTask: null,
+    headerHeight: null,
   });
 
   const { useObserver: useSaveObserver, emitEvent, subscribe, unsubscribe } = useObserver();
@@ -189,6 +191,11 @@ export default function TaskSetupPage() {
     return () => unsubscribe(f);
   }, [handleOnPublishTask]);
 
+  const handleOnHeaderResize = (size) => {
+    store.headerHeight = size?.height;
+    render();
+  };
+
   // ·········································································
   // INIT VALUES
 
@@ -233,25 +240,27 @@ export default function TaskSetupPage() {
   // COMPONENT
 
   return (
-    <ContextContainer fullHeight>
+    <Stack direction="column" fullHeight>
       <AdminPageHeader
+        variant="teacher"
+        icon={<PluginAssignmentsIcon />}
         values={headerLabels}
-        buttons={{ edit: t('common.save'), duplicate: status === 'draft' && t('common.publish') }}
+        buttons={{ duplicate: t('common.save'), edit: status === 'draft' && t('common.publish') }}
         onEdit={() => emitEvent('saveTask')}
         onDuplicate={() => handleOnPublishTask().catch(() => {})}
+        onResize={handleOnHeaderResize}
       />
 
-      <Paper color="solid" shadow="none" padding={0}>
-        <PageContainer>
-          <ContextContainer padded="vertical">
-            <Paper fullWidth padding={5}>
-              {!isEmpty(setupProps) && isArray(setupProps.steps) && (
-                <Setup {...setupProps} useObserver={useSaveObserver} onSave={handleOnSaveTask} />
-              )}
-            </Paper>
-          </ContextContainer>
-        </PageContainer>
-      </Paper>
-    </ContextContainer>
+      <Box>
+        {!isEmpty(setupProps) && isArray(setupProps.steps) && (
+          <Setup
+            {...setupProps}
+            stickyAt={store.headerHeight}
+            useObserver={useSaveObserver}
+            onSave={handleOnSaveTask}
+          />
+        )}
+      </Box>
+    </Stack>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { isEmpty, isFunction, toLower } from 'lodash';
+import { isEmpty, isFunction, toLower, isNil } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
@@ -51,6 +51,16 @@ function isImageFile(file) {
   return false;
 }
 
+function isNullish(obj) {
+  return Object.values(obj).every((value) => {
+    if (isNil(value)) {
+      return true;
+    }
+
+    return false;
+  });
+}
+
 // -----------------------------------------------------------------------------
 // COMPONENT
 
@@ -88,6 +98,7 @@ const LibraryForm = ({
   const defaultValues = {
     file: asset.file || null,
     name: asset.name || '',
+    tagline: asset.tagline || '',
     description: asset.description || '',
     color: asset.color || '',
     cover: asset.cover || null,
@@ -99,6 +110,7 @@ const LibraryForm = ({
     watch,
     trigger,
     setValue,
+    getValues,
     formState: { errors },
   } = form || useForm({ defaultValues });
 
@@ -107,8 +119,19 @@ const LibraryForm = ({
   const bookmarkUrl = watch('url');
 
   useEffect(() => {
+    if (!isNullish(asset) && isEmpty(asset?.id)) {
+      const valueNames = ['file', 'name', 'tagline', 'description', 'color', 'cover'];
+      const values = getValues(valueNames);
+      valueNames.forEach((valueName, index) => {
+        setValue(valueName, asset[valueName] || values[index]);
+      });
+    }
+  }, [asset]);
+
+  useEffect(() => {
     if (!isEmpty(assetFile)) {
-      setIsImage(isImageFile(assetFile));
+      const isImageType = isImageFile(assetFile);
+      setIsImage(isImageType);
       setValue('name', assetFile.name.match(/(.+?)(\.[^.]+$|$)/)[1]);
     }
   }, [assetFile]);
@@ -119,7 +142,13 @@ const LibraryForm = ({
     }
   }, [watchCoverFile]);
 
-  useEffect(() => setIsImage(onlyImages), [onlyImages]);
+  useEffect(() => {
+    // ES: El caso de uso es que el usuario cambie de soportar archivos, a solo imágenes
+    // EN: The use case is that the user changes from supporting files to only images
+    if (!isImage && !isNil(onlyImages)) {
+      setIsImage(onlyImages);
+    }
+  }, [onlyImages, isImage]);
 
   // ························································
   // HANDLERS
