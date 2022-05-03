@@ -109,6 +109,7 @@ module.exports = {
         }
       }
       const task = await get(id, {
+        userSession: ctx.state.userSession,
         columns,
       });
 
