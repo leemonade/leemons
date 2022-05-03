@@ -1,6 +1,6 @@
 const create = require('../src/services/task/create');
 const { get } = require('../src/services/task/get');
-const publish = require('../src/services/task/versions/publish');
+const publish = require('../src/services/task/publish');
 const remove = require('../src/services/task/remove');
 const search = require('../src/services/task/search');
 const update = require('../src/services/task/update');
@@ -97,7 +97,7 @@ module.exports = {
     try {
       const { id } = ctx.params;
 
-      const published = await publish(id);
+      const published = await publish(id, { userSession: ctx.state.userSession });
 
       ctx.status = 200;
       ctx.body = {
@@ -114,21 +114,21 @@ module.exports = {
   },
   search: async (ctx) => {
     try {
-      const { offset, size, draft, ...query } = ctx.request.query;
+      const { offset, size, draft, preferCurrent, ...query } = ctx.request.query;
 
-      const tasks = await search(
-        { ...query },
-        parseInt(offset, 10) || 0,
-        parseInt(size, 10) || 10,
-        {
-          draft: draft === 'true',
-        }
-      );
+      const tasks = await search({
+        // offset: parseInt(offset, 10) || 0,
+        // size: parseInt(size, 10) || 10,
+        draft: draft === 'true',
+        preferCurrent: preferCurrent === 'true',
+        ...query,
+        userSession: ctx.state.userSession,
+      });
 
       ctx.status = 200;
       ctx.body = {
         status: 200,
-        ...tasks,
+        tasks,
       };
     } catch (e) {
       ctx.status = 400;
