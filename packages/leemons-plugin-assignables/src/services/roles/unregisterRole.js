@@ -1,7 +1,7 @@
 const { roles } = require('../tables');
 const getRole = require('./getRole');
 
-module.exports = async function registerRole(role, { transacting }) {
+module.exports = async function registerRole(role, { transacting } = {}) {
   if (!this.calledFrom) {
     throw new Error("Can't unregister role without plugin name");
   }

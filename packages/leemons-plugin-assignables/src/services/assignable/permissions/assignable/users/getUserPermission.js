@@ -1,12 +1,24 @@
 const permission = require('../../permission');
 const getPermissionName = require('../getPermissionName');
 const getRoleMatchingActions = require('../getRoleMatchingActions');
+const getTeacherPermission = require('./getTeacherPermission');
 
 module.exports = async function getUserPermission(assignable, { userSession, transacting } = {}) {
   const permissions = await permission.getUserAgentPermissions(userSession.userAgents, {
-    query: { permissionName: getPermissionName(assignable) },
+    query: { permissionName_$contains: getPermissionName(assignable.id) },
     transacting,
   });
+
+  if (!permissions.length) {
+    permissions.push(...(await getTeacherPermission(assignable.id, { userSession, transacting })));
+  }
+
+  if (!permissions.length) {
+    return {
+      role: null,
+      actions: [],
+    };
+  }
 
   return {
     role: getRoleMatchingActions(permissions[0].actionNames),

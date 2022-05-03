@@ -1,108 +1,27 @@
-const emit = require('../events/emit');
-const { tasks } = require('../table');
-const parseId = require('./helpers/parseId');
-const addSubjects = require('./subjects/add');
-const versioningCreate = require('./versions/create');
-const addTags = require('../tags/add');
-const addObjectives = require('./objectives/add');
-const addAssessmentCriteria = require('./assessmentCriteria/add');
-const addContent = require('./contents/add');
-const addAttachments = require('../attachments/add');
+const assignablesServices = require('../assignables');
+
+const { assignables } = assignablesServices;
 
 module.exports = async function create(
-  {
-    name,
-    tagline,
-    level,
-    summary,
-    cover,
-    color,
-    methodology,
-    recommendedDuration,
-    statement,
-    development,
-    submissions,
-    preTask,
-    preTaskOptions,
-    selfReflection,
-    feedback,
-    instructionsForTeacher,
-    instructionsForStudent,
-    state,
-    subjects,
-    center,
-    program,
-    tags,
-    attachments,
-  },
-  { transacting: t } = {}
+  data,
+
+  { transacting, userSession } = {}
 ) {
   try {
-    return global.utils.withTransaction(
-      async (transacting) => {
-        let task = {
-          tagline,
-          level,
-          summary,
-          cover,
-          color,
-          methodology,
-          recommendedDuration,
-          statement,
-          development,
-          submissions: submissions && JSON.stringify(submissions),
-          preTask,
-          preTaskOptions: preTaskOptions && JSON.stringify(preTaskOptions),
-          selfReflection: selfReflection && JSON.stringify(selfReflection),
-          feedback: feedback && JSON.stringify(feedback),
-          instructionsForTeacher,
-          instructionsForStudent,
-          state,
-          published: false,
-          center,
-          program,
-        };
+    const assignableObject = {
+      role: 'task',
+      ...data,
+    };
+    const createdAssignable = await assignables.createAssignable(assignableObject, {
+      transacting,
+      userSession,
+    });
 
-        // EN: Register task versioning
-        // ES: Registrar versionado de tarea
-        const taskInfo = await versioningCreate(
-          {
-            name,
-          },
-          { transacting }
-        );
+    // TODO: Save attachments
 
-        // EN: Generate an id with the task versioning id and the current version
-        // ES: Generar un id con el id de versionamiento de tarea y la versión actual
-        // id@version
-        const { fullId, id, version } = await parseId(taskInfo.id, taskInfo.last, { transacting });
-        task.id = fullId;
-
-        // EN: Create task instance
-        // ES: Crear instancia de tarea
-        task = await tasks.create(task, { transacting });
-
-        // EN: Create task subjects
-        // ES: Crear asignaturas de tarea
-        await addSubjects(task.id, subjects, { transacting });
-
-        // EN: Create the task tags
-        // ES: Crear etiquetas de tarea
-        await addTags(task.id, tags, { transacting });
-
-        // EN: Add attachments
-        // ES: Añadir adjuntos
-        await addAttachments(task.id, attachments, { transacting });
-
-        // EN: Emit the event.
-        // ES: Emitir el evento.
-        emit('task.created', { id: taskInfo.id });
-
-        return { name, fullId, id, version, current: `${id}@current` };
-      },
-      tasks,
-      t
-    );
+    return leemons
+      .getPlugin('common')
+      .services.versionControl.parseId(createdAssignable.id, null, { transacting });
   } catch (error) {
     throw new Error(`Error creating task: ${error.message}`);
   }

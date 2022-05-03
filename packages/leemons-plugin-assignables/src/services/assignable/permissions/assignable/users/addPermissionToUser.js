@@ -10,7 +10,7 @@ module.exports = async function addPermissionToUser(
   await permission.addCustomPermissionToUserAgent(
     userAgents,
     {
-      permissionName: getPermissionName(assignable),
+      permissionName: getPermissionName(assignable.id, { prefix: true }),
       actionNames: leemons.plugin.config.constants.assignableRolesObject[role].actions,
     },
     { transacting }

@@ -1,30 +1,44 @@
 const _ = require('lodash');
+const updateAsset = require('../leebrary/assets/updateAsset');
+const getDiff = require('../../helpers/getDiff');
 const { validateAssignable } = require('../../helpers/validators/assignable');
 const updateSubjects = require('../subjects/updateSubjects');
 const { assignables } = require('../tables');
 const versionControl = require('../versionControl');
+const addUserToAssignable = require('./addUserToAssignable');
 const createAssignable = require('./createAssignable');
 const getAssignable = require('./getAssignable');
+const listAssignableUserAgents = require('./listAssignableUserAgents');
 const getUserPermission = require('./permissions/assignable/users/getUserPermission');
 
-function getDiff(a, b) {
-  const _a = _.defaults(_.cloneDeep(a), b);
-
-  if (_.isEqual(_a, b)) {
-    return { object: _a, diff: [] };
-  }
-
-  return {
-    object: _a,
-    diff: _.differenceWith(Object.entries(_a), Object.entries(b), _.isEqual).map(([key]) => key),
-  };
-}
+const updatableFields = [
+  'asset',
+  // role,
+  'gradable',
+  'program',
+  'subjects',
+  'relatedAssignables',
+  'methodology',
+  'statement',
+  'development',
+  'duration',
+  'submission',
+  'instructionsForTeachers',
+  'instructionsForStudents',
+  'metadata',
+];
 
 module.exports = async function updateAssignable(assignable, { userSession, transacting } = {}) {
   const { id, ...assignableObject } = assignable;
+
+  // Check if any of the keys are not updatable (use lodash)
+  if (_.keys(_.omit(assignableObject, updatableFields))?.length) {
+    throw new Error('Some of the provided keys are not updatable');
+  }
+
   let shouldUpgrade = false;
 
-  if (_.isEmpty(assignable)) {
+  if (_.isEmpty(assignableObject)) {
     throw new Error('No changes detected');
   }
 
@@ -58,6 +72,26 @@ module.exports = async function updateAssignable(assignable, { userSession, tran
     shouldUpgrade = true;
   }
 
+  let assetId = currentAssignable.asset.id;
+
+  if (diff.includes('asset')) {
+    const asset = await updateAsset(
+      {
+        ..._.defaults(object.asset, currentAssignable.asset),
+        id: currentAssignable.asset.id,
+      },
+      {
+        transacting,
+        userSession,
+        upgrade: true,
+        published: false,
+        scale: 'major',
+      }
+    );
+
+    assetId = asset.id;
+  }
+
   // EN: Update the version.
   // ES: Actualiza la versión.
   if (shouldUpgrade) {
@@ -67,11 +101,38 @@ module.exports = async function updateAssignable(assignable, { userSession, tran
     });
 
     // TODO: Duplicate everything and apply changes
-    return {
-      ...(await createAssignable.call(this, _.omit(object, ['published', 'id']), {
+    // TODO: Ensure to keep original owner
+    const newAssignable = await createAssignable.call(
+      this,
+      _.omit({ ...object, asset: assetId }, ['published', 'id']),
+      {
         id: fullId,
+        userSession,
         transacting,
-      })),
+      }
+    );
+
+    // EN: Get the users that have access to the assignable.
+    // ES: Obtiene los usuarios que tienen acceso al asignable.
+    const users = await listAssignableUserAgents.call(this, id, { userSession, transacting });
+
+    const userAgents = userSession.userAgents.map((u) => u.id);
+
+    // EN: Add the permissions to the users.
+    // ES: Añade los permisos a los usuarios.
+    await Promise.all(
+      users
+        .filter((user) => !userAgents.includes(user.userAgent) && user.role !== 'student')
+        .map((user) =>
+          addUserToAssignable.call(this, fullId, user.userAgent, user.role, {
+            userSession,
+            transacting,
+          })
+        )
+    );
+
+    return {
+      ...newAssignable,
       published: false,
     };
   }
@@ -88,7 +149,7 @@ module.exports = async function updateAssignable(assignable, { userSession, tran
     return { id, ...object };
   }
 
-  const updateObject = _.omit(_.pick(assignableObject, diff), ['subjects']);
+  const updateObject = { ..._.omit(_.pick(assignableObject, diff), ['subjects']), asset: assetId };
 
   if (diff.includes('submission')) {
     updateObject.submission = JSON.stringify(assignableObject.submission);
@@ -98,9 +159,39 @@ module.exports = async function updateAssignable(assignable, { userSession, tran
     updateObject.metadata = JSON.stringify(assignableObject.metadata);
   }
 
+  if (diff.includes('relatedAssignables')) {
+    updateObject.relatedAssignables = JSON.stringify(assignableObject.relatedAssignables);
+
+    if (
+      updateObject.relatedAssignables?.before?.length ||
+      updateObject.relatedAssignables?.after?.length
+    ) {
+      try {
+        // EN: Check every assignable exists
+        // ES: Comprueba que todos los asignables existan
+        await Promise.all(
+          _.concat(
+            updateObject.relatedAssignables?.before,
+            updateObject.relatedAssignables?.after
+          ).map((a) => getAssignable.call(this, a.id, { userSession, transacting }))
+        );
+      } catch (e) {
+        throw new Error(
+          "Some of the related assignables don't exists or you don't have permissions to access them"
+        );
+      }
+    }
+  }
   await assignables.update({ id }, updateObject, {
     transacting,
   });
 
-  return { id, ...object };
+  return {
+    id,
+    ...object,
+    asset: {
+      ...object.asset,
+      id: assetId,
+    },
+  };
 };

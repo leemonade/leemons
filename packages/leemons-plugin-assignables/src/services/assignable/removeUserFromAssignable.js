@@ -13,7 +13,7 @@ module.exports = async function removeUserFromAssignable(
   // EN: Check if user has access to the assignable
   // ES: Comprobar si el usuario tiene acceso al asignable
   try {
-    assignable = await getAssignable.bind(this)(assignableId, { transacting });
+    assignable = await getAssignable.bind(this)(assignableId, { userSession, transacting });
     assignerRole = (await getUserPermission(assignable, { userSession, transacting })).role;
   } catch (e) {
     throw new Error(

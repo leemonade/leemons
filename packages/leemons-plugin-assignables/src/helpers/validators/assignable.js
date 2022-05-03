@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const { subjectsValidationObject } = require('./subjects');
 
 // AJV Validator
@@ -13,9 +14,41 @@ const assignableValidationObject = {
       cover
     */
     asset: {
-      type: 'string',
-      minLength: 36,
-      maxLength: 255,
+      oneOf: [
+        {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              maxLength: 255,
+            },
+            tagline: {
+              type: 'string',
+              maxLength: 255,
+            },
+            description: {
+              type: 'string',
+              maxLength: 16777215,
+            },
+            tags: {
+              type: 'array',
+              items: {
+                type: 'string',
+                maxLength: 255,
+              },
+            },
+            color: {
+              type: 'string',
+            },
+            cover: {
+              type: 'string',
+            },
+          },
+        },
+        {
+          type: 'string',
+        },
+      ],
     },
     role: {
       type: 'string',
@@ -44,6 +77,24 @@ const assignableValidationObject = {
     development: {
       type: 'string',
       maxLength: 16777215,
+      nullable: true,
+    },
+    relatedAssignables: {
+      type: 'object',
+      properties: {
+        before: {
+          type: 'array',
+          items: {
+            type: 'object',
+          },
+        },
+        after: {
+          type: 'array',
+          items: {
+            type: 'object',
+          },
+        },
+      },
       nullable: true,
     },
     duration: {
@@ -83,7 +134,7 @@ const assignableRequiredProperties = [
 ];
 
 function validateAssignable(assignable, { useRequired = false } = {}) {
-  const obj = assignableValidationObject;
+  const obj = _.clone(assignableValidationObject);
   if (useRequired) {
     obj.required = assignableRequiredProperties;
   }
