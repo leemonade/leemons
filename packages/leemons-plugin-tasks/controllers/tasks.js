@@ -28,61 +28,9 @@ module.exports = {
   update: async (ctx) => {
     try {
       const { id } = ctx.params;
-      const {
-        name,
-        tagline,
-        level,
-        summary,
-        cover,
-        color,
-        methodology,
-        recommendedDuration,
-        statement,
-        development,
-        submissions,
-        preTask,
-        preTaskOptions,
-        selfReflection,
-        feedback,
-        instructionsForTeacher,
-        instructionsForStudent,
-        state,
-        published,
-        subjects,
-        center,
-        program,
-        tags,
-        attachments,
-      } = ctx.request.body;
+      let task = ctx.request.body;
 
-      let task = {
-        name,
-        tagline,
-        level,
-        summary,
-        cover,
-        color,
-        methodology,
-        recommendedDuration,
-        statement,
-        development,
-        submissions,
-        preTask,
-        preTaskOptions,
-        selfReflection,
-        feedback,
-        instructionsForTeacher,
-        instructionsForStudent,
-        state,
-        published,
-        subjects,
-        center,
-        program,
-        tags,
-        attachments,
-      };
-
-      task = await update(id, task);
+      task = await update(id, task, { userSession: ctx.state.userSession });
 
       ctx.status = 200;
       ctx.body = {
