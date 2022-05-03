@@ -67,8 +67,13 @@ const addGradeLetterSchema = {
   additionalProperties: false,
 };
 
-function validateAddGrade(data) {
-  const validator = new LeemonsValidator(addGradeSchema);
+function validateAddGrade(data, disableRequired) {
+  const schema = addGradeSchema;
+  if (disableRequired) {
+    schema.required = ['name', 'type', 'center'];
+  }
+
+  const validator = new LeemonsValidator(schema);
   const { name, type, center, minScaleToPromote, ...rest } = data;
 
   if (!validator.validate({ name, type, center, minScaleToPromote })) {
