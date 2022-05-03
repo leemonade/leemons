@@ -394,8 +394,8 @@ const LibraryForm = ({
                         changeImage: labels.changeImage,
                         uploadButton: labels.uploadButton,
                       }}
-                      // previewURL={getCoverUrl(value)}
-                      previewURL={value}
+                      previewURL={getCoverUrl(value)}
+                      // previewURL={value}
                       {...field}
                     />
                   )}

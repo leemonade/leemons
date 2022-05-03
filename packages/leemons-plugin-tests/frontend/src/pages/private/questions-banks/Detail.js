@@ -7,6 +7,7 @@ import {
   VerticalStepperContainer,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { PluginTestIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
@@ -139,11 +140,13 @@ export default function Detail() {
               : t('pageTitle', { name: formValues.name || '' }),
           }}
           buttons={{
-            edit: formValues.name && !formValues.published ? t('saveDraft') : undefined,
-            duplicate: store.isValid ? t('publish') : undefined,
+            duplicate: formValues.name && !formValues.published ? t('saveDraft') : undefined,
+            edit: store.isValid ? t('publish') : undefined,
           }}
-          onDuplicate={() => saveAsPublish()}
-          onEdit={() => saveAsDraft()}
+          icon={<PluginTestIcon />}
+          variant="teacher"
+          onEdit={() => saveAsPublish()}
+          onDuplicate={() => saveAsDraft()}
           loading={store.saving}
         />
 
