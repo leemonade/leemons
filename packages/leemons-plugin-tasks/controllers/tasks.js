@@ -130,7 +130,7 @@ module.exports = {
     try {
       const { id } = ctx.params;
 
-      const deleted = await remove(id);
+      const deleted = await remove(id, { userSession: ctx.state.userSession });
 
       ctx.status = 200;
       ctx.body = {

@@ -1,9 +1,3 @@
-const { tasks, tasksVersioning } = require('../table');
-const parseId = require('./helpers/parseId');
-const getVersion = require('./versions/get');
-const getSubjects = require('./subjects/get');
-const getTags = require('../tags/get');
-const getAttachments = require('../attachments/get');
 const assignablesService = require('../assignables');
 
 const { assignables } = assignablesService;
