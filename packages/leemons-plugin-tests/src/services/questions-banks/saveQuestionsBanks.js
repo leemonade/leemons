@@ -78,7 +78,7 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
           category: 'tests-questions-banks',
         };
         assetsToSave.name = props.name;
-        if (props.summary) assetsToSave.description = props.summary;
+        if (props.description) assetsToSave.description = props.description;
         if (props.tagline) assetsToSave.tagline = props.tagline;
         if (props.cover) assetsToSave.cover = props.cover;
         if (tags) assetsToSave.tags = tags;

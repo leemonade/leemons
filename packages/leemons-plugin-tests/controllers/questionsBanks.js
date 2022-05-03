@@ -41,6 +41,7 @@ async function getQuestionBankDetail(ctx) {
   const [questionBank] = await questionsBanksService.details(ctx.request.params.id, {
     userSession: ctx.state.userSession,
   });
+  console.log(questionBank);
   ctx.status = 200;
   ctx.body = { status: 200, questionBank };
 }
