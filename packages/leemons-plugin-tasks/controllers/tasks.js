@@ -8,61 +8,9 @@ const update = require('../src/services/task/update');
 module.exports = {
   create: async (ctx) => {
     try {
-      const {
-        name,
-        tagline,
-        level,
-        summary,
-        cover,
-        color,
-        methodology,
-        recommendedDuration,
-        statement,
-        development,
-        submissions,
-        preTask,
-        preTaskOptions,
-        selfReflection,
-        feedback,
-        instructionsForTeacher,
-        instructionsForStudent,
-        state,
-        published,
-        subjects,
-        center,
-        program,
-        tags,
-        attachments,
-      } = ctx.request.body;
+      let task = ctx.request.body;
 
-      let task = {
-        name,
-        tagline,
-        level,
-        summary,
-        cover,
-        color,
-        methodology,
-        recommendedDuration,
-        statement,
-        development,
-        submissions,
-        preTask,
-        preTaskOptions,
-        selfReflection,
-        feedback,
-        instructionsForTeacher,
-        instructionsForStudent,
-        state,
-        published,
-        subjects,
-        center,
-        program,
-        tags,
-        attachments,
-      };
-
-      task = await create(task);
+      task = await create(task, { userSession: ctx.state.userSession });
 
       ctx.status = 201;
       ctx.body = {
