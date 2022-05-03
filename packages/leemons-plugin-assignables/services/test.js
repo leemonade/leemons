@@ -112,6 +112,7 @@ module.exports = function main(userSession) {
     // tags: ['tag1', 'tag2'],
     // indexable: true,
     // public: true,
+    published: true,
     role: 'task',
     gradable: true,
     program: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',

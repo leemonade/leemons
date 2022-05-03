@@ -111,9 +111,12 @@ module.exports = {
       },
     },
     evaluationSystem: {
+      type: 'uuid',
+      /*
       references: {
         collection: 'plugins_grades::grades',
       },
+       */
     },
   },
   primaryKey: {

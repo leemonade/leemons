@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { permissions, menuItems, category } = require('./config/constants');
+const { permissions, menuItems, category, assignableRoles } = require('./config/constants');
 const addMenuItems = require('./src/services/menu-builder/add');
 const init = require('./init');
 
@@ -34,6 +34,19 @@ async function events(isInstalled) {
     );
 
     leemons.events.once(
+      ['plugins.assignables:pluginDidLoadServices', 'plugins.leebrary:pluginDidLoadServices'],
+      async () => {
+        const assignablesPlugin = leemons.getPlugin('assignables');
+        await Promise.all(
+          _.map(assignableRoles, (role) => {
+            console.log(role);
+            return assignablesPlugin.services.assignables.registerRole(role);
+          })
+        );
+      }
+    );
+
+    leemons.events.once(
       [
         'plugins.leebrary:init-categories',
         `plugins.tests:init-permissions`,
@@ -44,6 +57,18 @@ async function events(isInstalled) {
       }
     );
   } else {
+    leemons.events.once(
+      ['plugins.assignables:pluginDidLoadServices', 'plugins.leebrary:pluginDidLoadServices'],
+      async () => {
+        const assignablesPlugin = leemons.getPlugin('assignables');
+        const a = await Promise.all(
+          _.map(assignableRoles, (role) =>
+            assignablesPlugin.services.assignables.registerRole(role)
+          )
+        );
+        console.log(a);
+      }
+    );
     leemons.events.once('plugins.tests:pluginDidInit', async () => {
       leemons.events.emit('init-permissions');
       leemons.events.emit('init-menu');
