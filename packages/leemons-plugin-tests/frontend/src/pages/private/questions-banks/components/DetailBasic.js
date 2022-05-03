@@ -1,23 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Stack } from '@bubbles-ui/components';
-import { useStore } from '@common';
 import AssetFormInput from '@leebrary/components/AssetFormInput';
 
 export default function DetailBasic({ form, t, onNext }) {
-  const [isDirty, setIsDirty] = React.useState(false);
-  const [store, render] = useStore({
-    subjectsByProgram: {},
-  });
-  const program = form.watch('program');
-
   async function next() {
-    setIsDirty(true);
-    const formGood = await form.trigger(['name', 'tagline', 'description', 'coverFile', 'color']);
+    const formGood = await form.trigger(['name']);
     if (formGood) {
       onNext();
     }
   }
+
+  console.log(form.getValues('asset'));
 
   return (
     <AssetFormInput

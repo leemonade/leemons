@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { isEmpty, isFunction, toLower, isNil } from 'lodash';
+import { isEmpty, isFunction, isNil, toLower } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
@@ -368,16 +368,19 @@ const LibraryForm = ({
                 <Controller
                   control={control}
                   name="cover"
-                  render={({ field: { ref, value, ...field } }) => (
-                    <ImagePreviewInput
-                      labels={{
-                        changeImage: labels.changeImage,
-                        uploadButton: labels.uploadButton,
-                      }}
-                      previewURL={value}
-                      {...field}
-                    />
-                  )}
+                  render={({ field: { ref, value, ...field } }) => {
+                    console.log(value);
+                    return (
+                      <ImagePreviewInput
+                        labels={{
+                          changeImage: labels.changeImage,
+                          uploadButton: labels.uploadButton,
+                        }}
+                        previewURL={value}
+                        {...field}
+                      />
+                    );
+                  }}
                 />
               </Stack>
             </ContextContainer>

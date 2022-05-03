@@ -80,6 +80,7 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
         assetsToSave.name = props.name;
         if (props.description) assetsToSave.description = props.description;
         if (props.tagline) assetsToSave.tagline = props.tagline;
+        if (props.color) assetsToSave.color = props.color;
         if (props.cover) assetsToSave.cover = props.cover;
         if (tags) assetsToSave.tags = tags;
         const assetService = leemons.getPlugin('leebrary').services.assets;
