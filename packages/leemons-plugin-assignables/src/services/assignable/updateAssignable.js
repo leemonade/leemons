@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const updateAsset = require('../leebrary/assets/updateAsset');
-const removeAsset = require('../leebrary/assets/removeAsset');
 const getDiff = require('../../helpers/getDiff');
 const { validateAssignable } = require('../../helpers/validators/assignable');
 const updateSubjects = require('../subjects/updateSubjects');
@@ -11,7 +10,6 @@ const createAssignable = require('./createAssignable');
 const getAssignable = require('./getAssignable');
 const listAssignableUserAgents = require('./listAssignableUserAgents');
 const getUserPermission = require('./permissions/assignable/users/getUserPermission');
-const getAsset = require('../leebrary/assets/getAsset');
 
 const updatableFields = [
   'asset',
@@ -92,9 +90,6 @@ module.exports = async function updateAssignable(assignable, { userSession, tran
     );
 
     assetId = asset.id;
-    if (assetId !== currentAssignable.asset.id) {
-      await removeAsset(currentAssignable.asset.id, { userSession, transacting });
-    }
   }
 
   // EN: Update the version.
@@ -105,13 +100,11 @@ module.exports = async function updateAssignable(assignable, { userSession, tran
       transacting,
     });
 
-    const asset = await getAsset(assetId, { userSession, transacting });
-
     // TODO: Duplicate everything and apply changes
     // TODO: Ensure to keep original owner
     const newAssignable = await createAssignable.call(
       this,
-      _.omit({ ...object, asset }, ['published', 'id']),
+      _.omit({ ...object, asset: assetId }, ['published', 'id']),
       {
         id: fullId,
         userSession,
@@ -193,5 +186,12 @@ module.exports = async function updateAssignable(assignable, { userSession, tran
     transacting,
   });
 
-  return { id, ...object };
+  return {
+    id,
+    ...object,
+    asset: {
+      ...object.asset,
+      id: assetId,
+    },
+  };
 };
