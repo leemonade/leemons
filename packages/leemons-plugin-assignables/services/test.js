@@ -261,8 +261,6 @@ module.exports = function main(userSession) {
         transacting,
       }
     );
-    console.log('SearchedAssignables:', searchedAssignables);
-
     // EN: Create the task instance
     // ES: Crea la instancia de la tarea
     // const taskInstanceData = await createAssignableInstance(

@@ -22,6 +22,10 @@ const assignableValidationObject = {
               type: 'string',
               maxLength: 255,
             },
+            tagline: {
+              type: 'string',
+              maxLength: 255,
+            },
             description: {
               type: 'string',
               maxLength: 16777215,

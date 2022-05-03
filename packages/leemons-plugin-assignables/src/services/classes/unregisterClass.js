@@ -1,6 +1,6 @@
 const { classes } = require('../tables');
 
-module.exports = function unregisterClass(assignableInstanceId, classId, { transacting }) {
+module.exports = function unregisterClass(assignableInstanceId, classId, { transacting } = {}) {
   const classIds = Array.isArray(classId) ? classId : [classId].filter((id) => id);
 
   // TODO: Check if user has edition permissions

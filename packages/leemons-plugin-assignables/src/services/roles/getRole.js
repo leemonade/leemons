@@ -1,6 +1,6 @@
 const { roles } = require('../tables');
 
-module.exports = async function getRole(role, { transacting }) {
+module.exports = async function getRole(role, { transacting } = {}) {
   if (!this.calledFrom) {
     throw new Error("Can't get role without plugin name");
   }
