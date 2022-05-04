@@ -5,6 +5,12 @@ module.exports = {
       // TODO: Convert to relation
       type: 'string',
     },
+    program: {
+      type: 'uuid',
+      options: {
+        notNull: true,
+      },
+    },
     subject: {
       type: 'uuid',
       options: {

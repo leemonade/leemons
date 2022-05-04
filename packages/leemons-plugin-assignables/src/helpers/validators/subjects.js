@@ -3,6 +3,10 @@ const subjectsValidationObject = {
   items: {
     type: 'object',
     properties: {
+      program: {
+        type: 'string',
+        format: 'uuid',
+      },
       subject: {
         type: 'string',
         format: 'uuid',
