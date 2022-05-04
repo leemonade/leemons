@@ -127,6 +127,7 @@ ${plugin.dir.next})`,
   );
 
   const handler = async () => {
+    leemons.setEvents();
     // eslint-disable-next-line no-param-reassign
     leemons.backRouter.stack = [];
     await leemons.db.destroy();
