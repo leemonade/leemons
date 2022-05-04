@@ -58,14 +58,11 @@ async function events(isInstalled) {
 
     // EN: Register the assignable role
     // ES: Registrar el rol de asignable
-    leemons.events.once(
-      ['plugins.assignables:pluginDidLoadServices', 'plugins.leebrary:pluginDidLoadServices'],
-      async () => {
-        // EN: Register the assignable role
-        // ES: Registrar el rol asignable
-        await leemons.getPlugin('assignables').services.assignables.registerRole('task');
-      }
-    );
+    leemons.events.once('plugins.assignables:init-plugin', async () => {
+      // EN: Register the assignable role
+      // ES: Registrar el rol asignable
+      await leemons.getPlugin('assignables').services.assignables.registerRole('task');
+    });
   } else {
     leemons.events.once(`${pluginName}:pluginDidInit`, async () => {
       leemons.events.emit('init-permissions');

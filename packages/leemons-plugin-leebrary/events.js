@@ -30,8 +30,8 @@ async function events(isInstalled) {
     leemons.events.once(
       [
         'plugins.menu-builder:init-main-menu',
-        `${pluginName}:init-permissions`,
         `${pluginName}:pluginDidLoadServices`,
+        `${pluginName}:init-permissions`,
       ],
       async () => {
         const { services } = leemons.getPlugin('menu-builder');

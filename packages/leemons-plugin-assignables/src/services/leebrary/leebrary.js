@@ -1,1 +1,1 @@
-module.exports = leemons.getPlugin('leebrary').services;
+module.exports = () => leemons.getPlugin('leebrary').services;

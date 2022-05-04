@@ -1,8 +1,10 @@
+const leebrary = require('../leebrary');
+
 module.exports = async function addCategory(
   { role, label, creatable, createUrl, provider },
   { transacting }
 ) {
-  return leemons.getPlugin('leebrary').services.categories.add(
+  return leebrary().categories.add(
     {
       key: role,
       creatable: creatable && createUrl,

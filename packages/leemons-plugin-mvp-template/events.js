@@ -51,6 +51,7 @@ async function events(isInstalled) {
         'plugins.academic-portfolio:init-permissions',
         'plugins.leebrary:init-permissions',
         'plugins.grades:init-permissions',
+        'plugins.tasks:init-permissions',
       ],
       async () => {
         try {
