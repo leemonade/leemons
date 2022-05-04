@@ -38,7 +38,6 @@ export default function List() {
   }
 
   function goDetailPage(asset) {
-    console.log(asset);
     history.push(`/private/tests/${asset.id}`);
   }
 

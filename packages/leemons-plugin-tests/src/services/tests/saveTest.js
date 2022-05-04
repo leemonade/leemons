@@ -2,7 +2,6 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 const { validateSaveTest } = require('../../validations/forms');
-const { getQuestionsBanksDetails } = require('../questions-banks');
 
 async function saveTest(data, { userSession, transacting: _transacting } = {}) {
   // const tagsService = leemons.getPlugin('common').services.tags;
@@ -39,6 +38,8 @@ async function saveTest(data, { userSession, transacting: _transacting } = {}) {
       };
 
       if (data.id) {
+        delete toSave.role;
+        console.log(data);
         return assignableService.updateAssignable(
           { id: data.id, ...toSave },
           {

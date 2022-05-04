@@ -98,6 +98,8 @@ const saveTestSchema = {
     name: stringSchema,
     type: stringSchemaNullable,
     tagline: stringSchemaNullable,
+    color: stringSchemaNullable,
+    cover: stringSchemaNullable,
     description: stringSchemaNullable,
     tags: {
       type: 'array',

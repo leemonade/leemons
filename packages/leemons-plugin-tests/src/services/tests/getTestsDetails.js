@@ -2,7 +2,50 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 
-async function getTestsDetails(id, { transacting } = {}) {
+async function getTestsDetails(id, { userSession, transacting } = {}) {
+  const { assignables: assignableService } = leemons.getPlugin('assignables').services;
+  const ids = _.isArray(id) ? id : [id];
+
+  const assignables = await Promise.all(
+    _.map(ids, (_id) =>
+      assignableService.getAssignable(_id, {
+        userSession,
+        transacting,
+      })
+    )
+  );
+
+  let questionIds = [];
+  _.forEach(assignables, (assignable) => {
+    if (assignable?.metadata?.questions) {
+      questionIds = questionIds.concat(assignable.metadata.questions);
+    }
+  });
+
+  const questions = await table.questions.find({ id_$in: _.uniq(questionIds) }, { transacting });
+  const questionsById = _.keyBy(questions, 'id');
+
+  return _.map(assignables, (assignable) => ({
+    id: assignable.id,
+    name: assignable.asset.name,
+    description: assignable.asset.description,
+    color: assignable.asset.color,
+    cover: assignable.asset.cover,
+    tags: assignable.asset.tags,
+    program: assignable.program,
+    subjects: _.map(assignable.subjects, 'subject'),
+    statement: assignable.statement,
+    instructionsForTeachers: assignable.instructionsForTeachers,
+    instructionsForStudents: assignable.instructionsForStudents,
+    gradable: assignable.gradable,
+    questionBank: assignable.metadata.questionBank,
+    filters: assignable.metadata.filters,
+    questions: _.map(assignable?.metadata?.questions, (questionId) => questionsById[questionId]),
+    type: assignable.metadata.type,
+    levels: assignable.metadata.level,
+  }));
+
+  /*
   const tagsService = leemons.getPlugin('common').services.tags;
   const ids = _.isArray(id) ? id : [id];
   const [tests, questionsTests] = await Promise.all([
@@ -58,6 +101,8 @@ async function getTestsDetails(id, { transacting } = {}) {
       properties: JSON.parse(questionsById[quest.question].properties),
     })),
   }));
+
+   */
 }
 
 module.exports = { getTestsDetails };
