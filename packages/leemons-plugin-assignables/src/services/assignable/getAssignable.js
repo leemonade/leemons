@@ -9,12 +9,6 @@ module.exports = async function getAssignable(id, { userSession, transacting } =
   let isPublished = false;
 
   try {
-    // EN: Check if the current version is published.
-    // ES: Comprueba si la versión actual está publicada.
-    const version = await versionControl.getVersion(id, { transacting });
-
-    isPublished = version.published;
-
     // TODO: Let the user decide which columns to get
 
     // EN: Get the assignable.
@@ -22,10 +16,25 @@ module.exports = async function getAssignable(id, { userSession, transacting } =
     // eslint-disable-next-line prefer-const
     let { deleted, ...assignable } = await assignables.findOne(
       {
-        id,
+        $or: [
+          {
+            id,
+          },
+          {
+            asset: id,
+          },
+        ],
       },
       { transacting }
     );
+
+    id = assignable.id;
+
+    // EN: Check if the current version is published.
+    // ES: Comprueba si la versión actual está publicada.
+    const version = await versionControl.getVersion(id, { transacting });
+
+    isPublished = version.published;
 
     // EN: Get the role for checking the role ownership.
     // ES: Obtiene el rol para comprobar la propiedad del rol.
