@@ -65,7 +65,7 @@ module.exports = async function searchAssignables(
 
       if (nameSort) {
         assets = (
-          await leebrary.search.search(
+          await leebrary().search.search(
             { category: `assignables.${role}`, criteria: search },
             {
               allVersions: true,
@@ -84,7 +84,7 @@ module.exports = async function searchAssignables(
       assets =
         assets ||
         (
-          await leebrary.search.search(
+          await leebrary().search.search(
             { criteria: search, category: `assignables.${role}` },
             { allVersions: true, published: 'all', transacting, userSession }
           )

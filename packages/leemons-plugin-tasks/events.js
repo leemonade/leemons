@@ -58,7 +58,7 @@ async function events(isInstalled) {
 
     // EN: Register the assignable role
     // ES: Registrar el rol de asignable
-    leemons.events.once('plugins.assignables:pluginDidLoadServices', async () => {
+    leemons.events.once('plugins.assignables:init-plugin', async () => {
       // EN: Register the assignable role
       // ES: Registrar el rol asignable
       await leemons.getPlugin('assignables').services.assignables.registerRole('task');

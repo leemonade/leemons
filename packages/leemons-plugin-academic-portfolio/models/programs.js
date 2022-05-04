@@ -111,9 +111,8 @@ module.exports = {
       },
     },
     evaluationSystem: {
-      references: {
-        collection: 'plugins_grades::grades',
-      },
+      // TODO: Add reference to plugins grade
+      type: 'uuid',
     },
   },
   primaryKey: {

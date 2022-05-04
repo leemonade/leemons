@@ -4,7 +4,7 @@ module.exports = async function saveAsset(
   { cover, color, name, description, tags, category, indexable, public: publ },
   { userSession, transacting, published } = {}
 ) {
-  return leebrary.assets.add(
+  return leebrary().assets.add(
     {
       cover,
       color,

@@ -4,7 +4,7 @@ module.exports = async function addCategory(
   { role, label, creatable, createUrl, provider },
   { transacting }
 ) {
-  return leebrary.categories.add(
+  return leebrary().categories.add(
     {
       key: role,
       creatable: creatable && createUrl,
