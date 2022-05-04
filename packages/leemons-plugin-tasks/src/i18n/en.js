@@ -64,6 +64,24 @@ module.exports = {
       publish: 'Publish',
     },
     setup: {
+      basicData: {
+        step_label: 'Basic',
+        labels: {
+          name: 'Name',
+          tagline: 'Tagline',
+          description: 'Summary',
+        },
+        placeholders: {
+          name: "Task's name",
+          tagline: 'Subtitle of the task',
+          description: 'What is this assignment about?',
+        },
+        errorMessages: {
+          name: { required: 'Field required' },
+          tagline: { required: 'Required field' },
+          description: { required: 'Required field' },
+        },
+      },
       configData: {
         step_label: 'Config',
         labels: {
@@ -302,6 +320,7 @@ module.exports = {
     page_description:
       'First of all we need to match the system profiles with the custom profiles you have created on the platform (Please read carefully the characteristics of each profile. Once the profiles are linked, it cannot be undone.)',
     save: 'Save',
+    loadFromAP: 'Load profiles from Academic Portfolio',
     profileSaved: 'Saved profiles',
     profiles: 'Profiles',
     teacher: 'Teacher',

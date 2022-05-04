@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { isEmpty, isNil, isArray } from 'lodash';
 import { useParams, useHistory } from 'react-router-dom';
-import { Box, PageContainer, ContextContainer, Stack } from '@bubbles-ui/components';
+import { Box, Stack } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -9,6 +9,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useStore, unflatten } from '@common';
 import {
   Setup,
+  BasicData,
   ConfigData,
   DesignData,
   ContentData,
@@ -208,12 +209,16 @@ export default function TaskSetupPage() {
 
   const setupProps = useMemo(() => {
     if (!isNil(labels)) {
-      const { configData, designData, contentData, instructionData } = labels;
+      const { basicData, configData, designData, contentData, instructionData } = labels;
 
       return {
         editable: isEmpty(store.currentTask),
         values: store.currentTask || {},
         steps: [
+          {
+            label: basicData.step_label,
+            content: <BasicData useObserver={useSaveObserver} {...basicData} />,
+          },
           {
             label: configData.step_label,
             content: <ConfigData useObserver={useSaveObserver} {...configData} />,

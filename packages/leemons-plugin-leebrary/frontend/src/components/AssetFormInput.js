@@ -19,6 +19,8 @@ const AssetFormInput = ({
   tagsType,
   category: categoryKey,
   preview,
+  labels,
+  placeholders,
 }) => {
   const [category, setCategory] = React.useState(null);
   const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
@@ -27,10 +29,14 @@ const AssetFormInput = ({
       const items = unflatten(translations.items);
       const data = items.plugins.leebrary.assetSetup.basicData;
       data.labels.title = data.header.titleNew;
-      return data;
+      return {
+        ...data,
+        labels: { ...data.labels, ...labels },
+        placeholders: { ...data.placeholders, ...placeholders },
+      };
     }
-    return {};
-  }, [translations]);
+    return { labels };
+  }, [translations, labels]);
 
   const preparedAsset = React.useMemo(() => {
     if (asset) {
@@ -94,6 +100,9 @@ const AssetFormInput = ({
   return formComponent;
 };
 
+AssetFormInput.defaultProps = {
+  labels: {},
+};
 AssetFormInput.propTypes = {
   editing: PropTypes.bool,
   file: PropTypes.instanceOf(Object),
@@ -105,6 +114,8 @@ AssetFormInput.propTypes = {
   tagsType: PropTypes.string,
   category: PropTypes.string,
   preview: PropTypes.bool,
+  labels: PropTypes.object,
+  placeholders: PropTypes.object,
 };
 
 export { AssetFormInput };

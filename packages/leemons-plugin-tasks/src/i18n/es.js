@@ -42,6 +42,24 @@ module.exports = {
     setup: {
       title: 'Crear nueva tarea',
       editTitle: 'Editar tarea',
+      basicData: {
+        step_label: 'Datos básicos',
+        labels: {
+          name: 'Nombre',
+          tagline: 'Tagline',
+          description: 'Resumen',
+        },
+        placeholders: {
+          name: 'Nombre de la tarea',
+          tagline: 'Subtitulo de la task',
+          description: '¿De qué trata esta tarea?',
+        },
+        errorMessages: {
+          name: { required: 'Campo requerido' },
+          tagline: { required: 'Campo requerido' },
+          description: { required: 'Campo requerido' },
+        },
+      },
       configData: {
         step_label: 'Config',
         labels: {
@@ -196,6 +214,7 @@ module.exports = {
     page_description:
       'En primer lugar, debemos vincular los perfiles del sistema con los perfiles personalizados que has creado en la plataforma. (Por favor, lee atentamente las características de cada perfil. Una vez vinculados los perfiles, no se puede deshacer)',
     save: 'Guardar',
+    loadFromAP: 'Cargar perfiles desde Academic Portfolio',
     profileSaved: 'Perfiles guardados',
     profiles: 'Perfiles',
     teacher: 'Profesor',
