@@ -107,6 +107,11 @@ module.exports = {
     draft: 'Borradores',
   },
   testsDetail: {
+    gradableLabel: 'Evaluable',
+    programLabel: 'Programa',
+    programRequired: 'Campo obligatorio',
+    subjectLabel: 'Asignatura',
+    subjectRequired: 'Campo obligatorio',
     basic: 'Basico',
     pageTitle: 'Editando test: {name}',
     pageTitleNew: 'Nuevo test',

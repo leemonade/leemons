@@ -29,13 +29,15 @@ async function listTests(ctx) {
 }
 
 async function saveTest(ctx) {
-  const test = await testsService.save(ctx.request.body);
+  const test = await testsService.save(ctx.request.body, { userSession: ctx.state.userSession });
   ctx.status = 200;
   ctx.body = { status: 200, test };
 }
 
 async function getTest(ctx) {
-  const [test] = await testsService.details(ctx.request.params.id);
+  const [test] = await testsService.details(ctx.request.params.id, {
+    userSession: ctx.state.userSession,
+  });
   ctx.status = 200;
   ctx.body = { status: 200, test };
 }

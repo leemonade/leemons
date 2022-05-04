@@ -33,17 +33,12 @@ async function events(isInstalled) {
       }
     );
 
-    leemons.events.once(
-      ['plugins.assignables:pluginDidLoadServices', 'plugins.leebrary:pluginDidLoadServices'],
-      async () => {
-        const assignablesPlugin = leemons.getPlugin('assignables');
-        await Promise.all(
-          _.map(assignableRoles, (role) =>
-            assignablesPlugin.services.assignables.registerRole(role)
-          )
-        );
-      }
-    );
+    leemons.events.once('plugins.assignables:init-plugin', async () => {
+      const assignablesPlugin = leemons.getPlugin('assignables');
+      await Promise.all(
+        _.map(assignableRoles, (role) => assignablesPlugin.services.assignables.registerRole(role))
+      );
+    });
 
     leemons.events.once(
       [

@@ -9,7 +9,7 @@ export default function DetailInstructions({ form, t, onNext }) {
 
   async function next() {
     setIsDirty(true);
-    const formGood = await form.trigger(['instructionsForTeacher', 'instructionsForStudent']);
+    const formGood = await form.trigger(['instructionsForTeachers', 'instructionsForStudents']);
     if (formGood) {
       onNext();
     }
@@ -19,10 +19,10 @@ export default function DetailInstructions({ form, t, onNext }) {
     <ContextContainer>
       <Controller
         control={form.control}
-        name="instructionsForTeacher"
+        name="instructionsForTeachers"
         render={({ field }) => (
           <TextEditorInput
-            error={isDirty ? form.formState.errors.instructionsForTeacher : null}
+            error={isDirty ? form.formState.errors.instructionsForTeachers : null}
             label={t('instructionsForTeacherLabel')}
             {...field}
           />
@@ -30,10 +30,10 @@ export default function DetailInstructions({ form, t, onNext }) {
       />
       <Controller
         control={form.control}
-        name="instructionsForStudent"
+        name="instructionsForStudents"
         render={({ field }) => (
           <TextEditorInput
-            error={isDirty ? form.formState.errors.instructionsForStudent : null}
+            error={isDirty ? form.formState.errors.instructionsForStudents : null}
             label={t('instructionsForStudentLabel')}
             {...field}
           />

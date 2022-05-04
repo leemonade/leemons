@@ -108,6 +108,11 @@ module.exports = {
     draft: 'Drafts',
   },
   testsDetail: {
+    gradableLabel: 'Gradable',
+    programLabel: 'Program',
+    programRequired: 'Field required',
+    subjectLabel: 'Subject',
+    subjectRequired: 'Field required',
     basic: 'Basic',
     pageTitle: 'Editing test: {name}',
     pageTitleNew: 'New test',
