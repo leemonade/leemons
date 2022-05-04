@@ -10,7 +10,7 @@ module.exports = async function getRole(role, { transacting } = {}) {
   const foundRoles = await roles.find({ name: role }, { transacting });
 
   if (foundRoles.length) {
-    if (foundRoles[0].plugin !== this.calledFrom) {
+    if (this.calledFrom === 'plugins.assignables' || foundRoles[0].plugin !== this.calledFrom) {
       throw new Error("Role doesn't belong to this plugin");
     }
 
