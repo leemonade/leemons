@@ -14,7 +14,7 @@ async function asyncFilter(array, f) {
 }
 
 module.exports = async function searchAssignables(
-  role,
+  roles,
   { published, preferCurrent, search, subjects, program, sort, ..._query },
   { userSession, transacting } = {}
 ) {
@@ -45,7 +45,7 @@ module.exports = async function searchAssignables(
     */
 
     const query = {
-      role,
+      role_$in: Array.isArray(roles) ? roles : [roles],
       ..._query,
     };
 
@@ -65,19 +65,23 @@ module.exports = async function searchAssignables(
       const nameSort = _.find(sorting, { key: 'name' });
 
       if (nameSort) {
-        assets = (
-          await leebrary().search.search(
-            { category: `assignables.${role}`, criteria: search },
-            {
-              allVersions: true,
-              published: 'all',
-              sortBy: ['name'],
-              sortDirection: nameSort.direction,
-              transacting,
-              userSession,
-            }
-          )
-        ).map(({ asset }) => asset);
+        assets = _.uniq(
+          await Promise.all(
+            roles.map((role) =>
+              leebrary().search.search(
+                { category: `assignables.${role}`, criteria: search },
+                {
+                  allVersions: true,
+                  published: 'all',
+                  sortBy: ['name'],
+                  sortDirection: nameSort.direction,
+                  transacting,
+                  userSession,
+                }
+              )
+            )
+          ).flatMap(({ asset }) => asset)
+        );
       }
     }
 
@@ -85,11 +89,15 @@ module.exports = async function searchAssignables(
       assets =
         assets ||
         (
-          await leebrary().search.search(
-            { criteria: search, category: `assignables.${role}` },
-            { allVersions: true, published: 'all', transacting, userSession }
+          await Promise.all(
+            roles.map((role) =>
+              leebrary().search.search(
+                { criteria: search, category: `assignables.${role}` },
+                { allVersions: true, published: 'all', transacting, userSession }
+              )
+            )
           )
-        ).map(({ asset }) => asset);
+        ).flatMap(({ asset }) => asset);
 
       query.asset_$in = assets;
     }
