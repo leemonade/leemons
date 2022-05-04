@@ -38,8 +38,6 @@ class Leemons {
 
     log.verbose('New leemons');
 
-    const timers = new Map();
-
     // Initialize the reload method (generate a "state" for it)
     this.reload();
 
@@ -47,10 +45,16 @@ class Leemons {
     this.frontRouter = new Router();
     this.backRouter = new Router();
 
+    this.setEvents();
+
     this.initServer();
 
     this.loaded = false;
     this.started = false;
+  }
+
+  setEvents() {
+    const timers = new Map();
 
     const emitCache = [];
     const arrayEvents = {};
