@@ -1,8 +1,7 @@
 const assignablesServices = require('../assignables');
 
-const { assignables } = assignablesServices;
-
 module.exports = async function publish(taskId, { transacting, userSession } = {}) {
+  const { assignables } = assignablesServices();
   try {
     return await assignables.publishAssignable(taskId, { userSession, transacting });
   } catch (e) {

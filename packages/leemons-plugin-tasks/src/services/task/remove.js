@@ -1,8 +1,7 @@
 const assignablesServices = require('../assignables');
 
-const { assignables } = assignablesServices;
-
 module.exports = async function remove(taskId, { transacting, userSession } = {}) {
+  const { assignables } = assignablesServices();
   try {
     // EN: remove the given task.
     // ES: Eliminar la tarea dada.

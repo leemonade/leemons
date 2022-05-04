@@ -162,7 +162,6 @@ const menuItems = [
         en: 'Library',
         es: 'Librería',
       },
-      disabled: true,
     },
     permissions: [
       {
