@@ -114,8 +114,6 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
         }
       }
 
-      console.log('Despues de subir cover');
-
       // -- Subjects --
       await removeSubjectsFromQuestionBanks(questionBank.id, { transacting });
       if (_.isArray(subjects) && subjects.length > 0) {
@@ -231,6 +229,7 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
           questionsToDelete.push(questionId);
         }
       });
+
       if (questionsToDelete.length) {
         await deleteQuestions(questionsToDelete, { userSession, transacting });
       }

@@ -1,8 +1,9 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const { table } = require('../tables');
+const { getQuestionsBanksDetails } = require('../questions-banks/getQuestionsBanksDetails');
 
-async function getTestsDetails(id, { userSession, transacting } = {}) {
+async function getTestsDetails(id, { userSession, withQuestionBank, transacting } = {}) {
   const { assignables: assignableService } = leemons.getPlugin('assignables').services;
   const ids = _.isArray(id) ? id : [id];
 
@@ -15,14 +16,25 @@ async function getTestsDetails(id, { userSession, transacting } = {}) {
     )
   );
 
+  const questionBankIds = [];
   let questionIds = [];
   _.forEach(assignables, (assignable) => {
+    if (withQuestionBank) {
+      if (assignable?.metadata?.questionBank) {
+        questionBankIds.push(assignable.metadata.questionBank);
+      }
+    }
     if (assignable?.metadata?.questions) {
       questionIds = questionIds.concat(assignable.metadata.questions);
     }
   });
 
-  const questions = await table.questions.find({ id_$in: _.uniq(questionIds) }, { transacting });
+  const [questions, questionBanks] = await Promise.all([
+    table.questions.find({ id_$in: _.uniq(questionIds) }, { transacting }),
+    getQuestionsBanksDetails(questionBankIds, { userSession, transacting }),
+  ]);
+
+  const questionBankById = _.keyBy(questionBanks, 'id');
   const questionsById = _.keyBy(questions, 'id');
 
   return _.map(assignables, (assignable) => ({
@@ -38,9 +50,14 @@ async function getTestsDetails(id, { userSession, transacting } = {}) {
     instructionsForTeachers: assignable.instructionsForTeachers,
     instructionsForStudents: assignable.instructionsForStudents,
     gradable: assignable.gradable,
-    questionBank: assignable.metadata.questionBank,
+    questionBank: questionBankById[assignable.metadata.questionBank]
+      ? questionBankById[assignable.metadata.questionBank]
+      : assignable.metadata.questionBank,
     filters: assignable.metadata.filters,
-    questions: _.map(assignable?.metadata?.questions, (questionId) => questionsById[questionId]),
+    questions: _.map(assignable?.metadata?.questions, (questionId) => ({
+      ...questionsById[questionId],
+      properties: JSON.parse(questionsById[questionId].properties),
+    })),
     type: assignable.metadata.type,
     levels: assignable.metadata.level,
   }));

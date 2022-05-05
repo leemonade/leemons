@@ -107,7 +107,7 @@ module.exports = {
     published: 'Published',
     draft: 'Drafts',
   },
-  testsDetail: {
+  testsEdit: {
     gradableLabel: 'Gradable',
     programLabel: 'Program',
     programRequired: 'Field required',
@@ -178,5 +178,12 @@ module.exports = {
     instructionsForTeacherLabel: 'Instructions for teacher',
     instructionsForStudentLabel: 'Instructions for student',
     instructions: 'Instructions',
+  },
+  testsDetail: {
+    assign: 'Assign',
+    undefined: 'Undefined',
+    questionTypes: 'Question types',
+    categories: 'Categories',
+    questions: 'Questions',
   },
 };

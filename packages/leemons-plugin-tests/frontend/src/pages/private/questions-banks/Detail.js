@@ -39,7 +39,7 @@ export default function Detail() {
 
   async function saveAsDraft() {
     try {
-      store.saving = 'edit';
+      store.saving = 'duplicate';
       render();
       await saveQuestionBankRequest({ ...formValues, published: false });
       addSuccessAlert(t('savedAsDraft'));
@@ -53,12 +53,16 @@ export default function Detail() {
 
   async function saveAsPublish() {
     try {
-      store.saving = 'duplicate';
+      console.log('Antes?');
+      store.saving = 'edit';
       render();
+      console.log('Hola?');
       await saveQuestionBankRequest({ ...formValues, published: true });
+      console.log('Despues?');
       addSuccessAlert(t('published'));
       history.push('/private/tests/questions-banks');
     } catch (error) {
+      console.log(error);
       addErrorAlert(error);
     }
     store.saving = null;
@@ -103,9 +107,7 @@ export default function Detail() {
   React.useEffect(() => {
     const subscription = form.watch(() => {
       debounce(async () => {
-        console.log(form.getValues());
         store.isValid = await form.trigger();
-        console.log(form.formState.errors);
         render();
       });
     });
@@ -118,9 +120,12 @@ export default function Detail() {
       <ContextContainer fullHeight>
         <AdminPageHeader
           values={{
-            title: store.isNew
-              ? t('pageTitleNew', { name: formValues.name || '' })
-              : t('pageTitle', { name: formValues.name || '' }),
+            // eslint-disable-next-line no-nested-ternary
+            title: formValues.name
+              ? formValues.name
+              : store.isNew
+              ? t('pageTitleNew', { name: '' })
+              : t('pageTitle', { name: '' }),
           }}
           buttons={{
             duplicate: formValues.name && !formValues.published ? t('saveDraft') : undefined,

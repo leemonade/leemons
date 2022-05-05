@@ -12,7 +12,7 @@ async function saveQuestionBank(body) {
   const form = new FormData();
   const questionsFiles = [];
   forEach(body.questions || [], (question, index) => {
-    if (!isString(question.properties.image)) {
+    if (question.properties.image && !isString(question.properties.image)) {
       if (question.properties.image.id) {
         // eslint-disable-next-line no-param-reassign
         body.questions[index].properties.image = question.properties.image.cover.id;

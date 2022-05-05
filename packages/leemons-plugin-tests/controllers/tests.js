@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const testsService = require('../src/services/tests');
 
 async function listTests(ctx) {
@@ -29,13 +30,18 @@ async function listTests(ctx) {
 }
 
 async function saveTest(ctx) {
-  const test = await testsService.save(ctx.request.body, { userSession: ctx.state.userSession });
+  const data = JSON.parse(ctx.request.body.data);
+  _.forIn(ctx.request.files, (value, key) => {
+    _.set(data, key, value);
+  });
+  const test = await testsService.save(data, { userSession: ctx.state.userSession });
   ctx.status = 200;
   ctx.body = { status: 200, test };
 }
 
 async function getTest(ctx) {
   const [test] = await testsService.details(ctx.request.params.id, {
+    withQuestionBank: ctx.request.query.withQuestionBank === 'true',
     userSession: ctx.state.userSession,
   });
   ctx.status = 200;

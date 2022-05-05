@@ -114,6 +114,8 @@ export default function DetailQuestionsBanks({ form, t, onNext }) {
                 onChange={(e) => {
                   if (e.target.checked) {
                     form.setValue('questionBank', item.id);
+                    form.setValue('filters', null);
+                    form.setValue('questions', []);
                   }
                 }}
               />
@@ -122,7 +124,7 @@ export default function DetailQuestionsBanks({ form, t, onNext }) {
               <Box style={{ textAlign: 'right', width: '100%' }}>
                 <ActionButton
                   as={Link}
-                  to={`/private/tests/${item.id}`}
+                  to={`/private/tests/questions-banks/${item.id}`}
                   tooltip={t('view')}
                   icon={<ExpandDiagonalIcon />}
                 />
