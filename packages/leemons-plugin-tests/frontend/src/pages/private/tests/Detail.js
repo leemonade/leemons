@@ -99,45 +99,47 @@ export default function Detail() {
       />
 
       <PageContainer noFlex>
-        {store.stats ? (
-          <Stack fullWidth>
-            <InputWrapper label={t('questionTypes')}>
-              <Box sx={() => ({ height: '400px' })}>
-                <ResponsiveBar
-                  colors={{ scheme: 'nivo' }}
-                  data={store.stats.questions}
-                  keys={store.stats.questionsKeys}
-                  indexBy="key"
-                  colorBy="indexValue"
-                  margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
-                  padding={0.3}
-                />
-              </Box>
-            </InputWrapper>
-            <InputWrapper label={t('categories')}>
-              <Box sx={() => ({ height: '400px' })}>
-                <ResponsiveBar
-                  colors={{ scheme: 'nivo' }}
-                  data={store.stats.categories}
-                  keys={store.stats.categoriesKeys}
-                  indexBy="key"
-                  colorBy="indexValue"
-                  layout="horizontal"
-                  enableGridX={true}
-                  enableGridY={false}
-                  margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
-                  padding={0.3}
-                />
-              </Box>
-            </InputWrapper>
-          </Stack>
-        ) : null}
+        <Box sx={(theme) => ({ paddingBottom: theme.spacing[12] })}>
+          {store.stats ? (
+            <Stack fullWidth>
+              <InputWrapper label={t('questionTypes')}>
+                <Box sx={() => ({ height: '400px' })}>
+                  <ResponsiveBar
+                    colors={{ scheme: 'nivo' }}
+                    data={store.stats.questions}
+                    keys={store.stats.questionsKeys}
+                    indexBy="key"
+                    colorBy="indexValue"
+                    margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
+                    padding={0.3}
+                  />
+                </Box>
+              </InputWrapper>
+              <InputWrapper label={t('categories')}>
+                <Box sx={() => ({ height: '400px' })}>
+                  <ResponsiveBar
+                    colors={{ scheme: 'nivo' }}
+                    data={store.stats.categories}
+                    keys={store.stats.categoriesKeys}
+                    indexBy="key"
+                    colorBy="indexValue"
+                    layout="horizontal"
+                    enableGridX={true}
+                    enableGridY={false}
+                    margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
+                    padding={0.3}
+                  />
+                </Box>
+              </InputWrapper>
+            </Stack>
+          ) : null}
 
-        {store.test ? (
-          <InputWrapper label={t('questions')}>
-            <QuestionsTable hideCheckbox questions={store.test?.questions} />
-          </InputWrapper>
-        ) : null}
+          {store.test ? (
+            <InputWrapper label={t('questions')}>
+              <QuestionsTable hideCheckbox questions={store.test?.questions} />
+            </InputWrapper>
+          ) : null}
+        </Box>
       </PageContainer>
     </ContextContainer>
   );

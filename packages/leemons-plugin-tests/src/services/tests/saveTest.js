@@ -22,7 +22,6 @@ async function saveTest(data, { userSession, transacting: _transacting } = {}) {
           public: true, // TODO Cambiar a false despues de la demo
         },
         role: 'tests',
-        program: data.program,
         subjects: _.map(data.subjects, (subject) => ({ subject, program: data.program })),
         statement: data.statement,
         instructionsForTeachers: data.instructionsForTeachers,
@@ -39,7 +38,6 @@ async function saveTest(data, { userSession, transacting: _transacting } = {}) {
 
       if (data.id) {
         delete toSave.role;
-        console.log(data);
         return assignableService.updateAssignable(
           { id: data.id, ...toSave },
           {
