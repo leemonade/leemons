@@ -1,7 +1,7 @@
 const leebrary = require('../leebrary');
 
 module.exports = async function saveAsset(
-  { cover, color, name, description, tags, category, indexable, public: publ },
+  { cover, color, name, tagline, description, tags, category, indexable, public: publ },
   { userSession, transacting, published } = {}
 ) {
   return leebrary().assets.add(
@@ -9,6 +9,7 @@ module.exports = async function saveAsset(
       cover,
       color,
       name,
+      tagline,
       description,
       tags,
       category,

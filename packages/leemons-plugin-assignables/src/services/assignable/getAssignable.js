@@ -5,16 +5,10 @@ const versionControl = require('../versionControl');
 const getUserPermission = require('./permissions/assignable/users/getUserPermission');
 const getAsset = require('../leebrary/assets/getAsset');
 
-module.exports = async function getAssignable(id, { userSession, transacting } = {}) {
+module.exports = async function getAssignable(id, { userSession, withFiles, transacting } = {}) {
   let isPublished = false;
 
   try {
-    // EN: Check if the current version is published.
-    // ES: Comprueba si la versión actual está publicada.
-    const version = await versionControl.getVersion(id, { transacting });
-
-    isPublished = version.published;
-
     // TODO: Let the user decide which columns to get
 
     // EN: Get the assignable.
@@ -22,10 +16,25 @@ module.exports = async function getAssignable(id, { userSession, transacting } =
     // eslint-disable-next-line prefer-const
     let { deleted, ...assignable } = await assignables.findOne(
       {
-        id,
+        $or: [
+          {
+            id,
+          },
+          {
+            asset: id,
+          },
+        ],
       },
       { transacting }
     );
+
+    id = assignable.id;
+
+    // EN: Check if the current version is published.
+    // ES: Comprueba si la versión actual está publicada.
+    const version = await versionControl.getVersion(id, { transacting });
+
+    isPublished = version.published;
 
     // EN: Get the role for checking the role ownership.
     // ES: Obtiene el rol para comprobar la propiedad del rol.
@@ -35,7 +44,7 @@ module.exports = async function getAssignable(id, { userSession, transacting } =
 
     // EN: Get the asset data
     // ES: Obtiene los datos del asset
-    assignable.asset = await getAsset(assignable.asset, { userSession, transacting });
+    assignable.asset = await getAsset(assignable.asset, { userSession, withFiles, transacting });
 
     // EN: Parse objects.
     // ES: Parsear objetos.

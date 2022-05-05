@@ -1,7 +1,5 @@
 const assignablesServices = require('../assignables');
 
-const { assignables } = assignablesServices;
-
 module.exports = async function searchTask({
   draft,
   preferCurrent,
@@ -12,6 +10,7 @@ module.exports = async function searchTask({
   transacting,
   ...query
 } = {}) {
+  const { assignables } = assignablesServices();
   try {
     return await assignables.searchAssignables(
       'task',

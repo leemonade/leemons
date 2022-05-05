@@ -9,7 +9,7 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
 
   const tagsService = leemons.getPlugin('common').services.tags;
   const ids = _.isArray(id) ? id : [id];
-  const questionsBanks = table.questionsBanks.find(
+  const questionsBanks = await table.questionsBanks.find(
     { $or: [{ id_$in: ids }, { asset_$in: ids }] },
     { transacting }
   );
@@ -85,8 +85,11 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
     if (questionBanksAssets[i]) {
       questionBank.asset = questionBanksAssets[i];
       questionBank.tagline = questionBanksAssets[i].tagline;
-      questionBank.summary = questionBanksAssets[i].description;
-      questionBank.cover = questionBanksAssets[i];
+      questionBank.description = questionBanksAssets[i].description;
+      questionBank.color = questionBanksAssets[i].color;
+      questionBank.file = questionBanksAssets[i].file;
+      questionBank.tags = questionBanksAssets[i].tags;
+      questionBank.cover = questionBanksAssets[i].cover;
     }
   });
 

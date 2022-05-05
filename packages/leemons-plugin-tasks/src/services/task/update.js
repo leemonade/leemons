@@ -1,8 +1,7 @@
 const assignablesServices = require('../assignables');
 
-const { assignables } = assignablesServices;
-
 module.exports = async function update(taskId, data, { transacting, userSession } = {}) {
+  const { assignables } = assignablesServices();
   try {
     return await assignables.updateAssignable(
       {
