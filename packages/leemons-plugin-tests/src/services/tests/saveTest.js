@@ -14,6 +14,7 @@ async function saveTest(data, { userSession, transacting: _transacting } = {}) {
       const toSave = {
         asset: {
           name: data.name,
+          tagline: data.tagline,
           description: data.description,
           color: data.color,
           cover: data.cover,

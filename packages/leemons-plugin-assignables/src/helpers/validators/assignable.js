@@ -45,7 +45,7 @@ const assignableValidationObject = {
               nullable: true,
             },
             cover: {
-              type: 'string',
+              type: ['object', 'string'],
               nullable: true,
             },
           },
@@ -141,6 +141,7 @@ function validateAssignable(assignable, { useRequired = false } = {}) {
 
   const validator = new global.utils.LeemonsValidator(obj);
 
+  console.log(assignable);
   if (!validator.validate(assignable)) {
     throw validator.error;
   }

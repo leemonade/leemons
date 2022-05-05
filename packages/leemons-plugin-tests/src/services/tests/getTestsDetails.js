@@ -11,6 +11,7 @@ async function getTestsDetails(id, { userSession, withQuestionBank, transacting 
     _.map(ids, (_id) =>
       assignableService.getAssignable(_id, {
         userSession,
+        withFiles: true,
         transacting,
       })
     )
@@ -41,6 +42,7 @@ async function getTestsDetails(id, { userSession, withQuestionBank, transacting 
     id: assignable.id,
     name: assignable.asset.name,
     description: assignable.asset.description,
+    tagline: assignable.asset.tagline,
     color: assignable.asset.color,
     cover: assignable.asset.cover,
     tags: assignable.asset.tags,

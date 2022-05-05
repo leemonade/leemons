@@ -5,7 +5,7 @@ const versionControl = require('../versionControl');
 const getUserPermission = require('./permissions/assignable/users/getUserPermission');
 const getAsset = require('../leebrary/assets/getAsset');
 
-module.exports = async function getAssignable(id, { userSession, transacting } = {}) {
+module.exports = async function getAssignable(id, { userSession, withFiles, transacting } = {}) {
   let isPublished = false;
 
   try {
@@ -44,7 +44,7 @@ module.exports = async function getAssignable(id, { userSession, transacting } =
 
     // EN: Get the asset data
     // ES: Obtiene los datos del asset
-    assignable.asset = await getAsset(assignable.asset, { userSession, transacting });
+    assignable.asset = await getAsset(assignable.asset, { userSession, withFiles, transacting });
 
     // EN: Parse objects.
     // ES: Parsear objetos.

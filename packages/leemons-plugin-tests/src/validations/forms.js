@@ -99,7 +99,10 @@ const saveTestSchema = {
     type: stringSchemaNullable,
     tagline: stringSchemaNullable,
     color: stringSchemaNullable,
-    cover: stringSchemaNullable,
+    cover: {
+      type: ['object', 'string'],
+      nullable: true,
+    },
     description: stringSchemaNullable,
     tags: {
       type: 'array',
