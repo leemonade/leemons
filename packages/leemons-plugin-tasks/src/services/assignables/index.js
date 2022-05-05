@@ -1,1 +1,1 @@
-module.exports = leemons.getPlugin('assignables').services;
+module.exports = () => leemons.getPlugin('assignables').services;
