@@ -29,7 +29,10 @@ const updatableFields = [
   'metadata',
 ];
 
-module.exports = async function updateAssignable(assignable, { published: false, userSession, transacting } = {}) {
+module.exports = async function updateAssignable(
+  assignable,
+  { published = false, userSession, transacting } = {}
+) {
   const { id, ...assignableObject } = assignable;
 
   // Check if any of the keys are not updatable (use lodash)
@@ -198,6 +201,6 @@ module.exports = async function updateAssignable(assignable, { published: false,
       ...object.asset,
       id: assetId,
     },
-    published: published,
+    published,
   };
 };
