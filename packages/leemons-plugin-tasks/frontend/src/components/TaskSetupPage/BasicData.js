@@ -1,16 +1,8 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { isFunction, isEmpty } from 'lodash';
-import { useForm, Controller, FormProvider } from 'react-hook-form';
-import {
-  Box,
-  Stack,
-  ContextContainer,
-  TextInput,
-  Button,
-  Textarea,
-  Paragraph,
-} from '@bubbles-ui/components';
+import { isFunction } from 'lodash';
+import { useForm } from 'react-hook-form';
+import { Box, Stack, Button, ContextContainer, useDebouncedCallback } from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { AssetFormInput } from '@leebrary/components/AssetFormInput';
 
@@ -24,36 +16,41 @@ function BasicData({
   setSharedData,
   editable,
   useObserver,
+  onNameChange,
   ...props
 }) {
   // ·······························································
   // FORM
 
   const defaultValues = {
-    ...sharedData,
-    subjects: [],
+    ...sharedData.asset,
   };
 
   const formData = useForm({ defaultValues });
-  const {
-    control,
-    watch,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = formData;
+  const { handleSubmit, reset, watch } = formData;
 
   const { subscribe, unsubscribe, emitEvent } = useObserver();
 
+  const taskName = watch('name');
+  const debounced = useDebouncedCallback(500);
+
   useEffect(() => {
-    reset(sharedData);
+    debounced(() => onNameChange(taskName));
+    onNameChange(taskName);
+  }, [taskName]);
+
+  useEffect(() => {
+    reset(sharedData.asset);
   }, [sharedData]);
 
   useEffect(() => {
     const f = (event) => {
       if (event === 'saveTask') {
-        handleSubmit((data) => {
-          setSharedData(data);
+        handleSubmit((e) => {
+          setSharedData({
+            ...sharedData,
+            asset: e,
+          });
           emitEvent('saveData');
         })();
       }
@@ -71,30 +68,34 @@ function BasicData({
   const handleOnNext = (e) => {
     const data = {
       ...sharedData,
-      ...e,
+      asset: e,
     };
 
     if (isFunction(setSharedData)) setSharedData(data);
     if (isFunction(onNext)) onNext(data);
   };
 
-  // ·······························································
-  // SUBJECTS
+  const handleOnSubmit = handleSubmit(handleOnNext);
 
-  const program = watch('program');
-
-  // ---------------------------------------------------------------
-  // COMPONENT
+  // ························································
+  // RENDER
 
   return (
-    <Box sx={(theme) => ({ maxWidth: theme.breakpoints.md })}>
+    <ContextContainer divided>
       <AssetFormInput
         form={formData}
         {...{ labels, placeholders, helps, errorMessages }}
         category="assignables.task"
+        tagsPluginName="tasks"
         preview
+        previewVariant="task"
       />
-    </Box>
+      <Stack fullWidth justifyContent="end">
+        <Button rightIcon={<ChevRightIcon height={20} width={20} />} onClick={handleOnSubmit}>
+          {labels.buttonNext}
+        </Button>
+      </Stack>
+    </ContextContainer>
   );
 }
 
@@ -109,6 +110,7 @@ BasicData.propTypes = {
   editable: PropTypes.bool,
   onNext: PropTypes.func,
   useObserver: PropTypes.func,
+  onNameChange: PropTypes.func,
 };
 
 // eslint-disable-next-line import/prefer-default-export

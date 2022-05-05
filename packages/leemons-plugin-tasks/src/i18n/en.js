@@ -70,6 +70,7 @@ module.exports = {
           name: 'Name',
           tagline: 'Tagline',
           description: 'Summary',
+          buttonNext: 'Next',
         },
         placeholders: {
           name: "Task's name",
@@ -85,8 +86,6 @@ module.exports = {
       configData: {
         step_label: 'Config',
         labels: {
-          name: 'Name',
-          tagline: 'Tagline',
           configTitle: 'Config',
           center: 'Center',
           program: 'Program',
@@ -99,14 +98,8 @@ module.exports = {
             begginer: 'Beginner',
             intermediate: 'Intermediate',
           },
-          summary: 'Summary',
-          tags: 'Tags',
           buttonNext: 'Next',
-          wordCounter: {
-            single: 'Word',
-            plural: 'Words',
-          },
-
+          buttonPrev: 'Previous',
           preTask: {
             toggler: 'Add a pre-task activity',
             mandatory: 'Mandatory to start the Task',
@@ -119,43 +112,18 @@ module.exports = {
         },
 
         placeholders: {
-          tagline: 'Subtitle of the task',
-          name: "Task's name",
           center: 'Select...',
           program: 'Select...',
           course: 'Select...',
           subject: 'Select...',
           level: 'Select...',
-          summary: 'What is this assignment about?',
-          tags: 'Start typing a tag',
         },
         errorMessages: {
-          name: { required: 'Field required' },
-          tagline: { required: 'Required field' },
           program: { required: 'Required field' },
           course: { required: 'Required field' },
           subject: { required: 'Required field' },
           level: { required: 'Required field' },
           summary: { required: 'Required field' },
-          tags: { required: 'Required field' },
-        },
-      },
-      designData: {
-        step_label: 'Design',
-        labels: {
-          title: 'Design',
-          color: 'Color',
-          cover: 'Cover Image',
-          buttonNext: 'Next',
-          buttonPrev: 'Previous',
-        },
-        placeholders: {
-          color: 'Pick color',
-          cover: 'Upload or select from Library',
-        },
-        errorMessages: {
-          color: { required: 'Required field' },
-          cover: { required: 'Required field' },
         },
       },
       contentData: {
@@ -207,6 +175,8 @@ module.exports = {
         errorMessages: {
           methodology: { required: 'Required field' },
           recommendedDuration: { required: 'Required field' },
+          development: { required: 'Required field' },
+          statement: { required: 'Required field' },
         },
       },
       instructionData: {

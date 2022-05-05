@@ -42,6 +42,11 @@ module.exports = {
         unpinnedSuccess: 'Asset successfully unpinned',
         url: 'URL (webpage link)',
         checkUrl: 'Check url',
+        wordCounter: {
+          single: 'Word',
+          plural: 'Words',
+        },
+        preview: 'Thumbnail preview',
       },
       descriptions: {
         featuredImage: "Only if you want to change the webpage's default featured image",

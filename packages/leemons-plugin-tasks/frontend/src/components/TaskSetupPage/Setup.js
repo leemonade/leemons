@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isNil } from 'lodash';
-import { Stepper, VerticalStepperContainer } from '@bubbles-ui/components';
+import { VerticalStepperContainer } from '@bubbles-ui/components';
 
 function Setup({ labels, steps, values, editable, onSave, useObserver, ...props }) {
-  const [sharedData, setSharedData] = useState(values || {});
+  const [sharedData, setSharedData] = useState(values);
   const [active, setActive] = useState(0);
 
   const { subscribe, unsubscribe } = useObserver();
@@ -57,7 +57,7 @@ function Setup({ labels, steps, values, editable, onSave, useObserver, ...props 
   // COMPONENT
 
   return (
-    <VerticalStepperContainer {...props} data={steps}>
+    <VerticalStepperContainer {...props} currentStep={active} data={steps}>
       {
         steps.map((item) =>
           React.cloneElement(item.content, {
@@ -76,7 +76,7 @@ function Setup({ labels, steps, values, editable, onSave, useObserver, ...props 
 
 Setup.defaultProps = {
   labels: {},
-  values: {},
+  values: { asset: {} },
   editable: true,
 };
 Setup.propTypes = {

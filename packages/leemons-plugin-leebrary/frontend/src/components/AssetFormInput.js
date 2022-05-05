@@ -1,6 +1,6 @@
 import React from 'react';
 import { find, isEmpty } from 'lodash';
-import { Box } from '@bubbles-ui/components';
+import { Box, InputWrapper } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -19,11 +19,17 @@ const AssetFormInput = ({
   tagsType,
   category: categoryKey,
   preview,
+  previewVariant,
   labels,
   placeholders,
+  errorMessages,
 }) => {
   const [category, setCategory] = React.useState(null);
   const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
+
+  // ························································
+  // LABELS & STATICS
+
   const formLabels = React.useMemo(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
@@ -33,6 +39,7 @@ const AssetFormInput = ({
         ...data,
         labels: { ...data.labels, ...labels },
         placeholders: { ...data.placeholders, ...placeholders },
+        errorMessages: { ...data.errorMessages, ...errorMessages },
       };
     }
     return { labels };
@@ -45,6 +52,9 @@ const AssetFormInput = ({
     return {};
   }, [asset]);
 
+  // ························································
+  // DATA PROCESS
+
   async function loadCategory() {
     const result = await listCategoriesRequest();
     const items = result.map((data) => ({
@@ -55,18 +65,15 @@ const AssetFormInput = ({
     setCategory(find(items, { key: categoryKey }));
   }
 
-  function getValuesAsAsset() {
-    const values = form.getValues();
-    return {
-      original: {
-        ...values,
-      },
-    };
-  }
+  // ························································
+  // EFFECTS
 
   React.useEffect(() => {
     if (categoryKey) loadCategory();
   }, [categoryKey]);
+
+  // ························································
+  // RENDER
 
   const formComponent = (
     <LibraryForm
@@ -91,7 +98,13 @@ const AssetFormInput = ({
           {formComponent}
         </Box>
         <Box sx={() => ({ minWidth: '288px', maxWidth: '288px' })}>
-          <CardWrapper item={getValuesAsAsset()} category={category} />
+          <InputWrapper label={formLabels?.labels?.preview}>
+            <CardWrapper
+              item={{ original: form?.watch() }}
+              category={category}
+              variant={previewVariant}
+            />
+          </InputWrapper>
         </Box>
       </Box>
     );
@@ -102,6 +115,7 @@ const AssetFormInput = ({
 
 AssetFormInput.defaultProps = {
   labels: {},
+  previewVariant: 'media',
 };
 AssetFormInput.propTypes = {
   editing: PropTypes.bool,
@@ -116,6 +130,8 @@ AssetFormInput.propTypes = {
   preview: PropTypes.bool,
   labels: PropTypes.object,
   placeholders: PropTypes.object,
+  errorMessages: PropTypes.object,
+  previewVariant: PropTypes.string,
 };
 
 export { AssetFormInput };

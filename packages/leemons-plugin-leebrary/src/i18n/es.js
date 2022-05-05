@@ -42,6 +42,11 @@ module.exports = {
         unpinnedSuccess: 'Recurso desanclado con éxito',
         url: 'URL (enlace web)',
         checkUrl: 'Comprobar url',
+        wordCounter: {
+          single: 'Palabra',
+          plural: 'Palabras',
+        },
+        preview: 'Vista previa',
       },
       descriptions: {
         featuredImage: 'Sólo si quieres cambiar la imagen destacada por defecto de la página web',

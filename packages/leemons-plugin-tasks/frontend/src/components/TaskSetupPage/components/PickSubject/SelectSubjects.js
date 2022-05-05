@@ -28,11 +28,8 @@ export default function SelectSubjects({
 
   const selects = useMemo(
     () => ({
-      courses: map(program?.courses, ({ name, index, id }) => ({
-        label: `${name ? `${name} (${index}º)` : `${index}º`}`,
-        value: id,
-      })),
       subjects: map(program?.subjects, ({ name, id }) => ({
+        // TODO: Incluir el curso y grupo en el label
         label: name,
         value: id,
       })),
@@ -57,18 +54,6 @@ export default function SelectSubjects({
   const subjectsColumns = useMemo(() => {
     const columns = [];
 
-    if (!isNil(program) && program?.maxNumberOfCourses > 1) {
-      columns.push({
-        Header: labels.course,
-        accessor: 'course',
-        input: {
-          node: <Select data={selects?.courses} placeholder={placeholders?.course} required />,
-          rules: { required: errorMessages?.course?.required },
-        },
-        valueRender: (v) => find(selects?.courses, { value: v })?.label,
-      });
-    }
-
     columns.push({
       Header: labels?.subject,
       accessor: 'subject',
@@ -78,6 +63,7 @@ export default function SelectSubjects({
             data={selects?.subjects}
             placeholder={placeholders?.subject}
             disabled={!selects?.subjects?.length}
+            searchable
             required
           />
         ),
