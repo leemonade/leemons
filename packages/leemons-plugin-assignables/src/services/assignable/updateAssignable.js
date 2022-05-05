@@ -10,6 +10,7 @@ const createAssignable = require('./createAssignable');
 const getAssignable = require('./getAssignable');
 const listAssignableUserAgents = require('./listAssignableUserAgents');
 const getUserPermission = require('./permissions/assignable/users/getUserPermission');
+const publishAssignable = require('./publishAssignable');
 
 const updatableFields = [
   'asset',
@@ -28,7 +29,7 @@ const updatableFields = [
   'metadata',
 ];
 
-module.exports = async function updateAssignable(assignable, { userSession, transacting } = {}) {
+module.exports = async function updateAssignable(assignable, { published: false, userSession, transacting } = {}) {
   const { id, ...assignableObject } = assignable;
 
   // Check if any of the keys are not updatable (use lodash)
@@ -186,6 +187,10 @@ module.exports = async function updateAssignable(assignable, { userSession, tran
     transacting,
   });
 
+  if (published) {
+    await publishAssignable.call(this, id, { userSession, transacting });
+  }
+
   return {
     id,
     ...object,
@@ -193,5 +198,6 @@ module.exports = async function updateAssignable(assignable, { userSession, tran
       ...object.asset,
       id: assetId,
     },
+    published: published,
   };
 };

@@ -8,6 +8,7 @@ const getAssignable = require('./getAssignable');
 const { registerAssignablePermission } = require('./permissions');
 const addPermissionToUser = require('./permissions/assignable/users/addPermissionToUser');
 const saveAsset = require('../leebrary/assets/saveAsset');
+const publishAssignable = require('./publishAssignable');
 
 module.exports = async function createAssignable(
   assignable,
@@ -39,7 +40,6 @@ module.exports = async function createAssignable(
       // ES: Registra una nueva versión de una entidad.
       if (!id) {
         const version = await versionControl.register('assignable', {
-          published,
           transacting,
         });
         id = version.fullId;
@@ -68,7 +68,7 @@ module.exports = async function createAssignable(
         if (!_id) {
           const savedAsset = await saveAsset(
             { ...assignableAsset, category: `assignables.${assignable.role}`, public: true },
-            { published, userSession, transacting }
+            { published: false, userSession, transacting }
           );
 
           asset = savedAsset.id;
@@ -109,6 +109,12 @@ module.exports = async function createAssignable(
         // EN: Save the subjects for the given assignable.
         // ES: Guarda los asignables para la versión dada.
         await saveSubjects(assignableCreated.id, subjects, { transacting });
+
+        // EN: Publish the assignable if needed.
+        // ES: Publica el asignable si es necesario.
+        if (published) {
+          await publishAssignable.call(this, assignableCreated.id, { transacting, userSession });
+        }
 
         return { id: assignableCreated.id, ...assignable };
       } catch (e) {
