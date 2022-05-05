@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { isEmpty, isFunction, toLower, isNil } from 'lodash';
+import { isEmpty, isFunction, isNil, isString, toLower } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
@@ -25,7 +25,7 @@ import {
 } from './LibraryForm.constants';
 import { getUrlMetadataRequest } from '../../request';
 import { AssetListDrawer } from '../AssetListDrawer';
-import { prepareAsset } from '../../helpers/prepareAsset';
+import { prepareAsset, getFileUrl } from '../../helpers/prepareAsset';
 
 // -----------------------------------------------------------------------------
 // HELPERS
@@ -59,6 +59,26 @@ function isNullish(obj) {
 
     return false;
   });
+}
+
+function getCoverUrl(cover) {
+  if (cover?.id) {
+    return getFileUrl(cover.id);
+  }
+
+  if (cover instanceof File) {
+    return URL.createObjectURL(cover);
+  }
+
+  if (isString(cover) && isValidURL(cover)) {
+    return cover;
+  }
+
+  if (isString(cover)) {
+    console.log('A ver qué llega aquí:', cover);
+  }
+
+  return null;
 }
 
 // -----------------------------------------------------------------------------
@@ -96,12 +116,12 @@ const LibraryForm = ({
   // FORM SETUP
 
   const defaultValues = {
-    file: asset.file || null,
-    name: asset.name || '',
-    tagline: asset.tagline || '',
-    description: asset.description || '',
-    color: asset.color || '',
-    cover: asset.cover || null,
+    file: asset?.file || null,
+    name: asset?.name || '',
+    tagline: asset?.tagline || '',
+    description: asset?.description || '',
+    color: asset?.color || '',
+    cover: asset?.cover || null,
   };
 
   const {
@@ -374,7 +394,8 @@ const LibraryForm = ({
                         changeImage: labels.changeImage,
                         uploadButton: labels.uploadButton,
                       }}
-                      previewURL={value}
+                      previewURL={getCoverUrl(value)}
+                      // previewURL={value}
                       {...field}
                     />
                   )}

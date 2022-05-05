@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { permissions, menuItems, category } = require('./config/constants');
+const { permissions, menuItems, category, assignableRoles } = require('./config/constants');
 const addMenuItems = require('./src/services/menu-builder/add');
 const init = require('./init');
 
@@ -32,6 +32,13 @@ async function events(isInstalled) {
         await initMenuBuilder();
       }
     );
+
+    leemons.events.once('plugins.assignables:init-plugin', async () => {
+      const assignablesPlugin = leemons.getPlugin('assignables');
+      await Promise.all(
+        _.map(assignableRoles, (role) => assignablesPlugin.services.assignables.registerRole(role))
+      );
+    });
 
     leemons.events.once(
       [

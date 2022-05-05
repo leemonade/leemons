@@ -1,166 +1,145 @@
 import React from 'react';
 import {
+  Box,
   ContextContainer,
+  InputWrapper,
   PageContainer,
-  Stepper,
-  useDebouncedCallback,
+  ResponsiveBar,
+  Stack,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { map } from 'lodash';
-import DetailConfig from './components/DetailConfig';
-import { getTestRequest, saveTestRequest } from '../../../request';
-import DetailDesign from './components/DetailDesign';
-import DetailQuestionsBanks from './components/DetailQuestionsBanks';
-import DetailQuestions from './components/DetailQuestions';
-import DetailContent from './components/DetailContent';
-import DetailInstructions from './components/DetailInstructions';
+import { addErrorAlert } from '@layout/alert';
+import { PluginTestIcon } from '@bubbles-ui/icons/outline';
+import { forEach, keyBy } from 'lodash';
+import { getTestRequest } from '../../../request';
+import QuestionsTable from './components/QuestionsTable';
+import { questionTypeT } from '../questions-banks/components/QuestionForm';
 
 export default function Detail() {
-  const [t] = useTranslateLoader(prefixPN('testsDetail'));
-  const debounce = useDebouncedCallback(1000);
+  const [t, t1V] = useTranslateLoader(prefixPN('testsDetail'));
+  const [t2, t2V] = useTranslateLoader(prefixPN('questionsBanksDetail'));
 
   // ----------------------------------------------------------------------
   // SETTINGS
   const [store, render] = useStore({
     loading: true,
     isNew: false,
+    currentStep: 0,
   });
 
   const history = useHistory();
   const params = useParams();
 
-  const form = useForm();
-  const formValues = form.watch();
+  function getStats() {
+    const questions = [];
+    const questionsIndex = {};
+    //
+    const categories = [];
+    const categoryIndex = {};
+    const categoriesById = keyBy(store.test.questionBank.categories, 'id');
 
-  async function saveAsDraft() {
-    try {
-      store.saving = 'edit';
-      render();
-      await saveTestRequest({ ...formValues, published: false });
-      addSuccessAlert(t('savedAsDraft'));
-      history.push('/private/tests');
-    } catch (error) {
-      addErrorAlert(error);
-    }
-    store.saving = null;
-    render();
-  }
+    forEach(store.test.questions, (question) => {
+      if (categoryIndex[question.category] === undefined) {
+        categories.push({
+          key: question.category ? categoriesById[question.category].value : t('undefined'),
+          value: 0,
+        });
+        categoryIndex[question.category] = categories.length - 1;
+      }
+      categories[categoryIndex[question.category]].value++;
+      if (questionsIndex[question.type] === undefined) {
+        questions.push({
+          key: t2(questionTypeT[question.type]),
+          value: 0,
+        });
+        questionsIndex[question.type] = questions.length - 1;
+      }
+      questions[questionsIndex[question.type]].value++;
+    });
 
-  async function saveAsPublish() {
-    try {
-      store.saving = 'duplicate';
-      render();
-      await saveTestRequest({ ...formValues, published: true });
-      addSuccessAlert(t('published'));
-      history.push('/private/tests');
-    } catch (error) {
-      addErrorAlert(error);
-    }
-    store.saving = null;
-    render();
+    return { categories, categoriesKeys: ['value'], questions, questionsKeys: ['value'] };
   }
 
   async function init() {
     try {
-      store.isNew = params.id === 'new';
+      const { test } = await getTestRequest(params.id, { withQuestionBank: true });
+      store.test = test;
+      store.stats = getStats();
       render();
-      if (!store.isNew) {
-        const {
-          // eslint-disable-next-line camelcase
-          test: { deleted, deleted_at, created_at, updated_at, ...props },
-        } = await getTestRequest(params.id);
-        form.reset({ ...props, questions: map(props.questions, 'id') });
-      }
     } catch (error) {
+      console.log(error);
       addErrorAlert(error);
     }
   }
 
-  React.useEffect(() => {
-    if (params?.id) init();
-  }, [params]);
-
-  const steps = [
-    {
-      label: t('config'),
-      content: <DetailConfig t={t} form={form} />,
-    },
-  ];
-
-  if (formValues.type) {
-    steps.push({
-      label: t('design'),
-      content: <DetailDesign t={t} form={form} />,
-    });
-  }
-
-  form.register('name', { required: t('nameRequired') });
-  form.register('type', { required: t('typeRequired') });
-  form.register('tagline', { required: t('taglineRequired') });
-  form.register('summary', { required: t('summaryRequired') });
-
-  if (formValues.type === 'learn') {
-    form.register('questionBank', { required: t('questionBankRequired') });
-    form.register('questions', {
-      required: t('questionsRequired'),
-      min: {
-        value: 1,
-        message: t('questionsRequired'),
-      },
-    });
-    form.register('statement', { required: t('statementRequired') });
-    steps.push({
-      label: t('questionsBank'),
-      content: <DetailQuestionsBanks t={t} form={form} />,
-    });
-    steps.push({
-      label: t('questions'),
-      content: <DetailQuestions t={t} form={form} />,
-    });
-    steps.push({
-      label: t('contentLabel'),
-      content: <DetailContent t={t} form={form} />,
-    });
-    steps.push({
-      label: t('instructions'),
-      content: <DetailInstructions t={t} form={form} />,
-    });
+  function goAssignPage() {
+    history.push(`/private/tests/assign/${store.test.id}`);
   }
 
   React.useEffect(() => {
-    const subscription = form.watch(() => {
-      debounce(async () => {
-        store.isValid = await form.trigger();
-        render();
-      });
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+    if (params?.id && t1V && t2V) init();
+  }, [params, t1V, t2V]);
 
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader
         values={{
-          title: store.isNew ? t('pageTitleNew') : t('pageTitle', { name: formValues.name }),
+          title: store.test?.name,
         }}
         buttons={{
-          edit: formValues.name && !formValues.published ? t('saveDraft') : undefined,
-          duplicate: store.isValid ? t('publish') : undefined,
+          edit: t('assign'),
         }}
-        onDuplicate={() => saveAsPublish()}
-        onEdit={() => saveAsDraft()}
-        loading={store.saving}
+        icon={<PluginTestIcon />}
+        variant="teacher"
+        onEdit={() => goAssignPage()}
       />
 
       <PageContainer noFlex>
-        <Stepper data={steps} />
+        <Box sx={(theme) => ({ paddingBottom: theme.spacing[12] })}>
+          {store.stats ? (
+            <Stack fullWidth>
+              <InputWrapper label={t('questionTypes')}>
+                <Box sx={() => ({ height: '400px' })}>
+                  <ResponsiveBar
+                    colors={{ scheme: 'nivo' }}
+                    data={store.stats.questions}
+                    keys={store.stats.questionsKeys}
+                    indexBy="key"
+                    colorBy="indexValue"
+                    margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
+                    padding={0.3}
+                  />
+                </Box>
+              </InputWrapper>
+              <InputWrapper label={t('categories')}>
+                <Box sx={() => ({ height: '400px' })}>
+                  <ResponsiveBar
+                    colors={{ scheme: 'nivo' }}
+                    data={store.stats.categories}
+                    keys={store.stats.categoriesKeys}
+                    indexBy="key"
+                    colorBy="indexValue"
+                    layout="horizontal"
+                    enableGridX={true}
+                    enableGridY={false}
+                    margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
+                    padding={0.3}
+                  />
+                </Box>
+              </InputWrapper>
+            </Stack>
+          ) : null}
+
+          {store.test ? (
+            <InputWrapper label={t('questions')}>
+              <QuestionsTable hideCheckbox questions={store.test?.questions} />
+            </InputWrapper>
+          ) : null}
+        </Box>
       </PageContainer>
     </ContextContainer>
   );

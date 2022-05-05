@@ -126,6 +126,8 @@ const menuItems = [
   },
 ];
 
+const assignableRoles = ['tests'];
+
 module.exports = {
   pluginName: permissionsPrefix,
   permissions: {
@@ -134,4 +136,5 @@ module.exports = {
     bundles: permissionsBundles,
   },
   menuItems,
+  assignableRoles,
 };

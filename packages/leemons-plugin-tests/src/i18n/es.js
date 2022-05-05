@@ -106,7 +106,13 @@ module.exports = {
     published: 'Publicados',
     draft: 'Borradores',
   },
-  testsDetail: {
+  testsEdit: {
+    gradableLabel: 'Evaluable',
+    programLabel: 'Programa',
+    programRequired: 'Campo obligatorio',
+    subjectLabel: 'Asignatura',
+    subjectRequired: 'Campo obligatorio',
+    basic: 'Basico',
     pageTitle: 'Editando test: {name}',
     pageTitleNew: 'Nuevo test',
     saveDraft: 'Guardar borrador',
@@ -171,5 +177,12 @@ module.exports = {
     instructionsForTeacherLabel: 'Instrucciones para el profesor',
     instructionsForStudentLabel: 'Instrucciones para el alumno',
     instructions: 'Instrucciones',
+  },
+  testsDetail: {
+    assign: 'Asignar',
+    undefined: 'Indefinido',
+    questionTypes: 'Tipos de preguntas',
+    categories: 'Categorías',
+    questions: 'Preguntas',
   },
 };

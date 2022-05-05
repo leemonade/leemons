@@ -1,8 +1,70 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const { table } = require('../tables');
+const { getQuestionsBanksDetails } = require('../questions-banks/getQuestionsBanksDetails');
 
-async function getTestsDetails(id, { transacting } = {}) {
+async function getTestsDetails(id, { userSession, withQuestionBank, transacting } = {}) {
+  const { assignables: assignableService } = leemons.getPlugin('assignables').services;
+  const ids = _.isArray(id) ? id : [id];
+
+  const assignables = await Promise.all(
+    _.map(ids, (_id) =>
+      assignableService.getAssignable(_id, {
+        userSession,
+        withFiles: true,
+        transacting,
+      })
+    )
+  );
+
+  const questionBankIds = [];
+  let questionIds = [];
+  _.forEach(assignables, (assignable) => {
+    if (withQuestionBank) {
+      if (assignable?.metadata?.questionBank) {
+        questionBankIds.push(assignable.metadata.questionBank);
+      }
+    }
+    if (assignable?.metadata?.questions) {
+      questionIds = questionIds.concat(assignable.metadata.questions);
+    }
+  });
+
+  const [questions, questionBanks] = await Promise.all([
+    table.questions.find({ id_$in: _.uniq(questionIds) }, { transacting }),
+    getQuestionsBanksDetails(questionBankIds, { userSession, transacting }),
+  ]);
+
+  const questionBankById = _.keyBy(questionBanks, 'id');
+  const questionsById = _.keyBy(questions, 'id');
+
+  return _.map(assignables, (assignable) => ({
+    id: assignable.id,
+    name: assignable.asset.name,
+    description: assignable.asset.description,
+    tagline: assignable.asset.tagline,
+    color: assignable.asset.color,
+    cover: assignable.asset.cover,
+    tags: assignable.asset.tags,
+    program: assignable.program,
+    subjects: _.map(assignable.subjects, 'subject'),
+    statement: assignable.statement,
+    instructionsForTeachers: assignable.instructionsForTeachers,
+    instructionsForStudents: assignable.instructionsForStudents,
+    gradable: assignable.gradable,
+    questionBank: questionBankById[assignable.metadata.questionBank]
+      ? questionBankById[assignable.metadata.questionBank]
+      : assignable.metadata.questionBank,
+    filters: assignable.metadata.filters,
+    questions: _.map(assignable?.metadata?.questions, (questionId) => ({
+      ...questionsById[questionId],
+      properties: JSON.parse(questionsById[questionId].properties),
+    })),
+    type: assignable.metadata.type,
+    levels: assignable.metadata.level,
+  }));
+
+  /*
   const tagsService = leemons.getPlugin('common').services.tags;
   const ids = _.isArray(id) ? id : [id];
   const [tests, questionsTests] = await Promise.all([
@@ -58,6 +120,8 @@ async function getTestsDetails(id, { transacting } = {}) {
       properties: JSON.parse(questionsById[quest.question].properties),
     })),
   }));
+
+   */
 }
 
 module.exports = { getTestsDetails };
