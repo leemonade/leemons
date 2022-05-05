@@ -12,6 +12,7 @@ const ora = require('ora');
 const uuid = require('uuid');
 const withTelemetry = require('leemons-telemetry/withTelemetry');
 const koaBody = require('koa-body')({ multipart: true });
+const fetch = require('node-fetch');
 
 const leemonsUtils = require('leemons-utils');
 const { createDatabaseManager } = require('leemons-database');
@@ -37,8 +38,6 @@ class Leemons {
 
     log.verbose('New leemons');
 
-    const timers = new Map();
-
     // Initialize the reload method (generate a "state" for it)
     this.reload();
 
@@ -46,10 +45,16 @@ class Leemons {
     this.frontRouter = new Router();
     this.backRouter = new Router();
 
+    this.setEvents();
+
     this.initServer();
 
     this.loaded = false;
     this.started = false;
+  }
+
+  setEvents() {
+    const timers = new Map();
 
     const emitCache = [];
     const arrayEvents = {};
@@ -331,7 +336,7 @@ class Leemons {
         }
 
         const { userSession } = ctx.state;
-        if(this.plugins.xapi) {
+        if (this.plugins.xapi) {
           const { services } = this.plugins.xapi;
           await services.statement.add(
             { actor: actor || userSession.id, verb, object, context, pluginName },
@@ -419,9 +424,22 @@ class Leemons {
 
     // Make next.js handle with all non /api requests
     this.frontRouter.get(/(?!^\/api)^\/.*/, async (ctx) => {
-      ctx.req.pipe(request(`http://localhost:3000${ctx.req.url}`)).pipe(ctx.res);
-      // await this.frontHandler(ctx.req, ctx.res);
-      // Stop Koa handling the request
+      try {
+        // EN: Check if the server is ready
+        // ES: Comprobamos si el servidor está listo
+        await fetch(`http://localhost:3000${ctx.req.url}`, {
+          method: 'HEAD',
+        });
+
+        // EN: Redirect to the react server
+        // ES: Redirect to the react server
+        ctx.req.pipe(request(`http://localhost:3000${ctx.req.url}`)).pipe(ctx.res);
+        // Stop Koa handling the request
+      } catch (e) {
+        ctx.res.setHeader('Content-Type', 'text/html');
+        ctx.res.write(`<html><p>The frontend server is not ready yet</p></html>`);
+        ctx.res.end();
+      }
       ctx.respond = false;
     });
   }

@@ -19,9 +19,6 @@ module.exports = {
         notNull: true,
       },
     },
-    program: {
-      type: 'uuid',
-    },
     methodology: {
       type: 'string',
     },

@@ -5,6 +5,7 @@ const { assignables } = require('../tables');
 const getUserPermission = require('./permissions/assignable/users/getUserPermission');
 const leebrary = require('../leebrary/leebrary');
 const searchBySubject = require('../subjects/searchBySubject');
+const searchByProgram = require('../subjects/searchByProgram');
 
 async function asyncFilter(array, f) {
   const results = await Promise.all(array.map(f));
@@ -14,7 +15,7 @@ async function asyncFilter(array, f) {
 
 module.exports = async function searchAssignables(
   role,
-  { published, preferCurrent, search, subjects, sort, ..._query },
+  { published, preferCurrent, search, subjects, program, sort, ..._query },
   { userSession, transacting } = {}
 ) {
   try {
@@ -95,6 +96,12 @@ module.exports = async function searchAssignables(
 
     if (subjects) {
       query.id_$in = await searchBySubject(subjects, { transacting });
+    }
+
+    if (program) {
+      const ids = await searchByProgram(program, { transacting });
+
+      query.id_$in = query.id_$in?.length ? _.intersection(query.id_$in, ids) : ids;
     }
 
     // EN: Get all the assignables matching the query

@@ -10,19 +10,21 @@ module.exports = async function saveSubjects(assignable, subjects, { transacting
     validateSubjects(subjects);
 
     await table.createMany(
-      subjects.map(({ subject, level, curriculum }) => ({
+      subjects.map(({ subject, level, curriculum, program }) => ({
         assignable,
         subject,
         level,
+        program,
         curriculum: JSON.stringify(curriculum),
       })),
       { transacting }
     );
 
-    return subjects.map(({ subject, level, curriculum }) => ({
+    return subjects.map(({ subject, level, curriculum, program }) => ({
       assignable,
       subject,
       level,
+      program,
       curriculum,
     }));
   } catch (e) {

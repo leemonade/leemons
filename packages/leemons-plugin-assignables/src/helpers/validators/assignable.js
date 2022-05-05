@@ -63,11 +63,6 @@ const assignableValidationObject = {
     gradable: {
       type: 'boolean',
     },
-    program: {
-      type: 'string',
-      format: 'uuid',
-      nullable: true,
-    },
     subjects: subjectsValidationObject,
     methodology: {
       type: 'string',
