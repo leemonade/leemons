@@ -139,19 +139,24 @@ export default function ClassDashboard({ session }) {
   }, [id]);
 
   if (store.loading) return null;
+
+  const classImage = getClassImage(store.class);
+  const headerProps = {};
+  if (classImage) {
+    headerProps.blur = 10;
+    headerProps.withBlur = true;
+    headerProps.image = classImage;
+    headerProps.backgroundPosition = 'center';
+  } else {
+    headerProps.withBlur = false;
+    headerProps.withGradient = true;
+    headerProps.color = store.class.color;
+  }
   return (
     <>
       <Box className={styles.leftSide}>
         <Box className={styles.header}>
-          <HeaderBackground
-            withGradient
-            withBlur={!store.class.image}
-            color={store.class.color}
-            image={getClassImage(store.class)}
-            styles={{ position: 'absolute' }}
-            backgroundPosition="center"
-            blur={store.class.image ? 10 : 0}
-          />
+          <HeaderBackground {...headerProps} styles={{ position: 'absolute' }} />
           <Box style={{ position: 'absolute', bottom: 0, left: 0, right: '50%', zIndex: 5 }}>
             <HeaderDropdown value={store.class} data={store.classesSelect} onChange={changeClass} />
           </Box>

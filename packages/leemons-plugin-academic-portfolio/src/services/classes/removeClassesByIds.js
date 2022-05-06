@@ -8,7 +8,7 @@ const { removeByClass: removeTeachersByClass } = require('./teacher/removeByClas
 const { removeByClass: removeCourseByClass } = require('./course/removeByClass');
 const { removeByClass: removeGroupByClass } = require('./group/removeByClass');
 
-async function removeClassesByIds(ids, { soft, transacting: _transacting } = {}) {
+async function removeClassesByIds(ids, { soft, userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       const classes = await classByIds(_.isArray(ids) ? ids : [ids], { transacting });
@@ -19,6 +19,19 @@ async function removeClassesByIds(ids, { soft, transacting: _transacting } = {})
         item_$in: _.map(classes, 'id'),
         type: 'plugins.academic-portfolio.class',
       });
+
+      const assetService = leemons.getPlugin('leebrary').services.assets;
+      await Promise.all(
+        _.map(classes, (classe) =>
+          assetService.remove(
+            { id: classe.image.id },
+            {
+              userSession,
+              transacting,
+            }
+          )
+        )
+      );
 
       await removeKnowledgeByClass(classesIds, { soft, transacting });
       await removeSubstageByClass(classesIds, { soft, transacting });
