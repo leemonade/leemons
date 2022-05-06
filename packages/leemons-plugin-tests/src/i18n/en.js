@@ -107,7 +107,13 @@ module.exports = {
     published: 'Published',
     draft: 'Drafts',
   },
-  testsDetail: {
+  testsEdit: {
+    gradableLabel: 'Gradable',
+    programLabel: 'Program',
+    programRequired: 'Field required',
+    subjectLabel: 'Subject',
+    subjectRequired: 'Field required',
+    basic: 'Basic',
     pageTitle: 'Editing test: {name}',
     pageTitleNew: 'New test',
     saveDraft: 'Save as draft',
@@ -172,5 +178,12 @@ module.exports = {
     instructionsForTeacherLabel: 'Instructions for teacher',
     instructionsForStudentLabel: 'Instructions for student',
     instructions: 'Instructions',
+  },
+  testsDetail: {
+    assign: 'Assign',
+    undefined: 'Undefined',
+    questionTypes: 'Question types',
+    categories: 'Categories',
+    questions: 'Questions',
   },
 };

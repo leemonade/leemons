@@ -25,13 +25,16 @@ const assignableValidationObject = {
             tagline: {
               type: 'string',
               maxLength: 255,
+              nullable: true,
             },
             description: {
               type: 'string',
               maxLength: 16777215,
+              nullable: true,
             },
             tags: {
               type: 'array',
+              nullable: true,
               items: {
                 type: 'string',
                 maxLength: 255,
@@ -39,9 +42,11 @@ const assignableValidationObject = {
             },
             color: {
               type: 'string',
+              nullable: true,
             },
             cover: {
-              type: 'string',
+              type: ['object', 'string'],
+              nullable: true,
             },
           },
         },
@@ -136,6 +141,7 @@ function validateAssignable(assignable, { useRequired = false } = {}) {
 
   const validator = new global.utils.LeemonsValidator(obj);
 
+  console.log(assignable);
   if (!validator.validate(assignable)) {
     throw validator.error;
   }

@@ -7,13 +7,13 @@ import {
   VerticalStepperContainer,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { PluginTestIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { isString } from 'lodash';
 import { getQuestionBankRequest, saveQuestionBankRequest } from '../../../request';
 import DetailQuestions from './components/DetailQuestions';
 import DetailBasic from './components/DetailBasic';
@@ -37,27 +37,9 @@ export default function Detail() {
   const form = useForm();
   const formValues = form.watch();
 
-  form.register('cover', {
-    validate: (cover) => {
-      if (isString(cover)) {
-        return true;
-      }
-      if (cover) {
-        if (cover.id) {
-          if (cover.cover) {
-            return true;
-          }
-        } else {
-          return true;
-        }
-      }
-      return t('coverRequired');
-    },
-  });
-
   async function saveAsDraft() {
     try {
-      store.saving = 'edit';
+      store.saving = 'duplicate';
       render();
       await saveQuestionBankRequest({ ...formValues, published: false });
       addSuccessAlert(t('savedAsDraft'));
@@ -71,12 +53,16 @@ export default function Detail() {
 
   async function saveAsPublish() {
     try {
-      store.saving = 'duplicate';
+      console.log('Antes?');
+      store.saving = 'edit';
       render();
+      console.log('Hola?');
       await saveQuestionBankRequest({ ...formValues, published: true });
+      console.log('Despues?');
       addSuccessAlert(t('published'));
       history.push('/private/tests/questions-banks');
     } catch (error) {
+      console.log(error);
       addErrorAlert(error);
     }
     store.saving = null;
@@ -84,7 +70,6 @@ export default function Detail() {
   }
 
   async function init() {
-    console.log('HOLA');
     try {
       store.isNew = params.id === 'new';
       render();
@@ -93,11 +78,9 @@ export default function Detail() {
           // eslint-disable-next-line camelcase
           questionBank: { deleted, deleted_at, created_at, updated_at, ...props },
         } = await getQuestionBankRequest(params.id);
-        console.log(props);
         form.reset(props);
       }
     } catch (error) {
-      console.log(error);
       addErrorAlert(error);
     }
   }
@@ -137,16 +120,21 @@ export default function Detail() {
       <ContextContainer fullHeight>
         <AdminPageHeader
           values={{
-            title: store.isNew
-              ? t('pageTitleNew', { name: formValues.name || '' })
-              : t('pageTitle', { name: formValues.name || '' }),
+            // eslint-disable-next-line no-nested-ternary
+            title: formValues.name
+              ? formValues.name
+              : store.isNew
+              ? t('pageTitleNew', { name: '' })
+              : t('pageTitle', { name: '' }),
           }}
           buttons={{
-            edit: formValues.name && !formValues.published ? t('saveDraft') : undefined,
-            duplicate: store.isValid ? t('publish') : undefined,
+            duplicate: formValues.name && !formValues.published ? t('saveDraft') : undefined,
+            edit: store.isValid ? t('publish') : undefined,
           }}
-          onDuplicate={() => saveAsPublish()}
-          onEdit={() => saveAsDraft()}
+          icon={<PluginTestIcon />}
+          variant="teacher"
+          onEdit={() => saveAsPublish()}
+          onDuplicate={() => saveAsDraft()}
           loading={store.saving}
         />
 

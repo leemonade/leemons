@@ -112,11 +112,13 @@ module.exports = function main(userSession) {
     // tags: ['tag1', 'tag2'],
     // indexable: true,
     // public: true,
+    published: true,
     role: 'task',
     gradable: true,
-    program: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
+    program: 'qwdqwd',
     subjects: [
       {
+        program: 'asdasd',
         subject: 'bf9f8f8f-8f8f-8f8f-8f8f-8f8f8f8f8f8f',
         level: '1',
         curriculum: {},
@@ -155,6 +157,7 @@ module.exports = function main(userSession) {
     },
     instructionsForTeachers: 'Assign this task to your students',
     instructionsForStudents: 'Plan and do the task',
+    metadata: {},
   };
 
   const taskInstance = {

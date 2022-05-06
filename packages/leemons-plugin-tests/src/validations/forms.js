@@ -98,16 +98,27 @@ const saveTestSchema = {
     name: stringSchema,
     type: stringSchemaNullable,
     tagline: stringSchemaNullable,
-    summary: stringSchemaNullable,
+    color: stringSchemaNullable,
+    cover: {
+      type: ['object', 'string'],
+      nullable: true,
+    },
+    description: stringSchemaNullable,
     tags: {
       type: 'array',
       items: stringSchema,
     },
     level: stringSchemaNullable,
+    gradable: booleanSchema,
     statement: stringSchemaNullable,
-    instructionsForTeacher: stringSchemaNullable,
-    instructionsForStudent: stringSchemaNullable,
+    instructionsForTeachers: stringSchemaNullable,
+    instructionsForStudents: stringSchemaNullable,
     questionBank: stringSchemaNullable,
+    program: stringSchemaNullable,
+    subjects: {
+      type: 'array',
+      items: stringSchema,
+    },
     filters: {
       type: 'object',
       additionalProperties: true,
@@ -128,16 +139,7 @@ const saveTestSchema = {
 function validateSaveTest(data) {
   const schema = _.cloneDeep(saveTestSchema);
   if (data.published) {
-    schema.required = [
-      'name',
-      'type',
-      'tagline',
-      'summary',
-      'level',
-      'questionBank',
-      'questions',
-      'statement',
-    ];
+    schema.required = ['name', 'type', 'questionBank', 'questions', 'statement'];
   }
   const validator = new LeemonsValidator(schema);
 
