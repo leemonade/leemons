@@ -63,6 +63,10 @@ const assignableValidationObject = {
     gradable: {
       type: 'boolean',
     },
+    center: {
+      type: 'string',
+      format: 'uuid',
+    },
     subjects: subjectsValidationObject,
     methodology: {
       type: 'string',
@@ -141,7 +145,6 @@ function validateAssignable(assignable, { useRequired = false } = {}) {
 
   const validator = new global.utils.LeemonsValidator(obj);
 
-  console.log(assignable);
   if (!validator.validate(assignable)) {
     throw validator.error;
   }

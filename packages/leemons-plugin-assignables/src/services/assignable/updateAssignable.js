@@ -78,23 +78,21 @@ module.exports = async function updateAssignable(
 
   let assetId = currentAssignable.asset.id;
 
-  if (diff.includes('asset')) {
-    const asset = await updateAsset(
-      {
-        ..._.defaults(object.asset, currentAssignable.asset),
-        id: currentAssignable.asset.id,
-      },
-      {
-        transacting,
-        userSession,
-        upgrade: true,
-        published: false,
-        scale: 'major',
-      }
-    );
+  const asset = await updateAsset(
+    {
+      ..._.defaults(object.asset, currentAssignable.asset),
+      id: currentAssignable.asset.id,
+    },
+    {
+      transacting,
+      userSession,
+      upgrade: true,
+      published: false,
+      scale: 'major',
+    }
+  );
 
-    assetId = asset.id;
-  }
+  assetId = asset.id;
 
   // EN: Update the version.
   // ES: Actualiza la versión.

@@ -1,12 +1,11 @@
 const assignablesServices = require('../assignables');
 
-const { assignables } = assignablesServices;
-
 module.exports = async function create(
   data,
 
   { transacting, userSession } = {}
 ) {
+  const { assignables } = assignablesServices();
   try {
     const assignableObject = {
       role: 'task',

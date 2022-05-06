@@ -1,4 +1,4 @@
-const assignablesService = require('../assignables');
+const assignablesServices = require('../assignables');
 
 const DEFAULT_COLUMNS = ['id', 'current', 'last', 'name', 'status', 'subjects', 'tags'];
 const TASK_VERSIONING_EXISTING_COLUMNS = ['id', 'name', 'current', 'last'];
@@ -28,7 +28,7 @@ const TASK_VERSIONS_EXISTING_COLUMNS = ['status'];
 const TASK_SUBJECTS_EXISTING_COLUMNS = ['subjects'];
 
 async function getMany(taskIds, { columns, userSession, transacting } = {}) {
-  const { assignables } = assignablesService();
+  const { assignables } = assignablesServices();
   try {
     // EN: Get the requested columns
     // ES: Obtener las columnas solicitadas
