@@ -1,15 +1,24 @@
 const assignablesServices = require('../assignables');
 
-module.exports = async function update(taskId, data, { transacting, userSession } = {}) {
+module.exports = async function update(
+  taskId,
+  { published, role, ...data },
+  { transacting, userSession } = {}
+) {
   const { assignables } = assignablesServices();
   try {
-    return await assignables.updateAssignable(
+    const assignable = await assignables.updateAssignable(
       {
         id: taskId,
         ...data,
       },
       { userSession, transacting }
     );
+    const version = await leemons
+      .getPlugin('common')
+      .services.versionControl.parseId(assignable.id, null, { transacting });
+
+    return { ...assignable, ...version };
 
     // TODO: Update attachments
   } catch (error) {

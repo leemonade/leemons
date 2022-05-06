@@ -405,16 +405,21 @@ const AssetList = ({
   }, [category]);
 
   const showDrawer = useMemo(() => !loading && !isNil(asset) && !isEmpty(asset), [loading, asset]);
-
   const headerOffset = useMemo(() => Math.round(childRect.bottom + childRect.top), [childRect]);
-
+  const isEmbedded = useMemo(() => variant === 'embedded', [variant]);
   const listProps = useMemo(() => {
     const paperProps = { shadow: 'none', padding: 0 };
 
     if (!onlyThumbnails && layout === 'grid') {
       return {
         itemRender: (p) => (
-          <CardWrapper {...p} variant={cardVariant} category={category} published={published} />
+          <CardWrapper
+            {...p}
+            variant={cardVariant}
+            category={category}
+            published={published}
+            isEmbedded={isEmbedded}
+          />
         ),
         itemMinWidth,
         margin: 16,
@@ -434,7 +439,7 @@ const AssetList = ({
     }
 
     return { paperProps };
-  }, [layout, category]);
+  }, [layout, category, isEmbedded]);
 
   const listLayouts = useMemo(
     () => [
@@ -460,8 +465,6 @@ const AssetList = ({
     [asset]
   );
 
-  const isEmbedded = useMemo(() => variant === 'embedded', [variant]);
-
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
@@ -483,8 +486,9 @@ const AssetList = ({
         padding={isEmbedded ? 0 : 5}
         style={
           isEmbedded
-            ? {}
+            ? { flex: 0 }
             : {
+                flex: 0,
                 width: containerRect.width,
                 top: containerRect.top,
                 position: 'fixed',

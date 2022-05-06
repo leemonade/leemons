@@ -1,3 +1,8 @@
+module.exports = {
+  ...leemons.getPlugin('common').services.tags.getControllerFunctions('plugins.tasks'),
+};
+
+/*
 const add = require('../src/services/tags/add');
 const get = require('../src/services/tags/get');
 const has = require('../src/services/tags/has');
@@ -102,3 +107,4 @@ module.exports = {
     }
   },
 };
+*/

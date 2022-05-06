@@ -61,7 +61,32 @@ async function events(isInstalled) {
     leemons.events.once('plugins.assignables:init-plugin', async () => {
       // EN: Register the assignable role
       // ES: Registrar el rol asignable
-      await leemons.getPlugin('assignables').services.assignables.registerRole('task');
+      await leemons.getPlugin('assignables').services.assignables.registerRole('task', {
+        creatable: true,
+        createUrl: '/private/tasks/create',
+        canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
+        menu: {
+          item: {
+            iconSvg: '/public/leebrary-tasks/leebrary-menu-icon.svg',
+            activeIconSvg: '/public/leebrary-tasks/leebrary-menu-icon.svg',
+            label: {
+              en: 'Tasks',
+              es: 'Tareas',
+            },
+          },
+          permissions: [
+            {
+              permissionName: 'plugins.tasks.library',
+              actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+            },
+          ],
+        },
+        frontend: {
+          componentOwner: 'plugins.tasks', // va al modelo de Assignable.Role
+          listCardComponent: 'ListCard', // va al modelo de Leebrary.Category
+          detailComponent: 'Detail', // va al modelo de Leebrary.Category
+        },
+      });
     });
   } else {
     leemons.events.once(`${pluginName}:pluginDidInit`, async () => {

@@ -22,6 +22,16 @@ const getPermissions = (permissionsArr, actions = null) => {
 };
 
 module.exports = [
+  // ························································
+  // Tags
+  ...leemons.getPlugin('common').services.tags.getRoutes('tags', {
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.tasks.library': {
+        actions: ['update', 'create', 'delete', 'admin'],
+      },
+    },
+  }),
   /**
    * Profiles
    */
@@ -86,6 +96,7 @@ module.exports = [
   /**
    * Tags
    */
+  /*
   {
     method: 'POST',
     path: '/tasks/:task/tags',
@@ -116,6 +127,7 @@ module.exports = [
     handler: 'tags.list',
     authenticated: true,
   },
+  */
   /**
    * Attachments
    */

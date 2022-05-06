@@ -42,60 +42,60 @@ module.exports = {
     setup: {
       title: 'Crear nueva tarea',
       editTitle: 'Editar tarea',
+      basicData: {
+        step_label: 'Datos básicos',
+        labels: {
+          name: 'Nombre',
+          tagline: 'Tagline',
+          description: 'Resumen',
+          buttonNext: 'Siguiente',
+        },
+        placeholders: {
+          name: 'Nombre de la tarea',
+          tagline: 'Subtitulo de la task',
+          description: '¿De qué trata esta tarea?',
+        },
+        errorMessages: {
+          name: { required: 'Campo requerido' },
+          tagline: { required: 'Campo requerido' },
+          description: { required: 'Campo requerido' },
+        },
+      },
       configData: {
         step_label: 'Config',
         labels: {
           title: 'Config',
-          tagline: 'Tagline',
-          name: 'Nombre',
           center: 'Centro',
           program: 'Programa',
           course: 'Curso',
           subjects: 'Asignaturas',
           subject: 'Asignatura',
           level: 'Nivel',
-          summary: 'Resumen',
-          tags: 'Etiquetas',
           buttonNext: 'Siguiente',
+          buttonPrev: 'Anterior',
+          preTask: {
+            toggler: 'Añadir una Pre-Tarea',
+            mandatory: 'Obligatoria para empezar la Tarea',
+            condition: 'Condición para empezar la Tarea',
+            conditions: {
+              take: 'Realizar sólo el Test',
+              greater: 'Pasar el Test si el nivel es mayor que',
+            },
+          },
         },
         placeholders: {
-          name: 'Nombre de la tarea',
-          tagline: 'Subtitulo de la task',
           center: 'Seleccionar...',
           program: 'Seleccionar...',
           course: 'Seleccionar...',
           subject: 'Seleccionar...',
           addSubject: 'Añadir materia',
           level: 'Seleccionar...',
-          summary: '¿De qué trata esta tarea?',
-          tags: 'Escribe una etiqueta',
         },
         errorMessages: {
-          tagline: { required: 'Campo requerido' },
           program: { required: 'Campo requerido' },
           course: { required: 'Campo requerido' },
           subject: { required: 'Campo requerido' },
           level: { required: 'Campo requerido' },
-          summary: { required: 'Campo requerido' },
-          tags: { required: 'Campo requerido' },
-        },
-      },
-      designData: {
-        step_label: 'Diseño',
-        labels: {
-          title: 'Diseño',
-          color: 'Color',
-          cover: 'Imagen de portada',
-          buttonNext: 'Siguiente',
-          buttonPrev: 'Anterior',
-        },
-        placeholders: {
-          color: 'Selecciona un color',
-          cover: 'Subir o seleccionar de la Biblioteca',
-        },
-        errorMessages: {
-          color: { required: 'Campo requerido' },
-          cover: { required: 'Campo requerido' },
         },
       },
       contentData: {
@@ -111,6 +111,8 @@ module.exports = {
         errorMessages: {
           methodology: { required: 'Campo requerido' },
           recommendedDuration: { required: 'Campo requerido' },
+          development: { required: 'Campo requerido' },
+          statement: { required: 'Campo requerido' },
         },
       },
       instructionData: {
@@ -196,6 +198,7 @@ module.exports = {
     page_description:
       'En primer lugar, debemos vincular los perfiles del sistema con los perfiles personalizados que has creado en la plataforma. (Por favor, lee atentamente las características de cada perfil. Una vez vinculados los perfiles, no se puede deshacer)',
     save: 'Guardar',
+    loadFromAP: 'Cargar perfiles desde Academic Portfolio',
     profileSaved: 'Perfiles guardados',
     profiles: 'Perfiles',
     teacher: 'Profesor',

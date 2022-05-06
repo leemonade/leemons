@@ -10,12 +10,17 @@ function dynamicImport(pluginName, component) {
   );
 }
 
-const CardDetailWrapper = ({ category, ...props }) => {
+const CardDetailWrapper = ({ category, asset, ...props }) => {
   let Component = LibraryDetail;
 
   if (category?.detailComponent && category?.pluginOwner) {
     try {
-      Component = dynamicImport(category?.pluginOwner, category?.detailComponent);
+      Component = dynamicImport(
+        asset?.original?.providerData?.componentOwner ||
+          asset?.providerData?.componentOwner ||
+          category?.pluginOwner,
+        category?.detailComponent
+      );
     } catch (e) {
       //
     }
@@ -26,6 +31,7 @@ const CardDetailWrapper = ({ category, ...props }) => {
 
 CardDetailWrapper.propTypes = {
   category: PropTypes.any,
+  asset: PropTypes.any,
 };
 
 export { CardDetailWrapper };

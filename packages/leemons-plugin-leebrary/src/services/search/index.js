@@ -1,4 +1,18 @@
-const { compact, uniq, uniqBy, flattenDeep, isEmpty, sortBy, intersection } = require('lodash');
+const {
+  compact,
+  uniq,
+  uniqBy,
+  flattenDeep,
+  isEmpty,
+  sortBy,
+  intersection,
+  groupBy,
+  forEach,
+  find,
+  set,
+  map,
+} = require('lodash');
+const semver = require('semver');
 const { byName: getByName } = require('./byName');
 const { byTagline: getByTagline } = require('./byTagline');
 const { byDescription: getByDescription } = require('./byDescription');
@@ -131,6 +145,59 @@ async function search(
     }
 
     // console.log('-- Después de PERMISSIONS:');
+    // console.log(assets);
+
+    // EN: Filter by published status
+    // ES: Filtrar por estado publicado
+    if (!nothingFound) {
+      const { versionControl } = leemons.getPlugin('common').services;
+      assets = await Promise.all(
+        assets.map((id) => versionControl.getVersion(id, { transacting }))
+      );
+      if (published !== 'all') {
+        assets = assets.filter(({ published: isPublished }) => isPublished === published);
+      }
+
+      // EN: Filter by preferCurrent status
+      // ES: Filtrar por estado preferCurrent
+      const groupedAssets = groupBy(assets, (id) => id.uuid);
+      if (published !== false && preferCurrent) {
+        const assetsUuids = uniq(assets.map((id) => id.uuid));
+
+        const currentVersions = await Promise.all(
+          assetsUuids.map(async (uuid) => {
+            const { current } = await versionControl.getCurrentVersions(uuid, { transacting });
+
+            return { uuid, current: versionControl.stringifyId(uuid, current) };
+          })
+        );
+
+        // EN: Get only the current versions (if not present, return all)
+        // ES: Obtener solo las versiones actuales
+        forEach(groupedAssets, (values, uuid) => {
+          const currentVersion = find(currentVersions, (version) => version.uuid === uuid);
+
+          const current = find(values, (id) => id.fullId === currentVersion.current);
+          if (current) {
+            set(groupedAssets, uuid, [current]);
+          }
+
+          return values;
+        });
+      }
+
+      // EN: Get the latest versions of each uuid
+      // ES: Obtener la última versión de cada uuid
+      assets = map(groupedAssets, (values) => {
+        const versions = map(values, (id) => id.version);
+
+        const latest = semver.maxSatisfying(versions, '*');
+
+        return find(values, (id) => id.version === latest).fullId;
+      });
+    }
+
+    // console.log('-- Después de VERSION CONTROL:');
     // console.log(assets);
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta

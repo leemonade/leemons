@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { isEmpty, isNil, isArray } from 'lodash';
 import { useParams, useHistory } from 'react-router-dom';
-import { Box, PageContainer, ContextContainer, Stack } from '@bubbles-ui/components';
+import { Box, Stack } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -9,6 +9,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useStore, unflatten } from '@common';
 import {
   Setup,
+  BasicData,
   ConfigData,
   DesignData,
   ContentData,
@@ -26,6 +27,7 @@ export default function TaskSetupPage() {
   const [status, setStatus] = useState('published');
   const [store, render] = useStore({
     currentTask: null,
+    taskName: null,
     headerHeight: null,
   });
 
@@ -36,23 +38,26 @@ export default function TaskSetupPage() {
   // ·········································································
   // API CALLS
 
-  const saveTask = async (values, redirectTo = 'library') => {
+  const saveTask = async ({ program, curriculum, ...values }, redirectTo = 'library') => {
     try {
       const body = {
         ...values,
+        // TODO: Esto debe establecerse en el Config
+        gradable: true,
         subjects: values.subjects.map((subject) => ({
           ...subject,
-          curriculum: {
-            objectives: values?.curriculum[subject.subject]?.objectives?.map(
-              ({ objective }) => objective
-            ),
-            contents: values?.curriculum[subject.subject]?.contents?.map(({ content }) => content),
-            assessmentCriteria: values?.curriculum[subject.subject]?.assessmentCriteria?.map(
+          program,
+          curriculum: curriculum && {
+            objectives: curriculum[subject.subject]?.objectives?.map(({ objective }) => objective),
+            contents: curriculum[subject.subject]?.contents?.map(({ content }) => content),
+            assessmentCriteria: curriculum[subject.subject]?.assessmentCriteria?.map(
               ({ assessmentCriteria }) => assessmentCriteria
             ),
           },
         })),
       };
+
+      console.log('body:', body);
 
       let messageKey = 'create_done';
 
@@ -192,7 +197,12 @@ export default function TaskSetupPage() {
   }, [handleOnPublishTask]);
 
   const handleOnHeaderResize = (size) => {
-    store.headerHeight = size?.height;
+    store.headerHeight = size?.height - 1;
+    render();
+  };
+
+  const handleOnNameChange = (name) => {
+    store.taskName = name;
     render();
   };
 
@@ -201,26 +211,32 @@ export default function TaskSetupPage() {
 
   const headerLabels = useMemo(
     () => ({
-      title: isEmpty(store.currentTask) ? t('title') : t('edit_title'),
+      title: isNil(store.taskName) || isEmpty(store.taskName) ? t('title') : store.taskName,
     }),
-    [t, store.currentTask]
+    [t, store.taskName]
   );
 
   const setupProps = useMemo(() => {
     if (!isNil(labels)) {
-      const { configData, designData, contentData, instructionData } = labels;
+      const { basicData, configData, contentData, instructionData } = labels;
 
       return {
         editable: isEmpty(store.currentTask),
         values: store.currentTask || {},
         steps: [
           {
-            label: configData.step_label,
-            content: <ConfigData useObserver={useSaveObserver} {...configData} />,
+            label: basicData.step_label,
+            content: (
+              <BasicData
+                {...basicData}
+                useObserver={useSaveObserver}
+                onNameChange={handleOnNameChange}
+              />
+            ),
           },
           {
-            label: designData.step_label,
-            content: <DesignData useObserver={useSaveObserver} {...designData} />,
+            label: configData.step_label,
+            content: <ConfigData useObserver={useSaveObserver} {...configData} />,
           },
           {
             label: contentData.step_label,

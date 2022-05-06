@@ -1,11 +1,21 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { ContextContainer, PageContainer, Button, Box, Grid, Col } from '@bubbles-ui/components';
+import { forIn } from 'lodash';
+import {
+  ContextContainer,
+  PageContainer,
+  Button,
+  Box,
+  Stack,
+  Grid,
+  Col,
+} from '@bubbles-ui/components';
 import { useForm, Controller } from 'react-hook-form';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { SelectProfile } from '@users/components/SelectProfile';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { getProfilesRequest } from '@academic-portfolio/request';
 import { prefixPN } from '../../../helpers';
 import { getProfiles, setProfiles } from '../../../request/profiles';
 
@@ -51,6 +61,17 @@ export default function ProfilesPage() {
     }
   };
 
+  const loadProfilesFromAP = async () => {
+    try {
+      const { profiles } = await getProfilesRequest();
+      forIn(profiles, (profile, key) => {
+        setValue(key, profile);
+      });
+    } catch (e) {
+      addErrorAlert(e.message);
+    }
+  };
+
   // ·····················································································
   // INIT DATA LOAD
 
@@ -68,47 +89,54 @@ export default function ProfilesPage() {
     <ContextContainer fullHeight>
       <AdminPageHeader values={messages.header} />
       <PageContainer>
-        <Grid>
-          <Col span={5}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <ContextContainer>
-                <Controller
-                  name="teacher"
-                  control={control}
-                  rules={{ required: t('teacherRequired') }}
-                  render={({ field }) => (
-                    <SelectProfile
-                      {...field}
-                      required
-                      error={errors.teacher}
-                      label={t('teacher')}
-                      description={t('teacherDescription')}
-                    />
-                  )}
-                />
-                <Controller
-                  name="student"
-                  control={control}
-                  rules={{ required: t('studentRequired') }}
-                  render={({ field }) => (
-                    <SelectProfile
-                      {...field}
-                      required
-                      error={errors.student}
-                      label={t('student')}
-                      description={t('studentDescription')}
-                    />
-                  )}
-                />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Grid>
+            <Col span={5}>
+              <ContextContainer divided>
+                <ContextContainer>
+                  <Controller
+                    name="teacher"
+                    control={control}
+                    rules={{ required: t('teacherRequired') }}
+                    render={({ field }) => (
+                      <SelectProfile
+                        {...field}
+                        required
+                        error={errors.teacher}
+                        label={t('teacher')}
+                        description={t('teacherDescription')}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="student"
+                    control={control}
+                    rules={{ required: t('studentRequired') }}
+                    render={({ field }) => (
+                      <SelectProfile
+                        {...field}
+                        required
+                        error={errors.student}
+                        label={t('student')}
+                        description={t('studentDescription')}
+                      />
+                    )}
+                  />
+                </ContextContainer>
                 <Box>
-                  <Button type="submit" loading={loading}>
-                    {t('save')}
-                  </Button>
+                  <Stack fullWidth justifyContent="space-between" spacing={5}>
+                    <Button variant="outline" onClick={loadProfilesFromAP}>
+                      {t('loadFromAP')}
+                    </Button>
+                    <Button type="submit" loading={loading}>
+                      {t('save')}
+                    </Button>
+                  </Stack>
                 </Box>
               </ContextContainer>
-            </form>
-          </Col>
-        </Grid>
+            </Col>
+          </Grid>
+        </form>
       </PageContainer>
     </ContextContainer>
   );

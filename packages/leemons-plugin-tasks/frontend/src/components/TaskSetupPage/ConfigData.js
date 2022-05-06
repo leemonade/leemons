@@ -1,19 +1,11 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { isFunction, isEmpty } from 'lodash';
+import { isFunction } from 'lodash';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
-import {
-  Stack,
-  ContextContainer,
-  TextInput,
-  Button,
-  Textarea,
-  Paragraph,
-} from '@bubbles-ui/components';
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
+import { Box, Stack, ContextContainer, Button } from '@bubbles-ui/components';
+import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import SelectProgram from './components/PickSubject/SelectProgram';
 import SelectSubjects from './components/PickSubject/SelectSubjects';
-import TagSelect from './components/Tags/TagSelect';
 import PreTaskSelector from './components/PreTaskSelector/PreTaskSelector';
 
 function ConfigData({
@@ -22,6 +14,7 @@ function ConfigData({
   helps,
   errorMessages,
   onNext,
+  onPrevious,
   sharedData,
   setSharedData,
   editable,
@@ -32,9 +25,11 @@ function ConfigData({
   // FORM
 
   const defaultValues = {
-    ...sharedData,
     subjects: [],
+    ...sharedData,
   };
+
+  console.log('sharedData:', sharedData);
 
   const formData = useForm({ defaultValues });
   const {
@@ -93,42 +88,12 @@ function ConfigData({
       <form onSubmit={handleSubmit(handleOnNext)} autoComplete="off">
         <ContextContainer {...props} pt={20} divided>
           <ContextContainer>
-            {/* Name input */}
-            <Controller
-              control={control}
-              autoComplete="off"
-              name="name"
-              rules={{ required: errorMessages.name?.required }}
-              render={({ field }) => (
-                <TextInput
-                  {...field}
-                  label={labels.name}
-                  placeholder={placeholders.name}
-                  error={errors.name}
-                  required={!isEmpty(errorMessages.name?.required)}
-                />
-              )}
-            />
-            {/* Tagline input */}
-            <Controller
-              control={control}
-              name="tagline"
-              rules={{ required: errorMessages.tagline?.required }}
-              render={({ field }) => (
-                <TextInput
-                  {...field}
-                  label={labels.tagline}
-                  placeholder={placeholders.tagline}
-                  error={errors.tagline}
-                  required={!isEmpty(errorMessages.tagline?.required)}
-                />
-              )}
-            />
             <ContextContainer title={labels?.configTitle}>
               <SelectProgram
                 errorMessages={errorMessages}
                 labels={labels}
                 placeholders={placeholders}
+                required
               />
               <Controller
                 control={control}
@@ -146,39 +111,24 @@ function ConfigData({
                 )}
               />
             </ContextContainer>
-
-            {/* Summary container */}
-            <ContextContainer title={labels.summary}>
-              {/* Summary input */}
-              <Controller
-                control={control}
-                name="summary"
-                rules={{ required: errorMessages.summary?.required }}
-                render={({ field }) => (
-                  <Textarea
-                    {...field}
-                    required
-                    autosize={true}
-                    label={labels.summary}
-                    placeholder={placeholders.summary}
-                    error={errors.summary}
-                    counter="word"
-                    counterLabels={{
-                      single: labels.wordCounter.single,
-                      plural: labels.wordCounter.plural,
-                    }}
-                    showCounter
-                  />
-                )}
-              />
-            </ContextContainer>
-            <TagSelect labels={labels} placeholders={placeholders} />
             <PreTaskSelector labels={labels?.preTask} />
           </ContextContainer>
-          <Stack fullWidth justifyContent="end">
-            <Button type="submit" rightIcon={<ChevRightIcon height={20} width={20} />}>
-              {labels.buttonNext}
-            </Button>
+          <Stack fullWidth justifyContent="space-between">
+            <Box>
+              <Button
+                compact
+                variant="light"
+                leftIcon={<ChevLeftIcon height={20} width={20} />}
+                onClick={onPrevious}
+              >
+                {labels.buttonPrev}
+              </Button>
+            </Box>
+            <Box>
+              <Button type="submit" rightIcon={<ChevRightIcon height={20} width={20} />}>
+                {labels.buttonNext}
+              </Button>
+            </Box>
           </Stack>
         </ContextContainer>
       </form>
@@ -196,6 +146,7 @@ ConfigData.propTypes = {
   setSharedData: PropTypes.func,
   editable: PropTypes.bool,
   onNext: PropTypes.func,
+  onPrevious: PropTypes.func,
   useObserver: PropTypes.func,
 };
 

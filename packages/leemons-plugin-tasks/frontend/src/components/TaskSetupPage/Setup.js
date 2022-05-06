@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isNil } from 'lodash';
-import { Stepper } from '@bubbles-ui/components';
+import { VerticalStepperContainer } from '@bubbles-ui/components';
 
 function Setup({ labels, steps, values, editable, onSave, useObserver, ...props }) {
-  const [sharedData, setSharedData] = useState(values || {});
+  const [sharedData, setSharedData] = useState(values);
   const [active, setActive] = useState(0);
 
   const { subscribe, unsubscribe } = useObserver();
@@ -57,24 +57,26 @@ function Setup({ labels, steps, values, editable, onSave, useObserver, ...props 
   // COMPONENT
 
   return (
-    <Stepper
-      {...props}
-      active={active}
-      data={steps}
-      onNext={handleOnNext}
-      onPrev={handleOnPrev}
-      sharedData={sharedData}
-      setSharedData={setSharedData}
-      editable={editable}
-      orientation="vertical"
-      usePageContainer
-    />
+    <VerticalStepperContainer {...props} currentStep={active} data={steps}>
+      {
+        steps.map((item) =>
+          React.cloneElement(item.content, {
+            ...item.content.props,
+            onNext: handleOnNext,
+            onPrevious: handleOnPrev,
+            setSharedData,
+            sharedData,
+            editable,
+          })
+        )[active]
+      }
+    </VerticalStepperContainer>
   );
 }
 
 Setup.defaultProps = {
   labels: {},
-  values: {},
+  values: { asset: {} },
   editable: true,
 };
 Setup.propTypes = {

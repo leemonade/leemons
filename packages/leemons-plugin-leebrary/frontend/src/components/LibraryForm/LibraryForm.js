@@ -14,6 +14,7 @@ import {
   TextInput,
   useResizeObserver,
   useViewportSize,
+  useDebouncedValue,
 } from '@bubbles-ui/components';
 import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
 import { addErrorAlert } from '@layout/alert';
@@ -102,6 +103,7 @@ const LibraryForm = ({
   onlyImages,
   hideTitle,
   hideSubmit,
+  onChange = () => {},
 }) => {
   const [isImage, setIsImage] = useState(onlyImages);
   const [checking, setChecking] = useState(false);
@@ -134,6 +136,7 @@ const LibraryForm = ({
     formState: { errors },
   } = form || useForm({ defaultValues });
 
+  const formValues = watch();
   const watchCoverFile = watch('cover');
   const assetFile = watch('file');
   const bookmarkUrl = watch('url');
@@ -169,6 +172,8 @@ const LibraryForm = ({
       setIsImage(onlyImages);
     }
   }, [onlyImages, isImage]);
+
+  useEffect(() => onChange(formValues), [formValues]);
 
   // ························································
   // HANDLERS
@@ -251,7 +256,7 @@ const LibraryForm = ({
                 control={control}
                 name="file"
                 shouldUnregister
-                rules={{ required: errorMessages.file || 'Field required' }}
+                rules={{ required: errorMessages.file?.required || 'Field required' }}
                 render={({ field: { ref, value, ...field } }) => (
                   <FileUpload
                     icon={<CloudUploadIcon height={32} width={32} />}
@@ -274,7 +279,7 @@ const LibraryForm = ({
                 name="url"
                 shouldUnregister
                 rules={{
-                  required: errorMessages.url || 'Field required',
+                  required: errorMessages.url?.required || 'Field required',
                   validate: isValidURL,
                 }}
                 render={({ field }) => (
@@ -307,7 +312,7 @@ const LibraryForm = ({
             <Controller
               control={control}
               name="name"
-              rules={{ required: errorMessages.name || 'Field required' }}
+              rules={{ required: errorMessages.name?.required || 'Field required' }}
               render={({ field }) => (
                 <TextInput
                   label={labels.name}
@@ -322,11 +327,17 @@ const LibraryForm = ({
             <Controller
               control={control}
               name="tagline"
+              rules={
+                !isNil(errorMessages?.tagline?.required) && {
+                  required: errorMessages.tagline.required,
+                }
+              }
               render={({ field }) => (
                 <TextInput
                   label={labels.tagline}
                   placeholder={placeholders.tagline}
                   error={errors.tagline}
+                  required={!isNil(errorMessages?.tagline?.required)}
                   {...field}
                 />
               )}
@@ -334,10 +345,23 @@ const LibraryForm = ({
             <Controller
               control={control}
               name="description"
+              rules={
+                !isNil(errorMessages?.description?.required) && {
+                  required: errorMessages.description.required,
+                }
+              }
               render={({ field }) => (
                 <Textarea
                   label={labels.description}
                   placeholder={placeholders.description}
+                  required={!isNil(errorMessages?.description?.required)}
+                  error={errors.description}
+                  counter="word"
+                  counterLabels={{
+                    single: labels?.wordCounter?.single,
+                    plural: labels?.wordCounter?.plural,
+                  }}
+                  showCounter
                   {...field}
                 />
               )}

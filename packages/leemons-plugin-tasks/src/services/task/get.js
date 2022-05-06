@@ -29,6 +29,7 @@ const TASK_SUBJECTS_EXISTING_COLUMNS = ['subjects'];
 
 async function getMany(taskIds, { columns, userSession, transacting } = {}) {
   const { assignables } = assignablesServices();
+
   try {
     // EN: Get the requested columns
     // ES: Obtener las columnas solicitadas
