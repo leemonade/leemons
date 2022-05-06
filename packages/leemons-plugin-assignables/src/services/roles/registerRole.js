@@ -34,7 +34,6 @@ module.exports = async function registerRole(role, { transacting: t } = {}) {
           role: `assignables.${role}`,
           label: { en: role, es: role },
           creatable: false,
-          provider: null,
         },
         { transacting }
       );

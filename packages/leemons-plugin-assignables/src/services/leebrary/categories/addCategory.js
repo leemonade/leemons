@@ -1,7 +1,7 @@
 const leebrary = require('../leebrary');
 
 module.exports = async function addCategory(
-  { role, label, creatable, createUrl, provider },
+  { role, label, creatable, createUrl, provider = 'leebrary-assignables' },
   { transacting }
 ) {
   return leebrary().categories.add(
@@ -10,7 +10,7 @@ module.exports = async function addCategory(
       creatable: creatable && createUrl,
       duplicable: true,
       createUrl,
-      provider: 'leebrary',
+      provider,
       menu: {
         item: {
           iconSvg: '/test',

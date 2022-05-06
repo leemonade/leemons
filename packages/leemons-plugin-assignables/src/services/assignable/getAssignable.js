@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const getRole = require('../roles/getRole');
 const getSubjects = require('../subjects/getSubjects');
 const { assignables } = require('../tables');
@@ -5,8 +6,12 @@ const versionControl = require('../versionControl');
 const getUserPermission = require('./permissions/assignable/users/getUserPermission');
 const getAsset = require('../leebrary/assets/getAsset');
 
-module.exports = async function getAssignable(id, { userSession, withFiles, transacting } = {}) {
+module.exports = async function getAssignable(
+  _id,
+  { userSession, columns = ['asset'], withFiles, transacting } = {}
+) {
   let isPublished = false;
+  let id = _id;
 
   try {
     // TODO: Let the user decide which columns to get
@@ -44,7 +49,12 @@ module.exports = async function getAssignable(id, { userSession, withFiles, tran
 
     // EN: Get the asset data
     // ES: Obtiene los datos del asset
-    assignable.asset = await getAsset(assignable.asset, { userSession, withFiles, transacting });
+    if (columns.includes('asset')) {
+      assignable.asset = _.omit(
+        await getAsset(assignable.asset, { userSession, withFiles, transacting }),
+        ['providerData']
+      );
+    }
 
     // EN: Parse objects.
     // ES: Parsear objetos.
