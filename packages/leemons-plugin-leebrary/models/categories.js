@@ -33,6 +33,7 @@ module.exports = {
         notNull: true,
       },
     },
+    componentOwner: { type: 'string' },
     listCardComponent: { type: 'string' },
     listItemComponent: { type: 'string' },
     detailComponent: { type: 'string' },

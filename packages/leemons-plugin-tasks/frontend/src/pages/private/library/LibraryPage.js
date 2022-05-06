@@ -43,6 +43,10 @@ export default function LibraryPage() {
     history.push('/private/tasks/library/create');
   };
 
+  const handleOnSelectTask = (item) => {
+    history.push(`/private/tasks/library/edit/${item.providerData?.id}`);
+  };
+
   // ·········································································
   // INIT VALUES
 
@@ -80,7 +84,7 @@ export default function LibraryPage() {
                 showPublic
                 variant="embedded"
                 category="assignables.task"
-                onSelectItem={(e) => console.log(e)}
+                onSelectItem={handleOnSelectTask}
               />
             </Box>
           </TabPanel>
@@ -93,7 +97,7 @@ export default function LibraryPage() {
                 showPublic
                 variant="embedded"
                 category="assignables.task"
-                onSelectItem={(e) => console.log(e)}
+                onSelectItem={handleOnSelectTask}
               />
             </Box>
           </TabPanel>

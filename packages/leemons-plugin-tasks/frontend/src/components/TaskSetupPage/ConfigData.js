@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { isFunction } from 'lodash';
+import { isFunction, isArray } from 'lodash';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import { Box, Stack, ContextContainer, Button } from '@bubbles-ui/components';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
@@ -27,9 +27,12 @@ function ConfigData({
   const defaultValues = {
     subjects: [],
     ...sharedData,
+    program:
+      sharedData?.program ||
+      (isArray(sharedData?.subjects) &&
+        sharedData?.subjects.length > 0 &&
+        sharedData?.subjects[0].program),
   };
-
-  console.log('sharedData:', sharedData);
 
   const formData = useForm({ defaultValues });
   const {

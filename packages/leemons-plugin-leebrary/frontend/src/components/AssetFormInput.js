@@ -103,6 +103,7 @@ const AssetFormInput = ({
               item={{ original: form?.watch() }}
               category={category}
               variant={previewVariant}
+              single
             />
           </InputWrapper>
         </Box>

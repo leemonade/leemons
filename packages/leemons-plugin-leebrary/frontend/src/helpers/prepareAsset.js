@@ -21,6 +21,7 @@ function prepareAsset(assetFromApi, isPublished = true) {
   const deleteRoles = ['owner'];
   const shareRoles = ['owner', 'editor'];
   const editRoles = ['owner', 'editor'];
+  const assignRoles = ['owner', 'editor'];
 
   if (isNil(asset.pinneable)) {
     asset.pinneable = isPublished;
@@ -53,6 +54,16 @@ function prepareAsset(assetFromApi, isPublished = true) {
         intersection(item.userAgentIds, userAgents).length > 0
     );
     asset.shareable = canShare;
+  }
+
+  if (isNil(asset.assignable)) {
+    const canAssign = asset.canAccess.some(
+      (item) =>
+        intersection(item.permissions, assignRoles).length > 0 &&
+        intersection(item.userAgentIds, userAgents).length > 0
+    );
+
+    asset.assignable = canAssign;
   }
 
   if (!isEmpty(asset.file)) {

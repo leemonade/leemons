@@ -15,7 +15,7 @@ module.exports = async function addCategory(
   return leebrary().categories.add(
     {
       key: role,
-      creatable: creatable && createUrl,
+      creatable: Boolean(creatable && createUrl),
       duplicable: true,
       createUrl,
       provider,
@@ -30,9 +30,8 @@ module.exports = async function addCategory(
         },
         permissions: [],
       },
-      frontend: {
-        componentOwner: 'plugins.tasks',
-      },
+
+      componentOwner: 'plugins.tasks',
       listCardComponent,
       detailComponent,
     },

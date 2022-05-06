@@ -30,6 +30,7 @@ const CardWrapper = ({
   variant = 'media',
   category,
   isEmbedded,
+  single,
   ...props
 }) => {
   const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
@@ -37,15 +38,11 @@ const CardWrapper = ({
   const { classes } = CardWrapperStyles({ selected });
 
   let Component = LibraryCard;
+  const componentOwner = category?.componentOwner || category?.pluginOwner;
 
-  if (category?.listCardComponent && category?.pluginOwner) {
+  if (category?.listCardComponent && componentOwner) {
     try {
-      Component = dynamicImport(
-        item?.providerData?.componentOwner ||
-          item?.original?.providerData?.componentOwner ||
-          category?.pluginOwner,
-        category?.listCardComponent
-      );
+      Component = dynamicImport(componentOwner, category.listCardComponent);
     } catch (e) {
       //
     }
@@ -59,6 +56,7 @@ const CardWrapper = ({
         variant={variant}
         className={classes.root}
         embedded={isEmbedded}
+        single={single}
       />
     </Box>
   ) : null;
@@ -74,6 +72,7 @@ CardWrapper.propTypes = {
   variant: PropTypes.string,
   category: PropTypes.any,
   isEmbedded: PropTypes.bool,
+  single: PropTypes.bool,
 };
 
 export { CardWrapper };

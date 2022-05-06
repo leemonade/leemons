@@ -24,13 +24,11 @@ const a = {
     ],
   },
 
-  frontend: {
-    // Frontend config
-    // Paths must be realtive to plugin's frontend "src/widgets/leebrary"
-    listCardComponent: 'path/to/my/card-component',
-    detailComponent: 'path/to/my/detail-component',
-    componentOwner: 'plugins.owner',
-  },
+  // Frontend config
+  // Paths must be realtive to plugin's frontend "src/widgets/leebrary"
+  listCardComponent: 'path/to/my/card-component',
+  detailComponent: 'path/to/my/detail-component',
+  componentOwner: 'plugins.owner',
 };
 
 module.exports = async function registerRole(role, { transacting: t, ...data } = {}) {
@@ -58,20 +56,15 @@ module.exports = async function registerRole(role, { transacting: t, ...data } =
 
       // EN: Register role
       // ES: Registrar rol
-      await roles.create(
-        { name: role, plugin: this.calledFrom, componentOwner: frontend?.componentOwner },
-        { transacting }
-      );
+      await roles.create({ name: role, plugin: this.calledFrom }, { transacting });
 
       // EN: Register the leebrary category
       // ES: Registrar la categoría de leebrary
       await addCategory(
         {
+          ...categoryData,
           role: `assignables.${role}`,
           label: { en: role, es: role },
-          ...categoryData,
-          listCardComponent: frontend?.listCardComponent,
-          detailComponent: frontend?.detailComponent,
         },
         { transacting }
       );

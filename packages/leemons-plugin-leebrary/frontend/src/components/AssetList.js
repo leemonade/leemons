@@ -202,6 +202,10 @@ const AssetList = ({
     }
   };
 
+  const reloadAssets = () => {
+    loadAssets(category.id);
+  };
+
   const duplicateAsset = async (id) => {
     setAppLoading(true);
     try {
@@ -209,7 +213,7 @@ const AssetList = ({
       if (response?.asset) {
         setAppLoading(false);
         addSuccessAlert(t('labels.duplicateSuccess'));
-        loadAssets(category.id);
+        reloadAssets();
       }
     } catch (err) {
       setAppLoading(false);
@@ -224,7 +228,7 @@ const AssetList = ({
       setAppLoading(false);
       addSuccessAlert(t('labels.removeSuccess'));
       setAsset(null);
-      loadAssets(category.id);
+      reloadAssets();
     } catch (err) {
       setAppLoading(false);
       addErrorAlert(getErrorMessage(err));
@@ -419,6 +423,7 @@ const AssetList = ({
             category={category}
             published={published}
             isEmbedded={isEmbedded}
+            onRefresh={reloadAssets}
           />
         ),
         itemMinWidth,
@@ -617,6 +622,7 @@ const AssetList = ({
               onShare={handleOnShare}
               onPin={handleOnPin}
               onUnpin={handleOnUnpin}
+              onRefresh={reloadAssets}
             />
           </Box>
         )}

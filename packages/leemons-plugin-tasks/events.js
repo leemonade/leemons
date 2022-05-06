@@ -77,15 +77,14 @@ async function events(isInstalled) {
           permissions: [
             {
               permissionName: 'plugins.tasks.library',
-              actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+              actionNames: ['view', 'admin'],
             },
           ],
         },
-        frontend: {
-          componentOwner: 'plugins.tasks', // va al modelo de Assignable.Role
-          listCardComponent: 'ListCard', // va al modelo de Leebrary.Category
-          detailComponent: 'Detail', // va al modelo de Leebrary.Category
-        },
+
+        componentOwner: 'plugins.tasks',
+        listCardComponent: 'ListCard',
+        detailComponent: 'Detail',
       });
     });
   } else {

@@ -27,6 +27,7 @@ async function add(data, { transacting } = {}) {
         ...categoryData,
         canUse: JSON.stringify(categoryData.canUse),
         pluginOwner: this.calledFrom,
+        componentOwner: categoryData.componentOwner || this.calledFrom,
       },
       { transacting }
     );

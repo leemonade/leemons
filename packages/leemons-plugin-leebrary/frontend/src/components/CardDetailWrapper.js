@@ -6,21 +6,17 @@ import loadable from '@loadable/component';
 
 function dynamicImport(pluginName, component) {
   return loadable(() =>
-    import(`@leemons/plugins/${pluginName}/src/widgets/leebrary/${component}.js`)
+    import(`@leemons/plugins/${pluginName.split('.')[1]}/src/widgets/leebrary/${component}.js`)
   );
 }
 
-const CardDetailWrapper = ({ category, asset, ...props }) => {
+const CardDetailWrapper = ({ category, ...props }) => {
   let Component = LibraryDetail;
+  const componentOwner = category?.componentOwner || category?.pluginOwner;
 
-  if (category?.detailComponent && category?.pluginOwner) {
+  if (category?.detailComponent && componentOwner) {
     try {
-      Component = dynamicImport(
-        asset?.original?.providerData?.componentOwner ||
-          asset?.providerData?.componentOwner ||
-          category?.pluginOwner,
-        category?.detailComponent
-      );
+      Component = dynamicImport(componentOwner, category?.detailComponent);
     } catch (e) {
       //
     }
@@ -31,7 +27,6 @@ const CardDetailWrapper = ({ category, asset, ...props }) => {
 
 CardDetailWrapper.propTypes = {
   category: PropTypes.any,
-  asset: PropTypes.any,
 };
 
 export { CardDetailWrapper };
