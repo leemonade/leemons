@@ -29,6 +29,7 @@ const CardWrapper = ({
   className,
   variant = 'media',
   category,
+  isEmbedded,
   ...props
 }) => {
   const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
@@ -39,7 +40,12 @@ const CardWrapper = ({
 
   if (category?.listCardComponent && category?.pluginOwner) {
     try {
-      Component = dynamicImport(category?.pluginOwner, category?.listCardComponent);
+      Component = dynamicImport(
+        item?.providerData?.componentOwner ||
+          item?.original?.providerData?.componentOwner ||
+          category?.pluginOwner,
+        category?.listCardComponent
+      );
     } catch (e) {
       //
     }
@@ -47,7 +53,13 @@ const CardWrapper = ({
 
   return !isNil(category) && !isEmpty(asset) ? (
     <Box key={key} {...props}>
-      <Component asset={asset} menuItems={menuItems} variant={variant} className={classes.root} />
+      <Component
+        asset={asset}
+        menuItems={menuItems}
+        variant={variant}
+        className={classes.root}
+        embedded={isEmbedded}
+      />
     </Box>
   ) : null;
 };
@@ -61,6 +73,7 @@ CardWrapper.propTypes = {
   onClick: PropTypes.func,
   variant: PropTypes.string,
   category: PropTypes.any,
+  isEmbedded: PropTypes.bool,
 };
 
 export { CardWrapper };

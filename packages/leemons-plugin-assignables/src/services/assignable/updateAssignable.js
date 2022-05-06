@@ -16,7 +16,7 @@ const updatableFields = [
   'asset',
   // role,
   'gradable',
-  'program',
+  'center',
   'subjects',
   'relatedAssignables',
   'methodology',
@@ -36,7 +36,9 @@ module.exports = async function updateAssignable(
   const { id, ...assignableObject } = assignable;
 
   // Check if any of the keys are not updatable (use lodash)
-  if (_.keys(_.omit(assignableObject, updatableFields))?.length) {
+  const omitted = _.omit(assignableObject, updatableFields);
+  console.dir(omitted, { depth: null });
+  if (_.keys(omitted)?.length) {
     throw new Error('Some of the provided keys are not updatable');
   }
 

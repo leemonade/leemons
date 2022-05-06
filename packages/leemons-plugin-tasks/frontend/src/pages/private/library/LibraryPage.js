@@ -1,17 +1,41 @@
 import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
-import { ContextContainer, PageContainer, Tabs, TabPanel } from '@bubbles-ui/components';
+import {
+  ContextContainer,
+  PageContainer,
+  Tabs,
+  TabPanel,
+  Box,
+  createStyles,
+} from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import AssetList from '@leebrary/components/AssetList';
 import { prefixPN } from '../../../helpers';
-import ListTasks from '../../../components/Library/ListTasks';
+
+const LibraryPageStyles = createStyles((theme) => ({
+  pageContainer: {
+    display: 'flex',
+  },
+  tabs: {
+    display: 'flex',
+    flex: 1,
+  },
+  tabPane: {
+    display: 'flex',
+    flex: 1,
+    paddingTop: theme.spacing[5],
+    paddingBottom: theme.spacing[5],
+  },
+}));
 
 export default function LibraryPage() {
   const [t] = useTranslateLoader(prefixPN('library_page'));
   const { t: tCommonHeader } = useCommonTranslate('page_header');
 
   const history = useHistory();
+
   // ·········································································
   // HANDLERS
 
@@ -39,19 +63,39 @@ export default function LibraryPage() {
   // -------------------------------------------------------------------------
   // COMPONENT
 
+  const { classes } = LibraryPageStyles({}, { name: 'LibraryPage' });
+
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader values={headerLabels} buttons={headerButtons} onNew={handleOnNewTask} />
 
-      <PageContainer>
-        <Tabs>
+      <PageContainer className={classes.pageContainer}>
+        <Tabs className={classes.tabs}>
           {/* TRANSLATE: Published tab */}
           <TabPanel label="Published">
-            <ListTasks />
+            <Box className={classes.tabPane}>
+              <AssetList
+                canShowPublicToggle={false}
+                published
+                showPublic
+                variant="embedded"
+                category="assignables.task"
+                onSelectItem={(e) => console.log(e)}
+              />
+            </Box>
           </TabPanel>
           {/* TRANSLATE: Draft tab */}
           <TabPanel label="Draft">
-            <ListTasks draft />
+            <Box className={classes.tabPane}>
+              <AssetList
+                canShowPublicToggle={false}
+                published={false}
+                showPublic
+                variant="embedded"
+                category="assignables.task"
+                onSelectItem={(e) => console.log(e)}
+              />
+            </Box>
           </TabPanel>
         </Tabs>
       </PageContainer>

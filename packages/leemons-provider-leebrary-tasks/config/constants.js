@@ -6,6 +6,7 @@ module.exports = {
     createUrl: '/private/tasks/create',
     duplicable: true,
     provider: 'leebrary-tasks',
+    canUse: ['plugins.tasks', 'plugins.assignables'],
     menu: {
       item: {
         iconSvg: '/public/leebrary-tasks/menu-icon.svg',
