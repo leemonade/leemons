@@ -5,20 +5,14 @@ import { isArray, map } from 'lodash';
 import { useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@dashboard/helpers/prefixPN';
-import {
-  Box,
-  createStyles,
-  ImageLoader,
-  RadioGroup,
-  Select,
-  Stack,
-  TabPanel,
-  Tabs,
-} from '@bubbles-ui/components';
+import { Box, createStyles, RadioGroup, TabPanel, Tabs } from '@bubbles-ui/components';
+import { HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
 import { useHistory, useParams } from 'react-router-dom';
 import { classDetailForDashboardRequest } from '@academic-portfolio/request';
 import { ZoneWidgets } from '@widgets';
 import { getLocalizations } from '@multilanguage/useTranslate';
+import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
+import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 
 const rightZoneWidth = '320px';
 
@@ -39,9 +33,8 @@ const Styles = createStyles((theme) => ({
     paddingTop: theme.spacing[4],
   },
   header: {
-    height: '152px',
-    padding: theme.spacing[1],
-    paddingLeft: theme.spacing[7],
+    position: 'relative',
+    height: 224,
   },
   image: {
     position: 'relative',
@@ -92,14 +85,18 @@ export default function ClassDashboard({ session }) {
     store.programClasses = programClasses;
     store.classesSelect = map(store.programClasses, (programClass) => {
       const courseMultiple = isArray(programClass.courses);
-      const group = classe.groups ? classe.groups.abbreviation : null;
+      const group = programClass.groups ? programClass.groups.abbreviation : null;
       return {
-        value: programClass.id,
-        label: `${programClass.subject.name} ${
+        id: programClass.id,
+        color: programClass.color,
+        image: getClassImage(programClass),
+        icon: getClassIcon(programClass),
+        label: programClass.subject.name,
+        description: `${
           programClass.courses
             ? courseMultiple
-              ? `- ${t('multipleCourses')} - ${programClass.subject.internalId}`
-              : `- ${programClass.courses?.index}${programClass.subject.internalId}`
+              ? `${t('multipleCourses')} - ${programClass.subject.internalId}`
+              : `${programClass.courses?.index}${programClass.subject.internalId}`
             : ''
         } ${group ? `- ${group}` : ''}`,
       };
@@ -113,8 +110,8 @@ export default function ClassDashboard({ session }) {
     }, 4000);
   }
 
-  function changeClass(classId) {
-    history.push(`/private/dashboard/class/${classId}`);
+  function changeClass(classe) {
+    history.push(`/private/dashboard/class/${classe.id}`);
   }
 
   async function onGetZone(zone) {
@@ -142,10 +139,25 @@ export default function ClassDashboard({ session }) {
   }, [id]);
 
   if (store.loading) return null;
-
   return (
     <>
       <Box className={styles.leftSide}>
+        <Box className={styles.header}>
+          <HeaderBackground
+            withGradient
+            withBlur={!store.class.image}
+            color={store.class.color}
+            image={getClassImage(store.class)}
+            styles={{ position: 'absolute' }}
+            backgroundPosition="center"
+            blur={store.class.image ? 10 : 0}
+          />
+          <Box style={{ position: 'absolute', bottom: 0, left: 0, right: '50%', zIndex: 5 }}>
+            <HeaderDropdown value={store.class} data={store.classesSelect} onChange={changeClass} />
+          </Box>
+        </Box>
+
+        {/*
         <Stack alignItems="center" className={styles.header}>
           <Box
             className={styles.image}
@@ -168,6 +180,7 @@ export default function ClassDashboard({ session }) {
             <Select data={store.classesSelect} value={store.class.id} onChange={changeClass} />
           </Box>
         </Stack>
+        */}
 
         <ZoneWidgets zone="plugins.dashboard.class.tabs" onGetZone={onGetZone} container={<Tabs />}>
           {({ Component, key, properties }) => (

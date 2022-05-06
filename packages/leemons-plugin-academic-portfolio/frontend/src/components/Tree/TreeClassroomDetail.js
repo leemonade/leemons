@@ -18,6 +18,7 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
+import ImagePicker from '@leebrary/components/ImagePicker';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import getUserFullName from '@users/helpers/getUserFullName';
 import { ScheduleInput } from '@timetable/components';
@@ -273,6 +274,19 @@ const TreeClassroomDetail = ({
               render={({ field }) => <ColorInput label={messages.colorLabel} {...field} />}
             />
           </Box>
+
+          <Box>
+            <Controller
+              control={control}
+              name="image"
+              render={({ field }) => (
+                <InputWrapper label={messages.imageLabel}>
+                  <ImagePicker {...field} />
+                </InputWrapper>
+              )}
+            />
+          </Box>
+
           <Box>
             <Controller
               control={control}

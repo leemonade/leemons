@@ -418,6 +418,8 @@ module.exports = {
       courseLabel: 'Course:',
       groupLabel: 'Group:',
       substageLabel: 'Substage:',
+      imageLabel: 'Image:',
+      iconLabel: 'Icon:',
       seatsLabel: 'Seats:',
       knowledgeLabel: 'Area:',
       colorLabel: 'Color:',

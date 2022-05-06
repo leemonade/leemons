@@ -1,3 +1,5 @@
+import { isString } from 'lodash';
+
 async function haveClasses() {
   return leemons.api(`academic-portfolio/classes/have`, {
     allAgents: true,
@@ -35,10 +37,34 @@ async function listSessionClasses(body) {
 }
 
 async function createClass(body) {
+  const form = new FormData();
+  if ((body.image && !isString(body.image)) || (body.icon && !isString(body.icon))) {
+    const { image, icon, ...data } = body;
+    if (body.image) {
+      if (body.image.id) {
+        data.image = body.image.cover?.id;
+      } else {
+        form.append('image', body.image, body.image.name);
+      }
+    }
+    if (body.icon) {
+      if (body.icon.id) {
+        data.icon = body.icon.cover?.id;
+      } else {
+        form.append('icon', body.icon, body.icon.name);
+      }
+    }
+    form.append('data', JSON.stringify(data));
+  } else {
+    form.append('data', JSON.stringify(body));
+  }
   return leemons.api('academic-portfolio/class', {
     allAgents: true,
     method: 'POST',
-    body,
+    headers: {
+      'content-type': 'none',
+    },
+    body: form,
   });
 }
 
@@ -51,10 +77,34 @@ async function createClassInstance(body) {
 }
 
 async function updateClass(body) {
+  const form = new FormData();
+  if ((body.image && !isString(body.image)) || (body.icon && !isString(body.icon))) {
+    const { image, icon, ...data } = body;
+    if (body.image) {
+      if (body.image.id) {
+        data.image = body.image.cover?.id;
+      } else {
+        form.append('image', body.image, body.image.name);
+      }
+    }
+    if (body.icon) {
+      if (body.icon.id) {
+        data.icon = body.icon.cover?.id;
+      } else {
+        form.append('icon', body.icon, body.icon.name);
+      }
+    }
+    form.append('data', JSON.stringify(data));
+  } else {
+    form.append('data', JSON.stringify(body));
+  }
   return leemons.api('academic-portfolio/class', {
     allAgents: true,
     method: 'PUT',
-    body,
+    headers: {
+      'content-type': 'none',
+    },
+    body: form,
   });
 }
 

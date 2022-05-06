@@ -1,15 +1,47 @@
+const _ = require('lodash');
 const { table } = require('../tables');
 const { validateAddSubject } = require('../../validations/forms');
 const { setSubjectCredits } = require('./setSubjectCredits');
 const { setSubjectInternalId } = require('./setSubjectInternalId');
 
-async function addSubject(_data, { transacting: _transacting } = {}) {
+async function addSubject(_data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await validateAddSubject(_data, { transacting });
-      const { credits, internalId, ...data } = _data;
+      const { credits, internalId, image, icon, ...data } = _data;
 
-      const subject = await table.subjects.create({ ...data }, { transacting });
+      let subject = await table.subjects.create({ ...data }, { transacting });
+
+      // ES: Añadimos el asset de la imagen
+      const imageData = {
+        indexable: true,
+        public: true, // TODO Cambiar a false despues de hacer la demo
+        name: subject.id,
+      };
+      const iconData = _.clone(imageData);
+      if (image) imageData.cover = image;
+      if (icon) iconData.cover = icon;
+      const assetService = leemons.getPlugin('leebrary').services.assets;
+      const [assetImage, assetIcon] = await Promise.all([
+        assetService.add(imageData, {
+          published: true,
+          userSession,
+          transacting,
+        }),
+        assetService.add(iconData, {
+          published: true,
+          userSession,
+          transacting,
+        }),
+      ]);
+      subject = await table.subjects.update(
+        { id: subject.id },
+        {
+          image: assetImage.id,
+          icon: assetIcon.id,
+        },
+        { transacting }
+      );
 
       // ES: Seteamos los creditos a la asignatura para el programa en el que estamos creando la asignatura
       if (credits) {

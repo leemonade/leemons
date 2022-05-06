@@ -22,14 +22,38 @@ const { changeBySubject } = require('./knowledge/changeBySubject');
 const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubject');
 const { isUsedInSubject } = require('./group/isUsedInSubject');
 
-async function updateClass(data, { transacting: _transacting } = {}) {
+async function updateClass(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await validateUpdateClass(data, { transacting });
-      const { id, course, group, knowledge, substage, teachers, schedule, ...rest } = data;
+      const { id, course, group, knowledge, substage, teachers, schedule, icon, image, ...rest } =
+        data;
       // ES: Actualizamos la clase
-      const nClass = await table.class.update({ id }, rest, { transacting });
+      let nClass = await table.class.update({ id }, rest, { transacting });
 
+      // ES: Añadimos el asset de la imagen
+      const imageData = {
+        indexable: true,
+        public: true, // TODO Cambiar a false despues de hacer la demo
+        name: nClass.id,
+      };
+      if (image) imageData.cover = image;
+      const assetService = leemons.getPlugin('leebrary').services.assets;
+      const assetImage = await assetService.update(
+        { id: nClass.image, ...imageData },
+        {
+          published: true,
+          userSession,
+          transacting,
+        }
+      );
+      nClass = await table.class.update(
+        { id: nClass.id },
+        {
+          image: assetImage.id,
+        },
+        { transacting }
+      );
       const promises = [];
       // ES: Añadimos todas las relaciones de la clase
 

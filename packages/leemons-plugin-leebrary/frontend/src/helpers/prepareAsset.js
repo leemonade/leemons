@@ -4,7 +4,9 @@ import { prepareAssetType } from './prepareAssetType';
 
 function getFileUrl(fileID) {
   const authTokens = getAuthorizationTokenForAllCenters();
-  return `${window.location.origin}/api/leebrary/file/${fileID}?authorization=${authTokens}`;
+  return `${window.location.origin}/api/leebrary/file/${fileID}?authorization=${encodeURIComponent(
+    `${authTokens}`
+  )}`;
 }
 
 function prepareAsset(assetFromApi, isPublished = true) {

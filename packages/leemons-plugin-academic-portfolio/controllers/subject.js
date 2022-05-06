@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const subjectService = require('../src/services/subjects');
 const {
   validatePutSubjectCredits,
@@ -6,13 +7,21 @@ const {
 } = require('../src/validations/forms');
 
 async function postSubject(ctx) {
-  const subject = await subjectService.addSubject(ctx.request.body);
+  const data = JSON.parse(ctx.request.body.data);
+  _.forIn(ctx.request.files, (value, key) => {
+    _.set(data, key, value);
+  });
+  const subject = await subjectService.addSubject(data, { userSession: ctx.state.userSession });
   ctx.status = 200;
   ctx.body = { status: 200, subject };
 }
 
 async function putSubject(ctx) {
-  const subject = await subjectService.updateSubject(ctx.request.body);
+  const data = JSON.parse(ctx.request.body.data);
+  _.forIn(ctx.request.files, (value, key) => {
+    _.set(data, key, value);
+  });
+  const subject = await subjectService.updateSubject(data, { userSession: ctx.state.userSession });
   ctx.status = 200;
   ctx.body = { status: 200, subject };
 }
@@ -73,7 +82,7 @@ async function listSubject(ctx) {
 
 async function subjectByIds(ctx) {
   const { id } = ctx.request.params;
-  const data = await subjectService.subjectByIds([id]);
+  const data = await subjectService.subjectByIds([id], { userSession: ctx.state.userSession });
   ctx.status = 200;
   ctx.body = { status: 200, data: data && data[0] };
 }

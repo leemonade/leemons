@@ -616,6 +616,14 @@ const addSubjectSchema = {
     program: stringSchema,
     credits: numberSchema,
     internalId: stringSchema,
+    image: {
+      type: ['string', 'object'],
+      nullable: true,
+    },
+    icon: {
+      type: ['string', 'object'],
+      nullable: true,
+    },
   },
   required: ['name', 'program', 'internalId'],
   additionalProperties: false,
@@ -663,6 +671,14 @@ const updateSubjectSchema = {
     credits: numberSchema,
     subjectType: stringSchema,
     knowledge: stringSchemaNullable,
+    image: {
+      type: ['string', 'object'],
+      nullable: true,
+    },
+    icon: {
+      type: ['string', 'object'],
+      nullable: true,
+    },
   },
   required: ['id'],
   additionalProperties: false,
@@ -773,7 +789,10 @@ const addClassSchema = {
     subjectType: stringSchema,
     knowledge: stringSchemaNullable,
     color: stringSchema,
-    icon: stringSchema,
+    icon: {
+      type: ['string', 'object'],
+      nullable: true,
+    },
     substage: stringSchema,
     seats: numberSchema,
     classroom: stringSchema,
@@ -790,7 +809,10 @@ const addClassSchema = {
         },
       },
     },
-    image: stringSchema,
+    image: {
+      type: ['string', 'object'],
+      nullable: true,
+    },
     description: stringSchema,
     schedule: {
       type: 'array',
@@ -1008,7 +1030,10 @@ const updateClassSchema = {
     subjectType: stringSchemaNullable,
     knowledge: stringSchemaNullable,
     color: stringSchemaNullable,
-    icon: stringSchemaNullable,
+    icon: {
+      type: ['string', 'object'],
+      nullable: true,
+    },
     substage: stringSchemaNullable,
     seats: integerSchemaNullable,
     classroom: stringSchemaNullable,
@@ -1026,7 +1051,10 @@ const updateClassSchema = {
         },
       },
     },
-    image: stringSchemaNullable,
+    image: {
+      type: ['string', 'object'],
+      nullable: true,
+    },
     description: stringSchemaNullable,
     schedule: {
       type: 'array',

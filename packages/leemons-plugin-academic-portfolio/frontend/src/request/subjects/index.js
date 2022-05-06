@@ -1,3 +1,5 @@
+import { isString } from 'lodash';
+
 async function listSubjects({ page, size, program, course }) {
   return leemons.api(
     `academic-portfolio/subject?page=${page}&size=${size}&program=${program}&course=${course}`,
@@ -9,18 +11,66 @@ async function listSubjects({ page, size, program, course }) {
 }
 
 async function createSubject(body) {
+  const form = new FormData();
+  if ((body.image && !isString(body.image)) || (body.icon && !isString(body.icon))) {
+    const { image, icon, ...data } = body;
+    if (body.image) {
+      if (body.image.id) {
+        data.image = body.image.cover?.id;
+      } else {
+        form.append('image', body.image, body.image.name);
+      }
+    }
+    if (body.icon) {
+      if (body.icon.id) {
+        data.icon = body.icon.cover?.id;
+      } else {
+        form.append('icon', body.icon, body.icon.name);
+      }
+    }
+    form.append('data', JSON.stringify(data));
+  } else {
+    form.append('data', JSON.stringify(body));
+  }
   return leemons.api('academic-portfolio/subject', {
     allAgents: true,
     method: 'POST',
-    body,
+    headers: {
+      'content-type': 'none',
+    },
+    body: form,
   });
 }
 
 async function updateSubject(body) {
+  const form = new FormData();
+  if ((body.image && !isString(body.image)) || (body.icon && !isString(body.icon))) {
+    const { image, icon, ...data } = body;
+    if (body.image) {
+      if (body.image.id) {
+        data.image = body.image.cover?.id;
+      } else {
+        form.append('image', body.image, body.image.name);
+      }
+    }
+    if (body.icon) {
+      if (body.icon.id) {
+        data.icon = body.icon.cover?.id;
+      } else {
+        form.append('icon', body.icon, body.icon.name);
+      }
+    }
+    form.append('data', JSON.stringify(data));
+  } else {
+    form.append('data', JSON.stringify(body));
+  }
   return leemons.api('academic-portfolio/subject', {
     allAgents: true,
     method: 'PUT',
-    body,
+    headers: {
+      'content-type': 'none',
+    },
+    body: form,
   });
 }
 
