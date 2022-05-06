@@ -1,7 +1,15 @@
 const leebrary = require('../leebrary');
 
 module.exports = async function addCategory(
-  { role, label, creatable, createUrl, provider = 'leebrary-assignables' },
+  {
+    role,
+    creatable,
+    createUrl,
+    listCardComponent,
+    detailComponent,
+    menu,
+    provider = 'leebrary-assignables',
+  },
   { transacting }
 ) {
   return leebrary().categories.add(
@@ -11,14 +19,22 @@ module.exports = async function addCategory(
       duplicable: true,
       createUrl,
       provider,
-      menu: {
+      menu: menu || {
         item: {
           iconSvg: '/test',
           activeIconSvg: '/test',
-          label,
+          label: {
+            en: 'tasks',
+            es: 'tareas',
+          },
         },
         permissions: [],
       },
+      frontend: {
+        componentOwner: 'plugins.tasks',
+      },
+      listCardComponent,
+      detailComponent,
     },
     { transacting }
   );

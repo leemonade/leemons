@@ -2,7 +2,40 @@ const addCategory = require('../leebrary/categories/addCategory');
 const { roles } = require('../tables');
 const getRole = require('./getRole');
 
-module.exports = async function registerRole(role, { transacting: t } = {}) {
+const a = {
+  creatable: true,
+  createUrl: '/private/my-plugin/create',
+  // canUse: []
+  // Menu properties
+  menu: {
+    item: {
+      iconSvg: '/public/my-plugin/category-icon.svg',
+      activeIconSvg: '/public/my-plugin/category-icon_active.svg',
+      label: {
+        en: 'My awesome category',
+        es: 'Mi increíble categoría',
+      },
+    },
+    permissions: [
+      {
+        permissionName: 'plugin.my-plugin.my-permission',
+        actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    ],
+  },
+
+  frontend: {
+    // Frontend config
+    // Paths must be realtive to plugin's frontend "src/widgets/leebrary"
+    listCardComponent: 'path/to/my/card-component',
+    detailComponent: 'path/to/my/detail-component',
+    componentOwner: 'plugins.owner',
+  },
+};
+
+module.exports = async function registerRole(role, { transacting: t, ...data } = {}) {
+  const { frontend, ...categoryData } = data;
+
   return global.utils.withTransaction(
     async (transacting) => {
       if (!this.calledFrom) {
@@ -25,7 +58,10 @@ module.exports = async function registerRole(role, { transacting: t } = {}) {
 
       // EN: Register role
       // ES: Registrar rol
-      await roles.create({ name: role, plugin: this.calledFrom }, { transacting });
+      await roles.create(
+        { name: role, plugin: this.calledFrom, componentOwner: frontend?.componentOwner },
+        { transacting }
+      );
 
       // EN: Register the leebrary category
       // ES: Registrar la categoría de leebrary
@@ -33,7 +69,9 @@ module.exports = async function registerRole(role, { transacting: t } = {}) {
         {
           role: `assignables.${role}`,
           label: { en: role, es: role },
-          creatable: false,
+          ...categoryData,
+          listCardComponent: frontend?.listCardComponent,
+          detailComponent: frontend?.detailComponent,
         },
         { transacting }
       );

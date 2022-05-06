@@ -7,5 +7,8 @@ module.exports = {
     plugin: {
       type: 'string',
     },
+    componentOwner: {
+      type: 'string',
+    },
   },
 };
