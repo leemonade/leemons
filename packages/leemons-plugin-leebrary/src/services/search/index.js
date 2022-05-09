@@ -101,8 +101,8 @@ async function search(
       nothingFound = assets.length === 0;
     }
 
-    // console.log('-- Después de CRITERIA:');
-    // console.log(assets);
+    console.log('-- Después de CRITERIA:');
+    console.log(assets);
 
     if (type) {
       assets = await getAssetsByType(type, { assets, transacting });
@@ -142,8 +142,8 @@ async function search(
       nothingFound = assets.length === 0;
     }
 
-    // console.log('-- Después de CATEGORY:');
-    // console.log(assets);
+    console.log('-- Después de CATEGORY:');
+    console.log(assets);
 
     // EN: Only return assets that the user has permission to view
     // ES: Sólo devuelve los recursos que el usuario tiene permiso para ver
@@ -158,8 +158,8 @@ async function search(
       nothingFound = assets.length === 0;
     }
 
-    // console.log('-- Después de PERMISSIONS:');
-    // console.log(assets);
+    console.log('-- Después de PERMISSIONS:');
+    console.log(assets);
 
     // EN: Filter by published status
     // ES: Filtrar por estado publicado
@@ -213,8 +213,8 @@ async function search(
       assets = assetsWithPermissions.filter(({ asset }) => assets.includes(asset));
     }
 
-    // console.log('-- Después de VERSION CONTROL:');
-    // console.log(assets);
+    console.log('-- Después de VERSION CONTROL:');
+    console.log(assets);
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
     // EN: For the case that you need sorting, we need a different logic

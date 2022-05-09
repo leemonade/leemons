@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const { isEmpty, flatten, map, find, compact, uniq, isNil } = require('lodash');
+const { isEmpty, flatten, map, find, compact, uniq, isNil, intersection } = require('lodash');
 const { tables } = require('../tables');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
 const { getUsersByAsset } = require('../permissions/getUsersByAsset');
@@ -153,6 +153,12 @@ async function getByIds(
   // ·········································································
   // FINALLY
 
+  const deleteRoles = ['owner'];
+  const shareRoles = ['owner', 'editor'];
+  const editRoles = ['owner', 'editor'];
+  const assignRoles = ['owner', 'editor'];
+  const userAgents = userSession.userAgents.map(({ id }) => id);
+
   return assets.map((asset, index) => {
     const item = { ...asset };
 
@@ -172,47 +178,29 @@ async function getByIds(
       item.pinned = !isNil(pin?.id);
     }
 
-    /*
-    const deleteRoles = ['owner'];
-    const shareRoles = ['owner', 'editor'];
-    const editRoles = ['owner', 'editor'];
-    const assignRoles = ['owner', 'editor'];
-
-    item.editable = asset.canAccess.some(
-      (item) =>
-        intersection(item.permissions, editRoles).length > 0 &&
-        intersection(item.userAgentIds, userAgents).length > 0
+    item.editable = item.canAccess.some(
+      (permission) =>
+        intersection(permission.permissions, editRoles).length > 0 &&
+        intersection(permission.userAgentIds, userAgents).length > 0
     );
 
-    if (isNil(asset.deleteable)) {
-      const canDelete = asset.canAccess.some(
-        (item) =>
-          intersection(item.permissions, deleteRoles).length > 0 &&
-          intersection(item.userAgentIds, userAgents).length > 0
-      );
+    item.deleteable = item.canAccess.some(
+      (permission) =>
+        intersection(permission.permissions, deleteRoles).length > 0 &&
+        intersection(permission.userAgentIds, userAgents).length > 0
+    );
 
-      asset.deleteable = canDelete;
-    }
+    item.shareable = item.canAccess.some(
+      (permission) =>
+        intersection(permission.permissions, shareRoles).length > 0 &&
+        intersection(permission.userAgentIds, userAgents).length > 0
+    );
 
-    if (isNil(asset.shareable)) {
-      const canShare = asset.canAccess.some(
-        (item) =>
-          intersection(item.permissions, shareRoles).length > 0 &&
-          intersection(item.userAgentIds, userAgents).length > 0
-      );
-      asset.shareable = canShare;
-    }
-
-    if (isNil(asset.assignable)) {
-      const canAssign = asset.canAccess.some(
-        (item) =>
-          intersection(item.permissions, assignRoles).length > 0 &&
-          intersection(item.userAgentIds, userAgents).length > 0
-      );
-
-      asset.assignable = canAssign;
-    }
-    */
+    item.assignable = item.canAccess.some(
+      (permission) =>
+        intersection(permission.permissions, assignRoles).length > 0 &&
+        intersection(permission.userAgentIds, userAgents).length > 0
+    );
 
     return item;
   });

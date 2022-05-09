@@ -117,6 +117,7 @@ const AssetListDrawer = ({
                 <Box
                   sx={(theme) => ({
                     marginTop: theme.spacing[5],
+                    height: '100%',
                   })}
                 >
                   {LibraryList}
@@ -127,6 +128,7 @@ const AssetListDrawer = ({
                   sx={(theme) => ({
                     marginTop: theme.spacing[5],
                     maxWidth: theme.breakpoints.xs,
+                    height: '100%',
                   })}
                 >
                   {category?.key === 'media-files' ? (
