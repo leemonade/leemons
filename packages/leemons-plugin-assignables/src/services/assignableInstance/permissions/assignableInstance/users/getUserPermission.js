@@ -18,6 +18,18 @@ module.exports = async function getUserPermission(
     );
   }
 
+  if (!permissions.length) {
+    // TODO: Return no permissions (for the demo everything is public)
+    return {
+      role: 'viewer',
+      actions: ['view'],
+    };
+    // return {
+    //   role: null,
+    //   actions: [],
+    // };
+  }
+
   return {
     role: getRoleMatchingActions(permissions[0].actionNames),
     actions: permissions[0].actionNames,
