@@ -7,6 +7,7 @@ module.exports = async function addCategory(
     createUrl,
     listCardComponent,
     detailComponent,
+    componentOwner,
     menu,
     provider = 'leebrary-assignables',
   },
@@ -31,7 +32,7 @@ module.exports = async function addCategory(
         permissions: [],
       },
 
-      componentOwner: 'plugins.tasks',
+      componentOwner,
       listCardComponent,
       detailComponent,
     },
