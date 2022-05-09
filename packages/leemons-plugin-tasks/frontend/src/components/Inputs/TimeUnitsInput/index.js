@@ -32,25 +32,9 @@ export default function TimeUnitsInput({ onChange, value: userValue, ...props })
     }
   }, [time]);
 
-  const getMultiplier = (u) => {
-    switch (u) {
-      case 'seconds':
-        return 1000;
-      case 'minutes':
-        return 1000 * 60;
-      case 'hours':
-        return 1000 * 60 * 60;
-      case 'days':
-        return 1000 * 60 * 60 * 24;
-      default:
-        return 1;
-    }
-  };
-
   const handleChange = (v, u) => {
-    if (typeof v !== 'number' || typeof u !== 'string') {
-      return;
-    }
+    const dur = `${v} ${u}`;
+
     if (v !== value) {
       setValue(v);
     }
@@ -59,16 +43,15 @@ export default function TimeUnitsInput({ onChange, value: userValue, ...props })
       setUnits(u);
     }
 
-    const t = v * getMultiplier(u);
-
-    if (time !== t) {
-      setTime(t);
+    if (time !== dur) {
+      setTime(dur);
     }
   };
 
   useEffect(() => {
     if (userValue !== time && userValue !== undefined) {
-      handleChange(userValue / getMultiplier(units), units);
+      const [v, ...u] = userValue.split(' ');
+      handleChange(parseInt(v, 10), u.join(' '));
     }
   }, [userValue]);
 

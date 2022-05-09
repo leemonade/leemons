@@ -96,90 +96,92 @@ function ContentData({
             <Attachments />
             <Controller
               control={control}
-              name="recommendedDuration"
+              name="duration"
               render={({ field }) => (
                 <TimeUnitsInput
                   {...field}
                   label={labels.recommendedDuration}
                   error={errors.recommendedDuration}
-                  min={0}
                 />
               )}
             />
-            {!!subjects?.length && (
-              <InputWrapper label={labels?.curriculum} required>
-                <Tabs>
-                  {subjects?.map((subject, index) => (
-                    <TabPanel key={index} label={subject?.label}>
-                      <ContextContainer>
-                        <InputWrapper label={labels?.content}>
-                          <Controller
-                            control={control}
-                            name="program"
-                            render={({ field: { value: program } }) => (
-                              <Curriculum
-                                program={program}
-                                name={`curriculum.${subject.value}.contents`}
-                                type="content"
-                              />
-                            )}
-                          />
-                        </InputWrapper>
-                        {/* <InputWrapper label={labels?.objectives}>
-                          <Controller
-                            control={control}
-                            name="program"
-                            render={({ field: { value: program } }) => (
-                              <Curriculum
-                                program={program}
-                                name={`curriculum.${subject.value}.objectives`}
-                                type="objective"
-                              />
-                            )}
-                          />
-                        </InputWrapper> */}
-                        <InputWrapper label={labels?.assessmentCriteria}>
-                          <Controller
-                            control={control}
-                            name="program"
-                            render={({ field: { value: program } }) => (
-                              <Curriculum
-                                program={program}
-                                name={`curriculum.${subject.value}.assessmentCriteria`}
-                                type="assessmentCriteria"
-                              />
-                            )}
-                          />
-                        </InputWrapper>
-                        <Objectives
-                          name={`curriculum.${subject.value}.objectives`}
-                          required
-                          label={labels.objectives || ''}
-                          error={errors.objectives}
-                        />
-                      </ContextContainer>
-                      {/* <Contents
-                      name={`curriculum.${subject.subject}.contents`}
-                      required
-                      label={labels.content || ''}
-                      error={errors.content}
-                    />
-                    <Objectives
-                      name={`curriculum.${subject.subject}.objectives`}
-                      required
-                      label={labels.objectives || ''}
-                      error={errors.objectives}
-                    />
-                    <AssessmentCriteria
-                      name={`curriculum.${subject.subject}.assessmentCriteria`}
-                      label={labels.assessmentCriteria || ''}
-                      error={errors.assessmentCriteria}
-                    /> */}
-                    </TabPanel>
-                  ))}
-                </Tabs>
-              </InputWrapper>
-            )}
+
+            {
+              // {!!subjects?.length && (
+              //   <InputWrapper label={labels?.curriculum} required>
+              //     <Tabs>
+              //       {subjects?.map((subject, index) => (
+              //         <TabPanel key={index} label={subject?.label}>
+              //           <ContextContainer>
+              //             <InputWrapper label={labels?.content}>
+              //               <Controller
+              //                 control={control}
+              //                 name="program"
+              //                 render={({ field: { value: program } }) => (
+              //                   <Curriculum
+              //                     program={program}
+              //                     name={`curriculum.${subject.value}.contents`}
+              //                     type="content"
+              //                   />
+              //                 )}
+              //               />
+              //             </InputWrapper>
+              //             {/* <InputWrapper label={labels?.objectives}>
+              //               <Controller
+              //                 control={control}
+              //                 name="program"
+              //                 render={({ field: { value: program } }) => (
+              //                   <Curriculum
+              //                     program={program}
+              //                     name={`curriculum.${subject.value}.objectives`}
+              //                     type="objective"
+              //                   />
+              //                 )}
+              //               />
+              //             </InputWrapper> */}
+              //             <InputWrapper label={labels?.assessmentCriteria}>
+              //               <Controller
+              //                 control={control}
+              //                 name="program"
+              //                 render={({ field: { value: program } }) => (
+              //                   <Curriculum
+              //                     program={program}
+              //                     name={`curriculum.${subject.value}.assessmentCriteria`}
+              //                     type="assessmentCriteria"
+              //                   />
+              //                 )}
+              //               />
+              //             </InputWrapper>
+              //             <Objectives
+              //               name={`curriculum.${subject.value}.objectives`}
+              //               required
+              //               label={labels.objectives || ''}
+              //               error={errors.objectives}
+              //             />
+              //           </ContextContainer>
+              //           {/* <Contents
+              //           name={`curriculum.${subject.subject}.contents`}
+              //           required
+              //           label={labels.content || ''}
+              //           error={errors.content}
+              //         />
+              //         <Objectives
+              //           name={`curriculum.${subject.subject}.objectives`}
+              //           required
+              //           label={labels.objectives || ''}
+              //           error={errors.objectives}
+              //         />
+              //         <AssessmentCriteria
+              //           name={`curriculum.${subject.subject}.assessmentCriteria`}
+              //           label={labels.assessmentCriteria || ''}
+              //           error={errors.assessmentCriteria}
+              //         /> */}
+              //         </TabPanel>
+              //       ))}
+              //     </Tabs>
+              //   </InputWrapper>
+              // )}
+            }
 
             {/* TODO: Make the statement required (Not allowed with TextEditor) */}
             <Controller
