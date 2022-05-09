@@ -67,8 +67,8 @@ async function events(isInstalled) {
         canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
         menu: {
           item: {
-            iconSvg: '/public/leebrary-tasks/leebrary-menu-icon.svg',
-            activeIconSvg: '/public/leebrary-tasks/leebrary-menu-icon.svg',
+            iconSvg: '/public/tasks/leebrary-menu-icon.svg',
+            activeIconSvg: '/public/tasks/leebrary-menu-icon.svg',
             label: {
               en: 'Tasks',
               es: 'Tareas',
