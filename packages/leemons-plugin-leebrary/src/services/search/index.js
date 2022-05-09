@@ -101,8 +101,8 @@ async function search(
       nothingFound = assets.length === 0;
     }
 
-    console.log('-- Después de CRITERIA:');
-    console.log(assets);
+    // console.log('-- Después de CRITERIA:');
+    // console.log(assets);
 
     if (type) {
       assets = await getAssetsByType(type, { assets, transacting });
@@ -142,8 +142,8 @@ async function search(
       nothingFound = assets.length === 0;
     }
 
-    console.log('-- Después de CATEGORY:');
-    console.log(assets);
+    // console.log('-- Después de CATEGORY:');
+    // console.log(assets);
 
     // EN: Only return assets that the user has permission to view
     // ES: Sólo devuelve los recursos que el usuario tiene permiso para ver
@@ -158,8 +158,8 @@ async function search(
       nothingFound = assets.length === 0;
     }
 
-    console.log('-- Después de PERMISSIONS:');
-    console.log(assets);
+    // console.log('-- Después de PERMISSIONS:');
+    // console.log(assets);
 
     // EN: Filter by published status
     // ES: Filtrar por estado publicado
@@ -171,6 +171,9 @@ async function search(
       if (published !== 'all') {
         assets = assets.filter(({ published: isPublished }) => isPublished === published);
       }
+
+      // console.log('-- Después de VERSION CONTROL > published:');
+      // console.log(assets);
 
       // EN: Filter by preferCurrent status
       // ES: Filtrar por estado preferCurrent
@@ -208,13 +211,21 @@ async function search(
 
           return find(values, (id) => id.version === latest).fullId;
         });
+      } else {
+        assets = assets.map(({ fullId }) => fullId);
       }
 
+      // console.log('-- Después de VERSION CONTROL > preferCurrent:');
+      // console.log(assets);
+
       assets = assetsWithPermissions.filter(({ asset }) => assets.includes(asset));
+
+      // console.log('-- Después de VERSION CONTROL > finally:');
+      // console.log(assets);
     }
 
-    console.log('-- Después de VERSION CONTROL:');
-    console.log(assets);
+    // console.log('-- Después de VERSION CONTROL:');
+    // console.log(assets);
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
     // EN: For the case that you need sorting, we need a different logic

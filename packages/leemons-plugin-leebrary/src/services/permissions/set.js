@@ -38,7 +38,7 @@ async function set(
     // EN: Get the assigner and assignee roles
     // ES: Obtener los roles del asignador y del asignado
     const { role: assignerRole } = await getByAsset(assetId, { userSession, transacting });
-    const [assetData] = await getByIds([assetId]);
+    const [assetData] = await getByIds([assetId], { userSession });
 
     if (isPublic) {
       if (assignerRole === 'owner') {
