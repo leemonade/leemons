@@ -114,7 +114,6 @@ function ConfigData({
                 )}
               />
             </ContextContainer>
-            <PreTaskSelector labels={labels?.preTask} />
           </ContextContainer>
           <Stack fullWidth justifyContent="space-between">
             <Box>

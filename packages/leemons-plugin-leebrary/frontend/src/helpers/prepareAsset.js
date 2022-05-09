@@ -1,5 +1,5 @@
-import { capitalize, intersection, isEmpty, isNil } from 'lodash';
-import { getAuthorizationTokenForAllCenters, getCentersWithToken } from '@users/session';
+import { capitalize, isEmpty, isNil } from 'lodash';
+import { getAuthorizationTokenForAllCenters } from '@users/session';
 import { prepareAssetType } from './prepareAssetType';
 
 function getFileUrl(fileID) {
@@ -14,58 +14,12 @@ function prepareAsset(assetFromApi, isPublished = true) {
     return assetFromApi;
   }
 
-  const userAgents = getCentersWithToken().map((item) => item.userAgentId);
   const asset = { ...assetFromApi, original: assetFromApi, prepared: true };
   asset.public = [1, '1', true, 'true'].includes(asset.public);
   asset.canAccess = asset.canAccess || [];
 
-  // TODO: Move all this permission logic to backend
-  const deleteRoles = ['owner'];
-  const shareRoles = ['owner', 'editor'];
-  const editRoles = ['owner', 'editor'];
-  const assignRoles = ['owner', 'editor'];
-
   if (isNil(asset.pinneable)) {
     asset.pinneable = isPublished;
-  }
-
-  if (isNil(asset.editable)) {
-    const canEdit = asset.canAccess.some(
-      (item) =>
-        intersection(item.permissions, editRoles).length > 0 &&
-        intersection(item.userAgentIds, userAgents).length > 0
-    );
-
-    asset.editable = canEdit;
-  }
-
-  if (isNil(asset.deleteable)) {
-    const canDelete = asset.canAccess.some(
-      (item) =>
-        intersection(item.permissions, deleteRoles).length > 0 &&
-        intersection(item.userAgentIds, userAgents).length > 0
-    );
-
-    asset.deleteable = canDelete;
-  }
-
-  if (isNil(asset.shareable)) {
-    const canShare = asset.canAccess.some(
-      (item) =>
-        intersection(item.permissions, shareRoles).length > 0 &&
-        intersection(item.userAgentIds, userAgents).length > 0
-    );
-    asset.shareable = canShare;
-  }
-
-  if (isNil(asset.assignable)) {
-    const canAssign = asset.canAccess.some(
-      (item) =>
-        intersection(item.permissions, assignRoles).length > 0 &&
-        intersection(item.userAgentIds, userAgents).length > 0
-    );
-
-    asset.assignable = canAssign;
   }
 
   if (!isEmpty(asset.file)) {

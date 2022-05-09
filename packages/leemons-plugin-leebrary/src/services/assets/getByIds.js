@@ -1,5 +1,15 @@
 /* eslint-disable no-param-reassign */
-const { isEmpty, flatten, map, find, compact, uniq, isNil } = require('lodash');
+const {
+  isEmpty,
+  flatten,
+  map,
+  find,
+  compact,
+  uniq,
+  isNil,
+  intersection,
+  isArray,
+} = require('lodash');
 const { tables } = require('../tables');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
 const { getUsersByAsset } = require('../permissions/getUsersByAsset');
@@ -153,6 +163,12 @@ async function getByIds(
   // ·········································································
   // FINALLY
 
+  const deleteRoles = ['owner'];
+  const shareRoles = ['owner', 'editor'];
+  const editRoles = ['owner', 'editor'];
+  const assignRoles = ['owner', 'editor'];
+  const userAgents = userSession?.userAgents.map(({ id }) => id) || [];
+
   return assets.map((asset, index) => {
     const item = { ...asset };
 
@@ -170,6 +186,32 @@ async function getByIds(
     if (checkPins) {
       const pin = find(pins, { asset: asset.id });
       item.pinned = !isNil(pin?.id);
+    }
+
+    if (isArray(item.canAccess)) {
+      item.editable = item.canAccess.some(
+        (permission) =>
+          intersection(permission.permissions, editRoles).length > 0 &&
+          intersection(permission.userAgentIds, userAgents).length > 0
+      );
+
+      item.deleteable = item.canAccess.some(
+        (permission) =>
+          intersection(permission.permissions, deleteRoles).length > 0 &&
+          intersection(permission.userAgentIds, userAgents).length > 0
+      );
+
+      item.shareable = item.canAccess.some(
+        (permission) =>
+          intersection(permission.permissions, shareRoles).length > 0 &&
+          intersection(permission.userAgentIds, userAgents).length > 0
+      );
+
+      item.assignable = item.canAccess.some(
+        (permission) =>
+          intersection(permission.permissions, assignRoles).length > 0 &&
+          intersection(permission.userAgentIds, userAgents).length > 0
+      );
     }
 
     return item;
