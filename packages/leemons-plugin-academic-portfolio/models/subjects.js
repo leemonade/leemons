@@ -21,6 +21,12 @@ module.exports = {
         collection: 'plugins_academic-portfolio::groups',
       },
     },
+    image: {
+      type: 'string',
+    },
+    icon: {
+      type: 'string',
+    },
   },
   primaryKey: {
     type: 'uuid',

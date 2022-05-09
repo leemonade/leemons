@@ -17,15 +17,36 @@ const { changeBySubject } = require('./knowledge/changeBySubject');
 const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubject');
 const { isUsedInSubject } = require('./group/isUsedInSubject');
 
-async function addClass(data, { transacting: _transacting } = {}) {
+async function addClass(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await validateAddClass(data, { transacting });
-      const { course, group, knowledge, substage, teachers, schedule, ...rest } = data;
+      const { course, group, knowledge, substage, teachers, schedule, image, icon, ...rest } = data;
       // ES: Creamos la clase
-      const nClass = await table.class.create(rest, { transacting });
-      // ES: Añadimos todas las relaciones de la clase
+      let nClass = await table.class.create(rest, { transacting });
 
+      // ES: Añadimos el asset de la imagen
+      const imageData = {
+        indexable: true,
+        public: true, // TODO Cambiar a false despues de hacer la demo
+        name: nClass.id,
+      };
+      if (image) imageData.cover = image;
+      const assetService = leemons.getPlugin('leebrary').services.assets;
+      const assetImage = await assetService.add(imageData, {
+        published: true,
+        userSession,
+        transacting,
+      });
+      nClass = await table.class.update(
+        { id: nClass.id },
+        {
+          image: assetImage.id,
+        },
+        { transacting }
+      );
+
+      // ES: Añadimos todas las relaciones de la clase
       const promises = [];
 
       if (knowledge) {
@@ -105,6 +126,7 @@ async function addClass(data, { transacting: _transacting } = {}) {
       await Promise.all(promises);
 
       const classe = (await classByIds(nClass.id, { transacting }))[0];
+      // TODO Pasar en class icon: donde sea la url del asset
       await leemons.events.emit('after-add-class', { class: classe, transacting });
       return classe;
     },

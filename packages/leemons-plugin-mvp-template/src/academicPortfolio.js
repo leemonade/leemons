@@ -68,8 +68,10 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
 
     for (let i = 0, len = subjectsKeys.length; i < len; i++) {
       const key = subjectsKeys[i];
-      const { classes, seats, ...subject } = subjects[key];
-      const subjectData = await services.subjects.addSubject(subject);
+      const { classes, seats, creator, ...subject } = subjects[key];
+      const subjectData = await services.subjects.addSubject(subject, {
+        userSession: users[creator],
+      });
       subjects[key] = { ...subjectData };
 
       // ·····················································
@@ -113,7 +115,9 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
 
         // console.dir(classroom, { depth: null });
 
-        classesData.push(await services.classes.addClass(classroom));
+        classesData.push(
+          await services.classes.addClass(classroom, { userSession: users[creator] })
+        );
       }
 
       subjects[key].classes = classesData;

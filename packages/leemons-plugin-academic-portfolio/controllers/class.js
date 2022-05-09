@@ -9,13 +9,21 @@ async function haveClasses(ctx) {
 }
 
 async function postClass(ctx) {
-  const _class = await classService.addClass(ctx.request.body);
+  const data = JSON.parse(ctx.request.body.data);
+  _.forIn(ctx.request.files, (value, key) => {
+    _.set(data, key, value);
+  });
+  const _class = await classService.addClass(data, { userSession: ctx.state.userSession });
   ctx.status = 200;
   ctx.body = { status: 200, class: _class };
 }
 
 async function putClass(ctx) {
-  const _class = await classService.updateClass(ctx.request.body);
+  const data = JSON.parse(ctx.request.body.data);
+  _.forIn(ctx.request.files, (value, key) => {
+    _.set(data, key, value);
+  });
+  const _class = await classService.updateClass(data, { userSession: ctx.state.userSession });
   ctx.status = 200;
   ctx.body = { status: 200, class: _class };
 }

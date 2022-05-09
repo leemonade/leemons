@@ -419,6 +419,8 @@ module.exports = {
       courseLabel: 'Curso:',
       groupLabel: 'Grupo:',
       substageLabel: 'Sub-etapa:',
+      imageLabel: 'Imagen:',
+      iconLabel: 'Icono:',
       seatsLabel: 'Número de asientos:',
       knowledgeLabel: 'Área:',
       colorLabel: 'Color:',

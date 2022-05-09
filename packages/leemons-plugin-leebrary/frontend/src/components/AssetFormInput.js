@@ -65,9 +65,6 @@ const AssetFormInput = ({
     setCategory(find(items, { key: categoryKey }));
   }
 
-  // ························································
-  // EFFECTS
-
   React.useEffect(() => {
     if (categoryKey) loadCategory();
   }, [categoryKey]);

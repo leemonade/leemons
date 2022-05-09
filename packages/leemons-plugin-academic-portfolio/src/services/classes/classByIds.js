@@ -8,8 +8,9 @@ const { getByClass: getTeacherByClass } = require('./teacher/getByClass');
 const { getByClass: getCourseByClass } = require('./course/getByClass');
 const { getByClass: getGroupByClass } = require('./group/getByClass');
 const { programHaveMultiCourses } = require('../programs/programHaveMultiCourses');
+const { subjectByIds } = require('../subjects');
 
-async function classByIds(ids, { noSearchChilds, noSearchParents, transacting } = {}) {
+async function classByIds(ids, { userSession, noSearchChilds, noSearchParents, transacting } = {}) {
   const timetableService = leemons.getPlugin('timetable').services.timetable;
   const [
     classes,
@@ -33,6 +34,15 @@ async function classByIds(ids, { noSearchChilds, noSearchParents, transacting } 
     timetableService.listByClassIds(ids, { transacting }),
   ]);
 
+  const assetService = leemons.getPlugin('leebrary').services.assets;
+  const images = await assetService.getByIds(_.map(classes, 'image'), {
+    withFiles: true,
+    userSession,
+    transacting,
+  });
+
+  const imagesById = _.keyBy(images, 'id');
+
   let haveMultiCourses = false;
   if (classes[0]) {
     haveMultiCourses = await programHaveMultiCourses(classes[0].program, { transacting });
@@ -47,7 +57,7 @@ async function classByIds(ids, { noSearchChilds, noSearchParents, transacting } 
   ] = await Promise.all([
     table.subjectTypes.find({ id_$in: _.map(classes, 'subjectType') }, { transacting }),
     table.knowledges.find({ id_$in: _.map(knowledges, 'knowledge') }, { transacting }),
-    table.subjects.find({ id_$in: _.map(classes, 'subject') }, { transacting }),
+    subjectByIds(_.map(classes, 'subject'), { userSession, transacting }),
     table.groups.find({ id_$in: _.map(substages, 'substage') }, { transacting }),
     table.groups.find({ id_$in: _.map(courses, 'course') }, { transacting }),
     table.groups.find({ id_$in: _.map(groups, 'group') }, { transacting }),
@@ -112,6 +122,7 @@ async function classByIds(ids, { noSearchChilds, noSearchParents, transacting } 
       subjectType: subjectTypesById[subjectType],
       classes: childClassesByClass[id],
       parentClass: parentClassesById[rest.class],
+      image: imagesById[rest.image],
       knowledges: knowledgesByClass[id] ? knowledgesById[knowledgesByClass[id][0].knowledge] : null,
       substages: substagesByClass[id] ? substagesById[substagesByClass[id][0].substage] : null,
       // eslint-disable-next-line no-nested-ternary

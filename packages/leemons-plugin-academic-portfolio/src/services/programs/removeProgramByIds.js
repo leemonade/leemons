@@ -11,7 +11,7 @@ const { removeProgramCentersByProgramIds } = require('./removeProgramCentersByPr
 const { removeProgramConfigsByProgramIds } = require('./removeProgramConfigsByProgramIds');
 const { removeClassesByIds } = require('../classes/removeClassesByIds');
 
-async function removeProgramByIds(ids, { soft, transacting: _transacting } = {}) {
+async function removeProgramByIds(ids, { userSession, soft, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       const [programs, classes] = await Promise.all([
@@ -37,8 +37,8 @@ async function removeProgramByIds(ids, { soft, transacting: _transacting } = {})
       });
       // ES: Eliminamos primero las clases y las asignaturas por que si no la bbdd da error por las claves foraneas
       // EN: First we delete the classes and subjects because if the database gives an error for foreign keys
-      await removeClassesByIds(_.map(classes, 'id'), { soft, transacting });
-      await removeSubjectByIds(_.map(subjects, 'id'), { soft, transacting });
+      await removeClassesByIds(_.map(classes, 'id'), { userSession, soft, transacting });
+      await removeSubjectByIds(_.map(subjects, 'id'), { userSession, soft, transacting });
 
       // ES: Eliminamos el resto de datos
       // EN: Delete the rest of data

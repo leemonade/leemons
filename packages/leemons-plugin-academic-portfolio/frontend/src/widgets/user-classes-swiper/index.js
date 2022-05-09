@@ -8,6 +8,8 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { isArray } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { listSessionClassesRequest } from '../../request';
+import { getClassIcon } from '../../helpers/getClassIcon';
+import { getClassImage } from '../../helpers/getClassImage';
 
 const Styles = createStyles((theme) => ({
   root: {
@@ -25,6 +27,8 @@ const Styles = createStyles((theme) => ({
     height: '48px',
     width: '48px',
     borderRadius: '50%',
+    backgroundPosition: '50% 50%',
+    backgroundSize: 'cover',
     backgroundColor: theme.colors.uiBackground02,
   },
   card: {
@@ -100,6 +104,9 @@ function UserClassesSwiperWidget({ program }) {
             : classe.courses
             ? `${classe.courses.index}º`
             : null;
+          const imageStyle = getClassImage(classe)
+            ? { backgroundImage: `url(${getClassImage(classe)})` }
+            : {};
           return (
             <Stack
               key={classe.id}
@@ -107,19 +114,21 @@ function UserClassesSwiperWidget({ program }) {
               alignItems="center"
               onClick={() => goClassDashboard(classe)}
             >
-              <Box
-                className={styles.imageContainer}
-                style={classe.image ? { backgroundImage: `url("${classe.image}")` } : {}}
-              >
-                <Box className={styles.image} />
+              <Box className={styles.imageContainer}>
+                <Box className={styles.image} style={imageStyle} />
                 {classe.color || classe.icon ? (
                   <Box
                     style={classe.color ? { backgroundColor: classe.color } : {}}
                     className={styles.colorIcon}
                   >
-                    {classe.icon ? (
+                    {getClassIcon(classe) ? (
                       <Box className={styles.icon}>
-                        <ImageLoader src={classe.icon} strokeCurrent fillCurrent />
+                        <ImageLoader
+                          height="12px"
+                          src={getClassIcon(classe)}
+                          strokeCurrent
+                          fillCurrent
+                        />
                       </Box>
                     ) : null}
                   </Box>

@@ -5,12 +5,14 @@ import {
   Box,
   Button,
   ContextContainer,
+  InputWrapper,
   Select,
   TabPanel,
   Tabs,
   TextInput,
   Title,
 } from '@bubbles-ui/components';
+import ImagePicker from '@leebrary/components/ImagePicker';
 import { useStore } from '@common';
 import { forEach, map } from 'lodash';
 import { TreeClassroomDetail } from './TreeClassroomDetail';
@@ -138,6 +140,30 @@ const TreeClassDetail = ({
                 />
               </Box>
             ) : null}
+
+            <Box>
+              <Controller
+                control={control}
+                name="image"
+                render={({ field }) => (
+                  <InputWrapper label={messages.imageLabel}>
+                    <ImagePicker {...field} />
+                  </InputWrapper>
+                )}
+              />
+            </Box>
+
+            <Box>
+              <Controller
+                control={control}
+                name="icon"
+                render={({ field }) => (
+                  <InputWrapper label={messages.iconLabel}>
+                    <ImagePicker {...field} />
+                  </InputWrapper>
+                )}
+              />
+            </Box>
 
             <Box>
               <Button loading={saving} type="submit">

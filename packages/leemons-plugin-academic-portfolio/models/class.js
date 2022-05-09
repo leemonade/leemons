@@ -31,7 +31,7 @@ module.exports = {
     seats: {
       type: 'integer',
     },
-    icon: {
+    image: {
       type: 'string',
     },
     color: {
