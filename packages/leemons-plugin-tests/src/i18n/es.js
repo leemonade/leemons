@@ -188,5 +188,6 @@ module.exports = {
   testsCard: {
     view: 'Ver',
     edit: 'Editar',
+    tests: 'Pruebas',
   },
 };

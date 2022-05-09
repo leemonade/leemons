@@ -55,6 +55,7 @@ const TestsListCard = ({ asset, selected, ...props }) => {
       asset={asset}
       menuItems={menuItems}
       variant="tests"
+      variantTitle={t('tests')}
       className={classes.root}
     />
   );
