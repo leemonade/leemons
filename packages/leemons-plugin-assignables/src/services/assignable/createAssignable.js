@@ -118,6 +118,7 @@ module.exports = async function createAssignable(
 
         return { id: assignableCreated.id, ...assignable };
       } catch (e) {
+        console.log(e);
         throw new Error(`Failed to create assignable: ${e.message}`);
       }
     },
