@@ -41,6 +41,13 @@ async function search(
   let assets = [];
   let nothingFound = false;
 
+  if (pinned) {
+    // eslint-disable-next-line no-param-reassign
+    published = 'all';
+    // eslint-disable-next-line no-param-reassign
+    preferCurrent = false;
+  }
+
   try {
     let categoryId;
     if (category) {
@@ -104,7 +111,7 @@ async function search(
 
     // console.log('-- Después de TYPE:');
     // console.log(assets);
-
+    /*
     if (!nothingFound && !pinned) {
       const { versionControl } = leemons.getPlugin('common').services;
       const assetByStatus = await versionControl.listVersionsOfType(
@@ -121,6 +128,7 @@ async function search(
 
       nothingFound = assets.length === 0;
     }
+    */
 
     // console.log('-- Después de VERSION CONTROL:');
     // console.log(assets);
@@ -139,8 +147,14 @@ async function search(
 
     // EN: Only return assets that the user has permission to view
     // ES: Sólo devuelve los recursos que el usuario tiene permiso para ver
+    let assetsWithPermissions = [];
     if (!nothingFound) {
-      assets = await getPermissions(uniq(assets), { showPublic, userSession, transacting });
+      assetsWithPermissions = await getPermissions(uniq(assets), {
+        showPublic,
+        userSession,
+        transacting,
+      });
+      assets = assetsWithPermissions;
       nothingFound = assets.length === 0;
     }
 
@@ -152,7 +166,7 @@ async function search(
     if (!nothingFound) {
       const { versionControl } = leemons.getPlugin('common').services;
       assets = await Promise.all(
-        assets.map((id) => versionControl.getVersion(id, { transacting }))
+        assets.map(({ asset }) => versionControl.getVersion(asset, { transacting }))
       );
       if (published !== 'all') {
         assets = assets.filter(({ published: isPublished }) => isPublished === published);
@@ -184,17 +198,19 @@ async function search(
 
           return values;
         });
+
+        // EN: Get the latest versions of each uuid
+        // ES: Obtener la última versión de cada uuid
+        assets = map(groupedAssets, (values) => {
+          const versions = map(values, (id) => id.version);
+
+          const latest = semver.maxSatisfying(versions, '*');
+
+          return find(values, (id) => id.version === latest).fullId;
+        });
       }
 
-      // EN: Get the latest versions of each uuid
-      // ES: Obtener la última versión de cada uuid
-      assets = map(groupedAssets, (values) => {
-        const versions = map(values, (id) => id.version);
-
-        const latest = semver.maxSatisfying(versions, '*');
-
-        return find(values, (id) => id.version === latest).fullId;
-      });
+      assets = assetsWithPermissions.filter(({ asset }) => assets.includes(asset));
     }
 
     // console.log('-- Después de VERSION CONTROL:');

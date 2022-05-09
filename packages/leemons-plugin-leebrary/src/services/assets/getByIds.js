@@ -172,6 +172,48 @@ async function getByIds(
       item.pinned = !isNil(pin?.id);
     }
 
+    /*
+    const deleteRoles = ['owner'];
+    const shareRoles = ['owner', 'editor'];
+    const editRoles = ['owner', 'editor'];
+    const assignRoles = ['owner', 'editor'];
+
+    item.editable = asset.canAccess.some(
+      (item) =>
+        intersection(item.permissions, editRoles).length > 0 &&
+        intersection(item.userAgentIds, userAgents).length > 0
+    );
+
+    if (isNil(asset.deleteable)) {
+      const canDelete = asset.canAccess.some(
+        (item) =>
+          intersection(item.permissions, deleteRoles).length > 0 &&
+          intersection(item.userAgentIds, userAgents).length > 0
+      );
+
+      asset.deleteable = canDelete;
+    }
+
+    if (isNil(asset.shareable)) {
+      const canShare = asset.canAccess.some(
+        (item) =>
+          intersection(item.permissions, shareRoles).length > 0 &&
+          intersection(item.userAgentIds, userAgents).length > 0
+      );
+      asset.shareable = canShare;
+    }
+
+    if (isNil(asset.assignable)) {
+      const canAssign = asset.canAccess.some(
+        (item) =>
+          intersection(item.permissions, assignRoles).length > 0 &&
+          intersection(item.userAgentIds, userAgents).length > 0
+      );
+
+      asset.assignable = canAssign;
+    }
+    */
+
     return item;
   });
 }
