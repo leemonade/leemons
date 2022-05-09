@@ -1,5 +1,15 @@
 /* eslint-disable no-param-reassign */
-const { isEmpty, flatten, map, find, compact, uniq, isNil, intersection } = require('lodash');
+const {
+  isEmpty,
+  flatten,
+  map,
+  find,
+  compact,
+  uniq,
+  isNil,
+  intersection,
+  isArray,
+} = require('lodash');
 const { tables } = require('../tables');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
 const { getUsersByAsset } = require('../permissions/getUsersByAsset');
@@ -178,29 +188,31 @@ async function getByIds(
       item.pinned = !isNil(pin?.id);
     }
 
-    item.editable = item.canAccess.some(
-      (permission) =>
-        intersection(permission.permissions, editRoles).length > 0 &&
-        intersection(permission.userAgentIds, userAgents).length > 0
-    );
+    if (isArray(item.canAccess)) {
+      item.editable = item.canAccess.some(
+        (permission) =>
+          intersection(permission.permissions, editRoles).length > 0 &&
+          intersection(permission.userAgentIds, userAgents).length > 0
+      );
 
-    item.deleteable = item.canAccess.some(
-      (permission) =>
-        intersection(permission.permissions, deleteRoles).length > 0 &&
-        intersection(permission.userAgentIds, userAgents).length > 0
-    );
+      item.deleteable = item.canAccess.some(
+        (permission) =>
+          intersection(permission.permissions, deleteRoles).length > 0 &&
+          intersection(permission.userAgentIds, userAgents).length > 0
+      );
 
-    item.shareable = item.canAccess.some(
-      (permission) =>
-        intersection(permission.permissions, shareRoles).length > 0 &&
-        intersection(permission.userAgentIds, userAgents).length > 0
-    );
+      item.shareable = item.canAccess.some(
+        (permission) =>
+          intersection(permission.permissions, shareRoles).length > 0 &&
+          intersection(permission.userAgentIds, userAgents).length > 0
+      );
 
-    item.assignable = item.canAccess.some(
-      (permission) =>
-        intersection(permission.permissions, assignRoles).length > 0 &&
-        intersection(permission.userAgentIds, userAgents).length > 0
-    );
+      item.assignable = item.canAccess.some(
+        (permission) =>
+          intersection(permission.permissions, assignRoles).length > 0 &&
+          intersection(permission.userAgentIds, userAgents).length > 0
+      );
+    }
 
     return item;
   });
