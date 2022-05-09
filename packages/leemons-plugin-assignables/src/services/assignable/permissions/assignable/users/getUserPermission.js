@@ -14,10 +14,15 @@ module.exports = async function getUserPermission(assignable, { userSession, tra
   }
 
   if (!permissions.length) {
+    // TODO: Return no permissions (for the demo everything is public)
     return {
-      role: null,
-      actions: [],
+      role: 'viewer',
+      actions: ['view'],
     };
+    // return {
+    //   role: null,
+    //   actions: [],
+    // };
   }
 
   return {
