@@ -126,7 +126,36 @@ const menuItems = [
   },
 ];
 
-const assignableRoles = ['tests'];
+const assignableRoles = [
+  {
+    role: 'tests',
+    options: {
+      creatable: true,
+      createUrl: '/private/tests/new',
+      canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
+      menu: {
+        item: {
+          iconSvg: '/public/tests/menu-icon.svg',
+          activeIconSvg: '/public/tests/menu-icon.svg',
+          label: {
+            en: 'Tests',
+            es: 'Tests',
+          },
+        },
+        permissions: [
+          {
+            permissionName: permissionNames.tests,
+            actionNames: ['view', 'admin'],
+          },
+        ],
+      },
+
+      componentOwner: 'plugins.tests',
+      listCardComponent: 'TestsListCard',
+      detailComponent: 'TestsDetail',
+    },
+  },
+];
 
 module.exports = {
   pluginName: permissionsPrefix,

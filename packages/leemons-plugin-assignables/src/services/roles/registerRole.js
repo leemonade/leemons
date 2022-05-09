@@ -3,8 +3,6 @@ const { roles } = require('../tables');
 const getRole = require('./getRole');
 
 module.exports = async function registerRole(role, { transacting: t, ...data } = {}) {
-  const { frontend, ...categoryData } = data;
-
   return global.utils.withTransaction(
     async (transacting) => {
       if (!this.calledFrom) {
@@ -33,7 +31,7 @@ module.exports = async function registerRole(role, { transacting: t, ...data } =
       // ES: Registrar la categoría de leebrary
       await addCategory(
         {
-          ...categoryData,
+          ...data,
           role: `assignables.${role}`,
           label: { en: role, es: role },
         },
