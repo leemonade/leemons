@@ -50,14 +50,14 @@ module.exports = async function getAssignable(
     // EN: Get the asset data
     // ES: Obtiene los datos del asset
     if (columns.includes('asset')) {
-      console.log('-- Obteniendo asset');
+      // console.log('-- Obteniendo asset');
       assignable.asset = _.omit(
         await getAsset(assignable.asset, { userSession, withFiles, transacting }),
         ['providerData']
       );
     }
 
-    console.log('assignable.asset:', assignable.asset);
+    // console.log('assignable.asset:', assignable.asset);
 
     // EN: Parse objects.
     // ES: Parsear objetos.

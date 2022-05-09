@@ -77,6 +77,7 @@ const AssetListDrawer = ({
       layout={layout}
       assetType={assetType}
       variant="embedded"
+      paperProps={{ padding: 2 }}
       canChangeLayout={false}
       canSearch
       onSelectItem={onSelect}
@@ -91,6 +92,7 @@ const AssetListDrawer = ({
         shadow="none"
         padding="none"
         fullWidth
+        fullHeight
         style={{ flex: 1, height: '100%' }}
       >
         <Stack
@@ -109,10 +111,12 @@ const AssetListDrawer = ({
           sx={(theme) => ({
             padding: `0 ${theme.spacing[7]}px`,
             marginTop: creatable ? 0 : theme.spacing[4],
+            display: 'flex',
+            flex: 1,
           })}
         >
           {creatable ? (
-            <Tabs>
+            <Tabs fullHeight>
               <TabPanel key="library" label="Library">
                 <Box
                   sx={(theme) => ({

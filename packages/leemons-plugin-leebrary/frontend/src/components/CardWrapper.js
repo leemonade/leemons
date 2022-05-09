@@ -40,8 +40,6 @@ const CardWrapper = ({
   let Component = LibraryCard;
   const componentOwner = category?.componentOwner || category?.pluginOwner;
 
-  console.log(category);
-
   if (category?.listCardComponent && componentOwner) {
     try {
       Component = dynamicImport(componentOwner, category.listCardComponent);

@@ -11,7 +11,6 @@ async function updateQuestion(data, { userSession, published, transacting: _tran
         const question = await table.questions.findOne({ id });
         question.properties = JSON.parse(question.properties);
         if (question.properties.image) {
-          console.log('Antes del update', data.properties.image);
           const asset = await leemons.getPlugin('leebrary').services.assets.update(
             {
               id: question.properties.image,
@@ -24,7 +23,7 @@ async function updateQuestion(data, { userSession, published, transacting: _tran
               transacting,
             }
           );
-          console.log('Despues del udate');
+
           properties.image = asset.id;
         } else {
           const asset = await leemons.getPlugin('leebrary').services.assets.add(

@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  ContextContainer,
-  PageContainer,
-  useDebouncedCallback,
-  VerticalStepperContainer,
-} from '@bubbles-ui/components';
+import { Stack, useDebouncedCallback, VerticalStepperContainer, Box } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
@@ -32,6 +27,7 @@ export default function Edit() {
     loading: true,
     isNew: false,
     currentStep: 0,
+    headerHeight: null,
   });
 
   const history = useHistory();
@@ -117,13 +113,26 @@ export default function Edit() {
     steps.push({ label: t('contentLabel'), status: 'OK' });
     steps.push({ label: t('instructions'), status: 'OK' });
     if (store.currentStep === 2)
-      component = <DetailQuestionsBanks t={t} form={form} onNext={() => setStep(3)} />;
+      component = (
+        <DetailQuestionsBanks
+          t={t}
+          form={form}
+          onNext={() => setStep(3)}
+          onPrev={() => setStep(1)}
+        />
+      );
     if (store.currentStep === 3)
-      component = <DetailQuestions t={t} form={form} onNext={() => setStep(4)} />;
+      component = (
+        <DetailQuestions t={t} form={form} onNext={() => setStep(4)} onPrev={() => setStep(2)} />
+      );
     if (store.currentStep === 4)
-      component = <DetailContent t={t} form={form} onNext={() => setStep(5)} />;
+      component = (
+        <DetailContent t={t} form={form} onNext={() => setStep(5)} onPrev={() => setStep(3)} />
+      );
     if (store.currentStep === 5)
-      component = <DetailInstructions t={t} form={form} onNext={() => setStep(6)} />;
+      component = (
+        <DetailInstructions t={t} form={form} onNext={() => setStep(6)} onPrev={() => setStep(4)} />
+      );
   }
 
   React.useEffect(() => {
@@ -137,8 +146,13 @@ export default function Edit() {
     return () => subscription.unsubscribe();
   }, []);
 
+  const handleOnHeaderResize = (size) => {
+    store.headerHeight = size?.height - 1;
+    render();
+  };
+
   return (
-    <ContextContainer fullHeight>
+    <Stack direction="column" fullHeight>
       <AdminPageHeader
         values={{
           // eslint-disable-next-line no-nested-ternary
@@ -157,15 +171,22 @@ export default function Edit() {
         onEdit={() => saveAsPublish()}
         onDuplicate={() => saveAsDraft()}
         loading={store.saving}
+        onResize={handleOnHeaderResize}
       />
 
-      <PageContainer noFlex>
-        <VerticalStepperContainer currentStep={store.currentStep} data={steps}>
+      <Box>
+        <VerticalStepperContainer
+          stickyAt={store.headerHeight}
+          currentStep={store.currentStep}
+          data={steps}
+        >
           {store.currentStep === 0 && <DetailBasic t={t} form={form} onNext={() => setStep(1)} />}
-          {store.currentStep === 1 && <DetailConfig t={t} form={form} onNext={() => setStep(2)} />}
+          {store.currentStep === 1 && (
+            <DetailConfig t={t} form={form} onNext={() => setStep(2)} onPrev={() => setStep(0)} />
+          )}
           {component}
         </VerticalStepperContainer>
-      </PageContainer>
-    </ContextContainer>
+      </Box>
+    </Stack>
   );
 }

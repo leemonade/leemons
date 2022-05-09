@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  ContextContainer,
-  PageContainer,
-  useDebouncedCallback,
-  VerticalStepperContainer,
-} from '@bubbles-ui/components';
+import { Box, Stack, useDebouncedCallback, VerticalStepperContainer } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { PluginTestIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -29,6 +23,7 @@ export default function Detail() {
     loading: true,
     isNew: false,
     currentStep: 0,
+    headerHeight: null,
   });
 
   const history = useHistory();
@@ -53,12 +48,9 @@ export default function Detail() {
 
   async function saveAsPublish() {
     try {
-      console.log('Antes?');
       store.saving = 'edit';
       render();
-      console.log('Hola?');
       await saveQuestionBankRequest({ ...formValues, published: true });
-      console.log('Despues?');
       addSuccessAlert(t('published'));
       history.push('/private/tests/questions-banks');
     } catch (error) {
@@ -115,9 +107,14 @@ export default function Detail() {
     return () => subscription.unsubscribe();
   }, []);
 
+  const handleOnHeaderResize = (size) => {
+    store.headerHeight = size?.height - 1;
+    render();
+  };
+
   return (
     <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
-      <ContextContainer fullHeight>
+      <Stack direction="column" fullHeight>
         <AdminPageHeader
           values={{
             // eslint-disable-next-line no-nested-ternary
@@ -136,10 +133,12 @@ export default function Detail() {
           onEdit={() => saveAsPublish()}
           onDuplicate={() => saveAsDraft()}
           loading={store.saving}
+          onResize={handleOnHeaderResize}
         />
 
-        <PageContainer noFlex>
+        <Box>
           <VerticalStepperContainer
+            stickyAt={store.headerHeight}
             currentStep={
               store.currentStep === 2 && formValues.questions?.length ? 3 : store.currentStep
             }
@@ -157,8 +156,8 @@ export default function Detail() {
               <DetailQuestions t={t} form={form} />
             ) : null}
           </VerticalStepperContainer>
-        </PageContainer>
-      </ContextContainer>
+        </Box>
+      </Stack>
     </Box>
   );
 }

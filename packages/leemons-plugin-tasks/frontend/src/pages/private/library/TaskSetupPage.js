@@ -11,7 +11,6 @@ import {
   Setup,
   BasicData,
   ConfigData,
-  DesignData,
   ContentData,
   InstructionData,
 } from '../../../components/TaskSetupPage';
@@ -56,8 +55,6 @@ export default function TaskSetupPage() {
           },
         })),
       };
-
-      console.log('body:', body);
 
       let messageKey = 'create_done';
 

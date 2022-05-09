@@ -67,6 +67,7 @@ const AssetList = ({
   published,
   onSearch,
   pinned,
+  paperProps,
   onSelectItem = () => {},
   onEditItem = () => {},
   onTypeChange = () => {},
@@ -412,8 +413,6 @@ const AssetList = ({
   const headerOffset = useMemo(() => Math.round(childRect.bottom + childRect.top), [childRect]);
   const isEmbedded = useMemo(() => variant === 'embedded', [variant]);
   const listProps = useMemo(() => {
-    const paperProps = { shadow: 'none', padding: 0 };
-
     if (!onlyThumbnails && layout === 'grid') {
       return {
         itemRender: (p) => (
@@ -429,7 +428,7 @@ const AssetList = ({
         itemMinWidth,
         margin: 16,
         spacing: 4,
-        paperProps,
+        paperProps: { shadow: 'none', padding: 0},
       };
     }
 
@@ -553,7 +552,7 @@ const AssetList = ({
             paddingLeft: !isEmbedded && theme.spacing[5],
           })}
         >
-          <LoadingOverlay visible={loading} />
+          <LoadingOverlay visible={loading} overlayOpacity={0} />
           {!loading && !pinned && canShowPublicToggle && (
             <Switch label="Show public assets" checked={showPublic} onChange={handleOnShowPublic} />
           )}
@@ -566,6 +565,7 @@ const AssetList = ({
               <PaginatedList
                 {...serverData}
                 {...listProps}
+                paperProps={paperProps}
                 selectable
                 selected={asset}
                 columns={columns}
@@ -648,6 +648,7 @@ AssetList.defaultProps = {
   showPublic: false,
   pinned: false,
   canShowPublicToggle: true,
+  paperProps: { color: 'none', shadow: 'none' }
 };
 AssetList.propTypes = {
   category: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
@@ -674,6 +675,7 @@ AssetList.propTypes = {
   published: PropTypes.bool,
   pinned: PropTypes.bool,
   canShowPublicToggle: PropTypes.bool,
+  paperProps: PropTypes.object,
 };
 
 export { AssetList };

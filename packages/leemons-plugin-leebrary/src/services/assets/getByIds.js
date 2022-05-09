@@ -77,6 +77,7 @@ async function getByIds(
     fileIds.push(...iconFiles);
 
     const files = await tables.files.find({ id_$in: fileIds }, { transacting });
+
     assets = assets.map((asset) => {
       const items = assetsFiles
         .filter((assetFile) => assetFile.asset === asset.id)
