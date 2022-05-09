@@ -1,5 +1,6 @@
 module.exports = {
   classes: 'Classes',
+  programs: 'Programs',
   event: 'Event',
   task: 'Task',
   holidays_vacation: 'Holiday / Vacation',

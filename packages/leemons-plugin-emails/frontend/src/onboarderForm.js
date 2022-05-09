@@ -32,7 +32,6 @@ export default function OnboarderForm() {
         config,
       },
     });
-    console.log(data);
   }
 
   return (

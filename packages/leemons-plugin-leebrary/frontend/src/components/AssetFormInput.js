@@ -66,6 +66,7 @@ const AssetFormInput = ({
   }
 
   React.useEffect(() => {
+    console.log(categoryKey);
     if (categoryKey) loadCategory();
   }, [categoryKey]);
 

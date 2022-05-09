@@ -13,7 +13,9 @@ async function havePrograms(ctx) {
 }
 
 async function postProgram(ctx) {
-  const program = await programService.addProgram(ctx.request.body);
+  const program = await programService.addProgram(ctx.request.body, {
+    userSession: ctx.state.userSession,
+  });
   ctx.status = 200;
   ctx.body = { status: 200, program };
 }

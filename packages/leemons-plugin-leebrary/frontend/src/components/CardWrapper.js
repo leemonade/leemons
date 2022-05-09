@@ -1,5 +1,5 @@
 import React from 'react';
-import { isNil, isEmpty } from 'lodash';
+import { isEmpty, isNil } from 'lodash';
 import PropTypes from 'prop-types';
 import { Box, createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
@@ -39,6 +39,8 @@ const CardWrapper = ({
 
   let Component = LibraryCard;
   const componentOwner = category?.componentOwner || category?.pluginOwner;
+
+  console.log(category);
 
   if (category?.listCardComponent && componentOwner) {
     try {

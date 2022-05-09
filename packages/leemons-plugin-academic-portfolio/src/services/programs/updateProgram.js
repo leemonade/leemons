@@ -11,7 +11,9 @@ async function updateProgram(data, { transacting: _transacting } = {}) {
 
       const program = await table.programs.update({ id }, programData, { transacting });
 
-      return (await programsByIds([program.id], { transacting }))[0];
+      const _program = (await programsByIds([program.id], { transacting }))[0];
+      await leemons.events.emit('after-update-program', { program: _program, transacting });
+      return _program;
     },
     table.programCenter,
     _transacting

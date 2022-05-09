@@ -24,8 +24,10 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
     const programsKeys = keys(programs);
 
     for (let i = 0, len = programsKeys.length; i < len; i++) {
-      const program = programs[programsKeys[i]];
-      const programData = await services.programs.addProgram(program);
+      const { creator, ...program } = programs[programsKeys[i]];
+      const programData = await services.programs.addProgram(program, {
+        userSession: users[creator],
+      });
       programs[programsKeys[i]] = { ...programData };
     }
 

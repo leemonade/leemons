@@ -15,6 +15,11 @@ module.exports = {
         collection: 'plugins_academic-portfolio::class',
       },
     },
+    program: {
+      references: {
+        collection: 'plugins_academic-portfolio::programs',
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

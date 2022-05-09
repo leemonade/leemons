@@ -11,14 +11,12 @@ module.exports = {
     ctx.body = 'Hello World!';
   },
   createUser: async () => {
-    console.log(
-      await leemons.getPlugin('users').services.users.add({
-        name: 'Miguel',
-        surnames: 'Florido',
-        email: 'teacher@leemons.io',
-        locale: 'es',
-        password: 'testing',
-      })
-    );
+    await leemons.getPlugin('users').services.users.add({
+      name: 'Miguel',
+      surnames: 'Florido',
+      email: 'teacher@leemons.io',
+      locale: 'es',
+      password: 'testing',
+    });
   },
 };

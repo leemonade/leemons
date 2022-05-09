@@ -6,22 +6,18 @@ const es = require('./src/i18n/es');
 const en = require('./src/i18n/en');
 const {
   onAcademicPortfolioAddClass,
-} = require('./src/services/pluginEvents/onAcademicPortfolioAddClass');
-const {
   onAcademicPortfolioRemoveClasses,
-} = require('./src/services/pluginEvents/onAcademicPortfolioRemoveClasses');
-const {
   onAcademicPortfolioUpdateClass,
-} = require('./src/services/pluginEvents/onAcademicPortfolioUpdateClass');
-const {
   onAcademicPortfolioAddClassStudent,
-} = require('./src/services/pluginEvents/onAcademicPortfolioAddClassStudent');
-const {
   onAcademicPortfolioRemoveClassStudents,
-} = require('./src/services/pluginEvents/onAcademicPortfolioRemoveClassStudents');
-const {
   onAcademicPortfolioRemoveStudentFromClass,
-} = require('./src/services/pluginEvents/onAcademicPortfolioRemoveStudentFromClass');
+} = require('./src/services/pluginEvents/class');
+
+const {
+  onAcademicPortfolioAddProgram,
+  onAcademicPortfolioUpdateProgram,
+  onAcademicPortfolioRemovePrograms,
+} = require('./src/services/pluginEvents/program');
 
 async function events(isInstalled) {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
@@ -36,11 +32,11 @@ async function events(isInstalled) {
     }
   });
 
+  // --- Classes ---
   leemons.events.on(
     'plugins.academic-portfolio:after-remove-classes-students',
     onAcademicPortfolioRemoveClassStudents
   );
-
   leemons.events.on(
     'plugins.academic-portfolio:after-add-class-student',
     onAcademicPortfolioAddClassStudent
@@ -57,6 +53,17 @@ async function events(isInstalled) {
   leemons.events.on(
     'plugins.academic-portfolio:before-remove-classes',
     onAcademicPortfolioRemoveClasses
+  );
+
+  // --- Programs ---
+  leemons.events.on('plugins.academic-portfolio:after-add-program', onAcademicPortfolioAddProgram);
+  leemons.events.on(
+    'plugins.academic-portfolio:after-update-program',
+    onAcademicPortfolioUpdateProgram
+  );
+  leemons.events.on(
+    'plugins.academic-portfolio:after-remove-programs',
+    onAcademicPortfolioRemovePrograms
   );
 
   if (!isInstalled) {

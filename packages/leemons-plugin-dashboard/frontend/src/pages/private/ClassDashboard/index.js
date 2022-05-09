@@ -115,7 +115,6 @@ export default function ClassDashboard({ session }) {
   }
 
   async function onGetZone(zone) {
-    console.log(zone);
     const { items } = await getLocalizations({ keys: map(zone.widgetItems, 'properties.label') });
     store.widgetLabels = items;
     render();

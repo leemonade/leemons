@@ -6,7 +6,7 @@ const { addSubstage } = require('../substages/addSubstage');
 const { addCourse } = require('../courses/addCourse');
 const { addNextCourseIndex } = require('../courses/addNextCourseIndex');
 
-async function addProgram(data, { transacting: _transacting } = {}) {
+async function addProgram(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       validateAddProgram(data);
@@ -75,7 +75,13 @@ async function addProgram(data, { transacting: _transacting } = {}) {
 
       await Promise.all(promises);
 
-      return (await programsByIds([program.id], { transacting }))[0];
+      const _program = (await programsByIds([program.id], { transacting }))[0];
+      await leemons.events.emit('after-add-program', {
+        program: _program,
+        transacting,
+        userSession,
+      });
+      return _program;
     },
     table.programCenter,
     _transacting

@@ -102,7 +102,6 @@ export default function EvaluationList() {
 
   function onSelect(e) {
     store.selectedGrade = cloneDeep(find(store.grades, { id: e.id }));
-    console.log(store.selectedGrade.scales, store.selectedGrade.minScaleToPromote);
     store.selectedGrade.minScaleToPromote = find(store.selectedGrade.scales, {
       id: store.selectedGrade.minScaleToPromote,
     }).number;

@@ -16,7 +16,7 @@ import { map } from 'lodash';
 import { PluginTestIcon } from '@bubbles-ui/icons/outline';
 import DetailConfig from './components/DetailConfig';
 import { getTestRequest, saveTestRequest } from '../../../request';
-import DetailBasic from '../questions-banks/components/DetailBasic';
+import DetailBasic from './components/DetailBasic';
 import DetailQuestionsBanks from './components/DetailQuestionsBanks';
 import DetailQuestions from './components/DetailQuestions';
 import DetailContent from './components/DetailContent';

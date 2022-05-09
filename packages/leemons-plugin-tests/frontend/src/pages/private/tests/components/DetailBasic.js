@@ -17,7 +17,7 @@ export default function DetailBasic({ form, t, onNext }) {
       preview
       tagsPluginName="tests"
       tagsType="plugins.tests.tests"
-      category="tests-questions-banks"
+      category="assignables.tests"
     >
       <Stack justifyContent="end">
         <Button onClick={next}>{t('continue')}</Button>

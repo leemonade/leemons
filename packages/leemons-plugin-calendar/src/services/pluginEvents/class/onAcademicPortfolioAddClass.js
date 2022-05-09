@@ -7,6 +7,7 @@ function onAcademicPortfolioAddClass(
       id,
       icon,
       color,
+      program,
       classroom,
       subject: { name },
     },
@@ -17,7 +18,7 @@ function onAcademicPortfolioAddClass(
   return new Promise(async (resolve) => {
     try {
       // eslint-disable-next-line global-require,no-shadow
-      const { table } = require('../tables');
+      const { table } = require('../../tables');
       const config = {
         name: `${name}${classroom ? ` (${classroom})` : ''}`,
         section: leemons.plugin.prefixPN('classes'),
@@ -35,6 +36,7 @@ function onAcademicPortfolioAddClass(
       await table.classCalendar.create(
         {
           class: id,
+          program,
           calendar: calendar.id,
         },
         { transacting }
