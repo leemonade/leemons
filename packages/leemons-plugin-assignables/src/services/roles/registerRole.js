@@ -2,35 +2,6 @@ const addCategory = require('../leebrary/categories/addCategory');
 const { roles } = require('../tables');
 const getRole = require('./getRole');
 
-const a = {
-  creatable: true,
-  createUrl: '/private/my-plugin/create',
-  // canUse: []
-  // Menu properties
-  menu: {
-    item: {
-      iconSvg: '/public/my-plugin/category-icon.svg',
-      activeIconSvg: '/public/my-plugin/category-icon_active.svg',
-      label: {
-        en: 'My awesome category',
-        es: 'Mi increíble categoría',
-      },
-    },
-    permissions: [
-      {
-        permissionName: 'plugin.my-plugin.my-permission',
-        actionNames: ['view', 'update', 'create', 'delete', 'admin'],
-      },
-    ],
-  },
-
-  // Frontend config
-  // Paths must be realtive to plugin's frontend "src/widgets/leebrary"
-  listCardComponent: 'path/to/my/card-component',
-  detailComponent: 'path/to/my/detail-component',
-  componentOwner: 'plugins.owner',
-};
-
 module.exports = async function registerRole(role, { transacting: t, ...data } = {}) {
   const { frontend, ...categoryData } = data;
 
