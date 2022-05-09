@@ -186,4 +186,8 @@ module.exports = {
     categories: 'Categories',
     questions: 'Questions',
   },
+  testsCard: {
+    view: 'View',
+    edit: 'Edit',
+  },
 };

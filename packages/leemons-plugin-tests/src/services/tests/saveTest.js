@@ -48,6 +48,7 @@ async function saveTest(data, { userSession, transacting: _transacting } = {}) {
           }
         );
       }
+      console.log(toSave, data);
       return assignableService.createAssignable(toSave, {
         userSession,
         transacting,

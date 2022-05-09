@@ -35,7 +35,7 @@ const TestsDetail = ({ ...props }) => {
   return (
     <LibraryDetail
       {...props}
-      variant="task"
+      variant="tests"
       toolbarItems={toolbarItems}
       onEdit={handleEdit}
       onDuplicate={handleDuplicate}

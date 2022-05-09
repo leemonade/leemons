@@ -46,7 +46,7 @@ async function getTestsDetails(id, { userSession, withQuestionBank, transacting 
     color: assignable.asset.color,
     cover: assignable.asset.cover,
     tags: assignable.asset.tags,
-    program: assignable.program,
+    program: assignable.subjects[0]?.program,
     subjects: _.map(assignable.subjects, 'subject'),
     statement: assignable.statement,
     instructionsForTeachers: assignable.instructionsForTeachers,
