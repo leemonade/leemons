@@ -92,15 +92,14 @@ module.exports = async function createAssignableInstance(
   if (students.length) {
     // EN: Register the students permissions
     // ES: Registra los permisos de los estudiantes
-    const studentsIds = students.map((student) => student.id);
-    await addPermissionToUser(id, assignable.id, studentsIds, 'student', { transacting });
+    await addPermissionToUser(id, assignable.id, students, 'student', { transacting });
 
     // EN: Create student assignations
     // ES: Crea asignaciones de estudiantes
     await createAssignation.call(
       this,
       id,
-      studentsIds,
+      students,
       { indexable: false },
       { userSession, transacting }
     );

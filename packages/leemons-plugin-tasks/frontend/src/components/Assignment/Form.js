@@ -69,12 +69,6 @@ export default function Form({ onSubmit: parentSubmit, task }) {
       <ContextContainer>
         <Controller
           control={control}
-          name="teachers"
-          rules={{ required: true }}
-          render={({ field }) => <SelectTeachers {...field} role="teacher" />}
-        />
-        <Controller
-          control={control}
           name="assignees"
           rules={{ required: true }}
           render={({ field }) => (
@@ -91,7 +85,7 @@ export default function Form({ onSubmit: parentSubmit, task }) {
         />
         <Controller
           control={control}
-          name="alwaysOpen"
+          name="alwaysAvailable"
           render={({ field: alwaysOpenField }) => (
             <ConditionalInput
               {...alwaysOpenField}
@@ -102,7 +96,7 @@ export default function Form({ onSubmit: parentSubmit, task }) {
                   <ContextContainer direction="row">
                     <Controller
                       control={control}
-                      name="startDate"
+                      name="dates.start"
                       rules={{ required: true }}
                       render={({ field }) => (
                         <DatePicker
@@ -118,10 +112,10 @@ export default function Form({ onSubmit: parentSubmit, task }) {
 
                     <Controller
                       control={control}
-                      name="deadline"
+                      name="dates.deadline"
                       rules={{ required: true }}
                       render={({ field }) => {
-                        const startDate = watch('startDate');
+                        const startDate = watch('dates.start');
                         return (
                           <DatePicker
                             {...field}
@@ -144,11 +138,11 @@ export default function Form({ onSubmit: parentSubmit, task }) {
                           <ContextContainer direction="row" alignItems="end">
                             <Controller
                               control={control}
-                              name="visualizationDate"
+                              name="dates.visualization"
                               shouldUnregister={true}
                               rules={{ required: true }}
                               render={({ field }) => {
-                                const startDate = watch('startDate');
+                                const startDate = watch('dates.start');
                                 return (
                                   <DatePicker
                                     {...field}
@@ -172,11 +166,11 @@ export default function Form({ onSubmit: parentSubmit, task }) {
                           <ContextContainer direction="row" alignItems="end">
                             <Controller
                               control={control}
-                              name="closeDate"
+                              name="dates.close"
                               shouldUnregister={true}
                               rules={{ required: true }}
                               render={({ field }) => {
-                                const deadline = watch('deadline');
+                                const deadline = watch('dates.deadline');
                                 return (
                                   <DatePicker
                                     {...field}
@@ -206,7 +200,7 @@ export default function Form({ onSubmit: parentSubmit, task }) {
           render={() => (
             <Controller
               control={control}
-              name="executionTime"
+              name="duration"
               shouldUnregister={true}
               rules={{ required: true }}
               render={({ field }) => (
@@ -225,7 +219,7 @@ export default function Form({ onSubmit: parentSubmit, task }) {
           render={() => (
             <Controller
               control={control}
-              name="message"
+              name="messageToAssignees"
               shouldUnregister={true}
               rules={{ required: true }}
               render={({ field }) => (
@@ -241,7 +235,7 @@ export default function Form({ onSubmit: parentSubmit, task }) {
 
         <Controller
           control={control}
-          name="showCurriculum.toogle"
+          name="curriculum.toogle"
           render={({ field: showField }) => (
             <ConditionalInput
               {...showField}
@@ -250,7 +244,7 @@ export default function Form({ onSubmit: parentSubmit, task }) {
                 <>
                   <Controller
                     control={control}
-                    name="showCurriculum.content"
+                    name="curriculum.content"
                     shouldUnregister={true}
                     render={({ field }) => (
                       <Switch {...field} checked={field.value} label={labels?.content} />
@@ -258,7 +252,7 @@ export default function Form({ onSubmit: parentSubmit, task }) {
                   />
                   <Controller
                     control={control}
-                    name="showCurriculum.objectives"
+                    name="curriculum.objectives"
                     shouldUnregister={true}
                     render={({ field }) => (
                       <Switch {...field} checked={field.value} label={labels?.objectives} />
@@ -266,7 +260,7 @@ export default function Form({ onSubmit: parentSubmit, task }) {
                   />
                   <Controller
                     control={control}
-                    name="showCurriculum.assessmentCriteria"
+                    name="curriculum.assessmentCriteria"
                     shouldUnregister={true}
                     render={({ field }) => (
                       <Switch {...field} checked={field.value} label={labels?.assessmentCriteria} />

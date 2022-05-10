@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import _ from 'lodash';
 import { ContextContainer, PageContainer, Paper } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
@@ -9,8 +10,6 @@ import hooks from 'leemons-hooks';
 import { useLayout } from '@layout/context';
 import Form from '../../../components/Assignment/Form';
 import createInstanceRequest from '../../../request/instance/createInstance';
-import assignStudentRequest from '../../../request/instance/assignStudent';
-import assignTeacherRequest from '../../../request/instance/assignTeacher';
 import getTaskRequest from '../../../request/task/getTask';
 import { enableMenuItemRequest } from '../../../request';
 import { prefixPN } from '../../../helpers/prefixPN';
@@ -56,28 +55,27 @@ export default function AssignmentPage() {
   }, [id]);
 
   const handleAssignment = async (values) => {
-    const {
-      assignees,
-      teachers,
-      startDate,
-      deadline,
-      visualizationDate,
-      closeDate,
-      ...instanceData
-    } = values;
+    const { assignees, teachers, dates, curriculum, ...instanceData } = values;
+
+    const students = _.uniq(assignees.flatMap((assignee) => assignee.students));
+    const classes = assignees.flatMap((assignee) => assignee.group);
+
+    _.forIn(dates, (value, key) => {
+      dates[key] = parseDates(value);
+    });
 
     try {
-      const instance = await createInstanceRequest(id, {
+      const taskInstanceData = {
         ...instanceData,
-        startDate: parseDates(startDate),
-        deadline: parseDates(deadline),
-        visualizationDate: parseDates(visualizationDate),
-        closeDate: parseDates(closeDate),
-      });
+        students,
+        classes,
+        curriculum: curriculum ? _.omit(curriculum, 'toogle') : {},
+        dates,
+        // TODO: let the user decide
+        gradable: true,
+      };
 
-      // TODO: Add subject selector
-      await assignStudentRequest(instance, assignees);
-      await assignTeacherRequest(instance, teachers);
+      await createInstanceRequest(id, taskInstanceData);
 
       await enableMenuItemRequest('ongoing');
       await enableMenuItemRequest('history');
@@ -86,7 +84,7 @@ export default function AssignmentPage() {
       await hooks.fireEvent('menu-builder:user:updateItem', 'history');
 
       addSuccessAlert('Assignment created successfully');
-      history.push('/private/tasks/ongoing');
+      // history.push('/private/tasks/ongoing');
     } catch (e) {
       addErrorAlert(e.message);
     }
