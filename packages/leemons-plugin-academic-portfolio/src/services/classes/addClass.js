@@ -86,14 +86,6 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
         }
         promises.push(addGroup(nClass.id, group, { transacting }));
       }
-      if (teachers)
-        promises.push(
-          Promise.all(
-            _.map(teachers, ({ teacher, type }) =>
-              addTeacher(nClass.id, teacher, type, { transacting })
-            )
-          )
-        );
 
       // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo tipo de asignatura
       promises.push(
@@ -128,7 +120,16 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
       const classe = (await classByIds(nClass.id, { transacting }))[0];
       // TODO Pasar en class icon: donde sea la url del asset
       await leemons.events.emit('after-add-class', { class: classe, transacting });
-      return classe;
+
+      if (teachers) {
+        await Promise.all(
+          _.map(teachers, ({ teacher, type }) =>
+            addTeacher(nClass.id, teacher, type, { transacting })
+          )
+        );
+      }
+
+      return (await classByIds(nClass.id, { transacting }))[0];
     },
     table.groups,
     _transacting
