@@ -55,15 +55,14 @@ async function getCoverFileContent(ctx) {
     showPublic: true,
     userSession,
   });
-  const canAccess = !isEmpty(assets);
-
-  if (!canAccess) {
-    throw new global.utils.HttpError(403, 'You do not have permissions to view this file');
-  }
 
   const [asset] = assets;
-  if (!asset.public) {
-    throw new global.utils.HttpError(403, 'You do not have permissions to view this file');
+
+  if (!asset) {
+    throw new global.utils.HttpError(
+      403,
+      "You don't have permissions to view this Asset or doens't exists"
+    );
   }
 
   const { readStream, fileName, contentType } = await fileService.dataForReturnFile(
