@@ -25,8 +25,6 @@ function InstructionData({
   const [loading, setLoading] = React.useState(null);
 
   const defaultValues = {
-    forTeacher: '',
-    forStudent: '',
     ...sharedData,
   };
 
@@ -71,7 +69,7 @@ function InstructionData({
           <Box>
             <Controller
               control={control}
-              name="instructionsForTeacher"
+              name="instructionsForTeachers"
               rules={{ required: errorMessages.forTeacher?.required }}
               render={({ field }) => (
                 <TextEditorInput
@@ -88,7 +86,7 @@ function InstructionData({
           <Box>
             <Controller
               control={control}
-              name="instructionsForStudent"
+              name="instructionsForStudents"
               rules={{ required: errorMessages.forStudent?.required }}
               render={({ field }) => (
                 <TextEditorInput
