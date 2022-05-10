@@ -95,6 +95,12 @@ module.exports = [
     handler: 'files.file',
     authenticated: true,
   },
+
+  {
+    path: '/img/:assetId',
+    method: 'GET',
+    handler: 'files.cover',
+  },
   // ························································
   // Categories
   {
