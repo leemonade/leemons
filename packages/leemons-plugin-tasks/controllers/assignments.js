@@ -28,28 +28,15 @@ module.exports = {
   instanceCreate: async (ctx) => {
     try {
       const { task } = ctx.request.params;
-      const {
-        startDate,
-        deadline,
-        visualizationDate,
-        executionTime,
-        alwaysOpen,
-        closeDate,
-        message,
-        showCurriculum,
-      } = ctx.request.body;
+      const instanceData = ctx.request.body;
 
-      const instance = await createInstance({
-        task,
-        startDate,
-        deadline,
-        visualizationDate,
-        executionTime,
-        alwaysOpen,
-        closeDate,
-        message,
-        showCurriculum,
-      });
+      const instance = await createInstance(
+        {
+          task,
+          ...instanceData,
+        },
+        { userSession: ctx.state.userSession }
+      );
 
       ctx.status = 201;
       ctx.body = {

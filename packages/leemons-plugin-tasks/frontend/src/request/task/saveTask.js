@@ -6,11 +6,13 @@ export default async function saveTaskRequest(taskId, task) {
 
   const formData = new FormData();
 
+  formData.append('task', JSON.stringify(task));
+
   if (task.asset.cover instanceof File) {
     formData.append('asset.cover', task.asset.cover, task.asset.cover.name);
+  } else if (task.asset.cover?.id) {
+    formData.append('asset.cover', task.asset.cover.id);
   }
-
-  formData.append('task', JSON.stringify(task));
 
   if (!taskId) {
     // EN: Create a new task
