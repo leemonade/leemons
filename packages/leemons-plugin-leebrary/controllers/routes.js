@@ -100,7 +100,6 @@ module.exports = [
     path: '/img/:assetId',
     method: 'GET',
     handler: 'files.cover',
-    authenticated: true,
   },
   // ························································
   // Categories
