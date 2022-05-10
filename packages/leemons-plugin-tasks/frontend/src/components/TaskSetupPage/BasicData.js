@@ -26,8 +26,6 @@ function BasicData({
     ...sharedData.asset,
   };
 
-  console.log('defaultValues:', defaultValues);
-
   const formData = useForm({ defaultValues });
   const { handleSubmit, reset, watch } = formData;
 

@@ -41,7 +41,7 @@ function DetailUser({ session }) {
   const query = new URLSearchParams(window.location.search);
   store.params.center = query.get('center');
   store.params.profile = query.get('profile');
-  store.params.user = userId === 'me' ? session.id : userId;
+  store.params.user = !userId || userId === 'me' ? session?.id : userId;
 
   const form = useForm();
 

@@ -2,6 +2,7 @@ const _ = require('lodash');
 const usersService = require('../src/services/users');
 const userAgentsService = require('../src/services/user-agents');
 const { table } = require('../src/services/tables');
+const { hasPermissionCTX } = require('../services/users');
 
 async function canReset(ctx) {
   const validator = new global.utils.LeemonsValidator({
@@ -126,15 +127,63 @@ async function detail(ctx) {
 }
 
 async function detailForPage(ctx) {
-  const data = await usersService.detailForPage(ctx.params.id);
-  ctx.status = 200;
-  ctx.body = { status: 200, data };
+  const allowedPermissions = {
+    'plugins.users.users': {
+      actions: ['view', 'update', 'create', 'delete', 'admin'],
+    },
+  };
+  let hasPermission = ctx.params.id === ctx.state.userSession.id;
+
+  if (!hasPermission) {
+    hasPermission = await hasPermissionCTX(ctx.state.userSession, allowedPermissions);
+  }
+
+  if (hasPermission) {
+    const data = await usersService.detailForPage(ctx.params.id);
+    ctx.status = 200;
+    ctx.body = { status: 200, data };
+  } else {
+    const rAllowedPermissions = [];
+    _.forIn(allowedPermissions, ({ actions }, permissionName) => {
+      rAllowedPermissions.push({ permissionName, actions });
+    });
+    ctx.status = 401;
+    ctx.body = {
+      status: 401,
+      message: 'You do not have permissions',
+      allowedPermissions: rAllowedPermissions,
+    };
+  }
 }
 
 async function agentDetailForPage(ctx) {
-  const data = await userAgentsService.agentDetailForPage(ctx.params.id);
-  ctx.status = 200;
-  ctx.body = { status: 200, data };
+  const allowedPermissions = {
+    'plugins.users.users': {
+      actions: ['view', 'update', 'create', 'delete', 'admin'],
+    },
+  };
+  let hasPermission = ctx.params.id === ctx.state.userSession.id;
+
+  if (!hasPermission) {
+    hasPermission = await hasPermissionCTX(ctx.state.userSession, allowedPermissions);
+  }
+
+  if (hasPermission) {
+    const data = await userAgentsService.agentDetailForPage(ctx.params.id);
+    ctx.status = 200;
+    ctx.body = { status: 200, data };
+  } else {
+    const rAllowedPermissions = [];
+    _.forIn(allowedPermissions, ({ actions }, permissionName) => {
+      rAllowedPermissions.push({ permissionName, actions });
+    });
+    ctx.status = 401;
+    ctx.body = {
+      status: 401,
+      message: 'You do not have permissions',
+      allowedPermissions: rAllowedPermissions,
+    };
+  }
 }
 
 async function _profiles(ctx) {
@@ -306,15 +355,63 @@ async function saveDataForUserAgentDatasets(ctx) {
 }
 
 async function updateUser(ctx) {
-  const data = await usersService.update(ctx.params.id, ctx.request.body);
-  ctx.status = 200;
-  ctx.body = { status: 200, data };
+  const allowedPermissions = {
+    'plugins.users.users': {
+      actions: ['update', 'admin'],
+    },
+  };
+  let hasPermission = ctx.params.id === ctx.state.userSession.id;
+
+  if (!hasPermission) {
+    hasPermission = await hasPermissionCTX(ctx.state.userSession, allowedPermissions);
+  }
+
+  if (hasPermission) {
+    const data = await usersService.update(ctx.params.id, ctx.request.body);
+    ctx.status = 200;
+    ctx.body = { status: 200, data };
+  } else {
+    const rAllowedPermissions = [];
+    _.forIn(allowedPermissions, ({ actions }, permissionName) => {
+      rAllowedPermissions.push({ permissionName, actions });
+    });
+    ctx.status = 401;
+    ctx.body = {
+      status: 401,
+      message: 'You do not have permissions',
+      allowedPermissions: rAllowedPermissions,
+    };
+  }
 }
 
 async function updateUserAgent(ctx) {
-  const data = await userAgentsService.update(ctx.params.id, ctx.request.body);
-  ctx.status = 200;
-  ctx.body = { status: 200, data };
+  const allowedPermissions = {
+    'plugins.users.users': {
+      actions: ['update', 'admin'],
+    },
+  };
+  let hasPermission = ctx.params.id === ctx.state.userSession.id;
+
+  if (!hasPermission) {
+    hasPermission = await hasPermissionCTX(ctx.state.userSession, allowedPermissions);
+  }
+
+  if (hasPermission) {
+    const data = await userAgentsService.update(ctx.params.id, ctx.request.body);
+    ctx.status = 200;
+    ctx.body = { status: 200, data };
+  } else {
+    const rAllowedPermissions = [];
+    _.forIn(allowedPermissions, ({ actions }, permissionName) => {
+      rAllowedPermissions.push({ permissionName, actions });
+    });
+    ctx.status = 401;
+    ctx.body = {
+      status: 401,
+      message: 'You do not have permissions',
+      allowedPermissions: rAllowedPermissions,
+    };
+  }
 }
 
 module.exports = {

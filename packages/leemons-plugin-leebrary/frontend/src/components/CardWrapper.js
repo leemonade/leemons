@@ -31,6 +31,7 @@ const CardWrapper = ({
   category,
   isEmbedded,
   single,
+  onRefresh,
   ...props
 }) => {
   const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
@@ -56,6 +57,7 @@ const CardWrapper = ({
         variant={variant}
         className={classes.root}
         embedded={isEmbedded}
+        onRefresh={onRefresh}
         single={single}
       />
     </Box>
@@ -69,6 +71,7 @@ CardWrapper.propTypes = {
   selected: PropTypes.bool,
   className: PropTypes.string,
   onClick: PropTypes.func,
+  onRefresh: PropTypes.func,
   variant: PropTypes.string,
   category: PropTypes.any,
   isEmbedded: PropTypes.bool,

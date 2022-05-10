@@ -15,7 +15,7 @@ function useValueUpdater(form, originalForm) {
     const subscription = form.watch((value, field) => {
       if (field.name?.startsWith('data')) {
         shouldUpdate.current = false;
-        originalForm.setValue('submissions.data', value?.data);
+        originalForm.setValue('submission.data', value?.data);
       }
     });
     return () => subscription.unsubscribe();
@@ -25,7 +25,7 @@ function useValueUpdater(form, originalForm) {
   // ES: Propagar cambios del formulario padre al formulario hijo
   useEffect(() => {
     const subscription = originalForm.watch((value, field) => {
-      if (shouldUpdate.current && field.name?.startsWith('submissions.data')) {
+      if (shouldUpdate.current && field.name?.startsWith('submission.data')) {
         form.setValue('data', value);
       }
 
@@ -37,8 +37,8 @@ function useValueUpdater(form, originalForm) {
 
   useEffect(() => {
     const subscription = originalForm.watch((value, field) => {
-      if (field.name?.startsWith('submissions')) {
-        form.setValue('show', !!value?.submissions?.type || !!value?.submissions?.description);
+      if (field.name?.startsWith('submission')) {
+        form.setValue('show', !!value?.submission?.type || !!value?.submission?.description);
       }
     });
 
@@ -48,7 +48,7 @@ function useValueUpdater(form, originalForm) {
   // EN: Propagate the first value to the child form
   // ES: Propagar el primer valor al formulario hijo
   useEffect(() => {
-    const s = originalForm.getValues('submissions');
+    const s = originalForm.getValues('submission');
 
     form.setValue('show', !!s?.type || !!s?.description);
 
@@ -92,7 +92,7 @@ export default function Submissions({ labels }) {
                 <ContextContainer>
                   <Controller
                     control={contextControl}
-                    name="submissions.type"
+                    name="submission.type"
                     render={({ field: type }) => (
                       <Select
                         {...type}
@@ -113,7 +113,7 @@ export default function Submissions({ labels }) {
 
                   <Controller
                     control={contextControl}
-                    name="submissions.type"
+                    name="submission.type"
                     render={({ field: { value } }) => {
                       const C = Component(value);
 
@@ -123,7 +123,7 @@ export default function Submissions({ labels }) {
 
                   <Controller
                     control={contextControl}
-                    name="submissions.description"
+                    name="submission.description"
                     render={({ field: f }) => (
                       <TextEditorInput {...f} label={labels?.submission?.description} />
                     )}

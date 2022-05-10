@@ -4,9 +4,12 @@ import hooks from 'leemons-hooks';
 import { getMenu } from '@menu-builder/helpers';
 import { MainNav } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@menu-builder/helpers/prefixPN';
 
 export default function MainMenu({ subNavWidth, ...props }) {
   const session = useSession();
+  const [t] = useTranslateLoader(prefixPN('sessionMenu'));
   const [isLoading, setIsLoading] = useState(false);
   const [loadMenu, setLoadMenu] = useState(false);
   const [menuData, setMenuData] = useState([]);
@@ -53,6 +56,36 @@ export default function MainMenu({ subNavWidth, ...props }) {
       hideSubNavOnClose={false}
       useRouter={true}
       session={session}
+      sessionMenu={{
+        id: 'menu-0',
+        label: t('label'),
+        children: [
+          {
+            id: 'menu-1',
+            label: t('accountInfo'),
+            order: 0,
+            url: '/private/users/detail',
+            window: 'SELF',
+            disabled: null,
+          },
+          {
+            id: 'menu-2',
+            label: t('switchProfile'),
+            order: 1,
+            url: '/private/users/select-profile',
+            window: 'SELF',
+            disabled: null,
+          },
+          {
+            id: 'menu-3',
+            label: t('logout'),
+            order: 2,
+            url: '/private/users/logout',
+            window: 'SELF',
+            disabled: null,
+          },
+        ],
+      }}
     />
   );
 }

@@ -1,4 +1,10 @@
 module.exports = {
+  sessionMenu: {
+    label: 'User Account',
+    accountInfo: 'Account info',
+    switchProfile: 'Switch profile',
+    logout: 'Logout',
+  },
   menu: {
     menu_constructor: {
       title: 'Menu Constructor',

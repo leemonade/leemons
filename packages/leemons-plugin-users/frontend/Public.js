@@ -7,6 +7,7 @@ import Login from './src/pages/public/Login';
 const RegisterPassword = loadable(() => import('./src/pages/public/RegisterPassword'));
 const Recover = loadable(() => import('./src/pages/public/Recover'));
 const Reset = loadable(() => import('./src/pages/public/Reset'));
+const Logout = loadable(() => import('./src/pages/public/Logout'));
 
 export default function Public() {
   const { path } = useRouteMatch();
@@ -15,6 +16,9 @@ export default function Public() {
     <Switch>
       <Route path={`${path}/register-password`}>
         <RegisterPassword />
+      </Route>
+      <Route path={`${path}/logout`}>
+        <Logout />
       </Route>
       <Route path={`${path}/login`}>
         <Login />
