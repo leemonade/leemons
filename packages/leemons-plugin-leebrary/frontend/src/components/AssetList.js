@@ -428,7 +428,7 @@ const AssetList = ({
         itemMinWidth,
         margin: 16,
         spacing: 4,
-        paperProps: { shadow: 'none', padding: 0},
+        paperProps: { shadow: 'none', padding: 0 },
       };
     }
 
