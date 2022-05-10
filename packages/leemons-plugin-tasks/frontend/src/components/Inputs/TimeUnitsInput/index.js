@@ -11,7 +11,7 @@ export default function TimeUnitsInput({ onChange, value: userValue, ...props })
 
   const [value, setValue] = useState(0);
   const [units, setUnits] = useState('minutes');
-  const [time, setTime] = useState(0);
+  const [time, setTime] = useState(`${value} ${units}`);
 
   useEffect(() => {
     if (translations) {
