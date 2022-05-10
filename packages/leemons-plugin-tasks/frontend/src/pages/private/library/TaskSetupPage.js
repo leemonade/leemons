@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState, useRef } from 'react';
 import { isEmpty, isNil, isArray } from 'lodash';
 import { useParams, useHistory } from 'react-router-dom';
 import { Box, Stack } from '@bubbles-ui/components';
@@ -24,6 +24,7 @@ export default function TaskSetupPage() {
   const [t, translations] = useTranslateLoader(prefixPN('task_setup_page'));
   const [labels, setLabels] = useState(null);
   const [status, setStatus] = useState('published');
+  const loading = useRef(null);
   const [store, render] = useStore({
     currentTask: null,
     taskName: null,
@@ -83,6 +84,11 @@ export default function TaskSetupPage() {
       emitEvent('taskSaved');
     } catch (e) {
       addErrorAlert(e.message);
+    } finally {
+      if (loading.current === 'duplicate') {
+        loading.current = null;
+        render();
+      }
     }
   };
 
@@ -102,6 +108,11 @@ export default function TaskSetupPage() {
     } catch (e) {
       addErrorAlert(e.error);
       throw e;
+    } finally {
+      if (loading.current === 'edit') {
+        loading.current = null;
+        render();
+      }
     }
   };
 
@@ -164,6 +175,7 @@ export default function TaskSetupPage() {
             unsubscribe(f);
             resolve(await publishTask());
           } catch (e) {
+            emitEvent('publishTaskFailed');
             reject(e);
           }
         }
@@ -259,9 +271,18 @@ export default function TaskSetupPage() {
         icon={<PluginAssignmentsIcon />}
         values={headerLabels}
         buttons={{ duplicate: t('common.save'), edit: status === 'draft' && t('common.publish') }}
-        onDuplicate={() => emitEvent('saveTask')}
-        onEdit={() => handleOnPublishTask().catch(() => {})}
+        onDuplicate={() => {
+          loading.current = 'duplicate';
+          render();
+          emitEvent('saveTask');
+        }}
+        onEdit={() => {
+          loading.current = 'edit';
+          render();
+          handleOnPublishTask().catch(() => {});
+        }}
         onResize={handleOnHeaderResize}
+        loading={loading.current}
       />
 
       <Box>

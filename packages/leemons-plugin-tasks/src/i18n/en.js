@@ -130,6 +130,7 @@ module.exports = {
         step_label: 'Content',
         labels: {
           title: 'Content',
+          subjects: 'Subjects',
           methodology: 'Methodology',
           recommendedDuration: 'Recommended duration',
           statement: 'Statement',
