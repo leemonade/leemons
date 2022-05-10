@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction } from 'lodash';
 import { useForm } from 'react-hook-form';
-import { Box, Stack, Button, ContextContainer, useDebouncedCallback } from '@bubbles-ui/components';
+import { Stack, Button, ContextContainer, useDebouncedCallback } from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { AssetFormInput } from '@leebrary/components/AssetFormInput';
 
@@ -25,6 +25,8 @@ function BasicData({
   const defaultValues = {
     ...sharedData.asset,
   };
+
+  console.log('defaultValues:', defaultValues);
 
   const formData = useForm({ defaultValues });
   const { handleSubmit, reset, watch } = formData;

@@ -27,7 +27,7 @@ const TASK_EXISTING_COLUMNS = [
 const TASK_VERSIONS_EXISTING_COLUMNS = ['status'];
 const TASK_SUBJECTS_EXISTING_COLUMNS = ['subjects'];
 
-async function getMany(taskIds, { columns, userSession, transacting } = {}) {
+async function getMany(taskIds, { columns, withFiles, userSession, transacting } = {}) {
   const { assignables } = assignablesServices();
 
   try {
@@ -52,7 +52,9 @@ async function getMany(taskIds, { columns, userSession, transacting } = {}) {
 
     // EN: Get each task' id and fullId
     // ES: Obtener cada id y fullId de la tarea
-    return taskIds.map((taskId) => assignables.getAssignable(taskId, { userSession, transacting }));
+    return taskIds.map((taskId) =>
+      assignables.getAssignable(taskId, { userSession, withFiles, transacting })
+    );
 
     // TODO: Return attachments
   } catch (e) {
@@ -60,16 +62,20 @@ async function getMany(taskIds, { columns, userSession, transacting } = {}) {
   }
 }
 
-async function get(taskId, { columns = DEFAULT_COLUMNS, userSession, transacting } = {}) {
+async function get(
+  taskId,
+  { columns = DEFAULT_COLUMNS, userSession, withFiles, transacting } = {}
+) {
   try {
     if (Array.isArray(taskId)) {
-      return getMany(taskId, { columns, userSession, transacting });
+      return getMany(taskId, { columns, userSession, withFiles, transacting });
     }
 
     const result = await getMany([taskId], {
       columns,
       userSession,
       transacting,
+      withFiles,
     });
 
     return result[0];

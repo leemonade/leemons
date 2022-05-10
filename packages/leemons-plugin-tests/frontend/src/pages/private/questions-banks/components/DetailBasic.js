@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Stack } from '@bubbles-ui/components';
+import { Button, Stack, ContextContainer } from '@bubbles-ui/components';
+import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import AssetFormInput from '@leebrary/components/AssetFormInput';
 
 export default function DetailBasic({ form, t, onNext }) {
@@ -12,17 +13,21 @@ export default function DetailBasic({ form, t, onNext }) {
   }
 
   return (
-    <AssetFormInput
-      form={form}
-      preview
-      tagsPluginName="tests"
-      tagsType="plugins.tests.questionBanks"
-      category="tests-questions-banks"
-    >
-      <Stack justifyContent="end">
-        <Button onClick={next}>{t('continue')}</Button>
+    <ContextContainer divided>
+      <AssetFormInput
+        form={form}
+        preview
+        tagsPluginName="tests"
+        tagsType="plugins.tests.questionBanks"
+        category="tests-questions-banks"
+      />
+
+      <Stack fullWidth justifyContent="end">
+        <Button rightIcon={<ChevRightIcon height={20} width={20} />} onClick={next}>
+          {t('continue')}
+        </Button>
       </Stack>
-    </AssetFormInput>
+    </ContextContainer>
   );
 }
 

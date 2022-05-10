@@ -1,5 +1,5 @@
 import React from 'react';
-import { ContextContainer, Paper, TabPanel, Tabs } from '@bubbles-ui/components';
+import { ContextContainer, Box, TabPanel, Tabs, createStyles } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
@@ -8,6 +8,16 @@ import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { useHistory } from 'react-router-dom';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
 import AssetList from '@leebrary/components/AssetList';
+
+const ListPageStyles = createStyles((theme) => ({
+  tabPane: {
+    display: 'flex',
+    flex: 1,
+    height: '100%',
+    paddingTop: theme.spacing[5],
+    paddingBottom: theme.spacing[5],
+  },
+}));
 
 export default function List() {
   const [t] = useTranslateLoader(prefixPN('questionsBanksList'));
@@ -47,6 +57,8 @@ export default function List() {
     getPermissions();
   }, []);
 
+  const { classes } = ListPageStyles({});
+
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader
@@ -59,7 +71,7 @@ export default function List() {
 
       <Tabs usePageLayout={true} panelColor="solid" fullHeight>
         <TabPanel label={t('published')}>
-          <Paper padding={2} mt={20} mb={20} fullWidth color="solid" shadow="none">
+          <Box className={classes.tabPane}>
             <AssetList
               canShowPublicToggle={false}
               published={true}
@@ -68,10 +80,10 @@ export default function List() {
               category="tests-questions-banks"
               onSelectItem={goDetailPage}
             />
-          </Paper>
+          </Box>
         </TabPanel>
         <TabPanel label={t('draft')}>
-          <Paper padding={2} mt={20} mb={20} fullWidth color="solid" shadow="none">
+          <Box className={classes.tabPane}>
             <AssetList
               canShowPublicToggle={false}
               published={false}
@@ -80,7 +92,7 @@ export default function List() {
               category="tests-questions-banks"
               onSelectItem={goDetailPage}
             />
-          </Paper>
+          </Box>
         </TabPanel>
       </Tabs>
     </ContextContainer>
