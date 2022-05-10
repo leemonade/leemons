@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const create = require('../src/services/task/create');
 const { get } = require('../src/services/task/get');
 const publish = require('../src/services/task/publish');
@@ -8,7 +9,14 @@ const update = require('../src/services/task/update');
 module.exports = {
   create: async (ctx) => {
     try {
-      let task = ctx.request.body;
+      const { body, files } = ctx.request;
+      let { task } = body;
+
+      task = JSON.parse(task);
+
+      _.forIn(files, (file, key) => {
+        _.set(task, key, file);
+      });
 
       task = await create(task, { userSession: ctx.state.userSession });
 

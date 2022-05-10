@@ -214,7 +214,7 @@ function ContentData({
               )}
             />
             <Submissions labels={labels} />
-            <SelfReflection
+            {/* <SelfReflection
               labels={labels?.selfReflection}
               description={descriptions?.selfReflection}
               showType
@@ -224,7 +224,7 @@ function ContentData({
               labels={labels?.feedback}
               description={descriptions?.feedback}
               name="feedback"
-            />
+            /> */}
           </ContextContainer>
           <Stack fullWidth justifyContent="space-between">
             <Box>
