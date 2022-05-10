@@ -85,6 +85,7 @@ export default function AssignmentPage() {
 
       addSuccessAlert('Assignment created successfully');
       // history.push('/private/tasks/ongoing');
+      history.push('/private/tasks/library');
     } catch (e) {
       addErrorAlert(e.message);
     }
