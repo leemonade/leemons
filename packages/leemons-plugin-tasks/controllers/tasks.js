@@ -6,17 +6,28 @@ const remove = require('../src/services/task/remove');
 const search = require('../src/services/task/search');
 const update = require('../src/services/task/update');
 
+function parseTaskObject(ctx) {
+  const { body, files } = ctx.request;
+
+  // eslint-disable-next-line prefer-const
+  let { task, ...otherProperties } = body;
+
+  task = JSON.parse(task);
+
+  _.forIn(files, (file, key) => {
+    _.set(task, key, file);
+  });
+
+  _.forIn(otherProperties, (value, key) => {
+    _.set(task, key, value);
+  });
+  return task;
+}
+
 module.exports = {
   create: async (ctx) => {
     try {
-      const { body, files } = ctx.request;
-      let { task } = body;
-
-      task = JSON.parse(task);
-
-      _.forIn(files, (file, key) => {
-        _.set(task, key, file);
-      });
+      let task = parseTaskObject(ctx);
 
       task = await create(task, { userSession: ctx.state.userSession });
 
@@ -36,7 +47,7 @@ module.exports = {
   update: async (ctx) => {
     try {
       const { id } = ctx.params;
-      let task = ctx.request.body;
+      let task = parseTaskObject(ctx);
 
       task = await update(id, task, { userSession: ctx.state.userSession });
 

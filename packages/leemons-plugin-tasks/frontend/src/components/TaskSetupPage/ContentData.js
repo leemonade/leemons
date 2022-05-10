@@ -87,140 +87,147 @@ function ContentData({
     <FormProvider {...formData}>
       <form onSubmit={handleSubmit(handleOnNext)} autoComplete="off">
         <ContextContainer {...props} divided>
-          <ContextContainer title={labels.title}>
-            <Methodology
-              labels={labels}
-              errorMessages={errorMessages}
-              placeholders={placeholders}
-            />
+          <ContextContainer divided>
+            <ContextContainer title={labels.title}>
+              <Methodology
+                labels={labels}
+                errorMessages={errorMessages}
+                placeholders={placeholders}
+              />
+              <Controller
+                control={control}
+                name="duration"
+                render={({ field }) => (
+                  <TimeUnitsInput
+                    {...field}
+                    label={labels.recommendedDuration}
+                    error={errors.recommendedDuration}
+                  />
+                )}
+              />
+            </ContextContainer>
             <Attachments />
-            <Controller
-              control={control}
-              name="duration"
-              render={({ field }) => (
-                <TimeUnitsInput
-                  {...field}
-                  label={labels.recommendedDuration}
-                  error={errors.recommendedDuration}
-                />
-              )}
-            />
 
-            {
-              // {!!subjects?.length && (
-              //   <InputWrapper label={labels?.curriculum} required>
-              //     <Tabs>
-              //       {subjects?.map((subject, index) => (
-              //         <TabPanel key={index} label={subject?.label}>
-              //           <ContextContainer>
-              //             <InputWrapper label={labels?.content}>
-              //               <Controller
-              //                 control={control}
-              //                 name="program"
-              //                 render={({ field: { value: program } }) => (
-              //                   <Curriculum
-              //                     program={program}
-              //                     name={`curriculum.${subject.value}.contents`}
-              //                     type="content"
-              //                   />
-              //                 )}
-              //               />
-              //             </InputWrapper>
-              //             {/* <InputWrapper label={labels?.objectives}>
-              //               <Controller
-              //                 control={control}
-              //                 name="program"
-              //                 render={({ field: { value: program } }) => (
-              //                   <Curriculum
-              //                     program={program}
-              //                     name={`curriculum.${subject.value}.objectives`}
-              //                     type="objective"
-              //                   />
-              //                 )}
-              //               />
-              //             </InputWrapper> */}
-              //             <InputWrapper label={labels?.assessmentCriteria}>
-              //               <Controller
-              //                 control={control}
-              //                 name="program"
-              //                 render={({ field: { value: program } }) => (
-              //                   <Curriculum
-              //                     program={program}
-              //                     name={`curriculum.${subject.value}.assessmentCriteria`}
-              //                     type="assessmentCriteria"
-              //                   />
-              //                 )}
-              //               />
-              //             </InputWrapper>
-              //             <Objectives
-              //               name={`curriculum.${subject.value}.objectives`}
-              //               required
-              //               label={labels.objectives || ''}
-              //               error={errors.objectives}
-              //             />
-              //           </ContextContainer>
-              //           {/* <Contents
-              //           name={`curriculum.${subject.subject}.contents`}
-              //           required
-              //           label={labels.content || ''}
-              //           error={errors.content}
-              //         />
-              //         <Objectives
-              //           name={`curriculum.${subject.subject}.objectives`}
-              //           required
-              //           label={labels.objectives || ''}
-              //           error={errors.objectives}
-              //         />
-              //         <AssessmentCriteria
-              //           name={`curriculum.${subject.subject}.assessmentCriteria`}
-              //           label={labels.assessmentCriteria || ''}
-              //           error={errors.assessmentCriteria}
-              //         /> */}
-              //         </TabPanel>
-              //       ))}
-              //     </Tabs>
-              //   </InputWrapper>
-              // )}
-            }
+            <ContextContainer title={labels.subjects}>
+              {
+                // {!!subjects?.length && (
+                //   <InputWrapper label={labels?.curriculum} required>
+                //     <Tabs>
+                //       {subjects?.map((subject, index) => (
+                //         <TabPanel key={index} label={subject?.label}>
+                //           <ContextContainer>
+                //             <InputWrapper label={labels?.content}>
+                //               <Controller
+                //                 control={control}
+                //                 name="program"
+                //                 render={({ field: { value: program } }) => (
+                //                   <Curriculum
+                //                     program={program}
+                //                     name={`curriculum.${subject.value}.contents`}
+                //                     type="content"
+                //                   />
+                //                 )}
+                //               />
+                //             </InputWrapper>
+                //             {/* <InputWrapper label={labels?.objectives}>
+                //               <Controller
+                //                 control={control}
+                //                 name="program"
+                //                 render={({ field: { value: program } }) => (
+                //                   <Curriculum
+                //                     program={program}
+                //                     name={`curriculum.${subject.value}.objectives`}
+                //                     type="objective"
+                //                   />
+                //                 )}
+                //               />
+                //             </InputWrapper> */}
+                //             <InputWrapper label={labels?.assessmentCriteria}>
+                //               <Controller
+                //                 control={control}
+                //                 name="program"
+                //                 render={({ field: { value: program } }) => (
+                //                   <Curriculum
+                //                     program={program}
+                //                     name={`curriculum.${subject.value}.assessmentCriteria`}
+                //                     type="assessmentCriteria"
+                //                   />
+                //                 )}
+                //               />
+                //             </InputWrapper>
+                //             <Objectives
+                //               name={`curriculum.${subject.value}.objectives`}
+                //               required
+                //               label={labels.objectives || ''}
+                //               error={errors.objectives}
+                //             />
+                //           </ContextContainer>
+                //           {/* <Contents
+                //           name={`curriculum.${subject.subject}.contents`}
+                //           required
+                //           label={labels.content || ''}
+                //           error={errors.content}
+                //         />
+                //         <Objectives
+                //           name={`curriculum.${subject.subject}.objectives`}
+                //           required
+                //           label={labels.objectives || ''}
+                //           error={errors.objectives}
+                //         />
+                //         <AssessmentCriteria
+                //           name={`curriculum.${subject.subject}.assessmentCriteria`}
+                //           label={labels.assessmentCriteria || ''}
+                //           error={errors.assessmentCriteria}
+                //         /> */}
+                //         </TabPanel>
+                //       ))}
+                //     </Tabs>
+                //   </InputWrapper>
+                // )}
+              }
+            </ContextContainer>
 
-            {/* TODO: Make the statement required (Not allowed with TextEditor) */}
-            <Controller
-              control={control}
-              name="statement"
-              rules={{
-                required: errorMessages.statement?.required,
-              }}
-              render={({ field }) => (
-                <TextEditorInput
-                  required
-                  {...field}
-                  label={labels.statement}
-                  error={errors.statement}
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              name="development"
-              rules={{ required: errorMessages.development?.required }}
-              render={({ field }) => (
-                <TextEditorInput
-                  {...field}
-                  label={labels.development}
-                  placeholder={placeholders.development}
-                  error={errors.development}
-                  required={!isEmpty(errorMessages.development?.required)}
-                />
-              )}
-            />
+            <ContextContainer>
+              {/* TODO: Make the statement required (Not allowed with TextEditor) */}
+              <Controller
+                control={control}
+                name="statement"
+                rules={{
+                  required: errorMessages.statement?.required,
+                }}
+                render={({ field }) => (
+                  <TextEditorInput
+                    required
+                    {...field}
+                    label={labels.statement}
+                    error={errors.statement}
+                  />
+                )}
+              />
+              <Controller
+                control={control}
+                name="development"
+                rules={{ required: errorMessages.development?.required }}
+                render={({ field }) => (
+                  <TextEditorInput
+                    {...field}
+                    label={labels.development}
+                    placeholder={placeholders.development}
+                    error={errors.development}
+                    required={!isEmpty(errorMessages.development?.required)}
+                  />
+                )}
+              />
+            </ContextContainer>
+
             <Submissions labels={labels} />
             {/* <SelfReflection
               labels={labels?.selfReflection}
               description={descriptions?.selfReflection}
               showType
               name="selfReflection"
-            />
-            <SelfReflection
+            /> */}
+            {/* <SelfReflection
               labels={labels?.feedback}
               description={descriptions?.feedback}
               name="feedback"
