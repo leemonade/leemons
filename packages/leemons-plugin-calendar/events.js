@@ -11,6 +11,7 @@ const {
   onAcademicPortfolioAddClassStudent,
   onAcademicPortfolioRemoveClassStudents,
   onAcademicPortfolioRemoveStudentFromClass,
+  onAcademicPortfolioAddClassTeacher,
 } = require('./src/services/pluginEvents/class');
 
 const {
@@ -18,6 +19,9 @@ const {
   onAcademicPortfolioUpdateProgram,
   onAcademicPortfolioRemovePrograms,
 } = require('./src/services/pluginEvents/program');
+const {
+  onAcademicPortfolioRemoveClassTeachers,
+} = require('./src/services/pluginEvents/class/onAcademicPortfolioRemoveClassTeachers');
 
 async function events(isInstalled) {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
@@ -53,6 +57,14 @@ async function events(isInstalled) {
   leemons.events.on(
     'plugins.academic-portfolio:before-remove-classes',
     onAcademicPortfolioRemoveClasses
+  );
+  leemons.events.on(
+    'plugins.academic-portfolio:after-add-class-teacher',
+    onAcademicPortfolioAddClassTeacher
+  );
+  leemons.events.on(
+    'plugins.academic-portfolio:after-remove-classes-teachers',
+    onAcademicPortfolioRemoveClassTeachers
   );
 
   // --- Programs ---

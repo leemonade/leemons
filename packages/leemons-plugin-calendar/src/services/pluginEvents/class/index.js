@@ -8,12 +8,18 @@ const {
 const {
   onAcademicPortfolioRemoveStudentFromClass,
 } = require('./onAcademicPortfolioRemoveStudentFromClass');
+const { onAcademicPortfolioAddClassTeacher } = require('./onAcademicPortfolioAddClassTeacher');
+const {
+  onAcademicPortfolioRemoveClassTeachers,
+} = require('./onAcademicPortfolioRemoveClassTeachers');
 
 module.exports = {
   onAcademicPortfolioAddClass,
   onAcademicPortfolioUpdateClass,
   onAcademicPortfolioRemoveClasses,
   onAcademicPortfolioAddClassStudent,
+  onAcademicPortfolioAddClassTeacher,
   onAcademicPortfolioRemoveClassStudents,
+  onAcademicPortfolioRemoveClassTeachers,
   onAcademicPortfolioRemoveStudentFromClass,
 };

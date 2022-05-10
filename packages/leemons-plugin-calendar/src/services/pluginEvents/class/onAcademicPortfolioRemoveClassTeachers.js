@@ -1,29 +1,29 @@
 const _ = require('lodash');
 
-async function remove(classCalendar, student, { transacting }) {
+async function remove(classCalendar, teacher, { transacting }) {
   const programService = leemons.getPlugin('academic-portfolio').services.programs;
   const [insideProgram] = await Promise.all([
-    programService.isUserInsideProgram({ userAgents: [{ id: student }] }, classCalendar.program, {
+    programService.isUserInsideProgram({ userAgents: [{ id: teacher }] }, classCalendar.program, {
       transacting,
     }),
     leemons.plugin.services.calendar.unGrantAccessUserAgentToCalendar(
       leemons.plugin.prefixPN(`class.${classCalendar.class}`),
-      student,
-      'view',
+      teacher,
+      'owner',
       { transacting }
     ),
   ]);
   if (!insideProgram) {
     await leemons.plugin.services.calendar.unGrantAccessUserAgentToCalendar(
       leemons.plugin.prefixPN(`program.${classCalendar.program}`),
-      student,
+      teacher,
       'view',
       { transacting }
     );
   }
 }
 
-function onAcademicPortfolioRemoveClassStudents(data, { classIds, classStudents, transacting }) {
+function onAcademicPortfolioRemoveClassTeachers(data, { classIds, classTeachers, transacting }) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     try {
@@ -37,8 +37,8 @@ function onAcademicPortfolioRemoveClassStudents(data, { classIds, classStudents,
 
       const promises = [];
       _.forEach(classIds, (classId) => {
-        _.forEach(classStudents, ({ student }) => {
-          promises.push(remove(classCalendarsByClass[classId], student, { transacting }));
+        _.forEach(classTeachers, ({ teacher }) => {
+          promises.push(remove(classCalendarsByClass[classId], teacher, { transacting }));
         });
       });
       await Promise.all(promises);
@@ -49,4 +49,4 @@ function onAcademicPortfolioRemoveClassStudents(data, { classIds, classStudents,
   });
 }
 
-module.exports = { onAcademicPortfolioRemoveClassStudents };
+module.exports = { onAcademicPortfolioRemoveClassTeachers };
