@@ -43,7 +43,7 @@ export default function TaskSetupPage() {
         ...values,
         // TODO: Esto debe establecerse en el Config
         gradable: true,
-        subjects: values.subjects.map((subject) => ({
+        subjects: values?.subjects?.map((subject) => ({
           ...subject,
           program,
           curriculum: curriculum && {
