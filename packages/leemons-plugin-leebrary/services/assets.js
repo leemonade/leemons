@@ -10,4 +10,5 @@ module.exports = {
   update,
   add,
   remove,
+  getCoverUrl: (assetId) => `/api/leebrary/img/${assetId}`,
 };
