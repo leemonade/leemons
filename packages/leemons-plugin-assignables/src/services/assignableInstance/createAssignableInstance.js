@@ -107,7 +107,11 @@ module.exports = async function createAssignableInstance(
   // EN: Save the teachers
   // ES: Guarda los profesores
   const teachers = await getTeachersOfGivenClasses(classes, { userSession, transacting });
-  await addTeachersToAssignableInstance(teachers, id, { transacting });
+  await addTeachersToAssignableInstance(
+    teachers,
+    { id, assignable: assignableInstance.assignable },
+    { transacting }
+  );
 
   if (students.length) {
     // EN: Register the students permissions
