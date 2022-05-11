@@ -8,6 +8,7 @@ const registerPermission = require('./permissions/assignableInstance/assignableI
 const addPermissionToUser = require('./permissions/assignableInstance/users/addPermissionToUser');
 const createAssignation = require('../assignations/createAssignation');
 const addTeachersToAssignableInstance = require('../teachers/addTeachersToAssignableInstance');
+const registerEvent = require('./calendar/registerEvent');
 
 async function getTeachersOfGivenClasses(classes, { userSession, transacting } = {}) {
   const academicPortfolioServices = leemons.getPlugin('academic-portfolio').services;
@@ -81,12 +82,14 @@ module.exports = async function createAssignableInstance(
     );
   }
 
+  const event = await registerEvent(assignable, classes, { dates, transacting });
+
   // EN: Create the assignable instance
   // ES: Crea el asignable instance
   const { id } = await assignableInstances.create(
     {
       ...assignableInstanceObj,
-
+      event: event.id,
       metadata: JSON.stringify(metadata),
       curriculum: JSON.stringify(curriculum),
       relatedAssignableInstances: JSON.stringify(
@@ -112,8 +115,21 @@ module.exports = async function createAssignableInstance(
     { id, assignable: assignableInstance.assignable },
     { transacting }
   );
+  // EN: Grant users to access event
+  // ES: Da permiso a los usuarios para ver el evento
+  await leemons
+    .getPlugin('calendar')
+    .services.calendar.grantAccessUserAgentToEvent(event.id, _.map(teachers, 'teacher'), 'owner', {
+      transacting,
+    });
 
   if (students.length) {
+    // EN: Grant users to access event
+    // ES: Da permiso a los usuarios para ver el evento
+    await leemons
+      .getPlugin('calendar')
+      .services.calendar.grantAccessUserAgentToEvent(event.id, students, 'view', { transacting });
+
     // EN: Register the students permissions
     // ES: Registra los permisos de los estudiantes
     await addPermissionToUser(id, assignable.id, students, 'student', { transacting });
