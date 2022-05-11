@@ -94,7 +94,14 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
         transacting,
       }
     ),
-    await Promise.all(_.map(calendarIds, (calendarId) => getEvents(calendarId, { transacting }))),
+    await Promise.all(
+      _.map(calendarIds, (calendarId) =>
+        getEvents(calendarId, {
+          getPrivates: false,
+          transacting,
+        })
+      )
+    ),
     table.events.find(
       { id_$in: eventIds },
       {

@@ -4,7 +4,9 @@ const eventTypes = require('../src/services/event-types');
 const { validateKeyPrefix } = require('../src/validations/exists');
 
 function addEvent(key, event, { transacting } = {}) {
-  validateKeyPrefix(key, this.calledFrom);
+  if (!this.calledFrom.startsWith('plugins.assignables')) {
+    validateKeyPrefix(key, this.calledFrom);
+  }
   return events.add(key, event, { transacting });
 }
 
