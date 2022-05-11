@@ -8,6 +8,7 @@ const registerPermission = require('./permissions/assignableInstance/assignableI
 const addPermissionToUser = require('./permissions/assignableInstance/users/addPermissionToUser');
 const createAssignation = require('../assignations/createAssignation');
 const addTeachersToAssignableInstance = require('../teachers/addTeachersToAssignableInstance');
+const registerEvent = require('./calendar/registerEvent');
 
 async function getTeachersOfGivenClasses(classes, { userSession, transacting } = {}) {
   const academicPortfolioServices = leemons.getPlugin('academic-portfolio').services;
@@ -81,12 +82,18 @@ module.exports = async function createAssignableInstance(
     );
   }
 
+  let event = null;
+
+  if (dates && dates.start && dates.close) {
+    const newEvent = await registerEvent(assignable, classes, { dates, transacting });
+    event = newEvent.id;
+  }
   // EN: Create the assignable instance
   // ES: Crea el asignable instance
   const { id } = await assignableInstances.create(
     {
       ...assignableInstanceObj,
-
+      event,
       metadata: JSON.stringify(metadata),
       curriculum: JSON.stringify(curriculum),
       relatedAssignableInstances: JSON.stringify(
@@ -112,8 +119,25 @@ module.exports = async function createAssignableInstance(
     { id, assignable: assignableInstance.assignable },
     { transacting }
   );
+  // EN: Grant users to access event
+  // ES: Da permiso a los usuarios para ver el evento
+  if (event && teachers && teachers.length) {
+    await leemons
+      .getPlugin('calendar')
+      .services.calendar.grantAccessUserAgentToEvent(event, _.map(teachers, 'teacher'), 'view', {
+        transacting,
+      });
+  }
 
   if (students.length) {
+    // EN: Grant users to access event
+    // ES: Da permiso a los usuarios para ver el evento
+    if (event) {
+      await leemons
+        .getPlugin('calendar')
+        .services.calendar.grantAccessUserAgentToEvent(event, students, 'view', { transacting });
+    }
+
     // EN: Register the students permissions
     // ES: Registra los permisos de los estudiantes
     await addPermissionToUser(id, assignable.id, students, 'student', { transacting });
