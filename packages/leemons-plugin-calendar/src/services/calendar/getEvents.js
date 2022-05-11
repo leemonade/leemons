@@ -1,22 +1,23 @@
+const _ = require('lodash');
 const { table } = require('../tables');
 const { validateNotExistCalendar } = require('../../validations/exists');
-const _ = require('lodash');
 
 /**
  *
  * @public
  * @static
  * @param {string} calendar
+ * @param {boolean} getPrivates
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function getEvents(calendar, { transacting } = {}) {
+async function getEvents(calendar, { getPrivates = true, transacting } = {}) {
   await validateNotExistCalendar(calendar);
   const eventCalendars = await table.eventCalendar.find({ calendar }, { transacting });
-  const events = await table.events.find(
-    { id_$in: _.map(eventCalendars, 'event') },
-    { transacting }
-  );
+
+  const query = { id_$in: _.map(eventCalendars, 'event') };
+  if (!getPrivates) query.isPrivate = false;
+  const events = await table.events.find(query, { transacting });
   return _.map(events, (event) => ({
     ...event,
     calendar,

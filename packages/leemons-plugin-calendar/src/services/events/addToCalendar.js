@@ -11,15 +11,11 @@ async function addToCalendar(_eventIds, _calendarIds, { transacting: _transactin
   return global.utils.withTransaction(
     async (transacting) => {
       const calendars = await Promise.all(
-        _.map(calendarIds, (calendarId) => {
-          return detailCalendar(calendarId, { transacting });
-        })
+        _.map(calendarIds, (calendarId) => detailCalendar(calendarId, { transacting }))
       );
 
       const events = await Promise.all(
-        _.map(eventIds, (eventId) => {
-          return detailEvent(eventId, { transacting });
-        })
+        _.map(eventIds, (eventId) => detailEvent(eventId, { transacting }))
       );
 
       const promises = [];
@@ -38,7 +34,7 @@ async function addToCalendar(_eventIds, _calendarIds, { transacting: _transactin
         });
       });
 
-      return await Promise.all(promises);
+      return Promise.all(promises);
     },
     table.calendars,
     _transacting
