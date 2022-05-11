@@ -6,6 +6,8 @@ const updateDates = require('../dates/updateDates');
 const { assignableInstances } = require('../tables');
 const getAssignableInstance = require('./getAssignableInstance');
 const getUserPermission = require('./permissions/assignableInstance/users/getUserPermission');
+const updateEvent = require('./calendar/updateEvent');
+const registerEvent = require('./calendar/registerEvent');
 
 const updatableFields = [
   'alwaysAvailable',
@@ -101,6 +103,67 @@ module.exports = async function updateAssignableInstance(
 
   if (cleanObj.length) {
     await assignableInstances.update({ id }, cleanObj, { transacting });
+  }
+
+  // ----------
+
+  const assignable = 'assinable';
+
+  const oldInstance = {
+    event: 'id',
+  };
+  const classes = [];
+  const dates = {};
+
+  const teachersIdsToRemove = [];
+  const studentsIdsToRemove = [];
+  const newTeacherIds = [];
+  const newStudentIds = [];
+
+  let { event } = oldInstance;
+
+  const { calendar: calendarService } = leemons.getPlugin('calendar').services;
+
+  if (event) {
+    if (dates && dates.start && dates.close) {
+      // ES: Si ya existe evento y seguimos teniendo fechas buenas actualizamos el evento
+      await updateEvent(event, assignable, classes, { dates, transacting });
+    } else {
+      // ES: Si ya existe evento pero las nuevas fechas no cumplen los criterios tenemos que eliminar el evento
+      await calendarService.removeEvent(event, { transacting });
+      event = null;
+    }
+  } else if (dates && dates.start && dates.close) {
+    // ES: Si no existe el evento y tenemos fechas buenas creamos el evento
+    const newEvent = await registerEvent(assignable, classes, { dates, transacting });
+    event = newEvent.id;
+  }
+
+  // ES: Eliminamos los profesores/estudiantes que ya no estan en el asignable
+  if (event && (teachersIdsToRemove.length || studentsIdsToRemove.length)) {
+    await leemons
+      .getPlugin('calendar')
+      .services.calendar.unGrantAccessUserAgentToEvent(
+        event,
+        [...teachersIdsToRemove, ...studentsIdsToRemove],
+        {
+          transacting,
+        }
+      );
+  }
+
+  // ES: Añadimos los nuevos profesores/estudiantes
+  if (event && (newTeacherIds.length || newStudentIds.length)) {
+    await leemons
+      .getPlugin('calendar')
+      .services.calendar.grantAccessUserAgentToEvent(
+        event,
+        [...newTeacherIds, ...newStudentIds],
+        'view',
+        {
+          transacting,
+        }
+      );
   }
 
   return {

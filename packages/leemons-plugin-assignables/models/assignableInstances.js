@@ -35,9 +35,12 @@ module.exports = {
       type: 'json',
     },
     event: {
+      type: 'uuid',
+      /*
       references: {
         collection: 'plugins_calendar::events',
       },
+       */
     },
   },
   primaryKey: {

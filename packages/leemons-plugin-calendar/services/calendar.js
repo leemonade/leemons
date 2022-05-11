@@ -16,6 +16,34 @@ function addEvent(key, event, { transacting } = {}) {
   return events.add(key, event, { transacting });
 }
 
+function grantAccessUserAgentToEvent(id, userAgentId, actionName, { transacting } = {}) {
+  if (!this.calledFrom.startsWith('plugins.assignables')) {
+    throw new Error('You can not have access');
+  }
+  return events.grantAccessUserAgentToEvent(id, userAgentId, actionName, { transacting });
+}
+
+function unGrantAccessUserAgentToEvent(id, userAgentId, { actionName, transacting } = {}) {
+  if (!this.calledFrom.startsWith('plugins.assignables')) {
+    throw new Error('You can not have access');
+  }
+  return events.grantAccessUserAgentToEvent(id, userAgentId, { actionName, transacting });
+}
+
+function removeEvent(id, { transacting } = {}) {
+  if (!this.calledFrom.startsWith('plugins.assignables')) {
+    throw new Error('You can not have access');
+  }
+  return events.remove(id, { transacting });
+}
+
+function updateEvent(id, data, { calendar: _calendar, transacting } = {}) {
+  if (!this.calledFrom.startsWith('plugins.assignables')) {
+    throw new Error('You can not have access');
+  }
+  return events.update(id, data, { calendar: _calendar, transacting });
+}
+
 module.exports = {
   eventTypes: {
     event: leemons.plugin.prefixPN('event'),
@@ -29,8 +57,10 @@ module.exports = {
   grantAccessUserAgentToCalendar: calendar.grantAccessUserAgentToCalendar,
   unGrantAccessUserAgentToCalendar: calendar.unGrantAccessUserAgentToCalendar,
   addEvent,
-  grantAccessUserAgentToEvent: events.grantAccessUserAgentToEvent,
-  unGrantAccessUserAgentToEvent: events.unGrantAccessUserAgentToEvent,
+  removeEvent,
+  updateEvent,
+  grantAccessUserAgentToEvent,
+  unGrantAccessUserAgentToEvent,
   addEventType: eventTypes.add,
   listEventType: eventTypes.list,
   existEventType: eventTypes.exist,
