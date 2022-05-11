@@ -85,6 +85,7 @@ export default function AssignmentPage() {
 
       addSuccessAlert('Assignment created successfully');
       // history.push('/private/tasks/ongoing');
+      history.push('/private/tasks/library');
     } catch (e) {
       addErrorAlert(e.message);
     }
@@ -96,7 +97,7 @@ export default function AssignmentPage() {
 
   return (
     <ContextContainer fullHeight>
-      <AdminPageHeader values={{ title: `${labels?.page_title}: ${task?.name}` }} />
+      <AdminPageHeader values={{ title: `${labels?.page_title}: ${task?.asset?.name}` }} />
       <Paper color="solid" shadow="none" padding={0}>
         <PageContainer>
           <ContextContainer padded="vertical">
