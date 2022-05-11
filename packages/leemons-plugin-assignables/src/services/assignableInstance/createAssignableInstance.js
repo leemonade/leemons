@@ -7,6 +7,7 @@ const { assignableInstances } = require('../tables');
 const registerPermission = require('./permissions/assignableInstance/assignableInstance/registerPermission');
 const addPermissionToUser = require('./permissions/assignableInstance/users/addPermissionToUser');
 const createAssignation = require('../assignations/createAssignation');
+const registerEvent = require('./calendar/registerEvent');
 
 module.exports = async function createAssignableInstance(
   assignableInstance,
@@ -66,12 +67,14 @@ module.exports = async function createAssignableInstance(
     );
   }
 
+  const event = await registerEvent(assignable, { userSession, transacting });
+
   // EN: Create the assignable instance
   // ES: Crea el asignable instance
   const { id } = await assignableInstances.create(
     {
       ...assignableInstanceObj,
-
+      event: event.id,
       metadata: JSON.stringify(metadata),
       curriculum: JSON.stringify(curriculum),
       relatedAssignableInstances: JSON.stringify(

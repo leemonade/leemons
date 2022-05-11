@@ -34,6 +34,11 @@ module.exports = {
     relatedAssignableInstances: {
       type: 'json',
     },
+    event: {
+      references: {
+        collection: 'plugins_calendar::events',
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',
