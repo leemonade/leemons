@@ -38,8 +38,10 @@ const {
 const { filterUserAgentsByProfileAndCenter } = require('./filterUserAgentsByProfileAndCenter');
 const { getDataForUserAgentDatasets } = require('./getDataForUserAgentDatasets');
 const { saveDataForUserAgentDatasets } = require('./saveDataForUserAgentDatasets');
+const { update } = require('./update');
 
 module.exports = {
+  update,
   existUserAgent,
   searchUserAgents,
   getUserAgentsInfo,

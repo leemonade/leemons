@@ -247,6 +247,7 @@ module.exports = {
     addTag: 'Add Tag',
     edit: 'Edit',
     save: 'Save',
+    cancel: 'Cancel',
     saveSuccess: 'Saved successfully',
   },
 };

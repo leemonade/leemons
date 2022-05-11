@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Paragraph, TabPanel, Tabs, Title } from '@bubbles-ui/components';
+import { Box, Paragraph, TabPanel, Tabs, Stack, Alert } from '@bubbles-ui/components';
 import { forEach } from 'lodash';
 import { ByTag } from './ByTag';
 import { ByData } from './ByData';
@@ -34,12 +34,15 @@ const SelectUsersForAddToClasses = ({
     <Box>
       {showMessages ? (
         <Box>
-          <Title order={4}>{messages.title}</Title>
-          <Paragraph>{messages.description}</Paragraph>
-          <Paragraph>
-            <strong>{messages.note}</strong>
-            {messages.noteDescription}
-          </Paragraph>
+          <Alert severity="info" variant="block" title={messages.title} closeable={false}>
+            <Stack direction="column" fullWidth spacing={4}>
+              <Box>{messages.description}</Box>
+              <Box>
+                <strong>{messages.note} </strong>
+                {messages.noteDescription}
+              </Box>
+            </Stack>
+          </Alert>
         </Box>
       ) : null}
 

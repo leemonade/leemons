@@ -8,6 +8,8 @@ import {
   Select,
   Stack,
   Title,
+  useResizeObserver,
+  Divider,
 } from '@bubbles-ui/components';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
@@ -44,6 +46,9 @@ function DetailUser({ session }) {
   store.params.user = !userId || userId === 'me' ? session?.id : userId;
 
   const form = useForm();
+
+  const [containerRef, containerRect] = useResizeObserver();
+  const [childRef, childRect] = useResizeObserver();
 
   function getUserAgentsCenters() {
     const values = {};
@@ -109,6 +114,19 @@ function DetailUser({ session }) {
       store.user = data.user;
       store.userAgents = data.userAgents;
       store.centers = getUserAgentsCenters();
+      store.formValues = {
+        'preferences.gender': store.user.preferences?.gender,
+        'preferences.pronoun': store.user.preferences?.pronoun,
+        'preferences.pluralPronoun': store.user.preferences?.pluralPronoun,
+        'user.name': store.user.name,
+        'user.email': store.user.email,
+        'user.surnames': store.user.surnames,
+        'user.secondSurname': store.user.secondSurname,
+        'user.birthdate': new Date(store.user.birthdate),
+        'user.gender': store.user.gender,
+      };
+      form.reset(store.formValues);
+      /*
       form.setValue('preferences.gender', store.user.preferences?.gender);
       form.setValue('preferences.pronoun', store.user.preferences?.pronoun);
       form.setValue('preferences.pluralPronoun', store.user.preferences?.pluralPronoun);
@@ -118,6 +136,7 @@ function DetailUser({ session }) {
       form.setValue('user.secondSurname', store.user.secondSurname);
       form.setValue('user.birthdate', new Date(store.user.birthdate));
       form.setValue('user.gender', store.user.gender);
+      */
       if (store.centers[0]) selectCenter(store.centers[0].value);
       if (store.profiles[0]) selectProfile(store.profiles[0].value);
       render();
@@ -137,6 +156,14 @@ function DetailUser({ session }) {
 
   function setCanEdit() {
     store.isEditMode = true;
+    render();
+  }
+
+  function cancelEdit() {
+    form.reset(store.formValues);
+    if (store.centers[0]) selectCenter(store.centers[0].value);
+    if (store.profiles[0]) selectProfile(store.profiles[0].value);
+    store.isEditMode = false;
     render();
   }
 
@@ -167,11 +194,12 @@ function DetailUser({ session }) {
         await Promise.all(promises);
 
         store.isEditMode = false;
-
         render();
         addSuccessAlert(t(`saveSuccess`));
+        return true;
       } catch (err) {
         addErrorAlert(getErrorMessage(err));
+        return false;
       }
     })();
   }
@@ -186,45 +214,65 @@ function DetailUser({ session }) {
   if (!store.user) return null;
 
   return (
-    <Box sx={(theme) => ({ paddingBottom: theme.spacing[10] })}>
-      <PageContainer>
-        <Stack
-          sx={(theme) => ({ paddingTop: theme.spacing[12], paddingBottom: theme.spacing[12] })}
-          fullWidth
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <ContextContainer direction="row" alignItems="center" justifyContent="start">
-            <Title>{getUserFullName(store.user)}</Title>
-            <Select
-              placeholder={t('selectCenter')}
-              value={store.center}
-              onChange={selectCenter}
-              data={store.centers}
-            />
-            <Select
-              placeholder={t('selectProfile')}
-              disabled={!store.center}
-              value={store.profile}
-              onChange={selectProfile}
-              data={store.profiles}
-            />
-          </ContextContainer>
-          {store.canUpdate ? (
-            <>
-              {store.isEditMode ? (
-                <Button onClick={tryToSave} sx={() => ({ justifySelf: 'end' })}>
-                  {t('save')}
-                </Button>
-              ) : (
-                <Button onClick={setCanEdit} sx={() => ({ justifySelf: 'end' })}>
-                  {t('edit')}
-                </Button>
-              )}
-            </>
-          ) : null}
-        </Stack>
+    <Box ref={containerRef} sx={(theme) => ({ paddingBottom: theme.spacing[10] })}>
+      <Box
+        ref={childRef}
+        style={{ width: containerRect.width, top: containerRect.top }}
+        sx={(theme) => ({
+          position: 'fixed',
+          backgroundColor: theme.colors.uiBackground04,
+          zIndex: 9,
+        })}
+      >
+        <PageContainer>
+          <Stack
+            sx={(theme) => ({ paddingTop: theme.spacing[5], paddingBottom: theme.spacing[5] })}
+            fullWidth
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            spacing={5}
+          >
+            <ContextContainer direction="row" alignItems="center" justifyContent="start">
+              <Title>{getUserFullName(store.user)}</Title>
+              <Select
+                placeholder={t('selectCenter')}
+                value={store.center}
+                onChange={selectCenter}
+                data={store.centers}
+              />
+              <Select
+                placeholder={t('selectProfile')}
+                disabled={!store.center}
+                value={store.profile}
+                onChange={selectProfile}
+                data={store.profiles}
+              />
+            </ContextContainer>
+            {store.canUpdate ? (
+              <>
+                {store.isEditMode ? (
+                  <Stack direction="row" spacing={5} skipFlex>
+                    <Button variant="light" onClick={cancelEdit}>
+                      {t('cancel')}
+                    </Button>
+                    <Button onClick={tryToSave}>{t('save')}</Button>
+                  </Stack>
+                ) : (
+                  <Button onClick={setCanEdit} sx={() => ({ justifySelf: 'end' })}>
+                    {t('edit')}
+                  </Button>
+                )}
+              </>
+            ) : null}
+          </Stack>
+          <Divider />
+        </PageContainer>
+      </Box>
+      <PageContainer
+        sx={(theme) => ({ paddingTop: theme.spacing[5] })}
+        style={{ marginTop: childRect.height }}
+      >
         <ContextContainer direction="row">
           <ContextContainer divided>
             <UserImageAndPreferredGender
