@@ -11,26 +11,44 @@ export default function SelectCustomGroup({ labels, profiles, onChange, value })
     defaultValues: {},
   });
 
-  const { assignableStudents, subjects } = useGroupedClassesWithSelectedSubjects();
+  const { assignableStudents, subjects, classes } = useGroupedClassesWithSelectedSubjects();
 
   useEffect(() => {
     const handleChange = (v) => {
       if (v.name?.length && v.assignees?.length) {
-        const assignees =
-          // EN: Create a group per subject
-          // ES: Crear un grupo por asignatura
-          subjects.map((subject) => ({
-            // TODO: Save custom group with name and students to be reused
-            group: undefined, // v.name,
+        // EN: Get the groups that are selected through their students
+        // ES: Obtener los grupos que seleccionaron a través de sus estudiantes
+        const groupsMatchingStudents = classes
+          .map((c) => ({
+            ...c,
+            students: _.intersection(c.students, v.assignees),
+          }))
+          .filter((c) => c.students.length);
+
+        // EN: Get the classes selected through their groups
+        // ES: Obtener las clases que seleccionaron a través de sus grupos
+        const classesMatchingStudents = groupsMatchingStudents.flatMap((group) => {
+          if (group.type === 'group') {
+            return group.classes.map((c) => ({
+              group: c.class.id,
+              type: 'custom',
+              students: group.students,
+              c,
+            }));
+          }
+
+          return {
+            group: group.id,
             type: 'custom',
-            subject,
-            students: v.assignees,
-          }));
+            students: group.students,
+            c: group,
+          };
+        });
 
         // EN: Do not update if same values
         // ES: No actualizar si son iguales
-        if (!value || !_.isEqual(value, assignees)) {
-          onChange(assignees);
+        if (!value || !_.isEqual(value, classesMatchingStudents)) {
+          onChange(classesMatchingStudents);
         }
       } else if (!value || value?.length) {
         onChange([]);

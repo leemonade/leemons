@@ -41,12 +41,16 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
     groups = Object.entries(groups).reduce((acc, [id, group]) => {
       const groupStudents = _.uniq(group.flatMap((c) => c.students));
 
-      const shouldDisplayOnlyGroup = disableGrouping
-        ? false
-        : group.every(({ students }) => {
-            const common = _.intersection(students, groupStudents);
-            return common.length >= groupStudents.length * 0.8;
-          });
+      const shouldDisplayOnlyGroup =
+        disableGrouping || group.length === 1
+          ? false
+          : group.every(({ students }) => {
+              const common = _.intersection(students, groupStudents);
+              return (
+                (common.length > 0 || students.length === 0) &&
+                common.length >= groupStudents.length * 0.8
+              );
+            });
 
       if (shouldDisplayOnlyGroup) {
         const groupAssignableStudents = _.uniq(group.flatMap((c) => c.assignableStudents));
