@@ -7,6 +7,21 @@ const { assignableInstances } = require('../tables');
 const registerPermission = require('./permissions/assignableInstance/assignableInstance/registerPermission');
 const addPermissionToUser = require('./permissions/assignableInstance/users/addPermissionToUser');
 const createAssignation = require('../assignations/createAssignation');
+const addTeachersToAssignableInstance = require('../teachers/addTeachersToAssignableInstance');
+
+async function getTeachersOfGivenClasses(classes, { userSession, transacting } = {}) {
+  const academicPortfolioServices = leemons.getPlugin('academic-portfolio').services;
+  const classesData = await academicPortfolioServices.classes.classByIds(classes, {
+    userSession,
+    transacting,
+  });
+  const teachers = _.uniqBy(
+    classesData.flatMap((classData) => classData.teachers),
+    'teacher'
+  );
+
+  return teachers;
+}
 
 module.exports = async function createAssignableInstance(
   assignableInstance,
@@ -88,6 +103,11 @@ module.exports = async function createAssignableInstance(
   // EN: Save the classes
   // ES: Guarda las clases
   await registerClass(id, assignable.id, classes, { userSession, transacting });
+
+  // EN: Save the teachers
+  // ES: Guarda los profesores
+  const teachers = await getTeachersOfGivenClasses(classes, { userSession, transacting });
+  await addTeachersToAssignableInstance(teachers, id, { transacting });
 
   if (students.length) {
     // EN: Register the students permissions
