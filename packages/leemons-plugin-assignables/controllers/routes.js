@@ -10,4 +10,10 @@ module.exports = [
     path: '/createUser',
     handler: 'test.createUser',
   },
+  {
+    method: 'GET',
+    path: '/instances',
+    handler: 'assignables.listInstances',
+    authenticated: true,
+  },
 ];
