@@ -52,18 +52,17 @@ async function getCoverFileContent(ctx) {
 
   const assets = await getByIds([assetId], {
     checkPermissions: true,
-    showPublic: false,
+    showPublic: true,
     userSession,
   });
 
-  console.log('assetId:', assetId);
-  console.log('assets', assets);
-  console.log('asset.cover', assets[0]?.cover);
+  const [asset] = assets;
 
-  const canAccess = !isEmpty(assets);
-
-  if (!canAccess) {
-    throw new global.utils.HttpError(403, 'You do not have permissions to view this file');
+  if (!asset) {
+    throw new global.utils.HttpError(
+      403,
+      "You don't have permissions to view this Asset or doens't exists"
+    );
   }
 
   const { readStream, fileName, contentType } = await fileService.dataForReturnFile(

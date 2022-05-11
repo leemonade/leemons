@@ -38,7 +38,12 @@ async function getByIds(
   // PERMISSIONS & PERSONS
 
   if (checkPermissions && userSession) {
-    const permissions = await getPermissions(assetsIds, { showPublic, userSession, transacting });
+    let permissions = [];
+
+    if (userSession || showPublic) {
+      permissions = await getPermissions(assetsIds, { showPublic, userSession, transacting });
+    }
+
     const privateAssets = permissions.map((item) => item.asset);
     assets = assets.filter((asset) => privateAssets.includes(asset.id));
 

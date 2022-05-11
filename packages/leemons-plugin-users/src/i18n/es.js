@@ -250,6 +250,7 @@ module.exports = {
     addTag: 'Añadir tag',
     edit: 'Editar',
     save: 'Guardar',
+    cancel: 'Cancelar',
     saveSuccess: 'Datos guardados correctamente',
   },
 };
