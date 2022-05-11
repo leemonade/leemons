@@ -16,27 +16,25 @@ export default function Private() {
   const session = useSession({ redirectTo: goLoginPage });
 
   return (
-    <div>
-      <Switch>
-        <Route path={`${path}/new`}>
-          <AddCurriculum session={session} />
-        </Route>
-        <Route path={`${path}/:id/step/1`}>
-          <AddCurriculumStep1 session={session} />
-        </Route>
-        <Route path={`${path}/:id/step/2`}>
-          <AddCurriculumStep2 session={session} />
-        </Route>
-        <Route path={`${path}/:id/step/3`}>
-          <AddCurriculumStep3 session={session} />
-        </Route>
-        <Route path={`${path}/:id/view`}>
-          <CurriculumView session={session} />
-        </Route>
-        <Route path={`${path}/list`}>
-          <ListCurriculum session={session} />
-        </Route>
-      </Switch>
-    </div>
+    <Switch>
+      <Route path={`${path}/new`}>
+        <AddCurriculum session={session} />
+      </Route>
+      <Route path={`${path}/:id/step/1`}>
+        <AddCurriculumStep1 session={session} />
+      </Route>
+      <Route path={`${path}/:id/step/2`}>
+        <AddCurriculumStep2 session={session} />
+      </Route>
+      <Route path={`${path}/:id/step/3`}>
+        <AddCurriculumStep3 session={session} />
+      </Route>
+      <Route path={`${path}/:id/view`}>
+        <CurriculumView session={session} />
+      </Route>
+      <Route path={`${path}/list`}>
+        <ListCurriculum session={session} />
+      </Route>
+    </Switch>
   );
 }

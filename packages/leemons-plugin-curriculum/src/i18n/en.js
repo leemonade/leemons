@@ -1,4 +1,8 @@
 module.exports = {
+  listCurriculum: {
+    page_title: 'Curriculum Library',
+    page_description: 'These are the curricula of the programmes you deliver.',
+  },
   addCurriculum: {
     newCurriculum: 'New curriculum',
     description1:
