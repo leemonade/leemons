@@ -190,5 +190,6 @@ module.exports = {
     view: 'View',
     edit: 'Edit',
     tests: 'Tests',
+    questionBank: 'Question bank',
   },
 };

@@ -68,7 +68,9 @@ export default function Dashboard({ session }) {
     if (store.isAcademicMode) {
       const { programs } = await getUserProgramsRequest();
       store.programs = programs;
-      [store.selectedProgram] = store.programs;
+      if (store.programs.length >= 1) {
+        [store.selectedProgram] = store.programs;
+      }
     }
 
     store.loading = false;
@@ -96,7 +98,7 @@ export default function Dashboard({ session }) {
   } else {
     headerProps.withBlur = false;
     headerProps.withGradient = false;
-    headerProps.color = store.selectedProgram.color || 'rgb(255, 204, 153)';
+    headerProps.color = store.selectedProgram?.color || 'rgb(255, 204, 153)';
   }
 
   // TODO: Añadir en el header que se puedan seleccionar los programas
@@ -112,7 +114,7 @@ export default function Dashboard({ session }) {
           <HeaderBackground {...headerProps} styles={{ position: 'absolute' }} />
           <Box className={styles.programSelectorContainer}>
             <Title order={3}>
-              {store.isAcademicMode
+              {store.isAcademicMode && store.programs.length
                 ? store.selectedProgram
                   ? store.selectedProgram.name
                   : t('selectYourProgram')
@@ -151,24 +153,26 @@ export default function Dashboard({ session }) {
         </ContextContainer>
 
         {/* -- RIGHT ZONE -- */}
-        <Paper
-          sx={(theme) => ({
-            position: 'fixed',
-            right: 0,
-            top: 0,
-            bottom: 0,
-            background: theme.colors.uiBackground02,
-            width: rightZoneWidth,
-          })}
-        >
-          <ZoneWidgets zone="plugins.dashboard.program.right">
-            {({ Component, key }) => (
-              <Box key={key}>
-                <Component program={store.selectedProgram} session={session} />
-              </Box>
-            )}
-          </ZoneWidgets>
-        </Paper>
+        {store.selectedProgram ? (
+          <Paper
+            sx={(theme) => ({
+              position: 'fixed',
+              right: 0,
+              top: 0,
+              bottom: 0,
+              background: theme.colors.uiBackground02,
+              width: rightZoneWidth,
+            })}
+          >
+            <ZoneWidgets zone="plugins.dashboard.program.right">
+              {({ Component, key }) => (
+                <Box key={key}>
+                  <Component program={store.selectedProgram} session={session} />
+                </Box>
+              )}
+            </ZoneWidgets>
+          </Paper>
+        ) : null}
       </Box>
     </>
   );
