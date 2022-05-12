@@ -1,20 +1,24 @@
 import React from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Switch as Routes, Route, useRouteMatch, Redirect } from 'react-router-dom';
 import loadable from '@loadable/component';
-import { useSession } from '@users/session';
-import { goLoginPage } from '@users/navigate';
 
-const TestsList = loadable(() => import('./src/pages/private/tests/List'));
+const Details = loadable(() => import('./src/components/Details/Details'));
 
 export default function Private() {
   const { path } = useRouteMatch();
-  const session = useSession({ redirectTo: goLoginPage });
 
   return (
-    <Switch>
-      <Route path={`${path}`}>
-        <TestsList session={session} />
+    <Routes>
+      <Route path={`${path}/ongoing`}>
+        <p>Ongoing</p>
       </Route>
-    </Switch>
+      <Route path={`${path}/details/:id`}>
+        <Details />
+      </Route>
+
+      <Route path={`${path}/`}>
+        <Redirect to={`${path}/ongoing`} />
+      </Route>
+    </Routes>
   );
 }

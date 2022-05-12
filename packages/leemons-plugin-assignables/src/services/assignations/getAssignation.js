@@ -1,7 +1,7 @@
 const { getDates } = require('../dates');
 const { assignations } = require('../tables');
 const getGrade = require('../grades/getGrade');
-const getTeacherPermission = require('../assignableInstance/permissions/assignableInstance/users/getTeacherPermission');
+const getUserPermission = require('../assignableInstance/permissions/assignableInstance/users/getUserPermission');
 
 module.exports = async function getAssignation(
   assignableInstanceId,
@@ -13,7 +13,9 @@ module.exports = async function getAssignation(
   if (
     !(
       userSession.userAgents.map((u) => u.id).includes(user) ||
-      (await getTeacherPermission(assignableInstanceId, { userSession, transacting })).length
+      (
+        await getUserPermission(assignableInstanceId, { userSession, transacting })
+      ).actions.includes('edit')
     )
   ) {
     throw new Error('Assignation not found or your are not allowed to view it');

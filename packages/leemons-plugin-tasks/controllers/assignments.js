@@ -93,18 +93,18 @@ module.exports = {
   instanceGet: async (ctx) => {
     try {
       const { instance } = ctx.request.params;
-      let { columns } = ctx.query;
+      // let { columns } = ctx.query;
 
-      try {
-        columns = JSON.parse(columns);
-      } catch (e) {
-        if (columns !== '*') {
-          columns = undefined;
-        }
-      }
+      // try {
+      //   columns = JSON.parse(columns);
+      // } catch (e) {
+      //   if (columns !== '*') {
+      //     columns = undefined;
+      //   }
+      // }
 
       const data = await getInstance(instance, {
-        columns,
+        userSession: ctx.state.userSession,
       });
 
       ctx.status = 200;
