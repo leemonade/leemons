@@ -61,6 +61,7 @@ module.exports = async function getAssignableInstance(
     if (isTeacher) {
       try {
         assignableInstance.students = await getAssignationsOfAssignableInstance(id, {
+          details: true,
           userSession,
           transacting,
         });

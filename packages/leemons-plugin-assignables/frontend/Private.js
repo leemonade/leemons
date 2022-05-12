@@ -1,6 +1,8 @@
 import React from 'react';
 import { Switch as Routes, Route, useRouteMatch, Redirect } from 'react-router-dom';
-import Details from './src/components/Details/Details';
+import loadable from '@loadable/component';
+
+const Details = loadable(() => import('./src/components/Details/Details'));
 
 export default function Private() {
   const { path } = useRouteMatch();

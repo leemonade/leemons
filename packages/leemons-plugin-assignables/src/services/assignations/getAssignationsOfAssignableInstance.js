@@ -1,9 +1,10 @@
 const getUserPermission = require('../assignableInstance/permissions/assignableInstance/users/getUserPermission');
 const { assignations } = require('../tables');
+const getAssignation = require('./getAssignation');
 
 module.exports = async function getAssignationsOfAssignableInstance(
   assignableInstance,
-  { userSession, transacting } = {}
+  { details = false, userSession, transacting } = {}
 ) {
   const userPermission = await getUserPermission(assignableInstance, { userSession, transacting });
 
@@ -13,9 +14,17 @@ module.exports = async function getAssignationsOfAssignableInstance(
 
   const query = { instance: assignableInstance };
 
-  const studentsAssignations = await assignations.findOne(query, { transacting });
+  const studentsAssignations = await assignations.find(query, { transacting });
 
-  studentsAssignations.map((assignation) => ({
+  if (details) {
+    return Promise.all(
+      studentsAssignations.map(async ({ user }) =>
+        getAssignation(assignableInstance, user, { transacting, userSession })
+      )
+    );
+  }
+
+  return studentsAssignations.map((assignation) => ({
     ...assignation,
     classes: JSON.parse(assignation.classes),
     metadata: JSON.parse(assignation.metadata),

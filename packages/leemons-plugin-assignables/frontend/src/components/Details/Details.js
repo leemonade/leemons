@@ -1,20 +1,20 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-// import useInstance from '../Student/TaskDetail/helpers/useInstance';
+import useAssignableInstance from '../../hooks/assignableInstance/useAssignableInstance';
 import { TaskOngoingList } from './components/TaskOngoingList';
 import UsersList from './components/UsersList';
 
 export default function Details() {
   const { id } = useParams();
 
-  // const instance = useInstance(instanceId);
+  const instance = useAssignableInstance(id);
 
-  console.log(id);
+  console.log('instance', instance);
 
   return (
     <>
       <TaskOngoingList />
-      <UsersList />
+      <UsersList instance={instance} />
     </>
   );
 }

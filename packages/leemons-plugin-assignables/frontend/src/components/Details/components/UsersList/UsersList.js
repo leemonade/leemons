@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import _ from 'lodash';
+import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
 import {
   PaginatedList,
@@ -10,55 +11,43 @@ import {
   Stack,
   ContextContainer,
   Checkbox,
+  UserDisplayItem,
 } from '@bubbles-ui/components';
+import { getUserAgentsInfoRequest } from '@users/request';
+
 import StudentsList from './StudentsList';
 
-export default function UserList({ labels, placeholders, descriptions }) {
-  const students = useMemo(() => {
-    const student = {
-      student: 'Juan Alberto',
-      status: 'En proceso',
-      completed: '10',
-      avgTime: '10',
-      score: '10',
-      actions: <Button>Corregir</Button>,
-    };
+import useParsedStudents from './helpers/useParseStudents';
 
-    const array = [];
+export default function UserList({ labels, placeholders, descriptions, instance }) {
+  const students = useParsedStudents(instance);
 
-    for (let i = 0; i < 100; i++) {
-      array.push({ ...student, student: `${student.student} (${i})`, id: _.uniqueId() });
-    }
+  // const bulkActions = useMemo(
+  //   () => [
+  //     {
+  //       label: 'To be defined',
+  //       value: 'TBD',
+  //     },
+  //     {
+  //       label: labels?.bulkActions?.SEND_REMINDER,
+  //       value: 'SEND_REMINDER',
+  //     },
+  //   ],
+  //   []
+  // );
 
-    return array;
-  }, []);
-
-  const bulkActions = useMemo(
-    () => [
-      {
-        label: 'To be defined',
-        value: 'TBD',
-      },
-      {
-        label: labels?.bulkActions?.SEND_REMINDER,
-        value: 'SEND_REMINDER',
-      },
-    ],
-    []
-  );
-
-  const selected = [];
+  // const selected = [];
 
   return (
     <>
       <ContextContainer spacing={5} sx={(theme) => ({ padding: theme.spacing[5] })}>
-        <Stack justifyContent="space-between" alignItems="center" fullWidth>
+        <Stack fullWidth>
           <Title order={4}>
             {labels?.students} {students.length}
           </Title>
           <SearchInput placeholder={placeholders?.searchStudent} variant="filled" />
         </Stack>
-        <Stack justifyContent="space-between" alignItems="center" fullWidth>
+        {/* <Stack justifyContent="space-between" alignItems="center" fullWidth>
           <Select
             orientation="horizontal"
             description={`${descriptions?.searchStudent} ${selected.length}`}
@@ -67,7 +56,7 @@ export default function UserList({ labels, placeholders, descriptions }) {
             placeholder={placeholders?.bulkActions}
           />
           <Button>{labels?.assignStudent}</Button>
-        </Stack>
+        </Stack> */}
         <StudentsList labels={labels} students={students} />
       </ContextContainer>
     </>
@@ -75,6 +64,7 @@ export default function UserList({ labels, placeholders, descriptions }) {
 }
 
 UserList.propTypes = {
+  instance: PropTypes.object,
   labels: PropTypes.shape({
     students: PropTypes.string,
     assignStudent: PropTypes.string,
