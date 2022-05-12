@@ -4,8 +4,6 @@ async function newAsset(assetData, categoryId, categoryKey) {
   const { file, cover, ...data } = assetData;
   const formData = new FormData();
 
-  console.log('assetData:', assetData);
-
   if (categoryKey === 'media-files') {
     formData.append('files', file, file.name);
 
