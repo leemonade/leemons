@@ -4,7 +4,5 @@ export default async function getAssignableInstance({ id, details = true }) {
     allAgents: true,
   });
 
-  console.log(apiData);
-
   return apiData.assignableInstance;
 }

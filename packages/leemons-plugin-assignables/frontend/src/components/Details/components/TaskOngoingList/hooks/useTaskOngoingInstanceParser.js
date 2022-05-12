@@ -1,5 +1,6 @@
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import getStatus from '../../UsersList/helpers/getStatus';
+import useClassData from './useClassData';
 
 function getStatusAsNumber(student, instance) {
   const status = getStatus(student, instance);
@@ -25,6 +26,8 @@ export default function useTaskOngoingInstanceParser(instance) {
     status: getStatusAsNumber(student, instance),
   }));
 
+  const classData = useClassData(instance.classes);
+
   return {
     // TODO: Update
     headerBackground: {
@@ -34,10 +37,9 @@ export default function useTaskOngoingInstanceParser(instance) {
     },
     taskDeadlineHeader: {
       title: instance?.assignable?.asset?.name,
-      subtitle: instance?.assignable?.asset?.tagline, // 'Geografía e historia - 3002',
-      // TODO: UPDATE
-      icon: 'https://static.thenounproject.com/png/447685-200.png',
-      color: instance?.assignable?.asset?.color,
+      subtitle: classData.name,
+      icon: classData.icon,
+      color: classData.color,
       deadline: new Date(instance?.dates?.deadline),
       // TODO: UPDATE
       locale: 'es-ES',
