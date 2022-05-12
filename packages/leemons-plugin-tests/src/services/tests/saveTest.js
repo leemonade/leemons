@@ -86,7 +86,9 @@ async function saveTest(data, { userSession, transacting: _transacting } = {}) {
               close: '2022-05-26T22:00:00.000Z',
             },
             gradable: true,
-            metadata: {},
+            metadata: {
+              questions: data.questions,
+            },
           },
           { userSession, transacting }
         );

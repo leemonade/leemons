@@ -10,6 +10,7 @@ import {
   addStudentsToClassesUnderNodeTree,
   createProgram,
   detailProgram,
+  getProgramEvaluationSystem,
   getProgramTree,
   getUserPrograms,
   havePrograms,
@@ -35,9 +36,9 @@ import {
   createClassInstance,
   haveClasses,
   listClasses,
+  listSessionClasses,
   listStudentClasses,
   listTeacherClasses,
-  listSessionClasses,
   removeClass,
   removeStudentFromClass,
   updateClass,
@@ -66,6 +67,7 @@ export const listClassesRequest = listClasses;
 export const createClassRequest = createClass;
 export const updateClassRequest = updateClass;
 export const removeClassRequest = removeClass;
+export const getProgramEvaluationSystemRequest = getProgramEvaluationSystem;
 export const updateClassManyRequest = updateClassMany;
 export const listSessionClassesRequest = listSessionClasses;
 export const createClassInstanceRequest = createClassInstance;

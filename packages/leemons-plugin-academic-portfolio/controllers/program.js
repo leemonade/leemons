@@ -124,6 +124,12 @@ async function getUserPrograms(ctx) {
   ctx.body = { status: 200, programs };
 }
 
+async function getProgramEvaluationSystem(ctx) {
+  const evaluationSystem = await programService.getProgramEvaluationSystem(ctx.request.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200, evaluationSystem };
+}
+
 module.exports = {
   putProgram,
   postProgram,
@@ -140,5 +146,6 @@ module.exports = {
   programSubstages,
   programHasCourses,
   programHasSubstages,
+  getProgramEvaluationSystem,
   addStudentsToClassesUnderNodeTree,
 };

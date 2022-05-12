@@ -9,6 +9,7 @@ const TestsEdit = loadable(() => import('./src/pages/private/tests/Edit'));
 const TestsDetail = loadable(() => import('./src/pages/private/tests/Detail'));
 const QuestionBanksList = loadable(() => import('./src/pages/private/questions-banks/List'));
 const QuestionBankDetail = loadable(() => import('./src/pages/private/questions-banks/Detail'));
+const StudentInstance = loadable(() => import('./src/pages/private/tests/StudentInstance'));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -16,6 +17,9 @@ export default function Private() {
 
   return (
     <Switch>
+      <Route path={`${path}/student/:id`}>
+        <StudentInstance session={session} />
+      </Route>
       <Route path={`${path}/questions-banks/:id`}>
         <QuestionBankDetail session={session} />
       </Route>
