@@ -12,16 +12,19 @@ import {
   TASK_ONGOING_LIST_DEFAULT_PROPS,
   TASK_ONGOING_LIST_PROP_TYPES,
 } from './TaskOngoingList.constants';
-import { mock } from './mock/mock';
+import useTaskOngoingInstanceParser from './hooks/useTaskOngoingInstanceParser';
+// import { mock } from './mock/mock';
 
-const TaskOngoingList = ({ ...props }) => {
+const TaskOngoingList = ({ instance }) => {
+  const instanceData = useTaskOngoingInstanceParser(instance);
+
   const { classes, cx } = TaskOngoingListStyles({}, { name: 'TaskOngoingList' });
 
   return (
     <Box className={classes.root}>
       <Box className={classes.header}>
         <HeaderBackground
-          {...mock.headerBackground}
+          {...instanceData.headerBackground}
           styles={{ position: 'absolute' }}
           backgroundPosition="center"
           blur={10}
@@ -36,11 +39,11 @@ const TaskOngoingList = ({ ...props }) => {
           Back
         </Button>
         <TaskDeadlineHeader
-          {...mock.taskDeadlineHeader}
+          {...instanceData.taskDeadlineHeader}
           styles={{ position: 'absolute', bottom: 0, left: 0, right: '50%', zIndex: 5 }}
         />
         <HorizontalTimeline
-          {...mock.horizontalTimeline}
+          {...instanceData.horizontalTimeline}
           rootStyles={{
             position: 'absolute',
             bottom: 0,
@@ -70,13 +73,13 @@ const TaskOngoingList = ({ ...props }) => {
                 <Text role="productive">Completed</Text>
               </Box>
             </Box>
-            <ScoresBar {...mock.leftScoresBar} />
+            <ScoresBar {...instanceData.leftScoresBar} />
           </Box>
         </Box>
         <Box className={classes.rightSide}>
           <Text transform="uppercase">Status</Text>
           <Box className={classes.rightScoreBarWrapper}>
-            <ScoresBar {...mock.rightScoresBar} />
+            <ScoresBar {...instanceData.rightScoresBar} />
           </Box>
         </Box>
       </Box>

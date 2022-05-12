@@ -11,10 +11,14 @@ export default function Details() {
 
   console.log('instance', instance);
 
-  return (
-    <>
-      <TaskOngoingList />
-      <UsersList instance={instance} />
-    </>
-  );
+  if (instance) {
+    return (
+      <>
+        <TaskOngoingList instance={instance} />
+        <UsersList instance={instance} />
+      </>
+    );
+  }
+
+  return <p>Loading...</p>;
 }

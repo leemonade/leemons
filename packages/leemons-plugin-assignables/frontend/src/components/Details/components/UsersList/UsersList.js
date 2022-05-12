@@ -1,19 +1,6 @@
-import React, { useMemo, useEffect, useState } from 'react';
-import _ from 'lodash';
-import dayjs from 'dayjs';
+import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  PaginatedList,
-  Button,
-  Title,
-  Select,
-  SearchInput,
-  Stack,
-  ContextContainer,
-  Checkbox,
-  UserDisplayItem,
-} from '@bubbles-ui/components';
-import { getUserAgentsInfoRequest } from '@users/request';
+import { Title, SearchInput, Stack, ContextContainer } from '@bubbles-ui/components';
 
 import StudentsList from './StudentsList';
 
