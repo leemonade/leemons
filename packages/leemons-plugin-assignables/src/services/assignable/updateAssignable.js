@@ -37,7 +37,7 @@ module.exports = async function updateAssignable(
 
   // Check if any of the keys are not updatable (use lodash)
   const omitted = _.omit(assignableObject, updatableFields);
-  console.dir(omitted, { depth: null });
+
   if (_.keys(omitted)?.length) {
     throw new Error('Some of the provided keys are not updatable');
   }
