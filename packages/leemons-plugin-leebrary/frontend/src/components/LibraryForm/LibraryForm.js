@@ -137,7 +137,7 @@ const LibraryForm = ({
   } = form || useForm({ defaultValues });
 
   const formValues = watch();
-  const watchCoverFile = watch('cover');
+  const coverFile = watch('cover');
   const assetFile = watch('file');
   const bookmarkUrl = watch('url');
 
@@ -160,10 +160,10 @@ const LibraryForm = ({
   }, [assetFile]);
 
   useEffect(() => {
-    if (isEmpty(watchCoverFile)) {
+    if (isEmpty(coverFile)) {
       setCoverAsset(null);
     }
-  }, [watchCoverFile]);
+  }, [coverFile]);
 
   useEffect(() => {
     // ES: El caso de uso es que el usuario cambie de soportar archivos, a solo imágenes
@@ -179,7 +179,8 @@ const LibraryForm = ({
   // HANDLERS
 
   const handleOnSubmit = (e) => {
-    if (!isEmpty(e.file) && e.file.length === 1) [e.file] = e.file;
+    if (assetFile) e.file = assetFile;
+    if (coverFile) e.cover = coverFile;
     if (asset.id) e.id = asset.id;
     if (urlMetadata?.logo) e.icon = urlMetadata.logo;
     if (coverAsset) e.cover = coverAsset.file.id;
@@ -404,7 +405,7 @@ const LibraryForm = ({
               description={type === LIBRARY_FORM_TYPES.BOOKMARKS && descriptions?.featuredImage}
             >
               <Stack direction="row" spacing={3}>
-                {!watchCoverFile && (
+                {!coverFile && (
                   <Button variant={'outline'} onClick={() => setShowAssetDrawer(true)}>
                     Search from library
                   </Button>

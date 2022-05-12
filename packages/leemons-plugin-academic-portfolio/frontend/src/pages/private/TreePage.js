@@ -15,7 +15,7 @@ import { SelectCenter } from '@users/components/SelectCenter';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { useQuery, useStore } from '@common';
-import { cloneDeep, find, forEach, isArray, isUndefined, map, omitBy } from 'lodash';
+import { find, forEach, isArray, isUndefined, map, omitBy } from 'lodash';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import SelectUserAgent from '@users/components/SelectUserAgent';
@@ -67,7 +67,7 @@ export default function TreePage() {
   const [ts, , , tsLoading] = useTranslateLoader(prefixPN('subject_page'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [store, render] = useStore();
-  const { openDeleteConfirmationModal } = useLayout();
+  const { openDeleteConfirmationModal, setLoading } = useLayout();
 
   const params = useQuery();
 
@@ -139,7 +139,8 @@ export default function TreePage() {
     render();
   }
 
-  async function getProgramTree() {
+  const getProgramTree = async () => {
+    setLoading(true);
     try {
       const [{ tree }, { subjectCredits }, { program }, { profiles }] = await Promise.all([
         getProgramTreeRequest(store.programId),
@@ -155,6 +156,7 @@ export default function TreePage() {
       const removeLabel = t('treeRemove');
       const duplicateLabel = t('treeDuplicate');
 
+      // eslint-disable-next-line no-inner-declarations
       function processItem(item, parents) {
         let text = item.value.name;
         if (item.nodeType === 'courses') {
@@ -248,12 +250,15 @@ export default function TreePage() {
       store.profiles = profiles;
       store.program = program;
       store.classesBySubject = classesBySubject;
+      setLoading(false);
       return result;
     } catch (err) {
+      setLoading(false);
       console.log(err);
       addErrorAlert(getErrorMessage(err));
+      return false;
     }
-  }
+  };
 
   async function init() {
     store.centerId = params.center;
@@ -443,7 +448,7 @@ export default function TreePage() {
   }
 
   function selectClass(classId) {
-    const item = cloneDeep(store.editingItem || store.newItem);
+    const item = store.editingItem || store.newItem;
     item.value = find(store.classesBySubject[item.value.subject?.id], {
       id: classId,
     });
@@ -704,6 +709,7 @@ export default function TreePage() {
         <PageContainer>
           <ContextContainer padded="vertical">
             <Grid>
+              {/* TREE ----------------------------------------- */}
               <Col span={5}>
                 <Paper fullWidth padding={5}>
                   <ContextContainer divided>
@@ -737,6 +743,7 @@ export default function TreePage() {
                   </ContextContainer>
                 </Paper>
               </Col>
+              {/* CONTENT ----------------------------------------- */}
               <Col span={7}>
                 {store.editingItem ? (
                   <Paper fullWidth padding={5}>

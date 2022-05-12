@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@tests/helpers/prefixPN';
 
 const ListCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -13,6 +15,7 @@ const ListCardStyles = createStyles((theme, { selected }) => ({
 }));
 
 const QuestionsBanksListCard = ({ asset, selected, ...props }) => {
+  const [t] = useTranslateLoader(prefixPN('testsCard'));
   const menuItems = [];
   const { classes } = ListCardStyles({ selected });
 
@@ -21,7 +24,8 @@ const QuestionsBanksListCard = ({ asset, selected, ...props }) => {
       {...props}
       asset={asset}
       menuItems={menuItems}
-      variant="task"
+      variant="questionBank"
+      variantTitle={t('questionBank')}
       className={classes.root}
     />
   );

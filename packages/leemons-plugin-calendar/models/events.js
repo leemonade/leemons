@@ -45,6 +45,12 @@ module.exports = {
     data: {
       type: 'json',
     },
+    isPrivate: {
+      type: 'boolean',
+      options: {
+        defaultTo: false,
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

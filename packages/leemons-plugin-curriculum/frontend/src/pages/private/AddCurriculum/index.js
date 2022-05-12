@@ -5,7 +5,8 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getPlatformLocalesRequest, listCentersRequest } from '@users/request';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { useHistory } from 'react-router-dom';
-import { Box, Title, Text } from '@bubbles-ui/components';
+import { Box, Stack, Title, Text, PageContainer } from '@bubbles-ui/components';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
 import {
   AddCurriculumForm,
   ADD_CURRICULUM_FORM_MESSAGES,
@@ -92,26 +93,34 @@ function AddCurriculum() {
     }
   };
 
+  const headerValues = useMemo(
+    () => ({
+      title: t('newCurriculum'),
+      description: t('description1'),
+    }),
+    [t]
+  );
+
   return (
-    <Box m={32}>
-      <Box mb={12}>
-        <Title>{t('newCurriculum')}</Title>
+    <Stack direction="column" fullWidth fullHeight>
+      <AdminPageHeader values={headerValues} />
+
+      <Box style={{ flex: 1 }}>
+        <PageContainer>
+          <Box mb={16}>
+            <Text role={'productive'}>{t('description2')}</Text>
+          </Box>
+          <AddCurriculumForm
+            messages={messages}
+            errorMessages={errorMessages}
+            selectData={selectData}
+            isLoading={saving}
+            onSubmit={onSubmit}
+            onFormChange={onFormChange}
+          />
+        </PageContainer>
       </Box>
-      <Box mb={12}>
-        <Text role={'productive'}>{t('description1')}</Text>
-      </Box>
-      <Box mb={16}>
-        <Text role={'productive'}>{t('description2')}</Text>
-      </Box>
-      <AddCurriculumForm
-        messages={messages}
-        errorMessages={errorMessages}
-        selectData={selectData}
-        isLoading={saving}
-        onSubmit={onSubmit}
-        onFormChange={onFormChange}
-      />
-    </Box>
+    </Stack>
   );
 }
 

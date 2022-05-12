@@ -14,4 +14,10 @@ module.exports = [
     handler: 'assignableInstance.get',
     authenticated: true,
   },
+  {
+    method: 'GET',
+    path: '/instances',
+    handler: 'assignables.listInstances',
+    authenticated: true,
+  },
 ];

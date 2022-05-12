@@ -4,14 +4,11 @@ import PropTypes from 'prop-types';
 import { useStore } from '@common';
 import {
   Box,
-  Col,
+  COLORS,
   ContextContainer,
-  Grid,
-  ImageLoader,
+  createStyles,
   PageContainer,
   Paper,
-  Paragraph,
-  Stack,
   Title,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -19,16 +16,37 @@ import prefixPN from '@dashboard/helpers/prefixPN';
 import { getProfilesRequest, getUserProgramsRequest } from '@academic-portfolio/request';
 import { getUserProfilesRequest } from '@users/request';
 import { forEach } from 'lodash';
-import { ProgramCard } from '@academic-portfolio/components/ProgramCard';
 import { ZoneWidgets } from '@widgets';
+import { HeaderBackground } from '@bubbles-ui/leemons';
 
 const rightZoneWidth = '320px';
+const Styles = createStyles((theme) => ({
+  header: {
+    position: 'relative',
+    height: 80 + 48,
+  },
+  programSelectorContainer: {
+    display: 'flex',
+    height: '80px',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: '50%',
+    zIndex: 5,
+    backgroundColor: COLORS.mainWhite,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    padding: '24px 24px 24px 26px',
+    alignItems: 'center',
+  },
+}));
 
 export default function Dashboard({ session }) {
   const [store, render] = useStore({
     loading: true,
     isAcademicMode: false,
   });
+  const { classes: styles } = Styles();
   const [t] = useTranslateLoader(prefixPN('dashboard'));
 
   async function init() {
@@ -50,7 +68,7 @@ export default function Dashboard({ session }) {
     if (store.isAcademicMode) {
       const { programs } = await getUserProgramsRequest();
       store.programs = programs;
-      if (store.programs.length === 1) {
+      if (store.programs.length >= 1) {
         [store.selectedProgram] = store.programs;
       }
     }
@@ -70,82 +88,93 @@ export default function Dashboard({ session }) {
 
   if (store.loading) return null;
 
+  const programImage = null;
+  const headerProps = {};
+  if (programImage) {
+    headerProps.blur = 10;
+    headerProps.withBlur = true;
+    headerProps.image = programImage;
+    headerProps.backgroundPosition = 'center';
+  } else {
+    headerProps.withBlur = false;
+    headerProps.withGradient = false;
+    headerProps.color = store.selectedProgram?.color || 'rgb(255, 204, 153)';
+  }
+
+  // TODO: Añadir en el header que se puedan seleccionar los programas
+
   return (
-    <ContextContainer fullHeight>
-      <PageContainer
-        sx={(theme) => ({
-          paddingTop: theme.spacing[8],
-          marginRight: store.selectedProgram ? rightZoneWidth : 0,
+    <>
+      <Box
+        sx={() => ({
+          paddingRight: store.selectedProgram ? rightZoneWidth : 0,
         })}
       >
-        <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
-          <Stack>
-            <Box
-              sx={(theme) => ({ marginRight: theme.spacing[2] })}
-              style={{ width: '24px', height: '24px', position: 'relative' }}
-            >
-              <ImageLoader src="/public/assets/svgs/plugin-dashboard-black.svg" />
-            </Box>
-            <Stack direction="column">
-              <Title order={3}>
-                {store.isAcademicMode
-                  ? store.selectedProgram
-                    ? store.selectedProgram.name
-                    : t('selectYourProgram')
-                  : t('dashboard')}
-              </Title>
-              {store.selectedProgram ? <Paragraph>{t('controlPanel')}</Paragraph> : null}
-            </Stack>
-          </Stack>
+        <Box className={styles.header}>
+          <HeaderBackground {...headerProps} styles={{ position: 'absolute' }} />
+          <Box className={styles.programSelectorContainer}>
+            <Title order={3}>
+              {store.isAcademicMode && store.programs.length
+                ? store.selectedProgram
+                  ? store.selectedProgram.name
+                  : t('selectYourProgram')
+                : t('dashboard')}
+            </Title>
+          </Box>
         </Box>
-        {!store.selectedProgram && store.programs ? (
-          <Grid columns={3}>
-            {store.programs.map((program) => (
-              <Col span={1} key={program.id}>
-                <ProgramCard program={program} onClick={selectProgram} />
-              </Col>
-            ))}
-          </Grid>
-        ) : null}
+
+        <ContextContainer fullHeight>
+          <PageContainer
+            sx={(theme) => ({
+              paddingTop: theme.spacing[8],
+            })}
+          >
+            <Box>
+              {store.selectedProgram ? (
+                <>
+                  {/* -- LEFT ZONE -- */}
+                  <ZoneWidgets zone="plugins.dashboard.program.left">
+                    {({ Component, key }) => (
+                      <Box
+                        key={key}
+                        sx={(theme) => ({
+                          paddingTop: theme.spacing[6],
+                          paddingBottom: theme.spacing[6],
+                        })}
+                      >
+                        <Component program={store.selectedProgram} session={session} />
+                      </Box>
+                    )}
+                  </ZoneWidgets>
+                </>
+              ) : null}
+            </Box>
+          </PageContainer>
+        </ContextContainer>
+
+        {/* -- RIGHT ZONE -- */}
         {store.selectedProgram ? (
-          <>
-            {/* -- LEFT ZONE -- */}
-            <ZoneWidgets zone="plugins.dashboard.program.left">
+          <Paper
+            sx={(theme) => ({
+              position: 'fixed',
+              right: 0,
+              top: 0,
+              bottom: 0,
+              background: theme.colors.uiBackground02,
+              width: rightZoneWidth,
+            })}
+          >
+            <ZoneWidgets zone="plugins.dashboard.program.right">
               {({ Component, key }) => (
-                <Box
-                  key={key}
-                  sx={(theme) => ({
-                    paddingTop: theme.spacing[6],
-                    paddingBottom: theme.spacing[6],
-                  })}
-                >
+                <Box key={key}>
                   <Component program={store.selectedProgram} session={session} />
                 </Box>
               )}
             </ZoneWidgets>
-            {/* -- RIGHT ZONE -- */}
-            <Paper
-              sx={(theme) => ({
-                position: 'fixed',
-                right: 0,
-                top: 0,
-                bottom: 0,
-                background: theme.colors.uiBackground02,
-                width: rightZoneWidth,
-              })}
-            >
-              <ZoneWidgets zone="plugins.dashboard.program.right">
-                {({ Component, key }) => (
-                  <Box key={key}>
-                    <Component program={store.selectedProgram} session={session} />
-                  </Box>
-                )}
-              </ZoneWidgets>
-            </Paper>
-          </>
+          </Paper>
         ) : null}
-      </PageContainer>
-    </ContextContainer>
+      </Box>
+    </>
   );
 }
 

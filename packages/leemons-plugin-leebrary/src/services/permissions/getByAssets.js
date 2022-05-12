@@ -9,15 +9,15 @@ async function getByAssets(assetIds, { showPublic, userSession, transacting } = 
 
   try {
     const { services: userService } = leemons.getPlugin('users');
-    const permissions = await userService.permissions.getUserAgentPermissions(
-      userSession.userAgents,
-      {
+    let permissions = [];
+    if (userSession && userSession?.userAgents) {
+      permissions = await userService.permissions.getUserAgentPermissions(userSession.userAgents, {
         query: {
           $or: assetsIds.map((id) => ({ permissionName_$contains: getAssetPermissionName(id) })),
         },
         transacting,
-      }
-    );
+      });
+    }
 
     const publicAssets = showPublic
       ? await tables.assets.find(

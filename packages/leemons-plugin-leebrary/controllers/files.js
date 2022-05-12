@@ -1,6 +1,7 @@
 const { isEmpty } = require('lodash');
 const fileService = require('../src/services/files');
 const { getByFile } = require('../src/services/assets/files/getByFile');
+const { getByIds } = require('../src/services/assets/getByIds');
 
 /**
  * Get file content from ID
@@ -37,6 +38,51 @@ async function getFileContent(ctx) {
   }
 }
 
+/**
+ * Get cover file content from Asset ID
+ * @param {*} ctx
+ */
+async function getCoverFileContent(ctx) {
+  const { assetId } = ctx.params;
+  const { userSession } = ctx.state;
+
+  if (isEmpty(assetId)) {
+    throw new global.utils.HttpError(400, 'Asset ID is required');
+  }
+
+  const assets = await getByIds([assetId], {
+    checkPermissions: true,
+    showPublic: true,
+    userSession,
+  });
+
+  const [asset] = assets;
+
+  if (!asset) {
+    throw new global.utils.HttpError(
+      403,
+      "You don't have permissions to view this Asset or doens't exists"
+    );
+  }
+
+  const { readStream, fileName, contentType } = await fileService.dataForReturnFile(
+    assets[0].cover
+  );
+
+  const mediaType = contentType.split('/')[0];
+
+  ctx.status = 200;
+  ctx.body = readStream;
+  ctx.set('Content-Type', contentType);
+
+  if (['image', 'video', 'audio'].includes(mediaType)) {
+    // TODO: handle content disposition for images, video and audio. Taking care of download param
+  } else {
+    ctx.set('Content-disposition', `attachment; filename=${fileName}`);
+  }
+}
+
 module.exports = {
   file: getFileContent,
+  cover: getCoverFileContent,
 };

@@ -14,7 +14,7 @@ const constants = require('../../../config/constants');
  * @param {Object} allowedPermissions - Allowed permission by key
  * @property {string[]} allowedPermissions.actions - Array of allowed actions
  * @property {string} allowedPermissions.target - Target
- * @param {any} ctx - Koa context
+ * @param {any?} ctx - Koa context
  * @return {Promise<boolean>} If have permission return true if not false
  * */
 async function hasPermissionCTX(userSession, allowedPermissions, ctx) {

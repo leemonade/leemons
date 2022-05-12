@@ -2,12 +2,19 @@ const addCategory = require('../leebrary/categories/addCategory');
 const { roles } = require('../tables');
 const getRole = require('./getRole');
 
-module.exports = async function registerRole(role, { transacting: t, ...data } = {}) {
+module.exports = async function registerRole(
+  role,
+  { transacting: t, teacherDetailUrl, studentDetailUrl, teacherEvaluationUrl, ...data } = {}
+) {
   return global.utils.withTransaction(
     async (transacting) => {
       if (!this.calledFrom) {
         throw new Error("Can't register role without plugin name");
       }
+
+      // ES: Comprobar si los urls vienen
+      if (!teacherDetailUrl || !studentDetailUrl || !teacherEvaluationUrl)
+        throw new Error('Urls required');
 
       // EN: Check if role already exists
       // ES: Comprueba si el rol ya existe
@@ -25,7 +32,16 @@ module.exports = async function registerRole(role, { transacting: t, ...data } =
 
       // EN: Register role
       // ES: Registrar rol
-      await roles.create({ name: role, plugin: this.calledFrom }, { transacting });
+      await roles.create(
+        {
+          name: role,
+          teacherDetailUrl,
+          studentDetailUrl,
+          teacherEvaluationUrl,
+          plugin: this.calledFrom,
+        },
+        { transacting }
+      );
 
       // EN: Register the leebrary category
       // ES: Registrar la categoría de leebrary

@@ -376,6 +376,10 @@ const AssetList = ({
     })();
   };
 
+  const handleOnDownload = (item) => {
+    window.open(item.url, '_blank');
+  };
+
   // ·········································································
   // LABELS & STATIC
 
@@ -428,7 +432,7 @@ const AssetList = ({
         itemMinWidth,
         margin: 16,
         spacing: 4,
-        paperProps: { shadow: 'none', padding: 0},
+        paperProps: { shadow: 'none', padding: 0 },
       };
     }
 
@@ -466,7 +470,7 @@ const AssetList = ({
       unpin: asset?.pinned ? 'Unpin' : false,
       toggle: 'Toggle',
     }),
-    [asset]
+    [asset, category]
   );
 
   const detailLabels = useMemo(() => {
@@ -623,6 +627,7 @@ const AssetList = ({
               onPin={handleOnPin}
               onUnpin={handleOnUnpin}
               onRefresh={reloadAssets}
+              onDownload={handleOnDownload}
             />
           </Box>
         )}
@@ -648,7 +653,7 @@ AssetList.defaultProps = {
   showPublic: false,
   pinned: false,
   canShowPublicToggle: true,
-  paperProps: { color: 'none', shadow: 'none' }
+  paperProps: { color: 'none', shadow: 'none' },
 };
 AssetList.propTypes = {
   category: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),

@@ -1,4 +1,8 @@
 module.exports = {
+  listCurriculum: {
+    page_title: 'Biblioteca de Planes de estudio',
+    page_description: 'Estos son los planes de estudio de los programas que imparte.',
+  },
   addCurriculum: {
     newCurriculum: 'Nuevo curriculum',
     description1:

@@ -4,6 +4,8 @@ import loadable from '@loadable/component';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
+const Logout = loadable(() => import('./src/pages/public/Logout'));
+
 const Home = loadable(() => import('./src/pages/private/Home'));
 const SelectProfile = loadable(() => import('./src/pages/private/SelectProfile'));
 const UserData = loadable(() => import('./src/pages/private/UserData'));
@@ -25,6 +27,9 @@ export default function Private() {
 
   return (
     <Switch>
+      <Route path={`${path}/logout`}>
+        <Logout session={session} />
+      </Route>
       <Route path={`${path}/home`}>
         <Home session={session} />
       </Route>
@@ -59,6 +64,9 @@ export default function Private() {
         <UserDataDatasetValues session={session} />
       </Route>
       <Route path={`${path}/detail/:userId`}>
+        <DetailUser session={session} />
+      </Route>
+      <Route path={`${path}/detail`}>
         <DetailUser session={session} />
       </Route>
     </Switch>
