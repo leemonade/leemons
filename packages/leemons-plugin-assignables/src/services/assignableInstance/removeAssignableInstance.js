@@ -10,12 +10,18 @@ module.exports = async function removeAssignableInstance(
 ) {
   // EN: Get the assignable instance
   // ES: Obtiene el asignable instance
-  const { relatedAssignableInstances, dates, classes, assignable } =
+  const { relatedAssignableInstances, dates, classes, assignable, event } =
     await getAssignableInstance.call(this, assignableInstanceId, {
       details: true,
       userSession,
       transacting,
     });
+
+  // ES: Si hay evento lo eliminamos
+  if (event) {
+    const { calendar: calendarService } = leemons.getPlugin('calendar').services;
+    await calendarService.removeEvent(event, { transacting });
+  }
 
   // EN: Remove each relatedAssignableInstance
   // ES: Elimina cada relatedAssignableInstance

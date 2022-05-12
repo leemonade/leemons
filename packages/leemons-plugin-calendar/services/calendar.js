@@ -1,13 +1,47 @@
+const _ = require('lodash');
 const calendar = require('../src/services/calendar');
 const events = require('../src/services/events');
 const eventTypes = require('../src/services/event-types');
 const { validateKeyPrefix } = require('../src/validations/exists');
 
 function addEvent(key, event, { transacting } = {}) {
-  if (!this.calledFrom.startsWith('plugins.assignables')) {
-    validateKeyPrefix(key, this.calledFrom);
-  }
+  const keys = _.isArray(key) ? key : [key];
+  // Check if keys start with 'plugins.assignables'
+  _.forEach(keys, (k) => {
+    if (!this.calledFrom.startsWith('plugins.assignables')) {
+      validateKeyPrefix(k, this.calledFrom);
+    }
+  });
+
   return events.add(key, event, { transacting });
+}
+
+function grantAccessUserAgentToEvent(id, userAgentId, actionName, { transacting } = {}) {
+  if (!this.calledFrom.startsWith('plugins.assignables')) {
+    throw new Error('You can not have access');
+  }
+  return events.grantAccessUserAgentToEvent(id, userAgentId, actionName, { transacting });
+}
+
+function unGrantAccessUserAgentToEvent(id, userAgentId, { actionName, transacting } = {}) {
+  if (!this.calledFrom.startsWith('plugins.assignables')) {
+    throw new Error('You can not have access');
+  }
+  return events.grantAccessUserAgentToEvent(id, userAgentId, { actionName, transacting });
+}
+
+function removeEvent(id, { transacting } = {}) {
+  if (!this.calledFrom.startsWith('plugins.assignables')) {
+    throw new Error('You can not have access');
+  }
+  return events.remove(id, { transacting });
+}
+
+function updateEvent(id, data, { calendar: _calendar, transacting } = {}) {
+  if (!this.calledFrom.startsWith('plugins.assignables')) {
+    throw new Error('You can not have access');
+  }
+  return events.update(id, data, { calendar: _calendar, transacting });
 }
 
 module.exports = {
@@ -23,6 +57,10 @@ module.exports = {
   grantAccessUserAgentToCalendar: calendar.grantAccessUserAgentToCalendar,
   unGrantAccessUserAgentToCalendar: calendar.unGrantAccessUserAgentToCalendar,
   addEvent,
+  removeEvent,
+  updateEvent,
+  grantAccessUserAgentToEvent,
+  unGrantAccessUserAgentToEvent,
   addEventType: eventTypes.add,
   listEventType: eventTypes.list,
   existEventType: eventTypes.exist,

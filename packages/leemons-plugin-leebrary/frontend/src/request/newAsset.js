@@ -1,3 +1,5 @@
+import { isString } from 'lodash';
+
 async function newAsset(assetData, categoryId, categoryKey) {
   const { file, cover, ...data } = assetData;
   const formData = new FormData();
@@ -5,7 +7,8 @@ async function newAsset(assetData, categoryId, categoryKey) {
   if (categoryKey === 'media-files') {
     formData.append('files', file, file.name);
 
-    if (cover) formData.append('cover', cover, cover.name);
+    if (cover && isString(cover)) formData.append('cover', cover);
+    if (cover && cover.name) formData.append('cover', cover, cover.name);
   }
 
   if (categoryKey === 'bookmarks') {
