@@ -11,7 +11,6 @@ const SetupTask = loadable(() => import('./src/pages/private/library/TaskSetupPa
 const Profiles = loadable(() => import('./src/pages/private/profiles/ProfilesPage'));
 const Ongoing = loadable(() => import('./src/pages/private/ongoing/OngoingPage'));
 const History = loadable(() => import('./src/pages/private/ongoing/HistoryPage'));
-const Details = loadable(() => import('./src/pages/private/assignment/DetailsPage'));
 const UserDetails = loadable(() => import('./src/pages/private/student/Details'));
 const Correction = loadable(() => import('./src/pages/private/assignment/Correction'));
 
@@ -47,10 +46,6 @@ export default function Private() {
       </Route>
       <Route path={`${path}/history`}>
         <History session={session} />
-      </Route>
-
-      <Route path={`${path}/details/:instance`}>
-        <Details session={session} />
       </Route>
       <Route path={`${path}/correction/:instance/:student`}>
         <Correction session={session} />
