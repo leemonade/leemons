@@ -102,6 +102,9 @@
   {
     "name": "leebrary-tests",
     "path": "../../packages/leemons-provider-leebrary-tests/frontend"
+  },
+  {
+    "name": "assignables",
+    "path": "../../packages/leemons-plugin-assignables/frontend"
   }
 ]
-
