@@ -1,9 +1,9 @@
 const { classDetailForDashboard } = require('@academic-portfolio/request/classes');
 
-export default async function getClassData(classes) {
+export default async function getClassData(classes, labels = { multiSubject: 'Multi-Subject' }) {
   if (classes.length > 1) {
     return {
-      name: 'Multi-Subject',
+      name: labels?.multiSubject,
       icon: '',
       color: '#f5f5f5',
     };

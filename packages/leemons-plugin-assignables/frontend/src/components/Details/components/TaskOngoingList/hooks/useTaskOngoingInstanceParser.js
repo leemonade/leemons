@@ -1,6 +1,6 @@
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import getStatus from '../../UsersList/helpers/getStatus';
-import useClassData from './useClassData';
+import useClassData from '../../../../../hooks/useClassData';
 
 function getStatusAsNumber(student, instance) {
   const status = getStatus(student, instance);
