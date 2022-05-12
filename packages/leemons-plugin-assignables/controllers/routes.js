@@ -5,10 +5,14 @@ module.exports = [
     handler: 'test.test',
     authenticated: true,
   },
+  /**
+   * Assignable Instances
+   */
   {
     method: 'GET',
-    path: '/createUser',
-    handler: 'test.createUser',
+    path: '/assignableInstances/:id',
+    handler: 'assignableInstance.get',
+    authenticated: true,
   },
   {
     method: 'GET',

@@ -4,5 +4,5 @@ export default async function getInstanceRequest({ id, columns }) {
     method: 'GET',
   });
 
-  return instance.data[0];
+  return instance.data;
 }

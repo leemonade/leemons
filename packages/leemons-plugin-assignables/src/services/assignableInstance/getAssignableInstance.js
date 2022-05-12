@@ -3,12 +3,14 @@ const getAssignable = require('../assignable/getAssignable');
 const listAssignableInstanceClasses = require('../classes/listAssignableInstanceClasses');
 const { assignableInstances } = require('../tables');
 const getUserPermission = require('./permissions/assignableInstance/users/getUserPermission');
+const getAssignationsOfAssignableInstance = require('../assignations/getAssignationsOfAssignableInstance');
 
 module.exports = async function getAssignableInstance(
   id,
   { relatedAssignableInstances, details, userSession, transacting } = {}
 ) {
   let assignableInstance;
+  let isTeacher;
   try {
     // EN: Check the user permissions
     // ES: Comprueba los permisos del usuario
@@ -16,6 +18,8 @@ module.exports = async function getAssignableInstance(
     if (!permissions.actions.includes('view')) {
       throw new Error('You do not have permissions');
     }
+
+    isTeacher = permissions.actions.includes('edit');
 
     // EN: Get the provided assignableInstance
     // ES: Obtiene el asignableInstance proporcionado
@@ -52,6 +56,18 @@ module.exports = async function getAssignableInstance(
       assignableInstance.dates = await getDates('assignableInstance', id, { transacting });
     } catch (e) {
       throw new Error(`Error getting the dates of the assignable instance: ${e.message}`);
+    }
+
+    if (isTeacher) {
+      try {
+        assignableInstance.students = await getAssignationsOfAssignableInstance(id, {
+          details: true,
+          userSession,
+          transacting,
+        });
+      } catch (e) {
+        throw new Error(`Error getting the students data of the assignable instance: ${e.message}`);
+      }
     }
 
     // EN: Get the assignable data
