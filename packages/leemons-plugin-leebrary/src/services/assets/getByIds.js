@@ -11,6 +11,7 @@ const {
   isArray,
 } = require('lodash');
 const { tables } = require('../tables');
+const { CATEGORIES } = require('../../../config/constants');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
 const { getUsersByAsset } = require('../permissions/getUsersByAsset');
 const { find: findBookmarks } = require('../bookmarks/find');
@@ -179,9 +180,10 @@ async function getByIds(
     const item = { ...asset };
 
     if (withCategory) {
-      const { duplicable, assignable } = find(categories, { id: asset.category });
+      const { key, duplicable, assignable } = find(categories, { id: asset.category });
       item.duplicable = duplicable;
       item.assignable = assignable;
+      item.downloadable = key === CATEGORIES.MEDIA_FILES;
       item.providerData = find(assetCategoryData, { asset: asset.id });
     }
 
