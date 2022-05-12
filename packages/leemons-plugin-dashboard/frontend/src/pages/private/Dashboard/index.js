@@ -95,7 +95,7 @@ export default function Dashboard({ session }) {
     headerProps.backgroundPosition = 'center';
   } else {
     headerProps.withBlur = false;
-    headerProps.withGradient = true;
+    headerProps.withGradient = false;
     headerProps.color = store.selectedProgram.color || 'rgb(255, 204, 153)';
   }
 
