@@ -1,5 +1,6 @@
 import React from 'react';
 import { Switch as Routes, Route, useRouteMatch, Redirect } from 'react-router-dom';
+import Details from './src/components/Details/Details';
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -10,7 +11,7 @@ export default function Private() {
         <p>Ongoing</p>
       </Route>
       <Route path={`${path}/details/:id`}>
-        <p>Details</p>
+        <Details />
       </Route>
 
       <Route path={`${path}/`}>
