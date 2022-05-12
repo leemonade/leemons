@@ -73,6 +73,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/program/:id/evaluation-system',
+    method: 'GET',
+    handler: 'program.getProgramEvaluationSystem',
+    authenticated: true,
+  },
+  {
     path: '/program/:id/has/courses',
     method: 'GET',
     handler: 'program.programHasCourses',

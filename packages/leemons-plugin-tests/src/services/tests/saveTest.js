@@ -9,7 +9,8 @@ async function saveTest(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       validateSaveTest(data);
-      const { assignables: assignableService } = leemons.getPlugin('assignables').services;
+      const { assignables: assignableService, assignableInstances: assignableInstancesService } =
+        leemons.getPlugin('assignables').services;
 
       const toSave = {
         asset: {
@@ -37,9 +38,11 @@ async function saveTest(data, { userSession, transacting: _transacting } = {}) {
         },
       };
 
+      let assignable = null;
+
       if (data.id) {
         delete toSave.role;
-        return assignableService.updateAssignable(
+        assignable = await assignableService.updateAssignable(
           { id: data.id, ...toSave },
           {
             userSession,
@@ -47,74 +50,51 @@ async function saveTest(data, { userSession, transacting: _transacting } = {}) {
             published: data.published,
           }
         );
-      }
-      console.log(toSave, data);
-      return assignableService.createAssignable(toSave, {
-        userSession,
-        transacting,
-        published: data.published,
-      });
-
-      /*
-      const { id, questions, tags, published, ...props } = data;
-      let test;
-
-      if (id) {
-        let version = await versionControlService.getVersion(id, { transacting });
-        if (version.published) {
-          version = await versionControlService.upgradeVersion(id, 'major', {
-            published,
-            setAsCurrent: true,
-            transacting,
-          });
-          test = await table.tests.create(
-            {
-              id: version.fullId,
-              ...props,
-              filters: JSON.stringify(props.filters),
-            },
-            { transacting }
-          );
-        } else {
-          if (published) {
-            await versionControlService.publishVersion(id, true, { transacting });
-          }
-          test = await table.tests.update(
-            { id },
-            {
-              ...props,
-              filters: JSON.stringify(props.filters),
-            },
-            { transacting }
-          );
-        }
       } else {
-        const version = await versionControlService.register('test', {
-          published,
+        assignable = await assignableService.createAssignable(toSave, {
+          userSession,
+          transacting,
+          published: data.published,
+        });
+      }
+
+      // TODO Eliminar cuando se integre la asignacion de test
+      if (data.published) {
+        const classService = leemons.getPlugin('academic-portfolio').services.classes;
+        const classes = await classService.getBasicClassesByProgram(data.program, { transacting });
+
+        const classStudents = await classService.student.getByClass(_.map(classes, 'id'), {
           transacting,
         });
-        test = await table.tests.create(
+        await assignableInstancesService.createAssignableInstance(
           {
-            id: version.fullId,
-            ...props,
-            filters: JSON.stringify(props.filters),
+            assignable: assignable.id,
+            alwaysAvailable: false,
+            duration: '20 minutes',
+            messageToAssignees: '<p style="margin-left: 0px!important;">Pepe</p>',
+            students: _.map(classStudents, 'student'),
+            classes: _.map(classes, 'id'),
+            curriculum: {
+              content: true,
+              objectives: true,
+              assessmentCriteria: true,
+            },
+            dates: {
+              start: '2022-05-11T22:00:00.000Z',
+              deadline: '2022-05-19T22:00:00.000Z',
+              visualization: '2022-05-11T22:00:00.000Z',
+              close: '2022-05-26T22:00:00.000Z',
+            },
+            gradable: true,
+            metadata: {
+              questions: data.questions,
+            },
           },
-          { transacting }
+          { userSession, transacting }
         );
       }
 
-      await tagsService.setTagsToValues('plugins.tests.tests', tags || [], test.id, {
-        transacting,
-      });
-
-      await removeTestQuestions(test.id, { transacting });
-      if (questions && questions.length) {
-        await addQuestionToTest(test.id, questions, { transacting });
-      }
-
-      return test;
-
-       */
+      return assignable;
     },
     table.questionsBanks,
     _transacting

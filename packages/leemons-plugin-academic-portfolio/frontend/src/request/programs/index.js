@@ -57,6 +57,13 @@ async function addStudentsToClassesUnderNodeTree(body) {
   });
 }
 
+async function getProgramEvaluationSystem(id) {
+  return leemons.api(`academic-portfolio/program/${id}/evaluation-system`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
 export {
   listPrograms,
   detailProgram,
@@ -65,5 +72,6 @@ export {
   havePrograms,
   getProgramTree,
   getUserPrograms,
+  getProgramEvaluationSystem,
   addStudentsToClassesUnderNodeTree,
 };

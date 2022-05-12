@@ -1,5 +1,6 @@
 const { programCanHaveCoursesOrHaveCourses } = require('./programCanHaveCoursesOrHaveCourses');
 const { addStudentsToClassesUnderNodeTree } = require('./addStudentsToClassesUnderNodeTree');
+const { getProgramEvaluationSystem } = require('./getProgramEvaluationSystem');
 const { duplicateProgramByIds } = require('./duplicateProgramByIds');
 const { getProgramSubstages } = require('./getProgramSubstages');
 const { isUserInsideProgram } = require('./isUserInsideProgram');
@@ -30,6 +31,7 @@ module.exports = {
   isUserInsideProgram,
   getProgramSubstages,
   duplicateProgramByIds,
+  getProgramEvaluationSystem,
   addStudentsToClassesUnderNodeTree,
   programCanHaveCoursesOrHaveCourses,
 };

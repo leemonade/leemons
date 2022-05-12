@@ -131,7 +131,7 @@ const assignableRoles = [
     role: 'tests',
     options: {
       teacherDetailUrl: '/private/tests/detail/:id',
-      studentDetailUrl: '/',
+      studentDetailUrl: '/private/tests/student/:id',
       teacherEvaluationUrl: '/',
       creatable: true,
       createUrl: '/private/tests/new',
