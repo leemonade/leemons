@@ -7,8 +7,8 @@ import { addErrorAlert } from '@layout/alert';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import { isString } from 'lodash';
-import { Box, VerticalStepper } from '@bubbles-ui/components';
-import { HeaderBackground, TaskDeadline, TaskHeader } from '@bubbles-ui/leemons';
+import { Box, COLORS } from '@bubbles-ui/components';
+import { HeaderBackground, TaskHeader } from '@bubbles-ui/leemons';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { StudentInstanceStyles } from './StudentInstance.style';
 
@@ -16,6 +16,7 @@ export default function StudentInstance() {
   const [t] = useTranslateLoader(prefixPN('testsDetail'));
   const [store, render] = useStore({
     loading: true,
+    isFirstStep: true,
   });
 
   const { classes } = StudentInstanceStyles(
@@ -70,6 +71,23 @@ export default function StudentInstance() {
     return {};
   }, [store.instance]);
 
+  const taskHeaderProps = React.useMemo(() => {
+    if (store.instance) {
+      return {
+        title: store.instance.assignable.asset.name,
+        styles: {
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: store.isFirstStep && '50%',
+          borderRadius: store.isFirstStep ? '16px 16px 0 0' : 0,
+          backgroundColor: store.isFirstStep ? COLORS.mainWhite : COLORS.interactive03,
+        },
+      };
+    }
+    return {};
+  }, [store.instance, store.isFirstStep]);
+
   if (store.loading) {
     return null;
   }
@@ -85,14 +103,14 @@ export default function StudentInstance() {
           {...headerProps}
         />
         <TaskHeader {...taskHeaderProps} size={store.isFirstStep ? 'md' : 'sm'} />
-        <TaskDeadline {...taskDeadlineProps} size={store.isFirstStep ? 'md' : 'sm'} />
+        {/* <TaskDeadline {...taskDeadlineProps} size={store.isFirstStep ? 'md' : 'sm'} /> */}
       </Box>
-      <Box className={classes.mainContent}>
+      {/* <Box className={classes.mainContent}>
         <Box className={classes.verticalStepper}>
           <VerticalStepper {...mock.verticalStepper} currentStep={currentStep} />
         </Box>
         <Box className={classes.pages}>{mock.pages[currentStep](classes, nextStep, prevStep)}</Box>
-      </Box>
+      </Box> */}
     </Box>
   );
 }
