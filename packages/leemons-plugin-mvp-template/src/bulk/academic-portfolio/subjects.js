@@ -33,6 +33,20 @@ async function importAcademicPortfolioSubjects({ programs, users, knowledgeAreas
         return { teacher: users[teacher]?.id, type: `${type ? `${type}-` : ''}teacher`, group };
       });
 
+    // Students
+    let students = [];
+
+    if (items[key].students && !isEmpty(items[key].students)) {
+      students = items[key].students
+        .split(',')
+        .map((val) => trim(val))
+        .filter((val) => !isEmpty(val))
+        .map((userGroup) => {
+          const [user, group] = userGroup.split('@');
+          return { student: users[user]?.id, group };
+        });
+    }
+
     // Groups
     const groups = items[key].groups
       .split(',')
@@ -69,6 +83,9 @@ async function importAcademicPortfolioSubjects({ programs, users, knowledgeAreas
 
       // Teacher
       classroom.teachers = [find(teachers, { group: group.abbreviation })];
+
+      // Students
+      classroom.students = students.filter((student) => student.group === group.abbreviation);
 
       return classroom;
     });
@@ -108,6 +125,7 @@ const PROGRAMS = {
 
 const USERS = {
   teacher01: { id: 'TEACHER01' },
+  studentC01: { id: 'STUDENT01' },
 };
 
 importAcademicPortfolioSubjects({

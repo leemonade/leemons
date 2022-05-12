@@ -1,6 +1,6 @@
 /* eslint-disable no-unreachable */
 /* eslint-disable no-await-in-loop */
-const { keys, find } = require('lodash');
+const { keys, find, compact } = require('lodash');
 const importProfiles = require('./bulk/academic-portfolio/profiles');
 const importPrograms = require('./bulk/academic-portfolio/programs');
 const importSubjectTypes = require('./bulk/academic-portfolio/subjectTypes');
@@ -70,7 +70,7 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
 
     for (let i = 0, len = subjectsKeys.length; i < len; i++) {
       const key = subjectsKeys[i];
-      const { classes, seats, creator, ...subject } = subjects[key];
+      const { classes, seats, creator, students: rawStudents, ...subject } = subjects[key];
       const subjectData = await services.subjects.addSubject(subject, {
         userSession: users[creator],
       });
@@ -90,7 +90,7 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
       const classesData = [];
 
       for (let j = 0, l = classes.length; j < l; j++) {
-        const { program, teachers, ...rest } = classes[j];
+        const { program, teachers, students, ...rest } = classes[j];
         const programData = find(programs, { id: program });
         const [center] = programData.centers;
 
@@ -103,7 +103,7 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
         );
 
         // Todo : Mover los seats de la asignatura a la clase
-        const classroom = {
+        const classroomData = {
           ...rest,
           program,
           seats,
@@ -115,11 +115,40 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
           }),
         };
 
-        // console.dir(classroom, { depth: null });
+        const classroom = await services.classes.addClass(classroomData, {
+          userSession: users[creator],
+        });
 
-        classesData.push(
-          await services.classes.addClass(classroom, { userSession: users[creator] })
-        );
+        classesData.push(classroom);
+
+        // ·····································
+        // ADD STUDENTS TO CLASS
+
+        if (students && students.length > 0) {
+          const studentsData = await Promise.all(
+            students.map((item) => {
+              if (item?.student) {
+                return leemons
+                  .getPlugin('users')
+                  .services.users.getUserAgentByCenterProfile(
+                    item.student,
+                    center,
+                    apProfiles.student
+                  );
+              }
+              return null;
+            })
+          );
+
+          if (studentsData && studentsData.length > 0) {
+            const data = {
+              class: [classroom.id],
+              students: studentsData.map(({ id }) => id),
+            };
+
+            await services.classes.addStudentsToClasses(data);
+          }
+        }
       }
 
       subjects[key].classes = classesData;
