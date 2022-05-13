@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Box, Paper, ContextContainer, Stack, TagifyInput } from '@bubbles-ui/components';
 import { useLayout } from '@layout/context';
 import SelectUserAgent from '@users/components/SelectUserAgent';
+import { LocaleDuration } from '@common/LocaleDate';
 import selectFile from '../../../helpers/selectFile';
 import { listAllMyFilesRequest, uploadFilesRequest, removeFileRequest } from '../../../request';
 import IconByMimeType from '../../../components/IconByMimeType';
@@ -133,6 +134,11 @@ export default function TestPage() {
               setSelectedCover(e);
             }}
           />
+        </ContextContainer>
+        <ContextContainer title="LocaleDuration">
+          <Box>
+            <LocaleDuration seconds={200} />
+          </Box>
         </ContextContainer>
       </ContextContainer>
     </Paper>
