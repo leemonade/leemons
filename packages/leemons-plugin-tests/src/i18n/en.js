@@ -192,4 +192,20 @@ module.exports = {
     tests: 'Tests',
     questionBank: 'Question bank',
   },
+  studentInstance: {
+    multiSubject: 'Multi-Subject',
+    delivery: 'Delivery',
+    resume: 'Resume',
+    statement: 'Statement',
+    prev: 'Previous',
+    next: 'Continue',
+    development: 'Development',
+    // ----- Test
+    questions: 'Questions',
+    perQuestion: 'Per question',
+    totalPoints: 'Total points',
+    minToApprove: 'Min. to approve',
+    beforeStart: 'Before start',
+    withoutPause: 'Without pause',
+  },
 };

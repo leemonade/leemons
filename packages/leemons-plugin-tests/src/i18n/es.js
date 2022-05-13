@@ -191,4 +191,20 @@ module.exports = {
     tests: 'Pruebas',
     questionBank: 'Banco de preguntas',
   },
+  studentInstance: {
+    multiSubject: 'Multi-Asignatura',
+    delivery: 'Entrega',
+    resume: 'Resumen',
+    statement: 'Enunciado',
+    prev: 'Anterior',
+    next: 'Continuar',
+    development: 'Desarrollo',
+    // ----- Test
+    questions: 'Preguntas',
+    perQuestion: 'Cada pregunta',
+    totalPoints: 'Puntuación total',
+    minToApprove: 'Min. para aprobar',
+    beforeStart: 'Antes de empezar',
+    withoutPause: 'Sin pausa',
+  },
 };

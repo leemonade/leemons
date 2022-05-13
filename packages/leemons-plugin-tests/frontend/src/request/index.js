@@ -9,3 +9,5 @@ export {
   saveTest as saveTestRequest,
   getTest as getTestRequest,
 } from './tests';
+
+export { getQuestionByIds as getQuestionByIdsRequest } from './questions';

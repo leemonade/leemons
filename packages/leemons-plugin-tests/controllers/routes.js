@@ -75,4 +75,10 @@ module.exports = [
     authenticated: true,
     allowedPermissions: getPermissions(permissions.tests, ['create', 'update']),
   },
+  {
+    path: '/questions/details',
+    method: 'POST',
+    handler: 'questions.getDetails',
+    authenticated: true,
+  },
 ];
