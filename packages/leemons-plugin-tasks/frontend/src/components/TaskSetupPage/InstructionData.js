@@ -51,6 +51,8 @@ function InstructionData({
             emitEvent('saveTaskFailed');
           }
         )();
+      } else if (event === 'saveTaskFailed') {
+        setLoading(false);
       }
     };
     subscribe(f);
