@@ -193,6 +193,11 @@ export default function TaskSetupPage() {
         } else if (event === 'publishTaskAndAssign') {
           await handleOnPublishTask();
           history.push(`/private/tasks/library/assign/${store.currentTask.id}`);
+        } else if (event === 'saveTaskFailed') {
+          if (loading.current) {
+            loading.current = null;
+            render();
+          }
         }
       } catch (e) {
         // EN: The error was previously handled

@@ -59,10 +59,15 @@ function ContentData({
   useEffect(() => {
     const f = (event) => {
       if (event === 'saveTask') {
-        handleSubmit((data) => {
-          setSharedData(data);
-          emitEvent('saveData');
-        })();
+        handleSubmit(
+          (data) => {
+            setSharedData(data);
+            emitEvent('saveData');
+          },
+          () => {
+            emitEvent('saveTaskFailed');
+          }
+        )();
       }
     };
     subscribe(f);

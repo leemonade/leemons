@@ -52,10 +52,15 @@ function ConfigData({
   useEffect(() => {
     const f = (event) => {
       if (event === 'saveTask') {
-        handleSubmit((data) => {
-          setSharedData(data);
-          emitEvent('saveData');
-        })();
+        handleSubmit(
+          (data) => {
+            setSharedData(data);
+            emitEvent('saveData');
+          },
+          () => {
+            emitEvent('saveTaskFailed');
+          }
+        )();
       }
     };
 
@@ -101,7 +106,10 @@ function ConfigData({
               <Controller
                 control={control}
                 name="subjects"
-                rules={{ required: errorMessages.subjects?.required }}
+                rules={{
+                  required: errorMessages.subjects?.required,
+                  validate: (value) => value.length > 0,
+                }}
                 render={({ field }) => (
                   <SelectSubjects
                     {...field}
