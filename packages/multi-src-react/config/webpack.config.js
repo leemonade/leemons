@@ -111,7 +111,7 @@ module.exports = ({ alias, filesToCopy, useLegacy = false }) => ({
   },
   module: {
     // Enforce the named imports to be exported
-    strictExportPresence: isProduction,
+    // strictExportPresence: isProduction,
     rules: [
       {
         enforce: 'pre',

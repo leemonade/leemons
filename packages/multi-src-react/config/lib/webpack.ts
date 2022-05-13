@@ -27,6 +27,16 @@ export default async function compile(
       });
 
   compiler.hooks.watchRun.tapPromise('Leemons', onChange);
+  if (process.env.NODE_ENV === 'production') {
+    compiler.run(() => {
+      console.log('Starting build');
+      compiler.close(() => {
+        console.log('Build finished');
+      });
+    });
+
+    return async () => {};
+  }
   // Development
 
   const devServer = new WebpackDevServer(config.devServer, compiler);
