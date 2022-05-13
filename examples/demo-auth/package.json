@@ -5,6 +5,7 @@
   "scripts": {
     "start": "leemons start",
     "front": "yarn workspace multi-src-react dev $(pwd)",
+    "front:build": "NODE_ENV=production yarn workspace multi-src-react dev $(pwd)",
     "dev": "leemons dev",
     "leemons": "leemons"
   },
