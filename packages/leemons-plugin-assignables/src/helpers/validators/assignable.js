@@ -129,19 +129,16 @@ const assignableValidationObject = {
   additionalProperties: false,
 };
 
-const assignableRequiredProperties = [
-  'asset',
-  'role',
-  'assessable',
-  'methodology',
-  'statement',
-  'development',
-];
+const assignableRequiredProperties = ['asset', 'role', 'methodology', 'statement', 'development'];
 
-function validateAssignable(assignable, { useRequired = false } = {}) {
-  const obj = _.clone(assignableValidationObject);
+function validateAssignable(assignable, { validationObject, useRequired = false } = {}) {
+  const obj = validationObject || _.clone(assignableValidationObject);
   if (useRequired) {
-    obj.required = assignableRequiredProperties;
+    if (Array.isArray(useRequired)) {
+      obj.required = useRequired;
+    } else {
+      obj.required = assignableRequiredProperties;
+    }
   }
 
   const validator = new global.utils.LeemonsValidator(obj);

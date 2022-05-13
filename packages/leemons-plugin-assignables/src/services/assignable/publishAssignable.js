@@ -1,12 +1,34 @@
+const _ = require('lodash');
+const {
+  validateAssignable,
+  assignableValidationObject,
+} = require('../../helpers/validators/assignable');
 const updateAsset = require('../leebrary/assets/updateAsset');
 const versionControl = require('../versionControl');
 const getAssignable = require('./getAssignable');
 const getUserPermission = require('./permissions/assignable/users/getUserPermission');
 
+function validateDataForPublish(assignable) {
+  const validationObject = _.cloneDeep(assignableValidationObject);
+
+  validationObject.properties.statement.nullable = false;
+  validationObject.properties.development.nullable = false;
+  validationObject.properties.subjects.minItems = 1;
+
+  validateAssignable(_.omit(assignable, ['id', 'published']), {
+    validationObject,
+    useRequired: ['asset', 'role', 'subjects', 'statement', 'development'],
+  });
+}
+
 module.exports = async function publishAssignable(assignableId, { userSession, transacting }) {
   // EN: Get the assignable to validate ownership.
   // ES: Obtiene el asignable para validar la propiedad.
   const assignable = await getAssignable.call(this, assignableId, { userSession, transacting });
+
+  // EN: Validate that all the required fields are filled.
+  // ES: Valida que todos los campos requeridos están llenos.
+  validateDataForPublish(assignable);
 
   // TODO: Add required properties verification
 

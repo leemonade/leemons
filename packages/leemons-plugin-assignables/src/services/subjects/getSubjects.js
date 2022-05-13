@@ -10,7 +10,7 @@ module.exports = async function getSubjects(assignable, { ids = false, transacti
         program,
         subject,
         level,
-        curriculum: JSON.parse(curriculum),
+        curriculum: JSON.parse(curriculum) || {},
       };
 
       if (ids) {
