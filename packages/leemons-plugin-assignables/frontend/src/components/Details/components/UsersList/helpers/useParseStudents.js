@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { LocaleDate } from '@common';
+import { LocaleDate, LocaleDuration } from '@common';
 import dayjs from 'dayjs';
 import UserDisplay from './userDisplay';
 import getStatus from './getStatus';
@@ -24,9 +24,13 @@ export default function useParseStudents(instance) {
         )) ||
         '-',
       avgTime:
-        student?.timestamps?.start && student?.timestamps?.end
-          ? dayjs(student.timestamps.end).diff(student.timestamps.start, 'minutes')
-          : '-',
+        student?.timestamps?.start && student?.timestamps?.end ? (
+          <LocaleDuration
+            seconds={dayjs(student.timestamps.end).diff(student.timestamps.start, 'seconds')}
+          />
+        ) : (
+          '-'
+        ),
       score: 'TBD',
       actions: getActions(student, instance),
     }));

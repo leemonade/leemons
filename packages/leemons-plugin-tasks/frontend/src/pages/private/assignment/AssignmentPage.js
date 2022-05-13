@@ -55,7 +55,7 @@ export default function AssignmentPage() {
   }, [id]);
 
   const handleAssignment = async (values) => {
-    const { assignees, teachers, dates, curriculum, ...instanceData } = values;
+    const { assignees, teachers, dates, curriculum, alwaysAvailable, ...instanceData } = values;
 
     const students = _.uniq(assignees.flatMap((assignee) => assignee.students));
     const classes = assignees.flatMap((assignee) => assignee.group);
@@ -70,7 +70,8 @@ export default function AssignmentPage() {
         students,
         classes,
         curriculum: curriculum ? _.omit(curriculum, 'toogle') : {},
-        dates,
+        alwaysAvailable: alwaysAvailable || false,
+        dates: alwaysAvailable ? {} : dates,
         // TODO: let the user decide
         gradable: true,
       };

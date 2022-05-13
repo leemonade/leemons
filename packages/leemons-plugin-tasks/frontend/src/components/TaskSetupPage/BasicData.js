@@ -46,13 +46,18 @@ function BasicData({
   useEffect(() => {
     const f = (event) => {
       if (event === 'saveTask') {
-        handleSubmit((e) => {
-          setSharedData({
-            ...sharedData,
-            asset: e,
-          });
-          emitEvent('saveData');
-        })();
+        handleSubmit(
+          (e) => {
+            setSharedData({
+              ...sharedData,
+              asset: e,
+            });
+            emitEvent('saveData');
+          },
+          () => {
+            emitEvent('saveTaskFailed');
+          }
+        )();
       }
     };
 

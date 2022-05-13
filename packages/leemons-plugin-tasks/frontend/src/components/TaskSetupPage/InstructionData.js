@@ -25,12 +25,15 @@ function InstructionData({
   const [loading, setLoading] = React.useState(null);
 
   const defaultValues = {
+    instructionsForTeachers: '',
+    instructionsForStudents: '',
     ...sharedData,
   };
 
   const {
     control,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm({ defaultValues });
 
@@ -39,10 +42,17 @@ function InstructionData({
   useEffect(() => {
     const f = (event) => {
       if (event === 'saveTask') {
-        handleSubmit((data) => {
-          setSharedData(data);
-          emitEvent('saveData');
-        })();
+        handleSubmit(
+          (data) => {
+            setSharedData(data);
+            emitEvent('saveData');
+          },
+          () => {
+            emitEvent('saveTaskFailed');
+          }
+        )();
+      } else if (event === 'saveTaskFailed') {
+        setLoading(false);
       }
     };
     subscribe(f);
@@ -63,21 +73,28 @@ function InstructionData({
   // COMPONENT
 
   return (
-    <form onSubmit={handleSubmit(handleOnNext)} autoComplete="off">
+    <form
+      onSubmit={(...v) => {
+        handleSubmit(handleOnNext)(...v);
+      }}
+      autoComplete="off"
+    >
       <ContextContainer {...props} divided>
         <ContextContainer title={labels.title}>
           <Box>
             <Controller
               control={control}
               name="instructionsForTeachers"
-              rules={{ required: errorMessages.forTeacher?.required }}
+              rules={{
+                required: errorMessages.forTeacher?.required,
+              }}
               render={({ field }) => (
                 <TextEditorInput
                   {...field}
                   label={labels.forTeacher}
                   placeholder={placeholders.forTeacher}
                   help={helps.forTeacher}
-                  error={errors.forTeacher}
+                  error={errors.instructionsForTeachers}
                   required={!isEmpty(errorMessages.forTeacher?.required)}
                 />
               )}
@@ -94,7 +111,7 @@ function InstructionData({
                   label={labels.forStudent}
                   placeholder={placeholders.forStudent}
                   help={helps.forStudent}
-                  error={errors.forStudent}
+                  error={errors.instructionsForStudents}
                   required={!isEmpty(errorMessages.forStudent?.required)}
                 />
               )}

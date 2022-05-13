@@ -121,7 +121,7 @@ module.exports = {
         errorMessages: {
           program: { required: 'Required field' },
           course: { required: 'Required field' },
-          subject: { required: 'Required field' },
+          subjects: { required: 'Required field' },
           level: { required: 'Required field' },
           summary: { required: 'Required field' },
         },

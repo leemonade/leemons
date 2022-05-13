@@ -17,6 +17,7 @@ const subjectsValidationObject = {
       },
       curriculum: {
         type: 'object',
+        nullable: true,
       },
     },
   },
