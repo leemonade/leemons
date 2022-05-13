@@ -10,6 +10,7 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
   logger.level = logLevel;
 
   const PORT = await getAvailablePort();
+  process.env.NODE_ENV = 'production';
   process.env.PORT = PORT;
 
   const leemonsInstance = leemons(logger);
