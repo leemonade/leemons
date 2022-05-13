@@ -627,7 +627,8 @@ class Leemons {
      * Load all the frontend plugins, build the app if needed
      * and set the middlewares.
      */
-    await this.loadFront(this.enabledPlugins, this.enabledProviders);
+    await this.setFrontRoutes();
+    // await this.loadFront(this.enabledPlugins, this.enabledProviders);
 
     this.loaded = true;
     this.events.emit('appDidLoad', 'leemons');
