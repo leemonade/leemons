@@ -88,7 +88,7 @@ UserList.defaultProps = {
       student: 'Student',
       status: 'Status',
       completed: 'Completed',
-      avgTime: 'Avg. time (min)',
+      avgTime: 'Avg. time',
       score: 'Score',
     },
   },
