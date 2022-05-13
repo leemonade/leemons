@@ -206,5 +206,14 @@ module.exports = {
     minToApprove: 'Min. para aprobar',
     beforeStart: 'Antes de empezar',
     withoutPause: 'Sin pausa',
+    noTimeLimit: 'Sin límite de tiempo',
+    makeTheTest: 'Hacer el test',
+    howItWorks: '¿Cómo funciona?',
+    limitedTime: 'Tiempo limitado',
+    limitedTimeDescription:
+      'Una vez comenzado tienes {time} para finalizar el test, si el tiempo acaba antes de que contestes a todas las preguntas, puntuarán solo las preguntas contestadas hasta el momento de la interrupción.',
+    canNotStop: 'La prueba no se puede pausar',
+    canNotStopDescription:
+      'Si sales de la aplicación con la prueba en proceso, esta se dará por finalizada, puntuando solo las preguntas contestadas hasta el momento de la interrupción. Si se produce algún error en el sistema y te expulsa de la prueba, podrás notificarlo y en caso de que tu error sea comprobado podrás volver a realizar la prueba.',
   },
 };

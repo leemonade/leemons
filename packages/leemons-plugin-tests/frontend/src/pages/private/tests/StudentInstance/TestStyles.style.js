@@ -9,6 +9,7 @@ export const TestStyles = createStyles((theme, {}) => ({
   },
   timeLimitContent: {
     marginTop: theme.spacing[2],
+    marginBottom: theme.spacing[5],
     width: '100%',
     height: 142,
     position: 'relative',
@@ -26,11 +27,15 @@ export const TestStyles = createStyles((theme, {}) => ({
     position: 'absolute',
     top: '50%',
     left: 0,
-    width: 320,
+    width: 340,
     transform: 'translateY(-50%)',
     display: 'flex',
     textAlign: 'center',
     justifyContent: 'space-around',
+  },
+  howItWorksModalContainer: {
+    padding: theme.spacing[2],
+    paddingTop: theme.spacing[6],
   },
   tagline: {
     marginBottom: theme.spacing[7],

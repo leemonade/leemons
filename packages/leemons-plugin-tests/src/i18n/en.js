@@ -207,5 +207,14 @@ module.exports = {
     minToApprove: 'Min. to approve',
     beforeStart: 'Before start',
     withoutPause: 'Without pause',
+    noTimeLimit: 'No time limit',
+    makeTheTest: 'Make the test',
+    howItWorks: 'How it works?',
+    limitedTime: 'Limited time',
+    limitedTimeDescription:
+      'Once started you have {time} to finish the test, if the time ends before you answer all the questions, only the questions answered up to the moment of the interruption will be scored.',
+    canNotStop: 'The test cannot be paused',
+    canNotStopDescription:
+      'If you exit the application with the test in progress, the test will be terminated, scoring only the questions answered up to the moment of interruption. If an error occurs in the system and you are expelled from the test, you will be able to notify it and if your error is verified you will be able to retake the test.',
   },
 };
