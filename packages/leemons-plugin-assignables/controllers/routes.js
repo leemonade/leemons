@@ -10,14 +10,14 @@ module.exports = [
    */
   {
     method: 'GET',
-    path: '/assignableInstances/:id',
-    handler: 'assignableInstance.get',
+    path: '/assignableInstances',
+    handler: 'assignableInstance.search',
     authenticated: true,
   },
   {
     method: 'GET',
-    path: '/instances',
-    handler: 'assignables.listInstances',
+    path: '/assignableInstances/:id',
+    handler: 'assignableInstance.get',
     authenticated: true,
   },
 ];
