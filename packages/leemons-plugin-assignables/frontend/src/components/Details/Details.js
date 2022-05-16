@@ -9,8 +9,6 @@ export default function Details() {
 
   const instance = useAssignableInstance(id);
 
-  console.log('instance', instance);
-
   if (instance) {
     return (
       <>
