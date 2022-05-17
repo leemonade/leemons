@@ -8,7 +8,7 @@ type webpackTapFunction = (args_0: webpack.Compiler) => Promise<void>;
 // Compile
 export default async function compile(
   _config: { alias: {}; filesToCopy: {}; useLegacy?: boolean },
-  onChange: webpackTapFunction = async () => {},
+  onChange: webpackTapFunction = async () => { },
   plugins: any[]
 ): Promise<Function> {
   // eslint-disable-next-line global-require
@@ -17,25 +17,26 @@ export default async function compile(
   const compiler = _config.useLegacy
     ? webpack(config)
     : createCompiler({
-        appName: 'Leemons App',
-        config,
-        urls,
-        useYarn: true,
-        useTypeScript: false,
-        webpack,
-        plugins,
-      });
+      appName: 'Leemons App',
+      config,
+      urls,
+      useYarn: true,
+      useTypeScript: false,
+      webpack,
+      plugins,
+    });
 
   compiler.hooks.watchRun.tapPromise('Leemons', onChange);
   if (process.env.NODE_ENV === 'production') {
+    console.log('Starting build');
     compiler.run(() => {
-      console.log('Starting build');
       compiler.close(() => {
         console.log('Build finished');
+        process.exit(0);
       });
     });
 
-    return async () => {};
+    return async () => { };
   }
   // Development
 
