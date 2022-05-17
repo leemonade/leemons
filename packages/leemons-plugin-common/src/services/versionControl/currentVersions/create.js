@@ -5,13 +5,16 @@ const { stringifyId } = require('../helpers');
 const { stringifyType } = require('../helpers/type');
 const createVersion = require('../versions/createVersion');
 
-module.exports = async function create(type, { published = false, transacting: t } = {}) {
+module.exports = async function create(
+  type,
+  { setAsCurrent = false, published = false, transacting: t } = {}
+) {
   const stringifiedType = stringifyType(this.calledFrom, type);
 
   return global.utils.withTransaction(
     async (transacting) => {
       const obj = {
-        published: published ? '1.0.0' : null,
+        published: published && setAsCurrent ? '1.0.0' : null,
         type: stringifiedType,
       };
 
