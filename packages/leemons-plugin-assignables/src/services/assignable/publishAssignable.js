@@ -12,12 +12,11 @@ function validateDataForPublish(assignable) {
   const validationObject = _.cloneDeep(assignableValidationObject);
 
   validationObject.properties.statement.nullable = false;
-  validationObject.properties.development.nullable = false;
   validationObject.properties.subjects.minItems = 1;
 
   validateAssignable(_.omit(assignable, ['id', 'published']), {
     validationObject,
-    useRequired: ['asset', 'role', 'subjects', 'statement', 'development'],
+    useRequired: ['asset', 'role', 'subjects', 'statement'],
   });
 }
 
