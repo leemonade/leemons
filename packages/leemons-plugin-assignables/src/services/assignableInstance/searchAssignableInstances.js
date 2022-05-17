@@ -3,6 +3,82 @@ const dayjs = require('dayjs');
 const { getDates } = require('../dates');
 const { teachers, assignations } = require('../tables');
 
+function sortByGivenDate(date) {
+  return (a, b) => {
+    const aDate = a[date];
+    const bDate = b[date];
+
+    if (!aDate && !bDate) {
+      return 0;
+    }
+
+    if (!aDate) {
+      return 1;
+    }
+    if (!bDate) {
+      return -1;
+    }
+
+    return dayjs(aDate).diff(dayjs(bDate));
+  };
+}
+
+function sortByGivenDates(instances, order) {
+  return instances.sort((a, b) => {
+    const { dates: aDates } = a;
+    const { dates: bDates } = b;
+
+    const orderLength = order.length;
+    for (let i = 0; i < orderLength; i++) {
+      const sortResult = sortByGivenDate(order[i])(aDates, bDates);
+
+      if (sortResult !== 0) {
+        return sortResult;
+      }
+    }
+
+    return 0;
+  });
+}
+
+function checkIfDateIsInRange(dates, min, max, defaultValue) {
+  if (!dates.length) {
+    return defaultValue;
+  }
+
+  return dates.some((date) => {
+    if (!date) {
+      return true;
+    }
+
+    if (!min && max) {
+      return dayjs(date).isBefore(dayjs(max));
+    }
+
+    if (min && !max) {
+      return dayjs(date).isAfter(dayjs(min));
+    }
+
+    return dayjs(date).isBetween(dayjs(min), dayjs(max));
+  });
+}
+
+function filterByDates(instances, datesOptions) {
+  const filteredInstances = instances.filter((instance) => {
+    const everyDateIsInRange = _.every(datesOptions, (date) => {
+      const { min, max, dates, default: defaultValue } = date;
+
+      const datesToCheck = _.values(_.pick(instance.dates, dates));
+
+      return checkIfDateIsInRange(datesToCheck, min, max, defaultValue);
+    });
+
+    return everyDateIsInRange;
+  });
+
+  return filteredInstances;
+}
+
 async function searchTeacherAssignableInstances(query, { userSession, transacting } = {}) {
   const userAgents = userSession.userAgents.map((userAgent) => userAgent.id);
 
@@ -41,47 +117,19 @@ async function searchStudentAssignableInstances(query, { userSession, transactin
 
   // EN: Filter by dates visibility
   // ES: Filtra por fechas de visibilidad
-  results = results.filter((result) => {
-    const { dates } = result;
-
-    const { start, deadline, visibility } = dates;
-
-    if (!start || !deadline) {
-      return true;
-    }
-
-    if (visibility) {
-      if (dayjs(visibility).isAfter(dayjs())) {
-        return false;
-      }
-    } else if (start && dayjs(start).isAfter(dayjs())) {
-      return false;
-    }
-
-    return true;
-  });
+  const filteredResults = filterByDates(results, [
+    {
+      dates: ['visibility', 'start'],
+      max: new Date(),
+      default: true,
+    },
+    // TODO: Determine last day to see the task when deadline is exceeded
+  ]);
 
   // TODO: CHECK ORDER
-  results.sort((a, b) => {
-    const { dates: aDates } = a;
-    const { dates: bDates } = b;
+  const orderedResults = sortByGivenDates(filteredResults, ['deadline', 'start', 'visibility']);
 
-    if (aDates.deadline && bDates.deadline) {
-      return dayjs(aDates.deadline).diff(dayjs(bDates.deadline));
-    }
-
-    if (aDates.deadline) {
-      return 1;
-    }
-
-    if (bDates.deadline) {
-      return -1;
-    }
-
-    return 0;
-  });
-
-  return results;
+  return orderedResults;
 }
 
 module.exports = async function searchAssignableInstances(
