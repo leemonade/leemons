@@ -8,6 +8,7 @@ const addCalendarAndEventAsClassroom = require('./src/calendar');
 const addAWSS3AsProvider = require('./src/leebrary');
 const addAWSEmailAsProvider = require('./src/emails');
 const initWidgets = require('./src/widgets');
+const initTests = require('./src/tests');
 
 async function events(isInstalled) {
   const config = {
@@ -129,6 +130,21 @@ async function events(isInstalled) {
         try {
           config.programs = await initAcademicPortfolio(config);
           leemons.events.emit('init-academic-portfolio', config.programs);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    );
+
+    // ·······························································
+    // TESTS & QBANKS
+
+    leemons.events.once(
+      ['plugins.tests:pluginDidLoadServices', 'plugins.mvp-template:init-academic-portfolio'],
+      async () => {
+        try {
+          config.tests = await initTests(config);
+          leemons.events.emit('init-tests', config.tests);
         } catch (e) {
           console.error(e);
         }
