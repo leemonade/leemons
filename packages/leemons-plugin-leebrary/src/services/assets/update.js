@@ -113,6 +113,9 @@ async function update(
     currentVersion.published = published;
     assetId = duplicatedAsset.id;
     currentAsset.id = assetId;
+    if (!diff.length) {
+      return currentAsset;
+    }
   }
 
   // EN: If the asset is not published and we want to publish it, we do it

@@ -11,6 +11,7 @@ import {
   Stack,
   Title,
 } from '@bubbles-ui/components';
+import ImagePicker from '@leebrary/components/ImagePicker';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { Controller, useForm } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
@@ -156,6 +157,12 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
               {...field}
             />
           )}
+        />
+
+        <Controller
+          control={form.control}
+          name="questionImage"
+          render={({ field }) => <ImagePicker {...field} />}
         />
 
         {type

@@ -61,6 +61,11 @@ const saveQuestionBankSchema = {
             nullable: true,
           },
           question: stringSchema,
+          questionImage: {
+            type: ['object', 'string'],
+            nullable: true,
+          },
+          questionImageDescription: stringSchemaNullable,
           properties: {
             type: 'object',
             additionalProperties: true,
@@ -86,6 +91,7 @@ function validateSaveQuestionBank(data) {
   }
   const validator = new LeemonsValidator(schema);
 
+  console.log(data);
   if (!validator.validate(data)) {
     throw validator.error;
   }

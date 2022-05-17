@@ -14,7 +14,7 @@ dayjs.extend(duration);
 export default function Development(props) {
   const session = useSession();
   const [showModal, setShowModal] = React.useState(false);
-  const { classes, styles, cx, t, store } = props;
+  const { classes, styles, cx, t, store, nextStep, onStartQuestions } = props;
 
   const durationSeconds = React.useMemo(() => {
     if (store.instance?.duration) {
@@ -93,6 +93,10 @@ export default function Development(props) {
             style={{ width: 338 }}
             rounded
             compact
+            onClick={() => {
+              nextStep();
+              onStartQuestions();
+            }}
           >
             {t('makeTheTest')}
           </Button>

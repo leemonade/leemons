@@ -12,6 +12,9 @@ async function getByIds(id, { userSession, transacting } = {}) {
   const assetIds = [];
   _.forEach(questions, (question) => {
     question.properties = JSON.parse(question.properties);
+    if (question.questionImage) {
+      assetIds.push(question.questionImage);
+    }
     if (question.properties?.image) {
       assetIds.push(question.properties.image);
     }
@@ -34,6 +37,10 @@ async function getByIds(id, { userSession, transacting } = {}) {
     question.tags = questionsTags[i];
     if (question.properties?.image) {
       question.properties.image = questionAssetsById[question.properties.image];
+    }
+    if (question.questionImage) {
+      question.questionImage = questionAssetsById[question.questionImage];
+      question.questionImageDescription = question.questionImage.description;
     }
   });
 

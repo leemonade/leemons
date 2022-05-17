@@ -52,6 +52,9 @@ module.exports = {
     responsesLabel: 'Respuestas',
     responseLabel: 'Respuesta',
     errorMarkGoodResponse: 'La respuesta correcta debe ser marcada',
+    needImages: 'Las respuestas deben tener imágenes',
+    needExplanationAndResponse: 'Todas las respuestas necesitan un texto y una explicación',
+    needResponse: 'Las respuestas deben tener un texto',
     responsesDescription:
       'Selecciona la respuesta correcta haciendo clic en el icono circular, marca ({{icon}}) la respuesta que se ocultará cuando el usuario solicite una pista (puedes configurar el modo de pista en la sección de asignación).',
     addResponse: 'Añadir respuesta',

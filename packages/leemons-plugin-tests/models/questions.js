@@ -23,6 +23,9 @@ module.exports = {
       type: 'string',
       required: true,
     },
+    questionImage: {
+      type: 'string',
+    },
     clues: {
       type: 'json',
     },

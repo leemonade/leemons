@@ -52,6 +52,9 @@ module.exports = {
     responsesLabel: 'Responses',
     responseLabel: 'Response',
     errorMarkGoodResponse: 'You must mark a good response',
+    needImages: 'Answers must have images',
+    needExplanationAndResponse: 'All answers need a text and an explanation',
+    needResponse: 'Answers must have a text',
     responsesDescription:
       'Select the correct answer by clicking on the circular icon, mark ({{icon}}) the response that will be hidden when the user requests a hint (you can set the hint mode in the assignment section).',
     addResponse: 'Add response',

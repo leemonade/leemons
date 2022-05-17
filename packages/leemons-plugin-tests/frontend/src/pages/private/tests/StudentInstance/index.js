@@ -37,6 +37,10 @@ export default function StudentInstance() {
 
   const params = useParams();
 
+  async function onStartQuestions() {
+    // TODO LLamar a asignables seteando la hora de inicio del test
+  }
+
   function prevStep() {
     store.currentStep -= 1;
     render();
@@ -146,7 +150,6 @@ export default function StudentInstance() {
 
   const verticalStepperProps = React.useMemo(() => {
     if (store.instance) {
-      console.log(store.instance);
       const commonProps = { classes, t, store, render, cx, prevStep, nextStep, goToStep };
       const steps = [];
       const curriculumValues = getIfCurriculumSubjectsHaveValues(
@@ -172,7 +175,7 @@ export default function StudentInstance() {
         });
       }
 
-      const testProps = { styles };
+      const testProps = { styles, onStartQuestions };
 
       steps.push({
         label: t('development'),

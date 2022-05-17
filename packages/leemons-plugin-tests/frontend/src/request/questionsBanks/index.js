@@ -11,7 +11,17 @@ async function listQuestionsBanks(body) {
 async function saveQuestionBank(body) {
   const form = new FormData();
   const questionsFiles = [];
+  console.log(body);
   forEach(body.questions || [], (question, index) => {
+    if (question.questionImage && !isString(question.questionImage)) {
+      if (question.questionImage.id) {
+        // eslint-disable-next-line no-param-reassign
+        body.questions[index].questionImage = question.questionImage.cover.id;
+      } else {
+        questionsFiles.push({ index, name: 'questionImage', file: question.questionImage });
+      }
+    }
+    console.log(question.properties);
     if (question.properties.image && !isString(question.properties.image)) {
       if (question.properties.image.id) {
         // eslint-disable-next-line no-param-reassign
