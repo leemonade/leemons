@@ -34,7 +34,7 @@ function InstructionData({
     control,
     handleSubmit,
     getValues,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm({ defaultValues });
 
   const { subscribe, unsubscribe, emitEvent } = useObserver();
@@ -63,6 +63,20 @@ function InstructionData({
   // ·······························································
   // HANDLERS
 
+  const handleOnPrev = () => {
+    if (!isDirty) {
+      onPrevious(sharedData);
+
+      return;
+    }
+
+    handleSubmit((values) => {
+      const data = { ...sharedData, ...values };
+      if (isFunction(setSharedData)) setSharedData(data);
+      if (isFunction(onPrevious)) onPrevious(data);
+    })();
+  };
+
   const handleOnNext = (e) => {
     const data = { ...sharedData, ...e };
     if (isFunction(setSharedData)) setSharedData(data);
@@ -85,9 +99,9 @@ function InstructionData({
             <Controller
               control={control}
               name="instructionsForTeachers"
-              rules={{
-                required: errorMessages.forTeacher?.required,
-              }}
+              // rules={{
+              //   required: errorMessages.forTeacher?.required,
+              // }}
               render={({ field }) => (
                 <TextEditorInput
                   {...field}
@@ -95,7 +109,7 @@ function InstructionData({
                   placeholder={placeholders.forTeacher}
                   help={helps.forTeacher}
                   error={errors.instructionsForTeachers}
-                  required={!isEmpty(errorMessages.forTeacher?.required)}
+                  // required={!isEmpty(errorMessages.forTeacher?.required)}
                 />
               )}
             />
@@ -104,7 +118,7 @@ function InstructionData({
             <Controller
               control={control}
               name="instructionsForStudents"
-              rules={{ required: errorMessages.forStudent?.required }}
+              // rules={{ required: errorMessages.forStudent?.required }}
               render={({ field }) => (
                 <TextEditorInput
                   {...field}
@@ -112,7 +126,7 @@ function InstructionData({
                   placeholder={placeholders.forStudent}
                   help={helps.forStudent}
                   error={errors.instructionsForStudents}
-                  required={!isEmpty(errorMessages.forStudent?.required)}
+                  // required={!isEmpty(errorMessages.forStudent?.required)}
                 />
               )}
             />
@@ -124,7 +138,7 @@ function InstructionData({
               compact
               variant="light"
               leftIcon={<ChevLeftIcon height={20} width={20} />}
-              onClick={onPrevious}
+              onClick={handleOnPrev}
             >
               {labels.buttonPrev}
             </Button>

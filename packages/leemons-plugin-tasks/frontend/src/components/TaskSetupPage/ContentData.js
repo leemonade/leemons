@@ -49,7 +49,7 @@ function ContentData({
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = formData;
 
   const subjects = useSubjects(sharedData);
@@ -77,6 +77,20 @@ function ContentData({
 
   // ·······························································
   // HANDLERS
+
+  const handleOnPrev = () => {
+    if (!isDirty) {
+      onPrevious(sharedData);
+
+      return;
+    }
+
+    handleSubmit((values) => {
+      const data = { ...sharedData, ...values };
+      if (isFunction(setSharedData)) setSharedData(data);
+      if (isFunction(onPrevious)) onPrevious(data);
+    })();
+  };
 
   const handleOnNext = (e) => {
     const data = { ...sharedData, ...e };
@@ -244,7 +258,7 @@ function ContentData({
                 compact
                 variant="light"
                 leftIcon={<ChevLeftIcon height={20} width={20} />}
-                onClick={onPrevious}
+                onClick={handleOnPrev}
               >
                 {labels.buttonPrev}
               </Button>

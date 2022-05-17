@@ -79,12 +79,57 @@ function filterByDates(instances, datesOptions) {
   return filteredInstances;
 }
 
+async function getInstancesDates(instances, { transacting } = {}) {
+  const instancesData = await instances.reduce(async (obj, instance) => {
+    const dates = await getDates('assignableInstance', instance, { transacting });
+
+    return {
+      ...(await obj),
+      [instance]: {
+        dates,
+      },
+    };
+  }, {});
+
+  return instancesData;
+}
+
 async function searchTeacherAssignableInstances(query, { userSession, transacting } = {}) {
   const userAgents = userSession.userAgents.map((userAgent) => userAgent.id);
 
   const results = await teachers.find({ teacher_$in: userAgents }, { transacting });
 
-  return results.map((result) => result.assignableInstance);
+  const instances = _.map(results, 'assignableInstance');
+
+  let instancesData = await getInstancesDates(instances, { transacting });
+
+  instancesData = _.entries(instancesData).map(([key, value]) => ({
+    instance: key,
+    dates: value.dates,
+  }));
+
+  const filteredResults = filterByDates(instancesData, [
+    {
+      dates: ['close'],
+      max: new Date(),
+      default: true,
+    },
+    {
+      dates: ['closed'],
+      max: new Date(),
+      default: true,
+    },
+  ]);
+
+  const sortedResults = sortByGivenDates(filteredResults, [
+    'close',
+    'closed',
+    'deadline',
+    'start',
+    'visibility',
+  ]);
+
+  return sortedResults;
 }
 
 async function searchStudentAssignableInstances(query, { userSession, transacting } = {}) {
@@ -98,25 +143,13 @@ async function searchStudentAssignableInstances(query, { userSession, transactin
   }));
 
   const instances = _.uniq(_.map(results, 'instance'));
-
-  const instancesData = await instances.reduce(async (obj, instance) => {
-    const dates = await getDates('assignableInstance', instance, { transacting });
-
-    return {
-      ...(await obj),
-      [instance]: {
-        dates,
-      },
-    };
-  }, {});
+  const instancesData = await getInstancesDates(instances, { transacting });
 
   results = results.map((result) => ({
     ...result,
     dates: instancesData[result.instance].dates,
   }));
 
-  // EN: Filter by dates visibility
-  // ES: Filtra por fechas de visibilidad
   const filteredResults = filterByDates(results, [
     {
       dates: ['visibility', 'start'],
