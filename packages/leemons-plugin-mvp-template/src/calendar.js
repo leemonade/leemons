@@ -30,7 +30,7 @@ const events = [
 ];
 
 async function addCalendarAndEventAsClassroom(users) {
-  const { studentA01 } = users;
+  const { studentB01 } = users;
   const calendarKey = leemons.plugin.prefixPN('calendar-test');
   const calendarKey2 = leemons.plugin.prefixPN('calendar-test2');
   const section = leemons.plugin.prefixPN('Testing');
@@ -56,12 +56,12 @@ async function addCalendarAndEventAsClassroom(users) {
 
   await services.calendar.grantAccessUserAgentToCalendar(
     calendarKey,
-    studentA01.userAgents[0].id,
+    studentB01.userAgents[0].id,
     'view'
   );
   await services.calendar.grantAccessUserAgentToCalendar(
     calendarKey2,
-    studentA01.userAgents[0].id,
+    studentB01.userAgents[0].id,
     'view'
   );
 }

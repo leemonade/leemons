@@ -59,14 +59,13 @@ async function importQbanks(programs) {
 
       // Qbank program
       const program = programs[qbank[programColumn]];
-      console.log('-- QBANK PROGRAM --');
-      console.dir(program, { depth: null });
+
       item.program = program.id;
       item.subjects = qbank[subjectsColumn]
         ?.split(',')
         .map((val) => trim(val))
-        .filter((val) => !isEmpty(val));
-      // .map((subject) => program.subjects));
+        .filter((val) => !isEmpty(val))
+        .map((subject) => program.subjects[subject]?.id);
 
       // Tags
       item.tags = item.tags

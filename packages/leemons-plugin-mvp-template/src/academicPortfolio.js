@@ -75,8 +75,11 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
         userSession: users[creator],
       });
       subjects[key] = { ...subjectData };
-      const programIndex = findIndex(programs, { id: subjectData.program });
-      programs[programIndex].subjects[key] = { ...subjectData };
+
+      const programKey = Object.keys(programs).filter(
+        (val) => programs[val].id === subject.program
+      )[0];
+      programs[programKey].subjects[key] = subjects[key];
 
       // ·····················································
       // CLASSES

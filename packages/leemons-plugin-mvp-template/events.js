@@ -53,6 +53,7 @@ async function events(isInstalled) {
         'plugins.leebrary:init-permissions',
         'plugins.grades:init-permissions',
         'plugins.tasks:init-permissions',
+        'plugins.tests:init-permissions',
       ],
       async () => {
         try {
@@ -68,7 +69,7 @@ async function events(isInstalled) {
           config.grades = await initGrades(config.centers);
           leemons.events.emit('init-grades', config.grades);
 
-          await addCalendarAndEventAsClassroom(config.users);
+          // await addCalendarAndEventAsClassroom(config.users);
         } catch (e) {
           console.error(e);
         }
