@@ -1,6 +1,6 @@
 /* eslint-disable no-unreachable */
 /* eslint-disable no-await-in-loop */
-const { keys, find, compact } = require('lodash');
+const { keys, find, compact, findIndex } = require('lodash');
 const importProfiles = require('./bulk/academic-portfolio/profiles');
 const importPrograms = require('./bulk/academic-portfolio/programs');
 const importSubjectTypes = require('./bulk/academic-portfolio/subjectTypes');
@@ -28,7 +28,7 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
       const programData = await services.programs.addProgram(program, {
         userSession: users[creator],
       });
-      programs[programsKeys[i]] = { ...programData };
+      programs[programsKeys[i]] = { ...programData, subjects: {} };
     }
 
     // ·····················································
@@ -75,6 +75,8 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
         userSession: users[creator],
       });
       subjects[key] = { ...subjectData };
+      const programIndex = findIndex(programs, { id: subjectData.program });
+      programs[programIndex].subjects[key] = { ...subjectData };
 
       // ·····················································
       // CLASSES

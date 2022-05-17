@@ -11,6 +11,8 @@ async function initTests({ programs }) {
     // QBANKS
 
     let qbanks = await importQbanks(programs);
+    console.log('-- QBANKS --');
+    console.dir(qbanks, { depth: null });
     // qbanks = await services.questionBanks.save(qbanks);
 
     // ·····················································

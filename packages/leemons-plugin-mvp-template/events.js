@@ -128,6 +128,7 @@ async function events(isInstalled) {
       ],
       async () => {
         try {
+          console.log('MVP - Iniciando el plugin de Academic Portfolio');
           config.programs = await initAcademicPortfolio(config);
           leemons.events.emit('init-academic-portfolio', config.programs);
         } catch (e) {
@@ -143,6 +144,7 @@ async function events(isInstalled) {
       ['plugins.tests:pluginDidLoadServices', 'plugins.mvp-template:init-academic-portfolio'],
       async () => {
         try {
+          console.log('MVP - Iniciando el plugin de Tests');
           config.tests = await initTests(config);
           leemons.events.emit('init-tests', config.tests);
         } catch (e) {

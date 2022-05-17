@@ -58,7 +58,7 @@ async function importQbanks(programs) {
       });
 
       // Qbank program
-      const program = qbank[programColumn];
+      const program = programs[qbank[programColumn]];
       console.log('-- QBANK PROGRAM --');
       console.dir(program, { depth: null });
       item.program = program.id;

@@ -1,6 +1,6 @@
 module.exports = {
   dashboard: {
-    selectYourProgram: 'Selecciona tu programa',
+    selectYourProgram: 'Seleccionar programa',
     dashboard: 'Dashboard',
     controlPanel: 'Panel de control',
   },

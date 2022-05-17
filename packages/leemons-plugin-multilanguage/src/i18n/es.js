@@ -9,16 +9,16 @@ module.exports = {
     minItems: 'Tiene que tener mínimo {limit} elementos',
     maxItems: 'Tiene que tener máximo {limit} elementos',
     format: {
-      email: 'No es un email valido',
-      uri: 'No es una url valida',
-      numbers: 'Solo se permiten números',
-      phone: 'Teléfono invalido (+xx xxxxxxxxx)',
+      email: 'No es un email válido',
+      uri: 'No es una url válida',
+      numbers: 'Campo numérico',
+      phone: 'Teléfono inválido (formato +xx xxxxxxxxx)',
     },
-    selectionRequired: 'Tiene que seleccionar una opción',
+    selectionRequired: 'Es necesario seleccionar una opción',
   },
   request_errors: {
     permission_error:
-      'Es necesario el permiso "{permissionName}" con alguna de las siguientes acciones "{actions}"',
+      'Las acciones solicitadas ({actions}) requieren los siguientes permisos: {permissionName}',
   },
   page_header: {
     new: 'Nuevo',
@@ -40,10 +40,10 @@ module.exports = {
     phone: 'Teléfono',
     link: 'Enlace',
     archive: 'Archivo',
-    multioption: 'Multiples opciones',
+    multioption: 'Múltiples opciones',
     checkbox: 'Checkbox',
     select: 'Select',
-    boolean: 'Boolean',
+    boolean: 'Booleano',
     user: 'Usuario',
     multioption_types: {
       dropdown: 'Dropdown (+chips)',
@@ -56,7 +56,7 @@ module.exports = {
       switcher: 'Switcher',
     },
     boolean_initial_status: {
-      yes: 'Si',
+      yes: 'Sí',
       no: 'No',
       nothing: 'No hay selección',
     },
