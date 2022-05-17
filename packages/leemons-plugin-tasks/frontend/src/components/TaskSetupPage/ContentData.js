@@ -125,7 +125,7 @@ function ContentData({
                 )}
               />
             </ContextContainer>
-            <Attachments />
+            {/* <Attachments /> */}
 
             <ContextContainer title={labels.subjects}>
               {
