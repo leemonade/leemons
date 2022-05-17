@@ -146,7 +146,7 @@ const AssetList = ({
       console.log(response);
       // console.log('assets:', response.assets);
       setAssets(response?.assets || []);
-      setTimeout(() => setLoading(false), 500);
+      // setTimeout(() => setLoading(false), 500);
     } catch (err) {
       setLoading(false);
       addErrorAlert(getErrorMessage(err));
@@ -169,7 +169,7 @@ const AssetList = ({
       } else {
         setServerData([]);
       }
-      setTimeout(() => setLoading(false), 1000);
+      setTimeout(() => setLoading(false), 500);
     } catch (err) {
       setLoading(false);
       addErrorAlert(getErrorMessage(err));

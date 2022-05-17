@@ -1,44 +1,27 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { isNil, find, map } from 'lodash';
+import React, { useMemo } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { find, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { ContextContainer, TableInput, Select } from '@bubbles-ui/components';
-import { detailProgramRequest } from '@academic-portfolio/request';
 import useTableInputLabels from '../../../../helpers/useTableInputLabels';
+import useProgram from '../../../Student/TaskDetail/helpers/useProgram';
 
-export default function SelectSubjects({
-  value,
-  program: programId,
-  labels,
-  placeholders,
-  errorMessages,
-  errors,
-  onChange,
-}) {
-  if (!programId) {
-    return null;
+function useProgramSubjects(programId) {
+  const program = useProgram(programId);
+
+  if (program) {
+    return map(program?.subjects, ({ name, id }) => ({
+      // TODO: Incluir el curso y grupo en el label
+      label: name,
+      value: id,
+    }));
   }
-  const tableInputLabels = useTableInputLabels();
 
-  const [program, setProgram] = useState({});
+  return [];
+}
 
-  useEffect(async () => {
-    const details = await detailProgramRequest(programId);
-    setProgram(details?.program);
-  }, [programId]);
-
-  const selects = useMemo(
-    () => ({
-      subjects: map(program?.subjects, ({ name, id }) => ({
-        // TODO: Incluir el curso y grupo en el label
-        label: name,
-        value: id,
-      })),
-    }),
-    [program]
-  );
-
-  // TRANSLATE: Level labels
-  const levelsList = useMemo(
+function useDifficultyLevels(labels) {
+  return useMemo(
     () => [
       {
         label: labels.levelValues.begginer,
@@ -51,7 +34,12 @@ export default function SelectSubjects({
     ],
     []
   );
-  const subjectsColumns = useMemo(() => {
+}
+
+function useSubjectColumns({ labels, placeholders, errorMessages, subjects }) {
+  const difficultyLevels = useDifficultyLevels(labels);
+
+  return useMemo(() => {
     const columns = [];
 
     columns.push({
@@ -60,16 +48,16 @@ export default function SelectSubjects({
       input: {
         node: (
           <Select
-            data={selects?.subjects}
+            data={subjects}
             placeholder={placeholders?.subject}
-            disabled={!selects?.subjects?.length}
+            disabled={!subjects?.length}
             searchable
             required
           />
         ),
         rules: { required: errorMessages?.subject?.required },
       },
-      valueRender: (v) => find(selects?.subjects, { value: v })?.label,
+      valueRender: (v) => find(subjects, { value: v })?.label,
     });
 
     columns.push({
@@ -78,18 +66,37 @@ export default function SelectSubjects({
       input: {
         node: (
           <Select
-            data={levelsList}
+            data={difficultyLevels}
             placeholder={placeholders?.level}
             required
-            disabled={!selects?.subjects?.length}
+            disabled={!subjects?.length}
           />
         ),
         rules: { required: errorMessages?.level?.required },
       },
-      valueRender: (v) => find(levelsList, { value: v })?.label,
+      valueRender: (v) => find(difficultyLevels, { value: v })?.label,
     });
+
     return columns;
-  }, [labels, program]);
+  }, [labels, subjects, difficultyLevels]);
+}
+
+export default function SelectSubjects({
+  labels,
+  placeholders,
+  errorMessages,
+  value,
+  onChange,
+  errors,
+}) {
+  const tableInputLabels = useTableInputLabels();
+
+  const { control, getValues } = useFormContext();
+  const programId = useWatch({ name: 'program', control, defaultValue: getValues('program') });
+
+  const subjects = useProgramSubjects(programId);
+
+  const subjectsColumns = useSubjectColumns({ labels, placeholders, errorMessages, subjects });
 
   return (
     /* Subject container */

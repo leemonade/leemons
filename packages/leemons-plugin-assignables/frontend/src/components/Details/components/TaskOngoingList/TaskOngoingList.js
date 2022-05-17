@@ -79,7 +79,7 @@ const TaskOngoingList = ({ instance }) => {
         <Box className={classes.rightSide}>
           <Text transform="uppercase">Status</Text>
           <Box className={classes.rightScoreBarWrapper}>
-            <ScoresBar {...instanceData.rightScoresBar} />
+            {instanceData.rightScoresBar && <ScoresBar {...instanceData.rightScoresBar} />}
           </Box>
         </Box>
       </Box>

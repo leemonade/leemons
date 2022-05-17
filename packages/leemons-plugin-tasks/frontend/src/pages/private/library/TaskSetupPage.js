@@ -23,7 +23,6 @@ import useObserver from '../../../helpers/useObserver';
 export default function TaskSetupPage() {
   const [t, translations] = useTranslateLoader(prefixPN('task_setup_page'));
   const [labels, setLabels] = useState(null);
-  const [status, setStatus] = useState('published');
   const loading = useRef(null);
   const [store, render] = useStore({
     currentTask: null,
@@ -102,7 +101,8 @@ export default function TaskSetupPage() {
       }
 
       await publishTaskRequest(id);
-      setStatus('published');
+      store.currentTask.published = true;
+      render();
 
       addSuccessAlert(t('common.publish'));
     } catch (e) {
@@ -143,9 +143,6 @@ export default function TaskSetupPage() {
   useEffect(async () => {
     if (!isEmpty(id)) {
       store.currentTask = await getTask(id);
-
-      setStatus(store?.currentTask?.status);
-
       render();
     }
   }, [id]);
@@ -193,6 +190,11 @@ export default function TaskSetupPage() {
         } else if (event === 'publishTaskAndAssign') {
           await handleOnPublishTask();
           history.push(`/private/tasks/library/assign/${store.currentTask.id}`);
+        } else if (event === 'saveTaskFailed') {
+          if (loading.current) {
+            loading.current = null;
+            render();
+          }
         }
       } catch (e) {
         // EN: The error was previously handled
@@ -270,7 +272,10 @@ export default function TaskSetupPage() {
         variant="teacher"
         icon={<PluginAssignmentsIcon />}
         values={headerLabels}
-        buttons={{ duplicate: t('common.save'), edit: status === 'draft' && t('common.publish') }}
+        buttons={{
+          duplicate: t('common.save'),
+          edit: store.currentTask?.published === false && t('common.publish'),
+        }}
         onDuplicate={() => {
           loading.current = 'duplicate';
           render();

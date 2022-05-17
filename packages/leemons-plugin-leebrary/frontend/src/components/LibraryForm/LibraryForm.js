@@ -249,7 +249,7 @@ const LibraryForm = ({
 
   return (
     <Box ref={boxRef}>
-      <form onSubmit={handleSubmit(handleOnSubmit)}>
+      <form autoComplete="off" onSubmit={handleSubmit(handleOnSubmit)}>
         <ContextContainer title={!hideTitle ? labels.title : undefined} divided>
           <ContextContainer>
             {type === LIBRARY_FORM_TYPES.MEDIA_FILES && (

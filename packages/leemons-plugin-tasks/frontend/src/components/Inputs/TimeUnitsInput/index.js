@@ -50,8 +50,13 @@ export default function TimeUnitsInput({ onChange, value: userValue, ...props })
 
   useEffect(() => {
     if (userValue !== time && userValue !== undefined) {
-      const [v, ...u] = userValue.split(' ');
-      handleChange(parseInt(v, 10), u.join(' '));
+      try {
+        const [v, ...u] = userValue.split(' ');
+        handleChange(parseInt(v, 10), u.join(' '));
+      } catch (e) {
+        // EN: Sometimes, the value is not valid, so we ignore it
+        // ES: Algunas veces, el valor no es válido, por lo que lo ignoramos
+      }
     }
   }, [userValue]);
 
