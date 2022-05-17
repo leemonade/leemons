@@ -129,7 +129,7 @@ async function searchTeacherAssignableInstances(query, { userSession, transactin
     'visibility',
   ]);
 
-  return sortedResults;
+  return _.map(sortedResults, 'instance');
 }
 
 async function searchStudentAssignableInstances(query, { userSession, transacting } = {}) {
@@ -162,7 +162,7 @@ async function searchStudentAssignableInstances(query, { userSession, transactin
   // TODO: CHECK ORDER
   const orderedResults = sortByGivenDates(filteredResults, ['deadline', 'start', 'visibility']);
 
-  return orderedResults;
+  return _.map(orderedResults, 'instance');
 }
 
 module.exports = async function searchAssignableInstances(
