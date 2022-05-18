@@ -5,7 +5,7 @@ async function createQuestion(data, { userSession, published, transacting: _tran
   const tagsService = leemons.getPlugin('common').services.tags;
   return global.utils.withTransaction(
     async (transacting) => {
-      const { tags, properties, ...props } = data;
+      const { tags, clues, properties, ...props } = data;
       // ES: Si el tipo es map creamos el asset
       if (data.type === 'map') {
         const asset = await leemons.getPlugin('leebrary').services.assets.add(
@@ -25,15 +25,15 @@ async function createQuestion(data, { userSession, published, transacting: _tran
       }
 
       if (data.type === 'mono-response') {
-        if (properties.withImages) {
+        if (data.withImages) {
           const promises = [];
-          _.forEach(properties.responses, (response) => {
+          _.forEach(properties.responses, (response, index) => {
             promises.push(
               leemons.getPlugin('leebrary').services.assets.add(
                 {
-                  name: `Image question`,
-                  cover: response.image,
-                  description: response.imageDescription,
+                  name: `Image question Response ${index}`,
+                  cover: response.value.image,
+                  description: response.value.imageDescription,
                   indexable: true,
                   public: true, // TODO Cambiar a false despues de hacer la demo
                 },
@@ -47,7 +47,7 @@ async function createQuestion(data, { userSession, published, transacting: _tran
           });
           const assets = await Promise.all(promises);
           _.forEach(properties.responses, (response, index) => {
-            response.image = assets[index].id;
+            response.value.image = assets[index].id;
           });
         }
       }
@@ -72,6 +72,7 @@ async function createQuestion(data, { userSession, published, transacting: _tran
       const question = await table.questions.create(
         {
           ...props,
+          clues: JSON.stringify(clues),
           properties: JSON.stringify(properties),
         },
         { transacting }

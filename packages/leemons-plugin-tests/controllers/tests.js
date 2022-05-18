@@ -48,7 +48,42 @@ async function getTest(ctx) {
   ctx.body = { status: 200, test };
 }
 
+async function setInstanceTimestamp(ctx) {
+  const { timestamps } = await testsService.setInstanceTimestamp(
+    ctx.request.body.instance,
+    ctx.request.body.timeKey,
+    {
+      userSession: ctx.state.userSession,
+    }
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, timestamps };
+}
+
+async function setQuestionResponse(ctx) {
+  const question = await testsService.setQuestionResponse(ctx.request.body, {
+    userSession: ctx.state.userSession,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, question };
+}
+
+async function getUserQuestionResponses(ctx) {
+  const responses = await testsService.getUserQuestionResponses(
+    ctx.request.params.id,
+    ctx.request.query.user || ctx.state.userSession.userAgents[0].id,
+    {
+      userSession: ctx.state.userSession,
+    }
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, responses };
+}
+
 module.exports = {
+  getUserQuestionResponses,
+  setInstanceTimestamp,
+  setQuestionResponse,
   listTests,
   saveTest,
   getTest,

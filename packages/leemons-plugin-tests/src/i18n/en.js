@@ -219,5 +219,10 @@ module.exports = {
     canNotStop: 'The test cannot be paused',
     canNotStopDescription:
       'If you exit the application with the test in progress, the test will be terminated, scoring only the questions answered up to the moment of interruption. If an error occurs in the system and you are expelled from the test, you will be able to notify it and if your error is verified you will be able to retake the test.',
+    questionNumber: 'QUESTION: {number}',
+    theQuestionValueIs: 'The question value is',
+    pointsInTotal: 'Total points',
+    askForAHint: 'Ask for a hint',
+    hint: 'Hint',
   },
 };

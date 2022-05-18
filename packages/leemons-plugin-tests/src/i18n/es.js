@@ -218,5 +218,10 @@ module.exports = {
     canNotStop: 'La prueba no se puede pausar',
     canNotStopDescription:
       'Si sales de la aplicación con la prueba en proceso, esta se dará por finalizada, puntuando solo las preguntas contestadas hasta el momento de la interrupción. Si se produce algún error en el sistema y te expulsa de la prueba, podrás notificarlo y en caso de que tu error sea comprobado podrás volver a realizar la prueba.',
+    questionNumber: 'PREGUNTA: {number}',
+    theQuestionValueIs: 'La pregunta vale',
+    pointsInTotal: 'Puntos en total',
+    askForAHint: 'Pedir una pista',
+    hint: 'Pista',
   },
 };

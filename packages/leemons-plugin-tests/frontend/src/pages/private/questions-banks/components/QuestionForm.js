@@ -41,6 +41,7 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
 
   function save() {
     form.handleSubmit((data) => {
+      console.log(data);
       onSave(data);
     })();
   }

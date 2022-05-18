@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
-import { isString } from 'lodash';
+import { forEach, isString } from 'lodash';
 import { Box, COLORS, VerticalStepper } from '@bubbles-ui/components';
 import { HeaderBackground, TaskDeadline, TaskHeader } from '@bubbles-ui/leemons';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
@@ -17,16 +17,24 @@ import { getIfCurriculumSubjectsHaveValues } from './helpers/getIfCurriculumSubj
 import Statement from './components/Statement';
 import Development from './components/Development';
 import { TestStyles } from './TestStyles.style';
-import { getQuestionByIdsRequest } from '../../../../request';
+import {
+  getQuestionByIdsRequest,
+  getUserQuestionResponsesRequest,
+  setInstanceTimestampRequest,
+  setQuestionResponseRequest,
+} from '../../../../request';
 import { calculeInfoValues } from './helpers/calculeInfoValues';
+import Question from './components/Question';
+import { htmlToText } from './helpers/htmlToText';
 
 export default function StudentInstance() {
   const [t, translations] = useTranslateLoader(prefixPN('studentInstance'));
   const [store, render] = useStore({
     loading: true,
+    idLoaded: '',
     isFirstStep: true,
-    currentStep: 1,
-    maxNavigatedStep: 1,
+    currentStep: 2,
+    maxNavigatedStep: 2,
   });
 
   const { classes: styles } = TestStyles({}, { name: 'Tests' });
@@ -38,7 +46,9 @@ export default function StudentInstance() {
   const params = useParams();
 
   async function onStartQuestions() {
-    // TODO LLamar a asignables seteando la hora de inicio del test
+    const { timestamps } = await setInstanceTimestampRequest(params.id, 'start');
+    store.timestamps = timestamps;
+    render();
   }
 
   function prevStep() {
@@ -61,14 +71,38 @@ export default function StudentInstance() {
     }
   }
 
+  async function saveQuestion(question) {
+    try {
+      await setQuestionResponseRequest({
+        instance: store.instance.id,
+        question,
+        ...store.questionResponses[question],
+      });
+    } catch (error) {
+      addErrorAlert(error);
+    }
+  }
+
   async function init() {
     try {
       store.instance = await getAssignableInstance({ id: params.id });
-      const [{ evaluationSystem }, classe, { questions }] = await Promise.all([
-        getProgramEvaluationSystemRequest(store.instance.assignable.subjects[0].program),
-        getClassData(store.instance.classes, { multiSubject: t('multiSubject') }),
-        getQuestionByIdsRequest(store.instance.metadata.questions),
-      ]);
+      const [{ evaluationSystem }, classe, { questions }, { timestamps }, { responses }] =
+        await Promise.all([
+          getProgramEvaluationSystemRequest(store.instance.assignable.subjects[0].program),
+          getClassData(store.instance.classes, { multiSubject: t('multiSubject') }),
+          getQuestionByIdsRequest(store.instance.metadata.questions),
+          setInstanceTimestampRequest(params.id, 'open'),
+          getUserQuestionResponsesRequest(params.id),
+        ]);
+      store.questionResponses = responses;
+      forEach(questions, ({ id }) => {
+        if (!store.questionResponses[id]) {
+          store.questionResponses[id] = {
+            clues: 0,
+          };
+        }
+      });
+      store.timestamps = timestamps;
       store.questionsInfo = calculeInfoValues(
         questions.length,
         evaluationSystem.maxScale.number,
@@ -77,7 +111,7 @@ export default function StudentInstance() {
       store.questions = questions;
       store.evaluationSystem = evaluationSystem;
       store.class = classe;
-
+      store.idLoaded = params.id;
       store.loading = false;
       render();
     } catch (error) {
@@ -87,7 +121,7 @@ export default function StudentInstance() {
   }
 
   React.useEffect(() => {
-    if (params?.id && translations) init();
+    if (params?.id && translations && store.idLoaded !== params?.id) init();
   }, [params, translations]);
 
   const headerProps = React.useMemo(() => {
@@ -126,7 +160,7 @@ export default function StudentInstance() {
           left: 0,
           right: store.isFirstStep && '50%',
           borderRadius: store.isFirstStep ? '16px 16px 0 0' : 0,
-          backgroundColor: store.isFirstStep ? COLORS.mainWhite : COLORS.interactive03,
+          backgroundColor: store.isFirstStep ? COLORS.uiBackground01 : COLORS.uiBackground02,
         },
       };
     }
@@ -183,6 +217,23 @@ export default function StudentInstance() {
         component: <Development {...commonProps} {...testProps} />,
       });
 
+      forEach(store.questions, (question, index) => {
+        steps.push({
+          label: htmlToText(question.question),
+          status: 'OK',
+          component: (
+            <Question
+              {...commonProps}
+              {...testProps}
+              question={question}
+              index={index}
+              saveQuestion={() => saveQuestion(question.id)}
+            />
+          ),
+          isQuestion: true,
+        });
+      });
+
       return {
         data: steps,
         calificationProps: {
@@ -194,6 +245,13 @@ export default function StudentInstance() {
     }
     return {};
   }, [store.instance, translations]);
+
+  React.useEffect(() => {
+    if (verticalStepperProps.data) {
+      store.isFirstStep = !verticalStepperProps.data[store.currentStep].isQuestion;
+      render();
+    }
+  }, [store.currentStep, verticalStepperProps]);
 
   if (store.loading) {
     return null;

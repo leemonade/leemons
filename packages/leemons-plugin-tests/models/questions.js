@@ -16,6 +16,9 @@ module.exports = {
     type: {
       type: 'string',
     },
+    withImages: {
+      type: 'boolean',
+    },
     level: {
       type: 'string',
     },

@@ -21,7 +21,6 @@ async function saveQuestionBank(body) {
         questionsFiles.push({ index, name: 'questionImage', file: question.questionImage });
       }
     }
-    console.log(question.properties);
     if (question.properties.image && !isString(question.properties.image)) {
       if (question.properties.image.id) {
         // eslint-disable-next-line no-param-reassign
@@ -30,12 +29,31 @@ async function saveQuestionBank(body) {
         questionsFiles.push({ index, name: 'properties.image', file: question.properties.image });
       }
     }
+    if (question.properties.responses) {
+      forEach(question.properties.responses, (response, i) => {
+        if (response.value.image) {
+          if (response.value.image.id) {
+            // eslint-disable-next-line no-param-reassign
+            body.questions[index].properties.responses[i].value.image =
+              response.value.image.cover.id;
+          } else {
+            questionsFiles.push({
+              index,
+              name: `properties.responses[${i}].value.image`,
+              file: response.value.image,
+            });
+          }
+        }
+      });
+    }
   });
   if ((body.cover && !isString(body.cover)) || questionsFiles.length) {
     const { cover, ...data } = body;
     if (body.cover) {
-      if (body.cover.id) {
+      if (body.cover.cover) {
         data.cover = body.cover.cover?.id;
+      } else if (body.cover.id) {
+        data.cover = body.cover.id;
       } else {
         form.append('cover', body.cover, body.cover.name);
       }

@@ -5,6 +5,9 @@ const table = {
   questionsTests: leemons.query('plugins_tests::questions-tests'),
   questions: leemons.query('plugins_tests::questions'),
   tests: leemons.query('plugins_tests::tests'),
+  userAgentAssignableInstanceResponses: leemons.query(
+    'plugins_tests::user-agent-assignable-instance-responses'
+  ),
 };
 
 module.exports = { table };

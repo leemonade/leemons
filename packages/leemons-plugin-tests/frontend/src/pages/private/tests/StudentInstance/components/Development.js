@@ -146,4 +146,5 @@ Development.propTypes = {
   prevStep: PropTypes.func,
   nextStep: PropTypes.func,
   isFirstStep: PropTypes.bool,
+  onStartQuestions: PropTypes.func,
 };

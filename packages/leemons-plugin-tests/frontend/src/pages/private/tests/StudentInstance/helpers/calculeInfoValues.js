@@ -4,5 +4,6 @@ export function calculeInfoValues(nQuestions, maxPoints, minPointsToApprove) {
     totalPoints: maxPoints,
     minToApprove: minPointsToApprove,
     perQuestion: `+${(maxPoints / nQuestions).toFixed(2)}`,
+    perQuestionNumber: maxPoints / nQuestions,
   };
 }

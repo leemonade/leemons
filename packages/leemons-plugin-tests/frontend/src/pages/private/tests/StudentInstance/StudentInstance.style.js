@@ -11,8 +11,9 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
   mainContent: {
     display: 'flex',
     height: isFirstStep ? 'calc(75vh - 16px)' : 'calc(100% - 60px)',
+    backgroundColor: isFirstStep ? theme.colors.uiBackground01 : theme.colors.uiBackground02,
   },
-  verticalStepper: { width: 232 },
+  verticalStepper: { width: 232, backgroundColor: theme.colors.uiBackground01 },
   pages: {
     flex: 1,
     display: 'flex',
@@ -20,6 +21,7 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
   loremIpsum: {
     paddingTop: 16,
     paddingLeft: theme.spacing[10],
+    paddingRight: theme.spacing[10],
     width: '100%',
   },
   resources: {

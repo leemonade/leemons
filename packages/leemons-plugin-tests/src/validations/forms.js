@@ -54,7 +54,10 @@ const saveQuestionBankSchema = {
             maxLength: 255,
             nullable: true,
           },
-          withImages: booleanSchema,
+          withImages: {
+            type: ['boolean', 'number'],
+            nullable: true,
+          },
           tags: {
             type: 'array',
             items: stringSchema,
@@ -72,7 +75,12 @@ const saveQuestionBankSchema = {
           },
           clues: {
             type: 'array',
-            items: stringSchema,
+            items: {
+              type: 'object',
+              properties: {
+                value: stringSchema,
+              },
+            },
             nullable: true,
           },
         },
@@ -84,6 +92,7 @@ const saveQuestionBankSchema = {
 };
 
 function validateSaveQuestionBank(data) {
+  console.log(data.questions[0], data.questions[1]);
   const schema = _.cloneDeep(saveQuestionBankSchema);
   if (data.published) {
     schema.required = ['name', 'questions', 'program', 'subjects'];
@@ -91,7 +100,6 @@ function validateSaveQuestionBank(data) {
   }
   const validator = new LeemonsValidator(schema);
 
-  console.log(data);
   if (!validator.validate(data)) {
     throw validator.error;
   }

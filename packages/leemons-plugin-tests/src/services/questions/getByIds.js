@@ -18,6 +18,11 @@ async function getByIds(id, { userSession, transacting } = {}) {
     if (question.properties?.image) {
       assetIds.push(question.properties.image);
     }
+    if (question.withImages && question.type === 'mono-response') {
+      _.forEach(question.properties.responses, (response) => {
+        assetIds.push(response.value.image);
+      });
+    }
   });
 
   const [questionAssets, questionsTags] = await Promise.all([
@@ -35,12 +40,20 @@ async function getByIds(id, { userSession, transacting } = {}) {
   const questionAssetsById = _.keyBy(questionAssets, 'id');
   _.forEach(questions, (question, i) => {
     question.tags = questionsTags[i];
+    question.clues = JSON.parse(question.clues);
     if (question.properties?.image) {
       question.properties.image = questionAssetsById[question.properties.image];
     }
     if (question.questionImage) {
       question.questionImage = questionAssetsById[question.questionImage];
       question.questionImageDescription = question.questionImage.description;
+    }
+    if (question.properties.responses) {
+      _.forEach(question.properties.responses, (response) => {
+        if (response.value.image) {
+          response.value.image = questionAssetsById[response.value.image];
+        }
+      });
     }
   });
 

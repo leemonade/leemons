@@ -14,6 +14,7 @@ const subjectsValidationObject = {
       level: {
         type: 'string',
         maxLength: 255,
+        nullable: true,
       },
       curriculum: {
         type: 'object',
