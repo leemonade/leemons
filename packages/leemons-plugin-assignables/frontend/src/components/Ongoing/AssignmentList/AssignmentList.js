@@ -73,6 +73,10 @@ function useAssignmentsColumns() {
           Header: labels.completed,
           accessor: 'completed',
         },
+        {
+          Header: '',
+          accessor: 'actions',
+        },
       ];
     }
 

@@ -1,12 +1,12 @@
-import React, { useMemo, useContext } from 'react';
-import _, { assign } from 'lodash';
-import useIsTeacher from './useIsTeacher';
+import React, { useMemo, useContext, useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
+import _ from 'lodash';
 import { LocaleDate, LocaleDuration, useApi } from '@common';
-import getClassData from '../../../../../src/helpers/getClassData';
-import globalContext from '../../../../contexts/globalContext';
-import { Badge, Text, ContextContainer } from '@bubbles-ui/components';
-import { day } from 'date-arithmetic';
+import { Badge, Text, ContextContainer, ActionButton } from '@bubbles-ui/components';
+import { ViewOnIcon } from '@bubbles-ui/icons/outline';
 import dayjs from 'dayjs';
+import globalContext from '../../../../contexts/globalContext';
+import getClassData from '../../../../helpers/getClassData';
 import getStatus from '../../../Details/components/UsersList/helpers/getStatus';
 
 function parseDates(dates, keysToParse) {
@@ -61,7 +61,7 @@ function getStudentsStatusForTeacher(assignation) {
     return (
       <ContextContainer direction="row">
         {value}
-        <Badge severity={severity} label={percentage + '%'} closable={false} radius="default " />
+        <Badge severity={severity} label={`${percentage}%`} closable={false} radius="default " />
       </ContextContainer>
     );
   });
@@ -85,24 +85,36 @@ function getTeacherStatus(assignation) {
     closed.isBefore(today)
   ) {
     return 'Finished';
-  } else if (deadline.isSame(today) || deadline.isBefore(today)) {
-    return 'Completed';
-  } else if (start.isSame(today) || start.isBefore(today)) {
-    return 'Started';
-  } else {
-    return 'Assigned';
   }
+  if (deadline.isSame(today) || deadline.isBefore(today)) {
+    return 'Completed';
+  }
+  if (start.isSame(today) || start.isBefore(today)) {
+    return 'Started';
+  }
+  return 'Assigned';
 }
 
 function getTimeReferenceColor(date) {
   const timeReference = dayjs().diff(dayjs(date), 'days');
   if (timeReference < 2) {
     return 'error';
-  } else if (timeReference < 5) {
-    return 'warning';
-  } else {
-    return 'primary';
   }
+  if (timeReference < 5) {
+    return 'warning';
+  }
+  return 'primary';
+}
+
+function TeacherActions({ id }) {
+  const history = useHistory();
+
+  const redirectToInstance = useCallback(
+    () => history.push(`/private/assignables/details/${id}`),
+    [history]
+  );
+
+  return <ActionButton icon={<ViewOnIcon />} onClick={redirectToInstance} />;
 }
 
 async function parseAssignationForTeacherView(instance) {
@@ -120,6 +132,7 @@ async function parseAssignationForTeacherView(instance) {
     status,
     subject: classData.name,
     ...studentsStatus,
+    actions: <TeacherActions id={instance.id} />,
   };
 }
 
@@ -127,7 +140,7 @@ async function parseAssignationForStudentView(assignation) {
   const labels = {
     notSubmitted: 'Not submitted',
   };
-  const instance = assignation.instance;
+  const { instance } = assignation;
   const parsedDates = parseDates(instance.dates);
   const status = getStatus(assignation, instance);
   const classData = await getClassData(instance.classes);
