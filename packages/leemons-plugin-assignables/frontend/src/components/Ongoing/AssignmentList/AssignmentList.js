@@ -1,37 +1,81 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { PaginatedList } from '@bubbles-ui/components';
-import useAssignableInstances from '../../../hooks/assignableInstance/useAssignableInstances';
 import useSearchAssignableInstances from '../../../hooks/assignableInstance/useSearchAssignableInstances';
 import useParseAssignations from './hooks/useParseAssignations';
+import useAssignationsByProfile from './hooks/useAssignationsByProfile';
+import globalContext from '../../../contexts/globalContext';
 
-export default function AssignmentList() {
-  const instances = useSearchAssignableInstances();
-  useEffect(() => {
-    console.log('instances', instances);
-  }, [instances]);
-  const instancesData = useAssignableInstances(instances);
-  useEffect(() => {
-    console.log('instancesData', instancesData);
-  }, [instancesData]);
-  const parsedInstances = useParseAssignations(instancesData);
-  useEffect(() => {
-    console.log('parsedInstances', parsedInstances);
-  }, [parsedInstances]);
+function useAssignmentsColumns() {
+  const { isTeacher } = useContext(globalContext);
 
-  const labels = useMemo(
-    () => ({
+  const labels = useMemo(() => {
+    if (isTeacher) {
+      return {
+        task: 'Task',
+        group: 'Group',
+        start: 'Start date',
+        deadline: 'Due date',
+        status: 'Status',
+        students: 'students',
+        open: 'Open',
+        ongoing: 'Ongoing',
+        completed: 'Completed',
+      };
+    }
+
+    return {
       task: 'Task',
       subject: 'Subject',
       start: 'Start date',
       deadline: 'Due date',
       status: 'status',
-    }),
-    []
-  );
+    };
+  }, [isTeacher]);
 
-  const columns = useMemo(
-    () => [
+  const columns = useMemo(() => {
+    if (isTeacher) {
+      return [
+        {
+          Header: labels.group,
+          accessor: 'subject',
+        },
+        {
+          Header: labels.task,
+          accessor: 'assignable.asset.name',
+        },
+        {
+          Header: labels.start,
+          accessor: 'parsedDates.start',
+        },
+        {
+          Header: labels.deadline,
+          accessor: 'parsedDates.deadline',
+        },
+        {
+          Header: labels.students,
+          accessor: 'students.length',
+        },
+        {
+          Header: labels.status,
+          accessor: 'status',
+        },
+        {
+          Header: labels.open,
+          accessor: 'open',
+        },
+        {
+          Header: labels.ongoing,
+          accessor: 'ongoing',
+        },
+        {
+          Header: labels.completed,
+          accessor: 'completed',
+        },
+      ];
+    }
+
+    return [
       {
         Header: labels.task,
         accessor: 'assignable.asset.name',
@@ -52,9 +96,24 @@ export default function AssignmentList() {
         Header: labels.status,
         accessor: 'status',
       },
-    ],
-    [labels]
-  );
+    ];
+  }, [isTeacher]);
+
+  return columns;
+}
+
+export default function AssignmentList() {
+  const instances = useSearchAssignableInstances();
+  const instancesData = useAssignationsByProfile(instances);
+  const parsedInstances = useParseAssignations(instancesData);
+  const columns = useAssignmentsColumns();
+  // useEffect(() => {
+  //   console.log('instancesData', instancesData);
+  // }, [instancesData]);
+
+  // useEffect(() => {
+  //   console.log('parsedInstances', parsedInstances);
+  // }, [parsedInstances]);
 
   const page = 1;
   const size = 10;

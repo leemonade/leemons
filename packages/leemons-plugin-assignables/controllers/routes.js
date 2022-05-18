@@ -1,10 +1,4 @@
 module.exports = [
-  {
-    method: 'GET',
-    path: '/test',
-    handler: 'test.test',
-    authenticated: true,
-  },
   /**
    * Assignable Instances
    */
@@ -18,6 +12,15 @@ module.exports = [
     method: 'GET',
     path: '/assignableInstances/:id',
     handler: 'assignableInstance.get',
+    authenticated: true,
+  },
+  /**
+   * Assignations
+   */
+  {
+    method: 'GET',
+    path: '/assignableInstances/:instance/assignations/:user',
+    handler: 'assignations.get',
     authenticated: true,
   },
 ];
