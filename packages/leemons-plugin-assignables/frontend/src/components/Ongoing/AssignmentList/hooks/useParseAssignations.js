@@ -124,6 +124,9 @@ async function parseAssignationForTeacherView(instance) {
 }
 
 async function parseAssignationForStudentView(assignation) {
+  const labels = {
+    notSubmitted: 'Not submitted',
+  };
   const instance = assignation.instance;
   const parsedDates = parseDates(instance.dates);
   const status = getStatus(assignation, instance);
@@ -145,8 +148,11 @@ async function parseAssignationForStudentView(assignation) {
         '-'
       ) : (
         <Text color={timeReferenceColor}>
-          {timeReference < 0 && '-'}
-          <LocaleDuration seconds={Math.abs(timeReference)} short />
+          {timeReference < 0 ? (
+            labels.notSubmitted
+          ) : (
+            <LocaleDuration seconds={Math.abs(timeReference)} short />
+          )}
         </Text>
       ),
   };

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useContext } from 'react';
+import React, { useState, useMemo, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { PaginatedList } from '@bubbles-ui/components';
 import useSearchAssignableInstances from '../../../hooks/assignableInstance/useSearchAssignableInstances';
@@ -108,34 +108,34 @@ function useAssignmentsColumns() {
 }
 
 export default function AssignmentList() {
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
+
   const instances = useSearchAssignableInstances();
-  const instancesData = useAssignationsByProfile(instances);
+
+  const instancesInPage = useMemo(() => {
+    if (!instances.length) {
+      return [];
+    }
+
+    return instances.slice((page - 1) * size, page * size);
+  }, [instances, page, size]);
+
+  const instancesData = useAssignationsByProfile(instancesInPage);
   const parsedInstances = useParseAssignations(instancesData);
   const columns = useAssignmentsColumns();
-  // useEffect(() => {
-  //   console.log('instancesData', instancesData);
-  // }, [instancesData]);
-
-  // useEffect(() => {
-  //   console.log('parsedInstances', parsedInstances);
-  // }, [parsedInstances]);
-
-  const page = 1;
-  const size = 10;
-
-  if (!parsedInstances?.length) {
-    return 'Loading...';
-  }
 
   return (
     <>
       <PaginatedList
         columns={columns}
-        items={parsedInstances.slice((page - 1) * size, page * size)}
+        items={parsedInstances}
         page={page}
         size={size}
-        totalCount={parsedInstances.length}
-        totalPages={parsedInstances.length / size}
+        totalCount={instances.length}
+        totalPages={Math.ceil(instances.length / size)}
+        onSizeChange={setSize}
+        onPageChange={setPage}
       />
     </>
   );
