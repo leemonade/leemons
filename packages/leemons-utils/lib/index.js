@@ -9,6 +9,7 @@ const squirrelly = require('squirrelly');
 const { ImporterFactory } = require('xlsx-import/lib/ImporterFactory');
 const mediaInfo = require('mediainfo.js');
 const got = require('got');
+const sharp = require('sharp');
 const documentInfo = require('./documentInfo');
 const { fetch, fetchJson, fetchText } = require('./fetch');
 const { env } = require('./env');
@@ -80,4 +81,5 @@ module.exports = {
   mediaInfo,
   documentInfo,
   got,
+  sharp,
 };

@@ -38,8 +38,6 @@ module.exports = {
         description: 'Description',
         createdSuccess: 'Asset successfully created',
         updatedSuccess: 'Asset successfully updated',
-        pinnedSuccess: 'Asset successfully pinned',
-        unpinnedSuccess: 'Asset successfully unpinned',
         url: 'URL (webpage link)',
         checkUrl: 'Check url',
         wordCounter: {
@@ -110,11 +108,15 @@ module.exports = {
     labels: {
       duplicateSuccess: 'Asset successfully duplicated',
       removeSuccess: 'Asset successfully removed',
+      pinnedSuccess: 'Asset successfully pinned',
+      unpinnedSuccess: 'Asset successfully unpinned',
+      nothingFound: 'No assets found',
       copy: 'Copy',
       copied: 'Copied',
       sharedWith: 'Shared with',
       sharedViewAll: 'View all',
       sharedWithEverybody: 'Shared with everybody',
+      showPublic: 'Show public assets'
     },
   },
 };

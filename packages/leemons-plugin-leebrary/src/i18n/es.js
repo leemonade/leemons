@@ -38,8 +38,6 @@ module.exports = {
         description: 'Descripción',
         createdSuccess: 'Recurso creado con éxito',
         updatedSuccess: 'Recurso actualizado con éxito',
-        pinnedSuccess: 'Recurso anclado con éxito',
-        unpinnedSuccess: 'Recurso desanclado con éxito',
         url: 'URL (enlace web)',
         checkUrl: 'Comprobar url',
         wordCounter: {
@@ -110,11 +108,15 @@ module.exports = {
     labels: {
       duplicateSuccess: 'Recurso duplicado con éxito',
       removeSuccess: 'Recurso eliminado con éxito',
+      pinnedSuccess: 'Recurso anclado con éxito',
+      unpinnedSuccess: 'Recurso desanclado con éxito',
+      nothingFound: 'No se encontraron recursos',
       copy: 'Copiar',
       copied: 'Copiado',
       sharedWith: 'Compartido con',
       sharedViewAll: 'Ver todos',
       sharedWithEverybody: 'Compartido con todos',
+      showPublic: 'Mostrar recursos públicos',
     },
   },
 };
