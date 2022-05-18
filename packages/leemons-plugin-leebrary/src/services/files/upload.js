@@ -276,6 +276,21 @@ async function upload(file, { name }, { transacting } = {}) {
   return { ...newFile, metadata };
 }
 
+function uploadImage(path, extension) {
+  return new Promise((resolve, reject) => {
+    const fileWriterStream = leemons.fs.createTempWriteStream();
+
+    fileWriterStream
+      .on('error', (error) => reject(error))
+      .on('finish', () => {
+        fileWriterStream.end();
+        resolve({ path: fileWriterStream.path });
+      });
+
+    getOptimizedImage(path, extension).pipe(fileWriterStream);
+  });
+}
+
 async function uploadFromFileStream(file, { name }, { userSession, transacting } = {}) {
   const { readStream, contentType } = file;
 
@@ -299,4 +314,4 @@ async function uploadFromUrl(url, { name }, { userSession, transacting } = {}) {
   return upload({ path, type: contentType }, { name }, { userSession, transacting });
 }
 
-module.exports = { upload, uploadFromUrl, uploadFromFileStream };
+module.exports = { upload, uploadFromUrl, uploadFromFileStream, uploadImage };

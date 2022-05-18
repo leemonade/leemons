@@ -21,6 +21,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { LocaleDate, unflatten, useRequestErrorMessage } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
+import { useSession } from '@users/session';
 import prefixPN from '../helpers/prefixPN';
 import {
   deleteAssetRequest,
@@ -39,6 +40,10 @@ import { AssetThumbnail } from './AssetThumbnail';
 import { prepareAsset } from '../helpers/prepareAsset';
 import { prepareAssetType } from '../helpers/prepareAssetType';
 import { PermissionsData } from './AssetSetup/PermissionsData';
+
+function getLocale(session) {
+  return session ? session.locale : navigator?.language || 'en';
+}
 
 function getOwner(asset) {
   const owner = (asset?.canAccess || []).filter((person) =>
@@ -100,6 +105,8 @@ const AssetList = ({
     closeModal,
   } = useLayout();
   const [searchDebounced] = useDebouncedValue(searchCriteria, 300);
+  const session = useSession();
+  const locale = getLocale(session);
 
   // ·········································································
   // DATA PROCESSING
@@ -427,6 +434,7 @@ const AssetList = ({
             published={published}
             isEmbedded={isEmbedded}
             onRefresh={reloadAssets}
+            locale={locale}
           />
         ),
         itemMinWidth,
@@ -632,6 +640,7 @@ const AssetList = ({
               onUnpin={handleOnUnpin}
               onRefresh={reloadAssets}
               onDownload={handleOnDownload}
+              locale={locale}
             />
           </Box>
         )}

@@ -32,6 +32,7 @@ const CardWrapper = ({
   isEmbedded,
   single,
   onRefresh,
+  locale,
   ...props
 }) => {
   const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
@@ -59,6 +60,7 @@ const CardWrapper = ({
         embedded={isEmbedded}
         onRefresh={onRefresh}
         single={single}
+        locale={locale}
       />
     </Box>
   ) : null;
