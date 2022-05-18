@@ -125,9 +125,15 @@ export default function TaskSetupPage() {
 
       task.curriculum = {};
       task?.subjects?.forEach((subject) => {
-        task.curriculum[subject.subject] = subject.curriculum;
+        const { curriculum } = subject;
+        task.curriculum[subject.subject] = {
+          objectives: curriculum?.objectives?.map((objective) => ({ objective })),
+          contents: curriculum?.contents?.map((content) => ({ content })),
+          assessmentCriteria: curriculum?.assessmentCriteria?.map((assessmentCriteria) => ({
+            assessmentCriteria,
+          })),
+        };
       });
-
       return task;
     } catch (e) {
       addErrorAlert(e.message);

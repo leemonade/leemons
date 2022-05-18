@@ -128,82 +128,47 @@ function ContentData({
             {/* <Attachments /> */}
 
             <ContextContainer title={labels.subjects}>
-              {
-                // {!!subjects?.length && (
-                //   <InputWrapper label={labels?.curriculum} required>
-                //     <Tabs>
-                //       {subjects?.map((subject, index) => (
-                //         <TabPanel key={index} label={subject?.label}>
-                //           <ContextContainer>
-                //             <InputWrapper label={labels?.content}>
-                //               <Controller
-                //                 control={control}
-                //                 name="program"
-                //                 render={({ field: { value: program } }) => (
-                //                   <Curriculum
-                //                     program={program}
-                //                     name={`curriculum.${subject.value}.contents`}
-                //                     type="content"
-                //                   />
-                //                 )}
-                //               />
-                //             </InputWrapper>
-                //             {/* <InputWrapper label={labels?.objectives}>
-                //               <Controller
-                //                 control={control}
-                //                 name="program"
-                //                 render={({ field: { value: program } }) => (
-                //                   <Curriculum
-                //                     program={program}
-                //                     name={`curriculum.${subject.value}.objectives`}
-                //                     type="objective"
-                //                   />
-                //                 )}
-                //               />
-                //             </InputWrapper> */}
-                //             <InputWrapper label={labels?.assessmentCriteria}>
-                //               <Controller
-                //                 control={control}
-                //                 name="program"
-                //                 render={({ field: { value: program } }) => (
-                //                   <Curriculum
-                //                     program={program}
-                //                     name={`curriculum.${subject.value}.assessmentCriteria`}
-                //                     type="assessmentCriteria"
-                //                   />
-                //                 )}
-                //               />
-                //             </InputWrapper>
-                //             <Objectives
-                //               name={`curriculum.${subject.value}.objectives`}
-                //               required
-                //               label={labels.objectives || ''}
-                //               error={errors.objectives}
-                //             />
-                //           </ContextContainer>
-                //           {/* <Contents
-                //           name={`curriculum.${subject.subject}.contents`}
-                //           required
-                //           label={labels.content || ''}
-                //           error={errors.content}
-                //         />
-                //         <Objectives
-                //           name={`curriculum.${subject.subject}.objectives`}
-                //           required
-                //           label={labels.objectives || ''}
-                //           error={errors.objectives}
-                //         />
-                //         <AssessmentCriteria
-                //           name={`curriculum.${subject.subject}.assessmentCriteria`}
-                //           label={labels.assessmentCriteria || ''}
-                //           error={errors.assessmentCriteria}
-                //         /> */}
-                //         </TabPanel>
-                //       ))}
-                //     </Tabs>
-                //   </InputWrapper>
-                // )}
-              }
+              {!!subjects?.length && (
+                <InputWrapper required>
+                  <Tabs>
+                    {subjects?.map((subject, index) => (
+                      <TabPanel key={index} label={subject?.label}>
+                        <ContextContainer>
+                          <Controller
+                            control={control}
+                            name="program"
+                            render={({ field: { value: program } }) => (
+                              <Curriculum
+                                label={labels?.content || ''}
+                                program={program}
+                                name={`curriculum.${subject.value}.contents`}
+                                type="content"
+                              />
+                            )}
+                          />
+                          <Controller
+                            control={control}
+                            name="program"
+                            render={({ field: { value: program } }) => (
+                              <Curriculum
+                                label={labels?.assessmentCriteria || ''}
+                                program={program}
+                                name={`curriculum.${subject.value}.assessmentCriteria`}
+                                type="assessmentCriteria"
+                              />
+                            )}
+                          />
+                          <Objectives
+                            name={`curriculum.${subject.value}.objectives`}
+                            label={labels.objectives || ''}
+                            error={errors.objectives}
+                          />
+                        </ContextContainer>
+                      </TabPanel>
+                    ))}
+                  </Tabs>
+                </InputWrapper>
+              )}
             </ContextContainer>
 
             <ContextContainer>

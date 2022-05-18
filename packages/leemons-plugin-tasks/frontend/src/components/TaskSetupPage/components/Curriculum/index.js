@@ -25,7 +25,7 @@ function useCurriculum(program) {
   return curriculum;
 }
 
-export default function Curriculum({ program, name, type }) {
+export default function Curriculum({ program, name, type, label }) {
   const [show, setShow] = useState(false);
   const curriculum = useCurriculum(program);
 
@@ -36,35 +36,37 @@ export default function Curriculum({ program, name, type }) {
   }
 
   return (
-    <Controller
-      name={name}
-      control={control}
-      render={({ field }) => {
-        const value = field.value?.map((v) => v[type]);
-        return (
-          <>
-            <CurriculumSelectContentsModal
-              {...field}
-              opened={show}
-              value={value}
-              curriculum={curriculum?.id}
-              onChange={(contents) => {
-                field.onChange(contents.map((content) => ({ [type]: content })));
-                setShow(false);
-              }}
-              onClose={() => setShow(false)}
-            />
-            <CurriculumListContents {...field} value={value} />
+    <InputWrapper label={label}>
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => {
+          const value = field.value?.map((v) => v[type]);
+          return (
+            <>
+              <CurriculumSelectContentsModal
+                {...field}
+                opened={show}
+                value={value}
+                curriculum={curriculum?.id}
+                onChange={(contents) => {
+                  field.onChange(contents.map((content) => ({ [type]: content })));
+                  setShow(false);
+                }}
+                onClose={() => setShow(false)}
+              />
+              <CurriculumListContents {...field} value={value} />
 
-            <Stack>
-              <Button leftIcon={<AddCircleIcon />} variant="light" onClick={() => setShow(true)}>
-                Add from curriculum
-              </Button>
-            </Stack>
-          </>
-        );
-      }}
-    />
+              <Stack>
+                <Button leftIcon={<AddCircleIcon />} variant="light" onClick={() => setShow(true)}>
+                  Add from curriculum
+                </Button>
+              </Stack>
+            </>
+          );
+        }}
+      />
+    </InputWrapper>
   );
 }
 
@@ -72,4 +74,5 @@ Curriculum.propTypes = {
   program: PropTypes.string,
   name: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
 };
