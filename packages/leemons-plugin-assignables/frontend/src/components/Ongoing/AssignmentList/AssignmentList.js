@@ -111,7 +111,7 @@ export default function AssignmentList() {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
 
-  const instances = useSearchAssignableInstances();
+  const [instances, instancesLoading] = useSearchAssignableInstances();
 
   const instancesInPage = useMemo(() => {
     if (!instances.length) {
@@ -121,9 +121,11 @@ export default function AssignmentList() {
     return instances.slice((page - 1) * size, page * size);
   }, [instances, page, size]);
 
-  const instancesData = useAssignationsByProfile(instancesInPage);
-  const parsedInstances = useParseAssignations(instancesData);
+  const [instancesData, instancesDataLoading] = useAssignationsByProfile(instancesInPage);
+  const [parsedInstances, parsedInstancesLoading] = useParseAssignations(instancesData);
   const columns = useAssignmentsColumns();
+
+  const isLoading = instancesLoading || instancesDataLoading || parsedInstancesLoading;
 
   return (
     <>
@@ -132,6 +134,7 @@ export default function AssignmentList() {
         items={parsedInstances}
         page={page}
         size={size}
+        loading={isLoading}
         totalCount={instances.length}
         totalPages={Math.ceil(instances.length / size)}
         onSizeChange={setSize}

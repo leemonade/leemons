@@ -5,7 +5,7 @@ import searchAssignableInstances from '../../requests/assignableInstances/search
 export default function useSearchAssignableInstances() {
   const options = useMemo(() => ({}), []);
   const defaultReturn = useMemo(() => [], []);
-  const [assignableInstances] = useApi(searchAssignableInstances, options);
+  const [assignableInstances, , loading] = useApi(searchAssignableInstances, options);
 
-  return assignableInstances || defaultReturn;
+  return [assignableInstances || defaultReturn, loading];
 }

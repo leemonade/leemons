@@ -184,7 +184,7 @@ export default function useParseAssignations(assignations) {
 
   const defaultValue = useMemo(() => [], []);
 
-  const [parsedAssignations] = useApi(parseAssignations, options);
+  const [parsedAssignations, , loading] = useApi(parseAssignations, options);
 
-  return parsedAssignations || defaultValue;
+  return [parsedAssignations || defaultValue, loading];
 }

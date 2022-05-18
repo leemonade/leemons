@@ -6,6 +6,7 @@ import globalContext from '../../../../contexts/globalContext';
 
 export default function useAssignationsByProfile(ids) {
   const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const token = getCookieToken(true);
   const user = token.centers[0].userAgentId;
@@ -22,7 +23,9 @@ export default function useAssignationsByProfile(ids) {
 
       setResults(studentResults);
     }
+
+    setLoading(false);
   }, [isTeacher, ids, user]);
 
-  return results;
+  return [results, loading];
 }
