@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const dayjs = require('dayjs');
 const { getDates } = require('../dates');
-const { teachers, assignations, classes } = require('../tables');
+const { teachers, assignations, classes, assignableInstances, subjects } = require('../tables');
 
 function sortByGivenDate(date) {
   return (a, b) => {
@@ -208,7 +208,49 @@ async function searchStudentAssignableInstances(query, { userSession, transactin
     user: assignation.user,
   }));
 
-  const instances = _.uniq(_.map(results, 'instance'));
+  let instances = _.uniq(_.map(results, 'instance'));
+
+  if (query.subjects?.length) {
+    let instancesWithAssignables = await assignableInstances.find(
+      {
+        id_$in: instances,
+      },
+      { transacting, columns: ['assignable', 'id'] }
+    );
+
+    instancesWithAssignables = instancesWithAssignables.map((instance) => ({
+      assignable: instance.assignable,
+      instance: instance.id,
+    }));
+
+    const assignablesToSearch = _.uniq(_.map(instancesWithAssignables, 'assignable'));
+
+    const subjectsMatchingAssignables = await subjects.find(
+      {
+        assignable_$in: assignablesToSearch,
+        subject_$in: query.subjects,
+      },
+      { transacting, columns: ['assignable', 'subject'] }
+    );
+
+    const instancesWithSubjects = instancesWithAssignables.reduce((obj, assignable) => {
+      const { instance } = assignable;
+      const resultingSubjects = subjectsMatchingAssignables
+        .filter((subject) => subject.assignable === assignable.assignable)
+        .map((s) => s.subject);
+
+      return {
+        ...obj,
+        [instance]: resultingSubjects,
+      };
+    }, {});
+
+    results = results.filter(
+      (result) => instancesWithSubjects[result.instance]?.length === query.subjects.length
+    );
+    instances = _.uniq(_.map(results, 'instance'));
+  }
+
   const instancesData = await getInstancesDates(instances, { transacting });
 
   results = results.map((result) => ({
@@ -252,13 +294,13 @@ module.exports = async function searchAssignableInstances(
    * Query:
    * Student
    *  - Task search
-   *  - Subject
+   *  - Subject ✅
    *  - Instance Start date ✅
    *  - Instance Deadline ✅
    *  - Scored
    * Teacher
    * - Task search
-   * - Class
+   * - Class ✅
    * - Deadine ✅
    * - Assigned date ❌
    * Common:

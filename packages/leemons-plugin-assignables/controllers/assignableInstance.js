@@ -32,6 +32,10 @@ module.exports = {
         query.classes = JSON.parse(query.classes);
       }
 
+      if (query.subjects) {
+        query.subjects = JSON.parse(query.subjects);
+      }
+
       const assignableInstances = await services.searchAssignableInstances(query, {
         userSession: ctx.state.userSession,
       });
