@@ -1,5 +1,5 @@
 import React, { useMemo, useContext } from 'react';
-import _ from 'lodash';
+import _, { assign } from 'lodash';
 import useIsTeacher from './useIsTeacher';
 import { LocaleDate, LocaleDuration, useApi } from '@common';
 import getClassData from '../../../../../src/helpers/getClassData';
@@ -7,6 +7,7 @@ import globalContext from '../../../../contexts/globalContext';
 import { Badge, Text, ContextContainer } from '@bubbles-ui/components';
 import { day } from 'date-arithmetic';
 import dayjs from 'dayjs';
+import getStatus from '../../../Details/components/UsersList/helpers/getStatus';
 
 function parseDates(dates, keysToParse) {
   let datesToParse = dates;
@@ -18,21 +19,6 @@ function parseDates(dates, keysToParse) {
   return _.mapValues(dates, (date) => (
     <LocaleDate date={date} options={{ dateStyle: 'short', timeStyle: 'short' }} />
   ));
-}
-
-async function parseAssignationForStudentView(assignation) {
-  const parsedDates = parseDates(assignation.dates);
-  const classData = await getClassData(assignation.classes);
-  return {
-    ...assignation,
-    parsedDates: {
-      start: '-',
-      deadline: '-',
-      ...parsedDates,
-    },
-    status: 'TBD',
-    subject: classData.name,
-  };
 }
 
 function getStudentsStatusForTeacher(assignation) {
@@ -108,14 +94,25 @@ function getTeacherStatus(assignation) {
   }
 }
 
-async function parseAssignationForTeacherView(assignation) {
-  const parsedDates = parseDates(assignation.dates, ['start', 'deadline']);
-  const classData = await getClassData(assignation.classes);
-  const studentsStatus = getStudentsStatusForTeacher(assignation);
-  const status = getTeacherStatus(assignation);
+function getTimeReferenceColor(date) {
+  const timeReference = dayjs().diff(dayjs(date), 'days');
+  if (timeReference < 2) {
+    return 'error';
+  } else if (timeReference < 5) {
+    return 'warning';
+  } else {
+    return 'primary';
+  }
+}
+
+async function parseAssignationForTeacherView(instance) {
+  const parsedDates = parseDates(instance.dates, ['start', 'deadline']);
+  const classData = await getClassData(instance.classes);
+  const studentsStatus = getStudentsStatusForTeacher(instance);
+  const status = getTeacherStatus(instance);
 
   return {
-    ...assignation,
+    ...instance,
     parsedDates: {
       deadline: '-',
       ...parsedDates,
@@ -123,6 +120,35 @@ async function parseAssignationForTeacherView(assignation) {
     status,
     subject: classData.name,
     ...studentsStatus,
+  };
+}
+
+async function parseAssignationForStudentView(assignation) {
+  const instance = assignation.instance;
+  const parsedDates = parseDates(instance.dates);
+  const status = getStatus(assignation, instance);
+  const classData = await getClassData(instance.classes);
+  const timeReference = dayjs().diff(dayjs(instance.dates.deadline), 'seconds');
+  const timeReferenceColor = getTimeReferenceColor(instance.dates.deadline);
+
+  return {
+    ...instance,
+    parsedDates: {
+      start: '-',
+      deadline: '-',
+      ...parsedDates,
+    },
+    status,
+    subject: classData.name,
+    timeReference:
+      !instance.dates.deadline || instance.dates.end ? (
+        '-'
+      ) : (
+        <Text color={timeReferenceColor}>
+          {timeReference < 0 && '-'}
+          <LocaleDuration seconds={Math.abs(timeReference)} short />
+        </Text>
+      ),
   };
 }
 

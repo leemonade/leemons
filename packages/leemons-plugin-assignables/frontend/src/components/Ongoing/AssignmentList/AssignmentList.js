@@ -29,7 +29,8 @@ function useAssignmentsColumns() {
       subject: 'Subject',
       start: 'Start date',
       deadline: 'Due date',
-      status: 'status',
+      status: 'Status',
+      timeReference: 'Time reference',
     };
   }, [isTeacher]);
 
@@ -95,6 +96,10 @@ function useAssignmentsColumns() {
       {
         Header: labels.status,
         accessor: 'status',
+      },
+      {
+        Header: labels.timeReference,
+        accessor: 'timeReference',
       },
     ];
   }, [isTeacher]);
