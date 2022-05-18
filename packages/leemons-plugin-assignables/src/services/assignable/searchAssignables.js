@@ -6,6 +6,7 @@ const getUserPermission = require('./permissions/assignable/users/getUserPermiss
 const leebrary = require('../leebrary/leebrary');
 const searchBySubject = require('../subjects/searchBySubject');
 const searchByProgram = require('../subjects/searchByProgram');
+const listRoles = require('../roles/listRoles');
 
 async function asyncFilter(array, f) {
   const results = await Promise.all(array.map(f));
@@ -14,7 +15,7 @@ async function asyncFilter(array, f) {
 }
 
 module.exports = async function searchAssignables(
-  roles,
+  _roles,
   { published, preferCurrent, search, subjects, program, sort, ..._query },
   { userSession, transacting } = {}
 ) {
@@ -45,9 +46,16 @@ module.exports = async function searchAssignables(
     */
 
     const query = {
-      role_$in: Array.isArray(roles) ? roles : [roles],
       ..._query,
     };
+
+    let roles;
+    if (_roles) {
+      roles = Array.isArray(_roles) ? _roles : [_roles];
+      query.role_$in = roles;
+    } else {
+      roles = await listRoles({ transacting });
+    }
 
     let assets;
     let sorting;
@@ -65,40 +73,46 @@ module.exports = async function searchAssignables(
       const nameSort = _.find(sorting, { key: 'name' });
 
       if (nameSort) {
-        assets = _.uniq(
-          await Promise.all(
-            roles.map((role) =>
-              leebrary().search.search(
-                { category: `assignables.${role}`, criteria: search },
-                {
-                  allVersions: true,
-                  published: 'all',
-                  sortBy: ['name'],
-                  sortDirection: nameSort.direction,
-                  transacting,
-                  userSession,
-                }
-              )
+        let assetsFound = await Promise.all(
+          roles.map((role) =>
+            leebrary().search.search(
+              { category: `assignables.${role}`, criteria: search },
+              {
+                allVersions: true,
+                published: 'all',
+                sortBy: ['name'],
+                sortDirection: nameSort.direction,
+                transacting,
+                userSession,
+              }
             )
-          ).flatMap(({ asset }) => asset)
+          )
         );
+
+        assetsFound = _.flattenDeep(assetsFound);
+
+        assets = _.uniq(assetsFound.map(({ asset }) => asset));
       }
     }
 
     if (search) {
-      assets =
-        assets ||
-        (
-          await Promise.all(
-            roles.map((role) =>
-              leebrary().search.search(
-                { criteria: search, category: `assignables.${role}` },
-                { allVersions: true, published: 'all', transacting, userSession }
-              )
+      if (!assets?.length) {
+        let assetsFound = await Promise.all(
+          roles.map((role) =>
+            leebrary().search.search(
+              { criteria: search, category: `assignables.${role}` },
+              { allVersions: true, published: 'all', showPublic: true, transacting, userSession }
             )
           )
-        ).flatMap(({ asset }) => asset);
+        );
 
+        assetsFound = _.flattenDeep(assetsFound);
+        assets = assetsFound.map(({ asset }) => asset);
+
+        if (!assets.length) {
+          return [];
+        }
+      }
       query.asset_$in = assets;
     }
 

@@ -8,6 +8,14 @@ import SelectProgram from './components/PickSubject/SelectProgram';
 import SelectSubjects from './components/PickSubject/SelectSubjects';
 import PreTaskSelector from './components/PreTaskSelector/PreTaskSelector';
 
+function getInitialProgram(sharedData) {
+  if (sharedData?.subjects?.length > 0) {
+    return sharedData.subjects[0].program;
+  }
+
+  return null;
+}
+
 function ConfigData({
   labels,
   placeholders,
@@ -27,11 +35,7 @@ function ConfigData({
   const defaultValues = {
     subjects: [],
     ...sharedData,
-    program:
-      sharedData?.program ||
-      (isArray(sharedData?.subjects) &&
-        sharedData?.subjects.length > 0 &&
-        sharedData?.subjects[0].program),
+    program: getInitialProgram(sharedData),
   };
 
   const formData = useForm({ defaultValues });
@@ -39,7 +43,7 @@ function ConfigData({
     control,
     watch,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
     reset,
   } = formData;
 
@@ -72,6 +76,20 @@ function ConfigData({
 
   // ·······························································
   // HANDLERS
+
+  const handleOnPrev = () => {
+    if (!isDirty) {
+      onPrevious(sharedData);
+
+      return;
+    }
+
+    handleSubmit((values) => {
+      const data = { ...sharedData, ...values };
+      if (isFunction(setSharedData)) setSharedData(data);
+      if (isFunction(onPrevious)) onPrevious(data);
+    })();
+  };
 
   const handleOnNext = (e) => {
     const data = {
@@ -129,7 +147,7 @@ function ConfigData({
                 compact
                 variant="light"
                 leftIcon={<ChevLeftIcon height={20} width={20} />}
-                onClick={onPrevious}
+                onClick={handleOnPrev}
               >
                 {labels.buttonPrev}
               </Button>
