@@ -131,6 +131,78 @@ function parseDatesQuery(query) {
     .filter(Boolean);
 }
 
+async function filterByClasses(instances, query, { transacting } = {}) {
+  if (!query.classes?.length) {
+    return instances;
+  }
+
+  const classesResults = await classes.find(
+    { class_$in: query.classes, assignableInstance_$in: instances },
+    { transacting }
+  );
+
+  const classesByInstance = classesResults.reduce(
+    (obj, classResult) => ({
+      ...obj,
+      [classResult.assignableInstance]: [
+        ...(obj[classResult.assignableInstance] || []),
+        classResult.class,
+      ],
+    }),
+    {}
+  );
+
+  return instances.filter(
+    (instance) => classesByInstance[instance]?.length === query.classes.length
+  );
+}
+
+async function filterBySubjects(userInstances, query, { transacting } = {}) {
+  if (!query.subjects?.length) {
+    return userInstances;
+  }
+
+  const instances = _.uniq(_.map(userInstances, 'instance'));
+
+  let instancesWithAssignables = await assignableInstances.find(
+    {
+      id_$in: instances,
+    },
+    { transacting, columns: ['assignable', 'id'] }
+  );
+
+  instancesWithAssignables = instancesWithAssignables.map((instance) => ({
+    assignable: instance.assignable,
+    instance: instance.id,
+  }));
+
+  const assignablesToSearch = _.uniq(_.map(instancesWithAssignables, 'assignable'));
+
+  const subjectsMatchingAssignables = await subjects.find(
+    {
+      assignable_$in: assignablesToSearch,
+      subject_$in: query.subjects,
+    },
+    { transacting, columns: ['assignable', 'subject'] }
+  );
+
+  const instancesWithSubjects = instancesWithAssignables.reduce((obj, assignable) => {
+    const { instance } = assignable;
+    const resultingSubjects = subjectsMatchingAssignables
+      .filter((subject) => subject.assignable === assignable.assignable)
+      .map((s) => s.subject);
+
+    return {
+      ...obj,
+      [instance]: resultingSubjects,
+    };
+  }, {});
+
+  return userInstances.filter(
+    (result) => instancesWithSubjects[result.instance]?.length === query.subjects.length
+  );
+}
+
 async function searchTeacherAssignableInstances(query, { userSession, transacting } = {}) {
   const userAgents = userSession.userAgents.map((userAgent) => userAgent.id);
 
@@ -138,27 +210,7 @@ async function searchTeacherAssignableInstances(query, { userSession, transactin
 
   let instances = _.map(results, 'assignableInstance');
 
-  if (query.classes?.length) {
-    const classesResults = await classes.find(
-      { class_$in: query.classes, assignableInstance_$in: instances },
-      { transacting }
-    );
-
-    const classesByInstance = classesResults.reduce(
-      (obj, classResult) => ({
-        ...obj,
-        [classResult.assignableInstance]: [
-          ...(obj[classResult.assignableInstance] || []),
-          classResult.class,
-        ],
-      }),
-      {}
-    );
-
-    instances = instances.filter(
-      (instance) => classesByInstance[instance]?.length === query.classes.length
-    );
-  }
+  instances = await filterByClasses(instances, query, { transacting });
 
   let instancesData = await getInstancesDates(instances, { transacting });
 
@@ -208,48 +260,9 @@ async function searchStudentAssignableInstances(query, { userSession, transactin
     user: assignation.user,
   }));
 
-  let instances = _.uniq(_.map(results, 'instance'));
+  results = await filterBySubjects(results, query, { transacting });
 
-  if (query.subjects?.length) {
-    let instancesWithAssignables = await assignableInstances.find(
-      {
-        id_$in: instances,
-      },
-      { transacting, columns: ['assignable', 'id'] }
-    );
-
-    instancesWithAssignables = instancesWithAssignables.map((instance) => ({
-      assignable: instance.assignable,
-      instance: instance.id,
-    }));
-
-    const assignablesToSearch = _.uniq(_.map(instancesWithAssignables, 'assignable'));
-
-    const subjectsMatchingAssignables = await subjects.find(
-      {
-        assignable_$in: assignablesToSearch,
-        subject_$in: query.subjects,
-      },
-      { transacting, columns: ['assignable', 'subject'] }
-    );
-
-    const instancesWithSubjects = instancesWithAssignables.reduce((obj, assignable) => {
-      const { instance } = assignable;
-      const resultingSubjects = subjectsMatchingAssignables
-        .filter((subject) => subject.assignable === assignable.assignable)
-        .map((s) => s.subject);
-
-      return {
-        ...obj,
-        [instance]: resultingSubjects,
-      };
-    }, {});
-
-    results = results.filter(
-      (result) => instancesWithSubjects[result.instance]?.length === query.subjects.length
-    );
-    instances = _.uniq(_.map(results, 'instance'));
-  }
+  const instances = _.uniq(_.map(results, 'instance'));
 
   const instancesData = await getInstancesDates(instances, { transacting });
 
