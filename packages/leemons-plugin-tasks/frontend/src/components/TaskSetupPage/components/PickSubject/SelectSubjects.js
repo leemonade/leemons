@@ -3,6 +3,10 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { find, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { ContextContainer, TableInput, Select } from '@bubbles-ui/components';
+import {
+  SelectLevelsOfDifficulty,
+  useLevelsOfDifficulty,
+} from '@assignables/components/LevelsOfDifficulty';
 import useTableInputLabels from '../../../../helpers/useTableInputLabels';
 import useProgram from '../../../Student/TaskDetail/helpers/useProgram';
 
@@ -20,25 +24,8 @@ function useProgramSubjects(programId) {
   return [];
 }
 
-function useDifficultyLevels(labels) {
-  return useMemo(
-    () => [
-      {
-        label: labels.levelValues.begginer,
-        value: 'beginner',
-      },
-      {
-        label: labels.levelValues.intermediate,
-        value: 'intermediate',
-      },
-    ],
-    []
-  );
-}
-
 function useSubjectColumns({ labels, placeholders, errorMessages, subjects }) {
-  const difficultyLevels = useDifficultyLevels(labels);
-
+  const difficultyLevels = useLevelsOfDifficulty();
   return useMemo(() => {
     const columns = [];
 
@@ -65,8 +52,7 @@ function useSubjectColumns({ labels, placeholders, errorMessages, subjects }) {
       accessor: 'level',
       input: {
         node: (
-          <Select
-            data={difficultyLevels}
+          <SelectLevelsOfDifficulty
             placeholder={placeholders?.level}
             required
             disabled={!subjects?.length}
