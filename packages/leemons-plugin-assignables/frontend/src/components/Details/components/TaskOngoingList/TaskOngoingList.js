@@ -7,6 +7,7 @@ import {
   TimeClockCircleIcon,
   CheckCircleIcon,
 } from '@bubbles-ui/icons/outline';
+import { addErrorAlert } from '@layout/alert';
 import { TaskOngoingListStyles } from './TaskOngoingList.styles';
 import {
   TASK_ONGOING_LIST_DEFAULT_PROPS,
@@ -40,6 +41,8 @@ const TaskOngoingList = ({ instance }) => {
         </Button>
         <TaskDeadlineHeader
           {...instanceData.taskDeadlineHeader}
+          onDeadlineChange={() => addErrorAlert('This feature is not implemented yet')}
+          onCloseTask={() => addErrorAlert('This feature is not implemented yet')}
           styles={{ position: 'absolute', bottom: 0, left: 0, right: '50%', zIndex: 5 }}
         />
         <HorizontalTimeline

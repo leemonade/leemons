@@ -24,7 +24,15 @@ export function LocaleDate({ date, options = {} }) {
   return formatters[key].format(new Date(date));
 }
 
-export function LocaleDuration({ seconds: secondsProp, options = {} }) {
+function shortenUnits(label, short = false) {
+  if (short) {
+    return label.substring(0, 2).trim();
+  }
+
+  return label;
+}
+
+export function LocaleDuration({ seconds: secondsProp, short = false, options = {} }) {
   const seconds = Number(secondsProp);
   const d = Math.floor(seconds / (3600 * 24));
   const h = Math.floor((seconds % (3600 * 24)) / 3600);
@@ -47,15 +55,15 @@ export function LocaleDuration({ seconds: secondsProp, options = {} }) {
   const dayParts = formatter.formatToParts(d, 'days');
 
   const result = [
-    { value: d, label: dayParts.slice(-1)[0].value },
-    { value: h, label: hourParts.slice(-1)[0].value },
+    { value: d, label: shortenUnits(dayParts.slice(-1)[0].value, short) },
+    { value: h, label: shortenUnits(hourParts.slice(-1)[0].value, short) },
     {
       value: m,
-      label: minuteParts.slice(-1)[0].value,
+      label: shortenUnits(minuteParts.slice(-1)[0].value, short),
     },
     {
       value: s,
-      label: secondParts.slice(-1)[0].value,
+      label: shortenUnits(secondParts.slice(-1)[0].value, short),
     },
   ]
     .filter((item) => item.value > 0)
