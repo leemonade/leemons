@@ -1,7 +1,8 @@
 const _ = require('lodash');
 const dayjs = require('dayjs');
 const { getDates } = require('../dates');
-const { teachers, assignations, classes, assignableInstances, subjects } = require('../tables');
+const { teachers, assignations, classes, assignableInstances } = require('../tables');
+const searchAssignables = require('../assignable/searchAssignables');
 
 function sortByGivenDate(date) {
   return (a, b) => {
@@ -157,12 +158,10 @@ async function filterByClasses(instances, query, { transacting } = {}) {
   );
 }
 
-async function filterBySubjects(userInstances, query, { transacting } = {}) {
-  if (!query.subjects?.length) {
-    return userInstances;
+async function filterBySearchQuery(instances, query, { transacting, userSession } = {}) {
+  if (!(query.search || query.subjects?.length)) {
+    return instances;
   }
-
-  const instances = _.uniq(_.map(userInstances, 'instance'));
 
   let instancesWithAssignables = await assignableInstances.find(
     {
@@ -178,29 +177,22 @@ async function filterBySubjects(userInstances, query, { transacting } = {}) {
 
   const assignablesToSearch = _.uniq(_.map(instancesWithAssignables, 'assignable'));
 
-  const subjectsMatchingAssignables = await subjects.find(
-    {
-      assignable_$in: assignablesToSearch,
-      subject_$in: query.subjects,
-    },
-    { transacting, columns: ['assignable', 'subject'] }
+  const searchResults = await searchAssignables.call(
+    this,
+    undefined,
+    { published: 'all', preferCurrent: false, search: query.search, subjects: query.subjects },
+    { userSession, transacting }
   );
 
-  const instancesWithSubjects = instancesWithAssignables.reduce((obj, assignable) => {
-    const { instance } = assignable;
-    const resultingSubjects = subjectsMatchingAssignables
-      .filter((subject) => subject.assignable === assignable.assignable)
-      .map((s) => s.subject);
-
-    return {
-      ...obj,
-      [instance]: resultingSubjects,
-    };
-  }, {});
-
-  return userInstances.filter(
-    (result) => instancesWithSubjects[result.instance]?.length === query.subjects.length
+  const resultsMatchingAssignables = searchResults.filter((searchResult) =>
+    assignablesToSearch.includes(searchResult)
   );
+
+  const instancesMatchingSearch = instancesWithAssignables.filter((instance) =>
+    resultsMatchingAssignables.includes(instance.assignable)
+  );
+
+  return _.map(instancesMatchingSearch, 'instance');
 }
 
 async function searchTeacherAssignableInstances(query, { userSession, transacting } = {}) {
@@ -211,6 +203,8 @@ async function searchTeacherAssignableInstances(query, { userSession, transactin
   let instances = _.map(results, 'assignableInstance');
 
   instances = await filterByClasses(instances, query, { transacting });
+
+  instances = await filterBySearchQuery.call(this, instances, query, { transacting, userSession });
 
   let instancesData = await getInstancesDates(instances, { transacting });
 
@@ -260,9 +254,10 @@ async function searchStudentAssignableInstances(query, { userSession, transactin
     user: assignation.user,
   }));
 
-  results = await filterBySubjects(results, query, { transacting });
+  let instances = _.uniq(_.map(results, 'instance'));
+  instances = await filterBySearchQuery.call(this, instances, query, { transacting, userSession });
 
-  const instances = _.uniq(_.map(results, 'instance'));
+  results = results.filter((result) => instances.includes(result.instance));
 
   const instancesData = await getInstancesDates(instances, { transacting });
 
@@ -312,7 +307,7 @@ module.exports = async function searchAssignableInstances(
    *  - Instance Deadline ✅
    *  - Scored
    * Teacher
-   * - Task search
+   * - Task search ✅
    * - Class ✅
    * - Deadine ✅
    * - Assigned date ❌
