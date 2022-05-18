@@ -111,7 +111,9 @@ export default function AssignmentList() {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
 
-  const [instances, instancesLoading] = useSearchAssignableInstances();
+  const query = useMemo(() => ({}), []);
+
+  const [instances, instancesLoading] = useSearchAssignableInstances(query);
 
   const instancesInPage = useMemo(() => {
     if (!instances.length) {

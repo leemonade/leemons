@@ -26,10 +26,15 @@ module.exports = {
   },
   search: async (ctx) => {
     try {
-      const assignableInstances = await services.searchAssignableInstances(
-        {},
-        { userSession: ctx.state.userSession }
-      );
+      const { query } = ctx.request;
+
+      if (query.classes) {
+        query.classes = JSON.parse(query.classes);
+      }
+
+      const assignableInstances = await services.searchAssignableInstances(query, {
+        userSession: ctx.state.userSession,
+      });
 
       ctx.status = 200;
       ctx.body = {
