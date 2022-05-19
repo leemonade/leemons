@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext, useEffect } from 'react';
+import React, { useState, useMemo, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { PaginatedList } from '@bubbles-ui/components';
 import useSearchAssignableInstances from '../../../hooks/assignableInstance/useSearchAssignableInstances';
@@ -105,6 +105,10 @@ function useAssignmentsColumns() {
         Header: labels.timeReference,
         accessor: 'timeReference',
       },
+      {
+        Header: '',
+        accessor: 'actions',
+      },
     ];
   }, [isTeacher]);
 
@@ -160,3 +164,7 @@ export default function AssignmentList({ closed = false }) {
     </>
   );
 }
+
+AssignmentList.propTypes = {
+  closed: PropTypes.bool,
+};
