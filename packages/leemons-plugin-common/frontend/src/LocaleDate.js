@@ -24,13 +24,22 @@ export function LocaleDate({ date, options = {} }) {
   return formatters[key].format(new Date(date));
 }
 
-export function getLocaleDuration({ seconds: secondsProp, options = {} }, session) {
+function shortenUnits(label, short = false) {
+  if (short) {
+    return label.substring(0, 2).trim();
+  }
+
+  return label;
+}
+
+export function LocaleDuration({ seconds: secondsProp, short = false, options = {} }) {
   const seconds = Number(secondsProp);
   const d = Math.floor(seconds / (3600 * 24));
   const h = Math.floor((seconds % (3600 * 24)) / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = Math.floor(seconds % 60);
 
+  const session = useSession();
   const locale = getLocale(session);
   const key = getFormatterKey(locale, options);
 
@@ -45,24 +54,21 @@ export function getLocaleDuration({ seconds: secondsProp, options = {} }, sessio
   const hourParts = formatter.formatToParts(h, 'hours');
   const dayParts = formatter.formatToParts(d, 'days');
 
-  return [
-    { value: d, label: dayParts.slice(-1)[0].value },
-    { value: h, label: hourParts.slice(-1)[0].value },
+  const result = [
+    { value: d, label: shortenUnits(dayParts.slice(-1)[0].value, short) },
+    { value: h, label: shortenUnits(hourParts.slice(-1)[0].value, short) },
     {
       value: m,
-      label: minuteParts.slice(-1)[0].value,
+      label: shortenUnits(minuteParts.slice(-1)[0].value, short),
     },
     {
       value: s,
-      label: secondParts.slice(-1)[0].value,
+      label: shortenUnits(secondParts.slice(-1)[0].value, short),
     },
   ]
     .filter((item) => item.value > 0)
     .map((item) => item.value + item.label)
     .join(' ');
-}
 
-export function LocaleDuration({ seconds, options = {} }) {
-  const session = useSession();
-  return getLocaleDuration({ seconds, options }, session);
+  return result;
 }

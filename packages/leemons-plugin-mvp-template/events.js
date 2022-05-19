@@ -8,6 +8,7 @@ const addCalendarAndEventAsClassroom = require('./src/calendar');
 const addAWSS3AsProvider = require('./src/leebrary');
 const addAWSEmailAsProvider = require('./src/emails');
 const initWidgets = require('./src/widgets');
+const initTests = require('./src/tests');
 
 async function events(isInstalled) {
   const config = {
@@ -52,6 +53,7 @@ async function events(isInstalled) {
         'plugins.leebrary:init-permissions',
         'plugins.grades:init-permissions',
         'plugins.tasks:init-permissions',
+        'plugins.tests:init-permissions',
       ],
       async () => {
         try {
@@ -67,7 +69,7 @@ async function events(isInstalled) {
           config.grades = await initGrades(config.centers);
           leemons.events.emit('init-grades', config.grades);
 
-          await addCalendarAndEventAsClassroom(config.users);
+          // await addCalendarAndEventAsClassroom(config.users);
         } catch (e) {
           console.error(e);
         }
@@ -127,8 +129,25 @@ async function events(isInstalled) {
       ],
       async () => {
         try {
+          console.log('MVP - Iniciando el plugin de Academic Portfolio');
           config.programs = await initAcademicPortfolio(config);
           leemons.events.emit('init-academic-portfolio', config.programs);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    );
+
+    // ·······························································
+    // TESTS & QBANKS
+
+    leemons.events.once(
+      ['plugins.tests:pluginDidLoadServices', 'plugins.mvp-template:init-academic-portfolio'],
+      async () => {
+        try {
+          console.log('MVP - Iniciando el plugin de Tests');
+          config.tests = await initTests(config);
+          leemons.events.emit('init-tests', config.tests);
         } catch (e) {
           console.error(e);
         }

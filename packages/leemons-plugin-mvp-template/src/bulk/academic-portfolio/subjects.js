@@ -4,7 +4,7 @@ const itemsImport = require('../helpers/simpleListImport');
 
 async function importAcademicPortfolioSubjects({ programs, users, knowledgeAreas, subjectTypes }) {
   const filePath = path.resolve(__dirname, '../data.xlsx');
-  const items = await itemsImport(filePath, 'ap_subjects', 20, false, true);
+  const items = await itemsImport(filePath, 'ap_subjects', 30, false, false);
 
   keys(items).forEach((key) => {
     const item = items[key];
@@ -82,7 +82,7 @@ async function importAcademicPortfolioSubjects({ programs, users, knowledgeAreas
       classroom.knowledge = knowledgeAreas[knowledgeKey]?.id;
 
       // Teacher
-      classroom.teachers = [find(teachers, { group: group.abbreviation })];
+      classroom.teachers = teachers.filter((teacher) => teacher.group === group.abbreviation);
 
       // Students
       classroom.students = students.filter((student) => student.group === group.abbreviation);

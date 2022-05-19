@@ -15,7 +15,7 @@ module.exports = {
       type: 'string',
     },
     description: {
-      type: 'string',
+      type: 'richtext',
     },
     color: {
       type: 'string',

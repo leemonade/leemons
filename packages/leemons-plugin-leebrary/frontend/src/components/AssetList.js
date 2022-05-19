@@ -559,7 +559,11 @@ const AssetList = ({
         >
           <LoadingOverlay visible={loading} overlayOpacity={0} />
           {!loading && !pinned && canShowPublicToggle && (
-            <Switch label="Show public assets" checked={showPublic} onChange={handleOnShowPublic} />
+            <Switch
+              label={t('labels.showPublic')}
+              checked={showPublic}
+              onChange={handleOnShowPublic}
+            />
           )}
           {!loading && !isEmpty(serverData?.items) && (
             <Box
@@ -594,7 +598,7 @@ const AssetList = ({
               >
                 <CommonFileSearchIcon style={{ fontSize: 24 }} />
                 <Title order={4} color="soft">
-                  No assets found
+                  {t('labels.nothingFound')}
                 </Title>
               </Stack>
             </Stack>

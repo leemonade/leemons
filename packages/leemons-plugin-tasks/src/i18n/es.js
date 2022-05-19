@@ -2,29 +2,29 @@ module.exports = {
   welcome_page: {
     page_title: 'Tareas',
     page_description:
-      'Gracias al módulo de tareas puedes crear nuevas tareas, asignarlas a grupos de estudiantes o individuos, controlar su estado actual e iniciar evaluaciones de las tareas completadas.',
-    hide_info_label: `Ok, ya lo tengo. Cuando la configuración esté completa, no muestres más esta información`,
+      'El módulo de tareas permite crear nuevas actividades, asignarlas a grupos de estudiantes o individuos, controlar su estado en todo momento y evaluarlas una vez completadas.',
+    hide_info_label: `¡Entendido!. No mostrar más, una vez finalizada la configuración.`,
     step_profiles: {
-      title: 'Vincular perfiles',
-      description: 'Identifica que perfiles coinciden con los profesores y estudiantes',
-      btn: 'Vincular perfiles',
+      title: 'Conectar perfiles',
+      description: 'Es necesario conectar los perfiles de la aplicación Tareas con los existentes en el sistema (solo será necesario indicar esta información una vez).',
+      btn: 'Conectar perfiles',
     },
     step_library: {
       title: 'Biblioteca de tareas',
       description:
-        'Crea nuevas tareas y asignarlas o revisa las creadas en la biblioteca de tareas.',
-      btn: 'Crear tarea',
+        'El listado de tareas permite encontrar actividades para asignarlas, editarlas o duplicarlas.',
+      btn: 'Crear nueva tarea',
     },
     step_ongoing: {
       title: 'Tareas en curso',
       description:
-        'Revisa las tareas en curso y controla su estado. También puede iniciar la corrección de las tareas completadas.',
+        'El listado de tareas asignadas a los estudiantes muestra el estado de cada tarea en el ciclo de vida de su ejecución. Una vez finalizadas, también permite realizar la corrección de las mismas.',
       btn: 'Ver tareas en curso',
     },
     step_history: {
-      title: 'Historial',
-      description: `Ver tareas completadas, sus evaluaciones y los comentarios del estudiante.`,
-      btn: 'Ver historial de tareas',
+      title: 'Histórico',
+      description: `Listado de tareas finalizadas y cerradas con acceso a sus evaluaciones y los comentarios de los estudiantes.`,
+      btn: 'Ver histórico de tareas',
     },
   },
   library_page: {
@@ -35,9 +35,9 @@ module.exports = {
     edit_title: 'Editar tarea',
     common: {
       select_center: 'Seleccionar centro',
-      create_done: 'Tarea creada',
-      update_done: 'Tarea actualizada',
-      publish_done: 'Tarea publicada',
+      create_done: 'Tarea creada con éxito',
+      update_done: 'Tarea actualizada con éxito',
+      publish_done: 'Tarea publicada con éxito',
     },
     setup: {
       title: 'Crear nueva tarea',
@@ -46,25 +46,25 @@ module.exports = {
         step_label: 'Datos básicos',
         labels: {
           name: 'Nombre',
-          tagline: 'Tagline',
+          tagline: 'Subtítulo',
           description: 'Resumen',
           buttonNext: 'Siguiente',
         },
         placeholders: {
-          name: 'Nombre de la tarea',
-          tagline: 'Subtitulo de la task',
+          name: 'Nombre',
+          tagline: 'Subtítulo',
           description: '¿De qué trata esta tarea?',
         },
         errorMessages: {
-          name: { required: 'Campo requerido' },
-          tagline: { required: 'Campo requerido' },
-          description: { required: 'Campo requerido' },
+          name: { required: 'Campo necesario' },
+          tagline: { required: 'Campo necesario' },
+          description: { required: 'Campo necesario' },
         },
       },
       configData: {
-        step_label: 'Config',
+        step_label: 'Configuración',
         labels: {
-          title: 'Config',
+          title: 'Configuración',
           center: 'Centro',
           program: 'Programa',
           course: 'Curso',
@@ -74,12 +74,12 @@ module.exports = {
           buttonNext: 'Siguiente',
           buttonPrev: 'Anterior',
           preTask: {
-            toggler: 'Añadir una Pre-Tarea',
+            toggler: 'Añadir una actividad previa',
             mandatory: 'Obligatoria para empezar la Tarea',
-            condition: 'Condición para empezar la Tarea',
+            condition: 'Condición',
             conditions: {
               take: 'Realizar sólo el Test',
-              greater: 'Pasar el Test si el nivel es mayor que',
+              greater: 'Aprobar el Test con una nota igual o superior a',
             },
           },
         },
@@ -88,14 +88,14 @@ module.exports = {
           program: 'Seleccionar...',
           course: 'Seleccionar...',
           subject: 'Seleccionar...',
-          addSubject: 'Añadir materia',
+          addSubject: 'Añadir asignatura',
           level: 'Seleccionar...',
         },
         errorMessages: {
-          program: { required: 'Campo requerido' },
-          course: { required: 'Campo requerido' },
-          subject: { required: 'Campo requerido' },
-          level: { required: 'Campo requerido' },
+          program: { required: 'Campo necesario' },
+          course: { required: 'Campo necesario' },
+          subject: { required: 'Campo necesario' },
+          level: { required: 'Campo necesario' },
         },
       },
       contentData: {
@@ -109,10 +109,10 @@ module.exports = {
           buttonPrev: 'Anterior',
         },
         errorMessages: {
-          methodology: { required: 'Campo requerido' },
-          recommendedDuration: { required: 'Campo requerido' },
-          development: { required: 'Campo requerido' },
-          statement: { required: 'Campo requerido' },
+          methodology: { required: 'Campo necesario' },
+          recommendedDuration: { required: 'Campo necesario' },
+          development: { required: 'Campo necesario' },
+          statement: { required: 'Campo necesario' },
         },
       },
       instructionData: {
@@ -129,11 +129,11 @@ module.exports = {
           forTeacher:
             'Ayuda a otros profesores a abordar este ejercicio con unas sencillas instrucciones.',
           forStudent:
-            'Aquí puedes incluir información extra para ayudar al alumno a realizar mejor el ejercicio.',
+            'Información extra para ayudar al alumno a realizar mejor el ejercicio.',
         },
         errorMessages: {
-          forTeacher: { required: 'Campo requerido' },
-          forStudent: { required: 'Campo requerido' },
+          forTeacher: { required: 'Campo necesario' },
+          forStudent: { required: 'Campo necesario' },
         },
       },
       publishData: {
@@ -141,8 +141,8 @@ module.exports = {
         labels: {
           title: 'Publicar y asignar',
           description:
-            'Ahora puedes guardar esta actividad en tu biblioteca para utilizarla cuando quieras o, en el mismo paso, asignarla a tus alumnos para que la realicen.',
-          assign: 'Assign later to students',
+            'Guardar esta actividad en la biblioteca para reutilizar o asignar a los alumnos para que la realicen.',
+          assign: 'Asignar más tarde',
           buttonNext: 'Publicar tarea',
           buttonPrev: 'Anterior',
         },
@@ -155,8 +155,8 @@ module.exports = {
   assignment_form: {
     labels: {
       assignTo: 'Asignar a',
-      classroomToAssign: 'Asignar a la clase',
-      studentToAssign: 'Asignar al estudiante',
+      classroomToAssign: 'Asignar a una clase',
+      studentToAssign: 'Asignar a un estudiante',
       mode: 'Modo',
       startDate: 'Fecha de inicio',
       deadline: 'Fecha límite',
@@ -176,7 +176,7 @@ module.exports = {
     },
     descriptions: {
       messageToStudents:
-        'Si asignas esta tarea a otros grupos en este paso, este mensaje será el mensaje predeterminado para todas las tareas (aunque puedes cambiarlo individualmente si lo deseas).',
+        'Mensaje predeterminado para la tarea (es posible cambiarlo individualmente en cada asignación).',
     },
     assignTo: {
       student: 'Estudiante',
@@ -194,19 +194,19 @@ module.exports = {
     },
   },
   profiles_page: {
-    page_title: 'Tareas - Configuración de perfiles',
+    page_title: 'Tareas - Conectar perfiles',
     page_description:
-      'En primer lugar, debemos vincular los perfiles del sistema con los perfiles personalizados que has creado en la plataforma. (Por favor, lee atentamente las características de cada perfil. Una vez vinculados los perfiles, no se puede deshacer)',
+      'Es necesario conectar los perfiles de la aplicación Tareas con los existentes en el sistema (solo será necesario indicar esta información una vez). Una vez conectados los perfiles, esta acción no se podrá deshacer.',
     save: 'Guardar',
-    loadFromAP: 'Cargar perfiles desde Academic Portfolio',
-    profileSaved: 'Perfiles guardados',
+    loadFromAP: 'Cargar perfiles desde el Portafolio',
+    profileSaved: 'Perfiles guardados con éxito',
     profiles: 'Perfiles',
     teacher: 'Profesor',
     teacherDescription: 'Responsable de la creación y asignación de tareas',
-    teacherRequired: 'Campo requerido',
+    teacherRequired: 'Campo necesario',
     student: 'Estudiante',
     studentDescription: 'Se le asignarán las tareas y será responsable de ejecutarlas',
-    studentRequired: 'Campo requerido',
+    studentRequired: 'Campo necesario',
   },
   ongoing_page: {
     page_title: 'Tareas en curso',

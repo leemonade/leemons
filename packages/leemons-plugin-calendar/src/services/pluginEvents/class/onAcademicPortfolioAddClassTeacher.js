@@ -3,7 +3,7 @@ function onAcademicPortfolioAddClassTeacher(data, { class: classId, teacher, tra
   return new Promise(async (resolve) => {
     try {
       const { table } = require('../../tables');
-      console.log('Vamos ha añadir profesor a calendario clase');
+      // console.log('Vamos ha añadir profesor a calendario clase');
       const [classCalendar] = await Promise.all([
         table.classCalendar.findOne({ class: classId }, { transacting }),
         leemons.plugin.services.calendar.grantAccessUserAgentToCalendar(

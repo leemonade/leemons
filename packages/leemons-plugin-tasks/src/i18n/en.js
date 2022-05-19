@@ -17,7 +17,6 @@ module.exports = {
     gameBasedLearning: 'Game-Based Learning',
     kinestheticLearning: 'Kinesthetic Learning',
     differentiatedInstruction: 'Differentiated Instruction',
-    udl: 'UDL (Unified Design for Learning)',
     other: 'Other',
   },
   welcome_page: {

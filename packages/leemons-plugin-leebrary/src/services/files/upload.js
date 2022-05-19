@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const { toLower } = require('lodash');
+const { toLower, isEmpty } = require('lodash');
 const mime = require('mime-types');
 const pathSys = require('path');
 const { tables } = require('../tables');
@@ -26,6 +26,18 @@ const ADMITTED_METADATA = [
 
 // -----------------------------------------------------------------------------
 // HELPERS
+
+function getOptimizedImage(path, extension) {
+  let stream = global.utils.sharp();
+
+  if (path && !isEmpty(path)) {
+    stream = global.utils.sharp(path);
+  }
+
+  return stream
+    .resize(1024, 1024, { fit: 'inside', withoutEnlargement: true })
+    .toFormat(extension || 'jpeg', { quality: 70 });
+}
 
 function getReadableDuration(milliseconds, padStart) {
   function pad(num) {
@@ -82,25 +94,43 @@ function getMetaProps(data, result = {}) {
   return result;
 }
 
-function download(url) {
+function getRemoteContentType(url) {
   return new Promise((resolve, reject) => {
-    const downloadStream = global.utils.got(url, { isStream: true });
-    const fileWriterStream = leemons.fs.createTempWriteStream();
-    let contentType = '';
-
-    downloadStream
+    global.utils
+      .got(url, { isStream: true })
       .on('response', (response) => {
-        contentType = response.headers['content-type'];
+        response.destroy();
+        resolve(response.headers['content-type']);
       })
       .on('error', (error) => reject(error));
+  });
+}
 
-    fileWriterStream
-      .on('error', (error) => reject(error))
-      .on('finish', () => {
-        fileWriterStream.end();
-        resolve({ stream: fileWriterStream, path: fileWriterStream.path, contentType });
-      });
-    downloadStream.pipe(fileWriterStream);
+function download(url, compress) {
+  return new Promise((resolve, reject) => {
+    (async () => {
+      const downloadStream = global.utils.got(url, { isStream: true });
+      const fileWriterStream = leemons.fs.createTempWriteStream();
+      const contentType = await getRemoteContentType(url);
+
+      const [fileType] = contentType.split('/');
+      const extension = mime.extension(contentType);
+
+      downloadStream.on('error', (error) => reject(error));
+
+      fileWriterStream
+        .on('error', (error) => reject(error))
+        .on('finish', () => {
+          fileWriterStream.end();
+          resolve({ stream: fileWriterStream, path: fileWriterStream.path, contentType });
+        });
+
+      if (compress && fileType === 'image' && ['jpeg', 'jpg', 'png'].includes(extension)) {
+        downloadStream.pipe(getOptimizedImage(null, extension)).pipe(fileWriterStream);
+      } else {
+        downloadStream.pipe(fileWriterStream);
+      }
+    })();
   });
 }
 
@@ -130,7 +160,7 @@ function createTemp(readStream, contentType) {
 // -----------------------------------------------------------------------------
 // MAIN FUNCTIONS
 
-async function upload(file, { name }, { userSession, transacting } = {}) {
+async function upload(file, { name }, { transacting } = {}) {
   const { path, type } = file;
   const extension = mime.extension(type);
 
@@ -235,6 +265,7 @@ async function upload(file, { name }, { userSession, transacting } = {}) {
       'files',
       `${newFile.id}.${newFile.extension}`
     );
+
     await leemons.fs.copyFile(path, urlData.uri);
   }
 
@@ -247,6 +278,7 @@ async function upload(file, { name }, { userSession, transacting } = {}) {
 
 async function uploadFromFileStream(file, { name }, { userSession, transacting } = {}) {
   const { readStream, contentType } = file;
+
   const { path } = await createTemp(readStream, contentType);
 
   return upload({ path, type: contentType }, { name }, { userSession, transacting });
@@ -256,13 +288,13 @@ async function uploadFromUrl(url, { name }, { userSession, transacting } = {}) {
   // ES: Primero comprobamos que la URL no sea un FILE_ID
   // EN: First check if the URL is a FILE_ID
   const file = await getById(url);
-  console.log(file);
+  // console.log(file);
   if (file?.id) {
     const fileStream = await dataForReturnFile(file.id);
     return uploadFromFileStream(fileStream, { name }, { userSession, transacting });
   }
 
-  const { path, contentType } = await download(url);
+  const { path, contentType } = await download(url, true);
 
   return upload({ path, type: contentType }, { name }, { userSession, transacting });
 }

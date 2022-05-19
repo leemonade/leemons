@@ -1,11 +1,11 @@
 module.exports = {
   calendar: {
-    user_section: 'Mis calendarios',
+    user_section: 'Usuarios',
   },
   user_data_page: {
     page_title: 'Datos del usuario',
     page_description:
-      'En esta sección puede configurar los campos del conjunto de datos de sus usuarios. Los datos de identificación son obligatorios para el funcionamiento de la plataforma y obligatorios para todos los usuarios de cualquier perfil. Los campos comunes son los que comparten todos los usuarios, pueden ser obligatorios u opcionales (son útiles para ahorrar tiempo a la hora de definir campos comunes a todos los usuarios de la plataforma como un nombre o un apellido). <br/> Por último, los perfiles tienen sus propios conjuntos de datos que puedes consultar en la sección de perfiles.',
+      'En esta sección se configuran los campos del dataset de usuarios. Los datos de identificación son obligatorios para el funcionamiento de la plataforma y obligatorios para todos los usuarios de cualquier perfil. Los campos comunes son los que comparten todos los usuarios, pueden ser obligatorios u opcionales (son útiles para ahorrar tiempo a la hora de definir campos comunes a todos los usuarios de la plataforma como un nombre o un apellido). <br/> Por último, los perfiles tienen sus propios conjuntos de datos que pueden ser consultados en la sección de perfiles.',
     tabs: {
       system_data: 'Datos del sistema',
       common_fields: 'Campos comunes',
@@ -13,10 +13,10 @@ module.exports = {
 
     systemData: {
       save: 'Guardar',
-      saveSuccess: 'Guardado correctamente',
+      saveSuccess: 'Guardado con éxito',
       description1:
         'Campos obligatorios para crear cuentas de usuario (no se pueden editar o eliminar)',
-      description2: 'Campos incluidos en el sistema Leemons que puede configurar',
+      description2: 'Campos incluidos en el sistema Leemons que se pueden configurar',
       table: {
         name: 'Nombre',
         description: 'Descripción',
@@ -47,7 +47,7 @@ module.exports = {
           type: 'String',
         },
         birthday: {
-          name: 'Cumpleaños',
+          name: 'Fecha de nacimiento',
           description: 'dd/mm/yyyy',
           type: 'Date',
         },
@@ -64,7 +64,7 @@ module.exports = {
       },
     },
     basic: {
-      description: 'Configuración de campos generales para sus usuarios',
+      description: 'Configuración de campos generales',
       table: {
         name: 'Nombre',
         description: 'Descripción',
@@ -75,23 +75,23 @@ module.exports = {
       delete: 'Borrar',
     },
     dataset: {
-      description: 'Configuración de campos generales para sus usuarios',
+      description: 'Configuración de campos generales',
       filter_by_center: 'Filtrar por centro',
       add_field: 'Añadir campo',
       no_data_in_table: 'Aun no hay datos',
-      deleted_done: 'Item del dataset borrado',
+      deleted_done: 'Elemento del dataset borrado con éxito',
     },
     remove_modal: {
-      title: '¿Quieres eliminar el item?',
+      title: '¿Eliminar el elemento?',
       message: 'Esta acción no puede deshacerse',
       cancel: 'No',
       action: 'Eliminar',
     },
   },
   welcome_page: {
-    page_title: 'Bienvenido a la administración de usuarios',
+    page_title: 'Administración de usuarios',
     page_description:
-      'Aquí le recomendamos los primeros pasos para configurar correctamente su administración de usuarios.',
+      'Primeros pasos para configurar correctamente la administración de usuarios.',
   },
   hero_bg: {
     text: '"¡No sé el significado de la mitad de esas largas palabras y, además, no creo que tú tampoco lo sepas!"',
@@ -100,7 +100,7 @@ module.exports = {
   list_profiles: {
     page_title: 'Perfiles',
     page_description:
-      'Utilice los perfiles de usuario para gestionar los permisos de las aplicaciones. Cada vez que instale un nuevo leemon le pediremos que defina los permisos para cada perfil existente.',
+      'Los perfiles de usuario pemriten gestionar los permisos de las aplicaciones. Cada vez que se instala un nuevo plugin es necesario configurar los permisos para cada perfil existente.',
     name: 'Nombre',
     overview: 'Resumen',
     actions: 'Acciones',
@@ -117,22 +117,22 @@ module.exports = {
     save_done: 'Perfil creado',
     update_done: 'Perfil actualizado',
     translations: 'Traducciones',
-    translations_warning: 'Debes guardar el perfil para que se almacenen las traducciones',
+    translations_warning: 'Es necesario guardar el perfil para almacenar las traducciones',
     options_modal: {
       title: 'Traducción',
       description:
-        'Añade aquí las traducciones de la información del perfil a los idiomas de tu sistema',
+        'Traducciones de la información del perfil a los idiomas del sistema',
       accept: 'Aceptar',
       cancel: 'Cancelar',
       profile_name: 'Nombre del perfil',
       profile_description: 'Descripción del perfil',
     },
     dataset_tab: {
-      description: 'Configure los campos adicionales para este perfil',
+      description: 'Campos adicionales para este perfil',
       filter_by_center: 'Filtrar por centro',
       add_field: 'Añadir campo',
       no_data_in_table: 'Aun no hay datos',
-      deleted_done: 'Item del dataset borrado',
+      deleted_done: 'Elemento del dataset borrado con éxito',
       table: {
         name: 'Nombre',
         description: 'Descripción',
@@ -143,43 +143,43 @@ module.exports = {
       },
     },
     remove_modal: {
-      title: '¿Quieres eliminar el item?',
+      title: '¿Quieres eliminar el elemento?',
       message: 'Esta acción no puede deshacerse',
       cancel: 'No',
       action: 'Eliminar',
     },
   },
   login: {
-    title: 'Acceda a su cuenta',
+    title: 'Acceder a mi cuenta',
     email: 'Email',
     password: 'Contraseña',
     remember_password: 'No recuerdo mi contraseña',
     log_in: 'Entrar',
     not_registered: 'No estoy registrado',
-    form_error: 'Email or password does not match',
+    form_error: 'El email o la contraseña no son correctas',
   },
   registerPassword: {
-    title: 'Crea tu contraseña',
+    title: 'Crear mi contraseña',
     password: 'Contraseña',
     repeatPassword: 'Repetir contraseña',
     setPassword: 'Establecer contraseña',
-    repeatPasswordPlaceholder: 'Tu contraseña',
-    passwordPlaceholder: 'Repite tu contraseña',
+    repeatPasswordPlaceholder: 'Contraseña',
+    passwordPlaceholder: 'Repitir contraseña',
     passwordMatch: 'Las contraseñas no coinciden',
     tokenError:
-      'El código para setear la contraseña a caducado o no es valido, contacta con tu centro..',
+      'El código para configurar la contraseña ha caducado o no es valido, contactar con el centro.',
   },
   selectProfile: {
-    title: 'Hola {name}',
+    title: 'Hola, {name}',
     number_of_profiles:
-      'Tienes {profiles} perfiles en leemons, por favor selecciona con el que quieres acceder',
+      'Tienes {profiles} perfiles en Leemons, por favor selecciona con el que quieres acceder',
     several_centers:
-      'Tienes varios centros y perfiles en Leemons, por favor selecciona los adecuados para acceder.',
-    use_always_profile: 'Utilizar siempre esta configuración para acceder rápidamente',
+      'Tienes varios centros y perfiles en Leemons, por favor selecciona con los que quieres para acceder.',
+    use_always_profile: 'Usar siempre esta configuración para acceder rápidamente',
     change_easy:
-      'Puede cambiar fácilmente su perfil haciendo clic en su avatar en la barra lateral de la aplicación',
+      'Puede cambiar fácilmente de perfil haciendo clic en el avatar en la barra lateral de la aplicación',
     log_in: 'Entrar',
-    choose_center: 'Selecciona un centro',
+    choose_center: 'Seleccionar un centro',
   },
   list_users: {
     pageTitle: 'Listado de usuarios',
@@ -206,42 +206,42 @@ module.exports = {
     profileLabel: 'Perfil',
     emailHeader: 'Email',
     passwordHeader: 'Contraseña',
-    emailHeaderRequired: 'El correo electrónico es obligatorio',
+    emailHeaderRequired: 'El correo electrónico es necesario',
     emailHeaderNotEmail: 'El correo electrónico no es válido',
     nameHeader: 'Nombre',
-    nameHeaderRequired: 'El nombre es obligatorio',
+    nameHeaderRequired: 'El nombre es necesario',
     surnameHeader: 'Apellido',
-    surnameHeaderRequired: 'Se requiere el apellido',
+    surnameHeaderRequired: 'El apellido es necesario',
     genderHeader: 'Genero',
-    genderHeaderRequired: 'Genero es obligatorio',
+    genderHeaderRequired: 'Genero es necesario',
     birthdayHeader: 'Fecha de nacimiento',
-    birthdayHeaderRequired: 'Fecha de nacimiento es obligatorio',
+    birthdayHeaderRequired: 'La fecha de nacimiento es necesaria',
     avatarHeader: 'Avatar',
-    avatarHeaderRequired: 'El avatar es obligatorio',
+    avatarHeaderRequired: 'El avatar es necesario',
     secondSurnameHeader: 'Segundo apellido',
-    secondSurnameHeaderRequired: 'Se requiere el segundo apellido',
+    secondSurnameHeaderRequired: 'El segundo apellido es necesario',
     tagsHeader: 'Etiquetas',
     tableAdd: 'Añadir',
     tableRemove: 'Eliminar',
-    userAlreadyHaveThisConfig: 'El usuario ya existe en ese centro con ese perfil',
-    userEmailAlreadyAdded: 'Ya tienes un usuario añadido con ese email',
+    userAlreadyHaveThisConfig: 'Este usuario ya existe en ese centro con este perfil',
+    userEmailAlreadyAdded: 'Ya existe un usuario con este email',
     tagsForAllUsers: 'Etiquetas para todos los usuarios',
     save: 'Guardar',
-    usersAddedSuccessfully: 'Usuarios añadidos correctamente',
+    usersAddedSuccessfully: 'Usuarios añadidos con éxito',
   },
   needDatasetDataModal: {
     goPageButton: 'Ir a la página',
   },
   userDataDatasetPage: {
     pageTitle: 'Datos de usuario',
-    pageDescription: 'Añade los datos necesarios',
+    pageDescription: 'Añadir datos necesarios',
     save: 'Guardar',
-    saveSuccess: 'Datos guardados correctamente',
+    saveSuccess: 'Datos guardados con éxito',
   },
   detailUser: {
-    selectCenter: 'Selecciona un centro',
-    selectProfile: 'Selecciona un perfil',
-    noResults: 'No hay resultados',
+    selectCenter: 'Seleccionar un centro',
+    selectProfile: 'Seleccionar un perfil',
+    noResults: 'No hay resultados con los criterios indicados',
     preferredGenderLabel: 'Pronombre de género preferido',
     personalInformationLabel: 'Información personal',
     recoveryLink: 'Enviar enlace de recuperación',
@@ -251,6 +251,6 @@ module.exports = {
     edit: 'Editar',
     save: 'Guardar',
     cancel: 'Cancelar',
-    saveSuccess: 'Datos guardados correctamente',
+    saveSuccess: 'Datos guardados con éxito',
   },
 };

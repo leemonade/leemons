@@ -85,8 +85,7 @@ export default function AssignmentPage() {
       await hooks.fireEvent('menu-builder:user:updateItem', 'history');
 
       addSuccessAlert('Assignment created successfully');
-      // history.push('/private/tasks/ongoing');
-      history.push('/private/tasks/library');
+      history.push('/private/assignables/ongoing');
     } catch (e) {
       addErrorAlert(e.message);
     }
