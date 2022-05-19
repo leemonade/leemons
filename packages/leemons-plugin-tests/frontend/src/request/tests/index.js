@@ -39,4 +39,41 @@ async function getTest(id, { withQuestionBank } = { withQuestionBank: false }) {
   });
 }
 
-export { listTests, saveTest, getTest };
+async function setInstanceTimestamp(instance, timeKey) {
+  return leemons.api(`tests/tests/instance/timestamp`, {
+    allAgents: true,
+    method: 'POST',
+    body: {
+      instance,
+      timeKey,
+    },
+  });
+}
+
+async function setQuestionResponse(body) {
+  return leemons.api(`tests/tests/instance/question/response`, {
+    allAgents: true,
+    method: 'POST',
+    body,
+  });
+}
+
+async function getUserQuestionResponses(instance, user) {
+  let url = `tests/tests/instance/${instance}/question/response`;
+  if (user) {
+    url += `?user=${user}`;
+  }
+  return leemons.api(url, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
+export {
+  listTests,
+  saveTest,
+  getTest,
+  setInstanceTimestamp,
+  getUserQuestionResponses,
+  setQuestionResponse,
+};

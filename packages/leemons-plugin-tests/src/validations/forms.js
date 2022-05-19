@@ -54,20 +54,33 @@ const saveQuestionBankSchema = {
             maxLength: 255,
             nullable: true,
           },
-          withImages: booleanSchema,
+          withImages: {
+            type: ['boolean', 'number'],
+            nullable: true,
+          },
           tags: {
             type: 'array',
             items: stringSchema,
             nullable: true,
           },
           question: stringSchema,
+          questionImage: {
+            type: ['object', 'string'],
+            nullable: true,
+          },
+          questionImageDescription: stringSchemaNullable,
           properties: {
             type: 'object',
             additionalProperties: true,
           },
           clues: {
             type: 'array',
-            items: stringSchema,
+            items: {
+              type: 'object',
+              properties: {
+                value: stringSchema,
+              },
+            },
             nullable: true,
           },
         },
@@ -79,6 +92,7 @@ const saveQuestionBankSchema = {
 };
 
 function validateSaveQuestionBank(data) {
+  console.log(data.questions[0], data.questions[1]);
   const schema = _.cloneDeep(saveQuestionBankSchema);
   if (data.published) {
     schema.required = ['name', 'questions', 'program', 'subjects'];

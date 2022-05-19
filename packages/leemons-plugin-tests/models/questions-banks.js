@@ -21,7 +21,7 @@ module.exports = {
       },
     },
     asset: {
-      specificType: 'varchar(255)',
+      type: 'string',
     },
   },
   primaryKey: {

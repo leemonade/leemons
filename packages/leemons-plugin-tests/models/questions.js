@@ -16,12 +16,18 @@ module.exports = {
     type: {
       type: 'string',
     },
+    withImages: {
+      type: 'boolean',
+    },
     level: {
       type: 'string',
     },
     question: {
       type: 'string',
       required: true,
+    },
+    questionImage: {
+      type: 'string',
     },
     clues: {
       type: 'json',

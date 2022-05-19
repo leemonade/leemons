@@ -150,6 +150,7 @@ const AssetList = ({
         showPublic: !pinned ? showPublic : true,
         pinned,
       });
+      console.log(response);
       // console.log('assets:', response.assets);
       setAssets(response?.assets || []);
       // setTimeout(() => setLoading(false), 500);

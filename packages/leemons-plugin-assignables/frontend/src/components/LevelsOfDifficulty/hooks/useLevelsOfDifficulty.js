@@ -1,28 +1,55 @@
 export default function useLevelsOfDifficulty() {
+  // const levels = [
+  //   {
+  //     value: 'beginner',
+  //     label: 'Beginner',
+  //   },
+  //   {
+  //     value: 'elementary',
+  //     label: 'Elementary',
+  //   },
+  //   {
+  //     value: 'lowerIntermediate',
+  //     label: 'Lower Intermediate',
+  //   },
+  //   {
+  //     value: 'intermediate',
+  //     label: 'Intermediate',
+  //   },
+  //   {
+  //     value: 'upperIntermediate',
+  //     label: 'Upper Intermediate',
+  //   },
+  //   {
+  //     value: 'advanced',
+  //     label: 'Advanced',
+  //   },
+  // ];
+
   const levels = [
     {
       value: 'beginner',
-      label: 'Beginner',
+      label: 'Principiante',
     },
     {
       value: 'elementary',
-      label: 'Elementary',
+      label: 'Elemental',
     },
     {
       value: 'lowerIntermediate',
-      label: 'Lower Intermediate',
+      label: 'Intermedio bajo',
     },
     {
       value: 'intermediate',
-      label: 'Intermediate',
+      label: 'Intermedio',
     },
     {
       value: 'upperIntermediate',
-      label: 'Upper Intermediate',
+      label: 'Intermedio alto',
     },
     {
       value: 'advanced',
-      label: 'Advanced',
+      label: 'Avanzado',
     },
   ];
 

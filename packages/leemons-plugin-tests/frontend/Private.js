@@ -9,7 +9,7 @@ const TestsEdit = loadable(() => import('./src/pages/private/tests/Edit'));
 const TestsDetail = loadable(() => import('./src/pages/private/tests/Detail'));
 const QuestionBanksList = loadable(() => import('./src/pages/private/questions-banks/List'));
 const QuestionBankDetail = loadable(() => import('./src/pages/private/questions-banks/Detail'));
-const StudentInstance = loadable(() => import('./src/pages/private/tests/StudentInstance'));
+const StudentInstance = loadable(() => import('./src/pages/private/tests/StudentInstance/index'));
 
 export default function Private() {
   const { path } = useRouteMatch();

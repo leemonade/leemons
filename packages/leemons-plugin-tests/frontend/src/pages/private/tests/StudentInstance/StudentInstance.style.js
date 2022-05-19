@@ -11,15 +11,18 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
   mainContent: {
     display: 'flex',
     height: isFirstStep ? 'calc(75vh - 16px)' : 'calc(100% - 60px)',
+    backgroundColor: isFirstStep ? theme.colors.uiBackground01 : theme.colors.uiBackground02,
   },
-  verticalStepper: { width: 232 },
+  verticalStepper: { width: 232, backgroundColor: theme.colors.uiBackground01 },
   pages: {
     flex: 1,
     display: 'flex',
   },
   loremIpsum: {
     paddingTop: 16,
-    paddingInline: '10%',
+    paddingLeft: theme.spacing[10],
+    paddingRight: theme.spacing[10],
+    width: '100%',
   },
   resources: {
     padding: 16,
@@ -30,6 +33,10 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
     paddingTop: 24,
     paddingBottom: 40,
     fontSize: 18,
+  },
+  statementText: {
+    paddingTop: 24,
+    paddingBottom: 40,
   },
   mainText: {
     display: 'block',
@@ -49,8 +56,19 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
   },
   continueButton: {
     display: 'flex',
+    justifyContent: 'space-between',
+    gap: theme.spacing[5],
+    marginBottom: theme.spacing[8],
+  },
+  continueButtonFirst: {
+    display: 'flex',
     justifyContent: 'end',
     gap: theme.spacing[5],
+    marginBottom: theme.spacing[8],
+  },
+  limitedWidthStep: {
+    width: '100%',
+    maxWidth: theme.breakpoints.md,
   },
   preDoing: {
     width: '100%',
