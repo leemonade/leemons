@@ -19,6 +19,7 @@ const assignableInstanceValidationObject = {
             {
               type: 'string',
               format: 'date-time',
+              nullable: true,
             },
             {
               instanceof: 'Date',

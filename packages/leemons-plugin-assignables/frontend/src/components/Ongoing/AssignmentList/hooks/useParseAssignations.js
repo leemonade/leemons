@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import _ from 'lodash';
 import { LocaleDate, LocaleDuration, useApi } from '@common';
 import { Badge, Text, ContextContainer, ActionButton } from '@bubbles-ui/components';
-import { ViewOnIcon } from '@bubbles-ui/icons/outline';
+import { ViewOnIcon, ViewOffIcon } from '@bubbles-ui/icons/outline';
 import dayjs from 'dayjs';
 import globalContext from '../../../../contexts/globalContext';
 import getClassData from '../../../../helpers/getClassData';
@@ -117,6 +117,21 @@ function TeacherActions({ id }) {
   return <ActionButton icon={<ViewOnIcon />} onClick={redirectToInstance} />;
 }
 
+function StudentActions({ id, role, late, submitted }) {
+  const history = useHistory();
+  const url = useMemo(() => role.studentDetailUrl.replace(':id', id), [id, role?.studentDetailUrl]);
+
+  const redirectToInstance = useCallback(() => history.push(url), [history, url]);
+
+  if (late && !submitted) {
+    return <ActionButton icon={<ViewOffIcon />} disabled />;
+  }
+  if (!submitted) {
+    return <ActionButton icon={<ViewOnIcon />} onClick={redirectToInstance} />;
+  }
+  return <p>See correction</p>;
+}
+
 async function parseAssignationForTeacherView(instance) {
   const parsedDates = parseDates(instance.dates, ['start', 'deadline']);
   const classData = await getClassData(instance.classes);
@@ -146,6 +161,7 @@ async function parseAssignationForStudentView(assignation) {
   const classData = await getClassData(instance.classes);
   const timeReference = dayjs().diff(dayjs(instance.dates.deadline), 'seconds');
   const timeReferenceColor = getTimeReferenceColor(instance.dates.deadline);
+  const role = instance.assignable.roleDetails;
 
   return {
     ...instance,
@@ -156,6 +172,14 @@ async function parseAssignationForStudentView(assignation) {
     },
     status,
     subject: classData.name,
+    actions: (
+      <StudentActions
+        late={instance.dates.deadline && timeReference <= 0}
+        submitted={instance.dates.end}
+        id={instance.id}
+        role={role}
+      />
+    ),
     timeReference:
       !instance.dates.deadline || instance.dates.end ? (
         '-'

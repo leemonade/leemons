@@ -15,7 +15,9 @@ import {
   TimeClockCircleIcon,
   CheckCircleIcon,
 } from '@bubbles-ui/icons/outline';
-import { addErrorAlert } from '@layout/alert';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import dayjs from 'dayjs';
+import updateAssignableInstance from '../../../../requests/assignableInstances/updateAssignableInstance';
 import { TaskOngoingListStyles } from './TaskOngoingList.styles';
 import {
   TASK_ONGOING_LIST_DEFAULT_PROPS,
@@ -30,6 +32,46 @@ const TaskOngoingList = ({ instance }) => {
   const [childRef, childRect] = useResizeObserver();
 
   const { classes, cx } = TaskOngoingListStyles({}, { name: 'TaskOngoingList' });
+
+  const onCloseTask = async (closed) => {
+    const newDates = {
+      closed: closed ? new Date() : null,
+    };
+
+    if (dayjs(instance.dates.close).isBefore(dayjs())) {
+      newDates.close = null;
+    }
+
+    try {
+      await updateAssignableInstance({ id: instance.id, dates: newDates });
+
+      let verb = 'closed';
+      if (!closed) {
+        verb = 'opened';
+      }
+      addSuccessAlert(`task ${verb}`);
+    } catch (e) {
+      let verb = 'closing';
+      if (!closed) {
+        verb = 'opening';
+      }
+      addErrorAlert(`Error ${verb} task: ${e.message}`);
+    }
+  };
+
+  const onDeadlineChange = async (deadline) => {
+    const newDates = {
+      deadline,
+    };
+
+    try {
+      await updateAssignableInstance({ id: instance.id, dates: newDates });
+
+      addSuccessAlert(`task deadline changed`);
+    } catch (e) {
+      addErrorAlert(`Error changing deadline: ${e.message}`);
+    }
+  };
 
   return (
     <Box ref={containerRef} className={classes.root}>
@@ -56,8 +98,8 @@ const TaskOngoingList = ({ instance }) => {
         </Button>
         <TaskDeadlineHeader
           {...instanceData.taskDeadlineHeader}
-          onDeadlineChange={() => addErrorAlert('This feature is not implemented yet')}
-          onCloseTask={() => addErrorAlert('This feature is not implemented yet')}
+          onDeadlineChange={onDeadlineChange}
+          onCloseTask={onCloseTask}
           styles={{ position: 'absolute', bottom: 0, left: 0, right: '50%', zIndex: 5 }}
         />
         <HorizontalTimeline

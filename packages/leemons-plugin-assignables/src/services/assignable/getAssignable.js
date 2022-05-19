@@ -43,7 +43,8 @@ module.exports = async function getAssignable(
 
     // EN: Get the role for checking the role ownership.
     // ES: Obtiene el rol para comprobar la propiedad del rol.
-    await getRole.call(this, assignable.role, { transacting });
+    const role = await getRole.call(this, assignable.role, { transacting });
+    assignable.roleDetails = role;
 
     const subjects = await getSubjects(id, { transacting });
 
