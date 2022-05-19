@@ -4,8 +4,8 @@
   "main": "Public.js",
   "license": "MIT",
   "dependencies": {
-    "@bubbles-ui/leemons": "^1.0.35",
-    "@bubbles-ui/components": "^1.0.35",
+    "@bubbles-ui/leemons": "^1.0.36",
+    "@bubbles-ui/components": "^1.0.36",
     "@bubbles-ui/editors": "^1.0.26",
     "js-cookie": "^2.2.1",
     "prop-types": "^15.7.2",
