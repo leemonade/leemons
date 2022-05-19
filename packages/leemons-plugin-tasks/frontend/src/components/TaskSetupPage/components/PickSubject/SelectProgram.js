@@ -1,37 +1,35 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import PropTypes from 'prop-types';
-import { ContextContainer, Box } from '@bubbles-ui/components';
+import { ContextContainer } from '@bubbles-ui/components';
 import { SelectProgram as APSelectProgram } from '@academic-portfolio/components';
-import { SelectCenter } from '@users/components';
+import { getCentersWithToken } from '@users/session';
 
 export default function SelectProgram({ errorMessages, labels, placeholders, required }) {
   const {
     control,
-    watch,
+    getValues,
+    setValue,
     formState: { errors },
   } = useFormContext();
 
-  const centerId = watch('center');
+  const centerId = useMemo(() => {
+    const savedCenter = getValues('center');
+
+    if (savedCenter) {
+      return savedCenter;
+    }
+
+    const centers = getCentersWithToken();
+    const { id } = centers[0];
+    // EN: There should be only one center.
+    // ES: Debe haber solo un centro.
+    setValue('center', id);
+    return id;
+  }, []);
 
   return (
     <ContextContainer direction="row">
-      {/* Center Selector - MUST COME FROM A PREVIOUS SCREEN */}
-      <Box>
-        <Controller
-          control={control}
-          name="center"
-          rules={{ required: required && errorMessages?.center?.required }}
-          render={({ field }) => (
-            <SelectCenter
-              {...field}
-              label={labels?.center}
-              placeholder={placeholders?.center}
-              error={errors?.center}
-            />
-          )}
-        />
-      </Box>
       {/* Program selector */}
       {
         <Controller
