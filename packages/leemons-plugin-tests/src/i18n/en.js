@@ -224,5 +224,7 @@ module.exports = {
     pointsInTotal: 'Total points',
     askForAHint: 'Ask for a hint',
     hint: 'Hint',
+    skipButton: 'Skip',
+    nextButton: 'Next',
   },
 };

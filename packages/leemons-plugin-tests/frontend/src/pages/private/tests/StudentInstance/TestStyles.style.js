@@ -145,6 +145,7 @@ export const TestStyles = createStyles((theme, {}) => ({
     padding: theme.spacing[4],
     textAlign: 'left',
     marginBottom: theme.spacing[6],
+    borderRadius: 4,
   },
   questionTitle: {
     display: 'flex',
@@ -182,5 +183,61 @@ export const TestStyles = createStyles((theme, {}) => ({
     position: 'absolute',
     right: 56,
     top: 28,
+  },
+  questionImageContainer: {
+    backgroundColor: theme.colors.uiBackground02,
+    padding: theme.spacing[4],
+    borderRadius: 4,
+    marginBottom: theme.spacing[4],
+  },
+  questionImage: {
+    maxWidth: '100%',
+    borderRadius: 4,
+  },
+  questionImageBottomMargin: {
+    marginBottom: theme.spacing[4],
+  },
+  questionResponseImageContainer: {
+    border: '1px solid',
+    borderColor: theme.colors.ui01,
+    borderRadius: 4,
+    overflow: 'hidden',
+    cursor: 'pointer',
+    padding: theme.spacing[3],
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+  },
+  questionResponseImageContainerSelected: {
+    borderColor: theme.colors.interactive01d,
+    backgroundColor: theme.colors.interactive01v1,
+  },
+  questionResponseImageTextContent: {
+    paddingTop: theme.spacing[3],
+  },
+  questionResponseImageContent: {
+    width: '100%',
+    position: 'relative',
+    paddingBottom: '100%',
+  },
+  questionResponseImage: {
+    width: '100%',
+    height: '100%',
+    display: 'block',
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    objectFit: 'contain',
+  },
+  questionResponsesContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing[3],
+  },
+  questionResponsesContainerImages: {
+    display: 'grid',
+    flexDirection: 'row',
+    gridTemplateColumns: 'repeat(4, 1fr)',
+    gap: theme.spacing[3],
   },
 }));

@@ -223,5 +223,7 @@ module.exports = {
     pointsInTotal: 'Puntos en total',
     askForAHint: 'Pedir una pista',
     hint: 'Pista',
+    skipButton: 'Omitir',
+    nextButton: 'Siguiente',
   },
 };

@@ -23,7 +23,7 @@ export default function QuestionHeader(props) {
           <Box className={styles.questionStepBar}>
             <Box
               className={styles.questionStepBaInner}
-              style={{ width: `${(store.questionMax / store.questions.length) * 100}%` }}
+              style={{ width: `${((store.questionMax + 1) / store.questions.length) * 100}%` }}
             />
           </Box>
           <Box className={styles.questionStepNumbers}>

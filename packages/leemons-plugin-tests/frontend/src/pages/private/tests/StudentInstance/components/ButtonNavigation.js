@@ -3,7 +3,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@bubbles-ui/icons/outline';
 import PropTypes from 'prop-types';
 import { Box, Button } from '@bubbles-ui/components';
 
-export function ButtonNavigation({ classes, t, isFirstStep, prevStep, nextStep }) {
+export function ButtonNavigation({ classes, t, isFirstStep, prevStep, nextStep, nextLabel }) {
   return (
     <>
       <Box className={isFirstStep ? classes.continueButtonFirst : classes.continueButton}>
@@ -29,7 +29,7 @@ export function ButtonNavigation({ classes, t, isFirstStep, prevStep, nextStep }
           compact
           onClick={nextStep}
         >
-          {t('next')}
+          {nextLabel || t('next')}
         </Button>
       </Box>
     </>

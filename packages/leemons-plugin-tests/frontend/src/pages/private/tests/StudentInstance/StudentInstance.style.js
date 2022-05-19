@@ -58,11 +58,13 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
     display: 'flex',
     justifyContent: 'space-between',
     gap: theme.spacing[5],
+    marginBottom: theme.spacing[8],
   },
   continueButtonFirst: {
     display: 'flex',
     justifyContent: 'end',
     gap: theme.spacing[5],
+    marginBottom: theme.spacing[8],
   },
   limitedWidthStep: {
     width: '100%',
