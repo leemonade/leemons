@@ -85,15 +85,18 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
         if (tags) assetsToSave.tags = tags;
         const assetService = leemons.getPlugin('leebrary').services.assets;
 
-        if (questionBank.asset) {
+        if (id) {
+          const q = await table.questionsBanks.findOne({ id }, { columns: ['asset'], transacting });
           // -- Asset update
-          assetsToSave.id = questionBank.asset;
+          assetsToSave.id = q.asset;
+
           const asset = await assetService.update(assetsToSave, {
             upgrade: true,
             published,
             userSession,
             transacting,
           });
+
           questionBank = await table.questionsBanks.update(
             { id: questionBank.id },
             { asset: asset.id },

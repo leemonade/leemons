@@ -5,7 +5,12 @@ export {
 } from './questionsBanks';
 
 export {
+  getUserQuestionResponses as getUserQuestionResponsesRequest,
+  setQuestionResponse as setQuestionResponseRequest,
+  setInstanceTimestamp as setInstanceTimestampRequest,
   listTests as listTestsRequest,
   saveTest as saveTestRequest,
   getTest as getTestRequest,
 } from './tests';
+
+export { getQuestionByIds as getQuestionByIdsRequest } from './questions';

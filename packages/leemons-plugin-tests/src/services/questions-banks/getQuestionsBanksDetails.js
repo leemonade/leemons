@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const { table } = require('../tables');
+const { getByIds } = require('../questions');
 
 async function getQuestionsBanksDetails(id, { userSession, transacting, getAssets = true } = {}) {
   // Check is userSession is provided
@@ -14,15 +15,18 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
     { transacting }
   );
   const questionBankIds = _.map(questionsBanks, 'id');
+  const questionIds = await table.questions.find(
+    { questionBank_$in: questionBankIds },
+    {
+      columns: ['id'],
+      transacting,
+    }
+  );
   const [questions, questionBankSubjects, questionBankCategories] = await Promise.all([
-    table.questions.find({ questionBank_$in: questionBankIds }, { transacting }),
+    getByIds(_.map(questionIds, 'id'), { userSession, transacting }),
     table.questionBankSubjects.find({ questionBank_$in: questionBankIds }, { transacting }),
     table.questionBankCategories.find({ questionBank_$in: questionBankIds }, { transacting }),
   ]);
-
-  _.forEach(questions, (question) => {
-    question.properties = JSON.parse(question.properties);
-  });
 
   const promises = [];
   if (questionsBanks.length) {
@@ -41,23 +45,7 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
           transacting,
         })
       );
-
-      const assetIds = [];
-      _.forEach(questions, (question) => {
-        if (question.properties?.image) {
-          assetIds.push(question.properties.image);
-        }
-      });
-
-      promises.push(
-        assetService.getByIds(assetIds, {
-          withFiles: true,
-          userSession,
-          transacting,
-        })
-      );
     } else {
-      promises.push(Promise.resolve([]));
       promises.push(Promise.resolve([]));
     }
   } else {
@@ -65,20 +53,7 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
     promises.push(Promise.resolve([]));
   }
 
-  if (questions.length) {
-    promises.push(
-      tagsService.getValuesTags(_.map(questions, 'id'), {
-        type: 'plugins.tests.questions',
-        transacting,
-      })
-    );
-  } else {
-    promises.push(Promise.resolve([]));
-  }
-
-  const [questionBanksTags, questionBanksAssets, questionAssets, questionsTags] = await Promise.all(
-    promises
-  );
+  const [questionBanksTags, questionBanksAssets] = await Promise.all(promises);
 
   _.forEach(questionsBanks, (questionBank, i) => {
     questionBank.tags = questionBanksTags[i];
@@ -90,14 +65,6 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
       questionBank.file = questionBanksAssets[i].file;
       questionBank.tags = questionBanksAssets[i].tags;
       questionBank.cover = questionBanksAssets[i].cover;
-    }
-  });
-
-  const questionAssetsById = _.keyBy(questionAssets, 'id');
-  _.forEach(questions, (question, i) => {
-    question.tags = questionsTags[i];
-    if (question.properties?.image) {
-      question.properties.image = questionAssetsById[question.properties.image];
     }
   });
 

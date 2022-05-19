@@ -16,6 +16,8 @@ const ImagePicker = ({
   styles,
   className,
   onChange = () => {},
+  readonly,
+  disabled,
   ...props
 }) => {
   const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
@@ -78,7 +80,7 @@ const ImagePicker = ({
   return (
     <Box {...{ styles, className }}>
       <Stack direction="row" spacing={3}>
-        {!assetUrl && (
+        {!assetUrl && !readonly && !disabled && (
           <Button variant={'outline'} onClick={() => setShowAssetDrawer(true)}>
             {formLabels.search}
           </Button>
@@ -90,6 +92,8 @@ const ImagePicker = ({
           }}
           previewURL={assetUrl}
           onChange={onChange}
+          readonly={readonly}
+          disabled={disabled}
         />
       </Stack>
 
@@ -119,6 +123,8 @@ ImagePicker.propTypes = {
     uploadButton: PropTypes.string,
     search: PropTypes.string,
   }),
+  readonly: PropTypes.bool,
+  disabled: PropTypes.bool,
   value: PropTypes.any,
   onChange: PropTypes.func,
   styles: PropTypes.object,

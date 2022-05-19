@@ -1,15 +1,16 @@
+const _ = require('lodash');
 const { table } = require('../tables');
 
 async function updateQuestion(data, { userSession, published, transacting: _transacting } = {}) {
   const tagsService = leemons.getPlugin('common').services.tags;
   return global.utils.withTransaction(
     async (transacting) => {
-      const { id, tags, properties, ...props } = data;
+      const { id, tags, clues, properties, ...props } = data;
+      const question = await table.questions.findOne({ id });
+      question.properties = JSON.parse(question.properties);
 
       // Si el tipo es mapa, comprobamos si ya existia un asset, si ya existia lo actualizamos, si no existia lo creamos.
       if (data.type === 'map') {
-        const question = await table.questions.findOne({ id });
-        question.properties = JSON.parse(question.properties);
         if (question.properties.image) {
           const asset = await leemons.getPlugin('leebrary').services.assets.update(
             {
@@ -40,11 +41,88 @@ async function updateQuestion(data, { userSession, published, transacting: _tran
           properties.image = asset.id;
         }
       }
+
+      // --- Question image
+      if (question.questionImage) {
+        const asset = await leemons.getPlugin('leebrary').services.assets.update(
+          {
+            id: question.questionImage,
+            name: `Image question - ${question.id}`,
+            cover: data.questionImage,
+            description: data.questionImageDescription,
+          },
+          {
+            published,
+            userSession,
+            transacting,
+          }
+        );
+
+        properties.questionImage = asset.id;
+      } else {
+        const asset = await leemons.getPlugin('leebrary').services.assets.add(
+          {
+            name: `Image question - ${question.id}`,
+            cover: data.questionImage,
+            description: data.questionImageDescription,
+          },
+          {
+            published,
+            userSession,
+            transacting,
+          }
+        );
+        properties.questionImage = asset.id;
+      }
+
+      if (data.type === 'mono-response') {
+        const removePromises = [];
+        _.forEach(question.properties.responses, (response) => {
+          if (response.value.image) {
+            removePromises.push(
+              leemons.getPlugin('leebrary').services.assets.remove(response.value.image, {
+                userSession,
+                transacting,
+              })
+            );
+          }
+        });
+
+        await Promise.all(removePromises);
+
+        if (properties.withImages) {
+          const promises = [];
+          _.forEach(properties.responses, (response, index) => {
+            promises.push(
+              leemons.getPlugin('leebrary').services.assets.add(
+                {
+                  name: `Image question Response ${index}`,
+                  cover: response.value.image,
+                  description: response.value.imageDescription,
+                  indexable: true,
+                  public: true, // TODO Cambiar a false despues de hacer la demo
+                },
+                {
+                  published,
+                  userSession,
+                  transacting,
+                }
+              )
+            );
+          });
+          const assets = await Promise.all(promises);
+          _.forEach(properties.responses, (response, index) => {
+            response.value.image = assets[index].id;
+          });
+        }
+      }
+
       const [updatedQuestion] = await Promise.all([
         table.questions.update(
           { id },
           {
             ...props,
+            clues: JSON.stringify(clues),
             properties: JSON.stringify(properties),
           },
           { transacting }

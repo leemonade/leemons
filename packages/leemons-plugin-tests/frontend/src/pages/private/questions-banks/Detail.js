@@ -70,6 +70,7 @@ export default function Detail() {
           // eslint-disable-next-line camelcase
           questionBank: { deleted, deleted_at, created_at, updated_at, ...props },
         } = await getQuestionBankRequest(params.id);
+        console.log(await getQuestionBankRequest(params.id));
         form.reset(props);
       }
     } catch (error) {

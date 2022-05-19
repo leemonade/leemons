@@ -75,4 +75,28 @@ module.exports = [
     authenticated: true,
     allowedPermissions: getPermissions(permissions.tests, ['create', 'update']),
   },
+  {
+    path: '/questions/details',
+    method: 'POST',
+    handler: 'questions.getDetails',
+    authenticated: true,
+  },
+  {
+    path: '/tests/instance/timestamp',
+    method: 'POST',
+    handler: 'tests.setInstanceTimestamp',
+    authenticated: true,
+  },
+  {
+    path: '/tests/instance/question/response',
+    method: 'POST',
+    handler: 'tests.setQuestionResponse',
+    authenticated: true,
+  },
+  {
+    path: '/tests/instance/:id/question/response',
+    method: 'GET',
+    handler: 'tests.getUserQuestionResponses',
+    authenticated: true,
+  },
 ];

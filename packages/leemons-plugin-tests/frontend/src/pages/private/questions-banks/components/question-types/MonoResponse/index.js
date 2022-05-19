@@ -19,6 +19,7 @@ import { ListItemValueRender } from './components/ListItemValueRender';
 
 // eslint-disable-next-line import/prefer-default-export
 export function MonoResponse({ form, t }) {
+  const withImages = form.watch('withImages');
   const explanationInResponses = form.watch('properties.explanationInResponses');
   const splits = t('responsesDescription').split('{{icon}}');
   const responsesDescription = [
@@ -87,6 +88,32 @@ export function MonoResponse({ form, t }) {
           rules={{
             required: t('typeRequired'),
             validate: (a) => {
+              if (withImages) {
+                let needImages = false;
+                console.log(a);
+                forEach(a, ({ value: { image } }) => {
+                  if (!image) {
+                    needImages = true;
+                  }
+                });
+                if (needImages) return t('needImages');
+              } else if (explanationInResponses) {
+                let error = false;
+                forEach(a, ({ value: { response, explanation } }) => {
+                  if (!response || !explanation) {
+                    error = true;
+                  }
+                });
+                if (error) return t('needExplanationAndResponse');
+              } else {
+                let error = false;
+                forEach(a, ({ value: { response } }) => {
+                  if (!response) {
+                    error = true;
+                  }
+                });
+                if (error) return t('needResponse');
+              }
               const item = find(a, { value: { isCorrectResponse: true } });
               return item ? true : t('errorMarkGoodResponse');
             },
@@ -95,7 +122,13 @@ export function MonoResponse({ form, t }) {
             <ListInput
               {...field}
               error={form.formState.errors.properties?.responses}
-              inputRender={<ListInputRender t={t} useExplanation={explanationInResponses} />}
+              inputRender={
+                <ListInputRender
+                  t={t}
+                  useExplanation={explanationInResponses}
+                  withImages={withImages}
+                />
+              }
               listRender={
                 <ListItem
                   itemContainerRender={({ children }) => (
@@ -116,6 +149,7 @@ export function MonoResponse({ form, t }) {
                     <ListItemValueRender
                       t={t}
                       useExplanation={explanationInResponses}
+                      withImages={withImages}
                       toggleHideOnHelp={toggleHideOnHelp}
                       changeCorrectResponse={changeCorrectResponse}
                     />
