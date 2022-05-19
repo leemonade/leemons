@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box } from '@bubbles-ui/components';
 import MonoResponse from './questions/MonoResponse';
+import Map from './questions/Map';
 import QuestionHeader from './QuestionHeader';
 import QuestionValue from './QuestionValue';
 
@@ -10,6 +11,9 @@ export default function Question(props) {
   let child = null;
   if (props.question.type === 'mono-response') {
     child = <MonoResponse {...props} />;
+  }
+  if (props.question.type === 'map') {
+    child = <Map {...props} />;
   }
   React.useEffect(() => {
     if (!store.questionMax || store.questionMax < index) {

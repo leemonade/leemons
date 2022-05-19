@@ -1,15 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, ImageLoader, Text } from '@bubbles-ui/components';
-import { LeebraryImage } from '@leebrary/components';
-import { numberToEncodedLetter } from '@common';
 import { find } from 'lodash';
 import { getQuestionClues } from '../../../helpers/getQuestionClues';
 
 export default function Responses(props) {
   const { styles, question, store, render, cx } = props;
 
-  const currentResponseIndex = store.questionResponses[question.id].properties?.response;
+  const currentResponses = store.questionResponses[question.id].properties?.responses;
 
   const clue = React.useMemo(
     () =>
@@ -19,6 +16,9 @@ export default function Responses(props) {
     [question, store.questionResponses[question.id].clues]
   );
 
+  return null;
+
+  /*
   if (clue && clue.indexs.includes(currentResponseIndex)) {
     store.questionResponses[question.id].properties.response = null;
     render();
@@ -104,6 +104,8 @@ export default function Responses(props) {
       {components}
     </Box>
   );
+
+   */
 }
 
 Responses.propTypes = {

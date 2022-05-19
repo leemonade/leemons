@@ -216,12 +216,12 @@ async function searchTeacherAssignableInstances(query, { userSession, transactin
   const datesFilter = [
     {
       dates: ['close'],
-      max: new Date(),
+      min: new Date(),
       default: true,
     },
     {
       dates: ['closed'],
-      max: new Date(),
+      min: new Date(),
       default: true,
     },
     ...parseDatesQuery(query),
