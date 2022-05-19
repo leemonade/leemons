@@ -9,15 +9,14 @@ module.exports = async function updateDates(type, instance, dates, { transacting
 
   const newDates = _.defaults(dates, currentDates);
 
-  const datesToRemove = _.entries(newDates)
-    .filter(([, date]) => date === null)
-    .map(([name]) => name);
-  const datesToAdd = _.difference(_.keys(newDates), _.keys(currentDates)).reduce(
-    (acc, name) => ({ ...acc, [name]: newDates[name] }),
-    {}
-  );
+  const { diff, object } = getDiff(newDates, currentDates);
 
-  await unregisterDates(type, instance, datesToRemove, { transacting });
+  const changedDates = _.pick(object, diff);
+
+  const datesToRemove = _.pickBy(changedDates, (value) => value === null);
+  const datesToAdd = _.pickBy(changedDates, (value) => value !== null);
+
+  await unregisterDates(type, instance, _.keys(datesToRemove), { transacting });
   await registerDates(type, instance, datesToAdd, { transacting });
 
   return {
