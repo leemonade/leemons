@@ -33,8 +33,8 @@ export default function StudentInstance() {
     loading: true,
     idLoaded: '',
     isFirstStep: true,
-    currentStep: 5,
-    maxNavigatedStep: 5,
+    currentStep: 1,
+    maxNavigatedStep: 1,
   });
 
   const { classes: styles } = TestStyles({}, { name: 'Tests' });
@@ -112,6 +112,7 @@ export default function StudentInstance() {
       store.questionsInfo = calculeInfoValues(
         questions.length,
         evaluationSystem.maxScale.number,
+        evaluationSystem.minScale.number,
         evaluationSystem.minScaleToPromote.number
       );
       store.questions = questions;

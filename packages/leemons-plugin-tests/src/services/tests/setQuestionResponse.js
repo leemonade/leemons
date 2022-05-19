@@ -3,6 +3,7 @@ const dayjs = require('dayjs');
 const duration = require('dayjs/plugin/duration');
 const { table } = require('../tables');
 const { findQuestionResponses } = require('./findQuestionResponses');
+const { calculeUserAgentInstanceNote } = require('./calculeUserAgentInstanceNote');
 
 dayjs.extend(duration);
 
@@ -12,7 +13,7 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
       const { assignations: assignationsService, assignableInstances: assignableInstancesService } =
         leemons.getPlugin('assignables').services;
 
-      const [{ timestamps }, [questionResponse], instance] = await Promise.all([
+      const [{ timestamps, finished }, [questionResponse], instance] = await Promise.all([
         assignationsService.getAssignation(data.instance, userSession.userAgents[0].id, {
           userSession,
           transacting,
@@ -30,6 +31,10 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
           transacting,
         }),
       ]);
+
+      if (finished) {
+        // throw new Error('Assignation finished');
+      }
 
       if (questionResponse) {
         // Check if the data clues is less than the question response
@@ -64,7 +69,7 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
         ],
       };
 
-      return table.userAgentAssignableInstanceResponses.set(
+      const result = await table.userAgentAssignableInstanceResponses.set(
         {
           instance: data.instance,
           question: data.question,
@@ -77,6 +82,15 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
         },
         { transacting }
       );
+
+      const note = await calculeUserAgentInstanceNote(data.instance, userSession.userAgents[0].id, {
+        userSession,
+        transacting,
+      });
+
+      console.log(note);
+
+      return result;
     },
     table.userAgentAssignableInstanceResponses,
     _transacting

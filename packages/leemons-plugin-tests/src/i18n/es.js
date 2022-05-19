@@ -202,6 +202,8 @@ module.exports = {
     questions: 'Preguntas',
     perQuestion: 'Cada pregunta',
     totalPoints: 'Puntuación total',
+    minScore: 'Puntuación mínima',
+    maxScore: 'Puntuación máxima',
     minToApprove: 'Min. para aprobar',
     beforeStart: 'Antes de empezar',
     withoutPause: 'Sin pausa',
@@ -223,5 +225,9 @@ module.exports = {
     nextButton: 'Siguiente',
     finishButton: 'Finalizar',
     selectResponse: 'Seleccionar respuesta',
+    blankQuestions:
+      '<strong>Puedes dejar preguntas en blanco</strong> y estas no puntuarán (es decir, puntúan 0)',
+    errorQuestions:
+      'Las <strong>contestaciones erróneas restan el 50%</strong> de su valor, es decir, puntúan {points}',
   },
 };

@@ -56,6 +56,12 @@ export const TestStyles = createStyles((theme, {}) => ({
     paddingBottom: theme.spacing[4],
     backgroundColor: theme.colors.uiBackground02,
   },
+  resumeBoxBig: {
+    width: 335,
+    display: 'flex',
+    gap: theme.spacing[3],
+    textAlign: 'left',
+  },
   resumeNumber: {
     color: theme.colors.text01,
     fontSize: 32,
@@ -66,6 +72,11 @@ export const TestStyles = createStyles((theme, {}) => ({
     color: theme.colors.text01,
     fontSize: theme.fontSizes[1],
     textAlign: 'center',
+  },
+  resumeLabelBig: {
+    width: 230,
+    fontSize: theme.fontSizes[2],
+    textAlign: 'left',
   },
   questionHeader: {
     backgroundColor: theme.colors.uiBackground01,
