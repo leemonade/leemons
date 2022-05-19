@@ -111,11 +111,22 @@ function useAssignmentsColumns() {
   return columns;
 }
 
-export default function AssignmentList() {
+export default function AssignmentList({ closed = false }) {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
 
-  const query = useMemo(() => ({}), []);
+  const query = useMemo(() => {
+    const q = {};
+
+    if (closed) {
+      q.close_min = new Date();
+      q.closed_min = new Date();
+      q.close_default = false;
+      q.closed_default = false;
+    }
+
+    return q;
+  }, []);
 
   const [instances, instancesLoading] = useSearchAssignableInstances(query);
 
