@@ -283,4 +283,8 @@ export const TestStyles = createStyles((theme, {}) => ({
   questionResponseImageContainerClued: {
     cursor: 'not-allowed',
   },
+  mapImageContainer: {
+    marginLeft: -theme.spacing[4],
+    marginRight: -theme.spacing[4],
+  },
 }));
