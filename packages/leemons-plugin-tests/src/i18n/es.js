@@ -221,5 +221,7 @@ module.exports = {
     hint: 'Pista',
     skipButton: 'Omitir',
     nextButton: 'Siguiente',
+    finishButton: 'Finalizar',
+    selectResponse: 'Seleccionar respuesta',
   },
 };

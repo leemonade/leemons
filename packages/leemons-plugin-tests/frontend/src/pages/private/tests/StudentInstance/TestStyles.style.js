@@ -250,6 +250,7 @@ export const TestStyles = createStyles((theme, {}) => ({
     backgroundColor: theme.colors.uiBackground01,
     zIndex: 1,
     opacity: 0.5,
+    cursor: 'not-allowed',
   },
   disableResponseBgWithOutImage: {
     opacity: 0.75,
@@ -286,5 +287,25 @@ export const TestStyles = createStyles((theme, {}) => ({
   mapImageContainer: {
     marginLeft: -theme.spacing[4],
     marginRight: -theme.spacing[4],
+  },
+  mapResponsesContainer: {
+    marginTop: theme.spacing[4],
+    display: 'grid',
+    flexDirection: 'row',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gridGap: theme.spacing[2],
+    columnGap: theme.spacing[6],
+  },
+  mapResponsesContent: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  mapResponsesNumber: {
+    width: '50px',
+    textAlign: 'center',
+  },
+  mapResponsesSelect: {
+    width: '100%',
+    position: 'relative',
   },
 }));

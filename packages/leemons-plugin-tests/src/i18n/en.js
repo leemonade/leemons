@@ -226,5 +226,7 @@ module.exports = {
     hint: 'Hint',
     skipButton: 'Skip',
     nextButton: 'Next',
+    finishButton: 'Finish',
+    selectResponse: 'Select response',
   },
 };

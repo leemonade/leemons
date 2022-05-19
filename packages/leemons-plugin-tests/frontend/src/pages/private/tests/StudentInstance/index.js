@@ -64,6 +64,12 @@ export default function StudentInstance() {
     render();
   }
 
+  async function finishStep() {
+    const { timestamps } = await setInstanceTimestampRequest(params.id, 'end');
+    store.timestamps = timestamps;
+    render();
+  }
+
   function goToStep(step) {
     if (step <= store.maxNavigatedStep) {
       store.currentStep = step;
@@ -218,6 +224,7 @@ export default function StudentInstance() {
       });
 
       forEach(store.questions, (question, index) => {
+        const isLast = index === store.questions.length - 1;
         steps.push({
           label: htmlToText(question.question),
           status: 'OK',
@@ -225,8 +232,16 @@ export default function StudentInstance() {
             <Question
               {...commonProps}
               {...testProps}
+              nextStep={(e) => {
+                if (isLast) {
+                  finishStep(e);
+                } else {
+                  nextStep(e);
+                }
+              }}
               question={question}
               index={index}
+              isLast={isLast}
               saveQuestion={() => saveQuestion(question.id)}
             />
           ),
@@ -236,11 +251,6 @@ export default function StudentInstance() {
 
       return {
         data: steps,
-        calificationProps: {
-          label: 'Aprobado',
-          grade: 9,
-          minimumGrade: 5,
-        },
       };
     }
     return {};
