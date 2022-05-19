@@ -116,7 +116,7 @@ module.exports = {
       sharedWith: 'Shared with',
       sharedViewAll: 'View all',
       sharedWithEverybody: 'Shared with everybody',
-      showPublic: 'Show public assets'
+      showPublic: 'Show public assets',
     },
   },
 };

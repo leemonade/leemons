@@ -2,9 +2,8 @@ const permissionsPrefix = 'plugins.tasks';
 
 const permissionNames = {
   tasks: `${permissionsPrefix}.tasks`,
+  profiles: `${permissionsPrefix}.profiles`,
   library: `${permissionsPrefix}.library`,
-  ongoing: `${permissionsPrefix}.ongoing`,
-  history: `${permissionsPrefix}.history`,
 };
 
 const permissions = [
@@ -14,25 +13,20 @@ const permissions = [
     localizationName: { es: 'Tareas', en: 'Tasks' },
   },
   {
+    permissionName: permissionNames.profiles,
+    actions: ['view', 'update', 'create', 'admin'],
+    localizationName: {
+      es: 'Tareas - Perfiles',
+      en: 'Tasks - Profiles',
+    },
+  },
+  {
     permissionName: permissionNames.library,
     actions: ['view', 'admin'],
     localizationName: {
       es: 'Tareas - Librería',
       en: 'Tasks - Library',
     },
-  },
-  {
-    permissionName: permissionNames.ongoing,
-    actions: ['view', 'admin'],
-    localizationName: {
-      es: 'Tareas - En curso',
-      en: 'Tasks - Ongoing',
-    },
-  },
-  {
-    permissionName: permissionNames.history,
-    actions: ['view', 'admin'],
-    localizationName: { es: 'Tareas - Historial', en: 'Tasks - History' },
   },
 ];
 
@@ -55,6 +49,24 @@ const permissionsBundles = {
       actions: ['delete', 'admin'],
     },
   },
+  profiles: {
+    create: {
+      permission: permissionNames.profiles,
+      actions: ['create', 'admin'],
+    },
+    view: {
+      permission: permissionNames.profiles,
+      actions: ['view', 'admin'],
+    },
+    update: {
+      permission: permissionNames.profiles,
+      actions: ['update', 'admin'],
+    },
+    delete: {
+      permission: permissionNames.profiles,
+      actions: ['delete', 'admin'],
+    },
+  },
   library: {
     create: {
       permission: permissionNames.tasks,
@@ -71,26 +83,6 @@ const permissionsBundles = {
     delete: {
       permission: permissionNames.tasks,
       actions: ['delete', 'admin'],
-    },
-  },
-  ongoing: {
-    view: {
-      permission: permissionNames.ongoing,
-      actions: ['view', 'admin'],
-    },
-    update: {
-      permission: permissionNames.tasks,
-      actions: ['update', 'admin'],
-    },
-  },
-  history: {
-    view: {
-      permission: permissionNames.history,
-      actions: ['view', 'admin'],
-    },
-    update: {
-      permission: permissionNames.tasks,
-      actions: ['update', 'admin'],
     },
   },
 };
@@ -128,7 +120,7 @@ const menuItems = [
     },
     permissions: [
       {
-        permissionName: permissionNames.tasks,
+        permissionName: permissionNames.profiles,
         actionNames: ['view', 'admin'],
       },
     ],
@@ -146,8 +138,8 @@ const menuItems = [
     },
     permissions: [
       {
-        permissionName: permissionNames.tasks,
-        actionNames: ['admin'],
+        permissionName: permissionNames.profiles,
+        actionNames: ['view', 'admin'],
       },
     ],
   },
@@ -166,46 +158,6 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.library,
-        actionNames: ['view', 'admin'],
-      },
-    ],
-  },
-  // Ongoing
-  {
-    item: {
-      key: 'ongoing',
-      order: 4,
-      parentKey: 'tasks',
-      url: '/private/tasks/ongoing',
-      label: {
-        en: 'Ongoing',
-        es: 'En curso',
-      },
-      disabled: true,
-    },
-    permissions: [
-      {
-        permissionName: permissionNames.ongoing,
-        actionNames: ['view', 'admin'],
-      },
-    ],
-  },
-  // History
-  {
-    item: {
-      key: 'history',
-      order: 5,
-      parentKey: 'tasks',
-      url: '/private/tasks/history',
-      label: {
-        en: 'History',
-        es: 'Historial',
-      },
-      disabled: true,
-    },
-    permissions: [
-      {
-        permissionName: permissionNames.history,
         actionNames: ['view', 'admin'],
       },
     ],

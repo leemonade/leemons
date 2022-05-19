@@ -171,7 +171,7 @@ const menuItems = [
     },
     permissions: [
       {
-        permissionName: permissionNames.portfolio,
+        permissionName: permissionNames.profiles,
         actionNames: ['view', 'admin'],
       },
     ],
