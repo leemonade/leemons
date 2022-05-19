@@ -1,5 +1,13 @@
 import React from 'react';
-import { Box, Button, HorizontalTimeline, Text, ScoresBar, COLORS } from '@bubbles-ui/components';
+import {
+  Box,
+  Button,
+  HorizontalTimeline,
+  Text,
+  ScoresBar,
+  COLORS,
+  useResizeObserver,
+} from '@bubbles-ui/components';
 import { HeaderBackground, TaskDeadlineHeader } from '@bubbles-ui/leemons';
 import {
   ChevLeftIcon,
@@ -18,16 +26,23 @@ import useTaskOngoingInstanceParser from './hooks/useTaskOngoingInstanceParser';
 
 const TaskOngoingList = ({ instance }) => {
   const instanceData = useTaskOngoingInstanceParser(instance);
+  const [containerRef, containerRect] = useResizeObserver();
+  const [childRef, childRect] = useResizeObserver();
 
   const { classes, cx } = TaskOngoingListStyles({}, { name: 'TaskOngoingList' });
 
   return (
-    <Box className={classes.root}>
-      <Box className={classes.header}>
+    <Box ref={containerRef} className={classes.root}>
+      <Box
+        ref={childRef}
+        style={{ width: containerRect.width, top: containerRect.top }}
+        className={classes.header}
+      >
         <HeaderBackground
           {...instanceData.headerBackground}
           styles={{ position: 'absolute' }}
           backgroundPosition="center"
+          withOverlay
           blur={10}
         />
         <Button
@@ -58,7 +73,7 @@ const TaskOngoingList = ({ instance }) => {
           }}
         />
       </Box>
-      <Box className={classes.mainContent}>
+      <Box style={{ marginTop: childRect.height }} className={classes.mainContent}>
         <Box className={classes.leftSide}>
           <Text transform="uppercase">Resumen del estado</Text>
           <Box className={classes.leftScoreBarWrapper}>
