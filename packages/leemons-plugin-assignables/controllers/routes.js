@@ -14,6 +14,12 @@ module.exports = [
     handler: 'assignableInstance.get',
     authenticated: true,
   },
+  {
+    method: 'PUT',
+    path: '/assignableInstances/:id',
+    handler: 'assignableInstance.update',
+    authenticated: true,
+  },
   /**
    * Assignations
    */

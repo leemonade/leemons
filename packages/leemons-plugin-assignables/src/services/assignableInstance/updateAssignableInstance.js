@@ -8,6 +8,7 @@ const getAssignableInstance = require('./getAssignableInstance');
 const getUserPermission = require('./permissions/assignableInstance/users/getUserPermission');
 const updateEvent = require('./calendar/updateEvent');
 const registerEvent = require('./calendar/registerEvent');
+const { listAssignableInstanceClasses } = require('../classes');
 
 const updatableFields = [
   'alwaysAvailable',
@@ -70,6 +71,7 @@ module.exports = async function updateAssignableInstance(
   //     changesDetected = true;
   //   }
   // }
+
   if (diff.length) {
     changesDetected = true;
   }
@@ -101,19 +103,19 @@ module.exports = async function updateAssignableInstance(
     cleanObj.curriculum = JSON.stringify(cleanObj.curriculum);
   }
 
-  if (cleanObj.length) {
+  if (Object.keys(cleanObj).length) {
     await assignableInstances.update({ id }, cleanObj, { transacting });
   }
 
   // ----------
 
-  const assignable = 'assinable';
+  const { assignable } = object;
 
   const oldInstance = {
-    event: 'id',
+    event: object.event,
   };
-  const classes = [];
-  const dates = {};
+  const classes = _.map(await listAssignableInstanceClasses(id, { transacting }), 'class');
+  const { dates } = object;
 
   const teachersIdsToRemove = [];
   const studentsIdsToRemove = [];
