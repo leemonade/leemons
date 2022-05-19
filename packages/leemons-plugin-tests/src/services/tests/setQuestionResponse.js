@@ -51,6 +51,19 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
         }
       }
 
+      const a = {
+        assignableInstance: 'instance id',
+        user: 'user agent id',
+        grades: [
+          {
+            subject: 'id',
+            type: 'main',
+            grade: 'la nota',
+            gradedBy: 'auto-graded',
+          },
+        ],
+      };
+
       return table.userAgentAssignableInstanceResponses.set(
         {
           instance: data.instance,

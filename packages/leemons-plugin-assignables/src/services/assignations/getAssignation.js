@@ -42,5 +42,8 @@ module.exports = async function getAssignation(
   assignation.timestamps = await getDates('assignation', assignation.id, { transacting });
   assignation.grades = await getGrade({ assignation: assignation.id }, { transacting });
 
+  // TODO Miguel añadir el resto de logica
+  assignation.finished = !!assignation.timestamps.end;
+
   return assignation;
 };
