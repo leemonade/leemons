@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { CORE_PLUGINS } = require('../../../config/constants');
 const { table } = require('../../tables');
 const { translations } = require('../../translations');
 const { validateNotExistMenuItem } = require('../../validations/exists');
@@ -78,6 +79,12 @@ async function add(
 
       // Check if the MENU ITEM exists
       await validateExistMenuItem(menuKey, key, { transacting });
+
+      // TODO: This CORE_PLUGIN Array must come from leemons core
+      if (CORE_PLUGINS.includes(this.calledFrom)) {
+        // eslint-disable-next-line no-param-reassign
+        order = _order;
+      }
 
       // Check if the MENU ITEM PARENT exists
       if (parentKey) {

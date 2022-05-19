@@ -142,6 +142,7 @@ const menuItems = [
   // Main
   {
     item: {
+      order: 4,
       key: 'portfolio',
       iconSvg: '/public/academic-portfolio/menu-icon.svg',
       activeIconSvg: '/public/academic-portfolio/menu-icon.svg',
