@@ -240,4 +240,5 @@ export const TestStyles = createStyles((theme, {}) => ({
     gridTemplateColumns: 'repeat(4, 1fr)',
     gap: theme.spacing[3],
   },
+  disableResponse: {},
 }));

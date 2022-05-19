@@ -3,11 +3,25 @@ import PropTypes from 'prop-types';
 import { Box, Text } from '@bubbles-ui/components';
 import { LeebraryImage } from '@leebrary/components';
 import { numberToEncodedLetter } from '@common';
+import { find } from 'lodash';
+import { getQuestionClues } from '../../../helpers/getQuestionClues';
 
 export default function Responses(props) {
   const { styles, question, store, render, cx } = props;
 
   const currentResponseIndex = store.questionResponses[question.id].properties?.response;
+
+  let clue = React.useMemo(
+    () =>
+      find(getQuestionClues(question, store.questionResponses[question.id].clues), {
+        type: 'hide-response',
+      }),
+    [question, store.questionResponses[question.id].clues]
+  );
+
+  clue = {
+    indexs: [1],
+  };
 
   async function markResponse(index) {
     if (!store.questionResponses[question.id].properties) {
@@ -24,6 +38,14 @@ export default function Responses(props) {
     }
     return (
       <Box key={index} className={classContainer} onClick={() => markResponse(index)}>
+        {clue && clue.indexs.includes(index) ? (
+          <Box className={styles.disableResponse}>
+            <Text className={styles.questionResponseImageClueText}>
+              {numberToEncodedLetter(index + 1)}
+            </Text>
+          </Box>
+        ) : null}
+
         {question.withImages ? (
           <>
             <Box className={styles.questionResponseImageContent}>
