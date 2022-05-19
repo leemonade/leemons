@@ -17,7 +17,7 @@ module.exports = {
       },
     },
     grade: {
-      type: 'uuid',
+      type: 'float',
       options: {
         notNull: true,
       },

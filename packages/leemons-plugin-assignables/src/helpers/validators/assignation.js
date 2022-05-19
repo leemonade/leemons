@@ -48,8 +48,7 @@ const assignationObject = {
             nullable: false,
           },
           grade: {
-            type: 'string',
-            format: 'uuid',
+            type: 'number',
             nullable: false,
           },
           gradedBy: {
