@@ -33,8 +33,8 @@ export default function StudentInstance() {
     loading: true,
     idLoaded: '',
     isFirstStep: true,
-    currentStep: 0,
-    maxNavigatedStep: 0,
+    currentStep: 3,
+    maxNavigatedStep: 3,
   });
 
   const { classes: styles } = TestStyles({}, { name: 'Tests' });

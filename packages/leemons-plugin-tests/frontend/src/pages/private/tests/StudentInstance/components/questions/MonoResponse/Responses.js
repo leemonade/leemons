@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Text } from '@bubbles-ui/components';
+import { Box, ImageLoader, Text } from '@bubbles-ui/components';
 import { LeebraryImage } from '@leebrary/components';
 import { numberToEncodedLetter } from '@common';
 import { find } from 'lodash';
@@ -11,7 +11,7 @@ export default function Responses(props) {
 
   const currentResponseIndex = store.questionResponses[question.id].properties?.response;
 
-  let clue = React.useMemo(
+  const clue = React.useMemo(
     () =>
       find(getQuestionClues(question, store.questionResponses[question.id].clues), {
         type: 'hide-response',
@@ -19,9 +19,10 @@ export default function Responses(props) {
     [question, store.questionResponses[question.id].clues]
   );
 
-  clue = {
-    indexs: [1],
-  };
+  if (clue && clue.indexs.includes(currentResponseIndex)) {
+    store.questionResponses[question.id].properties.response = null;
+    render();
+  }
 
   async function markResponse(index) {
     if (!store.questionResponses[question.id].properties) {
@@ -36,14 +37,38 @@ export default function Responses(props) {
     if (index === currentResponseIndex) {
       classContainer = cx(classContainer, styles.questionResponseImageContainerSelected);
     }
+    let classDisableBg = styles.disableResponseBg;
+    let classDisableIcon = styles.disableResponseIcon;
+    if (!question.withImages) {
+      classDisableBg = cx(classDisableBg, styles.disableResponseBgWithOutImage);
+      classDisableIcon = cx(classDisableIcon, styles.disableResponseIconWithOutImage);
+    }
+    const clued = clue && clue.indexs.includes(index);
+    if (clued) {
+      classContainer = cx(classContainer, styles.questionResponseImageContainerClued);
+    }
     return (
-      <Box key={index} className={classContainer} onClick={() => markResponse(index)}>
-        {clue && clue.indexs.includes(index) ? (
-          <Box className={styles.disableResponse}>
-            <Text className={styles.questionResponseImageClueText}>
-              {numberToEncodedLetter(index + 1)}
-            </Text>
-          </Box>
+      <Box
+        key={index}
+        className={classContainer}
+        onClick={() => {
+          if (!clued) {
+            markResponse(index);
+          }
+        }}
+      >
+        {clued ? (
+          <>
+            <Box className={classDisableBg} />
+            <Box className={classDisableIcon}>
+              <ImageLoader src={`/public/tests/clue-on.svg`} />
+            </Box>
+            {question.withImages ? (
+              <Box className={styles.disableResponseImage}>
+                <ImageLoader src={`/public/tests/hint-image.svg`} />
+              </Box>
+            ) : null}
+          </>
         ) : null}
 
         {question.withImages ? (
