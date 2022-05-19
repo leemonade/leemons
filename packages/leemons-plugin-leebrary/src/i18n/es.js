@@ -110,7 +110,9 @@ module.exports = {
       removeSuccess: 'Recurso eliminado con éxito',
       pinnedSuccess: 'Recurso anclado con éxito',
       unpinnedSuccess: 'Recurso desanclado con éxito',
-      nothingFound: 'No se encontraron recursos',
+      listEmpty: 'No hay ningún recurso disponible',
+      listEmptyDescription:
+        'Puedes subir archivos multi-media de cualquier formato y guardar tus enlaces favoritos para tenerlos siempre disponibles.',
       copy: 'Copiar',
       copied: 'Copiado',
       sharedWith: 'Compartido con',

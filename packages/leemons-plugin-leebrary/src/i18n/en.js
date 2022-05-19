@@ -110,7 +110,9 @@ module.exports = {
       removeSuccess: 'Asset successfully removed',
       pinnedSuccess: 'Asset successfully pinned',
       unpinnedSuccess: 'Asset successfully unpinned',
-      nothingFound: 'No assets found',
+      listEmpty: 'No assets found',
+      listEmptyDescription:
+        'You can upload multi-media files of any format and save your favorite links to have them always available.',
       copy: 'Copy',
       copied: 'Copied',
       sharedWith: 'Shared with',

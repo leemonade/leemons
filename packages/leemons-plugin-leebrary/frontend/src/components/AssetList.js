@@ -40,6 +40,8 @@ import { AssetThumbnail } from './AssetThumbnail';
 import { prepareAsset } from '../helpers/prepareAsset';
 import { prepareAssetType } from '../helpers/prepareAssetType';
 import { PermissionsData } from './AssetSetup/PermissionsData';
+import { ListEmpty } from './ListEmpty';
+import { SearchEmpty } from './SearchEmpty';
 
 function getLocale(session) {
   return session ? session.locale : navigator?.language || 'en';
@@ -73,6 +75,8 @@ const AssetList = ({
   onSearch,
   pinned,
   paperProps,
+  emptyComponent,
+  searchEmptyComponent,
   onSelectItem = () => {},
   onEditItem = () => {},
   onTypeChange = () => {},
@@ -491,6 +495,14 @@ const AssetList = ({
     return {};
   }, [translations]);
 
+  const getEmptyState = () => {
+    if(searchDebounced && !isEmpty(searchDebounced)) {
+      return searchEmptyComponent || emptyComponent || <SearchEmpty t={t} />
+    } 
+
+    return emptyComponent || <ListEmpty t={t} />
+  }
+
   // ·········································································
   // RENDER
 
@@ -598,17 +610,7 @@ const AssetList = ({
           )}
           {!loading && isEmpty(serverData?.items) && (
             <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
-              <Stack
-                alignItems="center"
-                direction="column"
-                spacing={2}
-                sx={(theme) => ({ color: theme.colors.text05 })}
-              >
-                <CommonFileSearchIcon style={{ fontSize: 24 }} />
-                <Title order={4} color="soft">
-                  {t('labels.nothingFound')}
-                </Title>
-              </Stack>
+              {getEmptyState()}
             </Stack>
           )}
         </Box>
@@ -695,6 +697,8 @@ AssetList.propTypes = {
   pinned: PropTypes.bool,
   canShowPublicToggle: PropTypes.bool,
   paperProps: PropTypes.object,
+  emptyComponent: PropTypes.element,
+  searchEmptyComponent: PropTypes.element,
 };
 
 export { AssetList };

@@ -146,8 +146,8 @@ async function events(isInstalled) {
       async () => {
         try {
           console.log('MVP - Iniciando el plugin de Tests');
-          config.tests = await initTests(config);
-          leemons.events.emit('init-tests', config.tests);
+          // config.tests = await initTests(config);
+          // leemons.events.emit('init-tests', config.tests);
         } catch (e) {
           console.error(e);
         }
