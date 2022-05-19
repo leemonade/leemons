@@ -496,12 +496,12 @@ const AssetList = ({
   }, [translations]);
 
   const getEmptyState = () => {
-    if(searchDebounced && !isEmpty(searchDebounced)) {
-      return searchEmptyComponent || emptyComponent || <SearchEmpty t={t} />
-    } 
+    if (searchDebounced && !isEmpty(searchDebounced)) {
+      return searchEmptyComponent || emptyComponent || <SearchEmpty t={t} />;
+    }
 
-    return emptyComponent || <ListEmpty t={t} />
-  }
+    return emptyComponent || <ListEmpty t={t} />;
+  };
 
   // ·········································································
   // RENDER

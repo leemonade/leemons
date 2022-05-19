@@ -130,7 +130,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.rules,
-        actionNames: ['view', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },
@@ -149,7 +149,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.rules,
-        actionNames: ['view', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },
@@ -169,7 +169,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.evaluations,
-        actionNames: ['view', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },
@@ -189,7 +189,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.promotions,
-        actionNames: ['view', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },
@@ -209,7 +209,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.dependencies,
-        actionNames: ['view', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },

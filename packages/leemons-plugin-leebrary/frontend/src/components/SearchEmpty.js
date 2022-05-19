@@ -1,25 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Stack, Title } from '@bubbles-ui/components';
-import { CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
+import { Stack, Title, ImageLoader, Box, Paragraph } from '@bubbles-ui/components';
 
-const SeachEmpty = ({ t }) => (
-  <Stack
-    alignItems="center"
-    direction="column"
-    spacing={2}
-    sx={(theme) => ({ color: theme.colors.text05 })}
-  >
-    <CommonFileSearchIcon style={{ fontSize: 24 }} />
-    <Title order={4} color="soft">
-      {t('labels.nothingFound')}
-    </Title>
+const SearchEmpty = ({ t }) => (
+  <Stack alignItems="center" justifyContent="center" direction="column" spacing={5}>
+    <Box style={{ maxWidth: 350, textAlign: 'center' }}>
+      <Title order={3}>{t('labels.searchListEmpty')}</Title>
+    </Box>
+    <ImageLoader src="/public/leebrary/search-empty.png" height={200} />
+    <Box style={{ maxWidth: 350 }}>
+      <Paragraph align="center">{t('labels.searchListEmptyDescription')}</Paragraph>
+    </Box>
   </Stack>
 );
 
-SeachEmpty.propTypes = {
+SearchEmpty.propTypes = {
   t: PropTypes.func.isRequired,
 };
 
-export { SeachEmpty };
-export default SeachEmpty;
+export { SearchEmpty };
+export default SearchEmpty;

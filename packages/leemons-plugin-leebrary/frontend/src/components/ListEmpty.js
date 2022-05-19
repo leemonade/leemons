@@ -1,18 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Stack, Title, ImageLoader, Paragraph, Text } from '@bubbles-ui/components';
-import { CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
+import { Stack, Title, ImageLoader, Paragraph, Box } from '@bubbles-ui/components';
 
 const ListEmpty = ({ t }) => (
-  <Stack
-    alignItems="center"
-    direction="column"
-    spacing={4}
-    sx={(theme) => ({ color: theme.colors.text05 })}
-  >
-    <Title order={4}>{t('labels.listEmpty')}</Title>
+  <Stack alignItems="center" justifyContent="center" direction="column" spacing={5}>
+    <Title order={3}>{t('labels.listEmpty')}</Title>
     <ImageLoader src="/public/leebrary/empty.png" height={200} />
-    <Paragraph>{t('labels.listEmptyDescription')}</Paragraph>
+    <Box style={{ maxWidth: 350 }}>
+      <Paragraph align="center">{t('labels.listEmptyDescription')}</Paragraph>
+    </Box>
   </Stack>
 );
 

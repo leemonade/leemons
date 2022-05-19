@@ -23,7 +23,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: `${pluginName}.curriculum`,
-        actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },
@@ -40,7 +40,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: `${pluginName}.curriculum`,
-        actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+        actionNames: ['create', 'update', 'admin'],
       },
     ],
   },

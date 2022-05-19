@@ -79,11 +79,11 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.questionBanks,
-        actionNames: ['view', 'create', 'update', 'delete', 'admin'],
+        actionNames: ['admin'],
       },
       {
         permissionName: permissionNames.tests,
-        actionNames: ['view', 'create', 'update', 'delete', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },
@@ -102,7 +102,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.tests,
-        actionNames: ['view', 'create', 'update', 'delete', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },
@@ -121,7 +121,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.questionBanks,
-        actionNames: ['view', 'create', 'update', 'delete', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },
@@ -149,7 +149,7 @@ const assignableRoles = [
         permissions: [
           {
             permissionName: permissionNames.tests,
-            actionNames: ['view', 'admin'],
+            actionNames: ['admin'],
           },
         ],
       },

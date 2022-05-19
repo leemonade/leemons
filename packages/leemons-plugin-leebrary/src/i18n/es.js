@@ -113,6 +113,9 @@ module.exports = {
       listEmpty: 'No hay ningún recurso disponible',
       listEmptyDescription:
         'Puedes subir archivos multi-media de cualquier formato y guardar tus enlaces favoritos para tenerlos siempre disponibles.',
+      searchListEmpty: 'No hay ningún recurso disponible con tus criterios de búsqueda',
+      searchListEmptyDescription:
+        'Prueba a buscar por palabras clave (tags) o a escribir un término más genérico y luego utiliza los filtros para refinar tu búsqueda.',
       copy: 'Copiar',
       copied: 'Copiado',
       sharedWith: 'Compartido con',
