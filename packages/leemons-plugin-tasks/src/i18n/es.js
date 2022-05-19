@@ -1,4 +1,26 @@
 module.exports = {
+  tableInput: {
+    // EVERYTHING NEW
+    add: 'Añadir',
+    remove: 'Eliminar',
+    edit: 'Editar',
+    accept: 'Aceptar',
+    cancel: 'Cancelar',
+  },
+  methodology: {
+    // EVERYTHING NEW
+    directInstruction: 'Instrucción directa',
+    flippedClassroom: 'Aula invertida',
+    projectBasedLearning: 'Aprendizaje basado en proyectos',
+    inquiryBasedLearning: 'Aprendizaje basado en investigación',
+    expeditionaryLearning: 'Aprendizaje de campo',
+    cooperativeLearning: 'Aprendizaje cooperativo',
+    personalizedLearning: 'Aprendizaje personalizado',
+    gameBasedLearning: 'Aprendizaje basado en juegos',
+    kinestheticLearning: 'Aprendizaje kinestésico',
+    differentiatedInstruction: 'Instrucción diferenciada',
+    other: 'Otro',
+  },
   welcome_page: {
     page_title: 'Tareas',
     page_description:
@@ -6,7 +28,8 @@ module.exports = {
     hide_info_label: `¡Entendido!. No mostrar más, una vez finalizada la configuración.`,
     step_profiles: {
       title: 'Conectar perfiles',
-      description: 'Es necesario conectar los perfiles de la aplicación Tareas con los existentes en el sistema (solo será necesario indicar esta información una vez).',
+      description:
+        'Es necesario conectar los perfiles de la aplicación Tareas con los existentes en el sistema (solo será necesario indicar esta información una vez).',
       btn: 'Conectar perfiles',
     },
     step_library: {
@@ -38,10 +61,9 @@ module.exports = {
       create_done: 'Tarea creada con éxito',
       update_done: 'Tarea actualizada con éxito',
       publish_done: 'Tarea publicada con éxito',
+      no_id_error: 'No se ha provisto el id de la tarea', // NEW
     },
     setup: {
-      title: 'Crear nueva tarea',
-      editTitle: 'Editar tarea',
       basicData: {
         step_label: 'Datos básicos',
         labels: {
@@ -128,8 +150,7 @@ module.exports = {
         placeholders: {
           forTeacher:
             'Ayuda a otros profesores a abordar este ejercicio con unas sencillas instrucciones.',
-          forStudent:
-            'Información extra para ayudar al alumno a realizar mejor el ejercicio.',
+          forStudent: 'Información extra para ayudar al alumno a realizar mejor el ejercicio.',
         },
         errorMessages: {
           forTeacher: { required: 'Campo necesario' },
@@ -154,7 +175,6 @@ module.exports = {
   },
   assignment_form: {
     labels: {
-      assignTo: 'Asignar a',
       classroomToAssign: 'Asignar a una clase',
       studentToAssign: 'Asignar a un estudiante',
       mode: 'Modo',
@@ -164,10 +184,38 @@ module.exports = {
       visualizationDate: 'Fecha de visualización',
       limitedExecutionToogle: 'Tiempo limitado',
       limitedExecution: 'Tiempo de ejecución',
+      alwaysOpenToogle:
+        'Esta tarea siempre está disponible y puede realizarse en cualquier momento', // NEW
+      closeDateToogle: 'Fecha límite para la evaluación del profesor', // NEW
+      closeDate: 'Fecha límite', // NEW
       messageToStudentsToogle: 'Añadir un mensaje para los estudiantes',
       messageToStudents: 'Mensaje para los estudiantes',
-      submit: 'Asignar',
-      add: 'Añadir',
+      showCurriculumToogle: 'Mostrar el curriculum', // NEW
+      content: 'Contenido', // NEW
+      objectives: 'Objetivos', // NEW
+      assessmentCriteria: 'Criterios de evaluación', // NEW
+      submit: 'Asignar', // NEW
+      add: 'Añadir', // NEW
+      assignTo: {
+        // EVERYTHING NEW
+        class: 'Clase',
+        customGroups: 'Grupos personalizados',
+        session: 'Sesión',
+      },
+      selectStudentsTitle: '¿Quién va a realizar la tarea?', // NEW
+      excludeStudents: 'Excluir estudiantes', // NEW
+      subjects: {
+        // EVERYTHING NEW
+        title: 'Asignaturas que se asignarán a la tarea',
+        subtitle: 'NOTA: Mínimo una asignatura',
+      },
+      unableToAssignStudentsMessage:
+        'Los estudiantes que no estén inscrito en todas las asignaturas seleccionadas no se asignarán a la tarea.', // NEW
+      matchingStudents: 'Estudiantes que coinciden', // NEW
+      groupName: 'Nombre del grupo', // NEW
+      students: 'Estudiantes', // NEW
+      noStudentsToAssign:
+        'No hay estudiantes inscritos en todas las asignaturas seleccionadas, elige otra combinación', // NEW
     },
     placeholders: {
       date: 'dd/mm/aaaa',
@@ -177,6 +225,11 @@ module.exports = {
     descriptions: {
       messageToStudents:
         'Mensaje predeterminado para la tarea (es posible cambiarlo individualmente en cada asignación).',
+      visualizationDate:
+        'NOTA: La nota estará disponible para visualización, pero no podrá comenzarse hasta la fecha de inicio.', // NEW
+      closeDateToogle: 'NOTA: Después de esta fecha, la tarea no podrá ser evaluada.', // NEW
+      limitedExecution:
+        'NOTA: Este es el tiempo desde la revisión del resumen de la tarea hasta la entrega de la misma.', // NEW
     },
     assignTo: {
       student: 'Estudiante',

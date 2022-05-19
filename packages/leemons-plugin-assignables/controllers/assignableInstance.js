@@ -24,6 +24,32 @@ module.exports = {
       };
     }
   },
+  update: async (ctx) => {
+    const { id } = ctx.request.params;
+    const { dates } = ctx.request.body;
+
+    try {
+      const updatedAssignableInstance = await services.updateAssignableInstance(
+        {
+          id,
+          dates,
+        },
+        { userSession: ctx.state.userSession }
+      );
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        assignableInstance: updatedAssignableInstance,
+      };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = {
+        status: 500,
+        message: e.message,
+      };
+    }
+  },
   search: async (ctx) => {
     try {
       const { query } = ctx.request;

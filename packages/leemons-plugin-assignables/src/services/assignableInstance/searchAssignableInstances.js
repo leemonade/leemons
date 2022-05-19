@@ -105,25 +105,26 @@ function parseDatesQuery(query) {
   return dates
     .map((date) => {
       const datesToCheck = date === 'close' ? ['close', 'closed'] : [date];
+      const defaultValue = query[`${date}_default`] === true || query[`${date}_default`] === 'true';
       if (query[date]) {
         return {
           dates: datesToCheck,
           equals: query[date],
-          default: false,
+          default: defaultValue,
         };
       }
       if (query[`${date}_min`]) {
         return {
           dates: datesToCheck,
           min: query[`${date}_min`],
-          default: false,
+          default: defaultValue,
         };
       }
       if (query[`${date}_max`]) {
         return {
           dates: datesToCheck,
           max: query[`${date}_max`],
-          default: false,
+          default: defaultValue,
         };
       }
 
@@ -214,16 +215,16 @@ async function searchTeacherAssignableInstances(query, { userSession, transactin
   }));
 
   const datesFilter = [
-    {
-      dates: ['close'],
-      max: new Date(),
-      default: true,
-    },
-    {
-      dates: ['closed'],
-      max: new Date(),
-      default: true,
-    },
+    // {
+    //   dates: ['close'],
+    //   min: new Date(),
+    //   default: true,
+    // },
+    // {
+    //   dates: ['closed'],
+    //   min: new Date(),
+    //   default: true,
+    // },
     ...parseDatesQuery(query),
   ];
 
