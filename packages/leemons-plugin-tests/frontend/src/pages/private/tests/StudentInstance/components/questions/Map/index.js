@@ -1,13 +1,14 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { forEach } from 'lodash';
+import { find, forEach } from 'lodash';
 import { Box } from '@bubbles-ui/components';
 import QuestionTitle from '../../QuestionTitle';
 import QuestionNoteClues from '../../QuestionNoteClues';
 import { ButtonNavigation } from '../../ButtonNavigation';
 import { QuestionImage } from '../../../../../../../components/QuestionImage';
 import Responses from './Responses';
+import { getQuestionClues } from '../../../helpers/getQuestionClues';
 
 export default function Index(props) {
   const { styles, saveQuestion, store, question, t, isLast } = props;
@@ -26,12 +27,27 @@ export default function Index(props) {
     props.nextStep();
   }
 
+  const clue = React.useMemo(
+    () =>
+      find(getQuestionClues(question, store.questionResponses[question.id].clues), {
+        type: 'hide-response',
+      }),
+    [question, store.questionResponses[question.id].clues]
+  );
+
   return (
     <>
       <Box className={styles.questionCard}>
         <QuestionTitle {...props} />
         <Box className={styles.mapImageContainer}>
-          <QuestionImage src={question.properties.image} markers={question.properties.markers} />
+          <QuestionImage
+            src={question.properties.image}
+            markers={question.properties.markers}
+            values={
+              store.viewMode ? store.questionResponses[question.id].properties.responses : null
+            }
+            clue={clue}
+          />
         </Box>
         <Responses {...props} />
       </Box>

@@ -33,8 +33,8 @@ export default function StudentInstance() {
     loading: true,
     idLoaded: '',
     isFirstStep: true,
-    currentStep: 2,
-    maxNavigatedStep: 2,
+    currentStep: 5,
+    maxNavigatedStep: 5,
     viewMode: true,
   });
 
@@ -115,8 +115,8 @@ export default function StudentInstance() {
           getUserQuestionResponsesRequest(params.id),
         ]);
       store.questionResponses = responses;
-      console.log(responses);
-      // store.questionMax
+      store.questionMax = Object.keys(responses).length - 1;
+      if (store.questionMax < 0) store.questionMax = 0;
       forEach(questions, ({ id }) => {
         if (!store.questionResponses[id]) {
           store.questionResponses[id] = {

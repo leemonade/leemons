@@ -1,6 +1,7 @@
+/* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, ImageLoader, Select, Text } from '@bubbles-ui/components';
+import { Box, ImageLoader, Select, Stack, Text } from '@bubbles-ui/components';
 import { cloneDeep, find, forEach, isArray, isNil, isNumber, isObject, shuffle } from 'lodash';
 import { numberToEncodedLetter } from '@common';
 import { getQuestionClues } from '../../../helpers/getQuestionClues';
@@ -81,6 +82,57 @@ export default function Responses(props) {
       clued = clue.indexs.includes(index);
     }
 
+    const currentValue = isNumber(store.questionResponses[question.id].properties?.responses[index])
+      ? store.questionResponses[question.id].properties.responses[index]
+      : '-';
+
+    if (store.viewMode) {
+      const isDone = currentValue === index;
+
+      return (
+        <Box key={index} className={styles.mapResponsesContent}>
+          <Box className={styles.mapResponsesNumber}>
+            <Text size="md" role="productive" strong>
+              {question.properties.markers.type === 'letter'
+                ? numberToEncodedLetter(index + 1)
+                : index + 1}
+            </Text>
+          </Box>
+
+          {clued ? (
+            <Box className={cx(styles.mapViewContent, styles.mapViewContentClue)}>
+              {question.properties.markers.list[index].response}
+              <Box className={styles.mapViewIcon}>
+                <ImageLoader src={`/public/tests/clue-on.svg`} />
+              </Box>
+            </Box>
+          ) : isDone ? (
+            <Box className={cx(styles.mapViewContent, styles.mapViewContentDone)}>
+              {question.properties.markers.list[currentValue].response}
+              <Box className={styles.mapViewIcon}>
+                <ImageLoader src={`/public/tests/question-done.svg`} />
+              </Box>
+            </Box>
+          ) : (
+            <Stack fullWidth spacing={2}>
+              <Box className={cx(styles.mapViewContent, styles.mapViewContentError)}>
+                {question.properties.markers.list[currentValue].response}
+                <Box className={styles.mapViewIcon}>
+                  <ImageLoader src={`/public/tests/question-wrong.svg`} />
+                </Box>
+              </Box>
+              <Box className={cx(styles.mapViewContent, styles.mapViewContentDone)}>
+                {question.properties.markers.list[index].response}
+                <Box className={styles.mapViewIcon}>
+                  <ImageLoader src={`/public/tests/question-done.svg`} />
+                </Box>
+              </Box>
+            </Stack>
+          )}
+        </Box>
+      );
+    }
+
     return (
       <Box key={index} className={styles.mapResponsesContent}>
         <Box className={styles.mapResponsesNumber}>
@@ -103,11 +155,7 @@ export default function Responses(props) {
           ) : null}
           <Select
             placeholder={t('selectResponse')}
-            value={
-              isNumber(store.questionResponses[question.id].properties?.responses[index])
-                ? store.questionResponses[question.id].properties.responses[index]
-                : '-'
-            }
+            value={currentValue}
             data={[select, ...shuffle(selectData)]}
             onChange={(e) => onSelectChange(e, index)}
           />
