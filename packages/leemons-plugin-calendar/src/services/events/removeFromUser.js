@@ -23,26 +23,32 @@ async function removeFromUser(userSession, id, { transacting: _transacting } = {
     async (transacting) => {
       const userPlugin = leemons.getPlugin('users');
 
+      /*
       const event = await detailEvent(id);
       const calendar = await detailCalendar(event.calendar);
-
       const permissionConfigCalendar = getPermissionConfigCalendar(calendar.key);
-      const permissionConfigEvent = getPermissionConfigEvent(event.id);
+      */
+      const permissionConfigEvent = getPermissionConfigEvent(id);
 
-      const [[calendarPermission], [eventPermission]] = await Promise.all([
-        userPlugin.services.permissions.getUserAgentPermissions(userSession.userAgents, {
-          query: {
-            permissionName: permissionConfigCalendar.permissionName,
-          },
-          transacting,
-        }),
+      const [[eventPermission], [calendarPermission]] = await Promise.all([
         userPlugin.services.permissions.getUserAgentPermissions(userSession.userAgents, {
           query: {
             permissionName: permissionConfigEvent.permissionName,
           },
           transacting,
         }),
+        [],
+        /*
+        userPlugin.services.permissions.getUserAgentPermissions(userSession.userAgents, {
+          query: {
+            permissionName: permissionConfigCalendar.permissionName,
+          },
+          transacting,
+        })
+         */
       ]);
+
+      console.log(eventPermission, permissionConfigEvent);
 
       // ES: Si el usuario es owner del calendario o del evento entonces procedemos a
       // borrar/cancelar el evento por que tiene permiso para hacerlo
@@ -50,7 +56,7 @@ async function removeFromUser(userSession, id, { transacting: _transacting } = {
         (calendarPermission && calendarPermission.actionNames.indexOf('owner') >= 0) ||
         (eventPermission && eventPermission.actionNames.indexOf('owner') >= 0)
       ) {
-        return removeOrCancel(event.id, { transacting });
+        return removeOrCancel(id, { transacting });
       }
       // ES: Si el usuario tiene permiso para ver el evento y quiere borrarlo, le quitamos el permiso
       if (eventPermission && eventPermission.actionNames.indexOf('view') >= 0) {

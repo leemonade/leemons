@@ -64,7 +64,7 @@ async function events(isInstalled) {
       await leemons.getPlugin('assignables').services.assignables.registerRole('task', {
         teacherDetailUrl: '/',
         studentDetailUrl: '/',
-        teacherEvaluationUrl: '/',
+        evaluationDetailUrl: '/',
         creatable: true,
         createUrl: '/private/tasks/create',
         canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'

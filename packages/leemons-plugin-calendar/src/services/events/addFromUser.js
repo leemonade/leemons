@@ -1,6 +1,9 @@
+const _ = require('lodash');
 const { table } = require('../tables');
 const { getPermissionConfig } = require('../calendar/getPermissionConfig');
 const { add } = require('./add');
+const { grantAccessUserAgentToEvent } = require('./grantAccessUserAgentToEvent');
+const { getPermissionConfig: getPermissionConfigEvent } = require('./getPermissionConfig');
 
 /**
  * Add event to calendar if the user have access
@@ -33,6 +36,14 @@ async function addFromUser(userSession, data, { transacting: _transacting } = {}
       const { calendar, ...eventData } = data;
 
       const event = await add(calendar, eventData, { transacting });
+      const permissionConfigEvent = getPermissionConfigEvent(event.id);
+
+      await grantAccessUserAgentToEvent(
+        event.id,
+        _.map(userSession.userAgents, 'id'),
+        permissionConfigEvent.all.actionNames,
+        { transacting }
+      );
 
       // TODO Si se han añadido usuarios al evento hay que añadirlos ahora (grantAccessUserAgentToCalendar)
       console.log(event);
