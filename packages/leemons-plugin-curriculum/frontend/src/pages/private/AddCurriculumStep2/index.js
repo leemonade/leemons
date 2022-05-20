@@ -13,6 +13,7 @@ import {
   Paper,
   Tree,
   useTree,
+  LoadingOverlay
 } from '@bubbles-ui/components';
 import { useHistory, useParams } from 'react-router-dom';
 import { useStore } from '@common';
@@ -443,7 +444,7 @@ function AddCurriculumStep2() {
   }
 
   if (store.loading) {
-    return <Box>Loading...</Box>;
+    return <LoadingOverlay visible />;
   }
 
   return (
