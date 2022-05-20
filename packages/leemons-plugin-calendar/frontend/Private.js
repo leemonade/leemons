@@ -1,18 +1,22 @@
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import loadable from '@loadable/component';
+import pMinDelay from 'p-min-delay';
+import { LoadingOverlay } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const Calendar = loadable(() => import('./src/pages/private/Calendar'));
-const Kanban = loadable(() => import('./src/pages/private/Kanban'));
+const Calendar = loadable(() => pMinDelay(import('./src/pages/private/Calendar'), 1000));
+const Kanban = loadable(() => pMinDelay(import('./src/pages/private/Kanban'), 1000));
 
-const CalendarConfigList = loadable(() => import('./src/pages/private/config/CalendarConfigList'));
+const CalendarConfigList = loadable(() =>
+  pMinDelay(import('./src/pages/private/config/CalendarConfigList'), 1000)
+);
 const CalendarConfigDetail = loadable(() =>
-  import('./src/pages/private/config/CalendarConfigDetail')
+  pMinDelay(import('./src/pages/private/config/CalendarConfigDetail'), 1000)
 );
 const CalendarConfigCalendar = loadable(() =>
-  import('./src/pages/private/config/CalendarConfigCalendar')
+  pMinDelay(import('./src/pages/private/config/CalendarConfigCalendar'), 1000)
 );
 
 export default function Private() {
@@ -23,19 +27,19 @@ export default function Private() {
     <div>
       <Switch>
         <Route path={`${path}/home`}>
-          <Calendar session={session} />
+          <Calendar session={session} fallback={<LoadingOverlay visible />} />
         </Route>
         <Route path={`${path}/kanban`}>
-          <Kanban session={session} />
+          <Kanban session={session} fallback={<LoadingOverlay visible />} />
         </Route>
         <Route path={`${path}/config/calendars/:id`}>
-          <CalendarConfigCalendar session={session} />
+          <CalendarConfigCalendar session={session} fallback={<LoadingOverlay visible />} />
         </Route>
         <Route path={`${path}/config/detail/:id`}>
-          <CalendarConfigDetail session={session} />
+          <CalendarConfigDetail session={session} fallback={<LoadingOverlay visible />} />
         </Route>
         <Route path={`${path}/config`}>
-          <CalendarConfigList session={session} />
+          <CalendarConfigList session={session} fallback={<LoadingOverlay visible />} />
         </Route>
       </Switch>
     </div>

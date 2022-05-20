@@ -1,12 +1,16 @@
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import loadable from '@loadable/component';
+import pMinDelay from 'p-min-delay';
+import { LoadingOverlay } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const FamiliesList = loadable(() => import('./src/pages/private/FamiliesList'));
-const FamilyDetail = loadable(() => import('./src/pages/private/FamilyDetail'));
-const FamiliesConfig = loadable(() => import('./src/pages/private/FamiliesConfig'));
+const FamiliesList = loadable(() => pMinDelay(import('./src/pages/private/FamiliesList'), 1000));
+const FamilyDetail = loadable(() => pMinDelay(import('./src/pages/private/FamilyDetail'), 1000));
+const FamiliesConfig = loadable(() =>
+  pMinDelay(import('./src/pages/private/FamiliesConfig'), 1000)
+);
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -16,16 +20,16 @@ export default function Private() {
     <div>
       <Switch>
         <Route path={`${path}/list`}>
-          <FamiliesList session={session} />
+          <FamiliesList session={session} fallback={<LoadingOverlay visible />} />
         </Route>
         <Route path={`${path}/detail/:id`}>
-          <FamilyDetail session={session} />
+          <FamilyDetail session={session} fallback={<LoadingOverlay visible />} />
         </Route>
         <Route path={`${path}/detail`}>
-          <FamilyDetail session={session} />
+          <FamilyDetail session={session} fallback={<LoadingOverlay visible />} />
         </Route>
         <Route path={`${path}/config`}>
-          <FamiliesConfig session={session} />
+          <FamiliesConfig session={session} fallback={<LoadingOverlay visible />} />
         </Route>
       </Switch>
     </div>
