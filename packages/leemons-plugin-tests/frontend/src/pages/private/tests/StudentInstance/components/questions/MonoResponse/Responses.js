@@ -47,16 +47,41 @@ export default function Responses(props) {
     if (clued) {
       classContainer = cx(classContainer, styles.questionResponseImageContainerClued);
     }
+
+    let iconToShow = null;
+    if (store.viewMode) {
+      classContainer = cx(classContainer, styles.questionResponseImageContainerViewMode);
+      if (question.withImages) {
+        classContainer = cx(
+          classContainer,
+          styles.questionResponseImageContainerViewModeWithImages
+        );
+      }
+      if (response.isCorrectResponse) {
+        iconToShow = '/public/tests/question-done.svg';
+        classContainer = cx(classContainer, styles.questionResponseImageContainerDone);
+      } else if (index === currentResponseIndex) {
+        iconToShow = '/public/tests/question-wrong.svg';
+        classContainer = cx(classContainer, styles.questionResponseImageContainerWrong);
+      }
+    }
+
     return (
       <Box
         key={index}
         className={classContainer}
         onClick={() => {
-          if (!clued) {
+          if (!clued && !store.viewMode) {
             markResponse(index);
           }
         }}
       >
+        {iconToShow ? (
+          <Box className={styles.questionViewModeIcon}>
+            <ImageLoader src={iconToShow} />
+          </Box>
+        ) : null}
+
         {clued ? (
           <>
             <Box className={classDisableBg} />

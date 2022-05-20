@@ -15,7 +15,7 @@ export default function Index(props) {
   const currentResponseIndex = store.questionResponses[question.id].properties?.response;
 
   function nextStep() {
-    saveQuestion();
+    if (!store.viewMode) saveQuestion();
     props.nextStep();
   }
 

@@ -33,8 +33,9 @@ export default function StudentInstance() {
     loading: true,
     idLoaded: '',
     isFirstStep: true,
-    currentStep: 0,
-    maxNavigatedStep: 0,
+    currentStep: 2,
+    maxNavigatedStep: 2,
+    viewMode: true,
   });
 
   const { classes: styles } = TestStyles({}, { name: 'Tests' });
@@ -114,6 +115,8 @@ export default function StudentInstance() {
           getUserQuestionResponsesRequest(params.id),
         ]);
       store.questionResponses = responses;
+      console.log(responses);
+      // store.questionMax
       forEach(questions, ({ id }) => {
         if (!store.questionResponses[id]) {
           store.questionResponses[id] = {

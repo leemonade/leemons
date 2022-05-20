@@ -319,4 +319,26 @@ export const TestStyles = createStyles((theme, {}) => ({
     width: '100%',
     position: 'relative',
   },
+  questionResponseImageContainerDone: {
+    borderColor: theme.colors.fatic02,
+    backgroundColor: theme.colors.fatic02v0,
+  },
+  questionResponseImageContainerWrong: {
+    borderColor: theme.colors.fatic01,
+    backgroundColor: theme.colors.fatic01v0,
+  },
+  questionViewModeIcon: {
+    position: 'absolute',
+    left: 25,
+    top: 9,
+    width: 20,
+    height: 22,
+  },
+  questionResponseImageContainerViewMode: {
+    cursor: 'default',
+    paddingLeft: 64,
+  },
+  questionResponseImageContainerViewModeWithImages: {
+    paddingLeft: theme.spacing[3],
+  },
 }));

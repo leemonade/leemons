@@ -22,7 +22,7 @@ export default function Index(props) {
   });
 
   function nextStep() {
-    saveQuestion();
+    if (!store.viewMode) saveQuestion();
     props.nextStep();
   }
 

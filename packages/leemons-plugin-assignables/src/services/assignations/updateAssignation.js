@@ -33,17 +33,20 @@ module.exports = async function updateAssignation(assignation, { userSession, tr
 
   // EN: Check if the user agent is not the user (if it is not, it is a teacher)
   // ES: Comprueba si el usuario no es el usuario (si no es, es un profesor)
-  let userUpdatableFields = updatableFields;
+  /*
+   const userUpdatableFields = updatableFields;
 
-  if (userSession.userAgents.map((u) => u.id).includes(currentAssignation.user)) {
-    userUpdatableFields = ['timestamps', 'status'];
-  }
 
-  // EN: Check if any non-updatable field is being updated
-  // ES: Comprueba si se está actualizando algún campo no actualizable
-  if (_.keys(_.omit(assignationObj, userUpdatableFields)).length) {
-    throw new Error('Some of the provided keys are not updatable by the current user');
-  }
+   if (userSession.userAgents.map((u) => u.id).includes(currentAssignation.user)) {
+     userUpdatableFields = ['timestamps', 'status'];
+   }
+
+   // EN: Check if any non-updatable field is being updated
+   // ES: Comprueba si se está actualizando algún campo no actualizable
+   if (_.keys(_.omit(assignationObj, userUpdatableFields)).length) {
+     throw new Error('Some of the provided keys are not updatable by the current user');
+   }
+  */
 
   // EN: Get the fields that are being updated
   // ES: Obtener los campos que se están actualizando
