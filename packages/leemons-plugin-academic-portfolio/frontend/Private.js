@@ -1,14 +1,20 @@
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import loadable from '@loadable/component';
+import pMinDelay from 'p-min-delay';
+import { LoadingOverlay } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const Welcome = loadable(() => import('./src/pages/private/WelcomePage'));
-const Profiles = loadable(() => import('./src/pages/private/ProfilesPage'));
-const Tree = loadable(() => import('./src/pages/private/TreePage'));
-const ProgramList = loadable(() => import('./src/pages/private/programs/ProgramList'));
-const SubjectList = loadable(() => import('./src/pages/private/subjects/SubjectList'));
+const Welcome = loadable(() => pMinDelay(import('./src/pages/private/WelcomePage'), 1000));
+const Profiles = loadable(() => pMinDelay(import('./src/pages/private/ProfilesPage'), 1000));
+const Tree = loadable(() => pMinDelay(import('./src/pages/private/TreePage'), 1000));
+const ProgramList = loadable(() =>
+  pMinDelay(import('./src/pages/private/programs/ProgramList'), 1000)
+);
+const SubjectList = loadable(() =>
+  pMinDelay(import('./src/pages/private/subjects/SubjectList'), 1000)
+);
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -17,19 +23,19 @@ export default function Private() {
   return (
     <Switch>
       <Route path={`${path}/welcome`}>
-        <Welcome session={session} />
+        <Welcome session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/profiles`}>
-        <Profiles session={session} />
+        <Profiles session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/programs`}>
-        <ProgramList session={session} />
+        <ProgramList session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/subjects`}>
-        <SubjectList session={session} />
+        <SubjectList session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/tree`}>
-        <Tree session={session} />
+        <Tree session={session} fallback={<LoadingOverlay visible />} />
       </Route>
     </Switch>
   );

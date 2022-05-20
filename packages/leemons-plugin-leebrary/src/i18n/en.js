@@ -112,7 +112,7 @@ module.exports = {
       unpinnedSuccess: 'Asset successfully unpinned',
       listEmpty: 'No assets found',
       listEmptyDescription:
-        'You can upload multi-media files of any format and save your favorite links to have them always available.',
+        'Thanks to Leemons Libraries, teachers can manage assignments, tests, sessions... and both teachers and students can create and share multi-media files and save their favorite web pages.',
       searchListEmpty: 'No assets found with these search criteria',
       searchListEmptyDescription:
         'Try searching by keywords (tags) or type in more generic and then use the filters to refine your search.',

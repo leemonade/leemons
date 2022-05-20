@@ -53,7 +53,7 @@ async function calculeUserAgentInstanceNote(
       const correctIndex = _.findIndex(question.properties.responses, {
         value: { isCorrectResponse: true },
       });
-      if (!_.isNumber(questionResponses[question.id].properties?.response)) {
+      if (!_.isNumber(questionResponses[question.id]?.properties?.response)) {
         note += perUndefined;
       } else if (questionResponses[question.id].properties.response === correctIndex) {
         note += perDone;
@@ -62,7 +62,7 @@ async function calculeUserAgentInstanceNote(
       }
     }
     if (question.type === 'map') {
-      if (questionResponses[question.id].properties?.responses) {
+      if (questionResponses[question.id]?.properties?.responses) {
         let allWithValues = true;
         let allValuesGood = true;
         _.forEach(question.properties.markers.list, (r, index) => {

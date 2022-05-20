@@ -52,6 +52,7 @@ async function setInstanceTimestamp(ctx) {
   const { timestamps } = await testsService.setInstanceTimestamp(
     ctx.request.body.instance,
     ctx.request.body.timeKey,
+    ctx.request.body.user || ctx.state.userSession.userAgents[0].id,
     {
       userSession: ctx.state.userSession,
     }

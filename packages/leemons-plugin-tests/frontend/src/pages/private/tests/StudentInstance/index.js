@@ -11,6 +11,9 @@ import { Box, Button, COLORS, Modal, Stack, Text, VerticalStepper } from '@bubbl
 import { HeaderBackground, TaskDeadline, TaskHeader } from '@bubbles-ui/leemons';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import getClassData from '@assignables/helpers/getClassData';
+import getAssignation from '@assignables/requests/assignations/getAssignation';
+import { getCentersWithToken } from '@users/session';
+import dayjs from 'dayjs';
 import { StudentInstanceStyles } from './StudentInstance.style';
 import Resume from './components/Resume';
 import { getIfCurriculumSubjectsHaveValues } from './helpers/getIfCurriculumSubjectsHaveValues';
@@ -33,9 +36,9 @@ export default function StudentInstance() {
     loading: true,
     idLoaded: '',
     isFirstStep: true,
-    currentStep: 2,
-    maxNavigatedStep: 2,
-    viewMode: true,
+    currentStep: 0,
+    maxNavigatedStep: 0,
+    viewMode: false,
   });
 
   const { classes: styles } = TestStyles({}, { name: 'Tests' });
@@ -47,8 +50,13 @@ export default function StudentInstance() {
   const history = useHistory();
   const params = useParams();
 
+  function getUserId() {
+    if (params.user) return params.user;
+    return getCentersWithToken()[0].userAgentId;
+  }
+
   async function onStartQuestions() {
-    const { timestamps } = await setInstanceTimestampRequest(params.id, 'start');
+    const { timestamps } = await setInstanceTimestampRequest(params.id, 'start', getUserId());
     store.timestamps = timestamps;
     render();
   }
@@ -56,6 +64,12 @@ export default function StudentInstance() {
   function closeFinishModal() {
     store.showFinishModal = false;
     render();
+  }
+
+  function closeForceFinishModal() {
+    store.showForceFinishModal = false;
+    render();
+    history.push(`/private/dashboard`);
   }
 
   function prevStep() {
@@ -72,16 +86,27 @@ export default function StudentInstance() {
   }
 
   async function finishStep() {
-    store.showFinishModal = true;
-    render();
+    if (store.viewMode) {
+      history.push(`/private/dashboard`);
+    } else {
+      store.showFinishModal = true;
+      render();
+    }
   }
 
   async function finishTest() {
     store.showFinishModal = false;
-    const { timestamps } = await setInstanceTimestampRequest(params.id, 'end');
+    const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
     store.timestamps = timestamps;
     render();
     history.push(`/private/dashboard`);
+  }
+
+  async function forceFinishTest() {
+    store.showForceFinishModal = true;
+    const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
+    store.timestamps = timestamps;
+    render();
   }
 
   function goToStep(step) {
@@ -105,18 +130,23 @@ export default function StudentInstance() {
 
   async function init() {
     try {
-      store.instance = await getAssignableInstance({ id: params.id });
-      const [{ evaluationSystem }, classe, { questions }, { timestamps }, { responses }] =
+      [store.instance, store.assignation] = await Promise.all([
+        getAssignableInstance({ id: params.id }),
+        getAssignation({ id: params.id, user: getUserId() }),
+      ]);
+
+      const [{ evaluationSystem }, classe, { questions }, { responses }, { timestamps }] =
         await Promise.all([
           getProgramEvaluationSystemRequest(store.instance.assignable.subjects[0].program),
           getClassData(store.instance.classes, { multiSubject: t('multiSubject') }),
           getQuestionByIdsRequest(store.instance.metadata.questions),
-          setInstanceTimestampRequest(params.id, 'open'),
-          getUserQuestionResponsesRequest(params.id),
+          getUserQuestionResponsesRequest(params.id, getUserId()),
+          setInstanceTimestampRequest(params.id, 'open', getUserId()),
         ]);
+      if (store.assignation.finished) store.viewMode = true;
       store.questionResponses = responses;
-      console.log(responses);
-      // store.questionMax
+      store.questionMax = Object.keys(responses).length - 1;
+      if (store.questionMax < 0) store.questionMax = 0;
       forEach(questions, ({ id }) => {
         if (!store.questionResponses[id]) {
           store.questionResponses[id] = {
@@ -136,12 +166,37 @@ export default function StudentInstance() {
       store.class = classe;
       store.idLoaded = params.id;
       store.loading = false;
+
       render();
     } catch (error) {
       console.log(error);
       addErrorAlert(error);
     }
   }
+
+  React.useEffect(() => {
+    if (store.timeout) clearTimeout(store.timeout);
+    if (
+      !store.showForceFinishModal &&
+      !store.viewMode &&
+      store.instance &&
+      store.instance.duration &&
+      store.timestamps.start
+    ) {
+      const [value, unit] = store.instance.duration.split(' ');
+      const now = new Date();
+      const endDate = new Date(store.timestamps.start);
+      endDate.setSeconds(endDate.getSeconds() + dayjs.duration({ [unit]: value }).asSeconds());
+      const diff = endDate.getTime() - now.getTime();
+      if (diff > 0) {
+        store.timeout = setTimeout(() => {
+          forceFinishTest();
+        }, diff);
+      } else {
+        forceFinishTest();
+      }
+    }
+  }, [store.timestamps, store.instance]);
 
   React.useEffect(() => {
     if (params?.id && translations && store.idLoaded !== params?.id) init();
@@ -295,7 +350,9 @@ export default function StudentInstance() {
           {...headerProps}
         />
         <TaskHeader {...taskHeaderProps} size={store.isFirstStep ? 'md' : 'sm'} />
-        <TaskDeadline {...taskDeadlineProps} size={store.isFirstStep ? 'md' : 'sm'} />
+        {!store.viewMode ? (
+          <TaskDeadline {...taskDeadlineProps} size={store.isFirstStep ? 'md' : 'sm'} />
+        ) : null}
       </Box>
       <Box className={classes.mainContent}>
         <Box className={classes.verticalStepper}>
@@ -327,6 +384,45 @@ export default function StudentInstance() {
               {t('cancelSubmission')}
             </Button>
             <Button onClick={finishTest}>{t('confirmSubmission')}</Button>
+          </Stack>
+        </Box>
+      </Modal>
+      <Modal
+        title={t('finishForceTestModalTitle')}
+        opened={store.showForceFinishModal}
+        onClose={closeForceFinishModal}
+        withCloseButton={false}
+        closeOnEscape={false}
+        closeOnClickOutside={false}
+      >
+        <Box className={styles.howItWorksModalContainer}>
+          <Text
+            dangerouslySetInnerHTML={{
+              __html: t('finishForceTestModalDescription'),
+            }}
+          />
+        </Box>
+        <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+          <Stack fullWidth justifyContent="space-between">
+            <Button
+              variant="link"
+              onClick={() => {
+                store.showForceFinishModal = false;
+                render();
+                history.push(`/private/assignables/ongoing`);
+              }}
+            >
+              {t('activitiesInCourse')}
+            </Button>
+            <Button
+              onClick={() => {
+                store.showForceFinishModal = false;
+                render();
+                history.push(`/private/tests/evaluation/${params.id}/${getUserId()}`);
+              }}
+            >
+              {t('reviewResults')}
+            </Button>
           </Stack>
         </Box>
       </Modal>

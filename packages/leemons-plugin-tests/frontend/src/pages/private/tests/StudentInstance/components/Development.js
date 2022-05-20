@@ -26,9 +26,17 @@ export default function Development(props) {
 
   return (
     <Box className={cx(classes.loremIpsum, classes.limitedWidthStep)}>
-      {store.instance.assignable.asset.tagline ? (
-        <Title order={2}>{store.instance.assignable.asset.tagline}</Title>
-      ) : null}
+      <Box
+        sx={(theme) => ({
+          marginTop: theme.spacing[8],
+          marginBottom: theme.spacing[6],
+          textAlign: 'center',
+        })}
+      >
+        {store.instance.assignable.asset.tagline ? (
+          <Title order={2}>{store.instance.assignable.asset.tagline}</Title>
+        ) : null}
+      </Box>
 
       <Box className={styles.resumeBoxContainer}>
         <InfoCard styles={styles} number={store.questionsInfo.questions} label={t('questions')} />

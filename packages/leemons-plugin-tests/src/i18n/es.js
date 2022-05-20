@@ -47,7 +47,7 @@ module.exports = {
     typeRequired: 'Campo necesario',
     levelLabel: 'Nivel',
     withImagesLabel: 'Con imágenes',
-    questionLabel: 'Pregunta',
+    questionLabel: 'Enunciado',
     questionRequired: 'Campo necesario',
     responsesLabel: 'Respuestas',
     responseLabel: 'Respuesta',
@@ -218,7 +218,7 @@ module.exports = {
       'Si sales de la aplicación con la prueba en proceso, esta se dará por finalizada, puntuando solo las preguntas contestadas hasta el momento de la interrupción. Si se produce algún error en el sistema y te expulsa de la prueba, podrás notificarlo y en caso de que tu error sea comprobado podrás volver a realizar la prueba.',
     questionNumber: 'PREGUNTA: {number}',
     theQuestionValueIs: 'La pregunta vale',
-    pointsInTotal: 'Puntos en total',
+    pointsInTotal: 'Puntos',
     askForAHint: 'Pedir una pista',
     hint: 'Pista',
     skipButton: 'Omitir',
@@ -234,5 +234,16 @@ module.exports = {
       'Si haces click en "Confirmar entrega", tu test será enviado a un revisor y ya no podrás modificar ningun respuesta o responder a preguntas sin contestar <br/><br/> Una vez que confirmes la entrega, el sistema te mostrará los resultados del test (exceptuando las preguntas abiertas)',
     confirmSubmission: 'Confirmar entrega',
     cancelSubmission: 'Cancelar',
+    finishForceTestModalTitle: 'El tiempo establecido para completar este test ha finalizado.',
+    finishForceTestModalDescription:
+      'Las preguntas respondidas hasta este momento han sido correctamente enviadas. <br/><br/> Puedes revisar el resultado del test o consultar tus actividades en curso.',
+    activitiesInCourse: 'Actividades en curso',
+    reviewResults: 'Revisar resultados',
+    warnNoResponseTitle: 'PREGUNTA NO RESPONDIDA',
+    warnNoResponseDescription:
+      'Esta pregunta no ha sido respondida, a continuación puede consultar cuál es la respuesta correcta con su explicación (si la hubiese)',
+    mapNeedResponses:
+      'Esta pregunta requiere que respondas a todas las opciones presentadas para poder ser evaluada (en caso contrario contará como pregunta no respondida)',
+    attention: 'Atención',
   },
 };

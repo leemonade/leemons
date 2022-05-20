@@ -10,7 +10,6 @@ export function ListInputRender({ t, withImages, useExplanation, addItem, value,
   const [store, render] = useStore(value || { useButton: true });
 
   function emit() {
-    console.log('Hola mandamos onChange');
     props.onChange({
       ...value,
       image: store.image,

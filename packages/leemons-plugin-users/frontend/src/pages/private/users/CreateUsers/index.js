@@ -202,20 +202,17 @@ function CreateUsers() {
           node: <TextInput disabled={!store.center || !store.profile || !!store.user} required />,
           rules: store.avatar.required ? { required: t('avatarHeaderRequired') } : {},
         },
-        valueRender: (v, row) => {
-          const value = row.values;
-          return (
-            <>
-              <Avatar
-                image={value?.avatar}
-                fullName={getUserFullName(value)}
-                mx="auto"
-                mb={10}
-                radius="xl"
-              />
-            </>
-          );
-        },
+        valueRender: (v, row) => (
+          <>
+            <Avatar
+              image={row?.avatar}
+              fullName={getUserFullName(row)}
+              mx="auto"
+              mb={10}
+              radius="xl"
+            />
+          </>
+        ),
       });
     }
     result.tableColumns.push({

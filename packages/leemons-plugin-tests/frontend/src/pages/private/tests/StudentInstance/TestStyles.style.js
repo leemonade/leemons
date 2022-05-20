@@ -341,4 +341,42 @@ export const TestStyles = createStyles((theme, {}) => ({
   questionResponseImageContainerViewModeWithImages: {
     paddingLeft: theme.spacing[3],
   },
+  mapViewContent: {
+    width: '100%',
+    padding: theme.spacing[3],
+    paddingRight: 32,
+    border: '1px solid',
+    borderRadius: 4,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    position: 'relative',
+  },
+  mapViewContentClue: {
+    backgroundColor: theme.colors.fatic03v0,
+    borderColor: theme.colors.fatic03,
+  },
+  mapViewContentDone: {
+    backgroundColor: theme.colors.fatic02v0,
+    borderColor: theme.colors.fatic02,
+  },
+  mapViewContentError: {
+    backgroundColor: theme.colors.fatic01v0,
+    borderColor: theme.colors.fatic01,
+  },
+  mapViewIcon: {
+    position: 'absolute',
+    right: theme.spacing[3],
+    width: 16,
+    height: 24,
+    top: '50%',
+    transform: 'translateY(-50%)',
+  },
+  countdownContainer: {
+    backgroundColor: theme.colors.uiBackground02,
+    width: 210,
+    height: 60,
+    borderRadius: theme.spacing[2],
+    marginBottom: theme.spacing[3],
+  },
 }));

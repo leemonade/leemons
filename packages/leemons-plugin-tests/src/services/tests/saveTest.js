@@ -72,8 +72,8 @@ async function saveTest(data, { userSession, transacting: _transacting } = {}) {
             alwaysAvailable: false,
             duration: '20 minutes',
             messageToAssignees: '<p style="margin-left: 0px!important;">Pepe</p>',
-            students: _.map(classStudents, 'student'),
-            classes: _.map(classes, 'id'),
+            students: _.uniq(_.map(classStudents, 'student')),
+            classes: _.uniq(_.map(classes, 'id')),
             curriculum: {
               content: true,
               objectives: true,

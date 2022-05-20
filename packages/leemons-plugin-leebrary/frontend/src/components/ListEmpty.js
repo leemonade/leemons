@@ -4,11 +4,11 @@ import { Stack, Title, ImageLoader, Paragraph, Box } from '@bubbles-ui/component
 
 const ListEmpty = ({ t }) => (
   <Stack alignItems="center" justifyContent="center" direction="column" spacing={5}>
-    <Box style={{ maxWidth: 350, textAlign: 'center' }}>
+    <Box style={{ maxWidth: 400, textAlign: 'center' }}>
       <Title order={3}>{t('labels.listEmpty')}</Title>
     </Box>
     <ImageLoader src="/public/leebrary/empty.png" height={200} />
-    <Box style={{ maxWidth: 350 }}>
+    <Box style={{ maxWidth: 400 }}>
       <Paragraph align="center">{t('labels.listEmptyDescription')}</Paragraph>
     </Box>
   </Stack>

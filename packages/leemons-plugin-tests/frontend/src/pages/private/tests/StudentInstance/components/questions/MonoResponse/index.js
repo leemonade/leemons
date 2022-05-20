@@ -8,6 +8,7 @@ import QuestionNoteClues from '../../QuestionNoteClues';
 import QuestionImage from '../../QuestionImage';
 import Responses from './Responses';
 import { ButtonNavigation } from '../../ButtonNavigation';
+import QuestionNotResponsedWarning from '../../QuestionNotResponsedWarning';
 
 export default function Index(props) {
   const { styles, saveQuestion, store, question, t, isLast } = props;
@@ -19,8 +20,15 @@ export default function Index(props) {
     props.nextStep();
   }
 
+  let showNotResponsedWarning = false;
+  if (store.viewMode) {
+    showNotResponsedWarning = !isNumber(store.questionResponses[question.id]?.properties?.response);
+  }
+
   return (
     <>
+      {showNotResponsedWarning ? <QuestionNotResponsedWarning {...props} /> : null}
+
       <Box className={styles.questionCard}>
         <QuestionTitle {...props} />
         {!question.withImages && question.questionImage?.cover ? (
