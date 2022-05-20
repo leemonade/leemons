@@ -65,7 +65,10 @@ const updateEventSchema = {
     startDate: dateSchema,
     endDate: dateSchema,
     isAllDay: booleanSchema,
-    isPrivate: booleanSchema,
+    isPrivate: {
+      type: ['boolean', 'number'],
+      nullable: true,
+    },
     repeat: stringSchema,
     type: stringSchema,
     data: {

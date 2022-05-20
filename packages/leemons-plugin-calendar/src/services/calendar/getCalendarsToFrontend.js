@@ -190,18 +190,21 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
       ...calendar,
       isClass: classCalendarsIds.indexOf(calendar.id) >= 0,
     })),
-    events: events
-      .concat(
-        eventsFromCalendars.map((e) => ({
-          ...e,
-          fromCalendar: true,
-        }))
-      )
-      .concat(configCalendarEvents)
-      .map((event) => ({
-        ...event,
-        data: _.isString(event.data) ? JSON.parse(event.data) : event.data,
-      })),
+    events: _.uniqBy(
+      events
+        .concat(
+          eventsFromCalendars.map((e) => ({
+            ...e,
+            fromCalendar: true,
+          }))
+        )
+        .concat(configCalendarEvents)
+        .map((event) => ({
+          ...event,
+          data: _.isString(event.data) ? JSON.parse(event.data) : event.data,
+        })),
+      'id'
+    ),
   };
 }
 
