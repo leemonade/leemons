@@ -3,8 +3,6 @@ import { forEach, isNumber } from 'lodash';
 export function getQuestionClues(question, limit) {
   const clues = [];
 
-  console.log(question);
-
   if (question.type === 'map') {
     const responsesIndexsToHide = [];
     forEach(question.properties.markers.list, (response, index) => {

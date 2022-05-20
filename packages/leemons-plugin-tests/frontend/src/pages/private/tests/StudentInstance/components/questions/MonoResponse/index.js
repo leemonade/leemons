@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { isNumber } from 'lodash';
@@ -9,12 +10,12 @@ import Responses from './Responses';
 import { ButtonNavigation } from '../../ButtonNavigation';
 
 export default function Index(props) {
-  const { styles, saveQuestion, store, question, t } = props;
+  const { styles, saveQuestion, store, question, t, isLast } = props;
 
   const currentResponseIndex = store.questionResponses[question.id].properties?.response;
 
   function nextStep() {
-    saveQuestion();
+    if (!store.viewMode) saveQuestion();
     props.nextStep();
   }
 
@@ -44,7 +45,13 @@ export default function Index(props) {
       <ButtonNavigation
         {...props}
         nextStep={nextStep}
-        nextLabel={isNumber(currentResponseIndex) ? t('nextButton') : t('skipButton')}
+        nextLabel={
+          isLast
+            ? t('finishButton')
+            : isNumber(currentResponseIndex)
+            ? t('nextButton')
+            : t('skipButton')
+        }
       />
     </>
   );
@@ -59,6 +66,7 @@ Index.propTypes = {
   question: PropTypes.any,
   prevStep: PropTypes.func,
   nextStep: PropTypes.func,
+  isLast: PropTypes.bool,
   isFirstStep: PropTypes.bool,
   saveQuestion: PropTypes.func,
 };

@@ -2,12 +2,12 @@ import React from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import { forEach, isString } from 'lodash';
-import { Box, COLORS, VerticalStepper } from '@bubbles-ui/components';
+import { Box, Button, COLORS, Modal, Stack, Text, VerticalStepper } from '@bubbles-ui/components';
 import { HeaderBackground, TaskDeadline, TaskHeader } from '@bubbles-ui/leemons';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import getClassData from '@assignables/helpers/getClassData';
@@ -33,8 +33,9 @@ export default function StudentInstance() {
     loading: true,
     idLoaded: '',
     isFirstStep: true,
-    currentStep: 5,
-    maxNavigatedStep: 5,
+    currentStep: 2,
+    maxNavigatedStep: 2,
+    viewMode: true,
   });
 
   const { classes: styles } = TestStyles({}, { name: 'Tests' });
@@ -43,11 +44,17 @@ export default function StudentInstance() {
     { name: 'TaskDoing' }
   );
 
+  const history = useHistory();
   const params = useParams();
 
   async function onStartQuestions() {
     const { timestamps } = await setInstanceTimestampRequest(params.id, 'start');
     store.timestamps = timestamps;
+    render();
+  }
+
+  function closeFinishModal() {
+    store.showFinishModal = false;
     render();
   }
 
@@ -62,6 +69,19 @@ export default function StudentInstance() {
       store.maxNavigatedStep = store.currentStep;
     }
     render();
+  }
+
+  async function finishStep() {
+    store.showFinishModal = true;
+    render();
+  }
+
+  async function finishTest() {
+    store.showFinishModal = false;
+    const { timestamps } = await setInstanceTimestampRequest(params.id, 'end');
+    store.timestamps = timestamps;
+    render();
+    history.push(`/private/dashboard`);
   }
 
   function goToStep(step) {
@@ -95,6 +115,8 @@ export default function StudentInstance() {
           getUserQuestionResponsesRequest(params.id),
         ]);
       store.questionResponses = responses;
+      console.log(responses);
+      // store.questionMax
       forEach(questions, ({ id }) => {
         if (!store.questionResponses[id]) {
           store.questionResponses[id] = {
@@ -106,6 +128,7 @@ export default function StudentInstance() {
       store.questionsInfo = calculeInfoValues(
         questions.length,
         evaluationSystem.maxScale.number,
+        evaluationSystem.minScale.number,
         evaluationSystem.minScaleToPromote.number
       );
       store.questions = questions;
@@ -218,6 +241,7 @@ export default function StudentInstance() {
       });
 
       forEach(store.questions, (question, index) => {
+        const isLast = index === store.questions.length - 1;
         steps.push({
           label: htmlToText(question.question),
           status: 'OK',
@@ -225,8 +249,16 @@ export default function StudentInstance() {
             <Question
               {...commonProps}
               {...testProps}
+              nextStep={(e) => {
+                if (isLast) {
+                  finishStep(e);
+                } else {
+                  nextStep(e);
+                }
+              }}
               question={question}
               index={index}
+              isLast={isLast}
               saveQuestion={() => saveQuestion(question.id)}
             />
           ),
@@ -236,11 +268,6 @@ export default function StudentInstance() {
 
       return {
         data: steps,
-        calificationProps: {
-          label: 'Aprobado',
-          grade: 9,
-          minimumGrade: 5,
-        },
       };
     }
     return {};
@@ -282,6 +309,27 @@ export default function StudentInstance() {
             : null}
         </Box>
       </Box>
+      <Modal
+        title={t('finishTestModalTitle')}
+        opened={store.showFinishModal}
+        onClose={closeFinishModal}
+      >
+        <Box className={styles.howItWorksModalContainer}>
+          <Text
+            dangerouslySetInnerHTML={{
+              __html: t('finishTestModalDescription'),
+            }}
+          />
+        </Box>
+        <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+          <Stack fullWidth justifyContent="space-between">
+            <Button variant="link" onClick={closeFinishModal}>
+              {t('cancelSubmission')}
+            </Button>
+            <Button onClick={finishTest}>{t('confirmSubmission')}</Button>
+          </Stack>
+        </Box>
+      </Modal>
     </Box>
   );
 }
