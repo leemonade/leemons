@@ -33,9 +33,7 @@ module.exports = async function updateAssignable(
   assignable,
   { published = false, userSession, transacting } = {}
 ) {
-  // eslint-disable-next-line prefer-const
-  let { id, ...assignableObject } = assignable;
-  assignableObject = _.omit(assignableObject, ['roleDetails']);
+  const { id, ...assignableObject } = assignable;
 
   // Check if any of the keys are not updatable (use lodash)
   const omitted = _.omit(assignableObject, updatableFields);
@@ -110,7 +108,7 @@ module.exports = async function updateAssignable(
     // TODO: Ensure to keep original owner
     const newAssignable = await createAssignable.call(
       this,
-      _.omit({ ...object, asset: assetId }, ['published', 'id']),
+      _.omit({ ...object, asset: assetId }, ['published', 'id', 'roleDetails']),
       {
         id: fullId,
         userSession,
