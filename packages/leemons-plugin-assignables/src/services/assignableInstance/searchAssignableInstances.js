@@ -100,7 +100,7 @@ async function getInstancesDates(instances, { transacting } = {}) {
 }
 
 function parseDatesQuery(query) {
-  const dates = ['visibility', 'deadline', 'start', 'close', 'assignment'];
+  const dates = ['visualization', 'deadline', 'start', 'close', 'assignment'];
 
   return dates
     .map((date) => {
@@ -235,7 +235,7 @@ async function searchTeacherAssignableInstances(query, { userSession, transactin
     'closed',
     'deadline',
     'start',
-    'visibility',
+    'visualization',
   ]);
 
   if (query.limit) {
@@ -269,7 +269,7 @@ async function searchStudentAssignableInstances(query, { userSession, transactin
 
   const datesFilter = [
     {
-      dates: ['visibility', 'start'],
+      dates: ['visualization', 'start'],
       max: new Date(),
       default: true,
     },
@@ -280,7 +280,7 @@ async function searchStudentAssignableInstances(query, { userSession, transactin
   const filteredResults = filterByDates(results, datesFilter);
 
   // TODO: CHECK ORDER
-  const orderedResults = sortByGivenDates(filteredResults, ['deadline', 'start', 'visibility']);
+  const orderedResults = sortByGivenDates(filteredResults, ['deadline', 'start', 'visualization']);
 
   if (query.limit) {
     orderedResults.splice(query.limit);
