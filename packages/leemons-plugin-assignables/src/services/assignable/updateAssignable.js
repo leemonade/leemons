@@ -33,14 +33,9 @@ module.exports = async function updateAssignable(
   assignable,
   { published = false, userSession, transacting } = {}
 ) {
-  const { id, ...assignableObject } = assignable;
+  const { id, ...assignableObjectReceived } = assignable;
 
-  // Check if any of the keys are not updatable (use lodash)
-  const omitted = _.omit(assignableObject, updatableFields);
-
-  if (_.keys(omitted)?.length) {
-    throw new Error('Some of the provided keys are not updatable');
-  }
+  const assignableObject = _.pick(assignableObjectReceived, updatableFields);
 
   let shouldUpgrade = false;
 
