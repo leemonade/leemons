@@ -8,7 +8,7 @@ module.exports = async function registerEvent(assignable, classes, { dates, tran
       isPrivate: true,
       type: 'plugins.calendar.task',
       startDate: dates.start,
-      endDate: dates.close,
+      endDate: dates.deadline,
     },
     { transacting }
   );
