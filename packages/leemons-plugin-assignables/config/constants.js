@@ -1,3 +1,4 @@
+const pluginName = 'plugins.assignables';
 const assignableActions = ['edit', 'view', 'view+student', 'assign', 'delete'];
 const assignableRoles = ['viewer', 'student', 'editor', 'owner'];
 const assignableRolesObject = {
@@ -32,7 +33,60 @@ const assignableInstanceRolesObject = {
   },
 };
 
+/**
+ * MENU BUILDER
+ */
+const menuItems = [
+  {
+    item: {
+      key: 'activities',
+      order: 25,
+      iconSvg: '/public/tasks/tasks-menu-icon.svg',
+      activeIconSvg: '/public/tasks/tasks-menu-icon.svg',
+      label: {
+        en: 'Activities',
+        es: 'Actividades',
+      },
+    },
+    permissions: [
+      // TODO: Add permissions to students
+    ],
+  },
+  {
+    item: {
+      key: 'activities.ongoing',
+      order: 1,
+      parentKey: 'activities',
+      url: '/private/assignables/ongoing',
+      label: {
+        en: 'Ongoing',
+        es: 'En curso',
+      },
+    },
+    permissions: [
+      // TODO: Add permissions to students
+    ],
+  },
+  {
+    item: {
+      key: 'activities.history',
+      order: 2,
+      parentKey: 'activities',
+      url: '/private/assignables/history',
+      label: {
+        en: 'History',
+        es: 'Histórico',
+      },
+    },
+    permissions: [
+      // TODO: Add permissions to students
+    ],
+  },
+];
+
 module.exports = {
+  pluginName,
+
   assignableRoles,
   assignableActions,
   assignableRolesObject,
@@ -40,4 +94,6 @@ module.exports = {
   assignableInstanceRoles,
   assignableInstanceActions,
   assignableInstanceRolesObject,
+
+  menuItems,
 };
