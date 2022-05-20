@@ -87,15 +87,7 @@ const TaskOngoingList = ({ instance }) => {
           withOverlay
           blur={10}
         />
-        <Button
-          variant="light"
-          size="md"
-          compact
-          leftIcon={<ChevLeftIcon width={20} height={20} />}
-          styles={{ zIndex: 5, color: COLORS.mainWhite }}
-        >
-          Back
-        </Button>
+
         <TaskDeadlineHeader
           {...instanceData.taskDeadlineHeader}
           onDeadlineChange={onDeadlineChange}

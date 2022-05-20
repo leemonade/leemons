@@ -1,114 +1,123 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import {
   ContextContainer,
   Paragraph,
-  ImageLoader,
   Button,
-  Stack,
-  Anchor,
-  Divider,
   HtmlText,
   Box,
+  Tabs,
+  TabPanel,
 } from '@bubbles-ui/components';
-import useInstance from '../helpers/useInstance';
-import useTask from '../helpers/useTask';
-import getFakeImage from '../../../../helpers/getFakeImage';
+import { useApi } from '@common';
+import { classDetailForDashboard } from '@academic-portfolio/request/classes';
+import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
 
-function useTaskInfo(instanceId, id) {
-  const instance = useInstance(instanceId, ['showCurriculum']);
-
-  const columns = useMemo(() => {
-    const cols = ['tagline', 'summary', 'cover', 'attachments', 'subjects'];
-    const instance = {
-      showCurriculum: {
-        content: true,
-        objectives: true,
-        assessmentCriteria: true,
-      },
-    };
-
-    // TODO: To get the curriculum, backend must be changed to return it
-    if (instance?.showCurriculum?.content) {
-      cols.push('content');
-    }
-
-    if (instance?.showCurriculum?.objectives) {
-      cols.push('objectives');
-    }
-
-    if (instance?.showCurriculum?.assessmentCriteria) {
-      cols.push('assessmentCriteria');
-    }
-    return cols;
-  }, [instance]);
-
-  const task = useTask(id || instance?.task?.id, columns);
-
-  return task;
+function getClasses(classes) {
+  return Promise.all(classes.map(classDetailForDashboard));
 }
 
-export default function SummaryStep({ id, instance, onNext }) {
-  const task = useTaskInfo(instance, id);
+function useClassesSubjects(classes) {
+  const [classesData, error, loading] = useApi(getClasses, classes);
+
+  if (loading) {
+    return [];
+  }
+  if (error) {
+    // TODO: Add error alert
+    return [];
+  }
+
+  const subjects = _.map(classesData, 'classe.subject');
+  return _.uniqBy(subjects, 'id');
+}
+
+function CurriculumRender({ assignation, showCurriculum: showCurriculumObj }) {
+  const {
+    content: showContent,
+    objectives: showObjectives,
+    assessmentCriteria: showAssessmentCriteria,
+  } = showCurriculumObj;
+
+  const showCurriculum = showContent || showObjectives || showAssessmentCriteria;
+
+  const { instance } = assignation;
+  const { assignable } = instance;
+
+  if (!showCurriculum) {
+    return null;
+  }
+
+  const subjects = useClassesSubjects(instance.classes);
 
   return (
-    <ContextContainer direction="row" fullHeight fullWidth>
-      <ContextContainer>
-        <ImageLoader
-          src={
-            // TODO: Remove image fake
-            getFakeImage(task?.cover) || ''
-          }
-          height="300px"
-          withPlaceholder={true}
-          placeholder="Image not found"
-        />
-        <Paragraph size="md">{task?.tagline}</Paragraph>
-        <ContextContainer title="Summary">
-          <Paragraph>{task?.summary}</Paragraph>
-        </ContextContainer>
-        {task?.content && (
-          <ContextContainer subtitle="Content">
-            {task?.content?.map(({ content, position }) => (
-              <HtmlText key={position}>{content}</HtmlText>
-            ))}
-          </ContextContainer>
-        )}
-        {task?.objectives && (
-          <ContextContainer subtitle="Objectives">
-            <Box>
-              {task?.objectives?.map(({ objective, position }) => (
-                <HtmlText key={position}>{objective}</HtmlText>
-              ))}
-            </Box>
-          </ContextContainer>
-        )}
-        {task?.assessmentCriteria && (
-          <ContextContainer subtitle="Assesment Criteria">
-            {task?.assessmentCriteria?.map(({ assessmentCriteria, position }) => (
-              <HtmlText key={position}>{assessmentCriteria}</HtmlText>
-            ))}
-          </ContextContainer>
-        )}
-        <Stack fullWidth justifyContent="end">
-          <Button onClick={onNext}>Next</Button>
-        </Stack>
+    <ContextContainer title="Curriculum">
+      <Tabs>
+        {subjects.map(({ id, name }) => {
+          const { curriculum } = assignable.subjects.find((s) => s.subject === id);
+          const tabPanelStyle = (theme) => ({ marginLeft: theme.spacing[3] });
+          return (
+            <TabPanel key={id} label={name}>
+              {/*
+                EN: Box to add margin
+                ES: Box para agregar margen
+              */}
+              <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}></Box>
+
+              {showContent && curriculum?.content?.length && (
+                <Box sx={tabPanelStyle}>
+                  <ContextContainer title="Content">
+                    <CurriculumListContents value={curriculum?.content} />
+                  </ContextContainer>
+                </Box>
+              )}
+              {showAssessmentCriteria && curriculum?.assessmentCriteria?.length && (
+                <Box sx={tabPanelStyle}>
+                  <ContextContainer title="Assessment Criteria">
+                    <CurriculumListContents value={curriculum?.assessmentCriteria} />
+                  </ContextContainer>
+                </Box>
+              )}
+              {showObjectives && curriculum?.objectives?.length && (
+                <Box sx={tabPanelStyle}>
+                  <ContextContainer title="Custom objectives">
+                    {/* TODO: Use react lists */}
+                    <HtmlText>
+                      {`
+                      <ul>
+                      ${curriculum?.objectives?.map(
+                        (objective) =>
+                          `<li>
+                            ${objective}
+                            </li>`
+                      )}
+                      </ul>
+                    `}
+                    </HtmlText>
+                  </ContextContainer>
+                </Box>
+              )}
+            </TabPanel>
+          );
+        })}
+      </Tabs>
+    </ContextContainer>
+  );
+}
+export default function SummaryStep({ assignation }) {
+  const { instance } = assignation;
+  const { assignable } = instance;
+  const { asset } = assignable;
+
+  const showCurriculum = instance.curriculum;
+
+  return (
+    <ContextContainer>
+      <ContextContainer title="Summary">
+        <Paragraph>{asset?.description}</Paragraph>
       </ContextContainer>
-      <Divider skipFlex orientation="vertical" />
-      <Stack skipFlex style={{ width: 300 }}>
-        <ContextContainer noFlex>
-          <ContextContainer title="Resources">
-            <Stack direction="column">
-              {task?.attachments?.map((a, i) => (
-                <Anchor href="https://leemons.io" taget="_blank" key={i}>
-                  {a}
-                </Anchor>
-              ))}
-            </Stack>
-          </ContextContainer>
-          {/* <ContextContainer title="Your team"></ContextContainer> */}
-        </ContextContainer>
-      </Stack>
+      <CurriculumRender assignation={assignation} showCurriculum={showCurriculum} />
     </ContextContainer>
   );
 }
