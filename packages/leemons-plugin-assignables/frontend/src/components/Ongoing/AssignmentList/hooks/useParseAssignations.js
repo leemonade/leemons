@@ -96,7 +96,7 @@ function getTeacherStatus(assignation) {
 }
 
 function getTimeReferenceColor(date) {
-  const timeReference = dayjs().diff(dayjs(date), 'days');
+  const timeReference = dayjs(date).diff(dayjs(), 'days');
   if (timeReference < 2) {
     return 'error';
   }
@@ -117,9 +117,12 @@ function TeacherActions({ id }) {
   return <ActionButton icon={<ViewOnIcon />} onClick={redirectToInstance} />;
 }
 
-function StudentActions({ id, role, late, submitted }) {
+function StudentActions({ id, user, role, late, submitted }) {
   const history = useHistory();
-  const url = useMemo(() => role.studentDetailUrl.replace(':id', id), [id, role?.studentDetailUrl]);
+  const url = useMemo(
+    () => role.studentDetailUrl.replace(':id', id).replace(':user', user),
+    [id, role?.studentDetailUrl]
+  );
 
   const redirectToInstance = useCallback(() => history.push(url), [history, url]);
 
@@ -159,7 +162,7 @@ async function parseAssignationForStudentView(assignation) {
   const parsedDates = parseDates(instance.dates);
   const status = getStatus(assignation, instance);
   const classData = await getClassData(instance.classes);
-  const timeReference = dayjs().diff(dayjs(instance.dates.deadline), 'seconds');
+  const timeReference = dayjs(instance.dates.deadline).diff(dayjs(), 'seconds');
   const timeReferenceColor = getTimeReferenceColor(instance.dates.deadline);
   const role = instance.assignable.roleDetails;
 
@@ -174,6 +177,7 @@ async function parseAssignationForStudentView(assignation) {
     subject: classData.name,
     actions: (
       <StudentActions
+        user={assignation.user}
         late={instance.dates.deadline && timeReference <= 0}
         submitted={instance.dates.end}
         id={instance.id}
