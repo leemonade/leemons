@@ -7,6 +7,8 @@ export default async function saveTaskRequest(taskId, task) {
   const formData = new FormData();
 
   formData.append('task', JSON.stringify(task));
+  console.log(task.asset.cover);
+  throw new Error("I'm not working");
 
   if (task.asset.cover instanceof File) {
     formData.append('asset.cover', task.asset.cover, task.asset.cover.name);

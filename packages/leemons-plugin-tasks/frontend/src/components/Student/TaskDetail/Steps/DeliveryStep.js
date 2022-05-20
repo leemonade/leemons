@@ -7,10 +7,14 @@ import useTask from '../helpers/useTask';
 import addDeliverableRequest from '../../../../request/instance/addDeliverable';
 import useDeliverable from '../helpers/useDelivery';
 
-export default function DeliveryStep({ assignation }) {
+export default function DeliveryStep({ assignation, onNext, onPrev }) {
   const { instance } = assignation;
   const { assignable } = instance;
   const { submission } = assignable;
+
+  onNext.current = () => true;
+
+  onPrev.current = () => false;
 
   console.log(assignation);
 

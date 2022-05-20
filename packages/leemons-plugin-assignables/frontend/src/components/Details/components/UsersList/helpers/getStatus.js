@@ -5,7 +5,7 @@ export default function getStatus(studentData, instanceData) {
     if (
       !instanceData.dates?.alwaysAvailable &&
       instanceData.dates?.deadline &&
-      !dayjs(studentData.timestamps?.end).isAfter(dayjs(instanceData.dates?.deadline))
+      dayjs(studentData.timestamps?.end).isAfter(dayjs(instanceData.dates?.deadline))
     ) {
       return 'LATE';
     }
@@ -14,7 +14,7 @@ export default function getStatus(studentData, instanceData) {
   if (studentData.timestamps?.start) {
     return 'ONGOING';
   }
-  if (studentData.timestamps?.opened) {
+  if (studentData.timestamps?.open) {
     return 'OPENED';
   }
   return 'NOT OPENED';

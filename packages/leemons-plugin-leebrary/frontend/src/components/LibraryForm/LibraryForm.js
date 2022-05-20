@@ -413,17 +413,24 @@ const LibraryForm = ({
                 <Controller
                   control={control}
                   name="cover"
-                  render={({ field: { ref, value, ...field } }) => (
-                    <ImagePreviewInput
-                      labels={{
-                        changeImage: labels.changeImage,
-                        uploadButton: labels.uploadButton,
-                      }}
-                      previewURL={getCoverUrl(value)}
-                      // previewURL={value}
-                      {...field}
-                    />
-                  )}
+                  render={({ field: { ref, value, ...field } }) => {
+                    console.log('file value', value);
+                    return (
+                      <ImagePreviewInput
+                        labels={{
+                          changeImage: labels.changeImage,
+                          uploadButton: labels.uploadButton,
+                        }}
+                        previewURL={getCoverUrl(value)}
+                        // previewURL={value}
+                        {...field}
+                        onChange={(files) => {
+                          console.log('Files changed', files);
+                          field.onChange(files);
+                        }}
+                      />
+                    );
+                  }}
                 />
               </Stack>
             </ContextContainer>

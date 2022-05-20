@@ -212,7 +212,7 @@ module.exports = [
   },
   {
     method: 'PUT',
-    path: '/tasks/instances/:instance/students/:student/key/:key/value/:value',
+    path: '/tasks/instances/:instance/students/:student',
     handler: 'assignments.studentUpdate',
     authenticated: true,
   },

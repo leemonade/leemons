@@ -75,6 +75,9 @@ const assignationObject = {
             {
               instanceof: 'Date',
             },
+            {
+              type: 'number',
+            },
           ],
         },
       },

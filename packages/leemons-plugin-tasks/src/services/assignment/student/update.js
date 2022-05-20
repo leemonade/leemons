@@ -1,30 +1,50 @@
-const { userInstances } = require('../../table');
-const getStudentDetails = require('./get');
+const _ = require('lodash');
+const assignablesServices = require('../../assignables');
 
-const VALID_KEYS = ['opened', 'start', 'end'];
+const STUDENT_UPDATABLE_FIELDS = [
+  'timestamps.open',
+  'timestamps.start',
+  'timestamps.end',
+  'metadata.submission',
+];
 
-module.exports = async function update({ student, instance, key, value }, { transacting } = {}) {
-  if (!VALID_KEYS.includes(key)) {
-    throw new Error(`Invalid key: ${key}`);
+const TEACHER_UPDATABLE_FIELD = ['grades'];
+
+module.exports = async function update(
+  { student, instance, ...data },
+  { userSession, transacting } = {}
+) {
+  const { assignations } = assignablesServices();
+
+  // EN: Check if it is the student or the teacher
+  // ES: Comprobar si es el estudiante o el profesor
+  const isStudent = _.map(userSession.userAgents, 'id').includes(student);
+
+  // EN: Only update the allowed fields
+  // ES: Solo actualizar los campos permitidos
+  const newData = _.pick(data, isStudent ? STUDENT_UPDATABLE_FIELDS : TEACHER_UPDATABLE_FIELD);
+
+  if (newData.timestamps) {
+    const assignation = await assignations.getAssignation(instance, student, {
+      userSession,
+      transacting,
+    });
+
+    // EN: The student is unable to replace the existing timestamps
+    // ES: El estudiante no puede reemplazar los timestamps existentes
+    newData.timestamps = _.defaults(assignation.timestamps, newData.timestamps);
   }
 
-  // EN: Check if the key is already setted
-  // ES: Comprobar si la clave ya está establecida
-  const details = await getStudentDetails(student, instance, { columns: [key], transacting });
-  if (!details) {
-    throw new Error("Student or instance doesn't exist");
-  }
-  if (details[key]) {
-    return false;
-  }
-
-  // EN: Update the key
-  // ES: Actualizar el key
-  await userInstances.set(
-    { instance, user: student },
-    { [key]: global.utils.sqlDatetime(parseInt(value, 10)) },
-    { transacting }
+  // EN: Update the instance
+  // ES: Actualizar la instancia
+  const updatedAssignation = await assignations.updateAssignation(
+    {
+      assignableInstance: instance,
+      user: student,
+      ...newData,
+    },
+    { userSession, transacting }
   );
 
-  return true;
+  return updatedAssignation;
 };

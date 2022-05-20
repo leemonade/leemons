@@ -261,9 +261,13 @@ module.exports = {
   },
   studentUpdate: async (ctx) => {
     try {
-      const { instance, student, key, value } = ctx.request.params;
+      const { instance, student } = ctx.request.params;
+      const { body } = ctx.request;
 
-      const updated = await updateStudent({ instance, student, key, value });
+      const updated = await updateStudent(
+        { instance, student, ...body },
+        { userSession: ctx.state.userSession }
+      );
 
       ctx.status = 200;
       ctx.body = {

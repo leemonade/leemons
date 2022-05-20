@@ -24,6 +24,9 @@ const assignableInstanceValidationObject = {
             {
               instanceof: 'Date',
             },
+            {
+              type: 'number',
+            },
           ],
         },
       },

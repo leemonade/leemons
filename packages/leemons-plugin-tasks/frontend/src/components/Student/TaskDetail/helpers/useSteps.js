@@ -47,6 +47,8 @@ export default function useSteps(assignation) {
       },
       submission: () => {
         const { submission } = assignable;
+        const onNext = { current: null };
+        const onPrev = { current: null };
 
         if (!submission) {
           return null;
@@ -54,9 +56,11 @@ export default function useSteps(assignation) {
         // TODO: Check if submission is filed
         return {
           label: 'Submission',
-          component: <DeliveryStep assignation={assignation} />,
+          component: <DeliveryStep assignation={assignation} onNext={onNext} onPrev={onPrev} />,
           sidebar: true,
           timestamps: 'start',
+          onNext,
+          onPrev,
           // status: 'OK',
           // badge: 'Submitted',
         };
