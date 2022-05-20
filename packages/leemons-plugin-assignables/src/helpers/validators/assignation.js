@@ -53,7 +53,6 @@ const assignationObject = {
           },
           gradedBy: {
             type: 'string',
-            format: 'uuid',
             nullable: false,
           },
           feedback: {

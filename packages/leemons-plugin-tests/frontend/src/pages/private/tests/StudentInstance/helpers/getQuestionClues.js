@@ -2,13 +2,20 @@ import { forEach, isNumber } from 'lodash';
 
 export function getQuestionClues(question, limit) {
   const clues = [];
-  if (question.clues?.length) {
-    forEach(question.clues, (clue) => {
-      clues.push({
-        type: 'note',
-        text: clue.value,
-      });
+
+  if (question.type === 'map') {
+    const responsesIndexsToHide = [];
+    forEach(question.properties.markers.list, (response, index) => {
+      if (response.hideOnHelp) {
+        responsesIndexsToHide.push(index);
+      }
     });
+    if (responsesIndexsToHide.length) {
+      clues.push({
+        type: 'hide-response',
+        indexs: responsesIndexsToHide,
+      });
+    }
   }
 
   if (question.type === 'mono-response') {
@@ -25,6 +32,16 @@ export function getQuestionClues(question, limit) {
       });
     }
   }
+
+  if (question.clues?.length) {
+    forEach(question.clues, (clue) => {
+      clues.push({
+        type: 'note',
+        text: clue.value,
+      });
+    });
+  }
+
   if (isNumber(limit)) {
     return clues.slice(0, limit);
   }

@@ -39,15 +39,32 @@ export default function Development(props) {
         />
       </Box>
       <Box className={styles.resumeBoxContainer}>
-        <InfoCard
-          styles={styles}
-          number={store.questionsInfo.totalPoints}
-          label={t('totalPoints')}
-        />
+        {store.questionsInfo.minPoints !== 0 ? (
+          <InfoCard styles={styles} number={store.questionsInfo.minPoints} label={t('minScore')} />
+        ) : null}
+        <InfoCard styles={styles} number={store.questionsInfo.totalPoints} label={t('maxScore')} />
         <InfoCard
           styles={styles}
           number={store.questionsInfo.minToApprove}
           label={t('minToApprove')}
+        />
+      </Box>
+
+      <Box className={styles.resumeBoxContainer}>
+        <InfoCard
+          cx={cx}
+          icon="/public/tests/blank-questions.png"
+          styles={styles}
+          label={t('blankQuestions')}
+        />
+      </Box>
+
+      <Box className={styles.resumeBoxContainer}>
+        <InfoCard
+          cx={cx}
+          icon="/public/tests/error-questions.png"
+          styles={styles}
+          label={t('errorQuestions', { points: store.questionsInfo.perErrorQuestion })}
         />
       </Box>
 

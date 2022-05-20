@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction } from 'lodash';
-import { Stepper } from '@bubbles-ui/components';
+import { HorizontalStepper, Box } from '@bubbles-ui/components';
 import { LayoutContext } from '@layout/context/layout';
 
 function Setup({ steps, onNext, onPrev, onFinish, ...props }) {
@@ -33,7 +33,20 @@ function Setup({ steps, onNext, onPrev, onFinish, ...props }) {
   // COMPONENT
 
   return (
-    <Stepper {...props} active={active} data={steps} onNext={handleOnNext} onPrev={handleOnPrev} />
+    <>
+      <HorizontalStepper {...props} currentStep={active} data={steps} />
+      <Box pt={40}>
+        {
+          steps.map((item) =>
+            React.cloneElement(item.content, {
+              ...item.content.props,
+              onNext: handleOnNext,
+              onPrevious: handleOnPrev,
+            })
+          )[active]
+        }
+      </Box>
+    </>
   );
 }
 

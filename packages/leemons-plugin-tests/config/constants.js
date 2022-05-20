@@ -68,6 +68,7 @@ const menuItems = [
   {
     item: {
       key: 'tests',
+      order: 12,
       iconSvg: '/public/tests/menu-icon.svg',
       activeIconSvg: '/public/tests/menu-icon.svg',
       label: {
@@ -78,11 +79,11 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.questionBanks,
-        actionNames: ['view', 'create', 'update', 'delete', 'admin'],
+        actionNames: ['admin'],
       },
       {
         permissionName: permissionNames.tests,
-        actionNames: ['view', 'create', 'update', 'delete', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },
@@ -101,7 +102,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.tests,
-        actionNames: ['view', 'create', 'update', 'delete', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },
@@ -120,7 +121,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.questionBanks,
-        actionNames: ['view', 'create', 'update', 'delete', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },
@@ -148,7 +149,7 @@ const assignableRoles = [
         permissions: [
           {
             permissionName: permissionNames.tests,
-            actionNames: ['view', 'admin'],
+            actionNames: ['admin'],
           },
         ],
       },

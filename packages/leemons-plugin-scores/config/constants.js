@@ -32,6 +32,7 @@ const menuItems = [
   {
     config: {
       key: 'scores',
+      order: 14,
       iconSvg: '/public/assets/svgs/curriculum.svg',
       activeIconSvg: '/public/assets/svgs/curriculum.svg',
       label: {

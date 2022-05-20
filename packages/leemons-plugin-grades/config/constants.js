@@ -119,6 +119,7 @@ const menuItems = [
   {
     item: {
       key: 'rules',
+      order: 3,
       iconSvg: '/public/grades/menu-icon.svg',
       activeIconSvg: '/public/grades/menu-icon.svg',
       label: {
@@ -129,7 +130,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.rules,
-        actionNames: ['view', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },
@@ -148,7 +149,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.rules,
-        actionNames: ['view', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },
@@ -168,7 +169,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.evaluations,
-        actionNames: ['view', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },
@@ -188,7 +189,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.promotions,
-        actionNames: ['view', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },
@@ -208,7 +209,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.dependencies,
-        actionNames: ['view', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },

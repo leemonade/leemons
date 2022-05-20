@@ -1,8 +1,10 @@
 /* eslint-disable no-param-reassign */
+const _ = require('lodash');
 const dayjs = require('dayjs');
 const duration = require('dayjs/plugin/duration');
 const { table } = require('../tables');
 const { findQuestionResponses } = require('./findQuestionResponses');
+const { calculeUserAgentInstanceNote } = require('./calculeUserAgentInstanceNote');
 
 dayjs.extend(duration);
 
@@ -12,7 +14,7 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
       const { assignations: assignationsService, assignableInstances: assignableInstancesService } =
         leemons.getPlugin('assignables').services;
 
-      const [{ timestamps }, [questionResponse], instance] = await Promise.all([
+      const [{ timestamps, finished }, [questionResponse], instance] = await Promise.all([
         assignationsService.getAssignation(data.instance, userSession.userAgents[0].id, {
           userSession,
           transacting,
@@ -27,9 +29,14 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
         ),
         assignableInstancesService.getAssignableInstance(data.instance, {
           userSession,
+          details: true,
           transacting,
         }),
       ]);
+
+      if (finished) {
+        // throw new Error('Assignation finished');
+      }
 
       if (questionResponse) {
         // Check if the data clues is less than the question response
@@ -51,7 +58,7 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
         }
       }
 
-      return table.userAgentAssignableInstanceResponses.set(
+      const result = await table.userAgentAssignableInstanceResponses.set(
         {
           instance: data.instance,
           question: data.question,
@@ -64,6 +71,30 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
         },
         { transacting }
       );
+
+      const note = await calculeUserAgentInstanceNote(data.instance, userSession.userAgents[0].id, {
+        userSession,
+        transacting,
+      });
+
+      await assignationsService.updateAssignation(
+        {
+          assignableInstance: data.instance,
+          user: userSession.userAgents[0].id,
+          grades: _.map(instance.assignable.subjects, ({ subject }) => ({
+            subject,
+            type: 'main',
+            grade: note,
+            gradedBy: 'auto-graded',
+          })),
+        },
+        {
+          userSession,
+          transacting,
+        }
+      );
+
+      return result;
     },
     table.userAgentAssignableInstanceResponses,
     _transacting

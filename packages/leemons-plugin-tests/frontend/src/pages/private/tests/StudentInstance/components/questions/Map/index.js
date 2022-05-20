@@ -1,18 +1,25 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { isNumber } from 'lodash';
-import { Box, Stack } from '@bubbles-ui/components';
+import { forEach } from 'lodash';
+import { Box } from '@bubbles-ui/components';
 import QuestionTitle from '../../QuestionTitle';
 import QuestionNoteClues from '../../QuestionNoteClues';
-import QuestionImage from '../../QuestionImage';
-import Responses from './Responses';
 import { ButtonNavigation } from '../../ButtonNavigation';
+import { QuestionImage } from '../../../../../../../components/QuestionImage';
+import Responses from './Responses';
 
 export default function Index(props) {
   const { styles, saveQuestion, store, question, t, isLast } = props;
 
-  const currentResponseIndex = store.questionResponses[question.id].properties?.response;
+  const currentResponses = store.questionResponses[question.id].properties?.responses || [];
+
+  let allSelectsUsed = true;
+  forEach(question.properties.markers.list, (response, index) => {
+    if (!currentResponses.includes(index)) {
+      allSelectsUsed = false;
+    }
+  });
 
   function nextStep() {
     if (!store.viewMode) saveQuestion();
@@ -23,35 +30,16 @@ export default function Index(props) {
     <>
       <Box className={styles.questionCard}>
         <QuestionTitle {...props} />
-        {!question.withImages && question.questionImage?.cover ? (
-          <>
-            <Stack fullWidth spacing={4}>
-              <Box>
-                <QuestionImage {...props} />
-              </Box>
-              <Box>
-                <Responses {...props} />
-              </Box>
-            </Stack>
-          </>
-        ) : (
-          <>
-            <QuestionImage {...props} />
-            <Responses {...props} />
-          </>
-        )}
+        <Box className={styles.mapImageContainer}>
+          <QuestionImage src={question.properties.image} markers={question.properties.markers} />
+        </Box>
+        <Responses {...props} />
       </Box>
       <QuestionNoteClues {...props} />
       <ButtonNavigation
         {...props}
         nextStep={nextStep}
-        nextLabel={
-          isLast
-            ? t('finishButton')
-            : isNumber(currentResponseIndex)
-            ? t('nextButton')
-            : t('skipButton')
-        }
+        nextLabel={isLast ? t('finishButton') : allSelectsUsed ? t('nextButton') : t('skipButton')}
       />
     </>
   );
@@ -66,7 +54,7 @@ Index.propTypes = {
   question: PropTypes.any,
   prevStep: PropTypes.func,
   nextStep: PropTypes.func,
-  isLast: PropTypes.bool,
   isFirstStep: PropTypes.bool,
   saveQuestion: PropTypes.func,
+  isLast: PropTypes.bool,
 };

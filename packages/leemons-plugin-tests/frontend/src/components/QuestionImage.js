@@ -35,7 +35,7 @@ export function QuestionImage({ src, markers }) {
       {markers && markers.list
         ? markers.list.map((marker, index) => (
             <Box
-              key={marker.id}
+              key={index}
               className={classes.marker}
               style={{
                 top: marker.top,
@@ -52,15 +52,10 @@ export function QuestionImage({ src, markers }) {
 }
 
 QuestionImage.propTypes = {
-  src: PropTypes.string.isRequired,
+  src: PropTypes.any.isRequired,
   markers: PropTypes.shape({
     type: PropTypes.string,
     backgroundColor: PropTypes.string,
-    list: PropTypes.arrayOf(
-      PropTypes.shape({
-        top: PropTypes.number.isRequired,
-        left: PropTypes.number.isRequired,
-      })
-    ),
+    list: PropTypes.any,
   }).isRequired,
 };

@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@bubbles-ui/leemons": "^1.0.34",
+    "@bubbles-ui/leemons": "^1.0.36",
     "react-autosuggest": "^10.1.0",
     "@babel/runtime-corejs2": "^7.14.8",
     "@leemonade/rjsf-core": "^3.0.0",

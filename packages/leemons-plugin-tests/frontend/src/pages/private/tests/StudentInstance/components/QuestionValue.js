@@ -10,11 +10,13 @@ export default function QuestionValue(props) {
   const clues = React.useMemo(() => getQuestionClues(question), [question]);
 
   function useClue() {
-    if (clues.length > store.questionResponses[question.id].clues) {
-      store.questionResponses[question.id].clues += 1;
-      saveQuestion();
+    if (!store.viewMode) {
+      if (clues.length > store.questionResponses[question.id].clues) {
+        store.questionResponses[question.id].clues += 1;
+        saveQuestion();
+      }
+      render();
     }
-    render();
   }
 
   return (

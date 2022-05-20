@@ -32,14 +32,13 @@ function shortenUnits(label, short = false) {
   return label;
 }
 
-export function LocaleDuration({ seconds: secondsProp, short = false, options = {} }) {
+export function getLocaleDuration({ seconds: secondsProp, short = false, options = {} }, session) {
   const seconds = Number(secondsProp);
   const d = Math.floor(seconds / (3600 * 24));
   const h = Math.floor((seconds % (3600 * 24)) / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = Math.floor(seconds % 60);
 
-  const session = useSession();
   const locale = getLocale(session);
   const key = getFormatterKey(locale, options);
 
@@ -54,7 +53,7 @@ export function LocaleDuration({ seconds: secondsProp, short = false, options = 
   const hourParts = formatter.formatToParts(h, 'hours');
   const dayParts = formatter.formatToParts(d, 'days');
 
-  const result = [
+  return [
     { value: d, label: shortenUnits(dayParts.slice(-1)[0].value, short) },
     { value: h, label: shortenUnits(hourParts.slice(-1)[0].value, short) },
     {
@@ -69,6 +68,9 @@ export function LocaleDuration({ seconds: secondsProp, short = false, options = 
     .filter((item) => item.value > 0)
     .map((item) => item.value + item.label)
     .join(' ');
+}
 
-  return result;
+export function LocaleDuration({ seconds: secondsProp, short = false, options = {} }) {
+  const session = useSession();
+  return getLocaleDuration({ seconds: secondsProp, short, options }, session);
 }

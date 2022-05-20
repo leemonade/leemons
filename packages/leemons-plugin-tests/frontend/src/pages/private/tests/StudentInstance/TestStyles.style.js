@@ -56,6 +56,12 @@ export const TestStyles = createStyles((theme, {}) => ({
     paddingBottom: theme.spacing[4],
     backgroundColor: theme.colors.uiBackground02,
   },
+  resumeBoxBig: {
+    width: 335,
+    display: 'flex',
+    gap: theme.spacing[3],
+    textAlign: 'left',
+  },
   resumeNumber: {
     color: theme.colors.text01,
     fontSize: 32,
@@ -66,6 +72,11 @@ export const TestStyles = createStyles((theme, {}) => ({
     color: theme.colors.text01,
     fontSize: theme.fontSizes[1],
     textAlign: 'center',
+  },
+  resumeLabelBig: {
+    width: 230,
+    fontSize: theme.fontSizes[2],
+    textAlign: 'left',
   },
   questionHeader: {
     backgroundColor: theme.colors.uiBackground01,
@@ -207,6 +218,7 @@ export const TestStyles = createStyles((theme, {}) => ({
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
+    position: 'relative',
   },
   questionResponseImageContainerSelected: {
     borderColor: theme.colors.interactive01d,
@@ -239,5 +251,94 @@ export const TestStyles = createStyles((theme, {}) => ({
     flexDirection: 'row',
     gridTemplateColumns: 'repeat(4, 1fr)',
     gap: theme.spacing[3],
+  },
+  disableResponseBg: {
+    position: 'absolute',
+    left: -1,
+    top: -1,
+    width: 'calc(100% + 2px)',
+    height: 'calc(100% + 2px)',
+    backgroundColor: theme.colors.uiBackground01,
+    zIndex: 1,
+    opacity: 0.5,
+    cursor: 'not-allowed',
+  },
+  disableResponseBgWithOutImage: {
+    opacity: 0.75,
+  },
+  disableResponseIcon: {
+    width: 22,
+    height: 28,
+    position: 'absolute',
+    right: theme.spacing[3],
+    top: theme.spacing[3],
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    borderRadius: 3,
+    zIndex: 2,
+  },
+  disableResponseIconWithOutImage: {
+    top: theme.spacing[1],
+    width: 14,
+    height: 14,
+    right: theme.spacing[1],
+    backgroundColor: 'transparent',
+  },
+  disableResponseImage: {
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '50%',
+    height: '50%',
+    zIndex: 3,
+  },
+  questionResponseImageContainerClued: {
+    cursor: 'not-allowed',
+  },
+  mapImageContainer: {
+    marginLeft: -theme.spacing[4],
+    marginRight: -theme.spacing[4],
+  },
+  mapResponsesContainer: {
+    marginTop: theme.spacing[4],
+    display: 'grid',
+    flexDirection: 'row',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gridGap: theme.spacing[2],
+    columnGap: theme.spacing[6],
+  },
+  mapResponsesContent: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  mapResponsesNumber: {
+    width: '50px',
+    textAlign: 'center',
+  },
+  mapResponsesSelect: {
+    width: '100%',
+    position: 'relative',
+  },
+  questionResponseImageContainerDone: {
+    borderColor: theme.colors.fatic02,
+    backgroundColor: theme.colors.fatic02v0,
+  },
+  questionResponseImageContainerWrong: {
+    borderColor: theme.colors.fatic01,
+    backgroundColor: theme.colors.fatic01v0,
+  },
+  questionViewModeIcon: {
+    position: 'absolute',
+    left: 25,
+    top: 9,
+    width: 20,
+    height: 22,
+  },
+  questionResponseImageContainerViewMode: {
+    cursor: 'default',
+    paddingLeft: 64,
+  },
+  questionResponseImageContainerViewModeWithImages: {
+    paddingLeft: theme.spacing[3],
   },
 }));

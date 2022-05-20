@@ -21,6 +21,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { LocaleDate, unflatten, useRequestErrorMessage } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
+import { useSession } from '@users/session';
 import prefixPN from '../helpers/prefixPN';
 import {
   deleteAssetRequest,
@@ -39,6 +40,12 @@ import { AssetThumbnail } from './AssetThumbnail';
 import { prepareAsset } from '../helpers/prepareAsset';
 import { prepareAssetType } from '../helpers/prepareAssetType';
 import { PermissionsData } from './AssetSetup/PermissionsData';
+import { ListEmpty } from './ListEmpty';
+import { SearchEmpty } from './SearchEmpty';
+
+function getLocale(session) {
+  return session ? session.locale : navigator?.language || 'en';
+}
 
 function getOwner(asset) {
   const owner = (asset?.canAccess || []).filter((person) =>
@@ -68,6 +75,8 @@ const AssetList = ({
   onSearch,
   pinned,
   paperProps,
+  emptyComponent,
+  searchEmptyComponent,
   onSelectItem = () => {},
   onEditItem = () => {},
   onTypeChange = () => {},
@@ -100,6 +109,8 @@ const AssetList = ({
     closeModal,
   } = useLayout();
   const [searchDebounced] = useDebouncedValue(searchCriteria, 300);
+  const session = useSession();
+  const locale = getLocale(session);
 
   // ·········································································
   // DATA PROCESSING
@@ -428,6 +439,7 @@ const AssetList = ({
             published={published}
             isEmbedded={isEmbedded}
             onRefresh={reloadAssets}
+            locale={locale}
           />
         ),
         itemMinWidth,
@@ -482,6 +494,14 @@ const AssetList = ({
     }
     return {};
   }, [translations]);
+
+  const getEmptyState = () => {
+    if (searchDebounced && !isEmpty(searchDebounced)) {
+      return searchEmptyComponent || emptyComponent || <SearchEmpty t={t} />;
+    }
+
+    return emptyComponent || <ListEmpty t={t} />;
+  };
 
   // ·········································································
   // RENDER
@@ -590,17 +610,7 @@ const AssetList = ({
           )}
           {!loading && isEmpty(serverData?.items) && (
             <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
-              <Stack
-                alignItems="center"
-                direction="column"
-                spacing={2}
-                sx={(theme) => ({ color: theme.colors.text05 })}
-              >
-                <CommonFileSearchIcon style={{ fontSize: 24 }} />
-                <Title order={4} color="soft">
-                  {t('labels.nothingFound')}
-                </Title>
-              </Stack>
+              {getEmptyState()}
             </Stack>
           )}
         </Box>
@@ -633,6 +643,7 @@ const AssetList = ({
               onUnpin={handleOnUnpin}
               onRefresh={reloadAssets}
               onDownload={handleOnDownload}
+              locale={locale}
             />
           </Box>
         )}
@@ -686,6 +697,8 @@ AssetList.propTypes = {
   pinned: PropTypes.bool,
   canShowPublicToggle: PropTypes.bool,
   paperProps: PropTypes.object,
+  emptyComponent: PropTypes.element,
+  searchEmptyComponent: PropTypes.element,
 };
 
 export { AssetList };

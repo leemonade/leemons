@@ -4,11 +4,16 @@ import { Box, InputWrapper } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useSession } from '@users/session';
 import { LibraryForm } from './LibraryForm/LibraryForm';
 import prefixPN from '../helpers/prefixPN';
 import { prepareAsset } from '../helpers/prepareAsset';
 import { listCategoriesRequest } from '../request';
 import { CardWrapper } from './CardWrapper';
+
+function getLocale(session) {
+  return session ? session.locale : navigator?.language || 'en';
+}
 
 const AssetFormInput = ({
   form,
@@ -26,6 +31,8 @@ const AssetFormInput = ({
 }) => {
   const [category, setCategory] = React.useState(null);
   const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
+  const session = useSession();
+  const locale = getLocale(session);
 
   // ························································
   // LABELS & STATICS
@@ -101,6 +108,7 @@ const AssetFormInput = ({
               item={{ original: form?.watch() }}
               category={category}
               variant={previewVariant}
+              locale={locale}
               single
             />
           </InputWrapper>
