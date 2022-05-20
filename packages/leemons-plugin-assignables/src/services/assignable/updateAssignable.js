@@ -33,7 +33,9 @@ module.exports = async function updateAssignable(
   assignable,
   { published = false, userSession, transacting } = {}
 ) {
-  const { id, ...assignableObject } = assignable;
+  // eslint-disable-next-line prefer-const
+  let { id, ...assignableObject } = assignable;
+  assignableObject = _.omit(assignableObject, ['roleDetails']);
 
   // Check if any of the keys are not updatable (use lodash)
   const omitted = _.omit(assignableObject, updatableFields);
