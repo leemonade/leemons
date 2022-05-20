@@ -7,24 +7,12 @@ import useTask from '../helpers/useTask';
 import addDeliverableRequest from '../../../../request/instance/addDeliverable';
 import useDeliverable from '../helpers/useDelivery';
 
-export default function DeliveryStep({ onNext, onPrevious, instance, student, id }) {
-  const task = useTask(id, ['submissions']);
-  const deliverable = useDeliverable(instance, student, 'submission');
+export default function DeliveryStep({ assignation }) {
+  const { instance } = assignation;
+  const { assignable } = instance;
+  const { submission } = assignable;
 
-  const handleSubmission = React.useCallback(
-    (value) => {
-      addDeliverableRequest({
-        instance,
-        user: student,
-        type: 'submission',
-        deliverable: {
-          type: task?.submissions?.type,
-          value,
-        },
-      });
-    },
-    [instance, student, task?.submissions?.type]
-  );
+  console.log(assignation);
 
   const Component = (type) =>
     loadable(() => {
@@ -37,24 +25,25 @@ export default function DeliveryStep({ onNext, onPrevious, instance, student, id
       return import(`./Delivery/${type}`);
     });
 
-  const C = Component(task?.submissions?.type);
+  const C = Component(submission.type);
 
   return (
     <ContextContainer title="Delivery">
-      <HtmlText>{task?.submissions?.description}</HtmlText>
-      <C task={task} onChange={handleSubmission} value={deliverable?.value} />
-      <Stack fullWidth justifyContent="space-between">
-        <Button onClick={onPrevious}>Previous</Button>
-        <Button onClick={onNext}>Next</Button>
-      </Stack>
+      <HtmlText>{submission?.description}</HtmlText>
+      <C submission={submission} onChange={() => {}} value={undefined} />
     </ContextContainer>
   );
 }
 
 DeliveryStep.propTypes = {
-  onNext: PropTypes.func.isRequired,
-  onPrevious: PropTypes.func.isRequired,
-  instance: PropTypes.string.isRequired,
-  student: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
+  assignation: PropTypes.shape({
+    instance: PropTypes.shape({
+      assignable: PropTypes.shape({
+        submission: PropTypes.shape({
+          type: PropTypes.string.isRequired,
+          description: PropTypes.string.isRequired,
+        }),
+      }),
+    }),
+  }).isRequired,
 };

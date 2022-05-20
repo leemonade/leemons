@@ -1,37 +1,21 @@
-import React, { useEffect, useMemo } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { useApi } from '@common';
 
-import { ContextContainer, HtmlText, Button, Stack } from '@bubbles-ui/components';
-import getTaskRequest from '../../../../request/task/getTask';
+import { ContextContainer, HtmlText } from '@bubbles-ui/components';
 
-import updateStudentRequest from '../../../../request/instance/updateStudent';
-import useTask from '../helpers/useTask';
-
-export default function StatementAndDevelopmentStep({ id, instance, student, onNext, onPrevious }) {
-  const task = useTask(id, ['statement', 'development']);
-
-  useEffect(() => {
-    updateStudentRequest({
-      instance,
-      student,
-      key: 'start',
-      value: new Date().getTime(),
-    });
-  }, []);
+export default function StatementAndDevelopmentStep({ assignation, showDevelopment }) {
+  const { statement, development } = assignation?.instance?.assignable;
 
   return (
     <ContextContainer>
       <ContextContainer title="Statement">
-        <HtmlText>{task?.statement}</HtmlText>
+        <HtmlText>{statement}</HtmlText>
       </ContextContainer>
-      <ContextContainer title="Development">
-        <HtmlText>{task?.development}</HtmlText>
-      </ContextContainer>
-      <Stack fullWidth justifyContent="space-between">
-        <Button onClick={onPrevious}>Previous</Button>
-        <Button onClick={onNext}>Next</Button>
-      </Stack>
+      {showDevelopment && (
+        <ContextContainer title="Development">
+          <HtmlText>{development}</HtmlText>
+        </ContextContainer>
+      )}
     </ContextContainer>
   );
 }

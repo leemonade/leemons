@@ -1,4 +1,4 @@
-import { createStyles, getFontExpressive } from '@bubbles-ui/components';
+import { createStyles } from '@bubbles-ui/components';
 
 export const TaskDetailStyles = createStyles((theme) => ({
   root: {
@@ -10,7 +10,7 @@ export const TaskDetailStyles = createStyles((theme) => ({
   },
   content: {
     minWidth: '50%',
-    maxWidth: `calc(100% - ${theme.spacing.lg}px)`,
+    padding: `0 ${theme.spacing.lg}px`,
     margin: `${theme.spacing[4]}px auto`,
   },
   nav: {

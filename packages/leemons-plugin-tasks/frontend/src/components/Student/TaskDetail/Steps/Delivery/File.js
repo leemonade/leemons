@@ -16,15 +16,15 @@ TaggedText.propTypes = {
   text: PropTypes.string.isRequired,
 };
 
-export default function File({ task }) {
+export default function File({ submission }) {
   return (
     <>
       <TaggedText
         tag="Tipo de archivo"
         text={`${
-          task?.submissions?.data?.multipleFiles ? 'Multiple files of: ' : 'One file of: '
-        }${task?.submissions?.data?.extensions?.join(', ')} con un peso máximo de ${
-          task?.submissions?.data?.maxSize
+          submission.data?.multipleFiles ? 'Multiple files of: ' : 'One file of: '
+        }${submission.data?.extensions?.join(', ')} con un peso máximo de ${
+          submission.data?.maxSize
         }Kb`}
       />
       <TaggedText tag="Evaluable" text="CONFIG DE EVALUACION" />
@@ -40,13 +40,11 @@ export default function File({ task }) {
 }
 
 File.propTypes = {
-  task: PropTypes.shape({
-    submissions: PropTypes.shape({
-      data: PropTypes.shape({
-        multipleFiles: PropTypes.bool,
-        extensions: PropTypes.arrayOf(PropTypes.string),
-        maxSize: PropTypes.number,
-      }),
+  submission: PropTypes.shape({
+    data: PropTypes.shape({
+      multipleFiles: PropTypes.bool,
+      extensions: PropTypes.arrayOf(PropTypes.string),
+      maxSize: PropTypes.number,
     }),
   }).isRequired,
 };

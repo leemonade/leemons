@@ -23,7 +23,7 @@ export default function TaskDetailHeader({ asset, classData, cover, isFirstStep,
           subtitle={classData?.name}
           icon={classData?.icon}
           color={classData?.color}
-          className={classes.taskHeader}
+          className={cx(classes.taskHeader, { [classes.rounded]: isFirstStep })}
           size={isFirstStep ? 'md' : 'sm'}
         />
         <HeaderBackground

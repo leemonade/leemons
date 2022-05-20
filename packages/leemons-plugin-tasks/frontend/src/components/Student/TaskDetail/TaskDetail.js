@@ -32,7 +32,7 @@ export default function TaskDetail({ id, student }) {
   const [currentStep, setCurrentStep] = useState(0);
   const classData = useClassData(assignation?.instance?.classes);
 
-  const isFirstStep = true;
+  const isFirstStep = currentStep === 0;
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
@@ -47,11 +47,13 @@ export default function TaskDetail({ id, student }) {
 
   const { classes } = TaskDetailStyles();
 
+  const step = steps[currentStep];
+
   useEffect(() => {
-    if (steps[currentStep]?.timestamps) {
-      console.log('Saving timestamp', steps[currentStep].timestamps);
+    if (step?.timestamps) {
+      console.log('Saving timestamp', step.timestamps);
     }
-  }, [steps[currentStep]?.timestamps]);
+  }, [step?.timestamps]);
 
   if (loading) {
     return <Loader />;
@@ -73,7 +75,6 @@ export default function TaskDetail({ id, student }) {
 
   return (
     <ContextContainer fullHeight spacing={0}>
-      Step: {currentStep}
       <TaskDetailHeader
         asset={asset}
         classData={classData}
@@ -86,24 +87,32 @@ export default function TaskDetail({ id, student }) {
           <VerticalStepper data={steps} currentStep={currentStep} />
         </Box>
         <Box className={classes?.content}>
-          {steps[currentStep]?.component}
+          {step?.component}
           <Stack direction="row" justifyContent="space-between" fullWidth className={classes?.nav}>
-            <Button
-              compact
-              variant="light"
-              leftIcon={<ChevLeftIcon height={20} width={20} />}
-              onClick={handlePrev}
-            >
-              Previous
-            </Button>
-            <Button rightIcon={<ChevRightIcon height={20} width={20} />} onClick={handleNext}>
-              Continue
-            </Button>
+            {step?.previous !== false && (
+              <Button
+                compact
+                variant="light"
+                leftIcon={<ChevLeftIcon height={20} width={20} />}
+                onClick={handlePrev}
+              >
+                {typeof step?.previous === 'string' ? step?.previous : 'Previous'}
+              </Button>
+            )}
+            {step?.next !== false && (
+              <Button
+                rightIcon={<ChevRightIcon height={20} width={20} />}
+                onClick={handleNext}
+                rounded
+              >
+                {typeof step?.next === 'string' ? step?.next : 'Continue'}
+              </Button>
+            )}
           </Stack>
         </Box>
         <Sidebar
-          // show={steps[currentStep]?.sidebar === true}
-          show={false}
+          show={steps[currentStep]?.sidebar === true}
+          // show={false}
           assignation={assignation}
           className={classes?.sidebar}
         />
