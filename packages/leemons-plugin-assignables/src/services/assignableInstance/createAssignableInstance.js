@@ -84,7 +84,7 @@ module.exports = async function createAssignableInstance(
 
   let event = null;
 
-  if (dates && dates.start && dates.close) {
+  if (dates && dates.start && dates.deadline) {
     const newEvent = await registerEvent(assignable, classes, { dates, transacting });
     event = newEvent.id;
   }

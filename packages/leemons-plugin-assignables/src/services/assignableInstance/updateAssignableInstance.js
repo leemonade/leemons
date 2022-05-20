@@ -127,7 +127,7 @@ module.exports = async function updateAssignableInstance(
   const { calendar: calendarService } = leemons.getPlugin('calendar').services;
 
   if (event) {
-    if (dates && dates.start && dates.close) {
+    if (dates && dates.start && dates.deadline) {
       // ES: Si ya existe evento y seguimos teniendo fechas buenas actualizamos el evento
       await updateEvent(event, assignable, classes, { dates, transacting });
     } else {
@@ -135,7 +135,7 @@ module.exports = async function updateAssignableInstance(
       await calendarService.removeEvent(event, { transacting });
       event = null;
     }
-  } else if (dates && dates.start && dates.close) {
+  } else if (dates && dates.start && dates.deadline) {
     // ES: Si no existe el evento y tenemos fechas buenas creamos el evento
     const newEvent = await registerEvent(assignable, classes, { dates, transacting });
     event = newEvent.id;
