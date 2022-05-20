@@ -13,7 +13,7 @@ module.exports = async function updateEvent(
       isPrivate: true,
       type: 'plugins.calendar.task',
       startDate: dates.start,
-      endDate: dates.close,
+      endDate: dates.deadline,
     },
     { calendar: _.map(classes, (classe) => `plugins.calendar.class.${classe}`), transacting }
   );
