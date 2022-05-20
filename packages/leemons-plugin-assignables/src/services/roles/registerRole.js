@@ -4,7 +4,7 @@ const getRole = require('./getRole');
 
 module.exports = async function registerRole(
   role,
-  { transacting: t, teacherDetailUrl, studentDetailUrl, teacherEvaluationUrl, ...data } = {}
+  { transacting: t, teacherDetailUrl, studentDetailUrl, evaluationDetailUrl, ...data } = {}
 ) {
   return global.utils.withTransaction(
     async (transacting) => {
@@ -13,7 +13,7 @@ module.exports = async function registerRole(
       }
 
       // ES: Comprobar si los urls vienen
-      if (!teacherDetailUrl || !studentDetailUrl || !teacherEvaluationUrl)
+      if (!teacherDetailUrl || !studentDetailUrl || !evaluationDetailUrl)
         throw new Error('Urls required');
 
       // EN: Check if role already exists
@@ -37,7 +37,7 @@ module.exports = async function registerRole(
           name: role,
           teacherDetailUrl,
           studentDetailUrl,
-          teacherEvaluationUrl,
+          evaluationDetailUrl,
           plugin: this.calledFrom,
         },
         { transacting }

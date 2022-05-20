@@ -223,7 +223,7 @@ module.exports = {
       'If you exit the application with the test in progress, the test will be terminated, scoring only the questions answered up to the moment of interruption. If an error occurs in the system and you are expelled from the test, you will be able to notify it and if your error is verified you will be able to retake the test.',
     questionNumber: 'QUESTION: {number}',
     theQuestionValueIs: 'The question value is',
-    pointsInTotal: 'Total points',
+    pointsInTotal: 'Points',
     askForAHint: 'Ask for a hint',
     hint: 'Hint',
     skipButton: 'Skip',
@@ -239,5 +239,16 @@ module.exports = {
       'If you click on "Confirm submission", your test will be sent to a reviewer and you will no longer be able to modify any answers or answer unanswered questions <br/><br/> Once you confirm the submission, the system will show you the test results (except for open questions).',
     confirmSubmission: 'Confirm submission',
     cancelSubmission: 'Cancel',
+    finishForceTestModalTitle: 'The time established to complete this test has expired.',
+    finishForceTestModalDescription:
+      'The questions answered up to this point have been correctly submitted. <br/><br/> You can check the test result or consult your current activities.',
+    activitiesInCourse: 'Activities in course',
+    reviewResults: 'Review results',
+    warnNoResponseTitle: 'UNANSWERED QUESTION',
+    warnNoResponseDescription:
+      'This question has not been answered, please see below for the correct answer and explanation (if any).',
+    mapNeedResponses:
+      'This question requires you to answer all the options presented in order to be evaluated (otherwise it will count as an unanswered question).',
+    attention: 'Attention',
   },
 };

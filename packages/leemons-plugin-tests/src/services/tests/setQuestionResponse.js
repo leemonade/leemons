@@ -35,7 +35,7 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
       ]);
 
       if (finished) {
-        // throw new Error('Assignation finished');
+        throw new Error('Assignation finished');
       }
 
       if (questionResponse) {
@@ -54,7 +54,7 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
         const start = new Date(timestamps.start);
         start.setSeconds(start.getSeconds() + seconds);
         if (new Date() > start) {
-          // throw new global.utils.HttpErrorWithCustomCode(400, 7001, 'Time used up');
+          throw new global.utils.HttpErrorWithCustomCode(400, 7001, 'Time used up');
         }
       }
 

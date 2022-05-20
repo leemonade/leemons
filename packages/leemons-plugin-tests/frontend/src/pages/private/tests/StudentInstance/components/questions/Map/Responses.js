@@ -116,7 +116,9 @@ export default function Responses(props) {
           ) : (
             <Stack fullWidth spacing={2}>
               <Box className={cx(styles.mapViewContent, styles.mapViewContentError)}>
-                {question.properties.markers.list[currentValue].response}
+                {currentValue === '-'
+                  ? t('selectResponse')
+                  : question.properties.markers.list[currentValue].response}
                 <Box className={styles.mapViewIcon}>
                   <ImageLoader src={`/public/tests/question-wrong.svg`} />
                 </Box>

@@ -6,7 +6,8 @@ async function getValuesTags(values, { type, transacting }) {
   _values = _.map(_values, (value) => JSON.stringify(value));
   // Check if value not empty
   if (_values.length === 0) {
-    throw new Error(`Values cannot be empty.`);
+    return [];
+    // throw new Error(`Values cannot be empty.`);
   }
 
   const query = { value_$in: _values };

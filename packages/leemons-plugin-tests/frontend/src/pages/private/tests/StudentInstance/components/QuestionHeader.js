@@ -1,9 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Text, Title } from '@bubbles-ui/components';
+import { ActivityCountdown, Box, Text, Title } from '@bubbles-ui/components';
+import dayjs from 'dayjs';
+import * as duration from 'dayjs/plugin/duration';
+
+dayjs.extend(duration);
 
 export default function QuestionHeader(props) {
   const { styles, t, store, index } = props;
+
+  let endDate = null;
+  if (!store.viewMode && store.instance.duration && store.timestamps.start) {
+    const [value, unit] = store.instance.duration.split(' ');
+    endDate = new Date(store.timestamps.start);
+    endDate.setSeconds(endDate.getSeconds() + dayjs.duration({ [unit]: value }).asSeconds());
+  }
+
   return (
     <Box className={styles.questionHeader}>
       <Box>
@@ -19,6 +31,11 @@ export default function QuestionHeader(props) {
         ) : null}
       </Box>
       <Box>
+        {endDate ? (
+          <Box className={styles.countdownContainer}>
+            <ActivityCountdown finish={endDate} />
+          </Box>
+        ) : null}
         <Box className={styles.questionStep}>
           <Box className={styles.questionStepBar}>
             <Box

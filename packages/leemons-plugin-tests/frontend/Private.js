@@ -20,6 +20,9 @@ export default function Private() {
       <Route path={`${path}/student/:id`}>
         <StudentInstance session={session} />
       </Route>
+      <Route path={`${path}/student/:id/:user`}>
+        <StudentInstance session={session} />
+      </Route>
       <Route path={`${path}/questions-banks/:id`}>
         <QuestionBankDetail session={session} />
       </Route>

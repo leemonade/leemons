@@ -372,4 +372,11 @@ export const TestStyles = createStyles((theme, {}) => ({
     top: '50%',
     transform: 'translateY(-50%)',
   },
+  countdownContainer: {
+    backgroundColor: theme.colors.uiBackground02,
+    width: 210,
+    height: 60,
+    borderRadius: theme.spacing[2],
+    marginBottom: theme.spacing[3],
+  },
 }));

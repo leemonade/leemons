@@ -10,7 +10,7 @@ module.exports = {
     studentDetailUrl: {
       type: 'string',
     },
-    teacherEvaluationUrl: {
+    evaluationDetailUrl: {
       type: 'string',
     },
     plugin: {

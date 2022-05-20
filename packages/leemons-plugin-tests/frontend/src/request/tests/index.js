@@ -39,13 +39,14 @@ async function getTest(id, { withQuestionBank } = { withQuestionBank: false }) {
   });
 }
 
-async function setInstanceTimestamp(instance, timeKey) {
+async function setInstanceTimestamp(instance, timeKey, user) {
   return leemons.api(`tests/tests/instance/timestamp`, {
     allAgents: true,
     method: 'POST',
     body: {
       instance,
       timeKey,
+      user,
     },
   });
 }

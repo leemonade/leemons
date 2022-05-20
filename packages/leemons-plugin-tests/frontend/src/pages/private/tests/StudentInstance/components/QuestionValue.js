@@ -28,16 +28,18 @@ export default function QuestionValue(props) {
       </Box>
       <Box style={{ display: 'flex' }}>
         {/* -- Question value -- */}
-        <Box className={styles.questionValueCard}>
-          <Box>
-            <Text size="md" sx={(theme) => ({ color: theme.colors.fatic02 })}>
-              {store.questionsInfo.perQuestion}
+        {!store.viewMode ? (
+          <Box className={styles.questionValueCard}>
+            <Box>
+              <Text size="md" sx={(theme) => ({ color: theme.colors.fatic02 })}>
+                {store.questionsInfo.perQuestion}
+              </Text>
+            </Box>
+            <Text size="xs" color="primary">
+              {t('pointsInTotal')}
             </Text>
           </Box>
-          <Text size="xs" color="primary">
-            {t('pointsInTotal')}
-          </Text>
-        </Box>
+        ) : null}
 
         {/* -- Question clues -- */}
         {clues.length ? (
@@ -48,9 +50,11 @@ export default function QuestionValue(props) {
               </Box>
             ))}
 
-            <Button variant="link" color="interactive" onClick={useClue}>
-              {t('askForAHint')}
-            </Button>
+            {!store.viewMode ? (
+              <Button variant="link" onClick={useClue}>
+                {t('askForAHint')}
+              </Button>
+            ) : null}
           </Box>
         ) : null}
       </Box>
