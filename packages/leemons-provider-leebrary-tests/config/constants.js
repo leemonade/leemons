@@ -19,7 +19,7 @@ module.exports = {
       permissions: [
         {
           permissionName: 'plugins.tests.questionsBanks',
-          actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+          actionNames: ['admin'],
         },
       ],
     },

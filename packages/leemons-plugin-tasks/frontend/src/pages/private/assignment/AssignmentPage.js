@@ -78,12 +78,6 @@ export default function AssignmentPage() {
 
       await createInstanceRequest(id, taskInstanceData);
 
-      await enableMenuItemRequest('ongoing');
-      await enableMenuItemRequest('history');
-
-      await hooks.fireEvent('menu-builder:user:updateItem', 'ongoing');
-      await hooks.fireEvent('menu-builder:user:updateItem', 'history');
-
       addSuccessAlert('Assignment created successfully');
       history.push('/private/assignables/ongoing');
     } catch (e) {

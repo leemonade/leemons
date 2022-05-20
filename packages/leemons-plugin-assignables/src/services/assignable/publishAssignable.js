@@ -23,7 +23,9 @@ function validateDataForPublish(assignable) {
 module.exports = async function publishAssignable(assignableId, { userSession, transacting }) {
   // EN: Get the assignable to validate ownership.
   // ES: Obtiene el asignable para validar la propiedad.
-  const assignable = await getAssignable.call(this, assignableId, { userSession, transacting });
+  let assignable = await getAssignable.call(this, assignableId, { userSession, transacting });
+
+  assignable = _.omit(assignable, ['roleDetails']);
 
   // EN: Validate that all the required fields are filled.
   // ES: Valida que todos los campos requeridos están llenos.

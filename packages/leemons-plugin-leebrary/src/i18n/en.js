@@ -110,13 +110,18 @@ module.exports = {
       removeSuccess: 'Asset successfully removed',
       pinnedSuccess: 'Asset successfully pinned',
       unpinnedSuccess: 'Asset successfully unpinned',
-      nothingFound: 'No assets found',
+      listEmpty: 'No assets found',
+      listEmptyDescription:
+        'You can upload multi-media files of any format and save your favorite links to have them always available.',
+      searchListEmpty: 'No assets found with these search criteria',
+      searchListEmptyDescription:
+        'Try searching by keywords (tags) or type in more generic and then use the filters to refine your search.',
       copy: 'Copy',
       copied: 'Copied',
       sharedWith: 'Shared with',
       sharedViewAll: 'View all',
       sharedWithEverybody: 'Shared with everybody',
-      showPublic: 'Show public assets'
+      showPublic: 'Show public assets',
     },
   },
 };

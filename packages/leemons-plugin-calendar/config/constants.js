@@ -22,6 +22,7 @@ module.exports = {
     {
       config: {
         key: 'calendar',
+        order: 7,
         iconSvg: '/public/assets/svgs/calendar.svg',
         activeIconSvg: '/public/assets/svgs/calendar.svg',
         url: '/private/calendar/home',
@@ -37,6 +38,7 @@ module.exports = {
     {
       config: {
         key: 'kanban',
+        order: 8,
         iconSvg: '/public/calendar/plugin-kanban.svg',
         activeIconSvg: '/public/calendar/plugin-kanban-active.svg',
         url: '/private/calendar/kanban',

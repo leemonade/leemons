@@ -108,7 +108,7 @@ module.exports = async function updateAssignable(
     // TODO: Ensure to keep original owner
     const newAssignable = await createAssignable.call(
       this,
-      _.omit({ ...object, asset: assetId }, ['published', 'id']),
+      _.omit({ ...object, asset: assetId }, ['published', 'id', 'roleDetails']),
       {
         id: fullId,
         userSession,

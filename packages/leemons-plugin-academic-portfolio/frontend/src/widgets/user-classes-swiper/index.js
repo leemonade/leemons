@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, createStyles, ImageLoader, Stack, Text } from '@bubbles-ui/components';
+import { Box, createStyles, ImageLoader, Stack, Text, Swiper } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -17,7 +17,7 @@ const Styles = createStyles((theme) => ({
     width: '100%',
   },
   cardContainer: {
-    backgroundColor: theme.colors.uiBackground02,
+    backgroundColor: theme.colors.ui02,
   },
   imageContainer: {
     position: 'relative',
@@ -29,18 +29,16 @@ const Styles = createStyles((theme) => ({
     borderRadius: '50%',
     backgroundPosition: '50% 50%',
     backgroundSize: 'cover',
-    backgroundColor: theme.colors.uiBackground02,
+    backgroundColor: theme.colors.ui02,
+  },
+  cardWrapper: {
+    padding: 2,
+    paddingRight: 0,
   },
   card: {
     backgroundColor: theme.colors.uiBackground01,
     borderRadius: '2px',
     padding: theme.spacing[4],
-    width: '250px',
-    margin: '2px',
-    marginLeft: '0px',
-    '&:first-of-type': {
-      marginLeft: '2px',
-    },
     cursor: 'pointer',
   },
   colorIcon: {
@@ -95,8 +93,16 @@ function UserClassesSwiperWidget({ program }) {
 
   return (
     <Box className={styles.root}>
-      <Stack className={styles.cardContainer}>
-        {store.classes.map((classe) => {
+      <Swiper
+        className={styles.cardContainer}
+        breakAt={{
+          1200: { slidesPerView: 3, spaceBetween: 2 },
+          940: { slidesPerView: 3, spaceBetween: 2 },
+          520: { slidesPerView: 2, spaceBetween: 2 },
+          360: { slidesPerView: 1, spaceBetween: 2 },
+        }}
+      >
+        {store.classes.map((classe, index) => {
           const name = `${classe.subject.name} - ${classe.subject.internalId}`;
           const group = classe.groups ? classe.groups.abbreviation : null;
           const course = isArray(classe.courses)
@@ -108,43 +114,49 @@ function UserClassesSwiperWidget({ program }) {
             ? { backgroundImage: `url(${getClassImage(classe)})` }
             : {};
           return (
-            <Stack
+            <Box
               key={classe.id}
-              className={styles.card}
-              alignItems="center"
-              onClick={() => goClassDashboard(classe)}
+              className={styles.cardWrapper}
+              style={{ paddingRight: index < store.classes.length - 1 ? 0 : 2 }}
             >
-              <Box className={styles.imageContainer}>
-                <Box className={styles.image} style={imageStyle} />
-                {classe.color || classe.icon ? (
-                  <Box
-                    style={classe.color ? { backgroundColor: classe.color } : {}}
-                    className={styles.colorIcon}
-                  >
-                    {getClassIcon(classe) ? (
-                      <Box className={styles.icon}>
-                        <ImageLoader
-                          height="12px"
-                          src={getClassIcon(classe)}
-                          strokeCurrent
-                          fillCurrent
-                        />
-                      </Box>
-                    ) : null}
-                  </Box>
-                ) : null}
-              </Box>
-              <Stack direction="column">
-                <Text size="xs">{name}</Text>
-                <Text strong>
-                  {course}
-                  {group ? (course ? `- ${group}` : group) : null}
-                </Text>
+              <Stack
+                className={styles.card}
+                alignItems="center"
+                fullWidth
+                onClick={() => goClassDashboard(classe)}
+              >
+                <Box className={styles.imageContainer}>
+                  <Box className={styles.image} style={imageStyle} />
+                  {classe.color || classe.icon ? (
+                    <Box
+                      style={classe.color ? { backgroundColor: classe.color } : {}}
+                      className={styles.colorIcon}
+                    >
+                      {getClassIcon(classe) ? (
+                        <Box className={styles.icon}>
+                          <ImageLoader
+                            height="12px"
+                            src={getClassIcon(classe)}
+                            strokeCurrent
+                            fillCurrent
+                          />
+                        </Box>
+                      ) : null}
+                    </Box>
+                  ) : null}
+                </Box>
+                <Stack direction="column">
+                  <Text size="xs">{name}</Text>
+                  <Text strong>
+                    {course}
+                    {group ? (course ? `- ${group}` : group) : null}
+                  </Text>
+                </Stack>
               </Stack>
-            </Stack>
+            </Box>
           );
         })}
-      </Stack>
+      </Swiper>
     </Box>
   );
 }

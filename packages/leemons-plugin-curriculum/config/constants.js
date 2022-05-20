@@ -12,6 +12,7 @@ const menuItems = [
   {
     config: {
       key: 'curriculum',
+      order: 9,
       iconSvg: '/public/assets/svgs/curriculum.svg',
       activeIconSvg: '/public/assets/svgs/curriculum.svg',
       label: {
@@ -22,7 +23,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: `${pluginName}.curriculum`,
-        actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+        actionNames: ['admin'],
       },
     ],
   },
@@ -39,7 +40,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: `${pluginName}.curriculum`,
-        actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+        actionNames: ['create', 'update', 'admin'],
       },
     ],
   },
