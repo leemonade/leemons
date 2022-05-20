@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+const _ = require('lodash');
 const dayjs = require('dayjs');
 const duration = require('dayjs/plugin/duration');
 const { table } = require('../tables');
@@ -28,6 +29,7 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
         ),
         assignableInstancesService.getAssignableInstance(data.instance, {
           userSession,
+          details: true,
           transacting,
         }),
       ]);
@@ -56,19 +58,6 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
         }
       }
 
-      const a = {
-        assignableInstance: 'instance id',
-        user: 'user agent id',
-        grades: [
-          {
-            subject: 'id',
-            type: 'main',
-            grade: 'la nota',
-            gradedBy: 'auto-graded',
-          },
-        ],
-      };
-
       const result = await table.userAgentAssignableInstanceResponses.set(
         {
           instance: data.instance,
@@ -88,7 +77,22 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
         transacting,
       });
 
-      console.log(note);
+      await assignationsService.updateAssignation(
+        {
+          assignableInstance: data.instance,
+          user: userSession.userAgents[0].id,
+          grades: _.map(instance.assignable.subjects, ({ subject }) => ({
+            subject,
+            type: 'main',
+            grade: note,
+            gradedBy: 'auto-graded',
+          })),
+        },
+        {
+          userSession,
+          transacting,
+        }
+      );
 
       return result;
     },

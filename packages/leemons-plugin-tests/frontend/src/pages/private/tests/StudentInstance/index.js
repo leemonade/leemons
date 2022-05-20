@@ -2,12 +2,12 @@ import React from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import { forEach, isString } from 'lodash';
-import { Box, COLORS, VerticalStepper } from '@bubbles-ui/components';
+import { Box, Button, COLORS, Modal, Stack, Text, VerticalStepper } from '@bubbles-ui/components';
 import { HeaderBackground, TaskDeadline, TaskHeader } from '@bubbles-ui/leemons';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import getClassData from '@assignables/helpers/getClassData';
@@ -33,8 +33,8 @@ export default function StudentInstance() {
     loading: true,
     idLoaded: '',
     isFirstStep: true,
-    currentStep: 1,
-    maxNavigatedStep: 1,
+    currentStep: 0,
+    maxNavigatedStep: 0,
   });
 
   const { classes: styles } = TestStyles({}, { name: 'Tests' });
@@ -43,11 +43,17 @@ export default function StudentInstance() {
     { name: 'TaskDoing' }
   );
 
+  const history = useHistory();
   const params = useParams();
 
   async function onStartQuestions() {
     const { timestamps } = await setInstanceTimestampRequest(params.id, 'start');
     store.timestamps = timestamps;
+    render();
+  }
+
+  function closeFinishModal() {
+    store.showFinishModal = false;
     render();
   }
 
@@ -65,9 +71,16 @@ export default function StudentInstance() {
   }
 
   async function finishStep() {
+    store.showFinishModal = true;
+    render();
+  }
+
+  async function finishTest() {
+    store.showFinishModal = false;
     const { timestamps } = await setInstanceTimestampRequest(params.id, 'end');
     store.timestamps = timestamps;
     render();
+    history.push(`/private/dashboard`);
   }
 
   function goToStep(step) {
@@ -293,6 +306,27 @@ export default function StudentInstance() {
             : null}
         </Box>
       </Box>
+      <Modal
+        title={t('finishTestModalTitle')}
+        opened={store.showFinishModal}
+        onClose={closeFinishModal}
+      >
+        <Box className={styles.howItWorksModalContainer}>
+          <Text
+            dangerouslySetInnerHTML={{
+              __html: t('finishTestModalDescription'),
+            }}
+          />
+        </Box>
+        <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+          <Stack fullWidth justifyContent="space-between">
+            <Button variant="link" onClick={closeFinishModal}>
+              {t('cancelSubmission')}
+            </Button>
+            <Button onClick={finishTest}>{t('confirmSubmission')}</Button>
+          </Stack>
+        </Box>
+      </Modal>
     </Box>
   );
 }

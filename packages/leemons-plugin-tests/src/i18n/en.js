@@ -234,5 +234,10 @@ module.exports = {
       '<strong>You can leave questions blank</strong> and these will not score (i.e. they score 0).',
     errorQuestions:
       '<strong>Wrong answers subtract 50% of their value</strong>, that is, they score {points}',
+    finishTestModalTitle: 'Complete and submit this test',
+    finishTestModalDescription:
+      'If you click on "Confirm submission", your test will be sent to a reviewer and you will no longer be able to modify any answers or answer unanswered questions <br/><br/> Once you confirm the submission, the system will show you the test results (except for open questions).',
+    confirmSubmission: 'Confirm submission',
+    cancelSubmission: 'Cancel',
   },
 };
