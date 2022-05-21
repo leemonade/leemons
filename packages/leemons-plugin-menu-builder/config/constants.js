@@ -12,6 +12,7 @@ module.exports = {
     'dashboard',
     'users',
     'calendar',
+    'assignables',
   ].map((item) => `plugins.${item}`),
   url: {
     base: 'menu-builder',

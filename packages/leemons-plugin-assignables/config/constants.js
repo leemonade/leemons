@@ -33,6 +33,36 @@ const assignableInstanceRolesObject = {
   },
 };
 
+const permissionNames = {
+  activities: `${pluginName}.activities`,
+  ongoing: `${pluginName}.ongoing`,
+  history: `${pluginName}.history`,
+};
+
+const permissions = [
+  {
+    permissionName: permissionNames.activities,
+    actions: ['view'],
+    localizationName: { es: 'Actividaded', en: 'Activities' },
+  },
+  {
+    permissionName: permissionNames.ongoing,
+    actions: ['view'],
+    localizationName: {
+      es: 'Actividades - En curso',
+      en: 'Activities - Ongoing',
+    },
+  },
+  {
+    permissionName: permissionNames.history,
+    actions: ['view'],
+    localizationName: {
+      es: 'Actividades - Histórico',
+      en: 'Activities - History',
+    },
+  },
+];
+
 /**
  * MENU BUILDER
  */
@@ -40,7 +70,7 @@ const menuItems = [
   {
     item: {
       key: 'activities',
-      order: 25,
+      order: 11,
       iconSvg: '/public/tasks/tasks-menu-icon.svg',
       activeIconSvg: '/public/tasks/tasks-menu-icon.svg',
       label: {
@@ -49,7 +79,10 @@ const menuItems = [
       },
     },
     permissions: [
-      // TODO: Add permissions to students
+      {
+        permissionName: permissionNames.activities,
+        actionNames: ['view'],
+      },
     ],
   },
   {
@@ -64,7 +97,10 @@ const menuItems = [
       },
     },
     permissions: [
-      // TODO: Add permissions to students
+      {
+        permissionName: permissionNames.ongoing,
+        actionNames: ['view'],
+      },
     ],
   },
   {
@@ -79,7 +115,10 @@ const menuItems = [
       },
     },
     permissions: [
-      // TODO: Add permissions to students
+      {
+        permissionName: permissionNames.history,
+        actionNames: ['view'],
+      },
     ],
   },
 ];
@@ -96,4 +135,5 @@ module.exports = {
   assignableInstanceRolesObject,
 
   menuItems,
+  permissions,
 };
