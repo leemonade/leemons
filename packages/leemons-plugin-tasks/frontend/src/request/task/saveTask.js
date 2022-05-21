@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 const pluginPath = 'tasks';
 
 export default async function saveTaskRequest(taskId, task) {
@@ -6,14 +8,16 @@ export default async function saveTaskRequest(taskId, task) {
 
   const formData = new FormData();
 
-  formData.append('task', JSON.stringify(task));
+  const cover = task?.asset?.cover;
+  const taskData = _.omit(task, ['asset.cover']);
 
-  if (task.asset.cover instanceof File) {
-    formData.append('asset.cover', task.asset.cover, task.asset.cover.name);
-  } else if (task.asset.cover?.id) {
-    formData.append('asset.cover', task.asset.cover.id);
+  formData.append('task', JSON.stringify(taskData));
+
+  if (cover instanceof File) {
+    formData.append('asset.cover', cover, cover.name);
+  } else if (cover?.id) {
+    formData.append('asset.cover', cover.id);
   }
-
   if (!taskId) {
     // EN: Create a new task
     // ES: Crear una nueva tarea

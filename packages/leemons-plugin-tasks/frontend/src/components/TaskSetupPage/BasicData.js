@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction } from 'lodash';
 import { useForm } from 'react-hook-form';
@@ -26,12 +26,19 @@ function BasicData({
     ...sharedData.asset,
   };
 
+  const coverFile = useRef(null);
   const formData = useForm({ defaultValues });
   const { handleSubmit, reset, watch } = formData;
 
   const { subscribe, unsubscribe, emitEvent } = useObserver();
 
   const taskName = watch('name');
+  const cover = watch('cover');
+  useEffect(() => {
+    if (cover instanceof File || typeof cover === 'string') {
+      coverFile.current = cover;
+    }
+  }, [cover]);
   const debounced = useDebouncedCallback(500);
 
   useEffect(() => {
@@ -48,6 +55,9 @@ function BasicData({
       if (event === 'saveTask') {
         handleSubmit(
           (e) => {
+            if (coverFile.current) {
+              e.cover = coverFile.current;
+            }
             setSharedData({
               ...sharedData,
               asset: e,
@@ -71,6 +81,9 @@ function BasicData({
   // HANDLERS
 
   const handleOnNext = (e) => {
+    if (coverFile.current) {
+      e.cover = coverFile.current;
+    }
     const data = {
       ...sharedData,
       asset: e,
