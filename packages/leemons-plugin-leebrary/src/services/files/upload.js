@@ -176,7 +176,7 @@ async function upload(file, { name }, { transacting } = {}) {
   // MEDIAINFO
 
   if (['image', 'audio', 'video'].includes(fileType)) {
-    const mediainfo = await global.utils.mediaInfo({ format: 'JSON' });
+    let mediainfo;
 
     const readChunk = async (size, offset) => {
       const buffer = Buffer.alloc(size);
@@ -185,6 +185,7 @@ async function upload(file, { name }, { transacting } = {}) {
     };
 
     try {
+      mediainfo = await global.utils.mediaInfo({ format: 'JSON' });
       const metainfo = await mediainfo.analyzeData(() => fileSize, readChunk);
       const { track: tracks } = JSON.parse(metainfo).media;
       tracks.forEach((track) => {
