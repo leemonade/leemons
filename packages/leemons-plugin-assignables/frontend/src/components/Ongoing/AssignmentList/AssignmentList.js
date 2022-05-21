@@ -123,10 +123,12 @@ export default function AssignmentList({ closed = false }) {
     const q = {};
 
     if (closed) {
-      q.close_min = new Date();
-      q.closed_min = new Date();
+      q.close_max = new Date();
+      q.close = new Date();
       q.close_default = false;
-      q.closed_default = false;
+    } else {
+      q.close_min = new Date();
+      q.close_default = true;
     }
 
     return q;

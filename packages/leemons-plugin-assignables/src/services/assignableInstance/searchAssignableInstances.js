@@ -52,8 +52,8 @@ function checkIfDateIsInRange(dates, { min, max, equals, default: defaultValue }
       return true;
     }
 
-    if (equals) {
-      return dayjs(date).isSame(dayjs(equals));
+    if (equals && dayjs(date).isSame(dayjs(equals))) {
+      return true;
     }
 
     if (!min && max) {
@@ -63,8 +63,11 @@ function checkIfDateIsInRange(dates, { min, max, equals, default: defaultValue }
     if (min && !max) {
       return dayjs(date).isAfter(dayjs(min));
     }
+    if (min && max) {
+      return dayjs(date).isBetween(dayjs(min), dayjs(max));
+    }
 
-    return dayjs(date).isBetween(dayjs(min), dayjs(max));
+    return false;
   });
 }
 
@@ -106,29 +109,26 @@ function parseDatesQuery(query) {
     .map((date) => {
       const datesToCheck = date === 'close' ? ['close', 'closed'] : [date];
       const defaultValue = query[`${date}_default`] === true || query[`${date}_default`] === 'true';
+      const dateQuery = {
+        dates: datesToCheck,
+        default: defaultValue,
+      };
+
+      let shouldReturn = false;
       if (query[date]) {
-        return {
-          dates: datesToCheck,
-          equals: query[date],
-          default: defaultValue,
-        };
+        shouldReturn = true;
+        dateQuery.equals = query[date];
       }
       if (query[`${date}_min`]) {
-        return {
-          dates: datesToCheck,
-          min: query[`${date}_min`],
-          default: defaultValue,
-        };
+        shouldReturn = true;
+        dateQuery.min = query[`${date}_min`];
       }
       if (query[`${date}_max`]) {
-        return {
-          dates: datesToCheck,
-          max: query[`${date}_max`],
-          default: defaultValue,
-        };
+        shouldReturn = true;
+        dateQuery.max = query[`${date}_max`];
       }
 
-      return null;
+      return shouldReturn ? dateQuery : null;
     }, {})
     .filter(Boolean);
 }

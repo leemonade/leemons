@@ -126,19 +126,24 @@ module.exports = async function updateAssignableInstance(
 
   const { calendar: calendarService } = leemons.getPlugin('calendar').services;
 
-  if (event) {
-    if (dates && dates.start && dates.deadline) {
-      // ES: Si ya existe evento y seguimos teniendo fechas buenas actualizamos el evento
-      await updateEvent(event, assignable, classes, { dates, transacting });
-    } else {
-      // ES: Si ya existe evento pero las nuevas fechas no cumplen los criterios tenemos que eliminar el evento
-      await calendarService.removeEvent(event, { transacting });
-      event = null;
+  try {
+    if (event) {
+      if (dates && dates.start && dates.deadline) {
+        // ES: Si ya existe evento y seguimos teniendo fechas buenas actualizamos el evento
+        await updateEvent(event, assignable, classes, { dates, transacting });
+      } else {
+        // ES: Si ya existe evento pero las nuevas fechas no cumplen los criterios tenemos que eliminar el evento
+        await calendarService.removeEvent(event, { transacting });
+        event = null;
+      }
+    } else if (dates && dates.start && dates.deadline) {
+      // ES: Si no existe el evento y tenemos fechas buenas creamos el evento
+      const newEvent = await registerEvent(assignable, classes, { dates, transacting });
+      event = newEvent.id;
     }
-  } else if (dates && dates.start && dates.deadline) {
-    // ES: Si no existe el evento y tenemos fechas buenas creamos el evento
-    const newEvent = await registerEvent(assignable, classes, { dates, transacting });
-    event = newEvent.id;
+  } catch (e) {
+    leemons.log.error(`Error creating/updating event for assignable instance: ${e.message}`);
+    // throw new Error(`Error updating event: ${e.message}`);
   }
 
   // ES: Eliminamos los profesores/estudiantes que ya no estan en el asignable

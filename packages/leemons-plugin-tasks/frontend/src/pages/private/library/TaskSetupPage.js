@@ -39,7 +39,6 @@ export default function TaskSetupPage() {
 
   const saveTask = async ({ program, curriculum, ...values }, redirectTo = 'library') => {
     try {
-      console.log('values', values);
       const body = {
         ...values,
         // TODO: Esto debe establecerse en el Config

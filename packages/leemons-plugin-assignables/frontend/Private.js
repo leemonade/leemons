@@ -18,7 +18,10 @@ export default function Private() {
   return (
     <Routes>
       <Route path={`${path}/ongoing`}>
-        <Ongoing session={session} fallback={<LoadingOverlay visible />} />
+        <Ongoing key="ongoing" session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/history`}>
+        <Ongoing key="history" session={session} fallback={<LoadingOverlay visible />} closed />
       </Route>
       <Route path={`${path}/details/:id`}>
         <Details session={session} fallback={<LoadingOverlay visible />} />
