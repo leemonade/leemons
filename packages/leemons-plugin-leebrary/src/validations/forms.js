@@ -2,11 +2,8 @@ const { LeemonsValidator } = global.utils;
 const {
   stringSchema,
   booleanSchema,
-  integerSchema,
-  arrayStringSchema,
-  integerSchemaNullable,
   stringSchemaNullable,
-  numberSchema,
+  textSchemaNullable,
 } = require('./types');
 
 const addAssetSchema = {
@@ -14,7 +11,7 @@ const addAssetSchema = {
   properties: {
     name: stringSchema,
     color: stringSchemaNullable,
-    description: stringSchemaNullable,
+    description: textSchemaNullable,
     categoryId: stringSchema,
     categoryKey: stringSchema,
     category: {

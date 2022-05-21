@@ -6,6 +6,11 @@ const textSchema = {
   maxLength: 65000,
 };
 
+const textSchemaNullable = {
+  ...textSchema,
+  nullable: true,
+};
+
 const numberSchema = {
   type: 'number',
 };
@@ -68,6 +73,7 @@ const localeObjectSchema = () => ({
 module.exports = {
   dateSchema,
   textSchema,
+  textSchemaNullable,
   numberSchema,
   stringSchema,
   booleanSchema,
