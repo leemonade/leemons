@@ -13,6 +13,7 @@ import {
   Paper,
   Tree,
   useTree,
+  LoadingOverlay
 } from '@bubbles-ui/components';
 import { useParams } from 'react-router-dom';
 import { detailProgramRequest } from '@academic-portfolio/request';
@@ -227,7 +228,7 @@ function AddCurriculumStep3() {
   }
 
   if (store.loading) {
-    return <Box>Loading...</Box>;
+    return <LoadingOverlay visible />;
   }
 
   return (

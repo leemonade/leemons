@@ -4,7 +4,7 @@ import { find, forEach, forIn, isArray, orderBy } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { listCentersRequest } from '@users/request';
-import { Box, Group, Text, Title, Tree, useTree } from '@bubbles-ui/components';
+import { Box, Group, Text, Title, Tree, useTree, LoadingOverlay } from '@bubbles-ui/components';
 import { useParams } from 'react-router-dom';
 import { detailProgramRequest } from '@academic-portfolio/request';
 import { detailCurriculumRequest } from '../../../request';
@@ -146,7 +146,7 @@ function CurriculumView() {
   }
 
   if (loading) {
-    return <Box>Loading...</Box>;
+    return <LoadingOverlay visible />;
   }
 
   return (

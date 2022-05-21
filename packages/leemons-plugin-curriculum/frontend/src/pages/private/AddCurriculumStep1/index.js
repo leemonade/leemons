@@ -11,6 +11,7 @@ import {
   Paper,
   Tree,
   useTree,
+  LoadingOverlay,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { useHistory, useParams } from 'react-router-dom';
@@ -155,7 +156,7 @@ function AddCurriculumStep1() {
   }
 
   if (loading) {
-    return <Box>Loading...</Box>;
+    return <LoadingOverlay visible />;
   }
   return (
     <ContextContainer fullHeight>

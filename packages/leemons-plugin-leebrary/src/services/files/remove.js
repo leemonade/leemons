@@ -29,6 +29,7 @@ async function remove(fileIds, assetId, { soft, userSession, transacting } = {})
 
       // EN: Delete the file entry from the database
       // ES: Eliminar la entrada del archivo de la base de datos
+      await tables.assetsFiles.deleteMany({ file: file.id, asset: assetId }, { soft, transacting });
       await tables.files.deleteMany({ id: file.id }, { soft, transacting });
 
       return true;

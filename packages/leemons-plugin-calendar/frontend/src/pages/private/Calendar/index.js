@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { find, flatten, forEach, keyBy, map, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Box } from '@bubbles-ui/components';
+import { Box, LoadingOverlay } from '@bubbles-ui/components';
 import { BigCalendar } from '@bubbles-ui/calendars';
 import { CalendarSubNavFilters } from '@bubbles-ui/leemons';
 import { getCentersWithToken } from '@users/session';
@@ -209,7 +209,7 @@ function Calendar({ session }) {
     return config;
   }, [ref.current.center, ref.current.loading]);
 
-  if (ref.current.loading) return <Box>Loading...</Box>;
+  if (ref.current.loading) return <LoadingOverlay visible />;
 
   return (
     <Box style={{ display: 'flex', width: '100%', height: '100vh' }}>

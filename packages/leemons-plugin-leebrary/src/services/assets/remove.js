@@ -67,18 +67,18 @@ async function remove(id, { soft, userSession, transacting: t } = {}) {
         }
 
         // ··········································································
-        // REMOVE ASSET
-
-        // EN: First delete the file from the database so if it fails we don't have an entry without a file
-        // ES: Primero eliminamos el archivo de la base de datos para que si falla no tengamos una entrada sin archivo
-        await tables.assets.delete({ id }, { soft, transacting });
-
-        // ··········································································
         // REMOVE COVER
 
         if (!isEmpty(asset.cover)) {
           await removeFiles(asset.cover, id, { userSession, soft, transacting });
         }
+
+        // ··········································································
+        // REMOVE ASSET
+
+        // EN: First delete the file from the database so if it fails we don't have an entry without a file
+        // ES: Primero eliminamos el archivo de la base de datos para que si falla no tengamos una entrada sin archivo
+        await tables.assets.delete({ id }, { soft, transacting });
 
         // ··········································································
         // REMOVE PERMISSIONS

@@ -1,13 +1,16 @@
 import React from 'react';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 import loadable from '@loadable/component';
+import pMinDelay from 'p-min-delay';
+import { LoadingOverlay } from '@bubbles-ui/components';
 import Login from './src/pages/public/Login';
 
-// const Login = loadable(() => import('./src/pages/public/Login'));
-const RegisterPassword = loadable(() => import('./src/pages/public/RegisterPassword'));
-const Recover = loadable(() => import('./src/pages/public/Recover'));
-const Reset = loadable(() => import('./src/pages/public/Reset'));
-const Logout = loadable(() => import('./src/pages/public/Logout'));
+const RegisterPassword = loadable(() =>
+  pMinDelay(import('./src/pages/public/RegisterPassword'), 1000)
+);
+const Recover = loadable(() => pMinDelay(import('./src/pages/public/Recover'), 1000));
+const Reset = loadable(() => pMinDelay(import('./src/pages/public/Reset'), 1000));
+const Logout = loadable(() => pMinDelay(import('./src/pages/public/Logout'), 1000));
 
 export default function Public() {
   const { path } = useRouteMatch();
@@ -15,19 +18,19 @@ export default function Public() {
   return (
     <Switch>
       <Route path={`${path}/register-password`}>
-        <RegisterPassword />
+        <RegisterPassword fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/logout`}>
-        <Logout />
+        <Logout fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/login`}>
-        <Login />
+        <Login fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/recover`}>
-        <Recover />
+        <Recover fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/reset`}>
-        <Reset />
+        <Reset fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}`}>
         <Redirect to={`/private/dashboard`} />

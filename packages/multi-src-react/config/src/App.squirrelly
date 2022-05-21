@@ -1,15 +1,17 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Link, Switch, Redirect } from 'react-router-dom';
 import loadable from '@loadable/component';
+import pMinDelay from 'p-min-delay';
+import { LoadingOverlay } from '@bubbles-ui/components';
 import "./global.css";
 
 // Plugins imports
 {{ @each(it.plugins) => plugin }}
 {{ @if(plugin.routers.public) }}
-const {{ plugin.name | clear | capitalize }}Public = loadable(() => import('@{{ plugin.name }}/../Public'));
+const {{ plugin.name | clear | capitalize }}Public = loadable(() => pMinDelay(import('@{{ plugin.name }}/../Public'), 1000));
 {{ /if }}
 {{ @if(plugin.routers.private) }}
-const {{ plugin.name | clear | capitalize }}Private = loadable(() => import('@{{ plugin.name }}/../Private'));
+const {{ plugin.name | clear | capitalize }}Private = loadable(() => pMinDelay(import('@{{ plugin.name }}/../Private'), 1000));
 {{ /if }}
 {{ @if(plugin.hooks) }}
 import use{{ plugin.name | clear | capitalize }} from '@{{ plugin.name }}/../globalHooks';
@@ -44,12 +46,12 @@ function App() {
 {{ /if }}
 {{ @if(plugin.routers.public) }}
                 <Route path="/{{ plugin.name }}">
-                  <{{ plugin.name | clear | capitalize }}Public fallback={<p>Loading...</p>} />
+                  <{{ plugin.name | clear | capitalize }}Public fallback={<LoadingOverlay visible />} />
                 </Route>
 {{ /if }}
 {{ @if(plugin.routers.private) }}
                 <Route path="/private/{{ plugin.name }}">
-                  <{{ plugin.name | clear | capitalize }}Private fallback={<p>Loading...</p>} />
+                  <{{ plugin.name | clear | capitalize }}Private fallback={<LoadingOverlay visible />} />
                 </Route>
 {{ /if }}
 {{ @if(plugin.localContext && (plugin.routers.public || plugin.routers.private)) }}

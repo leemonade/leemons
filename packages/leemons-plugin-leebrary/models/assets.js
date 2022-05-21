@@ -21,9 +21,7 @@ module.exports = {
       type: 'string',
     },
     cover: {
-      references: {
-        collection: 'plugins_leebrary::files',
-      },
+      type: 'uuid',
     },
     fromUser: {
       references: {
