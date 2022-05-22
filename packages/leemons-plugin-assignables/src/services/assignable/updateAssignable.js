@@ -43,11 +43,15 @@ module.exports = async function updateAssignable(
     throw new Error('No changes detected');
   }
 
-  validateAssignable(assignableObject);
+  validateAssignable(_.omit(assignableObject, ['deleted']));
 
   // EN: Get the current values
   // ES: Obtenemos los valores actuales
   const currentAssignable = await getAssignable.call(this, id, { userSession, transacting });
+
+  if (currentAssignable.deleted) {
+    throw new Error('The assignable is deleted');
+  }
 
   // EN: Check if the user has permission to update the assignable.
   // ES: Comprueba si el usuario tiene permiso para actualizar el asignable.
