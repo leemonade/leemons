@@ -2,6 +2,7 @@ export {
   listQuestionsBanks as listQuestionsBanksRequest,
   saveQuestionBank as saveQuestionBankRequest,
   getQuestionBank as getQuestionBankRequest,
+  deleteQuestionBank as deleteQuestionBankRequest,
 } from './questionsBanks';
 
 export {

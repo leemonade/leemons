@@ -47,6 +47,13 @@ module.exports = [
     allowedPermissions: getPermissions(permissions.questionBanks, ['view']),
   },
   {
+    path: '/question-bank/:id',
+    method: 'DELETE',
+    handler: 'questionsBanks.deleteQuestionBank',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.questionBanks, ['delete']),
+  },
+  {
     path: '/question-bank',
     method: 'POST',
     handler: 'questionsBanks.saveQuestionBanks',

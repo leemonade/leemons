@@ -46,8 +46,17 @@ async function getQuestionBankDetail(ctx) {
   ctx.body = { status: 200, questionBank };
 }
 
+async function deleteQuestionBank(ctx) {
+  await questionsBanksService.delete(ctx.request.params.id, {
+    userSession: ctx.state.userSession,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
 module.exports = {
   listQuestionBanks,
   saveQuestionBanks,
   getQuestionBankDetail,
+  deleteQuestionBank,
 };

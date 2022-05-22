@@ -83,4 +83,11 @@ async function getQuestionBank(id) {
   });
 }
 
-export { listQuestionsBanks, saveQuestionBank, getQuestionBank };
+async function deleteQuestionBank(id) {
+  return leemons.api(`tests/question-bank/${id}`, {
+    allAgents: true,
+    method: 'DELETE',
+  });
+}
+
+export { listQuestionsBanks, saveQuestionBank, getQuestionBank, deleteQuestionBank };
