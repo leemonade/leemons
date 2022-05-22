@@ -156,8 +156,6 @@ async function getAssets(ctx) {
   const { category, criteria, type, published, preferCurrent, showPublic } = ctx.request.query;
   const { userSession } = ctx.state;
 
-  console.log('-- Pasando por route -> getAssets --');
-
   if (isEmpty(category)) {
     throw new global.utils.HttpError(400, 'Not category was specified');
   }
@@ -167,7 +165,6 @@ async function getAssets(ctx) {
   const displayPublic = ['true', true, '1', 1].includes(showPublic);
 
   if (!isEmpty(criteria) || !isEmpty(type)) {
-    console.log('-- Entrando en -> getByCriteria --');
     assets = await getByCriteria(
       { category, criteria, type },
       {
@@ -179,7 +176,6 @@ async function getAssets(ctx) {
       }
     );
   } else {
-    console.log('-- Entrando en -> getByCategory --');
     assets = await getByCategory(category, {
       published: assetPublished,
       indexable: true,
@@ -202,8 +198,6 @@ async function getAssetsByIds(ctx) {
     assets: assetIds,
     filters: { published, showPublic },
   } = ctx.request.body;
-
-  console.log('-- Pasando por route -> getAssetsByIds --');
 
   if (isEmpty(assetIds)) {
     throw new global.utils.HttpError(400, 'Not assets was specified');
