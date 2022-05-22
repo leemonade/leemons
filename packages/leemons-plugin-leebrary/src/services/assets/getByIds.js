@@ -27,13 +27,23 @@ async function getByIds(
     withCategory = true,
     checkPins = true,
     checkPermissions,
+    indexable,
     userSession,
     showPublic,
     transacting,
   } = {}
 ) {
   const ids = flatten([assetsIds]);
-  let assets = await tables.assets.find({ id_$in: ids }, { transacting });
+
+  const query = {
+    id_$in: ids,
+  };
+
+  if (!isNil(indexable)) {
+    query.indexable = indexable;
+  }
+
+  let assets = await tables.assets.find(query, { transacting });
 
   // ·········································································
   // PERMISSIONS & PERSONS

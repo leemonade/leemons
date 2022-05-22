@@ -104,6 +104,11 @@ async function add(
         newId = fullId;
       }
 
+      // Set indexable as TRUE by default
+      if (isNil(assetData.indexable)) {
+        assetData.indexable = true;
+      }
+
       // EN: Firstly create the asset in the database to get the id
       // ES: Primero creamos el archivo en la base de datos para obtener el id
       const newAsset = await tables.assets.create(

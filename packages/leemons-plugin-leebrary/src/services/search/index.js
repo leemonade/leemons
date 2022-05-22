@@ -18,6 +18,7 @@ const { byTagline: getByTagline } = require('./byTagline');
 const { byDescription: getByDescription } = require('./byDescription');
 const { getByCategory } = require('../assets/getByCategory');
 const { getByIds } = require('../assets/getByIds');
+const { getIndexables } = require('../assets/getIndexables');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
 const { getAssetsByType } = require('../files/getAssetsByType');
 const { getById: getCategoryById } = require('../categories/getById');
@@ -31,6 +32,7 @@ async function search(
     sortBy: sortingBy,
     sortDirection = 'asc',
     published = true,
+    indexable = true,
     preferCurrent,
     pinned,
     showPublic,
@@ -66,21 +68,18 @@ async function search(
     }
 
     if (pinned) {
-      // console.log('-- Vamos a buscar en los assets pinneados --');
       const pins = await getPinsByUser({ userSession, transacting });
       assets = pins.map((pin) => pin.asset);
       nothingFound = assets.length === 0;
-      // console.log('assets:');
-      // console.log(assets);
     }
 
     if (!isEmpty(criteria)) {
       const tagsService = leemons.getPlugin('common').services.tags;
 
       const [byName, byTagline, byDescription, byTags] = await Promise.all([
-        getByName(criteria, { assets, transacting }),
-        getByTagline(criteria, { assets, transacting }),
-        getByDescription(criteria, { assets, transacting }),
+        getByName(criteria, { indexable, assets, transacting }),
+        getByTagline(criteria, { indexable, assets, transacting }),
+        getByDescription(criteria, { indexable, assets, transacting }),
         // getByProvider(category, criteria, { assets, transacting }),
         tagsService.getTagsValues(criteria, {
           type: leemons.plugin.prefixPN(''),
@@ -101,49 +100,26 @@ async function search(
       nothingFound = assets.length === 0;
     }
 
-    // console.log('-- Después de CRITERIA:');
-    // console.log(assets);
-
     if (type) {
       assets = await getAssetsByType(type, { assets, transacting });
       nothingFound = assets.length === 0;
     }
 
-    // console.log('-- Después de TYPE:');
-    // console.log(assets);
-    /*
-    if (!nothingFound && !pinned) {
-      const { versionControl } = leemons.getPlugin('common').services;
-      const assetByStatus = await versionControl.listVersionsOfType(
-        leemons.plugin.prefixPN(categoryId),
-        { allVersions, published, preferCurrent, transacting }
-      );
-
-      assets = assets.length
-        ? intersection(
-            assets,
-            assetByStatus.map((item) => item.fullId)
-          )
-        : assetByStatus.map((item) => item.fullId);
-
-      nothingFound = assets.length === 0;
-    }
-    */
-
-    // console.log('-- Después de VERSION CONTROL:');
-    // console.log(assets);
-
     // ES: Si viene la categoría, filtramos todo el array de Assets con respecto a esa categoría
     // EN: If we have the category, we filter the array of Assets with respect to that category
     if (!nothingFound && categoryId) {
-      assets = (await getByCategory(categoryId, { assets: uniq(assets), transacting })).map(
-        ({ id }) => id
-      );
+      assets = (
+        await getByCategory(categoryId, { indexable, assets: uniq(assets), transacting })
+      ).map(({ id }) => id);
       nothingFound = assets.length === 0;
     }
 
-    // console.log('-- Después de CATEGORY:');
-    // console.log(assets);
+    // ES: Solo nos interesan los que sean indexables
+    // EN: Only interested in indexables
+    if (!nothingFound) {
+      assets = (await getIndexables(assets, { columns: ['id'], transacting })).map(({ id }) => id);
+      nothingFound = assets.length === 0;
+    }
 
     // EN: Only return assets that the user has permission to view
     // ES: Sólo devuelve los recursos que el usuario tiene permiso para ver
@@ -158,9 +134,6 @@ async function search(
       nothingFound = assets.length === 0;
     }
 
-    // console.log('-- Después de PERMISSIONS:');
-    // console.log(assets);
-
     // EN: Filter by published status
     // ES: Filtrar por estado publicado
     if (!nothingFound) {
@@ -171,9 +144,6 @@ async function search(
       if (published !== 'all') {
         assets = assets.filter(({ published: isPublished }) => isPublished === published);
       }
-
-      // console.log('-- Después de VERSION CONTROL > published:');
-      // console.log(assets);
 
       // EN: Filter by preferCurrent status
       // ES: Filtrar por estado preferCurrent
@@ -215,17 +185,8 @@ async function search(
         assets = assets.map(({ fullId }) => fullId);
       }
 
-      // console.log('-- Después de VERSION CONTROL > preferCurrent:');
-      // console.log(assets);
-
       assets = assetsWithPermissions.filter(({ asset }) => assets.includes(asset));
-
-      // console.log('-- Después de VERSION CONTROL > finally:');
-      // console.log(assets);
     }
-
-    // console.log('-- Después de VERSION CONTROL:');
-    // console.log(assets);
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
     // EN: For the case that you need sorting, we need a different logic

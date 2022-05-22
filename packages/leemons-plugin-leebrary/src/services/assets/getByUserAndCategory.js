@@ -1,20 +1,23 @@
-const { isEmpty, isArray } = require('lodash');
 const { tables } = require('../tables');
 const { getByIds: getAssets } = require('./getByIds');
 const { getByCategory: getByPermissions } = require('../permissions/getByCategory');
 
 async function getByUserAndCategory(
   categoryId,
-  { details = false, includePublic = false, userSession, transacting } = {}
+  { details = false, includePublic = false, indexable = true, userSession, transacting } = {}
 ) {
   try {
     // Must include private and public assets
-    const privateAssets = await getByPermissions(categoryId, { userSession, transacting });
+    const privateAssets = await getByPermissions(categoryId, {
+      indexable,
+      userSession,
+      transacting,
+    });
     let publicAssets = [];
 
     if (includePublic) {
       publicAssets = await tables.assets.find(
-        { category: categoryId, public: true },
+        { category: categoryId, public: true, indexable },
         { columns: ['id'], transacting }
       );
     }
