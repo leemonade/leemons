@@ -1,4 +1,4 @@
-import { forEach, isString } from 'lodash';
+import { cloneDeep, forEach, isString } from 'lodash';
 
 async function listQuestionsBanks(body) {
   return leemons.api(`tests/question-bank/list`, {
@@ -8,11 +8,11 @@ async function listQuestionsBanks(body) {
   });
 }
 
-async function saveQuestionBank(body) {
+async function saveQuestionBank(_body) {
+  const body = cloneDeep(_body);
   const form = new FormData();
   const questionsFiles = [];
-  console.log(body);
-  forEach(body.questions || [], (question, index) => {
+  forEach(_body.questions || [], (question, index) => {
     if (question.questionImage && !isString(question.questionImage)) {
       if (question.questionImage.id) {
         // eslint-disable-next-line no-param-reassign
@@ -47,15 +47,15 @@ async function saveQuestionBank(body) {
       });
     }
   });
-  if ((body.cover && !isString(body.cover)) || questionsFiles.length) {
+  if ((_body.cover && !isString(_body.cover)) || questionsFiles.length) {
     const { cover, ...data } = body;
-    if (body.cover) {
-      if (body.cover.cover) {
-        data.cover = body.cover.cover?.id;
-      } else if (body.cover.id) {
-        data.cover = body.cover.id;
+    if (_body.cover) {
+      if (_body.cover.cover) {
+        data.cover = _body.cover.cover?.id;
+      } else if (_body.cover.id) {
+        data.cover = _body.cover.id;
       } else {
-        form.append('cover', body.cover, body.cover.name);
+        form.append('cover', _body.cover, _body.cover.name);
       }
     }
     forEach(questionsFiles, ({ index, name, file }) => {
@@ -83,4 +83,11 @@ async function getQuestionBank(id) {
   });
 }
 
-export { listQuestionsBanks, saveQuestionBank, getQuestionBank };
+async function deleteQuestionBank(id) {
+  return leemons.api(`tests/question-bank/${id}`, {
+    allAgents: true,
+    method: 'DELETE',
+  });
+}
+
+export { listQuestionsBanks, saveQuestionBank, getQuestionBank, deleteQuestionBank };

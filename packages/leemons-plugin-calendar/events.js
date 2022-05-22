@@ -109,6 +109,11 @@ async function events(isInstalled) {
       );
       await leemons.plugin.services.calendar.addEventType(leemons.plugin.prefixPN('task'), 'task', {
         onlyOneDate: true,
+        config: {
+          titlePlaceholder: 'plugins.calendar.taskPlaceholder',
+          fromLabel: 'plugins.calendar.fromLabelDeadline',
+          hideAllDay: true,
+        },
       });
       leemons.events.emit('init-event-types');
     });

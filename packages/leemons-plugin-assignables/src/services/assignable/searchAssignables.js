@@ -14,6 +14,8 @@ async function asyncFilter(array, f) {
   return array.filter((d, i) => results[i]);
 }
 
+// TODO: Refactor to be able to search deleted assignables
+
 module.exports = async function searchAssignables(
   _roles,
   { published, preferCurrent, search, subjects, program, sort, ..._query },

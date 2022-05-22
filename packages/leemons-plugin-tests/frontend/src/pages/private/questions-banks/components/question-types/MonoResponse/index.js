@@ -90,7 +90,6 @@ export function MonoResponse({ form, t }) {
             validate: (a) => {
               if (withImages) {
                 let needImages = false;
-                console.log(a);
                 forEach(a, ({ value: { image } }) => {
                   if (!image) {
                     needImages = true;
@@ -152,6 +151,7 @@ export function MonoResponse({ form, t }) {
                       withImages={withImages}
                       toggleHideOnHelp={toggleHideOnHelp}
                       changeCorrectResponse={changeCorrectResponse}
+                      showEye={field?.value?.length > 2}
                     />
                   }
                 />

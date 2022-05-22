@@ -92,7 +92,6 @@ const saveQuestionBankSchema = {
 };
 
 function validateSaveQuestionBank(data) {
-  console.log(data.questions[0], data.questions[1]);
   const schema = _.cloneDeep(saveQuestionBankSchema);
   if (data.published) {
     schema.required = ['name', 'questions', 'program', 'subjects'];

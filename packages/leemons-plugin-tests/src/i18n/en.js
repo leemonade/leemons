@@ -64,6 +64,7 @@ module.exports = {
     includeExplanationToEveryAnswerLabel:
       'Include an explanation to every answer (right and wrong ones)',
     explanationLabel: 'Explanation',
+    caption: 'Caption/ Alt text',
     cluesLabel: 'Clues',
     cluesDescription:
       'You can give hints to students providing information that facilitates the memory retrieval task.',
@@ -159,13 +160,13 @@ module.exports = {
     questionFiltersDescription2:
       'If you need a test with specific questions, go to the questions list detail and select the ones you want to use in the text, then click on “Select marked questions"',
     numberOfQuestions: 'Number of questions',
-    useAllQuestions: 'Use all questions',
+    useAllQuestions: 'Select questions manually',
     addType: 'Add type',
     levelLabel: 'Level',
     categoriesLabel: 'Categories',
     addLevel: 'Add level',
     selectByTag: 'Select by tag',
-    showQuestions: 'Show questions',
+    showQuestions: 'Continue',
     nQuestionsRequired: 'Field required',
     minOneQuestion: 'Minimum one question',
     selectQuestionDescription:
@@ -173,7 +174,7 @@ module.exports = {
     selectQuestionNothingToSelect:
       'No questions were found for the criteria you entered, please go back and expand your search settings.',
     returnFilters: 'Return to Select questions',
-    assignSelectedQuestions: 'Assign selected Questions to Test',
+    assignSelectedQuestions: 'Select questions and continue',
     responsesLabel: 'Responses',
     questionLabel: 'Question',
     questionsRequired: 'Minimum select one question',

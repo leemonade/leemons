@@ -1,6 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button, ContextContainer, Paper, TextInput } from '@bubbles-ui/components';
+import {
+  Box,
+  Button,
+  ContextContainer,
+  Paper,
+  Stack,
+  Textarea,
+  TextInput,
+} from '@bubbles-ui/components';
 import { useStore } from '@common';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import ImagePicker from '@leebrary/components/ImagePicker';
@@ -21,9 +29,7 @@ export function ListInputRender({ t, withImages, useExplanation, addItem, value,
 
   function emitIfCan() {
     if (withImages) {
-      console.log('aaa', store.image);
       if (store.image) {
-        console.log('Emitimos');
         emit();
       }
     } else if (useExplanation) {
@@ -48,8 +54,13 @@ export function ListInputRender({ t, withImages, useExplanation, addItem, value,
   }
 
   function onChangeImage(e) {
-    console.log(e);
     store.image = e;
+    emitIfCan();
+    render();
+  }
+
+  function onChangeImageDescription(e) {
+    store.imageDescription = e;
     emitIfCan();
     render();
   }
@@ -62,6 +73,7 @@ export function ListInputRender({ t, withImages, useExplanation, addItem, value,
         store.dirty = false;
         store.image = null;
         store.imageDescription = null;
+        store.explanation = null;
       }
     } else if (
       (useExplanation && store.explanation && store.response) ||
@@ -82,9 +94,28 @@ export function ListInputRender({ t, withImages, useExplanation, addItem, value,
       <Box>
         <Container fullWidth>
           <ContextContainer>
-            <Box>
-              <ImagePicker value={store.image} onChange={onChangeImage} />
-            </Box>
+            <Stack fullWidth spacing={4}>
+              <Box>
+                <ImagePicker value={store.image} onChange={onChangeImage} />
+              </Box>
+              <Box>
+                <Textarea
+                  label={t('caption')}
+                  value={store.imageDescription}
+                  onChange={onChangeImageDescription}
+                />
+              </Box>
+            </Stack>
+            {useExplanation ? (
+              <Box>
+                <TextEditorInput
+                  value={store.explanation}
+                  label={t('explanationLabel')}
+                  onChange={onChangeExplanation}
+                  error={store.dirty && !store.explanation ? t('explanationRequired') : null}
+                />
+              </Box>
+            ) : null}
           </ContextContainer>
         </Container>
 

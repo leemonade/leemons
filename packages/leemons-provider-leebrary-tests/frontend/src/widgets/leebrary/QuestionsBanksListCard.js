@@ -4,6 +4,13 @@ import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
+import { ViewOnIcon } from '@bubbles-ui/icons/outline';
+import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { deleteQuestionBankRequest } from '@tests/request';
+import { useHistory } from 'react-router-dom';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { useLayout } from '@layout/context';
 
 const ListCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -14,10 +21,50 @@ const ListCardStyles = createStyles((theme, { selected }) => ({
   },
 }));
 
-const QuestionsBanksListCard = ({ asset, selected, ...props }) => {
+const QuestionsBanksListCard = ({ asset, selected, onRefresh, ...props }) => {
   const [t] = useTranslateLoader(prefixPN('testsCard'));
-  const menuItems = [];
   const { classes } = ListCardStyles({ selected });
+  const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
+  const [, , , getErrorMessage] = useRequestErrorMessage();
+
+  const history = useHistory();
+
+  const menuItems = React.useMemo(() => {
+    const items = [];
+
+    if (asset?.id) {
+      items.push({
+        icon: <ViewOnIcon />,
+        children: t('view'),
+        onClick: (e) => {
+          e.stopPropagation();
+          history.push(`/private/tests/questions-banks/${asset.providerData.id}`);
+        },
+      });
+      if (asset.deleteable) {
+        items.push({
+          icon: <DeleteBinIcon />,
+          children: 'Delete',
+          onClick: (e) => {
+            e.stopPropagation();
+            openDeleteConfirmationModal({
+              onConfirm: async () => {
+                try {
+                  await deleteQuestionBankRequest(asset.providerData.id);
+                  addSuccessAlert(t('deleted'));
+                  onRefresh();
+                } catch (err) {
+                  addErrorAlert(getErrorMessage(err));
+                }
+              },
+            })();
+          },
+        });
+      }
+    }
+
+    return items;
+  }, [asset, t]);
 
   return (
     <LibraryCard
@@ -35,6 +82,7 @@ QuestionsBanksListCard.propTypes = {
   asset: PropTypes.any,
   variant: PropTypes.string,
   selected: PropTypes.bool,
+  onRefresh: PropTypes.func,
 };
 
 export default QuestionsBanksListCard;

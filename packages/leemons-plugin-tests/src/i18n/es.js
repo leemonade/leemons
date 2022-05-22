@@ -56,13 +56,15 @@ module.exports = {
     needExplanationAndResponse: 'Todas las respuestas necesitan un texto y una explicación',
     needResponse: 'Las respuestas deben tener un texto',
     errorMarkGoodResponse: 'Es necesario marcar la respuesta correcta',
-    responsesDescription: 'Seleccionar la respuesta correcta pulsando sobre el icono ({{icon}}).',
+    responsesDescription:
+      'Selecciona la respuesta correcta pulsando sobre el círculo. Pistas: pulsa el icono “{{icon}}” para indicar qué respuesta se ocultará cuando el alumno pida una pista (solo disponible a partir de tres respuestas).',
     addResponse: 'Añadir respuesta',
     responseRequired: 'Campo necesario',
     explanationRequired: 'Campo necesario',
     includeExplanationToEveryAnswerLabel:
       'Incluir una explicación a cada respuesta (correctas e incorrectas)',
     explanationLabel: 'Explicación',
+    caption: 'Pie de foto/texto alternativo',
     cluesLabel: 'Pistas',
     cluesDescription:
       'Es posible dar pistas a los alumnos proporcionando información que facilite la tarea de recuperación de la memoria.',
@@ -156,13 +158,13 @@ module.exports = {
     questionFiltersDescription2:
       'Para escoger preguntas específicas, se pueden seleccionar manualmente desd ele listado. Al finalizar la selección pulsar sobre "Seleccionar preguntas marcadas".',
     numberOfQuestions: 'Número de preguntas',
-    useAllQuestions: 'Utilizar todas las preguntas',
+    useAllQuestions: 'Seleccionar preguntas manualmente',
     addType: 'Añadir tipo',
     levelLabel: 'Nivel',
     categoriesLabel: 'Categorías',
     addLevel: 'Añadir nivel',
     selectByTag: 'Seleccionar por etiqueta',
-    showQuestions: 'Mostrar preguntas',
+    showQuestions: 'Continuar',
     nQuestionsRequired: 'Campo necesario',
     minOneQuestion: 'Seleccionar al menos una pregunta',
     selectQuestionDescription:
@@ -170,7 +172,7 @@ module.exports = {
     selectQuestionNothingToSelect:
       'No se han encontrado preguntas con los criterios introducidos. Volver atrás y ampliar la búsqueda.',
     returnFilters: 'Volver a Seleccionar preguntas',
-    assignSelectedQuestions: 'Asignar las preguntas seleccionadas al test',
+    assignSelectedQuestions: 'Seleccionar preguntas y continuar',
     responsesLabel: 'Respuestas',
     questionLabel: 'Pregunta',
     questionsRequired: 'Seleccionar al menos una pregunta',

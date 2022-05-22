@@ -8,7 +8,7 @@ const getAsset = require('../leebrary/assets/getAsset');
 
 module.exports = async function getAssignable(
   _id,
-  { userSession, columns = ['asset'], withFiles, transacting } = {}
+  { userSession, columns = ['asset'], withFiles, transacting, deleted: showDeleted = true } = {}
 ) {
   let isPublished = false;
   let id = _id;
@@ -19,19 +19,22 @@ module.exports = async function getAssignable(
     // EN: Get the assignable.
     // ES: Obtiene el asignable.
     // eslint-disable-next-line prefer-const
-    let { deleted, ...assignable } = await assignables.findOne(
-      {
-        $or: [
-          {
-            id,
-          },
-          {
-            asset: id,
-          },
-        ],
-      },
-      { transacting }
-    );
+    const query = {
+      $or: [
+        {
+          id,
+        },
+        {
+          asset: id,
+        },
+      ],
+    };
+
+    if (showDeleted) {
+      query.deleted_$null = false;
+    }
+
+    let assignable = await assignables.findOne(query, { transacting });
 
     id = assignable.id;
 

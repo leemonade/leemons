@@ -25,7 +25,11 @@ module.exports = async function publishAssignable(assignableId, { userSession, t
   // ES: Obtiene el asignable para validar la propiedad.
   let assignable = await getAssignable.call(this, assignableId, { userSession, transacting });
 
-  assignable = _.omit(assignable, ['roleDetails']);
+  if (assignable.deleted) {
+    throw new Error('The assignable is deleted');
+  }
+
+  assignable = _.omit(assignable, ['roleDetails', 'deleted']);
 
   // EN: Validate that all the required fields are filled.
   // ES: Valida que todos los campos requeridos están llenos.

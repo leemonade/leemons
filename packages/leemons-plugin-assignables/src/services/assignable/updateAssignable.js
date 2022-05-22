@@ -49,6 +49,10 @@ module.exports = async function updateAssignable(
   // ES: Obtenemos los valores actuales
   const currentAssignable = await getAssignable.call(this, id, { userSession, transacting });
 
+  if (currentAssignable.deleted) {
+    throw new Error('The assignable is deleted');
+  }
+
   // EN: Check if the user has permission to update the assignable.
   // ES: Comprueba si el usuario tiene permiso para actualizar el asignable.
   const { actions } = await getUserPermission(currentAssignable, { userSession, transacting });
@@ -103,7 +107,7 @@ module.exports = async function updateAssignable(
     // TODO: Ensure to keep original owner
     const newAssignable = await createAssignable.call(
       this,
-      _.omit({ ...object, asset: assetId }, ['published', 'id', 'roleDetails']),
+      _.omit({ ...object, asset: assetId }, ['published', 'id', 'roleDetails', 'deleted']),
       {
         id: fullId,
         userSession,

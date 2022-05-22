@@ -1,38 +1,48 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
-import { ContextContainer, Stack, Button, HtmlText } from '@bubbles-ui/components';
-import updateStudentRequest from '../../../../request/instance/updateStudent';
+import { ContextContainer, Alert, HtmlText } from '@bubbles-ui/components';
 
-function handleDeliverySubmission(instance, student) {
-  return async (delivery) => {
-    try {
-      await updateStudentRequest({
-        instance,
-        student,
-        metadata: {
-          submission: delivery,
-        },
-      });
-    } catch (e) {
-      // Ignore error
-    }
-  };
+function SubmissionState({ submitted, loading, error }) {
+  if (error) {
+    return (
+      <Alert title="Error" severity="error" closeable={false}>
+        Unable to submit the task: {error !== true ? error : ''}
+      </Alert>
+    );
+  }
+  if (loading) {
+    return (
+      <Alert title="Submitting" severity="info" closeable={false}>
+        Submitting the task
+      </Alert>
+    );
+  }
+  if (submitted) {
+    return (
+      <Alert title="Submitted" severity="success" closeable={false}>
+        The task has been submitted
+      </Alert>
+    );
+  }
+  return (
+    <Alert title="Not submitted" severity="info" closeable={false}>
+      The task has not been submitted yet
+    </Alert>
+  );
 }
-
 export default function DeliveryStep({ assignation, onNext, onPrev }) {
   const { instance } = assignation;
   const { assignable } = instance;
   const { submission } = assignable;
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [submitted, setSubmitted] = useState(Boolean(assignation.metadata?.submission));
 
-  const onDeliverySubmission = useMemo(
-    () => handleDeliverySubmission(instance?.id, assignation?.user),
-    [assignation?.user, instance?.id]
-  );
   // , metadata: {submission: submissionValue}
-  onNext.current = () => true;
+  onNext.current = () => !loading;
 
-  onPrev.current = () => true;
+  onPrev.current = () => !loading;
 
   console.log(assignation);
 
@@ -47,14 +57,28 @@ export default function DeliveryStep({ assignation, onNext, onPrev }) {
       return import(`./Delivery/${type}`);
     });
 
-  const C = Component(submission.type);
+  const C = useMemo(() => Component(submission.type), [submission.type]);
+
+  const onSubmit = useCallback(() => {
+    setError(null);
+    setSubmitted(true);
+    setLoading(false);
+  }, [setLoading, setSubmitted, setError]);
+  const onLoading = useCallback(() => {
+    setLoading(true);
+    setSubmitted(false);
+    setError(null);
+  }, [setLoading, setSubmitted, setError]);
 
   return (
     <ContextContainer title="Delivery">
       <HtmlText>{submission?.description}</HtmlText>
+      <SubmissionState loading={loading} error={error} submitted={submitted} />
       <C
-        submission={submission}
-        onChange={onDeliverySubmission}
+        assignation={assignation}
+        onError={setError}
+        onSubmit={onSubmit}
+        onLoading={onLoading}
         value={assignation?.metadata?.submission}
       />
     </ContextContainer>

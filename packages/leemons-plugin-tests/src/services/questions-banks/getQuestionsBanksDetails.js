@@ -11,7 +11,7 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
   const tagsService = leemons.getPlugin('common').services.tags;
   const ids = _.isArray(id) ? id : [id];
   const questionsBanks = await table.questionsBanks.find(
-    { $or: [{ id_$in: ids }, { asset_$in: ids }] },
+    { $or: [{ id_$in: ids }, { asset_$in: ids }], deleted_$null: false },
     { transacting }
   );
   const questionBankIds = _.map(questionsBanks, 'id');

@@ -12,12 +12,13 @@ export function ListItemValueRender({
   withImages,
   changeCorrectResponse,
   toggleHideOnHelp,
+  showEye,
 }) {
   return (
     <Box sx={() => ({ width: '100%' })}>
       <Stack fullWidth alignItems="start" justifyContent="start">
         <Radio checked={item.isCorrectResponse} onChange={() => changeCorrectResponse(item)} />
-        {!item.isCorrectResponse ? (
+        {!item.isCorrectResponse && showEye ? (
           <Box
             sx={(theme) => ({
               marginLeft: -theme.spacing[5],
@@ -35,7 +36,28 @@ export function ListItemValueRender({
 
         <Box>
           {withImages ? (
-            <>{item.image ? <ImagePicker value={item.image} readonly={true} /> : null}</>
+            <>
+              {item.image ? (
+                <>
+                  <Stack fullWidth spacing={4}>
+                    <Box>
+                      <ImagePicker value={item.image} readonly={true} />
+                    </Box>
+                    <Box>
+                      <InputWrapper label={t('caption')}>{item.imageDescription}</InputWrapper>
+                    </Box>
+                  </Stack>
+
+                  {useExplanation ? (
+                    <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                      <InputWrapper label={t('explanationLabel')}>
+                        <HtmlText>{item.explanation}</HtmlText>
+                      </InputWrapper>
+                    </Box>
+                  ) : null}
+                </>
+              ) : null}
+            </>
           ) : (
             <>
               {item.response}
@@ -61,4 +83,5 @@ ListItemValueRender.propTypes = {
   withImages: PropTypes.bool,
   toggleHideOnHelp: PropTypes.func,
   changeCorrectResponse: PropTypes.func,
+  showEye: PropTypes.bool,
 };
