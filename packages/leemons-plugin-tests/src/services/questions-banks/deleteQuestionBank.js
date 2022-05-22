@@ -3,13 +3,13 @@ const _ = require('lodash');
 const { table } = require('../tables');
 const { getQuestionsBanksDetails } = require('./getQuestionsBanksDetails');
 
-async function deleteQuestionBank(id, { userSession, transacting } = {}) {
+async function deleteQuestionBank(_id, { userSession, transacting } = {}) {
   const { versionControl } = leemons.getPlugin('common').services;
   const assetService = leemons.getPlugin('leebrary').services.assets;
 
-  const version = await versionControl.getVersion(id, { transacting });
+  const version = await versionControl.getVersion(_id, { transacting });
   const versions = (
-    await versionControl.listVersions(id, {
+    await versionControl.listVersions(_id, {
       published: version.published,
       transacting,
     })
@@ -21,14 +21,13 @@ async function deleteQuestionBank(id, { userSession, transacting } = {}) {
     transacting,
   });
 
-  const promises = [
-    table.questionsBanks.deleteMany({ id_$in: versions }, { soft: true, transacting }),
-  ];
+  const promises = [];
 
-  _.forEach(questionBanks, ({ asset }) => {
+  _.forEach(questionBanks, ({ id, asset }) => {
+    promises.push(table.questionsBanks.delete({ id }, { soft: true, transacting }));
     promises.push(
       assetService.update(
-        { ...asset, indexable: false },
+        { id: asset.id, name: asset.name, category: asset.category, indexable: false },
         {
           userSession,
           transacting,
