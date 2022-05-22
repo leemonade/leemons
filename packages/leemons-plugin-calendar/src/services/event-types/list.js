@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const { table } = require('../tables');
 
 /**
@@ -9,7 +10,8 @@ const { table } = require('../tables');
  * @return {Promise<any>}
  * */
 async function list({ transacting } = {}) {
-  return table.eventTypes.find(undefined, { transacting });
+  const eventTypes = await table.eventTypes.find(undefined, { transacting });
+  return _.map(eventTypes, (eventType) => ({ ...eventType, config: JSON.parse(eventType.config) }));
 }
 
 module.exports = { list };

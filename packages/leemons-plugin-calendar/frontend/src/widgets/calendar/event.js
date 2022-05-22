@@ -35,7 +35,6 @@ export default function Event({ isEditing, event, form, data, allFormData, class
                   disabled={disabled}
                   label={t('video_link')}
                   error={get(errors, 'videoLink')}
-                  required
                   {...field}
                 />
               )}
@@ -58,7 +57,6 @@ export default function Event({ isEditing, event, form, data, allFormData, class
                   disabled={disabled}
                   label={t('add_place')}
                   error={get(errors, 'place')}
-                  required
                   {...field}
                 />
               )}
@@ -81,7 +79,6 @@ export default function Event({ isEditing, event, form, data, allFormData, class
                   disabled={disabled}
                   label={t('add_description')}
                   error={get(errors, 'description')}
-                  required
                   {...field}
                 />
               )}

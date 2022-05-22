@@ -27,6 +27,9 @@ module.exports = {
     onlyOneDate: {
       type: 'boolean',
     },
+    config: {
+      type: 'json',
+    },
   },
   primaryKey: {
     type: 'uuid',

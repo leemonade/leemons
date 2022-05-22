@@ -83,7 +83,7 @@ module.exports = {
   kanbanColumns: [
     {
       name: {
-        es: 'PROXÍMOS',
+        es: 'SIN ESTADO',
         en: 'BACKLOG',
       },
       order: 1,
@@ -93,7 +93,7 @@ module.exports = {
     },
     {
       name: {
-        es: 'TO DO',
+        es: 'POR HACER',
         en: 'TO DO',
       },
       order: 2,

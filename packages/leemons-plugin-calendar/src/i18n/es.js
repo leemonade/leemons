@@ -6,6 +6,8 @@ module.exports = {
   holidays_vacation: 'Vacaciones / Días festivos',
   regional_holidays: 'Fiestas regionales',
   non_school_day: 'Día no lectivo (Otro)',
+  taskPlaceholder: 'Nueva tarea',
+  fromLabelDeadline: 'Fecha límite',
   calendar: {
     month: 'Mes',
     week: 'Semana',
@@ -46,7 +48,7 @@ module.exports = {
     subtask: 'Subtarea',
     add_subtask: 'Añadir subtarea',
     tags: 'Etiquetas',
-    column: 'Columna',
+    column: 'Estado en Kanban',
   },
   detail_page: {
     title_placeholder: 'Configuración del calendario',
