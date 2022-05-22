@@ -32,10 +32,10 @@ const ImagePicker = ({
     } else if (!isEmpty(valueProp) && valueProp !== asset) {
       setAsset(valueProp);
 
-      if (valueProp.id && valueProp.cover) {
+      if (!isEmpty(valueProp.id) && !isEmpty(valueProp.cover)) {
         const preparedAsset = prepareAsset(valueProp);
         setAssetUrl(preparedAsset.cover);
-      } else if (valueProp.name && valueProp.path) {
+      } else if (!isEmpty(valueProp.name) && !isEmpty(valueProp.path)) {
         const imageSrc = URL.createObjectURL(valueProp);
         setAssetUrl(imageSrc);
       }
