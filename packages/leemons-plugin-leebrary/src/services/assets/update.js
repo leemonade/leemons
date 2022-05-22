@@ -106,6 +106,7 @@ async function update(
     });
 
     const duplicatedAsset = await duplicate.call(this, assetId, {
+      preserveName: true,
       newId: fullId,
       userSession,
       transacting,
