@@ -64,6 +64,7 @@ module.exports = {
     includeExplanationToEveryAnswerLabel:
       'Include an explanation to every answer (right and wrong ones)',
     explanationLabel: 'Explanation',
+    caption: 'Caption/ Alt text',
     cluesLabel: 'Clues',
     cluesDescription:
       'You can give hints to students providing information that facilitates the memory retrieval task.',

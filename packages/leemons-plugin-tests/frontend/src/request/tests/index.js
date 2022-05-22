@@ -1,4 +1,4 @@
-import { isString } from 'lodash';
+import { cloneDeep, isString } from 'lodash';
 
 async function listTests({ page, size, published }) {
   return leemons.api(`tests/tests?page=${page}&size=${size}&published=${published}`, {
@@ -7,15 +7,16 @@ async function listTests({ page, size, published }) {
   });
 }
 
-async function saveTest(body) {
+async function saveTest(_body) {
+  const body = cloneDeep(_body);
   const form = new FormData();
-  if (body.cover && !isString(body.cover)) {
+  if (_body.cover && !isString(_body.cover)) {
     const { cover, ...data } = body;
-    if (body.cover) {
-      if (body.cover.id) {
-        data.cover = body.cover.cover?.id;
+    if (_body.cover) {
+      if (_body.cover.id) {
+        data.cover = _body.cover.cover?.id;
       } else {
-        form.append('cover', body.cover, body.cover.name);
+        form.append('cover', _body.cover, _body.cover.name);
       }
     }
     form.append('data', JSON.stringify(data));

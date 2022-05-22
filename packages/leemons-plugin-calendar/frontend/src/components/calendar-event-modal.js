@@ -103,8 +103,6 @@ function NewCalendarEventModal({
       }
     });
 
-    console.log(eventTypes);
-
     return eventTypes;
   }
 

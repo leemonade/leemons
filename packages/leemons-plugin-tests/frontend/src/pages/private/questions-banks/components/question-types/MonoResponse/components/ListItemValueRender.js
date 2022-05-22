@@ -36,7 +36,28 @@ export function ListItemValueRender({
 
         <Box>
           {withImages ? (
-            <>{item.image ? <ImagePicker value={item.image} readonly={true} /> : null}</>
+            <>
+              {item.image ? (
+                <>
+                  <Stack fullWidth spacing={4}>
+                    <Box>
+                      <ImagePicker value={item.image} readonly={true} />
+                    </Box>
+                    <Box>
+                      <InputWrapper label={t('caption')}>{item.imageDescription}</InputWrapper>
+                    </Box>
+                  </Stack>
+
+                  {useExplanation ? (
+                    <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                      <InputWrapper label={t('explanationLabel')}>
+                        <HtmlText>{item.explanation}</HtmlText>
+                      </InputWrapper>
+                    </Box>
+                  ) : null}
+                </>
+              ) : null}
+            </>
           ) : (
             <>
               {item.response}

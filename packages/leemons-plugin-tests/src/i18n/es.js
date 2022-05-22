@@ -64,6 +64,7 @@ module.exports = {
     includeExplanationToEveryAnswerLabel:
       'Incluir una explicación a cada respuesta (correctas e incorrectas)',
     explanationLabel: 'Explicación',
+    caption: 'Pie de foto/texto alternativo',
     cluesLabel: 'Pistas',
     cluesDescription:
       'Es posible dar pistas a los alumnos proporcionando información que facilite la tarea de recuperación de la memoria.',
