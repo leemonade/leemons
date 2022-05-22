@@ -1,9 +1,9 @@
 const getRolePermissions = require('./helpers/getRolePermissions');
 const { find: findAsset } = require('../assets/find');
 
-async function getPublic(categoryId, { transacting } = {}) {
+async function getPublic(categoryId, { indexable = true, transacting } = {}) {
   try {
-    const query = { public: true };
+    const query = { public: true, indexable };
 
     if (categoryId) {
       query.category = categoryId;

@@ -2,10 +2,14 @@ const { isEmpty } = require('lodash');
 const { tables } = require('../tables');
 const { getByIds: getAssetsByIds } = require('../assets/getByIds');
 
-async function byTagline(tagline, { details = false, assets: assetsIds, transacting } = {}) {
+async function byTagline(
+  tagline,
+  { details = false, indexable = true, assets: assetsIds, transacting } = {}
+) {
   try {
     const query = {
       tagline_$contains: tagline,
+      indexable,
     };
 
     if (!isEmpty(assetsIds)) {

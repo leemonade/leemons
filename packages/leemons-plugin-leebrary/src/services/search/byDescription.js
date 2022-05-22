@@ -4,11 +4,12 @@ const { tables } = require('../tables');
 
 async function byDescription(
   description,
-  { details = false, assets: assetsIds, transacting } = {}
+  { details = false, indexable = true, assets: assetsIds, transacting } = {}
 ) {
   try {
     const query = {
       description_$contains: description,
+      indexable,
     };
 
     if (!isEmpty(assetsIds)) {

@@ -2,10 +2,14 @@ const { isEmpty } = require('lodash');
 const { tables } = require('../tables');
 const { getByIds } = require('./getByIds');
 
-async function getByCategory(categoryId, { details = false, assets: assetIds, transacting } = {}) {
+async function getByCategory(
+  categoryId,
+  { details = false, indexable = true, assets: assetIds, transacting } = {}
+) {
   try {
     const query = {
       category: categoryId,
+      indexable,
     };
 
     if (!isEmpty(assetIds)) {

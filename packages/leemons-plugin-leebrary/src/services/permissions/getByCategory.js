@@ -11,6 +11,7 @@ async function getByCategory(
     sortBy: sortingBy,
     sortDirection = 'asc',
     published = true,
+    indexable = true,
     preferCurrent,
     showPublic,
     userSession,
@@ -30,7 +31,7 @@ async function getByCategory(
       }
     );
 
-    const publicAssets = showPublic ? await getPublic(categoryId, { transacting }) : [];
+    const publicAssets = showPublic ? await getPublic(categoryId, { indexable, transacting }) : [];
 
     // ES: Concatenamos todas las IDs, y luego obtenemos la intersección en función de su status
     // EN: Concatenate all IDs, and then get the intersection in accordance with their status
@@ -56,6 +57,7 @@ async function getByCategory(
         getByIds(assetIds, {
           withCategory: false,
           withTags: false,
+          indexable,
           showPublic,
           userSession,
           transacting,
