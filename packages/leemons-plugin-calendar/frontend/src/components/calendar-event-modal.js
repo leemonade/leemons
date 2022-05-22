@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+/* eslint-disable no-param-reassign */
 
 import * as _ from 'lodash';
 import { find, forEach, isString, map, set } from 'lodash';
@@ -9,7 +10,7 @@ import { getCalendarsToFrontendRequest } from '@calendar/request';
 import loadable from '@loadable/component';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { CALENDAR_EVENT_MODAL_DEFAULT_PROPS, CalendarEventModal } from '@bubbles-ui/leemons';
-import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
+import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
 import PropTypes from 'prop-types';
 
@@ -68,8 +69,43 @@ function NewCalendarEventModal({
   }
 
   async function getEventTypes() {
-    const response = await getEventTypesRequest();
-    return response.eventTypes;
+    const { eventTypes } = await getEventTypesRequest();
+
+    const keys = [];
+    _.forEach(eventTypes, (eventType) => {
+      if (eventType.config?.titlePlaceholder) {
+        keys.push(eventType.config?.titlePlaceholder);
+      }
+      if (eventType.config?.fromLabel) {
+        keys.push(eventType.config?.fromLabel);
+      }
+      if (eventType.config?.toLabel) {
+        keys.push(eventType.config?.toLabel);
+      }
+    });
+
+    const { items } = await getLocalizations({ keys });
+
+    _.forEach(eventTypes, (eventType) => {
+      if (eventType.config?.titlePlaceholder) {
+        eventType.config.titlePlaceholder =
+          items[eventType.config.titlePlaceholder] || eventType.config.titlePlaceholder;
+      }
+      if (eventType.config?.fromLabel) {
+        eventType.config.fromLabel =
+          items[eventType.config.fromLabel] || eventType.config.fromLabel;
+      }
+      if (eventType.config?.toLabel) {
+        eventType.config.toLabel = items[eventType.config.toLabel] || eventType.config.toLabel;
+      }
+      if (!eventType.config) {
+        eventType.config = {};
+      }
+    });
+
+    console.log(eventTypes);
+
+    return eventTypes;
   }
 
   async function getEventTypeTranslations(eventTypes) {
@@ -246,6 +282,8 @@ function NewCalendarEventModal({
   }, [session, event]);
 
   if (ref.current.loading) return null;
+
+  console.log(ref.current.eventTypes);
 
   return (
     <CalendarEventModal

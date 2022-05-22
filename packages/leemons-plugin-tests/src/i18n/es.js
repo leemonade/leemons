@@ -157,13 +157,13 @@ module.exports = {
     questionFiltersDescription2:
       'Para escoger preguntas específicas, se pueden seleccionar manualmente desd ele listado. Al finalizar la selección pulsar sobre "Seleccionar preguntas marcadas".',
     numberOfQuestions: 'Número de preguntas',
-    useAllQuestions: 'Utilizar todas las preguntas',
+    useAllQuestions: 'Seleccionar preguntas manualmente',
     addType: 'Añadir tipo',
     levelLabel: 'Nivel',
     categoriesLabel: 'Categorías',
     addLevel: 'Añadir nivel',
     selectByTag: 'Seleccionar por etiqueta',
-    showQuestions: 'Mostrar preguntas',
+    showQuestions: 'Continuar',
     nQuestionsRequired: 'Campo necesario',
     minOneQuestion: 'Seleccionar al menos una pregunta',
     selectQuestionDescription:
@@ -171,7 +171,7 @@ module.exports = {
     selectQuestionNothingToSelect:
       'No se han encontrado preguntas con los criterios introducidos. Volver atrás y ampliar la búsqueda.',
     returnFilters: 'Volver a Seleccionar preguntas',
-    assignSelectedQuestions: 'Asignar las preguntas seleccionadas al test',
+    assignSelectedQuestions: 'Seleccionar preguntas y continuar',
     responsesLabel: 'Respuestas',
     questionLabel: 'Pregunta',
     questionsRequired: 'Seleccionar al menos una pregunta',

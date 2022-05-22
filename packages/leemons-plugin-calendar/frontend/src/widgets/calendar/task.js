@@ -119,7 +119,6 @@ export default function Task({ event, form, classes, disabled, allProps: { class
                   disabled={disabled}
                   label={t('description')}
                   error={get(errors, 'description')}
-                  required
                   {...field}
                 />
               )}
