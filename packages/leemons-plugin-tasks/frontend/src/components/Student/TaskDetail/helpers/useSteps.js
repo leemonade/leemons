@@ -67,7 +67,7 @@ export default function useSteps(assignation) {
       },
     };
 
-    const stepsToShow = ['summary', 'statement', 'submission'];
+    const stepsToShow = ['submission', 'summary', 'statement', 'submission'];
 
     const finalSteps = stepsToShow
       .map((step) => {
