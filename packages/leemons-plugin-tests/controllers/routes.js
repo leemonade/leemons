@@ -69,6 +69,13 @@ module.exports = [
     allowedPermissions: getPermissions(permissions.tests, ['view']),
   },
   {
+    path: '/tests/:id',
+    method: 'DELETE',
+    handler: 'tests.deleteTest',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tests, ['delete']),
+  },
+  {
     path: '/tests',
     method: 'POST',
     handler: 'tests.saveTest',

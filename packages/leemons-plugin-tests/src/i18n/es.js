@@ -193,6 +193,8 @@ module.exports = {
     view: 'Ver',
     edit: 'Editar',
     tests: 'Pruebas',
+    questionBank: 'Banco de preguntas',
+    deleted: 'Borrado',
   },
   studentInstance: {
     multiSubject: 'Multi-Asignatura',

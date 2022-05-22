@@ -11,6 +11,7 @@ export {
   listTests as listTestsRequest,
   saveTest as saveTestRequest,
   getTest as getTestRequest,
+  deleteTest as deleteTestRequest,
 } from './tests';
 
 export { getQuestionByIds as getQuestionByIdsRequest } from './questions';

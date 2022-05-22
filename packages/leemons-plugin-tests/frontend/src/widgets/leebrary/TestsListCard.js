@@ -6,6 +6,11 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { EditIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
 import { useHistory } from 'react-router-dom';
+import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+import { useLayout } from '@layout/context';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { deleteTestRequest } from '../../request';
 
 const ListCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -16,9 +21,11 @@ const ListCardStyles = createStyles((theme, { selected }) => ({
   },
 }));
 
-const TestsListCard = ({ asset, selected, ...props }) => {
+const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
   const [t] = useTranslateLoader(prefixPN('testsCard'));
   const { classes } = ListCardStyles({ selected });
+  const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
+  const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const history = useHistory();
 
@@ -31,7 +38,7 @@ const TestsListCard = ({ asset, selected, ...props }) => {
         children: t('view'),
         onClick: (e) => {
           e.stopPropagation();
-          history.push(`/private/tests/detail/${asset.id}`);
+          history.push(`/private/tests/detail/${asset.providerData.id}`);
         },
       });
       if (asset.editable) {
@@ -40,7 +47,27 @@ const TestsListCard = ({ asset, selected, ...props }) => {
           children: t('edit'),
           onClick: (e) => {
             e.stopPropagation();
-            history.push(`/private/tests/${asset.id}`);
+            history.push(`/private/tests/${asset.providerData.id}`);
+          },
+        });
+      }
+      if (asset.deleteable) {
+        items.push({
+          icon: <DeleteBinIcon />,
+          children: 'Delete',
+          onClick: (e) => {
+            e.stopPropagation();
+            openDeleteConfirmationModal({
+              onConfirm: async () => {
+                try {
+                  await deleteTestRequest(asset.providerData.id);
+                  addSuccessAlert(t('deleted'));
+                  onRefresh();
+                } catch (err) {
+                  addErrorAlert(getErrorMessage(err));
+                }
+              },
+            })();
           },
         });
       }
@@ -65,6 +92,7 @@ TestsListCard.propTypes = {
   asset: PropTypes.any,
   variant: PropTypes.string,
   selected: PropTypes.bool,
+  onRefresh: PropTypes.func,
 };
 
 export default TestsListCard;
