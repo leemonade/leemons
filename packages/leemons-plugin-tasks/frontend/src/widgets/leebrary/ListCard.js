@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { isNil } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { EditIcon, StudyDeskIcon } from '@bubbles-ui/icons/outline';
 import { addSuccessAlert } from '@layout/alert';
+
 import { useLayout } from '@layout/context';
 
 const ListCardStyles = createStyles((theme, { single }) => ({

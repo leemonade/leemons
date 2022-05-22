@@ -198,6 +198,7 @@ module.exports = {
     edit: 'Edit',
     tests: 'Tests',
     questionBank: 'Question bank',
+    deleted: 'Deleted',
   },
   studentInstance: {
     multiSubject: 'Multi-Subject',

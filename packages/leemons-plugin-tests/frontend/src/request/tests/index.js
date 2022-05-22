@@ -70,10 +70,18 @@ async function getUserQuestionResponses(instance, user) {
   });
 }
 
+async function deleteTest(id) {
+  return leemons.api(`tests/tests/${id}`, {
+    allAgents: true,
+    method: 'DELETE',
+  });
+}
+
 export {
   listTests,
   saveTest,
   getTest,
+  deleteTest,
   setInstanceTimestamp,
   getUserQuestionResponses,
   setQuestionResponse,

@@ -8,6 +8,7 @@ async function listQuestionBanks(ctx) {
       page: { type: ['number', 'string'] },
       size: { type: ['number', 'string'] },
       published: { type: ['boolean', 'string'] },
+      subjects: { type: 'array', items: { type: 'string' } },
       query: { type: 'object', additionalProperties: true },
     },
     required: ['page', 'size'],

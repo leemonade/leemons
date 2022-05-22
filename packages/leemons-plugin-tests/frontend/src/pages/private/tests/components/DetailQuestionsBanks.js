@@ -30,6 +30,7 @@ export default function DetailQuestionsBanks({ form, t, onNext, onPrev }) {
     size: 10,
   });
   const questionBank = form.watch('questionBank');
+  const subjects = form.watch('subjects');
 
   async function next() {
     setIsDirty(true);
@@ -45,6 +46,7 @@ export default function DetailQuestionsBanks({ form, t, onNext, onPrev }) {
         page: store.page,
         size: store.size,
         published: true,
+        subjects,
       });
       return data;
     } catch (e) {

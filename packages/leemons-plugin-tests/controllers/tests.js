@@ -81,10 +81,19 @@ async function getUserQuestionResponses(ctx) {
   ctx.body = { status: 200, responses };
 }
 
+async function deleteTest(ctx) {
+  await testsService.deleteTest(ctx.request.params.id, {
+    userSession: ctx.state.userSession,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, deleted: true };
+}
+
 module.exports = {
   getUserQuestionResponses,
   setInstanceTimestamp,
   setQuestionResponse,
+  deleteTest,
   listTests,
   saveTest,
   getTest,
