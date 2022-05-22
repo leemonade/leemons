@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  ActionButton,
   Box,
   Button,
   ContextContainer,
@@ -12,10 +13,12 @@ import {
   Textarea,
   TextInput,
 } from '@bubbles-ui/components';
+import { ViewOffIcon } from '@bubbles-ui/icons/outline';
+import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+
 import { Controller } from 'react-hook-form';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { useStore } from '@common';
-import { ViewOffIcon } from '@bubbles-ui/icons/outline';
 import { findIndex, forEach, map } from 'lodash';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { QuestionImage } from '../../../../../../components/QuestionImage';
@@ -63,12 +66,28 @@ export function Map({ form, t }) {
     splits[1],
   ];
 
+  function removeImage() {
+    form.setValue('properties.image', null);
+    form.setValue('properties.markers', {
+      ...markers,
+      list: [],
+    });
+  }
+
   return (
     <ContextContainer>
       <InputWrapper required label={t('mapLabel')}>
         {image ? (
           <ContextContainer>
-            <QuestionImage src={image} markers={markers} />
+            <ContextContainer direction="row">
+              <Box>
+                <QuestionImage src={image} markers={markers} />
+              </Box>
+              <Box>
+                <ActionButton icon={<DeleteBinIcon />} onClick={() => removeImage()} />
+              </Box>
+            </ContextContainer>
+
             <Box>
               <Button onClick={showMarkersModal}>{t('createNumbering')}</Button>
             </Box>
