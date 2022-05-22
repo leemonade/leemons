@@ -12,12 +12,13 @@ export function ListItemValueRender({
   withImages,
   changeCorrectResponse,
   toggleHideOnHelp,
+  showEye,
 }) {
   return (
     <Box sx={() => ({ width: '100%' })}>
       <Stack fullWidth alignItems="start" justifyContent="start">
         <Radio checked={item.isCorrectResponse} onChange={() => changeCorrectResponse(item)} />
-        {!item.isCorrectResponse ? (
+        {!item.isCorrectResponse && showEye ? (
           <Box
             sx={(theme) => ({
               marginLeft: -theme.spacing[5],
@@ -61,4 +62,5 @@ ListItemValueRender.propTypes = {
   withImages: PropTypes.bool,
   toggleHideOnHelp: PropTypes.func,
   changeCorrectResponse: PropTypes.func,
+  showEye: PropTypes.bool,
 };

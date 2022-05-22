@@ -21,9 +21,7 @@ export function ListInputRender({ t, withImages, useExplanation, addItem, value,
 
   function emitIfCan() {
     if (withImages) {
-      console.log('aaa', store.image);
       if (store.image) {
-        console.log('Emitimos');
         emit();
       }
     } else if (useExplanation) {
@@ -48,7 +46,6 @@ export function ListInputRender({ t, withImages, useExplanation, addItem, value,
   }
 
   function onChangeImage(e) {
-    console.log(e);
     store.image = e;
     emitIfCan();
     render();

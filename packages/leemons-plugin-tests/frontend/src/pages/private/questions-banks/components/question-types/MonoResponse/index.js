@@ -152,6 +152,7 @@ export function MonoResponse({ form, t }) {
                       withImages={withImages}
                       toggleHideOnHelp={toggleHideOnHelp}
                       changeCorrectResponse={changeCorrectResponse}
+                      showEye={field?.value?.length > 2}
                     />
                   }
                 />
