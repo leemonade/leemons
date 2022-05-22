@@ -43,7 +43,7 @@ module.exports = async function updateAssignable(
     throw new Error('No changes detected');
   }
 
-  validateAssignable(_.omit(assignableObject, ['deleted']));
+  validateAssignable(assignableObject);
 
   // EN: Get the current values
   // ES: Obtenemos los valores actuales
@@ -107,7 +107,7 @@ module.exports = async function updateAssignable(
     // TODO: Ensure to keep original owner
     const newAssignable = await createAssignable.call(
       this,
-      _.omit({ ...object, asset: assetId }, ['published', 'id', 'roleDetails']),
+      _.omit({ ...object, asset: assetId }, ['published', 'id', 'roleDetails', 'deleted']),
       {
         id: fullId,
         userSession,

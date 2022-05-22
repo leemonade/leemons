@@ -141,7 +141,7 @@ export default function TaskDetail({ id, student }) {
         <Box className={classes?.content}>
           {step?.component}
           <Stack direction="row" justifyContent="space-between" fullWidth className={classes?.nav}>
-            {step?.previous !== false && (
+            {!isFirstStep && step?.previous !== false && (
               <Button
                 rounded
                 compact
