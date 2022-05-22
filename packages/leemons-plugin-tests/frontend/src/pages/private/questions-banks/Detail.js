@@ -151,10 +151,10 @@ export default function Detail() {
           >
             {store.currentStep === 0 && <DetailBasic t={t} form={form} onNext={() => setStep(1)} />}
             {store.currentStep === 1 && (
-              <DetailConfig t={t} form={form} onNext={() => setStep(2)} />
+              <DetailConfig t={t} form={form} onPrev={() => setStep(0)} onNext={() => setStep(2)} />
             )}
             {store.currentStep === 2 || store.currentStep === 3 ? (
-              <DetailQuestions t={t} form={form} />
+              <DetailQuestions t={t} form={form} onPrev={() => setStep(1)} />
             ) : null}
           </VerticalStepperContainer>
         </Box>
