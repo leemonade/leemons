@@ -46,19 +46,21 @@ export default function File({ assignation, onLoading, onSubmit, onError, value 
         await Promise.all(filesToRemove.map((file) => deleteAssetRequest(file.id)));
       }
 
+      let filesSaved = [];
+
       if (filesToSave?.length) {
-        let filesSaved = await Promise.all(
+        filesSaved = await Promise.all(
           filesToSave.map((file) =>
-            newAssetRequest({ file, name: file.name }, category, 'media-files')
+            newAssetRequest({ file, name: file.name, indexable: false }, category, 'media-files')
           )
         );
 
         filesSaved = _.map(filesSaved, 'asset');
 
-        await saveSubmission([...filesToKeep, ...filesSaved]);
-        savedFiles.current = [...filesToKeep, ...filesSaved];
         // await Promise.all(filesToSave.map((file) => newAsset(file)));
       }
+      await saveSubmission([...filesToKeep, ...filesSaved]);
+      savedFiles.current = [...filesToKeep, ...filesSaved];
 
       onSubmit();
     } catch (e) {
