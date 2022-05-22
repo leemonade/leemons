@@ -140,3 +140,7 @@ dist
 # Editor
 
 .vscode/
+
+
+# Leemons
+packages/multi-src-react/build

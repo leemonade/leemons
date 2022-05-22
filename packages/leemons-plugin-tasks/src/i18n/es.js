@@ -80,7 +80,6 @@ module.exports = {
         errorMessages: {
           name: { required: 'Campo necesario' },
           tagline: { required: 'Campo necesario' },
-          description: { required: 'Campo necesario' },
         },
       },
       configData: {

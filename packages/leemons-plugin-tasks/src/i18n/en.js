@@ -79,7 +79,6 @@ module.exports = {
         errorMessages: {
           name: { required: 'Field required' },
           tagline: { required: 'Required field' },
-          description: { required: 'Required field' },
         },
       },
       configData: {
