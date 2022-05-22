@@ -80,6 +80,7 @@ module.exports = {
         errorMessages: {
           name: { required: 'Campo necesario' },
           tagline: { required: 'Campo necesario' },
+          description: { required: 'Campo necesario' },
         },
       },
       configData: {
@@ -126,6 +127,7 @@ module.exports = {
           methodology: 'Metodología',
           recommendedDuration: 'Duración recomendada',
           statement: 'Enunciado',
+          development: 'Desarrollo',
           buttonNext: 'Siguiente',
           buttonPrev: 'Anterior',
         },

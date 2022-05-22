@@ -84,12 +84,16 @@ module.exports = async function updateAssignation(assignation, { userSession, tr
 
   // EN: Update the assignation
   // ES: Actualizar la asignación
-  if (_.omit(diff, ['timestamps', 'grades']).length) {
+  if (_.pull(diff, 'timestamps', 'grades').length) {
     await assignations.update(
       {
         id,
       },
-      _.omit(object, ['timestamps', 'grades']),
+      {
+        ..._.omit(object, ['timestamps', 'grades']),
+        classes: JSON.stringify(object.classes),
+        metadata: JSON.stringify(object.metadata),
+      },
       { transacting }
     );
   }
