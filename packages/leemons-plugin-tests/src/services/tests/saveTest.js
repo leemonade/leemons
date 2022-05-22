@@ -70,7 +70,7 @@ async function saveTest(data, { userSession, transacting: _transacting } = {}) {
           {
             assignable: assignable.id,
             alwaysAvailable: false,
-            duration: '20 minutes',
+            duration: '30 minutes',
             messageToAssignees: '<p style="margin-left: 0px!important;">Pepe</p>',
             students: _.uniq(_.map(classStudents, 'student')),
             classes: _.uniq(_.map(classes, 'id')),
@@ -81,9 +81,9 @@ async function saveTest(data, { userSession, transacting: _transacting } = {}) {
             },
             dates: {
               start: '2022-05-11T22:00:00.000Z',
-              deadline: '2022-05-19T22:00:00.000Z',
+              deadline: '2022-11-19T22:00:00.000Z',
               visualization: '2022-05-11T22:00:00.000Z',
-              close: '2022-05-26T22:00:00.000Z',
+              close: '2022-11-26T22:00:00.000Z',
             },
             gradable: true,
             metadata: {
