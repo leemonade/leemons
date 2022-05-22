@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack, useDebouncedCallback, VerticalStepperContainer, Box } from '@bubbles-ui/components';
+import { Box, Stack, useDebouncedCallback, VerticalStepperContainer } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
@@ -38,7 +38,7 @@ export default function Edit() {
 
   async function saveAsDraft() {
     try {
-      store.saving = 'edit';
+      store.saving = 'duplicate';
       render();
       await saveTestRequest({ ...formValues, published: false });
       addSuccessAlert(t('savedAsDraft'));
@@ -50,13 +50,17 @@ export default function Edit() {
     render();
   }
 
-  async function saveAsPublish() {
+  async function saveAsPublish(redictToAssign = false) {
     try {
-      store.saving = 'duplicate';
+      store.saving = 'edit';
       render();
-      await saveTestRequest({ ...formValues, published: true });
+      const { test } = await saveTestRequest({ ...formValues, published: true });
       addSuccessAlert(t('published'));
-      history.push('/private/tests');
+      if (redictToAssign) {
+        history.push(`/private/tests/detail/${test.asset}`);
+      } else {
+        history.push('/private/tests');
+      }
     } catch (error) {
       addErrorAlert(error);
     }
@@ -131,7 +135,13 @@ export default function Edit() {
       );
     if (store.currentStep === 5)
       component = (
-        <DetailInstructions t={t} form={form} onNext={() => setStep(6)} onPrev={() => setStep(4)} />
+        <DetailInstructions
+          t={t}
+          form={form}
+          onPublish={() => saveAsPublish()}
+          onAssign={() => saveAsPublish(true)}
+          onPrev={() => setStep(4)}
+        />
       );
   }
 

@@ -2,18 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { groupBy, map, uniqBy } from 'lodash';
 import {
+  Box,
   Button,
   ContextContainer,
   ListInput,
   MultiSelect,
   Select,
   Stack,
-  Box,
 } from '@bubbles-ui/components';
 import { Controller } from 'react-hook-form';
 import { useStore } from '@common';
 import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
-import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 
 export default function DetailConfig({ form, t, onNext, onPrev }) {
   const [isDirty, setIsDirty] = React.useState(false);
@@ -96,7 +96,6 @@ export default function DetailConfig({ form, t, onNext, onPrev }) {
       <Stack fullWidth justifyContent="space-between">
         <Box>
           <Button
-            compact
             variant="light"
             leftIcon={<ChevLeftIcon height={20} width={20} />}
             onClick={onPrev}
@@ -118,4 +117,5 @@ DetailConfig.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   onNext: PropTypes.func,
+  onPrev: PropTypes.func,
 };

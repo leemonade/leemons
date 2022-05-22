@@ -10,6 +10,7 @@ import {
   Stack,
   Title,
 } from '@bubbles-ui/components';
+import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import QuestionsTable from './QuestionsTable';
 
 export default function DetailQuestionsSelect({
@@ -23,14 +24,14 @@ export default function DetailQuestionsSelect({
   error,
 }) {
   return (
-    <ContextContainer>
-      {questions && questions.length > 0 ? (
-        <Title order={6}>
-          {t('nQuestions', { n: reorderMode ? value.length : questions.length })}
-        </Title>
-      ) : null}
+    <ContextContainer divided>
+      <ContextContainer>
+        {questions && questions.length > 0 ? (
+          <Title order={6}>
+            {t('nQuestions', { n: reorderMode ? value.length : questions.length })}
+          </Title>
+        ) : null}
 
-      <Stack justifyContent="space-between">
         <Box>
           <Paragraph>
             {t(reorderMode ? 'reorderQuestionsDescription' : 'selectQuestionDescription')}
@@ -44,32 +45,42 @@ export default function DetailQuestionsSelect({
         <Box>
           {questions && questions.length > 0 ? (
             <ContextContainer>
-              <Box>
-                <Button onClick={next}>
-                  {t(reorderMode ? 'continue' : 'assignSelectedQuestions')}
-                </Button>
-              </Box>
               <InputWrapper error={error} />
             </ContextContainer>
           ) : null}
         </Box>
+        {questions && questions.length > 0 ? (
+          <Box>
+            <QuestionsTable
+              questions={questions}
+              value={value}
+              onChange={(e) => onChange(e)}
+              reorderMode={reorderMode}
+            />
+          </Box>
+        ) : (
+          <Box>
+            <Alert closeable={false} severity="error">
+              {t('selectQuestionNothingToSelect')}
+            </Alert>
+          </Box>
+        )}
+      </ContextContainer>
+      <Stack fullWidth justifyContent="space-between">
+        <Box>
+          <Button
+            compact
+            variant="light"
+            leftIcon={<ChevLeftIcon height={20} width={20} />}
+            onClick={back}
+          >
+            {t('previous')}
+          </Button>
+        </Box>
+        <Box>
+          <Button onClick={next}>{t(reorderMode ? 'continue' : 'assignSelectedQuestions')}</Button>
+        </Box>
       </Stack>
-      {questions && questions.length > 0 ? (
-        <Box>
-          <QuestionsTable
-            questions={questions}
-            value={value}
-            onChange={(e) => onChange(e)}
-            reorderMode={reorderMode}
-          />
-        </Box>
-      ) : (
-        <Box>
-          <Alert closeable={false} severity="error">
-            {t('selectQuestionNothingToSelect')}
-          </Alert>
-        </Box>
-      )}
     </ContextContainer>
   );
 }

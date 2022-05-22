@@ -10,7 +10,7 @@ import { getQuestionBankRequest } from '../../../../request';
 import DetailQuestionsFilters from './DetailQuestionsFilters';
 import DetailQuestionsSelect from './DetailQuestionsSelect';
 
-export default function DetailQuestions({ form, t, onNext }) {
+export default function DetailQuestions({ form, t, onNext, onPrev }) {
   const [isDirty, setIsDirty] = React.useState(false);
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [store, render] = useStore();
@@ -143,6 +143,7 @@ export default function DetailQuestions({ form, t, onNext }) {
               questionBank={store.questionBank}
               t={t}
               {...field}
+              back={onPrev}
               onChange={(v) => {
                 field.onChange(v);
                 onFiltersChange();

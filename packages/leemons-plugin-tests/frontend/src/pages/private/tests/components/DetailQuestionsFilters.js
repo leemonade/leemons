@@ -17,9 +17,10 @@ import { forIn, map } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { TagsAutocomplete } from '@common';
+import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { questionTypeT } from '../../questions-banks/components/QuestionForm';
 
-export default function DetailQuestionsFilters({ defaultValues, questionBank, t, onChange }) {
+export default function DetailQuestionsFilters({ defaultValues, back, questionBank, t, onChange }) {
   const [t2] = useTranslateLoader(prefixPN('questionsBanksDetail'));
   const form = useForm({ defaultValues });
   const useAllQuestions = form.watch('useAllQuestions');
@@ -134,8 +135,20 @@ export default function DetailQuestionsFilters({ defaultValues, questionBank, t,
             </Box>,
           ]
         : null}
-      <Stack justifyContent="end">
-        <Button onClick={showQuestions}>{t('showQuestions')}</Button>
+      <Stack justifyContent="space-between">
+        <Box>
+          <Button
+            compact
+            variant="light"
+            leftIcon={<ChevLeftIcon height={20} width={20} />}
+            onClick={back}
+          >
+            {t('previous')}
+          </Button>
+        </Box>
+        <Box>
+          <Button onClick={showQuestions}>{t('showQuestions')}</Button>
+        </Box>
       </Stack>
     </ContextContainer>
   );
@@ -146,4 +159,5 @@ DetailQuestionsFilters.propTypes = {
   onChange: PropTypes.func.isRequired,
   questionBank: PropTypes.object,
   defaultValues: PropTypes.object,
+  back: PropTypes.func,
 };

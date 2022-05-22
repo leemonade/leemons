@@ -10,13 +10,13 @@ import {
   Table,
   Title,
 } from '@bubbles-ui/components';
-import { EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { ChevLeftIcon, EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import { useLayout } from '@layout/context';
 import QuestionForm from './QuestionForm';
 import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
 
-export default function DetailQuestions({ form, t, onNext }) {
+export default function DetailQuestions({ form, t, onPrev }) {
   const [qStore, qRender] = useStore({
     newQuestion: false,
   });
@@ -100,28 +100,41 @@ export default function DetailQuestions({ form, t, onNext }) {
   ];
 
   return (
-    <ContextContainer>
-      <Stack alignItems="center" justifyContent="space-between">
-        <Title order={4}>{t('questions')}</Title>
+    <>
+      <ContextContainer divided>
+        <ContextContainer>
+          <Stack alignItems="center" justifyContent="space-between">
+            <Title order={4}>{t('questions')}</Title>
+            <Box>
+              <Button onClick={addQuestion}>{t('addQuestion')}</Button>
+            </Box>
+          </Stack>
+          {questions && questions.length ? (
+            <Table
+              columns={tableHeaders}
+              data={map(questions, (question, i) => ({
+                ...getQuestionForTable(question, t),
+                actions: (
+                  <Stack justifyContent="end" fullWidth>
+                    <ActionButton icon={<EditIcon />} onClick={() => editQuestion(i)} />
+                    <ActionButton icon={<RemoveIcon />} onClick={() => deleteQuestion(i)} />
+                  </Stack>
+                ),
+              }))}
+            />
+          ) : null}
+        </ContextContainer>
         <Box>
-          <Button onClick={addQuestion}>{t('addQuestion')}</Button>
+          <Button
+            variant="light"
+            leftIcon={<ChevLeftIcon height={20} width={20} />}
+            onClick={onPrev}
+          >
+            {t('previous')}
+          </Button>
         </Box>
-      </Stack>
-      {questions && questions.length ? (
-        <Table
-          columns={tableHeaders}
-          data={map(questions, (question, i) => ({
-            ...getQuestionForTable(question, t),
-            actions: (
-              <Stack justifyContent="end" fullWidth>
-                <ActionButton icon={<EditIcon />} onClick={() => editQuestion(i)} />
-                <ActionButton icon={<RemoveIcon />} onClick={() => deleteQuestion(i)} />
-              </Stack>
-            ),
-          }))}
-        />
-      ) : null}
-    </ContextContainer>
+      </ContextContainer>
+    </>
   );
 }
 
@@ -129,4 +142,5 @@ DetailQuestions.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   onNext: PropTypes.func,
+  onPrev: PropTypes.func,
 };
