@@ -94,18 +94,20 @@ const TaskOngoingList = ({ instance }) => {
           onCloseTask={onCloseTask}
           styles={{ position: 'absolute', bottom: 0, left: 0, right: '50%', zIndex: 5 }}
         />
-        <HorizontalTimeline
-          {...instanceData.horizontalTimeline}
-          rootStyles={{
-            position: 'absolute',
-            bottom: 0,
-            right: 0,
-            left: '50%',
-            paddingInline: 48,
-            paddingBottom: 10,
-            zIndex: 5,
-          }}
-        />
+        {instanceData.horizontalTimeline && (
+          <HorizontalTimeline
+            {...instanceData.horizontalTimeline}
+            rootStyles={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              left: '50%',
+              paddingInline: 48,
+              paddingBottom: 10,
+              zIndex: 5,
+            }}
+          />
+        )}
       </Box>
       <Box style={{ marginTop: childRect.height }} className={classes.mainContent}>
         <Box className={classes.leftSide}>

@@ -116,7 +116,7 @@ export default function useTaskOngoingInstanceParser(instance) {
   const classData = useClassData(instance.classes);
   const evaluationSystem = useProgramEvaluationSystem(instance);
 
-  return {
+  const data = {
     // TODO: Update
     headerBackground: {
       withGradient: true,
@@ -140,14 +140,20 @@ export default function useTaskOngoingInstanceParser(instance) {
         cancel: 'Cancel',
       },
     },
-    horizontalTimeline: {
-      data: Object.entries(instance?.dates).map(([name, date]) => ({
-        label: name,
-        date: new Date(date),
-      })),
-    },
+
     leftScoresBar: getStatusGraphData(students),
     // TODO: UPDATE
     rightScoresBar: getGradesGraphData(evaluationSystem, students),
   };
+
+  if (!instance.alwaysAvailable) {
+    data.horizontalTimeline = {
+      data: Object.entries(instance?.dates).map(([name, date]) => ({
+        label: name,
+        date: new Date(date),
+      })),
+    };
+  }
+
+  return data;
 }
