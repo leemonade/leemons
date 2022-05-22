@@ -63,8 +63,6 @@ export function Map({ form, t }) {
     splits[1],
   ];
 
-  console.log(image);
-
   return (
     <ContextContainer>
       <InputWrapper required label={t('mapLabel')}>
@@ -172,6 +170,7 @@ export function Map({ form, t }) {
                       markers={markers}
                       t={t}
                       toggleHideOnHelp={toggleHideOnHelp}
+                      showEye={field?.value?.list?.length > 2}
                     />
                   }
                 />

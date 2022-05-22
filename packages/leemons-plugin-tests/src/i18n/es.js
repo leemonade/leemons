@@ -56,7 +56,8 @@ module.exports = {
     needExplanationAndResponse: 'Todas las respuestas necesitan un texto y una explicación',
     needResponse: 'Las respuestas deben tener un texto',
     errorMarkGoodResponse: 'Es necesario marcar la respuesta correcta',
-    responsesDescription: 'Seleccionar la respuesta correcta pulsando sobre el icono ({{icon}}).',
+    responsesDescription:
+      'Selecciona la respuesta correcta pulsando sobre el círculo. Pistas: pulsa el icono “{{icon}}” para indicar qué respuesta se ocultará cuando el alumno pida una pista (solo disponible a partir de tres respuestas).',
     addResponse: 'Añadir respuesta',
     responseRequired: 'Campo necesario',
     explanationRequired: 'Campo necesario',
