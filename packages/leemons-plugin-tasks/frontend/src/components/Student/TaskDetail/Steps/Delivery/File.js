@@ -5,6 +5,7 @@ import { ContextContainer, Alert, Button, Stack, Text, FileUpload } from '@bubbl
 import { CloudUploadIcon } from '@bubbles-ui/icons/outline';
 import { deleteAssetRequest, newAssetRequest, listCategoriesRequest } from '@leebrary/request';
 import { useApi } from '@common';
+import { addErrorAlert } from '@layout/alert';
 import handleDeliverySubmission from './handleDeliverySubmission';
 
 function TaggedText({ tag, text }) {
@@ -25,21 +26,18 @@ export default function File({ assignation, onLoading, onSubmit, onError, value 
   const [categories] = useApi(listCategoriesRequest);
   const category = (categories || [])?.find(({ key }) => key === 'media-files')?.id;
 
-  const multiFile = assignation.instance.assignable.submission.data.multipleFiles;
+  const fileData = assignation?.instance?.assignable?.submission?.data;
 
   const savedFiles = useRef(value);
   const files = useRef();
-  const saveSubmission = useMemo(
-    () => handleDeliverySubmission(assignation.instance.id, assignation.user),
-    [assignation.instance.id, assignation.user]
-  );
+  const saveSubmission = useMemo(() => handleDeliverySubmission(assignation), [assignation]);
   const handleSubmit = useCallback(async () => {
     onLoading();
 
     // 1. Remove the assets saved
     // 2. Save the new assets
 
-    const filesToSave = [files.current].flat().filter((file) => !file.id);
+    const filesToSave = !files.current ? [] : [files.current].flat().filter((file) => !file.id);
     const filesToRemove = _.difference(savedFiles.current, files.current);
     const filesToKeep = _.difference(savedFiles.current, filesToRemove);
 
@@ -53,16 +51,22 @@ export default function File({ assignation, onLoading, onSubmit, onError, value 
       if (filesToSave?.length) {
         filesSaved = await Promise.all(
           filesToSave.map((file) =>
-            newAssetRequest({ file, name: file.name, indexable: false }, category, 'media-files')
+            newAssetRequest(
+              { file, name: file.name, indexable: 0, public: 1 },
+              category,
+              'media-files'
+            )
           )
         );
 
-        filesSaved = _.map(filesSaved, 'asset');
+        filesSaved = _.map(_.map(filesSaved, 'asset'), (file) => _.pick(file, ['id', 'name']));
       }
-      await saveSubmission([...filesToKeep, ...filesSaved]);
-      savedFiles.current = [...filesToKeep, ...filesSaved];
 
-      onSubmit();
+      filesSaved = [...filesToKeep, ...filesSaved];
+      await saveSubmission(filesSaved, !filesSaved.length);
+      savedFiles.current = filesSaved;
+
+      onSubmit(Boolean(savedFiles.current.length));
     } catch (e) {
       onError(e.message);
     }
@@ -75,14 +79,24 @@ export default function File({ assignation, onLoading, onSubmit, onError, value 
         subtitle="or drop here a file from your computer"
         errorMessage={{ title: 'Error', message: 'File was rejected' }}
         hideUploadButton
-        multipleUpload={multiFile}
-        single={!multiFile}
+        multipleUpload={fileData?.multipleFiles}
+        single={!fileData?.multipleFiles}
         initialFiles={savedFiles.current || []}
         onChange={(newFiles) => {
           files.current = newFiles;
         }}
+        onReject={(allErrors) => {
+          allErrors.forEach((error) => {
+            addErrorAlert(
+              `File ${error.file.name} was rejected: ${error?.errors
+                ?.map((e) => e.message)
+                .join(', ')}`
+            );
+          });
+        }}
         // inputWrapperProps={{ error: errors.file }}
-        // accept={onlyImages ? ['image/*'] : undefined}
+        accept={fileData?.extensions && Object.values(fileData.extensions)}
+        maxSize={fileData?.maxSize * 1024 * 1024}
         // {...field}
       />
       <Stack>

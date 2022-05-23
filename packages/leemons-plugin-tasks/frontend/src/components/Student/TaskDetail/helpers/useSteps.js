@@ -4,11 +4,8 @@ import loadable from '@loadable/component';
 // import useCorrection from '../../../Grade/hooks/useCorrection';
 
 const DeliveryStep = loadable(() => import('../Steps/DeliveryStep'));
-const PreTaskStep = loadable(() => import('../Steps/PreTaskStep'));
 const StatementAndDevelopmentStep = loadable(() => import('../Steps/StatementAndDevelopmentStep'));
 const SummaryStep = loadable(() => import('../Steps/SummaryStep'));
-const SelfReflectionStep = loadable(() => import('../Steps/SelfReflectionStep'));
-const FeedbackStep = loadable(() => import('../Steps/FeedbackStep'));
 const CorrectionStep = loadable(() => import('../Steps/CorrectionStep'));
 
 export default function useSteps(assignation) {
@@ -67,7 +64,7 @@ export default function useSteps(assignation) {
       },
     };
 
-    const stepsToShow = ['submission', 'summary', 'statement', 'submission'];
+    const stepsToShow = ['summary', 'statement', 'submission'];
 
     const finalSteps = stepsToShow
       .map((step) => {

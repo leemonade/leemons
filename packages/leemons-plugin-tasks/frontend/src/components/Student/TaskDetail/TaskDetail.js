@@ -55,7 +55,7 @@ function getNextButtonLabel(step, isLastStep) {
 export default function TaskDetail({ id, student }) {
   const [assignation, error, loading] = useAssignation(id, student, true);
   const asset = assignation?.instance?.assignable?.asset;
-  const coverUrl = useMemo(() => getFileUrl(asset), [asset?.cover]);
+  const coverUrl = useMemo(() => getFileUrl(asset?.cover), [asset?.cover]);
   const history = useHistory();
 
   const steps = useSteps(assignation);

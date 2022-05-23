@@ -1,4 +1,5 @@
 import React from 'react';
+import mime from 'mime';
 import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
 import {
@@ -25,7 +26,44 @@ export default function File({ labels }) {
         control={control}
         name="data.extensions"
         render={({ field }) => (
-          <TagsInput {...field} label={labels?.type} placeholder={labels?.typePlaceholder} />
+          <TagsInput
+            {...field}
+            value={Object.keys(field.value)}
+            onChange={(extensions) => {
+              const validExtensions = extensions.reduce((values, extension) => {
+                if (field.value[extension]) {
+                  return {
+                    ...values,
+                    [extension]: field.value[extension],
+                  };
+                }
+                const type = mime.getType(extension);
+                const ext = mime.getExtension(extension);
+
+                if (type) {
+                  return {
+                    ...values,
+                    [extension]: type,
+                  };
+                }
+                if (ext) {
+                  return {
+                    ...values,
+                    [extension]: extension,
+                  };
+                }
+
+                return {
+                  ...values,
+                  [extension]: extension,
+                };
+              }, {});
+
+              field.onChange(validExtensions);
+            }}
+            label={labels?.type}
+            placeholder={labels?.typePlaceholder}
+          />
         )}
       />
       <Stack direction="row" alignItems="end">
