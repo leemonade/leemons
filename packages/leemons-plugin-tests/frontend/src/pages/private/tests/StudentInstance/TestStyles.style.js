@@ -184,7 +184,8 @@ export const TestStyles = createStyles((theme, {}) => ({
     position: 'relative',
     borderRadius: 8,
     minHeight: 140,
-    marginBottom: theme.spacing[6],
+    marginBottom: theme.spacing[4],
+    marginTop: theme.spacing[4],
   },
   questionCluePerson: {
     backgroundImage: 'url(/public/tests/clue-person.png)',

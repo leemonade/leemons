@@ -28,7 +28,12 @@ export default function Responses(props) {
     if (!store.questionResponses[question.id].properties) {
       store.questionResponses[question.id].properties = {};
     }
-    store.questionResponses[question.id].properties.response = index;
+    if (store.questionResponses[question.id].properties.response === index) {
+      delete store.questionResponses[question.id].properties.response;
+    } else {
+      store.questionResponses[question.id].properties.response = index;
+    }
+
     render();
   }
 

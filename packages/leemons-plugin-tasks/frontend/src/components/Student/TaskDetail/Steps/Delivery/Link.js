@@ -8,7 +8,7 @@ export default function Link({ onError, onSubmit, onLoading, value, assignation 
   const [debouncedUrl] = useDebouncedValue(url, 1000);
   const isFirstRender = React.useRef(true);
 
-  const onLinkSubmission = handleDeliverySubmission(assignation.instance.id, assignation.user);
+  const onLinkSubmission = handleDeliverySubmission(assignation);
 
   React.useEffect(async () => {
     if (debouncedUrl?.length && !isFirstRender.current) {

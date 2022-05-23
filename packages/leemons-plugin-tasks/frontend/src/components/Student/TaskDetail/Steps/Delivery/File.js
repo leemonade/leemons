@@ -30,10 +30,7 @@ export default function File({ assignation, onLoading, onSubmit, onError, value 
 
   const savedFiles = useRef(value);
   const files = useRef();
-  const saveSubmission = useMemo(
-    () => handleDeliverySubmission(assignation.instance.id, assignation.user),
-    [assignation.instance.id, assignation.user]
-  );
+  const saveSubmission = useMemo(() => handleDeliverySubmission(assignation), [assignation]);
   const handleSubmit = useCallback(async () => {
     onLoading();
 

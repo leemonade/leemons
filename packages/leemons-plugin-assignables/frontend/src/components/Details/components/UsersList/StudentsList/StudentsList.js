@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { PaginatedList } from '@bubbles-ui/components';
 
@@ -35,6 +35,10 @@ export default function StudentsList({ labels, students }) {
 
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
+
+  useEffect(() => {
+    setPage(1);
+  }, [students]);
 
   return (
     <PaginatedList

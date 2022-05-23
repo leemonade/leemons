@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Text, Title } from '@bubbles-ui/components';
+import { Box, HtmlText, Title } from '@bubbles-ui/components';
 import { ButtonNavigation } from './ButtonNavigation';
 
 export default function Resume(props) {
@@ -8,12 +8,12 @@ export default function Resume(props) {
 
   return (
     <Box className={cx(classes.loremIpsum, classes.limitedWidthStep)}>
-      {store.instance.assignable.asset.description ? (
+      {store.instance?.assignable?.statement ? (
         <>
           <Title order={2}>{t('resume')}</Title>
-          <Text color="primary" role="productive" strong className={classes.subtitle}>
-            {store.instance.assignable.asset.description}
-          </Text>
+          <Box sx={(theme) => ({ marginTop: theme.spacing[4], marginBottom: theme.spacing[4] })}>
+            <HtmlText>{store.instance.assignable.statement}</HtmlText>
+          </Box>
         </>
       ) : null}
       <ButtonNavigation {...props} />

@@ -4,11 +4,8 @@ import loadable from '@loadable/component';
 // import useCorrection from '../../../Grade/hooks/useCorrection';
 
 const DeliveryStep = loadable(() => import('../Steps/DeliveryStep'));
-const PreTaskStep = loadable(() => import('../Steps/PreTaskStep'));
-const StatementAndDevelopmentStep = loadable(() => import('../Steps/StatementAndDevelopmentStep'));
+const DevelopmentStep = loadable(() => import('../Steps/StatementAndDevelopmentStep'));
 const SummaryStep = loadable(() => import('../Steps/SummaryStep'));
-const SelfReflectionStep = loadable(() => import('../Steps/SelfReflectionStep'));
-const FeedbackStep = loadable(() => import('../Steps/FeedbackStep'));
 const CorrectionStep = loadable(() => import('../Steps/CorrectionStep'));
 
 export default function useSteps(assignation) {
@@ -28,20 +25,13 @@ export default function useSteps(assignation) {
       },
       statement: () => {
         const shouldShowDevelopment = assignable?.development !== null;
-        let label = 'Statement';
 
-        if (shouldShowDevelopment) {
-          label = 'Statement and Development';
+        if (!shouldShowDevelopment) {
+          return null;
         }
-
         return {
-          label,
-          component: (
-            <StatementAndDevelopmentStep
-              assignation={assignation}
-              showDevelopment={shouldShowDevelopment}
-            />
-          ),
+          label: 'Development',
+          component: <DevelopmentStep assignation={assignation} />,
           sidebar: false,
         };
       },
@@ -67,7 +57,7 @@ export default function useSteps(assignation) {
       },
     };
 
-    const stepsToShow = ['submission', 'summary', 'statement', 'submission'];
+    const stepsToShow = ['summary', 'statement', 'submission'];
 
     const finalSteps = stepsToShow
       .map((step) => {

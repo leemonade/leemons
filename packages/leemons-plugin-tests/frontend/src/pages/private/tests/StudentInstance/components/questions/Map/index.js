@@ -57,6 +57,8 @@ export default function Index(props) {
     <>
       {showNotResponsedWarning ? <QuestionNotResponsedWarning {...props} /> : null}
 
+      <QuestionNoteClues {...props} />
+
       <Box className={styles.questionCard}>
         <QuestionTitle {...props} />
         <Box className={styles.mapImageContainer}>
@@ -71,7 +73,6 @@ export default function Index(props) {
         </Box>
         <Responses {...props} />
       </Box>
-      <QuestionNoteClues {...props} />
 
       {!store.viewMode && !allWithValues && used ? (
         <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
