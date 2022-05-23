@@ -1,23 +1,23 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { Button } from '@bubbles-ui/components';
 
-// function CorrectionButton() {
-//   return <Button onClick={}>Corregir</Button>
-// }
+function CorrectionButton({ studentData, instanceData }) {
+  const history = useHistory();
 
-export default function getActions(studentData) {
+  const redirect = useCallback(() => {
+    const urlTemplate = instanceData.assignable.roleDetails.evaluationDetailUrl;
+    const url = urlTemplate.replace(':id', instanceData.id).replace(':user', studentData.user);
+    history.push(url);
+  }, [studentData, instanceData]);
+
+  return <Button onClick={redirect}>Corregir</Button>;
+}
+
+export default function getActions(studentData, instanceData) {
   if (studentData.finished) {
-    if (!studentData.timestamps.end) {
-      return (
-        <>
-          <Button>CORREGIR</Button>
-          <Button>ENVIAR RECORDATORIO</Button>;
-        </>
-      );
-    }
-
-    return <Button>CORREGIR</Button>;
+    return <CorrectionButton studentData={studentData} instanceData={instanceData} />;
   }
 
   if (!studentData.timestamps?.start) {
