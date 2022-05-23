@@ -156,9 +156,9 @@ module.exports = {
     questionBank: 'Question Bank: {name}',
     nQuestions: '{n} questions',
     questionFiltersDescription1:
-      'This way of selecting questions automates the process through a configuration of question type, category and level.',
+      'The system allows, by default, automatic filtering by question type, category and level.',
     questionFiltersDescription2:
-      'If you need a test with specific questions, go to the questions list detail and select the ones you want to use in the text, then click on “Select marked questions"',
+      'To choose specific questions, click on the "Select questions manually" option and click on "continue".',
     numberOfQuestions: 'Number of questions',
     useAllQuestions: 'Select questions manually',
     addType: 'Add type',
@@ -181,7 +181,7 @@ module.exports = {
     questionsRequired: 'Minimum select one question',
     reorderQuestionsDescription:
       'These are the questions you have selected for this test, if you wish, you can order them at your convenience',
-    statementLabel: 'Statement',
+    statementLabel: 'Test statement',
     statementRequired: 'Field required',
     contentLabel: 'Content',
     instructionsForTeacherLabel: 'Instructions for teacher',

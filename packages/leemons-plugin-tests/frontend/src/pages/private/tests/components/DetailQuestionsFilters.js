@@ -50,20 +50,20 @@ export default function DetailQuestionsFilters({ defaultValues, back, questionBa
         <Paragraph>{t('questionFiltersDescription1')}</Paragraph>
         <Paragraph>{t('questionFiltersDescription2')}</Paragraph>
       </Box>
+
       <Box>
-        <InputWrapper
-          label={t('numberOfQuestions')}
-          description={
-            <Controller
-              control={form.control}
-              name="useAllQuestions"
-              render={({ field }) => (
-                <Checkbox {...field} label={t('useAllQuestions')} checked={field.value} />
-              )}
-            />
-          }
-        >
-          {!useAllQuestions ? (
+        <Controller
+          control={form.control}
+          name="useAllQuestions"
+          render={({ field }) => (
+            <Checkbox {...field} label={t('useAllQuestions')} checked={field.value} />
+          )}
+        />
+      </Box>
+
+      <Box>
+        {!useAllQuestions ? (
+          <InputWrapper label={t('numberOfQuestions')}>
             <Controller
               control={form.control}
               name="nQuestions"
@@ -79,8 +79,8 @@ export default function DetailQuestionsFilters({ defaultValues, back, questionBa
                 <NumberInput required error={form.formState.errors.nQuestions} {...field} />
               )}
             />
-          ) : null}
-        </InputWrapper>
+          </InputWrapper>
+        ) : null}
       </Box>
       {!useAllQuestions
         ? [

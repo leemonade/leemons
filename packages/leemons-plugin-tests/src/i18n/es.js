@@ -154,9 +154,9 @@ module.exports = {
     questionBank: 'Banco de preguntas: {{name}}',
     nQuestions: '{{n}} preguntas',
     questionFiltersDescription1:
-      'Esta forma de seleccionar las preguntas automatiza el proceso filtrando por tipo de pregunta, categoría y nivel.',
+      'El sistema permite, por defecto, filtrar automáticamente por tipo de pregunta, categoría y nivel.',
     questionFiltersDescription2:
-      'Para escoger preguntas específicas, se pueden seleccionar manualmente desd ele listado. Al finalizar la selección pulsar sobre "Seleccionar preguntas marcadas".',
+      'Para escoger preguntas específicas, haz click sobre la opción "Seleccionar preguntas manualmente" y pulsa en "continuar".',
     numberOfQuestions: 'Número de preguntas',
     useAllQuestions: 'Seleccionar preguntas manualmente',
     addType: 'Añadir tipo',
@@ -178,7 +178,7 @@ module.exports = {
     questionLabel: 'Pregunta',
     questionsRequired: 'Seleccionar al menos una pregunta',
     reorderQuestionsDescription: 'Preguntas seleccionas para este test (reordenar si es necesario)',
-    statementLabel: 'Pregunta',
+    statementLabel: 'Enunciado del test',
     statementRequired: 'Campo necesario',
     contentLabel: 'Contenido',
     instructionsForTeacherLabel: 'Instrucciones para el profesor',
