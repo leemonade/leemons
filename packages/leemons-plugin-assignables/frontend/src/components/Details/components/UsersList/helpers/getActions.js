@@ -2,8 +2,12 @@ import React from 'react';
 import dayjs from 'dayjs';
 import { Button } from '@bubbles-ui/components';
 
+// function CorrectionButton() {
+//   return <Button onClick={}>Corregir</Button>
+// }
+
 export default function getActions(studentData, instanceData) {
-  if (instanceData.dates.deadline && dayjs(instanceData).isBefore(dayjs())) {
+  if (dayjs(instanceData.dates.deadline).isBefore(dayjs())) {
     if (!studentData.timestamps.end) {
       return (
         <>
