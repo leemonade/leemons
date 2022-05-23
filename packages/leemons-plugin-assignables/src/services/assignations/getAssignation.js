@@ -1,3 +1,4 @@
+const dayjs = require('dayjs');
 const { getDates } = require('../dates');
 const { assignations } = require('../tables');
 const getGrade = require('../grades/getGrade');
@@ -42,8 +43,13 @@ module.exports = async function getAssignation(
   assignation.timestamps = await getDates('assignation', assignation.id, { transacting });
   assignation.grades = await getGrade({ assignation: assignation.id }, { transacting });
 
-  // TODO Miguel añadir el resto de logica
-  assignation.finished = !!assignation.timestamps.end;
-
+  if (
+    assignation.timestamps.end ||
+    (assignation.timestamps.deadline && dayjs(assignation.timestamps.deadline).isBefore(dayjs())) ||
+    (assignation.timestamps.close && dayjs(assignation.timestamps.close).isBefore(dayjs())) ||
+    (assignation.timestamps.closed && dayjs(assignation.timestamps.closed).isBefore(dayjs()))
+  ) {
+    assignation.finished = true;
+  }
   return assignation;
 };

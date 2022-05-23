@@ -1,13 +1,19 @@
 import updateStudentRequest from '../../../../../request/instance/updateStudent';
 
-export default function handleDeliverySubmission(instance, student) {
+export default function handleDeliverySubmission(assignation) {
   return async (delivery, shouldRemove = false) => {
     await updateStudentRequest({
-      instance,
-      student,
+      instance: assignation.instance.id,
+      student: assignation.user,
       metadata: {
         submission: shouldRemove ? null : delivery,
       },
     });
+
+    // eslint-disable-next-line no-param-reassign
+    assignation.metadata = {
+      ...assignation.metadata,
+      submission: shouldRemove ? null : delivery,
+    };
   };
 }

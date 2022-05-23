@@ -5,7 +5,7 @@ export const TaskDetailStyles = createStyles((theme) => ({
     width: '100%',
   },
   stepper: {
-    width: 276,
+    width: '276px',
     height: 'fit-content',
   },
   content: {
@@ -18,7 +18,7 @@ export const TaskDetailStyles = createStyles((theme) => ({
     marginBottom: theme.spacing[4],
   },
   sidebar: {
-    width: 280,
+    width: '280px',
     minHeight: '100%',
     backgroundColor: theme.colors.gray[3],
     padding: theme.spacing[4],
