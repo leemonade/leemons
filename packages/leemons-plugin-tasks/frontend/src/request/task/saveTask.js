@@ -15,8 +15,8 @@ export default async function saveTaskRequest(taskId, task) {
 
   if (cover instanceof File) {
     formData.append('asset.cover', cover, cover.name);
-  } else if (cover?.id) {
-    formData.append('asset.cover', cover.id);
+  } else if (typeof cover === 'string') {
+    formData.append('asset.cover', cover);
   }
   if (!taskId) {
     // EN: Create a new task

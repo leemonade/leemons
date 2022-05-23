@@ -1,20 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TextInput, useDebouncedValue } from '@bubbles-ui/components';
-
-import updateStudentRequest from '../../../../../request/instance/updateStudent';
-
-function handleDeliverySubmission(instance, student) {
-  return async (delivery) => {
-    await updateStudentRequest({
-      instance,
-      student,
-      metadata: {
-        submission: delivery,
-      },
-    });
-  };
-}
+import handleDeliverySubmission from './handleDeliverySubmission';
 
 export default function Link({ onError, onSubmit, onLoading, value, assignation }) {
   const [url, setUrl] = React.useState(value);

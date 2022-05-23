@@ -6,6 +6,7 @@ import { goLoginPage } from '@users/navigate';
 
 const TestsList = loadable(() => import('./src/pages/private/tests/List'));
 const TestsEdit = loadable(() => import('./src/pages/private/tests/Edit'));
+const TestsAssign = loadable(() => import('./src/pages/private/tests/Assign'));
 const TestsDetail = loadable(() => import('./src/pages/private/tests/Detail'));
 const QuestionBanksList = loadable(() => import('./src/pages/private/questions-banks/List'));
 const QuestionBankDetail = loadable(() => import('./src/pages/private/questions-banks/Detail'));
@@ -31,6 +32,9 @@ export default function Private() {
       </Route>
       <Route path={`${path}/detail/:id`}>
         <TestsDetail session={session} />
+      </Route>
+      <Route path={`${path}/assign/:id`}>
+        <TestsAssign session={session} />
       </Route>
       <Route path={`${path}/:id`}>
         <TestsEdit session={session} />

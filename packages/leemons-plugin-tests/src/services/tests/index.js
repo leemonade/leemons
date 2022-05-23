@@ -5,8 +5,11 @@ const { setInstanceTimestamp } = require('./setInstanceTimestamp');
 const { setQuestionResponse } = require('./setQuestionResponse');
 const { getUserQuestionResponses } = require('./getUserQuestionResponses');
 const { deleteTest } = require('./deleteTest');
+const { assignTest } = require('./assignTest');
 
 module.exports = {
+  assignTest,
+  assign: assignTest,
   list: listTests,
   listTests,
   details: getTestsDetails,
