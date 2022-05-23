@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { unflatten } from '@common';
-import { useForm, Controller } from 'react-hook-form';
-import { Button, ContextContainer, DatePicker, Box, Switch, Grid } from '@bubbles-ui/components';
+import { Controller, useForm } from 'react-hook-form';
+import { Box, Button, ContextContainer, DatePicker, Grid, Switch } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditorInput } from '@bubbles-ui/editors';
 
@@ -12,7 +12,12 @@ import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
 import TimeUnitsInput from '@tasks/components/Inputs/TimeUnitsInput';
 import AssignStudents from './AssignStudents';
 
-export default function Form({ onSubmit: parentSubmit, assignable }) {
+export default function Form({
+  defaultValues = {},
+  onSubmit: parentSubmit,
+  assignable,
+  sendButton,
+}) {
   const [, translations] = useTranslateLoader(prefixPN('assignment_form'));
   const [labels, setLabels] = useState({});
   const [placeholders, setPlaceholders] = useState({});
@@ -26,7 +31,7 @@ export default function Form({ onSubmit: parentSubmit, assignable }) {
     watch,
     formState: { errors },
   } = useForm({
-    defaultValues: {},
+    defaultValues,
   });
 
   useEffect(() => {
@@ -275,9 +280,7 @@ export default function Form({ onSubmit: parentSubmit, assignable }) {
           )}
         />
 
-        <Box>
-          <Button type="submit">{labels?.submit}</Button>
-        </Box>
+        <Box>{sendButton || <Button type="submit">{labels?.submit}</Button>}</Box>
       </ContextContainer>
     </form>
   );
@@ -286,4 +289,6 @@ export default function Form({ onSubmit: parentSubmit, assignable }) {
 Form.propTypes = {
   onSubmit: PropTypes.func,
   assignable: PropTypes.object,
+  defaultValues: PropTypes.object,
+  sendButton: PropTypes.any,
 };

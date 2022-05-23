@@ -13,7 +13,7 @@ import {
 import { addErrorAlert } from '@layout/alert';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { map } from 'lodash';
-import Form from '@tasks/components/Assignment/Form';
+import Form from '@assignables/components/Assignment/Form';
 import { getTestRequest } from '../../../request';
 
 export default function Assign() {
@@ -33,12 +33,12 @@ export default function Assign() {
     try {
       const { test } = await getTestRequest(params.id, { withQuestionBank: true });
       store.test = test;
-      store.task = {
+      console.log(test);
+      store.assignable = {
         subjects: map(test.subjects, (id) => ({
           subject: id,
         })),
       };
-      console.log(store.task);
       render();
     } catch (error) {
       console.log(error);
@@ -68,7 +68,7 @@ export default function Assign() {
         onResize={handleOnHeaderResize}
       />
       <Box>
-        {store.task ? (
+        {store.assignable ? (
           <VerticalStepperContainer
             stickyAt={store.headerHeight}
             currentStep={store.currentStep}
@@ -80,7 +80,7 @@ export default function Assign() {
             {store.currentStep === 0 && (
               <Form
                 onSubmit={handleAssignment}
-                task={store.task}
+                assignable={store.assignable}
                 sendButton={
                   <Stack fullWidth justifyContent="end">
                     <Button type="submit">{t('next')}</Button>
