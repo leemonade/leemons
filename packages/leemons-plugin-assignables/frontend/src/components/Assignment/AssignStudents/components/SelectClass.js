@@ -13,7 +13,7 @@ import { SelectUserAgent } from '@users/components';
 import { useForm, Controller } from 'react-hook-form';
 import { getUserAgentsInfoRequest } from '@users/request';
 import { useApi } from '@common';
-import ConditionalInput from '../../../Inputs/ConditionalInput';
+import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
 import { useGroupedClassesWithSelectedSubjects } from '../hooks';
 
 function useUserAgentsInfo(users) {

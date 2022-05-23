@@ -6,7 +6,7 @@ import SubjectSelector from './AssignStudents/components/SubjectSelector';
 import AssigneeTypeSelector from './AssignStudents/components/AssigneeTypeSelector';
 import AssigneeSelector from './AssignStudents/components/AssigneeSelector';
 
-export default function AssignStudents({ labels, profile, onChange, task }) {
+export default function AssignStudents({ labels, profile, onChange, assignable }) {
   const form = useForm({
     subjects: [],
     type: null,
@@ -26,7 +26,9 @@ export default function AssignStudents({ labels, profile, onChange, task }) {
       <Controller
         control={control}
         name="subjects"
-        render={({ field }) => <SubjectSelector {...field} labels={labels} task={task} />}
+        render={({ field }) => (
+          <SubjectSelector {...field} labels={labels} assignable={assignable} />
+        )}
       />
       <ContextContainer title={labels.selectStudentsTitle}>
         <Controller
@@ -52,5 +54,5 @@ AssignStudents.propTypes = {
   labels: PropTypes.object,
   profile: PropTypes.string.isRequired,
   onChange: PropTypes.func,
-  task: PropTypes.shape({}),
+  assignable: PropTypes.shape({}),
 };

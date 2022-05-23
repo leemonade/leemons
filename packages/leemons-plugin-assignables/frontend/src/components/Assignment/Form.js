@@ -6,13 +6,13 @@ import { Button, ContextContainer, DatePicker, Box, Switch, Grid } from '@bubble
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditorInput } from '@bubbles-ui/editors';
 
-import { prefixPN } from '../../helpers/prefixPN';
+// TODO: Move to assignables
+import { prefixPN } from '@tasks/helpers/prefixPN';
+import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
+import TimeUnitsInput from '@tasks/components/Inputs/TimeUnitsInput';
 import AssignStudents from './AssignStudents';
-import ConditionalInput from '../Inputs/ConditionalInput';
-import TimeUnitsInput from '../Inputs/TimeUnitsInput';
-import SelectTeachers from './SelectTeachers';
 
-export default function Form({ onSubmit: parentSubmit, task }) {
+export default function Form({ onSubmit: parentSubmit, assignable }) {
   const [, translations] = useTranslateLoader(prefixPN('assignment_form'));
   const [labels, setLabels] = useState({});
   const [placeholders, setPlaceholders] = useState({});
@@ -76,7 +76,7 @@ export default function Form({ onSubmit: parentSubmit, task }) {
               {...field}
               error={errors.assignees}
               profile="student"
-              task={task}
+              assignable={assignable}
               labels={labels}
               modes={modes}
               assignTo={assignTo}
@@ -285,5 +285,5 @@ export default function Form({ onSubmit: parentSubmit, task }) {
 
 Form.propTypes = {
   onSubmit: PropTypes.func,
-  task: PropTypes.object,
+  assignable: PropTypes.object,
 };
