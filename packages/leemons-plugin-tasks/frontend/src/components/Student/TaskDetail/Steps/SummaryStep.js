@@ -1,15 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import {
-  ContextContainer,
-  Paragraph,
-  Button,
-  HtmlText,
-  Box,
-  Tabs,
-  TabPanel,
-} from '@bubbles-ui/components';
+import { ContextContainer, HtmlText, Box, Tabs, TabPanel } from '@bubbles-ui/components';
 import { useApi } from '@common';
 import { classDetailForDashboard } from '@academic-portfolio/request/classes';
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
@@ -108,14 +100,13 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj }) {
 export default function SummaryStep({ assignation }) {
   const { instance } = assignation;
   const { assignable } = instance;
-  const { asset } = assignable;
 
   const showCurriculum = instance.curriculum;
 
   return (
     <ContextContainer>
       <ContextContainer title="Summary">
-        <Paragraph>{asset?.description}</Paragraph>
+        <HtmlText>{assignable?.statement}</HtmlText>
       </ContextContainer>
       <CurriculumRender assignation={assignation} showCurriculum={showCurriculum} />
     </ContextContainer>

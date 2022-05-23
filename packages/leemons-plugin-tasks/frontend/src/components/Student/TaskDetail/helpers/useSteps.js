@@ -4,7 +4,7 @@ import loadable from '@loadable/component';
 // import useCorrection from '../../../Grade/hooks/useCorrection';
 
 const DeliveryStep = loadable(() => import('../Steps/DeliveryStep'));
-const StatementAndDevelopmentStep = loadable(() => import('../Steps/StatementAndDevelopmentStep'));
+const DevelopmentStep = loadable(() => import('../Steps/StatementAndDevelopmentStep'));
 const SummaryStep = loadable(() => import('../Steps/SummaryStep'));
 const CorrectionStep = loadable(() => import('../Steps/CorrectionStep'));
 
@@ -25,20 +25,13 @@ export default function useSteps(assignation) {
       },
       statement: () => {
         const shouldShowDevelopment = assignable?.development !== null;
-        let label = 'Statement';
 
-        if (shouldShowDevelopment) {
-          label = 'Statement and Development';
+        if (!shouldShowDevelopment) {
+          return null;
         }
-
         return {
-          label,
-          component: (
-            <StatementAndDevelopmentStep
-              assignation={assignation}
-              showDevelopment={shouldShowDevelopment}
-            />
-          ),
+          label: 'Development',
+          component: <DevelopmentStep assignation={assignation} />,
           sidebar: false,
         };
       },
