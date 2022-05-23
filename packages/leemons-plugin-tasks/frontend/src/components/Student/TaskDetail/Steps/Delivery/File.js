@@ -25,6 +25,8 @@ export default function File({ assignation, onLoading, onSubmit, onError, value 
   const [categories] = useApi(listCategoriesRequest);
   const category = (categories || [])?.find(({ key }) => key === 'media-files')?.id;
 
+  const multiFile = assignation.instance.assignable.submission.data.multipleFiles;
+
   const savedFiles = useRef(value);
   const files = useRef();
   const saveSubmission = useMemo(
@@ -56,8 +58,6 @@ export default function File({ assignation, onLoading, onSubmit, onError, value 
         );
 
         filesSaved = _.map(filesSaved, 'asset');
-
-        // await Promise.all(filesToSave.map((file) => newAsset(file)));
       }
       await saveSubmission([...filesToKeep, ...filesSaved]);
       savedFiles.current = [...filesToKeep, ...filesSaved];
@@ -75,7 +75,8 @@ export default function File({ assignation, onLoading, onSubmit, onError, value 
         subtitle="or drop here a file from your computer"
         errorMessage={{ title: 'Error', message: 'File was rejected' }}
         hideUploadButton
-        multipleUpload
+        multipleUpload={multiFile}
+        single={!multiFile}
         initialFiles={savedFiles.current || []}
         onChange={(newFiles) => {
           files.current = newFiles;
@@ -89,38 +90,6 @@ export default function File({ assignation, onLoading, onSubmit, onError, value 
       </Stack>
     </>
   );
-  // return (
-  //   <>
-  //     <TaggedText
-  //       tag="Tipo de archivo"
-  //       text={`${
-  //         submission.data?.multipleFiles ? 'Multiple files of: ' : 'One file of: '
-  //       }${submission.data?.extensions?.join(', ')} con un peso máximo de ${
-  //         submission.data?.maxSize
-  //       }Kb`}
-  //     />
-  //     <TaggedText tag="Evaluable" text="CONFIG DE EVALUACION" />
-  //     <Alert title="Recuerda" severity="info" closeable={false}>
-  //       una vez entregado el archivo podrás sustituirlo tantas veces como necesites hasta la fecha
-  //       de expiración de la prueba pero solo se guardará la última versión
-  //     </Alert>
-  //     <Paper color="solid">
-  //       <ContextContainer title="Your deliver">DELIVERIES</ContextContainer>
-  //     </Paper>
-  //     <FileUpload
-  //       icon={<CloudUploadIcon height={32} width={32} />}
-  //       title="Click to browse your file"
-  //       subtitle="or drop here a file from your computer"
-  //       errorMessage={{ title: 'Error', message: 'File was rejected' }}
-  //       hideUploadButton
-  //       single
-  //       // initialFiles={value ? [value] : []}
-  //       // inputWrapperProps={{ error: errors.file }}
-  //       // accept={onlyImages ? ['image/*'] : undefined}
-  //       // {...field}
-  //     />
-  //   </>
-  // );
 }
 
 File.propTypes = {
