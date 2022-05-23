@@ -89,7 +89,7 @@ export default function ProfilesPage() {
     <ContextContainer fullHeight>
       <AdminPageHeader values={messages.header} />
       <PageContainer>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
           <Grid>
             <Col span={5}>
               <ContextContainer divided>

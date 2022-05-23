@@ -215,6 +215,7 @@ function BranchBlock({
         if (defaultValues) d.id = defaultValues.id;
         onSubmit(d);
       })}
+      autoComplete="off"
     >
       <ContextContainer>
         <Group grow>{groupFields}</Group>

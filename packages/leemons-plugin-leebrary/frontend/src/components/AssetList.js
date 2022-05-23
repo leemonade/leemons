@@ -154,7 +154,7 @@ const AssetList = ({
         showPublic: !pinned ? showPublic : true,
         pinned,
       });
-      console.log(response);
+      // console.log(response);
       // console.log('assets:', response.assets);
       setAssets(response?.assets || []);
       // setTimeout(() => setLoading(false), 500);
@@ -318,15 +318,20 @@ const AssetList = ({
   }, [assets, page, size]);
 
   useEffect(() => {
+    console.log('#ha cambiado el searchDebounced');
+
     if (isFunction(onSearch)) {
       onSearch(searchDebounced);
     } else {
+      console.log('#y como no existe una func "onSearch", vamos a cargar los assets');
       loadAssets(category.id, searchDebounced, assetType);
     }
   }, [searchDebounced]);
 
   useEffect(() => {
+    console.log('>han cambiado muchos parámetros, puede que el searchProp');
     if (!isEmpty(category?.id) || pinned) {
+      console.log('>y como tenemos category, vamos a cargar los assets.');
       loadAssets(category.id, searchProp, assetType);
     }
   }, [searchProp, category, assetType, showPublic, pinned]);
