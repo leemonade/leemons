@@ -148,6 +148,8 @@ module.exports = {
     actionsHeader: 'Acciones',
     questionBankRequired: 'Seleccionar un banco de preguntas',
     questions: 'Preguntas',
+    noQuestionBanks:
+      'No hay ningún banco de preguntas disponible para las asignaturas seleccionadas',
     savedAsDraft: 'Guardado como borrador',
     published: 'Publicado',
     questionsDescription: 'Seleccionar las preguntas del banco para utilizar en este test',

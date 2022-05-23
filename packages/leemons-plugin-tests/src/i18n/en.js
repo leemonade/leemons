@@ -145,6 +145,7 @@ module.exports = {
     questionsBanks: 'Questions Banks',
     nameHeader: 'Name',
     nQuestionsHeader: 'Questions',
+    noQuestionBanks: 'No question bank available for the selected subjects',
     levelHeader: 'Level',
     actionsHeader: 'Actions',
     questionBankRequired: 'You must select one question bank',

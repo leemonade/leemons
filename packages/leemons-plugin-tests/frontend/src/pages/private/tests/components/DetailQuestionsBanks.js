@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   ActionButton,
+  Alert,
   Box,
   Button,
   ContextContainer,
@@ -16,7 +17,7 @@ import {
 import { useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import _ from 'lodash';
+import _, { find } from 'lodash';
 import { Link } from 'react-router-dom';
 import { ChevLeftIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import { listQuestionsBanksRequest } from '../../../../request';
@@ -48,6 +49,15 @@ export default function DetailQuestionsBanks({ form, t, onNext, onPrev }) {
         published: true,
         subjects,
       });
+
+      if (questionBank) {
+        const found = find(data.items, { id: questionBank });
+        if (!found) {
+          form.setValue('questionBank', null);
+          form.setValue('filters', null);
+          form.setValue('questions', []);
+        }
+      }
       return data;
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
@@ -56,7 +66,10 @@ export default function DetailQuestionsBanks({ form, t, onNext, onPrev }) {
   }
 
   async function load() {
+    store.loading = true;
+    render();
     store.pagination = await listQuestionsBanks();
+    store.loading = false;
     render();
   }
 
@@ -153,23 +166,35 @@ export default function DetailQuestionsBanks({ form, t, onNext, onPrev }) {
 
         <Title order={4}>{t('questionsBanks')}</Title>
 
-        <Box>
-          <Table columns={tableHeaders} data={tableItems} />
-        </Box>
-        <Stack fullWidth justifyContent="center">
-          <Pager
-            page={store.pagination?.page || 0}
-            totalPages={store.pagination?.totalPages || 0}
-            size={store.size}
-            withSize={true}
-            onChange={(val) => onPageChange(val - 1)}
-            onSizeChange={onPageSizeChange}
-            labels={{
-              show: t('show'),
-              goTo: t('goTo'),
-            }}
-          />
-        </Stack>
+        {tableItems.length ? (
+          <>
+            <Box>
+              <Table columns={tableHeaders} data={tableItems} />
+            </Box>
+            <Stack fullWidth justifyContent="center">
+              <Pager
+                page={store.pagination?.page || 0}
+                totalPages={store.pagination?.totalPages || 0}
+                size={store.size}
+                withSize={true}
+                onChange={(val) => onPageChange(val - 1)}
+                onSizeChange={onPageSizeChange}
+                labels={{
+                  show: t('show'),
+                  goTo: t('goTo'),
+                }}
+              />
+            </Stack>
+          </>
+        ) : (
+          <>
+            {!store.loading ? (
+              <Alert severity="error" closeable={false}>
+                {t('noQuestionBanks')}
+              </Alert>
+            ) : null}
+          </>
+        )}
       </ContextContainer>
       <Stack fullWidth justifyContent="space-between">
         <Box>
