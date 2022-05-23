@@ -34,6 +34,10 @@ module.exports = async function getAssignation(
     throw new Error('Assignation not found or your are not allowed to view it');
   }
 
+  const instanceDates = await getDates('assignableInstance', assignableInstanceId, {
+    transacting,
+  });
+
   assignation = {
     ...assignation,
     classes: JSON.parse(assignation.classes),
@@ -46,10 +50,12 @@ module.exports = async function getAssignation(
   if (
     assignation.timestamps.end ||
     (assignation.timestamps.deadline && dayjs(assignation.timestamps.deadline).isBefore(dayjs())) ||
-    (assignation.timestamps.close && dayjs(assignation.timestamps.close).isBefore(dayjs())) ||
-    (assignation.timestamps.closed && dayjs(assignation.timestamps.closed).isBefore(dayjs()))
+    (instanceDates.close && dayjs(instanceDates.close).isBefore(dayjs())) ||
+    (instanceDates.closed && dayjs(instanceDates.closed).isBefore(dayjs()))
   ) {
     assignation.finished = true;
+  } else {
+    assignation.finished = false;
   }
   return assignation;
 };

@@ -6,8 +6,8 @@ import { Button } from '@bubbles-ui/components';
 //   return <Button onClick={}>Corregir</Button>
 // }
 
-export default function getActions(studentData, instanceData) {
-  if (dayjs(instanceData.dates.deadline).isBefore(dayjs())) {
+export default function getActions(studentData) {
+  if (studentData.finished) {
     if (!studentData.timestamps.end) {
       return (
         <>
@@ -19,9 +19,7 @@ export default function getActions(studentData, instanceData) {
 
     return <Button>CORREGIR</Button>;
   }
-  if (studentData.timestamps?.end) {
-    return <Button>CORREGIR</Button>;
-  }
+
   if (!studentData.timestamps?.start) {
     return <Button>ENVIAR RECORDATORIO</Button>;
   }
