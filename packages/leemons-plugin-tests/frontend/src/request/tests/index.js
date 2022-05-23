@@ -78,11 +78,23 @@ async function deleteTest(id) {
   });
 }
 
+async function assignTest(id, data) {
+  return leemons.api(`tests/tests/assign`, {
+    allAgents: true,
+    method: 'POST',
+    body: {
+      id,
+      data,
+    },
+  });
+}
+
 export {
   listTests,
   saveTest,
   getTest,
   deleteTest,
+  assignTest,
   setInstanceTimestamp,
   getUserQuestionResponses,
   setQuestionResponse,

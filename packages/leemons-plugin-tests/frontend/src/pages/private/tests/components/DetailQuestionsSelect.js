@@ -6,7 +6,6 @@ import {
   Button,
   ContextContainer,
   InputWrapper,
-  Paragraph,
   Stack,
   Title,
 } from '@bubbles-ui/components';
@@ -32,6 +31,8 @@ export default function DetailQuestionsSelect({
           </Title>
         ) : null}
 
+        {/*
+        // Juanjo: quitar que no aporta nada: https://www.notion.so/leemons/Redise-o-m-nimo-test-botones-y-poco-m-s-de26307f47554dd2b52f6c1b697e03d8#16f056fd83434061982b04a7cf918791
         <Box>
           <Paragraph>
             {t(reorderMode ? 'reorderQuestionsDescription' : 'selectQuestionDescription')}
@@ -42,6 +43,8 @@ export default function DetailQuestionsSelect({
             </Button>
           </Box>
         </Box>
+        */}
+
         <Box>
           {questions && questions.length > 0 ? (
             <ContextContainer>

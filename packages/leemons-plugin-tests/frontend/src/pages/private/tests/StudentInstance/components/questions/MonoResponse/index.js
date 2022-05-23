@@ -29,6 +29,8 @@ export default function Index(props) {
     <>
       {showNotResponsedWarning ? <QuestionNotResponsedWarning {...props} /> : null}
 
+      <QuestionNoteClues {...props} />
+
       <Box className={styles.questionCard}>
         <QuestionTitle {...props} />
         {!question.withImages && question.questionImage?.cover ? (
@@ -49,7 +51,7 @@ export default function Index(props) {
           </>
         )}
       </Box>
-      <QuestionNoteClues {...props} />
+
       <ButtonNavigation
         {...props}
         nextStep={nextStep}

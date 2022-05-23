@@ -134,9 +134,13 @@ module.exports = async function updateAssignable(
         )
     );
 
+    if (published) {
+      await publishAssignable.call(this, fullId, { userSession, transacting });
+    }
+
     return {
       ...newAssignable,
-      published: false,
+      published,
     };
   }
   // EN: Update the assignable.

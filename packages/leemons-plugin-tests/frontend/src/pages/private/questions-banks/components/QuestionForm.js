@@ -16,6 +16,7 @@ import { TextEditorInput } from '@bubbles-ui/editors';
 import { Controller, useForm } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete } from '@common';
+import SelectLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty';
 import { MonoResponse } from './question-types/MonoResponse';
 import { Map } from './question-types/Map';
 
@@ -79,42 +80,7 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
             )}
           />
 
-          <Controller
-            control={form.control}
-            name="category"
-            render={({ field }) => (
-              <Select
-                required
-                data={categoryData}
-                error={form.formState.errors.category}
-                label={t('categoryLabel')}
-                {...field}
-                onChange={(e) => {
-                  const item = categoryData[e];
-                  if (item) {
-                    field.onChange(item.value);
-                  } else {
-                    field.onChange(e);
-                  }
-                }}
-              />
-            )}
-          />
-
-          <Controller
-            control={form.control}
-            name="level"
-            render={({ field }) => (
-              <Select
-                data={[{ value: 'falta-implementar', label: 'Falta implementar' }]}
-                error={form.formState.errors.level}
-                label={t('levelLabel')}
-                {...field}
-              />
-            )}
-          />
-
-          {typesWithImage.includes(form.watch('type')) && (
+          {type && typesWithImage.includes(form.watch('type')) && (
             <Box style={{ alignSelf: 'flex-end' }}>
               <Controller
                 control={form.control}
@@ -131,64 +97,102 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
             </Box>
           )}
         </ContextContainer>
+        {type ? (
+          <>
+            <ContextContainer direction="row">
+              <Controller
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <Select
+                    data={categoryData}
+                    error={form.formState.errors.category}
+                    label={t('categoryLabel')}
+                    {...field}
+                    onChange={(e) => {
+                      const item = categoryData[e];
+                      if (item) {
+                        field.onChange(item.value);
+                      } else {
+                        field.onChange(e);
+                      }
+                    }}
+                  />
+                )}
+              />
 
-        <Controller
-          control={form.control}
-          name="tags"
-          render={({ field }) => (
-            <TagsAutocomplete
-              pluginName="tests"
-              type="plugins.tests.questionBanks"
-              label={t('tagsLabel')}
-              labels={{ addButton: t('addTag') }}
-              {...field}
+              <Controller
+                control={form.control}
+                name="level"
+                render={({ field }) => (
+                  <SelectLevelsOfDifficulty
+                    error={form.formState.errors.level}
+                    label={t('levelLabel')}
+                    {...field}
+                  />
+                )}
+              />
+            </ContextContainer>
+
+            <Controller
+              control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <TagsAutocomplete
+                  pluginName="tests"
+                  type="plugins.tests.questionBanks"
+                  label={t('tagsLabel')}
+                  labels={{ addButton: t('addTag') }}
+                  {...field}
+                />
+              )}
             />
-          )}
-        />
 
-        <Controller
-          control={form.control}
-          name="question"
-          rules={{ required: t('questionRequired') }}
-          render={({ field }) => (
-            <TextEditorInput
-              required
-              error={form.formState.errors.question}
-              label={t('questionLabel')}
-              {...field}
+            <Controller
+              control={form.control}
+              name="question"
+              rules={{ required: t('questionRequired') }}
+              render={({ field }) => (
+                <TextEditorInput
+                  required
+                  error={form.formState.errors.question}
+                  label={t('questionLabel')}
+                  {...field}
+                />
+              )}
             />
-          )}
-        />
 
-        <Controller
-          control={form.control}
-          name="questionImage"
-          render={({ field }) => <ImagePicker {...field} />}
-        />
-
-        {type
-          ? React.cloneElement(questionComponents[type], {
-              form,
-              t,
-            })
-          : null}
-
-        <Controller
-          control={form.control}
-          name="clues"
-          render={({ field }) => (
-            <ListInput
-              canAdd
-              label={t('cluesLabel')}
-              description={t('cluesDescription')}
-              {...field}
+            <Controller
+              control={form.control}
+              name="questionImage"
+              render={({ field }) => <ImagePicker {...field} />}
             />
-          )}
-        />
 
-        <Stack justifyContent="end">
-          <Button onClick={save}>{t('save')}</Button>
-        </Stack>
+            {type
+              ? React.cloneElement(questionComponents[type], {
+                  form,
+                  t,
+                })
+              : null}
+
+            <Controller
+              control={form.control}
+              name="clues"
+              render={({ field }) => (
+                <ListInput
+                  canAdd
+                  label={t('cluesLabel')}
+                  description={t('cluesDescription')}
+                  {...field}
+                />
+              )}
+            />
+
+            <Stack justifyContent="end">
+              <Button onClick={save}>{t('save')}</Button>
+            </Stack>
+          </>
+        ) : null}
       </ContextContainer>
     </Box>
   );
