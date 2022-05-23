@@ -16,6 +16,7 @@ import { TextEditorInput } from '@bubbles-ui/editors';
 import { Controller, useForm } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete } from '@common';
+import SelectLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty';
 import { MonoResponse } from './question-types/MonoResponse';
 import { Map } from './question-types/Map';
 
@@ -84,7 +85,6 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
             name="category"
             render={({ field }) => (
               <Select
-                required
                 data={categoryData}
                 error={form.formState.errors.category}
                 label={t('categoryLabel')}
@@ -105,8 +105,7 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
             control={form.control}
             name="level"
             render={({ field }) => (
-              <Select
-                data={[{ value: 'falta-implementar', label: 'Falta implementar' }]}
+              <SelectLevelsOfDifficulty
                 error={form.formState.errors.level}
                 label={t('levelLabel')}
                 {...field}

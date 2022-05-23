@@ -16,7 +16,7 @@ async function assignTest({ id, data }, { userSession, transacting } = {}) {
   return assignableInstancesService.createAssignableInstance(
     {
       assignable: assignable.id,
-      ...data.data,
+      ...data,
     },
     { userSession, transacting }
   );

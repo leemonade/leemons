@@ -13,6 +13,7 @@ export {
   saveTest as saveTestRequest,
   getTest as getTestRequest,
   deleteTest as deleteTestRequest,
+  assignTest as assignTestRequest,
 } from './tests';
 
 export { getQuestionByIds as getQuestionByIdsRequest } from './questions';

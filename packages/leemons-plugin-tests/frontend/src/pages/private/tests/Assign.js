@@ -10,11 +10,20 @@ import {
   Stack,
   VerticalStepperContainer,
 } from '@bubbles-ui/components';
-import { addErrorAlert } from '@layout/alert';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { map } from 'lodash';
+import { forIn, map, omit, uniq } from 'lodash';
 import Form from '@assignables/components/Assignment/Form';
-import { getTestRequest } from '../../../request';
+import { assignTestRequest, getTestRequest } from '../../../request';
+import AssignConfig from '../../../components/AssignConfig';
+
+function parseDates(date) {
+  if (date instanceof Date) {
+    return date.toISOString();
+  }
+
+  return undefined;
+}
 
 export default function Assign() {
   const [t] = useTranslateLoader(prefixPN('testAssign'));
@@ -23,17 +32,48 @@ export default function Assign() {
     loading: true,
     isNew: false,
     currentStep: 0,
-    data: {},
+    data: {
+      metadata: {},
+    },
   });
 
   const history = useHistory();
   const params = useParams();
 
+  async function send() {
+    const { assignees, teachers, dates, curriculum, alwaysAvailable, ...instanceData } = store.data;
+
+    const students = uniq(assignees.flatMap((assignee) => assignee.students));
+    const classes = assignees.flatMap((assignee) => assignee.group);
+
+    forIn(dates, (value, key) => {
+      dates[key] = parseDates(value);
+    });
+
+    try {
+      const taskInstanceData = {
+        gradable: true,
+        ...instanceData,
+        students,
+        classes,
+        curriculum: curriculum ? omit(curriculum, 'toogle') : {},
+        alwaysAvailable: alwaysAvailable || false,
+        dates: alwaysAvailable ? {} : dates,
+      };
+
+      await assignTestRequest(store.test.id, taskInstanceData);
+
+      addSuccessAlert(t('assignDone'));
+      history.push('/private/assignables/ongoing');
+    } catch (e) {
+      addErrorAlert(e.message);
+    }
+  }
+
   async function init() {
     try {
       const { test } = await getTestRequest(params.id, { withQuestionBank: true });
       store.test = test;
-      console.log(test);
       store.assignable = {
         subjects: map(test.subjects, (id) => ({
           subject: id,
@@ -58,7 +98,7 @@ export default function Assign() {
   };
 
   React.useEffect(() => {
-    if (params?.id) init();
+    if (params?.id && (!store.test || store.test.id !== params.id)) init();
   }, [params]);
 
   return (
@@ -79,6 +119,7 @@ export default function Assign() {
           >
             {store.currentStep === 0 && (
               <Form
+                defaultValues={store.data}
                 onSubmit={handleAssignment}
                 assignable={store.assignable}
                 sendButton={
@@ -88,7 +129,22 @@ export default function Assign() {
                 }
               />
             )}
-            {store.currentStep === 1 && Hola}
+            {store.currentStep === 1 && (
+              <AssignConfig
+                defaultValues={store.data.metadata}
+                test={store.test}
+                t={t}
+                onBack={(e) => {
+                  store.data.metadata = { ...store.data.metadata, ...e };
+                  store.currentStep = 0;
+                  render();
+                }}
+                onSend={(e) => {
+                  store.data.metadata = { ...store.data.metadata, ...e };
+                  send();
+                }}
+              />
+            )}
           </VerticalStepperContainer>
         ) : null}
       </Box>

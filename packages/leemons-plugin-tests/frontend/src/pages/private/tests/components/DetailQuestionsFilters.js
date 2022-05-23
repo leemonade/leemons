@@ -18,12 +18,14 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { TagsAutocomplete } from '@common';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import { questionTypeT } from '../../questions-banks/components/QuestionForm';
 
 export default function DetailQuestionsFilters({ defaultValues, back, questionBank, t, onChange }) {
   const [t2] = useTranslateLoader(prefixPN('questionsBanksDetail'));
   const form = useForm({ defaultValues });
   const useAllQuestions = form.watch('useAllQuestions');
+  const levels = useLevelsOfDifficulty();
 
   const questionTypes = [];
   forIn(questionTypeT, (value, key) => {
@@ -88,7 +90,12 @@ export default function DetailQuestionsFilters({ defaultValues, back, questionBa
                 name="type"
                 shouldUnregister
                 render={({ field }) => (
-                  <MultiSelect label={t('typeLabel')} data={questionTypes} {...field} />
+                  <MultiSelect
+                    placeholder={t('all')}
+                    label={t('typeLabel')}
+                    data={questionTypes}
+                    {...field}
+                  />
                 )}
               />
             </Box>,
@@ -99,7 +106,12 @@ export default function DetailQuestionsFilters({ defaultValues, back, questionBa
                   name="categories"
                   shouldUnregister
                   render={({ field }) => (
-                    <MultiSelect label={t('categoriesLabel')} data={categoriesData} {...field} />
+                    <MultiSelect
+                      placeholder={t('all')}
+                      label={t('categoriesLabel')}
+                      data={categoriesData}
+                      {...field}
+                    />
                   )}
                 />
               </Box>
@@ -111,8 +123,9 @@ export default function DetailQuestionsFilters({ defaultValues, back, questionBa
                 shouldUnregister
                 render={({ field }) => (
                   <MultiSelect
+                    placeholder={t('all')}
                     label={t('levelLabel')}
-                    data={[{ value: '', label: 'Need integration' }]}
+                    data={levels}
                     {...field}
                   />
                 )}

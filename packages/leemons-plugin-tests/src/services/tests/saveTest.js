@@ -58,42 +58,6 @@ async function saveTest(data, { userSession, transacting: _transacting } = {}) {
         });
       }
 
-      // TODO Eliminar cuando se integre la asignacion de test
-      if (data.published) {
-        const classService = leemons.getPlugin('academic-portfolio').services.classes;
-        const classes = await classService.getBasicClassesByProgram(data.program, { transacting });
-
-        const classStudents = await classService.student.getByClass(_.map(classes, 'id'), {
-          transacting,
-        });
-        await assignableInstancesService.createAssignableInstance(
-          {
-            assignable: assignable.id,
-            alwaysAvailable: false,
-            duration: '30 minutes',
-            messageToAssignees: '<p style="margin-left: 0px!important;">Pepe</p>',
-            students: _.uniq(_.map(classStudents, 'student')),
-            classes: _.uniq(_.map(classes, 'id')),
-            curriculum: {
-              content: true,
-              objectives: true,
-              assessmentCriteria: true,
-            },
-            dates: {
-              start: '2022-05-11T22:00:00.000Z',
-              deadline: '2022-11-19T22:00:00.000Z',
-              visualization: '2022-05-11T22:00:00.000Z',
-              close: '2022-11-26T22:00:00.000Z',
-            },
-            gradable: true,
-            metadata: {
-              questions: data.questions,
-            },
-          },
-          { userSession, transacting }
-        );
-      }
-
       return assignable;
     },
     table.questionsBanks,

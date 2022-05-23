@@ -246,7 +246,7 @@ export default function StudentInstance() {
   }, [store.instance, store.class, store.isFirstStep]);
 
   const taskDeadlineProps = React.useMemo(() => {
-    if (store.instance) {
+    if (store.instance && store.instance.dates.deadline) {
       return {
         label: t('delivery'),
         deadline: new Date(store.instance.dates.deadline),
@@ -257,7 +257,7 @@ export default function StudentInstance() {
         },
       };
     }
-    return {};
+    return null;
   }, [store.instance, store.isFirstStep]);
 
   const verticalStepperProps = React.useMemo(() => {
@@ -350,7 +350,7 @@ export default function StudentInstance() {
           {...headerProps}
         />
         <TaskHeader {...taskHeaderProps} size={store.isFirstStep ? 'md' : 'sm'} />
-        {!store.viewMode ? (
+        {!store.viewMode && taskDeadlineProps ? (
           <TaskDeadline {...taskDeadlineProps} size={store.isFirstStep ? 'md' : 'sm'} />
         ) : null}
       </Box>
