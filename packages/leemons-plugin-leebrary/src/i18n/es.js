@@ -4,6 +4,7 @@ module.exports = {
       quickAccess: 'Acceso rápido',
       uploadButton: 'Subir o crear',
       createNewTitle: 'Crear nuevo',
+      uploadTitle: 'Subir archivo',
       fileUploadTitle: 'Click para buscar un archivo',
       fileUploadSubtitle: 'o arrastrar desde el ordenador',
     },
