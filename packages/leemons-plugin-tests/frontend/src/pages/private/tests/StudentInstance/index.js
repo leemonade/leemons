@@ -17,7 +17,6 @@ import dayjs from 'dayjs';
 import { StudentInstanceStyles } from './StudentInstance.style';
 import Resume from './components/Resume';
 import { getIfCurriculumSubjectsHaveValues } from './helpers/getIfCurriculumSubjectsHaveValues';
-import Statement from './components/Statement';
 import Development from './components/Development';
 import { TestStyles } from './TestStyles.style';
 import {
@@ -268,7 +267,8 @@ export default function StudentInstance() {
         store.instance.assignable.subjects
       );
       if (
-        store.instance?.assignable?.asset?.description ||
+        // store.instance?.assignable?.asset?.description ||
+        store.instance?.assignable?.statement ||
         (store.instance.curriculum.content && curriculumValues.content) ||
         (store.instance.curriculum.objectives && curriculumValues.objectives) ||
         (store.instance.curriculum.assessmentCriteria && curriculumValues.assessmentCriteria)
@@ -279,6 +279,7 @@ export default function StudentInstance() {
           component: <Resume {...commonProps} />,
         });
       }
+      /*
       if (store.instance?.assignable?.statement) {
         steps.push({
           label: t('statement'),
@@ -286,7 +287,7 @@ export default function StudentInstance() {
           component: <Statement {...commonProps} />,
         });
       }
-
+      */
       const testProps = { styles, onStartQuestions };
 
       steps.push({

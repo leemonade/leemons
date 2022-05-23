@@ -125,9 +125,6 @@ export default function Responses(props) {
               </Box>
               <Box className={cx(styles.mapViewContent, styles.mapViewContentDone)}>
                 {question.properties.markers.list[index].response}
-                <Box className={styles.mapViewIcon}>
-                  <ImageLoader src={`/public/tests/question-done.svg`} />
-                </Box>
               </Box>
             </Stack>
           )}
