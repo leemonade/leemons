@@ -13,6 +13,7 @@ import {
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import useSubjects from '@assignables/components/Assignment/AssignStudents/hooks/useSubjects';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 import SelfReflection from './components/SelfReflection';
 import Submissions from './components/Submissions';
@@ -21,7 +22,6 @@ import Objectives from './components/Objectives';
 // import AssessmentCriteria from './components/AssessmentCriteria';
 import Attachments from './components/Attachments';
 import Methodology from './components/Methodology';
-import useSubjects from '../Assignment/AssignStudents/hooks/useSubjects';
 import Curriculum from './components/Curriculum';
 
 function ContentData({
