@@ -167,10 +167,10 @@ const AssetList = ({
           showPublic: !pinned ? showPublic : true,
           pinned,
         };
-        console.log('query:', query);
+        // console.log('query:', query);
         const response = await getAssetsRequest(query);
         const results = response?.assets || [];
-        console.log('results:', results)
+        // console.log('results:', results)
         setAssets(results);
 
         if (isEmpty(results)) {
