@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { ContextContainer, CheckBoxGroup } from '@bubbles-ui/components';
 import { useSubjects } from '../hooks';
 
-export default function SubjectSelector({ labels, onChange, value, task }) {
-  const subjects = useSubjects(task);
+export default function SubjectSelector({ labels, onChange, value, assignable }) {
+  const subjects = useSubjects(assignable);
 
   if (subjects.length <= 1) {
     const subject = subjects[0];
@@ -30,7 +30,7 @@ SubjectSelector.propTypes = {
   }),
   onChange: PropTypes.func.isRequired,
   value: PropTypes.array.isRequired,
-  task: PropTypes.shape({
+  assignable: PropTypes.shape({
     subjects: PropTypes.arrayOf(
       PropTypes.shape({
         subject: PropTypes.string,

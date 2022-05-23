@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { unflatten } from '@common';
-import { Controller, useForm } from 'react-hook-form';
-import { Box, Button, ContextContainer, DatePicker, Grid, Switch } from '@bubbles-ui/components';
+import { useForm, Controller } from 'react-hook-form';
+import { Button, ContextContainer, DatePicker, Box, Switch, Grid } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditorInput } from '@bubbles-ui/editors';
 
-import { prefixPN } from '../../helpers/prefixPN';
+// TODO: Move to assignables
+import { prefixPN } from '@tasks/helpers/prefixPN';
+import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
+import TimeUnitsInput from '@tasks/components/Inputs/TimeUnitsInput';
 import AssignStudents from './AssignStudents';
-import ConditionalInput from '../Inputs/ConditionalInput';
-import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 
-export default function Form({ defaultValues = {}, onSubmit: parentSubmit, task, sendButton }) {
+export default function Form({ onSubmit: parentSubmit, assignable }) {
   const [, translations] = useTranslateLoader(prefixPN('assignment_form'));
   const [labels, setLabels] = useState({});
   const [placeholders, setPlaceholders] = useState({});
@@ -25,7 +26,7 @@ export default function Form({ defaultValues = {}, onSubmit: parentSubmit, task,
     watch,
     formState: { errors },
   } = useForm({
-    defaultValues,
+    defaultValues: {},
   });
 
   useEffect(() => {
@@ -75,7 +76,7 @@ export default function Form({ defaultValues = {}, onSubmit: parentSubmit, task,
               {...field}
               error={errors.assignees}
               profile="student"
-              task={task}
+              assignable={assignable}
               labels={labels}
               modes={modes}
               assignTo={assignTo}
@@ -274,7 +275,9 @@ export default function Form({ defaultValues = {}, onSubmit: parentSubmit, task,
           )}
         />
 
-        <Box>{sendButton || <Button type="submit">{labels?.submit}</Button>}</Box>
+        <Box>
+          <Button type="submit">{labels?.submit}</Button>
+        </Box>
       </ContextContainer>
     </form>
   );
@@ -282,7 +285,5 @@ export default function Form({ defaultValues = {}, onSubmit: parentSubmit, task,
 
 Form.propTypes = {
   onSubmit: PropTypes.func,
-  task: PropTypes.object,
-  defaultValues: PropTypes.object,
-  sendButton: PropTypes.any,
+  assignable: PropTypes.object,
 };

@@ -6,12 +6,10 @@ import { unflatten } from '@common';
 import { useParams, useHistory } from 'react-router-dom';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import hooks from 'leemons-hooks';
 import { useLayout } from '@layout/context';
-import Form from '../../../components/Assignment/Form';
+import Form from '@assignables/components/Assignment/Form';
 import createInstanceRequest from '../../../request/instance/createInstance';
 import getTaskRequest from '../../../request/task/getTask';
-import { enableMenuItemRequest } from '../../../request';
 import { prefixPN } from '../../../helpers/prefixPN';
 
 function parseDates(date) {
@@ -96,7 +94,7 @@ export default function AssignmentPage() {
         <PageContainer>
           <ContextContainer padded="vertical">
             <Paper fullWidth padding={5}>
-              <Form onSubmit={handleAssignment} task={task} />
+              <Form onSubmit={handleAssignment} assignable={task} />
             </Paper>
           </ContextContainer>
         </PageContainer>

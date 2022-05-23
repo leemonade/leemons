@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { getProfiles } from '../../../../request/profiles';
+import { getProfiles } from '@tasks/request/profiles';
 import SelectClass from './SelectClass';
 import SelectCustomGroup from './SelectCustomGroup';
 
