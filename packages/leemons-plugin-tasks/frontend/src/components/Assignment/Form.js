@@ -10,9 +10,8 @@ import { prefixPN } from '../../helpers/prefixPN';
 import AssignStudents from './AssignStudents';
 import ConditionalInput from '../Inputs/ConditionalInput';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
-import SelectTeachers from './SelectTeachers';
 
-export default function Form({ onSubmit: parentSubmit, task }) {
+export default function Form({ onSubmit: parentSubmit, assignable }) {
   const [, translations] = useTranslateLoader(prefixPN('assignment_form'));
   const [labels, setLabels] = useState({});
   const [placeholders, setPlaceholders] = useState({});
@@ -76,7 +75,7 @@ export default function Form({ onSubmit: parentSubmit, task }) {
               {...field}
               error={errors.assignees}
               profile="student"
-              task={task}
+              assignable={assignable}
               labels={labels}
               modes={modes}
               assignTo={assignTo}
@@ -285,5 +284,5 @@ export default function Form({ onSubmit: parentSubmit, task }) {
 
 Form.propTypes = {
   onSubmit: PropTypes.func,
-  task: PropTypes.object,
+  assignable: PropTypes.object,
 };

@@ -96,7 +96,7 @@ export default function AssignmentPage() {
         <PageContainer>
           <ContextContainer padded="vertical">
             <Paper fullWidth padding={5}>
-              <Form onSubmit={handleAssignment} task={task} />
+              <Form onSubmit={handleAssignment} assignable={task} />
             </Paper>
           </ContextContainer>
         </PageContainer>
