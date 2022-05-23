@@ -59,11 +59,14 @@ export default function DeliveryStep({ assignation, onNext, onPrev }) {
 
   const C = useMemo(() => Component(submission.type), [submission.type]);
 
-  const onSubmit = useCallback(() => {
-    setError(null);
-    setSubmitted(true);
-    setLoading(false);
-  }, [setLoading, setSubmitted, setError]);
+  const onSubmit = useCallback(
+    (isSubmitted) => {
+      setError(null);
+      setSubmitted(isSubmitted);
+      setLoading(false);
+    },
+    [setLoading, setSubmitted, setError]
+  );
   const onLoading = useCallback(() => {
     setLoading(true);
     setSubmitted(false);
