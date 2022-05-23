@@ -257,4 +257,11 @@ module.exports = {
       'This question requires you to answer all the options presented in order to be evaluated (otherwise it will count as an unanswered question).',
     attention: 'Attention',
   },
+  testAssign: {
+    pageTitle: 'Assign Test:',
+    assign: 'Assignar',
+    config: 'Config',
+    next: 'Continue',
+    prev: 'Previous',
+  },
 };

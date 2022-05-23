@@ -57,7 +57,7 @@ export default function Edit() {
       const { test } = await saveTestRequest({ ...formValues, published: true });
       addSuccessAlert(t('published'));
       if (redictToAssign) {
-        history.push(`/private/tests/detail/${test.asset}`);
+        history.push(`/private/tests/assign/${test.id}`);
       } else {
         history.push('/private/tests');
       }

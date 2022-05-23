@@ -89,10 +89,17 @@ async function deleteTest(ctx) {
   ctx.body = { status: 200, deleted: true };
 }
 
+async function assignTest(ctx) {
+  const test = await testsService.assign(ctx.request.body, { userSession: ctx.state.userSession });
+  ctx.status = 200;
+  ctx.body = { status: 200, test };
+}
+
 module.exports = {
   getUserQuestionResponses,
   setInstanceTimestamp,
   setQuestionResponse,
+  assignTest,
   deleteTest,
   listTests,
   saveTest,

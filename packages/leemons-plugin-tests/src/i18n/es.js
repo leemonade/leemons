@@ -254,4 +254,11 @@ module.exports = {
       'Esta pregunta requiere que respondas a todas las opciones presentadas para poder ser evaluada (en caso contrario contará como pregunta no respondida)',
     attention: 'Atención',
   },
+  testAssign: {
+    pageTitle: 'Assignar Test:',
+    assign: 'Assignar',
+    config: 'Configuración',
+    next: 'Siguiente',
+    prev: 'Anterior',
+  },
 };
