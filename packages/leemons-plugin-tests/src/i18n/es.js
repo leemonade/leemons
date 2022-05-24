@@ -256,6 +256,8 @@ module.exports = {
     mapNeedResponses:
       'Esta pregunta requiere que respondas a todas las opciones presentadas para poder ser evaluada (en caso contrario contará como pregunta no respondida)',
     attention: 'Atención',
+    correctResponse: 'Respuesta correcta',
+    explanation: 'Explicación',
   },
   testAssign: {
     pageTitle: 'Assignar Test:',

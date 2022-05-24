@@ -35,7 +35,7 @@ export default function StudentInstance() {
     loading: true,
     idLoaded: '',
     isFirstStep: true,
-    currentStep: 0,
+    currentStep: 2,
     maxNavigatedStep: 0,
     viewMode: false,
   });
@@ -93,40 +93,6 @@ export default function StudentInstance() {
     }
   }
 
-  async function finishTest() {
-    store.showFinishModal = false;
-    const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
-    store.timestamps = timestamps;
-    render();
-    history.push(`/private/dashboard`);
-  }
-
-  async function forceFinishTest() {
-    store.showForceFinishModal = true;
-    const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
-    store.timestamps = timestamps;
-    render();
-  }
-
-  function goToStep(step) {
-    if (step <= store.maxNavigatedStep) {
-      store.currentStep = step;
-      render();
-    }
-  }
-
-  async function saveQuestion(question) {
-    try {
-      await setQuestionResponseRequest({
-        instance: store.instance.id,
-        question,
-        ...store.questionResponses[question],
-      });
-    } catch (error) {
-      addErrorAlert(error);
-    }
-  }
-
   async function init() {
     try {
       [store.instance, store.assignation] = await Promise.all([
@@ -169,6 +135,49 @@ export default function StudentInstance() {
       render();
     } catch (error) {
       console.log(error);
+      addErrorAlert(error);
+    }
+  }
+
+  async function finishTest() {
+    store.showFinishModal = false;
+    const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
+    store.timestamps = timestamps;
+
+    store.loading = true;
+    store.idLoaded = '';
+    store.isFirstStep = true;
+    store.currentStep = 0;
+    store.maxNavigatedStep = 0;
+    store.viewMode = false;
+    render();
+    init();
+
+    // history.push(`/private/dashboard`);
+  }
+
+  async function forceFinishTest() {
+    store.showForceFinishModal = true;
+    const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
+    store.timestamps = timestamps;
+    render();
+  }
+
+  function goToStep(step) {
+    if (step <= store.maxNavigatedStep) {
+      store.currentStep = step;
+      render();
+    }
+  }
+
+  async function saveQuestion(question) {
+    try {
+      await setQuestionResponseRequest({
+        instance: store.instance.id,
+        question,
+        ...store.questionResponses[question],
+      });
+    } catch (error) {
       addErrorAlert(error);
     }
   }

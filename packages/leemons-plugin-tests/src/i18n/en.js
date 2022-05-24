@@ -258,6 +258,8 @@ module.exports = {
     mapNeedResponses:
       'This question requires you to answer all the options presented in order to be evaluated (otherwise it will count as an unanswered question).',
     attention: 'Attention',
+    correctResponse: 'Correct response',
+    explanation: 'Explanation',
   },
   testAssign: {
     pageTitle: 'Assign Test:',

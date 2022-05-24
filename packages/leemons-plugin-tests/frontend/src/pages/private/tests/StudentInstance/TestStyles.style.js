@@ -303,8 +303,7 @@ export const TestStyles = createStyles((theme, {}) => ({
   mapResponsesContainer: {
     marginTop: theme.spacing[4],
     display: 'grid',
-    flexDirection: 'row',
-    gridTemplateColumns: 'repeat(2, 1fr)',
+    gridTemplateColumns: 'repeat(2, calc(50% - 28px))',
     gridGap: theme.spacing[2],
     columnGap: theme.spacing[6],
   },
@@ -330,10 +329,11 @@ export const TestStyles = createStyles((theme, {}) => ({
   },
   questionViewModeIcon: {
     position: 'absolute',
-    left: 25,
-    top: 9,
+    left: 12,
+    top: 12,
     width: 20,
     height: 22,
+    zIndex: 2,
   },
   questionResponseImageContainerViewMode: {
     cursor: 'default',
@@ -341,6 +341,7 @@ export const TestStyles = createStyles((theme, {}) => ({
   },
   questionResponseImageContainerViewModeWithImages: {
     paddingLeft: theme.spacing[3],
+    flexDirection: 'row',
   },
   mapViewContent: {
     width: '100%',
@@ -379,5 +380,36 @@ export const TestStyles = createStyles((theme, {}) => ({
     height: 60,
     borderRadius: theme.spacing[2],
     marginBottom: theme.spacing[3],
+  },
+  textExplanation: {
+    border: '2px solid',
+    borderColor: theme.colors.interactive03h,
+    backgroundColor: theme.colors.uiBackground04,
+    borderRadius: theme.spacing[1],
+    padding: theme.spacing[4],
+    marginTop: theme.spacing[5],
+    marginLeft: -52,
+  },
+  textExplanationRemovePadding: {
+    marginLeft: 0,
+  },
+  questionResponseRemovePadding: {
+    paddingLeft: theme.spacing[4],
+  },
+  questionResponsesContainerViewMode: {
+    gridTemplateColumns: 'repeat(1, auto)',
+  },
+  questionResponseImageContentViewMode: {
+    width: 150,
+    height: 150,
+    position: 'relative',
+    marginRight: theme.spacing[4],
+  },
+  questionResponseImageTextContentViewMode: {
+    width: '80%',
+  },
+  textExplanationViewMode: {
+    marginLeft: '0px !important',
+    marginTop: 0,
   },
 }));

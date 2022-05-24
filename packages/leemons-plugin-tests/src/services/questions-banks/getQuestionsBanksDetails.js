@@ -14,6 +14,7 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
     { $or: [{ id_$in: ids }, { asset_$in: ids }], deleted_$null: false },
     { transacting }
   );
+
   const questionBankIds = _.map(questionsBanks, 'id');
   const questionIds = await table.questions.find(
     { questionBank_$in: questionBankIds },
@@ -71,7 +72,7 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
   const questionBankCategoriesByQuestionBank = _.groupBy(questionBankCategories, 'questionBank');
   const questionBankSubjectsByQuestionBank = _.groupBy(questionBankSubjects, 'questionBank');
   const questionsByQuestionBank = _.groupBy(questions, 'questionBank');
-  return _.map(questionsBanks, (questionBank) => {
+  const result = _.map(questionsBanks, (questionBank) => {
     const categories = _.orderBy(questionBankCategoriesByQuestionBank[questionBank.id], ['order']);
     const questionCategories = {};
     _.forEach(categories, (category, index) => {
@@ -89,6 +90,7 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
       })),
     };
   });
+  return result;
 }
 
 module.exports = { getQuestionsBanksDetails };
