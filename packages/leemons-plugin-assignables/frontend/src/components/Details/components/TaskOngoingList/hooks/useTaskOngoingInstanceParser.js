@@ -8,63 +8,28 @@ function getGradesGraphData(evaluationSystem, students) {
     return null;
   }
 
+  const studentsWithGrades = students
+    .filter((student) => student.finished)
+    .map((student) => {
+      const mainGrades = student.grades.filter((grade) => grade.type === 'main');
+      const averageObj = mainGrades.reduce(
+        (acc, grade) => {
+          acc.total += grade.grade;
+          acc.count += 1;
+          return acc;
+        },
+        { total: 0, count: 0 }
+      );
+
+      return {
+        student: student.id,
+        score: averageObj.total / averageObj.count,
+      };
+    })
+    .filter((student) => !Number.isNaN(student.score));
+
   return {
-    scores: [
-      { student: 'Albert', score: 10 },
-      { student: 'Bert', score: 9 },
-      { student: 'Manolo', score: 9 },
-      { student: 'Bertrand', score: 8 },
-      { student: 'Bertrand 2', score: 8 },
-      { student: 'Bertrand 3', score: 8 },
-      { student: 'Bertrand 4', score: 8 },
-      { student: 'Bertrand 5', score: 8 },
-      { student: 'Céline', score: 7 },
-      { student: 'Céline 2', score: 7 },
-      { student: 'Dora', score: 6 },
-      { student: 'Dora 2', score: 6 },
-      { student: 'Edouard', score: 5 },
-      { student: 'Edouard 2', score: 5 },
-      { student: 'Edouard 3', score: 5 },
-      { student: 'Céline 3', score: 7 },
-      { student: 'Céline 4', score: 7 },
-      { student: 'Dora 3', score: 6 },
-      { student: 'Dora 4', score: 6 },
-      { student: 'Céline 5', score: 7 },
-      { student: 'Céline 6', score: 7 },
-      { student: 'Dora 5', score: 6 },
-      { student: 'Dora 6', score: 6 },
-      { student: 'Edouard 4', score: 5 },
-      { student: 'Edouard 5', score: 5 },
-      { student: 'Edouard 6', score: 5 },
-      { student: 'Félix', score: 4 },
-      { student: 'Henri', score: 2 },
-      { student: 'Ida', score: 1 },
-      { student: 'Henri', score: 2 },
-      { student: 'Ida', score: 1 },
-      { student: 'Henri', score: 2 },
-      { student: 'Ida', score: 1 },
-      { student: 'Henri', score: 2 },
-      { student: 'Ida', score: 1 },
-      { student: 'Henri', score: 2 },
-      { student: 'Olivia', score: 3 },
-      { student: 'Olivia', score: 3 },
-      { student: 'Olivia', score: 3 },
-      { student: 'Olivia', score: 3 },
-      { student: 'Jean-Claude', score: 0 },
-      { student: 'Kévin', score: 7 },
-      { student: 'Léa', score: 6 },
-      { student: 'Olivia', score: 3 },
-      { student: 'Philippe', score: 6 },
-      { student: 'Quentin', score: 5 },
-      { student: 'Rémi', score: 4 },
-      { student: 'Sylvie', score: 5 },
-      { student: 'Théo', score: 4 },
-      { student: 'Théo', score: 4 },
-      { student: 'Théo', score: 4 },
-      { student: 'Théo', score: 4 },
-      { student: 'Ursule', score: 3 },
-      { student: 'Vincent', score: 5 },
-    ],
+    scores: studentsWithGrades,
     grades: evaluationSystem?.scales
       ?.map((scale) => ({
         number: scale.number,
@@ -113,6 +78,8 @@ function getStatusAsNumber(student, instance) {
 
 export default function useTaskOngoingInstanceParser(instance) {
   const students = instance.students.map((student) => ({
+    finished: student.finished,
+    grades: student.grades,
     id: student.user,
     status: getStatusAsNumber(student, instance),
   }));
