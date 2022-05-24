@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Title, SearchInput, Stack, ContextContainer } from '@bubbles-ui/components';
 
@@ -8,6 +8,26 @@ import useParsedStudents from './helpers/useParseStudents';
 
 export default function UserList({ labels, placeholders, descriptions, instance }) {
   const students = useParsedStudents(instance);
+  const [query, setQuery] = useState('');
+
+  const filteredStudents = useMemo(() => {
+    const normalize = (str) =>
+      str
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+    if (!query?.length) {
+      return students;
+    }
+
+    const normalizedQuery = normalize(query);
+
+    return students.filter(
+      ({ userInfo }) =>
+        normalize(userInfo?.name)?.includes(normalizedQuery) ||
+        normalize(userInfo?.surnames)?.includes(normalizedQuery)
+    );
+  }, [students, query]);
 
   // const bulkActions = useMemo(
   //   () => [
@@ -32,7 +52,12 @@ export default function UserList({ labels, placeholders, descriptions, instance 
           <Title order={4}>
             {labels?.students} {students.length}
           </Title>
-          <SearchInput placeholder={placeholders?.searchStudent} variant="filled" />
+          <SearchInput
+            placeholder={placeholders?.searchStudent}
+            variant="filled"
+            value={query}
+            onChange={setQuery}
+          />
         </Stack>
         {/* <Stack justifyContent="space-between" alignItems="center" fullWidth>
           <Select
@@ -44,7 +69,7 @@ export default function UserList({ labels, placeholders, descriptions, instance 
           />
           <Button>{labels?.assignStudent}</Button>
         </Stack> */}
-        <StudentsList labels={labels} students={students} />
+        <StudentsList labels={labels} students={filteredStudents} />
       </ContextContainer>
     </>
   );

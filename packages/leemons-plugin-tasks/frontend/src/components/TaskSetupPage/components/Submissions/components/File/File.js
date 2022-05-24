@@ -28,10 +28,10 @@ export default function File({ labels }) {
         render={({ field }) => (
           <TagsInput
             {...field}
-            value={Object.keys(field.value)}
+            value={field.value ? Object.keys(field.value) : []}
             onChange={(extensions) => {
               const validExtensions = extensions.reduce((values, extension) => {
-                if (field.value[extension]) {
+                if (field.value && field.value[extension]) {
                   return {
                     ...values,
                     [extension]: field.value[extension],

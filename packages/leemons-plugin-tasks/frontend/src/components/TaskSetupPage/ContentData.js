@@ -127,6 +127,37 @@ function ContentData({
             </ContextContainer>
             {/* <Attachments /> */}
 
+            <ContextContainer>
+              {/* TODO: Make the statement required (Not allowed with TextEditor) */}
+              <Controller
+                control={control}
+                name="statement"
+                rules={{
+                  required: errorMessages.statement?.required,
+                }}
+                render={({ field }) => (
+                  <TextEditorInput
+                    required
+                    {...field}
+                    label={labels.statement}
+                    error={errors.statement}
+                  />
+                )}
+              />
+              <Controller
+                control={control}
+                name="development"
+                render={({ field }) => (
+                  <TextEditorInput
+                    {...field}
+                    label={labels.development}
+                    placeholder={placeholders.development}
+                    error={errors.development}
+                  />
+                )}
+              />
+            </ContextContainer>
+
             <ContextContainer title={labels.subjects}>
               {!!subjects?.length && (
                 <InputWrapper required>
@@ -169,37 +200,6 @@ function ContentData({
                   </Tabs>
                 </InputWrapper>
               )}
-            </ContextContainer>
-
-            <ContextContainer>
-              {/* TODO: Make the statement required (Not allowed with TextEditor) */}
-              <Controller
-                control={control}
-                name="statement"
-                rules={{
-                  required: errorMessages.statement?.required,
-                }}
-                render={({ field }) => (
-                  <TextEditorInput
-                    required
-                    {...field}
-                    label={labels.statement}
-                    error={errors.statement}
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="development"
-                render={({ field }) => (
-                  <TextEditorInput
-                    {...field}
-                    label={labels.development}
-                    placeholder={placeholders.development}
-                    error={errors.development}
-                  />
-                )}
-              />
             </ContextContainer>
 
             <Submissions labels={labels} />

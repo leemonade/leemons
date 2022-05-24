@@ -77,6 +77,7 @@ function NewBranchConfig({
       onSubmit={handleSubmit((data) => {
         onSubmit({ ...data, id: defaultValues?.id });
       })}
+      autoComplete="off"
     >
       <ContextContainer>
         <Stack fullWidth justifyContent="space-between" alignItems="center">

@@ -68,7 +68,7 @@ export default function ProfilesPage() {
       <PageContainer>
         <Grid>
           <Col span={5}>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
               <ContextContainer>
                 <Controller
                   name="teacher"

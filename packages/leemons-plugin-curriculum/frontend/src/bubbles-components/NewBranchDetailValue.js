@@ -94,7 +94,7 @@ function NewBranchDetailValue({
         <ActionButton icon={<RemoveIcon />} onClick={onCloseBranch} />
       </Stack>
       {!readonly ? (
-        <form>
+        <form autoComplete="off">
           <Box>
             <Controller
               name="name"

@@ -56,7 +56,7 @@ const TreeKnowledgeDetail = ({
 
   return (
     <Box>
-      <form onSubmit={handleSubmit(onSave)}>
+      <form onSubmit={handleSubmit(onSave)} autoComplete="off">
         <ContextContainer direction="column" fullWidth>
           <Title order={4}>{knowledge ? messages.title : messages.titleNew}</Title>
           <Box>

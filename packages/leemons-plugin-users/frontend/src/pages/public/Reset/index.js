@@ -55,7 +55,7 @@ export default function Reset() {
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
         <div>
           <label>New password</label>
           <input type="password" {...register('password', { required: true })} />

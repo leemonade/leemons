@@ -207,7 +207,7 @@ const TreeClassroomDetail = ({
 
   return (
     <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-      <form onSubmit={handleSubmit(onSave)}>
+      <form onSubmit={handleSubmit(onSave)} autoComplete="off">
         <ContextContainer direction="column" fullWidth>
           <Title order={4}>{messages.title}</Title>
           {program.maxNumberOfCourses > 0 ? (
