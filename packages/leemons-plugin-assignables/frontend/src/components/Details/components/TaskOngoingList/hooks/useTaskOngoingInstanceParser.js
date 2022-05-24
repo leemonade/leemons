@@ -65,10 +65,14 @@ function getGradesGraphData(evaluationSystem, students) {
       { student: 'Ursule', score: 3 },
       { student: 'Vincent', score: 5 },
     ],
-    grades: evaluationSystem?.scales?.map((scale) => ({
-      number: scale.number,
-      letter: scale.letter,
-    })),
+    grades: evaluationSystem?.scales
+      ?.map((scale) => ({
+        number: scale.number,
+        letter: scale.letter,
+      }))
+      .sort((a, b) => a.number - b.number),
+    minimumGrade: evaluationSystem?.minScaleToPromote?.number,
+    withMarker: true,
   };
 }
 
