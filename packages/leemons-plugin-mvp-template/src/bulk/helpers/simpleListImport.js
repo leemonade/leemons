@@ -71,7 +71,7 @@ async function simpleListImport(
               value = true;
             }
             // Number check
-            else if (!isNaN(parseFloat(value))) {
+            else if (!isNaN(Number(value))) {
               value = parseFloat(value);
             }
           }
