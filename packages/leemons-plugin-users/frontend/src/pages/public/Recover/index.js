@@ -27,7 +27,7 @@ export default function Recover() {
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
         <div>
           <label>Email</label>
           <input defaultValue="jaime@leemons.io" {...register('email', { required: true })} />

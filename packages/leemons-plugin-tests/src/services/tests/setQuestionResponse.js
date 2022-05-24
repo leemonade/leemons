@@ -58,7 +58,7 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
         }
       }
 
-      const result = await table.userAgentAssignableInstanceResponses.set(
+      let result = await table.userAgentAssignableInstanceResponses.set(
         {
           instance: data.instance,
           question: data.question,
@@ -72,10 +72,28 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
         { transacting }
       );
 
-      const note = await calculeUserAgentInstanceNote(data.instance, userSession.userAgents[0].id, {
-        userSession,
-        transacting,
-      });
+      const { note, questions } = await calculeUserAgentInstanceNote(
+        data.instance,
+        userSession.userAgents[0].id,
+        {
+          userSession,
+          transacting,
+        }
+      );
+
+      console.log(questions);
+
+      result = await table.userAgentAssignableInstanceResponses.set(
+        {
+          instance: data.instance,
+          question: data.question,
+          userAgent: userSession.userAgents[0].id,
+        },
+        {
+          ...questions[data.question],
+        },
+        { transacting }
+      );
 
       await assignationsService.updateAssignation(
         {

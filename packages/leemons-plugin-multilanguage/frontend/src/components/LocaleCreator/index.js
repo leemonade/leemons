@@ -20,7 +20,7 @@ export default function LocaleCreator({ addLocale }) {
   };
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off">
       <div className="rounded-md shadow-sm flex">
         <label htmlFor="locale-code" className="sr-only">
           Email address

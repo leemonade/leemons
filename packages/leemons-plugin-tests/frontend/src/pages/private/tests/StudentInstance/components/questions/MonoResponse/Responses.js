@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, ImageLoader, Text } from '@bubbles-ui/components';
+import { Box, HtmlText, ImageLoader, Stack, Text } from '@bubbles-ui/components';
 import { LeebraryImage } from '@leebrary/components';
 import { numberToEncodedLetter } from '@common';
 import { find } from 'lodash';
 import { getQuestionClues } from '../../../helpers/getQuestionClues';
+import { htmlToText } from '../../../helpers/htmlToText';
 
 export default function Responses(props) {
-  const { styles, question, store, render, cx } = props;
+  const { styles, question, store, render, cx, t } = props;
 
   const currentResponseIndex = store.questionResponses[question.id].properties?.response;
 
@@ -53,14 +54,26 @@ export default function Responses(props) {
       classContainer = cx(classContainer, styles.questionResponseImageContainerClued);
     }
 
+    let classExplanation = styles.textExplanation;
+    let explanation = null;
     let iconToShow = null;
     if (store.viewMode) {
       classContainer = cx(classContainer, styles.questionResponseImageContainerViewMode);
+
+      if (question.properties.explanationInResponses) {
+        const text = htmlToText(response.explanation);
+        if (text) explanation = response.explanation;
+      } else if (response.isCorrectResponse) {
+        const text = htmlToText(question.properties.explanation);
+        if (text) explanation = question.properties.explanation;
+      }
+
       if (question.withImages) {
         classContainer = cx(
           classContainer,
           styles.questionResponseImageContainerViewModeWithImages
         );
+        classExplanation = cx(classExplanation, styles.textExplanationViewMode);
       }
       if (response.isCorrectResponse) {
         iconToShow = '/public/tests/question-done.svg';
@@ -68,6 +81,9 @@ export default function Responses(props) {
       } else if (index === currentResponseIndex) {
         iconToShow = '/public/tests/question-wrong.svg';
         classContainer = cx(classContainer, styles.questionResponseImageContainerWrong);
+      } else {
+        classContainer = cx(classContainer, styles.questionResponseRemovePadding);
+        classExplanation = cx(classExplanation, styles.textExplanationRemovePadding);
       }
     }
 
@@ -103,37 +119,74 @@ export default function Responses(props) {
 
         {question.withImages ? (
           <>
-            <Box className={styles.questionResponseImageContent}>
+            <Box
+              className={
+                store.viewMode
+                  ? styles.questionResponseImageContentViewMode
+                  : styles.questionResponseImageContent
+              }
+            >
               <LeebraryImage className={styles.questionResponseImage} src={response.image} />
             </Box>
-            <Box className={styles.questionResponseImageTextContent}>
-              {response.image?.description ? (
+            <Box
+              className={
+                store.viewMode
+                  ? styles.questionResponseImageTextContentViewMode
+                  : styles.questionResponseImageTextContent
+              }
+            >
+              {!store.viewMode && response.image?.description ? (
                 <Text color="primary" role="productive" size="md">
                   {response.image.description}
                 </Text>
+              ) : null}
+              {explanation ? (
+                <Box className={classExplanation}>
+                  <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
+                    <Text role="productive" size="xs" color="primary">
+                      {response.isCorrectResponse
+                        ? t('correctResponse').toUpperCase()
+                        : t('explanation').toUpperCase()}
+                    </Text>
+                  </Box>
+                  <HtmlText>{explanation}</HtmlText>
+                </Box>
               ) : null}
             </Box>
           </>
         ) : (
           <Box>
-            {numberToEncodedLetter(index + 1)}. {response.response}{' '}
+            <Stack fullWidth>
+              {numberToEncodedLetter(index + 1)}.
+              <Box sx={(theme) => ({ paddingLeft: theme.spacing[1] })}>{response.response}</Box>
+            </Stack>
+            {explanation ? (
+              <Box className={classExplanation}>
+                <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
+                  <Text role="productive" size="xs" color="primary">
+                    {response.isCorrectResponse
+                      ? t('correctResponse').toUpperCase()
+                      : t('explanation').toUpperCase()}
+                  </Text>
+                </Box>
+                <HtmlText>{explanation}</HtmlText>
+              </Box>
+            ) : null}
           </Box>
         )}
       </Box>
     );
   });
 
-  return (
-    <Box
-      className={
-        question.withImages
-          ? styles.questionResponsesContainerImages
-          : styles.questionResponsesContainer
-      }
-    >
-      {components}
-    </Box>
-  );
+  let className = question.withImages
+    ? styles.questionResponsesContainerImages
+    : styles.questionResponsesContainer;
+
+  if (store.viewMode) {
+    className = cx(className, styles.questionResponsesContainerViewMode);
+  }
+
+  return <Box className={className}>{components}</Box>;
 }
 
 Responses.propTypes = {

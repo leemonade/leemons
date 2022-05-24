@@ -114,7 +114,7 @@ export default function Responses(props) {
               </Box>
             </Box>
           ) : (
-            <Stack fullWidth spacing={2}>
+            <Stack fullWidth spacing={2} style={{ width: 'calc(100% - 50%)' }}>
               <Box className={cx(styles.mapViewContent, styles.mapViewContentError)}>
                 {currentValue === '-'
                   ? t('selectResponse')

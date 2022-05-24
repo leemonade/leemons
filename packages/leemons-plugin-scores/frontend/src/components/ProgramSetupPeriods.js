@@ -97,7 +97,7 @@ export default function ProgramSetupPeriods({
   }, [program]);
 
   return (
-    <form onSubmit={handleSubmit(handleOnNext)}>
+    <form onSubmit={handleSubmit(handleOnNext)} autoComplete="off">
       <ContextContainer padded="vertical">
         <Box>
           <Controller

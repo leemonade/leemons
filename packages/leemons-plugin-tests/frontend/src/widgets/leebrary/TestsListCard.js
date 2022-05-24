@@ -33,14 +33,16 @@ const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
     const items = [];
 
     if (asset?.id) {
-      items.push({
-        icon: <ViewOnIcon />,
-        children: t('view'),
-        onClick: (e) => {
-          e.stopPropagation();
-          history.push(`/private/tests/detail/${asset.providerData.id}`);
-        },
-      });
+      if (asset.providerData.published) {
+        items.push({
+          icon: <ViewOnIcon />,
+          children: t('view'),
+          onClick: (e) => {
+            e.stopPropagation();
+            history.push(`/private/tests/detail/${asset.providerData.id}`);
+          },
+        });
+      }
       if (asset.editable) {
         items.push({
           icon: <EditIcon />,
@@ -68,6 +70,15 @@ const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
                 }
               },
             })();
+          },
+        });
+      }
+      if (asset.providerData.published) {
+        items.push({
+          children: t('assign'),
+          onClick: (e) => {
+            e.stopPropagation();
+            history.push(`/private/tests/assign/${asset.providerData.id}`);
           },
         });
       }

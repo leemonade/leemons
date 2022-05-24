@@ -135,6 +135,14 @@ const ListAssetPage = () => {
           `search=${criteria}`
         )}`
       );
+    } else {
+      history.push(
+        `${location.pathname}?${getQueryParams({
+          includeType: true,
+          includePublic: true,
+          includePublished: true,
+        })}`
+      );
     }
   };
 

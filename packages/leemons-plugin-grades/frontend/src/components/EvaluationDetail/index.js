@@ -82,7 +82,7 @@ const EvaluationDetail = ({
   const type = find(selectData.type, { value: watch('type') });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
       <ContextContainer>
         <Box>
           <Name messages={messages} errorMessages={errorMessages} form={form} />

@@ -43,14 +43,25 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
             setAsCurrent: true,
             transacting,
           });
-          questionBank = await table.questionsBanks.create(
-            { id: version.fullId, ...props },
-            { transacting }
-          );
+          const [_questionBank, oldCategories] = await Promise.all([
+            table.questionsBanks.create({ id: version.fullId, ...props }, { transacting }),
+            table.questionBankCategories.find(
+              { questionBank: id },
+              {
+                transacting,
+              }
+            ),
+          ]);
+          questionBank = _questionBank;
+          const oldCategoriesById = _.keyBy(oldCategories, 'id');
+
           // ES - Borramos las id para que se creen nuevas
           // EN - Delete the id to create new
           _.forEach(data.questions, (question) => {
             delete question.id;
+            if (oldCategoriesById[question.category]) {
+              question.category = oldCategoriesById[question.category].order;
+            }
           });
         } else {
           if (published) {
