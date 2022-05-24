@@ -19,7 +19,7 @@ async function getUserQuestionResponses(instance, userAgent, { userSession, tran
       instance,
       userAgent,
     },
-    { columns: ['question', 'clues', 'properties'], transacting }
+    { columns: ['question', 'clues', 'properties', 'status', 'points'], transacting }
   );
 
   const result = {};
