@@ -26,8 +26,7 @@ import {
   setQuestionResponseRequest,
 } from '../../../../request';
 import { calculeInfoValues } from './helpers/calculeInfoValues';
-import Question from './components/Question';
-import { htmlToText } from './helpers/htmlToText';
+import QuestionList from './components/QuestionList';
 
 export default function StudentInstance() {
   const [t, translations] = useTranslateLoader(prefixPN('studentInstance'));
@@ -35,7 +34,7 @@ export default function StudentInstance() {
     loading: true,
     idLoaded: '',
     isFirstStep: true,
-    currentStep: 2,
+    currentStep: 0,
     maxNavigatedStep: 0,
     viewMode: false,
   });
@@ -305,30 +304,23 @@ export default function StudentInstance() {
         component: <Development {...commonProps} {...testProps} />,
       });
 
+      steps.push({
+        label: t('questions'),
+        status: 'OK',
+        component: (
+          <QuestionList
+            {...commonProps}
+            {...testProps}
+            nextStep={nextStep}
+            finishStep={finishStep}
+            saveQuestion={saveQuestion}
+          />
+        ),
+        isQuestion: true,
+      });
+
       forEach(store.questions, (question, index) => {
         const isLast = index === store.questions.length - 1;
-        steps.push({
-          label: htmlToText(question.question),
-          status: 'OK',
-          component: (
-            <Question
-              {...commonProps}
-              {...testProps}
-              nextStep={(e) => {
-                if (isLast) {
-                  finishStep(e);
-                } else {
-                  nextStep(e);
-                }
-              }}
-              question={question}
-              index={index}
-              isLast={isLast}
-              saveQuestion={() => saveQuestion(question.id)}
-            />
-          ),
-          isQuestion: true,
-        });
       });
 
       return {
