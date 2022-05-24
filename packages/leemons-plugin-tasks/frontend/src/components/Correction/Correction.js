@@ -18,6 +18,7 @@ import { useSubjects } from '@academic-portfolio/hooks';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { CorrectionStyles } from './Correction.style';
 import { SubjectSelector } from './components/SubjectSelector';
+import Submission from './components/Submission';
 
 function Header({ assignation }) {
   const { instance } = assignation;
@@ -34,13 +35,8 @@ function Header({ assignation }) {
   );
 }
 
-function SubmissionSwiper({ assignation }) {
-  return <Box>Submission swiper</Box>;
-}
-
 export default function Correction({ assignation }) {
   const evaluationSystem = useProgramEvaluationSystem(assignation?.instance);
-  console.log('evaluation system', evaluationSystem);
 
   const scoreInputProps = useMemo(() => {
     if (!evaluationSystem) {
@@ -59,8 +55,6 @@ export default function Correction({ assignation }) {
     };
   }, [evaluationSystem]);
 
-  console.log('scoreInputProps', scoreInputProps);
-
   const { classes } = CorrectionStyles();
   return (
     <Box className={classes?.root}>
@@ -68,7 +62,7 @@ export default function Correction({ assignation }) {
         <Header assignation={assignation}></Header>
       </Box>
       <ContextContainer spacing={2} className={classes?.main}>
-        <SubmissionSwiper assignation={assignation} />
+        <Submission assignation={assignation} />
         <SubjectSelector assignation={assignation} />
 
         <ActivityAccordion>

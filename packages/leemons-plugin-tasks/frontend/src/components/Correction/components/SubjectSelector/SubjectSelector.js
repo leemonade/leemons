@@ -1,17 +1,14 @@
 import React, { useMemo, useState } from 'react';
 import _ from 'lodash';
 import { Box, Title, Text, ImageLoader, Swiper, Loader } from '@bubbles-ui/components';
-import { useSubjects } from '@academic-portfolio/hooks';
+import { useSubjects, useClassesSubjects } from '@academic-portfolio/hooks';
 import SubjectCard from './components/SubjectCard';
 
 export default function SubjectSelector({ assignation }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const subjectsIds = useMemo(
-    () => _.map(assignation.instance.assignable.subjects, 'subject'),
-    [assignation?.instance?.assignable?.subjects]
-  );
-
-  console.log('grades', assignation.grades);
+  const instanceSubjects = useClassesSubjects(assignation?.instance?.classes);
+  const subjectsIds = useMemo(() => _.map(instanceSubjects, 'id'), [instanceSubjects]);
+  const subjects = useSubjects(subjectsIds);
 
   const gradesBySubject = useMemo(
     () =>
@@ -28,12 +25,6 @@ export default function SubjectSelector({ assignation }) {
     [assignation.grades]
   );
 
-  console.log('gradesBySubject', gradesBySubject);
-
-  let subjects = useSubjects(subjectsIds);
-  if (subjects.length) {
-    subjects = Array.from(Array(10).keys()).fill(subjects[0], 0, 10);
-  }
   if (!subjects.length) {
     return (
       <Box>

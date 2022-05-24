@@ -2,28 +2,8 @@ import React, { useEffect, useState, useMemo } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { ContextContainer, HtmlText, Box, Tabs, TabPanel } from '@bubbles-ui/components';
-import { useApi } from '@common';
-import { classDetailForDashboard } from '@academic-portfolio/request/classes';
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
-
-function getClasses(classes) {
-  return Promise.all(classes.map(classDetailForDashboard));
-}
-
-function useClassesSubjects(classes) {
-  const [classesData, error, loading] = useApi(getClasses, classes);
-
-  if (loading) {
-    return [];
-  }
-  if (error) {
-    // TODO: Add error alert
-    return [];
-  }
-
-  const subjects = _.map(classesData, 'classe.subject');
-  return _.uniqBy(subjects, 'id');
-}
+import { useClassesSubjects } from '@academic-portfolio/hooks';
 
 function CurriculumRender({ assignation, showCurriculum: showCurriculumObj }) {
   const {
