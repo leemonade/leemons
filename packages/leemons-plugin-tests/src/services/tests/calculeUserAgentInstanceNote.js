@@ -47,6 +47,7 @@ async function calculeUserAgentInstanceNote(
   const perUndefined = 0;
 
   let note = evaluationSystem.minScale.number;
+  const questionsResponse = {};
 
   _.forEach(questions, (question) => {
     if (question.type === 'mono-response') {
@@ -55,10 +56,22 @@ async function calculeUserAgentInstanceNote(
       });
       if (!_.isNumber(questionResponses[question.id]?.properties?.response)) {
         note += perUndefined;
+        questionsResponse[question.id] = {
+          points: perUndefined,
+          status: null,
+        };
       } else if (questionResponses[question.id].properties.response === correctIndex) {
         note += perDone;
+        questionsResponse[question.id] = {
+          points: perDone,
+          status: 'ok',
+        };
       } else {
         note += perError;
+        questionsResponse[question.id] = {
+          points: perError,
+          status: 'ko',
+        };
       }
     }
     if (question.type === 'map') {
@@ -75,18 +88,34 @@ async function calculeUserAgentInstanceNote(
         });
         if (allWithValues && allValuesGood) {
           note += perDone;
+          questionsResponse[question.id] = {
+            points: perDone,
+            status: 'ok',
+          };
         } else if (allWithValues) {
           note += perError;
+          questionsResponse[question.id] = {
+            points: perError,
+            status: 'ko',
+          };
         } else {
           note += perUndefined;
+          questionsResponse[question.id] = {
+            points: perUndefined,
+            status: null,
+          };
         }
       } else {
         note += perUndefined;
+        questionsResponse[question.id] = {
+          points: perUndefined,
+          status: null,
+        };
       }
     }
   });
 
-  return note;
+  return { note, questions: questionsResponse };
 }
 
 module.exports = { calculeUserAgentInstanceNote };
