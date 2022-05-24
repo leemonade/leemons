@@ -200,6 +200,7 @@ module.exports = {
     view: 'View',
     edit: 'Edit',
     tests: 'Tests',
+    assign: 'Assign',
     questionBank: 'Question bank',
     deleted: 'Deleted',
   },

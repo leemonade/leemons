@@ -198,6 +198,7 @@ module.exports = {
     view: 'Ver',
     edit: 'Editar',
     tests: 'Pruebas',
+    assign: 'Asignar',
     questionBank: 'Banco de preguntas',
     deleted: 'Borrado',
   },
