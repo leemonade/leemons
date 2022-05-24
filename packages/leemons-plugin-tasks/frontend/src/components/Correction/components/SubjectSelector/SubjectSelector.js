@@ -41,6 +41,11 @@ export default function SubjectSelector({ assignation }) {
       </Box>
     );
   }
+
+  if (subjects.length === 1) {
+    return null;
+  }
+
   return (
     <Swiper
       onSelectIndex={setSelectedIndex}

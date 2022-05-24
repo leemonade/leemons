@@ -18,6 +18,9 @@ export const CorrectionStyles = createStyles((theme) => ({
     width: '100%',
     overflow: 'auto',
   },
+  accordionPanel: {
+    padding: `${theme.spacing[4]}px ${theme.spacing[5]}px`,
+  },
 }));
 
 export default CorrectionStyles;

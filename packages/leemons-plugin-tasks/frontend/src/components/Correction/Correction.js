@@ -8,7 +8,7 @@ import {
   ActivityAccordionPanel,
   Badge,
   ContextContainer,
-  ImageLoader,
+  ScoreInput,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import useClassData from '@assignables/hooks/useClassData';
@@ -40,6 +40,26 @@ function SubmissionSwiper({ assignation }) {
 
 export default function Correction({ assignation }) {
   const evaluationSystem = useProgramEvaluationSystem(assignation?.instance);
+  console.log('evaluation system', evaluationSystem);
+
+  const scoreInputProps = useMemo(() => {
+    if (!evaluationSystem) {
+      return null;
+    }
+
+    return {
+      showLetters: evaluationSystem.type === 'letter',
+      acceptCustom: evaluationSystem.type === 'letter' ? 'text' : 'number',
+      grades: evaluationSystem.scales.map((scale) => ({
+        score: scale.number,
+        letter: scale.letter,
+      })),
+      tags: evaluationSystem.tags,
+      evaluation: evaluationSystem.id,
+    };
+  }, [evaluationSystem]);
+
+  console.log('scoreInputProps', scoreInputProps);
 
   const { classes } = CorrectionStyles();
   return (
@@ -61,7 +81,10 @@ export default function Correction({ assignation }) {
                   <ContextContainer direction="row" spacing={1}>
                     <Text>Min. to pass</Text>
                     <Badge
-                      label={evaluationSystem?.minScaleToPromote?.letter}
+                      label={
+                        evaluationSystem?.minScaleToPromote?.letter ||
+                        evaluationSystem?.minScaleToPromote?.number
+                      }
                       closable={false}
                       severity="warning"
                     />
@@ -70,12 +93,22 @@ export default function Correction({ assignation }) {
                 closable={false}
               />
             }
-          ></ActivityAccordionPanel>
+          >
+            <Box className={classes.accordionPanel}>
+              {evaluationSystem && scoreInputProps && (
+                <ScoreInput {...scoreInputProps} value={{ score: 0 }} />
+              )}
+            </Box>
+          </ActivityAccordionPanel>
           <ActivityAccordionPanel
             label="Feedback for student"
             icon={<PluginComunicaIcon />}
             rightSection={<Badge label="Optional" closable={false} />}
-          ></ActivityAccordionPanel>
+          >
+            <Box className={classes.accordionPanel}>
+              <TextEditorInput />
+            </Box>
+          </ActivityAccordionPanel>
         </ActivityAccordion>
       </ContextContainer>
     </Box>
