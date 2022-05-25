@@ -109,12 +109,11 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
       }
 
       if (_.isNull(group) || teachers) await removeTeachersByClass(nClass.id, { transacting });
+
       if (teachers)
-        promises.push(
-          Promise.all(
-            _.map(teachers, ({ teacher, type }) =>
-              addTeacher(nClass.id, teacher, type, { transacting })
-            )
+        await Promise.all(
+          _.map(teachers, ({ teacher, type }) =>
+            addTeacher(nClass.id, teacher, type, { transacting })
           )
         );
 
@@ -135,6 +134,7 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
       await Promise.all(promises);
 
       const classe = (await classByIds(nClass.id, { transacting }))[0];
+
       await leemons.events.emit('after-update-class', { class: classe, transacting });
 
       return classe;

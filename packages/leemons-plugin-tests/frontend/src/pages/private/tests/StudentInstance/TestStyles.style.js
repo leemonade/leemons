@@ -113,6 +113,7 @@ export const TestStyles = createStyles((theme, {}) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    flex: 'none',
   },
   questionValueContainer: {
     display: 'flex',

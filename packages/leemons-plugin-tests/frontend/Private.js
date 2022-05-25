@@ -8,6 +8,7 @@ const TestsList = loadable(() => import('./src/pages/private/tests/List'));
 const TestsEdit = loadable(() => import('./src/pages/private/tests/Edit'));
 const TestsAssign = loadable(() => import('./src/pages/private/tests/Assign'));
 const TestsDetail = loadable(() => import('./src/pages/private/tests/Detail'));
+const TestsResult = loadable(() => import('./src/pages/private/tests/Result'));
 const QuestionBanksList = loadable(() => import('./src/pages/private/questions-banks/List'));
 const QuestionBankDetail = loadable(() => import('./src/pages/private/questions-banks/Detail'));
 const StudentInstance = loadable(() => import('./src/pages/private/tests/StudentInstance/index'));
@@ -18,6 +19,12 @@ export default function Private() {
 
   return (
     <Switch>
+      <Route path={`${path}/result/:id`}>
+        <TestsResult session={session} />
+      </Route>
+      <Route path={`${path}/result/:id/:user`}>
+        <TestsResult session={session} />
+      </Route>
       <Route path={`${path}/student/:id`}>
         <StudentInstance session={session} />
       </Route>

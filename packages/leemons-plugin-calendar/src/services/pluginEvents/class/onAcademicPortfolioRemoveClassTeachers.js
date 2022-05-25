@@ -38,7 +38,9 @@ function onAcademicPortfolioRemoveClassTeachers(data, { classIds, classTeachers,
       const promises = [];
       _.forEach(classIds, (classId) => {
         _.forEach(classTeachers, ({ teacher }) => {
-          promises.push(remove(classCalendarsByClass[classId], teacher, { transacting }));
+          if (classCalendarsByClass[classId]) {
+            promises.push(remove(classCalendarsByClass[classId], teacher, { transacting }));
+          }
         });
       });
       await Promise.all(promises);

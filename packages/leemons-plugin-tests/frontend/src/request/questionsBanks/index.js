@@ -31,7 +31,7 @@ async function saveQuestionBank(_body) {
     }
     if (question.properties.responses) {
       forEach(question.properties.responses, (response, i) => {
-        if (response.value.image) {
+        if (response.value.image && !isString(response.value.image)) {
           if (response.value.image.id) {
             // eslint-disable-next-line no-param-reassign
             body.questions[index].properties.responses[i].value.image =

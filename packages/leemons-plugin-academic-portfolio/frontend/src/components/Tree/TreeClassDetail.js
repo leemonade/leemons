@@ -7,6 +7,7 @@ import {
   ContextContainer,
   InputWrapper,
   Select,
+  Stack,
   TabPanel,
   Tabs,
   TextInput,
@@ -165,11 +166,11 @@ const TreeClassDetail = ({
               />
             </Box>
 
-            <Box>
+            <Stack fullWidth justifyContent="end">
               <Button loading={saving} type="submit">
                 {messages.save}
               </Button>
-            </Box>
+            </Stack>
           </ContextContainer>
         </form>
         <Box>

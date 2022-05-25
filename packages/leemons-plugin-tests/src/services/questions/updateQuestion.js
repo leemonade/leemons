@@ -76,21 +76,14 @@ async function updateQuestion(data, { userSession, published, transacting: _tran
       }
 
       if (data.type === 'mono-response') {
-        const removePromises = [];
+        const toRemove = [];
         _.forEach(question.properties.responses, (response) => {
           if (response.value.image) {
-            removePromises.push(
-              leemons.getPlugin('leebrary').services.assets.remove(response.value.image, {
-                userSession,
-                transacting,
-              })
-            );
+            toRemove.push(response.value.image);
           }
         });
 
-        await Promise.all(removePromises);
-
-        if (properties.withImages) {
+        if (data.withImages) {
           const promises = [];
           _.forEach(properties.responses, (response, index) => {
             promises.push(
@@ -112,8 +105,19 @@ async function updateQuestion(data, { userSession, published, transacting: _tran
           });
           const assets = await Promise.all(promises);
           _.forEach(properties.responses, (response, index) => {
-            response.value.image = assets[index].id;
+            properties.responses[index].value.image = assets[index].id;
           });
+        }
+
+        if (toRemove.length) {
+          await Promise.all(
+            _.map(toRemove, (r) =>
+              leemons.getPlugin('leebrary').services.assets.remove(r, {
+                userSession,
+                transacting,
+              })
+            )
+          );
         }
       }
 

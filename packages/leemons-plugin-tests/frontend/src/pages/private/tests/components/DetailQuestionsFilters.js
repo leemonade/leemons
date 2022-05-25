@@ -76,7 +76,7 @@ export default function DetailQuestionsFilters({ defaultValues, back, questionBa
                 },
               }}
               render={({ field }) => (
-                <NumberInput required error={form.formState.errors.nQuestions} {...field} />
+                <NumberInput required min={0} error={form.formState.errors.nQuestions} {...field} />
               )}
             />
           </InputWrapper>

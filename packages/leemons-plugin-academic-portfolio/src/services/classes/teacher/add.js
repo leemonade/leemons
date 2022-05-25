@@ -23,6 +23,7 @@ async function add(_class, teacher, type, { transacting } = {}) {
   );
 
   await leemons.events.emit('after-add-class-teacher', { class: _class, teacher, transacting });
+
   return classTeacher;
 }
 
