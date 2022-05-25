@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import _ from 'lodash';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { ContextContainer, HtmlText, Box, Tabs, TabPanel } from '@bubbles-ui/components';
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
 
-function CurriculumRender({ assignation, showCurriculum: showCurriculumObj }) {
+function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labels }) {
   const {
     content: showContent,
     objectives: showObjectives,
@@ -24,7 +23,7 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj }) {
   const subjects = useClassesSubjects(instance.classes);
 
   return (
-    <ContextContainer title="Curriculum">
+    <ContextContainer title={labels?.title}>
       <Tabs>
         {subjects.map(({ id, name }) => {
           const { curriculum } = assignable.subjects.find((s) => s.subject === id);
@@ -39,21 +38,21 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj }) {
 
               {showContent && curriculum?.content?.length && (
                 <Box sx={tabPanelStyle}>
-                  <ContextContainer title="Content">
+                  <ContextContainer title={labels?.content}>
                     <CurriculumListContents value={curriculum?.content} />
                   </ContextContainer>
                 </Box>
               )}
               {showAssessmentCriteria && curriculum?.assessmentCriteria?.length && (
                 <Box sx={tabPanelStyle}>
-                  <ContextContainer title="Assessment Criteria">
+                  <ContextContainer title={labels?.assessmentCriteria}>
                     <CurriculumListContents value={curriculum?.assessmentCriteria} />
                   </ContextContainer>
                 </Box>
               )}
               {showObjectives && curriculum?.objectives?.length && (
                 <Box sx={tabPanelStyle}>
-                  <ContextContainer title="Custom objectives">
+                  <ContextContainer title={labels?.objectives}>
                     {/* TODO: Use react lists */}
                     <HtmlText>
                       {`
@@ -77,7 +76,16 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj }) {
     </ContextContainer>
   );
 }
-export default function SummaryStep({ assignation }) {
+
+CurriculumRender.propTypes = {
+  assignation: PropTypes.object.isRequired,
+  showCurriculum: PropTypes.object.isRequired,
+  labels: PropTypes.object.isRequired,
+};
+
+export default function StatementStep({ assignation, labels: _labels }) {
+  const labels = _labels.statement_step;
+
   const { instance } = assignation;
   const { assignable } = instance;
 
@@ -85,16 +93,37 @@ export default function SummaryStep({ assignation }) {
 
   return (
     <ContextContainer>
-      <ContextContainer title="Summary">
+      <ContextContainer title={labels.statement}>
         <HtmlText>{assignable?.statement}</HtmlText>
       </ContextContainer>
-      <CurriculumRender assignation={assignation} showCurriculum={showCurriculum} />
+      <CurriculumRender
+        assignation={assignation}
+        showCurriculum={showCurriculum}
+        labels={labels?.curriculum}
+      />
     </ContextContainer>
   );
 }
 
-SummaryStep.propTypes = {
-  id: PropTypes.string.isRequired,
-  instance: PropTypes.string.isRequired,
-  onNext: PropTypes.func.isRequired,
+StatementStep.propTypes = {
+  assignation: PropTypes.shape({
+    instance: PropTypes.shape({
+      curriculum: PropTypes.shape({
+        content: PropTypes.bool,
+        assessmentCriteria: PropTypes.bool,
+        objectives: PropTypes.bool,
+      }),
+      assignable: PropTypes.shape({
+        statement: PropTypes.string,
+        curriculum: PropTypes.shape({
+          content: PropTypes.arrayOf(PropTypes.string),
+          assessmentCriteria: PropTypes.arrayOf(PropTypes.string),
+          objectives: PropTypes.arrayOf(PropTypes.string),
+        }),
+      }),
+    }),
+  }),
+  labels: PropTypes.shape({
+    statement_step: PropTypes.object,
+  }),
 };

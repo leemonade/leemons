@@ -10,19 +10,29 @@ import {
   Tabs,
   TabPanel,
   InputWrapper,
+  createStyles,
+  Switch,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import useSubjects from '@assignables/components/Assignment/AssignStudents/hooks/useSubjects';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
-import SelfReflection from './components/SelfReflection';
+// import SelfReflection from './components/SelfReflection';
 import Submissions from './components/Submissions';
 import Objectives from './components/Objectives';
 // import Contents from './components/Contents';
 // import AssessmentCriteria from './components/AssessmentCriteria';
-import Attachments from './components/Attachments';
+// import Attachments from './components/Attachments';
 import Methodology from './components/Methodology';
 import Curriculum from './components/Curriculum';
+
+const ContentDataStyles = createStyles((theme) => ({
+  tabPane: {
+    paddingTop: theme.spacing[5],
+    paddingLeft: theme.spacing[5],
+    paddingBottom: theme.spacing[5],
+  },
+}));
 
 function ContentData({
   labels,
@@ -41,7 +51,10 @@ function ContentData({
   // ·······························································
   // FORM
 
+  const { classes } = ContentDataStyles();
+
   const defaultValues = {
+    gradable: false,
     ...sharedData,
   };
 
@@ -127,7 +140,7 @@ function ContentData({
             </ContextContainer>
             {/* <Attachments /> */}
 
-            <ContextContainer>
+            <ContextContainer title={labels?.statementAndDevelopmentTitle}>
               {/* TODO: Make the statement required (Not allowed with TextEditor) */}
               <Controller
                 control={control}
@@ -164,37 +177,41 @@ function ContentData({
                   <Tabs>
                     {subjects?.map((subject, index) => (
                       <TabPanel key={index} label={subject?.label}>
-                        <ContextContainer>
-                          <Controller
-                            control={control}
-                            name="program"
-                            render={({ field: { value: program } }) => (
-                              <Curriculum
-                                label={labels?.content || ''}
-                                program={program}
-                                name={`curriculum.${subject.value}.contents`}
-                                type="content"
-                              />
-                            )}
-                          />
-                          <Controller
-                            control={control}
-                            name="program"
-                            render={({ field: { value: program } }) => (
-                              <Curriculum
-                                label={labels?.assessmentCriteria || ''}
-                                program={program}
-                                name={`curriculum.${subject.value}.assessmentCriteria`}
-                                type="assessmentCriteria"
-                              />
-                            )}
-                          />
-                          <Objectives
-                            name={`curriculum.${subject.value}.objectives`}
-                            label={labels.objectives || ''}
-                            error={errors.objectives}
-                          />
-                        </ContextContainer>
+                        <Box className={classes.tabPane}>
+                          <ContextContainer>
+                            <Controller
+                              control={control}
+                              name="program"
+                              render={({ field: { value: program } }) => (
+                                <Curriculum
+                                  label={labels?.content || ''}
+                                  addLabel={labels?.addFromCurriculum}
+                                  program={program}
+                                  name={`curriculum.${subject.value}.contents`}
+                                  type="content"
+                                />
+                              )}
+                            />
+                            <Controller
+                              control={control}
+                              name="program"
+                              render={({ field: { value: program } }) => (
+                                <Curriculum
+                                  label={labels?.assessmentCriteria || ''}
+                                  addLabel={labels?.addFromCurriculum}
+                                  program={program}
+                                  name={`curriculum.${subject.value}.assessmentCriteria`}
+                                  type="assessmentCriteria"
+                                />
+                              )}
+                            />
+                            <Objectives
+                              name={`curriculum.${subject.value}.objectives`}
+                              label={labels.objectives || ''}
+                              error={errors.objectives}
+                            />
+                          </ContextContainer>
+                        </Box>
                       </TabPanel>
                     ))}
                   </Tabs>
@@ -202,6 +219,13 @@ function ContentData({
               )}
             </ContextContainer>
 
+            <Controller
+              name="gradable"
+              control={control}
+              render={({ field }) => (
+                <Switch label={labels?.gradable} {...field} checked={field.value} />
+              )}
+            />
             <Submissions labels={labels} />
             {/* <SelfReflection
               labels={labels?.selfReflection}

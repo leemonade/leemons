@@ -260,18 +260,18 @@ export default function Form({
                   />
                   <Controller
                     control={control}
-                    name="curriculum.objectives"
-                    shouldUnregister={true}
-                    render={({ field }) => (
-                      <Switch {...field} checked={field.value} label={labels?.objectives} />
-                    )}
-                  />
-                  <Controller
-                    control={control}
                     name="curriculum.assessmentCriteria"
                     shouldUnregister={true}
                     render={({ field }) => (
                       <Switch {...field} checked={field.value} label={labels?.assessmentCriteria} />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="curriculum.objectives"
+                    shouldUnregister={true}
+                    render={({ field }) => (
+                      <Switch {...field} checked={field.value} label={labels?.objectives} />
                     )}
                   />
                 </>

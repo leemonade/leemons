@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, ContextContainer, Box } from '@bubbles-ui/components';
 
-export default function File({ assignation }) {
+export default function File({ assignation, labels }) {
   const submittedFiles = assignation.metadata?.submission;
 
   if (Array.isArray(submittedFiles)) {
@@ -16,5 +16,5 @@ export default function File({ assignation }) {
     );
   }
 
-  return <Text>Files not submitted</Text>;
+  return <Text>{labels?.types?.file?.noSubmission}</Text>;
 }

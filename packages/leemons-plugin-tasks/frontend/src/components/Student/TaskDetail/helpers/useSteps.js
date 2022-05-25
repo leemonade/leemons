@@ -1,14 +1,12 @@
 import React, { useMemo } from 'react';
 import loadable from '@loadable/component';
-// import useTask from './useTask';
-// import useCorrection from '../../../Grade/hooks/useCorrection';
 
 const DeliveryStep = loadable(() => import('../Steps/DeliveryStep'));
-const DevelopmentStep = loadable(() => import('../Steps/StatementAndDevelopmentStep'));
-const SummaryStep = loadable(() => import('../Steps/SummaryStep'));
+const DevelopmentStep = loadable(() => import('../Steps/DevelopmentStep'));
+const StatementStep = loadable(() => import('../Steps/StatementStep'));
 const CorrectionStep = loadable(() => import('../Steps/CorrectionStep'));
 
-export default function useSteps(assignation) {
+export default function useSteps(assignation, labels) {
   const instance = assignation?.instance;
   const assignable = instance?.assignable;
 
@@ -18,8 +16,8 @@ export default function useSteps(assignation) {
     }
     const stepsObj = {
       summary: {
-        label: 'Summary',
-        component: <SummaryStep assignation={assignation} />,
+        label: labels.steps.statement,
+        component: <StatementStep assignation={assignation} labels={labels} />,
         sidebar: true,
         timestamps: 'open',
       },
@@ -30,8 +28,8 @@ export default function useSteps(assignation) {
           return null;
         }
         return {
-          label: 'Development',
-          component: <DevelopmentStep assignation={assignation} />,
+          label: labels.steps.development,
+          component: <DevelopmentStep assignation={assignation} labels={labels} />,
           sidebar: false,
         };
       },
@@ -45,8 +43,15 @@ export default function useSteps(assignation) {
         }
         // TODO: Check if submission is filed
         return {
-          label: 'Submission',
-          component: <DeliveryStep assignation={assignation} onNext={onNext} onPrev={onPrev} />,
+          label: labels.steps.submission,
+          component: (
+            <DeliveryStep
+              assignation={assignation}
+              onNext={onNext}
+              onPrev={onPrev}
+              labels={labels}
+            />
+          ),
           sidebar: true,
           timestamps: 'start',
           onNext,

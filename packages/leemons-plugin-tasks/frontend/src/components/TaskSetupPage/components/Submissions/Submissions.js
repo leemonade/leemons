@@ -79,14 +79,14 @@ export default function Submissions({ labels }) {
 
   return (
     <FormProvider {...form}>
-      <ContextContainer title="Submissions">
+      <ContextContainer title={labels?.submission?.title}>
         <Controller
           control={control}
           name="show"
           render={({ field }) => (
             <ConditionalInput
               {...field}
-              label={labels?.submission?.title}
+              label={labels?.submission?.checkDescription}
               showOnTrue
               render={() => (
                 <ContextContainer>
@@ -142,6 +142,7 @@ Submissions.propTypes = {
   labels: PropTypes.shape({
     submission: PropTypes.shape({
       title: PropTypes.string,
+      checkDescription: PropTypes.string,
       type: PropTypes.string,
       types: PropTypes.shape({
         file: PropTypes.string,
