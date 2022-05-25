@@ -1,7 +1,8 @@
 const { pluginName, menuItems, permissions } = require('./config/constants');
+const initMultilanguage = require('./src/config/multilanguage/init');
 const addMenuItems = require('./src/services/menu-builder/add');
 
-async function initMenuBuilder(isInstalled) {
+function initMenuBuilder(isInstalled) {
   if (!isInstalled) {
     leemons.events.once(
       ['plugins.menu-builder:init-main-menu', `${pluginName}:init-permissions`],
@@ -37,6 +38,12 @@ function initPermissions(isInstalled) {
   }
 }
 
+function initLocalizations() {
+  leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
+    initMultilanguage();
+  });
+}
+
 async function events(isInstalled) {
   leemons.events.once(
     [
@@ -50,6 +57,7 @@ async function events(isInstalled) {
     }
   );
 
+  initLocalizations();
   initPermissions(isInstalled);
   initMenuBuilder(isInstalled);
 
