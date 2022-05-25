@@ -20,8 +20,6 @@ async function initLibrary({ users, profiles }) {
       const key = assetsKeys[i];
       const { creator, ...asset } = assets[key];
       const assetData = await services.assets.add(asset, { userSession: creator });
-      console.log(`Asset ${key} created:`, assetData.name);
-      console.log('----------------------------------------');
       assets[key] = { ...assetData };
     }
 
