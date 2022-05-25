@@ -72,7 +72,7 @@ module.exports = {
   activity_deadline_header: {
     deadline: 'Deadline',
     deadlineExtraTime: 'Add extra time',
-    closeTask: 'Close task',
+    closeTask: 'Close activity',
     save: 'Save',
     cancel: 'Cancel',
   },
