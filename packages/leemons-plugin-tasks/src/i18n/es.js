@@ -286,4 +286,9 @@ module.exports = {
   tabStudentTasks: {
     label: 'Tareas y actividades',
   },
+  cardMenu: {
+    edit: 'Editar',
+    assign: 'Asignar',
+    delete: 'Eliminar',
+  },
 };
