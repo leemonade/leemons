@@ -11,7 +11,11 @@ const addAssetSchema = {
   properties: {
     name: stringSchema,
     color: stringSchemaNullable,
-    description: textSchemaNullable,
+    description: {
+      type: 'string',
+      maxLength: 65000,
+      nullable: true,
+    },
     categoryId: stringSchema,
     categoryKey: stringSchema,
     category: {
