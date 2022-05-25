@@ -11,6 +11,7 @@ import {
   TabPanel,
   InputWrapper,
   createStyles,
+  Switch,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
@@ -53,6 +54,7 @@ function ContentData({
   const { classes } = ContentDataStyles();
 
   const defaultValues = {
+    gradable: false,
     ...sharedData,
   };
 
@@ -138,7 +140,7 @@ function ContentData({
             </ContextContainer>
             {/* <Attachments /> */}
 
-            <ContextContainer>
+            <ContextContainer title={labels?.statementAndDevelopmentTitle}>
               {/* TODO: Make the statement required (Not allowed with TextEditor) */}
               <Controller
                 control={control}
@@ -217,6 +219,13 @@ function ContentData({
               )}
             </ContextContainer>
 
+            <Controller
+              name="gradable"
+              control={control}
+              render={({ field }) => (
+                <Switch label={labels?.gradable} {...field} checked={field.value} />
+              )}
+            />
             <Submissions labels={labels} />
             {/* <SelfReflection
               labels={labels?.selfReflection}

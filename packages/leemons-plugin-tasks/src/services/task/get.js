@@ -12,6 +12,7 @@ const TASK_EXISTING_COLUMNS = [
   'recommendedDuration',
   'statement',
   'development',
+  'gradable',
   'submissions',
   'preTask',
   'preTaskOptions',

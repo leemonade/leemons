@@ -135,6 +135,7 @@ module.exports = {
           recommendedDuration: 'Recommended duration',
           statement: 'Statement',
           development: 'Development',
+          statementAndDevelopmentTitle: 'Statement and development',
           objectives: 'Custom objectives',
           curriculum: 'Curriculum',
           content: 'Content',
@@ -142,6 +143,7 @@ module.exports = {
           addFromCurriculum: 'Add from curriculum',
           buttonNext: 'Next',
           buttonPrev: 'Previous',
+          gradable: 'Gradable',
           submission: {
             title: 'Submission',
             checkDescription: 'This task requires the submission of a file, document or link.',
@@ -373,6 +375,22 @@ module.exports = {
         },
       },
       submission: 'Submission',
+    },
+  },
+  task_correction: {
+    punctuation: 'Punctuation',
+    minToPromote: 'Min. to promote',
+    feedbackForStudent: 'Feedback for student',
+    optional: 'Optional',
+    submission: {
+      types: {
+        notFound: {
+          notFound: 'The submission type could not be found',
+        },
+        file: {
+          noSubmission: 'No submission was made yet',
+        },
+      },
     },
   },
 };

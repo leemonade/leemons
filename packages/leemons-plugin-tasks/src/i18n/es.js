@@ -128,14 +128,16 @@ module.exports = {
           subjects: 'Curriculum por asignatura', // NEW
           methodology: 'Metodología',
           recommendedDuration: 'Duración recomendada',
-          statement: 'Enunciado',
-          development: 'Desarrollo',
+          statement: 'Enunciado de la tarea',
+          development: 'Desarrollo de la tarea',
+          statementAndDevelopmentTitle: 'Enunciado y desarrollo',
           content: 'Contenidos', // NEW
           assessmentCriteria: 'Criterios de evaluación', // NEW
           objectives: 'Objetivos personalizados', // NEW
           addFromCurriculum: 'Añadir del curriculum', // NEW
           buttonNext: 'Siguiente',
           buttonPrev: 'Anterior',
+          gradable: 'Calificable', // NEW
           submission: {
             // EVERYTHING NEW
             title: 'Entregables',
@@ -372,6 +374,22 @@ module.exports = {
         },
       },
       submission: 'Entrega',
+    },
+  },
+  task_correction: {
+    punctuation: 'Puntuación',
+    minToPromote: 'Min. para aprobar',
+    feedbackForStudent: 'Feedback para el estudiante',
+    optional: 'Opcional',
+    submission: {
+      types: {
+        notFound: {
+          notFound: 'No se ha encontrado el tipo de entregable',
+        },
+        file: {
+          noSubmission: 'No se ha entregado ningún archivo',
+        },
+      },
     },
   },
 };
