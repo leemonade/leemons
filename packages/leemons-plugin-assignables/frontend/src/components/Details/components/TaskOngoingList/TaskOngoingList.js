@@ -1,22 +1,18 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Box,
-  Button,
   HorizontalTimeline,
   Text,
   ScoresBar,
-  COLORS,
   useResizeObserver,
 } from '@bubbles-ui/components';
 import { HeaderBackground, TaskDeadlineHeader } from '@bubbles-ui/leemons';
-import {
-  ChevLeftIcon,
-  OpenIcon,
-  TimeClockCircleIcon,
-  CheckCircleIcon,
-} from '@bubbles-ui/icons/outline';
+import { OpenIcon, TimeClockCircleIcon, CheckCircleIcon } from '@bubbles-ui/icons/outline';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import dayjs from 'dayjs';
+import _ from 'lodash';
+import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import updateAssignableInstance from '../../../../requests/assignableInstances/updateAssignableInstance';
 import { TaskOngoingListStyles } from './TaskOngoingList.styles';
 import {
@@ -24,14 +20,31 @@ import {
   TASK_ONGOING_LIST_PROP_TYPES,
 } from './TaskOngoingList.constants';
 import useTaskOngoingInstanceParser from './hooks/useTaskOngoingInstanceParser';
-// import { mock } from './mock/mock';
+import prefixPN from '../../../../helpers/prefixPN';
 
 const TaskOngoingList = ({ instance }) => {
   const instanceData = useTaskOngoingInstanceParser(instance);
   const [containerRef, containerRect] = useResizeObserver();
   const [childRef, childRect] = useResizeObserver();
 
-  const { classes, cx } = TaskOngoingListStyles({}, { name: 'TaskOngoingList' });
+  const [, translations] = useTranslateLoader([
+    prefixPN('activity_dashboard'),
+    prefixPN('activity_status'),
+  ]);
+
+  const { dashboardLocalizations, statusLocalizations } = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      return {
+        dashboardLocalizations: _.get(res, prefixPN('activity_dashboard')),
+        statusLocalizations: _.get(res, prefixPN('activity_status')),
+      };
+    }
+
+    return {};
+  }, [translations]);
+
+  const { classes } = TaskOngoingListStyles({}, { name: 'TaskOngoingList' });
 
   const onCloseTask = async (closed) => {
     const newDates = {
@@ -45,17 +58,23 @@ const TaskOngoingList = ({ instance }) => {
     try {
       await updateAssignableInstance({ id: instance.id, dates: newDates });
 
-      let verb = 'closed';
+      let verb = dashboardLocalizations.closeAction.verbs.closed;
       if (!closed) {
-        verb = 'opened';
+        verb = dashboardLocalizations.closeAction.verbs.opened;
       }
-      addSuccessAlert(`task ${verb}`);
+      addSuccessAlert(
+        dashboardLocalizations.closeAction.messages.success.replace('{{verb}}', verb)
+      );
     } catch (e) {
-      let verb = 'closing';
+      let verb = dashboardLocalizations.closeAction.verbs.closing;
       if (!closed) {
-        verb = 'opening';
+        verb = dashboardLocalizations.closeAction.verbs.opening;
       }
-      addErrorAlert(`Error ${verb} task: ${e.message}`);
+      addErrorAlert(
+        dashboardLocalizations.closeAction.messages.error
+          .replace('{{verb}}', verb)
+          .replace('{{error}}', e.message)
+      );
     }
   };
 
@@ -67,9 +86,9 @@ const TaskOngoingList = ({ instance }) => {
     try {
       await updateAssignableInstance({ id: instance.id, dates: newDates });
 
-      addSuccessAlert(`task deadline changed`);
+      addSuccessAlert(dashboardLocalizations.deadline.messages.success);
     } catch (e) {
-      addErrorAlert(`Error changing deadline: ${e.message}`);
+      addErrorAlert(dashboardLocalizations.deadline.messages.error.replace('{{error}}', e.message));
     }
   };
 
@@ -111,27 +130,27 @@ const TaskOngoingList = ({ instance }) => {
       </Box>
       <Box style={{ marginTop: childRect.height }} className={classes.mainContent}>
         <Box className={classes.leftSide}>
-          <Text transform="uppercase">Resumen del estado</Text>
+          <Text transform="uppercase">{dashboardLocalizations?.labels?.graphs?.status}</Text>
           <Box className={classes.leftScoreBarWrapper}>
             <Box className={classes.scoreBarLeftLegend}>
               <Box className={classes.legend}>
                 <OpenIcon width={12} height={12} />
-                <Text role="productive">Open</Text>
+                <Text role="productive">{statusLocalizations?.opened}</Text>
               </Box>
               <Box className={classes.legend}>
                 <TimeClockCircleIcon width={12} height={12} />
-                <Text role="productive">Ongoing</Text>
+                <Text role="productive">{statusLocalizations?.ongoing}</Text>
               </Box>
               <Box className={classes.legend}>
                 <CheckCircleIcon width={12} height={12} />
-                <Text role="productive">Completed</Text>
+                <Text role="productive">{statusLocalizations?.completed}</Text>
               </Box>
             </Box>
             <ScoresBar {...instanceData.leftScoresBar} />
           </Box>
         </Box>
         <Box className={classes.rightSide}>
-          <Text transform="uppercase">Status</Text>
+          <Text transform="uppercase">{dashboardLocalizations?.labels?.graphs?.grades}</Text>
           <Box className={classes.rightScoreBarWrapper}>
             {instanceData.rightScoresBar && <ScoresBar {...instanceData.rightScoresBar} />}
           </Box>

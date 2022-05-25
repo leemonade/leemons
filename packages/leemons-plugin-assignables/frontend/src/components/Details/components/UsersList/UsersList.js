@@ -1,13 +1,38 @@
 import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Title, SearchInput, Stack, ContextContainer } from '@bubbles-ui/components';
-
-import StudentsList from './StudentsList';
-
+import _ from 'lodash';
+import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useParsedStudents from './helpers/useParseStudents';
+import StudentsList from './StudentsList';
+import prefixPN from '../../../../helpers/prefixPN';
 
-export default function UserList({ labels, placeholders, descriptions, instance }) {
-  const students = useParsedStudents(instance);
+export default function UserList({ instance }) {
+  const [, translations] = useTranslateLoader([
+    prefixPN('studentsList'),
+    prefixPN('activity_status'),
+  ]);
+
+  const { labels, placeholders, descriptions, status } = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = _.get(res, prefixPN('studentsList'));
+
+      // EN: Modify the data object here
+      // ES: Modifica el objeto data aquí
+      return { ...data, status: _.get(res, prefixPN('activity_status')) };
+    }
+
+    return {
+      labels: {},
+      placeholders: {},
+      descriptions: {},
+      status: {},
+    };
+  }, [translations]);
+
+  const students = useParsedStudents(instance, status);
   const [query, setQuery] = useState('');
 
   const filteredStudents = useMemo(() => {

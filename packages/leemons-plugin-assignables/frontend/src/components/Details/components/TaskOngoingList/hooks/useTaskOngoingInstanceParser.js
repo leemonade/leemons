@@ -1,7 +1,12 @@
+import { useMemo } from 'react';
+import _ from 'lodash';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
+import { useLocale, unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useProgramEvaluationSystem from '../../../../../hooks/useProgramEvaluationSystem';
 import getStatus from '../../UsersList/helpers/getStatus';
 import useClassData from '../../../../../hooks/useClassData';
+import prefixPN from '../../../../../helpers/prefixPN';
 
 function getGradesGraphData(evaluationSystem, students) {
   if (!students || !evaluationSystem) {
@@ -61,15 +66,15 @@ function getStatusGraphData(students) {
 function getStatusAsNumber(student, instance) {
   const status = getStatus(student, instance);
 
-  if (status === 'COMPLETED' || status === 'LATE') {
+  if (status === 'completed' || status === 'late') {
     return 0;
   }
 
-  if (status === 'ONGOING') {
+  if (status === 'ongoing') {
     return 1;
   }
 
-  if (status === 'OPENED') {
+  if (status === 'opened') {
     return 2;
   }
 
@@ -83,6 +88,23 @@ export default function useTaskOngoingInstanceParser(instance) {
     id: student.user,
     status: getStatusAsNumber(student, instance),
   }));
+
+  const locale = useLocale();
+
+  const [, translations] = useTranslateLoader(prefixPN('activity_deadline_header'));
+
+  const deadlineHeaderLabels = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = _.get(res, prefixPN('activity_deadline_header'));
+
+      // EN: Modify the data object here
+      // ES: Modifica el objeto data aquí
+      return data;
+    }
+
+    return {};
+  }, [translations]);
 
   const classData = useClassData(instance.classes);
   const evaluationSystem = useProgramEvaluationSystem(instance);
@@ -101,15 +123,9 @@ export default function useTaskOngoingInstanceParser(instance) {
       color: classData.color,
       deadline: new Date(instance?.dates?.deadline),
       // TODO: UPDATE
-      locale: 'es-ES',
+      locale,
       // TODO: UPDATE
-      labels: {
-        deadline: 'Deadline',
-        deadlineExtraTime: 'Add extra time',
-        closeTask: 'Close task',
-        save: 'Save',
-        cancel: 'Cancel',
-      },
+      labels: deadlineHeaderLabels,
     },
 
     leftScoresBar: getStatusGraphData(students),
