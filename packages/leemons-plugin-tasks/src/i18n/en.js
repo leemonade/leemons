@@ -337,8 +337,61 @@ module.exports = {
       save: 'Save',
     },
     sidebar: {
-      resources: 'Recursos',
-      team: 'Tu equipo',
+      resources: 'Resources',
+      team: 'Your team',
+    },
+    steps: {
+      statement: 'Statement',
+      development: 'Development',
+      submission: 'Submission',
+    },
+    statement_step: {
+      statement: 'Statement',
+      curriculum: {
+        title: 'Curriculum',
+        content: 'Content',
+        objectives: 'Custom objectives',
+        assessmentCriteria: 'Assessment criteria',
+      },
+    },
+    development_step: {
+      development: 'Development',
+    },
+    submission_step: {
+      submission_type: {
+        file: {
+          uploadTitle: 'Click to upload a file',
+          uploadSubtitle: 'Or drag it here',
+          errorMessage: {
+            title: 'Error',
+            message: 'The file could not be uploaded',
+          },
+          errorAlert: 'The file {{fileName}} was rejected: {{error}}',
+          upload: 'Upload',
+        },
+        link: {
+          link: 'Submission link',
+        },
+      },
+      submission_state: {
+        error: {
+          title: 'Error',
+          message: 'The changes could not be saved: {{error}}',
+        },
+        loading: {
+          title: 'Saving',
+          message: 'Saving changes...',
+        },
+        submitted: {
+          title: 'Submitted',
+          message: 'That task has been submitted',
+        },
+        notSubmitted: {
+          title: 'Not submitted',
+          message: 'That task has not been submitted yet',
+        },
+      },
+      submission: 'Submission',
     },
   },
 };

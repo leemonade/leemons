@@ -331,7 +331,9 @@ module.exports = {
           errorAlert: 'El archivo {{fileName}} ha sido rechazado: {{error}}',
           upload: 'Subir',
         },
-        link: {},
+        link: {
+          link: 'Enlace de la entrega',
+        },
       },
       submission_state: {
         error: {
