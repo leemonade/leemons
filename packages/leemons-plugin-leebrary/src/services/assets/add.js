@@ -19,6 +19,30 @@ async function add(
       // ES: Asignamos la categoría de "media-files" por defecto.
       // EN: Assign the "media-files" category by default.
       data.categoryKey = data.categoryKey || CATEGORIES.MEDIA_FILES;
+
+      // ES: En caso de que se quiera crear un Bookmark, pero no vengan los datos desde el frontend, los obtenemos.
+      // EN: In case you want to create a Bookmark, but not come from the frontend, we get them.
+      if (data.categoryKey === CATEGORIES.BOOKMARKS) {
+        if (isString(data.url) && !isEmpty(data.url) && (isNil(data.icon) || isEmpty(data.icon))) {
+          try {
+            const { body: html } = await global.utils.got(data.url);
+            const metas = await global.utils.metascraper({ html, url: data.url });
+            data.name = !isEmpty(data.name) && data.name !== 'null' ? data.name : metas.title;
+            data.description = data.description || metas.description;
+
+            if (!isEmpty(metas.image)) {
+              data.cover = data.cover || metas.image;
+            }
+
+            if (!isEmpty(metas.logo)) {
+              data.icon = data.icon || metas.logo;
+            }
+          } catch (err) {
+            console.error('Error getting bookmark metadata:', err);
+          }
+        }
+      }
+
       await validateAddAsset(data);
 
       const { categoryId, categoryKey, tags, ...assetData } = data;
@@ -126,7 +150,7 @@ async function add(
       // EN: First, add permission to the asset
       await userService.permissions.addItem(
         newAsset.id,
-        leemons.plugin.prefixPN(categoryId),
+        leemons.plugin.prefixPN(category.id),
         {
           permissionName,
           actionNames: leemons.plugin.config.constants.assetRoles,
@@ -150,7 +174,7 @@ async function add(
               {
                 permissionName,
                 actionNames: [role],
-                target: categoryId,
+                target: category.id,
               },
               { transacting }
             )
@@ -165,7 +189,7 @@ async function add(
             {
               permissionName,
               actionNames: ['owner'],
-              target: categoryId,
+              target: category.id,
             },
             { transacting }
           )

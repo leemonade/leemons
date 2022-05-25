@@ -4,11 +4,11 @@ const initProfiles = require('./src/profiles');
 const initFamilies = require('./src/families');
 const initGrades = require('./src/grades');
 const initAcademicPortfolio = require('./src/academicPortfolio');
-const addCalendarAndEventAsClassroom = require('./src/calendar');
-const addAWSS3AsProvider = require('./src/leebrary');
+const { addAWSS3AsProvider, initLibrary } = require('./src/leebrary');
 const addAWSEmailAsProvider = require('./src/emails');
 const initWidgets = require('./src/widgets');
-const initTests = require('./src/tests');
+// const addCalendarAndEventAsClassroom = require('./src/calendar');
+// const initTests = require('./src/tests');
 
 async function events(isInstalled) {
   const config = {
@@ -98,9 +98,12 @@ async function events(isInstalled) {
       [
         'plugins.leebrary:pluginDidLoadServices',
         'providers.leebrary-aws-s3:providerDidLoadServices',
+        'plugins.mvp-template:init-profiles',
+        'plugins.mvp-template:init-users',
       ],
       async () => {
         await addAWSS3AsProvider();
+        await initLibrary(config);
       }
     );
 
