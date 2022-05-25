@@ -79,7 +79,6 @@ module.exports = {
         errorMessages: {
           name: { required: 'Field required' },
           tagline: { required: 'Required field' },
-          description: { required: 'Required field' },
         },
       },
       configData: {
@@ -134,26 +133,16 @@ module.exports = {
           recommendedDuration: 'Recommended duration',
           statement: 'Statement',
           development: 'Development',
-          objectives: 'Objectives',
+          objectives: 'Custom objectives',
           curriculum: 'Curriculum',
           content: 'Content',
           assessmentCriteria: 'Assessment criteria',
+          addFromCurriculum: 'Add from curriculum',
           buttonNext: 'Next',
           buttonPrev: 'Previous',
-          selfReflection: {
-            title: 'Self reflection',
-            description: 'Description',
-            id: 'WIP: Id of the test',
-            mandatory: 'Mandatory to fill the task',
-          },
-          feedback: {
-            title: 'Feedback',
-            description: 'Description',
-            id: 'WIP: Id of the test',
-            mandatory: 'Mandatory to fill the task',
-          },
           submission: {
-            title: 'This task is comppleted with the submission of a paper or activity',
+            title: 'Submission',
+            checkDescription: 'This task requires the submission of a file, document or link.',
             type: 'Type of submission',
             types: {
               file: 'File',
@@ -168,14 +157,7 @@ module.exports = {
             },
           },
         },
-        descriptions: {
-          selfReflection: 'Add a space for the student to reflect on what he/she has learned.',
-          feedback: 'Ask the student for a quick evaluation of this exercise.',
-        },
         errorMessages: {
-          methodology: { required: 'Required field' },
-          recommendedDuration: { required: 'Required field' },
-          development: { required: 'Required field' },
           statement: { required: 'Required field' },
         },
       },
@@ -193,10 +175,6 @@ module.exports = {
           forTeacher: 'Help other teachers approach this exercise with a few simple instructions.',
           forStudent:
             'Here you can include extra information to help the student perform the exercise better.',
-        },
-        errorMessages: {
-          forTeacher: { required: 'Required field' },
-          forStudent: { required: 'Required field' },
         },
       },
       publishData: {
@@ -306,6 +284,7 @@ module.exports = {
   history_page: {
     page_title: 'History',
   },
+  // FROM HERE TO BOTTOM EVERYTHING NEW
   teacher_assignments: {
     table: {
       headers: {

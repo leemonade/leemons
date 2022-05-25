@@ -80,7 +80,6 @@ module.exports = {
         errorMessages: {
           name: { required: 'Campo necesario' },
           tagline: { required: 'Campo necesario' },
-          description: { required: 'Campo necesario' },
         },
       },
       configData: {
@@ -124,17 +123,37 @@ module.exports = {
         step_label: 'Contenido',
         labels: {
           title: 'Contenido',
+          subjects: 'Curriculum por asignatura', // NEW
           methodology: 'Metodología',
           recommendedDuration: 'Duración recomendada',
           statement: 'Enunciado',
           development: 'Desarrollo',
+          content: 'Contenidos', // NEW
+          assessmentCriteria: 'Criterios de evaluación', // NEW
+          objectives: 'Objetivos personalizados', // NEW
+          addFromCurriculum: 'Añadir del curriculum', // NEW
           buttonNext: 'Siguiente',
           buttonPrev: 'Anterior',
+          submission: {
+            // EVERYTHING NEW
+            title: 'Entregables',
+            checkDescription:
+              'Esta tarea require la entrega de algún tipo de archivo, documento o enlace',
+            type: 'Tipo de entrega',
+            types: {
+              file: 'Archivo',
+              link: 'Enlace',
+            },
+            description: 'Descripción',
+            FileType: {
+              multiFile: 'Permitir varios archivos',
+              type: 'Tipo de archivo',
+              typePlaceholder: 'Añadir tipo de archivo',
+              maxSize: 'Tamaño máximo',
+            },
+          },
         },
         errorMessages: {
-          methodology: { required: 'Campo necesario' },
-          recommendedDuration: { required: 'Campo necesario' },
-          development: { required: 'Campo necesario' },
           statement: { required: 'Campo necesario' },
         },
       },
@@ -152,10 +171,6 @@ module.exports = {
           forTeacher:
             'Ayuda a otros profesores a abordar este ejercicio con unas sencillas instrucciones.',
           forStudent: 'Información extra para ayudar al alumno a realizar mejor el ejercicio.',
-        },
-        errorMessages: {
-          forTeacher: { required: 'Campo necesario' },
-          forStudent: { required: 'Campo necesario' },
         },
       },
       publishData: {
@@ -268,6 +283,7 @@ module.exports = {
   history_page: {
     page_title: 'Tareas finalizadas',
   },
+  // FROM HERE TO BOTTOM EVERYTHING NEW
   teacher_assignments: {
     table: {
       headers: {
