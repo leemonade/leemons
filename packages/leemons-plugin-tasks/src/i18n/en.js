@@ -49,6 +49,8 @@ module.exports = {
   },
   library_page: {
     page_title: 'Task Library',
+    published: 'Publicado',
+    draft: 'Borrador',
   },
   task_setup_page: {
     title: 'Create new task',

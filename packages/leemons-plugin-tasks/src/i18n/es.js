@@ -52,6 +52,8 @@ module.exports = {
   },
   library_page: {
     page_title: 'Biblioteca de Tareas',
+    published: 'Publicado',
+    draft: 'Borrador',
   },
   task_setup_page: {
     title: 'Crear nueva tarea',

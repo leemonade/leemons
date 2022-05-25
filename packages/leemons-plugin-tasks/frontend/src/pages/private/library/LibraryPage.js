@@ -47,6 +47,8 @@ export default function LibraryPage() {
   const headerLabels = useMemo(
     () => ({
       title: t('page_title'),
+      published: t('published'),
+      draft: t('draft'),
     }),
     [t]
   );
@@ -69,7 +71,7 @@ export default function LibraryPage() {
 
       <Tabs usePageLayout={true} panelColor="solid" fullHeight>
         {/* TRANSLATE: Published tab */}
-        <TabPanel label="Published">
+        <TabPanel label={headerLabels.published}>
           <Box className={classes.tabPane}>
             <AssetList
               canShowPublicToggle={false}
@@ -82,7 +84,7 @@ export default function LibraryPage() {
           </Box>
         </TabPanel>
         {/* TRANSLATE: Draft tab */}
-        <TabPanel label="Draft">
+        <TabPanel label={headerLabels.draft}>
           <Box className={classes.tabPane}>
             <AssetList
               canShowPublicToggle={false}
