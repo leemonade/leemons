@@ -358,7 +358,9 @@ export default function StudentInstance() {
       </Box>
       <Box className={classes.mainContent}>
         <Box className={classes.verticalStepper}>
-          <VerticalStepper {...verticalStepperProps} currentStep={store.currentStep} />
+          <Box className={classes.verticalStepperContent}>
+            <VerticalStepper {...verticalStepperProps} currentStep={store.currentStep} />
+          </Box>
         </Box>
         <Box className={classes.pages}>
           {verticalStepperProps.data[store.currentStep]

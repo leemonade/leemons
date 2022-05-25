@@ -98,6 +98,7 @@ const categories = [
     key: CATEGORIES.BOOKMARKS,
     creatable: true,
     provider: 'leebrary',
+    canUse: '*',
     menu: {
       item: {
         iconSvg: '/public/leebrary/bookmarks.svg',

@@ -15,7 +15,7 @@ import { SelectCenter } from '@users/components/SelectCenter';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { useQuery, useStore } from '@common';
-import { find, forEach, isArray, isUndefined, map, omitBy } from 'lodash';
+import { cloneDeep, find, forEach, isArray, isUndefined, map, omitBy } from 'lodash';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import SelectUserAgent from '@users/components/SelectUserAgent';
@@ -448,7 +448,7 @@ export default function TreePage() {
   }
 
   function selectClass(classId) {
-    const item = store.editingItem || store.newItem;
+    const item = cloneDeep(store.editingItem || store.newItem);
     item.value = find(store.classesBySubject[item.value.subject?.id], {
       id: classId,
     });

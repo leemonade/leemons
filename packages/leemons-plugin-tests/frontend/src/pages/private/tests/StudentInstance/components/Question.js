@@ -21,8 +21,14 @@ export default function Question(props) {
       render();
     }
   }, [index]);
+
+  let className = cx(classes.loremIpsum, classes.limitedWidthStep);
+  if (store.embedded) {
+    className = cx(className, classes.loremIpsumEmbedded);
+  }
+
   return (
-    <Box className={cx(classes.loremIpsum, classes.limitedWidthStep)}>
+    <Box className={className}>
       <QuestionHeader {...props} />
       <QuestionValue {...props} />
       {child}

@@ -14,6 +14,10 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
     backgroundColor: isFirstStep ? theme.colors.uiBackground01 : theme.colors.uiBackground02,
   },
   verticalStepper: { width: 232, backgroundColor: theme.colors.uiBackground01 },
+  verticalStepperContent: {
+    position: 'relative',
+    zIndex: 1,
+  },
   pages: {
     flex: 1,
     display: 'flex',
@@ -23,6 +27,11 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
     paddingLeft: theme.spacing[10],
     paddingRight: theme.spacing[10],
     width: '100%',
+  },
+  loremIpsumEmbedded: {
+    paddingLeft: theme.spacing[0],
+    paddingRight: theme.spacing[0],
+    maxWidth: '100%',
   },
   resources: {
     padding: 16,

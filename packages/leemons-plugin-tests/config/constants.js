@@ -133,7 +133,7 @@ const assignableRoles = [
     options: {
       teacherDetailUrl: '/private/tests/detail/:id',
       studentDetailUrl: '/private/tests/student/:id/:user',
-      evaluationDetailUrl: '/',
+      evaluationDetailUrl: '/private/tests/result/:id/:user',
       creatable: true,
       createUrl: '/private/tests/new',
       canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
