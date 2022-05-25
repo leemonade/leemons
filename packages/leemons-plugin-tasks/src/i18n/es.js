@@ -291,4 +291,67 @@ module.exports = {
     assign: 'Asignar',
     delete: 'Eliminar',
   },
+  task_realization: {
+    buttons: {
+      previous: 'Anterior',
+      next: 'Siguiente',
+      finish: 'Entregar',
+      save: 'Guardar',
+    },
+    sidebar: {
+      resources: 'Recursos',
+      team: 'Tu equipo',
+    },
+    steps: {
+      statement: 'Enunciado',
+      development: 'Desarrollo',
+      submission: 'Entrega',
+    },
+    statement_step: {
+      statement: 'Enunciado',
+      curriculum: {
+        title: 'Curriculum',
+        content: 'Contenido',
+        objectives: 'Objetivos personalizados',
+        assessmentCriteria: 'Criterios de evaluación',
+      },
+    },
+    development_step: {
+      development: 'Desarrollo',
+    },
+    submission_step: {
+      submission_type: {
+        file: {
+          uploadTitle: 'Click para buscar archivo',
+          uploadSubtitle: 'O arrastra el archivo aquí',
+          errorMessage: {
+            title: 'Error',
+            message: 'El archivo ha sido rechazado',
+          },
+          errorAlert: 'El archivo {{fileName}} ha sido rechazado: {{error}}',
+          upload: 'Subir',
+        },
+        link: {},
+      },
+      submission_state: {
+        error: {
+          title: 'Error',
+          message: 'No se han podido guardar los cambios: {{error}}',
+        },
+        loading: {
+          title: 'Guardando',
+          message: 'Guardando los cambios...',
+        },
+        submitted: {
+          title: 'Entregado',
+          message: 'Tarea entregada con éxito',
+        },
+        notSubmitted: {
+          title: 'No entregado',
+          message: 'Todavía no se ha entregado la tarea',
+        },
+      },
+      submission: 'Entrega',
+    },
+  },
 };

@@ -8,21 +8,16 @@ import { useApi } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import handleDeliverySubmission from './handleDeliverySubmission';
 
-function TaggedText({ tag, text }) {
-  return (
-    <Stack>
-      <Text strong>{tag}:&nbsp;</Text>
-      <Text>{text}</Text>
-    </Stack>
-  );
-}
+export default function File({
+  assignation,
+  onLoading,
+  onSubmit,
+  onError,
+  value,
+  labels: _labels,
+}) {
+  const labels = _labels?.submission_type?.file;
 
-TaggedText.propTypes = {
-  tag: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
-};
-
-export default function File({ assignation, onLoading, onSubmit, onError, value }) {
   const [categories] = useApi(listCategoriesRequest);
   const category = (categories || [])?.find(({ key }) => key === 'media-files')?.id;
 
@@ -75,9 +70,12 @@ export default function File({ assignation, onLoading, onSubmit, onError, value 
     <>
       <FileUpload
         icon={<CloudUploadIcon height={32} width={32} />}
-        title="Click to browse your file"
-        subtitle="or drop here a file from your computer"
-        errorMessage={{ title: 'Error', message: 'File was rejected' }}
+        title={labels?.uploadTitle}
+        subtitle={labels?.uploadSubtitle}
+        errorMessage={{
+          title: labels?.errorMessage?.title,
+          message: labels?.errorMessage?.message,
+        }}
         hideUploadButton
         multipleUpload={fileData?.multipleFiles}
         single={!fileData?.multipleFiles}
@@ -87,11 +85,11 @@ export default function File({ assignation, onLoading, onSubmit, onError, value 
         }}
         onReject={(allErrors) => {
           allErrors.forEach((error) => {
-            addErrorAlert(
-              `File ${error.file.name} was rejected: ${error?.errors
-                ?.map((e) => e.message)
-                .join(', ')}`
-            );
+            const errorMessage = labels?.errorAlert
+              ?.replace('{{fileName}}', error.file.name)
+              .replace('{{error}}', error?.errors?.map((e) => e.message).join(', '));
+
+            addErrorAlert(errorMessage);
           });
         }}
         // inputWrapperProps={{ error: errors.file }}
@@ -100,7 +98,7 @@ export default function File({ assignation, onLoading, onSubmit, onError, value 
         // {...field}
       />
       <Stack>
-        <Button onClick={handleSubmit}>Upload</Button>
+        <Button onClick={handleSubmit}>{labels?.upload}</Button>
       </Stack>
     </>
   );

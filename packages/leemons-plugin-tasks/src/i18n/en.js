@@ -329,4 +329,16 @@ module.exports = {
     assign: 'Assign',
     delete: 'Delete',
   },
+  task_realization: {
+    buttons: {
+      previous: 'Previous',
+      next: 'Next',
+      finish: 'Finish',
+      save: 'Save',
+    },
+    sidebar: {
+      resources: 'Recursos',
+      team: 'Tu equipo',
+    },
+  },
 };

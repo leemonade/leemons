@@ -78,27 +78,27 @@ function useAssignmentsColumns() {
 
     return [
       {
-        Header: labels.task,
+        Header: labels.task || '',
         accessor: 'assignable.asset.name',
       },
       {
-        Header: labels.subject,
+        Header: labels.subject || '',
         accessor: 'subject',
       },
       {
-        Header: labels?.start,
+        Header: labels?.start || '',
         accessor: 'parsedDates.start',
       },
       {
-        Header: labels.deadline,
+        Header: labels.deadline || '',
         accessor: 'parsedDates.deadline',
       },
       {
-        Header: labels.status,
+        Header: labels.status || '',
         accessor: 'status',
       },
       {
-        Header: labels.timeReference,
+        Header: labels.timeReference || '',
         accessor: 'timeReference',
       },
       {
