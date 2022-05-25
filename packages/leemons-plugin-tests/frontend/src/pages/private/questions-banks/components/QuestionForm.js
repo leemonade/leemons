@@ -100,26 +100,28 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
         {type ? (
           <>
             <ContextContainer direction="row">
-              <Controller
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <Select
-                    data={categoryData}
-                    error={form.formState.errors.category}
-                    label={t('categoryLabel')}
-                    {...field}
-                    onChange={(e) => {
-                      const item = categoryData[e];
-                      if (item) {
-                        field.onChange(item.value);
-                      } else {
-                        field.onChange(e);
-                      }
-                    }}
-                  />
-                )}
-              />
+              {categoryData && categoryData.length ? (
+                <Controller
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <Select
+                      data={categoryData}
+                      error={form.formState.errors.category}
+                      label={t('categoryLabel')}
+                      {...field}
+                      onChange={(e) => {
+                        const item = categoryData[e];
+                        if (item) {
+                          field.onChange(item.value);
+                        } else {
+                          field.onChange(e);
+                        }
+                      }}
+                    />
+                  )}
+                />
+              ) : null}
 
               <Controller
                 control={form.control}

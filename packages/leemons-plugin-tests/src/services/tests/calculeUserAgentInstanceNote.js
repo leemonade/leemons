@@ -73,8 +73,7 @@ async function calculeUserAgentInstanceNote(
           status: 'ko',
         };
       }
-    }
-    if (question.type === 'map') {
+    } else if (question.type === 'map') {
       if (questionResponses[question.id]?.properties?.responses) {
         let allWithValues = true;
         let allValuesGood = true;
