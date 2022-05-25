@@ -28,7 +28,7 @@ export function CurriculumTab({ store, render, t }) {
     <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
       <Box sx={(theme) => ({ marginBottom: theme.spacing[2] })}>
         <Grid columns={100}>
-          <Col span={30}>
+          <Col span={33}>
             <Stack fullWidth alignItems="center" justifyContent="space-between">
               <Title order={6}>{t('selectFromCurriculum')}</Title>
               <Button variant="link" onClick={clearAll}>
@@ -36,14 +36,14 @@ export function CurriculumTab({ store, render, t }) {
               </Button>
             </Stack>
           </Col>
-          <Col span={70}></Col>
+          <Col span={67}></Col>
         </Grid>
       </Box>
       <Grid columns={100}>
-        <Col span={30}>
+        <Col span={33}>
           <Tree rootId={0} treeData={store.treeData} onSelect={onSelect} />
         </Col>
-        <Col span={70}>
+        <Col span={67}>
           {store.selectedNode
             ? store.selectedNode._formProperties.map((prop, i) => (
                 <CurriculumProp key={i} store={store} render={render} item={prop} />

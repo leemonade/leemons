@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { find, isEmpty, isFunction, isNil, isString } from 'lodash';
 import {
@@ -111,6 +111,7 @@ const AssetList = ({
   const [searchDebounced] = useDebouncedValue(searchCriteria, 300);
   const session = useSession();
   const locale = getLocale(session);
+  const loadingRef = useRef({ firstTime: false, loading: false });
 
   // ·········································································
   // DATA PROCESSING
@@ -141,49 +142,71 @@ const AssetList = ({
     }
   };
 
-  const loadAssets = async (categoryId, criteria = '', type = '') => {
-    // console.log('loadAssets > categoryId:', categoryId);
-    try {
-      setLoading(true);
-      setAsset(null);
-      const response = await getAssetsRequest({
-        category: categoryId,
-        criteria,
-        type,
-        published,
-        showPublic: !pinned ? showPublic : true,
-        pinned,
-      });
-      console.log(response);
-      // console.log('assets:', response.assets);
-      setAssets(response?.assets || []);
-      // setTimeout(() => setLoading(false), 500);
-    } catch (err) {
+  const clearAssetLoading = () => {
+    setTimeout(() => {
       setLoading(false);
-      addErrorAlert(getErrorMessage(err));
+      loadingRef.current.loading = false;
+      // console.log('Ahora está permitido cargar Assets!!');
+    }, 500);
+  };
+
+  const loadAssets = async (categoryId, criteria = '', type = '') => {
+    if (!loadingRef.current.loading || loadingRef.current.firstTime) {
+      loadingRef.current.loading = true;
+      loadingRef.current.firstTime = false;
+
+      setLoading(true);
+      // console.log('Pasamos por aquí!!');
+      try {
+        setAsset(null);
+        const query = {
+          category: categoryId,
+          criteria,
+          type,
+          published,
+          showPublic: !pinned ? showPublic : true,
+          pinned,
+        };
+        // console.log('query:', query);
+        const response = await getAssetsRequest(query);
+        const results = response?.assets || [];
+        // console.log('results:', results)
+        setAssets(results);
+
+        if (isEmpty(results)) {
+          setServerData([]);
+          clearAssetLoading();
+        }
+      } catch (err) {
+        clearAssetLoading();
+        addErrorAlert(getErrorMessage(err));
+      }
     }
   };
 
   const loadAssetsData = async () => {
-    // console.log('loadAssetsData');
-    try {
+    if (assets && !isEmpty(assets)) {
       setLoading(true);
-      if (!isEmpty(assets)) {
-        const paginated = getPageItems({ data: assets, page: page - 1, size });
-        const assetIds = paginated.items.map((item) => item.asset);
-        const response = await getAssetsByIdsRequest(assetIds, {
-          published,
-          showPublic: !pinned ? showPublic : true,
-        });
-        paginated.items = response.assets || [];
-        setServerData(paginated);
-      } else {
-        setServerData([]);
+
+      try {
+        if (!isEmpty(assets)) {
+          const paginated = getPageItems({ data: assets, page: page - 1, size });
+          const assetIds = paginated.items.map((item) => item.asset);
+          const response = await getAssetsByIdsRequest(assetIds, {
+            published,
+            showPublic: !pinned ? showPublic : true,
+          });
+          paginated.items = response.assets || [];
+          setServerData(paginated);
+        } else {
+          setServerData([]);
+        }
+
+        clearAssetLoading();
+      } catch (err) {
+        clearAssetLoading();
+        addErrorAlert(getErrorMessage(err));
       }
-      setTimeout(() => setLoading(false), 500);
-    } catch (err) {
-      setLoading(false);
-      addErrorAlert(getErrorMessage(err));
     }
   };
 
@@ -320,16 +343,16 @@ const AssetList = ({
   useEffect(() => {
     if (isFunction(onSearch)) {
       onSearch(searchDebounced);
-    } else {
+    } else if (!isEmpty(category?.id) || pinned) {
       loadAssets(category.id, searchDebounced, assetType);
     }
-  }, [searchDebounced]);
+  }, [searchDebounced, category, pinned, assetType]);
 
   useEffect(() => {
     if (!isEmpty(category?.id) || pinned) {
       loadAssets(category.id, searchProp, assetType);
     }
-  }, [searchProp, category, assetType, showPublic, pinned]);
+  }, [searchProp, category, assetType, showPublic, pinned, published]);
 
   // ·········································································
   // HANDLERS

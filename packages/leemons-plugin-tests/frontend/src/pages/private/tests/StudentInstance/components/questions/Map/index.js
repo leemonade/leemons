@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { find, forEach, isNumber } from 'lodash';
-import { Alert, Box } from '@bubbles-ui/components';
+import { Alert, Box, HtmlText, Text } from '@bubbles-ui/components';
 import QuestionTitle from '../../QuestionTitle';
 import QuestionNoteClues from '../../QuestionNoteClues';
 import { ButtonNavigation } from '../../ButtonNavigation';
@@ -10,9 +10,10 @@ import { QuestionImage } from '../../../../../../../components/QuestionImage';
 import Responses from './Responses';
 import { getQuestionClues } from '../../../helpers/getQuestionClues';
 import QuestionNotResponsedWarning from '../../QuestionNotResponsedWarning';
+import { htmlToText } from '../../../helpers/htmlToText';
 
 export default function Index(props) {
-  const { styles, saveQuestion, store, question, t, isLast } = props;
+  const { styles, saveQuestion, store, question, t, isLast, cx } = props;
 
   const currentResponses = store.questionResponses[question.id].properties?.responses || [];
 
@@ -49,8 +50,11 @@ export default function Index(props) {
   }
 
   let showNotResponsedWarning = false;
+  let explanation = null;
   if (store.viewMode) {
     showNotResponsedWarning = !allWithValues;
+    const text = htmlToText(question.properties.explanation);
+    if (text) explanation = question.properties.explanation;
   }
 
   return (
@@ -71,6 +75,18 @@ export default function Index(props) {
             clue={clue}
           />
         </Box>
+
+        {explanation ? (
+          <Box className={cx(styles.textExplanation, styles.textExplanationRemovePadding)}>
+            <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
+              <Text role="productive" size="xs" color="primary">
+                {t('explanation').toUpperCase()}
+              </Text>
+            </Box>
+            <HtmlText>{explanation}</HtmlText>
+          </Box>
+        ) : null}
+
         <Responses {...props} />
       </Box>
 

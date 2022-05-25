@@ -154,7 +154,7 @@ function CalendarSimpleEventModal({ event, eventTypes, close, config, calendars 
 
   return (
     <div style={{ width: '400px' }} className="p-4">
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
         <TextInput
           label={t('title')}
           error={_.get(errors, `title`)}

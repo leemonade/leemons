@@ -48,7 +48,7 @@ const TreeGroupDetail = ({
 
   return (
     <Box>
-      <form onSubmit={handleSubmit(onSave)}>
+      <form onSubmit={handleSubmit(onSave)} autoComplete="off">
         <ContextContainer direction="column" fullWidth>
           <Title order={4}>
             {/* eslint-disable-next-line no-nested-ternary */}

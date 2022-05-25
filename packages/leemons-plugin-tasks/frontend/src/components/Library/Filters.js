@@ -48,7 +48,7 @@ export default function Filters({ onChange }) {
           {show && (
             <PageContainer>
               <FormProvider {...form}>
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
                   <Stack spacing={5} direction="row" alignItems={'end'}>
                     {/* TRANSLATE: Methodology labels on Filters */}
                     <Methodology

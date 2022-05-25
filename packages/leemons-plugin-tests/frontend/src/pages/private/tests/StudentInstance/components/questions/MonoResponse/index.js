@@ -22,7 +22,7 @@ export default function Index(props) {
 
   let showNotResponsedWarning = false;
   if (store.viewMode) {
-    showNotResponsedWarning = !isNumber(store.questionResponses[question.id]?.properties?.response);
+    showNotResponsedWarning = store.questionResponses[question.id].status === null;
   }
 
   return (

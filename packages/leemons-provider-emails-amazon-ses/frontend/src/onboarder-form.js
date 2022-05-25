@@ -10,7 +10,7 @@ export default function OnboarderFormAmazonSes({ onSubmit, onTest }) {
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
         <div>
           <div>
             <label>Nombre</label>

@@ -33,6 +33,7 @@ export default function FileUploader() {
           },
         });
       })}
+      autoComplete="off"
     >
       <Controller
         control={control}

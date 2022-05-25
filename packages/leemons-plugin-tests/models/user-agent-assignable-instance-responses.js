@@ -29,6 +29,13 @@ module.exports = {
     clues: {
       type: 'integer',
     },
+    // ok | ko | null
+    status: {
+      type: 'string',
+    },
+    points: {
+      type: 'float',
+    },
     properties: {
       type: 'json',
     },

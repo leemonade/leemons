@@ -26,8 +26,7 @@ import {
   setQuestionResponseRequest,
 } from '../../../../request';
 import { calculeInfoValues } from './helpers/calculeInfoValues';
-import Question from './components/Question';
-import { htmlToText } from './helpers/htmlToText';
+import QuestionList from './components/QuestionList';
 
 export default function StudentInstance() {
   const [t, translations] = useTranslateLoader(prefixPN('studentInstance'));
@@ -93,40 +92,6 @@ export default function StudentInstance() {
     }
   }
 
-  async function finishTest() {
-    store.showFinishModal = false;
-    const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
-    store.timestamps = timestamps;
-    render();
-    history.push(`/private/dashboard`);
-  }
-
-  async function forceFinishTest() {
-    store.showForceFinishModal = true;
-    const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
-    store.timestamps = timestamps;
-    render();
-  }
-
-  function goToStep(step) {
-    if (step <= store.maxNavigatedStep) {
-      store.currentStep = step;
-      render();
-    }
-  }
-
-  async function saveQuestion(question) {
-    try {
-      await setQuestionResponseRequest({
-        instance: store.instance.id,
-        question,
-        ...store.questionResponses[question],
-      });
-    } catch (error) {
-      addErrorAlert(error);
-    }
-  }
-
   async function init() {
     try {
       [store.instance, store.assignation] = await Promise.all([
@@ -169,6 +134,49 @@ export default function StudentInstance() {
       render();
     } catch (error) {
       console.log(error);
+      addErrorAlert(error);
+    }
+  }
+
+  async function finishTest() {
+    store.showFinishModal = false;
+    const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
+    store.timestamps = timestamps;
+
+    store.loading = true;
+    store.idLoaded = '';
+    store.isFirstStep = true;
+    store.currentStep = 0;
+    store.maxNavigatedStep = 0;
+    store.viewMode = false;
+    render();
+    init();
+
+    // history.push(`/private/dashboard`);
+  }
+
+  async function forceFinishTest() {
+    store.showForceFinishModal = true;
+    const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
+    store.timestamps = timestamps;
+    render();
+  }
+
+  function goToStep(step) {
+    if (step <= store.maxNavigatedStep) {
+      store.currentStep = step;
+      render();
+    }
+  }
+
+  async function saveQuestion(question) {
+    try {
+      await setQuestionResponseRequest({
+        instance: store.instance.id,
+        question,
+        ...store.questionResponses[question],
+      });
+    } catch (error) {
       addErrorAlert(error);
     }
   }
@@ -296,30 +304,23 @@ export default function StudentInstance() {
         component: <Development {...commonProps} {...testProps} />,
       });
 
+      steps.push({
+        label: t('questions'),
+        status: 'OK',
+        component: (
+          <QuestionList
+            {...commonProps}
+            {...testProps}
+            nextStep={nextStep}
+            finishStep={finishStep}
+            saveQuestion={saveQuestion}
+          />
+        ),
+        isQuestion: true,
+      });
+
       forEach(store.questions, (question, index) => {
         const isLast = index === store.questions.length - 1;
-        steps.push({
-          label: htmlToText(question.question),
-          status: 'OK',
-          component: (
-            <Question
-              {...commonProps}
-              {...testProps}
-              nextStep={(e) => {
-                if (isLast) {
-                  finishStep(e);
-                } else {
-                  nextStep(e);
-                }
-              }}
-              question={question}
-              index={index}
-              isLast={isLast}
-              saveQuestion={() => saveQuestion(question.id)}
-            />
-          ),
-          isQuestion: true,
-        });
       });
 
       return {

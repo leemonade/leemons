@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button, ImageLoader, Text } from '@bubbles-ui/components';
+import { Box, Button, COLORS, ImageLoader, Text } from '@bubbles-ui/components';
 import { getQuestionClues } from '../helpers/getQuestionClues';
 
 export default function QuestionValue(props) {
@@ -19,6 +19,14 @@ export default function QuestionValue(props) {
     }
   }
 
+  const colorByStatus = {
+    ok: COLORS.fatic02,
+    ko: COLORS.fatic01,
+    null: null,
+  };
+
+  console.log(store.questionResponses[question.id]);
+
   return (
     <Box className={styles.questionValueContainer}>
       <Box>
@@ -28,18 +36,26 @@ export default function QuestionValue(props) {
       </Box>
       <Box style={{ display: 'flex' }}>
         {/* -- Question value -- */}
-        {!store.viewMode ? (
-          <Box className={styles.questionValueCard}>
-            <Box>
-              <Text size="md" sx={(theme) => ({ color: theme.colors.fatic02 })}>
-                {store.questionsInfo.perQuestion}
-              </Text>
-            </Box>
-            <Text size="xs" color="primary">
-              {t('pointsInTotal')}
+
+        <Box className={styles.questionValueCard}>
+          <Box>
+            <Text
+              size="md"
+              sx={(theme) => ({
+                color: store.viewMode
+                  ? colorByStatus[store.questionResponses[question.id].status]
+                  : theme.colors.fatic02,
+              })}
+            >
+              {store.viewMode
+                ? store.questionResponses[question.id].points
+                : store.questionsInfo.perQuestion}
             </Text>
           </Box>
-        ) : null}
+          <Text size="xs" color="primary">
+            {t('pointsInTotal')}
+          </Text>
+        </Box>
 
         {/* -- Question clues -- */}
         {clues.length ? (

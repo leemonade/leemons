@@ -95,7 +95,7 @@ const TreeClassDetail = ({
   return (
     <Box>
       <ContextContainer direction="column" fullWidth divided>
-        <form onSubmit={handleSubmit(onSaveSubject)}>
+        <form onSubmit={handleSubmit(onSaveSubject)} autoComplete="off">
           <ContextContainer direction="column" fullWidth>
             <Title order={4}>{messages.title}</Title>
             <Box>
