@@ -54,6 +54,7 @@ async function events(isInstalled) {
         'plugins.grades:init-permissions',
         'plugins.tasks:init-permissions',
         'plugins.tests:init-permissions',
+        'plugins.assignables:init-permissions',
       ],
       async () => {
         try {
