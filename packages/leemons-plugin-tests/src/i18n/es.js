@@ -280,4 +280,16 @@ module.exports = {
     categoriesLabel: 'Categorías',
     noRequiredQuestions: 'Las preguntas filtradas son menores que las solicitadas',
   },
+  testResult: {
+    testResult: 'Resultados del test',
+    questions: 'Preguntas',
+    test: 'Test',
+    notGradable: 'No evaluable',
+    gradable: 'Evaluable',
+    category: 'Categoría',
+    level: 'Nivel',
+    undefined: 'No definido',
+    question: 'Pregunta',
+    result: 'Resultado',
+  },
 };

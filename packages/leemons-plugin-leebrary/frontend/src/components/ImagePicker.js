@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
+import { isEmpty, isString } from 'lodash';
 import { Box, Button, ImagePreviewInput, Stack } from '@bubbles-ui/components';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '../helpers/prefixPN';
 import { AssetListDrawer } from './AssetListDrawer';
 import { AssetListModal } from './AssetListModal';
-import { prepareAsset } from '../helpers/prepareAsset';
+import { getFileUrl, prepareAsset } from '../helpers/prepareAsset';
 
 const ImagePicker = ({
   labels,
@@ -32,7 +32,9 @@ const ImagePicker = ({
     } else if (!isEmpty(valueProp) && valueProp !== asset) {
       setAsset(valueProp);
 
-      if (!isEmpty(valueProp.id) && !isEmpty(valueProp.cover)) {
+      if (isString(valueProp)) {
+        setAssetUrl(getFileUrl(valueProp));
+      } else if (!isEmpty(valueProp.id) && !isEmpty(valueProp.cover)) {
         const preparedAsset = prepareAsset(valueProp);
         setAssetUrl(preparedAsset.cover);
       } else if (!isEmpty(valueProp.name) && !isEmpty(valueProp.path)) {

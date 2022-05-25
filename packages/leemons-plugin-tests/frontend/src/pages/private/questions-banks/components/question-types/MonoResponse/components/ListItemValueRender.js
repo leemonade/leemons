@@ -14,6 +14,7 @@ export function ListItemValueRender({
   toggleHideOnHelp,
   showEye,
 }) {
+  console.log(item);
   return (
     <Box sx={() => ({ width: '100%' })}>
       <Stack fullWidth alignItems="start" justifyContent="start">

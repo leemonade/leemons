@@ -282,4 +282,16 @@ module.exports = {
     categoriesLabel: 'Categories',
     noRequiredQuestions: 'The filtered questions are fewer than those requested',
   },
+  testResult: {
+    testResult: 'Test results',
+    questions: 'Questions',
+    test: 'Test',
+    notGradable: 'Not gradable',
+    gradable: 'Gradable',
+    category: 'Category',
+    level: 'Level',
+    undefined: 'Undefined',
+    question: 'Question',
+    result: 'Result',
+  },
 };

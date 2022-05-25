@@ -4,7 +4,7 @@ import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import { EditIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
+import { EditIcon, PluginAssignmentsIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
 import { useHistory } from 'react-router-dom';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { useLayout } from '@layout/context';
@@ -75,6 +75,7 @@ const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
       }
       if (asset.providerData.published) {
         items.push({
+          icon: <PluginAssignmentsIcon />,
           children: t('assign'),
           onClick: (e) => {
             e.stopPropagation();

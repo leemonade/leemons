@@ -2,7 +2,7 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 
-async function getByIds(id, { userSession, transacting } = {}) {
+async function getByIds(id, { options, userSession, transacting } = {}) {
   const tagsService = leemons.getPlugin('common').services.tags;
   const assetService = leemons.getPlugin('leebrary').services.assets;
   const questions = await table.questions.find(
@@ -56,6 +56,18 @@ async function getByIds(id, { userSession, transacting } = {}) {
       });
     }
   });
+
+  if (options?.categories) {
+    const categoryIds = _.map(questions, 'category');
+    const categories = await table.questionBankCategories.find(
+      { id_$in: categoryIds },
+      { transacting }
+    );
+    const categoriesById = _.keyBy(categories, 'id');
+    _.forEach(questions, (question) => {
+      question.category = categoriesById[question.category];
+    });
+  }
 
   return questions;
 }

@@ -32,7 +32,7 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
 
       await leemons.events.emit('after-remove-classes-teachers', {
         classTeachers,
-        classIds,
+        classIds: _.isArray(classIds) ? classIds : [classIds],
         soft,
         transacting,
       });
