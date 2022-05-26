@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Button, Col, Grid, Stack, Title, Tree } from '@bubbles-ui/components';
-import { find, values } from 'lodash';
+import { find, forIn } from 'lodash';
 import { CurriculumProp } from './CurriculumProp';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -13,9 +13,17 @@ export function CurriculumTab({ store, render, t }) {
       ...node,
       _nodeLevel: find(store.curriculum.nodeLevels, { id: node.nodeLevel }),
     };
-    store.selectedNode._formProperties = store.selectedNode._nodeLevel?.schema?.compileJsonSchema
-      ? values(store.selectedNode._nodeLevel.schema.compileJsonSchema.properties)
-      : [];
+
+    store.selectedNode._formProperties = [];
+    if (store.selectedNode._nodeLevel?.schema?.compileJsonSchema) {
+      forIn(store.selectedNode._nodeLevel.schema.compileJsonSchema.properties, (value, key) => {
+        store.selectedNode._formProperties.push({
+          ...value,
+          id: key,
+        });
+      });
+    }
+
     render();
   }
 

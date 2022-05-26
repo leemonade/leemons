@@ -33,9 +33,7 @@ export default function Development(props) {
           textAlign: 'center',
         })}
       >
-        {store.instance.assignable.asset.tagline ? (
-          <Title order={2}>{store.instance.assignable.asset.tagline}</Title>
-        ) : null}
+        <Title order={2}>{t('instructionsForTest')}</Title>
       </Box>
 
       <Box className={styles.resumeBoxContainer}>
