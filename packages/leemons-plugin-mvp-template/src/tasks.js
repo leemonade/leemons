@@ -16,8 +16,8 @@ async function initTasks(config) {
       tasks[key] = { ...taskData };
     }
 
-    console.log('------ TASKS ------');
-    console.dir(tasks, { depth: null });
+    // console.log('------ TASKS ------');
+    // console.dir(tasks, { depth: null });
 
     return tasks;
   } catch (err) {
