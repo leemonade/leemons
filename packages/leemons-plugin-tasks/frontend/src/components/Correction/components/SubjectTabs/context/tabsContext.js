@@ -1,4 +1,5 @@
 import React, { useState, createContext } from 'react';
+import PropTypes from 'prop-types';
 
 const context = createContext();
 export default context;
@@ -26,3 +27,7 @@ export function TabProvider({ children }) {
     </Provider>
   );
 }
+
+TabProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};

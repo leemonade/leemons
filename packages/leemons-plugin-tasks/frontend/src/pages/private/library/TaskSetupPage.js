@@ -280,7 +280,7 @@ export default function TaskSetupPage() {
         values={headerLabels}
         buttons={{
           duplicate: t('common.save'),
-          edit: store.currentTask?.published === false && t('common.publish'),
+          edit: t('common.publish'),
         }}
         onDuplicate={() => {
           loading.current = 'duplicate';

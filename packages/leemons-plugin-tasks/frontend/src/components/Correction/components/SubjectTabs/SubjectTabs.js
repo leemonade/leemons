@@ -1,4 +1,5 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { useSubjects, useClassesSubjects } from '@academic-portfolio/hooks';
 import { Loader } from '@bubbles-ui/components';
@@ -43,3 +44,8 @@ export default function SubjectTabs({ assignation, children }) {
     </TabProvider>
   );
 }
+
+SubjectTabs.propTypes = {
+  assignation: PropTypes.object,
+  children: PropTypes.node,
+};

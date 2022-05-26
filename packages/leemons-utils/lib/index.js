@@ -33,6 +33,7 @@ const { withTransaction } = require('./withTransaction');
 const numberToEncodedLetter = require('./numberToEncodedLetter');
 const sqlDatetime = require('./sqlDatetime');
 const metascraper = require('./metascraper');
+const getDiff = require('./getDiff');
 
 squirrelly.helpers.define('printWithOutErrors', ({ params }) => {
   const it = params[0];
@@ -82,4 +83,5 @@ module.exports = {
   documentInfo,
   got,
   sharp,
+  getDiff,
 };

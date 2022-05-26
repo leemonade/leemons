@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
-
 import {
   Box,
   Text,
@@ -85,3 +85,12 @@ export default function Accordion({
     </ActivityAccordion>
   );
 }
+
+Accordion.propTypes = {
+  labels: PropTypes.object,
+  evaluationSystem: PropTypes.object,
+  classes: PropTypes.object,
+  scoreInputProps: PropTypes.object,
+  subject: PropTypes.string,
+  context: PropTypes.object,
+};
