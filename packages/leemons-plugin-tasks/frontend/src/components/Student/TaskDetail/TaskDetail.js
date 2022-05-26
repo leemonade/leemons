@@ -9,6 +9,7 @@ import {
   Box,
   ContextContainer,
   Button,
+  HtmlText,
 } from '@bubbles-ui/components';
 import useClassData from '@assignables/hooks/useClassData';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
@@ -16,6 +17,7 @@ import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useLayout } from '@layout/context';
 import useSteps from './helpers/useSteps';
 import TaskDetailHeader from './components/TaskDetailHeader';
 import { TaskDetailStyles } from './TaskDetail.style';
@@ -52,6 +54,7 @@ function getNextButtonLabel(step, isLastStep, labels) {
 }
 
 export default function TaskDetail({ id, student }) {
+  const { openConfirmationModal } = useLayout();
   const [assignation, error, loading] = useAssignation(id, student, true);
   const asset = assignation?.instance?.assignable?.asset;
   const coverUrl = useMemo(() => getFileUrl(asset?.cover), [asset?.cover]);
@@ -89,8 +92,19 @@ export default function TaskDetail({ id, student }) {
       }
     }
 
+    console.log('labels', labels);
     if (!isLastStep) {
       setCurrentStep(currentStep + 1);
+    } else if (steps.some((s) => s.showConfirmation)) {
+      openConfirmationModal({
+        onConfirm: async () => {
+          await updateTimestamps(assignation, 'end');
+          history.push('/private/assignables/ongoing');
+        },
+        title: labels?.confirmation_modal?.title,
+        description: <HtmlText>{labels?.confirmation_modal?.description}</HtmlText>,
+        labels: labels?.confirmation_modal?.labels,
+      })();
     } else {
       await updateTimestamps(assignation, 'end');
       history.push('/private/assignables/ongoing');

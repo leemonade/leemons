@@ -33,7 +33,7 @@ const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
     const items = [];
 
     if (asset?.id) {
-      if (asset.providerData.published) {
+      if (asset.providerData?.published) {
         items.push({
           icon: <ViewOnIcon />,
           children: t('view'),
@@ -73,7 +73,7 @@ const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
           },
         });
       }
-      if (asset.providerData.published) {
+      if (asset.providerData?.published) {
         items.push({
           icon: <PluginAssignmentsIcon />,
           children: t('assign'),

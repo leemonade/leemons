@@ -14,6 +14,8 @@ export {
   getTest as getTestRequest,
   deleteTest as deleteTestRequest,
   assignTest as assignTestRequest,
+  getFeedback as getFeedbackRequest,
+  setFeedback as setFeedbackRequest,
 } from './tests';
 
 export { getQuestionByIds as getQuestionByIdsRequest } from './questions';

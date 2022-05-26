@@ -64,6 +64,8 @@ module.exports = {
       update_done: 'Tarea actualizada con éxito',
       publish_done: 'Tarea publicada con éxito',
       no_id_error: 'No se ha provisto el id de la tarea', // NEW
+      save: 'Guardar borrador', // NEW
+      publish: 'Publicar', // NEW
     },
     setup: {
       basicData: {
@@ -312,6 +314,15 @@ module.exports = {
     delete: 'Eliminar',
   },
   task_realization: {
+    confirmation_modal: {
+      labels: {
+        confirm: 'Confirmar entrega',
+        cancel: 'Cancelar',
+      },
+      title: 'Finalizar y entregar esta tarea',
+      description:
+        '<p>Si haces click en "Confirmar entrega", tu tarea será enviada a un revisor y ya no podrás modificar el/los entregable/s seleccionado/s. Si solo deseas guardar el trabajo hecho hasta ahora, puedes cancelar esta acción y pulsar sobre "Solo guardar".</p><p>Al confirmar la entrega, el sistema te redireccionará a la sección de "Actividades en curso" dónde podrás revisar las tareas una vez sean corregidas.</p>',
+    },
     buttons: {
       previous: 'Anterior',
       next: 'Siguiente',

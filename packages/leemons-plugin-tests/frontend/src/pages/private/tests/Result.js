@@ -3,9 +3,9 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
-import { addErrorAlert } from '@layout/alert';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { find, forEach, map, uniq } from 'lodash';
-import { getCentersWithToken } from '@users/session';
+import { TextEditorInput } from '@bubbles-ui/editors';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import getAssignation from '@assignables/requests/assignations/getAssignation';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
@@ -17,20 +17,26 @@ import {
   Box,
   Button,
   ContextContainer,
+  HtmlText,
   ImageLoader,
-  PageContainer,
   ScoreFeedback,
   Stack,
   Table,
   Text,
   Title,
+  useAccordionState,
 } from '@bubbles-ui/components';
+import { ChevronRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
+
 import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
+import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
 import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
 import {
+  getFeedbackRequest,
   getQuestionByIdsRequest,
   getUserQuestionResponsesRequest,
+  setFeedbackRequest,
   setInstanceTimestampRequest,
 } from '../../../request';
 import { ResultStyles } from './Result.style';
@@ -43,8 +49,10 @@ export default function Result() {
   const { classes: styles, cx } = ResultStyles({}, { name: 'Result' });
   const [store, render] = useStore({
     loading: true,
-    useQuestionMode: true,
+    useQuestionMode: false,
   });
+
+  const [accordionState, accordionFunctions] = useAccordionState({ initialState: {} });
 
   const levels = useLevelsOfDifficulty();
   const history = useHistory();
@@ -52,23 +60,42 @@ export default function Result() {
 
   function getUserId() {
     if (params.user) return params.user;
-    return getCentersWithToken()[0].userAgentId;
+    return null;
+  }
+
+  function onChangeUser(e) {
+    if (e) {
+      history.push(`/private/tests/result/${params.id}/${e}`);
+    } else {
+      history.push(`/private/tests/result/${params.id}`);
+    }
+  }
+
+  async function getIfTeacher() {
+    const { feedback } = await getFeedbackRequest(params.id, getUserId());
+    store.isTeacher = feedback.isTeacher;
+    render();
   }
 
   async function init() {
     try {
+      store.loading = true;
+      render();
       [store.instance, store.assignation] = await Promise.all([
         getAssignableInstance({ id: params.id }),
         getAssignation({ id: params.id, user: getUserId() }),
       ]);
 
-      const [{ evaluationSystem }, { questions }, { responses }, { timestamps }] =
+      const [{ evaluationSystem }, { questions }, { responses }, { timestamps }, { feedback }] =
         await Promise.all([
           getProgramEvaluationSystemRequest(store.instance.assignable.subjects[0].program),
           getQuestionByIdsRequest(store.instance.metadata.questions, { categories: true }),
           getUserQuestionResponsesRequest(params.id, getUserId()),
           setInstanceTimestampRequest(params.id, 'open', getUserId()),
+          getFeedbackRequest(store.instance.id, getUserId()),
         ]);
+      store.isTeacher = feedback.isTeacher;
+      store.feedback = feedback.feedback;
       if (store.assignation.finished) store.viewMode = true;
       store.questionResponses = responses;
       store.questionMax = Object.keys(responses).length - 1;
@@ -92,6 +119,7 @@ export default function Result() {
       store.questions = questions;
       store.evaluationSystem = evaluationSystem;
       store.idLoaded = params.id;
+      store.userLoaded = params.user;
       store.loading = false;
 
       render();
@@ -102,7 +130,15 @@ export default function Result() {
   }
 
   React.useEffect(() => {
-    if (params?.id && store.idLoaded !== params?.id) init();
+    if (
+      params?.id &&
+      params?.user &&
+      (store.idLoaded !== params?.id || store.userLoaded !== params?.user)
+    ) {
+      init();
+    } else {
+      getIfTeacher();
+    }
   }, [params]);
 
   const graphData = React.useMemo(() => {
@@ -241,6 +277,22 @@ export default function Result() {
     [store.questions, store.questionResponses, levels]
   );
 
+  async function sendFeedback() {
+    store.feedbackError = false;
+    if (!htmlToText(store.feedback).trim()) {
+      store.feedbackError = true;
+    } else {
+      try {
+        await setFeedbackRequest(store.instance.id, getUserId(), store.feedback);
+        addSuccessAlert(t('feedbackDone'));
+      } catch (e) {
+        console.log(e);
+        addErrorAlert(e);
+      }
+    }
+    render();
+  }
+
   const accordion = [];
   if (graphData.data.length && graphData.selectables.length) {
     accordion.push(
@@ -270,51 +322,64 @@ export default function Result() {
       label={t('questions')}
       rightSection={
         <Box>
-          <Button onClick={toggleQuestionMode}>a</Button>
           <Badge label={store.questions?.length} size="md" color="stroke" closable={false} />
         </Box>
       }
       icon={
-        <Box style={{ position: 'relative', width: '23px', height: '24px' }}>
+        <Box style={{ position: 'relative', width: '22px', height: '24px' }}>
           <ImageLoader className="stroke-current" src={'/public/tests/questions-icon.svg'} />
         </Box>
       }
     >
       <Box>
         {store.useQuestionMode ? (
-          <ViewModeQuestions store={store} />
+          <ViewModeQuestions store={store} onReturn={toggleQuestionMode} />
         ) : (
-          <Table columns={tableHeaders} data={tableData} />
+          <>
+            <Box className={styles.showTestBar}>
+              <Button rounded rightIcon={<ChevronRightIcon />} onClick={toggleQuestionMode}>
+                {t('showInTests')}
+              </Button>
+            </Box>
+            <Table columns={tableHeaders} data={tableData} />
+          </>
         )}
       </Box>
     </ActivityAccordionPanel>
   );
-
-  accordion.push(
-    <ActivityAccordionPanel
-      key={2}
-      label={t('questions')}
-      rightSection={
-        <Box>
-          <Button onClick={toggleQuestionMode}>a</Button>
-          <Badge label={store.questions?.length} size="md" color="stroke" closable={false} />
-        </Box>
-      }
-      icon={
-        <Box style={{ position: 'relative', width: '24 px', height: '24px' }}>
-          <ImageLoader className="stroke-current" src={'/public/tests/feedback-for-student.svg'} />
-        </Box>
-      }
-    >
-      <Box>
-        {store.useQuestionMode ? (
-          <ViewModeQuestions store={store} />
+  if (store.isTeacher || (!store.isTeacher && store.feedback)) {
+    accordion.push(
+      <ActivityAccordionPanel
+        key={2}
+        label={t('feedbackForStudent')}
+        icon={
+          <Box style={{ position: 'relative', width: '24px', height: '24px' }}>
+            <ImageLoader src={'/public/tests/feedback-for-student.svg'} />
+          </Box>
+        }
+      >
+        {store.isTeacher ? (
+          <Box sx={(theme) => ({ padding: theme.spacing[6] })}>
+            <TextEditorInput
+              value={store.feedback}
+              error={store.feedbackError ? t('feedbackRequired') : null}
+              onChange={(e) => {
+                store.feedback = e;
+                store.feedbackError = false;
+                render();
+              }}
+            />
+          </Box>
         ) : (
-          <Table columns={tableHeaders} data={tableData} />
+          <Box sx={(theme) => ({ padding: theme.spacing[4] })}>
+            <Box className={styles.feedbackUser}>
+              <HtmlText>{store.feedback}</HtmlText>
+            </Box>
+          </Box>
         )}
-      </Box>
-    </ActivityAccordionPanel>
-  );
+      </ActivityAccordionPanel>
+    );
+  }
 
   return (
     <ContextContainer
@@ -326,43 +391,96 @@ export default function Result() {
       fullHeight
       fullWidth
     >
-      {!store.loading ? (
-        <PageContainer noFlex>
-          <Box className={styles.container}>
-            <Box className={styles.header}>
-              <Text role="productive">
-                {store.instance.gradable ? t('gradable') : t('notGradable')}{' '}
-                {store.instance.gradable ? <StarIcon /> : <CutStarIcon />}
-              </Text>
+      <Box
+        sx={(theme) => ({
+          width: '100%',
+          maxWidth: theme.breakpoints.lg,
+          paddingLeft: store.isTeacher ? 0 : theme.spacing[8],
+          paddingRight: theme.spacing[5],
+        })}
+      >
+        <Box className={styles.container}>
+          {store.isTeacher ? (
+            <Box className={styles.leftContent}>
+              <AssignableUserNavigator
+                onChange={onChangeUser}
+                value={params.user}
+                instance={store.instance || params.id}
+              />
             </Box>
-            <Box className={styles.content}>
-              <ScoreFeedback
-                calification={{
-                  minimumGrade: store.evaluationSystem.minScaleToPromote.number,
-                  grade: store.assignation.grades[0].grade,
-                  label: null,
-                }}
-              >
-                <Stack
-                  fullWidth
-                  fullHeight
-                  direction="column"
-                  justifyContent="center"
-                  style={{
-                    padding: 24,
+          ) : null}
+          {params.user && !store.loading ? (
+            <Box
+              className={cx(
+                styles.rightContent,
+                store.isTeacher ? styles.rightContentTeacher : null
+              )}
+            >
+              <Box className={styles.header}>
+                <Text role="productive">
+                  {store.instance.gradable ? t('gradable') : t('notGradable')}{' '}
+                  {store.instance.gradable ? <StarIcon /> : <CutStarIcon />}
+                </Text>
+              </Box>
+              <Box className={styles.content}>
+                <ScoreFeedback
+                  calification={{
+                    minimumGrade: store.evaluationSystem.minScaleToPromote.number,
+                    grade:
+                      store.assignation.grades[0]?.grade || store.evaluationSystem.minScale.number,
+                    label: null,
                   }}
                 >
-                  <Text size="md" role="productive" strong>
-                    Test
-                  </Text>
-                  <Title order={3}>{store.instance.assignable.asset.name}</Title>
-                </Stack>
-              </ScoreFeedback>
-              <ActivityAccordion>{accordion}</ActivityAccordion>
+                  <Stack
+                    fullWidth
+                    fullHeight
+                    direction="column"
+                    justifyContent="center"
+                    style={{
+                      padding: 24,
+                    }}
+                  >
+                    <Text size="md" role="productive" strong>
+                      Test
+                    </Text>
+                    <Title order={3}>{store.instance.assignable.asset.name}</Title>
+                  </Stack>
+                </ScoreFeedback>
+                <ActivityAccordion
+                  state={accordionState}
+                  onChange={(e) => {
+                    accordionFunctions.setState(e);
+                  }}
+                >
+                  {accordion}
+                </ActivityAccordion>
+                {store.isTeacher ? (
+                  <Box
+                    sx={(theme) => ({
+                      display: 'flex',
+                      justifyContent: 'end',
+                      marginTop: theme.spacing[4],
+                    })}
+                  >
+                    <Button
+                      onClick={() => {
+                        if (!accordionState[2]) {
+                          accordionFunctions.toggle(2);
+                        } else {
+                          sendFeedback();
+                        }
+                      }}
+                      rightIcon={<SendMessageIcon />}
+                    >
+                      {t('sendFeedback')}
+                    </Button>
+                  </Box>
+                ) : null}
+              </Box>
             </Box>
-          </Box>
-        </PageContainer>
-      ) : null}
+          ) : null}
+        </Box>
+      </Box>
     </ContextContainer>
   );
 }

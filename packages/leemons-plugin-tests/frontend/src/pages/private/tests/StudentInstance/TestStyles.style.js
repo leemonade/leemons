@@ -413,4 +413,25 @@ export const TestStyles = createStyles((theme, {}) => ({
     marginLeft: '0px !important',
     marginTop: 0,
   },
+  returnToTable: {
+    display: 'flex',
+    alignItems: 'center',
+    cursor: 'pointer',
+  },
+  questionTitleEmbedded: {
+    position: 'relative',
+    marginLeft: -theme.spacing[4],
+    marginRight: -theme.spacing[4],
+    marginTop: -theme.spacing[4],
+    padding: theme.spacing[4],
+    backgroundColor: theme.colors.ui04,
+    paddingRight: '200px',
+  },
+  questionValueCardEmbedded: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    margin: 0,
+    borderRadius: '2px 0 2px 2px',
+  },
 }));

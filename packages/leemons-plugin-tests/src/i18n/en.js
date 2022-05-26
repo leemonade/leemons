@@ -261,6 +261,7 @@ module.exports = {
     attention: 'Attention',
     correctResponse: 'Correct response',
     explanation: 'Explanation',
+    returnToTable: 'Return to table',
   },
   testAssign: {
     pageTitle: 'Assign Test:',
@@ -293,5 +294,10 @@ module.exports = {
     undefined: 'Undefined',
     question: 'Question',
     result: 'Result',
+    showInTests: 'Show in the tests',
+    feedbackForStudent: 'Feedback for student',
+    sendFeedback: 'Send feedback',
+    feedbackRequired: 'Feedback required',
+    feedbackDone: 'Feedback sent successfully',
   },
 };

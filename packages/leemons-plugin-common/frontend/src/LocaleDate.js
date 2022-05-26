@@ -77,6 +77,43 @@ export function getLocaleDuration({ seconds: secondsProp, short = false, options
     .join(' ');
 }
 
+function getNearestUnit(elapsedTime) {
+  const units = {
+    second: 1,
+    minute: 60,
+    hour: 60 * 60,
+    day: 24 * 60 * 60,
+    week: 24 * 60 * 60 * 7,
+    month: 24 * 60 * 60 * 30,
+    year: 24 * 60 * 60 * 365,
+  };
+
+  let unitToUse;
+
+  Object.entries(units).forEach(([unit, seconds]) => {
+    if (elapsedTime >= seconds) {
+      unitToUse = unit;
+    }
+  });
+
+  return { unit: unitToUse, seconds: units[unitToUse] };
+}
+
+export function LocaleRelativeTime({ seconds, short = false, options = { numeric: 'always' } }) {
+  const locale = useLocale();
+  const key = getFormatterKey(locale, { short, ...options });
+
+  if (!rFormatters[key]) {
+    rFormatters[key] = new Intl.RelativeTimeFormat([locale, 'default'], options);
+  }
+
+  const formatter = rFormatters[key];
+
+  const unit = getNearestUnit(seconds);
+
+  return formatter.format(Math.floor(seconds / unit.seconds), unit.unit);
+}
+
 export function LocaleDuration({ seconds: secondsProp, short = false, options = {} }) {
   const session = useSession();
   return getLocaleDuration({ seconds: secondsProp, short, options }, session);

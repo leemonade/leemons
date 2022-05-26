@@ -103,6 +103,18 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/tests/instance/:id/feedback/:user',
+    method: 'GET',
+    handler: 'tests.getInstanceFeedback',
+    authenticated: true,
+  },
+  {
+    path: '/tests/instance/feedback',
+    method: 'POST',
+    handler: 'tests.setInstanceFeedback',
+    authenticated: true,
+  },
+  {
     path: '/tests/instance/timestamp',
     method: 'POST',
     handler: 'tests.setInstanceTimestamp',

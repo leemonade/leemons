@@ -313,6 +313,15 @@ module.exports = {
     delete: 'Delete',
   },
   task_realization: {
+    confirmation_modal: {
+      labels: {
+        confirm: 'Confirm the submission',
+        cancel: 'Cancel',
+      },
+      title: 'Finish and submit this task',
+      description:
+        '<p>If you click on "Confirm submission", your task will be sent to a reviewer and you will not be able to modify the selected deliverables. If you only want to save the work done so far, you can cancel this action and press on "Save only".</p><p>When you confirm the submission, the system will redirect you to the "Ongoing activities" section where you can review the tasks once they are corrected.</p>',
+    },
     buttons: {
       previous: 'Previous',
       next: 'Next',
