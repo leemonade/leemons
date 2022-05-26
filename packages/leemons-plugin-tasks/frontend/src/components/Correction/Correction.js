@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useForm, FormProvider } from 'react-hook-form';
 import _ from 'lodash';
@@ -57,10 +57,34 @@ export default function Correction({ assignation }) {
     }, {});
 
     return gradesObject;
-  }, []);
+  }, [assignation.user]);
+
   const form = useForm({
     defaultValues,
   });
+
+  useEffect(() => {
+    const values = form.getValues();
+
+    if (!_.isEqual(values, defaultValues)) {
+      const emptyValues = _.mapValues(values, () => null);
+      form.reset(
+        { ...emptyValues, ...defaultValues },
+        {
+          keepDirtyValues: false,
+          keepErrors: false,
+          keepDirty: false,
+          keepValues: false,
+          keepDefaultValues: false,
+          keepIsSubmitted: false,
+          keepIsValid: false,
+          keepSubmitCount: false,
+          keepTouched: false,
+        }
+      );
+    }
+  }, [assignation.user, defaultValues]);
+
   const { handleSubmit } = form;
 
   /*
@@ -145,48 +169,37 @@ export default function Correction({ assignation }) {
   const { classes } = CorrectionStyles();
   return (
     <FormProvider {...form}>
-      <Box className={classes?.root}>
-        <Box className={classes?.aside}>
-          <Header assignation={assignation}></Header>
-        </Box>
-        <Box className={classes?.main}>
-          <Box className={classes?.mainContent}>
-            <Submission assignation={assignation} labels={labels.submission} />
-            <SubjectTabs assignation={assignation}>
-              <Accordion
-                classes={classes}
-                evaluationSystem={evaluationSystem}
-                labels={labels}
-                scoreInputProps={scoreInputProps}
-              />
-            </SubjectTabs>
-          </Box>
-          <Box className={classes?.mainButtons}>
-            <Button
-              variant="outline"
-              loading={isLoading('save')}
-              disabled={loadingButton && !isLoading('save')}
-              onClick={handleSubmit(onSave(false, 'save'))}
-            >
-              {labels?.save}
-            </Button>
-            <Button
-              loading={isLoading('saveAndSend')}
-              disabled={loadingButton && !isLoading('saveAndSend')}
-              onClick={handleSubmit(onSave(true, 'saveAndSend'))}
-            >
-              {labels?.saveAndSend}
-            </Button>
-          </Box>
-        </Box>
+      <Box className={classes?.mainContent}>
+        <Submission assignation={assignation} labels={labels.submission} />
+        <SubjectTabs assignation={assignation}>
+          <Accordion
+            classes={classes}
+            evaluationSystem={evaluationSystem}
+            labels={labels}
+            scoreInputProps={scoreInputProps}
+          />
+        </SubjectTabs>
+      </Box>
+      <Box className={classes?.mainButtons}>
+        <Button
+          variant="outline"
+          loading={isLoading('save')}
+          disabled={loadingButton && !isLoading('save')}
+          onClick={handleSubmit(onSave(false, 'save'))}
+        >
+          {labels?.save}
+        </Button>
+        <Button
+          loading={isLoading('saveAndSend')}
+          disabled={loadingButton && !isLoading('saveAndSend')}
+          onClick={handleSubmit(onSave(true, 'saveAndSend'))}
+        >
+          {labels?.saveAndSend}
+        </Button>
       </Box>
     </FormProvider>
   );
 }
-
-Correction.propTypes = {
-  assignation: PropTypes.object,
-};
 
 Header.propTypes = {
   assignation: PropTypes.object,

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
 import {
@@ -27,8 +27,23 @@ export default function Accordion({
   const state = tabsState(subject);
   const setState = updateTabState(subject);
 
+  // EN: Start with the accordion opened
+  // ES: Iniciar con el acordeón abierto
+  const initialState = useMemo(() => {
+    const defaultState = {
+      0: true,
+      1: true,
+    };
+    if (!state) {
+      setState(defaultState);
+      return defaultState;
+    }
+
+    return state;
+  }, []);
+
   return (
-    <ActivityAccordion noFlex onChange={setState} state={state}>
+    <ActivityAccordion noFlex onChange={setState} state={state || initialState}>
       <ActivityAccordionPanel
         label={labels?.punctuation}
         icon={<RatingStarIcon />}
