@@ -1,85 +1,32 @@
-const { range, keys, findIndex, trim, isEmpty } = require('lodash');
 const path = require('path');
-const getColumns = require('../helpers/getColumns');
-
-const XlsxImporter = require('../helpers/getXlsImporter')();
-
-const factory = new XlsxImporter();
-const filePath = path.resolve(__dirname, '../data.xlsx');
+const { keys, trim, isEmpty } = require('lodash');
+const itemsImport = require('../helpers/simpleListImport');
 
 async function importQbanks(programs) {
-  const importer = await factory.from(filePath);
-  const config = {
-    qbanks: {
-      worksheet: 'te_qbanks',
-      type: 'list',
-      columns: getColumns(100),
-    },
-  };
+  const filePath = path.resolve(__dirname, '../data.xlsx');
+  const items = await itemsImport(filePath, 'te_qbanks', 40, true, true);
 
-  const qbanks = importer.getAllItems(config.qbanks);
+  keys(items).forEach((key) => {
+    const qbank = items[key];
 
-  // ·····················································
-  // HEADER FIELDS
+    // Qbank program
+    const program = programs[qbank.program];
 
-  const fields = keys(qbanks[0])
-    .map((key) => qbanks[0][key])
-    .filter((val) => val !== '');
+    qbank.program = program.id;
+    qbank.subjects = (qbank.subjects || '')
+      ?.split(',')
+      .map((val) => trim(val))
+      .filter((val) => !isEmpty(val))
+      .map((subject) => program.subjects[subject]?.id);
 
-  // ·····················································
-  // QBANKS FIELDS START COLUMN INDEX
+    // Tags
+    qbank.tags = (qbank.tags || '')
+      ?.split(',')
+      .map((val) => trim(val))
+      .filter((val) => !isEmpty(val));
 
-  const fieldStartColumnOffset = 1; // first column is omitted
-  const fieldStartColumn =
-    findIndex(fields, (field) => field.indexOf('root') > -1) + fieldStartColumnOffset;
-  const fieldStopColumn = findIndex(fields, (field) => field.indexOf('program') > -1);
-
-  // ·····················································
-  // QBANK RELATIONS COLUMN INDEX
-
-  const programColumn = fieldStopColumn + 1;
-  const subjectsColumn = programColumn + 1;
-
-  // ·····················································
-  // PROFILE ITEMS START ROW INDEX
-
-  const itemsStartRowOffset = 2; // fields names and header items
-  const itemsStartRow =
-    findIndex(qbanks.slice(1), (qbank) => qbank[1] !== '') + itemsStartRowOffset;
-
-  const items = qbanks
-    .slice(itemsStartRow)
-    .map((qbank) => {
-      const item = { root: qbank[1] };
-
-      // Add qbank fields
-      range(fieldStartColumn, fieldStopColumn).forEach((index) => {
-        item[fields[index]] = qbank[fieldStartColumn + index];
-      });
-
-      // Qbank program
-      const program = programs[qbank[programColumn]];
-
-      item.program = program.id;
-      item.subjects = qbank[subjectsColumn]
-        ?.split(',')
-        .map((val) => trim(val))
-        .filter((val) => !isEmpty(val))
-        .map((subject) => program.subjects[subject]?.id);
-
-      // Tags
-      item.tags = item.tags
-        ?.split(',')
-        .map((val) => trim(val))
-        .filter((val) => !isEmpty(val));
-
-      return item;
-    })
-    .reduce((acc, item) => {
-      const { root, ...rest } = item;
-      acc[root] = rest;
-      return acc;
-    }, {});
+    items[key] = qbank;
+  });
 
   // console.dir(items, { depth: null });
   return items;
