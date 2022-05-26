@@ -18,7 +18,6 @@ function SubjectImage({ subject }) {
 
 export default function SubjectCard({ subject, corrected, selected }) {
   const { classes } = SubjectCardStyles({ corrected, selected });
-  console.log('subject', subject);
   return (
     <Box className={classes.root}>
       <Box className={classes.imageContainer}>

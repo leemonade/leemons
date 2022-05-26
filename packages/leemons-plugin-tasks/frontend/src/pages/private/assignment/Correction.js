@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import useAssignation from '@assignables/hooks/assignations/useAssignation';
 import { useParams, useHistory } from 'react-router-dom';
 import { Loader, Text, createStyles, Box } from '@bubbles-ui/components';
@@ -31,6 +31,7 @@ const styles = createStyles((theme) => ({
 }));
 
 export default function CorrectionPage() {
+  const isFirstUser = useRef(true);
   const history = useHistory();
   const { instance: instanceId } = useParams();
   let { student } = useParams();
@@ -42,8 +43,23 @@ export default function CorrectionPage() {
   const instance = useAssignableInstance(instanceId, true);
   const [assignation, error, loading] = useAssignation(
     instanceId,
-    student || instance?.students?.[0]?.user
+    student || instance?.students?.[0]?.user,
+    false
   );
+
+  const fullAssignation = useMemo(
+    () => ({
+      ...assignation,
+      instance,
+    }),
+    [assignation, instance]
+  );
+
+  useEffect(() => {
+    if (assignation && isFirstUser.current) {
+      isFirstUser.current = false;
+    }
+  }, [assignation]);
 
   const onStudentChange = (user) => {
     if (user) {
@@ -57,19 +73,20 @@ export default function CorrectionPage() {
     }
   }, [assignation?.user]);
 
-  if ((loading && !assignation) || !student) {
+  if ((isFirstUser.current && loading && !assignation) || !student) {
     return <Loader />;
   }
   if (error) {
     return <Text>Error: {error.message}</Text>;
   }
+
   return (
     <Box className={classes.root}>
       <Box className={classes.aside}>
         <AssignableUserNavigator instance={instance} onChange={onStudentChange} value={student} />
       </Box>
       <Box className={classes.main}>
-        <Correction assignation={assignation} />
+        <Correction assignation={fullAssignation} instance={instance} loading={loading} />
       </Box>
     </Box>
   );

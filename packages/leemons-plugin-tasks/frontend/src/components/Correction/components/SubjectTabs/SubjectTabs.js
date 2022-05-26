@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { useSubjects, useClassesSubjects } from '@academic-portfolio/hooks';
@@ -6,9 +6,9 @@ import { Loader } from '@bubbles-ui/components';
 import { Tabs, SubjectSelector } from './components';
 import tabContext, { TabProvider } from './context/tabsContext';
 
-export default function SubjectTabs({ assignation, children }) {
+export default function SubjectTabs({ assignation, instance, children, loading }) {
   const [activeTab, setActiveTab] = useState(null);
-  const instanceSubjects = useClassesSubjects(assignation?.instance?.classes);
+  const instanceSubjects = useClassesSubjects(instance?.classes);
   const subjectsIds = useMemo(() => _.map(instanceSubjects, 'id'), [instanceSubjects]);
   const subjects = useSubjects(subjectsIds);
 
@@ -38,9 +38,13 @@ export default function SubjectTabs({ assignation, children }) {
         currentSubject={activeTab}
         setCurrentSubject={setActiveTab}
       />
-      <Tabs tabToShow={activeTab} context={tabContext}>
-        {tabs}
-      </Tabs>
+      {loading ? (
+        <Loader />
+      ) : (
+        <Tabs tabToShow={activeTab} context={tabContext}>
+          {tabs}
+        </Tabs>
+      )}
     </TabProvider>
   );
 }
