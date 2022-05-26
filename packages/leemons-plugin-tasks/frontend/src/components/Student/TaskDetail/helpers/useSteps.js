@@ -54,6 +54,7 @@ export default function useSteps(assignation, labels) {
           ),
           sidebar: true,
           timestamps: 'start',
+          showConfirmation: true,
           onNext,
           onPrev,
           // status: 'OK',
