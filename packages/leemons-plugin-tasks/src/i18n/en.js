@@ -55,8 +55,6 @@ module.exports = {
   task_setup_page: {
     title: 'Create new task',
     edit_title: 'Edit task',
-    save_draft: 'Save draft',
-    publish: 'Publish',
     common: {
       select_center: 'Select center',
       create_done: 'Task created',

@@ -58,14 +58,14 @@ module.exports = {
   task_setup_page: {
     title: 'Crear nueva tarea',
     edit_title: 'Editar tarea',
-    save_draft: 'Guardar borrador', // NEW
-    publish: 'Publicar', // NEW
     common: {
       select_center: 'Seleccionar centro',
       create_done: 'Tarea creada con éxito',
       update_done: 'Tarea actualizada con éxito',
       publish_done: 'Tarea publicada con éxito',
       no_id_error: 'No se ha provisto el id de la tarea', // NEW
+      save: 'Guardar borrador', // NEW
+      publish: 'Publicar', // NEW
     },
     setup: {
       basicData: {
