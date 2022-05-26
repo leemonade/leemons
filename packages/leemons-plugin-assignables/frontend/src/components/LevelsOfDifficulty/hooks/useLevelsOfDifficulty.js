@@ -1,57 +1,77 @@
+import { useMemo } from 'react';
+import _ from 'lodash';
+import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '../../../helpers/prefixPN';
+
 export default function useLevelsOfDifficulty() {
-  // const levels = [
-  //   {
-  //     value: 'beginner',
-  //     label: 'Beginner',
-  //   },
-  //   {
-  //     value: 'elementary',
-  //     label: 'Elementary',
-  //   },
-  //   {
-  //     value: 'lowerIntermediate',
-  //     label: 'Lower Intermediate',
-  //   },
-  //   {
-  //     value: 'intermediate',
-  //     label: 'Intermediate',
-  //   },
-  //   {
-  //     value: 'upperIntermediate',
-  //     label: 'Upper Intermediate',
-  //   },
-  //   {
-  //     value: 'advanced',
-  //     label: 'Advanced',
-  //   },
-  // ];
+  const [, translations] = useTranslateLoader(prefixPN('levelsOfDifficulty'));
+
+  const localizations = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = _.get(res, prefixPN('levelsOfDifficulty'));
+
+      // EN: Modify the data object here
+      // ES: Modifica el objeto data aquí
+      return data;
+    }
+
+    return {};
+  }, [translations]);
 
   const levels = [
     {
       value: 'beginner',
-      label: 'Principiante',
+      label: localizations.beginner,
     },
     {
       value: 'elementary',
-      label: 'Elemental',
+      label: localizations.elementary,
     },
     {
       value: 'lowerIntermediate',
-      label: 'Intermedio bajo',
+      label: localizations.lowerIntermediate,
     },
     {
       value: 'intermediate',
-      label: 'Intermedio',
+      label: localizations.intermediate,
     },
     {
       value: 'upperIntermediate',
-      label: 'Intermedio alto',
+      label: localizations.upperIntermediate,
     },
     {
       value: 'advanced',
-      label: 'Avanzado',
+      label: localizations.advanced,
     },
   ];
+  // const levels = [
+  //   {
+  //     value: 'beginner',
+  //     label: 'Principiante',
+  //   },
+  //   {
+  //     value: 'elementary',
+  //     label: 'Elemental',
+  //   },
+  //   {
+  //     value: 'lowerIntermediate',
+  //     label: 'Intermedio bajo',
+  //   },
+  //   {
+  //     value: 'intermediate',
+  //     label: 'Intermedio',
+  //   },
+  //   {
+  //     value: 'upperIntermediate',
+  //     label: 'Intermedio alto',
+  //   },
+  //   {
+  //     value: 'advanced',
+  //     label: 'Avanzado',
+  //   },
+  // ];
 
   return levels;
 }

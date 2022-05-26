@@ -1,9 +1,13 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { Button } from '@bubbles-ui/components';
+import _ from 'lodash';
+import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '../../../../../helpers/prefixPN';
 
-function CorrectionButton({ studentData, instanceData }) {
+function CorrectionButton({ studentData, instanceData, label }) {
   const history = useHistory();
 
   const redirect = useCallback(() => {
@@ -12,16 +16,22 @@ function CorrectionButton({ studentData, instanceData }) {
     history.push(url);
   }, [studentData, instanceData]);
 
-  return <Button onClick={redirect}>Corregir</Button>;
+  return <Button onClick={redirect}>{label}</Button>;
 }
 
-export default function getActions(studentData, instanceData) {
+export default function getActions(studentData, instanceData, localizations) {
   if (studentData.finished) {
-    return <CorrectionButton studentData={studentData} instanceData={instanceData} />;
+    return (
+      <CorrectionButton
+        studentData={studentData}
+        instanceData={instanceData}
+        label={localizations.evaluate}
+      />
+    );
   }
 
   if (!studentData.timestamps?.start) {
-    return <Button>ENVIAR RECORDATORIO</Button>;
+    return <Button>{localizations.sendReminder}</Button>;
   }
   return <></>;
 }

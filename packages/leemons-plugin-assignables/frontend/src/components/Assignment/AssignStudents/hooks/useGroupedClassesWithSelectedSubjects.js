@@ -4,6 +4,7 @@ import useGroupedClasses from './useGroupedClasses';
 export default function useGroupedClassesWithSelectedSubjects(disableGrouping) {
   const form = useFormContext();
   if (!form) {
+    // TRANSLATE: This error should never happen and is a bug
     throw new Error('useGroupedClassesWithSelectedSubjects needs a FormContext');
   }
 

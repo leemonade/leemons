@@ -25,7 +25,7 @@ function useCurriculum(program) {
   return curriculum;
 }
 
-export default function Curriculum({ program, name, type, label }) {
+export default function Curriculum({ program, name, type, label, addLabel }) {
   const [show, setShow] = useState(false);
   const curriculum = useCurriculum(program);
 
@@ -59,7 +59,7 @@ export default function Curriculum({ program, name, type, label }) {
 
               <Stack>
                 <Button leftIcon={<AddCircleIcon />} variant="light" onClick={() => setShow(true)}>
-                  Add from curriculum
+                  {addLabel}
                 </Button>
               </Stack>
             </>
@@ -75,4 +75,5 @@ Curriculum.propTypes = {
   name: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
+  addLabel: PropTypes.string.isRequired,
 };

@@ -49,6 +49,8 @@ module.exports = {
   },
   library_page: {
     page_title: 'Task Library',
+    published: 'Publicado',
+    draft: 'Borrador',
   },
   task_setup_page: {
     title: 'Create new task',
@@ -79,7 +81,6 @@ module.exports = {
         errorMessages: {
           name: { required: 'Field required' },
           tagline: { required: 'Required field' },
-          description: { required: 'Required field' },
         },
       },
       configData: {
@@ -134,26 +135,18 @@ module.exports = {
           recommendedDuration: 'Recommended duration',
           statement: 'Statement',
           development: 'Development',
-          objectives: 'Objectives',
+          statementAndDevelopmentTitle: 'Statement and development',
+          objectives: 'Custom objectives',
           curriculum: 'Curriculum',
           content: 'Content',
           assessmentCriteria: 'Assessment criteria',
+          addFromCurriculum: 'Add from curriculum',
           buttonNext: 'Next',
           buttonPrev: 'Previous',
-          selfReflection: {
-            title: 'Self reflection',
-            description: 'Description',
-            id: 'WIP: Id of the test',
-            mandatory: 'Mandatory to fill the task',
-          },
-          feedback: {
-            title: 'Feedback',
-            description: 'Description',
-            id: 'WIP: Id of the test',
-            mandatory: 'Mandatory to fill the task',
-          },
+          gradable: 'Gradable',
           submission: {
-            title: 'This task is comppleted with the submission of a paper or activity',
+            title: 'Submission',
+            checkDescription: 'This task requires the submission of a file, document or link.',
             type: 'Type of submission',
             types: {
               file: 'File',
@@ -168,14 +161,7 @@ module.exports = {
             },
           },
         },
-        descriptions: {
-          selfReflection: 'Add a space for the student to reflect on what he/she has learned.',
-          feedback: 'Ask the student for a quick evaluation of this exercise.',
-        },
         errorMessages: {
-          methodology: { required: 'Required field' },
-          recommendedDuration: { required: 'Required field' },
-          development: { required: 'Required field' },
           statement: { required: 'Required field' },
         },
       },
@@ -193,10 +179,6 @@ module.exports = {
           forTeacher: 'Help other teachers approach this exercise with a few simple instructions.',
           forStudent:
             'Here you can include extra information to help the student perform the exercise better.',
-        },
-        errorMessages: {
-          forTeacher: { required: 'Required field' },
-          forStudent: { required: 'Required field' },
         },
       },
       publishData: {
@@ -306,6 +288,7 @@ module.exports = {
   history_page: {
     page_title: 'History',
   },
+  // FROM HERE TO BOTTOM EVERYTHING NEW
   teacher_assignments: {
     table: {
       headers: {
@@ -323,5 +306,91 @@ module.exports = {
   },
   tabStudentTasks: {
     label: 'Task & Activities',
+  },
+  cardMenu: {
+    edit: 'Edit',
+    assign: 'Assign',
+    delete: 'Delete',
+  },
+  task_realization: {
+    buttons: {
+      previous: 'Previous',
+      next: 'Next',
+      finish: 'Finish',
+      save: 'Save',
+    },
+    sidebar: {
+      resources: 'Resources',
+      team: 'Your team',
+    },
+    steps: {
+      statement: 'Statement',
+      development: 'Development',
+      submission: 'Submission',
+    },
+    statement_step: {
+      statement: 'Statement',
+      curriculum: {
+        title: 'Curriculum',
+        content: 'Content',
+        objectives: 'Custom objectives',
+        assessmentCriteria: 'Assessment criteria',
+      },
+    },
+    development_step: {
+      development: 'Development',
+    },
+    submission_step: {
+      submission_type: {
+        file: {
+          uploadTitle: 'Click to upload a file',
+          uploadSubtitle: 'Or drag it here',
+          errorMessage: {
+            title: 'Error',
+            message: 'The file could not be uploaded',
+          },
+          errorAlert: 'The file {{fileName}} was rejected: {{error}}',
+          upload: 'Upload',
+        },
+        link: {
+          link: 'Submission link',
+        },
+      },
+      submission_state: {
+        error: {
+          title: 'Error',
+          message: 'The changes could not be saved: {{error}}',
+        },
+        loading: {
+          title: 'Saving',
+          message: 'Saving changes...',
+        },
+        submitted: {
+          title: 'Submitted',
+          message: 'That task has been submitted',
+        },
+        notSubmitted: {
+          title: 'Not submitted',
+          message: 'That task has not been submitted yet',
+        },
+      },
+      submission: 'Submission',
+    },
+  },
+  task_correction: {
+    punctuation: 'Punctuation',
+    minToPromote: 'Min. to promote',
+    feedbackForStudent: 'Feedback for student',
+    optional: 'Optional',
+    submission: {
+      types: {
+        notFound: {
+          notFound: 'The submission type could not be found',
+        },
+        file: {
+          noSubmission: 'No submission was made yet',
+        },
+      },
+    },
   },
 };

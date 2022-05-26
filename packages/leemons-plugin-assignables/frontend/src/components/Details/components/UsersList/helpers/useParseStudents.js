@@ -1,10 +1,13 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { LocaleDate, LocaleDuration } from '@common';
+import _ from 'lodash';
+import { LocaleDate, LocaleDuration, unflatten } from '@common';
 import dayjs from 'dayjs';
 import { getUserAgentsInfoRequest } from '@users/request';
-import UserDisplay from './userDisplay';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { UserDisplayItem } from '@bubbles-ui/components';
 import getStatus from './getStatus';
 import getActions from './getActions';
+import prefixPN from '../../../../../helpers/prefixPN';
 
 function useStudentData(students) {
   const [studentsData, setStudentsData] = useState({});
@@ -30,8 +33,38 @@ function useStudentData(students) {
   return Object.values(studentsData);
 }
 
-export default function useParseStudents(instance) {
+function getStudentAverageScore(studentData) {
+  const scores = studentData.grades;
+  const mainScores = scores.filter((grade) => grade.type === 'main');
+  const scoresAvgObject = mainScores.reduce(
+    (acc, grade) => ({
+      total: acc.total + grade.grade,
+      count: acc.count + 1,
+    }),
+    { total: 0, count: 0 }
+  );
+  if (scoresAvgObject.count === 0) {
+    return '-';
+  }
+
+  return scoresAvgObject.total / scoresAvgObject.count;
+}
+
+export default function useParseStudents(instance, statusLabels) {
   const students = useStudentData(instance?.students);
+  const [, translations] = useTranslateLoader(prefixPN('teacher_actions'));
+
+  const localizations = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = _.get(res, prefixPN('teacher_actions'));
+      // EN: Modify the data object here
+      // ES: Modifica el objeto data aquí
+      return data;
+    }
+
+    return {};
+  }, [translations]);
 
   return useMemo(() => {
     if (!instance?.students?.length) {
@@ -39,8 +72,8 @@ export default function useParseStudents(instance) {
     }
     return students?.map((student) => ({
       id: student.user,
-      student: <UserDisplay {...student.userInfo} />,
-      status: getStatus(student, instance),
+      student: <UserDisplayItem {...student.userInfo} />,
+      status: statusLabels[getStatus(student, instance)],
       completed:
         (student?.timestamps?.end && (
           <LocaleDate
@@ -57,10 +90,9 @@ export default function useParseStudents(instance) {
         ) : (
           '-'
         ),
-      score: 'TBD',
-      actions: getActions(student, instance),
+      score: getStudentAverageScore(student),
+      actions: getActions(student, instance, localizations),
       userInfo: student.userInfo,
     }));
   }, [students]);
-  // return students;
 }

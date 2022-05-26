@@ -43,7 +43,7 @@ const permissions = [
   {
     permissionName: permissionNames.activities,
     actions: ['view'],
-    localizationName: { es: 'Actividaded', en: 'Activities' },
+    localizationName: { es: 'Actividades', en: 'Activities' },
   },
   {
     permissionName: permissionNames.ongoing,
@@ -74,8 +74,8 @@ const menuItems = [
       iconSvg: '/public/tasks/tasks-menu-icon.svg',
       activeIconSvg: '/public/tasks/tasks-menu-icon.svg',
       label: {
-        en: 'Activities',
-        es: 'Actividades',
+        en: 'Ongoing Activities',
+        es: 'Actividades en curso',
       },
     },
     permissions: [

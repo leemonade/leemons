@@ -7,9 +7,9 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditorInput } from '@bubbles-ui/editors';
 
 // TODO: Move to assignables
-import { prefixPN } from '@tasks/helpers/prefixPN';
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
 import TimeUnitsInput from '@tasks/components/Inputs/TimeUnitsInput';
+import prefixPN from '../../helpers/prefixPN';
 import AssignStudents from './AssignStudents';
 
 export default function Form({
@@ -37,7 +37,7 @@ export default function Form({
   useEffect(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = res.plugins.tasks.assignment_form;
+      const data = res.plugins.assignables.assignment_form;
 
       setModes(
         Object.entries(data.modes || {}).map(([key, value]) => ({
@@ -260,18 +260,18 @@ export default function Form({
                   />
                   <Controller
                     control={control}
-                    name="curriculum.objectives"
-                    shouldUnregister={true}
-                    render={({ field }) => (
-                      <Switch {...field} checked={field.value} label={labels?.objectives} />
-                    )}
-                  />
-                  <Controller
-                    control={control}
                     name="curriculum.assessmentCriteria"
                     shouldUnregister={true}
                     render={({ field }) => (
                       <Switch {...field} checked={field.value} label={labels?.assessmentCriteria} />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="curriculum.objectives"
+                    shouldUnregister={true}
+                    render={({ field }) => (
+                      <Switch {...field} checked={field.value} label={labels?.objectives} />
                     )}
                   />
                 </>

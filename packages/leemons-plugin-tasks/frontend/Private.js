@@ -17,8 +17,6 @@ const SetupTask = loadable(() =>
 const Profiles = loadable(() =>
   pMinDelay(import('./src/pages/private/profiles/ProfilesPage'), 1000)
 );
-const Ongoing = loadable(() => pMinDelay(import('./src/pages/private/ongoing/OngoingPage'), 1000));
-const History = loadable(() => pMinDelay(import('./src/pages/private/ongoing/HistoryPage'), 1000));
 const UserDetails = loadable(() => pMinDelay(import('./src/pages/private/student/Details'), 1000));
 const Correction = loadable(() =>
   pMinDelay(import('./src/pages/private/assignment/Correction'), 1000)
@@ -50,12 +48,6 @@ export default function Private() {
       </Route>
       <Route path={`${path}/library`}>
         <Library session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/ongoing`}>
-        <Ongoing session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/history`}>
-        <History session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/correction/:instance/:student`}>
         <Correction session={session} fallback={<LoadingOverlay visible />} />

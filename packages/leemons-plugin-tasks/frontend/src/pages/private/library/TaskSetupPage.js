@@ -42,7 +42,6 @@ export default function TaskSetupPage() {
       const body = {
         ...values,
         // TODO: Esto debe establecerse en el Config
-        gradable: true,
         subjects: values?.subjects?.map((subject) => ({
           ...subject,
           program,
