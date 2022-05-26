@@ -20,6 +20,7 @@ async function getByCategory(
 ) {
   try {
     const { services: userService } = leemons.getPlugin('users');
+
     const permissions = await userService.permissions.getUserAgentPermissions(
       userSession.userAgents,
       {

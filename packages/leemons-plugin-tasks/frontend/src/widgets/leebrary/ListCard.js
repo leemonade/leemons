@@ -6,8 +6,11 @@ import { LibraryCard } from '@bubbles-ui/leemons';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { EditIcon, StudyDeskIcon } from '@bubbles-ui/icons/outline';
 import { addSuccessAlert } from '@layout/alert';
-
 import { useLayout } from '@layout/context';
+import _ from 'lodash';
+import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { prefixPN } from '../../helpers/prefixPN';
 
 const ListCardStyles = createStyles((theme, { single }) => ({
   root: {
@@ -18,6 +21,21 @@ const ListCardStyles = createStyles((theme, { single }) => ({
 const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...props }) => {
   const history = useHistory();
   const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
+
+  const [, translations] = useTranslateLoader(prefixPN('cardMenu'));
+
+  const menuLabels = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = _.get(res, prefixPN('cardMenu'));
+
+      // EN: Modify the data object here
+      // ES: Modifica el objeto data aquí
+      return data;
+    }
+
+    return {};
+  }, [translations]);
 
   // ·········································································
   // HANDLERS
@@ -53,7 +71,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
       if (asset.editable) {
         items.push({
           icon: <EditIcon />,
-          children: 'Edit',
+          children: menuLabels.edit,
           onClick: (e) => {
             e.stopPropagation();
             handleClick(`/private/tasks/library/edit/${taskId}`);
@@ -61,10 +79,10 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
         });
       }
 
-      if (asset.assignable) {
+      if (asset.assignable && asset.providerData.published) {
         items.push({
           icon: <StudyDeskIcon />,
-          children: 'Assign',
+          children: menuLabels.assign,
           onClick: (e) => {
             e.stopPropagation();
             handleClick(`/private/tasks/library/assign/${taskId}`);
@@ -75,7 +93,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
       if (asset.deleteable) {
         items.push({
           icon: <DeleteBinIcon />,
-          children: 'Delete',
+          children: menuLabels.delete,
           onClick: (e) => {
             e.stopPropagation();
             openDeleteConfirmationModal({
@@ -97,7 +115,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
     }
 
     return items;
-  }, [asset, embedded]);
+  }, [asset, embedded, menuLabels, onRefresh]);
 
   // ·········································································
   // RENDER

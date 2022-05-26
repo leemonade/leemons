@@ -8,6 +8,7 @@ import {
   Loader,
   ContextContainer,
   UserDisplayItem,
+  Paragraph,
 } from '@bubbles-ui/components';
 import { SelectUserAgent } from '@users/components';
 import { useForm, Controller } from 'react-hook-form';
@@ -30,14 +31,14 @@ function NonAssignableStudents({ users, labels }) {
   const students = useUserAgentsInfo(users);
 
   return (
-    <p>
+    <Paragraph>
       {labels?.unableToAssignStudentsMessage}:{' '}
       <Stack>
         {students?.map((student) => (
           <UserDisplayItem key={student.id} {...student} size="xs" />
         ))}
       </Stack>
-    </p>
+    </Paragraph>
   );
 }
 

@@ -3,35 +3,38 @@ import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
 import { ContextContainer, Alert, HtmlText } from '@bubbles-ui/components';
 
-function SubmissionState({ submitted, loading, error }) {
+function SubmissionState({ submitted, loading, error, labels: _labels }) {
+  const labels = _labels?.submission_state;
+
   if (error) {
     return (
-      <Alert title="Error" severity="error" closeable={false}>
-        Unable to submit the task: {error !== true ? error : ''}
+      <Alert title={labels?.error?.title} severity="error" closeable={false}>
+        {labels?.error?.message?.replace('{{error}}', error !== true ? error : '')}
       </Alert>
     );
   }
   if (loading) {
     return (
-      <Alert title="Submitting" severity="info" closeable={false}>
-        Submitting the task
+      <Alert title={labels?.loading?.title} severity="info" closeable={false}>
+        {labels?.loading?.message}
       </Alert>
     );
   }
   if (submitted) {
     return (
-      <Alert title="Submitted" severity="success" closeable={false}>
-        The task has been submitted
+      <Alert title={labels?.submitted?.title} severity="success" closeable={false}>
+        {labels?.submitted?.message}
       </Alert>
     );
   }
   return (
-    <Alert title="Not submitted" severity="info" closeable={false}>
-      The task has not been submitted yet
+    <Alert title={labels?.notSubmitted?.title} severity="info" closeable={false}>
+      {labels?.notSubmitted?.message}
     </Alert>
   );
 }
-export default function DeliveryStep({ assignation, onNext, onPrev }) {
+export default function DeliveryStep({ assignation, onNext, onPrev, labels: _labels }) {
+  const labels = _labels?.submission_step;
   const { instance } = assignation;
   const { assignable } = instance;
   const { submission } = assignable;
@@ -43,8 +46,6 @@ export default function DeliveryStep({ assignation, onNext, onPrev }) {
   onNext.current = () => !loading;
 
   onPrev.current = () => !loading;
-
-  console.log(assignation);
 
   const Component = (type) =>
     loadable(() => {
@@ -74,15 +75,16 @@ export default function DeliveryStep({ assignation, onNext, onPrev }) {
   }, [setLoading, setSubmitted, setError]);
 
   return (
-    <ContextContainer title="Delivery">
+    <ContextContainer title={labels.submission}>
       <HtmlText>{submission?.description}</HtmlText>
-      <SubmissionState loading={loading} error={error} submitted={submitted} />
+      <SubmissionState loading={loading} error={error} submitted={submitted} labels={labels} />
       <C
         assignation={assignation}
         onError={setError}
         onSubmit={onSubmit}
         onLoading={onLoading}
         value={assignation?.metadata?.submission}
+        labels={labels}
       />
     </ContextContainer>
   );

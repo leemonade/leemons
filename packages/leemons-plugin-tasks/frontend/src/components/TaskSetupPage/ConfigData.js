@@ -114,7 +114,7 @@ function ConfigData({
       <form onSubmit={handleSubmit(handleOnNext)} autoComplete="off">
         <ContextContainer {...props} pt={20} divided>
           <ContextContainer>
-            <ContextContainer title={labels?.configTitle}>
+            <ContextContainer title={labels?.title}>
               <SelectProgram
                 errorMessages={errorMessages}
                 labels={labels}

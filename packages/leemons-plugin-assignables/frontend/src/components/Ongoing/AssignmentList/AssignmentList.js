@@ -1,76 +1,72 @@
 import React, { useState, useMemo, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { PaginatedList } from '@bubbles-ui/components';
+import _ from 'lodash';
+import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useSearchAssignableInstances from '../../../hooks/assignableInstance/useSearchAssignableInstances';
 import useParseAssignations from './hooks/useParseAssignations';
 import useAssignationsByProfile from './hooks/useAssignationsByProfile';
 import globalContext from '../../../contexts/globalContext';
+import prefixPN from '../../../helpers/prefixPN';
 
 function useAssignmentsColumns() {
   const { isTeacher } = useContext(globalContext);
 
+  const [, translations] = useTranslateLoader(
+    prefixPN(`assignment_list.${isTeacher ? 'teacher' : 'student'}`)
+  );
+
   const labels = useMemo(() => {
-    if (isTeacher) {
-      return {
-        task: 'Task',
-        group: 'Group',
-        start: 'Start date',
-        deadline: 'Due date',
-        status: 'Status',
-        students: 'students',
-        open: 'Open',
-        ongoing: 'Ongoing',
-        completed: 'Completed',
-      };
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = _.get(res, prefixPN(`assignment_list.${isTeacher ? 'teacher' : 'student'}`));
+
+      // EN: Modify the data object here
+      // ES: Modifica el objeto data aquí
+      return data;
     }
 
-    return {
-      task: 'Task',
-      subject: 'Subject',
-      start: 'Start date',
-      deadline: 'Due date',
-      status: 'Status',
-      timeReference: 'Time reference',
-    };
-  }, [isTeacher]);
+    return {};
+  }, [translations]);
 
   const columns = useMemo(() => {
     if (isTeacher) {
       return [
         {
-          Header: labels.group,
+          Header: labels.group || '',
           accessor: 'subject',
         },
         {
-          Header: labels.task,
+          Header: labels.task || '',
           accessor: 'assignable.asset.name',
         },
         {
-          Header: labels.start,
+          Header: labels.start || '',
           accessor: 'parsedDates.start',
         },
         {
-          Header: labels.deadline,
+          Header: labels.deadline || '',
           accessor: 'parsedDates.deadline',
         },
         {
-          Header: labels.students,
+          Header: labels.students || '',
           accessor: 'students.length',
         },
         {
-          Header: labels.status,
+          Header: labels.status || '',
           accessor: 'status',
         },
         {
-          Header: labels.open,
+          Header: labels.open || '',
           accessor: 'open',
         },
         {
-          Header: labels.ongoing,
+          Header: labels.ongoing || '',
           accessor: 'ongoing',
         },
         {
-          Header: labels.completed,
+          Header: labels.completed || '',
           accessor: 'completed',
         },
         {
@@ -82,27 +78,27 @@ function useAssignmentsColumns() {
 
     return [
       {
-        Header: labels.task,
+        Header: labels.task || '',
         accessor: 'assignable.asset.name',
       },
       {
-        Header: labels.subject,
+        Header: labels.subject || '',
         accessor: 'subject',
       },
       {
-        Header: labels?.start,
+        Header: labels?.start || '',
         accessor: 'parsedDates.start',
       },
       {
-        Header: labels.deadline,
+        Header: labels.deadline || '',
         accessor: 'parsedDates.deadline',
       },
       {
-        Header: labels.status,
+        Header: labels.status || '',
         accessor: 'status',
       },
       {
-        Header: labels.timeReference,
+        Header: labels.timeReference || '',
         accessor: 'timeReference',
       },
       {
@@ -110,7 +106,7 @@ function useAssignmentsColumns() {
         accessor: 'actions',
       },
     ];
-  }, [isTeacher]);
+  }, [isTeacher, labels]);
 
   return columns;
 }

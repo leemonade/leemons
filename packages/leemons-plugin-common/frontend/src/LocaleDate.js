@@ -7,6 +7,13 @@ function getLocale(session) {
   return session ? session.locale : navigator?.language || 'en';
 }
 
+export function useLocale() {
+  const session = useSession();
+  const locale = getLocale(session);
+
+  return locale;
+}
+
 function getFormatterKey(locale, options) {
   return `${locale}-${JSON.stringify(options)}`;
 }

@@ -14,11 +14,12 @@ import { TextEditorInput } from '@bubbles-ui/editors';
 import useClassData from '@assignables/hooks/useClassData';
 import { PluginComunicaIcon, RatingStarIcon } from '@bubbles-ui/icons/outline';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import { useSubjects } from '@academic-portfolio/hooks';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
+import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { CorrectionStyles } from './Correction.style';
 import { SubjectSelector } from './components/SubjectSelector';
 import Submission from './components/Submission';
+import { prefixPN } from '../../helpers';
 
 function Header({ assignation }) {
   const { instance } = assignation;
@@ -36,6 +37,21 @@ function Header({ assignation }) {
 }
 
 export default function Correction({ assignation }) {
+  const [, translations] = useTranslateLoader(prefixPN('task_correction'));
+
+  const labels = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = _.get(res, prefixPN('task_correction'));
+
+      // EN: Modify the data object here
+      // ES: Modifica el objeto data aquí
+      return data;
+    }
+
+    return {};
+  }, [translations]);
+
   const evaluationSystem = useProgramEvaluationSystem(assignation?.instance);
 
   const scoreInputProps = useMemo(() => {
@@ -62,18 +78,18 @@ export default function Correction({ assignation }) {
         <Header assignation={assignation}></Header>
       </Box>
       <ContextContainer spacing={2} className={classes?.main}>
-        <Submission assignation={assignation} />
+        <Submission assignation={assignation} labels={labels.submission} />
         <SubjectSelector assignation={assignation} />
 
         <ActivityAccordion>
           <ActivityAccordionPanel
-            label="Punctuation"
+            label={labels?.punctuation}
             icon={<RatingStarIcon />}
             rightSection={
               <Badge
                 label={
                   <ContextContainer direction="row" spacing={1}>
-                    <Text>Min. to pass</Text>
+                    <Text>{labels?.minToPromote}</Text>
                     <Badge
                       label={
                         evaluationSystem?.minScaleToPromote?.letter ||
@@ -95,9 +111,9 @@ export default function Correction({ assignation }) {
             </Box>
           </ActivityAccordionPanel>
           <ActivityAccordionPanel
-            label="Feedback for student"
+            label={labels?.feedbackForStudent}
             icon={<PluginComunicaIcon />}
-            rightSection={<Badge label="Optional" closable={false} />}
+            rightSection={<Badge label={labels?.optional} closable={false} />}
           >
             <Box className={classes.accordionPanel}>
               <TextEditorInput />

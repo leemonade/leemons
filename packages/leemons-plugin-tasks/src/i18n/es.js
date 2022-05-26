@@ -52,6 +52,8 @@ module.exports = {
   },
   library_page: {
     page_title: 'Biblioteca de Tareas',
+    published: 'Publicado',
+    draft: 'Borrador',
   },
   task_setup_page: {
     title: 'Crear nueva tarea',
@@ -80,7 +82,6 @@ module.exports = {
         errorMessages: {
           name: { required: 'Campo necesario' },
           tagline: { required: 'Campo necesario' },
-          description: { required: 'Campo necesario' },
         },
       },
       configData: {
@@ -124,17 +125,39 @@ module.exports = {
         step_label: 'Contenido',
         labels: {
           title: 'Contenido',
+          subjects: 'Curriculum por asignatura', // NEW
           methodology: 'Metodología',
           recommendedDuration: 'Duración recomendada',
-          statement: 'Enunciado',
-          development: 'Desarrollo',
+          statement: 'Enunciado de la tarea',
+          development: 'Desarrollo de la tarea',
+          statementAndDevelopmentTitle: 'Enunciado y desarrollo',
+          content: 'Contenidos', // NEW
+          assessmentCriteria: 'Criterios de evaluación', // NEW
+          objectives: 'Objetivos personalizados', // NEW
+          addFromCurriculum: 'Añadir del curriculum', // NEW
           buttonNext: 'Siguiente',
           buttonPrev: 'Anterior',
+          gradable: 'Calificable', // NEW
+          submission: {
+            // EVERYTHING NEW
+            title: 'Entregables',
+            checkDescription:
+              'Esta tarea require la entrega de algún tipo de archivo, documento o enlace',
+            type: 'Tipo de entrega',
+            types: {
+              file: 'Archivo',
+              link: 'Enlace',
+            },
+            description: 'Descripción',
+            FileType: {
+              multiFile: 'Permitir varios archivos',
+              type: 'Tipo de archivo',
+              typePlaceholder: 'Añadir tipo de archivo',
+              maxSize: 'Tamaño máximo',
+            },
+          },
         },
         errorMessages: {
-          methodology: { required: 'Campo necesario' },
-          recommendedDuration: { required: 'Campo necesario' },
-          development: { required: 'Campo necesario' },
           statement: { required: 'Campo necesario' },
         },
       },
@@ -152,10 +175,6 @@ module.exports = {
           forTeacher:
             'Ayuda a otros profesores a abordar este ejercicio con unas sencillas instrucciones.',
           forStudent: 'Información extra para ayudar al alumno a realizar mejor el ejercicio.',
-        },
-        errorMessages: {
-          forTeacher: { required: 'Campo necesario' },
-          forStudent: { required: 'Campo necesario' },
         },
       },
       publishData: {
@@ -268,6 +287,7 @@ module.exports = {
   history_page: {
     page_title: 'Tareas finalizadas',
   },
+  // FROM HERE TO BOTTOM EVERYTHING NEW
   teacher_assignments: {
     table: {
       headers: {
@@ -285,5 +305,91 @@ module.exports = {
   },
   tabStudentTasks: {
     label: 'Tareas y actividades',
+  },
+  cardMenu: {
+    edit: 'Editar',
+    assign: 'Asignar',
+    delete: 'Eliminar',
+  },
+  task_realization: {
+    buttons: {
+      previous: 'Anterior',
+      next: 'Siguiente',
+      finish: 'Entregar',
+      save: 'Guardar',
+    },
+    sidebar: {
+      resources: 'Recursos',
+      team: 'Tu equipo',
+    },
+    steps: {
+      statement: 'Enunciado',
+      development: 'Desarrollo',
+      submission: 'Entrega',
+    },
+    statement_step: {
+      statement: 'Enunciado',
+      curriculum: {
+        title: 'Curriculum',
+        content: 'Contenido',
+        objectives: 'Objetivos personalizados',
+        assessmentCriteria: 'Criterios de evaluación',
+      },
+    },
+    development_step: {
+      development: 'Desarrollo',
+    },
+    submission_step: {
+      submission_type: {
+        file: {
+          uploadTitle: 'Click para buscar archivo',
+          uploadSubtitle: 'O arrastra el archivo aquí',
+          errorMessage: {
+            title: 'Error',
+            message: 'El archivo ha sido rechazado',
+          },
+          errorAlert: 'El archivo {{fileName}} ha sido rechazado: {{error}}',
+          upload: 'Subir',
+        },
+        link: {
+          link: 'Enlace de la entrega',
+        },
+      },
+      submission_state: {
+        error: {
+          title: 'Error',
+          message: 'No se han podido guardar los cambios: {{error}}',
+        },
+        loading: {
+          title: 'Guardando',
+          message: 'Guardando los cambios...',
+        },
+        submitted: {
+          title: 'Entregado',
+          message: 'Tarea entregada con éxito',
+        },
+        notSubmitted: {
+          title: 'No entregado',
+          message: 'Todavía no se ha entregado la tarea',
+        },
+      },
+      submission: 'Entrega',
+    },
+  },
+  task_correction: {
+    punctuation: 'Puntuación',
+    minToPromote: 'Min. para aprobar',
+    feedbackForStudent: 'Feedback para el estudiante',
+    optional: 'Opcional',
+    submission: {
+      types: {
+        notFound: {
+          notFound: 'No se ha encontrado el tipo de entregable',
+        },
+        file: {
+          noSubmission: 'No se ha entregado ningún archivo',
+        },
+      },
+    },
   },
 };

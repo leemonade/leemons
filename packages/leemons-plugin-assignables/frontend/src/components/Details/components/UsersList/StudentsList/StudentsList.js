@@ -6,23 +6,23 @@ export default function StudentsList({ labels, students }) {
   const columns = useMemo(
     () => [
       {
-        Header: labels?.studentListcolumns?.student,
+        Header: labels?.studentListcolumns?.student || '',
         accessor: 'student',
       },
       {
-        Header: labels?.studentListcolumns?.status,
+        Header: labels?.studentListcolumns?.status || '',
         accessor: 'status',
       },
       {
-        Header: labels?.studentListcolumns?.completed,
+        Header: labels?.studentListcolumns?.completed || '',
         accessor: 'completed',
       },
       {
-        Header: labels?.studentListcolumns?.avgTime,
+        Header: labels?.studentListcolumns?.avgTime || '',
         accessor: 'avgTime',
       },
       {
-        Header: labels?.studentListcolumns?.score,
+        Header: labels?.studentListcolumns?.score || '',
         accessor: 'score',
       },
       {
@@ -30,7 +30,7 @@ export default function StudentsList({ labels, students }) {
         accessor: 'actions',
       },
     ],
-    []
+    [labels]
   );
 
   const [page, setPage] = useState(1);
