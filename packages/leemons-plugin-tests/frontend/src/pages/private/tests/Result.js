@@ -149,27 +149,27 @@ export default function Result() {
       let category = false;
       let level = false;
       forEach(store.questions, (question) => {
-        if (store.questionResponses[question.id].status) {
-          const d = {
-            id: question.id,
-            status: store.questionResponses[question.id].status.toUpperCase(),
-          };
-          if (question.category) {
-            category = true;
-            d.category = question.category.category;
-          } else {
-            d.category = t('undefined');
-          }
-          if (levels) {
-            if (question.level) {
-              level = true;
-              d.level = find(levels, { value: question.level }).label;
-            } else {
-              d.level = t('undefined');
-            }
-          }
-          data.push(d);
+        const d = {
+          id: question.id,
+          status: store.questionResponses[question.id].status
+            ? store.questionResponses[question.id].status.toUpperCase()
+            : null,
+        };
+        if (question.category) {
+          category = true;
+          d.category = question.category.category;
+        } else {
+          d.category = t('undefined');
         }
+        if (levels) {
+          if (question.level) {
+            level = true;
+            d.level = find(levels, { value: question.level }).label;
+          } else {
+            d.level = t('undefined');
+          }
+        }
+        data.push(d);
       });
       if (category) {
         selectables.push({
@@ -184,7 +184,7 @@ export default function Result() {
         });
       }
     }
-    return { selectables, data };
+    return { selectables, data, labels: { OK: t('ok'), KO: t('ko'), null: t('nsnc') } };
   }, [store.questions, levels, t]);
 
   function onChangeType(e) {
