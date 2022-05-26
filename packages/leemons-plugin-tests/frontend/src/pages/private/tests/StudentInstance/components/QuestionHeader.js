@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ActivityCountdown, Box, Text, Title } from '@bubbles-ui/components';
+import { ArrowLeftIcon } from '@bubbles-ui/icons/outline';
 import dayjs from 'dayjs';
 import * as duration from 'dayjs/plugin/duration';
 
 dayjs.extend(duration);
 
 export default function QuestionHeader(props) {
-  const { styles, t, store, index } = props;
+  const { styles, t, store, index, onReturn } = props;
 
   let endDate = null;
   if (!store.viewMode && store.instance.duration && store.timestamps.start) {
@@ -19,14 +20,29 @@ export default function QuestionHeader(props) {
   return (
     <Box className={styles.questionHeader}>
       <Box>
-        <Box>
-          <Text role="expressive" size="xs" color="soft">
-            {t('questionNumber', { number: index + 1 })}
-          </Text>
-        </Box>
-        {store.instance.assignable.asset.tagline ? (
-          <Box>
-            <Title order="3">{store.instance.assignable.asset.tagline}</Title>
+        {!store.embedded ? (
+          <>
+            <Box>
+              <Text role="expressive" size="xs" color="soft">
+                {t('questionNumber', { number: index + 1 })}
+              </Text>
+            </Box>
+            {store.instance.assignable.asset.tagline ? (
+              <Box>
+                <Title order="3">{store.instance.assignable.asset.tagline}</Title>
+              </Box>
+            ) : null}
+          </>
+        ) : null}
+
+        {store.embedded ? (
+          <Box className={styles.returnToTable} onClick={onReturn}>
+            <ArrowLeftIcon />
+            <Box sx={(theme) => ({ paddingLeft: theme.spacing[3] })}>
+              <Text role="productive" size="md" color="primary">
+                {t('returnToTable')}
+              </Text>
+            </Box>
           </Box>
         ) : null}
       </Box>
@@ -67,4 +83,5 @@ QuestionHeader.propTypes = {
   nextStep: PropTypes.func,
   isFirstStep: PropTypes.bool,
   index: PropTypes.number,
+  onReturn: PropTypes.func,
 };

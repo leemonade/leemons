@@ -25,7 +25,9 @@ export default function QuestionValue(props) {
     null: null,
   };
 
-  console.log(store.questionResponses[question.id]);
+  if (store.embedded) {
+    return null;
+  }
 
   return (
     <Box className={styles.questionValueContainer}>

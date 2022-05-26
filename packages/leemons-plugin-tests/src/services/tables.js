@@ -8,6 +8,7 @@ const table = {
   userAgentAssignableInstanceResponses: leemons.query(
     'plugins_tests::user-agent-assignable-instance-responses'
   ),
+  userFeedback: leemons.query('plugins_tests::user-feedback'),
 };
 
 module.exports = { table };

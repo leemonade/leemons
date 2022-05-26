@@ -19,16 +19,16 @@ export default function Private() {
 
   return (
     <Switch>
-      <Route path={`${path}/result/:id`}>
-        <TestsResult session={session} />
-      </Route>
       <Route path={`${path}/result/:id/:user`}>
         <TestsResult session={session} />
       </Route>
-      <Route path={`${path}/student/:id`}>
-        <StudentInstance session={session} />
+      <Route path={`${path}/result/:id`}>
+        <TestsResult session={session} />
       </Route>
       <Route path={`${path}/student/:id/:user`}>
+        <StudentInstance session={session} />
+      </Route>
+      <Route path={`${path}/student/:id`}>
         <StudentInstance session={session} />
       </Route>
       <Route path={`${path}/questions-banks/:id`}>

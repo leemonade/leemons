@@ -3,8 +3,10 @@ const getAssignableInstance = require('../src/services/assignableInstance/getAss
 const removeAssignableInstance = require('../src/services/assignableInstance/removeAssignableInstance');
 const searchAssignableInstances = require('../src/services/assignableInstance/searchAssignableInstances');
 const updateAssignableInstance = require('../src/services/assignableInstance/updateAssignableInstance');
+const getUserPermission = require('../src/services/assignableInstance/permissions/assignableInstance/users/getUserPermission');
 
 module.exports = {
+  getUserPermission,
   createAssignableInstance,
   getAssignableInstance,
   removeAssignableInstance,
