@@ -299,5 +299,8 @@ module.exports = {
     sendFeedback: 'Send feedback',
     feedbackRequired: 'Feedback required',
     feedbackDone: 'Feedback sent successfully',
+    ok: 'Successful',
+    ko: 'Wrong',
+    nsnc: 'NS/NC',
   },
 };

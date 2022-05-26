@@ -67,7 +67,7 @@ export default function StudentInstance() {
   function closeForceFinishModal() {
     store.showForceFinishModal = false;
     render();
-    history.push(`/private/dashboard`);
+    history.push(`/private/tests/result/${params.id}/${getUserId()}`);
   }
 
   function prevStep() {
@@ -85,7 +85,7 @@ export default function StudentInstance() {
 
   async function finishStep() {
     if (store.viewMode) {
-      history.push(`/private/dashboard`);
+      history.push(`/private/tests/result/${params.id}/${getUserId()}`);
     } else {
       store.showFinishModal = true;
       render();
@@ -143,6 +143,7 @@ export default function StudentInstance() {
     const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
     store.timestamps = timestamps;
 
+    /*
     store.loading = true;
     store.idLoaded = '';
     store.isFirstStep = true;
@@ -151,8 +152,9 @@ export default function StudentInstance() {
     store.viewMode = false;
     render();
     init();
+     */
 
-    // history.push(`/private/dashboard`);
+    history.push(`/private/tests/result/${params.id}/${getUserId()}`);
   }
 
   async function forceFinishTest() {

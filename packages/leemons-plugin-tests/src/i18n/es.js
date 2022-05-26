@@ -297,5 +297,8 @@ module.exports = {
     sendFeedback: 'Enviar comentario',
     feedbackRequired: 'Comentario obligatorio',
     feedbackDone: 'Comentario enviado con éxito',
+    ok: 'Acertada',
+    ko: 'Errónea',
+    nsnc: 'NS/NC',
   },
 };
