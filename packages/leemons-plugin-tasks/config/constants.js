@@ -163,6 +163,24 @@ const menuItems = [
       },
     ],
   },
+  {
+    item: {
+      key: 'new-task',
+      order: 4,
+      parentKey: 'tasks',
+      url: '/private/tasks/library/create',
+      label: {
+        en: 'New task',
+        es: 'Nueva tarea',
+      },
+    },
+    permissions: [
+      {
+        permissionName: permissionNames.library,
+        actionNames: ['view', 'admin'],
+      },
+    ],
+  },
 ];
 
 const widgets = {
