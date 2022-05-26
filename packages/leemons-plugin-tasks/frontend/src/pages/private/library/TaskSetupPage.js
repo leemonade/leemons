@@ -40,6 +40,7 @@ export default function TaskSetupPage() {
   const saveTask = async ({ program, curriculum, ...values }, redirectTo = 'library') => {
     try {
       const body = {
+        gradable: false,
         ...values,
         // TODO: Esto debe establecerse en el Config
         subjects: values?.subjects?.map((subject) => ({
