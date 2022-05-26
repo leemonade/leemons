@@ -58,6 +58,8 @@ module.exports = {
   task_setup_page: {
     title: 'Crear nueva tarea',
     edit_title: 'Editar tarea',
+    save_draft: 'Guardar borrador', // NEW
+    publish: 'Publicar', // NEW
     common: {
       select_center: 'Seleccionar centro',
       create_done: 'Tarea creada con éxito',

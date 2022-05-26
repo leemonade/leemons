@@ -1,7 +1,7 @@
 import React, { useMemo, useContext, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash';
-import { LocaleDate, LocaleDuration, useApi } from '@common';
+import { LocaleDate, LocaleRelativeTime, useApi } from '@common';
 import { Badge, Text, ContextContainer, ActionButton } from '@bubbles-ui/components';
 import { ViewOnIcon, ViewOffIcon } from '@bubbles-ui/icons/outline';
 import dayjs from 'dayjs';
@@ -16,7 +16,7 @@ function parseDates(dates, keysToParse) {
     datesToParse = _.pick(dates, keysToParse);
   }
 
-  return _.mapValues(dates, (date) => (
+  return _.mapValues(datesToParse, (date) => (
     <LocaleDate date={date} options={{ dateStyle: 'short', timeStyle: 'short' }} />
   ));
 }
@@ -192,7 +192,7 @@ async function parseAssignationForStudentView(assignation) {
           {timeReference < 0 ? (
             labels.notSubmitted
           ) : (
-            <LocaleDuration seconds={Math.abs(timeReference)} short />
+            <LocaleRelativeTime seconds={Math.abs(timeReference)} short />
           )}
         </Text>
       ),
