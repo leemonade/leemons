@@ -21,7 +21,7 @@ async function importQuestions() {
       .filter((val) => !isEmpty(val));
 
     question.clues = (question.clues || '')
-      .split(',')
+      .split('|')
       .map((val) => trim(val))
       .filter((val) => !isEmpty(val))
       .map((value) => ({ value }));
