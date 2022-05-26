@@ -30,7 +30,7 @@ export default function useSteps(assignation, labels) {
         return {
           label: labels.steps.development,
           component: <DevelopmentStep assignation={assignation} labels={labels} />,
-          sidebar: false,
+          sidebar: true,
         };
       },
       submission: () => {

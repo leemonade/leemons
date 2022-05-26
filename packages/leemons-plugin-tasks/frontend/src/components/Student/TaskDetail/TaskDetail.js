@@ -148,7 +148,7 @@ export default function TaskDetail({ id, student }) {
         isFirstStep={isFirstStep}
         deadline={assignation?.instance?.dates?.deadline}
       />
-      <Stack direction="row" className={classes?.root}>
+      <Box className={classes?.root}>
         <Box className={classes?.stepper}>
           <VerticalStepper data={steps} currentStep={currentStep} />
         </Box>
@@ -183,7 +183,7 @@ export default function TaskDetail({ id, student }) {
           className={classes?.sidebar}
           labels={labels?.sidebar}
         />
-      </Stack>
+      </Box>
     </ContextContainer>
   );
 }
