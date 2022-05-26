@@ -1,4 +1,7 @@
 module.exports = {
+  userNavigator: {
+    student: 'Student',
+  },
   assignment_form: {
     labels: {
       classroomToAssign: 'Classroom to assign',

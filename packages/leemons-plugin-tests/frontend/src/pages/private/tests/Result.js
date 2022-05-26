@@ -5,7 +5,6 @@ import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { find, forEach, map, uniq } from 'lodash';
-import { getCentersWithToken } from '@users/session';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import getAssignation from '@assignables/requests/assignations/getAssignation';
@@ -20,7 +19,6 @@ import {
   ContextContainer,
   HtmlText,
   ImageLoader,
-  PageContainer,
   ScoreFeedback,
   Stack,
   Table,
@@ -32,6 +30,7 @@ import { ChevronRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
 
 import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
+import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
 import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
 import {
   getFeedbackRequest,
@@ -61,18 +60,31 @@ export default function Result() {
 
   function getUserId() {
     if (params.user) return params.user;
-    return getCentersWithToken()[0].userAgentId;
+    return null;
+  }
+
+  function onChangeUser(e) {
+    if (e) {
+      history.push(`/private/tests/result/${params.id}/${e}`);
+    } else {
+      history.push(`/private/tests/result/${params.id}`);
+    }
+  }
+
+  async function getIfTeacher() {
+    const { feedback } = await getFeedbackRequest(params.id, getUserId());
+    store.isTeacher = feedback.isTeacher;
+    render();
   }
 
   async function init() {
     try {
+      store.loading = true;
+      render();
       [store.instance, store.assignation] = await Promise.all([
         getAssignableInstance({ id: params.id }),
         getAssignation({ id: params.id, user: getUserId() }),
       ]);
-
-      // console.log(store.instance);
-      // getUserAgentsInfo
 
       const [{ evaluationSystem }, { questions }, { responses }, { timestamps }, { feedback }] =
         await Promise.all([
@@ -107,6 +119,7 @@ export default function Result() {
       store.questions = questions;
       store.evaluationSystem = evaluationSystem;
       store.idLoaded = params.id;
+      store.userLoaded = params.user;
       store.loading = false;
 
       render();
@@ -117,7 +130,15 @@ export default function Result() {
   }
 
   React.useEffect(() => {
-    if (params?.id && store.idLoaded !== params?.id) init();
+    if (
+      params?.id &&
+      params?.user &&
+      (store.idLoaded !== params?.id || store.userLoaded !== params?.user)
+    ) {
+      init();
+    } else {
+      getIfTeacher();
+    }
   }, [params]);
 
   const graphData = React.useMemo(() => {
@@ -370,73 +391,96 @@ export default function Result() {
       fullHeight
       fullWidth
     >
-      {!store.loading ? (
-        <PageContainer noFlex>
-          <Box className={styles.container}>
-            <Box className={styles.header}>
-              <Text role="productive">
-                {store.instance.gradable ? t('gradable') : t('notGradable')}{' '}
-                {store.instance.gradable ? <StarIcon /> : <CutStarIcon />}
-              </Text>
+      <Box
+        sx={(theme) => ({
+          width: '100%',
+          maxWidth: theme.breakpoints.lg,
+          paddingLeft: store.isTeacher ? 0 : theme.spacing[8],
+          paddingRight: theme.spacing[5],
+        })}
+      >
+        <Box className={styles.container}>
+          {store.isTeacher ? (
+            <Box className={styles.leftContent}>
+              <AssignableUserNavigator
+                onChange={onChangeUser}
+                value={params.user}
+                instance={store.instance || params.id}
+              />
             </Box>
-            <Box className={styles.content}>
-              <ScoreFeedback
-                calification={{
-                  minimumGrade: store.evaluationSystem.minScaleToPromote.number,
-                  grade: store.assignation.grades[0].grade,
-                  label: null,
-                }}
-              >
-                <Stack
-                  fullWidth
-                  fullHeight
-                  direction="column"
-                  justifyContent="center"
-                  style={{
-                    padding: 24,
+          ) : null}
+          {params.user && !store.loading ? (
+            <Box
+              className={cx(
+                styles.rightContent,
+                store.isTeacher ? styles.rightContentTeacher : null
+              )}
+            >
+              <Box className={styles.header}>
+                <Text role="productive">
+                  {store.instance.gradable ? t('gradable') : t('notGradable')}{' '}
+                  {store.instance.gradable ? <StarIcon /> : <CutStarIcon />}
+                </Text>
+              </Box>
+              <Box className={styles.content}>
+                <ScoreFeedback
+                  calification={{
+                    minimumGrade: store.evaluationSystem.minScaleToPromote.number,
+                    grade:
+                      store.assignation.grades[0]?.grade || store.evaluationSystem.minScale.number,
+                    label: null,
                   }}
                 >
-                  <Text size="md" role="productive" strong>
-                    Test
-                  </Text>
-                  <Title order={3}>{store.instance.assignable.asset.name}</Title>
-                </Stack>
-              </ScoreFeedback>
-              <ActivityAccordion
-                state={accordionState}
-                onChange={(e) => {
-                  accordionFunctions.setState(e);
-                  console.log(accordionFunctions);
-                }}
-              >
-                {accordion}
-              </ActivityAccordion>
-              {store.isTeacher ? (
-                <Box
-                  sx={(theme) => ({
-                    display: 'flex',
-                    justifyContent: 'end',
-                    marginTop: theme.spacing[4],
-                  })}
-                >
-                  <Button
-                    onClick={() => {
-                      if (!accordionState[2]) {
-                        accordionFunctions.toggle(2);
-                      } else {
-                        sendFeedback();
-                      }
+                  <Stack
+                    fullWidth
+                    fullHeight
+                    direction="column"
+                    justifyContent="center"
+                    style={{
+                      padding: 24,
                     }}
-                    rightIcon={<SendMessageIcon />}
                   >
-                    {t('sendFeedback')}
-                  </Button>
-                </Box>
-              ) : null}
+                    <Text size="md" role="productive" strong>
+                      Test
+                    </Text>
+                    <Title order={3}>{store.instance.assignable.asset.name}</Title>
+                  </Stack>
+                </ScoreFeedback>
+                <ActivityAccordion
+                  state={accordionState}
+                  onChange={(e) => {
+                    accordionFunctions.setState(e);
+                  }}
+                >
+                  {accordion}
+                </ActivityAccordion>
+                {store.isTeacher ? (
+                  <Box
+                    sx={(theme) => ({
+                      display: 'flex',
+                      justifyContent: 'end',
+                      marginTop: theme.spacing[4],
+                    })}
+                  >
+                    <Button
+                      onClick={() => {
+                        if (!accordionState[2]) {
+                          accordionFunctions.toggle(2);
+                        } else {
+                          sendFeedback();
+                        }
+                      }}
+                      rightIcon={<SendMessageIcon />}
+                    >
+                      {t('sendFeedback')}
+                    </Button>
+                  </Box>
+                ) : null}
+              </Box>
             </Box>
-          </Box>
-        </PageContainer>
-      ) : null}
+          ) : null}
+        </Box>
+      </Box>
     </ContextContainer>
   );
 }

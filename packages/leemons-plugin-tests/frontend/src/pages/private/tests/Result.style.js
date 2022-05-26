@@ -1,7 +1,22 @@
 import { createStyles } from '@bubbles-ui/components';
 
 export const ResultStyles = createStyles((theme, {}) => ({
-  container: {},
+  container: {
+    width: '100%',
+    display: 'flex',
+    gap: theme.spacing[10],
+  },
+
+  leftContent: {
+    width: '332px',
+    marginTop: theme.spacing[6],
+  },
+  rightContent: {
+    width: '100%',
+  },
+  rightContentTeacher: {
+    width: 'calc(100% - 332px)',
+  },
   header: {
     textAlign: 'center',
     paddingTop: theme.spacing[6],
