@@ -31,7 +31,7 @@ export default function getActions(studentData, instanceData, localizations) {
   }
 
   if (!studentData.timestamps?.start) {
-    return <Button>{localizations.sendReminder}</Button>;
+    return <Button variant="link">{localizations.sendReminder}</Button>;
   }
   return <></>;
 }

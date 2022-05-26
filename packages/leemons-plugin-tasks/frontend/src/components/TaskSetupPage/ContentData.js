@@ -120,24 +120,6 @@ function ContentData({
       <form onSubmit={handleSubmit(handleOnNext)} autoComplete="off">
         <ContextContainer {...props} divided>
           <ContextContainer divided>
-            <ContextContainer title={labels.title}>
-              {/* <Methodology
-                labels={labels}
-                errorMessages={errorMessages}
-                placeholders={placeholders}
-              /> */}
-              <Controller
-                control={control}
-                name="duration"
-                render={({ field }) => (
-                  <TimeUnitsInput
-                    {...field}
-                    label={labels.recommendedDuration}
-                    error={errors.recommendedDuration}
-                  />
-                )}
-              />
-            </ContextContainer>
             {/* <Attachments /> */}
 
             <ContextContainer title={labels?.statementAndDevelopmentTitle}>
@@ -219,13 +201,31 @@ function ContentData({
               )}
             </ContextContainer>
 
-            <Controller
-              name="gradable"
-              control={control}
-              render={({ field }) => (
-                <Switch label={labels?.gradable} {...field} checked={field.value} />
-              )}
-            />
+            <ContextContainer>
+              {/* <Methodology
+                labels={labels}
+                errorMessages={errorMessages}
+                placeholders={placeholders}
+              /> */}
+              <Controller
+                control={control}
+                name="duration"
+                render={({ field }) => (
+                  <TimeUnitsInput
+                    {...field}
+                    label={labels.recommendedDuration}
+                    error={errors.recommendedDuration}
+                  />
+                )}
+              />
+              <Controller
+                name="gradable"
+                control={control}
+                render={({ field }) => (
+                  <Switch label={labels?.gradable} {...field} checked={field.value} />
+                )}
+              />
+            </ContextContainer>
             <Submissions labels={labels} />
             {/* <SelfReflection
               labels={labels?.selfReflection}
