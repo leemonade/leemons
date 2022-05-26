@@ -27,4 +27,16 @@ export const ResultStyles = createStyles((theme, {}) => ({
     paddingTop: theme.spacing[5],
     paddingBottom: theme.spacing[5],
   },
+  showTestBar: {
+    backgroundColor: theme.colors.uiBackground01,
+    padding: theme.spacing[4],
+    display: 'flex',
+    justifyContent: 'end',
+  },
+  feedbackUser: {
+    border: '1px solid',
+    borderColor: theme.colors.ui01,
+    borderRadius: theme.spacing[1],
+    padding: theme.spacing[4],
+  },
 }));

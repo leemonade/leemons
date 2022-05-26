@@ -95,10 +95,33 @@ async function assignTest(ctx) {
   ctx.body = { status: 200, test };
 }
 
+async function getInstanceFeedback(ctx) {
+  const feedback = await testsService.getFeedback(ctx.request.params.id, ctx.request.params.user, {
+    userSession: ctx.state.userSession,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, feedback };
+}
+
+async function setInstanceFeedback(ctx) {
+  const feedback = await testsService.setFeedback(
+    ctx.request.body.id,
+    ctx.request.body.user,
+    ctx.request.body.feedback,
+    {
+      userSession: ctx.state.userSession,
+    }
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, feedback };
+}
+
 module.exports = {
   getUserQuestionResponses,
   setInstanceTimestamp,
   setQuestionResponse,
+  getInstanceFeedback,
+  setInstanceFeedback,
   assignTest,
   deleteTest,
   listTests,

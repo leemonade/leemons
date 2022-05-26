@@ -259,6 +259,7 @@ module.exports = {
     attention: 'Atención',
     correctResponse: 'Respuesta correcta',
     explanation: 'Explicación',
+    returnToTable: 'Volver a la tabla',
   },
   testAssign: {
     pageTitle: 'Assignar Test:',
@@ -291,5 +292,10 @@ module.exports = {
     undefined: 'No definido',
     question: 'Pregunta',
     result: 'Resultado',
+    showInTests: 'Ver en el tests',
+    feedbackForStudent: 'Comentario para el estudiante',
+    sendFeedback: 'Enviar comentario',
+    feedbackRequired: 'Comentario obligatorio',
+    feedbackDone: 'Comentario enviado con éxito',
   },
 };

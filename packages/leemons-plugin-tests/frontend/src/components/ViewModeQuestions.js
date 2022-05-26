@@ -7,7 +7,7 @@ import { TestStyles } from '../pages/private/tests/StudentInstance/TestStyles.st
 import { StudentInstanceStyles } from '../pages/private/tests/StudentInstance/StudentInstance.style';
 import QuestionList from '../pages/private/tests/StudentInstance/components/QuestionList';
 
-export default function ViewModeQuestions({ store: cStore }) {
+export default function ViewModeQuestions({ store: cStore, onReturn }) {
   const [t, translations] = useTranslateLoader(prefixPN('studentInstance'));
   const [store, render] = useStore({
     loading: true,
@@ -57,10 +57,12 @@ export default function ViewModeQuestions({ store: cStore }) {
       goToStep={() => {}}
       saveQuestion={() => {}}
       finishStep={() => {}}
+      onReturn={onReturn}
     />
   );
 }
 
 ViewModeQuestions.propTypes = {
   store: PropTypes.any,
+  onReturn: PropTypes.func,
 };

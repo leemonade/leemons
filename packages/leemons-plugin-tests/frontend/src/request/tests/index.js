@@ -89,12 +89,33 @@ async function assignTest(id, data) {
   });
 }
 
+async function getFeedback(instance, user) {
+  return leemons.api(`tests/tests/instance/${instance}/feedback/${user}`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
+async function setFeedback(instance, user, feedback) {
+  return leemons.api(`tests/tests/instance/feedback`, {
+    allAgents: true,
+    method: 'POST',
+    body: {
+      id: instance,
+      user,
+      feedback,
+    },
+  });
+}
+
 export {
   listTests,
   saveTest,
   getTest,
   deleteTest,
   assignTest,
+  getFeedback,
+  setFeedback,
   setInstanceTimestamp,
   getUserQuestionResponses,
   setQuestionResponse,
