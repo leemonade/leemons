@@ -111,7 +111,7 @@ async function importTasks({ users, centers, programs, assets }) {
       center: task.center,
       subjects: task.subjects,
       statement: converter.makeHtml(task.statement || ''),
-      development: converter.makeHtml(task.development || ''),
+      development: isEmpty(task.development) ? null : converter.makeHtml(task.development),
       duration: task.duration,
       submission,
       gradable: task.gradable,
