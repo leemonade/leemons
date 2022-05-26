@@ -1,5 +1,11 @@
 import React from 'react';
-import { Box, Stack, useDebouncedCallback, VerticalStepperContainer } from '@bubbles-ui/components';
+import {
+  Box,
+  LoadingOverlay,
+  Stack,
+  useDebouncedCallback,
+  VerticalStepperContainer,
+} from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { PluginTestIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -13,7 +19,7 @@ import DetailQuestions from './components/DetailQuestions';
 import DetailBasic from './components/DetailBasic';
 import DetailConfig from './components/DetailConfig';
 
-export default function Detail() {
+export default function Detail(p) {
   const [t] = useTranslateLoader(prefixPN('questionsBanksDetail'));
 
   // ----------------------------------------------------------------------
@@ -63,6 +69,7 @@ export default function Detail() {
 
   async function init() {
     try {
+      store.loading = true;
       store.isNew = params.id === 'new';
       render();
       if (!store.isNew) {
@@ -75,6 +82,9 @@ export default function Detail() {
         }
         form.reset(props);
       }
+      store.idLoaded = params.id;
+      store.loading = false;
+      render();
     } catch (error) {
       addErrorAlert(error);
     }
@@ -86,7 +96,7 @@ export default function Detail() {
   }
 
   React.useEffect(() => {
-    if (params?.id) init();
+    if (params?.id && store.idLoaded !== params?.id) init();
   }, [params]);
 
   form.register('questions', {
@@ -114,6 +124,8 @@ export default function Detail() {
     store.headerHeight = size?.height - 1;
     render();
   };
+
+  if (store.loading) return <LoadingOverlay visible />;
 
   return (
     <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
