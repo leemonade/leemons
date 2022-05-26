@@ -1,14 +1,39 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import _ from 'lodash';
-import { Box, Title, Text, ImageLoader, Swiper, Loader } from '@bubbles-ui/components';
-import { useSubjects, useClassesSubjects } from '@academic-portfolio/hooks';
+import { Box, Swiper, Loader } from '@bubbles-ui/components';
 import SubjectCard from './components/SubjectCard';
 
-export default function SubjectSelector({ assignation }) {
+export default function SubjectSelector({
+  assignation,
+  subjects,
+  currentSubject,
+  setCurrentSubject,
+}) {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const instanceSubjects = useClassesSubjects(assignation?.instance?.classes);
-  const subjectsIds = useMemo(() => _.map(instanceSubjects, 'id'), [instanceSubjects]);
-  const subjects = useSubjects(subjectsIds);
+
+  const subjectsIds = useMemo(() => _.map(subjects, 'id'), [subjects]);
+  useEffect(() => {
+    const subjectIndex = subjectsIds.indexOf(currentSubject);
+    if (subjectIndex !== -1 && subjectIndex !== selectedIndex) {
+      setSelectedIndex(subjectIndex);
+    }
+  }, [currentSubject, subjectsIds]);
+
+  useEffect(() => {
+    if (subjectsIds?.length && !currentSubject && typeof setCurrentSubject === 'function') {
+      setCurrentSubject(subjectsIds[selectedIndex]);
+    }
+  }, [subjectsIds]);
+
+  const handleSelectIndex = (newIndex) => {
+    if (currentSubject !== undefined) {
+      if (typeof setCurrentSubject === 'function' && currentSubject !== subjectsIds[newIndex]) {
+        setCurrentSubject(subjectsIds[newIndex]);
+      }
+    } else if (newIndex !== selectedIndex) {
+      setSelectedIndex(newIndex);
+    }
+  };
 
   const gradesBySubject = useMemo(
     () =>
@@ -39,7 +64,7 @@ export default function SubjectSelector({ assignation }) {
 
   return (
     <Swiper
-      onSelectIndex={setSelectedIndex}
+      onSelectIndex={handleSelectIndex}
       selectable
       deselectable={false}
       disableSelectedStyles
