@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const getDiff = require('../../helpers/getDiff');
 const { validateAssignableInstance } = require('../../helpers/validators/assignableInstance');
 const updateClasses = require('../classes/updateClasses');
 const updateDates = require('../dates/updateDates');
@@ -9,6 +8,8 @@ const getUserPermission = require('./permissions/assignableInstance/users/getUse
 const updateEvent = require('./calendar/updateEvent');
 const registerEvent = require('./calendar/registerEvent');
 const { listAssignableInstanceClasses } = require('../classes');
+
+const { getDiff } = global.utils;
 
 const updatableFields = [
   'alwaysAvailable',

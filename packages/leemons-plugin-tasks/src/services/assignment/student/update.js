@@ -1,6 +1,8 @@
 const _ = require('lodash');
 const assignablesServices = require('../../assignables');
 
+const { getDiff } = global.utils;
+
 const STUDENT_UPDATABLE_FIELDS = [
   'timestamps.open',
   'timestamps.start',
@@ -33,6 +35,26 @@ module.exports = async function update(
     // EN: The student is unable to replace the existing timestamps
     // ES: El estudiante no puede reemplazar los timestamps existentes
     newData.timestamps = _.defaults(assignation.timestamps, newData.timestamps);
+  }
+
+  if (newData.grades) {
+    const assignation = await assignations.getAssignation(instance, student, {
+      userSession,
+      transacting,
+    });
+
+    const existingGrades = assignation.grades || [];
+
+    const { diff, object } = getDiff(newData.grades, existingGrades);
+
+    newData.grades = object;
+
+    diff.forEach((grade) => {
+      object[grade] = {
+        ...object[grade],
+        gradedBy: userSession.userAgents[0].id,
+      };
+    });
   }
 
   // EN: Update the instance

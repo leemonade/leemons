@@ -1,21 +1,21 @@
 const _ = require('lodash');
-const getDiff = require('../../helpers/getDiff');
 const { validateAssignation } = require('../../helpers/validators/assignation');
-const getAssignableInstance = require('../assignableInstance/getAssignableInstance');
 const updateDates = require('../dates/updateDates');
 const registerGrade = require('../grades/registerGrade');
 const { assignations } = require('../tables');
 const getAssignation = require('./getAssignation');
 
-const updatableFields = [
-  'indexable',
-  'classes',
-  'group',
-  'grades',
-  'timestamps',
-  'status',
-  'metadata',
-];
+const { getDiff } = global.utils;
+
+// const updatableFields = [
+//   'indexable',
+//   'classes',
+//   'group',
+//   'grades',
+//   'timestamps',
+//   'status',
+//   'metadata',
+// ];
 
 module.exports = async function updateAssignation(assignation, { userSession, transacting } = {}) {
   const { assignableInstance, user, ...assignationObj } = assignation;

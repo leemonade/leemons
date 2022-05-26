@@ -402,5 +402,10 @@ module.exports = {
         },
       },
     },
+    save: 'Guardar cambios',
+    saveAndSend: 'Guardar y enviar',
+    saveMessage: 'Cambios guardados con éxito',
+    saveAndSendMessage: 'Cambios guardados y enviados al estudiante con éxito',
+    saveError: 'No se han podido guardar los cambios: {{error}}',
   },
 };

@@ -401,5 +401,10 @@ module.exports = {
         },
       },
     },
+    save: 'Save feedback',
+    saveAndSend: 'Save and send feedback',
+    saveMessage: 'The changes have been saved',
+    saveAndSendMessage: 'The changes have been saved and have been sent to the student',
+    saveError: 'The changes could not be saved: {{error}}',
   },
 };

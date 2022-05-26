@@ -101,7 +101,10 @@ async function saveField(
 
         id = schemaConfig.schema.id ? schemaConfig.schema.id : global.utils.randomString();
 
-        dataset.jsonSchema.properties[id] = schemaConfig.schema;
+        dataset.jsonSchema.properties[id] = {
+          ...schemaConfig.schema,
+          id,
+        };
         dataset.jsonUI[id] = schemaConfig.ui;
 
         dataset.jsonSchema.required = [];

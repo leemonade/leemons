@@ -40,6 +40,7 @@ export default function TaskSetupPage() {
   const saveTask = async ({ program, curriculum, ...values }, redirectTo = 'library') => {
     try {
       const body = {
+        gradable: false,
         ...values,
         // TODO: Esto debe establecerse en el Config
         subjects: values?.subjects?.map((subject) => ({
@@ -279,7 +280,7 @@ export default function TaskSetupPage() {
         values={headerLabels}
         buttons={{
           duplicate: t('common.save'),
-          edit: store.currentTask?.published === false && t('common.publish'),
+          edit: t('common.publish'),
         }}
         onDuplicate={() => {
           loading.current = 'duplicate';
