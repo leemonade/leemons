@@ -121,11 +121,11 @@ function ContentData({
         <ContextContainer {...props} divided>
           <ContextContainer divided>
             <ContextContainer title={labels.title}>
-              <Methodology
+              {/* <Methodology
                 labels={labels}
                 errorMessages={errorMessages}
                 placeholders={placeholders}
-              />
+              /> */}
               <Controller
                 control={control}
                 name="duration"
