@@ -2,11 +2,20 @@
 /* eslint-disable no-await-in-loop */
 const { keys, find, compact } = require('lodash');
 const importQbanks = require('./bulk/tests/qbanks');
+const importQuestions = require('./bulk/tests/questions');
 
 async function initTests({ users, programs }) {
   const { services } = leemons.getPlugin('tests');
 
   try {
+    // ·····················································
+    // QUESTIONS
+
+    const questions = await importQuestions();
+
+    console.log('--- QUESTIONS ---');
+    console.dir(questions, { depth: null });
+
     // ·····················································
     // QBANKS
 
@@ -16,6 +25,7 @@ async function initTests({ users, programs }) {
     for (let i = 0, len = qbanksKeys.length; i < len; i++) {
       const key = qbanksKeys[i];
       const { creator, ...qbank } = qbanks[key];
+      /*
       const qbankData = await services.questionsBanks.save(
         { ...qbank, published: true, questions: [] },
         {
@@ -23,12 +33,13 @@ async function initTests({ users, programs }) {
         }
       );
       qbanks[key] = { ...qbankData };
+      */
     }
 
     // ·····················································
     // TESTS
 
-    let tests = {
+    const tests = {
       test01: {
         qbanks,
       },
