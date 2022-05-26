@@ -17,6 +17,21 @@ export const CorrectionStyles = createStyles((theme) => ({
     margin: theme.spacing[10],
     width: '100%',
     overflow: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing[5],
+    justifyContent: 'start',
+  },
+  mainContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing[2],
+  },
+  mainButtons: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: theme.spacing[3],
   },
   accordionPanel: {
     padding: `${theme.spacing[4]}px ${theme.spacing[5]}px`,
