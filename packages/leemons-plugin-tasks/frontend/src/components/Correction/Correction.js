@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useForm, FormProvider } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import _ from 'lodash';
 import { Box, Title, Text, Button } from '@bubbles-ui/components';
 import useClassData from '@assignables/hooks/useClassData';
@@ -222,8 +222,7 @@ export default function Correction({ assignation, instance, loading }) {
   /*
     --- Form Hooks ---
   */
-  const form = useForm();
-  const { control, handleSubmit, getValues, reset } = form;
+  const { handleSubmit, getValues, reset } = useFormContext();
 
   useEffect(() => {
     if (!assignation) {
@@ -325,7 +324,7 @@ export default function Correction({ assignation, instance, loading }) {
   const { classes } = CorrectionStyles();
 
   return (
-    <FormProvider {...form}>
+    <>
       <Box className={classes.mainContent}>
         <Submission assignation={assignation} labels={labels.submission} />
         <SubjectTabs assignation={assignation} instance={instance} loading={loading}>
@@ -354,6 +353,6 @@ export default function Correction({ assignation, instance, loading }) {
           {labels?.saveAndSend}
         </Button>
       </Box>
-    </FormProvider>
+    </>
   );
 }

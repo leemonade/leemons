@@ -4,6 +4,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import { Loader, Text, createStyles, Box } from '@bubbles-ui/components';
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
 import useAssignableInstance from '@assignables/hooks/assignableInstance/useAssignableInstance';
+import { useForm, FormProvider } from 'react-hook-form';
 import Correction from '../../../components/Correction';
 
 const styles = createStyles((theme) => ({
@@ -16,7 +17,8 @@ const styles = createStyles((theme) => ({
   aside: {
     marginTop: theme.spacing[10],
     background: theme.colors.uiBackground04,
-    width: '332px',
+    minWidth: '332px',
+    maxWidth: '332px',
     height: 'fit-content',
   },
   main: {
@@ -36,6 +38,10 @@ export default function CorrectionPage() {
   const { instance: instanceId } = useParams();
   let { student } = useParams();
   const { classes } = styles();
+  const form = useForm();
+  const {
+    formState: { isDirty },
+  } = form;
 
   if (!student || student === 'null' || student === 'undefined') {
     student = null;
@@ -81,13 +87,15 @@ export default function CorrectionPage() {
   }
 
   return (
-    <Box className={classes.root}>
-      <Box className={classes.aside}>
-        <AssignableUserNavigator instance={instance} onChange={onStudentChange} value={student} />
+    <FormProvider {...form}>
+      <Box className={classes.root}>
+        <Box className={classes.aside}>
+          <AssignableUserNavigator instance={instance} onChange={onStudentChange} value={student} />
+        </Box>
+        <Box className={classes.main}>
+          <Correction assignation={fullAssignation} instance={instance} loading={loading} />
+        </Box>
       </Box>
-      <Box className={classes.main}>
-        <Correction assignation={fullAssignation} instance={instance} loading={loading} />
-      </Box>
-    </Box>
+    </FormProvider>
   );
 }
