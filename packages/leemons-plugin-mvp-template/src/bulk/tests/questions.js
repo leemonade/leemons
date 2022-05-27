@@ -56,12 +56,15 @@ async function importQuestions() {
     // ·····················································
     // RESPONSES
 
+    const imageResponses = Boolean(question.withImages && question.answers_images);
+    const responseBreak = imageResponses ? ',' : '|';
+
     properties.responses = (
-      (question.withImages ? question.answers_images : question.answers) ||
+      (imageResponses ? question.answers_images : question.answers) ||
       question.answers ||
       ''
     )
-      .split('|')
+      .split(responseBreak)
       .map((val) => trim(val))
       .filter((val) => !isEmpty(val))
       .map((answer, index) => {
@@ -73,14 +76,21 @@ async function importQuestions() {
           response = answer.slice(0, -1);
         }
 
-        return {
-          value: {
-            response,
-            explanation: feedback || null,
-            isCorrectResponse: Number(question.answer_correct) === index + 1,
-            hideOnHelp,
-          },
+        const value = {
+          explanation: feedback || null,
+          isCorrectResponse: Number(question.answer_correct) === index + 1,
+          hideOnHelp,
         };
+
+        if (imageResponses) {
+          const [url, caption] = response.split('|');
+          value.image = url;
+          value.imageDescription = caption;
+        } else {
+          value.response = response;
+        }
+
+        return value;
       });
 
     // ·····················································
