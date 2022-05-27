@@ -1,7 +1,15 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, createStyles, ImageLoader, Stack, Text, Swiper } from '@bubbles-ui/components';
+import {
+  Box,
+  createStyles,
+  ImageLoader,
+  Stack,
+  Swiper,
+  Text,
+  TextClamp,
+} from '@bubbles-ui/components';
 import { useStore } from '@common';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -37,26 +45,37 @@ const Styles = createStyles((theme) => ({
   },
   card: {
     backgroundColor: theme.colors.uiBackground01,
-    borderRadius: '2px',
-    padding: theme.spacing[4],
+    borderRadius: '4px',
+    padding: theme.spacing[6],
+    paddingLeft: theme.spacing[4],
+    paddingRight: theme.spacing[4],
     cursor: 'pointer',
+    textAlign: 'center',
+    border: '2px solid',
+    borderColor: theme.colors.uiBackground01,
+    transitionDuration: '100ms',
+    '&:hover': {
+      borderColor: theme.colors.ui01,
+    },
   },
   colorIcon: {
     position: 'absolute',
-    width: '20px',
-    height: '20px',
+    width: '25px',
+    height: '25px',
     borderRadius: '50%',
-    right: '6px',
-    bottom: '0px',
+    right: '0px',
+    bottom: '-2px',
     backgroundColor: theme.colors.uiBackground02,
+    border: '2px solid',
+    borderColor: theme.colors.uiBackground01,
   },
   icon: {
     position: 'absolute',
     left: '50%',
     top: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '12px',
-    height: '12px',
+    width: '16px',
+    height: '16px',
     color: theme.colors.text07,
   },
 }));
@@ -96,10 +115,10 @@ function UserClassesSwiperWidget({ program }) {
       <Swiper
         className={styles.cardContainer}
         breakAt={{
-          1200: { slidesPerView: 3, spaceBetween: 2 },
-          940: { slidesPerView: 3, spaceBetween: 2 },
-          520: { slidesPerView: 2, spaceBetween: 2 },
-          360: { slidesPerView: 1, spaceBetween: 2 },
+          1200: { slidesPerView: 4, spaceBetween: 2 },
+          940: { slidesPerView: 4, spaceBetween: 2 },
+          520: { slidesPerView: 3, spaceBetween: 2 },
+          360: { slidesPerView: 2, spaceBetween: 2 },
         }}
       >
         {store.classes.map((classe, index) => {
@@ -122,6 +141,8 @@ function UserClassesSwiperWidget({ program }) {
               <Stack
                 className={styles.card}
                 alignItems="center"
+                direction="column"
+                spacing={4}
                 fullWidth
                 onClick={() => goClassDashboard(classe)}
               >
@@ -145,12 +166,20 @@ function UserClassesSwiperWidget({ program }) {
                     </Box>
                   ) : null}
                 </Box>
-                <Stack direction="column">
-                  <Text size="xs">{name}</Text>
-                  <Text strong>
-                    {course}
-                    {group ? (course ? `- ${group}` : group) : null}
-                  </Text>
+                <Stack direction="column" spacing={2}>
+                  <Box style={{ height: '32px' }}>
+                    <TextClamp lines={2} showTooltip>
+                      <Text color="primary" strong>
+                        {name}
+                      </Text>
+                    </TextClamp>
+                  </Box>
+                  <TextClamp lines={1} showTooltip>
+                    <Text size="sm" strong>
+                      {course}
+                      {group ? (course ? `- ${group}` : group) : null}
+                    </Text>
+                  </TextClamp>
                 </Stack>
               </Stack>
             </Box>
