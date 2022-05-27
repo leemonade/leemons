@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
-import { Box } from '@bubbles-ui/components';
+import { Box, ActivityAccordion, ActivityAccordionPanel } from '@bubbles-ui/components';
 import loadable from '@loadable/component';
 import pMinDelay from 'p-min-delay';
+import { PluginAssignmentsIcon } from '@bubbles-ui/icons/outline';
+import styles from '../../Correction.style';
 
 function TypeNotFound({ labels }) {
   return <Box>{labels?.types?.notFound?.notFound}</Box>;
@@ -9,10 +11,7 @@ function TypeNotFound({ labels }) {
 
 export default function Submission({ assignation, labels }) {
   const submissionType = assignation?.instance?.assignable?.submission?.type;
-
-  if (!submissionType) {
-    return null;
-  }
+  const { classes } = styles();
 
   const Component = useMemo(
     () =>
@@ -31,5 +30,17 @@ export default function Submission({ assignation, labels }) {
     [submissionType]
   );
 
-  return <Component assignation={assignation} labels={labels} />;
+  if (!submissionType) {
+    return null;
+  }
+
+  return (
+    <ActivityAccordion>
+      <ActivityAccordionPanel label={labels?.title} icon={<PluginAssignmentsIcon />}>
+        <Box className={classes?.accordionPanel}>
+          <Component assignation={assignation} labels={labels} />
+        </Box>
+      </ActivityAccordionPanel>
+    </ActivityAccordion>
+  );
 }

@@ -75,7 +75,7 @@ export default function StudentCorrection({ assignation }) {
 
   return (
     <Box className={classes?.root}>
-      <Submission assignation={assignation} labels={labels} />
+      <Submission assignation={assignation} labels={labels?.submission} />
       <SubjectTabs assignation={assignation} instance={assignation?.instance}>
         <SubjectTab labels={labels} classes={classes} />
       </SubjectTabs>

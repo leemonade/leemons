@@ -392,6 +392,7 @@ module.exports = {
     feedbackForStudent: 'Feedback for student',
     optional: 'Optional',
     submission: {
+      title: 'Submission',
       types: {
         notFound: {
           notFound: 'The submission type could not be found',

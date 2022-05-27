@@ -1,20 +1,79 @@
-import React from 'react';
-import { Text, ContextContainer, Box } from '@bubbles-ui/components';
+import React, { useState, useEffect } from 'react';
+import { Text, ContextContainer, Box, Loader } from '@bubbles-ui/components';
+import getAssetsByIds from '@leebrary/request/getAssetsByIds';
+import prepareAsset from '@leebrary/helpers/prepareAsset';
 
 export default function File({ assignation, labels }) {
   const submittedFiles = assignation.metadata?.submission;
+  const [assets, setAssets] = useState([]);
+
+  useEffect(async () => {
+    let files = await getAssetsByIds(
+      submittedFiles.map((file) => file.id),
+      { showPublic: true, indexable: false }
+    );
+
+    /**
+  id: PropTypes.string,
+  fileType: PropTypes.string,
+  fileExtension: PropTypes.string,
+  name: PropTypes.string,
+  description: PropTypes.string,
+  tagline: PropTypes.string,
+  metadata: PropTypes.arrayOf(PropTypes.shape({ label: PropTypes.any, value: PropTypes.any })),
+  created: PropTypes.string,
+  version: PropTypes.string,
+  cover: PropTypes.string,
+  color: PropTypes.string,
+  url: PropTypes.string,
+  icon: PropTypes.string,
+  tags: PropTypes.arrayOf(PropTypes.string),
+  category: PropTypes.string,
+  role: PropTypes.oneOf(LIBRARYCARD_ROLES),
+     */
+    files = files.assets.map((asset) => {
+      const preparedAsset = prepareAsset(asset);
+      return {
+        id: preparedAsset.id,
+        fileType: preparedAsset.file.type,
+        fileExtension: preparedAsset.file.extension,
+        name: preparedAsset.name,
+        description: preparedAsset.description,
+        tagline: preparedAsset.tagline,
+        metadata: preparedAsset.metadata,
+        created: preparedAsset.created_at,
+        version: '',
+        cover: null,
+        color: preparedAsset.color,
+        url: preparedAsset.file.uri,
+        icon: preparedAsset.icon,
+        tags: preparedAsset.tags,
+        category: preparedAsset.category,
+        role: null,
+      };
+    });
+
+    // console.log('files', files);
+
+    setAssets(files);
+  }, [submittedFiles]);
 
   if (Array.isArray(submittedFiles)) {
+    if (!assets?.length) {
+      return <Loader />;
+    }
     return (
       <Box>
         <ContextContainer spacing={2}>
-          {submittedFiles.map((file) => (
-            <Text key={file.id}>{file.id}</Text>
+          {assets.map((asset) => (
+            <>
+              {/* <LibraryCardEmbed asset={asset} /> */}
+              <Text key={asset.id}>{asset.name}</Text>
+            </>
           ))}
         </ContextContainer>
       </Box>
     );
   }
-
   return <Text>{labels?.types?.file?.noSubmission}</Text>;
 }
