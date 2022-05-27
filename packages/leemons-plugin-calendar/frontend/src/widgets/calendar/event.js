@@ -20,72 +20,78 @@ export default function Event({ isEditing, event, form, data, allFormData, class
 
   return (
     <ContextContainer>
-      <Box>
-        <Grid columns={100} gutter={0}>
-          <Col span={10} className={classes.icon}>
-            <MeetingCameraIcon />
-          </Col>
-          <Col span={90}>
-            <Controller
-              name="videoLink"
-              control={control}
-              render={({ field }) => (
-                <TextInput
-                  size="xs"
-                  disabled={disabled}
-                  label={t('video_link')}
-                  error={get(errors, 'videoLink')}
-                  {...field}
-                />
-              )}
-            />
-          </Col>
-        </Grid>
-      </Box>
-      <Box>
-        <Grid columns={100} gutter={0}>
-          <Col span={10} className={classes.icon}>
-            <PluginKimIcon />
-          </Col>
-          <Col span={90}>
-            <Controller
-              name="place"
-              control={control}
-              render={({ field }) => (
-                <TextInput
-                  size="xs"
-                  disabled={disabled}
-                  label={t('add_place')}
-                  error={get(errors, 'place')}
-                  {...field}
-                />
-              )}
-            />
-          </Col>
-        </Grid>
-      </Box>
-      <Box>
-        <Grid columns={100} gutter={0}>
-          <Col span={10} className={classes.icon}>
-            <PluginRedactorIcon />
-          </Col>
-          <Col span={90}>
-            <Controller
-              name="description"
-              control={control}
-              render={({ field }) => (
-                <TextInput
-                  size="xs"
-                  disabled={disabled}
-                  label={t('add_description')}
-                  error={get(errors, 'description')}
-                  {...field}
-                />
-              )}
-            />
-          </Col>
-        </Grid>
-      </Box>
+      {!disabled || (disabled && form.getValues('videoLink')) ? (
+        <Box>
+          <Grid columns={100} gutter={0}>
+            <Col span={10} className={classes.icon}>
+              <MeetingCameraIcon />
+            </Col>
+            <Col span={90}>
+              <Controller
+                name="videoLink"
+                control={control}
+                render={({ field }) => (
+                  <TextInput
+                    size="xs"
+                    disabled={disabled}
+                    label={t('video_link')}
+                    error={get(errors, 'videoLink')}
+                    {...field}
+                  />
+                )}
+              />
+            </Col>
+          </Grid>
+        </Box>
+      ) : null}
+      {!disabled || (disabled && form.getValues('place')) ? (
+        <Box>
+          <Grid columns={100} gutter={0}>
+            <Col span={10} className={classes.icon}>
+              <PluginKimIcon />
+            </Col>
+            <Col span={90}>
+              <Controller
+                name="place"
+                control={control}
+                render={({ field }) => (
+                  <TextInput
+                    size="xs"
+                    disabled={disabled}
+                    label={t('add_place')}
+                    error={get(errors, 'place')}
+                    {...field}
+                  />
+                )}
+              />
+            </Col>
+          </Grid>
+        </Box>
+      ) : null}
+      {!disabled || (disabled && form.getValues('description')) ? (
+        <Box>
+          <Grid columns={100} gutter={0}>
+            <Col span={10} className={classes.icon}>
+              <PluginRedactorIcon />
+            </Col>
+            <Col span={90}>
+              <Controller
+                name="description"
+                control={control}
+                render={({ field }) => (
+                  <TextInput
+                    size="xs"
+                    disabled={disabled}
+                    label={t('add_description')}
+                    error={get(errors, 'description')}
+                    {...field}
+                  />
+                )}
+              />
+            </Col>
+          </Grid>
+        </Box>
+      ) : null}
     </ContextContainer>
   );
 }

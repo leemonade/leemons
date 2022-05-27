@@ -1,6 +1,6 @@
 module.exports = {
   calendar: {
-    user_section: 'Usuarios',
+    user_section: 'Mis calendarios',
   },
   user_data_page: {
     page_title: 'Datos del usuario',
@@ -90,8 +90,7 @@ module.exports = {
   },
   welcome_page: {
     page_title: 'Administración de usuarios',
-    page_description:
-      'Primeros pasos para configurar correctamente la administración de usuarios.',
+    page_description: 'Primeros pasos para configurar correctamente la administración de usuarios.',
   },
   hero_bg: {
     text: '"¡No sé el significado de la mitad de esas largas palabras y, además, no creo que tú tampoco lo sepas!"',
@@ -120,8 +119,7 @@ module.exports = {
     translations_warning: 'Es necesario guardar el perfil para almacenar las traducciones',
     options_modal: {
       title: 'Traducción',
-      description:
-        'Traducciones de la información del perfil a los idiomas del sistema',
+      description: 'Traducciones de la información del perfil a los idiomas del sistema',
       accept: 'Aceptar',
       cancel: 'Cancelar',
       profile_name: 'Nombre del perfil',

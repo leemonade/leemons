@@ -393,6 +393,7 @@ module.exports = {
     feedbackForStudent: 'Feedback para el estudiante',
     optional: 'Opcional',
     submission: {
+      title: 'Entrega',
       types: {
         notFound: {
           notFound: 'No se ha encontrado el tipo de entregable',

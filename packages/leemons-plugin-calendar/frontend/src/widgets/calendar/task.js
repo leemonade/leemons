@@ -101,33 +101,37 @@ export default function Task({ event, form, classes, disabled, allProps: { class
   };
 
   const subtask = form.watch('subtask');
+  const formClasses = form.watch('classes');
 
   return (
     <ContextContainer>
-      <Box>
-        <Grid columns={100} gutter={0}>
-          <Col span={10} className={classes.icon}>
-            <PluginRedactorIcon />
-          </Col>
-          <Col span={90}>
-            <Controller
-              name="description"
-              control={control}
-              render={({ field }) => (
-                <Textarea
-                  size="xs"
-                  disabled={disabled}
-                  label={t('description')}
-                  error={get(errors, 'description')}
-                  {...field}
-                />
-              )}
-            />
-          </Col>
-        </Grid>
-      </Box>
+      {!disabled || (disabled && form.getValues('description')) ? (
+        <Box>
+          <Grid columns={100} gutter={0}>
+            <Col span={10} className={classes.icon}>
+              <PluginRedactorIcon />
+            </Col>
+            <Col span={90}>
+              <Controller
+                name="description"
+                control={control}
+                render={({ field }) => (
+                  <Textarea
+                    size="xs"
+                    disabled={disabled}
+                    readOnly={disabled}
+                    label={t('description')}
+                    error={get(errors, 'description')}
+                    {...field}
+                  />
+                )}
+              />
+            </Col>
+          </Grid>
+        </Box>
+      ) : null}
 
-      {!disabled || (subtask && subtask.length) ? (
+      {!disabled || (disabled && subtask && subtask.length) ? (
         <Box>
           <Grid columns={100} gutter={0}>
             <Col span={10} className={classes.icon}>
@@ -181,7 +185,9 @@ export default function Task({ event, form, classes, disabled, allProps: { class
         </Box>
       ) : null}
 
-      {classCalendars && classCalendars.length ? (
+      {classCalendars &&
+      classCalendars.length &&
+      (!disabled || (disabled && formClasses && formClasses.length)) ? (
         <Box>
           <Grid columns={100} gutter={0}>
             <Col span={10} className={classes.icon}>
@@ -207,7 +213,7 @@ export default function Task({ event, form, classes, disabled, allProps: { class
         </Box>
       ) : null}
 
-      {columnsData ? (
+      {columnsData && (!disabled || (disabled && form.getValues('column'))) ? (
         <Box>
           <Grid columns={100} gutter={0}>
             <Col span={10} className={classes.icon} />
@@ -223,6 +229,7 @@ export default function Task({ event, form, classes, disabled, allProps: { class
                     size="xs"
                     label={t('column')}
                     disabled={disabled}
+                    readOnly={disabled}
                     data={columnsData}
                     {...field}
                     required
