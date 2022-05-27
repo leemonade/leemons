@@ -361,7 +361,14 @@ export default function StudentInstance() {
       <Box className={classes.mainContent}>
         <Box className={classes.verticalStepper}>
           <Box className={classes.verticalStepperContent}>
-            <VerticalStepper {...verticalStepperProps} currentStep={store.currentStep} />
+            <VerticalStepper
+              {...verticalStepperProps}
+              currentStep={store.currentStep}
+              onChangeActiveIndex={(e) => {
+                store.currentStep = e;
+                render();
+              }}
+            />
           </Box>
         </Box>
         <Box className={classes.pages}>
@@ -424,7 +431,7 @@ export default function StudentInstance() {
               onClick={() => {
                 store.showForceFinishModal = false;
                 render();
-                history.push(`/private/tests/evaluation/${params.id}/${getUserId()}`);
+                history.push(`/private/tests/result/${params.id}/${getUserId()}`);
               }}
             >
               {t('reviewResults')}
