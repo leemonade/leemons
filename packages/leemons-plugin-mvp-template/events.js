@@ -107,7 +107,7 @@ async function events(isInstalled) {
         await addAWSS3AsProvider();
         leemons.events.emit('init-leebrary-provider', config.assets);
 
-        // config.assets = await initLibrary(config);
+        config.assets = await initLibrary(config);
         leemons.events.emit('init-leebrary', config.assets);
         console.log('MVP - Plugin de Leebrary inicializado!');
       }
@@ -185,7 +185,7 @@ async function events(isInstalled) {
       async () => {
         try {
           console.log('MVP - Iniciando el plugin de Tasks');
-          // config.tasks = await initTasks(config);
+          config.tasks = await initTasks(config);
           console.log('MVP - Plugin de Tasks inicializado!');
         } catch (e) {
           console.error(e);
