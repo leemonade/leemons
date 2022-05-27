@@ -90,7 +90,7 @@ async function importQuestions() {
           value.response = response;
         }
 
-        return value;
+        return { value };
       });
 
     // ·····················································

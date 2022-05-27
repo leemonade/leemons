@@ -1,5 +1,5 @@
 const path = require('path');
-const { keys, trim, isEmpty } = require('lodash');
+const { keys, trim, isEmpty, isNil } = require('lodash');
 const showdown = require('showdown');
 const itemsImport = require('../helpers/simpleListImport');
 
@@ -14,13 +14,14 @@ async function importTests({ programs, qbanks, questions }) {
 
     // Qbank program
     const program = programs[test.program];
-
-    test.program = program.id;
-    test.subjects = (test.subjects || '')
-      ?.split(',')
-      .map((val) => trim(val))
-      .filter((val) => !isEmpty(val))
-      .map((subject) => program.subjects[subject]?.id);
+    if (program) {
+      test.program = program.id;
+      test.subjects = (test.subjects || '')
+        ?.split(',')
+        .map((val) => trim(val))
+        .filter((val) => !isEmpty(val))
+        .map((subject) => program.subjects[subject]?.id);
+    }
 
     test.questions = (test.questions || '')
       ?.split('|')
@@ -34,12 +35,18 @@ async function importTests({ programs, qbanks, questions }) {
       .map((val) => trim(val))
       .filter((val) => !isEmpty(val));
 
-    test.questionBank = qbanks[test.questionBank]?.id;
-    test.statement = converter.makeHtml(test.statement || '');
-    test.instructionsForTeachers = converter.makeHtml(test.instructionsForTeachers || '');
-    test.instructionsForStudents = converter.makeHtml(test.instructionsForStudents || '');
+    if (test.questionBank) test.questionBank = qbanks[test.questionBank]?.id;
+    if (test.statement) test.statement = converter.makeHtml(test.statement || '');
 
-    test.filters = { useAllQuestions: test.useAllQuestions };
+    if (test.instructionsForTeachers && !isEmpty(test.instructionsForTeachers)) {
+      test.instructionsForTeachers = converter.makeHtml(test.instructionsForTeachers);
+    }
+
+    if (test.instructionsForStudents && !isEmpty(test.instructionsForStudents)) {
+      test.instructionsForStudents = converter.makeHtml(test.instructionsForStudents);
+    }
+
+    if (!isNil(test.useAllQuestions)) test.filters = { useAllQuestions: test.useAllQuestions };
 
     delete test.useAllQuestions;
 
@@ -79,4 +86,4 @@ async function importTests({ programs, qbanks, questions }) {
 
 // importQbanks();
 
-module.exports = importQbanks;
+module.exports = importTests;
