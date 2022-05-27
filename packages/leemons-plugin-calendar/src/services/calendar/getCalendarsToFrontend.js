@@ -181,6 +181,9 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
 
   const classCalendarsIds = _.map(classCalendars, 'calendar');
 
+  console.log('EVENTS --------', events);
+  console.log('EVENTS CALENDARS --------', eventsFromCalendars);
+
   return {
     userCalendar,
     ownerCalendars,
@@ -191,13 +194,12 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
       isClass: classCalendarsIds.indexOf(calendar.id) >= 0,
     })),
     events: _.uniqBy(
-      events
-        .concat(
-          eventsFromCalendars.map((e) => ({
-            ...e,
-            fromCalendar: true,
-          }))
-        )
+      eventsFromCalendars
+        .map((e) => ({
+          ...e,
+          fromCalendar: true,
+        }))
+        .concat(events)
         .concat(configCalendarEvents)
         .map((event) => ({
           ...event,
