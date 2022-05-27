@@ -1,4 +1,4 @@
-const { classDetailForDashboard } = require('@academic-portfolio/request/classes');
+const { classByIdsRequest } = require('@academic-portfolio/request');
 
 export default async function getClassData(classes, labels = { multiSubject: 'Multi-Subject' }) {
   if (classes.length > 1) {
@@ -10,7 +10,7 @@ export default async function getClassData(classes, labels = { multiSubject: 'Mu
   }
 
   const klass = classes[0];
-  const data = await classDetailForDashboard(klass);
+  const data = await classByIdsRequest(klass);
 
   return {
     name:

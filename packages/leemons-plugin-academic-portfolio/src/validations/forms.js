@@ -751,9 +751,29 @@ const getSubjectCreditsSchema = {
   required: ['subject', 'program'],
   additionalProperties: false,
 };
+const getSubjectsCreditsSchema = {
+  type: 'array',
+  items: [
+    {
+      properties: {
+        subject: stringSchema,
+        program: stringSchema,
+      },
+      required: ['subject', 'program'],
+      additionalProperties: false,
+    },
+  ],
+};
 
 function validateGetSubjectCredits(data) {
   const validator = new LeemonsValidator(getSubjectCreditsSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+function validateGetSubjectsCredits(data) {
+  const validator = new LeemonsValidator(getSubjectsCreditsSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
@@ -1136,6 +1156,7 @@ module.exports = {
   validateUpdateSubjectType,
   validatePutSubjectCredits,
   validateGetSubjectCredits,
+  validateGetSubjectsCredits,
   validateAddClassStudentsMany,
   validateAddClassTeachersMany,
   validateGetSubjectCreditsProgram,

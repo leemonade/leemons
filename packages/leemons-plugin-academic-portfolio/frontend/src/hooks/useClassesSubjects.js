@@ -1,10 +1,12 @@
 import { useMemo } from 'react';
 import { useApi } from '@common';
 import { uniqBy, map } from 'lodash';
-import { classDetailForDashboardRequest } from '../request';
+import { classByIdsRequest } from '../request';
 
-function getClasses(classes) {
-  return Promise.all(classes.map(classDetailForDashboardRequest));
+async function getClasses(classes) {
+  const request = await classByIdsRequest(classes);
+
+  return request.classes;
 }
 
 export default function useClassesSubjects(classes) {
@@ -15,8 +17,7 @@ export default function useClassesSubjects(classes) {
     if (!classesData?.length) {
       return defaultValue;
     }
-
-    const subjects = map(classesData, 'classe.subject');
+    const subjects = map(classesData, 'subject');
     return uniqBy(subjects, 'id');
   }, [classesData, defaultValue]);
 

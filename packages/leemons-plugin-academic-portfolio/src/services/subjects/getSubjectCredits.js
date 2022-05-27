@@ -12,4 +12,12 @@ async function getSubjectCredits(subject, program, { transacting } = {}) {
   return _.isArray(subject) || _.isArray(program) ? response : response[0];
 }
 
-module.exports = { getSubjectCredits };
+async function getSubjectsCredits(subjects, { transacting } = {}) {
+  const query = subjects.map((subject) => _.pick(subject, ['subject', 'program']));
+
+  const response = await table.programSubjectsCredits.find({ $or: query }, { transacting });
+
+  return response;
+}
+
+module.exports = { getSubjectCredits, getSubjectsCredits };

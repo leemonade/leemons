@@ -264,6 +264,12 @@ module.exports = [
     handler: 'subject.subjectByIds',
     authenticated: true,
   },
+  {
+    path: '/subjects',
+    method: 'GET',
+    handler: 'subject.subjectByIds',
+    authenticated: true,
+  },
   // Class
   {
     path: '/class',
@@ -323,6 +329,12 @@ module.exports = [
     path: '/class/remove/students',
     method: 'POST',
     handler: 'class.removeStudent',
+    authenticated: true,
+  },
+  {
+    path: '/classes',
+    method: 'GET',
+    handler: 'class.classByIds',
     authenticated: true,
   },
   // Student
