@@ -135,7 +135,7 @@ function StudentActions({ assignation }) {
   const now = dayjs();
   const visualization = dayjs(dates?.visualization);
   const start = dayjs(dates?.start);
-  const alwaysAvailable = dates?.start && dates?.deadline;
+  const alwaysAvailable = !(dates?.start && dates?.deadline);
 
   const redirectToInstance = useCallback(() => history.push(url), [history, url]);
 

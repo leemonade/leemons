@@ -49,7 +49,7 @@ module.exports = async function getAssignation(
 
   if (
     assignation.timestamps.end ||
-    (assignation.timestamps.deadline && dayjs(assignation.timestamps.deadline).isBefore(dayjs())) ||
+    (instanceDates.deadline && dayjs(instanceDates.deadline).isBefore(dayjs())) ||
     (instanceDates.close && dayjs(instanceDates.close).isBefore(dayjs())) ||
     (instanceDates.closed && dayjs(instanceDates.closed).isBefore(dayjs()))
   ) {
