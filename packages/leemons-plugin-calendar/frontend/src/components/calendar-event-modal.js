@@ -233,27 +233,31 @@ function NewCalendarEventModal({
   async function onSubmit(_formData) {
     // eslint-disable-next-line prefer-const
     let { startDate, endDate, startTime, endTime, ...formData } = _formData;
-    startDate = new Date(startDate);
-    endDate = new Date(endDate);
+    if (startDate) startDate = new Date(startDate);
+    if (endDate) endDate = new Date(endDate);
     if (formData.isAllDay) {
-      startDate.setHours(0, 0, 0);
-      endDate.setHours(23, 59, 59);
+      if (startDate) startDate.setHours(0, 0, 0);
+      if (endDate) endDate.setHours(23, 59, 59);
     } else {
-      startDate.setHours(
-        startTime ? startTime.getHours() : 0,
-        startTime ? startTime.getMinutes() : 0,
-        startTime ? startTime.getSeconds() : 0
-      );
-      endDate.setHours(
-        endTime ? endTime.getHours() : 0,
-        endTime ? endTime.getMinutes() : 0,
-        endTime ? endTime.getSeconds() : 0
-      );
+      if (startDate) {
+        startDate.setHours(
+          startTime ? startTime.getHours() : 0,
+          startTime ? startTime.getMinutes() : 0,
+          startTime ? startTime.getSeconds() : 0
+        );
+      }
+      if (endDate) {
+        endDate.setHours(
+          endTime ? endTime.getHours() : 0,
+          endTime ? endTime.getMinutes() : 0,
+          endTime ? endTime.getSeconds() : 0
+        );
+      }
     }
 
     const toSend = {
-      startDate: getUTCString(startDate),
-      endDate: getUTCString(endDate),
+      startDate: startDate ? getUTCString(startDate) : null,
+      endDate: endDate ? getUTCString(endDate) : null,
       ...formData,
     };
 
@@ -280,8 +284,6 @@ function NewCalendarEventModal({
   }, [session, event]);
 
   if (ref.current.loading) return null;
-
-  console.log(ref.current.eventTypes);
 
   return (
     <CalendarEventModal
@@ -311,6 +313,7 @@ function NewCalendarEventModal({
         saveButtonLabel: t('save'),
         updateButtonLabel: t('update'),
         calendarPlaceholder: t('selectCalendar'),
+        showInCalendar: t('showInCalendar'),
       }}
       errorMessages={{
         titleRequired: tCommon('required'),
