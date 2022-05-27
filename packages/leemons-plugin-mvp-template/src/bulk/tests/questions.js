@@ -453,7 +453,7 @@ async function importQuestions() {
     ],
   };
 
-  return questions;
+  return { items, questions };
 }
 
 module.exports = importQuestions;

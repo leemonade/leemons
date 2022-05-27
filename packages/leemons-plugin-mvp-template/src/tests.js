@@ -3,6 +3,7 @@
 const { keys, find, compact } = require('lodash');
 const importQbanks = require('./bulk/tests/qbanks');
 const importQuestions = require('./bulk/tests/questions');
+const importTests = require('./bulk/tests/tests');
 
 async function initTests({ users, programs }) {
   const { services } = leemons.getPlugin('tests');
@@ -11,10 +12,7 @@ async function initTests({ users, programs }) {
     // ·····················································
     // QUESTIONS
 
-    const questions = await importQuestions();
-
-    // console.log('--- QUESTIONS ---');
-    // console.dir(questions, { depth: null });
+    const { items: questionsItems, questions } = await importQuestions();
 
     // ·····················································
     // QBANKS
@@ -42,11 +40,25 @@ async function initTests({ users, programs }) {
     // ·····················································
     // TESTS
 
-    const tests = {
-      test01: {
-        qbanks,
-      },
-    };
+    const tests = await importTests({ qbanks, programs, questionsItems });
+    const testsKeys = keys(tests);
+
+    console.log('--- TESTS ---');
+    console.dir(tests, { depth: null });
+
+    for (let i = 0, len = testsKeys.length; i < len; i++) {
+      const key = testsKeys[i];
+      const { creator, ...test } = tests[key];
+
+      const testData = await services.tests.save(
+        { ...test, published: true },
+        {
+          userSession: users[creator],
+        }
+      );
+
+      tests[key] = { ...testData };
+    }
 
     return tests;
   } catch (err) {
