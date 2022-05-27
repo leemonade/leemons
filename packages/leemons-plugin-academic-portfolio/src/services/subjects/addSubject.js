@@ -3,6 +3,7 @@ const { table } = require('../tables');
 const { validateAddSubject } = require('../../validations/forms');
 const { setSubjectCredits } = require('./setSubjectCredits');
 const { setSubjectInternalId } = require('./setSubjectInternalId');
+const enableMenuItemService = require('../menu-builder/enableItem');
 
 async function addSubject(_data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
@@ -53,7 +54,7 @@ async function addSubject(_data, { userSession, transacting: _transacting } = {}
           transacting,
         });
       }
-
+      await Promise.all([enableMenuItemService('subjects'), enableMenuItemService('tree')]);
       return subject;
     },
     table.subjects,

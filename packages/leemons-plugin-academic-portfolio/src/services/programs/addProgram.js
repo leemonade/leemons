@@ -5,6 +5,7 @@ const { validateAddProgram, validateSubstagesFormat } = require('../../validatio
 const { addSubstage } = require('../substages/addSubstage');
 const { addCourse } = require('../courses/addCourse');
 const { addNextCourseIndex } = require('../courses/addNextCourseIndex');
+const enableMenuItemService = require('../menu-builder/enableItem');
 
 async function addProgram(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
@@ -12,7 +13,6 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
       validateAddProgram(data);
       const { centers, substages: _substages, customSubstages, ...programData } = data;
       let substages = _substages;
-
       // ES: Si se ha marcado que hay substages y usar los valores por defecto generamos los substages
       if (programData.haveSubstagesPerCourse) {
         if (programData.useDefaultSubstagesName) {
@@ -81,6 +81,7 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
         transacting,
         userSession,
       });
+      await Promise.all([enableMenuItemService('programs'), enableMenuItemService('subjects')]);
       return _program;
     },
     table.programCenter,
