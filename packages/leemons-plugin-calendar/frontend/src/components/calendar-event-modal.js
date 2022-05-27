@@ -196,15 +196,19 @@ function NewCalendarEventModal({
       const foundCalendar = find(ref.current.calendarData.ownerCalendars, { id: calendarId });
       if (foundCalendar) set(ref.current.defaultValues, 'calendar', foundCalendar.key);
       set(ref.current.defaultValues, 'isAllDay', !!isAllDay);
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      start.setSeconds(0, 0);
-      end.setSeconds(0, 0);
 
-      set(ref.current.defaultValues, 'startDate', start);
-      set(ref.current.defaultValues, 'startTime', start);
-      set(ref.current.defaultValues, 'endDate', end);
-      set(ref.current.defaultValues, 'endTime', end);
+      if (startDate) {
+        const start = new Date(startDate);
+        start.setSeconds(0, 0);
+        set(ref.current.defaultValues, 'startDate', start);
+        set(ref.current.defaultValues, 'startTime', start);
+      }
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setSeconds(0, 0);
+        set(ref.current.defaultValues, 'endDate', end);
+        set(ref.current.defaultValues, 'endTime', end);
+      }
     } else if (ref.current.eventTypes.length) {
       set(ref.current.defaultValues, 'type', forceType || ref.current.eventTypes[0].key);
       set(ref.current.defaultValues, 'repeat', 'dont_repeat');
