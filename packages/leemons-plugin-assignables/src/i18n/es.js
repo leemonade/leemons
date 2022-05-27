@@ -151,6 +151,7 @@ module.exports = {
     start: 'Empezar',
     view: 'Ver',
     notSubmitted: 'No entregado',
+    correction: 'Revisar',
   },
   levelsOfDifficulty: {
     beginner: 'Principiante',

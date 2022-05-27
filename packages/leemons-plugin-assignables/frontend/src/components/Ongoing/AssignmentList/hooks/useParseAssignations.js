@@ -125,9 +125,12 @@ function StudentActions({ assignation, labels }) {
   const user = assignation?.user;
 
   const history = useHistory();
-  const url = useMemo(
+  const activityUrl = useMemo(
     () => role.studentDetailUrl.replace(':id', id).replace(':user', user),
     [id, role?.studentDetailUrl]
+  );
+  const revisionUrl = useMemo(() =>
+    role.evaluationDetailUrl.replace(':id', id).replace(':user', user)
   );
 
   const dates = assignation?.instance?.dates;
@@ -139,35 +142,37 @@ function StudentActions({ assignation, labels }) {
   const start = dayjs(dates?.start);
   const alwaysAvailable = !(dates?.start && dates?.deadline);
 
-  const redirectToInstance = useCallback(() => history.push(url), [history, url]);
+  const redirectToInstance = useCallback(() => history.push(activityUrl), [history, activityUrl]);
+  const redirectToRevision = useCallback(() => history.push(revisionUrl), [history, revisionUrl]);
 
   // TRANSLATE: Translate buttons
-  if (alwaysAvailable) {
-    if (finished) {
-      // TODO: Botón ver corrección
-      return null;
+  if (finished) {
+    const hasCorrections = assignation?.grades
+      ?.filter((grade) => grade.type === 'main')
+      .some((grade) => grade.visibleToStudent);
+    if (hasCorrections) {
+      return <Button onClick={redirectToRevision}>{labels?.student_actions?.correction}</Button>;
     }
+    return null;
+  }
+
+  if (alwaysAvailable) {
     if (timestamps?.start) {
       return <Button onClick={redirectToInstance}>{labels?.student_actions?.continue}</Button>;
     }
     // Start <= x < Deadline
     return <Button onClick={redirectToInstance}>{labels?.student_actions?.start}</Button>;
   }
-  if (!finished) {
-    // Visualization <= x < Start
-    if (!now.isBefore(visualization) && visualization.isValid() && now.isBefore(start)) {
-      return <Button onClick={redirectToInstance}>{labels?.student_actions?.view}</Button>;
+  // Visualization <= x < Start
+  if (!now.isBefore(visualization) && visualization.isValid() && now.isBefore(start)) {
+    return <Button onClick={redirectToInstance}>{labels?.student_actions?.view}</Button>;
+  }
+  if (!now.isBefore(start) && start.isValid()) {
+    if (timestamps?.start) {
+      return <Button onClick={redirectToInstance}>{labels?.student_actions?.continue}</Button>;
     }
-    if (!now.isBefore(start) && start.isValid()) {
-      if (timestamps?.start) {
-        return <Button onClick={redirectToInstance}>{labels?.student_actions?.continue}</Button>;
-      }
-      // Start <= x < Deadline
-      return <Button onClick={redirectToInstance}>{labels?.student_actions?.start}</Button>;
-    }
-  } else {
-    // TODO: Botón ver corrección
-    return null;
+    // Start <= x < Deadline
+    return <Button onClick={redirectToInstance}>{labels?.student_actions?.start}</Button>;
   }
 }
 
@@ -233,7 +238,6 @@ function parseAssignations({ assignations, parserToUse, labels }) {
 
 export default function useParseAssignations(assignations) {
   const [, translations] = useTranslateLoader([
-    prefixPN('teacher_actions'),
     prefixPN('student_actions'),
     prefixPN('activity_status'),
   ]);
@@ -242,7 +246,6 @@ export default function useParseAssignations(assignations) {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       const data = {
-        teacher_actions: _.get(res, prefixPN('teacher_actions')),
         student_actions: _.get(res, prefixPN('student_actions')),
         activity_status: _.get(res, prefixPN('activity_status')),
       };
@@ -254,8 +257,6 @@ export default function useParseAssignations(assignations) {
 
     return {};
   }, [translations]);
-
-  console.log(labels);
 
   const { isTeacher } = useContext(globalContext);
 
