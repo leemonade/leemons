@@ -43,6 +43,7 @@ import {
   removeStudentFromClass,
   updateClass,
   updateClassMany,
+  classByIds,
 } from './classes';
 import { getStudentsByTags } from './common';
 
@@ -77,6 +78,7 @@ export const listStudentClassesRequest = listStudentClasses;
 export const listTeacherClassesRequest = listTeacherClasses;
 export const classDetailForDashboardRequest = classDetailForDashboard;
 export const removeStudentFromClassRequest = removeStudentFromClass;
+export const classByIdsRequest = classByIds;
 
 export const createKnowledgeRequest = createKnowledge;
 export const listKnowledgesRequest = listKnowledges;

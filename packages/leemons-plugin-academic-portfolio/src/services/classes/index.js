@@ -2,6 +2,7 @@ const { addClass } = require('./addClass');
 const { listClasses } = require('./listClasses');
 const { updateClass } = require('./updateClass');
 const { haveClasses } = require('./haveClasses');
+const { classByIds } = require('./classByIds');
 const { updateClassMany } = require('./updateClassMany');
 const { addClassStudents } = require('./addClassStudents');
 const { addClassTeachers } = require('./addClassTeachers');
@@ -17,6 +18,7 @@ const { getBasicClassesByProgram } = require('./getBasicClassesByProgram');
 
 module.exports = {
   addClass,
+  classByIds,
   listClasses,
   updateClass,
   haveClasses,

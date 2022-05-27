@@ -1,13 +1,15 @@
 import React, { useMemo, useContext, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash';
-import { LocaleDate, LocaleRelativeTime, useApi } from '@common';
-import { Badge, Text, ContextContainer, ActionButton } from '@bubbles-ui/components';
+import { LocaleDate, LocaleRelativeTime, useApi, unflatten } from '@common';
+import { Badge, Text, ContextContainer, ActionButton, Button } from '@bubbles-ui/components';
 import { ViewOnIcon, ViewOffIcon } from '@bubbles-ui/icons/outline';
 import dayjs from 'dayjs';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import globalContext from '../../../../contexts/globalContext';
 import getClassData from '../../../../helpers/getClassData';
 import getStatus from '../../../Details/components/UsersList/helpers/getStatus';
+import prefixPN from '../../../../helpers/prefixPN';
 
 function parseDates(dates, keysToParse) {
   let datesToParse = dates;
@@ -117,22 +119,69 @@ function TeacherActions({ id }) {
   return <ActionButton icon={<ViewOnIcon />} onClick={redirectToInstance} />;
 }
 
-function StudentActions({ id, user, role, late, submitted }) {
+function StudentActions({ assignation, labels }) {
+  const id = assignation?.instance?.id;
+  const role = assignation?.instance?.assignable?.roleDetails;
+  const user = assignation?.user;
+
   const history = useHistory();
-  const url = useMemo(
+  const activityUrl = useMemo(
     () => role.studentDetailUrl.replace(':id', id).replace(':user', user),
     [id, role?.studentDetailUrl]
   );
+  const revisionUrl = useMemo(() =>
+    role.evaluationDetailUrl.replace(':id', id).replace(':user', user)
+  );
 
-  const redirectToInstance = useCallback(() => history.push(url), [history, url]);
+  const dates = assignation?.instance?.dates;
+  const timestamps = assignation?.timestamps;
+  const finished = assignation?.finished;
 
-  if (late && !submitted) {
-    return <ActionButton icon={<ViewOffIcon />} disabled />;
+  const now = dayjs();
+  const visualization = dayjs(dates?.visualization);
+  const start = dayjs(dates?.start);
+  const alwaysAvailable = !(dates?.start && dates?.deadline);
+
+  const redirectToInstance = useCallback(() => history.push(activityUrl), [history, activityUrl]);
+  const redirectToRevision = useCallback(() => history.push(revisionUrl), [history, revisionUrl]);
+
+  // TRANSLATE: Translate buttons
+  if (finished) {
+    const hasCorrections = assignation?.grades
+      ?.filter((grade) => grade.type === 'main')
+      .some((grade) => grade.visibleToStudent);
+    if (hasCorrections) {
+      return (
+        <Button variant="outline" onClick={redirectToRevision}>
+          {labels?.student_actions?.correction}
+        </Button>
+      );
+    }
+    return null;
   }
-  if (!submitted) {
-    return <ActionButton icon={<ViewOnIcon />} onClick={redirectToInstance} />;
+
+  if (alwaysAvailable) {
+    if (timestamps?.start) {
+      return <Button onClick={redirectToInstance}>{labels?.student_actions?.continue}</Button>;
+    }
+    // Start <= x < Deadline
+    return <Button onClick={redirectToInstance}>{labels?.student_actions?.start}</Button>;
   }
-  return <p>See correction</p>;
+  // Visualization <= x < Start
+  if (!now.isBefore(visualization) && visualization.isValid() && now.isBefore(start)) {
+    return (
+      <Button variant="outline" onClick={redirectToInstance}>
+        {labels?.student_actions?.view}
+      </Button>
+    );
+  }
+  if (!now.isBefore(start) && start.isValid()) {
+    if (timestamps?.start) {
+      return <Button onClick={redirectToInstance}>{labels?.student_actions?.continue}</Button>;
+    }
+    // Start <= x < Deadline
+    return <Button onClick={redirectToInstance}>{labels?.student_actions?.start}</Button>;
+  }
 }
 
 async function parseAssignationForTeacherView(instance) {
@@ -154,17 +203,13 @@ async function parseAssignationForTeacherView(instance) {
   };
 }
 
-async function parseAssignationForStudentView(assignation) {
-  const labels = {
-    notSubmitted: 'Not submitted',
-  };
+async function parseAssignationForStudentView(assignation, labels) {
   const { instance } = assignation;
   const parsedDates = parseDates(instance.dates);
-  const status = getStatus(assignation, instance);
+  const status = labels?.activity_status?.[getStatus(assignation, instance)];
   const classData = await getClassData(instance.classes);
   const timeReference = dayjs(instance.dates.deadline).diff(dayjs(), 'seconds');
   const timeReferenceColor = getTimeReferenceColor(instance.dates.deadline);
-  const role = instance.assignable.roleDetails;
 
   return {
     ...instance,
@@ -175,22 +220,14 @@ async function parseAssignationForStudentView(assignation) {
     },
     status,
     subject: classData.name,
-    actions: (
-      <StudentActions
-        user={assignation.user}
-        late={instance.dates.deadline && timeReference <= 0}
-        submitted={instance.dates.end}
-        id={instance.id}
-        role={role}
-      />
-    ),
+    actions: <StudentActions assignation={assignation} labels={labels} />,
     timeReference:
       !instance.dates.deadline || instance.dates.end ? (
         '-'
       ) : (
         <Text color={timeReferenceColor}>
           {timeReference < 0 ? (
-            labels.notSubmitted
+            labels?.student_actions?.notSubmitted
           ) : (
             <LocaleRelativeTime seconds={Math.abs(timeReference)} short />
           )}
@@ -199,15 +236,36 @@ async function parseAssignationForStudentView(assignation) {
   };
 }
 
-function parseAssignations({ assignations, parserToUse }) {
+function parseAssignations({ assignations, parserToUse, labels }) {
   if (!assignations.length) {
     return [];
   }
 
-  return Promise.all(assignations?.map(parserToUse));
+  return Promise.all(assignations?.map((assignation) => parserToUse(assignation, labels)));
 }
 
 export default function useParseAssignations(assignations) {
+  const [, translations] = useTranslateLoader([
+    prefixPN('student_actions'),
+    prefixPN('activity_status'),
+  ]);
+
+  const labels = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = {
+        student_actions: _.get(res, prefixPN('student_actions')),
+        activity_status: _.get(res, prefixPN('activity_status')),
+      };
+
+      // EN: Modify the data object here
+      // ES: Modifica el objeto data aquí
+      return data;
+    }
+
+    return {};
+  }, [translations]);
+
   const { isTeacher } = useContext(globalContext);
 
   const parserToUse = useMemo(
@@ -219,8 +277,9 @@ export default function useParseAssignations(assignations) {
     () => ({
       parserToUse,
       assignations,
+      labels,
     }),
-    [parserToUse, assignations]
+    [parserToUse, assignations, labels]
   );
 
   const defaultValue = useMemo(() => [], []);

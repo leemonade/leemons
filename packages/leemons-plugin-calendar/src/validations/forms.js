@@ -8,6 +8,7 @@ const {
   integerSchema,
   arrayStringSchema,
   localeObjectSchema,
+  dateSchemaNullable,
 } = require('./types');
 
 const addCalendarSchema = {
@@ -35,8 +36,8 @@ const addEventSchema = {
   type: 'object',
   properties: {
     title: stringSchema,
-    startDate: dateSchema,
-    endDate: dateSchema,
+    startDate: dateSchemaNullable,
+    endDate: dateSchemaNullable,
     isAllDay: booleanSchema,
     isPrivate: booleanSchema,
     repeat: stringSchema,
@@ -46,12 +47,18 @@ const addEventSchema = {
       additionalProperties: true,
     },
   },
-  required: ['title', 'startDate', 'endDate', 'type'],
+  required: ['title', 'type'], // 'startDate', 'endDate',
   additionalProperties: false,
 };
 
 function validateAddEvent(data) {
-  const validator = new LeemonsValidator(addEventSchema);
+  const schema = _.cloneDeep(addEventSchema);
+
+  if (data.type !== 'plugins.calendar.task') {
+    schema.required.push('startDate', 'endDate');
+  }
+
+  const validator = new LeemonsValidator(schema);
 
   if (!validator.validate(data)) {
     throw validator.error;
@@ -62,8 +69,8 @@ const updateEventSchema = {
   type: 'object',
   properties: {
     title: stringSchema,
-    startDate: dateSchema,
-    endDate: dateSchema,
+    startDate: dateSchemaNullable,
+    endDate: dateSchemaNullable,
     isAllDay: booleanSchema,
     isPrivate: {
       type: ['boolean', 'number'],

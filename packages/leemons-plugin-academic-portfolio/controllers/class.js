@@ -171,6 +171,18 @@ async function classDetailForDashboard(ctx) {
   ctx.body = { status: 200, ...data };
 }
 
+async function classByIds(ctx) {
+  const ids = JSON.parse(ctx.request.query.ids);
+  const classes = await classService.classByIds(ids, {
+    userSession: ctx.state.userSession,
+    noSearchChilds: ctx.request.query.noSearchChilds,
+    noSearchParents: ctx.request.query.noSearchParents,
+  });
+
+  ctx.status = 200;
+  ctx.body = { status: 200, classes };
+}
+
 module.exports = {
   postClass,
   putClass,
@@ -186,4 +198,5 @@ module.exports = {
   listStudentClasses,
   listTeacherClasses,
   classDetailForDashboard,
+  classByIds,
 };

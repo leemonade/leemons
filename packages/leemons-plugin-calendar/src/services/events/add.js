@@ -22,9 +22,9 @@ async function add(key, data, { ignoreType, transacting: _transacting } = {}) {
   validateAddEvent(data);
 
   // eslint-disable-next-line no-param-reassign
-  data.startDate = data.startDate.slice(0, 19).replace('T', ' ');
+  if (data.startDate) data.startDate = data.startDate.slice(0, 19).replace('T', ' ');
   // eslint-disable-next-line no-param-reassign
-  data.endDate = data.endDate.slice(0, 19).replace('T', ' ');
+  if (data.endDate) data.endDate = data.endDate.slice(0, 19).replace('T', ' ');
 
   return global.utils.withTransaction(
     async (transacting) => {
@@ -38,11 +38,7 @@ async function add(key, data, { ignoreType, transacting: _transacting } = {}) {
         { transacting }
       );
 
-      const calendars = await Promise.all(
-        _.map(keys, (k) => {
-          return detailByKey(k, { transacting });
-        })
-      );
+      const calendars = await Promise.all(_.map(keys, (k) => detailByKey(k, { transacting })));
 
       await addToCalendar(event.id, _.map(calendars, 'id'), { transacting });
 

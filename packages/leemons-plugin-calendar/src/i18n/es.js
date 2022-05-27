@@ -30,6 +30,7 @@ module.exports = {
     repeatLabel: 'Repetir',
     cancel: 'Cancelar',
     selectCalendar: 'Seleccionar calendario',
+    showInCalendar: 'Mostrar en calendario',
     repeat: {
       dont_repeat: 'No repetir',
       every_day: 'Cada día',
@@ -49,6 +50,7 @@ module.exports = {
     add_subtask: 'Añadir subtarea',
     tags: 'Etiquetas',
     column: 'Estado en Kanban',
+    dontShowInCalendar: 'No mostrar en calendario',
   },
   detail_page: {
     title_placeholder: 'Configuración del calendario',

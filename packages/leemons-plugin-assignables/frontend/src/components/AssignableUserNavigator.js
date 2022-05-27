@@ -12,7 +12,7 @@ import SelectUserAgent from '@users/components/SelectUserAgent';
 import PropTypes from 'prop-types';
 import { findIndex } from 'lodash/array';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import getAssignation from '../requests/assignations/getAssignation';
+// import getAssignation from '../requests/assignations/getAssignation';
 
 export default function AssignableUserNavigator({ value, instance, onChange = () => {} }) {
   const [t, translations] = useTranslateLoader(prefixPN('userNavigator'));
@@ -29,17 +29,18 @@ export default function AssignableUserNavigator({ value, instance, onChange = ()
         store.instance = instance;
       }
 
+      const assignations = store.instance.students;
       const studentIds = map(store.instance.students, 'user');
 
-      const promises = [];
-      forEach(studentIds, (user) => {
-        promises.push(getAssignation({ id: store.instance.id, user }));
-      });
+      // const promises = [];
+      // forEach(studentIds, (user) => {
+      //   promises.push(getAssignation({ id: store.instance.id, user }));
+      // });
 
-      const [classe, { userAgents }, assignations] = await Promise.all([
+      const [classe, { userAgents }] = await Promise.all([
         getClassData(store.instance.classes, { multiSubject: t('multiSubject') }),
         getUserAgentsInfo(studentIds),
-        Promise.all(promises),
+        // Promise.all(promises),
       ]);
 
       const assignationsByUser = keyBy(assignations, 'user');

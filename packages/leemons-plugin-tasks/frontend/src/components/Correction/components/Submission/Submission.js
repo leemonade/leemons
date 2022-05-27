@@ -8,7 +8,7 @@ function TypeNotFound({ labels }) {
 }
 
 export default function Submission({ assignation, labels }) {
-  const submissionType = assignation.instance.assignable.submission?.type;
+  const submissionType = assignation?.instance?.assignable?.submission?.type;
 
   if (!submissionType) {
     return null;

@@ -32,6 +32,12 @@ const dateSchema = {
   format: 'date-time',
 };
 
+const dateSchemaNullable = {
+  type: 'string',
+  format: 'date-time',
+  nullable: true,
+};
+
 const booleanSchema = {
   type: 'boolean',
 };
@@ -56,6 +62,7 @@ module.exports = {
   booleanSchema,
   integerSchema,
   arrayStringSchema,
+  dateSchemaNullable,
   localeObjectSchema,
   arrayStringRequiredSchema,
 };

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import _ from 'lodash';
 import { getSubjectDetails } from '@academic-portfolio/request/subjects';
 
 export default function useSubjects(task) {
@@ -10,11 +11,12 @@ export default function useSubjects(task) {
       return;
     }
 
-    const s = await Promise.all(subjects.map(({ subject }) => getSubjectDetails(subject)));
+    const subjectsData = (await getSubjectDetails(_.map(subjects, 'subject')))?.data;
+
     setData(
-      s.map(({ data: subjectData }) => ({
-        label: subjectData.name,
-        value: subjectData.id,
+      subjectsData.map((subject) => ({
+        label: subject.name,
+        value: subject.id,
       }))
     );
   }, [subjects]);

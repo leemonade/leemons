@@ -69,16 +69,24 @@ function Calendar({ session }) {
     const events = [];
     const calendarsByKey = keyBy(data.calendars, 'id');
     _.forEach(data.events, (event) => {
-      if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
-        // eslint-disable-next-line consistent-return
-        _.forEach(event.data.classes, (calendar) => {
-          if (calendarsByKey[calendar].showEvents) {
-            events.push(transformEvent(event, data.calendars));
-            return false;
-          }
-        });
-      } else if (calendarsByKey[event.calendar].showEvents) {
-        events.push(event);
+      let canShowInCalendar = true;
+
+      if (event.data?.hideInCalendar) {
+        canShowInCalendar = false;
+      }
+
+      if (canShowInCalendar) {
+        if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
+          // eslint-disable-next-line consistent-return
+          _.forEach(event.data.classes, (calendar) => {
+            if (calendarsByKey[calendar].showEvents) {
+              events.push(transformEvent(event, data.calendars));
+              return false;
+            }
+          });
+        } else if (calendarsByKey[event.calendar].showEvents) {
+          events.push(event);
+        }
       }
     });
     return events;

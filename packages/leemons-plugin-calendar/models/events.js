@@ -13,15 +13,19 @@ module.exports = {
     },
     startDate: {
       type: 'datetime',
+      /* // Los tasks pueden no tener fecha
       options: {
         notNull: true,
       },
+       */
     },
     endDate: {
       type: 'datetime',
-      options: {
-        notNull: true,
-      },
+      /* // Los tasks pueden no tener fecha
+       options: {
+         notNull: true,
+       },
+        */
     },
     isAllDay: {
       type: 'boolean',

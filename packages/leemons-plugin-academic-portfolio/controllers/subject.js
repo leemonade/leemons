@@ -4,6 +4,7 @@ const {
   validatePutSubjectCredits,
   validateGetSubjectCredits,
   validateGetSubjectCreditsProgram,
+  validateGetSubjectsCredits,
 } = require('../src/validations/forms');
 
 async function postSubject(ctx) {
@@ -35,11 +36,21 @@ async function putSubjectCredits(ctx) {
 }
 
 async function getSubjectCredits(ctx) {
-  validateGetSubjectCredits(ctx.request.query);
-  const { subject, program } = ctx.request.query;
-  const subjectCredits = await subjectService.getSubjectCredits(subject, program);
-  ctx.status = 200;
-  ctx.body = { status: 200, subjectCredits };
+  let { subjects } = ctx.request.query;
+  if (subjects) {
+    subjects = JSON.parse(subjects);
+
+    validateGetSubjectsCredits(subjects);
+    const subjectsCredits = await subjectService.getSubjectsCredits(subjects);
+    ctx.status = 200;
+    ctx.body = { status: 200, subjectsCredits };
+  } else {
+    validateGetSubjectCredits(ctx.request.query);
+    const { subject, program } = ctx.request.query;
+    const subjectCredits = await subjectService.getSubjectCredits(subject, program);
+    ctx.status = 200;
+    ctx.body = { status: 200, subjectCredits };
+  }
 }
 
 async function listSubjectCreditsForProgram(ctx) {
@@ -81,10 +92,21 @@ async function listSubject(ctx) {
 }
 
 async function subjectByIds(ctx) {
-  const { id } = ctx.request.params;
-  const data = await subjectService.subjectByIds([id], { userSession: ctx.state.userSession });
+  let { id } = ctx.request.params;
+  if (!id) {
+    const { ids } = ctx.request.query;
+    id = JSON.parse(ids);
+  }
+
+  const data = await subjectService.subjectByIds(Array.isArray(id) ? id : [id], {
+    userSession: ctx.state.userSession,
+  });
   ctx.status = 200;
-  ctx.body = { status: 200, data: data && data[0] };
+  if (ctx.request.params.id) {
+    ctx.body = { status: 200, data: data && data[0] };
+  } else {
+    ctx.body = { status: 200, data };
+  }
 }
 
 module.exports = {
