@@ -406,5 +406,6 @@ module.exports = {
     saveMessage: 'The changes have been saved',
     saveAndSendMessage: 'The changes have been saved and have been sent to the student',
     saveError: 'The changes could not be saved: {{error}}',
+    subjectNotCorrectedYet: ' This subject has not been corrected yet',
   },
 };

@@ -407,5 +407,6 @@ module.exports = {
     saveMessage: 'Cambios guardados con éxito',
     saveAndSendMessage: 'Cambios guardados y enviados al estudiante con éxito',
     saveError: 'No se han podido guardar los cambios: {{error}}',
+    subjectNotCorrectedYet: 'Esta asignatura todavía no ha sido corregida',
   },
 };

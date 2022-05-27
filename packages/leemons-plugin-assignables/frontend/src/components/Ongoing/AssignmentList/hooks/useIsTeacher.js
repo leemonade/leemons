@@ -38,5 +38,14 @@ export default function useIsTeacher() {
     });
   }, []);
 
+  leemons.log.debug(
+    'currentProfile: ',
+    profile,
+    'teacherProfile: ',
+    teacherProfile,
+    'isTeacher: ',
+    profile === teacherProfile
+  );
+
   return profile === teacherProfile;
 }

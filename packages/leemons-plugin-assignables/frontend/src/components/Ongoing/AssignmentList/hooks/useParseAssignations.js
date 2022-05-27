@@ -151,7 +151,11 @@ function StudentActions({ assignation, labels }) {
       ?.filter((grade) => grade.type === 'main')
       .some((grade) => grade.visibleToStudent);
     if (hasCorrections) {
-      return <Button onClick={redirectToRevision}>{labels?.student_actions?.correction}</Button>;
+      return (
+        <Button variant="outline" onClick={redirectToRevision}>
+          {labels?.student_actions?.correction}
+        </Button>
+      );
     }
     return null;
   }
@@ -165,7 +169,11 @@ function StudentActions({ assignation, labels }) {
   }
   // Visualization <= x < Start
   if (!now.isBefore(visualization) && visualization.isValid() && now.isBefore(start)) {
-    return <Button onClick={redirectToInstance}>{labels?.student_actions?.view}</Button>;
+    return (
+      <Button variant="outline" onClick={redirectToInstance}>
+        {labels?.student_actions?.view}
+      </Button>
+    );
   }
   if (!now.isBefore(start) && start.isValid()) {
     if (timestamps?.start) {
