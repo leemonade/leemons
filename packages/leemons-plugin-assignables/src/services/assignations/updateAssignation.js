@@ -74,6 +74,7 @@ module.exports = async function updateAssignation(assignation, { userSession, tr
             grade: grade.grade,
             feedback: grade.feedback,
             gradedBy: grade.gradedBy,
+            visibleToStudent: grade.visibleToStudent,
             type: grade.type,
           },
           { userSession, transacting }
