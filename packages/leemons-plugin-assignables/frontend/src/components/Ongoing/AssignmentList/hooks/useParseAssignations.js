@@ -1,13 +1,15 @@
 import React, { useMemo, useContext, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash';
-import { LocaleDate, LocaleRelativeTime, useApi } from '@common';
+import { LocaleDate, LocaleRelativeTime, useApi, unflatten } from '@common';
 import { Badge, Text, ContextContainer, ActionButton, Button } from '@bubbles-ui/components';
 import { ViewOnIcon, ViewOffIcon } from '@bubbles-ui/icons/outline';
 import dayjs from 'dayjs';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import globalContext from '../../../../contexts/globalContext';
 import getClassData from '../../../../helpers/getClassData';
 import getStatus from '../../../Details/components/UsersList/helpers/getStatus';
+import prefixPN from '../../../../helpers/prefixPN';
 
 function parseDates(dates, keysToParse) {
   let datesToParse = dates;
@@ -117,7 +119,7 @@ function TeacherActions({ id }) {
   return <ActionButton icon={<ViewOnIcon />} onClick={redirectToInstance} />;
 }
 
-function StudentActions({ assignation }) {
+function StudentActions({ assignation, labels }) {
   const id = assignation?.instance?.id;
   const role = assignation?.instance?.assignable?.roleDetails;
   const user = assignation?.user;
@@ -146,22 +148,22 @@ function StudentActions({ assignation }) {
       return null;
     }
     if (timestamps?.start) {
-      return <Button onClick={redirectToInstance}>Continuar</Button>;
+      return <Button onClick={redirectToInstance}>{labels?.student_actions?.continue}</Button>;
     }
     // Start <= x < Deadline
-    return <Button onClick={redirectToInstance}>Empezar</Button>;
+    return <Button onClick={redirectToInstance}>{labels?.student_actions?.start}</Button>;
   }
   if (!finished) {
     // Visualization <= x < Start
     if (!now.isBefore(visualization) && visualization.isValid() && now.isBefore(start)) {
-      return <Button onClick={redirectToInstance}>Ver</Button>;
+      return <Button onClick={redirectToInstance}>{labels?.student_actions?.view}</Button>;
     }
     if (!now.isBefore(start) && start.isValid()) {
       if (timestamps?.start) {
-        return <Button onClick={redirectToInstance}>Continuar</Button>;
+        return <Button onClick={redirectToInstance}>{labels?.student_actions?.continue}</Button>;
       }
       // Start <= x < Deadline
-      return <Button onClick={redirectToInstance}>Empezar</Button>;
+      return <Button onClick={redirectToInstance}>{labels?.student_actions?.start}</Button>;
     }
   } else {
     // TODO: Botón ver corrección
@@ -188,17 +190,13 @@ async function parseAssignationForTeacherView(instance) {
   };
 }
 
-async function parseAssignationForStudentView(assignation) {
-  const labels = {
-    notSubmitted: 'Not submitted',
-  };
+async function parseAssignationForStudentView(assignation, labels) {
   const { instance } = assignation;
   const parsedDates = parseDates(instance.dates);
-  const status = getStatus(assignation, instance);
+  const status = labels?.activity_status?.[getStatus(assignation, instance)];
   const classData = await getClassData(instance.classes);
   const timeReference = dayjs(instance.dates.deadline).diff(dayjs(), 'seconds');
   const timeReferenceColor = getTimeReferenceColor(instance.dates.deadline);
-  const role = instance.assignable.roleDetails;
 
   return {
     ...instance,
@@ -209,14 +207,14 @@ async function parseAssignationForStudentView(assignation) {
     },
     status,
     subject: classData.name,
-    actions: <StudentActions assignation={assignation} />,
+    actions: <StudentActions assignation={assignation} labels={labels} />,
     timeReference:
       !instance.dates.deadline || instance.dates.end ? (
         '-'
       ) : (
         <Text color={timeReferenceColor}>
           {timeReference < 0 ? (
-            labels.notSubmitted
+            labels?.student_actions?.notSubmitted
           ) : (
             <LocaleRelativeTime seconds={Math.abs(timeReference)} short />
           )}
@@ -225,15 +223,40 @@ async function parseAssignationForStudentView(assignation) {
   };
 }
 
-function parseAssignations({ assignations, parserToUse }) {
+function parseAssignations({ assignations, parserToUse, labels }) {
   if (!assignations.length) {
     return [];
   }
 
-  return Promise.all(assignations?.map(parserToUse));
+  return Promise.all(assignations?.map((assignation) => parserToUse(assignation, labels)));
 }
 
 export default function useParseAssignations(assignations) {
+  const [, translations] = useTranslateLoader([
+    prefixPN('teacher_actions'),
+    prefixPN('student_actions'),
+    prefixPN('activity_status'),
+  ]);
+
+  const labels = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = {
+        teacher_actions: _.get(res, prefixPN('teacher_actions')),
+        student_actions: _.get(res, prefixPN('student_actions')),
+        activity_status: _.get(res, prefixPN('activity_status')),
+      };
+
+      // EN: Modify the data object here
+      // ES: Modifica el objeto data aquí
+      return data;
+    }
+
+    return {};
+  }, [translations]);
+
+  console.log(labels);
+
   const { isTeacher } = useContext(globalContext);
 
   const parserToUse = useMemo(
@@ -245,8 +268,9 @@ export default function useParseAssignations(assignations) {
     () => ({
       parserToUse,
       assignations,
+      labels,
     }),
-    [parserToUse, assignations]
+    [parserToUse, assignations, labels]
   );
 
   const defaultValue = useMemo(() => [], []);
