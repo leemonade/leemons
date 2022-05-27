@@ -9,7 +9,7 @@ export default function useAssignation(instance, user, details = true) {
       user,
       details,
     }),
-    []
+    [instance, user, details]
   );
   return useApi(getAssignation, options);
 }

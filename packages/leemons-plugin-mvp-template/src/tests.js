@@ -13,8 +13,8 @@ async function initTests({ users, programs }) {
 
     const questions = await importQuestions();
 
-    console.log('--- QUESTIONS ---');
-    console.dir(questions, { depth: null });
+    // console.log('--- QUESTIONS ---');
+    // console.dir(questions, { depth: null });
 
     // ·····················································
     // QBANKS
@@ -25,15 +25,18 @@ async function initTests({ users, programs }) {
     for (let i = 0, len = qbanksKeys.length; i < len; i++) {
       const key = qbanksKeys[i];
       const { creator, ...qbank } = qbanks[key];
-      /*
+      qbank.questions = questions
+        .filter((question) => question.qbank === key)
+        .map(({ qbank: qbankProp, ...question }) => question);
+
       const qbankData = await services.questionsBanks.save(
-        { ...qbank, published: true, questions: [] },
+        { ...qbank, published: true },
         {
           userSession: users[creator],
         }
       );
+
       qbanks[key] = { ...qbankData };
-      */
     }
 
     // ·····················································

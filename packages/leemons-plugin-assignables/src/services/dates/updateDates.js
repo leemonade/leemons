@@ -1,8 +1,9 @@
 const _ = require('lodash');
-const getDiff = require('../../helpers/getDiff');
 const getDates = require('./getDates');
 const registerDates = require('./registerDates');
 const unregisterDates = require('./unregisterDates');
+
+const { getDiff } = global.utils;
 
 module.exports = async function updateDates(type, instance, dates, { transacting } = {}) {
   const currentDates = await getDates(type, instance, { transacting });

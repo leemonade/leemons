@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const updateAsset = require('../leebrary/assets/updateAsset');
-const getDiff = require('../../helpers/getDiff');
 const { validateAssignable } = require('../../helpers/validators/assignable');
 const updateSubjects = require('../subjects/updateSubjects');
 const { assignables } = require('../tables');
@@ -11,6 +10,8 @@ const getAssignable = require('./getAssignable');
 const listAssignableUserAgents = require('./listAssignableUserAgents');
 const getUserPermission = require('./permissions/assignable/users/getUserPermission');
 const publishAssignable = require('./publishAssignable');
+
+const { getDiff } = global.utils;
 
 const updatableFields = [
   'asset',
