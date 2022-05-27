@@ -31,6 +31,13 @@ module.exports = {
     feedback: {
       type: 'richtext',
     },
+    visibleToStudent: {
+      type: 'boolean',
+      options: {
+        notNull: true,
+        defaultTo: true,
+      },
+    },
     date: {
       type: 'datetime',
     },

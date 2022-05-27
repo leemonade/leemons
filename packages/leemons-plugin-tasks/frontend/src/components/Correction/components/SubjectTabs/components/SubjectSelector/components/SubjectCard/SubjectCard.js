@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageLoader, Box, TextClamp } from '@bubbles-ui/components';
+import { ImageLoader, Box, TextClamp, Text } from '@bubbles-ui/components';
 import { StarIcon, StarAlternateIcon } from '@bubbles-ui/icons/solid';
 import { SubjectCardStyles } from './SubjectCard.style';
 
@@ -32,10 +32,12 @@ export default function SubjectCard({ subject, corrected, selected }) {
       </Box>
       <Box className={classes.nameContainer}>
         <TextClamp lines={1} showTooltip color="primary" size="sm">
-          {subject.name}
+          <Text color="primary">{subject.name}</Text>
         </TextClamp>
         <TextClamp lines={1} showTooltip color="secondary" size="xs">
-          {subject.internalId}
+          <Text color="secondary" size="xs">
+            {subject.internalId}
+          </Text>
         </TextClamp>
       </Box>
     </Box>

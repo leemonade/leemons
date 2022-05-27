@@ -290,7 +290,7 @@ export default function TaskSetupPage() {
         onEdit={() => {
           loading.current = 'edit';
           render();
-          handleOnPublishTask().catch(() => {});
+          emitEvent('publishTaskAndLibrary');
         }}
         onResize={handleOnHeaderResize}
         loading={loading.current}

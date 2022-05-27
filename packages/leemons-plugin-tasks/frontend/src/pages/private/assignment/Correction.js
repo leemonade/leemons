@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import useAssignation from '@assignables/hooks/assignations/useAssignation';
+import useAssignablesContext from '@assignables/hooks/useAssignablesContext';
 import { useParams, useHistory } from 'react-router-dom';
 import { Loader, Text, createStyles, Box } from '@bubbles-ui/components';
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
 import useAssignableInstance from '@assignables/hooks/assignableInstance/useAssignableInstance';
 import { useForm, FormProvider } from 'react-hook-form';
 import Correction from '../../../components/Correction';
+import StudentCorrection from '../../../components/StudentCorrection';
 
 const styles = createStyles((theme) => ({
   root: {
@@ -33,6 +35,7 @@ const styles = createStyles((theme) => ({
 }));
 
 export default function CorrectionPage() {
+  const { isTeacher } = useAssignablesContext();
   const isFirstUser = useRef(true);
   const history = useHistory();
   const { instance: instanceId } = useParams();
@@ -86,16 +89,23 @@ export default function CorrectionPage() {
     return <Text>Error: {error.message}</Text>;
   }
 
-  return (
-    <FormProvider {...form}>
-      <Box className={classes.root}>
-        <Box className={classes.aside}>
-          <AssignableUserNavigator instance={instance} onChange={onStudentChange} value={student} />
+  if (isTeacher) {
+    return (
+      <FormProvider {...form}>
+        <Box className={classes.root}>
+          <Box className={classes.aside}>
+            <AssignableUserNavigator
+              instance={instance}
+              onChange={onStudentChange}
+              value={student}
+            />
+          </Box>
+          <Box className={classes.main}>
+            <Correction assignation={fullAssignation} instance={instance} loading={loading} />
+          </Box>
         </Box>
-        <Box className={classes.main}>
-          <Correction assignation={fullAssignation} instance={instance} loading={loading} />
-        </Box>
-      </Box>
-    </FormProvider>
-  );
+      </FormProvider>
+    );
+  }
+  return <StudentCorrection assignation={fullAssignation} />;
 }

@@ -196,7 +196,7 @@ async function getAssetsByIds(ctx) {
   const { userSession } = ctx.state;
   const {
     assets: assetIds,
-    filters: { published, showPublic },
+    filters: { published, showPublic, indexable = true },
   } = ctx.request.body;
 
   if (isEmpty(assetIds)) {
@@ -206,7 +206,7 @@ async function getAssetsByIds(ctx) {
   const assets = await getByIds(assetIds, {
     withFiles: true,
     checkPermissions: true,
-    indexable: true,
+    indexable,
     published,
     showPublic,
     userSession,

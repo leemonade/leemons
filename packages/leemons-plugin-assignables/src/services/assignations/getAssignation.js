@@ -11,9 +11,10 @@ module.exports = async function getAssignation(
 ) {
   // EN: Check permissions (or teacher or student)
   // ES: Comprueba permisos (o profesor o estudiante)
+  const isTheStudent = userSession.userAgents.map((u) => u.id).includes(user);
   if (
     !(
-      userSession.userAgents.map((u) => u.id).includes(user) ||
+      isTheStudent ||
       (
         await getUserPermission(assignableInstanceId, { userSession, transacting })
       ).actions.includes('edit')
@@ -45,11 +46,14 @@ module.exports = async function getAssignation(
   };
 
   assignation.timestamps = await getDates('assignation', assignation.id, { transacting });
-  assignation.grades = await getGrade({ assignation: assignation.id }, { transacting });
+  assignation.grades = await getGrade(
+    { assignation: assignation.id, visibleToStudent: isTheStudent ? true : undefined },
+    { transacting }
+  );
 
   if (
     assignation.timestamps.end ||
-    (assignation.timestamps.deadline && dayjs(assignation.timestamps.deadline).isBefore(dayjs())) ||
+    (instanceDates.deadline && dayjs(instanceDates.deadline).isBefore(dayjs())) ||
     (instanceDates.close && dayjs(instanceDates.close).isBefore(dayjs())) ||
     (instanceDates.closed && dayjs(instanceDates.closed).isBefore(dayjs()))
   ) {

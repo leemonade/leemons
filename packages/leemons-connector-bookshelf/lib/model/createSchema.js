@@ -170,6 +170,9 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
               case 'notNull':
                 col.notNullable();
                 break;
+              case 'defaultTo':
+                col.defaultTo(property);
+                break;
               default:
             }
           } else if (property !== undefined) {
