@@ -48,8 +48,8 @@ async function initTests({ users, programs }) {
       // ·····················································
       // POST-PROCESSING QUESTIONS
 
-      console.log('qbank.name:', qbank.name);
-      console.log('qbankData.asset:', qbankData.asset);
+      // console.log('qbank.name:', qbank.name);
+      // console.log('qbankData.asset:', qbankData.asset);
 
       const qbanksDetail = (
         await services.questionsBanks.findByAssetIds([qbankData.asset], {
@@ -69,7 +69,7 @@ async function initTests({ users, programs }) {
           }
         });
       } else {
-        console.log('No tenemos questions para el Qbank');
+        // console.log('No tenemos questions para el Qbank');
       }
 
       qbanks[key] = { ...qbankData, questions: qbanksDetail.questions };
@@ -81,8 +81,8 @@ async function initTests({ users, programs }) {
     const tests = await importTests({ qbanks, programs, questions: questionsItems });
     const testsKeys = keys(tests);
 
-    console.log('--- TESTS ---');
-    console.dir(tests, { depth: null });
+    // console.log('--- TESTS ---');
+    // console.dir(tests, { depth: null });
 
     for (let i = 0, len = testsKeys.length; i < len; i++) {
       const key = testsKeys[i];
