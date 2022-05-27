@@ -1,6 +1,7 @@
 const { keyBy } = require('lodash');
 const { table } = require('../tables');
 const { getProfiles } = require('./getProfiles');
+const enableMenuItemService = require('../menu-builder/enableItem');
 
 /**
  * @public
@@ -30,6 +31,8 @@ async function setProfiles({ teacher, student }, { transacting } = {}) {
       { transacting }
     ),
   ]);
+  await Promise.all([enableMenuItemService('profiles'), enableMenuItemService('programs')]);
+
   return getProfiles({ transacting });
 }
 
