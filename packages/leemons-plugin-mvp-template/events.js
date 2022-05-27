@@ -8,8 +8,8 @@ const { addAWSS3AsProvider, initLibrary } = require('./src/leebrary');
 const addAWSEmailAsProvider = require('./src/emails');
 const initWidgets = require('./src/widgets');
 const initTasks = require('./src/tasks');
+const initTests = require('./src/tests');
 // const addCalendarAndEventAsClassroom = require('./src/calendar');
-// const initTests = require('./src/tests');
 
 async function events(isInstalled) {
   const config = {
@@ -163,8 +163,9 @@ async function events(isInstalled) {
       async () => {
         try {
           console.log('MVP - Iniciando el plugin de Tests');
-          // config.tests = await initTests(config);
-          // leemons.events.emit('init-tests', config.tests);
+          config.tests = await initTests(config);
+          leemons.events.emit('init-tests', config.tests);
+          console.log('MVP - Plugin de Tests inicializado!');
         } catch (e) {
           console.error(e);
         }
