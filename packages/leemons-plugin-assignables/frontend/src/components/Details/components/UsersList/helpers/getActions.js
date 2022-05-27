@@ -1,11 +1,6 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import dayjs from 'dayjs';
 import { Button } from '@bubbles-ui/components';
-import _ from 'lodash';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '../../../../../helpers/prefixPN';
 
 function CorrectionButton({ studentData, instanceData, label }) {
   const history = useHistory();

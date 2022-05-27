@@ -2,7 +2,7 @@ import React, { useMemo, useContext, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash';
 import { LocaleDate, LocaleRelativeTime, useApi } from '@common';
-import { Badge, Text, ContextContainer, ActionButton } from '@bubbles-ui/components';
+import { Badge, Text, ContextContainer, ActionButton, Button } from '@bubbles-ui/components';
 import { ViewOnIcon, ViewOffIcon } from '@bubbles-ui/icons/outline';
 import dayjs from 'dayjs';
 import globalContext from '../../../../contexts/globalContext';
@@ -117,22 +117,56 @@ function TeacherActions({ id }) {
   return <ActionButton icon={<ViewOnIcon />} onClick={redirectToInstance} />;
 }
 
-function StudentActions({ id, user, role, late, submitted }) {
+function StudentActions({ assignation }) {
+  const id = assignation?.instance?.id;
+  const role = assignation?.instance?.assignable?.roleDetails;
+  const user = assignation?.user;
+
   const history = useHistory();
   const url = useMemo(
     () => role.studentDetailUrl.replace(':id', id).replace(':user', user),
     [id, role?.studentDetailUrl]
   );
 
+  const dates = assignation?.instance?.dates;
+  const timestamps = assignation?.timestamps;
+  const finished = assignation?.finished;
+
+  const now = dayjs();
+  const visualization = dayjs(dates?.visualization);
+  const start = dayjs(dates?.start);
+  const alwaysAvailable = dates?.start && dates?.deadline;
+
   const redirectToInstance = useCallback(() => history.push(url), [history, url]);
 
-  if (late && !submitted) {
-    return <ActionButton icon={<ViewOffIcon />} disabled />;
+  // TRANSLATE: Translate buttons
+  if (alwaysAvailable) {
+    if (finished) {
+      // TODO: Botón ver corrección
+      return null;
+    }
+    if (timestamps?.start) {
+      return <Button onClick={redirectToInstance}>Continuar</Button>;
+    }
+    // Start <= x < Deadline
+    return <Button onClick={redirectToInstance}>Empezar</Button>;
   }
-  if (!submitted) {
-    return <ActionButton icon={<ViewOnIcon />} onClick={redirectToInstance} />;
+  if (!finished) {
+    // Visualization <= x < Start
+    if (!now.isBefore(visualization) && visualization.isValid() && now.isBefore(start)) {
+      return <Button onClick={redirectToInstance}>Ver</Button>;
+    }
+    if (!now.isBefore(start) && start.isValid()) {
+      if (timestamps?.start) {
+        return <Button onClick={redirectToInstance}>Continuar</Button>;
+      }
+      // Start <= x < Deadline
+      return <Button onClick={redirectToInstance}>Empezar</Button>;
+    }
+  } else {
+    // TODO: Botón ver corrección
+    return null;
   }
-  return <p>See correction</p>;
 }
 
 async function parseAssignationForTeacherView(instance) {
@@ -175,15 +209,7 @@ async function parseAssignationForStudentView(assignation) {
     },
     status,
     subject: classData.name,
-    actions: (
-      <StudentActions
-        user={assignation.user}
-        late={instance.dates.deadline && timeReference <= 0}
-        submitted={instance.dates.end}
-        id={instance.id}
-        role={role}
-      />
-    ),
+    actions: <StudentActions assignation={assignation} />,
     timeReference:
       !instance.dates.deadline || instance.dates.end ? (
         '-'
