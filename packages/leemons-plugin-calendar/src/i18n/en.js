@@ -30,6 +30,7 @@ module.exports = {
     repeatLabel: 'Repeat',
     cancel: 'Cancel',
     selectCalendar: 'Select calendar',
+    calendarLabel: 'Choose calendar where to display',
     showInCalendar: 'Show in calendar',
     repeat: {
       dont_repeat: 'Don´t repeat',
@@ -48,7 +49,7 @@ module.exports = {
     description: 'Description',
     subtask: 'Subtask',
     add_subtask: 'Add sub-task',
-    tags: 'Tags',
+    tags: 'Subject tag',
     column: 'State in Kanban',
     dontShowInCalendar: 'Don´t show in calendar',
   },

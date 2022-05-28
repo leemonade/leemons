@@ -8,6 +8,7 @@ const { detail: detailEvent } = require('./detail');
 const { detail: detailCalendar } = require('../calendar/detail');
 const { update } = require('./update');
 const { getEventCalendars } = require('./getEventCalendars');
+const { detailByKey } = require('../calendar/detailByKey');
 
 /**
  * Add event to calendar if the user have access
@@ -65,7 +66,17 @@ async function updateFromUser(userSession, id, data, { transacting: _transacting
         (eventPermission && eventPermission.actionNames.indexOf('owner') >= 0) ||
         (eventPermission && eventPermission.actionNames.indexOf('view') >= 0)
       ) {
-        return update(event.id, data, { transacting });
+        let calendar = data.calendar || null;
+        if (calendar) {
+          const c = await Promise.all(
+            _.map(_.isArray(calendar) ? calendar : [calendar], (k) =>
+              detailByKey(k, { transacting })
+            )
+          );
+          calendar = _.map(c, 'id');
+        }
+        delete data.calendar;
+        return update(event.id, data, { calendar, transacting });
       }
 
       throw new Error('You can`t update this event');

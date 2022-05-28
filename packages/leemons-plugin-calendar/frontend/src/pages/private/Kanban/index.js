@@ -10,13 +10,14 @@ import {
 } from '@calendar/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@calendar/helpers/prefixPN';
-import getCalendarNameWithConfigAndSession from '@calendar/helpers/getCalendarNameWithConfigAndSession';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import { KanbanFilters, KanbanTaskCard } from '@bubbles-ui/leemons';
 import * as _ from 'lodash';
+import { find, flatten, map, uniq } from 'lodash';
 import hooks from 'leemons-hooks';
+import getUserFullName from '@users/helpers/getUserFullName';
 import transformEvent from '../../../helpers/transformEvent';
 
 function Kanban({ session }) {
@@ -81,10 +82,18 @@ function Kanban({ session }) {
 
     return {
       ...response,
-      calendars: _.map(response.calendars, (calendar) => ({
-        ...calendar,
-        name: getCalendarNameWithConfigAndSession(calendar, response, session),
-      })),
+      calendars: _.map(response.calendars, (calendar) => {
+        const isUserCalendar =
+          response && response.userCalendar && response.userCalendar.id === calendar.id;
+        const data = {
+          ...calendar,
+          isUserCalendar,
+        };
+        if (isUserCalendar) {
+          data.fullName = getUserFullName(session);
+        }
+        return data;
+      }),
     };
   }
 
@@ -176,6 +185,7 @@ function Kanban({ session }) {
     });
 
     ref.current.board = getKanbanBoard();
+
     render();
   }
 
@@ -219,6 +229,7 @@ function Kanban({ session }) {
       ref.current.board = getKanbanBoard();
     }
 
+    console.log(ref.current.board);
     ref.current.loading = false;
     render();
   }
@@ -243,6 +254,19 @@ function Kanban({ session }) {
       hooks.removeAction('calendar:force:reload', reload);
     };
   });
+
+  let icon = null;
+  if (ref.current.board) {
+    const calendarIds = uniq(
+      flatten(map(ref.current.board.columns, (column) => map(column.cards, 'calendar')))
+    );
+    if (calendarIds.length === 1) {
+      const calendar = find(ref.current.data.calendars, { id: calendarIds[0] });
+      if (calendar) {
+        icon = calendar.icon;
+      }
+    }
+  }
 
   return (
     <Box
@@ -270,12 +294,13 @@ function Kanban({ session }) {
           addEventClick={addEventClick}
         />
       </Box>
-      <Box sx={(theme) => ({ paddingTop: theme.spacing[5], height: '100%' })}>
+      <Box sx={(theme) => ({ height: '100%' })}>
         {ref.current.board ? (
           <BubblesKanban
             value={ref.current.board}
             onChange={onChange}
             disableCardDrag={ref.current.filters.calendars.length}
+            icon={icon}
             itemRender={(props) => (
               <KanbanTaskCard {...props} config={ref.current.data} onClick={onClickCard} />
             )}

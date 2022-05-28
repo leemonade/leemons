@@ -83,8 +83,8 @@ module.exports = {
   kanbanColumns: [
     {
       name: {
-        es: 'SIN ESTADO',
-        en: 'BACKLOG',
+        es: 'Sin estado',
+        en: 'Backlog',
       },
       order: 1,
       isDone: false,
@@ -93,8 +93,8 @@ module.exports = {
     },
     {
       name: {
-        es: 'POR HACER',
-        en: 'TO DO',
+        es: 'Por hacer',
+        en: 'To do',
       },
       order: 2,
       isDone: false,
@@ -103,8 +103,8 @@ module.exports = {
     },
     {
       name: {
-        es: 'EN PROGRESO',
-        en: 'IN PROGRESS',
+        es: 'En progreso',
+        en: 'In progress',
       },
       order: 3,
       isDone: false,
@@ -113,10 +113,20 @@ module.exports = {
     },
     {
       name: {
-        es: 'FINALIZADO',
-        en: 'DONE',
+        es: 'En revisión',
+        en: 'Under rev iew',
       },
-      order: 4,
+      order: 5,
+      isDone: false,
+      isArchived: false,
+      bgColor: '#83de7d',
+    },
+    {
+      name: {
+        es: 'Finalizado',
+        en: 'Done',
+      },
+      order: 5,
       isDone: true,
       isArchived: false,
       bgColor: '#83de7d',
@@ -126,7 +136,7 @@ module.exports = {
         es: 'ARCHIVADO',
         en: 'ARCHIVED',
       },
-      order: 5,
+      order: 6,
       isDone: false,
       isArchived: true,
       bgColor: '#a1a1a1',
