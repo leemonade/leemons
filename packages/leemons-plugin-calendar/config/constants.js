@@ -114,9 +114,9 @@ module.exports = {
     {
       name: {
         es: 'En revisión',
-        en: 'Under rev iew',
+        en: 'Under review',
       },
-      order: 5,
+      order: 4,
       isDone: false,
       isArchived: false,
       bgColor: '#83de7d',

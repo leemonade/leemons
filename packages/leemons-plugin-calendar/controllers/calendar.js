@@ -24,10 +24,12 @@ async function addEvent(ctx) {
 }
 
 async function updateEvent(ctx) {
+  const { calendarName, ...body } = ctx.request.body.event;
+
   const event = await eventsService.updateFromUser(
     ctx.state.userSession,
     ctx.request.body.id,
-    ctx.request.body.event
+    body
   );
   ctx.status = 200;
   ctx.body = { status: 200, event };
