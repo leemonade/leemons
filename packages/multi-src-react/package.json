@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack --config config/webpack.config.js",
-    "dev": "nodemon -w config config/index.ts -e ts,json,cjson,js,squirrelly"
+    "dev": "nodemon -w config config/index.ts -e ts,json,cjson,js,squirrelly",
+    "clear": "rimraf build"
   },
   "dependencies": {
     "@bubbles-ui/components": "^1.0.35",
@@ -54,6 +55,7 @@
     "node-sass": "^6.0.1",
     "nodemon": "^2.0.15",
     "react-refresh": "^0.10.0",
+    "rimraf": "^3.0.2",
     "sass-loader": "^12.2.0",
     "ts-node": "^10.4.0",
     "webpack": "^5.57.1",

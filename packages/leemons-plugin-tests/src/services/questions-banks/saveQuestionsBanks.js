@@ -34,6 +34,8 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
       const { id, questions, categories, tags, published, subjects, ...props } = data;
       let questionBank;
 
+      console.log('----- 1');
+
       if (id) {
         let version = await versionControlService.getVersion(id, { transacting });
 
@@ -79,6 +81,8 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
           { transacting }
         );
       }
+
+      console.log('----- 2');
 
       // -- Asset ---
 
@@ -128,11 +132,15 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
         }
       }
 
+      console.log('----- 3');
+
       // -- Subjects --
       await removeSubjectsFromQuestionBanks(questionBank.id, { transacting });
       if (_.isArray(subjects) && subjects.length > 0) {
         await addSubjectsToQuestionBanks(subjects, questionBank.id, { transacting });
       }
+
+      console.log('----- 4');
 
       // -- Tags --
       await tagsService.setTagsToValues(
@@ -143,6 +151,8 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
           transacting,
         }
       );
+
+      console.log('----- 5');
 
       const [currentCategories, currentQuestions] = await Promise.all([
         table.questionBankCategories.find(
@@ -216,6 +226,8 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
         );
       }
 
+      console.log('----- 6');
+
       let orderedCategories = await table.questionBankCategories.find(
         { questionBank: questionBank.id },
         { transacting }
@@ -244,9 +256,16 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
         }
       });
 
+      console.log('----- 6 - 1');
+
       if (questionsToDelete.length) {
         await deleteQuestions(questionsToDelete, { userSession, transacting });
       }
+
+      console.log('----- 6 - 2');
+
+      console.dir(questionsToUpdate, { depth: null });
+
       if (questionsToUpdate.length) {
         await Promise.all(
           _.map(questionsToUpdate, (question) =>
@@ -270,6 +289,11 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
           )
         );
       }
+
+      console.log('----- 6 - 3');
+
+      console.dir(questionsToCreate, { depth: null });
+
       if (questionsToCreate.length) {
         await Promise.all(
           _.map(questionsToCreate, (question) =>
@@ -294,6 +318,8 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
           )
         );
       }
+      console.log('----- 7');
+
       return questionBank;
     },
     table.questionsBanks,

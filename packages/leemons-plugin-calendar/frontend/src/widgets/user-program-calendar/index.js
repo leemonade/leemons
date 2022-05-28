@@ -74,6 +74,14 @@ function UserProgramCalendar({ program, classe, session }) {
   }
 
   function getFilteredEvents() {
+    console.log(
+      getEvents(),
+      transformDBEventsToFullCalendarEvents(
+        getEvents(),
+        store.centerData.calendars,
+        store.centerData.calendarConfig
+      )
+    );
     return transformDBEventsToFullCalendarEvents(
       getEvents(),
       store.centerData.calendars,

@@ -28,6 +28,36 @@ async function importQbanks(programs) {
     items[key] = qbank;
   });
 
+  const mock = {
+    name: 'Qbank 3',
+    tagline: 'Qbank 3 - Subtítulo',
+    program: '1d4a67a1-76ac-4753-941b-373ffd7f1daf',
+    subjects: ['bd72f431-a344-4d8c-9bc0-22c37a1efa65'],
+    categories: [{ value: 'Datos' }, { value: 'Vocabulario' }],
+    questions: [
+      {
+        type: 'mono-response',
+        category: 0,
+        level: 'elementary',
+        tags: ['continentes', 'demografía'],
+        question: '<p style="margin-left: 0px!important;">Qbank 3 - Enunciado</p>',
+        properties: {
+          explanation: '<p style="margin-left: 0px!important;"></p>',
+          responses: [
+            { value: { response: 'Qbank 3 - Respuesta 1', isCorrectResponse: false } },
+            {
+              value: {
+                response: 'Qbank 3 - Respuesta 2',
+                explanation: null,
+                isCorrectResponse: true,
+              },
+            },
+          ],
+        },
+      },
+    ],
+  };
+
   // console.dir(items, { depth: null });
   return items;
 }

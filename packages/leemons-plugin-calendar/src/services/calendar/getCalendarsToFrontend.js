@@ -181,18 +181,21 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
 
   const classCalendarsIds = _.map(classCalendars, 'calendar');
 
-  console.log('EVENTS --------', events);
-  console.log('EVENTS CALENDARS --------', eventsFromCalendars);
+  // console.log('EVENTS --------', events);
+  // console.log('EVENTS CALENDARS --------', eventsFromCalendars);
 
   return {
     userCalendar,
-    ownerCalendars,
+    ownerCalendars: _.sortBy(ownerCalendars, ({ id }) => (id === userCalendar.id ? 0 : 1)),
     calendarConfig,
     configCalendars,
-    calendars: _.map(finalCalendars, (calendar) => ({
-      ...calendar,
-      isClass: classCalendarsIds.indexOf(calendar.id) >= 0,
-    })),
+    calendars: _.sortBy(
+      _.map(finalCalendars, (calendar) => ({
+        ...calendar,
+        isClass: classCalendarsIds.indexOf(calendar.id) >= 0,
+      })),
+      ({ id }) => (id === userCalendar.id ? 0 : 1)
+    ),
     events: _.uniqBy(
       eventsFromCalendars
         .map((e) => ({

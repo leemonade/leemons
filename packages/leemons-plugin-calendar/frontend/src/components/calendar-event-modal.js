@@ -196,15 +196,19 @@ function NewCalendarEventModal({
       const foundCalendar = find(ref.current.calendarData.ownerCalendars, { id: calendarId });
       if (foundCalendar) set(ref.current.defaultValues, 'calendar', foundCalendar.key);
       set(ref.current.defaultValues, 'isAllDay', !!isAllDay);
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      start.setSeconds(0, 0);
-      end.setSeconds(0, 0);
 
-      set(ref.current.defaultValues, 'startDate', start);
-      set(ref.current.defaultValues, 'startTime', start);
-      set(ref.current.defaultValues, 'endDate', end);
-      set(ref.current.defaultValues, 'endTime', end);
+      if (startDate) {
+        const start = new Date(startDate);
+        start.setSeconds(0, 0);
+        set(ref.current.defaultValues, 'startDate', start);
+        set(ref.current.defaultValues, 'startTime', start);
+      }
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setSeconds(0, 0);
+        set(ref.current.defaultValues, 'endDate', end);
+        set(ref.current.defaultValues, 'endTime', end);
+      }
     } else if (ref.current.eventTypes.length) {
       set(ref.current.defaultValues, 'type', forceType || ref.current.eventTypes[0].key);
       set(ref.current.defaultValues, 'repeat', 'dont_repeat');
@@ -231,6 +235,7 @@ function NewCalendarEventModal({
   }
 
   async function onSubmit(_formData) {
+    console.log(_formData);
     // eslint-disable-next-line prefer-const
     let { startDate, endDate, startTime, endTime, ...formData } = _formData;
     if (startDate) startDate = new Date(startDate);
@@ -266,7 +271,7 @@ function NewCalendarEventModal({
         await addEventRequest(centerToken, toSend);
         addSuccessAlert(t('add_done'));
       } else {
-        delete toSend.calendar;
+        // delete toSend.calendar;
         delete toSend.type;
         delete toSend.status;
         await updateEventRequest(centerToken, event.id, toSend);
@@ -313,6 +318,7 @@ function NewCalendarEventModal({
         saveButtonLabel: t('save'),
         updateButtonLabel: t('update'),
         calendarPlaceholder: t('selectCalendar'),
+        calendarLabel: t('calendarLabel'),
         showInCalendar: t('showInCalendar'),
       }}
       errorMessages={{

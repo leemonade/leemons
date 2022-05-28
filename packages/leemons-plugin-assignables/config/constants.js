@@ -70,9 +70,9 @@ const menuItems = [
   {
     item: {
       key: 'activities',
-      order: 11,
-      iconSvg: '/public/tasks/tasks-menu-icon.svg',
-      activeIconSvg: '/public/tasks/tasks-menu-icon.svg',
+      order: 10,
+      iconSvg: '/public/assignables/menu-icon.svg',
+      activeIconSvg: '/public/assignables/menu-icon.svg',
       label: {
         en: 'Ongoing Activities',
         es: 'Actividades en curso',

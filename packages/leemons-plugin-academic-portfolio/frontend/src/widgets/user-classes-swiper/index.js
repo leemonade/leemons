@@ -16,8 +16,8 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { isArray } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { listSessionClassesRequest } from '../../request';
-import { getClassIcon } from '../../helpers/getClassIcon';
 import { getClassImage } from '../../helpers/getClassImage';
+import { getClassIcon } from '../../helpers/getClassIcon';
 
 const Styles = createStyles((theme) => ({
   root: {
@@ -68,6 +68,11 @@ const Styles = createStyles((theme) => ({
     backgroundColor: theme.colors.uiBackground02,
     border: '2px solid',
     borderColor: theme.colors.uiBackground01,
+    color: theme.colors.text07,
+    img: {
+      filter:
+        'invert(92%) sepia(71%) saturate(2%) hue-rotate(314deg) brightness(108%) contrast(101%)',
+    },
   },
   icon: {
     position: 'absolute',
@@ -77,6 +82,10 @@ const Styles = createStyles((theme) => ({
     width: '16px',
     height: '16px',
     color: theme.colors.text07,
+    img: {
+      filter:
+        'invert(92%) sepia(71%) saturate(2%) hue-rotate(314deg) brightness(108%) contrast(101%)',
+    },
   },
 }));
 
@@ -157,9 +166,15 @@ function UserClassesSwiperWidget({ program }) {
                         <Box className={styles.icon}>
                           <ImageLoader
                             height="12px"
+                            imageStyles={{
+                              width: 12,
+                              position: 'absolute',
+                              left: '50%',
+                              top: '50%',
+                              transform: 'translate(-50%, -50%)',
+                            }}
                             src={getClassIcon(classe)}
-                            strokeCurrent
-                            fillCurrent
+                            forceImage
                           />
                         </Box>
                       ) : null}

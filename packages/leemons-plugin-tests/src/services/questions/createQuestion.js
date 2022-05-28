@@ -57,6 +57,7 @@ async function createQuestion(data, { userSession, published, transacting: _tran
           {
             name: `Image question`,
             cover: data.questionImage,
+            description: data.questionImageDescription,
             indexable: true,
             public: true, // TODO Cambiar a false despues de hacer la demo
           },
