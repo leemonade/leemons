@@ -44,6 +44,7 @@ async function getByIds(id, { options, userSession, transacting } = {}) {
     if (question.properties?.image) {
       question.properties.image = questionAssetsById[question.properties.image];
     }
+    console.log(question);
     if (question.questionImage) {
       question.questionImage = questionAssetsById[question.questionImage];
       question.questionImageDescription = question.questionImage.description;

@@ -235,6 +235,7 @@ function NewCalendarEventModal({
   }
 
   async function onSubmit(_formData) {
+    console.log(_formData);
     // eslint-disable-next-line prefer-const
     let { startDate, endDate, startTime, endTime, ...formData } = _formData;
     if (startDate) startDate = new Date(startDate);
@@ -270,7 +271,7 @@ function NewCalendarEventModal({
         await addEventRequest(centerToken, toSend);
         addSuccessAlert(t('add_done'));
       } else {
-        delete toSend.calendar;
+        // delete toSend.calendar;
         delete toSend.type;
         delete toSend.status;
         await updateEventRequest(centerToken, event.id, toSend);
@@ -317,6 +318,7 @@ function NewCalendarEventModal({
         saveButtonLabel: t('save'),
         updateButtonLabel: t('update'),
         calendarPlaceholder: t('selectCalendar'),
+        calendarLabel: t('calendarLabel'),
         showInCalendar: t('showInCalendar'),
       }}
       errorMessages={{
