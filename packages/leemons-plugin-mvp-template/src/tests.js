@@ -1,8 +1,9 @@
 /* eslint-disable no-unreachable */
 /* eslint-disable no-await-in-loop */
-const { keys, find, compact } = require('lodash');
+const { keys, find, isEmpty, findIndex } = require('lodash');
 const importQbanks = require('./bulk/tests/qbanks');
 const importQuestions = require('./bulk/tests/questions');
+const importTests = require('./bulk/tests/tests');
 
 async function initTests({ users, programs }) {
   const { services } = leemons.getPlugin('tests');
@@ -11,10 +12,12 @@ async function initTests({ users, programs }) {
     // ·····················································
     // QUESTIONS
 
-    const questions = await importQuestions();
+    const { items: questionsItems, questions } = await importQuestions();
 
-    // console.log('--- QUESTIONS ---');
+    // console.log('-- QUESTIONS --');
     // console.dir(questions, { depth: null });
+
+    const categories = questions.map((question) => ({ value: question.category }));
 
     // ·····················································
     // QBANKS
@@ -27,26 +30,73 @@ async function initTests({ users, programs }) {
       const { creator, ...qbank } = qbanks[key];
       qbank.questions = questions
         .filter((question) => question.qbank === key)
-        .map(({ qbank: qbankProp, ...question }) => question);
+        .map(({ qbank: qbankProp, category, ...question }) => ({
+          ...question,
+          category: findIndex(categories, { value: category }),
+        }));
+
+      // console.log('-- QBANK --');
+      // console.dir(qbank, { depth: null });
 
       const qbankData = await services.questionsBanks.save(
-        { ...qbank, published: true },
+        { ...qbank, categories },
         {
           userSession: users[creator],
         }
       );
 
-      qbanks[key] = { ...qbankData };
+      // ·····················································
+      // POST-PROCESSING QUESTIONS
+
+      // console.log('qbank.name:', qbank.name);
+      // console.log('qbankData.asset:', qbankData.asset);
+
+      const qbanksDetail = (
+        await services.questionsBanks.findByAssetIds([qbankData.asset], {
+          userSession: users[creator],
+        })
+      )[0];
+
+      if (qbanksDetail && !isEmpty(qbanksDetail.questions)) {
+        keys(questionsItems).forEach((qKey) => {
+          const question = questionsItems[qKey];
+          if (question.qbank === key) {
+            const qbankQuestion = qbanksDetail.questions.find(
+              (q) => q.question === question.question
+            );
+            question.id = qbankQuestion.id;
+            questionsItems[qKey] = question;
+          }
+        });
+      } else {
+        // console.log('No tenemos questions para el Qbank');
+      }
+
+      qbanks[key] = { ...qbankData, questions: qbanksDetail.questions };
     }
 
     // ·····················································
     // TESTS
 
-    const tests = {
-      test01: {
-        qbanks,
-      },
-    };
+    const tests = await importTests({ qbanks, programs, questions: questionsItems });
+    const testsKeys = keys(tests);
+
+    // console.log('--- TESTS ---');
+    // console.dir(tests, { depth: null });
+
+    for (let i = 0, len = testsKeys.length; i < len; i++) {
+      const key = testsKeys[i];
+      const { creator, ...test } = tests[key];
+
+      const testData = await services.tests.save(
+        { ...test },
+        {
+          userSession: users[creator],
+        }
+      );
+
+      tests[key] = { ...testData };
+    }
 
     return tests;
   } catch (err) {

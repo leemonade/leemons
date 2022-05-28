@@ -181,8 +181,8 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
 
   const classCalendarsIds = _.map(classCalendars, 'calendar');
 
-  console.log('EVENTS --------', events);
-  console.log('EVENTS CALENDARS --------', eventsFromCalendars);
+  // console.log('EVENTS --------', events);
+  // console.log('EVENTS CALENDARS --------', eventsFromCalendars);
 
   return {
     userCalendar,
