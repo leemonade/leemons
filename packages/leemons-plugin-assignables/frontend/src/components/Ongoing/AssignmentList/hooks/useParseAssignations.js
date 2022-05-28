@@ -158,7 +158,11 @@ function StudentActions({ assignation, labels }) {
         </Button>
       );
     }
-    return null;
+    return (
+      <Button variant="outline" onClick={redirectToRevision}>
+        {labels?.student_actions?.review}
+      </Button>
+    );
   }
 
   if (alwaysAvailable) {
