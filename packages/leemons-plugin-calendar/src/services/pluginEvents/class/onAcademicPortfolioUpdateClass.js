@@ -5,10 +5,9 @@ function onAcademicPortfolioUpdateClass(
   {
     class: {
       id,
-      icon,
       color,
       classroom,
-      subject: { name },
+      subject: { name, icon },
     },
     transacting,
   }
@@ -22,7 +21,9 @@ function onAcademicPortfolioUpdateClass(
         bgColor: color || randomColor({ luminosity: 'light' }),
       };
 
-      if (icon) config.icon = icon;
+      if (icon) {
+        config.icon = await leemons.getPlugin('leebrary').services.assets.getCoverUrl(icon.id);
+      }
 
       await leemons.plugin.services.calendar.update(
         leemons.plugin.prefixPN(`class.${id}`),

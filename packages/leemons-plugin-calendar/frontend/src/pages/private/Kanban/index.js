@@ -228,8 +228,6 @@ function Kanban({ session }) {
       await onCenterChange();
       ref.current.board = getKanbanBoard();
     }
-
-    console.log(ref.current.board);
     ref.current.loading = false;
     render();
   }

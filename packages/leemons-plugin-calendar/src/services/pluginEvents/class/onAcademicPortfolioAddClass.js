@@ -5,11 +5,10 @@ function onAcademicPortfolioAddClass(
   {
     class: {
       id,
-      icon,
       color,
       program,
       classroom,
-      subject: { name },
+      subject: { name, icon },
     },
     transacting,
   }
@@ -25,7 +24,9 @@ function onAcademicPortfolioAddClass(
         bgColor: color || randomColor({ luminosity: 'light' }),
       };
 
-      if (icon) config.icon = icon;
+      if (icon) {
+        config.icon = await leemons.getPlugin('leebrary').services.assets.getCoverUrl(icon.id);
+      }
 
       const calendar = await leemons.plugin.services.calendar.add(
         leemons.plugin.prefixPN(`class.${id}`),
