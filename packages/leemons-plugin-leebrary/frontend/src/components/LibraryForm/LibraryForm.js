@@ -14,7 +14,6 @@ import {
   TextInput,
   useResizeObserver,
   useViewportSize,
-  useDebouncedValue,
 } from '@bubbles-ui/components';
 import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
 import { addErrorAlert } from '@layout/alert';
@@ -26,7 +25,7 @@ import {
 } from './LibraryForm.constants';
 import { getUrlMetadataRequest } from '../../request';
 import { AssetListDrawer } from '../AssetListDrawer';
-import { prepareAsset, getFileUrl } from '../../helpers/prepareAsset';
+import { getFileUrl, prepareAsset } from '../../helpers/prepareAsset';
 
 // -----------------------------------------------------------------------------
 // HELPERS
@@ -413,17 +412,21 @@ const LibraryForm = ({
                 <Controller
                   control={control}
                   name="cover"
-                  render={({ field: { ref, value, ...field } }) => (
-                    <ImagePreviewInput
-                      labels={{
-                        changeImage: labels.changeImage,
-                        uploadButton: labels.uploadButton,
-                      }}
-                      previewURL={getCoverUrl(value)}
-                      // previewURL={value}
-                      {...field}
-                    />
-                  )}
+                  render={({ field: { ref, value, ...field } }) => {
+                    console.log(value, getCoverUrl(value));
+                    return (
+                      <ImagePreviewInput
+                        labels={{
+                          changeImage: labels.changeImage,
+                          uploadButton: labels.uploadButton,
+                        }}
+                        previewURL={getCoverUrl(value)}
+                        // previewURL={value}
+                        value={''}
+                        {...field}
+                      />
+                    );
+                  }}
                 />
               </Stack>
             </ContextContainer>

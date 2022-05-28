@@ -42,6 +42,8 @@ async function updateQuestion(data, { userSession, published, transacting: _tran
         }
       }
 
+      console.log(question.questionImage, data.questionImage);
+
       // --- Question image
       if (question.questionImage) {
         const asset = await leemons.getPlugin('leebrary').services.assets.update(
@@ -58,7 +60,7 @@ async function updateQuestion(data, { userSession, published, transacting: _tran
           }
         );
 
-        properties.questionImage = asset.id;
+        props.questionImage = asset.id;
       } else {
         const asset = await leemons.getPlugin('leebrary').services.assets.add(
           {
@@ -72,7 +74,7 @@ async function updateQuestion(data, { userSession, published, transacting: _tran
             transacting,
           }
         );
-        properties.questionImage = asset.id;
+        props.questionImage = asset.id;
       }
 
       if (data.type === 'mono-response') {
