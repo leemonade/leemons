@@ -404,6 +404,10 @@ module.exports = {
         },
       },
     },
+    contactTeacher: {
+      title: '¿Quieres hacer alguna consulta sobre esta evaluación?',
+      button: 'Escribe a tu profesor',
+    },
     save: 'Guardar cambios',
     saveAndSend: 'Guardar y enviar',
     saveMessage: 'Cambios guardados con éxito',
