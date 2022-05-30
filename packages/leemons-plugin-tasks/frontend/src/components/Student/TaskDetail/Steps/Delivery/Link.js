@@ -3,14 +3,7 @@ import PropTypes from 'prop-types';
 import { TextInput, useDebouncedValue } from '@bubbles-ui/components';
 import handleDeliverySubmission from './handleDeliverySubmission';
 
-export default function Link({
-  onError,
-  onSubmit,
-  onLoading,
-  value,
-  assignation,
-  labels: _labels,
-}) {
+export default function Link({ updateStatus, value, assignation, labels: _labels }) {
   const labels = _labels?.submission_type?.link;
   const [url, setUrl] = React.useState(value);
   const [debouncedUrl] = useDebouncedValue(url, 1000);
@@ -22,11 +15,11 @@ export default function Link({
     if (debouncedUrl?.length && !isFirstRender.current) {
       // TODO: Cancel previous request
       try {
-        onLoading();
+        updateStatus('loading');
         await onLinkSubmission(debouncedUrl);
-        onSubmit();
+        updateStatus(debouncedUrl?.length ? 'submitted' : 'cleared');
       } catch (e) {
-        onError(e.message);
+        updateStatus('error', e.message);
       }
     }
 

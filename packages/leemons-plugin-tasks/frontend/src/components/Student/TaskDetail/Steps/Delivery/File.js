@@ -8,14 +8,7 @@ import { useApi } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import handleDeliverySubmission from './handleDeliverySubmission';
 
-export default function File({
-  assignation,
-  onLoading,
-  onSubmit,
-  onError,
-  value,
-  labels: _labels,
-}) {
+export default function File({ assignation, updateStatus, onSave, value, labels: _labels }) {
   const labels = _labels?.submission_type?.file;
 
   const [categories] = useApi(listCategoriesRequest);
@@ -27,7 +20,7 @@ export default function File({
   const files = useRef();
   const saveSubmission = useMemo(() => handleDeliverySubmission(assignation), [assignation]);
   const handleSubmit = useCallback(async () => {
-    onLoading();
+    updateStatus('loading');
 
     // 1. Remove the assets saved
     // 2. Save the new assets
@@ -61,11 +54,13 @@ export default function File({
       await saveSubmission(filesSaved, !filesSaved.length);
       savedFiles.current = filesSaved;
 
-      onSubmit(Boolean(savedFiles.current.length));
+      updateStatus(savedFiles.current.length ? 'submitted' : 'cleared');
     } catch (e) {
-      onError(e.message);
+      updateStatus('error', e.message);
     }
-  }, [onSubmit, onError, onLoading, category]);
+  }, [updateStatus, category]);
+
+  onSave.current = handleSubmit;
   return (
     <>
       <FileUpload
@@ -81,6 +76,7 @@ export default function File({
         single={!fileData?.multipleFiles}
         initialFiles={savedFiles.current || []}
         onChange={(newFiles) => {
+          updateStatus('changed');
           files.current = newFiles;
         }}
         onReject={(allErrors) => {
@@ -97,9 +93,6 @@ export default function File({
         maxSize={fileData?.maxSize * 1024 * 1024}
         // {...field}
       />
-      <Stack>
-        <Button onClick={handleSubmit}>{labels?.upload}</Button>
-      </Stack>
     </>
   );
 }

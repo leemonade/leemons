@@ -136,6 +136,7 @@ function StudentActions({ assignation, labels }) {
   const dates = assignation?.instance?.dates;
   const timestamps = assignation?.timestamps;
   const finished = assignation?.finished;
+  const started = assignation?.started;
 
   const now = dayjs();
   const visualization = dayjs(dates?.visualization);
@@ -157,7 +158,11 @@ function StudentActions({ assignation, labels }) {
         </Button>
       );
     }
-    return null;
+    return (
+      <Button variant="outline" onClick={redirectToRevision}>
+        {labels?.student_actions?.review}
+      </Button>
+    );
   }
 
   if (alwaysAvailable) {
@@ -167,8 +172,16 @@ function StudentActions({ assignation, labels }) {
     // Start <= x < Deadline
     return <Button onClick={redirectToInstance}>{labels?.student_actions?.start}</Button>;
   }
+
+  if (started) {
+    if (timestamps?.start) {
+      return <Button onClick={redirectToInstance}>{labels?.student_actions?.continue}</Button>;
+    }
+    // Start <= x < Deadline
+    return <Button onClick={redirectToInstance}>{labels?.student_actions?.start}</Button>;
+  }
   // Visualization <= x < Start
-  if (!now.isBefore(visualization) && visualization.isValid() && now.isBefore(start)) {
+  if (!now.isBefore(visualization) && visualization.isValid() && !started) {
     return (
       <Button variant="outline" onClick={redirectToInstance}>
         {labels?.student_actions?.view}
@@ -176,11 +189,6 @@ function StudentActions({ assignation, labels }) {
     );
   }
   if (!now.isBefore(start) && start.isValid()) {
-    if (timestamps?.start) {
-      return <Button onClick={redirectToInstance}>{labels?.student_actions?.continue}</Button>;
-    }
-    // Start <= x < Deadline
-    return <Button onClick={redirectToInstance}>{labels?.student_actions?.start}</Button>;
   }
 }
 

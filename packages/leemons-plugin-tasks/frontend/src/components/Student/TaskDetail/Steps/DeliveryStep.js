@@ -1,51 +1,83 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
 import { ContextContainer, Alert, HtmlText } from '@bubbles-ui/components';
 
-function SubmissionState({ submitted, loading, error, labels: _labels }) {
+function SubmissionState({ status, error, labels: _labels }) {
   const labels = _labels?.submission_state;
 
-  if (error) {
+  if (status === 'error' && error) {
     return (
       <Alert title={labels?.error?.title} severity="error" closeable={false}>
         {labels?.error?.message?.replace('{{error}}', error !== true ? error : '')}
       </Alert>
     );
   }
-  if (loading) {
+  if (status === 'loading') {
     return (
       <Alert title={labels?.loading?.title} severity="info" closeable={false}>
         {labels?.loading?.message}
       </Alert>
     );
   }
-  if (submitted) {
+  if (status === 'submitted') {
     return (
       <Alert title={labels?.submitted?.title} severity="success" closeable={false}>
         {labels?.submitted?.message}
       </Alert>
     );
   }
-  return (
-    <Alert title={labels?.notSubmitted?.title} severity="info" closeable={false}>
-      {labels?.notSubmitted?.message}
-    </Alert>
-  );
+  if (status === 'changed') {
+    return (
+      <Alert title={labels?.notSubmitted?.title} severity="info" closeable={false}>
+        {labels?.notSubmitted?.message}
+      </Alert>
+    );
+  }
+
+  return null;
 }
-export default function DeliveryStep({ assignation, onNext, onPrev, labels: _labels }) {
+export default function DeliveryStep({ assignation, onSave, labels: _labels, disableButton }) {
   const labels = _labels?.submission_step;
   const { instance } = assignation;
   const { assignable } = instance;
   const { submission } = assignable;
-  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState(assignation.metadata?.submission ? 'submitted' : 'cleared');
   const [error, setError] = useState(null);
-  const [submitted, setSubmitted] = useState(Boolean(assignation.metadata?.submission));
+
+  const updateStatus = (newStatus, e) => {
+    const availableStatus = ['cleared', 'submitted', 'changed', 'loading', 'error'];
+
+    if (!availableStatus.includes(newStatus)) {
+      throw new Error(`Invalid status ${newStatus}`);
+    }
+
+    setStatus(newStatus);
+
+    if (newStatus === 'cleared' || newStatus === 'changed' || newStatus === 'error') {
+      if (e) {
+        setError(e);
+      }
+      disableButton('save', false);
+      disableButton('next', true);
+    } else if (newStatus === 'submitted') {
+      disableButton('save', true);
+      disableButton('next', false);
+    } else if (newStatus === 'loading') {
+      disableButton('save', true);
+      disableButton('next', true);
+    }
+    // TODO: Optional submission
+  };
+
+  useEffect(() => {
+    updateStatus(status);
+  }, []);
 
   // , metadata: {submission: submissionValue}
-  onNext.current = () => !loading;
+  // onNext.current = () => !loading;
 
-  onPrev.current = () => !loading;
+  // onPrev.current = () => !loading;
 
   const Component = (type) =>
     loadable(() => {
@@ -60,32 +92,17 @@ export default function DeliveryStep({ assignation, onNext, onPrev, labels: _lab
 
   const C = useMemo(() => Component(submission.type), [submission.type]);
 
-  const onSubmit = useCallback(
-    (isSubmitted) => {
-      setError(null);
-      setSubmitted(isSubmitted);
-      setLoading(false);
-    },
-    [setLoading, setSubmitted, setError]
-  );
-  const onLoading = useCallback(() => {
-    setLoading(true);
-    setSubmitted(false);
-    setError(null);
-  }, [setLoading, setSubmitted, setError]);
-
   return (
     <ContextContainer title={labels.submission}>
       <HtmlText>{submission?.description}</HtmlText>
-      <SubmissionState loading={loading} error={error} submitted={submitted} labels={labels} />
       <C
         assignation={assignation}
-        onError={setError}
-        onSubmit={onSubmit}
-        onLoading={onLoading}
+        updateStatus={updateStatus}
+        onSave={onSave}
         value={assignation?.metadata?.submission}
         labels={labels}
       />
+      <SubmissionState status={status} error={error} labels={labels} />
     </ContextContainer>
   );
 }

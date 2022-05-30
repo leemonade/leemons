@@ -4,11 +4,17 @@ import loadable from '@loadable/component';
 const DeliveryStep = loadable(() => import('../Steps/DeliveryStep'));
 const DevelopmentStep = loadable(() => import('../Steps/DevelopmentStep'));
 const StatementStep = loadable(() => import('../Steps/StatementStep'));
-const CorrectionStep = loadable(() => import('../Steps/CorrectionStep'));
 
-export default function useSteps(assignation, labels) {
+export default function useSteps({
+  assignation,
+  labels,
+  disableButton,
+  disabledButtons,
+  currentStep,
+}) {
   const instance = assignation?.instance;
   const assignable = instance?.assignable;
+  const shouldShowDevelopment = assignable?.development !== null;
 
   const steps = useMemo(() => {
     if (!instance) {
@@ -16,18 +22,19 @@ export default function useSteps(assignation, labels) {
     }
     const stepsObj = {
       summary: {
+        id: 'statement',
         label: labels.steps.statement,
         component: <StatementStep assignation={assignation} labels={labels} />,
         sidebar: true,
         timestamps: 'open',
       },
       statement: () => {
-        const shouldShowDevelopment = assignable?.development !== null;
-
         if (!shouldShowDevelopment) {
           return null;
         }
+
         return {
+          id: 'development',
           label: labels.steps.development,
           component: <DevelopmentStep assignation={assignation} labels={labels} />,
           sidebar: true,
@@ -35,28 +42,30 @@ export default function useSteps(assignation, labels) {
       },
       submission: () => {
         const { submission } = assignable;
-        const onNext = { current: null };
-        const onPrev = { current: null };
+        const onSave = { current: null };
 
         if (!submission) {
           return null;
         }
+
         // TODO: Check if submission is filed
         return {
+          id: 'submission',
           label: labels.steps.submission,
           component: (
             <DeliveryStep
               assignation={assignation}
-              onNext={onNext}
-              onPrev={onPrev}
+              onSave={onSave}
               labels={labels}
+              disableButton={disableButton}
             />
           ),
           sidebar: true,
           timestamps: 'start',
           showConfirmation: true,
-          onNext,
-          onPrev,
+          onSave,
+          save: assignation?.started && !assignation?.finished,
+          next: assignation?.started && !assignation?.finished,
           // status: 'OK',
           // badge: 'Submitted',
         };
@@ -77,6 +86,14 @@ export default function useSteps(assignation, labels) {
 
     return finalSteps;
   }, [assignation]);
+
+  const nextStep = steps[currentStep + 1];
+  if (nextStep?.id === 'submission' && !assignation?.started) {
+    const shouldDisable = disabledButtons.next !== !assignation?.started;
+    if (shouldDisable) {
+      disableButton('next', !assignation?.started);
+    }
+  }
 
   return steps;
 }

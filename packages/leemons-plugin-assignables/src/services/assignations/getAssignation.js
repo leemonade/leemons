@@ -51,15 +51,28 @@ module.exports = async function getAssignation(
     { transacting }
   );
 
+  const today = dayjs();
+  const startDate = dayjs(instanceDates.start || null);
+  const deadline = dayjs(instanceDates.deadline || null);
+  const closeDate = dayjs(instanceDates.close || null);
+  const closedDate = dayjs(instanceDates.closed || null);
+
   if (
     assignation.timestamps.end ||
-    (instanceDates.deadline && dayjs(instanceDates.deadline).isBefore(dayjs())) ||
-    (instanceDates.close && dayjs(instanceDates.close).isBefore(dayjs())) ||
-    (instanceDates.closed && dayjs(instanceDates.closed).isBefore(dayjs()))
+    (deadline.isValid() && !deadline.isAfter(today)) ||
+    (closeDate.isValid() && !closeDate.isAfter(today)) ||
+    (closedDate.isValid() && !closedDate.isAfter(today))
   ) {
     assignation.finished = true;
   } else {
     assignation.finished = false;
   }
+
+  if (startDate.isValid() && !startDate.isAfter(today)) {
+    assignation.started = true;
+  } else {
+    assignation.started = false;
+  }
+
   return assignation;
 };

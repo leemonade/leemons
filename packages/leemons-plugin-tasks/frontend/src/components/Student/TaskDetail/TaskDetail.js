@@ -56,9 +56,18 @@ function getNextButtonLabel(step, isLastStep, labels) {
 export default function TaskDetail({ id, student }) {
   const { openConfirmationModal } = useLayout();
   const [assignation, error, loading] = useAssignation(id, student, true);
+  const [disabledButtons, setDisabledButtons] = useState({
+    previous: false,
+    next: false,
+    save: false,
+  });
   const asset = assignation?.instance?.assignable?.asset;
   const coverUrl = useMemo(() => getFileUrl(asset?.cover), [asset?.cover]);
   const history = useHistory();
+
+  if (assignation?.finished) {
+    history.push('/private/assignables/ongoing');
+  }
 
   const [, translations] = useTranslateLoader(prefixPN('task_realization'));
 
@@ -75,9 +84,23 @@ export default function TaskDetail({ id, student }) {
     return {};
   }, [translations]);
 
-  const steps = useSteps(assignation, labels);
+  const disableButton = (button, value = true) => {
+    if (disabledButtons[button] !== undefined) {
+      setDisabledButtons((v) => ({ ...v, [button]: value }));
+    }
+  };
+
+  const resetButtons = () => {
+    setDisabledButtons({
+      previous: false,
+      next: false,
+      save: false,
+    });
+  };
 
   const [currentStep, setCurrentStep] = useState(0);
+  const steps = useSteps({ assignation, labels, disabledButtons, disableButton, currentStep });
+
   const classData = useClassData(assignation?.instance?.classes);
 
   const isFirstStep = currentStep === 0;
@@ -92,9 +115,9 @@ export default function TaskDetail({ id, student }) {
       }
     }
 
-    console.log('labels', labels);
     if (!isLastStep) {
       setCurrentStep(currentStep + 1);
+      resetButtons();
     } else if (steps.some((s) => s.showConfirmation)) {
       openConfirmationModal({
         onConfirm: async () => {
@@ -120,6 +143,15 @@ export default function TaskDetail({ id, student }) {
         }
       }
       setCurrentStep(currentStep - 1);
+      resetButtons();
+    }
+  };
+
+  const handleSave = async () => {
+    if (typeof step.onSave?.current === 'function') {
+      const proceed = await step.onSave.current();
+      if (proceed === false) {
+      }
     }
   };
 
@@ -174,21 +206,36 @@ export default function TaskDetail({ id, student }) {
                 rounded
                 compact
                 variant="light"
+                disabled={disabledButtons.previous}
                 leftIcon={<ChevLeftIcon height={20} width={20} />}
                 onClick={handlePrev}
               >
                 {typeof step?.previous === 'string' ? step?.previous : labels?.buttons?.previous}
               </Button>
             )}
-            {step?.next !== false && (
-              <Button
-                rightIcon={<ChevRightIcon height={20} width={20} />}
-                onClick={handleNext}
-                rounded
-              >
-                {getNextButtonLabel(step, isLastStep, labels?.buttons)}
-              </Button>
-            )}
+            <Stack spacing={3}>
+              {step?.save !== undefined && step?.save !== false && (
+                <Button
+                  rightIcon={<ChevRightIcon height={20} width={20} />}
+                  variant="outline"
+                  disabled={disabledButtons.save}
+                  onClick={handleSave}
+                  rounded
+                >
+                  {typeof step?.save === 'string' ? step?.save : labels?.buttons?.save}
+                </Button>
+              )}
+              {step?.next !== false && (
+                <Button
+                  rightIcon={<ChevRightIcon height={20} width={20} />}
+                  disabled={disabledButtons.next}
+                  onClick={handleNext}
+                  rounded
+                >
+                  {getNextButtonLabel(step, isLastStep, labels?.buttons)}
+                </Button>
+              )}
+            </Stack>
           </Stack>
         </Box>
         <Sidebar
@@ -201,8 +248,3 @@ export default function TaskDetail({ id, student }) {
     </ContextContainer>
   );
 }
-
-TaskDetail.propTypes = {
-  id: PropTypes.string.isRequired,
-  student: PropTypes.string.isRequired,
-};
