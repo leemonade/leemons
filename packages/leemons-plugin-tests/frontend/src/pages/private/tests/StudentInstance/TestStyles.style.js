@@ -172,6 +172,9 @@ export const TestStyles = createStyles((theme, {}) => ({
     marginRight: theme.spacing[3],
     color: theme.colors.text05,
   },
+  questionTitleText: {
+    width: 'calc(100% - 23px)',
+  },
   questionClueCard: {
     width: '100%',
     backgroundImage: 'url(/public/tests/papel-rayas.jpg)',

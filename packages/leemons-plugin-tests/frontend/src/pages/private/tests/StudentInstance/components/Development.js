@@ -4,9 +4,9 @@ import { Box, Button, ImageLoader, Modal, Text, Title } from '@bubbles-ui/compon
 import dayjs from 'dayjs';
 import * as duration from 'dayjs/plugin/duration';
 import { getLocaleDuration, LocaleDuration } from '@common';
-import { ChevronRightIcon } from '@bubbles-ui/icons/outline';
 import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
 import { useSession } from '@users/session';
+import { ChevronLeftIcon, ChevronRightIcon } from '@bubbles-ui/icons/outline';
 
 import InfoCard from './InfoCard';
 
@@ -14,7 +14,7 @@ dayjs.extend(duration);
 export default function Development(props) {
   const session = useSession();
   const [showModal, setShowModal] = React.useState(false);
-  const { classes, styles, cx, t, store, nextStep, onStartQuestions } = props;
+  const { classes, styles, cx, t, store, nextStep, prevStep, onStartQuestions } = props;
 
   const durationSeconds = React.useMemo(() => {
     if (store.instance?.duration) {
@@ -96,24 +96,44 @@ export default function Development(props) {
             ) : null}
           </Box>
           <img className={styles.timeLimitImage} src="/public/tests/ninaBrazoLevantado.png" />
+          {durationSeconds ? (
+            <Box
+              sx={() => ({
+                position: 'absolute',
+                bottom: '0px',
+                width: '340px',
+                textAlign: 'center',
+              })}
+            >
+              <Button
+                position="right"
+                variant="link"
+                rightIcon={<AlertInformationCircleIcon />}
+                rounded
+                compact
+                onClick={() => setShowModal(true)}
+              >
+                {t('howItWorks')}
+              </Button>
+            </Box>
+          ) : null}
         </Box>
 
         <Box className={classes.continueButton}>
           <Button
             position="right"
-            variant="link"
-            rightIcon={<AlertInformationCircleIcon />}
+            variant="outline"
+            leftIcon={<ChevronLeftIcon />}
             rounded
             compact
-            onClick={() => setShowModal(true)}
+            onClick={prevStep}
           >
-            {t('howItWorks')}
+            {t('prev')}
           </Button>
 
           <Button
             position="left"
             rightIcon={<ChevronRightIcon />}
-            style={{ width: 338 }}
             rounded
             compact
             onClick={() => {
