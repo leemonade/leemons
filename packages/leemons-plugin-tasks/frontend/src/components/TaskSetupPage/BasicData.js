@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
+import { isFunction, uniq } from 'lodash';
 import PropTypes from 'prop-types';
-import { isFunction } from 'lodash';
 import { useForm } from 'react-hook-form';
 import { Stack, Button, ContextContainer, useDebouncedCallback } from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
@@ -28,7 +28,12 @@ function BasicData({
 
   const coverFile = useRef(null);
   const formData = useForm({ defaultValues });
-  const { handleSubmit, reset, watch } = formData;
+  const {
+    handleSubmit,
+    reset,
+    watch,
+    formState: { isDirty },
+  } = formData;
 
   const { subscribe, unsubscribe, emitEvent } = useObserver();
 
@@ -50,24 +55,52 @@ function BasicData({
     reset(sharedData.asset);
   }, [sharedData]);
 
+  const onSubmit = useCallback(
+    (e) => {
+      if (coverFile.current) {
+        e.cover = coverFile.current;
+      }
+      const data = {
+        ...sharedData,
+        asset: e,
+        metadata: {
+          ...sharedData.metadata,
+          visitedSteps: uniq([...(sharedData.metadata?.visitedSteps || []), 'basicData']),
+        },
+      };
+      setSharedData(data);
+
+      return data;
+    },
+    [setSharedData, sharedData]
+  );
+
   useEffect(() => {
     const f = (event) => {
       if (event === 'saveTask') {
         handleSubmit(
           (e) => {
-            if (coverFile.current) {
-              e.cover = coverFile.current;
-            }
-            setSharedData({
-              ...sharedData,
-              asset: e,
-            });
+            onSubmit(e);
             emitEvent('saveData');
           },
           () => {
             emitEvent('saveTaskFailed');
           }
         )();
+      } else if (event === 'saveStep') {
+        if (!isDirty) {
+          emitEvent('stepSaved');
+        } else {
+          handleSubmit(
+            (e) => {
+              onSubmit(e);
+              emitEvent('stepSaved');
+            },
+            () => {
+              emitEvent('saveStepFailed');
+            }
+          )();
+        }
       }
     };
 
@@ -75,21 +108,13 @@ function BasicData({
     return () => {
       unsubscribe(f);
     };
-  }, []);
+  }, [isDirty, onSubmit, emitEvent, handleSubmit, subscribe, unsubscribe]);
 
   // ·······························································
   // HANDLERS
 
   const handleOnNext = (e) => {
-    if (coverFile.current) {
-      e.cover = coverFile.current;
-    }
-    const data = {
-      ...sharedData,
-      asset: e,
-    };
-
-    if (isFunction(setSharedData)) setSharedData(data);
+    const data = onSubmit(e);
     if (isFunction(onNext)) onNext(data);
   };
 

@@ -236,10 +236,15 @@ export default function TaskSetupPage() {
   const setupProps = useMemo(() => {
     if (!isNil(labels)) {
       const { basicData, configData, contentData, instructionData } = labels;
+      const steps = ['basicData', 'configData', 'contentData', 'instructionData'];
+      const completedSteps =
+        store.currentTask?.metadata?.visitedSteps?.map((step) => steps.indexOf(step)) || [];
 
       return {
         editable: isEmpty(store.currentTask),
         values: store.currentTask || {},
+        completedSteps,
+        visitedSteps: completedSteps,
         steps: [
           {
             label: basicData.step_label,
@@ -250,18 +255,22 @@ export default function TaskSetupPage() {
                 onNameChange={handleOnNameChange}
               />
             ),
+            status: 'OK',
           },
           {
             label: configData.step_label,
             content: <ConfigData useObserver={useSaveObserver} {...configData} />,
+            status: 'OK',
           },
           {
             label: contentData.step_label,
             content: <ContentData useObserver={useSaveObserver} {...contentData} />,
+            status: 'OK',
           },
           {
             label: instructionData.step_label,
             content: <InstructionData useObserver={useSaveObserver} {...instructionData} />,
+            status: 'OK',
           },
         ],
       };

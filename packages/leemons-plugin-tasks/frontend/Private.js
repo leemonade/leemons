@@ -38,10 +38,10 @@ export default function Private() {
 
       {/* TEACHER VIEW */}
       <Route path={`${path}/library/edit/:id`}>
-        <SetupTask session={session} fallback={<LoadingOverlay visible />} />
+        <SetupTask key="edit" session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/library/create`}>
-        <SetupTask session={session} fallback={<LoadingOverlay visible />} />
+        <SetupTask key="create" session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/library/assign/:id`}>
         <AssignmentPage session={session} fallback={<LoadingOverlay visible />} />

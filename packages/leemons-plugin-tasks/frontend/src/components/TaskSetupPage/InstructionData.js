@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { isFunction, isEmpty } from 'lodash';
+import { isFunction, uniq } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Stack, ContextContainer, Button } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
@@ -39,12 +39,28 @@ function InstructionData({
 
   const { subscribe, unsubscribe, emitEvent } = useObserver();
 
+  const onSubmit = useCallback(
+    (e) => {
+      const data = {
+        ...sharedData,
+        ...e,
+        metadata: {
+          ...sharedData.metadata,
+          visitedSteps: uniq([...(sharedData.metadata?.visitedSteps || []), 'instructionData']),
+        },
+      };
+      setSharedData(data);
+
+      return data;
+    },
+    [setSharedData, sharedData]
+  );
   useEffect(() => {
     const f = (event) => {
       if (event === 'saveTask') {
         handleSubmit(
           (data) => {
-            setSharedData(data);
+            onSubmit(data);
             emitEvent('saveData');
           },
           () => {
@@ -53,12 +69,26 @@ function InstructionData({
         )();
       } else if (event === 'saveTaskFailed') {
         setLoading(false);
+      } else if (event === 'saveStep') {
+        if (!isDirty) {
+          emitEvent('stepSaved');
+        } else {
+          handleSubmit(
+            (data) => {
+              onSubmit(data);
+              emitEvent('stepSaved');
+            },
+            () => {
+              emitEvent('saveStepFailed');
+            }
+          )();
+        }
       }
     };
     subscribe(f);
 
     return () => unsubscribe(f);
-  }, []);
+  }, [isDirty, setSharedData, emitEvent, handleSubmit, subscribe, unsubscribe, setLoading]);
 
   // ·······························································
   // HANDLERS
@@ -78,8 +108,7 @@ function InstructionData({
   };
 
   const handleOnNext = (e) => {
-    const data = { ...sharedData, ...e };
-    if (isFunction(setSharedData)) setSharedData(data);
+    const data = onSubmit(e);
     if (isFunction(onNext)) onNext(data);
   };
 

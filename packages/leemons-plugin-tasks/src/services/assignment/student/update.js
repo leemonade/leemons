@@ -8,6 +8,7 @@ const STUDENT_UPDATABLE_FIELDS = [
   'timestamps.start',
   'timestamps.end',
   'metadata.submission',
+  'metadata.visitedSteps',
 ];
 
 const TEACHER_UPDATABLE_FIELD = ['grades'];

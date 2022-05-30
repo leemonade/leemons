@@ -140,7 +140,7 @@ module.exports = {
     completed: 'Completada',
     ongoing: 'Empezada',
     opened: 'Abierta',
-    notOpened: 'Pendiente',
+    notOpened: 'Cerrada',
   },
   teacher_actions: {
     sendReminder: 'Enviar recordatorio',

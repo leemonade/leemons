@@ -18,7 +18,7 @@ export default function useSteps({
 
   const steps = useMemo(() => {
     if (!instance) {
-      return [];
+      return { steps: [] };
     }
     const stepsObj = {
       summary: {
@@ -27,6 +27,7 @@ export default function useSteps({
         component: <StatementStep assignation={assignation} labels={labels} />,
         sidebar: true,
         timestamps: 'open',
+        status: 'OK',
       },
       statement: () => {
         if (!shouldShowDevelopment) {
@@ -38,6 +39,7 @@ export default function useSteps({
           label: labels.steps.development,
           component: <DevelopmentStep assignation={assignation} labels={labels} />,
           sidebar: true,
+          status: 'OK',
         };
       },
       submission: () => {
@@ -64,9 +66,10 @@ export default function useSteps({
           timestamps: 'start',
           showConfirmation: true,
           onSave,
+          onChangeActiveIndex: onSave,
           save: assignation?.started && !assignation?.finished,
           next: assignation?.started && !assignation?.finished,
-          // status: 'OK',
+          status: 'OK',
           // badge: 'Submitted',
         };
       },
@@ -84,7 +87,11 @@ export default function useSteps({
       })
       .filter((step) => step);
 
-    return finalSteps;
+    const visitedSteps = assignation?.metadata?.visitedSteps?.map((step) =>
+      finalSteps.findIndex(({ id }) => id === step)
+    );
+
+    return { steps: finalSteps, visitedSteps };
   }, [assignation]);
 
   const nextStep = steps[currentStep + 1];

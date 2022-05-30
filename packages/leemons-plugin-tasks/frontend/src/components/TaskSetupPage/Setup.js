@@ -7,7 +7,21 @@ function Setup({ labels, steps, values, editable, onSave, useObserver, ...props 
   const [sharedData, setSharedData] = useState(values);
   const [active, setActive] = useState(0);
 
-  const { subscribe, unsubscribe } = useObserver();
+  const { subscribe, unsubscribe, emitEvent } = useObserver();
+
+  const onChangeActiveIndex = (index) => {
+    const f = (event) => {
+      if (event === 'stepSaved') {
+        setActive(index);
+        unsubscribe(f);
+      } else if (event === 'saveStepFailed') {
+        unsubscribe(f);
+      }
+    };
+    subscribe(f);
+
+    emitEvent('saveStep');
+  };
 
   const [callOnSave, setCallOnSave] = useState(false);
 
@@ -57,7 +71,12 @@ function Setup({ labels, steps, values, editable, onSave, useObserver, ...props 
   // COMPONENT
 
   return (
-    <VerticalStepperContainer {...props} currentStep={active} data={steps}>
+    <VerticalStepperContainer
+      {...props}
+      currentStep={active}
+      data={steps}
+      onChangeActiveIndex={onChangeActiveIndex}
+    >
       {
         steps.map((item) =>
           React.cloneElement(item.content, {

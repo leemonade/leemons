@@ -30,6 +30,11 @@ export default function File({ assignation, updateStatus, onSave, value, labels:
     const filesToKeep = _.difference(savedFiles.current, filesToRemove);
 
     try {
+      if (!filesToSave?.length && !filesToRemove?.length) {
+        updateStatus(filesToKeep?.length ? 'submitted' : 'cleared');
+        return;
+      }
+
       if (filesToRemove?.length) {
         await Promise.all(filesToRemove.map((file) => deleteAssetRequest(file.id)));
       }
@@ -49,7 +54,6 @@ export default function File({ assignation, updateStatus, onSave, value, labels:
 
         filesSaved = _.map(_.map(filesSaved, 'asset'), (file) => _.pick(file, ['id', 'name']));
       }
-
       filesSaved = [...filesToKeep, ...filesSaved];
       await saveSubmission(filesSaved, !filesSaved.length);
       savedFiles.current = filesSaved;
