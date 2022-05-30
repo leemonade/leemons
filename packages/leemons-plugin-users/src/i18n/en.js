@@ -171,10 +171,9 @@ module.exports = {
     number_of_profiles:
       'You have {profiles} profiles on leemons, please select the one with you want to access',
     several_centers:
-      'You have several centers and profiles on Leemons, please select the properly ones to access.',
-    use_always_profile: 'Always use this config for quick access',
-    change_easy:
-      'You can easily change your profile by clicking on your avatar in the sidebar of the application',
+      'You have several centers and profiles in Leemons, please select how you want to access.',
+    use_always_profile: 'Remember this configuration',
+    change_easy: 'You can always change your profile or center from your user account.',
     log_in: 'Log in',
     choose_center: 'Choose center',
   },
