@@ -28,7 +28,7 @@ import {
   listKanbanColumnsRequest,
   listKanbanEventOrdersRequest,
 } from '../../request';
-import transformEvent from '../../helpers/transformEvent';
+import useTransformEvent from '../../helpers/useTransformEvent';
 
 const Styles = createStyles((theme) => ({
   root: {
@@ -47,6 +47,7 @@ const Styles = createStyles((theme) => ({
 
 function UserProgramKanban({ program, classe, session, useAllColumns = false }) {
   const { classes: styles } = Styles();
+  const [transformEv, evLoading] = useTransformEvent();
   const [store, render] = useStore({
     loading: true,
     filtersData: {
@@ -163,7 +164,7 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
       cols.push({
         id: column.id,
         title: getColumnName(column.nameKey),
-        cards: _.map(cards, (card) => transformEvent(card, store.data.calendars)),
+        cards: _.map(cards, (card) => transformEv(card, store.data.calendars)),
       });
     });
     return { columns: cols };
@@ -212,8 +213,8 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
   }
 
   React.useEffect(() => {
-    if (program || classe) load();
-  }, [program, classe]);
+    if ((program || classe) && !evLoading) load();
+  }, [program, classe, evLoading]);
 
   if (store.loading) return null;
 

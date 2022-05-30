@@ -243,6 +243,19 @@ async function setRememberLogin(ctx) {
   }
 }
 
+async function removeRememberLogin(ctx) {
+  const remember = await table.userRememberLogin.findOne({ user: ctx.state.userSession.id });
+
+  if (remember) {
+    await table.userRememberLogin.delete({ user: ctx.state.userSession.id });
+  }
+
+  ctx.status = 200;
+  ctx.body = {
+    status: 200,
+  };
+}
+
 async function getRememberLogin(ctx) {
   const remember = await table.userRememberLogin.findOne({ user: ctx.state.userSession.id });
   if (remember) {
@@ -436,6 +449,7 @@ module.exports = {
   agentDetailForPage,
   setRememberLogin,
   getRememberLogin,
+  removeRememberLogin,
   centerProfileToken,
   canRegisterPassword,
   getDataForUserAgentDatasets,

@@ -8,6 +8,9 @@ module.exports = {
   non_school_day: 'Día no lectivo (Otro)',
   taskPlaceholder: 'Nueva tarea',
   fromLabelDeadline: 'Fecha límite',
+  transformEvent: {
+    multiSubject: 'Multi-Asignatura',
+  },
   calendar: {
     month: 'Mes',
     week: 'Semana',

@@ -38,6 +38,7 @@ import saveSystemDataFieldsConfig from './saveSystemDataFieldsConfig';
 import getDataForUserAgentDatasets from './getDataForUserAgentDatasets';
 import saveDataForUserAgentDatasets from './saveDataForUserAgentDatasets';
 import getPermissionsWithActionsIfIHave from './getPermissionsWithActionsIfIHave';
+import removeRememberLogin from './removeRememberLogin';
 
 export const loginRequest = login;
 export const resetRequest = reset;
@@ -68,6 +69,7 @@ export const getUserAgentsInfoRequest = getUserAgentsInfo;
 export const getRememberLoginRequest = getRememberLogin;
 export const setRememberLoginRequest = setRememberLogin;
 export const getPlatformLocalesRequest = getPlatformLocales;
+export const removeRememberLoginRequest = removeRememberLogin;
 export const canRegisterPasswordRequest = canRegisterPassword;
 export const getUserProfileTokenRequest = getUserProfileToken;
 export const getUserDetailForPageRequest = getUserDetailForPage;

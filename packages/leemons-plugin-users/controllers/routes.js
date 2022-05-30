@@ -129,6 +129,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/user/remember/login',
+    method: 'DELETE',
+    handler: 'users.removeRememberLogin',
+    authenticated: true,
+  },
+  {
     path: '/user/profile/:id/token',
     method: 'GET',
     handler: 'users.profileToken',

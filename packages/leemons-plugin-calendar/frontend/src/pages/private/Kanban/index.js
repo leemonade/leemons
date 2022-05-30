@@ -18,9 +18,10 @@ import * as _ from 'lodash';
 import { find, flatten, map, uniq } from 'lodash';
 import hooks from 'leemons-hooks';
 import getUserFullName from '@users/helpers/getUserFullName';
-import transformEvent from '../../../helpers/transformEvent';
+import useTransformEvent from '../../../helpers/useTransformEvent';
 
 function Kanban({ session }) {
+  const [transformEv, evLoading] = useTransformEvent();
   const ref = useRef({
     loading: true,
     mounted: true,
@@ -141,7 +142,7 @@ function Kanban({ session }) {
         cols.push({
           id: column.id,
           title: getColumnName(column.nameKey),
-          cards: _.map(cards, (card) => transformEvent(card, ref.current.data.calendars)),
+          cards: _.map(cards, (card) => transformEv(card, ref.current.data.calendars)),
         });
       }
     });
@@ -240,11 +241,11 @@ function Kanban({ session }) {
 
   useEffect(() => {
     ref.current.mounted = true;
-    if (session) init();
+    if (session && !evLoading) init();
     return () => {
       ref.current.mounted = false;
     };
-  }, [session]);
+  }, [session, evLoading]);
 
   useEffect(() => {
     hooks.addAction('calendar:force:reload', reload);

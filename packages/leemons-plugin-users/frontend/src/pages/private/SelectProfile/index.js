@@ -16,6 +16,7 @@ import {
   getRememberLoginRequest,
   getUserCenterProfileTokenRequest,
   getUserCentersRequest,
+  removeRememberLoginRequest,
   setRememberLoginRequest,
 } from '../../../request';
 import { getCookieToken } from '../../../session';
@@ -80,6 +81,8 @@ export default function SelectProfile({ session }) {
           center: data.center,
           profile: data.profile,
         });
+      } else {
+        await removeRememberLoginRequest();
       }
       const { jwtToken } = await getUserCenterProfileTokenRequest(data.center, data.profile);
       await hooks.fireEvent('user:change:profile', profile);

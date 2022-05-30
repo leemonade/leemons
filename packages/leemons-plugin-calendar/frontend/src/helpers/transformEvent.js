@@ -1,6 +1,6 @@
 import { cloneDeep, keyBy, uniq } from 'lodash';
 
-export default function transformEvent(_event, calendars) {
+export default function transformEvent(_event, calendars, t) {
   const event = cloneDeep(_event);
   if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
     const calendarsByKey = keyBy(calendars, 'id');
@@ -11,7 +11,7 @@ export default function transformEvent(_event, calendars) {
       event.icon = '/public/assets/svgs/module-three.svg';
       event.bgColor = '#67728E';
       event.borderColor = '#67728E';
-      event.calendarName = 'Multi-Subject';
+      event.calendarName = t ? t('multiSubject') : 'Multi-Subject';
     } else {
       const calendar = calendarsByKey[classes[0]];
       event.icon = calendar.icon;
