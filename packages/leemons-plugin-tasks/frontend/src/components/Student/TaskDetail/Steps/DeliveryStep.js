@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
 import { ContextContainer, Alert, HtmlText } from '@bubbles-ui/components';
@@ -98,8 +98,8 @@ export default function DeliveryStep({ assignation, onSave, labels: _labels, dis
       <C
         assignation={assignation}
         updateStatus={updateStatus}
-        onSave={onSave}
         value={assignation?.metadata?.submission}
+        onSave={onSave}
         labels={labels}
       />
       <SubmissionState status={status} error={error} labels={labels} />

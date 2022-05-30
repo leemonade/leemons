@@ -26,7 +26,7 @@ import updateStudentRequest from '../../../request/instance/updateStudent';
 import { prefixPN } from '../../../helpers';
 
 async function updateTimestamps(assignation, timestamps) {
-  if (timestamps) {
+  if (timestamps && !assignation?.timestamps?.[timestamps]) {
     try {
       await updateStudentRequest({
         instance: assignation?.instance?.id,
@@ -35,6 +35,26 @@ async function updateTimestamps(assignation, timestamps) {
           [timestamps]: Date.now(),
         },
       });
+    } catch (e) {
+      // TODO: Handle error
+    }
+  }
+}
+
+async function updateVisitedSteps(assignation, step) {
+  if (step?.id && !assignation?.metadata?.visitedSteps?.includes(step.id)) {
+    try {
+      const visitedSteps = [...(assignation?.metadata?.visitedSteps || []), step.id];
+      await updateStudentRequest({
+        instance: assignation?.instance?.id,
+        student: assignation.user,
+        metadata: {
+          ...assignation?.metadata,
+          visitedSteps,
+        },
+      });
+
+      _.set(assignation, 'metadata.visitedSteps', visitedSteps);
     } catch (e) {
       // TODO: Handle error
     }
@@ -99,7 +119,13 @@ export default function TaskDetail({ id, student }) {
   };
 
   const [currentStep, setCurrentStep] = useState(0);
-  const steps = useSteps({ assignation, labels, disabledButtons, disableButton, currentStep });
+  const { steps, visitedSteps } = useSteps({
+    assignation,
+    labels,
+    disabledButtons,
+    disableButton,
+    currentStep,
+  });
 
   const classData = useClassData(assignation?.instance?.classes);
 
@@ -155,6 +181,18 @@ export default function TaskDetail({ id, student }) {
     }
   };
 
+  const handleChangeActiveIndex = async (index) => {
+    if (typeof step.onChangeActiveIndex?.current === 'function') {
+      const proceed = await step.onChangeActiveIndex.current(index);
+      if (proceed === false) {
+        return;
+      }
+    }
+
+    setCurrentStep(index);
+    resetButtons();
+  };
+
   const { classes } = TaskDetailStyles();
 
   useEffect(() => {
@@ -162,6 +200,12 @@ export default function TaskDetail({ id, student }) {
       updateTimestamps(assignation, 'open');
     }
   }, [assignation]);
+
+  useEffect(() => {
+    if (assignation) {
+      updateVisitedSteps(assignation, step);
+    }
+  }, [step?.id]);
 
   useEffect(() => {
     updateTimestamps(assignation, step?.timestamps);
@@ -196,7 +240,13 @@ export default function TaskDetail({ id, student }) {
       />
       <Box className={classes?.root}>
         <Box className={classes?.stepper}>
-          <VerticalStepper data={steps} currentStep={currentStep} />
+          <VerticalStepper
+            data={steps}
+            currentStep={currentStep}
+            completedSteps={visitedSteps}
+            visitedSteps={visitedSteps}
+            onChangeActiveIndex={handleChangeActiveIndex}
+          />
         </Box>
         <Box className={classes?.content}>
           {step?.component}
