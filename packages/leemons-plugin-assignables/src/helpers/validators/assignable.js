@@ -107,6 +107,10 @@ const assignableValidationObject = {
       maxLength: 255,
       nullable: true,
     },
+    resources: {
+      type: 'array',
+      nullable: true,
+    },
     submission: {
       type: 'object',
       nullable: true,

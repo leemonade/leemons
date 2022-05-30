@@ -44,8 +44,8 @@ export default function TaskSetupPage() {
         ...values,
         // TODO: Esto debe establecerse en el Config
         subjects: values?.subjects?.map((subject) => ({
-          ...subject,
           program,
+          ...subject,
           curriculum: curriculum && {
             objectives: curriculum[subject.subject]?.objectives?.map(({ objective }) => objective),
             contents: curriculum[subject.subject]?.contents?.map(({ content }) => content),

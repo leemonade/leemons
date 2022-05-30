@@ -133,6 +133,8 @@ module.exports = {
           statement: 'Enunciado de la tarea',
           development: 'Desarrollo de la tarea',
           statementAndDevelopmentTitle: 'Enunciado y desarrollo',
+          attachmentsTitle: 'Recursos', // NEW
+          searchFromLibrary: 'Buscar en la biblioteca', // NEW
           content: 'Contenidos', // NEW
           assessmentCriteria: 'Criterios de evaluación', // NEW
           objectives: 'Objetivos personalizados', // NEW

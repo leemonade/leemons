@@ -22,8 +22,16 @@ module.exports = async function removeAssignables(assignables, { userSession, tr
           // EN: Make the asset no longer indexable
           // ES: Hace que el asset ya no sea indexable
           // await removeAsset(a.asset.id, { userSession, transacting });
-          const asset = await getAsset(a.asset.id, { userSession, transacting });
-          await updateAsset({ ...asset, indexable: false }, { userSession, transacting });
+          const assets = await getAsset([a.asset.id, ...a.resources], { userSession, transacting });
+
+          await Promise.all(
+            assets.map((asset) =>
+              updateAsset(
+                { ...asset, indexable: false },
+                { upgrade: false, userSession, transacting }
+              )
+            )
+          );
 
           // EN: Get the users that have access to the assignable.
           // ES: Obtiene los usuarios que tienen acceso al asignable.
