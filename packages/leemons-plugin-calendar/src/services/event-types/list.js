@@ -10,7 +10,8 @@ const { table } = require('../tables');
  * @return {Promise<any>}
  * */
 async function list({ transacting } = {}) {
-  const eventTypes = await table.eventTypes.find(undefined, { transacting });
+  let eventTypes = await table.eventTypes.find(undefined, { transacting });
+  eventTypes = _.sortBy(eventTypes, 'order');
   return _.map(eventTypes, (eventType) => ({ ...eventType, config: JSON.parse(eventType.config) }));
 }
 

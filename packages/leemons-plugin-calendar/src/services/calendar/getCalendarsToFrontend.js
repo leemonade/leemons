@@ -184,17 +184,25 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   // console.log('EVENTS --------', events);
   // console.log('EVENTS CALENDARS --------', eventsFromCalendars);
 
+  const calendarFunc = (calendar) => ({
+    ...calendar,
+    isClass: classCalendarsIds.indexOf(calendar.id) >= 0,
+    isUserCalendar: calendar.id === userCalendar.id,
+    fullName:
+      calendar.id === userCalendar.id
+        ? leemons.getPlugin('users').services.users.getUserFullName(userSession)
+        : calendar.name,
+  });
+
   return {
     userCalendar,
-    ownerCalendars: _.sortBy(ownerCalendars, ({ id }) => (id === userCalendar.id ? 0 : 1)),
+    ownerCalendars: _.sortBy(_.map(ownerCalendars, calendarFunc), ({ id }) =>
+      id === userCalendar.id ? 0 : 1
+    ),
     calendarConfig,
     configCalendars,
-    calendars: _.sortBy(
-      _.map(finalCalendars, (calendar) => ({
-        ...calendar,
-        isClass: classCalendarsIds.indexOf(calendar.id) >= 0,
-      })),
-      ({ id }) => (id === userCalendar.id ? 0 : 1)
+    calendars: _.sortBy(_.map(finalCalendars, calendarFunc), ({ id }) =>
+      id === userCalendar.id ? 0 : 1
     ),
     events: _.uniqBy(
       eventsFromCalendars

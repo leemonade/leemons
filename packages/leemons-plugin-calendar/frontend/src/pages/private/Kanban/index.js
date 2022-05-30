@@ -17,7 +17,6 @@ import { KanbanFilters, KanbanTaskCard } from '@bubbles-ui/leemons';
 import * as _ from 'lodash';
 import { find, flatten, map, uniq } from 'lodash';
 import hooks from 'leemons-hooks';
-import getUserFullName from '@users/helpers/getUserFullName';
 import useTransformEvent from '../../../helpers/useTransformEvent';
 
 function Kanban({ session }) {
@@ -83,18 +82,6 @@ function Kanban({ session }) {
 
     return {
       ...response,
-      calendars: _.map(response.calendars, (calendar) => {
-        const isUserCalendar =
-          response && response.userCalendar && response.userCalendar.id === calendar.id;
-        const data = {
-          ...calendar,
-          isUserCalendar,
-        };
-        if (isUserCalendar) {
-          data.fullName = getUserFullName(session);
-        }
-        return data;
-      }),
     };
   }
 

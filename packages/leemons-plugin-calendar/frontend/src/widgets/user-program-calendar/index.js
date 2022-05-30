@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Box, Button, createStyles, Select, Stack, Text } from '@bubbles-ui/components';
 import { ChevRightIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
@@ -14,7 +14,9 @@ import { forEach, keyBy, map } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import { listSessionClassesRequest } from '@academic-portfolio/request';
+import hooks from 'leemons-hooks';
 import { getCalendarsToFrontendRequest } from '../../request';
+import useTransformEvent from '../../helpers/useTransformEvent';
 
 const Styles = createStyles((theme) => ({
   root: {
@@ -35,6 +37,7 @@ function UserProgramCalendar({ program, classe, session }) {
   const [store, render] = useStore({
     loading: true,
   });
+  const [transformEv, evLoading] = useTransformEvent();
   const [t] = useTranslateLoader(prefixPN('userProgramCalendar'));
   const [tC] = useTranslateLoader(prefixPN('calendar'));
   const [toggleEventModal, EventModal] = useCalendarEventModal();
@@ -67,21 +70,13 @@ function UserProgramCalendar({ program, classe, session }) {
           event.calendar === store.selectedCalendar) &&
         calendarIds.includes(event.calendar)
       ) {
-        events.push(event);
+        events.push(transformEv(event, store.centerData.calendars));
       }
     });
     return events;
   }
 
   function getFilteredEvents() {
-    console.log(
-      getEvents(),
-      transformDBEventsToFullCalendarEvents(
-        getEvents(),
-        store.centerData.calendars,
-        store.centerData.calendarConfig
-      )
-    );
     return transformDBEventsToFullCalendarEvents(
       getEvents(),
       store.centerData.calendars,
@@ -162,8 +157,15 @@ function UserProgramCalendar({ program, classe, session }) {
   }
 
   React.useEffect(() => {
-    if (program || classe) load();
-  }, [program, classe]);
+    if ((program || classe) && !evLoading) load();
+  }, [program, classe, evLoading]);
+
+  useEffect(() => {
+    hooks.addAction('calendar:force:reload', load);
+    return () => {
+      hooks.removeAction('calendar:force:reload', load);
+    };
+  });
 
   if (store.loading) return null;
 

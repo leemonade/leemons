@@ -105,16 +105,27 @@ async function events(isInstalled) {
     leemons.events.once('plugins.calendar:pluginDidLoadServices', async () => {
       await leemons.plugin.services.calendar.addEventType(
         leemons.plugin.prefixPN('event'),
-        'event'
+        'event',
+        undefined,
+        {
+          order: 1,
+        }
       );
-      await leemons.plugin.services.calendar.addEventType(leemons.plugin.prefixPN('task'), 'task', {
-        onlyOneDate: true,
-        config: {
-          titlePlaceholder: 'plugins.calendar.taskPlaceholder',
-          fromLabel: 'plugins.calendar.fromLabelDeadline',
-          hideAllDay: true,
+      await leemons.plugin.services.calendar.addEventType(
+        leemons.plugin.prefixPN('task'),
+        'task',
+        {
+          onlyOneDate: true,
+          config: {
+            titlePlaceholder: 'plugins.calendar.taskPlaceholder',
+            fromLabel: 'plugins.calendar.fromLabelDeadline',
+            hideAllDay: true,
+          },
         },
-      });
+        {
+          order: 2,
+        }
+      );
       leemons.events.emit('init-event-types');
     });
 

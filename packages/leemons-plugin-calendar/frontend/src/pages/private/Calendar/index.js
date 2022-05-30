@@ -86,7 +86,7 @@ function Calendar({ session }) {
             }
           });
         } else if (calendarsByKey[event.calendar].showEvents) {
-          events.push(event);
+          events.push(transformEv(event, data.calendars));
         }
       }
     });

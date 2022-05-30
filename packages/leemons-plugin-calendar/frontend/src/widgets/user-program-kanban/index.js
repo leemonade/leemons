@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -23,6 +23,7 @@ import { useCalendarEventModal } from '@calendar/components/calendar-event-modal
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import getCalendarNameWithConfigAndSession from '@calendar/helpers/getCalendarNameWithConfigAndSession';
 import { listSessionClassesRequest } from '@academic-portfolio/request';
+import hooks from 'leemons-hooks';
 import {
   getCalendarsToFrontendRequest,
   listKanbanColumnsRequest,
@@ -215,6 +216,13 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
   React.useEffect(() => {
     if ((program || classe) && !evLoading) load();
   }, [program, classe, evLoading]);
+
+  useEffect(() => {
+    hooks.addAction('calendar:force:reload', load);
+    return () => {
+      hooks.removeAction('calendar:force:reload', load);
+    };
+  });
 
   if (store.loading) return null;
 

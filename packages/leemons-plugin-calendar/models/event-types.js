@@ -27,6 +27,9 @@ module.exports = {
     onlyOneDate: {
       type: 'boolean',
     },
+    order: {
+      type: 'integer',
+    },
     config: {
       type: 'json',
     },
