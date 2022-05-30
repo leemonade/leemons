@@ -6,6 +6,7 @@ export default function handleDeliverySubmission(assignation) {
       instance: assignation.instance.id,
       student: assignation.user,
       metadata: {
+        ...assignation.metadata,
         submission: shouldRemove ? null : delivery,
       },
     });

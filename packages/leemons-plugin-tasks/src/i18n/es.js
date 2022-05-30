@@ -364,6 +364,7 @@ module.exports = {
         },
         link: {
           link: 'Enlace de la entrega',
+          invalidURL: 'El enlace no es válido',
         },
       },
       submission_state: {

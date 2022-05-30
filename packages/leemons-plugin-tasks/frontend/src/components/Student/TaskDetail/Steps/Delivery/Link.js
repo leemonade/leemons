@@ -1,42 +1,51 @@
-import React from 'react';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { TextInput, useDebouncedValue } from '@bubbles-ui/components';
+import { TextInput } from '@bubbles-ui/components';
 import handleDeliverySubmission from './handleDeliverySubmission';
 
 export default function Link({ updateStatus, value, assignation, labels: _labels, onSave }) {
   const labels = _labels?.submission_type?.link;
-  const [url, setUrl] = React.useState(value);
-  const [debouncedUrl] = useDebouncedValue(url, 1000);
-  const isFirstRender = React.useRef(true);
+  const [url, setUrl] = useState(value);
+  const urlRef = useRef(value);
 
-  const onLinkSubmission = handleDeliverySubmission(assignation);
+  const saveSubmission = useMemo(() => handleDeliverySubmission(assignation), [assignation]);
 
-  React.useEffect(async () => {
-    if (debouncedUrl?.length && !isFirstRender.current) {
-      // TODO: Cancel previous request
+  const handleSubmit = useCallback(async () => {
+    updateStatus('loading');
+    const urlToSave = urlRef.current;
+
+    if (urlToSave.length) {
       try {
-        updateStatus('loading');
-        await onLinkSubmission(debouncedUrl);
-        updateStatus(debouncedUrl?.length ? 'submitted' : 'cleared');
+        // eslint-disable-next-line no-new
+        new URL(urlToSave);
       } catch (e) {
-        updateStatus('error', e.message);
+        updateStatus('error', labels?.invalidURL);
+        return;
       }
     }
 
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
+    try {
+      await saveSubmission(urlToSave, !urlToSave?.length);
+      updateStatus(urlToSave.length ? 'submitted' : 'cleared');
+    } catch (e) {
+      updateStatus('error', e.message);
     }
-  }, [debouncedUrl, onError, onSubmit, onLoading]);
+  }, [updateStatus, saveSubmission, _labels]);
 
-  onSave.current = onLinkSubmission;
+  onSave.current = handleSubmit;
 
-  React.useEffect(() => {
-    if (value !== url) {
-      setUrl(value);
-    }
-  }, [value]);
-
-  return <TextInput type="url" label={labels?.link} value={url} onChange={setUrl} />;
+  return (
+    <TextInput
+      type="url"
+      label={labels?.link}
+      value={url}
+      onChange={(newUrl) => {
+        updateStatus('changed');
+        urlRef.current = newUrl;
+        setUrl(newUrl);
+      }}
+    />
+  );
 }
 
 Link.propTypes = {
