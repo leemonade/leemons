@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { isFunction, isEmpty } from 'lodash';
+import { isFunction, uniq } from 'lodash';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import {
   Box,
@@ -68,25 +68,54 @@ function ContentData({
   const subjects = useSubjects(sharedData);
 
   const { subscribe, unsubscribe, emitEvent } = useObserver();
+  const onSubmit = useCallback(
+    (e) => {
+      const data = {
+        ...sharedData,
+        ...e,
+        metadata: {
+          ...sharedData.metadata,
+          visitedSteps: uniq([...(sharedData.metadata?.visitedSteps || []), 'contentData']),
+        },
+      };
+      setSharedData(data);
 
+      return data;
+    },
+    [setSharedData, sharedData]
+  );
   useEffect(() => {
     const f = (event) => {
       if (event === 'saveTask') {
         handleSubmit(
           (data) => {
-            setSharedData(data);
+            onSubmit(data);
             emitEvent('saveData');
           },
           () => {
             emitEvent('saveTaskFailed');
           }
         )();
+      } else if (event === 'saveStep') {
+        if (!isDirty) {
+          emitEvent('stepSaved');
+        } else {
+          handleSubmit(
+            (data) => {
+              onSubmit(data);
+              emitEvent('stepSaved');
+            },
+            () => {
+              emitEvent('saveStepFailed');
+            }
+          )();
+        }
       }
     };
     subscribe(f);
 
     return () => unsubscribe(f);
-  }, []);
+  }, [isDirty, setSharedData, emitEvent, handleSubmit, subscribe, unsubscribe]);
 
   // ·······························································
   // HANDLERS
@@ -106,9 +135,8 @@ function ContentData({
   };
 
   const handleOnNext = (e) => {
-    const data = { ...sharedData, ...e };
+    const data = onSubmit(e);
 
-    if (isFunction(setSharedData)) setSharedData(data);
     if (isFunction(onNext)) onNext(data);
   };
 

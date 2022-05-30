@@ -1,12 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { isFunction, isArray } from 'lodash';
+import { isFunction, uniq } from 'lodash';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import { Box, Stack, ContextContainer, Button } from '@bubbles-ui/components';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import SelectProgram from './components/PickSubject/SelectProgram';
 import SelectSubjects from './components/PickSubject/SelectSubjects';
-import PreTaskSelector from './components/PreTaskSelector/PreTaskSelector';
 
 function getInitialProgram(sharedData) {
   if (sharedData?.subjects?.length > 0) {
@@ -53,18 +52,49 @@ function ConfigData({
     reset(sharedData);
   }, [sharedData]);
 
+  const onSubmit = useCallback(
+    (e) => {
+      const data = {
+        ...sharedData,
+        ...e,
+        metadata: {
+          ...sharedData.metadata,
+          visitedSteps: uniq([...(sharedData.metadata?.visitedSteps || []), 'configData']),
+        },
+      };
+      setSharedData(data);
+
+      return data;
+    },
+    [setSharedData, sharedData]
+  );
+
   useEffect(() => {
     const f = (event) => {
       if (event === 'saveTask') {
         handleSubmit(
           (data) => {
-            setSharedData(data);
+            onSubmit(data);
             emitEvent('saveData');
           },
           () => {
             emitEvent('saveTaskFailed');
           }
         )();
+      } else if (event === 'saveStep') {
+        if (!isDirty) {
+          emitEvent('stepSaved');
+        } else {
+          handleSubmit(
+            (data) => {
+              onSubmit(data);
+              emitEvent('stepSaved');
+            },
+            () => {
+              emitEvent('saveStepFailed');
+            }
+          )();
+        }
       }
     };
 
@@ -72,7 +102,7 @@ function ConfigData({
     return () => {
       unsubscribe(f);
     };
-  }, []);
+  }, [handleSubmit, isDirty, reset, setSharedData, emitEvent, subscribe, unsubscribe]);
 
   // ·······························································
   // HANDLERS
@@ -92,12 +122,8 @@ function ConfigData({
   };
 
   const handleOnNext = (e) => {
-    const data = {
-      ...sharedData,
-      ...e,
-    };
+    const data = onSubmit(e);
 
-    if (isFunction(setSharedData)) setSharedData(data);
     if (isFunction(onNext)) onNext(data);
   };
 
