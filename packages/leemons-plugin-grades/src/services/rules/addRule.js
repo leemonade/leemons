@@ -3,6 +3,7 @@ const { table } = require('../tables');
 const { validateAddRule } = require('../../validations/forms');
 const { addConditionGroup } = require('../condition-groups/addConditionGroup');
 const { ruleByIds } = require('./ruleByIds');
+const enableMenuItemService = require('../menu-builder/enableItem');
 
 async function addRule(data, { isDependency = false, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
@@ -17,6 +18,10 @@ async function addRule(data, { isDependency = false, transacting: _transacting }
 
       await table.rules.update({ id: rule.id }, { group: _group.id }, { transacting });
 
+      await Promise.all([
+        enableMenuItemService('promotions'),
+        enableMenuItemService('dependencies'),
+      ]);
       return (await ruleByIds(rule.id, { transacting }))[0];
     },
     table.grades,

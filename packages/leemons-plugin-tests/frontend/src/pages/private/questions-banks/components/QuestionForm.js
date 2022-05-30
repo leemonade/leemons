@@ -42,7 +42,6 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
 
   function save() {
     form.handleSubmit((data) => {
-      console.log(data);
       onSave(data);
     })();
   }
@@ -164,11 +163,13 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
               )}
             />
 
-            <Controller
-              control={form.control}
-              name="questionImage"
-              render={({ field }) => <ImagePicker {...field} />}
-            />
+            {type !== 'map' ? (
+              <Controller
+                control={form.control}
+                name="questionImage"
+                render={({ field }) => <ImagePicker {...field} />}
+              />
+            ) : null}
 
             {type
               ? React.cloneElement(questionComponents[type], {

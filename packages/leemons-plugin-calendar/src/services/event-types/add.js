@@ -11,7 +11,7 @@ const { validateKeyPrefix, validateExistEventTypeKey } = require('../../validati
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function add(key, url, options = {}, { transacting: _transacting } = {}) {
+async function add(key, url, options = {}, { order, transacting: _transacting } = {}) {
   validateKeyPrefix(key, this.calledFrom);
 
   return global.utils.withTransaction(
@@ -23,6 +23,7 @@ async function add(key, url, options = {}, { transacting: _transacting } = {}) {
           config: JSON.stringify(options.config || {}),
           key,
           url,
+          order,
           pluginName: this.calledFrom.replace('plugins.', ''),
         },
         { transacting }

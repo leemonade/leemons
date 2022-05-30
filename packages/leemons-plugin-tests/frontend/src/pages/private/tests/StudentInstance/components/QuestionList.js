@@ -18,6 +18,8 @@ export default function QuestionList(props) {
         if (store.questionNumber > 0) {
           store.questionNumber -= 1;
           render();
+        } else {
+          props.prevStep();
         }
       }}
       nextStep={(e) => {

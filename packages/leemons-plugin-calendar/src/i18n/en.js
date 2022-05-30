@@ -8,6 +8,9 @@ module.exports = {
   non_school_day: 'Non school day (Other)',
   taskPlaceholder: 'New task',
   fromLabelDeadline: 'Deadline',
+  transformEvent: {
+    multiSubject: 'Multi-Subject',
+  },
   calendar: {
     month: 'Month',
     week: 'Week',

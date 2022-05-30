@@ -3,6 +3,7 @@ const { table } = require('../tables');
 const { validateAddGrade } = require('../../validations/forms');
 const { addGradeScale } = require('../grade-scales');
 const { gradeByIds } = require('./gradeByIds');
+const enableMenuItemService = require('../menu-builder/enableItem');
 
 async function addGrade(data, { fromFrontend, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
@@ -27,7 +28,10 @@ async function addGrade(data, { fromFrontend, transacting: _transacting } = {}) 
           { transacting }
         );
       }
-
+      await Promise.all([
+        enableMenuItemService('evaluations'),
+        enableMenuItemService('promotions'),
+      ]);
       return (await gradeByIds(grade.id, { transacting }))[0];
     },
     table.grades,

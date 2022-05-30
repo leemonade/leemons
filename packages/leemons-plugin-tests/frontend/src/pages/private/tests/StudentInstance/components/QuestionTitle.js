@@ -22,9 +22,11 @@ export default function QuestionTitle(props) {
       <Box className={styles.questionTitleIcon}>
         <ImageLoader className="stroke-current" src={'/public/tests/question.svg'} />
       </Box>
-      <Text size="md" role="productive" color="primary" strong>
-        {htmlToText(question.question)}
-      </Text>
+      <Box className={styles.questionTitleText}>
+        <Text size="md" role="productive" color="primary" strong>
+          {htmlToText(question.question)}
+        </Text>
+      </Box>
       {store.embedded ? (
         <Box className={cx(styles.questionValueCard, styles.questionValueCardEmbedded)}>
           <Box>

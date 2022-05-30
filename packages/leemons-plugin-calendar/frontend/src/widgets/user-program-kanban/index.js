@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -23,12 +23,13 @@ import { useCalendarEventModal } from '@calendar/components/calendar-event-modal
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import getCalendarNameWithConfigAndSession from '@calendar/helpers/getCalendarNameWithConfigAndSession';
 import { listSessionClassesRequest } from '@academic-portfolio/request';
+import hooks from 'leemons-hooks';
 import {
   getCalendarsToFrontendRequest,
   listKanbanColumnsRequest,
   listKanbanEventOrdersRequest,
 } from '../../request';
-import transformEvent from '../../helpers/transformEvent';
+import useTransformEvent from '../../helpers/useTransformEvent';
 
 const Styles = createStyles((theme) => ({
   root: {
@@ -47,6 +48,7 @@ const Styles = createStyles((theme) => ({
 
 function UserProgramKanban({ program, classe, session, useAllColumns = false }) {
   const { classes: styles } = Styles();
+  const [transformEv, evLoading] = useTransformEvent();
   const [store, render] = useStore({
     loading: true,
     filtersData: {
@@ -163,7 +165,7 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
       cols.push({
         id: column.id,
         title: getColumnName(column.nameKey),
-        cards: _.map(cards, (card) => transformEvent(card, store.data.calendars)),
+        cards: _.map(cards, (card) => transformEv(card, store.data.calendars)),
       });
     });
     return { columns: cols };
@@ -212,8 +214,15 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
   }
 
   React.useEffect(() => {
-    if (program || classe) load();
-  }, [program, classe]);
+    if ((program || classe) && !evLoading) load();
+  }, [program, classe, evLoading]);
+
+  useEffect(() => {
+    hooks.addAction('calendar:force:reload', load);
+    return () => {
+      hooks.removeAction('calendar:force:reload', load);
+    };
+  });
 
   if (store.loading) return null;
 

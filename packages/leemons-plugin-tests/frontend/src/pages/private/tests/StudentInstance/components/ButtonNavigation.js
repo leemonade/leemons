@@ -25,7 +25,6 @@ export function ButtonNavigation({
             position="right"
             variant="outline"
             leftIcon={<ChevronLeftIcon />}
-            style={{ width: 338 }}
             rounded
             compact
             onClick={prevStep}
@@ -38,7 +37,6 @@ export function ButtonNavigation({
           <Button
             position="left"
             rightIcon={<ChevronRightIcon />}
-            style={{ width: 338 }}
             rounded
             compact
             onClick={nextStep}

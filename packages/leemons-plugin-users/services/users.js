@@ -53,4 +53,9 @@ module.exports = {
     userAgents.itemPermissions.getAllItemsForTheUserAgentHasPermissions,
   getAllItemsForTheUserAgentHasPermissionsByType:
     userAgents.itemPermissions.getAllItemsForTheUserAgentHasPermissionsByType,
+  getUserFullName(userSession) {
+    return `${userSession.name ? userSession.name : ''}${
+      userSession.surnames ? ` ${userSession.surnames}` : ''
+    }${userSession.secondSurname ? ` ${userSession.secondSurname}` : ''}`;
+  },
 };

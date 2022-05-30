@@ -272,7 +272,7 @@ function NewCalendarEventModal({
         addSuccessAlert(t('add_done'));
       } else {
         // delete toSend.calendar;
-        delete toSend.type;
+        // delete toSend.type;
         delete toSend.status;
         await updateEventRequest(centerToken, event.id, toSend);
         addSuccessAlert(t('updated_done'));

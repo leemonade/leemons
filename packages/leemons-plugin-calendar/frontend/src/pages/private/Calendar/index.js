@@ -15,11 +15,12 @@ import hooks from 'leemons-hooks';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@calendar/helpers/prefixPN';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
-import transformEvent from '../../../helpers/transformEvent';
+import useTransformEvent from '../../../helpers/useTransformEvent';
 
 function Calendar({ session }) {
   const ref = useRef({ loading: true });
 
+  const [transformEv, evLoading] = useTransformEvent();
   const [t] = useTranslateLoader(prefixPN('calendar'));
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [, setR] = useState(null);
@@ -80,12 +81,12 @@ function Calendar({ session }) {
           // eslint-disable-next-line consistent-return
           _.forEach(event.data.classes, (calendar) => {
             if (calendarsByKey[calendar].showEvents) {
-              events.push(transformEvent(event, data.calendars));
+              events.push(transformEv(event, data.calendars));
               return false;
             }
           });
         } else if (calendarsByKey[event.calendar].showEvents) {
-          events.push(event);
+          events.push(transformEv(event, data.calendars));
         }
       }
     });
@@ -186,8 +187,8 @@ function Calendar({ session }) {
   });
 
   useEffect(() => {
-    if (session) init();
-  }, [session]);
+    if (session && !evLoading) init();
+  }, [session, evLoading]);
 
   const onEventClick = (info) => {
     if (info.originalEvent) {

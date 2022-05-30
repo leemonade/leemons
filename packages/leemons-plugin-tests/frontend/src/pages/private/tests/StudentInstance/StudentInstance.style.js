@@ -77,7 +77,8 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
   },
   limitedWidthStep: {
     width: '100%',
-    maxWidth: theme.breakpoints.md,
+    maxWidth: theme.breakpoints.sm,
+    margin: `${theme.spacing[12]}px auto`,
   },
   preDoing: {
     width: '100%',
