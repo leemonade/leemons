@@ -16,9 +16,9 @@ import SubjectTabs from '../Correction/components/SubjectTabs';
 import studentCorrectionStyles from './StudentCorrection.style';
 import Submission from '../Correction/components/Submission';
 import { prefixPN } from '../../helpers';
+import ContactTeacher from './components/ContactTeacher/ContactTeacher';
 
 function SubjectTab({ assignation, subject, labels, classes, evaluationSystem }) {
-  console.log('subjectTab', subject, assignation);
   const grade = assignation?.grades?.find(({ subject: s }) => s === subject);
 
   if (!grade) {
@@ -51,6 +51,7 @@ function SubjectTab({ assignation, subject, labels, classes, evaluationSystem })
           </ActivityAccordionPanel>
         </ActivityAccordion>
       )}
+      <ContactTeacher assignation={assignation} subject={subject} labels={labels?.contactTeacher} />
     </>
   );
 }

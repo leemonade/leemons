@@ -133,6 +133,8 @@ module.exports = {
           statement: 'Enunciado de la tarea',
           development: 'Desarrollo de la tarea',
           statementAndDevelopmentTitle: 'Enunciado y desarrollo',
+          attachmentsTitle: 'Recursos', // NEW
+          searchFromLibrary: 'Buscar en la biblioteca', // NEW
           content: 'Contenidos', // NEW
           assessmentCriteria: 'Criterios de evaluación', // NEW
           objectives: 'Objetivos personalizados', // NEW
@@ -403,6 +405,10 @@ module.exports = {
           noSubmission: 'No se ha entregado ningún archivo',
         },
       },
+    },
+    contactTeacher: {
+      title: '¿Quieres hacer alguna consulta sobre esta evaluación?',
+      button: 'Escribe a tu profesor',
     },
     save: 'Guardar cambios',
     saveAndSend: 'Guardar y enviar',

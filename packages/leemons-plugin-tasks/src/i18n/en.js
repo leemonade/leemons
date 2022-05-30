@@ -402,6 +402,10 @@ module.exports = {
         },
       },
     },
+    contactTeacher: {
+      title: 'Do you want to contact the teacher?',
+      button: 'Write to your teacher',
+    },
     save: 'Save feedback',
     saveAndSend: 'Save and send feedback',
     saveMessage: 'The changes have been saved',

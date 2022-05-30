@@ -22,8 +22,8 @@ import Submissions from './components/Submissions';
 import Objectives from './components/Objectives';
 // import Contents from './components/Contents';
 // import AssessmentCriteria from './components/AssessmentCriteria';
-// import Attachments from './components/Attachments';
-import Methodology from './components/Methodology';
+import Attachments from './components/Attachments';
+// import Methodology from './components/Methodology';
 import Curriculum from './components/Curriculum';
 
 const ContentDataStyles = createStyles((theme) => ({
@@ -148,8 +148,6 @@ function ContentData({
       <form onSubmit={handleSubmit(handleOnNext)} autoComplete="off">
         <ContextContainer {...props} divided>
           <ContextContainer divided>
-            {/* <Attachments /> */}
-
             <ContextContainer title={labels?.statementAndDevelopmentTitle}>
               {/* TODO: Make the statement required (Not allowed with TextEditor) */}
               <Controller
@@ -179,6 +177,10 @@ function ContentData({
                   />
                 )}
               />
+            </ContextContainer>
+
+            <ContextContainer title={labels?.attachmentsTitle}>
+              <Attachments labels={labels} />
             </ContextContainer>
 
             <ContextContainer title={labels.subjects}>

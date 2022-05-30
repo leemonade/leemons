@@ -34,7 +34,9 @@ module.exports = {
     duration: {
       type: 'string',
     },
-    // attachments
+    resources: {
+      type: 'json',
+    },
     submission: {
       type: 'json',
     },

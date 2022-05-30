@@ -9,6 +9,7 @@ const { registerAssignablePermission } = require('./permissions');
 const addPermissionToUser = require('./permissions/assignable/users/addPermissionToUser');
 const saveAsset = require('../leebrary/assets/saveAsset');
 const publishAssignable = require('./publishAssignable');
+const duplicateAsset = require('../leebrary/assets/duplicateAsset');
 
 module.exports = async function createAssignable(
   assignable,
@@ -29,6 +30,7 @@ module.exports = async function createAssignable(
         submission,
         metadata,
         relatedAssignables,
+        resources,
         ...assignableObject
       } = assignable;
 
@@ -79,6 +81,16 @@ module.exports = async function createAssignable(
         throw new Error(`Error creating the asset: ${e.message}`);
       }
 
+      // EN: Create the resources
+      // ES: Crea los recursos
+      if (resources?.length) {
+        await Promise.all(
+          resources.map((resource) =>
+            duplicateAsset(resource, { preserveName: true, userSession, transacting })
+          )
+        );
+      }
+
       // EN: Create the assignable for the given version.
       // ES: Crea el asignable para la versión dada.
       try {
@@ -90,6 +102,7 @@ module.exports = async function createAssignable(
             relatedAssignables: JSON.stringify(relatedAssignables),
             submission: JSON.stringify(submission),
             metadata: JSON.stringify(metadata),
+            resources: JSON.stringify(resources),
           },
           { transacting }
         );
