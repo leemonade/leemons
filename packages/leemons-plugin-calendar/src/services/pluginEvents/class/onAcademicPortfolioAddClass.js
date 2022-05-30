@@ -7,7 +7,7 @@ function onAcademicPortfolioAddClass(
       id,
       color,
       program,
-      classroom,
+      groups,
       subject: { name, icon },
     },
     transacting,
@@ -19,7 +19,7 @@ function onAcademicPortfolioAddClass(
       // eslint-disable-next-line global-require,no-shadow
       const { table } = require('../../tables');
       const config = {
-        name: `${name}${classroom ? ` (${classroom})` : ''}`,
+        name: `${name}${groups?.abbreviation ? ` (${groups?.abbreviation})` : ''}`,
         section: leemons.plugin.prefixPN('classes'),
         bgColor: color || randomColor({ luminosity: 'light' }),
       };

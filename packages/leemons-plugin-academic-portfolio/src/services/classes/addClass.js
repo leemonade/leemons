@@ -118,6 +118,7 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
       await Promise.all(promises);
 
       const classe = (await classByIds(nClass.id, { transacting }))[0];
+
       // TODO Pasar en class icon: donde sea la url del asset
       await leemons.events.emit('after-add-class', { class: classe, transacting });
 

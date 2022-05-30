@@ -87,7 +87,6 @@ export default function SelectProfile({ session }) {
       const { jwtToken } = await getUserCenterProfileTokenRequest(data.center, data.profile);
       await hooks.fireEvent('user:change:profile', profile);
       const newToken = { ...jwtToken, profile: data.profile };
-      console.log('newToken: ', newToken);
       Cookies.set('token', newToken);
       hooks.fireEvent('user:cookie:session:change');
       history.push(`/private/dashboard`);
@@ -105,13 +104,13 @@ export default function SelectProfile({ session }) {
       description:
         store.centers?.length > 1
           ? t('several_centers')
-          : t('number_of_profiles', { profiles: store.profiles?.length }),
+          : t('number_of_profiles', { profiles: store.centers?.[0].profiles?.length }),
       remember: t('use_always_profile'),
       help: t('change_easy'),
       login: t('log_in'),
       centerPlaceholder: t('choose_center'),
     }),
-    [t, session, store.profiles, store.centers]
+    [t, session, store.centers]
   );
 
   const errorMessages = useMemo(

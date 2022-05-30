@@ -8,15 +8,25 @@ export const TaskDetailStyles = createStyles((theme) => ({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
   },
+  rootContent: {
+    maxWidth: theme.breakpoints.sm,
+
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
   stepper: {
     minWidth: '276px',
     width: '276px',
     height: 'fit-content',
   },
   content: {
-    minWidth: '50%',
-    padding: `0 ${theme.spacing.lg}px`,
-    margin: `${theme.spacing[4]}px auto`,
+    maxWidth: theme.breakpoints.sm,
+    marginLeft: theme.spacing[13],
+    marginRight: theme.spacing[13],
+    marginTop: theme.spacing[7],
+    marginBottom: theme.spacing[7],
   },
   nav: {
     marginTop: theme.spacing[6],
