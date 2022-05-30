@@ -6,7 +6,7 @@ function onAcademicPortfolioUpdateClass(
     class: {
       id,
       color,
-      group,
+      groups,
       subject: { name, icon },
     },
     transacting,
@@ -16,7 +16,7 @@ function onAcademicPortfolioUpdateClass(
   return new Promise(async (resolve) => {
     try {
       const config = {
-        name: `${name}${group?.abbreviation ? ` (${group.abbreviation})` : ''}`,
+        name: `${name}${groups?.abbreviation ? ` (${groups.abbreviation})` : ''}`,
         section: leemons.plugin.prefixPN('classes'),
         bgColor: color || randomColor({ luminosity: 'light' }),
       };
