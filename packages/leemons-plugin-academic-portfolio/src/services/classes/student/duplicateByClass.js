@@ -17,6 +17,8 @@ async function duplicateByClass(
         transacting,
       });
 
+      // TODO Mirar los permisos de que puedan verse entre ellos
+
       // ES: Empezamos la duplicación de los items
       // EN: Start the duplication of the items
       const newItems = await Promise.all(

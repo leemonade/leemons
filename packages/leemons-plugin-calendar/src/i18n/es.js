@@ -8,6 +8,8 @@ module.exports = {
   non_school_day: 'Día no lectivo (Otro)',
   taskPlaceholder: 'Nueva tarea',
   fromLabelDeadline: 'Fecha límite',
+  taskTitleLabel: 'Nombre de la tarea',
+  eventTitleLabel: 'Nombre del evento',
   transformEvent: {
     multiSubject: 'Multi-Asignatura',
   },
@@ -22,6 +24,8 @@ module.exports = {
     showWeekends: 'Mostrar fines de semana',
   },
   event_modal: {
+    name: 'Nombre',
+    subtasks: 'Sub-tareas',
     title: 'Titulo del evento',
     save: 'Guardar',
     update: 'Actualizar',
@@ -35,6 +39,9 @@ module.exports = {
     selectCalendar: 'Seleccionar calendario',
     showInCalendar: 'Mostrar en calendario',
     calendarLabel: 'Elegir calendario donde mostrar',
+    calendarLabelDisabled: 'Calendario',
+    users: 'Invitar a otro usuarios',
+    usersDisabled: 'Invitados',
     repeat: {
       dont_repeat: 'No repetir',
       every_day: 'Cada día',
@@ -51,7 +58,8 @@ module.exports = {
   task_mode_event_type: {
     description: 'Descripción',
     subtask: 'Subtarea',
-    add_subtask: 'Añadir subtarea',
+    subtaskLabel: 'Sub-tareas',
+    add_subtask: 'Añadir sub-tarea',
     tags: 'Etiqueta de asignatura',
     column: 'Estado en Kanban',
     dontShowInCalendar: 'No mostrar en calendario',

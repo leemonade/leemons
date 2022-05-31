@@ -8,7 +8,8 @@ import { listKanbanColumnsRequest } from '@calendar/request';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+import { DeleteBinIcon, EditorListBulletsIcon, PluginKanbanIcon } from '@bubbles-ui/icons/solid';
+import { AddCircleIcon, PluginRedactorIcon, TagsIcon } from '@bubbles-ui/icons/outline';
 import {
   ActionButton,
   Box,
@@ -17,12 +18,12 @@ import {
   Col,
   ContextContainer,
   Grid,
+  InputWrapper,
   MultiSelect,
   Select,
   Textarea,
   TextInput,
 } from '@bubbles-ui/components';
-import { PluginKanbanIcon, PluginRedactorIcon, TagsIcon } from '@bubbles-ui/icons/outline';
 
 export default function Task({ event, form, classes, disabled, allProps: { classCalendars } }) {
   const {
@@ -135,51 +136,59 @@ export default function Task({ event, form, classes, disabled, allProps: { class
         <Box>
           <Grid columns={100} gutter={0}>
             <Col span={10} className={classes.icon}>
-              <PluginKanbanIcon />
+              <EditorListBulletsIcon />
             </Col>
             <Col span={90}>
-              <Controller
-                name="subtask"
-                control={control}
-                render={({ field }) =>
-                  field.value
-                    ? field.value.map((item, index) => (
-                        <Grid key={index} columns={100}>
-                          <Col span={15}>
-                            <Checkbox
-                              disabled={disabled}
-                              checked={item.checked}
-                              onChange={(e) => onCheckedChange(e, index)}
-                            />
-                          </Col>
-                          <Col span={disabled ? 85 : 65}>
-                            <TextInput
-                              size="xs"
-                              disabled={disabled}
-                              value={item.title}
-                              onChange={(e) => onInputCheckboxChange(e, index)}
-                            />
-                          </Col>
-                          {!disabled ? (
-                            <Col span={20}>
-                              <ActionButton
-                                icon={<DeleteBinIcon />}
-                                onClick={() => removeSubtask(index)}
+              <InputWrapper label={t('subtaskLabel')}>
+                <Controller
+                  name="subtask"
+                  control={control}
+                  render={({ field }) =>
+                    field.value
+                      ? field.value.map((item, index) => (
+                          <Grid key={index} align="center" columns={100}>
+                            <Col span={15}>
+                              <Checkbox
+                                // disabled={disabled}
+                                checked={item.checked}
+                                onChange={(e) => onCheckedChange(e, index)}
                               />
                             </Col>
-                          ) : null}
-                        </Grid>
-                      ))
-                    : null
-                }
-              />
-              {!disabled ? (
-                <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-                  <Button size="xs" onClick={addSubTask}>
-                    {t('add_subtask')}
-                  </Button>
-                </Box>
-              ) : null}
+                            <Col span={disabled ? 85 : 65}>
+                              <TextInput
+                                size="xs"
+                                readOnly={disabled}
+                                disabled={disabled}
+                                value={item.title}
+                                onChange={(e) => onInputCheckboxChange(e, index)}
+                              />
+                            </Col>
+                            {!disabled ? (
+                              <Col span={20}>
+                                <ActionButton
+                                  icon={<DeleteBinIcon />}
+                                  onClick={() => removeSubtask(index)}
+                                />
+                              </Col>
+                            ) : null}
+                          </Grid>
+                        ))
+                      : null
+                  }
+                />
+                {!disabled ? (
+                  <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                    <Button
+                      variant="light"
+                      size="xs"
+                      leftIcon={<AddCircleIcon />}
+                      onClick={addSubTask}
+                    >
+                      {t('add_subtask')}
+                    </Button>
+                  </Box>
+                ) : null}
+              </InputWrapper>
             </Col>
           </Grid>
         </Box>
@@ -200,6 +209,7 @@ export default function Task({ event, form, classes, disabled, allProps: { class
                 render={({ field }) => (
                   <MultiSelect
                     size="xs"
+                    readOnly={disabled}
                     disabled={disabled}
                     data={classCalendars}
                     label={t('tags')}
@@ -216,7 +226,9 @@ export default function Task({ event, form, classes, disabled, allProps: { class
       {columnsData && (!disabled || (disabled && form.getValues('column'))) ? (
         <Box>
           <Grid columns={100} gutter={0}>
-            <Col span={10} className={classes.icon} />
+            <Col span={10} className={classes.icon}>
+              <PluginKanbanIcon />
+            </Col>
             <Col span={90}>
               <Controller
                 name="column"
@@ -232,7 +244,7 @@ export default function Task({ event, form, classes, disabled, allProps: { class
                     readOnly={disabled}
                     data={columnsData}
                     {...field}
-                    required
+                    required={!disabled}
                     error={get(errors, 'column')}
                   />
                 )}

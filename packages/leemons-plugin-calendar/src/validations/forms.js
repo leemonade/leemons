@@ -42,6 +42,13 @@ const addEventSchema = {
     isPrivate: booleanSchema,
     repeat: stringSchema,
     type: stringSchema,
+    users: {
+      type: 'array',
+      items: {
+        type: 'string',
+      },
+      nullable: true,
+    },
     data: {
       type: 'object',
       additionalProperties: true,

@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 const { getUserAgentsInfo } = require('./getUserAgentsInfo');
-const { getUserAgentContacts } = require('./contacts/getUserAgentContacts');
 
 /**
  * Returns all agents that meet the specified parameters.
@@ -82,11 +81,15 @@ async function searchUserAgents(
     if (!userSession) {
       throw new Error('User session is required to get contacts');
     }
+    // eslint-disable-next-line global-require
+    const { getUserAgentContacts } = require('./contacts/getUserAgentContacts');
+
     // ES: Si solo queremos los contactos de un usuario, lo buscamos y lo añadimos a la query
     const userAgentContacts = await getUserAgentContacts(_.map(userSession.userAgents, 'id'), {
       transacting,
     });
-    finalQuery.id_$in = _.map(userAgentContacts, 'toUserAgent');
+
+    finalQuery.id_$in = userAgentContacts; // _.map(userAgentContacts, 'toUserAgent');
   }
 
   // ES: Si solo viene perfil o solo viene centro se pasan sus respectivos roles para solo sacar

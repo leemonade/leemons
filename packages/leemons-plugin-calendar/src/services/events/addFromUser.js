@@ -45,8 +45,10 @@ async function addFromUser(userSession, data, { transacting: _transacting } = {}
         { transacting }
       );
 
-      // TODO Si se han añadido usuarios al evento hay que añadirlos ahora (grantAccessUserAgentToCalendar)
-      console.log(event);
+      if (eventData?.users) {
+        await grantAccessUserAgentToEvent(event.id, eventData.users, ['view'], { transacting });
+      }
+
       return event;
     },
     table.calendars,

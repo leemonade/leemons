@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const { table } = require('../tables');
 const { getPermissionConfig: getPermissionConfigCalendar } = require('./getPermissionConfig');
@@ -194,7 +195,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
         : calendar.name,
   });
 
-  return {
+  const result = {
     userCalendar,
     ownerCalendars: _.sortBy(_.map(ownerCalendars, calendarFunc), ({ id }) =>
       id === userCalendar.id ? 0 : 1
@@ -219,6 +220,64 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
       'id'
     ),
   };
+
+  const permissionNames = [];
+  _.forEach(result.events, (event) => {
+    permissionNames.push(getPermissionConfigEvent(event.id).permissionName);
+  });
+
+  const [viewPermissions, _ownerPermissions] = await Promise.all([
+    leemons.getPlugin('users').services.permissions.findUserAgentsWithPermission(
+      {
+        permissionName_$in: permissionNames,
+        actionNames: ['view'],
+      },
+      { returnUserAgents: false, transacting }
+    ),
+    leemons.getPlugin('users').services.permissions.findUserAgentsWithPermission(
+      {
+        permissionName_$in: permissionNames,
+        actionNames: ['owner'],
+      },
+      { returnUserAgents: false, transacting }
+    ),
+  ]);
+
+  const userAgentIds = _.uniq(_.map(viewPermissions, 'userAgent'));
+  const permissionsByName = _.groupBy(viewPermissions, 'permissionName');
+  const ownerPermissionsByName = _.groupBy(_ownerPermissions, 'permissionName');
+
+  const userAgents = await await leemons
+    .getPlugin('users')
+    .services.users.getUserAgentsInfo(userAgentIds, { transacting });
+
+  const userAgentsById = _.keyBy(userAgents, 'id');
+
+  const currentUserAgentIds = _.map(userSession.userAgents, 'id');
+
+  result.events = _.map(result.events, (event) => {
+    event.users = [];
+    event.owners = [];
+    event.userAgents = [];
+    const permName = getPermissionConfigEvent(event.id).permissionName;
+    const ownerPerms = ownerPermissionsByName[permName];
+    if (ownerPerms && ownerPerms.length) {
+      event.owners = _.map(ownerPerms, 'userAgent');
+    }
+    const perms = permissionsByName[permName];
+    if (perms && perms.length) {
+      _.forEach(perms, (perm) => {
+        const userAgent = userAgentsById[perm.userAgent];
+        if (userAgent && !currentUserAgentIds.includes(userAgent.id)) {
+          event.users.push(userAgent.id);
+          event.userAgents.push(userAgent);
+        }
+      });
+    }
+    return event;
+  });
+
+  return result;
 }
 
 module.exports = { getCalendarsToFrontend };
