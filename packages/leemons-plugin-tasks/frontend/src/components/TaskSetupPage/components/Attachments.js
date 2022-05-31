@@ -119,15 +119,29 @@ export default function Attachments({ labels }) {
         ))}
       </Box>
       <Box ref={boxRef}>
-        <Button onClick={toggleDrawer}>{labels?.searchFromLibrary}</Button>
-        <AssetListDrawer
-          opened={showAssetDrawer}
-          creatable
-          size={drawerSize}
-          shadow={drawerSize <= 500}
-          onSelect={onAssetSelect}
-          onClose={onDrawerClose}
-        />
+        <form
+          onSubmit={(e) => {
+            // EN: Added to prevent the event from bubbling up to the parent form
+            // ES: Añadido para evitar que el evento se propague hacia arriba del formulario
+            if (typeof e.preventDefault === 'function') {
+              e.preventDefault();
+            }
+
+            if (typeof e.stopPropagation === 'function') {
+              e.stopPropagation();
+            }
+          }}
+        >
+          <Button onClick={toggleDrawer}>{labels?.searchFromLibrary}</Button>
+          <AssetListDrawer
+            opened={showAssetDrawer}
+            creatable
+            size={drawerSize}
+            shadow={drawerSize <= 500}
+            onSelect={onAssetSelect}
+            onClose={onDrawerClose}
+          />
+        </form>
       </Box>
     </>
   );
