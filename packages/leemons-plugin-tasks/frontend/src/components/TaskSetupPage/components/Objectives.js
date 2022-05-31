@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
-import { TableInput, Box, InputWrapper, HtmlText } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
+import { TableInput, Textarea, InputWrapper, HtmlText } from '@bubbles-ui/components';
+// import { TextEditorInput } from '@bubbles-ui/editors';
 
 import useTableInputLabels from '../../../helpers/useTableInputLabels';
 
@@ -18,7 +18,7 @@ export default function Objectives({ name, label, required }) {
     {
       Header: '',
       accessor: 'objective',
-      input: { node: <TextEditorInput />, rules: { required: true } },
+      input: { node: <Textarea />, rules: { required: true } },
       valueRender: (value) => <HtmlText>{value}</HtmlText>,
     },
   ]);
