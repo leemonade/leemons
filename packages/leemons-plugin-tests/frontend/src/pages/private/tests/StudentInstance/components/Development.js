@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button, ImageLoader, Modal, Text, Title } from '@bubbles-ui/components';
+import { Box, Button, ImageLoader, Modal, Paragraph, Title } from '@bubbles-ui/components';
 import dayjs from 'dayjs';
 import * as duration from 'dayjs/plugin/duration';
 import { getLocaleDuration, LocaleDuration } from '@common';
@@ -150,7 +150,7 @@ export default function Development(props) {
           <Title order={5} sx={(theme) => ({ marginBottom: theme.spacing[2] })}>
             {t('limitedTime')}
           </Title>
-          <Text
+          <Paragraph
             dangerouslySetInnerHTML={{
               __html: t('limitedTimeDescription', {
                 time: getLocaleDuration({ seconds: durationSeconds }, session),
@@ -167,7 +167,7 @@ export default function Development(props) {
           >
             {t('canNotStop')}
           </Title>
-          <Text
+          <Paragraph
             dangerouslySetInnerHTML={{
               __html: t('canNotStopDescription', {
                 time: getLocaleDuration({ seconds: durationSeconds }, session),
