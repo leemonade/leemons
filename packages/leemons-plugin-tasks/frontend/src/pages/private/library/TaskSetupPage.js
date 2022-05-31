@@ -104,7 +104,7 @@ export default function TaskSetupPage() {
       store.currentTask.published = true;
       render();
 
-      addSuccessAlert(t('common.publish'));
+      addSuccessAlert(t('common.publish_done'));
     } catch (e) {
       addErrorAlert(e.error);
       throw e;
