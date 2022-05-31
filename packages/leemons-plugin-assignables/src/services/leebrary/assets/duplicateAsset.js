@@ -1,5 +1,5 @@
-import { isNil } from 'lodash';
-import updateAsset from './updateAsset';
+const { isNil } = require('lodash');
+const updateAsset = require('./updateAsset');
 
 const leebrary = require('../leebrary');
 
