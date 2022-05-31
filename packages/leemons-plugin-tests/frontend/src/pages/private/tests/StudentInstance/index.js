@@ -7,7 +7,16 @@ import { addErrorAlert } from '@layout/alert';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import { forEach, isString } from 'lodash';
-import { Box, Button, COLORS, Modal, Stack, Text, VerticalStepper } from '@bubbles-ui/components';
+import {
+  Box,
+  Button,
+  COLORS,
+  Modal,
+  Stack,
+  Text,
+  VerticalStepper,
+  Paragraph,
+} from '@bubbles-ui/components';
 import { HeaderBackground, TaskDeadline, TaskHeader } from '@bubbles-ui/leemons';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import getClassData from '@assignables/helpers/getClassData';
@@ -409,7 +418,7 @@ export default function StudentInstance() {
         closeOnClickOutside={false}
       >
         <Box className={styles.howItWorksModalContainer}>
-          <Text
+          <Paragraph
             dangerouslySetInnerHTML={{
               __html: t('finishForceTestModalDescription'),
             }}
