@@ -1,6 +1,7 @@
 module.exports = {
   home: {
     navbar: {
+      title: 'Library',
       quickAccess: 'Quick access',
       uploadButton: 'Upload or create',
       createNewTitle: 'Create new',
@@ -123,6 +124,8 @@ module.exports = {
       sharedViewAll: 'View all',
       sharedWithEverybody: 'Shared with everybody',
       showPublic: 'Show public assets',
+      resourceTypes: 'Type of resource',
+      allResourceTypes: 'All types',
     },
   },
 };

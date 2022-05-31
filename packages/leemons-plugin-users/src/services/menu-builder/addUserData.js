@@ -5,6 +5,7 @@ async function addUserData() {
     {
       key: 'user-data',
       parentKey: 'users',
+      order: 2,
       url: '/private/users/user-data',
       label: {
         en: 'User data',

@@ -1,3 +1,4 @@
+const { uniq } = require('lodash');
 const { getByCategory } = require('../src/services/assets/getByCategory');
 const { getTypesByAssets } = require('../src/services/files/getTypesByAssets');
 const { add } = require('../src/services/categories/add');
@@ -46,7 +47,7 @@ async function getAssetTypes(ctx) {
   const types = await getTypesByAssets(assets, { transacting });
 
   ctx.status = 200;
-  ctx.body = { status: 200, types };
+  ctx.body = { status: 200, types: uniq(types) };
 }
 
 module.exports = {

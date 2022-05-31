@@ -155,7 +155,12 @@ async function events(isInstalled) {
       try {
         await addMain();
         leemons.events.emit('init-menu');
-        await Promise.all([addWelcome(), addProfiles(), addUserData(), addUsers()]);
+        await Promise.all([
+          // addWelcome(),
+          addProfiles(),
+          addUserData(),
+          addUsers(),
+        ]);
         leemons.events.emit('init-submenu');
       } catch (e) {
         console.error('Error users menu', e);

@@ -6,6 +6,7 @@ const getAssetPermissionName = require('./helpers/getAssetPermissionName');
 async function getByAsset(assetId, { userSession, transacting } = {}) {
   try {
     const { services: userService } = leemons.getPlugin('users');
+
     const permissions = await userService.permissions.getUserAgentPermissions(
       userSession.userAgents,
       {

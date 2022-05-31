@@ -19,8 +19,16 @@ async function initLibrary({ users, profiles }) {
     for (let i = 0, len = assetsKeys.length; i < len; i++) {
       const key = assetsKeys[i];
       const { creator, ...asset } = assets[key];
-      const assetData = await services.assets.add(asset, { userSession: creator });
-      assets[key] = { ...assetData };
+
+      try {
+        const assetData = await services.assets.add(asset, { userSession: creator });
+        assets[key] = { ...assetData };
+      } catch (e) {
+        console.log('-- CREATOR ERROR --');
+        console.dir(asset, { depth: null });
+        console.dir(creator, { depth: null });
+        console.error(e);
+      }
     }
 
     // console.log('------ ASSETS ------');
