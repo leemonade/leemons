@@ -207,7 +207,10 @@ async function add(
       // ES: Asignar el archivo al asset
 
       if (newFile?.id) {
-        promises.push(addFiles(newFile.id, newAsset.id, { userSession, transacting }));
+        console.log('newFile?.id:', newFile?.id);
+        promises.push(
+          addFiles(newFile.id, newAsset.id, { skipPermissions: true, userSession, transacting })
+        );
       }
 
       // ··········································································

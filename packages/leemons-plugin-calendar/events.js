@@ -88,6 +88,7 @@ async function events(isInstalled) {
       ],
       async () => {
         for (let i = 0, l = constants.menuItems.length; i < l; i++) {
+          // eslint-disable-next-line no-await-in-loop
           await addMenuItem(
             constants.menuItems[i].config,
             constants.menuItems[i].permissions,
@@ -95,14 +96,16 @@ async function events(isInstalled) {
           );
         }
         leemons.events.emit('init-menu');
-        const { add: addKanbanColumn } = require('./src/services/kanban-columns/add');
-        await Promise.all(_.map(constants.kanbanColumns, (d) => addKanbanColumn(d)));
-        leemons.events.emit('init-kanban-columns');
       }
     );
 
     // Event types
     leemons.events.once('plugins.calendar:pluginDidLoadServices', async () => {
+      // eslint-disable-next-line global-require
+      const { add: addKanbanColumn } = require('./src/services/kanban-columns/add');
+      await Promise.all(_.map(constants.kanbanColumns, (d) => addKanbanColumn(d)));
+      leemons.events.emit('init-kanban-columns');
+
       await leemons.plugin.services.calendar.addEventType(
         leemons.plugin.prefixPN('event'),
         'event',
