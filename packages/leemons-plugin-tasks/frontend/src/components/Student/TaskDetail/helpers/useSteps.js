@@ -94,7 +94,7 @@ export default function useSteps({
     return { steps: finalSteps, visitedSteps };
   }, [assignation]);
 
-  const nextStep = steps[currentStep + 1];
+  const nextStep = steps?.steps[currentStep + 1];
   if (nextStep?.id === 'submission' && !assignation?.started) {
     const shouldDisable = disabledButtons.next !== !assignation?.started;
     if (shouldDisable) {
