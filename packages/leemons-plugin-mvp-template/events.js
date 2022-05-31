@@ -9,7 +9,7 @@ const addAWSEmailAsProvider = require('./src/emails');
 const initWidgets = require('./src/widgets');
 const initTasks = require('./src/tasks');
 const initTests = require('./src/tests');
-// const addCalendarAndEventAsClassroom = require('./src/calendar');
+const initCalendar = require('./src/calendar');
 
 async function events(isInstalled) {
   const config = {
@@ -70,8 +70,6 @@ async function events(isInstalled) {
 
           config.grades = await initGrades(config.centers);
           leemons.events.emit('init-grades', config.grades);
-
-          // await addCalendarAndEventAsClassroom(config.users);
         } catch (e) {
           console.error(e);
         }
@@ -144,6 +142,22 @@ async function events(isInstalled) {
           config.programs = await initAcademicPortfolio(config);
           leemons.events.emit('init-academic-portfolio', config.programs);
           console.log('MVP - Plugin de Academic Portfolio inicializado!');
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    );
+
+    // ·······························································
+    // CALENDAR & KANBAN
+
+    leemons.events.once(
+      ['plugins.calendar:pluginDidLoadServices', 'plugins.mvp-template:init-academic-portfolio'],
+      async () => {
+        try {
+          console.log('MVP - Iniciando el plugin de Calendar');
+          await initCalendar(config);
+          console.log('MVP - Plugin de Calendar inicializado!');
         } catch (e) {
           console.error(e);
         }

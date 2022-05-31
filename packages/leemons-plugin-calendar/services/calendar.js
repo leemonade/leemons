@@ -8,7 +8,10 @@ function addEvent(key, event, { transacting } = {}) {
   const keys = _.isArray(key) ? key : [key];
   // Check if keys start with 'plugins.assignables'
   _.forEach(keys, (k) => {
-    if (!this.calledFrom.startsWith('plugins.assignables')) {
+    if (
+      !this.calledFrom.startsWith('plugins.assignables') &&
+      !this.calledFrom.startsWith('plugins.mvp-template')
+    ) {
       validateKeyPrefix(k, this.calledFrom);
     }
   });
@@ -66,4 +69,6 @@ module.exports = {
   existEventType: eventTypes.exist,
   updateEventType: eventTypes.update,
   removeEventType: eventTypes.remove,
+  // TODO: Remove this method when MVP-Template is removed
+  getCalendars: calendar.getCalendarsToFrontend,
 };
