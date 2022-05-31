@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { ActivityCountdown, createStyles, Box } from '@bubbles-ui/components';
+import { ActivityCountdown, createStyles, Box, getFontProductive } from '@bubbles-ui/components';
 import dayjs from 'dayjs';
 import dayjsDuration from 'dayjs/plugin/duration';
 

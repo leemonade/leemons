@@ -16,6 +16,7 @@ export default function useSteps({
   const instance = assignation?.instance;
   const assignable = instance?.assignable;
   const shouldShowDevelopment = assignable?.development !== null;
+  const shouldShowSubmission = assignable?.submission !== null;
 
   const steps = useMemo(() => {
     if (!instance) {
@@ -28,6 +29,7 @@ export default function useSteps({
         component: <StatementStep assignation={assignation} labels={labels} />,
         sidebar: true,
         timestamps: 'open',
+        limitedTimeAlert: !shouldShowDevelopment,
         status: 'OK',
       },
       statement: () => {
@@ -41,7 +43,7 @@ export default function useSteps({
           component: <DevelopmentStep assignation={assignation} labels={labels} />,
           sidebar: true,
           countdown: true,
-          timestamps: 'start',
+          limitedTimeAlert: true,
           status: 'OK',
         };
       },
@@ -49,7 +51,7 @@ export default function useSteps({
         const { submission } = assignable;
         const onSave = { current: null };
 
-        if (!submission) {
+        if (!shouldShowSubmission) {
           return null;
         }
 

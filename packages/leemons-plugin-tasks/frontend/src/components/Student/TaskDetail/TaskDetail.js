@@ -25,6 +25,7 @@ import Sidebar from './components/Sidebar';
 import updateStudentRequest from '../../../request/instance/updateStudent';
 import { prefixPN } from '../../../helpers';
 import Countdown from './components/Countdown';
+import LimitedTimeAlert from './components/LimitedTimeAlert/LimitedTimeAlert';
 
 async function updateTimestamps(assignation, timestamps) {
   if (timestamps && !assignation?.timestamps?.[timestamps]) {
@@ -255,6 +256,11 @@ export default function TaskDetail({ id, student }) {
         <Box className={classes?.content}>
           <Countdown assignation={assignation} show={step?.countdown === true} />
           {step?.component}
+          <LimitedTimeAlert
+            assignation={assignation}
+            labels={labels?.limitedTimeAlert}
+            show={step?.limitedTimeAlert === true}
+          />
           <Box className={classes?.nav}>
             {!isFirstStep && step?.previous !== false && (
               <Button
