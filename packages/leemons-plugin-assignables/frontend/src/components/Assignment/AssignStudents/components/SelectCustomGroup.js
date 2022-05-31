@@ -59,7 +59,7 @@ export default function SelectCustomGroup({ labels, profiles, onChange, value })
 
     handleChange(getValues());
     return subscription.unsubscribe;
-  }, [watch, subjects, onChange, value]);
+  }, [watch, subjects, onChange, value, classes]);
 
   if (!assignableStudents) {
     return <Loader />;

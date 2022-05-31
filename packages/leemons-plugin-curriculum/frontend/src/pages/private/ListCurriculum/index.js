@@ -100,7 +100,7 @@ function ListCurriculum() {
           <LibraryCard {...p} asset={p.item.original} variant="curriculum" />
         </Box>
       ),
-      itemMinWidth: 340,
+      itemMinWidth: 330,
       margin: 16,
       spacing: 4,
       paperProps: { shadow: 'none', color: 'none', padding: 0 },
