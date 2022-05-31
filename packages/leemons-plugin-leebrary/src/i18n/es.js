@@ -1,6 +1,7 @@
 module.exports = {
   home: {
     navbar: {
+      title: 'Librería',
       quickAccess: 'Acceso rápido',
       uploadButton: 'Subir o crear',
       createNewTitle: 'Crear nuevo',

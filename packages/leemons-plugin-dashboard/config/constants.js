@@ -12,7 +12,7 @@ const menuItems = [
       url: '/private/dashboard',
       label: {
         en: 'Dashboard',
-        es: 'Dashboard',
+        es: 'Panel de control',
       },
     },
   },
