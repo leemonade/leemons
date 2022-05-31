@@ -1,11 +1,13 @@
+import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+
 const { classByIdsRequest } = require('@academic-portfolio/request');
 
 export default async function getClassData(classes, labels = { multiSubject: 'Multi-Subject' }) {
   if (classes.length > 1) {
     return {
       name: labels?.multiSubject,
-      icon: '',
-      color: '#f5f5f5',
+      icon: '/public/assets/svgs/module-three.svg',
+      color: '#67728E',
     };
   }
 
@@ -15,7 +17,7 @@ export default async function getClassData(classes, labels = { multiSubject: 'Mu
 
   return {
     name: `${data?.subject?.name} - ${data?.groups?.name}` || data?.groups?.abbreviation,
-    icon: '',
+    icon: getClassIcon(data),
     color: data?.color,
   };
 }

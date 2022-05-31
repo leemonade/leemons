@@ -21,7 +21,11 @@ async function remove(classId, studentId, { soft, transacting: _transacting } = 
 
       await table.classStudent.delete({ id: classStudent.id }, { soft, transacting });
 
-      // TODO: Quitar permiso de que pueda ver al resto de alumnos y profesores
+      const { removeUserAgentContacts } = leemons.getPlugin('users').services.users;
+      const promises = [];
+      promises.push(removeUserAgentContacts(studentId, '*', { target: classId, transacting }));
+      promises.push(removeUserAgentContacts('*', studentId, { target: classId, transacting }));
+      await Promise.all(promises);
 
       await leemons.getPlugin('users').services.permissions.removeCustomUserAgentPermission(
         classStudent.student,

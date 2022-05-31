@@ -3,15 +3,18 @@ import { createStyles, getFontExpressive } from '@bubbles-ui/components';
 export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
   root: {
     ...getFontExpressive(theme.fontSizes['2']),
+    height: '100%',
   },
   header: {
-    height: isFirstStep ? 'calc(25vh - 16px)' : 60,
+    height: isFirstStep ? 'calc(25vh)' : 60,
     position: 'relative',
   },
   mainContent: {
     display: 'flex',
-    height: isFirstStep ? 'calc(75vh - 16px)' : 'calc(100% - 60px)',
+    height: isFirstStep ? 'calc(75vh)' : 'calc(100% - 60px)',
     backgroundColor: isFirstStep ? theme.colors.uiBackground01 : theme.colors.uiBackground02,
+    overflow: 'auto',
+    // paddingBottom: theme.spacing[12],
   },
   verticalStepper: { width: 232, backgroundColor: theme.colors.uiBackground01 },
   verticalStepperContent: {
@@ -21,12 +24,18 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
   pages: {
     flex: 1,
     display: 'flex',
+    justifyContent: 'center',
+    padding: `${theme.spacing[8]}px ${theme.spacing[12]}px`,
+    overflow: 'auto',
+  },
+  pagesContent: {
+    width: '100%',
+    maxWidth: theme.breakpoints.sm,
   },
   loremIpsum: {
     paddingTop: 16,
-    paddingLeft: theme.spacing[10],
-    paddingRight: theme.spacing[10],
     width: '100%',
+    paddingBottom: theme.spacing[12],
   },
   loremIpsumEmbedded: {
     paddingLeft: theme.spacing[0],
@@ -78,7 +87,6 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
   limitedWidthStep: {
     width: '100%',
     maxWidth: theme.breakpoints.sm,
-    margin: `${theme.spacing[12]}px auto`,
   },
   preDoing: {
     width: '100%',

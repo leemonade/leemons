@@ -24,7 +24,7 @@ async function addEvent(ctx) {
 }
 
 async function updateEvent(ctx) {
-  const { calendarName, ...body } = ctx.request.body.event;
+  const { calendarName, userAgents, owners, ...body } = ctx.request.body.event;
 
   const event = await eventsService.updateFromUser(
     ctx.state.userSession,

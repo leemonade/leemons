@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { ContextContainer, HtmlText } from '@bubbles-ui/components';
+import { ContextContainer, HtmlText, Title } from '@bubbles-ui/components';
 
 export default function DevelopmentStep({ assignation, labels: _labels }) {
   const labels = _labels?.development_step;
@@ -9,7 +9,10 @@ export default function DevelopmentStep({ assignation, labels: _labels }) {
 
   return (
     <ContextContainer>
-      <ContextContainer title={labels?.development}>
+      <ContextContainer>
+        <Title color="primary" order={2}>
+          {labels?.development}
+        </Title>
         <HtmlText>{development}</HtmlText>
       </ContextContainer>
     </ContextContainer>

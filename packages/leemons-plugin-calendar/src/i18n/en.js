@@ -8,6 +8,8 @@ module.exports = {
   non_school_day: 'Non school day (Other)',
   taskPlaceholder: 'New task',
   fromLabelDeadline: 'Deadline',
+  taskTitleLabel: 'Name of task',
+  eventTitleLabel: 'Name of event',
   transformEvent: {
     multiSubject: 'Multi-Subject',
   },
@@ -22,6 +24,8 @@ module.exports = {
     showWeekends: 'Show weekends',
   },
   event_modal: {
+    name: 'Name',
+    subtasks: 'Sub-tasks',
     title: 'Event title',
     save: 'Save',
     update: 'Update',
@@ -34,6 +38,9 @@ module.exports = {
     cancel: 'Cancel',
     selectCalendar: 'Select calendar',
     calendarLabel: 'Choose calendar where to display',
+    calendarLabelDisabled: 'Calendar',
+    users: 'Invite other users',
+    usersDisabled: 'Guests',
     showInCalendar: 'Show in calendar',
     repeat: {
       dont_repeat: 'Don´t repeat',
@@ -51,6 +58,7 @@ module.exports = {
   task_mode_event_type: {
     description: 'Description',
     subtask: 'Subtask',
+    subtaskLabel: 'Sub-tasks',
     add_subtask: 'Add sub-task',
     tags: 'Subject tag',
     column: 'State in Kanban',

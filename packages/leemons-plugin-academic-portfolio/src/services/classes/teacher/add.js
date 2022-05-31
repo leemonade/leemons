@@ -1,4 +1,8 @@
+const { map } = require('lodash');
 const { table } = require('../../tables');
+const {
+  addPermissionsBetweenStudentsAndTeachers,
+} = require('../addPermissionsBetweenStudentsAndTeachers');
 
 async function add(_class, teacher, type, { transacting } = {}) {
   const classTeacher = await table.classTeacher.create(
@@ -9,9 +13,6 @@ async function add(_class, teacher, type, { transacting } = {}) {
     },
     { transacting }
   );
-  // TODO: Añadir al profesor que pueda ver a los alumnos y al resto de profesores y añadir al alumno que pueda ver al profesor y al resto de alumnos
-
-  // TODO: Añadir el permiso del profesor a la clase
 
   await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
     teacher,
@@ -21,6 +22,8 @@ async function add(_class, teacher, type, { transacting } = {}) {
     },
     { transacting }
   );
+
+  await addPermissionsBetweenStudentsAndTeachers(_class, { transacting });
 
   await leemons.events.emit('after-add-class-teacher', { class: _class, teacher, transacting });
 

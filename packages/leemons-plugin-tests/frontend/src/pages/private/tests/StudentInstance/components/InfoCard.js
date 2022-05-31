@@ -4,7 +4,7 @@ import { Box } from '@bubbles-ui/components';
 import { isNil } from 'lodash';
 
 export default function InfoCard(props) {
-  const { styles, number, label, icon, cx } = props;
+  const { styles, number, label, icon, cx, reverse } = props;
 
   let root = styles.resumeBox;
   let labelClass = styles.resumeLabel;
@@ -12,6 +12,9 @@ export default function InfoCard(props) {
   if (icon) {
     root = cx(root, styles.resumeBoxBig);
     labelClass = cx(labelClass, styles.resumeLabelBig);
+  }
+  if (reverse) {
+    root = cx(root, styles.reverseResumeBoxBig);
   }
 
   return (
@@ -38,4 +41,5 @@ InfoCard.propTypes = {
   label: PropTypes.string,
   icon: PropTypes.string,
   cx: PropTypes.any,
+  reverse: PropTypes.bool,
 };

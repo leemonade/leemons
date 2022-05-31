@@ -1,16 +1,8 @@
 import { createStyles } from '@bubbles-ui/components';
 
-export const TaskDetailStyles = createStyles((theme) => ({
+export const TaskDetailStyles = createStyles((theme, { onlyNext }) => ({
   root: {
     width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  rootContent: {
-    maxWidth: theme.breakpoints.sm,
-
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -19,9 +11,11 @@ export const TaskDetailStyles = createStyles((theme) => ({
   stepper: {
     minWidth: '276px',
     width: '276px',
+    maxWidth: '276px',
     height: 'fit-content',
   },
   content: {
+    width: '100%',
     maxWidth: theme.breakpoints.sm,
     marginLeft: theme.spacing[13],
     marginRight: theme.spacing[13],
@@ -29,15 +23,12 @@ export const TaskDetailStyles = createStyles((theme) => ({
     marginBottom: theme.spacing[7],
   },
   nav: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: onlyNext ? 'flex-end' : 'space-between',
+    alignItems: 'center',
     marginTop: theme.spacing[6],
     marginBottom: theme.spacing[4],
-  },
-  sidebar: {
-    minWidth: '280px',
-    width: '280px',
-    minHeight: '100%',
-    backgroundColor: theme.colors.gray[3],
-    padding: theme.spacing[4],
   },
 }));
 

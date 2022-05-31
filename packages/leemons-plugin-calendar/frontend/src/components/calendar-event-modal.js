@@ -4,11 +4,12 @@
 import * as _ from 'lodash';
 import { find, forEach, isString, map, set } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
-import { useSession } from '@users/session';
+import { getCentersWithToken, useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 import { getCalendarsToFrontendRequest } from '@calendar/request';
 import loadable from '@loadable/component';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { Box } from '@bubbles-ui/components';
 import { CALENDAR_EVENT_MODAL_DEFAULT_PROPS, CalendarEventModal } from '@bubbles-ui/leemons';
 import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
@@ -19,6 +20,7 @@ import prefixPN from '@calendar/helpers/prefixPN';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import hooks from 'leemons-hooks';
+import SelectUserAgent from '@users/components/SelectUserAgent';
 import getUTCString from '../helpers/getUTCString';
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
 import {
@@ -33,6 +35,25 @@ function dynamicImport(pluginName, component) {
     import(`@leemons/plugins/${pluginName}/src/widgets/calendar/${component}.js`)
   );
 }
+
+function UsersComponent(props) {
+  return (
+    <Box>
+      <SelectUserAgent
+        {...props}
+        maxSelectedValues={99999}
+        onlyContacts
+        label={props.disabled ? props.labelDisabled : props.label}
+      />
+    </Box>
+  );
+}
+
+UsersComponent.propTypes = {
+  disabled: PropTypes.bool,
+  label: PropTypes.string,
+  labelDisabled: PropTypes.string,
+};
 
 function NewCalendarEventModal({
   opened,
@@ -76,6 +97,9 @@ function NewCalendarEventModal({
       if (eventType.config?.titlePlaceholder) {
         keys.push(eventType.config?.titlePlaceholder);
       }
+      if (eventType.config?.titleLabel) {
+        keys.push(eventType.config?.titleLabel);
+      }
       if (eventType.config?.fromLabel) {
         keys.push(eventType.config?.fromLabel);
       }
@@ -90,6 +114,10 @@ function NewCalendarEventModal({
       if (eventType.config?.titlePlaceholder) {
         eventType.config.titlePlaceholder =
           items[eventType.config.titlePlaceholder] || eventType.config.titlePlaceholder;
+      }
+      if (eventType.config?.titleLabel) {
+        eventType.config.titleLabel =
+          items[eventType.config.titleLabel] || eventType.config.titleLabel;
       }
       if (eventType.config?.fromLabel) {
         eventType.config.fromLabel =
@@ -168,9 +196,22 @@ function NewCalendarEventModal({
     if (event) {
       ref.current.fromCalendar = event.fromCalendar;
       ref.current.isNew = false;
+      const centers = getCentersWithToken();
+      if (centers && centers.length) {
+        let isOwner = false;
+        forEach(centers, ({ userAgentId }) => {
+          if (event.owners.includes(userAgentId)) {
+            isOwner = true;
+          }
+        });
+        ref.current.isOwner = isOwner;
+      }
+      /*
       ref.current.isOwner = !!_.find(ref.current.calendarData.ownerCalendars, {
         id: _.isString(event.calendar) ? event.calendar : event.calendar.id,
       });
+
+       */
 
       const {
         startDate,
@@ -235,7 +276,6 @@ function NewCalendarEventModal({
   }
 
   async function onSubmit(_formData) {
-    console.log(_formData);
     // eslint-disable-next-line prefer-const
     let { startDate, endDate, startTime, endTime, ...formData } = _formData;
     if (startDate) startDate = new Date(startDate);
@@ -304,11 +344,19 @@ function NewCalendarEventModal({
         calendars: ref.current.calendarData.ownerCalendars,
       }}
       onSubmit={onSubmit}
+      UsersComponent={
+        <UsersComponent
+          label={t('users')}
+          labelDisabled={t('usersDisabled')}
+          userAgents={ref.current.defaultValues.userAgents}
+        />
+      }
       components={ref.current.components}
       onClose={onClose}
       defaultValues={ref.current.defaultValues}
       classCalendars={classCalendars}
       messages={{
+        subtasks: t('subtasks'),
         fromLabel: t('from'),
         toLabel: t('to'),
         repeatLabel: t('repeatLabel'),
@@ -319,6 +367,7 @@ function NewCalendarEventModal({
         updateButtonLabel: t('update'),
         calendarPlaceholder: t('selectCalendar'),
         calendarLabel: t('calendarLabel'),
+        calendarLabelDisabled: t('calendarLabelDisabled'),
         showInCalendar: t('showInCalendar'),
       }}
       errorMessages={{

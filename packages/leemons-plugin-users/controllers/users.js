@@ -324,10 +324,10 @@ async function getUserAgentsInfo(ctx) {
 }
 
 async function searchUserAgents(ctx) {
-  const userAgents = await userAgentsService.searchUserAgents(
-    ctx.request.body.filters,
-    ctx.request.body.options
-  );
+  const userAgents = await userAgentsService.searchUserAgents(ctx.request.body.filters, {
+    ...ctx.request.body.options,
+    userSession: ctx.state.userSession,
+  });
   ctx.status = 200;
   ctx.body = { status: 200, userAgents };
 }

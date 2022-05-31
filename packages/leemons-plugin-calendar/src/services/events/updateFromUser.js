@@ -9,6 +9,8 @@ const { detail: detailCalendar } = require('../calendar/detail');
 const { update } = require('./update');
 const { getEventCalendars } = require('./getEventCalendars');
 const { detailByKey } = require('../calendar/detailByKey');
+const { grantAccessUserAgentToEvent } = require('./grantAccessUserAgentToEvent');
+const { unGrantAccessEventUsers } = require('./unGrantAccessEventUsers');
 
 /**
  * Add event to calendar if the user have access
@@ -75,6 +77,17 @@ async function updateFromUser(userSession, id, data, { transacting: _transacting
           );
           calendar = _.map(c, 'id');
         }
+
+        await unGrantAccessEventUsers(id, { transacting });
+        if (data?.users) {
+          _.forEach(userSession.userAgents, ({ id: uId }) => {
+            if (data.users.includes(uId)) {
+              data.users.splice(data.users.indexOf(uId), 1);
+            }
+          });
+          await grantAccessUserAgentToEvent(id, data.users, ['view'], { transacting });
+        }
+        delete data.users;
         delete data.calendar;
         return update(event.id, data, { calendar, transacting });
       }

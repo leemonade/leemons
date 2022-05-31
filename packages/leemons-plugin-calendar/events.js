@@ -106,7 +106,11 @@ async function events(isInstalled) {
       await leemons.plugin.services.calendar.addEventType(
         leemons.plugin.prefixPN('event'),
         'event',
-        undefined,
+        {
+          config: {
+            titleLabel: 'plugins.calendar.eventTitleLabel',
+          },
+        },
         {
           order: 1,
         }
@@ -117,9 +121,11 @@ async function events(isInstalled) {
         {
           onlyOneDate: true,
           config: {
+            titleLabel: 'plugins.calendar.taskTitleLabel',
             titlePlaceholder: 'plugins.calendar.taskPlaceholder',
             fromLabel: 'plugins.calendar.fromLabelDeadline',
             hideAllDay: true,
+            hideRepeat: true,
           },
         },
         {

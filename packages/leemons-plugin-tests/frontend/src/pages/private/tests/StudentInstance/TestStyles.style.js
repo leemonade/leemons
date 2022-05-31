@@ -49,6 +49,9 @@ export const TestStyles = createStyles((theme, {}) => ({
   },
   resumeBox: {
     width: 162,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
     borderRadius: 4,
     paddingLeft: theme.spacing[5],
     paddingRight: theme.spacing[5],
@@ -59,19 +62,23 @@ export const TestStyles = createStyles((theme, {}) => ({
   resumeBoxBig: {
     width: 335,
     display: 'flex',
+    flexDirection: 'row',
     gap: theme.spacing[3],
     textAlign: 'left',
+  },
+  reverseResumeBoxBig: {
+    flexDirection: 'column-reverse',
   },
   resumeNumber: {
     color: theme.colors.text01,
     fontSize: 32,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   resumeLabel: {
     ...getFontProductive(),
     color: theme.colors.text01,
     fontSize: theme.fontSizes[1],
-    textAlign: 'center',
+    textAlign: 'left',
   },
   resumeLabelBig: {
     width: 230,

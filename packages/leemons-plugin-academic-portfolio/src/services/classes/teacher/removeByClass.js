@@ -30,6 +30,15 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
         )
       );
 
+      const { removeUserAgentContacts } = leemons.getPlugin('users').services.users;
+      const teacherIds = _.map(classTeachers, 'teacher');
+      const promises = [];
+      _.forEach(classIds, (classId) => {
+        promises.push(removeUserAgentContacts(teacherIds, '*', { target: classId, transacting }));
+        promises.push(removeUserAgentContacts('*', teacherIds, { target: classId, transacting }));
+      });
+      await Promise.all(promises);
+
       await leemons.events.emit('after-remove-classes-teachers', {
         classTeachers,
         classIds: _.isArray(classIds) ? classIds : [classIds],
