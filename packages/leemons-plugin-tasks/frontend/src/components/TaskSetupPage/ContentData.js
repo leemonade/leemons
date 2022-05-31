@@ -16,7 +16,6 @@ import {
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import useSubjects from '@assignables/components/Assignment/AssignStudents/hooks/useSubjects';
-import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 // import SelfReflection from './components/SelfReflection';
 import Submissions from './components/Submissions';
 import Objectives from './components/Objectives';
@@ -231,43 +230,22 @@ function ContentData({
               )}
             </ContextContainer>
 
-            <ContextContainer>
+            <ContextContainer title={labels?.submission?.title}>
               {/* <Methodology
                 labels={labels}
                 errorMessages={errorMessages}
                 placeholders={placeholders}
               /> */}
-              <Controller
-                control={control}
-                name="duration"
-                render={({ field }) => (
-                  <TimeUnitsInput
-                    {...field}
-                    label={labels.recommendedDuration}
-                    error={errors.recommendedDuration}
-                  />
-                )}
-              />
+
               <Controller
                 name="gradable"
                 control={control}
                 render={({ field }) => (
-                  <Switch label={labels?.gradable} {...field} checked={field.value} />
+                  <Switch label={labels?.submission?.gradable} {...field} checked={field.value} />
                 )}
               />
+              <Submissions labels={labels} />
             </ContextContainer>
-            <Submissions labels={labels} />
-            {/* <SelfReflection
-              labels={labels?.selfReflection}
-              description={descriptions?.selfReflection}
-              showType
-              name="selfReflection"
-            /> */}
-            {/* <SelfReflection
-              labels={labels?.feedback}
-              description={descriptions?.feedback}
-              name="feedback"
-            /> */}
           </ContextContainer>
           <Stack fullWidth justifyContent="space-between">
             <Box>

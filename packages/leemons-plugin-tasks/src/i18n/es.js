@@ -95,6 +95,7 @@ module.exports = {
           course: 'Curso',
           subjects: 'Asignaturas',
           subject: 'Asignatura',
+          recommendedDuration: 'Duración recomendada',
           level: 'Nivel',
           buttonNext: 'Siguiente',
           buttonPrev: 'Anterior',
@@ -129,7 +130,6 @@ module.exports = {
           title: 'Contenido',
           subjects: 'Curriculum por asignatura', // NEW
           methodology: 'Metodología',
-          recommendedDuration: 'Duración recomendada',
           statement: 'Enunciado de la tarea',
           development: 'Desarrollo de la tarea',
           statementAndDevelopmentTitle: 'Enunciado y desarrollo',
@@ -141,10 +141,10 @@ module.exports = {
           addFromCurriculum: 'Añadir del curriculum', // NEW
           buttonNext: 'Siguiente',
           buttonPrev: 'Anterior',
-          gradable: 'Calificable', // NEW
           submission: {
             // EVERYTHING NEW
-            title: 'Entregables',
+            gradable: 'Calificable',
+            title: 'Evaluación',
             checkDescription:
               'Esta tarea require la entrega de algún tipo de archivo, documento o enlace',
             type: 'Tipo de entrega',
