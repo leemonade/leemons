@@ -211,6 +211,7 @@ module.exports = {
     next: 'Continuar',
     development: 'Instrucciones',
     // ----- Test
+    test: 'TEST',
     instructionsForTest: 'Instrucciones para hacer este test',
     questions: 'Preguntas',
     perQuestion: 'Cada pregunta',
@@ -218,7 +219,7 @@ module.exports = {
     minScore: 'Puntuación mínima',
     maxScore: 'Puntuación máxima',
     minToApprove: 'Min. para aprobar',
-    beforeStart: 'Antes tener en cuenta',
+    beforeStart: 'A tener en cuenta',
     withoutPause: 'Sin pausa',
     noTimeLimit: 'Sin límite de tiempo',
     makeTheTest: 'Hacer el test',

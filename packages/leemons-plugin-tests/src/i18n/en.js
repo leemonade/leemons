@@ -213,6 +213,7 @@ module.exports = {
     next: 'Continue',
     development: 'Instructions',
     // ----- Test
+    test: 'TEST',
     instructionsForTest: 'Instructions for this test',
     questions: 'Questions',
     perQuestion: 'Per question',

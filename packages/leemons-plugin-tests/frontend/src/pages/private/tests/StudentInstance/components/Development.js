@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button, ImageLoader, Modal, Paragraph, Title } from '@bubbles-ui/components';
+import { Box, Button, ImageLoader, Modal, Paragraph, Text, Title } from '@bubbles-ui/components';
 import dayjs from 'dayjs';
 import * as duration from 'dayjs/plugin/duration';
 import { getLocaleDuration, LocaleDuration } from '@common';
@@ -28,17 +28,25 @@ export default function Development(props) {
     <Box className={cx(classes.loremIpsum, classes.limitedWidthStep)}>
       <Box
         sx={(theme) => ({
-          marginTop: theme.spacing[8],
           marginBottom: theme.spacing[6],
           textAlign: 'center',
         })}
       >
+        <Text role="productive" size="xs" color="soft">
+          {t('test')}
+        </Text>
         <Title order={2}>{t('instructionsForTest')}</Title>
       </Box>
 
       <Box className={styles.resumeBoxContainer}>
-        <InfoCard styles={styles} number={store.questionsInfo.questions} label={t('questions')} />
         <InfoCard
+          cx={cx}
+          styles={styles}
+          number={store.questionsInfo.questions}
+          label={t('questions')}
+        />
+        <InfoCard
+          cx={cx}
           styles={styles}
           number={store.questionsInfo.perQuestion}
           label={t('perQuestion')}
@@ -46,10 +54,24 @@ export default function Development(props) {
       </Box>
       <Box className={styles.resumeBoxContainer}>
         {store.questionsInfo.minPoints !== 0 ? (
-          <InfoCard styles={styles} number={store.questionsInfo.minPoints} label={t('minScore')} />
+          <InfoCard
+            cx={cx}
+            reverse
+            styles={styles}
+            number={store.questionsInfo.minPoints}
+            label={t('minScore')}
+          />
         ) : null}
-        <InfoCard styles={styles} number={store.questionsInfo.totalPoints} label={t('maxScore')} />
         <InfoCard
+          cx={cx}
+          reverse
+          styles={styles}
+          number={store.questionsInfo.totalPoints}
+          label={t('maxScore')}
+        />
+        <InfoCard
+          cx={cx}
+          reverse
           styles={styles}
           number={store.questionsInfo.minToApprove}
           label={t('minToApprove')}
@@ -122,7 +144,7 @@ export default function Development(props) {
         <Box className={classes.continueButton}>
           <Button
             position="right"
-            variant="outline"
+            variant="light"
             leftIcon={<ChevronLeftIcon />}
             rounded
             compact
