@@ -16,14 +16,13 @@ import {
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import useSubjects from '@assignables/components/Assignment/AssignStudents/hooks/useSubjects';
-import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 // import SelfReflection from './components/SelfReflection';
 import Submissions from './components/Submissions';
 import Objectives from './components/Objectives';
 // import Contents from './components/Contents';
 // import AssessmentCriteria from './components/AssessmentCriteria';
-// import Attachments from './components/Attachments';
-import Methodology from './components/Methodology';
+import Attachments from './components/Attachments';
+// import Methodology from './components/Methodology';
 import Curriculum from './components/Curriculum';
 
 const ContentDataStyles = createStyles((theme) => ({
@@ -148,8 +147,6 @@ function ContentData({
       <form onSubmit={handleSubmit(handleOnNext)} autoComplete="off">
         <ContextContainer {...props} divided>
           <ContextContainer divided>
-            {/* <Attachments /> */}
-
             <ContextContainer title={labels?.statementAndDevelopmentTitle}>
               {/* TODO: Make the statement required (Not allowed with TextEditor) */}
               <Controller
@@ -179,6 +176,10 @@ function ContentData({
                   />
                 )}
               />
+            </ContextContainer>
+
+            <ContextContainer title={labels?.attachmentsTitle}>
+              <Attachments labels={labels} />
             </ContextContainer>
 
             <ContextContainer title={labels.subjects}>
@@ -229,43 +230,22 @@ function ContentData({
               )}
             </ContextContainer>
 
-            <ContextContainer>
+            <ContextContainer title={labels?.submission?.title}>
               {/* <Methodology
                 labels={labels}
                 errorMessages={errorMessages}
                 placeholders={placeholders}
               /> */}
-              <Controller
-                control={control}
-                name="duration"
-                render={({ field }) => (
-                  <TimeUnitsInput
-                    {...field}
-                    label={labels.recommendedDuration}
-                    error={errors.recommendedDuration}
-                  />
-                )}
-              />
+
               <Controller
                 name="gradable"
                 control={control}
                 render={({ field }) => (
-                  <Switch label={labels?.gradable} {...field} checked={field.value} />
+                  <Switch label={labels?.submission?.gradable} {...field} checked={field.value} />
                 )}
               />
+              <Submissions labels={labels} />
             </ContextContainer>
-            <Submissions labels={labels} />
-            {/* <SelfReflection
-              labels={labels?.selfReflection}
-              description={descriptions?.selfReflection}
-              showType
-              name="selfReflection"
-            /> */}
-            {/* <SelfReflection
-              labels={labels?.feedback}
-              description={descriptions?.feedback}
-              name="feedback"
-            /> */}
           </ContextContainer>
           <Stack fullWidth justifyContent="space-between">
             <Box>

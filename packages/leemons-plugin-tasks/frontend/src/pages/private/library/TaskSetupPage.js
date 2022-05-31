@@ -44,8 +44,8 @@ export default function TaskSetupPage() {
         ...values,
         // TODO: Esto debe establecerse en el Config
         subjects: values?.subjects?.map((subject) => ({
-          ...subject,
           program,
+          ...subject,
           curriculum: curriculum && {
             objectives: curriculum[subject.subject]?.objectives?.map(({ objective }) => objective),
             contents: curriculum[subject.subject]?.contents?.map(({ content }) => content),
@@ -104,7 +104,7 @@ export default function TaskSetupPage() {
       store.currentTask.published = true;
       render();
 
-      addSuccessAlert(t('common.publish'));
+      addSuccessAlert(t('common.publish_done'));
     } catch (e) {
       addErrorAlert(e.error);
       throw e;

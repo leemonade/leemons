@@ -10,6 +10,8 @@ const getAssignable = require('./getAssignable');
 const listAssignableUserAgents = require('./listAssignableUserAgents');
 const getUserPermission = require('./permissions/assignable/users/getUserPermission');
 const publishAssignable = require('./publishAssignable');
+const duplicateAsset = require('../leebrary/assets/duplicateAsset');
+const removeAsset = require('../leebrary/assets/removeAsset');
 
 const { getDiff } = global.utils;
 
@@ -23,6 +25,7 @@ const updatableFields = [
   'methodology',
   'statement',
   'development',
+  'resources',
   'duration',
   'submission',
   'instructionsForTeachers',
@@ -190,6 +193,33 @@ module.exports = async function updateAssignable(
       }
     }
   }
+
+  if (diff.includes('resources')) {
+    const newResources = _.difference(assignableObject.resources, currentAssignable.resources);
+    const resourcesToDelete = _.difference(currentAssignable.resources, assignableObject.resources);
+    const resourcesToKeep = _.intersection(currentAssignable.resources, assignableObject.resources);
+
+    const promises = [];
+
+    if (newResources.length) {
+      promises.push(
+        ...newResources.map((resource) =>
+          duplicateAsset(resource, { preserveName: true, userSession, transacting })
+        )
+      );
+    }
+
+    if (resourcesToDelete.length) {
+      promises.push(
+        ...resourcesToDelete.map((resource) => removeAsset(resource, { userSession, transacting }))
+      );
+    }
+
+    await Promise.all(promises);
+
+    updateObject.resources = JSON.stringify([...resourcesToKeep, ...newResources]);
+  }
+
   await assignables.update({ id }, updateObject, {
     transacting,
   });

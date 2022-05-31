@@ -95,6 +95,7 @@ module.exports = {
           course: 'Curso',
           subjects: 'Asignaturas',
           subject: 'Asignatura',
+          recommendedDuration: 'Duración recomendada',
           level: 'Nivel',
           buttonNext: 'Siguiente',
           buttonPrev: 'Anterior',
@@ -129,20 +130,21 @@ module.exports = {
           title: 'Contenido',
           subjects: 'Curriculum por asignatura', // NEW
           methodology: 'Metodología',
-          recommendedDuration: 'Duración recomendada',
           statement: 'Enunciado de la tarea',
           development: 'Desarrollo de la tarea',
           statementAndDevelopmentTitle: 'Enunciado y desarrollo',
+          attachmentsTitle: 'Recursos', // NEW
+          searchFromLibrary: 'Buscar en la biblioteca', // NEW
           content: 'Contenidos', // NEW
           assessmentCriteria: 'Criterios de evaluación', // NEW
           objectives: 'Objetivos personalizados', // NEW
           addFromCurriculum: 'Añadir del curriculum', // NEW
           buttonNext: 'Siguiente',
           buttonPrev: 'Anterior',
-          gradable: 'Calificable', // NEW
           submission: {
             // EVERYTHING NEW
-            title: 'Entregables',
+            gradable: 'Calificable',
+            title: 'Evaluación',
             checkDescription:
               'Esta tarea require la entrega de algún tipo de archivo, documento o enlace',
             type: 'Tipo de entrega',
@@ -403,6 +405,10 @@ module.exports = {
           noSubmission: 'No se ha entregado ningún archivo',
         },
       },
+    },
+    contactTeacher: {
+      title: '¿Quieres hacer alguna consulta sobre esta evaluación?',
+      button: 'Escribe a tu profesor',
     },
     save: 'Guardar cambios',
     saveAndSend: 'Guardar y enviar',

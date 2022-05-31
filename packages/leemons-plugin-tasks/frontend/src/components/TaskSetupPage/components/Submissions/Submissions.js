@@ -79,61 +79,59 @@ export default function Submissions({ labels }) {
 
   return (
     <FormProvider {...form}>
-      <ContextContainer title={labels?.submission?.title}>
-        <Controller
-          control={control}
-          name="show"
-          render={({ field }) => (
-            <ConditionalInput
-              {...field}
-              label={labels?.submission?.checkDescription}
-              showOnTrue
-              render={() => (
-                <ContextContainer>
-                  <Controller
-                    control={contextControl}
-                    name="submission.type"
-                    render={({ field: type }) => (
-                      <Select
-                        {...type}
-                        label={labels?.submission?.type}
-                        data={[
-                          {
-                            label: labels?.submission?.types?.file,
-                            value: 'File',
-                          },
-                          {
-                            label: labels?.submission?.types?.link,
-                            value: 'Link',
-                          },
-                        ]}
-                      />
-                    )}
-                  />
+      <Controller
+        control={control}
+        name="show"
+        render={({ field }) => (
+          <ConditionalInput
+            {...field}
+            label={labels?.submission?.checkDescription}
+            showOnTrue
+            render={() => (
+              <ContextContainer>
+                <Controller
+                  control={contextControl}
+                  name="submission.type"
+                  render={({ field: type }) => (
+                    <Select
+                      {...type}
+                      label={labels?.submission?.type}
+                      data={[
+                        {
+                          label: labels?.submission?.types?.file,
+                          value: 'File',
+                        },
+                        {
+                          label: labels?.submission?.types?.link,
+                          value: 'Link',
+                        },
+                      ]}
+                    />
+                  )}
+                />
 
-                  <Controller
-                    control={contextControl}
-                    name="submission.type"
-                    render={({ field: { value } }) => {
-                      const C = Component(value);
+                <Controller
+                  control={contextControl}
+                  name="submission.type"
+                  render={({ field: { value } }) => {
+                    const C = Component(value);
 
-                      return <C labels={labels?.submission[`${value}Type`]} />;
-                    }}
-                  />
+                    return <C labels={labels?.submission[`${value}Type`]} />;
+                  }}
+                />
 
-                  <Controller
-                    control={contextControl}
-                    name="submission.description"
-                    render={({ field: f }) => (
-                      <TextEditorInput {...f} label={labels?.submission?.description} />
-                    )}
-                  />
-                </ContextContainer>
-              )}
-            />
-          )}
-        />
-      </ContextContainer>
+                <Controller
+                  control={contextControl}
+                  name="submission.description"
+                  render={({ field: f }) => (
+                    <TextEditorInput {...f} label={labels?.submission?.description} />
+                  )}
+                />
+              </ContextContainer>
+            )}
+          />
+        )}
+      />
     </FormProvider>
   );
 }

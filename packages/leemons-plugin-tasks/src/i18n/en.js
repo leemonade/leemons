@@ -91,6 +91,7 @@ module.exports = {
           program: 'Program',
           course: 'Course',
           subjectsTitle: 'Subjects',
+          recommendedDuration: 'Recommended duration',
           subject: 'Subject',
           addSubject: 'Add subject',
           level: 'Level',
@@ -132,7 +133,6 @@ module.exports = {
           title: 'Content',
           subjects: 'Subjects',
           methodology: 'Methodology',
-          recommendedDuration: 'Recommended duration',
           statement: 'Statement',
           development: 'Development',
           statementAndDevelopmentTitle: 'Statement and development',
@@ -143,9 +143,9 @@ module.exports = {
           addFromCurriculum: 'Add from curriculum',
           buttonNext: 'Next',
           buttonPrev: 'Previous',
-          gradable: 'Gradable',
           submission: {
-            title: 'Submission',
+            title: 'Evaluation',
+            gradable: 'Gradable',
             checkDescription: 'This task requires the submission of a file, document or link.',
             type: 'Type of submission',
             types: {
@@ -401,6 +401,10 @@ module.exports = {
           noSubmission: 'No submission was made yet',
         },
       },
+    },
+    contactTeacher: {
+      title: 'Do you want to contact the teacher?',
+      button: 'Write to your teacher',
     },
     save: 'Save feedback',
     saveAndSend: 'Save and send feedback',
