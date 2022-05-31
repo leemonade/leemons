@@ -5,7 +5,9 @@ export default function transformEvent(_event, calendars, t) {
   // if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
   const calendarsByKey = keyBy(calendars, 'id');
   let classes = event.data?.classes ? cloneDeep(event.data.classes) : [];
-  classes.push(event.calendar);
+  if (calendarsByKey[event.calendar]?.key.indexOf('plugins.calendar.class.') >= 0) {
+    classes.push(event.calendar);
+  }
   classes = uniq(classes);
   if (classes.length >= 2) {
     event.icon = '/public/assets/svgs/module-three.svg';
@@ -13,7 +15,10 @@ export default function transformEvent(_event, calendars, t) {
     event.borderColor = '#67728E';
     event.calendarName = t ? t('multiSubject') : 'Multi-Subject';
   } else {
-    const calendar = calendarsByKey[classes[0]];
+    let calendar = calendarsByKey[classes[0]];
+    if (!calendar) {
+      calendar = calendarsByKey[event.calendar];
+    }
     event.icon = calendar.icon;
     event.bgColor = calendar.bgColor;
     event.borderColor = calendar.borderColor;
