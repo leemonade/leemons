@@ -10,7 +10,7 @@ import { BigCalendar } from '@bubbles-ui/calendars';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
 import { getCentersWithToken } from '@users/session';
 import * as _ from 'lodash';
-import { forEach, keyBy, map } from 'lodash';
+import { find, forEach, keyBy, map } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import { listSessionClassesRequest } from '@academic-portfolio/request';
@@ -46,6 +46,12 @@ function UserProgramCalendar({ program, classe, session }) {
   function getEvents() {
     const events = [];
     const calendarIds = map(store.calendarFilters, 'value');
+    const programCalendar = find(store.centerData.calendars, {
+      key: `plugins.calendar.program.${program.id}`,
+    });
+    if (programCalendar) {
+      calendarIds.push(programCalendar.id);
+    }
     forEach(store.centerData.events, (event) => {
       if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
         // eslint-disable-next-line consistent-return

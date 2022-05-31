@@ -12,6 +12,7 @@ import {
 import { useStore } from '@common';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import ImagePicker from '@leebrary/components/ImagePicker';
+import { AddCircleIcon } from '@bubbles-ui/icons/outline';
 
 // eslint-disable-next-line import/prefer-default-export
 export function ListInputRender({ t, withImages, useExplanation, addItem, value, ...props }) {
@@ -150,14 +151,15 @@ export function ListInputRender({ t, withImages, useExplanation, addItem, value,
               />
             </Box>
           ) : null}
+          {store.useButton ? (
+            <Box>
+              <Button variant="light" onClick={add} leftIcon={<AddCircleIcon />}>
+                {t('addResponse')}
+              </Button>
+            </Box>
+          ) : null}
         </ContextContainer>
       </Container>
-
-      {store.useButton ? (
-        <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-          <Button onClick={add}>{t('addResponse')}</Button>
-        </Box>
-      ) : null}
     </Box>
   );
 }
