@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ContextContainer, HtmlText, Box, Tabs, TabPanel } from '@bubbles-ui/components';
+import { ContextContainer, HtmlText, Box, Tabs, TabPanel, Title } from '@bubbles-ui/components';
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
 
@@ -23,7 +23,10 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labe
   const subjects = useClassesSubjects(instance.classes);
 
   return (
-    <ContextContainer title={labels?.title}>
+    <ContextContainer>
+      <Title order={4} color="primary">
+        {labels?.title}
+      </Title>
       <Tabs>
         {subjects.map(({ id, name }) => {
           const { curriculum } = assignable.subjects.find((s) => s.subject === id);
@@ -38,31 +41,42 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labe
 
               {showContent && curriculum?.content?.length && (
                 <Box sx={tabPanelStyle}>
-                  <ContextContainer title={labels?.content}>
+                  <ContextContainer>
+                    <Title color="primary" order={4}>
+                      {labels?.content}
+                    </Title>
                     <CurriculumListContents value={curriculum?.content} />
                   </ContextContainer>
                 </Box>
               )}
               {showAssessmentCriteria && curriculum?.assessmentCriteria?.length && (
                 <Box sx={tabPanelStyle}>
-                  <ContextContainer title={labels?.assessmentCriteria}>
+                  <ContextContainer>
+                    <Title color="primary" order={4}>
+                      {labels?.assessmentCriteria}
+                    </Title>
                     <CurriculumListContents value={curriculum?.assessmentCriteria} />
                   </ContextContainer>
                 </Box>
               )}
               {showObjectives && curriculum?.objectives?.length && (
                 <Box sx={tabPanelStyle}>
-                  <ContextContainer title={labels?.objectives}>
+                  <ContextContainer>
+                    <Title color="primary" order={4}>
+                      {labels?.objectives}
+                    </Title>
                     {/* TODO: Use react lists */}
                     <HtmlText>
                       {`
                       <ul>
-                      ${curriculum?.objectives?.map(
-                        (objective) =>
-                          `<li>
+                      ${curriculum?.objectives
+                        ?.map(
+                          (objective) =>
+                            `<li>
                             ${objective}
-                            </li>`
-                      )}
+                          </li>`
+                        )
+                        ?.join('')}
                       </ul>
                     `}
                     </HtmlText>
@@ -93,7 +107,10 @@ export default function StatementStep({ assignation, labels: _labels }) {
 
   return (
     <ContextContainer>
-      <ContextContainer title={labels.statement}>
+      <ContextContainer>
+        <Title order={2} color="primary">
+          {labels?.statement}
+        </Title>
         <HtmlText>{assignable?.statement}</HtmlText>
       </ContextContainer>
       <CurriculumRender

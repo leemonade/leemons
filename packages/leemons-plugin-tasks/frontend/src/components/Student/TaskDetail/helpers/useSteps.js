@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
+import { map } from 'lodash';
 import loadable from '@loadable/component';
 
 const DeliveryStep = loadable(() => import('../Steps/DeliveryStep'));
@@ -39,6 +40,8 @@ export default function useSteps({
           label: labels.steps.development,
           component: <DevelopmentStep assignation={assignation} labels={labels} />,
           sidebar: true,
+          countdown: true,
+          timestamps: 'start',
           status: 'OK',
         };
       },
@@ -63,6 +66,7 @@ export default function useSteps({
             />
           ),
           sidebar: true,
+          countdown: true,
           timestamps: 'start',
           showConfirmation: true,
           onSave,
@@ -94,13 +98,19 @@ export default function useSteps({
     return { steps: finalSteps, visitedSteps };
   }, [assignation]);
 
-  const nextStep = steps?.steps[currentStep + 1];
-  if (nextStep?.id === 'submission' && !assignation?.started) {
-    const shouldDisable = disabledButtons.next !== !assignation?.started;
-    if (shouldDisable) {
-      disableButton('next', !assignation?.started);
+  useEffect(() => {
+    if (!steps?.steps?.length) {
+      return;
     }
-  }
+
+    if (
+      !assignation.started &&
+      steps?.steps?.[currentStep]?.id === 'statement' &&
+      !disabledButtons.next
+    ) {
+      disableButton('next', true);
+    }
+  }, [assignation, currentStep, disabledButtons, steps?.steps]);
 
   return steps;
 }

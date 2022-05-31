@@ -24,17 +24,21 @@ import { TaskDetailStyles } from './TaskDetail.style';
 import Sidebar from './components/Sidebar';
 import updateStudentRequest from '../../../request/instance/updateStudent';
 import { prefixPN } from '../../../helpers';
+import Countdown from './components/Countdown';
 
 async function updateTimestamps(assignation, timestamps) {
   if (timestamps && !assignation?.timestamps?.[timestamps]) {
     try {
+      const time = Date.now();
       await updateStudentRequest({
         instance: assignation?.instance?.id,
         student: assignation.user,
         timestamps: {
-          [timestamps]: Date.now(),
+          [timestamps]: time,
         },
       });
+
+      _.set(assignation, `timestamps.${timestamps}`, time);
     } catch (e) {
       // TODO: Handle error
     }
@@ -193,7 +197,7 @@ export default function TaskDetail({ id, student }) {
     resetButtons();
   };
 
-  const { classes } = TaskDetailStyles();
+  const { classes } = TaskDetailStyles({ onlyNext: isFirstStep || step?.previous === false });
 
   useEffect(() => {
     if (assignation) {
@@ -249,8 +253,9 @@ export default function TaskDetail({ id, student }) {
           />
         </Box>
         <Box className={classes?.content}>
+          <Countdown assignation={assignation} show={step?.countdown === true} />
           {step?.component}
-          <Stack direction="row" justifyContent="space-between" fullWidth className={classes?.nav}>
+          <Box className={classes?.nav}>
             {!isFirstStep && step?.previous !== false && (
               <Button
                 rounded
@@ -286,10 +291,10 @@ export default function TaskDetail({ id, student }) {
                 </Button>
               )}
             </Stack>
-          </Stack>
+          </Box>
         </Box>
         <Sidebar
-          show={steps[currentStep]?.sidebar === true}
+          show={step?.sidebar === true}
           assignation={assignation}
           className={classes?.sidebar}
           labels={labels?.sidebar}
