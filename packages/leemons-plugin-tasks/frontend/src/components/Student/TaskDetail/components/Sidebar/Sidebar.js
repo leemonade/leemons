@@ -6,7 +6,7 @@ import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { sidebarStyles } from './Sidebar.style';
 
 async function getResources(ids) {
-  const response = await getAssetsByIdsRequest(ids, { showPublic: true });
+  const response = await getAssetsByIdsRequest(ids, { showPublic: true, indexable: 0 });
 
   return response.assets.map((asset) => prepareAsset(asset));
 }
