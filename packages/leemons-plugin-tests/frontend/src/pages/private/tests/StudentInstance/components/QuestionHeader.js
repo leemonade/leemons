@@ -7,6 +7,28 @@ import * as duration from 'dayjs/plugin/duration';
 
 dayjs.extend(duration);
 
+function Step(props) {
+  const { styles, t, store, index, onReturn } = props;
+  return (
+    <Box className={styles.questionStep}>
+      <Box className={styles.questionStepBar}>
+        <Box
+          className={styles.questionStepBaInner}
+          style={{ width: `${((store.questionMax + 1) / store.questions.length) * 100}%` }}
+        />
+      </Box>
+      <Box className={styles.questionStepNumbers}>
+        <Text size="lg" color="primary">
+          {store.questionMax + 1}
+        </Text>
+        <Text size="md" color="quartiary">
+          /{store.questions.length}
+        </Text>
+      </Box>
+    </Box>
+  );
+}
+
 export default function QuestionHeader(props) {
   const { styles, t, store, index, onReturn } = props;
 
@@ -52,22 +74,7 @@ export default function QuestionHeader(props) {
             <ActivityCountdown finish={endDate} />
           </Box>
         ) : null}
-        <Box className={styles.questionStep}>
-          <Box className={styles.questionStepBar}>
-            <Box
-              className={styles.questionStepBaInner}
-              style={{ width: `${((store.questionMax + 1) / store.questions.length) * 100}%` }}
-            />
-          </Box>
-          <Box className={styles.questionStepNumbers}>
-            <Text size="lg" color="primary">
-              {store.questionMax + 1}
-            </Text>
-            <Text size="md" color="quartiary">
-              /{store.questions.length}
-            </Text>
-          </Box>
-        </Box>
+        <Step {...props} />
       </Box>
     </Box>
   );

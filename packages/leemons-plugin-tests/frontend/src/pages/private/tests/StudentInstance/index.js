@@ -1,13 +1,22 @@
 import React from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import { useStore } from '@common';
+import { useLocale, useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import { forEach, isString } from 'lodash';
-import { Box, Button, COLORS, Modal, Stack, Text, VerticalStepper } from '@bubbles-ui/components';
+import {
+  Box,
+  Button,
+  COLORS,
+  Modal,
+  Paragraph,
+  Stack,
+  Text,
+  VerticalStepper,
+} from '@bubbles-ui/components';
 import { HeaderBackground, TaskDeadline, TaskHeader } from '@bubbles-ui/leemons';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import getClassData from '@assignables/helpers/getClassData';
@@ -29,6 +38,7 @@ import { calculeInfoValues } from './helpers/calculeInfoValues';
 import QuestionList from './components/QuestionList';
 
 export default function StudentInstance() {
+  const locale = useLocale();
   const [t, translations] = useTranslateLoader(prefixPN('studentInstance'));
   const [store, render] = useStore({
     loading: true,
@@ -261,8 +271,9 @@ export default function StudentInstance() {
         deadline: new Date(store.instance.dates.deadline),
         styles: {
           position: 'absolute',
-          top: 8,
+          top: '50%',
           right: store.isFirstStep ? 8 : 0,
+          transform: 'translateY(-50%)',
         },
       };
     }
@@ -355,7 +366,11 @@ export default function StudentInstance() {
         />
         <TaskHeader {...taskHeaderProps} size={store.isFirstStep ? 'md' : 'sm'} />
         {!store.viewMode && taskDeadlineProps ? (
-          <TaskDeadline {...taskDeadlineProps} size={store.isFirstStep ? 'md' : 'sm'} />
+          <TaskDeadline
+            {...taskDeadlineProps}
+            locale={locale}
+            size={store.isFirstStep ? 'md' : 'sm'}
+          />
         ) : null}
       </Box>
       <Box className={classes.mainContent}>
@@ -372,11 +387,13 @@ export default function StudentInstance() {
           </Box>
         </Box>
         <Box className={classes.pages}>
-          {verticalStepperProps.data[store.currentStep]
-            ? React.cloneElement(verticalStepperProps.data[store.currentStep].component, {
-                isFirstStep: !store.currentStep,
-              })
-            : null}
+          <Box className={classes.pagesContent}>
+            {verticalStepperProps.data[store.currentStep]
+              ? React.cloneElement(verticalStepperProps.data[store.currentStep].component, {
+                  isFirstStep: !store.currentStep,
+                })
+              : null}
+          </Box>
         </Box>
       </Box>
       <Modal
@@ -409,7 +426,7 @@ export default function StudentInstance() {
         closeOnClickOutside={false}
       >
         <Box className={styles.howItWorksModalContainer}>
-          <Text
+          <Paragraph
             dangerouslySetInnerHTML={{
               __html: t('finishForceTestModalDescription'),
             }}

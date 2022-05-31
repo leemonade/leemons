@@ -9,7 +9,10 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<string[]>}
  * */
-async function findUserAgentsWithPermission(permissions, { transacting } = {}) {
+async function findUserAgentsWithPermission(
+  permissions,
+  { returnUserAgents = true, transacting } = {}
+) {
   const _permissions = _.isArray(permissions) ? permissions : [permissions];
   const query = {
     $or: [],
@@ -21,8 +24,9 @@ async function findUserAgentsWithPermission(permissions, { transacting } = {}) {
     }
     query.$or.push(q);
   });
+
   const response = await table.userAgentPermission.find(query, { transacting });
-  return _.uniq(_.map(response, 'userAgent'));
+  return returnUserAgents ? _.uniq(_.map(response, 'userAgent')) : response;
 }
 
 module.exports = { findUserAgentsWithPermission };

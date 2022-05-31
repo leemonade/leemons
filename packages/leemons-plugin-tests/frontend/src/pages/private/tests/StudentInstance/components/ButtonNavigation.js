@@ -23,7 +23,7 @@ export function ButtonNavigation({
         {showFirstButton ? (
           <Button
             position="right"
-            variant="outline"
+            variant="light"
             leftIcon={<ChevronLeftIcon />}
             rounded
             compact

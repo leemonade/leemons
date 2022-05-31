@@ -680,7 +680,7 @@ AssetList.defaultProps = {
   searchable: true,
   category: 'media-files',
   categories: [],
-  itemMinWidth: 340,
+  itemMinWidth: 330,
   search: '',
   page: 1,
   pageSize: 6,
