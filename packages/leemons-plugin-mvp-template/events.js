@@ -56,9 +56,13 @@ async function events(isInstalled) {
         'plugins.tasks:init-permissions',
         'plugins.tests:init-permissions',
         'plugins.assignables:init-permissions',
+        'plugins.leebrary:pluginDidLoadServices',
+        'providers.leebrary-aws-s3:providerDidLoadServices',
       ],
       async () => {
         try {
+          await addAWSS3AsProvider();
+
           config.centers = await initCenters();
           leemons.events.emit('init-centers', config.centers);
 
@@ -102,7 +106,6 @@ async function events(isInstalled) {
       ],
       async () => {
         console.log('MVP - Iniciando el plugin de Leebrary');
-        await addAWSS3AsProvider();
         leemons.events.emit('init-leebrary-provider', config.assets);
 
         config.assets = await initLibrary(config);

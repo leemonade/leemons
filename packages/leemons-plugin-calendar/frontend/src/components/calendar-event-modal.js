@@ -334,12 +334,10 @@ function NewCalendarEventModal({
   }
 
   useEffect(() => {
-    if (session && opened && event?.id !== ref.current.eventId) init();
+    if (session && opened && (!event || event.id !== ref.current.eventId)) init();
   }, [session, event]);
 
   if (ref.current.loading) return <LoadingOverlay visible />;
-
-  console.log(ref.current.defaultValues);
 
   return (
     <CalendarEventModal

@@ -189,6 +189,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     ...calendar,
     isClass: classCalendarsIds.indexOf(calendar.id) >= 0,
     isUserCalendar: calendar.id === userCalendar.id,
+    image: calendar.id === userCalendar.id ? userSession.avatar : null,
     fullName:
       calendar.id === userCalendar.id
         ? leemons.getPlugin('users').services.users.getUserFullName(userSession)

@@ -25,6 +25,8 @@ function UserImageAndPreferredGender({ t, user, form, isEditMode }) {
 
   const avatar = form.watch('user.avatar');
 
+  console.log(avatar);
+
   return (
     <ContextContainer direction="row" alignItems="center">
       <Avatar image={avatar} fullName={getUserFullName(user)} mx="auto" size="lg" />

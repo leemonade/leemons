@@ -4,12 +4,12 @@ import {
   Box,
   Button,
   ContextContainer,
+  Divider,
   PageContainer,
   Select,
   Stack,
   Title,
   useResizeObserver,
-  Divider,
 } from '@bubbles-ui/components';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
@@ -124,6 +124,7 @@ function DetailUser({ session }) {
         'user.secondSurname': store.user.secondSurname,
         'user.birthdate': new Date(store.user.birthdate),
         'user.gender': store.user.gender,
+        'user.avatar': store.user.avatar,
       };
       form.reset(store.formValues);
       /*

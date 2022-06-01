@@ -1,6 +1,6 @@
 import { cloneDeep, keyBy, uniq } from 'lodash';
 
-export default function transformEvent(_event, calendars, t) {
+export default function transformEvent(_event, calendars, { t, session }) {
   const event = cloneDeep(_event);
   // if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
   const calendarsByKey = keyBy(calendars, 'id');

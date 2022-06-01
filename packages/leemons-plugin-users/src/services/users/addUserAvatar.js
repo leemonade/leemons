@@ -5,7 +5,6 @@ async function addUserAvatar(user, avatar, { transacting } = {}) {
   const assetData = {
     indexable: false,
     public: true,
-    category: 'user-avatar',
     name: `user-${user.id}`,
   };
   if (avatar) assetData.cover = avatar;
