@@ -81,7 +81,29 @@ export function MonoResponse({ form, t }) {
           />
         ) : null}
       </InputWrapper>
-      <InputWrapper required label={t('responsesLabel')} description={responsesDescription}>
+      <InputWrapper
+        required
+        label={t('responsesLabel')}
+        description={
+          <Box>
+            <Box style={{ alignSelf: 'flex-end' }}>
+              <Controller
+                control={form.control}
+                name="withImages"
+                render={({ field }) => (
+                  <Checkbox
+                    checked={field.value}
+                    error={form.formState.errors.withImages}
+                    label={t('withImagesLabel')}
+                    {...field}
+                  />
+                )}
+              />
+            </Box>
+            {responsesDescription}
+          </Box>
+        }
+      >
         <Controller
           control={form.control}
           name="properties.responses"

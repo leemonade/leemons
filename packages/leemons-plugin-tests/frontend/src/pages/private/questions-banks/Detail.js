@@ -100,10 +100,10 @@ export default function Detail(p) {
   }, [params]);
 
   form.register('questions', {
-    required: true,
+    required: t('questionRequired'),
     validate: (value) => {
       if (value.length === 0) {
-        return true;
+        return t('questionRequired');
       }
       return undefined;
     },
@@ -141,7 +141,7 @@ export default function Detail(p) {
           }}
           buttons={{
             duplicate: formValues.name && !formValues.published ? t('saveDraft') : undefined,
-            edit: store.isValid ? t('publish') : undefined,
+            edit: store.isValid && !store.isNew ? t('publish') : undefined,
           }}
           icon={<PluginTestIcon />}
           variant="teacher"
@@ -168,7 +168,7 @@ export default function Detail(p) {
               <DetailConfig t={t} form={form} onPrev={() => setStep(0)} onNext={() => setStep(2)} />
             )}
             {store.currentStep === 2 || store.currentStep === 3 ? (
-              <DetailQuestions t={t} form={form} onPrev={() => setStep(1)} />
+              <DetailQuestions t={t} form={form} onPrev={() => setStep(1)} onNext={saveAsPublish} />
             ) : null}
           </VerticalStepperContainer>
         </Box>

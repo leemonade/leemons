@@ -117,14 +117,15 @@ export function ListInputRender({ t, withImages, useExplanation, addItem, value,
                 />
               </Box>
             ) : null}
+            {store.useButton ? (
+              <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                <Button variant="light" leftIcon={<AddCircleIcon />} onClick={add}>
+                  {t('addResponse')}
+                </Button>
+              </Box>
+            ) : null}
           </ContextContainer>
         </Container>
-
-        {store.useButton ? (
-          <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-            <Button onClick={add}>{t('addResponse')}</Button>
-          </Box>
-        ) : null}
       </Box>
     );
   }

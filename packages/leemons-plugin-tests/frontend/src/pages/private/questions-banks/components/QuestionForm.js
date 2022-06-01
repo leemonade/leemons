@@ -4,8 +4,8 @@ import { forIn, map } from 'lodash';
 import {
   Box,
   Button,
-  Checkbox,
   ContextContainer,
+  InputWrapper,
   ListInput,
   Select,
   Stack,
@@ -55,145 +55,149 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
     <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
       <ContextContainer>
         <Box>
-          <Button variant="link" onClick={onCancel}>
-            <ChevLeftIcon />
+          <Button variant="light" leftIcon={<ChevLeftIcon />} onClick={onCancel}>
             {t('returnToList')}
           </Button>
         </Box>
 
         <Title order={4}>{t('questionDetail')}</Title>
 
-        <ContextContainer direction="row">
-          <Controller
-            control={form.control}
-            name="type"
-            rules={{ required: t('typeRequired') }}
-            render={({ field }) => (
-              <Select
-                required
-                data={questionTypes}
-                error={form.formState.errors.type}
-                label={t('typeLabel')}
-                {...field}
-              />
-            )}
-          />
-
-          {type && typesWithImage.includes(form.watch('type')) && (
-            <Box style={{ alignSelf: 'flex-end' }}>
-              <Controller
-                control={form.control}
-                name="withImages"
-                render={({ field }) => (
-                  <Checkbox
-                    checked={field.value}
-                    error={form.formState.errors.withImages}
-                    label={t('withImagesLabel')}
+        <Box style={{ width: '230px' }}>
+          <ContextContainer fullWidth direction="row">
+            <Controller
+              control={form.control}
+              name="type"
+              rules={{ required: t('typeRequired') }}
+              render={({ field }) => (
+                <Box style={{ width: '100%' }}>
+                  <Select
+                    required
+                    data={questionTypes}
+                    error={form.formState.errors.type}
+                    label={t('typeLabel')}
                     {...field}
                   />
-                )}
-              />
-            </Box>
-          )}
-        </ContextContainer>
+                </Box>
+              )}
+            />
+          </ContextContainer>
+        </Box>
         {type ? (
           <>
-            <ContextContainer direction="row">
-              {categoryData && categoryData.length ? (
+            <ContextContainer divided>
+              <ContextContainer>
+                <ContextContainer fullWidth direction="row">
+                  {categoryData && categoryData.length ? (
+                    <Controller
+                      control={form.control}
+                      name="category"
+                      render={({ field }) => (
+                        <Box style={{ width: '230px' }}>
+                          <Select
+                            data={categoryData}
+                            error={form.formState.errors.category}
+                            label={t('categoryLabel')}
+                            {...field}
+                            onChange={(e) => {
+                              const item = categoryData[e];
+                              if (item) {
+                                field.onChange(item.value);
+                              } else {
+                                field.onChange(e);
+                              }
+                            }}
+                          />
+                        </Box>
+                      )}
+                    />
+                  ) : null}
+
+                  <Controller
+                    control={form.control}
+                    name="level"
+                    render={({ field }) => (
+                      <Box style={{ width: '230px' }}>
+                        <SelectLevelsOfDifficulty
+                          error={form.formState.errors.level}
+                          label={t('levelLabel')}
+                          {...field}
+                        />
+                      </Box>
+                    )}
+                  />
+                </ContextContainer>
+
                 <Controller
                   control={form.control}
-                  name="category"
+                  name="tags"
                   render={({ field }) => (
-                    <Select
-                      data={categoryData}
-                      error={form.formState.errors.category}
-                      label={t('categoryLabel')}
+                    <Box style={{ width: '484px' }}>
+                      <TagsAutocomplete
+                        pluginName="tests"
+                        type="plugins.tests.questionBanks"
+                        label={t('tagsLabel')}
+                        labels={{ addButton: t('addTag') }}
+                        {...field}
+                      />
+                    </Box>
+                  )}
+                />
+
+                <Controller
+                  control={form.control}
+                  name="question"
+                  rules={{ required: t('questionRequired') }}
+                  render={({ field }) => (
+                    <TextEditorInput
+                      required
+                      error={form.formState.errors.question}
+                      label={t('questionLabel')}
                       {...field}
-                      onChange={(e) => {
-                        const item = categoryData[e];
-                        if (item) {
-                          field.onChange(item.value);
-                        } else {
-                          field.onChange(e);
-                        }
-                      }}
                     />
                   )}
                 />
-              ) : null}
 
-              <Controller
-                control={form.control}
-                name="level"
-                render={({ field }) => (
-                  <SelectLevelsOfDifficulty
-                    error={form.formState.errors.level}
-                    label={t('levelLabel')}
-                    {...field}
+                {type !== 'map' ? (
+                  <Controller
+                    control={form.control}
+                    name="questionImage"
+                    render={({ field }) => (
+                      <InputWrapper label={t('questionImage')}>
+                        <ImagePicker {...field} />
+                      </InputWrapper>
+                    )}
                   />
-                )}
-              />
+                ) : null}
+
+                {type
+                  ? React.cloneElement(questionComponents[type], {
+                      form,
+                      t,
+                    })
+                  : null}
+
+                <Controller
+                  control={form.control}
+                  name="clues"
+                  render={({ field }) => (
+                    <ListInput
+                      canAdd
+                      addButtonLabel={t('addClue')}
+                      label={t('cluesLabel')}
+                      description={t('cluesDescription')}
+                      {...field}
+                    />
+                  )}
+                />
+              </ContextContainer>
+
+              <Stack alignItems="center" justifyContent="space-between">
+                <Button variant="light" leftIcon={<ChevLeftIcon />} onClick={onCancel}>
+                  {t('returnToList')}
+                </Button>
+                <Button onClick={save}>{t('saveQuestion')}</Button>
+              </Stack>
             </ContextContainer>
-
-            <Controller
-              control={form.control}
-              name="tags"
-              render={({ field }) => (
-                <TagsAutocomplete
-                  pluginName="tests"
-                  type="plugins.tests.questionBanks"
-                  label={t('tagsLabel')}
-                  labels={{ addButton: t('addTag') }}
-                  {...field}
-                />
-              )}
-            />
-
-            <Controller
-              control={form.control}
-              name="question"
-              rules={{ required: t('questionRequired') }}
-              render={({ field }) => (
-                <TextEditorInput
-                  required
-                  error={form.formState.errors.question}
-                  label={t('questionLabel')}
-                  {...field}
-                />
-              )}
-            />
-
-            {type !== 'map' ? (
-              <Controller
-                control={form.control}
-                name="questionImage"
-                render={({ field }) => <ImagePicker {...field} />}
-              />
-            ) : null}
-
-            {type
-              ? React.cloneElement(questionComponents[type], {
-                  form,
-                  t,
-                })
-              : null}
-
-            <Controller
-              control={form.control}
-              name="clues"
-              render={({ field }) => (
-                <ListInput
-                  canAdd
-                  label={t('cluesLabel')}
-                  description={t('cluesDescription')}
-                  {...field}
-                />
-              )}
-            />
-
-            <Stack justifyContent="end">
-              <Button onClick={save}>{t('save')}</Button>
-            </Stack>
           </>
         ) : null}
       </ContextContainer>

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { map } from 'lodash';
 import {
   ActionButton,
+  Alert,
   Box,
   Button,
   ContextContainer,
@@ -10,13 +11,13 @@ import {
   Table,
   Title,
 } from '@bubbles-ui/components';
-import { ChevLeftIcon, EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon, ChevLeftIcon, EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import { useLayout } from '@layout/context';
 import QuestionForm from './QuestionForm';
 import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
 
-export default function DetailQuestions({ form, t, onPrev }) {
+export default function DetailQuestions({ form, t, onPrev, onNext }) {
   const [qStore, qRender] = useStore({
     newQuestion: false,
   });
@@ -99,15 +100,14 @@ export default function DetailQuestions({ form, t, onPrev }) {
     },
   ];
 
+  console.log(form.formState.errors.questions);
+
   return (
     <>
       <ContextContainer divided>
         <ContextContainer>
           <Stack alignItems="center" justifyContent="space-between">
             <Title order={4}>{t('questions')}</Title>
-            <Box>
-              <Button onClick={addQuestion}>{t('addQuestion')}</Button>
-            </Box>
           </Stack>
           {questions && questions.length ? (
             <Table
@@ -123,8 +123,18 @@ export default function DetailQuestions({ form, t, onPrev }) {
               }))}
             />
           ) : null}
+          <Box>
+            <Button variant="light" leftIcon={<AddCircleIcon />} onClick={addQuestion}>
+              {t('addQuestion')}
+            </Button>
+          </Box>
+          {qStore.trySend && form.formState.errors.questions ? (
+            <Alert severity="error" closeable={false}>
+              {form.formState.errors.questions?.message}
+            </Alert>
+          ) : null}
         </ContextContainer>
-        <Box>
+        <Stack alignItems="center" justifyContent="space-between">
           <Button
             variant="light"
             leftIcon={<ChevLeftIcon height={20} width={20} />}
@@ -132,7 +142,18 @@ export default function DetailQuestions({ form, t, onPrev }) {
           >
             {t('previous')}
           </Button>
-        </Box>
+          <Button
+            onClick={() => {
+              qStore.trySend = true;
+              qRender();
+              if (questions && questions.length) {
+                onNext();
+              }
+            }}
+          >
+            {t('publish')}
+          </Button>
+        </Stack>
       </ContextContainer>
     </>
   );

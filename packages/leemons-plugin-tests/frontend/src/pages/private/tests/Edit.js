@@ -174,7 +174,7 @@ export default function Edit() {
         }}
         buttons={{
           duplicate: formValues.name && !formValues.published ? t('saveDraft') : undefined,
-          edit: store.isValid ? t('publish') : undefined,
+          edit: store.isValid && !store.isNew ? t('publish') : undefined,
         }}
         icon={<PluginTestIcon />}
         variant="teacher"

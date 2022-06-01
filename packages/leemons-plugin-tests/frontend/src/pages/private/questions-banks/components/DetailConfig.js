@@ -90,7 +90,14 @@ export default function DetailConfig({ form, t, onNext, onPrev }) {
         <Controller
           control={form.control}
           name="categories"
-          render={({ field }) => <ListInput {...field} label={t('categoriesLabel')} canAdd />}
+          render={({ field }) => (
+            <ListInput
+              {...field}
+              label={t('categoriesLabel')}
+              addButtonLabel={t('addCategory')}
+              canAdd
+            />
+          )}
         />
       </ContextContainer>
       <Stack fullWidth justifyContent="space-between">
