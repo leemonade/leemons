@@ -63,8 +63,8 @@ function NewCalendarEventModal({
   onClose,
   close,
   classCalendars,
+  reff: ref,
 }) {
-  const ref = useRef({ loading: false });
   const { t: tCommon } = useCommonTranslate('forms');
   const session = useSession({ redirectTo: goLoginPage });
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -146,8 +146,8 @@ function NewCalendarEventModal({
   async function init() {
     ref.current.loading = true;
     render();
-
     try {
+      ref.current.eventId = event?.id;
       if (!ref.current.repeat) {
         ref.current.repeat = map(
           CALENDAR_EVENT_MODAL_DEFAULT_PROPS.selectData.repeat,
@@ -282,7 +282,7 @@ function NewCalendarEventModal({
     }
   }
 
-  async function onSubmit(_formData) {
+  async function onSubmit(_formData, { closeOnSend = true }) {
     // eslint-disable-next-line prefer-const
     let { startDate, endDate, startTime, endTime, ...formData } = _formData;
     if (startDate) startDate = new Date(startDate);
@@ -321,21 +321,25 @@ function NewCalendarEventModal({
         // delete toSend.calendar;
         // delete toSend.type;
         delete toSend.status;
-        await updateEventRequest(centerToken, event.id, toSend);
+        const { event: e } = await updateEventRequest(centerToken, event.id, toSend);
+        ref.current.defaultValues.data = e.data;
+
         addSuccessAlert(t('updated_done'));
       }
       reloadCalendar();
-      close();
+      if (closeOnSend) close();
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }
   }
 
   useEffect(() => {
-    if (session && opened) init();
+    if (session && opened && event?.id !== ref.current.eventId) init();
   }, [session, event]);
 
   if (ref.current.loading) return <LoadingOverlay visible />;
+
+  console.log(ref.current.defaultValues);
 
   return (
     <CalendarEventModal
@@ -399,17 +403,22 @@ NewCalendarEventModal.propTypes = {
   removeEvent: PropTypes.func,
   close: PropTypes.func,
   classCalendars: PropTypes.array,
+  reff: PropTypes.any,
 };
 
 export const useCalendarEventModal = () => {
   const [opened, setOpened] = useState(false);
+  const ref = useRef({ loading: false });
+  const element = (
+    <NewCalendarEventModal reff={ref} opened={opened} onClose={() => setOpened(false)} />
+  );
 
   return [
     function toggle() {
       setOpened(!opened);
     },
     function Component(data) {
-      return <NewCalendarEventModal {...data} opened={opened} onClose={() => setOpened(false)} />;
+      return React.cloneElement(element, data);
     },
   ];
 };

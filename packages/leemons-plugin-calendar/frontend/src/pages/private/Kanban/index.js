@@ -285,7 +285,7 @@ function Kanban({ session }) {
           <BubblesKanban
             value={ref.current.board}
             onChange={onChange}
-            disableCardDrag={ref.current.filters.calendars.length}
+            disableCardDrag={false} // ref.current.filters.calendars.length
             icon={icon}
             itemRender={(props) => (
               <KanbanTaskCard {...props} config={ref.current.data} onClick={onClickCard} />

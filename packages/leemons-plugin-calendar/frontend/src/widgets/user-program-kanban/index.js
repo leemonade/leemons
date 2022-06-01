@@ -9,6 +9,7 @@ import {
   Stack,
   Text,
 } from '@bubbles-ui/components';
+import { saveKanbanEventOrdersRequest, updateEventRequest } from '@calendar/request';
 import { ChevRightIcon, PluginKanbanIcon } from '@bubbles-ui/icons/outline';
 import { KanbanTaskCard } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
@@ -67,7 +68,7 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
     const orderedColumns = _.orderBy(columns, ['order'], ['asc']);
     return useAllColumns
       ? orderedColumns
-      : _.filter(orderedColumns, (column) => [1, 2, 3].includes(column.order));
+      : _.filter(orderedColumns, (column) => [2, 3, 5].includes(column.order));
   }
 
   async function getTranslationColumns() {
@@ -224,6 +225,47 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
     };
   });
 
+  function onChange(values, event) {
+    const cardsById = {};
+    _.forEach(values.columns, (column) => {
+      _.forEach(column.cards, (card) => {
+        cardsById[card.id] = { ...card, data: { ...card.data, column: column.id } };
+      });
+    });
+    const changedColumns = [];
+    if (
+      event.destination &&
+      event.source &&
+      event.destination.droppableId === event.source.droppableId
+    ) {
+      changedColumns.push(event.destination.droppableId);
+    }
+    _.forEach(store.data.events, (event) => {
+      const card = cardsById[event.id];
+      if (event.data && event.data.column && card && event.data.column !== card.data.column) {
+        changedColumns.push(card.data.column);
+        // eslint-disable-next-line no-param-reassign
+        event.data.column = card.data.column;
+        updateEventRequest(store.center.token, event.id, { data: event.data });
+      }
+    });
+
+    _.forEach(values.columns, (column) => {
+      if (changedColumns.indexOf(column.id) >= 0) {
+        store.columnsEventsOrders[column.id] = _.map(column.cards, 'id');
+        saveKanbanEventOrdersRequest(
+          store.center.token,
+          column.id,
+          store.columnsEventsOrders[column.id]
+        );
+      }
+    });
+
+    store.board = getKanbanBoard();
+
+    render();
+  }
+
   if (store.loading) return null;
 
   return (
@@ -250,8 +292,8 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
         />
         <BubblesKanban
           value={store.board}
-          onChange={() => {}}
-          disableCardDrag={true}
+          onChange={onChange}
+          disableCardDrag={false}
           itemRender={(props) => (
             <KanbanTaskCard {...props} config={store.data} onClick={onClickCard} />
           )}
