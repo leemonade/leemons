@@ -19,10 +19,14 @@ export default function transformEvent(_event, calendars, t) {
     if (!calendar) {
       calendar = calendarsByKey[event.calendar];
     }
+    console.log(calendar);
     event.icon = calendar.icon;
     event.bgColor = calendar.bgColor;
     event.borderColor = calendar.borderColor;
     event.calendarName = calendar.name;
+    if (!event.icon && !calendar.isClass && !calendar.isUserCalendar) {
+      event.icon = '/public/assets/svgs/alarm-bell.svg';
+    }
   }
   // }
   return event;
