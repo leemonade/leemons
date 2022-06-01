@@ -9,7 +9,7 @@ import { goLoginPage } from '@users/navigate';
 import { getCalendarsToFrontendRequest } from '@calendar/request';
 import loadable from '@loadable/component';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { Box } from '@bubbles-ui/components';
+import { Box, LoadingOverlay } from '@bubbles-ui/components';
 import { CALENDAR_EVENT_MODAL_DEFAULT_PROPS, CalendarEventModal } from '@bubbles-ui/leemons';
 import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
@@ -64,7 +64,7 @@ function NewCalendarEventModal({
   close,
   classCalendars,
 }) {
-  const ref = useRef({ loading: true });
+  const ref = useRef({ loading: false });
   const { t: tCommon } = useCommonTranslate('forms');
   const session = useSession({ redirectTo: goLoginPage });
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -147,116 +147,123 @@ function NewCalendarEventModal({
     ref.current.loading = true;
     render();
 
-    if (!ref.current.repeat) {
-      ref.current.repeat = map(
-        CALENDAR_EVENT_MODAL_DEFAULT_PROPS.selectData.repeat,
-        ({ value }) => ({
-          value,
-          label: t(`repeat.${value}`),
-        })
-      );
-    }
-
-    if (!ref.current.eventTypes) {
-      const eventTypes = await getEventTypes();
-      const eventTypesTranslations = await getEventTypeTranslations(eventTypes);
-      ref.current.eventTypes = map(eventTypes, (eventType) => ({
-        ...eventType,
-        value: eventType.key,
-        label: getEventTypeName(eventType.key, eventTypesTranslations),
-      }));
-      ref.current.components = {};
-      forEach(ref.current.eventTypes, (eventType) => {
-        ref.current.components[eventType.key] = dynamicImport(
-          `${eventType.pluginName}`,
-          eventType.url
+    try {
+      if (!ref.current.repeat) {
+        ref.current.repeat = map(
+          CALENDAR_EVENT_MODAL_DEFAULT_PROPS.selectData.repeat,
+          ({ value }) => ({
+            value,
+            label: t(`repeat.${value}`),
+          })
         );
-      });
-    }
+      }
 
-    ref.current.calendarData = await getCalendarsForCenter();
-    ref.current.calendarData.calendars = map(ref.current.calendarData.calendars, (calendar) => ({
-      ...calendar,
-      value: calendar.key,
-      label: getCalendarNameWithConfigAndSession(calendar, ref.current.calendarData, session),
-    }));
-    ref.current.calendarData.ownerCalendars = map(
-      ref.current.calendarData.ownerCalendars,
-      (calendar) => ({
+      if (!ref.current.eventTypes) {
+        const eventTypes = await getEventTypes();
+        const eventTypesTranslations = await getEventTypeTranslations(eventTypes);
+        ref.current.eventTypes = map(eventTypes, (eventType) => ({
+          ...eventType,
+          value: eventType.key,
+          label: getEventTypeName(eventType.key, eventTypesTranslations),
+        }));
+        ref.current.components = {};
+        forEach(ref.current.eventTypes, (eventType) => {
+          ref.current.components[eventType.key] = dynamicImport(
+            `${eventType.pluginName}`,
+            eventType.url
+          );
+        });
+      }
+
+      ref.current.calendarData = await getCalendarsForCenter();
+      ref.current.calendarData.calendars = map(ref.current.calendarData.calendars, (calendar) => ({
         ...calendar,
         value: calendar.key,
         label: getCalendarNameWithConfigAndSession(calendar, ref.current.calendarData, session),
-      })
-    );
+      }));
+      ref.current.calendarData.ownerCalendars = map(
+        ref.current.calendarData.ownerCalendars,
+        (calendar) => ({
+          ...calendar,
+          value: calendar.key,
+          label: getCalendarNameWithConfigAndSession(calendar, ref.current.calendarData, session),
+        })
+      );
 
-    ref.current.defaultValues = {};
-    ref.current.isNew = true;
-    ref.current.isOwner = false;
+      ref.current.defaultValues = {};
+      ref.current.isNew = true;
+      ref.current.isOwner = false;
 
-    if (event) {
-      ref.current.fromCalendar = event.fromCalendar;
-      ref.current.isNew = false;
-      const centers = getCentersWithToken();
-      if (centers && centers.length) {
-        let isOwner = false;
-        forEach(centers, ({ userAgentId }) => {
-          if (event.owners.includes(userAgentId)) {
-            isOwner = true;
-          }
+      if (event) {
+        ref.current.fromCalendar = event.fromCalendar;
+        ref.current.isNew = false;
+        const centers = getCentersWithToken();
+        if (centers && centers.length) {
+          let isOwner = false;
+          forEach(centers, ({ userAgentId }) => {
+            if (event.owners.includes(userAgentId)) {
+              isOwner = true;
+            }
+          });
+          ref.current.isOwner = isOwner;
+        }
+        /*
+        ref.current.isOwner = !!_.find(ref.current.calendarData.ownerCalendars, {
+          id: _.isString(event.calendar) ? event.calendar : event.calendar.id,
         });
-        ref.current.isOwner = isOwner;
-      }
-      /*
-      ref.current.isOwner = !!_.find(ref.current.calendarData.ownerCalendars, {
-        id: _.isString(event.calendar) ? event.calendar : event.calendar.id,
-      });
 
-       */
+         */
 
-      const {
-        startDate,
-        endDate,
-        isAllDay,
-        calendar,
-        id,
-        deleted,
-        fromCalendar,
-        created_at,
-        updated_at,
-        deleted_at,
-        ...eventData
-      } = event;
+        const {
+          startDate,
+          endDate,
+          isAllDay,
+          calendar,
+          id,
+          deleted,
+          fromCalendar,
+          created_at,
+          updated_at,
+          deleted_at,
+          ...eventData
+        } = event;
 
-      _.forIn(eventData, (value, key) => {
-        set(ref.current.defaultValues, key, value);
-      });
+        _.forIn(eventData, (value, key) => {
+          set(ref.current.defaultValues, key, value);
+        });
 
-      if (!ref.current.defaultValues.repeat)
+        if (!ref.current.defaultValues.repeat)
+          set(ref.current.defaultValues, 'repeat', 'dont_repeat');
+        const calendarId = isString(calendar) ? calendar : calendar.id;
+        const foundCalendar = find(ref.current.calendarData.ownerCalendars, { id: calendarId });
+        if (foundCalendar) set(ref.current.defaultValues, 'calendar', foundCalendar.key);
+        set(ref.current.defaultValues, 'isAllDay', !!isAllDay);
+
+        if (startDate) {
+          const start = new Date(startDate);
+          start.setSeconds(0, 0);
+          set(ref.current.defaultValues, 'startDate', start);
+          set(ref.current.defaultValues, 'startTime', start);
+        }
+        if (endDate) {
+          const end = new Date(endDate);
+          end.setSeconds(0, 0);
+          set(ref.current.defaultValues, 'endDate', end);
+          set(ref.current.defaultValues, 'endTime', end);
+        }
+      } else if (ref.current.eventTypes.length) {
+        set(ref.current.defaultValues, 'type', forceType || ref.current.eventTypes[0].key);
         set(ref.current.defaultValues, 'repeat', 'dont_repeat');
-      const calendarId = isString(calendar) ? calendar : calendar.id;
-      const foundCalendar = find(ref.current.calendarData.ownerCalendars, { id: calendarId });
-      if (foundCalendar) set(ref.current.defaultValues, 'calendar', foundCalendar.key);
-      set(ref.current.defaultValues, 'isAllDay', !!isAllDay);
+        set(ref.current.defaultValues, 'isAllDay', false);
+        if (ref.current.calendarData && ref.current.calendarData.ownerCalendars)
+          set(
+            ref.current.defaultValues,
+            'calendar',
+            ref.current.calendarData.ownerCalendars[0].key
+          );
+      }
+    } catch (e) {}
 
-      if (startDate) {
-        const start = new Date(startDate);
-        start.setSeconds(0, 0);
-        set(ref.current.defaultValues, 'startDate', start);
-        set(ref.current.defaultValues, 'startTime', start);
-      }
-      if (endDate) {
-        const end = new Date(endDate);
-        end.setSeconds(0, 0);
-        set(ref.current.defaultValues, 'endDate', end);
-        set(ref.current.defaultValues, 'endTime', end);
-      }
-    } else if (ref.current.eventTypes.length) {
-      set(ref.current.defaultValues, 'type', forceType || ref.current.eventTypes[0].key);
-      set(ref.current.defaultValues, 'repeat', 'dont_repeat');
-      set(ref.current.defaultValues, 'isAllDay', false);
-      if (ref.current.calendarData && ref.current.calendarData.ownerCalendars)
-        set(ref.current.defaultValues, 'calendar', ref.current.calendarData.ownerCalendars[0].key);
-    }
     ref.current.loading = false;
     render();
   }
@@ -325,10 +332,10 @@ function NewCalendarEventModal({
   }
 
   useEffect(() => {
-    if (session) init();
+    if (session && opened) init();
   }, [session, event]);
 
-  if (ref.current.loading) return null;
+  if (ref.current.loading) return <LoadingOverlay visible />;
 
   return (
     <CalendarEventModal
@@ -341,14 +348,14 @@ function NewCalendarEventModal({
       selectData={{
         repeat: ref.current.repeat,
         eventTypes: ref.current.eventTypes,
-        calendars: ref.current.calendarData.ownerCalendars,
+        calendars: ref.current.calendarData?.ownerCalendars,
       }}
       onSubmit={onSubmit}
       UsersComponent={
         <UsersComponent
           label={t('users')}
           labelDisabled={t('usersDisabled')}
-          userAgents={ref.current.defaultValues.userAgents}
+          userAgents={ref.current.defaultValues?.userAgents}
         />
       }
       components={ref.current.components}

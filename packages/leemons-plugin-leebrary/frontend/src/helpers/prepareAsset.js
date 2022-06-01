@@ -1,4 +1,4 @@
-import { capitalize, isEmpty, isNil } from 'lodash';
+import { capitalize, isEmpty, isNil, isString } from 'lodash';
 import { getAuthorizationTokenForAllCenters } from '@users/session';
 import { prepareAssetType } from './prepareAssetType';
 
@@ -50,9 +50,10 @@ function prepareAsset(assetFromApi, isPublished = true) {
   if (asset.cover) {
     if (!isEmpty(asset.cover?.id)) {
       asset.cover = getFileUrl(asset.cover.id);
-    }
-    if (asset.cover instanceof File) {
+    } else if (asset.cover instanceof File) {
       asset.cover = URL.createObjectURL(asset.cover);
+    } else if (isString(asset.cover)) {
+      asset.cover = getFileUrl(asset.cover);
     }
   }
 

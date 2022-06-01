@@ -19,18 +19,28 @@ import {
   ContextContainer,
   Grid,
   InputWrapper,
+  LoadingOverlay,
   MultiSelect,
   Select,
   Textarea,
   TextInput,
 } from '@bubbles-ui/components';
+import { useLocale, useStore } from '@common';
+import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
+import CardWrapper from '@leebrary/components/CardWrapper';
 
-export default function Task({ event, form, classes, disabled, allProps: { classCalendars } }) {
+const { classByIdsRequest } = require('@academic-portfolio/request');
+
+export default function Task({ event, form, classes, disabled, allProps }) {
+  const locale = useLocale();
+  const { classCalendars } = allProps;
   const {
     Controller,
     control,
     formState: { errors },
   } = form;
+
+  const [store, render] = useStore();
 
   const [t] = useTranslateLoader(prefixPN('task_mode_event_type'));
   const { t: tCommon } = useCommonTranslate('forms');
@@ -71,6 +81,20 @@ export default function Task({ event, form, classes, disabled, allProps: { class
     getKanbanColumns();
   }, []);
 
+  async function loadInstance() {
+    store.instance = await getAssignableInstance({ id: store.instanceId });
+    store.classes = await classByIdsRequest(store.instance.classes);
+    console.log(store.instance, store.classes);
+    render();
+  }
+
+  useEffect(() => {
+    if (allProps.defaultValues?.data?.instanceId) {
+      store.instanceId = allProps.defaultValues.data.instanceId;
+      loadInstance();
+    }
+  }, [allProps.defaultValues]);
+
   useEffect(() => {
     getTranslationColumns();
   }, [columns]);
@@ -103,6 +127,24 @@ export default function Task({ event, form, classes, disabled, allProps: { class
 
   const subtask = form.watch('subtask');
   const formClasses = form.watch('classes');
+
+  if (store.instanceId) {
+    if (store.instance) {
+      return (
+        <CardWrapper
+          onClick={() => {
+            console.log('Holaaaaa');
+          }}
+          item={{ original: store.instance.assignable.asset }}
+          category={`assignables.${store.instance.assignable.role}`}
+          variant={store.instance.assignable.role}
+          locale={locale}
+          single
+        />
+      );
+    }
+    return <LoadingOverlay visible />;
+  }
 
   return (
     <ContextContainer>
