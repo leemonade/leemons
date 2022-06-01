@@ -46,11 +46,13 @@ function UserProgramCalendar({ program, classe, session }) {
   function getEvents() {
     const events = [];
     const calendarIds = map(store.calendarFilters, 'value');
-    const programCalendar = find(store.centerData.calendars, {
-      key: `plugins.calendar.program.${program.id}`,
-    });
-    if (programCalendar) {
-      calendarIds.push(programCalendar.id);
+    if (program) {
+      const programCalendar = find(store.centerData.calendars, {
+        key: `plugins.calendar.program.${program.id}`,
+      });
+      if (programCalendar) {
+        calendarIds.push(programCalendar.id);
+      }
     }
     forEach(store.centerData.events, (event) => {
       if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
@@ -91,6 +93,7 @@ function UserProgramCalendar({ program, classe, session }) {
   }
 
   async function load() {
+    console.log('wtf');
     store.centers = getCentersWithToken();
     if (store.centers) {
       const promises = [getCalendarsToFrontendRequest(store.centers[0].token)];
@@ -163,7 +166,9 @@ function UserProgramCalendar({ program, classe, session }) {
   }
 
   React.useEffect(() => {
-    if ((program || classe) && !evLoading) load();
+    if ((program || classe) && !evLoading) {
+      load();
+    }
   }, [program, classe, evLoading]);
 
   useEffect(() => {
@@ -173,9 +178,11 @@ function UserProgramCalendar({ program, classe, session }) {
     };
   });
 
+  console.log('Hola 1', store);
+
   if (store.loading) return null;
 
-  // TODO VER CON JOHAN COMO FILTRAR SOLO LOS EVENTOS DEL PROGRAMA
+  console.log('Hola 2');
 
   return (
     <Box className={styles.root}>

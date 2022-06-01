@@ -17,7 +17,7 @@ import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getCentersWithToken } from '@users/session';
 import * as _ from 'lodash';
-import { forEach, keyBy, map } from 'lodash';
+import { keyBy } from 'lodash';
 import tKeys from '@multilanguage/helpers/tKeys';
 import { useHistory } from 'react-router-dom';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
@@ -138,6 +138,7 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
         });
       }
 
+      /*
       const start = new Date();
       const end = new Date();
       end.setDate(end.getDate() + 5);
@@ -162,6 +163,7 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
         }
         return toReturn;
       });
+       */
 
       cols.push({
         id: column.id,
@@ -276,7 +278,7 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
           <Text size="lg" color="primary" className={styles.title}>
             {t('kanban')}
           </Text>
-          <Text color="soft">{t('description')}</Text>
+          {/* <Text color="soft">{t('description')}</Text> */}
         </Box>
         <Button variant="link" onClick={() => history.push('/private/calendar/kanban')}>
           {t('showAllKanban')}

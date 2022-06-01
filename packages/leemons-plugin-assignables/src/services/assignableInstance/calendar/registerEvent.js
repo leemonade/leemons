@@ -11,10 +11,11 @@ module.exports = async function registerEvent(
       title: assignable.asset.name,
       isPrivate: true,
       type: 'plugins.calendar.task',
-      startDate: typeof dates.start === 'string' ? dates.start : dates.start.toISOString(),
+      startDate: typeof dates.deadline === 'string' ? dates.deadline : dates.deadline.toISOString(), // typeof dates.start === 'string' ? dates.start : dates.start.toISOString(),
       endDate: typeof dates.deadline === 'string' ? dates.deadline : dates.deadline.toISOString(),
       data: {
         instanceId: id,
+        // classes,
       },
     },
     { transacting }
