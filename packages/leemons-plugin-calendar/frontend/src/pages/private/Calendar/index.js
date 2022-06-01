@@ -14,10 +14,12 @@ import { useCalendarEventModal } from '@calendar/components/calendar-event-modal
 import hooks from 'leemons-hooks';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@calendar/helpers/prefixPN';
+import { useLocale } from '@common';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
 import useTransformEvent from '../../../helpers/useTransformEvent';
 
 function Calendar({ session }) {
+  const locale = useLocale();
   const ref = useRef({ loading: true });
 
   const [transformEv, evLoading] = useTransformEvent();
@@ -272,7 +274,7 @@ function Calendar({ session }) {
           addEventClick={onNewEvent}
           events={ref.current.centersDataById[ref.current.center.id].events}
           {...fullCalendarConfigs}
-          locale={session?.locale}
+          locale={locale}
           messages={{
             month: t('month'),
             week: t('week'),

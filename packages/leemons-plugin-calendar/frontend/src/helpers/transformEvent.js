@@ -19,7 +19,6 @@ export default function transformEvent(_event, calendars, t) {
     if (!calendar) {
       calendar = calendarsByKey[event.calendar];
     }
-    console.log(calendar);
     event.icon = calendar.icon;
     event.bgColor = calendar.bgColor;
     event.borderColor = calendar.borderColor;
