@@ -225,6 +225,15 @@ function Calendar({ session }) {
       <Box style={{ width: '250px', height: '100vh' }}>
         <CalendarSubNavFilters
           style={{ position: 'static' }}
+          messages={{
+            title: t('calendar'),
+            centers: t('centers'),
+            closeTooltip: t('close'),
+          }}
+          pages={[
+            { label: t('calendar'), value: 'calendar' },
+            { label: t('schedule'), value: 'schedule' },
+          ]}
           value={ref.current.centersDataById[ref.current.center.id].sections}
           onChange={(event) => {
             ref.current.centersDataById[ref.current.center.id].sections = event;

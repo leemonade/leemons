@@ -22,6 +22,10 @@ module.exports = {
     previous: 'Anterior',
     next: 'Siguiente',
     showWeekends: 'Mostrar fines de semana',
+    calendar: 'Calendario',
+    schedule: 'Horario',
+    centers: 'Centros',
+    close: 'Cerrar',
   },
   event_modal: {
     name: 'Nombre',

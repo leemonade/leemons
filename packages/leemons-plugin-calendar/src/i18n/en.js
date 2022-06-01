@@ -22,6 +22,10 @@ module.exports = {
     previous: 'Previous',
     next: 'Next',
     showWeekends: 'Show weekends',
+    calendar: 'Calendar',
+    schedule: 'Schedule',
+    centers: 'Centers',
+    close: 'Close',
   },
   event_modal: {
     name: 'Name',
