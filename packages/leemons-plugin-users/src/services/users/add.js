@@ -6,6 +6,7 @@ const { exist } = require('./exist');
 const {
   addCalendarToUserAgentsIfNeedByUser,
 } = require('../user-agents/calendar/addCalendarToUserAgentsIfNeedByUser');
+const { addUserAvatar } = require('./addUserAvatar');
 
 /**
  * Add a user to platform
@@ -45,7 +46,6 @@ async function add(
           name,
           surnames,
           secondSurname,
-          avatar,
           birthdate: birthdate ? global.utils.sqlDatetime(birthdate) : birthdate,
           email,
           gender,
@@ -64,6 +64,9 @@ async function add(
         })),
         { transacting }
       );
+
+      // --- Asset
+      await addUserAvatar(user, avatar, { transacting });
 
       if (tags && _.isArray(tags) && tags.length) {
         const tagsService = leemons.getPlugin('common').services.tags;

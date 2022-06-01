@@ -30,6 +30,9 @@ module.exports = {
     avatar: {
       type: 'string',
     },
+    avatarAsset: {
+      type: 'string',
+    },
     birthdate: {
       type: 'datetime',
       options: {

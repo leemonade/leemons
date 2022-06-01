@@ -12,10 +12,11 @@ const { validateAddUsersBulkForm } = require('../../validations/forms');
 const { sendWelcomeEmailToUser } = require('./sendWelcomeEmailToUser');
 const { setUserForRegisterPassword } = require('./setUserForRegisterPassword');
 const { sendNewProfileAddedEmailToUser } = require('./sendNewProfileAddedEmailToUser');
+const { addUserAvatar } = require('./addUserAvatar');
 
 async function addUserBulk(
   role,
-  { tags, password, birthdate, ...userData },
+  { tags, password, birthdate, avatar, ...userData },
   ctx,
   { profile, transacting } = {}
 ) {
@@ -53,6 +54,10 @@ async function addUserBulk(
     if (!isNewUser) {
       await sendNewProfileAddedEmailToUser(user, profile, ctx, { transacting });
     }
+  }
+
+  if (isNewUser) {
+    await addUserAvatar({ ...user, userAgents: [userAgent] }, avatar, { transacting });
   }
 
   if (tags && _.isArray(tags) && tags.length) {

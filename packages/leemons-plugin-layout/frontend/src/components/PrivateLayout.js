@@ -5,6 +5,7 @@ import { Box, createStyles, LoadingOverlay, MAIN_NAV_WIDTH } from '@bubbles-ui/c
 import MainMenu from '@menu-builder/components/mainMenu';
 import { getProfilesRequest } from '@academic-portfolio/request';
 import { getCookieToken } from '@users/session';
+import { useHistory } from 'react-router-dom';
 import AlertStack from './AlertStack';
 import { LayoutContext } from '../context/layout';
 
@@ -33,23 +34,28 @@ const PrivateLayoutStyles = createStyles((theme, { width }) => ({
 
 const PrivateLayout = ({ children }) => {
   const { layoutState, setLayoutState } = useContext(LayoutContext);
+  const history = useHistory();
 
   const setState = (newState) => {
     setLayoutState({ ...layoutState, ...newState });
   };
 
   const handleChangeProfile = async () => {
-    const profileState = { profileChecked: true, isAcademicMode: true };
-    const token = getCookieToken(true);
-    if (!isEmpty(token?.profile)) {
-      const { profiles: academicProfiles } = await getProfilesRequest();
+    try {
+      const profileState = { profileChecked: true, isAcademicMode: true };
+      const token = getCookieToken(true);
+      if (!isEmpty(token?.profile)) {
+        const { profiles: academicProfiles } = await getProfilesRequest();
 
-      profileState.isAcademicMode = [academicProfiles.teacher, academicProfiles.student].includes(
-        token?.profile
-      );
+        profileState.isAcademicMode = [academicProfiles.teacher, academicProfiles.student].includes(
+          token?.profile
+        );
+      }
+
+      setState(profileState);
+    } catch (error) {
+      history.push('/users/login');
     }
-
-    setState(profileState);
   };
 
   useEffect(() => {
