@@ -22,7 +22,7 @@ import ImagePicker from '@leebrary/components/ImagePicker';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import getUserFullName from '@users/helpers/getUserFullName';
 import { ScheduleInput } from '@timetable/components';
-import { LocaleDate, useStore } from '@common';
+import { isValidHttpUrl, LocaleDate, useStore } from '@common';
 import { filter, find, map } from 'lodash';
 import { getUserAgentsInfoRequest } from '@users/request';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
@@ -76,6 +76,8 @@ const TreeClassroomDetail = ({
       group: classe?.groups?.id,
       color: classe?.color,
       seats: classe?.seats,
+      address: classe?.address,
+      virtualUrl: classe?.virtualUrl,
       schedule: classe?.schedule ? { days: classe.schedule } : { days: [] },
       teacher: teacher ? teacher.teacher : null,
     };
@@ -283,6 +285,32 @@ const TreeClassroomDetail = ({
                 <InputWrapper label={messages.imageLabel}>
                   <ImagePicker {...field} />
                 </InputWrapper>
+              )}
+            />
+          </Box>
+
+          <Box>
+            <Controller
+              control={control}
+              name="address"
+              render={({ field }) => <TextInput label={messages.addressLabel} {...field} />}
+            />
+          </Box>
+
+          <Box>
+            <Controller
+              control={control}
+              rules={{
+                validate: (value) => {
+                  if (value) {
+                    return isValidHttpUrl(value) ? true : messages.notValidUrl;
+                  }
+                  return true;
+                },
+              }}
+              name="virtualUrl"
+              render={({ field }) => (
+                <TextInput label={messages.virtualUrlLabel} {...field} error={errors.virtualUrl} />
               )}
             />
           </Box>

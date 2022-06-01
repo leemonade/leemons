@@ -772,6 +772,7 @@ function validateGetSubjectCredits(data) {
     throw validator.error;
   }
 }
+
 function validateGetSubjectsCredits(data) {
   const validator = new LeemonsValidator(getSubjectsCreditsSchema);
 
@@ -1057,6 +1058,8 @@ const updateClassSchema = {
     substage: stringSchemaNullable,
     seats: integerSchemaNullable,
     classroom: stringSchemaNullable,
+    address: stringSchemaNullable,
+    virtualUrl: stringSchemaNullable,
     teachers: {
       type: 'array',
       nullable: true,

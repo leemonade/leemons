@@ -37,6 +37,12 @@ module.exports = {
     color: {
       type: 'string',
     },
+    address: {
+      type: 'string',
+    },
+    virtualUrl: {
+      type: 'string',
+    },
   },
   primaryKey: {
     type: 'uuid',

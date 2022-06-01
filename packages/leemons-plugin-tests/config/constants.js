@@ -91,7 +91,7 @@ const menuItems = [
   {
     item: {
       key: 'test',
-      order: 1,
+      order: 2,
       parentKey: 'tests',
       url: '/private/tests',
       label: {
@@ -106,16 +106,52 @@ const menuItems = [
       },
     ],
   },
+  {
+    item: {
+      key: 'new-test',
+      order: 3,
+      parentKey: 'tests',
+      url: '/private/tests/new',
+      label: {
+        en: 'New tests',
+        es: 'Nuevo test',
+      },
+    },
+    permissions: [
+      {
+        permissionName: permissionNames.tests,
+        actionNames: ['admin'],
+      },
+    ],
+  },
   // Question banks
   {
     item: {
       key: 'questionBanks',
-      order: 2,
+      order: 4,
       parentKey: 'tests',
       url: '/private/tests/questions-banks',
       label: {
         en: 'Questions banks',
         es: 'Bancos de preguntas',
+      },
+    },
+    permissions: [
+      {
+        permissionName: permissionNames.questionBanks,
+        actionNames: ['admin'],
+      },
+    ],
+  },
+  {
+    item: {
+      key: 'new-questionBanks',
+      order: 5,
+      parentKey: 'tests',
+      url: '/private/tests/questions-banks/new',
+      label: {
+        en: 'New question bank',
+        es: 'Nuevo banco de preguntas',
       },
     },
     permissions: [

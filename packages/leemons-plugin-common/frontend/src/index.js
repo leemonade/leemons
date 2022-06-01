@@ -17,6 +17,7 @@ export * from './tags';
 export * from './LocaleDate';
 export * from './numberToEncodedLetter';
 export * from './linkify';
+export * from './isValidHttpUrl';
 
 export {
   formWithTheme,

@@ -297,8 +297,7 @@ module.exports = {
     newsubject: 'Nueva asignatura',
     addUsers: {
       title: 'Asignar estudiantes',
-      description:
-        'Asignar estudiantes a todas las clases de este nivel.',
+      description: 'Asignar estudiantes a todas las clases de este nivel.',
       note: 'NOTE:',
       noteDescription:
         'Los estudiantes seleccionados serán asignados a cada clase. Para consultar o editar los estudiantes de una clase concreta, acceder al detalle de la misma.',
@@ -316,8 +315,7 @@ module.exports = {
       studentsWarning:
         '{{count}} estudiantes ya están en alguna clase pero pueden ser añadidos al resto de clases.',
       seatsError1: 'Las siguientes clases ya están completas:',
-      seatsError2:
-        'Acceder a cada clase de forma individual para añadir o eliminar estudiantes.',
+      seatsError2: 'Acceder a cada clase de forma individual para añadir o eliminar estudiantes.',
       seatsClassError: '- {{className}} ({{seats}} plazas disponibles)',
       addStudent: 'Añadir estudiante',
       userAlreadySelected: 'Estudiante ya seleccionado',
@@ -424,6 +422,9 @@ module.exports = {
       knowledgeLabel: 'Área de conocimiento:',
       colorLabel: 'Color:',
       scheduleLabel: 'Calendario:',
+      addressLabel: 'Dirección:',
+      virtualUrlLabel: 'Aula virtual:',
+      notValidUrl: 'URL no válida',
       teacherLabel: 'Profesor tutor:',
       teacherDescription: 'Asignar profesor tutor a esta clase',
       studentsLabel: 'Estudiantes:',
