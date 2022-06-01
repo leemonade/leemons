@@ -43,7 +43,7 @@ const menuItems = [
       url: '/private/leebrary/',
       label: {
         en: 'Library',
-        es: 'Library',
+        es: 'Librería',
       },
     },
     permissions: [

@@ -36,10 +36,6 @@
     "path": "../../packages/leemons-plugin-calendar/frontend"
   },
   {
-    "name": "families",
-    "path": "../../packages/leemons-plugin-families/frontend"
-  },
-  {
     "name": "package-manager",
     "path": "../../packages/leemons-plugin-package-manager/frontend"
   },
@@ -50,10 +46,6 @@
   {
     "name": "leebrary-tasks",
     "path": "../../packages/leemons-provider-leebrary-tasks/frontend"
-  },
-  {
-    "name": "families-emergency-numbers",
-    "path": "../../packages/leemons-plugin-families-emergency-numbers/frontend"
   },
   {
     "name": "curriculum",

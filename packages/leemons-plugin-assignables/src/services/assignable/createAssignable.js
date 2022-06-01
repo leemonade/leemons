@@ -83,12 +83,21 @@ module.exports = async function createAssignable(
 
       // EN: Create the resources
       // ES: Crea los recursos
+      let resourcesToSave = null;
       if (resources?.length) {
-        await Promise.all(
+        const newResources = await Promise.all(
           resources.map((resource) =>
-            duplicateAsset(resource, { preserveName: true, userSession, transacting })
+            duplicateAsset(resource, {
+              preserveName: true,
+              public: 1,
+              indexable: 0,
+              userSession,
+              transacting,
+            })
           )
         );
+
+        resourcesToSave = newResources.map((resource) => resource.id);
       }
 
       // EN: Create the assignable for the given version.
@@ -102,7 +111,7 @@ module.exports = async function createAssignable(
             relatedAssignables: JSON.stringify(relatedAssignables),
             submission: JSON.stringify(submission),
             metadata: JSON.stringify(metadata),
-            resources: JSON.stringify(resources),
+            resources: JSON.stringify(resourcesToSave),
           },
           { transacting }
         );
@@ -129,7 +138,7 @@ module.exports = async function createAssignable(
           await publishAssignable.call(this, assignableCreated.id, { transacting, userSession });
         }
 
-        return { id: assignableCreated.id, ...assignable };
+        return { id: assignableCreated.id, ...assignable, resources: resourcesToSave };
       } catch (e) {
         throw new Error(`Failed to create assignable: ${e.message}`);
       }

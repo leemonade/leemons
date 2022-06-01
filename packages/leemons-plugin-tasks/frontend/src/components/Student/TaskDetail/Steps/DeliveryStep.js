@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
-import { ContextContainer, Alert, HtmlText } from '@bubbles-ui/components';
+import { ContextContainer, Alert, HtmlText, Title } from '@bubbles-ui/components';
 
 function SubmissionState({ status, error, labels: _labels }) {
   const labels = _labels?.submission_state;
@@ -93,7 +93,10 @@ export default function DeliveryStep({ assignation, onSave, labels: _labels, dis
   const C = useMemo(() => Component(submission.type), [submission.type]);
 
   return (
-    <ContextContainer title={labels.submission}>
+    <ContextContainer>
+      <Title color="primary" order={2}>
+        {labels?.submission}
+      </Title>
       <HtmlText>{submission?.description}</HtmlText>
       <C
         assignation={assignation}

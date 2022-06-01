@@ -195,17 +195,28 @@ module.exports = async function updateAssignable(
   }
 
   if (diff.includes('resources')) {
+    const resourcesToSave = [];
     const newResources = _.difference(assignableObject.resources, currentAssignable.resources);
     const resourcesToDelete = _.difference(currentAssignable.resources, assignableObject.resources);
     const resourcesToKeep = _.intersection(currentAssignable.resources, assignableObject.resources);
+
+    resourcesToSave.push(...resourcesToKeep);
 
     const promises = [];
 
     if (newResources.length) {
       promises.push(
-        ...newResources.map((resource) =>
-          duplicateAsset(resource, { preserveName: true, userSession, transacting })
-        )
+        ...newResources.map(async (resource) => {
+          const duplicatedAsset = await duplicateAsset(resource, {
+            preserveName: true,
+            public: 1,
+            indexable: 0,
+            userSession,
+            transacting,
+          });
+
+          resourcesToSave.push(duplicatedAsset.id);
+        })
       );
     }
 
@@ -217,7 +228,8 @@ module.exports = async function updateAssignable(
 
     await Promise.all(promises);
 
-    updateObject.resources = JSON.stringify([...resourcesToKeep, ...newResources]);
+    object.resources = resourcesToSave;
+    updateObject.resources = JSON.stringify(resourcesToSave);
   }
 
   await assignables.update({ id }, updateObject, {

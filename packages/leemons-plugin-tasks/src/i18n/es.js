@@ -389,6 +389,12 @@ module.exports = {
       },
       submission: 'Entrega',
     },
+    limitedTimeAlert: {
+      beforeStart: 'Antes de empezar',
+      noTimeLimit: 'Sin límite de tiempo',
+      withoutPause: 'Sin pausa',
+      howItWorks: '¿Cómo funciona?',
+    },
   },
   task_correction: {
     punctuation: 'Puntuación',

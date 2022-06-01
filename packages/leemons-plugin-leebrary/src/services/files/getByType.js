@@ -15,7 +15,7 @@ async function getByType(type, { files, columns, transacting } = {}) {
   }
 
   if (type && !isEmpty(type)) {
-    query.type_$contains = type;
+    query.type_$contains = type === 'document' ? 'application' : type;
   }
 
   const items = await tables.files.find(query, { columns, transacting });

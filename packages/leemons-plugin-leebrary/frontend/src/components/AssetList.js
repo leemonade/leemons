@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { find, isEmpty, isFunction, isNil, isString } from 'lodash';
+import { find, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
 import {
   Box,
   LoadingOverlay,
@@ -10,7 +10,6 @@ import {
   Select,
   Stack,
   Switch,
-  Title,
   useDebouncedValue,
   useResizeObserver,
 } from '@bubbles-ui/components';
@@ -132,10 +131,13 @@ const AssetList = ({
   const loadAssetTypes = async (categoryId) => {
     try {
       const response = await getAssetTypesRequest(categoryId);
-      const types = response.types.map((type) => ({
-        label: prepareAssetType(type),
-        value: prepareAssetType(type, false),
-      }));
+      const types = uniqBy(
+        response.types.map((type) => ({
+          label: prepareAssetType(type),
+          value: prepareAssetType(type, false),
+        })),
+        'value'
+      );
       setAssetTypes(types);
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
@@ -335,6 +337,16 @@ const AssetList = ({
       setAssetTypes(null);
     }
   }, [category]);
+
+  useEffect(() => {
+    if(assetTypes && !isEmpty(assetTypes) && assetTypes[0].value !== '') {
+      const label = t('labels.allResourceTypes');
+
+      if(label !== 'labels.allResourceTypes') {
+        setAssetTypes([ {label, value: ''}, ...assetTypes]);
+      }
+    }
+  }, [assetTypes, t]);
 
   useEffect(() => {
     loadAssetsData();
@@ -563,7 +575,7 @@ const AssetList = ({
               data={assetTypes}
               value={assetType}
               onChange={onTypeChange}
-              placeholder="Type of resource"
+              placeholder={t('labels.resourceTypes')}
             />
           )}
         </Stack>

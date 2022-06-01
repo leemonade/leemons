@@ -3,7 +3,7 @@ const { exists: assetExists } = require('../exists');
 const { tables } = require('../../tables');
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
 
-async function add(fileId, assetId, { userSession, transacting } = {}) {
+async function add(fileId, assetId, { skipPermissions, userSession, transacting } = {}) {
   try {
     // EN: Get the user permissions
     // ES: Obtener los permisos del usuario
@@ -11,11 +11,12 @@ async function add(fileId, assetId, { userSession, transacting } = {}) {
 
     // EN: Check if the user has permissions to update the asset
     // ES: Comprobar si el usuario tiene permisos para actualizar el activo
-    if (!permissions.edit) {
+    if (!permissions.edit && !skipPermissions) {
       throw new global.utils.HttpError(401, "You don't have permissions to update this asset");
     }
 
     if (!(await fileExists(fileId, { transacting }))) {
+      console.log('ERROR fileId:', fileId);
       throw new global.utils.HttpError(422, 'File not found');
     }
 

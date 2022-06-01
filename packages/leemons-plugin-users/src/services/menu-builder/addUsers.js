@@ -4,6 +4,7 @@ async function addUsers() {
   return add(
     {
       key: 'users-list',
+      order: 3,
       parentKey: 'users',
       url: '/private/users/list',
       label: {
