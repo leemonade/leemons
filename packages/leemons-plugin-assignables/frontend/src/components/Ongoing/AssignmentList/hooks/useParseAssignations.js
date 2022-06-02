@@ -86,15 +86,15 @@ function getTeacherStatus(assignation) {
     closed.isSame(today) ||
     closed.isBefore(today)
   ) {
-    return 'Finished';
+    return 'closed';
   }
   if (deadline.isSame(today) || deadline.isBefore(today)) {
-    return 'Completed';
+    return 'closed';
   }
   if (start.isSame(today) || start.isBefore(today)) {
-    return 'Started';
+    return 'opened';
   }
-  return 'Assigned';
+  return 'assigned';
 }
 
 function getTimeReferenceColor(date) {
@@ -146,7 +146,6 @@ function StudentActions({ assignation, labels }) {
   const redirectToInstance = useCallback(() => history.push(activityUrl), [history, activityUrl]);
   const redirectToRevision = useCallback(() => history.push(revisionUrl), [history, revisionUrl]);
 
-  // TRANSLATE: Translate buttons
   if (finished) {
     const hasCorrections = assignation?.grades
       ?.filter((grade) => grade.type === 'main')
@@ -197,6 +196,7 @@ async function parseAssignationForTeacherView(instance, labels) {
   const classData = await getClassData(instance.classes, { multiSubject: labels.multiSubject });
   const studentsStatus = getStudentsStatusForTeacher(instance);
   const status = getTeacherStatus(instance);
+  const localizedStatus = labels?.activity_status?.[status];
 
   return {
     ...instance,
@@ -204,7 +204,7 @@ async function parseAssignationForTeacherView(instance, labels) {
       deadline: '-',
       ...parsedDates,
     },
-    status,
+    status: localizedStatus,
     subject: classData.name,
     ...studentsStatus,
     actions: <TeacherActions id={instance.id} />,
