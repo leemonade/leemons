@@ -23,6 +23,10 @@ export default function transformEvent(_event, calendars, { t, session }) {
     event.bgColor = calendar.bgColor;
     event.borderColor = calendar.borderColor;
     event.calendarName = calendar.name;
+    if (calendar.isUserCalendar && !classes.length) {
+      event.image = calendar.image;
+      event.calendarName = null;
+    }
     if (!event.icon && !calendar.isClass && !calendar.isUserCalendar) {
       event.icon = '/public/assets/svgs/alarm-bell.svg';
     }

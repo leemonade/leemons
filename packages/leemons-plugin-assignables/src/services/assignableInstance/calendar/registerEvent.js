@@ -5,7 +5,9 @@ module.exports = async function registerEvent(
   classes,
   { id, dates, transacting } = {}
 ) {
-  return leemons.getPlugin('calendar').services.calendar.addEvent(
+  const calendarService = leemons.getPlugin('calendar').services.calendar;
+  const calendarClasses = await calendarService.getCalendarsByClass(classes);
+  return calendarService.addEvent(
     _.map(classes, (classe) => `plugins.calendar.class.${classe}`),
     {
       title: assignable.asset.name,
@@ -15,7 +17,7 @@ module.exports = async function registerEvent(
       endDate: typeof dates.deadline === 'string' ? dates.deadline : dates.deadline.toISOString(),
       data: {
         instanceId: id,
-        // classes,
+        classes: _.map(calendarClasses, 'calendar'),
       },
     },
     { transacting }

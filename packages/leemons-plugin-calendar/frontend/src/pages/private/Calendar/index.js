@@ -82,12 +82,12 @@ function Calendar({ session }) {
         if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
           // eslint-disable-next-line consistent-return
           _.forEach(event.data.classes, (calendar) => {
-            if (calendarsByKey[calendar].showEvents) {
+            if (calendarsByKey[calendar]?.showEvents) {
               events.push(transformEv(event, data.calendars));
               return false;
             }
           });
-        } else if (calendarsByKey[event.calendar].showEvents) {
+        } else if (calendarsByKey[event.calendar]?.showEvents) {
           events.push(transformEv(event, data.calendars));
         }
       }
