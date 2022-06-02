@@ -7,7 +7,7 @@ import { TestStyles } from '../pages/private/tests/StudentInstance/TestStyles.st
 import { StudentInstanceStyles } from '../pages/private/tests/StudentInstance/StudentInstance.style';
 import QuestionList from '../pages/private/tests/StudentInstance/components/QuestionList';
 
-export default function ViewModeQuestions({ store: cStore, onReturn }) {
+export default function ViewModeQuestions({ viewMode = true, store: cStore, onReturn }) {
   const [t, translations] = useTranslateLoader(prefixPN('studentInstance'));
   const [store, render] = useStore({
     loading: true,
@@ -15,7 +15,7 @@ export default function ViewModeQuestions({ store: cStore, onReturn }) {
     isFirstStep: true,
     currentStep: 0,
     maxNavigatedStep: 0,
-    viewMode: true,
+    viewMode,
     embedded: true,
   });
 

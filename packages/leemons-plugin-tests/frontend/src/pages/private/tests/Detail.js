@@ -1,11 +1,15 @@
 import React from 'react';
 import {
+  ActivityAccordion,
+  ActivityAccordionPanel,
+  ActivityAnswersBar,
+  Badge,
   Box,
+  Button,
   ContextContainer,
-  InputWrapper,
+  ImageLoader,
   PageContainer,
-  ResponsiveBar,
-  Stack,
+  useAccordionState,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -13,62 +17,96 @@ import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
-import { PluginTestIcon } from '@bubbles-ui/icons/outline';
+import { ChevronRightIcon, PluginTestIcon } from '@bubbles-ui/icons/outline';
 import { forEach, keyBy } from 'lodash';
+import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import { getTestRequest } from '../../../request';
 import QuestionsTable from './components/QuestionsTable';
 import { questionTypeT } from '../questions-banks/components/QuestionForm';
+import ViewModeQuestions from '../../../components/ViewModeQuestions';
+import { ResultStyles } from './Result.style';
+import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
 
 export default function Detail() {
   const [t, t1V] = useTranslateLoader(prefixPN('testsDetail'));
   const [t2, t2V] = useTranslateLoader(prefixPN('questionsBanksDetail'));
+  const { classes: styles, cx } = ResultStyles({}, { name: 'Detail' });
 
-  // ----------------------------------------------------------------------
-  // SETTINGS
   const [store, render] = useStore({
     loading: true,
     isNew: false,
     currentStep: 0,
   });
 
+  const [accordionState, accordionFunctions] = useAccordionState({ initialState: {} });
+
   const history = useHistory();
   const params = useParams();
 
   function getStats() {
-    const questions = [];
-    const questionsIndex = {};
-    //
-    const categories = [];
-    const categoryIndex = {};
-    const categoriesById = keyBy(store.test.questionBank.categories, 'id');
+    const selectables = [];
+    const data = [];
 
-    forEach(store.test.questions, (question) => {
-      if (categoryIndex[question.category] === undefined) {
-        categories.push({
-          key: question.category ? categoriesById[question.category].value : t('undefined'),
-          value: 0,
+    if (store.test?.questions) {
+      let category = false;
+      let type = false;
+      const categoriesById = keyBy(store.test.questionBank.categories, 'id');
+      forEach(store.test.questions, (question) => {
+        const d = {
+          id: question.id,
+          status: null,
+        };
+        if (question.category) {
+          category = true;
+          d.category = categoriesById[question.category].value;
+        } else {
+          d.category = t('undefined');
+        }
+        if (question.type) {
+          type = true;
+          d.type = t2(questionTypeT[question.type]);
+        } else {
+          d.type = t('undefined');
+        }
+        data.push(d);
+      });
+      if (category) {
+        selectables.push({
+          value: 'category',
+          label: t('categories'),
         });
-        categoryIndex[question.category] = categories.length - 1;
       }
-      categories[categoryIndex[question.category]].value++;
-      if (questionsIndex[question.type] === undefined) {
-        questions.push({
-          key: t2(questionTypeT[question.type]),
-          value: 0,
+      if (type) {
+        selectables.push({
+          value: 'type',
+          label: t('questionTypes'),
         });
-        questionsIndex[question.type] = questions.length - 1;
       }
-      questions[questionsIndex[question.type]].value++;
-    });
-
-    return { categories, categoriesKeys: ['value'], questions, questionsKeys: ['value'] };
+    }
+    return { selectables, data, labels: { OK: t('ok'), KO: t('ko'), null: t('nsnc') } };
   }
 
   async function init() {
     try {
       const { test } = await getTestRequest(params.id, { withQuestionBank: true });
+      const { evaluationSystem } = await getProgramEvaluationSystemRequest(test.program);
       store.test = test;
       store.stats = getStats();
+      store.test.questionResponses = {};
+      forEach(store.test.questions, ({ id }) => {
+        store.test.questionResponses[id] = {
+          clues: 0,
+          points: 0,
+          status: null,
+        };
+      });
+      store.test.questionsInfo = calculeInfoValues(
+        store.test.questions.length,
+        evaluationSystem.maxScale.number,
+        evaluationSystem.minScale.number,
+        evaluationSystem.minScaleToPromote.number
+      );
+      store.evaluationSystem = evaluationSystem;
       render();
     } catch (error) {
       console.log(error);
@@ -80,65 +118,111 @@ export default function Detail() {
     history.push(`/private/tests/assign/${store.test.id}`);
   }
 
+  function goEditPage() {
+    history.push(`/private/tests/${store.test.id}`);
+  }
+
+  function toggleQuestionMode() {
+    store.useQuestionMode = !store.useQuestionMode;
+    render();
+  }
+
   React.useEffect(() => {
     if (params?.id && t1V && t2V) init();
   }, [params, t1V, t2V]);
 
+  const accordion = [];
+  if (store.stats?.data.length && store.stats?.selectables.length) {
+    accordion.push(
+      <ActivityAccordionPanel
+        key={1}
+        label={t('chartLabel')}
+        icon={
+          <Box style={{ position: 'relative', width: '23px', height: '23px' }}>
+            <ImageLoader className="stroke-current" src={'/public/tests/test-results-icon.svg'} />
+          </Box>
+        }
+        color="solid"
+      >
+        <Box p={20}>
+          <ActivityAnswersBar withLegend={false} {...store.stats} />
+        </Box>
+      </ActivityAccordionPanel>
+    );
+  }
+  if (store.test) {
+    accordion.push(
+      <ActivityAccordionPanel
+        key={2}
+        label={t('questions')}
+        rightSection={
+          <Box>
+            <Badge
+              label={store.test?.questions?.length}
+              size="md"
+              color="stroke"
+              closable={false}
+            />
+          </Box>
+        }
+        icon={
+          <Box style={{ position: 'relative', width: '22px', height: '24px' }}>
+            <ImageLoader className="stroke-current" src={'/public/tests/questions-icon.svg'} />
+          </Box>
+        }
+      >
+        <Box>
+          {store.useQuestionMode ? (
+            <ViewModeQuestions viewMode={false} store={store.test} onReturn={toggleQuestionMode} />
+          ) : (
+            <>
+              <Box className={styles.showTestBar}>
+                <Button rounded rightIcon={<ChevronRightIcon />} onClick={toggleQuestionMode}>
+                  {t('showInTests')}
+                </Button>
+              </Box>
+              <QuestionsTable withStyle hideCheckbox questions={store.test?.questions} />
+            </>
+          )}
+        </Box>
+      </ActivityAccordionPanel>
+    );
+  }
+
   return (
-    <ContextContainer fullHeight>
+    <ContextContainer
+      sx={(theme) => ({
+        backgroundColor: theme.colors.uiBackground02,
+        paddingBottom: theme.spacing[12],
+        overflow: 'auto',
+      })}
+      fullHeight
+      fullWidth
+    >
       <AdminPageHeader
         values={{
           title: store.test?.name,
         }}
         buttons={{
+          duplicate: t('edit'),
           edit: t('assign'),
         }}
         icon={<PluginTestIcon />}
         variant="teacher"
+        onDuplicate={() => goEditPage()}
         onEdit={() => goAssignPage()}
       />
 
       <PageContainer noFlex>
         <Box sx={(theme) => ({ paddingBottom: theme.spacing[12] })}>
-          {store.stats ? (
-            <Stack fullWidth>
-              <InputWrapper label={t('questionTypes')}>
-                <Box sx={() => ({ height: '400px' })}>
-                  <ResponsiveBar
-                    colors={{ scheme: 'nivo' }}
-                    data={store.stats.questions}
-                    keys={store.stats.questionsKeys}
-                    indexBy="key"
-                    colorBy="indexValue"
-                    margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
-                    padding={0.3}
-                  />
-                </Box>
-              </InputWrapper>
-              <InputWrapper label={t('categories')}>
-                <Box sx={() => ({ height: '400px' })}>
-                  <ResponsiveBar
-                    colors={{ scheme: 'nivo' }}
-                    data={store.stats.categories}
-                    keys={store.stats.categoriesKeys}
-                    indexBy="key"
-                    colorBy="indexValue"
-                    layout="horizontal"
-                    enableGridX={true}
-                    enableGridY={false}
-                    margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
-                    padding={0.3}
-                  />
-                </Box>
-              </InputWrapper>
-            </Stack>
-          ) : null}
-
-          {store.test ? (
-            <InputWrapper label={t('questions')}>
-              <QuestionsTable hideCheckbox questions={store.test?.questions} />
-            </InputWrapper>
-          ) : null}
+          <ActivityAccordion
+            state={accordionState}
+            onChange={(e) => {
+              accordionFunctions.setState(e);
+            }}
+          >
+            {accordion}
+          </ActivityAccordion>
         </Box>
       </PageContainer>
     </ContextContainer>

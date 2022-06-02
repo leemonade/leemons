@@ -13,7 +13,7 @@ import QuestionNotResponsedWarning from '../../QuestionNotResponsedWarning';
 export default function Index(props) {
   const { styles, saveQuestion, store, question, t, isLast } = props;
 
-  const currentResponseIndex = store.questionResponses[question.id].properties?.response;
+  const currentResponseIndex = store.questionResponses?.[question.id].properties?.response;
 
   function nextStep() {
     if (!store.viewMode) saveQuestion();

@@ -8,10 +8,10 @@ export default function QuestionNoteClues(props) {
   const { styles, question, store, t } = props;
   const clues = React.useMemo(
     () =>
-      filter(getQuestionClues(question, store.questionResponses[question.id].clues), {
+      filter(getQuestionClues(question, store.questionResponses?.[question.id].clues), {
         type: 'note',
       }),
-    [question, store.questionResponses[question.id].clues]
+    [question, store.questionResponses?.[question.id].clues]
   );
 
   if (clues.length) {
