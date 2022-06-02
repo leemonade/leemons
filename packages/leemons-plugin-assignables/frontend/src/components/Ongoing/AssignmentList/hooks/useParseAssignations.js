@@ -6,13 +6,12 @@ import {
   Badge,
   Text,
   ContextContainer,
-  ActionButton,
   Button,
   ImageLoader,
   Box,
   TextClamp,
 } from '@bubbles-ui/components';
-import { ViewOnIcon, ViewOffIcon } from '@bubbles-ui/icons/outline';
+import { ViewOnIcon, EditIcon } from '@bubbles-ui/icons/outline';
 import dayjs from 'dayjs';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
@@ -72,39 +71,13 @@ function getStudentsStatusForTeacher(assignation) {
 
     return (
       <ContextContainer direction="row">
-        {value}
+        {/* {value} */}
         <Badge severity={severity} label={`${percentage}%`} closable={false} radius="default " />
       </ContextContainer>
     );
   });
 
   return statusWithPercentage;
-}
-
-function getTeacherStatus(assignation) {
-  const { dates } = assignation;
-
-  const start = dayjs(dates.start || null);
-  const deadline = dayjs(dates.deadline || null);
-  const close = dayjs(dates.close || null);
-  const closed = dayjs(dates.closed || null);
-  const today = dayjs();
-
-  if (
-    close.isSame(today) ||
-    close.isBefore(today) ||
-    closed.isSame(today) ||
-    closed.isBefore(today)
-  ) {
-    return 'closed';
-  }
-  if (deadline.isSame(today) || deadline.isBefore(today)) {
-    return 'closed';
-  }
-  if (start.isSame(today) || start.isBefore(today)) {
-    return 'opened';
-  }
-  return 'assigned';
 }
 
 function getTimeReferenceColor(date) {
@@ -126,7 +99,15 @@ function TeacherActions({ id }) {
     [history]
   );
 
-  return <ActionButton icon={<ViewOnIcon />} onClick={redirectToInstance} />;
+  return (
+    <Button
+      iconOnly
+      variant="link"
+      color="primary"
+      rightIcon={<ViewOnIcon />}
+      onClick={redirectToInstance}
+    />
+  );
 }
 
 function StudentActions({ assignation, labels }) {
@@ -143,62 +124,80 @@ function StudentActions({ assignation, labels }) {
     role.evaluationDetailUrl.replace(':id', id).replace(':user', user)
   );
 
-  const dates = assignation?.instance?.dates;
-  const timestamps = assignation?.timestamps;
+  // const dates = assignation?.instance?.dates;
+  // const timestamps = assignation?.timestamps;
   const finished = assignation?.finished;
-  const started = assignation?.started;
+  // const started = assignation?.started;
 
-  const now = dayjs();
-  const visualization = dayjs(dates?.visualization);
-  const start = dayjs(dates?.start);
-  const alwaysAvailable = !(dates?.start && dates?.deadline);
+  // const now = dayjs();
+  // const visualization = dayjs(dates?.visualization);
+  // const start = dayjs(dates?.start);
+  // const alwaysAvailable = !(dates?.start && dates?.deadline);
 
   const redirectToInstance = useCallback(() => history.push(activityUrl), [history, activityUrl]);
   const redirectToRevision = useCallback(() => history.push(revisionUrl), [history, revisionUrl]);
 
   if (finished) {
-    const hasCorrections = assignation?.grades
-      ?.filter((grade) => grade.type === 'main')
-      .some((grade) => grade.visibleToStudent);
-    if (hasCorrections) {
-      return (
-        <Button variant="outline" onClick={redirectToRevision}>
-          {labels?.student_actions?.correction}
-        </Button>
-      );
-    }
     return (
-      <Button variant="outline" onClick={redirectToRevision}>
-        {labels?.student_actions?.review}
-      </Button>
+      <Button
+        iconOnly
+        variant="link"
+        color="primary"
+        rightIcon={<ViewOnIcon />}
+        onClick={redirectToRevision}
+      />
     );
+    // const hasCorrections = assignation?.grades
+    //   ?.filter((grade) => grade.type === 'main')
+    //   .some((grade) => grade.visibleToStudent);
+    // if (hasCorrections) {
+    //   return (
+    //     <Button variant="outline" onClick={redirectToRevision}>
+    //       {labels?.student_actions?.correction}
+    //     </Button>
+    //   );
+    // }
+    // return (
+    //   <Button variant="outline" onClick={redirectToRevision}>
+    //     {labels?.student_actions?.review}
+    //   </Button>
+    // );
   }
 
-  if (alwaysAvailable) {
-    if (timestamps?.start) {
-      return <Button onClick={redirectToInstance}>{labels?.student_actions?.continue}</Button>;
-    }
-    // Start <= x < Deadline
-    return <Button onClick={redirectToInstance}>{labels?.student_actions?.start}</Button>;
-  }
+  return (
+    <Button
+      iconOnly
+      variant="link"
+      color="primary"
+      rightIcon={<EditIcon />}
+      onClick={redirectToInstance}
+    />
+  );
+  // if (alwaysAvailable) {
+  //   if (timestamps?.start) {
+  //     return <Button onClick={redirectToInstance}>{labels?.student_actions?.continue}</Button>;
+  //   }
+  //   // Start <= x < Deadline
+  //   return <Button onClick={redirectToInstance}>{labels?.student_actions?.start}</Button>;
+  // }
 
-  if (started) {
-    if (timestamps?.start) {
-      return <Button onClick={redirectToInstance}>{labels?.student_actions?.continue}</Button>;
-    }
-    // Start <= x < Deadline
-    return <Button onClick={redirectToInstance}>{labels?.student_actions?.start}</Button>;
-  }
-  // Visualization <= x < Start
-  if (!now.isBefore(visualization) && visualization.isValid() && !started) {
-    return (
-      <Button variant="outline" onClick={redirectToInstance}>
-        {labels?.student_actions?.view}
-      </Button>
-    );
-  }
-  if (!now.isBefore(start) && start.isValid()) {
-  }
+  // if (started) {
+  //   if (timestamps?.start) {
+  //     return <Button onClick={redirectToInstance}>{labels?.student_actions?.continue}</Button>;
+  //   }
+  //   // Start <= x < Deadline
+  //   return <Button onClick={redirectToInstance}>{labels?.student_actions?.start}</Button>;
+  // }
+  // // Visualization <= x < Start
+  // if (!now.isBefore(visualization) && visualization.isValid() && !started) {
+  //   return (
+  //     <Button variant="outline" onClick={redirectToInstance}>
+  //       {labels?.student_actions?.view}
+  //     </Button>
+  //   );
+  // }
+  // if (!now.isBefore(start) && start.isValid()) {
+  // }
 }
 
 function ActivityItem({ instance }) {
@@ -260,11 +259,62 @@ function SubjectItem({ classData }) {
   );
 }
 
+function TimeReference({ assignation, status, labels }) {
+  if (status === 'closed') {
+    return (
+      <Text strong color="error">
+        {labels.notSubmitted}
+      </Text>
+    );
+  }
+  if (status === 'opened' || status === 'assigned' || status === 'started') {
+    const deadline = dayjs(assignation?.instance?.dates?.deadline || null);
+    const today = dayjs();
+    const color = getTimeReferenceColor(deadline);
+    if (deadline.isValid()) {
+      return (
+        <Text strong color={color}>
+          <LocaleRelativeTime
+            seconds={dayjs(assignation?.instance.dates.deadline).diff(today, 'seconds')}
+          />
+        </Text>
+      );
+    }
+
+    return labels?.[status];
+  }
+
+  if (status === 'submitted') {
+    return (
+      <Text strong color="success">
+        {labels.submitted}
+      </Text>
+    );
+  }
+
+  if (status === 'late') {
+    return (
+      <Text strong color="error">
+        {labels.late}
+      </Text>
+    );
+  }
+
+  if (status === 'evaluated') {
+    return (
+      <Text strong color="success">
+        {labels.evaluated}
+      </Text>
+    );
+  }
+
+  return labels.status || status;
+}
+
 async function parseAssignationForCommonView(instance, labels) {
   const parsedDates = parseDates(instance.dates, ['start', 'deadline']);
   const classData = await getClassData(instance.classes, { multiSubject: labels.multiSubject });
 
-  console.log('classData', classData);
   return {
     // TODO: Create unique id
     id: instance.id,
@@ -280,41 +330,40 @@ async function parseAssignationForCommonView(instance, labels) {
 
 async function parseAssignationForTeacherView(instance, labels) {
   const studentsStatus = getStudentsStatusForTeacher(instance);
-  const status = getTeacherStatus(instance);
-  const localizedStatus = labels?.activity_status?.[status];
 
   const commonData = await parseAssignationForCommonView(instance, labels);
   return {
     ...commonData,
-    status: localizedStatus,
     ...studentsStatus,
+    students: instance?.students?.length,
     actions: <TeacherActions id={instance.id} />,
   };
 }
 
 async function parseAssignationForStudentView(assignation, labels) {
   const { instance } = assignation;
-  const status = labels?.activity_status?.[getStatus(assignation, instance)];
-  const timeReference = dayjs(instance.dates.deadline).diff(dayjs(), 'seconds');
-  const timeReferenceColor = getTimeReferenceColor(instance.dates.deadline);
+  const _status = getStatus(assignation, instance);
+  const status = labels?.activity_status?.[_status];
 
   const commonData = await parseAssignationForCommonView(instance, labels);
   return {
     ...commonData,
     status,
     actions: <StudentActions assignation={assignation} labels={labels} />,
-    timeReference:
-      !instance.dates.deadline || instance.dates.end ? (
-        '-'
-      ) : (
-        <Text color={timeReferenceColor}>
-          {timeReference < 0 ? (
-            labels?.student_actions?.notSubmitted
-          ) : (
-            <LocaleRelativeTime seconds={Math.abs(timeReference)} short />
-          )}
-        </Text>
-      ),
+    timeReference: (
+      <TimeReference assignation={assignation} status={_status} labels={labels.activity_status} />
+    ),
+    // !instance.dates.deadline || instance.dates.end ? (
+    //   '-'
+    // ) : (
+    //   <Text color={timeReferenceColor}>
+    //     {timeReference < 0 ? (
+    //       labels?.student_actions?.notSubmitted
+    //     ) : (
+    //       <LocaleRelativeTime seconds={Math.abs(timeReference)} short />
+    //     )}
+    //   </Text>
+    // ),
   };
 }
 

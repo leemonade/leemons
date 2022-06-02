@@ -58,11 +58,7 @@ function useAssignmentsColumns() {
         ...commonColumns,
         {
           Header: labels.students || '',
-          accessor: 'students.length',
-        },
-        {
-          Header: labels.status || '',
-          accessor: 'status',
+          accessor: 'students',
         },
         {
           Header: labels.open || '',

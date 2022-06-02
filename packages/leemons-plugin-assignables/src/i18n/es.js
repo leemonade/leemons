@@ -147,6 +147,7 @@ module.exports = {
     late: 'Tarde',
     evaluated: 'Evaluada',
     submitted: 'Entregada',
+    notSubmitted: 'No entregada',
     // toBeEvaluated: 'Para evaluar',
     // endingSoon: 'Termina pronto',
   },
