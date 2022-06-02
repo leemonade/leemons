@@ -1,6 +1,7 @@
 module.exports = {
   userNavigator: {
     student: 'Student',
+    multiSubject: 'Multi-subject',
   },
   assignment_form: {
     labels: {
