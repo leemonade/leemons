@@ -55,6 +55,7 @@ function UserProgramCalendar({ program, classe, session }) {
       }
     }
     forEach(store.centerData.events, (event) => {
+      // console.log(event, calendarIds, calendarIds.includes(event.calendar), store.selectedCalendar);
       if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
         // eslint-disable-next-line consistent-return
         /*
@@ -93,7 +94,6 @@ function UserProgramCalendar({ program, classe, session }) {
   }
 
   async function load() {
-    console.log('wtf');
     store.centers = getCentersWithToken();
     if (store.centers) {
       const promises = [getCalendarsToFrontendRequest(store.centers[0].token)];
@@ -178,11 +178,7 @@ function UserProgramCalendar({ program, classe, session }) {
     };
   });
 
-  console.log('Hola 1', store);
-
-  if (store.loading) return null;
-
-  console.log('Hola 2');
+  // if (store.loading) return null;
 
   return (
     <Box className={styles.root}>
@@ -191,7 +187,7 @@ function UserProgramCalendar({ program, classe, session }) {
         <Text size="lg" color="primary" className={styles.title}>
           {t('calendar')}
         </Text>
-        {program ? (
+        {program && !store.loading ? (
           <Select
             data={[{ label: t('allSubjects'), value: '*' }, ...store.calendarFilters]}
             value={store.selectedCalendar || '*'}
@@ -200,12 +196,15 @@ function UserProgramCalendar({ program, classe, session }) {
         ) : null}
       </Stack>
       <Box className={styles.calendarContainer}>
-        <EventModal
-          centerToken={store.centers[0].token}
-          event={store.selectedEvent}
-          close={toggleEventModal}
-          classCalendars={store.calendarFilters}
-        />
+        {!store.loading ? (
+          <EventModal
+            centerToken={store.centers[0].token}
+            event={store.selectedEvent}
+            close={toggleEventModal}
+            classCalendars={store.calendarFilters}
+          />
+        ) : null}
+
         <BigCalendar
           style={{ height: '100%' }}
           currentView="week"
