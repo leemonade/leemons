@@ -192,9 +192,9 @@ function StudentActions({ assignation, labels }) {
   }
 }
 
-async function parseAssignationForTeacherView(instance) {
+async function parseAssignationForTeacherView(instance, labels) {
   const parsedDates = parseDates(instance.dates, ['start', 'deadline']);
-  const classData = await getClassData(instance.classes);
+  const classData = await getClassData(instance.classes, { multiSubject: labels.multiSubject });
   const studentsStatus = getStudentsStatusForTeacher(instance);
   const status = getTeacherStatus(instance);
 
@@ -215,7 +215,7 @@ async function parseAssignationForStudentView(assignation, labels) {
   const { instance } = assignation;
   const parsedDates = parseDates(instance.dates);
   const status = labels?.activity_status?.[getStatus(assignation, instance)];
-  const classData = await getClassData(instance.classes);
+  const classData = await getClassData(instance.classes, { multiSubject: labels.multiSubject });
   const timeReference = dayjs(instance.dates.deadline).diff(dayjs(), 'seconds');
   const timeReferenceColor = getTimeReferenceColor(instance.dates.deadline);
 
@@ -256,6 +256,7 @@ export default function useParseAssignations(assignations) {
   const [, translations] = useTranslateLoader([
     prefixPN('student_actions'),
     prefixPN('activity_status'),
+    prefixPN('multiSubject'),
   ]);
 
   const labels = useMemo(() => {
@@ -264,6 +265,7 @@ export default function useParseAssignations(assignations) {
       const data = {
         student_actions: _.get(res, prefixPN('student_actions')),
         activity_status: _.get(res, prefixPN('activity_status')),
+        multiSubject: _.get(res, prefixPN('multiSubject')),
       };
 
       // EN: Modify the data object here

@@ -162,6 +162,7 @@ module.exports = {
     upperIntermediate: 'Intermedio alto',
     advanced: 'Avanzado',
   },
+  multiSubject: 'Multi-asignatura',
   assignment_list: {
     teacher: {
       task: 'Tarea',
