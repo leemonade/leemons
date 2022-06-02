@@ -143,7 +143,7 @@ module.exports = {
           buttonPrev: 'Anterior',
           submission: {
             // EVERYTHING NEW
-            gradable: 'Calificable',
+            gradable: 'Esta tarea es calificable',
             title: 'Evaluación',
             checkDescription:
               'Esta tarea require la entrega de algún tipo de archivo, documento o enlace',

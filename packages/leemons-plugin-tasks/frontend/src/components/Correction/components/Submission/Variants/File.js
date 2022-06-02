@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, ContextContainer, Box, Loader } from '@bubbles-ui/components';
+import { Text, ContextContainer, Box, Loader, Anchor } from '@bubbles-ui/components';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 
@@ -8,6 +8,9 @@ export default function File({ assignation, labels }) {
   const [assets, setAssets] = useState([]);
 
   useEffect(async () => {
+    if (!submittedFiles?.length) {
+      return;
+    }
     let files = await getAssetsByIds(
       submittedFiles.map((file) => file.id),
       { showPublic: true, indexable: false }
@@ -45,7 +48,7 @@ export default function File({ assignation, labels }) {
         version: '',
         cover: null,
         color: preparedAsset.color,
-        url: preparedAsset.file.uri,
+        url: preparedAsset.url,
         icon: preparedAsset.icon,
         tags: preparedAsset.tags,
         category: preparedAsset.category,
@@ -68,7 +71,9 @@ export default function File({ assignation, labels }) {
           {assets.map((asset) => (
             <>
               {/* <LibraryCardEmbed asset={asset} /> */}
-              <Text key={asset.id}>{asset.name}</Text>
+              <Anchor target="_blank" href={asset.url} key={asset.id}>
+                {asset.name}
+              </Anchor>
             </>
           ))}
         </ContextContainer>

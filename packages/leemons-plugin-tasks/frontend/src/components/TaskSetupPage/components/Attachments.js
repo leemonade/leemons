@@ -13,6 +13,8 @@ import { uniqBy, map } from 'lodash';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';
+import { listCategoriesRequest } from '@leebrary/request';
+import { useApi } from '@common';
 
 const styles = createStyles((theme) => ({
   attachmentContainer: {
@@ -22,10 +24,24 @@ const styles = createStyles((theme) => ({
   },
 }));
 
+function useListCategories() {
+  const [categories] = useApi(listCategoriesRequest);
+
+  return useMemo(() => {
+    if (!categories.length) {
+      return [];
+    }
+    const desiredCategories = ['bookmarks', 'media-files'];
+    return categories.filter((category) => desiredCategories.includes(category.key));
+  }, [categories]);
+}
+
 export default function Attachments({ labels }) {
+  const categories = useListCategories();
   /*
     --- Drawer state ---
   */
+  const [assetType, setAssetType] = useState('');
   const [showAssetDrawer, setShowAssetDrawer] = useState(false);
   const onDrawerClose = useCallback(() => setShowAssetDrawer(false), [setShowAssetDrawer]);
   const toggleDrawer = useCallback(
@@ -138,8 +154,12 @@ export default function Attachments({ labels }) {
             creatable
             size={drawerSize}
             shadow={drawerSize <= 500}
+            assetType={assetType}
+            canChangeType
+            onTypeChange={setAssetType}
             onSelect={onAssetSelect}
             onClose={onDrawerClose}
+            categories={categories}
           />
         </form>
       </Box>
