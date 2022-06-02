@@ -2,10 +2,20 @@ import React, { useMemo, useContext, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash';
 import { LocaleDate, LocaleRelativeTime, useApi, unflatten } from '@common';
-import { Badge, Text, ContextContainer, ActionButton, Button } from '@bubbles-ui/components';
+import {
+  Badge,
+  Text,
+  ContextContainer,
+  ActionButton,
+  Button,
+  ImageLoader,
+  Box,
+  TextClamp,
+} from '@bubbles-ui/components';
 import { ViewOnIcon, ViewOffIcon } from '@bubbles-ui/icons/outline';
 import dayjs from 'dayjs';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prepareAsset from '@leebrary/helpers/prepareAsset';
 import globalContext from '../../../../contexts/globalContext';
 import getClassData from '../../../../helpers/getClassData';
 import getStatus from '../../../Details/components/UsersList/helpers/getStatus';
@@ -191,21 +201,90 @@ function StudentActions({ assignation, labels }) {
   }
 }
 
-async function parseAssignationForTeacherView(instance, labels) {
+function ActivityItem({ instance }) {
+  const assignable = instance?.assignable;
+  const preparedAsset = prepareAsset(assignable?.asset);
+  return (
+    <Box
+      sx={(theme) => ({
+        display: 'flex',
+        flexDirection: 'row',
+        gap: theme.spacing[2],
+        alignItems: 'center',
+      })}
+    >
+      <ImageLoader src={preparedAsset?.cover} width={36} height={36} />
+      <TextClamp lines={1}>
+        <Text>{assignable?.asset?.name}</Text>
+      </TextClamp>
+    </Box>
+  );
+}
+
+function SubjectItem({ classData }) {
+  return (
+    <Box
+      sx={(theme) => ({
+        display: 'flex',
+        flexDirection: 'row',
+        gap: theme.spacing[2],
+        alignItems: 'center',
+      })}
+    >
+      <Box
+        sx={() => ({
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 26,
+          height: 26,
+          borderRadius: '50%',
+          backgroundColor: classData?.color,
+        })}
+      >
+        <ImageLoader
+          sx={() => ({
+            filter: 'brightness(0) invert(1)',
+          })}
+          src={classData?.icon}
+          width={16}
+          height={16}
+        />
+      </Box>
+      <TextClamp lines={1}>
+        <Text>{classData?.groupName || classData?.name}</Text>
+      </TextClamp>
+    </Box>
+  );
+}
+
+async function parseAssignationForCommonView(instance, labels) {
   const parsedDates = parseDates(instance.dates, ['start', 'deadline']);
   const classData = await getClassData(instance.classes, { multiSubject: labels.multiSubject });
+
+  console.log('classData', classData);
+  return {
+    // TODO: Create unique id
+    id: instance.id,
+    activity: <ActivityItem instance={instance} />,
+    parsedDates: {
+      deadline: '-',
+      start: '-',
+      ...parsedDates,
+    },
+    subject: <SubjectItem classData={classData} />,
+  };
+}
+
+async function parseAssignationForTeacherView(instance, labels) {
   const studentsStatus = getStudentsStatusForTeacher(instance);
   const status = getTeacherStatus(instance);
   const localizedStatus = labels?.activity_status?.[status];
 
+  const commonData = await parseAssignationForCommonView(instance, labels);
   return {
-    ...instance,
-    parsedDates: {
-      deadline: '-',
-      ...parsedDates,
-    },
+    ...commonData,
     status: localizedStatus,
-    subject: classData.name,
     ...studentsStatus,
     actions: <TeacherActions id={instance.id} />,
   };
@@ -213,21 +292,14 @@ async function parseAssignationForTeacherView(instance, labels) {
 
 async function parseAssignationForStudentView(assignation, labels) {
   const { instance } = assignation;
-  const parsedDates = parseDates(instance.dates);
   const status = labels?.activity_status?.[getStatus(assignation, instance)];
-  const classData = await getClassData(instance.classes, { multiSubject: labels.multiSubject });
   const timeReference = dayjs(instance.dates.deadline).diff(dayjs(), 'seconds');
   const timeReferenceColor = getTimeReferenceColor(instance.dates.deadline);
 
+  const commonData = await parseAssignationForCommonView(instance, labels);
   return {
-    ...instance,
-    parsedDates: {
-      start: '-',
-      deadline: '-',
-      ...parsedDates,
-    },
+    ...commonData,
     status,
-    subject: classData.name,
     actions: <StudentActions assignation={assignation} labels={labels} />,
     timeReference:
       !instance.dates.deadline || instance.dates.end ? (

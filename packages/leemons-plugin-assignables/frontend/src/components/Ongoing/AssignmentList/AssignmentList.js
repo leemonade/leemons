@@ -1,168 +1,54 @@
-import React, { useState, useMemo, useContext } from 'react';
-import PropTypes from 'prop-types';
-import { PaginatedList } from '@bubbles-ui/components';
-import _ from 'lodash';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useSearchAssignableInstances from '../../../hooks/assignableInstance/useSearchAssignableInstances';
-import useParseAssignations from './hooks/useParseAssignations';
-import useAssignationsByProfile from './hooks/useAssignationsByProfile';
-import globalContext from '../../../contexts/globalContext';
-import prefixPN from '../../../helpers/prefixPN';
+import React from 'react';
+import { Box, SearchInput, SegmentedControl, Select } from '@bubbles-ui/components';
+import Filters from './components/Filters';
+import { useAssignmentListStyle } from './AssignmentList.style';
+import ActivitiesList from './components/ActivitiesList';
 
-function useAssignmentsColumns() {
-  const { isTeacher } = useContext(globalContext);
+export default function AssignmentList() {
+  const labels = {
+    title: 'Actividades',
+    filters: {
+      ongoing: 'En curso {{count}}',
+      evaluated: 'Evaluadas {{count}}',
+      search: 'Buscar actividades en curso',
+      subject: 'Asignatura/grupo',
+      status: 'Estado',
+      type: 'Tipo',
+      seeAll: 'Ver todas',
+    },
+    columns: {
+      name: 'Nombre',
+      subject: 'Asignatura/grupo',
+      start: 'Inicio',
+      deadline: 'Fecha límite',
+      status: 'Estado',
+      submission: 'Entrega',
+      students: 'Estudiantes',
+      opened: 'Abierta',
+      started: 'Comenzada',
+      completed: 'Completada',
+    },
+  };
+  const ongoingCount = 5;
+  const evaluatedCount = 7;
 
-  const [, translations] = useTranslateLoader(
-    prefixPN(`assignment_list.${isTeacher ? 'teacher' : 'student'}`)
-  );
-
-  const labels = useMemo(() => {
-    if (translations && translations.items) {
-      const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN(`assignment_list.${isTeacher ? 'teacher' : 'student'}`));
-
-      // EN: Modify the data object here
-      // ES: Modifica el objeto data aquí
-      return data;
-    }
-
-    return {};
-  }, [translations]);
-
-  const columns = useMemo(() => {
-    if (isTeacher) {
-      return [
-        {
-          Header: labels.group || '',
-          accessor: 'subject',
-        },
-        {
-          Header: labels.task || '',
-          accessor: 'assignable.asset.name',
-        },
-        {
-          Header: labels.start || '',
-          accessor: 'parsedDates.start',
-        },
-        {
-          Header: labels.deadline || '',
-          accessor: 'parsedDates.deadline',
-        },
-        {
-          Header: labels.students || '',
-          accessor: 'students.length',
-        },
-        {
-          Header: labels.status || '',
-          accessor: 'status',
-        },
-        {
-          Header: labels.open || '',
-          accessor: 'open',
-        },
-        {
-          Header: labels.ongoing || '',
-          accessor: 'ongoing',
-        },
-        {
-          Header: labels.completed || '',
-          accessor: 'completed',
-        },
-        {
-          Header: '',
-          accessor: 'actions',
-        },
-      ];
-    }
-
-    return [
-      {
-        Header: labels.task || '',
-        accessor: 'assignable.asset.name',
-      },
-      {
-        Header: labels.subject || '',
-        accessor: 'subject',
-      },
-      {
-        Header: labels?.start || '',
-        accessor: 'parsedDates.start',
-      },
-      {
-        Header: labels.deadline || '',
-        accessor: 'parsedDates.deadline',
-      },
-      {
-        Header: labels.status || '',
-        accessor: 'status',
-      },
-      {
-        Header: labels.timeReference || '',
-        accessor: 'timeReference',
-      },
-      {
-        Header: '',
-        accessor: 'actions',
-      },
-    ];
-  }, [isTeacher, labels]);
-
-  return columns;
-}
-
-export default function AssignmentList({ closed = false }) {
-  const [page, setPage] = useState(1);
-  const [size, setSize] = useState(10);
-
-  const query = useMemo(() => {
-    const q = {};
-
-    if (closed) {
-      q.close_max = new Date();
-      q.close = new Date();
-      q.close_default = false;
-    } else {
-      q.close_min = new Date();
-      q.close_default = true;
-    }
-
-    return q;
-  }, []);
-
-  const [instances, instancesLoading] = useSearchAssignableInstances(query);
-
-  const instancesInPage = useMemo(() => {
-    if (!instances.length) {
-      return [];
-    }
-
-    return instances.slice((page - 1) * size, page * size);
-  }, [instances, page, size]);
-
-  const [instancesData, instancesDataLoading] = useAssignationsByProfile(instancesInPage);
-  const [parsedInstances, parsedInstancesLoading] = useParseAssignations(instancesData);
-  const columns = useAssignmentsColumns();
-
-  const isLoading = instancesLoading || instancesDataLoading || parsedInstancesLoading;
-
+  const { classes } = useAssignmentListStyle();
   return (
-    <>
-      <PaginatedList
-        columns={columns}
-        items={parsedInstances}
-        page={page}
-        size={size}
-        loading={isLoading}
-        totalCount={instances.length}
-        totalPages={Math.ceil(instances.length / size)}
-        onSizeChange={setSize}
-        onPageChange={setPage}
+    <Box className={classes?.root}>
+      <Filters
+        labels={labels.filters}
+        tabs={[
+          {
+            label: labels?.filters?.ongoing?.replace?.('{{count}}', `(${ongoingCount})`),
+            value: 'ongoing',
+          },
+          {
+            label: labels?.filters?.evaluated?.replace?.('{{count}}', `(${evaluatedCount})`),
+            value: 'evaluated',
+          },
+        ]}
       />
-    </>
+      <ActivitiesList />
+    </Box>
   );
 }
-
-AssignmentList.propTypes = {
-  closed: PropTypes.bool,
-};

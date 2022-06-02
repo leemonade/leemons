@@ -127,6 +127,8 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
       asset={asset}
       menuItems={menuItems}
       variant="task"
+      // TRANSLATE
+      variantTitle={'task'}
       className={classes.root}
     />
   );
