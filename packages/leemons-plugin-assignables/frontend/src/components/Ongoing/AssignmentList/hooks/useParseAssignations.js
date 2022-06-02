@@ -244,11 +244,13 @@ function SubjectItem({ classData }) {
       >
         <ImageLoader
           sx={() => ({
+            borderRadius: 0,
             filter: 'brightness(0) invert(1)',
           })}
-          src={classData?.icon}
+          forceImage
           width={16}
           height={16}
+          src={classData?.icon}
         />
       </Box>
       <TextClamp lines={1}>
