@@ -14,6 +14,7 @@ import { CALENDAR_EVENT_MODAL_DEFAULT_PROPS, CalendarEventModal } from '@bubbles
 import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
 import PropTypes from 'prop-types';
+import { useForm } from 'react-hook-form';
 
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@calendar/helpers/prefixPN';
@@ -70,6 +71,7 @@ function NewCalendarEventModal({
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [t] = useTranslateLoader(prefixPN('event_modal'));
   const [, setR] = useState();
+  const form = useForm({ defaultValues: ref.current.defaultValues });
 
   function render() {
     setR(new Date().getTime());
@@ -264,6 +266,8 @@ function NewCalendarEventModal({
       }
     } catch (e) {}
 
+    console.log('Hola');
+    form.reset(ref.current.defaultValues);
     ref.current.loading = false;
     render();
   }
@@ -333,14 +337,28 @@ function NewCalendarEventModal({
     }
   }
 
+  function onKanbanReorded({ args: [{ id, column }] }) {
+    if (event && event.id === id) {
+      form.setValue('data.column', column);
+    }
+  }
+
   useEffect(() => {
     if (session && opened && (!event || event.id !== ref.current.eventId)) init();
   }, [session, event]);
+
+  useEffect(() => {
+    hooks.addAction('calendar:kanban:reorded', onKanbanReorded);
+    return () => {
+      hooks.removeAction('calendar:kanban:reorded', onKanbanReorded);
+    };
+  });
 
   if (ref.current.loading) return <LoadingOverlay visible />;
 
   return (
     <CalendarEventModal
+      form={form}
       opened={opened}
       fromCalendar={ref.current.fromCalendar}
       onRemove={removeEvent}

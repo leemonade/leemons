@@ -10,14 +10,14 @@ import { htmlToText } from '../../../helpers/htmlToText';
 export default function Responses(props) {
   const { styles, question, store, render, cx, t } = props;
 
-  const currentResponseIndex = store.questionResponses[question.id].properties?.response;
+  const currentResponseIndex = store.questionResponses?.[question.id].properties?.response;
 
   const clue = React.useMemo(
     () =>
-      find(getQuestionClues(question, store.questionResponses[question.id].clues), {
+      find(getQuestionClues(question, store.questionResponses?.[question.id].clues), {
         type: 'hide-response',
       }),
-    [question, store.questionResponses[question.id].clues]
+    [question, store.questionResponses?.[question.id].clues]
   );
 
   if (clue && clue.indexs.includes(currentResponseIndex)) {

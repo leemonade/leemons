@@ -11,7 +11,7 @@ import {
   TextInput,
 } from '@bubbles-ui/components';
 import prefixPN from '@calendar/helpers/prefixPN';
-import { MeetingCameraIcon, PluginKimIcon, PluginRedactorIcon } from '@bubbles-ui/icons/outline';
+import { MeetingCameraIcon, PluginRedactorIcon, SmileyPinIcon } from '@bubbles-ui/icons/outline';
 
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -69,7 +69,7 @@ export default function Event({ isEditing, event, form, data, allFormData, class
         <Box>
           <Grid columns={100} gutter={0}>
             <Col span={10} className={classes.icon}>
-              <PluginKimIcon />
+              <SmileyPinIcon />
             </Col>
             <Col span={90}>
               <Controller
@@ -78,7 +78,7 @@ export default function Event({ isEditing, event, form, data, allFormData, class
                 render={({ field }) => {
                   if (disabled) {
                     return (
-                      <InputWrapper label={t('video_link')}>
+                      <InputWrapper label={t('add_place')}>
                         <Paragraph
                           clean
                           dangerouslySetInnerHTML={{ __html: linkify(field.value) }}
@@ -115,7 +115,7 @@ export default function Event({ isEditing, event, form, data, allFormData, class
                 render={({ field }) => {
                   if (disabled) {
                     return (
-                      <InputWrapper label={t('video_link')}>
+                      <InputWrapper label={t('add_description')}>
                         <Paragraph
                           clean
                           dangerouslySetInnerHTML={{ __html: linkify(field.value) }}

@@ -1,7 +1,9 @@
-import { forEach, isNumber } from 'lodash';
+import { forEach, isNumber, isString } from 'lodash';
 
 export function getQuestionClues(question, limit) {
   const clues = [];
+
+  console.log(question);
 
   if (question.type === 'map') {
     const responsesIndexsToHide = [];
@@ -34,7 +36,7 @@ export function getQuestionClues(question, limit) {
   }
 
   if (question.clues?.length) {
-    forEach(question.clues, (clue) => {
+    forEach(isString(question.clues) ? JSON.parse(question.clues) : question.clues, (clue) => {
       clues.push({
         type: 'note',
         text: clue.value,

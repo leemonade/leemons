@@ -194,11 +194,14 @@ module.exports = {
     instructions: 'Instructions',
   },
   testsDetail: {
-    assign: 'Assign',
+    assign: 'Assign test',
+    edit: 'Edit test',
     undefined: 'Undefined',
     questionTypes: 'Question types',
     categories: 'Categories',
     questions: 'Questions',
+    chartLabel: 'Composition of questions',
+    showInTests: 'Preview',
   },
   testsCard: {
     view: 'View',

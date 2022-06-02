@@ -1,18 +1,53 @@
+// import getAssignation from '../requests/assignations/getAssignation';
+/* eslint-disable no-nested-ternary */
 import React from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@assignables/helpers/prefixPN';
 import { useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
-import { filter, forEach, isString, keyBy, map } from 'lodash';
-import { Box, COLORS, ImageLoader, Stack, Text, TextClamp } from '@bubbles-ui/components';
+import { filter, isString, keyBy, map } from 'lodash';
+import {
+  Box,
+  COLORS,
+  createStyles,
+  ImageLoader,
+  Stack,
+  Text,
+  TextClamp,
+} from '@bubbles-ui/components';
 import getClassData from '@assignables/helpers/getClassData';
 import getUserAgentsInfo from '@users/request/getUserAgentsInfo';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import PropTypes from 'prop-types';
 import { findIndex } from 'lodash/array';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-// import getAssignation from '../requests/assignations/getAssignation';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
+
+const Styles = createStyles((theme, { color }) => ({
+  colorIcon: {
+    position: 'relative',
+    width: '25px',
+    height: '25px',
+    borderRadius: '50%',
+    backgroundColor: color,
+    border: '2px solid',
+    borderColor: color,
+    color: theme.colors.text07,
+    img: {
+      filter: 'brightness(0) invert(1)',
+    },
+  },
+  icon: {
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
+    color: theme.colors.text07,
+    img: {
+      filter: 'brightness(0) invert(1)',
+    },
+  },
+}));
 
 export default function AssignableUserNavigator({ value, instance, onChange = () => {} }) {
   const [t, translations] = useTranslateLoader(prefixPN('userNavigator'));
@@ -20,6 +55,7 @@ export default function AssignableUserNavigator({ value, instance, onChange = ()
     loading: true,
     idLoaded: '',
   });
+  const { classes: style } = Styles({ color: store.class?.color });
 
   async function init() {
     try {
@@ -130,14 +166,8 @@ export default function AssignableUserNavigator({ value, instance, onChange = ()
             gap: theme.spacing[2],
           })}
         >
-          <Box
-            sx={(theme) => ({
-              borderRadius: '50%',
-              backgroundColor: taskHeaderProps.color,
-              padding: theme.spacing[1],
-            })}
-          >
-            <ImageLoader src={taskHeaderProps.icon} height={12} width={12} />
+          <Box className={style.colorIcon}>
+            <ImageLoader className={style.icon} src={taskHeaderProps.icon} height={14} width={14} />
           </Box>
           <Text strong color="primary">
             {taskHeaderProps.subtitle}

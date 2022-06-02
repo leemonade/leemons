@@ -1,4 +1,8 @@
 module.exports = {
+  userNavigator: {
+    student: 'Estudiante',
+    multiSubject: 'Multi-asignatura',
+  },
   assignment_form: {
     labels: {
       classroomToAssign: 'Seleccionar clase para asignar',

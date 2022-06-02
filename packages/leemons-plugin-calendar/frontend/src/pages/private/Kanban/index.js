@@ -158,6 +158,7 @@ function Kanban({ session }) {
         // eslint-disable-next-line no-param-reassign
         event.data.column = card.data.column;
         updateEventRequest(ref.current.center.token, event.id, { data: event.data });
+        hooks.fireEvent('calendar:kanban:reorded', { id: event.id, column: event.data.column });
       }
     });
 

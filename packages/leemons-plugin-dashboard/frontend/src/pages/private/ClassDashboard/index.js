@@ -1,12 +1,12 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { isArray, map } from 'lodash';
+import { find, isArray, map } from 'lodash';
 import { useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@dashboard/helpers/prefixPN';
 import { Box, createStyles, RadioGroup, TabPanel, Tabs } from '@bubbles-ui/components';
-import { HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
+import { ClassroomHeaderBar, HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
 import { useHistory, useParams } from 'react-router-dom';
 import { classDetailForDashboardRequest } from '@academic-portfolio/request';
 import { ZoneWidgets } from '@widgets';
@@ -151,6 +151,9 @@ export default function ClassDashboard({ session }) {
     headerProps.withGradient = true;
     headerProps.color = store.class.color;
   }
+
+  const mainTeacher = find(store.class.teachers, { type: 'main-teacher' }).teacher;
+
   return (
     <>
       <Box className={styles.leftSide}>
@@ -158,6 +161,15 @@ export default function ClassDashboard({ session }) {
           <HeaderBackground {...headerProps} styles={{ position: 'absolute' }} />
           <Box style={{ position: 'absolute', bottom: 0, left: 0, right: '50%', zIndex: 5 }}>
             <HeaderDropdown value={store.class} data={store.classesSelect} onChange={changeClass} />
+            <ClassroomHeaderBar
+              labels={{ virtualClassroom: t('virtualClassroom') }}
+              classRoom={{
+                schedule: store.class.schedule,
+                address: store.class.address,
+                virtual_classroom: store.class.virtualUrl,
+                teacher: mainTeacher?.user,
+              }}
+            />
           </Box>
         </Box>
 

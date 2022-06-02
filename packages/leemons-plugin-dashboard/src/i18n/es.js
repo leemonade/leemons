@@ -6,6 +6,7 @@ module.exports = {
   },
   classDashboard: {
     multipleCourses: 'Varios cursos',
+    virtualClassroom: 'Clase virtual',
   },
   tabControlPanel: {
     label: 'Panel de control',

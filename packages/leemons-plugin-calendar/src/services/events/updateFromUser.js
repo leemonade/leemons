@@ -87,6 +87,7 @@ async function updateFromUser(userSession, id, data, { transacting: _transacting
           });
           await grantAccessUserAgentToEvent(id, data.users, ['view'], { transacting });
         }
+
         delete data.users;
         delete data.calendar;
         return update(event.id, data, { calendar, transacting });

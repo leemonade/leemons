@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { table } = require('../src/services/tables');
 const calendar = require('../src/services/calendar');
 const events = require('../src/services/events');
 const eventTypes = require('../src/services/event-types');
@@ -47,6 +48,10 @@ function updateEvent(id, data, { calendar: _calendar, transacting } = {}) {
   return events.update(id, data, { calendar: _calendar, transacting });
 }
 
+function getCalendarsByClass(classe) {
+  return table.classCalendar.find({ class_$in: _.isArray(classe) ? classe : [classe] });
+}
+
 module.exports = {
   eventTypes: {
     event: leemons.plugin.prefixPN('event'),
@@ -62,6 +67,7 @@ module.exports = {
   addEvent,
   removeEvent,
   updateEvent,
+  getCalendarsByClass,
   grantAccessUserAgentToEvent,
   unGrantAccessUserAgentToEvent,
   addEventType: eventTypes.add,

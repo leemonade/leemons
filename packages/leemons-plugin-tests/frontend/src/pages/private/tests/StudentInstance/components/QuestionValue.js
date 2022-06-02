@@ -6,7 +6,7 @@ import { getQuestionClues } from '../helpers/getQuestionClues';
 export default function QuestionValue(props) {
   const { styles, cx, t, store, render, question, saveQuestion } = props;
 
-  const usedClues = store.questionResponses[question.id].clues;
+  const usedClues = store.questionResponses?.[question.id].clues;
   const clues = React.useMemo(() => getQuestionClues(question), [question]);
 
   function useClue() {
@@ -25,7 +25,7 @@ export default function QuestionValue(props) {
     null: null,
   };
 
-  if (store.embedded) {
+  if (store.embedded && store.viewMode) {
     return null;
   }
 

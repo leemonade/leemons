@@ -7,16 +7,22 @@ import prefixPN from '@tests/helpers/prefixPN';
 import { Link } from 'react-router-dom';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
+import { ResultStyles } from '../Result.style';
 
 export default function QuestionsTable({
   questions,
   onChange,
   value = [],
   reorderMode,
+  withStyle = false,
   hideCheckbox = false,
 }) {
+  // eslint-disable-next-line prefer-const
+  let { classes: styles, cx } = ResultStyles({}, { name: 'QuestionsTable' });
   const [t] = useTranslateLoader(prefixPN('testsEdit'));
   const [t2] = useTranslateLoader(prefixPN('questionsBanksDetail'));
+
+  if (!withStyle) styles = {};
 
   const tableHeaders = React.useMemo(() => {
     let result = [];
@@ -45,21 +51,22 @@ export default function QuestionsTable({
       {
         Header: t('questionLabel'),
         accessor: 'question',
-        className: 'text-left',
+        className: cx(styles.tableHeader, styles.firstTableHeader),
       },
       {
         Header: t('responsesLabel'),
         accessor: 'responses',
-        className: 'text-left',
+        className: styles.tableHeader,
       },
       {
         Header: t('typeLabel'),
         accessor: 'type',
-        className: 'text-left',
+        className: styles.tableHeader,
       },
       {
         Header: t('actionsHeader'),
         accessor: 'actions',
+        className: styles.tableHeader,
       },
     ]);
     return result;
@@ -69,7 +76,7 @@ export default function QuestionsTable({
     () =>
       questions && questions.length
         ? map(questions, (item) => ({
-            ...getQuestionForTable(item, t2),
+            ...getQuestionForTable(item, t2, styles),
             check: (
               <Checkbox
                 checked={value ? value.includes(item.id) : false}
@@ -86,7 +93,7 @@ export default function QuestionsTable({
               />
             ),
             actions: () => (
-              <Box style={{ textAlign: 'right', width: '100%' }}>
+              <Box className={styles.tableCell} style={{ textAlign: 'right', minWidth: '100px' }}>
                 <ActionButton
                   as={Link}
                   to={`/private/tests/questions-banks/${item.questionBank}?question=${item.id}`}

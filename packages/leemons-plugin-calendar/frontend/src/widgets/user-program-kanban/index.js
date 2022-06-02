@@ -249,6 +249,7 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
         // eslint-disable-next-line no-param-reassign
         event.data.column = card.data.column;
         updateEventRequest(store.center.token, event.id, { data: event.data });
+        hooks.fireEvent('calendar:kanban:reorded', { id: event.id, column: event.data.column });
       }
     });
 

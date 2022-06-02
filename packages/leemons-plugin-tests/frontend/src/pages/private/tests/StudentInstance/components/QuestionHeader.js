@@ -33,7 +33,7 @@ export default function QuestionHeader(props) {
   const { styles, t, store, index, onReturn } = props;
 
   let endDate = null;
-  if (!store.viewMode && store.instance.duration && store.timestamps.start) {
+  if (!store.viewMode && store.instance?.duration && store.timestamps?.start) {
     const [value, unit] = store.instance.duration.split(' ');
     endDate = new Date(store.timestamps.start);
     endDate.setSeconds(endDate.getSeconds() + dayjs.duration({ [unit]: value }).asSeconds());

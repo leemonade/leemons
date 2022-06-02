@@ -27,18 +27,20 @@ export default function QuestionTitle(props) {
           {htmlToText(question.question)}
         </Text>
       </Box>
-      {store.embedded ? (
+      {store.embedded && store.viewMode ? (
         <Box className={cx(styles.questionValueCard, styles.questionValueCardEmbedded)}>
           <Box>
             <Text
               size="md"
               sx={(theme) => ({
                 color: store.viewMode
-                  ? colorByStatus[store.questionResponses[question.id].status]
+                  ? colorByStatus[store.questionResponses?.[question.id].status]
                   : theme.colors.fatic02,
               })}
             >
-              {store.questionResponses[question.id].points}
+              {store.viewMode
+                ? store.questionResponses?.[question.id].points
+                : store.questionsInfo.perQuestion}
             </Text>
           </Box>
           <Text size="xs" color="primary">

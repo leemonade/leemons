@@ -4,7 +4,7 @@ import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { find, forEach, map, uniq } from 'lodash';
+import { find, forEach, map } from 'lodash';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import getAssignation from '@assignables/requests/assignations/getAssignation';
@@ -187,11 +187,6 @@ export default function Result() {
     return { selectables, data, labels: { OK: t('ok'), KO: t('ko'), null: t('nsnc') } };
   }, [store.questions, levels, t]);
 
-  function onChangeType(e) {
-    store.graphicHeight = uniq(map(graphData.data, e)).length * 25 + 50;
-    render();
-  }
-
   function toggleQuestionMode() {
     store.useQuestionMode = !store.useQuestionMode;
     render();
@@ -307,11 +302,7 @@ export default function Result() {
         color="solid"
       >
         <Box p={20}>
-          <ActivityAnswersBar
-            {...graphData}
-            graphicHeight={store.graphicHeight}
-            onChangeType={onChangeType}
-          />
+          <ActivityAnswersBar {...graphData} />
         </Box>
       </ActivityAccordionPanel>
     );
