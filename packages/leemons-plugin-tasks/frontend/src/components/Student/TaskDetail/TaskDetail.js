@@ -18,6 +18,7 @@ import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useLayout } from '@layout/context';
+// import { ActivityContainer } from '@bubbles-ui/leemons';
 import useSteps from './helpers/useSteps';
 import TaskDetailHeader from './components/TaskDetailHeader';
 import { TaskDetailStyles } from './TaskDetail.style';
@@ -236,6 +237,25 @@ export default function TaskDetail({ id, student }) {
 
   return (
     <ContextContainer fullHeight spacing={0}>
+      {
+        //   <ActivityContainer
+        //   header={{
+        //     title: asset?.name,
+        //     subtitle: classData?.name,
+        //     icon: classData?.icon,
+        //     color: classData?.color,
+        //     image: coverUrl,
+        //   }}
+        //   deadline={{
+        //     label: 'Entrega',
+        //     deadline:
+        //       assignation?.instance?.dates?.deadline instanceof Date
+        //         ? assignation?.instance?.dates?.deadline
+        //         : new Date(assignation?.instance?.dates?.deadline),
+        //   }}
+        //   collapsed={isFirstStep}
+        // >
+      }
       <TaskDetailHeader
         asset={asset}
         classData={classData}
@@ -306,6 +326,7 @@ export default function TaskDetail({ id, student }) {
           labels={labels?.sidebar}
         />
       </Box>
+      {/* </ActivityContainer> */}
     </ContextContainer>
   );
 }
