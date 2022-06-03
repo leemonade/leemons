@@ -13,14 +13,22 @@ module.exports = {
         required: true,
       },
     },
+    dayWeek: {
+      type: 'integer',
+      options: {
+        required: true,
+      },
+    },
     start: {
-      type: 'time',
+      // type: 'time',
+      type: 'string',
       options: {
         required: true,
       },
     },
     end: {
-      type: 'time',
+      // type: 'time',
+      type: 'string',
       options: {
         required: true,
       },

@@ -1,7 +1,13 @@
 const _ = require('lodash');
 
 const { LeemonsValidator } = global.utils;
-const { stringSchema, booleanSchema, stringSchemaNullable, textSchema } = require('./types');
+const {
+  stringSchema,
+  booleanSchema,
+  stringSchemaNullable,
+  textSchemaNullable,
+  textSchema,
+} = require('./types');
 
 const saveQuestionBankSchema = {
   type: 'object',
@@ -9,13 +15,13 @@ const saveQuestionBankSchema = {
     id: stringSchema,
     name: stringSchema,
     tagline: stringSchemaNullable,
-    description: stringSchemaNullable,
+    description: textSchemaNullable,
     color: stringSchemaNullable,
     cover: {
       type: ['object', 'string'],
       nullable: true,
     },
-    state: stringSchemaNullable,
+    state: textSchemaNullable,
     program: stringSchemaNullable,
     categories: {
       type: 'array',
@@ -116,16 +122,16 @@ const saveTestSchema = {
       type: ['object', 'string'],
       nullable: true,
     },
-    description: stringSchemaNullable,
+    description: textSchemaNullable,
     tags: {
       type: 'array',
       items: stringSchema,
     },
     level: stringSchemaNullable,
     gradable: booleanSchema,
-    statement: stringSchemaNullable,
-    instructionsForTeachers: stringSchemaNullable,
-    instructionsForStudents: stringSchemaNullable,
+    statement: textSchemaNullable,
+    instructionsForTeachers: textSchemaNullable,
+    instructionsForStudents: textSchemaNullable,
     questionBank: stringSchemaNullable,
     program: stringSchemaNullable,
     subjects: {

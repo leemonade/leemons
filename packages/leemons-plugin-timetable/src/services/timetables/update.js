@@ -4,7 +4,7 @@ const { table } = require('../tables');
 
 module.exports = async function updateTimetable(
   timetableId,
-  { day, start, duration } = {},
+  { day, start, duration, dayWeek } = {},
   { transacting } = {}
 ) {
   const data = {};
@@ -34,5 +34,5 @@ module.exports = async function updateTimetable(
     throw new Error('At least one of day, start and duration is required');
   }
 
-  return table.timetable.set({ id: timetableId }, data, { transacting });
+  return table.timetable.set({ id: timetableId }, { ...data, dayWeek }, { transacting });
 };

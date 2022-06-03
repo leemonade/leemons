@@ -4,7 +4,7 @@ const count = require('./count');
 const { table } = require('../tables');
 
 module.exports = async function create(
-  { class: classId, day, start, duration },
+  { class: classId, day, start, duration, dayWeek },
   { transacting } = {}
 ) {
   // TODO: check if class exists
@@ -53,8 +53,10 @@ module.exports = async function create(
     start,
     end,
     duration,
+    dayWeek,
   };
 
   const timetable = await table.timetable.create(data, { transacting });
+
   return timetable;
 };

@@ -46,6 +46,8 @@ module.exports = {
     calendarLabelDisabled: 'Calendario',
     users: 'Invitar a otro usuarios',
     usersDisabled: 'Invitados',
+    showMore: 'Ver todos',
+    showLess: 'Ver menos',
     repeat: {
       dont_repeat: 'No repetir',
       every_day: 'Cada día',
@@ -56,8 +58,8 @@ module.exports = {
   },
   event_mode_event_type: {
     video_link: 'Enlace a videollamada',
-    add_place: 'Añadir lugar',
-    add_description: 'Añadir descripción',
+    add_place: 'Lugar',
+    add_description: 'Descripción',
   },
   task_mode_event_type: {
     description: 'Descripción',

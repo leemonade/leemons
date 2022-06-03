@@ -17,7 +17,7 @@ import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getCentersWithToken } from '@users/session';
 import * as _ from 'lodash';
-import { keyBy } from 'lodash';
+import { forEach, keyBy, map } from 'lodash';
 import tKeys from '@multilanguage/helpers/tKeys';
 import { useHistory } from 'react-router-dom';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
@@ -142,8 +142,11 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
       const start = new Date();
       const end = new Date();
       end.setDate(end.getDate() + 5);
+
+       */
       const calendarIds = map(store.data.onlyProgramCalendars, 'id');
       cards = _.filter(cards, (c) => {
+        /*
         const endDate = new Date(c.endDate);
         if (endDate < start || endDate > end) {
           return false;
@@ -151,6 +154,7 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
         if (calendarIds.includes(c.calendar)) {
           return true;
         }
+         */
         let toReturn = false;
         if (c.type === 'plugins.calendar.task' && c.data && c.data.classes) {
           // eslint-disable-next-line consistent-return
@@ -163,7 +167,6 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
         }
         return toReturn;
       });
-       */
 
       cols.push({
         id: column.id,

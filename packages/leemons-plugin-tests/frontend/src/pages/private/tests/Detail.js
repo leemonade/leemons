@@ -131,6 +131,8 @@ export default function Detail() {
     if (params?.id && t1V && t2V) init();
   }, [params, t1V, t2V]);
 
+  console.log(store.test?.questions);
+
   const accordion = [];
   if (store.stats?.data.length && store.stats?.selectables.length) {
     accordion.push(
