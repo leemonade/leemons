@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { find, isArray, map } from 'lodash';
-import { useStore } from '@common';
+import { useLocale, useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@dashboard/helpers/prefixPN';
 import { Box, createStyles, RadioGroup, TabPanel, Tabs } from '@bubbles-ui/components';
@@ -69,6 +69,7 @@ const Styles = createStyles((theme) => ({
 }));
 
 export default function ClassDashboard({ session }) {
+  const locale = useLocale();
   const [store, render] = useStore({
     loading: true,
     tabNames: {},
@@ -169,6 +170,7 @@ export default function ClassDashboard({ session }) {
                 virtual_classroom: store.class.virtualUrl,
                 teacher: mainTeacher?.user,
               }}
+              locale={locale}
             />
           </Box>
         </Box>

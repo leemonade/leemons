@@ -46,6 +46,8 @@ module.exports = {
     users: 'Invite other users',
     usersDisabled: 'Guests',
     showInCalendar: 'Show in calendar',
+    showMore: 'Show all',
+    showLess: 'Show less',
     repeat: {
       dont_repeat: 'Don´t repeat',
       every_day: 'Every day',
@@ -56,8 +58,8 @@ module.exports = {
   },
   event_mode_event_type: {
     video_link: 'Include a video call link',
-    add_place: 'Add place',
-    add_description: 'Add a description',
+    add_place: 'Place',
+    add_description: 'Description',
   },
   task_mode_event_type: {
     description: 'Description',

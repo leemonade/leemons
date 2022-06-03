@@ -2,6 +2,13 @@ import { capitalize, isEmpty, isNil, isString } from 'lodash';
 import { getAuthorizationTokenForAllCenters } from '@users/session';
 import { prepareAssetType } from './prepareAssetType';
 
+function getAssetUrl(assetID) {
+  const authTokens = getAuthorizationTokenForAllCenters();
+  return `${window.location.origin}/api/leebrary/img/${assetID}?authorization=${encodeURIComponent(
+    `${authTokens}`
+  )}`;
+}
+
 function getFileUrl(fileID) {
   const authTokens = getAuthorizationTokenForAllCenters();
   return `${window.location.origin}/api/leebrary/file/${fileID}?authorization=${encodeURIComponent(
@@ -72,5 +79,5 @@ function prepareAsset(assetFromApi, isPublished = true) {
   return asset;
 }
 
-export { prepareAsset, getFileUrl };
+export { prepareAsset, getFileUrl, getAssetUrl };
 export default prepareAsset;

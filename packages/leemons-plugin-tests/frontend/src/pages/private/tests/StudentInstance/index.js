@@ -287,7 +287,7 @@ export default function StudentInstance() {
 
   const verticalStepperProps = React.useMemo(() => {
     if (store.instance) {
-      const commonProps = { classes, t, store, render, cx, prevStep, nextStep, goToStep };
+      const commonProps = { styles, classes, t, store, render, cx, prevStep, nextStep, goToStep };
       const steps = [];
       const curriculumValues = getIfCurriculumSubjectsHaveValues(
         store.instance.assignable.subjects
@@ -314,7 +314,7 @@ export default function StudentInstance() {
         });
       }
       */
-      const testProps = { styles, onStartQuestions };
+      const testProps = { onStartQuestions };
 
       steps.push({
         label: t('development'),

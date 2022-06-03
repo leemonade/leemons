@@ -11,17 +11,17 @@ export function getQuestionForTable(question, t, styles) {
   return {
     ...question,
     question: (
-      <Box className={styles.tableCell}>
+      <Box className={styles?.tableCell}>
         <HtmlText>{question.question}</HtmlText>
       </Box>
     ),
     responses: (
-      <Box style={{ minWidth: '100px' }} className={styles.tableCell}>
+      <Box style={{ minWidth: '100px' }} className={styles?.tableCell}>
         {responses}
       </Box>
     ),
     type: (
-      <Box style={{ minWidth: '150px' }} className={styles.tableCell}>
+      <Box style={{ minWidth: '150px' }} className={styles?.tableCell}>
         {t(questionTypeT[question.type])}
       </Box>
     ),

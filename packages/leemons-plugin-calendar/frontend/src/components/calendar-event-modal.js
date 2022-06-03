@@ -9,7 +9,7 @@ import { goLoginPage } from '@users/navigate';
 import { getCalendarsToFrontendRequest } from '@calendar/request';
 import loadable from '@loadable/component';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { Box, LoadingOverlay } from '@bubbles-ui/components';
+import { Box, LoadingOverlay, UserDisplayItemList } from '@bubbles-ui/components';
 import { CALENDAR_EVENT_MODAL_DEFAULT_PROPS, CalendarEventModal } from '@bubbles-ui/leemons';
 import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
@@ -40,12 +40,22 @@ function dynamicImport(pluginName, component) {
 function UsersComponent(props) {
   return (
     <Box>
-      <SelectUserAgent
-        {...props}
-        maxSelectedValues={99999}
-        onlyContacts
-        label={props.disabled ? props.labelDisabled : props.label}
-      />
+      {props.disabled ? (
+        <UserDisplayItemList
+          data={map(props.userAgents, 'user')}
+          labels={{
+            showMore: props.showMore,
+            showLess: props.showLess,
+          }}
+        />
+      ) : (
+        <SelectUserAgent
+          {...props}
+          maxSelectedValues={99999}
+          onlyContacts
+          label={props.disabled ? props.labelDisabled : props.label}
+        />
+      )}
     </Box>
   );
 }
@@ -53,7 +63,10 @@ function UsersComponent(props) {
 UsersComponent.propTypes = {
   disabled: PropTypes.bool,
   label: PropTypes.string,
+  showMore: PropTypes.string,
+  showLess: PropTypes.string,
   labelDisabled: PropTypes.string,
+  userAgents: PropTypes.any,
 };
 
 function NewCalendarEventModal({
@@ -375,6 +388,8 @@ function NewCalendarEventModal({
         <UsersComponent
           label={t('users')}
           labelDisabled={t('usersDisabled')}
+          showMore={t('showMore')}
+          showLess={t('showLess')}
           userAgents={ref.current.defaultValues?.userAgents}
         />
       }
