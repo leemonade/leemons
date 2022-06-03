@@ -34,6 +34,12 @@ export default function Filters({
   const { control, setValue, getValues, watch } = useForm({ defaultValues });
 
   useEffect(() => {
+    if (!value) {
+      onChange(defaultValues);
+    }
+  }, []);
+
+  useEffect(() => {
     if (value) {
       const values = getValues();
 

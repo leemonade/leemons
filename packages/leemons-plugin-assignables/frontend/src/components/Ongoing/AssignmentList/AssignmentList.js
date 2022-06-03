@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Box } from '@bubbles-ui/components';
 import Filters from './components/Filters';
 import { useAssignmentListStyle } from './AssignmentList.style';
 import ActivitiesList from './components/ActivitiesList';
 
-export default function AssignmentList() {
+export default function AssignmentList({ closed }) {
   const labels = {
     title: 'Actividades',
     filters: {
       ongoing: 'En curso {{count}}',
       evaluated: 'Evaluadas {{count}}',
+      history: 'Histórico {{count}}',
       search: 'Buscar actividades en curso',
       subject: 'Asignatura/grupo',
       status: 'Estado',
@@ -30,31 +31,37 @@ export default function AssignmentList() {
     },
   };
   const [filters, setFilters] = useState(null);
-  const ongoingCount = 5;
-  const evaluatedCount = 7;
+
+  const tabs = useMemo(() => {
+    if (!closed) {
+      return [
+        {
+          label: labels?.filters?.ongoing?.replace?.('{{count}}', ''), // `(${ongoingCount})`),
+          value: 'ongoing',
+        },
+        {
+          label: labels?.filters?.evaluated?.replace?.('{{count}}', ''), // `(${evaluatedCount})`),
+          value: 'evaluated',
+        },
+      ];
+    }
+
+    return [
+      {
+        label: labels?.filters?.history?.replace?.('{{count}}', ''), // `(${evaluatedCount})`),
+        value: 'history',
+      },
+      {
+        label: labels?.filters?.evaluated?.replace?.('{{count}}', ''), // `(${evaluatedCount})`),
+        value: 'evaluated',
+      },
+    ];
+  }, [labels, closed]);
 
   const { classes } = useAssignmentListStyle();
   return (
     <Box className={classes?.root}>
-      <Filters
-        labels={labels.filters}
-        tabs={[
-          {
-            label: labels?.filters?.ongoing?.replace?.('{{count}}', `(${ongoingCount})`),
-            value: 'ongoing',
-          },
-          {
-            label: labels?.filters?.evaluated?.replace?.('{{count}}', `(${evaluatedCount})`),
-            value: 'evaluated',
-          },
-          {
-            label: 'History',
-            value: 'history',
-          },
-        ]}
-        value={filters}
-        onChange={setFilters}
-      />
+      <Filters labels={labels.filters} tabs={tabs} value={filters} onChange={setFilters} />
       <ActivitiesList filters={filters} />
     </Box>
   );
