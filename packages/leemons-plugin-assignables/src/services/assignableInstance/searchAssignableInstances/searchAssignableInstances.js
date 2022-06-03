@@ -1,8 +1,9 @@
 const _ = require('lodash');
 const dayjs = require('dayjs');
-const { getDates } = require('../dates');
-const { teachers, assignations, classes, assignableInstances } = require('../tables');
-const searchAssignables = require('../assignable/searchAssignables');
+const { getDates } = require('../../dates');
+const { teachers, assignations, classes, assignableInstances, grades } = require('../../tables');
+const searchAssignables = require('../../assignable/searchAssignables');
+const filterByEvaluatedQuery = require('./filterByEvaluated');
 
 function sortByGivenDate(date) {
   return (a, b) => {
@@ -230,7 +231,8 @@ async function searchTeacherAssignableInstances(query, { userSession, transactin
     ...parseDatesQuery(query),
   ];
 
-  const filteredResults = filterByDates(instancesData, datesFilter);
+  let filteredResults = filterByDates(instancesData, datesFilter);
+  filteredResults = await filterByEvaluatedQuery(filteredResults, query, { transacting });
 
   const sortedResults = sortByGivenDates(filteredResults, [
     'close',
@@ -261,6 +263,8 @@ async function searchStudentAssignableInstances(query, { userSession, transactin
   instances = await filterBySearchQuery.call(this, instances, query, { transacting, userSession });
 
   results = results.filter((result) => instances.includes(result.instance));
+
+  results = await filterByEvaluatedQuery(results, query, { users: userAgents, transacting });
 
   const instancesData = await getInstancesDates(instances, { transacting });
 
@@ -316,23 +320,46 @@ module.exports = async function searchAssignableInstances(
    *  - Deadline ✅
    *
    *
-   * Ongoing / Closed
+   * Ongoing / Closed ✅
    * Graded / Graded x time ago
    * Query search ✅
    * Subject/Group ✅
-   * Status
+   * Status ❌
    * Role ✅
    */
 
-  const q = {};
+  const q = { ...query };
 
-  const teacherResults = await searchTeacherAssignableInstances(query, {
+  if (query.closed) {
+    q.close_max = new Date();
+    q.close = new Date();
+    q.close_default = false;
+  } else if (query.closed === false) {
+    q.close_min = new Date();
+    q.close_default = true;
+  }
+
+  if (typeof query.evaluated === 'boolean') {
+    if (query.evaluated) {
+      q.evaluated = dayjs();
+    } else {
+      q.evaluated = false;
+    }
+  } else {
+    const date = dayjs(query.evaluated || null);
+
+    if (date.isValid()) {
+      q.evaluated = date;
+    }
+  }
+
+  const teacherResults = await searchTeacherAssignableInstances(q, {
     userSession,
     transacting,
   });
 
   if (!teacherResults.length) {
-    return searchStudentAssignableInstances(query, { userSession, transacting });
+    return searchStudentAssignableInstances(q, { userSession, transacting });
   }
 
   return teacherResults;

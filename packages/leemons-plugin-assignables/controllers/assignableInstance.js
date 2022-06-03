@@ -62,6 +62,12 @@ module.exports = {
         query.subjects = JSON.parse(query.subjects);
       }
 
+      if (query.closed === 'true') {
+        query.closed = true;
+      } else if (query.closed === 'false') {
+        query.closed = false;
+      }
+
       const assignableInstances = await services.searchAssignableInstances(query, {
         userSession: ctx.state.userSession,
       });

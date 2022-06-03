@@ -96,7 +96,7 @@ function TeacherActions({ id }) {
 
   const redirectToInstance = useCallback(
     () => history.push(`/private/assignables/details/${id}`),
-    [history]
+    [history, id]
   );
 
   return (

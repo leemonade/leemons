@@ -119,15 +119,14 @@ export default function ActivitiesList({ filters }) {
     if (filters?.status && filters?.status !== 'all') {
       q.status = filters?.status;
     }
-    // if (closed) {
-    //   q.close_max = new Date();
-    //   q.close = new Date();
-    //   q.close_default = false;
-    // } else {
-    //   q.close_min = new Date();
-    //   q.close_default = true;
-    // }
 
+    if (filters?.tab === 'ongoing') {
+      q.closed = false;
+    } else if (filters?.tab === 'history') {
+      q.closed = true;
+    } else if (filters?.tab === 'evaluated') {
+      q.evaluated = true;
+    }
     return q;
   }, [filters]);
 

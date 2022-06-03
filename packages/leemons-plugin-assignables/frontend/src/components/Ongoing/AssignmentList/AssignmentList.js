@@ -47,6 +47,10 @@ export default function AssignmentList() {
             label: labels?.filters?.evaluated?.replace?.('{{count}}', `(${evaluatedCount})`),
             value: 'evaluated',
           },
+          {
+            label: 'History',
+            value: 'history',
+          },
         ]}
         value={filters}
         onChange={setFilters}
