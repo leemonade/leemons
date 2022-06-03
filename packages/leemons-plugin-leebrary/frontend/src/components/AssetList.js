@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { find, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
 import {
@@ -14,7 +14,6 @@ import {
   useResizeObserver,
 } from '@bubbles-ui/components';
 import { LibraryItem } from '@bubbles-ui/leemons';
-import { CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
 import { LayoutHeadlineIcon, LayoutModuleIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { LocaleDate, unflatten, useRequestErrorMessage } from '@common';
@@ -339,11 +338,11 @@ const AssetList = ({
   }, [category]);
 
   useEffect(() => {
-    if(assetTypes && !isEmpty(assetTypes) && assetTypes[0].value !== '') {
+    if (assetTypes && !isEmpty(assetTypes) && assetTypes[0].value !== '') {
       const label = t('labels.allResourceTypes');
 
-      if(label !== 'labels.allResourceTypes') {
-        setAssetTypes([ {label, value: ''}, ...assetTypes]);
+      if (label !== 'labels.allResourceTypes') {
+        setAssetTypes([{ label, value: '' }, ...assetTypes]);
       }
     }
   }, [assetTypes, t]);
@@ -637,6 +636,10 @@ const AssetList = ({
                 layout={layout}
                 page={page}
                 size={size}
+                labels={{
+                  show: t('show'),
+                  goTo: t('goTo'),
+                }}
                 onSelect={handleOnSelect}
                 onPageChange={setPage}
                 onSizeChange={setSize}

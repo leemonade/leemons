@@ -107,6 +107,8 @@ module.exports = {
     },
   },
   list: {
+    show: 'Mostrar',
+    goTo: 'Ir a',
     labels: {
       duplicateSuccess: 'Recurso duplicado con éxito',
       removeSuccess: 'Recurso eliminado con éxito',
