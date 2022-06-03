@@ -39,6 +39,7 @@ const { filterUserAgentsByProfileAndCenter } = require('./filterUserAgentsByProf
 const { getDataForUserAgentDatasets } = require('./getDataForUserAgentDatasets');
 const { saveDataForUserAgentDatasets } = require('./saveDataForUserAgentDatasets');
 const { update } = require('./update');
+const { userAgentsAreContacts } = require('./contacts/userAgentsAreContacts');
 
 module.exports = {
   update,
@@ -56,6 +57,7 @@ module.exports = {
     addCalendarToUserAgentsIfNeedByUser,
   },
   contacts: {
+    userAgentsAreContacts,
     addUserAgentContacts,
     getUserAgentContacts,
     removeUserAgentContacts,

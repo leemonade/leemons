@@ -178,6 +178,7 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
   }
 
   async function load() {
+    store.currentLoaded = JSON.stringify({ program, classe });
     store.centers = getCentersWithToken();
     if (store.centers) {
       [store.center] = store.centers;
@@ -220,7 +221,13 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
   }
 
   React.useEffect(() => {
-    if ((program || classe) && !evLoading) load();
+    const toLoad = JSON.stringify({ program, classe });
+    if (
+      (program || classe) &&
+      !evLoading &&
+      (!store.currentLoaded || toLoad !== store.currentLoaded)
+    )
+      load();
   }, [program, classe, evLoading]);
 
   useEffect(() => {

@@ -289,6 +289,7 @@ const widgets = {
       url: 'tab-detail/index',
       properties: {
         label: 'plugins.academic-portfolio.tabDetail.label',
+        hideRightSide: true,
       },
     },
   ],

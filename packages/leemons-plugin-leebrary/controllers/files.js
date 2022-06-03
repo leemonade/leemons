@@ -34,7 +34,7 @@ async function getFileContent(ctx) {
   if (['image', 'video', 'audio'].includes(mediaType)) {
     // TODO: handle content disposition for images, video and audio. Taking care of download param
   } else {
-    ctx.set('Content-disposition', `attachment; filename=${fileName}`);
+    ctx.set('Content-disposition', `attachment; filename=${encodeURIComponent(fileName)}`);
   }
 }
 

@@ -2,7 +2,7 @@ const _ = require('lodash');
 const usersService = require('../src/services/users');
 const userAgentsService = require('../src/services/user-agents');
 const { table } = require('../src/services/tables');
-const { hasPermissionCTX } = require('../services/users');
+const { hasPermissionCTX, userAgentsAreContacts } = require('../services/users');
 
 async function canReset(ctx) {
   const validator = new global.utils.LeemonsValidator({
@@ -138,8 +138,17 @@ async function detailForPage(ctx) {
     hasPermission = await hasPermissionCTX(ctx.state.userSession, allowedPermissions);
   }
 
+  const data = await usersService.detailForPage(ctx.params.id);
+
+  // Comprobamos si se tienen como contactos
+  if (!hasPermission) {
+    hasPermission = await userAgentsAreContacts(
+      _.map(ctx.state.userSession.userAgents, 'id'),
+      _.map(data.userAgents, 'id')
+    );
+  }
+
   if (hasPermission) {
-    const data = await usersService.detailForPage(ctx.params.id);
     ctx.status = 200;
     ctx.body = { status: 200, data };
   } else {
@@ -166,6 +175,14 @@ async function agentDetailForPage(ctx) {
 
   if (!hasPermission) {
     hasPermission = await hasPermissionCTX(ctx.state.userSession, allowedPermissions);
+  }
+
+  // Comprobamos si se tienen como contactos
+  if (!hasPermission) {
+    hasPermission = await userAgentsAreContacts(
+      _.map(ctx.state.userSession.userAgents, 'id'),
+      ctx.params.id
+    );
   }
 
   if (hasPermission) {

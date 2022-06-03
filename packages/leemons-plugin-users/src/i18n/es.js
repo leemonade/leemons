@@ -250,4 +250,16 @@ module.exports = {
     cancel: 'Cancelar',
     saveSuccess: 'Datos guardados con éxito',
   },
+  userDetailModal: {
+    male: 'Hombre',
+    female: 'Mujer',
+    personalInformation: 'Información personal',
+    badges: 'Etiquetas',
+    email: 'Email',
+    name: 'Nombre',
+    surnames: 'Apellidos',
+    birthday: 'Fecha de nacimiento',
+    gender: 'Género',
+    rol: 'Rol',
+  },
 };

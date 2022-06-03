@@ -5,7 +5,14 @@ import { find, isArray, map } from 'lodash';
 import { useLocale, useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@dashboard/helpers/prefixPN';
-import { Box, createStyles, RadioGroup, TabPanel, Tabs } from '@bubbles-ui/components';
+import {
+  Box,
+  createStyles,
+  LoadingOverlay,
+  RadioGroup,
+  TabPanel,
+  Tabs,
+} from '@bubbles-ui/components';
 import { ClassroomHeaderBar, HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
 import { useHistory, useParams } from 'react-router-dom';
 import { classDetailForDashboardRequest } from '@academic-portfolio/request';
@@ -16,18 +23,20 @@ import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 
 const rightZoneWidth = '320px';
 
-const Styles = createStyles((theme) => ({
+const Styles = createStyles((theme, { hideRightSide }) => ({
   leftSide: {
-    width: `calc(100% - ${rightZoneWidth})`,
+    width: hideRightSide ? '100%' : `calc(100% - ${rightZoneWidth})`,
+    transition: '300ms',
   },
   rightSide: {
     width: rightZoneWidth,
     height: '100vh',
     position: 'fixed',
-    right: 0,
+    right: hideRightSide ? `-${rightZoneWidth}` : 0,
     top: 0,
     backgroundColor: theme.colors.uiBackground02,
     padding: theme.spacing[4],
+    transition: '300ms',
   },
   rightSidewidgetsContainer: {
     paddingTop: theme.spacing[4],
@@ -73,13 +82,18 @@ export default function ClassDashboard({ session }) {
   const [store, render] = useStore({
     loading: true,
     tabNames: {},
+    tabsProperties: {},
+    hideRightSide: false,
   });
-  const { classes: styles } = Styles();
+  const { classes: styles } = Styles({ hideRightSide: store.hideRightSide });
   const [t] = useTranslateLoader(prefixPN('classDashboard'));
   const { id } = useParams();
   const history = useHistory();
 
   async function init() {
+    store.loading = true;
+    render();
+    store.idLoaded = id;
     const { classe, programClasses } = await classDetailForDashboardRequest(id);
 
     store.class = classe;
@@ -135,13 +149,11 @@ export default function ClassDashboard({ session }) {
   }
 
   React.useEffect(() => {
-    init();
+    if (id && (!store.idLoaded || id !== store.idLoaded)) init();
   }, [id]);
 
-  if (store.loading) return null;
-
-  const classImage = getClassImage(store.class);
   const headerProps = {};
+  const classImage = store.class ? getClassImage(store.class) : null;
   if (classImage) {
     headerProps.blur = 10;
     headerProps.withBlur = true;
@@ -150,13 +162,16 @@ export default function ClassDashboard({ session }) {
   } else {
     headerProps.withBlur = false;
     headerProps.withGradient = true;
-    headerProps.color = store.class.color;
+    headerProps.color = store.class?.color;
   }
 
-  const mainTeacher = find(store.class.teachers, { type: 'main-teacher' }).teacher;
+  const mainTeacher = store.class
+    ? find(store.class.teachers, { type: 'main-teacher' }).teacher
+    : null;
 
   return (
     <>
+      {store.loading ? <LoadingOverlay visible /> : null}
       <Box className={styles.leftSide}>
         <Box className={styles.header}>
           <HeaderBackground {...headerProps} styles={{ position: 'absolute' }} />
@@ -165,9 +180,9 @@ export default function ClassDashboard({ session }) {
             <ClassroomHeaderBar
               labels={{ virtualClassroom: t('virtualClassroom') }}
               classRoom={{
-                schedule: store.class.schedule,
-                address: store.class.address,
-                virtual_classroom: store.class.virtualUrl,
+                schedule: store.class?.schedule,
+                address: store.class?.address,
+                virtual_classroom: store.class?.virtualUrl,
                 teacher: mainTeacher?.user,
               }}
               locale={locale}
@@ -200,15 +215,30 @@ export default function ClassDashboard({ session }) {
         </Stack>
         */}
 
-        <ZoneWidgets zone="plugins.dashboard.class.tabs" onGetZone={onGetZone} container={<Tabs />}>
-          {({ Component, key, properties }) => (
-            <TabPanel
-              label={store.widgetLabels ? store.widgetLabels[properties.label] || '-' : '-'}
-              key={key}
-            >
-              <Component {...properties} classe={store.class} session={session} />
-            </TabPanel>
-          )}
+        <ZoneWidgets
+          zone="plugins.dashboard.class.tabs"
+          onGetZone={onGetZone}
+          container={
+            <Tabs
+              onChange={(key) => {
+                store.hideRightSide = !!store.tabsProperties?.[key]?.hideRightSide;
+                render();
+              }}
+            />
+          }
+        >
+          {({ Component, key, properties }) => {
+            store.tabsProperties[key] = properties;
+
+            return (
+              <TabPanel
+                label={store.widgetLabels ? store.widgetLabels[properties.label] || '-' : '-'}
+                key={key}
+              >
+                <Component {...properties} classe={store.class} session={session} />
+              </TabPanel>
+            );
+          }}
         </ZoneWidgets>
       </Box>
       <Box className={styles.rightSide}>

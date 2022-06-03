@@ -32,6 +32,7 @@ module.exports = {
   getUserAgentByCenterProfile: userAgentsService.getUserAgentByCenterProfile,
 
   // Contacts
+  userAgentsAreContacts: userAgentsService.contacts.userAgentsAreContacts,
   getUserAgentContacts: userAgentsService.contacts.getUserAgentContacts,
   addUserAgentContacts: userAgentsService.contacts.addUserAgentContacts,
   removeUserAgentContacts: userAgentsService.contacts.removeUserAgentContacts,
