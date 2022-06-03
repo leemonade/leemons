@@ -95,12 +95,16 @@ export default function TaskDetail({ id, student }) {
     history.push('/private/assignables/ongoing');
   }
 
-  const [, translations] = useTranslateLoader(prefixPN('task_realization'));
+  const [, translations] = useTranslateLoader([
+    prefixPN('task_realization'),
+    'plugins.assignables.multiSubject',
+  ]);
 
   const labels = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       const data = _.get(res, prefixPN('task_realization'));
+      data.multiSubject = _.get(res, 'plugins.assignables.multiSubject');
 
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
@@ -133,7 +137,7 @@ export default function TaskDetail({ id, student }) {
     currentStep,
   });
 
-  const classData = useClassData(assignation?.instance?.classes);
+  const classData = useClassData(assignation?.instance?.classes, labels);
 
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === steps.length - 1;
