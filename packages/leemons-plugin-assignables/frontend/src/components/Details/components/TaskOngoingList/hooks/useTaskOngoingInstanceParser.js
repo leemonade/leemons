@@ -91,22 +91,24 @@ export default function useTaskOngoingInstanceParser(instance) {
 
   const locale = useLocale();
 
-  const [, translations] = useTranslateLoader(prefixPN('activity_deadline_header'));
+  const [, translations] = useTranslateLoader([
+    prefixPN('activity_deadline_header'),
+    prefixPN('multiSubject'),
+  ]);
 
-  const deadlineHeaderLabels = useMemo(() => {
+  const { multiSubjectLabel, deadlineHeaderLabels } = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('activity_deadline_header'));
-
-      // EN: Modify the data object here
-      // ES: Modifica el objeto data aquí
-      return data;
+      return {
+        deadlineHeaderLabels: _.get(res, prefixPN('activity_deadline_header')),
+        multiSubjectLabel: _.get(res, prefixPN('multiSubject')),
+      };
     }
 
     return {};
   }, [translations]);
 
-  const classData = useClassData(instance.classes);
+  const classData = useClassData(instance.classes, { multiSubject: multiSubjectLabel });
   const evaluationSystem = useProgramEvaluationSystem(instance);
 
   const data = {
