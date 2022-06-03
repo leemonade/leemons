@@ -1,9 +1,9 @@
 import React from 'react';
-import { Select } from '@bubbles-ui/components';
+import CenterAlignedSelect from '../CenterAlignedSelect';
 
 export default function Status({ labels, value, onChange }) {
   return (
-    <Select
+    <CenterAlignedSelect
       orientation="horizontal"
       label={labels?.status}
       data={[
