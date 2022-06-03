@@ -6,6 +6,13 @@ const textSchema = {
   maxLength: 65000,
 };
 
+const textSchemaNullable = {
+  type: 'string',
+  minLength: 1,
+  maxLength: 65000,
+  nullable: true,
+};
+
 const numberSchema = {
   type: 'number',
 };
@@ -73,6 +80,7 @@ module.exports = {
   booleanSchema,
   integerSchema,
   arrayStringSchema,
+  textSchemaNullable,
   localeObjectSchema,
   stringSchemaNullable,
   integerSchemaNullable,
