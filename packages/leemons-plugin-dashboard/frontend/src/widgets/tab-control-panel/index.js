@@ -5,6 +5,10 @@ import { Box } from '@bubbles-ui/components';
 import { ZoneWidgets } from '@widgets';
 
 function TabControlPanelWidget(props) {
+  React.useEffect(() => {
+    console.log('La puta');
+  }, []);
+
   return (
     <ZoneWidgets zone="plugins.dashboard.class.control-panel">
       {({ Component, key, properties }) => (

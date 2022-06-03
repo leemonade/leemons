@@ -90,6 +90,7 @@ function UserProgramCalendar({ program, classe, session }) {
   }
 
   async function load() {
+    store.currentLoaded = JSON.stringify({ program, classe });
     store.centers = getCentersWithToken();
     if (store.centers) {
       const promises = [getCalendarsToFrontendRequest(store.centers[0].token)];
@@ -162,7 +163,12 @@ function UserProgramCalendar({ program, classe, session }) {
   }
 
   React.useEffect(() => {
-    if ((program || classe) && !evLoading) {
+    const toLoad = JSON.stringify({ program, classe });
+    if (
+      (program || classe) &&
+      !evLoading &&
+      (!store.currentLoaded || toLoad !== store.currentLoaded)
+    ) {
       load();
     }
   }, [program, classe, evLoading]);

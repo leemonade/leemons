@@ -14,6 +14,7 @@ function ZoneWidgets({ zone, container = <Box />, onGetZone = () => {}, children
   const [store, render] = useStore();
 
   async function load() {
+    store.zoneLoaded = zone;
     const data = await getZoneRequest(zone);
     store.zone = data.zone;
     onGetZone(store.zone);
@@ -21,7 +22,7 @@ function ZoneWidgets({ zone, container = <Box />, onGetZone = () => {}, children
   }
 
   React.useEffect(() => {
-    if (zone) load();
+    if (zone && (!store.zoneLoaded || store.zoneLoaded !== zone)) load();
   }, [zone]);
 
   return React.cloneElement(container, {
@@ -36,7 +37,7 @@ function ZoneWidgets({ zone, container = <Box />, onGetZone = () => {}, children
                 properties: item.properties,
               });
             }
-            React.cloneElement(children, {
+            return React.cloneElement(children, {
               key: item.id,
               item,
               Component: dynamicImport(item.pluginName, item.url),

@@ -249,4 +249,16 @@ module.exports = {
     cancel: 'Cancel',
     saveSuccess: 'Saved successfully',
   },
+  userDetailModal: {
+    male: 'Male',
+    female: 'Female',
+    personalInformation: 'Personal information',
+    badges: 'Tags',
+    email: 'Email',
+    name: 'First name',
+    surnames: 'Last name',
+    birthday: 'Date of birth',
+    gender: 'Gender',
+    rol: 'Role',
+  },
 };

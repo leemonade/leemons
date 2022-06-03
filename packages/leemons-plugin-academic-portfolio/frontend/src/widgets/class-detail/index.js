@@ -7,6 +7,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { forEach } from 'lodash';
 import getUserFullName from '@users/helpers/getUserFullName';
 import { LocaleDate } from '@common';
+import UserDetailModal from '@users/components/UserDetailModal';
 
 function ClassDetailWidget({ classe }) {
   const [t] = useTranslateLoader(prefixPN('classDetailWidget'));
@@ -44,6 +45,7 @@ function ClassDetailWidget({ classe }) {
     const students = [];
     forEach(classe.teachers, (teacher) => {
       teachers.push({
+        userAgentId: teacher.teacher.id,
         ...teacher.teacher.user,
         type: teacher.type,
 
@@ -58,6 +60,7 @@ function ClassDetailWidget({ classe }) {
     });
     forEach(classe.students, (student) => {
       students.push({
+        userAgentId: student.id,
         ...student.user,
         avatar: <Avatar image={student.user.avatar} fullName={getUserFullName(student.user)} />,
         birthdate: <LocaleDate date={student.user.birthdate} />,
@@ -67,15 +70,36 @@ function ClassDetailWidget({ classe }) {
     return { teachers, students };
   }, [classe]);
 
+  const [openedStudent, setOpenedStudent] = React.useState();
+
+  function onClickRow(row) {
+    setOpenedStudent(row.original.userAgentId);
+  }
+
+  function closeStudent() {
+    setOpenedStudent(null);
+  }
+
   return (
     <ContextContainer>
+      <UserDetailModal opened={!!openedStudent} userAgent={openedStudent} onClose={closeStudent} />
       <Box>
         <Title order={4}>{t('teachers')}</Title>
-        <Table columns={tableHeaders} data={data.teachers} />
+        <Table
+          onClickRow={onClickRow}
+          styleRow={{ cursor: 'pointer' }}
+          columns={tableHeaders}
+          data={data.teachers}
+        />
       </Box>
       <Box>
         <Title order={4}>{t('students')}</Title>
-        <Table columns={tableHeaders} data={data.students} />
+        <Table
+          onClickRow={onClickRow}
+          styleRow={{ cursor: 'pointer' }}
+          columns={tableHeaders}
+          data={data.students}
+        />
       </Box>
     </ContextContainer>
   );
