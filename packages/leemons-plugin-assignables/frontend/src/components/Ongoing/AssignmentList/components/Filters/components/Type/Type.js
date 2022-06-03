@@ -11,6 +11,14 @@ export default function Type({ labels, value, onChange }) {
           label: labels?.seeAll,
           value: 'all',
         },
+        {
+          label: 'tasks',
+          value: 'task',
+        },
+        {
+          label: 'tests',
+          value: 'tests',
+        },
       ]}
       value={value}
       onChange={onChange}

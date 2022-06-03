@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, SearchInput, SegmentedControl, Select } from '@bubbles-ui/components';
+import React, { useState } from 'react';
+import { Box } from '@bubbles-ui/components';
 import Filters from './components/Filters';
 import { useAssignmentListStyle } from './AssignmentList.style';
 import ActivitiesList from './components/ActivitiesList';
@@ -29,6 +29,7 @@ export default function AssignmentList() {
       completed: 'Completada',
     },
   };
+  const [filters, setFilters] = useState(null);
   const ongoingCount = 5;
   const evaluatedCount = 7;
 
@@ -47,8 +48,10 @@ export default function AssignmentList() {
             value: 'evaluated',
           },
         ]}
+        value={filters}
+        onChange={setFilters}
       />
-      <ActivitiesList />
+      <ActivitiesList filters={filters} />
     </Box>
   );
 }

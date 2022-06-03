@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { difference } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, SearchInput, SegmentedControl } from '@bubbles-ui/components';
 import { Subject, Status, Type } from './components';
@@ -30,19 +31,41 @@ export default function Filters({
     [tabs]
   );
 
-  const { control, setValue, watch } = useForm({ defaultValues });
+  const { control, setValue, getValues, watch } = useForm({ defaultValues });
 
   useEffect(() => {
-    setValue(value);
+    if (value) {
+      const values = getValues();
+
+      const diff = difference(value, values);
+
+      diff.map((key) => setValue(key, value[key]));
+    }
   }, [value]);
 
   useEffect(() => {
     if (typeof onChange !== 'function') {
       return () => {};
     }
-    const subscription = watch((values) => onChange(values));
 
-    return subscription.unsubscribe;
+    let timer;
+    const subscription = watch((values) => {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      timer = setTimeout(() => {
+        onChange(values);
+
+        clearTimeout(timer);
+        timer = null;
+      }, 200);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timer);
+    };
   }, [watch, onChange]);
 
   /*

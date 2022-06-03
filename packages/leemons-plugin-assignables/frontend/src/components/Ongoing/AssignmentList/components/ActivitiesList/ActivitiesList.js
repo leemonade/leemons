@@ -99,24 +99,37 @@ function useAssignmentsColumns() {
   return columns;
 }
 
-export default function ActivitiesList({ closed = false }) {
+export default function ActivitiesList({ filters }) {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
 
   const query = useMemo(() => {
     const q = {};
 
-    if (closed) {
-      q.close_max = new Date();
-      q.close = new Date();
-      q.close_default = false;
-    } else {
-      q.close_min = new Date();
-      q.close_default = true;
+    if (filters?.query) {
+      q.search = filters?.query;
     }
 
+    if (filters?.subject && filters?.subject !== 'all') {
+      q.subject = filters?.subject;
+    }
+    if (filters?.type && filters?.type !== 'all') {
+      q.role = filters?.type;
+    }
+    if (filters?.status && filters?.status !== 'all') {
+      q.status = filters?.status;
+    }
+    // if (closed) {
+    //   q.close_max = new Date();
+    //   q.close = new Date();
+    //   q.close_default = false;
+    // } else {
+    //   q.close_min = new Date();
+    //   q.close_default = true;
+    // }
+
     return q;
-  }, []);
+  }, [filters]);
 
   const [instances, instancesLoading] = useSearchAssignableInstances(query);
 
@@ -153,5 +166,5 @@ export default function ActivitiesList({ closed = false }) {
 }
 
 ActivitiesList.propTypes = {
-  closed: PropTypes.bool,
+  query: PropTypes.object,
 };

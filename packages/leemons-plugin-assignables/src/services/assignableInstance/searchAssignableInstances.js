@@ -160,7 +160,7 @@ async function filterByClasses(instances, query, { transacting } = {}) {
 }
 
 async function filterBySearchQuery(instances, query, { transacting, userSession } = {}) {
-  if (!(query.search || query.subjects?.length)) {
+  if (!(query.search || query.subjects?.length || query.role)) {
     return instances;
   }
 
@@ -180,7 +180,7 @@ async function filterBySearchQuery(instances, query, { transacting, userSession 
 
   const searchResults = await searchAssignables.call(
     this,
-    undefined,
+    query.role,
     { published: 'all', preferCurrent: false, search: query.search, subjects: query.subjects },
     { userSession, transacting }
   );
@@ -193,7 +193,9 @@ async function filterBySearchQuery(instances, query, { transacting, userSession 
     resultsMatchingAssignables.includes(instance.assignable)
   );
 
-  return _.map(instancesMatchingSearch, 'instance');
+  const filteredResults = instancesMatchingSearch;
+
+  return _.map(filteredResults, 'instance');
 }
 
 async function searchTeacherAssignableInstances(query, { userSession, transacting } = {}) {
@@ -293,10 +295,6 @@ module.exports = async function searchAssignableInstances(
   query,
   { userSession, transacting } = {}
 ) {
-  const teacherResults = await searchTeacherAssignableInstances(query, {
-    userSession,
-    transacting,
-  });
   /**
    * Limit ✅
    *
@@ -316,7 +314,22 @@ module.exports = async function searchAssignableInstances(
    *  - Task search ✅
    *  - Start date ✅
    *  - Deadline ✅
+   *
+   *
+   * Ongoing / Closed
+   * Graded / Graded x time ago
+   * Query search ✅
+   * Subject/Group ✅
+   * Status
+   * Role ✅
    */
+
+  const q = {};
+
+  const teacherResults = await searchTeacherAssignableInstances(query, {
+    userSession,
+    transacting,
+  });
 
   if (!teacherResults.length) {
     return searchStudentAssignableInstances(query, { userSession, transacting });
