@@ -46,6 +46,8 @@ module.exports = {
     users: 'Invite other users',
     usersDisabled: 'Guests',
     showInCalendar: 'Show in calendar',
+    showMore: 'Show all',
+    showLess: 'Show less',
     repeat: {
       dont_repeat: 'Don´t repeat',
       every_day: 'Every day',

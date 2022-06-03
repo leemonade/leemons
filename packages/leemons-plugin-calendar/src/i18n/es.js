@@ -46,6 +46,8 @@ module.exports = {
     calendarLabelDisabled: 'Calendario',
     users: 'Invitar a otro usuarios',
     usersDisabled: 'Invitados',
+    showMore: 'Ver todos',
+    showLess: 'Ver menos',
     repeat: {
       dont_repeat: 'No repetir',
       every_day: 'Cada día',
