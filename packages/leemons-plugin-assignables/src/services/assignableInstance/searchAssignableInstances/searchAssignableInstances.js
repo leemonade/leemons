@@ -341,7 +341,7 @@ module.exports = async function searchAssignableInstances(
 
   if (typeof query.evaluated === 'boolean') {
     if (query.evaluated) {
-      q.evaluated = dayjs();
+      q.evaluated = dayjs().subtract(7, 'days');
     } else {
       q.evaluated = false;
     }

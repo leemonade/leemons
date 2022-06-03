@@ -122,11 +122,13 @@ export default function ActivitiesList({ filters }) {
 
     if (filters?.tab === 'ongoing') {
       q.closed = false;
+      q.evaluated = false;
     } else if (filters?.tab === 'history') {
       q.closed = true;
     } else if (filters?.tab === 'evaluated') {
       q.evaluated = true;
     }
+
     return q;
   }, [filters]);
 

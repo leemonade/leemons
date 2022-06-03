@@ -188,7 +188,11 @@ async function filterByEvaluated(instances, query, { users, transacting } = {}) 
 
   const matchingIds = _.map(filteredInstances, 'instance');
 
-  return instances.filter((instance) => matchingIds.includes(instance.instance));
+  if (query.evaluated) {
+    return instances.filter((instance) => matchingIds.includes(instance.instance));
+  }
+  return instances.filter((instance) => !matchingIds.includes(instance.instance));
+
   // Necesitamos la cantidad de alumnos
 
   // Si todas la main grade de todas las asignaturas

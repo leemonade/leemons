@@ -68,6 +68,12 @@ module.exports = {
         query.closed = false;
       }
 
+      if (query.evaluated === 'true') {
+        query.evaluated = true;
+      } else if (query.evaluated === 'false') {
+        query.evaluated = false;
+      }
+
       const assignableInstances = await services.searchAssignableInstances(query, {
         userSession: ctx.state.userSession,
       });
