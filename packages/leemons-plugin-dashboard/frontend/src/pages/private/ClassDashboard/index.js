@@ -220,7 +220,6 @@ export default function ClassDashboard({ session }) {
           onGetZone={onGetZone}
           container={
             <Tabs
-              forceRender
               onChange={(key) => {
                 store.hideRightSide = !!store.tabsProperties?.[key]?.hideRightSide;
                 render();
@@ -228,19 +227,18 @@ export default function ClassDashboard({ session }) {
             />
           }
         >
-          {(Component, key, properties) => {
+          {({ Component, key, properties }) => {
             store.tabsProperties[key] = properties;
+
             return (
               <TabPanel
                 label={store.widgetLabels ? store.widgetLabels[properties.label] || '-' : '-'}
                 key={key}
               >
-                {(store.tabsProperties[key] = properties)}
                 <Component {...properties} classe={store.class} session={session} />
               </TabPanel>
             );
           }}
-          <TabsComponent store={store} session={session} />
         </ZoneWidgets>
       </Box>
       <Box className={styles.rightSide}>
