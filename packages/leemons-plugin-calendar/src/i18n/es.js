@@ -56,8 +56,8 @@ module.exports = {
   },
   event_mode_event_type: {
     video_link: 'Enlace a videollamada',
-    add_place: 'Añadir lugar',
-    add_description: 'Añadir descripción',
+    add_place: 'Lugar',
+    add_description: 'Descripción',
   },
   task_mode_event_type: {
     description: 'Descripción',

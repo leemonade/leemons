@@ -56,8 +56,8 @@ module.exports = {
   },
   event_mode_event_type: {
     video_link: 'Include a video call link',
-    add_place: 'Add place',
-    add_description: 'Add a description',
+    add_place: 'Place',
+    add_description: 'Description',
   },
   task_mode_event_type: {
     description: 'Description',
