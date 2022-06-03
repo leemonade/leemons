@@ -10,11 +10,8 @@ async function processScheduleForClass(schedule, classId, { transacting: _transa
       const alreadyIds = _.map(timetables, 'id');
       const toCreate = _.filter(schedule, ({ id }) => !id);
       const toUpdate = _.filter(schedule, ({ id }) => id && alreadyIds.includes(id));
-      const toDelete = _.filter(schedule, ({ id }) => id && !alreadyIds.includes(id));
-
-      console.log('toCreate', toCreate);
-      console.log('toUpdate', toUpdate);
-      console.log('toDelete', toDelete);
+      const toUpdateIds = _.map(toUpdate, 'id');
+      const toDelete = _.filter(alreadyIds, (id) => !toUpdateIds.includes(id));
 
       return Promise.all([
         // Create
@@ -42,7 +39,7 @@ async function processScheduleForClass(schedule, classId, { transacting: _transa
           )
         ),
         // Delete
-        Promise.all(_.map(toDelete, ({ id }) => timetableService.delete(id, { transacting }))),
+        Promise.all(_.map(toDelete, (id) => timetableService.delete(id, { transacting }))),
       ]);
     },
     table.groups,

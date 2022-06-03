@@ -58,21 +58,17 @@ function UserProgramCalendar({ program, classe, session }) {
       // console.log(event, calendarIds, calendarIds.includes(event.calendar), store.selectedCalendar);
       if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
         // eslint-disable-next-line consistent-return
-        /*
-        31/03/22 Juanjo dijo que no se mostraran los eventos tipo tarea
         forEach(event.data.classes, (calendar) => {
-
           if (
             (!store.selectedCalendar ||
               store.selectedCalendar === '*' ||
               calendar === store.selectedCalendar) &&
             calendarIds.includes(calendar)
           ) {
-            events.push(transformEvent(event, store.centerData.calendars));
+            events.push(transformEv(event, store.centerData.calendars));
             return false;
           }
         });
-         */
       } else if (
         (!store.selectedCalendar ||
           store.selectedCalendar === '*' ||
