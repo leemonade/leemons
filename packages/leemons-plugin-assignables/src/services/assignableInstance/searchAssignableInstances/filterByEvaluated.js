@@ -140,7 +140,7 @@ async function getMainGradesPerAssignation(assignations, { users, transacting } 
 
 function filterInstancesNotHavingAllTheStudentsEvaluated(
   assignationsWithGradesPerInstance,
-  subjects
+  classesWithSubjects
 ) {
   const assignationsWithGradesAndIdPerInstance = _.mapValues(
     assignationsWithGradesPerInstance,
@@ -152,7 +152,9 @@ function filterInstancesNotHavingAllTheStudentsEvaluated(
 
   return _.filter(assignationsWithGradesAndIdPerInstance, ({ assignations }) =>
     assignations.every((assignation) => {
-      const subjectsForInstance = subjects[assignation?.instance];
+      const subjectsForInstance = _.uniq(
+        classesWithSubjects[assignation?.instance]?.map((klass) => klass.subject)
+      );
       return assignation?.grades?.length >= subjectsForInstance.length;
     })
   );
