@@ -62,7 +62,7 @@ class Leemons {
     this.events = new events();
 
     // TODO: Find best value for listeners in order to memory comsuption
-    this.events.setMaxListeners(50);
+    this.events.setMaxListeners(100);
 
     const { emit, once } = this.events;
     const emitArrayEventsIfNeed = async (_event, { event, target }, ...args) => {
