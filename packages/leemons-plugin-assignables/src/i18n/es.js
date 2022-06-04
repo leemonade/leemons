@@ -193,4 +193,18 @@ module.exports = {
       submission: 'Entrega',
     },
   },
+  activities_filters: {
+    ongoing: 'En curso {{count}}',
+    evaluated: 'Evaluadas {{count}}',
+    history: 'Histórico {{count}}',
+    search: 'Buscar actividades en curso',
+    subject: 'Asignatura',
+    status: 'Estado',
+    type: 'Tipo',
+    seeAll: 'Ver todas',
+  },
+  ongoing: {
+    ongoing: 'Actividades en curso',
+    history: 'Actividades pasadas',
+  },
 };

@@ -220,7 +220,7 @@ function ActivityItem({ instance }) {
   );
 }
 
-function SubjectItem({ classData }) {
+function SubjectItem({ classData, fullLength }) {
   return (
     <Box
       sx={(theme) => ({
@@ -253,7 +253,7 @@ function SubjectItem({ classData }) {
         />
       </Box>
       <TextClamp lines={1}>
-        <Text>{classData?.groupName || classData?.name}</Text>
+        <Text>{fullLength ? classData?.name : classData?.groupName || classData?.name}</Text>
       </TextClamp>
     </Box>
   );
@@ -311,7 +311,7 @@ function TimeReference({ assignation, status, labels }) {
   return labels.status || status;
 }
 
-async function parseAssignationForCommonView(instance, labels) {
+async function parseAssignationForCommonView(instance, labels, { subjectFullLength }) {
   const parsedDates = parseDates(instance.dates, ['start', 'deadline']);
   const classData = await getClassData(instance.classes, { multiSubject: labels.multiSubject });
 
@@ -324,14 +324,14 @@ async function parseAssignationForCommonView(instance, labels) {
       start: '-',
       ...parsedDates,
     },
-    subject: <SubjectItem classData={classData} />,
+    subject: <SubjectItem classData={classData} fullLength={subjectFullLength} />,
   };
 }
 
-async function parseAssignationForTeacherView(instance, labels) {
+async function parseAssignationForTeacherView(instance, labels, options) {
   const studentsStatus = getStudentsStatusForTeacher(instance);
 
-  const commonData = await parseAssignationForCommonView(instance, labels);
+  const commonData = await parseAssignationForCommonView(instance, labels, options);
   return {
     ...commonData,
     ...studentsStatus,
@@ -340,12 +340,12 @@ async function parseAssignationForTeacherView(instance, labels) {
   };
 }
 
-async function parseAssignationForStudentView(assignation, labels) {
+async function parseAssignationForStudentView(assignation, labels, options) {
   const { instance } = assignation;
   const _status = getStatus(assignation, instance);
   const status = labels?.activity_status?.[_status];
 
-  const commonData = await parseAssignationForCommonView(instance, labels);
+  const commonData = await parseAssignationForCommonView(instance, labels, options);
   return {
     ...commonData,
     status,
@@ -367,15 +367,15 @@ async function parseAssignationForStudentView(assignation, labels) {
   };
 }
 
-function parseAssignations({ assignations, parserToUse, labels }) {
+function parseAssignations({ assignations, parserToUse, labels, options }) {
   if (!assignations.length) {
     return [];
   }
 
-  return Promise.all(assignations?.map((assignation) => parserToUse(assignation, labels)));
+  return Promise.all(assignations?.map((assignation) => parserToUse(assignation, labels, options)));
 }
 
-export default function useParseAssignations(assignations) {
+export default function useParseAssignations(assignations, options) {
   const [, translations] = useTranslateLoader([
     prefixPN('student_actions'),
     prefixPN('activity_status'),
@@ -406,18 +406,19 @@ export default function useParseAssignations(assignations) {
     [isTeacher]
   );
 
-  const options = useMemo(
+  const parseAssignationsOptions = useMemo(
     () => ({
       parserToUse,
       assignations,
       labels,
+      options,
     }),
     [parserToUse, assignations, labels]
   );
 
   const defaultValue = useMemo(() => [], []);
 
-  const [parsedAssignations, , loading] = useApi(parseAssignations, options);
+  const [parsedAssignations, , loading] = useApi(parseAssignations, parseAssignationsOptions);
 
   return [parsedAssignations || defaultValue, loading];
 }

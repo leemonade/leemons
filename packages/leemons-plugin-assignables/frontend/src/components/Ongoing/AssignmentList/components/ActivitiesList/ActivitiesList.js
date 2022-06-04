@@ -143,7 +143,9 @@ export default function ActivitiesList({ filters }) {
   }, [instances, page, size]);
 
   const [instancesData, instancesDataLoading] = useAssignationsByProfile(instancesInPage);
-  const [parsedInstances, parsedInstancesLoading] = useParseAssignations(instancesData);
+  const [parsedInstances, parsedInstancesLoading] = useParseAssignations(instancesData, {
+    subjectFullLength: true,
+  });
   const columns = useAssignmentsColumns();
 
   const isLoading = instancesLoading || instancesDataLoading || parsedInstancesLoading;

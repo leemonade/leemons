@@ -1,35 +1,37 @@
 import React, { useState, useMemo } from 'react';
-import { Box } from '@bubbles-ui/components';
+import { Box, Title, InlineSvg } from '@bubbles-ui/components';
+import _ from 'lodash';
+import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import Filters from './components/Filters';
 import { useAssignmentListStyle } from './AssignmentList.style';
 import ActivitiesList from './components/ActivitiesList';
+import prefixPN from '../../../helpers/prefixPN';
 
-export default function AssignmentList({ closed }) {
-  const labels = {
-    title: 'Actividades',
-    filters: {
-      ongoing: 'En curso {{count}}',
-      evaluated: 'Evaluadas {{count}}',
-      history: 'Histórico {{count}}',
-      search: 'Buscar actividades en curso',
-      subject: 'Asignatura/grupo',
-      status: 'Estado',
-      type: 'Tipo',
-      seeAll: 'Ver todas',
-    },
-    columns: {
-      name: 'Nombre',
-      subject: 'Asignatura/grupo',
-      start: 'Inicio',
-      deadline: 'Fecha límite',
-      status: 'Estado',
-      submission: 'Entrega',
-      students: 'Estudiantes',
-      opened: 'Abierta',
-      started: 'Comenzada',
-      completed: 'Completada',
-    },
-  };
+function parseTitleKey(title, closed) {
+  if (title) {
+    return title;
+  }
+
+  if (closed) {
+    return prefixPN('ongoing.history');
+  }
+  return prefixPN('ongoing.ongoing');
+}
+
+export default function AssignmentList({ closed, title, filters: filtersProps }) {
+  const titleKey = parseTitleKey(title, closed);
+  const [, translations] = useTranslateLoader([prefixPN('activities_filters'), titleKey]);
+
+  const labels = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      return { filters: _.get(res, prefixPN('activities_filters')), title: _.get(res, titleKey) };
+    }
+
+    return {};
+  }, [translations]);
+
   const [filters, setFilters] = useState(null);
 
   const tabs = useMemo(() => {
@@ -61,11 +63,26 @@ export default function AssignmentList({ closed }) {
   const { classes } = useAssignmentListStyle();
   return (
     <Box className={classes?.root}>
+      <Box className={classes?.title}>
+        <InlineSvg
+          style={{
+            display: 'inline-block',
+            position: 'relative',
+            width: 24,
+            heiht: 24,
+          }}
+          width={24}
+          height={24}
+          src="/public/assignables/menu-icon.svg"
+        />
+        <Title order={1}>{labels.title}</Title>
+      </Box>
       <Filters
         labels={labels.filters}
         tabs={tabs}
         value={filters}
         onChange={setFilters}
+        {...filtersProps}
         hideStatus
       />
       <ActivitiesList filters={filters} />
