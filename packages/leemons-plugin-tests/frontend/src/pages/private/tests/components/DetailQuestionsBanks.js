@@ -139,6 +139,7 @@ export default function DetailQuestionsBanks({ form, t, onNext, onPrev }) {
               <Box style={{ textAlign: 'right', width: '100%' }}>
                 <ActionButton
                   as={Link}
+                  target="_blank"
                   to={`/private/tests/questions-banks/${item.id}`}
                   tooltip={t('view')}
                   icon={<ExpandDiagonalIcon />}

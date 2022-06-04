@@ -11,7 +11,10 @@ function dynamicImport(pluginName, component) {
 }
 
 function ZoneWidgets({ zone, container = <Box />, onGetZone = () => {}, children }) {
-  const [store, render] = useStore();
+  const [store, render] = useStore({
+    cache: {},
+    c: null,
+  });
 
   async function load() {
     store.zoneLoaded = zone;
@@ -30,12 +33,21 @@ function ZoneWidgets({ zone, container = <Box />, onGetZone = () => {}, children
       store.zone && store.zone.widgetItems.length
         ? map(store.zone.widgetItems, (item) => {
             if (isFunction(children)) {
-              return children({
-                key: item.id,
-                item,
-                Component: dynamicImport(item.pluginName, item.url),
-                properties: item.properties,
-              });
+              if (
+                !store.cache[item.id] ||
+                (store.cache[item.id] && store.cache[item.id].func !== children)
+              ) {
+                store.cache[item.id] = {
+                  func: children,
+                  result: children({
+                    key: item.id,
+                    item,
+                    Component: dynamicImport(item.pluginName, item.url),
+                    properties: item.properties,
+                  }),
+                };
+              }
+              return store.cache[item.id].result;
             }
             return React.cloneElement(children, {
               key: item.id,

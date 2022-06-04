@@ -96,6 +96,7 @@ export default function QuestionsTable({
               <Box className={styles.tableCell} style={{ textAlign: 'right', minWidth: '100px' }}>
                 <ActionButton
                   as={Link}
+                  target="_blank"
                   to={`/private/tests/questions-banks/${item.questionBank}?question=${item.id}`}
                   tooltip={t('view')}
                   icon={<ExpandDiagonalIcon />}

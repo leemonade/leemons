@@ -27,7 +27,7 @@ function Calendar({ session }) {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [, setR] = useState(null);
 
-  const [toggleEventModal, EventModal] = useCalendarEventModal();
+  const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
 
   function render() {
     setR(new Date().getTime());
@@ -196,13 +196,13 @@ function Calendar({ session }) {
     if (info.originalEvent) {
       const { bgColor, icon, borderColor, ...e } = info.originalEvent;
       setSelectedEvent(e);
-      toggleEventModal();
+      openEventModal();
     }
   };
 
   const onNewEvent = () => {
     setSelectedEvent(null);
-    toggleEventModal();
+    openEventModal();
   };
 
   const fullCalendarConfigs = useMemo(() => {
