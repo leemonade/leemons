@@ -9,5 +9,5 @@ export default async function searchAssignableInstances(query) {
     }
   );
 
-  return result.assignableInstances;
+  return result?.assignableInstances || [];
 }

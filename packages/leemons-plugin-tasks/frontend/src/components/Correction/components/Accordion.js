@@ -75,6 +75,7 @@ export default function Accordion({
               render={({ field }) => (
                 <ScoreInput
                   {...scoreInputProps}
+                  tags={[]}
                   value={{ score: field?.value }}
                   onChange={(newValue) => field.onChange(newValue.score)}
                 />

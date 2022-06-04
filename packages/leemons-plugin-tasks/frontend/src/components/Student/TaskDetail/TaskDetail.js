@@ -18,6 +18,7 @@ import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useLayout } from '@layout/context';
+// import { ActivityContainer } from '@bubbles-ui/leemons';
 import useSteps from './helpers/useSteps';
 import TaskDetailHeader from './components/TaskDetailHeader';
 import { TaskDetailStyles } from './TaskDetail.style';
@@ -94,12 +95,16 @@ export default function TaskDetail({ id, student }) {
     history.push('/private/assignables/ongoing');
   }
 
-  const [, translations] = useTranslateLoader(prefixPN('task_realization'));
+  const [, translations] = useTranslateLoader([
+    prefixPN('task_realization'),
+    'plugins.assignables.multiSubject',
+  ]);
 
   const labels = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       const data = _.get(res, prefixPN('task_realization'));
+      data.multiSubject = _.get(res, 'plugins.assignables.multiSubject');
 
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
@@ -132,7 +137,7 @@ export default function TaskDetail({ id, student }) {
     currentStep,
   });
 
-  const classData = useClassData(assignation?.instance?.classes);
+  const classData = useClassData(assignation?.instance?.classes, labels);
 
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === steps.length - 1;
@@ -236,6 +241,25 @@ export default function TaskDetail({ id, student }) {
 
   return (
     <ContextContainer fullHeight spacing={0}>
+      {
+        //   <ActivityContainer
+        //   header={{
+        //     title: asset?.name,
+        //     subtitle: classData?.name,
+        //     icon: classData?.icon,
+        //     color: classData?.color,
+        //     image: coverUrl,
+        //   }}
+        //   deadline={{
+        //     label: 'Entrega',
+        //     deadline:
+        //       assignation?.instance?.dates?.deadline instanceof Date
+        //         ? assignation?.instance?.dates?.deadline
+        //         : new Date(assignation?.instance?.dates?.deadline),
+        //   }}
+        //   collapsed={isFirstStep}
+        // >
+      }
       <TaskDetailHeader
         asset={asset}
         classData={classData}
@@ -306,6 +330,7 @@ export default function TaskDetail({ id, student }) {
           labels={labels?.sidebar}
         />
       </Box>
+      {/* </ActivityContainer> */}
     </ContextContainer>
   );
 }

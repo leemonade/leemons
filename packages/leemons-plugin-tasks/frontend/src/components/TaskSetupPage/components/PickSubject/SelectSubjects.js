@@ -1,12 +1,14 @@
 import React, { useMemo } from 'react';
+import _, { find, map } from 'lodash';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { find, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { ContextContainer, TableInput, Select } from '@bubbles-ui/components';
 import {
   SelectLevelsOfDifficulty,
   useLevelsOfDifficulty,
 } from '@assignables/components/LevelsOfDifficulty';
+import { listSessionClassesRequest } from '@academic-portfolio/request';
+import { useApi } from '@common';
 import useTableInputLabels from '../../../../helpers/useTableInputLabels';
 import useProgram from '../../../Student/TaskDetail/helpers/useProgram';
 
@@ -80,9 +82,37 @@ export default function SelectSubjects({
   const { control, getValues } = useFormContext();
   const programId = useWatch({ name: 'program', control, defaultValue: getValues('program') });
 
-  const subjects = useProgramSubjects(programId);
+  // const subjects = useProgramSubjects(programId);
 
-  const subjectsColumns = useSubjectColumns({ labels, placeholders, errorMessages, subjects });
+  const options = useMemo(
+    () => ({
+      program: programId,
+    }),
+    [programId]
+  );
+  const [data] = useApi(listSessionClassesRequest, options);
+
+  const classes = data?.classes;
+  const subjects = classes?.map((klass) => ({
+    value: klass.subject.id,
+    label: klass.subject.name,
+  }));
+  const uniqSubjects = _.uniqBy(subjects, 'value');
+
+  const subjectsToUse = useMemo(() => {
+    if (programId) {
+      return uniqSubjects;
+    }
+
+    return [];
+  }, [programId, uniqSubjects]);
+
+  const subjectsColumns = useSubjectColumns({
+    labels,
+    placeholders,
+    errorMessages,
+    subjects: subjectsToUse,
+  });
 
   return (
     /* Subject container */

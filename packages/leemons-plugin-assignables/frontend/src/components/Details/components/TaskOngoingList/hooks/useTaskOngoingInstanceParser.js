@@ -7,6 +7,7 @@ import useProgramEvaluationSystem from '../../../../../hooks/useProgramEvaluatio
 import getStatus from '../../UsersList/helpers/getStatus';
 import useClassData from '../../../../../hooks/useClassData';
 import prefixPN from '../../../../../helpers/prefixPN';
+import getStatusAsNumber from '../../UsersList/helpers/getStatusAsNumber';
 
 function getGradesGraphData(evaluationSystem, students) {
   if (!students || !evaluationSystem) {
@@ -61,24 +62,6 @@ function getStatusGraphData(students) {
       width: 'calc(100% - 95px)',
     },
   };
-}
-
-function getStatusAsNumber(student, instance) {
-  const status = getStatus(student, instance);
-
-  if (status === 'completed' || status === 'late') {
-    return 0;
-  }
-
-  if (status === 'ongoing') {
-    return 1;
-  }
-
-  if (status === 'opened') {
-    return 2;
-  }
-
-  return -1;
 }
 
 export default function useTaskOngoingInstanceParser(instance) {

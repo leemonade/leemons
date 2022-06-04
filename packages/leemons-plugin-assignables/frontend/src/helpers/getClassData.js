@@ -17,6 +17,8 @@ export default async function getClassData(classes, labels = { multiSubject: 'Mu
 
   return {
     name: `${data?.subject?.name} - ${data?.groups?.name}` || data?.groups?.abbreviation,
+    subjectName: data?.subject?.name,
+    groupName: data?.groups?.name,
     icon: getClassIcon(data),
     color: data?.color,
   };
