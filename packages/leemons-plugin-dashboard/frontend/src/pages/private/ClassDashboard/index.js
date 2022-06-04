@@ -193,6 +193,13 @@ export default function ClassDashboard({ session }) {
     [store.selectedRightTab, store.class, session]
   );
 
+  console.log({
+    schedule: store.class?.schedule,
+    address: store.class?.address,
+    virtual_classroom: store.class?.virtualUrl,
+    teacher: mainTeacher?.user,
+  });
+
   return (
     <>
       {store.loading ? <LoadingOverlay visible /> : null}

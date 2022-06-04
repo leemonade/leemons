@@ -279,7 +279,6 @@ function NewCalendarEventModal({
       }
     } catch (e) {}
 
-    console.log('Hola');
     form.reset(ref.current.defaultValues);
     ref.current.loading = false;
     render();
@@ -450,6 +449,15 @@ export const useCalendarEventModal = () => {
     },
     function Component(data) {
       return React.cloneElement(element, data);
+    },
+    {
+      opened,
+      openModal: () => {
+        setOpened(true);
+      },
+      closeModal: () => {
+        setOpened(false);
+      },
     },
   ];
 };
