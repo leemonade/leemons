@@ -64,8 +64,8 @@ function UserDetailModal({ userAgent, opened, onClose = () => {} }) {
           badges: t('badges'),
           email: t('email'),
           name: t('name'),
-          rol: t('rol'),
           surnames: t('surnames'),
+          rol: t('rol'),
           birthday: t('birthday'),
           gender: t('gender'),
         }}
