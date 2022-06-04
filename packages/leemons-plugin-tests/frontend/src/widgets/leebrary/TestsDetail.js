@@ -65,7 +65,7 @@ const TestsDetail = ({ asset, onRefresh, ...props }) => {
 
   if (asset?.providerData) {
     metadata.push({
-      label: t('gradable'),
+      label: t('evaluation'),
       value: asset.providerData.gradable ? t('gradable') : t('nogradable'),
     });
   }

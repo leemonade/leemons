@@ -70,6 +70,14 @@ const Detail = ({ asset, onRefresh, ...props }) => {
 
   const metadata = [];
 
+  if (asset?.providerData) {
+    metadata.push({
+      label: t('evaluation'),
+      value: asset.providerData.gradable ? t('gradable') : t('nogradable'),
+    });
+  }
+  console.log(asset);
+
   return (
     <LibraryDetail
       {...props}
