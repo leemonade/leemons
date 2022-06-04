@@ -246,7 +246,10 @@ async function filterByEvaluated(instances, query, { users, transacting, userSes
   if (query.evaluated) {
     return instances.filter((instance) => matchingIds.includes(instance.instance));
   }
-  return instances.filter((instance) => !matchingIds.includes(instance.instance));
+  return instances.filter(
+    (instance) =>
+      !matchingIds.includes(instance.instance) && instancesIds.includes(instance.instance)
+  );
 
   // Necesitamos la cantidad de alumnos
 
