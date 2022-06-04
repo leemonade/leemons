@@ -9,15 +9,22 @@ async function initWidgets() {
   const zoneReorders = {
     'plugins.dashboard.program.left': [
       'plugins.academic-portfolio.user.classes.swiper',
+      'plugins.assignables.dashboard.need-your-attention',
       'plugins.calendar.user.program.calendar',
       'plugins.calendar.user.program.kanban',
     ],
     'plugins.dashboard.class.tabs': [
       'plugins.dashboard.class.tab.control-panel',
       'plugins.academic-portfolio.class.tab.detail',
+      'plugins.assignables.class.tab.ongoing',
       'plugins.tasks.class.tab.students.tasks',
       'plugins.calendar.class.tab.kanban',
       'plugins.calendar.class.tab.calendar',
+    ],
+    'plugins.dashboard.class.control-panel': [
+      'plugins.assignables.dashboard.subject.need-your-attention',
+      'plugins.calendar.user.class.calendar',
+      'plugins.calendar.user.class.kanban',
     ],
   };
 

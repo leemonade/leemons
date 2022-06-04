@@ -99,7 +99,7 @@ function useAssignmentsColumns() {
   return columns;
 }
 
-export default function ActivitiesList({ filters }) {
+export default function ActivitiesList({ filters, subjectFullLength = true }) {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
 
@@ -113,6 +113,11 @@ export default function ActivitiesList({ filters }) {
     if (filters?.subject && filters?.subject !== 'all') {
       q.subjects = JSON.stringify([filters?.subject]);
     }
+
+    if (filters?.class && filters?.class !== 'all') {
+      q.classes = JSON.stringify([filters?.class]);
+    }
+
     if (filters?.type && filters?.type !== 'all') {
       q.role = filters?.type;
     }
@@ -144,7 +149,7 @@ export default function ActivitiesList({ filters }) {
 
   const [instancesData, instancesDataLoading] = useAssignationsByProfile(instancesInPage);
   const [parsedInstances, parsedInstancesLoading] = useParseAssignations(instancesData, {
-    subjectFullLength: true,
+    subjectFullLength,
   });
   const columns = useAssignmentsColumns();
 

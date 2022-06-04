@@ -123,6 +123,45 @@ const menuItems = [
   },
 ];
 
+const widgets = {
+  zones: [
+    {
+      key: `${pluginName}.class.ongoing`,
+      name: 'Ongoing activities',
+      description: 'Zone for ongoing activities',
+    },
+  ],
+  items: [
+    // --- Class (Ongoing tab) ---
+    {
+      zoneKey: 'plugins.dashboard.class.tabs',
+      key: `${pluginName}.class.tab.ongoing`,
+      url: 'dashboard/tab-ongoing/index',
+      properties: {
+        label: `${pluginName}.ongoing.activities`,
+      },
+    },
+    // --- Class (Ongoing) ---
+    {
+      zoneKey: `${pluginName}.class.ongoing`,
+      key: `${pluginName}.class.ongoing`,
+      url: 'dashboard/ongoing/index',
+    },
+    // --- NYA (Main Dashboard) ---
+    {
+      zoneKey: 'plugins.dashboard.program.left',
+      key: `${pluginName}.dashboard.need-your-attention`,
+      url: 'dashboard/nya/index',
+    },
+    // --- NYA (Subject Dashboard) ---
+    {
+      zoneKey: 'plugins.dashboard.class.control-panel',
+      key: `${pluginName}.dashboard.subject.need-your-attention`,
+      url: 'dashboard/nya/index',
+    },
+  ],
+};
+
 module.exports = {
   pluginName,
 
@@ -136,4 +175,6 @@ module.exports = {
 
   menuItems,
   permissions,
+
+  widgets,
 };
