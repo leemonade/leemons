@@ -129,6 +129,10 @@ export default function ActivitiesList({ filters }) {
       q.evaluated = true;
     }
 
+    if (filters?.subject !== 'all') {
+      q.subjects = JSON.stringify([filters?.subject]);
+    }
+
     return q;
   }, [filters]);
 

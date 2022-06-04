@@ -61,7 +61,13 @@ export default function AssignmentList({ closed }) {
   const { classes } = useAssignmentListStyle();
   return (
     <Box className={classes?.root}>
-      <Filters labels={labels.filters} tabs={tabs} value={filters} onChange={setFilters} />
+      <Filters
+        labels={labels.filters}
+        tabs={tabs}
+        value={filters}
+        onChange={setFilters}
+        hideStatus
+      />
       <ActivitiesList filters={filters} />
     </Box>
   );
