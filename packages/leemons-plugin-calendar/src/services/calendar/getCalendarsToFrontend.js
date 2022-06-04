@@ -1,11 +1,59 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
+const dayjs = require('dayjs');
 const { table } = require('../tables');
 const { getPermissionConfig: getPermissionConfigCalendar } = require('./getPermissionConfig');
 const { getPermissionConfig: getPermissionConfigEvent } = require('../events/getPermissionConfig');
 const { getByCenterId } = require('../calendar-configs');
 const { getCalendars } = require('../calendar-configs/getCalendars');
 const { getEvents } = require('./getEvents');
+
+function hasGrades(studentData) {
+  const grades = studentData?.grades;
+
+  if (!grades || !grades.length) {
+    return false;
+  }
+
+  return grades.some((grade) => grade.type === 'main' && grade.visibleToStudent);
+}
+
+function getStatus(studentData, instanceData) {
+  // EN: This values are keys for the localization object prefixPN('activity_status')
+  // ES: Estos valores son claves para el objeto de traducción prefixPN('activity_status')
+
+  if (hasGrades(studentData)) {
+    return 'evaluated';
+  }
+
+  if (studentData.finished) {
+    const deadline = dayjs(instanceData.dates.deadline || null);
+    const endDate = dayjs(studentData?.timestamps?.end || null);
+
+    const endDateIsLate = endDate.isValid() && endDate.isAfter(deadline);
+
+    if (endDateIsLate) {
+      return 'late';
+    }
+
+    if (endDate.isValid()) {
+      return 'submitted';
+    }
+
+    return 'closed';
+  }
+
+  if (studentData.started) {
+    const startDate = dayjs(studentData?.timestamps?.start || null);
+
+    if (startDate.isValid()) {
+      return 'started';
+    }
+    return 'opened';
+  }
+
+  return 'assigned';
+}
 
 /**
  * Add calendar with the provided key if not already exists
@@ -196,6 +244,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
         : calendar.name,
   });
 
+  // ES: Resultados con todos los eventos y calendarios a los que tiene acceso el usuario
   const result = {
     userCalendar,
     ownerCalendars: _.sortBy(_.map(ownerCalendars, calendarFunc), ({ id }) =>
@@ -223,10 +272,12 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   };
 
   const permissionNames = [];
+
   _.forEach(result.events, (event) => {
     permissionNames.push(getPermissionConfigEvent(event.id).permissionName);
   });
 
+  // ES: Sacamos para todos los eventos que userAgents tiene permiso de ver y cuales son sus owers
   const [viewPermissions, _ownerPermissions] = await Promise.all([
     leemons.getPlugin('users').services.permissions.findUserAgentsWithPermission(
       {
@@ -244,6 +295,43 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     ),
   ]);
 
+  let [assignations, instances, kanbanColumns] = [[], [], []];
+  const instanceIdEvents = {};
+  try {
+    const instancePromises = [];
+    const assignationsPromises = [];
+    const instanceService = leemons.getPlugin('assignables').services.assignableInstances;
+    const assignationsService = leemons.getPlugin('assignables').services.assignations;
+
+    _.forEach(result.events, (event) => {
+      if (event?.data?.instanceId) {
+        instancePromises.push(
+          instanceService.getAssignableInstance(event.data.instanceId, {
+            details: true,
+            userSession,
+            transacting,
+          })
+        );
+        assignationsPromises.push(
+          assignationsService.getAssignation(event.data.instanceId, userSession.userAgents[0].id, {
+            userSession,
+            transacting,
+          })
+        );
+        instanceIdEvents[event.id] = event.data.instanceId;
+      }
+    });
+
+    [assignations, instances, kanbanColumns] = await Promise.all([
+      Promise.all(assignationsPromises),
+      Promise.all(instancePromises),
+      leemons.plugin.services.kanban.listColumns({ transacting }),
+    ]);
+  } catch (e) {}
+
+  const instancesById = _.keyBy(instances, 'id');
+  const assignationsByInstance = _.keyBy(assignations, 'instance');
+
   const userAgentIds = _.uniq(_.map(viewPermissions, 'userAgent'));
   const permissionsByName = _.groupBy(viewPermissions, 'permissionName');
   const ownerPermissionsByName = _.groupBy(_ownerPermissions, 'permissionName');
@@ -255,28 +343,84 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   const userAgentsById = _.keyBy(userAgents, 'id');
 
   const currentUserAgentIds = _.map(userSession.userAgents, 'id');
+  const kanbanColumnsByOrder = _.keyBy(kanbanColumns, 'order');
 
-  result.events = _.map(result.events, (event) => {
-    event.users = [];
-    event.owners = [];
-    event.userAgents = [];
-    const permName = getPermissionConfigEvent(event.id).permissionName;
-    const ownerPerms = ownerPermissionsByName[permName];
-    if (ownerPerms && ownerPerms.length) {
-      event.owners = _.map(ownerPerms, 'userAgent');
-    }
-    const perms = permissionsByName[permName];
-    if (perms && perms.length) {
-      _.forEach(perms, (perm) => {
-        const userAgent = userAgentsById[perm.userAgent];
-        if (userAgent && !currentUserAgentIds.includes(userAgent.id)) {
-          event.users.push(userAgent.id);
-          event.userAgents.push(userAgent);
+  // Procesamos todos los eventos para meterles sus userAgents y si son de instancias calcular la columna
+  result.events = _.omitBy(
+    _.map(result.events, (event) => {
+      // --- User agents
+      event.users = [];
+      event.owners = [];
+      event.userAgents = [];
+      const permName = getPermissionConfigEvent(event.id).permissionName;
+      const ownerPerms = ownerPermissionsByName[permName];
+      if (ownerPerms && ownerPerms.length) {
+        event.owners = _.map(ownerPerms, 'userAgent');
+      }
+      const perms = permissionsByName[permName];
+      if (perms && perms.length) {
+        _.forEach(perms, (perm) => {
+          const userAgent = userAgentsById[perm.userAgent];
+          if (userAgent && !currentUserAgentIds.includes(userAgent.id)) {
+            event.users.push(userAgent.id);
+            event.userAgents.push(userAgent);
+          }
+        });
+      }
+
+      // --- Instancia
+
+      if (instanceIdEvents[event.id]) {
+        const instance = instancesById[instanceIdEvents[event.id]];
+        const assignation = assignationsByInstance[instanceIdEvents[event.id]];
+        if (instance && assignation) {
+          const now = new Date();
+
+          const status = getStatus(assignation, instance);
+
+          if (instance.dates) {
+            if (instance.dates.visualization) {
+              // Si hay fecha de visualización
+              if (now > new Date(instance.dates.visualization)) {
+                // Si la fecha actual es mayor debe de poder ver el evento
+                event.data.column = kanbanColumnsByOrder[1].id;
+              }
+            }
+            // Si siempre tiene que estar disponible lo ponemos en por hacer
+            if (instance.alwaysAvailable) {
+              event.data.column = kanbanColumnsByOrder[2].id;
+            }
+            // Si tiene fecha de inicio y la fecha actual es mayor lo ponemos en por hacer
+            if (instance.dates.start) {
+              if (now > new Date(instance.dates.start)) {
+                event.data.column = kanbanColumnsByOrder[2].id;
+              }
+            }
+          }
+          // Si ya ha empezado con la tarea
+          if (assignation.timestamps?.start) {
+            event.data.column = kanbanColumnsByOrder[3].id;
+          }
+          if (instance.dates) {
+            if (instance.dates.deadline) {
+              if (now > new Date(instance.dates.deadline)) {
+                event.data.column = kanbanColumnsByOrder[5].id;
+              }
+            }
+          }
+          console.log(assignation);
+          if (assignation.finished) {
+            event.data.column = kanbanColumnsByOrder[5].id;
+          }
+          if (!event.data.column) {
+            return null;
+          }
         }
-      });
-    }
-    return event;
-  });
+      }
+      return event;
+    }),
+    _.isNil
+  );
 
   return result;
 }
