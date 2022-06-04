@@ -1,4 +1,4 @@
-const { pluginName, menuItems, permissions } = require('./config/constants');
+const { pluginName, menuItems, permissions, widgets } = require('./config/constants');
 const initMultilanguage = require('./src/config/multilanguage/init');
 const addMenuItems = require('./src/services/menu-builder/add');
 
@@ -44,6 +44,42 @@ function initLocalizations() {
   });
 }
 
+function initWidgets(isInstalled) {
+  if (!isInstalled) {
+    leemons.events.once('plugins.dashboard:init-widget-zones', async () => {
+      const widgetsPlugin = leemons.getPlugin('widgets').services.widgets;
+      const { zones, items } = widgets;
+
+      // EN: Register zones
+      // ES: Registra las zonas
+      await Promise.all(
+        zones.map((zone) =>
+          widgetsPlugin.addZone(zone.key, {
+            name: zone.name,
+            description: zone.description,
+          })
+        )
+      );
+
+      leemons.events.emit('init-widget-zones');
+
+      // EN: Register items
+      // ES: Registra los items
+      await Promise.all(
+        items.map((item) =>
+          widgetsPlugin.addItemToZone(item.zoneKey, item.key, item.url, {
+            name: item.name,
+            description: item.description,
+            properties: item.properties,
+          })
+        )
+      );
+
+      leemons.events.emit('init-widget-items');
+    });
+  }
+}
+
 async function events(isInstalled) {
   leemons.events.once(
     [
@@ -51,6 +87,9 @@ async function events(isInstalled) {
       'plugins.leebrary:init-menu',
       `${pluginName}:init-permissions`,
       `${pluginName}:init-menu`,
+      `${pluginName}:init-submenu`,
+      `${pluginName}:init-widget-zones`,
+      `${pluginName}:init-widget-items`,
     ],
     async () => {
       leemons.events.emit('init-plugin');
@@ -60,6 +99,7 @@ async function events(isInstalled) {
   initLocalizations();
   initPermissions(isInstalled);
   initMenuBuilder(isInstalled);
+  initWidgets(isInstalled);
 
   // TODO cuando se cambie el profesor de la clase en academic -portfolio se lance un evento que pille assignable para quitarle el permiso al profesor sobre los eventos y darselo al nuevo profesor
 }

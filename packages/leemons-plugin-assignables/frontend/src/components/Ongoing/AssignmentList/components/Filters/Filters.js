@@ -110,7 +110,9 @@ export default function Filters({
           <Controller
             control={control}
             name="query"
-            render={({ field }) => <SearchInput placeholder={labels?.search} {...field} />}
+            render={({ field }) => (
+              <SearchInput placeholder={labels?.search} variant="filled" {...field} />
+            )}
           />
         </Box>
       )}

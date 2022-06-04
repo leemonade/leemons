@@ -9,6 +9,10 @@ import ActivitiesList from './components/ActivitiesList';
 import prefixPN from '../../../helpers/prefixPN';
 
 function parseTitleKey(title, closed) {
+  if (title === null) {
+    return null;
+  }
+
   if (title) {
     return title;
   }
@@ -19,9 +23,19 @@ function parseTitleKey(title, closed) {
   return prefixPN('ongoing.ongoing');
 }
 
-export default function AssignmentList({ closed, title, filters: filtersProps }) {
+export default function AssignmentList({
+  closed,
+  title,
+  filters: filtersProps,
+  defualtFilters = null,
+  ...props
+}) {
   const titleKey = parseTitleKey(title, closed);
-  const [, translations] = useTranslateLoader([prefixPN('activities_filters'), titleKey]);
+  const keys = [prefixPN('activities_filters')];
+  if (titleKey) {
+    keys.push(titleKey);
+  }
+  const [, translations] = useTranslateLoader(keys);
 
   const labels = useMemo(() => {
     if (translations && translations.items) {
@@ -32,7 +46,7 @@ export default function AssignmentList({ closed, title, filters: filtersProps })
     return {};
   }, [translations]);
 
-  const [filters, setFilters] = useState(null);
+  const [filters, setFilters] = useState(defualtFilters);
 
   const tabs = useMemo(() => {
     if (!closed) {
@@ -63,20 +77,22 @@ export default function AssignmentList({ closed, title, filters: filtersProps })
   const { classes } = useAssignmentListStyle();
   return (
     <Box className={classes?.root}>
-      <Box className={classes?.title}>
-        <InlineSvg
-          style={{
-            display: 'inline-block',
-            position: 'relative',
-            width: 24,
-            heiht: 24,
-          }}
-          width={24}
-          height={24}
-          src="/public/assignables/menu-icon.svg"
-        />
-        <Title order={1}>{labels.title}</Title>
-      </Box>
+      {titleKey && (
+        <Box className={classes?.title}>
+          <InlineSvg
+            style={{
+              display: 'inline-block',
+              position: 'relative',
+              width: 24,
+              heiht: 24,
+            }}
+            width={24}
+            height={24}
+            src="/public/assignables/menu-icon.svg"
+          />
+          <Title order={1}>{labels.title}</Title>
+        </Box>
+      )}
       <Filters
         labels={labels.filters}
         tabs={tabs}
@@ -85,7 +101,7 @@ export default function AssignmentList({ closed, title, filters: filtersProps })
         {...filtersProps}
         hideStatus
       />
-      <ActivitiesList filters={filters} />
+      <ActivitiesList filters={filters} {...props} />
     </Box>
   );
 }

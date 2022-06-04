@@ -207,5 +207,6 @@ module.exports = {
   ongoing: {
     ongoing: 'Actividades en curso',
     history: 'Actividades pasadas',
+    activities: 'Actividades',
   },
 };
