@@ -69,20 +69,33 @@ const { classes, assignations, grades } = require('../../tables');
 //   ],
 // };
 
-async function subjectsPerInstance(instances, { transacting } = {}) {
-  const classesFound = await classes.find(
+async function subjectsPerInstance(instances, { userSession, transacting } = {}) {
+  let classesFound = await classes.find(
     {
       assignableInstance_$in: instances,
     },
     { transacting, columns: ['assignableInstance', 'class'] }
   );
 
+  const ids = _.map(classesFound, 'class');
+  const classesData = await leemons
+    .getPlugin('academic-portfolio')
+    .services.classes.classByIds(ids, { userSession, transacting });
+
+  classesFound = classesFound.map((classFound) => {
+    const klass = classesData.find((c) => c.id === classFound.class);
+    return {
+      ...classFound,
+      subject: klass.subject.id,
+    };
+  });
+
   // TODO: for now, 1 class = 1 subject, 2 classes have diff subjects
 
   const result = classesFound.reduce(
-    (acc, { assignableInstance, class: c }) => ({
+    (acc, { assignableInstance, class: c, subject }) => ({
       ...acc,
-      [assignableInstance]: [...(acc?.[assignableInstance] || []), c],
+      [assignableInstance]: [...(acc?.[assignableInstance] || []), { class: c, subject }],
     }),
     {}
   );
@@ -153,14 +166,54 @@ function filterByMinDate(instancesWithAssignations, minDate) {
   );
 }
 
-async function filterByEvaluated(instances, query, { users, transacting } = {}) {
-  if (_.isNil(query.evaluated)) {
+async function filterByEvaluated(instances, query, { users, transacting, userSession } = {}) {
+  if (!(_.isNil(query.evaluated) || _.isNil(query.subjects) || _.isNil(query.classes))) {
     return instances;
   }
 
-  const instancesIds = _.map(instances, 'instance');
+  let instancesIds = _.map(instances, 'instance');
   // Necesitamos las asignaturas
-  const subjects = await subjectsPerInstance(instancesIds, { transacting });
+  const classesWithSubjects = await subjectsPerInstance(instancesIds, {
+    userSession,
+    transacting,
+  });
+
+  if (query.subjects || query.classes) {
+    const classesMatchingFilters = _.mapValues(classesWithSubjects, (_classes) => {
+      let matches = true;
+      if (query.subjects) {
+        const matchesSubjects = _classes.some((klass) => query.subjects.includes(klass.subject));
+
+        if (!matchesSubjects) {
+          matches = false;
+        }
+      }
+
+      if (query.classes) {
+        const matchesClasses = _classes.some((klass) => query.classes.includes(klass.class));
+
+        if (!matchesClasses) {
+          matches = false;
+        }
+      }
+
+      if (matches) {
+        return _classes;
+      }
+      return null;
+    });
+
+    let instancesMatchingClassesFilters = _.keys(classesMatchingFilters);
+    instancesMatchingClassesFilters = instancesMatchingClassesFilters.filter(
+      (instance) => classesMatchingFilters[instance]
+    );
+
+    instancesIds = instancesMatchingClassesFilters;
+  }
+
+  if (_.isNil(query.evaluated)) {
+    return instances.filter((instance) => instancesIds.includes(instance.instance));
+  }
 
   // Tenemos las asignaciones con las que vamos a comparar
   const matchingAssignations = await getMatchingAssignations(instancesIds, {
@@ -179,7 +232,7 @@ async function filterByEvaluated(instances, query, { users, transacting } = {}) 
 
   let filteredInstances = filterInstancesNotHavingAllTheStudentsEvaluated(
     assignationsWithGradesPerInstance,
-    subjects
+    classesWithSubjects
   );
 
   if (query?.evaluated?.isValid?.()) {
