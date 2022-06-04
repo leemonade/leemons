@@ -77,6 +77,9 @@ export default function Accordion({
                   {...scoreInputProps}
                   tags={[]}
                   value={{ score: field?.value }}
+                  decimalPrecision={2}
+                  decimalSeparator=","
+                  direction="ltr"
                   onChange={(newValue) => field.onChange(newValue.score)}
                 />
               )}

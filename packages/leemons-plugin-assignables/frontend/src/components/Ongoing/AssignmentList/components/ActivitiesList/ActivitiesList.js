@@ -86,8 +86,8 @@ function useAssignmentsColumns() {
         accessor: 'status',
       },
       {
-        Header: labels.timeReference || '',
-        accessor: 'timeReference',
+        Header: labels.submission || '',
+        accessor: 'submission',
       },
       {
         Header: '',

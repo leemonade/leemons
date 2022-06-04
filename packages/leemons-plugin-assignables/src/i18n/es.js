@@ -181,7 +181,7 @@ module.exports = {
       status: 'Estado',
       students: 'Estudiantes',
       open: 'Abierta',
-      ongoing: 'Empezada',
+      ongoing: 'Comenzada',
       completed: 'Completada',
     },
     student: {
@@ -190,7 +190,7 @@ module.exports = {
       start: 'Fecha inicio',
       deadline: 'Fecha límite',
       status: 'Estado',
-      timeReference: 'Ref. Temporal',
+      submission: 'Entrega',
     },
   },
 };

@@ -350,7 +350,7 @@ async function parseAssignationForStudentView(assignation, labels) {
     ...commonData,
     status,
     actions: <StudentActions assignation={assignation} labels={labels} />,
-    timeReference: (
+    submission: (
       <TimeReference assignation={assignation} status={_status} labels={labels.activity_status} />
     ),
     // !instance.dates.deadline || instance.dates.end ? (
