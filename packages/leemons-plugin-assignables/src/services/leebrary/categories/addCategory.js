@@ -20,17 +20,7 @@ module.exports = async function addCategory(
       duplicable: true,
       createUrl,
       provider,
-      menu: menu || {
-        item: {
-          iconSvg: '/test',
-          activeIconSvg: '/test',
-          label: {
-            en: 'tasks',
-            es: 'tareas',
-          },
-        },
-        permissions: [],
-      },
+      menu,
 
       componentOwner,
       listCardComponent,

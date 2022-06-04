@@ -43,13 +43,23 @@ module.exports = async function registerRole(
         { transacting }
       );
 
+      // EN: Save the localizations
+      // ES: Guardar las localizaciones
+      const localizations = data.menu.item.label;
+
+      const multilanguageCommon = leemons.getPlugin('multilanguage').services.common.getProvider();
+      await multilanguageCommon.addManyByKey(
+        leemons.plugin.prefixPN(`roles.${role}`),
+        localizations,
+        { transacting }
+      );
+
       // EN: Register the leebrary category
       // ES: Registrar la categoría de leebrary
       await addCategory(
         {
           ...data,
           role: `assignables.${role}`,
-          label: { en: role, es: role },
         },
         { transacting }
       );
