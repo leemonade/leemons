@@ -232,7 +232,10 @@ async function searchTeacherAssignableInstances(query, { userSession, transactin
   ];
 
   let filteredResults = filterByDates(instancesData, datesFilter);
-  filteredResults = await filterByEvaluatedQuery(filteredResults, query, { transacting });
+  filteredResults = await filterByEvaluatedQuery(filteredResults, query, {
+    transacting,
+    userSession,
+  });
 
   const sortedResults = sortByGivenDates(filteredResults, [
     'close',
@@ -264,7 +267,11 @@ async function searchStudentAssignableInstances(query, { userSession, transactin
 
   results = results.filter((result) => instances.includes(result.instance));
 
-  results = await filterByEvaluatedQuery(results, query, { users: userAgents, transacting });
+  results = await filterByEvaluatedQuery(results, query, {
+    users: userAgents,
+    transacting,
+    userSession,
+  });
 
   const instancesData = await getInstancesDates(instances, { transacting });
 

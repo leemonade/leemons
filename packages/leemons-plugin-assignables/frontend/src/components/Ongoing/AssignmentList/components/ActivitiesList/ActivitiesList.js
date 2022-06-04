@@ -111,7 +111,7 @@ export default function ActivitiesList({ filters }) {
     }
 
     if (filters?.subject && filters?.subject !== 'all') {
-      q.subject = filters?.subject;
+      q.subjects = JSON.stringify([filters?.subject]);
     }
     if (filters?.type && filters?.type !== 'all') {
       q.role = filters?.type;
@@ -127,10 +127,6 @@ export default function ActivitiesList({ filters }) {
       q.closed = true;
     } else if (filters?.tab === 'evaluated') {
       q.evaluated = true;
-    }
-
-    if (filters?.subject !== 'all') {
-      q.subjects = JSON.stringify([filters?.subject]);
     }
 
     return q;
