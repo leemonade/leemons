@@ -95,8 +95,8 @@ const menuItems = [
       parentKey: 'tests',
       url: '/private/tests',
       label: {
-        en: 'Tests',
-        es: 'Tests',
+        en: 'Tests library',
+        es: 'Librería de tests',
       },
     },
     permissions: [

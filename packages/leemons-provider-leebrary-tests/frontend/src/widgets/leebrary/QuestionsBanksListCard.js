@@ -4,8 +4,7 @@ import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import { ViewOnIcon } from '@bubbles-ui/icons/outline';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { deleteQuestionBankRequest } from '@tests/request';
 import { useHistory } from 'react-router-dom';
@@ -34,8 +33,8 @@ const QuestionsBanksListCard = ({ asset, selected, onRefresh, ...props }) => {
 
     if (asset?.id) {
       items.push({
-        icon: <ViewOnIcon />,
-        children: t('view'),
+        icon: <EditWriteIcon />,
+        children: t('edit'),
         onClick: (e) => {
           e.stopPropagation();
           history.push(`/private/tests/questions-banks/${asset.providerData.id}`);
@@ -44,7 +43,7 @@ const QuestionsBanksListCard = ({ asset, selected, onRefresh, ...props }) => {
       if (asset.deleteable) {
         items.push({
           icon: <DeleteBinIcon />,
-          children: 'Delete',
+          children: t('delete'),
           onClick: (e) => {
             e.stopPropagation();
             openDeleteConfirmationModal({

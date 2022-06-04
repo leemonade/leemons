@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
-import { ContextContainer, Tabs, TabPanel, Box, createStyles } from '@bubbles-ui/components';
+import { Box, ContextContainer, createStyles, TabPanel, Tabs } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';

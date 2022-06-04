@@ -16,6 +16,12 @@ const ListCard = ({ asset, selected, ...props }) => {
   const menuItems = [];
   const { classes } = ListCardStyles({ selected });
 
+  const handleOnSelectTask = (item) => {
+    // history.push(`/private/tasks/library/edit/${item.providerData?.id}`);
+  };
+
+  // history.push(`/private/tasks/library/assign/${store.currentTask.id}`);
+
   return (
     <LibraryCard
       {...props}

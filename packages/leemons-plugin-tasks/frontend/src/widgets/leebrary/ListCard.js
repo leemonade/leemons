@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { EditIcon, StudyDeskIcon } from '@bubbles-ui/icons/outline';
+
+import { AssignIcon } from '@bubbles-ui/icons/outline';
+import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import _ from 'lodash';
@@ -65,12 +66,12 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
   const menuItems = useMemo(() => {
     const items = [];
 
-    if (asset?.id && embedded) {
+    if (asset?.id) {
       const taskId = asset.providerData?.id;
 
       if (asset.editable) {
         items.push({
-          icon: <EditIcon />,
+          icon: <EditWriteIcon />,
           children: menuLabels.edit,
           onClick: (e) => {
             e.stopPropagation();
@@ -81,7 +82,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
 
       if (asset.assignable && asset.providerData.published) {
         items.push({
-          icon: <StudyDeskIcon />,
+          icon: <AssignIcon />,
           children: menuLabels.assign,
           onClick: (e) => {
             e.stopPropagation();
