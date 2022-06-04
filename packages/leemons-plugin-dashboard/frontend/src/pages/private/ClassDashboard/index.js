@@ -169,6 +169,30 @@ export default function ClassDashboard({ session }) {
     ? find(store.class.teachers, { type: 'main-teacher' }).teacher
     : null;
 
+  const classTabs = React.useCallback(
+    ({ Component, key, properties }) => {
+      store.tabsProperties[key] = properties;
+
+      return (
+        <TabPanel
+          label={store.widgetLabels ? store.widgetLabels[properties.label] || '-' : '-'}
+          key={key}
+        >
+          <Component {...properties} classe={store.class} session={session} />
+        </TabPanel>
+      );
+    },
+    [store.widgetLabels, store.class, session]
+  );
+
+  const classRightTabs = React.useCallback(
+    ({ Component, key, properties }) =>
+      store.selectedRightTab === key ? (
+        <Component {...properties} key={key} classe={store.class} session={session} />
+      ) : null,
+    [store.selectedRightTab, store.class, session]
+  );
+
   return (
     <>
       {store.loading ? <LoadingOverlay visible /> : null}
@@ -227,18 +251,7 @@ export default function ClassDashboard({ session }) {
             />
           }
         >
-          {({ Component, key, properties }) => {
-            store.tabsProperties[key] = properties;
-
-            return (
-              <TabPanel
-                label={store.widgetLabels ? store.widgetLabels[properties.label] || '-' : '-'}
-                key={key}
-              >
-                <Component {...properties} classe={store.class} session={session} />
-              </TabPanel>
-            );
-          }}
+          {classTabs}
         </ZoneWidgets>
       </Box>
       <Box className={styles.rightSide}>
@@ -257,11 +270,7 @@ export default function ClassDashboard({ session }) {
 
         <Box className={styles.rightSidewidgetsContainer}>
           <ZoneWidgets zone="plugins.dashboard.class.right-tabs" onGetZone={onGetRightZone}>
-            {({ Component, key, properties }) =>
-              store.selectedRightTab === key ? (
-                <Component {...properties} key={key} classe={store.class} session={session} />
-              ) : null
-            }
+            {classRightTabs}
           </ZoneWidgets>
         </Box>
       </Box>

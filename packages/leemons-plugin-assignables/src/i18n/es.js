@@ -148,6 +148,7 @@ module.exports = {
     evaluated: 'Evaluada',
     submitted: 'Entregada',
     notSubmitted: 'No entregada',
+    noLimit: 'Sin límite de tiempo',
     // toBeEvaluated: 'Para evaluar',
     // endingSoon: 'Termina pronto',
   },

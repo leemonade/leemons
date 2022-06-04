@@ -99,7 +99,12 @@ function getNearestUnit(elapsedTime) {
   return { unit: unitToUse, seconds: units[unitToUse] };
 }
 
-export function LocaleRelativeTime({ seconds, short = false, options = { numeric: 'always' } }) {
+export function LocaleRelativeTime({
+  seconds,
+  short = false,
+  options = { numeric: 'always' },
+  firstLetterUppercase = false,
+}) {
   const locale = useLocale();
   const key = getFormatterKey(locale, { short, ...options });
 
@@ -111,7 +116,9 @@ export function LocaleRelativeTime({ seconds, short = false, options = { numeric
 
   const unit = getNearestUnit(seconds);
 
-  return formatter.format(Math.floor(seconds / unit.seconds), unit.unit);
+  const result = formatter.format(Math.floor(seconds / unit.seconds), unit.unit);
+
+  return firstLetterUppercase ? result.charAt(0).toUpperCase() + result.slice(1) : result;
 }
 
 export function LocaleDuration({ seconds: secondsProp, short = false, options = {} }) {

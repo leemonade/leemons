@@ -127,7 +127,7 @@ function StudentActions({ assignation, labels }) {
   // const dates = assignation?.instance?.dates;
   // const timestamps = assignation?.timestamps;
   const finished = assignation?.finished;
-  // const started = assignation?.started;
+  const started = assignation?.started;
 
   // const now = dayjs();
   // const visualization = dayjs(dates?.visualization);
@@ -137,7 +137,7 @@ function StudentActions({ assignation, labels }) {
   const redirectToInstance = useCallback(() => history.push(activityUrl), [history, activityUrl]);
   const redirectToRevision = useCallback(() => history.push(revisionUrl), [history, revisionUrl]);
 
-  if (finished) {
+  if (finished || !started) {
     return (
       <Button
         iconOnly
@@ -275,13 +275,18 @@ function TimeReference({ assignation, status, labels }) {
       return (
         <Text strong color={color}>
           <LocaleRelativeTime
+            firstLetterUppercase
             seconds={dayjs(assignation?.instance.dates.deadline).diff(today, 'seconds')}
           />
         </Text>
       );
     }
 
-    return labels?.[status];
+    return (
+      <Text strong color="primary">
+        {labels.noLimit}
+      </Text>
+    );
   }
 
   if (status === 'submitted') {
@@ -308,7 +313,11 @@ function TimeReference({ assignation, status, labels }) {
     );
   }
 
-  return labels.status || status;
+  return (
+    <Text strong color="primary">
+      {labels[status] || status}
+    </Text>
+  );
 }
 
 async function parseAssignationForCommonView(instance, labels, { subjectFullLength }) {
