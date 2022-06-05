@@ -1,8 +1,8 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button, createStyles, Select, Stack, Text } from '@bubbles-ui/components';
-import { ChevRightIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
+import { Box, Button, createStyles, IconButton, Select, Stack, Text } from '@bubbles-ui/components';
+import { AddIcon as PlusIcon, ChevRightIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -40,7 +40,8 @@ function UserProgramCalendar({ program, classe, session }) {
   const [transformEv, evLoading] = useTransformEvent();
   const [t] = useTranslateLoader(prefixPN('userProgramCalendar'));
   const [tC] = useTranslateLoader(prefixPN('calendar'));
-  const [toggleEventModal, EventModal] = useCalendarEventModal();
+  const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
+
   const history = useHistory();
 
   function getEvents() {
@@ -180,6 +181,11 @@ function UserProgramCalendar({ program, classe, session }) {
     };
   });
 
+  const onNewEvent = () => {
+    store.selectedEvent = null;
+    openEventModal();
+  };
+
   // if (store.loading) return null;
 
   return (
@@ -217,10 +223,19 @@ function UserProgramCalendar({ program, classe, session }) {
           showToolbarAddButton={false}
           showToolbarViewSwitcher={false}
           toolbarRightNode={
-            <Button variant="link" onClick={() => history.push('/private/calendar/home')}>
-              {t('showAllCalendar')}
-              <ChevRightIcon />
-            </Button>
+            <Stack alignItems="center">
+              <Box sx={(theme) => ({ marginRight: theme.spacing[4] })}>
+                <Button variant="link" onClick={() => history.push('/private/calendar/home')}>
+                  {t('showAllCalendar')}
+                  <ChevRightIcon />
+                </Button>
+              </Box>
+              <Box>
+                <IconButton color="primary" size="lg" rounded onClick={onNewEvent}>
+                  <PlusIcon />
+                </IconButton>
+              </Box>
+            </Stack>
           }
           messages={{
             today: tC('today'),

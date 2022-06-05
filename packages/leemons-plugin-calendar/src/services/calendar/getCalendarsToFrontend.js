@@ -22,11 +22,11 @@ function getStatus(studentData, instanceData) {
   // EN: This values are keys for the localization object prefixPN('activity_status')
   // ES: Estos valores son claves para el objeto de traducción prefixPN('activity_status')
 
-  if (hasGrades(studentData)) {
-    return 'evaluated';
-  }
-
   if (studentData.finished) {
+    if (hasGrades(studentData)) {
+      return 'evaluated';
+    }
+
     const deadline = dayjs(instanceData.dates.deadline || null);
     const endDate = dayjs(studentData?.timestamps?.end || null);
 
@@ -369,15 +369,54 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
       }
 
       // --- Instancia
-
       if (instanceIdEvents[event.id]) {
         const instance = instancesById[instanceIdEvents[event.id]];
         const assignation = assignationsByInstance[instanceIdEvents[event.id]];
         if (instance && assignation) {
+          event.disableDrag = true;
           const now = new Date();
 
           const status = getStatus(assignation, instance);
 
+          if (instance.dates.visualization) {
+            // Si hay fecha de visualización
+            if (now > new Date(instance.dates.visualization)) {
+              // Si la fecha actual es mayor debe de poder ver el evento
+              event.data.column = kanbanColumnsByOrder[1].id;
+            } else {
+              return null;
+            }
+          }
+          // Si siempre tiene que estar disponible lo ponemos en por hacer
+          if (instance.alwaysAvailable) {
+            event.data.column = kanbanColumnsByOrder[2].id;
+          }
+          // Si tiene fecha de inicio y la fecha actual es mayor lo ponemos en por hacer
+          if (instance.dates.start) {
+            if (now > new Date(instance.dates.start)) {
+              event.data.column = kanbanColumnsByOrder[2].id;
+            } else {
+              return null;
+            }
+          }
+
+          if (status === 'assigned') {
+            event.data.column = kanbanColumnsByOrder[1].id;
+          }
+          if (status === 'opened') {
+            event.data.column = kanbanColumnsByOrder[2].id;
+          }
+          if (status === 'started') {
+            event.data.column = kanbanColumnsByOrder[3].id;
+          }
+          if (status === 'late' || status === 'submitted' || status === 'closed') {
+            event.data.column = kanbanColumnsByOrder[4].id;
+          }
+          if (status === 'evaluated') {
+            event.data.column = kanbanColumnsByOrder[5].id;
+          }
+
+          /*
           if (instance.dates) {
             if (instance.dates.visualization) {
               // Si hay fecha de visualización
@@ -412,6 +451,8 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
           if (assignation.finished) {
             event.data.column = kanbanColumnsByOrder[5].id;
           }
+
+           */
           if (!event.data.column) {
             return null;
           }

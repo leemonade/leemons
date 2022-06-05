@@ -80,12 +80,18 @@ async function updateFromUser(userSession, id, data, { transacting: _transacting
 
         await unGrantAccessEventUsers(id, { transacting });
         if (data?.users) {
+          /*
           _.forEach(userSession.userAgents, ({ id: uId }) => {
             if (data.users.includes(uId)) {
               data.users.splice(data.users.indexOf(uId), 1);
             }
           });
+           */
           await grantAccessUserAgentToEvent(id, data.users, ['view'], { transacting });
+        }
+
+        if (data.data?.instanceId) {
+          throw new Error('Instance events can not be updated');
         }
 
         delete data.users;
