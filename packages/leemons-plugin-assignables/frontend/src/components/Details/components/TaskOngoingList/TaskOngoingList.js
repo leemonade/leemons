@@ -139,11 +139,11 @@ const TaskOngoingList = ({ instance }) => {
               </Box>
               <Box className={classes.legend}>
                 <TimeClockCircleIcon width={12} height={12} />
-                <Text role="productive">{statusLocalizations?.ongoing}</Text>
+                <Text role="productive">{statusLocalizations?.started}</Text>
               </Box>
               <Box className={classes.legend}>
                 <CheckCircleIcon width={12} height={12} />
-                <Text role="productive">{statusLocalizations?.completed}</Text>
+                <Text role="productive">{statusLocalizations?.submitted}</Text>
               </Box>
             </Box>
             <ScoresBar {...instanceData.leftScoresBar} />
