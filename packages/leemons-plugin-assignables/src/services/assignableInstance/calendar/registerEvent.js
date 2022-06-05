@@ -13,11 +13,20 @@ module.exports = async function registerEvent(
       title: assignable.asset.name,
       isPrivate: true,
       type: 'plugins.calendar.task',
-      startDate: typeof dates.deadline === 'string' ? dates.deadline : dates.deadline.toISOString(), // typeof dates.start === 'string' ? dates.start : dates.start.toISOString(),
-      endDate: typeof dates.deadline === 'string' ? dates.deadline : dates.deadline.toISOString(),
+      startDate: dates.deadline
+        ? typeof dates.deadline === 'string'
+          ? dates.deadline
+          : dates.deadline.toISOString()
+        : undefined, // typeof dates.start === 'string' ? dates.start : dates.start.toISOString(),
+      endDate: dates.deadline
+        ? typeof dates.deadline === 'string'
+          ? dates.deadline
+          : dates.deadline.toISOString()
+        : undefined,
       data: {
         instanceId: id,
         classes: _.map(calendarClasses, 'calendar'),
+        hideInCalendar: !dates.deadline,
       },
     },
     { transacting }

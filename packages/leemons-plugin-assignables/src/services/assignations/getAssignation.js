@@ -69,6 +69,7 @@ module.exports = async function getAssignation(
   }
 
   if ((startDate.isValid() && !startDate.isAfter(today)) || !startDate.isValid()) {
+    // if (startDate.isValid() && !startDate.isAfter(today)) {
     assignation.started = true;
   } else {
     assignation.started = false;
