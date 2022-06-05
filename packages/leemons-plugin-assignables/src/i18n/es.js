@@ -209,4 +209,7 @@ module.exports = {
     history: 'Actividades pasadas',
     activities: 'Actividades',
   },
+  need_your_attention: {
+    title: 'Necesita tu atención',
+  },
 };

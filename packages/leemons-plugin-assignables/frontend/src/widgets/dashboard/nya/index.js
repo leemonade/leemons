@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
-import { Swiper, Box, Loader } from '@bubbles-ui/components';
+import { Swiper, Box, Text, Loader } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useAssignablesContext from '@assignables/hooks/useAssignablesContext';
-import { useApi, unflatten } from '@common';
+import { useApi, unflatten, useLocale } from '@common';
 import _ from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useSearchAssignableInstances from '../../../hooks/assignableInstance/useSearchAssignableInstances';
@@ -152,16 +152,16 @@ function usePreparedInstances(instances, query) {
 }
 
 export default function NYA({ classe, program }) {
-  const [, translations] = useTranslateLoader(prefixPN('roles'));
+  const [, translations] = useTranslateLoader([prefixPN('roles'), prefixPN('need_your_attention')]);
+  const locale = useLocale();
 
   const labels = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('roles'));
-
-      // EN: Modify the data object here
-      // ES: Modifica el objeto data aquí
-      return data;
+      return {
+        ..._.get(res, prefixPN('need_your_attention')),
+        roles: _.get(res, prefixPN('roles')),
+      };
     }
 
     return {};
@@ -186,59 +186,65 @@ export default function NYA({ classe, program }) {
 
   const preparedAssets = usePreparedInstances(instancesData, query);
 
-  if (!preparedAssets?.length) {
-    return <Loader />;
-  }
-
   return (
     <Box
-      sx={{
+      sx={(theme) => ({
         maxWidth: '1000px',
-      }}
+        display: 'flex',
+        flexDirection: 'column',
+        gap: theme.spacing[6],
+      })}
     >
-      <Swiper
-        // onSelectIndex={handleSelectIndex}
-        selectable
-        deselectable={false}
-        disableSelectedStyles
-        breakAt={{
-          800: {
-            slidesPerView: 1,
-            spaceBetween: 16,
-          },
-          1000: {
-            slidesPerView: 2,
-            spaceBetween: 16,
-          },
-          1500: {
-            slidesPerView: 3,
-            spaceBetween: 16,
-          },
-        }}
-      >
-        {preparedAssets.map((instance) => (
-          <Box
-            key={instance.id}
-            style={{
-              cursor: 'pointer',
-            }}
-            onClick={instance.onClick}
-          >
-            <LibraryCard
-              asset={instance.asset}
-              variant="assigment"
-              dashboard
-              shadow
-              locale="es"
-              assigment={instance.assignment}
-              deadlineProps={instance.deadlineProps}
-              subject={instance.subject}
-              isNew={instance.isNew}
-              variantTitle={labels[instance.assignable.role] || instance.assignable.role}
-            />
-          </Box>
-        ))}
-      </Swiper>
+      <Text size="lg" color="primary">
+        {labels.title}
+      </Text>
+      {!preparedAssets?.length ? (
+        <Loader />
+      ) : (
+        <Swiper
+          // onSelectIndex={handleSelectIndex}
+          selectable
+          deselectable={false}
+          disableSelectedStyles
+          breakAt={{
+            800: {
+              slidesPerView: 1,
+              spaceBetween: 16,
+            },
+            1000: {
+              slidesPerView: 2,
+              spaceBetween: 16,
+            },
+            1500: {
+              slidesPerView: 3,
+              spaceBetween: 16,
+            },
+          }}
+        >
+          {preparedAssets.map((instance) => (
+            <Box
+              key={instance.id}
+              style={{
+                cursor: 'pointer',
+              }}
+              onClick={instance.onClick}
+            >
+              <LibraryCard
+                asset={instance.asset}
+                variant="assigment"
+                dashboard
+                shadow
+                locale={locale}
+                assigment={instance.assignment}
+                deadlineProps={instance.deadlineProps}
+                subject={instance.subject}
+                isNew={instance.isNew}
+                variantTitle={labels?.roles?.[instance.assignable.role] || instance.assignable.role}
+              />
+            </Box>
+          ))}
+        </Swiper>
+      )}
     </Box>
   );
 }
