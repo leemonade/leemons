@@ -86,6 +86,21 @@ export default function Dashboard({ session }) {
     init();
   }, []);
 
+  const widgets = React.useCallback(
+    ({ Component, key }) => (
+      <Box
+        key={key}
+        sx={(theme) => ({
+          paddingTop: theme.spacing[6],
+          paddingBottom: theme.spacing[6],
+        })}
+      >
+        <Component program={store.selectedProgram} session={session} />
+      </Box>
+    ),
+    [store.selectedProgram, session]
+  );
+
   if (store.loading) return null;
 
   const programImage = null;
@@ -133,19 +148,7 @@ export default function Dashboard({ session }) {
               {store.selectedProgram ? (
                 <>
                   {/* -- LEFT ZONE -- */}
-                  <ZoneWidgets zone="plugins.dashboard.program.left">
-                    {({ Component, key }) => (
-                      <Box
-                        key={key}
-                        sx={(theme) => ({
-                          paddingTop: theme.spacing[6],
-                          paddingBottom: theme.spacing[6],
-                        })}
-                      >
-                        <Component program={store.selectedProgram} session={session} />
-                      </Box>
-                    )}
-                  </ZoneWidgets>
+                  <ZoneWidgets zone="plugins.dashboard.program.left">{widgets}</ZoneWidgets>
                 </>
               ) : null}
             </Box>
