@@ -95,9 +95,13 @@ function TeacherActions({ id }) {
   const history = useHistory();
 
   const redirectToInstance = useCallback(
-    () => history.push(`/private/assignables/details/${id}`),
+    () => window.open(`/private/assignables/details/${id}`, '_blank'),
     [history, id]
   );
+  // const redirectToInstance = useCallback(
+  //   () => history.push(`/private/assignables/details/${id}`),
+  //   [history, id]
+  // );
 
   return (
     <Button
@@ -134,10 +138,18 @@ function StudentActions({ assignation, labels }) {
   // const start = dayjs(dates?.start);
   // const alwaysAvailable = !(dates?.start && dates?.deadline);
 
-  const redirectToInstance = useCallback(() => history.push(activityUrl), [history, activityUrl]);
-  const redirectToRevision = useCallback(() => history.push(revisionUrl), [history, revisionUrl]);
+  // const redirectToInstance = useCallback(() => history.push(activityUrl), [history, activityUrl]);
+  // const redirectToRevision = useCallback(() => history.push(revisionUrl), [history, revisionUrl]);
+  const redirectToInstance = useCallback(
+    () => window.open(activityUrl, '_blank'),
+    [history, activityUrl]
+  );
+  const redirectToRevision = useCallback(
+    () => window.open(revisionUrl, '_blank'),
+    [history, revisionUrl]
+  );
 
-  if (finished || !started) {
+  if (finished) {
     return (
       <Button
         iconOnly
@@ -162,6 +174,18 @@ function StudentActions({ assignation, labels }) {
     //     {labels?.student_actions?.review}
     //   </Button>
     // );
+  }
+
+  if (!started) {
+    return (
+      <Button
+        iconOnly
+        variant="link"
+        color="primary"
+        rightIcon={<ViewOnIcon />}
+        onClick={redirectToInstance}
+      />
+    );
   }
 
   return (

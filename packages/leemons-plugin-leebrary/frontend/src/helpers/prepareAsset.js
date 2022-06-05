@@ -12,7 +12,7 @@ function getAssetUrl(assetID) {
 function getFileUrl(fileID) {
   const authTokens = getAuthorizationTokenForAllCenters();
 
-  if (fileID.startsWith('http')) {
+  if (fileID?.startsWith('http')) {
     return fileID;
   }
 
