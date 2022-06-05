@@ -149,6 +149,7 @@ export default function StudentInstance() {
   }
 
   async function finishTest() {
+    console.log('finishTest');
     store.showFinishModal = false;
     const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
     store.timestamps = timestamps;

@@ -342,6 +342,7 @@ function NewCalendarEventModal({
 
         addSuccessAlert(t('updated_done'));
       }
+      ref.current.eventId = null;
       reloadCalendar();
       if (closeOnSend) close();
     } catch (e) {

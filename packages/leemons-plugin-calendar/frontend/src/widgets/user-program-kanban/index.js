@@ -5,12 +5,13 @@ import {
   Box,
   Button,
   createStyles,
+  IconButton,
   Kanban as BubblesKanban,
   Stack,
   Text,
 } from '@bubbles-ui/components';
 import { saveKanbanEventOrdersRequest, updateEventRequest } from '@calendar/request';
-import { ChevRightIcon, PluginKanbanIcon } from '@bubbles-ui/icons/outline';
+import { AddIcon as PlusIcon, ChevRightIcon, PluginKanbanIcon } from '@bubbles-ui/icons/outline';
 import { KanbanTaskCard } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
@@ -60,8 +61,14 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
     },
   });
   const [t] = useTranslateLoader(prefixPN('userProgramKanban'));
-  const [toggleEventModal, EventModal] = useCalendarEventModal();
+  const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
+
   const history = useHistory();
+
+  const onNewEvent = () => {
+    store.selectedEvent = null;
+    openEventModal();
+  };
 
   async function getKanbanColumns() {
     const { columns } = await listKanbanColumnsRequest();
@@ -290,11 +297,16 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
             {t('kanban')}
           </Text>
           {/* <Text color="soft">{t('description')}</Text> */}
+          <Button variant="link" onClick={() => history.push('/private/calendar/kanban')}>
+            {t('showAllKanban')}
+            <ChevRightIcon />
+          </Button>
         </Box>
-        <Button variant="link" onClick={() => history.push('/private/calendar/kanban')}>
-          {t('showAllKanban')}
-          <ChevRightIcon />
-        </Button>
+        <Box>
+          <IconButton color="primary" size="lg" rounded onClick={onNewEvent}>
+            <PlusIcon />
+          </IconButton>
+        </Box>
       </Stack>
       <Box className={styles.calendarContainer}>
         <EventModal

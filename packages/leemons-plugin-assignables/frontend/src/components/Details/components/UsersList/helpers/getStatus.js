@@ -14,11 +14,10 @@ export default function getStatus(studentData, instanceData) {
   // EN: This values are keys for the localization object prefixPN('activity_status')
   // ES: Estos valores son claves para el objeto de traducción prefixPN('activity_status')
 
-  if (hasGrades(studentData)) {
-    return 'evaluated';
-  }
-
   if (studentData.finished) {
+    if (hasGrades(studentData)) {
+      return 'evaluated';
+    }
     const deadline = dayjs(instanceData.dates.deadline || null);
     const endDate = dayjs(studentData?.timestamps?.end || null);
 

@@ -23,6 +23,7 @@ const addProgramSchema = {
   type: 'object',
   properties: {
     name: stringSchema,
+    color: stringSchemaNullable,
     centers: arrayStringSchema,
     evaluationSystem: stringSchema,
     abbreviation: {
@@ -142,6 +143,7 @@ const updateProgramSchema = {
   properties: {
     id: stringSchema,
     name: stringSchema,
+    color: stringSchemaNullable,
     abbreviation: {
       type: 'string',
       minLength: 1,

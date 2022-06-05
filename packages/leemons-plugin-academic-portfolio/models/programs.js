@@ -11,6 +11,9 @@ module.exports = {
         notNull: true,
       },
     },
+    color: {
+      type: 'string',
+    },
     abbreviation: {
       type: 'string',
       options: {
