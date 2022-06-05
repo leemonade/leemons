@@ -39,13 +39,13 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labe
               */}
               <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}></Box>
 
-              {showContent && curriculum?.content?.length && (
+              {showContent && curriculum?.contents?.length && (
                 <Box sx={tabPanelStyle}>
                   <ContextContainer>
                     <Title color="primary" order={4}>
                       {labels?.content}
                     </Title>
-                    <CurriculumListContents value={curriculum?.content} />
+                    <CurriculumListContents value={curriculum?.contents} />
                   </ContextContainer>
                 </Box>
               )}
