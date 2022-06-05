@@ -11,6 +11,11 @@ function getAssetUrl(assetID) {
 
 function getFileUrl(fileID) {
   const authTokens = getAuthorizationTokenForAllCenters();
+
+  if (fileID.startsWith('http')) {
+    return fileID;
+  }
+
   return `${window.location.origin}/api/leebrary/file/${fileID}?authorization=${encodeURIComponent(
     `${authTokens}`
   )}`;
