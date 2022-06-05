@@ -94,7 +94,7 @@ export default function SelectSubjects({
 
   const classes = data?.classes;
   const subjects = classes?.map((klass) => ({
-    value: klass.subject.id,
+    value: klass.subject.subject,
     label: klass.subject.name,
   }));
   const uniqSubjects = _.uniqBy(subjects, 'value');
