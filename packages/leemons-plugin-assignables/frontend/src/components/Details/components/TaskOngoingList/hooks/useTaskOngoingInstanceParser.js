@@ -77,14 +77,16 @@ export default function useTaskOngoingInstanceParser(instance) {
   const [, translations] = useTranslateLoader([
     prefixPN('activity_deadline_header'),
     prefixPN('multiSubject'),
+    prefixPN('dates'),
   ]);
 
-  const { multiSubjectLabel, deadlineHeaderLabels } = useMemo(() => {
+  const { multiSubjectLabel, deadlineHeaderLabels, datesLabels } = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       return {
         deadlineHeaderLabels: _.get(res, prefixPN('activity_deadline_header')),
         multiSubjectLabel: _.get(res, prefixPN('multiSubject')),
+        datesLabels: _.get(res, prefixPN('dates')),
       };
     }
 
@@ -121,7 +123,7 @@ export default function useTaskOngoingInstanceParser(instance) {
   if (!instance.alwaysAvailable) {
     data.horizontalTimeline = {
       data: Object.entries(instance?.dates).map(([name, date]) => ({
-        label: name,
+        label: datesLabels?.[name] || name,
         date: new Date(date),
       })),
     };

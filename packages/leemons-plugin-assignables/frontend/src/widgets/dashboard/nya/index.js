@@ -1,15 +1,17 @@
 import React, { useMemo } from 'react';
+import dayjs from 'dayjs';
 import { Swiper, Box, Text, Loader } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useAssignablesContext from '@assignables/hooks/useAssignablesContext';
-import { useApi, unflatten, useLocale } from '@common';
+import { useApi, unflatten, useLocale, LocaleDate, LocaleRelativeTime } from '@common';
 import _ from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useSearchAssignableInstances from '../../../hooks/assignableInstance/useSearchAssignableInstances';
 import useAssignationsByProfile from '../../../components/Ongoing/AssignmentList/hooks/useAssignationsByProfile';
 import getClassData from '../../../helpers/getClassData';
 import prefixPN from '../../../helpers/prefixPN';
+import getStatus from '../../../components/Details/components/UsersList/helpers/getStatus';
 
 function parseAssignation(isTeacher, instance) {
   if (isTeacher) {
@@ -58,13 +60,137 @@ function parseDeadline(isTeacher, obj) {
   if (!isTeacher) {
     instance = obj.instance;
   }
+
+  const labels = {
+    evaluated: 'Ver evaluación',
+    submission: 'Entrega',
+    evaluate: 'Para evaluar',
+    evaluation: 'Evaluación',
+    opened: 'Actividad abierta',
+    start: 'Fecha inicio',
+    assigned: 'Programada',
+    late: 'Tarde',
+    submitted: 'Entregada',
+    startActivity: 'Empezar actividad',
+  };
+
+  let main = null;
+  let mainColor = 'success';
+  let backgroundColor = 'default';
+  let secondary = null;
+  let dateToShow = null;
+
+  const today = dayjs();
+  const deadline = dayjs(instance?.dates?.deadline || null);
+  const isDeadline = deadline.isValid() && !deadline.isAfter(today);
+
+  if (!isTeacher) {
+    const submission = dayjs(obj?.timestamps?.end || null);
+    const status = getStatus(obj, instance);
+    if (status === 'evaluated') {
+      main = labels.evaluated;
+      secondary = labels?.submission;
+      dateToShow = deadline.isValid() && deadline.toDate();
+    } else if (status === 'late') {
+      main = labels.late;
+      secondary = labels?.submission;
+      dateToShow = deadline.isValid() && deadline.toDate();
+    } else if (status === 'submitted') {
+      main = labels.submitted;
+      secondary = labels?.submitted;
+      dateToShow = submission.isValid() && submission.toDate();
+    } else if (status === 'started' || status === 'opened') {
+      const daysUntilDeadline = deadline.diff(today, 'days');
+      const durationInSeconds = deadline.diff(today, 'seconds');
+
+      secondary = labels?.submission;
+      dateToShow = deadline.toDate();
+
+      if (isDeadline) {
+        main = 'late';
+      } else if (daysUntilDeadline <= 5) {
+        mainColor = 'warning';
+        if (daysUntilDeadline <= 2) {
+          mainColor = 'error';
+        }
+        main = <LocaleRelativeTime seconds={durationInSeconds} />;
+      } else {
+        main = labels?.startActivity;
+      }
+    }
+  } else {
+    const closeDate = dayjs(instance?.dates?.close || null);
+    const closedDate = dayjs(instance?.dates?.closed || null);
+    const startDate = dayjs(instance?.dates?.start || null);
+
+    const isClosed =
+      (closeDate.isValid() && !closeDate.isAfter(today)) ||
+      (closedDate.isValid() && !closedDate.isAfter(today));
+    const isStarted = !isClosed && !isDeadline && startDate.isValid() && !startDate.isAfter(today);
+
+    if (isClosed) {
+      // TODO: Check if it is already graded
+      main = labels?.evaluated;
+      secondary = labels?.submission;
+      dateToShow = deadline.isValid() && deadline.toDate();
+    } else if (isDeadline) {
+      main = labels?.evaluate;
+      if (closeDate.isValid()) {
+        const daysUntilClose = closeDate.diff(today, 'day');
+        const durationInSeconds = closeDate.diff(today, 'seconds');
+
+        dateToShow = closeDate.toDate();
+        if (daysUntilClose <= 5) {
+          mainColor = 'warning';
+          if (daysUntilClose <= 2) {
+            mainColor = 'error';
+          }
+          if (daysUntilClose < 0) {
+            backgroundColor = 'error';
+          }
+          secondary = <LocaleRelativeTime seconds={durationInSeconds} />;
+        } else {
+          secondary = labels?.evaluation;
+        }
+      } else {
+        const daysSinceDeadline = today.diff(deadline, 'day');
+        const durationInSeconds = today.diff(deadline, 'seconds');
+
+        dateToShow = deadline.toDate();
+
+        if (daysSinceDeadline >= 2) {
+          mainColor = 'warning';
+          if (daysSinceDeadline >= 5) {
+            mainColor = 'error';
+          }
+          if (daysSinceDeadline >= 7) {
+            backgroundColor = 'error';
+          }
+
+          secondary = <LocaleRelativeTime seconds={durationInSeconds} />;
+        } else {
+          secondary = labels?.submission;
+        }
+      }
+    } else if (isStarted) {
+      main = labels?.opened;
+      secondary = labels?.submission;
+      dateToShow = startDate.toDate();
+    } else {
+      main = labels?.assigned;
+      secondary = labels?.start;
+      dateToShow = startDate.isValid() && startDate.toDate();
+    }
+  }
+
   return {
-    deadline: new Date(instance.dates.deadline),
+    deadline: dateToShow || new Date(0),
     locale: 'es',
+    titleColor: mainColor,
+    backgroundColor,
     labels: {
-      title: 'TODO:',
-      new: 'New',
-      deadline: 'TODO:',
+      title: main,
+      deadline: secondary,
     },
   };
 }
@@ -142,8 +268,9 @@ function usePreparedInstances(instances, query) {
     [isTeacher, instances, query]
   );
 
-  const [results] = useApi(prepareInstances, options);
+  const [results, error] = useApi(prepareInstances, options);
 
+  console.log('Use prepared instances error', error);
   if (!results) {
     return [];
   }
@@ -189,7 +316,6 @@ export default function NYA({ classe, program }) {
   return (
     <Box
       sx={(theme) => ({
-        maxWidth: '1000px',
         display: 'flex',
         flexDirection: 'column',
         gap: theme.spacing[6],
@@ -229,6 +355,16 @@ export default function NYA({ classe, program }) {
               }}
               onClick={instance.onClick}
             >
+              <Box
+                sx={(theme) => ({
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: theme.spacing[1],
+                })}
+              >
+                <Text>Main color: {instance.deadlineProps.titleColor}</Text>
+                <Text>Background color: {instance.deadlineProps.backgroundColor}</Text>
+              </Box>
               <LibraryCard
                 asset={instance.asset}
                 variant="assigment"

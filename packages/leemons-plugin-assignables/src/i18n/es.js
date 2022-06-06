@@ -102,7 +102,7 @@ module.exports = {
     labels: {
       graphs: {
         status: 'Resumen de estado',
-        grades: 'Resuemn de puntuaciones',
+        grades: 'Resumen de puntuaciones',
       },
       studentList: {
         studentsCount: 'Estudiantes {{count}}',
@@ -208,6 +208,13 @@ module.exports = {
     ongoing: 'Actividades en curso',
     history: 'Actividades pasadas',
     activities: 'Actividades',
+  },
+  dates: {
+    visualization: 'Visualización',
+    start: 'Inicio',
+    deadline: 'Entrega',
+    close: 'Cierre',
+    closed: 'Cerrada',
   },
   need_your_attention: {
     title: 'Necesita tu atención',
