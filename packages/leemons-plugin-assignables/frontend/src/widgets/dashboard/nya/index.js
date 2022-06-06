@@ -13,7 +13,7 @@ import getClassData from '../../../helpers/getClassData';
 import prefixPN from '../../../helpers/prefixPN';
 import getStatus from '../../../components/Details/components/UsersList/helpers/getStatus';
 
-function parseAssignation(isTeacher, instance, subject) {
+function parseAssignation({ isTeacher, instance, subject, labels }) {
   if (isTeacher) {
     const { students } = instance;
 
@@ -52,11 +52,10 @@ function parseAssignation(isTeacher, instance, subject) {
       subject: {
         name: subject.name,
       },
+      labels: labels?.assigment,
       avgTime,
     };
   }
-
-  return null;
 }
 
 function parseDeadline(isTeacher, obj) {
@@ -224,7 +223,7 @@ function parseDeadline(isTeacher, obj) {
   };
 }
 
-function prepareInstances({ instances, isTeacher, query }) {
+function prepareInstances({ instances, isTeacher, query, labels }) {
   return Promise.all(
     instances.map(async (object) => {
       let instance = object;
@@ -233,13 +232,16 @@ function prepareInstances({ instances, isTeacher, query }) {
         instance = object.instance;
       }
 
-      const multiSubjectLabel = 'multi-Asignatura';
-
       const subjectData = await getClassData(instance.classes, {
-        multiSubject: multiSubjectLabel,
+        multiSubject: labels.multiSubject,
       });
 
-      const assignment = parseAssignation(isTeacher, object, subjectData);
+      const assignment = parseAssignation({
+        isTeacher,
+        instance: object,
+        subject: subjectData,
+        labels,
+      });
       const deadlineProps = parseDeadline(isTeacher, object);
       // const subject = {
       //   // Only if main dashboard or multi-language
@@ -248,7 +250,7 @@ function prepareInstances({ instances, isTeacher, query }) {
       //   icon: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Globe_icon_2.svg',
       // };
 
-      const showSubject = query.classes === undefined || subjectData.name === multiSubjectLabel;
+      const showSubject = query.classes === undefined || subjectData.name === labels.multiSubject;
 
       const subject = {
         name: subjectData.name,
@@ -287,7 +289,7 @@ function prepareInstances({ instances, isTeacher, query }) {
   );
 }
 
-function usePreparedInstances(instances, query) {
+function usePreparedInstances(instances, query, labels) {
   const { isTeacher } = useAssignablesContext();
 
   const options = React.useMemo(
@@ -295,8 +297,9 @@ function usePreparedInstances(instances, query) {
       isTeacher,
       instances,
       query,
+      labels,
     }),
-    [isTeacher, instances, query]
+    [isTeacher, instances, query, labels]
   );
 
   const [results, error] = useApi(prepareInstances, options);
@@ -310,7 +313,11 @@ function usePreparedInstances(instances, query) {
 }
 
 export default function NYA({ classe, program }) {
-  const [, translations] = useTranslateLoader([prefixPN('roles'), prefixPN('need_your_attention')]);
+  const [, translations] = useTranslateLoader([
+    prefixPN('roles'),
+    prefixPN('need_your_attention'),
+    prefixPN('multiSubject'),
+  ]);
   const locale = useLocale();
 
   const labels = useMemo(() => {
@@ -319,6 +326,7 @@ export default function NYA({ classe, program }) {
       return {
         ..._.get(res, prefixPN('need_your_attention')),
         roles: _.get(res, prefixPN('roles')),
+        multiSubject: _.get(res, prefixPN('multiSubject')),
       };
     }
 
@@ -342,7 +350,7 @@ export default function NYA({ classe, program }) {
   const [instances] = useSearchAssignableInstances(query);
   const [instancesData, instancesDataLoading] = useAssignationsByProfile(instances);
 
-  const preparedAssets = usePreparedInstances(instancesData, query);
+  const preparedAssets = usePreparedInstances(instancesData, query, labels);
 
   return (
     <Box
@@ -381,16 +389,21 @@ export default function NYA({ classe, program }) {
               spaceBetween: 16,
             },
           }}
+          slideStyles={{
+            height: 'auto',
+          }}
         >
           {preparedAssets.map((instance) => (
             <Box
               key={instance.id}
               style={{
                 cursor: 'pointer',
+                height: '100%',
               }}
               onClick={instance.onClick}
             >
               <LibraryCard
+                fullHeight
                 asset={instance.asset}
                 variant="assigment"
                 dashboard
