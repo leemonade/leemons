@@ -111,6 +111,7 @@ const TaskOngoingList = ({ instance }) => {
           {...instanceData.taskDeadlineHeader}
           onDeadlineChange={onDeadlineChange}
           onCloseTask={onCloseTask}
+          closed={Boolean(instance.dates.closed || dayjs(instance.dates.close).isBefore(dayjs()))}
           styles={{ position: 'absolute', bottom: 0, left: 0, right: '50%', zIndex: 5 }}
         />
         {instanceData.horizontalTimeline && (
