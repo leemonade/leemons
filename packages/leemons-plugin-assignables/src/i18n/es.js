@@ -102,7 +102,7 @@ module.exports = {
     labels: {
       graphs: {
         status: 'Resumen de estado',
-        grades: 'Resuemn de puntuaciones',
+        grades: 'Resumen de puntuaciones',
       },
       studentList: {
         studentsCount: 'Estudiantes {{count}}',
