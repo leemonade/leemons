@@ -22,6 +22,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import hooks from 'leemons-hooks';
 import SelectUserAgent from '@users/components/SelectUserAgent';
+import { useLocale } from '@common';
 import getUTCString from '../helpers/getUTCString';
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
 import {
@@ -84,6 +85,7 @@ function NewCalendarEventModal({
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [t] = useTranslateLoader(prefixPN('event_modal'));
   const [, setR] = useState();
+  const locale = useLocale();
   const form = useForm({ defaultValues: ref.current.defaultValues });
 
   function render() {
@@ -373,6 +375,7 @@ function NewCalendarEventModal({
     <CalendarEventModal
       form={form}
       opened={opened}
+      locale={locale}
       fromCalendar={ref.current.fromCalendar}
       onRemove={removeEvent}
       isNew={ref.current.isNew}
