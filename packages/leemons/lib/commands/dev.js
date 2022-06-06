@@ -1,4 +1,5 @@
 const apm = require('leemons-telemetry').start('Leemons App');
+const fs = require('fs-extra');
 
 const cluster = require('cluster');
 const path = require('path');
@@ -105,26 +106,23 @@ async function setupBack(leemons) {
   const providersDirs = providers.map((provider) => path.join(provider.dir.app, '**'));
 
   // Ignore plugins frontend and config folders (they are handled by other services)
-  const ignoredPluginsDirs = plugins.map((plugin) =>
-    path.join(
-      plugin.dir.app,
-      `\
-(${plugin.dir.config}|\
-${plugin.dir.next})`,
-      '**'
-    )
-  );
+  const ignoredPluginsDirs = plugins.map((plugin) => {
+    const pluginUnwatchedDirs = plugin.config.config?.unwatchedDirs || [];
+
+    const allIgnoredDirs = [plugin.dir.config, plugin.dir.next, ...pluginUnwatchedDirs];
+
+    return path.join(plugin.dir.app, `(${allIgnoredDirs.join('|')})`, '**');
+  });
 
   // Ignore providers frontend and config folders (they are handled by other services)
-  const ignoredProvidersDirs = plugins.map((plugin) =>
-    path.join(
-      plugin.dir.app,
-      `\
-(${plugin.dir.config}|\
-${plugin.dir.next})`,
-      '**'
-    )
-  );
+
+  const ignoredProvidersDirs = providers.map((provider) => {
+    const providerUnwatchedDirs = provider.config.config?.unwatchedDirs || [];
+
+    const allIgnoredDirs = [provider.dir.config, provider.dir.next, ...providerUnwatchedDirs];
+
+    return path.join(provider.dir.app, `(${allIgnoredDirs.join('|')})`, '**');
+  });
 
   const handler = async () => {
     leemons.setEvents();
