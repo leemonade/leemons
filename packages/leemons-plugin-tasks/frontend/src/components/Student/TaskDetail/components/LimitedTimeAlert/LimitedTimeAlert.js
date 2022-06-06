@@ -1,11 +1,44 @@
 import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import dayjsDuration from 'dayjs/plugin/duration';
-import { Box, Button, ImageLoader, Modal, Text, Title, createStyles } from '@bubbles-ui/components';
-import { getLocaleDuration, LocaleDuration } from '@common';
+import {
+  Box,
+  Button,
+  ImageLoader,
+  Modal,
+  Text,
+  Paragraph,
+  Title,
+  createStyles,
+} from '@bubbles-ui/components';
+import { LocaleDate, LocaleDuration } from '@common';
 import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
 
 dayjs.extend(dayjsDuration);
+
+function replaceTextByComponent(text, replace, component) {
+  const splittedText = text?.split?.(replace).filter(Boolean);
+  const endsWithReplacement = text?.endsWith?.(replace);
+
+  const length = splittedText?.length;
+  return splittedText?.reduce?.((acc, current, index) => {
+    console.log(
+      acc,
+      splittedText,
+      'length',
+      length,
+      'index',
+      index,
+      'endsWithReplacement',
+      endsWithReplacement
+    );
+    if (index !== length - 1 || endsWithReplacement) {
+      console.log('Push component');
+      return [...acc, current, component];
+    }
+    return [...acc, current];
+  }, []);
+}
 
 const useBeforeStartStyles = createStyles((theme) => ({
   timeLimitContainer: {
@@ -44,12 +77,18 @@ const useBeforeStartStyles = createStyles((theme) => ({
     padding: theme.spacing[2],
     paddingTop: theme.spacing[6],
   },
+  closedActivity: {
+    paddingLeft: theme.spacing[6],
+    gap: theme.spacing[4],
+    textAlign: 'left',
+    flexDirection: 'column',
+  },
 }));
 
 export default function LimitedTimeAlert({ assignation, labels, show }) {
   const [value, unit] = assignation?.instance?.duration?.split(' ') || [];
   const durationSeconds = dayjs.duration(value, unit).asSeconds();
-  const { classes } = useBeforeStartStyles();
+  const { classes, cx } = useBeforeStartStyles();
 
   const [showModal, setShowModal] = useState(false);
 
@@ -61,30 +100,51 @@ export default function LimitedTimeAlert({ assignation, labels, show }) {
       <Box className={classes.timeLimitContainer}>
         <Title order={5}>{labels?.beforeStart}</Title>
         <Box className={classes.timeLimitContent}>
-          <Box className={classes.timeLimitInfo}>
-            <Box>
-              <Box sx={() => ({ position: 'relative', height: '24px', marginBottom: '24px' })}>
-                <ImageLoader className="stroke-current" src={'/public/tests/clock.svg'} />
-              </Box>
-              <Title order={4}>
-                {durationSeconds ? (
-                  <LocaleDuration seconds={durationSeconds} />
-                ) : (
-                  labels?.noTimeLimit
-                )}
-              </Title>
-            </Box>
-            {durationSeconds ? (
+          {assignation?.started ? (
+            <Box className={classes.timeLimitInfo}>
               <Box>
-                <Box sx={() => ({ position: 'relative', height: '32px', marginBottom: '16px' })}>
-                  <ImageLoader className="stroke-current" src={'/public/tests/pause.svg'} />
+                <Box sx={() => ({ position: 'relative', height: '24px', marginBottom: '24px' })}>
+                  <ImageLoader className="stroke-current" src={'/public/tests/clock.svg'} />
                 </Box>
-                <Title order={4}>{labels?.withoutPause}</Title>
+                <Title order={4}>
+                  {durationSeconds ? (
+                    <LocaleDuration seconds={durationSeconds} />
+                  ) : (
+                    labels?.noTimeLimit
+                  )}
+                </Title>
               </Box>
-            ) : null}
-          </Box>
+              {durationSeconds ? (
+                <Box>
+                  <Box sx={() => ({ position: 'relative', height: '32px', marginBottom: '16px' })}>
+                    <ImageLoader className="stroke-current" src={'/public/tests/pause.svg'} />
+                  </Box>
+                  <Title order={4}>{labels?.withoutPause}</Title>
+                </Box>
+              ) : null}
+            </Box>
+          ) : (
+            <Box className={cx(classes.timeLimitInfo, classes.closedActivity)}>
+              <Text strong color="primary">
+                {labels?.closedTaskFirstLine}
+              </Text>
+              <Box>
+                <Text strong color="primary">
+                  {replaceTextByComponent(
+                    labels?.closedTaskSecondLine,
+                    '{{time}}',
+                    <LocaleDate
+                      date={new Date(assignation?.instance?.dates?.start)}
+                      options={{ dateStyle: 'short', timeStyle: 'short' }}
+                    />
+                  )}
+                </Text>
+              </Box>
+            </Box>
+          )}
+
           <img className={classes.timeLimitImage} src="/public/tests/ninaBrazoLevantado.png" />
-          {durationSeconds ? (
+          {durationSeconds && assignation?.started ? (
             <Box
               sx={() => ({
                 position: 'absolute',
@@ -109,8 +169,26 @@ export default function LimitedTimeAlert({ assignation, labels, show }) {
       </Box>
       <Modal title={labels?.howItWorks} opened={showModal} onClose={() => setShowModal(false)}>
         <Box className={classes.howItWorksModalContainer}>
-          <Title>Este texto no está</Title>
-          <Text>Cuando Juanjo tenga el copy, estará</Text>
+          <Title order={5} sx={(theme) => ({ marginBottom: theme.spacing[2] })}>
+            {labels?.limitedTimeTitle}
+          </Title>
+          <Paragraph>
+            {replaceTextByComponent(
+              labels?.limitedTime,
+              '{{time}}',
+              <LocaleDuration seconds={durationSeconds} />
+            )}
+          </Paragraph>
+          <Title
+            order={5}
+            sx={(theme) => ({
+              marginTop: theme.spacing[6],
+              marginBottom: theme.spacing[2],
+            })}
+          >
+            {labels?.pauseTitle}
+          </Title>
+          <Paragraph>{labels?.pause}</Paragraph>
           {/* <Title order={5} sx={(theme) => ({ marginBottom: theme.spacing[2] })}>
             {t('limitedTime')}
           </Title>

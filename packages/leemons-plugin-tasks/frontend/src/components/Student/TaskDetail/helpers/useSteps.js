@@ -31,6 +31,7 @@ export default function useSteps({
         timestamps: 'open',
         limitedTimeAlert: !shouldShowDevelopment,
         status: 'OK',
+        next: !assignation?.started ? shouldShowDevelopment : true,
       },
       statement: () => {
         if (!shouldShowDevelopment) {
@@ -45,10 +46,10 @@ export default function useSteps({
           countdown: true,
           limitedTimeAlert: true,
           status: 'OK',
+          next: assignation?.started,
         };
       },
       submission: () => {
-        const { submission } = assignable;
         const onSave = { current: null };
 
         if (!shouldShowSubmission) {
@@ -100,19 +101,19 @@ export default function useSteps({
     return { steps: finalSteps, visitedSteps };
   }, [assignation]);
 
-  useEffect(() => {
-    if (!steps?.steps?.length) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!steps?.steps?.length) {
+  //     return;
+  //   }
 
-    if (
-      !assignation.started &&
-      steps?.steps?.[currentStep]?.id === 'statement' &&
-      !disabledButtons.next
-    ) {
-      disableButton('next', true);
-    }
-  }, [assignation, currentStep, disabledButtons, steps?.steps]);
+  //   if (
+  //     !assignation.started &&
+  //     steps?.steps?.[currentStep]?.id === 'statement' &&
+  //     !disabledButtons.next
+  //   ) {
+  //     disableButton('next', true);
+  //   }
+  // }, [assignation, currentStep, disabledButtons, steps?.steps]);
 
   return steps;
 }

@@ -394,6 +394,14 @@ module.exports = {
       noTimeLimit: 'Sin límite de tiempo',
       withoutPause: 'Sin pausa',
       howItWorks: '¿Cómo funciona?',
+      limitedTimeTitle: 'Tiempo limitado',
+      limitedTime:
+        'Una vez comenzado tienes {{time}} para finalizar esta tarea, deberás hacer la entrega antes de que este tiempo termine.',
+      pauseTitle: 'La tarea no se puede pausar',
+      pause:
+        'Si sales de la aplicación con la tarea en proceso, esta se dará por finalizada y se enviará automáticamente la última entrega guardada antes del momento de la interrupción. Si se produce algún error en el sistema y te expulsa de la tarea, podrás notificarlo y en caso de que tu error sea comprobado podrás volver a realizarla.',
+      closedTaskFirstLine: 'Esta actividad está en modo "solo consulta".',
+      closedTaskSecondLine: 'La fecha de inicio para poder realizar esta actividad es: {{time}}',
     },
   },
   task_correction: {
