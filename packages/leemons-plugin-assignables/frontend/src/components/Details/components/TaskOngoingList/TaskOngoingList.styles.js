@@ -11,6 +11,7 @@ const TaskOngoingListStyles = createStyles((theme) => ({
     height: '370px',
     backgroundColor: theme.colors.mainWhite,
     display: 'flex',
+    gap: theme.spacing[13],
   },
   leftSide: {
     width: '50%',

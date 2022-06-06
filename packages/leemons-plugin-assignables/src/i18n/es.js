@@ -218,5 +218,6 @@ module.exports = {
   },
   need_your_attention: {
     title: 'Necesita tu atención',
+    new: 'Nueva',
   },
 };
