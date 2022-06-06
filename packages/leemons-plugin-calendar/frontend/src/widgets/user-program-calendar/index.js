@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Box, createStyles, IconButton, Select, Stack, Text } from '@bubbles-ui/components';
+import { Box, createStyles, IconButton, Loader, Select, Stack, Text } from '@bubbles-ui/components';
 import { AddIcon as PlusIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
@@ -28,7 +28,7 @@ const Styles = createStyles((theme, { inTab }) => ({
   },
   calendarContainer: {
     paddingTop: theme.spacing[6],
-    height: inTab ? '1150px' : '520px',
+    height: inTab ? '1150px' : '750px',
   },
 }));
 
@@ -159,7 +159,7 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
     if (info.originalEvent) {
       const { bgColor, icon, borderColor, ...e } = info.originalEvent;
       store.selectedEvent = e;
-      toggleEventModal();
+      openEventModal();
     }
   }
 
@@ -206,49 +206,50 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
         </Stack>
       ) : null}
 
-      <Box className={styles.calendarContainer}>
-        {!store.loading ? (
+      {!store.loading ? (
+        <Box className={styles.calendarContainer}>
           <EventModal
             centerToken={store.centers[0].token}
             event={store.selectedEvent}
             close={toggleEventModal}
             classCalendars={store.calendarFilters}
           />
-        ) : null}
-
-        <BigCalendar
-          style={{ height: '100%' }}
-          currentView="week"
-          eventClick={onEventClick}
-          events={store.filteredEvents || []}
-          {...store.fullCalendarConfig}
-          locale={session?.locale}
-          showToolbarAddButton={false}
-          showToolbarViewSwitcher={false}
-          toolbarRightNode={
-            <Stack alignItems="center">
-              {/* <Box sx={(theme) => ({ marginRight: theme.spacing[4] })}>
+          <BigCalendar
+            style={{ height: '100%' }}
+            currentView="week"
+            eventClick={onEventClick}
+            events={store.filteredEvents || []}
+            {...store.fullCalendarConfig}
+            locale={session?.locale}
+            showToolbarAddButton={false}
+            showToolbarViewSwitcher={false}
+            toolbarRightNode={
+              <Stack alignItems="center">
+                {/* <Box sx={(theme) => ({ marginRight: theme.spacing[4] })}>
                 <Button variant="link" onClick={() => history.push('/private/calendar/home')}>
                   {t('showAllCalendar')}
                   <ChevRightIcon />
                 </Button>
               </Box> */}
 
-              <Box>
-                <IconButton color="primary" size="lg" rounded onClick={onNewEvent}>
-                  <PlusIcon />
-                </IconButton>
-              </Box>
-            </Stack>
-          }
-          messages={{
-            today: tC('today'),
-            previous: tC('previous'),
-            next: tC('next'),
-            showWeekends: tC('showWeekends'),
-          }}
-        />
-      </Box>
+                <Box>
+                  <IconButton color="primary" size="lg" rounded onClick={onNewEvent}>
+                    <PlusIcon />
+                  </IconButton>
+                </Box>
+              </Stack>
+            }
+            messages={{
+              today: tC('today'),
+              previous: tC('previous'),
+              next: tC('next'),
+              showWeekends: tC('showWeekends'),
+            }}
+          />
+        </Box>
+      ) : (
+        <Loader />
+      )}
     </Box>
   );
 }

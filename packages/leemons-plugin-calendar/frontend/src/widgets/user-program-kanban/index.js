@@ -6,6 +6,7 @@ import {
   createStyles,
   IconButton,
   Kanban as BubblesKanban,
+  Loader,
   Stack,
   Text,
 } from '@bubbles-ui/components';
@@ -43,7 +44,7 @@ const Styles = createStyles((theme, { inTab }) => ({
   },
   calendarContainer: {
     paddingTop: theme.spacing[6],
-    height: '520px',
+    height: '750px',
   },
 }));
 
@@ -226,7 +227,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
 
   function onClickCard({ bgColor, icon, borderColor, ...e }) {
     store.selectedEvent = e;
-    toggleEventModal();
+    openEventModal();
   }
 
   React.useEffect(() => {
@@ -288,8 +289,6 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
     render();
   }
 
-  if (store.loading) return null;
-
   return (
     <Box className={styles.root}>
       <Stack fullWidth alignItems="center" justifyContent="space-between">
@@ -310,27 +309,35 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
           </Button> */}
         </Box>
         <Box>
-          <IconButton color="primary" size="lg" rounded onClick={onNewEvent}>
-            <PlusIcon />
-          </IconButton>
+          {!store.loading ? (
+            <IconButton color="primary" size="lg" rounded onClick={onNewEvent}>
+              <PlusIcon />
+            </IconButton>
+          ) : null}
         </Box>
       </Stack>
-      <Box className={styles.calendarContainer}>
-        <EventModal
-          centerToken={store.centers[0].token}
-          event={store.selectedEvent}
-          close={toggleEventModal}
-          classCalendars={store.filtersData.calendars}
-        />
-        <BubblesKanban
-          value={store.board}
-          onChange={onChange}
-          disableCardDrag={false}
-          itemRender={(props) => (
-            <KanbanTaskCard {...props} config={store.data} onClick={onClickCard} />
-          )}
-        />
-      </Box>
+
+      {!store.loading ? (
+        <Box className={styles.calendarContainer}>
+          <EventModal
+            centerToken={store.centers[0].token}
+            event={store.selectedEvent}
+            close={toggleEventModal}
+            classCalendars={store.filtersData.calendars}
+            forceType={inTab ? 'plugins.calendar.task' : null}
+          />
+          <BubblesKanban
+            value={store.board}
+            onChange={onChange}
+            disableCardDrag={false}
+            itemRender={(props) => (
+              <KanbanTaskCard {...props} config={store.data} onClick={onClickCard} />
+            )}
+          />
+        </Box>
+      ) : (
+        <Loader />
+      )}
     </Box>
   );
 }
