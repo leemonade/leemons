@@ -13,7 +13,7 @@ import getClassData from '../../../helpers/getClassData';
 import prefixPN from '../../../helpers/prefixPN';
 import getStatus from '../../../components/Details/components/UsersList/helpers/getStatus';
 
-function parseAssignation(isTeacher, instance) {
+function parseAssignation(isTeacher, instance, subject) {
   if (isTeacher) {
     const { students } = instance;
 
@@ -45,7 +45,7 @@ function parseAssignation(isTeacher, instance) {
       submission,
       total,
       subject: {
-        name: 'Maths - 1025 - GB',
+        name: subject.name,
       },
       avgTime,
     };
@@ -203,7 +203,14 @@ function prepareInstances({ instances, isTeacher, query }) {
       if (!isTeacher) {
         instance = object.instance;
       }
-      const assignment = parseAssignation(isTeacher, object);
+
+      const multiSubjectLabel = 'multi-Asignatura';
+
+      const subjectData = await getClassData(instance.classes, {
+        multiSubject: multiSubjectLabel,
+      });
+
+      const assignment = parseAssignation(isTeacher, object, subjectData);
       const deadlineProps = parseDeadline(isTeacher, object);
       // const subject = {
       //   // Only if main dashboard or multi-language
@@ -211,11 +218,6 @@ function prepareInstances({ instances, isTeacher, query }) {
       //   color: '#FABADA',
       //   icon: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Globe_icon_2.svg',
       // };
-
-      const multiSubjectLabel = 'multi-Asignatura';
-      const subjectData = await getClassData(instance.classes, {
-        multiSubject: multiSubjectLabel,
-      });
 
       const showSubject = query.classes === undefined || subjectData.name === multiSubjectLabel;
 
