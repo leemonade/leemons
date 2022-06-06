@@ -1,5 +1,6 @@
-const { getTreeNodes } = require('../src/services/common');
+const { getTreeNodes, adminDashboard } = require('../src/services/common');
 
 module.exports = {
   getTreeNodes,
+  adminDashboard,
 };

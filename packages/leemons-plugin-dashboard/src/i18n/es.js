@@ -11,4 +11,12 @@ module.exports = {
   tabControlPanel: {
     label: 'Panel de control',
   },
+  adminDashboard: {
+    activityInPlatform: 'Actividad en la plataforma',
+    activeUsers: 'Usuarios activos',
+    students: 'Alumnos',
+    teachers: 'Docentes',
+    total: 'Total:',
+    createdTasks: 'Tareas creadas',
+  },
 };

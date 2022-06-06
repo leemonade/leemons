@@ -324,7 +324,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
             event={store.selectedEvent}
             close={toggleEventModal}
             classCalendars={store.filtersData.calendars}
-            forceType={inTab ? 'plugins.calendar.task' : null}
+            forceType={'plugins.calendar.task'}
           />
           <BubblesKanban
             value={store.board}
