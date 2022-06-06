@@ -5,6 +5,7 @@ import {
   Box,
   createStyles,
   ImageLoader,
+  Loader,
   Stack,
   Swiper,
   Text,
@@ -115,7 +116,8 @@ function UserClassesSwiperWidget({ program }) {
     if (program) load();
   }, [program]);
 
-  if (store.loading || !store.classes) return null;
+  if (store.loading) return <Loader />;
+  if (!store.classes) return null;
 
   return (
     <Box className={styles.root}>

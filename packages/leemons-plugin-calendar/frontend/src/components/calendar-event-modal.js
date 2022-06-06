@@ -302,6 +302,8 @@ function NewCalendarEventModal({
 
   async function onSubmit(_formData, { closeOnSend = true }) {
     // eslint-disable-next-line prefer-const
+    ref.current.saving = true;
+    render();
     let { startDate, endDate, startTime, endTime, ...formData } = _formData;
     if (startDate) startDate = new Date(startDate);
     if (endDate) endDate = new Date(endDate);
@@ -344,9 +346,13 @@ function NewCalendarEventModal({
 
         addSuccessAlert(t('updated_done'));
       }
-      ref.current.eventId = null;
       reloadCalendar();
-      if (closeOnSend) close();
+      if (closeOnSend) {
+        ref.current.eventId = null;
+        close();
+      }
+      ref.current.saving = false;
+      render();
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }
@@ -369,62 +375,67 @@ function NewCalendarEventModal({
     };
   });
 
-  if (ref.current.loading) return <LoadingOverlay visible />;
+  if (ref.current.loading) {
+    return <LoadingOverlay visible />;
+  }
 
   return (
-    <CalendarEventModal
-      form={form}
-      opened={opened}
-      locale={locale}
-      fromCalendar={ref.current.fromCalendar}
-      onRemove={removeEvent}
-      isNew={ref.current.isNew}
-      isOwner={ref.current.isOwner}
-      forceType={forceType}
-      selectData={{
-        repeat: ref.current.repeat,
-        eventTypes: ref.current.eventTypes,
-        calendars: ref.current.calendarData?.ownerCalendars,
-      }}
-      onSubmit={onSubmit}
-      UsersComponent={
-        <UsersComponent
-          label={t('users')}
-          labelDisabled={t('usersDisabled')}
-          showMore={t('showMore')}
-          showLess={t('showLess')}
-          userAgents={ref.current.defaultValues?.userAgents}
-        />
-      }
-      components={ref.current.components}
-      onClose={onClose}
-      defaultValues={ref.current.defaultValues}
-      classCalendars={classCalendars}
-      messages={{
-        subtasks: t('subtasks'),
-        fromLabel: t('from'),
-        toLabel: t('to'),
-        repeatLabel: t('repeatLabel'),
-        allDayLabel: t('all_day'),
-        titlePlaceholder: t('title'),
-        cancelButtonLabel: t('cancel'),
-        saveButtonLabel: t('save'),
-        updateButtonLabel: t('update'),
-        calendarPlaceholder: t('selectCalendar'),
-        calendarLabel: t('calendarLabel'),
-        calendarLabelDisabled: t('calendarLabelDisabled'),
-        showInCalendar: t('showInCalendar'),
-      }}
-      errorMessages={{
-        titleRequired: tCommon('required'),
-        startDateRequired: tCommon('required'),
-        startTimeRequired: tCommon('required'),
-        endDateRequired: tCommon('required'),
-        endTimeRequired: tCommon('required'),
-        calendarRequired: tCommon('required'),
-        typeRequired: tCommon('required'),
-      }}
-    />
+    <>
+      {ref.current.saving ? <LoadingOverlay visible /> : null}
+      <CalendarEventModal
+        form={form}
+        opened={opened}
+        locale={locale}
+        fromCalendar={ref.current.fromCalendar}
+        onRemove={removeEvent}
+        isNew={ref.current.isNew}
+        isOwner={ref.current.isOwner}
+        forceType={forceType}
+        selectData={{
+          repeat: ref.current.repeat,
+          eventTypes: ref.current.eventTypes,
+          calendars: ref.current.calendarData?.ownerCalendars,
+        }}
+        onSubmit={onSubmit}
+        UsersComponent={
+          <UsersComponent
+            label={t('users')}
+            labelDisabled={t('usersDisabled')}
+            showMore={t('showMore')}
+            showLess={t('showLess')}
+            userAgents={ref.current.defaultValues?.userAgents}
+          />
+        }
+        components={ref.current.components}
+        onClose={onClose}
+        defaultValues={ref.current.defaultValues}
+        classCalendars={classCalendars}
+        messages={{
+          subtasks: t('subtasks'),
+          fromLabel: t('from'),
+          toLabel: t('to'),
+          repeatLabel: t('repeatLabel'),
+          allDayLabel: t('all_day'),
+          titlePlaceholder: t('title'),
+          cancelButtonLabel: t('cancel'),
+          saveButtonLabel: t('save'),
+          updateButtonLabel: t('update'),
+          calendarPlaceholder: t('selectCalendar'),
+          calendarLabel: t('calendarLabel'),
+          calendarLabelDisabled: t('calendarLabelDisabled'),
+          showInCalendar: t('showInCalendar'),
+        }}
+        errorMessages={{
+          titleRequired: tCommon('required'),
+          startDateRequired: tCommon('required'),
+          startTimeRequired: tCommon('required'),
+          endDateRequired: tCommon('required'),
+          endTimeRequired: tCommon('required'),
+          calendarRequired: tCommon('required'),
+          typeRequired: tCommon('required'),
+        }}
+      />
+    </>
   );
 }
 

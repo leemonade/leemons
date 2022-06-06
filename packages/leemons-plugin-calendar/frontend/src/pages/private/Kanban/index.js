@@ -34,7 +34,8 @@ function Kanban({ session }) {
   });
   const prefix = prefixPN('kanbanFiltersOptions');
   const [, translations] = useTranslateLoader(prefix);
-  const [toggleEventModal, EventModal] = useCalendarEventModal();
+  const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
+
   const [, setR] = useState();
 
   function render() {
@@ -188,12 +189,12 @@ function Kanban({ session }) {
 
   function addEventClick() {
     ref.current.event = null;
-    toggleEventModal();
+    openEventModal();
   }
 
   function onClickCard({ bgColor, icon, borderColor, ...e }) {
     ref.current.event = e;
-    toggleEventModal();
+    openEventModal();
   }
 
   // ES: Carga
