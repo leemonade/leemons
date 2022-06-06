@@ -114,11 +114,14 @@ export default function Task({ event, form, classes, disabled, allProps }) {
     subtask[index].title = e;
     form.setValue('subtask', subtask);
   };
+
   const onCheckedChange = (e, index) => {
     const subtask = form.getValues('subtask');
     subtask[index].checked = e;
     form.setValue('subtask', subtask);
-    allProps.onSubmit(allProps.form.getValues(), { closeOnSend: false });
+    if (allProps.readOnly) {
+      allProps.onSubmit(allProps.form.getValues(), { closeOnSend: false });
+    }
   };
   const removeSubtask = (index) => {
     const subtask = form.getValues('subtask');

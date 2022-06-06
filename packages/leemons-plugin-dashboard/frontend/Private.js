@@ -16,15 +16,13 @@ export default function Private() {
   const session = useSession({ redirectTo: goLoginPage });
 
   return (
-    <div>
-      <Switch>
-        <Route path={`${path}/class/:id`}>
-          <ClassDashboard session={session} fallback={<LoadingOverlay visible />} />
-        </Route>
-        <Route path={`${path}`}>
-          <Dashboard session={session} fallback={<LoadingOverlay visible />} />
-        </Route>
-      </Switch>
-    </div>
+    <Switch>
+      <Route path={`${path}/class/:id`}>
+        <ClassDashboard session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}`}>
+        <Dashboard session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+    </Switch>
   );
 }

@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const systeminformation = require('systeminformation');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -58,6 +59,7 @@ module.exports = {
   returnError,
   bcrypt,
   jwt,
+  systeminformation,
   settledResponseToManyResponse,
   aws,
   paginate,
