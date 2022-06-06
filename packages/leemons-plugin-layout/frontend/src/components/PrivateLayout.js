@@ -104,7 +104,7 @@ const PrivateLayout = ({ children }) => {
           onPin={onPinMenu}
           subNavWidth={NAV_OPEN_WIDTH}
           pinned={pinned}
-          lightMode={layoutState.isAcademicMode}
+          // lightMode={layoutState.isAcademicMode}
         />
       </Box>
       <Box ref={layoutState.contentRef} className={classes.content}>

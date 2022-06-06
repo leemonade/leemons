@@ -14,6 +14,7 @@ const canAssignRole = require('../src/services/permissions/helpers/canAssignRole
 const { getById: getCategory } = require('../src/services/categories/getById');
 const { add: addPin } = require('../src/services/pins/add');
 const { removeByAsset: removePin } = require('../src/services/pins/removeByAsset');
+const { getByUser: getPinsByUser } = require('../src/services/pins/getByUser');
 
 async function setAsset(ctx) {
   const { id } = ctx.params;
@@ -292,6 +293,18 @@ async function getPinnedAssets(ctx) {
   };
 }
 
+async function hasPinnedAssets(ctx) {
+  const { userSession } = ctx.state;
+
+  const pins = await getPinsByUser({ userSession });
+
+  ctx.status = 200;
+  ctx.body = {
+    status: 200,
+    hasPins: pins.length > 0,
+  };
+}
+
 module.exports = {
   add: setAsset,
   update: setAsset,
@@ -305,4 +318,5 @@ module.exports = {
   addPin: addAssetPin,
   removePin: removeAssetPin,
   pins: getPinnedAssets,
+  hasPins: hasPinnedAssets,
 };

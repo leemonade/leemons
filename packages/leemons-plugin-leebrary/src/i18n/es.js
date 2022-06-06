@@ -7,13 +7,14 @@ module.exports = {
       createNewTitle: 'Crear nuevo',
       uploadTitle: 'Subir archivo',
       fileUploadTitle: 'Click para buscar un archivo',
-      fileUploadSubtitle: 'o arrastrar desde el ordenador',
+      fileUploadSubtitle: 'o arrastrar aquí desde el ordenador',
     },
   },
   assetSetup: {
     header: {
       back: 'Volver',
       close: 'Cerrar',
+      title: 'Librería',
     },
     basicData: {
       header: {
@@ -32,6 +33,8 @@ module.exports = {
         addTag: 'Añadir tag',
         changeImage: 'Cambiar imagen',
         uploadButton: 'Subir imagen',
+        browseFile: 'Click para buscar un archivo',
+        dropFile: 'o arrastrar aquí desde el ordenador',
         search: 'Buscar en la librería',
         submitForm: 'Añadir a la librería',
         submitChanges: 'Guardar cambios',
@@ -61,10 +64,10 @@ module.exports = {
         url: 'Enlace web',
       },
       errorMessages: {
-        name: 'Nombre es necesario',
-        file: 'Archivo es necesario',
-        tags: 'Escribir etiqueta',
-        url: 'URL es necesaria',
+        name: { required: 'Nombre es necesario' },
+        file: { required: 'Archivo es necesario', rejected: 'Archivo no permitido' },
+        tags: { required: 'Escribir etiqueta' },
+        url: { required: 'URL es necesaria' },
       },
     },
     permissionsData: {
@@ -93,9 +96,9 @@ module.exports = {
         userRole: 'Seleccionar rol',
       },
       errorMessages: {
-        user: 'Usuario es necesario',
-        userRole: 'Rol es necesario',
-        share: 'Sin permisos para compartir el recurso',
+        user: { required: 'Usuario es necesario' },
+        userRole: { required: 'Rol es necesario' },
+        share: { required: 'Sin permisos para compartir el recurso' },
       },
     },
     roleLabels: {
@@ -109,6 +112,11 @@ module.exports = {
   list: {
     show: 'Mostrar',
     goTo: 'Ir a',
+    tableLabels: {
+      name: 'Nombre',
+      owner: 'Propietario/a',
+      updated: 'Última modificación',
+    },
     labels: {
       duplicateSuccess: 'Recurso duplicado con éxito',
       removeSuccess: 'Recurso eliminado con éxito',

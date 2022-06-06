@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const { map, isEmpty, isNil, isString, isArray } = require('lodash');
+const { map, isEmpty, isNil, isString, isArray, trim } = require('lodash');
 const { CATEGORIES } = require('../../../config/constants');
 const { tables } = require('../tables');
 const { uploadFromSource } = require('../files/helpers/uploadFromSource');
@@ -30,9 +30,10 @@ async function add(
             data.name = !isEmpty(data.name) && data.name !== 'null' ? data.name : metas.title;
             data.description = data.description || metas.description;
 
-            if (!isEmpty(metas.image)) {
-              data.cover = data.cover || metas.image;
-            }
+            if (isEmpty(trim(data.cover))) data.cover = null;
+
+            data.cover = data.cover || metas.image;
+            cover = data.cover;
 
             if (!isEmpty(metas.logo)) {
               data.icon = data.icon || metas.logo;
@@ -206,11 +207,16 @@ async function add(
       // EN: Assign the file to the asset
       // ES: Asignar el archivo al asset
 
-      if (newFile?.id) {
-        console.log('newFile?.id:', newFile?.id);
-        promises.push(
-          addFiles(newFile.id, newAsset.id, { skipPermissions: true, userSession, transacting })
-        );
+      if (isString(newFile?.id)) {
+        try {
+          await addFiles(newFile.id, newAsset.id, {
+            skipPermissions: true,
+            userSession,
+            transacting,
+          });
+        } catch (error) {
+          console.error(error);
+        }
       }
 
       // ··········································································

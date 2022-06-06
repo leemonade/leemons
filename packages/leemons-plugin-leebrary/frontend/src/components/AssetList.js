@@ -49,7 +49,7 @@ function getOwner(asset) {
   const owner = (asset?.canAccess || []).filter((person) =>
     person.permissions.includes('owner')
   )[0];
-  return `${owner.name} ${owner.surnames}`;
+  return !isEmpty(owner) ? `${owner?.name} ${owner?.surnames}` : '-';
 }
 
 const AssetList = ({
@@ -69,6 +69,7 @@ const AssetList = ({
   onlyThumbnails,
   page: pageProp,
   pageSize,
+  pageSizes,
   published,
   onSearch,
   pinned,
@@ -79,6 +80,7 @@ const AssetList = ({
   onEditItem = () => {},
   onTypeChange = () => {},
   onShowPublic = () => {},
+  onLoading = () => {},
 }) => {
   const [t, translations] = useTranslateLoader(prefixPN('list'));
   const [category, setCategory] = useState(categoryProp);
@@ -171,7 +173,7 @@ const AssetList = ({
         // console.log('query:', query);
         const response = await getAssetsRequest(query);
         const results = response?.assets || [];
-        // console.log('results:', results)
+        console.log('results:', results);
         setAssets(results);
 
         if (isEmpty(results)) {
@@ -307,6 +309,7 @@ const AssetList = ({
   useEffect(() => setCategories(categoriesProp), [categoriesProp]);
   useEffect(() => setAssetType(assetTypeProp), [assetTypeProp]);
   useEffect(() => setShowPublic(showPublicProp), [showPublicProp]);
+  useEffect(() => onLoading(loading), [loading]);
 
   useEffect(() => {
     if (!isEmpty(assetProp?.id) && assetProp.id !== asset?.id) {
@@ -355,13 +358,13 @@ const AssetList = ({
     if (isFunction(onSearch)) {
       onSearch(searchDebounced);
     } else if (!isEmpty(category?.id) || pinned) {
-      loadAssets(category.id, searchDebounced, assetType);
+      loadAssets(category?.id, searchDebounced, assetType);
     }
   }, [searchDebounced, category, pinned, assetType]);
 
   useEffect(() => {
     if (!isEmpty(category?.id) || pinned) {
-      loadAssets(category.id, searchProp, assetType);
+      loadAssets(category?.id, searchProp, assetType);
     }
   }, [searchProp, category, assetType, showPublic, pinned, published]);
 
@@ -429,23 +432,24 @@ const AssetList = ({
   // ·········································································
   // LABELS & STATIC
 
-  const columns = [
+  const columns = useMemo(() => {
+    return [
     {
-      Header: 'Name',
+      Header: t('tableLabels.name'),
       accessor: 'name',
       valueRender: (_, row) => <LibraryItem asset={prepareAsset(row, published)} />,
     },
     {
-      Header: 'Owner',
+      Header: t('tableLabels.owner'),
       accessor: 'owner',
       valueRender: (_, row) => getOwner(row),
     },
     {
-      Header: 'Last change',
+      Header: t('tableLabels.updated'),
       accessor: 'updated',
       valueRender: (_, row) => <LocaleDate date={row.updated_at} />,
     },
-  ];
+  ]; }, [t]);
 
   const cardVariant = useMemo(() => {
     let option = 'media';
@@ -468,8 +472,8 @@ const AssetList = ({
         itemRender: (p) => (
           <CardWrapper
             {...p}
-            variant={cardVariant}
-            category={category}
+            variant={cardVariant || 'media'}
+            category={category || { key: 'media-file' }}
             published={published}
             isEmbedded={isEmbedded}
             onRefresh={reloadAssets}
@@ -636,6 +640,7 @@ const AssetList = ({
                 layout={layout}
                 page={page}
                 size={size}
+                sizes={pageSizes}
                 labels={{
                   show: t('show'),
                   goTo: t('goTo'),
@@ -699,6 +704,7 @@ AssetList.defaultProps = {
   search: '',
   page: 1,
   pageSize: 6,
+  pageSizes: [6, 12, 18, 24],
   canChangeLayout: true,
   canChangeType: true,
   canSearch: true,
@@ -731,12 +737,15 @@ AssetList.propTypes = {
   variant: PropTypes.oneOf(['full', 'embedded']),
   page: PropTypes.number,
   pageSize: PropTypes.number,
+  pageSizes: PropTypes.array,
   published: PropTypes.bool,
   pinned: PropTypes.bool,
   canShowPublicToggle: PropTypes.bool,
   paperProps: PropTypes.object,
   emptyComponent: PropTypes.element,
   searchEmptyComponent: PropTypes.element,
+  onLoaded: PropTypes.func,
+  onLoading: PropTypes.func,
 };
 
 export { AssetList };

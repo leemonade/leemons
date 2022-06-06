@@ -201,10 +201,10 @@ async function upload(file, { name }, { transacting } = {}) {
       }
     } catch (err) {
       //
-    } finally {
-      if (fileHandle) await fileHandle.close();
-      if (mediainfo) mediainfo.close();
     }
+
+    if (fileHandle) await fileHandle.close();
+    if (mediainfo) await mediainfo.close();
   }
 
   // ·········································································
@@ -255,7 +255,7 @@ async function upload(file, { name }, { transacting } = {}) {
 
   // EN: If no provider is active, use the default one
   // ES: Si no hay proveedor activo, usar el por defecto
-  if (urlData.uri === '') {
+  if (isEmpty(urlData.uri)) {
     // Generamos la nueva url y copiamos desde la carpeta temporal a la nuestra donde se almacenan todos los archivos
     urlData.provider = 'sys';
     urlData.uri = pathSys.resolve(
@@ -267,7 +267,8 @@ async function upload(file, { name }, { transacting } = {}) {
       `${newFile.id}.${newFile.extension}`
     );
 
-    await leemons.fs.copyFile(path, urlData.uri);
+    const buffer = await leemons.fs.readFile(path);
+    await leemons.fs.writeFile(urlData.uri, buffer);
   }
 
   // EN: Update the asset with the new URI and provider

@@ -14,6 +14,7 @@ import updateAsset from './updateAsset';
 import getAssetTypes from './getAssetTypes';
 import pinAsset from './pinAsset';
 import unpinAsset from './unpinAsset';
+import hasPins from './hasPins';
 
 export const removeFileRequest = removeFile;
 export const uploadFilesRequest = uploadFiles;
@@ -31,3 +32,4 @@ export const updateAssetRequest = updateAsset;
 export const getAssetTypesRequest = getAssetTypes;
 export const pinAssetRequest = pinAsset;
 export const unpinAssetRequest = unpinAsset;
+export const hasPinsRequest = hasPins;
