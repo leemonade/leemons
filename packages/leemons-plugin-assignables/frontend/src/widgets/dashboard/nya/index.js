@@ -75,7 +75,7 @@ function parseDeadline(isTeacher, obj) {
   };
 
   let main = null;
-  let mainColor = 'success';
+  let severity = 'low';
   let backgroundColor = 'default';
   let secondary = null;
   let dateToShow = null;
@@ -109,9 +109,9 @@ function parseDeadline(isTeacher, obj) {
       if (isDeadline) {
         main = 'late';
       } else if (daysUntilDeadline <= 5) {
-        mainColor = 'warning';
+        severity = 'medium';
         if (daysUntilDeadline <= 2) {
-          mainColor = 'error';
+          severity = 'high';
         }
         main = <LocaleRelativeTime seconds={durationInSeconds} />;
       } else {
@@ -141,9 +141,9 @@ function parseDeadline(isTeacher, obj) {
 
         dateToShow = closeDate.toDate();
         if (daysUntilClose <= 5) {
-          mainColor = 'warning';
+          severity = 'medium';
           if (daysUntilClose <= 2) {
-            mainColor = 'error';
+            severity = 'high';
           }
           if (daysUntilClose < 0) {
             backgroundColor = 'error';
@@ -159,9 +159,9 @@ function parseDeadline(isTeacher, obj) {
         dateToShow = deadline.toDate();
 
         if (daysSinceDeadline >= 2) {
-          mainColor = 'warning';
+          severity = 'medium';
           if (daysSinceDeadline >= 5) {
-            mainColor = 'error';
+            severity = 'high';
           }
           if (daysSinceDeadline >= 7) {
             backgroundColor = 'error';
@@ -186,12 +186,13 @@ function parseDeadline(isTeacher, obj) {
   return {
     deadline: dateToShow || new Date(0),
     locale: 'es',
-    titleColor: mainColor,
+    severity,
     backgroundColor,
     labels: {
       title: main,
       deadline: secondary,
     },
+    disableHover: true,
   };
 }
 
@@ -336,15 +337,19 @@ export default function NYA({ classe, program }) {
           disableSelectedStyles
           breakAt={{
             800: {
-              slidesPerView: 1,
-              spaceBetween: 16,
-            },
-            1000: {
               slidesPerView: 2,
               spaceBetween: 16,
             },
-            1500: {
+            1200: {
               slidesPerView: 3,
+              spaceBetween: 16,
+            },
+            1800: {
+              slidesPerView: 4,
+              spaceBetween: 16,
+            },
+            2000: {
+              slidesPerView: 5,
               spaceBetween: 16,
             },
           }}
@@ -363,10 +368,7 @@ export default function NYA({ classe, program }) {
                   flexDirection: 'column',
                   gap: theme.spacing[1],
                 })}
-              >
-                <Text>Main color: {instance.deadlineProps.titleColor}</Text>
-                <Text>Background color: {instance.deadlineProps.backgroundColor}</Text>
-              </Box>
+              ></Box>
               <LibraryCard
                 asset={instance.asset}
                 variant="assigment"
@@ -376,7 +378,7 @@ export default function NYA({ classe, program }) {
                 assigment={instance.assignment}
                 deadlineProps={instance.deadlineProps}
                 subject={instance.subject}
-                isNew={instance.isNew}
+                badge={instance.isNew && labels?.new?.toUpperCase()}
                 variantTitle={labels?.roles?.[instance.assignable.role] || instance.assignable.role}
               />
             </Box>
