@@ -209,6 +209,13 @@ module.exports = {
     history: 'Actividades pasadas',
     activities: 'Actividades',
   },
+  dates: {
+    visualization: 'Visualización',
+    start: 'Inicio',
+    deadline: 'Entrega',
+    close: 'Cierre',
+    closed: 'Cerrada',
+  },
   need_your_attention: {
     title: 'Necesita tu atención',
   },
