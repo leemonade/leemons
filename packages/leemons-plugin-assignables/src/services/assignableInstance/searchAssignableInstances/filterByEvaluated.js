@@ -237,7 +237,7 @@ async function filterByEvaluated(instances, query, { users, transacting, userSes
     classesWithSubjects
   );
 
-  if (query?.evaluated?.isValid()) {
+  if (query?.evaluated?.isValid?.()) {
     filteredInstances = filterByMinDate(filteredInstances, query?.evaluated);
   }
 

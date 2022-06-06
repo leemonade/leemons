@@ -17,6 +17,11 @@ function parseAssignation(isTeacher, instance, subject) {
   if (isTeacher) {
     const { students } = instance;
 
+    // EN: If the activity is not started yer, the assignation is not available
+    // ES: Si la actividad no ha sido iniciada, la asignación no está disponible
+    if (!students?.[0]?.started) {
+      return null;
+    }
     const submission = students.filter((student) => student.timestamps.end).length;
 
     // EN: Avg time only including the students who have finished the assignation
@@ -89,22 +94,30 @@ function parseDeadline(isTeacher, obj) {
     const status = getStatus(obj, instance);
     if (status === 'evaluated') {
       main = labels.evaluated;
-      secondary = labels?.submission;
-      dateToShow = deadline.isValid() && deadline.toDate();
+      if (deadline.isValid()) {
+        secondary = labels?.submission;
+        dateToShow = deadline.toDate();
+      }
     } else if (status === 'late') {
       main = labels.late;
-      secondary = labels?.submission;
-      dateToShow = deadline.isValid() && deadline.toDate();
+      if (deadline.isValid()) {
+        secondary = labels?.submission;
+        dateToShow = deadline.toDate();
+      }
     } else if (status === 'submitted') {
       main = labels.submitted;
-      secondary = labels?.submitted;
-      dateToShow = submission.isValid() && submission.toDate();
+      if (submission.isValid()) {
+        secondary = labels?.submitted;
+        dateToShow = submission.toDate();
+      }
     } else if (status === 'started' || status === 'opened') {
       const daysUntilDeadline = deadline.diff(today, 'days');
       const durationInSeconds = deadline.diff(today, 'seconds');
 
-      secondary = labels?.submission;
-      dateToShow = deadline.toDate();
+      if (deadline.isValid()) {
+        secondary = labels?.submission;
+        dateToShow = deadline.toDate();
+      }
 
       if (isDeadline) {
         main = 'late';
@@ -117,6 +130,12 @@ function parseDeadline(isTeacher, obj) {
       } else {
         main = labels?.startActivity;
       }
+    } else {
+      main = labels?.assigned;
+      if (deadline.isValid()) {
+        secondary = labels?.submission;
+        dateToShow = deadline.toDate();
+      }
     }
   } else {
     const closeDate = dayjs(instance?.dates?.close || null);
@@ -126,20 +145,25 @@ function parseDeadline(isTeacher, obj) {
     const isClosed =
       (closeDate.isValid() && !closeDate.isAfter(today)) ||
       (closedDate.isValid() && !closedDate.isAfter(today));
-    const isStarted = !isClosed && !isDeadline && startDate.isValid() && !startDate.isAfter(today);
+    const isStarted =
+      !isClosed &&
+      !isDeadline &&
+      ((startDate.isValid() && !startDate.isAfter(today)) || !startDate.isValid());
 
     if (isClosed) {
       // TODO: Check if it is already graded
       main = labels?.evaluated;
-      secondary = labels?.submission;
-      dateToShow = deadline.isValid() && deadline.toDate();
+      if (deadline.isValid()) {
+        secondary = labels?.submission;
+        dateToShow = deadline.toDate();
+      }
     } else if (isDeadline) {
       main = labels?.evaluate;
       if (closeDate.isValid()) {
         const daysUntilClose = closeDate.diff(today, 'day');
         const durationInSeconds = closeDate.diff(today, 'seconds');
 
-        dateToShow = closeDate.toDate();
+        dateToShow = closeDate.isValid() && closeDate.toDate();
         if (daysUntilClose <= 5) {
           severity = 'medium';
           if (daysUntilClose <= 2) {
@@ -149,14 +173,14 @@ function parseDeadline(isTeacher, obj) {
             backgroundColor = 'error';
           }
           secondary = <LocaleRelativeTime seconds={durationInSeconds} />;
-        } else {
+        } else if (dateToShow) {
           secondary = labels?.evaluation;
         }
       } else {
         const daysSinceDeadline = today.diff(deadline, 'day');
         const durationInSeconds = today.diff(deadline, 'seconds');
 
-        dateToShow = deadline.toDate();
+        dateToShow = deadline.isValid() && deadline.toDate();
 
         if (daysSinceDeadline >= 2) {
           severity = 'medium';
@@ -168,23 +192,27 @@ function parseDeadline(isTeacher, obj) {
           }
 
           secondary = <LocaleRelativeTime seconds={durationInSeconds} />;
-        } else {
+        } else if (dateToShow) {
           secondary = labels?.submission;
         }
       }
     } else if (isStarted) {
       main = labels?.opened;
-      secondary = labels?.submission;
-      dateToShow = startDate.toDate();
+      if (startDate.isValid()) {
+        secondary = labels?.submission;
+        dateToShow = startDate.toDate();
+      }
     } else {
       main = labels?.assigned;
-      secondary = labels?.start;
-      dateToShow = startDate.isValid() && startDate.toDate();
+      if (startDate.isValid()) {
+        secondary = labels?.start;
+        dateToShow = startDate.toDate();
+      }
     }
   }
 
   return {
-    deadline: dateToShow || new Date(0),
+    deadline: dateToShow,
     locale: 'es',
     severity,
     backgroundColor,
@@ -362,13 +390,6 @@ export default function NYA({ classe, program }) {
               }}
               onClick={instance.onClick}
             >
-              <Box
-                sx={(theme) => ({
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: theme.spacing[1],
-                })}
-              ></Box>
               <LibraryCard
                 asset={instance.asset}
                 variant="assigment"
