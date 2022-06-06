@@ -316,7 +316,6 @@ export default function NYA({ classe, program }) {
   return (
     <Box
       sx={(theme) => ({
-        maxWidth: '1000px',
         display: 'flex',
         flexDirection: 'column',
         gap: theme.spacing[6],
