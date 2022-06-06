@@ -278,7 +278,11 @@ export default function TaskDetail({ id, student }) {
           />
         </Box>
         <Box className={classes?.content}>
-          <Countdown assignation={assignation} show={step?.countdown === true} />
+          <Countdown
+            assignation={assignation}
+            show={step?.countdown === true}
+            onTimeout={() => updateTimestamps(assignation, 'end')}
+          />
           {step?.component}
           <LimitedTimeAlert
             assignation={assignation}
