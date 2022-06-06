@@ -78,12 +78,10 @@ const useBeforeStartStyles = createStyles((theme) => ({
     paddingTop: theme.spacing[6],
   },
   closedActivity: {
-    display: 'flex',
-    flexDirection: 'column',
+    paddingLeft: theme.spacing[6],
     gap: theme.spacing[4],
-    padding: theme.spacing[4],
-    width: 340,
     textAlign: 'left',
+    flexDirection: 'column',
   },
 }));
 
@@ -126,10 +124,12 @@ export default function LimitedTimeAlert({ assignation, labels, show }) {
               ) : null}
             </Box>
           ) : (
-            <Box className={classes.closedActivity}>
-              <Text>{labels?.closedTaskFirstLine}</Text>
+            <Box className={cx(classes.timeLimitInfo, classes.closedActivity)}>
+              <Text strong color="primary">
+                {labels?.closedTaskFirstLine}
+              </Text>
               <Box>
-                <Text>
+                <Text strong color="primary">
                   {replaceTextByComponent(
                     labels?.closedTaskSecondLine,
                     '{{time}}',
