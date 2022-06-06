@@ -8,7 +8,6 @@ import {
   ContextContainer,
   createStyles,
   PageContainer,
-  Paper,
   Title,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -122,7 +121,7 @@ export default function Dashboard({ session }) {
     <>
       <Box
         sx={() => ({
-          paddingRight: store.selectedProgram ? rightZoneWidth : 0,
+          // paddingRight: store.selectedProgram ? rightZoneWidth : 0,
         })}
       >
         <Box className={styles.header}>
@@ -142,6 +141,7 @@ export default function Dashboard({ session }) {
           <PageContainer
             sx={(theme) => ({
               paddingTop: theme.spacing[8],
+              maxWidth: '100%',
             })}
           >
             <Box>
@@ -156,7 +156,7 @@ export default function Dashboard({ session }) {
         </ContextContainer>
 
         {/* -- RIGHT ZONE -- */}
-        {store.selectedProgram ? (
+        {/* store.selectedProgram ? (
           <Paper
             sx={(theme) => ({
               position: 'fixed',
@@ -175,7 +175,7 @@ export default function Dashboard({ session }) {
               )}
             </ZoneWidgets>
           </Paper>
-        ) : null}
+        ) : null */}
       </Box>
     </>
   );

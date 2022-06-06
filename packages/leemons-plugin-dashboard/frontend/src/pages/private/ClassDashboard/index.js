@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { find, isArray, map } from 'lodash';
 import { useLocale, useStore } from '@common';
@@ -20,10 +20,11 @@ import { ZoneWidgets } from '@widgets';
 import { getLocalizations } from '@multilanguage/useTranslate';
 import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import { LayoutContext } from '@layout/context/layout';
 
 const rightZoneWidth = '320px';
 
-const Styles = createStyles((theme, { hideRightSide }) => ({
+const Styles = createStyles((theme, { hideRightSide, haveScrollBar }) => ({
   leftSide: {
     width: hideRightSide ? '100%' : `calc(100% - ${rightZoneWidth})`,
     transition: '300ms',
@@ -32,7 +33,7 @@ const Styles = createStyles((theme, { hideRightSide }) => ({
     width: rightZoneWidth,
     height: '100vh',
     position: 'fixed',
-    right: hideRightSide ? `-${rightZoneWidth}` : 0,
+    right: hideRightSide ? `-${rightZoneWidth}` : haveScrollBar ? '14px' : 0,
     top: 0,
     backgroundColor: theme.colors.uiBackground02,
     padding: theme.spacing[4],
@@ -78,17 +79,40 @@ const Styles = createStyles((theme, { hideRightSide }) => ({
 }));
 
 export default function ClassDashboard({ session }) {
+  const { layoutState } = useContext(LayoutContext);
+
   const locale = useLocale();
   const [store, render] = useStore({
     loading: true,
     tabNames: {},
     tabsProperties: {},
     hideRightSide: false,
+    haveScrollBar: false,
   });
-  const { classes: styles } = Styles({ hideRightSide: store.hideRightSide });
+  const { classes: styles } = Styles({
+    hideRightSide: store.hideRightSide,
+    haveScrollBar: store.haveScrollBar,
+  });
   const [t] = useTranslateLoader(prefixPN('classDashboard'));
   const { id } = useParams();
   const history = useHistory();
+
+  function onResize() {
+    const haveScrollBar =
+      layoutState.contentRef.current.clientHeight < layoutState.contentRef.current.scrollHeight;
+    if (haveScrollBar !== store.haveScrollBar) {
+      store.haveScrollBar = haveScrollBar;
+      render();
+    }
+  }
+
+  React.useEffect(() => {
+    const observer = new ResizeObserver(onResize);
+    observer.observe(layoutState.contentRef.current);
+    return () => {
+      observer.disconnect();
+    };
+  });
 
   async function init() {
     store.loading = true;
@@ -193,13 +217,6 @@ export default function ClassDashboard({ session }) {
     [store.selectedRightTab, store.class, session]
   );
 
-  console.log({
-    schedule: store.class?.schedule,
-    address: store.class?.address,
-    virtual_classroom: store.class?.virtualUrl,
-    teacher: mainTeacher?.user,
-  });
-
   return (
     <>
       {store.loading ? <LoadingOverlay visible /> : null}
@@ -255,6 +272,7 @@ export default function ClassDashboard({ session }) {
                 store.hideRightSide = !!store.tabsProperties?.[key]?.hideRightSide;
                 render();
               }}
+              style={{ width: '100%' }}
             />
           }
         >
