@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, ContextContainer, FileIcon, Anchor, Text } from '@bubbles-ui/components';
+import { LibraryItem } from '@bubbles-ui/leemons';
 import { getAssetsByIdsRequest } from '@leebrary/request';
 import { useApi } from '@common';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
@@ -9,27 +10,6 @@ async function getResources(ids) {
   const response = await getAssetsByIdsRequest(ids, { showPublic: true, indexable: 0 });
 
   return response.assets.map((asset) => prepareAsset(asset));
-}
-
-function ResourceRenderer({ resource, classes }) {
-  return (
-    <Box className={classes?.resource}>
-      <Box>
-        <FileIcon
-          size={16}
-          fileExtension={resource?.file?.extension}
-          fileType={null}
-          color="#212B3D"
-        />
-      </Box>
-      <Box className={classes?.resourceContent}>
-        <Anchor href={resource.url} target="_blank">
-          {resource.name}
-        </Anchor>
-        <Text>{resource?.file?.extension}</Text>
-      </Box>
-    </Box>
-  );
 }
 
 export default function Sidebar({ assignation, show = true, labels }) {
@@ -46,7 +26,7 @@ export default function Sidebar({ assignation, show = true, labels }) {
             <Text color="soft">{labels?.resources}</Text>
             <Box className={classes.resourceContainer}>
               {resources?.map((resource) => (
-                <ResourceRenderer resource={resource} key={resource?.id} classes={classes} />
+                <LibraryItem asset={resource} key={resource?.id} />
               ))}
             </Box>
           </Box>

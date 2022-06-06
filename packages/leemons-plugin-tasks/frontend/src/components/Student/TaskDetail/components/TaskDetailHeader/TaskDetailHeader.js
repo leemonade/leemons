@@ -9,10 +9,12 @@ import {
   VerticalStepperContainer,
   Box,
 } from '@bubbles-ui/components';
+import { useLocale } from '@common';
 import { HeaderBackground, TaskHeader, TaskDeadline } from '@bubbles-ui/leemons';
 import { TaskDetailHeaderStyles } from './TaskDetailHeader.style';
 
 export default function TaskDetailHeader({ asset, classData, cover, isFirstStep, deadline }) {
+  const locale = useLocale();
   const { classes, cx } = TaskDetailHeaderStyles({ isFirstStep }, { name: 'TaskDoing' });
 
   return (
@@ -38,6 +40,7 @@ export default function TaskDetailHeader({ asset, classData, cover, isFirstStep,
         {deadline && (
           <TaskDeadline
             label="Entrega"
+            locale={locale}
             deadline={deadline instanceof Date ? deadline : new Date(deadline)}
             styles={{
               right: 21,

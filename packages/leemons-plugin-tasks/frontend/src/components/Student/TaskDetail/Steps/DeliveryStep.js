@@ -45,7 +45,7 @@ export default function DeliveryStep({ assignation, onSave, labels: _labels, dis
   const [status, setStatus] = useState(assignation.metadata?.submission ? 'submitted' : 'cleared');
   const [error, setError] = useState(null);
 
-  const updateStatus = (newStatus, e) => {
+  const updateStatus = (newStatus, e, firstRender) => {
     const availableStatus = ['cleared', 'submitted', 'changed', 'loading', 'error'];
 
     if (!availableStatus.includes(newStatus)) {
@@ -58,7 +58,10 @@ export default function DeliveryStep({ assignation, onSave, labels: _labels, dis
       if (e) {
         setError(e);
       }
-      disableButton('save', false);
+
+      // EN: If it is cleared and is the first render, disable the save button
+      // ES: Si se ha borrado y es la primera renderización, deshabilitar el botón de guardar
+      disableButton('save', !!(firstRender && newStatus === 'cleared'));
       disableButton('next', true);
     } else if (newStatus === 'submitted') {
       disableButton('save', true);
@@ -71,7 +74,7 @@ export default function DeliveryStep({ assignation, onSave, labels: _labels, dis
   };
 
   useEffect(() => {
-    updateStatus(status);
+    updateStatus(status, false, true);
   }, []);
 
   // , metadata: {submission: submissionValue}

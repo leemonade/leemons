@@ -134,7 +134,7 @@ module.exports = {
           development: 'Desarrollo de la tarea',
           statementAndDevelopmentTitle: 'Enunciado y desarrollo',
           attachmentsTitle: 'Recursos', // NEW
-          searchFromLibrary: 'Buscar en la biblioteca', // NEW
+          searchFromLibrary: 'Añadir documentos y multimedia', // NEW
           content: 'Contenidos', // NEW
           assessmentCriteria: 'Criterios de evaluación', // NEW
           objectives: 'Objetivos personalizados', // NEW
@@ -323,7 +323,7 @@ module.exports = {
       },
       title: 'Finalizar y entregar esta tarea',
       description:
-        '<p>Si haces click en "Confirmar entrega", tu tarea será enviada a un revisor y ya no podrás modificar el/los entregable/s seleccionado/s. Si solo deseas guardar el trabajo hecho hasta ahora, puedes cancelar esta acción y pulsar sobre "Solo guardar".</p><p>Al confirmar la entrega, el sistema te redireccionará a la sección de "Actividades en curso" dónde podrás revisar las tareas una vez sean corregidas.</p>',
+        '<p>Si haces click en "Confirmar entrega", tu tarea será enviada a un revisor y ya no podrás modificar el/los entregable/s seleccionado/s. Si solo deseas guardar el trabajo hecho hasta ahora, puedes cancelar esta acción y pulsar sobre "Guardar".</p><p>Al confirmar la entrega, el sistema te redireccionará a la sección de "Actividades en curso" dónde podrás revisar las tareas una vez sean corregidas.</p>',
     },
     buttons: {
       previous: 'Anterior',
