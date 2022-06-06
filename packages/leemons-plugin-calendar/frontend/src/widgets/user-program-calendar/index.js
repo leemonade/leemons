@@ -1,8 +1,8 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button, createStyles, IconButton, Select, Stack, Text } from '@bubbles-ui/components';
-import { AddIcon as PlusIcon, ChevRightIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
+import { Box, createStyles, IconButton, Select, Stack, Text } from '@bubbles-ui/components';
+import { AddIcon as PlusIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -18,7 +18,7 @@ import hooks from 'leemons-hooks';
 import { getCalendarsToFrontendRequest } from '../../request';
 import useTransformEvent from '../../helpers/useTransformEvent';
 
-const Styles = createStyles((theme) => ({
+const Styles = createStyles((theme, { inTab }) => ({
   root: {
     width: '100%',
   },
@@ -28,12 +28,12 @@ const Styles = createStyles((theme) => ({
   },
   calendarContainer: {
     paddingTop: theme.spacing[6],
-    height: '520px',
+    height: inTab ? '1150px' : '520px',
   },
 }));
 
-function UserProgramCalendar({ program, classe, session }) {
-  const { classes: styles } = Styles();
+function UserProgramCalendar({ program, classe, session, inTab }) {
+  const { classes: styles } = Styles({ inTab });
   const [store, render] = useStore({
     loading: true,
   });
@@ -190,19 +190,22 @@ function UserProgramCalendar({ program, classe, session }) {
 
   return (
     <Box className={styles.root}>
-      <Stack alignItems="center">
-        <PluginCalendarIcon />
-        <Text size="lg" color="primary" className={styles.title}>
-          {t('calendar')}
-        </Text>
-        {program && !store.loading ? (
-          <Select
-            data={[{ label: t('allSubjects'), value: '*' }, ...store.calendarFilters]}
-            value={store.selectedCalendar || '*'}
-            onChange={onChangeSelectedCalendar}
-          />
-        ) : null}
-      </Stack>
+      {!inTab ? (
+        <Stack alignItems="center">
+          <PluginCalendarIcon />
+          <Text size="lg" color="primary" className={styles.title}>
+            {t('calendar')}
+          </Text>
+          {program && !store.loading ? (
+            <Select
+              data={[{ label: t('allSubjects'), value: '*' }, ...store.calendarFilters]}
+              value={store.selectedCalendar || '*'}
+              onChange={onChangeSelectedCalendar}
+            />
+          ) : null}
+        </Stack>
+      ) : null}
+
       <Box className={styles.calendarContainer}>
         {!store.loading ? (
           <EventModal
@@ -224,12 +227,13 @@ function UserProgramCalendar({ program, classe, session }) {
           showToolbarViewSwitcher={false}
           toolbarRightNode={
             <Stack alignItems="center">
-              <Box sx={(theme) => ({ marginRight: theme.spacing[4] })}>
+              {/* <Box sx={(theme) => ({ marginRight: theme.spacing[4] })}>
                 <Button variant="link" onClick={() => history.push('/private/calendar/home')}>
                   {t('showAllCalendar')}
                   <ChevRightIcon />
                 </Button>
-              </Box>
+              </Box> */}
+
               <Box>
                 <IconButton color="primary" size="lg" rounded onClick={onNewEvent}>
                   <PlusIcon />
@@ -253,6 +257,7 @@ UserProgramCalendar.propTypes = {
   program: PropTypes.object,
   classe: PropTypes.object,
   session: PropTypes.object,
+  inTab: PropTypes.bool,
 };
 
 export default UserProgramCalendar;

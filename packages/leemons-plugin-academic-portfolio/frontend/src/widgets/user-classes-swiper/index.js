@@ -122,6 +122,8 @@ function UserClassesSwiperWidget({ program }) {
       <Swiper
         className={styles.cardContainer}
         breakAt={{
+          1800: { slidesPerView: 6, spaceBetween: 2 },
+          1600: { slidesPerView: 5, spaceBetween: 2 },
           1200: { slidesPerView: 4, spaceBetween: 2 },
           940: { slidesPerView: 4, spaceBetween: 2 },
           520: { slidesPerView: 3, spaceBetween: 2 },

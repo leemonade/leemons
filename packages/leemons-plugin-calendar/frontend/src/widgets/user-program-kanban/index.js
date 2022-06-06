@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
-  Button,
   createStyles,
   IconButton,
   Kanban as BubblesKanban,
@@ -11,7 +10,7 @@ import {
   Text,
 } from '@bubbles-ui/components';
 import { saveKanbanEventOrdersRequest, updateEventRequest } from '@calendar/request';
-import { AddIcon as PlusIcon, ChevRightIcon, PluginKanbanIcon } from '@bubbles-ui/icons/outline';
+import { AddIcon as PlusIcon, PluginKanbanIcon } from '@bubbles-ui/icons/outline';
 import { KanbanTaskCard } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
@@ -33,9 +32,9 @@ import {
 } from '../../request';
 import useTransformEvent from '../../helpers/useTransformEvent';
 
-const Styles = createStyles((theme) => ({
+const Styles = createStyles((theme, { inTab }) => ({
   root: {
-    paddingTop: theme.spacing[11],
+    paddingTop: inTab ? 0 : theme.spacing[11],
     width: '100%',
   },
   title: {
@@ -48,8 +47,8 @@ const Styles = createStyles((theme) => ({
   },
 }));
 
-function UserProgramKanban({ program, classe, session, useAllColumns = false }) {
-  const { classes: styles } = Styles();
+function UserProgramKanban({ program, classe, session, inTab, useAllColumns = false }) {
+  const { classes: styles } = Styles({ inTab });
   const [transformEv, evLoading] = useTransformEvent();
   const [store, render] = useStore({
     loading: true,
@@ -73,9 +72,12 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
   async function getKanbanColumns() {
     const { columns } = await listKanbanColumnsRequest();
     const orderedColumns = _.orderBy(columns, ['order'], ['asc']);
+    return _.filter(orderedColumns, (column) => [2, 3, 4, 5].includes(column.order));
+    /*
     return useAllColumns
       ? orderedColumns
-      : _.filter(orderedColumns, (column) => [2, 3, 5].includes(column.order));
+      : _.filter(orderedColumns, (column) => [2, 3, 4, 5].includes(column.order));
+  */
   }
 
   async function getTranslationColumns() {
@@ -292,15 +294,20 @@ function UserProgramKanban({ program, classe, session, useAllColumns = false }) 
     <Box className={styles.root}>
       <Stack fullWidth alignItems="center" justifyContent="space-between">
         <Box>
-          <PluginKanbanIcon />
-          <Text size="lg" color="primary" className={styles.title}>
-            {t('kanban')}
-          </Text>
+          {!inTab ? (
+            <>
+              <PluginKanbanIcon />
+              <Text size="lg" color="primary" className={styles.title}>
+                {t('kanban')}
+              </Text>
+            </>
+          ) : null}
+
           {/* <Text color="soft">{t('description')}</Text> */}
-          <Button variant="link" onClick={() => history.push('/private/calendar/kanban')}>
+          {/* <Button variant="link" onClick={() => history.push('/private/calendar/kanban')}>
             {t('showAllKanban')}
             <ChevRightIcon />
-          </Button>
+          </Button> */}
         </Box>
         <Box>
           <IconButton color="primary" size="lg" rounded onClick={onNewEvent}>
@@ -333,6 +340,7 @@ UserProgramKanban.propTypes = {
   classe: PropTypes.object,
   session: PropTypes.object,
   useAllColumns: PropTypes.bool,
+  inTab: PropTypes.bool,
 };
 
 export default UserProgramKanban;
