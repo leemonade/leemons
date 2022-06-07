@@ -86,6 +86,7 @@ function parseDeadline(isTeacher, obj) {
 
   const today = dayjs();
   const deadline = dayjs(instance?.dates?.deadline || null);
+  const startDate = dayjs(instance?.dates?.start || null);
   const isDeadline = deadline.isValid() && !deadline.isAfter(today);
 
   if (!isTeacher) {
@@ -131,15 +132,14 @@ function parseDeadline(isTeacher, obj) {
       }
     } else {
       main = labels?.assigned;
-      if (deadline.isValid()) {
-        secondary = labels?.submission;
-        dateToShow = deadline.toDate();
+      if (startDate.isValid()) {
+        secondary = labels?.start;
+        dateToShow = startDate.toDate();
       }
     }
   } else {
     const closeDate = dayjs(instance?.dates?.close || null);
     const closedDate = dayjs(instance?.dates?.closed || null);
-    const startDate = dayjs(instance?.dates?.start || null);
 
     const isClosed =
       (closeDate.isValid() && !closeDate.isAfter(today)) ||
