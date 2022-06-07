@@ -27,7 +27,7 @@ export default function AssignmentList({
   closed,
   title,
   filters: filtersProps,
-  defualtFilters = null,
+  defualtFilters: defaultFilters = null,
   ...props
 }) {
   const titleKey = parseTitleKey(title, closed);
@@ -46,7 +46,7 @@ export default function AssignmentList({
     return {};
   }, [translations]);
 
-  const [filters, setFilters] = useState(defualtFilters);
+  const [filters, setFilters] = useState(defaultFilters);
 
   const tabs = useMemo(() => {
     if (!closed) {

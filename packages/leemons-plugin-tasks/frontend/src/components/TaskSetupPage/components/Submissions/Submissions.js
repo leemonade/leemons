@@ -15,6 +15,7 @@ function useValueUpdater(form, originalForm) {
     const subscription = form.watch((value, field) => {
       if (field.name?.startsWith('data')) {
         shouldUpdate.current = false;
+
         originalForm.setValue('submission.data', value?.data);
       }
     });
@@ -33,7 +34,7 @@ function useValueUpdater(form, originalForm) {
     });
 
     return () => subscription.unsubscribe();
-  }, [originalForm]);
+  }, [originalForm?.watch]);
 
   useEffect(() => {
     const subscription = originalForm.watch((value, field) => {
@@ -58,11 +59,14 @@ function useValueUpdater(form, originalForm) {
   }, []);
 }
 
-export default function Submissions({ labels }) {
+export default function Submissions({ labels, errorMessages }) {
   const form = useForm();
   const { control } = form;
   const originalForm = useFormContext();
-  const { control: contextControl } = originalForm;
+  const {
+    control: contextControl,
+    formState: { errors },
+  } = originalForm;
 
   useValueUpdater(form, originalForm);
 
@@ -86,15 +90,37 @@ export default function Submissions({ labels }) {
           <ConditionalInput
             {...field}
             label={labels?.submission?.checkDescription}
+            onChange={(value) => {
+              field.onChange(value);
+              if (!value) {
+                originalForm.setValue('submission', null);
+              }
+            }}
             showOnTrue
             render={() => (
               <ContextContainer>
                 <Controller
                   control={contextControl}
+                  rules={{
+                    required: errorMessages.statement?.required,
+                    validate: () =>
+                      new Promise((resolve, reject) => {
+                        form.handleSubmit(
+                          () => {
+                            resolve(true);
+                          },
+                          () => {
+                            resolve(false);
+                          }
+                        )();
+                      }),
+                  }}
                   name="submission.type"
                   render={({ field: type }) => (
                     <Select
                       {...type}
+                      required
+                      error={!!errors?.submission?.type?.length && errors?.submission?.type}
                       label={labels?.submission?.type}
                       data={[
                         {
