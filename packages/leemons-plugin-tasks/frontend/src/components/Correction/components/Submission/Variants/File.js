@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Text, ContextContainer, Box, Loader, Anchor } from '@bubbles-ui/components';
+import { LibraryCardEmbed } from '@bubbles-ui/leemons';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 
@@ -38,19 +39,20 @@ export default function File({ assignation, labels }) {
       const preparedAsset = prepareAsset(asset);
       return {
         id: preparedAsset.id,
-        fileType: preparedAsset.file.type,
-        fileExtension: preparedAsset.file.extension,
-        name: preparedAsset.name,
+        fileType: preparedAsset.file.extension,
+        // fileExtension: preparedAsset.file.extension,
+        title:
+          preparedAsset.name.substr(0, preparedAsset.name.lastIndexOf('.')) || preparedAsset.name,
         description: preparedAsset.description,
-        tagline: preparedAsset.tagline,
-        metadata: preparedAsset.metadata,
-        created: preparedAsset.created_at,
-        version: '',
+        // tagline: preparedAsset.tagline,
+        // metadata: preparedAsset.metadata,
+        // created: preparedAsset.created_at,
+        // version: '',
         cover: null,
         color: preparedAsset.color,
         url: preparedAsset.url,
-        icon: preparedAsset.icon,
-        tags: preparedAsset.tags,
+        // icon: preparedAsset.icon,
+        // tags: preparedAsset.tags,
         category: preparedAsset.category,
         role: null,
       };
@@ -70,10 +72,10 @@ export default function File({ assignation, labels }) {
         <ContextContainer spacing={2}>
           {assets.map((asset) => (
             <>
-              {/* <LibraryCardEmbed asset={asset} /> */}
-              <Anchor target="_blank" href={asset.url} key={asset.id}>
+              <LibraryCardEmbed asset={asset} variant="media" />
+              {/* <Anchor target="_blank" href={asset.url} key={asset.id}>
                 {asset.name}
-              </Anchor>
+              </Anchor> */}
             </>
           ))}
         </ContextContainer>
