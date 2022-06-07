@@ -109,21 +109,13 @@ export default function NYA({ classe, program }) {
           }}
         >
           {instancesData.map((instance) => (
-            <Box
+            <NYACard
               key={instance.id}
-              style={{
-                cursor: 'pointer',
-                height: '100%',
-              }}
-              onClick={instance.onClick}
-            >
-              <NYACard
-                instance={instance}
-                labels={labels}
-                showSubject={!query?.classes}
-                classData={classData}
-              />
-            </Box>
+              instance={instance}
+              labels={labels}
+              showSubject={!query?.classes}
+              classData={classData}
+            />
           ))}
         </Swiper>
       )}

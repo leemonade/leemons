@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import dayjs from 'dayjs';
+import { Box } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useAssignablesContext from '@assignables/hooks/useAssignablesContext';
@@ -371,18 +372,27 @@ export default function NYACard({
   }
 
   return (
-    <LibraryCard
-      fullHeight
-      asset={preparedInstance?.asset}
-      variant="assigment"
-      dashboard
-      shadow
-      locale={locale}
-      assigment={preparedInstance?.assignment}
-      deadlineProps={preparedInstance?.deadlineProps}
-      subject={preparedInstance?.subject}
-      badge={preparedInstance?.isNew && labels?.new?.toUpperCase()}
-      variantTitle={labels?.roles?.[instance.assignable.role] || instance.assignable.role}
-    />
+    <Box
+      key={preparedInstance?.id}
+      style={{
+        cursor: 'pointer',
+        height: '100%',
+      }}
+      onClick={preparedInstance?.onClick}
+    >
+      <LibraryCard
+        fullHeight
+        asset={preparedInstance?.asset}
+        variant="assigment"
+        dashboard
+        shadow
+        locale={locale}
+        assigment={preparedInstance?.assignment}
+        deadlineProps={preparedInstance?.deadlineProps}
+        subject={preparedInstance?.subject}
+        badge={preparedInstance?.isNew && labels?.new?.toUpperCase()}
+        variantTitle={labels?.roles?.[instance?.assignable?.role] || instance?.assignable?.role}
+      />
+    </Box>
   );
 }

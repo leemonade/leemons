@@ -27,7 +27,9 @@ import {
 } from '@bubbles-ui/components';
 import { useLocale, useStore } from '@common';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
-import CardWrapper from '@leebrary/components/CardWrapper';
+import getAssignation from '@assignables/requests/assignations/getAssignation';
+import NYACard from '@assignables/components/NYACard';
+import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
 
 const { classByIdsRequest } = require('@academic-portfolio/request');
 
@@ -46,6 +48,13 @@ export default function Task({ event, form, classes, disabled, allProps }) {
   const { t: tCommon } = useCommonTranslate('forms');
   const [columns, setColumns] = useState([]);
   const [columnsT, setColumnsT] = useState([]);
+
+  // EN: Get the user agents
+  // ES: Obtiene los user agents
+  const userAgents = useUserAgents();
+  // EN: This is valid while only one user agent is used
+  // ES: Este es valido mientras solo se use un user agent a la vez
+  const userAgent = userAgents[0];
 
   const getKanbanColumns = async () => {
     const { columns: _columns } = await listKanbanColumnsRequest();
@@ -83,17 +92,19 @@ export default function Task({ event, form, classes, disabled, allProps }) {
 
   async function loadInstance() {
     store.instance = await getAssignableInstance({ id: store.instanceId });
+    if (!store.instance.students) {
+      store.assignation = await getAssignation({ id: store.instanceId, user: userAgent });
+    }
     store.classes = await classByIdsRequest(store.instance.classes);
-    console.log(store.instance, store.classes);
     render();
   }
 
   useEffect(() => {
-    if (allProps.defaultValues?.data?.instanceId) {
+    if (allProps.defaultValues?.data?.instanceId && userAgent) {
       store.instanceId = allProps.defaultValues.data.instanceId;
       loadInstance();
     }
-  }, [allProps.defaultValues]);
+  }, [allProps.defaultValues, userAgent]);
 
   useEffect(() => {
     getTranslationColumns();
@@ -134,18 +145,7 @@ export default function Task({ event, form, classes, disabled, allProps }) {
 
   if (store.instanceId) {
     if (store.instance) {
-      return (
-        <CardWrapper
-          onClick={() => {
-            console.log('Holaaaaa');
-          }}
-          item={{ original: store.instance.assignable.asset }}
-          category={`assignables.${store.instance.assignable.role}`}
-          variant={store.instance.assignable.role}
-          locale={locale}
-          single
-        />
-      );
+      return <NYACard instance={store.assignation || store.instance} showSubject />;
     }
     return <LoadingOverlay visible />;
   }
