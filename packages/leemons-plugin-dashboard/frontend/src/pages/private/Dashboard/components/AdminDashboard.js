@@ -12,14 +12,20 @@ import {
   ContextContainer,
   createStyles,
   ImageLoader,
+  LoadingOverlay,
   PageContainer,
   Paper,
   Stack,
+  Swiper,
   Text,
+  Title,
 } from '@bubbles-ui/components';
+import { LibraryCardBasic } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@dashboard/helpers/prefixPN';
 import { AnalyticsGraphBarIcon } from '@bubbles-ui/icons/solid';
+import { SchoolTeacherMaleIcon, SingleActionsGraduateIcon } from '@bubbles-ui/icons/outline';
+
 import { getLocalizations } from '@multilanguage/useTranslate';
 import { getAdminDashboardRealtimeRequest, getAdminDashboardRequest } from '../../../../request';
 
@@ -85,6 +91,12 @@ Icon.propTypes = {
   size: PropTypes.string,
 };
 
+const programImages = [
+  'https://images.unsplash.com/photo-1464983308776-3c7215084895?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2748&q=80',
+  'https://images.unsplash.com/photo-1568792923760-d70635a89fdc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2970&q=80',
+  'https://images.unsplash.com/photo-1564429238817-393bd4286b2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=4032&q=80',
+];
+
 export default function AdminDashboard({ session }) {
   const [store, render] = useStore({
     loading: true,
@@ -114,6 +126,7 @@ export default function AdminDashboard({ session }) {
     };
 
     store.pc = pc;
+    store.academicPortfolio = academicPortfolio;
     store.instances = cloneDeep(base);
     store.activeUsers = cloneDeep(base);
 
@@ -189,6 +202,8 @@ export default function AdminDashboard({ session }) {
     ramUsed = (ramUsed / store.pc.mem.total) * 100;
   }
 
+  if (store.loading) return <LoadingOverlay visible />;
+
   return (
     <ContextContainer
       fullHeight
@@ -207,6 +222,99 @@ export default function AdminDashboard({ session }) {
         })}
       >
         <Box sx={(theme) => ({ marginBottom: theme.spacing[6] })}>
+          <Text size="lg" color="primary" className={styles.title}>
+            {t('programs')}
+          </Text>
+        </Box>
+        <Box>
+          <Swiper
+            className={styles.cardContainer}
+            breakAt={{
+              1800: { slidesPerView: 4, spaceBetween: 2 },
+              1600: { slidesPerView: 3, spaceBetween: 2 },
+              1200: { slidesPerView: 3, spaceBetween: 2 },
+              940: { slidesPerView: 2, spaceBetween: 2 },
+              520: { slidesPerView: 1, spaceBetween: 2 },
+              360: { slidesPerView: 1, spaceBetween: 2 },
+            }}
+          >
+            {store.academicPortfolio?.programs.map((program, i) => (
+              <LibraryCardBasic
+                key={program.id}
+                blur={5}
+                asset={{
+                  name: program.program.name,
+                  color: program.program.color || null,
+                  cover: programImages[i],
+                }}
+              >
+                <Box
+                  style={{
+                    display: 'flex',
+                    height: '100%',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    padding: 12,
+                  }}
+                >
+                  <Box
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 16,
+                    }}
+                  >
+                    {/*
+                      <Box style={{ display: 'flex', gap: 4, alignItems: 'center', padding: 2 }}>
+                        <FamilyChildIcon width={16} height={16} />
+                        <Text role="productive" color="primary">
+                          Familias:
+                        </Text>
+                        <Text role="productive" color="primary" strong>
+                          320
+                        </Text>
+                      </Box> */}
+
+                    <Box style={{ display: 'flex', gap: 4, alignItems: 'center', padding: 2 }}>
+                      <SingleActionsGraduateIcon width={16} height={16} />
+                      <Text role="productive" color="primary">
+                        {t('students')}:
+                      </Text>
+                      <Text role="productive" color="primary" strong>
+                        {program.students}
+                      </Text>
+                    </Box>
+                    <Box style={{ display: 'flex', gap: 4, alignItems: 'center', padding: 2 }}>
+                      <SchoolTeacherMaleIcon width={16} height={16} />
+                      <Text role="productive" color="primary">
+                        {t('teachers')}:
+                      </Text>
+                      <Text role="productive" color="primary" strong>
+                        {program.teachers}
+                      </Text>
+                    </Box>
+                  </Box>
+                  <Box style={{ display: 'flex' }}>
+                    <Box style={{ flex: 1 }}>
+                      <Title order={3}>{program.courses}</Title>
+                      <Text role="productive" color="primary">
+                        {t('courses')}
+                      </Text>
+                    </Box>
+                    <Box style={{ flex: 1 }}>
+                      <Title order={3}>{program.subjects}</Title>
+                      <Text role="productive" color="primary">
+                        {t('subjects')}
+                      </Text>
+                    </Box>
+                  </Box>
+                </Box>
+              </LibraryCardBasic>
+            ))}
+          </Swiper>
+        </Box>
+
+        <Box sx={(theme) => ({ marginTop: theme.spacing[10], marginBottom: theme.spacing[6] })}>
           <AnalyticsGraphBarIcon />
           <Text size="lg" color="primary" className={styles.title}>
             {t('activityInPlatform')}
@@ -298,7 +406,7 @@ export default function AdminDashboard({ session }) {
           </Box>
         </Stack>
         {/* --- RAM --- */}
-        <Stack sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+        <Stack sx={(theme) => ({ marginTop: theme.spacing[6] })}>
           <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
             <Icon size="18px" src={'/public/assets/svgs/ram.svg'} />
           </Box>
@@ -325,7 +433,7 @@ export default function AdminDashboard({ session }) {
         {/* --- DISCO --- */}
         {store.pc.diskLayout
           ? store.pc.diskLayout.map((disk, i) => (
-              <Stack key={i} sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+              <Stack key={i} sx={(theme) => ({ marginTop: theme.spacing[6] })}>
                 <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
                   <Icon size="18px" src={'/public/assets/svgs/disk.svg'} />
                 </Box>
@@ -350,7 +458,7 @@ export default function AdminDashboard({ session }) {
           : null}
 
         {/* --- INTERNET --- */}
-        <Stack sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+        <Stack sx={(theme) => ({ marginTop: theme.spacing[6] })}>
           <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
             <Icon size="18px" src={'/public/assets/svgs/internet-speed.svg'} />
           </Box>

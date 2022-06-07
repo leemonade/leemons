@@ -1,7 +1,7 @@
 module.exports = {
   dashboard: {
     selectYourProgram: 'Seleccionar programa',
-    dashboard: 'Dashboard',
+    dashboard: 'Panel de control',
     controlPanel: 'Panel de control',
   },
   classDashboard: {
@@ -16,6 +16,8 @@ module.exports = {
     activeUsers: 'Usuarios activos',
     students: 'Alumnos',
     teachers: 'Docentes',
+    courses: 'Cursos',
+    subjects: 'Asignaturas',
     total: 'Total:',
     createdTasks: 'Tareas creadas',
     cpu: 'CPU',
@@ -33,5 +35,6 @@ module.exports = {
     space: 'Espacio:',
     network: 'INTERNET',
     speed: 'Velocidad:',
+    programs: 'Programas dados de alta',
   },
 };
