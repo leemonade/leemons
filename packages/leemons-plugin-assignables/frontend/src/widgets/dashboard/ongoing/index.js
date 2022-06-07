@@ -1,4 +1,5 @@
 import React from 'react';
+import { Text } from '@bubbles-ui/components';
 import AssignmentList from '../../../components/Ongoing/AssignmentList';
 
 export default function Ongoing({ classe }) {
@@ -7,7 +8,8 @@ export default function Ongoing({ classe }) {
       closed={false}
       defaultFilters={{ class: classe?.id, closed: false }}
       filters={{ hideSubject: true }}
-      title={null}
+      fullWidth
+      titleComponent={<Text size="lg" color="primary"></Text>}
       subjectFullLength={false}
     />
   );

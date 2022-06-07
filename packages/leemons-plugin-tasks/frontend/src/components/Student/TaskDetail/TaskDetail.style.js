@@ -1,6 +1,6 @@
 import { createStyles } from '@bubbles-ui/components';
 
-export const TaskDetailStyles = createStyles((theme, { onlyNext }) => ({
+export const TaskDetailStyles = createStyles((theme, { onlyNext, marginTop }) => ({
   root: {
     width: '100%',
     display: 'flex',
@@ -13,6 +13,10 @@ export const TaskDetailStyles = createStyles((theme, { onlyNext }) => ({
     width: '276px',
     maxWidth: '276px',
     height: 'fit-content',
+  },
+  stepperFixed: {
+    position: 'absolute',
+    top: marginTop,
   },
   content: {
     width: '100%',
@@ -29,6 +33,16 @@ export const TaskDetailStyles = createStyles((theme, { onlyNext }) => ({
     alignItems: 'center',
     marginTop: theme.spacing[6],
     marginBottom: theme.spacing[4],
+  },
+  sidebar: {
+    minWidth: '280px',
+    maxWidth: '280px',
+  },
+  sidebarFixed: {
+    height: `calc(100vh - ${marginTop}px)`,
+    position: 'absolute',
+    top: marginTop,
+    right: 0,
   },
 }));
 

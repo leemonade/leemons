@@ -26,8 +26,10 @@ function parseTitleKey(title, closed) {
 export default function AssignmentList({
   closed,
   title,
+  titleComponent,
   filters: filtersProps,
   defualtFilters: defaultFilters = null,
+  fullWidth,
   ...props
 }) {
   const titleKey = parseTitleKey(title, closed);
@@ -74,25 +76,28 @@ export default function AssignmentList({
     ];
   }, [labels, closed]);
 
-  const { classes } = useAssignmentListStyle();
+  const { classes, cx } = useAssignmentListStyle();
   return (
-    <Box className={classes?.root}>
-      {titleKey && (
-        <Box className={classes?.title}>
-          <InlineSvg
-            style={{
-              display: 'inline-block',
-              position: 'relative',
-              width: 24,
-              heiht: 24,
-            }}
-            width={24}
-            height={24}
-            src="/public/assignables/menu-icon.svg"
-          />
-          <Title order={1}>{labels.title}</Title>
-        </Box>
-      )}
+    <Box className={cx({ [classes?.root]: !fullWidth })}>
+      {titleKey &&
+        (titleComponent ? (
+          React.cloneElement(titleComponent, { children: labels.title })
+        ) : (
+          <Box className={classes?.title}>
+            <InlineSvg
+              style={{
+                display: 'inline-block',
+                position: 'relative',
+                width: 24,
+                heiht: 24,
+              }}
+              width={24}
+              height={24}
+              src="/public/assignables/menu-icon.svg"
+            />
+            <Title order={1}>{labels.title}</Title>
+          </Box>
+        ))}
       <Filters
         labels={labels.filters}
         tabs={tabs}

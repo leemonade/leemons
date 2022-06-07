@@ -18,7 +18,7 @@ import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useLayout } from '@layout/context';
-// import { ActivityContainer } from '@bubbles-ui/leemons';
+import { ActivityContainer } from '@bubbles-ui/leemons';
 import useSteps from './helpers/useSteps';
 import TaskDetailHeader from './components/TaskDetailHeader';
 import { TaskDetailStyles } from './TaskDetail.style';
@@ -79,7 +79,18 @@ function getNextButtonLabel(step, isLastStep, labels) {
   return labels.next;
 }
 
+function Content({ marginTop, setMargin, children }) {
+  useEffect(() => {
+    if (typeof setMargin === 'function') {
+      setMargin(marginTop);
+    }
+  }, [marginTop, setMargin]);
+
+  return children;
+}
+
 export default function TaskDetail({ id, student }) {
+  const [marginTop, setMarginTop] = useState(0);
   const { openConfirmationModal } = useLayout();
   const [assignation, error, loading] = useAssignation(id, student, true);
   const [disabledButtons, setDisabledButtons] = useState({
@@ -203,7 +214,10 @@ export default function TaskDetail({ id, student }) {
     resetButtons();
   };
 
-  const { classes } = TaskDetailStyles({ onlyNext: isFirstStep || step?.previous === false });
+  const { classes, cx } = TaskDetailStyles({
+    onlyNext: isFirstStep || step?.previous === false,
+    marginTop,
+  });
 
   useEffect(() => {
     if (assignation) {
@@ -240,100 +254,102 @@ export default function TaskDetail({ id, student }) {
   }
 
   return (
-    <ContextContainer fullHeight spacing={0}>
-      {
-        //   <ActivityContainer
-        //   header={{
-        //     title: asset?.name,
-        //     subtitle: classData?.name,
-        //     icon: classData?.icon,
-        //     color: classData?.color,
-        //     image: coverUrl,
-        //   }}
-        //   deadline={{
-        //     label: 'Entrega',
-        //     deadline:
-        //       assignation?.instance?.dates?.deadline instanceof Date
-        //         ? assignation?.instance?.dates?.deadline
-        //         : new Date(assignation?.instance?.dates?.deadline),
-        //   }}
-        //   collapsed={isFirstStep}
-        // >
+    <ActivityContainer
+      header={{
+        title: asset?.name,
+        subtitle: classData?.name,
+        icon: classData?.icon,
+        color: classData?.color,
+        image: coverUrl,
+      }}
+      deadline={
+        assignation?.instance?.dates?.deadline && {
+          label: 'Entrega',
+          deadline:
+            assignation?.instance?.dates?.deadline instanceof Date
+              ? assignation?.instance?.dates?.deadline
+              : new Date(assignation?.instance?.dates?.deadline),
+        }
       }
-      <TaskDetailHeader
-        asset={asset}
-        classData={classData}
-        cover={coverUrl}
-        isFirstStep={isFirstStep}
-        deadline={assignation?.instance?.dates?.deadline}
-      />
-      <Box className={classes?.root}>
-        <Box className={classes?.stepper}>
-          <VerticalStepper
-            data={steps}
-            currentStep={currentStep}
-            completedSteps={visitedSteps}
-            visitedSteps={visitedSteps}
-            onChangeActiveIndex={handleChangeActiveIndex}
-          />
-        </Box>
-        <Box className={classes?.content}>
-          <Countdown
-            assignation={assignation}
-            show={step?.countdown === true}
-            onTimeout={() => updateTimestamps(assignation, 'end')}
-          />
-          {step?.component}
-          <LimitedTimeAlert
-            assignation={assignation}
-            labels={labels?.limitedTimeAlert}
-            show={step?.limitedTimeAlert === true}
-          />
-          <Box className={classes?.nav}>
-            {!isFirstStep && step?.previous !== false && (
-              <Button
-                rounded
-                compact
-                variant="light"
-                disabled={disabledButtons.previous}
-                leftIcon={<ChevLeftIcon height={20} width={20} />}
-                onClick={handlePrev}
-              >
-                {typeof step?.previous === 'string' ? step?.previous : labels?.buttons?.previous}
-              </Button>
-            )}
-            <Stack spacing={3}>
-              {step?.save !== undefined && step?.save !== false && (
-                <Button
-                  variant="outline"
-                  disabled={disabledButtons.save}
-                  onClick={handleSave}
-                  rounded
-                >
-                  {typeof step?.save === 'string' ? step?.save : labels?.buttons?.save}
-                </Button>
-              )}
-              {step?.next !== false && (
-                <Button
-                  rightIcon={<ChevRightIcon height={20} width={20} />}
-                  disabled={disabledButtons.next}
-                  onClick={handleNext}
-                  rounded
-                >
-                  {getNextButtonLabel(step, isLastStep, labels?.buttons)}
-                </Button>
-              )}
-            </Stack>
+      collapsed={!isFirstStep}
+    >
+      <Content setMargin={setMarginTop}>
+        <ContextContainer fullHeight spacing={0}>
+          <Box className={classes?.root}>
+            <Box className={classes?.stepper}>
+              <Box className={cx(classes?.stepperFixed, classes?.stepper)}>
+                <VerticalStepper
+                  data={steps}
+                  currentStep={currentStep}
+                  completedSteps={visitedSteps}
+                  visitedSteps={visitedSteps}
+                  onChangeActiveIndex={handleChangeActiveIndex}
+                />
+              </Box>
+            </Box>
+            <Box className={classes?.content}>
+              <Countdown
+                assignation={assignation}
+                show={step?.countdown === true}
+                onTimeout={() => updateTimestamps(assignation, 'end')}
+              />
+              {step?.component}
+              <LimitedTimeAlert
+                assignation={assignation}
+                labels={labels?.limitedTimeAlert}
+                show={step?.limitedTimeAlert === true}
+              />
+              <Box className={classes?.nav}>
+                {!isFirstStep && step?.previous !== false && (
+                  <Button
+                    rounded
+                    compact
+                    variant="light"
+                    disabled={disabledButtons.previous}
+                    leftIcon={<ChevLeftIcon height={20} width={20} />}
+                    onClick={handlePrev}
+                  >
+                    {typeof step?.previous === 'string'
+                      ? step?.previous
+                      : labels?.buttons?.previous}
+                  </Button>
+                )}
+                <Stack spacing={3}>
+                  {step?.save !== undefined && step?.save !== false && (
+                    <Button
+                      variant="outline"
+                      disabled={disabledButtons.save}
+                      onClick={handleSave}
+                      rounded
+                    >
+                      {typeof step?.save === 'string' ? step?.save : labels?.buttons?.save}
+                    </Button>
+                  )}
+                  {step?.next !== false && (
+                    <Button
+                      rightIcon={<ChevRightIcon height={20} width={20} />}
+                      disabled={disabledButtons.next}
+                      onClick={handleNext}
+                      rounded
+                    >
+                      {getNextButtonLabel(step, isLastStep, labels?.buttons)}
+                    </Button>
+                  )}
+                </Stack>
+              </Box>
+            </Box>
+            <Box className={classes?.sidebar}>
+              <Box className={classes?.sidebarFixed}>
+                <Sidebar
+                  show={step?.sidebar === true}
+                  assignation={assignation}
+                  labels={labels?.sidebar}
+                />
+              </Box>
+            </Box>
           </Box>
-        </Box>
-        <Sidebar
-          show={step?.sidebar === true}
-          assignation={assignation}
-          className={classes?.sidebar}
-          labels={labels?.sidebar}
-        />
-      </Box>
-      {/* </ActivityContainer> */}
-    </ContextContainer>
+        </ContextContainer>
+      </Content>
+    </ActivityContainer>
   );
 }
