@@ -1,4 +1,4 @@
-const { isEmpty, isString } = require('lodash');
+const { isEmpty, isString, uniqBy } = require('lodash');
 const { CATEGORIES } = require('../config/constants');
 const { add } = require('../src/services/assets/add');
 const { update } = require('../src/services/assets/update');

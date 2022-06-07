@@ -54,7 +54,7 @@ export default function Attachments({ labels }) {
   const { width: viewportWidth } = useViewportSize();
   const [boxRef, rect] = useResizeObserver();
   const drawerSize = useMemo(
-    () => Math.max(viewportWidth - rect.width - 370, 500),
+    () => Math.max(viewportWidth - rect.width - 370, 600),
     [viewportWidth, rect]
   );
 
@@ -153,13 +153,14 @@ export default function Attachments({ labels }) {
             opened={showAssetDrawer}
             creatable
             size={drawerSize}
-            shadow={drawerSize <= 500}
+            shadow={drawerSize <= 600}
             assetType={assetType}
             canChangeType
             onTypeChange={setAssetType}
             onSelect={onAssetSelect}
             onClose={onDrawerClose}
             categories={categories}
+            itemMinWidth={200}
           />
         </form>
       </Box>

@@ -81,7 +81,7 @@ const AssetListDrawer = ({
       canChangeLayout={false}
       canSearch
       onSelectItem={onSelect}
-      itemMinWidth={assetType === 'image' ? 200 : undefined}
+      itemMinWidth={assetType === 'image' ? 200 : props.itemMinWidth}
     />
   );
 
@@ -187,6 +187,7 @@ AssetListDrawer.propTypes = {
   creatable: PropTypes.bool,
   onlyCreateImages: PropTypes.bool,
   shadow: PropTypes.bool,
+  itemMinWidth: PropTypes.number,
 };
 
 export { AssetListDrawer };

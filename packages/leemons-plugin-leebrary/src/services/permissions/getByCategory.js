@@ -1,4 +1,4 @@
-const { isEmpty, sortBy, intersection } = require('lodash');
+const { isEmpty, sortBy, intersection, uniqBy, uniq } = require('lodash');
 const getRolePermissions = require('./helpers/getRolePermissions');
 const getAssetIdFromPermissionName = require('./helpers/getAssetIdFromPermissionName');
 const { getPublic } = require('./getPublic');
@@ -46,9 +46,11 @@ async function getByCategory(
       { published, preferCurrent, transacting }
     );
 
-    assetIds = intersection(
-      assetIds,
-      assetByStatus.map((item) => item.fullId)
+    assetIds = uniq(
+      intersection(
+        assetIds,
+        assetByStatus.map((item) => item.fullId)
+      )
     );
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
@@ -88,7 +90,7 @@ async function getByCategory(
       .concat(publicAssets)
       .filter((item) => assetIds.includes(item.asset));
 
-    return results;
+    return uniqBy(results, 'asset');
   } catch (e) {
     throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);
   }

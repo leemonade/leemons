@@ -173,8 +173,8 @@ const AssetList = ({
         // console.log('query:', query);
         const response = await getAssetsRequest(query);
         const results = response?.assets || [];
-        console.log('results:', results);
-        setAssets(results);
+        // console.log('results:', results);
+        setAssets(uniqBy(results, 'asset'));
 
         if (isEmpty(results)) {
           setServerData([]);
@@ -200,6 +200,7 @@ const AssetList = ({
             showPublic: !pinned ? showPublic : true,
           });
           paginated.items = response.assets || [];
+          // console.log('paginated.items:', paginated.items);
           setServerData(paginated);
         } else {
           setServerData([]);
@@ -432,24 +433,23 @@ const AssetList = ({
   // ·········································································
   // LABELS & STATIC
 
-  const columns = useMemo(() => {
-    return [
-    {
-      Header: t('tableLabels.name'),
-      accessor: 'name',
-      valueRender: (_, row) => <LibraryItem asset={prepareAsset(row, published)} />,
-    },
-    {
-      Header: t('tableLabels.owner'),
-      accessor: 'owner',
-      valueRender: (_, row) => getOwner(row),
-    },
-    {
-      Header: t('tableLabels.updated'),
-      accessor: 'updated',
-      valueRender: (_, row) => <LocaleDate date={row.updated_at} />,
-    },
-  ]; }, [t]);
+  const columns = useMemo(() => ([
+      {
+        Header: t('tableLabels.name'),
+        accessor: 'name',
+        valueRender: (_, row) => <LibraryItem asset={prepareAsset(row, published)} />,
+      },
+      {
+        Header: t('tableLabels.owner'),
+        accessor: 'owner',
+        valueRender: (_, row) => getOwner(row),
+      },
+      {
+        Header: t('tableLabels.updated'),
+        accessor: 'updated',
+        valueRender: (_, row) => <LocaleDate date={row.updated_at} />,
+      },
+    ]), [t]);
 
   const cardVariant = useMemo(() => {
     let option = 'media';
