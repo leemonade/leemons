@@ -119,7 +119,7 @@ export default function Task({ event, form, classes, disabled, allProps }) {
     const subtask = form.getValues('subtask');
     subtask[index].checked = e;
     form.setValue('subtask', subtask);
-    if (allProps.readOnly) {
+    if (disabled) {
       allProps.onSubmit(allProps.form.getValues(), { closeOnSend: false });
     }
   };

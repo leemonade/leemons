@@ -16,6 +16,8 @@ module.exports = {
     activeUsers: 'Active users',
     students: 'Students',
     teachers: 'Teachers',
+    courses: 'Courses',
+    subjects: 'Subjects',
     total: 'Total:',
     createdTasks: 'Tasks created',
     cpu: 'CPU',
@@ -33,5 +35,6 @@ module.exports = {
     space: 'Space:',
     network: 'NETWORK',
     speed: 'Speed:',
+    programs: 'Registered programs',
   },
 };
