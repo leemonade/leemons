@@ -32,7 +32,7 @@ export function CurriculumListContents({ value }) {
     const nodeLabel = store.data.nodes[nodeValues[0].node].fullName;
     const groupByProperty = values(groupBy(nodeValues, 'property'));
     return (
-      <Box key={i} sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+      <Box key={i} /* sx={(theme) => ({ marginTop: theme.spacing[4] })} */>
         {/* <InputWrapper label={nodeLabel}> */}
         {groupByProperty.map((propertyValues, x) => {
           const propertyLabel =
