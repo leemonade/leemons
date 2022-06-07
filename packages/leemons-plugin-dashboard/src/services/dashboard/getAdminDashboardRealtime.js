@@ -11,6 +11,7 @@ async function getAdminDashboardRealtime({ transacting } = {}) {
   return {
     currentLoad,
     mem,
+    networkInterfaces,
     networkInterface: _.find(networkInterfaces, { iface: networkInterfaceDefault }),
   };
 }
