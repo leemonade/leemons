@@ -8,7 +8,7 @@ function SubmissionState({ status, error, labels: _labels }) {
 
   if (status === 'error' && error) {
     return (
-      <Alert title={labels?.error?.title} severity="error" closeable={true}>
+      <Alert title={labels?.error?.title} severity="error" closeable={false}>
         {labels?.error?.message?.replace('{{error}}', error !== true ? error : '')}
       </Alert>
     );
@@ -22,14 +22,14 @@ function SubmissionState({ status, error, labels: _labels }) {
   }
   if (status === 'submitted') {
     return (
-      <Alert title={labels?.submitted?.title} severity="success" closeable={true}>
+      <Alert title={labels?.submitted?.title} severity="success" closeable={false}>
         {labels?.submitted?.message}
       </Alert>
     );
   }
   if (status === 'changed') {
     return (
-      <Alert title={labels?.notSubmitted?.title} severity="info" closeable={true}>
+      <Alert title={labels?.notSubmitted?.title} severity="info" closeable={false}>
         {labels?.notSubmitted?.message}
       </Alert>
     );

@@ -17,7 +17,8 @@ export default function File({ assignation, updateStatus, onSave, value, labels:
   const fileData = assignation?.instance?.assignable?.submission?.data;
 
   const savedFiles = useRef(value || []);
-  const files = useRef([]);
+  const files = useRef(value || []);
+  const saveSubmission = useMemo(() => handleDeliverySubmission(assignation), [assignation]);
   const handleSubmit = useCallback(async () => {
     updateStatus('loading');
 
@@ -27,15 +28,6 @@ export default function File({ assignation, updateStatus, onSave, value, labels:
     const filesToSave = !files.current ? [] : [files.current].flat().filter((file) => !file.id);
     const filesToRemove = _.difference(savedFiles.current, files.current);
     const filesToKeep = _.difference(savedFiles.current, filesToRemove);
-
-    if (_.isEqual(files.current, savedFiles.current)) {
-      if (!files.current.length) {
-        updateStatus('cleared');
-      } else {
-        updateStatus('submitted');
-      }
-      return true;
-    }
 
     try {
       if (!filesToSave?.length && !filesToRemove?.length) {
@@ -63,7 +55,7 @@ export default function File({ assignation, updateStatus, onSave, value, labels:
         filesSaved = _.map(_.map(filesSaved, 'asset'), (file) => _.pick(file, ['id', 'name']));
       }
       filesSaved = [...filesToKeep, ...filesSaved];
-
+      await saveSubmission(filesSaved, !filesSaved.length);
       savedFiles.current = filesSaved;
       updateStatus(savedFiles.current.length ? 'submitted' : 'cleared');
       return true;
