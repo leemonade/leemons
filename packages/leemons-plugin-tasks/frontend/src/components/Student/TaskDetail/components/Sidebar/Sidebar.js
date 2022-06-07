@@ -4,6 +4,7 @@ import { LibraryItem } from '@bubbles-ui/leemons';
 import { getAssetsByIdsRequest } from '@leebrary/request';
 import { useApi } from '@common';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
+import { useHistory } from 'react-router-dom';
 import { sidebarStyles } from './Sidebar.style';
 
 async function getResources(ids) {
@@ -13,6 +14,7 @@ async function getResources(ids) {
 }
 
 export default function Sidebar({ assignation, show = true, labels }) {
+  const history = useHistory();
   const { classes, cx } = sidebarStyles();
   const [resources] = useApi(getResources, assignation?.instance?.assignable?.resources);
 
@@ -26,7 +28,11 @@ export default function Sidebar({ assignation, show = true, labels }) {
             <Text color="soft">{labels?.resources}</Text>
             <Box className={classes.resourceContainer}>
               {resources?.map((resource) => (
-                <LibraryItem asset={resource} key={resource?.id} />
+                <LibraryItem
+                  asset={resource}
+                  key={resource?.id}
+                  onClick={() => history.push(resource.url)}
+                />
               ))}
             </Box>
           </Box>
