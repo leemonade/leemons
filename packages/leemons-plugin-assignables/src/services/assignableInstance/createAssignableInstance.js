@@ -39,6 +39,7 @@ module.exports = async function createAssignableInstance(
     curriculum,
     relatedAssignables,
     students,
+    isAllDay,
     ...assignableInstanceObj
   } = assignableInstance;
 
@@ -99,7 +100,7 @@ module.exports = async function createAssignableInstance(
     { transacting }
   );
 
-  const newEvent = await registerEvent(assignable, classes, { id, dates, transacting });
+  const newEvent = await registerEvent(assignable, classes, { id, dates, isAllDay, transacting });
   event = newEvent.id;
 
   // EN: Create the item permission

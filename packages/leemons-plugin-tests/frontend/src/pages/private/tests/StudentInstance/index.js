@@ -366,7 +366,7 @@ export default function StudentInstance() {
       header={taskHeaderProps}
       deadline={
         store.instance.dates.deadline
-          ? { label: t('delivery'), deadline: new Date(store.instance.dates.deadline) }
+          ? { label: t('delivery'), locale, deadline: new Date(store.instance.dates.deadline) }
           : null
       }
     >

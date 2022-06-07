@@ -39,35 +39,42 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labe
               */}
               <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}></Box>
 
-              {showContent && curriculum?.contents?.length && (
-                <Box sx={tabPanelStyle}>
-                  <ContextContainer>
-                    <Title color="primary" order={4}>
-                      {labels?.content}
-                    </Title>
-                    <CurriculumListContents value={curriculum?.contents} />
-                  </ContextContainer>
-                </Box>
-              )}
-              {showAssessmentCriteria && curriculum?.assessmentCriteria?.length && (
-                <Box sx={tabPanelStyle}>
-                  <ContextContainer>
-                    <Title color="primary" order={4}>
-                      {labels?.assessmentCriteria}
-                    </Title>
-                    <CurriculumListContents value={curriculum?.assessmentCriteria} />
-                  </ContextContainer>
-                </Box>
-              )}
-              {!!showObjectives && !!curriculum?.objectives?.length && (
-                <Box sx={tabPanelStyle}>
-                  <ContextContainer>
-                    <Title color="primary" order={4}>
-                      {labels?.objectives}
-                    </Title>
-                    {/* TODO: Use react lists */}
-                    <HtmlText>
-                      {`
+              <Box
+                sx={(theme) => ({
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: theme.spacing[4],
+                })}
+              >
+                {showContent && curriculum?.contents?.length && (
+                  <Box sx={tabPanelStyle}>
+                    <Box>
+                      <Title color="primary" order={5}>
+                        {labels?.content}
+                      </Title>
+                      <CurriculumListContents value={curriculum?.contents} />
+                    </Box>
+                  </Box>
+                )}
+                {showAssessmentCriteria && curriculum?.assessmentCriteria?.length && (
+                  <Box sx={tabPanelStyle}>
+                    <Box>
+                      <Title color="primary" order={5}>
+                        {labels?.assessmentCriteria}
+                      </Title>
+                      <CurriculumListContents value={curriculum?.assessmentCriteria} />
+                    </Box>
+                  </Box>
+                )}
+                {!!showObjectives && !!curriculum?.objectives?.length && (
+                  <Box sx={tabPanelStyle}>
+                    <Box>
+                      <Title color="primary" order={5}>
+                        {labels?.objectives}
+                      </Title>
+                      {/* TODO: Use react lists */}
+                      <HtmlText>
+                        {`
                       <ul>
                       ${curriculum?.objectives
                         ?.map(
@@ -79,10 +86,11 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labe
                         ?.join('')}
                       </ul>
                     `}
-                    </HtmlText>
-                  </ContextContainer>
-                </Box>
-              )}
+                      </HtmlText>
+                    </Box>
+                  </Box>
+                )}
+              </Box>
             </TabPanel>
           );
         })}

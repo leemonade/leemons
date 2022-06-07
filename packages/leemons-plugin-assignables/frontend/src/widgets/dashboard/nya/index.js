@@ -26,7 +26,7 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
 
     // EN: Avg time only including the students who have finished the assignation
     // ES: Tiempo promedio solo incluyendo a los estudiantes que han finalizado la asignación
-    const avgTime =
+    const avgTime = (
       students
         .map((student) => {
           const { timestamps } = student;
@@ -41,7 +41,8 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
 
           return (endTime - startTime) / 1000;
         })
-        .reduce((acc, time) => acc + time, 0) / submission || 0;
+        .reduce((acc, time) => acc + time, 0) / submission || 0
+    ).toFixed(2);
 
     const total = students.length;
     return {

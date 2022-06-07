@@ -73,7 +73,7 @@ module.exports = {
         labels: {
           name: 'Nombre',
           tagline: 'Subtítulo',
-          description: 'Resumen',
+          description: 'Descipción',
           buttonNext: 'Siguiente',
         },
         placeholders: {
