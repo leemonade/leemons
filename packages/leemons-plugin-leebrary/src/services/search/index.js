@@ -148,6 +148,9 @@ async function search(
       // EN: Filter by preferCurrent status
       // ES: Filtrar por estado preferCurrent
       const groupedAssets = groupBy(assets, (id) => id.uuid);
+
+      // TODO: Hay que ver cómo montar esto bien
+      /*
       if (published !== false && preferCurrent) {
         const assetsUuids = uniq(assets.map((id) => id.uuid));
 
@@ -172,6 +175,19 @@ async function search(
           return values;
         });
 
+        // EN: Get the latest versions of each uuid
+        // ES: Obtener la última versión de cada uuid
+        assets = map(groupedAssets, (values) => {
+          const versions = map(values, (id) => id.version);
+
+          const latest = semver.maxSatisfying(versions, '*');
+
+          return find(values, (id) => id.version === latest).fullId;
+        });
+      } else
+      */
+
+      if (preferCurrent) {
         // EN: Get the latest versions of each uuid
         // ES: Obtener la última versión de cada uuid
         assets = map(groupedAssets, (values) => {
@@ -210,6 +226,7 @@ async function search(
 
     return uniqBy(assets, 'asset') || [];
   } catch (e) {
+    console.log(e);
     throw new global.utils.HttpError(500, `Failed to find asset with query: ${e.message}`);
   }
 }

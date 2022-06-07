@@ -215,6 +215,8 @@ module.exports = {
     gradable: 'Calificable',
     nogradable: 'No calificable',
     task: 'Tarea',
+    toggle: 'Cerrar',
+    open: 'Abrir',
   },
   studentInstance: {
     multiSubject: 'Multi-Asignatura',
