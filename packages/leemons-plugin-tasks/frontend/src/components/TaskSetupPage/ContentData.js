@@ -144,7 +144,7 @@ function ContentData({
 
   return (
     <FormProvider {...formData}>
-      <form onSubmit={handleSubmit(handleOnNext)} autoComplete="off">
+      <form autoComplete="off" onSubmit={(e) => e.preventDefault()}>
         <ContextContainer {...props} divided>
           <ContextContainer divided>
             <ContextContainer title={labels?.statementAndDevelopmentTitle}>
@@ -259,7 +259,10 @@ function ContentData({
               </Button>
             </Box>
             <Box>
-              <Button type="submit" rightIcon={<ChevRightIcon height={20} width={20} />}>
+              <Button
+                rightIcon={<ChevRightIcon height={20} width={20} />}
+                onClick={handleSubmit(handleOnNext)}
+              >
                 {labels.buttonNext}
               </Button>
             </Box>
