@@ -6,7 +6,8 @@ const constants = require('../../../config/constants');
 async function sendWelcomeEmailToUser(user, ctx, { transacting } = {}) {
   const recovery = await table.userRegisterPassword.findOne({ user: user.id }, { transacting });
 
-  return leemons
+  console.log('Vamos a mandar el email');
+  const email = await leemons
     .getPlugin('emails')
     .services.email.sendAsPlatform(user.email, 'user-welcome', user.locale, {
       name: user.name,
@@ -18,6 +19,10 @@ async function sendWelcomeEmailToUser(user, ctx, { transacting } = {}) {
       )}`,
       expDays: constants.daysForRegisterPassword,
     });
+
+  console.log('Resultado email');
+  console.log(email);
+  return email;
 }
 
 module.exports = { sendWelcomeEmailToUser };

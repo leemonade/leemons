@@ -5,4 +5,11 @@ async function getAdminDashboard({ program, start, end } = {}) {
   });
 }
 
-export { getAdminDashboard };
+async function getAdminDashboardRealtime() {
+  return leemons.api(`dashboard/admin/realtime`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
+export { getAdminDashboard, getAdminDashboardRealtime };

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Box, ActivityAccordion, ActivityAccordionPanel } from '@bubbles-ui/components';
 import loadable from '@loadable/component';
 import pMinDelay from 'p-min-delay';
@@ -10,6 +10,7 @@ function TypeNotFound({ labels }) {
 }
 
 export default function Submission({ assignation, labels }) {
+  const [state, setState] = useState({ 0: true });
   const submissionType = assignation?.instance?.assignable?.submission?.type;
   const { classes } = styles();
 
@@ -35,7 +36,7 @@ export default function Submission({ assignation, labels }) {
   }
 
   return (
-    <ActivityAccordion>
+    <ActivityAccordion state={state} onChange={setState}>
       <ActivityAccordionPanel label={labels?.title} icon={<PluginAssignmentsIcon />}>
         <Box className={classes?.accordionPanel}>
           <Component assignation={assignation} labels={labels} />

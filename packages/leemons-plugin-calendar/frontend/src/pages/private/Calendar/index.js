@@ -222,8 +222,6 @@ function Calendar({ session }) {
 
   if (ref.current.loading) return <LoadingOverlay visible />;
 
-  console.log(ref.current.centersDataById[ref.current.center.id].events);
-
   return (
     <Box style={{ display: 'flex', width: '100%', height: '100vh' }}>
       <Box style={{ width: '250px', height: '100vh' }}>
