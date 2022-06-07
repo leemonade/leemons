@@ -15,6 +15,7 @@ import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';
 import { listCategoriesRequest } from '@leebrary/request';
 import { useApi } from '@common';
+import { RemoveIcon } from '@bubbles-ui/icons/outline';
 
 const styles = createStyles((theme) => ({
   attachmentContainer: {
@@ -61,7 +62,7 @@ export default function Attachments({ labels }) {
   /*
     --- Form ---
   */
-  const { control, setValue, getValues } = useFormContext();
+  const { setValue, getValues } = useFormContext();
 
   /*
     --- Resources state ---
@@ -70,7 +71,7 @@ export default function Attachments({ labels }) {
   useEffect(async () => {
     const formResources = getValues('resources');
     if (formResources?.length) {
-      const assets = await getAssetsByIds(formResources, { public: true });
+      const assets = await getAssetsByIds(formResources, { public: true, indexable: false });
       const preparedAssets = assets?.assets?.map(prepareAsset);
       if (preparedAssets?.length) {
         setResources(preparedAssets);
@@ -124,13 +125,16 @@ export default function Attachments({ labels }) {
           <LibraryCardEmbed
             asset={{ ...asset, title: asset.name, image: asset.cover }}
             key={asset.id}
-            menuItems={[
-              {
-                icon: <DeleteBinIcon />,
-                children: 'Delete',
-                onClick: () => onAssetRemove(asset),
-              },
-            ]}
+            actionIcon={
+              <Box
+                sx={{ cursor: 'pointer' }}
+                onClick={() => {
+                  onAssetRemove(asset);
+                }}
+              >
+                <RemoveIcon />
+              </Box>
+            }
           />
         ))}
       </Box>
