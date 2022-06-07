@@ -86,7 +86,7 @@ export default function Countdown({ assignation, show = true, onTimeout }) {
   const endDate = useCountdownDate(assignation);
 
   useEffect(() => {
-    if (endDate.isValid() && !opened.current) {
+    if (endDate?.isValid() && !opened.current) {
       const timeUntilEnd = endDate?.diff(dayjs(), 'millisecond');
 
       if (timeUntilEnd <= 0) {
@@ -104,7 +104,7 @@ export default function Countdown({ assignation, show = true, onTimeout }) {
       }
     }
     return null;
-  }, [endDate.format(), showTimeoutModal]);
+  }, [endDate?.format(), showTimeoutModal]);
 
   if (!endDate || !show) {
     return null;
