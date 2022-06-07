@@ -21,6 +21,7 @@ module.exports = async function duplicateAsset(
         category: asset.category,
         public: isPublic,
         indexable,
+        coverFile: asset?.cover?.id,
       },
       { upgrade: false, userSession, transacting }
     );

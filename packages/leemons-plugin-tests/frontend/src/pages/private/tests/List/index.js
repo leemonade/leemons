@@ -8,6 +8,7 @@ import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { useHistory } from 'react-router-dom';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
 import AssetList from '@leebrary/components/AssetList';
+import { prepareAsset } from '@leebrary/helpers/prepareAsset';
 
 const ListPageStyles = createStyles((theme) => ({
   tabPane: {
@@ -22,6 +23,7 @@ const ListPageStyles = createStyles((theme) => ({
 export default function List() {
   const [t] = useTranslateLoader(prefixPN('testsList'));
   const { t: tCommon } = useCommonTranslate('page_header');
+  const [currentAsset, setCurrentAsset] = React.useState(null);
 
   const history = useHistory();
 
@@ -48,7 +50,10 @@ export default function List() {
   }
 
   function goDetailPage(asset) {
-    history.push(`/private/tests/${asset.id}`);
+    // history.push(`/private/tests/${asset.id}`);
+    if (currentAsset?.id !== asset?.id) {
+      setCurrentAsset(prepareAsset(asset));
+    }
   }
 
   React.useEffect(() => {
@@ -65,14 +70,22 @@ export default function List() {
         }}
         buttons={store.canAdd ? { new: tCommon('new') } : {}}
         onNew={() => goCreatePage()}
+        fullWidth
       />
 
-      <Tabs usePageLayout={true} panelColor="solid" fullHeight>
+      <Tabs
+        panelColor="solid"
+        usePageLayout
+        fullHeight
+        fullWidth
+        onTabClick={() => setCurrentAsset(null)}
+      >
         <TabPanel label={t('published')}>
           <Box className={classes.tabPane}>
             <AssetList
               canShowPublicToggle={false}
               published={true}
+              asset={currentAsset}
               showPublic
               variant="embedded"
               category="assignables.tests"
@@ -85,6 +98,7 @@ export default function List() {
             <AssetList
               canShowPublicToggle={false}
               published={false}
+              asset={currentAsset}
               showPublic
               variant="embedded"
               category="assignables.tests"

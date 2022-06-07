@@ -217,6 +217,8 @@ module.exports = {
     gradable: 'Gradable',
     nogradable: 'No gradable',
     task: 'Task',
+    toggle: 'Close',
+    open: 'Open',
   },
   studentInstance: {
     multiSubject: 'Multi-Subject',

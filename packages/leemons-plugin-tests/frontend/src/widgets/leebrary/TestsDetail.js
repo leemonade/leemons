@@ -15,7 +15,7 @@ const TestsDetail = ({ asset, onRefresh, ...props }) => {
   const [t] = useTranslateLoader(prefixPN('testsCard'));
   const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const toolbarItems = {};
+  const toolbarItems = { toggle: t('toggle'), open: t('open') };
 
   // ·········································································
   // HANDLERS

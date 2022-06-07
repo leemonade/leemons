@@ -22,18 +22,7 @@ function replaceTextByComponent(text, replace, component) {
 
   const length = splittedText?.length;
   return splittedText?.reduce?.((acc, current, index) => {
-    console.log(
-      acc,
-      splittedText,
-      'length',
-      length,
-      'index',
-      index,
-      'endsWithReplacement',
-      endsWithReplacement
-    );
     if (index !== length - 1 || endsWithReplacement) {
-      console.log('Push component');
       return [...acc, current, component];
     }
     return [...acc, current];
@@ -44,7 +33,7 @@ const useBeforeStartStyles = createStyles((theme) => ({
   timeLimitContainer: {
     paddingTop: theme.spacing[6],
     width: 500,
-    margin: '0px auto',
+    margin: 0,
     paddingBottom: theme.spacing[5],
   },
   timeLimitContent: {

@@ -78,6 +78,7 @@ CardWrapper.propTypes = {
   category: PropTypes.any,
   isEmbedded: PropTypes.bool,
   single: PropTypes.bool,
+  locale: PropTypes.string,
 };
 
 export { CardWrapper };
