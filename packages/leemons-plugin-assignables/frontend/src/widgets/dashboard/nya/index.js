@@ -12,12 +12,18 @@ import NYACard from '../../../components/NYACard';
 async function getInstancesClassData({ instances, labels }) {
   return Object.fromEntries(
     await Promise.all(
-      instances.map(async (instance) => [
-        instance.id,
-        await getClassData(instance.classes, {
-          multiSubject: labels.multiSubject,
-        }),
-      ])
+      instances?.map(async (object) => {
+        let instance = object;
+        if (object?.instance) {
+          instance = object?.instance;
+        }
+        return [
+          instance.id,
+          await getClassData(instance.classes, {
+            multiSubject: labels.multiSubject,
+          }),
+        ];
+      })
     )
   );
 }
