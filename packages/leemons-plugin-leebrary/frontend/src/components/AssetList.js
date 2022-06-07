@@ -76,6 +76,7 @@ const AssetList = ({
   paperProps,
   emptyComponent,
   searchEmptyComponent,
+  preferCurrent,
   onSelectItem = () => {},
   onEditItem = () => {},
   onTypeChange = () => {},
@@ -169,6 +170,7 @@ const AssetList = ({
           published,
           showPublic: !pinned ? showPublic : true,
           pinned,
+          preferCurrent,
         };
         // console.log('query:', query);
         const response = await getAssetsRequest(query);
@@ -433,7 +435,8 @@ const AssetList = ({
   // ·········································································
   // LABELS & STATIC
 
-  const columns = useMemo(() => ([
+  const columns = useMemo(
+    () => [
       {
         Header: t('tableLabels.name'),
         accessor: 'name',
@@ -449,7 +452,9 @@ const AssetList = ({
         accessor: 'updated',
         valueRender: (_, row) => <LocaleDate date={row.updated_at} />,
       },
-    ]), [t]);
+    ],
+    [t]
+  );
 
   const cardVariant = useMemo(() => {
     let option = 'media';
@@ -464,8 +469,15 @@ const AssetList = ({
   }, [category]);
 
   const showDrawer = useMemo(() => !loading && !isNil(asset) && !isEmpty(asset), [loading, asset]);
-  const headerOffset = useMemo(() => Math.round(childRect.bottom + childRect.top), [childRect]);
   const isEmbedded = useMemo(() => variant === 'embedded', [variant]);
+
+  const headerOffset = useMemo(() => {
+    const offsets = childRef.current?.getBoundingClientRect() || childRect;
+    return Math.round(
+      offsets.top + childRect.top + childRect.bottom + (isEmbedded ? childRect.height : 0)
+    );
+  }, [childRect, isEmbedded]);
+
   const listProps = useMemo(() => {
     if (!onlyThumbnails && layout === 'grid') {
       return {
@@ -599,7 +611,7 @@ const AssetList = ({
         fullHeight
         style={
           isEmbedded
-            ? {}
+            ? { marginRight: showDrawer && drawerRect.width }
             : {
                 marginTop: headerOffset,
                 marginRight: drawerRect.width,
@@ -669,9 +681,15 @@ const AssetList = ({
         }}
       >
         {showDrawer && (
-          <Box style={{ background: '#FFF', width: openDetail ? 360 : 'auto', height: '100%' }}>
+          <Box
+            style={{
+              background: !isEmbedded && '#FFF',
+              width: openDetail ? 360 : 'auto',
+              height: '100%',
+            }}
+          >
             <CardDetailWrapper
-              category={category}
+              category={category || {}}
               asset={asset}
               labels={detailLabels}
               variant={cardVariant}
@@ -712,6 +730,7 @@ AssetList.defaultProps = {
   published: true,
   showPublic: false,
   pinned: false,
+  preferCurrent: true,
   canShowPublicToggle: true,
   paperProps: { color: 'none', shadow: 'none' },
 };
@@ -746,6 +765,7 @@ AssetList.propTypes = {
   searchEmptyComponent: PropTypes.element,
   onLoaded: PropTypes.func,
   onLoading: PropTypes.func,
+  preferCurrent: PropTypes.bool,
 };
 
 export { AssetList };

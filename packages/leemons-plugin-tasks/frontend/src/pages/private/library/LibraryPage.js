@@ -5,6 +5,7 @@ import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import AssetList from '@leebrary/components/AssetList';
+import { prepareAsset } from '@leebrary/helpers/prepareAsset';
 import { prefixPN } from '../../../helpers';
 
 const LibraryPageStyles = createStyles((theme) => ({
@@ -27,6 +28,7 @@ const LibraryPageStyles = createStyles((theme) => ({
 export default function LibraryPage() {
   const [t] = useTranslateLoader(prefixPN('library_page'));
   const { t: tCommonHeader } = useCommonTranslate('page_header');
+  const [currentAsset, setCurrentAsset] = React.useState(null);
 
   const history = useHistory();
 
@@ -38,7 +40,10 @@ export default function LibraryPage() {
   };
 
   const handleOnSelectTask = (item) => {
-    history.push(`/private/tasks/library/edit/${item.providerData?.id}`);
+    // history.push(`/private/tasks/library/edit/${item.providerData?.id}`);
+    if (currentAsset?.id !== item?.id) {
+      setCurrentAsset(prepareAsset(item));
+    }
   };
 
   // ·········································································
@@ -67,9 +72,20 @@ export default function LibraryPage() {
 
   return (
     <ContextContainer fullHeight>
-      <AdminPageHeader values={headerLabels} buttons={headerButtons} onNew={handleOnNewTask} />
+      <AdminPageHeader
+        values={headerLabels}
+        buttons={headerButtons}
+        onNew={handleOnNewTask}
+        fullWidth
+      />
 
-      <Tabs usePageLayout={true} panelColor="solid" fullHeight>
+      <Tabs
+        usePageLayout
+        panelColor="solid"
+        fullHeight
+        fullWidth
+        onTabClick={() => setCurrentAsset(null)}
+      >
         {/* TRANSLATE: Published tab */}
         <TabPanel label={headerLabels.published}>
           <Box className={classes.tabPane}>
@@ -77,6 +93,7 @@ export default function LibraryPage() {
               canShowPublicToggle={false}
               published
               showPublic
+              asset={currentAsset}
               variant="embedded"
               category="assignables.task"
               onSelectItem={handleOnSelectTask}
@@ -90,6 +107,7 @@ export default function LibraryPage() {
               canShowPublicToggle={false}
               published={false}
               showPublic
+              asset={currentAsset}
               variant="embedded"
               category="assignables.task"
               onSelectItem={handleOnSelectTask}

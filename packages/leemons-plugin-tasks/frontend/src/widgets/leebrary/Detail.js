@@ -11,7 +11,7 @@ const Detail = ({ asset, onRefresh, ...props }) => {
   const history = useHistory();
   const [t] = useTranslateLoader(prefixPN('testsCard'));
   const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
-  const toolbarItems = {};
+  const toolbarItems = { toggle: t('toggle'), open: t('open') };
 
   const handleClick = (url, target = 'self', callback) => {
     if (target === 'self') {
