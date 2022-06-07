@@ -92,7 +92,9 @@ Icon.propTypes = {
 };
 
 const programImages = [
-  'https://s3-alpha-sig.figma.com/img/eb37/89f0/596b7437979740e500e082a33e6ca9e0?Expires=1655683200&Signature=OdEKSCGmNe8Fj9RmnpdHlLd1D4tllBDuIXYGMJOTtcrVsJL0Ai3ELs0v77vb9bBMYCO-Iu3xzdyZ4rlUZVvrLpaJ36PakgJSzB7vVgRMsqS8ajhmdqQ6W04kzhLgKnGa6Rq-zNWylPrZemXFKRrQsfTvIpfN3eOJyk9-bw9BHrz7inDDq-yjd8SuOKazlixWq~Kwhjex4-qPPh2u0WIzW36OAb8I1yn8tg4vyMdOEBSU8ows6nwnMCjzo2IpRmWZxpPNbu8e-n9rnJLexnjeqNjIKLjEfm~mn3Wor1OxWUTwuFG3oMduB2uld5i8sWMnOarHkK7fbZHiInYG~k532g__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA',
+  'https://images.unsplash.com/photo-1464983308776-3c7215084895?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2748&q=80',
+  'https://images.unsplash.com/photo-1568792923760-d70635a89fdc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2970&q=80',
+  'https://images.unsplash.com/photo-1564429238817-393bd4286b2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=4032&q=80',
 ];
 
 export default function AdminDashboard({ session }) {
