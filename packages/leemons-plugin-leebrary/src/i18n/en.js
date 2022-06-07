@@ -14,6 +14,7 @@ module.exports = {
     header: {
       back: 'Back',
       close: 'Close',
+      title: 'Library',
     },
     basicData: {
       header: {
@@ -30,6 +31,8 @@ module.exports = {
         featuredImage: 'Featured image',
         tags: 'Tags',
         addTag: 'Add tag',
+        browseFile: 'Click to browse your file',
+        dropFile: 'or drop here a file from your computer',
         changeImage: 'Change image',
         uploadButton: 'Upload image',
         search: 'Search from library',
@@ -61,10 +64,10 @@ module.exports = {
         color: 'Select a color',
       },
       errorMessages: {
-        name: 'Name is required',
-        url: 'URL is required',
-        file: 'File is required',
-        tags: 'Write a tag to add it',
+        name: { required: 'Name is required' },
+        url: { required: 'URL is required' },
+        file: { required: 'File is required', rejected: 'File was rejected' },
+        tags: { required: 'Write a tag to add it' },
       },
     },
     permissionsData: {
@@ -109,6 +112,11 @@ module.exports = {
   list: {
     show: 'Show',
     goTo: 'Go to',
+    tableLabels: {
+      name: 'Name',
+      owner: 'Owner',
+      updated: 'Last change',
+    },
     labels: {
       duplicateSuccess: 'Asset successfully duplicated',
       removeSuccess: 'Asset successfully removed',

@@ -8,13 +8,43 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { LibraryForm } from '../LibraryForm/LibraryForm';
 import prefixPN from '../../helpers/prefixPN';
 import { prepareAsset } from '../../helpers/prepareAsset';
-import { newAssetRequest } from '../../request';
+import { newAssetRequest, updateAssetRequest } from '../../request';
 
-const BookmarkBasicData = ({ categoryId, onSave = () => {}, onNext = () => {} }) => {
+const BookmarkBasicData = ({
+  asset: assetProp,
+  editing,
+  categoryId,
+  onSave = () => {},
+  onNext = () => {},
+}) => {
   const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const [loading, setLoading] = useState(false);
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState(assetProp?.tags || []);
   const [, , , getErrorMessage] = useRequestErrorMessage();
+
+  // ··············································································
+  // LABELS & STATICS
+
+  const formLabels = useMemo(() => {
+    if (!isEmpty(translations)) {
+      const items = unflatten(translations.items);
+      const data = items.plugins.leebrary.assetSetup.basicData;
+
+      data.labels.title = editing ? data.header.titleEdit : data.header.titleNew;
+      data.labels.submitForm = editing ? data.labels.submitChanges : data.labels.submitForm;
+
+      return data;
+    }
+    return {};
+  }, [translations]);
+
+  const preparedAsset = useMemo(() => {
+    if (assetProp) {
+      console.log(assetProp);
+      return prepareAsset(assetProp);
+    }
+    return {};
+  }, [assetProp]);
 
   // ··············································································
   // HANDLERS
@@ -24,13 +54,23 @@ const BookmarkBasicData = ({ categoryId, onSave = () => {}, onNext = () => {} })
   };
 
   const handleOnSubmit = async (data) => {
+    let { cover } = data;
+    if (cover === preparedAsset.cover) {
+      cover = assetProp.cover;
+    }
+
+    const requestMethod = editing ? updateAssetRequest : newAssetRequest;
+
     setLoading(true);
 
     try {
-      const { asset } = await newAssetRequest({ ...data, tags }, categoryId, 'bookmarks');
+      const { asset } = await requestMethod({ ...data, cover, tags }, categoryId, 'bookmarks');
+
       onSave(prepareAsset(asset));
       setLoading(false);
-      addSuccessAlert(t('basicData.labels.createdSuccess'));
+      addSuccessAlert(
+        editing ? t('basicData.labels.updatedSuccess') : t('basicData.labels.createdSuccess')
+      );
       onNext();
     } catch (err) {
       setLoading(false);
@@ -39,23 +79,16 @@ const BookmarkBasicData = ({ categoryId, onSave = () => {}, onNext = () => {} })
   };
 
   // ··············································································
-  // LABELS & STATICS
-
-  const formLabels = useMemo(() => {
-    if (!isEmpty(translations)) {
-      const items = unflatten(translations.items);
-      const data = items.plugins.leebrary.assetSetup.basicData;
-      data.labels.title = data.bookmark.title;
-      return data;
-    }
-    return {};
-  }, [translations]);
-
-  // ··············································································
   // RENDER
 
   return (
-    <LibraryForm {...formLabels} type="bookmarks" loading={loading} onSubmit={handleOnSubmit}>
+    <LibraryForm
+      {...formLabels}
+      asset={{ ...assetProp, cover: preparedAsset.cover }}
+      type="bookmarks"
+      loading={loading}
+      onSubmit={handleOnSubmit}
+    >
       <ContextContainer subtitle="Tags" spacing={1}>
         <TagsAutocomplete
           pluginName="leebrary"
@@ -71,6 +104,8 @@ const BookmarkBasicData = ({ categoryId, onSave = () => {}, onNext = () => {} })
 
 BookmarkBasicData.propTypes = {
   categoryId: PropTypes.string.isRequired,
+  editing: PropTypes.bool,
+  asset: PropTypes.instanceOf(Object),
   onSave: PropTypes.func,
   onNext: PropTypes.func,
 };

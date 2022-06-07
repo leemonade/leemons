@@ -1,6 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Paper, ImageLoader, createStyles } from '@bubbles-ui/components';
+import {
+  Box,
+  Stack,
+  FileIcon,
+  ImageLoader,
+  createStyles,
+  Text,
+  COLORS,
+} from '@bubbles-ui/components';
 import { prepareAsset } from '../helpers/prepareAsset';
 
 const AssetThumbnailStyles = createStyles((theme, { selected }) => ({
@@ -15,16 +23,41 @@ const AssetThumbnailStyles = createStyles((theme, { selected }) => ({
       boxShadow: theme.shadows.shadow03,
     },
   },
+  fileIcon: {
+    height: 170,
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+    backgroundColor: theme.colors.interactive03h,
+    padding: theme.spacing[3],
+    borderRadius: 4,
+  },
 }));
 
 const AssetThumbnail = ({ key, item, selected, headers, className, ...props }) => {
-  const asset = prepareAsset(item.original);
-  const { classes } = AssetThumbnailStyles({ selected });
+  const asset = prepareAsset(item.original || item);
+  const { classes, cx } = AssetThumbnailStyles({ selected });
 
   return (
     <Box key={key} {...props}>
-      <Box className={classes.root}>
-        <ImageLoader src={asset.cover} height={170} />
+      <Box className={cx(classes.root, { [classes.fileIcon]: !asset.cover })}>
+        {asset.cover ? (
+          <ImageLoader src={asset.cover} height={170} />
+        ) : (
+          <Stack direction="column" spacing={2}>
+            <FileIcon
+              size={32}
+              fileExtension={asset.fileExtension}
+              fileType={asset.fileType}
+              color={'#B9BEC4'}
+              iconStyle={{ backgroundColor: COLORS.interactive03h }}
+              hideExtension
+            />
+            <Box>
+              <Text color="soft">{asset.name}</Text>
+            </Box>
+          </Stack>
+        )}
       </Box>
     </Box>
   );

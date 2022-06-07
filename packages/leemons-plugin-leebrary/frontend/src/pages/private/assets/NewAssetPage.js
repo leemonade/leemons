@@ -1,10 +1,9 @@
 /* eslint-disable no-unreachable */
 import React, { useEffect, useMemo, useState, useContext } from 'react';
-import { isEmpty, isArray, find } from 'lodash';
+import { isEmpty, isArray } from 'lodash';
 import { useHistory, useParams } from 'react-router-dom';
-import { Box, Stack, ActionButton, Paper, createStyles, SearchInput } from '@bubbles-ui/components';
-import { ChevronLeftIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
-import { PluginLeebraryIcon } from '@bubbles-ui/icons/solid';
+import { Box, Stack, ActionButton, createStyles } from '@bubbles-ui/components';
+import { ChevronLeftIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '../../../helpers/prefixPN';
 import LibraryContext from '../../../context/LibraryContext';
@@ -24,8 +23,7 @@ const NewAssetPageStyles = createStyles((theme) => ({
 }));
 
 const NewAssetPage = () => {
-  const { file, setView, category, categories, selectCategory, setAsset, asset } =
-    useContext(LibraryContext);
+  const { file, setView, category, selectCategory, setAsset, asset } = useContext(LibraryContext);
   const [t] = useTranslateLoader(prefixPN('assetSetup'));
   const history = useHistory();
   const params = useParams();
@@ -73,8 +71,6 @@ const NewAssetPage = () => {
     }
     return null;
   }, [t, file, category, asset]);
-
-  const mediaFileCategory = useMemo(() => find(categories, { key: 'media-files' }), [categories]);
 
   const { classes, cx } = NewAssetPageStyles({}, { name: 'NewAssetPage' });
 

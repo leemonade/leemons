@@ -59,7 +59,7 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labe
                   </ContextContainer>
                 </Box>
               )}
-              {showObjectives && curriculum?.objectives?.length && (
+              {!!showObjectives && !!curriculum?.objectives?.length && (
                 <Box sx={tabPanelStyle}>
                   <ContextContainer>
                     <Title color="primary" order={4}>

@@ -1,4 +1,3 @@
-const fs = require('fs');
 const { getById } = require('./getById');
 
 async function dataForReturnFile(id, { transacting } = {}) {
@@ -14,7 +13,7 @@ async function dataForReturnFile(id, { transacting } = {}) {
       file,
       contentType: file.type,
       fileName: `${file.name}.${file.extension}`,
-      readStream: fs.createReadStream(file.uri),
+      readStream: leemons.fs.createReadStream(file.uri),
     };
   }
 

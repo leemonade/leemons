@@ -189,6 +189,10 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
             if (plugin.name === 'leebrary') return fs.readFile(...rest);
             throw new Error('Only the plugin leebrary have access to readFile');
           },
+          writeFile: (...rest) => {
+            if (plugin.name === 'leebrary') return fs.writeFile(...rest);
+            throw new Error('Only the plugin leebrary have access to writeFile');
+          },
           open: (...rest) => {
             if (plugin.name === 'leebrary') return fs.open(...rest);
             throw new Error('Only the plugin leebrary have access to open');
@@ -200,6 +204,10 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
           unlink: (...rest) => {
             if (plugin.name === 'leebrary') return fs.unlink(...rest);
             throw new Error('Only the plugin leebrary have access to unlink');
+          },
+          createReadStream: (...rest) => {
+            if (plugin.name === 'leebrary') return fss.createReadStream(...rest);
+            throw new Error('Only the plugin leebrary have access to createReadStream');
           },
           write: (...rest) => {
             if (plugin.name === 'leebrary') return fss.write(...rest);

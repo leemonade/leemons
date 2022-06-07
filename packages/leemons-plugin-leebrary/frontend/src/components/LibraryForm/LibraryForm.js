@@ -123,6 +123,7 @@ const LibraryForm = ({
     description: asset?.description || '',
     color: asset?.color || '',
     cover: asset?.cover || null,
+    url: asset?.url || null,
   };
 
   const {
@@ -260,9 +261,12 @@ const LibraryForm = ({
                 render={({ field: { ref, value, ...field } }) => (
                   <FileUpload
                     icon={<CloudUploadIcon height={32} width={32} />}
-                    title="Click to browse your file"
-                    subtitle="or drop here a file from your computer"
-                    errorMessage={{ title: 'Error', message: 'File was rejected' }}
+                    title={labels.browseFile}
+                    subtitle={labels.dropFile}
+                    errorMessage={{
+                      title: 'Error',
+                      message: errorMessages.file?.rejected || 'File was rejected',
+                    }}
                     hideUploadButton
                     single
                     initialFiles={value ? [value] : []}
@@ -406,7 +410,7 @@ const LibraryForm = ({
               <Stack direction="row" spacing={3}>
                 {!coverFile && (
                   <Button variant={'outline'} onClick={() => setShowAssetDrawer(true)}>
-                    Search from library
+                    {labels.search}
                   </Button>
                 )}
                 <Controller

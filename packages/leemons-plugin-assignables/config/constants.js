@@ -141,6 +141,13 @@ const widgets = {
         label: `${pluginName}.ongoing.activities`,
       },
     },
+    // --- NYA (Subject Dashboard Ongoing) ---
+    {
+      // zoneKey: 'plugins.dashboard.class.control-panel',
+      zoneKey: `${pluginName}.class.ongoing`,
+      key: `${pluginName}.dashboard.subject.need-your-attention`,
+      url: 'dashboard/nya/index',
+    },
     // --- Class (Ongoing) ---
     {
       zoneKey: `${pluginName}.class.ongoing`,
@@ -151,12 +158,6 @@ const widgets = {
     {
       zoneKey: 'plugins.dashboard.program.left',
       key: `${pluginName}.dashboard.need-your-attention`,
-      url: 'dashboard/nya/index',
-    },
-    // --- NYA (Subject Dashboard) ---
-    {
-      zoneKey: 'plugins.dashboard.class.control-panel',
-      key: `${pluginName}.dashboard.subject.need-your-attention`,
       url: 'dashboard/nya/index',
     },
   ],

@@ -22,7 +22,7 @@ async function add({ url, iconUrl }, asset, { transacting: t } = {}) {
           { transacting }
         );
 
-        icon = iconFile.id;
+        icon = iconFile?.id;
       }
 
       const bookmark = await tables.bookmarks.create(

@@ -24,17 +24,17 @@ const widgets = {
     { key: 'plugins.dashboard.program.right' },
     { key: 'plugins.dashboard.class.tabs' },
     { key: 'plugins.dashboard.class.right-tabs' },
-    { key: 'plugins.dashboard.class.control-panel' },
+    // { key: 'plugins.dashboard.class.control-panel' },
   ],
   items: [
-    {
-      zoneKey: 'plugins.dashboard.class.tabs',
-      key: `plugins.dashboard.class.tab.control-panel`,
-      url: 'tab-control-panel/index',
-      properties: {
-        label: 'plugins.dashboard.tabControlPanel.label',
-      },
-    },
+    // {
+    //   zoneKey: 'plugins.dashboard.class.tabs',
+    //   key: `plugins.dashboard.class.tab.control-panel`,
+    //   url: 'tab-control-panel/index',
+    //   properties: {
+    //     label: 'plugins.dashboard.tabControlPanel.label',
+    //   },
+    // },
   ],
 };
 

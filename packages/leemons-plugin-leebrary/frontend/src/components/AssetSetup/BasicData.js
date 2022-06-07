@@ -104,8 +104,8 @@ const BasicData = ({
 
 BasicData.propTypes = {
   categoryId: PropTypes.string.isRequired,
-  editing: PropTypes.bool,
   file: PropTypes.instanceOf(Object),
+  editing: PropTypes.bool,
   asset: PropTypes.instanceOf(Object),
   onSave: PropTypes.func,
   onNext: PropTypes.func,

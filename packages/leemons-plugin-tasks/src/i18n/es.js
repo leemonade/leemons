@@ -134,7 +134,7 @@ module.exports = {
           development: 'Desarrollo de la tarea',
           statementAndDevelopmentTitle: 'Enunciado y desarrollo',
           attachmentsTitle: 'Recursos', // NEW
-          searchFromLibrary: 'Buscar en la biblioteca', // NEW
+          searchFromLibrary: 'Añadir documentos y multimedia', // NEW
           content: 'Contenidos', // NEW
           assessmentCriteria: 'Criterios de evaluación', // NEW
           objectives: 'Objetivos personalizados', // NEW
@@ -323,7 +323,7 @@ module.exports = {
       },
       title: 'Finalizar y entregar esta tarea',
       description:
-        '<p>Si haces click en "Confirmar entrega", tu tarea será enviada a un revisor y ya no podrás modificar el/los entregable/s seleccionado/s. Si solo deseas guardar el trabajo hecho hasta ahora, puedes cancelar esta acción y pulsar sobre "Solo guardar".</p><p>Al confirmar la entrega, el sistema te redireccionará a la sección de "Actividades en curso" dónde podrás revisar las tareas una vez sean corregidas.</p>',
+        '<p>Si haces click en "Confirmar entrega", tu tarea será enviada a un revisor y ya no podrás modificar el/los entregable/s seleccionado/s. Si cancelas ahora, la entrega quedará guardada automáticamente y puedes modificarla más tarde</p><p>Al confirmar la entrega, el sistema te redireccionará a la sección de "Actividades en curso" dónde podrás revisar las tareas una vez sean corregidas.</p>',
     },
     buttons: {
       previous: 'Anterior',
@@ -372,19 +372,20 @@ module.exports = {
       submission_state: {
         error: {
           title: 'Error',
-          message: 'No se han podido guardar los cambios: {{error}}',
+          message: 'Ha habido algún error al guardar, por favor, vuelve a intentarlo.',
         },
         loading: {
           title: 'Guardando',
           message: 'Guardando los cambios...',
         },
         submitted: {
-          title: 'Entregado',
-          message: 'Tarea entregada con éxito',
+          title: 'Guardada',
+          message: 'Entrega guardada con éxito',
         },
         notSubmitted: {
-          title: 'No entregado',
-          message: 'Todavía no se ha entregado la tarea',
+          title: 'Atención',
+          message:
+            'Ahora puedes guardar la tarea y entregarla más tarde (cuidado si la tarea tiene tiempo límite) o entregarla inmediatamente pulsando en el botón de "Entregar".',
         },
       },
       submission: 'Entrega',

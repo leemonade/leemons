@@ -160,16 +160,16 @@ module.exports = {
         url: 'user-program-kanban/index',
       },
       // ---- Class (Control Panel)
-      {
-        zoneKey: 'plugins.dashboard.class.control-panel',
-        key: `${permissionsPrefix}.user.class.calendar`,
-        url: 'user-program-calendar/index',
-      },
-      {
-        zoneKey: 'plugins.dashboard.class.control-panel',
-        key: `${permissionsPrefix}.user.class.kanban`,
-        url: 'user-program-kanban/index',
-      },
+      // {
+      //   zoneKey: 'plugins.dashboard.class.control-panel',
+      //   key: `${permissionsPrefix}.user.class.calendar`,
+      //   url: 'user-program-calendar/index',
+      // },
+      // {
+      //   zoneKey: 'plugins.dashboard.class.control-panel',
+      //   key: `${permissionsPrefix}.user.class.kanban`,
+      //   url: 'user-program-kanban/index',
+      // },
       // ---- Class (Kanban)
       {
         zoneKey: `${permissionsPrefix}.class.kanban`,

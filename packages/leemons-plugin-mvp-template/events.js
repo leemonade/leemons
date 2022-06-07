@@ -106,8 +106,6 @@ async function events(isInstalled) {
       ],
       async () => {
         console.log('MVP - Iniciando el plugin de Leebrary');
-        leemons.events.emit('init-leebrary-provider', config.assets);
-
         config.assets = await initLibrary(config);
         leemons.events.emit('init-leebrary', config.assets);
         console.log('MVP - Plugin de Leebrary inicializado!');
@@ -137,7 +135,7 @@ async function events(isInstalled) {
         'plugins.mvp-template:init-centers',
         'plugins.mvp-template:init-users',
         'plugins.mvp-template:init-grades',
-        'plugins.mvp-template:init-leebrary-provider',
+        'plugins.mvp-template:init-leebrary',
       ],
       async () => {
         try {

@@ -278,7 +278,11 @@ export default function TaskDetail({ id, student }) {
           />
         </Box>
         <Box className={classes?.content}>
-          <Countdown assignation={assignation} show={step?.countdown === true} />
+          <Countdown
+            assignation={assignation}
+            show={step?.countdown === true}
+            onTimeout={() => updateTimestamps(assignation, 'end')}
+          />
           {step?.component}
           <LimitedTimeAlert
             assignation={assignation}
@@ -301,7 +305,6 @@ export default function TaskDetail({ id, student }) {
             <Stack spacing={3}>
               {step?.save !== undefined && step?.save !== false && (
                 <Button
-                  rightIcon={<ChevRightIcon height={20} width={20} />}
                   variant="outline"
                   disabled={disabledButtons.save}
                   onClick={handleSave}

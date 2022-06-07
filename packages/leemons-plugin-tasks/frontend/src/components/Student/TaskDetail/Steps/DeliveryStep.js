@@ -54,12 +54,18 @@ export default function DeliveryStep({ assignation, onSave, labels: _labels, dis
 
     setStatus(newStatus);
 
-    if (newStatus === 'cleared' || newStatus === 'changed' || newStatus === 'error') {
+    if (newStatus === 'cleared') {
+      disableButton('save', true);
+      disableButton('next', true);
+    } else if (newStatus === 'cleared' || newStatus === 'changed' || newStatus === 'error') {
       if (e) {
         setError(e);
       }
+
+      // EN: If it is cleared and is the first render, disable the save button
+      // ES: Si se ha borrado y es la primera renderización, deshabilitar el botón de guardar
       disableButton('save', false);
-      disableButton('next', true);
+      disableButton('next', false);
     } else if (newStatus === 'submitted') {
       disableButton('save', true);
       disableButton('next', false);

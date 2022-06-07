@@ -81,7 +81,7 @@ const AssetListDrawer = ({
       canChangeLayout={false}
       canSearch
       onSelectItem={onSelect}
-      itemMinWidth={assetType === 'image' ? 200 : undefined}
+      itemMinWidth={assetType === 'image' ? 200 : props.itemMinWidth}
     />
   );
 
@@ -117,7 +117,7 @@ const AssetListDrawer = ({
         >
           {creatable ? (
             <Tabs fullHeight>
-              <TabPanel key="library" label="Library">
+              <TabPanel key="library" label={t('header.title')}>
                 <Box
                   sx={(theme) => ({
                     marginTop: theme.spacing[5],
@@ -127,7 +127,7 @@ const AssetListDrawer = ({
                   {LibraryList}
                 </Box>
               </TabPanel>
-              <TabPanel key="create" label="New resource">
+              <TabPanel key="create" label={t('basicData.header.titleNew')}>
                 <Box
                   sx={(theme) => ({
                     marginTop: theme.spacing[5],
@@ -160,6 +160,8 @@ AssetListDrawer.defaultProps = {
   opened: false,
   position: 'right',
   size: 500,
+  pageSize: 50,
+  pageSizes: [50, 100, 150],
   layout: 'grid',
   assetType: 'image',
   canChangeType: false,
@@ -172,6 +174,8 @@ AssetListDrawer.propTypes = {
   opened: PropTypes.bool,
   position: PropTypes.oneOf(['left', 'right']),
   size: PropTypes.number,
+  pageSize: PropTypes.number,
+  pageSizes: PropTypes.array,
   onClose: PropTypes.func,
   categories: PropTypes.arrayOf(PropTypes.object),
   category: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
@@ -183,6 +187,7 @@ AssetListDrawer.propTypes = {
   creatable: PropTypes.bool,
   onlyCreateImages: PropTypes.bool,
   shadow: PropTypes.bool,
+  itemMinWidth: PropTypes.number,
 };
 
 export { AssetListDrawer };

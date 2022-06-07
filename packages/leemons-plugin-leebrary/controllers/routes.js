@@ -54,6 +54,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/assets/has-pins',
+    method: 'GET',
+    handler: 'assets.hasPins',
+    authenticated: true,
+  },
+  {
     path: '/assets/:id',
     method: 'POST',
     handler: 'assets.duplicate',

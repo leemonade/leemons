@@ -12,7 +12,7 @@ function useQuery() {
 }
 
 const ListAssetPage = () => {
-  const { setView, view, categories, asset, setAsset, category, setCategory, selectCategory } =
+  const { setView, view, categories, asset, setAsset, category, selectCategory, setLoading } =
     useContext(LibraryContext);
   const [currentAsset, setCurrentAsset] = useState(asset);
   const [searchCriteria, setSearchCriteria] = useState('');
@@ -183,6 +183,7 @@ const ListAssetPage = () => {
       onShowPublic={handleOnShowPublic}
       assetType={assetType}
       pinned={category?.key === 'pins'}
+      onLoading={setLoading}
     />
   ) : null;
 };
