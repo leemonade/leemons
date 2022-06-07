@@ -29,6 +29,7 @@ export default function Form({
     handleSubmit,
     control,
     watch,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues,
@@ -69,6 +70,16 @@ export default function Form({
     }
   };
 
+  function setAllDay(e) {
+    e.setHours(23, 59, 59);
+    setValue('dates.deadline', e);
+    e.setHours(0, 0, 0);
+    setValue('dates.start', e);
+  }
+
+  const isAllDay = watch('isAllDay');
+  const deadline = watch('dates.deadline');
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
       <ContextContainer divided>
@@ -97,106 +108,138 @@ export default function Form({
               label={labels?.alwaysOpenToogle}
               showOnTrue={false}
               render={() => (
-                <Grid>
-                  <Grid.Col span={6}>
-                    {/* <ContextContainer direction="row"> */}
+                <>
+                  <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
                     <Controller
                       control={control}
-                      name="dates.start"
-                      rules={{ required: true }}
+                      name="isAllDay"
                       render={({ field }) => (
-                        <DatePicker
-                          {...field}
-                          withTime
-                          minDate={new Date()}
-                          error={errors.startDate}
-                          label={labels?.startDate}
-                          placeholder={placeholders?.date}
+                        <Switch
+                          checked={field.value}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            if (e && deadline) {
+                              setAllDay(deadline);
+                            }
+                          }}
+                          label="Todo el dia"
                         />
                       )}
                     />
-                  </Grid.Col>
-                  <Grid.Col span={6}>
-                    <Controller
-                      control={control}
-                      name="dates.deadline"
-                      rules={{ required: true }}
-                      render={({ field }) => {
-                        const startDate = watch('dates.start');
-                        return (
-                          <DatePicker
-                            {...field}
-                            withTime
-                            error={errors.deadline}
-                            label={labels?.deadline}
-                            minDate={startDate}
-                            placeholder={placeholders?.date}
-                          />
-                        );
-                      }}
-                    />
-                  </Grid.Col>
-                  {/* </ContextContainer> */}
-                  <Grid.Col span={6}>
-                    <ConditionalInput
-                      label={labels?.visualizationDateToogle}
-                      help={descriptions?.visualizationDate}
-                      render={() => (
-                        <ContextContainer direction="row" alignItems="end">
-                          <Controller
-                            control={control}
-                            name="dates.visualization"
-                            shouldUnregister={true}
-                            rules={{ required: true }}
-                            render={({ field }) => {
-                              const startDate = watch('dates.start');
-                              return (
-                                <DatePicker
-                                  {...field}
-                                  withTime
-                                  minDate={new Date()}
-                                  maxDate={startDate}
-                                  error={errors.visualizationDate}
-                                  label={labels?.visualizationDate}
-                                  placeholder={placeholders?.date}
-                                />
-                              );
-                            }}
-                          />
-                        </ContextContainer>
-                      )}
-                    />
-                  </Grid.Col>
-                  <Grid.Col span={6}>
-                    <ConditionalInput
-                      label={`${labels?.closeDateToogle}\n `}
-                      help={descriptions?.closeDateToogle}
-                      render={() => (
-                        <ContextContainer direction="row" alignItems="end">
-                          <Controller
-                            control={control}
-                            name="dates.close"
-                            shouldUnregister={true}
-                            rules={{ required: true }}
-                            render={({ field }) => {
-                              const deadline = watch('dates.deadline');
-                              return (
-                                <DatePicker
-                                  {...field}
-                                  withTime
-                                  minDate={deadline}
-                                  error={errors.closeDate}
-                                  label={labels?.closeDate}
-                                  placeholder={placeholders?.date}
-                                />
-                              );
-                            }}
-                          />
-                        </ContextContainer>
-                      )}
-                    />
-                  </Grid.Col>
-                </Grid>
+                  </Box>
+                  <Grid>
+                    {!isAllDay ? (
+                      <Grid.Col span={6}>
+                        {/* <ContextContainer direction="row"> */}
+                        <Controller
+                          control={control}
+                          name="dates.start"
+                          rules={{ required: true }}
+                          render={({ field }) => (
+                            <DatePicker
+                              {...field}
+                              withTime
+                              minDate={new Date()}
+                              error={errors.startDate}
+                              label={labels?.startDate}
+                              placeholder={placeholders?.date}
+                            />
+                          )}
+                        />
+                      </Grid.Col>
+                    ) : null}
+
+                    <Grid.Col span={6}>
+                      <Controller
+                        control={control}
+                        name="dates.deadline"
+                        rules={{ required: true }}
+                        render={({ field }) => {
+                          const startDate = watch('dates.start');
+                          return (
+                            <DatePicker
+                              {...field}
+                              onChange={(e) => {
+                                if (isAllDay) {
+                                  setAllDay(e);
+                                } else {
+                                  field.onChange(e);
+                                }
+                              }}
+                              withTime={!isAllDay}
+                              error={errors.deadline}
+                              label={labels?.deadline}
+                              minDate={startDate}
+                              placeholder={placeholders?.date}
+                            />
+                          );
+                        }}
+                      />
+                    </Grid.Col>
+                    {/* </ContextContainer> */}
+                  </Grid>
+                  <Grid>
+                    <Grid.Col span={6}>
+                      <ConditionalInput
+                        label={labels?.visualizationDateToogle}
+                        help={descriptions?.visualizationDate}
+                        render={() => (
+                          <ContextContainer direction="row" alignItems="end">
+                            <Controller
+                              control={control}
+                              name="dates.visualization"
+                              shouldUnregister={true}
+                              rules={{ required: true }}
+                              render={({ field }) => {
+                                const startDate = watch('dates.start');
+                                return (
+                                  <DatePicker
+                                    {...field}
+                                    withTime
+                                    minDate={new Date()}
+                                    maxDate={startDate}
+                                    error={errors.visualizationDate}
+                                    label={labels?.visualizationDate}
+                                    placeholder={placeholders?.date}
+                                  />
+                                );
+                              }}
+                            />
+                          </ContextContainer>
+                        )}
+                      />
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                      <ConditionalInput
+                        label={`${labels?.closeDateToogle}\n `}
+                        help={descriptions?.closeDateToogle}
+                        render={() => (
+                          <ContextContainer direction="row" alignItems="end">
+                            <Controller
+                              control={control}
+                              name="dates.close"
+                              shouldUnregister={true}
+                              rules={{ required: true }}
+                              render={({ field }) => {
+                                const deadline = watch('dates.deadline');
+                                return (
+                                  <DatePicker
+                                    {...field}
+                                    withTime
+                                    minDate={deadline}
+                                    error={errors.closeDate}
+                                    label={labels?.closeDate}
+                                    placeholder={placeholders?.date}
+                                  />
+                                );
+                              }}
+                            />
+                          </ContextContainer>
+                        )}
+                      />
+                    </Grid.Col>
+                  </Grid>
+                </>
               )}
             />
           )}
