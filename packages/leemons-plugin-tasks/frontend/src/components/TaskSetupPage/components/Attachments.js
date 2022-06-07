@@ -7,7 +7,7 @@ import {
   useResizeObserver,
   useViewportSize,
 } from '@bubbles-ui/components';
-import { LibraryCard } from '@bubbles-ui/leemons';
+import { LibraryCardEmbed } from '@bubbles-ui/leemons';
 import { AssetListDrawer } from '@leebrary/components';
 import { uniqBy, map } from 'lodash';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
@@ -121,8 +121,8 @@ export default function Attachments({ labels }) {
     <>
       <Box className={classes?.attachmentContainer}>
         {resources.map((asset) => (
-          <LibraryCard
-            asset={asset}
+          <LibraryCardEmbed
+            asset={{ ...asset, title: asset.name, image: asset.cover }}
             key={asset.id}
             menuItems={[
               {
