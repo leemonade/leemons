@@ -489,6 +489,13 @@ const AssetList = ({
             published={published}
             isEmbedded={isEmbedded}
             onRefresh={reloadAssets}
+            onDuplicate={handleOnDuplicate}
+              onDelete={handleOnDelete}
+              onEdit={handleOnEdit}
+              onShare={handleOnShare}
+              onPin={handleOnPin}
+              onUnpin={handleOnUnpin}
+              onDownload={handleOnDownload}
             locale={locale}
           />
         ),
@@ -522,18 +529,18 @@ const AssetList = ({
 
   const toolbarItems = useMemo(
     () => ({
-      edit: asset?.editable ? 'Edit' : false,
-      duplicate: asset?.duplicable ? 'Duplicate' : false,
-      download: asset?.downloadable ? 'Download' : false,
-      delete: asset?.deleteable ? 'Delete' : false,
-      share: asset?.shareable ? 'Share' : false,
-      assign: asset?.assignable ? 'Assign' : false,
+      edit: asset?.editable ? t('cardToolbar.edit') : false,
+      duplicate: asset?.duplicable ? t('cardToolbar.duplicate') : false,
+      download: asset?.downloadable ? t('cardToolbar.download') : false,
+      delete: asset?.deleteable ? t('cardToolbar.delete') : false,
+      share: asset?.shareable ? t('cardToolbar.share') : false,
+      // assign: asset?.assignable ? t('cardToolbar.assign') : false,
       // eslint-disable-next-line no-nested-ternary
-      pin: asset?.pinned ? false : asset?.pinneable && published ? 'Pin' : false,
-      unpin: asset?.pinned ? 'Unpin' : false,
-      toggle: 'Toggle',
+      pin: asset?.pinned ? false : asset?.pinneable && published ? t('cardToolbar.pin') : false,
+      unpin: asset?.pinned ? t('cardToolbar.unpin') : false,
+      toggle: t('cardToolbar.toggle'),
     }),
-    [asset, category]
+    [asset, category, t]
   );
 
   const detailLabels = useMemo(() => {

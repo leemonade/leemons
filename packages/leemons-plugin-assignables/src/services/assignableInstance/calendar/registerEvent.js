@@ -3,7 +3,7 @@ const _ = require('lodash');
 module.exports = async function registerEvent(
   assignable,
   classes,
-  { id, dates, transacting } = {}
+  { id, isAllDay, dates, transacting } = {}
 ) {
   const calendarService = leemons.getPlugin('calendar').services.calendar;
   const calendarClasses = await calendarService.getCalendarsByClass(classes);
@@ -12,6 +12,7 @@ module.exports = async function registerEvent(
     {
       title: assignable.asset.name,
       isPrivate: true,
+      isAllDay,
       type: 'plugins.calendar.task',
       startDate: dates.deadline
         ? typeof dates.deadline === 'string'

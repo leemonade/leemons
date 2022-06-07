@@ -137,5 +137,17 @@ module.exports = {
       resourceTypes: 'Tipos de recursos',
       allResourceTypes: 'Todos los tipos',
     },
+    cardToolbar: {
+      edit: 'Editar',
+      duplicate: 'Duplicar',
+      download: 'Descargar',
+      delete: 'Eliminar',
+      share: 'Compartir',
+      assign: 'Asignar',
+      pin: 'Pinear',
+      unpin: 'Despinear',
+      toggle: 'Cerrar',
+      open: 'Abrir',
+    },
   },
 };

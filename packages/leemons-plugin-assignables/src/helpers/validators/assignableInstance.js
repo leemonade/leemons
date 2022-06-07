@@ -8,6 +8,9 @@ const assignableInstanceValidationObject = {
       minLength: 36,
       maxLength: 255,
     },
+    isAllDay: {
+      type: 'boolean',
+    },
     alwaysAvailable: {
       type: 'boolean',
     },

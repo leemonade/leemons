@@ -97,6 +97,8 @@ const programImages = [
   'https://images.unsplash.com/photo-1564429238817-393bd4286b2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=4032&q=80',
 ];
 
+const programColors = ['#96D47F', '#B462F2', '#96D47F', '#B462F2'];
+
 export default function AdminDashboard({ session }) {
   const [store, render] = useStore({
     loading: true,
@@ -243,10 +245,10 @@ export default function AdminDashboard({ session }) {
             {store.academicPortfolio?.programs.map((program, i) => (
               <LibraryCardBasic
                 key={program.id}
-                blur={5}
+                blur={20}
                 asset={{
                   name: program.program.name,
-                  color: program.program.color || null,
+                  color: program.program.color || programColors[i],
                   cover: programImages[i],
                 }}
               >
@@ -322,9 +324,9 @@ export default function AdminDashboard({ session }) {
             {t('activityInPlatform')}
           </Text>
         </Box>
-        <Stack fullWidth>
+        <Stack direction="column" spacing={3} fullWidth>
           <Box>
-            <ActivityAccordion>
+            <ActivityAccordion initialItem={0}>
               <ActivityAccordionPanel
                 key={0}
                 label={t('activeUsers')}
@@ -351,6 +353,10 @@ export default function AdminDashboard({ session }) {
                   />
                 </Box>
               </ActivityAccordionPanel>
+            </ActivityAccordion>
+          </Box>
+          <Box>
+            <ActivityAccordion initialItem={0}>
               <ActivityAccordionPanel
                 key={0}
                 label={t('createdTasks')}
@@ -474,7 +480,7 @@ export default function AdminDashboard({ session }) {
               <PCValue text={t('type')} value={store.pc.networkInterface.type} />
             ) : null}
             {store.pc.networkInterface ? (
-              <PCValue text={t('speed')} value={`${store.pc.networkInterface.speed}Mb/s`} />
+              <PCValue text={t('speed')} value={`${store.pc.networkInterface.speed || 0}Mb/s`} />
             ) : null}
           </Box>
         </Stack>
