@@ -161,7 +161,9 @@ export default function AdminDashboard({ session }) {
   }
 
   async function realtime() {
+    store.loadingRealtime = true;
     const { data } = await getAdminDashboardRealtimeRequest();
+    store.loadingRealtime = false;
     if (store.pc) {
       store.pc.currentLoad = data.currentLoad;
       store.pc.mem = data.mem;
@@ -176,7 +178,7 @@ export default function AdminDashboard({ session }) {
 
   React.useEffect(() => {
     const interval = setInterval(() => {
-      realtime();
+      if (!store.loadingRealtime) realtime();
     }, 1000);
 
     return () => clearInterval(interval);
