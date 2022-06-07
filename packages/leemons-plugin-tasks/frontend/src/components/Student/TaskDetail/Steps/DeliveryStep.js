@@ -8,7 +8,7 @@ function SubmissionState({ status, error, labels: _labels }) {
 
   if (status === 'error' && error) {
     return (
-      <Alert title={labels?.error?.title} severity="error" closeable={false}>
+      <Alert title={labels?.error?.title} severity="error" closeable={true}>
         {labels?.error?.message?.replace('{{error}}', error !== true ? error : '')}
       </Alert>
     );
@@ -22,14 +22,14 @@ function SubmissionState({ status, error, labels: _labels }) {
   }
   if (status === 'submitted') {
     return (
-      <Alert title={labels?.submitted?.title} severity="success" closeable={false}>
+      <Alert title={labels?.submitted?.title} severity="success" closeable={true}>
         {labels?.submitted?.message}
       </Alert>
     );
   }
   if (status === 'changed') {
     return (
-      <Alert title={labels?.notSubmitted?.title} severity="info" closeable={false}>
+      <Alert title={labels?.notSubmitted?.title} severity="info" closeable={true}>
         {labels?.notSubmitted?.message}
       </Alert>
     );
@@ -45,7 +45,7 @@ export default function DeliveryStep({ assignation, onSave, labels: _labels, dis
   const [status, setStatus] = useState(assignation.metadata?.submission ? 'submitted' : 'cleared');
   const [error, setError] = useState(null);
 
-  const updateStatus = (newStatus, e, firstRender) => {
+  const updateStatus = (newStatus, e) => {
     const availableStatus = ['cleared', 'submitted', 'changed', 'loading', 'error'];
 
     if (!availableStatus.includes(newStatus)) {
@@ -54,15 +54,18 @@ export default function DeliveryStep({ assignation, onSave, labels: _labels, dis
 
     setStatus(newStatus);
 
-    if (newStatus === 'cleared' || newStatus === 'changed' || newStatus === 'error') {
+    if (newStatus === 'cleared') {
+      disableButton('save', true);
+      disableButton('next', true);
+    } else if (newStatus === 'cleared' || newStatus === 'changed' || newStatus === 'error') {
       if (e) {
         setError(e);
       }
 
       // EN: If it is cleared and is the first render, disable the save button
       // ES: Si se ha borrado y es la primera renderización, deshabilitar el botón de guardar
-      disableButton('save', !!(firstRender && newStatus === 'cleared'));
-      disableButton('next', true);
+      disableButton('save', false);
+      disableButton('next', false);
     } else if (newStatus === 'submitted') {
       disableButton('save', true);
       disableButton('next', false);
@@ -74,7 +77,7 @@ export default function DeliveryStep({ assignation, onSave, labels: _labels, dis
   };
 
   useEffect(() => {
-    updateStatus(status, false, true);
+    updateStatus(status);
   }, []);
 
   // , metadata: {submission: submissionValue}

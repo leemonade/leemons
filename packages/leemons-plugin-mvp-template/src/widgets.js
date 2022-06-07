@@ -14,18 +14,21 @@ async function initWidgets() {
       'plugins.calendar.user.program.kanban',
     ],
     'plugins.dashboard.class.tabs': [
-      'plugins.dashboard.class.tab.control-panel',
-      'plugins.academic-portfolio.class.tab.detail',
+      // 'plugins.dashboard.class.tab.control-panel',
       'plugins.assignables.class.tab.ongoing',
-      'plugins.tasks.class.tab.students.tasks',
       'plugins.calendar.class.tab.kanban',
       'plugins.calendar.class.tab.calendar',
+      'plugins.academic-portfolio.class.tab.detail',
     ],
-    'plugins.dashboard.class.control-panel': [
+    'plugins.assignables.class.ongoing': [
       'plugins.assignables.dashboard.subject.need-your-attention',
-      'plugins.calendar.user.class.calendar',
-      'plugins.calendar.user.class.kanban',
+      'plugins.assignables.class.ongoing',
     ],
+    // 'plugins.dashboard.class.control-panel': [
+    //   'plugins.assignables.dashboard.subject.need-your-attention',
+    //   'plugins.calendar.user.class.calendar',
+    //   'plugins.calendar.user.class.kanban',
+    // ],
   };
 
   const itemProfiles = [

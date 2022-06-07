@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useMemo } from 'react';
-import _, { find } from 'lodash';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { ContextContainer, Alert, Button, Stack, Text, FileUpload } from '@bubbles-ui/components';
+import { FileUpload } from '@bubbles-ui/components';
 import { CloudUploadIcon } from '@bubbles-ui/icons/outline';
 import { deleteAssetRequest, newAssetRequest, listCategoriesRequest } from '@leebrary/request';
 import { useApi } from '@common';
@@ -16,9 +16,8 @@ export default function File({ assignation, updateStatus, onSave, value, labels:
 
   const fileData = assignation?.instance?.assignable?.submission?.data;
 
-  const savedFiles = useRef(value);
-  const files = useRef();
-  const saveSubmission = useMemo(() => handleDeliverySubmission(assignation), [assignation]);
+  const savedFiles = useRef(value || []);
+  const files = useRef([]);
   const handleSubmit = useCallback(async () => {
     updateStatus('loading');
 
@@ -29,10 +28,19 @@ export default function File({ assignation, updateStatus, onSave, value, labels:
     const filesToRemove = _.difference(savedFiles.current, files.current);
     const filesToKeep = _.difference(savedFiles.current, filesToRemove);
 
+    if (_.isEqual(files.current, savedFiles.current)) {
+      if (!files.current.length) {
+        updateStatus('cleared');
+      } else {
+        updateStatus('submitted');
+      }
+      return true;
+    }
+
     try {
       if (!filesToSave?.length && !filesToRemove?.length) {
         updateStatus(filesToKeep?.length ? 'submitted' : 'cleared');
-        return;
+        return true;
       }
 
       if (filesToRemove?.length) {
@@ -55,12 +63,13 @@ export default function File({ assignation, updateStatus, onSave, value, labels:
         filesSaved = _.map(_.map(filesSaved, 'asset'), (file) => _.pick(file, ['id', 'name']));
       }
       filesSaved = [...filesToKeep, ...filesSaved];
-      await saveSubmission(filesSaved, !filesSaved.length);
-      savedFiles.current = filesSaved;
 
+      savedFiles.current = filesSaved;
       updateStatus(savedFiles.current.length ? 'submitted' : 'cleared');
+      return true;
     } catch (e) {
       updateStatus('error', e.message);
+      return false;
     }
   }, [updateStatus, category]);
 
@@ -80,6 +89,14 @@ export default function File({ assignation, updateStatus, onSave, value, labels:
         single={!fileData?.multipleFiles}
         initialFiles={savedFiles.current || []}
         onChange={(newFiles) => {
+          if (_.isEqual(newFiles, savedFiles.current)) {
+            if (!newFiles.length) {
+              updateStatus('cleared');
+            } else {
+              updateStatus('submitted');
+            }
+            return;
+          }
           updateStatus('changed');
           files.current = newFiles;
         }}

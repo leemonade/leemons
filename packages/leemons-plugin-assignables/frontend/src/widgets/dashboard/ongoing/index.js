@@ -6,7 +6,7 @@ export default function Ongoing({ classe }) {
   return (
     <AssignmentList
       closed={false}
-      defualtFilters={{ class: classe.id }}
+      defualtFilters={{ class: classe?.id }}
       filters={{ hideSubject: true }}
       title={null}
       subjectFullLength={false}

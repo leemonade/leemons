@@ -73,6 +73,7 @@ export default function useSteps({
           timestamps: 'start',
           showConfirmation: true,
           onSave,
+          onNext: onSave,
           onChangeActiveIndex: onSave,
           save: assignation?.started && !assignation?.finished,
           next: assignation?.started && !assignation?.finished,
