@@ -1,6 +1,6 @@
 /* eslint-disable no-unreachable */
 /* eslint-disable no-await-in-loop */
-const { keys, find, isEmpty, findIndex, uniq, compact } = require('lodash');
+const { keys, find, isEmpty, findIndex, uniq, uniqBy, compact } = require('lodash');
 const importQbanks = require('./bulk/tests/qbanks');
 const importQuestions = require('./bulk/tests/questions');
 const importTests = require('./bulk/tests/tests');
@@ -17,7 +17,10 @@ async function initTests({ users, programs }) {
     // console.log('-- QUESTIONS --');
     // console.dir(questions, { depth: null });
 
-    const categories = compact(uniq(questions.map((question) => ({ value: question.category }))));
+    const categories = uniqBy(
+      questions.map((question) => ({ value: question.category })),
+      'value'
+    );
 
     // ·····················································
     // QBANKS
