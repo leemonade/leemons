@@ -98,8 +98,6 @@ export default function AdminDashboard({ session }) {
       data: { academicPortfolio, instances, pc },
     } = await getAdminDashboardRequest();
 
-    console.log(pc);
-
     const { items: instancesTranslations } = await getLocalizations({
       keys: map(instances, 'roleName'),
     });
