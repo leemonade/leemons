@@ -37,6 +37,7 @@ async function getAdminDashboard(config, { transacting } = {}) {
       currentLoad,
       diskLayout,
       fsSize,
+      networkInterfaces,
       networkInterface: _.find(networkInterfaces, { iface: networkInterfaceDefault }),
     },
   };

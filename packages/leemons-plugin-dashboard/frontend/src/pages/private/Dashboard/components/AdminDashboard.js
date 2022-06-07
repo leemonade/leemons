@@ -402,6 +402,9 @@ export default function AdminDashboard({ session }) {
               />
             </Box>
             {store.pc.cpu.cores ? <PCValue text={t('cores')} value={store.pc.cpu.cores} /> : null}
+            {store.pc.cpu.speed ? (
+              <PCValue text={t('feq')} value={`${store.pc.cpu.speed}GHz`} />
+            ) : null}
             {store.pc.cpu.speedMin ? (
               <PCValue text={t('feqMin')} value={`${store.pc.cpu.speedMin}GHz`} />
             ) : null}

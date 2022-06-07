@@ -23,6 +23,7 @@ module.exports = {
     cpu: 'CPU',
     name: 'Name:',
     cores: 'Cores:',
+    feq: 'Frequency:',
     feqMin: 'Minimum frequency:',
     feqMax: 'Maximum frequency:',
     load: 'Current load:',
