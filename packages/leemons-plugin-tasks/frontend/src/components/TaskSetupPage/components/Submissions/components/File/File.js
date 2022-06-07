@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import mime from 'mime';
 import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
@@ -12,7 +13,10 @@ import {
 } from '@bubbles-ui/components';
 
 export default function File({ labels }) {
-  const { control } = useFormContext();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext();
   return (
     <ContextContainer>
       <Controller
@@ -25,10 +29,19 @@ export default function File({ labels }) {
       <Controller
         control={control}
         name="data.extensions"
+        rules={{
+          validate: (value) => {
+            if (_.isEmpty(value)) {
+              return labels?.required;
+            }
+          },
+        }}
         render={({ field }) => (
           <TagsInput
             {...field}
             value={field.value ? Object.keys(field.value) : []}
+            required
+            error={errors.data?.extensions}
             onChange={(extensions) => {
               const validExtensions = extensions.reduce((values, extension) => {
                 if (field.value && field.value[extension]) {
@@ -70,9 +83,22 @@ export default function File({ labels }) {
         <Controller
           control={control}
           name="data.maxSize"
-          render={({ field }) => <NumberInput {...field} label={labels?.maxSize} />}
+          rules={{
+            validate: (value) => {
+              if (value <= 0) {
+                return labels?.required;
+              }
+            },
+          }}
+          render={({ field }) => (
+            <NumberInput
+              {...field}
+              required
+              error={errors.data?.maxSize}
+              label={`${labels?.maxSize} (MB)`}
+            />
+          )}
         />
-        <Text>MB</Text>
       </Stack>
     </ContextContainer>
   );

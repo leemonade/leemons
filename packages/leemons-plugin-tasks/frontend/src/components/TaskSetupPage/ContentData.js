@@ -244,7 +244,7 @@ function ContentData({
                   <Switch label={labels?.submission?.gradable} {...field} checked={field.value} />
                 )}
               />
-              <Submissions labels={labels} />
+              <Submissions labels={labels} errorMessages={errorMessages} />
             </ContextContainer>
           </ContextContainer>
           <Stack fullWidth justifyContent="space-between">

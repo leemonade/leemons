@@ -158,6 +158,7 @@ module.exports = {
               type: 'Tipo de archivo',
               typePlaceholder: 'Añadir tipo de archivo',
               maxSize: 'Tamaño máximo',
+              required: 'Campo necesario',
             },
           },
         },
