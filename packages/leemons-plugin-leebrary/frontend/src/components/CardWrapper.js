@@ -4,6 +4,10 @@ import PropTypes from 'prop-types';
 import { Box, createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import loadable from '@loadable/component';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { DuplicateIcon, ShareSocialIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
+import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
+import prefixPN from '../helpers/prefixPN';
 import { prepareAsset } from '../helpers/prepareAsset';
 
 function dynamicImport(pluginName, component) {
@@ -32,12 +36,82 @@ const CardWrapper = ({
   isEmbedded,
   single,
   onRefresh,
+  onDuplicate,
+  onDelete,
+  onEdit,
+  onShare,
+  onPin,
+  onUnpin,
+  onDownload,
   locale,
   ...props
 }) => {
   const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
-  const menuItems = [];
+  const [t] = useTranslateLoader(prefixPN('list'));
+
   const { classes } = CardWrapperStyles({ selected });
+
+  const menuItems = React.useMemo(() => {
+    const items = [];
+
+    if (asset?.id) {
+      if (asset.editable) {
+        items.push({
+          icon: <EditWriteIcon />,
+          children: t('cardToolbar.edit'),
+          onClick: (e) => {
+            e.stopPropagation();
+            onEdit(asset);
+          },
+        });
+      }
+      if (asset.duplicable) {
+        items.push({
+          icon: <DuplicateIcon />,
+          children: t('cardToolbar.duplicate'),
+          onClick: (e) => {
+            e.stopPropagation();
+            onDuplicate(asset);
+          },
+        });
+      }
+
+      if (asset.downloadable) {
+        items.push({
+          icon: <DownloadIcon />,
+          children: t('cardToolbar.download'),
+          onClick: (e) => {
+            e.stopPropagation();
+            onDownload(asset);
+          },
+        });
+      }
+
+      if (asset.deleteable) {
+        items.push({
+          icon: <DeleteBinIcon />,
+          children: t('cardToolbar.delete'),
+          onClick: (e) => {
+            e.stopPropagation();
+            onDelete(asset);
+          },
+        });
+      }
+
+      if (asset.shareable) {
+        items.push({
+          icon: <ShareSocialIcon />,
+          children: t('cardToolbar.share'),
+          onClick: (e) => {
+            e.stopPropagation();
+            onShare(asset);
+          },
+        });
+      }
+    }
+
+    return items;
+  }, [asset, t]);
 
   let Component = LibraryCard;
   const componentOwner = category?.componentOwner || category?.pluginOwner;
@@ -79,6 +153,13 @@ CardWrapper.propTypes = {
   isEmbedded: PropTypes.bool,
   single: PropTypes.bool,
   locale: PropTypes.string,
+  onDuplicate: PropTypes.func,
+  onDelete: PropTypes.func,
+  onEdit: PropTypes.func,
+  onShare: PropTypes.func,
+  onPin: PropTypes.func,
+  onUnpin: PropTypes.func,
+  onDownload: PropTypes.func,
 };
 
 export { CardWrapper };
