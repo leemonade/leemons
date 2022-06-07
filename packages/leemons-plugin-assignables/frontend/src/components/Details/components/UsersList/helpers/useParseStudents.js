@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { getUserAgentsInfoRequest } from '@users/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { UserDisplayItem } from '@bubbles-ui/components';
+import { useClassesSubjects } from '@academic-portfolio/hooks';
 import getStatus from './getStatus';
 import getActions from './getActions';
 import prefixPN from '../../../../../helpers/prefixPN';
@@ -52,6 +53,7 @@ function getStudentAverageScore(studentData) {
 
 export default function useParseStudents(instance, statusLabels) {
   const students = useStudentData(instance?.students);
+  const subjects = useClassesSubjects(instance?.classes);
   const [, translations] = useTranslateLoader(prefixPN('teacher_actions'));
 
   const localizations = useMemo(() => {
@@ -91,7 +93,7 @@ export default function useParseStudents(instance, statusLabels) {
           '-'
         ),
       score: getStudentAverageScore(student),
-      actions: getActions(student, instance, localizations),
+      actions: getActions(student, instance, localizations, subjects),
       userInfo: student.userInfo,
     }));
   }, [students]);
