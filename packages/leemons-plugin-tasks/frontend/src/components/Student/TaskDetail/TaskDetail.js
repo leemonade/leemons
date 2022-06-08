@@ -15,12 +15,11 @@ import useClassData from '@assignables/hooks/useClassData';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import _ from 'lodash';
-import { unflatten } from '@common';
+import { unflatten, useLocale } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useLayout } from '@layout/context';
 import { ActivityContainer } from '@bubbles-ui/leemons';
 import useSteps from './helpers/useSteps';
-import TaskDetailHeader from './components/TaskDetailHeader';
 import { TaskDetailStyles } from './TaskDetail.style';
 import Sidebar from './components/Sidebar';
 import updateStudentRequest from '../../../request/instance/updateStudent';
@@ -90,6 +89,7 @@ function Content({ marginTop, setMargin, children }) {
 }
 
 export default function TaskDetail({ id, student }) {
+  const locale = useLocale();
   const [marginTop, setMarginTop] = useState(0);
   const { openConfirmationModal } = useLayout();
   const [assignation, error, loading] = useAssignation(id, student, true);
@@ -269,6 +269,7 @@ export default function TaskDetail({ id, student }) {
             assignation?.instance?.dates?.deadline instanceof Date
               ? assignation?.instance?.dates?.deadline
               : new Date(assignation?.instance?.dates?.deadline),
+          locale,
         }
       }
       collapsed={!isFirstStep}
