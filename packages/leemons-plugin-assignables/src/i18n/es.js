@@ -229,4 +229,8 @@ module.exports = {
       avgTime: 'Tiempo medio',
     },
   },
+  pagination: {
+    show: 'Mostrar',
+    goTo: 'Ir a',
+  },
 };

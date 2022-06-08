@@ -137,6 +137,19 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
     return q;
   }, [filters]);
 
+  const [, translations] = useTranslateLoader(prefixPN('pagination'));
+
+  const labels = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      return {
+        pagination: _.get(res, prefixPN('pagination')),
+      };
+    }
+
+    return {};
+  }, [translations]);
+
   const [instances, instancesLoading] = useSearchAssignableInstances(query);
 
   const instancesInPage = useMemo(() => {
@@ -168,6 +181,7 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
         onSizeChange={setSize}
         onPageChange={setPage}
         selectable={false}
+        labels={labels.pagination}
       />
     </>
   );
