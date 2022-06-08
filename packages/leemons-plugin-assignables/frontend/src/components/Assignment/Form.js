@@ -73,8 +73,6 @@ export default function Form({
   function setAllDay(e) {
     e.setHours(23, 59, 59);
     setValue('dates.deadline', e);
-    e.setHours(0, 0, 0);
-    setValue('dates.start', e);
   }
 
   const isAllDay = watch('isAllDay');
@@ -109,45 +107,25 @@ export default function Form({
               showOnTrue={false}
               render={() => (
                 <>
-                  <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
-                    <Controller
-                      control={control}
-                      name="isAllDay"
-                      render={({ field }) => (
-                        <Switch
-                          checked={field.value}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            if (e && deadline) {
-                              setAllDay(deadline);
-                            }
-                          }}
-                          label="Todo el dia"
-                        />
-                      )}
-                    />
-                  </Box>
                   <Grid>
-                    {!isAllDay ? (
-                      <Grid.Col span={6}>
-                        {/* <ContextContainer direction="row"> */}
-                        <Controller
-                          control={control}
-                          name="dates.start"
-                          rules={{ required: true }}
-                          render={({ field }) => (
-                            <DatePicker
-                              {...field}
-                              withTime
-                              minDate={new Date()}
-                              error={errors.startDate}
-                              label={labels?.startDate}
-                              placeholder={placeholders?.date}
-                            />
-                          )}
-                        />
-                      </Grid.Col>
-                    ) : null}
+                    <Grid.Col span={6}>
+                      {/* <ContextContainer direction="row"> */}
+                      <Controller
+                        control={control}
+                        name="dates.start"
+                        rules={{ required: true }}
+                        render={({ field }) => (
+                          <DatePicker
+                            {...field}
+                            withTime
+                            minDate={new Date()}
+                            error={errors.startDate}
+                            label={labels?.startDate}
+                            placeholder={placeholders?.date}
+                          />
+                        )}
+                      />
+                    </Grid.Col>
 
                     <Grid.Col span={6}>
                       <Controller
@@ -210,6 +188,26 @@ export default function Form({
                       />
                     </Grid.Col>
                     <Grid.Col span={6}>
+                      <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
+                        <Controller
+                          control={control}
+                          name="isAllDay"
+                          render={({ field }) => (
+                            <Switch
+                              checked={field.value}
+                              onChange={(e) => {
+                                field.onChange(e);
+                                if (e && deadline) {
+                                  setAllDay(deadline);
+                                }
+                              }}
+                              helpPosition="bottom"
+                              label={labels?.isAllDay}
+                              help={descriptions?.isAllDay}
+                            />
+                          )}
+                        />
+                      </Box>
                       <ConditionalInput
                         label={`${labels?.closeDateToogle}\n `}
                         help={descriptions?.closeDateToogle}
