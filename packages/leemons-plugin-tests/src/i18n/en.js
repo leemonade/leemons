@@ -198,6 +198,7 @@ module.exports = {
     edit: 'Edit test',
     undefined: 'Undefined',
     questionTypes: 'Question types',
+    levels: 'Levels',
     categories: 'Categories',
     questions: 'Questions',
     chartLabel: 'Composition of questions',
@@ -305,7 +306,7 @@ module.exports = {
     noRequiredQuestions: 'The filtered questions are fewer than those requested',
   },
   testResult: {
-    testResult: 'Test results',
+    testResult: 'Statistics by type of question',
     questions: 'Questions',
     test: 'Test',
     notGradable: 'Not gradable',

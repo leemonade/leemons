@@ -4,7 +4,7 @@ import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '../../../helpers/prefixPN';
 
-export default function useLevelsOfDifficulty() {
+export default function useLevelsOfDifficulty(waitToTranslations) {
   const [, translations] = useTranslateLoader(prefixPN('levelsOfDifficulty'));
 
   const localizations = useMemo(() => {
@@ -73,5 +73,8 @@ export default function useLevelsOfDifficulty() {
   //   },
   // ];
 
+  if (waitToTranslations && !translations) {
+    return null;
+  }
   return levels;
 }
