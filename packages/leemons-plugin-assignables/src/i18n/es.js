@@ -5,6 +5,7 @@ module.exports = {
   },
   assignment_form: {
     labels: {
+      isAllDay: 'Mostrar como evento diario',
       classroomToAssign: 'Seleccionar clase para asignar',
       studentToAssign: 'Seleccionar estudiante para asignar',
       mode: 'Modo',
@@ -57,6 +58,8 @@ module.exports = {
       closeDateToogle: 'NOTA: Después de esta fecha, no se pueden hacer correcciones',
       limitedExecution:
         'NOTA: Es el intervalo de tiempo que transcurre desde la visualización del resumen de la actividad hasta la presentación del entregable.',
+      isAllDay:
+        'NOTA: Los alumnos tendrán hasta las 23:59h para entregar, pero verán la fecha límite como un evento diario en su calendario.',
     },
     assignTo: {
       student: 'Estudiante',
