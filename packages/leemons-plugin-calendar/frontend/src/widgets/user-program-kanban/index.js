@@ -228,6 +228,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
   function onClickCard({ bgColor, icon, borderColor, ...e }) {
     store.selectedEvent = e;
     openEventModal();
+    render();
   }
 
   React.useEffect(() => {
