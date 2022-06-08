@@ -107,6 +107,7 @@ module.exports = ({ alias, filesToCopy, useLegacy = false }) => ({
       react: path.resolve(require.resolve('react'), '..'),
       'react-dom': path.resolve(require.resolve('react-dom'), '..'),
       'react-router-dom': path.resolve(require.resolve('react-router-dom'), '..'),
+      'react-query': path.resolve(require.resolve('react-query'), '..'),
     },
   },
   module: {

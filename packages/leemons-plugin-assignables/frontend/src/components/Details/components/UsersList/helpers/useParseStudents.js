@@ -6,32 +6,39 @@ import { getUserAgentsInfoRequest } from '@users/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { UserDisplayItem } from '@bubbles-ui/components';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
+import { useQuery } from 'react-query';
 import getStatus from './getStatus';
 import getActions from './getActions';
 import prefixPN from '../../../../../helpers/prefixPN';
 
-function useStudentData(students) {
-  const [studentsData, setStudentsData] = useState({});
+function useUserAgentsInfo(students) {
+  const users = students.map((student) => student.user);
+  return useQuery(
+    ['userAgentsInfoMulti', { ids: users }],
+    () => getUserAgentsInfoRequest(users).then((res) => res.userAgents),
+    {
+      cacheTime: 0,
+      refetchOnWindowFocus: false,
+    }
+  );
+}
 
-  useEffect(() => {
-    if (!students?.length) {
-      return;
+function useStudentData(students) {
+  const userAgentsInfoMulti = useUserAgentsInfo(students);
+
+  return useMemo(() => {
+    // TODO: Handle user fetching errors
+    if (!userAgentsInfoMulti.isSuccess) {
+      return [];
     }
 
-    students.map(async (student) => {
-      const userInfo = await getUserAgentsInfoRequest(student.user);
+    const data = students.map((student, i) => ({
+      ...student,
+      userInfo: userAgentsInfoMulti.data[i].user,
+    }));
 
-      setStudentsData((prev) => ({
-        ...prev,
-        [student.user]: {
-          ...student,
-          userInfo: userInfo.userAgents[0].user,
-        },
-      }));
-    });
-  }, [students]);
-
-  return Object.values(studentsData);
+    return data;
+  }, [students, userAgentsInfoMulti]);
 }
 
 function getStudentAverageScore(studentData) {

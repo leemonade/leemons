@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useQuery } from 'react-query';
 import { useApi } from '@common';
 import { uniqBy, map } from 'lodash';
 import { classByIdsRequest } from '../request';
@@ -10,7 +11,11 @@ async function getClasses(classes) {
 }
 
 export default function useClassesSubjects(classes) {
-  const [classesData, error, loading] = useApi(getClasses, classes);
+  const {
+    data: classesData,
+    error,
+    isLoading,
+  } = useQuery(['classes', { classes }], () => getClasses(classes));
   const defaultValue = useMemo(() => [], []);
 
   const value = useMemo(() => {
@@ -21,7 +26,7 @@ export default function useClassesSubjects(classes) {
     return uniqBy(subjects, 'id');
   }, [classesData, defaultValue]);
 
-  if (loading) {
+  if (isLoading) {
     return defaultValue;
   }
   if (error) {

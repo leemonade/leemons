@@ -1,14 +1,14 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { LoadingOverlay } from '@bubbles-ui/components';
-import useAssignableInstance from '../../hooks/assignableInstance/useAssignableInstance';
+import { LoadingOverlay, Text } from '@bubbles-ui/components';
+import useAssignableInstances from '../../hooks/assignableInstance/useAssignableInstancesQuery';
 import { TaskOngoingList } from './components/TaskOngoingList';
 import UsersList from './components/UsersList';
 
 export default function Details() {
   const { id } = useParams();
 
-  const instance = useAssignableInstance(id);
+  const { data: instance, isLoading, isError } = useAssignableInstances({ id });
 
   if (instance) {
     return (
@@ -19,5 +19,12 @@ export default function Details() {
     );
   }
 
-  return <LoadingOverlay visible />;
+  if (isLoading) {
+    return <LoadingOverlay visible />;
+  }
+
+  if (isError) {
+    // TRANSLATE: Error message when an error occurs while fetching assignable instance
+    return <Text>An error ocurred</Text>;
+  }
 }

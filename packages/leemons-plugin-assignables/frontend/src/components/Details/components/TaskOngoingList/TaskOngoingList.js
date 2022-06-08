@@ -13,7 +13,6 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import updateAssignableInstance from '../../../../requests/assignableInstances/updateAssignableInstance';
 import { TaskOngoingListStyles } from './TaskOngoingList.styles';
 import {
   TASK_ONGOING_LIST_DEFAULT_PROPS,
@@ -21,11 +20,13 @@ import {
 } from './TaskOngoingList.constants';
 import useTaskOngoingInstanceParser from './hooks/useTaskOngoingInstanceParser';
 import prefixPN from '../../../../helpers/prefixPN';
+import useMutateAssignableInstance from '../../../../hooks/assignableInstance/useMutateAssignableInstance';
 
 const TaskOngoingList = ({ instance }) => {
   const instanceData = useTaskOngoingInstanceParser(instance);
   const [containerRef, containerRect] = useResizeObserver();
   const [childRef, childRect] = useResizeObserver();
+  const { mutateAsync } = useMutateAssignableInstance();
 
   const [, translations] = useTranslateLoader([
     prefixPN('activity_dashboard'),
@@ -56,7 +57,7 @@ const TaskOngoingList = ({ instance }) => {
     }
 
     try {
-      await updateAssignableInstance({ id: instance.id, dates: newDates });
+      await mutateAsync({ id: instance.id, dates: newDates });
 
       let verb = dashboardLocalizations.closeAction.verbs.closed;
       if (!closed) {
@@ -84,7 +85,7 @@ const TaskOngoingList = ({ instance }) => {
     };
 
     try {
-      await updateAssignableInstance({ id: instance.id, dates: newDates });
+      await mutateAsync({ id: instance.id, dates: newDates });
 
       addSuccessAlert(dashboardLocalizations.deadline.messages.success);
     } catch (e) {
