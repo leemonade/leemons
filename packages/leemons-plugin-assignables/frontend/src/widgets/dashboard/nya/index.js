@@ -1,32 +1,40 @@
 import React, { useMemo } from 'react';
 import { Swiper, Box, Text, Loader, ImageLoader } from '@bubbles-ui/components';
-import { useApi, unflatten } from '@common';
+import { unflatten } from '@common';
 import _ from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useSearchAssignableInstances from '../../../hooks/assignableInstance/useSearchAssignableInstances';
-import useAssignationsByProfile from '../../../components/Ongoing/AssignmentList/hooks/useAssignationsByProfile';
-import getClassData from '../../../helpers/getClassData';
+import useSearchAssignableInstances from '../../../hooks/assignableInstance/useSearchAssignableInstancesQuery';
+import useAssignationsByProfile from '../../../hooks/assignations/useAssignationsByProfile';
 import prefixPN from '../../../helpers/prefixPN';
 import NYACard from '../../../components/NYACard';
 import EmptyState from './EmptyState.png';
+import useClassData from '../../../hooks/useClassDataQuery';
 
-async function getInstancesClassData({ instances, labels }) {
-  return Object.fromEntries(
-    await Promise.all(
-      instances?.map(async (object) => {
-        let instance = object;
-        if (object?.instance) {
-          instance = object?.instance;
-        }
-        return [
-          instance.id,
-          await getClassData(instance.classes, {
-            multiSubject: labels.multiSubject,
-          }),
-        ];
-      })
-    )
-  );
+function useInstancesClassData({ instances, labels }) {
+  const result = useClassData(instances, labels);
+
+  const isSuccess = result.some(({ isSuccess: s }) => s);
+
+  const data = useMemo(() => {
+    if (!isSuccess) {
+      return null;
+    }
+
+    return instances.reduce(
+      (acc, instance, i) => ({
+        ...acc,
+        [instance.id]: result[i].data,
+      }),
+      {}
+    );
+  }, [result, isSuccess]);
+
+  return {
+    isLoading: result.some(({ isLoading }) => isLoading),
+    isError: result.some(({ isError }) => isError),
+    isSuccess,
+    data,
+  };
 }
 
 function nyaStatus({ loading, data, labels, query, classData }) {
@@ -102,7 +110,6 @@ export default function NYA({ classe, program }) {
     prefixPN('need_your_attention'),
     prefixPN('multiSubject'),
   ]);
-  // const locale = useLocale();
 
   const labels = useMemo(() => {
     if (translations && translations.items) {
@@ -131,15 +138,30 @@ export default function NYA({ classe, program }) {
     return q;
   }, []);
 
-  const [instances, , loadingSearch] = useSearchAssignableInstances(query);
-  const [instancesData, , loadingAssignationByProfile] = useAssignationsByProfile(instances);
+  const { data: nyaInstances, isLoading: nyaInstancesIsLoading } =
+    useSearchAssignableInstances(query);
 
-  const classDataQuery = useMemo(
-    () => ({ instances: instancesData, labels }),
-    [instancesData, labels]
+  const instancesDataQueries = useAssignationsByProfile(nyaInstances);
+  const instancesDataQueriesIsSuccess = useMemo(
+    () => instancesDataQueries?.some(({ isSuccess }) => isSuccess),
+    [instancesDataQueries]
   );
+  const instancesDataQueriesIsLoading = useMemo(
+    () => instancesDataQueries?.some(({ isLoading }) => isLoading),
+    [instancesDataQueries]
+  );
+  const instancesData = useMemo(() => {
+    if (!instancesDataQueriesIsSuccess) {
+      return [];
+    }
 
-  const [classData, , loadingClassData] = useApi(getInstancesClassData, classDataQuery);
+    return instancesDataQueries?.map((q) => q.data);
+  }, [instancesDataQueriesIsSuccess, instancesDataQueries]);
+
+  const { data: classData, isLoading: classDataIsLoading } = useInstancesClassData({
+    instances: instancesData,
+    labels,
+  });
 
   return (
     <Box
@@ -153,7 +175,7 @@ export default function NYA({ classe, program }) {
         {labels.title}
       </Text>
       {nyaStatus({
-        loading: loadingSearch || loadingAssignationByProfile || loadingClassData,
+        loading: nyaInstancesIsLoading || instancesDataQueriesIsLoading || classDataIsLoading,
         data: instancesData,
         labels,
         query,
