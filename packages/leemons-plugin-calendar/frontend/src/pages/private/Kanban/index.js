@@ -195,6 +195,7 @@ function Kanban({ session }) {
   function onClickCard({ bgColor, icon, borderColor, ...e }) {
     ref.current.event = e;
     openEventModal();
+    render();
   }
 
   // ES: Carga
