@@ -28,17 +28,20 @@ function useStudentData(students) {
 
   return useMemo(() => {
     // TODO: Handle user fetching errors
-    if (!userAgentsInfoMulti.isSuccess) {
+    if (!userAgentsInfoMulti.isSuccess || !userAgentsInfoMulti.data) {
       return [];
     }
 
-    const data = students.map((student, i) => ({
-      ...student,
-      userInfo: userAgentsInfoMulti.data[i].user,
-    }));
+    const data = students.map((student) => {
+      const userAgent = userAgentsInfoMulti.data.find((d) => d.id === student.user);
+      return {
+        ...student,
+        userInfo: userAgent?.user,
+      };
+    });
 
     return data;
-  }, [students, userAgentsInfoMulti]);
+  }, [students, userAgentsInfoMulti.data]);
 }
 
 function getStudentAverageScore(studentData) {
@@ -79,6 +82,11 @@ export default function useParseStudents(instance, statusLabels) {
     if (!instance?.students?.length) {
       return [];
     }
+
+    if (!students?.length || !subjects?.length) {
+      return [];
+    }
+
     return students?.map((student) => ({
       id: student.user,
       student: <UserDisplayItem {...student.userInfo} />,
@@ -103,5 +111,5 @@ export default function useParseStudents(instance, statusLabels) {
       actions: getActions(student, instance, localizations, subjects),
       userInfo: student.userInfo,
     }));
-  }, [students]);
+  }, [students, subjects]);
 }
