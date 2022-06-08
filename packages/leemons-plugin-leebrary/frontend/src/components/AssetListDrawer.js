@@ -97,7 +97,7 @@ const AssetListDrawer = ({
       >
         <Stack
           sx={(theme) => ({
-            padding: `0 ${theme.spacing[7]}px`,
+            padding: `0 ${theme.spacing[4]}px 0 ${theme.spacing[7]}px`,
             marginTop: theme.spacing[4],
             color: theme.colors.text05,
           })}
@@ -109,14 +109,15 @@ const AssetListDrawer = ({
         </Stack>
         <Box
           sx={(theme) => ({
-            padding: `0 ${theme.spacing[7]}px`,
+            // padding: `0 ${theme.spacing[7]}px`,
             marginTop: creatable ? 0 : theme.spacing[4],
             display: 'flex',
             flex: 1,
+            overflow: 'hidden',
           })}
         >
           {creatable ? (
-            <Tabs fullHeight>
+            <Tabs usePaddedLayout fullHeight>
               <TabPanel key="library" label={t('header.title')}>
                 <Box
                   sx={(theme) => ({
