@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import _ from 'lodash';
 import { LocaleDate, LocaleDuration, unflatten } from '@common';
 import dayjs from 'dayjs';
@@ -6,32 +6,42 @@ import { getUserAgentsInfoRequest } from '@users/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { UserDisplayItem } from '@bubbles-ui/components';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
+import { useQuery } from 'react-query';
 import getStatus from './getStatus';
 import getActions from './getActions';
 import prefixPN from '../../../../../helpers/prefixPN';
 
-function useStudentData(students) {
-  const [studentsData, setStudentsData] = useState({});
+function useUserAgentsInfo(students) {
+  const users = students.map((student) => student.user);
+  return useQuery(
+    ['userAgentsInfoMulti', { ids: users }],
+    () => getUserAgentsInfoRequest(users).then((res) => res.userAgents),
+    {
+      cacheTime: 0,
+      refetchOnWindowFocus: false,
+    }
+  );
+}
 
-  useEffect(() => {
-    if (!students?.length) {
-      return;
+function useStudentData(students) {
+  const userAgentsInfoMulti = useUserAgentsInfo(students);
+
+  return useMemo(() => {
+    // TODO: Handle user fetching errors
+    if (!userAgentsInfoMulti.isSuccess || !userAgentsInfoMulti.data) {
+      return [];
     }
 
-    students.map(async (student) => {
-      const userInfo = await getUserAgentsInfoRequest(student.user);
-
-      setStudentsData((prev) => ({
-        ...prev,
-        [student.user]: {
-          ...student,
-          userInfo: userInfo.userAgents[0].user,
-        },
-      }));
+    const data = students.map((student) => {
+      const userAgent = userAgentsInfoMulti.data.find((d) => d.id === student.user);
+      return {
+        ...student,
+        userInfo: userAgent?.user,
+      };
     });
-  }, [students]);
 
-  return Object.values(studentsData);
+    return data;
+  }, [students, userAgentsInfoMulti.data]);
 }
 
 function getStudentAverageScore(studentData) {
@@ -48,7 +58,7 @@ function getStudentAverageScore(studentData) {
     return '-';
   }
 
-  return scoresAvgObject.total / scoresAvgObject.count;
+  return (scoresAvgObject.total / scoresAvgObject.count).toFixed(2);
 }
 
 export default function useParseStudents(instance, statusLabels) {
@@ -72,6 +82,11 @@ export default function useParseStudents(instance, statusLabels) {
     if (!instance?.students?.length) {
       return [];
     }
+
+    if (!students?.length || !subjects?.length) {
+      return [];
+    }
+
     return students?.map((student) => ({
       id: student.user,
       student: <UserDisplayItem {...student.userInfo} />,
@@ -96,5 +111,5 @@ export default function useParseStudents(instance, statusLabels) {
       actions: getActions(student, instance, localizations, subjects),
       userInfo: student.userInfo,
     }));
-  }, [students]);
+  }, [students, subjects]);
 }

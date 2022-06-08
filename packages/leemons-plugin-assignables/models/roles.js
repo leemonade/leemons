@@ -16,5 +16,8 @@ module.exports = {
     plugin: {
       type: 'string',
     },
+    icon: {
+      type: 'string',
+    },
   },
 };

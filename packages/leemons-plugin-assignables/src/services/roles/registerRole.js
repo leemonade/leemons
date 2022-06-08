@@ -39,6 +39,7 @@ module.exports = async function registerRole(
           studentDetailUrl,
           evaluationDetailUrl,
           plugin: this.calledFrom,
+          icon: data.menu.item.iconSvg,
         },
         { transacting }
       );
