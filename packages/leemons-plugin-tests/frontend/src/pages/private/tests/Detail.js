@@ -20,6 +20,7 @@ import { addErrorAlert } from '@layout/alert';
 import { ChevronRightIcon, PluginTestIcon } from '@bubbles-ui/icons/outline';
 import { forEach, keyBy } from 'lodash';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
+import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import { getTestRequest } from '../../../request';
 import QuestionsTable from './components/QuestionsTable';
 import { questionTypeT } from '../questions-banks/components/QuestionForm';
@@ -31,6 +32,7 @@ export default function Detail() {
   const [t, t1V] = useTranslateLoader(prefixPN('testsDetail'));
   const [t2, t2V] = useTranslateLoader(prefixPN('questionsBanksDetail'));
   const { classes: styles, cx } = ResultStyles({}, { name: 'Detail' });
+  const levels = useLevelsOfDifficulty(true);
 
   const [store, render] = useStore({
     loading: true,
@@ -49,13 +51,21 @@ export default function Detail() {
 
     if (store.test?.questions) {
       let category = false;
+      let level = false;
       let type = false;
+      const levelsByValue = keyBy(levels, 'value');
       const categoriesById = keyBy(store.test.questionBank.categories, 'id');
       forEach(store.test.questions, (question) => {
         const d = {
           id: question.id,
           status: null,
         };
+        if (question.level) {
+          level = true;
+          d.level = levelsByValue[question.level].label;
+        } else {
+          d.level = t('undefined');
+        }
         if (question.category) {
           category = true;
           d.category = categoriesById[question.category].value;
@@ -82,12 +92,19 @@ export default function Detail() {
           label: t('questionTypes'),
         });
       }
+      if (level) {
+        selectables.push({
+          value: 'level',
+          label: t('levels'),
+        });
+      }
     }
     return { selectables, data, labels: { OK: t('ok'), KO: t('ko'), null: t('nsnc') } };
   }
 
   async function init() {
     try {
+      store.currentId = params.id;
       const { test } = await getTestRequest(params.id, { withQuestionBank: true });
       const { evaluationSystem } = await getProgramEvaluationSystemRequest(test.program);
       store.test = test;
@@ -128,10 +145,9 @@ export default function Detail() {
   }
 
   React.useEffect(() => {
-    if (params?.id && t1V && t2V) init();
-  }, [params, t1V, t2V]);
-
-  console.log(store.test?.questions);
+    if (params?.id && (!store.currentId || store.currentId !== params.id) && t1V && t2V && levels)
+      init();
+  }, [levels, params, t1V, t2V]);
 
   const accordion = [];
   if (store.stats?.data.length && store.stats?.selectables.length) {
@@ -147,7 +163,7 @@ export default function Detail() {
         color="solid"
       >
         <Box p={20}>
-          <ActivityAnswersBar withLegend={false} {...store.stats} />
+          <ActivityAnswersBar showBarIcon={false} withLegend={false} {...store.stats} />
         </Box>
       </ActivityAccordionPanel>
     );
