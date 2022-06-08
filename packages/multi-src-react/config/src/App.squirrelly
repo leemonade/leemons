@@ -1,5 +1,7 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Link, Switch, Redirect } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { QueryClientProvider, QueryClient } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 import loadable from '@loadable/component';
 import pMinDelay from 'p-min-delay';
 import { LoadingOverlay } from '@bubbles-ui/components';
@@ -24,6 +26,31 @@ import { Provider as {{ plugin.name | clear | capitalize }}LocalProvider } from 
 {{ /if }}
 {{ /each }}
 
+const queryClient = new QueryClient();
+
+function ReactQueryDevtoolsWrapper() {
+  if (process.env.NODE_ENV === "production") {
+    return null;
+  }
+
+  const [showQueryDevtools, setShowQueryDevtools] = useState(window.localStorage.getItem('showReactQueryDevTools'));
+
+  useEffect(() => {
+    window.toogleQueryDevtools = (persist) => setShowQueryDevtools((s) => {
+      if (persist) {
+        window.localStorage.setItem('showReactQueryDevTools', !s);
+      }
+      return !s
+    });
+  }, [setShowQueryDevtools]);
+
+  if (showQueryDevtools) {
+    return <ReactQueryDevtools initialIsOpen={false} />;
+  }
+
+  return null;
+}
+
 function App() {
   // Plugins hooks
 {{ @each(it.plugins) => plugin }}
@@ -32,42 +59,45 @@ function App() {
 {{ /if }}
 {{ /each }}
   return (
-    <Router>
+    <QueryClientProvider client={queryClient}>
+      <Router>
 {{ @each(it.plugins) => plugin }}
 {{ @if(plugin.globalContext) }}
-        <{{ plugin.name | clear | capitalize }}GlobalProvider>
+          <{{ plugin.name | clear | capitalize }}GlobalProvider>
 {{ /if }}
 {{ /each }}
-            <Switch>
-              {/* Define each plugin route */}
+              <Switch>
+                {/* Define each plugin route */}
 {{ @each(it.plugins) => plugin }}
 {{ @if(plugin.localContext && (plugin.routers.public || plugin.routers.private)) }}
-              <{{ plugin.name | clear | capitalize }}LocalProvider>
+                <{{ plugin.name | clear | capitalize }}LocalProvider>
 {{ /if }}
 {{ @if(plugin.routers.public) }}
-                <Route path="/{{ plugin.name }}">
-                  <{{ plugin.name | clear | capitalize }}Public fallback={<LoadingOverlay visible />} />
-                </Route>
+                  <Route path="/{{ plugin.name }}">
+                    <{{ plugin.name | clear | capitalize }}Public fallback={<LoadingOverlay visible />} />
+                  </Route>
 {{ /if }}
 {{ @if(plugin.routers.private) }}
-                <Route path="/private/{{ plugin.name }}">
-                  <{{ plugin.name | clear | capitalize }}Private fallback={<LoadingOverlay visible />} />
-                </Route>
+                  <Route path="/private/{{ plugin.name }}">
+                    <{{ plugin.name | clear | capitalize }}Private fallback={<LoadingOverlay visible />} />
+                  </Route>
 {{ /if }}
 {{ @if(plugin.localContext && (plugin.routers.public || plugin.routers.private)) }}
-              </{{ plugin.name | clear | capitalize }}LocalProvider>
+                </{{ plugin.name | clear | capitalize }}LocalProvider>
 {{ /if }}
 {{ /each }}
-              <Route path="/">
-                   <Redirect to={`/private/dashboard`} />
-              </Route>
-            </Switch>
+                <Route path="/">
+                    <Redirect to={`/private/dashboard`} />
+                </Route>
+              </Switch>
 {{ @each(it.plugins.reverse()) => plugin }}
 {{ @if(plugin.globalContext) }}
-        </{{ plugin.name | clear | capitalize }}GlobalProvider>
+          </{{ plugin.name | clear | capitalize }}GlobalProvider>
 {{ /if }}
 {{ /each }}
     </Router>
+    <ReactQueryDevtoolsWrapper />
+    </QueryClientProvider>
   );
 }
 
