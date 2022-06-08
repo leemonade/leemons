@@ -66,6 +66,6 @@ StudentsList.propTypes = {
       avgTime: PropTypes.string,
       score: PropTypes.string,
     }),
-    pagination: PropTypes.object(),
+    pagination: PropTypes.object,
   }),
 };
