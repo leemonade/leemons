@@ -45,6 +45,7 @@ module.exports = {
       students: 'Estudiantes',
       noStudentsToAssign:
         'No hay estudiantes matriculados en las asignaturas seleccionadas, por favor seleccione otra combinación',
+      required: 'Campo requerido',
     },
     placeholders: {
       date: 'dd/mm/aaaa',
