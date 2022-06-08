@@ -45,7 +45,7 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
     const total = students.length;
     return {
       // Only if finished
-      completed: submission / total,
+      completed: Math.round(submission / total),
       submission,
       total,
       subject: {
