@@ -85,7 +85,7 @@ export default function File({ labels }) {
           name="data.maxSize"
           rules={{
             validate: (value) => {
-              if (value <= 0) {
+              if (value <= 0 || !value) {
                 return labels?.required;
               }
             },

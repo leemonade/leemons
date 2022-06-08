@@ -120,7 +120,10 @@ export default function Submissions({ labels, errorMessages }) {
                     <Select
                       {...type}
                       required
-                      error={!!errors?.submission?.type?.length && errors?.submission?.type}
+                      error={
+                        !!errors?.submission?.type?.message?.length &&
+                        errors?.submission?.type?.message
+                      }
                       label={labels?.submission?.type}
                       data={[
                         {
