@@ -5,6 +5,7 @@ module.exports = {
   },
   assignment_form: {
     labels: {
+      isAllDay: 'Show as daily event',
       classroomToAssign: 'Classroom to assign',
       studentToAssign: 'Student to assign',
       mode: 'Mode',
@@ -57,6 +58,8 @@ module.exports = {
       closeDateToogle: 'NOTE: After this date, no corrections can be made',
       limitedExecution:
         'NOTE: This is the time interval after reviewing the activity summary until the submission of the deliverable.',
+      isAllDay:
+        'NOTE: Students will have until 23:59h to submit, but will see the deadline as a daily event in their calendar.',
     },
     assignTo: {
       student: 'Student',
