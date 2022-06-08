@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import _ from 'lodash';
 import { LocaleDate, LocaleDuration, unflatten } from '@common';
 import dayjs from 'dayjs';
@@ -55,7 +55,7 @@ function getStudentAverageScore(studentData) {
     return '-';
   }
 
-  return scoresAvgObject.total / scoresAvgObject.count;
+  return (scoresAvgObject.total / scoresAvgObject.count).toFixed(2);
 }
 
 export default function useParseStudents(instance, statusLabels) {
