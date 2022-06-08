@@ -14,8 +14,18 @@ function CorrectionButton({ studentData, instanceData, label }) {
   return <Button onClick={redirect}>{label}</Button>;
 }
 
-export default function getActions(studentData, instanceData, localizations) {
+export default function getActions(studentData, instanceData, localizations, subjects) {
   if (studentData.finished) {
+    const grades = studentData.grades?.filter((grade) => grade.type === 'main');
+    if (grades?.length === subjects?.length) {
+      return (
+        <CorrectionButton
+          studentData={studentData}
+          instanceData={instanceData}
+          label={localizations.review}
+        />
+      );
+    }
     return (
       <CorrectionButton
         studentData={studentData}

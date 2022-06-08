@@ -155,6 +155,7 @@ module.exports = {
   teacher_actions: {
     sendReminder: 'Enviar recordatorio',
     evaluate: 'Evaluar',
+    review: 'Revisar',
   },
   student_actions: {
     continue: 'Continuar',
