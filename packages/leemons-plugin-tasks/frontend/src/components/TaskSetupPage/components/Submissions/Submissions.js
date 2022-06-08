@@ -36,15 +36,15 @@ function useValueUpdater(form, originalForm) {
     return () => subscription.unsubscribe();
   }, [originalForm?.watch]);
 
-  useEffect(() => {
-    const subscription = originalForm.watch((value, field) => {
-      if (field.name?.startsWith('submission')) {
-        form.setValue('show', !!value?.submission?.type || !!value?.submission?.description);
-      }
-    });
+  // useEffect(() => {
+  //   const subscription = originalForm.watch((value, field) => {
+  //     if (field.name?.startsWith('submission')) {
+  //       form.setValue('show', !!value?.submission?.type || !!value?.submission?.description);
+  //     }
+  //   });
 
-    return () => subscription.unsubscribe();
-  }, [originalForm]);
+  //   return () => subscription.unsubscribe();
+  // }, [originalForm]);
 
   // EN: Propagate the first value to the child form
   // ES: Propagar el primer valor al formulario hijo
