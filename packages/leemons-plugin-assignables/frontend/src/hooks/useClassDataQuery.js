@@ -6,7 +6,7 @@ function getClassDataWithLabel({ classes, labels }) {
 }
 
 export default function useClassData(instances, labels = {}) {
-  const _instances = Array.isArray(instances) ? instances : [instances];
+  const _instances = (Array.isArray(instances) ? instances : [instances])?.filter(Boolean);
 
   return useQueries(
     _instances.map(({ classes }) => ({
