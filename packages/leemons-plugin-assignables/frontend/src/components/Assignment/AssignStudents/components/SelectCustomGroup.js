@@ -4,14 +4,19 @@ import PropTypes from 'prop-types';
 import { useForm, Controller } from 'react-hook-form';
 import { TextInput, Alert, Loader, ContextContainer } from '@bubbles-ui/components';
 import SelectUserAgent from '@users/components/SelectUserAgent';
-import useGroupedClassesWithSelectedSubjects from '../hooks/useGroupedClassesWithSelectedSubjects';
 
-export default function SelectCustomGroup({ labels, profiles, onChange, value }) {
+export default function SelectCustomGroup({
+  labels,
+  profiles,
+  onChange,
+  value,
+  groupedClassesWithSelectedSubjects,
+}) {
   const { control, watch, getValues } = useForm({
     defaultValues: {},
   });
 
-  const { assignableStudents, subjects, classes } = useGroupedClassesWithSelectedSubjects();
+  const { assignableStudents, subjects, classes } = groupedClassesWithSelectedSubjects;
 
   useEffect(() => {
     const handleChange = (v) => {
@@ -102,4 +107,17 @@ SelectCustomGroup.propTypes = {
   profiles: PropTypes.arrayOf(PropTypes.string).isRequired,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.arrayOf(PropTypes.string),
+  groupedClassesWithSelectedSubjects: PropTypes.shape({
+    classes: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        label: PropTypes.string.isRequired,
+        assignableStudents: PropTypes.arrayOf(PropTypes.string).isRequired,
+        totalStudents: PropTypes.number.isRequired,
+        type: PropTypes.string.isRequired,
+      })
+    ).isRequired,
+    subjects: PropTypes.arrayOf(PropTypes.string).isRequired,
+    assignableStudents: PropTypes.arrayOf(PropTypes.string).isRequired,
+  }).isRequired,
 };

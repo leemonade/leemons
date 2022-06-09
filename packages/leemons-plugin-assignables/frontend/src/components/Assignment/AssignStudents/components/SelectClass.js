@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import {
@@ -15,7 +15,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { getUserAgentsInfoRequest } from '@users/request';
 import { useApi } from '@common';
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
-import { useGroupedClassesWithSelectedSubjects } from '../hooks';
 
 function useUserAgentsInfo(users) {
   const [data] = useApi(getUserAgentsInfoRequest, users);
@@ -48,15 +47,20 @@ NonAssignableStudents.propTypes = {
     unableToAssignStudentsMessage: PropTypes.string,
   }),
 };
-export default function SelectClass({ labels, profiles, onChange, value }) {
+export default function SelectClass({
+  labels,
+  profiles,
+  onChange,
+  value,
+  groupedClassesWithSelectedSubjects,
+}) {
   const { control, watch, getValues } = useForm({
     defaultValues: {
       excluded: [],
     },
   });
 
-  const { classes, nonAssignableStudents, assignableStudents } =
-    useGroupedClassesWithSelectedSubjects();
+  const { classes, nonAssignableStudents, assignableStudents } = groupedClassesWithSelectedSubjects;
 
   useEffect(() => {
     const handleChange = (data) => {
@@ -191,4 +195,17 @@ SelectClass.propTypes = {
   profiles: PropTypes.arrayOf(PropTypes.string).isRequired,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.arrayOf(PropTypes.string),
+  groupedClassesWithSelectedSubjects: PropTypes.shape({
+    classes: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        label: PropTypes.string.isRequired,
+        assignableStudents: PropTypes.arrayOf(PropTypes.string).isRequired,
+        totalStudents: PropTypes.number.isRequired,
+        type: PropTypes.string.isRequired,
+      })
+    ).isRequired,
+    nonAssignableStudents: PropTypes.arrayOf(PropTypes.string).isRequired,
+    assignableStudents: PropTypes.arrayOf(PropTypes.string).isRequired,
+  }).isRequired,
 };
