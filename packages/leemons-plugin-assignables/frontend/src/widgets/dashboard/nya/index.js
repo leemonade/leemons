@@ -7,7 +7,7 @@ import useSearchAssignableInstances from '../../../hooks/assignableInstance/useS
 import useAssignationsByProfile from '../../../hooks/assignations/useAssignationsByProfile';
 import prefixPN from '../../../helpers/prefixPN';
 import NYACard from '../../../components/NYACard';
-import EmptyState from './EmptyState.png';
+import EmptyState from '../../../assets/EmptyState.png';
 import useClassData from '../../../hooks/useClassDataQuery';
 
 function useInstancesClassData({ instances: object, labels }) {
@@ -93,7 +93,7 @@ function nyaStatus({ loading, data, labels, query, classData }) {
   return (
     <Box
       sx={(theme) => ({
-        width: 357,
+        width: '100%',
         height: 328,
         borderRadius: theme.spacing[1],
         backgroundColor: theme.colors.uiBackground02,
@@ -105,7 +105,8 @@ function nyaStatus({ loading, data, labels, query, classData }) {
       })}
     >
       <ImageLoader src={EmptyState} width={142} height={149} />
-      <Text color="primary">No hay tareas programadas</Text>
+      {/* TRANSLATE: Translate empty state */}
+      <Text color="primary">No hay actividades programadas</Text>
     </Box>
   );
 }
@@ -156,13 +157,15 @@ export default function NYA({ classe, program }) {
     () => instancesDataQueries?.some(({ isLoading }) => isLoading),
     [instancesDataQueries]
   );
-  const instancesData = useMemo(() => {
-    if (!instancesDataQueriesIsSuccess) {
-      return [];
-    }
+  const instancesData = useMemo(
+    () =>
+      // if (!instancesDataQueriesIsSuccess) {
+      //   return [];
+      // }
 
-    return instancesDataQueries?.map((q) => q.data);
-  }, [instancesDataQueriesIsSuccess, instancesDataQueries]);
+      instancesDataQueries?.map((q) => q.data)?.filter((d) => d) || [],
+    [instancesDataQueriesIsSuccess, instancesDataQueries]
+  );
 
   const { data: classData, isLoading: classDataIsLoading } = useInstancesClassData({
     instances: instancesData,

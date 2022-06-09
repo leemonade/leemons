@@ -4,10 +4,13 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { getProfiles } from '@tasks/request/profiles';
 import SelectClass from './SelectClass';
 import SelectCustomGroup from './SelectCustomGroup';
+import { useGroupedClassesWithSelectedSubjects } from '../hooks';
 
 export default function AssigneeSelector({ labels, profile, onChange, value }) {
   const { control } = useFormContext();
   const [profiles, setProfiles] = useState(null);
+
+  const groupedClassesWithSelectedSubjects = useGroupedClassesWithSelectedSubjects();
 
   const type = useWatch({
     control,
@@ -25,10 +28,24 @@ export default function AssigneeSelector({ labels, profile, onChange, value }) {
 
   switch (type) {
     case 'class':
-      return <SelectClass labels={labels} profiles={profiles} value={value} onChange={onChange} />;
+      return (
+        <SelectClass
+          labels={labels}
+          profiles={profiles}
+          value={value}
+          onChange={onChange}
+          groupedClassesWithSelectedSubjects={groupedClassesWithSelectedSubjects}
+        />
+      );
     case 'customGroups':
       return (
-        <SelectCustomGroup labels={labels} profiles={profiles} value={value} onChange={onChange} />
+        <SelectCustomGroup
+          labels={labels}
+          profiles={profiles}
+          value={value}
+          onChange={onChange}
+          groupedClassesWithSelectedSubjects={groupedClassesWithSelectedSubjects}
+        />
       );
     case 'session':
       // TODO: Implement session selector for tasks
