@@ -51,7 +51,7 @@ module.exports = {
     },
   },
   library_page: {
-    page_title: 'Biblioteca de Tareas',
+    page_title: 'Librería de tareas',
     published: 'Publicado',
     draft: 'Borrador',
   },

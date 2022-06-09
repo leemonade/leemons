@@ -28,7 +28,7 @@ export default function AssignmentList({
   title,
   titleComponent,
   filters: filtersProps,
-  defualtFilters: defaultFilters = null,
+  defaultFilters = null,
   fullWidth,
   ...props
 }) {

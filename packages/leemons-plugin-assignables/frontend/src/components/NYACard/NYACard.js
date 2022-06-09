@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import dayjs from 'dayjs';
-import { Box } from '@bubbles-ui/components';
+import { Box, ImageLoader } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useAssignablesContext from '@assignables/hooks/useAssignablesContext';
@@ -45,7 +45,7 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
     const total = students.length;
     return {
       // Only if finished
-      completed: Math.round(submission / total),
+      completed: (submission / total).toFixed(2),
       submission,
       total,
       subject: {
@@ -66,6 +66,7 @@ function parseDeadline(isTeacher, obj) {
     instance = obj.instance;
   }
 
+  // TRANSLATE: Deadline
   const labels = {
     evaluated: 'Ver evaluación',
     submission: 'Entrega',
@@ -96,8 +97,8 @@ function parseDeadline(isTeacher, obj) {
     if (status === 'evaluated') {
       main = labels.evaluated;
       if (deadline.isValid()) {
-        secondary = labels?.submission;
-        dateToShow = deadline.toDate();
+        secondary = labels?.submitted;
+        dateToShow = submission.toDate();
       }
     } else if (status === 'late') {
       main = labels.late;
@@ -200,7 +201,7 @@ function parseDeadline(isTeacher, obj) {
       main = labels?.opened;
       if (startDate.isValid()) {
         secondary = labels?.submission;
-        dateToShow = startDate.toDate();
+        dateToShow = deadline.toDate();
       }
     } else {
       main = labels?.assigned;
@@ -391,7 +392,27 @@ export default function NYACard({
         deadlineProps={preparedInstance?.deadlineProps}
         subject={preparedInstance?.subject}
         badge={preparedInstance?.isNew && labels?.new?.toUpperCase()}
-        variantTitle={labels?.roles?.[instance?.assignable?.role] || instance?.assignable?.role}
+        variantTitle={
+          labels?.roles?.[preparedInstance?.assignable?.role] || preparedInstance?.assignable?.role
+        }
+        variantIcon={
+          <Box
+            style={{
+              position: 'relative',
+            }}
+          >
+            <ImageLoader
+              style={{
+                width: 12,
+                height: 12,
+                position: 'relative',
+              }}
+              width={12}
+              height={12}
+              src={preparedInstance?.assignable?.roleDetails?.icon}
+            />
+          </Box>
+        }
       />
     </Box>
   );

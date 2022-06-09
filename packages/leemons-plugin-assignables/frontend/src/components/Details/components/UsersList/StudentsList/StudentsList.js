@@ -51,6 +51,7 @@ export default function StudentsList({ labels, students }) {
       onPageChange={setPage}
       onSizeChange={setSize}
       selectable
+      labels={labels?.pagination}
     ></PaginatedList>
   );
 }
@@ -65,5 +66,6 @@ StudentsList.propTypes = {
       avgTime: PropTypes.string,
       score: PropTypes.string,
     }),
+    pagination: PropTypes.object,
   }),
 };

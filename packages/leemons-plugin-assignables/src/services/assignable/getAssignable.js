@@ -68,7 +68,7 @@ module.exports = async function getAssignable(
       relatedAssignables: JSON.parse(assignable.relatedAssignables),
       submission: JSON.parse(assignable.submission),
       metadata: JSON.parse(assignable.metadata),
-      resources: JSON.parse(assignable.resources),
+      resources: JSON.parse(assignable.resources) || [],
       subjects,
     };
 

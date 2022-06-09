@@ -12,6 +12,7 @@ export default function UserList({ instance }) {
   const [, translations] = useTranslateLoader([
     prefixPN('studentsList'),
     prefixPN('activity_status'),
+    prefixPN('pagination'),
   ]);
 
   const { labels, placeholders, descriptions, status } = useMemo(() => {
@@ -21,7 +22,11 @@ export default function UserList({ instance }) {
 
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return { ...data, status: _.get(res, prefixPN('activity_status')) };
+      return {
+        ...data,
+        status: _.get(res, prefixPN('activity_status')),
+        pagination: _.get(res, prefixPN('pagination')),
+      };
     }
 
     return {

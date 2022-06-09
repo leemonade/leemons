@@ -41,6 +41,8 @@ import { PermissionsData } from './AssetSetup/PermissionsData';
 import { ListEmpty } from './ListEmpty';
 import { SearchEmpty } from './SearchEmpty';
 
+const DRAWER_WIDTH = 350;
+
 function getLocale(session) {
   return session ? session.locale : navigator?.language || 'en';
 }
@@ -94,7 +96,8 @@ const AssetList = ({
   const [assets, setAssets] = useState([]);
   const [assetTypes, setAssetTypes] = useState([]);
   const [assetType, setAssetType] = useState(assetTypeProp);
-  const [openDetail, setOpenDetail] = useState(true);
+  const [openDetail, setOpenDetail] = useState(false);
+  const [isDetailOpened, setIsDetailOpened] = useState(false);
   const [serverData, setServerData] = useState({});
   const [showPublic, setShowPublic] = useState(showPublicProp);
   const [searchCriteria, setSearhCriteria] = useState(searchProp);
@@ -202,6 +205,7 @@ const AssetList = ({
             showPublic: !pinned ? showPublic : true,
           });
           paginated.items = response.assets || [];
+          paginated.page += 1;
           // console.log('paginated.items:', paginated.items);
           setServerData(paginated);
         } else {
@@ -413,10 +417,12 @@ const AssetList = ({
     });
   };
 
+  /*
   const handleOnShowPublic = (value) => {
     setShowPublic(value);
     onShowPublic(value);
   };
+  */
 
   const handleOnPin = (item) => {
     pinAsset(item);
@@ -471,11 +477,29 @@ const AssetList = ({
   const showDrawer = useMemo(() => !loading && !isNil(asset) && !isEmpty(asset), [loading, asset]);
   const isEmbedded = useMemo(() => variant === 'embedded', [variant]);
 
+  const toggleDetail = (val) => {
+    if (!val) {
+      setTimeout(() => setIsDetailOpened(val), 10);
+      setTimeout(() => setOpenDetail(val), 200); // 200
+    } else {
+      setTimeout(() => setIsDetailOpened(val), 500); // 500
+      setTimeout(() => setOpenDetail(val), 10);
+    }
+  };
+
+  useEffect(() => {
+    toggleDetail(showDrawer);
+  }, [showDrawer]);
+
+  useEffect(() => {
+    if (!isNil(asset) && !isEmpty(asset)) {
+      toggleDetail(true);
+    }
+  }, [asset]);
+
   const headerOffset = useMemo(() => {
     const offsets = childRef.current?.getBoundingClientRect() || childRect;
-    return Math.round(
-      offsets.top + childRect.top + childRect.bottom + (isEmbedded ? childRect.height : 0)
-    );
+    return Math.round(offsets.top + childRect.height + childRect.top);
   }, [childRect, isEmbedded]);
 
   const listProps = useMemo(() => {
@@ -490,12 +514,12 @@ const AssetList = ({
             isEmbedded={isEmbedded}
             onRefresh={reloadAssets}
             onDuplicate={handleOnDuplicate}
-              onDelete={handleOnDelete}
-              onEdit={handleOnEdit}
-              onShare={handleOnShare}
-              onPin={handleOnPin}
-              onUnpin={handleOnUnpin}
-              onDownload={handleOnDownload}
+            onDelete={handleOnDelete}
+            onEdit={handleOnEdit}
+            onShare={handleOnShare}
+            onPin={handleOnPin}
+            onUnpin={handleOnUnpin}
+            onDownload={handleOnDownload}
             locale={locale}
           />
         ),
@@ -560,14 +584,34 @@ const AssetList = ({
     return emptyComponent || <ListEmpty t={t} />;
   };
 
+  const listWidth = useMemo(() => {
+    if (openDetail && showDrawer) {
+      return `calc(100% - ${DRAWER_WIDTH}px)`;
+    }
+
+    if (showDrawer) {
+      return `calc(100% - 50px)`;
+    }
+
+    return '100%';
+  }, [openDetail, showDrawer]);
+
   // ·········································································
   // RENDER
 
   return (
-    <Stack ref={containerRef} direction="column" fullHeight style={{ position: 'relative' }}>
+    <Stack
+      ref={containerRef}
+      direction="column"
+      fullWidth
+      fullHeight
+      style={{ position: 'relative' }}
+    >
+      {/* SEARCH BAR ············· */}
       <Stack
         ref={childRef}
         fullWidth
+        skipFlex
         spacing={5}
         padding={isEmbedded ? 0 : 5}
         style={
@@ -614,34 +658,33 @@ const AssetList = ({
         )}
       </Stack>
 
+      {/* PAGINATED LIST ········· */}
       <Stack
         fullHeight
-        style={
-          isEmbedded
-            ? { marginRight: showDrawer && drawerRect.width }
-            : {
-                marginTop: headerOffset,
-                marginRight: drawerRect.width,
-              }
-        }
-      >
+        style={{
+          marginTop: !isEmbedded && headerOffset,
+          width: listWidth,
+          transition: 'width 0.3s ease',
+        }}>
         <Box
           sx={(theme) => ({
             flex: 1,
             position: 'relative',
-            marginTop: isEmbedded && theme.spacing[5],
+            marginTop: theme.spacing[5],
             paddingRight: !isEmbedded && theme.spacing[5],
             paddingLeft: !isEmbedded && theme.spacing[5],
           })}
         >
           <LoadingOverlay visible={loading} overlayOpacity={0} />
-          {!loading && !pinned && canShowPublicToggle && (
+
+          {/* !loading && !pinned && canShowPublicToggle && (
             <Switch
               label={t('labels.showPublic')}
               checked={showPublic}
               onChange={handleOnShowPublic}
             />
-          )}
+          ) */}
+
           {!loading && !isEmpty(serverData?.items) && (
             <Box
               sx={(theme) => ({
@@ -677,21 +720,22 @@ const AssetList = ({
           )}
         </Box>
       </Stack>
+
+      {/* SIDE PANEL ········· */}
       <Box
         ref={drawerRef}
-        style={{
+        sx={(theme) => ({
           position: 'fixed',
-          height: `calc(100% - ${headerOffset}px)`,
+          height: `calc(100% - ${headerOffset + theme.spacing[5]}px)`,
           right: 0,
-          top: headerOffset,
+          top: headerOffset + theme.spacing[5],
           zIndex: 99,
-        }}
+        })}
       >
         {showDrawer && (
           <Box
             style={{
-              background: !isEmbedded && '#FFF',
-              width: openDetail ? 360 : 'auto',
+              width: isDetailOpened ? DRAWER_WIDTH : 0,
               height: '100%',
             }}
           >
@@ -700,9 +744,9 @@ const AssetList = ({
               asset={asset}
               labels={detailLabels}
               variant={cardVariant}
-              open={openDetail}
+              open={isDetailOpened}
               toolbarItems={toolbarItems}
-              onToggle={() => setOpenDetail(!openDetail)}
+              onToggle={() => toggleDetail(!isDetailOpened)}
               onDuplicate={handleOnDuplicate}
               onDelete={handleOnDelete}
               onEdit={handleOnEdit}
@@ -725,11 +769,11 @@ AssetList.defaultProps = {
   searchable: true,
   category: 'media-files',
   categories: [],
-  itemMinWidth: 330,
+  itemMinWidth: 300,
   search: '',
   page: 1,
-  pageSize: 6,
-  pageSizes: [6, 12, 18, 24],
+  pageSize: 12,
+  pageSizes: [12, 18, 24],
   canChangeLayout: true,
   canChangeType: true,
   canSearch: true,
@@ -739,7 +783,7 @@ AssetList.defaultProps = {
   pinned: false,
   preferCurrent: true,
   canShowPublicToggle: true,
-  paperProps: { color: 'none', shadow: 'none' },
+  paperProps: { color: 'none', shadow: 'none', padding: 0 },
 };
 AssetList.propTypes = {
   category: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),

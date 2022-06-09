@@ -17,7 +17,7 @@ function CorrectionButton({ studentData, instanceData, label }) {
 export default function getActions(studentData, instanceData, localizations, subjects) {
   if (studentData.finished) {
     const grades = studentData.grades?.filter((grade) => grade.type === 'main');
-    if (grades?.length === subjects?.length) {
+    if (grades?.length >= subjects?.length) {
       return (
         <CorrectionButton
           studentData={studentData}

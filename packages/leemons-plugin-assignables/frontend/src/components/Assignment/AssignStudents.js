@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { ContextContainer, PageContainer } from '@bubbles-ui/components';
+import { ContextContainer, PageContainer, InputWrapper } from '@bubbles-ui/components';
 import { useForm, FormProvider, Controller } from 'react-hook-form';
 import SubjectSelector from './AssignStudents/components/SubjectSelector';
 import AssigneeTypeSelector from './AssignStudents/components/AssigneeTypeSelector';
 import AssigneeSelector from './AssignStudents/components/AssigneeSelector';
 
-export default function AssignStudents({ labels, profile, onChange, assignable }) {
+export default function AssignStudents({ labels, profile, onChange, assignable, ...props }) {
   const form = useForm({
     subjects: [],
     type: null,
@@ -23,29 +23,31 @@ export default function AssignStudents({ labels, profile, onChange, assignable }
 
   return (
     <FormProvider {...form}>
-      <Controller
-        control={control}
-        name="subjects"
-        render={({ field }) => (
-          <SubjectSelector {...field} labels={labels} assignable={assignable} />
-        )}
-      />
-      <ContextContainer title={labels.selectStudentsTitle}>
+      <InputWrapper {...props}>
         <Controller
           control={control}
-          name="type"
-          render={({ field }) => <AssigneeTypeSelector {...field} labels={labels} />}
+          name="subjects"
+          render={({ field }) => (
+            <SubjectSelector {...field} labels={labels} assignable={assignable} />
+          )}
         />
-        <PageContainer>
+        <ContextContainer title={labels.selectStudentsTitle}>
           <Controller
             control={control}
-            name="assignee"
-            render={({ field }) => (
-              <AssigneeSelector {...field} labels={labels} profile={profile} />
-            )}
+            name="type"
+            render={({ field }) => <AssigneeTypeSelector {...field} labels={labels} />}
           />
-        </PageContainer>
-      </ContextContainer>
+          <PageContainer>
+            <Controller
+              control={control}
+              name="assignee"
+              render={({ field }) => (
+                <AssigneeSelector {...field} labels={labels} profile={profile} />
+              )}
+            />
+          </PageContainer>
+        </ContextContainer>
+      </InputWrapper>
     </FormProvider>
   );
 }

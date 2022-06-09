@@ -13,7 +13,7 @@ function ReactQueryDevtoolsWrapper() {
   }
 
   const [showQueryDevtools, setShowQueryDevtools] = useState(
-    window.localStorage.getItem('showReactQueryDevTools')
+    window.localStorage.getItem('showReactQueryDevTools') === 'true'
   );
 
   useEffect(() => {

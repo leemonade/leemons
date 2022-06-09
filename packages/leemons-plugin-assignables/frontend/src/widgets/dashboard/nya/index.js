@@ -10,7 +10,13 @@ import NYACard from '../../../components/NYACard';
 import EmptyState from './EmptyState.png';
 import useClassData from '../../../hooks/useClassDataQuery';
 
-function useInstancesClassData({ instances, labels }) {
+function useInstancesClassData({ instances: object, labels }) {
+  const isTeacher = object.some((instance) => instance?.assignable);
+  const instances = useMemo(
+    () => (isTeacher ? object : object.map((instance) => instance?.instance)),
+    [object, isTeacher]
+  );
+
   const result = useClassData(instances, labels);
 
   const isSuccess = result.some(({ isSuccess: s }) => s);

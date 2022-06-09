@@ -15,6 +15,7 @@ import { ViewOnIcon, EditIcon } from '@bubbles-ui/icons/outline';
 import dayjs from 'dayjs';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
+import { useQuery } from 'react-query';
 import globalContext from '../../../../contexts/globalContext';
 import getClassData from '../../../../helpers/getClassData';
 import getStatus from '../../../Details/components/UsersList/helpers/getStatus';
@@ -439,19 +440,25 @@ export default function useParseAssignations(assignations, options) {
     [isTeacher]
   );
 
-  const parseAssignationsOptions = useMemo(
-    () => ({
-      parserToUse,
-      assignations,
-      labels,
-      options,
-    }),
-    [parserToUse, assignations, labels]
+  const result = useQuery(
+    [
+      'parseAssignations',
+      {
+        parserToUse: parserToUse.toString(),
+        assignations,
+        labels,
+        options,
+      },
+    ],
+    () =>
+      parseAssignations({
+        assignations,
+        labels,
+        options,
+        parserToUse,
+      })
   );
+  // const [parsedAssignations, , loading] = useApi(parseAssignations, parseAssignationsOptions);
 
-  const defaultValue = useMemo(() => [], []);
-
-  const [parsedAssignations, , loading] = useApi(parseAssignations, parseAssignationsOptions);
-
-  return [parsedAssignations || defaultValue, loading];
+  return result;
 }

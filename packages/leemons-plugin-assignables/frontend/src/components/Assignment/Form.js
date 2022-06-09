@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { unflatten } from '@common';
 import { Controller, useForm } from 'react-hook-form';
@@ -19,12 +19,6 @@ export default function Form({
   sendButton,
 }) {
   const [, translations] = useTranslateLoader(prefixPN('assignment_form'));
-  const [labels, setLabels] = useState({});
-  const [placeholders, setPlaceholders] = useState({});
-  const [descriptions, setDescriptions] = useState({});
-  const [modes, setModes] = useState({});
-  const [assignTo, setAssignTo] = useState([]);
-
   const {
     handleSubmit,
     control,
@@ -35,19 +29,16 @@ export default function Form({
     defaultValues,
   });
 
-  useEffect(() => {
+  const { labels, placeholders, descriptions, assignTo, modes } = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       const data = res.plugins.assignables.assignment_form;
+      const _modes = Object.entries(data.modes || {}).map(([key, value]) => ({
+        value: key,
+        label: value,
+      }));
 
-      setModes(
-        Object.entries(data.modes || {}).map(([key, value]) => ({
-          value: key,
-          label: value,
-        }))
-      );
-
-      setAssignTo([
+      const _assignTo = [
         {
           label: data.assignTo.class,
           value: 'class',
@@ -56,12 +47,24 @@ export default function Form({
           label: data.assignTo.student,
           value: 'student',
         },
-      ]);
+      ];
 
-      setLabels(data.labels);
-      setPlaceholders(data.placeholders);
-      setDescriptions(data.descriptions);
+      return {
+        labels: data.labels,
+        placeholders: data.placeholders,
+        descriptions: data.descriptions,
+        modes: _modes,
+        assignTo: _assignTo,
+      };
     }
+
+    return {
+      labels: {},
+      placeholders: {},
+      descriptions: {},
+      modes: {},
+      assignTo: [],
+    };
   }, [translations]);
 
   const onSubmit = (data) => {
@@ -74,7 +77,6 @@ export default function Form({
     e.setHours(23, 59, 59);
     setValue('dates.deadline', e);
   }
-
   const isAllDay = watch('isAllDay');
   const deadline = watch('dates.deadline');
 
@@ -84,11 +86,11 @@ export default function Form({
         <Controller
           control={control}
           name="assignees"
-          rules={{ required: true }}
+          rules={{ required: labels?.required }}
           render={({ field }) => (
             <AssignStudents
               {...field}
-              error={errors.assignees}
+              error={errors?.assignees}
               profile="student"
               assignable={assignable}
               labels={labels}
@@ -113,13 +115,13 @@ export default function Form({
                       <Controller
                         control={control}
                         name="dates.start"
-                        rules={{ required: true }}
+                        rules={{ required: labels?.required }}
                         render={({ field }) => (
                           <DatePicker
                             {...field}
                             withTime
                             minDate={new Date()}
-                            error={errors.startDate}
+                            error={errors?.dates?.start}
                             label={labels?.startDate}
                             placeholder={placeholders?.date}
                           />
@@ -131,7 +133,7 @@ export default function Form({
                       <Controller
                         control={control}
                         name="dates.deadline"
-                        rules={{ required: true }}
+                        rules={{ required: labels?.required }}
                         render={({ field }) => {
                           const startDate = watch('dates.start');
                           return (
@@ -145,7 +147,7 @@ export default function Form({
                                 }
                               }}
                               withTime={!isAllDay}
-                              error={errors.deadline}
+                              error={errors?.dates?.deadline}
                               label={labels?.deadline}
                               minDate={startDate}
                               placeholder={placeholders?.date}
@@ -167,7 +169,7 @@ export default function Form({
                               control={control}
                               name="dates.visualization"
                               shouldUnregister={true}
-                              rules={{ required: true }}
+                              rules={{ required: labels?.required }}
                               render={({ field }) => {
                                 const startDate = watch('dates.start');
                                 return (
@@ -176,7 +178,7 @@ export default function Form({
                                     withTime
                                     minDate={new Date()}
                                     maxDate={startDate}
-                                    error={errors.visualizationDate}
+                                    error={errors?.dates?.visualization}
                                     label={labels?.visualizationDate}
                                     placeholder={placeholders?.date}
                                   />
@@ -217,7 +219,7 @@ export default function Form({
                               control={control}
                               name="dates.close"
                               shouldUnregister={true}
-                              rules={{ required: true }}
+                              rules={{ required: labels?.required }}
                               render={({ field }) => {
                                 const deadline = watch('dates.deadline');
                                 return (
@@ -225,7 +227,7 @@ export default function Form({
                                     {...field}
                                     withTime
                                     minDate={deadline}
-                                    error={errors.closeDate}
+                                    error={errors?.dates?.close}
                                     label={labels?.closeDate}
                                     placeholder={placeholders?.date}
                                   />
@@ -251,10 +253,10 @@ export default function Form({
               control={control}
               name="duration"
               shouldUnregister={true}
-              rules={{ required: true }}
+              rules={{ required: labels?.required }}
               render={({ field }) => (
                 <TimeUnitsInput
-                  error={errors.executionTime}
+                  error={errors?.duration}
                   label={labels?.limitedExecution}
                   {...field}
                 />
@@ -270,10 +272,10 @@ export default function Form({
               control={control}
               name="messageToAssignees"
               shouldUnregister={true}
-              rules={{ required: true }}
+              rules={{ required: labels?.required }}
               render={({ field }) => (
                 <TextEditorInput
-                  error={errors.message}
+                  error={errors?.messageToAssignees}
                   label={labels?.messageToStudents}
                   {...field}
                 />

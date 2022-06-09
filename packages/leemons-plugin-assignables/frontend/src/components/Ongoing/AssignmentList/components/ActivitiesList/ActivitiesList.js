@@ -4,9 +4,9 @@ import { PaginatedList } from '@bubbles-ui/components';
 import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useSearchAssignableInstances from '../../../../../hooks/assignableInstance/useSearchAssignableInstances';
+import useSearchAssignableInstances from '../../../../../hooks/assignableInstance/useSearchAssignableInstancesQuery';
 import useParseAssignations from '../../hooks/useParseAssignations';
-import useAssignationsByProfile from '../../hooks/useAssignationsByProfile';
+import useAssignationsByProfile from '../../../../../hooks/assignations/useAssignationsByProfile';
 import globalContext from '../../../../../contexts/globalContext';
 import prefixPN from '../../../../../helpers/prefixPN';
 
@@ -137,20 +137,50 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
     return q;
   }, [filters]);
 
-  const [instances, instancesLoading] = useSearchAssignableInstances(query);
+  const [, translations] = useTranslateLoader(prefixPN('pagination'));
+
+  const labels = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      return {
+        pagination: _.get(res, prefixPN('pagination')),
+      };
+    }
+
+    return {};
+  }, [translations]);
+
+  const { data: instances, isLoading: instancesLoading } = useSearchAssignableInstances(query);
 
   const instancesInPage = useMemo(() => {
-    if (!instances.length) {
+    if (instancesLoading || !instances?.length) {
       return [];
     }
 
     return instances.slice((page - 1) * size, page * size);
-  }, [instances, page, size]);
+  }, [instances, instancesLoading, page, size]);
 
-  const [instancesData, instancesDataLoading] = useAssignationsByProfile(instancesInPage);
-  const [parsedInstances, parsedInstancesLoading] = useParseAssignations(instancesData, {
-    subjectFullLength,
-  });
+  const assignationsByProfile = useAssignationsByProfile(instancesInPage);
+
+  const instancesDataLoading = useMemo(
+    () => assignationsByProfile.some((q) => q.isLoading),
+    [assignationsByProfile]
+  );
+  const instancesData = useMemo(() => {
+    if (instancesDataLoading) {
+      return [];
+    }
+
+    return assignationsByProfile.map(({ data }) => data);
+  }, [assignationsByProfile, instancesDataLoading]);
+
+  const { data: parsedInstances, isLoading: parsedInstancesLoading } = useParseAssignations(
+    instancesData,
+    {
+      subjectFullLength,
+    }
+  );
+
   const columns = useAssignmentsColumns();
 
   const isLoading = instancesLoading || instancesDataLoading || parsedInstancesLoading;
@@ -163,11 +193,12 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
         page={page}
         size={size}
         loading={isLoading}
-        totalCount={instances.length}
-        totalPages={Math.ceil(instances.length / size)}
+        totalCount={instances?.length}
+        totalPages={Math.ceil(instances?.length / size)}
         onSizeChange={setSize}
         onPageChange={setPage}
         selectable={false}
+        labels={labels.pagination}
       />
     </>
   );
