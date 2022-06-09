@@ -26,6 +26,13 @@ module.exports = {
     schedule: 'Schedule',
     centers: 'Centers',
     close: 'Close',
+    allDay: 'All day',
+    init: 'Init',
+    end: 'End',
+    date: 'Date',
+    time: 'Time',
+    event: 'Event',
+    empty: 'There are no events',
   },
   event_modal: {
     name: 'Name',
