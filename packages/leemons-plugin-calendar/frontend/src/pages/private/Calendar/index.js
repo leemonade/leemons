@@ -286,7 +286,7 @@ function Calendar({ session }) {
             showWeekends: t('showWeekends'),
             allDay: t('allDay'),
             init: t('init'),
-            widgets: t('end'),
+            end: t('end'),
             date: t('date'),
             time: t('time'),
             event: t('event'),
