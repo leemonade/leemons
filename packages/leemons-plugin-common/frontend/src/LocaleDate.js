@@ -3,7 +3,7 @@ import { useSession } from '@users/session';
 const formatters = {};
 const rFormatters = {};
 
-function getLocale(session) {
+export function getLocale(session) {
   return session ? session.locale : navigator?.language || 'en';
 }
 

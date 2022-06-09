@@ -284,8 +284,8 @@ module.exports = {
     returnToTable: 'Volver a la tabla',
   },
   testAssign: {
-    pageTitle: 'Assignar Test:',
-    assign: 'Assignar',
+    pageTitle: 'Asignar Test:',
+    assign: 'Asignar',
     config: 'Configuración',
     next: 'Siguiente',
     prev: 'Anterior',
