@@ -156,13 +156,15 @@ export default function NYA({ classe, program }) {
     () => instancesDataQueries?.some(({ isLoading }) => isLoading),
     [instancesDataQueries]
   );
-  const instancesData = useMemo(() => {
-    if (!instancesDataQueriesIsSuccess) {
-      return [];
-    }
+  const instancesData = useMemo(
+    () =>
+      // if (!instancesDataQueriesIsSuccess) {
+      //   return [];
+      // }
 
-    return instancesDataQueries?.map((q) => q.data);
-  }, [instancesDataQueriesIsSuccess, instancesDataQueries]);
+      instancesDataQueries?.map((q) => q.data)?.filter((d) => d) || [],
+    [instancesDataQueriesIsSuccess, instancesDataQueries]
+  );
 
   const { data: classData, isLoading: classDataIsLoading } = useInstancesClassData({
     instances: instancesData,
