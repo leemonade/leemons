@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { find, flatten, forEach, keyBy, map, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Box, LoadingOverlay } from '@bubbles-ui/components';
+import { Box, ImageLoader, LoadingOverlay, Title } from '@bubbles-ui/components';
 import { BigCalendar } from '@bubbles-ui/calendars';
 import { CalendarSubNavFilters } from '@bubbles-ui/leemons';
 import { getCentersWithToken } from '@users/session';
@@ -284,6 +284,25 @@ function Calendar({ session }) {
             previous: t('previous'),
             next: t('next'),
             showWeekends: t('showWeekends'),
+            allDay: t('allDay'),
+            init: t('init'),
+            end: t('end'),
+            date: t('date'),
+            time: t('time'),
+            event: t('event'),
+            noEventsInRange: (
+              <Box sx={(theme) => ({ textAlign: 'center', marginTop: theme.spacing[12] })}>
+                <Title order={2}>{t('empty')}</Title>
+                <Box sx={(theme) => ({ display: 'flex', marginTop: theme.spacing[12] })}>
+                  <ImageLoader
+                    src={'/public/calendar/no-events.png'}
+                    imageStyles={{ margin: '0px auto' }}
+                    width={300}
+                    height={240}
+                  />
+                </Box>
+              </Box>
+            ),
           }}
         />
       </Box>

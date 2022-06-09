@@ -26,6 +26,13 @@ module.exports = {
     schedule: 'Horario',
     centers: 'Centros',
     close: 'Cerrar',
+    allDay: 'Todo el dia',
+    init: 'Inicio',
+    end: 'Fin',
+    date: 'Fecha',
+    time: 'Hora',
+    event: 'Evento',
+    empty: 'No hay eventos',
   },
   event_modal: {
     name: 'Nombre',
