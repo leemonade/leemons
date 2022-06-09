@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import useAssignation from '@assignables/hooks/assignations/useAssignation';
+import useAssignations from '@assignables/hooks/assignations/useAssignations';
 import {
   VerticalStepper,
   Loader,
@@ -23,27 +23,31 @@ import useSteps from './helpers/useSteps';
 import { TaskDetailStyles } from './TaskDetail.style';
 import Sidebar from './components/Sidebar';
 import updateStudentRequest from '../../../request/instance/updateStudent';
+import useStudentAssignationMutation from '../../../hooks/student/useStudentAssignationMutation';
 import { prefixPN } from '../../../helpers';
 import Countdown from './components/Countdown';
 import LimitedTimeAlert from './components/LimitedTimeAlert/LimitedTimeAlert';
 
-async function updateTimestamps(assignation, timestamps) {
-  if (timestamps && !assignation?.timestamps?.[timestamps]) {
-    try {
-      const time = Date.now();
-      await updateStudentRequest({
-        instance: assignation?.instance?.id,
-        student: assignation.user,
-        timestamps: {
-          [timestamps]: time,
-        },
-      });
-
-      _.set(assignation, `timestamps.${timestamps}`, time);
-    } catch (e) {
-      // TODO: Handle error
-    }
-  }
+function useUpdateTimestamps(mutateAsync) {
+  return useMemo(
+    () => async (assignation, timestamps) => {
+      if (timestamps && !assignation?.timestamps?.[timestamps]) {
+        try {
+          const time = Date.now();
+          await mutateAsync({
+            instance: assignation?.instance?.id,
+            student: assignation.user,
+            timestamps: {
+              [timestamps]: time,
+            },
+          });
+        } catch (e) {
+          // TODO: Handle error
+        }
+      }
+    },
+    [mutateAsync]
+  );
 }
 
 async function updateVisitedSteps(assignation, step) {
@@ -89,10 +93,17 @@ function Content({ marginTop, setMargin, children }) {
 }
 
 export default function TaskDetail({ id, student }) {
+  const { mutateAsync } = useStudentAssignationMutation();
+  // const [disableQuery, setDisableQuery] = useState(false);
+  const updateTimestamps = useUpdateTimestamps(mutateAsync);
   const locale = useLocale();
   const [marginTop, setMarginTop] = useState(0);
   const { openConfirmationModal } = useLayout();
-  const [assignation, error, loading] = useAssignation(id, student, true);
+  const {
+    data: assignation,
+    error,
+    isLoading: loading,
+  } = useAssignations({ instance: id, user: student }, true);
   const [disabledButtons, setDisabledButtons] = useState({
     previous: false,
     next: false,
