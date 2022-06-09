@@ -74,9 +74,10 @@ export default function Form({
   };
 
   function setAllDay(e) {
-    e.setHours(23, 59, 59);
+    if (e) e.setHours(23, 59, 59);
     setValue('dates.deadline', e);
   }
+
   const isAllDay = watch('isAllDay');
   const deadline = watch('dates.deadline');
 
