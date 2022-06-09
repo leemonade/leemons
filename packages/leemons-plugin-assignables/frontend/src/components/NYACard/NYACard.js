@@ -66,6 +66,7 @@ function parseDeadline(isTeacher, obj) {
     instance = obj.instance;
   }
 
+  // TRANSLATE: Deadline
   const labels = {
     evaluated: 'Ver evaluación',
     submission: 'Entrega',
@@ -96,8 +97,8 @@ function parseDeadline(isTeacher, obj) {
     if (status === 'evaluated') {
       main = labels.evaluated;
       if (deadline.isValid()) {
-        secondary = labels?.submission;
-        dateToShow = deadline.toDate();
+        secondary = labels?.submitted;
+        dateToShow = submission.toDate();
       }
     } else if (status === 'late') {
       main = labels.late;
@@ -200,7 +201,7 @@ function parseDeadline(isTeacher, obj) {
       main = labels?.opened;
       if (startDate.isValid()) {
         secondary = labels?.submission;
-        dateToShow = startDate.toDate();
+        dateToShow = deadline.toDate();
       }
     } else {
       main = labels?.assigned;
