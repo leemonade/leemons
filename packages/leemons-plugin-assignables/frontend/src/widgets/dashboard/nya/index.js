@@ -19,7 +19,7 @@ function useInstancesClassData({ instances: object, labels }) {
 
   const result = useClassData(instances, labels);
 
-  const isSuccess = result.some(({ isSuccess: s }) => s);
+  const isSuccess = !result.some(({ isSuccess: s }) => !s);
 
   const data = useMemo(() => {
     if (!isSuccess) {
