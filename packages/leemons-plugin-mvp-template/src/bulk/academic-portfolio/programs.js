@@ -4,7 +4,7 @@ const itemsImport = require('../helpers/simpleListImport');
 
 async function importAcademicPortfolioPrograms(centers, grades) {
   const filePath = path.resolve(__dirname, '../data.xlsx');
-  const items = await itemsImport(filePath, 'ap_programs', 30, true, true);
+  const items = await itemsImport(filePath, 'ap_programs', 40, true, true);
 
   keys(items).forEach((key) => {
     const program = items[key];
