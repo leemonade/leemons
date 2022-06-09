@@ -63,7 +63,7 @@ async function remove(id, { soft, userSession, transacting: t } = {}) {
 
         const category = await getCategoryById(asset.category, { transacting });
         if (category.key === CATEGORIES.BOOKMARKS) {
-          await removeBookmark(id, { transacting });
+          await removeBookmark(id, { userSession, transacting });
         }
 
         // ··········································································

@@ -104,7 +104,7 @@ export default function Assign() {
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader
-        values={{ title: `${t('pageTitle')} ${store.test?.name}` }}
+        values={{ title: `${t('pageTitle')} ${store.test?.name || ''}` }}
         onResize={handleOnHeaderResize}
       />
       <Box>
