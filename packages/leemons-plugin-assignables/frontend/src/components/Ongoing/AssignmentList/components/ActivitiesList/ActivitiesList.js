@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { PaginatedList } from '@bubbles-ui/components';
+import { PaginatedList, Loader, Box, Text, ImageLoader } from '@bubbles-ui/components';
 import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -9,6 +9,7 @@ import useParseAssignations from '../../hooks/useParseAssignations';
 import useAssignationsByProfile from '../../../../../hooks/assignations/useAssignationsByProfile';
 import globalContext from '../../../../../contexts/globalContext';
 import prefixPN from '../../../../../helpers/prefixPN';
+import EmptyState from '../../../../../assets/EmptyState.png';
 
 function useAssignmentsColumns() {
   const { isTeacher } = useContext(globalContext);
@@ -184,6 +185,31 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
   const columns = useAssignmentsColumns();
 
   const isLoading = instancesLoading || instancesDataLoading || parsedInstancesLoading;
+
+  if (isLoading) {
+    return <Loader />;
+  }
+  if (!parsedInstances?.length) {
+    return (
+      <Box
+        sx={(theme) => ({
+          width: '100%',
+          height: 328,
+          borderRadius: theme.spacing[1],
+          backgroundColor: theme.colors.uiBackground02,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: theme.spacing[1],
+        })}
+      >
+        <ImageLoader src={EmptyState} width={142} height={149} />
+        {/* TRANSLATE: Translate empty state */}
+        <Text color="primary">No hay actividades programadas</Text>
+      </Box>
+    );
+  }
 
   return (
     <>
