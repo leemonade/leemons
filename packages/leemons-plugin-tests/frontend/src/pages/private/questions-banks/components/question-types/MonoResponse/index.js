@@ -139,49 +139,56 @@ export function MonoResponse({ form, t }) {
               return item ? true : t('errorMarkGoodResponse');
             },
           }}
-          render={({ field }) => (
-            <ListInput
-              {...field}
-              error={form.formState.errors.properties?.responses}
-              inputRender={
-                <ListInputRender
-                  t={t}
-                  useExplanation={explanationInResponses}
-                  withImages={withImages}
-                />
-              }
-              listRender={
-                <ListItem
-                  itemContainerRender={({ children }) => (
-                    <Paper
-                      fullWidth
-                      sx={(theme) => ({
-                        marginTop: theme.spacing[2],
-                        marginBottom: theme.spacing[2],
-                        width: '100%',
-                      })}
-                    >
-                      <Stack alignItems={explanationInResponses ? 'top' : 'center'} fullWidth>
-                        {children}
-                      </Stack>
-                    </Paper>
-                  )}
-                  itemValueRender={
-                    <ListItemValueRender
-                      t={t}
-                      useExplanation={explanationInResponses}
-                      withImages={withImages}
-                      toggleHideOnHelp={toggleHideOnHelp}
-                      changeCorrectResponse={changeCorrectResponse}
-                      showEye={field?.value?.length > 2}
-                    />
-                  }
-                />
-              }
-              hideAddButton
-              canAdd
-            />
-          )}
+          render={({ field }) => {
+            let canSetHelp = true;
+            forEach(field.value, ({ value: { hideOnHelp } }) => {
+              if (hideOnHelp) canSetHelp = false;
+            });
+            return (
+              <ListInput
+                {...field}
+                error={form.formState.errors.properties?.responses}
+                inputRender={
+                  <ListInputRender
+                    t={t}
+                    useExplanation={explanationInResponses}
+                    withImages={withImages}
+                  />
+                }
+                listRender={
+                  <ListItem
+                    itemContainerRender={({ children }) => (
+                      <Paper
+                        fullWidth
+                        sx={(theme) => ({
+                          marginTop: theme.spacing[2],
+                          marginBottom: theme.spacing[2],
+                          width: '100%',
+                        })}
+                      >
+                        <Stack alignItems={explanationInResponses ? 'top' : 'center'} fullWidth>
+                          {children}
+                        </Stack>
+                      </Paper>
+                    )}
+                    itemValueRender={
+                      <ListItemValueRender
+                        t={t}
+                        canSetHelp={canSetHelp}
+                        useExplanation={explanationInResponses}
+                        withImages={withImages}
+                        toggleHideOnHelp={toggleHideOnHelp}
+                        changeCorrectResponse={changeCorrectResponse}
+                        showEye={field?.value?.length > 2}
+                      />
+                    }
+                  />
+                }
+                hideAddButton
+                canAdd
+              />
+            );
+          }}
         />
       </InputWrapper>
     </ContextContainer>

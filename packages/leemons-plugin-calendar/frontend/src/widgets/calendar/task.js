@@ -30,6 +30,7 @@ import getAssignableInstance from '@assignables/requests/assignableInstances/get
 import getAssignation from '@assignables/requests/assignations/getAssignation';
 import NYACard from '@assignables/components/NYACard';
 import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
+import { updateEventSubTasksRequest } from '../../request';
 
 const { classByIdsRequest } = require('@academic-portfolio/request');
 
@@ -46,8 +47,8 @@ export default function Task({ event, form, classes, disabled, allProps }) {
 
   const [t] = useTranslateLoader(prefixPN('task_mode_event_type'));
   const { t: tCommon } = useCommonTranslate('forms');
-  const [columns, setColumns] = useState([]);
-  const [columnsT, setColumnsT] = useState([]);
+  const [columns, setColumns] = useState(allProps.parent.store.columns || []);
+  const [columnsT, setColumnsT] = useState(allProps.parent.store.columnsT || []);
 
   // EN: Get the user agents
   // ES: Obtiene los user agents
@@ -57,14 +58,20 @@ export default function Task({ event, form, classes, disabled, allProps }) {
   const userAgent = userAgents[0];
 
   const getKanbanColumns = async () => {
-    const { columns: _columns } = await listKanbanColumnsRequest();
-    setColumns(_.orderBy(_columns, ['order'], ['asc']));
+    if (!allProps.parent.store.columns) {
+      const { columns: _columns } = await listKanbanColumnsRequest();
+      allProps.parent.store.columns = _columns;
+    }
+    setColumns(_.orderBy(allProps.parent.store.columns, ['order'], ['asc']));
   };
 
   const getTranslationColumns = async () => {
     const keys = _.map(columns, 'nameKey');
-    const { items } = await getLocalizationsByArrayOfItems(keys);
-    setColumnsT(items);
+    if (!allProps.parent.store.columnsT) {
+      const { items } = await getLocalizationsByArrayOfItems(keys);
+      allProps.parent.store.columnsT = items;
+    }
+    setColumnsT(allProps.parent.store.columnsT);
   };
 
   const getColumnName = (name) => tKeys(name, columnsT);
@@ -126,12 +133,22 @@ export default function Task({ event, form, classes, disabled, allProps }) {
     form.setValue('subtask', subtask);
   };
 
-  const onCheckedChange = (e, index) => {
+  const onCheckedChange = async (e, index) => {
     const subtask = form.getValues('subtask');
     subtask[index].checked = e;
     form.setValue('subtask', subtask);
     if (disabled) {
-      allProps.onSubmit(allProps.form.getValues(), { closeOnSend: false });
+      try {
+        allProps.parent.setSaving(true);
+        await updateEventSubTasksRequest(allProps.parent.getEventId(), subtask);
+        // eslint-disable-next-line no-param-reassign
+        allProps.parent.defaultValues.data.subtask = subtask;
+        allProps.parent.reloadCalendar();
+        allProps.parent.addSuccessAlertUpdate();
+      } catch (e) {
+        allProps.parent.addErrorAlert(e);
+      }
+      allProps.parent.setSaving(false);
     }
   };
   const removeSubtask = (index) => {

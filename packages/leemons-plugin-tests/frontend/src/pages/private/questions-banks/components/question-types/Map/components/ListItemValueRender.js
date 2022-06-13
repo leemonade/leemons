@@ -5,7 +5,14 @@ import { ViewOffIcon } from '@bubbles-ui/icons/outline';
 import { numberToEncodedLetter } from '@common';
 
 // eslint-disable-next-line import/prefer-default-export
-export function ListItemValueRender({ item, toggleHideOnHelp, markers, showEye, index }) {
+export function ListItemValueRender({
+  canSetHelp,
+  item,
+  toggleHideOnHelp,
+  markers,
+  showEye,
+  index,
+}) {
   return (
     <Box sx={() => ({ width: '100%' })}>
       <Stack fullWidth alignItems="start" justifyContent="start">
@@ -19,7 +26,7 @@ export function ListItemValueRender({ item, toggleHideOnHelp, markers, showEye, 
             {markers.type === 'letter' ? numberToEncodedLetter(index + 1) : index + 1}
           </Title>
         </Box>
-        {showEye ? (
+        {showEye && (canSetHelp || (!canSetHelp && item.hideOnHelp)) ? (
           <Box
             sx={(theme) => ({
               marginRight: theme.spacing[5],
@@ -41,6 +48,7 @@ export function ListItemValueRender({ item, toggleHideOnHelp, markers, showEye, 
 }
 
 ListItemValueRender.propTypes = {
+  canSetHelp: PropTypes.bool,
   item: PropTypes.object,
   toggleHideOnHelp: PropTypes.func,
   index: PropTypes.number,

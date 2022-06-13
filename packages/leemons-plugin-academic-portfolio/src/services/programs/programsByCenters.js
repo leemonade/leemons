@@ -2,7 +2,10 @@ const _ = require('lodash');
 const { table } = require('../tables');
 const { programsByIds } = require('./programsByIds');
 
-async function programsByCenters(centerIds, { transacting, returnRelation, returnIds } = {}) {
+async function programsByCenters(
+  centerIds,
+  { userSession, transacting, returnRelation, returnIds } = {}
+) {
   const programCenters = await table.programCenter.find(
     { center_$in: _.isArray(centerIds) ? centerIds : [centerIds] },
     { transacting }
@@ -11,7 +14,7 @@ async function programsByCenters(centerIds, { transacting, returnRelation, retur
 
   // ES: Si returnIds es falso sacamos los programas y se los seteamos a programCenters
   if (!returnIds) {
-    const programs = await programsByIds(programIds, { transacting });
+    const programs = await programsByIds(programIds, { userSession, transacting });
     const programsById = _.keyBy(programs, 'id');
     _.forEach(programCenters, (programCenter, index) => {
       programCenters[index].program = programsById[programCenter.program];

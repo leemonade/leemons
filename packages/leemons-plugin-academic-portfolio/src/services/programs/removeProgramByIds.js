@@ -15,7 +15,7 @@ async function removeProgramByIds(ids, { userSession, soft, transacting: _transa
   return global.utils.withTransaction(
     async (transacting) => {
       const [programs, classes] = await Promise.all([
-        programsByIds(_.isArray(ids) ? ids : [ids], { transacting }),
+        programsByIds(_.isArray(ids) ? ids : [ids], { userSession, transacting }),
         table.class.find({ program_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
       ]);
       await leemons.events.emit('before-remove-programs', { programs, soft, transacting });

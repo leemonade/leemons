@@ -83,7 +83,7 @@ export default function AcademicDashboard({ session }) {
 
   if (store.loading) return null;
 
-  const programImage = null;
+  const programImage = store.selectedProgram?.imageUrl;
   const headerProps = {};
   if (programImage) {
     headerProps.blur = 10;

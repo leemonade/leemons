@@ -50,6 +50,8 @@ module.exports = {
         labels: {
           title: 'Información básica',
           name: 'Nombre del programa',
+          color: 'Color:',
+          image: 'Imagen:',
           abbreviation: 'Abreviatura',
           evaluationSystem: 'Sistema de evaluación',
           creditSystem: 'No conlleva sistema de créditos',
