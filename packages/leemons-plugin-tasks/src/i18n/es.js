@@ -94,6 +94,7 @@ module.exports = {
           program: 'Programa',
           course: 'Curso',
           subjects: 'Asignaturas',
+          showOtherSubjects: 'Añadir otras asignaturas en las que colaboro', // NEW
           subject: 'Asignatura',
           recommendedDuration: 'Duración recomendada',
           level: 'Nivel',

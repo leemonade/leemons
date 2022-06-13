@@ -9,8 +9,10 @@ import {
 } from '@assignables/components/LevelsOfDifficulty';
 import { listSessionClassesRequest } from '@academic-portfolio/request';
 import { useApi } from '@common';
+import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
 import useTableInputLabels from '../../../../helpers/useTableInputLabels';
 import useProgram from '../../../Student/TaskDetail/helpers/useProgram';
+import ConditionalInput from '../../../Inputs/ConditionalInput';
 
 function useProgramSubjects(programId) {
   const program = useProgram(programId);
@@ -84,18 +86,12 @@ export default function SelectSubjects({
 
   // const subjects = useProgramSubjects(programId);
 
-  const options = useMemo(
-    () => ({
-      program: programId,
-    }),
-    [programId]
-  );
-  const [data] = useApi(listSessionClassesRequest, options);
+  const { data: classes } = useSessionClasses({ program: programId, showType: true });
 
-  const classes = data?.classes;
   const subjects = classes?.map((klass) => ({
     value: klass.subject.subject || klass.subject.id,
     label: klass.subject.name,
+    type: klass.type,
   }));
   const uniqSubjects = _.uniqBy(subjects, 'value');
 
@@ -104,27 +100,109 @@ export default function SelectSubjects({
       return uniqSubjects;
     }
 
-    return [];
+    return null;
   }, [programId, uniqSubjects]);
 
-  const subjectsColumns = useSubjectColumns({
+  const mainTeacherSubjects = useMemo(() => {
+    if (subjectsToUse) {
+      return subjectsToUse.filter((subject) => subject.type === 'main-teacher');
+    }
+
+    return [];
+  }, [subjectsToUse]);
+
+  const otherTypeTeacherSubjects = useMemo(() => {
+    if (subjectsToUse) {
+      return subjectsToUse.filter((subject) => subject.type !== 'main-teacher');
+    }
+
+    return [];
+  }, [subjectsToUse]);
+
+  const mainTeacherSubjectsColumns = useSubjectColumns({
     labels,
     placeholders,
     errorMessages,
-    subjects: subjectsToUse,
+    subjects: mainTeacherSubjects,
   });
+
+  const otherTypeTeacherSubjectsColumns = useSubjectColumns({
+    labels,
+    placeholders,
+    errorMessages,
+    subjects: otherTypeTeacherSubjects,
+  });
+
+  const mainTeacherValues = useMemo(() => {
+    if (value) {
+      return value.filter((subject) =>
+        mainTeacherSubjects.find(({ value: id }) => id === subject.subject)
+      );
+    }
+
+    return [];
+  }, [value, mainTeacherSubjects]);
+
+  const otherTypeTeacherValues = useMemo(() => {
+    if (value) {
+      return value.filter((subject) =>
+        otherTypeTeacherSubjects.find(({ value: id }) => id === subject.subject)
+      );
+    }
+
+    return [];
+  }, [value, otherTypeTeacherSubjects]);
+
+  const handleChange = (type) => (newValues) => {
+    if (type === 'main-teacher') {
+      onChange([...otherTypeTeacherValues, ...newValues]);
+    } else if (type === 'other-type') {
+      onChange([...mainTeacherValues, ...newValues]);
+    }
+  };
+
+  const [show, setShow] = React.useState(false);
+
+  React.useEffect(() => {
+    if (otherTypeTeacherValues.length) {
+      setShow(true);
+    }
+  }, [otherTypeTeacherValues]);
 
   return (
     /* Subject container */
     <ContextContainer title={labels?.subjects}>
       <TableInput
-        data={value}
-        onChange={onChange}
-        columns={subjectsColumns}
+        data={mainTeacherValues}
+        onChange={handleChange('main-teacher')}
+        columns={mainTeacherSubjectsColumns}
         labels={tableInputLabels}
         unique
         sortable
         error={errors?.subjects}
+      />
+      <ConditionalInput
+        value={show}
+        onChange={(newShow) => {
+          if (!newShow) {
+            onChange(mainTeacherValues);
+          }
+
+          setShow(newShow);
+        }}
+        showOnTrue
+        label={labels?.showOtherSubjects}
+        render={() => (
+          <TableInput
+            data={otherTypeTeacherValues}
+            onChange={handleChange('other-type')}
+            columns={otherTypeTeacherSubjectsColumns}
+            labels={tableInputLabels}
+            unique
+            sortable
+            error={errors?.subjects}
+          />
+        )}
       />
     </ContextContainer>
   );
@@ -174,4 +252,5 @@ SelectSubjects.propTypes = {
     summary: PropTypes.string,
   }),
   onChange: PropTypes.func,
+  teacherType: PropTypes.string,
 };

@@ -2,15 +2,25 @@ const _ = require('lodash');
 const { table } = require('../tables');
 const { classByIds } = require('./classByIds');
 
-async function listSessionClasses(userSession, { program } = {}, { transacting } = {}) {
+async function listSessionClasses(userSession, { program, type } = {}, { transacting } = {}) {
+  let typeQuery = {};
+  if (Array.isArray(type)) {
+    typeQuery = {
+      type_$in: type,
+    };
+  } else if (type) {
+    typeQuery = {
+      type,
+    };
+  }
   const [classStudent, classTeacher] = await Promise.all([
     table.classStudent.find(
       { student_$in: _.map(userSession.userAgents, 'id') },
       { columns: ['class'], transacting }
     ),
     table.classTeacher.find(
-      { teacher_$in: _.map(userSession.userAgents, 'id') },
-      { columns: ['class'], transacting }
+      { teacher_$in: _.map(userSession.userAgents, 'id'), ...typeQuery },
+      { columns: ['class', 'type'], transacting }
     ),
   ]);
 
