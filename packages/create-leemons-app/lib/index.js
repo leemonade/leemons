@@ -16,11 +16,9 @@ const saveConfigDirs = require('./helpers/utils/saveConfigDirs');
 const getDatabaseDeps = require('./helpers/packageManager/getDatabaseDeps');
 const createDir = require('./helpers/utils/createDir');
 const createPackageJSON = require('./createPackageJSON');
-const createFrontDir = require('./createFrontDir');
 
 module.exports = async (_appName, useNPM) => {
   try {
-    const template = 'default';
     const cwd = process.cwd();
 
     // Get app settings
@@ -33,7 +31,7 @@ module.exports = async (_appName, useNPM) => {
           app: path.join(cwd, userConfig.appName),
           config: 'config',
           plugins: 'plugins',
-          next: 'next',
+          frontend: 'frontend',
           env: '.env',
         },
       },
@@ -76,9 +74,6 @@ module.exports = async (_appName, useNPM) => {
           exitWithError('An error occurred while installing the dependencies');
         }
       }),
-
-      // Create front directory
-      createFrontDir(template, routes),
 
       // Create plugins dir
       createDir(path.join(routes.app, routes.plugins), 'plugins'),

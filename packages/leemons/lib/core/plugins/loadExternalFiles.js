@@ -40,7 +40,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
           models: 'models',
           controllers: 'controllers',
           services: 'services',
-          next: 'frontend',
+          frontend: 'frontend',
           env: '.env',
           install: 'install.js',
           events: 'events.js',

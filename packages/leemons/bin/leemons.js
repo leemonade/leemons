@@ -35,7 +35,7 @@ program.version(packageJSON.version);
 // $leemons start
 program
   .command('start')
-  .option('-N, --next <dir>', 'next directory')
+  .option('-N, --frontend <dir>', 'frontend directory')
   .option('-L, --level <level>', 'log level')
   .description('Launches leemons application in production mode')
   .action(getLocalCommand('start'));
