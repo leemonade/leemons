@@ -86,7 +86,7 @@ export default function SelectSubjects({
 
   // const subjects = useProgramSubjects(programId);
 
-  const { data: classes } = useSessionClasses({ program: programId, showType: true });
+  const { data: classes } = useSessionClasses({ program: programId, showType: true, type: null });
 
   const subjects = classes?.map((klass) => ({
     value: klass.subject.subject || klass.subject.id,
