@@ -38,6 +38,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/update/event-subtask',
+    method: 'POST',
+    handler: 'calendar.updateEventSubTasks',
+    authenticated: true,
+  },
+  {
     path: '/remove/event',
     method: 'POST',
     handler: 'calendar.removeEvent',

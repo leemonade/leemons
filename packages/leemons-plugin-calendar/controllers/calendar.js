@@ -35,6 +35,15 @@ async function updateEvent(ctx) {
   ctx.body = { status: 200, event };
 }
 
+async function updateEventSubTasks(ctx) {
+  const event = await eventsService.updateEventSubTasksFromUser(
+    ctx.request.body,
+    ctx.state.userSession
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, event };
+}
+
 async function removeEvent(ctx) {
   const event = await eventsService.removeFromUser(ctx.state.userSession, ctx.request.body.event);
   ctx.status = 200;
@@ -149,6 +158,7 @@ module.exports = {
   updateConfigEvent,
   removeConfigEvent,
   listCalendarConfig,
+  updateEventSubTasks,
   updateCalendarConfig,
   detailCalendarConfig,
   removeCalendarConfig,
