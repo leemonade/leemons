@@ -11,7 +11,7 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
   return global.utils.withTransaction(
     async (transacting) => {
       validateAddProgram(data);
-      const { centers, substages: _substages, customSubstages, ...programData } = data;
+      const { centers, image, substages: _substages, customSubstages, ...programData } = data;
       let substages = _substages;
       // ES: Si se ha marcado que hay substages y usar los valores por defecto generamos los substages
       if (programData.haveSubstagesPerCourse) {
@@ -35,7 +35,29 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
         }
       }
 
-      const program = await table.programs.create(programData, { transacting });
+      let program = await table.programs.create(programData, { transacting });
+
+      // ES: Añadimos el asset de la imagen
+      const imageData = {
+        indexable: true,
+        public: true, // TODO Cambiar a false despues de hacer la demo
+        name: program.id,
+      };
+      if (image) imageData.cover = image;
+      const assetService = leemons.getPlugin('leebrary').services.assets;
+      const assetImage = await assetService.add(imageData, {
+        published: true,
+        userSession,
+        transacting,
+      });
+      program = await table.programs.update(
+        { id: program.id },
+        {
+          image: assetImage.id,
+          imageUrl: assetService.getCoverUrl(assetImage.id),
+        },
+        { transacting }
+      );
 
       if (_.isArray(substages)) {
         // ES: Generamos los substages
@@ -75,7 +97,7 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
 
       await Promise.all(promises);
 
-      const _program = (await programsByIds([program.id], { transacting }))[0];
+      const _program = (await programsByIds([program.id], { userSession, transacting }))[0];
       await leemons.events.emit('after-add-program', {
         program: _program,
         transacting,

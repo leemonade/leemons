@@ -31,10 +31,11 @@ import {
   updateProgramRequest,
 } from '@academic-portfolio/request';
 import { ProgramItem } from '@academic-portfolio/components';
-import { useStore, unflatten } from '@common';
+import { unflatten, useStore } from '@common';
 import { EvaluationsSelect } from '@grades/components/EvaluationsSelect';
 import { listGradesRequest } from '@grades/request';
 import { Link, useHistory } from 'react-router-dom';
+import ImagePicker from '@leebrary/components/ImagePicker';
 import { detailProgramRequest } from '../../../request';
 import { activeMenuItemSubjects } from '../../../helpers/activeMenuItemSubjects';
 
@@ -121,12 +122,13 @@ export default function ProgramList() {
       let messageKey = 'common.create_done';
 
       if (!isEmpty(store.currentProgram)) {
-        const { name, abbreviation, credits } = values;
+        const { name, abbreviation, credits, image } = values;
         body = {
           id: store.currentProgram.id,
           name,
           abbreviation,
           credits,
+          image,
         };
         apiCall = updateProgramRequest;
         messageKey = 'common.update_done';
@@ -265,6 +267,7 @@ export default function ProgramList() {
             content: (
               <AcademicProgramSetupBasicData
                 {...basicData}
+                ImagePicker={ImagePicker}
                 evaluationSystemSelect={<EvaluationsSelect center={centerId} />}
               />
             ),

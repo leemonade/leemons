@@ -91,14 +91,6 @@ Icon.propTypes = {
   size: PropTypes.string,
 };
 
-const programImages = [
-  'https://images.unsplash.com/photo-1464983308776-3c7215084895?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2748&q=80',
-  'https://images.unsplash.com/photo-1568792923760-d70635a89fdc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2970&q=80',
-  'https://images.unsplash.com/photo-1564429238817-393bd4286b2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=4032&q=80',
-];
-
-const programColors = ['#96D47F', '#B462F2', '#96D47F', '#B462F2'];
-
 export default function AdminDashboard({ session }) {
   const [store, render] = useStore({
     loading: true,
@@ -248,8 +240,8 @@ export default function AdminDashboard({ session }) {
                 blur={20}
                 asset={{
                   name: program.program.name,
-                  color: program.program.color || programColors[i],
-                  cover: programImages[i],
+                  color: program.program.color,
+                  cover: program.program.imageUrl,
                 }}
               >
                 <Box

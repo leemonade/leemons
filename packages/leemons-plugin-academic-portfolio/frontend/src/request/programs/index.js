@@ -1,3 +1,5 @@
+import { isString } from 'lodash';
+
 async function getProgramTree(programId) {
   return leemons.api(`academic-portfolio/program/${programId}/tree`, {
     allAgents: true,
@@ -34,18 +36,54 @@ async function getUserPrograms() {
 }
 
 async function createProgram(body) {
+  const form = new FormData();
+  if (body.image && !isString(body.image)) {
+    const { image, icon, ...data } = body;
+    if (body.image) {
+      if (body.image.id) {
+        data.image = body.image.cover?.id;
+      } else {
+        form.append('image', body.image, body.image.name);
+      }
+    }
+    form.append('data', JSON.stringify(data));
+  } else {
+    form.append('data', JSON.stringify(body));
+  }
   return leemons.api('academic-portfolio/program', {
     allAgents: true,
     method: 'POST',
-    body,
+    headers: {
+      'content-type': 'none',
+    },
+    body: form,
   });
 }
 
 async function updateProgram(body) {
+  console.log(body);
+  const form = new FormData();
+  if (body.image && !isString(body.image)) {
+    const { image, ...data } = body;
+    if (body.image) {
+      if (body.image.id) {
+        data.image = body.image.cover?.id;
+      } else {
+        console.log('Añadimos el image as file');
+        form.append('image', body.image, body.image.name);
+      }
+    }
+    form.append('data', JSON.stringify(data));
+  } else {
+    form.append('data', JSON.stringify(body));
+  }
   return leemons.api('academic-portfolio/program', {
     allAgents: true,
     method: 'PUT',
-    body,
+    headers: {
+      'content-type': 'none',
+    },
+    body: form,
   });
 }
 
