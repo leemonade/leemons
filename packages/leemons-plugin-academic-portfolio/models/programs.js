@@ -14,6 +14,12 @@ module.exports = {
     color: {
       type: 'string',
     },
+    image: {
+      type: 'string',
+    },
+    imageUrl: {
+      type: 'string',
+    },
     abbreviation: {
       type: 'string',
       options: {

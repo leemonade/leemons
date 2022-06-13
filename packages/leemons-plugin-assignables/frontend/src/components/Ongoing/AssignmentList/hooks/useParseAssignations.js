@@ -347,7 +347,10 @@ function TimeReference({ assignation, status, labels }) {
 
 async function parseAssignationForCommonView(instance, labels, { subjectFullLength }) {
   const parsedDates = parseDates(instance.dates, ['start', 'deadline']);
-  const classData = await getClassData(instance.classes, { multiSubject: labels.multiSubject });
+  const classData = await getClassData(instance.classes, {
+    multiSubject: labels.multiSubject,
+    groupName: instance?.metadata?.groupName,
+  });
 
   return {
     // TODO: Create unique id

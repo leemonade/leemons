@@ -11,12 +11,12 @@ const { duplicateProgramCentersByProgramIds } = require('./duplicateProgramCente
 const { duplicateProgramConfigsByProgramIds } = require('./duplicateProgramConfigsByProgramIds');
 const { duplicateClassesByIds } = require('../classes/duplicateClassesByIds');
 
-async function duplicateProgramByIds(ids, { transacting: _transacting } = {}) {
+async function duplicateProgramByIds(ids, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       const [rawPrograms, programs, classes] = await Promise.all([
         table.programs.find({ id_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
-        programsByIds(_.isArray(ids) ? ids : [ids], { transacting }),
+        programsByIds(_.isArray(ids) ? ids : [ids], { userSession, transacting }),
         table.class.find({ program_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
       ]);
       await leemons.events.emit('before-duplicate-programs', { programs, transacting });
@@ -89,7 +89,7 @@ async function duplicateProgramByIds(ids, { transacting: _transacting } = {}) {
         newProgramIds.push(id);
       });
 
-      return programsByIds(newProgramIds, { transacting });
+      return programsByIds(newProgramIds, { userSession, transacting });
     },
     table.programCenter,
     _transacting

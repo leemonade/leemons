@@ -49,7 +49,7 @@ async function initKnex(connector, connections) {
           max: _.get(connection.settings, 'pool.max', 50),
         },
         connection: {
-          charset: _.get(connection.settings, 'charset'),
+          charset: _.get(connection.settings, 'charset', 'utf8mb4'),
           database: _.get(connection.settings, 'database'),
           filename: _.get(connection.settings, 'filename', '.tmp/data.db'),
           host: _.get(connection.settings, 'host'),

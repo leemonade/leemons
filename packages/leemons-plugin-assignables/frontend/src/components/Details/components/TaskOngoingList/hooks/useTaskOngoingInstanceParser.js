@@ -93,7 +93,10 @@ export default function useTaskOngoingInstanceParser(instance) {
     return {};
   }, [translations]);
 
-  const classData = useClassData(instance.classes, { multiSubject: multiSubjectLabel });
+  const classData = useClassData(instance.classes, {
+    multiSubject: multiSubjectLabel,
+    groupName: instance?.metadata?.groupName,
+  });
   const evaluationSystem = useProgramEvaluationSystem(instance);
 
   const data = {

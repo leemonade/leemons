@@ -50,6 +50,8 @@ module.exports = {
         labels: {
           title: 'Información básica',
           name: 'Nombre del programa',
+          color: 'Color:',
+          image: 'Imagen:',
           abbreviation: 'Abreviatura',
           evaluationSystem: 'Sistema de evaluación',
           creditSystem: 'No conlleva sistema de créditos',
@@ -426,6 +428,7 @@ module.exports = {
       virtualUrlLabel: 'Aula virtual:',
       notValidUrl: 'URL no válida',
       teacherLabel: 'Profesor tutor:',
+      associateTeachersLabel: 'Profesores colaboradores:',
       teacherDescription: 'Asignar profesor tutor a esta clase',
       studentsLabel: 'Estudiantes:',
       addStudents: 'Añadir estudiantes',

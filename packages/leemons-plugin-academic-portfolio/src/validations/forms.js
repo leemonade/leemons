@@ -17,7 +17,7 @@ const { getCourseIndex } = require('../services/courses/getCourseIndex');
 const { getProgramSubjectDigits } = require('../services/programs/getProgramSubjectDigits');
 const { programHaveMultiCourses } = require('../services/programs/programHaveMultiCourses');
 
-const teacherTypes = ['main-teacher', 'teacher'];
+const teacherTypes = ['main-teacher', 'associate-teacher'];
 
 const addProgramSchema = {
   type: 'object',
@@ -26,6 +26,11 @@ const addProgramSchema = {
     color: stringSchemaNullable,
     centers: arrayStringSchema,
     evaluationSystem: stringSchema,
+    image: {
+      type: ['string', 'object'],
+      nullable: true,
+    },
+    imageUrl: stringSchemaNullable,
     abbreviation: {
       type: 'string',
       minLength: 1,
@@ -143,6 +148,11 @@ const updateProgramSchema = {
   properties: {
     id: stringSchema,
     name: stringSchema,
+    image: {
+      type: ['string', 'object'],
+      nullable: true,
+    },
+    imageUrl: stringSchemaNullable,
     color: stringSchemaNullable,
     abbreviation: {
       type: 'string',
@@ -193,14 +203,14 @@ const addKnowledgeSchema = {
   additionalProperties: false,
 };
 
-async function validateAddKnowledge(data, { transacting } = {}) {
+async function validateAddKnowledge(data, { userSession, transacting } = {}) {
   const validator = new LeemonsValidator(addKnowledgeSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
   }
 
-  const [program] = await programsByIds(data.program, { transacting });
+  const [program] = await programsByIds(data.program, { userSession, transacting });
 
   if (!program) {
     throw new Error('The program does not exist');
@@ -248,7 +258,7 @@ const updateKnowledgeSchema = {
   additionalProperties: false,
 };
 
-async function validateUpdateKnowledge(data, { transacting } = {}) {
+async function validateUpdateKnowledge(data, { userSession, transacting } = {}) {
   const validator = new LeemonsValidator(updateKnowledgeSchema);
 
   if (!validator.validate(data)) {
@@ -260,7 +270,7 @@ async function validateUpdateKnowledge(data, { transacting } = {}) {
     throw new Error('The knowledge does not exist');
   }
 
-  const [program] = await programsByIds(_knowledge.program, { transacting });
+  const [program] = await programsByIds(_knowledge.program, { userSession, transacting });
 
   if (!program) {
     throw new Error('The program does not exist');

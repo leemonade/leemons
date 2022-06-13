@@ -13,12 +13,13 @@ export function ListItemValueRender({
   changeCorrectResponse,
   toggleHideOnHelp,
   showEye,
+  canSetHelp,
 }) {
   return (
     <Box sx={() => ({ width: '100%' })}>
       <Stack fullWidth alignItems="start" justifyContent="start">
         <Radio checked={item.isCorrectResponse} onChange={() => changeCorrectResponse(item)} />
-        {!item.isCorrectResponse && showEye ? (
+        {!item.isCorrectResponse && showEye && (canSetHelp || (!canSetHelp && item.hideOnHelp)) ? (
           <Box
             sx={(theme) => ({
               marginLeft: -theme.spacing[5],
@@ -77,6 +78,7 @@ export function ListItemValueRender({
 }
 
 ListItemValueRender.propTypes = {
+  canSetHelp: PropTypes.bool,
   item: PropTypes.object,
   t: PropTypes.func,
   useExplanation: PropTypes.bool,

@@ -10,6 +10,7 @@ const { updateFromUser } = require('./updateFromUser');
 const { getPermissionConfig } = require('./getPermissionConfig');
 const { grantAccessUserAgentToEvent } = require('./grantAccessUserAgentToEvent');
 const { unGrantAccessUserAgentToEvent } = require('./unGrantAccessUserAgentToEvent');
+const { updateEventSubTasksFromUser } = require('./updateEventSubTasksFromUser');
 
 module.exports = {
   add,
@@ -23,5 +24,6 @@ module.exports = {
   updateFromUser,
   getPermissionConfig,
   grantAccessUserAgentToEvent,
+  updateEventSubTasksFromUser,
   unGrantAccessUserAgentToEvent,
 };

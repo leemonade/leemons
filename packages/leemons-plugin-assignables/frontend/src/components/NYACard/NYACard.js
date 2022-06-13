@@ -240,6 +240,7 @@ async function prepareInstance({ instance: object, isTeacher, query, labels }) {
   } else {
     subjectData = await getClassData(instance.classes, {
       multiSubject: labels.multiSubject,
+      groupName: instance?.metadata?.groupName,
     });
   }
 
@@ -383,7 +384,10 @@ export default function NYACard({
     >
       <LibraryCard
         fullHeight
-        asset={preparedInstance?.asset}
+        asset={{
+          ...preparedInstance?.asset,
+          hideDashboardIcons: true,
+        }}
         variant="assigment"
         dashboard
         shadow

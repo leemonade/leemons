@@ -79,6 +79,7 @@ function NewCalendarEventModal({
   close,
   classCalendars,
   reff: ref,
+  ref2,
 }) {
   const { t: tCommon } = useCommonTranslate('forms');
   const session = useSession({ redirectTo: goLoginPage });
@@ -359,6 +360,7 @@ function NewCalendarEventModal({
 
   function onKanbanReorded({ args: [{ id, column }] }) {
     if (event && event.id === id) {
+      ref.current.defaultValues.data.column = column;
       form.setValue('data.column', column);
     }
   }
@@ -390,6 +392,20 @@ function NewCalendarEventModal({
         isNew={ref.current.isNew}
         isOwner={ref.current.isOwner}
         forceType={forceType}
+        parent={{
+          store: ref2.current,
+          getEventId: () => event.id,
+          setSaving: (saving) => {
+            ref.current.saving = saving;
+            render();
+          },
+          reloadCalendar,
+          defaultValues: ref.current.defaultValues,
+          render,
+          addSuccessAlertAdd: () => addSuccessAlert(t('add_done')),
+          addSuccessAlertUpdate: () => addSuccessAlert(t('updated_done')),
+          addErrorAlert: (e) => addErrorAlert(getErrorMessage(e)),
+        }}
         selectData={{
           repeat: ref.current.repeat,
           eventTypes: ref.current.eventTypes,
@@ -453,8 +469,14 @@ NewCalendarEventModal.propTypes = {
 export const useCalendarEventModal = () => {
   const [opened, setOpened] = useState(false);
   const ref = useRef({ loading: false });
+  const ref2 = useRef({});
   const element = (
-    <NewCalendarEventModal reff={ref} opened={opened} onClose={() => setOpened(false)} />
+    <NewCalendarEventModal
+      ref2={ref2}
+      reff={ref}
+      opened={opened}
+      onClose={() => setOpened(false)}
+    />
   );
 
   return [

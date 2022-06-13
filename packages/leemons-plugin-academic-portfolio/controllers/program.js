@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const programService = require('../src/services/programs');
 const enableMenuItemService = require('../src/services/menu-builder/enableItem');
 
@@ -14,7 +15,11 @@ async function havePrograms(ctx) {
 }
 
 async function postProgram(ctx) {
-  const program = await programService.addProgram(ctx.request.body, {
+  const data = JSON.parse(ctx.request.body.data);
+  _.forIn(ctx.request.files, (value, key) => {
+    _.set(data, key, value);
+  });
+  const program = await programService.addProgram(data, {
     userSession: ctx.state.userSession,
   });
   ctx.status = 200;
@@ -22,7 +27,11 @@ async function postProgram(ctx) {
 }
 
 async function putProgram(ctx) {
-  const program = await programService.updateProgram(ctx.request.body);
+  const data = JSON.parse(ctx.request.body.data);
+  _.forIn(ctx.request.files, (value, key) => {
+    _.set(data, key, value);
+  });
+  const program = await programService.updateProgram(data, { userSession: ctx.state.userSession });
   ctx.status = 200;
   ctx.body = { status: 200, program };
 }
@@ -41,6 +50,7 @@ async function listProgram(ctx) {
   if (validator.validate(ctx.request.query)) {
     const { page, size, center, ...options } = ctx.request.query;
     const data = await programService.listPrograms(parseInt(page, 10), parseInt(size, 10), center, {
+      userSession: ctx.state.userSession,
       ...options,
     });
     ctx.status = 200;
@@ -51,7 +61,9 @@ async function listProgram(ctx) {
 }
 
 async function detailProgram(ctx) {
-  const [program] = await programService.programsByIds(ctx.request.params.id);
+  const [program] = await programService.programsByIds(ctx.request.params.id, {
+    userSession: ctx.state.userSession,
+  });
   if (!program) throw new Error('Program not found');
   ctx.status = 200;
   ctx.body = { status: 200, program };
@@ -103,7 +115,9 @@ async function deleteProgram(ctx) {
 }
 
 async function duplicateProgram(ctx) {
-  const [program] = await programService.duplicateProgramByIds(ctx.request.params.id);
+  const [program] = await programService.duplicateProgramByIds(ctx.request.params.id, {
+    userSession: ctx.state.userSession,
+  });
   ctx.status = 200;
   ctx.body = { status: 200, program };
 }
