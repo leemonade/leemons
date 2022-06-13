@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { forIn, map } from 'lodash';
+import { forIn, isEmpty, map } from 'lodash';
 import {
   Box,
   Button,
@@ -181,7 +181,7 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
                   name="clues"
                   render={({ field }) => (
                     <ListInput
-                      canAdd
+                      canAdd={isEmpty(field.value)}
                       addButtonLabel={t('addClue')}
                       label={t('cluesLabel')}
                       description={t('cluesDescription')}

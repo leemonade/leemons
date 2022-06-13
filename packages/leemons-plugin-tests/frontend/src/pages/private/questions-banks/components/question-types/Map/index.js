@@ -146,56 +146,63 @@ export function Map({ form, t }) {
               return allHasResponse ? undefined : t('markersNeedResponseInAllItems');
             },
           }}
-          render={({ field }) => (
-            <ListInput
-              {...field}
-              value={map(field.value?.list || [], (item) => ({ value: item }))}
-              onChange={(value) => {
-                field.onChange({
-                  ...field.value,
-                  list: map(field.value.list, (item, i) => ({
-                    ...item,
-                    response: value[i].value.response,
-                    hideOnHelp: value[i].value.hideOnHelp,
-                  })),
-                });
-              }}
-              error={form.formState.errors.properties?.markers}
-              inputRender={(props) => (
-                <TextInput
-                  {...props}
-                  value={props.value.response}
-                  onChange={(e) => props.onChange({ ...props.value, response: e })}
-                />
-              )}
-              listRender={
-                <ListItem
-                  itemContainerRender={({ children }) => (
-                    <Paper
-                      fullWidth
-                      sx={(theme) => ({
-                        marginTop: theme.spacing[2],
-                        marginBottom: theme.spacing[2],
-                        width: '100%',
-                      })}
-                    >
-                      <Stack alignItems="center" fullWidth>
-                        {children}
-                      </Stack>
-                    </Paper>
-                  )}
-                  itemValueRender={
-                    <ListItemValueRender
-                      markers={markers}
-                      t={t}
-                      toggleHideOnHelp={toggleHideOnHelp}
-                      showEye={field?.value?.list?.length > 2}
-                    />
-                  }
-                />
-              }
-            />
-          )}
+          render={({ field }) => {
+            let canSetHelp = true;
+            forEach(field.value?.list, ({ hideOnHelp }) => {
+              if (hideOnHelp) canSetHelp = false;
+            });
+            return (
+              <ListInput
+                {...field}
+                value={map(field.value?.list || [], (item) => ({ value: item }))}
+                onChange={(value) => {
+                  field.onChange({
+                    ...field.value,
+                    list: map(field.value.list, (item, i) => ({
+                      ...item,
+                      response: value[i].value.response,
+                      hideOnHelp: value[i].value.hideOnHelp,
+                    })),
+                  });
+                }}
+                error={form.formState.errors.properties?.markers}
+                inputRender={(props) => (
+                  <TextInput
+                    {...props}
+                    value={props.value.response}
+                    onChange={(e) => props.onChange({ ...props.value, response: e })}
+                  />
+                )}
+                listRender={
+                  <ListItem
+                    itemContainerRender={({ children }) => (
+                      <Paper
+                        fullWidth
+                        sx={(theme) => ({
+                          marginTop: theme.spacing[2],
+                          marginBottom: theme.spacing[2],
+                          width: '100%',
+                        })}
+                      >
+                        <Stack alignItems="center" fullWidth>
+                          {children}
+                        </Stack>
+                      </Paper>
+                    )}
+                    itemValueRender={
+                      <ListItemValueRender
+                        markers={markers}
+                        t={t}
+                        canSetHelp={canSetHelp}
+                        toggleHideOnHelp={toggleHideOnHelp}
+                        showEye={field?.value?.list?.length > 2}
+                      />
+                    }
+                  />
+                }
+              />
+            );
+          }}
         />
       </InputWrapper>
       <InputWrapper label={t('explanationLabel')}>
