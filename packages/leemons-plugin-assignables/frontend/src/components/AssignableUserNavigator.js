@@ -21,7 +21,7 @@ import SelectUserAgent from '@users/components/SelectUserAgent';
 import PropTypes from 'prop-types';
 import { findIndex } from 'lodash/array';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import prefixPN from '../helpers/prefixPN';
 
 const Styles = createStyles((theme, { color }) => ({
   colorIcon: {
