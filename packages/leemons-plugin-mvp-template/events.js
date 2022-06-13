@@ -30,7 +30,7 @@ async function events(isInstalled) {
         await leemons.getPlugin('users').services.platform.addLocale('es-ES', 'Español (España)');
         await leemons.getPlugin('users').services.platform.setDefaultLocale('en');
       } catch (e) {
-        console.error(e);
+        // console.error(e);
       }
     };
 
