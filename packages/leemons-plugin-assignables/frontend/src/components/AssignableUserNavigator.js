@@ -74,7 +74,10 @@ export default function AssignableUserNavigator({ value, instance, onChange = ()
       // });
 
       const [classe, { userAgents }] = await Promise.all([
-        getClassData(store.instance.classes, { multiSubject: t('multiSubject') }),
+        getClassData(store.instance.classes, {
+          multiSubject: t('multiSubject'),
+          groupName: store.instance?.metadata?.groupName,
+        }),
         getUserAgentsInfo(studentIds),
         // Promise.all(promises),
       ]);

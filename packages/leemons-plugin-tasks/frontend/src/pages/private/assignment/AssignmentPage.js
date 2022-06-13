@@ -74,6 +74,10 @@ export default function AssignmentPage() {
         gradable: true,
       };
 
+      if (assignees[0]?.type === 'custom') {
+        _.set(taskInstanceData, 'metadata.groupName', assignees[0].name);
+      }
+
       await createInstanceRequest(id, taskInstanceData);
 
       addSuccessAlert('Assignment created successfully');
