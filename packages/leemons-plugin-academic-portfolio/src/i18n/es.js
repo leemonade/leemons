@@ -428,6 +428,7 @@ module.exports = {
       virtualUrlLabel: 'Aula virtual:',
       notValidUrl: 'URL no válida',
       teacherLabel: 'Profesor tutor:',
+      associateTeachersLabel: 'Profesores colaboradores:',
       teacherDescription: 'Asignar profesor tutor a esta clase',
       studentsLabel: 'Estudiantes:',
       addStudents: 'Añadir estudiantes',

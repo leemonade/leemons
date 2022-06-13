@@ -15,11 +15,11 @@ module.exports = {
         collection: 'plugins_users::user-agent',
       },
     },
-    // main-teacher | teacher
+    // main-teacher | associate-teacher
     type: {
       type: 'string',
       options: {
-        defaultTo: 'teacher',
+        defaultTo: 'associate-teacher',
       },
     },
   },

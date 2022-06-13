@@ -25,7 +25,12 @@ async function add(_class, teacher, type, { transacting } = {}) {
 
   await addPermissionsBetweenStudentsAndTeachers(_class, { transacting });
 
-  await leemons.events.emit('after-add-class-teacher', { class: _class, teacher, transacting });
+  await leemons.events.emit('after-add-class-teacher', {
+    class: _class,
+    teacher,
+    type,
+    transacting,
+  });
 
   return classTeacher;
 }

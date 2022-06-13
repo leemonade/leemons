@@ -68,6 +68,7 @@ const TreeClassroomDetail = ({
 
   function classForForm() {
     const teacher = find(classe?.teachers, { type: 'main-teacher' });
+    const associateTeachers = filter(classe?.teachers, { type: 'associate-teacher' });
     return {
       id: classe?.id,
       course: program.moreThanOneAcademicYear ? map(classe?.courses, 'id') : classe?.courses?.id,
@@ -80,6 +81,7 @@ const TreeClassroomDetail = ({
       virtualUrl: classe?.virtualUrl,
       schedule: classe?.schedule ? { days: classe.schedule } : { days: [] },
       teacher: teacher ? teacher.teacher : null,
+      associateTeachers: associateTeachers ? map(associateTeachers, 'teacher') : null,
     };
   }
 
@@ -228,7 +230,6 @@ const TreeClassroomDetail = ({
               />
             </Box>
           ) : null}
-
           <Box>
             <Controller
               control={control}
@@ -249,7 +250,6 @@ const TreeClassroomDetail = ({
               />
             </Box>
           ) : null}
-
           {program.haveKnowledge ? (
             <Box>
               <Controller
@@ -261,7 +261,6 @@ const TreeClassroomDetail = ({
               />
             </Box>
           ) : null}
-
           <Box>
             <Controller
               control={control}
@@ -276,7 +275,6 @@ const TreeClassroomDetail = ({
               render={({ field }) => <ColorInput label={messages.colorLabel} {...field} />}
             />
           </Box>
-
           <Box>
             <Controller
               control={control}
@@ -288,7 +286,6 @@ const TreeClassroomDetail = ({
               )}
             />
           </Box>
-
           <Box>
             <Controller
               control={control}
@@ -296,7 +293,6 @@ const TreeClassroomDetail = ({
               render={({ field }) => <TextInput label={messages.addressLabel} {...field} />}
             />
           </Box>
-
           <Box>
             <Controller
               control={control}
@@ -314,7 +310,6 @@ const TreeClassroomDetail = ({
               )}
             />
           </Box>
-
           <Box>
             <Controller
               control={control}
@@ -322,7 +317,6 @@ const TreeClassroomDetail = ({
               render={({ field }) => <ScheduleInput label={messages.scheduleLabel} {...field} />}
             />
           </Box>
-
           <Box>
             <Controller
               control={control}
@@ -332,7 +326,19 @@ const TreeClassroomDetail = ({
               }
             />
           </Box>
-
+          <Box>
+            <Controller
+              control={control}
+              name="associateTeachers"
+              render={({ field }) =>
+                React.cloneElement(teacherSelect, {
+                  label: messages.associateTeachersLabel,
+                  maxSelectedValues: 999,
+                  ...field,
+                })
+              }
+            />
+          </Box>
           <InputWrapper label={messages.studentsLabel}>
             {/* eslint-disable-next-line no-nested-ternary */}
             {store.addStudents ? (
@@ -380,7 +386,6 @@ const TreeClassroomDetail = ({
               </Stack>
             )}
           </InputWrapper>
-
           {!store.addStudents ? (
             <Stack justifyContent="end">
               <Button loading={saving} type="submit">

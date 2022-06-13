@@ -9,7 +9,7 @@ async function listSessionClasses(userSession, { program } = {}, { transacting }
       { columns: ['class'], transacting }
     ),
     table.classTeacher.find(
-      { teacher_$in: _.map(userSession.userAgents, 'id') },
+      { teacher_$in: _.map(userSession.userAgents, 'id'), type: 'main-teacher' },
       { columns: ['class'], transacting }
     ),
   ]);

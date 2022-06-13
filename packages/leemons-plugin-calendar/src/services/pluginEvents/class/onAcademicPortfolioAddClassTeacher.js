@@ -1,18 +1,22 @@
-function onAcademicPortfolioAddClassTeacher(data, { class: classId, teacher, transacting }) {
+function onAcademicPortfolioAddClassTeacher(data, { class: classId, teacher, type, transacting }) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     try {
       const { table } = require('../../tables');
       // console.log('Vamos ha añadir profesor a calendario clase');
-      const [classCalendar] = await Promise.all([
-        table.classCalendar.findOne({ class: classId }, { transacting }),
+      const promises = [table.classCalendar.findOne({ class: classId }, { transacting })];
+
+      promises.push(
         leemons.plugin.services.calendar.grantAccessUserAgentToCalendar(
           leemons.plugin.prefixPN(`class.${classId}`),
           teacher,
-          'owner',
+          type === 'main-teacher' ? 'owner' : 'view',
           { transacting }
-        ),
-      ]);
+        )
+      );
+
+      const [classCalendar] = await Promise.all(promises);
+
       try {
         await leemons.plugin.services.calendar.grantAccessUserAgentToCalendar(
           leemons.plugin.prefixPN(`program.${classCalendar.program}`),

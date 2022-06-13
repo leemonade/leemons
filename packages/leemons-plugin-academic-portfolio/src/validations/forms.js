@@ -17,7 +17,7 @@ const { getCourseIndex } = require('../services/courses/getCourseIndex');
 const { getProgramSubjectDigits } = require('../services/programs/getProgramSubjectDigits');
 const { programHaveMultiCourses } = require('../services/programs/programHaveMultiCourses');
 
-const teacherTypes = ['main-teacher', 'teacher'];
+const teacherTypes = ['main-teacher', 'associate-teacher'];
 
 const addProgramSchema = {
   type: 'object',
