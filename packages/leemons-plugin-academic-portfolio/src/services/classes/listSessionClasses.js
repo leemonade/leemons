@@ -12,7 +12,7 @@ async function listSessionClasses(userSession, { program, type } = {}, { transac
     typeQuery = {
       type,
     };
-  } else {
+  } else if (type !== null) {
     typeQuery = {
       type: 'main-teacher',
     };
