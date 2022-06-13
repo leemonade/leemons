@@ -383,7 +383,10 @@ export default function NYACard({
     >
       <LibraryCard
         fullHeight
-        asset={preparedInstance?.asset}
+        asset={{
+          ...preparedInstance?.asset,
+          hideDashboardIcons: true,
+        }}
         variant="assigment"
         dashboard
         shadow
