@@ -12,6 +12,10 @@ async function listSessionClasses(userSession, { program, type } = {}, { transac
     typeQuery = {
       type,
     };
+  } else {
+    typeQuery = {
+      type: 'main-teacher',
+    };
   }
   const [classStudent, classTeacher] = await Promise.all([
     table.classStudent.find(

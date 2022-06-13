@@ -23,6 +23,7 @@ export function getTreeClassDetailTranslation(t) {
     virtualUrlLabel: t('class.virtualUrlLabel'),
     notValidUrl: t('class.notValidUrl'),
     teacherLabel: t('class.teacherLabel'),
+    associateTeachersLabel: t('class.associateTeachersLabel'),
     teacherDescription: t('class.teacherDescription'),
     studentsLabel: t('class.studentsLabel'),
     addStudents: t('class.addStudents'),

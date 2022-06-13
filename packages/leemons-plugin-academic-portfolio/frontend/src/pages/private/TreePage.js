@@ -456,15 +456,24 @@ export default function TreePage() {
     render();
   }
 
-  async function onSaveClass({ schedule, teacher, ...data }) {
+  async function onSaveClass({ schedule, teacher, associateTeachers, ...data }) {
     try {
       store.saving = true;
       render();
       let alert = null;
+      const teachers = [];
+      if (teacher) {
+        teachers.push({ type: 'main-teacher', teacher });
+      }
+      if (associateTeachers) {
+        forEach(associateTeachers, (tea) => {
+          teachers.push({ type: 'associate-teacher', teacher: tea });
+        });
+      }
       if (data.id) {
         await updateClassRequest({
           ...data,
-          teachers: teacher ? [{ type: 'main-teacher', teacher }] : [],
+          teachers,
           schedule: schedule ? schedule.days : [],
         });
         alert = t('classUpdated');
@@ -473,7 +482,7 @@ export default function TreePage() {
           class: { id },
         } = await createClassRequest({
           ...omitBy(data, isUndefined),
-          teachers: teacher ? [{ type: 'main-teacher', teacher }] : [],
+          teachers,
           schedule: schedule ? schedule.days : [],
           subject: store.newItem.value.subject?.id,
           program: store.program.id,
