@@ -1,4 +1,5 @@
 import React from 'react';
+import { set, forIn, map, omit, uniq } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
@@ -12,7 +13,6 @@ import {
 } from '@bubbles-ui/components';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { forIn, map, omit, uniq } from 'lodash';
 import Form from '@assignables/components/Assignment/Form';
 import { assignTestRequest, getTestRequest } from '../../../request';
 import AssignConfig from '../../../components/AssignConfig';
@@ -60,6 +60,10 @@ export default function Assign() {
         alwaysAvailable: alwaysAvailable || false,
         dates: alwaysAvailable ? {} : dates,
       };
+
+      if (assignees[0]?.type === 'custom') {
+        set(taskInstanceData, 'metadata.groupName', assignees[0].name);
+      }
 
       await assignTestRequest(store.test.id, taskInstanceData);
 

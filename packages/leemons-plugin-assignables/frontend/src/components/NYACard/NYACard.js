@@ -240,6 +240,7 @@ async function prepareInstance({ instance: object, isTeacher, query, labels }) {
   } else {
     subjectData = await getClassData(instance.classes, {
       multiSubject: labels.multiSubject,
+      groupName: instance?.metadata?.groupName,
     });
   }
 

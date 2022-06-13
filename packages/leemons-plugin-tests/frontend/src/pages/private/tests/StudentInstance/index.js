@@ -112,7 +112,10 @@ export default function StudentInstance() {
       const [{ evaluationSystem }, classe, { questions }, { responses }, { timestamps }] =
         await Promise.all([
           getProgramEvaluationSystemRequest(store.instance.assignable.subjects[0].program),
-          getClassData(store.instance.classes, { multiSubject: t('multiSubject') }),
+          getClassData(store.instance.classes, {
+            multiSubject: t('multiSubject'),
+            groupName: store.instance?.metadata?.groupName,
+          }),
           getQuestionByIdsRequest(store.instance.metadata.questions),
           getUserQuestionResponsesRequest(params.id, getUserId()),
           setInstanceTimestampRequest(params.id, 'open', getUserId()),

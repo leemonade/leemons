@@ -39,6 +39,7 @@ export default function SelectCustomGroup({
               type: 'custom',
               students: group.students,
               c,
+              name: v.name,
             }));
           }
 
@@ -47,6 +48,7 @@ export default function SelectCustomGroup({
             type: 'custom',
             students: group.students,
             c: group,
+            name: v.name,
           };
         });
 

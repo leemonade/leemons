@@ -159,7 +159,10 @@ export default function TaskDetail({ id, student }) {
     currentStep,
   });
 
-  const classData = useClassData(assignation?.instance?.classes, labels);
+  const classData = useClassData(assignation?.instance?.classes, {
+    ...labels,
+    groupName: assignation?.instance?.metadata?.groupName,
+  });
 
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === steps.length - 1;
