@@ -94,7 +94,7 @@ async function updateQuestion(data, { userSession, published, transacting: _tran
                   name: `Image question Response ${index}`,
                   cover: response.value.image,
                   description: response.value.imageDescription,
-                  indexable: true,
+                  indexable: false,
                   public: true, // TODO Cambiar a false despues de hacer la demo
                 },
                 {
