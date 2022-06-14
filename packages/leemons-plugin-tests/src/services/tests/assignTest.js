@@ -13,6 +13,8 @@ async function assignTest({ id, data }, { userSession, transacting } = {}) {
     data.metadata.questions = assignable.metadata?.questions;
   }
 
+  console.log(data.metadata);
+
   return assignableInstancesService.createAssignableInstance(
     {
       assignable: assignable.id,

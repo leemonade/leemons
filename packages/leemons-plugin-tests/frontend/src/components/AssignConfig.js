@@ -9,8 +9,13 @@ import {
   InputWrapper,
   MultiSelect,
   NumberInput,
+  Paper,
+  Select,
   Stack,
+  Switch,
+  TableInput,
   Text,
+  TextInput,
   Title,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
@@ -19,7 +24,12 @@ import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/ho
 import { Controller, useForm } from 'react-hook-form';
 
 export default function AssignConfig({ defaultValues: dv, test, t, onBack, onSend }) {
-  let defaultValues = {};
+  let defaultValues = {
+    clues: [
+      { type: 'extra-info', name: t('clueExtraInfo'), value: 0, canUse: true },
+      { type: 'hide-show-option', name: t('clueHideOption'), value: 0, canUse: true },
+    ],
+  };
   if (dv) {
     if (dv.filters) {
       defaultValues = { ...dv.filters };
@@ -33,6 +43,13 @@ export default function AssignConfig({ defaultValues: dv, test, t, onBack, onSen
   const useAllQuestions = form.watch('useAllQuestions');
   const nQuestions = form.watch('nQuestions');
   const questions = form.watch('questions');
+  const settings = form.watch('settings');
+  const settingsAsPreset = form.watch('settingsAsPreset');
+  const useAdvancedSettings = form.watch('useAdvancedSettings');
+  const canOmitQuestions = form.watch('canOmitQuestions');
+  const allowClues = form.watch('allowClues');
+  const clues = form.watch('clues');
+
   const _levels = useLevelsOfDifficulty();
 
   const datas = React.useMemo(() => {
@@ -93,6 +110,35 @@ export default function AssignConfig({ defaultValues: dv, test, t, onBack, onSen
 
     return () => subscription.unsubscribe();
   });
+
+  const cluesData = map(clues, (clue, index) => ({
+    ...clue,
+    canUseCheck: (
+      <Checkbox
+        checked={clue.canUse}
+        onChange={(e) => {
+          const _clues = form.getValues('clues');
+          _clues[index].canUse = e;
+          form.setValue('clues', _clues);
+        }}
+      />
+    ),
+    select: (
+      <Select
+        data={[
+          { label: t('clueNoImpact'), value: 0 },
+          { label: t('cluePer', { number: 25 }), value: 25 },
+          { label: t('cluePer', { number: 50 }), value: 50 },
+        ]}
+        value={clue.value}
+        onChange={(e) => {
+          const _clues = form.getValues('clues');
+          _clues[index].value = e;
+          form.setValue('clues', _clues);
+        }}
+      />
+    ),
+  }));
 
   return (
     <ContextContainer divided>
@@ -193,6 +239,158 @@ export default function AssignConfig({ defaultValues: dv, test, t, onBack, onSen
               </Box>,
             ]
           : null}
+
+        <Title order={4}>{t('advancedSettings')}</Title>
+        <Controller
+          control={form.control}
+          name="useAdvancedSettings"
+          shouldUnregister
+          render={({ field }) => (
+            <Switch checked={field.value} {...field} label={t('allowAdvancedSettings')} />
+          )}
+        />
+
+        {useAdvancedSettings ? (
+          <Paper>
+            <ContextContainer>
+              <Controller
+                control={form.control}
+                name="settings"
+                shouldUnregister
+                render={({ field }) => (
+                  <Select
+                    data={[{ label: t('new'), value: 'new' }]}
+                    {...field}
+                    label={t('useSettings')}
+                  />
+                )}
+              />
+
+              {settings === 'new' ? (
+                <>
+                  <Controller
+                    control={form.control}
+                    name="settingsAsPreset"
+                    shouldUnregister
+                    render={({ field }) => (
+                      <Switch checked={field.value} {...field} label={t('settingsAsPreset')} />
+                    )}
+                  />
+                  {settingsAsPreset ? (
+                    <Controller
+                      control={form.control}
+                      name="presetName"
+                      shouldUnregister
+                      render={({ field }) => (
+                        <TextInput checked={field.value} {...field} label={t('presetName')} />
+                      )}
+                    />
+                  ) : null}
+                  <Controller
+                    control={form.control}
+                    name="wrong"
+                    shouldUnregister
+                    render={({ field }) => (
+                      <Select
+                        description={t('wrongAnswerDescription')}
+                        data={[
+                          { label: t('wrongAnswerDoNotScore'), value: 0 },
+                          { label: t('wrongAnswerPercentage', { number: 25 }), value: 25 },
+                          { label: t('wrongAnswerPercentage', { number: 50 }), value: 50 },
+                          { label: t('wrongAnswerPercentage', { number: 100 }), value: 100 },
+                        ]}
+                        {...field}
+                        label={t('wrongAnswerLabel')}
+                      />
+                    )}
+                  />
+                  <InputWrapper
+                    label={t('unansweredLabel')}
+                    description={
+                      <Controller
+                        control={form.control}
+                        name="canOmitQuestions"
+                        shouldUnregister
+                        render={({ field }) => (
+                          <Switch
+                            checked={field.value}
+                            {...field}
+                            label={t('unansweredDescriptions')}
+                          />
+                        )}
+                      />
+                    }
+                  >
+                    {canOmitQuestions ? (
+                      <Controller
+                        control={form.control}
+                        name="omit"
+                        shouldUnregister
+                        render={({ field }) => (
+                          <Select
+                            description={t('unansweredDescription2')}
+                            data={[
+                              { label: t('wrongAnswerDoNotScore'), value: 0 },
+                              { label: t('wrongAnswerPercentage', { number: 25 }), value: 25 },
+                              { label: t('wrongAnswerPercentage', { number: 50 }), value: 50 },
+                              { label: t('wrongAnswerPercentage', { number: 100 }), value: 100 },
+                            ]}
+                            {...field}
+                          />
+                        )}
+                      />
+                    ) : null}
+                  </InputWrapper>
+
+                  <InputWrapper
+                    label={t('clues')}
+                    description={
+                      <Controller
+                        control={form.control}
+                        name="allowClues"
+                        shouldUnregister
+                        render={({ field }) => (
+                          <Switch checked={field.value} {...field} label={t('allowClues')} />
+                        )}
+                      />
+                    }
+                  >
+                    {allowClues ? (
+                      <Controller
+                        control={form.control}
+                        name="clues"
+                        shouldUnregister
+                        render={({ field }) => (
+                          <TableInput
+                            forceSortable={true}
+                            disabled={true}
+                            columns={[
+                              {
+                                Header: t('clueCanUse'),
+                                accessor: 'canUseCheck',
+                              },
+                              {
+                                Header: t('clueType'),
+                                accessor: 'name',
+                              },
+                              {
+                                Header: t('clueReduction'),
+                                accessor: 'select',
+                              },
+                            ]}
+                            {...field}
+                            data={cluesData}
+                            labels={{}}
+                          />
+                        )}
+                      />
+                    ) : null}
+                  </InputWrapper>
+                </>
+              ) : null}
+            </ContextContainer>
+          </Paper>
+        ) : null}
       </ContextContainer>
       <Stack fullWidth justifyContent="space-between">
         <Box>
