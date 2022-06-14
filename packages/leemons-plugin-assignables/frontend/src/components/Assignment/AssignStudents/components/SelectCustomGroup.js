@@ -42,7 +42,7 @@ export default function SelectCustomGroup({
               students: group.students,
               c,
               name: v.name,
-              showToStudents: !v.showToStudents,
+              showToStudents: v.showToStudents,
             }));
           }
 
@@ -52,7 +52,7 @@ export default function SelectCustomGroup({
             students: group.students,
             c: group,
             name: v.name,
-            showToStudents: !v.showToStudents,
+            showToStudents: v.showToStudents,
           };
         });
 
@@ -106,7 +106,12 @@ export default function SelectCustomGroup({
         shouldUnregister
         control={control}
         render={({ field }) => (
-          <Switch {...field} checked={!field.value} label={labels?.showToStudents} />
+          <Switch
+            {...field}
+            checked={!field.value}
+            onChange={(v) => field.onChange(!v)}
+            label={labels?.showToStudents}
+          />
         )}
       />
     </ContextContainer>
