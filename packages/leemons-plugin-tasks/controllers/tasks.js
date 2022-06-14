@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const create = require('../src/services/task/create');
+const duplicate = require('../src/services/task/duplicate');
 const { get } = require('../src/services/task/get');
 const publish = require('../src/services/task/publish');
 const remove = require('../src/services/task/remove');
@@ -94,6 +95,26 @@ module.exports = {
       };
     }
   },
+  duplicate: async (ctx) => {
+    try {
+      const { id } = ctx.params;
+      const { published } = ctx.request.body;
+      const task = await duplicate(id, { published, userSession: ctx.state.userSession });
+
+      ctx.status = 201;
+      ctx.body = {
+        status: 201,
+        task,
+      };
+    } catch (error) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        error: error.message,
+      };
+    }
+  },
+
   remove: async (ctx) => {
     try {
       const { id } = ctx.params;

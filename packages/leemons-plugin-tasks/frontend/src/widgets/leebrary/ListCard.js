@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 
-import { AssignIcon } from '@bubbles-ui/icons/outline';
+import { AssignIcon, DuplicateIcon } from '@bubbles-ui/icons/outline';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
@@ -21,7 +21,11 @@ const ListCardStyles = createStyles((theme, { single }) => ({
 
 const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...props }) => {
   const history = useHistory();
-  const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
+  const {
+    openConfirmationModal,
+    openDeleteConfirmationModal,
+    setLoading: setAppLoading,
+  } = useLayout();
 
   const [, translations] = useTranslateLoader(prefixPN('cardMenu'));
 
@@ -80,13 +84,33 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
         });
       }
 
-      if (asset.assignable && asset.providerData.published) {
+      if (asset.assignable && asset.providerData?.published) {
         items.push({
           icon: <AssignIcon />,
           children: menuLabels.assign,
           onClick: (e) => {
             e.stopPropagation();
             handleClick(`/private/tasks/library/assign/${taskId}`);
+          },
+        });
+      }
+
+      if (asset.duplicable) {
+        items.push({
+          icon: <DuplicateIcon />,
+          children: menuLabels.duplicate,
+          onClick: (e) => {
+            e.stopPropagation();
+            openConfirmationModal({
+              onConfirm: () => {
+                setAppLoading(true);
+                handleClick(`POST://tasks/tasks/${taskId}/duplicate`, 'api', () => {
+                  addSuccessAlert('Task duplicated');
+                  setAppLoading(false);
+                  onRefresh();
+                });
+              },
+            })();
           },
         });
       }
@@ -98,16 +122,18 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
           onClick: (e) => {
             e.stopPropagation();
             openDeleteConfirmationModal({
-              onConfirm: () =>
+              onConfirm: () => {
+                setAppLoading(true);
                 handleClick(`DELETE://tasks/tasks/${taskId}`, 'api', () => {
                   addSuccessAlert('Task deleted');
+                  setAppLoading(false);
                   onRefresh();
-                }),
+                });
+              },
             })();
           },
         });
       }
-
       // {
       //   icon: <DuplicateIcon />,
       //   children: 'Duplicate',

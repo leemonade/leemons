@@ -10,8 +10,12 @@ import { useLayout } from '@layout/context';
 const Detail = ({ asset, onRefresh, ...props }) => {
   const history = useHistory();
   const [t] = useTranslateLoader(prefixPN('testsCard'));
-  const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
-  const toolbarItems = { toggle: t('toggle'), open: t('open') };
+  const {
+    openDeleteConfirmationModal,
+    openConfirmationModal,
+    setLoading: setAppLoading,
+  } = useLayout();
+  const toolbarItems = { toggle: t('toggle'), open: t('open'), duplicate: t('duplicate') };
 
   const handleClick = (url, target = 'self', callback) => {
     if (target === 'self') {
@@ -45,6 +49,9 @@ const Detail = ({ asset, onRefresh, ...props }) => {
     if (asset.deleteable) {
       toolbarItems.delete = t('delete');
     }
+    if (asset.duplicable) {
+      toolbarItems.duplicate = t('duplicate');
+    }
   }
 
   const handleEdit = () => {
@@ -55,13 +62,29 @@ const Detail = ({ asset, onRefresh, ...props }) => {
     history.push(`/private/tasks/library/assign/${asset.providerData.id}`);
   };
 
+  const handleDuplicate = () => {
+    openConfirmationModal({
+      onConfirm: () => {
+        setAppLoading(true);
+        handleClick(`POST://tasks/tasks/${asset.providerData.id}/duplicate`, 'api', () => {
+          addSuccessAlert('Task duplicated');
+          setAppLoading(false);
+          onRefresh();
+        });
+      },
+    })();
+  };
+
   const handleDelete = () => {
     openDeleteConfirmationModal({
-      onConfirm: () =>
+      onConfirm: () => {
+        setAppLoading(true);
         handleClick(`DELETE://tasks/tasks/${asset.providerData.id}`, 'api', () => {
           addSuccessAlert('Task deleted');
+          setAppLoading(false);
           onRefresh();
-        }),
+        });
+      },
     })();
   };
 
@@ -76,7 +99,6 @@ const Detail = ({ asset, onRefresh, ...props }) => {
       value: asset.providerData.gradable ? t('gradable') : t('nogradable'),
     });
   }
-  console.log(asset);
 
   return (
     <LibraryDetail
@@ -90,6 +112,7 @@ const Detail = ({ asset, onRefresh, ...props }) => {
       toolbarItems={toolbarItems}
       onDelete={handleDelete}
       onEdit={handleEdit}
+      onDuplicate={handleDuplicate}
       onAssign={handleAssign}
     />
   );
