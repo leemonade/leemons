@@ -26,6 +26,7 @@ export default function ViewModeQuestions({ viewMode = true, store: cStore, onRe
       store.questionResponses = cStore.questionResponses;
       store.questionMax = cStore.questionMax;
       store.timestamps = cStore.timestamps;
+      store.config = cStore.config;
       store.questionsInfo = cStore.questionsInfo;
       store.questions = cStore.questions;
       store.evaluationSystem = cStore.evaluationSystem;

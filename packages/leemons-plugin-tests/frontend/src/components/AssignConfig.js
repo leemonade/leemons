@@ -26,8 +26,8 @@ import { Controller, useForm } from 'react-hook-form';
 export default function AssignConfig({ defaultValues: dv, test, t, onBack, onSend }) {
   let defaultValues = {
     clues: [
-      { type: 'extra-info', name: t('clueExtraInfo'), value: 0, canUse: true },
-      { type: 'hide-show-option', name: t('clueHideOption'), value: 0, canUse: true },
+      { type: 'note', name: t('clueExtraInfo'), value: 0, canUse: true },
+      { type: 'hide-response', name: t('clueHideOption'), value: 0, canUse: true },
     ],
   };
   if (dv) {

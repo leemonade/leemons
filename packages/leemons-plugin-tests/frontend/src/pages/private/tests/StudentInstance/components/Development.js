@@ -83,7 +83,17 @@ export default function Development(props) {
           cx={cx}
           icon="/public/tests/blank-questions.png"
           styles={styles}
-          label={t('blankQuestions')}
+          label={
+            // eslint-disable-next-line no-nested-ternary
+            !store.config.canOmitQuestions
+              ? t('noBlankQuestions')
+              : store.config.omit
+              ? t('blankQuestionsScores', {
+                  per: store.config.omit,
+                  points: store.questionsInfo.perOmitQuestion,
+                })
+              : t('blankQuestions')
+          }
         />
       </Box>
 
@@ -92,7 +102,10 @@ export default function Development(props) {
           cx={cx}
           icon="/public/tests/error-questions.png"
           styles={styles}
-          label={t('errorQuestions', { points: store.questionsInfo.perErrorQuestion })}
+          label={t('errorQuestions', {
+            per: store.config.wrong,
+            points: store.questionsInfo.perErrorQuestion,
+          })}
         />
       </Box>
 

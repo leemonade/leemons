@@ -1,13 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Button, COLORS, ImageLoader, Text } from '@bubbles-ui/components';
+import { forEach, keyBy } from 'lodash';
 import { getQuestionClues } from '../helpers/getQuestionClues';
 
 export default function QuestionValue(props) {
   const { styles, cx, t, store, render, question, saveQuestion } = props;
 
   const usedClues = store.questionResponses?.[question.id].clues;
-  const clues = React.useMemo(() => getQuestionClues(question), [question]);
+  const clues = React.useMemo(() => getQuestionClues(question, 9999, store.config), [question]);
+  const cluesConfigByType = React.useMemo(
+    () => keyBy(store.config.clues, 'type'),
+    [store.config.clues]
+  );
+  let clueLessPoints = 0;
+  const usedCluesObj = [];
+
+  forEach(clues, (clue, index) => {
+    if (index < usedClues) {
+      const lessPoints =
+        store.questionsInfo.perQuestion * (cluesConfigByType[clue.type].value / 100);
+      usedCluesObj.push({
+        points: `-${lessPoints.toFixed(2)}`,
+        index,
+      });
+      clueLessPoints += lessPoints;
+    }
+  });
 
   function useClue() {
     if (!store.viewMode) {
@@ -39,6 +58,24 @@ export default function QuestionValue(props) {
       <Box style={{ display: 'flex' }}>
         {/* -- Question value -- */}
 
+        {usedCluesObj.map((clObj) => (
+          <Box className={styles.questionValueCard}>
+            <Box>
+              <Text
+                size="md"
+                sx={(theme) => ({
+                  color: theme.colors.fatic01,
+                })}
+              >
+                {clObj.points}
+              </Text>
+            </Box>
+            <Text size="xs" color="primary">
+              {t('clueN', { number: clObj.index + 1 })}
+            </Text>
+          </Box>
+        ))}
+
         <Box className={styles.questionValueCard}>
           <Box>
             <Text
@@ -51,7 +88,7 @@ export default function QuestionValue(props) {
             >
               {store.viewMode
                 ? store.questionResponses[question.id].points
-                : store.questionsInfo.perQuestion}
+                : (store.questionsInfo.perQuestion - clueLessPoints).toFixed(2)}
             </Text>
           </Box>
           <Text size="xs" color="primary">

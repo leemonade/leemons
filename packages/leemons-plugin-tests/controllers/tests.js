@@ -116,12 +116,19 @@ async function setInstanceFeedback(ctx) {
   ctx.body = { status: 200, feedback };
 }
 
+async function getAssignConfigs(ctx) {
+  const configs = await testsService.getAssignSavedConfigs(ctx.state.userSession);
+  ctx.status = 200;
+  ctx.body = { status: 200, configs };
+}
+
 module.exports = {
   getUserQuestionResponses,
   setInstanceTimestamp,
   setQuestionResponse,
   getInstanceFeedback,
   setInstanceFeedback,
+  getAssignConfigs,
   assignTest,
   deleteTest,
   listTests,

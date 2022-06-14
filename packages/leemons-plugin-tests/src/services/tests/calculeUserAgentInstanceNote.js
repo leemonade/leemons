@@ -2,8 +2,15 @@
 const _ = require('lodash');
 const dayjs = require('dayjs');
 const duration = require('dayjs/plugin/duration');
+const { keyBy, forEach } = require('lodash');
 const { getUserQuestionResponses } = require('./getUserQuestionResponses');
 const { getByIds } = require('../questions/getByIds');
+const {
+  getQuestionClues,
+} = require('../../../frontend/src/pages/private/tests/StudentInstance/helpers/getQuestionClues');
+const {
+  getConfigByInstance,
+} = require('../../../frontend/src/pages/private/tests/StudentInstance/helpers/getConfigByInstance');
 
 dayjs.extend(duration);
 
@@ -37,17 +44,31 @@ async function calculeUserAgentInstanceNote(
     }),
   ]);
 
-  const perError = -(
-    (evaluationSystem.maxScale.number - evaluationSystem.minScale.number) /
-    questions.length /
-    2
-  );
-  const perDone =
+  const perQuestion =
     (evaluationSystem.maxScale.number - evaluationSystem.minScale.number) / questions.length;
-  const perUndefined = 0;
+
+  const config = getConfigByInstance(instance);
+  const cluesConfigByType = _.keyBy(config.clues, 'type');
+
+  const perError = -(perQuestion * (config.wrong / 100));
+  const perDone = perQuestion;
+  const perUndefined = -(perQuestion * (config.omit / 100));
 
   let note = evaluationSystem.minScale.number;
   const questionsResponse = {};
+
+  function getClueLessPoints(question) {
+    const usedClues = questionResponses[question.id].clues;
+    const clues = getQuestionClues(question, 99999, config);
+    let clueLessPoints = 0;
+    forEach(clues, (clue, index) => {
+      if (index < usedClues) {
+        const lessPoints = perQuestion * (cluesConfigByType[clue.type].value / 100);
+        clueLessPoints += lessPoints;
+      }
+    });
+    return clueLessPoints;
+  }
 
   _.forEach(questions, (question) => {
     if (question.type === 'mono-response') {
@@ -61,9 +82,9 @@ async function calculeUserAgentInstanceNote(
           status: null,
         };
       } else if (questionResponses[question.id].properties.response === correctIndex) {
-        note += perDone;
+        note += perDone - getClueLessPoints(question);
         questionsResponse[question.id] = {
-          points: perDone,
+          points: perDone - getClueLessPoints(question),
           status: 'ok',
         };
       } else {
@@ -86,9 +107,9 @@ async function calculeUserAgentInstanceNote(
           }
         });
         if (allWithValues && allValuesGood) {
-          note += perDone;
+          note += perDone - getClueLessPoints(question);
           questionsResponse[question.id] = {
-            points: perDone,
+            points: perDone - getClueLessPoints(question),
             status: 'ok',
           };
         } else if (allWithValues) {

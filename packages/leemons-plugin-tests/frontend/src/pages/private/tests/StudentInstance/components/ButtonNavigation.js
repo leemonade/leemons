@@ -11,6 +11,7 @@ export function ButtonNavigation({
   isFirstStep,
   prevStep,
   nextStep,
+  disableNext = false,
   nextLabel,
 }) {
   const showFirstButton = !isFirstStep && (!store.embedded || (store.embedded && index > 0));
@@ -40,6 +41,7 @@ export function ButtonNavigation({
             rounded
             compact
             onClick={nextStep}
+            disabled={disableNext}
           >
             {store.embedded ? t('nextButton') : nextLabel || t('next')}
           </Button>

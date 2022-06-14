@@ -261,10 +261,13 @@ module.exports = {
     nextButton: 'Next',
     finishButton: 'Finish',
     selectResponse: 'Select response',
+    noBlankQuestions: "You can't leave questions blank",
     blankQuestions:
       '<strong>You can leave questions blank</strong> and these will not score (i.e. they score 0).',
+    blankQuestionsScores:
+      '<strong>You can leave questions blank</strong> and these will <strong>subtract {per}%</strong> of their value (i.e. they score {points}).',
     errorQuestions:
-      '<strong>Wrong answers subtract 50% of their value</strong>, that is, they score {points}',
+      '<strong>Wrong answers subtract {per}% of their value</strong>, that is, they score {points}',
     finishTestModalTitle: 'Complete and submit this test',
     finishTestModalDescription:
       'If you click on "Confirm submission", your test will be sent to a reviewer and you will no longer be able to modify any answers or answer unanswered questions <br/><br/> Once you confirm the submission, the system will show you the test results (except for open questions).',
@@ -284,6 +287,7 @@ module.exports = {
     correctResponse: 'Correct response',
     explanation: 'Explanation',
     returnToTable: 'Return to table',
+    clueN: '{number}ª Clue',
   },
   testAssign: {
     pageTitle: 'Assign Test:',

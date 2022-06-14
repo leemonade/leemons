@@ -259,10 +259,13 @@ module.exports = {
     nextButton: 'Siguiente',
     finishButton: 'Finalizar',
     selectResponse: 'Seleccionar respuesta',
+    noBlankQuestions: 'No puedes dejar preguntas en blanco',
     blankQuestions:
       '<strong>Puedes dejar preguntas en blanco</strong> y estas no puntuarán (es decir, puntúan 0)',
+    blankQuestionsScores:
+      '<strong>Puedes dejar preguntas en blanco</strong> y estas <strong>restaran el {per}%</strong> de su valor (es decir, puntúan {points})',
     errorQuestions:
-      'Las <strong>contestaciones erróneas restan el 50%</strong> de su valor, es decir, puntúan {points}',
+      'Las <strong>contestaciones erróneas restan el {per}%</strong> de su valor, es decir, puntúan {points}',
     finishTestModalTitle: 'Finalizar y entregar este test',
     finishTestModalDescription:
       'Si haces click en "Confirmar entrega", tu test será enviado a un revisor y ya no podrás modificar ningun respuesta o responder a preguntas sin contestar <br/><br/> Una vez que confirmes la entrega, el sistema te mostrará los resultados del test (exceptuando las preguntas abiertas)',
@@ -282,6 +285,7 @@ module.exports = {
     correctResponse: 'Respuesta correcta',
     explanation: 'Explicación',
     returnToTable: 'Volver a la tabla',
+    clueN: '{number}ª Pista',
   },
   testAssign: {
     pageTitle: 'Asignar Test:',
