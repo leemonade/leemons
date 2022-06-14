@@ -69,11 +69,11 @@ const assignableValidationObject = {
       nullable: true,
     },
     subjects: subjectsValidationObject,
-    methodology: {
-      type: 'string',
-      maxLength: 255,
-      nullable: true,
-    },
+    // methodology: {
+    //   type: 'string',
+    //   maxLength: 255,
+    //   nullable: true,
+    // },
     statement: {
       type: 'string',
       maxLength: 16777215,
@@ -133,6 +133,29 @@ const assignableValidationObject = {
   additionalProperties: false,
 };
 
+const validAssignableProperties = [
+  'asset.name',
+  'asset.tagline',
+  'asset.description',
+  'asset.tags',
+  'asset.color',
+  'asset.cover',
+  'role',
+  'gradable',
+  'center',
+  'subjects',
+  // 'methodology',
+  'statement',
+  'development',
+  'relatedAssignables',
+  'duration',
+  'resources',
+  'submission',
+  'instructionsForTeachers',
+  'instructionsForStudents',
+  'metadata',
+];
+
 const assignableRequiredProperties = ['asset', 'role', 'statement'];
 
 function validateAssignable(assignable, { validationObject, useRequired = false } = {}) {
@@ -156,4 +179,5 @@ module.exports = {
   assignableValidationObject,
   assignableRequiredProperties,
   validateAssignable,
+  validAssignableProperties,
 };

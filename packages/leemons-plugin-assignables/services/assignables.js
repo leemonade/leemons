@@ -12,6 +12,7 @@ const registerRole = require('../src/services/roles/registerRole');
 const unregisterRole = require('../src/services/roles/unregisterRole');
 const searchAssignables = require('../src/services/assignable/searchAssignables');
 const findAssignableByAssetIds = require('../src/services/assignable/findAssignableByAssetIds');
+const duplicateAssignable = require('../src/services/assignable/duplicateAssignable');
 
 function createAssignableService(assignable, { userSession, transacting, ...props }) {
   return createAssignable.call(this, assignable, { userSession, transacting, ...props });
@@ -22,6 +23,7 @@ module.exports = {
   createAssignable: createAssignableService,
   getAssignable,
   updateAssignable,
+  duplicateAssignable,
   removeAssignable,
   publishAssignable,
   addUserToAssignable,
