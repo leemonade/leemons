@@ -12,6 +12,7 @@ import {
   Switch,
   useDebouncedValue,
   useResizeObserver,
+  ImageLoader,
 } from '@bubbles-ui/components';
 import { LibraryItem } from '@bubbles-ui/leemons';
 import { LayoutHeadlineIcon, LayoutModuleIcon } from '@bubbles-ui/icons/solid';
@@ -78,6 +79,7 @@ const AssetList = ({
   paperProps,
   emptyComponent,
   searchEmptyComponent,
+  allowChangeCategories,
   preferCurrent,
   onSelectItem = () => {},
   onEditItem = () => {},
@@ -116,7 +118,12 @@ const AssetList = ({
   const session = useSession();
   const locale = getLocale(session);
   const loadingRef = useRef({ firstTime: false, loading: false });
+  const showThumbnails = useMemo(
+    () => onlyThumbnails && category?.key === 'media-files',
+    [onlyThumbnails, category]
+  );
 
+  useEffect(() => console.log(assetType), [assetType]);
   // ·········································································
   // DATA PROCESSING
 
@@ -438,6 +445,19 @@ const AssetList = ({
     window.open(item.url, '_blank');
   };
 
+  const handleOnChangeCategory = (key) => {
+    setAssetType('');
+    setCategory(find(categories, { key }));
+  }
+
+  const handleOnTypeChange = (type) => {
+    if(isEmbedded) {
+      setAssetType(type);
+    }
+
+    onTypeChange(type);
+  }
+
   // ·········································································
   // LABELS & STATIC
 
@@ -503,7 +523,7 @@ const AssetList = ({
   }, [childRect, isEmbedded]);
 
   const listProps = useMemo(() => {
-    if (!onlyThumbnails && layout === 'grid') {
+    if (!showThumbnails && layout === 'grid') {
       return {
         itemRender: (p) => (
           <CardWrapper
@@ -530,10 +550,10 @@ const AssetList = ({
       };
     }
 
-    if (onlyThumbnails && layout === 'grid') {
+    if (showThumbnails && layout === 'grid') {
       return {
         itemRender: (p) => <AssetThumbnail {...p} />,
-        itemMinWidth,
+        itemMinWidth: category?.key === 'media-files' ? 200 : itemMinWidth,
         margin: 16,
         spacing: 4,
         paperProps: { shadow: 'none', padding: 4 },
@@ -541,7 +561,7 @@ const AssetList = ({
     }
 
     return { paperProps };
-  }, [layout, category, isEmbedded]);
+  }, [layout, category, isEmbedded, showThumbnails]);
 
   const listLayouts = useMemo(
     () => [
@@ -596,6 +616,17 @@ const AssetList = ({
     return '100%';
   }, [openDetail, showDrawer]);
 
+  const categoriesRadioData = useMemo(
+    () =>
+      categories
+        .filter((item) => Array.isArray(allowChangeCategories) ? allowChangeCategories.includes(item.key) : true)
+        .map((item) => ({
+          value: item.key,
+          label: item.name,
+          icon: <Box style={{ height: 16, marginBottom: 5}}><ImageLoader src={item.icon} style={{ width: 16, height: 16, position: 'relative' }} /></Box>,
+        })),
+    [allowChangeCategories, categories]);
+
   // ·········································································
   // RENDER
 
@@ -640,7 +671,7 @@ const AssetList = ({
               skipFlex
               data={assetTypes}
               value={assetType}
-              onChange={onTypeChange}
+              onChange={handleOnTypeChange}
               placeholder={t('labels.resourceTypes')}
             />
           )}
@@ -658,6 +689,19 @@ const AssetList = ({
         )}
       </Stack>
 
+      {/* CATEGORY RADIO GROUP ···· */}
+      {allowChangeCategories !== false && !isNil(categories) && !isEmpty(categories) && (
+        <Box skipFlex sx={(theme) => ({ marginTop: theme.spacing[5] })}>
+          <RadioGroup
+            data={categoriesRadioData}
+            variant="icon"
+            onChange={handleOnChangeCategory}
+            value={category.key}
+            fullWidth
+          />
+        </Box>
+      )}
+
       {/* PAGINATED LIST ········· */}
       <Stack
         fullHeight
@@ -665,7 +709,8 @@ const AssetList = ({
           marginTop: !isEmbedded && headerOffset,
           width: listWidth,
           transition: 'width 0.3s ease',
-        }}>
+        }}
+      >
         <Box
           sx={(theme) => ({
             flex: 1,
@@ -784,6 +829,7 @@ AssetList.defaultProps = {
   preferCurrent: true,
   canShowPublicToggle: true,
   paperProps: { color: 'none', shadow: 'none', padding: 0 },
+  allowChangeCategories: false,
 };
 AssetList.propTypes = {
   category: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
@@ -817,6 +863,7 @@ AssetList.propTypes = {
   onLoaded: PropTypes.func,
   onLoading: PropTypes.func,
   preferCurrent: PropTypes.bool,
+  allowChangeCategories: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)]),
 };
 
 export { AssetList };

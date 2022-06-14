@@ -11,10 +11,7 @@ import { LibraryCardEmbed } from '@bubbles-ui/leemons';
 import { AssetListDrawer } from '@leebrary/components';
 import { uniqBy, map } from 'lodash';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';
-import { listCategoriesRequest } from '@leebrary/request';
-import { useApi } from '@common';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
 
 const styles = createStyles((theme) => ({
@@ -25,20 +22,7 @@ const styles = createStyles((theme) => ({
   },
 }));
 
-function useListCategories() {
-  const [categories] = useApi(listCategoriesRequest);
-
-  return useMemo(() => {
-    if (!categories.length) {
-      return [];
-    }
-    const desiredCategories = ['bookmarks', 'media-files'];
-    return categories.filter((category) => desiredCategories.includes(category.key));
-  }, [categories]);
-}
-
 export default function Attachments({ labels }) {
-  const categories = useListCategories();
   /*
     --- Drawer state ---
   */
@@ -163,7 +147,8 @@ export default function Attachments({ labels }) {
             onTypeChange={setAssetType}
             onSelect={onAssetSelect}
             onClose={onDrawerClose}
-            categories={categories}
+            onlyThumbnails={false}
+            allowChangeCategories={['bookmarks', 'media-files']}
             itemMinWidth={200}
           />
         </form>

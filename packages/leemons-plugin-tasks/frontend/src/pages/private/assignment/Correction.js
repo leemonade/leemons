@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useMemo } from 'react';
-import useAssignation from '@assignables/hooks/assignations/useAssignation';
+import useAssignation from '@assignables/hooks/assignations/useAssignations';
 import useAssignablesContext from '@assignables/hooks/useAssignablesContext';
 import { useParams, useHistory } from 'react-router-dom';
 import { Loader, Text, createStyles, Box } from '@bubbles-ui/components';
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
-import useAssignableInstance from '@assignables/hooks/assignableInstance/useAssignableInstance';
+import useAssignableInstance from '@assignables/hooks/assignableInstance/useAssignableInstancesQuery';
 import { useForm, FormProvider } from 'react-hook-form';
 import Correction from '../../../components/Correction';
 import StudentCorrection from '../../../components/StudentCorrection';
@@ -42,18 +42,20 @@ export default function CorrectionPage() {
   let { student } = useParams();
   const { classes } = styles();
   const form = useForm();
-  const {
-    formState: { isDirty },
-  } = form;
 
   if (!student || student === 'null' || student === 'undefined') {
     student = null;
   }
-  const instance = useAssignableInstance(instanceId, true);
-  const [assignation, error, loading] = useAssignation(
-    instanceId,
-    student || instance?.students?.[0]?.user,
-    false
+
+  const { data: instance, error, isLoading: loading } = useAssignableInstance({ id: instanceId });
+
+  const { data: assignation } = useAssignation(
+    {
+      instance: instanceId,
+      user: student,
+    },
+    true,
+    !student
   );
 
   const fullAssignation = useMemo(
@@ -65,15 +67,22 @@ export default function CorrectionPage() {
   );
 
   useEffect(() => {
+    if (instance && isFirstUser.current && !student) {
+      const studentToUse = instance?.students?.[0]?.user;
+      if (studentToUse) {
+        history.push(`/private/tasks/correction/${instanceId}/${studentToUse}`);
+      }
+    }
+  }, [instance]);
+
+  useEffect(() => {
     if (assignation && isFirstUser.current) {
       isFirstUser.current = false;
     }
   }, [assignation]);
 
   const onStudentChange = (user) => {
-    if (user) {
-      history.push(`/private/tasks/correction/${instanceId}/${user}`);
-    }
+    history.push(`/private/tasks/correction/${instanceId}/${user}`);
   };
 
   useEffect(() => {
@@ -82,11 +91,11 @@ export default function CorrectionPage() {
     }
   }, [assignation?.user]);
 
-  if ((isFirstUser.current && loading && !assignation) || !student) {
+  if (isFirstUser.current && loading && !assignation) {
     return <Loader />;
   }
   if (error) {
-    return <Text>Error: {error.message}</Text>;
+    return <Text>Error: {error}</Text>;
   }
 
   if (isTeacher) {
@@ -101,7 +110,9 @@ export default function CorrectionPage() {
             />
           </Box>
           <Box className={classes.main}>
-            <Correction assignation={fullAssignation} instance={instance} loading={loading} />
+            {!!assignation && (
+              <Correction assignation={fullAssignation} instance={instance} loading={loading} />
+            )}
           </Box>
         </Box>
       </FormProvider>

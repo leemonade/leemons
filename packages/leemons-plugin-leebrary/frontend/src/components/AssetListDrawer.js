@@ -81,7 +81,6 @@ const AssetListDrawer = ({
       canChangeLayout={false}
       canSearch
       onSelectItem={onSelect}
-      itemMinWidth={assetType === 'image' ? 200 : props.itemMinWidth}
     />
   );
 
@@ -166,6 +165,7 @@ AssetListDrawer.defaultProps = {
   layout: 'grid',
   assetType: 'image',
   canChangeType: false,
+  allowChangeCategories: false,
   onlyThumbnails: true,
   creatable: false,
   onlyCreateImages: false,
@@ -180,6 +180,7 @@ AssetListDrawer.propTypes = {
   onClose: PropTypes.func,
   categories: PropTypes.arrayOf(PropTypes.object),
   category: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  allowChangeCategories: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)]),
   layout: PropTypes.string,
   onSelect: PropTypes.func,
   assetType: PropTypes.string,

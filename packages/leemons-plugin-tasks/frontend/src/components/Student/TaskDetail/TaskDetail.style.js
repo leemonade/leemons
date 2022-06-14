@@ -5,7 +5,7 @@ export const TaskDetailStyles = createStyles((theme, { onlyNext, marginTop }) =>
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     alignItems: 'flex-start',
   },
   stepper: {
