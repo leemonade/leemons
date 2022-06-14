@@ -14,6 +14,8 @@ import {
   copyFileWithSquirrelly,
   copyFolder,
   folderExists,
+  createJsConfig,
+  createEsLint,
 } from './lib/fs';
 import compile from './lib/webpack';
 import createReloader from './lib/watch';
@@ -207,6 +209,12 @@ async function generateMonorepo(dir: string, plugins: Plugin[]): Promise<void> {
 
   await removeFiles(path.resolve(dir, 'plugins'), extraFiles);
   await installDeps(dir);
+
+  // Re-generate "jsconfig.json" file
+  await createJsConfig(plugins);
+
+  // Re-generate ".eslintrc.json" file
+  await createEsLint(plugins);
 }
 
 // Generate alias object for webpack

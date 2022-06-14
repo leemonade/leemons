@@ -90,6 +90,13 @@ module.exports = [
     allowedPermissions: getPermissions(permissions.tests, ['create', 'update']),
   },
   {
+    path: '/tests/assign/configs',
+    method: 'GET',
+    handler: 'tests.getAssignConfigs',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tests, ['create', 'update']),
+  },
+  {
     path: '/tests/assign',
     method: 'POST',
     handler: 'tests.assignTest',

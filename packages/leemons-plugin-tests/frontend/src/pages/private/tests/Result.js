@@ -42,6 +42,7 @@ import {
 import { ResultStyles } from './Result.style';
 import { htmlToText } from './StudentInstance/helpers/htmlToText';
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
+import { getConfigByInstance } from './StudentInstance/helpers/getConfigByInstance';
 
 export default function Result() {
   const [t] = useTranslateLoader(prefixPN('testResult'));
@@ -110,11 +111,13 @@ export default function Result() {
         }
       });
       store.timestamps = timestamps;
+      store.config = getConfigByInstance(store.instance);
       store.questionsInfo = calculeInfoValues(
         questions.length,
         evaluationSystem.maxScale.number,
         evaluationSystem.minScale.number,
-        evaluationSystem.minScaleToPromote.number
+        evaluationSystem.minScaleToPromote.number,
+        store.instance
       );
       store.questions = questions;
       store.evaluationSystem = evaluationSystem;

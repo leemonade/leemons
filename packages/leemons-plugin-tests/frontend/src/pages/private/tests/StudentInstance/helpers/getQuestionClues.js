@@ -1,7 +1,9 @@
-import { forEach, isNumber, isString } from 'lodash';
+const { forEach, isNumber, isString } = require('lodash');
 
-export function getQuestionClues(question, limit) {
-  const clues = [];
+function getQuestionClues(question, limit, config) {
+  let clues = [];
+  const hideResponses = [];
+  const notes = [];
 
   if (question.type === 'map') {
     const responsesIndexsToHide = [];
@@ -11,7 +13,7 @@ export function getQuestionClues(question, limit) {
       }
     });
     if (responsesIndexsToHide.length) {
-      clues.push({
+      hideResponses.push({
         type: 'hide-response',
         indexs: responsesIndexsToHide,
       });
@@ -26,7 +28,7 @@ export function getQuestionClues(question, limit) {
       }
     });
     if (responsesIndexsToHide.length) {
-      clues.push({
+      hideResponses.push({
         type: 'hide-response',
         indexs: responsesIndexsToHide,
       });
@@ -35,10 +37,23 @@ export function getQuestionClues(question, limit) {
 
   if (question.clues?.length) {
     forEach(isString(question.clues) ? JSON.parse(question.clues) : question.clues, (clue) => {
-      clues.push({
+      notes.push({
         type: 'note',
         text: clue.value,
       });
+    });
+  }
+
+  if (config.allowClues) {
+    forEach(config.clues, (clue) => {
+      if (clue.canUse) {
+        if (clue.type === 'hide-response') {
+          clues = clues.concat(hideResponses);
+        }
+        if (clue.type === 'note') {
+          clues = clues.concat(notes);
+        }
+      }
     });
   }
 
@@ -47,3 +62,5 @@ export function getQuestionClues(question, limit) {
   }
   return clues;
 }
+
+module.exports = { getQuestionClues };

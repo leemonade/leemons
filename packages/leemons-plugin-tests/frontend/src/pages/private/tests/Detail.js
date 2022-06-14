@@ -27,6 +27,7 @@ import { questionTypeT } from '../questions-banks/components/QuestionForm';
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import { ResultStyles } from './Result.style';
 import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
+import { getConfigByInstance } from './StudentInstance/helpers/getConfigByInstance';
 
 export default function Detail() {
   const [t, t1V] = useTranslateLoader(prefixPN('testsDetail'));
@@ -107,6 +108,7 @@ export default function Detail() {
       store.currentId = params.id;
       const { test } = await getTestRequest(params.id, { withQuestionBank: true });
       const { evaluationSystem } = await getProgramEvaluationSystemRequest(test.program);
+      console.log(test);
       store.test = test;
       store.stats = getStats();
       store.test.questionResponses = {};
@@ -117,6 +119,7 @@ export default function Detail() {
           status: null,
         };
       });
+      store.test.config = getConfigByInstance();
       store.test.questionsInfo = calculeInfoValues(
         store.test.questions.length,
         evaluationSystem.maxScale.number,

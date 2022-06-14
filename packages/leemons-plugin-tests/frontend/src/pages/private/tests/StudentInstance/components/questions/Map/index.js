@@ -31,7 +31,7 @@ export default function Index(props) {
 
   const clue = React.useMemo(
     () =>
-      find(getQuestionClues(question, store.questionResponses[question.id].clues), {
+      find(getQuestionClues(question, store.questionResponses[question.id].clues, store.config), {
         type: 'hide-response',
       }),
     [question, store.questionResponses[question.id].clues]

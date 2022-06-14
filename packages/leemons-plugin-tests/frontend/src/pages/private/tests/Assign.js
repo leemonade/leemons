@@ -1,5 +1,5 @@
 import React from 'react';
-import { set, forIn, map, omit, uniq } from 'lodash';
+import { forIn, map, omit, set, uniq } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
@@ -14,7 +14,7 @@ import {
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import Form from '@assignables/components/Assignment/Form';
-import { assignTestRequest, getTestRequest } from '../../../request';
+import { assignTestRequest, getAssignConfigsRequest, getTestRequest } from '../../../request';
 import AssignConfig from '../../../components/AssignConfig';
 
 function parseDates(date) {
@@ -77,7 +77,11 @@ export default function Assign() {
 
   async function init() {
     try {
-      const { test } = await getTestRequest(params.id, { withQuestionBank: true });
+      const [{ test }, { configs }] = await Promise.all([
+        getTestRequest(params.id, { withQuestionBank: true }),
+        getAssignConfigsRequest(),
+      ]);
+      store.configs = configs;
       store.test = test;
       store.assignable = {
         subjects: map(test.subjects, (id) => ({
@@ -138,14 +142,42 @@ export default function Assign() {
               <AssignConfig
                 defaultValues={store.data.metadata}
                 test={store.test}
+                configs={store.configs}
                 t={t}
                 onBack={(e) => {
-                  store.data.metadata = { ...store.data.metadata, ...e };
+                  store.data.metadata = {
+                    ...store.data.metadata,
+                    ...e,
+                  };
                   store.currentStep = 0;
                   render();
                 }}
                 onSend={(e) => {
-                  store.data.metadata = { ...store.data.metadata, ...e };
+                  let filters = {
+                    wrong: 50,
+                    canOmitQuestions: true,
+                    allowClues: true,
+                    omit: 0,
+                    clues: [
+                      {
+                        type: 'hide-response',
+                        value: 0,
+                        canUse: true,
+                      },
+                      { type: 'note', value: 0, canUse: true },
+                    ],
+                  };
+                  if (store.data.metadata.filters) {
+                    filters = { ...filters, ...store.data.metadata.filters };
+                  }
+                  if (e.filters) {
+                    filters = { ...filters, ...e.filters };
+                  }
+                  store.data.metadata = {
+                    ...store.data.metadata,
+                    ...e,
+                    filters,
+                  };
                   send();
                 }}
               />

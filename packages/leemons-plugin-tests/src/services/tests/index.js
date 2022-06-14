@@ -8,6 +8,7 @@ const { deleteTest } = require('./deleteTest');
 const { assignTest } = require('./assignTest');
 const { getInstanceFeedback } = require('./getInstanceFeedback');
 const { setInstanceFeedback } = require('./setInstanceFeedback');
+const { getAssignSavedConfigs } = require('./getAssignSavedConfigs');
 
 module.exports = {
   assignTest,
@@ -18,6 +19,7 @@ module.exports = {
   assign: assignTest,
   list: listTests,
   listTests,
+  getAssignSavedConfigs,
   details: getTestsDetails,
   getTestsDetails,
   save: saveTest,
