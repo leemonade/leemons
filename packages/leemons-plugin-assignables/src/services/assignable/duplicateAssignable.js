@@ -5,7 +5,7 @@ const getAssignable = require('./getAssignable');
 
 module.exports = async function duplicateAssignable(
   assignableId,
-  { published = false, userSession, transacting } = {}
+  { published, userSession, transacting } = {}
 ) {
   const assignable = await getAssignable.call(this, assignableId, { userSession, transacting });
 
@@ -14,7 +14,7 @@ module.exports = async function duplicateAssignable(
   const assignableToCreate = pick(assignable, validAssignableProperties);
 
   const newAssignable = await createAssignable.call(this, assignableToCreate, {
-    published,
+    published: published === undefined ? assignable.published : published,
     userSession,
     transacting,
   });

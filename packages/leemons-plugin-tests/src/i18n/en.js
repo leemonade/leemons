@@ -220,6 +220,7 @@ module.exports = {
     task: 'Task',
     toggle: 'Close',
     open: 'Open',
+    duplicate: 'Duplicate',
   },
   studentInstance: {
     multiSubject: 'Multi-Subject',

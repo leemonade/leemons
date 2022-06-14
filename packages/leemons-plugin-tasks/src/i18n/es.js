@@ -316,6 +316,7 @@ module.exports = {
     edit: 'Editar',
     assign: 'Asignar',
     delete: 'Eliminar',
+    duplicate: 'Duplicar',
   },
   task_realization: {
     confirmation_modal: {
