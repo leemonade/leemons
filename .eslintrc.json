@@ -27,14 +27,51 @@
     "prettier"
   ],
   "rules": {
+    "import/no-unresolved": [
+      2,
+      {
+        "ignore": [
+          "@users",
+          "@layout",
+          "@common",
+          "@menu-builder",
+          "@multilanguage",
+          "@assets",
+          "@dataset",
+          "@socket-io",
+          "@calendar",
+          "@package-manager",
+          "@leebrary",
+          "@leebrary-tasks",
+          "@curriculum",
+          "@academic-portfolio",
+          "@grades",
+          "@tasks",
+          "@timetable",
+          "@scores",
+          "@emails",
+          "@emails-amazon-ses",
+          "@widgets",
+          "@dashboard",
+          "@tests",
+          "@leebrary-tests",
+          "@assignables",
+          "@bubbles-ui"
+        ]
+      }
+    ],
     "no-plusplus": "off",
     "import/no-dynamic-requires": "off",
     "import/no-extraneous-dependencies": "off",
     "react/react-in-jsx-scope": "off",
     "no-underscore-dangle": "off",
-    "prettier/prettier": ["error", {}, {
-      "usePrettierrc": true
-    }],
+    "prettier/prettier": [
+      "error",
+      {},
+      {
+        "usePrettierrc": true
+      }
+    ],
     "import/no-names-as-default": "off"
   }
 }
