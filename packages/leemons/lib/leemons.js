@@ -419,10 +419,10 @@ class Leemons {
   // Initialize the frontend handler
   setFrontRoutes() {
     // TODO: Catch error when port 3000 not available
-    // Next.js public path
-    this.app.use(Static('./next/public'));
+    // React application public path
+    this.app.use(Static('./frontend/public'));
 
-    // Make next.js handle with all non /api requests
+    // Make frontend server handle with all non /api requests
     this.frontRouter.get(/(?!^\/api)^\/.*/, async (ctx) => {
       try {
         // EN: Check if the server is ready
@@ -548,12 +548,12 @@ class Leemons {
         return;
       }
 
-      // When next is prepared
+      // When frontend is prepared
       leemons.events.emit('frontWillStartServer', 'leemons');
       const prepareFront = ora('Starting frontend server').start();
-      // Start production next app
+      // Start production frontend app
       const start = execa.command(
-        `yarn --cwd ${leemons.dir.next} ${
+        `yarn --cwd ${leemons.dir.frontend} ${
           process.env.NODE_ENV !== 'development' ? 'start' : 'dev'
         }`,
         {

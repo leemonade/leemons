@@ -23,7 +23,9 @@ async function removeMissingPlugins(dir, _plugins) {
   const plugins = _plugins.map(([name]) => name);
   if (await fs.exists(dir)) {
     await Promise.all(
-      (await fs.readdir(dir, { withFileTypes: true }))
+      (
+        await fs.readdir(dir, { withFileTypes: true })
+      )
         .filter((file) => file.isDirectory())
         .map((file) => file.name)
         // Get missing plugins
@@ -44,7 +46,7 @@ async function removeExtraFiles(dir, extra) {
 async function removeEmptyDirs(dir) {
   // Get the empty directories
   const emptyDirs = getEmptyDirsFromreaddirRecursive(
-    await readdirRecursive(dir, { ignore: ['node_modules', '.next', 'src'] })
+    await readdirRecursive(dir, { ignore: ['node_modules', 'src'] })
   );
 
   // If there are empty directories, delete them
@@ -113,7 +115,7 @@ async function checkDirChanges(dir) {
     }
   }
 
-  // Get nextjs path checksums
+  // Get frontend path checksums
   const currentChecksums = await readdirRecursive(dir, {
     checksums: true,
     ignore: ['checksums.json', /(yarn\.lock|package-lock\.json)$/, 'node_modules'],
@@ -179,17 +181,17 @@ async function loadFront(leemons, installedPlugins, installedProviders) {
   const plugins = installedPlugins
     .map((plugin) => [plugin.name, plugin])
     .concat(providers.map((provider) => [provider.name, provider]));
-  const nextPath = leemons.dir.next;
+  const frontendPath = leemons.dir.frontend;
 
   // Flags for compilation
   _.set(leemons, 'frontNeedsBuild', false);
   _.set(leemons, 'frontNeedsUpdateDeps', false);
 
   // Generate dest directories
-  const pagesPath = path.resolve(nextPath, 'pages');
-  const srcPath = path.resolve(nextPath, 'plugins');
-  const depsPath = path.resolve(nextPath, 'dependencies');
-  const publicPath = path.resolve(nextPath, 'public');
+  const pagesPath = path.resolve(frontendPath, 'pages');
+  const srcPath = path.resolve(frontendPath, 'plugins');
+  const depsPath = path.resolve(frontendPath, 'dependencies');
+  const publicPath = path.resolve(frontendPath, 'public');
 
   await Promise.all([
     removeMissingPlugins(pagesPath, plugins),
@@ -213,17 +215,17 @@ async function loadFront(leemons, installedPlugins, installedProviders) {
   const nonInstalledDeps = [];
 
   // Get installed deps
-  const nextDeps = (await fs.readJSON(path.resolve(nextPath, 'package.json'))).dependencies;
+  const frontendDeps = (await fs.readJSON(path.resolve(frontendPath, 'package.json'))).dependencies;
   // Move plugins folders
 
   await Promise.all(
     plugins.map(async ([, pluginObj]) => {
       const {
         name,
-        dir: { app: pluginDir, next: pluginNext },
+        dir: { app: pluginDir, frontend: pluginFrontend },
       } = pluginObj;
       // Each plugin root directory
-      const dir = path.resolve(pluginDir, pluginNext);
+      const dir = path.resolve(pluginDir, pluginFrontend);
 
       if (await fs.exists(dir)) {
         // Track which plugins have frontend
@@ -256,7 +258,7 @@ async function loadFront(leemons, installedPlugins, installedProviders) {
           }
 
           // Generate an alias
-          aliases[`@${name}/*`] = [`${path.relative(nextPath, srcPath)}/${name}/*`];
+          aliases[`@${name}/*`] = [`${path.relative(frontendPath, srcPath)}/${name}/*`];
 
           const pluginSrc = path.resolve(dir, 'src');
 
@@ -274,7 +276,7 @@ async function loadFront(leemons, installedPlugins, installedProviders) {
 
         // #region Copy dependencies
         if (await fs.exists(path.resolve(dir, 'package.json'))) {
-          // Create the next.js dependencies directory
+          // Create the frontend dependencies directory
           if (!(await fs.pathExists(depsPath))) {
             await fs.mkdir(depsPath, { recursive: true });
           }
@@ -289,10 +291,10 @@ async function loadFront(leemons, installedPlugins, installedProviders) {
           // Register useds deps
           usedDeps.push(`@leemons/${name}`);
           // If the dependencies are not registered register them
-          if (!_.get(nextDeps, `@leemons/${name}`, null)) {
+          if (!_.get(frontendDeps, `@leemons/${name}`, null)) {
             nonInstalledDeps.push({
               name: `@leemons/${name}`,
-              path: path.relative(nextPath, path.resolve(depsPath, name)),
+              path: path.relative(frontendPath, path.resolve(depsPath, name)),
             });
           }
         } else if (await fs.exists(path.resolve(depsPath, name))) {
@@ -322,21 +324,21 @@ async function loadFront(leemons, installedPlugins, installedProviders) {
     })
   );
 
-  await removeEmptyDirs(nextPath);
+  await removeEmptyDirs(frontendPath);
   // Generate a plugin loader
-  await generatePluginLoader({ plugins, srcPath, srcChecksums, aliases, nextPath });
+  await generatePluginLoader({ plugins, srcPath, srcChecksums, aliases, frontendPath });
 
   // Set all the aliases
   let jsconfig;
   try {
-    jsconfig = await fs.readJSON(path.resolve(nextPath, 'jsconfig.json'));
+    jsconfig = await fs.readJSON(path.resolve(frontendPath, 'jsconfig.json'));
   } catch (e) {
     jsconfig = {};
   }
 
   // Merge current jsconfig and plugins jsconfig
   await fs.writeJSON(
-    path.resolve(nextPath, 'jsconfig.json'),
+    path.resolve(frontendPath, 'jsconfig.json'),
     _.merge(jsconfig, {
       compilerOptions: {
         baseUrl: '.',
@@ -357,8 +359,8 @@ async function loadFront(leemons, installedPlugins, installedProviders) {
       nonInstalledDeps.map((dep) => [dep.name, `file:${dep.path}`])
     );
     await fs.writeJSON(
-      path.resolve(nextPath, 'package.json'),
-      _.merge(await fs.readJSON(path.resolve(nextPath, 'package.json')), {
+      path.resolve(frontendPath, 'package.json'),
+      _.merge(await fs.readJSON(path.resolve(frontendPath, 'package.json')), {
         dependencies: dependencyObject,
       }),
       { spaces: 2 }
@@ -368,12 +370,12 @@ async function loadFront(leemons, installedPlugins, installedProviders) {
 
   // Prune dependencies
   const unusedDeps = _.difference(
-    _.keys(nextDeps).filter((name) => name.startsWith('@leemons/')),
+    _.keys(frontendDeps).filter((name) => name.startsWith('@leemons/')),
     usedDeps
   );
 
   if (unusedDeps.length) {
-    await execa.command(`yarn --cwd ${nextPath} remove ${unusedDeps.join(' ')}`);
+    await execa.command(`yarn --cwd ${frontendPath} remove ${unusedDeps.join(' ')}`);
   }
 }
 

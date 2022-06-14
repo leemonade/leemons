@@ -3,7 +3,7 @@ module.exports = {
   dir: {
     app: '/Users/Usuario/Sites/leemonade/leemons/examples/demo-auth',
     plugins: 'plugins',
-    next: 'next',
+    frontend: 'frontend',
     env: '.env',
   },
 };

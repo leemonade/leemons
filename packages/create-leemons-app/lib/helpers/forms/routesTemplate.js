@@ -1,6 +1,6 @@
 module.exports = `{
   "config": "\${config:config}",
   "plugins": "\${plugins:plugins}",
-  "next": "\${next:next}",
+  "frontend": "\${frontend:frontend}",
   "env": "\${env:.env}",
 }`;

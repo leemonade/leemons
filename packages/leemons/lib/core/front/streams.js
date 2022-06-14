@@ -1,7 +1,7 @@
 const stream = require('stream');
 
 // stream transformer for listening ready event from frontend
-// Emit a ready event when next is listening
+// Emit a ready event when frontend is listening
 function nextTransform(prefix, callback) {
   return new stream.Transform({
     transform: (chunk, encoding, next) => {
@@ -16,7 +16,7 @@ function nextTransform(prefix, callback) {
             /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
             ''
           )
-          // in dev. and prod. next logs a line like: ready - listening on:
+          // in dev. and prod. frontend logs a line like: ready - listening on:
           .startsWith(prefix)
       ) {
         callback();
