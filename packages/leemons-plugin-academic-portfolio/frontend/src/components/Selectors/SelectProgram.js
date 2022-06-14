@@ -68,7 +68,7 @@ const SelectProgram = forwardRef(
         {...props}
         ref={ref}
         data={data}
-        disabled={!data.length}
+        disabled={!data?.length}
         onChange={handleChange}
         value={value}
       />

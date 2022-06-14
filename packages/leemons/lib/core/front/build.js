@@ -5,11 +5,11 @@ const path = require('path');
 const { nextTransform, frontLogger } = require('./streams');
 
 /*
- * Global Next.js Dependencies Installation
+ * Global frontend Dependencies Installation
  */
 async function frontDeps() {
   // Check if the dependencies are installed
-  if (!(await fs.exists(path.resolve(leemons.dir.next, 'node_modules')))) {
+  if (!(await fs.exists(path.resolve(leemons.dir.frontend, 'node_modules')))) {
     leemons.frontNeedsUpdateDeps = true;
   }
 
@@ -18,13 +18,13 @@ async function frontDeps() {
     leemons.events.emit('frontWillInstallDeps', 'leemons');
     const installSpinner = ora('Installing frontend dependencies').start();
     return execa
-      .command(`yarn --cwd ${leemons.dir.next} --force`)
+      .command(`yarn --cwd ${leemons.dir.frontend} --force`)
       .then(() => {
         installSpinner.succeed('Frontend dependencies installed');
       })
       .catch(async (e) => {
         installSpinner.fail("Frontend dependencies can't be installed");
-        await fs.remove(path.resolve(leemons.dir.next, 'node_modules'));
+        await fs.remove(path.resolve(leemons.dir.frontend, 'node_modules'));
         leemons.log.throw(e);
       })
       .finally(async () => {
@@ -35,13 +35,13 @@ async function frontDeps() {
 }
 
 /*
- * Next.js Build
+ * Frontend Build
  */
-async function buildNext() {
+async function buildFrontend() {
   // Do not build if is a dev environment
   if (process.env.NODE_ENV !== 'development') {
     // Check if a production build exists
-    if (!(await fs.exists(path.resolve(leemons.dir.next, '.next', 'BUILD_ID')))) {
+    if (!(await fs.exists(path.resolve(leemons.dir.frontend, '.frontend', 'BUILD_ID')))) {
       leemons.frontNeedsBuild = true;
     }
 
@@ -50,7 +50,7 @@ async function buildNext() {
       leemons.events.emit('frontWillBuild', 'leemons');
       const spinner = ora('Building frontend').start();
       return new Promise((resolve) => {
-        const build = execa.command(`yarn --cwd ${leemons.dir.next} build`, {
+        const build = execa.command(`yarn --cwd ${leemons.dir.frontend} build`, {
           ...process.env,
           FORCE_COLOR: true,
         });
@@ -81,9 +81,9 @@ async function buildNext() {
   return true;
 }
 
-async function buildF() {
+async function buildFront() {
   await frontDeps();
-  return buildNext();
+  return buildFrontend();
 }
 
-module.exports = buildF;
+module.exports = buildFront;

@@ -9,6 +9,9 @@ module.exports = async (appName, routes) => {
     private: true,
     scripts: {
       start: 'leemons start',
+      front: 'yarn workspace leemons-react dev $(pwd)',
+      'front:build':
+        'yarn workspace leemons-react clear && NODE_ENV=production yarn workspace leemons-react dev $(pwd)',
       dev: 'leemons dev',
       leemons: 'leemons',
     },

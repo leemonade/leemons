@@ -13,10 +13,10 @@ export default function AssigneeTypeSelector({ labels, onChange, value }) {
         value: 'customGroups',
         label: labels?.assignTo?.customGroups,
       },
-      {
-        value: 'session',
-        label: labels?.assignTo?.session,
-      },
+      // {
+      //   value: 'session',
+      //   label: labels?.assignTo?.session,
+      // },
     ],
     [labels]
   );

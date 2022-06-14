@@ -23,31 +23,31 @@ const { LeemonsSocket } = require('../socket.io');
 /**
  * Creates a watcher for frontend files and then sets up all the needed files
  */
-async function setupFront(leemons, plugins, providers, nextDir) {
+async function setupFront(leemons, plugins, providers, frontendDir) {
   // Frontend directories to watch for changes
   const frontDirs = [
-    // App next/** directories
+    // App frontend/** directories
     path.join(
-      path.isAbsolute(leemons.dir.next)
-        ? leemons.dir.next
-        : path.join(leemons.dir.app, leemons.dir.next),
+      path.isAbsolute(leemons.dir.frontend)
+        ? leemons.dir.frontend
+        : path.join(leemons.dir.app, leemons.dir.frontend),
       '**'
     ),
-    // Plugin next/** directories
+    // Plugin frontend/** directories
     ...plugins.map((plugin) =>
       path.join(
-        path.isAbsolute(plugin.dir.next)
-          ? plugin.dir.next
-          : path.join(plugin.dir.app, plugin.dir.next),
+        path.isAbsolute(plugin.dir.frontend)
+          ? plugin.dir.frontend
+          : path.join(plugin.dir.app, plugin.dir.frontend),
         '**'
       )
     ),
-    // Provider next/** directories
+    // Provider frontend/** directories
     ...providers.map((provider) =>
       path.join(
-        path.isAbsolute(provider.dir.next)
-          ? provider.dir.next
-          : path.join(provider.dir.app, provider.dir.next),
+        path.isAbsolute(provider.dir.frontend)
+          ? provider.dir.frontend
+          : path.join(provider.dir.app, provider.dir.frontend),
         '**'
       )
     ),
@@ -73,12 +73,12 @@ async function setupFront(leemons, plugins, providers, nextDir) {
         'yarn.lock',
         /*
          * Ignore:
-         *  next/dependencies
-         *  next/plugins
-         *  next/pages
-         *  next/jsconfig.json
+         *  frontend/dependencies
+         *  frontend/plugins
+         *  frontend/pages
+         *  frontend/jsconfig.json
          */
-        `${nextDir}/(dependencies|plugins|pages|jsconfig.json)/**`,
+        `${frontendDir}/(dependencies|plugins|pages|jsconfig.json)/**`,
         /.*checksums.json.*/,
       ],
     },
@@ -109,7 +109,7 @@ async function setupBack(leemons) {
   const ignoredPluginsDirs = plugins.map((plugin) => {
     const pluginUnwatchedDirs = plugin.config.config?.unwatchedDirs || [];
 
-    const allIgnoredDirs = [plugin.dir.config, plugin.dir.next, ...pluginUnwatchedDirs];
+    const allIgnoredDirs = [plugin.dir.config, plugin.dir.frontend, ...pluginUnwatchedDirs];
 
     return path.join(plugin.dir.app, `(${allIgnoredDirs.join('|')})`, '**');
   });
@@ -119,7 +119,7 @@ async function setupBack(leemons) {
   const ignoredProvidersDirs = providers.map((provider) => {
     const providerUnwatchedDirs = provider.config.config?.unwatchedDirs || [];
 
-    const allIgnoredDirs = [provider.dir.config, provider.dir.next, ...providerUnwatchedDirs];
+    const allIgnoredDirs = [provider.dir.config, provider.dir.frontend, ...providerUnwatchedDirs];
 
     return path.join(provider.dir.app, `(${allIgnoredDirs.join('|')})`, '**');
   });
@@ -176,8 +176,8 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
       configDir,
       // Application package.json
       path.join(cwd, 'package.json'),
-      // ignore leemons plugins and connectors
-      path.join(__dirname, '../../../leemons-!(plugin|connector|provider)**'),
+      // ignore leemons plugins, connectors and frontend dirs
+      path.join(__dirname, '../../../leemons-!(plugin|connector|provider|react)**'),
       path.join(__dirname, '../../../leemons/**'),
     ];
 
@@ -333,13 +333,13 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
 
     // TODO: ADD NEW FRONT LOGIC
     leemons.setFrontRoutes();
-    // let nextDir = leemons.config.get('config.dir.next', 'next');
-    // nextDir = path.isAbsolute(nextDir) ? nextDir : path.join(cwd, nextDir);
+    // let frontendDir = leemons.config.get('config.dir.frontend', 'frontend');
+    // frontendDir = path.isAbsolute(frontendDir) ? frontendDir : path.join(cwd, frontendDir);
     // const { handler: frontHandler } = await setupFront(
     //   leemons,
     //   leemons.enabledPlugins,
     //   leemons.enabledProviders,
-    //   nextDir
+    //   frontendDir
     // );
     // setUpFront = frontHandler;
 

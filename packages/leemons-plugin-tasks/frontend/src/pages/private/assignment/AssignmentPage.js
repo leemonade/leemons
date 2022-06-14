@@ -76,6 +76,7 @@ export default function AssignmentPage() {
 
       if (assignees[0]?.type === 'custom') {
         _.set(taskInstanceData, 'metadata.groupName', assignees[0].name);
+        _.set(taskInstanceData, 'metadata.showGroupNameToStudents', assignees[0].showToStudents);
       }
 
       await createInstanceRequest(id, taskInstanceData);

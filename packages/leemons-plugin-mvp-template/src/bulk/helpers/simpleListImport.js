@@ -1,16 +1,6 @@
 const { range, keys, findIndex, toLower, isNaN, isEmpty } = require('lodash');
 const getColumns = require('./getColumns');
-
-let DataImporter;
-
-if (global.utils) {
-  const { XlsxImporter } = global.utils;
-  DataImporter = XlsxImporter;
-} else {
-  // eslint-disable-next-line global-require
-  const { ImporterFactory } = require('xlsx-import/lib/ImporterFactory');
-  DataImporter = ImporterFactory;
-}
+const DataImporter = require('./getXlsImporter')();
 
 const factory = new DataImporter();
 

@@ -30,6 +30,11 @@ module.exports = async function getAssignableInstance(
     assignableInstance.relatedAssignableInstances = JSON.parse(
       assignableInstance.relatedAssignableInstances
     );
+
+    if (!isTeacher && !assignableInstance.metadata.showGroupNameToStudents) {
+      assignableInstance.metadata.groupName = undefined;
+      assignableInstance.metadata.showGroupNameToStudents = undefined;
+    }
   } catch (e) {
     throw new Error("The assignable instance doesn't exist or you don't have access");
   }

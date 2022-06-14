@@ -63,6 +63,7 @@ export default function Assign() {
 
       if (assignees[0]?.type === 'custom') {
         set(taskInstanceData, 'metadata.groupName', assignees[0].name);
+        set(taskInstanceData, 'metadata.showGroupNameToStudents', assignees[0].showToStudents);
       }
 
       await assignTestRequest(store.test.id, taskInstanceData);

@@ -12,7 +12,7 @@ const leemonsDefaultDirs = {
   plugins: 'plugins',
   providers: 'providers',
   // TODO: Add frontend dir for front dir
-  // next: envf('nextDir', 'frontend'),
+  // frontend: envf('frontendDir', 'frontend'),
   env: '.env',
 };
 

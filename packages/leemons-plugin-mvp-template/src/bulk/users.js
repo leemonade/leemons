@@ -1,10 +1,9 @@
 const { range, keys, findIndex, trim, isEmpty, toLower } = require('lodash');
 const path = require('path');
 const getColumns = require('./helpers/getColumns');
+const DataImporter = require('./helpers/getXlsImporter')();
 
-const { XlsxImporter } = global.utils;
-
-const factory = new XlsxImporter();
+const factory = new DataImporter();
 const filePath = path.resolve(__dirname, 'data.xlsx');
 
 async function importUsers(centers, profiles) {

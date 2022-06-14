@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const _ = require('lodash');
 
-async function generatePluginLoader({ plugins, srcPath, srcChecksums, aliases, nextPath }) {
+async function generatePluginLoader({ plugins, srcPath, srcChecksums, aliases, frontendPath }) {
   const file = `module.exports = {
   plugins: [
     ${plugins.map(([name]) => `'${name}'`).join(',\n\t\t')}
@@ -43,7 +43,7 @@ async function generatePluginLoader({ plugins, srcPath, srcChecksums, aliases, n
     await fs.writeFile(pluginFilePath, file);
   }
 
-  aliases[`@plugins`] = [`${path.relative(nextPath, srcPath)}/plugins.js`];
+  aliases[`@plugins`] = [`${path.relative(frontendPath, srcPath)}/plugins.js`];
 }
 
 module.exports = { generatePluginLoader };

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { useForm, Controller } from 'react-hook-form';
-import { TextInput, Alert, Loader, ContextContainer } from '@bubbles-ui/components';
+import { TextInput, Alert, Loader, ContextContainer, Switch } from '@bubbles-ui/components';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 
 export default function SelectCustomGroup({
@@ -13,7 +13,9 @@ export default function SelectCustomGroup({
   groupedClassesWithSelectedSubjects,
 }) {
   const { control, watch, getValues } = useForm({
-    defaultValues: {},
+    defaultValues: {
+      showToStudents: true,
+    },
   });
 
   const { assignableStudents, subjects, classes } = groupedClassesWithSelectedSubjects;
@@ -40,6 +42,7 @@ export default function SelectCustomGroup({
               students: group.students,
               c,
               name: v.name,
+              showToStudents: !v.showToStudents,
             }));
           }
 
@@ -49,6 +52,7 @@ export default function SelectCustomGroup({
             students: group.students,
             c: group,
             name: v.name,
+            showToStudents: !v.showToStudents,
           };
         });
 
@@ -89,11 +93,20 @@ export default function SelectCustomGroup({
         render={({ field }) => (
           <SelectUserAgent
             {...field}
+            checked={field.value}
             label={labels?.students}
             maxSelectedValues={0}
             users={assignableStudents}
             profiles={profiles}
           />
+        )}
+      />
+      <Controller
+        name="showToStudents"
+        shouldUnregister
+        control={control}
+        render={({ field }) => (
+          <Switch {...field} checked={!field.value} label={labels?.showToStudents} />
         )}
       />
     </ContextContainer>

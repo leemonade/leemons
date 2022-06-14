@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "start": "leemons start",
-    "front": "yarn workspace multi-src-react dev $(pwd)",
-    "front:build": "yarn workspace multi-src-react clear && NODE_ENV=production yarn workspace multi-src-react dev $(pwd)",
+    "front": "yarn workspace leemons-react dev $(pwd)",
+    "front:build": "yarn workspace leemons-react clear && NODE_ENV=production yarn workspace leemons-react dev $(pwd)",
     "dev": "leemons dev",
     "leemons": "leemons"
   },
@@ -21,7 +21,6 @@
     "leemons-plugin-curriculum": "1.0.0",
     "leemons-plugin-dashboard": "1.0.0",
     "leemons-plugin-dataset": "1.0.0",
-    "leemons-plugin-dataset-test": "1.0.0",
     "leemons-plugin-emails": "1.0.0",
     "leemons-plugin-grades": "1.0.0",
     "leemons-plugin-layout": "1.0.0",

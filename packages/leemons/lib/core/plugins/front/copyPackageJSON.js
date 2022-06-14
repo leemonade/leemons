@@ -19,7 +19,7 @@ module.exports = async (src, dest, name, checksums) => {
 
   // Remove conflicting deps (react only allows 1 copy of react)
   if (fileContent.dependencies) {
-    const depsToRemove = ['react', 'react-dom', 'next'];
+    const depsToRemove = ['react', 'react-dom'];
     depsToRemove.forEach((dep) => {
       delete fileContent.dependencies[dep];
     });
@@ -34,7 +34,7 @@ module.exports = async (src, dest, name, checksums) => {
   if (checksums[name] !== fileChecksums) {
     leemons.log.debug(`The plugin ${name} in ${src} have changed`);
 
-    // Move file to next.js
+    // Move file to frontend
     if (!(await fs.exists(finalDest))) {
       await fs.mkdir(finalDest);
     }

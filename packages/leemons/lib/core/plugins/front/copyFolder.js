@@ -80,7 +80,7 @@ async function copyFile(src, dest, name, checksums) {
   if (checksums[name] !== fileChecksums.checksum) {
     leemons.log.debug(`The plugin ${name} in ${src} have changed`);
 
-    // Move file to next.js
+    // Move file to frontend folder
     if (!(await fs.exists(finalDest))) {
       await fs.mkdir(finalDest);
     }
@@ -107,7 +107,7 @@ async function copyFolder(src, dest, name, checksums, addFiles = []) {
   if (checksums[name] !== dirObj.checksum) {
     leemons.log.debug(`The plugin ${name} in ${src} have changed`);
 
-    // Move folder to next.js
+    // Move folder to frontend
     await fs.copy(src, path.resolve(dest, name));
     await Promise.all(
       extraFiles.map(({ path: file }) =>
