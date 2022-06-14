@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
+
 const squirrelly = require('squirrelly');
 
 /* Squirrelly Helpers */
@@ -8,12 +9,12 @@ squirrelly.filters.define(
   (str: string) => str.charAt(0).toUpperCase() + str.substring(1)
 );
 
-squirrelly.filters.define('clear', (str: string) => {
-  return str
+squirrelly.filters.define('clear', (str: string) =>
+  str
     .split(/[-_]/)
     .map((string) => string.charAt(0).toUpperCase() + string.substring(1))
-    .join('');
-});
+    .join('')
+);
 
 async function _fileExists(dir: string, validateFiles: boolean = false): Promise<boolean> {
   try {
@@ -106,8 +107,8 @@ export interface fileList {
 }
 // List all the files inside a directory
 
-export function listFiles(dir: string, useMap: true): Promise<Map<string, fileList>>;
-export function listFiles(dir: string, useMap: false): Promise<fileList[]>;
+// export function listFiles(dir: string, useMap: true): Promise<any[]>;
+// export function listFiles(dir: string, useMap: false): Promise<fileList[]>;
 export async function listFiles(
   dir: string,
   useMap: boolean = false
@@ -213,7 +214,11 @@ export async function createJsConfig(plugins: any[] = []): Promise<void> {
 
   config.compilerOptions.paths = paths;
 
-  fs.writeFileSync(path.resolve(__dirname, `../../../../${fileName}`), JSON.stringify(config, null, 2), 'utf8');
+  fs.writeFileSync(
+    path.resolve(__dirname, `../../../../${fileName}`),
+    JSON.stringify(config, null, 2),
+    'utf8'
+  );
 }
 
 export async function createEsLint(plugins: any[] = []): Promise<void> {
@@ -252,12 +257,16 @@ export async function createEsLint(plugins: any[] = []): Promise<void> {
 
   const config = JSON.parse(rawConfig);
 
-  config.rules["import/no-unresolved"] = [
+  config.rules['import/no-unresolved'] = [
     2,
     {
-      "ignore": plugins.map((plugin) => `@${plugin.name}`).concat(['@bubbles-ui']),
-    }
+      ignore: plugins.map((plugin) => `@${plugin.name}`).concat(['@bubbles-ui']),
+    },
   ];
 
-  fs.writeFileSync(path.resolve(__dirname, `../../../../${fileName}`), JSON.stringify(config, null, 2), 'utf8');
+  fs.writeFileSync(
+    path.resolve(__dirname, `../../../../${fileName}`),
+    JSON.stringify(config, null, 2),
+    'utf8'
+  );
 }
