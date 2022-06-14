@@ -141,6 +141,7 @@ async function setupBack(leemons) {
       ignored: [
         /(^|[/\\])\../, // ignore dotfiles
         /.*node_modules.*/,
+        path.join(__dirname, '../../../leemons-react/**'),
         ...ignoredPluginsDirs,
         ...ignoredProvidersDirs,
       ],
