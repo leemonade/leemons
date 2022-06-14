@@ -36,6 +36,7 @@ import {
 } from '../../../../request';
 import { calculeInfoValues } from './helpers/calculeInfoValues';
 import QuestionList from './components/QuestionList';
+import { getConfigByInstance } from './helpers/getConfigByInstance';
 
 export default function StudentInstance() {
   const locale = useLocale();
@@ -132,17 +133,21 @@ export default function StudentInstance() {
         }
       });
       store.timestamps = timestamps;
+      store.config = getConfigByInstance(store.instance);
       store.questionsInfo = calculeInfoValues(
         questions.length,
         evaluationSystem.maxScale.number,
         evaluationSystem.minScale.number,
-        evaluationSystem.minScaleToPromote.number
+        evaluationSystem.minScaleToPromote.number,
+        store.instance
       );
       store.questions = questions;
       store.evaluationSystem = evaluationSystem;
       store.class = classe;
       store.idLoaded = params.id;
       store.loading = false;
+
+      console.log(store);
 
       render();
     } catch (error) {

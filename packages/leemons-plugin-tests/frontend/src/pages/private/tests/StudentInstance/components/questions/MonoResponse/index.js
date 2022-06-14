@@ -1,8 +1,8 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { isNumber } from 'lodash';
 import { Box, Stack } from '@bubbles-ui/components';
+import { isNumber } from 'lodash';
 import QuestionTitle from '../../QuestionTitle';
 import QuestionNoteClues from '../../QuestionNoteClues';
 import QuestionImage from '../../QuestionImage';
@@ -23,6 +23,21 @@ export default function Index(props) {
   let showNotResponsedWarning = false;
   if (store.viewMode) {
     showNotResponsedWarning = store.questionResponses[question.id].status === null;
+  }
+
+  let nextLabel = null;
+  if (store.config.canOmitQuestions) {
+    nextLabel = isNumber(currentResponseIndex) ? t('nextButton') : t('skipButton');
+  } else {
+    nextLabel = t('nextButton');
+  }
+  if (isLast) {
+    nextLabel = t('finishButton');
+  }
+
+  let disableNext = !store.config.canOmitQuestions;
+  if (isNumber(currentResponseIndex)) {
+    disableNext = false;
   }
 
   return (
@@ -55,13 +70,8 @@ export default function Index(props) {
       <ButtonNavigation
         {...props}
         nextStep={nextStep}
-        nextLabel={
-          isLast
-            ? t('finishButton')
-            : isNumber(currentResponseIndex)
-            ? t('nextButton')
-            : t('skipButton')
-        }
+        nextLabel={nextLabel}
+        disableNext={disableNext}
       />
     </>
   );

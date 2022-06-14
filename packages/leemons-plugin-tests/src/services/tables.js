@@ -9,6 +9,7 @@ const table = {
     'plugins_tests::user-agent-assignable-instance-responses'
   ),
   userFeedback: leemons.query('plugins_tests::user-feedback'),
+  assignSavedConfig: leemons.query('plugins_tests::assign-saved-config'),
 };
 
 module.exports = { table };
