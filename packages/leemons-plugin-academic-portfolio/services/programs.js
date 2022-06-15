@@ -1,5 +1,6 @@
 const { addProgram } = require('../src/services/programs');
 const {
+  programsByIds,
   getUserPrograms,
   isUserInsideProgram,
   getProgramEvaluationSystem,
@@ -7,6 +8,7 @@ const {
 
 module.exports = {
   addProgram,
+  programsByIds,
   getUserPrograms,
   isUserInsideProgram,
   getProgramEvaluationSystem,

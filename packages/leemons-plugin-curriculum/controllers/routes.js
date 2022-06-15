@@ -27,7 +27,7 @@ module.exports = [
   },
   {
     path: '/curriculum/:id',
-    method: 'GET',
+    method: 'POST',
     handler: 'curriculum.getCurriculum',
     authenticated: true,
   },

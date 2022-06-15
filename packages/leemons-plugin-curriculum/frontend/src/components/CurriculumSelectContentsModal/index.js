@@ -74,8 +74,17 @@ export function CurriculumSelectContentsModal({
 
   async function init() {
     try {
-      const { curriculum } = await detailCurriculumRequest(id);
+      const { curriculum } = await detailCurriculumRequest(id, { withProgram: true });
       store.curriculum = curriculum;
+      let course = null;
+      const subject = find(store.curriculum.program.subjects, { id: subjects[0] });
+
+      if (subject && subject.course) {
+        course = find(store.curriculum.program.courses, { id: subject.course });
+      }
+      store.curriculumTitle = `${course ? `${course.index}º ` : ''}${
+        store.curriculum.program.name
+      } ${subject ? `- ${subject.name}` : ''}`;
       store.treeData = getTreeData();
     } catch (error) {
       console.error(error);
@@ -103,7 +112,7 @@ export function CurriculumSelectContentsModal({
     <Modal trapFocus={false} size={1000} withCloseButton={false} opened={opened} onClose={onClose}>
       <ContextContainer>
         <Stack fullWidth justifyContent="space-between">
-          <Title order={3}>{title || t('title')}</Title>
+          <Title order={3}>{title || store.curriculum?.name || ''}</Title>
           <ActionButton icon={<RemoveIcon />} onClick={onClose} />
         </Stack>
 
