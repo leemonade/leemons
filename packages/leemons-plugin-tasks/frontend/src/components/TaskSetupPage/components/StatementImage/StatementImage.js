@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useFormContext } from 'react-hook-form';
 import {
   Box,
@@ -6,6 +7,7 @@ import {
   createStyles,
   useResizeObserver,
   useViewportSize,
+  InputWrapper,
 } from '@bubbles-ui/components';
 import { LibraryCardEmbed } from '@bubbles-ui/leemons';
 import { AssetListDrawer } from '@leebrary/components';
@@ -22,11 +24,10 @@ const styles = createStyles((theme) => ({
   },
 }));
 
-export default function Attachments({ labels }) {
+export default function StatementImage({ labels }) {
   /*
     --- Drawer state ---
   */
-  const [assetType, setAssetType] = useState('');
   const [showAssetDrawer, setShowAssetDrawer] = useState(false);
   const onDrawerClose = useCallback(() => setShowAssetDrawer(false), [setShowAssetDrawer]);
   const toggleDrawer = useCallback(
@@ -53,7 +54,7 @@ export default function Attachments({ labels }) {
   */
   const [resources, setResources] = useState([]);
   useEffect(async () => {
-    const formResources = getValues('resources');
+    const formResources = getValues('statementImage');
     if (formResources?.length) {
       const savedAssets = await getAssetsByIds(formResources, { public: true, indexable: false });
       const newAssets = await getAssetsByIds(formResources, { public: true });
@@ -80,7 +81,7 @@ export default function Attachments({ labels }) {
         return newResources;
       });
       onDrawerClose();
-      setValue('resources', map(newResources, 'id'), {
+      setValue('statementImage', map(newResources, 'id'), {
         shouldDirty: true,
         shouldTouch: true,
       });
@@ -95,7 +96,10 @@ export default function Attachments({ labels }) {
         newResources = currentResources.filter((resource) => resource.id !== asset.id);
         return newResources;
       });
-      setValue('resources', map(newResources, 'id'), { shouldDirty: true, shouldTouch: true });
+      setValue('statementImage', map(newResources, 'id'), {
+        shouldDirty: true,
+        shouldTouch: true,
+      });
     },
 
     [setResources]
@@ -105,26 +109,33 @@ export default function Attachments({ labels }) {
     --- Render ---
   */
 
+  if (resources?.length) {
+    return (
+      <InputWrapper label="Imágen de apoyo">
+        <Box className={classes?.attachmentContainer}>
+          {resources.map((asset) => (
+            <LibraryCardEmbed
+              asset={{ ...asset, title: asset.name, image: asset.cover }}
+              key={asset.id}
+              actionIcon={
+                <Box
+                  sx={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    onAssetRemove(asset);
+                  }}
+                >
+                  <RemoveIcon />
+                </Box>
+              }
+            />
+          ))}
+        </Box>
+      </InputWrapper>
+    );
+  }
+
   return (
-    <>
-      <Box className={classes?.attachmentContainer}>
-        {resources.map((asset) => (
-          <LibraryCardEmbed
-            asset={{ ...asset, title: asset.name, image: asset.cover }}
-            key={asset.id}
-            actionIcon={
-              <Box
-                sx={{ cursor: 'pointer' }}
-                onClick={() => {
-                  onAssetRemove(asset);
-                }}
-              >
-                <RemoveIcon />
-              </Box>
-            }
-          />
-        ))}
-      </Box>
+    <InputWrapper label={labels?.supportImage}>
       <Box ref={boxRef}>
         <form
           onSubmit={(e) => {
@@ -140,24 +151,24 @@ export default function Attachments({ labels }) {
           }}
         >
           <Button variant="outline" onClick={toggleDrawer}>
-            {labels?.searchFromLibraryDocsAndMedia}
+            {labels?.searchFromLibrary}
           </Button>
           <AssetListDrawer
             opened={showAssetDrawer}
             creatable
             size={drawerSize}
             shadow={drawerSize <= 600}
-            assetType={assetType}
-            canChangeType
-            onTypeChange={setAssetType}
             onSelect={onAssetSelect}
             onClose={onDrawerClose}
             onlyThumbnails={false}
-            allowChangeCategories={['bookmarks', 'media-files']}
             itemMinWidth={200}
           />
         </form>
       </Box>
-    </>
+    </InputWrapper>
   );
 }
+
+StatementImage.propTypes = {
+  labels: PropTypes.object,
+};

@@ -108,9 +108,6 @@ export interface fileList {
 }
 
 // List all the files inside a directory
-
-// export function listFiles(dir: string, useMap: true): Promise<any[]>;
-// export function listFiles(dir: string, useMap: false): Promise<fileList[]>;
 export async function listFiles(dir: string, useMap: boolean = false): Promise<any> {
   try {
     const data = (await fs.readdir(dir, { withFileTypes: true })).map((file) => ({
@@ -200,16 +197,18 @@ export async function createJsConfig(plugins: any[] = []): Promise<void> {
   const basePath = path.resolve(__dirname, '../../../../', config.compilerOptions.baseUrl);
   const paths: any = {};
 
-  plugins.sort().forEach((plugin) => {
-    const relativePath = path.relative(basePath, plugin.path);
-    const pluginName = `@${plugin.name}/*`;
+  plugins
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .forEach((plugin) => {
+      const relativePath = path.relative(basePath, plugin.path);
+      const pluginName = `@${plugin.name}/*`;
 
-    if (plugin.name === 'common') {
-      paths[`@${plugin.name}`] = [`./${relativePath}/src/index`];
-    }
+      if (plugin.name === 'common') {
+        paths[`@${plugin.name}`] = [`./${relativePath}/src/index`];
+      }
 
-    paths[pluginName] = [`./${relativePath}/src/*`];
-  });
+      paths[pluginName] = [`./${relativePath}/src/*`];
+    });
 
   config.compilerOptions.paths = paths;
 
