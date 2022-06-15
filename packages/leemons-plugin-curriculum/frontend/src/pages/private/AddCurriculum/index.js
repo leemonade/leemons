@@ -1,20 +1,19 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { forIn, map } from 'lodash';
-import { withLayout } from '@layout/hoc';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getPlatformLocalesRequest, listCentersRequest } from '@users/request';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { useHistory } from 'react-router-dom';
-import { Box, Stack, Title, Text, PageContainer } from '@bubbles-ui/components';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { Box, PageContainer, Stack, Text } from '@bubbles-ui/components';
 import {
-  AddCurriculumForm,
-  ADD_CURRICULUM_FORM_MESSAGES,
   ADD_CURRICULUM_FORM_ERROR_MESSAGES,
+  ADD_CURRICULUM_FORM_MESSAGES,
+  AddCurriculumForm,
+  AdminPageHeader,
 } from '@bubbles-ui/leemons';
 import { listProgramsRequest } from '@academic-portfolio/request';
 import countryList from 'country-region-data';
-import { addCurriculumRequest } from '../../../request';
+import { addCurriculumRequest, listCurriculumRequest } from '../../../request';
 
 function AddCurriculum() {
   const [saving, setSaving] = useState(false);
@@ -77,7 +76,11 @@ function AddCurriculum() {
 
   const onFormChange = async ({ value, name }) => {
     if (name === 'center') {
-      const program = await getProgramsListForCenter(value.center);
+      const [program, curriculums] = await Promise.all([
+        getProgramsListForCenter(value.center),
+        listCurriculumRequest({ page: 0, size: 999999 }),
+      ]);
+      console.log(program, curriculums);
       setSelectData({ ...selectData, program });
     }
   };

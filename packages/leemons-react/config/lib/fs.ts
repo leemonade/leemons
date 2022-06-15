@@ -86,6 +86,7 @@ enum fileType {
   File = 'file',
   Null = 'null',
 }
+
 // Get which file type is a file
 export function getFileType(file: fs.Dirent): fileType {
   if (file.isSymbolicLink()) {
@@ -105,14 +106,12 @@ export interface fileList {
   name: string;
   type: fileType;
 }
+
 // List all the files inside a directory
 
 // export function listFiles(dir: string, useMap: true): Promise<any[]>;
 // export function listFiles(dir: string, useMap: false): Promise<fileList[]>;
-export async function listFiles(
-  dir: string,
-  useMap: boolean = false
-): Promise<Map<string, fileList> | fileList[]> {
+export async function listFiles(dir: string, useMap: boolean = false): Promise<any> {
   try {
     const data = (await fs.readdir(dir, { withFileTypes: true })).map((file) => ({
       name: file.name,
