@@ -25,7 +25,7 @@ function useCurriculum(program) {
   return curriculum;
 }
 
-export default function Curriculum({ program, name, type, label, addLabel }) {
+export default function Curriculum({ program, name, type, label, subjects, addLabel }) {
   const [show, setShow] = useState(false);
   const curriculum = useCurriculum(program);
 
@@ -48,6 +48,7 @@ export default function Curriculum({ program, name, type, label, addLabel }) {
                 {...field}
                 opened={show}
                 value={value}
+                subjects={subjects}
                 curriculum={curriculum?.id}
                 onChange={(contents) => {
                   field.onChange(contents.map((content) => ({ [type]: content })));
