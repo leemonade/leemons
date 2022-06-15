@@ -107,8 +107,8 @@ export interface fileList {
 }
 // List all the files inside a directory
 
-// export function listFiles(dir: string, useMap: true): Promise<any[]>;
-// export function listFiles(dir: string, useMap: false): Promise<fileList[]>;
+export function listFiles(dir: string, useMap: true): Promise<Map<string, fileList>>;
+export function listFiles(dir: string, useMap: false): Promise<fileList[]>;
 export async function listFiles(
   dir: string,
   useMap: boolean = false

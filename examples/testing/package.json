@@ -1,0 +1,46 @@
+{
+  "name": "testing",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "front": "yarn workspace leemons-react dev $(pwd)",
+    "dev": "leemons dev",
+    "leemons": "leemons"
+  },
+  "leemons": {},
+  "dependencies": {
+    "leemons": "1.0.0",
+    "leemons-connector-bookshelf": "1.0.0",
+    "leemons-plugin-academic-portfolio": "1.0.0",
+    "leemons-plugin-assets": "1.0.0",
+    "leemons-plugin-assignables": "1.0.0",
+    "leemons-plugin-calendar": "1.0.0",
+    "leemons-plugin-common": "1.0.0",
+    "leemons-plugin-curriculum": "1.0.0",
+    "leemons-plugin-dashboard": "1.0.0",
+    "leemons-plugin-dataset": "1.0.0",
+    "leemons-plugin-emails": "1.0.0",
+    "leemons-plugin-grades": "1.0.0",
+    "leemons-plugin-layout": "1.0.0",
+    "leemons-plugin-leebrary": "1.0.0",
+    "leemons-plugin-menu-builder": "1.0.0",
+    "leemons-plugin-multilanguage": "1.0.0",
+    "leemons-plugin-onboarding": "1.0.0",
+    "leemons-plugin-package-manager": "1.0.0",
+    "leemons-plugin-scores": "1.0.0",
+    "leemons-plugin-socket-io": "1.0.0",
+    "leemons-plugin-tasks": "1.0.0",
+    "leemons-plugin-tests": "1.0.0",
+    "leemons-plugin-timetable": "1.0.0",
+    "leemons-plugin-users": "1.0.0",
+    "leemons-plugin-widgets": "1.0.0",
+    "leemons-provider-leebrary-assignables": "1.0.0",
+    "leemons-provider-leebrary-tasks": "1.0.0",
+    "leemons-provider-leebrary-tests": "1.0.0",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.4.0"
+  }
+}
