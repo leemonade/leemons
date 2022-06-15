@@ -4,14 +4,17 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { listCentersRequest } from '@users/request';
 import {
+  Alert,
   Box,
+  Button,
   Checkbox,
   ContextContainer,
+  LoadingOverlay,
   PageContainer,
   Paper,
+  Stack,
   Tree,
   useTree,
-  LoadingOverlay,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { useHistory, useParams } from 'react-router-dom';
@@ -23,7 +26,10 @@ function AddCurriculumStep1() {
   const [saving, setSaving] = useState(false);
   const [t, translations] = useTranslateLoader(prefixPN('addCurriculumStep1'));
   const [curriculum, setCurriculum] = useState({});
-  const [nodeLevels, setNodeLevels] = useState([]);
+  const defaultNodeLevels = [];
+  defaultNodeLevels[1] = 'program';
+  defaultNodeLevels[6] = 'subjects';
+  const [nodeLevels, setNodeLevels] = useState(defaultNodeLevels);
 
   const tree = useTree();
   const history = useHistory();
@@ -41,6 +47,7 @@ function AddCurriculumStep1() {
 
   useEffect(() => {
     tree.setTreeData([
+      /*
       {
         id: 'program',
         parent: 0,
@@ -53,9 +60,11 @@ function AddCurriculumStep1() {
           />
         ),
       },
+
+       */
       {
         id: 'courses',
-        parent: 'program',
+        parent: 0,
         draggable: false,
         text: (
           <Checkbox
@@ -101,6 +110,14 @@ function AddCurriculumStep1() {
           />
         ),
       },
+      {
+        id: 'subjects',
+        parent: 'knowledges',
+        draggable: false,
+        text: (
+          <Checkbox label={t('subjects')} disabled checked={nodeLevels.indexOf('subjects') >= 0} />
+        ),
+      },
     ]);
   }, [translations, nodeLevels]);
 
@@ -142,7 +159,7 @@ function AddCurriculumStep1() {
           toSend.push({
             name: t(nodeLevel),
             type: nodeLevel,
-            listType: 'style-1',
+            listType: 'not-ordered',
             levelOrder: toSend.length,
           });
         }
@@ -161,23 +178,32 @@ function AddCurriculumStep1() {
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader
-        loading={saving ? 'edit' : null}
-        buttons={{ edit: t('saveButtonLabel') }}
-        onEdit={save}
         values={{
-          title: `${curriculum.name} (${curriculum.center.name}|${curriculum.program.name})`,
+          title: `${curriculum.name} <br/> (${curriculum.center.name}|${curriculum.program.name})`,
           description: t('description1') + t('description2'),
         }}
       />
 
       <Paper fullHeight color="solid" shadow="none" padding={0}>
         <PageContainer>
-          <ContextContainer padded="vertical">
-            <Paper fullWidth padding={5}>
-              <ContextContainer divided>
-                <Tree {...tree} rootId={0} />
+          <ContextContainer divided padded="vertical">
+            <Box>
+              <ContextContainer>
+                <Paper fullWidth padding={5}>
+                  <ContextContainer divided>
+                    <Tree {...tree} rootId={0} />
+                  </ContextContainer>
+                </Paper>
+                <Alert severity="warning" closeable={false} title={t('alertTitle')}>
+                  <Box dangerouslySetInnerHTML={{ __html: t('alertDescription') }} />
+                </Alert>
               </ContextContainer>
-            </Paper>
+            </Box>
+            <Stack justifyContent="end">
+              <Button onClick={save} loading={saving} type="submit">
+                {t('saveButtonLabel')}
+              </Button>
+            </Stack>
           </ContextContainer>
         </PageContainer>
       </Paper>

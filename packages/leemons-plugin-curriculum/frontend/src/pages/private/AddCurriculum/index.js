@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { forIn, map } from 'lodash';
+import { filter, forIn, map } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getPlatformLocalesRequest, listCentersRequest } from '@users/request';
+
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { useHistory } from 'react-router-dom';
 import { Box, PageContainer, Stack, Text } from '@bubbles-ui/components';
@@ -13,6 +13,7 @@ import {
 } from '@bubbles-ui/leemons';
 import { listProgramsRequest } from '@academic-portfolio/request';
 import countryList from 'country-region-data';
+import { getPlatformLocalesRequest, listCentersRequest } from '@users/request';
 import { addCurriculumRequest, listCurriculumRequest } from '../../../request';
 
 function AddCurriculum() {
@@ -76,12 +77,21 @@ function AddCurriculum() {
 
   const onFormChange = async ({ value, name }) => {
     if (name === 'center') {
-      const [program, curriculums] = await Promise.all([
+      const [
+        program,
+        {
+          data: { items: curriculums },
+        },
+      ] = await Promise.all([
         getProgramsListForCenter(value.center),
         listCurriculumRequest({ page: 0, size: 999999 }),
       ]);
-      console.log(program, curriculums);
-      setSelectData({ ...selectData, program });
+      const usedProgramIds = map(curriculums, 'program');
+
+      setSelectData({
+        ...selectData,
+        program: filter(program, (prog) => !usedProgramIds.includes(prog.value)),
+      });
     }
   };
 
