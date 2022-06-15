@@ -200,16 +200,18 @@ export async function createJsConfig(plugins: any[] = []): Promise<void> {
   const basePath = path.resolve(__dirname, '../../../../', config.compilerOptions.baseUrl);
   const paths: any = {};
 
-  plugins.sort().forEach((plugin) => {
-    const relativePath = path.relative(basePath, plugin.path);
-    const pluginName = `@${plugin.name}/*`;
+  plugins
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .forEach((plugin) => {
+      const relativePath = path.relative(basePath, plugin.path);
+      const pluginName = `@${plugin.name}/*`;
 
-    if (plugin.name === 'common') {
-      paths[`@${plugin.name}`] = [`./${relativePath}/src/index`];
-    }
+      if (plugin.name === 'common') {
+        paths[`@${plugin.name}`] = [`./${relativePath}/src/index`];
+      }
 
-    paths[pluginName] = [`./${relativePath}/src/*`];
-  });
+      paths[pluginName] = [`./${relativePath}/src/*`];
+    });
 
   config.compilerOptions.paths = paths;
 
