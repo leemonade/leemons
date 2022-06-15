@@ -69,6 +69,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    method: 'POST',
+    path: '/tasks/:id/duplicate',
+    handler: 'tasks.duplicate',
+    authenticated: true,
+  },
+  {
     method: 'GET',
     path: '/tasks/search',
     handler: 'tasks.search',

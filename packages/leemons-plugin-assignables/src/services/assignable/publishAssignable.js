@@ -2,6 +2,7 @@ const _ = require('lodash');
 const {
   validateAssignable,
   assignableValidationObject,
+  validAssignableProperties,
 } = require('../../helpers/validators/assignable');
 const updateAsset = require('../leebrary/assets/updateAsset');
 const versionControl = require('../versionControl');
@@ -14,7 +15,7 @@ function validateDataForPublish(assignable) {
   validationObject.properties.statement.nullable = false;
   validationObject.properties.subjects.minItems = 1;
 
-  validateAssignable(_.omit(assignable, ['id', 'published']), {
+  validateAssignable(_.pick(assignable, validAssignableProperties), {
     validationObject,
     useRequired: ['asset', 'role', 'subjects', 'statement'],
   });

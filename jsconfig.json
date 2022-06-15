@@ -4,7 +4,87 @@
     "moduleResolution": "Node",
     "target": "ES2020",
     "jsx": "preserve",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@users/*": [
+        "./packages/leemons-plugin-users/frontend/src/*"
+      ],
+      "@layout/*": [
+        "./packages/leemons-plugin-layout/frontend/src/*"
+      ],
+      "@common": [
+        "./packages/leemons-plugin-common/frontend/src/index"
+      ],
+      "@common/*": [
+        "./packages/leemons-plugin-common/frontend/src/*"
+      ],
+      "@menu-builder/*": [
+        "./packages/leemons-plugin-menu-builder/frontend/src/*"
+      ],
+      "@multilanguage/*": [
+        "./packages/leemons-plugin-multilanguage/frontend/src/*"
+      ],
+      "@assets/*": [
+        "./packages/leemons-plugin-assets/frontend/src/*"
+      ],
+      "@dataset/*": [
+        "./packages/leemons-plugin-dataset/frontend/src/*"
+      ],
+      "@socket-io/*": [
+        "./packages/leemons-plugin-socket-io/frontend/src/*"
+      ],
+      "@calendar/*": [
+        "./packages/leemons-plugin-calendar/frontend/src/*"
+      ],
+      "@package-manager/*": [
+        "./packages/leemons-plugin-package-manager/frontend/src/*"
+      ],
+      "@leebrary/*": [
+        "./packages/leemons-plugin-leebrary/frontend/src/*"
+      ],
+      "@leebrary-tasks/*": [
+        "./packages/leemons-provider-leebrary-tasks/frontend/src/*"
+      ],
+      "@curriculum/*": [
+        "./packages/leemons-plugin-curriculum/frontend/src/*"
+      ],
+      "@academic-portfolio/*": [
+        "./packages/leemons-plugin-academic-portfolio/frontend/src/*"
+      ],
+      "@grades/*": [
+        "./packages/leemons-plugin-grades/frontend/src/*"
+      ],
+      "@tasks/*": [
+        "./packages/leemons-plugin-tasks/frontend/src/*"
+      ],
+      "@timetable/*": [
+        "./packages/leemons-plugin-timetable/frontend/src/*"
+      ],
+      "@scores/*": [
+        "./packages/leemons-plugin-scores/frontend/src/*"
+      ],
+      "@emails/*": [
+        "./packages/leemons-plugin-emails/frontend/src/*"
+      ],
+      "@emails-amazon-ses/*": [
+        "./packages/leemons-provider-emails-amazon-ses/frontend/src/*"
+      ],
+      "@widgets/*": [
+        "./packages/leemons-plugin-widgets/frontend/src/*"
+      ],
+      "@dashboard/*": [
+        "./packages/leemons-plugin-dashboard/frontend/src/*"
+      ],
+      "@tests/*": [
+        "./packages/leemons-plugin-tests/frontend/src/*"
+      ],
+      "@leebrary-tests/*": [
+        "./packages/leemons-provider-leebrary-tests/frontend/src/*"
+      ],
+      "@assignables/*": [
+        "./packages/leemons-plugin-assignables/frontend/src/*"
+      ]
+    }
   },
   "exclude": [
     "node_modules",

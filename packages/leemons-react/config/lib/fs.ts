@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
+
 const squirrelly = require('squirrelly');
 
 /* Squirrelly Helpers */
@@ -8,12 +9,12 @@ squirrelly.filters.define(
   (str: string) => str.charAt(0).toUpperCase() + str.substring(1)
 );
 
-squirrelly.filters.define('clear', (str: string) => {
-  return str
+squirrelly.filters.define('clear', (str: string) =>
+  str
     .split(/[-_]/)
     .map((string) => string.charAt(0).toUpperCase() + string.substring(1))
-    .join('');
-});
+    .join('')
+);
 
 async function _fileExists(dir: string, validateFiles: boolean = false): Promise<boolean> {
   try {
@@ -106,8 +107,8 @@ export interface fileList {
 }
 // List all the files inside a directory
 
-export function listFiles(dir: string, useMap: true): Promise<Map<string, fileList>>;
-export function listFiles(dir: string, useMap: false): Promise<fileList[]>;
+// export function listFiles(dir: string, useMap: true): Promise<any[]>;
+// export function listFiles(dir: string, useMap: false): Promise<fileList[]>;
 export async function listFiles(
   dir: string,
   useMap: boolean = false
@@ -170,4 +171,102 @@ export async function copyFolder(src: string, dest: string): Promise<void> {
   } catch (e) {
     throw new Error(`Can't copy folder ${src} into ${dest}`);
   }
+}
+
+export async function createJsConfig(plugins: any[] = []): Promise<void> {
+  const fileName = 'jsconfig.json';
+  let rawConfig = '';
+  try {
+    rawConfig = fs.readFileSync(path.resolve(__dirname, `../../../../${fileName}`), 'utf8');
+  } catch (e) {
+    rawConfig = JSON.stringify(`{
+      "compilerOptions": {
+        "module": "CommonJS",
+        "moduleResolution": "Node",
+        "target": "ES2020",
+        "jsx": "preserve",
+        "baseUrl": "."
+      },
+      "exclude": [
+        "node_modules",
+        "**/node_modules/*"
+      ],
+      "include": [
+        "./packages/**/*"
+      ]
+    }`);
+  }
+
+  const config = JSON.parse(rawConfig);
+  const basePath = path.resolve(__dirname, '../../../../', config.compilerOptions.baseUrl);
+  const paths: any = {};
+
+  plugins.forEach((plugin) => {
+    const relativePath = path.relative(basePath, plugin.path);
+    const pluginName = `@${plugin.name}/*`;
+
+    if (plugin.name === 'common') {
+      paths[`@${plugin.name}`] = [`./${relativePath}/src/index`];
+    }
+
+    paths[pluginName] = [`./${relativePath}/src/*`];
+  });
+
+  config.compilerOptions.paths = paths;
+
+  fs.writeFileSync(
+    path.resolve(__dirname, `../../../../${fileName}`),
+    JSON.stringify(config, null, 2),
+    'utf8'
+  );
+}
+
+export async function createEsLint(plugins: any[] = []): Promise<void> {
+  const fileName = '.eslintrc.json';
+  let rawConfig = '';
+  try {
+    rawConfig = fs.readFileSync(path.resolve(__dirname, `../../../../${fileName}`), 'utf8');
+  } catch (e) {
+    rawConfig = JSON.stringify(`{
+      "env": {
+        "browser": true,
+        "es2021": true,
+        "node": true,
+        "jest": true
+      },
+      "globals": { "leemons": true },
+      "extends": ["plugin:react/recommended", "airbnb-base", "prettier"],
+      "parser": "babel-eslint",
+      "parserOptions": {
+        "ecmaFeatures": { "jsx": true },
+        "ecmaVersion": 12,
+        "sourceType": "module"
+      },
+      "plugins": ["react", "import", "prettier"],
+      "rules": {
+        "no-plusplus": "off",
+        "import/no-dynamic-requires": "off",
+        "import/no-extraneous-dependencies": "off",
+        "react/react-in-jsx-scope": "off",
+        "no-underscore-dangle": "off",
+        "prettier/prettier": [ 2, {}, { "usePrettierrc": true } ],
+        "import/no-names-as-default": "off"
+      }
+    }`);
+  }
+
+  const config = JSON.parse(rawConfig);
+
+  config.rules['import/no-unresolved'] = [
+    2,
+    {
+      ignore: plugins.map((plugin) => `@${plugin.name}`).concat(['@bubbles-ui']),
+    },
+  ];
+
+  fs.writeFileSync(
+    path.resolve(__dirname, `../../../../${fileName}`),
+    JSON.stringify(config, null, 2),
+    'utf8'
+  );
 }
