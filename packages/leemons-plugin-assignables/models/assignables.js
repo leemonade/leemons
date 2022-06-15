@@ -22,9 +22,6 @@ module.exports = {
     center: {
       type: 'uuid',
     },
-    methodology: {
-      type: 'string',
-    },
     statement: {
       type: 'richtext',
     },
