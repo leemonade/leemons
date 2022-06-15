@@ -200,7 +200,7 @@ export async function createJsConfig(plugins: any[] = []): Promise<void> {
   const basePath = path.resolve(__dirname, '../../../../', config.compilerOptions.baseUrl);
   const paths: any = {};
 
-  plugins.forEach((plugin) => {
+  plugins.sort().forEach((plugin) => {
     const relativePath = path.relative(basePath, plugin.path);
     const pluginName = `@${plugin.name}/*`;
 
@@ -259,7 +259,10 @@ export async function createEsLint(plugins: any[] = []): Promise<void> {
   config.rules['import/no-unresolved'] = [
     2,
     {
-      ignore: plugins.map((plugin) => `@${plugin.name}`).concat(['@bubbles-ui']),
+      ignore: plugins
+        .map((plugin) => `@${plugin.name}`)
+        .sort()
+        .concat(['@bubbles-ui']),
     },
   ];
 
