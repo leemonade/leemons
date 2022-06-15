@@ -1,29 +1,31 @@
-import React, { useEffect, useCallback } from 'react';
-import PropTypes from 'prop-types';
-import { isFunction, uniq } from 'lodash';
-import { useForm, Controller, FormProvider } from 'react-hook-form';
+// Libraries
 import {
   Box,
-  Stack,
-  ContextContainer,
   Button,
-  Tabs,
-  TabPanel,
-  InputWrapper,
+  ContextContainer,
   createStyles,
+  InputWrapper,
+  Stack,
   Switch,
+  TabPanel,
+  Tabs,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
+import { isFunction, uniq } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useCallback, useEffect } from 'react';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
+
+// Leemons plugins
 import useSubjects from '@assignables/components/Assignment/AssignStudents/hooks/useSubjects';
-// import SelfReflection from './components/SelfReflection';
-import Submissions from './components/Submissions';
-import Objectives from './components/Objectives';
-// import Contents from './components/Contents';
-// import AssessmentCriteria from './components/AssessmentCriteria';
+
+// Local files
 import Attachments from './components/Attachments';
-// import Methodology from './components/Methodology';
 import Curriculum from './components/Curriculum';
+import Objectives from './components/Objectives';
+import Submissions from './components/Submissions';
+import StatementImage from './components/StatementImage';
 
 const ContentDataStyles = createStyles((theme) => ({
   tabPane: {
@@ -164,6 +166,7 @@ function ContentData({
                   />
                 )}
               />
+              <StatementImage labels={labels} />
               <Controller
                 control={control}
                 name="development"
@@ -198,6 +201,7 @@ function ContentData({
                                   label={labels?.content || ''}
                                   addLabel={labels?.addFromCurriculum}
                                   program={program}
+                                  subjects={subject.value}
                                   name={`curriculum.${subject.value}.contents`}
                                   type="content"
                                 />
@@ -211,6 +215,7 @@ function ContentData({
                                   label={labels?.assessmentCriteria || ''}
                                   addLabel={labels?.addFromCurriculum}
                                   program={program}
+                                  subjects={subject.value}
                                   name={`curriculum.${subject.value}.assessmentCriteria`}
                                   type="assessmentCriteria"
                                 />
