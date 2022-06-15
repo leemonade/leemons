@@ -30,7 +30,8 @@ export function CurriculumSelectContentsModal({
   onChange,
   onClose,
 }) {
-  const subjects = isArray(_subjects) ? _subjects : [_subjects];
+  // eslint-disable-next-line no-nested-ternary
+  const subjects = isArray(_subjects) ? _subjects : _subjects ? [_subjects] : _subjects;
   const [t] = useTranslateLoader(prefixPN('selectContentModal'));
   const [store, render] = useStore({ value });
 
