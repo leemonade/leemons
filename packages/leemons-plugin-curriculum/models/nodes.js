@@ -17,6 +17,9 @@ module.exports = {
     nameOrder: {
       type: 'string',
     },
+    academicItem: {
+      type: 'string',
+    },
     // ES: Orden dentro del mismo padre
     // EN: Order inside the same parent
     nodeOrder: {

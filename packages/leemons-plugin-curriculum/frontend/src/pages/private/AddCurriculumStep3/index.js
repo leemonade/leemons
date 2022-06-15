@@ -1,19 +1,20 @@
 import React, { useEffect, useMemo } from 'react';
-import { find, findIndex, forEach, forIn, isArray, orderBy } from 'lodash';
+import { filter, find, findIndex, forEach, forIn, isArray, keyBy, map, orderBy } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { listCentersRequest } from '@users/request';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { RatingStarIcon } from '@bubbles-ui/icons/outline';
 import {
   Box,
   Col,
   ContextContainer,
   Grid,
+  LoadingOverlay,
   PageContainer,
   Paper,
   Tree,
   useTree,
-  LoadingOverlay
 } from '@bubbles-ui/components';
 import { useParams } from 'react-router-dom';
 import { detailProgramRequest } from '@academic-portfolio/request';
@@ -98,6 +99,10 @@ function AddCurriculumStep3() {
               text: node.fullName,
               node,
             });
+
+            if (node.childrens) {
+              addNodes(node.childrens, node.id, nextDeep + 1);
+            }
             if (store.curriculum.nodeLevels[nextDeep]) {
               items.push({
                 id: `add-button-${node.id}`,
@@ -110,9 +115,6 @@ function AddCurriculumStep3() {
                   action: 'add',
                 },
               });
-            }
-            if (node.childrens) {
-              addNodes(node.childrens, node.id, nextDeep + 1);
             }
           });
         };
@@ -135,10 +137,57 @@ function AddCurriculumStep3() {
   }, [store.curriculum]);
 
   async function onSelect({ node }) {
+    const nodeLevelsById = keyBy(store.curriculum.nodeLevels, 'id');
+
+    const academicItemIds = [];
+
+    function getAcademicIds(nodes) {
+      forEach(nodes, (nod) => {
+        academicItemIds.push(nod.academicItem);
+        if (nod.childrens) getAcademicIds(nod.childrens);
+      });
+    }
+
+    getAcademicIds(store.curriculum.nodes);
+
+    const unUsedSubjects = filter(
+      store.curriculum.program.subjects,
+      (a) => !academicItemIds.includes(a.id)
+    );
+
     store.activeNode = {
       ...node,
-      nodeLevel: find(store.curriculum.nodeLevels, { id: node.nodeLevel }),
+      nodeLevel: nodeLevelsById[node.nodeLevel],
+      unUsedSubjects: map(unUsedSubjects, (sub) => ({ label: sub.name, value: sub.id })),
     };
+    store.activeNode.isSubject = store.activeNode.nodeLevel.type === 'subject';
+    const subject = find(store.curriculum.program.subjects, { id: node.academicItem });
+    if (subject) {
+      store.activeNode.unUsedSubjects.push({
+        label: subject.name,
+        value: subject.id,
+      });
+    }
+
+    forIn(store.activeNode.nodeLevel?.schema?.compileJsonSchema?.properties, (prop, index) => {
+      store.activeNode.nodeLevel.schema.compileJsonUI[index]['ui:title'] = (
+        <>
+          {prop?.frontConfig?.blockData?.evaluationCriteria ? (
+            <Box
+              sx={(theme) => ({
+                display: 'inline-block',
+                verticalAlign: 'middle',
+                marginRight: theme.spacing[2],
+              })}
+            >
+              <RatingStarIcon />
+            </Box>
+          ) : null}
+          {prop.title}
+        </>
+      );
+    });
+
     store.activeRightSection = 'detail-branch-value';
     render();
   }
@@ -161,6 +210,9 @@ function AddCurriculumStep3() {
           parentNode: null,
           nodeOrder: store.curriculum.nodes.length,
         };
+        if (data.academicItem) {
+          toSend.academicItem = data.academicItem;
+        }
         if (store.activeNode) {
           const parentNodeLevelIndex = findIndex(store.curriculum.nodeLevels, {
             id: store.activeNode.nodeLevel,
@@ -189,6 +241,9 @@ function AddCurriculumStep3() {
   if (store.activeRightSection === 'add-branch-value') {
     groupChilds = (
       <NewBranchValue
+        isSubject={store.activeNode.isSubject}
+        subjectData={store.activeNode.unUsedSubjects}
+        academicItem={store.activeNode.academicItem}
         messages={messagesBranchValues}
         errorMessages={errorMessagesBranchValues}
         onSubmit={onAddBranchValue}
@@ -204,11 +259,17 @@ function AddCurriculumStep3() {
   if (store.activeRightSection === 'detail-branch-value') {
     groupChilds = (
       <NewBranchDetailValue
+        isSubject={store.activeNode.isSubject}
+        subjectData={store.activeNode.unUsedSubjects}
         messages={messagesBranchValues}
         errorMessages={errorMessagesBranchValues}
         onSubmit={onAddBranchValue}
         isLoading={store.saving}
-        defaultValues={{ name: store.activeNode.name, id: store.activeNode.id }}
+        defaultValues={{
+          academicItem: store.activeNode.academicItem,
+          name: store.activeNode.name,
+          id: store.activeNode.id,
+        }}
         schema={
           store.activeNode.nodeLevel.schema
             ? {
@@ -236,7 +297,7 @@ function AddCurriculumStep3() {
       <AdminPageHeader
         values={{
           title: `${store.curriculum.name} (${store.curriculum.center.name}|${store.curriculum.program.name})`,
-          description: t('description1') + t('description2'),
+          description: t('description1'),
         }}
       />
 

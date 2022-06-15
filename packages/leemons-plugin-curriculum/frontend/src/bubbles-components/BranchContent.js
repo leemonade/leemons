@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { compact, keys, values } from 'lodash';
 import PropTypes from 'prop-types';
-import { EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon, EditIcon, RatingStarIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 import {
   ActionButton,
+  Box,
   Button,
   ContextContainer,
   Stack,
@@ -58,7 +59,16 @@ function BranchContent({
         values(branch?.schema?.jsonSchema.properties || []).map((item, index) => {
           if (editingBlock && editingBlock.id === item.id) return null;
           return {
-            name: item.frontConfig.name,
+            name: (
+              <>
+                {item?.frontConfig?.blockData?.evaluationCriteria ? (
+                  <Box sx={(theme) => ({ marginRight: theme.spacing[2] })}>
+                    <RatingStarIcon />
+                  </Box>
+                ) : null}
+                {item.frontConfig.name}
+              </>
+            ),
             type: item.frontConfig.groupType,
             ordered: item.frontConfig.groupOrdered ? item.frontConfig.groupOrdered : '-',
             actions: (
@@ -107,25 +117,29 @@ function BranchContent({
       {branch.schema ? <Table columns={columns} data={data} /> : null}
 
       {addBlock || editingBlock ? (
-        <BranchBlock
-          messages={messages}
-          errorMessages={errorMessages}
-          selectData={selectData}
-          isLoading={isLoading}
-          branch={branch}
-          defaultValues={
-            editingBlock ? { ...editingBlock.frontConfig.blockData, id: editingBlock.id } : null
-          }
-          onCancel={() => {
-            setEditingBlock(null);
-            setAddBlock(false);
-          }}
-          onSubmit={sendOnSaveBlock}
-        />
+        <>
+          <BranchBlock
+            messages={messages}
+            errorMessages={errorMessages}
+            selectData={selectData}
+            isLoading={isLoading}
+            branch={branch}
+            defaultValues={
+              editingBlock ? { ...editingBlock.frontConfig.blockData, id: editingBlock.id } : null
+            }
+            onCancel={() => {
+              setEditingBlock(null);
+              setAddBlock(false);
+            }}
+            onSubmit={sendOnSaveBlock}
+          />
+        </>
       ) : null}
       {!editingBlock && !addBlock ? (
         <Stack justifyContent="end">
-          <Button onClick={() => setAddBlock(true)}>{messages.addContent}</Button>
+          <Button variant="light" leftIcon={<AddCircleIcon />} onClick={() => setAddBlock(true)}>
+            {messages.addContent}
+          </Button>
         </Stack>
       ) : null}
     </ContextContainer>

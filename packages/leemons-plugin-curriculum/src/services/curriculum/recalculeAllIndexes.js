@@ -90,6 +90,7 @@ async function recalculeItem(
     case 'custom':
       break;
     default:
+      node.fullName = `${node.name}`;
       config.indexes[`${nodeLevel.id}:numbering`] = '';
       break;
   }

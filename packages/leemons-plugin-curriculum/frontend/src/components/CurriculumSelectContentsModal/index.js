@@ -23,12 +23,14 @@ import { CurriculumAdded } from './components/CurriculumAdded';
 // eslint-disable-next-line import/prefer-default-export
 export function CurriculumSelectContentsModal({
   curriculum: id,
+  subjects: _subjects,
   opened,
   title,
   value,
   onChange,
   onClose,
 }) {
+  const subjects = isArray(_subjects) ? _subjects : [_subjects];
   const [t] = useTranslateLoader(prefixPN('selectContentModal'));
   const [store, render] = useStore({ value });
 
@@ -106,7 +108,7 @@ export function CurriculumSelectContentsModal({
 
         <Tabs>
           <TabPanel label={t('curriculum')}>
-            <CurriculumTab t={t} store={store} render={render} />
+            <CurriculumTab subjects={subjects} t={t} store={store} render={render} />
           </TabPanel>
           <TabPanel
             notification={store.value?.length ? store.value?.length : null}
@@ -126,6 +128,7 @@ export function CurriculumSelectContentsModal({
 
 CurriculumSelectContentsModal.propTypes = {
   curriculum: PropTypes.string,
+  subjects: PropTypes.any,
   opened: PropTypes.bool,
   onChange: PropTypes.func,
   onClose: PropTypes.func,

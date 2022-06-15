@@ -6,6 +6,7 @@ const { nodeLevelsByCurriculum } = require('./nodeLevelsByCurriculum');
 async function addNodeLevels(data, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
+      console.log(data);
       await validateAddNodeLevels(data, { transacting });
 
       const nodeLevels = await Promise.all(

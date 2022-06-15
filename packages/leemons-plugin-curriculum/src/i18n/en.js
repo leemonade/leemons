@@ -48,16 +48,16 @@ module.exports = {
     groups: 'Group',
     subjectType: 'Type',
     knowledges: 'Area',
-    subjects: 'Subject',
+    subject: 'Subject',
     alertTitle: 'Important:',
     alertDescription:
       'In order to link the Curriculum with evaluable or gradable activities, <strong>it is necessary to have a subject level</strong> and to nest within it the contents, evaluation criteria or learning standards.<br/> <strong>If the selected program is a single subject</strong>, these items can be nested directly under this level.',
   },
   addCurriculumStep2: {
     description1:
-      'Start by defining the structure of your curricular content, later you can complete it by creating the specific content for each section',
+      'Now you can add additional branches to the tree and by clicking on the edit icon, add new types of blocks (curricular contents, evaluation criteria, learning standards, objectives...).',
     description2:
-      'It is possible that not all branches of your programs have curriculum content. Select here which levels of your portfolio you will use to manage the curriculum content.',
+      'In the next step you can fill in these blocks for each subject or level of the selected tree.',
     continueButtonLabel: 'Continue',
     addBranchButtonLabel: 'Add branch',
     title: 'Branch config',
@@ -66,6 +66,7 @@ module.exports = {
     orderedLabel: 'Ordered:',
     orderedPlaceholder: 'Select...',
     orderedNothingFound: 'No data',
+    evaluationCriteriaLabel: 'This block contains evaluation criteria',
     saveButtonLabel: 'Save config',
     nameRequired: 'Field required',
     orderedRequired: 'Field required',
@@ -104,7 +105,7 @@ module.exports = {
       autocomposed: 'Autocomposed',
     },
     codeFieldNumbering: 'Numbering',
-    addContent: 'Add Content',
+    addContent: 'Add new block',
     blockNameLabel: 'Content Block Name',
     blockNamePlaceholder: 'Name...',
     blockTypeLabel: 'Type',
@@ -121,7 +122,9 @@ module.exports = {
     fieldMinPlaceholder: 'Min...',
     fieldMaxLabel: 'Max',
     fieldMaxPlaceholder: 'Max...',
-    blockSaveConfigButtonLabel: 'Save Config',
+    blockSaveConfigButtonLabel: 'Save block',
+    numerationLabel: 'Numbering',
+    subTypeLabel: 'Sub-type',
     codeTypePlaceholder: 'Select...',
     codeTypeNothingFound: 'No data',
     codeComposerLabel: 'Code composer',
@@ -141,8 +144,11 @@ module.exports = {
   },
   addCurriculumStep3: {
     addNode: 'Add {name}',
+    description1:
+      'Now you can add content to each block typology, remember that the contents of the block marked with a star can be linked to evaluable or gradable activities and travel to the final grading system.',
     newBranchValue: {
       nameLabel: 'Name',
+      subjectLabel: 'Subject',
       namePlaceholder: 'Name...',
       saveButtonLabel: 'Save',
       nameRequired: 'Field required',

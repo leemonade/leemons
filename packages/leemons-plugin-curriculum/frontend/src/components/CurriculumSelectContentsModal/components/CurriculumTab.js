@@ -2,12 +2,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button, Col, Grid, Stack, Title, Tree } from '@bubbles-ui/components';
-import { find, forIn } from 'lodash';
+import { Box, Button, Col, Grid, Stack, Title } from '@bubbles-ui/components';
+import { find, forIn, isArray } from 'lodash';
 import { CurriculumProp } from './CurriculumProp';
 
 // eslint-disable-next-line import/prefer-default-export
-export function CurriculumTab({ store, render, t }) {
+export function CurriculumTab({ subjects, store, render, t }) {
   function onSelect({ node }) {
     store.selectedNode = {
       ...node,
@@ -32,6 +32,12 @@ export function CurriculumTab({ store, render, t }) {
     render();
   }
 
+  React.useEffect(() => {
+    if (isArray(subjects) && subjects.length) {
+      console.log(subjects, store.curriculum);
+    }
+  }, [JSON.stringify(subjects), store.curriculum]);
+
   return (
     <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
       <Box sx={(theme) => ({ marginBottom: theme.spacing[2] })}>
@@ -48,10 +54,13 @@ export function CurriculumTab({ store, render, t }) {
         </Grid>
       </Box>
       <Grid columns={100}>
+        {/*
         <Col span={33}>
           <Tree rootId={0} treeData={store.treeData} onSelect={onSelect} />
         </Col>
-        <Col span={67}>
+        */}
+
+        <Col span={100}>
           {store.selectedNode
             ? store.selectedNode._formProperties.map((prop, i) => (
                 <CurriculumProp key={i} store={store} render={render} item={prop} />
@@ -65,6 +74,7 @@ export function CurriculumTab({ store, render, t }) {
 
 CurriculumTab.propTypes = {
   store: PropTypes.object,
+  subjects: PropTypes.any,
   render: PropTypes.func,
   t: PropTypes.func,
 };

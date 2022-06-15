@@ -53,6 +53,8 @@ async function generateCurriculumNodesFromAcademicPortfolioByNodeLevels(
                     ? childrens[i].value.name
                     : 'undefined',
                 nodeOrder: i,
+                academicItem:
+                  childrens[i].value && childrens[i].value.id ? childrens[i].value.id : null,
                 parentNode: parentNode.id,
                 nodeLevel: levels[deepLevel].id,
                 curriculum: curriculum.id,

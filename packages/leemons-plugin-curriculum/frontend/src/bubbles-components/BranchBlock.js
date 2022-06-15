@@ -1,7 +1,15 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
-import { Box, Button, ContextContainer, Group, Select, TextInput } from '@bubbles-ui/components';
+import {
+  Box,
+  Button,
+  Checkbox,
+  ContextContainer,
+  Group,
+  Select,
+  TextInput,
+} from '@bubbles-ui/components';
 import BranchBlockField from './BranchBlockField';
 import {
   BRANCH_CONTENT_ERROR_MESSAGES,
@@ -121,7 +129,7 @@ function BranchBlock({
           }}
           render={({ field }) => (
             <Select
-              label="&nbsp;"
+              label={messages.subTypeLabel}
               placeholder={messages.listTypePlaceholder}
               required
               error={errors.listType}
@@ -142,7 +150,7 @@ function BranchBlock({
           }}
           render={({ field }) => (
             <Select
-              label="&nbsp;"
+              label={messages.numerationLabel}
               placeholder={messages.listOrderedPlaceholder}
               required
               error={errors.listOrdered}
@@ -164,7 +172,7 @@ function BranchBlock({
           }}
           render={({ field }) => (
             <Select
-              label="&nbsp;"
+              label={messages.numerationLabel}
               placeholder={messages.groupOrderedPlaceholder}
               required
               error={errors.groupOrdered}
@@ -220,11 +228,19 @@ function BranchBlock({
       <ContextContainer>
         <Group grow>{groupFields}</Group>
         {branchBlocks[formData.type] || null}
+        <Controller
+          name="evaluationCriteria"
+          control={control}
+          render={({ field }) => (
+            <Checkbox checked={field.value} {...field} label={messages.evaluationCriteriaLabel} />
+          )}
+        />
+
         <ContextContainer direction="row" justifyContent="end">
           <Button variant="link" loading={isLoading} onClick={onCancel}>
             {messages.blockCancelConfigButtonLabel}
           </Button>
-          <Button loading={isLoading} type="submit">
+          <Button variant="outline" loading={isLoading} type="submit">
             {messages.blockSaveConfigButtonLabel}
           </Button>
         </ContextContainer>

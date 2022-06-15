@@ -1,4 +1,7 @@
 export const BRANCH_CONTENT_MESSAGES = {
+  numerationLabel: 'Numeration',
+  subTypeLabel: 'Sub-type',
+  evaluationCriteriaLabel: 'This block contains evaluation criteria',
   addContent: 'Add Content',
   blockNameLabel: 'Content Block Name',
   blockNamePlaceholder: 'Name...',

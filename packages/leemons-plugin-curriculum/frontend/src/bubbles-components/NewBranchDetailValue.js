@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   ContextContainer,
+  Select,
   Stack,
   TextInput,
 } from '@bubbles-ui/components';
@@ -15,6 +16,7 @@ import * as _ from 'lodash';
 
 export const NEW_BRANCH_DETAIL_VALUE_MESSAGES = {
   nameLabel: 'Name',
+  subjectLabel: 'Subject',
   namePlaceholder: 'Branch name...',
   saveButtonLabel: 'Save config',
 };
@@ -24,6 +26,8 @@ export const NEW_BRANCH_DETAIL_VALUE_ERROR_MESSAGES = {
 };
 
 function NewBranchDetailValue({
+  isSubject,
+  subjectData,
   messages,
   errorMessages,
   isLoading,
@@ -44,7 +48,7 @@ function NewBranchDetailValue({
 
   useEffect(() => {
     reset(defaultValues);
-  }, [defaultValues]);
+  }, [JSON.stringify(defaultValues)]);
 
   const datasetProps = useMemo(
     () => ({ formData: schemaFormValues }),
@@ -74,11 +78,13 @@ function NewBranchDetailValue({
   async function save() {
     handleSubmit(async (data) => {
       const toSend = { ...data, id: defaultValues?.id };
+      console.log(toSend);
       let fErrors = [];
       if (formActions.isLoaded()) {
         await formActions.submit();
         fErrors = formActions.getErrors();
 
+        console.log(fErrors);
         toSend.datasetValues = formActions.getValues();
       }
 
@@ -95,7 +101,16 @@ function NewBranchDetailValue({
       </Stack>
       {!readonly ? (
         <form autoComplete="off">
-          <Box>
+          <ContextContainer>
+            {isSubject ? (
+              <Controller
+                name="academicItem"
+                control={control}
+                render={({ field }) => (
+                  <Select label={messages.subjectLabel} data={subjectData} {...field} />
+                )}
+              />
+            ) : null}
             <Controller
               name="name"
               control={control}
@@ -112,7 +127,7 @@ function NewBranchDetailValue({
                 />
               )}
             />
-          </Box>
+          </ContextContainer>
         </form>
       ) : (
         <Box>{watch('name')}</Box>
@@ -140,8 +155,11 @@ NewBranchDetailValue.defaultProps = {
 };
 
 NewBranchDetailValue.propTypes = {
+  isSubject: PropTypes.bool,
+  subjectData: PropTypes.any,
   messages: PropTypes.shape({
     nameLabel: PropTypes.string,
+    subjectLabel: PropTypes.string,
     namePlaceholder: PropTypes.string,
     saveButtonLabel: PropTypes.string,
   }),

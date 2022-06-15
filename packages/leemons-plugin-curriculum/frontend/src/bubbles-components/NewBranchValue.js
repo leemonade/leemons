@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
 import {
   ActionButton,
-  Box,
   Button,
   ContextContainer,
+  Select,
   Stack,
   TextInput,
 } from '@bubbles-ui/components';
@@ -13,6 +13,7 @@ import { RemoveIcon } from '@bubbles-ui/icons/outline';
 
 export const NEW_BRANCH_VALUE_MESSAGES = {
   nameLabel: 'Name',
+  subjectLabel: 'Subject',
   namePlaceholder: 'Branch name...',
   saveButtonLabel: 'Save config',
 };
@@ -22,6 +23,8 @@ export const NEW_BRANCH_VALUE_ERROR_MESSAGES = {
 };
 
 function NewBranchValue({
+  isSubject,
+  subjectData,
   onCloseBranch,
   messages,
   errorMessages,
@@ -52,7 +55,16 @@ function NewBranchValue({
           <ActionButton icon={<RemoveIcon />} onClick={onCloseBranch} />
         </Stack>
 
-        <Box>
+        <ContextContainer>
+          {isSubject ? (
+            <Controller
+              name="academicItem"
+              control={control}
+              render={({ field }) => (
+                <Select label={messages.subjectLabel} data={subjectData} {...field} />
+              )}
+            />
+          ) : null}
           <Controller
             name="name"
             control={control}
@@ -69,7 +81,7 @@ function NewBranchValue({
               />
             )}
           />
-        </Box>
+        </ContextContainer>
         <Stack justifyContent="end">
           <Button loading={isLoading} type="submit">
             {messages.saveButtonLabel}
@@ -89,8 +101,11 @@ NewBranchValue.defaultProps = {
 };
 
 NewBranchValue.propTypes = {
+  isSubject: PropTypes.bool,
+  subjectData: PropTypes.any,
   messages: PropTypes.shape({
     nameLabel: PropTypes.string,
+    subjectLabel: PropTypes.string,
     namePlaceholder: PropTypes.string,
     saveButtonLabel: PropTypes.string,
   }),
