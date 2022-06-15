@@ -100,6 +100,43 @@ module.exports = async function createAssignable(
         resourcesToSave = newResources.map((resource) => resource.id);
       }
 
+      if (metadata?.leebrary) {
+        const parsedAssets = Object.entries(metadata.leebrary).map(async ([key, value]) => {
+          if (Array.isArray(value)) {
+            return [
+              key,
+              await Promise.all(
+                value.map(async (v) => {
+                  const savedAsset = await duplicateAsset(v, {
+                    preserveName: true,
+                    public: 1,
+                    indexable: 0,
+                    userSession,
+                    transacting,
+                  });
+
+                  return savedAsset.id;
+                })
+              ),
+            ];
+          }
+          return [
+            key,
+            (
+              await duplicateAsset(value, {
+                preserveName: true,
+                public: 1,
+                indexable: 0,
+                userSession,
+                transacting,
+              })
+            ).id,
+          ];
+        });
+
+        metadata.leebrary = Object.fromEntries(await Promise.all(parsedAssets));
+      }
+
       // EN: Create the assignable for the given version.
       // ES: Crea el asignable para la versión dada.
       try {

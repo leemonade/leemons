@@ -54,7 +54,7 @@ export default function StatementImage({ labels }) {
   */
   const [resources, setResources] = useState([]);
   useEffect(async () => {
-    const formResources = getValues('statementImage');
+    const formResources = getValues('metadata.leebrary.statementImage');
     if (formResources?.length) {
       const savedAssets = await getAssetsByIds(formResources, { public: true, indexable: false });
       const newAssets = await getAssetsByIds(formResources, { public: true });
@@ -81,7 +81,7 @@ export default function StatementImage({ labels }) {
         return newResources;
       });
       onDrawerClose();
-      setValue('statementImage', map(newResources, 'id'), {
+      setValue('metadata.leebrary.statementImage', map(newResources, 'id'), {
         shouldDirty: true,
         shouldTouch: true,
       });
@@ -96,7 +96,7 @@ export default function StatementImage({ labels }) {
         newResources = currentResources.filter((resource) => resource.id !== asset.id);
         return newResources;
       });
-      setValue('statementImage', map(newResources, 'id'), {
+      setValue('metadata.leebrary.statementImage', map(newResources, 'id'), {
         shouldDirty: true,
         shouldTouch: true,
       });
