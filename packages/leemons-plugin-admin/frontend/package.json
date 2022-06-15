@@ -1,0 +1,15 @@
+{
+  "name": "admin-front",
+  "version": "1.0.0",
+  "main": "Public.js",
+  "license": "MIT",
+  "dependencies": {
+    "@bubbles-ui/leemons": "^1.0.36",
+    "@bubbles-ui/components": "^1.0.36",
+    "@bubbles-ui/editors": "^1.0.26",
+    "prop-types": "^15.7.2",
+    "react-hook-form": "^7.8.5",
+    "react-simple-i18n": "^1.4.0-beta.0"
+  },
+  "devDependencies": {}
+}

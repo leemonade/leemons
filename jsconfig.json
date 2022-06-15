@@ -9,6 +9,9 @@
       "@academic-portfolio/*": [
         "./packages/leemons-plugin-academic-portfolio/frontend/src/*"
       ],
+      "@admin/*": [
+        "./packages/leemons-plugin-admin/frontend/src/*"
+      ],
       "@assets/*": [
         "./packages/leemons-plugin-assets/frontend/src/*"
       ],
@@ -35,9 +38,6 @@
       ],
       "@emails/*": [
         "./packages/leemons-plugin-emails/frontend/src/*"
-      ],
-      "@emails-amazon-ses/*": [
-        "./packages/leemons-provider-emails-amazon-ses/frontend/src/*"
       ],
       "@grades/*": [
         "./packages/leemons-plugin-grades/frontend/src/*"

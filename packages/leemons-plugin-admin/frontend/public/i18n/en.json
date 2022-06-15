@@ -1,0 +1,8 @@
+{
+  "welcome": {
+    "title": "Welcome to Leemons installation",
+    "description": "In order to continue, please choose the platform main language.",
+    "selectLanguage": "Select language",
+    "next": "Next"
+  }
+}

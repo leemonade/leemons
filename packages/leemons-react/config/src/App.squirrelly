@@ -59,7 +59,7 @@ function App() {
 {{ /if }}
 {{ /each }}
               <Route path="/">
-                   <Redirect to={`/private/dashboard`} />
+                   <Redirect to={`/admin`} />
               </Route>
             </Switch>
 {{ @each(it.plugins.reverse()) => plugin }}

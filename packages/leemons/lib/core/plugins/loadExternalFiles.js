@@ -186,8 +186,8 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
             throw new Error('Only the plugin leebrary have access to copyFile');
           },
           readFile: (...rest) => {
-            if (plugin.name === 'leebrary') return fs.readFile(...rest);
-            throw new Error('Only the plugin leebrary have access to readFile');
+            if (['leebrary', 'admin'].includes(plugin.name)) return fs.readFile(...rest);
+            throw new Error('Only the plugins [leebrary, admin] have access to readFile');
           },
           writeFile: (...rest) => {
             if (plugin.name === 'leebrary') return fs.writeFile(...rest);
