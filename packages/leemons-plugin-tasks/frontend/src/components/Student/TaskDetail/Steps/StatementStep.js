@@ -1,6 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ContextContainer, HtmlText, Box, Tabs, TabPanel, Title } from '@bubbles-ui/components';
+import {
+  ContextContainer,
+  HtmlText,
+  Box,
+  Tabs,
+  TabPanel,
+  Title,
+  ImageLoader,
+} from '@bubbles-ui/components';
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
 
@@ -120,6 +128,9 @@ export default function StatementStep({ assignation, labels: _labels }) {
           {labels?.statement}
         </Title>
         <HtmlText>{assignable?.statement}</HtmlText>
+        {!!assignable?.metadata?.leebrary?.statementImage && (
+          <ImageLoader src={assignable?.metadata?.leebrary?.statementImage} />
+        )}
       </ContextContainer>
       <CurriculumRender
         assignation={assignation}
