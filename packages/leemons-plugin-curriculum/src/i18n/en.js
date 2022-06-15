@@ -4,6 +4,7 @@ module.exports = {
     page_description: 'These are the curricula of the programmes you deliver.',
   },
   addCurriculum: {
+    noPrograms: 'All programs for this center used',
     newCurriculum: 'New curriculum',
     description1:
       'Start by defining the structure of your curricular content, later you can complete it by creating the specific content for each section',
@@ -29,7 +30,7 @@ module.exports = {
     tagsCreateLabel: '+ Create {{label}}',
     descriptionLabel: 'Description',
     descriptionPlaceholder: 'Enter description...',
-    continueButtonLabel: 'Continue to setup',
+    continueButtonLabel: 'Continue',
     nameRequired: 'Field required',
     countryRequired: 'Field required',
     languageRequired: 'Field required',
@@ -41,12 +42,16 @@ module.exports = {
       'Start by defining the structure of your curricular content, later you can complete it by creating the specific content for each section',
     description2:
       'It is possible that not all branches of your programs have curriculum content. Select here which levels of your portfolio you will use to manage the curriculum content.',
-    saveButtonLabel: 'Save tree',
+    saveButtonLabel: 'Continue',
     program: 'Program',
     courses: 'Course',
     groups: 'Group',
     subjectType: 'Type',
     knowledges: 'Area',
+    subjects: 'Subject',
+    alertTitle: 'Important:',
+    alertDescription:
+      'In order to link the Curriculum with evaluable or gradable activities, <strong>it is necessary to have a subject level</strong> and to nest within it the contents, evaluation criteria or learning standards.<br/> <strong>If the selected program is a single subject</strong>, these items can be nested directly under this level.',
   },
   addCurriculumStep2: {
     description1:

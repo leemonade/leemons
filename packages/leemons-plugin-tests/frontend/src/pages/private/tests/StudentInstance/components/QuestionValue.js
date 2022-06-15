@@ -51,50 +51,56 @@ export default function QuestionValue(props) {
   return (
     <Box className={styles.questionValueContainer}>
       <Box>
-        <Text size="xs" color="secondary">
-          {t('theQuestionValueIs')}
-        </Text>
+        {!store.embedded ? (
+          <Text size="xs" color="secondary">
+            {t('theQuestionValueIs')}
+          </Text>
+        ) : null}
       </Box>
       <Box style={{ display: 'flex' }}>
         {/* -- Question value -- */}
 
-        {usedCluesObj.map((clObj) => (
+        {!store.embedded
+          ? usedCluesObj.map((clObj) => (
+              <Box className={styles.questionValueCard}>
+                <Box>
+                  <Text
+                    size="md"
+                    sx={(theme) => ({
+                      color: theme.colors.fatic01,
+                    })}
+                  >
+                    {clObj.points}
+                  </Text>
+                </Box>
+                <Text size="xs" color="primary">
+                  {t('clueN', { number: clObj.index + 1 })}
+                </Text>
+              </Box>
+            ))
+          : null}
+
+        {!store.embedded ? (
           <Box className={styles.questionValueCard}>
             <Box>
               <Text
                 size="md"
                 sx={(theme) => ({
-                  color: theme.colors.fatic01,
+                  color: store.viewMode
+                    ? colorByStatus[store.questionResponses[question.id].status]
+                    : theme.colors.fatic02,
                 })}
               >
-                {clObj.points}
+                {store.viewMode
+                  ? store.questionResponses[question.id].points
+                  : (store.questionsInfo.perQuestion - clueLessPoints).toFixed(2)}
               </Text>
             </Box>
             <Text size="xs" color="primary">
-              {t('clueN', { number: clObj.index + 1 })}
+              {t('pointsInTotal')}
             </Text>
           </Box>
-        ))}
-
-        <Box className={styles.questionValueCard}>
-          <Box>
-            <Text
-              size="md"
-              sx={(theme) => ({
-                color: store.viewMode
-                  ? colorByStatus[store.questionResponses[question.id].status]
-                  : theme.colors.fatic02,
-              })}
-            >
-              {store.viewMode
-                ? store.questionResponses[question.id].points
-                : (store.questionsInfo.perQuestion - clueLessPoints).toFixed(2)}
-            </Text>
-          </Box>
-          <Text size="xs" color="primary">
-            {t('pointsInTotal')}
-          </Text>
-        </Box>
+        ) : null}
 
         {/* -- Question clues -- */}
         {clues.length ? (

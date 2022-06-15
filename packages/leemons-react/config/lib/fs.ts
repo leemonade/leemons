@@ -86,6 +86,7 @@ enum fileType {
   File = 'file',
   Null = 'null',
 }
+
 // Get which file type is a file
 export function getFileType(file: fs.Dirent): fileType {
   if (file.isSymbolicLink()) {
@@ -105,14 +106,9 @@ export interface fileList {
   name: string;
   type: fileType;
 }
-// List all the files inside a directory
 
-export function listFiles(dir: string, useMap: true): Promise<Map<string, fileList>>;
-export function listFiles(dir: string, useMap: false): Promise<fileList[]>;
-export async function listFiles(
-  dir: string,
-  useMap: boolean = false
-): Promise<Map<string, fileList> | fileList[]> {
+// List all the files inside a directory
+export async function listFiles(dir: string, useMap: boolean = false): Promise<any> {
   try {
     const data = (await fs.readdir(dir, { withFileTypes: true })).map((file) => ({
       name: file.name,
@@ -201,16 +197,18 @@ export async function createJsConfig(plugins: any[] = []): Promise<void> {
   const basePath = path.resolve(__dirname, '../../../../', config.compilerOptions.baseUrl);
   const paths: any = {};
 
-  plugins.forEach((plugin) => {
-    const relativePath = path.relative(basePath, plugin.path);
-    const pluginName = `@${plugin.name}/*`;
+  plugins
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .forEach((plugin) => {
+      const relativePath = path.relative(basePath, plugin.path);
+      const pluginName = `@${plugin.name}/*`;
 
-    if (plugin.name === 'common') {
-      paths[`@${plugin.name}`] = [`./${relativePath}/src/index`];
-    }
+      if (plugin.name === 'common') {
+        paths[`@${plugin.name}`] = [`./${relativePath}/src/index`];
+      }
 
-    paths[pluginName] = [`./${relativePath}/src/*`];
-  });
+      paths[pluginName] = [`./${relativePath}/src/*`];
+    });
 
   config.compilerOptions.paths = paths;
 
@@ -260,7 +258,10 @@ export async function createEsLint(plugins: any[] = []): Promise<void> {
   config.rules['import/no-unresolved'] = [
     2,
     {
-      ignore: plugins.map((plugin) => `@${plugin.name}`).concat(['@bubbles-ui']),
+      ignore: plugins
+        .map((plugin) => `@${plugin.name}`)
+        .sort()
+        .concat(['@bubbles-ui']),
     },
   ];
 

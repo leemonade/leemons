@@ -135,7 +135,9 @@ module.exports = {
           development: 'Desarrollo de la tarea',
           statementAndDevelopmentTitle: 'Enunciado y desarrollo',
           attachmentsTitle: 'Recursos', // NEW
-          searchFromLibrary: 'Añadir documentos y multimedia', // NEW
+          supportImage: 'Imagen de apoyo', // NEW
+          searchFromLibrary: 'Buscar en la librería', // NEW
+          searchFromLibraryDocsAndMedia: 'Añadir documentos y multimedia', // NEW
           content: 'Contenidos', // NEW
           assessmentCriteria: 'Criterios de evaluación', // NEW
           objectives: 'Objetivos personalizados', // NEW
