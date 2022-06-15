@@ -1,9 +1,11 @@
 module.exports = {
   listCurriculum: {
     page_title: 'Biblioteca de Curricula',
-    page_description: 'Estos son los planes de estudio de los programas que se imparten en el centro.',
+    page_description:
+      'Estos son los planes de estudio de los programas que se imparten en el centro.',
   },
   addCurriculum: {
+    noPrograms: 'Todos los programas de este centro ya se estan utilizando',
     newCurriculum: 'Nuevo curriculum',
     description1:
       'Estructura del contenido curricular (posteriormente se podrá completar con el contenido específico de cada sección).',
@@ -29,7 +31,7 @@ module.exports = {
     tagsCreateLabel: '+ Crear {{etiqueta}}',
     descriptionLabel: 'Descripción',
     descriptionPlaceholder: 'Introducir descripción...',
-    continueButtonLabel: 'Continuar con la configuración',
+    continueButtonLabel: 'Continuar',
     nameRequired: 'Campo necesario',
     countryRequired: 'Campo necesario',
     languageRequired: 'Campo necesario',
@@ -41,12 +43,16 @@ module.exports = {
       'Estructura del contenido curricular (posteriormente se podrá completar con el contenido específico de cada sección).',
     description2:
       'Es posible que no todas las ramas de los programas tengan contenido curricular. Seleccionar aquí los niveles del Portafolio que se utilizarán para gestionar el contenido curricular.',
-    saveButtonLabel: 'Guardar árbol',
+    saveButtonLabel: 'Continuar',
     program: 'Programa',
     courses: 'Curso',
     groups: 'Grupo',
     subjectType: 'Tipo',
     knowledges: 'Area',
+    subjects: 'Asignatura',
+    alertTitle: 'Importante:',
+    alertDescription:
+      'Para poder vincular el Curriculum con actividades evaluables o calificables, <strong>es necesario que exista un nivel de asignatura</strong> y anidar dentro los contenidos, criterios de evaluación o estándares de aprendizaje.<br/> <strong>Si el programa seleccionado es de asignatura única</strong>, se pueden anidar directamente dichos items debajo de este nivel.',
   },
   addCurriculumStep2: {
     description1:
