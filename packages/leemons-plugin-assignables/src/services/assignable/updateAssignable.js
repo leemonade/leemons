@@ -173,10 +173,6 @@ module.exports = async function updateAssignable(
       updateObject.submission = JSON.stringify(assignableObject.submission);
     }
 
-    if (diff.includes('metadata')) {
-      updateObject.metadata = JSON.stringify(assignableObject.metadata);
-    }
-
     if (diff.includes('relatedAssignables')) {
       updateObject.relatedAssignables = JSON.stringify(assignableObject.relatedAssignables);
 
@@ -245,6 +241,87 @@ module.exports = async function updateAssignable(
 
       object.resources = resourcesToSave;
       updateObject.resources = JSON.stringify(resourcesToSave);
+    }
+
+    if (diff.includes('metadata')) {
+      if (updateObject.metadata?.leebrary) {
+        const updateAssets = Object.entries(updateObject.metadata.leebrary).map(
+          async ([key, value]) => {
+            if (Array.isArray(value)) {
+              const resourcesToSave = [];
+              const newResources = _.difference(value, currentAssignable.metadata?.leebrary?.[key]);
+              const resourcesToDelete = _.difference(
+                currentAssignable.metadata?.leebrary?.[key],
+                value
+              );
+              const resourcesToKeep = _.intersection(
+                currentAssignable.metadata?.leebrary?.[key],
+                value
+              );
+
+              resourcesToSave.push(...resourcesToKeep);
+
+              const promises = [];
+
+              if (newResources.length) {
+                promises.push(
+                  ...newResources.map(async (resource) => {
+                    const duplicatedAsset = await duplicateAsset(resource, {
+                      preserveName: true,
+                      public: 1,
+                      indexable: 0,
+                      userSession,
+                      transacting,
+                    });
+
+                    resourcesToSave.push(duplicatedAsset.id);
+                  })
+                );
+              }
+
+              if (resourcesToDelete.length) {
+                promises.push(
+                  ...resourcesToDelete.map((resource) =>
+                    removeAsset(resource, { userSession, transacting })
+                  )
+                );
+              }
+
+              await Promise.all(promises);
+
+              _.set(updateObject, `metadata.leebrary.${key}`, resourcesToSave);
+            } else {
+              const shouldSave = value.id !== currentAssignable.metadata?.leebrary?.[key];
+              const shouldRemove =
+                currentAssignable.metadata?.leebrary?.[key] &&
+                value.id !== currentAssignable.metadata?.leebrary?.[key];
+
+              if (shouldRemove) {
+                await removeAsset(currentAssignable.metadata?.leebrary?.[key], {
+                  userSession,
+                  transacting,
+                });
+                _.set(updateObject, `metadata.leebrary.${key}`, null);
+              }
+
+              if (shouldSave) {
+                const duplicatedAsset = await duplicateAsset(value, {
+                  preserveName: true,
+                  public: 1,
+                  indexable: 0,
+                  userSession,
+                  transacting,
+                });
+
+                _.set(updateObject, `metadata.leebrary.${key}`, duplicatedAsset.id);
+              }
+            }
+          }
+        );
+
+        await Promise.all(updateAssets);
+        updateObject.metadata = JSON.stringify(assignableObject.metadata);
+      }
     }
 
     await assignables.update({ id }, updateObject, {

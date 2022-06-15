@@ -76,6 +76,7 @@ function ContentData({
         ...e,
         metadata: {
           ...sharedData.metadata,
+          ...e.metadata,
           visitedSteps: uniq([...(sharedData.metadata?.visitedSteps || []), 'contentData']),
         },
       };
