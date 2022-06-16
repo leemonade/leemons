@@ -82,6 +82,8 @@ const TaskOngoingList = ({ instance }) => {
   const onArchiveTask = async (archived) => {
     const newDates = {
       archived: archived ? new Date() : null,
+      // TODO: Do not close if not closable
+      closed: archived ? new Date() : undefined,
     };
 
     try {
@@ -142,8 +144,11 @@ const TaskOngoingList = ({ instance }) => {
           onCloseTask={onCloseTask}
           onArchiveTask={onArchiveTask}
           closed={Boolean(instance.dates.closed || dayjs(instance.dates.close).isBefore(dayjs()))}
+          // TODO: Show close date if a deadline exists but is allowed to be submitted later.
+          disableClose={Boolean(instance.dates.archived)}
+          hideClose={Boolean(instance.dates.deadline)}
+          hideArchive={Boolean(dayjs(instance.dates.deadline).isAfter(dayjs()))}
           archived={Boolean(instance.dates.archived)}
-          disableArchive
           styles={{ position: 'absolute', bottom: 0, left: 0, right: '50%', zIndex: 5 }}
         />
         {instanceData.horizontalTimeline && (
