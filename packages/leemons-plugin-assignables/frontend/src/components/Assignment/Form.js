@@ -1,8 +1,21 @@
 import React, { useMemo } from 'react';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { unflatten } from '@common';
 import { Controller, useForm } from 'react-hook-form';
-import { Box, Button, ContextContainer, DatePicker, Grid, Switch } from '@bubbles-ui/components';
+import {
+  Box,
+  Button,
+  ContextContainer,
+  DatePicker,
+  Grid,
+  InputWrapper,
+  Radio,
+  RadioGroup,
+  Switch,
+  Text,
+  Tooltip,
+} from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditorInput } from '@bubbles-ui/editors';
 
@@ -12,11 +25,106 @@ import TimeUnitsInput from '@tasks/components/Inputs/TimeUnitsInput';
 import prefixPN from '../../helpers/prefixPN';
 import AssignStudents from './AssignStudents';
 
+function GradeVariation({
+  onChange,
+  value,
+  variations = ['calificable', 'punctuation-evaluable', 'evaluable', 'no-evaluable'],
+  labels,
+}) {
+  const data = useMemo(
+    () =>
+      [
+        {
+          label: labels?.calificable?.label,
+          description: labels?.calificable?.description,
+          value: 'calificable',
+          variation: {
+            gradable: true,
+            requiresScoring: true,
+            allowFeedback: true,
+          },
+        },
+        {
+          label: labels?.punctuationEvaluable?.label,
+          description: labels?.punctuationEvaluable?.description,
+          value: 'punctuation-evaluable',
+          variation: {
+            gradable: false,
+            requiresScoring: true,
+            allowFeedback: true,
+          },
+        },
+        {
+          label: labels?.evaluable?.label,
+          description: labels?.evaluable?.description,
+          value: 'evaluable',
+          variation: {
+            gradable: false,
+            requiresScoring: false,
+            allowFeedback: true,
+          },
+        },
+        {
+          label: labels?.notEvaluable?.label,
+          description: labels?.notEvaluable?.description,
+          value: 'no-evaluable',
+          variation: {
+            gradable: false,
+            requiresScoring: false,
+            allowFeedback: false,
+          },
+        },
+      ].filter((variation) => variations.includes(variation.value)),
+    [labels, ...variations]
+  );
+
+  const selectedValue = useMemo(() => {
+    if (value) {
+      const found = data.find(({ variation: v }) => _.isEqual(v, value));
+
+      if (found) {
+        return found.value;
+      }
+    }
+
+    onChange(data[0].variation);
+    return data[0].value;
+  }, [JSON.stringify(value)]);
+
+  if (data?.length <= 1) {
+    return null;
+  }
+
+  return (
+    <RadioGroup
+      label={labels?.title}
+      direction="column"
+      data={data.map(({ label, description, value: v }) => ({
+        label: (
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+            <Text color="primary">{label}</Text>
+            <Text color="secondary">{description}</Text>
+          </Box>
+        ),
+        description,
+        value: v,
+      }))}
+      value={selectedValue}
+      onChange={(newValue) => {
+        const newVariation = data.find(({ value: v }) => newValue === v)?.variation;
+
+        onChange(newVariation);
+      }}
+    />
+  );
+}
+
 export default function Form({
   defaultValues = {},
   onSubmit: parentSubmit,
   assignable,
   sendButton,
+  variations,
 }) {
   const [, translations] = useTranslateLoader(prefixPN('assignment_form'));
   const {
@@ -26,10 +134,24 @@ export default function Form({
     setValue,
     formState: { errors },
   } = useForm({
-    defaultValues,
+    defaultValues: {
+      ...defaultValues,
+      gradeVariation: {
+        gradable: defaultValues?.gradable,
+        requiresScoring: defaultValues?.requiresScoring,
+        allowFeedback: defaultValues?.allowFeedback,
+      },
+    },
   });
 
-  const { labels, placeholders, descriptions, assignTo, modes } = useMemo(() => {
+  const {
+    labels,
+    placeholders,
+    descriptions,
+    assignTo,
+    modes,
+    gradeVariation: gradeVariationLabels,
+  } = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       const data = res.plugins.assignables.assignment_form;
@@ -51,6 +173,7 @@ export default function Form({
 
       return {
         labels: data.labels,
+        gradeVariation: data.gradeVariations,
         placeholders: data.placeholders,
         descriptions: data.descriptions,
         modes: _modes,
@@ -67,9 +190,9 @@ export default function Form({
     };
   }, [translations]);
 
-  const onSubmit = (data) => {
+  const onSubmit = ({ gradeVariation, ...data }) => {
     if (typeof parentSubmit === 'function') {
-      parentSubmit(data);
+      parentSubmit({ ...data, ...gradeVariation });
     }
   };
 
@@ -100,6 +223,19 @@ export default function Form({
             />
           )}
         />
+        <Controller
+          control={control}
+          name="gradeVariation"
+          render={({ field }) => (
+            <GradeVariation
+              {...field}
+              error={errors?.gradeVariation}
+              variations={variations}
+              labels={gradeVariationLabels}
+            />
+          )}
+        />
+
         <Controller
           control={control}
           name="alwaysAvailable"

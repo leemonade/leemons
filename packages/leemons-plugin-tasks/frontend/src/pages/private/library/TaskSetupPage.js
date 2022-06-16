@@ -83,6 +83,7 @@ export default function TaskSetupPage() {
       emitEvent('taskSaved');
     } catch (e) {
       addErrorAlert(e.message);
+      emitEvent('saveTaskFailed');
     } finally {
       if (loading.current === 'duplicate') {
         loading.current = null;
@@ -109,10 +110,8 @@ export default function TaskSetupPage() {
       addErrorAlert(e.error);
       throw e;
     } finally {
-      if (loading.current === 'edit') {
-        loading.current = null;
-        render();
-      }
+      loading.current = null;
+      render();
     }
   };
 
@@ -180,6 +179,12 @@ export default function TaskSetupPage() {
           } catch (e) {
             emitEvent('publishTaskFailed');
             reject(e);
+          }
+        } else if (event === 'saveTaskFailed') {
+          unsubscribe(f);
+          if (loading.current === 'edit') {
+            loading.current = null;
+            render();
           }
         }
       };

@@ -79,6 +79,34 @@ const TaskOngoingList = ({ instance }) => {
     }
   };
 
+  const onArchiveTask = async (archived) => {
+    const newDates = {
+      archived: archived ? new Date() : null,
+    };
+
+    try {
+      await mutateAsync({ id: instance.id, dates: newDates });
+
+      let verb = dashboardLocalizations.archiveAction.verbs.archived;
+      if (!archived) {
+        verb = dashboardLocalizations.archiveAction.verbs.unarchived;
+      }
+      addSuccessAlert(
+        dashboardLocalizations.archiveAction.messages.success.replace('{{verb}}', verb)
+      );
+    } catch (e) {
+      let verb = dashboardLocalizations.archiveAction.verbs.archiving;
+      if (!archived) {
+        verb = dashboardLocalizations.archiveAction.verbs.unarchiving;
+      }
+      addErrorAlert(
+        dashboardLocalizations.archiveAction.messages.error
+          .replace('{{verb}}', verb)
+          .replace('{{error}}', e.message)
+      );
+    }
+  };
+
   const onDeadlineChange = async (deadline) => {
     const newDates = {
       deadline,
@@ -112,7 +140,10 @@ const TaskOngoingList = ({ instance }) => {
           {...instanceData.taskDeadlineHeader}
           onDeadlineChange={onDeadlineChange}
           onCloseTask={onCloseTask}
+          onArchiveTask={onArchiveTask}
           closed={Boolean(instance.dates.closed || dayjs(instance.dates.close).isBefore(dayjs()))}
+          archived={Boolean(instance.dates.archived)}
+          disableArchive
           styles={{ position: 'absolute', bottom: 0, left: 0, right: '50%', zIndex: 5 }}
         />
         {instanceData.horizontalTimeline && (
