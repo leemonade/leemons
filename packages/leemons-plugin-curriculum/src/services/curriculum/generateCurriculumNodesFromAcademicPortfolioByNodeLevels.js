@@ -13,6 +13,11 @@ async function generateCurriculumNodesFromAcademicPortfolioByNodeLevels(
       if (!curriculum) throw new Error('Curriculum not found');
       const nodes = await table.nodes.count({ curriculum: curriculum.id }, { transacting });
       if (nodes) throw new Error('Curriculum already has nodes');
+
+      if (curriculum.step === 2) {
+        await table.curriculums.update({ id: curriculumId }, { step: 3 }, { transacting });
+      }
+
       const nodeLevels = await nodeLevelsByCurriculum(curriculumId, { transacting });
       // ES: Ordenamos los node levels por levelOrder
       // EN: Sort node levels by levelOrder

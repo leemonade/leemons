@@ -29,19 +29,28 @@ module.exports = {
       },
     },
     parentNode: {
+      type: 'string',
+      /*
       references: {
         collection: 'plugins_curriculum::nodes',
       },
+      */
     },
     nodeLevel: {
+      type: 'string',
+      /*
       references: {
         collection: 'plugins_curriculum::node-levels',
       },
+      */
     },
     curriculum: {
+      type: 'string',
+      /*
       references: {
         collection: 'plugins_curriculum::curriculums',
       },
+       */
     },
   },
   primaryKey: {

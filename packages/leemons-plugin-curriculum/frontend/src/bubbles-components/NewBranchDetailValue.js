@@ -78,13 +78,11 @@ function NewBranchDetailValue({
   async function save() {
     handleSubmit(async (data) => {
       const toSend = { ...data, id: defaultValues?.id };
-      console.log(toSend);
       let fErrors = [];
       if (formActions.isLoaded()) {
         await formActions.submit();
         fErrors = formActions.getErrors();
 
-        console.log(fErrors);
         toSend.datasetValues = formActions.getValues();
       }
 

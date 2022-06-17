@@ -18,14 +18,18 @@ const deleteSchema = require('../dataset-schema/deleteSchema');
  *  @param {any=} transacting - DB Transaction
  *  @return {Promise<boolean>} The new dataset location
  *  */
-async function deleteLocation(locationName, pluginName, { transacting: _transacting } = {}) {
+async function deleteLocation(
+  locationName,
+  pluginName,
+  { deleteValues, transacting: _transacting } = {}
+) {
   validateLocationAndPlugin(locationName, pluginName);
   validatePluginName(pluginName, this.calledFrom);
   await validateNotExistLocation(locationName, pluginName, { transacting: _transacting });
 
   return global.utils.withTransaction(
     async (transacting) => {
-      await deleteSchema.call(this, locationName, pluginName, { transacting });
+      await deleteSchema.call(this, locationName, pluginName, { deleteValues, transacting });
       const promises = [table.dataset.delete({ locationName, pluginName }, { transacting })];
       if (translations()) {
         promises.push(

@@ -3,10 +3,11 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Checkbox, InputWrapper, Paragraph, Stack } from '@bubbles-ui/components';
+import { Box, Checkbox, InputWrapper, Paragraph, Stack, Text } from '@bubbles-ui/components';
 import { isArray, isNil } from 'lodash';
+import { RatingStarIcon } from '@bubbles-ui/icons/outline';
 
-function Value({ item, store, render, property }) {
+function Value({ item, store, render, property, showCheckboxs }) {
   const key = `curriculum.${store.curriculum.id}|nodeLevel.${store.selectedNode.nodeLevel}|node.${store.selectedNode.id}|property.${property.id}|value.${item.id}`;
 
   function onChange() {
@@ -22,9 +23,11 @@ function Value({ item, store, render, property }) {
 
   return (
     <Stack fullWidth alignItems="start">
-      <Checkbox checked={store.value?.indexOf(key) >= 0} onChange={onChange} />
+      {showCheckboxs ? (
+        <Checkbox checked={store.value?.indexOf(key) >= 0} onChange={onChange} />
+      ) : null}
       <Stack alignItems="baseline">
-        {item.metadata?.index ? <Paragraph>{`${item.metadata?.index}`}</Paragraph> : null}
+        {item.metadata?.index ? <Text strong>{`${item.metadata?.index}`}</Text> : null}
         <Box sx={(theme) => ({ flex: 1, paddingLeft: theme.spacing[3] })}>
           <Paragraph
             dangerouslySetInnerHTML={{
@@ -42,25 +45,64 @@ Value.propTypes = {
   render: PropTypes.func,
   item: PropTypes.any,
   property: PropTypes.any,
+  showCheckboxs: PropTypes.bool,
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export function CurriculumProp({ store, render, item }) {
+export function CurriculumProp({ store, render, item, showCheckboxs = true }) {
   let values;
+  let isEvaluationCriteria = false;
   if (store.selectedNode?.formValues) {
     values = store.selectedNode?.formValues[item.id];
   }
+  if (
+    store.selectedNode?.nodeLevel?.schema?.compileJsonSchema?.properties?.[item.id]?.frontConfig
+      ?.blockData?.evaluationCriteria
+  ) {
+    isEvaluationCriteria = true;
+  }
+
   return (
     <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
-      <InputWrapper label={item.title}>
+      <InputWrapper
+        label={
+          <Box>
+            {isEvaluationCriteria ? (
+              <Box
+                sx={(theme) => ({
+                  display: 'inline-block',
+                  verticalAlign: 'center',
+                  marginRight: theme.spacing[2],
+                })}
+              >
+                <RatingStarIcon />
+              </Box>
+            ) : null}
+            {item.title}
+          </Box>
+        }
+      >
         {isNil(values) ? (
           '-'
         ) : isArray(values) ? (
           values.map((value) => (
-            <Value key={value.id} store={store} render={render} item={value} property={item} />
+            <Value
+              key={value.id}
+              showCheckboxs={showCheckboxs}
+              store={store}
+              render={render}
+              item={value}
+              property={item}
+            />
           ))
         ) : (
-          <Value store={store} render={render} item={values} property={item} />
+          <Value
+            store={store}
+            showCheckboxs={showCheckboxs}
+            render={render}
+            item={values}
+            property={item}
+          />
         )}
       </InputWrapper>
     </Box>
@@ -71,4 +113,5 @@ CurriculumProp.propTypes = {
   store: PropTypes.object,
   render: PropTypes.func,
   item: PropTypes.object,
+  showCheckboxs: PropTypes.bool,
 };

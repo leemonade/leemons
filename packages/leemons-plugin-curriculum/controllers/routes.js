@@ -26,6 +26,18 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/curriculum/:id/publish',
+    method: 'POST',
+    handler: 'curriculum.publishCurriculum',
+    authenticated: true,
+  },
+  {
+    path: '/curriculum/:id',
+    method: 'DELETE',
+    handler: 'curriculum.deleteCurriculum',
+    authenticated: true,
+  },
+  {
     path: '/curriculum/:id',
     method: 'POST',
     handler: 'curriculum.getCurriculum',

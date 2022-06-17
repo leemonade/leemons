@@ -1,5 +1,8 @@
 module.exports = {
   listCurriculum: {
+    view: 'Ver',
+    delete: 'Borrar',
+    deleted: 'Curriculum borrado',
     page_title: 'Biblioteca de Curricula',
     page_description:
       'Estos son los planes de estudio de los programas que se imparten en el centro.',
@@ -146,6 +149,9 @@ module.exports = {
     addNode: 'Añadir {name}',
     description1:
       'Ahora se pueden añadir contenidos a cada tipología de bloque, recuerda que los contenidos del bloque marcado con una estrella podrán vincularse con actividades evaluables o calificables y viajar al sistema de calificaciones finales.',
+    publish: 'Publicar curriculum',
+    starDescription:
+      'Los bloques marcados con una estrella corresponden a criterios de evaluación.',
     newBranchValue: {
       nameLabel: 'Nombre',
       subjectLabel: 'Asignatura',

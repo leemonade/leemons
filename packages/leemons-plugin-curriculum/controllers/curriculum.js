@@ -34,13 +34,17 @@ async function listCurriculum(ctx) {
     properties: {
       page: { type: ['number', 'string'] },
       size: { type: ['number', 'string'] },
+      canListUnpublished: { type: ['number', 'string'] },
     },
     required: ['page', 'size'],
     additionalProperties: true,
   });
   if (validator.validate(ctx.request.query)) {
-    const { page, size, ...query } = ctx.request.query;
+    const { page, size, canListUnpublished, ...query } = ctx.request.query;
+    const can = _.isString(canListUnpublished) ? canListUnpublished === 'true' : canListUnpublished;
     const data = await curriculumService.listCurriculums(parseInt(page, 10), parseInt(size, 10), {
+      canListUnpublished: can,
+      userSession: ctx.state.userSession,
       query,
     });
     ctx.status = 200;
@@ -56,10 +60,24 @@ async function getDataForKeys(ctx) {
   ctx.body = { status: 200, data };
 }
 
+async function deleteCurriculum(ctx) {
+  await curriculumService.deleteCurriculum(ctx.request.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
+async function publishCurriculum(ctx) {
+  await curriculumService.publishCurriculum(ctx.request.params.id);
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
 module.exports = {
   getCurriculum,
   postCurriculum,
   listCurriculum,
   getDataForKeys,
+  deleteCurriculum,
+  publishCurriculum,
   generateCurriculum,
 };

@@ -1,5 +1,8 @@
 module.exports = {
   listCurriculum: {
+    view: 'View',
+    delete: 'Delete',
+    deleted: 'Curriculum deleted',
     page_title: 'Curriculum Library',
     page_description: 'These are the curricula of the programmes you deliver.',
   },
@@ -146,6 +149,8 @@ module.exports = {
     addNode: 'Add {name}',
     description1:
       'Now you can add content to each block typology, remember that the contents of the block marked with a star can be linked to evaluable or gradable activities and travel to the final grading system.',
+    publish: 'Publish curriculum',
+    starDescription: 'The blocks marked with a star correspond to evaluation criteria.',
     newBranchValue: {
       nameLabel: 'Name',
       subjectLabel: 'Subject',

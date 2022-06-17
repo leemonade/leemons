@@ -6,8 +6,19 @@ const { nodeLevelsByCurriculum } = require('./nodeLevelsByCurriculum');
 async function addNodeLevels(data, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
-      console.log(data);
       await validateAddNodeLevels(data, { transacting });
+
+      const curriculum = await table.curriculums.findOne(
+        { id: data.curriculum },
+        {
+          columns: ['step'],
+          transacting,
+        }
+      );
+
+      if (curriculum.step === 1) {
+        await table.curriculums.update({ id: data.curriculum }, { step: 2 }, { transacting });
+      }
 
       const nodeLevels = await Promise.all(
         _.map(data.nodeLevels, (nodeLevel) =>
