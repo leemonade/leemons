@@ -62,6 +62,7 @@ async function getTestsDetails(id, { userSession, withQuestionBank, transacting 
     })),
     type: assignable.metadata.type,
     levels: assignable.metadata.level,
+    curriculum: assignable.subjects?.[0]?.curriculum,
   }));
 
   /*

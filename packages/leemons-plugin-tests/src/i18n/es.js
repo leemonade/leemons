@@ -186,6 +186,7 @@ module.exports = {
     reorderQuestionsDescription: 'Preguntas seleccionas para este test (reordenar si es necesario)',
     statementLabel: 'Enunciado del test',
     addFromCurriculum: 'Añadir del curriculum',
+    curriculum: 'Curriculum',
     statementRequired: 'Campo necesario',
     contentLabel: 'Contenido',
     instructionsForTeacherLabel: 'Instrucciones para el profesor',

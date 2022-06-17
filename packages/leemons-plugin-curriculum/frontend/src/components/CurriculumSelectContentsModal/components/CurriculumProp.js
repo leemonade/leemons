@@ -57,6 +57,8 @@ export function CurriculumProp({ store, render, item, showCheckboxs = true }) {
   }
   if (
     store.selectedNode?.nodeLevel?.schema?.compileJsonSchema?.properties?.[item.id]?.frontConfig
+      ?.blockData?.evaluationCriteria ||
+    store.selectedNode?._nodeLevel?.schema?.compileJsonSchema?.properties?.[item.id]?.frontConfig
       ?.blockData?.evaluationCriteria
   ) {
     isEvaluationCriteria = true;

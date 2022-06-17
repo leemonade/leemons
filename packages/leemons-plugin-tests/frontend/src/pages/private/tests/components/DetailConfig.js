@@ -2,17 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Button, ContextContainer, Select, Stack, Switch } from '@bubbles-ui/components';
 import { Controller } from 'react-hook-form';
-import { groupBy, map, uniqBy } from 'lodash';
-import { useStore } from '@common';
-import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { useTestsTypes } from '../../../../helpers/useTestsTypes';
 
-export default function DetailConfig({ form, t, onNext, onPrev }) {
+export default function DetailConfig({ store, form, t, onNext, onPrev }) {
   const [isDirty, setIsDirty] = React.useState(false);
-  const [store, render] = useStore({
-    subjectsByProgram: {},
-  });
   const testTypes = useTestsTypes();
   const program = form.watch('program');
   const type = form.watch('type');
@@ -25,29 +19,6 @@ export default function DetailConfig({ form, t, onNext, onPrev }) {
       onNext();
     }
   }
-
-  async function load() {
-    const [{ programs }, { classes }] = await Promise.all([
-      getUserProgramsRequest(),
-      listSessionClassesRequest(),
-    ]);
-    store.subjects = uniqBy(map(classes, 'subject'), 'id');
-    store.subjectsByProgram = groupBy(
-      map(store.subjects, (item) => ({
-        value: item.id,
-        label: item.name,
-        program: item.program,
-      })),
-      'program'
-    );
-    store.programs = programs;
-    store.programsData = map(programs, ({ id, name }) => ({ value: id, label: name }));
-    render();
-  }
-
-  React.useEffect(() => {
-    load();
-  }, []);
 
   return (
     <ContextContainer divided>
@@ -136,4 +107,5 @@ DetailConfig.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   onNext: PropTypes.func,
+  store: PropTypes.any,
 };

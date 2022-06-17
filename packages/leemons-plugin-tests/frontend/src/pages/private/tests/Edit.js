@@ -1,5 +1,11 @@
 import React from 'react';
-import { Box, Stack, useDebouncedCallback, VerticalStepperContainer } from '@bubbles-ui/components';
+import {
+  Box,
+  LoadingOverlay,
+  Stack,
+  useDebouncedCallback,
+  VerticalStepperContainer,
+} from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
@@ -7,8 +13,9 @@ import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { map } from 'lodash';
+import { groupBy, map, uniqBy } from 'lodash';
 import { PluginTestIcon } from '@bubbles-ui/icons/outline';
+import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import DetailConfig from './components/DetailConfig';
 import { getTestRequest, saveTestRequest } from '../../../request';
 import DetailBasic from './components/DetailBasic';
@@ -68,6 +75,25 @@ export default function Edit() {
     render();
   }
 
+  async function load() {
+    const [{ programs }, { classes }] = await Promise.all([
+      getUserProgramsRequest(),
+      listSessionClassesRequest(),
+    ]);
+    store.subjects = uniqBy(map(classes, 'subject'), 'id');
+    store.subjectsByProgram = groupBy(
+      map(store.subjects, (item) => ({
+        value: item.id,
+        label: item.name,
+        program: item.program,
+      })),
+      'program'
+    );
+    store.programs = programs;
+    store.programsData = map(programs, ({ id, name }) => ({ value: id, label: name }));
+    render();
+  }
+
   async function init() {
     try {
       store.isNew = params.id === 'new';
@@ -79,6 +105,9 @@ export default function Edit() {
         } = await getTestRequest(params.id);
         form.reset({ ...props, questions: map(props.questions, 'id') });
       }
+      await load();
+      store.loading = false;
+      render();
     } catch (error) {
       addErrorAlert(error);
     }
@@ -131,7 +160,13 @@ export default function Edit() {
       );
     if (store.currentStep === 4)
       component = (
-        <DetailContent t={t} form={form} onNext={() => setStep(5)} onPrev={() => setStep(3)} />
+        <DetailContent
+          store={store}
+          t={t}
+          form={form}
+          onNext={() => setStep(5)}
+          onPrev={() => setStep(3)}
+        />
       );
     if (store.currentStep === 5)
       component = (
@@ -163,6 +198,7 @@ export default function Edit() {
 
   return (
     <Stack direction="column" fullHeight>
+      {store.loading ? <LoadingOverlay visible /> : null}
       <AdminPageHeader
         values={{
           // eslint-disable-next-line no-nested-ternary
@@ -192,7 +228,13 @@ export default function Edit() {
         >
           {store.currentStep === 0 && <DetailBasic t={t} form={form} onNext={() => setStep(1)} />}
           {store.currentStep === 1 && (
-            <DetailConfig t={t} form={form} onNext={() => setStep(2)} onPrev={() => setStep(0)} />
+            <DetailConfig
+              store={store}
+              t={t}
+              form={form}
+              onNext={() => setStep(2)}
+              onPrev={() => setStep(0)}
+            />
           )}
           {component}
         </VerticalStepperContainer>
