@@ -27,7 +27,9 @@ async function setLanguages(langs, defaultLang, { transacting: _transacting } = 
         locales.map((lang) => userService.platform.addLocale(lang.code, lang.name))
       );
 
-      if (translations()) {
+      const languageService = translations();
+
+      if (languageService) {
         const localesData = {};
 
         for (let i = 0, len = localesAdded.length; i < len; i++) {
@@ -40,14 +42,15 @@ async function setLanguages(langs, defaultLang, { transacting: _transacting } = 
           localesData[locale.code] = JSON.parse(localesData[locale.code]);
         }
 
-        await translations().common.setManyByJSON(localesData, leemons.plugin.prefixPN(''));
+        await languageService.common.setManyByJSON(localesData, leemons.plugin.prefixPN(''));
       }
 
       if (defaultLang && isString(defaultLang) && !isEmpty(defaultLang)) {
         await userService.platform.setDefaultLocale(defaultLang);
       }
 
-      return update(
+      return update.call(
+        this,
         {
           ...(currentSettings || {}),
           lang: defaultLang || currentSettings?.lang || 'en',

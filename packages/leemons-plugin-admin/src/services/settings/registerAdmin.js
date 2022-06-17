@@ -1,4 +1,3 @@
-const { isEmpty, isString } = require('lodash');
 const { STATUS, profileSettings } = require('../../../config/constants');
 const { table } = require('../tables');
 const findOne = require('./findOne');
@@ -34,7 +33,8 @@ async function registerAdmin({ email, password, locale }, { transacting: _transa
         [profile.role]
       );
 
-      return update(
+      return update.call(
+        this,
         {
           ...(currentSettings || {}),
           status: STATUS.ADMIN_CREATED,

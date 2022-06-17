@@ -47,6 +47,6 @@ module.exports = [
     method: 'POST',
     handler: 'settings.update',
     authenticated: true,
-    allowedPermissions: getPermissions(permissions.config, ['admin']),
+    allowedPermissions: getPermissions(permissions.setup, ['admin']),
   },
 ];

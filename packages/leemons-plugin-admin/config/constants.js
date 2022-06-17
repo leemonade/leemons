@@ -1,21 +1,21 @@
 const permissionsPrefix = 'plugins.admin';
 
 const permissionNames = {
-  config: `${permissionsPrefix}.config`,
+  setup: `${permissionsPrefix}.setup`,
 };
 
 const permissions = [
   {
-    permissionName: permissionNames.config,
+    permissionName: permissionNames.setup,
     actions: ['view', 'update', 'create', 'delete', 'admin'],
     localizationName: { es: 'Configuración', en: 'Config' },
   },
 ];
 
 const permissionsBundles = {
-  config: {
+  setup: {
     all: {
-      permission: permissionNames.config,
+      permission: permissionNames.setup,
       actions: ['view', 'update', 'create', 'delete', 'admin'],
     },
   },
@@ -25,7 +25,7 @@ const menuItems = [
   // Main
   {
     item: {
-      key: 'config',
+      key: 'setup',
       order: 0,
       iconSvg: '/public/admin/menu-icon.svg',
       activeIconSvg: '/public/admin/menu-icon.svg',
@@ -37,7 +37,7 @@ const menuItems = [
     },
     permissions: [
       {
-        permissionName: permissionNames.config,
+        permissionName: permissionNames.setup,
         actionNames: ['admin'],
       },
     ],
@@ -45,12 +45,12 @@ const menuItems = [
 ];
 
 const profileSettings = {
-  name: 'super-admin',
+  name: 'SuperAdmin',
   description: 'Profile for platform super-administrators',
   indexable: false,
   permissions: [
     {
-      permissionName: 'plugins.admin.config',
+      permissionName: 'plugins.admin.setup',
       actionNames: ['admin'],
     },
     {

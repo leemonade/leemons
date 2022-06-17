@@ -17,6 +17,7 @@ async function addMenuItem({ menuItem, config }, { item, permissions }) {
       permissions
     );
   }
+
   return menuItem.update(
     config.constants.mainMenuKey,
     leemons.plugin.prefixPN(item.key),

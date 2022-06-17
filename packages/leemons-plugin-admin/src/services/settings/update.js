@@ -8,10 +8,18 @@ const findOne = require('./findOne');
  * @return {Promise<any>}
  * */
 async function update(settings, { transacting: _transacting } = {}) {
+  // TODO: Check why this.calledFrom from the plgin itself is not working
+  let allowed = !this.calledFrom;
+
   if (
-    this.calledFrom.startsWith('plugins.mvp-template') ||
-    this.calledFrom.startsWith('plugins.admin')
+    this.calledFrom &&
+    (this.calledFrom.startsWith('plugins.mvp-template') ||
+      this.calledFrom.startsWith('plugins.admin'))
   ) {
+    allowed = true;
+  }
+
+  if (allowed) {
     return global.utils.withTransaction(
       async (transacting) => {
         let currentSettings = await findOne({ transacting });

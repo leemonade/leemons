@@ -14,10 +14,7 @@ const initCalendar = require('./src/calendar');
 
 async function initAdmin() {
   const { services } = leemons.getPlugin('admin');
-  await Promise.all([
-    services.settings.update({ status: 'INSTALLED', configured: true }),
-    services.settings.initMenu(),
-  ]);
+  await services.settings.update({ status: 'INSTALLED', configured: true });
 }
 
 async function events(isInstalled) {
@@ -40,6 +37,7 @@ async function events(isInstalled) {
       ],
       async () => {
         await initLocales();
+        leemons.events.emit('init-locales');
       }
     );
 

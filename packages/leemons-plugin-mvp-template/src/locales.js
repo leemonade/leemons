@@ -20,8 +20,8 @@ async function initLocales() {
       locales[itemKey] = localeData;
     }
 
-    console.log('------ LOCALES ------');
-    console.dir(locales, { depth: null });
+    // console.log('------ LOCALES ------');
+    // console.dir(locales, { depth: null });
 
     await leemons.getPlugin('admin').services.settings.update({ status: 'LOCALIZED' });
 

@@ -98,7 +98,7 @@ async function getIfHasPermission(menuKey, userSession, { transacting } = {}) {
   );
 
   if (isSuperAdmin) {
-    menuItems = menuItems.filter((item) => item.key === 'plugins.admin.config');
+    menuItems = menuItems.filter((item) => item.key.indexOf('plugins.admin') === 0);
   }
 
   return transformManyMenuItemsToFrontEndMenu(menuItems, userSession.locale, customItemIds, {
