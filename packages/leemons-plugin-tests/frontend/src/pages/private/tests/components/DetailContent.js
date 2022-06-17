@@ -4,6 +4,7 @@ import { Box, Button, ContextContainer, Stack } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { Controller } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import Curriculum from '@tasks/components/TaskSetupPage/components/Curriculum';
 
 export default function DetailContent({ form, t, onNext, onPrev }) {
   const [isDirty, setIsDirty] = React.useState(false);
@@ -30,6 +31,14 @@ export default function DetailContent({ form, t, onNext, onPrev }) {
               {...field}
             />
           )}
+        />
+
+        <Curriculum
+          program={form.getValues('program')}
+          subjects={form.getValues('subjects')}
+          name="curriculum"
+          control={form.control}
+          addLabel={t('addFromCurriculum')}
         />
       </ContextContainer>
       <Stack justifyContent="space-between">

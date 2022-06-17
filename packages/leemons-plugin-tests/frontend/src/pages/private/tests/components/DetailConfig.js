@@ -1,19 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Button,
-  ContextContainer,
-  MultiSelect,
-  Select,
-  Stack,
-  Switch,
-  Box,
-} from '@bubbles-ui/components';
+import { Box, Button, ContextContainer, Select, Stack, Switch } from '@bubbles-ui/components';
 import { Controller } from 'react-hook-form';
 import { groupBy, map, uniqBy } from 'lodash';
 import { useStore } from '@common';
 import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
-import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { useTestsTypes } from '../../../../helpers/useTestsTypes';
 
 export default function DetailConfig({ form, t, onNext, onPrev }) {
@@ -80,13 +72,17 @@ export default function DetailConfig({ form, t, onNext, onPrev }) {
           name="subjects"
           rules={{ required: t('subjectRequired') }}
           render={({ field }) => (
-            <MultiSelect
+            <Select
               required
               error={isDirty ? form.formState.errors.subjects : null}
               label={t('subjectLabel')}
               disabled={!program}
               data={store.subjectsByProgram[program] || []}
               {...field}
+              value={field.value ? field.value[0] : field.value}
+              onChange={(e) => {
+                field.onChange(e ? [e] : e);
+              }}
             />
           )}
         />

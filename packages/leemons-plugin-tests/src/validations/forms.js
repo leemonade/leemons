@@ -134,6 +134,10 @@ const saveTestSchema = {
     instructionsForStudents: textSchemaNullable,
     questionBank: stringSchemaNullable,
     program: stringSchemaNullable,
+    curriculum: {
+      type: 'array',
+      items: stringSchema,
+    },
     subjects: {
       type: 'array',
       items: stringSchema,
