@@ -1,8 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ContextContainer, HtmlText, Box, Tabs, TabPanel, Title } from '@bubbles-ui/components';
+import {
+  ContextContainer,
+  HtmlText,
+  Box,
+  Tabs,
+  TabPanel,
+  Title,
+  ImageLoader,
+} from '@bubbles-ui/components';
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
+import prepareAsset, { getFileUrl } from '@leebrary/helpers/prepareAsset';
+import { useQuery } from 'react-query';
+import { getAssetsByIdsRequest } from '@leebrary/request';
 
 function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labels }) {
   const {
@@ -105,11 +116,30 @@ CurriculumRender.propTypes = {
   labels: PropTypes.object.isRequired,
 };
 
+function useSupportImage(assignable) {
+  const query = useQuery(
+    ['asset', { id: assignable?.metadata?.leebrary?.statementImage?.[0] }],
+    () =>
+      getAssetsByIdsRequest([assignable?.metadata?.leebrary?.statementImage?.[0]], {
+        indexable: false,
+        showPublic: true,
+      }).then((response) => response.assets[0]),
+    { enabled: !!assignable?.metadata?.leebrary?.statementImage?.[0] }
+  );
+
+  if (query.data) {
+    query.data = prepareAsset(query.data);
+  }
+
+  return query;
+}
 export default function StatementStep({ assignation, labels: _labels }) {
   const labels = _labels.statement_step;
 
   const { instance } = assignation;
   const { assignable } = instance;
+
+  const { data: supportImage } = useSupportImage(assignable);
 
   const showCurriculum = instance.curriculum;
 
@@ -120,6 +150,7 @@ export default function StatementStep({ assignation, labels: _labels }) {
           {labels?.statement}
         </Title>
         <HtmlText>{assignable?.statement}</HtmlText>
+        {!!supportImage && <ImageLoader src={supportImage.url} height="auto" />}
       </ContextContainer>
       <CurriculumRender
         assignation={assignation}

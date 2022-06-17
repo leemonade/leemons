@@ -71,7 +71,6 @@ export default function AssignmentPage() {
         alwaysAvailable: alwaysAvailable || false,
         dates: alwaysAvailable ? {} : dates,
         // TODO: let the user decide
-        gradable: true,
       };
 
       if (assignees[0]?.type === 'custom') {

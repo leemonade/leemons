@@ -77,11 +77,33 @@ module.exports = {
       minutes: 'Minutos',
       days: 'Días',
     },
+    gradeVariations: {
+      title: 'Tipo de actividad',
+      calificable: {
+        label: 'Calificable',
+        description:
+          'La puntuación será tenida en cuenta para la nota final, se admiten comentarios',
+      },
+      punctuationEvaluable: {
+        label: 'Evaluable con puntuación',
+        description:
+          'Se pide una puntuación pero no serña tenida en cuenta para la nota final, se admiten comentarios',
+      },
+      evaluable: {
+        label: 'Evaluable sin puntuación',
+        description: 'Solo se devuelven comentarios',
+      },
+      notEvaluable: {
+        label: 'No evaluable',
+        description: 'El alumno no recibe ninguna retro-alimentación',
+      },
+    },
   },
   activity_deadline_header: {
     deadline: 'Fecha límite',
     deadlineExtraTime: 'Añadir tiempo extra',
     closeTask: 'Cerrar actividad',
+    archiveTask: 'Archivar actividad',
     save: 'Guardar',
     cancel: 'Cancelar',
   },
@@ -92,6 +114,18 @@ module.exports = {
         opened: 'Empezada',
         closing: 'Cerrando',
         closed: 'Cerrada',
+      },
+      messages: {
+        success: 'Actividad {{verb}}',
+        error: 'Error {{verb}} actividad: {{error}}',
+      },
+    },
+    archiveAction: {
+      verbs: {
+        archiving: 'Archivando',
+        archived: 'Archivada',
+        unarchiving: 'Desarchivando',
+        unarchived: 'Desarchivada',
       },
       messages: {
         success: 'Actividad {{verb}}',
