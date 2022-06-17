@@ -1,8 +1,12 @@
 const getMenuBuilder = require('./getMenuBuilder');
 
 async function addMenuItem({ menuItem, config }, { item, permissions }) {
-  // eslint-disable-next-line no-await-in-loop
-  if (!(await menuItem.exist(config.constants.mainMenuKey, leemons.plugin.prefixPN(item.key)))) {
+  const checkMenuItem = await menuItem.exist(
+    config.constants.mainMenuKey,
+    leemons.plugin.prefixPN(item.key)
+  );
+
+  if (!checkMenuItem) {
     return menuItem.add(
       {
         ...item,
@@ -13,7 +17,12 @@ async function addMenuItem({ menuItem, config }, { item, permissions }) {
       permissions
     );
   }
-  return null;
+  return menuItem.update(
+    config.constants.mainMenuKey,
+    leemons.plugin.prefixPN(item.key),
+    { ...item, parentKey: item.parentKey ? leemons.plugin.prefixPN(item.parentKey) : undefined },
+    permissions
+  );
 }
 
 async function add(_items, shouldWait = false) {

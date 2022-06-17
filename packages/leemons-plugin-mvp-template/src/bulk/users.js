@@ -64,6 +64,7 @@ async function importUsers(centers, profiles) {
             profile: profiles[profile]?.id,
             center: centers[center]?.id,
             profileKey: profile,
+            profileRole: profiles[profile]?.role,
           };
         });
 

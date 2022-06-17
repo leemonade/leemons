@@ -1,7 +1,8 @@
 {
-  "private": true,
   "name": "leemons-monorepo",
-  "description": "The powerful flexible friendly Learning Experience Platform you’re waiting for",
+  "description": "The powerful, flexible, friendly Learning Experience Platform you’re waiting for",
+  "private": true,
+  "version": "0.0.1-beta.0",
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
     "@types/jest": "^26.0.23",

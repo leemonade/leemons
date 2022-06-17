@@ -1,7 +1,7 @@
-const pluginPath = 'admin';
+import { PLUGIN_NAME } from '../../constants';
 
 async function getSettings() {
-  return leemons.api(`${pluginPath}/settings`);
+  return leemons.api(`${PLUGIN_NAME}/settings`);
 }
 
 async function updateSettings(values) {
@@ -15,17 +15,28 @@ async function updateSettings(values) {
     delete body.id;
   }
 
-  return leemons.api(`${pluginPath}/settings`, { method: 'POST', body });
+  return leemons.api(`${PLUGIN_NAME}/settings`, { method: 'POST', body });
 }
 
 async function setLanguages(langs, defaultLang) {
   const body = { langs, defaultLang };
 
-  return leemons.api(`${pluginPath}/settings/languages`, { method: 'POST', body });
+  return leemons.api(`${PLUGIN_NAME}/settings/languages`, { method: 'POST', body });
+}
+
+async function signup(values) {
+  const body = {
+    email: values.email,
+    password: values.password,
+    locale: values.locale,
+  };
+
+  return leemons.api(`${PLUGIN_NAME}/settings/signup`, { method: 'POST', body });
 }
 
 export {
   getSettings as getSettingsRequest,
   updateSettings as updateSettingsRequest,
   setLanguages as setLanguagesRequest,
+  signup as signupRequest,
 };

@@ -1,3 +1,5 @@
+import { PLUGIN_NAME } from '../constants';
+
 /**
  * ES:
  * Añade el prefijo del plugin
@@ -11,5 +13,5 @@
  * @return {string} str with plugin name prefix
  * */
 export default function prefixPN(str) {
-  return `plugins.admin.${str}`;
+  return `plugins.${PLUGIN_NAME}.${str}`;
 }

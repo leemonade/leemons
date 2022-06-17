@@ -1,5 +1,3 @@
-const _ = require('lodash');
-const { add: addRole } = require('../roles');
 const { existName } = require('./existName');
 const { table } = require('../tables');
 const createNecessaryRolesForProfilesAccordingToCenters = require('./createNecessaryRolesForProfilesAccordingToCenters');
@@ -16,7 +14,7 @@ const { updateProfileTranslations } = require('./updateProfileTranslations');
  * @return {Promise<any>} Created permissions-roles
  * */
 async function add(
-  { name, description, permissions, translations },
+  { name, description, permissions, translations, indexable },
   { transacting: _transacting } = {}
 ) {
   return global.utils.withTransaction(
@@ -29,6 +27,7 @@ async function add(
           name,
           description,
           uri: global.utils.slugify(name, { lower: true }),
+          indexable,
         },
         { transacting }
       );

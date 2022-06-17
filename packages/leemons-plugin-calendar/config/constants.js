@@ -4,7 +4,7 @@ module.exports = {
   permissions: [
     {
       permissionName: `${permissionsPrefix}.calendar`,
-      actions: ['view', 'admin'],
+      actions: ['view', 'update', 'admin'],
       localizationName: { es: 'Calendario', en: 'Calendar' },
     },
     {

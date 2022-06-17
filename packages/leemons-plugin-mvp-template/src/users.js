@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-const { keys, map, uniq } = require('lodash');
+const { keys, map, uniq, isEmpty } = require('lodash');
 const importUsers = require('./bulk/users');
 
 async function initUsers(centers, profiles) {
@@ -15,13 +15,17 @@ async function initUsers(centers, profiles) {
       const itemKey = itemsKeys[i];
       const { roles, ...item } = users[itemKey];
 
-      // console.log('user roles:', roles);
-
-      const itemRoles = await Promise.all(
-        roles.map((rol) =>
-          services.profiles.getRoleForRelationshipProfileCenter(rol.profile, rol.center)
-        )
+      let itemRoles = await Promise.all(
+        roles
+          .filter((rol) => rol.center)
+          .map((rol) =>
+            services.profiles.getRoleForRelationshipProfileCenter(rol.profile, rol.center)
+          )
       );
+
+      if (isEmpty(itemRoles)) {
+        itemRoles = roles.map((rol) => ({ id: rol.profileRole }));
+      }
 
       // console.log('user roles created:', itemRoles);
 

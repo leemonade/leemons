@@ -25,10 +25,11 @@ const menuItems = [
   // Main
   {
     item: {
-      order: 1,
       key: 'config',
+      order: 0,
       iconSvg: '/public/admin/menu-icon.svg',
       activeIconSvg: '/public/admin/menu-icon.svg',
+      url: '/private/admin/setup',
       label: {
         en: 'Config',
         es: 'Configuración',
@@ -44,40 +45,49 @@ const menuItems = [
 ];
 
 const profileSettings = {
-  name: 'SuperAdmin',
+  name: 'super-admin',
   description: 'Profile for platform super-administrators',
+  indexable: false,
   permissions: [
     {
-      permissionName: 'plugins.users.users',
+      permissionName: 'plugins.admin.config',
       actionNames: ['admin'],
+    },
+    {
+      permissionName: 'plugins.users.users',
+      actionNames: ['update'],
     },
     {
       permissionName: 'plugins.users.user-data',
-      actionNames: ['admin'],
+      actionNames: ['update'],
     },
     {
       permissionName: 'plugins.users.centers',
-      actionNames: ['admin'],
+      actionNames: ['update'],
     },
     {
       permissionName: 'plugins.users.profiles',
-      actionNames: ['admin'],
+      actionNames: ['update'],
     },
     {
       permissionName: 'plugins.dataset.dataset',
-      actionNames: ['admin'],
+      actionNames: ['update'],
     },
     {
       permissionName: 'plugins.calendar.calendar',
-      actionNames: ['admin'],
+      actionNames: ['update'],
+    },
+    {
+      permissionName: 'plugins.calendar.calendar-configs',
+      actionNames: ['update'],
     },
     {
       permissionName: 'plugins.timetable.config',
-      actionNames: ['admin'],
+      actionNames: ['update'],
     },
     {
       permissionName: 'plugins.timetable.timetable',
-      actionNames: ['admin'],
+      actionNames: ['update'],
     },
     {
       permissionName: 'plugins.leebrary.library',

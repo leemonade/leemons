@@ -8,8 +8,17 @@ const { table } = require('../tables');
  * @return {Promise<string[]>} Super admin ids
  * */
 async function getSuperAdminUserIds({ transacting } = {}) {
-  const superAdminUsers = await table.superAdminUser.find(undefined, { transacting });
-  return _.map(superAdminUsers, 'user');
+  const profile = await table.profiles.findOne(
+    { name: 'super-admin' },
+    { columns: ['role'], transacting }
+  );
+
+  const userAgents = await table.userAgent.find(
+    { role: profile.role },
+    { columns: ['user'], transacting }
+  );
+
+  return _.map(userAgents, 'user');
 }
 
 module.exports = { getSuperAdminUserIds };

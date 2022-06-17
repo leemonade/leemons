@@ -47,6 +47,8 @@ export default function MainMenu({ subNavWidth, ...props }) {
     };
   }, [loadMenu]);
 
+  if (!session) return null;
+
   return (
     <MainNav
       {...props}
@@ -55,27 +57,31 @@ export default function MainMenu({ subNavWidth, ...props }) {
       subNavWidth={subNavWidth}
       hideSubNavOnClose={false}
       useRouter={true}
-      session={session}
+      session={{ ...session, name: session.isSuperAdmin ? '' : session.name }}
       sessionMenu={{
         id: 'menu-0',
         label: t('label'),
         children: [
-          {
-            id: 'menu-1',
-            label: t('accountInfo'),
-            order: 0,
-            url: '/private/users/detail',
-            window: 'SELF',
-            disabled: null,
-          },
-          {
-            id: 'menu-2',
-            label: t('switchProfile'),
-            order: 1,
-            url: '/private/users/select-profile',
-            window: 'SELF',
-            disabled: null,
-          },
+          ...(session.isSuperAdmin
+            ? []
+            : [
+                {
+                  id: 'menu-1',
+                  label: t('accountInfo'),
+                  order: 0,
+                  url: '/private/users/detail',
+                  window: 'SELF',
+                  disabled: null,
+                },
+                {
+                  id: 'menu-2',
+                  label: t('switchProfile'),
+                  order: 1,
+                  url: '/private/users/select-profile',
+                  window: 'SELF',
+                  disabled: null,
+                },
+              ]),
           {
             id: 'menu-3',
             label: t('logout'),

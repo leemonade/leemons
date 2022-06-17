@@ -53,12 +53,29 @@ async function profileToken(user, profile, { transacting } = {}) {
 
   const [userToken, ...centerTokens] = await Promise.all(promises);
 
+  // SuperAdmin profile token
+  let profilesTokens = [];
+  if (!centerTokens || (centerTokens && _.isEmpty(centerTokens))) {
+    profilesTokens = await Promise.all(
+      profiles.map((item) =>
+        generateJWTToken({
+          userAgent: userAgentsByRole[item.role].id,
+        })
+      )
+    );
+  }
+
   return {
     userToken,
     centers: _.map(centers, (center, index) => ({
       ...center,
       token: centerTokens[index],
       userAgentId: userAgentsByRole[rolesCentersByCenter[centers[index].id].role].id,
+    })),
+    profiles: _.map(profiles, (item, index) => ({
+      ...item,
+      token: profilesTokens[index],
+      userAgentId: userAgentsByRole[item.role].id,
     })),
   };
 }

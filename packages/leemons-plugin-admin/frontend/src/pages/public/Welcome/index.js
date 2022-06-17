@@ -1,16 +1,20 @@
 import React from 'react';
-import { Box, Stack, Button, ContextContainer, Select } from '@bubbles-ui/components';
+import { Box, Button, ContextContainer, Select, Paragraph } from '@bubbles-ui/components';
 import { useHistory } from 'react-router-dom';
 import { useI18n } from 'react-simple-i18n';
 import localeContext from '../../../contexts/translations';
 import { LOCALES } from '../../../constants';
 import { setLanguagesRequest } from '../../../request/settings';
+import { HeroWrapper } from '../../../components/HeroWrapper';
 
 const Welcome = () => {
   const { loadLocale, locale } = React.useContext(localeContext);
   const [state, setState] = React.useState({ lang: locale, loading: false });
   const { t } = useI18n();
   const history = useHistory();
+
+  // ·····················································
+  // HANDLERS
 
   const handleLocaleChange = (lang) => {
     setState({ ...state, lang });
@@ -30,26 +34,26 @@ const Welcome = () => {
     }
   };
 
+  // ·····················································
+  // RENDER
+
   return (
-    <Box style={{ height: '100vh' }}>
-      <Stack fullWidth fullHeight alignItems="center" justifyContent="center">
-        <Box style={{ width: 400 }}>
-          <ContextContainer title={t('welcome.title')} description={t('welcome.description')}>
-            <Select
-              label={t('welcome.selectLanguage')}
-              value={state.lang}
-              onChange={handleLocaleChange}
-              data={LOCALES}
-            />
-            <Box>
-              <Button onClick={handleNext} loading={state.loading}>
-                {t('welcome.next')}
-              </Button>
-            </Box>
-          </ContextContainer>
+    <HeroWrapper quote={{ q: t('welcome.quote.title'), a: t('welcome.quote.description') }}>
+      <ContextContainer title={t('welcome.title')} description={t('welcome.description')}>
+        <Select
+          placeholder={t('welcome.selectLanguage')}
+          value={state.lang}
+          onChange={handleLocaleChange}
+          data={LOCALES}
+        />
+        <Paragraph>{t('welcome.disclaimer')}</Paragraph>
+        <Box>
+          <Button onClick={handleNext} loading={state.loading}>
+            {t('welcome.next')}
+          </Button>
         </Box>
-      </Stack>
-    </Box>
+      </ContextContainer>
+    </HeroWrapper>
   );
 };
 

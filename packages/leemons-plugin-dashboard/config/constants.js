@@ -1,4 +1,4 @@
-const pluginName = 'plugins.scores';
+const pluginName = 'plugins.dashboard';
 
 const permissions = [];
 

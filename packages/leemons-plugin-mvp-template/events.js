@@ -1,5 +1,6 @@
 const initUsers = require('./src/users');
 const initCenters = require('./src/centers');
+const initLocales = require('./src/locales');
 const initProfiles = require('./src/profiles');
 const initFamilies = require('./src/families');
 const initGrades = require('./src/grades');
@@ -23,21 +24,14 @@ async function events(isInstalled) {
     // ·······························································
     // LOCALES
 
-    const configLocales = async () => {
-      try {
-        await leemons.getPlugin('users').services.platform.addLocale('es', 'Español');
-        await leemons.getPlugin('users').services.platform.addLocale('en', 'English');
-        await leemons.getPlugin('users').services.platform.addLocale('es-ES', 'Español (España)');
-        await leemons.getPlugin('users').services.platform.setDefaultLocale('en');
-      } catch (e) {
-        // console.error(e);
-      }
-    };
-
     leemons.events.once(
-      ['plugins.users:pluginDidLoadServices', 'plugins.multilanguage:pluginDidLoadServices'],
+      [
+        'plugins.users:pluginDidLoadServices',
+        'plugins.admin:pluginDidLoadServices',
+        'plugins.multilanguage:pluginDidLoadServices',
+      ],
       async () => {
-        await configLocales();
+        await initLocales();
       }
     );
 
@@ -57,6 +51,7 @@ async function events(isInstalled) {
         'plugins.tests:init-permissions',
         'plugins.assignables:init-permissions',
         'plugins.leebrary:pluginDidLoadServices',
+        'plugins.admin:pluginDidLoadServices',
         'providers.leebrary-aws-s3:providerDidLoadServices',
       ],
       async () => {
@@ -74,6 +69,10 @@ async function events(isInstalled) {
 
           config.grades = await initGrades(config.centers);
           leemons.events.emit('init-grades', config.grades);
+
+          await leemons
+            .getPlugin('admin')
+            .services.settings.update({ status: 'INSTALLED', configured: true });
         } catch (e) {
           console.error(e);
         }

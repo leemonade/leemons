@@ -4,6 +4,10 @@
     "path": "../../packages/leemons-plugin-users/frontend"
   },
   {
+    "name": "admin",
+    "path": "../../packages/leemons-plugin-admin/frontend"
+  },
+  {
     "name": "layout",
     "path": "../../packages/leemons-plugin-layout/frontend"
   },

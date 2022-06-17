@@ -1,6 +1,37 @@
 {
+  "welcome": {
+    "title": "Leemons installation",
+    "description": "Please select a language for the installation process.",
+    "selectLanguage": "Select language",
+    "disclaimer": "You can configure the default languages for the platform during the installation process.",
+    "next": "Start installation",
+    "quote": {
+      "title": "Welcome to Leemons",
+      "description": "The powerful, flexible and free Learning Experience Platform."
+    }
+  },
   "signup": {
-    "title": "Signup",
-    "description": "Signup for a new account"
+    "title": "Admin Sign up",
+    "description": "Please enter your details to sign up as an administrator.",
+    "labels": {
+      "nextButton": "Next",
+      "email": "Email",
+      "password": "Password",
+      "repeatPassword": "Repeat password",
+      "lang": "Select your language"
+    },
+    "placeholders": {
+      "email": "Your email",
+      "password": "Your password",
+      "repeatPassword": "Repeat your password",
+      "lang": "Select language"
+    },
+    "errorMessages": {
+      "email": {
+        "invalidFormat": "Please enter a valid email address",
+        "required": "Please enter your email address"
+      },
+      "password": { "notMatch": "Passwords not match", "required": "Please enter your password" }
+    }
   }
 }

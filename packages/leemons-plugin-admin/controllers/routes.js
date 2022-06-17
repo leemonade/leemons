@@ -23,6 +23,11 @@ const getPermissions = (permissionsArr, actions = null) => {
 
 module.exports = [
   {
+    path: '/i18n/:page/:lang',
+    method: 'GET',
+    handler: 'i18n.getLang',
+  },
+  {
     path: '/settings',
     method: 'GET',
     handler: 'settings.findOne',
@@ -31,6 +36,11 @@ module.exports = [
     path: '/settings/languages',
     method: 'POST',
     handler: 'settings.setLanguages',
+  },
+  {
+    path: '/settings/signup',
+    method: 'POST',
+    handler: 'settings.signup',
   },
   {
     path: '/settings',

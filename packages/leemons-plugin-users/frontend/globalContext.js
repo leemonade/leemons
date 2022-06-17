@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { SessionContext, SessionProvider } from '@users/context/session';
 import { Box, Button, Modal } from '@bubbles-ui/components';
-import _ from 'lodash';
+import _, { isEmpty } from 'lodash';
 import { useStore } from '@common';
 import { getCookieToken } from '@users/session';
 import { SocketIoService } from '@socket-io/service';
@@ -30,9 +30,13 @@ export function Provider({ children }) {
         }
         if (_.isObject(ctx.options)) {
           if (ctx.options.allAgents) {
-            ctx.options.headers.Authorization = JSON.stringify(_.map(token.centers, 'token'));
+            ctx.options.headers.Authorization = JSON.stringify(
+              _.map(token.centers.concat(token.profiles), 'token')
+            );
           } else if (ctx.options.centerToken) {
             ctx.options.headers.Authorization = ctx.options.centerToken;
+          } else if (ctx.options.profileAgents) {
+            ctx.options.headers.Authorization = JSON.stringify(_.map(token.profiles, 'token'));
           }
         }
       }
