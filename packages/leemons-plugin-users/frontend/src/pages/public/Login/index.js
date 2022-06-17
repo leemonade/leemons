@@ -4,7 +4,12 @@ import _ from 'lodash';
 import Cookies from 'js-cookie';
 import { Box, createStyles, Stack } from '@bubbles-ui/components';
 import { LoginForm } from '@bubbles-ui/leemons';
-import { getRememberLoginRequest, loginRequest } from '@users/request';
+import {
+  getRememberLoginRequest,
+  loginRequest,
+  getUserProfilesRequest,
+  getUserProfileTokenRequest,
+} from '@users/request';
 import { getCookieToken, useSession } from '@users/session';
 import { goRecoverPage } from '@users/navigate';
 import HeroBgLayout from '@users/layout/heroBgLayout';
@@ -52,44 +57,67 @@ export default function Login() {
       setFormError(null);
       const response = await loginRequest(data);
 
+      console.log('response:', response);
+
       try {
-        // Comprobamos si tiene recordado un perfil
-        const { profile, center } = await getRememberLoginRequest(response.jwtToken);
-
-        if (profile && center) {
-          // Si lo tiene sacamos el token para dicho centro y perfil
-          const { jwtToken } = await getUserCenterProfileTokenRequest(
-            center.id,
-            profile.id,
-            response.jwtToken
-          );
-
-          await hooks.fireEvent('user:change:profile', profile);
-          response.jwtToken = jwtToken;
-        } else {
-          // Si no lo tiene sacamos todos los perfiles a los que tiene acceso para hacer login
-          const { centers } = await getUserCentersRequest(response.jwtToken);
-          // Si solo tiene un perfil hacemos login automaticamente con ese
-          if (centers.length === 1 && centers[0].profiles.length === 1) {
-            const { jwtToken } = await getUserCenterProfileTokenRequest(
-              centers[0].id,
-              centers[0].profiles[0].id,
+        if (response?.user?.isSuperAdmin) {
+          const { profiles } = await getUserProfilesRequest(response.jwtToken);
+          if (profiles && !_.isEmpty(profiles)) {
+            const { jwtToken } = await getUserProfileTokenRequest(
+              profiles[0].id,
               response.jwtToken
             );
 
-            await hooks.fireEvent('user:change:profile', centers[0].profiles[0]);
+            response.jwtToken = { ...jwtToken, profile: profiles[0] };
+          }
+        } else {
+          // ES: Comprobamos si tiene recordado un perfil
+          // EN: Check if has remember a profile
+          const { profile, center } = await getRememberLoginRequest(response.jwtToken);
+
+          if (profile && center) {
+            // ES: Si lo tiene sacamos el token para dicho centro y perfil
+            // EN: If has, get the token for that center and profile
+            const { jwtToken } = await getUserCenterProfileTokenRequest(
+              center.id,
+              profile.id,
+              response.jwtToken
+            );
+
+            await hooks.fireEvent('user:change:profile', profile);
             response.jwtToken = jwtToken;
+          } else {
+            // ES: Si no lo tiene sacamos todos los perfiles a los que tiene acceso para hacer login
+            // EN: If not has, get all the profiles that has access to do login
+            const { centers } = await getUserCentersRequest(response.jwtToken);
+            // Si solo tiene un perfil hacemos login automaticamente con ese
+            if (centers.length === 1 && centers[0].profiles.length === 1) {
+              const { jwtToken } = await getUserCenterProfileTokenRequest(
+                centers[0].id,
+                centers[0].profiles[0].id,
+                response.jwtToken
+              );
+
+              await hooks.fireEvent('user:change:profile', centers[0].profiles[0]);
+              response.jwtToken = jwtToken;
+            }
           }
         }
       } catch (e) {
         //
       }
+
       // Finalmente metemos el token
       Cookies.set('token', response.jwtToken);
       hooks.fireEvent('user:cookie:session:change');
-      history.push(
-        _.isString(response.jwtToken) ? '/private/users/select-profile' : '/private/dashboard'
-      );
+
+      if (response.user.isSuperAdmin) {
+        history.push('/private/admin/setup');
+      } else {
+        history.push(
+          _.isString(response.jwtToken) ? '/private/users/select-profile' : '/private/dashboard'
+        );
+      }
     } catch (err) {
       if (_.isObject(err) && err.status === 401) {
         setFormStatus('error-match');

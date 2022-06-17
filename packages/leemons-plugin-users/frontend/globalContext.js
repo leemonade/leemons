@@ -30,9 +30,8 @@ export function Provider({ children }) {
         }
         if (_.isObject(ctx.options)) {
           if (ctx.options.allAgents) {
-            ctx.options.headers.Authorization = JSON.stringify(
-              _.map(token.centers.concat(token.profiles), 'token')
-            );
+            const allTokens = _.compact(token.centers.concat(token.profiles));
+            ctx.options.headers.Authorization = JSON.stringify(_.map(allTokens, 'token'));
           } else if (ctx.options.centerToken) {
             ctx.options.headers.Authorization = ctx.options.centerToken;
           } else if (ctx.options.profileAgents) {

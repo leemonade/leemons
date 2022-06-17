@@ -31,7 +31,7 @@ const menuItems = [
       activeIconSvg: '/public/admin/menu-icon.svg',
       url: '/private/admin/setup',
       label: {
-        en: 'Config',
+        en: 'Setup',
         es: 'Configuración',
       },
     },

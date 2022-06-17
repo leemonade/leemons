@@ -43,7 +43,7 @@ export default function HeroBgLayout({ children, quote: quoteProp, dobleQuoted }
   return (
     <ThemeProvider>
       <Box className={classes.root}>
-        <LoginBg author={quote.a} quote={quote.q} dobleQuoted={dobleQuoted} />
+        <LoginBg author={quote?.a || ''} quote={quote?.q || ''} dobleQuoted={dobleQuoted} />
         <Box className={classes.content}>{children}</Box>
       </Box>
     </ThemeProvider>

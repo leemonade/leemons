@@ -9,6 +9,7 @@
 const { generateJWTToken } = require('./jwt/generateJWTToken');
 const { comparePassword } = require('./bcrypt/comparePassword');
 const { table } = require('../tables');
+const { isSuperAdmin } = require('./isSuperAdmin');
 
 async function login(email, password) {
   const userP = await table.users.findOne({ email, active: true }, { columns: ['id', 'password'] });
@@ -21,6 +22,10 @@ async function login(email, password) {
     table.users.findOne({ email }),
     generateJWTToken({ id: userP.id }),
   ]);
+
+  if (user && user.id) {
+    user.isSuperAdmin = await isSuperAdmin(user.id);
+  }
 
   return { user, token };
 }

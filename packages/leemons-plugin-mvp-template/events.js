@@ -12,6 +12,14 @@ const initTasks = require('./src/tasks');
 const initTests = require('./src/tests');
 const initCalendar = require('./src/calendar');
 
+async function initAdmin() {
+  const { services } = leemons.getPlugin('admin');
+  await Promise.all([
+    services.settings.update({ status: 'INSTALLED', configured: true }),
+    services.settings.initMenu(),
+  ]);
+}
+
 async function events(isInstalled) {
   const config = {
     profiles: null,
@@ -70,9 +78,7 @@ async function events(isInstalled) {
           config.grades = await initGrades(config.centers);
           leemons.events.emit('init-grades', config.grades);
 
-          await leemons
-            .getPlugin('admin')
-            .services.settings.update({ status: 'INSTALLED', configured: true });
+          await initAdmin();
         } catch (e) {
           console.error(e);
         }

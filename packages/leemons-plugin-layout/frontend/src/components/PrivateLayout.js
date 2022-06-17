@@ -54,7 +54,7 @@ const PrivateLayout = ({ children }) => {
             academicProfiles.student,
           ].includes(token?.profile);
         } catch (error) {
-          console.log(error);
+          leemons.log.debug(error);
           // Possible super admin
           profileState.isAcademicMode = false;
         }

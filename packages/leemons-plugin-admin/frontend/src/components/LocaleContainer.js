@@ -11,15 +11,24 @@ const LocaleContainer = ({ children }) => {
   const [locale, setLocale] = React.useState('en');
   const [localeData, setLocaleData] = React.useState({});
 
+  const mounted = React.useRef(false);
+
   const loadLocale = async (lang) => {
     const response = await getLocaleRequest(lang, 'welcome');
-    setLocaleData(response.data || {});
-    setLocale(lang);
+    if (mounted.current) {
+      setLocaleData(response.data || {});
+      setLocale(lang);
+    }
   };
 
   React.useEffect(() => {
+    mounted.current = true;
     const lang = (navigator.language || navigator.userLanguage).split('-')[0];
     loadLocale(lang);
+
+    return () => {
+      mounted.current = false;
+    };
   }, []);
 
   return (

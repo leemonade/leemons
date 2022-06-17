@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
 import { Redirect, useRouteMatch } from 'react-router-dom';
 import { LoadingOverlay } from '@bubbles-ui/components';
-import { getCookieToken } from '@users/session';
 import { getSettingsRequest } from '../request/settings';
 import LocaleContext from '../contexts/translations';
 
@@ -12,38 +10,53 @@ const UserRedirect = ({ to }) => {
   const { loadLocale } = React.useContext(LocaleContext);
   const { path } = useRouteMatch();
   const component = React.useRef(null);
-  const token = getCookieToken(true);
 
   const getComponent = (url, comp) => (path === url ? comp : <Redirect to={url} />);
+
+  const getRedirect = (settings, isSuperAdmin) => {
+    if (settings.configured) {
+      if (isSuperAdmin) {
+        return getComponent('/private/admin/setup', to);
+      }
+      if (path === '/admin/login') {
+        return getComponent('/users/login', to);
+      }
+      return <Redirect to={'/private/dashboard'} />;
+    }
+
+    // If not configured yet but user is UserAdmin, just redirect to the page requested
+    if (isSuperAdmin) {
+      return getComponent(path, to);
+    }
+
+    if (settings.status === 'ADMIN_CREATED') {
+      return getComponent('/users/login', to);
+    }
+
+    if (settings.status === 'LOCALIZED') {
+      return getComponent('/admin/signup', to);
+    }
+
+    return getComponent('/admin/welcome', to);
+  };
 
   const getSettings = async () => {
     setLoading(true);
 
     try {
+      let userToken = null;
+      try {
+        userToken = await leemons.api(`users/user`);
+      } catch (e) {
+        leemons.log.debug('Token not valid or session expired');
+      }
       const response = await getSettingsRequest();
 
       if (response.settings?.lang) {
         loadLocale(response.settings?.lang);
       }
 
-      if (response.settings?.configured) {
-        if (path === '/admin/login') {
-          component.current = getComponent('/admin/login', to);
-        } else {
-          component.current = <Redirect to={'/private/dashboard'} />;
-        }
-      } else if (response.settings?.status === 'ADMIN_CREATED') {
-        if (!isEmpty(token?.profile)) {
-          component.current = getComponent('/private/admin/setup', to);
-        } else {
-          component.current = getComponent('/admin/login', to);
-        }
-      } else if (response.settings?.status === 'LOCALIZED') {
-        component.current = getComponent('/admin/signup', to);
-      } else {
-        component.current = getComponent('/admin/welcome', to);
-      }
-
+      component.current = getRedirect(response.settings || {}, userToken?.user?.isSuperAdmin);
       setLoading(false);
     } catch (e) {
       console.error(e);

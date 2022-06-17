@@ -50,7 +50,6 @@ const Login = () => {
       const response = await loginRequest(data);
 
       try {
-        // Si no tiene recordado un perfil, lo redirigimos a la selección de perfil
         const { profiles } = await getUserProfilesRequest(response.jwtToken);
         if (profiles && !isEmpty(profiles)) {
           const { jwtToken } = await getUserProfileTokenRequest(profiles[0].id, response.jwtToken);

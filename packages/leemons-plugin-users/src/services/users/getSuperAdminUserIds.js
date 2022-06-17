@@ -9,7 +9,7 @@ const { table } = require('../tables');
  * */
 async function getSuperAdminUserIds({ transacting } = {}) {
   const profile = await table.profiles.findOne(
-    { name: 'super-admin' },
+    { uri: 'superadmin' },
     { columns: ['role'], transacting }
   );
 
