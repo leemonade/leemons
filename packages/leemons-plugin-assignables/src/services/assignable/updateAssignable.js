@@ -322,6 +322,8 @@ module.exports = async function updateAssignable(
         await Promise.all(updateAssets);
         updateObject.metadata = JSON.stringify(assignableObject.metadata);
       }
+
+      updateObject.metadata = JSON.stringify(assignableObject.metadata);
     }
 
     await assignables.update({ id }, updateObject, {

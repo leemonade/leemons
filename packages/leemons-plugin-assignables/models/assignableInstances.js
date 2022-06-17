@@ -20,8 +20,24 @@ module.exports = {
       type: 'boolean',
       options: {
         notNull: true,
+        defaultValue: 0,
       },
     },
+    requiresScoring: {
+      type: 'boolean',
+      options: {
+        notNull: true,
+        defaultValue: 0,
+      },
+    },
+    allowFeedback: {
+      type: 'boolean',
+      options: {
+        notNull: true,
+        defaultValue: 0,
+      },
+    },
+
     messageToAssignees: {
       type: 'richtext',
     },

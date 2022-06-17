@@ -95,7 +95,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
         });
       }
 
-      if (asset.duplicable) {
+      if (asset.duplicable && asset.providerData) {
         items.push({
           icon: <DuplicateIcon />,
           children: menuLabels.duplicate,

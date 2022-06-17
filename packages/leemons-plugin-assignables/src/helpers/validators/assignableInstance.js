@@ -40,6 +40,12 @@ const assignableInstanceValidationObject = {
     gradable: {
       type: 'boolean',
     },
+    requiresScoring: {
+      type: 'boolean',
+    },
+    allowFeedback: {
+      type: 'boolean',
+    },
     classes: {
       type: 'array',
       items: {
@@ -71,7 +77,14 @@ const assignableInstanceValidationObject = {
   },
 };
 
-const assignableInstanceRequiredProperties = ['assignable', 'alwaysAvailable', 'dates', 'gradable'];
+const assignableInstanceRequiredProperties = [
+  'assignable',
+  'alwaysAvailable',
+  'dates',
+  'gradable',
+  'requiresScoring',
+  'allowFeedback',
+];
 
 function validateAssignableInstance(assignable, { useRequired = false } = {}) {
   const obj = _.clone(assignableInstanceValidationObject);

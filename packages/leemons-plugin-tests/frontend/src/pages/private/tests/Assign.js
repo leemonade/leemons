@@ -136,6 +136,7 @@ export default function Assign() {
                     <Button type="submit">{t('next')}</Button>
                   </Stack>
                 }
+                variations={['calificable', 'punctuation-evaluable']}
               />
             )}
             {store.currentStep === 1 && (
