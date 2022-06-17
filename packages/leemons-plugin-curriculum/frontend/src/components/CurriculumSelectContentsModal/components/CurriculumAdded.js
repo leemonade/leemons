@@ -50,7 +50,7 @@ export function CurriculumAdded({ store, render, t }) {
 
   return (
     <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-      <Title order={6}>{t('selectFromCurriculum')}</Title>
+      <Title order={6}>{store.curriculumTitle}</Title>
       <Stack>
         <Box>
           <Button variant="link" onClick={clearSelected}>

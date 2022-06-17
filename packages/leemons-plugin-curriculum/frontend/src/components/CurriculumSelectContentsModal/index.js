@@ -23,12 +23,15 @@ import { CurriculumAdded } from './components/CurriculumAdded';
 // eslint-disable-next-line import/prefer-default-export
 export function CurriculumSelectContentsModal({
   curriculum: id,
+  subjects: _subjects,
   opened,
   title,
   value,
   onChange,
   onClose,
 }) {
+  // eslint-disable-next-line no-nested-ternary
+  const subjects = isArray(_subjects) ? _subjects : _subjects ? [_subjects] : _subjects;
   const [t] = useTranslateLoader(prefixPN('selectContentModal'));
   const [store, render] = useStore({ value });
 
@@ -71,8 +74,17 @@ export function CurriculumSelectContentsModal({
 
   async function init() {
     try {
-      const { curriculum } = await detailCurriculumRequest(id);
+      const { curriculum } = await detailCurriculumRequest(id, { withProgram: true });
       store.curriculum = curriculum;
+      let course = null;
+      const subject = find(store.curriculum.program.subjects, { id: subjects[0] });
+
+      if (subject && subject.course) {
+        course = find(store.curriculum.program.courses, { id: subject.course });
+      }
+      store.curriculumTitle = `${course ? `${course.index}º ` : ''}${
+        store.curriculum.program.name
+      } ${subject ? `- ${subject.name}` : ''}`;
       store.treeData = getTreeData();
     } catch (error) {
       console.error(error);
@@ -100,13 +112,13 @@ export function CurriculumSelectContentsModal({
     <Modal trapFocus={false} size={1000} withCloseButton={false} opened={opened} onClose={onClose}>
       <ContextContainer>
         <Stack fullWidth justifyContent="space-between">
-          <Title order={3}>{title || t('title')}</Title>
+          <Title order={3}>{title || store.curriculum?.name || ''}</Title>
           <ActionButton icon={<RemoveIcon />} onClick={onClose} />
         </Stack>
 
         <Tabs>
           <TabPanel label={t('curriculum')}>
-            <CurriculumTab t={t} store={store} render={render} />
+            <CurriculumTab subjects={subjects} t={t} store={store} render={render} />
           </TabPanel>
           <TabPanel
             notification={store.value?.length ? store.value?.length : null}
@@ -126,6 +138,7 @@ export function CurriculumSelectContentsModal({
 
 CurriculumSelectContentsModal.propTypes = {
   curriculum: PropTypes.string,
+  subjects: PropTypes.any,
   opened: PropTypes.bool,
   onChange: PropTypes.func,
   onClose: PropTypes.func,

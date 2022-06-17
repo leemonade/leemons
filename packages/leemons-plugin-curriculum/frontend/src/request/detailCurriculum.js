@@ -1,7 +1,8 @@
-async function detailCurriculum(id) {
+async function detailCurriculum(id, body = {}) {
   return leemons.api(`curriculum/curriculum/${id}`, {
     allAgents: true,
-    method: 'GET',
+    method: 'POST',
+    body,
   });
 }
 

@@ -28,7 +28,7 @@ function AddCurriculumStep1() {
   const [curriculum, setCurriculum] = useState({});
   const defaultNodeLevels = [];
   defaultNodeLevels[1] = 'program';
-  defaultNodeLevels[6] = 'subjects';
+  defaultNodeLevels[6] = 'subject';
   const [nodeLevels, setNodeLevels] = useState(defaultNodeLevels);
 
   const tree = useTree();
@@ -111,11 +111,11 @@ function AddCurriculumStep1() {
         ),
       },
       {
-        id: 'subjects',
+        id: 'subject',
         parent: 'knowledges',
         draggable: false,
         text: (
-          <Checkbox label={t('subjects')} disabled checked={nodeLevels.indexOf('subjects') >= 0} />
+          <Checkbox label={t('subject')} disabled checked={nodeLevels.indexOf('subject') >= 0} />
         ),
       },
     ]);

@@ -17,7 +17,7 @@ const subjectsValidationObject = {
         nullable: true,
       },
       curriculum: {
-        type: 'object',
+        type: ['object', 'array'],
         nullable: true,
       },
     },

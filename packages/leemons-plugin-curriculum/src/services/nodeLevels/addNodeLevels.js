@@ -8,6 +8,18 @@ async function addNodeLevels(data, { transacting: _transacting } = {}) {
     async (transacting) => {
       await validateAddNodeLevels(data, { transacting });
 
+      const curriculum = await table.curriculums.findOne(
+        { id: data.curriculum },
+        {
+          columns: ['step'],
+          transacting,
+        }
+      );
+
+      if (curriculum.step === 1) {
+        await table.curriculums.update({ id: data.curriculum }, { step: 2 }, { transacting });
+      }
+
       const nodeLevels = await Promise.all(
         _.map(data.nodeLevels, (nodeLevel) =>
           table.nodeLevels.create({ curriculum: data.curriculum, ...nodeLevel }, { transacting })

@@ -17,6 +17,9 @@ module.exports = {
     nameOrder: {
       type: 'string',
     },
+    academicItem: {
+      type: 'string',
+    },
     // ES: Orden dentro del mismo padre
     // EN: Order inside the same parent
     nodeOrder: {
@@ -26,19 +29,28 @@ module.exports = {
       },
     },
     parentNode: {
+      type: 'string',
+      /*
       references: {
         collection: 'plugins_curriculum::nodes',
       },
+      */
     },
     nodeLevel: {
+      type: 'string',
+      /*
       references: {
         collection: 'plugins_curriculum::node-levels',
       },
+      */
     },
     curriculum: {
+      type: 'string',
+      /*
       references: {
         collection: 'plugins_curriculum::curriculums',
       },
+       */
     },
   },
   primaryKey: {

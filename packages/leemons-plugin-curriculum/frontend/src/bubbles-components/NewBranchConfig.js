@@ -126,7 +126,7 @@ function NewBranchConfig({
           </Box>
         </Group>
         <Stack justifyContent="end">
-          <Button loading={isLoading} type="submit">
+          <Button variant="outline" loading={isLoading} type="submit">
             {messages.saveButtonLabel}
           </Button>
         </Stack>

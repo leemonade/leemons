@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useStore } from '@common';
-import { Box, InputWrapper, Paragraph, Stack } from '@bubbles-ui/components';
+import { Box, InputWrapper, Paragraph, Stack, Text } from '@bubbles-ui/components';
 import { find, groupBy, isArray, map, values } from 'lodash';
 import { getDataForKeysRequest } from '../../request';
 import { getCurriculumSelectedContentValueByKey } from '../../helpers/getCurriculumSelectedContentValueByKey';
@@ -48,7 +48,7 @@ export function CurriculumListContents({ value }) {
               })}
             >
               {/* <InputWrapper label={propertyLabel}> */}
-              <InputWrapper>
+              <InputWrapper label={propertyLabel}>
                 {propertyValues.map((propertyValue, j) => {
                   const formValue =
                     store.data.nodes[nodeValues[0].node].formValues[propertyValue.property];
@@ -57,7 +57,7 @@ export function CurriculumListContents({ value }) {
                   return (
                     <Stack key={j} alignItems="baseline">
                       {item.metadata?.index ? (
-                        <Paragraph>{`${item.metadata?.index}`}</Paragraph>
+                        <Text strong color="primary">{`${item.metadata?.index}`}</Text>
                       ) : null}
                       <Box sx={(theme) => ({ flex: 1, paddingLeft: theme.spacing[3] })}>
                         <Paragraph

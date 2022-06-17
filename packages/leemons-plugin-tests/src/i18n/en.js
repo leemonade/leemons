@@ -187,6 +187,8 @@ module.exports = {
     reorderQuestionsDescription:
       'These are the questions you have selected for this test, if you wish, you can order them at your convenience',
     statementLabel: 'Test statement',
+    addFromCurriculum: 'Add from curriculum',
+    curriculum: 'Curriculum',
     statementRequired: 'Field required',
     contentLabel: 'Content',
     instructionsForTeacherLabel: 'Instructions for teacher',

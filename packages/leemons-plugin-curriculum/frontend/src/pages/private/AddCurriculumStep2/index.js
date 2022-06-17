@@ -9,11 +9,11 @@ import {
   Col,
   ContextContainer,
   Grid,
+  LoadingOverlay,
   PageContainer,
   Paper,
   Tree,
   useTree,
-  LoadingOverlay
 } from '@bubbles-ui/components';
 import { useHistory, useParams } from 'react-router-dom';
 import { useStore } from '@common';
@@ -215,6 +215,7 @@ function AddCurriculumStep2() {
       });
     });
 
+    /*
     items.push({
       id: 'add-button',
       parent: items.length ? items[items.length - 1].id : 0,
@@ -225,6 +226,8 @@ function AddCurriculumStep2() {
         action: 'add',
       },
     });
+
+     */
 
     tree.setTreeData(items);
   }, [store.curriculum]);
