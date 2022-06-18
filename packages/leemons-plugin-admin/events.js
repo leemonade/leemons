@@ -1,6 +1,7 @@
 const { permissions, menuItems } = require('./config/constants');
 const addMenuItems = require('./src/services/menu-builder/add');
 const init = require('./init');
+const { addLocales } = require('./src/services/locales/addLocales');
 
 async function events(isInstalled) {
   leemons.events.once(
@@ -10,6 +11,10 @@ async function events(isInstalled) {
       await addMenuItems(mainItem);
     }
   );
+
+  leemons.events.once('plugins.multilanguage:newLocale', async (event, locale) => {
+    await addLocales(locale.code);
+  });
 
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
     init();

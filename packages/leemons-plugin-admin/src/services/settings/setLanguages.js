@@ -1,11 +1,10 @@
 /* eslint-disable global-require */
-const path = require('path');
 const { flattenDeep, isEmpty, isString } = require('lodash');
 const { table } = require('../tables');
 const findOne = require('./findOne');
 const update = require('./update');
 const { STATUS } = require('../../../config/constants');
-const { translations } = require('../translations');
+// const { addLocales } = require('../locales/addLocales');
 
 /**
  * @public
@@ -27,23 +26,7 @@ async function setLanguages(langs, defaultLang, { transacting: _transacting } = 
         locales.map((lang) => userService.platform.addLocale(lang.code, lang.name))
       );
 
-      const languageService = translations();
-
-      if (languageService) {
-        const localesData = {};
-
-        for (let i = 0, len = localesAdded.length; i < len; i++) {
-          const locale = localesAdded[i];
-          // eslint-disable-next-line no-await-in-loop
-          localesData[locale.code] = await leemons.fs.readFile(
-            path.resolve(__dirname, `../../i18n/${locale.code}.json`),
-            'utf8'
-          );
-          localesData[locale.code] = JSON.parse(localesData[locale.code]);
-        }
-
-        await languageService.common.setManyByJSON(localesData, leemons.plugin.prefixPN(''));
-      }
+      // await addLocales(localesAdded.map((locale) => locale.code));
 
       if (defaultLang && isString(defaultLang) && !isEmpty(defaultLang)) {
         await userService.platform.setDefaultLocale(defaultLang);
